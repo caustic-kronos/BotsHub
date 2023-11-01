@@ -53,7 +53,7 @@ Local $DeadlockTimer
 Local $Deadlocked = False
 
 #Region GUI
-Global $FARM_SETUP = False
+Global $Jade_Brotherhood_Farm_Setup = False
 
 ;~ Main method to farm Raptors
 Func JadeBrotherhoodFarm($STATUS)
@@ -73,9 +73,9 @@ Func JadeBrotherhoodFarm($STATUS)
 		TravelTo($ID_The_Marketplace)
 	EndIf
 	
-	If Not $FARM_SETUP Then
+	If Not $Jade_Brotherhood_Farm_Setup Then
 		SetupJadeBrotherhoodFarm()
-		$FARM_SETUP = True
+		$Jade_Brotherhood_Farm_Setup = True
 	EndIf
 
 	If $STATUS <> "RUNNING" Then Return
@@ -94,8 +94,8 @@ Func SetupJadeBrotherhoodFarm()
 	GUICtrlSetState($LootPurpleItemsCheckbox, $GUI_CHECKED)
 	; TODO Display your Asura Title for the energy boost.
 	;SetDisplayedTitle(0x29)
-	SwitchMode(1)
-	AddHero(11)
+	SwitchMode($ID_HARD_MODE)
+	AddHero($ID_General_Morgahn)
 	MoveTo(16106, 18497)
 	Move(16481, 19378)
 	Move(16551, 19860)
@@ -172,7 +172,7 @@ Func TalkToAiko()
 	Out("Taking quest")
 	AcceptQuest(457)
 	Move(-11303, -6545, 40)
-	Rndsleep(4500)
+	RndSleep(4500)
 EndFunc
 
 
@@ -180,14 +180,14 @@ Func WaitForBall()
 	Local $lMe = GetAgentByID(-2)
 	Out("Waiting for ball")
 	If GetIsDead($lme) Then Return
-	Rndsleep(4500)
+	RndSleep(4500)
 	Local $target, $foesBalled = 0
 	Local $niceBall = False
 	While Not($foesBalled == 8 And $niceBall)
 		$niceBall = $foesBalled == 8 ? True : False
 		If GetIsDead($lme) Or TimerDiff($DeadlockTimer) > $timeOut Then Return
 		Out("Not yet : " & $foesBalled)
-		Rndsleep(4500)
+		RndSleep(4500)
 		$target = GetNearestEnemyToCoords(-13262, -5486)
 		$foesBalled = GetNumberOfFoesInRangeOfAgent($target, 360)
 	WEnd
@@ -248,10 +248,10 @@ Func KillJadeBrotherhood()
 			Sleep(GetPing() + Random(250, 300))
 		EndIf
 		TargetNearestEnemy()
-		Rndsleep(250)
+		RndSleep(250)
 		ChangeTarget(-1)
 		Attack(-1)
-		Rndsleep(250)
+		RndSleep(250)
 	WEnd
 EndFunc
 
@@ -279,7 +279,7 @@ Func GetAlmostInRangeOfAgent($tgtAgent)
 	Local $xGo = $xMe + ($xTgt - $xMe) * $ratio
 	Local $yGo = $yMe + ($yTgt - $yMe) * $ratio
 	Move($xGo, $yGo, 40)
-	Rndsleep(5000)
+	RndSleep(5000)
 EndFunc
 
 

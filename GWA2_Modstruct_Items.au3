@@ -104,90 +104,92 @@ Func IsPerfectStaff($aItem)
 	Local $Blood20Casting = StringInStr($ModStruct, "04141822", 0, 1)		; Mod struct for 20% blood
 
 	Switch $A
-	Case 2; Domination
-		If $Domination20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 4; Blood
-		If $Blood20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 5; Death
-		If $Death20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 8; Air
-		If $Air20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 9; Earth
-		If $Earth20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 10; Fire
-		If $Fire20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 11; Water
-		If $Water20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 12; Energy Storage
-		If $Air20Casting > 0 Or $Earth20Casting > 0 Or $Fire20Casting > 0 Or $Water20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 13; Healing
-		If $Healing20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 14; Smiting
-		If $Smite20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 15; Protection
-		If $Protection20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 16; Divine
-		If $Healing20Casting > 0 Or $Protection20Casting > 0 Or $Divine20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 33; Restoration
-		If $Restoration20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
-	Case 34; Channeling
-		If $Channeling20Casting > 0 Then
-			Return True
-		Else
-			Return False
-		EndIf
+		Case 2; Domination
+			If $Domination20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 4; Blood
+			If $Blood20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 5; Death
+			If $Death20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 8; Air
+			If $Air20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 9; Earth
+			If $Earth20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 10; Fire
+			If $Fire20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 11; Water
+			If $Water20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 12; Energy Storage
+			If $Air20Casting > 0 Or $Earth20Casting > 0 Or $Fire20Casting > 0 Or $Water20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 13; Healing
+			If $Healing20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 14; Smiting
+			If $Smite20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 15; Protection
+			If $Protection20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 16; Divine
+			If $Healing20Casting > 0 Or $Protection20Casting > 0 Or $Divine20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 33; Restoration
+			If $Restoration20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case 34; Channeling
+			If $Channeling20Casting > 0 Then
+				Return True
+			Else
+				Return False
+			EndIf
+		Case else
+			MsgBox(0, "Error", "This staff attribute is not recognised.")
 	EndSwitch
 	Return False
 EndFunc
@@ -235,256 +237,258 @@ Func IsPerfectCaster($aItem)
 	Local $Blood20Casting = StringInStr($ModStruct, "04141822", 0, 1)
 
 	Switch $A
-	Case 2; Domination
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Domination20Casting > 0 Or $Domination20Recharge > 0 Then
-				Return True
+		Case 2; Domination
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Domination20Casting > 0 Or $Domination20Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Domination20Recharge > 0 Or $Domination20Casting > 0 Then
+			If $Domination20Recharge > 0 Or $Domination20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Domination20Recharge > 0 Then
+				If $Domination20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 4; Blood
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Blood20Casting > 0 Or $Blood20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Blood20Recharge > 0 Or $Blood20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Blood20Recharge > 0 Then
+				If $Blood20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 5; Death
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Death20Casting > 0 Or $Death20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Death20Recharge > 0 Or $Death20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Death20Recharge > 0 Then
+				If $Death20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 8; Air
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Air20Casting > 0 Or $Air20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Air20Recharge > 0 Or $Air20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Air20Recharge > 0 Then
+				If $Air20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 9; Earth
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Earth20Casting > 0 Or $Earth20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Earth20Recharge > 0 Or $Earth20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Earth20Recharge > 0 Then
+				If $Earth20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 10; Fire
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Fire20Casting > 0 Or $Fire20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Fire20Recharge > 0 Or $Fire20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Fire20Recharge > 0 Then
+				If $Fire20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 11; Water
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Water20Casting > 0 Or $Water20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Water20Recharge > 0 Or $Water20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Water20Recharge > 0 Then
+				If $Water20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 12; Energy Storage
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Energy20Casting > 0 Or $Energy20Recharge > 0 Or $Water20Casting > 0 Or $Water20Recharge > 0 Or $Fire20Casting > 0 Or $Fire20Recharge > 0 Or $Earth20Casting > 0 Or $Earth20Recharge > 0 Or $Air20Casting > 0 Or $Air20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Energy20Recharge > 0 Or $Energy20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Or $Water20Casting > 0 Or $Water20Recharge > 0 Or $Fire20Casting > 0 Or $Fire20Recharge > 0 Or $Earth20Casting > 0 Or $Earth20Recharge > 0 Or $Air20Casting > 0 Or $Air20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Energy20Recharge > 0 Then
+				If $Energy20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
 			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
+				If $Water20Casting > 0 Or $Water20Recharge > 0 Or $Fire20Casting > 0 Or $Fire20Recharge > 0 Or $Earth20Casting > 0 Or $Earth20Recharge > 0 Or $Air20Casting > 0 Or $Air20Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Domination20Recharge > 0 Then
-			If $Domination20Casting > 0 Then
-				Return True
+			Return False
+		Case 13; Healing
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Healing20Casting > 0 Or $Healing20Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		Return False
-	Case 4; Blood
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Blood20Casting > 0 Or $Blood20Recharge > 0 Then
-				Return True
+			If $Healing20Recharge > 0 Or $Healing20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Blood20Recharge > 0 Or $Blood20Casting > 0 Then
+			If $Healing20Recharge > 0 Then
+				If $Healing20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 14; Smiting
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Smiting20Recharge > 0 Or $Smiting20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Smiting20Recharge > 0 Then
+				If $Smiting20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 15; Protection
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Protection20Recharge > 0 Or $Protection20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Protection20Recharge > 0 Then
+				If $Protection20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
+			Return False
+		Case 16; Divine
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Divine20Casting > 0 Or $Divine20Recharge > 0 Or $Healing20Casting > 0 Or $Healing20Recharge > 0 Or $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Or $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Divine20Recharge > 0 Or $Divine20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Or $Healing20Casting > 0 Or $Healing20Recharge > 0 Or $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Or $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
+					Return True
+				EndIf
+			EndIf
+			If $Divine20Recharge > 0 Then
+				If $Divine20Casting > 0 Then
+					Return True
+				EndIf
+			EndIf
 			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
+				If $Healing20Casting > 0 Or $Healing20Recharge > 0 Or $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Or $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Blood20Recharge > 0 Then
-			If $Blood20Casting > 0 Then
-				Return True
+			Return False
+		; Restoration
+		Case 33
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Restoration20Casting > 0 Or $Restoration20Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		Return False
-	Case 5; Death
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Death20Casting > 0 Or $Death20Recharge > 0 Then
-				Return True
+			If $Restoration20Recharge > 0 Or $Restoration20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Death20Recharge > 0 Or $Death20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
+			If $Restoration20Recharge > 0 Then
+				If $Restoration20Casting > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Death20Recharge > 0 Then
-			If $Death20Casting > 0 Then
-				Return True
+			Return False
+		; Channeling
+		Case 34
+			If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
+				If $Channeling20Casting > 0 Or $Channeling20Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		Return False
-	Case 8; Air
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Air20Casting > 0 Or $Air20Recharge > 0 Then
-				Return True
+			If $Channeling20Recharge > 0 Or $Channeling20Casting > 0 Then
+				If $10Cast > 0 Or $10Recharge > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Air20Recharge > 0 Or $Air20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
+			If $Channeling20Recharge > 0 Then
+				If $Channeling20Casting > 0 Then
+					Return True
+				EndIf
 			EndIf
-		EndIf
-		If $Air20Recharge > 0 Then
-			If $Air20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 9; Earth
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Earth20Casting > 0 Or $Earth20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Earth20Recharge > 0 Or $Earth20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Earth20Recharge > 0 Then
-			If $Earth20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 10; Fire
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Fire20Casting > 0 Or $Fire20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Fire20Recharge > 0 Or $Fire20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Fire20Recharge > 0 Then
-			If $Fire20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 11; Water
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Water20Casting > 0 Or $Water20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Water20Recharge > 0 Or $Water20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Water20Recharge > 0 Then
-			If $Water20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 12; Energy Storage
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Energy20Casting > 0 Or $Energy20Recharge > 0 Or $Water20Casting > 0 Or $Water20Recharge > 0 Or $Fire20Casting > 0 Or $Fire20Recharge > 0 Or $Earth20Casting > 0 Or $Earth20Recharge > 0 Or $Air20Casting > 0 Or $Air20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Energy20Recharge > 0 Or $Energy20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Or $Water20Casting > 0 Or $Water20Recharge > 0 Or $Fire20Casting > 0 Or $Fire20Recharge > 0 Or $Earth20Casting > 0 Or $Earth20Recharge > 0 Or $Air20Casting > 0 Or $Air20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Energy20Recharge > 0 Then
-			If $Energy20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $10Cast > 0 Or $10Recharge > 0 Then
-			If $Water20Casting > 0 Or $Water20Recharge > 0 Or $Fire20Casting > 0 Or $Fire20Recharge > 0 Or $Earth20Casting > 0 Or $Earth20Recharge > 0 Or $Air20Casting > 0 Or $Air20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 13; Healing
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Healing20Casting > 0 Or $Healing20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Healing20Recharge > 0 Or $Healing20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Healing20Recharge > 0 Then
-			If $Healing20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 14; Smiting
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Smiting20Recharge > 0 Or $Smiting20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Smiting20Recharge > 0 Then
-			If $Smiting20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 15; Protection
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Protection20Recharge > 0 Or $Protection20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Protection20Recharge > 0 Then
-			If $Protection20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	Case 16; Divine
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Divine20Casting > 0 Or $Divine20Recharge > 0 Or $Healing20Casting > 0 Or $Healing20Recharge > 0 Or $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Or $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Divine20Recharge > 0 Or $Divine20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Or $Healing20Casting > 0 Or $Healing20Recharge > 0 Or $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Or $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Divine20Recharge > 0 Then
-			If $Divine20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $10Cast > 0 Or $10Recharge > 0 Then
-			If $Healing20Casting > 0 Or $Healing20Recharge > 0 Or $Smiting20Casting > 0 Or $Smiting20Recharge > 0 Or $Protection20Casting > 0 Or $Protection20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	; Restoration
-	Case 33
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Restoration20Casting > 0 Or $Restoration20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Restoration20Recharge > 0 Or $Restoration20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Restoration20Recharge > 0 Then
-			If $Restoration20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
-	; Channeling
-	Case 34
-		If $PlusFive > 0 Or $PlusFiveEnch > 0 Then
-			If $Channeling20Casting > 0 Or $Channeling20Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Channeling20Recharge > 0 Or $Channeling20Casting > 0 Then
-			If $10Cast > 0 Or $10Recharge > 0 Then
-				Return True
-			EndIf
-		EndIf
-		If $Channeling20Recharge > 0 Then
-			If $Channeling20Casting > 0 Then
-				Return True
-			EndIf
-		EndIf
-		Return False
+			Return False
+		Case else
+			MsgBox(0, "Error", "This attribute is not recognised.")
 	EndSwitch
 	Return False
 EndFunc
@@ -504,91 +508,6 @@ Func IsRareRune($aItem)
 	Else
 		Return False
 	EndIf
-EndFunc
-
-Func IsSpecialItem($aItem)
-	Local $ModelID = DllStructGetData($aItem, "ModelID")
-	Local $ExtraID = DllStructGetData($aItem, "ExtraID")
-	
-	Switch $ModelID
-		; Special - ToT etc
-		Case $ID_UNKNOWN_CONSUMABLE_1, $ID_Victory_Token, $ID_Wintersday_Gift, $ID_Wayfarer_Mark, $ID_Lunar_Token, $ID_Lunar_Tokens, $ID_ToT
-			Return True
-		; Lockpicks
-		Case $ID_Lockpick
-			Return True
-		; Glacial Stones
-		Case $ID_Glacial_Stone
-			Return True
-		; All Tomes
-		Case $ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, $ID_Ritualist_EliteTome, _
-			$ID_Paragon_EliteTome, $ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome
-			Return True
-		; Black & White Dye
-		Case $ID_Dyes
-			If $ExtraID = $ID_Black_Dye Or $ExtraID = $ID_White_Dye Then
-				Return True
-			Else
-				Return False
-			EndIf
-		; Chalice & Rin Relics
-		Case $ID_Diessa_Chalice, $ID_Golden_Rin_Relic
-			Return True
-		; Superb Charr Carving
-		Case $ID_Superb_Charr_Carving
-			Return True
-		; Dark Remains
-		Case $ID_Dark_Remains
-			Return True
-		; Underworld & FOW Scroll
-		Case $ID_Passage_Scroll_UW, $ID_Passage_Scroll_FoW
-			Return True
-		; Dragon Root
-		Case $ID_Dragon_Root
-			Return True
-		; War supplies
-		Case $ID_War_Supplies
-			Return True
-		; Commendations
-		Case $ID_Ministerial_Commendation
-			Return True
-	EndSwitch
-	Return False
-EndFunc
-
-Func IsReq8Max($aItem)
-	Local $Req = GetItemReq($aItem)
-	Local $Attribute = GetItemAttribute($aItem)
-	Local $Rarity = GetRarity($aItem)
-	Local $Dmg = GetItemMaxDmg($aItem)
-	
-	Switch $Rarity
-		Case $RARITY_Gold
-			If $Req = 8 Then
-				If $Attribute = 20 Or $Attribute = 21 Or $Attribute = 17 Then
-					If $Dmg = 22 Or $Dmg = 16 Then
-						Return True
-					EndIf
-				EndIf
-			EndIf
-		Case $RARITY_Blue
-			If $Req = 8 Then
-				If $Attribute = 20 Or $Attribute = 21 Or $Attribute = 17 Then
-					If $Dmg = 22 Or $Dmg = 16 Then
-						Return True
-					EndIf
-				EndIf
-			EndIf
-		Case $RARITY_Purple
-			If $Req = 8 Then
-				If $Attribute = 20 Or $Attribute = 21 Or $Attribute = 17 Then
-					If $Dmg = 22 Or $Dmg = 16 Then
-						Return True
-					EndIf
-				EndIf
-			EndIf
-	EndSwitch
-	Return False
 EndFunc
 
 

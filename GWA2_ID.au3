@@ -61,6 +61,7 @@ Global Const $ID_Isle_Of_Jade = 276
 Global Const $ID_The_Marketplace = 303
 Global Const $ID_Imperial_Isle = 359
 Global Const $ID_Isle_Of_Meditation = 360
+Global Const $ID_Kaineng_A_Chance_Encounter = 861
 ;~ Nightfall
 Global Const $ID_Uncharted_Isle = 529
 Global Const $ID_Isle_Of_Wurms = 530
@@ -93,6 +94,23 @@ Global Const $ID_Type_Scythe = 35
 Global Const $ID_Type_Spear = 36
 Local Const $Weapon_Types_Array[26] = [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
 Global Const $Map_Weapon_Types = MapFromArray($Weapon_Types_Array)
+
+;~ Damage relative to the req				0		1		2		3		4		5		6		7		8		9		10		11		12		13
+Local Const $Axe_Max_Damage_Per_Level = 	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Local Const $Bow_Max_Damage_Per_Level = 	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Local Const $Focus_Max_Damage_Per_Level = 	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
+Local Const $Hammer_Max_Damage_Per_Level = 	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
+Local Const $Wand_Max_Damage_Per_Level = 	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Local Const $Shield_Max_Damage_Per_Level = 	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
+Local Const $Staff_Max_Damage_Per_Level = 	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Local Const $Sword_Max_Damage_Per_Level = 	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
+Local Const $Dagger_Max_Damage_Per_Level = 	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
+Local Const $Scythe_Max_Damage_Per_Level = 	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
+Local Const $Spear_Max_Damage_Per_Level = 	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
+Local Const $Weapons_Max_Damage_Per_Level_Keys = [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+Local Const $Weapons_Max_Damage_Per_Level_Values = [$Axe_Max_Damage_Per_Level, $Bow_Max_Damage_Per_Level, $Focus_Max_Damage_Per_Level, $Hammer_Max_Damage_Per_Level, $Wand_Max_Damage_Per_Level, $Shield_Max_Damage_Per_Level, _
+	$Staff_Max_Damage_Per_Level, $Sword_Max_Damage_Per_Level, $Dagger_Max_Damage_Per_Level, $Scythe_Max_Damage_Per_Level, $Spear_Max_Damage_Per_Level]
+Global Const $Weapons_Max_Damage_Per_Level[] = MapFromArrays($Weapons_Max_Damage_Per_Level_Keys, $Weapons_Max_Damage_Per_Level_Values)
 #EndRegion Type IDs
 
 
@@ -138,10 +156,24 @@ Global Const $ID_ZeiRi = 37
 
 
 #Region Skill IDs
-Global Const $ID_Shroud_of_Distress = 1031
+; Dervish
+Global Const $ID_Conviction = 1540
+Global Const $ID_Mystic_Regeneration = 1516
+; Warrior
+Global Const $ID_Healing_Signet = 1
+Global Const $ID_To_The_Limit = 316
+Global Const $ID_For_Great_Justice = 343
+Global Const $ID_100_Blades = 381
+Global Const $ID_Whirlwind_Attack = 2107
+; Mesmer
 Global Const $ID_Channeling = 38
 Global Const $ID_Arcane_Echo = 75
 Global Const $ID_Wastrels_Demise = 1335
+; Assassin
+Global Const $ID_Shadow_Refuge = 814
+Global Const $ID_Shroud_of_Distress = 1031
+; PvE
+Global Const $ID_Ebon_Battle_Standard_of_Honor = 2233
 #EndRegion Skill IDs
 
 
@@ -1072,10 +1104,10 @@ Global Const $ID_Panda_Mini = 15517
 
 
 #Region Weapon Attributes
-;Global Const $ID_ = 0
-;Global Const $ID_ = 1
-Global Const $ID_Domination = 2
-;Global Const $ID_ = 3
+Global Const $ID_Fast_Casting = 0
+Global Const $ID_Illusion_Magic = 1
+Global Const $ID_Domination_Magic = 2
+Global Const $ID_Inspiration_Magic = 3
 Global Const $ID_Blood_Magic = 4
 Global Const $ID_Death_Magic = 5
 ;Global Const $ID_ = 6
@@ -1089,24 +1121,29 @@ Global Const $ID_Healing_Prayers = 13
 Global Const $ID_Smiting_Prayers = 14
 Global Const $ID_Protection_Prayers = 15
 Global Const $ID_Divine_Favor = 16
-;Global Const $ID_ = 17
-;Global Const $ID_ = 18
-;Global Const $ID_ = 19
-;Global Const $ID_ = 20
-;Global Const $ID_ = 21
+Global Const $ID_Strength = 17
+Global Const $ID_Axe_Mastery = 18
+Global Const $ID_Hammer_Mastery = 19
+Global Const $ID_Swordsmanship = 20
+Global Const $ID_Tactics = 21
 ;Global Const $ID_ = 22
 ;Global Const $ID_ = 23
 ;Global Const $ID_ = 24
-;Global Const $ID_ = 25
+Global Const $ID_Marksmanship = 25
 ;Global Const $ID_ = 26
 ;Global Const $ID_ = 27
 ;Global Const $ID_ = 28
-;Global Const $ID_ = 29
+Global Const $ID_Dagger_Mastery = 29
 ;Global Const $ID_ = 30
 ;Global Const $ID_ = 31
 ;Global Const $ID_ = 32
 Global Const $ID_Restoration_Magic = 33
 Global Const $ID_Channeling_Magic = 34
+;Global Const $ID_ = 35
+;Global Const $ID_ = 36
+;Global Const $ID_ = 37
+Global Const $ID_Command = 38
+Global Const $ID_Motivation = 39
 #EndRegion Weapon Attributes
 
 

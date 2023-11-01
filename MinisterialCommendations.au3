@@ -6,749 +6,528 @@
 #include "Utils.au3"
 
 
-Global $Miku
-Global $Me
+Local Const $sp5 = 5
+Local Const $sp6 = 6
 
-Global Const $sp5 = 5
-Global Const $sp6 = 6
+; ==== Constantes ====
+Local Const $DWCommendationsFarmerSkillbar = "OgGlQpVq6smsGFA0XwTsDmL29RTSgB"
+Local Const $CommendationsFarmInformations = "For best results, have :" & @CRLF _
+	& "- 13 Earth Prayers" &@CRLF _
+	& "- 7 Mysticism" & @CRLF _
+	& "- 4 Wind Prayers" & @CRLF _
+	& "- 10 Tactics (shield req + weakness)" & @CRLF _
+	& "- 10 Swordsmanship (sword req + weakness)" & @CRLF _
+	& "- Blessed insignias or Windwalker insignias"& @CRLF _
+	& "- A tactics shield q9 or less with the inscription 'Sleep now in the fire' (+10 armor against fire damage)" & @CRLF _
+	& "- A main hand with +20% enchantments duration and +5 armor" & @CRLF _
+	& "- any PCons you wish to use"
 
-;Skills
-Global $SKILLID_ForGreatJustice = 343
-Global $SKILLID_100B = 381
-Global $SKILLID_ToTheLimit = 316
-Global $SKILLID_WhirlwindAttack = 2107
-Global $SKILLID_ShadowRefuge = 814
-Global $SKILLID_ShroudOfDistress= 1031
-Global $SKILLID_EBSOH = 3172
-Global $SKILLID_HealingSignet = 1
+Global $Ministerial_Commendations_Farm_Setup = False
+
+; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
+Local Const $Skill_Conviction = 1
+Local Const $Skill_Grenths_Aura  = 2
+Local Const $Skill_I_am_unstoppable = 3
+;Local Const $Skill_Healing_Signet = 4
+Local Const $Skill_Mystic_Regeneration = 4
+Local Const $Skill_To_the_limit = 5
+Local Const $Skill_Ebon_Battle_Standard_of_Honor = 6
+Local Const $Skill_Hundred_Blades = 7
+Local Const $Skill_Whirlwind_Attack = 8
+
+; ESurge mesmers
+Local Const $Energy_Surge_Skill_Position = 1
+Local Const $ESurge2_Mystic_Healing_Skill_Position = 8
+; Ineptitude mesmer
+Local Const $Stand_your_ground_Skill_position = 6
+Local Const $Make_Haste_Skill_position = 7
+; SoS Ritualist
+Local Const $SoS_Skill_Position = 1
+Local Const $Splinter_Weapon_Skill_Position = 2
+Local Const $Essence_Strike_Skill_Position = 3
+Local Const $Spirit_Light = 6
+Local Const $Strength_of_honor_Skill_Position = 8
+Local Const $SoS_Mystic_Healing_Skill_Position = 8
+; Prot Ritualist
+Local Const $SBoon_of_creation_Skill_Position = 1
+Local Const $Soul_Twisting_Skill_Position = 1
+Local Const $Shelter_Skill_Position = 2
+Local Const $Union_Skill_Position = 3
+Local Const $Displacement_Skill_Position = 4
+Local Const $Armor_of_Unfeeling_Skill_Position = 4
+Local Const $Prot_Mystic_Healing_Skill_Position = 7
+; BiP Necro
+Local Const $Life_Skill_Position = 4
+Local Const $Blood_bond_Skill_Position = 4
+Local Const $Spirit_Transfer = 4
+
+; Order heros are added to the team
+Local Const $Hero_Mesmer_DPS_1 = 1
+Local Const $Hero_Mesmer_DPS_2 = 2
+Local Const $Hero_Mesmer_DPS_3 = 3
+Local Const $Hero_Mesmer_Ineptitude = 4
+Local Const $Hero_Ritualist_SoS = 5
+Local Const $Hero_Ritualist_Prot = 6
+Local Const $Hero_Necro_BiP = 7
+
+Local Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
+Local Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
 
 
-Func MinisterialCommendationsFarm()
-	Setup()
+#CS
+Character location : 	X: -6322.51318359375, Y: -5266.85986328125
+Heroes locations :
+- Me1 dps				X: -6488.185546875, Y: -5084.078125
+- Me2 dps				X: -6052.578125, Y: -5522.14208984375
+- Me3 dps				X: -5820.1552734375, Y: -5309.80615234375
+- Me1 ineptitude/speed	X: -6041.62353515625, Y: -5072.26220703125
+- Rt SoS				X: -6307.7060546875, Y: -5273.31494140625
+- Rt heal				X: -6244.70703125, Y: -4860.3154296875
+- N BiP					X: -6004.0107421875, Y: -4620.87451171875
 
-	Out("Go to quest NPC")
-	GoToQuest()
+Platform center :		X: -6699.40966796875, Y: -5645.5556640625
+Away from loot :		X: -7295.5771484375, Y: -6395.5556640625
 
+Travel :
+1st stairs : 			X: -4693.87451171875, Y: -3137.0244140625 (time : until all mobs are dead)
+2nd stairs :			X: -4199.5126953125, Y: -1475.53430175781 (time : 6s no speed)
+3rd stairs :			X: -4709.81005859375, Y: -609.159118652344 (3s)
+1st corner :			X: -3116.35498046875, Y: 650.431457519531 (7s)
+2nd corner :			X: -2518.41357421875, Y: 631.814453125 (1.5s)
+4th stairs :			X: -2096.59228515625, Y: -1067.5732421875 (6s)
+5th stairs :			X: -815.586608886719, Y: -1898.28894042969 (5s)
+last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
+
+DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
+#CE
+
+
+Func MinisterialCommendationsFarm($STATUS)
+	If Not($Ministerial_Commendations_Farm_Setup) Then Setup()
+	
+	If $STATUS <> "RUNNING" Then Return
+	
+	If CountSlots() < 5 Then
+		Out("Inventory full, pausing.")
+		$STATS_MAP["success_code"] = 2
+		Return
+	EndIf
+	
 	Out("Entering quest")
 	EnterQuest()
+	
+	If $STATUS <> "RUNNING" Then Return
 
 	Out("Preparing to fight")
 	PrepareToFight()
+	
+	If $STATUS <> "RUNNING" Then Return
+	
+	Out("Fighting the first group")
+	InitialFight()
 
-	If CanContinue() Then
-		Out("Fighting")
-		Fight()
-	EndIf
+	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
-	If CanContinue() Then
-		Out("Running glitch spot")
-		RunToStairs()
-	EndIf
+	Out("Running to kill spot")
+	RunToKillSpot()
 
-	If CanContinue() Then
-		Out("Waiting for spike")
-		WaitForSpike()
-	EndIf
+	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
-	If CanContinue() Then
-		Out("Ready to spike")
-		Spike()
-		Out("Picking up loot")
-		CheckForLoot()
-		sleep(10)
-		CheckForLoot1()
-	EndIf
+	Out("Waiting for spike")
+	WaitForPurityBall()
+
+	If (IsFail()) Then Return ResignAndReturnToOutpost()
+
+	Out("Spiking the farm group")
+	KillMinistryOfPurity()
+
+	Out("Picking up loot")
+	PickUpItems()
+	
+	RndSleep(1000)
 
 	Out("Travelling back to KC")
-	RndTravel($ID_Kaineng_City)
+	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	$STATS_MAP["success_code"] = 0
 EndFunc
 
 
 Func Setup()
-	Out("Getting map ID" & GetMapID())
 	If GetMapID() <> $ID_Kaineng_City Then
-		Out("Travelling to KC")
-		RndTravel($ID_Kaineng_City)
+		Out("Travelling to Kaineng City")
+		DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	LeaveGroup()
-	AddHeroes()
-EndFunc
-
-
-Func AddHeroes ()
-	AddHero($ID_Tahlkora)
-	AddHero($ID_Dunkoro)
-	AddHero($ID_Ogden)
-	AddHero($ID_Xandra)
+	
 	AddHero($ID_Gwen)
-	AddHero($ID_Vekk)
-	AddHero($ID_Acolyte_Sousuke)
+	AddHero($ID_Norgu)
+	AddHero($ID_Razah)
+	AddHero($ID_mesmer_mercenary_hero)
+	AddHero($ID_ritualist_mercenary_hero)
+	AddHero($ID_Xandra)
+	AddHero($ID_Olias)
+	
+	SwitchMode($ID_HARD_MODE)
+	$Ministerial_Commendations_Farm_Setup = True
 EndFunc
 
 
 Func EnterQuest()
-	RndSleep(1000)
-	Local $NPC = GetNearestNPCToCoords(2240, -1264)
-	GoToNPC($NPC)
-	Sleep(250)
-	Dialog(0x00000084)
-	Sleep(500)
-	WaitMapLoading(861)
-EndFunc
-
-
-Func GoToQuest()
 	Local $lMe, $coordsX, $coordsY
 	$lMe = GetAgentByID(-2)
 	$coordsX = DllStructGetData($lMe, 'X')
 	$coordsY = DllStructGetData($lMe, 'Y')
 
-	If - 1400 < $coordsX And $coordsX < -550 And - 2000 < $coordsY And $coordsY < -1100 Then
-		Out("Moving")
+	If -1400 < $coordsX And $coordsX < -550 And - 2000 < $coordsY And $coordsY < -1100 Then
 		MoveTo(1474, -1197, 0)
 	EndIf
-EndFunc
 
-
-;~Move party into a good position
-Func MoveToStartingPositions()
-	Out("Moving party")
-	CommandHero(6, -5857, -4471)
-	CommandHero(5, -5509, -4471)
-	CommandHero(2, -5687, -4209)
-	CommandHero(4, -5679, -3705)
-	CommandHero(7, -5659, -4641)
-	CommandHero(1, -5578, -4786)
-	CommandHero(3, -6038, -4611)
-	MoveTo( -6311.79, -5241.88)
+	RndSleep(1000)
+	GoToNPC(GetNearestNPCToCoords(2240, -1264))
+	Sleep(250)
+	Dialog(0x00000084)
+	Sleep(500)
+	WaitMapLoading($ID_Kaineng_A_Chance_Encounter)
 EndFunc
 
 
 Func PrepareToFight()
-	RndSleep (1000)
-	sleep(2000)
-	sleep(2000)
+	RndSleep(16000)
+	;StartingPositions()
+	AlternateStartingPositions()
+
+	UseHeroSkill($Hero_Ritualist_Prot, $SBoon_of_creation_Skill_Position)		;Prot - Boon of Creation
+	Sleep(2500)
+	UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)			;Prot - Soul Twisting
+	Sleep(2500)
+	UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)					;Prot - Shelter
+	UseHeroSkill($Hero_Ritualist_SoS, $Splinter_Weapon_Skill_Position, -2)		;SoS - Splinter Weapon
+	Sleep(2500)
+	UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)					;Prot - Union
+	UseHeroSkill($Hero_Necro_BiP, $Life_Skill_Position)							;BiP - Life
+	UseHeroSkill($Hero_Ritualist_SoS, $SoS_Skill_Position)						;SoS - SoS
+	Sleep(2500)
+	UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)			;Prot - Displacement
+	UseHeroSkill($Hero_Mesmer_DPS_1, $Energy_Surge_Skill_Position)				;ESurge1 - ESurge
+	UseHeroSkill($Hero_Mesmer_DPS_2, $Energy_Surge_Skill_Position)				;ESurge2 - ESurge
+	UseHeroSkill($Hero_Mesmer_DPS_3, $Energy_Surge_Skill_Position)				;ESurge3 - ESurge
+	UseHeroSkill($Hero_Ritualist_SoS, $Essence_Strike_Skill_Position)			;Sos - Essence Strike
+	UseHeroSkill($Hero_Necro_BiP, $Blood_bond_Skill_Position)					;BiP - Blood Bond
+	Sleep(2500)
+	; Enemies turn hostile now
+	UseEgg()
+	UseHeroSkill($Hero_Mesmer_Ineptitude, $Stand_your_ground_Skill_position)	;Ineptitude - Stand your ground
+	UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)		;Prot - Armor of Unfeeling
+	UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
 	Sleep(1000)
-
-	;Make local variables for heroes and Miku
-	Global $Me = GetAgentByID(-2)
-
-	;Move party into a good position
-	MoveToStartingPositions()
-	Usezs()
-	EnableHeroSkillSlot(2, 5)
-	EnableHeroSkillSlot(3, 5)
-	UseHeroSkill(7, 1)
-	UseHeroSkill(6, 1)		;Pre-casting Esurge
-	UseHeroSkill(5, 1)
-	Sleep(2000)
-	UseHeroSkill(4, 2)		; hero 4, skill 5
-	Sleep(2000)
-	Sleep(2000)
-	UseHeroSkill(4, 3)		; hero 4, skill 5
-	RndSleep(7000)			; Wait until enemies about to turn hostile
-	UseHeroSkill(4, 4)
-	UseHeroSkill(1, 7, 58)	; hero 2, skill 3 ; Pre-casting Esurge
-	sleep(500)
-	RndSleep(300)			; Wait a short time
-	RndSleep(300)
-	RndSleep(300)
-	If IsRecharged($sp5) Then UseSkillEx($sp5)
-	If IsRecharged($Sp6) Then UseSkillEx($sp6)
-	sleep(1500)
-	RndSleep(300)
-	UseHeroSkill(2, 4, 58)	;hero 4, skill 1, -2 is player
-	RndSleep(300)
-	RndSleep(2000)			; Waiting a short time for second splinter
-	UseHeroSkill(4, 5)
-	RndSleep(300)
-	UseSkillEx(2)			; Player Fighting
-	UseSkillEx(1)			; Player Fighting
-	RndSleep (1000)			; Waiting a short time
-	UseHeroSkill(2, 7, -2)	;hero 4, skill 1, -2 is player
-	RndSleep(300)
-	UseSkillEx(7)			; Player Fighting
-	If IsRecharged($sp5) Then UseSkillEx($sp5)
-	If IsRecharged($Sp6) Then UseSkillEx($sp6)
-	RndSleep (2000)			; Waiting a short time
-	If IsRecharged($sp5) Then UseSkillEx($sp5)
-	If IsRecharged($Sp6) Then UseSkillEx($sp6)
-	UseSkillEx(3)			; Player Fighting
-	UseSkillEx(4, GetNearestEnemyToAgent(-2))	; Player Fighting
-	RndSleep (3500)			; Waiting a short time
-	If IsRecharged($sp5) Then UseSkillEx($sp5)
-	If IsRecharged($Sp6) Then UseSkillEx($sp6)
-	UseSkillEx(4, GetNearestEnemyToAgent(-2))	; Player Fighting
-	; Unflag all heroes
-	UseSkillEx(8)
-	UseSkillEx(6)
-	CancelHero(1)
-	CancelHero(2)
-	CancelHero(3)
-	CancelHero(4)
-	CancelHero(5)
-	CancelHero(6)
-	CancelHero(7)
-EndFunc
-
-Func HelpMiku()
-	If CanContinue() Then
-		If DllStructGetData(GetAgentByID(58), 'HP') < 0.50 Then		; Works for some reason (58 = Miku)
-			UseHeroSkill(3, 7, 58)									; hero 1, skill 1
-			sleep(1500)
-			UseHeroSkill(3, 1, 58)									; hero 2, skill 3
-			sleep(1500)
-			UseHeroSkill(3, 5, 58)									; hero 1, skill 1
-			sleep(1500)
-			UseHeroSkill(3, 7, 58)									; hero 1, skill 1
-		EndIf
-	EndIf
 EndFunc
 
 
-
-Func Fight()
-	$lDeadLock = TimerInit()
-	$LMovedHeroes = False
-
-	Do
-		HelpMiku()
-		If ((GetNumberOfFoesInRangeOfAgent(-2, 3000) < 3 Or TimerDiff($lDeadLock) > 60000) And $LMovedHeroes = False) Then
-			;Out("Moving heroes to finish fight")
-			CommandHero(5,-6554.25, -5207.51)
-			CommandHero(6, -6554.25, -5207.51)
-			CommandHero(7, -6554.25, -5207.51)
-			MoveTo(-6311.79, -5241.88)
-			$LMovedHeroes = True
-		Else
-			If GetNumberOfFoesInRangeOfAgent(-2, 3000) > 2 Then
-				UseSkillEx(1)
-				UseSkillEx(2)
-				UseSkillEx(8)
-				UseSkillEx(6)
-				Attack(GetNearestEnemyToAgent(-2))
-			EndIf
-		EndIf
-		;Out("Enemies left:" + GetNumberOfFoesInRangeOfAgent(-2, 8000))
-	Until GetNumberOfFoesInRangeOfAgent(-2, 3000) = 0 Or TimerDiff($lDeadLock) > 120000 Or CanContinue() = False
-	UseSkillEx(8)
-	CancelHero(1)
-	CancelHero(2)
-	CancelHero(3)
-	CancelHero(4)
-	CancelHero(5)
-	CancelHero(6)
-	CancelHero(7)
-	UseHeroSkill(4, 5)
-	sleep(500)
-	UseHeroSkill(4, 8)
-	;Out("Initial fight is over")
-EndFunc
-
-Func RunToStairs()
-	CheckForLoot3()
-	sleep(5)
-	CheckForLoot4()
-	$lDeadLock = TimerInit()
-	CommandAll(-7047, -2651)
-	UseSkillEx(5)
-	MoveTo(-4790, -3441)
-	MoveTo(-4608, -2120)
-	MoveTo(-4222, -1545)
-	MoveTo(-4664, -672)
-	MoveTo(-3825, 134)
-	MoveTo(-3067, 633)
-	MoveTo(-2663, 644)
-	UseSkillEx(5)
-	If (GetMapID() = 861) Then
-		Do
-			Sleep(5)
-		Until GetNumberOfFoesInRangeOfAgent(-2, 2850) > 0 Or TimerDiff($lDeadLock) > 60000 Or GetMapID() = $ID_Kaineng_City
-	EndIf
-	MoveTo(-2214, -334)
-	MoveTo(-878, -1877)
-	If (GetMapID() = 861) Then
-		Do
-			Sleep(5)
-		Until GetNumberOfFoesInRangeOfAgent(-2, 3500) > 0 Or TimerDiff($lDeadLock) > 60000 Or GetMapID() = $ID_Kaineng_City
-	EndIf
-	MoveTo(-770, -3052)
-	MoveTo(-699, -3773)
-	MoveTo(-1070, -4192, 0)
-	Useflame()
-	CommandHero(1, -5752, -3006)
-	CommandHero(2, -5763.44, -2885)
-	CommandHero(3, -5709.22, -2685)
-	UseSkillEx(6)
-	UseSkillEx(5)
-	UseHeroSkill(1, 2)
-	UseHeroSkill(2, 2)
-	UseHeroSkill(3, 2)
-	sleep(1000)
+;~ Move party into a good starting position
+Func StartingPositions()
+	CommandHero($Hero_Mesmer_DPS_1, -6488, -5084)
+	CommandHero($Hero_Mesmer_DPS_2, -6052, -5522)
+	CommandHero($Hero_Mesmer_DPS_3, -5820, -5309)
+	CommandHero($Hero_Mesmer_Ineptitude, -6041, -5072)
+	CommandHero($Hero_Ritualist_SoS, -6307, -5273)
+	CommandHero($Hero_Ritualist_Prot, -6004, -4620)
+	CommandHero($Hero_Necro_BiP, -6244, -4860)
+	MoveTo(-6322, -5266)
 EndFunc
 
 
-Func Useflame()
-	Local $aBag
-	Local $aItem
-	Sleep(200)
-	For $i = 1 To 4
-		$aBag = GetBag($i)
-		For $j = 1 To DllStructGetData($aBag, "Slots")
-			$aItem = GetItemBySlot($aBag, $j)
-			If DllStructGetData($aItem, "ModelID") == 36664 Then
-			UseItem($aItem)
-			Return True
-			EndIf
-		Next
-	Next
+;~ Move party into a good starting position
+Func AlternateStartingPositions()
+	CommandHero($Hero_Mesmer_DPS_1, -6175, -6013)
+	CommandHero($Hero_Mesmer_DPS_2, -6151, -5622)
+	CommandHero($Hero_Mesmer_DPS_3, -6201, -5239)
+	CommandHero($Hero_Mesmer_Ineptitude, -5770, -5577)
+	CommandHero($Hero_Ritualist_SoS, -5898, -5836)
+	CommandHero($Hero_Ritualist_Prot, -5911, -5319)
+	CommandHero($Hero_Necro_BiP, -5687, -5155)
+	MoveTo(-6322, -5266)
 EndFunc
 
 
-Func Usezs()
-	Local $aBag
-	Local $aItem
-	Sleep(200)
-	For $i = 1 To 4
-		$aBag = GetBag($i)
-		For $j = 1 To DllStructGetData($aBag, "Slots")
-			$aItem = GetItemBySlot($aBag, $j)
-			If DllStructGetData($aItem, "ModelID") == 31156 Then
-			UseItem($aItem)
-			Return True
-			EndIf
-		Next
-	Next
-EndFunc
-
-
-Func WaitForSpike()
-	; Wait until enemies are in melee range
-	UseSkillEx(6)
-	UseSkillEx(5)
-	$lDeadLock = TimerInit()
-
-	If IsRecharged($sp5) Then UseSkillEx($sp5)
-	If IsRecharged($Sp6) Then UseSkillEx($sp6)
-
-	Do
-		Sleep(250)
-	Until GetNumberOfFoesInRangeOfAgent(-2, 200) <> 0 Or TimerDiff($lDeadLock) > 55000
+Func InitialFight()
+	Local $deadlock = TimerInit()
+	Sleep(1000)
+	Local $foesInRange = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_COMPASS)
 	
-	; Use Shroud
-	UseSkillEx(6)
-	UseSkillEx(5)
+	; Wait until there are enemies
+	While $foesInRange == 0 And TimerDiff($deadlock) < 10000
+		Sleep(1000)
+		$foesInRange = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_COMPASS)
+	WEnd
+	
+	; Now there are enemies let's fight until one mob is left
+	While $foesInRange > 1 And TimerDiff($deadlock) < 120000
+		HelpMiku()
+		TargetNearestEnemy()
+		AttackOrUseSkill(1300, $Skill_I_am_unstoppable, 50, $Skill_Hundred_Blades, 50, $Skill_To_the_limit, 50)
+		$foesInRange = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_COMPASS)
+		If IsFail() Then Return
+	WEnd
+	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for most mobs to be dead")
 
-	Do
-		; Command heroes to useskill healing party and martyr
-		If IsDllStruct(GetEffect(480)) Then UseHeroSkill(2, 6)
-		If IsDllStruct(GetEffect(480)) Then UseHeroSkill(3, 6)
-		If IsDllStruct(GetEffect(480)) Then UseHeroSkill(1, 6)
+	PickUpItems()
 
-		; Use self healing skills
-		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.99 Then ; (-2 = Me)
-			UseSkillEx(5)
-			UseSkillEx(6)
-			UseSkillEx(8)
-		EndIf
+	; Unflag all heroes
+	;CancelAll()
+	CancelHero(1)
+	CancelHero(2)
+	CancelHero(3)
+	CancelHero(4)
+	CancelHero(5)
+	CancelHero(6)
+	CancelHero(7)
 
-		;Use hero healing if I am getting low
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.98 Then ;(-2 = Me) And
-				UseHeroSkill(2, 1)
-			UseHeroSkill(3, 1)
-			UseHeroSkill(1, 1)
-			UseHeroSkill(2, 6)
-			UseHeroSkill(3, 6)
-			UseHeroSkill(1, 6)
-			UseSkillEx(6)
-			UseSkillEx(8)
-		EndIf
+	; Hero cast speed on character
+	UseHeroSkill($Hero_Mesmer_Ineptitude, $Make_Haste_Skill_position, -2)
 
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.85 Then ;(-2 = Me) And
-			UseHeroSkill(2, 1)
-			UseHeroSkill(3, 1)
-			UseHeroSkill(1, 1)
-			UseHeroSkill(2, 6)
-			UseHeroSkill(3, 6)
-			UseHeroSkill(1, 6)
-			UseSkillEx(6)
-			UseSkillEx(8)
-		EndIf
-	Until GetisDead(-2) Or ((GetNumberOfFoesInRangeOfAgent(-2, 300) == GetNumberOfFoesInRangeOfAgent(-2, 700) And GetNumberOfFoesInRangeOfAgent(-2, 300) > 45)) Or TimerDiff($lDeadLock) > 50000 Or GetNumberOfFoesInRangeOfCords(352, -1173, 3000) = 0
-	sleep(1000)
-	UseHeroSkill(2, 1)
-	UseHeroSkill(3, 1)
-	UseHeroSkill(1, 1)
-	UseHeroSkill(2, 6)
-	UseHeroSkill(3, 6)
-	UseHeroSkill(1, 6)
-	;~ UseHeroSkill(4, 6)
-	UseSkillEx(8)
-	UseSkillEx(6)
-	sleep(2000)
-	UseHeroSkill(2, 1)
-	UseHeroSkill(3, 1)
-	UseHeroSkill(1, 1)
-	UseHeroSkill(2, 6)
-	UseHeroSkill(3, 6)
-	UseHeroSkill(1, 6)
-	;~ UseHeroSkill(4, 6)
-	UseSkillEx(8)
-	UseSkillEx(6)
+	; Move all heroes to podium to kill last 2 foes
+	CommandAll(-6699, -5645)
+
+	; Run to first stairs
+	Move(-4693, -3137)
+
+	; Wait for all foes in range of Miku to be dead
+	While (GetNumberOfFoesInRangeOfAgent(58, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 120000 And Not IsFail())
+		Move(-4693, -3137)
+		RndSleep(750)
+	WEnd
+	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for all mobs to be dead")
+
+	; Move all heroes to not interfere with loot
+	CommandAll(-7075, -5685)
 EndFunc
 
 
+;~ Heal Miku if she needs it
+Func HelpMiku()
+	If DllStructGetData(GetAgentByID(58), 'HP') < 0.50 Then		; Works for some reason (58 = Miku)
+		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, 58)
+		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, 58)
+	EndIf
+EndFunc
 
-Func CanContinue()
-	IF GetIsDead(GetAgentByID(58)) = False And GetIsDead(GetAgentByID(-2)) == False Then
-		Return True
+
+;~ Run to farm spot
+Func RunToKillSpot()
+	Local $lDeadLock = TimerInit()
+	MoveTo(-4199, -1475)
+	MoveTo(-4709, -609)
+	MoveTo(-3116, 650)
+	MoveTo(-2518, 631)
+	MoveTo(-2096, -1067)
+	MoveTo(-815, -1898)
+	MoveTo(-690, -3769)
+	MoveTo(-850, -3961, 0)
+	Sleep(500)
+EndFunc
+
+
+;~ Wait for all ennemies to be balled
+Func WaitForPurityBall()
+	Local $deadlock = TimerInit()
+	Local $foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+
+	; Wait until an enemy is in melee range
+	While $foesCount == 0 And TimerDiff($deadlock) < 55000
+		Sleep(1000)
+		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+	WEnd
+
+	While Not GetisDead(-2) And TimerDiff($deadlock) < 90000 And Not IsFurthestMobInBall()
+		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
+			UseSkillEx($Skill_To_the_limit)
+			RndSleep(50)
+		EndIf
+
+		; Use defensive and self healing skills
+		If DllStructGetData(GetAgentByID(-2), "HP") < 0.90 And IsRecharged($Skill_I_am_unstoppable) Then
+			UseSkillEx($Skill_I_am_unstoppable)
+			RndSleep(50)
+		EndIf
+		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
+			UseSkillEx($Skill_Conviction)
+			RndSleep(50)
+		EndIf
+		If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
+			UseSkillEx($Skill_Mystic_Regeneration)
+			RndSleep(GetPing() + 300)
+		EndIf
+		If DllStructGetData(GetAgentByID(-2), "HP") < 0.45 And IsRecharged($Skill_Grenths_Aura) Then
+			UseSkillEx($Skill_Grenths_Aura)
+			RndSleep(250)
+		EndIf
+		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
+			; Heroes with Mystic Healing provide additional long range support
+			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_Prot, $Prot_Mystic_Healing_Skill_Position)
+		EndIf
+
+		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+		RndSleep(250)
+	WEnd
+	If (TimerDiff($deadlock) > 90000) Then Out("Timed out waiting for mobs to ball")
+EndFunc
+
+
+;~ Return true if mission failed (you or Miku died)
+Func IsFail()
+	If GetIsDead(GetAgentByID(58)) Then
+		Out("Miku died.")
+	ElseIf GetIsDead(GetAgentByID(-2)) Then
+		Out("Player died")
 	Else
-		Out("Miku is:" & GetIsDead(GetAgentByID(-58)))
-		Out("Player is:" & GetIsDead(GetAgentByID(-2)))
 		Return False
 	EndIf
-EndFunc
-
-Func Spike()
-	UseSkillEx(8)
-	UseSkillEx(6)
-	CancelAction()
-	Sleep(GetPing() + 50)
-	CancelHero(1)
-	CancelHero(2)
-	CancelHero(3)
-	CancelHero(7)
-	CancelHero(1)
-	CancelHero(2)
-	CancelHero(3)
-	CancelHero(7)
-	CommandAll(-7047, -2651)
-	sleep(250)
-	UseSkillEx(8)
-	sleep(250)
-	UseSkillEx(7)
-	sleep(1000)
-	UseSkillEx(1)
-	UseSkillEx(2)
-	UseSkillEx(3)
-	UseSkillEx(4, GetNearestEnemyToAgent(-2))
-	Sleep(150)
-	UseSkillEx(8)
-	;~ 	CancelAction()
-	;~  CancelAll()
-	UseSkillEx(6)
-	CheckForLoot()
-	Sleep(100)
-	CheckForLoot1()
-	Sleep(100)
-	CheckForLoot2()
-	UseHeroSkill(4, 8)
-	UseHeroSkill(5, 8)
-	UseHeroSkill(7, 8)
-	UseHeroSkill(6, 8)
-	Sleep(100)
-	UseSkillEx(8)
-	CheckForLoot()
-	Sleep(100)
-	CheckForLoot1()
-	Sleep(100)
-	CheckForLoot2()
+	Return True
 EndFunc
 
 
-Func CheckForLoot()
-	Local $lMe
-	Local $lBlockedTimer
-	Local $lBlockedCount = 0
-	Local $lItemExists = True
+;~ Return to outpost in case of failure
+Func ResignAndReturnToOutpost()
+	Sleep(5000)
+	Resign()
+	Sleep(3400)
+	ReturnToOutpost()
+	WaitMapLoading($ID_Kaineng_City)
+	$STATS_MAP["success_code"] = 1
+	Return 1
+EndFunc
 
-	For $i = 1 To GetMaxAgents()
-		$lMe = GetAgentByID(-2)
-		$lAgent = GetAgentByID($i)
-		If Not GetIsMovable($lAgent) Then ContinueLoop
-		If Not ShouldPickItem($lAgent) Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
-		If ShouldPickItem($lItem) Then
-			Do
-				UseSkillEx(8)
-				If GetIsDead(GetAgentByID(-2)) == True Then
-					EnableHeroSkillSlot(4, 8)
-					CancelAll()
-					CancelHero(1)
-					CancelHero(2)
-					CancelHero(3)
-					CancelHero(4)
-					CancelHero(5)
-					CancelHero(6)
-					CancelHero(7)
-					Sleep(20000)
-					UseHeroSkill(4, 8)
-					UseHeroSkill(5, 8)
-					UseHeroSkill(7, 8)
-					UseHeroSkill(6, 8)
-				EndIf
-				UseSkillEx(8)
-				UseSkillEx(6)
-				PickUpItem($lItem)
-				Sleep(GetPing() + 500)
-				Do
-					Sleep(100)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
+
+;~ Kill mobs
+Func KillMinistryOfPurity()
+	Local $me = GetAgentByID(-2)
+	Local $deadlock
+	Local $foesCount
+
+	If DllStructGetData($me, "HP") < 0.60 And IsRecharged($Skill_Grenths_Aura) Then
+		UseSkillEx($Skill_Grenths_Aura)
+		Sleep(GetPing() + Random(40, 60))
+	EndIf
+
+	While IsRecharged($Skill_Ebon_Battle_Standard_of_Honor)
+		If GetIsDead($me) Then Return
+		UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
+		Sleep(GetPing() + Random(40, 60))
+		
+		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
+			; Heroes with Mystic Healing provide additional long range support
+			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_Prot, $Prot_Mystic_Healing_Skill_Position)
+		EndIf
+	WEnd
+
+	While IsRecharged($Skill_Hundred_Blades)
+		If GetIsDead($me) Then Return
+		UseSkillEx($Skill_Hundred_Blades)
+		Sleep(GetPing() + Random(40, 60))
+	WEnd
+
+	If IsRecharged($Skill_Grenths_Aura) Then
+		If GetIsDead($me) Then Return
+		UseSkillEx($Skill_Grenths_Aura)
+		Sleep(GetPing() + Random(40, 60))
+	EndIf
+	
+	;~ Whirlwind attack needs specific care to be used
+	While IsRecharged($Skill_Whirlwind_Attack)
+		If GetIsDead($me) Then Return
 			
-			Do
-				If GetMapLoading() == 2 Then Disconnected()
-				If $lBlockedCount > 2 Then UseSkillEx(6,-2)
-				PickUpItem($lItem)
-				Sleep(GetPing())
-				Do
-					Sleep(100)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
+		; Heroes with Mystic Healing provide additional long range support
+		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
+			; Heroes with Mystic Healing provide additional long range support
+			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_Prot, $Prot_Mystic_Healing_Skill_Position)
 		EndIf
-	Next
+
+		If (IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
+			UseSkillEx($Skill_To_the_limit)
+			RndSleep(50)
+		EndIf
+
+		UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(-2))
+		Sleep(GetPing() + 250)
+	WEnd
+	
+	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
+	$deadlock = TimerInit()
+	$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
+	While $foesCount > 0 And TimerDiff($deadlock) < 10000
+		If GetIsDead($me) Then Return
+		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
+			; Heroes with Mystic Healing provide additional long range support
+			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
+			UseHeroSkill($Hero_Ritualist_Prot, $Prot_Mystic_Healing_Skill_Position)
+		EndIf
+	
+		If (IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
+			UseSkillEx($Skill_To_the_limit)
+			RndSleep(50)
+		EndIf
+		If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
+			UseSkillEx($Skill_Mystic_Regeneration)
+			RndSleep(GetPing() + 300)
+		ElseIf GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) == 130 Then
+			While IsRecharged($Skill_Whirlwind_Attack) And TimerDiff($deadlock) < 10000
+				If GetIsDead($me) Then Return
+				UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(-2))
+				Sleep(GetPing() + 250)
+			WEnd
+		Else
+			AttackOrUseSkill(1300, $Skill_Conviction, 50)
+		EndIf
+		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
+	WEnd
+	If (TimerDiff($deadlock) > 10000) Then Out("Left some mobs alive")
+
+	If DllStructGetData(GetAgentByID(-2), "HP") < 0.90 Then
+		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
+			UseSkillEx($Skill_Conviction)
+			RndSleep(50)
+		EndIf
+		If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
+			UseSkillEx($Skill_Mystic_Regeneration)
+			RndSleep(GetPing() + 300)
+		EndIf
+		; Heroes with Mystic Healing provide additional long range support
+		UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
+		UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
+		UseHeroSkill($Hero_Ritualist_Prot, $Prot_Mystic_Healing_Skill_Position)
+	EndIf
+
+	RndSleep(250)
 EndFunc
 
 
-Func CheckForLoot1()
-	Local $lMe
-	Local $lBlockedTimer
-	Local $lBlockedCount = 0
-	Local $lItemExists = True
-
-	For $i = 1 To GetMaxAgents()
-		$lMe = GetAgentByID(-2)
-		$lAgent = GetAgentByID($i)
-		If Not GetIsMovable($lAgent) Then ContinueLoop
-		If Not GetCanPickUp($lAgent) Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
-		If ShouldPickItem($lItem) Then
-			Do
-				If GetIsDead(GetAgentByID(-2)) == True Then
-				EnableHeroSkillSlot(4, 8)
-				CancelAll()
-				CancelHero(1)
-				CancelHero(2)
-				CancelHero(3)
-				CancelHero(4)
-				CancelHero(5)
-				CancelHero(6)
-				CancelHero(7)
-				Sleep(20000)
-				UseHeroSkill(4, 8)
-				UseHeroSkill(5, 8)
-				UseHeroSkill(7, 8)
-				UseHeroSkill(6, 8)
-				EndIf
-				UseSkillEx(8)
-				UseSkillEx(6)
-				PickUpItem($lItem)
-				Sleep(GetPing() + 500)
-				Do
-					Sleep(100)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-			Do
-				If GetMapLoading() == 2 Then Disconnected()
-				If $lBlockedCount > 2 Then UseSkillEx(6,-2)
-				PickUpItem($lItem)
-				Sleep(GetPing())
-				Do
-					Sleep(100)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-		EndIf
-	Next
+Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
+	If ($skill <> null And IsRecharged($skill)) Then 
+		UseSkillEx($skill)
+		RndSleep($skillSleep)
+	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then 
+		UseSkillEx($skill2)
+		RndSleep($skill2Sleep)
+	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then 
+		UseSkillEx($skill3)
+		RndSleep($skill3Sleep)
+	Else
+		Attack(GetNearestEnemyToAgent(-2))
+		RndSleep($attackSleep)
+	EndIf
 EndFunc
 
 
-Func CheckForLoot2()
-	Local $lMe
-	Local $lBlockedTimer
-	Local $lBlockedCount = 0
-	Local $lItemExists = True
-
-	For $i = 1 To GetMaxAgents()
-		$lMe = GetAgentByID(-2)
-		$lAgent = GetAgentByID($i)
-		If Not GetIsMovable($lAgent) Then ContinueLoop
-		If Not GetCanPickUp($lAgent) Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
-		If ShouldPickItem($lItem) Then
-			Do
-				If GetIsDead(GetAgentByID(-2)) == True Then
-					EnableHeroSkillSlot(4, 8)
-					CancelAll()
-					CancelHero(1)
-					CancelHero(2)
-					CancelHero(3)
-					CancelHero(4)
-					CancelHero(5)
-					CancelHero(6)
-					CancelHero(7)
-					Sleep(20000)
-					UseHeroSkill(4, 8)
-					UseHeroSkill(5, 8)
-					UseHeroSkill(7, 8)
-					UseHeroSkill(6, 8)
-				EndIf
-				UseSkillEx(8)
-				UseSkillEx(6)
-
-				PickUpItem($lItem)
-				Sleep(GetPing() + 500)
-				Do
-					Sleep(100)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-			Do
-				If GetMapLoading() == 2 Then Disconnected()
-				If $lBlockedCount > 2 Then UseSkillEx(6,-2)
-				PickUpItem($lItem)
-				Sleep(GetPing())
-				Do
-					Sleep(100)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-		EndIf
-	Next
-EndFunc
-
-
-Func CheckForLoot3()
-	Local $lMe
-	Local $lBlockedTimer
-	Local $lBlockedCount = 0
-	Local $lItemExists = True
-
-	For $i = 1 To GetMaxAgents()
-		$lMe = GetAgentByID(-2)
-		$lAgent = GetAgentByID($i)
-		If Not GetIsMovable($lAgent) Then ContinueLoop
-		If Not GetCanPickUp($lAgent) Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
-		If ShouldPickItem($lItem) Then
-			Do
-				PickUpItem($lItem)
-				Sleep(GetPing() + 5)
-				Do
-					Sleep(5)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-			Do
-				If GetMapLoading() == 2 Then Disconnected()
-				If $lBlockedCount > 2 Then UseSkillEx(6,-2)
-				PickUpItem($lItem)
-				Sleep(GetPing())
-				Do
-					Sleep(1)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-		EndIf
-	Next
-EndFunc
-
-
-Func CheckForLoot4()
-	Local $lMe
-	Local $lBlockedTimer
-	Local $lBlockedCount = 0
-	Local $lItemExists = True
-
-	For $i = 1 To GetMaxAgents()
-		$lMe = GetAgentByID(-2)
-		$lAgent = GetAgentByID($i)
-		If Not GetIsMovable($lAgent) Then ContinueLoop
-		If Not GetCanPickUp($lAgent) Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
-		If ShouldPickItem($lItem) Then
-			Do
-				PickUpItem($lItem)
-				Sleep(GetPing() + 5)
-				Do
-					Sleep(5)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-			Do
-				If GetMapLoading() == 2 Then Disconnected()
-				If $lBlockedCount > 2 Then UseSkillEx(6,-2)
-				PickUpItem($lItem)
-				Sleep(GetPing())
-				Do
-					Sleep(1)
-					$lMe = GetAgentByID(-2)
-				Until DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0
-				$lBlockedTimer = TimerInit()
-				Do
-					Sleep(3)
-					$lItemExists = IsDllStruct(GetAgentByID($i))
-				Until Not $lItemExists Or TimerDiff($lBlockedTimer) > Random(5000, 7500, 1)
-				If $lItemExists Then $lBlockedCount += 1
-			Until Not $lItemExists Or $lBlockedCount > 5
-		EndIf
-	Next
+Func IsFurthestMobInBall()
+	Local $furthestEnemy = GetNearestEnemyToCoords(1817, -798)
+	If GetDistance($furthestEnemy, -2) > $RANGE_NEARBY Then Return False
+	Return True
 EndFunc
 #EndRegion Functions

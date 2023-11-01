@@ -281,6 +281,8 @@ Func GuiButtonHandler()
 			DynamicExecution(GUICtrlRead($DynamicExecutionInput))
 		Case $GUI_EVENT_CLOSE
             Exit
+		Case else
+			MsgBox(0, "Error", "This button is not coded yet.")
     EndSwitch
 EndFunc
 
@@ -364,6 +366,8 @@ Func BotHubLoop()
 				;Case Else
 				Case "Tests"
 					RunTests($STATUS)
+				Case else
+					MsgBox(0, "Error", "This farm doesn't exist.")
 			EndSwitch
 			FillStats(TimerDiff($timer))
 			UpdateStats()

@@ -13,9 +13,8 @@ Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	Local $target = GetNearestEnemyToCoords(-13262, -5486)
-	Local $foesBalled = GetNumberOfFoesInRangeOfAgentTest($target, $RANGE_NEARBY)
-	Out("Foes balled : " & $foesBalled)
+	;Func GetEffect($aSkillID = 0, $aHeroNumber = 0)
+	;Func GetSkillbarSkillAdrenaline($aSkillSlot, $aHeroNumber = 0)
 
 	#CS
 	Local $stage = 0
@@ -103,6 +102,8 @@ Func DynamicExecution($args)
 		Case 4
 			Out("Call to " & $arguments[1] & " " & $arguments[2] & " " & $arguments[3] & " " & $arguments[4])
 			Call($arguments[1], $arguments[2], $arguments[3], $arguments[4])
+		Case else
+			MsgBox(0, "Error", "Too many arguments provided to that function.")
 	EndSwitch
 EndFunc
 
@@ -448,11 +449,15 @@ Func ShouldPickItem($item)
 		Return GUICtrlRead($LootGlacialStonesCheckbox) == $GUI_CHECKED
 	ElseIf ($itemID == $ID_Jade_Bracelet) Then
 		Return True
+	ElseIf ($itemID == $ID_Ministerial_Commendation) Then
+		Return True
 	ElseIf IsMapPiece($itemID) Then
 		Return GUICtrlRead($LootMapPiecesCheckbox) == $GUI_CHECKED
 	ElseIf IsStackableItem($itemID) Then
 		Return True
 	ElseIf ($itemID == $ID_Lockpick)Then
+		Return True
+	ElseIf IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return True
@@ -840,9 +845,79 @@ Func GoNearestNPCToCoords($x, $y)
 	RndSleep(250)
 EndFunc
 
+
+Func IsLowReqMaxDamage($item)
+	Local $type = DllStructGetData($item, 'Type')
+	Local $requirement = GetItemReq($item)
+	Local $damage = GetItemMaxDmg($item)
+	
+	If $requirement > 8 Then Return False
+	
+	Switch $type
+		Case $ID_Type_Offhand
+			If $damage = 12 Then Return True
+		Case $ID_Type_Shield
+			If $damage = 16 Then Return True
+		Case $ID_Type_Dagger
+			If $damage = 17 Then Return True
+		Case $ID_Type_Sword, $ID_Type_Wand, $ID_Type_Staff
+			If $damage = 22 Then Return True
+		Case $ID_Type_Spear
+			If $damage = 27 Then Return True
+		Case $ID_Type_Axe, $ID_Type_Bow
+			If $damage = 28 Then Return True
+		Case $ID_Type_Hammer
+			If $damage = 35 Then Return True
+		Case $ID_Type_Scythe
+			If $damage = 41 Then Return True
+		Case else
+			Return False
+	EndSwitch
+	Return False
+EndFunc
+
+Func IsNoReqMaxDamage($item)
+	Local $type = DllStructGetData($item, 'Type')
+	Local $requirement = GetItemReq($item)
+	Local $damage = GetItemMaxDmg($item)
+	
+	If $requirement > 0 Then Return False
+	
+	Switch $type
+		Case $ID_Type_Offhand
+			If $damage = 6 Then Return True
+		Case $ID_Type_Shield
+			If $damage = 8 Then Return True
+		Case $ID_Type_Dagger
+			If $damage = 8 Then Return True
+		Case $ID_Type_Sword
+			If $damage = 10 Then Return True
+		Case $ID_Type_Wand, $ID_Type_Staff
+			If $damage = 11 Then Return True
+		Case $ID_Type_Spear, $ID_Type_Axe
+			If $damage = 12 Then Return True
+		Case $ID_Type_Bow
+			If $damage = 13 Then Return True
+		Case $ID_Type_Hammer
+			If $damage = 15 Then Return True
+		Case $ID_Type_Scythe
+			If $damage = 17 Then Return True
+		Case else
+			Return False
+	EndSwitch
+	Return False
+EndFunc
+
+Func IsMaxDamageForReq($item)
+	Local $type = DllStructGetData($item, 'Type')
+	Local $requirement = GetItemReq($item)
+	Local $damage = GetItemMaxDmg($item)
+		
+	Local $maxDamage = Weapons_Max_Damage_Per_Level[$type][$requirement]
+	If $damage == $maxDamage Then Return True
+	Return False
+EndFunc
 #EndRegion GW Utils
-
-
 
 
 #Region Utils
@@ -854,20 +929,30 @@ EndFunc
 
 
 ;~ Create a map from an array to have a one liner map instanciation
-Func MapFromArray(Const ByRef $array)
+Func MapFromArray(Const $keys)
 	Local $map[]
-	For $i = 0 To UBound($array) - 1
-		$map[$array[$i]] = 1
+	For $i = 0 To UBound($keys) - 1
+		$map[$keys[$i]] = 1
 	Next
 	Return $map
 EndFunc
 
 
 ;~ Create a map from a double array to have a one liner map instanciation with values
-Func MapFromDoubleArray(Const ByRef $array)
+Func MapFromDoubleArray(Const $keysAndValues)
 	Local $map[]
-	For $i = 0 To UBound($array) - 1
-		$map[$array[$i][0]] = $array[$i][1]
+	For $i = 0 To UBound($keysAndValues) - 1
+		$map[$keysAndValues[$i][0]] = $keysAndValues[$i][1]
+	Next
+	Return $map
+EndFunc
+
+
+;~ Create a map from two arrays to have a one liner map instanciation with values
+Func MapFromArrays(Const $keys, Const $values)
+	Local $map[]
+	For $i = 0 To UBound($keys) - 1
+		$map[$keys[$i]] = $values[$i]
 	Next
 	Return $map
 EndFunc
