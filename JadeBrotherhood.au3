@@ -63,8 +63,7 @@ Func JadeBrotherhoodFarm($STATUS)
 		Out("Inventory full, pausing.")
 		$Deadlocked = False
 		;Inventory()
-		$STATS_MAP["success_code"] = 2
-		Return
+		Return 2
 	EndIf
 
 	If $STATUS <> "RUNNING" Then Return
@@ -78,13 +77,9 @@ Func JadeBrotherhoodFarm($STATUS)
 		$Jade_Brotherhood_Farm_Setup = True
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> "RUNNING" Then Return 
 
-	$STATS_MAP["success_code"] = JadeBrotherhoodFarmLoop()
-	
-	If $Deadlocked Then $STATS_MAP["success_code"] = 1
-	
-	Return
+	Return JadeBrotherhoodFarmLoop()
 EndFunc
 
 
@@ -138,6 +133,7 @@ Func JadeBrotherhoodFarmLoop()
 		PickUpItems()
 	EndIf
 
+	If ($Deadlocked) Then Return BackToTheMarketplace(1)
 	Return BackToTheMarketplace(0)
 EndFunc
 

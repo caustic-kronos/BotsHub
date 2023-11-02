@@ -50,32 +50,19 @@ Local $timer = TimerInit()
 
 ;~ Main method to farm Vaettirs
 Func VaettirFarm($STATUS)
-	If $STATUS <> "RUNNING" Then Return
-
 	If ($Deadlocked OR ((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
 		Out("Inventory full, pausing.")
 		$Deadlocked = False
-		;Inventory()
-		$STATS_MAP["success_code"] = 2
-		Return
+		Return 2
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> "RUNNING" Then Return 2
 
-	If GetMapID() <> $ID_Jaga_Moraine Then
-		RunToJagaMoraine()
-		If (GetIsDead(-2) == True) Then 
-			$STATS_MAP["success_code"] = 1
-		EndIf
-	EndIf
+	If GetMapID() <> $ID_Jaga_Moraine Then RunToJagaMoraine()
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> "RUNNING" Then Return 2
 
-	$STATS_MAP["success_code"] = VaettirsFarmLoop()
-	
-	If $Deadlocked Then $STATS_MAP["success_code"] = 1
-	
-	Return
+	Return VaettirsFarmLoop()
 EndFunc
 
 
@@ -352,6 +339,7 @@ EndFunc
 Func RezoneToJagaMoraine()
 	Local $success = 0
 	If GetIsDead(-2) Then $success = 1
+	If $Deadlocked Then $success 1
 
 	Out("Zoning out and back in")
 	MoveAggroing(12289, -17700)

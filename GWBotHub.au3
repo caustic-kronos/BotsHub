@@ -13,8 +13,9 @@ GUI built with GuiBuilderPlus
 ; add option to choose between random travel and specific travel
 ; display titles automatically, if it does not pose problems
 ; add option for : running bot once, bot X times, bot until inventory full, or bot loop
-; write small bot that : - get item infos (ID, maybe more) -salvage them -get material ID -write in file item infos and related salvaged material
+; write small bot that : -salvage items (does not work for now) -get material ID -write in file salvaged material
 ; add green rarity
+; change bots to have cleaner return system
 
 #RequireAdmin
 #NoTrayIcon
@@ -332,6 +333,8 @@ EndFunc
 
 ;~ Main loop of the program
 Func BotHubLoop()
+	Local $STATS_MAP = CreateStatisticsMap()
+
 	While True
 		Sleep(1000)
 		;Out($STATUS)
@@ -340,7 +343,7 @@ Func BotHubLoop()
 			Local $Farm = GUICtrlRead($FarmChoiceCombo)
 			Local $timer = TimerInit()
 			$STATS_MAP["success_code"] = -1
-			FillStats()
+			FillStats($STATS_MAP)
 
 			Switch $Farm
 				Case "Choose a farm"
@@ -349,28 +352,27 @@ Func BotHubLoop()
 					GUICtrlSetData($StartButton, "Start")
 					GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 				Case "Jade Brotherhood"
-					JadeBrotherhoodFarm($STATUS)
+					$STATS_MAP["success_code"] = JadeBrotherhoodFarm($STATUS)
 				Case "Ministerial Commendations"
-					MinisterialCommendationsFarm($STATUS)
+					$STATS_MAP["success_code"] = MinisterialCommendationsFarm($STATUS)
 				Case "Raptors"
-					RaptorFarm($STATUS)
+					$STATS_MAP["success_code"] = RaptorFarm($STATUS)
 				Case "Vaettirs"
-					VaettirFarm($STATUS)
+					$STATS_MAP["success_code"] = VaettirFarm($STATUS)
 				Case "Storage"
-					ManageInventory($STATUS)
+					$STATS_MAP["success_code"] = ManageInventory($STATUS)
 					$STATUS = "WILL_PAUSE"
 				Case "Dynamic"
 					While $STATUS == "RUNNING"
 						Sleep(1000)
 					WEnd
-				;Case Else
 				Case "Tests"
-					RunTests($STATUS)
+					$STATS_MAP["success_code"] = RunTests($STATUS)
 				Case else
 					MsgBox(0, "Error", "This farm doesn't exist.")
 			EndSwitch
-			FillStats(TimerDiff($timer))
-			UpdateStats()
+			FillStats($STATS_MAP, TimerDiff($timer))
+			UpdateStats($STATS_MAP)
 			
 			If ($STATS_MAP["success_code"] == 2) Then $STATUS = "WILL_PAUSE"
 		Else
@@ -506,3 +508,81 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 EndFunc
 
 #EndRegion Authentification and Login
+
+
+#Region Statistics management
+;~ Create a map for information/statistics sharing between programs
+Func CreateStatisticsMap()
+	Local Const $Array_Statistics[16][2] = [["success_code", -1], ["runs", 0], ["failures", 0], ["run_time", 0], ["gold_earned", 0], ["gold_items_obtained", 0], ["experience_earned", 0], _
+		["asura_title_points_earned", 0], ["deldrimor_title_points_earned", 0], ["norn_title_points_earned", 0], ["vanguard_title_points_earned", 0], _
+		["kurzick_title_points_earned", 0], ["luxon_title_points_earned", 0], ["lightbringer_title_points_earned", 0], ["sunspear_title_points_earned", 0]]
+	Local $STATS_MAP = MapFromDoubleArray($Array_Statistics)
+	Return $STATS_MAP
+EndFunc
+
+
+;~ Fill statistics
+Func FillStats(ByRef $STATS_MAP, $time = 0)
+	Local Static $FirstGoldCount = GetGoldCharacter()
+	Local Static $FirstExperienceCount = GetExperience()
+	Local Static $FirstAsuraTitlePoints = GetAsuraTitle()
+	Local Static $FirstNornTitlePoints = GetNornTitle()
+	
+	;Local Static $ChunkOfDrakeFleshCount = 0
+	;Local Static $SkaleFinsCount = 0
+	;Local Static $GlacialStonesCount = 0
+	;Local Static $DiessaChalicesCount = 0
+	;Local Static $RinRelicsCount = 0
+	;Local Static $WintersdayGiftsCount = 0
+	;Local Static $MargoniteGemstoneCount = 0
+	;Local Static $TitanGemstoneCount = 0
+	;Local Static $TormentGemstoneCount = 0
+	
+	Local $successCode = $STATS_MAP["success_code"]
+	;Either bot did not run yet or ran but was paused
+	If $successCode == -1 Then Return
+
+	$STATS_MAP["runs"] += 1
+	if ($successCode == 1) Then $STATS_MAP["failures"] += 1
+	$STATS_MAP["run_time"] += $time
+	$STATS_MAP["gold_earned"] = GetGoldCharacter() - $FirstGoldCount
+	$STATS_MAP["experience_earned"] = GetExperience() - $FirstExperienceCount
+	$STATS_MAP["norn_title_points_earned"] = GetNornTitle() - $FirstNornTitlePoints
+	$STATS_MAP["asura_title_points_earned"] = GetAsuraTitle() - $FirstAsuraTitlePoints
+EndFunc
+
+
+;~ Update statistics
+Func UpdateStats($STATS_MAP)
+	;Global stats
+	GUICtrlSetData($RunsLabel, "Runs: " & $STATS_MAP["runs"])
+	GUICtrlSetData($FailuresLabel, "Failures: " & $STATS_MAP["failures"])
+	GUICtrlSetData($TimeLabel, "Time: " & Round($STATS_MAP["run_time"]/60000) & "min" & Round(Mod($STATS_MAP["run_time"], 60000)/1000) & "s")
+	Local $timePerRun = $STATS_MAP["run_time"] / $STATS_MAP["runs"]
+	GUICtrlSetData($TimePerRunLabel, "Time per run: " & Round($timePerRun/60000) & "min" & Round(Mod($timePerRun, 60000)/1000) & "s")
+	GUICtrlSetData($GoldLabel, "Gold: " & Round($STATS_MAP["gold_earned"]/1000) & "k" & Mod($STATS_MAP["gold_earned"], 1000) & "g")
+	GUICtrlSetData($GoldItemsLabel, "Gold Items: "  & $STATS_MAP["gold_items_obtained"])
+	GUICtrlSetData($ExperienceLabel, "Experience: " & $STATS_MAP["experience_earned"])
+	
+	;Item stats
+	;GUICtrlSetData($ChunkOfDrakeFleshLabel, "Chunks Of Drake Flesh: " & $STATS_MAP["ChunkOfDrakeFleshCount"])
+	;GUICtrlSetData($SkaleFinsLabel, "Skale Fins: " & $SkaleFinsCount)
+	;GUICtrlSetData($GlacialStonesLabel, "Glacial Stones: " & $GlacialStonesCount)
+	;GUICtrlSetData($DiessaChalicesLabel, "Diessa Chalices: " & $DiessaChalicesCount)
+	;GUICtrlSetData($RinRelicsLabel, "Rin Relics: " & $RinRelicsCount)
+	;GUICtrlSetData($WintersdayGiftsLabel, "Wintersday Gifts: " & $WintersdayGiftsCount)
+	;GUICtrlSetData($MargoniteGemstoneLabel, "Margonite Gemstones: " & $MargoniteGemstoneCount)
+	;GUICtrlSetData($TitanGemstoneLabel, "Titan Gemstones: " & $TitanGemstoneCount)
+	;GUICtrlSetData($TormentGemstoneLabel, "Torment Gemstones: " & $TormentGemstoneCount)
+	
+	;Title stats
+	GUICtrlSetData($AsuraTitleLabel, "Asura: " & $STATS_MAP["asura_title_points_earned"])
+	GUICtrlSetData($DeldrimorTitleLabel, "Deldrimor: " & $STATS_MAP["deldrimor_title_points_earned"])
+	GUICtrlSetData($NornTitleLabel, "Norn: " & $STATS_MAP["norn_title_points_earned"])
+	GUICtrlSetData($VanguardTitleLabel, "Vanguard: " & $STATS_MAP["vanguard_title_points_earned"])
+	GUICtrlSetData($KurzickTitleLabel, "Kurzick: " & $STATS_MAP["kurzick_title_points_earned"])
+	GUICtrlSetData($LuxonTitleLabel, "Luxon: " & $STATS_MAP["luxon_title_points_earned"])
+	GUICtrlSetData($LightbringerTitleLabel, "Lightbringer: " & $STATS_MAP["lightbringer_title_points_earned"])
+	GUICtrlSetData($SunspearTitleLabel, "Sunspear: " & $STATS_MAP["sunspear_title_points_earned"])		
+EndFunc
+#EndRegion Statistics management

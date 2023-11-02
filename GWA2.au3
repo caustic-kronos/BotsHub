@@ -2942,10 +2942,10 @@ Func GetNearestEnemyToAgent($aAgent = -2)
 	Local $lID = DllStructGetData($aAgent, 'ID')
 
 	For $i = 1 To $lAgentArray[0]
-		$lDistance = (DllStructGetData($aAgent, 'X') - DllStructGetData($lAgentArray[$i], 'X')) ^ 2 + (DllStructGetData($aAgent, 'Y') - DllStructGetData($lAgentArray[$i], 'Y')) ^ 2
 		If DllStructGetData($lAgentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
 		If DllStructGetData($lAgentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($lAgentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If DllStructGetData($lAgentArray[$i], 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
 
 		$lDistance = (DllStructGetData($aAgent, 'X') - DllStructGetData($lAgentArray[$i], 'X')) ^ 2 + (DllStructGetData($aAgent, 'Y') - DllStructGetData($lAgentArray[$i], 'Y')) ^ 2
 		If $lDistance < $lNearestDistance Then
@@ -2991,6 +2991,8 @@ Func GetNearestEnemyToCoords($aX, $aY)
 		If DllStructGetData($lAgentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
 		If DllStructGetData($lAgentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($lAgentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If DllStructGetData($lAgentArray[$i], 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+
 		If $lDistance < $lNearestDistance Then
 			If DllStructGetData($lAgentArray[$i], 'ID') == $lmeID Then ContinueLoop
 			$lNearestAgent = $lAgentArray[$i]

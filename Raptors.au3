@@ -64,17 +64,15 @@ Global $RAPTORS_FARM_SETUP = False
 
 ;~ Main method to farm Raptors
 Func RaptorFarm($STATUS)
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> "RUNNING" Then Return 2
 
 	If ($Deadlocked OR ((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
 		Out("Inventory full, pausing.")
 		$Deadlocked = False
-		;Inventory()
-		$STATS_MAP["success_code"] = 2
-		Return
+		Return 2
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> "RUNNING" Then Return 2
 
 	If GetMapID() <> $ID_Rata_Sum Then
 		TravelTo($ID_Rata_Sum)
@@ -85,13 +83,9 @@ Func RaptorFarm($STATUS)
 		$RAPTORS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> "RUNNING" Then Return 2
 
-	$STATS_MAP["success_code"] = RaptorsFarmLoop()
-	
-	If $Deadlocked Then $STATS_MAP["success_code"] = 1
-	
-	Return
+	Return RaptorsFarmLoop()
 EndFunc
 
 
@@ -292,23 +286,25 @@ EndFunc
 
 
 Func AssertFarmResult()
-	Local $lMe
-	Local $lAdjacentCount, $lDistance
+	If GetIsDead(-2) Then
+		Out("Character died")
+		Return 1
+	ElseIf $Deadlocked Then
+		Out("Deadlocked")
+		Return 1
+	EndIf
+
+	Local $lMe = GetAgentByID(-2)
+	Local $lAdjacentCount
 	Local $lAgentArray
 
 	$lAgentArray = GetAgentArray(0xDB)
 
 	For $i=1 To $lAgentArray[0]
-	$lDistance = GetPseudoDistance($lMe, $lAgentArray[$i])
-		If $lDistance < $RANGE_ADJACENT_2 Then
-			$lAdjacentCount += 1
-		EndIf
+		If GetPseudoDistance($lMe, $lAgentArray[$i]) < $RANGE_ADJACENT_2 Then $lAdjacentCount += 1
 	Next
 
-	If GetIsDead(-2) Then
-		Out("Character died")
-		Return 1
-	ElseIf $lAdjacentCount > 0 Then
+	If $lAdjacentCount > 0 Then
 		Out("Some raptors survived")
 		Return 1
 	Else

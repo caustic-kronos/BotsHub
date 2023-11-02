@@ -42,11 +42,13 @@ Func ManageInventory($STATUS)
 	Out("Checking Guild Hall")
 	CheckGuildHall()
 	Sleep(GetPing() + 500)
+	If $STATUS <> "RUNNING" Then Return 2
 	GoToMerchant()
-	
+	If $STATUS <> "RUNNING" Then Return 2
 	BalanceCharacterGold(20000)
-	
+	If $STATUS <> "RUNNING" Then Return 2
 	IdentifyAllItems()
+	If $STATUS <> "RUNNING" Then Return 2
 	;#CE
 	; TODO : 
 	; - deposit in chest mesmer tomes, white and black dyes, ToT bags and other consumables, RARE weapons
@@ -67,6 +69,7 @@ Func ManageInventory($STATUS)
 	;ReadOneItemData(1,3)
 	;ReadOneItemData(1,4)
 	;ReadOneItemData(1,5)
+	Return 0
 EndFunc
 
 

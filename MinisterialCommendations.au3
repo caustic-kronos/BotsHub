@@ -4,10 +4,7 @@
 #include "GWA2_Headers.au3"
 #include "GWA2_ID.au3"
 #include "Utils.au3"
-
-
-Local Const $sp5 = 5
-Local Const $sp6 = 6
+#include <File.au3>
 
 ; ==== Constantes ====
 Local Const $DWCommendationsFarmerSkillbar = "OgGlQpVq6smsGFA0XwTsDmL29RTSgB"
@@ -22,7 +19,9 @@ Local Const $CommendationsFarmInformations = "For best results, have :" & @CRLF 
 	& "- A main hand with +20% enchantments duration and +5 armor" & @CRLF _
 	& "- any PCons you wish to use"
 
-Global $Ministerial_Commendations_Farm_Setup = False
+Local $Ministerial_Commendations_Farm_Setup = False
+
+Local $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
 Local Const $Skill_Conviction = 1
@@ -45,6 +44,7 @@ Local Const $Make_Haste_Skill_position = 7
 Local Const $SoS_Skill_Position = 1
 Local Const $Splinter_Weapon_Skill_Position = 2
 Local Const $Essence_Strike_Skill_Position = 3
+Local Const $Mend_Body_And_Soul_Skill_Position = 5
 Local Const $Spirit_Light = 6
 Local Const $Strength_of_honor_Skill_Position = 8
 Local Const $SoS_Mystic_Healing_Skill_Position = 8
@@ -73,7 +73,6 @@ Local Const $Hero_Necro_BiP = 7
 Local Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
 Local Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
 
-
 #CS
 Character location : 	X: -6322.51318359375, Y: -5266.85986328125
 Heroes locations :
@@ -101,16 +100,15 @@ last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
 DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 #CE
 
-
 Func MinisterialCommendationsFarm($STATUS)
 	If Not($Ministerial_Commendations_Farm_Setup) Then Setup()
-	
+	$loggingFile = FileOpen("commendation_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+
 	If $STATUS <> "RUNNING" Then Return
 	
 	If CountSlots() < 5 Then
 		Out("Inventory full, pausing.")
-		$STATS_MAP["success_code"] = 2
-		Return
+		Return 2
 	EndIf
 	
 	Out("Entering quest")
@@ -148,7 +146,8 @@ Func MinisterialCommendationsFarm($STATUS)
 
 	Out("Travelling back to KC")
 	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
-	$STATS_MAP["success_code"] = 0
+	FileClose($loggingFile)
+	Return 0
 EndFunc
 
 
@@ -194,7 +193,7 @@ EndFunc
 Func PrepareToFight()
 	RndSleep(16000)
 	;StartingPositions()
-	AlternateStartingPositions()
+	AlternateStartingPositions2()
 
 	UseHeroSkill($Hero_Ritualist_Prot, $SBoon_of_creation_Skill_Position)		;Prot - Boon of Creation
 	Sleep(2500)
@@ -249,6 +248,19 @@ Func AlternateStartingPositions()
 EndFunc
 
 
+;~ Move party into a good starting position
+Func AlternateStartingPositions2()
+	CommandHero($Hero_Mesmer_DPS_1, -6524, -5178)
+	CommandHero($Hero_Mesmer_DPS_2, -6165, -5585)
+	CommandHero($Hero_Mesmer_DPS_3, -6224, -5075)
+	CommandHero($Hero_Mesmer_Ineptitude, -6033, -5271)
+	CommandHero($Hero_Ritualist_SoS, -6515, -5510)
+	CommandHero($Hero_Ritualist_Prot, -5766, -5226)
+	CommandHero($Hero_Necro_BiP, -6170, -4792)
+	MoveTo(-6285, -5343)
+EndFunc
+
+
 Func InitialFight()
 	Local $deadlock = TimerInit()
 	Sleep(1000)
@@ -285,9 +297,10 @@ Func InitialFight()
 	; Hero cast speed on character
 	UseHeroSkill($Hero_Mesmer_Ineptitude, $Make_Haste_Skill_position, -2)
 
-	; Move all heroes to podium to kill last 2 foes
+	; Move all heroes to podium to kill last foes
 	CommandAll(-6699, -5645)
 
+	If IsRecharged($Skill_I_am_unstoppable) Then UseSkillEx($Skill_I_am_unstoppable)
 	; Run to first stairs
 	Move(-4693, -3137)
 
@@ -297,6 +310,10 @@ Func InitialFight()
 		RndSleep(750)
 	WEnd
 	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for all mobs to be dead")
+
+	UseHeroSkill($Hero_Ritualist_SoS, $Mend_Body_And_Soul_Skill_Position, 58)
+	UseHeroSkill($Hero_Necro_BiP, $Mend_Body_And_Soul_Skill_Position, 58)
+	_FileWriteLog($loggingFile, "Initial fight lasted " & Round(TimerDiff($deadlock)/1000) & "s")
 
 	; Move all heroes to not interfere with loot
 	CommandAll(-7075, -5685)
@@ -337,7 +354,9 @@ Func WaitForPurityBall()
 		Sleep(1000)
 		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	WEnd
-
+	
+	Local $spirit
+	
 	While Not GetisDead(-2) And TimerDiff($deadlock) < 90000 And Not IsFurthestMobInBall()
 		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
 			UseSkillEx($Skill_To_the_limit)
@@ -372,6 +391,7 @@ Func WaitForPurityBall()
 		RndSleep(250)
 	WEnd
 	If (TimerDiff($deadlock) > 90000) Then Out("Timed out waiting for mobs to ball")
+	_FileWriteLog($loggingFile, "Waited for all mobs to be balled for " & Round(TimerDiff($deadlock)/1000) & "s")
 EndFunc
 
 
@@ -379,8 +399,10 @@ EndFunc
 Func IsFail()
 	If GetIsDead(GetAgentByID(58)) Then
 		Out("Miku died.")
+		_FileWriteLog($loggingFile, "Miku died.")
 	ElseIf GetIsDead(GetAgentByID(-2)) Then
 		Out("Player died")
+		_FileWriteLog($loggingFile, "Character died.")
 	Else
 		Return False
 	EndIf
@@ -395,7 +417,6 @@ Func ResignAndReturnToOutpost()
 	Sleep(3400)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Kaineng_City)
-	$STATS_MAP["success_code"] = 1
 	Return 1
 EndFunc
 
@@ -436,6 +457,8 @@ Func KillMinistryOfPurity()
 		Sleep(GetPing() + Random(40, 60))
 	EndIf
 	
+	Local $initialFoeCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+	
 	;~ Whirlwind attack needs specific care to be used
 	While IsRecharged($Skill_Whirlwind_Attack)
 		If GetIsDead($me) Then Return
@@ -457,6 +480,8 @@ Func KillMinistryOfPurity()
 		Sleep(GetPing() + 250)
 	WEnd
 	
+	Sleep(GetPing() + 250)
+
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
 	$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
@@ -487,7 +512,9 @@ Func KillMinistryOfPurity()
 		EndIf
 		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 	WEnd
-	If (TimerDiff($deadlock) > 10000) Then Out("Left some mobs alive")
+	If (TimerDiff($deadlock) > 10000) Then Out("Left " & $foesCount & " mobs alive out of " & $initialFoeCount & "foes")
+	_FileWriteLog($loggingFile, "Mobs killed " & ($initialFoeCount - $foesCount))
+	_FileWriteLog($loggingFile, "Mobs alive " & $foesCount)
 
 	If DllStructGetData(GetAgentByID(-2), "HP") < 0.90 Then
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
@@ -529,5 +556,28 @@ Func IsFurthestMobInBall()
 	Local $furthestEnemy = GetNearestEnemyToCoords(1817, -798)
 	If GetDistance($furthestEnemy, -2) > $RANGE_NEARBY Then Return False
 	Return True
+EndFunc
+
+Func GetPercentageMobsNearPlayer()
+	Local $foesOnGoodSide = GetAllFoesNearAgentSatisfyingCondition(-2, IsOnTopOfTheStairs)
+	Local $adjacentFoes = GetAllFoesNearAgent(-2, $RANGE_NEARBY)
+	Return $adjacentFoes[0] / $foesOnGoodSide[0]
+EndFunc
+
+
+Func GetFoesOnTopOfTheStairs()
+	Return GetAllFoesNearAgentSatisfyingCondition(-2, IsOnTopOfTheStairs)
+EndFunc
+
+Func GetFoesUnderTheStairs()
+	Return GetAllFoesNearAgentSatisfyingCondition(-2, IsUnderTheStairs)
+EndFunc
+
+Func IsOnTopOfTheStairs($agent)
+	Return IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+EndFunc
+
+Func IsUnderTheStairs($agent)
+	Return Not IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 #EndRegion Functions
