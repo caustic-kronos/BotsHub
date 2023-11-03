@@ -264,12 +264,12 @@ EndFunc
 Func InitialFight()
 	Local $deadlock = TimerInit()
 	Sleep(1000)
-	Local $foesInRange = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_COMPASS)
+	Local $foesInRange = CountFoesInRangeOfAgent(-2, $RANGE_COMPASS)
 	
 	; Wait until there are enemies
 	While $foesInRange == 0 And TimerDiff($deadlock) < 10000
 		Sleep(1000)
-		$foesInRange = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_COMPASS)
+		$foesInRange = CountFoesInRangeOfAgent(-2, $RANGE_COMPASS)
 	WEnd
 	
 	; Now there are enemies let's fight until one mob is left
@@ -277,7 +277,7 @@ Func InitialFight()
 		HelpMiku()
 		TargetNearestEnemy()
 		AttackOrUseSkill(1300, $Skill_I_am_unstoppable, 50, $Skill_Hundred_Blades, 50, $Skill_To_the_limit, 50)
-		$foesInRange = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_COMPASS)
+		$foesInRange = CountFoesInRangeOfAgent(-2, $RANGE_COMPASS)
 		If IsFail() Then Return
 	WEnd
 	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for most mobs to be dead")
@@ -305,7 +305,7 @@ Func InitialFight()
 	Move(-4693, -3137)
 
 	; Wait for all foes in range of Miku to be dead
-	While (GetNumberOfFoesInRangeOfAgent(58, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 120000 And Not IsFail())
+	While (CountFoesInRangeOfAgent(58, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 120000 And Not IsFail())
 		Move(-4693, -3137)
 		RndSleep(750)
 	WEnd
@@ -347,12 +347,12 @@ EndFunc
 ;~ Wait for all ennemies to be balled
 Func WaitForPurityBall()
 	Local $deadlock = TimerInit()
-	Local $foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 
 	; Wait until an enemy is in melee range
 	While $foesCount == 0 And TimerDiff($deadlock) < 55000
 		Sleep(1000)
-		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	WEnd
 	
 	Local $spirit
@@ -387,21 +387,19 @@ Func WaitForPurityBall()
 			UseHeroSkill($Hero_Ritualist_Prot, $Prot_Mystic_Healing_Skill_Position)
 		EndIf
 
-		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 		RndSleep(250)
 	WEnd
 	If (TimerDiff($deadlock) > 90000) Then Out("Timed out waiting for mobs to ball")
-	_FileWriteLog($loggingFile, "Waited for all mobs to be balled for " & Round(TimerDiff($deadlock)/1000) & "s")
+	_FileWriteLog($loggingFile, "Waited for all " & Round(TimerDiff($deadlock)/1000) & "s")
 EndFunc
 
 
 ;~ Return true if mission failed (you or Miku died)
 Func IsFail()
 	If GetIsDead(GetAgentByID(58)) Then
-		Out("Miku died.")
 		_FileWriteLog($loggingFile, "Miku died.")
 	ElseIf GetIsDead(GetAgentByID(-2)) Then
-		Out("Player died")
 		_FileWriteLog($loggingFile, "Character died.")
 	Else
 		Return False
@@ -412,6 +410,11 @@ EndFunc
 
 ;~ Return to outpost in case of failure
 Func ResignAndReturnToOutpost()
+	If GetIsDead(GetAgentByID(58)) Then
+		Out("Miku died.")
+	ElseIf GetIsDead(GetAgentByID(-2)) Then
+		Out("Player died")
+	EndIf
 	Sleep(5000)
 	Resign()
 	Sleep(3400)
@@ -457,7 +460,7 @@ Func KillMinistryOfPurity()
 		Sleep(GetPing() + Random(40, 60))
 	EndIf
 	
-	Local $initialFoeCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+	Local $initialFoeCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	
 	;~ Whirlwind attack needs specific care to be used
 	While IsRecharged($Skill_Whirlwind_Attack)
@@ -484,7 +487,7 @@ Func KillMinistryOfPurity()
 
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
-	$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
+	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 	While $foesCount > 0 And TimerDiff($deadlock) < 10000
 		If GetIsDead($me) Then Return
 		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
@@ -510,7 +513,7 @@ Func KillMinistryOfPurity()
 		Else
 			AttackOrUseSkill(1300, $Skill_Conviction, 50)
 		EndIf
-		$foesCount = GetNumberOfFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 	WEnd
 	If (TimerDiff($deadlock) > 10000) Then Out("Left " & $foesCount & " mobs alive out of " & $initialFoeCount & "foes")
 	_FileWriteLog($loggingFile, "Mobs killed " & ($initialFoeCount - $foesCount))
@@ -559,18 +562,18 @@ Func IsFurthestMobInBall()
 EndFunc
 
 Func GetPercentageMobsNearPlayer()
-	Local $foesOnGoodSide = GetAllFoesNearAgentSatisfyingCondition(-2, IsOnTopOfTheStairs)
-	Local $adjacentFoes = GetAllFoesNearAgent(-2, $RANGE_NEARBY)
+	Local $foesOnGoodSide = GetFoesOnTopOfTheStairs()
+	Local $adjacentFoes = GetFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	Return $adjacentFoes[0] / $foesOnGoodSide[0]
 EndFunc
 
 
 Func GetFoesOnTopOfTheStairs()
-	Return GetAllFoesNearAgentSatisfyingCondition(-2, IsOnTopOfTheStairs)
+	Return GetFoesInRangeOfAgent(-2, 0, IsOnTopOfTheStairs)
 EndFunc
 
 Func GetFoesUnderTheStairs()
-	Return GetAllFoesNearAgentSatisfyingCondition(-2, IsUnderTheStairs)
+	Return GetFoesInRangeOfAgent(-2, 0, IsUnderTheStairs)
 EndFunc
 
 Func IsOnTopOfTheStairs($agent)

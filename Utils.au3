@@ -1017,29 +1017,35 @@ EndFunc
 
 
 #Region Foes
-;~ Get all foes near the agent but filter them with a condition
-Func GetAllFoesNearAgentSatisfyingCondition($agent = -2, $condition = null)
-	Local $foesNear = GetAllFoesNearAgent($agent)
-	Local $curFoe
-	Local $foesCount = $foesNear[0]
-	For $i = $foesNear[0] To 1 Step -1
-		$curFoe = $foesNear[$i]
-		If $condition <> null And $condition($curFoe) == False Then 
-			_ArrayDelete($foesNear, $i)
-			$foesNear[0] -= 1
-		EndIf
+;~ Count foes in range of the agent
+Func CountFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
+	;Return GetFoesInRangeOfAgent($agent, $range)[0]
+	Local $agents = GetAgentArray(0xDB)
+	Local $curAgent
+	Local $count = 0
+
+	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
+
+	For $i = 1 To $agents[0]
+		$curAgent = $agents[$i]
+		If DllStructGetData($curAgent, 'Allegiance') <> 3 Then ContinueLoop
+		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
+		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $range > 0 And GetDistance($agent, $curAgent) > $range Then ContinueLoop
+		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		$count += 1
 	Next
-	Return $foesNear
+
+	Return $count
 EndFunc
 
 
-;~ Get all foes near the agent, no limit of distance or filter of any kind
-Func GetAllFoesNearAgent($agent = -2, $maxDistance = 0)
+;~ Get foes in range of the agent
+Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
 	Local $returnAgents[1] = [0]
-	Local $count = 0
-	Local $distance
 
 	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
 
@@ -1050,18 +1056,13 @@ Func GetAllFoesNearAgent($agent = -2, $maxDistance = 0)
 		If DllStructGetData($curAgent, 'Allegiance') <> 3 Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If DllStructGetData($lAgentArray[$i], 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
-		If DllStructGetData($curAgent, 'ID') == $agentID Then ContinueLoop
-
-		If $maxDistance > 0 Then
-			$distance = Sqrt((DllStructGetData($agent, 'X') - DllStructGetData($curAgent, 'X')) ^ 2 + (DllStructGetData($agent, 'Y') - DllStructGetData($curAgent, 'Y')) ^ 2)
-			If $distance > $maxDistance Then ContinueLoop
-		EndIf
+		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $range > 0 And GetDistance($agent, $curAgent) > $range Then ContinueLoop
+		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
 		
 		_ArrayAdd($returnAgents, $curAgent)
-		$count += 1
+		$returnAgents[0] += 1
 	Next
-	$returnAgents[0] = $count
 
 	Return $returnAgents
 EndFunc

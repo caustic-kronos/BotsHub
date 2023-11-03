@@ -185,7 +185,7 @@ Func WaitForBall()
 		Out("Not yet : " & $foesBalled)
 		RndSleep(4500)
 		$target = GetNearestEnemyToCoords(-13262, -5486)
-		$foesBalled = GetNumberOfFoesInRangeOfAgent($target, 360)
+		$foesBalled = CountFoesInRangeOfAgent($target, 360)
 	WEnd
 EndFunc
 
@@ -226,7 +226,7 @@ Func KillJadeBrotherhood()
 		Sleep(Random(40, 60))
 	WEnd
 	
-	While GetNumberOfFoesInRangeOfAgent(-2, 1250) > 0
+	While CountFoesInRangeOfAgent(-2, 1250) > 0
 		If GetIsDead($lme) Or TimerDiff($DeadlockTimer) > $timeOut Then Return
 		If GetEnergy($lMe) >= 6 And IsRecharged($Brotherhood_SandShards) Then
 			UseSkillEx($Brotherhood_SandShards, $lMe)
@@ -302,26 +302,4 @@ Func TargetMobInCenter($aAgent, $aRange)
 
 	$lAgent = GetNearestEnemyToCoords($sumX, $sumY)
 	Return $lAgent
-EndFunc
-
-
-Func GetNumberOfFoesInRangeOfAgent($aAgent, $aRange)
-	Local $lAgent, $lDistance
-	Local $lCount = 0
-
-	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
-
-	For $i = 1 To GetMaxAgents()
-		$lAgent = GetAgentByID($i)
-		;If BitAND(DllStructGetData($lAgent, 'typemap'), 262144) Then ContinueLoop
-		If DllStructGetData($lAgent, 'Type') <> 0xDB Then ContinueLoop
-		If DllStructGetData($lAgent, 'Allegiance') <> 3 Then ContinueLoop
-		If DllStructGetData($lAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($lAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		$lDistance = GetDistance($aAgent, $lAgent)
-		If $lDistance > $aRange Then ContinueLoop
-		$lCount += 1
-	Next
-
-	Return $lCount
 EndFunc
