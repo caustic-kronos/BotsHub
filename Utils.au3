@@ -183,16 +183,17 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($defendFunction = null)
+Func PickUpItems($defendFunction = null, $ShouldPickItem = null)
 	Local $lAgent
 	Local $lItem
 	Local $lDeadlock
 	For $i = 1 To GetMaxAgents()
-		If GetIsDead(-2) Then Return
+		If (GetIsDead(-2)) Then Return
 		$lAgent = GetAgentByID($i)
-		If DllStructGetData($lAgent, 'Type') <> 0x400 Then ContinueLoop
+		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
 		$lItem = GetItemByAgentID($i)
-		If ShouldPickItem($lItem) Then
+		
+		If (($ShouldPickItem = null And DefaultShouldPickItem($lItem)) Or ($ShouldPickItem <> null And $ShouldPickItem($lItem))) Then
 			If $defendFunction <> null Then $defendFunction()
 			PickUpItem($lItem)
 			$lDeadlock = TimerInit()
@@ -211,7 +212,7 @@ EndFunc
 
 
 ;~ Return true if the item should be picked up
-Func ShouldPickItem($item)
+Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, "ExtraID")
 	Local $rarity = GetRarity($item)
@@ -257,6 +258,28 @@ Func ShouldPickItem($item)
 		Return GUICtrlRead($LootBlueItemsCheckbox) == $GUI_CHECKED
 	ElseIf ($rarity == $RARITY_White) Then
 		Return GUICtrlRead($LootWhiteItemsCheckbox) == $GUI_CHECKED
+	EndIf
+	Return False
+EndFunc
+
+;~ Return true if the item should be picked up
+Func PickOnlyImportantItem($item)
+	Local $itemID = DllStructGetData(($item), 'ModelID')
+	Local $itemExtraID = DllStructGetData($item, "ExtraID")
+	Local $rarity = GetRarity($item)
+	;Only pick gold if character has less than 99k in inventory
+	If IsRareMaterial($itemID) Then
+		Return True
+	ElseIf ($itemID == $ID_Dyes) Then
+		Return (($itemExtraID == $ID_Black_Dye) Or ($itemExtraID == $ID_White_Dye))
+	ElseIf ($itemID == $ID_Lockpick) Then
+		Return True
+	ElseIf IsLowReqMaxDamage($item) Then
+		Return True
+	ElseIf ($rarity == $RARITY_Gold) Then
+		Return True
+	ElseIf ($rarity == $RARITY_Green) Then
+		Return True
 	EndIf
 	Return False
 EndFunc

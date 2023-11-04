@@ -159,6 +159,7 @@ Global Const $ID_ZeiRi = 37
 ; Dervish
 Global Const $ID_Conviction = 1540
 Global Const $ID_Mystic_Regeneration = 1516
+Global Const $ID_Vital_Boon = 1506
 ; Warrior
 Global Const $ID_Healing_Signet = 1
 Global Const $ID_To_The_Limit = 316
@@ -172,6 +173,11 @@ Global Const $ID_Wastrels_Demise = 1335
 ; Assassin
 Global Const $ID_Shadow_Refuge = 814
 Global Const $ID_Shroud_of_Distress = 1031
+;Ritualist
+Global Const $ID_Shelter = 982
+Global Const $ID_Union = 911
+Global Const $ID_Displacement = 1249
+Global Const $ID_Soul_Twisting = 1240
 ; PvE
 Global Const $ID_Ebon_Battle_Standard_of_Honor = 2233
 #EndRegion Skill IDs

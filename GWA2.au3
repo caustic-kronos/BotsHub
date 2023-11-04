@@ -3597,8 +3597,8 @@ Func GetEffect($aSkillID = 0, $aHeroNumber = 0)
 EndFunc   ;==>GetEffect
 
 ;~ Description: Returns time remaining before an effect expires, in milliseconds.
-Func GetEffectTimeRemaining($aEffect)
-	If Not IsDllStruct($aEffect) Then $aEffect = GetEffect($aEffect)
+Func GetEffectTimeRemaining($aEffect, $aHeroNumber = 0)
+	If Not IsDllStruct($aEffect) Then $aEffect = GetEffect($aEffect, $aHeroNumber)
 	If IsArray($aEffect) Then Return 0
 	Return DllStructGetData($aEffect, 'Duration') * 1000
 ;~ 	Return DllStructGetData($aEffect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($aEffect, 'TimeStamp'))

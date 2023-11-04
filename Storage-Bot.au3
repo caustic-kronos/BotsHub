@@ -35,26 +35,25 @@ Local $IsleOfSolitude = False
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
-	;#CS
-	Out("Travel to Guild Hall")
-	TravelGH()
-	WaitMapLoading()
-	Out("Checking Guild Hall")
-	CheckGuildHall()
-	Sleep(GetPing() + 500)
-	If $STATUS <> "RUNNING" Then Return 2
-	GoToMerchant()
-	If $STATUS <> "RUNNING" Then Return 2
-	BalanceCharacterGold(20000)
-	If $STATUS <> "RUNNING" Then Return 2
-	IdentifyAllItems()
-	If $STATUS <> "RUNNING" Then Return 2
-	;#CE
 	; TODO : 
 	; - deposit in chest mesmer tomes, white and black dyes, ToT bags and other consumables, RARE weapons
 	; - recycle all mods that need to be recycled (measure for measure, Forget Me Not, Strength and Honor, rare mods, insignias and runes)
 	; - recycle all items that need to be recycled for materials (glacial stones, specific weapons)
 	; - sell worthless items like bows and axes
+
+	;Out("Travel to Guild Hall")
+	;TravelGH()
+	;WaitMapLoading()
+	;Out("Checking Guild Hall")
+	;CheckGuildHall()
+	;Sleep(GetPing() + 500)
+	;If $STATUS <> "RUNNING" Then Return 2
+	;GoToMerchant()
+	;If $STATUS <> "RUNNING" Then Return 2
+	;BalanceCharacterGold(20000)
+	;If $STATUS <> "RUNNING" Then Return 2
+	;IdentifyAllItems()
+	;If $STATUS <> "RUNNING" Then Return 2
 
 	ConnectToDatabase()
 	StoreAllItemsData()
@@ -63,12 +62,6 @@ Func ManageInventory($STATUS)
 	CompleteModsHexa()
 	;SalvageAndStoreData()
 	DisconnectFromDatabase()
-	;#CE
-	
-	;ReadAllItemsData()
-	;ReadOneItemData(1,3)
-	;ReadOneItemData(1,4)
-	;ReadOneItemData(1,5)
 	Return 0
 EndFunc
 
