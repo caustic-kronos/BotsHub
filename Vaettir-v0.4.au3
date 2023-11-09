@@ -80,13 +80,13 @@ Func RunToJagaMoraine()
 	MoveTo(-26472, 16217)
 	WaitMapLoading($ID_Bjora_Marches)
 
-	Sleep(GetPing()+500)
+	RndSleep(500)
 	If (GUICtrlRead($ConsumeCupcakeCheckbox) == $GUI_CHECKED) Then UseCupcake()
-	Sleep(GetPing()+500)
+	RndSleep(500)
 	
 	;~ TODO Display your Norn Title for the health boost.
 	;SetDisplayedTitle(0x29)
-	;Sleep(GetPing()+500)
+	;RndSleep(500)
 
 	Out("Running to Jaga Moraine")
 	Local $Array_Longeyes_Ledge[31][3] = [ _
@@ -179,7 +179,7 @@ Func VaettirsFarmLoop()
 	; TODO Display your Norn Title for the health boost.
 	;SetDisplayedTitle(0x29)
 	
-	Sleep(GetPing()+2000)
+	RndSleep(2000)
 
 	AggroAllMobs()
 
@@ -286,11 +286,11 @@ Func KillMobs()
 
 	$deadlockTimer = TimerInit()
 	TargetNearestEnemy()
-	Sleep(100)
+	RndSleep(100)
 	Local $lTargetID = GetCurrentTargetID()
 
 	While GetAgentExists($lTargetID) And DllStructGetData(GetAgentByID($lTargetID), "HP") > 0
-		Sleep(50)
+		RndSleep(50)
 		If GetIsDead(-2) Then Return
 		$lAgentArray = GetAgentArray(0xDB)
 		StayAlive($lAgentArray)
@@ -322,7 +322,7 @@ Func KillMobs()
 		; Check if target has ran away
 		If GetDistance(-2, $lTargetID) > $RANGE_EARSHOT Then
 			TargetNearestEnemy()
-			Sleep(GetPing()+100)
+			RndSleep(100)
 			If GetAgentExists(-1) And DllStructGetData(GetAgentByID(-1), "HP") > 0 And GetDistance(-2, -1) < $RANGE_AREA Then
 				$lTargetID = GetCurrentTargetID()
 			Else
@@ -348,7 +348,7 @@ Func RezoneToJagaMoraine()
 	Local $deadlockTimer = TimerInit()
 	While GetIsDead(-2)
 		Out("Waiting for resurrection")
-		Sleep(1000)
+		RndSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$Deadlocked = True
 			Return 1
@@ -388,7 +388,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 		If DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0 Then
 			If $lHosCount > 6 Then
 				Do	; suicide
-					Sleep(100)
+					RndSleep(100)
 				Until GetIsDead(-2)
 				Return False
 			EndIf
@@ -445,7 +445,7 @@ Func WaitFor($lMs)
 	Local $lAgentArray
 	Local $lTimer = TimerInit()
 	Do
-		Sleep(100)
+		RndSleep(100)
 		If GetIsDead(-2) Then Return
 		$lAgentArray = GetAgentArray(0xDB)
 		StayAlive($lAgentArray)

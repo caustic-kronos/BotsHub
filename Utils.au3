@@ -12,9 +12,6 @@ Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-
-	Out("Test : " & (40 / 57))
-
 	;Local $foesUnder = 0
 	;Local $foesOver = 0
 	;
@@ -28,7 +25,7 @@ Func RunTests($STATUS)
 	;While(True)
 	;	$Me = GetAgentByID(-2)
 	;	Out("Is over the line : " & IsOverLine(1, 4800, DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y')))
-	;	Sleep(1000)
+	;	RndSleep(1000)
 	;WEnd
 
 
@@ -42,13 +39,13 @@ Func RunTests($STATUS)
 	Out("s:" & $stage)
 	TargetNearestEnemy()
 	$stage += 1
-	Sleep(3000)
+	RndSleep(3000)
 	
 	Out("s:" & $stage)
 	$target = GetCurrentTargetID()
 	Out(DllStructGetData($target, 'ID'))
 	$stage += 1
-	Sleep(3000)
+	RndSleep(3000)
 	
 	while (true)
 		Out("s:" & $stage)
@@ -56,7 +53,7 @@ Func RunTests($STATUS)
 		$target = GetCurrentTargetID()
 		Out(DllStructGetData($target, 'ID'))
 		$stage += 1
-		Sleep(3000)
+		RndSleep(3000)
 	wend
 	#CE
 	
@@ -164,7 +161,7 @@ EndFunc
 Func DistrictTravel($mapID, $district, $language)
 	MoveMap($mapID, $district, 0, $language)
 	WaitMapLoading($mapID, 30000)
-	Sleep(GetPing()+3000)
+	RndSleep(3000)
 EndFunc
 
 
@@ -176,7 +173,7 @@ Func RandomDistrictTravel($mapID, $district = 7)
 	Local $Random = Random(0, $district - 1, 1)
 	MoveMap($mapID, $Region[$Random], 0, $Language[$Random])
 	WaitMapLoading($mapID, 30000)
-	Sleep(GetPing()+3000)
+	RndSleep(3000)
 EndFunc
 #EndRegion Map and travel
 
@@ -198,7 +195,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = null)
 			PickUpItem($lItem)
 			$lDeadlock = TimerInit()
 			While GetAgentExists($i)
-				Sleep(100)
+				RndSleep(100)
 				If GetIsDead(-2) Then Return
 				If TimerDiff($lDeadlock) > 10000 Then ExitLoop
 			WEnd
@@ -212,6 +209,7 @@ EndFunc
 
 
 ;~ Return true if the item should be picked up
+;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
 Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, "ExtraID")
@@ -249,9 +247,9 @@ Func DefaultShouldPickItem($item)
 	ElseIf IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
-		Return True
+		Return GUICtrlRead($LootGoldItemsCheckbox) == $GUI_CHECKED
 	ElseIf ($rarity == $RARITY_Green) Then
-		Return True
+		Return GUICtrlRead($LootGreenItemsCheckbox) == $GUI_CHECKED
 	ElseIf ($rarity == $RARITY_Purple) Then
 		Return GUICtrlRead($LootPurpleItemsCheckbox) == $GUI_CHECKED
 	ElseIf ($rarity == $RARITY_Blue) Then
@@ -262,7 +260,23 @@ Func DefaultShouldPickItem($item)
 	Return False
 EndFunc
 
+
 ;~ Return true if the item should be picked up
+;~ Pick everything that is usually picked but also low req that have the maximum damage for their level
+Func AlsoPickLowReqItems($item)
+	If IsWeapon($item) And IsMaxDamageForReq($item) Then Return True
+	Return DefaultShouldPickItem($item)
+EndFunc
+
+;~ Return true if the item should be picked up
+;~ Pick everything that is usually picked but also max damage purple and blue
+;~ Only useful for OS items since max damage q9 blue/purple inscribable items are worthless
+Func AlsoPickMaxPurpleAndBlueItems($item)
+	
+EndFunc
+
+;~ Return true if the item should be picked up
+;~ Only pick rare materials, black and white dyes, lockpicks, gold items and green items
 Func PickOnlyImportantItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, "ExtraID")
@@ -291,7 +305,7 @@ EndFunc
 Func FindEmptySlot($bag)
 	Local $item
 	For $slot = 1 To DllStructGetData(GetBag($bag), "Slots")
-		Sleep(40)
+		RndSleep(40)
 		$item = GetItemBySlot($bag, $slot)
 		If DllStructGetData($item, "ID") = 0 Then Return $slot
 	Next
@@ -305,7 +319,7 @@ Func FindEmptySlots($bag)
 	Local $emptySlots[1] = [Null]
 	Local $item
 	For $slot = 1 To DllStructGetData($bag, "Slots")
-		Sleep(20)
+		RndSleep(20)
 		$item = GetItemBySlot($bag, $slot)
 		If DllStructGetData($item, "ID") = 0 Then
 			If $emptySlots[0] = Null Then
@@ -325,7 +339,7 @@ Func FindChestEmptySlot()
 	For $i = 8 To 21
 		$emptySlot = FindEmptySlot($i)
 		If $emptySlot <> 0 Then Return $emptySlot
-		Sleep(400)
+		RndSleep(400)
 	Next
 	Return 0
 EndFunc
@@ -337,7 +351,7 @@ Func FindChestEmptySlots()
 	For $i = 8 To 21
 		Local $chestTabEmptySlots[] = FindEmptySlots($i)
 		If UBound($chestTabEmptySlots) <> 0 Then $emptySlots[$i] = $chestTabEmptySlots
-		Sleep(400)
+		RndSleep(400)
 	Next
 	Return $emptySlots
 EndFunc
@@ -564,7 +578,7 @@ Func IdentifyAllItems()
 			
 			Local $identificationKit = FindIDKitOrBuySome()
 			IdentifyItem($item)
-			Sleep(GetPing()+500)
+			RndSleep(500)
 		Next
 	Next
 EndFunc
@@ -581,7 +595,7 @@ Func SalvageAllItems()
 			
 			Local $salvageKit = FindSalvageKitOrBuySome()
 			SalvageItem($item)
-			Sleep(GetPing()+500)
+			RndSleep(500)
 		Next
 	Next
 EndFunc
@@ -594,16 +608,16 @@ Func FindIDKitOrBuySome()
 	
 	If GetGoldCharacter() < 500 And GetGoldStorage() > 499 Then
 		WithdrawGold(500)
-		Sleep(GetPing() + 500)
+		RndSleep(500)
 	EndIf
 	Local $j = 0
 	Do
 		BuyItem(6, 1, 500)
-		Sleep(GetPing() + 500)
+		RndSleep(500)
 		$j = $j + 1
 	Until FindIDKit() <> 0 Or $j = 3
 	If $j = 3 Then Return 0
-	Sleep(GetPing() + 500)
+	RndSleep(500)
 	Return FindIDKit()
 EndFunc
 
@@ -615,16 +629,16 @@ Func FindSalvageKitOrBuySome()
 	
 	If GetGoldCharacter() < 400 And GetGoldStorage() > 399 Then
 		WithdrawGold(400)
-		Sleep(GetPing() + 400)
+		RndSleep(400)
 	EndIf
 	Local $j = 0
 	Do
 		BuyItem(3, 1, 400)
-		Sleep(GetPing() + 400)
+		RndSleep(400)
 		$j = $j + 1
 	Until FindSalvageKit() <> 0 Or $j = 3
 	If $j = 3 Then Return 0
-	Sleep(GetPing() + 400)
+	RndSleep(400)
 	Return FindSalvageKit()
 EndFunc
 #EndRegion Identification and Salvage
@@ -889,8 +903,8 @@ Func IsMaxDamageForReq($item)
 	Local $type = DllStructGetData($item, 'Type')
 	Local $requirement = GetItemReq($item)
 	Local $damage = GetItemMaxDmg($item)
-		
-	Local $maxDamage = Weapons_Max_Damage_Per_Level[$type][$requirement]
+	Local $weaponMaxDamages = $Weapons_Max_Damage_Per_Level[$type]
+	Local $maxDamage = $weaponMaxDamages[$requirement]
 	If $damage == $maxDamage Then Return True
 	Return False
 EndFunc
@@ -902,6 +916,15 @@ EndFunc
 Func GetOrDefault($value, $defaultValue)
 	If ($value == null) Then Return $defaultValue
 	Return $value
+EndFunc
+
+
+;~ Return True if item is present in array, else False
+Func ArrayContains($array, $item)
+	For $i = 0 To UBound($array) - 1
+		If $array[$i] == $item Then Return True
+	Next
+	Return False
 EndFunc
 
 
@@ -944,15 +967,6 @@ Func MapFromArrays(Const $keys, Const $values)
 		$map[$keys[$i]] = $values[$i]
 	Next
 	Return $map
-EndFunc
-
-
-;~ Return True if item is present in array, else False
-Func ArrayContains($array, $item)
-	For $i = 0 To UBound($array) - 1
-		If $array[$i] == $item Then Return True
-	Next
-	Return False
 EndFunc
 
 
@@ -1039,10 +1053,34 @@ EndFunc
 #EndRegion Utils
 
 
-#Region Foes
+#Region NPCs
 ;~ Count foes in range of the agent
 Func CountFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
-	;Return GetFoesInRangeOfAgent($agent, $range)[0]
+	Return CountNPCsInRangeOfAgent(3, $agent, $range, $condition)
+EndFunc
+
+
+;~ Count allies in range of the agent
+Func CountAlliesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
+	Return CountNPCsInRangeOfAgent(6, $agent, $range, $condition)
+EndFunc
+
+
+;~ Get foes in range of the agent
+Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
+	Return GetNPCsInRangeOfAgent(3, $agent, $range, $condition)
+EndFunc
+
+
+;~ Get allies in range of the agent
+Func GetAlliesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
+	Return GetNPCsInRangeOfAgent(6, $agent, $range, $condition)
+EndFunc
+
+
+;~ Count NPCs in range of the agent
+Func CountNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $condition = null)
+	;Return GetNPCsInRangeOfAgent($npcAllegiance, $agent, $range, $condition)[0]
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
 	Local $count = 0
@@ -1051,7 +1089,7 @@ Func CountFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If DllStructGetData($curAgent, 'Allegiance') <> 3 Then ContinueLoop
+		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
@@ -1064,8 +1102,8 @@ Func CountFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 EndFunc
 
 
-;~ Get foes in range of the agent
-Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
+;~ Get NPCs in range of the agent
+Func GetNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $condition = null)
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
 	Local $returnAgents[1] = [0]
@@ -1076,7 +1114,7 @@ Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If DllStructGetData($curAgent, 'Allegiance') <> 3 Then ContinueLoop
+		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
@@ -1089,11 +1127,7 @@ Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 
 	Return $returnAgents
 EndFunc
-#EndRegion Foes
-
-
-
-
+#EndRegion NPCs
 
 
 
@@ -1133,12 +1167,12 @@ Func Weapons($BagIndex, $SlotCount)
 							Else
 								$Full = True
 							EndIf
-							Sleep(400)
+							RndSleep(400)
 						Next
 					Until $Full = True
 					If $Full = False Then
 						MoveItem($aItem, $Bag, $NSlot)
-						Sleep(Random(450, 550))
+						RndSleep(500)
 					EndIf
 				EndIf
 		EndSwitch
@@ -1153,7 +1187,7 @@ Func WaitUntilAllFoesAreInRange($lRange)
 	Local $lMe = GetAgentByID(-2)
 	Local $lDistance
 	While True
-		Sleep(100)
+		RndSleep(100)
 		If GetIsDead($lMe) Then Return
 		StayAlive($lAgentArray)
 		For $i = 1 To $lAgentArray[0]

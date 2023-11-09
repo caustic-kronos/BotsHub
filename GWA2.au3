@@ -3811,8 +3811,22 @@ EndFunc   ;==>GetProfPrimaryAttribute
 #Region Other Functions
 #Region Misc
 ;~ Description: Sleep a random amount of time.
-Func RndSleep($aAmount, $aRandom = 0.05)
-	Local $lRandom = $aAmount * $aRandom
+Func RndSleep($aAmount, $aRandom = null)
+	Local $lRandom
+	Select
+		Case $aRandom <> null
+			$lRandom = $aAmount * $aRandom
+		Case $aAmount >= 15000
+			$lRandom = $aAmount * 0.025
+		Case $aAmount >= 6000
+			$lRandom = $aAmount * 0.05
+		Case $aAmount >= 3000
+			$lRandom = $aAmount * 0.1
+		Case $aAmount >= 10
+			$lRandom = $aAmount * 0.2
+		Case Else
+			$lRandom = 1
+       EndSelect
 	Sleep(Random($aAmount - $lRandom, $aAmount + $lRandom))
 EndFunc   ;==>RndSleep
 

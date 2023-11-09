@@ -46,20 +46,20 @@ Func ManageInventory($STATUS)
 	;WaitMapLoading()
 	;Out("Checking Guild Hall")
 	;CheckGuildHall()
-	;Sleep(GetPing() + 500)
+	;RndSleep(500)
 	;If $STATUS <> "RUNNING" Then Return 2
 	;GoToMerchant()
 	;If $STATUS <> "RUNNING" Then Return 2
 	;BalanceCharacterGold(20000)
 	;If $STATUS <> "RUNNING" Then Return 2
-	;IdentifyAllItems()
+	IdentifyAllItems()
 	;If $STATUS <> "RUNNING" Then Return 2
 
-	ConnectToDatabase()
-	StoreAllItemsData()
-	CompleteItemsNames()
-	CompleteItemsMods()
-	CompleteModsHexa()
+	;ConnectToDatabase()
+	;StoreAllItemsData()
+	;CompleteItemsNames()
+	;CompleteItemsMods()
+	;CompleteModsHexa()
 	;SalvageAndStoreData()
 	DisconnectFromDatabase()
 	Return 0
@@ -137,7 +137,7 @@ Func ReadAllItemsData()
 			$output &= DllStructGetData($item, 'quantity') & ";"
 			$output &= GetOrDefault(DllStructGetData($item, 'Value') & ";", 0)
 			Out($output)
-			Sleep(GetPing()+500)
+			RndSleep(500)
 		Next
 	Next
 EndFunc
@@ -376,7 +376,7 @@ Func Chest()
 	If IsDllStruct($chest)Then
 		Out("Going to " & $chestName)
 		GoToNPC($chest)
-		RndSleep(Random(3000, 4200))
+		RndSleep(3500)
 	EndIf
 EndFunc
 
@@ -424,22 +424,22 @@ Func GoToMerchant()
 	Out("Going to Merchant")
 
 	Do
-		RndSleep(Random(250,500))
+		RndSleep(250)
 		Local $Me = GetAgentByID(-2)
 		Local $guy = GetNearestNPCToCoords(DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y'))
 	Until DllStructGetData($guy, 'Id') <> 0
 	ChangeTarget($guy)
-	RndSleep(Random(250,500))
+	RndSleep(250)
 	GoNPC($guy)
-	RndSleep(Random(250,500))
+	RndSleep(250)
 	Do
 		MoveTo(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
-		RndSleep(Random(500,750))
+		RndSleep(500)
 		GoNPC($guy)
-		RndSleep(Random(250,500))
+		RndSleep(250)
 		Local $Me = GetAgentByID(-2)
 	Until ComputeDistance(DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
-	RndSleep(Random(1000,1500))
+	RndSleep(1000)
 EndFunc
 
 

@@ -63,6 +63,9 @@ Global Const $ID_Imperial_Isle = 359
 Global Const $ID_Isle_Of_Meditation = 360
 Global Const $ID_Kaineng_A_Chance_Encounter = 861
 ;~ Nightfall
+Global Const $ID_Jokos_Domain = 437
+Global Const $ID_Bone_Palace = 438
+Global Const $ID_The_Shattered_Ravines = 441
 Global Const $ID_Uncharted_Isle = 529
 Global Const $ID_Isle_Of_Wurms = 530
 Global Const $ID_Corrupted_Isle = 537

@@ -10,12 +10,15 @@ GUI built with GuiBuilderPlus
 #ce
 
 ; TODO :
-; add option to choose between random travel and specific travel
-; display titles automatically, if it does not pose problems
-; add option for : running bot once, bot X times, bot until inventory full, or bot loop
-; write small bot that : -salvage items (does not work for now) -get material ID -write in file salvaged material
-; add green rarity
-; change bots to have cleaner return system
+; - add option to choose between random travel and specific travel
+; - display titles automatically, if it does not pose problems
+; - add option for : running bot once, bot X times, bot until inventory full, or bot loop
+; - write small bot that : -salvage items (does not work for now) -get material ID -write in file salvaged material
+; - change bots to have cleaner return system
+; - change bots to not have direct access to checkboxes
+
+; BUGLIST :
+; - MinisterialCommendations bot blocks rarely on the spike
 
 #RequireAdmin
 #NoTrayIcon
@@ -39,6 +42,7 @@ GUI built with GuiBuilderPlus
 #include "Utils.au3"
 #include "JadeBrotherhood.au3"
 #include "MinisterialCommendations.au3"
+#include "OmniFarmer.au3"
 #include "Raptors.au3"
 #include "Vaettir-v0.4.au3"
 #include "Storage-Bot.au3"
@@ -76,7 +80,7 @@ Global $TitlesGroup, $AsuraTitleLabel, $DeldrimorTitleLabel, $NornTitleLabel, $V
 Global $GlobalOptionsGroup, $LoopRunsCheckbox, $HMCheckbox, $StoreUnidentifiedGoldItemsCheckbox, $IdentifyGoldItemsCheckbox, $SalvageItemsCheckbox, $SellItemsCheckbox, $DynamicExecutionInput, $DynamicExecutionButton
 Global $ConsumableOptionsGroup, $ConsumeCupcakeCheckbox, $ConsumeCandyAppleCheckbox, $ConsumePumpkingPieSliceCheckbox, $ConsumeGoldenEggCheckbox, $ConsumeCandyCornCheckbox
 Global $BaseLootOptionsGroup, $LootEverythingCheckbox, $LootNothingCheckbox, $LootRareMaterialsCheckbox, $LootBasicMaterialsCheckbox, $LootKeysCheckbox, $LootSalvageItemsCheckbox, $LootTomesCheckbox, $LootDyesCheckbox, $LootScrollsCheckbox
-Global $RarityLootOptionsGroup, $LootGoldItemsCheckbox, $LootPurpleItemsCheckbox, $LootBlueItemsCheckbox, $LootWhiteItemsCheckbox
+Global $RarityLootOptionsGroup, $LootGoldItemsCheckbox, $LootPurpleItemsCheckbox, $LootBlueItemsCheckbox, $LootWhiteItemsCheckbox, $LootGreenItemsCheckbox
 Global $FarmSpecificLootOptionsGroup, $LootGlacialStonesCheckbox, $LootMapPiecesCheckbox, $LootTrophiesCheckbox
 
 Global $ConsumablesLootOptionGroup, $LootCandyCaneShardsCheckbox, $LootLunarTokensCheckbox, $LootToTBagsCheckbox, $LootFestiveItemsCheckbox, $LootAlcoholsCheckbox, $LootSweetsCheckbox
@@ -94,7 +98,7 @@ Func createGUI()
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo("No character selected", 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo("Choose a farm", 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, "Jade Brotherhood|Ministerial Commendations|Raptors|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
+	GUICtrlSetData($FarmChoiceCombo, "Jade Brotherhood|Ministerial Commendations|OmniFarm|Raptors|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
 	$StartButton = GUICtrlCreateButton("Start", 300, 420, 136, 21)
 	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($StartButton, "GuiButtonHandler")
@@ -188,6 +192,7 @@ Func createGUI()
 	$LootBlueItemsCheckbox = GUICtrlCreateCheckbox("Blue items", 176, 279, 106, 20)
 	$LootPurpleItemsCheckbox = GUICtrlCreateCheckbox("Purple items", 176, 309, 106, 20)
 	$LootGoldItemsCheckbox = GUICtrlCreateCheckbox("Gold items", 176, 339, 106, 20)
+	$LootGreenItemsCheckbox = GUICtrlCreateCheckbox("Green items", 176, 369, 106, 20)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	$FarmSpecificLootOptionsGroup = GUICtrlCreateGroup("Farm Specific", 23, 224, 136, 176)
@@ -211,7 +216,14 @@ Func createGUI()
 	$HeroBuildLabel = GUICtrlCreateLabel("Hero build:", 30, 95, 531, 26)
 	$LootComponentsTab = GUICtrlCreateTabItem("Loot components")
 	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
-	$GUITODO = GUICtrlCreateLabel("GUI TODO : (farm specific to Secret Lair of the Snowmen)Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic (specific to Irontoe's lair) Dwarven Ale, Aged Dwarven Ale", 30, 95, 531, 26)
+	$GUITODO = GUICtrlCreateLabel("GUI TODO :" & @CRLF _
+		& "- add option to choose between random travel and specific travel" & @CRLF _
+		& "- display titles automatically, if it does not cause issues" & @CRLF _
+		& "- add option for running bot once, bot X times, bot until inventory full, or bot loop" & @CRLF _
+		& "- write small bot that salvage items (does not work for now), get material ID, write in file salvaged material" & @CRLF _
+		& "- change bots to have cleaner return system" & @CRLF _
+		& "- change system so that the checkbox are not read by other bots" & @CRLF _
+	, 30, 95, 531, 26)
 	GUICtrlCreateTabItem("")
 	
 	GUICtrlSetState($HMCheckbox, $GUI_CHECKED)
@@ -227,6 +239,7 @@ Func createGUI()
 	GUICtrlSetState($LootTomesCheckbox, $GUI_CHECKED)
 	GUICtrlSetState($LootScrollsCheckbox, $GUI_CHECKED)
 	GUICtrlSetState($LootGoldItemsCheckbox, $GUI_CHECKED)
+	GUICtrlSetState($LootGreenItemsCheckbox, $GUI_CHECKED)
 	GUICtrlSetState($LootGlacialStonesCheckbox, $GUI_CHECKED)
 	GUICtrlSetState($LootSweetsCheckbox, $GUI_CHECKED)
 	GUICtrlSetState($LootAlcoholsCheckbox, $GUI_CHECKED)
@@ -355,6 +368,8 @@ Func BotHubLoop()
 					$STATS_MAP["success_code"] = JadeBrotherhoodFarm($STATUS)
 				Case "Ministerial Commendations"
 					$STATS_MAP["success_code"] = MinisterialCommendationsFarm($STATUS)
+				Case "OmniFarm"
+					$STATS_MAP["success_code"] = OmniFarm($STATUS)
 				Case "Raptors"
 					$STATS_MAP["success_code"] = RaptorFarm($STATUS)
 				Case "Vaettirs"
@@ -443,7 +458,7 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 		Exit
 	EndIf
 
-	Sleep(Random(1000,1500))
+	RndSleep(1000)
 
 	Local $WindowList=WinList("Guild Wars")
 	Local $WinHandle = False;
@@ -463,10 +478,10 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 	Local $lDeadLock = Timerinit()
 
 	ControlSend($WinHandle, "", "", "{enter}")
-	Sleep(Random(500,1500))
+	RndSleep(1000)
 	WinSetTitle($WinHandle, "", $char_name & " - Guild Wars")
 	Do
-		Sleep(50)
+		RndSleep(50)
 		$lCheck = GetMapLoading() <> 2
 	Until $lCheck Or TimerDiff($lDeadLock)>15000
 
@@ -474,7 +489,7 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 		ControlSend($WinHandle, "", "", "{enter}")
 		$lDeadLock = Timerinit()
 		Do
-			Sleep(50)
+			RndSleep(50)
 			$lCheck = GetMapLoading() <> 2
 		Until $lCheck Or TimerDiff($lDeadLock)>15000
 	EndIf
@@ -483,7 +498,7 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 		ControlSend($WinHandle, "", "", "{enter}")
 		$lDeadLock = Timerinit()
 		Do
-			Sleep(50)
+			RndSleep(50)
 			$lCheck = GetMapLoading() <> 2
 		Until $lCheck Or TimerDiff($lDeadLock)>15000
 	EndIf
@@ -492,7 +507,7 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 		ControlSend($WinHandle, "", "", "{enter}")
 		$lDeadLock = Timerinit()
 		Do
-			Sleep(50)
+			RndSleep(50)
 			$lCheck = GetMapLoading() <> 2
 		Until $lCheck Or TimerDiff($lDeadLock)>15000
 	EndIf
@@ -503,7 +518,7 @@ Func LOGIN($char_name = "fail", $ProcessID = false)
 		ProcessClose($ProcessID)
 		Exit
 	Else
-		Sleep(Random(2500,3500))
+		RndSleep(3000)
 	EndIf
 EndFunc
 

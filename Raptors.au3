@@ -98,10 +98,10 @@ Func SetupRaptorFarm()
 	;DisableHeroSkills()
 	MoveTo(19649, 16791)
 	Move(20084, 16854)
-	Sleep(1000)
+	RndSleep(1000)
 	WaitMapLoading($ID_Riven_Earth)
 	Move(-26309, -4112)
-	Sleep(1000)
+	RndSleep(1000)
 	WaitMapLoading($ID_Rata_Sum)
 	Out("Resign preparation complete")
 EndFunc
@@ -119,7 +119,7 @@ Func RaptorsFarmLoop()
 	If Not $RenderingEnabled Then ClearMemory()
 	Out("Exiting to Riven Earth")
 	Move(20084, 16854)
-	Sleep(GetPing() + 1000)
+	RndSleep(1000)
 	UseHeroSkill(1, $Raptors_Incoming)
 	WaitMapLoading($ID_Riven_Earth)
 	UseHeroSkill(1, $Raptors_Incoming)
@@ -155,7 +155,7 @@ Func GetBlessing()
 		GoNearestNPCToCoords(-20000, 3000)
 		Dialog(132)
 	EndIf
-	Sleep(250)
+	RndSleep(250)
 EndFunc
 
 Func MoveToBaseOfCave()
@@ -163,19 +163,19 @@ Func MoveToBaseOfCave()
 	If GetIsDead(-2) Then Return
 	Out("Moving to Cave")
 	Move(-22015, -7502)
-	RndSleep(Random(500, 1000))
+	RndSleep(500)
 	UseHeroSkill(1, $Raptors_FallBack)
-	RndSleep(Random(7000, 7800))
+	RndSleep(7000)
 	UseSkill($IAmUnstoppable, $lMe)
 	Moveto(-21333, -8384)
 	UseHeroSkill(1, $Raptors_EnduringHarmony, -2)
-	Sleep(1800)
+	RndSleep(1800)
 	UseHeroSkill(1, $Raptors_MakeHaste, -2)
-	RndSleep(Random(20, 50))
+	RndSleep(50)
 	UseHeroSkill(1, $Raptors_StandYourGround)
-	RndSleep(Random(20, 50))
+	RndSleep(50)
 	UseHeroSkill(1, $Raptors_CantTouchThis)
-	RndSleep(Random(20, 50))
+	RndSleep(50)
 	UseHeroSkill(1, $Raptors_BladeturnRefrain, -2)
 	Move(-20930, -9480, 40)
 EndFunc
@@ -184,7 +184,7 @@ EndFunc
 Func MoveHeroAway()
 	Out("Moving Hero away")
 	CommandAll(-25309, -4212)
-	Sleep(Random(250, 500))
+	RndSleep(500)
 EndFunc
 
 
@@ -221,13 +221,13 @@ Func KillRaptors()
 	If GetIsDead($lme) Then Return
 	Out("Clearing Raptors")
 	UseSkill($IAmUnstoppable, $lMe)
-	RndSleep(Random(40, 60))
+	RndSleep(50)
 	UseSkill($ProtectorsDefense, $lMe)
-	RndSleep(Random(40, 60))
+	RndSleep(50)
 	UseSkill($HundredBlades, $lMe)
-	RndSleep(Random(1400, 1600))
+	RndSleep(1500)
 	UseSkill($WaryStance, $lMe)
-	RndSleep(Random(400, 600))
+	RndSleep(500)
 
 	$lRekoff = GetAgentByName("Rekoff Broodmother")
 
@@ -256,21 +256,21 @@ Func KillRaptors()
 	Next
 
 	If $lSpellCastCount	> 20 Then
-		Sleep(2500)
+		RndSleep(2500)
 	Elseif $lSpellCastCount < 21 Then
-		Sleep(4500)
+		RndSleep(4500)
 	EndIf
 
 	UseSkill($MarkOfPain, $MoPTarget)
-	RndSleep(Random(1000, 1100))
+	RndSleep(1000)
 	UseSkillEx($SoldiersDefense, $lMe)
-	RndSleep(Random(30, 60))
+	RndSleep(50)
 	UseSkill($ShieldBash, $lMe)
-	RndSleep(Random(30, 60))
+	RndSleep(50)
 	UseSkillEx($WhirlwindAttack, GetNearestEnemyToAgent(-2))
-	Sleep(GetPing() + 1500)
+	RndSleep(1500)
 	UseSkill($WhirlwindAttack, GetNearestEnemyToAgent(-2))
-	Sleep(GetPing() + 250)
+	RndSleep(250)
 EndFunc
 
 
@@ -278,7 +278,7 @@ Func BackToTown()
 	Local $result = AssertFarmResult()
 	Out("Porting to Rata Sum")
 	Resign()
-	Sleep(3400)
+	RndSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Rata_Sum)
 	Return $result
@@ -340,7 +340,7 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 	EndIf
 
 	Do
-		Sleep(50)
+		RndSleep(50)
 
 		$lMe = GetAgentByID(-2)
 

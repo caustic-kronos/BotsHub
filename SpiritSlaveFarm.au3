@@ -7,174 +7,154 @@
 #include <File.au3>
 
 ; ==== Constantes ====
-Local Const $DWCommendationsFarmerSkillbar = "OgGlQpVq6smsGFA0XwTsDmL29RTSgB"
-Local Const $CommendationsFarmInformations = "For best results, have :" & @CRLF _
-	& "- 13 Earth Prayers" &@CRLF _
-	& "- 7 Mysticism" & @CRLF _
-	& "- 4 Wind Prayers" & @CRLF _
-	& "- 10 Tactics (shield req + weakness)" & @CRLF _
-	& "- 10 Swordsmanship (sword req + weakness)" & @CRLF _
-	& "- Blessed insignias or Windwalker insignias"& @CRLF _
-	& "- A tactics shield q9 or less with the inscription 'Sleep now in the fire' (+10 armor against fire damage)" & @CRLF _
-	& "- A main hand with +20% enchantments duration and +5 armor" & @CRLF _
+Local Const $SpiritSlaves_Skillbar = "OgCjkOrMLTmXfXfbkXcX0k5iibA"
+Local Const $SpiritSlavesFarmInformations = "For best results, have :" & @CRLF _
+	& "- 16 Earth Prayers" &@CRLF _
+	& "- 13 Mysticism" & @CRLF _
+	& "- 4 Scythe Mastery" & @CRLF _
+	& "- Windwalker insignias"& @CRLF _
+	& "- A scythe of enchanting q4 or less with the inscription 'I have the power' (+5 energy)" & @CRLF _
 	& "- any PCons you wish to use"
 
-Local $Ministerial_Commendations_Farm_Setup = False
+Local $SpiritSlaves_Farm_Setup = False
 
 Local $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
-Local Const $Skill_Conviction = 1
-Local Const $Skill_Grenths_Aura  = 2
-Local Const $Skill_I_am_unstoppable = 3
-;Local Const $Skill_Healing_Signet = 4
-Local Const $Skill_Mystic_Regeneration = 4
-Local Const $Skill_Vital_Boon = 4
-Local Const $Skill_To_the_limit = 5
-Local Const $Skill_Ebon_Battle_Standard_of_Honor = 6
-Local Const $Skill_Hundred_Blades = 7
-Local Const $Skill_Whirlwind_Attack = 8
-
-; ESurge mesmers
-Local Const $Energy_Surge_Skill_Position = 1
-Local Const $ESurge2_Mystic_Healing_Skill_Position = 8
-; Ineptitude mesmer
-Local Const $Stand_your_ground_Skill_position = 6
-Local Const $Make_Haste_Skill_position = 7
-; SoS Ritualist
-Local Const $SoS_Skill_Position = 1
-Local Const $Splinter_Weapon_Skill_Position = 2
-Local Const $Essence_Strike_Skill_Position = 3
-Local Const $Mend_Body_And_Soul_Skill_Position = 5
-Local Const $Spirit_Light = 6
-Local Const $Strength_of_honor_Skill_Position = 8
-Local Const $SoS_Mystic_Healing_Skill_Position = 8
-; Prot Ritualist
-Local Const $SBoon_of_creation_Skill_Position = 1
-Local Const $Soul_Twisting_Skill_Position = 1
-Local Const $Shelter_Skill_Position = 2
-Local Const $Union_Skill_Position = 3
-Local Const $Displacement_Skill_Position = 4
-Local Const $Armor_of_Unfeeling_Skill_Position = 4
-Local Const $Prot_Mystic_Healing_Skill_Position = 7
-; BiP Necro
-Local Const $Recovery_Skill_Position = 8
-Local Const $Blood_bond_Skill_Position = 4
-Local Const $Spirit_Transfer = 4
-
-; Order heros are added to the team
-Local Const $Hero_Mesmer_DPS_1 = 1
-Local Const $Hero_Mesmer_DPS_2 = 2
-Local Const $Hero_Mesmer_DPS_3 = 3
-Local Const $Hero_Mesmer_Ineptitude = 4
-Local Const $Hero_Ritualist_SoS = 5
-Local Const $Hero_Ritualist_Prot = 6
-Local Const $Hero_Necro_BiP = 7
-
-Local Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
-Local Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
+Local Const $Skill_Sand_Shards = 1
+Local Const $Skill_Mystic_Vigor  = 2
+Local Const $Skill_Vow_of_Strength = 3
+Local Const $Skill_Extend_Enchantments = 4
+Local Const $Skill_Mirage_Cloak = 5
+Local Const $Skill_I_am_unstoppable = 6
+Local Const $Skill_Ebon_Battle_Standard_of_Honor = 7
+Local Const $Skill_Heart_of_Fury = 8
 
 #CS
-Character location : 	X: -6322.51318359375, Y: -5266.85986328125
-Heroes locations :
-- Me1 dps				X: -6488.185546875, Y: -5084.078125
-- Me2 dps				X: -6052.578125, Y: -5522.14208984375
-- Me3 dps				X: -5820.1552734375, Y: -5309.80615234375
-- Me1 ineptitude/speed	X: -6041.62353515625, Y: -5072.26220703125
-- Rt SoS				X: -6307.7060546875, Y: -5273.31494140625
-- Rt heal				X: -6244.70703125, Y: -4860.3154296875
-- N BiP					X: -6004.0107421875, Y: -4620.87451171875
+Character location : 	X: , Y: 
+-14520, 6009
+-14620, 3500
 
-Platform center :		X: -6699.40966796875, Y: -5645.5556640625
-Away from loot :		X: -7295.5771484375, Y: -6395.5556640625
+-check Joko's Domain
 
-Travel :
-1st stairs : 			X: -4693.87451171875, Y: -3137.0244140625 (time : until all mobs are dead)
-2nd stairs :			X: -4199.5126953125, Y: -1475.53430175781 (time : 6s no speed)
-3rd stairs :			X: -4709.81005859375, Y: -609.159118652344 (3s)
-1st corner :			X: -3116.35498046875, Y: 650.431457519531 (7s)
-2nd corner :			X: -2518.41357421875, Y: 631.814453125 (1.5s)
-4th stairs :			X: -2096.59228515625, Y: -1067.5732421875 (6s)
-5th stairs :			X: -815.586608886719, Y: -1898.28894042969 (5s)
-last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
+-12657.97, 2609.43
+Take wurm spoor at : 
+-10938.24, 4254.83
 
-DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
+-8255.75, 5320.06
+(starting here use speed if needed)
+-8624.96, 10636.63
+-8261.47, 12808.57
+-4422.35, 19422.67
+-4522.72, 20622.68
+(zoning)
+-9557.11, -10798.98 (go back fast to avoid mobs)
+-7416.00, -7822.87 (wait here for ball)
+Mobs around -8598.36, -5810.52
+Go and kill
+
+-7606.49, -8441.14 (aggro)
+-7929.09, -7803.91 (pull, wait)
+	(-8219.03, -8150.75 alternative)
+				   (target furthest ennemy and kill there)
+				   
+(repeat)
+
+Then repeat the first, twice :
+-7416.00, -7822.87 (wait here for ball)
+Mobs around -8598.36, -5810.52
+Go and kill
+
+
+-8056.33, -9293.79
+-10656.11, -11293.24
+(zoning)
+-4522.72, 20622.68
+
+<repeat>
+
+
+
+Killing sequence : 
+Get close (but don't aggro)
+Sand Shards
+Wait for mana 3s
+Mystic Vigor
+Wait for mana 1.5s
+Vow of Strength
+Run towards mobs
+Extends Enchantments
+(small wait)
+Mirage Cloak
+IAU
+EBSH (Once Melee)
+(Heart of Fury as soon as available)
+Attack twice
+Sand Shards
+
 #CE
 
-Func MinisterialCommendationsFarm($STATUS)
-	If Not($Ministerial_Commendations_Farm_Setup) Then Setup()
-	$loggingFile = FileOpen("commendation_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-
-	If $STATUS <> "RUNNING" Then Return
+Func SpiritSlavesFarm($STATUS)
+	$loggingFile = FileOpen("spiritslaves_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If CountSlots() < 5 Then
 		Out("Inventory full, pausing.")
 		Return 2
 	EndIf
-
-	Out("Entering quest")
-	EnterQuest()
-	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
+	
+	If $STATUS <> "RUNNING" Then Return
+	
+	If Not($SpiritSlaves_Farm_Setup) Then SpiritSlavesFarmSetup()
+	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
 	If $STATUS <> "RUNNING" Then Return
 
-	Out("Preparing to fight")
-	PrepareToFight()
-
-	If $STATUS <> "RUNNING" Then Return
-
-	Out("Fighting the first group")
-	InitialFight()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
-
-	Out("Running to kill spot")
-	RunToKillSpot()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
-
-	Out("Waiting for spike")
-	_FileWriteLog($loggingFile, "Waiting for ball")
-	WaitForPurityBall()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
-
-	Out("Spiking the farm group")
-	KillMinistryOfPurity()
+	Out("Starting a new farm")
+	Patati()
 
 	Out("Picking up loot")
-	PickUpItems(HealWhilePickingItems)
+	PickUpItems()
 
 	RndSleep(1000)
-
-	Out("Travelling back to KC")
-	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	
+	Out ("Moving out of the zone and back again")
+	Patata()
 	FileClose($loggingFile)
 	Return 0
 EndFunc
 
 
-Func Setup()
-	If GetMapID() <> $ID_Kaineng_City Then
-		Out("Travelling to Kaineng City")
-		DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+Func SpiritSlavesFarmSetup()
+	If GetMapID() <> $ID_The_Shattered_Ravines Then
+		If GetMapID() <> $ID_Bone_Palace Then
+			Out("Travelling to Bone Palace")
+			DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+		EndIf
+		SwitchMode($ID_HARD_MODE)
+		
+		; TODO : make all the travel to The Shattered Ravines
 	EndIf
-	LeaveGroup()
-
-	AddHero($ID_Gwen)
-	AddHero($ID_Norgu)
-	AddHero($ID_Razah)
-	AddHero($ID_mesmer_mercenary_hero)
-	AddHero($ID_ritualist_mercenary_hero)
-	AddHero($ID_Xandra)
-	AddHero($ID_Olias)
-
-	SwitchMode($ID_HARD_MODE)
-	$Ministerial_Commendations_Farm_Setup = True
+	$SpiritSlaves_Farm_Setup = True
 EndFunc
 
 
-Func EnterQuest()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Func tata1()
 	Local $lMe, $coordsX, $coordsY
 	$lMe = GetAgentByID(-2)
 	$coordsX = DllStructGetData($lMe, 'X')
@@ -193,77 +173,7 @@ Func EnterQuest()
 EndFunc
 
 
-Func PrepareToFight()
-	;StartingPositions()
-	AlternateStartingPositions2()
-	RndSleep(2500)
-	UseHeroSkill($Hero_Ritualist_SoS, $SoS_Skill_Position)						;SoS - SoS
-	UseHeroSkill($Hero_Necro_BiP, $Recovery_Skill_Position)						;BiP - Recovery
-	RndSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)					;Prot - Shelter
-	RndSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)					;Prot - Union
-	RndSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)			;Prot - Displacement
-	RndSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)			;Prot - Soul Twisting
-	RndSleep(2500)
-	UseHeroSkill($Hero_Ritualist_SoS, $Splinter_Weapon_Skill_Position, -2)		;SoS - Splinter Weapon
-	UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)		;Prot - Armor of Unfeeling
-	RndSleep(11000)
-	UseHeroSkill($Hero_Mesmer_DPS_1, $Energy_Surge_Skill_Position)				;ESurge1 - ESurge
-	UseHeroSkill($Hero_Mesmer_DPS_2, $Energy_Surge_Skill_Position)				;ESurge2 - ESurge
-	UseHeroSkill($Hero_Mesmer_DPS_3, $Energy_Surge_Skill_Position)				;ESurge3 - ESurge
-	UseHeroSkill($Hero_Ritualist_SoS, $Essence_Strike_Skill_Position)			;Sos - Essence Strike
-	UseHeroSkill($Hero_Necro_BiP, $Blood_bond_Skill_Position)					;BiP - Blood Bond
-	RndSleep(2500)
-	; Enemies turn hostile now
-	UseHeroSkill($Hero_Mesmer_Ineptitude, $Stand_your_ground_Skill_position)	;Ineptitude - Stand your ground
-	UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
-	RndSleep(1000)
-EndFunc
-
-
-;~ Move party into a good starting position
-Func StartingPositions()
-	CommandHero($Hero_Mesmer_DPS_1, -6488, -5084)
-	CommandHero($Hero_Mesmer_DPS_2, -6052, -5522)
-	CommandHero($Hero_Mesmer_DPS_3, -5820, -5309)
-	CommandHero($Hero_Mesmer_Ineptitude, -6041, -5072)
-	CommandHero($Hero_Ritualist_SoS, -6307, -5273)
-	CommandHero($Hero_Ritualist_Prot, -6004, -4620)
-	CommandHero($Hero_Necro_BiP, -6244, -4860)
-	MoveTo(-6322, -5266)
-EndFunc
-
-
-;~ Move party into a good starting position
-Func AlternateStartingPositions()
-	CommandHero($Hero_Mesmer_DPS_1, -6175, -6013)
-	CommandHero($Hero_Mesmer_DPS_2, -6151, -5622)
-	CommandHero($Hero_Mesmer_DPS_3, -6201, -5239)
-	CommandHero($Hero_Mesmer_Ineptitude, -5770, -5577)
-	CommandHero($Hero_Ritualist_SoS, -5898, -5836)
-	CommandHero($Hero_Ritualist_Prot, -5911, -5319)
-	CommandHero($Hero_Necro_BiP, -5687, -5155)
-	MoveTo(-6322, -5266)
-EndFunc
-
-
-;~ Move party into a good starting position
-Func AlternateStartingPositions2()
-	CommandHero($Hero_Mesmer_DPS_1, -6524, -5178)
-	CommandHero($Hero_Mesmer_DPS_2, -6165, -5585)
-	CommandHero($Hero_Mesmer_DPS_3, -6224, -5075)
-	CommandHero($Hero_Mesmer_Ineptitude, -6033, -5271)
-	CommandHero($Hero_Ritualist_SoS, -6515, -5510)
-	CommandHero($Hero_Ritualist_Prot, -5766, -5226)
-	CommandHero($Hero_Necro_BiP, -6170, -4792)
-	MoveTo(-6285, -5343)
-EndFunc
-
-
-Func InitialFight()
+Func tata2()
 	Local $deadlock = TimerInit()
 	_FileWriteLog($loggingFile, "New run started")
 	RndSleep(1000)
@@ -334,51 +244,8 @@ Func InitialFight()
 EndFunc
 
 
-;~ Heal Miku and character if they need it
-Func HelpMikuAndCharacter()
-	If DllStructGetData(GetAgentByID(58), 'HP') < 0.50 Then		; Works for some reason (58 = Miku)
-		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, 58)
-		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, 58)
-	ElseIf DllStructGetData(GetAgentByID(-2), 'HP') < 0.40 Then
-		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, -2)
-		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, -2)
-	EndIf
-EndFunc
-
-
-;~ Replace Soul Twisting spirits if needed
-Func RenewSpirits()
-	If GetEffectTimeRemaining(GetEffect($Shelter_Skill_Position)) == 0 _
-		Or GetEffectTimeRemaining(GetEffect($Shelter_Skill_Position)) == 0 Then
-			SoulTwistingRitualistUseSoulTwisting()
-			UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)						;Prot - Shelter
-			RndSleep(1250)
-			SoulTwistingRitualistUseSoulTwisting()
-			UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)						;Prot - Union
-			RndSleep(1250)
-			UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)			;Prot - Armor of Unfeeling
-			RndSleep(50)
-	EndIf
-	If GetEffectTimeRemaining(GetEffect($Displacement_Skill_Position)) == 0 Then
-		SoulTwistingRitualistUseSoulTwisting()
-		UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)					;Prot - Displacement
-		RndSleep(1250)
-		UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)				;Prot - Armor of Unfeeling
-		RndSleep(50)
-	EndIf
-	SoulTwistingRitualistUseSoulTwisting()
-EndFunc
-
-Func SoulTwistingRitualistUseSoulTwisting()
-	If GetEffectTimeRemaining(GetEffect($Soul_Twisting_Skill_Position, $Hero_Ritualist_Prot)) == 0 Then
-		UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)					;Prot - Soul Twisting
-		RndSleep(50)
-	EndIf
-EndFunc
-
-
 ;~ Run to farm spot
-Func RunToKillSpot()
+Func tata3()
 	Local $lDeadLock = TimerInit()
 	MoveTo(-4199, -1475)
 	MoveTo(-4709, -609)
@@ -393,7 +260,7 @@ EndFunc
 
 
 ;~ Wait for all ennemies to be balled
-Func WaitForPurityBall()
+Func tata4()
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 
@@ -456,7 +323,7 @@ EndFunc
 
 
 ;~ Return true if mission failed (you or Miku died)
-Func IsFail()
+Func tata5()
 	If GetIsDead(GetAgentByID(58)) Then
 		Return True
 	Elseif GetIsDead(GetAgentByID(-2)) Then
@@ -467,7 +334,7 @@ EndFunc
 
 
 ;~ Return to outpost in case of failure
-Func ResignAndReturnToOutpost()
+Func tata6()
 	If GetIsDead(GetAgentByID(58)) Then
 		Out("Miku died.")
 		_FileWriteLog($loggingFile, "Miku died.")
@@ -485,7 +352,7 @@ EndFunc
 
 
 ;~ Kill mobs
-Func KillMinistryOfPurity()
+Func tata7()
 	Local $me = GetAgentByID(-2)
 	Local $deadlock
 	Local $foesCount
@@ -593,7 +460,7 @@ Func KillMinistryOfPurity()
 EndFunc
 
 
-Func HealWhilePickingItems()
+Func tata8()
 	If DllStructGetData(GetAgentByID(-2), "HP") < 0.90 Then
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
 			UseSkillEx($Skill_Conviction)
@@ -614,7 +481,7 @@ Func HealWhilePickingItems()
 EndFunc
 
 
-Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
+Func tata9($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
 	If ($skill <> null And IsRecharged($skill)) Then
 		UseSkillEx($skill)
 		RndSleep($skillSleep)
@@ -628,43 +495,4 @@ Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = nu
 		Attack(GetNearestEnemyToAgent(-2))
 		RndSleep($attackSleep)
 	EndIf
-EndFunc
-
-
-;~ Return true if the furthest foe from the player (direction center of Kaineng) is adjacent
-Func IsFurthestMobInBall()
-	Local $furthestEnemy = GetNearestEnemyToCoords(1817, -798)
-	If GetDistance($furthestEnemy, -2) > $RANGE_NEARBY Then Return False
-	Return True
-EndFunc
-
-
-;~ Return true if at least 98% of foes are adjacent to the player (1 foe/50)
-Func MostFoesAdjacentToPlayer()
-
-
-EndFunc
-
-
-Func GetPercentageMobsNearPlayer()
-	Local $foesOnGoodSide = GetFoesOnTopOfTheStairs()
-	Local $adjacentFoes = GetFoesInRangeOfAgent(-2, $RANGE_NEARBY)
-	Return $adjacentFoes[0] / $foesOnGoodSide[0]
-EndFunc
-
-
-Func GetFoesOnTopOfTheStairs()
-	Return GetFoesInRangeOfAgent(-2, 0, IsOnTopOfTheStairs)
-EndFunc
-
-Func GetFoesUnderTheStairs()
-	Return GetFoesInRangeOfAgent(-2, 0, IsUnderTheStairs)
-EndFunc
-
-Func IsOnTopOfTheStairs($agent)
-	Return IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-EndFunc
-
-Func IsUnderTheStairs($agent)
-	Return Not IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
