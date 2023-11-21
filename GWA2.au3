@@ -1886,7 +1886,7 @@ Func UseSkillEx($lSkill, $lTgt = -2, $aTimeout = 3000)
 	UseSkill($lSkill, $lTgt)
 	Do
 		Sleep(50)
-		If GetIsDead(-2) = 1 Then Return
+		If GetIsDead(-2) Then Return
 	Until (Not IsRecharged($lSkill)) Or (TimerDiff($lDeadlock) > $aTimeout)
 	Sleep($lAftercast * 1000)
 EndFunc   ;==>UseSkillEx
@@ -5941,7 +5941,7 @@ Func GetBestTarget($aRange = 1320)
 	Return $lBestTarget
 EndFunc   ;==>GetBestTarget
 
-Func WaitMapLoading($aMapID = 0, $aDeadlock = 10000)
+Func WaitMapLoading($aMapID = 0, $aDeadlock = 10000, $waitingTime = 5000)
 ;~ 	Waits $aDeadlock for load to start, and $aDeadLock for agent to load after map is loaded.
 	Local $lMapLoading
 	Local $lDeadlock = TimerInit()
@@ -5955,7 +5955,7 @@ Func WaitMapLoading($aMapID = 0, $aDeadlock = 10000)
 		If TimerDiff($lDeadlock) > $aDeadlock And $aDeadlock > 0 Then Return False
 	Until $lMapLoading <> 2 And GetMapIsLoaded() And (GetMapID() = $aMapID Or $aMapID = 0)
 
-	RndSleep(5000)
+	RndSleep($waitingTime)
 
 	Return True
 EndFunc   ;==>WaitMapLoading

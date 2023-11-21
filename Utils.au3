@@ -12,57 +12,21 @@ Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	;Local $foesUnder = 0
-	;Local $foesOver = 0
+	Local $rareMaterial = GetItemBySlot(1,6)
+	TraderRequestSell($rareMaterial)
+	;SalvageItemAt(1, 6)
+
+	;Local $positionToGo = FindMiddleOfFoes(-7606, -8441)
+	;Out("finalposition: " & $positionToGo[0] & ";" & $positionToGo[1])
 	;
-	;$foesUnder = GetMobsOverTheLineLimit()[0]
-	;$foesOver = GetMobsOverTheLineLimit()[0]
-	;
-	;Out("Over the line : " & $foesOver)
-	;Out("Under the line : " & $foesUnder)
-
-	;Local $Me
-	;While(True)
-	;	$Me = GetAgentByID(-2)
-	;	Out("Is over the line : " & IsOverLine(1, 4800, DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y')))
-	;	RndSleep(1000)
-	;WEnd
-
-
-	;Func GetEffect($aSkillID = 0, $aHeroNumber = 0)
-	;Func GetSkillbarSkillAdrenaline($aSkillSlot, $aHeroNumber = 0)
-	;PickUpItems()
-	#CS
-	Local $stage = 0
-	Local $target
-	
-	Out("s:" & $stage)
-	TargetNearestEnemy()
-	$stage += 1
-	RndSleep(3000)
-	
-	Out("s:" & $stage)
-	$target = GetCurrentTargetID()
-	Out(DllStructGetData($target, 'ID'))
-	$stage += 1
-	RndSleep(3000)
-	
-	while (true)
-		Out("s:" & $stage)
-		TargetNextEnemy()
-		$target = GetCurrentTargetID()
-		Out(DllStructGetData($target, 'ID'))
-		$stage += 1
-		RndSleep(3000)
-	wend
-	#CE
-	
-	;Out("Tests" & GetMapID())
-	
-	;Local $test = GetLastDialogID()
-	;Out("Tests" & $test)
-	;Out("Tests" & GetLastDialogIDHex($test))
-
+	;Local $target = GetCurrentTarget()
+	;Local $foes = GetFoesInRangeOfAgent($target, $RANGE_AREA)
+	;Local $foe
+	;For $i = 1 To $foes[0]
+	;	$foe = $foes[$i]
+	;	PrintNPCInformations($foe)
+	;	Out("")
+	;Next
 	;Local $lQuestStruct = DllStructCreate('long id;long LogState;byte unknown1[12];long MapFrom;float X;float Y;byte unknown2[8];long MapTo;long Reward;long Objective')
 	;Local $quest = GetQuestByID(457)
 	;Out("id:" & $quest.id)
@@ -242,9 +206,9 @@ Func DefaultShouldPickItem($item)
 		Return GUICtrlRead($LootMapPiecesCheckbox) == $GUI_CHECKED
 	ElseIf IsStackableItem($itemID) Then
 		Return True
-	ElseIf ($itemID == $ID_Lockpick)Then
+	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
-	ElseIf IsLowReqMaxDamage($item) Then
+	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return GUICtrlRead($LootGoldItemsCheckbox) == $GUI_CHECKED
@@ -519,41 +483,10 @@ EndFunc
 ;~ Return true if the item should be salvaged
 ; TODO : refine which items should be salvaged and which should not
 Func ShouldSalvageItem($item)
-	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $rarity = GetRarity($item)
-	;Local $requirement = GetItemReq($item)
-	If IsBasicMaterial($itemID) Then
-		Return False
-	ElseIf IsRareMaterial($itemID) Then
-		Return False
-	ElseIf IsTome($itemID) Then
-		Return False
-	ElseIf IsGoldScroll($itemID) Then
-		Return False
-	ElseIf IsBlueScroll($itemID) Then
-		Return False
-	ElseIf IsKey($itemID) Then
-		Return False
-	ElseIf ($itemID == $ID_Dyes) Then
-		Return False
-	ElseIf ($itemID == $ID_Glacial_Stone) Then
-		Return False
-	ElseIf IsMapPiece($itemID) Then
-		Return False
-	ElseIf IsStackableItem($itemID) Then
-		Return False
-	ElseIf ($itemID == $ID_Lockpick)Then
-		Return False
-	ElseIf ($rarity == $RARITY_Gold) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Green) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Purple) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Blue) Then
-		Return False
-	ElseIf ($rarity == $RARITY_White) Then
+	If IsWeapon($item) And GetRarity($item) <> $RARITY_Green Then
 		Return True
+	ElseIf IsTrophy($item) Then
+		Return False
 	EndIf
 	Return False
 EndFunc
@@ -586,19 +519,67 @@ EndFunc
 
 ;~ Salvage all items from inventory (non functional)
 Func SalvageAllItems()
-	For $bagIndex = 1 To 5
-		Local $bag = GetBag($bagIndex)
-		Local $item
-		For $i = 1 To DllStructGetData($bag, "slots")
-			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, "ID") = 0 Then ContinueLoop
-			
-			Local $salvageKit = FindSalvageKitOrBuySome()
-			SalvageItem($item)
-			RndSleep(500)
+	Out("Salvaging all items")
+	For $bagIndex = 1 To 4
+		Out("Salvaging bag" & $bagIndex)
+		Local $bagSize = DllStructGetData(GetBag($bagIndex), "slots")
+		For $i = 1 To $bagSize
+			SalvageItemAt($bagIndex, $i)
 		Next
 	Next
 EndFunc
+
+
+Func SalvageItemAt($bag, $slot)
+	Out("Salvaging bag " & $bag & ", slot " & $slot)
+	Local $item = GetItemBySlot($bag, $slot)
+	Out("ItemID " & DllStructGetData($item, "ID"))
+	If DllStructGetData($item, "ID") = 0 Then Return
+	
+	Local $salvageKit = FindSalvageKitOrBuySome()
+	Out("Salvage kit " & $salvageKit)
+	If (ShouldSalvageItem($item) And CountSlots() > 0) Then
+		Out("Starting salvage")
+		SalvageItem($item, $salvageKit)
+	;	RndSleep(500)
+	;	If GetRarity($item) == $RARITY_gold Then
+	;		Out("Sending enter")
+	;		ControlSend(GetWindowHandle(), "", "", "{Enter}")
+	;		RndSleep(500)
+	;	EndIf
+	;	Out("Salvage done")
+	EndIf
+EndFunc
+
+#CS
+10:45 - Starting...
+10:45 - Salvaging bag 1, slot 6
+10:45 - ItemID 2251
+10:45 - Salvage kit 1274
+10:45 - Starting salvage
+10:45 - Salvage session 
+10:45 - Enqueueing
+10:45 - Sending enter
+10:45 - Salvage done
+10:45 - Paused.
+#CE
+
+
+Func SalvageItem($item, $kit)
+	Local $itemID = DllStructGetData($item, 'ID')
+	Local $lOffset[4] = [0, 0x18, 0x2C, 0x690]
+	Out("Reading")
+
+	Local $salvageSessionID = LoggingMemoryReadPtr($mBasePointer, $lOffset)
+
+	Out("Salvage session " & $salvageSessionID[1])
+
+	DllStructSetData($mSalvage, 2, $itemID)
+	DllStructSetData($mSalvage, 3, $kit)
+	DllStructSetData($mSalvage, 4, $salvageSessionID[1])
+	Out("Enqueueing")
+	LoggingEnqueue($mSalvagePtr, 16)
+EndFunc 
 
 
 ;~ Find an identification Kit in inventory or buy one. Return the ID of the kit or 0 if no kit was bought
@@ -645,29 +626,6 @@ EndFunc
 
 
 #Region Merchants
-;~ Go to the NPC the closest to given coordinates
-Func GoNearestNPCToCoords($x, $y)
-	Local $guy, $Me
-	Do
-		RndSleep(100)
-		$guy = GetNearestNPCToCoords($x, $y)
-	Until DllStructGetData($guy, 'Id') <> 0
-	ChangeTarget($guy)
-	RndSleep(250)
-	GoNPC($guy)
-	RndSleep(250)
-	Do
-		RndSleep(250)
-		Move(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
-		RndSleep(250)
-		GoNPC($guy)
-		RndSleep(250)
-		$Me = GetAgentByID(-2)
-	Until ComputeDistance(DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
-	RndSleep(250)
-EndFunc
-
-
 ;~ Return true if the item should be sold to the merchant
 ; TODO : refine which items should be sold and which should not
 Func ShouldSellItem($item)
@@ -1054,38 +1012,75 @@ EndFunc
 
 
 #Region NPCs
-;~ Count foes in range of the agent
+;~ Print NPC informations
+Func PrintNPCInformations($npc)
+	Out("ID: " & DllStructGetData($npc, 'ID'))
+	Out("X: " & DllStructGetData($npc, 'X'))
+	Out("Y: " & DllStructGetData($npc, 'Y'))
+	Out("TypeMap: " & DllStructGetData($npc, 'TypeMap'))
+	Out("Allegiance: " & DllStructGetData($npc, 'Allegiance'))
+	Out("Effects: " & DllStructGetData($npc, 'Effects'))
+	Out("ModelState: " & DllStructGetData($npc, 'ModelState'))
+	Out("NameProperties: " & DllStructGetData($npc, 'NameProperties'))
+	Out("Type: " & DllStructGetData($npc, 'Type'))
+	Out("ExtraType: " & DllStructGetData($npc, 'ExtraType'))
+EndFunc
+
+
+#Region Counting NPCs
+;~ Count foes in range of the given agent
 Func CountFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 	Return CountNPCsInRangeOfAgent(3, $agent, $range, $condition)
 EndFunc
 
 
-;~ Count allies in range of the agent
-Func CountAlliesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
-	Return CountNPCsInRangeOfAgent(6, $agent, $range, $condition)
+;~ Count foes in range of the given coordinates
+Func CountFoesInRangeOfCoords($xCoord = null, $yCoord = null, $range = 0, $condition = null)
+	Return CountNPCsInRangeOfCoords(3, $xCoord, $yCoord, $range, $condition)
 EndFunc
 
 
-;~ Get foes in range of the agent
+;~ Count allies in range of the given coordinates
+Func CountAlliesInRangeOfCoords($xCoord = null, $yCoord = null, $range = 0, $condition = null)
+	Return CountNPCsInRangeOfCoords(6, $xCoord, $yCoord, $range, $condition)
+EndFunc
+
+
+;~ Count NPCs in range of the given agent
+Func CountNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $condition = null)
+	If $agent <> -2 Then Return CountNPCsInRangeOfCoords($npcAllegiance, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $range, $condition)
+	Return CountNPCsInRangeOfCoords($npcAllegiance, null, null, $range, $condition)
+EndFunc
+#EndRegion Counting NPCs
+
+
+#Region Getting NPCs
+;~ Get foes in range of the given agent
 Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 	Return GetNPCsInRangeOfAgent(3, $agent, $range, $condition)
 EndFunc
 
 
-;~ Get allies in range of the agent
-Func GetAlliesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
-	Return GetNPCsInRangeOfAgent(6, $agent, $range, $condition)
+;~ Get foes in range of the given coordinates
+Func GetFoesInRangeOfCoords($xCoord = null, $yCoord = null, $range = 0, $condition = null)
+	Return GetNPCsInRangeOfCoords(3, $xCoord, $yCoord, $range, $condition)
 EndFunc
 
 
-;~ Count NPCs in range of the agent
-Func CountNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $condition = null)
-	;Return GetNPCsInRangeOfAgent($npcAllegiance, $agent, $range, $condition)[0]
+;~ Get NPCs in range of the given agent
+Func GetNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $condition = null)
+	If $agent <> -2 Then Return GetNPCsInRangeOfCoords($npcAllegiance, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $range, $condition)
+	Return GetNPCsInRangeOfCoords($npcAllegiance, null, null, $range, $condition)
+EndFunc
+#EndRegion Getting NPCs
+
+
+;~ Count NPCs in range of the given coordinates
+Func CountNPCsInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+	;Return GetNPCsInRangeOfCoords($npcAllegiance, $coordX, $coordY, $range, $condition)[0]
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
 	Local $count = 0
-
-	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
 
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
@@ -1093,7 +1088,14 @@ Func CountNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $co
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
-		If $range > 0 And GetDistance($agent, $curAgent) > $range Then ContinueLoop
+		If $range > 0 Then
+			If $coordX == null Or $coordY == null Then
+				Local $me = GetAgentByID(-2)
+				$coordX = DllStructGetData($me, 'X')
+				$coordY = DllStructGetData($me, 'Y')
+			EndIf
+			If ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		EndIf
 		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
 		$count += 1
 	Next
@@ -1102,15 +1104,11 @@ Func CountNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $co
 EndFunc
 
 
-;~ Get NPCs in range of the agent
-Func GetNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $condition = null)
+;~ Get NPCs in range of the given coordinates
+Func GetNPCsInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
 	Local $returnAgents[1] = [0]
-
-	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
-
-	Local $agentID = DllStructGetData($agent, 'ID')
 
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
@@ -1118,19 +1116,113 @@ Func GetNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $cond
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
-		If $range > 0 And GetDistance($agent, $curAgent) > $range Then ContinueLoop
+		If $range > 0 Then
+			If $coordX == null Or $coordY == null Then
+				Local $me = GetAgentByID(-2)
+				$coordX = DllStructGetData($me, 'X')
+				$coordY = DllStructGetData($me, 'Y')
+			EndIf
+			If ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		EndIf
 		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
 		
 		_ArrayAdd($returnAgents, $curAgent)
 		$returnAgents[0] += 1
 	Next
-
 	Return $returnAgents
+EndFunc
+
+
+;~ Get NPCs in range of the given coordinates
+Func GetNearestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+	Local $me = GetAgentByID(-2)
+	Local $agents = GetAgentArray(0xDB)
+	Local $smallestDistance = 99999
+	Local $returnAgent
+	Local $curAgent
+
+	For $i = 1 To $agents[0]
+		$curAgent = $agents[$i]
+		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
+		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		Local $curDistance = GetDistance($me, $curAgent)
+		If $coordX == null Or $coordY == null Then
+			$coordX = DllStructGetData($me, 'X')
+			$coordY = DllStructGetData($me, 'Y')
+		EndIf
+		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		If $curDistance < $smallestDistance Then
+			$returnAgent = $curAgent
+			$smallestDistance = $curDistance
+		EndIf
+	Next
+
+	Return $returnAgent
 EndFunc
 #EndRegion NPCs
 
 
+#Region Actions
+;~ Go to the NPC the closest to given coordinates
+Func GoNearestNPCToCoords($x, $y)
+	Local $guy
+	Do
+		RndSleep(100)
+		$guy = GetNearestNPCToCoords($x, $y)
+	Until DllStructGetData($guy, 'Id') <> 0
+	ChangeTarget($guy)
+	RndSleep(250)
+	GoNPC($guy)
+	RndSleep(250)
+	Do
+		RndSleep(250)
+		Move(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
+		RndSleep(250)
+		GoNPC($guy)
+		RndSleep(250)
+	Until ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
+	RndSleep(250)
+EndFunc
 
+
+;~ Get close to a mob without aggroing it
+Func GetAlmostInRangeOfAgent($tgtAgent)
+	Local $xMe = DllStructGetData($me, 'X')
+	Local $yMe = DllStructGetData($me, 'Y')
+	Local $xTgt = DllStructGetData($tgtAgent, 'X')
+	Local $yTgt = DllStructGetData($tgtAgent, 'Y')
+	
+	Local $distance = ComputeDistance($xTgt, $yTgt, $xMe, $yMe)
+	If ($distance < $RANGE_SPELLCAST) Then Return
+
+	Local $ratio = ($RANGE_SPELLCAST + 100) / $distance
+		
+	Local $xGo = $xMe + ($xTgt - $xMe) * (1 - $ratio)
+	Local $yGo = $yMe + ($yTgt - $yMe) * (1 - $ratio)
+	MoveTo($xGo, $yGo, 0)
+EndFunc
+
+
+;~ Use one of the skill mentionned if available, else attack
+Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
+	If ($skill <> null And IsRecharged($skill)) Then
+		UseSkillEx($skill)
+		RndSleep($skillSleep)
+	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then
+		UseSkillEx($skill2)
+		RndSleep($skill2Sleep)
+	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then
+		UseSkillEx($skill3)
+		RndSleep($skill3Sleep)
+	Else
+		Attack(GetNearestEnemyToAgent(-2))
+		RndSleep($attackSleep)
+	EndIf
+EndFunc
+#EndRegion Actions
 
 
 
@@ -1184,14 +1276,13 @@ EndFunc
 ; TODO: unused, keep
 Func WaitUntilAllFoesAreInRange($lRange)
 	Local $lAgentArray = GetAgentArray(0xDB)
-	Local $lMe = GetAgentByID(-2)
 	Local $lDistance
 	While True
 		RndSleep(100)
-		If GetIsDead($lMe) Then Return
+		If GetIsDead(-2) Then Return
 		StayAlive($lAgentArray)
 		For $i = 1 To $lAgentArray[0]
-			$lDistance = GetPseudoDistance($lMe, $lAgentArray[$i])
+			$lDistance = GetPseudoDistance(GetAgentByID(-2), $lAgentArray[$i])
 			If $lDistance < $RANGE_SPELLCAST_2 And $lDistance > $lRange^2 Then Return
 		Next
 	WEnd

@@ -35,7 +35,7 @@ Local Const $RaptorsFarmInformations = "For best results, have :" & @CRLF _
 	& "- A superior Absorption rune" & @CRLF _
 	& "- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership" & @CRLF _
 	& "- Golden Eggs"
-; Skill numbers declared to make the code WAY more readable (UseSkill($MarkOfPain  is better than UseSkill(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain)  is better than UseSkillEx(1))
 Local Const $MarkOfPain = 1
 Local Const $IAmUnstoppable = 2
 Local Const $ProtectorsDefense = 3
@@ -140,11 +140,10 @@ EndFunc
 
 
 Func DefendWhilePickingUpItems()
-	Local $lme = GetAgentByID(-2)
-	If GetEnergy($lMe) > 5 And IsRecharged($IAmUnstoppable) Then UseSkillEx($IAmUnstoppable)
-	If GetEnergy($lMe) > 5 And IsRecharged($SoldiersDefense) Then UseSkillEx($SoldiersDefense)
-	If GetEnergy($lMe) > 5 And IsRecharged($ShieldBash) Then UseSkillEx($ShieldBash)
-	If GetEnergy($lMe) > 10 And IsRecharged($WaryStance) Then UseSkillEx($WaryStance)
+	If GetEnergy(-2) > 5 And IsRecharged($IAmUnstoppable) Then UseSkillEx($IAmUnstoppable)
+	If GetEnergy(-2) > 5 And IsRecharged($SoldiersDefense) Then UseSkillEx($SoldiersDefense)
+	If GetEnergy(-2) > 5 And IsRecharged($ShieldBash) Then UseSkillEx($ShieldBash)
+	If GetEnergy(-2) > 10 And IsRecharged($WaryStance) Then UseSkillEx($WaryStance)
 EndFunc
 
 
@@ -159,14 +158,13 @@ Func GetBlessing()
 EndFunc
 
 Func MoveToBaseOfCave()
-	Local $lme = GetAgentByID(-2)
 	If GetIsDead(-2) Then Return
 	Out("Moving to Cave")
 	Move(-22015, -7502)
 	RndSleep(500)
 	UseHeroSkill(1, $Raptors_FallBack)
 	RndSleep(7000)
-	UseSkill($IAmUnstoppable, $lMe)
+	UseSkillEx($IAmUnstoppable)
 	Moveto(-21333, -8384)
 	UseHeroSkill(1, $Raptors_EnduringHarmony, -2)
 	RndSleep(1800)
@@ -190,23 +188,22 @@ EndFunc
 
 Func GetRaptors()
 	Out("Gathering Raptors")
-	Local $MoPTarget = GetNearestEnemyToAgent(-2)
-	Local $CheckTarget
+	Local $target = GetNearestEnemyToAgent(-2)
 	
 	Move(-20695, -9900, 20)
 	;Using the nearest to agent could result in targeting Angorodon if they are badly placed
-	;$MoPTarget = GetNearestEnemyToAgent(-2)
-	$MoPTarget = GetNearestEnemyToCoords(-20042, -10251)
+	;$target = GetNearestEnemyToAgent(-2)
+	$target = GetNearestEnemyToCoords(-20042, -10251)
 	
-	UseSkill($ShieldBash, -2)
-	UseSkillEx($MarkOfPain, $MoPTarget)
+	UseSkillEx($ShieldBash)
+	UseSkillEx($MarkOfPain, $target)
 
-	$CheckTarget = TargetNearestEnemy()
-	MoveAggroingRaptors(-20042, -10251, 50, $CheckTarget)
+	$target = TargetNearestEnemy()
+	MoveAggroingRaptors(-20042, -10251, 50, $target)
 	MoveTo(-19700, -10650, 50)
 	MoveTo(-19650, -11500, 50)
 	MoveTo(-20535, -12000, 50)
-	MoveAggroingRaptors(-21490, -12175, 50, $CheckTarget)
+	MoveAggroingRaptors(-21490, -12175, 50, $target)
 	MoveTo(-22000, -11927, 50)
 	TargetNearestEnemy()
 	MoveTo(-22450, -11820, 20)
@@ -215,23 +212,22 @@ EndFunc
 
 Func KillRaptors()
 	Local $MoPTarget
-	Local $lMe = GetAgentByID(-2)
 	Local $lRekoff
 
-	If GetIsDead($lme) Then Return
+	If GetIsDead(-2) Then Return
 	Out("Clearing Raptors")
-	UseSkill($IAmUnstoppable, $lMe)
+	UseSkillEx($IAmUnstoppable)
 	RndSleep(50)
-	UseSkill($ProtectorsDefense, $lMe)
+	UseSkillEx($ProtectorsDefense)
 	RndSleep(50)
-	UseSkill($HundredBlades, $lMe)
+	UseSkillEx($HundredBlades)
 	RndSleep(1500)
-	UseSkill($WaryStance, $lMe)
+	UseSkillEx($WaryStance)
 	RndSleep(500)
 
 	$lRekoff = GetAgentByName("Rekoff Broodmother")
 
-	If ComputeDistance(DllStructGetData($lMe, 'X'), DllStructGetData($lMe, 'Y'), DllStructGetData($lRekoff, 'X'), DllStructGetData($lRekoff, 'Y')) > 1500 Then
+	If ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), DllStructGetData($lRekoff, 'X'), DllStructGetData($lRekoff, 'Y')) > 1500 Then
 		$MoPTarget = GetNearestEnemyToAgent(-2)
 	Else
 		$MoPTarget = GetNearestEnemyToAgent($lRekoff)
@@ -248,8 +244,8 @@ Func KillRaptors()
 
 	$lAgentArray = GetAgentArray(0xDB)
 
-	For $i=1 To $lAgentArray[0]
-	$lDistance = GetPseudoDistance($lMe, $lAgentArray[$i])
+	For $i = 1 To $lAgentArray[0]
+	$lDistance = GetPseudoDistance(GetAgentByID(-2), $lAgentArray[$i])
 		If $lDistance < $RANGE_SPELLCAST_2 Then
 			$lSpellCastCount += 1
 		EndIf
@@ -261,15 +257,15 @@ Func KillRaptors()
 		RndSleep(4500)
 	EndIf
 
-	UseSkill($MarkOfPain, $MoPTarget)
+	UseSkillEx($MarkOfPain, $MoPTarget)
 	RndSleep(1000)
-	UseSkillEx($SoldiersDefense, $lMe)
+	UseSkillEx($SoldiersDefense)
 	RndSleep(50)
-	UseSkill($ShieldBash, $lMe)
+	UseSkillEx($ShieldBash)
 	RndSleep(50)
 	UseSkillEx($WhirlwindAttack, GetNearestEnemyToAgent(-2))
 	RndSleep(1500)
-	UseSkill($WhirlwindAttack, GetNearestEnemyToAgent(-2))
+	UseSkillEx($WhirlwindAttack, GetNearestEnemyToAgent(-2))
 	RndSleep(250)
 EndFunc
 
@@ -294,14 +290,13 @@ Func AssertFarmResult()
 		Return 1
 	EndIf
 
-	Local $lMe = GetAgentByID(-2)
 	Local $lAdjacentCount
 	Local $lAgentArray
 
 	$lAgentArray = GetAgentArray(0xDB)
 
 	For $i=1 To $lAgentArray[0]
-		If GetPseudoDistance($lMe, $lAgentArray[$i]) < $RANGE_ADJACENT_2 Then $lAdjacentCount += 1
+		If GetPseudoDistance(GetAgentByID(-2), $lAgentArray[$i]) < $RANGE_ADJACENT_2 Then $lAdjacentCount += 1
 	Next
 
 	If $lAdjacentCount > 0 Then
@@ -317,7 +312,7 @@ EndFunc
 Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 	If GetIsDead(-2) Then Return
 
-	Local $lMe, $lAgentArray
+	Local $lAgentArray
 	Local $lBlocked
 	Local $lAdjacentCount, $lDistance
 	Local $timer = TimerInit()
@@ -325,11 +320,10 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 
 	Move($lDestX, $lDestY, $lRandom)
 
-	$lMe = GetAgentByID(-2)
 	$lAgentArray = GetAgentArray(0xDB)
 
-	For $i=1 To $lAgentArray[0]
-	$lDistance = GetPseudoDistance($lMe, $lAgentArray[$i])
+	For $i = 1 To $lAgentArray[0]
+		$lDistance = GetPseudoDistance(GetAgentByID(-2), $lAgentArray[$i])
 		If $lDistance < $RANGE_ADJACENT_2 Then
 			$lAdjacentCount += 1
 		EndIf
@@ -342,11 +336,9 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 	Do
 		RndSleep(50)
 
-		$lMe = GetAgentByID(-2)
+		If GetIsDead(-2) Then Return
 
-		If GetIsDead($lMe) Then Return
-
-		If DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0 Then
+		If DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0 Then
 			$lBlocked += 1
 			Move($lDestX, $lDestY, $lRandom)
 		EndIf
@@ -371,5 +363,5 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 
 		If $timerCount > 0 Then Return
 
-	Until ComputeDistance(DllStructGetData($lMe, 'X'), DllStructGetData($lMe, 'Y'), $lDestX, $lDestY) < $lRandom*1.5
+	Until ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $lDestX, $lDestY) < $lRandom*1.5
 EndFunc

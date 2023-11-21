@@ -23,7 +23,7 @@ Local $Ministerial_Commendations_Farm_Setup = False
 
 Local $loggingFile
 
-; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
 Local Const $Skill_Conviction = 1
 Local Const $Skill_Grenths_Aura  = 2
 Local Const $Skill_I_am_unstoppable = 3
@@ -175,10 +175,8 @@ EndFunc
 
 
 Func EnterQuest()
-	Local $lMe, $coordsX, $coordsY
-	$lMe = GetAgentByID(-2)
-	$coordsX = DllStructGetData($lMe, 'X')
-	$coordsY = DllStructGetData($lMe, 'Y')
+	Local $coordsX = DllStructGetData(GetAgentByID(-2), 'X')
+	Local $coordsY = DllStructGetData(GetAgentByID(-2), 'Y')
 
 	If -1400 < $coordsX And $coordsX < -550 And - 2000 < $coordsY And $coordsY < -1100 Then
 		MoveTo(1474, -1197, 0)
@@ -405,7 +403,7 @@ Func WaitForPurityBall()
 
 	UseEgg()
 
-	_FileWriteLog($loggingFile, "Initial foes count - " & GetFoesOnTopOfTheStairs()[0])
+	_FileWriteLog($loggingFile, "Initial foes count - " & CountFoesOnTopOfTheStairs())
 
 	While Not GetisDead(-2) And TimerDiff($deadlock) < 75000 And Not IsFurthestMobInBall()
 		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
@@ -457,9 +455,9 @@ EndFunc
 
 ;~ Return true if mission failed (you or Miku died)
 Func IsFail()
-	If GetIsDead(GetAgentByID(58)) Then
+	If GetIsDead(58) Then
 		Return True
-	Elseif GetIsDead(GetAgentByID(-2)) Then
+	Elseif GetIsDead(-2) Then
 		Return True
 	EndIf
 	Return False
@@ -468,36 +466,30 @@ EndFunc
 
 ;~ Return to outpost in case of failure
 Func ResignAndReturnToOutpost()
-	If GetIsDead(GetAgentByID(58)) Then
+	If GetIsDead(58) Then
 		Out("Miku died.")
 		_FileWriteLog($loggingFile, "Miku died.")
-	ElseIf GetIsDead(GetAgentByID(-2)) Then
+	ElseIf GetIsDead(-2) Then
 		Out("Player died")
 		_FileWriteLog($loggingFile, "Character died.")
 	EndIf
-	RndSleep(5000)
-	Resign()
-	RndSleep(3400)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Kaineng_City)
+	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
 	Return 1
 EndFunc
 
 
 ;~ Kill mobs
 Func KillMinistryOfPurity()
-	Local $me = GetAgentByID(-2)
 	Local $deadlock
 	Local $foesCount
 
-	If DllStructGetData($me, "HP") < 0.60 And IsRecharged($Skill_Grenths_Aura) Then
+	If DllStructGetData(GetAgentByID(-2), "HP") < 0.60 And IsRecharged($Skill_Grenths_Aura) Then
 		UseSkillEx($Skill_Grenths_Aura)
 		RndSleep(50)
 	EndIf
 
-	Out("EBSO")
 	While IsRecharged($Skill_Ebon_Battle_Standard_of_Honor)
-		If GetIsDead($me) Then Return
+		If GetIsDead(-2) Then Return
 		UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
 		RndSleep(50)
 
@@ -509,16 +501,14 @@ Func KillMinistryOfPurity()
 		EndIf
 	WEnd
 
-	Out("100B")
 	While IsRecharged($Skill_Hundred_Blades)
-		If GetIsDead($me) Then Return
+		If GetIsDead(-2) Then Return
 		UseSkillEx($Skill_Hundred_Blades)
 		RndSleep(50)
 	WEnd
 
-	Out("Grenth Aura")
 	If IsRecharged($Skill_Grenths_Aura) Then
-		If GetIsDead($me) Then Return
+		If GetIsDead(-2) Then Return
 		UseSkillEx($Skill_Grenths_Aura)
 		RndSleep(50)
 	EndIf
@@ -526,9 +516,8 @@ Func KillMinistryOfPurity()
 	Local $initialFoeCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 
 	;~ Whirlwind attack needs specific care to be used
-	Out("Whirlwind")
 	While IsRecharged($Skill_Whirlwind_Attack)
-		If GetIsDead($me) Then Return
+		If GetIsDead(-2) Then Return
 
 		; Heroes with Mystic Healing provide additional long range support
 		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
@@ -552,9 +541,8 @@ Func KillMinistryOfPurity()
 
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
-	Out("Finish")
 	While $foesCount > 0 And TimerDiff($deadlock) < 10000
-		If GetIsDead($me) Then Return
+		If GetIsDead(-2) Then Return
 		If DllStructGetData(GetAgentByID(-2), "HP") < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
@@ -574,9 +562,8 @@ Func KillMinistryOfPurity()
 		;	UseSkillEx($Skill_Mystic_Regeneration)
 		;	RndSleep(300)
 		ElseIf GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) == 130 Then
-			Out("Finish with Whirlwind")
 			While IsRecharged($Skill_Whirlwind_Attack) And TimerDiff($deadlock) < 10000
-				If GetIsDead($me) Then Return
+				If GetIsDead(-2) Then Return
 				UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(-2))
 				RndSleep(250)
 			WEnd
@@ -614,23 +601,6 @@ Func HealWhilePickingItems()
 EndFunc
 
 
-Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
-	If ($skill <> null And IsRecharged($skill)) Then
-		UseSkillEx($skill)
-		RndSleep($skillSleep)
-	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then
-		UseSkillEx($skill2)
-		RndSleep($skill2Sleep)
-	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then
-		UseSkillEx($skill3)
-		RndSleep($skill3Sleep)
-	Else
-		Attack(GetNearestEnemyToAgent(-2))
-		RndSleep($attackSleep)
-	EndIf
-EndFunc
-
-
 ;~ Return true if the furthest foe from the player (direction center of Kaineng) is adjacent
 Func IsFurthestMobInBall()
 	Local $furthestEnemy = GetNearestEnemyToCoords(1817, -798)
@@ -639,31 +609,20 @@ Func IsFurthestMobInBall()
 EndFunc
 
 
-;~ Return true if at least 98% of foes are adjacent to the player (1 foe/50)
-Func MostFoesAdjacentToPlayer()
-
-
+Func CountFoesOnTopOfTheStairs()
+	Return CountFoesInRangeOfAgent(-2, 0, IsOnTopOfTheStairs)
 EndFunc
 
 
-Func GetPercentageMobsNearPlayer()
-	Local $foesOnGoodSide = GetFoesOnTopOfTheStairs()
-	Local $adjacentFoes = GetFoesInRangeOfAgent(-2, $RANGE_NEARBY)
-	Return $adjacentFoes[0] / $foesOnGoodSide[0]
+Func CountFoesUnderTheStairs()
+	Return CountFoesInRangeOfAgent(-2, 0, IsUnderTheStairs)
 EndFunc
 
-
-Func GetFoesOnTopOfTheStairs()
-	Return GetFoesInRangeOfAgent(-2, 0, IsOnTopOfTheStairs)
-EndFunc
-
-Func GetFoesUnderTheStairs()
-	Return GetFoesInRangeOfAgent(-2, 0, IsUnderTheStairs)
-EndFunc
 
 Func IsOnTopOfTheStairs($agent)
 	Return IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
+
 
 Func IsUnderTheStairs($agent)
 	Return Not IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))

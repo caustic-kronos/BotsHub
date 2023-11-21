@@ -42,8 +42,13 @@ Global Const $ID_RUSSIAN = 10
 
 
 #Region Game Locations
+;~ Generic
+Global Const $ID_Outpost = 0
+Global Const $ID_Explorable = 1
+Global Const $ID_Loading = 2
 ;~ Battle Isles
 Global Const $ID_Great_Temple_of_Balthazar = 248
+Global Const $ID_Embark_Beach = 857
 ;~ Prophecies
 Global Const $ID_Warriors_Isle = 4
 Global Const $ID_Hunters_Isle = 5
@@ -163,6 +168,10 @@ Global Const $ID_ZeiRi = 37
 Global Const $ID_Conviction = 1540
 Global Const $ID_Mystic_Regeneration = 1516
 Global Const $ID_Vital_Boon = 1506
+
+Global Const $ID_Mystic_Vigor = 1503
+Global Const $ID_Mirage_Cloak = 1500
+Global Const $ID_Heart_of_Fury = 1762
 ; Warrior
 Global Const $ID_Healing_Signet = 1
 Global Const $ID_To_The_Limit = 316

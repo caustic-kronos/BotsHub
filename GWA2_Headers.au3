@@ -5,13 +5,12 @@
 ; v1.6, source: github.com/rheek123/GwBotApiPatcher
 ;
 ; This file contains all headers that gwa2 uses to communicate with the gameservers directly.
-;
 ; The headers are named variables. The names should indicate what the header is about.
 ; The comments give a litte more detail about what the header does.
 ;
-; This makes the source code of gwa2 a little better readable. Also it allows to update headers more easily, as they
-; are all now in a small separate place as a list to work yourself through.
 ; If you need to update the headers, the comments give hints about what action to trigger while recording CtoGS packets..
+;
+; Night edit : if you wish to have a better, updated list of those headers, look up Opcodes.h from GWCA, the values are the same
 
 #include-once
 ;=QUEST=
@@ -27,7 +26,7 @@ Global Const $HEADER_HERO_AGGRESSION = 0x13	;Sets the heroes aggression level
 ;GAME_CMSG_HERO_LOCK_TARGET
 Global Const $HEADER_HERO_LOCK = 0x14	;Locks the heroes target
 ;GAME_CMSG_HERO_SKILL_TOGGLE
-Global Const $HEADER_HERO_TOGGLE_SKILL = 0x17	;Enables or disables the heroes skill
+Global Const $HEADER_HERO_TOGGLE_SKILL = 0x19	;Enables or disables the heroes skill
 ;GAME_CMSG_HERO_FLAG_SINGLE
 Global Const $HEADER_HERO_PLACE_FLAG = 0x18	;Sets the heroes position flag, hero runs to position
 Global Const $HEADER_HERO_CLEAR_FLAG = 0x18	;Clears the heroes position flag
@@ -100,6 +99,8 @@ Global Const $HEADER_SALVAGE_MATS = 0x78	;Salvages materials from item
 Global Const $HEADER_SALVAGE_MODS = 0x79	;Salvages mods from item
 ;GAME_CMSG_ITEM_SALVAGE_UPGRADE
 Global Const $HEADER_SALVAGE_SESSION = 0x75	;Salvages mods from item
+Global Const $HEADER_SALVAGE_SESSION_CANCEL = 0x76	;Salvages mods from item
+Global Const $HEADER_SALVAGE_SESSION_DONE = 0x77	;Salvages mods from item
 ;GAME_CMSG_ITEM_USE
 Global Const $HEADER_ITEM_USE = 0x7C	;Uses item from inventory/chest
 ;GAME_CMSG_UNEQUIP_ITEM

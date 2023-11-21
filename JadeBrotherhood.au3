@@ -32,7 +32,7 @@ Local Const $JB_FarmInformations = "For best results, have :" & @CRLF _
 	& "- A superior vigor rune" & @CRLF _
 	& "- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership" & @CRLF _
 	& "- Golden Eggs"
-; Skill numbers declared to make the code WAY more readable (UseSkill($MarkOfPain  is better than UseSkill(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain)  is better than UseSkillEx(1))
 Local Const $JB_DrunkerMaster = 1
 Local Const $JB_SandShards = 2
 Local Const $JB_MysticVigor = 3
@@ -105,7 +105,6 @@ EndFunc
 
 ;~ Farm loop
 Func JadeBrotherhoodFarmLoop()
-	Local $lme = GetAgentByID(-2)
 	If Not $RenderingEnabled Then ClearMemory()
 	Out("Abandonning quest")
 	AbandonQuest(457)
@@ -117,11 +116,11 @@ Func JadeBrotherhoodFarmLoop()
 	MoveToSeparationWithHero()
 	$DeadlockTimer = TimerInit()
 	TalkToAiko()
-	If GetIsDead($lme) Then Return BackToTheMarketplace(1)
+	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
 	WaitForBall()
-	If GetIsDead($lme) Then Return BackToTheMarketplace(1)
+	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
 	KillJadeBrotherhood()
-	If GetIsDead($lme) Then Return BackToTheMarketplace(1)
+	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
 		RndSleep(50)
@@ -135,7 +134,6 @@ EndFunc
 
 
 Func MoveToSeparationWithHero()
-	Local $lme = GetAgentByID(-2)
 	Out("Moving to crossing")
 	UseHeroSkill(1, $Brotherhood_Incoming)
 	RndSleep(50)
@@ -167,23 +165,21 @@ EndFunc
 
 
 Func WaitForBall()
-	Local $lMe = GetAgentByID(-2)
 	Out("Waiting for ball")
-	If GetIsDead($lme) Then Return
+	If GetIsDead(-2) Then Return
 	RndSleep(4500)
-	Local $target, $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
+	Local $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
 	Local $prevFoesBalled = 0, $prevPeasantsAlive = 100
 	; Aiko counts
 	While ($foesBalled <> 8 Or $peasantsAlive > 1)
-		If GetIsDead($lme) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		Out("Foes balled : " & $foesBalled)
 		Out("Peasants alive : " & $peasantsAlive)
 		RndSleep(4500)
-		$target = GetNearestEnemyToCoords(-13262, -5486)
 		$prevFoesBalled = $foesBalled
 		$prevPeasantsAlive = $peasantsAlive
-		$foesBalled = CountFoesInRangeOfAgent($target, 450)
-		$peasantsAlive = CountAlliesInRangeOfAgent($target, 1600)
+		$foesBalled = CountFoesInRangeOfCoords(-13262, -5486, 450)
+		$peasantsAlive = CountAlliesInRangeOfCoords(-13262, -5486, 1600)
 		If ($foesBalled = $prevFoesBalled And $peasantsAlive = $prevPeasantsAlive) Then
 			$countsDidNotChange += 1
 			If $countsDidNotChange > 2 Then Return
@@ -194,57 +190,56 @@ Func WaitForBall()
 EndFunc
 
 Func KillJadeBrotherhood()
-	Local $lMe = GetAgentByID(-2)
 	Local $EnchantmentsTimer
 	Local $target
 
-	If GetIsDead($lme) Then Return
+	If GetIsDead(-2) Then Return
 
 	Out("Clearing Jade Brotherhood")
-	UseSkillEx($JB_DrunkerMaster, $lMe)
+	UseSkillEx($JB_DrunkerMaster)
 	RndSleep(50)
-	UseSkillEx($JB_SandShards, $lMe)
+	UseSkillEx($JB_SandShards)
 	RndSleep(50)
 	
 	$target = GetNearestEnemyToCoords(-13262, -5486)
 	$target = TargetMobInCenter($target, 360)
 	GetAlmostInRangeOfAgent($target)
-	UseSkillEx($JB_MysticVigor, $lMe)
+	UseSkillEx($JB_MysticVigor)
 	RndSleep(300)
-	UseSkillEx($JB_ArmorOfSanctity, $lMe)
+	UseSkillEx($JB_ArmorOfSanctity)
 	RndSleep(300)
-	UseSkillEx($JB_VowOfStrength, $lMe)
+	UseSkillEx($JB_VowOfStrength)
 	RndSleep(500)
 	$EnchantmentsTimer = TimerInit()
 	While IsRecharged($JB_DeathsCharge)
-		If GetIsDead($lme) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		UseSkillEx($JB_DeathsCharge, $target)
 		RndSleep(50)
 	WEnd
-	UseSkillEx($JB_StaggeringForce, $lMe)
+	UseSkillEx($JB_StaggeringForce)
 	RndSleep(50)
 	UseSkillEx($JB_EremitesAttack, $target)
 	While IsRecharged($JB_EremitesAttack)
-		If GetIsDead($lme) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		UseSkillEx($JB_EremitesAttack, $target)
 		RndSleep(50)
 	WEnd
 	
 	While CountFoesInRangeOfAgent(-2, 1250) > 0
-		If GetIsDead($lme) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		If GetEnergy($lMe) >= 6 And IsRecharged($JB_SandShards) Then
-			UseSkillEx($JB_SandShards, $lMe)
+		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetEnergy(-2) >= 6 And IsRecharged($JB_SandShards) Then
+			UseSkillEx($JB_SandShards)
 			RndSleep(50)
 		EndIf
-		If GetEnergy($lMe) >= 6 And TimerDiff($EnchantmentsTimer) > 18000 Then
-			UseSkillEx($JB_VowOfStrength, $lMe)
+		If GetEnergy(-2) >= 6 And TimerDiff($EnchantmentsTimer) > 18000 Then
+			UseSkillEx($JB_VowOfStrength)
 			RndSleep(300)
-			UseSkillEx($JB_MysticVigor, $lMe)
+			UseSkillEx($JB_MysticVigor)
 			RndSleep(300)
 			$EnchantmentsTimer = TimerInit()
 		EndIf
-		If GetEnergy($lMe) >= 3 And IsRecharged($JB_ArmorOfSanctity) Then
-			UseSkillEx($JB_ArmorOfSanctity, $lMe)
+		If GetEnergy(-2) >= 3 And IsRecharged($JB_ArmorOfSanctity) Then
+			UseSkillEx($JB_ArmorOfSanctity)
 			RndSleep(300)
 		EndIf
 		TargetNearestEnemy()
@@ -263,23 +258,6 @@ Func BackToTheMarketplace($success)
 	ReturnToOutpost()
 	WaitMapLoading($ID_The_Marketplace)
 	Return $success
-EndFunc
-
-
-Func GetAlmostInRangeOfAgent($tgtAgent)
-	Local $lMe = GetAgentByID(-2)
-	Local $xMe = DllStructGetData($lMe, 'X')
-	Local $yMe = DllStructGetData($lMe, 'Y')
-	Local $xTgt = DllStructGetData($tgtAgent, 'X')
-	Local $yTgt = DllStructGetData($tgtAgent, 'Y')
-	
-	Local $distance = Sqrt(($xTgt - $xMe) ^ 2 + ($yTgt - $yMe) ^ 2)
-	Local $ratio = ($RANGE_SPELLCAST + 100) / $distance
-		
-	Local $xGo = $xMe + ($xTgt - $xMe) * $ratio
-	Local $yGo = $yMe + ($yTgt - $yMe) * $ratio
-	Move($xGo, $yGo, 40)
-	RndSleep(5000)
 EndFunc
 
 

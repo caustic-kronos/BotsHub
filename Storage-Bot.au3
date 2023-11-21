@@ -36,6 +36,7 @@ Local $IsleOfSolitude = False
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
 	; TODO : 
+	
 	; - deposit in chest mesmer tomes, white and black dyes, ToT bags and other consumables, RARE weapons
 	; - recycle all mods that need to be recycled (measure for measure, Forget Me Not, Strength and Honor, rare mods, insignias and runes)
 	; - recycle all items that need to be recycled for materials (glacial stones, specific weapons)
@@ -422,11 +423,11 @@ Func GoToMerchant()
 	Next
 
 	Out("Going to Merchant")
-
+	Local $me, $guy
 	Do
 		RndSleep(250)
-		Local $Me = GetAgentByID(-2)
-		Local $guy = GetNearestNPCToCoords(DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y'))
+		$me = GetAgentByID(-2)
+		$guy = GetNearestNPCToCoords(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'))
 	Until DllStructGetData($guy, 'Id') <> 0
 	ChangeTarget($guy)
 	RndSleep(250)
@@ -437,8 +438,8 @@ Func GoToMerchant()
 		RndSleep(500)
 		GoNPC($guy)
 		RndSleep(250)
-		Local $Me = GetAgentByID(-2)
-	Until ComputeDistance(DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
+		$me = GetAgentByID(-2)
+	Until ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
 	RndSleep(1000)
 EndFunc
 

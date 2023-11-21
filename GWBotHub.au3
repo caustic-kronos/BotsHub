@@ -20,6 +20,11 @@ GUI built with GuiBuilderPlus
 ; BUGLIST :
 ; - MinisterialCommendations bot blocks rarely on the spike
 
+; Night's tips and tricks
+; - Always refresh agents before getting data from them (agent = snapshot) 
+;		(so only use $me if you are sure nothing important changes between $me definition and $me usage)
+; - AdlibRegister("NotifyHangingBot", 120000) can be used in case of hanging to make a popup for user
+
 #RequireAdmin
 #NoTrayIcon
 
@@ -44,6 +49,7 @@ GUI built with GuiBuilderPlus
 #include "MinisterialCommendations.au3"
 #include "OmniFarmer.au3"
 #include "Raptors.au3"
+#include "SpiritSlaves.au3"
 #include "Vaettir-v0.4.au3"
 #include "Storage-Bot.au3"
 
@@ -98,7 +104,7 @@ Func createGUI()
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo("No character selected", 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo("Choose a farm", 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, "Jade Brotherhood|Ministerial Commendations|OmniFarm|Raptors|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
+	GUICtrlSetData($FarmChoiceCombo, "Jade Brotherhood|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
 	$StartButton = GUICtrlCreateButton("Start", 300, 420, 136, 21)
 	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($StartButton, "GuiButtonHandler")
@@ -372,6 +378,8 @@ Func BotHubLoop()
 					$STATS_MAP["success_code"] = OmniFarm($STATUS)
 				Case "Raptors"
 					$STATS_MAP["success_code"] = RaptorFarm($STATUS)
+				Case "SpiritSlaves"
+					$STATS_MAP["success_code"] = SpiritSlavesFarm($STATUS)
 				Case "Vaettirs"
 					$STATS_MAP["success_code"] = VaettirFarm($STATUS)
 				Case "Storage"
