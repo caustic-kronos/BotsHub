@@ -12,8 +12,13 @@ Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	Local $rareMaterial = GetItemBySlot(1,6)
-	TraderRequestSell($rareMaterial)
+
+	While true 
+		Out("Hello")
+		UseSkillEx(4)
+		RndSleep(11000)
+	WEnd
+
 	;SalvageItemAt(1, 6)
 
 	;Local $positionToGo = FindMiddleOfFoes(-7606, -8441)

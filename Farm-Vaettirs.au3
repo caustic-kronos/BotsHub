@@ -139,7 +139,6 @@ Func MoveRunning($lDestX, $lDestY)
 	If GetIsDead(-2) Then Return False
 
 	Local $lTgt
-	Local $lBlocked
 
 	Move($lDestX, $lDestY)
 
@@ -162,7 +161,6 @@ Func MoveRunning($lDestX, $lDestY)
 		If DllStructGetData(GetAgentByID(-2), "HP") < 0.5 And GetDistance(GetAgentByID(-2), $lTgt) < 500 And GetEnergy(-2) > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, -1)
 
 		If DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0 Then
-			$lBlocked += 1
 			Move($lDestX, $lDestY)
 		EndIf
 

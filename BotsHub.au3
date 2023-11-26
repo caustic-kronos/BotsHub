@@ -18,7 +18,7 @@ GUI built with GuiBuilderPlus
 ; - change bots to not have direct access to checkboxes
 
 ; BUGLIST :
-; - MinisterialCommendations bot blocks rarely on the spike
+;
 
 ; Night's tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot) 
@@ -44,14 +44,14 @@ GUI built with GuiBuilderPlus
 #include "GWA2_Headers.au3"
 #include "GWA2.au3"
 #include "GWA2_ID.au3"
+#include "Farm-JadeBrotherhood.au3"
+#include "Farm-MinisterialCommendations.au3"
+#include "Farm-Raptors.au3"
+#include "Farm-SpiritSlaves.au3"
+#include "Farm-Vaettirs.au3"
 #include "Utils.au3"
-#include "JadeBrotherhood.au3"
-#include "MinisterialCommendations.au3"
-#include "OmniFarmer.au3"
-#include "Raptors.au3"
-#include "SpiritSlaves.au3"
-#include "Vaettir-v0.4.au3"
-#include "Storage-Bot.au3"
+#include "Utils-OmniFarmer.au3"
+#include "Utils-Storage-Bot.au3"
 
 #EndRegion Includes
 

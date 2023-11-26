@@ -103,7 +103,7 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 
 Func MinisterialCommendationsFarm($STATUS)
 	If Not($Ministerial_Commendations_Farm_Setup) Then Setup()
-	$loggingFile = FileOpen("commendation_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	$loggingFile = FileOpen("logs/commendation_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If $STATUS <> "RUNNING" Then Return
 
@@ -535,9 +535,9 @@ Func KillMinistryOfPurity()
 		UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(-2))
 		RndSleep(250)
 	WEnd
-	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 
 	RndSleep(250)
+	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
