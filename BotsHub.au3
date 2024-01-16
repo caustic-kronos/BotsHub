@@ -45,6 +45,7 @@ GUI built with GuiBuilderPlus
 #include "GWA2.au3"
 #include "GWA2_ID.au3"
 #include "Farm-JadeBrotherhood.au3"
+#include "Farm-Lightbringer.au3"
 #include "Farm-MinisterialCommendations.au3"
 #include "Farm-Raptors.au3"
 #include "Farm-SpiritSlaves.au3"
@@ -104,7 +105,7 @@ Func createGUI()
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo("No character selected", 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo("Choose a farm", 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, "Jade Brotherhood|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
+	GUICtrlSetData($FarmChoiceCombo, "Jade Brotherhood|Lightbringer|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
 	$StartButton = GUICtrlCreateButton("Start", 300, 420, 136, 21)
 	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($StartButton, "GuiButtonHandler")
@@ -372,6 +373,8 @@ Func BotHubLoop()
 					GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 				Case "Jade Brotherhood"
 					$STATS_MAP["success_code"] = JadeBrotherhoodFarm($STATUS)
+				Case "Lightbringer"
+					$STATS_MAP["success_code"] = LightbringerFarm($STATUS)
 				Case "Ministerial Commendations"
 					$STATS_MAP["success_code"] = MinisterialCommendationsFarm($STATUS)
 				Case "OmniFarm"
@@ -550,6 +553,8 @@ Func FillStats(ByRef $STATS_MAP, $time = 0)
 	Local Static $FirstExperienceCount = GetExperience()
 	Local Static $FirstAsuraTitlePoints = GetAsuraTitle()
 	Local Static $FirstNornTitlePoints = GetNornTitle()
+	Local Static $FirstLightbringerTitlePoints = GetLightbringerTitle()
+	Local Static $FirstSunspearTitlePoints = GetSunspearTitle()
 	
 	;Local Static $ChunkOfDrakeFleshCount = 0
 	;Local Static $SkaleFinsCount = 0
@@ -572,6 +577,8 @@ Func FillStats(ByRef $STATS_MAP, $time = 0)
 	$STATS_MAP["experience_earned"] = GetExperience() - $FirstExperienceCount
 	$STATS_MAP["norn_title_points_earned"] = GetNornTitle() - $FirstNornTitlePoints
 	$STATS_MAP["asura_title_points_earned"] = GetAsuraTitle() - $FirstAsuraTitlePoints
+	$STATS_MAP["lightbringer_title_points_earned"] = GetLightbringerTitle() - $FirstLightbringerTitlePoints
+	$STATS_MAP["sunspear_title_points_earned"] = GetSunspearTitle() - $FirstSunspearTitlePoints
 EndFunc
 
 

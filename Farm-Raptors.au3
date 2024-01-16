@@ -75,7 +75,6 @@ Func RaptorFarm($STATUS)
 
 	If (((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
 		Out("Inventory full, pausing.")
-		$Deadlocked = False
 		Return 2
 	EndIf
 

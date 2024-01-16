@@ -33,7 +33,7 @@ Local Const $SS_Heart_of_Fury = 8
 
 ;~ Main loop of the farm
 Func SpiritSlavesFarm($STATUS)
-	$loggingFile = FileOpen("spiritslaves_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	$loggingFile = FileOpen("logs/spiritslaves_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If CountSlots() < 5 Then
 		Out("Inventory full, pausing.")
@@ -149,13 +149,13 @@ EndFunc
 Func FarmNorthGroup()
 	MoveTo(-7375, -7767)
 	WaitForFoesBall()
-	KillSequence(-8598, -5810)
+	NorthKillSequence()
 EndFunc
 
 
 ;~ Farm the south group (group 2 and 3)
 Func FarmSouthGroup()
-	Move(-8000, -8900)
+	Move(-7800, -8800)
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 	Out("Waiting on aggro")
@@ -164,26 +164,25 @@ Func FarmSouthGroup()
 		RndSleep(1000)
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 	WEnd
-	Move(-8000, -8000)	;(-8219.03, -8150.75 alternative)
-	KillSequence(-8068, -8870)
+	MoveTo(-7800, -8000)	;(-8219.03, -8150.75 alternative)
+	SouthKillSequence()
 EndFunc
 
 
-;~ Kill a mob group
-Func KillSequence($posX, $posY)
-	Out("Killing group")
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(3, $posX, $posY, $RANGE_SPELLCAST)
+Func NorthKillSequence()
+	MoveTo(-7375, -7767)
+	WaitForFoesBall()
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(3, -8598, -5810, $RANGE_SPELLCAST)
 	GetAlmostInRangeOfAgent($targetFoe)
+	Local $positionToGo = FindMiddleOfFoes(-8598, -5810)
 	UseSkillEx($SS_Sand_Shards)
 	RndSleep(2500)
 	UseSkillEx($SS_Mystic_Vigor)
 	RndSleep(1000)
 	UseSkillEx($SS_Vow_of_Strength)
 	RndSleep(300)
-
-	Local $positionToGo = FindMiddleOfFoes($posX, $posY)
+	
 	Local $temporaryPosition = GetTemporaryPosition(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $positionToGo[0], $positionToGo[1])
-
 	Move($positionToGo[0], $positionToGo[1])
 	RndSleep(1000)
 	UseSkillEx($SS_Extend_Enchantments)
@@ -192,9 +191,43 @@ Func KillSequence($posX, $posY)
 	UseSkillEx($SS_I_am_unstoppable)
 	Move($temporaryPosition[0], $temporaryPosition[1])
 	RndSleep(1000)
+	$positionToGo = FindMiddleOfFoes(-8598, -5810)
 	Move($positionToGo[0], $positionToGo[1])
-	RndSleep(1000)
+	RndSleep(2000)
 	
+	KillSequence()
+EndFunc
+
+
+Func SouthKillSequence()
+	Local $positionToGo = FindMiddleOfFoes(-7800, -8800)
+	UseSkillEx($SS_Sand_Shards)
+	RndSleep(50)
+	UseSkillEx($SS_Mystic_Vigor)
+	RndSleep(300)
+	UseSkillEx($SS_Vow_of_Strength)
+	RndSleep(300)
+	
+	Local $temporaryPosition = GetTemporaryPosition(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $positionToGo[0], $positionToGo[1])
+	Move($temporaryPosition[0], $temporaryPosition[1])
+	RndSleep(1000)
+	UseSkillEx($SS_Extend_Enchantments)
+	RndSleep(500)
+	UseSkillEx($SS_Mirage_Cloak)
+	UseSkillEx($SS_I_am_unstoppable)
+	RndSleep(1000)
+	$positionToGo = FindMiddleOfFoes(-7800, -8800)
+	Move($positionToGo[0], $positionToGo[1])
+	RndSleep(2000)
+	
+	KillSequence()
+EndFunc
+
+
+
+;~ Kill a mob group
+Func KillSequence()
+	Out("Killing group")
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_AREA)
 	; Wait until all foes are around
@@ -208,7 +241,7 @@ Func KillSequence($posX, $posY)
 	While Not GetIsDead(-2) And $foesCount > 0 And TimerDiff($deadlock) < 100000
 		If IsRecharged($SS_Mystic_Vigor) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Vigor)) == 0 Then
 			UseSkillEx($SS_Mystic_Vigor)
-			RndSleep(300)
+			;RndSleep(300)
 		EndIf
 		If IsRecharged($SS_Mirage_Cloak) And GetEffectTimeRemaining(GetEffect($ID_Mirage_Cloak)) == 0 Then
 			UseSkillEx($SS_Extend_Enchantments)
@@ -228,12 +261,12 @@ Func KillSequence($posX, $posY)
 			UseSkillEx($SS_Sand_Shards)
 			RndSleep(20)
 		EndIf
-		If IsRecharged($SS_Ebon_Battle_Standard_of_Honor) And GetEnergy($me) > 9 Then
+		If IsRecharged($SS_Ebon_Battle_Standard_of_Honor) And GetEnergy(-2) > 9 Then
 			UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
-			RndSleep(1100)
+			;RndSleep(1100)
 		EndIf
 		TargetNearestEnemy()
-		AttackOrUseSkill(1250, $SS_Vow_of_Strength, 300)
+		AttackOrUseSkill(1150, $SS_Vow_of_Strength, 300)
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	WEnd
 	Out("Looting")
@@ -243,7 +276,8 @@ EndFunc
 
 Func FindMiddleOfFoes($posX, $posY)
 	Local $position[2] = [0, 0]
-	Local $foes = GetFoesInRangeOfCoords($posX, $posY, $RANGE_SPELLCAST)
+	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
+	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $RANGE_AREA)
 	Local $foe
 	For $i = 1 To $foes[0]
 		$foe = $foes[$i]
@@ -285,7 +319,7 @@ Func WaitForFoesBall()
 		RndSleep(3000)
 		$target = GetNearestEnemyToCoords(-8598, -5810)
 		$foesCount = CountFoesInRangeOfAgent($target, $RANGE_AREA)
-		Out("foes: " & $foesCount & "/" & $totalFoesCount)
+		Out("foes: " & $foesCount & "/8")
 	WEnd
 	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for mobs to ball")
 	Out("Mobs balled")

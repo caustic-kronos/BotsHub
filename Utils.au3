@@ -149,7 +149,7 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($defendFunction = null, $ShouldPickItem = null)
+Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem)
 	Local $lAgent
 	Local $lItem
 	Local $lDeadlock
@@ -159,7 +159,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = null)
 		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
 		$lItem = GetItemByAgentID($i)
 		
-		If (($ShouldPickItem = null And DefaultShouldPickItem($lItem)) Or ($ShouldPickItem <> null And $ShouldPickItem($lItem))) Then
+		If ($ShouldPickItem($lItem)) Then
 			If $defendFunction <> null Then $defendFunction()
 			PickUpItem($lItem)
 			$lDeadlock = TimerInit()
@@ -215,6 +215,8 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
 		Return True
+	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
+		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return GUICtrlRead($LootGoldItemsCheckbox) == $GUI_CHECKED
 	ElseIf ($rarity == $RARITY_Green) Then
@@ -233,7 +235,7 @@ EndFunc
 ;~ Return true if the item should be picked up
 ;~ Pick everything that is usually picked but also low req that have the maximum damage for their level
 Func AlsoPickLowReqItems($item)
-	If IsWeapon($item) And IsMaxDamageForReq($item) Then Return True
+	If IsWeapon($item) And GetRarity($item) <> $RARITY_White And IsMaxDamageForReq($item) Then Return True
 	Return DefaultShouldPickItem($item)
 EndFunc
 
@@ -257,7 +259,7 @@ Func PickOnlyImportantItem($item)
 		Return (($itemExtraID == $ID_Black_Dye) Or ($itemExtraID == $ID_White_Dye))
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
-	ElseIf IsLowReqMaxDamage($item) Then
+	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return True
@@ -1195,8 +1197,8 @@ EndFunc
 
 ;~ Get close to a mob without aggroing it
 Func GetAlmostInRangeOfAgent($tgtAgent)
-	Local $xMe = DllStructGetData($me, 'X')
-	Local $yMe = DllStructGetData($me, 'Y')
+	Local $xMe = DllStructGetData(GetAgentByID(-2), 'X')
+	Local $yMe = DllStructGetData(GetAgentByID(-2), 'Y')
 	Local $xTgt = DllStructGetData($tgtAgent, 'X')
 	Local $yTgt = DllStructGetData($tgtAgent, 'Y')
 	
@@ -1214,13 +1216,13 @@ EndFunc
 ;~ Use one of the skill mentionned if available, else attack
 Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
 	If ($skill <> null And IsRecharged($skill)) Then
-		UseSkillEx($skill)
+		UseSkillEx($skill, GetNearestEnemyToAgent(-2))
 		RndSleep($skillSleep)
 	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then
-		UseSkillEx($skill2)
+		UseSkillEx($skill2, GetNearestEnemyToAgent(-2))
 		RndSleep($skill2Sleep)
 	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then
-		UseSkillEx($skill3)
+		UseSkillEx($skill3, GetNearestEnemyToAgent(-2))
 		RndSleep($skill3Sleep)
 	Else
 		Attack(GetNearestEnemyToAgent(-2))

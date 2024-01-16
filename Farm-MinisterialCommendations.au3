@@ -120,6 +120,7 @@ Func MinisterialCommendationsFarm($STATUS)
 
 	Out("Preparing to fight")
 	PrepareToFight()
+	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
 	If $STATUS <> "RUNNING" Then Return
 
