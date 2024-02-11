@@ -10,14 +10,22 @@ Opt("MustDeclareVars", 1)
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 
+Local Const $SpiritTypes_Array[3] = [262144, 278528, 311296]
+Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
+
+
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
 
-	While true 
-		Out("Hello")
-		UseSkillEx(4)
-		RndSleep(11000)
-	WEnd
+	;While true 
+	;	Out("Hello")
+	;	UseSkillEx(4)
+	;	RndSleep(11000)
+	;WEnd
+
+	Local $target = GetCurrentTarget()
+	PrintNPCInformations($target)
+	RndSleep(10000)
 
 	;SalvageItemAt(1, 6)
 
@@ -204,6 +212,8 @@ Func DefaultShouldPickItem($item)
 	ElseIf ($itemID == $ID_Glacial_Stone) Then
 		Return GUICtrlRead($LootGlacialStonesCheckbox) == $GUI_CHECKED
 	ElseIf ($itemID == $ID_Jade_Bracelet) Then
+		Return True
+	ElseIf ($itemID == $ID_Stolen_Goods) Then
 		Return True
 	ElseIf ($itemID == $ID_Ministerial_Commendation) Then
 		Return True
@@ -1094,7 +1104,7 @@ Func CountNPCsInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = n
 		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
 		If $range > 0 Then
 			If $coordX == null Or $coordY == null Then
 				Local $me = GetAgentByID(-2)
@@ -1122,7 +1132,7 @@ Func GetNPCsInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = nul
 		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
 		If $range > 0 Then
 			If $coordX == null Or $coordY == null Then
 				Local $me = GetAgentByID(-2)
@@ -1153,7 +1163,7 @@ Func GetNearestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY
 		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If DllStructGetData($curAgent, 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
 		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
 		Local $curDistance = GetDistance($me, $curAgent)
 		If $coordX == null Or $coordY == null Then

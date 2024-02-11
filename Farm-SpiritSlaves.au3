@@ -97,7 +97,6 @@ Func SpiritSlavesFarmSetup()
 		MoveTo(-8624, 10636)
 		If (CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST) > 0) Then UseSkillEx(5)
 		MoveTo(-8261, 12808)
-		; Starting from there there definitely are enemies on the way
 		Move(-3838, 19196)
 		While Not GetIsDead(-2) And DllStructGetData(GetAgentByID(-2), "MoveX") <> 0 And DllStructGetData(GetAgentByID(-2), "MoveY") <> 0
 			If (CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)

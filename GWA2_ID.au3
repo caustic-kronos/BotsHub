@@ -46,6 +46,9 @@ Global Const $ID_RUSSIAN = 10
 Global Const $ID_Outpost = 0
 Global Const $ID_Explorable = 1
 Global Const $ID_Loading = 2
+;~ Eden
+Global Const $ID_Ashford_Abbey = 164
+Global Const $ID_Lakeside_County = 146
 ;~ Battle Isles
 Global Const $ID_Great_Temple_of_Balthazar = 248
 Global Const $ID_Embark_Beach = 857
@@ -77,6 +80,7 @@ Global Const $ID_Isle_Of_Wurms = 530
 Global Const $ID_Corrupted_Isle = 537
 Global Const $ID_Isle_Of_Solitude = 538
 Global Const $ID_Remains_of_Sahlahja = 545
+Global Const $ID_Moddok_Crevice = 427
 ;~ EotN
 Global Const $ID_Bjora_Marches = 482
 Global Const $ID_Riven_Earth = 501
@@ -193,6 +197,7 @@ Global Const $ID_Union = 911
 Global Const $ID_Displacement = 1249
 Global Const $ID_Soul_Twisting = 1240
 ; PvE
+Global Const $ID_Mental_Block = 2417
 Global Const $ID_Ebon_Battle_Standard_of_Honor = 2233
 #EndRegion Skill IDs
 
@@ -712,6 +717,7 @@ Global Const $ID_Vermin_Hide = 853
 Global Const $ID_Venerable_Mantid_Pincer = 854
 Global Const $ID_Celestial_Essence = 855
 Global Const $ID_Moon_Shell = 1009
+Global Const $ID_Stolen_Goods = 1423
 Global Const $ID_Copper_Shilling = 1577
 Global Const $ID_Gold_Doubloon = 1578
 Global Const $ID_Silver_Bullion_Coin = 1579
