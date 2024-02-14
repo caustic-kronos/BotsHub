@@ -171,12 +171,12 @@ Global Const $ID_ZeiRi = 37
 
 #Region Skill IDs
 ; Dervish
-Global Const $ID_Conviction = 1540
-Global Const $ID_Mystic_Regeneration = 1516
-Global Const $ID_Vital_Boon = 1506
-
-Global Const $ID_Mystic_Vigor = 1503
 Global Const $ID_Mirage_Cloak = 1500
+Global Const $ID_Mystic_Vigor = 1503
+Global Const $ID_Vital_Boon = 1506
+Global Const $ID_Sand_Shards = 1510
+Global Const $ID_Mystic_Regeneration = 1516
+Global Const $ID_Conviction = 1540
 Global Const $ID_Heart_of_Fury = 1762
 ; Warrior
 Global Const $ID_Healing_Signet = 1
@@ -192,13 +192,13 @@ Global Const $ID_Wastrels_Demise = 1335
 Global Const $ID_Shadow_Refuge = 814
 Global Const $ID_Shroud_of_Distress = 1031
 ;Ritualist
-Global Const $ID_Shelter = 982
 Global Const $ID_Union = 911
-Global Const $ID_Displacement = 1249
+Global Const $ID_Shelter = 982
 Global Const $ID_Soul_Twisting = 1240
+Global Const $ID_Displacement = 1249
 ; PvE
-Global Const $ID_Mental_Block = 2417
 Global Const $ID_Ebon_Battle_Standard_of_Honor = 2233
+Global Const $ID_Mental_Block = 2417
 #EndRegion Skill IDs
 
 

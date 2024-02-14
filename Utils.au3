@@ -1,12 +1,14 @@
 #include-once
 
+#include <array.au3>
+#include <WinAPIDiag.au3>
 #include "GWA2_Headers.au3"
 #include "GWA2.au3"
 #include "GWA2_ID.au3"
 
 Opt("MustDeclareVars", 1)
 
-
+;Note: mobs aggro correspond to earshot range
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 
@@ -17,16 +19,25 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
 
-	;While true 
-	;	Out("Hello")
-	;	UseSkillEx(4)
-	;	RndSleep(11000)
-	;WEnd
+	UseSkillEx($SS_Mystic_Vigor)
+	RndSleep(300)
+	Out(GetEnergy(-2))
 
-	Local $target = GetCurrentTarget()
-	PrintNPCInformations($target)
-	RndSleep(10000)
+	While true 
+		Out(IsPastAggroLine(GetAgentByID(-2)))
+		RndSleep(1000)
+	WEnd
+	;ChangeWeaponSet(1) ;from 1 to 4
 
+	;Local $target = GetCurrentTarget()
+	;PrintNPCInformations($target)
+	;_dlldisplay($target)
+	;Out(GetEnergy(-2))
+	;Out(GetSkillTimer())
+	;Out(DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'TimeStamp'))
+	;Out(GetEffectTimeRemaining(GetEffect($ID_Shroud_of_Distress)))
+	;Out(_dlldisplay(GetEffect($ID_Shroud_of_Distress)))
+	;RndSleep(1000)
 	;SalvageItemAt(1, 6)
 
 	;Local $positionToGo = FindMiddleOfFoes(-7606, -8441)
@@ -478,9 +489,9 @@ Func UseCupcake()
 EndFunc
 
 
-Func UseEgg()
-	Local $GoldenEggSlot = findInInventory($ID_Golden_Egg)
-	UseItemBySlot($GoldenEggSlot[0], $GoldenEggSlot[1])
+Func UseConsumable($ID_consumable)
+	Local $ConsumableSlot = findInInventory($ID_consumable)
+	UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 EndFunc
 
 
@@ -1179,6 +1190,67 @@ Func GetNearestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY
 
 	Return $returnAgent
 EndFunc
+
+;~ Get NPCs in range of the given coordinates
+Func BetterGetNearestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+	Local $me = GetAgentByID(-2)
+	Local $agents = GetAgentArray(0xDB)
+	Local $smallestDistance = 99999
+	Local $returnAgent
+	Local $curAgent
+
+	If $coordX == null Or $coordY == null Then
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
+	For $i = 1 To $agents[0]
+		$curAgent = $agents[$i]
+		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
+		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
+		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		Local $curDistance = ComputeDistance(DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y'), $coordX, $coordY)
+		If $range > 0 And $curDistance > $range Then ContinueLoop
+		If $curDistance < $smallestDistance Then
+			$returnAgent = $curAgent
+			$smallestDistance = $curDistance
+		EndIf
+	Next
+
+	Return $returnAgent
+EndFunc
+
+;~ Get NPCs in range of the given coordinates
+Func GetFurthestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+	Local $me = GetAgentByID(-2)
+	Local $agents = GetAgentArray(0xDB)
+	Local $biggestDistance = 0
+	Local $returnAgent
+	Local $curAgent
+	Local $curDistance
+	
+	If $coordX == null Or $coordY == null Then
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
+	For $i = 1 To $agents[0]
+		$curAgent = $agents[$i]
+		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
+		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
+		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		$curDistance = ComputeDistance(DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y'), $coordX, $coordY)
+		If $range > 0 And $curDistance > $range Then ContinueLoop
+		If $curDistance > $biggestDistance Then
+			$returnAgent = $curAgent
+			$biggestDistance = $curDistance
+		EndIf
+	Next
+
+	Return $returnAgent
+EndFunc
 #EndRegion NPCs
 
 
@@ -1304,3 +1376,107 @@ Func WaitUntilAllFoesAreInRange($lRange)
 		Next
 	WEnd
 EndFunc
+
+
+
+
+
+
+
+Func _dlldisplay($tStruct)
+
+    Local $pNextPtr, $pCurrentPtr = DllStructGetPtr($tStruct, 1)
+    Local $iOffset = 0, $iDllSize = DllStructGetSize($tStruct)
+    Local $vElVal, $sType, $iTypeSize, $iElSize, $iArrCount, $iAlign
+
+    Local $aStruct[1][5] = [['-', $pCurrentPtr, '<struct>', 0, '-']] ; #|Offset|Type|Size|Value'
+
+    ; loop through elements
+    For $iE = 1 To 2 ^ 63
+
+        ; backup first index value, establish type and typesize of element, restore first index value
+        $vElVal = DllStructGetData($tStruct, $iE, 1)
+        Switch VarGetType($vElVal)
+            Case "Int32", "Int64"
+                DllStructSetData($tStruct, $iE, 0x7777666655554433, 1)
+                Switch DllStructGetData($tStruct, $iE, 1)
+                    Case 0x7777666655554433
+                        $sType = "int64"
+                        $iTypeSize = 8
+                    Case 0x55554433
+                        DllStructSetData($tStruct, $iE, 0x88887777, 1)
+                        $sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? "uint" : "int")
+                        $iTypeSize = 4
+                    Case 0x4433
+                        DllStructSetData($tStruct, $iE, 0x8888, 1)
+                        $sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? "ushort" : "short")
+                        $iTypeSize = 2
+                    Case 0x33
+                        $sType = 'byte'
+                        $iTypeSize = 1
+                EndSwitch
+            Case 'Ptr'
+                $sType = 'ptr'
+                $iTypeSize = @AutoItX64 ? 8 : 4
+			Case 'String'
+                DllStructSetData($tStruct, $iE, ChrW(0x2573), 1)
+                $sType = (DllStructGetData($tStruct, $iE, 1) = ChrW(0x2573) ? "wchar" : "char")
+                $iTypeSize = ($sType = 'wchar') ? 2 : 1
+            Case 'Double'
+                DllStructSetData($tStruct, $iE, 10 ^ - 15, 1)
+                $sType = (DllStructGetData($tStruct, $iE, 1) = 10 ^ - 15 ? "double" : "float")
+                $iTypeSize = ($sType = 'double') ? 8 : 4
+        EndSwitch
+        DllStructSetData($tStruct, $iE, $vElVal, 1)
+
+        ;calculate element total size based on distance to next element
+        $pNextPtr = DllStructGetPtr($tStruct, $iE + 1)
+        $iElSize = $pNextPtr ? Int($pNextPtr - $pCurrentPtr) : $iDllSize
+
+        ;calculate true array count. Walk index backwards till there is NOT an error
+        $iArrCount = Int($iElSize / $iTypeSize)
+        While $iArrCount > 1
+            DllStructGetData($tStruct, $iE, $iArrCount)
+            If Not @error Then ExitLoop
+            $iArrCount -= 1
+        WEnd
+
+        ;alignment is whatever space is left
+        $iAlign = $iElSize - ($iArrCount * $iTypeSize)
+        $iElSize -= $iAlign
+
+        ;Add/print values and alignment
+        Switch $sType
+            Case 'wchar', 'char', 'byte'
+                _ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '[' & $iArrCount & ']|' & $iElSize & '|' & DllStructGetData($tStruct, $iE))
+            Case Else ; 'uint', 'int', 'ushort', 'short', 'double', 'float', 'ptr'
+                If $iArrCount > 1 Then
+                    _ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '[' & $iArrCount & ']' & '|' & $iElSize & ' (' & $iTypeSize & ')|' & (DllStructGetData($tStruct, $iE) ? '[1] ' & $vElVal : '-'))
+                    If DllStructGetData($tStruct, $iE) Then ; skip empty arrays
+                        For $j = 2 To $iArrCount
+                            _ArrayAdd($aStruct, '-|' & $iOffset + ($iTypeSize * ($j - 1)) & '|-|-|[' & $j & '] ' & DllStructGetData($tStruct, $iE, $j))
+                        Next
+                    EndIf
+                Else
+                    _ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '|' & $iElSize & '|' & $vElVal)
+                EndIf
+        EndSwitch
+        If $iAlign Then _ArrayAdd($aStruct, '-|-|<alignment>|' & ($iAlign) & '|-')
+
+        ;if no next ptr then this was the last/only element
+        If Not $pNextPtr Then ExitLoop
+
+        ;update offset, size and next ptr
+        $iOffset += $iElSize + $iAlign
+        $iDllSize -= $iElSize + $iAlign
+        $pCurrentPtr = $pNextPtr
+
+    Next
+
+    _ArrayAdd($aStruct, '-|' & DllStructGetPtr($tStruct) + DllStructGetSize($tStruct) & '|<endstruct>|' & DllStructGetSize($tStruct) & '|-')
+
+    _ArrayDisplay($aStruct, '', '', 64, Default, '#|Offset|Type|Size|Value')
+
+    Return $aStruct
+
+EndFunc   ;==>_dlldisplay

@@ -402,7 +402,7 @@ Func WaitForPurityBall()
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	WEnd
 
-	UseEgg()
+	UseConsumable($ID_Golden_Egg)
 
 	_FileWriteLog($loggingFile, "Initial foes count - " & CountFoesOnTopOfTheStairs())
 
