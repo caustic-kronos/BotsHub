@@ -3601,7 +3601,9 @@ Func GetEffectTimeRemaining($aEffect, $aHeroNumber = 0)
 	If Not IsDllStruct($aEffect) Then $aEffect = GetEffect($aEffect, $aHeroNumber)
 	If IsArray($aEffect) Then Return 0
 	Return DllStructGetData($aEffect, 'Duration') * 1000
-;~ 	Return DllStructGetData($aEffect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($aEffect, 'TimeStamp'))
+	;Problem here is that DllStructGetData($aEffect, 'TimeStamp') returns the timestamp when the effect started
+	;But we don't have current timestamp : GetSkillTimer doesn't return it and returns something fixed
+ 	;Return DllStructGetData($aEffect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($aEffect, 'TimeStamp'))
 EndFunc   ;==>GetEffectTimeRemaining
 
 ;~ Description: Returns the timestamp used for effects and skills (milliseconds).

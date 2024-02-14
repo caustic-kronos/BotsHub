@@ -22,7 +22,7 @@ Opt("MustDeclareVars", 1)
 Local Const $CorsairsBotVersion = "0.4"
 
 ; ==== Constantes ====
-Local Const $RACorsairsFarmerSkillbar = "OgcSc5PTHQj1rg3lhOIQCH4O"
+Local Const $RACorsairsFarmerSkillbar = "OgcSc5PT3lCHIQHQj1xlpZ4O"
 Local Const $CorsairsFarmInformations = "For best results, have :" & @CRLF _
 	& "- 16 in Expertise" & @CRLF _
 	& "- 12 in Shadow Arts" & @CRLF _
@@ -33,14 +33,16 @@ Local Const $CorsairsFarmInformations = "For best results, have :" & @CRLF _
 	& "- Dunkoro"
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
 Local Const $Corsairs_DwarvenStability = 1
-Local Const $Corsairs_ShadowOfHaste = 2
-Local Const $Corsairs_ShroudOfDistress = 3
-Local Const $Corsairs_TogetherAsOne = 4
-;Local Const $Corsairs_ShadowSanctuary = 5
-Local Const $Corsairs_MentalBlock = 5
-Local Const $Corsairs_HeartOfShadow = 6
-Local Const $Corsairs_WhirlingDefense = 7
+Local Const $Corsairs_WhirlingDefense = 2
+Local Const $Corsairs_HeartOfShadow = 3
+Local Const $Corsairs_ShroudOfDistress = 4
+Local Const $Corsairs_TogetherAsOne = 5
+Local Const $Corsairs_MentalBlock = 6
+Local Const $Corsairs_FeignedNeutrality = 7
 Local Const $Corsairs_DeathsCharge = 8
+
+;Local Const $Corsairs_ShadowOfHaste = 2
+;Local Const $Corsairs_ShadowSanctuary = 5
 
 ; Hero Build
 Local Const $Corsairs_MakeHaste = 1
@@ -48,6 +50,7 @@ Local Const $Corsairs_MakeHaste = 1
 #Region GUI
 Local $CORSAIRS_FARM_SETUP = False
 
+Local $Bohseda_Timer
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
@@ -77,6 +80,7 @@ Func SetupCorsairsFarm()
 		DistrictTravel($ID_Moddok_Crevice, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	SwitchMode($ID_HARD_MODE)
+	LeaveGroup()
 	AddHero($ID_Dunkoro)
 	Out("Preparations complete")
 EndFunc
@@ -91,81 +95,98 @@ Func CorsairsFarmLoop()
 	Dialog(0x00000084)
 	RndSleep(500)
 	WaitMapLoading($ID_Moddok_Crevice)
+	UseSkillEx($Corsairs_DwarvenStability)
+	RndSleep(100)
+	UseSkillEx($Corsairs_WhirlingDefense)
+	RndSleep(100)
 	UseHeroSkill(1, $Corsairs_MakeHaste, -2)
-	RndSleep(250)
+	RndSleep(100)
+	$Bohseda_Timer = TimerInit()
 	CommandHero(1, -13750, -10150)
 
 	MoveTo(-9050, -7000)
 	Local $Captain_Bohseda = GetNearestNPCToCoords(-9850, -7250)
 	UseSkillEx($Corsairs_HeartOfShadow, $Captain_Bohseda)
-	RndSleep(250)
+	RndSleep(100)
 	MoveTo(-8020, -6500)
 	MoveTo(-7400, -4750)
-	UseSkillEx($Corsairs_TogetherAsOne)
-	RndSleep(100)
-	UseSkillEx($Corsairs_ShroudOfDistress)
-	RndSleep(100)
-	UseSkillEx($Corsairs_MentalBlock)
-	RndSleep(100)
+	CastAllDefensiveSkills()
 	MoveTo(-7300, -4500)
+	
+	If GetIsDead(-2) Then
+		BackToModdokCreviceOutpost()
+		Return 1
+	EndIf
 	
 	MoveTo(-8100, -6550)
 	DefendAgainstCorsairs()
-	UseSkillEx($Corsairs_DwarvenStability)
-	RndSleep(100)
-	UseSkillEx($Corsairs_ShadowOfHaste)
-	WaitForEnemies()
-	
-	MoveTo(-8450, -6750)
-	WaitForEnemies()
-	
-	MoveTo(-8650, -6850)
-	WaitForEnemies()
+
+	If GetIsDead(-2) Then
+		BackToModdokCreviceOutpost()
+		Return 1
+	EndIf
 	
 	MoveTo(-8850, -6950)
-	WaitForEnemies()
-	
+	WaitForEnemyInRange()
 	UseSkillEx($Corsairs_HeartOfShadow, GetNearestEnemyToAgent(-2))
-	WaitForEnemies()
+	DefendAgainstCorsairs()
 
-	MoveTo(-9400,-7100)
-	WaitForEnemies()
-
-	MoveTo(-9600,-7150)
-	WaitForEnemies()
-
-	MoveTo(-9850,-7100)
+	MoveTo(-9783,-7073, 0)
+	WaitForBohseda()
 	UseSkillEx($Corsairs_DwarvenStability)
-	WaitForEnemies()
+	RndSleep(20)
+	CastAllDefensiveSkills()
 	
-	MoveTo(-9800,-7250)
+	If GetIsDead(-2) Then
+		BackToModdokCreviceOutpost()
+		Return 1
+	EndIf
+	
+	MoveTo(-9730,-7350, 0)
 	GoNPC($Captain_Bohseda)
-	RndSleep(250)
-	WaitForEnemies()
+	RndSleep(1000)
 	Dialog(0x00000085)
-	RndSleep(1500)
-	UseSkillEx($Corsairs_WhirlingDefense)
-	RndSleep(100)
+	RndSleep(1000)
+	
+	While IsRecharged($Corsairs_WhirlingDefense) And Not GetIsDead(-2)
+		UseSkillEx($Corsairs_WhirlingDefense)
+		RndSleep(200)
+	WEnd
+
+	If GetIsDead(-2) Then
+		BackToModdokCreviceOutpost()
+		Return 1
+	EndIf
 
 	For $i = 0 To 13
-		DefendAgainstCorsairs(False)
-		If $i > 3 Then Attack(GetNearestEnemyToAgent(-2))
+		DefendAgainstCorsairs()
+		if $i < 13 Then Attack(GetNearestEnemyToAgent(-2))
 		RndSleep(1000)
 	Next
 	
-	Local $target = GetNearestEnemyToCoords(-8915, -6915)
+	If GetIsDead(-2) Then
+		BackToModdokCreviceOutpost()
+		Return 1
+	EndIf
+	
+	Local $target = GetNearestEnemyToCoords(-8920, -6950)
 	UseSkillEx($Corsairs_DeathsCharge, $target)
 	RndSleep(100)
 
 	Local $counter = 0
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_AREA)
 	While Not GetIsDead(-2) And $foesCount > 0 And $counter < 22
-		DefendAgainstCorsairs(False)
-		Attack(GetNearestEnemyToAgent(-2))
+		DefendAgainstCorsairs()
+		If $counter > 3 Then Attack(GetNearestEnemyToAgent(-2))
 		RndSleep(1000)
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_AREA)
 	WEnd
+
+	If GetIsDead(-2) Then
+		BackToModdokCreviceOutpost()
+		Return 1
+	EndIf
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
 		Out("Looting")
@@ -173,25 +194,38 @@ Func CorsairsFarmLoop()
 	EndIf
 
 	BackToModdokCreviceOutpost()
+	Return 0
 EndFunc
 
 
-Func DefendAgainstCorsairs($useShadowSanctuary = True)
+Func CastAllDefensiveSkills()
+	UseSkillEx($Corsairs_ShroudOfDistress)
+	RndSleep(20)
+	UseSkillEx($Corsairs_TogetherAsOne)
+	RndSleep(20)
+	UseSkillEx($Corsairs_MentalBlock)
+	RndSleep(20)
+	UseSkillEx($Corsairs_FeignedNeutrality)
+	RndSleep(20)
+EndFunc
+
+
+Func DefendAgainstCorsairs($Hidden = False)
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
-		RndSleep(GetPing() + 100)
+		RndSleep(GetPing() + 20)
 	EndIf
-;	If $useShadowSanctuary And IsRecharged($Corsairs_ShadowSanctuary) Then
-;		UseSkillEx($Corsairs_ShadowSanctuary)
-;		RndSleep(GetPing() + 100)
-;	EndIf
-	If IsRecharged($Corsairs_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 Then
+	If Not $Hidden And IsRecharged($Corsairs_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 Then
 		UseSkillEx($Corsairs_MentalBlock)
-		RndSleep(GetPing() + 100)
+		RndSleep(GetPing() + 20)
 	EndIf
-	If IsRecharged($Corsairs_ShroudOfDistress) Then
+	If Not $Hidden And IsRecharged($Corsairs_ShroudOfDistress) Then
 		UseSkillEx($Corsairs_ShroudOfDistress)
-		RndSleep(GetPing() + 100)
+		RndSleep(GetPing() + 20)
+	EndIf
+	If Not $Hidden And IsRecharged($Corsairs_FeignedNeutrality) Then
+		UseSkillEx($Corsairs_FeignedNeutrality)
+		RndSleep(GetPing() + 20)
 	EndIf
 EndFunc
 
@@ -205,20 +239,19 @@ Func BackToModdokCreviceOutpost()
 EndFunc
 
 
-Func WaitForEnemies()
-	RndSleep(250)
-	While EnemiesGettingTooFar()
+Func WaitForEnemyInRange()
+	Local $target = GetNearestEnemyToAgent(-2)
+	While (Not GetIsDead(-2) And GetDistance($target, -2) > $RANGE_SPELLCAST)
 		DefendAgainstCorsairs()
-		RndSleep(250)
+		RndSleep(500)
+		$target = GetNearestEnemyToAgent(-2)
 	WEnd
 EndFunc
 
-Func EnemiesGettingTooFar()
-	Local $aggroedFoes = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
-	Local $inRangeFoes = CountFoesInRangeOfAgent(-2, 1150)
-	If $inRangeFoes == $aggroedFoes Then
-		Return False
-	Else
-		Return True
-	EndIf
+
+Func WaitForBohseda()
+	While (Not GetIsDead(-2) And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy(-2) < 30))
+		DefendAgainstCorsairs(True)
+		RndSleep(500)
+	WEnd
 EndFunc
