@@ -1275,7 +1275,7 @@ Func Move($aX, $aY, $aRandom = 50)
 EndFunc   ;==>Move
 
 ;~ Description: Move to a location and wait until you reach it.
-Func MoveTo($aX, $aY, $aRandom = 50)
+Func MoveTo($aX, $aY, $aRandom = 50, $doWhileRunning = null)
 	Local $lBlocked = 0
 	Local $lMe
 	Local $lMapLoading = GetMapLoading(), $lMapLoadingOld
@@ -1293,7 +1293,7 @@ Func MoveTo($aX, $aY, $aRandom = 50)
 		$lMapLoadingOld = $lMapLoading
 		$lMapLoading = GetMapLoading()
 		If $lMapLoading <> $lMapLoadingOld Then ExitLoop
-
+		If $doWhileRunning <> null Then $doWhileRunning()
 		If DllStructGetData($lMe, 'MoveX') == 0 And DllStructGetData($lMe, 'MoveY') == 0 Then
 			$lBlocked += 1
 			$lDestX = $aX + Random(-$aRandom, $aRandom)

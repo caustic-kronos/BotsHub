@@ -70,6 +70,8 @@ Global Const $ID_The_Marketplace = 303
 Global Const $ID_Imperial_Isle = 359
 Global Const $ID_Isle_Of_Meditation = 360
 Global Const $ID_Kaineng_A_Chance_Encounter = 861
+Global Const $ID_Saint_Anjekas_Shrine = 349
+Global Const $ID_Drazach_Thicket = 861
 ;~ Nightfall
 Global Const $ID_Jokos_Domain = 437
 Global Const $ID_Bone_Palace = 438
@@ -330,7 +332,17 @@ Global Const $ID_Spiritwood_Planks = 956
 Global Const $ID_Amber_Chunk = 6532
 Global Const $ID_Jadeite_Shard = 6533
 
+Global Const $ID_Bone = 921
+Global Const $ID_Iron_Ingot = 948
+Global Const $ID_Tanned_Hide_Square = 940
+Global Const $ID_Scale = 953
+Global Const $ID_Chitin_Fragment = 954
+Global Const $ID_Bolt_of_Cloth = 925
+Global Const $ID_Wood_Plank = 946
+Global Const $ID_Granite_Slab = 955
+Global Const $ID_Pile_of_Glittering_Dust = 929
 Global Const $ID_Plant_Fibers = 934
+Global Const $ID_Feather = 933
 
 Local Const $Rare_Materials_Double_Array[26][2] = [[$ID_Fur_Square, "Fur Square"], [$ID_Bolt_of_Linen, "Bolt of Linen"], [$ID_Bolt_of_Damask, "Bolt of Damask"], [$ID_Bolt_of_Silk, "Bolt of Silk"], [$ID_Glob_of_Ectoplasm, "Glob of Ectoplasm"], _
 	[$ID_Steel_Ingot, "Steel Ingot"], [$ID_Deldrimor_Steel_Ingot, "Deldrimor Steel Ingot"], [$ID_Monstrous_Claw, "Monstrous Claw"], [$ID_Monstrous_Eye, "Monstrous Eye"], [$ID_Monstrous_Fang, "Monstrous Fang"], [$ID_Ruby, "Ruby"], [$ID_Sapphire, "Sapphire"], _
@@ -342,7 +354,7 @@ Global Const $Map_Rare_Materials = MapFromDoubleArray($Rare_Materials_Double_Arr
 Local Const $Rare_Materials_Array[26] = [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
 	$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, $ID_Rolls_of_Parchment, $ID_Rolls_of_Vellum, _
 	$ID_Spiritwood_Planks, $ID_Amber_Chunk, $ID_Jadeite_Shard]
-Local Const $Basic_Materials_Array[11] = [921, 925, 929, 933, $ID_Plant_Fibers, 940, 946, 948, 953, 954, 955]
+Local Const $Basic_Materials_Array[11] = [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
 
 Local $All_Materials_Array = $Rare_Materials_Array
 _ArrayConcatenate($All_Materials_Array, $Basic_Materials_Array)
@@ -1281,8 +1293,7 @@ Global Const $ID_CC_Channeling = 1885
 #EndRegion Celestial Compass
 
 
-Local $StackableItems = $All_Materials_Array
-_ArrayConcatenate($StackableItems, $Blue_Scrolls_Array)
+Local $StackableItems = $Blue_Scrolls_Array
 _ArrayConcatenate($StackableItems, $Gold_Scrolls_Array)
 _ArrayConcatenate($StackableItems, $Sweet_Pcons_Array)
 _ArrayConcatenate($StackableItems, $Special_Drops)
@@ -1302,7 +1313,7 @@ _ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_4)
 _ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_5)
 _ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_6)
 _ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_7)
-Global Const $Map_StackableItems = MapFromArray($StackableItems)
+Global Const $Map_StackableItemsExceptMaterials = MapFromArray($StackableItems)
 
 
 

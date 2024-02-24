@@ -45,6 +45,7 @@ GUI built with GuiBuilderPlus
 #include "GWA2.au3"
 #include "GWA2_ID.au3"
 #include "Farm-Corsairs.au3"
+#include "Farm-DragonMoss.au3"
 #include "Farm-EdenIris.au3"
 #include "Farm-JadeBrotherhood.au3"
 #include "Farm-Lightbringer.au3"
@@ -107,7 +108,7 @@ Func createGUI()
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo("No character selected", 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo("Choose a farm", 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, "Corsairs|Eden Iris|Jade Brotherhood|Lightbringer|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
+	GUICtrlSetData($FarmChoiceCombo, "Corsairs|Dragon Moss|Eden Iris|Jade Brotherhood|Lightbringer|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic", "Choose a farm")
 	$StartButton = GUICtrlCreateButton("Start", 300, 420, 136, 21)
 	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($StartButton, "GuiButtonHandler")
@@ -375,6 +376,8 @@ Func BotHubLoop()
 					GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 				Case "Corsairs"
 					$STATS_MAP["success_code"] = CorsairsFarm($STATUS)
+				Case "Dragon Moss"
+					$STATS_MAP["success_code"] = DragonMossFarm($STATUS)
 				Case "Eden Iris"
 					$STATS_MAP["success_code"] = EdenIrisFarm($STATUS)
 				Case "Jade Brotherhood"

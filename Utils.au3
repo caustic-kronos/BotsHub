@@ -19,14 +19,6 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
 
-	UseSkillEx($SS_Mystic_Vigor)
-	RndSleep(300)
-	Out(GetEnergy(-2))
-
-	While true 
-		Out(IsPastAggroLine(GetAgentByID(-2)))
-		RndSleep(1000)
-	WEnd
 	;ChangeWeaponSet(1) ;from 1 to 4
 
 	;Local $target = GetCurrentTarget()
@@ -202,13 +194,14 @@ Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, "ExtraID")
 	Local $rarity = GetRarity($item)
+	Local $type = DllStructGetData($item, "Type")
 	Local $characterGold = GetGoldCharacter()
 	;Only pick gold if character has less than 99k in inventory
 	If (($itemID == $ID_GOLD) And (GetGoldCharacter() < 99000)) Then
 		Return True
-	ElseIf IsBasicMaterial($itemID) Then
+	ElseIf IsBasicMaterial($item) Then
 		Return GUICtrlRead($LootBasicMaterialsCheckbox) == $GUI_CHECKED
-	ElseIf IsRareMaterial($itemID) Then
+	ElseIf IsRareMaterial($item) Then
 		Return GUICtrlRead($LootRareMaterialsCheckbox) == $GUI_CHECKED
 	ElseIf IsTome($itemID) Then
 		Return GUICtrlRead($LootTomesCheckbox) == $GUI_CHECKED
@@ -230,7 +223,7 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf IsMapPiece($itemID) Then
 		Return GUICtrlRead($LootMapPiecesCheckbox) == $GUI_CHECKED
-	ElseIf IsStackableItem($itemID) Then
+	ElseIf IsStackableItemButNotMaterial($itemID) Then
 		Return True
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
@@ -274,7 +267,7 @@ Func PickOnlyImportantItem($item)
 	Local $itemExtraID = DllStructGetData($item, "ExtraID")
 	Local $rarity = GetRarity($item)
 	;Only pick gold if character has less than 99k in inventory
-	If IsRareMaterial($itemID) Then
+	If IsRareMaterial($item) Then
 		Return True
 	ElseIf ($itemID == $ID_Dyes) Then
 		Return (($itemExtraID == $ID_Black_Dye) Or ($itemExtraID == $ID_White_Dye))
@@ -661,9 +654,9 @@ Func ShouldSellItem($item)
 	Local $itemExtraID = DllStructGetData($item, "ExtraID")
 	Local $rarity = GetRarity($item)
 	;Local $requirement = GetItemReq($item)
-	If IsBasicMaterial($itemID) Then
+	If IsBasicMaterial($item) Then
 		Return False
-	ElseIf IsRareMaterial($itemID) Then
+	ElseIf IsRareMaterial($item) Then
 		Return False
 	ElseIf IsTome($itemID) Then
 		Return False
@@ -681,7 +674,7 @@ Func ShouldSellItem($item)
 		Return False
 	ElseIf IsMapPiece($itemID) Then
 		Return False
-	ElseIf IsStackableItem($itemID) Then
+	ElseIf IsStackableItemButNotMaterial($itemID) Then
 		Return False
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return False
@@ -723,23 +716,23 @@ Func IsArmorSalvageItem($item)
 EndFunc
 
 
-Func IsStackableItem($itemID)
-	Return $Map_StackableItems[$itemID] <> null
+Func IsStackableItemButNotMaterial($itemID)
+	Return $Map_StackableItemsExceptMaterials[$itemID] <> null
 EndFunc
 
 
-Func IsMaterial($itemID)
-	Return $Map_All_Materials[$itemID] <> null
+Func IsMaterial($item)
+	Return DllStructGetData($item, "Type") == 11 And $Map_All_Materials[DllStructGetData($item, "ModelID")] <> null
 EndFunc
 
 
-Func IsBasicMaterial($itemID)
-	Return $Map_Basic_Materials[$itemID] <> null
+Func IsBasicMaterial($item)
+	Return DllStructGetData($item, "Type") == 11 And $Map_Basic_Materials[DllStructGetData($item, "ModelID")] <> null
 EndFunc
 
 
-Func IsRareMaterial($itemID)
-	Return $Map_Rare_Materials[$itemID] <> null
+Func IsRareMaterial($item)
+	Return DllStructGetData($item, "Type") == 11 And $Map_Rare_Materials[DllStructGetData($item, "ModelID")] <> null
 EndFunc
 
 
@@ -1083,6 +1076,23 @@ EndFunc
 
 
 #Region Getting NPCs
+;~ Returns the coordinates in the middle of a group of foes
+Func FindMiddleOfFoes($posX, $posY, $range)
+	Local $position[2] = [0, 0]
+	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
+	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $RANGE_AREA)
+	Local $foe
+	For $i = 1 To $foes[0]
+		$foe = $foes[$i]
+		$position[0] += DllStructGetData($foe, 'X')
+		$position[1] += DllStructGetData($foe, 'Y')
+	Next
+	$position[0] = $position[0] / $foes[0]
+	$position[1] = $position[1] / $foes[0]
+	Return $position
+EndFunc
+
+
 ;~ Get foes in range of the given agent
 Func GetFoesInRangeOfAgent($agent = -2, $range = 0, $condition = null)
 	Return GetNPCsInRangeOfAgent(3, $agent, $range, $condition)
@@ -1255,6 +1265,29 @@ EndFunc
 
 
 #Region Actions
+Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
+	Local $timer = TimerInit()
+	Local Const $PI = 3.141592653589793
+	While Not GetIsDead(-2) And ComputeDistance(DllStructGetData(-2, 'X'), DllStructGetData(-2, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
+		Move($coordX, $coordY)
+		RndSleep(100)
+		;Local $blocked = -1
+		;Local $angle = 0
+		;While Not GetIsDead(-2) And DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0		
+		;	$blocked += 1
+		;	If $blocked > 0 Then
+		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4
+		;	EndIf
+		;	If $blocked > 5 Then
+		;		Return False
+		;	EndIf
+		;	Move(DllStructGetData(GetAgentByID(-2), 'X') + 150 * sin($angle), DllStructGetData(GetAgentByID(-2), 'Y') + 150 * cos($angle))
+		;	RndSleep(50)
+		;WEnd
+	WEnd
+	Return True
+EndFunc
+
 ;~ Go to the NPC the closest to given coordinates
 Func GoNearestNPCToCoords($x, $y)
 	Local $guy

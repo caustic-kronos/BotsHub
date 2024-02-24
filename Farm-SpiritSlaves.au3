@@ -13,7 +13,9 @@ Local Const $SpiritSlavesFarmInformations = "For best results, have :" & @CRLF _
 	& "- 13 Mysticism" & @CRLF _
 	& "- 4 Scythe Mastery" & @CRLF _
 	& "- Windwalker insignias"& @CRLF _
-	& "- A scythe of enchanting q4 or less with the inscription 'I have the power' (+5 energy)" & @CRLF _
+	& "- Anything of enchanting without zealous on slot 1" & @CRLF _
+	& "- A scythe of enchanting q4 or less with zealous mod on slot 2" & @CRLF _
+	& "- Anything defensive on slot 4" & @CRLF _
 	& "- any PCons you wish to use"
 
 Local $SpiritSlaves_Farm_Setup = False
@@ -30,6 +32,11 @@ Local Const $SS_Deaths_Charge = 6
 Local Const $SS_Mirage_Cloak = 7
 Local Const $SS_Ebon_Battle_Standard_of_Honor = 8
 ;Local Const $SS_Heart_of_Fury = 8
+
+;Reduction from mysticism (50%) and increase from spirit (30%) are included
+Local Const $SS_SkillsArray = 		[$SS_Sand_Shards,	$SS_I_am_unstoppable,	$SS_Mystic_Vigor,	$SS_Vow_of_Strength,	$SS_Extend_Enchantments,	$SS_Deaths_Charge,	$SS_Mirage_Cloak,	$SS_Ebon_Battle_Standard_of_Honor]
+Local Const $SS_SkillsCostsArray =	[6.5,				6.5,					3.25,				3.25,					6.5,						6.5,				6.5,				13]
+Local Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray)
 
 
 ;~ Main loop of the farm
@@ -90,17 +97,18 @@ Func SpiritSlavesFarmSetup()
 		WaitMapLoading($ID_Jokos_Domain)
 		RndSleep(500)
 		MoveTo(-12657, 2609)
-		ChangeWeaponSet(2)
+		ChangeWeaponSet(4)
 		MoveTo(-10938, 4254)
 		; Going to wurm's spoor
 		ChangeTarget(GetNearestSignpostToCoords(-10938, 4254))
 		RndSleep(500)
 		Out("Taking wurm")
 		ActionInteract()
-		RndSleep(1000)
+		RndSleep(1500)
+		UseSkillEx(5)
 		; Starting from there there might be enemies on the way
 		MoveTo(-8255, 5320)
-		If (CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 0) Then	UseSkillEx(5)
+		If (CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
 		MoveTo(-8624, 10636)
 		If (CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
 		MoveTo(-8261, 12808)
@@ -161,6 +169,7 @@ Func FarmNorthGroup()
 	WaitForEnergy()
 	Local $targetFoe = GetNearestNPCInRangeOfCoords(3, -8598, -5810, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe)
+	ChangeWeaponSet(1)
 	UseSkillEx($SS_Sand_Shards)
 	RndSleep(3500)
 	UseSkillEx($SS_I_am_unstoppable)
@@ -178,9 +187,9 @@ Func FarmNorthGroup()
 
 	UseSkillEx($SS_Deaths_Charge, $targetFoe)
 	RndSleep(20)
-	UseSkillEx($SS_Mirage_Cloak)
+	If GetEnergy(-2) > $skillCostsMap[$SS_Mirage_Cloak] Then UseSkillEx($SS_Mirage_Cloak)
 	RndSleep(20)
-	UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
+	If GetEnergy(-2) > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 	RndSleep(20)
 	
 	If (GetIsDead(-2)) Then Return
@@ -191,7 +200,9 @@ EndFunc
 
 ;~ Farm the south group (group 2 and 3)
 Func FarmSouthGroup()
+	CleanseFromCripple()
 	MoveTo(-7830, -7860)
+	CleanseFromCripple()
 	; Wait until an enemy is past the correct aggro line
 	Local $foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
 	Local $deadlock = TimerInit()
@@ -199,7 +210,7 @@ Func FarmSouthGroup()
 		RndSleep(100)
 		$foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
 	WEnd
-
+	CleanseFromCripple()
 	;We want foes between -8055;-9200 and -8055;-9300
 	Move(-7735, -8380)
 	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
@@ -207,10 +218,11 @@ Func FarmSouthGroup()
 	; Wait until an enemy is aggroed
 	While Not GetIsDead(-2) And $foesCount == 0 And TimerDiff($deadlock) < 120000
 		RndSleep(100)
-		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
+		$foesCount = CountFoesInRangeOfAgent(-2, 950)
 	WEnd
 	If (GetIsDead(-2)) Then Return
 
+	ChangeWeaponSet(1)
 	MoveTo(-7830, -7860, 0)
 	
 	UseSkillEx($SS_Sand_Shards)
@@ -230,11 +242,11 @@ Func FarmSouthGroup()
 	RndSleep(20)
 	UseSkillEx($SS_Deaths_Charge, $targetFoe)
 	RndSleep(20)
-	UseSkillEx($SS_Mirage_Cloak)
+	If GetEnergy(-2) > $skillCostsMap[$SS_Mirage_Cloak] Then UseSkillEx($SS_Mirage_Cloak)
 	RndSleep(20)
-	UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
+	If GetEnergy(-2) > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 	RndSleep(20)
-	
+
 	If (GetIsDead(-2)) Then Return
 	
 	KillSequence()
@@ -243,22 +255,22 @@ EndFunc
 
 ;~ Kill a mob group
 Func KillSequence()
-	Out("Killing group")
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_AREA)
-	
+	Local $casterFoePosition = [0,0,0,0]
+	ChangeWeaponSet(2)
 	While Not GetIsDead(-2) And $foesCount > 0 And TimerDiff($deadlock) < 100000
-		If IsRecharged($SS_Mystic_Vigor) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Vigor)) == 0 Then
+		If IsRecharged($SS_Mystic_Vigor) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Vigor)) == 0 And GetEnergy(-2) > $skillCostsMap[$SS_Mystic_Vigor] Then
 			UseSkillEx($SS_Mystic_Vigor)
 			RndSleep(20)
 		EndIf
-		If $foesCount > 1 And IsRecharged($SS_Mirage_Cloak) And GetEffectTimeRemaining(GetEffect($ID_Mirage_Cloak)) == 0 Then
+		If $foesCount > 1 And IsRecharged($SS_Mirage_Cloak) And GetEffectTimeRemaining(GetEffect($ID_Mirage_Cloak)) == 0 And GetEnergy(-2) > ($skillCostsMap[$SS_Extend_Enchantments] + $skillCostsMap[$SS_Mirage_Cloak]) Then
 			UseSkillEx($SS_Extend_Enchantments)
 			RndSleep(20)
 			UseSkillEx($SS_Mirage_Cloak)
 			RndSleep(20)
 		EndIf
-		If IsRecharged($SS_I_am_unstoppable) Then
+		If IsRecharged($SS_I_am_unstoppable) And GetEnergy(-2) > $skillCostsMap[$SS_I_am_unstoppable] Then
 			UseSkillEx($SS_I_am_unstoppable)
 			RndSleep(20)
 		EndIf
@@ -266,44 +278,50 @@ Func KillSequence()
 		;	UseSkillEx($SS_Heart_of_Fury)
 		;	RndSleep(20)
 		;EndIf
-		If $foesCount > 3 And IsRecharged($SS_Sand_Shards) And GetEffectTimeRemaining(GetEffect($ID_Sand_Shards)) == 0 Then
+		If $foesCount > 3 And IsRecharged($SS_Sand_Shards) And GetEffectTimeRemaining(GetEffect($ID_Sand_Shards)) == 0 And GetEnergy(-2) > $skillCostsMap[$SS_Sand_Shards] Then
 			UseSkillEx($SS_Sand_Shards)
 			RndSleep(20)
 		EndIf
-		If IsRecharged($SS_Ebon_Battle_Standard_of_Honor) And GetEnergy(-2) > 9 Then
+		If IsRecharged($SS_Ebon_Battle_Standard_of_Honor) And GetEffectTimeRemaining(GetEffect($ID_Ebon_Battle_Standard_of_Honor)) == 0 And GetEnergy(-2) > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then
 			UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 			RndSleep(20)
 		EndIf
-		Local $casterSpirit = GetFurthestNPCToCoords(3, null, null, $RANGE_AREA)
-		If $foesCount < 5 And GetDistance(-2, $casterSpirit) > $RANGE_ADJACENT Then
-			ChangeTarget($casterSpirit)
-		Else
-			TargetNearestEnemy()
+		If IsRecharged($SS_Vow_of_Strength) And GetEnergy(-2) > $skillCostsMap[$SS_Vow_of_Strength] Then
+			UseSkillEx($SS_Vow_of_Strength)
+			RndSleep(20)
 		EndIf
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
-		If $foesCount > 0 Then AttackOrUseSkill(1000, $SS_Vow_of_Strength, 20)
+		If $foesCount > 0 Then
+			Local $casterFoe = GetFurthestNPCToCoords(3, null, null, $RANGE_AREA)
+			Local $distance = GetDistance(-2, $casterFoe)
+			If $foesCount < 5 And GetDistance(-2, $casterFoe) > $RANGE_ADJACENT Then
+				Out("One foe is distant")
+				If $casterFoePosition[3] == 1 And DllStructGetData($casterFoe, 'ID') == $casterFoePosition[0] Then
+					Out("Moving to fight that foe")
+					Local $timer = TimerInit()
+					;MoveAvoidingBodyBlock(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'X'), 1000)
+					While Not GetIsDead(-2) And ComputeDistance(DllStructGetData(-2, 'X'), DllStructGetData(-2, 'Y'), $casterFoePosition[1], $casterFoePosition[2]) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
+						Move($casterFoePosition[1], $casterFoePosition[2])
+						RndSleep(100)
+					WEnd
+					$casterFoePosition[3] += 1
+				Else
+					$casterFoePosition[0] = DllStructGetData($casterFoe, 'ID')
+					$casterFoePosition[1] = DllStructGetData($casterFoe, 'X')
+					$casterFoePosition[2] = DllStructGetData($casterFoe, 'Y')
+					$casterFoePosition[3] = 1
+				EndIf
+			EndIf
+			Attack(GetNearestEnemyToAgent(-2))
+			RndSleep(1000)
+		EndIf
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 	WEnd
+	ChangeWeaponSet(1)
+
 	If (GetIsDead(-2)) Then Return
 	CleanseFromCripple()
-	Out("Looting")
 	PickUpItems(CleanseFromCripple)
-EndFunc
-
-
-;~ Returns the coordinates in the middle of a group of foes
-Func FindMiddleOfFoes($posX, $posY, $range)
-	Local $position[2] = [0, 0]
-	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
-	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $RANGE_AREA)
-	Local $foe
-	For $i = 1 To $foes[0]
-		$foe = $foes[$i]
-		$position[0] += DllStructGetData($foe, 'X')
-		$position[1] += DllStructGetData($foe, 'Y')
-	Next
-	$position[0] = $position[0] / $foes[0]
-	$position[1] = $position[1] / $foes[0]
-	Return $position
 EndFunc
 
 
@@ -322,10 +340,9 @@ Func WaitForFoesBall()
 		RndSleep(3000)
 		$target = GetNearestEnemyToCoords(-8598, -5810)
 		$foesCount = CountFoesInRangeOfAgent($target, $RANGE_AREA)
-		Out("foes: " & $foesCount & "/8")
+		;Out("foes: " & $foesCount & "/8")
 	WEnd
 	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for mobs to ball")
-	Out("Mobs balled")
 EndFunc
 
 
@@ -340,15 +357,14 @@ Func WaitForAlliesDead()
 		$target = GetNearestNPCToCoords(-8598, -5810)
 	WEnd
 	If (TimerDiff($deadlock) > 120000) Then Out("Timed out waiting for allies to be dead")
-	Out("Allies all died")
 EndFunc
 
 
 ;~ Respawn and rezone if we die
 Func RestartAfterDeath()
 	Local $deadlockTimer = TimerInit()
+	Out("Waiting for resurrection")
 	While GetIsDead(-2)
-		Out("Waiting for resurrection")
 		RndSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$SpiritSlaves_Farm_Setup = True
@@ -378,7 +394,11 @@ EndFunc
 
 ;~ Give True if the given agent is past a specific line where we should take aggro
 Func IsPastAggroLine($agent)
-	Return Not IsOverLine(0, 7000, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	Return Not IsOverLine(0, 6750, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	;6500 works too, but slightly too early, some mobs stay downstairs
+	;Return Not IsOverLine(0, 6500, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	;7000 works but is slightly too late, sometimes mobs do not get aggroed
+	;Return Not IsOverLine(0, 7000, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 
 
