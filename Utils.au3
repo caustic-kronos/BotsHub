@@ -249,7 +249,7 @@ EndFunc
 ;~ Return true if the item should be picked up
 ;~ Pick everything that is usually picked but also low req that have the maximum damage for their level
 Func AlsoPickLowReqItems($item)
-	If IsWeapon($item) And GetRarity($item) <> $RARITY_White And IsMaxDamageForReq($item) Then Return True
+	If IsWeapon($item) And GetRarity($item) <> $RARITY_White And GetItemReq($item) < 9 And IsMaxDamageForReq($item) Then Return True
 	Return DefaultShouldPickItem($item)
 EndFunc
 

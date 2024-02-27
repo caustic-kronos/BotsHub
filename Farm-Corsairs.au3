@@ -190,7 +190,7 @@ Func CorsairsFarmLoop()
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
 		Out("Looting")
-		PickUpItems(DefendAgainstCorsairs)
+		PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
 	EndIf
 
 	BackToModdokCreviceOutpost()
