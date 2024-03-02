@@ -1,7 +1,7 @@
 #CS
 #################################
 #								#
-#	Raptor Bot 
+#	Raptor Bot
 #								#
 #################################
 Author: Rattiev
@@ -13,11 +13,11 @@ Modified by: Night
 #RequireAdmin
 #NoTrayIcon
 
-#include "GWA2_Headers.au3"
-#include "GWA2.au3"
-#include "Utils.au3"
+#include 'GWA2_Headers.au3'
+#include 'GWA2.au3'
+#include 'Utils.au3'
 
-; Possible improvements : 
+; Possible improvements :
 ; - Update movements to be depending on raptors positions to make sure almost all raptors are aggroed (especially boss group)
 ; - Make rubberbanding function using foes positions (if foes are mostly not around you then you're rubberbanding) or using foes targetting (if foes in aggro range don't target you you are rubberbanding)
 ; - Add heroes and use Edge of Extinction ? A bit unnecessary, will do if bored
@@ -26,24 +26,24 @@ Modified by: Night
 ; - Change spiking position
 
 
-Opt("MustDeclareVars", 1)
+Opt('MustDeclareVars', 1)
 
-Local Const $RaptorBotVersion = "0.4"
+Local Const $RaptorBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $WNRaptorFarmerSkillbar = "OQQTcYqVXySgmUlJvovYUbHctAA"
-Local Const $PRunnerHeroSkillbar = "OQijEqmMKODbe8O2Efjrx0bWMA"
-Local Const $RaptorsFarmInformations = "For best results, have :" & @CRLF _
-	& "- 12 in curses" & @CRLF _
-	& "- 12+ in tactics" & @CRLF _
-	& "- 9+ in swordsmanship (enough to use your sword)"& @CRLF _
-	& "- A Tactics shield with the inscription 'Through Thick and Thin' (+10 armor against Piercing damage)" & @CRLF _
-	& "- A sword 'of Shelter', prefix and inscription do not matter" & @CRLF _
-	& "- Knight insignias on all the armor pieces" & @CRLF _
-	& "- A superior vigor rune" & @CRLF _
-	& "- A superior Absorption rune" & @CRLF _
-	& "- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership" & @CRLF _
-	& "- Golden Eggs"
+Local Const $WNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'
+Local Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
+Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
+	& '- 12 in curses' & @CRLF _
+	& '- 12+ in tactics' & @CRLF _
+	& '- 9+ in swordsmanship (enough to use your sword)'& @CRLF _
+	& '- A Tactics shield with the inscription "Through Thick and Thin" (+10 armor against Piercing damage)' & @CRLF _
+	& '- A sword "of Shelter", prefix and inscription do not matter' & @CRLF _
+	& '- Knight insignias on all the armor pieces' & @CRLF _
+	& '- A superior vigor rune' & @CRLF _
+	& '- A superior Absorption rune' & @CRLF _
+	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
+	& '- Golden Eggs'
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
 Local Const $Raptors_MarkOfPain = 1
 Local Const $Raptors_IAmUnstoppable = 2
@@ -71,34 +71,24 @@ Local $chatStuckTimer = TimerInit()
 
 ;~ Main method to farm Raptors
 Func RaptorFarm($STATUS)
-	If $STATUS <> "RUNNING" Then Return 2
-
-	If (((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-		Out("Inventory full, pausing.")
-		Return 2
-	EndIf
-
-	If $STATUS <> "RUNNING" Then Return 2
-
 	If GetMapID() <> $ID_Rata_Sum Then
 		DistrictTravel($ID_Rata_Sum, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	
-	If Not $RAPTORS_FARM_SETUP Then 
+	If Not $RAPTORS_FARM_SETUP Then
 		SetupRaptorFarm()
 		$RAPTORS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return 2
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	Return RaptorsFarmLoop()
 EndFunc
 
 
 Func SetupRaptorFarm()
-	Out("Setting up farm")
-	; TODO Display your Asura Title for the energy boost.
-	;SetDisplayedTitle(0x29)
+	Out('Setting up farm')
+	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
 	;DisableHeroSkills()
@@ -110,7 +100,7 @@ Func SetupRaptorFarm()
 	Move(-26309, -4112)
 	RndSleep(1000)
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
-	Out("Resign preparation complete")
+	Out('Resign preparation complete')
 EndFunc
 
 
@@ -124,7 +114,7 @@ EndFunc
 ;~ Farm loop
 Func RaptorsFarmLoop()
 	If Not $RenderingEnabled Then ClearMemory()
-	Out("Exiting to Riven Earth")
+	Out('Exiting to Riven Earth')
 	Move(20084, 16854)
 	RndSleep(1000)
 	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
@@ -138,7 +128,7 @@ Func RaptorsFarmLoop()
 	KillRaptors()
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out("Looting")
+		Out('Looting')
 		PickUpItems(DefendWhilePickingUpItems)
 	EndIf
 
@@ -157,7 +147,7 @@ EndFunc
 Func GetBlessing()
 	Local $Asura = GetAsuraTitle()
 	If $Asura < 160000 Then
-		Out("Getting asura title blessing")
+		Out('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
 		RndSleep(250)
 		Dialog(132)
@@ -167,7 +157,7 @@ EndFunc
 
 Func MoveToBaseOfCave()
 	If GetIsDead(-2) Then Return
-	Out("Moving to Cave")
+	Out('Moving to Cave')
 	Move(-22015, -7502)
 	RndSleep(500)
 	UseHeroSkill(1, $Raptors_FallBack)
@@ -188,14 +178,14 @@ EndFunc
 
 
 Func MoveHeroAway()
-	Out("Moving Hero away")
+	Out('Moving Hero away')
 	CommandAll(-25309, -4212)
 	RndSleep(500)
 EndFunc
 
 
 Func GetRaptors()
-	Out("Gathering Raptors")
+	Out('Gathering Raptors')
 	Local $target = GetNearestEnemyToAgent(-2)
 	
 	Move(-20695, -9900, 20)
@@ -233,10 +223,10 @@ Func IsBodyBlocked()
 	Local $blocked = 0
 	Local Const $PI = 3.141592653589793
 	Local $angle = 0
-	If DllStructGetData(GetAgentByID(-2), "HP") < 0.92 Then
+	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.92 Then
 		; Dont spam stuck command it's sent to servers
 		If TimerDiff($chatStuckTimer) > 3000 Then
-			SendChat("stuck", "/")
+			SendChat('stuck', '/')
 			$chatStuckTimer = TimerInit()
 			RndSleep(GetPing())
 		EndIf
@@ -260,7 +250,7 @@ Func KillRaptors()
 	Local $lRekoff
 
 	If GetIsDead(-2) Then Return
-	Out("Clearing Raptors")
+	Out('Clearing Raptors')
 	If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 	RndSleep(50)
 	UseSkillEx($Raptors_ProtectorsDefense)
@@ -270,7 +260,7 @@ Func KillRaptors()
 	UseSkillEx($Raptors_WaryStance)
 	RndSleep(500)
 
-	$lRekoff = GetAgentByName("Rekoff Broodmother")
+	$lRekoff = GetAgentByName('Rekoff Broodmother')
 
 	If GetDistance(-2, $lRekoff) > $RANGE_SPELLCAST Then
 		$MoPTarget = GetNearestEnemyToAgent(-2)
@@ -317,7 +307,7 @@ Func KillRaptors()
 	WEnd
 	
 	Local $raptorsCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
-	Out("Spiking " & $raptorsCount & " raptors")
+	Out('Spiking ' & $raptorsCount & ' raptors')
 	
 	UseSkillEx($Raptors_ShieldBash)
 	RndSleep(20)
@@ -335,7 +325,7 @@ EndFunc
 
 Func BackToTown()
 	Local $result = AssertFarmResult()
-	Out("Porting to Rata Sum")
+	Out('Porting to Rata Sum')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()
@@ -346,13 +336,13 @@ EndFunc
 
 Func AssertFarmResult()
 	If GetIsDead(-2) Then
-		Out("Character died")
+		Out('Character died')
 		Return 1
 	EndIf
 
 	Local $survivors = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	If $survivors > 1 Then
-		Out($survivors & " raptors survived")
+		Out($survivors & ' raptors survived')
 		Return 1
 	Else
 		Return 0
@@ -360,7 +350,7 @@ Func AssertFarmResult()
 EndFunc
 
 
-;~ Description: Move to destX, destY, while staying alive vs raptors
+;~ Move to destX, destY, while staying alive vs raptors
 Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 	If GetIsDead(-2) Then Return
 
@@ -397,7 +387,7 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 
 		If $lBlocked > 3 Then
 			If TimerDiff($timer) > 2500 Then	; use a timer to avoid spamming /stuck
-				SendChat("stuck", "/")
+				SendChat('stuck', '/')
 				$timer = TimerInit()
 				$timerCount += 1
 			EndIf
@@ -405,7 +395,7 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 
 		If GetDistance() > 1500 Then ; target is far, we probably got stuck.
 			If TimerDiff($timer) > 2500 Then ; dont spam
-				SendChat("stuck", "/")
+				SendChat('stuck', '/')
 				$timer = TimerInit()
 				RndSleep(GetPing())
 				Attack($CheckTarget)

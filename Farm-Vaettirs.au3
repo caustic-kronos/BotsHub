@@ -13,24 +13,24 @@ Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from mone
 
 #include <Date.au3>
 
-#include "GWA2.au3"
-#include "GWA2_Headers.au3"
-#include "GWA2_ID.au3"
-#include "Utils.au3"
+#include 'GWA2.au3'
+#include 'GWA2_Headers.au3'
+#include 'GWA2_ID.au3'
+#include 'Utils.au3'
 
-Opt("MustDeclareVars", 1)
+Opt('MustDeclareVars', 1)
 
 
-Local Const $VaettirBotVersion = "0.4"
+Local Const $VaettirBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $AMeVaettirsFarmerSkillbar = "OwVUI2h5lPP8Id2BkAiAvpLBTAA"
-Local Const $VaettirsFarmInformations = "For best results, have :" & @CRLF _
-	& "- +4 Shadow Arts" & @CRLF _
-	& "- Blessed insignias"& @CRLF _
-	& "- A shield with the inscription 'Like a rolling stone' (+10 armor against earth damage)" & @CRLF _
-	& "- A main hand with +20% enchantments duration" & @CRLF _
-	& "- Cupcakes"
+Local Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiAvpLBTAA'
+Local Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
+	& '- +4 Shadow Arts' & @CRLF _
+	& '- Blessed insignias'& @CRLF _
+	& '- A shield with the inscription "Like a rolling stone" (+10 armor against earth damage)' & @CRLF _
+	& '- A main hand with +20% enchantments duration' & @CRLF _
+	& '- Cupcakes'
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form)  is better than UseSkillEx(2))
 Local Const $Skill_Deadly_Paradox = 1
 Local Const $Skill_Shadow_Form  = 2
@@ -50,33 +50,27 @@ Local $timer = TimerInit()
 
 ;~ Main method to farm Vaettirs
 Func VaettirFarm($STATUS)
-	If ($Deadlocked OR ((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-		Out("Inventory full, pausing.")
-		$Deadlocked = False
-		Return 2
-	EndIf
-
-	If $STATUS <> "RUNNING" Then Return 2
+	If $Deadlocked Then Return 2
 
 	If GetMapID() <> $ID_Jaga_Moraine Then RunToJagaMoraine()
 
-	If $STATUS <> "RUNNING" Then Return 2
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	Return VaettirsFarmLoop()
 EndFunc
 
 
-;~ Zones to Longeye if we're not there, and travel to Jaga Moraine
+;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
 Func RunToJagaMoraine()
 	If GetMapID() <> $ID_Longeyes_Ledge Then
-		Out("Travelling to Longeye's Ledge")
+		Out('Travelling to Longeyes Ledge')
 		;RandomDistrictTravel($ID_Longeyes_Ledge)
 		DistrictTravel($ID_Longeyes_Ledge, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
 
-	Out("Exiting Outpost")
+	Out('Exiting Outpost')
 	MoveTo(-26472, 16217)
 	WaitMapLoading($ID_Bjora_Marches)
 
@@ -84,11 +78,9 @@ Func RunToJagaMoraine()
 	If (GUICtrlRead($ConsumeCupcakeCheckbox) == $GUI_CHECKED) Then UseCupcake()
 	RndSleep(500)
 	
-	;~ TODO Display your Norn Title for the health boost.
-	;SetDisplayedTitle(0x29)
-	;RndSleep(500)
+	SetDisplayedTitle($ID_Norn_Title)
 
-	Out("Running to Jaga Moraine")
+	Out('Running to Jaga Moraine')
 	Local $Array_Longeyes_Ledge[31][3] = [ _
 		[1, 15003.8, -16598.1], _
 		[1, 15003.8, -16598.1], _
@@ -134,7 +126,7 @@ Func RunToJagaMoraine()
 EndFunc
 
 
-;~ Description: Move to destX, destY. This is to be used in the run from across Bjora Marches
+;~ Move to destX, destY. This is to be used in the run from across Bjora Marches
 Func MoveRunning($lDestX, $lDestY)
 	If GetIsDead(-2) Then Return False
 
@@ -156,9 +148,9 @@ Func MoveRunning($lDestX, $lDestY)
 			$timer = TimerInit()
 		EndIf
 
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.9 And GetEnergy(-2) > 10 And IsRecharged($Skill_Shroud_of_Distress) And TimerDiff($timer) < 15000 Then UseSkillEx($Skill_Shroud_of_Distress)
+		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.9 And GetEnergy(-2) > 10 And IsRecharged($Skill_Shroud_of_Distress) And TimerDiff($timer) < 15000 Then UseSkillEx($Skill_Shroud_of_Distress)
 
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.5 And GetDistance(GetAgentByID(-2), $lTgt) < 500 And GetEnergy(-2) > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, -1)
+		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.5 And GetDistance(GetAgentByID(-2), $lTgt) < 500 And GetEnergy(-2) > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, -1)
 
 		If DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0 Then
 			Move($lDestX, $lDestY)
@@ -173,19 +165,13 @@ EndFunc
 Func VaettirsFarmLoop()
 	If Not $RenderingEnabled Then ClearMemory()
 
-	; TODO Display your Norn Title for the health boost.
-	;SetDisplayedTitle(0x29)
-	
 	RndSleep(2000)
-
 	AggroAllMobs()
-
 	KillMobs()
-
 	WaitFor(1200)
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out("Looting")
+		Out('Looting')
 		PickUpItems()
 	EndIf
 
@@ -195,7 +181,7 @@ EndFunc
 
 ;~ Self explanatory
 Func AggroAllMobs()
-	Out("Aggroing left")
+	Out('Aggroing left')
 	MoveTo(13501, -20925)
 	MoveTo(13172, -22137)
 	TargetNearestEnemy()
@@ -214,7 +200,7 @@ Func AggroAllMobs()
 	MoveAggroing(8684, -20833, 150)
 	MoveAggroing(8982, -20576, 150)
 
-	Out("Waiting for left ball")
+	Out('Waiting for left ball')
 	WaitFor(12*1000)
 
 	If GetDistance() < 1000 Then
@@ -227,7 +213,7 @@ Func AggroAllMobs()
 
 	TargetNearestEnemy()
 
-	Out("Aggroing right")
+	Out('Aggroing right')
 	MoveAggroing(10196, -20124, 150)
 	MoveAggroing(9976, -18338, 150)
 	MoveAggroing(11316, -18056, 150)
@@ -241,7 +227,7 @@ Func AggroAllMobs()
 	TargetNearestEnemy()
 	MoveAggroing(12476, -16157)
 
-	Out("Waiting for right ball")
+	Out('Waiting for right ball')
 	WaitFor(15*1000)
 
 	If GetDistance() < 1000 Then
@@ -271,7 +257,7 @@ Func KillMobs()
 	Local $Shadow_Form_Timer = TimerDiff($timer)
 	Local $lAgentArray
 	
-	Out("Killing")
+	Out('Killing')
 	Do
 		WaitFor(100)
 		If GetIsDead(-2) Then Return
@@ -286,7 +272,7 @@ Func KillMobs()
 	RndSleep(100)
 	Local $lTargetID = GetCurrentTargetID()
 
-	While GetAgentExists($lTargetID) And DllStructGetData(GetAgentByID($lTargetID), "HP") > 0
+	While GetAgentExists($lTargetID) And DllStructGetData(GetAgentByID($lTargetID), 'HP') > 0
 		RndSleep(50)
 		If GetIsDead(-2) Then Return
 		$lAgentArray = GetAgentArray(0xDB)
@@ -320,7 +306,7 @@ Func KillMobs()
 		If GetDistance(-2, $lTargetID) > $RANGE_EARSHOT Then
 			TargetNearestEnemy()
 			RndSleep(100)
-			If GetAgentExists(-1) And DllStructGetData(GetAgentByID(-1), "HP") > 0 And GetDistance(-2, -1) < $RANGE_AREA Then
+			If GetAgentExists(-1) And DllStructGetData(GetAgentByID(-1), 'HP') > 0 And GetDistance(-2, -1) < $RANGE_AREA Then
 				$lTargetID = GetCurrentTargetID()
 			Else
 				ExitLoop
@@ -338,13 +324,13 @@ Func RezoneToJagaMoraine()
 	If GetIsDead(-2) Then $success = 1
 	If $Deadlocked Then $success 1
 
-	Out("Zoning out and back in")
+	Out('Zoning out and back in')
 	MoveAggroing(12289, -17700)
 	MoveAggroing(15318, -20351)
 
 	Local $deadlockTimer = TimerInit()
 	While GetIsDead(-2)
-		Out("Waiting for resurrection")
+		Out('Waiting for resurrection')
 		RndSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$Deadlocked = True
@@ -363,7 +349,7 @@ Func RezoneToJagaMoraine()
 EndFunc
 
 
-;~ Description: Move to destX, destY, while staying alive vs vaettirs
+;~ Move to destX, destY, while staying alive vs vaettirs
 Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 	If GetIsDead(-2) Then Return
 
@@ -408,7 +394,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 			If $lBlocked > 0 Then
 				; use a timer to avoid spamming /stuck
 				If TimerDiff($ChatStuckTimer) > 3000 Then	
-					SendChat("stuck", "/")
+					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
 				EndIf
 				$lBlocked = 0
@@ -419,7 +405,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 			If GetDistance() > 1100 Then
 				; dont spam
 				If TimerDiff($ChatStuckTimer) > 3000 Then
-					SendChat("stuck", "/")
+					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
 					RndSleep(GetPing())
 					; we werent stuck, but target broke aggro. select a new one
@@ -449,7 +435,7 @@ Func WaitFor($lMs)
 EndFunc
 
 
-;~ Description: use whatever skills you need to keep yourself alive.
+;~ Use whatever skills you need to keep yourself alive.
 ;~ Take agent array as param to more effectively react to the environment (mobs)
 Func StayAlive(Const ByRef $lAgentArray)
 	If IsRecharged($Skill_Shadow_Form ) Then
@@ -462,8 +448,8 @@ Func StayAlive(Const ByRef $lAgentArray)
 	Local $lAdjCount, $lAreaCount, $lSpellcastCount, $lProximityCount
 	Local $lDistance
 	For $i = 1 To $lAgentArray[0]
-		If DllStructGetData($lAgentArray[$i], "Allegiance") <> 0x3 Then ContinueLoop
-		If DllStructGetData($lAgentArray[$i], "HP") <= 0 Then ContinueLoop
+		If DllStructGetData($lAgentArray[$i], 'Allegiance') <> 0x3 Then ContinueLoop
+		If DllStructGetData($lAgentArray[$i], 'HP') <= 0 Then ContinueLoop
 		$lDistance = GetPseudoDistance(GetAgentByID(-2), $lAgentArray[$i])
 		If $lDistance < 1200*1200 Then
 			$lProximityCount += 1
@@ -482,9 +468,9 @@ Func StayAlive(Const ByRef $lAgentArray)
 	UseShadowForm($lProximityCount)
 
 	If IsRecharged($Skill_Shroud_of_Distress) And TimerDiff($timer) < 15000 Then
-		If $lSpellcastCount > 0 And DllStructGetData(GetEffect($ID_Shroud_of_Distress), "SkillID") == 0 Then
+		If $lSpellcastCount > 0 And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0 Then
 			UseSkillEx($Skill_Shroud_of_Distress)
-		ElseIf DllStructGetData(GetAgentByID(-2), "HP") < 0.6 Then
+		ElseIf DllStructGetData(GetAgentByID(-2), 'HP') < 0.6 Then
 			UseSkillEx($Skill_Shroud_of_Distress)
 		ElseIf $lAdjCount > 20 Then
 			UseSkillEx($Skill_Shroud_of_Distress)
@@ -495,7 +481,7 @@ Func StayAlive(Const ByRef $lAgentArray)
 	UseShadowForm($lProximityCount)
 
 	If IsRecharged($Skill_Way_of_Perfection) And TimerDiff($timer) < 15000 Then
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.5 Then
+		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.5 Then
 			UseSkillEx($Skill_Way_of_Perfection)
 		ElseIf $lAdjCount > 20 Then
 			UseSkillEx($Skill_Way_of_Perfection)
@@ -530,11 +516,11 @@ EndFunc
 ;~ Takes the agent array as returned by GetAgentArray(..)
 Func GetGoodTarget(Const ByRef $lAgentArray)
 	For $i = 1 To $lAgentArray[0]
-		If DllStructGetData($lAgentArray[$i], "Allegiance") <> 0x3 Then ContinueLoop
-		If DllStructGetData($lAgentArray[$i], "HP") <= 0 Then ContinueLoop
+		If DllStructGetData($lAgentArray[$i], 'Allegiance') <> 0x3 Then ContinueLoop
+		If DllStructGetData($lAgentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If GetDistance(GetAgentByID(-2), $lAgentArray[$i]) > $RANGE_NEARBY Then ContinueLoop
 		If GetHasHex($lAgentArray[$i]) Then ContinueLoop
 		If Not GetIsEnchanted($lAgentArray[$i]) Then ContinueLoop
-		Return DllStructGetData($lAgentArray[$i], "ID")
+		Return DllStructGetData($lAgentArray[$i], 'ID')
 	Next
 EndFunc

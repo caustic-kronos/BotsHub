@@ -13,12 +13,109 @@
 ; Night edit : if you wish to have a better, updated list of those headers, look up Opcodes.h from GWCA, the values are the same
 
 #include-once
+
+; GAME_CMSG_ - Trade related
+Global Const $HEADER_TRADE_ACKNOWLEDGE = 0x0000 ; Acknowledges a trade request or action
+Global Const $HEADER_TRADE_CANCEL = 0x0001 ; Cancels an ongoing trade
+Global Const $HEADER_TRADE_ADD_ITEM = 0x0002 ; Adds an item to the trade window
+Global Const $HEADER_TRADE_SEND_OFFER = 0x0003 ; Sends a trade offer to the other party
+Global Const $HEADER_TRADE_REMOVE_ITEM = 0x0005 ; Removes an item from the trade window
+Global Const $HEADER_TRADE_CANCEL_OFFER = 0x0006 ; Cancels a previously sent trade offer
+Global Const $HEADER_TRADE_ACCEPT = 0x0007 ; Accepts a trade offer
+Global Const $HEADER_TRADE_INITIATE = 0x0047 ; Initiates a trade with another player
+Global Const $HEADER_REQUEST_QUOTE = 0x004A ; Requests a quote or price for an item
+Global Const $HEADER_TRANSACT_ITEMS = 0x004B ; Confirms a transaction involving items
+
+; GAME_CMSG_ - Connection and Ping
+Global Const $HEADER_DISCONNECT = 0x0008 ; Disconnects from the server or session
+Global Const $HEADER_PING_REPLY = 0x0009 ; Sends a reply to a ping request
+Global Const $HEADER_HEARTBEAT = 0x000A ; Sends a heartbeat signal to maintain connection
+Global Const $HEADER_PING_REQUEST = 0x000B ; Requests a ping to check the connection status
+
+; GAME_CMSG_ - Attributes and Skills
+Global Const $HEADER_ATTRIBUTE_DECREASE = 0x000C ; Decreases a player's attribute level
+Global Const $HEADER_ATTRIBUTE_INCREASE = 0x000D ; Increases a player's attribute level
+Global Const $HEADER_ATTRIBUTE_LOAD = 0x000E ; Loads a set of player attributes
+Global Const $HEADER_SKILLBAR_SKILL_SET = 0x005A ; Sets a skill in the player's skill bar
+Global Const $HEADER_SKILLBAR_LOAD = 0x005B ; Loads a complete skill bar setup
+Global Const $HEADER_SKILLBAR_SKILL_REPLACE = 0x005C ; Replaces a skill in the skill bar
+
+; GAME_CMSG_ - Quests
+Global Const $HEADER_QUEST_ABANDON = 0x000F ; Abandons a selected quest
+Global Const $HEADER_QUEST_REQUEST_INFOS = 0x0010 ; Requests information about a quest
+Global Const $HEADER_QUEST_SET_ACTIVE_CONFIRMED = 0x0012 ; Confirms setting a quest as active
+
+; GAME_CMSG_ - Heroes and NPCs
+Global Const $HEADER_HERO_BEHAVIOR = 0x0013 ; Sets the behavior/aggression level of a hero
+Global Const $HEADER_HERO_LOCK_TARGET = 0x0014 ; Locks a target for the hero
+Global Const $HEADER_HERO_SKILL_TOGGLE = 0x0017 ; Toggles a hero's skill on or off
+Global Const $HEADER_HERO_FLAG_SINGLE = 0x0018 ; Sets a position flag for a single hero
+Global Const $HEADER_HERO_FLAG_ALL = 0x0019 ; Sets a position flag for all heroes
+Global Const $HEADER_HERO_USE_SKILL = 0x001A ; Uses a skill as a hero
+Global Const $HEADER_HERO_ADD = 0x001C ; Adds a hero to the party
+Global Const $HEADER_HERO_KICK = 0x001D ; Removes a hero from the party
+
+; GAME_CMSG_ - Targeting and Movement
+Global Const $HEADER_ATTACK_AGENT = 0x0024 ; Initiates an attack on a selected agent
+Global Const $HEADER_CANCEL_MOVEMENT = 0x0026 ; Cancels the current movement or action
+Global Const $HEADER_MOVE_TO_COORD = 0x003C ; Moves to specified coordinates
+Global Const $HEADER_INTERACT_ITEM = 0x003D ; Interacts with an item in the environment
+Global Const $HEADER_ROTATE_PLAYER = 0x003E ; Rotates the player character
+Global Const $HEADER_DRAW_MAP = 0x0029 ; Draws on the map (for map pinging/markers)
+
+; GAME_CMSG_ - Inventory and Items
+Global Const $HEADER_DROP_ITEM = 0x002A ; Drops an item from the inventory to the ground
+Global Const $HEADER_DROP_GOLD = 0x002D ; Drops gold from the inventory
+Global Const $HEADER_EQUIP_ITEM = 0x002E ; Equips an item from the inventory
+Global Const $HEADER_UNEQUIP_ITEM = 0x004D ; Unequips an item
+Global Const $HEADER_INTERACT_GADGET = 0x004F ; Interacts with a gadget or device in the game
+Global Const $HEADER_SEND_SIGNPOST_DIALOG = 0x0051 ; Sends a dialog or interaction to a signpost
+Global Const $HEADER_EQUIP_VISIBILITY = 0x0055 ; Toggles the visibility of equipped items
+Global Const $HEADER_ITEM_APPLY_DYE = 0x0068 ; Applies dye to an item
+Global Const $HEADER_ITEM_IDENTIFY = 0x006A ; Identifies an item
+Global Const $HEADER_TOME_UNLOCK_SKILL = 0x006B ; Unlocks a skill using a tome
+Global Const $HEADER_ITEM_MOVE = 0x0070 ; Moves an item within the inventory
+Global Const $HEADER_ITEM_ACCEPT_ALL = 0x0071 ; Accepts all items in a loot or reward screen
+Global Const $HEADER_ITEM_SPLIT_STACK = 0x0073 ; Splits a stack of items
+Global Const $HEADER_ITEM_SALVAGE_SESSION_OPEN = 0x0075 ; Opens a salvage session
+Global Const $HEADER_ITEM_SALVAGE_SESSION_CANCEL = 0x0076 ; Cancels a salvage session
+Global Const $HEADER_ITEM_SALVAGE_SESSION_DONE = 0x0077 ; Completes a salvage session
+Global Const $HEADER_ITEM_SALVAGE_MATERIALS = 0x0078 ; Salvages materials from an item
+Global Const $HEADER_ITEM_SALVAGE_UPGRADE = 0x0079 ; Salvages upgrades from an item
+Global Const $HEADER_ITEM_CHANGE_GOLD = 0x007A ; Moves gold between the player and storage
+
+; GAME_CMSG_ - Instance Management
+Global Const $HEADER_INSTANCE_LOAD_REQUEST_SPAWN = 0x0086 ; Requests spawn in an instance
+Global Const $HEADER_INSTANCE_LOAD_REQUEST_PLAYERS = 0x008E ; Requests player information in an instance
+Global Const $HEADER_INSTANCE_LOAD_REQUEST_ITEMS = 0x008F ; Requests item information in an instance
+Global Const $HEADER_PARTY_SET_DIFFICULTY = 0x0099 ; Sets the difficulty level for a party
+Global Const $HEADER_PARTY_ACCEPT_INVITE = 0x009A ; Accepts a party invitation
+Global Const $HEADER_PARTY_ACCEPT_CANCEL = 0x009B ; Cancels an acceptance of a party invite
+Global Const $HEADER_PARTY_ACCEPT_REFUSE = 0x009C ; Refuses a party invitation
+Global Const $HEADER_PARTY_INVITE_NPC = 0x009D ; Invites an NPC to the party
+Global Const $HEADER_PARTY_INVITE_PLAYER = 0x009E ; Invites a player to the party
+Global Const $HEADER_PARTY_INVITE_PLAYER_NAME = 0x009F ; Invites a player to the party by name
+Global Const $HEADER_PARTY_LEAVE_GROUP = 0x00A0 ; Leaves the current party or group
+Global Const $HEADER_PARTY_CANCEL_ENTER_CHALLENGE = 0x00A1 ; Cancels entry into a challenge or mission
+Global Const $HEADER_PARTY_ENTER_CHALLENGE = 0x00A3 ; Enters a challenge or mission
+Global Const $HEADER_PARTY_RETURN_TO_OUTPOST = 0x00A5 ; Returns the party to the outpost
+Global Const $HEADER_PARTY_KICK_NPC = 0x00A6 ; Removes an NPC from the party
+Global Const $HEADER_PARTY_KICK_PLAYER = 0x00A7 ; Kicks a player from the party
+Global Const $HEADER_PARTY_SEARCH_SEEK = 0x00A8 ; Seeks members for party formation
+Global Const $HEADER_PARTY_SEARCH_CANCEL = 0x00A9 ; Cancels a party search
+Global Const $HEADER_PARTY_SEARCH_REQUEST_JOIN = 0x00AA ; Requests to join a party search
+Global Const $HEADER_PARTY_SEARCH_REQUEST_REPLY = 0x00AB ; Replies to a party search join request
+Global Const $HEADER_PARTY_SEARCH_TYPE = 0x00AC ; Sets the type of party search
+Global Const $HEADER_PARTY_READY_STATUS = 0x00AD ; Indicates ready status in a party
+Global Const $HEADER_PARTY_ENTER_GUILD_HALL = 0x00AE ; Enters a guild hall
+Global Const $HEADER_PARTY_TRAVEL = 0x00AF ; Travels to a different location
+Global Const $HEADER_PARTY_LEAVE_GUILD_HALL = 0x00B0 ; Leaves
+
 ;=QUEST=
 ;GAME_SMSG_QUEST_ADD
 Global Const $HEADER_QUEST_ACCEPT = 0x39	;Accepts a quest from the NPC
 Global Const $HEADER_QUEST_REWARD = 0x39	;Retrieves Quest reward from NPC
 ;GAME_CMSG_QUEST_ABANDON 0x10 or GAME_SMSG_QUEST_REMOVE 0x52
-Global Const $HEADER_QUEST_ABANDON = 0x0F ;Abandons the quest
 
 ;=HERO=
 ;GAME_CMSG_HERO_BEHAVIOR
@@ -31,9 +128,7 @@ Global Const $HEADER_HERO_TOGGLE_SKILL = 0x19	;Enables or disables the heroes sk
 Global Const $HEADER_HERO_PLACE_FLAG = 0x18	;Sets the heroes position flag, hero runs to position
 Global Const $HEADER_HERO_CLEAR_FLAG = 0x18	;Clears the heroes position flag
 ;GAME_CMSG_HERO_ADD 0x1D or GAME_SMSG_PARTY_HERO_ADD 0x1C8
-Global Const $HEADER_HERO_ADD = 0x1C	;Adds hero to party
 ;GAME_CMSG_HERO_KICK 0x1E or GAME_SMSG_PARTY_HERO_REMOVE 0x1C9
-Global Const $HEADER_HERO_KICK = 0x1D	;Kicks hero from party
 Global Const $HEADER_HEROES_KICK = 0x1D	;Kicks ALL heroes from party
 Global Const $HEADER_USE_HERO_SKILL = 0x1A ;For use with UseHeroSkillByPacket() only
 
@@ -57,16 +152,16 @@ Global Const $HEADER_INVITE_ACCEPT = 0x9A	;Accept invitation to party
 ;=TARGET (Enemies or NPC)=
 ;GAME_CMSG_TARGET_CALL 0x22
 Global Const $HEADER_CALL_TARGET = 0x21	;Calls the target without attacking (Ctrl+Shift+Space)
-;GAME_CMSG_ATTACK_AGENT 0x25
-Global Const $HEADER_ATTACK_AGENT = 0x24	;Attacks agent (Space IIRC)
 ;GAME_CMSG_CANCEL_MOVEMENT 0x27 or GAME_SMSG_SKILL_CANCEL 0xE4
 Global Const $HEADER_CANCEL_ACTION = 0x26	;Cancels the current action
 ;GAME_CMSG_INTERACT_PLAYER 0x32
-Global Const $HEADER_AGENT_FOLLOW = 0x31	;Follows the agent/npc. Ctrl+Click triggers "I am following Person" in chat
+Global Const $HEADER_AGENT_FOLLOW = 0x31	;Follows the agent/npc. Ctrl+Click triggers 'I am following Person' in chat
 ;GAME_CMSG_INTERACT_LIVING
 Global Const $HEADER_NPC_TALK = 0x37	;talks/goes to npc
 ;GAME_CMSG_INTERACT_ITEM 0x3E or GAME_CMSG_INTERACT_GADGET 0x50
 Global Const $HEADER_SIGNPOST_RUN = 0x4F	;Runs to signpost
+
+Global Const $HEADER_OPEN_CHEST = 0x0051
 
 ;=DROP=
 ;GAME_CMSG_DROP_ITEM 0x2B
@@ -88,7 +183,6 @@ Global Const $HEADER_ITEM_DESTROY = 0x67	;Destroys the item
 ;GAME_CMSG_ITEM_IDENTIFY
 Global Const $HEADER_ITEM_ID = 0x6A	;Identifies item in inventory
 ;GAME_CMSG_ITEM_MOVE
-Global Const $HEADER_ITEM_MOVE = 0x70	;Moves item in inventory
 ;GAME_CMSG_ITEM_ACCEPT_ALL
 Global Const $HEADER_ITEMS_ACCEPT_UNCLAIMED = 0x71	;Accepts ITEMS not picked up in missions
 ;GAME_CMSG_ITEM_MOVE
@@ -121,9 +215,7 @@ Global Const $HEADER_TRADE_SUBMIT_OFFER = 0x03	;Submit offer
 ;GAME_SMSG_TRADE_CHANGE_OFFER
 Global Const $HEADER_TRADE_CHANGE_OFFER = 0x02	;Change offer
 ;GAME_CMSG_TRADE_CANCEL
-Global Const $HEADER_TRADE_CANCEL = 0x01	;Cancel trade
 ;GAME_CMSG_TRADE_ACCEPT
-Global Const $HEADER_TRADE_ACCEPT = 0x07	;Accept trade
 
 ;=TRAVEL=
 ;GAME_CMSG_PARTY_TRAVEL
@@ -191,7 +283,12 @@ Global Const $HEADER_MOVEMENT_TICK = 0x1E
 
 ;=OTHER CONSTANTS=
 Global Const $HEADER_MAX_ATTRIBUTES_CONST_5 = 0x03	;constant at word 5 of max attrib packet. Changed from 3 to four in most recent update
-Global Const $HEADER_MAX_ATTRIBUTES_CONST_22	= 0x03	;constant at word 22 of max attrib packet. Changed from 3 to four in most recent update
+Global Const $HEADER_MAX_ATTRIBUTES_CONST_22 = 0x03	;constant at word 22 of max attrib packet. Changed from 3 to four in most recent update
 Global Const $HEADER_OPEN_GB_WINDOW = 0x9E
 Global Const $HEADER_CLOSE_GB_WINDOW = 0x9F
 Global Const $HEADER_START_RATING_GVG = 0xA8
+;=NEW CONSTANTS=
+Global Const $HEADER_TITLE_UPDATE = 0x00F4
+Global Const $HEADER_TITLE_TRACK_INFO = 0x0075
+Global Const $HEADER_PLAYER_ATTR_UPDATE = 0x0086
+Global Const $HEADER_PLAYER_ATTR_SET = 0x0097

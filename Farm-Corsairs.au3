@@ -11,26 +11,26 @@ Author: Night
 #RequireAdmin
 #NoTrayIcon
 
-#include "GWA2_Headers.au3"
-#include "GWA2.au3"
-#include "Utils.au3"
+#include 'GWA2_Headers.au3'
+#include 'GWA2.au3'
+#include 'Utils.au3'
 
-; Possible improvements : 
+; Possible improvements :
 
-Opt("MustDeclareVars", 1)
+Opt('MustDeclareVars', 1)
 
-Local Const $CorsairsBotVersion = "0.4"
+Local Const $CorsairsBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $RACorsairsFarmerSkillbar = "OgcSc5PT3lCHIQHQj1xlpZ4O"
-Local Const $CorsairsFarmInformations = "For best results, have :" & @CRLF _
-	& "- 16 in Expertise" & @CRLF _
-	& "- 12 in Shadow Arts" & @CRLF _
-	& "- A shield with the inscription 'Through Thick and Thin' (+10 armor against Piercing damage)" & @CRLF _
-	& "- A spear +5 energy +5 armor or +20% enchantment duration" & @CRLF _
-	& "- Sentry or Blessed insignias on all the armor pieces" & @CRLF _
-	& "- A superior vigor rune" & @CRLF _
-	& "- Dunkoro"
+Local Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
+Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
+	& '- 16 in Expertise' & @CRLF _
+	& '- 12 in Shadow Arts' & @CRLF _
+	& '- A shield with the inscription "Through Thick and Thin" (+10 armor against Piercing damage)' & @CRLF _
+	& '- A spear +5 energy +5 armor or +20% enchantment duration' & @CRLF _
+	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
+	& '- A superior vigor rune' & @CRLF _
+	& '- Dunkoro'
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
 Local Const $Corsairs_DwarvenStability = 1
 Local Const $Corsairs_WhirlingDefense = 2
@@ -40,9 +40,6 @@ Local Const $Corsairs_TogetherAsOne = 5
 Local Const $Corsairs_MentalBlock = 6
 Local Const $Corsairs_FeignedNeutrality = 7
 Local Const $Corsairs_DeathsCharge = 8
-
-;Local Const $Corsairs_ShadowOfHaste = 2
-;Local Const $Corsairs_ShadowSanctuary = 5
 
 ; Hero Build
 Local Const $Corsairs_MakeHaste = 1
@@ -54,42 +51,33 @@ Local $Bohseda_Timer
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
-	If $STATUS <> "RUNNING" Then Return 2
-
-	If (((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-		Out("Inventory full, pausing.")
-		Return 2
-	EndIf
-
-	If $STATUS <> "RUNNING" Then Return 2
-
-	If Not $CORSAIRS_FARM_SETUP Then 
+	If Not $CORSAIRS_FARM_SETUP Then
 		SetupCorsairsFarm()
 		$CORSAIRS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return 2
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	Return CorsairsFarmLoop()
 EndFunc
 
 
 Func SetupCorsairsFarm()
-	Out("Setting up farm")
+	Out('Setting up farm')
 	If GetMapID() <> $ID_Moddok_Crevice Then
 		DistrictTravel($ID_Moddok_Crevice, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)
-	Out("Preparations complete")
+	Out('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func CorsairsFarmLoop()
 	If Not $RenderingEnabled Then ClearMemory()
-	Out("Entering mission")
+	Out('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 	RndSleep(250)
 	Dialog(0x00000084)
@@ -189,7 +177,7 @@ Func CorsairsFarmLoop()
 	EndIf
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out("Looting")
+		Out('Looting')
 		PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
 	EndIf
 
@@ -231,7 +219,7 @@ EndFunc
 
 
 Func BackToModdokCreviceOutpost()
-	Out("Porting to Moddok Crevice (city)")
+	Out('Porting to Moddok Crevice (city)')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

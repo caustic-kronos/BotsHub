@@ -1,13 +1,13 @@
 #include-once
 
-#include "GWA2.au3"
-#include "GWA2_Headers.au3"
-#include "GWA2_ID.au3"
-#include "Utils.au3"
+#include 'GWA2.au3'
+#include 'GWA2_Headers.au3'
+#include 'GWA2_ID.au3'
+#include 'Utils.au3'
 
 ; ==== Constantes ====
-Local Const $FarmerSkillbar = ""
-Local Const $FarmInformations = ""
+Local Const $FarmerSkillbar = ''
+Local Const $FarmInformations = ''
 
 Local $Farm_Setup = False
 
@@ -45,19 +45,19 @@ Local Const $ID_necro_mercenary_hero = $ID_Mercenary_Hero_3
 Func OmniFarm($STATUS)
 	;If Not($Farm_Setup) Then OmniFarmSetup()
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> 'RUNNING' Then Return
 
 	If CountSlots() < 5 Then
-		Out("Inventory full, pausing.")
+		Out('Inventory full, pausing.')
 		Return 2
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> 'RUNNING' Then Return
 
-	Out("Preparing the spirit setup")
+	Out('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
-	If $STATUS <> "RUNNING" Then Return
+	If $STATUS <> 'RUNNING' Then Return
 
 	HealingLoop()
 
@@ -66,7 +66,7 @@ EndFunc
 
 ;~ Shouldn't be used
 Func HealingLoop()
-	While $STATUS == "RUNNING"
+	While $STATUS == 'RUNNING'
 		HealingUnit()
 	WEnd
 EndFunc
@@ -121,7 +121,7 @@ EndFunc
 
 ;~ Can be used in other farm bots - has no latency - can be used at most once every 5s
 Func HealingUnit()
-	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then 
+	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf
@@ -141,7 +141,7 @@ EndFunc
 
 ;~ Shouldn't be used in other farm bots - made to run continuously, so has strong latency (about 5s)
 Func HealingUnitAutoLoop()
-	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then 
+	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf

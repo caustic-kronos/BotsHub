@@ -1,8 +1,8 @@
 #include-once
 #include <Array.au3>
-#include "Utils.au3"
+#include 'Utils.au3'
 
-; TO ADD : 
+; TO ADD :
 #Region Unknown IDs
 ; Special - something like a ToT :
 Global Const $ID_UNKNOWN_CONSUMABLE_1 = 5656
@@ -94,6 +94,66 @@ Global Const $ID_Longeyes_Ledge = 650
 #EndRegion Game Locations
 
 
+#Region Professions
+Global Const $ID_Warrior = 1
+Global Const $ID_Ranger = 2
+Global Const $ID_Monk = 3
+Global Const $ID_Mesmer = 5
+Global Const $ID_Necromancer = 4
+Global Const $ID_Elementalist = 6
+Global Const $ID_Ritualist = 7
+Global Const $ID_Assassin = 8
+Global Const $ID_Paragon = 9
+Global Const $ID_Dervish = 10
+#EndRegion Professions
+
+
+#Region Weapon Attributes
+Global Const $ID_Fast_Casting = 0
+Global Const $ID_Illusion_Magic = 1
+Global Const $ID_Domination_Magic = 2
+Global Const $ID_Inspiration_Magic = 3
+Global Const $ID_Blood_Magic = 4
+Global Const $ID_Death_Magic = 5
+Global Const $ID_Soul_Reaping = 6
+Global Const $ID_Curses = 7
+Global Const $ID_Air_Magic = 8
+Global Const $ID_Earth_Magic = 9
+Global Const $ID_Fire_Magic = 10
+Global Const $ID_Water_Magic = 11
+Global Const $ID_Energy_Storage = 12
+Global Const $ID_Healing_Prayers = 13
+Global Const $ID_Smiting_Prayers = 14
+Global Const $ID_Protection_Prayers = 15
+Global Const $ID_Divine_Favor = 16
+Global Const $ID_Strength = 17
+Global Const $ID_Axe_Mastery = 18
+Global Const $ID_Hammer_Mastery = 19
+Global Const $ID_Swordsmanship = 20
+Global Const $ID_Tactics = 21
+;Global Const $ID_ = 22		;BeastMastery or Survival
+Global Const $ID_Expertise = 23
+;Global Const $ID_ = 24		;BeastMastery or Survival
+Global Const $ID_Marksmanship = 25
+;Global Const $ID_ = 26
+;Global Const $ID_ = 27
+;Global Const $ID_ = 28
+Global Const $ID_Dagger_Mastery = 29
+;Global Const $ID_ = 30		;CriticalStrikes or Lethal or Shadow
+;Global Const $ID_ = 31		;CriticalStrikes or Lethal or Shadow
+;Global Const $ID_ = 32		;CriticalStrikes or Lethal or Shadow
+Global Const $ID_Restoration_Magic = 33
+Global Const $ID_Channeling_Magic = 34
+Global Const $ID_Spawning_Power = 35
+;Global Const $ID_ = 36
+;Global Const $ID_ = 37
+Global Const $ID_Command = 38
+Global Const $ID_Motivation = 39
+Global Const $ID_Leadership = 40
+Global Const $ID_Mysticism = 44
+#EndRegion Weapon Attributes
+
+
 #Region Type IDs
 Global Const $ID_Type_Armor_Salvage = 0
 Global Const $ID_Type_Axe = 2
@@ -170,6 +230,15 @@ Global Const $ID_Miku = 36
 Global Const $ID_ZeiRi = 37
 #EndRegion Hero IDs
 
+
+#Region Titles
+Global Const $ID_Sunspear_Title = 0x11
+Global Const $ID_Lightbringer_Title = 0x14
+Global Const $ID_Asura_Title = 0x26
+Global Const $ID_Dwarf_Title = 0x27
+Global Const $ID_Ebon_Vanguard_Title = 0x28
+Global Const $ID_Norn_Title = 0x29
+#EndRegion Titles
 
 #Region Skill IDs
 ; Dervish
@@ -344,11 +413,11 @@ Global Const $ID_Pile_of_Glittering_Dust = 929
 Global Const $ID_Plant_Fibers = 934
 Global Const $ID_Feather = 933
 
-Local Const $Rare_Materials_Double_Array[26][2] = [[$ID_Fur_Square, "Fur Square"], [$ID_Bolt_of_Linen, "Bolt of Linen"], [$ID_Bolt_of_Damask, "Bolt of Damask"], [$ID_Bolt_of_Silk, "Bolt of Silk"], [$ID_Glob_of_Ectoplasm, "Glob of Ectoplasm"], _
-	[$ID_Steel_Ingot, "Steel Ingot"], [$ID_Deldrimor_Steel_Ingot, "Deldrimor Steel Ingot"], [$ID_Monstrous_Claw, "Monstrous Claw"], [$ID_Monstrous_Eye, "Monstrous Eye"], [$ID_Monstrous_Fang, "Monstrous Fang"], [$ID_Ruby, "Ruby"], [$ID_Sapphire, "Sapphire"], _
-	[$ID_Diamond, "Diamond"], [$ID_Onyx_Gemstone, "Onyx Gemstones"], [$ID_Lump_of_Charcoal, "Lumps of Charcoal"], [$ID_Obsidian_Shard, "Obsidian Shard"], [$ID_Tempered_Glass_Vial, "Tempered Glass Vial"], [$ID_Leather_Square, "Leather Squares"], _
-	[$ID_Elonian_Leather_Square, "Elonian Leather Square"], [$ID_Vial_of_Ink, "Vial of Ink"], [$ID_Rolls_of_Parchment, "Rolls of Parchment"], [$ID_Rolls_of_Vellum, "Rolls of Vellum"], [$ID_Spiritwood_Planks, "Spiritwood Planks"], _
-	[$ID_Amber_Chunk, "Amber Chunk"], [$ID_Jadeite_Shard, "Jadeite Shard"]]
+Local Const $Rare_Materials_Double_Array[26][2] = [[$ID_Fur_Square, 'Fur Square'], [$ID_Bolt_of_Linen, 'Bolt of Linen'], [$ID_Bolt_of_Damask, 'Bolt of Damask'], [$ID_Bolt_of_Silk, 'Bolt of Silk'], [$ID_Glob_of_Ectoplasm, 'Glob of Ectoplasm'], _
+	[$ID_Steel_Ingot, 'Steel Ingot'], [$ID_Deldrimor_Steel_Ingot, 'Deldrimor Steel Ingot'], [$ID_Monstrous_Claw, 'Monstrous Claw'], [$ID_Monstrous_Eye, 'Monstrous Eye'], [$ID_Monstrous_Fang, 'Monstrous Fang'], [$ID_Ruby, 'Ruby'], [$ID_Sapphire, 'Sapphire'], _
+	[$ID_Diamond, 'Diamond'], [$ID_Onyx_Gemstone, 'Onyx Gemstones'], [$ID_Lump_of_Charcoal, 'Lumps of Charcoal'], [$ID_Obsidian_Shard, 'Obsidian Shard'], [$ID_Tempered_Glass_Vial, 'Tempered Glass Vial'], [$ID_Leather_Square, 'Leather Squares'], _
+	[$ID_Elonian_Leather_Square, 'Elonian Leather Square'], [$ID_Vial_of_Ink, 'Vial of Ink'], [$ID_Rolls_of_Parchment, 'Rolls of Parchment'], [$ID_Rolls_of_Vellum, 'Rolls of Vellum'], [$ID_Spiritwood_Planks, 'Spiritwood Planks'], _
+	[$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
 Global Const $Map_Rare_Materials = MapFromDoubleArray($Rare_Materials_Double_Array)
 
 Local Const $Rare_Materials_Array[26] = [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
@@ -1141,50 +1210,6 @@ Global Const $ID_Panda_Mini = 15517
 #EndRegion Minis
 
 
-#Region Weapon Attributes
-Global Const $ID_Fast_Casting = 0
-Global Const $ID_Illusion_Magic = 1
-Global Const $ID_Domination_Magic = 2
-Global Const $ID_Inspiration_Magic = 3
-Global Const $ID_Blood_Magic = 4
-Global Const $ID_Death_Magic = 5
-;Global Const $ID_ = 6
-;Global Const $ID_ = 7
-Global Const $ID_Air_Magic = 8
-Global Const $ID_Earth_Magic = 9
-Global Const $ID_Fire_Magic = 10
-Global Const $ID_Water_Magic = 11
-Global Const $ID_Energy_Storage = 12
-Global Const $ID_Healing_Prayers = 13
-Global Const $ID_Smiting_Prayers = 14
-Global Const $ID_Protection_Prayers = 15
-Global Const $ID_Divine_Favor = 16
-Global Const $ID_Strength = 17
-Global Const $ID_Axe_Mastery = 18
-Global Const $ID_Hammer_Mastery = 19
-Global Const $ID_Swordsmanship = 20
-Global Const $ID_Tactics = 21
-;Global Const $ID_ = 22
-;Global Const $ID_ = 23
-;Global Const $ID_ = 24
-Global Const $ID_Marksmanship = 25
-;Global Const $ID_ = 26
-;Global Const $ID_ = 27
-;Global Const $ID_ = 28
-Global Const $ID_Dagger_Mastery = 29
-;Global Const $ID_ = 30
-;Global Const $ID_ = 31
-;Global Const $ID_ = 32
-Global Const $ID_Restoration_Magic = 33
-Global Const $ID_Channeling_Magic = 34
-;Global Const $ID_ = 35
-;Global Const $ID_ = 36
-;Global Const $ID_ = 37
-Global Const $ID_Command = 38
-Global Const $ID_Motivation = 39
-#EndRegion Weapon Attributes
-
-
 #Region Envoy Weapons
 ;Envoy Skinned Greens
 ; Green Envoys
@@ -1353,111 +1378,111 @@ Global Const $Map_Weapon_Mods = MapFromArray($Weapon_Mods_Array)
 #EndRegion Weapon Mods
 
 ; Valid for shields/focus but also staff and probably others
-Global Const $ID_Plus_30_Health = "1E4823"
+Global Const $ID_Plus_30_Health = '1E4823'
 
 ; Shield/Focus Mods health and minus damage
-Global Const $ID_Minus_3_Hex = "3009820"
-Global Const $ID_Minus_2_Stance = "200A820"
-Global Const $ID_Minus_2_Enchantment = "2008820"
-Global Const $ID_Plus_45_Stance = "02D8823"
-Global Const $ID_Plus_45_Enchantment = "02D6823"
-Global Const $ID_Plus_44_Enchantment_Demons = "02C6823"
-Global Const $ID_Minus_5_20 = "5147820"
+Global Const $ID_Minus_3_Hex = '3009820'
+Global Const $ID_Minus_2_Stance = '200A820'
+Global Const $ID_Minus_2_Enchantment = '2008820'
+Global Const $ID_Plus_45_Stance = '02D8823'
+Global Const $ID_Plus_45_Enchantment = '02D6823'
+Global Const $ID_Plus_44_Enchantment_Demons = '02C6823'
+Global Const $ID_Minus_5_20 = '5147820'
 ; Shield/Focus Mods +10 vs X
-Global Const $ID_Plus_10_vs_Demons = "A0848210"
-Global Const $ID_Plus_10_vs_Dragons = "A0948210"
-Global Const $ID_Plus_10_vs_Plants = "A0348210"
-Global Const $ID_Plus_10_vs_Tengu = "A0748210"
-Global Const $ID_Plus_10_vs_Undead = "A0048210"
+Global Const $ID_Plus_10_vs_Demons = 'A0848210'
+Global Const $ID_Plus_10_vs_Dragons = 'A0948210'
+Global Const $ID_Plus_10_vs_Plants = 'A0348210'
+Global Const $ID_Plus_10_vs_Tengu = 'A0748210'
+Global Const $ID_Plus_10_vs_Undead = 'A0048210'
 
-Global Const $ID_Plus_10_vs_Blunt = "0A0018A1"
-Global Const $ID_Plus_10_vs_Piercing = "A0118210"
-Global Const $ID_Plus_10_vs_Slashing = "A0218210"
+Global Const $ID_Plus_10_vs_Blunt = '0A0018A1'
+Global Const $ID_Plus_10_vs_Piercing = 'A0118210'
+Global Const $ID_Plus_10_vs_Slashing = 'A0218210'
 
-Global Const $ID_Plus_10_vs_Air = "A0418210"
-Global Const $ID_Plus_10_vs_Cold = "A0318210"
-Global Const $ID_Plus_10_vs_Earth = "A0B18210"
-Global Const $ID_Plus_10_vs_Fire = "A0518210"
+Global Const $ID_Plus_10_vs_Air = 'A0418210'
+Global Const $ID_Plus_10_vs_Cold = 'A0318210'
+Global Const $ID_Plus_10_vs_Earth = 'A0B18210'
+Global Const $ID_Plus_10_vs_Fire = 'A0518210'
 
 ; +1 20% Mods
-Global Const $ID_Plus_1_Domination = "0218240"
-Global Const $ID_Plus_1_Divine = "1018240"
-Global Const $ID_Plus_1_Smite = "0E18240"
-Global Const $ID_Plus_1_Healing = "0D18240"
-Global Const $ID_Plus_1_Prot = "0F18240"
-Global Const $ID_Plus_1_Fire = "0A18240"
-Global Const $ID_Plus_1_Water = "0B18240"
-Global Const $ID_Plus_1_Air = "0818240"
-Global Const $ID_Plus_1_Earth = "0918240"
-Global Const $ID_Plus_1_Death = "0518240"
-Global Const $ID_Plus_1_Blood = "0418240"
+Global Const $ID_Plus_1_Domination = '0218240'
+Global Const $ID_Plus_1_Divine = '1018240'
+Global Const $ID_Plus_1_Smite = '0E18240'
+Global Const $ID_Plus_1_Healing = '0D18240'
+Global Const $ID_Plus_1_Prot = '0F18240'
+Global Const $ID_Plus_1_Fire = '0A18240'
+Global Const $ID_Plus_1_Water = '0B18240'
+Global Const $ID_Plus_1_Air = '0818240'
+Global Const $ID_Plus_1_Earth = '0918240'
+Global Const $ID_Plus_1_Death = '0518240'
+Global Const $ID_Plus_1_Blood = '0418240'
 
 ; Universal mods
-Global Const $ID_Plus_5_50 = "5320823"
-Global Const $ID_Plus_5_Enchantment = "500F822"
-Global Const $ID_Casting_10 = "A0822"
-Global Const $ID_Recharge_10 = "AA823"
+Global Const $ID_Plus_5_50 = '5320823'
+Global Const $ID_Plus_5_Enchantment = '500F822'
+Global Const $ID_Casting_10 = 'A0822'
+Global Const $ID_Recharge_10 = 'AA823'
 
 ; Ele mods
-Global Const $ID_Casting_20_Fire = "0A141822"
-Global Const $ID_Casting_20_Water = "0B141822"
-Global Const $ID_Casting_20_Air = "08141822"
-Global Const $ID_Casting_20_Earth = "09141822"
-Global Const $ID_Casting_20_Energy = "0C141822"
-Global Const $ID_Recharge_20_Fire = "0A149823"
-Global Const $ID_Recharge_20_Water = "0B149823"
-Global Const $ID_Recharge_20_Air = "08149823"
-Global Const $ID_Recharge_20_Earth = "09149823"
-Global Const $ID_Recharge_20_Energy = "0C149823"
+Global Const $ID_Casting_20_Fire = '0A141822'
+Global Const $ID_Casting_20_Water = '0B141822'
+Global Const $ID_Casting_20_Air = '08141822'
+Global Const $ID_Casting_20_Earth = '09141822'
+Global Const $ID_Casting_20_Energy = '0C141822'
+Global Const $ID_Recharge_20_Fire = '0A149823'
+Global Const $ID_Recharge_20_Water = '0B149823'
+Global Const $ID_Recharge_20_Air = '08149823'
+Global Const $ID_Recharge_20_Earth = '09149823'
+Global Const $ID_Recharge_20_Energy = '0C149823'
 ; Monk mods
-Global Const $ID_Casting_20_Smite = "0E141822"
-Global Const $ID_Casting_20_Divine = "10141822"
-Global Const $ID_Casting_20_Healing = "0D141822"
-Global Const $ID_Casting_20_Protection = "0F141822"
-Global Const $ID_Recharge_20_Smiting = "0E149823"
-Global Const $ID_Recharge_20_Divine = "10149823"
-Global Const $ID_Recharge_20_Healing = "0D149823"
-Global Const $ID_Recharge_20_Protection = "0F149823"
+Global Const $ID_Casting_20_Smite = '0E141822'
+Global Const $ID_Casting_20_Divine = '10141822'
+Global Const $ID_Casting_20_Healing = '0D141822'
+Global Const $ID_Casting_20_Protection = '0F141822'
+Global Const $ID_Recharge_20_Smiting = '0E149823'
+Global Const $ID_Recharge_20_Divine = '10149823'
+Global Const $ID_Recharge_20_Healing = '0D149823'
+Global Const $ID_Recharge_20_Protection = '0F149823'
 ; Rit mods
-Global Const $ID_Casting_20_Channeling = "22141822"
-Global Const $ID_Casting_20_Restoration = "21141822"
-Global Const $ID_Recharge_20_Channeling = "22149823"
-Global Const $ID_Recharge_20_Restoration = "21149823"
+Global Const $ID_Casting_20_Channeling = '22141822'
+Global Const $ID_Casting_20_Restoration = '21141822'
+Global Const $ID_Recharge_20_Channeling = '22149823'
+Global Const $ID_Recharge_20_Restoration = '21149823'
 ; Mes mods
-Global Const $ID_Casting_20_Domination = "02141822"
-Global Const $ID_Recharge_20_Domination = "02149823"
+Global Const $ID_Casting_20_Domination = '02141822'
+Global Const $ID_Recharge_20_Domination = '02149823'
 ; Necro mods
-Global Const $ID_Casting_20_Death = "05141822"
-Global Const $ID_Casting_20_Blood = "04141822"
-Global Const $ID_Recharge_20_Death = "05149823"
-Global Const $ID_Recharge_20_Blood = "04149823"
+Global Const $ID_Casting_20_Death = '05141822'
+Global Const $ID_Casting_20_Blood = '04141822'
+Global Const $ID_Recharge_20_Death = '05149823'
+Global Const $ID_Recharge_20_Blood = '04149823'
 
 ; Runes and insignias
-Global Const $ID_Rune_Superior_Vigor = "C202EA27"
-Global Const $ID_Insignia_Windwalker = "040430A5060518A7"
-Global Const $ID_Rune_Minor_Mysticism = "05033025012CE821"
-Global Const $ID_Rune_Superior_Earth_Prayers = "32BE82109033025"
-Global Const $ID_Insignia_Prodigy = "C60330A5000528A7"
-Global Const $ID_Rune_Superior_Domination = "30250302E821770"
-Global Const $ID_Insignia_Shaman = "080430A50005F8A"
+Global Const $ID_Rune_Superior_Vigor = 'C202EA27'
+Global Const $ID_Insignia_Windwalker = '040430A5060518A7'
+Global Const $ID_Rune_Minor_Mysticism = '05033025012CE821'
+Global Const $ID_Rune_Superior_Earth_Prayers = '32BE82109033025'
+Global Const $ID_Insignia_Prodigy = 'C60330A5000528A7'
+Global Const $ID_Rune_Superior_Domination = '30250302E821770'
+Global Const $ID_Insignia_Shaman = '080430A50005F8A'
 
 ; Weapon damage
-Global $ID_Weapon_stats = "A8A7"
+Global $ID_Weapon_stats = 'A8A7'
 ; Focus energy
-Global $ID_Focus_energy = "C867"
+Global $ID_Focus_energy = 'C867'
 ; Shield armor
-Global $ID_Focus_energy = "B8A7"
+Global $ID_Focus_energy = 'B8A7'
 
 ; Staff mods
-Global $ID_Plus_5_Armor = "05000821"
+Global $ID_Plus_5_Armor = '05000821'
 
 ; Furious mod (Axe haft, Dagger Tang, Hammer Haft, Scythe Snathe, Spearhead, Sword Hilt)
-Global Const $ID_Furious_Mod = "0A00B823"
+Global Const $ID_Furious_Mod = '0A00B823'
 
-Global Const $ID_Enchanting_Mod = "1400B822"
+Global Const $ID_Enchanting_Mod = '1400B822'
 
-Global Const $ID_Casting_20 = "00140828"
-Global Const $ID_Recharge_20 = "00142828"
+Global Const $ID_Casting_20 = '00140828'
+Global Const $ID_Recharge_20 = '00142828'
 
 #EndRegion Mods
 

@@ -2,11 +2,11 @@
 
 #include <array.au3>
 #include <WinAPIDiag.au3>
-#include "GWA2_Headers.au3"
-#include "GWA2.au3"
-#include "GWA2_ID.au3"
+#include 'GWA2_Headers.au3'
+#include 'GWA2.au3'
+#include 'GWA2_ID.au3'
 
-Opt("MustDeclareVars", 1)
+Opt('MustDeclareVars', 1)
 
 ;Note: mobs aggro correspond to earshot range
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
@@ -18,9 +18,16 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-
+	;SetDisplayedTitle(0x26)
 	;ChangeWeaponSet(1) ;from 1 to 4
-
+	Local $item = GetItemBySlot(1,1)
+	Local $name = GetAgentName($item)
+	Out($name)
+	;Sleep(2000)
+	;StartSalvage($item)
+	;Sleep(2000)
+	;SalvageMaterials()
+	;ChangeSecondProfession($ID_Warrior)
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
 	;_dlldisplay($target)
@@ -33,7 +40,7 @@ Func RunTests($STATUS)
 	;SalvageItemAt(1, 6)
 
 	;Local $positionToGo = FindMiddleOfFoes(-7606, -8441)
-	;Out("finalposition: " & $positionToGo[0] & ";" & $positionToGo[1])
+	;Out('finalposition: ' & $positionToGo[0] & ';' & $positionToGo[1])
 	;
 	;Local $target = GetCurrentTarget()
 	;Local $foes = GetFoesInRangeOfAgent($target, $RANGE_AREA)
@@ -41,15 +48,15 @@ Func RunTests($STATUS)
 	;For $i = 1 To $foes[0]
 	;	$foe = $foes[$i]
 	;	PrintNPCInformations($foe)
-	;	Out("")
+	;	Out('')
 	;Next
 	;Local $lQuestStruct = DllStructCreate('long id;long LogState;byte unknown1[12];long MapFrom;float X;float Y;byte unknown2[8];long MapTo;long Reward;long Objective')
 	;Local $quest = GetQuestByID(457)
-	;Out("id:" & $quest.id)
-	;Out("mapFrom:" & $quest.MapFrom)
-	;Out("MapTo:" & $quest.MapTo)
-	;Out("Reward:" & $quest.Reward)
-	;Out("Objective:" & $quest.Objective)
+	;Out('id:' & $quest.id)
+	;Out('mapFrom:' & $quest.MapFrom)
+	;Out('MapTo:' & $quest.MapTo)
+	;Out('Reward:' & $quest.Reward)
+	;Out('Objective:' & $quest.Objective)
 
 	;Return 0
 	Return 2
@@ -61,40 +68,40 @@ Func DynamicExecution($args)
 	Local $arguments = ParseFunctionArguments($args)
 	Switch $arguments[0]
 		Case 0
-			Out("Call to nothing ?!")
+			Out('Call to nothing ?!')
 			Return
 		Case 1
-			Out("Call to " & $arguments[1])
+			Out('Call to ' & $arguments[1])
 			Call($arguments[1])
 		Case 2
-			Out("Call to " & $arguments[1] & " " & $arguments[2])
+			Out('Call to ' & $arguments[1] & ' ' & $arguments[2])
 			Call($arguments[1], $arguments[2])
 		Case 3
-			Out("Call to " & $arguments[1] & " " & $arguments[2] & " " & $arguments[3])
+			Out('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3])
 			Call($arguments[1], $arguments[2], $arguments[3])
 		Case 4
-			Out("Call to " & $arguments[1] & " " & $arguments[2] & " " & $arguments[3] & " " & $arguments[4])
+			Out('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3] & ' ' & $arguments[4])
 			Call($arguments[1], $arguments[2], $arguments[3], $arguments[4])
 		Case else
-			MsgBox(0, "Error", "Too many arguments provided to that function.")
+			MsgBox(0, 'Error', 'Too many arguments provided to that function.')
 	EndSwitch
 EndFunc
 
 
 ;~ Find out the function name and the arguments in a call fun(arg1, arg2, [...])
 Func ParseFunctionArguments($functionCall)
-	Local $openParenthesisPosition = StringInStr($functionCall, "(")
+	Local $openParenthesisPosition = StringInStr($functionCall, '(')
 	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
 
 	Local $arguments[2] = [1, $functionName]
 	Out($functionName)
 	Local $commaPosition = $openParenthesisPosition + 1
-	Local $temp = StringInStr($functionCall, ",", 0, 1, $commaPosition)
+	Local $temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
 	While $temp <> 0
 		_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, $temp - $commaPosition))
 		Out(StringMid($functionCall, $commaPosition, $temp - $commaPosition))
 		$commaPosition = $temp + 1
-		$temp = StringInStr($functionCall, ",", 0, 1, $commaPosition)
+		$temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
 	WEnd
 	_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
 	Out(StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
@@ -103,37 +110,11 @@ Func ParseFunctionArguments($functionCall)
 EndFunc
 
 
-#Region Titles
-;=================================================================================================
-; Function:			SetDisplayedTitle($aTitle = 0)
-; Description:		Set the currently displayed title.
-; Parameter(s):		Parameter = $aTitle
-;								No Title		= 0x00
-;								Spearmarshall 	= 0x11
-;								Lightbringer 	= 0x14
-;								Asuran 			= 0x26
-;								Dwarven 		= 0x27
-;								Ebon Vanguard 	= 0x28
-;								Norn 			= 0x29
-;; Requirement(s):	GW must be running and Memory must have been scanned for pointers (see Initialize())
-; Return Value(s):	Returns displayed Title
-; Author(s):		Skaldish
-;=================================================================================================
-; Func SetDisplayedTitle($aTitle = 0)
-; 	If $aTitle Then
-; 		Return SendPacket(0x8, $HEADER_TITLE_DISPLAY, $aTitle)
-; 	Else
-; 		Return SendPacket(0x4, $HEADER_TITLE_CLEAR)
-; 	EndIf
-; EndFunc
-#EndRegion Titles
-
-
 #Region Map and travel
 ;~ Get your own location
 Func GetOwnLocation()
 	Local $lMe = GetAgentByID(-2)
-	Out("X: " & DllStructGetData($lMe, 'X') & ", Y: " & DllStructGetData($lMe, 'Y'))
+	Out('X: ' & DllStructGetData($lMe, 'X') & ', Y: ' & DllStructGetData($lMe, 'Y'))
 EndFunc
 
 
@@ -192,9 +173,9 @@ EndFunc
 ;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
 Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $itemExtraID = DllStructGetData($item, "ExtraID")
+	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
 	Local $rarity = GetRarity($item)
-	Local $type = DllStructGetData($item, "Type")
+	Local $type = DllStructGetData($item, 'Type')
 	Local $characterGold = GetGoldCharacter()
 	;Only pick gold if character has less than 99k in inventory
 	If (($itemID == $ID_GOLD) And (GetGoldCharacter() < 99000)) Then
@@ -264,7 +245,7 @@ EndFunc
 ;~ Only pick rare materials, black and white dyes, lockpicks, gold items and green items
 Func PickOnlyImportantItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $itemExtraID = DllStructGetData($item, "ExtraID")
+	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
 	Local $rarity = GetRarity($item)
 	;Only pick gold if character has less than 99k in inventory
 	If IsRareMaterial($item) Then
@@ -289,10 +270,10 @@ EndFunc
 ; Find the first empty slot in the given bag
 Func FindEmptySlot($bag)
 	Local $item
-	For $slot = 1 To DllStructGetData(GetBag($bag), "Slots")
+	For $slot = 1 To DllStructGetData(GetBag($bag), 'Slots')
 		RndSleep(40)
 		$item = GetItemBySlot($bag, $slot)
-		If DllStructGetData($item, "ID") = 0 Then Return $slot
+		If DllStructGetData($item, 'ID') = 0 Then Return $slot
 	Next
 	Return 0
 EndFunc
@@ -303,10 +284,10 @@ Func FindEmptySlots($bag)
 	If Not IsDllStruct($bag) Then $bag = GetBag($bag)
 	Local $emptySlots[1] = [Null]
 	Local $item
-	For $slot = 1 To DllStructGetData($bag, "Slots")
+	For $slot = 1 To DllStructGetData($bag, 'Slots')
 		RndSleep(20)
 		$item = GetItemBySlot($bag, $slot)
-		If DllStructGetData($item, "ID") = 0 Then
+		If DllStructGetData($item, 'ID') = 0 Then
 			If $emptySlots[0] = Null Then
 				$emptySlots[0] = $slot
 			Else
@@ -377,11 +358,11 @@ Func FillEquipmentBag()
 	
 	Local $iBag = 1, $slot = 1
 	Local $bag = GetBag($iBag)
-	Local $bagSlots = DllStructGetData($bag, "Slots")
+	Local $bagSlots = DllStructGetData($bag, 'Slots')
 	Local $item
 	While $freeSlots > 0 And $iBag < 5
 		$item = GetItemBySlot($bag, $slot)
-		If DllStructGetData($item, "ID") <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
+		If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
 			MoveItem($item, $equipmentBag, $emptySlots[$cursor])
 			$cursor += 1
 			$freeSlots -= 1
@@ -392,7 +373,7 @@ Func FillEquipmentBag()
 			$iBag += 1
 			$slot = 1
 			$bag = GetBag($iBag)
-			$bagSlots = DllStructGetData($bag, "Slots")
+			$bagSlots = DllStructGetData($bag, 'Slots')
 		EndIf
 		RndSleep(20)
 	WEnd
@@ -401,13 +382,13 @@ EndFunc
 
 ;~ Balance character gold to the amount given
 Func BalanceCharacterGold($goldAmount)
-	Out("Balancing character's gold")
+	Out('Balancing characters gold')
 	Local $GCharacter = GetGoldCharacter()
 	Local $GStorage = GetGoldStorage()
 	If $GStorage > 950000 Then
-		Out("Too much gold in chest, use some.")
+		Out('Too much gold in chest, use some.')
 	ElseIf $GStorage < 50000 Then
-		Out("Not enough gold in chest, get some.")
+		Out('Not enough gold in chest, get some.')
 	ElseIf $GCharacter > $goldAmount Then
 		DepositGold($GCharacter - $goldAmount)
 	ElseIf $GCharacter < $goldAmount Then
@@ -441,7 +422,7 @@ Func findInInventory($itemID)
 		Local $bagSize = GetMaxSlots($bag)
 		For $slot = 1 To $bagSize
 			$item = GetItemBySlot($bag, $slot)
-			If(DllStructGetData($item, "ModelID") == $itemID) Then
+			If(DllStructGetData($item, 'ModelID') == $itemID) Then
 				$itemBagAndSlot[0] = $bag
 				$itemBagAndSlot[1] = $slot
 			EndIf
@@ -458,14 +439,14 @@ Func GetInventoryItemCount($itemID)
 	Local $item
 	For $i = 1 To 4
 		$bag = GetBag($i)
-		Local $bagSize = DllStructGetData($bag, "Slots")
+		Local $bagSize = DllStructGetData($bag, 'Slots')
 		For $j = 1 To $bagSize
 			$item = GetItemBySlot($bag, $j)
 			
 			If $Map_Dyes[$itemID] <> null Then
-				If ((DllStructGetData($item, "ModelID") == $ID_Dyes) And (DllStructGetData($item, "ExtraID") == $itemID) Then $amountItem += DllStructGetData($item, "Quantity")
+				If ((DllStructGetData($item, 'ModelID') == $ID_Dyes) And (DllStructGetData($item, 'ExtraID') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
 			Else
-				If DllStructGetData($item, "ModelID") == $itemID Then $amountItem += DllStructGetData($item, "Quantity")
+				If DllStructGetData($item, 'ModelID') == $itemID Then $amountItem += DllStructGetData($item, 'Quantity')
 			EndIf
 		Next
 	Next
@@ -493,7 +474,7 @@ Func UseItemBySlot($bag, $slot)
 	If $bag > 0 And $slot > 0 Then
 		If (GetMapLoading() == 1) And (GetIsDead(-2) == False) Then
 			Local $item = GetItemBySlot($bag, $slot)
-			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, "ID"))
+			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf
 	EndIf
 EndFunc
@@ -516,23 +497,23 @@ EndFunc
 ;~ Get the number of uses of a kit
 Func GetKitUsesLeft($kitID)
 	Local $kitStruct = GetModStruct($kitID)
-	Return Int("0x" & StringMid($kitStruct, 11, 2))
+	Return Int('0x' & StringMid($kitStruct, 11, 2))
 EndFunc
 
 
 ;~ Identify all items from inventory
 Func IdentifyAllItems()
-	Out("Identifying all items")
+	Out('Identifying all items')
 	For $bagIndex = 1 To 5
 		Local $bag = GetBag($bagIndex)
 		Local $item
-		For $i = 1 To DllStructGetData($bag, "slots")
+		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, "ID") = 0 Then ContinueLoop
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 			
-			Local $identificationKit = FindIDKitOrBuySome()
+			Local $identificationKit = FindIdentificationKitOrBuySome()
 			IdentifyItem($item)
-			RndSleep(500)
+			RndSleep(100)
 		Next
 	Next
 EndFunc
@@ -540,10 +521,10 @@ EndFunc
 
 ;~ Salvage all items from inventory (non functional)
 Func SalvageAllItems()
-	Out("Salvaging all items")
+	Out('Salvaging all items')
 	For $bagIndex = 1 To 4
-		Out("Salvaging bag" & $bagIndex)
-		Local $bagSize = DllStructGetData(GetBag($bagIndex), "slots")
+		Out('Salvaging bag' & $bagIndex)
+		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $i = 1 To $bagSize
 			SalvageItemAt($bagIndex, $i)
 		Next
@@ -552,23 +533,23 @@ EndFunc
 
 
 Func SalvageItemAt($bag, $slot)
-	Out("Salvaging bag " & $bag & ", slot " & $slot)
+	Out('Salvaging bag ' & $bag & ', slot ' & $slot)
 	Local $item = GetItemBySlot($bag, $slot)
-	Out("ItemID " & DllStructGetData($item, "ID"))
-	If DllStructGetData($item, "ID") = 0 Then Return
+	Out('ItemID ' & DllStructGetData($item, 'ID'))
+	If DllStructGetData($item, 'ID') = 0 Then Return
 	
 	Local $salvageKit = FindSalvageKitOrBuySome()
-	Out("Salvage kit " & $salvageKit)
+	Out('Salvage kit ' & $salvageKit)
 	If (ShouldSalvageItem($item) And CountSlots() > 0) Then
-		Out("Starting salvage")
+		Out('Starting salvage')
 		SalvageItem($item, $salvageKit)
 	;	RndSleep(500)
 	;	If GetRarity($item) == $RARITY_gold Then
-	;		Out("Sending enter")
-	;		ControlSend(GetWindowHandle(), "", "", "{Enter}")
+	;		Out('Sending enter')
+	;		ControlSend(GetWindowHandle(), '', '', '{Enter}')
 	;		RndSleep(500)
 	;	EndIf
-	;	Out("Salvage done")
+	;	Out('Salvage done')
 	EndIf
 EndFunc
 
@@ -578,7 +559,7 @@ EndFunc
 10:45 - ItemID 2251
 10:45 - Salvage kit 1274
 10:45 - Starting salvage
-10:45 - Salvage session 
+10:45 - Salvage session
 10:45 - Enqueueing
 10:45 - Sending enter
 10:45 - Salvage done
@@ -589,23 +570,23 @@ EndFunc
 Func SalvageItem($item, $kit)
 	Local $itemID = DllStructGetData($item, 'ID')
 	Local $lOffset[4] = [0, 0x18, 0x2C, 0x690]
-	Out("Reading")
+	Out('Reading')
 
 	Local $salvageSessionID = LoggingMemoryReadPtr($mBasePointer, $lOffset)
 
-	Out("Salvage session " & $salvageSessionID[1])
+	Out('Salvage session ' & $salvageSessionID[1])
 
 	DllStructSetData($mSalvage, 2, $itemID)
 	DllStructSetData($mSalvage, 3, $kit)
 	DllStructSetData($mSalvage, 4, $salvageSessionID[1])
-	Out("Enqueueing")
+	Out('Enqueueing')
 	LoggingEnqueue($mSalvagePtr, 16)
-EndFunc 
+EndFunc
 
 
 ;~ Find an identification Kit in inventory or buy one. Return the ID of the kit or 0 if no kit was bought
-Func FindIDKitOrBuySome()
-	Local $IdentificationKitID = FindIDKit()
+Func FindIdentificationKitOrBuySome()
+	Local $IdentificationKitID = FindIdentificationKit()
 	If $IdentificationKitID <> 0 Then Return $IdentificationKitID
 	
 	If GetGoldCharacter() < 500 And GetGoldStorage() > 499 Then
@@ -617,10 +598,10 @@ Func FindIDKitOrBuySome()
 		BuyItem(6, 1, 500)
 		RndSleep(500)
 		$j = $j + 1
-	Until FindIDKit() <> 0 Or $j = 3
+	Until FindIdentificationKit() <> 0 Or $j = 3
 	If $j = 3 Then Return 0
 	RndSleep(500)
-	Return FindIDKit()
+	Return FindIdentificationKit()
 EndFunc
 
 
@@ -651,7 +632,7 @@ EndFunc
 ; TODO : refine which items should be sold and which should not
 Func ShouldSellItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $itemExtraID = DllStructGetData($item, "ExtraID")
+	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
 	Local $rarity = GetRarity($item)
 	;Local $requirement = GetItemReq($item)
 	If IsBasicMaterial($item) Then
@@ -697,11 +678,11 @@ EndFunc
 Func GetItemMaxDmg($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	Local $modString = GetModStruct($item)
-	Local $position = StringInStr($modString, "A8A7"); Weapon Damage
-	If $position = 0 Then $position = StringInStr($modString, "C867"); Energy (focus)
-	If $position = 0 Then $position = StringInStr($modString, "B8A7"); Armor (shield)
+	Local $position = StringInStr($modString, 'A8A7'); Weapon Damage
+	If $position = 0 Then $position = StringInStr($modString, 'C867'); Energy (focus)
+	If $position = 0 Then $position = StringInStr($modString, 'B8A7'); Armor (shield)
 	If $position = 0 Then Return 0
-	Return Int("0x" & StringMid($modString, $position - 2, 2))
+	Return Int('0x' & StringMid($modString, $position - 2, 2))
 EndFunc
 
 
@@ -712,7 +693,7 @@ EndFunc
 
 
 Func IsArmorSalvageItem($item)
-	Return DllStructGetData($item, "type") == $ID_Type_Armor_Salvage
+	Return DllStructGetData($item, 'type') == $ID_Type_Armor_Salvage
 EndFunc
 
 
@@ -722,17 +703,17 @@ EndFunc
 
 
 Func IsMaterial($item)
-	Return DllStructGetData($item, "Type") == 11 And $Map_All_Materials[DllStructGetData($item, "ModelID")] <> null
+	Return DllStructGetData($item, 'Type') == 11 And $Map_All_Materials[DllStructGetData($item, 'ModelID')] <> null
 EndFunc
 
 
 Func IsBasicMaterial($item)
-	Return DllStructGetData($item, "Type") == 11 And $Map_Basic_Materials[DllStructGetData($item, "ModelID")] <> null
+	Return DllStructGetData($item, 'Type') == 11 And $Map_Basic_Materials[DllStructGetData($item, 'ModelID')] <> null
 EndFunc
 
 
 Func IsRareMaterial($item)
-	Return DllStructGetData($item, "Type") == 11 And $Map_Rare_Materials[DllStructGetData($item, "ModelID")] <> null
+	Return DllStructGetData($item, 'Type') == 11 And $Map_Rare_Materials[DllStructGetData($item, 'ModelID')] <> null
 EndFunc
 
 
@@ -777,7 +758,7 @@ EndFunc
 
 
 Func IsWeapon($item)
-	Return $Map_Weapon_Types[DllStructGetData($item, "type")] <> null
+	Return $Map_Weapon_Types[DllStructGetData($item, 'type')] <> null
 EndFunc
 
 
@@ -912,7 +893,7 @@ Func AppendArrayMap($map, $key, $element)
 	If ($map[$key] == null) Then
 		Local $newArray[1] = [$element]
 		$map[$key] = $newArray
-	Else 
+	Else
 		_ArrayAdd($map[$key], $element)
 	EndIf
 	Return $map
@@ -952,8 +933,8 @@ EndFunc
 ; Find common longest substring in two strings
 Func LongestCommonSubstringOfTwo($string1, $string2)
 	Local $longestCommonSubstrings[0]
-	Local $string1characters = StringSplit($string1, "")
-	Local $string2characters = StringSplit($string2, "")
+	Local $string1characters = StringSplit($string1, '')
+	Local $string2characters = StringSplit($string2, '')
 	
 	Local $array[$string1characters[0] + 1][$string2characters[0] + 1]
 	Local $LongestCommonSubstringSize = 0
@@ -989,7 +970,7 @@ Func LongestCommonSubstring($strings)
 	If UBound($strings) = 0 Then Return ''
 	If UBound($strings) = 1 Then Return $strings[0]
 	Local $firstStringLength = StringLen($strings[0])
-	If $firstStringLength = 0 Then 
+	If $firstStringLength = 0 Then
 		Return ''
 	Else
 		For $i = 0 To $firstStringLength - 1
@@ -1021,7 +1002,7 @@ EndFunc
 ;~ Return true if the point X, Y is over the line defined by X + aY + b = 0
 Func IsOverLine($coefficientY, $fixedCoefficient, $posX, $posY)
 	Local $position = $posX + $posY * $coefficientY + $fixedCoefficient
-	If $position > 0 Then 
+	If $position > 0 Then
 		Return true
 	ElseIf $position < 0 Then
 		Return False
@@ -1035,16 +1016,16 @@ EndFunc
 #Region NPCs
 ;~ Print NPC informations
 Func PrintNPCInformations($npc)
-	Out("ID: " & DllStructGetData($npc, 'ID'))
-	Out("X: " & DllStructGetData($npc, 'X'))
-	Out("Y: " & DllStructGetData($npc, 'Y'))
-	Out("TypeMap: " & DllStructGetData($npc, 'TypeMap'))
-	Out("Allegiance: " & DllStructGetData($npc, 'Allegiance'))
-	Out("Effects: " & DllStructGetData($npc, 'Effects'))
-	Out("ModelState: " & DllStructGetData($npc, 'ModelState'))
-	Out("NameProperties: " & DllStructGetData($npc, 'NameProperties'))
-	Out("Type: " & DllStructGetData($npc, 'Type'))
-	Out("ExtraType: " & DllStructGetData($npc, 'ExtraType'))
+	Out('ID: ' & DllStructGetData($npc, 'ID'))
+	Out('X: ' & DllStructGetData($npc, 'X'))
+	Out('Y: ' & DllStructGetData($npc, 'Y'))
+	Out('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
+	Out('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
+	Out('Effects: ' & DllStructGetData($npc, 'Effects'))
+	Out('ModelState: ' & DllStructGetData($npc, 'ModelState'))
+	Out('NameProperties: ' & DllStructGetData($npc, 'NameProperties'))
+	Out('Type: ' & DllStructGetData($npc, 'Type'))
+	Out('ExtraType: ' & DllStructGetData($npc, 'ExtraType'))
 EndFunc
 
 
@@ -1364,10 +1345,10 @@ Func Weapons($BagIndex, $SlotCount)
 	Local $NSlot
 	For $I = 1 To $SlotCount
 		Local $aItem = GetItemBySlot($BagIndex, $I)
-		If DllStructGetData($aItem, "ID") = 0 Then ContinueLoop
+		If DllStructGetData($aItem, 'ID') = 0 Then ContinueLoop
 		Local $ModStruct = GetModStruct($aItem)
-		Local $Energy = StringInStr($ModStruct, "0500D822", 0, 1) ;~String for +5e mod
-		Switch DllStructGetData($aItem, "Type")
+		Local $Energy = StringInStr($ModStruct, '0500D822', 0, 1) ;~String for +5e mod
+		Switch DllStructGetData($aItem, 'Type')
 			Case 2, 5, 15, 27, 32, 35, 36
 				If $Energy > 0 Then
 					Do
@@ -1430,19 +1411,19 @@ Func _dlldisplay($tStruct)
         ; backup first index value, establish type and typesize of element, restore first index value
         $vElVal = DllStructGetData($tStruct, $iE, 1)
         Switch VarGetType($vElVal)
-            Case "Int32", "Int64"
+            Case 'Int32', 'Int64'
                 DllStructSetData($tStruct, $iE, 0x7777666655554433, 1)
                 Switch DllStructGetData($tStruct, $iE, 1)
                     Case 0x7777666655554433
-                        $sType = "int64"
+                        $sType = 'int64'
                         $iTypeSize = 8
                     Case 0x55554433
                         DllStructSetData($tStruct, $iE, 0x88887777, 1)
-                        $sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? "uint" : "int")
+                        $sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? 'uint' : 'int')
                         $iTypeSize = 4
                     Case 0x4433
                         DllStructSetData($tStruct, $iE, 0x8888, 1)
-                        $sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? "ushort" : "short")
+                        $sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? 'ushort' : 'short')
                         $iTypeSize = 2
                     Case 0x33
                         $sType = 'byte'
@@ -1453,11 +1434,11 @@ Func _dlldisplay($tStruct)
                 $iTypeSize = @AutoItX64 ? 8 : 4
 			Case 'String'
                 DllStructSetData($tStruct, $iE, ChrW(0x2573), 1)
-                $sType = (DllStructGetData($tStruct, $iE, 1) = ChrW(0x2573) ? "wchar" : "char")
+                $sType = (DllStructGetData($tStruct, $iE, 1) = ChrW(0x2573) ? 'wchar' : 'char')
                 $iTypeSize = ($sType = 'wchar') ? 2 : 1
             Case 'Double'
                 DllStructSetData($tStruct, $iE, 10 ^ - 15, 1)
-                $sType = (DllStructGetData($tStruct, $iE, 1) = 10 ^ - 15 ? "double" : "float")
+                $sType = (DllStructGetData($tStruct, $iE, 1) = 10 ^ - 15 ? 'double' : 'float')
                 $iTypeSize = ($sType = 'double') ? 8 : 4
         EndSwitch
         DllStructSetData($tStruct, $iE, $vElVal, 1)
@@ -1512,4 +1493,4 @@ Func _dlldisplay($tStruct)
 
     Return $aStruct
 
-EndFunc   ;==>_dlldisplay
+EndFunc

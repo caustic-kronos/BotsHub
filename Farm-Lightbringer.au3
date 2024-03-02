@@ -1,16 +1,16 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include "GWA2_Headers.au3"
-#include "GWA2.au3"
+#include 'GWA2_Headers.au3'
+#include 'GWA2.au3'
 
-Local Const $LightbringerFarmInformations = "For best results, have :" & @CRLF _
-	& "- the quest 'A Show of Force'" & @CRLF _
-	& "- the quest 'Requiem for a Brain'" & @CRLF _
-	& "- rune of doom in your inventory" & @CRLF _
-	& "- use low level heroes to level them up" & @CRLF _
-	& "- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible" & @CRLF _
-	& "- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow"
+Local Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
+	& '- the quest "A Show of Force"' & @CRLF _
+	& '- the quest "Requiem for a Brain"' & @CRLF _
+	& '- rune of doom in your inventory' & @CRLF _
+	& '- use low level heroes to level them up' & @CRLF _
+	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
+	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
 
 ;Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
 Local Const $weaponAttackTime = 1700
@@ -31,18 +31,9 @@ Local Const $Junundu_Leave = 8
 ; - interact with chests along the way
 
 Func LightbringerFarm($STATUS)
-	If $STATUS <> "RUNNING" Then Return 2
-
-	If (((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-		Out("Inventory full, pausing.")
-		Return 2
-	EndIf
-
-	If $STATUS <> "RUNNING" Then Return 2
-
 	If Not $Lightbringer_Farm_Setup Then LightbringerFarmSetup()
 
-	If $STATUS <> "RUNNING" Then Return 2
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	ToTheSulfurousWastes()
 	
@@ -52,10 +43,10 @@ Func LightbringerFarm($STATUS)
 EndFunc
 
 Func LightbringerFarmSetup()
-	$loggingFile = FileOpen("logs/lightbringer_farm.log" , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	$loggingFile = FileOpen('logs/lightbringer_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
-		Out("Travelling to Remains of Sahlahja")
+		Out('Travelling to Remains of Sahlahja')
 		DistrictTravel($ID_Remains_of_Sahlahja, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	LeaveGroup()
@@ -74,6 +65,7 @@ Func LightbringerFarmSetup()
 	AddHero($ID_Margrid_The_Sly)
 	;AddHero($ID_Ogden)
 
+	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
 	$Lightbringer_Farm_Setup = True
 EndFunc
@@ -95,7 +87,7 @@ Func CountPartyDeaths()
 EndFunc
 
 Func FarmTheSulfurousWastes()
-	Out("Taking Sunspear Undead Blessing")
+	Out('Taking Sunspear Undead Blessing')
 	GoToNPC(GetNearestNPCToCoords(-660, 16000))
 	Dialog(0x83)
 	RndSleep(1000)
@@ -109,11 +101,11 @@ Func FarmTheSulfurousWastes()
 	RndSleep(1500)
 
 	MoveTo(-800, 12000)
-	AggroMoveTo(-1700, 9800, "First Undead Group")
+	AggroMoveTo(-1700, 9800, 'First Undead Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-3000, 10900)
-	AggroMoveTo(-4500, 11500, "Second Undead Group")
+	AggroMoveTo(-4500, 11500, 'Second Undead Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-7500, 11925)
@@ -121,54 +113,54 @@ Func FarmTheSulfurousWastes()
 	MoveTo(-9800, 12400)
 	SpeedTeam()
 	MoveTo(-13000, 9500)
-	AggroMoveTo(-13250, 6750, "Third Undead Group")
+	AggroMoveTo(-13250, 6750, 'Third Undead Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-20600, 7270)
-	Out("Taking Lightbringer Margonite Blessing")
+	Out('Taking Lightbringer Margonite Blessing')
 	GoToNPC(GetNearestNPCToCoords(-20600, 7270))
 	RndSleep(1000)
 	Dialog(0x85)
 	RndSleep(1000)
 	SpeedTeam()
 	MoveTo(-22000, 9000)
-	AggroMoveTo(-22350, 11100, "First Margonite Group")
+	AggroMoveTo(-22350, 11100, 'First Margonite Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
 	;MoveTo(-21200, 10750)
-	;AggroMoveTo(-20250, 11000, "Second Margonite Group")
-	;If CountPartyDeaths() > 5 Then Return 
+	;AggroMoveTo(-20250, 11000, 'Second Margonite Group')
+	;If CountPartyDeaths() > 5 Then Return
 	;SpeedTeam()
 	;MoveTo(-22000, 9000)
 	SpeedTeam()
 	MoveTo(-19000, 5700)
 	SpeedTeam()
 	MoveTo(-20800, 600)
-	AggroMoveTo(-22000, -1200, "Djinn Group", 2200)
+	AggroMoveTo(-22000, -1200, 'Djinn Group', 2200)
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-21500, -6000)
 	SpeedTeam()
 	MoveTo(-20400, -7400)
-	AggroMoveTo(-19500, -9500, "Undead Ritualist Boss Group")
+	AggroMoveTo(-19500, -9500, 'Undead Ritualist Boss Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-22000, -9400)
-	AggroMoveTo(-22800, -9800, "Third Margonite Group")
+	AggroMoveTo(-22800, -9800, 'Third Margonite Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-23000, -10600)
-	AggroMoveTo(-23150, -12250, "Fourth Margonite Group")
+	AggroMoveTo(-23150, -12250, 'Fourth Margonite Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-22800, -13500)
-	AggroMoveTo(-21300, -14000, "Fifth Margonite Group")
+	AggroMoveTo(-21300, -14000, 'Fifth Margonite Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-21300, -14000)
 	TargetNearestItem()
 	RndSleep(50)
-	Out("Picking Up Tome")
+	Out('Picking Up Tome')
 	ActionInteract()
 	RndSleep(2000)
 	DropBundle()
@@ -177,11 +169,11 @@ Func FarmTheSulfurousWastes()
 	MoveTo(-22800, -13500)
 	SpeedTeam()
 	MoveTo(-23000, -10600)
-	AggroMoveTo(-21500, -9500, "Sixth Margonite Group")
+	AggroMoveTo(-21500, -9500, 'Sixth Margonite Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-21000, -9500)
-	AggroMoveTo(-19500, -8500, "Seventh Margonite Group")
+	AggroMoveTo(-19500, -8500, 'Seventh Margonite Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-22000, -9400)
@@ -189,10 +181,10 @@ Func FarmTheSulfurousWastes()
 	MoveTo(-23000, -10600)
 	SpeedTeam()
 	MoveTo(-22800, -13500)
-	Out("Moving To Temple")
+	Out('Moving To Temple')
 	SpeedTeam()
 	MoveTo(-19500, -13100)
-	AggroMoveTo(-18000, -13100, "Temple Monolith Groups")
+	AggroMoveTo(-18000, -13100, 'Temple Monolith Groups')
 	If CountPartyDeaths() > 5 Then Return 1
 	SpeedTeam()
 	MoveTo(-16000, -13100)
@@ -201,12 +193,12 @@ Func FarmTheSulfurousWastes()
 	RndSleep(1000)
 	TargetNearestItem()
 	RndSleep(250)
-	Out("Spawning Margonite Bosses")
+	Out('Spawning Margonite Bosses')
 	ActionInteract()
 	RndSleep(3000)
 	DropBundle()
 	RndSleep(1000)
-	AggroMoveTo(-18000, -13100, "Margonite Boss Group")
+	AggroMoveTo(-18000, -13100, 'Margonite Boss Group')
 	If CountPartyDeaths() > 5 Then Return 1
 	RndSleep(1000)
 	PickUpItems()
@@ -214,7 +206,7 @@ Func FarmTheSulfurousWastes()
 EndFunc
 
 Func SpeedTeam()
-	If (IsRecharged($Junundu_Tunnel)) Then 
+	If (IsRecharged($Junundu_Tunnel)) Then
 		UseSkillEx($Junundu_Tunnel)
 		UseHeroSkill(1, $Junundu_Tunnel)
 		UseHeroSkill(2, $Junundu_Tunnel)
@@ -226,8 +218,8 @@ Func SpeedTeam()
 	EndIf
 EndFunc
 
-Func AggroMoveTo($x, $y, $foesGroup = "", $range = 1650)
-	Out("Killing " & $foesGroup)
+Func AggroMoveTo($x, $y, $foesGroup = '', $range = 1650)
+	Out('Killing ' & $foesGroup)
 	; Get close enough to cast spells but not Aggro
 	; Use Junundu Siege (4) until it's in CD
 	; While there are enemies
@@ -242,9 +234,9 @@ Func AggroMoveTo($x, $y, $foesGroup = "", $range = 1650)
 	Local $skillCastTimer
 	
 	Local $target = GetNearestNPCInRangeOfCoords(3, $x, $y, $range)
-	If (DllStructGetData($target, "X") == 0) Then
+	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
-		_FileWriteLog($loggingFile, $foesGroup & " not found around " & $x & ";" & $y & " with distance set to " & $range)
+		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ';' & $y & ' with distance set to ' & $range)
 		Return
 	EndIf
 	
@@ -267,7 +259,7 @@ Func AggroMoveTo($x, $y, $foesGroup = "", $range = 1650)
 		$foes = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	Until $foes == 0
 	
-	If DllStructGetData(GetAgentByID(-2), "HP") < 0.75 Or CountPartyDeaths() > 0 Then
+	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
 
@@ -276,7 +268,7 @@ EndFunc
 
 Func ReturnToSahlahjaOutpost()
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
-		Out("Travelling to Remains of Sahlahja")
+		Out('Travelling to Remains of Sahlahja')
 		DistrictTravel($ID_Remains_of_Sahlahja, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 EndFunc

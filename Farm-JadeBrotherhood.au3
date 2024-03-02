@@ -11,27 +11,27 @@ Author: Night
 #RequireAdmin
 #NoTrayIcon
 
-#include "GWA2_Headers.au3"
-#include "GWA2.au3"
-#include "Utils.au3"
+#include 'GWA2_Headers.au3'
+#include 'GWA2.au3'
+#include 'Utils.au3'
 
-Opt("MustDeclareVars", 1)
+Opt('MustDeclareVars', 1)
 
-Local Const $JB_VERSION = "0.1"
+Local Const $JB_VERSION = '0.1'
 Local Const $JB_Timeout = 120000
 
 ; ==== Constants ====
-Local Const $JB_Skillbar = "OgejkirMrSqimXfXfbrXaXNX4OA"
-Local Const $JB_Hero_Skillbar = "OQijEqmMKODbe8O2Efjrx0bWMA"
-Local Const $JB_FarmInformations = "For best results, have :" & @CRLF _
-	& "- 16 in earth prayers" & @CRLF _
-	& "- 11+ in mysticism" & @CRLF _
-	& "- 9+ in scythe mastery (enough to use your scythe)"& @CRLF _
-	& "- A scythe 'Guided by Fate', enchantements last 20% longer" & @CRLF _
-	& "- Windwalker insignias on all the armor pieces" & @CRLF _
-	& "- A superior vigor rune" & @CRLF _
-	& "- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership" & @CRLF _
-	& "- Golden Eggs"
+Local Const $JB_Skillbar = 'OgejkirMrSqimXfXfbrXaXNX4OA'
+Local Const $JB_Hero_Skillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
+Local Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
+	& '- 16 in earth prayers' & @CRLF _
+	& '- 11+ in mysticism' & @CRLF _
+	& '- 9+ in scythe mastery (enough to use your scythe)'& @CRLF _
+	& '- A scythe "Guided by Fate", enchantements last 20% longer' & @CRLF _
+	& '- Windwalker insignias on all the armor pieces' & @CRLF _
+	& '- A superior vigor rune' & @CRLF _
+	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
+	& '- Golden Eggs'
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain)  is better than UseSkillEx(1))
 Local Const $JB_DrunkerMaster = 1
 Local Const $JB_SandShards = 2
@@ -58,16 +58,6 @@ Global $Jade_Brotherhood_Farm_Setup = False
 
 ;~ Main method to farm Jade Brotherhood for q8
 Func JadeBrotherhoodFarm($STATUS)
-	If $STATUS <> "RUNNING" Then Return
-
-	If ($Deadlocked OR ((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-		Out("Inventory full, pausing.")
-		$Deadlocked = False
-		Return 2
-	EndIf
-
-	If $STATUS <> "RUNNING" Then Return
-
 	If GetMapID() <> $ID_The_Marketplace Then
 		TravelTo($ID_The_Marketplace)
 	EndIf
@@ -77,7 +67,7 @@ Func JadeBrotherhoodFarm($STATUS)
 		$Jade_Brotherhood_Farm_Setup = True
 	EndIf
 
-	If $STATUS <> "RUNNING" Then Return 
+	If $STATUS <> 'RUNNING' Then Return
 
 	Return JadeBrotherhoodFarmLoop()
 EndFunc
@@ -85,7 +75,7 @@ EndFunc
 
 ;~ Setup for the jade brotherhood farm
 Func SetupJadeBrotherhoodFarm()
-	Out("Setting up farm")
+	Out('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
 	MoveTo(16106, 18497)
@@ -99,16 +89,16 @@ Func SetupJadeBrotherhoodFarm()
 	Move(-13960, -11700)
 	RndSleep(1000)
 	WaitMapLoading($ID_The_Marketplace)
-	Out("Jade Brotherhood farm setup")
+	Out('Jade Brotherhood farm setup')
 EndFunc
 
 
 ;~ Farm loop
 Func JadeBrotherhoodFarmLoop()
 	If Not $RenderingEnabled Then ClearMemory()
-	Out("Abandonning quest")
+	Out('Abandonning quest')
 	AbandonQuest(457)
-	Out("Exiting to Bukdek Byway")
+	Out('Exiting to Bukdek Byway')
 	Move(16551, 19860)
 	RndSleep(1000)
 	WaitMapLoading($ID_Bukdek_Byway)
@@ -124,7 +114,7 @@ Func JadeBrotherhoodFarmLoop()
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
 		RndSleep(50)
-		Out("Looting")
+		Out('Looting')
 		PickUpItems(null, AlsoPickLowReqItems)
 	EndIf
 
@@ -134,7 +124,7 @@ EndFunc
 
 
 Func MoveToSeparationWithHero()
-	Out("Moving to crossing")
+	Out('Moving to crossing')
 	UseHeroSkill(1, $Brotherhood_Incoming)
 	RndSleep(50)
 	CommandAll(-10475, -9685)
@@ -147,17 +137,17 @@ Func MoveToSeparationWithHero()
 	RndSleep(50)
 	Move(-11983, -6261, 40)
 	RndSleep(300)
-	Out("Moving Hero away")
+	Out('Moving Hero away')
 	CommandAll(-8447, -10099)
 	RndSleep(7000)
 EndFunc
 
 
 Func TalkToAiko()
-	Out("Talking to Aiko")
+	Out('Talking to Aiko')
 	GoNearestNPCToCoords(-13923, -5098)
 	RndSleep(1000)
-	Out("Taking quest")
+	Out('Taking quest')
 	AcceptQuest(457)
 	Move(-11303, -6545, 40)
 	RndSleep(4500)
@@ -165,7 +155,7 @@ EndFunc
 
 
 Func WaitForBall()
-	Out("Waiting for ball")
+	Out('Waiting for ball')
 	If GetIsDead(-2) Then Return
 	RndSleep(4500)
 	Local $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
@@ -173,8 +163,8 @@ Func WaitForBall()
 	; Aiko counts
 	While ($foesBalled <> 8 Or $peasantsAlive > 1)
 		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		Out("Foes balled : " & $foesBalled)
-		Out("Peasants alive : " & $peasantsAlive)
+		Out('Foes balled : ' & $foesBalled)
+		Out('Peasants alive : ' & $peasantsAlive)
 		RndSleep(4500)
 		$prevFoesBalled = $foesBalled
 		$prevPeasantsAlive = $peasantsAlive
@@ -183,7 +173,7 @@ Func WaitForBall()
 		If ($foesBalled = $prevFoesBalled And $peasantsAlive = $prevPeasantsAlive) Then
 			$countsDidNotChange += 1
 			If $countsDidNotChange > 2 Then Return
-		Else 
+		Else
 			$countsDidNotChange = 0
 		EndIf
 	WEnd
@@ -195,7 +185,7 @@ Func KillJadeBrotherhood()
 
 	If GetIsDead(-2) Then Return
 
-	Out("Clearing Jade Brotherhood")
+	Out('Clearing Jade Brotherhood')
 	UseSkillEx($JB_DrunkerMaster)
 	RndSleep(50)
 	UseSkillEx($JB_SandShards)
@@ -252,7 +242,7 @@ EndFunc
 
 
 Func BackToTheMarketplace($success)
-	Out("Porting to The Marketplace")
+	Out('Porting to The Marketplace')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()
