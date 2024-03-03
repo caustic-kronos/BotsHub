@@ -2014,7 +2014,7 @@ EndFunc
 
 ;~ Open a chest.
 Func OpenChest()
-	Return SendPacket(0x8, $HEADER_CHEST_OPEN, 2)
+	Return SendPacket(0x8, $HEADER_OPEN_CHEST, 2)
 EndFunc
 
 
