@@ -18,15 +18,26 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
+	Local $lAgentArray = GetAgentArray()
+	For $i = 1 To $lAgentArray[0]
+		Out('------------------------------------------------')
+		Out("ID: " & DllStructGetData($lAgentArray[$i], 'ID'))
+		Out("Allegiance: " & DllStructGetData($lAgentArray[$i], 'Allegiance'))
+		Out("PlayerNumber" & DllStructGetData($lAgentArray[$i], 'PlayerNumber'))
+	Next
+
+	;Out(GetHeroProfession(0, False))
 	;SetDisplayedTitle(0x26)
 	;ChangeWeaponSet(1) ;from 1 to 4
-	Local $item = GetItemBySlot(1,1)
-	Local $name = GetAgentName($item)
-	Out($name)
+	;Local $item = GetItemBySlot(1,20)
+	;Local $name = GetAgentName($item)
+	;Out($name)
 	;Sleep(2000)
 	;StartSalvage($item)
 	;Sleep(2000)
 	;SalvageMaterials()
+	;Sleep(2000)
+	;EndSalvage()
 	;ChangeSecondProfession($ID_Warrior)
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
@@ -141,7 +152,7 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem)
+Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	Local $lAgent
 	Local $lItem
 	Local $lDeadlock
@@ -149,6 +160,8 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 		If (GetIsDead(-2)) Then Return
 		$lAgent = GetAgentByID($i)
 		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
+		If Not GetCanPickUp($lAgent) Then ContinueLoop
+		If GetDistance(-2, $lAgent) > $range Then ContinueLoop
 		$lItem = GetItemByAgentID($i)
 		
 		If ($ShouldPickItem($lItem)) Then
@@ -1091,6 +1104,18 @@ Func GetNPCsInRangeOfAgent($npcAllegiance = null, $agent = -2, $range = 0, $cond
 	If $agent <> -2 Then Return GetNPCsInRangeOfCoords($npcAllegiance, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $range, $condition)
 	Return GetNPCsInRangeOfCoords($npcAllegiance, null, null, $range, $condition)
 EndFunc
+
+
+;~ Get party in range of the given agent
+Func GetPartyInRangeOfAgent($agent = -2, $range = 0)
+	If $agent <> -2 Then Return GetNPCsInRangeOfCoords(1, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $range, PartyMemberFilter)
+	Return GetNPCsInRangeOfCoords(1, null, null, $range, PartyMemberFilter)
+EndFunc
+
+;~ Small helper to filter party members - TODO: remove this
+Func PartyMemberFilter($agent)
+	return BitAND(DllStructGetData($agent, 'TypeMap'), 131072)
+EndFunc
 #EndRegion Getting NPCs
 
 
@@ -1310,16 +1335,31 @@ EndFunc
 
 
 ;~ Use one of the skill mentionned if available, else attack
-Func AttackOrUseSkill($attackSleep, $skill = null, $skillSleep = 0, $skill2 = null, $skill2Sleep = 0,  $skill3 = null, $skill3Sleep = 0)
+Func AttackOrUseSkill($attackSleep, $skill = null, $skill2 = null, $skill3 = null, $skill4 = null, $skill5 = null, $skill6 = null, $skill7 = null, $skill8 = null)
 	If ($skill <> null And IsRecharged($skill)) Then
 		UseSkillEx($skill, GetNearestEnemyToAgent(-2))
-		RndSleep($skillSleep)
+		RndSleep(50)
 	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then
 		UseSkillEx($skill2, GetNearestEnemyToAgent(-2))
-		RndSleep($skill2Sleep)
+		RndSleep(50)
 	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then
 		UseSkillEx($skill3, GetNearestEnemyToAgent(-2))
-		RndSleep($skill3Sleep)
+		RndSleep(50)
+	ElseIf ($skill4 <> null And IsRecharged($skill4)) Then
+		UseSkillEx($skill4, GetNearestEnemyToAgent(-2))
+		RndSleep(50)
+	ElseIf ($skill5 <> null And IsRecharged($skill5)) Then
+		UseSkillEx($skill5, GetNearestEnemyToAgent(-2))
+		RndSleep(50)
+	ElseIf ($skill6 <> null And IsRecharged($skill6)) Then
+		UseSkillEx($skill6, GetNearestEnemyToAgent(-2))
+		RndSleep(50)
+	ElseIf ($skill7 <> null And IsRecharged($skill7)) Then
+		UseSkillEx($skill7, GetNearestEnemyToAgent(-2))
+		RndSleep(50)
+	ElseIf ($skill8 <> null And IsRecharged($skill8)) Then
+		UseSkillEx($skill8, GetNearestEnemyToAgent(-2))
+		RndSleep(50)
 	Else
 		Attack(GetNearestEnemyToAgent(-2))
 		RndSleep($attackSleep)

@@ -748,6 +748,12 @@ Func SalvageMod($aModIndex)
 EndFunc
 
 
+;~ Salvage the materials out of an item.
+Func EndSalvage()
+	Return SendPacket(0x4, $HEADER_SALVAGE_SESSION_DONE)
+EndFunc
+
+
 ;~ Identifies an item.
 Func IdentifyItem($aItem)
 	If GetIsIdentified($aItem) Then Return
@@ -2731,7 +2737,7 @@ EndFunc
 ;~ Tests if an item is assigned to you.
 Func GetAssignedToMe($aAgent)
 	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
-	Return (DllStructGetData($aAgent, 'Owner') = GetMyID())
+	Return DllStructGetData($aAgent, 'Owner') == GetMyID()
 EndFunc
 
 
@@ -3199,7 +3205,7 @@ Func GetAgentByPlayerNumber($aPlayerNumber)
 	Local $lAgentArray = GetAgentArray()
 	If IsDllStruct($aPlayerNumber) Then Return DllStructGetData($aPlayerNumber, 'PlayerNumber')
 	For $i = 1 To $lAgentArray[0]
-		If DllStructGetData($lAgentArray[$i], 'PlayerNumber') == $aPlayerNumber Then Return $lAgentArray[$i]
+		If DllStructGetData($lAgentArray[$i], 'Allegiance') == 1 And DllStructGetData($lAgentArray[$i], 'PlayerNumber') == $aPlayerNumber Then Return $lAgentArray[$i]
 	Next
 EndFunc
 
@@ -3332,13 +3338,11 @@ Func GetParty($aAgentArray = 0)
 	Local $lReturnArray[1] = [0]
 	If $aAgentArray == 0 Then $aAgentArray = GetAgentArray(0xDB)
 	For $i = 1 To $aAgentArray[0]
-		If DllStructGetData($aAgentArray[$i], 'Allegiance') == 1 Then
-			If BitAND(DllStructGetData($aAgentArray[$i], 'TypeMap'), 131072) Then
-				$lReturnArray[0] += 1
-				ReDim $lReturnArray[$lReturnArray[0] + 1]
-				$lReturnArray[$lReturnArray[0]] = $aAgentArray[$i]
-			EndIf
-		EndIf
+		If DllStructGetData($aAgentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
+		If Not BitAND(DllStructGetData($aAgentArray[$i], 'TypeMap'), 131072) Then ContinueLoop
+		$lReturnArray[0] += 1
+		ReDim $lReturnArray[$lReturnArray[0] + 1]
+		$lReturnArray[$lReturnArray[0]] = $aAgentArray[$i]
 	Next
 	Return $lReturnArray
 EndFunc

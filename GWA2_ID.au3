@@ -62,7 +62,9 @@ Global Const $ID_Nomads_Isle = 177
 Global Const $ID_Druids_Isle = 178
 Global Const $ID_Isle_Of_The_Dead = 179
 ;~ Factions
+Global Const $ID_House_Zu_Heltzer = 77
 Global Const $ID_Kaineng_City = 194
+Global Const $ID_Ferndale = 210
 Global Const $ID_Bukdek_Byway = 240
 Global Const $ID_Isle_Of_Weeping_Stone = 275
 Global Const $ID_Isle_Of_Jade = 276
@@ -101,8 +103,8 @@ Global Const $ID_Monk = 3
 Global Const $ID_Mesmer = 5
 Global Const $ID_Necromancer = 4
 Global Const $ID_Elementalist = 6
-Global Const $ID_Ritualist = 7
-Global Const $ID_Assassin = 8
+Global Const $ID_Ritualist = 8
+Global Const $ID_Assassin = 7
 Global Const $ID_Paragon = 9
 Global Const $ID_Dervish = 10
 #EndRegion Professions
@@ -267,6 +269,9 @@ Global Const $ID_Union = 911
 Global Const $ID_Shelter = 982
 Global Const $ID_Soul_Twisting = 1240
 Global Const $ID_Displacement = 1249
+;Paragon
+Global Const $ID_Burning_Refrain = 1576
+Global Const $ID_Heroic_Refrain = 3431
 ; PvE
 Global Const $ID_Ebon_Battle_Standard_of_Honor = 2233
 Global Const $ID_Mental_Block = 2417

@@ -41,7 +41,6 @@ Local Const $DM_MentalBlock = 6
 Local Const $DM_DeathsCharge = 7
 Local Const $DM_WhirlingDefense = 8
 
-#Region GUI
 Local $DM_FARM_SETUP = False
 
 Local $Bohseda_Timer

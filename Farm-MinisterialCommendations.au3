@@ -274,7 +274,7 @@ Func InitialFight()
 		HelpMikuAndCharacter()
 		;RenewSpirits()
 		TargetNearestEnemy()
-		AttackOrUseSkill(1300, $Skill_I_am_unstoppable, 50, $Skill_Hundred_Blades, 50, $Skill_To_the_limit, 50)
+		AttackOrUseSkill(1300, $Skill_I_am_unstoppable, $Skill_Hundred_Blades, $Skill_To_the_limit)
 		If IsFail() Then
 			If $deathTimer = null Then
 				$deathTimer = TimerInit()
@@ -562,7 +562,7 @@ Func KillMinistryOfPurity()
 				RndSleep(250)
 			WEnd
 		Else
-			AttackOrUseSkill(1300, $Skill_Conviction, 50)
+			AttackOrUseSkill(1300, $Skill_Conviction)
 		EndIf
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 	WEnd

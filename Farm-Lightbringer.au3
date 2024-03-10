@@ -93,6 +93,8 @@ Func FarmTheSulfurousWastes()
 	RndSleep(1000)
 	Dialog(0x85)
 	RndSleep(1000)
+	
+	Out('Entering Junundu')
 	MoveTo(-615, 13450)
 	RndSleep(5000)
 	TargetNearestItem()
@@ -100,92 +102,42 @@ Func FarmTheSulfurousWastes()
 	ActionInteract()
 	RndSleep(1500)
 
-	MoveTo(-800, 12000)
-	AggroMoveTo(-1700, 9800, 'First Undead Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-3000, 10900)
-	AggroMoveTo(-4500, 11500, 'Second Undead Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-7500, 11925)
-	SpeedTeam()
-	MoveTo(-9800, 12400)
-	SpeedTeam()
-	MoveTo(-13000, 9500)
-	AggroMoveTo(-13250, 6750, 'Third Undead Group')
-	If CountPartyDeaths() > 5 Then Return 1
+	If MoveToAndAggro(-800, 12000, -1700, 9800, 'First Undead Group') Then Return 1
+	If MoveToAndAggro(-3000, 10900, -4500, 11500, 'Second Undead Group') Then Return 1
+	If MoveToAndAggro(-7500, 11925, -9800, 12400, -13000, 9500, -13250, 6750, 'Third Undead Group') Then Return 1
+	
+	Out('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
 	MoveTo(-20600, 7270)
-	Out('Taking Lightbringer Margonite Blessing')
 	GoToNPC(GetNearestNPCToCoords(-20600, 7270))
 	RndSleep(1000)
 	Dialog(0x85)
 	RndSleep(1000)
-	SpeedTeam()
-	MoveTo(-22000, 9000)
-	AggroMoveTo(-22350, 11100, 'First Margonite Group')
-	If CountPartyDeaths() > 5 Then Return 1
+	
+	If MoveToAndAggro(-22000, 9000, -22350, 11100, 'First Margonite Group') Then Return 1
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
-	;MoveTo(-21200, 10750)
-	;AggroMoveTo(-20250, 11000, 'Second Margonite Group')
-	;If CountPartyDeaths() > 5 Then Return
-	;SpeedTeam()
-	;MoveTo(-22000, 9000)
-	SpeedTeam()
-	MoveTo(-19000, 5700)
-	SpeedTeam()
-	MoveTo(-20800, 600)
-	AggroMoveTo(-22000, -1200, 'Djinn Group', 2200)
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-21500, -6000)
-	SpeedTeam()
-	MoveTo(-20400, -7400)
-	AggroMoveTo(-19500, -9500, 'Undead Ritualist Boss Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-22000, -9400)
-	AggroMoveTo(-22800, -9800, 'Third Margonite Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-23000, -10600)
-	AggroMoveTo(-23150, -12250, 'Fourth Margonite Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-22800, -13500)
-	AggroMoveTo(-21300, -14000, 'Fifth Margonite Group')
-	If CountPartyDeaths() > 5 Then Return 1
+	;If MoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
+	If MoveToAndAggro(-19000, 5700, -20800, 600, -22000, -1200, 'Djinn Group', 2200) Then Return 1
+	If MoveToAndAggro(-21500, -6000, -20400, -7400, -19500, -9500, 'Undead Ritualist Boss Group') Then Return 1
+	If MoveToAndAggro(-22000, -9400, -22800, -9800, 'Third Margonite Group') Then Return 1
+	If MoveToAndAggro(-23000, -10600, -23150, -12250, 'Fourth Margonite Group') Then Return 1
+	If MoveToAndAggro(-22800, -13500, -21300, -14000, 'Fifth Margonite Group') Then Return 1
+	
+	Out('Picking Up Tome')
 	SpeedTeam()
 	MoveTo(-21300, -14000)
 	TargetNearestItem()
 	RndSleep(50)
-	Out('Picking Up Tome')
 	ActionInteract()
 	RndSleep(2000)
 	DropBundle()
 	RndSleep(1000)
-	SpeedTeam()
-	MoveTo(-22800, -13500)
-	SpeedTeam()
-	MoveTo(-23000, -10600)
-	AggroMoveTo(-21500, -9500, 'Sixth Margonite Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-21000, -9500)
-	AggroMoveTo(-19500, -8500, 'Seventh Margonite Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	SpeedTeam()
-	MoveTo(-22000, -9400)
-	SpeedTeam()
-	MoveTo(-23000, -10600)
-	SpeedTeam()
-	MoveTo(-22800, -13500)
-	Out('Moving To Temple')
-	SpeedTeam()
-	MoveTo(-19500, -13100)
-	AggroMoveTo(-18000, -13100, 'Temple Monolith Groups')
-	If CountPartyDeaths() > 5 Then Return 1
+	
+	If MoveToAndAggro(-22800, -13500, -23000, -10600, -21500, -9500, 'Sixth Margonite Group') Then Return 1
+	If MoveToAndAggro(-21000, -9500, -19500, -8500, 'Seventh Margonite Group') Then Return 1
+	If MoveToAndAggro(-22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100, 'Temple Monolith Groups') Then Return 1
+	
+	Out('Spawning Margonite bosses')
 	SpeedTeam()
 	MoveTo(-16000, -13100)
 	SpeedTeam()
@@ -193,15 +145,12 @@ Func FarmTheSulfurousWastes()
 	RndSleep(1000)
 	TargetNearestItem()
 	RndSleep(250)
-	Out('Spawning Margonite Bosses')
 	ActionInteract()
 	RndSleep(3000)
 	DropBundle()
 	RndSleep(1000)
-	AggroMoveTo(-18000, -13100, 'Margonite Boss Group')
-	If CountPartyDeaths() > 5 Then Return 1
-	RndSleep(1000)
-	PickUpItems()
+	
+	If MoveToAndAggro(-18000, -13100, 'Margonite Boss Group') Then Return 1
 	Return 0
 EndFunc
 
@@ -218,7 +167,19 @@ Func SpeedTeam()
 	EndIf
 EndFunc
 
-Func AggroMoveTo($x, $y, $foesGroup = '', $range = 1650)
+;~ Main method for moving around and aggroing/killing mobs
+;~ Return true if the group is dead, false if not
+Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
+	Local $locationsCount = UBound($locations)
+	If $locationsCount > 3 Then
+		For $i = 0 To $locationsCount - 3 Step 2
+			SpeedTeam()
+			MoveTo($locations[$i], $locations[$i + 1])
+		Next
+	EndIf
+	Local $x = $locations[$locationsCount - 2]
+	Local $y = $locations[$locationsCount - 1]
+ 
 	Out('Killing ' & $foesGroup)
 	; Get close enough to cast spells but not Aggro
 	; Use Junundu Siege (4) until it's in CD
@@ -237,7 +198,7 @@ Func AggroMoveTo($x, $y, $foesGroup = '', $range = 1650)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ';' & $y & ' with distance set to ' & $range)
-		Return
+		Return False
 	EndIf
 	
 	GetAlmostInRangeOfAgent($target)
@@ -255,15 +216,18 @@ Func AggroMoveTo($x, $y, $foesGroup = '', $range = 1650)
 		CallTarget($target)
 		Sleep(20)
 		If (GetSkillbarSkillAdrenaline($Junundu_Smash) == 130) Then UseSkillEx($Junundu_Smash)
-		AttackOrUseSkill($weaponAttackTime, $Junundu_Bite, 1050, $Junundu_Strike, 1050)
+		AttackOrUseSkill($weaponAttackTime, $Junundu_Bite, $Junundu_Strike)
 		$foes = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	Until $foes == 0
-	
+		
 	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
+	
+	If CountPartyDeaths() > 5 Then Return True
 
 	PickUpItems()
+	Return False
 EndFunc
 
 Func ReturnToSahlahjaOutpost()

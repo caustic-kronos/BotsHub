@@ -44,9 +44,7 @@ Local Const $Corsairs_DeathsCharge = 8
 ; Hero Build
 Local Const $Corsairs_MakeHaste = 1
 
-#Region GUI
 Local $CORSAIRS_FARM_SETUP = False
-
 Local $Bohseda_Timer
 
 ;~ Main method to farm Corsairs
@@ -178,7 +176,12 @@ Func CorsairsFarmLoop()
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
 		Out('Looting')
-		PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
+		If $foesCount == 0 Then
+			PickUpItems(OnlyCastTogetherAsOne, AlsoPickLowReqItems)
+		Else
+			PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
+		EndIf
 	EndIf
 
 	BackToModdokCreviceOutpost()
@@ -195,6 +198,14 @@ Func CastAllDefensiveSkills()
 	RndSleep(20)
 	UseSkillEx($Corsairs_FeignedNeutrality)
 	RndSleep(20)
+EndFunc
+
+
+Func OnlyCastTogetherAsOne()
+	If IsRecharged($Corsairs_TogetherAsOne) Then
+		UseSkillEx($Corsairs_TogetherAsOne)
+		RndSleep(GetPing() + 20)
+	EndIf
 EndFunc
 
 

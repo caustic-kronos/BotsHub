@@ -64,9 +64,7 @@ Local Const $Raptors_StandYourGround = 6
 Local Const $Raptors_CantTouchThis = 7
 Local Const $Raptors_BladeturnRefrain = 8
 
-#Region GUI
 Local $RAPTORS_FARM_SETUP = False
-
 Local $chatStuckTimer = TimerInit()
 
 ;~ Main method to farm Raptors
