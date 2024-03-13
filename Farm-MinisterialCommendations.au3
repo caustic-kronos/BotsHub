@@ -109,13 +109,13 @@ Func MinisterialCommendationsFarm($STATUS)
 	EnterQuest()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
-	If $STATUS <> 'RUNNING' Then Return
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	Out('Preparing to fight')
 	PrepareToFight()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
-	If $STATUS <> 'RUNNING' Then Return
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	Out('Fighting the first group')
 	InitialFight()

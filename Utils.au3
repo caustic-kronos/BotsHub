@@ -21,9 +21,9 @@ Func RunTests($STATUS)
 	Local $lAgentArray = GetAgentArray()
 	For $i = 1 To $lAgentArray[0]
 		Out('------------------------------------------------')
-		Out("ID: " & DllStructGetData($lAgentArray[$i], 'ID'))
-		Out("Allegiance: " & DllStructGetData($lAgentArray[$i], 'Allegiance'))
-		Out("PlayerNumber" & DllStructGetData($lAgentArray[$i], 'PlayerNumber'))
+		Out('ID: ' & DllStructGetData($lAgentArray[$i], 'ID'))
+		Out('Allegiance: ' & DllStructGetData($lAgentArray[$i], 'Allegiance'))
+		Out('PlayerNumber: ' & DllStructGetData($lAgentArray[$i], 'PlayerNumber'))
 	Next
 
 	;Out(GetHeroProfession(0, False))

@@ -45,22 +45,13 @@ Local Const $ID_necro_mercenary_hero = $ID_Mercenary_Hero_3
 Func OmniFarm($STATUS)
 	;If Not($Farm_Setup) Then OmniFarmSetup()
 
-	If $STATUS <> 'RUNNING' Then Return
-
-	If CountSlots() < 5 Then
-		Out('Inventory full, pausing.')
-		Return 2
-	EndIf
-
-	If $STATUS <> 'RUNNING' Then Return
-
 	Out('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
-	If $STATUS <> 'RUNNING' Then Return
-
+	If $STATUS <> 'RUNNING' Then Return 2
+	
 	HealingLoop()
-
+	
 	Return 0
 EndFunc
 

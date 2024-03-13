@@ -73,11 +73,7 @@ Func RaptorFarm($STATUS)
 		DistrictTravel($ID_Rata_Sum, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	
-	If Not $RAPTORS_FARM_SETUP Then
-		SetupRaptorFarm()
-		$RAPTORS_FARM_SETUP = True
-	EndIf
-
+	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
 	If $STATUS <> 'RUNNING' Then Return 2
 
 	Return RaptorsFarmLoop()
@@ -98,6 +94,7 @@ Func SetupRaptorFarm()
 	Move(-26309, -4112)
 	RndSleep(1000)
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
+	$RAPTORS_FARM_SETUP = True
 	Out('Resign preparation complete')
 EndFunc
 

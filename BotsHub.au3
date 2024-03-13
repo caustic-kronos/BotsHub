@@ -53,6 +53,7 @@ GUI built with GuiBuilderPlus
 #include 'Farm-JadeBrotherhood.au3'
 #include 'Farm-Kurzick.au3'
 #include 'Farm-Lightbringer.au3'
+#include 'Farm-Luxon.au3'
 #include 'Farm-MinisterialCommendations.au3'
 #include 'Farm-Raptors.au3'
 #include 'Farm-SpiritSlaves.au3'
@@ -112,7 +113,7 @@ Func createGUI()
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kurzick|Lightbringer|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	GUICtrlSetData($FarmChoiceCombo, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kurzick|Lightbringer|Luxon|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
 	$StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
 	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($StartButton, 'GuiButtonHandler')
@@ -364,7 +365,6 @@ Func BotHubLoop()
 
 	While True
 		Sleep(1000)
-		;Out($STATUS)
 
 		If ($STATUS == 'RUNNING') Then
 			Local $Farm = GUICtrlRead($FarmChoiceCombo)
@@ -392,6 +392,8 @@ Func BotHubLoop()
 					$STATS_MAP['success_code'] = KurzickFactionFarm($STATUS)
 				Case 'Lightbringer'
 					$STATS_MAP['success_code'] = LightbringerFarm($STATUS)
+				Case 'Luxon'
+					$STATS_MAP['success_code'] = LuxonFactionFarm($STATUS)
 				Case 'Ministerial Commendations'
 					$STATS_MAP['success_code'] = MinisterialCommendationsFarm($STATUS)
 				Case 'OmniFarm'
@@ -406,9 +408,8 @@ Func BotHubLoop()
 					$STATS_MAP['success_code'] = ManageInventory($STATUS)
 					$STATUS = 'WILL_PAUSE'
 				Case 'Dynamic'
-					While $STATUS == 'RUNNING'
-						Sleep(1000)
-					WEnd
+					Out('Dynamic execution')
+					$STATUS = 'WILL_PAUSE'
 				Case 'Tests'
 					$STATS_MAP['success_code'] = RunTests($STATUS)
 				Case else
@@ -576,6 +577,8 @@ Func FillStats(ByRef $STATS_MAP, $time = 0)
 	Local Static $FirstNornTitlePoints = GetNornTitle()
 	Local Static $FirstLightbringerTitlePoints = GetLightbringerTitle()
 	Local Static $FirstSunspearTitlePoints = GetSunspearTitle()
+	Local Static $FirstKurzickTitlePoints = GetKurzickTitle()
+	Local Static $FirstLuxonTitlePoints = GetLuxonTitle()
 	
 	;Local Static $ChunkOfDrakeFleshCount = 0
 	;Local Static $SkaleFinsCount = 0
@@ -600,6 +603,8 @@ Func FillStats(ByRef $STATS_MAP, $time = 0)
 	$STATS_MAP['asura_title_points_earned'] = GetAsuraTitle() - $FirstAsuraTitlePoints
 	$STATS_MAP['lightbringer_title_points_earned'] = GetLightbringerTitle() - $FirstLightbringerTitlePoints
 	$STATS_MAP['sunspear_title_points_earned'] = GetSunspearTitle() - $FirstSunspearTitlePoints
+	$STATS_MAP['kurzick_title_points_earned'] = GetKurzickTitle() - $FirstKurzickTitlePoints
+	$STATS_MAP['luxon_title_points_earned'] = GetLuxonTitle() - $FirstLuxonTitlePoints
 EndFunc
 
 

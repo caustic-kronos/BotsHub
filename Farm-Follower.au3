@@ -95,7 +95,7 @@ EndFunc
 
 Func FollowerSetup()
 	$Player_Profession_ID = GetHeroProfession(0, False)
-	Out("Setting up follower bot")
+	Out('Setting up follower bot')
 	Switch $Player_Profession_ID
 		Case $ID_Warrior
 			DefaultSetup()
@@ -131,12 +131,12 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 	If $foesCount > 0 Then
-		Out("Foes in range detected, starting fight")
+		Out('Foes in range detected, starting fight')
 		While Not GetIsDead(-2) And $foesCount > 0
 			$FightFunction()
 			$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 		WEnd
-		Out("Fight is over")
+		Out('Fight is over')
 	EndIf
 
 	CheckForChests()
@@ -162,7 +162,7 @@ EndFunc
 
 
 Func DefaultRun()
-	If $Follower_RunningSkill <> "" And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
+	If $Follower_RunningSkill <> '' And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
 EndFunc
 
 
@@ -194,7 +194,7 @@ EndFunc
 
 
 Func ParagonSetup()
-	Out("Paragon setup - Heroic Refrain")
+	Out('Paragon setup - Heroic Refrain')
 
 	Local $Heroic_Refrain = 8
 	;Local $Aggressive_Refrain = 7
@@ -215,13 +215,13 @@ Func ParagonSetup()
 	$Follower_MaintainSkill7 = $Stand_Your_Ground
 	$Follower_MaintainSkill8 = $Theyre_On_Fire
 	
-	AdlibRegister("ParagonRefreshShouts", 12000)
+	AdlibRegister('ParagonRefreshShouts', 12000)
 	;AdlibUnRegister()
 EndFunc
 
 
 Func ParagonRefreshShouts()
-	Out("Refresh shouts on group")
+	Out('Refresh shouts on group')
 	Local Static $selfRecast = False
 	MoveToMiddleOfGroupWithTimeout(5000)
 	RndSleep(20)
@@ -264,7 +264,7 @@ Func ParagonRefreshShouts()
 		;Local $HeroNumber
 		;For $i = 1 To $partyMembers[0]
 		;	If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop
-		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], "ID"))
+		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
 		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy(-2) > 15 Then
 		;		UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
 		;		RndSleep(GetPing() + 20)
@@ -343,7 +343,7 @@ Func CheckForChests()
 		$extraType = DllStructGetData($agents[$i], 'ExtraType')
 		If $extraType <> 4582 And $extraType <> 8141 Then ContinueLoop	;dirty fix: skip signposts that aren't chests (nm And hm chest)
 		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
-			Out("Found a chest")
+			Out('Found a chest')
 			MoveTo(DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y'))
 			OpenChest()
 			Sleep(GetPing() + 500)

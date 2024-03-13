@@ -47,7 +47,7 @@ Func SpiritSlavesFarm($STATUS)
 		SpiritSlavesFarmSetup()
 	WEnd
 
-	If $STATUS <> 'RUNNING' Then Return
+	If $STATUS <> 'RUNNING' Then Return 2
 
 	UseConsumable($ID_Slice_of_Pumpkin_Pie)
 
