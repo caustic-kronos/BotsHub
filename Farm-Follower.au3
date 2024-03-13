@@ -331,24 +331,3 @@ Func MoveToMiddleOfGroupWithTimeout($timeOut)
 		Sleep(200)
 	WEnd
 EndFunc
-
-
-;~ Find and open chests
-Func CheckForChests()
-	Local Static $openedChests[]
-	Local $extraType
-	Local $agents = GetAgentArray(0x200) ;0x200 = type: static
-	For $i = 1 To $agents[0]
-		If GetDistance(-2, $agents[$i]) > $RANGE_EARSHOT Then ContinueLoop
-		$extraType = DllStructGetData($agents[$i], 'ExtraType')
-		If $extraType <> 4582 And $extraType <> 8141 Then ContinueLoop	;dirty fix: skip signposts that aren't chests (nm And hm chest)
-		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
-			Out('Found a chest')
-			MoveTo(DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y'))
-			OpenChest()
-			Sleep(GetPing() + 500)
-			$openedChests[DllStructGetData($agents[$i], 'ID')] == 1
-			PickUpItems()
-		EndIf
-	Next
-EndFunc

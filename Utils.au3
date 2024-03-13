@@ -18,13 +18,15 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	Local $lAgentArray = GetAgentArray()
-	For $i = 1 To $lAgentArray[0]
-		Out('------------------------------------------------')
-		Out('ID: ' & DllStructGetData($lAgentArray[$i], 'ID'))
-		Out('Allegiance: ' & DllStructGetData($lAgentArray[$i], 'Allegiance'))
-		Out('PlayerNumber: ' & DllStructGetData($lAgentArray[$i], 'PlayerNumber'))
-	Next
+	CheckForChests($RANGE_COMPASS)
+	;Local $lAgentArray = GetAgentArray()
+	;For $i = 1 To $lAgentArray[0]
+	;	Out('------------------------------------------------')
+	;	Out('ID: ' & DllStructGetData($lAgentArray[$i], 'ID'))
+	;	Out('Allegiance: ' & DllStructGetData($lAgentArray[$i], 'Allegiance'))
+	;	Out('PlayerNumber: ' & DllStructGetData($lAgentArray[$i], 'PlayerNumber'))
+	;Next
+	
 
 	;Out(GetHeroProfession(0, False))
 	;SetDisplayedTitle(0x26)
@@ -277,6 +279,33 @@ Func PickOnlyImportantItem($item)
 	Return False
 EndFunc
 #EndRegion Loot items
+
+
+#Region Loot Chests
+;~ Find and open chests in the given range (earshot by default)
+Func CheckForChests($range = $RANGE_EARSHOT)
+	Local Static $openedChests[]
+	Local $extraType
+	Local $agents = GetAgentArray(0x200) ;0x200 = type: static
+	For $i = 1 To $agents[0]
+		$extraType = DllStructGetData($agents[$i], 'ExtraType')
+		If $extraType <> $ID_ExtraType_NM_Chest And $extraType <> $ID_ExtraType_HM_Chest Then ContinueLoop
+		If GetDistance(-2, $agents[$i]) > $range Then ContinueLoop
+
+		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
+			Out('Found an unopened chest')
+			;MoveTo(DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y'))		;Fail half the time
+			;GoSignpost($agents[$i])															;Seems to work but serious rubberbanding
+			GoToSignpost($agents[$i])															;Maybe better ?
+			RndSleep(500)
+			OpenChest()
+			RndSleep(1000)
+			$openedChests[DllStructGetData($agents[$i], 'ID')] = 1
+			PickUpItems()
+		EndIf
+	Next
+EndFunc
+#EndRegion Loot Chests
 
 
 #Region Inventory or Chest

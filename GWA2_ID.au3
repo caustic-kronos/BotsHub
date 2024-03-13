@@ -195,6 +195,12 @@ Global Const $Weapons_Max_Damage_Per_Level[] = MapFromArrays($Weapons_Max_Damage
 #EndRegion Type IDs
 
 
+#Region MapMarkers
+Global Const $ID_ExtraType_NM_Chest = 4582
+Global Const $ID_ExtraType_HM_Chest = 8141
+#EndRegion MapMarkers
+
+
 #Region Hero IDs
 Global Const $ID_Norgu = 1
 Global Const $ID_Goren = 2
@@ -244,6 +250,7 @@ Global Const $ID_Dwarf_Title = 0x27
 Global Const $ID_Ebon_Vanguard_Title = 0x28
 Global Const $ID_Norn_Title = 0x29
 #EndRegion Titles
+
 
 #Region Skill IDs
 ; Dervish
@@ -1351,8 +1358,6 @@ Global Const $Map_StackableItemsExceptMaterials = MapFromArray($StackableItems)
 
 
 #Region Mods
-
-
 #Region Weapon Mods
 Global Const $ID_Staff_Head = 896
 Global Const $ID_Staff_Wrapping = 908

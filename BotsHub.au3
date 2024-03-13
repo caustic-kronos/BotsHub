@@ -349,8 +349,11 @@ Func main()
 		LOGIN($CHARACTER_NAME, $PROCESS_ID)
 		$STATUS = 'INITIALIZED'
 	ElseIf $RUN_MODE == 'AUTOLOAD' Then
-		Local $loggedCharNames = GetLoggedCharNames()
-		If ($loggedCharNames <> '') Then GUICtrlSetData($CharacterChoiceCombo, $loggedCharNames)
+		Local $loggedCharNames = ScanGW()
+		If ($loggedCharNames[0] > 0) Then
+			Local $comboChoices = '|' & _ArrayToString($loggedCharNames, '|', 1)
+			GUICtrlSetData($CharacterChoiceCombo, $comboChoices, $loggedCharNames[1])
+		EndIf
 	Else
 		GUICtrlDelete($CharacterChoiceCombo)
 		$CharacterChoiceCombo = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
