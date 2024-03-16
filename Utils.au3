@@ -1214,6 +1214,10 @@ Func GetNearestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY
 	Local $returnAgent
 	Local $curAgent
 
+	If $coordX == null Or $coordY == null Then
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
 		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
@@ -1222,10 +1226,6 @@ Func GetNearestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY
 		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
 		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
 		Local $curDistance = GetDistance($me, $curAgent)
-		If $coordX == null Or $coordY == null Then
-			$coordX = DllStructGetData($me, 'X')
-			$coordY = DllStructGetData($me, 'Y')
-		EndIf
 		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
 		If $curDistance < $smallestDistance Then
 			$returnAgent = $curAgent
@@ -1235,6 +1235,38 @@ Func GetNearestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY
 
 	Return $returnAgent
 EndFunc
+
+
+;~ Get NPCs in range of the given coordinates
+Func GetFurthestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+	Local $me = GetAgentByID(-2)
+	Local $agents = GetAgentArray(0xDB)
+	Local $furthestDistance = 0
+	Local $returnAgent
+	Local $curAgent
+
+	If $coordX == null Or $coordY == null Then
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
+	For $i = 1 To $agents[0]
+		$curAgent = $agents[$i]
+		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
+		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
+		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		Local $curDistance = GetDistance($me, $curAgent)
+		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		If $curDistance > $furthestDistance Then
+			$returnAgent = $curAgent
+			$furthestDistance = $curDistance
+		EndIf
+	Next
+
+	Return $returnAgent
+EndFunc
+
 
 ;~ Get NPCs in range of the given coordinates
 Func BetterGetNearestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
@@ -1260,37 +1292,6 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY 
 		If $curDistance < $smallestDistance Then
 			$returnAgent = $curAgent
 			$smallestDistance = $curDistance
-		EndIf
-	Next
-
-	Return $returnAgent
-EndFunc
-
-;~ Get NPCs in range of the given coordinates
-Func GetFurthestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
-	Local $me = GetAgentByID(-2)
-	Local $agents = GetAgentArray(0xDB)
-	Local $biggestDistance = 0
-	Local $returnAgent
-	Local $curAgent
-	Local $curDistance
-	
-	If $coordX == null Or $coordY == null Then
-		$coordX = DllStructGetData($me, 'X')
-		$coordY = DllStructGetData($me, 'Y')
-	EndIf
-	For $i = 1 To $agents[0]
-		$curAgent = $agents[$i]
-		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
-		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
-		$curDistance = ComputeDistance(DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y'), $coordX, $coordY)
-		If $range > 0 And $curDistance > $range Then ContinueLoop
-		If $curDistance > $biggestDistance Then
-			$returnAgent = $curAgent
-			$biggestDistance = $curDistance
 		EndIf
 	Next
 
@@ -1346,7 +1347,7 @@ EndFunc
 
 
 ;~ Get close to a mob without aggroing it
-Func GetAlmostInRangeOfAgent($tgtAgent)
+Func GetAlmostInRangeOfAgent($tgtAgent, $proximity = ($RANGE_SPELLCAST + 100))
 	Local $xMe = DllStructGetData(GetAgentByID(-2), 'X')
 	Local $yMe = DllStructGetData(GetAgentByID(-2), 'Y')
 	Local $xTgt = DllStructGetData($tgtAgent, 'X')
@@ -1355,7 +1356,7 @@ Func GetAlmostInRangeOfAgent($tgtAgent)
 	Local $distance = ComputeDistance($xTgt, $yTgt, $xMe, $yMe)
 	If ($distance < $RANGE_SPELLCAST) Then Return
 
-	Local $ratio = ($RANGE_SPELLCAST + 100) / $distance
+	Local $ratio = $proximity / $distance
 		
 	Local $xGo = $xMe + ($xTgt - $xMe) * (1 - $ratio)
 	Local $yGo = $yMe + ($yTgt - $yMe) * (1 - $ratio)

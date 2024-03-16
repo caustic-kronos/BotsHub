@@ -22,7 +22,7 @@ Opt('MustDeclareVars', 1)
 Local Const $DragonMossBotVersion = '0.1'
 
 ; ==== Constantes ====
-Local Const $RADragonMassFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
+Local Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
 Local Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -43,9 +43,7 @@ Local Const $DM_WhirlingDefense = 8
 
 Local $DM_FARM_SETUP = False
 
-Local $Bohseda_Timer
-
-;~ Main method to farm Corsairs
+;~ Main method to farm Dragon Moss
 Func DragonMossFarm($STATUS)
 	If Not $DM_FARM_SETUP Then
 		SetupDragonMossFarm()

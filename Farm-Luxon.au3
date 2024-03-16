@@ -115,49 +115,36 @@ Func VQLuxon()
 	
 	If LuxonMoveToAndAggroAll(-13046, -9347, 'Yeti 1') Then Return 1
 	If LuxonMoveToAndAggroAll(-17348, -9895, 'Yeti 2') Then Return 1
-
 	If LuxonMoveToAndAggroAll(-14702, -6671, 'Oni and Wallows 1') Then Return 1
 	If LuxonMoveToAndAggroAll(-11080, -6126, 'Oni and Wallows 2', 2000) Then Return 1
-
 	If LuxonMoveToAndAggroAll(-13426, -2344, 'Yeti') Then Return 1
-
 	If LuxonMoveToAndAggroAll(-15055, -3226, 'TomTom') Then Return 1
-
 	If LuxonMoveToAndAggroAll(-9448, -283, 'Guardian and Wallows') Then Return 1
-
 	If LuxonMoveToAndAggroAll(-9918, 2826, 'Yeti 1', 2000) Then Return 1
 	If LuxonMoveToAndAggroAll(-8721, 7682, 'Yeti 2') Then Return 1
 	If LuxonMoveToAndAggroAll(-3250, 8400, 'Yeti 3', $RANGE_SPIRIT) Then Return 1
-
 	If LuxonMoveToAndAggroAll(-7474, -1144, 'Guardian and Wallows 1') Then Return 1
 	If LuxonMoveToAndAggroAll(-9666, 2625, 'Guardian and Wallows 2') Then Return 1
 	If LuxonMoveToAndAggroAll(-5895, -3959, 'Guardian and Wallows 3') Then Return 1
-
 	If LuxonMoveToAndAggroAll(-3509, -8000, 'Patrol') Then Return 1
-
 	If LuxonMoveToAndAggroAll(-195, -9095, 'Oni 1') Then Return 1
 	If LuxonMoveToAndAggroAll(6298, -8707, 'Oni 2') Then Return 1
-
 	If LuxonMoveToAndAggroAll(3981, -3295, 'Bridge') Then Return 1
-
-	If LuxonMoveToAndAggroAll(496, -2581, 'Naga', 2000) Then Return 1
-
+	If LuxonMoveToAndAggroAll(496, -2581, 'Naga 1', 2000) Then Return 1
 	If LuxonMoveToAndAggroAll(2069, 1127, 'Guardian and Wallows 1') Then Return 1
 	If LuxonMoveToAndAggroAll(5859, 1599, 'Guardian and Wallows 2') Then Return 1
 	If LuxonMoveToAndAggroAll(6412, 6572, 'Guardian and Wallows 3') Then Return 1
-
-	If LuxonMoveToAndAggroAll(10507, 8140, 'Naga', $RANGE_SPIRIT) Then Return 1
-
+	If LuxonMoveToAndAggroAll(8550, 7000, 'Naga 1', $RANGE_SPIRIT) Then Return 1
+	If LuxonMoveToAndAggroAll(11000, 8250, 'Naga 2', $RANGE_SPIRIT) Then Return 1
 	If LuxonMoveToAndAggroAll(14403, 6938, 'Oni 1') Then Return 1
 	If LuxonMoveToAndAggroAll(18080, 3127, 'Oni 2') Then Return 1
-
 	If LuxonMoveToAndAggroAll(13518, -35, 'Naga 1') Then Return 1
 	If LuxonMoveToAndAggroAll(13450, -6084, 'Naga 2', 4000) Then Return 1
 	If LuxonMoveToAndAggroAll(13764, -4816, 'Naga 3', 4000) Then Return 1
 	If LuxonMoveToAndAggroAll(13450, -6084, 'Naga 4', 4000) Then Return 1
 	If LuxonMoveToAndAggroAll(13764, -4816, 'Naga 5', 4000) Then Return 1
-
-	Out('Waiting to get reward')
+	Out('The end : zone should be vanquished')
+	If $STATUS <> 'RUNNING' Then Return 2
 	Return 0
 EndFunc
 
@@ -173,65 +160,51 @@ Func LuxonMoveToAndAggroAll($x, $y, $s = '', $range = 1450)
 	Local $oldCoordsX
 	Local $oldCoordsY
 	Local $nearestEnemy
-	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 20
+	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldCoordsX = $coordsX
 		$oldCoordsY = $coordsY
 		$nearestEnemy = GetNearestEnemyToAgent(-2)
-		If GetDistance($nearestEnemy, -2) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then LuxonKillAllEnemies($range)
+		If GetDistance($nearestEnemy, -2) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then LuxonKillAllEnemies()
 		$me = GetAgentByID(-2)
 		$coordsX = DllStructGetData($me, 'X')
 		$coordsY = DllStructGetData($me, 'Y')
 		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
 			$blocked += 1
 			Move($coordsX, $coordsY, 500)
-			Sleep(350)
+			RndSleep(500)
 			Move($x, $y)
 		EndIf
+		RndSleep(500)
+		CheckForChests($RANGE_SPIRIT)
 	WEnd
+	If Not $groupIsAlive Then Return True
 EndFunc
 
 
-Func LuxonKillAllEnemies($range)
-	Local $lastId = 99999, $coordinate[2], $timer, $target = GetNearestEnemyToAgent(-2)
-	Local $distance
+Func LuxonKillAllEnemies()
+	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(-2), $targetId = -1
+	GetAlmostInRangeOfAgent($target)
 
-	While $groupIsAlive And DllStructGetData($target, 'ID') <> 0 And $distance < $range
-		If $target = 0 Then TargetNearestEnemy()
-		$distance = GetDistance(-2, $target)
-		
-		If DllStructGetData($target, 'ID') <> 0 And $distance < $range Then
-			ChangeTarget($target)
-			Sleep(50)
+	While $groupIsAlive And $foesCount > 0
+		$target = GetNearestEnemyToAgent(-2)
+		If DllStructGetData($target, 'ID') <> $targetId Then
+			$targetId = DllStructGetData($target, 'ID')
 			CallTarget($target)
-			Sleep(50)
-			Attack($target)
-			Sleep(50)
-		Else
-			$lastId = DllStructGetData($target, 'ID')
-			$coordinate[0] = DllStructGetData($target, 'X')
-			$coordinate[1] = DllStructGetData($target, 'Y')
-			$timer = TimerInit()
-			$distance = GetDistance($target, -2)
-			While $distance > 1100 And TimerDiff($timer) < 10000
-				Move($coordinate[0], $coordinate[1])
-				RndSleep(500)
-				$distance = GetDistance($target, -2)
-			WEnd
 		EndIf
 		RndSleep(50)
-		$timer = TimerInit()
-		$target = GetNearestEnemyToAgent(-2)
-		Local $skillNumber = 1
-		While $groupIsAlive And Not GetIsDead($target) And $distance < $range And TimerDiff($timer) < 5000
-			If $target <> 0 Then UseSkillEx($skillNumber, $target)
-			If $target <> 0 Then Attack($target)
-			Sleep(50)
-			$target = GetNearestEnemyToAgent(-2)
-			$distance = GetDistance($target, -2)
-			$skillNumber = Mod($skillNumber, 8) + 1
+		While Not IsRecharged($skillNumber) And $skillNumber < 9
+			$skillNumber += 1
 		WEnd
+		If $skillNumber < 9 Then 
+			UseSkillEx($skillNumber, $target)
+			RndSleep(50)
+		Else
+			Attack($target)
+			RndSleep(1000)
+		EndIf
+		$skillNumber = 1
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	WEnd
-	Sleep(200)
-	If GetIsDead(-2) Then Out('Died')
+	RndSleep(50)
 	PickUpItems()
 EndFunc

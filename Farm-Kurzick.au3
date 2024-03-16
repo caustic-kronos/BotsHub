@@ -241,6 +241,7 @@ Func VanquishFerndale($STATUS)
 	If MoveToAndAggroAll(8223, 12552, 'Dredge Patrol 54', 4000) Then Return 1
 	If MoveToAndAggroAll(7148, 11167, 'Dredge Patrol 55', 4000) Then Return 1
 	If MoveToAndAggroAll(5427, 10834, 'Dredge Patrol 56', 10000) Then Return 1
+	Out('The end : zone should be vanquished')
 	If $STATUS <> 'RUNNING' Then Return 2
 	Return 0
 EndFunc
@@ -261,61 +262,47 @@ Func MoveToAndAggroAll($x, $y, $s = '', $range = 1450)
 		$oldCoordsX = $coordsX
 		$oldCoordsY = $coordsY
 		$nearestEnemy = GetNearestEnemyToAgent(-2)
-		If GetDistance($nearestEnemy, -2) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then KillAllEnemies($range)
+		If GetDistance($nearestEnemy, -2) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then KillAllEnemies()
 		$me = GetAgentByID(-2)
 		$coordsX = DllStructGetData($me, 'X')
 		$coordsY = DllStructGetData($me, 'Y')
 		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
 			$blocked += 1
 			Move($coordsX, $coordsY, 500)
-			Sleep(500)
+			RndSleep(500)
 			Move($x, $y)
 		EndIf
+		RndSleep(500)
+		CheckForChests($RANGE_SPIRIT)
 	WEnd
 	If Not $groupIsAlive Then Return True
 EndFunc
 
 
-Func KillAllEnemies($range)
-	Local $lastId = 99999, $coordinate[2], $timer, $target = GetNearestEnemyToAgent(-2)
-	Local $distance
+Func KillAllEnemies()
+	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(-2), $targetId = -1
+	GetAlmostInRangeOfAgent($target)
 
-	While $groupIsAlive And DllStructGetData($target, 'ID') <> 0 And $distance < $range
-		If $target = 0 Then TargetNearestEnemy()
-		$distance = GetDistance(-2, $target)
-		
-		If DllStructGetData($target, 'ID') <> 0 And $distance < $range Then
-			ChangeTarget($target)
-			Sleep(50)
+	While $groupIsAlive And $foesCount > 0
+		$target = GetNearestEnemyToAgent(-2)
+		If DllStructGetData($target, 'ID') <> $targetId Then
+			$targetId = DllStructGetData($target, 'ID')
 			CallTarget($target)
-			Sleep(50)
-			Attack($target)
-			Sleep(50)
-		Else
-			$lastId = DllStructGetData($target, 'ID')
-			$coordinate[0] = DllStructGetData($target, 'X')
-			$coordinate[1] = DllStructGetData($target, 'Y')
-			$timer = TimerInit()
-			$distance = GetDistance($target, -2)
-			While $distance > 1100 And TimerDiff($timer) < 10000
-				Move($coordinate[0], $coordinate[1])
-				RndSleep(500)
-				$distance = GetDistance($target, -2)
-			WEnd
 		EndIf
 		RndSleep(50)
-		$timer = TimerInit()
-		$target = GetNearestEnemyToAgent(-2)
-		Local $skillNumber = 1
-		While $groupIsAlive And Not GetIsDead($target) And $distance < $range And TimerDiff($timer) < 5000
-			If $target <> 0 Then UseSkillEx($skillNumber, $target)
-			If $target <> 0 Then Attack($target)
-			Sleep(50)
-			$target = GetNearestEnemyToAgent(-2)
-			$distance = GetDistance($target, -2)
-			$skillNumber = Mod($skillNumber, 8) + 1
+		While Not IsRecharged($skillNumber) And $skillNumber < 9
+			$skillNumber += 1
 		WEnd
+		If $skillNumber < 9 Then 
+			UseSkillEx($skillNumber, $target)
+			RndSleep(50)
+		Else
+			Attack($target)
+			RndSleep(1000)
+		EndIf
+		$skillNumber = 1
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	WEnd
-	Sleep(200)
+	RndSleep(50)
 	PickUpItems()
 EndFunc

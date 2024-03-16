@@ -78,6 +78,9 @@ Global Const $ID_Drazach_Thicket = 861
 Global Const $ID_Kaineng_A_Chance_Encounter = 861
 
 ;~ Nightfall
+Global Const $ID_Sunward_Marches = 373
+Global Const $ID_Sunspear_Sanctuary = 387
+Global Const $ID_Command_Post = 436
 Global Const $ID_Jokos_Domain = 437
 Global Const $ID_Bone_Palace = 438
 Global Const $ID_The_Shattered_Ravines = 441

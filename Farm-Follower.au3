@@ -77,7 +77,8 @@ Func FollowerFarm($STATUS)
 			Case $ID_Assassin
 				FollowerLoop()
 			Case $ID_Paragon
-				FollowerLoop(DefaultRun, ParagonFight)
+				FollowerLoop()
+				;FollowerLoop(DefaultRun, ParagonFight)
 			Case $ID_Dervish
 				FollowerLoop()
 			Case else
@@ -114,7 +115,8 @@ Func FollowerSetup()
 		Case $ID_Assassin
 			DefaultSetup()
 		Case $ID_Paragon
-			ParagonSetup()
+			DefaultSetup()
+			;ParagonSetup()
 		Case $ID_Dervish
 			DefaultSetup()
 		Case else
@@ -125,10 +127,9 @@ EndFunc
 
 
 Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
-	Local $firstPlayer = GetAgentByPlayerNumber(1)
+	Local Static $firstPlayerID = GetFirstPlayerOfGroupID()
 	$RunFunction()
-	GoPlayer($firstPlayer)
-	
+	GoPlayer($firstPlayerID)
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 	If $foesCount > 0 Then
 		Out('Foes in range detected, starting fight')
@@ -138,7 +139,6 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 		WEnd
 		Out('Fight is over')
 	EndIf
-
 	CheckForChests()
 
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
@@ -162,7 +162,7 @@ EndFunc
 
 
 Func DefaultRun()
-	If $Follower_RunningSkill <> '' And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
+	If $Follower_RunningSkill <> null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
 EndFunc
 
 
@@ -293,6 +293,22 @@ Func ParagonFight()
 	RndSleep(GetPing() + 20)
 	Attack(GetNearestEnemyToAgent(-2))
 	RndSleep(1000)
+EndFunc
+
+
+Func GetFirstPlayerOfGroupID()
+	Local $partyMembers = GetParty()
+	Local $ownID = DllStructGetData(GetAgentByID(-2), 'ID')
+	Local $firstPlayerID = 0
+	For $i = 1 To $partyMembers[0]
+		If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop
+		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
+		If $HeroNumber == 0 Then
+			$firstPlayerID = DllStructGetData($partyMembers[$i], 'ID')
+			ExitLoop
+		EndIf
+	Next
+	Return $firstPlayerID
 EndFunc
 
 

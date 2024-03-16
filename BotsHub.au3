@@ -51,6 +51,7 @@ GUI built with GuiBuilderPlus
 #include 'Farm-EdenIris.au3'
 #include 'Farm-Follower.au3'
 #include 'Farm-JadeBrotherhood.au3'
+#include 'Farm-Kournans.au3'
 #include 'Farm-Kurzick.au3'
 #include 'Farm-Lightbringer.au3'
 #include 'Farm-Luxon.au3'
@@ -113,7 +114,7 @@ Func createGUI()
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kurzick|Lightbringer|Luxon|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	GUICtrlSetData($FarmChoiceCombo, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
 	$StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
 	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($StartButton, 'GuiButtonHandler')
@@ -391,6 +392,8 @@ Func BotHubLoop()
 					$STATS_MAP['success_code'] = FollowerFarm($STATUS)
 				Case 'Jade Brotherhood'
 					$STATS_MAP['success_code'] = JadeBrotherhoodFarm($STATUS)
+				Case 'Kournans'
+					$STATS_MAP['success_code'] = KournansFarm($STATUS)
 				Case 'Kurzick'
 					$STATS_MAP['success_code'] = KurzickFactionFarm($STATUS)
 				Case 'Lightbringer'
