@@ -824,7 +824,6 @@ EndFunc
 ;~ Picks up an item.
 Func PickUpItem($aItem)
 	Local $lAgentID
-
 	If IsDllStruct($aItem) = 0 Then
 		$lAgentID = $aItem
 	ElseIf DllStructGetSize($aItem) < 400 Then

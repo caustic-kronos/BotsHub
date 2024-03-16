@@ -155,25 +155,26 @@ EndFunc
 #Region Loot items
 ;~ Loot items around character
 Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
-	Local $lAgent
-	Local $lItem
-	Local $lDeadlock
-	For $i = 1 To GetMaxAgents()
+	Local $agent
+	Local $item
+	Local $deadlock
+	For $id = 1 To GetMaxAgents()
 		If (GetIsDead(-2)) Then Return
-		$lAgent = GetAgentByID($i)
-		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
-		If Not GetCanPickUp($lAgent) Then ContinueLoop
-		If GetDistance(-2, $lAgent) > $range Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
+		$agent = GetAgentByID($id)
+		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
+		If Not GetCanPickUp($agent) Then ContinueLoop
+		If GetDistance(-2, $agent) > $range Then ContinueLoop
+		$item = GetItemByAgentID($id)
 		
-		If ($ShouldPickItem($lItem)) Then
+		If ($ShouldPickItem($item)) Then
 			If $defendFunction <> null Then $defendFunction()
-			PickUpItem($lItem)
-			$lDeadlock = TimerInit()
-			While GetAgentExists($i)
+			If Not GetAgentExists($id) Then ContinueLoop
+			PickUpItem($item)
+			$deadlock = TimerInit()
+			While GetAgentExists($id)
 				RndSleep(100)
 				If GetIsDead(-2) Then Return
-				If TimerDiff($lDeadlock) > 10000 Then ExitLoop
+				If TimerDiff($deadlock) > 10000 Then ExitLoop
 			WEnd
 		EndIf
 	Next
