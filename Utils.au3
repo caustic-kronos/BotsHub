@@ -152,7 +152,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 EndFunc
 
 
-;~ Return true if the item should be picked up
+;~ Return True if the item should be picked up
 ;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
 Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
@@ -210,21 +210,21 @@ Func DefaultShouldPickItem($item)
 EndFunc
 
 
-;~ Return true if the item should be picked up
+;~ Return True if the item should be picked up
 ;~ Pick everything that is usually picked but also low req that have the maximum damage for their level
 Func AlsoPickLowReqItems($item)
 	If IsWeapon($item) And GetRarity($item) <> $RARITY_White And GetItemReq($item) < 9 And IsMaxDamageForReq($item) Then Return True
 	Return DefaultShouldPickItem($item)
 EndFunc
 
-;~ Return true if the item should be picked up
+;~ Return True if the item should be picked up
 ;~ Pick everything that is usually picked but also max damage purple and blue
 ;~ Only useful for OS items since max damage q9 blue/purple inscribable items are worthless
 Func AlsoPickMaxPurpleAndBlueItems($item)
 	
 EndFunc
 
-;~ Return true if the item should be picked up
+;~ Return True if the item should be picked up
 ;~ Only pick rare materials, black and white dyes, lockpicks, gold items and green items
 Func PickOnlyImportantItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
@@ -492,7 +492,7 @@ EndFunc
 
 
 #Region Identification and Salvage
-;~ Return true if the item should be salvaged
+;~ Return True if the item should be salvaged
 ; TODO : refine which items should be salvaged and which should not
 Func ShouldSalvageItem($item)
 	If IsWeapon($item) And GetRarity($item) <> $RARITY_Green Then
@@ -638,7 +638,7 @@ EndFunc
 
 
 #Region Merchants
-;~ Return true if the item should be sold to the merchant
+;~ Return True if the item should be sold to the merchant
 ; TODO : refine which items should be sold and which should not
 Func ShouldSellItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
@@ -696,7 +696,7 @@ Func GetItemMaxDmg($item)
 EndFunc
 
 
-;~ Return true if the item is a kit or a lockpick - used in Storage Bot to not sell those
+;~ Return True if the item is a kit or a lockpick - used in Storage Bot to not sell those
 Func IsGeneralItem($itemID)
 	Return $Map_General_Items[$itemID] <> null
 EndFunc
@@ -995,7 +995,7 @@ Func LongestCommonSubstring($strings)
 EndFunc
 
 
-;~ Return true if find is into every string in the array of strings
+;~ Return True if find is into every string in the array of strings
 Func IsSubstring($find, $strings)
 	If UBound($strings) < 1 And StringLen($find) < 1 Then
 		Return False
@@ -1005,15 +1005,15 @@ Func IsSubstring($find, $strings)
 			Return False
 		EndIf
 	Next
-	Return true
+	Return True
 EndFunc
 
 
-;~ Return true if the point X, Y is over the line defined by X + aY + b = 0
+;~ Return True if the point X, Y is over the line defined by X + aY + b = 0
 Func IsOverLine($coefficientY, $fixedCoefficient, $posX, $posY)
 	Local $position = $posX + $posY * $coefficientY + $fixedCoefficient
 	If $position > 0 Then
-		Return true
+		Return True
 	ElseIf $position < 0 Then
 		Return False
 	Else

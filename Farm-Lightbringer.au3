@@ -168,7 +168,7 @@ Func SpeedTeam()
 EndFunc
 
 ;~ Main method for moving around and aggroing/killing mobs
-;~ Return true if the group is dead, false if not
+;~ Return True if the group is dead, False if not
 Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
 	Local $locationsCount = UBound($locations)
 	If $locationsCount > 3 Then

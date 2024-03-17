@@ -447,7 +447,7 @@ Func WaitForPurityBall()
 EndFunc
 
 
-;~ Return true if mission failed (you or Miku died)
+;~ Return True if mission failed (you or Miku died)
 Func IsFail()
 	If GetIsDead(58) Then
 		Return True
@@ -595,7 +595,7 @@ Func HealWhilePickingItems()
 EndFunc
 
 
-;~ Return true if the furthest foe from the player (direction center of Kaineng) is adjacent
+;~ Return True if the furthest foe from the player (direction center of Kaineng) is adjacent
 Func IsFurthestMobInBall()
 	Local $furthestEnemy = GetNearestEnemyToCoords(1817, -798)
 	If GetDistance($furthestEnemy, -2) > $RANGE_NEARBY Then Return False

@@ -486,7 +486,7 @@ EndFunc
 
 ; Function to login from cmd, not tested
 ; TODO: test it
-Func LOGIN($char_name = 'fail', $ProcessID = false)
+Func LOGIN($char_name = 'fail', $ProcessID = False)
 	If $char_name = '' Then
 		MsgBox(0, 'Error', 'char_name' & $char_name)
 		Exit

@@ -85,7 +85,7 @@ Func PickUpIris()
 	Local $lAgent
 	Local $lItem
 	Local $lDeadlock
-	Local $success = true
+	Local $success = True
 	For $i = 1 To GetMaxAgents()
 		$lAgent = GetAgentByID($i)
 		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
@@ -101,7 +101,7 @@ Func PickUpIris()
 				If GetIsDead(-2) Then Return
 				If TimerDiff($lDeadlock) > 20000 Then
 					Out('Could not get iris at ' & DllStructGetData($lAgent, 'X') & ', ' & DllStructGetData($lAgent, 'Y'))
-					$success = false
+					$success = False
 					ExitLoop
 				EndIf
 			WEnd
@@ -114,7 +114,7 @@ Func PickUpIris()
 			Return True
 		EndIf
 	Next
-	Return false
+	Return False
 EndFunc
 
 ;~ Return to Ashford Abbey

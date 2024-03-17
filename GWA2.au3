@@ -1054,7 +1054,7 @@ Func GetInventoryItemPtrByModelId($nModelId)
 EndFunc
 
 
-;~ Request a quote to buy an item from a trader. Returns true if successful.
+;~ Request a quote to buy an item from a trader. Returns True if successful.
 Func TraderRequest($aModelID, $aExtraID = -1)
 	Local $lItemStruct = DllStructCreate('long Id;long AgentId;byte Unknown1[4];ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;byte unknown2[4];byte Type;byte unknown4;short ExtraId;short Value;byte unknown4[2];short Interaction;long ModelId;ptr ModString;byte unknown5[4];ptr NameString;ptr SingleItemName;byte Unknown4[10];byte IsSalvageable;byte Unknown6;byte Quantity;byte Equiped;byte Profession;byte Type2;byte Slot')
 
@@ -1297,7 +1297,7 @@ EndFunc
 
 
 #Region Movement
-;~ Move to a location. Returns true if successful
+;~ Move to a location. Returns True if successful
 Func Move($aX, $aY, $aRandom = 50)
 	If GetAgentExists(-2) Then
 		DllStructSetData($mMove, 2, $aX + Random(-$aRandom, $aRandom))
@@ -1516,7 +1516,7 @@ EndFunc
 
 
 #Region Travel
-;~ Map travel to an outpost, returns true if successful
+;~ Map travel to an outpost, returns True if successful
 Func TravelTo($aMapID, $aDis = 0)
 	If GetMapID() = $aMapID And $aDis = 0 And GetMapLoading() = 0 Then Return True
 	ZoneMap($aMapID, $aDis)
