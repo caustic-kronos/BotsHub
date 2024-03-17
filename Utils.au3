@@ -18,19 +18,6 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	CheckForChests($RANGE_COMPASS)
-	;Local $lAgentArray = GetAgentArray()
-	;For $i = 1 To $lAgentArray[0]
-	;	Out('------------------------------------------------')
-	;	Out('ID: ' & DllStructGetData($lAgentArray[$i], 'ID'))
-	;	Out('Allegiance: ' & DllStructGetData($lAgentArray[$i], 'Allegiance'))
-	;	Out('PlayerNumber: ' & DllStructGetData($lAgentArray[$i], 'PlayerNumber'))
-	;Next
-	
-
-	;Out(GetHeroProfession(0, False))
-	;SetDisplayedTitle(0x26)
-	;ChangeWeaponSet(1) ;from 1 to 4
 	;Local $item = GetItemBySlot(1,20)
 	;Local $name = GetAgentName($item)
 	;Out($name)
@@ -40,7 +27,7 @@ Func RunTests($STATUS)
 	;SalvageMaterials()
 	;Sleep(2000)
 	;EndSalvage()
-	;ChangeSecondProfession($ID_Warrior)
+
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
 	;_dlldisplay($target)
@@ -50,26 +37,6 @@ Func RunTests($STATUS)
 	;Out(GetEffectTimeRemaining(GetEffect($ID_Shroud_of_Distress)))
 	;Out(_dlldisplay(GetEffect($ID_Shroud_of_Distress)))
 	;RndSleep(1000)
-	;SalvageItemAt(1, 6)
-
-	;Local $positionToGo = FindMiddleOfFoes(-7606, -8441)
-	;Out('finalposition: ' & $positionToGo[0] & ';' & $positionToGo[1])
-	;
-	;Local $target = GetCurrentTarget()
-	;Local $foes = GetFoesInRangeOfAgent($target, $RANGE_AREA)
-	;Local $foe
-	;For $i = 1 To $foes[0]
-	;	$foe = $foes[$i]
-	;	PrintNPCInformations($foe)
-	;	Out('')
-	;Next
-	;Local $lQuestStruct = DllStructCreate('long id;long LogState;byte unknown1[12];long MapFrom;float X;float Y;byte unknown2[8];long MapTo;long Reward;long Objective')
-	;Local $quest = GetQuestByID(457)
-	;Out('id:' & $quest.id)
-	;Out('mapFrom:' & $quest.MapFrom)
-	;Out('MapTo:' & $quest.MapTo)
-	;Out('Reward:' & $quest.Reward)
-	;Out('Objective:' & $quest.Objective)
 
 	;Return 0
 	Return 2
@@ -290,7 +257,7 @@ Func CheckForChests($range = $RANGE_EARSHOT)
 	Local $agents = GetAgentArray(0x200) ;0x200 = type: static
 	For $i = 1 To $agents[0]
 		$extraType = DllStructGetData($agents[$i], 'ExtraType')
-		If $extraType <> $ID_ExtraType_NM_Chest And $extraType <> $ID_ExtraType_HM_Chest Then ContinueLoop
+		If $extraType <> $ID_ExtraType_NM_Chest And $extraType <> $ID_ExtraType_HM_Chest And $extraType <> $ID_ExtraType_Smol_Chest Then ContinueLoop
 		If GetDistance(-2, $agents[$i]) > $range Then ContinueLoop
 
 		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
@@ -1396,6 +1363,85 @@ Func AttackOrUseSkill($attackSleep, $skill = null, $skill2 = null, $skill3 = nul
 		RndSleep($attackSleep)
 	EndIf
 EndFunc
+
+
+#Region Map Clearing Utilities
+Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
+	Out('Hunting ' & $s)
+	Local $blocked = 0
+	Local $me = GetAgentByID(-2)
+	Local $coordsX = DllStructGetData($me, 'X')
+	Local $coordsY = DllStructGetData($me, 'Y')
+	
+	Move($x, $y)
+
+	Local $oldCoordsX
+	Local $oldCoordsY
+	Local $nearestEnemy
+	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
+		$oldCoordsX = $coordsX
+		$oldCoordsY = $coordsY
+		$nearestEnemy = GetNearestEnemyToAgent(-2)
+		If GetDistance($nearestEnemy, -2) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then MapClearKillFoes()
+		$me = GetAgentByID(-2)
+		$coordsX = DllStructGetData($me, 'X')
+		$coordsY = DllStructGetData($me, 'Y')
+		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
+			$blocked += 1
+			Move($coordsX, $coordsY, 500)
+			RndSleep(500)
+			Move($x, $y)
+		EndIf
+		RndSleep(500)
+		CheckForChests($RANGE_SPIRIT)
+	WEnd
+	If Not $groupIsAlive Then Return True
+EndFunc
+
+
+Func MapClearKillFoes()
+	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(-2), $targetId = -1
+	GetAlmostInRangeOfAgent($target)
+
+	While $groupIsAlive And $foesCount > 0
+		$target = GetNearestEnemyToAgent(-2)
+		If DllStructGetData($target, 'ID') <> $targetId Then
+			$targetId = DllStructGetData($target, 'ID')
+			CallTarget($target)
+		EndIf
+		RndSleep(50)
+		While Not IsRecharged($skillNumber) And $skillNumber < 9
+			$skillNumber += 1
+		WEnd
+		If $skillNumber < 9 Then 
+			UseSkillEx($skillNumber, $target)
+			RndSleep(50)
+		Else
+			Attack($target)
+			RndSleep(1000)
+		EndIf
+		$skillNumber = 1
+		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
+	WEnd
+	RndSleep(50)
+	PickUpItems()
+EndFunc
+
+
+Func IsGroupAlive()
+	Local $deadMembers = 0
+	For $i = 1 to GetHeroCount()
+		If GetIsDead(GetHeroID($i)) = True Then
+			$deadMembers += 1
+		EndIf
+		If $deadMembers >= 5 Then
+			Out('Group wiped, back to oupost to save time.')
+			Return False
+		EndIf
+	Next
+	Return True
+EndFunc
+#EndRegion Map Clearing Utilities
 #EndRegion Actions
 
 
@@ -1469,7 +1515,6 @@ EndFunc
 
 
 Func _dlldisplay($tStruct)
-
     Local $pNextPtr, $pCurrentPtr = DllStructGetPtr($tStruct, 1)
     Local $iOffset = 0, $iDllSize = DllStructGetSize($tStruct)
     Local $vElVal, $sType, $iTypeSize, $iElSize, $iArrCount, $iAlign
@@ -1563,5 +1608,4 @@ Func _dlldisplay($tStruct)
     _ArrayDisplay($aStruct, '', '', 64, Default, '#|Offset|Type|Size|Value')
 
     Return $aStruct
-
 EndFunc

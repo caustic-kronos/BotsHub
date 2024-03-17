@@ -199,6 +199,7 @@ Global Const $Weapons_Max_Damage_Per_Level[] = MapFromArrays($Weapons_Max_Damage
 
 
 #Region MapMarkers
+Global Const $ID_ExtraType_Smol_Chest = 6062 ;Istani chests
 Global Const $ID_ExtraType_NM_Chest = 4582
 Global Const $ID_ExtraType_HM_Chest = 8141
 #EndRegion MapMarkers

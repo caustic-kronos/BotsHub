@@ -17,8 +17,8 @@ Local Const $LuxonFactionSkillbar = ''
 Local Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 	& '- '
 
-Local $groupIsAlive = true
-Local $DonatePoints = true
+Local $groupIsAlive = True
+Local $DonatePoints = True
 
 
 Local Const $ID_unknown_outpost_deposit_points = 193
@@ -36,7 +36,25 @@ Func LuxonFactionFarm($STATUS)
 	LuxonFarmSetup()
 	
 	If $STATUS <> 'RUNNING' Then Return 2
-	Return VanquishMountQinkai()
+	
+	MoveTo(-4268, 11628)
+	MoveTo(-4980, 12425)
+	MoveTo(-5493, 13712)
+	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
+	$groupIsAlive = True
+	AdlibRegister('LuxonGroupIsAlive', 30000)
+	Local $result = VanquishMountQinkai()
+	AdlibUnRegister('LuxonGroupIsAlive')
+	
+	;Temporarily change a failure into a pause for debugging :
+	If $result == 1 Then $result = 2
+	If $STATUS <> 'RUNNING' Then Return 2
+	If (CountSlots() < 10) Then
+		Out('Inventory full, pausing.')
+		$result = 2
+	EndIf
+	
+	Return $result
 EndFunc
 
 
@@ -78,133 +96,97 @@ Func LuxonFarmSetup()
 	SwitchMode($ID_HARD_MODE)
 EndFunc
 
+
 Func VanquishMountQinkai()
-	MoveTo(-4268, 11628)
-	MoveTo(-4980, 12425)
-	MoveTo(-5493, 13712)
-	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
-	$groupIsAlive = true
-	AdlibRegister('CheckPartyWipe', 30000)
-	Local $result = VQLuxon()
-	AdlibUnRegister('CheckPartyWipe')
-	Return $result
-EndFunc
-
-
-Func CheckPartyWipeLuxon()
-	Local $deadMembers = 0
-	For $i = 1 to GetHeroCount()
-		If GetIsDead(GetHeroID($i)) = True Then
-			$deadMembers += 1
-		EndIf
-		If $deadMembers >= 5 Then
-			$groupIsAlive = false
-			Out('Group wiped, back to oupost to save time.')
-		EndIf
-	Next
-EndFunc
-
-
-Func VQLuxon()
 	Out('Taking blessing')
 	GoNearestNPCToCoords(-8394, -9801)
 	Dialog(0x85)
 	RndSleep(1000)
 	Dialog(0x86)
 	RndSleep(1000)
-	
-	If LuxonMoveToAndAggroAll(-13046, -9347, 'Yeti 1') Then Return 1
-	If LuxonMoveToAndAggroAll(-17348, -9895, 'Yeti 2') Then Return 1
-	If LuxonMoveToAndAggroAll(-14702, -6671, 'Oni and Wallows 1') Then Return 1
-	If LuxonMoveToAndAggroAll(-11080, -6126, 'Oni and Wallows 2', 2000) Then Return 1
-	If LuxonMoveToAndAggroAll(-13426, -2344, 'Yeti') Then Return 1
-	If LuxonMoveToAndAggroAll(-15055, -3226, 'TomTom') Then Return 1
-	If LuxonMoveToAndAggroAll(-9448, -283, 'Guardian and Wallows') Then Return 1
-	If LuxonMoveToAndAggroAll(-9918, 2826, 'Yeti 1', 2000) Then Return 1
-	If LuxonMoveToAndAggroAll(-8721, 7682, 'Yeti 2') Then Return 1
-	If LuxonMoveToAndAggroAll(-3250, 8400, 'Yeti 3', $RANGE_SPIRIT) Then Return 1
-	If LuxonMoveToAndAggroAll(-7474, -1144, 'Guardian and Wallows 1') Then Return 1
-	If LuxonMoveToAndAggroAll(-9666, 2625, 'Guardian and Wallows 2') Then Return 1
-	If LuxonMoveToAndAggroAll(-5895, -3959, 'Guardian and Wallows 3') Then Return 1
-	If LuxonMoveToAndAggroAll(-3509, -8000, 'Patrol') Then Return 1
-	If LuxonMoveToAndAggroAll(-195, -9095, 'Oni 1') Then Return 1
-	If LuxonMoveToAndAggroAll(6298, -8707, 'Oni 2') Then Return 1
-	If LuxonMoveToAndAggroAll(3981, -3295, 'Bridge') Then Return 1
-	If LuxonMoveToAndAggroAll(496, -2581, 'Naga 1', 2000) Then Return 1
-	If LuxonMoveToAndAggroAll(2069, 1127, 'Guardian and Wallows 1') Then Return 1
-	If LuxonMoveToAndAggroAll(5859, 1599, 'Guardian and Wallows 2') Then Return 1
-	If LuxonMoveToAndAggroAll(6412, 6572, 'Guardian and Wallows 3') Then Return 1
-	If LuxonMoveToAndAggroAll(8550, 7000, 'Naga 1', $RANGE_SPIRIT) Then Return 1
-	If LuxonMoveToAndAggroAll(11000, 8250, 'Naga 2', $RANGE_SPIRIT) Then Return 1
-	If LuxonMoveToAndAggroAll(14403, 6938, 'Oni 1') Then Return 1
-	If LuxonMoveToAndAggroAll(18080, 3127, 'Oni 2') Then Return 1
-	If LuxonMoveToAndAggroAll(13518, -35, 'Naga 1') Then Return 1
-	If LuxonMoveToAndAggroAll(13450, -6084, 'Naga 2', 4000) Then Return 1
-	If LuxonMoveToAndAggroAll(13764, -4816, 'Naga 3', 4000) Then Return 1
-	If LuxonMoveToAndAggroAll(13450, -6084, 'Naga 4', 4000) Then Return 1
-	If LuxonMoveToAndAggroAll(13764, -4816, 'Naga 5', 4000) Then Return 1
+
+	If MapClearMoveAndAggro(-11400, -9000, 'Yetis') Then Return 1
+	If MapClearMoveAndAggro(-13500, -10000, 'Yeti 1') Then Return 1
+	If MapClearMoveAndAggro(-15000, -8000, 'Yeti 2') Then Return 1
+	If MapClearMoveAndAggro(-17500, -10500, 'Yeti Ranger Boss') Then Return 1
+	If MapClearMoveAndAggro(-12000, -4500, 'Rot Wallows') Then Return 1
+	If MapClearMoveAndAggro(-12500, -3000, 'Yeti 3') Then Return 1
+	If MapClearMoveAndAggro(-14000, -2500, 'Yeti Ritualist Boss') Then Return 1
+	If MapClearMoveAndAggro(-12000, -3000, 'Leftovers', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-10500, -500, 'Rot Wallow 1', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-11000, 5000, 'Yeti 4') Then Return 1
+	If MapClearMoveAndAggro(-10000, 7000, 'Yeti 5') Then Return 1
+	If MapClearMoveAndAggro(-8500, 8000, 'Yeti Monk Boss') Then Return 1
+	If MapClearMoveAndAggro(-5000, 6500, 'Yeti 6') Then Return 1
+	If MapClearMoveAndAggro(-3000, 8000, 'Yeti 7', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-5000, 4000, 'Yeti 8') Then Return 1
+	If MapClearMoveAndAggro(-7000, 1000, 'Leftovers', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-9000, -1500, 'Leftovers', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-6500, -4500, 'Rot Wallow 2', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-7000, -7500, 'Rot Wallow 3') Then Return 1
+	If MapClearMoveAndAggro(-4000, -7500, 'Leftovers', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(0, -9500, 'Rot Wallow 4') Then Return 1
+	If MapClearMoveAndAggro(5000, -7000, 'Oni 1') Then Return 1
+	If MapClearMoveAndAggro(6500, -8500, 'Oni 2', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(5000, -3500, 'Leftovers', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(500, -2000, 'Leftovers') Then Return 1
+	If MapClearMoveAndAggro(-1500, -3000, 'Naga 1') Then Return 1
+	If MapClearMoveAndAggro(1000, 1000, 'Rot Wallow 5') Then Return 1
+	If MapClearMoveAndAggro(6500, 1000, 'Rot Wallow 6') Then Return 1
+	If MapClearMoveAndAggro(5500, 5000, 'Leftovers') Then Return 1
+	If MapClearMoveAndAggro(4000, 5500, 'Rot Wallow 7') Then Return 1
+	If MapClearMoveAndAggro(6500, 7500, 'Rot Wallow 8') Then Return 1
+	If MapClearMoveAndAggro(8000, 6000, 'Naga 2') Then Return 1
+	If MapClearMoveAndAggro(9500, 7000, 'Naga 3') Then Return 1
+	If MapClearMoveAndAggro(10500, 8000, 'Naga 4', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(12000, 7500, 'Naga 5', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(16000, 7000, 'Naga 6') Then Return 1
+	If MapClearMoveAndAggro(15500, 4500, 'Leftovers') Then Return 1
+	If MapClearMoveAndAggro(18000, 3000, 'Oni 3') Then Return 1
+	If MapClearMoveAndAggro(16500, 1000, 'Leftovers') Then Return 1
+	If MapClearMoveAndAggro(13500, -1500, 'Naga 7', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(12500, -3500, 'Naga 8', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(13000, -6000, 'Leftovers', $RANGE_COMPASS) Then Return 1	
+
 	Out('The end : zone should be vanquished')
-	If $STATUS <> 'RUNNING' Then Return 2
 	Return 0
 EndFunc
 
-Func LuxonMoveToAndAggroAll($x, $y, $s = '', $range = 1450)
-	Out('Hunting ' & $s)
-	Local $blocked = 0
-	Local $me = GetAgentByID(-2)
-	Local $coordsX = DllStructGetData($me, 'X')
-	Local $coordsY = DllStructGetData($me, 'Y')
-	
-	Move($x, $y)
 
-	Local $oldCoordsX
-	Local $oldCoordsY
-	Local $nearestEnemy
-	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
-		$oldCoordsX = $coordsX
-		$oldCoordsY = $coordsY
-		$nearestEnemy = GetNearestEnemyToAgent(-2)
-		If GetDistance($nearestEnemy, -2) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then LuxonKillAllEnemies()
-		$me = GetAgentByID(-2)
-		$coordsX = DllStructGetData($me, 'X')
-		$coordsY = DllStructGetData($me, 'Y')
-		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
-			$blocked += 1
-			Move($coordsX, $coordsY, 500)
-			RndSleep(500)
-			Move($x, $y)
-		EndIf
-		RndSleep(500)
-		CheckForChests($RANGE_SPIRIT)
-	WEnd
-	If Not $groupIsAlive Then Return True
+Func UnusedOldScanning()
+	If MapClearMoveAndAggro(-13046, -9347, 'Yeti 1') Then Return 1
+	If MapClearMoveAndAggro(-17348, -9895, 'Yeti 2') Then Return 1
+	If MapClearMoveAndAggro(-14702, -6671, 'Oni and Wallows 1') Then Return 1
+	If MapClearMoveAndAggro(-11080, -6126, 'Oni and Wallows 2', 2000) Then Return 1
+	If MapClearMoveAndAggro(-13426, -2344, 'Yeti') Then Return 1
+	If MapClearMoveAndAggro(-15055, -3226, 'TomTom') Then Return 1
+	If MapClearMoveAndAggro(-9448, -283, 'Guardian and Wallows') Then Return 1
+	If MapClearMoveAndAggro(-9918, 2826, 'Yeti 1', 2000) Then Return 1
+	If MapClearMoveAndAggro(-8721, 7682, 'Yeti 2') Then Return 1
+	If MapClearMoveAndAggro(-3250, 8400, 'Yeti 3', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(-7474, -1144, 'Guardian and Wallows 1') Then Return 1
+	If MapClearMoveAndAggro(-9666, 2625, 'Guardian and Wallows 2') Then Return 1
+	If MapClearMoveAndAggro(-5895, -3959, 'Guardian and Wallows 3') Then Return 1
+	If MapClearMoveAndAggro(-3509, -8000, 'Patrol') Then Return 1
+	If MapClearMoveAndAggro(-195, -9095, 'Oni 1') Then Return 1
+	If MapClearMoveAndAggro(6298, -8707, 'Oni 2') Then Return 1
+	If MapClearMoveAndAggro(3981, -3295, 'Bridge') Then Return 1
+	If MapClearMoveAndAggro(496, -2581, 'Naga 1', 2000) Then Return 1
+	If MapClearMoveAndAggro(2069, 1127, 'Guardian and Wallows 1') Then Return 1
+	If MapClearMoveAndAggro(5859, 1599, 'Guardian and Wallows 2') Then Return 1
+	If MapClearMoveAndAggro(6412, 6572, 'Guardian and Wallows 3') Then Return 1
+	If MapClearMoveAndAggro(8550, 7000, 'Naga 1', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(11000, 8250, 'Naga 2', $RANGE_SPIRIT) Then Return 1
+	If MapClearMoveAndAggro(14403, 6938, 'Oni 1') Then Return 1
+	If MapClearMoveAndAggro(18080, 3127, 'Oni 2') Then Return 1
+	If MapClearMoveAndAggro(13518, -35, 'Naga 1') Then Return 1
+	If MapClearMoveAndAggro(13450, -6084, 'Naga 2', 4000) Then Return 1
+	If MapClearMoveAndAggro(13764, -4816, 'Naga 3', 4000) Then Return 1
+	If MapClearMoveAndAggro(13450, -6084, 'Naga 4', 4000) Then Return 1
+	If MapClearMoveAndAggro(13764, -4816, 'Naga 5', 4000) Then Return 1
 EndFunc
 
-
-Func LuxonKillAllEnemies()
-	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(-2), $targetId = -1
-	GetAlmostInRangeOfAgent($target)
-
-	While $groupIsAlive And $foesCount > 0
-		$target = GetNearestEnemyToAgent(-2)
-		If DllStructGetData($target, 'ID') <> $targetId Then
-			$targetId = DllStructGetData($target, 'ID')
-			CallTarget($target)
-		EndIf
-		RndSleep(50)
-		While Not IsRecharged($skillNumber) And $skillNumber < 9
-			$skillNumber += 1
-		WEnd
-		If $skillNumber < 9 Then 
-			UseSkillEx($skillNumber, $target)
-			RndSleep(50)
-		Else
-			Attack($target)
-			RndSleep(1000)
-		EndIf
-		$skillNumber = 1
-		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
-	WEnd
-	RndSleep(50)
-	PickUpItems()
+Func LuxonGroupIsAlive()
+	$groupIsAlive = IsGroupAlive()
 EndFunc
