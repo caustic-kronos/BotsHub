@@ -42,7 +42,6 @@ Local Const $Skill_Arcane_Echo = 7
 Local Const $Skill_Wastrels_Demise = 8
 
 ; ==== Global variables ====
-Local Const $RenderingEnabled = True
 Local $ChatStuckTimer = TimerInit()
 Local $Deadlocked = False
 Local $timer = TimerInit()
@@ -163,8 +162,6 @@ EndFunc
 
 ;~ Farm loop
 Func VaettirsFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
-
 	RndSleep(2000)
 	AggroAllMobs()
 	KillMobs()

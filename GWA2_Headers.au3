@@ -1,9 +1,10 @@
-;###########################
-;#  by rheek               #
-;#  modified by mhaendler  #
-;# GWCA Update By 3vcloud  #
-;# C+ to LUA   By MrJambix #
-;###########################
+;############################
+;#  by rheek				#
+;#  modified by mhaendler	#
+;# GWCA Update By 3vcloud	#
+;# C+ to LUA   By MrJambix	#
+;#  improved by night		#
+;############################
 ; v1.7, source: github.com/rheek123/GwBotApiPatcher
 ;
 ; This file contains all headers that gwa2 uses to communicate with the gameservers directly.

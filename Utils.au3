@@ -1423,7 +1423,7 @@ Func MapClearKillFoes()
 		$skillNumber = 1
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	WEnd
-	RndSleep(50)
+	RndSleep(1000)
 	PickUpItems()
 EndFunc
 

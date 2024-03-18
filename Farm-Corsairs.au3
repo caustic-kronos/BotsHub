@@ -74,7 +74,6 @@ EndFunc
 
 ;~ Farm loop
 Func CorsairsFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
 	Out('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 	RndSleep(250)

@@ -76,7 +76,6 @@ EndFunc
 
 ;~ Farm loop
 Func DragonMossFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
 	Out('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)
 	MoveTo(-11000, -24000)

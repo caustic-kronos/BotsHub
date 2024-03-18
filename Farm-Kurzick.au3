@@ -21,9 +21,7 @@ Local $groupIsAlive = True
 Local $DonatePoints = True
 
 ;~ Main loop
-Func KurzickFactionFarm($STATUS)
-	If Not $RenderingEnabled Then ClearMemory()
-	
+Func KurzickFactionFarm($STATUS)	
 	If GetMapID() <> $ID_House_Zu_Heltzer Then
 		Out('Moving to Outpost')
 		DistrictTravel($ID_House_Zu_Heltzer, $ID_EUROPE, $ID_FRENCH)
@@ -233,7 +231,10 @@ Func VanquishFerndale()
 	If MapClearMoveAndAggro(8223, 12552, 'Dredge Patrol 54', 4000) Then Return 1
 	If MapClearMoveAndAggro(7148, 11167, 'Dredge Patrol 55', 4000) Then Return 1
 	If MapClearMoveAndAggro(5427, 10834, 'Dredge Patrol 56', 10000) Then Return 1
-	Out('The end : zone should be vanquished')
+	If Not GetAreaVanquished() Then
+		Out('The map has not been completely vanquished.', $CONSOLE_RED_COLOR)
+		Return 1
+	EndIf
 	Return 0
 EndFunc
 

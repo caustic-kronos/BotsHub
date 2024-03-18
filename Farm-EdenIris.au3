@@ -58,7 +58,6 @@ EndFunc
 
 ;~ Farm loop
 Func EdenIrisFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
 	Move(-11000, -6250)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)

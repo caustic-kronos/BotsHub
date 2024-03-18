@@ -102,8 +102,6 @@ EndFunc
 
 ;~ Farm loop
 Func KournansFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
-
 	Out('Entering Command Post')
 	MoveTo(0, 5000)
 	WaitMapLoading($ID_Command_Post, 10000, 2000)

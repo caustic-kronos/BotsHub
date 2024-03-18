@@ -42,6 +42,7 @@ GUI built with GuiBuilderPlus
 #include <Date.au3>
 #include <GuiEdit.au3>
 #include <GuiTab.au3>
+#include <GuiRichEdit.au3>
 
 #include 'GWA2_Headers.au3'
 #include 'GWA2.au3'
@@ -67,10 +68,15 @@ GUI built with GuiBuilderPlus
 
 #Region Variables
 Local Const $GW_BOT_HUB_VERSION = '1.0'
+Local Const $GUI_LIGHT_GREY_COLOR = 16777215
 Local Const $GUI_GREY_COLOR = 13158600
 Local Const $GUI_BLUE_COLOR = 11192062
 Local Const $GUI_RED_COLOR = 16751781
 Local Const $GUI_YELLOW_COLOR = 16777192
+Local Const $CONSOLE_BLUE_COLOR = 0xFF7000
+Local Const $CONSOLE_GREEN_COLOR = 0xCA4FFF
+Local Const $CONSOLE_YELLOW_COLOR = 0x00FFFF
+Local Const $CONSOLE_RED_COLOR = 0x0000FF
 
 ;STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
@@ -125,10 +131,10 @@ Func createGUI()
 	
 	$MainTab = GUICtrlCreateTabItem('Main')
 	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
-	$ConsoleEdit = GUICtrlCreateEdit('', 20, 225, 271, 176, BitOR($ES_AUTOVSCROLL, $ES_AUTOHSCROLL, $ES_WANTRETURN, $WS_VSCROLL))
-	GUICtrlSetColor($ConsoleEdit, 16777215)
-	GUICtrlSetBkColor($ConsoleEdit, 0)
-	
+	$ConsoleEdit = _GUICtrlRichEdit_Create($GWBotHubGui, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
+	_GUICtrlRichEdit_SetCharColor($ConsoleEdit, $GUI_LIGHT_GREY_COLOR)
+	_GUICtrlRichEdit_SetBkColor($ConsoleEdit, 0)
+
 	$RunInfosGroup = GUICtrlCreateGroup('Infos', 21, 39, 271, 176)
 	$RunsLabel = GUICtrlCreateLabel('Runs: 0', 31, 64, 246, 16)
 	$FailuresLabel = GUICtrlCreateLabel('Failures: 0', 31, 84, 246, 16)
@@ -234,7 +240,6 @@ Func createGUI()
 	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
 	$GUITODO = GUICtrlCreateLabel('GUI TODO :' & @CRLF _
 		& '- add option to choose between random travel and specific travel' & @CRLF _
-		& '- display titles automatically, if it does not cause issues' & @CRLF _
 		& '- add option for running bot once, bot X times, bot until inventory full, or bot loop' & @CRLF _
 		& '- write small bot that salvage items (does not work for now), get material ID, write in file salvaged material' & @CRLF _
 		& '- change bots to have cleaner return system' & @CRLF _
@@ -317,10 +322,9 @@ Func GuiButtonHandler()
 EndFunc
 
 ;~ Print to console with timestamp
-Func Out($TEXT)
-    GUICtrlSetData($ConsoleEdit, GUICtrlRead($ConsoleEdit) & @HOUR & ':' & @MIN & ' - ' & $TEXT & @CRLF)
-    _GUICtrlEdit_Scroll($ConsoleEdit, $SB_SCROLLCARET)
-    _GUICtrlEdit_Scroll($ConsoleEdit, $SB_LINEUP)
+Func Out($TEXT, $color = $GUI_LIGHT_GREY_COLOR)
+	_GUICtrlRichEdit_SetCharColor($ConsoleEdit, $color)
+	_GUICtrlRichEdit_AppendText($ConsoleEdit, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
     UpdateLock()
 EndFunc
 
@@ -426,7 +430,7 @@ Func BotHubLoop()
 			
 			If ($STATS_MAP['success_code'] == 2) Then $STATUS = 'WILL_PAUSE'
 			If (((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-				Out('Inventory full, pausing.')
+				Out('Inventory full, pausing.', $CONSOLE_RED_COLOR)
 				$STATUS = 'WILL_PAUSE'
 			EndIf
 		Else
@@ -434,7 +438,7 @@ Func BotHubLoop()
 		EndIf
 		
 		If ($STATUS == 'WILL_PAUSE') Then
-			Out('Paused.')
+			Out('Paused.', $CONSOLE_BLUE_COLOR)
 			$STATUS = 'PAUSED'
 			GUICtrlSetData($StartButton, 'Start')
 			GUICtrlSetState($FarmChoiceCombo, $GUI_Enable)

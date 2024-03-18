@@ -42,8 +42,7 @@ Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Knight insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
-	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
-	& '- Golden Eggs'
+	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
 Local Const $Raptors_MarkOfPain = 1
 Local Const $Raptors_IAmUnstoppable = 2
@@ -85,7 +84,7 @@ Func SetupRaptorFarm()
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
-	;DisableHeroSkills()
+	;DisableAllHeroSkills()
 	GUICtrlSetState($LootGreenItemsCheckbox, $GUI_UNCHECKED)
 	MoveTo(19649, 16791)
 	Move(20084, 16854)
@@ -99,7 +98,8 @@ Func SetupRaptorFarm()
 EndFunc
 
 
-Func DisableHeroSkills()
+;~ Unused for now
+Func DisableAllHeroSkills()
 	For $i = 1 to 8
 		DisableHeroSkillSlot(1, $i)
 	Next
@@ -108,7 +108,6 @@ EndFunc
 
 ;~ Farm loop
 Func RaptorsFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
 	Out('Exiting to Riven Earth')
 	Move(20084, 16854)
 	RndSleep(1000)
@@ -126,7 +125,7 @@ Func RaptorsFarmLoop()
 		Out('Looting')
 		PickUpItems(DefendWhilePickingUpItems)
 	EndIf
-
+	
 	Return BackToTown()
 EndFunc
 
@@ -175,7 +174,7 @@ EndFunc
 Func MoveHeroAway()
 	Out('Moving Hero away')
 	CommandAll(-25309, -4212)
-	RndSleep(500)
+	RndSleep(200)
 EndFunc
 
 
@@ -191,32 +190,50 @@ Func GetRaptors()
 	While IsRecharged($Raptors_MarkOfPain)
 		If GetIsDead(-2) Then Return
 		UseSkillEx($Raptors_MarkOfPain, $target)
-		RndSleep(250)
+		RndSleep(50)
 	WEnd
-
+	IsBossAggroed()
 	$target = TargetNearestEnemy()
-	MoveAggroingRaptors(-20042, -10251, 50, $target)
+	MoveAggroingRaptors(-20000, -10300, 50, $target)
 	If IsBodyBlocked() Then Return
-	MoveTo(-19700, -10650, 50)
+	MoveTo(-19500, -11500, 50)
 	If IsBodyBlocked() Then Return
-	MoveTo(-19650, -11500, 50)
+	MoveTo(-20500, -12000, 50)
 	If IsBodyBlocked() Then Return
-	MoveTo(-20535, -12000, 50)
+	MoveAggroingRaptors(-21500, -12000, 50, $target)
 	If IsBodyBlocked() Then Return
-	MoveAggroingRaptors(-21490, -12175, 50, $target)
-	If IsBodyBlocked() Then Return
-	MoveTo(-22000, -11927, 50)
+	MoveTo(-22000, -12000, 50)
 	If IsBodyBlocked() Then Return
 	TargetNearestEnemy()
 	If IsBodyBlocked() Then Return
-	MoveTo(-22450, -11820, 20)
+	If Not IsBossAggroed() Then MoveTo(-22400, -12000, 20)
+	If IsBodyBlocked() Then Return
+	If Not IsBossAggroed() Then MoveTo(-22500, -12200, 20)
+	If IsBodyBlocked() Then Return
+	If Not IsBossAggroed() Then MoveTo(-22600, -12400, 20)
+	If IsBodyBlocked() Then Return
+	If Not IsBossAggroed() Then MoveTo(-22700, -12600, 20)
+	If IsBodyBlocked() Then Return
+	If Not IsBossAggroed() Then MoveTo(-22800, -11800, 20)
 	If IsBodyBlocked() Then Return
 	MoveTo(-22450, -12460, 20)
 EndFunc
 
+
+;~ Returns true if the nearest boss is aggroed. Require being called once before the boss is aggroed.
+Func IsBossAggroed()
+	Local $boss = GetNearestBossFoe()
+	Local Static $unaggroedState = DllStructGetData($boss, 'TypeMap')
+	Out('State: ' & DllStructGetData($boss, 'TypeMap'))
+	Out('Aggroed: ' & (DllStructGetData($boss, 'TypeMap') <> $unaggroedState))
+	If DllStructGetData($boss, 'TypeMap') == $unaggroedState Then Return False
+	Return True
+EndFunc
+
+
 Func IsBodyBlocked()
 	Local $blocked = 0
-	Local Const $PI = 3.141592653589793
+	Local Const $PI = 3.14159
 	Local $angle = 0
 	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.92 Then
 		; Dont spam stuck command it's sent to servers
@@ -235,14 +252,13 @@ Func IsBodyBlocked()
 			Return True
 		EndIf
 		Move(DllStructGetData(GetAgentByID(-2), 'X') + 300 * sin($angle), DllStructGetData(GetAgentByID(-2), 'Y') + 300 * cos($angle))
-		RndSleep(50)
+		RndSleep(100)
 	WEnd
 	Return False
 EndFunc
 
 Func KillRaptors()
 	Local $MoPTarget
-	Local $lRekoff
 
 	If GetIsDead(-2) Then Return
 	Out('Clearing Raptors')
@@ -255,12 +271,11 @@ Func KillRaptors()
 	UseSkillEx($Raptors_WaryStance)
 	RndSleep(500)
 
-	$lRekoff = GetAgentByName('Rekoff Broodmother')
-
-	If GetDistance(-2, $lRekoff) > $RANGE_SPELLCAST Then
+	Local $rekoff_boss = GetNearestBossFoe()
+	If GetDistance(-2, $rekoff_boss) > $RANGE_SPELLCAST Then
 		$MoPTarget = GetNearestEnemyToAgent(-2)
 	Else
-		$MoPTarget = GetNearestEnemyToAgent($lRekoff)
+		$MoPTarget = GetNearestEnemyToAgent($rekoff_boss)
 	EndIf
 
 	If GetHasHex($MoPTarget) Then
@@ -401,4 +416,11 @@ Func MoveAggroingRaptors($lDestX, $lDestY, $lRandom, $CheckTarget)
 		If $timerCount > 0 Then Return
 
 	Until ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $lDestX, $lDestY) < $lRandom*1.5
+EndFunc
+
+
+Func GetNearestBossFoe()
+	Local $bossFoes = GetFoesInRangeOfAgent(-2, $RANGE_COMPASS, GetIsBoss)
+	If $bossFoes[0] == 1 Then Return $bossFoes[1]
+	Return null
 EndFunc

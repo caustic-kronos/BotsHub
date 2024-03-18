@@ -95,7 +95,6 @@ EndFunc
 
 ;~ Farm loop
 Func JadeBrotherhoodFarmLoop()
-	If Not $RenderingEnabled Then ClearMemory()
 	Out('Abandonning quest')
 	AbandonQuest(457)
 	Out('Exiting to Bukdek Byway')

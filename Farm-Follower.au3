@@ -55,7 +55,6 @@ Local $playerIDs
 
 ;~ Main loop
 Func FollowerFarm($STATUS)
-	If Not $RenderingEnabled Then ClearMemory()
 	If Not $FollowerFarmSetup Then FollowerSetup()
 	
 	While $STATUS == 'RUNNING' And CountSlots() > 5

@@ -24,9 +24,7 @@ Local $DonatePoints = True
 Local Const $ID_unknown_outpost_deposit_points = 193
 
 ;~ Main loop
-Func LuxonFactionFarm($STATUS)
-	If Not $RenderingEnabled Then ClearMemory()
-	
+Func LuxonFactionFarm($STATUS)	
 	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then
 		Out('Moving to Outpost')
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $ID_EUROPE, $ID_FRENCH)
@@ -147,9 +145,11 @@ Func VanquishMountQinkai()
 	If MapClearMoveAndAggro(13500, -1500, 'Naga 7', $RANGE_SPIRIT) Then Return 1
 	If MapClearMoveAndAggro(12500, -3500, 'Naga 8', $RANGE_SPIRIT) Then Return 1
 	If MapClearMoveAndAggro(14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT) Then Return 1
-	If MapClearMoveAndAggro(13000, -6000, 'Leftovers', $RANGE_COMPASS) Then Return 1	
-
-	Out('The end : zone should be vanquished')
+	If MapClearMoveAndAggro(13000, -6000, 'Leftovers', $RANGE_COMPASS) Then Return 1
+	If Not GetAreaVanquished() Then
+		Out('The map has not been completely vanquished.', $CONSOLE_RED_COLOR)
+		Return 1
+	EndIf
 	Return 0
 EndFunc
 
