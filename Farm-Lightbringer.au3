@@ -223,7 +223,8 @@ Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
 	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
-	
+	RndSleep(1000)
+
 	If CountPartyDeaths() > 5 Then Return True
 
 	PickUpItems()

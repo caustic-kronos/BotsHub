@@ -288,7 +288,7 @@ Func KillSequence()
 		EndIf
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 		If $foesCount > 0 Then
-			Local $casterFoe = GetFurthestNPCToCoords(3, null, null, $RANGE_AREA + 88)
+			Local $casterFoe = GetFurthestNPCInRangeOfCoords(3, null, null, $RANGE_AREA + 88)
 			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance(-2, $casterFoe)
 			If $foesCount < 5 And GetDistance(-2, $casterFoe) > $RANGE_ADJACENT Then
@@ -318,6 +318,7 @@ Func KillSequence()
 
 	If (GetIsDead(-2)) Then Return
 	CleanseFromCripple()
+	RndSleep(1000)
 	PickUpItems(CleanseFromCripple, AlsoPickLowReqItems)
 EndFunc
 

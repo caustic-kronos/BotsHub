@@ -135,11 +135,12 @@ Func MinisterialCommendationsFarm($STATUS)
 
 	Out('Spiking the farm group')
 	KillMinistryOfPurity()
+	
+	RndSleep(1000)
 
 	Out('Picking up loot')
 	PickUpItems(HealWhilePickingItems)
 
-	RndSleep(1000)
 
 	Out('Travelling back to KC')
 	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)

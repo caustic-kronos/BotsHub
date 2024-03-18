@@ -111,8 +111,9 @@ Func JadeBrotherhoodFarmLoop()
 	KillJadeBrotherhood()
 	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
 
+	RndSleep(1000)
+
 	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		RndSleep(50)
 		Out('Looting')
 		PickUpItems(null, AlsoPickLowReqItems)
 	EndIf

@@ -145,11 +145,11 @@ Func KournansFarmLoop()
 	RndSleep(2000)
 	Out('Looting')
 	PickUpItems()
-	
+	Local $result = GetIsDead(-2) ? 1 : 0
 	BackToSunspearSanctuary()
 	Out('Abandonning quest')
 	AbandonQuest(0x23E)
-	Return 0
+	Return $result
 EndFunc
 
 
