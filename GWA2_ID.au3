@@ -66,6 +66,9 @@ Global Const $ID_House_Zu_Heltzer = 77
 Global Const $ID_Kaineng_City = 194
 Global Const $ID_Mount_Qinkai = 200
 Global Const $ID_Ferndale = 210
+
+Global Const $ID_Nahpui_Quarter = 216
+Global Const $ID_Wajjun_Bazaar = 239
 Global Const $ID_Bukdek_Byway = 240
 Global Const $ID_Isle_Of_Weeping_Stone = 275
 Global Const $ID_Isle_Of_Jade = 276

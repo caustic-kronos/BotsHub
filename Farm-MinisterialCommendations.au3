@@ -188,8 +188,8 @@ EndFunc
 
 Func PrepareToFight()
 	;StartingPositions()
-	AlternateStartingPositions2()
-	RndSleep(2500)
+	StartingPositions()
+	RndSleep(1500)
 	UseHeroSkill($Hero_Ritualist_SoS, $SoS_Skill_Position)						;SoS - SoS
 	UseHeroSkill($Hero_Necro_BiP, $Recovery_Skill_Position)						;BiP - Recovery
 	RndSleep(2500)
@@ -219,14 +219,30 @@ EndFunc
 
 ;~ Move party into a good starting position
 Func StartingPositions()
+	CommandHero($Hero_Mesmer_DPS_1, -6524, -5178)
+	CommandHero($Hero_Mesmer_DPS_2, -6165, -5585)
+	CommandHero($Hero_Mesmer_DPS_3, -6224, -5075)
+	CommandHero($Hero_Mesmer_Ineptitude, -6033, -5271)
+	CommandHero($Hero_Ritualist_SoS, -6524, -5178)
+	CommandHero($Hero_Ritualist_Prot, -5766, -5226)
+	CommandHero($Hero_Necro_BiP, -6170, -4792)
+	MoveTo(-6285, -5343)
+	RndSleep(1000)
+	CommandHero($Hero_Ritualist_SoS, -6515, -5510)
+EndFunc
+
+
+;~ Move party into a good starting position
+Func AlternateStartingPositions2()
 	CommandHero($Hero_Mesmer_DPS_1, -6488, -5084)
 	CommandHero($Hero_Mesmer_DPS_2, -6052, -5522)
 	CommandHero($Hero_Mesmer_DPS_3, -5820, -5309)
 	CommandHero($Hero_Mesmer_Ineptitude, -6041, -5072)
-	CommandHero($Hero_Ritualist_SoS, -6307, -5273)
+	CommandHero($Hero_Ritualist_SoS, -6488, -5084)
 	CommandHero($Hero_Ritualist_Prot, -6004, -4620)
 	CommandHero($Hero_Necro_BiP, -6244, -4860)
 	MoveTo(-6322, -5266)
+	CommandHero($Hero_Ritualist_SoS, -6307, -5273)
 EndFunc
 
 
@@ -240,19 +256,6 @@ Func AlternateStartingPositions()
 	CommandHero($Hero_Ritualist_Prot, -5911, -5319)
 	CommandHero($Hero_Necro_BiP, -5687, -5155)
 	MoveTo(-6322, -5266)
-EndFunc
-
-
-;~ Move party into a good starting position
-Func AlternateStartingPositions2()
-	CommandHero($Hero_Mesmer_DPS_1, -6524, -5178)
-	CommandHero($Hero_Mesmer_DPS_2, -6165, -5585)
-	CommandHero($Hero_Mesmer_DPS_3, -6224, -5075)
-	CommandHero($Hero_Mesmer_Ineptitude, -6033, -5271)
-	CommandHero($Hero_Ritualist_SoS, -6515, -5510)
-	CommandHero($Hero_Ritualist_Prot, -5766, -5226)
-	CommandHero($Hero_Necro_BiP, -6170, -4792)
-	MoveTo(-6285, -5343)
 EndFunc
 
 
@@ -615,10 +618,10 @@ EndFunc
 
 
 Func IsOnTopOfTheStairs($agent)
-	Return IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	Return IsOverLine(1, 1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 
 
 Func IsUnderTheStairs($agent)
-	Return Not IsOverLine(1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	Return Not IsOverLine(1, 1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc

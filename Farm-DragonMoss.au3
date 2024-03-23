@@ -31,7 +31,7 @@ Local Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DwarvenStability)  is better than UseSkillEx(1))
 Local Const $DM_DwarvenStability = 1
 Local Const $DM_StormChaser = 2
 Local Const $DM_ShroudOfDistress = 3

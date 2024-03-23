@@ -400,11 +400,11 @@ EndFunc
 
 ;~ Give True if the given agent is past a specific line where we should take aggro
 Func IsPastAggroLine($agent)
-	Return Not IsOverLine(0, 6750, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	Return Not IsOverLine(1, 0, 6750, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 	;6500 works too, but slightly too early, some mobs stay downstairs
-	;Return Not IsOverLine(0, 6500, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	;Return Not IsOverLine(1, 0, 6500, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 	;7000 works but is slightly too late, sometimes mobs do not get aggroed
-	;Return Not IsOverLine(0, 7000, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+	;Return Not IsOverLine(1, 0, 7000, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 
 

@@ -3186,7 +3186,7 @@ Func GetNearestEnemyToCoords($aX, $aY)
 		If DllStructGetData($lAgentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
 		If DllStructGetData($lAgentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($lAgentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If DllStructGetData($lAgentArray[$i], 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($lAgentArray[$i], 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
 
 		If $lDistance < $lNearestDistance Then
 			If DllStructGetData($lAgentArray[$i], 'ID') == $lmeID Then ContinueLoop
