@@ -49,9 +49,9 @@ Func OmniFarm($STATUS)
 	PrepareZephyrSpirit()
 
 	If $STATUS <> 'RUNNING' Then Return 2
-	
+
 	HealingLoop()
-	
+
 	Return 0
 EndFunc
 
@@ -116,7 +116,7 @@ Func HealingUnit()
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf
-	
+
 	; Heroes with Mystic Healing provide additional long range support
 	UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)
 	UseHeroSkill($Hero_Dervish_1, $Mystic_Healing_Skill_Position)
@@ -136,7 +136,7 @@ Func HealingUnitAutoLoop()
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf
-	
+
 	; Heroes with Mystic Healing provide additional long range support
 	UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)
 	RndSleep(430)

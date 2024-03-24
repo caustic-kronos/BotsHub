@@ -21,20 +21,20 @@ Local $groupIsAlive = True
 Local $DonatePoints = True
 
 ;~ Main loop
-Func KurzickFactionFarm($STATUS)	
+Func KurzickFactionFarm($STATUS)
 	If GetMapID() <> $ID_House_Zu_Heltzer Then
 		Out('Moving to Outpost')
 		DistrictTravel($ID_House_Zu_Heltzer, $ID_EUROPE, $ID_FRENCH)
 		WaitMapLoading($ID_House_Zu_Heltzer, 10000, 2000)
 	EndIf
-	
+
 	KurzickFarmSetup()
-	
+
 	If $STATUS <> 'RUNNING' Then Return 2
 	AdlibRegister('KurzickGroupIsAlive', 30000)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('KurzickGroupIsAlive')
-	
+
 	;Temporarily change a failure into a pause for debugging :
 	If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
@@ -42,17 +42,17 @@ Func KurzickFactionFarm($STATUS)
 		Out('Inventory full, pausing.')
 		$result = 2
 	EndIf
-	
+
 	Return $result
 EndFunc
 
 
 Func KurzickFarmSetup()
-	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then 
+	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		Out('Turning in Kurzick faction')
 		RndSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
-	
+
 		If $DonatePoints Then
 			Do
 				DonateFaction('kurzick')
@@ -69,14 +69,14 @@ Func KurzickFarmSetup()
 		EndIf
 		RndSleep(500)
 	EndIf
-	
+
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Out('Withdrawing gold for shrines benediction')
 		RndSleep(250)
 		WithdrawGold(100)
 		RndSleep(250)
 	EndIf
-	
+
 	SwitchMode($ID_HARD_MODE)
 EndFunc
 
@@ -109,14 +109,14 @@ Func VanquishFerndale()
 	If MapClearMoveAndAggro(-10570, 11789, 'Mantis Group 8') Then Return 1
 	If MapClearMoveAndAggro(-10138, 10076, 'Mantis Group 9') Then Return 1
 	If MapClearMoveAndAggro(-10289, 8329, 'Mantis Group 10') Then Return 1
-	
+
 	If MapClearMoveAndAggro(-8587, 8739, 'Dredge Boss Warrior 1') Then Return 1
 	If MapClearMoveAndAggro(-6853, 8496, 'Dredge Boss Warrior 2') Then Return 1
-	
+
 	If MapClearMoveAndAggro(-5211, 7841, 'Dredge Patrol') Then Return 1
-	
+
 	If MapClearMoveAndAggro(-4059, 11325, 'Missing Dredge Patrol') Then Return 1
-	
+
 	If MapClearMoveAndAggro(-4328, 6317, 'Oni and Dredge Patrol 1') Then Return 1
 	If MapClearMoveAndAggro(-4454, 4558, 'Oni and Dredge Patrol 2') Then Return 1
 
@@ -232,7 +232,7 @@ Func VanquishFerndale()
 	If MapClearMoveAndAggro(7148, 11167, 'Dredge Patrol 55', 4000) Then Return 1
 	If MapClearMoveAndAggro(5427, 10834, 'Dredge Patrol 56', 10000) Then Return 1
 	If Not GetAreaVanquished() Then
-		Out('The map has not been completely vanquished.', $CONSOLE_RED_COLOR)
+		Out('The map has not been completely vanquished.', $GUI_CONSOLE_RED_COLOR)
 		Return 1
 	EndIf
 	Return 0

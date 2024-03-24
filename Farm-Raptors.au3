@@ -43,7 +43,7 @@ Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Raptors_MarkOfPain = 1
 Local Const $Raptors_IAmUnstoppable = 2
 Local Const $Raptors_ProtectorsDefense = 3
@@ -71,7 +71,7 @@ Func RaptorFarm($STATUS)
 	If GetMapID() <> $ID_Rata_Sum Then
 		DistrictTravel($ID_Rata_Sum, $ID_EUROPE, $ID_FRENCH)
 	EndIf
-	
+
 	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
 	If $STATUS <> 'RUNNING' Then Return 2
 
@@ -121,11 +121,9 @@ Func RaptorsFarmLoop()
 	GetRaptors()
 	KillRaptors()
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out('Looting')
-		PickUpItems(DefendWhilePickingUpItems)
-	EndIf
-	
+	Out('Looting')
+	PickUpItems(DefendWhilePickingUpItems)
+
 	Return BackToTown()
 EndFunc
 
@@ -181,11 +179,11 @@ EndFunc
 Func GetRaptors()
 	Out('Gathering Raptors')
 	Local $target = GetNearestEnemyToAgent(-2)
-	
+
 	Move(-20695, -9900, 20)
 	;Using the nearest to agent could result in targeting Angorodon if they are badly placed
 	$target = GetNearestEnemyToCoords(-20042, -10251)
-	
+
 	UseSkillEx($Raptors_ShieldBash)
 	While IsRecharged($Raptors_MarkOfPain)
 		If GetIsDead(-2) Then Return
@@ -243,7 +241,7 @@ Func IsBodyBlocked()
 			RndSleep(GetPing())
 		EndIf
 	EndIf
-	While DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0		
+	While DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0
 		$blocked += 1
 		If $blocked > 1 Then
 			$angle += $PI / 4
@@ -315,10 +313,10 @@ Func KillRaptors()
 		If GetIsDead(-2) Then Return
 		RndSleep(50)
 	WEnd
-	
+
 	Local $raptorsCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	Out('Spiking ' & $raptorsCount & ' raptors')
-	
+
 	UseSkillEx($Raptors_ShieldBash)
 	RndSleep(20)
 	While CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST) > 10

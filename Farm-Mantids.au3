@@ -23,7 +23,7 @@ Local Const $MantidsBotVersion = '0.1'
 
 ; ==== Constantes ====
 Local Const $RAMantidsFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
-Local Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
+Local Const $MantidsHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
 Local Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 14 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -32,7 +32,7 @@ Local Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A one hand weapon with +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
 Local Const $Mantids_DeadlyParadox = 1
 Local Const $Mantids_ShadowForm = 2
 Local Const $Mantids_ShroudOfDistress = 3
@@ -74,14 +74,14 @@ Func SetupMantidsFarm()
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_General_Morgahn)
-	
+
 	Out('Entering Wajjun Bazaar')
 	MoveTo(-22000, 12500)
 	MoveTo(-21750, 14500)
 	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
 	MoveTo(9100, -19600)
 	MoveTo(9100, -20500)
-	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)	
+	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
 	Out('Preparations complete')
 EndFunc
 
@@ -97,7 +97,7 @@ Func MantidsFarmLoop()
 	RndSleep(1500)
 	UseHeroSkill(1, $Mantids_Incoming)
 	AdlibRegister('UseFallBack', 8000)
-	
+
 	;Move to spot before aggro
 	MoveTo(3150, -16350, 0)
 	RndSleep(1500)
@@ -118,11 +118,11 @@ Func MantidsFarmLoop()
 	$target = GetNearestNPCInRangeOfCoords(3, 700, -16700, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(-800, -15800)
-	
+
 	$target = GetNearestNPCInRangeOfCoords(3, -1350, -16250, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(-700, -14800)
-	
+
 	$target = GetNearestNPCInRangeOfCoords(3, -1600, -14500, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(0, -14300)
@@ -152,7 +152,7 @@ Func MantidsFarmLoop()
 	MoveTo(-230, -14100)
 	MoveTo(-800, -14750)
 	RndSleep(1500)
-	
+
 	;Killing
 	MoveTo(-230, -14100)
 	Local $center = FindMiddleOfFoes(-250, -14250, $RANGE_AREA)
@@ -175,11 +175,9 @@ Func MantidsFarmLoop()
 		Return 1
 	EndIf
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out('Looting')
-		PickUpItems()
-		CheckForChests()
-	EndIf
+	Out('Looting')
+	PickUpItems()
+	CheckForChests()
 
 	BackToNahpuiQuarterOutpost()
 	Return 0

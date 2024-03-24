@@ -36,7 +36,7 @@ Local $IsleOfSolitude = False
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
 	; TODO :
-	
+
 	; - deposit in chest mesmer tomes, white and black dyes, ToT bags and other consumables, RARE weapons
 	; - recycle all mods that need to be recycled (measure for measure, Forget Me Not, Strength and Honor, rare mods, insignias and runes)
 	; - recycle all items that need to be recycled for materials (glacial stones, specific weapons)
@@ -107,7 +107,7 @@ Func ReadOneItemData($bagIndex, $slot)
 	$output &= DllStructGetData($item, 'quantity') & ';'
 	$output &= DllStructGetData($item, 'Value') & ';'
 	Out($output)
-	
+
 	For $i = 0 To 20
 		Out(DllStructGetData($item, $i))
 	Next
@@ -123,7 +123,7 @@ Func ReadAllItemsData()
 		For $slot = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $slot)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-			
+
 			$output = $bagIndex & ';'
 			$output &= $slot & ';'
 			$output &= DllStructGetData($item, 'rarity') & ';'
@@ -148,7 +148,7 @@ EndFunc
 Func StoreAllItemsData()
 	Local $InsertQuery, $item
 	Local $batchID = GetPreviousBatchID() + 1
-	
+
 	Out('Scanning and storing all items data')
 	_SQLite_Exec($SQLITE_DB, 'BEGIN;')
 	$InsertQuery = 'INSERT INTO items_data VALUES' & @CRLF
@@ -231,7 +231,7 @@ Func CompleteModsHexa()
 		While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
 			$mapItemStruct = AppendArrayMap($mapItemStruct, $row[0], $row[1])
 		WEnd
-		
+
 		_SQLite_Exec($SQLITE_DB, 'BEGIN;')
 		Local $modNames = MapKeys($mapItemStruct)
 		For $modName In $modNames
@@ -528,7 +528,7 @@ Func CanSell($item)
 				Return True
 		EndSwitch
 	EndIf
-	
+
 	Local $rarity = GetRarity($item)
 	If $rarity == $RARITY_Gold Then Return True
 	If $rarity == $RARITY_Purple Then Return True

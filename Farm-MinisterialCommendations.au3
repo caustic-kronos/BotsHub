@@ -25,7 +25,7 @@ Local $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
 Local Const $Skill_Conviction = 1
-Local Const $Skill_Grenths_Aura  = 2
+Local Const $Skill_Grenths_Aura = 2
 Local Const $Skill_I_am_unstoppable = 3
 ;Local Const $Skill_Healing_Signet = 4
 Local Const $Skill_Mystic_Regeneration = 4
@@ -75,7 +75,7 @@ Local Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
 Local Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
 
 #CS
-Character location : 	X: -6322.51318359375, Y: -5266.85986328125
+Character location :	X: -6322.51318359375, Y: -5266.85986328125
 Heroes locations :
 - Me1 dps				X: -6488.185546875, Y: -5084.078125
 - Me2 dps				X: -6052.578125, Y: -5522.14208984375
@@ -89,7 +89,7 @@ Platform center :		X: -6699.40966796875, Y: -5645.5556640625
 Away from loot :		X: -7295.5771484375, Y: -6395.5556640625
 
 Travel :
-1st stairs : 			X: -4693.87451171875, Y: -3137.0244140625 (time : until all mobs are dead)
+1st stairs :			X: -4693.87451171875, Y: -3137.0244140625 (time : until all mobs are dead)
 2nd stairs :			X: -4199.5126953125, Y: -1475.53430175781 (time : 6s no speed)
 3rd stairs :			X: -4709.81005859375, Y: -609.159118652344 (3s)
 1st corner :			X: -3116.35498046875, Y: 650.431457519531 (7s)
@@ -135,7 +135,7 @@ Func MinisterialCommendationsFarm($STATUS)
 
 	Out('Spiking the farm group')
 	KillMinistryOfPurity()
-	
+
 	RndSleep(1000)
 
 	Out('Picking up loot')
@@ -399,8 +399,6 @@ Func WaitForPurityBall()
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	WEnd
 
-	UseConsumable($ID_Golden_Egg)
-
 	_FileWriteLog($loggingFile, 'Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
 	While Not GetisDead(-2) And TimerDiff($deadlock) < 75000 And Not IsFurthestMobInBall()
@@ -417,7 +415,7 @@ Func WaitForPurityBall()
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
 			UseSkillEx($Skill_Conviction)
 			RndSleep(50)
-			
+
 			If IsRecharged($Skill_Vital_Boon) Then
 				UseSkillEx($Skill_Vital_Boon)
 				RndSleep(GetPing() + 1000)
@@ -431,7 +429,7 @@ Func WaitForPurityBall()
 			UseSkillEx($Skill_Vital_Boon)
 			RndSleep(GetPing() + 1000)
 		EndIf
-		
+
 		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.45 And IsRecharged($Skill_Grenths_Aura) Then
 			UseSkillEx($Skill_Grenths_Aura)
 			RndSleep(250)
@@ -552,7 +550,7 @@ Func KillMinistryOfPurity()
 			UseSkillEx($Skill_To_the_limit)
 			RndSleep(50)
 		EndIf
-		
+
 		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
 			RndSleep(1000)

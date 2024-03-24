@@ -1,7 +1,7 @@
 #CS
 #################################
 #								#
-#	Corsairs Bot 				#
+#	Corsairs Bot				#
 #								#
 #################################
 Author: Night
@@ -31,7 +31,7 @@ Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- Dunkoro'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Corsairs_DwarvenStability = 1
 Local Const $Corsairs_WhirlingDefense = 2
 Local Const $Corsairs_HeartOfShadow = 3
@@ -97,12 +97,12 @@ Func CorsairsFarmLoop()
 	MoveTo(-7400, -4750)
 	CastAllDefensiveSkills()
 	MoveTo(-7300, -4500)
-	
+
 	If GetIsDead(-2) Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
-	
+
 	MoveTo(-8100, -6550)
 	DefendAgainstCorsairs()
 
@@ -110,7 +110,7 @@ Func CorsairsFarmLoop()
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
-	
+
 	MoveTo(-8850, -6950)
 	WaitForEnemyInRange()
 	UseSkillEx($Corsairs_HeartOfShadow, GetNearestEnemyToAgent(-2))
@@ -121,18 +121,18 @@ Func CorsairsFarmLoop()
 	UseSkillEx($Corsairs_DwarvenStability)
 	RndSleep(20)
 	CastAllDefensiveSkills()
-	
+
 	If GetIsDead(-2) Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
-	
+
 	MoveTo(-9730,-7350, 0)
 	GoNPC($Captain_Bohseda)
 	RndSleep(1000)
 	Dialog(0x00000085)
 	RndSleep(1000)
-	
+
 	While IsRecharged($Corsairs_WhirlingDefense) And Not GetIsDead(-2)
 		UseSkillEx($Corsairs_WhirlingDefense)
 		RndSleep(200)
@@ -148,12 +148,12 @@ Func CorsairsFarmLoop()
 		if $i < 13 Then Attack(GetNearestEnemyToAgent(-2))
 		RndSleep(1000)
 	Next
-	
+
 	If GetIsDead(-2) Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
-	
+
 	Local $target = GetNearestEnemyToCoords(-8920, -6950)
 	UseSkillEx($Corsairs_DeathsCharge, $target)
 	RndSleep(100)
@@ -173,14 +173,12 @@ Func CorsairsFarmLoop()
 		Return 1
 	EndIf
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out('Looting')
-		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
-		If $foesCount == 0 Then
-			PickUpItems(OnlyCastTogetherAsOne, AlsoPickLowReqItems)
-		Else
-			PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
-		EndIf
+	Out('Looting')
+	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
+	If $foesCount == 0 Then
+		PickUpItems(OnlyCastTogetherAsOne, AlsoPickLowReqItems)
+	Else
+		PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
 	EndIf
 
 	BackToModdokCreviceOutpost()

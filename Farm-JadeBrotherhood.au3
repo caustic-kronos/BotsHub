@@ -1,7 +1,7 @@
 #CS
 #################################
 #								#
-#	Jade Brotherhood Bot 		#
+#	Jade Brotherhood Bot		#
 #								#
 #################################
 Author: Night
@@ -32,7 +32,7 @@ Local Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '- Golden Eggs'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
 Local Const $JB_DrunkerMaster = 1
 Local Const $JB_SandShards = 2
 Local Const $JB_MysticVigor = 3
@@ -61,7 +61,7 @@ Func JadeBrotherhoodFarm($STATUS)
 	If GetMapID() <> $ID_The_Marketplace Then
 		TravelTo($ID_The_Marketplace)
 	EndIf
-	
+
 	If Not $Jade_Brotherhood_Farm_Setup Then
 		SetupJadeBrotherhoodFarm()
 		$Jade_Brotherhood_Farm_Setup = True
@@ -113,10 +113,8 @@ Func JadeBrotherhoodFarmLoop()
 
 	RndSleep(1000)
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out('Looting')
-		PickUpItems(null, AlsoPickLowReqItems)
-	EndIf
+	Out('Looting')
+	PickUpItems(null, AlsoPickLowReqItems)
 
 	If ($Deadlocked) Then Return BackToTheMarketplace(1)
 	Return BackToTheMarketplace(0)
@@ -190,7 +188,7 @@ Func KillJadeBrotherhood()
 	RndSleep(50)
 	UseSkillEx($JB_SandShards)
 	RndSleep(50)
-	
+
 	$target = GetNearestEnemyToCoords(-13262, -5486)
 	$target = TargetMobInCenter($target, 360)
 	GetAlmostInRangeOfAgent($target)
@@ -214,7 +212,7 @@ Func KillJadeBrotherhood()
 		UseSkillEx($JB_EremitesAttack, $target)
 		RndSleep(50)
 	WEnd
-	
+
 	While CountFoesInRangeOfAgent(-2, 1250) > 0
 		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		If GetEnergy(-2) >= 6 And IsRecharged($JB_SandShards) Then

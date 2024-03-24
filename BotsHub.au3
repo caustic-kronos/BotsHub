@@ -1,8 +1,8 @@
 #cs
 #################################
-#                               #
-#           Bot Hub             #
-#                               #
+#								#
+#			Bot Hub				#
+#								#
 #################################
 Author: Night
 Inspired by: Vaettir from gigi
@@ -10,9 +10,7 @@ GUI built with GuiBuilderPlus
 #ce
 
 ; TODO - important:
-; - write small bot that : -salvage items (does not work for now) -get material ID -write in file salvaged material
-; - rename GUI specific variables with a GUI prefix to keep responsabilities separated
-; - change bots to not have direct access to checkboxes
+; - write small bot that : -salvage items -get material ID -write in file salvaged material
 
 ; TODO - secondary:
 ; - change bots to have cleaner return system
@@ -25,7 +23,7 @@ GUI built with GuiBuilderPlus
 ; Night's tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot)
 ;		(so only use $me if you are sure nothing important changes between $me definition and $me usage)
-; - AdlibRegister('NotifyHangingBot', 120000) can be used in case of hanging to make a popup for user
+; - AdlibRegister('NotifyHangingBot', 120000) can be used to simulate multithreading
 
 #RequireAdmin
 #NoTrayIcon
@@ -74,17 +72,17 @@ Local Const $GUI_GREY_COLOR = 13158600
 Local Const $GUI_BLUE_COLOR = 11192062
 Local Const $GUI_RED_COLOR = 16751781
 Local Const $GUI_YELLOW_COLOR = 16777192
-Local Const $CONSOLE_BLUE_COLOR = 0xFF7000
-Local Const $CONSOLE_GREEN_COLOR = 0xCA4FFF
-Local Const $CONSOLE_YELLOW_COLOR = 0x00FFFF
-Local Const $CONSOLE_RED_COLOR = 0x0000FF
+Local Const $GUI_CONSOLE_BLUE_COLOR = 0xFF7000
+Local Const $GUI_CONSOLE_GREEN_COLOR = 0xCA4FFF
+Local Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
+Local Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 
 ;STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
 ;-1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
 Local $RUN_MODE = 'AUTOLOAD'
 Local $PROCESS_ID = ''
-Local $CHARACTER_NAME  = ''
+Local $CHARACTER_NAME = ''
 #EndRegion Variables
 
 #Region GUI
@@ -92,154 +90,152 @@ Opt('GUIOnEventMode', 1)
 Opt('GUICloseOnESC', 0)
 Opt('MustDeclareVars', 1)
 
-Local $GWBotHubGui, $TabsParent, $MainTab, $RunOptionsTab, $LootOptionsTab, $FarmInfosTab, $LootComponentsTab
-Local $CharacterChoiceCombo, $FarmChoiceCombo, $StartButton, $FarmProgress
+Local $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI_Tab_LootOptions, $GUI_Tab_FarmInfos, $GUI_Tab_LootComponents
+Local $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress
 
-Global $ConsoleEdit
-Global $RunInfosGroup, $RunsLabel, $FailuresLabel, $TimeLabel, $TimePerRunLabel, $GoldLabel, $GoldItemsLabel, $ExperienceLabel
+Global $GUI_Console
+Global $GUI_Group_RunInfos, $GUI_Label_Runs, $GUI_Label_Failures, $GUI_Label_Time, $GUI_Label_TimePerRun, $GUI_Label_Gold, $GUI_Label_GoldItems, $GUI_Label_Experience
 
-Global $ItemsLootedGroup, $ChunkOfDrakeFleshLabel, $SkaleFinsLabel, $GlacialStonesLabel, $DiessaChalicesLabel, $RinRelicsLabel, $WintersdayGiftsLabel, $MargoniteGemstoneLabel, $StygianGemstoneLabel, $TitanGemstoneLabel, $TormentGemstoneLabel
-Global $TitlesGroup, $AsuraTitleLabel, $DeldrimorTitleLabel, $NornTitleLabel, $VanguardTitleLabel, $KurzickTitleLabel, $LuxonTitleLabel, $LightbringerTitleLabel, $SunspearTitleLabel
-Global $GlobalOptionsGroup, $LoopRunsCheckbox, $HMCheckbox, $StoreUnidentifiedGoldItemsCheckbox, $IdentifyGoldItemsCheckbox, $SalvageItemsCheckbox, $SellItemsCheckbox, $DynamicExecutionInput, $DynamicExecutionButton
-Global $ConsumableOptionsGroup, $ConsumeCupcakeCheckbox, $ConsumeCandyAppleCheckbox, $ConsumePumpkingPieSliceCheckbox, $ConsumeGoldenEggCheckbox, $ConsumeCandyCornCheckbox
-Global $BaseLootOptionsGroup, $LootEverythingCheckbox, $LootNothingCheckbox, $LootRareMaterialsCheckbox, $LootBasicMaterialsCheckbox, $LootKeysCheckbox, $LootSalvageItemsCheckbox, $LootTomesCheckbox, $LootDyesCheckbox, $LootScrollsCheckbox
-Global $RarityLootOptionsGroup, $LootGoldItemsCheckbox, $LootPurpleItemsCheckbox, $LootBlueItemsCheckbox, $LootWhiteItemsCheckbox, $LootGreenItemsCheckbox
-Global $FarmSpecificLootOptionsGroup, $LootGlacialStonesCheckbox, $LootMapPiecesCheckbox, $LootTrophiesCheckbox
+Global $GUI_Group_ItemsLooted, $GUI_Label_ChunkOfDrakeFlesh, $GUI_Label_SkaleFins, $GUI_Label_GlacialStones, $GUI_Label_DiessaChalices, $GUI_Label_RinRelics, $GUI_Label_WintersdayGifts, $GUI_Label_MargoniteGemstone, $GUI_Label_StygianGemstone, $GUI_Label_TitanGemstone, $GUI_Label_TormentGemstone
+Global $GUI_Group_Titles, $GUI_Label_AsuraTitle, $GUI_Label_DeldrimorTitle, $GUI_Label_NornTitle, $GUI_Label_VanguardTitle, $GUI_Label_KurzickTitle, $GUI_Label_LuxonTitle, $GUI_Label_LightbringerTitle, $GUI_Label_SunspearTitle
+Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
+Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables
+Global $GUI_Group_BaseLootOptions, $GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, $GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
+Global $GUI_Group_RarityLootOptions, $GUI_Checkbox_LootGoldItems, $GUI_Checkbox_LootPurpleItems, $GUI_Checkbox_LootBlueItems, $GUI_Checkbox_LootWhiteItems, $GUI_Checkbox_LootGreenItems
+Global $GUI_Group_FarmSpecificLootOptions, $GUI_Checkbox_LootGlacialStones, $GUI_Checkbox_LootMapPieces, $GUI_Checkbox_LootTrophies
 
-Global $ConsumablesLootOptionGroup, $LootCandyCaneShardsCheckbox, $LootLunarTokensCheckbox, $LootToTBagsCheckbox, $LootFestiveItemsCheckbox, $LootAlcoholsCheckbox, $LootSweetsCheckbox
+Global $GUI_Group_ConsumablesLootOption, $GUI_Checkbox_LootCandyCaneShards, $GUI_Checkbox_LootLunarTokens, $GUI_Checkbox_LootToTBags, $GUI_Checkbox_LootFestiveItems, $GUI_Checkbox_LootAlcohols, $GUI_Checkbox_LootSweets
 
-Global $CharacterBuildLabel, $HeroBuildLabel
-Global $GUITODO
+Global $GUI_Label_CharacterBuild, $GUI_Label_HeroBuild, $GUI_Label_FarmInformations
+Global $GUI_Label_ToDoList
 
 ;------------------------------------------------------
 ; Title...........:	_guiCreate
 ; Description.....:	Create the main GUI
 ;------------------------------------------------------
 Func createGUI()
-	$GWBotHubGui = GUICreate('GW Bot Hub', 600, 450, 851, 263)
-	GUISetBkColor($GUI_GREY_COLOR, $GWBotHubGui)
+	$GUI_GWBotHub = GUICreate('GW Bot Hub', 600, 450, 851, 263)
+	GUISetBkColor($GUI_GREY_COLOR, $GUI_GWBotHub)
 
-	$CharacterChoiceCombo = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
-	$FarmChoiceCombo = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
-	GUICtrlSetData($FarmChoiceCombo, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
-	$StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
-	GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
-	GUICtrlSetOnEvent($StartButton, 'GuiButtonHandler')
+	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
+	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
+	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	$GUI_StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
+	GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+	GUICtrlSetOnEvent($GUI_StartButton, 'GuiButtonHandler')
 	GUISetOnEvent($GUI_EVENT_CLOSE, 'GuiButtonHandler')
-	$FarmProgress = GUICtrlCreateProgress(445, 420, 141, 21)
-	
-	$TabsParent = GUICtrlCreateTab(10, 10, 581, 401)
-	
-	$MainTab = GUICtrlCreateTabItem('Main')
-	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
-	$ConsoleEdit = _GUICtrlRichEdit_Create($GWBotHubGui, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
-	_GUICtrlRichEdit_SetCharColor($ConsoleEdit, $GUI_LIGHT_GREY_COLOR)
-	_GUICtrlRichEdit_SetBkColor($ConsoleEdit, 0)
+	$GUI_FarmProgress = GUICtrlCreateProgress(445, 420, 141, 21)
 
-	$RunInfosGroup = GUICtrlCreateGroup('Infos', 21, 39, 271, 176)
-	$RunsLabel = GUICtrlCreateLabel('Runs: 0', 31, 64, 246, 16)
-	$FailuresLabel = GUICtrlCreateLabel('Failures: 0', 31, 84, 246, 16)
-	$TimeLabel = GUICtrlCreateLabel('Time: 0', 31, 104, 246, 16)
-	$TimePerRunLabel = GUICtrlCreateLabel('Time per run: 0', 31, 124, 246, 16)
-	$GoldLabel = GUICtrlCreateLabel('Gold: 0', 31, 144, 246, 16)
-	$GoldItemsLabel = GUICtrlCreateLabel('Gold Items: 0', 31, 164, 246, 16)
-	$ExperienceLabel = GUICtrlCreateLabel('Experience: 0', 31, 184, 246, 16)
+	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 581, 401)
+	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
+	GUICtrlSetOnEvent($GUI_Tabs_Parent, "TabEventManager")
+
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
+	_GUICtrlRichEdit_SetCharColor($GUI_Console, $GUI_LIGHT_GREY_COLOR)
+	_GUICtrlRichEdit_SetBkColor($GUI_Console, 0)
+
+	$GUI_Group_RunInfos = GUICtrlCreateGroup('Infos', 21, 39, 271, 176)
+	$GUI_Label_Runs = GUICtrlCreateLabel('Runs: 0', 31, 64, 246, 16)
+	$GUI_Label_Failures = GUICtrlCreateLabel('Failures: 0', 31, 84, 246, 16)
+	$GUI_Label_Time = GUICtrlCreateLabel('Time: 0', 31, 104, 246, 16)
+	$GUI_Label_TimePerRun = GUICtrlCreateLabel('Time per run: 0', 31, 124, 246, 16)
+	$GUI_Label_Gold = GUICtrlCreateLabel('Gold: 0', 31, 144, 246, 16)
+	$GUI_Label_GoldItems = GUICtrlCreateLabel('Gold Items: 0', 31, 164, 246, 16)
+	$GUI_Label_Experience = GUICtrlCreateLabel('Experience: 0', 31, 184, 246, 16)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$ItemsLootedGroup = GUICtrlCreateGroup('Items', 306, 39, 271, 241)
-	$GlacialStonesLabel = GUICtrlCreateLabel('Glacial Stones: 0', 316, 64, 246, 16)
-	$ChunkOfDrakeFleshLabel = GUICtrlCreateLabel('Chunk Of Drake Flesh: 0', 316, 84, 246, 16)
-	$SkaleFinsLabel = GUICtrlCreateLabel('Skale Fins: 0', 316, 104, 246, 16)
-	$WintersdayGiftsLabel = GUICtrlCreateLabel('Wintersday Gifts: 0', 316, 124, 246, 16)
-	$DiessaChalicesLabel = GUICtrlCreateLabel('Diessa Chalices: 0', 316, 144, 246, 16)
-	$RinRelicsLabel = GUICtrlCreateLabel('Rin Relics: 0', 316, 164, 246, 16)
-	$MargoniteGemstoneLabel = GUICtrlCreateLabel('Margonite Gemstone: 0', 316, 184, 246, 16)
-	$StygianGemstoneLabel = GUICtrlCreateLabel('Stygian Gemstone: 0', 315, 205, 246, 16)
-	$TitanGemstoneLabel = GUICtrlCreateLabel('Titan Gemstone: 0', 314, 229, 246, 16)
-	$TormentGemstoneLabel = GUICtrlCreateLabel('Torment Gemstone: 0', 315, 250, 246, 16)
+	$GUI_Group_ItemsLooted = GUICtrlCreateGroup('Items', 306, 39, 271, 241)
+	$GUI_Label_GlacialStones = GUICtrlCreateLabel('Glacial Stones: 0', 316, 64, 246, 16)
+	$GUI_Label_ChunkOfDrakeFlesh = GUICtrlCreateLabel('Chunk Of Drake Flesh: 0', 316, 84, 246, 16)
+	$GUI_Label_SkaleFins = GUICtrlCreateLabel('Skale Fins: 0', 316, 104, 246, 16)
+	$GUI_Label_WintersdayGifts = GUICtrlCreateLabel('Wintersday Gifts: 0', 316, 124, 246, 16)
+	$GUI_Label_DiessaChalices = GUICtrlCreateLabel('Diessa Chalices: 0', 316, 144, 246, 16)
+	$GUI_Label_RinRelics = GUICtrlCreateLabel('Rin Relics: 0', 316, 164, 246, 16)
+	$GUI_Label_MargoniteGemstone = GUICtrlCreateLabel('Margonite Gemstone: 0', 316, 184, 246, 16)
+	$GUI_Label_StygianGemstone = GUICtrlCreateLabel('Stygian Gemstone: 0', 315, 205, 246, 16)
+	$GUI_Label_TitanGemstone = GUICtrlCreateLabel('Titan Gemstone: 0', 314, 229, 246, 16)
+	$GUI_Label_TormentGemstone = GUICtrlCreateLabel('Torment Gemstone: 0', 315, 250, 246, 16)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$TitlesGroup = GUICtrlCreateGroup('Titles', 306, 289, 271, 111)
-	$AsuraTitleLabel = GUICtrlCreateLabel('Asura: 0', 316, 314, 121, 16)
-	$DeldrimorTitleLabel = GUICtrlCreateLabel('Deldrimor: 0', 316, 334, 121, 16)
-	$NornTitleLabel = GUICtrlCreateLabel('Norn: 0', 316, 354, 121, 16)
-	$VanguardTitleLabel = GUICtrlCreateLabel('Vanguard: 0', 316, 374, 121, 16)
-	$KurzickTitleLabel = GUICtrlCreateLabel('Kurzick: 0', 446, 314, 116, 16)
-	$LuxonTitleLabel = GUICtrlCreateLabel('Luxon: 0', 446, 334, 116, 16)
-	$LightbringerTitleLabel = GUICtrlCreateLabel('Lightbringer: 0', 446, 354, 116, 16)
-	$SunspearTitleLabel = GUICtrlCreateLabel('Sunspear: 0', 446, 374, 116, 16)
+	$GUI_Group_Titles = GUICtrlCreateGroup('Titles', 306, 289, 271, 111)
+	$GUI_Label_AsuraTitle = GUICtrlCreateLabel('Asura: 0', 316, 314, 121, 16)
+	$GUI_Label_DeldrimorTitle = GUICtrlCreateLabel('Deldrimor: 0', 316, 334, 121, 16)
+	$GUI_Label_NornTitle = GUICtrlCreateLabel('Norn: 0', 316, 354, 121, 16)
+	$GUI_Label_VanguardTitle = GUICtrlCreateLabel('Vanguard: 0', 316, 374, 121, 16)
+	$GUI_Label_KurzickTitle = GUICtrlCreateLabel('Kurzick: 0', 446, 314, 116, 16)
+	$GUI_Label_LuxonTitle = GUICtrlCreateLabel('Luxon: 0', 446, 334, 116, 16)
+	$GUI_Label_LightbringerTitle = GUICtrlCreateLabel('Lightbringer: 0', 446, 354, 116, 16)
+	$GUI_Label_SunspearTitle = GUICtrlCreateLabel('Sunspear: 0', 446, 374, 116, 16)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$RunOptionsTab = GUICtrlCreateTabItem('Run options')
-	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
+	$GUI_Tab_RunOptions = GUICtrlCreateTabItem('Run options')
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 
-	$GlobalOptionsGroup = GUICtrlCreateGroup('Options', 21, 39, 271, 361)
-	$LoopRunsCheckbox = GUICtrlCreateCheckbox('Loop Runs', 31, 64, 156, 20)
-	$HMCheckbox = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
-	$StoreUnidentifiedGoldItemsCheckbox = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
-	$IdentifyGoldItemsCheckbox = GUICtrlCreateCheckbox('Identify Gold Items', 31, 154, 156, 20)
-	$SalvageItemsCheckbox = GUICtrlCreateCheckbox('Salvage items', 31, 184, 156, 20)
-	$SellItemsCheckbox = GUICtrlCreateCheckbox('Sell Items', 31, 214, 156, 20)
-	
-	$DynamicExecutionInput = GUICtrlCreateInput('', 31, 364, 156, 20)
-	$DynamicExecutionButton = GUICtrlCreateButton('Run', 205, 364, 75, 20)
-	GUICtrlSetBkColor($DynamicExecutionButton, $GUI_BLUE_COLOR)
-	GUICtrlSetOnEvent($DynamicExecutionButton, 'GuiButtonHandler')
+	$GUI_Group_GlobalOptions = GUICtrlCreateGroup('Options', 21, 39, 271, 361)
+	$GUI_Checkbox_LoopRuns = GUICtrlCreateCheckbox('Loop Runs', 31, 64, 156, 20)
+	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
+	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
+	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 154, 156, 20)
+	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 184, 156, 20)
+	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 214, 156, 20)
+
+	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 31, 364, 156, 20)
+	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 205, 364, 75, 20)
+	GUICtrlSetBkColor($GUI_Button_DynamicExecution, $GUI_BLUE_COLOR)
+	GUICtrlSetOnEvent($GUI_Button_DynamicExecution, 'GuiButtonHandler')
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$ConsumableOptionsGroup = GUICtrlCreateGroup('Consumables to consume', 305, 40, 271, 361)
-	$ConsumeCupcakeCheckbox = GUICtrlCreateCheckbox('Cupcake', 315, 65, 156, 20)
-	$ConsumeCandyAppleCheckbox = GUICtrlCreateCheckbox('Candy Apple', 315, 95, 156, 20)
-	$ConsumePumpkingPieSliceCheckbox = GUICtrlCreateCheckbox('Pumpking Pie Slice', 315, 125, 156, 20)
-	$ConsumeGoldenEggCheckbox = GUICtrlCreateCheckbox('Golden Egg', 315, 155, 156, 20)
-	$ConsumeCandyCornCheckbox = GUICtrlCreateCheckbox('Candy Corn', 315, 185, 156, 20)
+	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('Consumables to consume', 305, 40, 271, 361)
+	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 156, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$LootOptionsTab = GUICtrlCreateTabItem('Loot options')
-	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
+	$GUI_Tab_LootOptions = GUICtrlCreateTabItem('Loot options')
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 
-	$BaseLootOptionsGroup = GUICtrlCreateGroup('Base Loot', 21, 39, 271, 176)
-	$LootEverythingCheckbox = GUICtrlCreateCheckbox('Loot everything', 31, 64, 96, 20)
-	$LootNothingCheckbox = GUICtrlCreateCheckbox('Loot nothing', 31, 94, 96, 20)
-	$LootRareMaterialsCheckbox = GUICtrlCreateCheckbox('Rare materials', 31, 124, 96, 20)
-	$LootBasicMaterialsCheckbox = GUICtrlCreateCheckbox('Basic materials', 30, 155, 96, 20)
-	$LootSalvageItemsCheckbox = GUICtrlCreateCheckbox('Salvage items', 151, 64, 111, 20)
-	$LootTomesCheckbox = GUICtrlCreateCheckbox('Tomes', 151, 94, 111, 20)
-	$LootKeysCheckbox = GUICtrlCreateCheckbox('Keys', 151, 154, 96, 20)
-	$LootDyesCheckbox = GUICtrlCreateCheckbox('Dyes (all)', 31, 184, 96, 20)
-	$LootScrollsCheckbox = GUICtrlCreateCheckbox('Scrolls', 151, 124, 111, 20)
+	$GUI_Group_BaseLootOptions = GUICtrlCreateGroup('Base Loot', 21, 39, 271, 176)
+	$GUI_Checkbox_LootEverything = GUICtrlCreateCheckbox('Loot everything', 31, 64, 96, 20)
+	$GUI_Checkbox_LootNothing = GUICtrlCreateCheckbox('Loot nothing', 31, 94, 96, 20)
+	$GUI_Checkbox_LootRareMaterials = GUICtrlCreateCheckbox('Rare materials', 31, 124, 96, 20)
+	$GUI_Checkbox_LootBasicMaterials = GUICtrlCreateCheckbox('Basic materials', 30, 155, 96, 20)
+	$GUI_Checkbox_LootSalvageItems = GUICtrlCreateCheckbox('Salvage items', 151, 64, 111, 20)
+	$GUI_Checkbox_LootTomes = GUICtrlCreateCheckbox('Tomes', 151, 94, 111, 20)
+	$GUI_Checkbox_LootKeys = GUICtrlCreateCheckbox('Keys', 151, 154, 96, 20)
+	$GUI_Checkbox_LootDyes = GUICtrlCreateCheckbox('Dyes (all)', 31, 184, 96, 20)
+	$GUI_Checkbox_LootScrolls = GUICtrlCreateCheckbox('Scrolls', 151, 124, 111, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$RarityLootOptionsGroup = GUICtrlCreateGroup('Rarity Loot', 166, 224, 126, 176)
-	$LootWhiteItemsCheckbox = GUICtrlCreateCheckbox('White items', 176, 249, 106, 20)
-	$LootBlueItemsCheckbox = GUICtrlCreateCheckbox('Blue items', 176, 279, 106, 20)
-	$LootPurpleItemsCheckbox = GUICtrlCreateCheckbox('Purple items', 176, 309, 106, 20)
-	$LootGoldItemsCheckbox = GUICtrlCreateCheckbox('Gold items', 176, 339, 106, 20)
-	$LootGreenItemsCheckbox = GUICtrlCreateCheckbox('Green items', 176, 369, 106, 20)
+	$GUI_Group_RarityLootOptions = GUICtrlCreateGroup('Rarity Loot', 166, 224, 126, 176)
+	$GUI_Checkbox_LootWhiteItems = GUICtrlCreateCheckbox('White items', 176, 249, 106, 20)
+	$GUI_Checkbox_LootBlueItems = GUICtrlCreateCheckbox('Blue items', 176, 279, 106, 20)
+	$GUI_Checkbox_LootPurpleItems = GUICtrlCreateCheckbox('Purple items', 176, 309, 106, 20)
+	$GUI_Checkbox_LootGoldItems = GUICtrlCreateCheckbox('Gold items', 176, 339, 106, 20)
+	$GUI_Checkbox_LootGreenItems = GUICtrlCreateCheckbox('Green items', 176, 369, 106, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$FarmSpecificLootOptionsGroup = GUICtrlCreateGroup('Farm Specific', 23, 224, 136, 176)
-	$LootGlacialStonesCheckbox = GUICtrlCreateCheckbox('Glacial Stones', 31, 249, 81, 20)
-	$LootMapPiecesCheckbox = GUICtrlCreateCheckbox('Map pieces', 31, 279, 81, 20)
-	$LootTrophiesCheckbox = GUICtrlCreateCheckbox('Trophies', 30, 310, 81, 20)
+	$GUI_Group_FarmSpecificLootOptions = GUICtrlCreateGroup('Farm Specific', 23, 224, 136, 176)
+	$GUI_Checkbox_LootGlacialStones = GUICtrlCreateCheckbox('Glacial Stones', 31, 249, 81, 20)
+	$GUI_Checkbox_LootMapPieces = GUICtrlCreateCheckbox('Map pieces', 31, 279, 81, 20)
+	$GUI_Checkbox_LootTrophies = GUICtrlCreateCheckbox('Trophies', 30, 310, 81, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$ConsumablesLootOptionGroup = GUICtrlCreateGroup('Consumables loot', 306, 39, 271, 361)
-	$LootSweetsCheckbox = GUICtrlCreateCheckbox('Sweets', 316, 64, 121, 20)
-	$LootAlcoholsCheckbox = GUICtrlCreateCheckbox('Alcohols', 446, 64, 121, 20)
-	$LootFestiveItemsCheckbox = GUICtrlCreateCheckbox('Festive Items', 316, 94, 121, 20)
-	$LootToTBagsCheckbox = GUICtrlCreateCheckbox('ToT Bags', 316, 124, 121, 20)
-	$LootLunarTokensCheckbox = GUICtrlCreateCheckbox('Lunar Tokens', 446, 124, 121, 20)
-	$LootCandyCaneShardsCheckbox = GUICtrlCreateCheckbox('Candy Cane Shards', 446, 94, 121, 20)
+	$GUI_Group_ConsumablesLootOption = GUICtrlCreateGroup('Consumables loot', 306, 39, 271, 361)
+	$GUI_Checkbox_LootSweets = GUICtrlCreateCheckbox('Sweets', 316, 64, 121, 20)
+	$GUI_Checkbox_LootAlcohols = GUICtrlCreateCheckbox('Alcohols', 446, 64, 121, 20)
+	$GUI_Checkbox_LootFestiveItems = GUICtrlCreateCheckbox('Festive Items', 316, 94, 121, 20)
+	$GUI_Checkbox_LootToTBags = GUICtrlCreateCheckbox('ToT Bags', 316, 124, 121, 20)
+	$GUI_Checkbox_LootLunarTokens = GUICtrlCreateCheckbox('Lunar Tokens', 446, 124, 121, 20)
+	$GUI_Checkbox_LootCandyCaneShards = GUICtrlCreateCheckbox('Candy Cane Shards', 446, 94, 121, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$FarmInfosTab = GUICtrlCreateTabItem('Farm infos')
-	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
-	$CharacterBuildLabel = GUICtrlCreateLabel('Character build:', 30, 55, 531, 26)
-	$HeroBuildLabel = GUICtrlCreateLabel('Hero build:', 30, 95, 531, 26)
-	$LootComponentsTab = GUICtrlCreateTabItem('Loot components')
-	_GUICtrlTab_SetBkColor($GWBotHubGui, $TabsParent, $GUI_GREY_COLOR)
-	$GUITODO = GUICtrlCreateLabel('GUI TODO :' & @CRLF _
+	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm infos')
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	$GUI_Label_CharacterBuild = GUICtrlCreateLabel('Character build:', 30, 55, 531, 26)
+	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 531, 26)
+	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
+	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	$GUI_Label_ToDoList = GUICtrlCreateLabel('GUI TODO :' & @CRLF _
 		& '- add option to choose between random travel and specific travel' & @CRLF _
 		& '- add option for running bot once, bot X times, bot until inventory full, or bot loop' & @CRLF _
 		& '- write small bot that salvage items (does not work for now), get material ID, write in file salvaged material' & @CRLF _
@@ -247,86 +243,93 @@ Func createGUI()
 		& '- change system so that the checkbox are not read by other bots' & @CRLF _
 	, 30, 95, 531, 26)
 	GUICtrlCreateTabItem('')
-	
-	GUICtrlSetState($HMCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($StoreUnidentifiedGoldItemsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LoopRunsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($ConsumeCupcakeCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($ConsumeGoldenEggCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($ConsumeCandyCornCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootRareMaterialsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootBasicMaterialsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootKeysCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootSalvageItemsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootTomesCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootScrollsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootGoldItemsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootGreenItemsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootGlacialStonesCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootSweetsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootAlcoholsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootFestiveItemsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootToTBagsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootLunarTokensCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootCandyCaneShardsCheckbox, $GUI_CHECKED)
-	GUICtrlSetState($LootTrophiesCheckbox, $GUI_CHECKED)
+
+	GUICtrlSetState($GUI_Checkbox_HM, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LoopRuns, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_UseConsumables, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootRareMaterials, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootBasicMaterials, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootKeys, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootSalvageItems, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootTomes, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootScrolls, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootGoldItems, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootGreenItems, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootGlacialStones, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootSweets, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootAlcohols, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootFestiveItems, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootToTBags, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootLunarTokens, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootCandyCaneShards, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootTrophies, $GUI_CHECKED)
 EndFunc
 
 Func _GUICtrlTab_SetBkColor($gui, $parentTab, $color)
-    Local $aTabPos = ControlGetPos($gui, '', $parentTab)
-    Local $aTab_Rect = _GUICtrlTab_GetItemRect($parentTab, -1)
+	Local $aTabPos = ControlGetPos($gui, '', $parentTab)
+	Local $aTab_Rect = _GUICtrlTab_GetItemRect($parentTab, -1)
 
-    GUICtrlCreateLabel('', $aTabPos[0]+2, $aTabPos[1]+$aTab_Rect[3]+4, $aTabPos[2]-6, $aTabPos[3]-$aTab_Rect[3]-7)
-    GUICtrlSetBkColor(-1, $color)
-    GUICtrlSetState(-1, $GUI_DISABLE)
+	GUICtrlCreateLabel('', $aTabPos[0]+2, $aTabPos[1]+$aTab_Rect[3]+4, $aTabPos[2]-6, $aTabPos[3]-$aTab_Rect[3]-7)
+	GUICtrlSetBkColor(-1, $color)
+	GUICtrlSetState(-1, $GUI_DISABLE)
 EndFunc
 
 ;~ Handle start button usage
 Func GuiButtonHandler()
-    Switch @GUI_CtrlId
-        Case $StartButton
+	Switch @GUI_CtrlId
+		Case $GUI_StartButton
 			If $STATUS == 'STOPPED' Then
 				Out('Initializing...')
 				If (Authentification() <> 0) Then Return
 				$STATUS = 'INITIALIZED'
-				
+
 				Out('Starting...')
 				$STATUS = 'RUNNING'
-				GUICtrlSetData($StartButton, 'Pause')
-				GUICtrlSetBkColor($StartButton, $GUI_RED_COLOR)
+				GUICtrlSetData($GUI_StartButton, 'Pause')
+				GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
 			ElseIf $STATUS == 'INITIALIZED' Then
 				Out('Starting...')
 				$STATUS = 'RUNNING'
 			ElseIf $STATUS == 'RUNNING' Then
 				Out('Pausing...')
-				GUICtrlSetData($StartButton, 'Will pause after this run')
-				GUICtrlSetState($StartButton, $GUI_Disable)
-				GUICtrlSetBkColor($StartButton, $GUI_YELLOW_COLOR)
+				GUICtrlSetData($GUI_StartButton, 'Will pause after this run')
+				GUICtrlSetState($GUI_StartButton, $GUI_Disable)
+				GUICtrlSetBkColor($GUI_StartButton, $GUI_YELLOW_COLOR)
 				$STATUS = 'WILL_PAUSE'
 			ElseIf $STATUS == 'WILL_PAUSE' Then
 				MsgBox(0, 'Error', 'You should not be able to press Pause when bot it already pausing.')
 			ElseIf $STATUS == 'PAUSED' Then
 				Out('Restarting...')
-				GUICtrlSetData($StartButton, 'Pause')
-				GUICtrlSetBkColor($StartButton, $GUI_RED_COLOR)
+				GUICtrlSetData($GUI_StartButton, 'Pause')
+				GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
 				$STATUS = 'RUNNING'
 			Else
 				MsgBox(0, 'Error', 'Unknown status '' & $STATUS & ''')
 			EndIf
-		Case $DynamicExecutionButton
-			DynamicExecution(GUICtrlRead($DynamicExecutionInput))
+		Case $GUI_Button_DynamicExecution
+			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_EVENT_CLOSE
-            Exit
+			Exit
 		Case else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
-    EndSwitch
+	EndSwitch
+EndFunc
+
+Func TabEventManager()
+	Switch GUICtrlRead($GUI_Tabs_Parent)
+		Case 0
+			ControlShow($GUI_GWBotHub, '', $GUI_Console)
+		Case else
+			ControlHide($GUI_GWBotHub, '', $GUI_Console)
+	EndSwitch
 EndFunc
 
 ;~ Print to console with timestamp
 Func Out($TEXT, $color = $GUI_LIGHT_GREY_COLOR)
-	_GUICtrlRichEdit_SetCharColor($ConsoleEdit, $color)
-	_GUICtrlRichEdit_AppendText($ConsoleEdit, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
-    UpdateLock()
+	_GUICtrlRichEdit_SetCharColor($GUI_Console, $color)
+	_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
+	UpdateLock()
 EndFunc
 
 #EndRegion GUI
@@ -349,8 +352,8 @@ Func main()
 			exit
 		EndIf
 		If 2 > UBound($CmdLine)-1 Then exit
-	
-		$CHARACTER_NAME  = $CmdLine[1]
+
+		$CHARACTER_NAME = $CmdLine[1]
 		$PROCESS_ID = $CmdLine[2]
 		LOGIN($CHARACTER_NAME, $PROCESS_ID)
 		$STATUS = 'INITIALIZED'
@@ -358,11 +361,11 @@ Func main()
 		Local $loggedCharNames = ScanGW()
 		If ($loggedCharNames[0] > 0) Then
 			Local $comboChoices = '|' & _ArrayToString($loggedCharNames, '|', 1)
-			GUICtrlSetData($CharacterChoiceCombo, $comboChoices, $loggedCharNames[1])
+			GUICtrlSetData($GUI_Combo_CharacterChoice, $comboChoices, $loggedCharNames[1])
 		EndIf
 	Else
-		GUICtrlDelete($CharacterChoiceCombo)
-		$CharacterChoiceCombo = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
+		GUICtrlDelete($GUI_Combo_CharacterChoice)
+		$GUI_Combo_CharacterChoice = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
 	EndIf
 
 	BotHubLoop()
@@ -370,103 +373,177 @@ EndFunc
 
 ;~ Main loop of the program
 Func BotHubLoop()
-	Local $STATS_MAP = CreateStatisticsMap()
-
 	While True
 		Sleep(1000)
 
 		If ($STATUS == 'RUNNING') Then
-			Local $Farm = GUICtrlRead($FarmChoiceCombo)
+			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			Local $timer = TimerInit()
-			$STATS_MAP['success_code'] = -1
-			FillStats($STATS_MAP)
+			UpdateFarmDescription($Farm)
+			Local $success = RunFarmLoop($Farm)
+			UpdateStats($success, $timer)
 
-			Switch $Farm
-				Case 'Choose a farm'
-					MsgBox(0, 'Error', 'No farm chosen.')
-					$STATUS = 'INITIALIZED'
-					GUICtrlSetData($StartButton, 'Start')
-					GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
-				Case 'Corsairs'
-					$STATS_MAP['success_code'] = CorsairsFarm($STATUS)
-				Case 'Dragon Moss'
-					$STATS_MAP['success_code'] = DragonMossFarm($STATUS)
-				Case 'Eden Iris'
-					$STATS_MAP['success_code'] = EdenIrisFarm($STATUS)
-				Case 'Follow'
-					$STATS_MAP['success_code'] = FollowerFarm($STATUS)
-				Case 'Jade Brotherhood'
-					$STATS_MAP['success_code'] = JadeBrotherhoodFarm($STATUS)
-				Case 'Kournans'
-					$STATS_MAP['success_code'] = KournansFarm($STATUS)
-				Case 'Kurzick'
-					$STATS_MAP['success_code'] = KurzickFactionFarm($STATUS)
-				Case 'Lightbringer'
-					$STATS_MAP['success_code'] = LightbringerFarm($STATUS)
-				Case 'Luxon'
-					$STATS_MAP['success_code'] = LuxonFactionFarm($STATUS)
-				Case 'Mantids'
-					$STATS_MAP['success_code'] = MantidsFarm($STATUS)
-				Case 'Ministerial Commendations'
-					$STATS_MAP['success_code'] = MinisterialCommendationsFarm($STATUS)
-				Case 'OmniFarm'
-					$STATS_MAP['success_code'] = OmniFarm($STATUS)
-				Case 'Raptors'
-					$STATS_MAP['success_code'] = RaptorFarm($STATUS)
-				Case 'SpiritSlaves'
-					$STATS_MAP['success_code'] = SpiritSlavesFarm($STATUS)
-				Case 'Vaettirs'
-					$STATS_MAP['success_code'] = VaettirFarm($STATUS)
-				Case 'Storage'
-					$STATS_MAP['success_code'] = ManageInventory($STATUS)
-					$STATUS = 'WILL_PAUSE'
-				Case 'Dynamic'
-					Out('Dynamic execution')
-					$STATUS = 'WILL_PAUSE'
-				Case 'Tests'
-					$STATS_MAP['success_code'] = RunTests($STATUS)
-				Case else
-					MsgBox(0, 'Error', 'This farm does not exist.')
-			EndSwitch
-			FillStats($STATS_MAP, TimerDiff($timer))
-			UpdateStats($STATS_MAP)
-			
-			If ($STATS_MAP['success_code'] == 2) Then $STATUS = 'WILL_PAUSE'
-			If (((CountSlots() < 5) AND (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED))) Then
-				Out('Inventory full, pausing.', $CONSOLE_RED_COLOR)
+			If ($success == 2) Then $STATUS = 'WILL_PAUSE'
+			If (GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then $STATUS = 'WILL_PAUSE'
+			If (CountSlots() < 5) Then
+				Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
 				$STATUS = 'WILL_PAUSE'
 			EndIf
 		Else
 			If Random(1, 10, 1) = 1 Then UpdateLock()
 		EndIf
-		
+
 		If ($STATUS == 'WILL_PAUSE') Then
-			Out('Paused.', $CONSOLE_BLUE_COLOR)
+			Out('Paused.', $GUI_CONSOLE_BLUE_COLOR)
 			$STATUS = 'PAUSED'
-			GUICtrlSetData($StartButton, 'Start')
-			GUICtrlSetState($FarmChoiceCombo, $GUI_Enable)
-			GUICtrlSetState($StartButton, $GUI_Enable)
-			GUICtrlSetBkColor($StartButton, $GUI_BLUE_COLOR)
+			GUICtrlSetData($GUI_StartButton, 'Start')
+			GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Enable)
+			GUICtrlSetState($GUI_StartButton, $GUI_Enable)
+			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
 		EndIf
 	WEnd
 EndFunc
 
+
+Func RunFarmLoop($Farm)
+	UpdateStats(-1, null)
+	Switch $Farm
+		Case 'Choose a farm'
+			MsgBox(0, 'Error', 'No farm chosen.')
+			$STATUS = 'INITIALIZED'
+			GUICtrlSetData($GUI_StartButton, 'Start')
+			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+		Case 'Corsairs'
+			Return CorsairsFarm($STATUS)
+		Case 'Dragon Moss'
+			Return DragonMossFarm($STATUS)
+		Case 'Eden Iris'
+			Return EdenIrisFarm($STATUS)
+		Case 'Follow'
+			Return FollowerFarm($STATUS)
+		Case 'Jade Brotherhood'
+			Return JadeBrotherhoodFarm($STATUS)
+		Case 'Kournans'
+			Return KournansFarm($STATUS)
+		Case 'Kurzick'
+			Return KurzickFactionFarm($STATUS)
+		Case 'Lightbringer'
+			Return LightbringerFarm($STATUS)
+		Case 'Luxon'
+			Return LuxonFactionFarm($STATUS)
+		Case 'Mantids'
+			Return MantidsFarm($STATUS)
+		Case 'Ministerial Commendations'
+			Return MinisterialCommendationsFarm($STATUS)
+		Case 'OmniFarm'
+			Return OmniFarm($STATUS)
+		Case 'Raptors'
+			Return RaptorFarm($STATUS)
+		Case 'SpiritSlaves'
+			Return SpiritSlavesFarm($STATUS)
+		Case 'Vaettirs'
+			Return VaettirFarm($STATUS)
+		Case 'Storage'
+			Return ManageInventory($STATUS)
+		Case 'Dynamic'
+			Out('Dynamic execution')
+		Case 'Tests'
+			RunTests($STATUS)
+		Case else
+			MsgBox(0, 'Error', 'This farm does not exist.')
+	EndSwitch
+	Return 2
+EndFunc
+
+
+Func UpdateFarmDescription($Farm)
+	Switch $Farm
+		Case 'Corsairs'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CorsairsFarmInformations)
+		Case 'Dragon Moss'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RADragonMossFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $DragonMossFarmInformations)
+		Case 'Eden Iris'
+			GUICtrlSetData($GUI_Label_CharacterBuild, '')
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $EdenIrisFarmInformations)
+		Case 'Follow'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $FollowerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $FollowerInformations)
+		Case 'Jade Brotherhood'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $JB_Skillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, 'Hero build:' & @CRLF & $JB_Hero_Skillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $JB_FarmInformations)
+		Case 'Kournans'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CorsairsFarmInformations)
+		Case 'Kurzick'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $KurzickFactionSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $KurzickFactionInformations)
+		Case 'Lightbringer'
+			GUICtrlSetData($GUI_Label_CharacterBuild, '')
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $LightbringerFarmInformations)
+		Case 'Luxon'
+			GUICtrlSetData($GUI_Label_CharacterBuild, '')
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $LuxonFactionInformations)
+		Case 'Mantids'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RAMantidsFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, 'Hero build:' & @CRLF & $MantidsHeroSkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $MantidsFarmInformations)
+		Case 'Ministerial Commendations'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $DWCommendationsFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CommendationsFarmInformations)
+		Case 'OmniFarm'
+			GUICtrlSetData($GUI_Label_CharacterBuild, '')
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, '')
+		Case 'Raptors'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $WNRaptorFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, 'Hero build:' & @CRLF & $PRunnerHeroSkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $RaptorsFarmInformations)
+		Case 'SpiritSlaves'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $SpiritSlaves_Skillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $SpiritSlavesFarmInformations)
+		Case 'Vaettirs'
+			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $AMeVaettirsFarmerSkillbar)
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $VaettirsFarmInformations)
+		Case 'Storage'
+			GUICtrlSetData($GUI_Label_CharacterBuild, '')
+			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, '')
+		Case else
+
+	EndSwitch
+EndFunc
+
+
 #Region Authentification and Login
 ;~ Initialize connection to GW with the character name or process id given
 Func Authentification()
-    Local $CharacterName = GUICtrlRead($CharacterChoiceCombo)
+	Local $CharacterName = GUICtrlRead($GUI_Combo_CharacterChoice)
 	If ($CharacterName == '') Then
 		MsgBox(0, 'Error', 'No character name given.')
 		Return 1
 	ElseIf($CharacterName == 'No character selected') Then
 		Out('Running without authentification.')
-    ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
-        $proc_id_int = Number($PROCESS_ID, 2)
-        Out('Running via pid ' & $proc_id_int)
-        If Initialize($proc_id_int, True, True, False) = 0 Then
-            MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat "' & $proc_id_int & '"  ' & VarGetType($proc_id_int) & '')
-            Return 1
-        EndIf
+	ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
+		$proc_id_int = Number($PROCESS_ID, 2)
+		Out('Running via pid ' & $proc_id_int)
+		If Initialize($proc_id_int, True, True, False) = 0 Then
+			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat "' & $proc_id_int & '" ' & VarGetType($proc_id_int) & '')
+			Return 1
+		EndIf
 	Else
 		If Initialize($CharacterName, True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a GW client with a character named "' & $CharacterName & '"')
@@ -474,21 +551,21 @@ Func Authentification()
 		EndIf
 	EndIf
 	EnsureEnglish(True)
-	GUICtrlSetState($CharacterChoiceCombo, $GUI_Disable)
-	GUICtrlSetState($FarmChoiceCombo, $GUI_Disable)
-	WinSetTitle($GWBotHubGui, '', 'GW Bot Hub - ' & GetCharname())
+	GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Disable)
+	GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Disable)
+	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & GetCharname())
 	Return 0
 EndFunc
 
 ;~ Lock an account for multiboxing
 Func UpdateLock()
-    Local $cn = GetCharname()
-    If $cn Then
-        Local $sFileName   = @ScriptDir & '\lock\' & $cn & '.lock'
-        Local $hFilehandle = FileOpen($sFileName, $FO_OVERWRITE)
-        FileWrite($hFilehandle,  @HOUR & ':' & @MIN)
-        FileClose($hFilehandle)
-    EndIf
+	Local $characterName = GetCharname()
+	If $characterName Then
+		Local $fileName = @ScriptDir & '\lock\' & $characterName & '.lock'
+		Local $fileHandle = FileOpen($fileName, $FO_OVERWRITE)
+		FileWrite($fileHandle, @HOUR & ':' & @MIN)
+		FileClose($fileHandle)
+	EndIf
 EndFunc
 
 ; Function to login from cmd, not tested
@@ -520,7 +597,7 @@ Func LOGIN($char_name = 'fail', $ProcessID = False)
 		Exit
 	EndIf
 
-	Local $lCheck    = False
+	Local $lCheck = False
 	Local $lDeadLock = Timerinit()
 
 	ControlSend($WinHandle, '', '', '{enter}')
@@ -572,86 +649,68 @@ EndFunc
 
 
 #Region Statistics management
-;~ Create a map for information/statistics sharing between programs
-Func CreateStatisticsMap()
-	Local Const $Array_Statistics[16][2] = [['success_code', -1], ['runs', 0], ['failures', 0], ['run_time', 0], ['gold_earned', 0], ['gold_items_obtained', 0], ['experience_earned', 0], _
-		['asura_title_points_earned', 0], ['deldrimor_title_points_earned', 0], ['norn_title_points_earned', 0], ['vanguard_title_points_earned', 0], _
-		['kurzick_title_points_earned', 0], ['luxon_title_points_earned', 0], ['lightbringer_title_points_earned', 0], ['sunspear_title_points_earned', 0]]
-	Local $STATS_MAP = MapFromDoubleArray($Array_Statistics)
-	Return $STATS_MAP
-EndFunc
-
-
 ;~ Fill statistics
-Func FillStats(ByRef $STATS_MAP, $time = 0)
-	Local Static $FirstGoldCount = GetGoldCharacter()
-	Local Static $FirstExperienceCount = GetExperience()
-	Local Static $FirstAsuraTitlePoints = GetAsuraTitle()
-	Local Static $FirstNornTitlePoints = GetNornTitle()
-	Local Static $FirstLightbringerTitlePoints = GetLightbringerTitle()
-	Local Static $FirstSunspearTitlePoints = GetSunspearTitle()
-	Local Static $FirstKurzickTitlePoints = GetKurzickTitle()
-	Local Static $FirstLuxonTitlePoints = GetLuxonTitle()
-	
-	;Local Static $ChunkOfDrakeFleshCount = 0
-	;Local Static $SkaleFinsCount = 0
-	;Local Static $GlacialStonesCount = 0
-	;Local Static $DiessaChalicesCount = 0
-	;Local Static $RinRelicsCount = 0
-	;Local Static $WintersdayGiftsCount = 0
-	;Local Static $MargoniteGemstoneCount = 0
-	;Local Static $TitanGemstoneCount = 0
-	;Local Static $TormentGemstoneCount = 0
-	
-	Local $successCode = $STATS_MAP['success_code']
-	;Either bot did not run yet or ran but was paused
-	If $successCode == -1 Then Return
+Func UpdateStats($success, $timer)
+	Local Static $runs = 0
+	Local Static $failures = 0
+	Local Static $time = 0
 
-	$STATS_MAP['runs'] += 1
-	if ($successCode == 1) Then $STATS_MAP['failures'] += 1
-	$STATS_MAP['run_time'] += $time
-	$STATS_MAP['gold_earned'] = GetGoldCharacter() - $FirstGoldCount
-	$STATS_MAP['experience_earned'] = GetExperience() - $FirstExperienceCount
-	$STATS_MAP['norn_title_points_earned'] = GetNornTitle() - $FirstNornTitlePoints
-	$STATS_MAP['asura_title_points_earned'] = GetAsuraTitle() - $FirstAsuraTitlePoints
-	$STATS_MAP['lightbringer_title_points_earned'] = GetLightbringerTitle() - $FirstLightbringerTitlePoints
-	$STATS_MAP['sunspear_title_points_earned'] = GetSunspearTitle() - $FirstSunspearTitlePoints
-	$STATS_MAP['kurzick_title_points_earned'] = GetKurzickTitle() - $FirstKurzickTitlePoints
-	$STATS_MAP['luxon_title_points_earned'] = GetLuxonTitle() - $FirstLuxonTitlePoints
+	Local Static $GoldCount = GetGoldCharacter()
+	Local Static $ExperienceCount = GetExperience()
+
+	Local Static $AsuraTitlePoints = GetAsuraTitle()
+	Local Static $DeldrimorTitlePoints = GetDeldrimorTitle()
+	Local Static $NornTitlePoints = GetNornTitle()
+	Local Static $VanguardTitlePoints = GetVanguardTitle()
+	Local Static $LightbringerTitlePoints = GetLightbringerTitle()
+	Local Static $SunspearTitlePoints = GetSunspearTitle()
+	Local Static $KurzickTitlePoints = GetKurzickTitle()
+	Local Static $LuxonTitlePoints = GetLuxonTitle()
+	Local Static $GoldItemsCount = CountGoldItems()
+
+	;Either bot did not run yet or ran but was paused
+	If $success == 0 Then
+		$runs += 1
+		$time += TimerDiff($timer)
+	ElseIf $success == 1 Then
+		$failures += 1
+		$runs += 1
+		$time += TimerDiff($timer)
+	EndIf
+
+	;Global stats
+	GUICtrlSetData($GUI_Label_Runs, 'Runs: ' & $runs)
+	GUICtrlSetData($GUI_Label_Failures, 'Failures: ' & $failures)
+	GUICtrlSetData($GUI_Label_Time, 'Time: ' & Floor($time/360000) & 'h' & Floor($time/60000) & 'min' & Floor(Mod($time, 60000)/1000) & 's')
+	Local $timePerRun = $runs == 0 ? 0 : $time / $runs
+	GUICtrlSetData($GUI_Label_TimePerRun, 'Time per run: ' & Floor($timePerRun/60000) & 'min' & Floor(Mod($timePerRun, 60000)/1000) & 's')
+	GUICtrlSetData($GUI_Label_Gold, 'Gold: ' & Floor((GetGoldCharacter() - $GoldCount)/1000) & 'k' & Mod((GetGoldCharacter() - $GoldCount), 1000) & 'g')
+	GUICtrlSetData($GUI_Label_GoldItems, 'Gold Items: ' & CountGoldItems() - $GoldItemsCount)
+	GUICtrlSetData($GUI_Label_Experience, 'Experience: ' & (GetExperience() - $ExperienceCount))
+
+	;Title stats
+	GUICtrlSetData($GUI_Label_AsuraTitle, 'Asura: ' & GetAsuraTitle() - $AsuraTitlePoints)
+	GUICtrlSetData($GUI_Label_DeldrimorTitle, 'Deldrimor: ' & GetDeldrimorTitle() - $DeldrimorTitlePoints)
+	GUICtrlSetData($GUI_Label_NornTitle, 'Norn: ' & GetNornTitle() - $NornTitlePoints)
+	GUICtrlSetData($GUI_Label_VanguardTitle, 'Vanguard: ' & GetVanguardTitle() - $VanguardTitlePoints)
+	GUICtrlSetData($GUI_Label_KurzickTitle, 'Kurzick: ' & GetKurzickTitle() - $KurzickTitlePoints)
+	GUICtrlSetData($GUI_Label_LuxonTitle, 'Luxon: ' & GetLuxonTitle() - $LuxonTitlePoints)
+	GUICtrlSetData($GUI_Label_LightbringerTitle, 'Lightbringer: ' & GetLightbringerTitle() - $LightbringerTitlePoints)
+	GUICtrlSetData($GUI_Label_SunspearTitle, 'Sunspear: ' & GetSunspearTitle() - $SunspearTitlePoints)
 EndFunc
 
 
-;~ Update statistics
-Func UpdateStats($STATS_MAP)
-	;Global stats
-	GUICtrlSetData($RunsLabel, 'Runs: ' & $STATS_MAP['runs'])
-	GUICtrlSetData($FailuresLabel, 'Failures: ' & $STATS_MAP['failures'])
-	GUICtrlSetData($TimeLabel, 'Time: ' & Round($STATS_MAP['run_time']/60000) & 'min' & Round(Mod($STATS_MAP['run_time'], 60000)/1000) & 's')
-	Local $timePerRun = $STATS_MAP['run_time'] / $STATS_MAP['runs']
-	GUICtrlSetData($TimePerRunLabel, 'Time per run: ' & Round($timePerRun/60000) & 'min' & Round(Mod($timePerRun, 60000)/1000) & 's')
-	GUICtrlSetData($GoldLabel, 'Gold: ' & Round($STATS_MAP['gold_earned']/1000) & 'k' & Mod($STATS_MAP['gold_earned'], 1000) & 'g')
-	GUICtrlSetData($GoldItemsLabel, 'Gold Items: '  & $STATS_MAP['gold_items_obtained'])
-	GUICtrlSetData($ExperienceLabel, 'Experience: ' & $STATS_MAP['experience_earned'])
-	
-	;Item stats
-	;GUICtrlSetData($ChunkOfDrakeFleshLabel, 'Chunks Of Drake Flesh: ' & $STATS_MAP['ChunkOfDrakeFleshCount'])
-	;GUICtrlSetData($SkaleFinsLabel, 'Skale Fins: ' & $SkaleFinsCount)
-	;GUICtrlSetData($GlacialStonesLabel, 'Glacial Stones: ' & $GlacialStonesCount)
-	;GUICtrlSetData($DiessaChalicesLabel, 'Diessa Chalices: ' & $DiessaChalicesCount)
-	;GUICtrlSetData($RinRelicsLabel, 'Rin Relics: ' & $RinRelicsCount)
-	;GUICtrlSetData($WintersdayGiftsLabel, 'Wintersday Gifts: ' & $WintersdayGiftsCount)
-	;GUICtrlSetData($MargoniteGemstoneLabel, 'Margonite Gemstones: ' & $MargoniteGemstoneCount)
-	;GUICtrlSetData($TitanGemstoneLabel, 'Titan Gemstones: ' & $TitanGemstoneCount)
-	;GUICtrlSetData($TormentGemstoneLabel, 'Torment Gemstones: ' & $TormentGemstoneCount)
-	
-	;Title stats
-	GUICtrlSetData($AsuraTitleLabel, 'Asura: ' & $STATS_MAP['asura_title_points_earned'])
-	GUICtrlSetData($DeldrimorTitleLabel, 'Deldrimor: ' & $STATS_MAP['deldrimor_title_points_earned'])
-	GUICtrlSetData($NornTitleLabel, 'Norn: ' & $STATS_MAP['norn_title_points_earned'])
-	GUICtrlSetData($VanguardTitleLabel, 'Vanguard: ' & $STATS_MAP['vanguard_title_points_earned'])
-	GUICtrlSetData($KurzickTitleLabel, 'Kurzick: ' & $STATS_MAP['kurzick_title_points_earned'])
-	GUICtrlSetData($LuxonTitleLabel, 'Luxon: ' & $STATS_MAP['luxon_title_points_earned'])
-	GUICtrlSetData($LightbringerTitleLabel, 'Lightbringer: ' & $STATS_MAP['lightbringer_title_points_earned'])
-	GUICtrlSetData($SunspearTitleLabel, 'Sunspear: ' & $STATS_MAP['sunspear_title_points_earned'])		
+Func CountGoldItems()
+	Local $goldItemsCount = 0
+	Local $item
+	For $bagIndex = 1 To 5
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			If ((IsWeapon($item) Or IsArmorSalvageItem($item)) And GetRarity($item) == $RARITY_Gold) Then $goldItemsCount += 1
+		Next
+	Next
+	Return $goldItemsCount
 EndFunc
 #EndRegion Statistics management

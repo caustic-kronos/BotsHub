@@ -25,7 +25,7 @@ Local $loggingFile
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
 Local Const $SS_Sand_Shards = 1
 Local Const $SS_I_am_unstoppable = 2
-Local Const $SS_Mystic_Vigor  = 3
+Local Const $SS_Mystic_Vigor = 3
 Local Const $SS_Vow_of_Strength = 4
 Local Const $SS_Extend_Enchantments = 5
 Local Const $SS_Deaths_Charge = 6
@@ -34,7 +34,7 @@ Local Const $SS_Ebon_Battle_Standard_of_Honor = 8
 ;Local Const $SS_Heart_of_Fury = 8
 
 ;Reduction from mysticism (50%) and increase from spirit (30%) are included
-Local Const $SS_SkillsArray = 		[$SS_Sand_Shards,	$SS_I_am_unstoppable,	$SS_Mystic_Vigor,	$SS_Vow_of_Strength,	$SS_Extend_Enchantments,	$SS_Deaths_Charge,	$SS_Mirage_Cloak,	$SS_Ebon_Battle_Standard_of_Honor]
+Local Const $SS_SkillsArray =		[$SS_Sand_Shards,	$SS_I_am_unstoppable,	$SS_Mystic_Vigor,	$SS_Vow_of_Strength,	$SS_Extend_Enchantments,	$SS_Deaths_Charge,	$SS_Mirage_Cloak,	$SS_Ebon_Battle_Standard_of_Honor]
 Local Const $SS_SkillsCostsArray =	[7,					7,						4,					4,						7,							7,					7,					13]
 Local Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray)
 

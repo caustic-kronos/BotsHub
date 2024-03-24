@@ -295,8 +295,8 @@ Func Initialize($aGW, $bChangeTitle = True, $aUseStringLog = False, $aUseEventSy
 	SetValue('MainStart', '0x' & Hex($lTemp, 8))
 	SetValue('MainReturn', '0x' & Hex($lTemp + 5, 8))
 	$lTemp = GetScannedAddress('ScanRenderFunc', -0x67)
-    SetValue('RenderingMod', '0x' & Hex($lTemp, 8))
-    SetValue('RenderingModReturn', '0x' & Hex($lTemp + 10, 8))
+	SetValue('RenderingMod', '0x' & Hex($lTemp, 8))
+	SetValue('RenderingModReturn', '0x' & Hex($lTemp + 10, 8))
 	$lTemp = GetScannedAddress('ScanTargetLog', 1)
 	SetValue('TargetLogStart', '0x' & Hex($lTemp, 8))
 	SetValue('TargetLogReturn', '0x' & Hex($lTemp + 5, 8))
@@ -320,12 +320,12 @@ Func Initialize($aGW, $bChangeTitle = True, $aUseStringLog = False, $aUseEventSy
 	SetValue('DialogLogStart', '0x' & Hex($lTemp, 8))
 	SetValue('DialogLogReturn', '0x' & Hex($lTemp + 5, 8))
 	$lTemp = GetScannedAddress('ScanStringFilter1', -5)
-    SetValue('StringFilter1Start', '0x' & Hex($lTemp, 8))
-    SetValue('StringFilter1Return', '0x' & Hex($lTemp + 5, 8))
-    $lTemp = GetScannedAddress('ScanStringFilter2', 0x16)
-    SetValue('StringFilter2Start', '0x' & Hex($lTemp, 8))
-    SetValue('StringFilter2Return', '0x' & Hex($lTemp + 5, 8))
-    SetValue('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
+	SetValue('StringFilter1Start', '0x' & Hex($lTemp, 8))
+	SetValue('StringFilter1Return', '0x' & Hex($lTemp + 5, 8))
+	$lTemp = GetScannedAddress('ScanStringFilter2', 0x16)
+	SetValue('StringFilter2Start', '0x' & Hex($lTemp, 8))
+	SetValue('StringFilter2Return', '0x' & Hex($lTemp + 5, 8))
+	SetValue('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
 
 	SetValue('LoadFinishedStart', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 1), 8))
 	SetValue('LoadFinishedReturn', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 6), 8))
@@ -450,7 +450,7 @@ Func Scan()
 	_('ScanEngine:')
 	AddPattern('56FFD083C4048B4E0485C9')
 	_('ScanRenderFunc:')
-    AddPattern('F6C401741C68B1010000BA')
+	AddPattern('F6C401741C68B1010000BA')
 	_('ScanLoadFinished:')
 	AddPattern('8B561C8BCF52E8')
 	_('ScanPostMessage:')
@@ -490,11 +490,11 @@ Func Scan()
 	_('ScanSellItemFunction:')
 	AddPattern('8B4D2085C90F858E')
 	_('ScanStringLog:')
-    AddPattern('893E8B7D10895E04397E08')
-    _('ScanStringFilter1:')
-    AddPattern('8B368B4F2C6A006A008B06')
-    _('ScanStringFilter2:')
-    AddPattern('515356578BF933D28B4F2C')
+	AddPattern('893E8B7D10895E04397E08')
+	_('ScanStringFilter1:')
+	AddPattern('8B368B4F2C6A006A008B06')
+	_('ScanStringFilter2:')
+	AddPattern('515356578BF933D28B4F2C')
 	_('ScanActionFunction:')
 	AddPattern('8B7508578BF983FE09750C6876')
 	_('ScanActionBase:')
@@ -502,7 +502,7 @@ Func Scan()
 	_('ScanSkillBase:')
 	AddPattern('8D04B6C1E00505')
 	_('ScanUseHeroSkillFunction:')
-    AddPattern('BA02000000B954080000')
+	AddPattern('BA02000000B954080000')
 	_('ScanTransactionFunction:')
 	AddPattern('85FF741D8B4D14EB08')
 	_('ScanBuyItemBase:')
@@ -1866,7 +1866,7 @@ EndFunc
 Func WriteChat($aMessage, $aSender = 'GWA2')
 	Local $lMessage, $lSender
 	Local $lAddress = 256 * $mQueueCounter + $mQueueBase
-	
+
 	If $mQueueCounter = $mQueueSize Then
 		$mQueueCounter = 0
 	Else
@@ -3178,7 +3178,7 @@ Func GetNearestEnemyToCoords($aX, $aY)
 	Local $lNearestAgent, $lNearestDistance = 100000000
 	Local $lDistance
 	Local $lAgentArray = GetAgentArray(0xDB)
-	
+
 	Local $lmeID = DllStructGetData(GetAgentByID(-2), 'ID')
 
 	For $i = 1 To $lAgentArray[0]
@@ -3837,7 +3837,7 @@ Func GetEffectTimeRemaining($aEffect, $aHeroNumber = 0)
 	Return DllStructGetData($aEffect, 'Duration') * 1000
 	;Problem here is that DllStructGetData($aEffect, 'TimeStamp') returns the timestamp when the effect started
 	;But we don't have current timestamp : GetSkillTimer doesn't return it and returns something fixed
- 	;Return DllStructGetData($aEffect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($aEffect, 'TimeStamp'))
+	;Return DllStructGetData($aEffect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($aEffect, 'TimeStamp'))
 EndFunc
 
 
@@ -4086,7 +4086,7 @@ Func RndSleep($aAmount, $aRandom = null)
 			$lRandom = $aAmount * 0.2
 		Case Else
 			$lRandom = 1
-       EndSelect
+	EndSelect
 	Sleep(Random($aAmount - $lRandom, $aAmount + $lRandom))
 EndFunc
 
@@ -4502,16 +4502,16 @@ Func ModifyMemory()
 	$mASMString = ''
 	CreateData()
 	CreateMain()
-;~ 	CreateTargetLog()
-;~ 	CreateSkillLog()
-;~ 	CreateSkillCancelLog()
-;~ 	CreateSkillCompleteLog()
-;~ 	CreateChatLog()
+;~	CreateTargetLog()
+;~	CreateSkillLog()
+;~	CreateSkillCancelLog()
+;~	CreateSkillCompleteLog()
+;~	CreateChatLog()
 	CreateTraderHook()
-;~ 	CreateLoadFinished()
+;~	CreateLoadFinished()
 	CreateStringLog()
-;~ 	CreateStringFilter1()
-;~ 	CreateStringFilter2()
+;~	CreateStringFilter1()
+;~	CreateStringFilter2()
 	CreateRenderingMod()
 	CreateCommands()
 	CreateDialogHook()
@@ -4522,28 +4522,28 @@ Func ModifyMemory()
 			$mMemory = DllCall($mKernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $mGWProcHandle, 'ptr', 0, 'ulong_ptr', $mASMSize, 'dword', 0x1000, 'dword', 64)
 			$mMemory = $mMemory[0]
 			MemoryWrite(MemoryRead($mBase), $mMemory)
-;~ 			MsgBox(1,1,$mASMString)
+;~			MsgBox(1,1,$mASMString)
 			CompleteASMCode()
 			WriteBinary($mASMString, $mMemory + $mASMCodeOffset)
 			$SecondInject = $mMemory + $mASMCodeOffset
-;~ 			MsgBox(1,1,$mASMString)
-;~ 			WriteBinary('83F8009090', GetValue('ClickToMoveFix'))
+;~			MsgBox(1,1,$mASMString)
+;~			WriteBinary('83F8009090', GetValue('ClickToMoveFix'))
 			MemoryWrite(GetValue('QueuePtr'), GetValue('QueueBase'))
-;~ 			MemoryWrite(GetValue('SkillLogPtr'), GetValue('SkillLogBase'))
-;~ 			MemoryWrite(GetValue('ChatRevAdr'), GetValue('ChatRevBase'))
-;~ 			MemoryWrite(GetValue('ChatLogPtr'), GetValue('ChatLogBase'))
-;~ 			MemoryWrite(GetValue('StringLogPtr'), GetValue('StringLogBase'))
+;~			MemoryWrite(GetValue('SkillLogPtr'), GetValue('SkillLogBase'))
+;~			MemoryWrite(GetValue('ChatRevAdr'), GetValue('ChatRevBase'))
+;~			MemoryWrite(GetValue('ChatLogPtr'), GetValue('ChatLogBase'))
+;~			MemoryWrite(GetValue('StringLogPtr'), GetValue('StringLogBase'))
 		Case Else
 			CompleteASMCode()
 	EndSwitch
 	WriteDetour('MainStart', 'MainProc')
-;~ 	WriteDetour('TargetLogStart', 'TargetLogProc')
+;~	WriteDetour('TargetLogStart', 'TargetLogProc')
 	WriteDetour('TraderHookStart', 'TraderHookProc')
-;~ 	WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
+;~	WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
 	WriteDetour('RenderingMod', 'RenderingModProc')
-;~ 	WriteDetour('StringLogStart', 'StringLogProc')
-;~ 	WriteDetour('StringFilter1Start', 'StringFilter1Proc')
-;~ 	WriteDetour('StringFilter2Start', 'StringFilter2Proc')
+;~	WriteDetour('StringLogStart', 'StringLogProc')
+;~	WriteDetour('StringFilter1Start', 'StringFilter1Proc')
+;~	WriteDetour('StringFilter2Start', 'StringFilter2Proc')
 	WriteDetour('DialogLogStart', 'DialogLogProc')
 EndFunc
 
@@ -4604,21 +4604,21 @@ Func CreateMain()
 	_('mov eax,dword[ecx+40]')
 	_('test eax,eax')
 	_('jz MainMain')
-;~ 	_('mov ecx,dword[ActionBase]')
-;~ 	_('mov ecx,dword[ecx+4]')
-;~ 	_('mov ecx,dword[ecx+34]')
-;~ 	_('add ecx,6C')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('push bb')
-;~ 	_('mov edx,esp')
-;~ 	_('push 0')
-;~ 	_('push edx')
-;~ 	_('push 18')
-;~ 	_('call ActionFunction')
-;~ 	_('pop eax')
-;~ 	_('pop ebx')
-;~ 	_('pop ecx')
+;~	_('mov ecx,dword[ActionBase]')
+;~	_('mov ecx,dword[ecx+4]')
+;~	_('mov ecx,dword[ecx+34]')
+;~	_('add ecx,6C')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('push bb')
+;~	_('mov edx,esp')
+;~	_('push 0')
+;~	_('push edx')
+;~	_('push 18')
+;~	_('call ActionFunction')
+;~	_('pop eax')
+;~	_('pop ebx')
+;~	_('pop ecx')
 
 	_('MainMain:')
 	_('mov eax,dword[QueueCounter]')
@@ -4644,7 +4644,7 @@ Func CreateMain()
 	_('popad')
 
 	_('mov ebp,esp')
-    _('fld st(0),dword[ebp+8]')
+	_('fld st(0),dword[ebp+8]')
 
 	_('ljmp MainReturn')
 EndFunc
@@ -5001,35 +5001,35 @@ EndFunc
 
 ;~ Internal use only.
 Func CreateRenderingMod()
-;~ 	_('RenderingModProc:')
-;~ 	_('cmp dword[DisableRendering],1')
-;~ 	_('jz RenderingModSkipCompare')
-;~ 	_('cmp eax,ebx')
-;~ 	_('ljne RenderingModReturn')
-;~ 	_('RenderingModSkipCompare:')
+;~	_('RenderingModProc:')
+;~	_('cmp dword[DisableRendering],1')
+;~	_('jz RenderingModSkipCompare')
+;~	_('cmp eax,ebx')
+;~	_('ljne RenderingModReturn')
+;~	_('RenderingModSkipCompare:')
 
-;~ 	$mASMSize += 17
-;~ 	$mASMString &= StringTrimLeft(MemoryRead(GetValue('RenderingMod') + 4, 'byte[17]'), 2)
+;~	$mASMSize += 17
+;~	$mASMString &= StringTrimLeft(MemoryRead(GetValue('RenderingMod') + 4, 'byte[17]'), 2)
 
-;~ 	_('cmp dword[DisableRendering],1')
-;~ 	_('jz DisableRenderingProc')
-;~ 	_('retn')
+;~	_('cmp dword[DisableRendering],1')
+;~	_('jz DisableRenderingProc')
+;~	_('retn')
 
-;~ 	_('DisableRenderingProc:')
-;~ 	_('push 1')
-;~ 	_('call dword[Sleep]')
-;~ 	_('retn')
+;~	_('DisableRenderingProc:')
+;~	_('push 1')
+;~	_('call dword[Sleep]')
+;~	_('retn')
 
-   _('RenderingModProc:')
-   _('add esp,4')
-   _('cmp dword[DisableRendering],1')
-   _('ljmp RenderingModReturn')
+	_('RenderingModProc:')
+	_('add esp,4')
+	_('cmp dword[DisableRendering],1')
+	_('ljmp RenderingModReturn')
 EndFunc
 
 
 ;~ Internal use only.
 Func CreateCommands()
-    _('CommandUseSkill:')
+	_('CommandUseSkill:')
 	_('mov ecx,dword[eax+C]')
 	_('push ecx')
 	_('mov ebx,dword[eax+8]')
@@ -5083,20 +5083,20 @@ Func CreateCommands()
 	_('pop eax')
 	_('ljmp CommandReturn')
 
-;~ 	_('CommandWriteChat:')
-;~ 	_('add eax,4')
-;~ 	_('mov edx,eax')
-;~ 	_('xor ecx,ecx')
-;~ 	_('add eax,28')
-;~ 	_('push eax')
-;~ 	_('call WriteChatFunction')
-;~ 	_('ljmp CommandReturn')
+;~	_('CommandWriteChat:')
+;~	_('add eax,4')
+;~	_('mov edx,eax')
+;~	_('xor ecx,ecx')
+;~	_('add eax,28')
+;~	_('push eax')
+;~	_('call WriteChatFunction')
+;~	_('ljmp CommandReturn')
 
 	_('CommandWriteChat:')
 	_('add eax,4')
-;~ 	_('mov edx,eax')
-;~ 	_('xor ecx,ecx')
-;~ 	_('add eax,28')
+;~	_('mov edx,eax')
+;~	_('xor ecx,ecx')
+;~	_('add eax,28')
 	_('push eax')
 	_('call WriteChatFunction')
 	_('pop eax')
@@ -5140,30 +5140,30 @@ Func CreateCommands()
 	_('add esp,24')
 	_('ljmp CommandReturn')
 
-;~ 	_('CommandCraftItemEx:')
-;~ 	_('add eax,4')
-;~ 	_('push eax')
-;~ 	_('add eax,4')
-;~ 	_('push eax')
-;~ 	_('push 1')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('push dword[eax+4]')
-;~ 	_('add eax,4')
-;~ 	_('push dword[eax+4]')
-;~ 	_('add eax,4')
-;~ 	_('mov edx,esp')
-;~ 	_('mov ecx,dword[E1D684]')
-;~ 	_('mov dword[edx-0x70],ecx')
-;~ 	_('mov ecx,dword[edx+0x1C]')
-;~ 	_('mov dword[edx+0x54],ecx')
-;~ 	_('mov ecx,dword[edx+4]')
-;~ 	_('mov dword[edx-0x14],ecx')
-;~ 	_('mov ecx,3')
-;~ 	_('mov ebx,dword[eax]')
-;~ 	_('mov edx,dword[eax+4]')
-;~ 	_('call BuyItemFunction')
-;~ 	_('ljmp CommandReturn')
+;~	_('CommandCraftItemEx:')
+;~	_('add eax,4')
+;~	_('push eax')
+;~	_('add eax,4')
+;~	_('push eax')
+;~	_('push 1')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('push dword[eax+4]')
+;~	_('add eax,4')
+;~	_('push dword[eax+4]')
+;~	_('add eax,4')
+;~	_('mov edx,esp')
+;~	_('mov ecx,dword[E1D684]')
+;~	_('mov dword[edx-0x70],ecx')
+;~	_('mov ecx,dword[edx+0x1C]')
+;~	_('mov dword[edx+0x54],ecx')
+;~	_('mov ecx,dword[edx+4]')
+;~	_('mov dword[edx-0x14],ecx')
+;~	_('mov ecx,3')
+;~	_('mov ebx,dword[eax]')
+;~	_('mov edx,dword[eax+4]')
+;~	_('call BuyItemFunction')
+;~	_('ljmp CommandReturn')
 
 	_('CommandAction:')
 	_('mov ecx,dword[ActionBase]')
@@ -5173,29 +5173,29 @@ Func CreateCommands()
 	_('add eax,4')
 	_('push eax')
 	_('push dword[eax+4]')
-    _('mov edx,0')
+	_('mov edx,0')
 	_('call ActionFunction')
 	_('ljmp CommandReturn')
 
-;~ 	_('CommandToggleLanguage:')
-;~ 	_('mov ecx,dword[ActionBase]')
-;~ 	_('mov ecx,dword[ecx+170]')
-;~ 	_('mov ecx,dword[ecx+20]')
-;~ 	_('mov ecx,dword[ecx]')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('push bb')
-;~ 	_('mov edx,esp')
-;~ 	_('push 0')
-;~ 	_('push edx')
-;~ 	_('push dword[eax+4]')
-;~ 	_('call ActionFunction')
-;~ 	_('pop eax')
-;~ 	_('pop ebx')
-;~ 	_('pop ecx')
-;~ 	_('ljmp CommandReturn')
+;~	_('CommandToggleLanguage:')
+;~	_('mov ecx,dword[ActionBase]')
+;~	_('mov ecx,dword[ecx+170]')
+;~	_('mov ecx,dword[ecx+20]')
+;~	_('mov ecx,dword[ecx]')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('push bb')
+;~	_('mov edx,esp')
+;~	_('push 0')
+;~	_('push edx')
+;~	_('push dword[eax+4]')
+;~	_('call ActionFunction')
+;~	_('pop eax')
+;~	_('pop ebx')
+;~	_('pop ecx')
+;~	_('ljmp CommandReturn')
 
-    _('CommandUseHeroSkill:')
+	_('CommandUseHeroSkill:')
 	_('mov ecx,dword[eax+8]')
 	_('push ecx')
 	_('mov ecx,dword[eax+c]')
@@ -5237,20 +5237,20 @@ Func CreateCommands()
 	_('add esp,20')
 	_('ljmp CommandReturn')
 
-;~ 	_('CommandRequestQuoteSell:')
-;~ 	_('mov dword[TraderCostID],0')
-;~ 	_('mov dword[TraderCostValue],0')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('add eax,4')
-;~ 	_('push eax')
-;~ 	_('push 1')
-;~ 	_('push 0')
-;~ 	_('mov ecx,d')
-;~ 	_('xor edx,edx')
-;~ 	_('call RequestQuoteFunction')
-;~ 	_('ljmp CommandReturn')
+;~	_('CommandRequestQuoteSell:')
+;~	_('mov dword[TraderCostID],0')
+;~	_('mov dword[TraderCostValue],0')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('add eax,4')
+;~	_('push eax')
+;~	_('push 1')
+;~	_('push 0')
+;~	_('mov ecx,d')
+;~	_('xor edx,edx')
+;~	_('call RequestQuoteFunction')
+;~	_('ljmp CommandReturn')
 
 	_('CommandTraderBuy:')
 	_('push 0')
@@ -5287,20 +5287,20 @@ Func CreateCommands()
 	_('add esp,24')
 	_('ljmp CommandReturn')
 
-;~ 	_('CommandTraderSell:')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('push 0')
-;~ 	_('push dword[TraderCostValue]')
-;~ 	_('push 0')
-;~ 	_('push TraderCostID')
-;~ 	_('push 1')
-;~ 	_('mov ecx,d')
-;~ 	_('xor edx,edx')
-;~ 	_('call TraderFunction')
-;~ 	_('mov dword[TraderCostID],0')
-;~ 	_('mov dword[TraderCostValue],0')
-;~ 	_('ljmp CommandReturn')
+;~	_('CommandTraderSell:')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('push 0')
+;~	_('push dword[TraderCostValue]')
+;~	_('push 0')
+;~	_('push TraderCostID')
+;~	_('push 1')
+;~	_('mov ecx,d')
+;~	_('xor edx,edx')
+;~	_('call TraderFunction')
+;~	_('mov dword[TraderCostID],0')
+;~	_('mov dword[TraderCostValue],0')
+;~	_('ljmp CommandReturn')
 
 	_('CommandSalvage:')
 	_('push eax')
@@ -5624,7 +5624,7 @@ Func _($aASM)
 			Else
 				$mASMSize += 6
 				$mASMString &= '81C7' & $lBuffer
-			 EndIf
+			EndIf
 		Case StringRegExp($aASM, 'add esi,[-[:xdigit:]]{1,8}\z')
 			$lBuffer = ASMNumber(StringMid($aASM, 9), True)
 			If @extended Then
@@ -5633,8 +5633,8 @@ Func _($aASM)
 			Else
 				$mASMSize += 6
 				$mASMString &= '81C6' & $lBuffer
-			 EndIf
-	    Case StringRegExp($aASM, 'add esp,[-[:xdigit:]]{1,8}\z')
+			EndIf
+		Case StringRegExp($aASM, 'add esp,[-[:xdigit:]]{1,8}\z')
 			$lBuffer = ASMNumber(StringMid($aASM, 9), True)
 			If @extended Then
 				$mASMSize += 3
@@ -5642,7 +5642,7 @@ Func _($aASM)
 			Else
 				$mASMSize += 6
 				$mASMString &= '81C4' & $lBuffer
-			 EndIf
+			EndIf
 		Case StringRegExp($aASM, 'cmp ebx,[-[:xdigit:]]{1,8}\z')
 			$lBuffer = ASMNumber(StringMid($aASM, 9), True)
 			If @extended Then
@@ -5801,7 +5801,7 @@ Func _($aASM)
 					$lOpCode = '8B4808'
 				Case 'mov eax,dword[eax+8]'
 					$lOpCode = '8B4008'
-			   Case 'mov eax,dword[eax+C]'
+				Case 'mov eax,dword[eax+C]'
 					$lOpCode = '8B400C'
 				Case 'mov ebx,dword[eax+4]'
 					$lOpCode = '8B5804'
@@ -5909,7 +5909,7 @@ Func _($aASM)
 					$lOpCode = '81F900000501'
 				Case 'mov edi,dword[edx+4]'
 					$lOpCode = '8B7A04'
-			    Case 'mov edi,dword[eax+4]'
+				Case 'mov edi,dword[eax+4]'
 					$lOpCode = '8B7804'
 				Case $aASM = 'mov ecx,dword[E1D684]'
 					$lOpCode = '8B0D84D6E100'
@@ -5969,15 +5969,15 @@ Func _($aASM)
 					$lOpCode = '8B09'
 				Case 'mov eax,dword[ecx+40]'
 					$lOpCode = '8B4140'
-			    Case 'mov ecx,dword[ecx+4]'
+				Case 'mov ecx,dword[ecx+4]'
 					$lOpCode = '8B4904'
-			    Case 'mov ecx,dword[ecx+�]'
+				Case 'mov ecx,dword[ecx+�]'
 					$lOpCode = '8B490C'
 				Case 'mov ecx,dword[ecx+8]'
 					$lOpCode = '8B4908'
-			    Case 'mov ecx,dword[ecx+34]'
+				Case 'mov ecx,dword[ecx+34]'
 					$lOpCode = '8B4934'
-			    Case 'mov ecx,dword[ecx+C]'
+				Case 'mov ecx,dword[ecx+C]'
 					$lOpCode = '8B490C'
 				Case 'mov ecx,dword[ecx+10]'
 					$lOpCode = '8B4910'
@@ -5987,7 +5987,7 @@ Func _($aASM)
 					$lOpCode = '8B4920'
 				Case 'mov ecx,dword[ecx+4c]'
 					$lOpCode = '8B494C'
-			    Case 'mov ecx,dword[ecx+50]'
+				Case 'mov ecx,dword[ecx+50]'
 					$lOpCode = '8B4950'
 				Case 'mov ecx,dword[ecx+170]'
 					$lOpCode = '8B8970010000'
@@ -6023,7 +6023,7 @@ Func _($aASM)
 					$lOpCode = '8B402C'
 				Case $aASM = 'mov eax,[eax+680]'
 					$lOpCode = '8B8080060000'
-			    Case $aASM = 'fld st(0),dword[ebp+8]'
+				Case $aASM = 'fld st(0),dword[ebp+8]'
 					$lOpCode = 'D94508'
 				Case 'mov esi,eax'
 					$lOpCode = '8BF0'
@@ -6085,12 +6085,12 @@ Func CompleteASMCode()
 EndFunc
 
 
-;~ Internal use only.
-;~ Func GetLabelInfo($aLabel)
-;~ 	Local $lValue = GetValue($aLabel)
-;~ 	If $lValue = -1 Then Exit MsgBox(0, 'Label', 'Label: ' & $aLabel & ' not provided')
-;~ 	Return $lValue ;Dec(StringRight($lValue, 8))
-;~ EndFunc
+;;~ Internal use only.
+;Func GetLabelInfo($aLabel)
+;	Local $lValue = GetValue($aLabel)
+;	If $lValue = -1 Then Exit MsgBox(0, 'Label', 'Label: ' & $aLabel & ' not provided')
+;	Return $lValue ;Dec(StringRight($lValue, 8))
+;EndFunc
 Func GetLabelInfo($aLab)
 	Local Const $lVal = GetValue($aLab)
 	Return $lVal
@@ -6113,15 +6113,15 @@ EndFunc
 
 
 ; #FUNCTION# ====================================================================================================================
-; Name...........: _ProcessGetName
-; Description ...: Returns a string containing the process name that belongs to a given PID.
-; Syntax.........: _ProcessGetName( $iPID )
-; Parameters ....: $iPID - The PID of a currently running process
-; Return values .: Success      - The name of the process
-;                  Failure      - Blank string and sets @error
-;                       1 - Process doesn't exist
-;                       2 - Error getting process list
-;                       3 - No processes found
+; Name...........:	_ProcessGetName
+; Description ...:	Returns a string containing the process name that belongs to a given PID.
+; Syntax.........:	_ProcessGetName( $iPID )
+; Parameters ....:	$iPID - The PID of a currently running process
+; Return values .:	Success		- The name of the process
+;					Failure		- Blank string and sets @error
+;						1 - Process doesn't exist
+;						2 - Error getting process list
+;						3 - No processes found
 ; Author ........: Erifash <erifash [at] gmail [dot] com>, Wouter van Kesteren.
 ; Remarks .......: Supplementary to ProcessExists().
 ; ===============================================================================================================================

@@ -24,17 +24,17 @@ Local $DonatePoints = True
 Local Const $ID_unknown_outpost_deposit_points = 193
 
 ;~ Main loop
-Func LuxonFactionFarm($STATUS)	
+Func LuxonFactionFarm($STATUS)
 	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then
 		Out('Moving to Outpost')
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $ID_EUROPE, $ID_FRENCH)
 		WaitMapLoading($ID_Aspenwood_Gate_Luxon, 10000, 2000)
 	EndIf
-	
+
 	LuxonFarmSetup()
-	
+
 	If $STATUS <> 'RUNNING' Then Return 2
-	
+
 	MoveTo(-4268, 11628)
 	MoveTo(-4980, 12425)
 	MoveTo(-5493, 13712)
@@ -43,7 +43,7 @@ Func LuxonFactionFarm($STATUS)
 	AdlibRegister('LuxonGroupIsAlive', 30000)
 	Local $result = VanquishMountQinkai()
 	AdlibUnRegister('LuxonGroupIsAlive')
-	
+
 	;Temporarily change a failure into a pause for debugging :
 	If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
@@ -51,13 +51,13 @@ Func LuxonFactionFarm($STATUS)
 		Out('Inventory full, pausing.')
 		$result = 2
 	EndIf
-	
+
 	Return $result
 EndFunc
 
 
 Func LuxonFarmSetup()
-	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then 
+	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
 		Out('Turning in Luxon faction')
 		DistrictTravel($ID_unknown_outpost_deposit_points, $ID_EUROPE, $ID_FRENCH)
 		WaitMapLoading($ID_unknown_outpost_deposit_points, 10000, 2000)
@@ -83,14 +83,14 @@ Func LuxonFarmSetup()
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $ID_EUROPE, $ID_FRENCH)
 		WaitMapLoading($ID_Aspenwood_Gate_Luxon, 10000, 2000)
 	EndIf
-	
+
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Out('Withdrawing gold for shrines benediction')
 		RndSleep(250)
 		WithdrawGold(100)
 		RndSleep(250)
 	EndIf
-	
+
 	SwitchMode($ID_HARD_MODE)
 EndFunc
 
@@ -147,7 +147,7 @@ Func VanquishMountQinkai()
 	If MapClearMoveAndAggro(14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT) Then Return 1
 	If MapClearMoveAndAggro(13000, -6000, 'Leftovers', $RANGE_COMPASS) Then Return 1
 	If Not GetAreaVanquished() Then
-		Out('The map has not been completely vanquished.', $CONSOLE_RED_COLOR)
+		Out('The map has not been completely vanquished.', $GUI_CONSOLE_RED_COLOR)
 		Return 1
 	EndIf
 	Return 0

@@ -31,7 +31,7 @@ Local Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DwarvenStability)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DwarvenStability) is better than UseSkillEx(1))
 Local Const $DM_DwarvenStability = 1
 Local Const $DM_StormChaser = 2
 Local Const $DM_ShroudOfDistress = 3
@@ -86,7 +86,7 @@ Func DragonMossFarmLoop()
 	RndSleep(100)
 	MoveTo(-8400, 18450)
 	;Can talk to get benediction here
-	
+
 	;Move to spot before aggro
 	MoveTo(-6500, 17200)
 	UseSkillEx($DM_ShroudOfDistress)
@@ -125,7 +125,7 @@ Func DragonMossFarmLoop()
 		UseSkillEx($DM_WhirlingDefense)
 		RndSleep(200)
 	WEnd
-	
+
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	Local $counter = 0
 	While Not GetIsDead(-2) And $foesCount > 0 And $counter < 16
@@ -142,10 +142,8 @@ Func DragonMossFarmLoop()
 
 	RndSleep(1000)
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out('Looting')
-		PickUpItems()
-	EndIf
+	Out('Looting')
+	PickUpItems()
 
 	BackToSaintAnjekaOutpost()
 	Return 0

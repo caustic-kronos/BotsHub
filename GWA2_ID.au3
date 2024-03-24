@@ -183,17 +183,17 @@ Local Const $Weapon_Types_Array[26] = [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offh
 Global Const $Map_Weapon_Types = MapFromArray($Weapon_Types_Array)
 
 ;~ Damage relative to the req				0		1		2		3		4		5		6		7		8		9		10		11		12		13
-Local Const $Axe_Max_Damage_Per_Level = 	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Local Const $Bow_Max_Damage_Per_Level = 	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Local Const $Focus_Max_Damage_Per_Level = 	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
-Local Const $Hammer_Max_Damage_Per_Level = 	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
-Local Const $Wand_Max_Damage_Per_Level = 	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Local Const $Shield_Max_Damage_Per_Level = 	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
-Local Const $Staff_Max_Damage_Per_Level = 	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Local Const $Sword_Max_Damage_Per_Level = 	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
-Local Const $Dagger_Max_Damage_Per_Level = 	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
-Local Const $Scythe_Max_Damage_Per_Level = 	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
-Local Const $Spear_Max_Damage_Per_Level = 	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
+Local Const $Axe_Max_Damage_Per_Level =		[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Local Const $Bow_Max_Damage_Per_Level =		[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Local Const $Focus_Max_Damage_Per_Level =	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
+Local Const $Hammer_Max_Damage_Per_Level =	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
+Local Const $Wand_Max_Damage_Per_Level =	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Local Const $Shield_Max_Damage_Per_Level =	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
+Local Const $Staff_Max_Damage_Per_Level =	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Local Const $Sword_Max_Damage_Per_Level =	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
+Local Const $Dagger_Max_Damage_Per_Level =	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
+Local Const $Scythe_Max_Damage_Per_Level =	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
+Local Const $Spear_Max_Damage_Per_Level =	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
 Local Const $Weapons_Max_Damage_Per_Level_Keys = [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
 Local Const $Weapons_Max_Damage_Per_Level_Values = [$Axe_Max_Damage_Per_Level, $Bow_Max_Damage_Per_Level, $Focus_Max_Damage_Per_Level, $Hammer_Max_Damage_Per_Level, $Wand_Max_Damage_Per_Level, $Shield_Max_Damage_Per_Level, _
 	$Staff_Max_Damage_Per_Level, $Sword_Max_Damage_Per_Level, $Dagger_Max_Damage_Per_Level, $Scythe_Max_Damage_Per_Level, $Spear_Max_Damage_Per_Level]
@@ -694,7 +694,7 @@ Global Const $ID_Polymock_Fire_Elemental = 24358 ; Purple
 Global Const $ID_Polymock_Aloe_Seed = 24355 ; Purple
 Global Const $ID_Polymock_Mirage_Iboga = 24363 ; Gold
 Global Const $ID_Polymock_Gaki = 24360 ; Gold
-;Global Const $ID_Polymock_Mantis_Dreamweaver =  ; Gold
+;Global Const $ID_Polymock_Mantis_Dreamweaver = ; Gold
 Global Const $ID_Polymock_Mursaat_Elementalist = 24370 ; Gold
 Global Const $ID_Polymock_Ruby_Djinn = 24371 ; Gold
 Global Const $ID_Polymock_Naga_Shaman = 24372 ; Gold
@@ -912,7 +912,7 @@ Local Const $Trophies_Array[191] = [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Sp
 	$ID_Incubus_Wing, $ID_Saurian_Bone, $ID_Amphibian_Tongue, $ID_Weaver_Leg, $ID_Patch_of_Simian_Fur, $ID_Quetzal_Crest, $ID_Skelk_Claw, $ID_Sentient_Vine, $ID_Frigid_Mandragor_Husk, $ID_Modnir_Mane, $ID_Stone_Summit_Emblem, $ID_Jotun_Pelt, _
 	$ID_Berserker_Horn, $ID_Glacial_Stone, $ID_Frozen_Wurm_Husk, $ID_Mountain_Root, $ID_Pile_of_Elemental_Dust, $ID_Superb_Charr_Carving, $ID_Stone_Grawl_Necklace, $ID_Mantid_Ungula, $ID_Skale_Fang, $ID_Stone_Claw, $ID_Skelk_Fang, $ID_Fungal_Root, _
 	$ID_Flesh_Reaver_Morsel, $ID_Golem_Runestone, $ID_Beetle_Egg, $ID_Blob_of_Ooze, $ID_Chromatic_Scale, $ID_Dryder_Web, $ID_Vaettir_Essence, $ID_Krait_Skin, $ID_Undead_Bone]
-#EndRegion  Stackable Trophies
+#EndRegion Stackable Trophies
 
 
 #Region Tomes

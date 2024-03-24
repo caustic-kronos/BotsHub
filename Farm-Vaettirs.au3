@@ -1,8 +1,8 @@
 #CS
 #################################
-#                               #
-#          Vaettir Bot          #
-#                               #
+#								#
+#			Vaettir Bot			#
+#								#
 #################################
 Author: gigi
 Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night (v.0.4)
@@ -31,9 +31,9 @@ Local Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A shield with the inscription "Like a rolling stone" (+10 armor against earth damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration' & @CRLF _
 	& '- Cupcakes'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form)  is better than UseSkillEx(2))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form) is better than UseSkillEx(2))
 Local Const $Skill_Deadly_Paradox = 1
-Local Const $Skill_Shadow_Form  = 2
+Local Const $Skill_Shadow_Form = 2
 Local Const $Skill_Shroud_of_Distress = 3
 Local Const $Skill_Way_of_Perfection = 4
 Local Const $Skill_Heart_of_Shadow = 5
@@ -74,44 +74,44 @@ Func RunToJagaMoraine()
 	WaitMapLoading($ID_Bjora_Marches)
 
 	RndSleep(500)
-	If (GUICtrlRead($ConsumeCupcakeCheckbox) == $GUI_CHECKED) Then UseCupcake()
+	UseConsumable($ID_Birthday_Cupcake)
 	RndSleep(500)
-	
+
 	SetDisplayedTitle($ID_Norn_Title)
 
 	Out('Running to Jaga Moraine')
 	Local $Array_Longeyes_Ledge[31][3] = [ _
-		[1, 15003.8, -16598.1], _
-		[1, 15003.8, -16598.1], _
-		[1, 12699.5, -14589.8], _
-		[1, 11628,   -13867.9], _
-		[1, 10891.5, -12989.5], _
-		[1, 10517.5, -11229.5], _
-		[1, 10209.1, -9973.1], _
-		[1, 9296.5,  -8811.5], _
-		[1, 7815.6,  -7967.1], _
-		[1, 6266.7,  -6328.5], _
-		[1, 4940,    -4655.4], _
-		[1, 3867.8,  -2397.6], _
-		[1, 2279.6,  -1331.9], _
-		[1, 7.2,     -1072.6], _
-		[1, 7.2,     -1072.6], _
-		[1, -1752.7, -1209], _
-		[1, -3596.9, -1671.8], _
-		[1, -5386.6, -1526.4], _
-		[1, -6904.2, -283.2], _
-		[1, -7711.6, 364.9], _
-		[1, -9537.8, 1265.4], _
-		[1, -11141.2,857.4], _
-		[1, -12730.7,371.5], _
-		[1, -13379,  40.5], _
-		[1, -14925.7,1099.6], _
-		[1, -16183.3,2753], _
-		[1, -17803.8,4439.4], _
-		[1, -18852.2,5290.9], _
-		[1, -19250,  5431], _
-		[1, -19968, 5564], _
-		[2, -20076,  5580] _
+		[1, 15003.8,	-16598.1], _
+		[1, 15003.8,	-16598.1], _
+		[1, 12699.5,	-14589.8], _
+		[1, 11628,		-13867.9], _
+		[1, 10891.5,	-12989.5], _
+		[1, 10517.5,	-11229.5], _
+		[1, 10209.1,	-9973.1], _
+		[1, 9296.5,		-8811.5], _
+		[1, 7815.6,		-7967.1], _
+		[1, 6266.7,		-6328.5], _
+		[1, 4940,		-4655.4], _
+		[1, 3867.8,		-2397.6], _
+		[1, 2279.6,		-1331.9], _
+		[1, 7.2,		-1072.6], _
+		[1, 7.2,		-1072.6], _
+		[1, -1752.7,	-1209], _
+		[1, -3596.9,	-1671.8], _
+		[1, -5386.6,	-1526.4], _
+		[1, -6904.2,	-283.2], _
+		[1, -7711.6,	364.9], _
+		[1, -9537.8,	1265.4], _
+		[1, -11141.2,	857.4], _
+		[1, -12730.7,	371.5], _
+		[1, -13379,		40.5], _
+		[1, -14925.7,	1099.6], _
+		[1, -16183.3,	2753], _
+		[1, -17803.8,	4439.4], _
+		[1, -18852.2,	5290.9], _
+		[1, -19250,		5431], _
+		[1, -19968,		5564], _
+		[2, -20076,		5580] _
 	]
 	For $i = 0 To (UBound($Array_Longeyes_Ledge) -1)
 		If ($Array_Longeyes_Ledge[$i][0] == 1) Then
@@ -140,7 +140,7 @@ Func MoveRunning($lDestX, $lDestY)
 		$lTgt = GetAgentByID(-1)
 
 		If GetIsDead(-2) Then Return False
-		
+
 		If GetDistance(GetAgentByID(-2), $lTgt) < 1300 And GetEnergy(-2)>20 And IsRecharged($Skill_Deadly_Paradox) And IsRecharged($Skill_Shadow_Form ) Then
 			UseSkillEx($Skill_Deadly_Paradox)
 			UseSkillEx($Skill_Shadow_Form )
@@ -167,10 +167,8 @@ Func VaettirsFarmLoop()
 	KillMobs()
 	WaitFor(1200)
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		Out('Looting')
-		PickUpItems()
-	EndIf
+	Out('Looting')
+	PickUpItems()
 
 	Return RezoneToJagaMoraine()
 EndFunc
@@ -253,7 +251,7 @@ Func KillMobs()
 	Local $deadlockTimer = TimerInit()
 	Local $Shadow_Form_Timer = TimerDiff($timer)
 	Local $lAgentArray
-	
+
 	Out('Killing')
 	Do
 		WaitFor(100)
@@ -337,7 +335,7 @@ Func RezoneToJagaMoraine()
 	Move(15865, -20531)
 	WaitMapLoading($ID_Bjora_Marches)
 	MoveTo(-19968, 5564)
-	Move(-20076,  5580, 30)
+	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
 
 	ClearMemory()
@@ -390,7 +388,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 		Else
 			If $lBlocked > 0 Then
 				; use a timer to avoid spamming /stuck
-				If TimerDiff($ChatStuckTimer) > 3000 Then	
+				If TimerDiff($ChatStuckTimer) > 3000 Then
 					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
 				EndIf

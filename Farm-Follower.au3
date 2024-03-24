@@ -27,10 +27,12 @@ Local Const $FollowerBotVersion = '0.1'
 
 ; ==== Constantes ====
 Local Const $FollowerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
-Local Const $FollowerInformations = 'This bot makes your character follow the player at position 1 in group.' & @CRLF _
-	& 'It will also attack everything that gets in range.'
-	
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
+Local Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
+	& 'It will attack everything that gets in range.' & @CRLF _
+	& 'It will loot all items it can loot.' & @CRLF _
+	& 'It will also loot all chests in range.'
+
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local $Player_Profession_ID
 Local $Follower_AttackSkill1 = null
 Local $Follower_AttackSkill2 = null
@@ -56,7 +58,7 @@ Local $playerIDs
 ;~ Main loop
 Func FollowerFarm($STATUS)
 	If Not $FollowerFarmSetup Then FollowerSetup()
-	
+
 	While $STATUS == 'RUNNING' And CountSlots() > 5
 		Switch $Player_Profession_ID
 			Case $ID_Warrior
@@ -84,7 +86,7 @@ Func FollowerFarm($STATUS)
 				FollowerLoop()
 		EndSwitch
 	WEnd
-	
+
 	$FollowerFarmSetup = False
 	AdlibUnRegister()
 
@@ -120,7 +122,7 @@ Func FollowerSetup()
 			DefaultSetup()
 		Case else
 			DefaultSetup()
-    EndSwitch
+	EndSwitch
 	$FollowerFarmSetup = True
 EndFunc
 
@@ -140,9 +142,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	EndIf
 	CheckForChests()
 
-	IF (GUICtrlRead($LootNothingCheckbox) == $GUI_UNCHECKED) Then
-		PickUpItems(null, DefaultShouldPickItem, 1500)
-	EndIf
+	PickUpItems(null, DefaultShouldPickItem, 1500)
 
 	RndSleep(1000)
 EndFunc
@@ -180,7 +180,7 @@ Func RangerSetup()
 	Local $Never_Rampage_Alone = 6
 	Local $Ebon_Battle_Standard_Of_Honor = 7
 	Local $Comfort_Animal = 8
-	
+
 	$Follower_MaintainSkill1 = $Together_As_One
 	$Follower_MaintainSkill2 = $Ebon_Battle_Standard_Of_Honor
 	$Follower_MaintainSkill3 = $Run_As_One
@@ -204,7 +204,7 @@ Func ParagonSetup()
 	Local $Theres_Nothing_To_Fear = 3
 	Local $Stand_Your_Ground = 2
 	Local $Theyre_On_Fire = 1
-	
+
 	$Follower_MaintainSkill1 = $Heroic_Refrain
 	$Follower_MaintainSkill2 = $Burning_Refrain
 	$Follower_MaintainSkill3 = $For_Great_Justice
@@ -213,7 +213,7 @@ Func ParagonSetup()
 	$Follower_MaintainSkill6 = $Theres_Nothing_To_Fear
 	$Follower_MaintainSkill7 = $Stand_Your_Ground
 	$Follower_MaintainSkill8 = $Theyre_On_Fire
-	
+
 	AdlibRegister('ParagonRefreshShouts', 12000)
 	;AdlibUnRegister()
 EndFunc
@@ -226,7 +226,7 @@ Func ParagonRefreshShouts()
 	RndSleep(20)
 	Local $partyMembers = GetPartyInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	If $partyMembers[0] < 4 Then Return
-	
+
 	UseSkillEx($Follower_MaintainSkill8)
 	RndSleep(20)
 	If ($selfRecast Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain)) == 0) And GetEnergy(-2) > 15 Then
@@ -258,7 +258,7 @@ Func ParagonRefreshShouts()
 			EndIf
 			$i = Mod($i, $partyMembers[0]) + 1
 		EndIf
-		
+
 		;This solution would be better - but effects can't be accessed on other heroes/characters
 		;Local $HeroNumber
 		;For $i = 1 To $partyMembers[0]
@@ -318,7 +318,7 @@ Func FindMiddleOfGroup()
 	Local $partySize = 0
 	Local $ownID = DllStructGetData(GetAgentByID(-2), 'ID')
 	For $i = 1 To $partyMembers[0]
-		If GetDistance(-2, $partyMembers[$i]) < $RANGE_SPIRIT And DllStructGetData($partyMembers[$i], 'ID') <> $ownID Then 
+		If GetDistance(-2, $partyMembers[$i]) < $RANGE_SPIRIT And DllStructGetData($partyMembers[$i], 'ID') <> $ownID Then
 			$position[0] += DllStructGetData($partyMembers[$i], 'X')
 			$position[1] += DllStructGetData($partyMembers[$i], 'Y')
 			$partySize += 1

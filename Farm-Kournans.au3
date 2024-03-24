@@ -31,7 +31,7 @@ Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain)  is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Kournans_Intensity = 1
 Local Const $Kournans_EbonBattleStandardOfHonor = 2
 Local Const $Kournans_Mindbender = 3
@@ -114,7 +114,7 @@ Func KournansFarmLoop()
 	WaitMapLoading($ID_Sunward_Marches, 10000, 2000)
 	MoveTo(13500, -4000)
 	MoveTo(11500, -2500)
-	
+
 	;Find the kournans and get in spirit range
 	;Move to the correct range of the enemies (who are not enemies at this points)(close so that they are affected by spirits but not too close)
 	Local $targetFoe = GetNearestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)

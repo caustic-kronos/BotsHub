@@ -36,7 +36,7 @@ Func LightbringerFarm($STATUS)
 	If $STATUS <> 'RUNNING' Then Return 2
 
 	ToTheSulfurousWastes()
-	
+
 	Local $success = FarmTheSulfurousWastes()
 	ReturnToSahlahjaOutpost()
 	Return $success
@@ -93,7 +93,7 @@ Func FarmTheSulfurousWastes()
 	RndSleep(1000)
 	Dialog(0x85)
 	RndSleep(1000)
-	
+
 	Out('Entering Junundu')
 	MoveTo(-615, 13450)
 	RndSleep(5000)
@@ -105,7 +105,7 @@ Func FarmTheSulfurousWastes()
 	If MoveToAndAggro(-800, 12000, -1700, 9800, 'First Undead Group') Then Return 1
 	If MoveToAndAggro(-3000, 10900, -4500, 11500, 'Second Undead Group') Then Return 1
 	If MoveToAndAggro(-7500, 11925, -9800, 12400, -13000, 9500, -13250, 6750, 'Third Undead Group') Then Return 1
-	
+
 	Out('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
 	MoveTo(-20600, 7270)
@@ -113,7 +113,7 @@ Func FarmTheSulfurousWastes()
 	RndSleep(1000)
 	Dialog(0x85)
 	RndSleep(1000)
-	
+
 	If MoveToAndAggro(-22000, 9000, -22350, 11100, 'First Margonite Group') Then Return 1
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
 	;If MoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
@@ -122,7 +122,7 @@ Func FarmTheSulfurousWastes()
 	If MoveToAndAggro(-22000, -9400, -22800, -9800, 'Third Margonite Group') Then Return 1
 	If MoveToAndAggro(-23000, -10600, -23150, -12250, 'Fourth Margonite Group') Then Return 1
 	If MoveToAndAggro(-22800, -13500, -21300, -14000, 'Fifth Margonite Group') Then Return 1
-	
+
 	Out('Picking Up Tome')
 	SpeedTeam()
 	MoveTo(-21300, -14000)
@@ -132,11 +132,11 @@ Func FarmTheSulfurousWastes()
 	RndSleep(2000)
 	DropBundle()
 	RndSleep(1000)
-	
+
 	If MoveToAndAggro(-22800, -13500, -23000, -10600, -21500, -9500, 'Sixth Margonite Group') Then Return 1
 	If MoveToAndAggro(-21000, -9500, -19500, -8500, 'Seventh Margonite Group') Then Return 1
 	If MoveToAndAggro(-22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100, 'Temple Monolith Groups') Then Return 1
-	
+
 	Out('Spawning Margonite bosses')
 	SpeedTeam()
 	MoveTo(-16000, -13100)
@@ -149,7 +149,7 @@ Func FarmTheSulfurousWastes()
 	RndSleep(3000)
 	DropBundle()
 	RndSleep(1000)
-	
+
 	If MoveToAndAggro(-18000, -13100, 'Margonite Boss Group') Then Return 1
 	Return 0
 EndFunc
@@ -179,36 +179,36 @@ Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
 	EndIf
 	Local $x = $locations[$locationsCount - 2]
 	Local $y = $locations[$locationsCount - 1]
- 
+
 	Out('Killing ' & $foesGroup)
 	; Get close enough to cast spells but not Aggro
 	; Use Junundu Siege (4) until it's in CD
 	; While there are enemies
-	; 	Use Junundu Tunnel (5) unless it's on CD
-	; 	Use Junundu Bite (3) off CD
-	; 	Use Junundu Smash (2) if available
-	; 		Don't use Junundu Feast (6) if an enemy died (would need to check what skill we get afterward ...)
-	; 	Use Junundu Strike (1) in between
-	; 	Else just attack
+	;	Use Junundu Tunnel (5) unless it's on CD
+	;	Use Junundu Bite (3) off CD
+	;	Use Junundu Smash (2) if available
+	;		Don't use Junundu Feast (6) if an enemy died (would need to check what skill we get afterward ...)
+	;	Use Junundu Strike (1) in between
+	;	Else just attack
 	; Use Junundu Wail (7) after fight only and if life is < 2400/3000 or if a team member is dead
 
 	Local $skillCastTimer
-	
+
 	Local $target = GetNearestNPCInRangeOfCoords(3, $x, $y, $range)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ';' & $y & ' with distance set to ' & $range)
 		Return False
 	EndIf
-	
+
 	GetAlmostInRangeOfAgent($target)
-	
+
 	$skillCastTimer = TimerInit()
 	While IsRecharged($Junundu_Siege) And TimerDiff($skillCastTimer) < 3000
 		UseSkillEx($Junundu_Siege, $target)
 		RndSleep(20)
 	WEnd
-	
+
 	Local $foes = 1
 	Do
 		$target = GetNearestEnemyToAgent(-2)
@@ -219,7 +219,7 @@ Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
 		AttackOrUseSkill($weaponAttackTime, $Junundu_Bite, $Junundu_Strike)
 		$foes = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	Until $foes == 0
-		
+
 	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf

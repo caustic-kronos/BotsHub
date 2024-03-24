@@ -1,7 +1,7 @@
 #CS
 #################################
 #								#
-#	Eden Iris Bot 				#
+#	Eden Iris Bot				#
 #								#
 #################################
 Author: Night
@@ -32,7 +32,7 @@ Func EdenIrisFarm($STATUS)
 	If GetMapID() <> $ID_Ashford_Abbey Then
 		DistrictTravel($ID_Ashford_Abbey, $ID_EUROPE, $ID_FRENCH)
 	EndIf
-	
+
 	If Not $IRIS_FARM_SETUP Then
 		SetupEdenIrisFarm()
 		$IRIS_FARM_SETUP = True
