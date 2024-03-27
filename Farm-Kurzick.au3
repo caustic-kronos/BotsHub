@@ -59,7 +59,7 @@ Func KurzickFarmSetup()
 				RndSleep(500)
 			Until GetKurzickFaction() < 5000
 		Else
-			Out("Buying Amber fragments")
+			Out('Buying Amber fragments')
 			Dialog(131)
 			RndSleep(550)
 			Local $temp = Floor(GetKurzickFaction() / 5000)

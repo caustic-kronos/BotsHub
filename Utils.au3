@@ -264,7 +264,7 @@ Func CheckForChests($range = $RANGE_EARSHOT)
 			Out('Found an unopened chest')
 			;MoveTo(DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y'))		;Fail half the time
 			;GoSignpost($agents[$i])															;Seems to work but serious rubberbanding
-			GoToSignpost($agents[$i])															;Maybe better ?
+			GoToSignpost($agents[$i])															;Much better solution
 			RndSleep(500)
 			OpenChest()
 			RndSleep(1000)
@@ -387,6 +387,203 @@ Func FillEquipmentBag()
 		EndIf
 		RndSleep(20)
 	WEnd
+EndFunc
+
+
+;~ Sort the inventory in this order :
+Func SortInventory()
+	;						0-Lockpicks 1-Books	2-Consumables	3-Trophies	4-Tomes	5-Materials	6-Others	7-Armor Salvageables[Gold,	8-Purple,	9-Blue	10-White]	11-Weapons [Green,	12-Gold,	13-Purple,	14-Blue,	15-White]	16-Armor (Armor salvageables, weapons and armor start from the end)
+	Local $itemsCounts = [	0,			0,		0,				0,			0,		0,			0,			0,							0,			0,		0,			0,					0,			0,			0,			0,			0]
+	Local $bagsSizes[6]
+	Local $bagsSize = 0
+	Local $bag, $item, $itemID, $rarity
+	Local $items[80]
+	Local $k = 0
+	For $bagIndex = 1 To 5
+		$bag = GetBag($bagIndex)
+		$bagsSizes[$bagIndex] = DllStructGetData($bag, 'slots')
+		$bagsSize += $bagsSizes[$bagIndex]
+		For $slot = 1 To $bagsSizes[$bagIndex]
+			$item = GetItemBySlot($bagIndex, $slot)
+			$itemID = DllStructGetData(($item), 'ModelID')
+
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
+			$items[$k] = $item
+			$k += 1
+			;Weapon
+			If IsWeapon($item) Then
+				$rarity = GetRarity($item)
+				If ($rarity == $RARITY_Gold) Then
+					$itemsCounts[12] += 1
+				ElseIf ($rarity == $RARITY_Purple) Then
+					$itemsCounts[13] += 1
+				ElseIf ($rarity == $RARITY_Blue) Then
+					$itemsCounts[14] += 1
+				ElseIf ($rarity == $RARITY_Green) Then
+					$itemsCounts[11] += 1
+				ElseIf ($rarity == $RARITY_White) Then
+					$itemsCounts[15] += 1
+				EndIf
+			;ArmorSalvage
+			ElseIf IsArmorSalvageItem($item) Then
+				$rarity = GetRarity($item)
+				If ($rarity == $RARITY_Gold) Then
+					$itemsCounts[7] += 1
+				ElseIf ($rarity == $RARITY_Purple) Then
+					$itemsCounts[8] += 1
+				ElseIf ($rarity == $RARITY_Blue) Then
+					$itemsCounts[9] += 1
+				ElseIf ($rarity == $RARITY_White) Then
+					$itemsCounts[10] += 1
+				EndIf
+			;Trophies
+			ElseIf IsTrophy($itemID) Then
+				$itemsCounts[3] += 1
+			;Consumables
+			ElseIf IsConsumable($itemID) Then
+				$itemsCounts[2] += 1
+			;Materials
+			ElseIf IsMaterial($item) Then
+				$itemsCounts[5] += 1
+			;Lockpick
+			ElseIf ($itemID == $ID_Lockpick) Then
+				$itemsCounts[0] += 1
+			;Tomes
+			ElseIf IsTome($itemID) Then
+				$itemsCounts[4] += 1
+			;Armor
+			ElseIf IsArmor($item) Then
+				$itemsCounts[16] += 1
+			;Books
+			ElseIf IsBook($item) Then
+				$itemsCounts[1] += 1
+			;Others
+			Else
+				$itemsCounts[6] += 1
+			EndIf
+		Next
+	Next
+
+
+	Local $itemsPositions[17]
+	$itemsPositions[0] = 1
+	$itemsPositions[16] = $bagsSize + 1 - $itemsCounts[16]
+	For $i = 1 To 6
+		$itemsPositions[$i] = $itemsPositions[$i - 1] + $itemsCounts[$i - 1]
+	Next
+	For $i = 15 To 7 Step -1
+		$itemsPositions[$i] = $itemsPositions[$i + 1] - $itemsCounts[$i]
+	Next
+
+
+	Local $bagAndSlot
+	Local $category
+	For $item In $items
+		$itemID = DllStructGetData($item, 'ModelID')
+		If $itemID == 0 Then ExitLoop
+		RndSleep(10)
+
+		;Weapon
+		If IsWeapon($item) Then
+			$rarity = GetRarity($item)
+			If ($rarity == $RARITY_Gold) Then
+				$category = 12
+			ElseIf ($rarity == $RARITY_Purple) Then
+				$category = 13
+			ElseIf ($rarity == $RARITY_Blue) Then
+				$category = 14
+			ElseIf ($rarity == $RARITY_Green) Then
+				$category = 11
+			ElseIf ($rarity == $RARITY_White) Then
+				$category = 15
+			EndIf
+		;ArmorSalvage
+		ElseIf isArmorSalvageItem($item) Then
+			$rarity = GetRarity($item)
+			If ($rarity == $RARITY_Gold) Then
+				$category = 7
+			ElseIf ($rarity == $RARITY_Purple) Then
+				$category = 8
+			ElseIf ($rarity == $RARITY_Blue) Then
+				$category = 9
+			ElseIf ($rarity == $RARITY_White) Then
+				$category = 10
+			EndIf
+		;Trophies
+		ElseIf IsTrophy($itemID) Then
+			$category = 3
+		;Consumables
+		ElseIf IsConsumable($itemID) Then
+			$category = 2
+		;Materials
+		ElseIf IsMaterial($item) Then
+			$category = 5
+		;Lockpick
+		ElseIf ($itemID == $ID_Lockpick) Then
+			$category = 0
+		;Tomes
+		ElseIf IsTome($itemID) Then
+			$category = 4
+		;Armor
+		ElseIf IsArmor($item) Then
+			$category = 16
+		;Books
+		ElseIf IsBook($item) Then
+			$category = 1
+		;Others
+		Else
+			$category = 6
+		EndIf
+		
+		$bagAndSlot = GetBagAndSlotFromGeneralSlot($bagsSizes, $itemsPositions[$category])
+		Out('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
+		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
+		$itemsPositions[$category] += 1
+	Next
+EndFunc
+
+
+Func GetGeneralSlot($bagsSizes, $bag, $slot)
+	Local $generalSlot = $slot
+	For $i = 1 To $bag - 1
+		$generalSlot += $bagsSizes[$i]
+	Next
+	Return $generalSlot
+EndFunc
+
+
+Func GetBagAndSlotFromGeneralSlot($bagsSizes, $generalSlot)
+	Local $bagAndSlot[2]
+	Local $i = 1
+	For $i = 1 To 4
+		If $generalSlot <= $bagsSizes[$i] Then
+			$bagAndSlot[0] = $i
+			$bagAndSlot[1] = $generalSlot
+			Return $bagAndSlot
+		Else 
+			$generalSlot -= $bagsSizes[$i]
+		EndIf
+	Next
+	$bagAndSlot[0] = $i
+	$bagAndSlot[1] = $generalSlot
+	Return $bagAndSlot
+EndFunc
+
+
+;~ Helper function for sorting function - allows moving an item via a generic position instead of with both bag and position
+Func GenericMoveItem($bagsSizes, $item, $genericSlot)
+	Local $i = 1
+	For $i = 1 To 4
+		If $genericSlot <= $bagsSizes[$i] Then
+			Out('to bag ' & $i & ' position ' & $genericSlot)
+			;MoveItem($item, $i, $genericSlot)
+			Return
+		Else 
+			$genericSlot -= $bagsSizes[$i]
+		EndIf
+	Next
+	Out('to bag ' & $i & ' position ' & $genericSlot)
+	;MoveItem($item, $i, $genericSlot)
 EndFunc
 
 
@@ -702,6 +899,11 @@ Func IsArmorSalvageItem($item)
 EndFunc
 
 
+Func IsBook($item)
+	Return DllStructGetData($item, 'type') == $ID_Type_Book
+EndFunc
+
+
 Func IsStackableItemButNotMaterial($itemID)
 	Return $Map_StackableItemsExceptMaterials[$itemID] <> null
 EndFunc
@@ -722,7 +924,7 @@ Func IsRareMaterial($item)
 EndFunc
 
 Func IsConsumable($itemID)
-	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID)
+	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID)
 EndFunc
 
 Func IsAlcohol($itemID)
@@ -755,13 +957,28 @@ Func IsSpecialDrop($itemID)
 EndFunc
 
 
-Func IsTrophy($itemID)
-	Return $Trophies_Array[$itemID] <> null
+Func IsSummoningStone($itemID)
+	Return $Map_Summoning_Stones[$itemID] <> null
 EndFunc
 
 
-Func IsSummoningStone($itemID)
-	Return $Map_Summoning_Stones[$itemID] <> null
+Func IsPartyTonic($itemID)
+	Return $Map_Party_Tonics[$itemID] <> null
+EndFunc
+
+
+Func IsEverlastingTonic($itemID)
+	Return $Map_EL_Tonics[$itemID] <> null
+EndFunc
+
+
+Func IsTrophy($itemID)
+	Return $Map_Trophies[$itemID] <> null Or $Map_Reward_Trophies[$itemID] <> null
+EndFunc
+
+
+Func IsArmor($item)
+	Return $Map_Armor_Types[DllStructGetData($item, 'type')] <> null
 EndFunc
 
 

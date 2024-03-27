@@ -128,7 +128,7 @@ Func createGUI()
 
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 581, 401)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
-	GUICtrlSetOnEvent($GUI_Tabs_Parent, "TabEventManager")
+	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'TabEventManager')
 
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
@@ -681,7 +681,7 @@ Func UpdateStats($success, $timer)
 	;Global stats
 	GUICtrlSetData($GUI_Label_Runs, 'Runs: ' & $runs)
 	GUICtrlSetData($GUI_Label_Failures, 'Failures: ' & $failures)
-	GUICtrlSetData($GUI_Label_Time, 'Time: ' & Floor($time/360000) & 'h' & Floor($time/60000) & 'min' & Floor(Mod($time, 60000)/1000) & 's')
+	GUICtrlSetData($GUI_Label_Time, 'Time: ' & Floor($time/3600000) & 'h' & Floor(Mod($time, 3600000)/60000) & 'min' & Floor(Mod($time, 60000)/1000) & 's')
 	Local $timePerRun = $runs == 0 ? 0 : $time / $runs
 	GUICtrlSetData($GUI_Label_TimePerRun, 'Time per run: ' & Floor($timePerRun/60000) & 'min' & Floor(Mod($timePerRun, 60000)/1000) & 's')
 	GUICtrlSetData($GUI_Label_Gold, 'Gold: ' & Floor((GetGoldCharacter() - $GoldCount)/1000) & 'k' & Mod((GetGoldCharacter() - $GoldCount), 1000) & 'g')

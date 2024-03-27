@@ -167,6 +167,15 @@ Global Const $ID_Mysticism = 44
 
 #Region Type IDs
 Global Const $ID_Type_Armor_Salvage = 0
+
+Global Const $ID_Type_Book = 43
+
+Global Const $ID_Type_Foot_Armor = 4
+Global Const $ID_Type_Chest_Armor = 7
+Global Const $ID_Type_Hand_Armor = 13
+Global Const $ID_Type_Headgear_Armor = 16
+Global Const $ID_Type_Leg_Armor = 19
+
 Global Const $ID_Type_Axe = 2
 Global Const $ID_Type_Bow = 5
 Global Const $ID_Type_Rune = 8
@@ -179,7 +188,9 @@ Global Const $ID_Type_Sword = 27
 Global Const $ID_Type_Dagger = 32
 Global Const $ID_Type_Scythe = 35
 Global Const $ID_Type_Spear = 36
-Local Const $Weapon_Types_Array[26] = [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+Local Const $Armor_Types_Array = [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
+Local Const $Weapon_Types_Array = [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+Global Const $Map_Armor_Types = MapFromArray($Armor_Types_Array)
 Global Const $Map_Weapon_Types = MapFromArray($Weapon_Types_Array)
 
 ;~ Damage relative to the req				0		1		2		3		4		5		6		7		8		9		10		11		12		13
@@ -465,64 +476,6 @@ Global Const $ID_Medal_of_Honor = 35122 ; Not tradeable
 #EndRegion Endgame Rewards
 
 
-#Region Reward Trophy
-Global Const $ID_Copper_Zaishen_Coin = 31202
-Global Const $ID_Gold_Zaishen_Coin = 31203
-Global Const $ID_Silver_Zaishen_Coin = 31204
-Global Const $ID_Monastery_Credit = 5819
-Global Const $ID_Imperial_Commendation = 6068
-Global Const $ID_Luxon_Totem = 6048
-Global Const $ID_Equipment_Requisition = 5817
-Global Const $ID_Battle_Commendation = 17081
-Global Const $ID_Kournan_Coin = 19195
-Global Const $ID_Trade_Contract = 17082
-Global Const $ID_Ancient_Artifact = 19182
-Global Const $ID_Inscribed_Secret = 19196
-Global Const $ID_Burol_Ironfists_Commendation = 29018
-Global Const $ID_Bison_Championship_Token = 27563
-Global Const $ID_Monumental_Tapestry = 27583
-Global Const $ID_Royal_Gift = 35120
-Global Const $ID_War_Supplies = 35121
-Global Const $ID_Confessors_Orders = 35123
-Global Const $ID_Paper_Wrapped_Parcel = 34212
-Global Const $ID_Sack_of_Random_Junk = 34213
-;Global Const $ID_Legion_Loot_Bag =
-;Global Const $ID_Reverie_Gift =
-Global Const $ID_Ministerial_Commendation = 36985
-Global Const $ID_Imperial_Guard_Requisition_Order = 29108
-Global Const $ID_Imperial_Guard_Lockbox = 30212 ; Not tradeable
-;Global Const $ID_Proof_of_Flames =
-;Global Const $ID_Proof_of_Mountains =
-;Global Const $ID_Proof_of_Waves =
-;Global Const $ID_Proof_of_Winds =
-;Global Const $ID_Racing_Medal =
-Global Const $ID_Glob_of_Frozen_Ectoplasm = 21509
-;Global Const $ID_Celestial_Miniature_Token =
-;Global Const $ID_Dragon_Festival_Grab_Bag =
-Global Const $ID_Red_Gift_Bag = 21811
-;Global Const $ID_Lunar_Festival_Grab_Bag =
-Global Const $ID_Festival_Prize = 15478
-;Global Const $ID_Imperial_Mask_Token =
-;Global Const $ID_Ghoulish_Grab_Bag =
-;Global Const $ID_Ghoulish_Accessory_Token =
-;Global Const $ID_Frozen_Accessory_Token =
-;;Global Const $ID_Wintersday_Grab_Bag =
-Global Const $ID_Armbrace_of_Truth = 21127
-Global Const $ID_Margonite_Gemstone = 21128
-Global Const $ID_Stygian_Gemstone = 21129
-Global Const $ID_Titan_Gemstone = 21130
-Global Const $ID_Torment_Gemstone = 21131
-Global Const $ID_Coffer_of_Whispers = 21228
-Global Const $ID_Gift_of_the_Traveller = 31148
-Global Const $ID_Gift_of_the_Huntsman = 31149
-Global Const $ID_Champions_Zaishen_Strongbox = 36665
-Global Const $ID_Heros_Zaishen_Strongbox = 36666
-Global Const $ID_Gladiators_Zaishen_Strongbox = 36667
-Global Const $ID_Strategists_Zaishen_Strongbox = 36668
-Global Const $ID_Zhos_Journal = 25866
-#EndRegion Reward Trophy
-
-
 #Region Alcohol
 Global Const $ID_Hunters_Ale = 910
 Global Const $ID_Flask_of_Firewater = 2513
@@ -608,7 +561,8 @@ Global Const $ID_Lunar_Fortune_2014 = 29431 ; Horse
 Global Const $ID_Blue_Rock_Candy = 31151
 Global Const $ID_Green_Rock_Candy = 31152
 Global Const $ID_Red_Rock_Candy = 31153
-Local Const $Sweet_Pcons_Array[13] = [$ID_Drake_Kabob, $ID_Bowl_of_Skalefin_Soup, $ID_Pahnai_Salad, $ID_Birthday_Cupcake, $ID_Golden_Egg, $ID_Candy_Apple, $ID_Candy_Corn, $ID_Slice_of_Pumpkin_Pie, _
+Global Const $ID_War_Supplies = 35121
+Local Const $Sweet_Pcons_Array = [$ID_Drake_Kabob, $ID_Bowl_of_Skalefin_Soup, $ID_Pahnai_Salad, $ID_Birthday_Cupcake, $ID_Golden_Egg, $ID_Candy_Apple, $ID_Candy_Corn, $ID_Slice_of_Pumpkin_Pie, _
 	$ID_Lunar_Fortune_2014, $ID_Blue_Rock_Candy, $ID_Green_Rock_Candy, $ID_Red_Rock_Candy, $ID_War_Supplies]
 Global Const $Map_Sweet_Pcons = MapFromArray($Sweet_Pcons_Array)
 #EndRegion Sweet Pcon
@@ -700,6 +654,68 @@ Global Const $ID_Polymock_Ruby_Djinn = 24371 ; Gold
 Global Const $ID_Polymock_Naga_Shaman = 24372 ; Gold
 Global Const $ID_Polymock_Stone_Rain = 24374 ; Gold
 #EndRegion Polymock
+
+
+#Region Reward Trophy
+Global Const $ID_Copper_Zaishen_Coin = 31202
+Global Const $ID_Gold_Zaishen_Coin = 31203
+Global Const $ID_Silver_Zaishen_Coin = 31204
+Global Const $ID_Monastery_Credit = 5819
+Global Const $ID_Imperial_Commendation = 6068
+Global Const $ID_Luxon_Totem = 6048
+Global Const $ID_Equipment_Requisition = 5817
+Global Const $ID_Battle_Commendation = 17081
+Global Const $ID_Kournan_Coin = 19195
+Global Const $ID_Trade_Contract = 17082
+Global Const $ID_Ancient_Artifact = 19182
+Global Const $ID_Inscribed_Secret = 19196
+Global Const $ID_Burol_Ironfists_Commendation = 29018
+Global Const $ID_Bison_Championship_Token = 27563
+Global Const $ID_Monumental_Tapestry = 27583
+Global Const $ID_Royal_Gift = 35120
+Global Const $ID_Confessors_Orders = 35123
+Global Const $ID_Paper_Wrapped_Parcel = 34212
+Global Const $ID_Sack_of_Random_Junk = 34213
+;Global Const $ID_Legion_Loot_Bag =
+;Global Const $ID_Reverie_Gift =
+Global Const $ID_Ministerial_Commendation = 36985
+Global Const $ID_Imperial_Guard_Requisition_Order = 29108
+Global Const $ID_Imperial_Guard_Lockbox = 30212 ; Not tradeable
+;Global Const $ID_Proof_of_Flames =
+;Global Const $ID_Proof_of_Mountains =
+;Global Const $ID_Proof_of_Waves =
+;Global Const $ID_Proof_of_Winds =
+;Global Const $ID_Racing_Medal =
+Global Const $ID_Glob_of_Frozen_Ectoplasm = 21509
+;Global Const $ID_Celestial_Miniature_Token =
+;Global Const $ID_Dragon_Festival_Grab_Bag =
+Global Const $ID_Red_Gift_Bag = 21811
+;Global Const $ID_Lunar_Festival_Grab_Bag =
+Global Const $ID_Festival_Prize = 15478
+;Global Const $ID_Imperial_Mask_Token =
+;Global Const $ID_Ghoulish_Grab_Bag =
+;Global Const $ID_Ghoulish_Accessory_Token =
+;Global Const $ID_Frozen_Accessory_Token =
+;;Global Const $ID_Wintersday_Grab_Bag =
+Global Const $ID_Armbrace_of_Truth = 21127
+Global Const $ID_Margonite_Gemstone = 21128
+Global Const $ID_Stygian_Gemstone = 21129
+Global Const $ID_Titan_Gemstone = 21130
+Global Const $ID_Torment_Gemstone = 21131
+Global Const $ID_Coffer_of_Whispers = 21228
+Global Const $ID_Gift_of_the_Traveller = 31148
+Global Const $ID_Gift_of_the_Huntsman = 31149
+Global Const $ID_Champions_Zaishen_Strongbox = 36665
+Global Const $ID_Heros_Zaishen_Strongbox = 36666
+Global Const $ID_Gladiators_Zaishen_Strongbox = 36667
+Global Const $ID_Strategists_Zaishen_Strongbox = 36668
+Global Const $ID_Zhos_Journal = 25866
+Local Const $Reward_Trophies_Array = [$ID_Copper_Zaishen_Coin, $ID_Gold_Zaishen_Coin, $ID_Silver_Zaishen_Coin, $ID_Monastery_Credit, $ID_Imperial_Commendation, $ID_Luxon_Totem, $ID_Equipment_Requisition, $ID_Battle_Commendation, $ID_Kournan_Coin, $ID_Trade_Contract, _
+	$ID_Ancient_Artifact, $ID_Inscribed_Secret, $ID_Burol_Ironfists_Commendation, $ID_Bison_Championship_Token, $ID_Monumental_Tapestry, $ID_Royal_Gift, $ID_War_Supplies, $ID_Confessors_Orders, $ID_Paper_Wrapped_Parcel, $ID_Sack_of_Random_Junk, $ID_Ministerial_Commendation, _
+	$ID_Imperial_Guard_Requisition_Order, $ID_Imperial_Guard_Lockbox, $ID_Glob_of_Frozen_Ectoplasm, $ID_Red_Gift_Bag, $ID_Festival_Prize, $ID_Armbrace_of_Truth, $ID_Margonite_Gemstone, $ID_Stygian_Gemstone, $ID_Titan_Gemstone, $ID_Torment_Gemstone, $ID_Coffer_of_Whispers, _
+	$ID_Gift_of_the_Traveller, $ID_Gift_of_the_Huntsman, $ID_Champions_Zaishen_Strongbox, $ID_Heros_Zaishen_Strongbox, $ID_Gladiators_Zaishen_Strongbox, $ID_Strategists_Zaishen_Strongbox, $ID_Zhos_Journal]
+Global Const $Map_Reward_Trophies = MapFromArray($Reward_Trophies_Array)
+#EndRegion Reward Trophy
 
 
 #Region Stackable Trophies
@@ -879,6 +895,7 @@ Global Const $ID_Glacial_Stone = 27047
 Global Const $ID_Frozen_Wurm_Husk = 27048
 Global Const $ID_Mountain_Root = 27049
 Global Const $ID_Pile_of_Elemental_Dust = 27050
+Global Const $ID_Fibrous_Mandragor_Root = 27051
 Global Const $ID_Superb_Charr_Carving = 27052
 Global Const $ID_Stone_Grawl_Necklace = 27053
 Global Const $ID_Mantid_Ungula = 27054
@@ -895,7 +912,7 @@ Global Const $ID_Dryder_Web = 27070
 Global Const $ID_Vaettir_Essence = 27071
 Global Const $ID_Krait_Skin = 27729
 Global Const $ID_Undead_Bone = 27974
-Local Const $Trophies_Array[191] = [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spiked_Crest, $ID_Hardened_Hump, $ID_Mergoyle_Skull, $ID_Glowing_Heart, $ID_Forest_Minotaur_Horn, $ID_Shadowy_Remnant, $ID_Abnormal_Seed, $ID_Bog_Skale_Fin, _
+Local Const $Trophies_Array[] = [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spiked_Crest, $ID_Hardened_Hump, $ID_Mergoyle_Skull, $ID_Glowing_Heart, $ID_Forest_Minotaur_Horn, $ID_Shadowy_Remnant, $ID_Abnormal_Seed, $ID_Bog_Skale_Fin, _
 	$ID_Feathered_Caromi_Scalp, $ID_Shriveled_Eye, $ID_Dune_Burrower_Jaw, $ID_Losaru_Mane, $ID_Bleached_Carapace, $ID_Topaz_Crest, $ID_Encrusted_Lodestone, $ID_Massive_Jawbone, $ID_Iridescant_Griffon_Wing, $ID_Dessicated_Hydra_Claw, _
 	$ID_Minotaur_Horn, $ID_Jade_Mandible, $ID_Forgotten_Seal, $ID_White_Mantle_Emblem, $ID_White_Mantle_Badge, $ID_Mursaat_Token, $ID_Ebon_Spider_Leg, $ID_Ancient_Eye, $ID_Behemoth_Jaw, $ID_Maguuma_Mane, $ID_Thorny_Carapace, $ID_Tangled_Seed, _
 	$ID_Mossy_Mandible, $ID_Jungle_Skale_Fin, $ID_Jungle_Troll_Tusk, $ID_Obsidian_Burrower_Jaw, $ID_Demonic_Fang, $ID_Phantom_Residue, $ID_Gruesome_Sternum, $ID_Demonic_Remains, $ID_Stormy_Eye, $ID_Scar_Behemoth_Jaw, $ID_Fetid_Carapace, _
@@ -910,8 +927,9 @@ Local Const $Trophies_Array[191] = [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Sp
 	$ID_Skree_Wing, $ID_Insect_Carapace, $ID_Sentient_Lodestone, $ID_Immolated_Djinn_Essence, $ID_Roaring_Ether_Claw, $ID_Mandragor_Husk, $ID_Mandragor_Swamproot, $ID_Behemoth_Hide, $ID_Geode, $ID_Hunting_Minotaur_Horn, $ID_Mandragor_Root, _
 	$ID_Red_Iris_Flower, $ID_Iboga_Petal, $ID_Skale_Fin, $ID_Chunk_of_Drake_Flesh, $ID_Ruby_Djinn_Essence, $ID_Sapphire_Djinn_Essence, $ID_Sentient_Spore, $ID_Heket_Tongue, $ID_Diessa_Chalice, $ID_Golden_Rin_Relic, $ID_Destroyer_Core, _
 	$ID_Incubus_Wing, $ID_Saurian_Bone, $ID_Amphibian_Tongue, $ID_Weaver_Leg, $ID_Patch_of_Simian_Fur, $ID_Quetzal_Crest, $ID_Skelk_Claw, $ID_Sentient_Vine, $ID_Frigid_Mandragor_Husk, $ID_Modnir_Mane, $ID_Stone_Summit_Emblem, $ID_Jotun_Pelt, _
-	$ID_Berserker_Horn, $ID_Glacial_Stone, $ID_Frozen_Wurm_Husk, $ID_Mountain_Root, $ID_Pile_of_Elemental_Dust, $ID_Superb_Charr_Carving, $ID_Stone_Grawl_Necklace, $ID_Mantid_Ungula, $ID_Skale_Fang, $ID_Stone_Claw, $ID_Skelk_Fang, $ID_Fungal_Root, _
-	$ID_Flesh_Reaver_Morsel, $ID_Golem_Runestone, $ID_Beetle_Egg, $ID_Blob_of_Ooze, $ID_Chromatic_Scale, $ID_Dryder_Web, $ID_Vaettir_Essence, $ID_Krait_Skin, $ID_Undead_Bone]
+	$ID_Berserker_Horn, $ID_Glacial_Stone, $ID_Frozen_Wurm_Husk, $ID_Mountain_Root, $ID_Pile_of_Elemental_Dust, $ID_Fibrous_Mandragor_Root, $ID_Superb_Charr_Carving, $ID_Stone_Grawl_Necklace, $ID_Mantid_Ungula, $ID_Skale_Fang, $ID_Stone_Claw, $ID_Skelk_Fang, _
+	$ID_Fungal_Root, $ID_Flesh_Reaver_Morsel, $ID_Golem_Runestone, $ID_Beetle_Egg, $ID_Blob_of_Ooze, $ID_Chromatic_Scale, $ID_Dryder_Web, $ID_Vaettir_Essence, $ID_Krait_Skin, $ID_Undead_Bone]
+Global Const $Map_Trophies = MapFromArray($Trophies_Array)
 #EndRegion Stackable Trophies
 
 
