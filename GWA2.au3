@@ -718,12 +718,8 @@ EndFunc
 Func StartSalvage($aItem)
 	Local $lOffset[4] = [0, 0x18, 0x2C, 0x690]
 	Local $lSalvageSessionID = MemoryReadPtr($mBasePointer, $lOffset)
-
-	If IsDllStruct($aItem) = 0 Then
-		Local $lItemID = $aItem
-	Else
-		Local $lItemID = DllStructGetData($aItem, 'ID')
-	EndIf
+	Local $lItemID = $aItem
+	If IsDllStruct($aItem) Then $lItemID = DllStructGetData($aItem, 'ID')
 
 	Local $lSalvageKit = FindSalvageKit()
 	If $lSalvageKit = 0 Then Return
@@ -758,12 +754,8 @@ EndFunc
 Func IdentifyItem($aItem)
 	If GetIsIdentified($aItem) Then Return
 
-	Local $lItemID
-	If IsDllStruct($aItem) = 0 Then
-		$lItemID = $aItem
-	Else
-		$lItemID = DllStructGetData($aItem, 'ID')
-	EndIf
+	Local $lItemID = $aItem
+	If IsDllStruct($aItem) Then $lItemID = DllStructGetData($aItem, 'ID')
 
 	Local $lIDKit = FindIdentificationKit()
 	If $lIDKit == 0 Then Return
@@ -795,28 +787,16 @@ EndFunc
 
 ;~ Equips an item.
 Func EquipItem($aItem)
-	Local $lItemID
-
-	If IsDllStruct($aItem) = 0 Then
-		$lItemID = $aItem
-	Else
-		$lItemID = DllStructGetData($aItem, 'ID')
-	EndIf
-
+	Local $lItemID = $aItem
+	If IsDllStruct($aItem) Then $lItemID = DllStructGetData($aItem, 'ID')
 	Return SendPacket(0x8, $HEADER_ITEM_EQUIP, $lItemID)
 EndFunc
 
 
 ;~ Uses an item.
 Func UseItem($aItem)
-	Local $lItemID
-
-	If IsDllStruct($aItem) = 0 Then
-		$lItemID = $aItem
-	Else
-		$lItemID = DllStructGetData($aItem, 'ID')
-	EndIf
-
+	Local $lItemID = $aItem
+	If IsDllStruct($aItem) Then $lItemID = DllStructGetData($aItem, 'ID')
 	Return SendPacket(0x8, $HEADER_ITEM_USE, $lItemID)
 EndFunc
 
@@ -824,7 +804,7 @@ EndFunc
 ;~ Picks up an item.
 Func PickUpItem($aItem)
 	Local $lAgentID
-	If IsDllStruct($aItem) = 0 Then
+	If Not IsDllStruct($aItem) Then
 		$lAgentID = $aItem
 	ElseIf DllStructGetSize($aItem) < 400 Then
 		$lAgentID = DllStructGetData($aItem, 'AgentID')
@@ -838,42 +818,30 @@ EndFunc
 
 ;~ Drops an item.
 Func DropItem($aItem, $aAmount = 0)
-	Local $lItemID, $lAmount
+	Local $lItemID
 
-	If IsDllStruct($aItem) = 0 Then
-		$lItemID = $aItem
-		If $aAmount > 0 Then
-			$lAmount = $aAmount
-		Else
-			$lAmount = DllStructGetData(GetItemByItemID($aItem), 'Quantity')
-		EndIf
-	Else
+	If IsDllStruct($aItem) Then
 		$lItemID = DllStructGetData($aItem, 'ID')
-		If $aAmount > 0 Then
-			$lAmount = $aAmount
-		Else
-			$lAmount = DllStructGetData($aItem, 'Quantity')
-		EndIf
+	Else
+		$lItemID = $aItem
+		$aItem = GetItemByItemID($aItem)
 	EndIf
+	If $aAmount < 0 Then $aAmount = DllStructGetData($aItem, 'Quantity')
 
-	Return SendPacket(0xC, $HEADER_ITEM_DROP, $lItemID, $lAmount)
+	Return SendPacket(0xC, $HEADER_ITEM_DROP, $lItemID, $aAmount)
 EndFunc
 
 
 ;~ Moves an item.
 Func MoveItem($aItem, $aBag, $aSlot)
-	Local $lItemID, $lBagID
+	Local $lItemID = $aItem
+	If IsDllStruct($aItem) Then $lItemID = DllStructGetData($aItem, 'ID')
 
-	If IsDllStruct($aItem) = 0 Then
-		$lItemID = $aItem
-	Else
-		$lItemID = DllStructGetData($aItem, 'ID')
-	EndIf
-
-	If IsDllStruct($aBag) = 0 Then
-		$lBagID = DllStructGetData(GetBag($aBag), 'ID')
-	Else
+	Local $lBagID
+	If IsDllStruct($aBag) Then
 		$lBagID = DllStructGetData($aBag, 'ID')
+	Else
+		$lBagID = DllStructGetData(GetBag($aBag), 'ID')
 	EndIf
 
 	Return SendPacket(0x10, $HEADER_ITEM_MOVE, $lItemID, $lBagID, $aSlot - 1)
@@ -888,7 +856,7 @@ EndFunc
 
 ;~ Sells an item.
 Func SellItem($aItem, $aQuantity = 0)
-	If IsDllStruct($aItem) = 0 Then $aItem = GetItemByItemID($aItem)
+	If Not IsDllStruct($aItem) Then $aItem = GetItemByItemID($aItem)
 	If $aQuantity = 0 Or $aQuantity > DllStructGetData($aItem, 'Quantity') Then $aQuantity = DllStructGetData($aItem, 'Quantity')
 
 	DllStructSetData($mSellItem, 2, $aQuantity * DllStructGetData($aItem, 'Value'))
@@ -1103,15 +1071,11 @@ EndFunc
 
 ;~ Request a quote to sell an item to the trader.
 Func TraderRequestSell($aItem)
-	Local $lItemID
 	Local $lFound = False
 	Local $lQuoteID = MemoryRead($mTraderQuoteID)
 
-	If IsDllStruct($aItem) = 0 Then
-		$lItemID = $aItem
-	Else
-		$lItemID = DllStructGetData($aItem, 'ID')
-	EndIf
+	Local $lItemID = $aItem
+	If IsDllStruct($aItem) Then $lItemID = DllStructGetData($aItem, 'ID')
 
 	DllStructSetData($mRequestQuoteSell, 2, $lItemID)
 	Enqueue($mRequestQuoteSellPtr, 8)
@@ -1281,11 +1245,10 @@ EndFunc
 ;~ Order a hero to use a skill.
 Func UseHeroSkill($aHero, $aSkillSlot, $aTarget = 0)
 	Local $lTargetID
-
-	If IsDllStruct($aTarget) = 0 Then
-		$lTargetID = ConvertID($aTarget)
-	Else
+	If IsDllStruct($aTarget) Then
 		$lTargetID = DllStructGetData($aTarget, 'ID')
+	Else
+		$lTargetID = ConvertID($aTarget)
 	EndIf
 
 	DllStructSetData($mUseHeroSkill, 2, GetHeroID($aHero))
@@ -1341,10 +1304,10 @@ EndFunc
 ;~ Run to or follow a player.
 Func GoPlayer($aAgent)
 	Local $lAgentID
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 	Return SendPacket(0x8, $HEADER_AGENT_FOLLOW , $lAgentID)
 EndFunc
@@ -1353,11 +1316,10 @@ EndFunc
 ;~ Talk to an NPC
 Func GoNPC($aAgent)
 	Local $lAgentID
-
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 
 	Return SendPacket(0xC, $HEADER_NPC_TALK, $lAgentID)
@@ -1394,10 +1356,10 @@ EndFunc
 ;~ Run to a signpost.
 Func GoSignpost($aAgent)
 	Local $lAgentID
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 	Return SendPacket(0xC, $HEADER_SIGNPOST_RUN, $lAgentID, 0)
 EndFunc
@@ -1433,10 +1395,10 @@ EndFunc
 ;~ Attack an agent.
 Func Attack($aAgent, $aCallTarget = False)
 	Local $lAgentID
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 	Return SendPacket(0xC, $HEADER_ATTACK_AGENT, $lAgentID, $aCallTarget)
 EndFunc
@@ -1719,10 +1681,10 @@ EndFunc
 ;~ Target an agent.
 Func ChangeTarget($aAgent)
 	Local $lAgentID
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 	DllStructSetData($mChangeTarget, 2, $lAgentID)
 	Enqueue($mChangeTargetPtr, 8)
@@ -1732,10 +1694,10 @@ EndFunc
 ;~ Call target.
 Func CallTarget($aTarget)
 	Local $lTargetID
-	If IsDllStruct($aTarget) = 0 Then
-		$lTargetID = ConvertID($aTarget)
-	Else
+	If IsDllStruct($aTarget) Then
 		$lTargetID = DllStructGetData($aTarget, 'ID')
+	Else
+		$lTargetID = ConvertID($aTarget)
 	EndIf
 	Return SendPacket(0xC, $HEADER_CALL_TARGET, 0xA, $lTargetID)
 EndFunc
@@ -1941,11 +1903,10 @@ EndFunc
 ;~ Use a skill.
 Func UseSkill($aSkillSlot, $aTarget, $aCallTarget = False)
 	Local $lTargetID
-
-	If IsDllStruct($aTarget) = 0 Then
-		$lTargetID = ConvertID($aTarget)
-	Else
+	If IsDllStruct($aTarget) Then
 		$lTargetID = DllStructGetData($aTarget, 'ID')
+	Else
+		$lTargetID = ConvertID($aTarget)
 	EndIf
 
 	DllStructSetData($mUseSkill, 2, $aSkillSlot)
@@ -2735,14 +2696,14 @@ EndFunc
 
 ;~ Tests if an item is assigned to you.
 Func GetAssignedToMe($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'Owner') == GetMyID()
 EndFunc
 
 
 ;~ Tests if you can pick up an item.
 Func GetCanPickUp($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	If GetAssignedToMe($aAgent) Or DllStructGetData($aAgent, 'Owner') = 0 Then
 		Return True
 	Else
@@ -2764,13 +2725,8 @@ EndFunc
 
 ;~ Returns item by slot.
 Func GetItemBySlot($aBag, $aSlot)
-	Local $lBag
-
-	If IsDllStruct($aBag) = 0 Then
-		$lBag = GetBag($aBag)
-	Else
-		$lBag = $aBag
-	EndIf
+	Local $lBag = $aBag
+	If Not IsDllStruct($aBag) Then $lBag = GetBag($aBag)
 
 	Local $lItemPtr = DllStructGetData($lBag, 'ItemArray')
 	Local $lBuffer = DllStructCreate('ptr')
@@ -3051,10 +3007,10 @@ EndFunc
 Func GetTarget($aAgent)
 	Local $lAgentID
 
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 
 	Return MemoryRead(GetValue('TargetLogBase') + 4 * $lAgentID)
@@ -3106,7 +3062,7 @@ Func GetNearestAgentToAgent($aAgent = -2)
 	Local $lDistance
 	Local $lAgentArray = GetAgentArray()
 
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 
 	Local $lID = DllStructGetData($aAgent, 'ID')
 
@@ -3215,7 +3171,7 @@ Func GetNearestSignpostToAgent($aAgent = -2)
 	Local $lDistance
 	Local $lAgentArray = GetAgentArray(0x200)
 
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 
 	Local $lID = DllStructGetData($aAgent, 'ID')
 
@@ -3415,9 +3371,7 @@ EndFunc
 
 ;~ Return the number of enemy agents targeting the given agent.
 Func GetAgentDanger($aAgent, $aAgentArray = 0)
-	If IsDllStruct($aAgent) = 0 Then
-		$aAgent = GetAgentByID($aAgent)
-	EndIf
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 
 	Local $lCount = 0
 
@@ -3448,42 +3402,42 @@ EndFunc
 #Region AgentInfo
 ;~ Tests if an agent is living.
 Func GetIsLiving($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'Type') = 0xDB
 EndFunc
 
 
 ;~ Tests if an agent is a signpost/chest/etc.
 Func GetIsStatic($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'Type') = 0x200
 EndFunc
 
 
 ;~ Tests if an agent is an item.
 Func GetIsMovable($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'Type') = 0x400
 EndFunc
 
 
 ;~ Returns energy of an agent. (Only self/heroes)
 Func GetEnergy($aAgent = -2)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'EnergyPercent') * DllStructGetData($aAgent, 'MaxEnergy')
 EndFunc
 
 
 ;~ Returns health of an agent. (Must have caused numerical change in health)
 Func GetHealth($aAgent = -2)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'HP') * DllStructGetData($aAgent, 'MaxHP')
 EndFunc
 
 
 ;~ Tests if an agent is moving.
 Func GetIsMoving($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	If DllStructGetData($aAgent, 'MoveX') <> 0 Or DllStructGetData($aAgent, 'MoveY') <> 0 Then Return True
 	Return False
 EndFunc
@@ -3491,14 +3445,14 @@ EndFunc
 
 ;~ Tests if an agent is knocked down.
 Func GetIsKnocked($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'ModelState') = 0x450
 EndFunc
 
 
 ;~ Tests if an agent is attacking.
 Func GetIsAttacking($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Switch DllStructGetData($aAgent, 'ModelState')
 		Case 0x60
 			Return True
@@ -3514,84 +3468,84 @@ EndFunc
 
 ;~ Tests if an agent is casting.
 Func GetIsCasting($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return DllStructGetData($aAgent, 'Skill') <> 0
 EndFunc
 
 
 ;~ Tests if an agent is bleeding.
 Func GetIsBleeding($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0001) > 0
 EndFunc
 
 
 ;~ Tests if an agent has a condition.
 Func GetHasCondition($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0002) > 0
 EndFunc
 
 
 ;~ Tests if an agent is dead.
 Func GetIsDead($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0010) > 0
 EndFunc
 
 
 ;~ Tests if an agent has a deep wound.
 Func GetHasDeepWound($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0020) > 0
 EndFunc
 
 
 ;~ Tests if an agent is poisoned.
 Func GetIsPoisoned($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0040) > 0
 EndFunc
 
 
 ;~ Tests if an agent is enchanted.
 Func GetIsEnchanted($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0080) > 0
 EndFunc
 
 
 ;~ Tests if an agent has a degen hex.
 Func GetHasDegenHex($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0400) > 0
 EndFunc
 
 
 ;~ Tests if an agent is hexed.
 Func GetHasHex($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0800) > 0
 EndFunc
 
 
 ;~ Tests if an agent has a weapon spell.
 Func GetHasWeaponSpell($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x8000) > 0
 EndFunc
 
 
 ;~ Tests if an agent is a boss.
 Func GetIsBoss($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'TypeMap'), 1024) > 0
 EndFunc
 
 
 ;~ Returns a player's name.
 Func GetPlayerName($aAgent)
-	If IsDllStruct($aAgent) = 0 Then $aAgent = GetAgentByID($aAgent)
+	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Local $lLogin = DllStructGetData($aAgent, 'LoginNumber')
 	Local $lOffset[6] = [0, 0x18, 0x2C, 0x80C, 76 * $lLogin + 0x28, 0]
 	Local $lReturn = MemoryReadPtr($mBasePointer, $lOffset, 'wchar[30]')
@@ -3603,11 +3557,11 @@ EndFunc
 Func GetAgentName($aAgent)
 	If $mUseStringLog = False Then Return
 
-	If IsDllStruct($aAgent) = 0 Then
+	If IsDllStruct($aAgent) Then
+		Local $lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
 		Local $lAgentID = ConvertID($aAgent)
 		If $lAgentID = 0 Then Return ''
-	Else
-		Local $lAgentID = DllStructGetData($aAgent, 'ID')
 	EndIf
 
 	Local $lAddress = $mStringLogBase + 256 * $lAgentID
@@ -4111,8 +4065,8 @@ EndFunc
 
 ;~ Returns the distance between two agents.
 Func GetDistance($aAgent1 = -1, $aAgent2 = -2)
-	If IsDllStruct($aAgent1) = 0 Then $aAgent1 = GetAgentByID($aAgent1)
-	If IsDllStruct($aAgent2) = 0 Then $aAgent2 = GetAgentByID($aAgent2)
+	If Not IsDllStruct($aAgent1) Then $aAgent1 = GetAgentByID($aAgent1)
+	If Not IsDllStruct($aAgent2) Then $aAgent2 = GetAgentByID($aAgent2)
 	Return Sqrt((DllStructGetData($aAgent1, 'X') - DllStructGetData($aAgent2, 'X')) ^ 2 + (DllStructGetData($aAgent1, 'Y') - DllStructGetData($aAgent2, 'Y')) ^ 2)
 EndFunc
 
@@ -6278,10 +6232,10 @@ EndFunc
 Func TradePlayer($aAgent)
 	Local $lAgentID
 
-	If IsDllStruct($aAgent) = 0 Then
-		$lAgentID = ConvertID($aAgent)
-	Else
+	If IsDllStruct($aAgent) Then
 		$lAgentID = DllStructGetData($aAgent, 'ID')
+	Else
+		$lAgentID = ConvertID($aAgent)
 	EndIf
 	SendPacket(0x08, $HEADER_TRADE_PLAYER, $lAgentID)
 EndFunc

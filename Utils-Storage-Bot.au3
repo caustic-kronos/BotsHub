@@ -269,7 +269,58 @@ EndFunc
 
 
 
-#Region Guild Hall Specifics
+
+
+
+#Region Inventory
+Func SellBagItems($bagIndex)
+	Local $item
+	Local $bag = GetBag($bagIndex)
+	Local $SlotCount = DllStructGetData($bag, 'slots')
+	For $i = 1 To $SlotCount
+		$item = GetItemBySlot($bagIndex, $i)
+		If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+		If CanSell($item) Then
+			Out('Selling Item: ' & $bagIndex & ', ' & $i)
+			SellItem($item)
+		EndIf
+		Sleep(GetPing()+250)
+	Next
+EndFunc
+
+
+Func CanSell($item)
+	; Local $Requirement = GetItemReq($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+
+	; Lockpicks, Kits
+	If IsGeneralItem($itemID) Then Return False
+	If $itemID == $ID_Glacial_Stone Then Return False
+	If IsTome($itemID) Then Return False
+	If IsMaterial($itemID) Then Return False
+	If IsWeaponMod($itemID) Then Return False
+	If IsStackableItem($itemID) Then Return False
+
+	If $itemID == $ID_Dyes Then
+		Switch DllStructGetData($item, 'ExtraID')
+			Case $ID_Black_Dye, $ID_White_Dye
+				Return False
+			Case Else
+				Return True
+		EndSwitch
+	EndIf
+
+	Local $rarity = GetRarity($item)
+	If $rarity == $RARITY_Gold Then Return True
+	If $rarity == $RARITY_Purple Then Return True
+	If $rarity == $RARITY_Blue Then Return True
+	If $rarity == $RARITY_White Then Return True
+	Return True
+EndFunc
+#EndRegion Inventory
+
+
+#Region Guild Hall
 ;~ Checks to see which Guild Hall you are in and the spawn point
 Func CheckGuildHall()
 	Switch GetMapID()
@@ -374,7 +425,7 @@ Func Chest()
 	Next
 	Local $chestName = 'Xunlai Chest'
 	Local $chest = GetAgentByName($chestName)
-	If IsDllStruct($chest)Then
+	If IsDllStruct($chest) Then
 		Out('Going to ' & $chestName)
 		GoToNPC($chest)
 		RndSleep(3500)
@@ -463,81 +514,6 @@ Func GenericRandomPath($aPosX, $aPosY, $aRandom = 50, $STOPSMIN = 1, $STOPSMAX =
 	EndIf
 EndFunc
 
-
-#EndRegion Guild Hall Specifics
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Func SellBagItems($bagIndex)
-	Local $item
-	Local $bag = GetBag($bagIndex)
-	Local $SlotCount = DllStructGetData($bag, 'slots')
-	For $i = 1 To $SlotCount
-		$item = GetItemBySlot($bagIndex, $i)
-		If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-		If CanSell($item) Then
-			Out('Selling Item: ' & $bagIndex & ', ' & $i)
-			SellItem($item)
-		EndIf
-		Sleep(GetPing()+250)
-	Next
-EndFunc
-
-Func CanSell($item)
-	; Local $Requirement = GetItemReq($item)
-	Local $itemID = DllStructGetData($item, 'ModelID')
-
-	; Lockpicks, Kits
-	If IsGeneralItem($itemID) Then Return False
-	If $itemID == $ID_Glacial_Stone Then Return False
-	If IsTome($itemID) Then Return False
-	If IsMaterial($itemID) Then Return False
-	If IsWeaponMod($itemID) Then Return False
-	If IsStackableItem($itemID) Then Return False
-
-	If $itemID == $ID_Dyes Then
-		Switch DllStructGetData($item, 'ExtraID')
-			Case $ID_Black_Dye, $ID_White_Dye
-				Return False
-			Case Else
-				Return True
-		EndSwitch
-	EndIf
-
-	Local $rarity = GetRarity($item)
-	If $rarity == $RARITY_Gold Then Return True
-	If $rarity == $RARITY_Purple Then Return True
-	If $rarity == $RARITY_Blue Then Return True
-	If $rarity == $RARITY_White Then Return True
-	Return True
-EndFunc
-
-
 Func RareMaterialTrader()
 	Local $Waypoints_by_RareMatTrader[36][3] = [ _
 			[$BurningIsle, -3793, 1069], _
@@ -585,7 +561,7 @@ Func RareMaterialTrader()
 	Next
 	Local $lRareTrader = 'Rare Material Trader'
 	Local $lRare = GetAgentByName($lRareTrader)
-	If IsDllStruct($lRare)Then
+	If IsDllStruct($lRare) Then
 		Out('Going to ' & $lRareTrader)
 		GoToNPC($lRare)
 		RndSleep(Random(3000, 4200))
@@ -600,77 +576,12 @@ Func RareMaterialTrader()
 		TraderBuy()
 	WEnd
 EndFunc
-
-#EndRegion Inventory
-
-
-
-
-Func _salvage()
-	Local $lquantityold, $loldvalue
-	salvagekit()
-	Local $lsalvagekitid = findsalvagekit()
-	Local $lsalvagekitptr = getitemptr($lsalvagekitid)
-	For $bag = 1 To 4
-		$lbagptr = getbagptr($bag)
-		$lbagp = getbag($bag)
-		If $lbagptr = 0 Then ContinueLoop
-		For $slot = 1 To memoryread($lbagptr + 32, 'long')
-			$litem = getitemptrbyslot($lbagptr, $slot)
-			$aitem = getitembyslot($bag, $slot)
-			out('getcansalvage($litem)')
-			If NOT getcansalvage($litem) Then ContinueLoop
-			out('Salvaging : ' & $bag & ',' & $slot)
-			$lquantity = memoryread($litem + 76, 'byte')
-			$itemmid = memoryread($litem + 44, 'long')
-			$itemrarity = getrarity($aitem)
-			If $itemrarity = $rarity_white OR $itemrarity = $rarity_blue Then
-				For $i = 1 To $lquantity
-					If memoryread($lsalvagekitptr + 12, 'ptr') = 0 Then
-						salvagekit()
-						$lsalvagekitid = findsalvagekit()
-						$lsalvagekitptr = getitemptr($lsalvagekitid)
-					EndIf
-					$lquantityold = $lquantity
-					$loldvalue = memoryread($lsalvagekitptr + 36, 'short')
-					startsalvage($aitem)
-					Local $ldeadlock = TimerInit()
-					Do
-						Sleep(200)
-					Until memoryread($lsalvagekitptr + 36, 'short') <> $loldvalue OR TimerDiff($ldeadlock) > 5000
-				Next
-			ElseIf $itemrarity = $rarity_purple OR $itemrarity = $rarity_gold Then
-				$itemtype = memoryread($litem + 32, 'byte')
-				If $itemtype = 0 Then
-					ContinueLoop
-				EndIf
-				If memoryread($litem + 12, 'ptr') <> 0 Then
-					If memoryread($lsalvagekitptr + 12, 'ptr') = 0 Then
-						salvagekit()
-						$lsalvagekitid = findsalvagekit()
-						$lsalvagekitptr = getitemptr($lsalvagekitid)
-					EndIf
-					$loldvalue = memoryread($lsalvagekitptr + 36, 'short')
-					startsalvage($aitem)
-					Sleep(500 + getping())
-					salvagematerials()
-					Local $ldeadlock = TimerInit()
-					Do
-						Sleep(200)
-					Until memoryread($lsalvagekitptr + 36, 'short') <> $loldvalue OR TimerDiff($ldeadlock) > 5000
-				EndIf
-			EndIf
-		Next
-	Next
-	salvagekit()
-EndFunc
+#EndRegion Guild Hall
 
 
 
 
-
-
-
+#Region Unused
 ;Bolt ons from Chest Bot script i.e. Storing Golds, unids, consumables etc.
 #Region Storage
 Func StoreItemsEx()
@@ -707,3 +618,5 @@ Func StoreItemsEx()
 		Next
 	Next
 EndFunc
+
+#EndRegion Unused
