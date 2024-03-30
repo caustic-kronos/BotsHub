@@ -58,7 +58,9 @@ EndFunc
 ;~ Shouldn't be used
 Func HealingLoop()
 	While $STATUS == 'RUNNING'
-		HealingUnit()
+		;RndSleep(5000)
+		;HealingUnit()
+		HealingUnitAutoLoop()
 	WEnd
 EndFunc
 
@@ -94,14 +96,21 @@ EndFunc
 ;~ Can be used in other farm bots
 Func PrepareZephyrSpirit()
 	UseHeroSkill($Hero_Speed_Paragon, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_Dervish_1, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_Dervish_2, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_Dervish_3, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_BiP_Necro_1, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_BiP_Necro_2, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Faithful_Intervention_Skill_Position)
-	RndSleep(2500)
-	UseHeroSkill($Hero_BiP_Necro_1, $BiP_Skill_Position, $Hero_Zephyr_Ranger)
+	RndSleep(1000)
+	UseHeroSkill($Hero_BiP_Necro_1, $BiP_Skill_Position, GetHeroID($Hero_Zephyr_Ranger))
+	RndSleep(1500)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Serpents_Quickness_Skill_Position)
 	RndSleep(1000)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
