@@ -1901,7 +1901,7 @@ EndFunc
 
 
 ;~ Use a skill.
-Func UseSkill($aSkillSlot, $aTarget, $aCallTarget = False)
+Func UseSkill($aSkillSlot, $aTarget = -2, $aCallTarget = False)
 	Local $lTargetID
 	If IsDllStruct($aTarget) Then
 		$lTargetID = DllStructGetData($aTarget, 'ID')

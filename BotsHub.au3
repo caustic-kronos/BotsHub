@@ -56,6 +56,7 @@ GUI built with GuiBuilderPlus
 #include 'Farm-Luxon.au3'
 #include 'Farm-Mantids.au3'
 #include 'Farm-MinisterialCommendations.au3'
+#include 'Farm-Pongmei.au3'
 #include 'Farm-Raptors.au3'
 #include 'Farm-SpiritSlaves.au3'
 #include 'Farm-Vaettirs.au3'
@@ -106,7 +107,8 @@ Global $GUI_Group_FarmSpecificLootOptions, $GUI_Checkbox_LootGlacialStones, $GUI
 
 Global $GUI_Group_ConsumablesLootOption, $GUI_Checkbox_LootCandyCaneShards, $GUI_Checkbox_LootLunarTokens, $GUI_Checkbox_LootToTBags, $GUI_Checkbox_LootFestiveItems, $GUI_Checkbox_LootAlcohols, $GUI_Checkbox_LootSweets
 
-Global $GUI_Label_CharacterBuild, $GUI_Label_HeroBuild, $GUI_Label_FarmInformations
+Global $GUI_Label_CharacterBuild, $GUI_Label_HeroBuild, $GUI_Edit_CharacterBuild, $GUI_Edit_HeroBuild, $GUI_Label_FarmInformations
+
 Global $GUI_Label_ToDoList
 
 ;------------------------------------------------------
@@ -119,7 +121,7 @@ Func createGUI()
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
-	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
 	$GUI_StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
 	GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($GUI_StartButton, 'GuiButtonHandler')
@@ -230,8 +232,11 @@ Func createGUI()
 
 	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm infos')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
-	$GUI_Label_CharacterBuild = GUICtrlCreateLabel('Character build:', 30, 55, 531, 26)
-	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 531, 26)
+	$GUI_Label_CharacterBuild = GUICtrlCreateLabel('Character build:', 30, 55, 80, 21)
+	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit("", 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
+	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
+	$GUI_Edit_HeroBuild = GUICtrlCreateEdit("", 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
+	
 	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
@@ -437,6 +442,8 @@ Func RunFarmLoop($Farm)
 			Return MinisterialCommendationsFarm($STATUS)
 		Case 'OmniFarm'
 			Return OmniFarm($STATUS)
+		Case 'Pongmei'
+			Return PongmeiChestFarm($STATUS)
 		Case 'Raptors'
 			Return RaptorFarm($STATUS)
 		Case 'SpiritSlaves'
@@ -459,71 +466,77 @@ EndFunc
 Func UpdateFarmDescription($Farm)
 	Switch $Farm
 		Case 'Corsairs'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RACorsairsFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CorsairsFarmInformations)
 		Case 'Dragon Moss'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RADragonMossFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $RADragonMossFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $DragonMossFarmInformations)
 		Case 'Eden Iris'
-			GUICtrlSetData($GUI_Label_CharacterBuild, '')
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $EdenIrisFarmInformations)
 		Case 'Follow'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $FollowerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $FollowerInformations)
 		Case 'Jade Brotherhood'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $JB_Skillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, 'Hero build:' & @CRLF & $JB_Hero_Skillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $JB_FarmInformations)
 		Case 'Kournans'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RACorsairsFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CorsairsFarmInformations)
 		Case 'Kurzick'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $KurzickFactionSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $KurzickFactionSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $KurzickFactionInformations)
 		Case 'Lightbringer'
-			GUICtrlSetData($GUI_Label_CharacterBuild, '')
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $LightbringerFarmInformations)
 		Case 'Luxon'
-			GUICtrlSetData($GUI_Label_CharacterBuild, '')
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $LuxonFactionInformations)
 		Case 'Mantids'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $RAMantidsFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, 'Hero build:' & @CRLF & $MantidsHeroSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $RAMantidsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, $MantidsHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $MantidsFarmInformations)
 		Case 'Ministerial Commendations'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $DWCommendationsFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $DWCommendationsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CommendationsFarmInformations)
 		Case 'OmniFarm'
-			GUICtrlSetData($GUI_Label_CharacterBuild, '')
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
+		Case 'Pongmei'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $PongmeiChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $PongmeiChestRunInformations)
 		Case 'Raptors'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $WNRaptorFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, 'Hero build:' & @CRLF & $PRunnerHeroSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, $PRunnerHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $RaptorsFarmInformations)
 		Case 'SpiritSlaves'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $SpiritSlaves_Skillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $SpiritSlavesFarmInformations)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $SpiritSlavesFarmInformations)
 		Case 'Vaettirs'
-			GUICtrlSetData($GUI_Label_CharacterBuild, 'Character build:' & @CRLF & $AMeVaettirsFarmerSkillbar)
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $VaettirsFarmInformations)
 		Case 'Storage'
-			GUICtrlSetData($GUI_Label_CharacterBuild, '')
-			GUICtrlSetData($GUI_Label_HeroBuild, '')
+			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
 		Case else
-
+			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, '')
 	EndSwitch
 EndFunc
 
@@ -667,6 +680,7 @@ Func UpdateStats($success, $timer)
 	Local Static $KurzickTitlePoints = GetKurzickTitle()
 	Local Static $LuxonTitlePoints = GetLuxonTitle()
 	Local Static $GoldItemsCount = CountGoldItems()
+	;Local Static $ItemStacks = CountItemStacks()
 
 	;Either bot did not run yet or ran but was paused
 	If $success == 0 Then

@@ -64,7 +64,9 @@ Global Const $ID_House_Zu_Heltzer			= 77
 Global Const $ID_Kaineng_City				= 194
 Global Const $ID_Mount_Qinkai				= 200
 Global Const $ID_Ferndale					= 210
+Global Const $ID_Pongmei_Valley				= 211
 Global Const $ID_Nahpui_Quarter				= 216
+Global Const $ID_Boreas_Seabed				= 219
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
 Global Const $ID_Isle_Of_Weeping_Stone		= 275
@@ -100,6 +102,7 @@ Global Const $ID_Longeyes_Ledge				= 650
 
 
 #Region Professions
+Global Const $ID_Unknown		= 0
 Global Const $ID_Warrior		= 1
 Global Const $ID_Ranger			= 2
 Global Const $ID_Monk			= 3
@@ -224,9 +227,11 @@ Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damag
 
 
 #Region MapMarkers
-Global Const $ID_ExtraType_Smol_Chest	= 6062 ;Istani chests
-Global Const $ID_ExtraType_NM_Chest		= 4582
-Global Const $ID_ExtraType_HM_Chest		= 8141
+Global Const $ID_ExtraType_Smol_Chest		= 6062 ;Istani chests
+Global Const $ID_ExtraType_NM_Chest			= 4582
+Global Const $ID_ExtraType_HM_Chest			= 8141
+Local Const $Chests_Array[]					= [$ID_ExtraType_Smol_Chest, $ID_ExtraType_NM_Chest, $ID_ExtraType_HM_Chest]
+Global Const $Map_Chests					= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
 
 

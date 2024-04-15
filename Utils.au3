@@ -18,7 +18,14 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	;Local $item = GetItemBySlot(1,20)
+
+	Out(GetHeroProfession(0))
+	Out(GetHeroProfession(1))
+	Out(GetHeroProfession(2))
+	;SortInventory()
+	;Local $item = GetItemBySlot(1,1)
+	;_dlldisplay($item)
+	;MoveItem($item, 1, 2)
 	;Local $name = GetAgentName($item)
 	;Out($name)
 	;Sleep(2000)
@@ -40,6 +47,13 @@ Func RunTests($STATUS)
 
 	;Return 0
 	Return 2
+EndFunc
+
+
+Func PrintNPCState($npc)
+	Out('ID: ' & DllStructGetData($npc, 'ID'))
+	Out('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
+	Out('ModelState: ' & DllStructGetData($npc, 'ModelState'))
 EndFunc
 
 
@@ -141,7 +155,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($id)
-				RndSleep(100)
+				RndSleep(50)
 				If GetIsDead(-2) Then Return
 				If TimerDiff($deadlock) > 10000 Then ExitLoop
 			WEnd
@@ -160,7 +174,7 @@ Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
 	;Only pick gold if character has less than 99k in inventory
-	If (($itemID == $ID_GOLD) And (GetGoldCharacter() < 99000)) Then
+	If (($itemID == $ID_Money) And (GetGoldCharacter() < 99000)) Then
 		Return True
 	ElseIf IsBasicMaterial($item) Then
 		Return GUICtrlRead($GUI_Checkbox_LootBasicMaterials) == $GUI_CHECKED
@@ -251,20 +265,21 @@ EndFunc
 
 #Region Loot Chests
 ;~ Find and open chests in the given range (earshot by default)
-Func CheckForChests($range = $RANGE_EARSHOT)
+Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
 	Local Static $openedChests[]
 	Local $extraType
 	Local $agents = GetAgentArray(0x200) ;0x200 = type: static
 	For $i = 1 To $agents[0]
 		$extraType = DllStructGetData($agents[$i], 'ExtraType')
-		If $extraType <> $ID_ExtraType_NM_Chest And $extraType <> $ID_ExtraType_HM_Chest And $extraType <> $ID_ExtraType_Smol_Chest Then ContinueLoop
+
+		If $Map_Chests[$extraType] == null Then ContinueLoop
 		If GetDistance(-2, $agents[$i]) > $range Then ContinueLoop
 
 		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
-			Out('Found an unopened chest')
 			;MoveTo(DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y'))		;Fail half the time
 			;GoSignpost($agents[$i])															;Seems to work but serious rubberbanding
-			GoToSignpost($agents[$i])															;Much better solution
+			;GoToSignpost($agents[$i])															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
+			GoToSignpostWhileDefending($agents[$i], $DefendFunction)							;Final solution
 			RndSleep(500)
 			OpenChest()
 			RndSleep(1000)
@@ -272,6 +287,28 @@ Func CheckForChests($range = $RANGE_EARSHOT)
 			PickUpItems()
 		EndIf
 	Next
+EndFunc
+
+
+;~ Go to signpost and waits until you reach it.
+Func GoToSignpostWhileDefending($agent, $DefendFunction = null)
+	Local $me = GetAgentByID(-2)
+	Local $X = DllStructGetData($agent, 'X')
+	Local $Y = DllStructGetData($agent, 'Y')
+	Local $blocked = 0
+	While Not GetIsDead(-2) And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
+		Move($X, $Y, 100)
+		RndSleep(100)
+		If $DefendFunction <> null Then $DefendFunction()
+		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+			$blocked += 1
+			Move($X, $Y, 100)
+		EndIf
+		GoSignpost($agent)
+		RndSleep(100)
+		$me = GetAgentByID(-2)
+	WEnd 
+	RndSleep(500)
 EndFunc
 #EndRegion Loot Chests
 
@@ -620,7 +657,7 @@ EndFunc
 
 
 ;~ Look for an item in bags and return bag and slot of the item, [0, 0] else (positions start at 1)
-Func findInInventory($itemID)
+Func FindInInventory($itemID)
 	Local $item
 	Local $itemBagAndSlot[2]
 	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0

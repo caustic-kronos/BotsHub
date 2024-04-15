@@ -52,17 +52,17 @@ Func LightbringerFarmSetup()
 	LeaveGroup()
 
 	AddHero($ID_Melonni)
-	AddHero($ID_MOX)
+	;AddHero($ID_MOX)
 	;AddHero($ID_Kahmu)
+	;AddHero($ID_Koss)
+	AddHero($ID_Goren)
 	AddHero($ID_Zenmai)
 	;AddHero($ID_Anton)
 	AddHero($ID_Acolyte_Sousuke)
 	AddHero($ID_Acolyte_Jin)
-	;AddHero($ID_Tahlkora)
-	;AddHero($ID_Dunkoro)
-	AddHero($ID_Goren)
-	;AddHero($ID_Koss)
 	AddHero($ID_Margrid_The_Sly)
+	AddHero($ID_Tahlkora)
+	;AddHero($ID_Dunkoro)
 	;AddHero($ID_Ogden)
 
 	SetDisplayedTitle($ID_Lightbringer_Title)
@@ -102,9 +102,15 @@ Func FarmTheSulfurousWastes()
 	ActionInteract()
 	RndSleep(1500)
 
-	If MoveToAndAggro(-800, 12000, -1700, 9800, 'First Undead Group') Then Return 1
-	If MoveToAndAggro(-3000, 10900, -4500, 11500, 'Second Undead Group') Then Return 1
-	If MoveToAndAggro(-7500, 11925, -9800, 12400, -13000, 9500, -13250, 6750, 'Third Undead Group') Then Return 1
+	If MultipleMoveToAndAggro('First Undead Group', -800, 12000, -1700, 9800) Then Return 1
+	If MultipleMoveToAndAggro('Second Undead Group', -3000, 10900, -4500, 11500) Then Return 1
+	SpeedTeam()
+	MoveTo(-7500, 11925)
+	SpeedTeam()
+	MoveTo(-9800, 12400)
+	SpeedTeam()
+	MoveTo(-13000, 9500)
+	If MultipleMoveToAndAggro('Third Undead Group', -13250, 6750) Then Return 1
 
 	Out('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
@@ -114,14 +120,14 @@ Func FarmTheSulfurousWastes()
 	Dialog(0x85)
 	RndSleep(1000)
 
-	If MoveToAndAggro(-22000, 9000, -22350, 11100, 'First Margonite Group') Then Return 1
+	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) Then Return 1
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
-	;If MoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
-	If MoveToAndAggro(-19000, 5700, -20800, 600, -22000, -1200, 'Djinn Group', 2200) Then Return 1
-	If MoveToAndAggro(-21500, -6000, -20400, -7400, -19500, -9500, 'Undead Ritualist Boss Group') Then Return 1
-	If MoveToAndAggro(-22000, -9400, -22800, -9800, 'Third Margonite Group') Then Return 1
-	If MoveToAndAggro(-23000, -10600, -23150, -12250, 'Fourth Margonite Group') Then Return 1
-	If MoveToAndAggro(-22800, -13500, -21300, -14000, 'Fifth Margonite Group') Then Return 1
+	;If MultipleMoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
+	If MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) Then Return 1  			; range 2200
+	If MultipleMoveToAndAggro('Undead Ritualist Boss Group', -21500, -6000, -20400, -7400, -19500, -9500) Then Return 1
+	If MultipleMoveToAndAggro('Third Margonite Group', -22000, -9400, -22800, -9800) Then Return 1
+	If MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) Then Return 1
+	If MultipleMoveToAndAggro('Fifth Margonite Group', -22800, -13500, -21300, -14000) Then Return 1
 
 	Out('Picking Up Tome')
 	SpeedTeam()
@@ -133,9 +139,9 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RndSleep(1000)
 
-	If MoveToAndAggro(-22800, -13500, -23000, -10600, -21500, -9500, 'Sixth Margonite Group') Then Return 1
-	If MoveToAndAggro(-21000, -9500, -19500, -8500, 'Seventh Margonite Group') Then Return 1
-	If MoveToAndAggro(-22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100, 'Temple Monolith Groups') Then Return 1
+	If MultipleMoveToAndAggro('Sixth Margonite Group', -22800, -13500, -23000, -10600, -21500, -9500) Then Return 1
+	If MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) Then Return 1
+	If MultipleMoveToAndAggro('Temple Monolith Groups', -22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100) Then Return 1
 
 	Out('Spawning Margonite bosses')
 	SpeedTeam()
@@ -150,7 +156,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RndSleep(1000)
 
-	If MoveToAndAggro(-18000, -13100, 'Margonite Boss Group') Then Return 1
+	If MultipleMoveToAndAggro('Margonite Boss Group', -18000, -13100) Then Return 1
 	Return 0
 EndFunc
 
@@ -167,20 +173,23 @@ Func SpeedTeam()
 	EndIf
 EndFunc
 
+Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = null, $location1y = null, $location2x = null, $location2y = null, $location3x = null, $location3y = null, $location4x = null, $location4y = null)
+	For $i = 0 To 4
+		If (Eval('location' & $i & 'x') == null) Then ExitLoop
+		SpeedTeam()
+		If MoveToAndAggro($foesGroup, Eval('location' & $i & 'x'), Eval('location' & $i & 'y')) Then Return True
+    Next
+	Return False
+EndFunc
+
+
+
 ;~ Main method for moving around and aggroing/killing mobs
 ;~ Return True if the group is dead, False if not
-Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
-	Local $locationsCount = UBound($locations)
-	If $locationsCount > 3 Then
-		For $i = 0 To $locationsCount - 3 Step 2
-			SpeedTeam()
-			MoveTo($locations[$i], $locations[$i + 1])
-		Next
-	EndIf
-	Local $x = $locations[$locationsCount - 2]
-	Local $y = $locations[$locationsCount - 1]
-
+Func MoveToAndAggro($foesGroup, $x, $y)
 	Out('Killing ' & $foesGroup)
+	Local $range = 1650
+
 	; Get close enough to cast spells but not Aggro
 	; Use Junundu Siege (4) until it's in CD
 	; While there are enemies
@@ -197,6 +206,7 @@ Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
 	Local $target = GetNearestNPCInRangeOfCoords(3, $x, $y, $range)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
+		CheckForChests($RANGE_SPIRIT)
 		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ';' & $y & ' with distance set to ' & $range)
 		Return False
 	EndIf
@@ -228,6 +238,8 @@ Func MoveToAndAggro($locations, $foesGroup = '', $range = 1650)
 	If CountPartyDeaths() > 5 Then Return True
 
 	PickUpItems()
+	CheckForChests($RANGE_SPIRIT)
+
 	Return False
 EndFunc
 
