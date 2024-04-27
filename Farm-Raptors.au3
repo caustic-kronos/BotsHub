@@ -85,7 +85,7 @@ Func RaptorFarm($STATUS)
 	EndIf
 
 	$RAPTORS_PROFESSION = GetHeroProfession(0)		;Gets our own profession
-	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 And Then Return 2
+	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return 2
 	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
 	If $STATUS <> 'RUNNING' Then Return 2
 
@@ -220,6 +220,7 @@ Func GetRaptors()
 	If MoveAggroingRaptors(-20000, -10300) Then Return
 	If MoveAggroingRaptors(-19500, -11500) Then Return
 	If MoveAggroingRaptors(-20500, -12000) Then Return
+	If MoveAggroingRaptors(-21000, -12200) Then Return
 	If MoveAggroingRaptors(-21500, -12000) Then Return
 	If MoveAggroingRaptors(-22000, -12000) Then Return
 	TargetNearestEnemy()
@@ -403,7 +404,7 @@ EndFunc
 
 Func SendStuckCommand()
 	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
-	If CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 3000 Then
+	If CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then
 		Out("Sending /stuck", $GUI_CONSOLE_YELLOW_COLOR)
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()

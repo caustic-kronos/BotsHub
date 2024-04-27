@@ -429,6 +429,7 @@ EndFunc
 
 ;~ Sort the inventory in this order :
 Func SortInventory()
+	Out('Sorting inventory')
 	;						0-Lockpicks 1-Books	2-Consumables	3-Trophies	4-Tomes	5-Materials	6-Others	7-Armor Salvageables[Gold,	8-Purple,	9-Blue	10-White]	11-Weapons [Green,	12-Gold,	13-Purple,	14-Blue,	15-White]	16-Armor (Armor salvageables, weapons and armor start from the end)
 	Local $itemsCounts = [	0,			0,		0,				0,			0,		0,			0,			0,							0,			0,		0,			0,					0,			0,			0,			0,			0]
 	Local $bagsSizes[6]
@@ -573,9 +574,10 @@ Func SortInventory()
 		EndIf
 		
 		$bagAndSlot = GetBagAndSlotFromGeneralSlot($bagsSizes, $itemsPositions[$category])
-		Out('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
+		;Out('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
 		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
 		$itemsPositions[$category] += 1
+		RndSleep(50)
 	Next
 EndFunc
 
@@ -751,8 +753,10 @@ Func IdentifyAllItems()
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 
 			Local $identificationKit = FindIdentificationKitOrBuySome()
-			IdentifyItem($item)
-			RndSleep(100)
+			If Not GetIsIdentified($item) Then 
+				IdentifyItem($item)
+				RndSleep(100)
+			EndIf
 		Next
 	Next
 EndFunc

@@ -99,7 +99,7 @@ Global $GUI_Group_RunInfos, $GUI_Label_Runs, $GUI_Label_Failures, $GUI_Label_Tim
 
 Global $GUI_Group_ItemsLooted, $GUI_Label_ChunkOfDrakeFlesh, $GUI_Label_SkaleFins, $GUI_Label_GlacialStones, $GUI_Label_DiessaChalices, $GUI_Label_RinRelics, $GUI_Label_WintersdayGifts, $GUI_Label_MargoniteGemstone, $GUI_Label_StygianGemstone, $GUI_Label_TitanGemstone, $GUI_Label_TormentGemstone
 Global $GUI_Group_Titles, $GUI_Label_AsuraTitle, $GUI_Label_DeldrimorTitle, $GUI_Label_NornTitle, $GUI_Label_VanguardTitle, $GUI_Label_KurzickTitle, $GUI_Label_LuxonTitle, $GUI_Label_LightbringerTitle, $GUI_Label_SunspearTitle
-Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
+Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables
 Global $GUI_Group_BaseLootOptions, $GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, $GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
 Global $GUI_Group_RarityLootOptions, $GUI_Checkbox_LootGoldItems, $GUI_Checkbox_LootPurpleItems, $GUI_Checkbox_LootBlueItems, $GUI_Checkbox_LootWhiteItems, $GUI_Checkbox_LootGreenItems
@@ -122,6 +122,7 @@ Func createGUI()
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
 	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	GUICtrlSetOnEvent($GUI_Combo_FarmChoice, 'GuiButtonHandler')
 	$GUI_StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
 	GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($GUI_StartButton, 'GuiButtonHandler')
@@ -130,7 +131,7 @@ Func createGUI()
 
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 581, 401)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
-	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'TabEventManager')
+	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
 
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
@@ -178,9 +179,11 @@ Func createGUI()
 	$GUI_Checkbox_LoopRuns = GUICtrlCreateCheckbox('Loop Runs', 31, 64, 156, 20)
 	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
 	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
-	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 154, 156, 20)
-	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 184, 156, 20)
-	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 214, 156, 20)
+	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort Items', 31, 154, 156, 20)
+	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 184, 156, 20)
+	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 214, 156, 20)
+	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 244, 156, 20)
+	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 274, 156, 20)
 
 	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 31, 364, 156, 20)
 	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 205, 364, 75, 20)
@@ -250,7 +253,6 @@ Func createGUI()
 	GUICtrlCreateTabItem('')
 
 	GUICtrlSetState($GUI_Checkbox_HM, $GUI_CHECKED)
-	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootRareMaterials, $GUI_CHECKED)
@@ -283,6 +285,18 @@ EndFunc
 ;~ Handle start button usage
 Func GuiButtonHandler()
 	Switch @GUI_CtrlId
+		Case $GUI_Tabs_Parent
+			Switch GUICtrlRead($GUI_Tabs_Parent)
+				Case 0
+					ControlShow($GUI_GWBotHub, '', $GUI_Console)
+				Case else
+					ControlHide($GUI_GWBotHub, '', $GUI_Console)
+			EndSwitch
+		Case $GUI_Combo_FarmChoice
+			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
+			UpdateFarmDescription($Farm)
+		Case $GUI_Button_DynamicExecution
+			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_StartButton
 			If $STATUS == 'STOPPED' Then
 				Out('Initializing...')
@@ -312,8 +326,6 @@ Func GuiButtonHandler()
 			Else
 				MsgBox(0, 'Error', 'Unknown status '' & $STATUS & ''')
 			EndIf
-		Case $GUI_Button_DynamicExecution
-			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_EVENT_CLOSE
 			Exit
 		Case else
@@ -384,15 +396,17 @@ Func BotHubLoop()
 		If ($STATUS == 'RUNNING') Then
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			Local $timer = TimerInit()
-			UpdateFarmDescription($Farm)
 			Local $success = RunFarmLoop($Farm)
 			UpdateStats($success, $timer)
-
-			If ($success == 2) Then $STATUS = 'WILL_PAUSE'
-			If (GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then $STATUS = 'WILL_PAUSE'
-			If (CountSlots() < 5) Then
-				Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
+			
+			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
+			Else
+				;PostFarmActions()
+				If (CountSlots() < 5) Then
+					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
+					$STATUS = 'WILL_PAUSE'
+				EndIf
 			EndIf
 		Else
 			If Random(1, 10, 1) = 1 Then UpdateLock()
@@ -463,52 +477,69 @@ Func RunFarmLoop($Farm)
 EndFunc
 
 
+Func PostFarmActions()
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then Out("Storing unidentified gold items is not a functionality for now.", $GUI_CONSOLE_RED_COLOR)
+	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then IdentifyAllItems()
+	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then 
+		ConnectToDatabase()
+		StoreAllItemsData()
+		;CompleteItemsNames()
+		;CompleteItemsMods()
+		;CompleteModsHexa()
+		DisconnectFromDatabase()
+	EndIf
+	;$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 214, 156, 20)
+	;$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 244, 156, 20)
+EndFunc
+
+
 Func UpdateFarmDescription($Farm)
 	Switch $Farm
 		Case 'Corsairs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CorsairsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $CorsairsFarmInformations)
 		Case 'Dragon Moss'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RADragonMossFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $DragonMossFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $DragonMossFarmInformations)
 		Case 'Eden Iris'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $EdenIrisFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $EdenIrisFarmInformations)
 		Case 'Follow'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $FollowerInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $JB_FarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $JB_FarmInformations)
 		Case 'Kournans'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $ElAKournansFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CorsairsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $CorsairsFarmInformations)
 		Case 'Kurzick'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $KurzickFactionSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $KurzickFactionInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $LightbringerFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarmInformations)
 		Case 'Luxon'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $LuxonFactionInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $LuxonFactionInformations)
 		Case 'Mantids'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RAMantidsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $MantidsHeroSkillbar)
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $MantidsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $MantidsFarmInformations)
 		Case 'Ministerial Commendations'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $DWCommendationsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $CommendationsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $CommendationsFarmInformations)
 		Case 'OmniFarm'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
@@ -516,11 +547,11 @@ Func UpdateFarmDescription($Farm)
 		Case 'Pongmei'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $PongmeiChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $PongmeiChestRunInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $PongmeiChestRunInformations)
 		Case 'Raptors'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $PRunnerHeroSkillbar)
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $RaptorsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $RaptorsFarmInformations)
 		Case 'SpiritSlaves'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
@@ -528,7 +559,7 @@ Func UpdateFarmDescription($Farm)
 		Case 'Vaettirs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, 'Farm informations:' & @CRLF & $VaettirsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
 		Case 'Storage'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')

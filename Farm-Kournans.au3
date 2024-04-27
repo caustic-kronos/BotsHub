@@ -30,7 +30,9 @@ Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Any weapon that gives you energy or maybe life' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Blessed insignias on all the armor pieces' & @CRLF _
-	& '- A superior vigor rune'
+	& '- A superior vigor rune' & @CRLF _
+	& '- The quest Fish in a Barrel not completed'
+	
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Kournans_Intensity = 1
 Local Const $Kournans_EbonBattleStandardOfHonor = 2

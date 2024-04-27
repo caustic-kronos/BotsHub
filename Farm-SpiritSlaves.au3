@@ -16,7 +16,8 @@ Local Const $SpiritSlavesFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Anything of enchanting without zealous on slot 1' & @CRLF _
 	& '- A scythe of enchanting q4 or less with zealous mod on slot 2' & @CRLF _
 	& '- Anything defensive on slot 4' & @CRLF _
-	& '- any PCons you wish to use'
+	& '- any PCons you wish to use' & @CRLF _
+	& '- the quest Destroy the Ungrateful Slaves not completed'
 
 Local $SpiritSlaves_Farm_Setup = False
 

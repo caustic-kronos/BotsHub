@@ -24,7 +24,7 @@ Opt('MustDeclareVars', 1)
 Local Const $VaettirBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiAvpLBTAA'
+Local Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
 Local Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- +4 Shadow Arts' & @CRLF _
 	& '- Blessed insignias'& @CRLF _
@@ -68,6 +68,7 @@ Func RunToJagaMoraine()
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
+	LeaveGroup()
 
 	Out('Exiting Outpost')
 	MoveTo(-26472, 16217)

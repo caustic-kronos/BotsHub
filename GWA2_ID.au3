@@ -159,6 +159,13 @@ Global Const $ID_Command			= 38
 Global Const $ID_Motivation			= 39
 Global Const $ID_Leadership			= 40
 Global Const $ID_Mysticism			= 44
+Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], [$ID_Blood_Magic, 'Blood Magic'], _
+													[$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], [$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], _
+													[$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], [$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], _
+													[$ID_Divine_Favor, 'Divine Favor'], [$ID_Strength, 'Strength'], [$ID_Axe_Mastery, 'Axe Mastery'], [$ID_Hammer_Mastery, 'Hammer Mastery'], _
+													[$ID_Swordsmanship, 'Swordsmanship'], [$ID_Tactics, 'Tactics'], [$ID_Expertise, 'Expertise'], [$ID_Marksmanship, 'Marksmanship'], [$ID_Dagger_Mastery, 'Dagger Mastery'], _
+													[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Command, 'Command'], _
+													[$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Mysticism, 'Mysticism']]
 #EndRegion Weapon Attributes
 
 
@@ -171,10 +178,10 @@ Global Const $ID_Type_Foot_Armor		= 4
 Global Const $ID_Type_Bow				= 5
 Global Const $ID_Type_Bundle			= 6
 Global Const $ID_Type_Chest_Armor		= 7
-Global Const $ID_Type_Rune_And_Mod		= 8
-Global Const $TYPE_USABLE				= 9		;?
+Global Const $ID_Type_Upgrade			= 8
+Global Const $ID_Type_Usable			= 9
 Global Const $ID_Type_Dye				= 10
-Global Const $ID_Type_Materials			= 11	;Also includes Zcoins
+Global Const $ID_Type_Material			= 11	;Also includes Zcoins
 Global Const $ID_Type_Offhand			= 12
 Global Const $ID_Type_Hand_Armor		= 13
 Global Const $ID_Type_Celestial_Sigil	= 14
@@ -201,6 +208,14 @@ Global Const $ID_Type_Book				= 43
 Global Const $ID_Type_Costume_Body		= 44
 Global Const $ID_Type_Costume_Headpiece	= 45
 Global Const $ID_Type_Unequipped		= 46	;?
+Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor salvage'], [$TYPE_LEADHAND, 'TYPE_LEADHAND ?'], [$ID_Type_Axe, 'Axe'], [$ID_Type_Bag, 'Bag'], [$ID_Type_Foot_Armor, 'Foot armor'], _
+													[$ID_Type_Bow, 'Bow'], [$ID_Type_Bundle, 'Bundle'], [$ID_Type_Chest_Armor, 'Chest armor'], [$ID_Type_Upgrade, 'Upgrade'], [$ID_Type_Usable, 'Usables'], _
+													[$ID_Type_Dye, 'Dye'], [$ID_Type_Material, 'Material'], [$ID_Type_Offhand, 'Offhand'], [$ID_Type_Hand_Armor, 'Hand armor'], [$ID_Type_Celestial_Sigil, 'Celestial Sigil'], [$ID_Type_Hammer, 'Hammer'], _
+													[$ID_Type_Headgear_Armor, 'Headgear armor'], [$ID_Type_Trophy_2, 'TROPHY 2 ?'], [$ID_Type_Key, 'Key'], [$ID_Type_Leg_Armor, 'Leg armor'], _
+													[$ID_Type_Money, 'Money'], [$ID_Type_Quest_Item, 'Quest item'], [$ID_Type_Wand, 'Wand'], [$ID_Type_Shield, 'Shield'], [$ID_Type_Staff, 'Staff'], _
+													[$ID_Type_Sword, 'Sword'], [$ID_Type_Kit, 'Kit'], [$ID_Type_Trophy, 'Trophy'], [$ID_Type_Scroll, 'Scroll'], _
+													[$ID_Type_Dagger, 'Dagger'], [$ID_Type_Present, 'PRESENT ?'], [$ID_Type_Minipet, 'Minipet'], [$ID_Type_Scythe, 'Scythe'], _
+													[$ID_Type_Spear, 'Spear'], [$ID_Type_Book, 'Book'], [$ID_Type_Costume_Body, 'Costume body'], [$ID_Type_Costume_Headpiece, 'Costume headpiece'], [$ID_Type_Unequipped, 'TYPE UNEQUIPED ?']]
 
 Local Const $Armor_Types_Array			= [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
 Local Const $Weapon_Types_Array			= [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
@@ -346,6 +361,7 @@ Global Const $RARITY_Gold	= 2624
 Global Const $RARITY_Purple	= 2626
 Global Const $RARITY_Green	= 2627
 Global Const $RARITY_Red	= 33026
+Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_White, 'White'], [$RARITY_Blue, 'Blue'], [$RARITY_Purple, 'Purple'], [$RARITY_Gold, 'Gold'], [$RARITY_Green, 'Green'], [$RARITY_Red, 'Red']]
 
 #Region Merchant Items
 Global Const $ID_Belt_Pouch				= 34

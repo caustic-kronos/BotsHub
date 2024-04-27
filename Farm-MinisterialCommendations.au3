@@ -9,6 +9,7 @@
 ; ==== Constantes ====
 Local Const $DWCommendationsFarmerSkillbar = 'OgGlQpVq6smsGFA0XwTsDmL29RTSgB'
 Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF _
+	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- 13 Earth Prayers' &@CRLF _
 	& '- 7 Mysticism' & @CRLF _
 	& '- 4 Wind Prayers' & @CRLF _
