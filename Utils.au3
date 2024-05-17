@@ -18,22 +18,33 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-
-	Out(GetHeroProfession(0))
-	Out(GetHeroProfession(1))
-	Out(GetHeroProfession(2))
+	;MoveItemsOutOfEquipmentBag()
+	;MoveItemsInEquipmentBag()
+	;StoreEverythingInXunlaiStorage()
+	;SellEverythingToMerchant()
 	;SortInventory()
-	;Local $item = GetItemBySlot(1,1)
+	;PostFarmActions()
+	
+	;For $i = 1 To 38
+	;	ReadOneItemData(6, $i)
+	;Next
+	
+	Local $item = GetItemBySlot(1,3)
+	StoreItemInXunlaiStorage($item)
 	;_dlldisplay($item)
-	;MoveItem($item, 1, 2)
+	;Out(DllStructGetData($item, 'Equiped'))
+	;MoveItem($item, 6, 1)
 	;Local $name = GetAgentName($item)
 	;Out($name)
 	;Sleep(2000)
 	;StartSalvage($item)
 	;Sleep(2000)
 	;SalvageMaterials()
+	;SalvageMod(2)
 	;Sleep(2000)
+	;CancelSalvage()
 	;EndSalvage()
+	;Sleep(2000)
 
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
@@ -163,7 +174,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 	Next
 
 	If ((DllStructGetData(GetBag(3), 'Slots') - DllStructGetData(GetBag(3), 'ItemsCount')) == 0) Then
-		FillEquipmentBag()
+		MoveItemsInEquipmentBag()
 	EndIf
 EndFunc
 
@@ -318,7 +329,6 @@ EndFunc
 Func FindEmptySlot($bag)
 	Local $item
 	For $slot = 1 To DllStructGetData(GetBag($bag), 'Slots')
-		RndSleep(40)
 		$item = GetItemBySlot($bag, $slot)
 		If DllStructGetData($item, 'ID') = 0 Then Return $slot
 	Next
@@ -327,19 +337,15 @@ EndFunc
 
 
 ; Find all empty slots in the given bag
-Func FindEmptySlots($bag)
-	If Not IsDllStruct($bag) Then $bag = GetBag($bag)
-	Local $emptySlots[1] = [Null]
+Func FindEmptySlots($bagId)
+	Local $bag = GetBag($bagId)
+	Local $emptySlots[0] = []
 	Local $item
 	For $slot = 1 To DllStructGetData($bag, 'Slots')
-		RndSleep(20)
-		$item = GetItemBySlot($bag, $slot)
-		If DllStructGetData($item, 'ID') = 0 Then
-			If $emptySlots[0] = Null Then
-				$emptySlots[0] = $slot
-			Else
-				_ArrayAdd($emptySlots, $slot)
-			EndIf
+		$item = GetItemBySlot($bagId, $slot)
+		If DllStructGetData($item, 'ID') == 0 Then
+			_ArrayAdd($emptySlots, $bagId)
+			_ArrayAdd($emptySlots, $slot)
 		EndIf
 	Next
 	Return $emptySlots
@@ -347,24 +353,38 @@ EndFunc
 
 
 ; Find first empty slot in chest
-Func FindChestEmptySlot()
-	Local $emptySlot
+Func FindChestFirstEmptySlot()
+	Local $bagEmptySlot[2] = [0, 0]
 	For $i = 8 To 21
-		$emptySlot = FindEmptySlot($i)
-		If $emptySlot <> 0 Then Return $emptySlot
-		RndSleep(400)
+		$bagEmptySlot[1] = FindEmptySlot($i)
+		If $bagEmptySlot[1] <> 0 Then 
+			$bagEmptySlot[0] = $i
+			Return $bagEmptySlot
+		EndIf
 	Next
-	Return 0
+	Return $bagEmptySlot
+EndFunc
+
+
+
+; Find all empty slots in inventory
+Func FindInventoryEmptySlots()
+	Return FindAllEmptySlots(1, 5)
 EndFunc
 
 
 ; Find all empty slots in chest
 Func FindChestEmptySlots()
-	Local $emptySlots[]
-	For $i = 8 To 21
-		Local $chestTabEmptySlots[] = FindEmptySlots($i)
-		If UBound($chestTabEmptySlots) <> 0 Then $emptySlots[$i] = $chestTabEmptySlots
-		RndSleep(400)
+	Return FindAllEmptySlots(8, 21)
+EndFunc
+
+
+; Find all empty slots in the given bags
+Func FindAllEmptySlots($firstBag, $lastBag)
+	Local $emptySlots[0] = []
+	For $i = $firstBag To $lastBag
+		Local $bagEmptySlots[] = FindEmptySlots($i)
+		If UBound($bagEmptySlots) > 0 Then _ArrayAdd($emptySlots, $bagEmptySlots)
 	Next
 	Return $emptySlots
 EndFunc
@@ -395,36 +415,33 @@ Func CountSlotsChest()
 EndFunc
 
 
-;~ Move to last bag until it's full or there's nothing to Move
-Func FillEquipmentBag()
-	Local $equipmentBag = GetBag(5)
-	Local $freeSlots = DllStructGetData($equipmentBag, 'Slots') - DllStructGetData($equipmentBag, 'ItemsCount')
-	If $freeSlots == 0 Then Return
-	Local $emptySlots = FindEmptySlots($equipmentBag)
-	Local $cursor = 0
-
-	Local $iBag = 1, $slot = 1
-	Local $bag = GetBag($iBag)
-	Local $bagSlots = DllStructGetData($bag, 'Slots')
-	Local $item
-	While $freeSlots > 0 And $iBag < 5
-		$item = GetItemBySlot($bag, $slot)
-		If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
-			MoveItem($item, $equipmentBag, $emptySlots[$cursor])
-			$cursor += 1
-			$freeSlots -= 1
-		EndIf
-
-		$slot += 1
-		If ($slot > $bagSlots) Then
-			$iBag += 1
-			$slot = 1
-			$bag = GetBag($iBag)
-			$bagSlots = DllStructGetData($bag, 'Slots')
-		EndIf
-		RndSleep(20)
-	WEnd
+;~ Move items in the equipment bag
+Func MoveItemsInEquipmentBag()
+	Local $equipmentBagEmptySlots = FindEmptySlots(5)
+	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
+	If $countEmptySlots < 1 Then 
+		Out('No space in inventory to move the items from the equipment bag')
+		Return
+	EndIf
+	
+	Local $cursor = 1
+	For $bagId = 1 To 4
+		For $slot = 1 To DllStructGetData(GetBag($bagId), 'slots')
+			Local $item = GetItemBySlot($bagId, $slot)
+			If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
+				If $countEmptySlots < 1 Then 
+					Out('No space in inventory to move the items from the equipment bag')
+					Return
+				EndIf
+				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
+				$cursor += 2
+				$countEmptySlots -= 1
+				RndSleep(50)
+			EndIf
+		Next
+	Next
 EndFunc
+
 
 
 ;~ Sort the inventory in this order :
@@ -658,13 +675,46 @@ Func GetBirthdayCupcakeCount()
 EndFunc
 
 
-;~ Look for an item in bags and return bag and slot of the item, [0, 0] else (positions start at 1)
-Func FindInInventory($itemID)
+;~ Look for any of the given items in bags and return bag and slot of an item, [0, 0] if none are present (positions start at 1)
+Func FindAnyInInventory(ByRef $itemIDs)
 	Local $item
 	Local $itemBagAndSlot[2]
 	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
 
 	For $bag = 1 To 5
+		Local $bagSize = GetMaxSlots($bag)
+		For $slot = 1 To $bagSize
+			$item = GetItemBySlot($bag, $slot)
+			For $itemId in $itemIDs
+				If(DllStructGetData($item, 'ModelID') == $itemID) Then
+					$itemBagAndSlot[0] = $bag
+					$itemBagAndSlot[1] = $slot
+				EndIf
+			Next
+		Next
+	Next
+	Return $itemBagAndSlot
+EndFunc
+
+
+;~ Look for an item in inventory
+Func FindInInventory($itemID)
+	Return FindInStorages(1, 5, $itemID)
+EndFunc
+
+
+;~ Look for an item in xunlai storage
+Func FindInXunlaiStorage($itemID)
+	Return FindInStorages(8, 21, $itemID)
+EndFunc
+
+
+;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else
+Func FindInStorages($firstBag, $lastBag, $itemID)
+	Local $item
+	Local $itemBagAndSlot[2] = [0, 0]
+
+	For $bag = $firstBag To $lastBag
 		Local $bagSize = GetMaxSlots($bag)
 		For $slot = 1 To $bagSize
 			$item = GetItemBySlot($bag, $slot)
@@ -675,6 +725,37 @@ Func FindInInventory($itemID)
 		Next
 	Next
 	Return $itemBagAndSlot
+EndFunc
+
+
+;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else
+Func FindAllInStorages($firstBag, $lastBag, $itemID)
+	Local $item
+	Local $itemBagsAndSlots[0] = []
+
+	For $bag = $firstBag To $lastBag
+		Local $bagSize = GetMaxSlots($bag)
+		For $slot = 1 To $bagSize
+			$item = GetItemBySlot($bag, $slot)
+			If(DllStructGetData($item, 'ModelID') == $itemID) Then
+				_ArrayAdd($itemBagsAndSlots, $bag)
+				_ArrayAdd($itemBagsAndSlots, $slot)
+			EndIf
+		Next
+	Next
+	Return $itemBagsAndSlots
+EndFunc
+
+
+;~ Look for an item in inventory
+Func FindAllInInventory($itemID)
+	Return FindAllInStorages(1, 5, $itemID)
+EndFunc
+
+
+;~ Look for an item in xunlai storage
+Func FindAllInXunlaiStorage($itemID)
+	Return FindAllInStorages(8, 21, $itemID)
 EndFunc
 
 
@@ -703,8 +784,8 @@ EndFunc
 
 #Region Use Items
 ;~ Uses a consumable from inventory, if present
-Func UseConsumable($ID_consumable)
-	If (GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
+Func UseConsumable($ID_consumable, $forceUse = false)
+	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
 	Local $ConsumableSlot = findInInventory($ID_consumable)
 	UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 EndFunc
@@ -713,7 +794,7 @@ EndFunc
 ;~ Uses the Item from $bag at position $slot (positions start at 1)
 Func UseItemBySlot($bag, $slot)
 	If $bag > 0 And $slot > 0 Then
-		If (GetMapLoading() == 1) And (GetIsDead(-2) == False) Then
+		If Not GetIsDead(-2) And GetMapLoading() <> 2 Then
 			Local $item = GetItemBySlot($bag, $slot)
 			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf

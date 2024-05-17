@@ -33,50 +33,106 @@ Local $IsleOfSolitude = False
 #EndRegion Guild Hall Globals
 
 
+#Region Tables
+; Those tables are built automatically and one is completed by the user
+Local $TABLE_DATA_RAW = 'DATA_RAW'
+Local $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'modstruct', 'quantity', 'value', 'rarity_ID', 'extra_ID', 'ID']
+							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
+
+Local $TABLE_DATA_USER = 'DATA_USER'
+Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'extra_ID', 'ID']
+
+Local $TABLE_DATA_SALVAGE = 'DATA_SALVAGE'
+Local $SCHEMA_DATA_SALVAGE = ['batch', 'model_ID', 'material', 'amount']
+
+; Those 3 lookups are filled directly when database is created
+Local $TABLE_LOOKUP_ATTRIBUTE = 'LOOKUP_ATTRIBUTE'
+Local $SCHEMA_LOOKUP_ATTRIBUTE = ['attribute_ID', 'attribute']
+
+Local $TABLE_LOOKUP_RARITY = 'LOOKUP_RARITY'
+Local $SCHEMA_LOOKUP_RARITY = ['rarity_ID', 'rarity']
+
+Local $TABLE_LOOKUP_TYPE = 'LOOKUP_TYPE'
+Local $SCHEMA_LOOKUP_TYPE = ['type_ID', 'type']
+
+; Those lookups are built from the data table filled by the user
+Local $TABLE_LOOKUP_MODEL = 'LOOKUP_MODEL'
+Local $SCHEMA_LOOKUP_MODEL = ['model_ID', 'model_name', 'OS']
+
+Local $TABLE_LOOKUP_UPGRADES = 'LOOKUP_UPGRADES'
+Local $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa', 'name', 'propagate']
+#EndRegion Tables
+
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
-	; TODO :
-
-	; - deposit in chest mesmer tomes, white and black dyes, ToT bags and other consumables, RARE weapons
-	; - recycle all mods that need to be recycled (measure for measure, Forget Me Not, Strength and Honor, rare mods, insignias and runes)
-	; - recycle all items that need to be recycled for materials (glacial stones, specific weapons)
-	; - sell worthless items like bows and axes
-
 	;Out('Travel to Guild Hall')
 	;TravelGH()
 	;WaitMapLoading()
 	;Out('Checking Guild Hall')
 	;CheckGuildHall()
-	;RndSleep(500)
-	;If $STATUS <> 'RUNNING' Then Return 2
-	;GoToMerchant()
-	;If $STATUS <> 'RUNNING' Then Return 2
-	;BalanceCharacterGold(20000)
-	;If $STATUS <> 'RUNNING' Then Return 2
-	IdentifyAllItems()
-	;If $STATUS <> 'RUNNING' Then Return 2
 
-	;ConnectToDatabase()
-	;StoreAllItemsData()
-	;CompleteItemsNames()
-	;CompleteItemsMods()
-	;CompleteModsHexa()
-	;SalvageAndStoreData()
-	DisconnectFromDatabase()
-	Return 0
+	PostFarmActions()
+
+	;StoreEverythingInXunlaiStorage()
+	Return 2
 EndFunc
 
 
+#Region Reading items data
+;~ Read data from item at bagIndex and slot and print it in the console
+Func ReadOneItemData($bagIndex, $slot)
+	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
+	Local $output = GetOneItemData($bagIndex, $slot)
+	If $output == '' Then Return
+	Out($output)
+EndFunc
+
+
+;~ Read data from all items in inventory and print it in the console
+Func ReadAllItemsData()
+	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
+	Local $item, $output
+	For $bagIndex = 1 To 5
+		Local $bag = GetBag($bagIndex)
+		For $slot = 1 To DllStructGetData($bag, 'slots')
+			$output = GetOneItemData($bagIndex, $slot)
+			If $output == '' Then ContinueLoop
+			Out($output)
+			RndSleep(50)
+		Next
+	Next
+EndFunc
+
+
+;~ Get data from an item into a string
+Func GetOneItemData($bagIndex, $slot)
+	Local $item = GetItemBySlot($bagIndex, $slot)
+	Local $output = ''
+	If DllStructGetData($item, 'ID') <> 0 Then
+		$output &= $bagIndex & ';'
+		$output &= $slot & ';'
+		$output &= DllStructGetData($item, 'rarity') & ';'
+		$output &= DllStructGetData($item, 'ModelID') & ';'
+		$output &= DllStructGetData($item, 'ID') & ';'
+		$output &= DllStructGetData($item, 'Type') & ';'
+		$output &= GetOrDefault(GetItemAttribute($item) & ';', '')
+		$output &= GetOrDefault(GetItemReq($item) & ';', '')
+		$output &= GetOrDefault(GetItemMaxDmg($item) & ';', '')
+		$output &= DllStructGetData($item, 'NameString') & ';'
+		$output &= GetModStruct($item) & ';'
+		$output &= DllStructGetData($item, 'quantity') & ';'
+		$output &= GetOrDefault(DllStructGetData($item, 'Value') & ';', 0)
+	EndIf
+	Return $output
+EndFunc
+#EndRegion Reading items data
 
 
 #Region Database
-
-
-;# Connect to the database storing information about items
+;~ Connect to the database storing information about items
 Func ConnectToDatabase()
 	_SQLite_Startup()
-	$SQLITE_DB = _SQLite_Open('items_database.db3')
-	_SQLite_Exec($SQLITE_DB, 'CREATE TABLE IF NOT EXISTS items_data (batch_ID, bag, bag_slot, model_ID, name, prefix, suffix, inscription, salvage, damage, attribute, requirement, item_ID, item_type, name_string, modstruct, quantity, value);')
+	$SQLITE_DB = _SQLite_Open('data/items_database.db3')
 EndFunc
 
 
@@ -87,61 +143,108 @@ Func DisconnectFromDatabase()
 EndFunc
 
 
-;~ Read data from item at bagIndex and slot and print it in the console
-Func ReadOneItemData($bagIndex, $slot)
-	Local $bag = GetBag($bagIndex)
-	Local $item = GetItemBySlot($bagIndex, $slot)
-	If DllStructGetData($item, 'ID') = 0 Then Return
-	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
-	Local $output = $bagIndex & ';'
-	$output &= $slot & ';'
-	$output &= DllStructGetData($item, 'rarity') & ';'
-	$output &= DllStructGetData($item, 'ModelID') & ';'
-	$output &= DllStructGetData($item, 'ID') & ';'
-	$output &= DllStructGetData($item, 'Type') & ';'
-	$output &= GetItemAttribute($item) & ';'
-	$output &= GetItemReq($item) & ';'
-	$output &= GetItemMaxDmg($item) & ';'
-	$output &= DllStructGetData($item, 'NameString') & ';'
-	$output &= GetModStruct($item) & ';'
-	$output &= DllStructGetData($item, 'quantity') & ';'
-	$output &= DllStructGetData($item, 'Value') & ';'
-	Out($output)
+;~ Create tables and views and fill the ones that need it
+Func InitializeDatabase()
+	CreateTable($TABLE_LOOKUP_ATTRIBUTE, $SCHEMA_LOOKUP_ATTRIBUTE)
+	CreateTable($TABLE_LOOKUP_RARITY, $SCHEMA_LOOKUP_RARITY)
+	CreateTable($TABLE_LOOKUP_TYPE, $SCHEMA_LOOKUP_TYPE)
+	
+	CreateTable($TABLE_LOOKUP_MODEL, $SCHEMA_LOOKUP_MODEL)
+	CreateTable($TABLE_LOOKUP_UPGRADES, $SCHEMA_LOOKUP_UPGRADES)
+	
+	CreateTable($TABLE_DATA_RAW, $SCHEMA_DATA_RAW)
+	CreateTable($TABLE_DATA_USER, $SCHEMA_DATA_USER)
 
-	For $i = 0 To 20
-		Out(DllStructGetData($item, $i))
-	Next
+	Local $columnsTypeIsNumber[] = [true, false]
+	If TableIsEmpty($TABLE_LOOKUP_TYPE) Then FillTable($TABLE_LOOKUP_TYPE, $columnsTypeIsNumber, $Item_Types_Double_Array)
+	If TableIsEmpty($TABLE_LOOKUP_ATTRIBUTE) Then FillTable($TABLE_LOOKUP_ATTRIBUTE, $columnsTypeIsNumber, $Attributes_Double_Array)
+	If TableIsEmpty($TABLE_LOOKUP_RARITY) Then FillTable($TABLE_LOOKUP_RARITY, $columnsTypeIsNumber, $Rarities_Double_Array)
 EndFunc
 
 
-;~ Read data from all items in inventory and print it in the console
-Func ReadAllItemsData()
-	Local $item, $output
-	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
-	For $bagIndex = 1 To 5
-		Local $bag = GetBag($bagIndex)
-		For $slot = 1 To DllStructGetData($bag, 'slots')
-			$item = GetItemBySlot($bagIndex, $slot)
-			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+;~ Create a table
+Func CreateTable($tableName, $tableColumns, $ifNotExists = True)
+	Local $query = 'CREATE TABLE '
+	If $ifNotExists Then $query &= 'IF NOT EXISTS '
+	$query &= $tableName & ' ('
+	For $column in $tableColumns
+		$query &= $column & ', '
+	Next
+	$query = StringLeft($query, StringLen($query) - 2)
+	$query &= ');'
+	SQLExecute($query)
+EndFunc
 
-			$output = $bagIndex & ';'
-			$output &= $slot & ';'
-			$output &= DllStructGetData($item, 'rarity') & ';'
-			$output &= DllStructGetData($item, 'ModelID') & ';'
-			$output &= DllStructGetData($item, 'ID') & ';'
-			$output &= DllStructGetData($item, 'Type') & ';'
-			$output &= GetOrDefault(GetItemAttribute($item) & ';', '')
-			$output &= GetOrDefault(GetItemReq($item) & ';', '')
-			$output &= GetOrDefault(GetItemMaxDmg($item) & ';', '')
-			$output &= DllStructGetData($item, 'NameString') & ';'
-			$output &= GetModStruct($item) & ';'
-			$output &= DllStructGetData($item, 'quantity') & ';'
-			$output &= GetOrDefault(DllStructGetData($item, 'Value') & ';', 0)
-			Out($output)
-			RndSleep(500)
+
+;~ Drop a table
+Func DropTable($tableName)
+	Local $query = 'DROP TABLE IF EXISTS ' & $tableName & ';'
+	SQLExecute($query)
+EndFunc
+
+
+;~ Fill a table with the given values (bidimensional array)
+Func FillTable($table, Const ByRef $isNumber, Const ByRef $values)
+	Local $query = 'INSERT INTO ' & $table & ' VALUES '
+	For $i = 0 To UBound($values) - 1
+		$query &= '('
+		For $j = 0 To Ubound($values,2) - 1
+			If $isNumber[$j] Then
+				$query &= $values[$i][$j] & ', '
+			Else
+				$query &= "'" & $values[$i][$j] & "', "
+			EndIf
 		Next
+		$query = StringLeft($query, StringLen($query) - 2)
+		$query &= '), '
 	Next
+	
+	$query = StringLeft($query, StringLen($query) - 2)
+	$query &= ';'
+	SQLExecute($query)
 EndFunc
+
+
+#Region Database Utils
+;~ Returns true if a table exists
+Func TableExists($table)
+	Local $query, $queryResult, $row
+	SQLQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" & $table & "';", $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$lastBatchID = $row[0]
+	WEnd
+	Return $lastBatchID
+EndFunc
+
+
+;~ Returns true if a table is empty
+Func TableIsEmpty($table)
+	Local $query, $queryResult, $row, $rowCount
+	SQLQuery('SELECT COUNT(*) FROM ' & $table & ';', $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$rowCount = $row[0]
+	WEnd
+	Return $rowCount == 0
+EndFunc
+
+
+;~ Query database
+Func SQLQuery($query, ByRef $queryResult)
+	;Out($query)
+	Local $return = _SQLite_Query($SQLITE_DB, $query, $queryResult)
+	If $return <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query, $GUI_CONSOLE_RED_COLOR)
+EndFunc
+
+
+;~ Execute a request on the database
+Func SQLExecute($query)
+	;Out($query)
+	Local $return = _SQLite_Exec($SQLITE_DB, $query)
+	If $return <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query, $GUI_CONSOLE_RED_COLOR)
+EndFunc
+
+
+#EndRegion Database Utils
 
 
 ;~ Store in database all data that can be found in items in inventory
@@ -150,8 +253,8 @@ Func StoreAllItemsData()
 	Local $batchID = GetPreviousBatchID() + 1
 
 	Out('Scanning and storing all items data')
-	_SQLite_Exec($SQLITE_DB, 'BEGIN;')
-	$InsertQuery = 'INSERT INTO items_data VALUES' & @CRLF
+	SQLExecute('BEGIN;')
+	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
 	For $bagIndex = 1 To 5
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
@@ -161,35 +264,90 @@ Func StoreAllItemsData()
 			$InsertQuery &= '	('
 			$InsertQuery &= $batchID & ', '
 			$InsertQuery &= $bagIndex & ', '
-			$InsertQuery &= $i & ', "'
-			$InsertQuery &= DllStructGetData($item, 'modelID') & '", NULL, NULL, NULL, NULL, NULL, '
+			$InsertQuery &= $i & ', '
+			$InsertQuery &= DllStructGetData($item, 'modelID') & ', '
+			$InsertQuery &= DllStructGetData($item, 'type') & ', '
+			$InsertQuery &= 'NULL, '
 			$InsertQuery &= (IsWeapon($item) ? GetItemMaxDmg($item) : 'NULL') & ', '
-			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ', '
-			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', "'
-			$InsertQuery &= DllStructGetData($item, 'ID') & '", "'
-			$InsertQuery &= DllStructGetData($item, 'type') & '", "'
-			$InsertQuery &= DllStructGetData($item, 'nameString') & '", "'
-			$InsertQuery &= GetModStruct($item) & '", '
+			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
+			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
+			$InsertQuery &= DllStructGetData($item, 'nameString') & "', '"
+			$InsertQuery &= GetModStruct($item) & "', "
 			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
 			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
-			$InsertQuery &= GetRarity($item)
+			$InsertQuery &= GetRarity($item) & ', '
+			$InsertQuery &= DllStructGetData($item, 'ExtraID') & ', '
+			$InsertQuery &= DllStructGetData($item, 'ID')
 			$InsertQuery &= '),' & @CRLF
-			Sleep(GetPing()+100)
+			Sleep(20)
 		Next
 	Next
+	
 	$InsertQuery = StringLeft($InsertQuery, StringLen($InsertQuery) - 3) & @CRLF & ';'
-	Out($InsertQuery)
-	_SQLite_Exec($SQLITE_DB, $InsertQuery)
-	_SQLite_Exec($SQLITE_DB, 'COMMIT;')
+	SQLExecute($InsertQuery)
+	SQLExecute('COMMIT;')
+	
+	AddToFilledData($batchID)
+	CompleteItemsMods($batchID)
+EndFunc
+
+
+Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription']
+
+Func AddToFilledData($batchID)
+	Local $InsertQuery = 'WITH raw AS (' & @CRLF _
+		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, modstruct, extra_ID, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
+		& ')' & @CRLF _
+		& 'INSERT INTO ' & $TABLE_DATA_USER & @CRLF _
+		& 'SELECT raw.batch, raw.bag, raw.slot, rarities.rarity, types.type, requirement, attributes.attribute, raw.value, names.model_name, names.OS, NULL, NULL, NULL, raw.type_ID, raw.model_ID, raw.name_string, raw.modstruct, raw.extra_ID, raw.ID' & @CRLF _
+		& 'FROM raw' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_RARITY & ' rarities ON raw.rarity_ID = rarities.rarity_ID' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_TYPE & ' types ON raw.type_ID = types.type_ID' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_ATTRIBUTE & ' attributes ON raw.attribute_ID = attributes.attribute_ID' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_MODEL & ' names ON raw.model_ID = names.model_ID;'
+	SQLExecute($InsertQuery)
+EndFunc
+
+
+;~ Auto fill the items mods based on the known modstructs
+Func CompleteItemsMods($batchID)
+	Out('Completing items mods')
+	Local $upgradeTypes[3] = ['prefix', 'suffix', 'inscription']
+	Local $query
+	For $upgradeType In $upgradeTypes
+		$query = 'UPDATE ' & $TABLE_DATA_USER & @CRLF _
+			& 'SET ' & $upgradeType & ' = (' & @CRLF _
+			& '	SELECT upgrades.effect' & @CRLF _
+			& '	FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
+			& '	WHERE upgrades.propagate = 1' & @CRLF _									
+			& '		AND upgrades.OS = ' & $TABLE_DATA_USER & '.OS' & @CRLF _							
+			& '		AND upgrades.weapon = type_ID' & @CRLF _						
+			& '		AND upgrades.hexa IS NOT NULL' & @CRLF _							
+			& "		AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _		
+			& "		AND modstruct LIKE ('%' || upgrades.hexa || '%')" & @CRLF _			
+			& ')' & @CRLF _
+			& 'WHERE ' & $upgradeType & ' IS NULL' & @CRLF _
+			& '	AND batch = ' & $batchID & @CRLF _										
+			& '	AND EXISTS (' & @CRLF _
+			& '		SELECT upgrades.effect' & @CRLF _
+			& '		FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
+			& '		WHERE upgrades.propagate = 1' & @CRLF _
+			& '			AND upgrades.OS = ' & $TABLE_DATA_USER & '.OS' & @CRLF _
+			& '			AND upgrades.weapon = type_ID' & @CRLF _
+			& '			AND upgrades.hexa IS NOT NULL' & @CRLF _
+			& "			AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _
+			& "			AND modstruct LIKE ('%' || upgrades.hexa || '%')" & @CRLF _
+			& ');'
+		SQLExecute($query)
+	Next
 EndFunc
 
 
 ;~ Get the previous batchID or -1 if no batch has been added into database
 Func GetPreviousBatchID()
 	Local $queryResult, $row, $lastBatchID, $query
-	$query = 'SELECT COALESCE(MAX(batch_ID), -1) FROM items_data;'
-	Out($query)
-	_SQLite_Query($SQLITE_DB, $query, $queryResult)
+	$query = 'SELECT COALESCE(MAX(batch), -1) FROM ' & $TABLE_DATA_RAW & ';'
+	SQLQuery($query, $queryResult)
 	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
 		$lastBatchID = $row[0]
 	WEnd
@@ -197,125 +355,298 @@ Func GetPreviousBatchID()
 EndFunc
 
 
-;~ Complete items data with their name if those items have been recognised before
-Func CompleteItemsNames()
-	Local $query, $queryResult
-	Out('Completing items names')
-	$query = 'WITH data AS (' & @CRLF _
-		& '	SELECT DISTINCT model_ID, name FROM items_data WHERE name IS NOT NULL' & @CRLF _
-		& ')' & @CRLF _
-		& 'UPDATE items_data' & @CRLF _
-		& 'SET name = (SELECT name FROM data WHERE data.model_ID = items_data.model_ID)' & @CRLF _
-		& 'WHERE name IS NULL'
-	Out($query)
-	_SQLite_Exec($SQLITE_DB, $query)
+;~ Complete model name lookup table
+Func CompleteModelLookupTable()
+	Local $query
+	Out('Completing model lookup ')
+	$query = 'INSERT INTO ' & $TABLE_LOOKUP_MODEL & @CRLF _
+		& 'SELECT DISTINCT model_id, name, OS' & @CRLF _
+		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
+		& 'WHERE name IS NOT NULL' & @CRLF _
+		& '	AND model_ID NOT IN (SELECT model_ID FROM ' & $TABLE_LOOKUP_MODEL & ');'
+	SQLExecute($query)
 EndFunc
 
 
 ;~ Complete mods data by cross-comparing all modstructs from items that have the same mods and deduce the mod hexa from it
-Func CompleteModsHexa()
-	Out('Completing mods structure')
+Func CompleteUpgradeLookupTable()
+	Out('Completing upgrade lookup')
 	Local $modTypes[3] = ['prefix', 'suffix', 'inscription']
-	Local $modType, $query, $queryResult, $row, $modName
-	For $modType In $modTypes
-		Local $mapItemStruct[]
-		$query = 'WITH valid_groups AS (' & @CRLF _
-			& '	SELECT ' & $modType & ' FROM items_data WHERE ' & $modType & ' IS NOT NULL GROUP BY ' & $modType & ' HAVING COUNT(*) > 3' & @CRLF _
-			& ')' & @CRLF _
-			& 'SELECT items_data.' & $modType & ', items_data.modstruct' & @CRLF _
-			& 'FROM items_data' & @CRLF _
-			& 'INNER JOIN valid_groups ON valid_groups.' & $modType & ' = items_data.' & $modType & @CRLF _
-			& 'ORDER BY items_data.' & $modType & ';'
-		Out($query)
-		_SQLite_Query($SQLITE_DB, $query, $queryResult)
-		While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
-			$mapItemStruct = AppendArrayMap($mapItemStruct, $row[0], $row[1])
-		WEnd
-
-		_SQLite_Exec($SQLITE_DB, 'BEGIN;')
-		Local $modNames = MapKeys($mapItemStruct)
-		For $modName In $modNames
-			Local $modStruct = LongestCommonSubstring($mapItemStruct[$modName])
-			$query = 'UPDATE mods_data' & @CRLF _
-				& '	SET hexa = "' & $modStruct & '" WHERE name = "' & $modName & '" AND mod_type = "' & $modType & '";'
-			Out($query)
-			_SQLite_Exec($SQLITE_DB, $query)
-		Next
-		_SQLite_Exec($SQLITE_DB, 'COMMIT;')
+	For $upgradeType In $modTypes
+		InsertNewUpgrades($upgradeType)
+		UpdateNewUpgrades($upgradeType)
+		ValidateNewUpgrades($upgradeType)
 	Next
 EndFunc
 
 
-;~ Auto fill the items mods based on the known modstructs
-Func CompleteItemsMods()
-	Out('Completing items mods')
-	Local $batchID = GetPreviousBatchID()
-	Local $modTypes[3] = ['prefix', 'suffix', 'inscription']
+Func InsertNewUpgrades($upgradeType)
+	Local $query = 'INSERT INTO ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
+		& "SELECT DISTINCT OS, '" & $upgradeType & "', type_ID, " & $upgradeType & ', NULL, NULL, 0' & @CRLF _
+		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
+		& 'WHERE ' & $upgradeType & ' IS NOT NULL' & @CRLF _
+		& "AND (OS, '" & $upgradeType & "', type_ID, " & $upgradeType & ') NOT IN (SELECT OS, upgrade_type, weapon, effect FROM ' & $TABLE_LOOKUP_UPGRADES & ');'
+	SQLExecute($query)
+EndFunc
+
+
+Func UpdateNewUpgrades($upgradeType)
+	Local $queryResult, $row
+	Local $mapItemStruct[]
+	Local $query = 'WITH valid_groups AS (' & @CRLF _
+		& '	SELECT OS, type_ID AS weapon, ' & $upgradeType & ' FROM ' & $TABLE_DATA_USER & ' WHERE ' & $upgradeType & ' IS NOT NULL GROUP BY OS, weapon, ' & $upgradeType & ' HAVING COUNT(*) > 3' & @CRLF _
+		& ')' & @CRLF _
+		& 'SELECT valid_groups.OS, weapon, valid_groups.' & $upgradeType & ', data.modstruct' & @CRLF _
+		& 'FROM ' & $TABLE_DATA_USER & ' data' & @CRLF _
+		& 'INNER JOIN valid_groups' & @CRLF _
+		& '	ON valid_groups.OS = data.OS AND valid_groups.weapon = data.type_ID AND valid_groups.' & $upgradeType & ' = data.' & $upgradeType & @CRLF _
+		& 'ORDER BY valid_groups.' & $upgradeType & ';'
+	SQLQuery($query, $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$mapItemStruct = AppendArrayMap($mapItemStruct, $row[0] & '|' & $row[1] & '|' & $row[2], $row[3])
+	WEnd
+
+	Local $OSWeaponUpgradeTypes = MapKeys($mapItemStruct)
+	For $OSWeaponUpgradeType In $OSWeaponUpgradeTypes
+		Local $modStruct = LongestCommonSubstring($mapItemStruct[$OSWeaponUpgradeType])
+		Local $bananaSplit = StringSplit($OSWeaponUpgradeType, '|')
+
+		$query = 'UPDATE ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
+			& "	SET hexa = '" & $modStruct & "' WHERE OS = " & $bananaSplit[1] & " AND upgrade_type = '" & $upgradeType & "' AND weapon = " & $bananaSplit[2] & " AND effect = '" & $bananaSplit[3] & "';"
+		SQLExecute($query)
+	Next
+EndFunc
+
+
+Func ValidateNewUpgrades($upgradeType)
 	Local $query
-	For $modType In $modTypes
-		$query = 'UPDATE items_data' & @CRLF _
-			& 'SET ' & $modType & ' = (SELECT name FROM mods_data WHERE propagate = 1 AND hexa IS NOT NULL AND mod_type = "' & $modType & '" AND modstruct LIKE ("%" || hexa || "%"))' & @CRLF _
-			& 'WHERE ' & $modType & ' IS NULL' & @CRLF _
-			& 'AND batch_ID = ' & $batchID & @CRLF _
-			& 'AND EXISTS (SELECT name FROM mods_data WHERE propagate = 1 AND hexa IS NOT NULL AND mod_type = "' & $modType & '" AND modstruct LIKE ("%" || hexa || "%"));'
-		Out($query)
-		_SQLite_Exec($SQLITE_DB, $query)
-	Next
+	$query = 'UPDATE ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
+		& 'SET propagate = 2' & @CRLF _
+		& 'WHERE hexa IS NOT NULL' & @CRLF _
+		& 'AND EXISTS (' & @CRLF _
+		& "	SELECT data.OS, type_ID, '" & $upgradeType & "', " & $upgradeType & @CRLF _
+		& '	FROM ' & $TABLE_DATA_USER & ' data' & @CRLF _
+		& '	WHERE data.OS = ' & $TABLE_LOOKUP_UPGRADES & '.OS' & @CRLF _
+		& "		AND upgrade_type = '" & $upgradeType & "'" & @CRLF _
+		& '		AND data.type_ID = weapon' & @CRLF _
+		& "		AND data.modstruct LIKE ('%' || hexa || '%')" & @CRLF _
+		& '		AND data.' & $upgradeType & ' <> effect' & @CRLF _
+		& ');'
+	SQLExecute($query)
 EndFunc
-
-
 #EndRegion Database
 
 
-
-
-
-
-
 #Region Inventory
-Func SellBagItems($bagIndex)
-	Local $item
-	Local $bag = GetBag($bagIndex)
-	Local $SlotCount = DllStructGetData($bag, 'slots')
-	For $i = 1 To $SlotCount
-		$item = GetItemBySlot($bagIndex, $i)
-		If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-		If CanSell($item) Then
-			Out('Selling Item: ' & $bagIndex & ', ' & $i)
-			SellItem($item)
-		EndIf
-		Sleep(GetPing()+250)
+;~ Don't use : for now TraderRequestSell make the game crash
+;~ Sell gold scrolls to scroll trader
+Func SellGoldScrolls()
+	If GetMapID() == $ID_Rata_Sum Then
+		Out('Moving to Scroll Trader')
+		Local $scrollTrader = GetNearestNPCToCoords(19250, 14275)
+		GoToNPC($scrollTrader)
+		RndSleep(500)
+	EndIf
+	
+	Local $item, $itemID
+	For $bagIndex = 1 To 5
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			$itemID = DllStructGetData($item, 'ModelID')
+			If $itemID <> 0 And IsGoldScroll($itemID) Then
+				Out('ok')
+				TraderRequestSell($item)
+				TraderSell()
+			EndIf
+		Next
 	Next
 EndFunc
 
 
-Func CanSell($item)
-	; Local $Requirement = GetItemReq($item)
+;~ Move all items out of the equipment bag so they can be salvaged
+Func MoveItemsOutOfEquipmentBag()
+	Local $equipmentBag = GetBag(5)
+	Local $inventoryEmptySlots = FindAllEmptySlots(1, 4)
+	Local $countEmptySlots = UBound($inventoryEmptySlots) / 2
+	Local $cursor = 0
+	If $countEmptySlots <= $cursor Then 
+		Out('No space in inventory to move the items from the equipment bag')
+		Return
+	EndIf
+	
+	For $slot = 1 To DllStructGetData($equipmentBag, 'slots')
+		If $countEmptySlots <= $cursor Then 
+			Out('No space in inventory to move the items from the equipment bag')
+			Return
+		EndIf
+		Local $item = GetItemBySlot(5, $slot)
+		Local $itemID = DllStructGetData($item, 'ModelID')
+		If $itemID <> 0 Then
+			MoveItem($item, $inventoryEmptySlots[2 * $cursor], $inventoryEmptySlots[2 * $cursor + 1])
+			$cursor += 1
+			RndSleep(50)
+		EndIf
+	Next
+EndFunc
+		;SalvageInscriptions()
+		;UpgradeWithSalvageInscriptions()
+		;SalvageItems()
+		;StoreInXunlaiStorage()
+
+
+
+
+;~ Sell general items to trader
+Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem)
+	If GetMapID() == $ID_Rata_Sum Then
+		Out('Moving to Merchant')
+		Local $merchant = GetNearestNPCToCoords(19500, 14750)
+		GoToNPC($merchant)
+		RndSleep(500)
+	EndIf
+	
+	Local $item, $itemID
+	For $bagIndex = 1 To 5
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			$itemID = DllStructGetData($item, 'ModelID')
+			If $itemID <> 0 And $shouldSellItem($item) Then
+				SellItem($item, DllStructGetData($item, 'Quantity'))
+				RndSleep(3000)
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
+	Out('Storing items')
+	Local $item, $itemID
+	For $bagIndex = 1 To 5
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			$itemID = DllStructGetData($item, 'ModelID')
+			If $itemID <> 0 And $shouldStoreItem($item) Then
+				Out('Moving ' & $bagIndex & ';' & $i)
+				StoreItemInXunlaiStorage($item)
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+Func StoreItemInXunlaiStorage($item)
+	Local $existingStacks
+	Local $itemID, $storageSlot, $amount
+	$itemID = DllStructGetData($item, 'ModelID')
+	$amount = DllStructGetData($item, 'Quantity')
+	
+	If IsMaterial($item) Then
+		Local $materialStorageLocation = $Map_Material_Location[$itemID]
+		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
+		Local $countMaterial = DllStructGetData($materialInStorage, 'Equiped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
+		MoveItem($item, 6, $materialStorageLocation)
+		RndSleep(50 + GetPing())
+		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
+		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equiped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
+		If $newCountMaterial - $countMaterial == $amount Then Return
+	EndIf
+	If (IsStackableItemButNotMaterial($itemID) Or IsMaterial($item)) And $amount < 250 Then
+		$existingStacks = FindAllInXunlaiStorage($itemID)
+		For $bagIndex = 0 To Ubound($existingStacks) - 1 Step 2
+			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
+			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
+			If $existingAmount < 250 Then
+				Out('To ' & $existingStacks[$bagIndex] & ';' & $existingStacks[$bagIndex + 1])
+				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
+				RndSleep(50 + GetPing())
+				$amount = $amount + $existingAmount - 250
+				If $amount < 0 Then Return
+			EndIf
+		Next
+	EndIf
+	$storageSlot = FindChestFirstEmptySlot()
+	If $storageSlot[0] == 0 Then
+		Out('Storage is full')
+		Return
+	EndIf
+	Out('To ' & $storageSlot[0] & ';' & $storageSlot[1])
+	MoveItem($item, $storageSlot[0], $storageSlot[1])
+	RndSleep(50 + GetPing())
+EndFunc
+
+
+
+;~ Return True if the item should be stored in Xunlai Storage
+Func DefaultShouldStoreItem($item)
+	Local $itemID = DllStructGetData(($item), 'ModelID')
+	Local $rarity = GetRarity($item)
+	If IsConsumable($itemID) Then
+		Return True
+	ElseIf IsBasicMaterial($item) Then
+		Return True
+	ElseIf ($itemID == $ID_Identification_Kit Or $itemID == $ID_SUP_Identification_Kit) Then
+		Return True
+	ElseIf IsRareMaterial($item) Then
+		Return True
+	ElseIf IsTome($itemID) Then
+		Return True
+	ElseIf IsGoldScroll($itemID) Then
+		Return True
+	ElseIf ($itemID == $ID_Dyes) Then
+		Return True
+	ElseIf ($itemID == $ID_Ministerial_Commendation) Then
+		Return True
+	ElseIf ($itemID == $ID_Lockpick) Then
+		Return False
+	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
+		Return True
+	ElseIf ($rarity == $RARITY_Gold) Then
+		Return True
+	ElseIf ($rarity == $RARITY_Green) Then
+		Return True
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if the item should be sold to the merchant
+Func DefaultShouldSellItem($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $rarity = GetRarity($item)
 
-	; Lockpicks, Kits
-	If IsGeneralItem($itemID) Then Return False
-	If $itemID == $ID_Glacial_Stone Then Return False
-	If IsTome($itemID) Then Return False
-	If IsMaterial($itemID) Then Return False
-	If IsWeaponMod($itemID) Then Return False
-	If IsStackableItem($itemID) Then Return False
-
-	If $itemID == $ID_Dyes Then
-		Switch DllStructGetData($item, 'ExtraID')
-			Case $ID_Black_Dye, $ID_White_Dye
-				Return False
-			Case Else
-				Return True
-		EndSwitch
+	If $itemID == $ID_Saurian_bone Then Return True
+	If IsBlueScroll($itemID) Then Return True
+	If IsWeapon($item) Then
+		If Not GetIsIdentified($item) Then Return False
+		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False
+		If HasSalvageInscription($item) Then Return False
+		If ShouldKeepWeapon($itemID) Then Return False
+		Return True
 	EndIf
 
-	Local $rarity = GetRarity($item)
-	If $rarity == $RARITY_Gold Then Return True
-	If $rarity == $RARITY_Purple Then Return True
-	If $rarity == $RARITY_Blue Then Return True
-	If $rarity == $RARITY_White Then Return True
-	Return True
+	Return False
+EndFunc
+
+Func HasSalvageInscription($item)
+	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '1F0208243E0432251D0008260F16A8A7', '00082600011826900098260F1CA8A7000000C', '1F0208243E0432251D0008260810B8A7000000C']
+	Local $modstruct = GetModStruct($item)
+	For $salvageableModStruct in $salvageableInscription
+		If StringInStr($modstruct, $salvageableModStruct) Then Return True
+	Next
+	Return False
+EndFunc
+
+Func ShouldKeepWeapon($itemID)
+	Local $ID_Model_Great_Conch = 2415
+	Local $ID_Model_Elemental_Sword = 2267
+	Local $shouldKeepWeaponsArray[] = [$ID_Model_Great_Conch, $ID_Model_Elemental_Sword]
+	Local $Map_shouldKeepWeapons = MapFromArray($shouldKeepWeaponsArray)
+	If $Map_shouldKeepWeapons[$itemID] <> null Then Return True
+	Return False
 EndFunc
 #EndRegion Inventory
 

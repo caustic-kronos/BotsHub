@@ -99,7 +99,7 @@ Global $GUI_Group_RunInfos, $GUI_Label_Runs, $GUI_Label_Failures, $GUI_Label_Tim
 
 Global $GUI_Group_ItemsLooted, $GUI_Label_ChunkOfDrakeFlesh, $GUI_Label_SkaleFins, $GUI_Label_GlacialStones, $GUI_Label_DiessaChalices, $GUI_Label_RinRelics, $GUI_Label_WintersdayGifts, $GUI_Label_MargoniteGemstone, $GUI_Label_StygianGemstone, $GUI_Label_TitanGemstone, $GUI_Label_TormentGemstone
 Global $GUI_Group_Titles, $GUI_Label_AsuraTitle, $GUI_Label_DeldrimorTitle, $GUI_Label_NornTitle, $GUI_Label_VanguardTitle, $GUI_Label_KurzickTitle, $GUI_Label_LuxonTitle, $GUI_Label_LightbringerTitle, $GUI_Label_SunspearTitle
-Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
+Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_StoreTheRest, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables
 Global $GUI_Group_BaseLootOptions, $GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, $GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
 Global $GUI_Group_RarityLootOptions, $GUI_Checkbox_LootGoldItems, $GUI_Checkbox_LootPurpleItems, $GUI_Checkbox_LootBlueItems, $GUI_Checkbox_LootWhiteItems, $GUI_Checkbox_LootGreenItems
@@ -184,6 +184,7 @@ Func createGUI()
 	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 214, 156, 20)
 	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 244, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 274, 156, 20)
+	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 304, 156, 20)
 
 	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 31, 364, 156, 20)
 	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 205, 364, 75, 20)
@@ -402,7 +403,7 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				;PostFarmActions()
+				If (CountSlots() < 5) Then PostFarmActions()
 				If (CountSlots() < 5) Then
 					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
 					$STATUS = 'WILL_PAUSE'
@@ -483,14 +484,29 @@ Func PostFarmActions()
 	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then IdentifyAllItems()
 	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then 
 		ConnectToDatabase()
+		InitializeDatabase()
+		CompleteModelLookupTable()
+		CompleteUpgradeLookupTable()
 		StoreAllItemsData()
-		;CompleteItemsNames()
-		;CompleteItemsMods()
-		;CompleteModsHexa()
 		DisconnectFromDatabase()
 	EndIf
-	;$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 214, 156, 20)
-	;$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 244, 156, 20)
+	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
+		; Can't sell gold scrolls since the function crash
+		;If (FindAnyInInventory($Gold_Scrolls_Array)) Then SellGoldScrolls()
+		SellEverythingToMerchant()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then 
+		MoveItemsOutOfEquipmentBag()
+		;SalvageInscriptions()
+		;UpgradeWithSalvageInscriptions()
+		;SalvageItems()
+		;StoreInXunlaiStorage()
+		; Need a second pass at merchant after recycling the inscriptions out
+		If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
+			SellEverythingToMerchant()
+		EndIf
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
 
 

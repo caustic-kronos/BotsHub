@@ -367,8 +367,8 @@ Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_Whit
 Global Const $ID_Belt_Pouch				= 34
 Global Const $ID_Bag					= 35
 Global Const $ID_Rune_of_Holding		= 2988
-Global Const $ID_ID_Kit					= 2989
-Global Const $ID_SUP_ID_Kit				= 5899
+Global Const $ID_Identification_Kit		= 2989
+Global Const $ID_SUP_Identification_Kit	= 5899
 Global Const $ID_Salvage_Kit			= 2992
 Global Const $ID_EXP_Salvage_Kit		= 2991
 Global Const $ID_SUP_Salvage_Kit		= 5900
@@ -413,7 +413,7 @@ Global Const $Map_Keys					= MapFromArray($Keys_Array)
 #EndRegion Keys
 
 
-Local Const $General_Items_Array[]	= [$ID_ID_Kit, $ID_EXP_Salvage_Kit, $ID_Salvage_Kit, $ID_SUP_ID_Kit, $ID_SUP_Salvage_Kit, $ID_Lockpick]
+Local Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_EXP_Salvage_Kit, $ID_Salvage_Kit, $ID_SUP_Identification_Kit, $ID_SUP_Salvage_Kit, $ID_Lockpick]
 Global Const $Map_General_Items		= MapFromArray($General_Items_Array)
 
 
@@ -449,7 +449,7 @@ Global Const $ID_Scroll_of_the_Lightbringer	= 21233
 Global Const $ID_Deep_Scroll				= 22279
 Global Const $ID_FoW_Scroll					= 22280
 Local Const $Blue_Scrolls_Array[]			= [$ID_Adventurers_Insight_Scroll, $ID_Rampagers_Insight_Scroll, $ID_Hunters_Insight_Scroll]
-Local Const $Gold_Scrolls_Array[]			= [$ID_Urgoz_Scroll, $ID_UW_Scroll, $ID_Heros_Insight_Scroll, $ID_Berserkers_Insight_Scroll, $ID_Slayers_Insight_Scroll, $ID_Scroll_of_the_Lightbringer, $ID_Deep_Scroll, $ID_FoW_Scroll]
+Global Const $Gold_Scrolls_Array[]			= [$ID_Urgoz_Scroll, $ID_UW_Scroll, $ID_Heros_Insight_Scroll, $ID_Berserkers_Insight_Scroll, $ID_Slayers_Insight_Scroll, $ID_Scroll_of_the_Lightbringer, $ID_Deep_Scroll, $ID_FoW_Scroll]
 Global Const $Map_Blue_Scrolls				= MapFromArray($Blue_Scrolls_Array)
 Global Const $Map_Gold_Scrolls				= MapFromArray($Gold_Scrolls_Array)
 #EndRegion Scrolls
@@ -507,6 +507,14 @@ Local $All_Materials_Array						= $Rare_Materials_Array
 _ArrayConcatenate($All_Materials_Array, $Basic_Materials_Array)
 Global Const $Map_Basic_Materials				= MapFromArray($Basic_Materials_Array)
 Global Const $Map_All_Materials					= MapFromArray($All_Materials_Array)
+
+Local Const $Materials_Double_Array[][]			= [	[$ID_Bone, 1], [$ID_Iron_Ingot, 2], [$ID_Tanned_Hide_Square, 3], [$ID_Scale, 4], [$ID_Chitin_Fragment, 5], [$ID_Bolt_of_Cloth, 6], [$ID_Wood_Plank, 7], [$ID_Granite_Slab, 9], [$ID_Pile_of_Glittering_Dust, 10], [$ID_Plant_Fibers, 11], [$ID_Feather, 12], _
+													[$ID_Fur_Square, 13], [$ID_Bolt_of_Linen, 14], [$ID_Bolt_of_Damask, 15], [$ID_Bolt_of_Silk, 16], [$ID_Glob_of_Ectoplasm, 17], [$ID_Steel_Ingot, 18], [$ID_Deldrimor_Steel_Ingot, 19], [$ID_Monstrous_Claw, 20], [$ID_Monstrous_Eye, 21], [$ID_Monstrous_Fang, 22], _
+													[$ID_Ruby, 23], [$ID_Sapphire, 24], [$ID_Diamond, 25], [$ID_Onyx_Gemstone, 26], [$ID_Lump_of_Charcoal, 27], [$ID_Obsidian_Shard, 28], [$ID_Tempered_Glass_Vial, 30], [$ID_Leather_Square, 31], [$ID_Elonian_Leather_Square, 32], [$ID_Vial_of_Ink, 33], _
+													[$ID_Rolls_of_Parchment, 34], [$ID_Rolls_of_Vellum, 35], [$ID_Spiritwood_Planks, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
+Global Const $Map_Material_Location				= MapFromDoubleArray($Materials_Double_Array)
+
+
 #EndRegion Materials
 
 

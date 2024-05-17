@@ -738,7 +738,7 @@ Func SalvageMaterials()
 EndFunc
 
 
-;~ Salvages a mod out of an item.
+;~ Salvages a mod out of an item. Index: 0 for prefix, 1 for suffix, 2 for inscription
 Func SalvageMod($aModIndex)
 	Return SendPacket(0x8, $HEADER_SALVAGE_MODS, $aModIndex)
 EndFunc
@@ -749,6 +749,11 @@ Func EndSalvage()
 	Return SendPacket(0x4, $HEADER_SALVAGE_SESSION_DONE)
 EndFunc
 
+
+;~ Cancel the salvaging session
+Func CancelSalvage()
+	Return SendPacket(0x4, $HEADER_SALVAGE_SESSION_CANCEL)
+EndFunc
 
 ;~ Identifies an item.
 Func IdentifyItem($aItem)
