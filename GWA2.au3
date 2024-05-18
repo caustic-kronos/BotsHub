@@ -725,7 +725,7 @@ Func StartSalvage($aItem)
 	If $lSalvageKit = 0 Then Return
 
 	DllStructSetData($mSalvage, 2, $lItemID)
-	DllStructSetData($mSalvage, 3, FindSalvageKit())
+	DllStructSetData($mSalvage, 3, $lSalvageKit)
 	DllStructSetData($mSalvage, 4, $lSalvageSessionID[1])
 
 	Enqueue($mSalvagePtr, 16)
@@ -738,7 +738,7 @@ Func SalvageMaterials()
 EndFunc
 
 
-;~ Salvages a mod out of an item. Index: 0 for prefix, 1 for suffix, 2 for inscription
+;~ Salvages a mod out of an item. Index: 0 for prefix/inscription, 1 for suffix/rune, 2 for inscription
 Func SalvageMod($aModIndex)
 	Return SendPacket(0x8, $HEADER_SALVAGE_MODS, $aModIndex)
 EndFunc
