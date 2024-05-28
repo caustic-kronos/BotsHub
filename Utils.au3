@@ -391,11 +391,11 @@ EndFunc
 
 
 ;~ Count available slots in the inventory
-Func CountSlots()
+Func CountSlots($fromBag = 1, $toBag = 5)
 	Local $bag
 	Local $availableSlots = 0
 	; If bag is missing it just won't count
-	For $i = 1 To 5
+	For $i = $fromBag To $toBag
 		$bag = GetBag($i)
 		$availableSlots += DllStructGetData($bag, 'Slots') - DllStructGetData($bag, 'ItemsCount')
 	Next

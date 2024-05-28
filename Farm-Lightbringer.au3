@@ -178,7 +178,7 @@ Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $locat
 		If (Eval('location' & $i & 'x') == null) Then ExitLoop
 		SpeedTeam()
 		If MoveToAndAggro($foesGroup, Eval('location' & $i & 'x'), Eval('location' & $i & 'y')) Then Return True
-    Next
+	Next
 	Return False
 EndFunc
 

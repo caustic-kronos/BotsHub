@@ -457,6 +457,7 @@ Func SellGoldScrolls()
 			If $itemID <> 0 And IsGoldScroll($itemID) Then
 				Out('ok')
 				TraderRequestSell($item)
+				RndSleep(250 + GetPing())
 				TraderSell()
 			EndIf
 		Next

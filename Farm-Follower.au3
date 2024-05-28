@@ -59,7 +59,7 @@ Local $playerIDs
 Func FollowerFarm($STATUS)
 	If Not $FollowerFarmSetup Then FollowerSetup()
 
-	While $STATUS == 'RUNNING' And CountSlots() > 5
+	While $STATUS == 'RUNNING' And CountSlots(4, 4) > 5
 		Switch $Player_Profession_ID
 			Case $ID_Warrior
 				FollowerLoop()

@@ -732,6 +732,13 @@ Func StartSalvage($aItem)
 EndFunc
 
 
+;~ Doesn't work
+Func ValidateSalvage()
+	ControlSend(GetWindowHandle(), "", "", "{Enter}")
+	Sleep(GetPing() + 750)
+EndFunc
+
+
 ;~ Salvage the materials out of an item.
 Func SalvageMaterials()
 	Return SendPacket(0x4, $HEADER_SALVAGE_MATS)
@@ -3496,6 +3503,16 @@ EndFunc
 Func GetIsDead($aAgent)
 	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
 	Return BitAND(DllStructGetData($aAgent, 'Effects'), 0x0010) > 0
+EndFunc
+
+
+;~ Tests if the character disconnected.
+Func IsDisconnected()
+	If GetMapLoading() <> 2 And GetAgentExists(-2) Then
+		Return False
+	Else
+		Return True
+	EndIf
 EndFunc
 
 

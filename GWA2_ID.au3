@@ -62,6 +62,7 @@ Global Const $ID_Isle_Of_The_Dead			= 179
 ;~ Factions
 Global Const $ID_House_Zu_Heltzer			= 77
 Global Const $ID_Kaineng_City				= 194
+Global Const $ID_Jaya_Bluffs				= 196
 Global Const $ID_Mount_Qinkai				= 200
 Global Const $ID_Ferndale					= 210
 Global Const $ID_Pongmei_Valley				= 211
@@ -69,6 +70,7 @@ Global Const $ID_Nahpui_Quarter				= 216
 Global Const $ID_Boreas_Seabed				= 219
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
+Global Const $ID_Seitung_Harbor				= 250
 Global Const $ID_Isle_Of_Weeping_Stone		= 275
 Global Const $ID_Isle_Of_Jade				= 276
 Global Const $ID_The_Marketplace			= 303

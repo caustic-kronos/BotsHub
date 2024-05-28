@@ -48,6 +48,7 @@ GUI built with GuiBuilderPlus
 #include 'Farm-Corsairs.au3'
 #include 'Farm-DragonMoss.au3'
 #include 'Farm-EdenIris.au3'
+#include 'Farm-Feathers.au3'
 #include 'Farm-Follower.au3'
 #include 'Farm-JadeBrotherhood.au3'
 #include 'Farm-Kournans.au3'
@@ -121,7 +122,7 @@ Func createGUI()
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
-	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
 	GUICtrlSetOnEvent($GUI_Combo_FarmChoice, 'GuiButtonHandler')
 	$GUI_StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
 	GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
@@ -403,8 +404,8 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots() < 5) Then PostFarmActions()
-				If (CountSlots() < 5) Then
+				If (CountSlots(4, 4) < 5) Then PostFarmActions()
+				If (CountSlots(4, 4) < 5) Then
 					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
 					$STATUS = 'WILL_PAUSE'
 				EndIf
@@ -439,6 +440,8 @@ Func RunFarmLoop($Farm)
 			Return DragonMossFarm($STATUS)
 		Case 'Eden Iris'
 			Return EdenIrisFarm($STATUS)
+		Case 'Feathers'
+			Return FeathersFarm($STATUS)
 		Case 'Follow'
 			Return FollowerFarm($STATUS)
 		Case 'Jade Brotherhood'
@@ -524,6 +527,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $EdenIrisFarmInformations)
+		Case 'Feathers'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $DAFeathersFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $FeathersFarmInformations)
 		Case 'Follow'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
