@@ -349,8 +349,8 @@ Func Initialize($aGW, $bChangeTitle = True, $aUseStringLog = False, $aUseEventSy
 	SetValue('UseHeroSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseHeroSkillFunction', -0x59), 8))
 	SetValue('BuyItemBase', '0x' & Hex(MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)), 8))
 	SetValue('TransactionFunction', '0x' & Hex(GetScannedAddress('ScanTransactionFunction', -0x7E), 8))
-	SetValue('RequestQuoteFunction', '0x' & Hex(GetScannedAddress('ScanRequestQuoteFunction', -0x34), 8)) ;-2
-	SetValue('TraderFunction', '0x' & Hex(GetScannedAddress('ScanTraderFunction', -71), 8))
+	SetValue('RequestQuoteFunction', '0x' & Hex(GetScannedAddress('ScanRequestQuoteFunction', -0x3B), 8)) ;-2
+	SetValue('TraderFunction', '0x' & Hex(GetScannedAddress('ScanTraderFunction', -0x1E), 8))
 	SetValue('ClickToMoveFix', '0x' & Hex(GetScannedAddress('ScanClickToMoveFix', 1), 8))
 	SetValue('ChangeStatusFunction', '0x' & Hex(GetScannedAddress('ScanChangeStatusFunction', 1), 8))
 
@@ -516,7 +516,7 @@ Func Scan()
 	_('ScanSleep:')
 	AddPattern('5F5E5B741A6860EA0000')
 	_('ScanSalvageFunction:')
-	AddPattern('33C58945FC8B45088945F08B450C8945F48B45108945F88D45EC506A10C745EC75')
+	AddPattern('33C58945FC8B45088945F08B450C8945F48B45108945F88D45EC506A10C745EC76')
 	;AddPattern('8BFA8BD9897DF0895DF4')
 	_('ScanSalvageGlobal:')
 	AddPattern('8B5104538945F48B4108568945E88B410C578945EC8B4110528955E48945F0')
@@ -734,7 +734,7 @@ EndFunc
 
 ;~ Doesn't work
 Func ValidateSalvage()
-	ControlSend(GetWindowHandle(), "", "", "{Enter}")
+	ControlSend(GetWindowHandle(), '', '', '{Enter}')
 	Sleep(GetPing() + 750)
 EndFunc
 
@@ -4830,8 +4830,18 @@ EndFunc
 ;~ Internal use only.
 Func CreateTraderHook()
 	_('TraderHookProc:')
-	_('mov dword[TraderCostID],ecx')
-	_('mov dword[TraderCostValue],edx')
+	_('push eax')
+	_('mov eax,dword[ebx+28] -> 8b 43 28')
+	_('mov eax,[eax] -> 8b 00')
+	_('mov dword[TraderCostID],eax')
+	_('mov eax,dword[ebx+28] -> 8b 43 28')
+	_('mov eax,[eax+4] -> 8b 40 04')
+	_('mov dword[TraderCostValue],eax')
+	_('pop eax')
+
+	_('mov ebx,dword[ebp+C] -> 8B 5D 0C') ; Original bytes
+	_('mov esi,eax') ; Original bytes
+
 	_('push eax')
 	_('mov eax,dword[TraderQuoteID]')
 	_('inc eax')
@@ -4841,8 +4851,7 @@ Func CreateTraderHook()
 	_('TraderSkipReset:')
 	_('mov dword[TraderQuoteID],eax')
 	_('pop eax')
-	_('mov ebp,esp')
-	_('sub esp,8')
+	
 	_('ljmp TraderHookReturn')
 EndFunc
 
@@ -5143,7 +5152,7 @@ Func CreateCommands()
 
 	_('CommandAction:')
 	_('mov ecx,dword[ActionBase]')
-	_('mov ecx,dword[ecx+�]')
+	_('mov ecx,dword[ecx+c]')
 	_('add ecx,A0')
 	_('push 0')
 	_('add eax,4')
@@ -5208,7 +5217,8 @@ Func CreateCommands()
 	_('push 0')
 	_('push 0')
 	_('push C')
-	_('xor edx,edx')
+	_('mov ecx,0')
+	_('mov edx,2')
 	_('call RequestQuoteFunction')
 	_('add esp,20')
 	_('ljmp CommandReturn')
@@ -5236,31 +5246,14 @@ Func CreateCommands()
 	_('push 0')
 	_('push 0')
 	_('push 0')
-	_('mov ecx,c')
 	_('mov edx,dword[TraderCostValue]')
+	_('push edx')
+	_('push C')
+	_('mov ecx,C')
 	_('call TraderFunction')
+	_('add esp,24')
 	_('mov dword[TraderCostID],0')
 	_('mov dword[TraderCostValue],0')
-	_('ljmp CommandReturn')
-
-	_('mov esi,eax')
-	_('add esi,10')
-	_('mov ecx,eax')
-	_('add ecx,4')
-	_('push ecx')
-	_('mov edx,eax')
-	_('add edx,8')
-	_('push edx')
-	_('push 1')
-	_('push 0')
-	_('push 0')
-	_('push 0')
-	_('push 0')
-	_('mov eax,dword[eax+C]')
-	_('push eax')
-	_('push 1')
-	_('call TransactionFunction')
-	_('add esp,24')
 	_('ljmp CommandReturn')
 
 ;~	_('CommandTraderSell:')
@@ -5384,7 +5377,25 @@ Func _($aASM)
 	;relative values stringregexp
 	;static values hardcoded
 	Local $lBuffer
+	Local $lOpCode
 	Select
+		Case StringInStr($aASM, ' -> ')
+			Local $split = StringSplit($aASM, ' -> ', 1)
+			$lOpCode = StringReplace($split[2], ' ', '')
+			$mASMSize += 0.5 * StringLen($lOpCode)
+			$mASMString &= $lOpCode
+		Case StringLeft($aASM, 3) = 'jb '
+			$mASMSize += 2
+			$mASMString &= '72(' & StringRight($aASM, StringLen($aASM) - 3) & ')'
+		Case StringLeft($aASM, 3) = 'je '
+			$mASMSize += 2
+			$mASMString &= '74(' & StringRight($aASM, StringLen($aASM) - 3) & ')'
+		Case StringRegExp($aASM, 'cmp ebx,[a-z,A-Z]{4,}') And StringInStr($aASM, ',dword') = 0
+			$mASMSize += 6
+			$mASMString &= '81FB[' & StringRight($aASM, StringLen($aASM) - 8) & ']'
+		Case StringRegExp($aASM, 'cmp edx,[a-z,A-Z]{4,}') And StringInStr($aASM, ',dword') = 0
+			$mASMSize += 6
+			$mASMString &= '81FA[' & StringRight($aASM, StringLen($aASM) - 8) & ']'
 		Case StringRight($aASM, 1) = ':'
 			SetValue('Label_' & StringLeft($aASM, StringLen($aASM) - 1), $mASMSize)
 		Case StringInStr($aASM, '/') > 0
@@ -5635,6 +5646,8 @@ Func _($aASM)
 		Case Else
 			Local $lOpCode
 			Switch $aASM
+				Case 'Flag_'
+					$lOpCode = '9090903434'
 				Case 'nop'
 					$lOpCode = '90'
 				Case 'pushad'
@@ -5643,6 +5656,10 @@ Func _($aASM)
 					$lOpCode = '61'
 				Case 'mov ebx,dword[eax]'
 					$lOpCode = '8B18'
+				Case 'mov ebx,dword[ecx]'
+					$lOpCode = '8B19'
+				Case 'mov ecx,dword[ebx+ecx]'
+					$lOpCode = '8B0C0B'
 				Case 'test eax,eax'
 					$lOpCode = '85C0'
 				Case 'test ebx,ebx'
@@ -5709,8 +5726,12 @@ Func _($aASM)
 					$lOpCode = '8BEC'
 				Case 'sub esp,8'
 					$lOpCode = '83EC08'
+				Case 'sub esi,4'
+					$lOpCode = '83EE04'
 				Case 'sub esp,14'
 					$lOpCode = '83EC14'
+				Case 'sub eax,C'
+					$lOpCode = '83E80C'
 				Case 'cmp ecx,4'
 					$lOpCode = '83F904'
 				Case 'cmp ecx,32'
@@ -5733,6 +5754,8 @@ Func _($aASM)
 					$lOpCode = '8B4704'
 				Case 'mov dword[eax+4],ecx'
 					$lOpCode = '894804'
+				Case 'mov dword[eax+8],ebx'
+					$lOpCode = '895808'
 				Case 'mov dword[eax+8],ecx'
 					$lOpCode = '894808'
 				Case 'mov dword[eax+C],ecx'
@@ -5747,6 +5770,8 @@ Func _($aASM)
 					$lOpCode = '8918'
 				Case 'mov edx,dword[eax+4]'
 					$lOpCode = '8B5004'
+				Case 'mov edx,dword[eax+8]'
+					$lOpCode = '8B5008'
 				Case 'mov edx,dword[eax+c]'
 					$lOpCode = '8B500C'
 				Case 'mov edx,dword[esi+1c]'
@@ -5787,8 +5812,16 @@ Func _($aASM)
 					$lOpCode = '8B5808'
 				Case 'mov ebx,dword[eax+C]'
 					$lOpCode = '8B580C'
+				Case 'mov ebx,dword[ecx+148]'
+					$lOpCode = '8B9948010000'
+				Case 'mov ecx,dword[ebx+13C]'
+					$lOpCode = '8B9B3C010000'
+				Case 'mov ebx,dword[ebx+F0]'
+					$lOpCode = '8B9BF0000000'
 				Case 'mov ecx,dword[eax+C]'
 					$lOpCode = '8B480C'
+				Case 'mov ecx,dword[eax+10]'
+					$lOpCode = '8B4810'
 				Case 'mov eax,dword[eax+4]'
 					$lOpCode = '8B4004'
 				Case 'push dword[eax+4]'
@@ -5947,8 +5980,6 @@ Func _($aASM)
 					$lOpCode = '8B4140'
 				Case 'mov ecx,dword[ecx+4]'
 					$lOpCode = '8B4904'
-				Case 'mov ecx,dword[ecx+�]'
-					$lOpCode = '8B490C'
 				Case 'mov ecx,dword[ecx+8]'
 					$lOpCode = '8B4908'
 				Case 'mov ecx,dword[ecx+34]'
@@ -5965,12 +5996,18 @@ Func _($aASM)
 					$lOpCode = '8B494C'
 				Case 'mov ecx,dword[ecx+50]'
 					$lOpCode = '8B4950'
+				Case 'mov ecx,dword[ecx+148]'
+					$lOpCode = '8B8948010000'
 				Case 'mov ecx,dword[ecx+170]'
 					$lOpCode = '8B8970010000'
 				Case 'mov ecx,dword[ecx+194]'
 					$lOpCode = '8B8994010000'
 				Case 'mov ecx,dword[ecx+250]'
 					$lOpCode = '8B8950020000'
+				Case 'mov ecx,dword[ecx+134]'
+					$lOpCode = '8B8934010000'
+				Case 'mov ecx,dword[ecx+13C]'
+					$lOpCode = '8B893C010000'
 				Case 'mov al,byte[ecx+4f]'
 					$lOpCode = '8A414F'
 				Case 'mov al,byte[ecx+3f]'
@@ -6003,8 +6040,60 @@ Func _($aASM)
 					$lOpCode = 'D94508'
 				Case 'mov esi,eax'
 					$lOpCode = '8BF0'
+				Case 'mov edx,dword[ecx]'
+					$lOpCode = '8B11'
+				Case 'mov dword[eax],edx'
+					$lOpCode = '8910'
+				Case 'test edx,edx'
+					$lOpCode = '85D2'
+				Case 'mov dword[eax],F'
+					$lOpCode = 'C7000F000000'
+				Case 'mov ebx,[ebx+0]'
+					$lOpCode = '8B1B'
+				Case 'mov ebx,[ebx+AC]'
+					$lOpCode = '8B9BAC000000'
+				Case 'mov ebx,[ebx+C]'
+					$lOpCode = '8B5B0C'
+				Case 'mov eax,dword[ebx+28]'
+					$lOpCode = '8B4328'
+				Case 'mov eax,[eax]'
+					$lOpCode = '8B00'
+				Case 'mov eax,[eax+4]'
+					$lOpCode = '8B4004'
+				Case 'mov ebx,dword[ebp+C]'
+					$lOpCode = '8B5D0C'
+				Case 'add ebx,ecx'
+					$lOpCode = '03D9'
+				Case 'lea ecx,dword[ecx+ecx*2]'
+					$lOpCode = '8D0C49'
+				Case 'lea ecx,dword[ebx+ecx*4]'
+					$lOpCode = '8D0C8B'
+				Case 'lea ecx,dword[ecx+18]'
+					$lOpCode = '8D4918'
+				Case 'mov ecx,dword[ecx+edx]'
+					$lOpCode = '8B0C11'
+				Case 'push dword[ebp+8]'
+					$lOpCode = 'FF7508'
+				Case 'mov dword[eax],edi'
+					$lOpCode = '8938'
+				Case 'mov [eax+8],ecx'
+					$lOpCode = '894808'
+				Case 'mov [eax+C],ecx'
+					$lOpCode = '89480C'
+				Case 'mov ebx,dword[ecx-C]'
+					$lOpCode = '8B59F4'
+				Case 'mov [eax+!],ebx'
+					$lOpCode = '89580C'
+				Case 'mov ecx,[eax+8]'
+					$lOpCode = '8B4808'
+				Case 'lea ecx,dword[ebx+18]'
+					$lOpCode = '8D4B18'
+				Case 'mov ebx,dword[ebx+18]'
+					$lOpCode = '8B5B18'
+				Case 'mov ecx,dword[ecx+0xF4]'
+					$lOpCode = '8B89F4000000'
 				Case Else
-					MsgBox(0, 'ASM', 'Could not assemble: ' & $aASM)
+					MsgBox(0x0, 'ASM', 'Could not assemble: ' & $aASM)
 					Exit
 			EndSwitch
 			$mASMSize += 0.5 * StringLen($lOpCode)
