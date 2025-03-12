@@ -741,13 +741,13 @@ EndFunc
 
 ;~ Salvage the materials out of an item.
 Func SalvageMaterials()
-	Return SendPacket(0x4, $HEADER_SALVAGE_MATS)
+	Return SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
 EndFunc
 
 
 ;~ Salvages a mod out of an item. Index: 0 for prefix/inscription, 1 for suffix/rune, 2 for inscription
 Func SalvageMod($aModIndex)
-	Return SendPacket(0x8, $HEADER_SALVAGE_MODS, $aModIndex)
+	Return SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, $aModIndex)
 EndFunc
 
 
@@ -772,7 +772,7 @@ Func IdentifyItem($aItem)
 	Local $lIDKit = FindIdentificationKit()
 	If $lIDKit == 0 Then Return
 
-	SendPacket(0xC, $HEADER_ITEM_ID, $lIDKit, $lItemID)
+	SendPacket(0xC, $HEADER_ITEM_IDENTIFY, $lIDKit, $lItemID)
 
 	Local $lDeadlock = TimerInit()
 	Do
@@ -824,7 +824,7 @@ Func PickUpItem($aItem)
 		$lAgentID = DllStructGetData($aItem, 'ID')
 	EndIf
 
-	Return SendPacket(0xC, $HEADER_ITEM_PICKUP, $lAgentID, 0)
+	Return SendPacket(0xC, $HEADER_ITEM_INTERACT, $lAgentID, 0)
 EndFunc
 
 
@@ -840,7 +840,7 @@ Func DropItem($aItem, $aAmount = 0)
 	EndIf
 	If $aAmount < 0 Then $aAmount = DllStructGetData($aItem, 'Quantity')
 
-	Return SendPacket(0xC, $HEADER_ITEM_DROP, $lItemID, $aAmount)
+	Return SendPacket(0xC, $HEADER_DROP_ITEM, $lItemID, $aAmount)
 EndFunc
 
 
@@ -1119,7 +1119,7 @@ Func DropGold($aAmount = 0)
 		$lAmount = GetGoldCharacter()
 	EndIf
 
-	Return SendPacket(0x8, $HEADER_GOLD_DROP, $lAmount)
+	Return SendPacket(0x8, $HEADER_DROP_GOLD, $lAmount)
 EndFunc
 
 
@@ -1181,58 +1181,58 @@ EndFunc
 
 ;~ Kicks all heroes from the party.
 Func KickAllHeroes()
-	Return SendPacket(0x8, $HEADER_HEROES_KICK, 0x26)
+	Return SendPacket(0x8, $HEADER_HERO_KICK, 0x26)
 EndFunc
 
 
 ;~ Add a henchman to the party.
 Func AddNpc($aNpcId)
-	Return SendPacket(0x8, $HEADER_HENCHMAN_ADD, $aNpcId)
+	Return SendPacket(0x8, $HEADER_PARTY_INVITE_NPC, $aNpcId)
 EndFunc
 
 
 ;~ Kick a henchman from the party.
 Func KickNpc($aNpcId)
-	Return SendPacket(0x8, $HEADER_HENCHMAN_KICK, $aNpcId)
+	Return SendPacket(0x8, $HEADER_PARTY_KICK_NPC, $aNpcId)
 EndFunc
 
 
 ;~ Clear the position flag from a hero.
 Func CancelHero($aHeroNumber)
 	Local $lAgentID = GetHeroID($aHeroNumber)
-	Return SendPacket(0x14, $HEADER_HERO_CLEAR_FLAG, $lAgentID, 0x7F800000, 0x7F800000, 0)
+	Return SendPacket(0x14, $HEADER_HERO_FLAG_SINGLE, $lAgentID, 0x7F800000, 0x7F800000, 0)
 EndFunc
 
 
 ;~ Clear the position flag from all heroes.
 Func CancelAll()
-	Return SendPacket(0x10, $HEADER_PARTY_CLEAR_FLAG, 0x7F800000, 0x7F800000, 0)
+	Return SendPacket(0x10, $HEADER_HERO_FLAG_ALL, 0x7F800000, 0x7F800000, 0)
 EndFunc
 
 
 ;~ Place a hero's position flag.
 Func CommandHero($aHeroNumber, $aX, $aY)
-	Return SendPacket(0x14, $HEADER_HERO_PLACE_FLAG, GetHeroID($aHeroNumber), FloatToInt($aX), FloatToInt($aY), 0)
+	Return SendPacket(0x14, $HEADER_HERO_FLAG_SINGLE, GetHeroID($aHeroNumber), FloatToInt($aX), FloatToInt($aY), 0)
 EndFunc
 
 
 ;~ Place the full-party position flag.
 Func CommandAll($aX, $aY)
-	Return SendPacket(0x10, $HEADER_PARTY_PLACE_FLAG, FloatToInt($aX), FloatToInt($aY), 0)
+	Return SendPacket(0x10, $HEADER_HERO_FLAG_ALL, FloatToInt($aX), FloatToInt($aY), 0)
 EndFunc
 
 
 ;~ Lock a hero onto a target.
 Func LockHeroTarget($aHeroNumber, $aAgentID = 0)
 	Local $lHeroID = GetHeroID($aHeroNumber)
-	Return SendPacket(0xC, $HEADER_HERO_LOCK, $lHeroID, $aAgentID)
+	Return SendPacket(0xC, $HEADER_HERO_LOCK_TARGET, $lHeroID, $aAgentID)
 EndFunc
 
 
 ;~ Change a hero's aggression level.
 Func SetHeroAggression($aHeroNumber, $aAggression) ;0=Fight, 1=Guard, 2=Avoid
 	Local $lHeroID = GetHeroID($aHeroNumber)
-	Return SendPacket(0xC, $HEADER_HERO_AGGRESSION, $lHeroID, $aAggression)
+	Return SendPacket(0xC, $HEADER_HERO_BEHAVIOR, $lHeroID, $aAggression)
 EndFunc
 
 
@@ -1250,7 +1250,7 @@ EndFunc
 
 ;~ Internal use for enabling or disabling hero skills
 Func ChangeHeroSkillSlotState($aHeroNumber, $aSkillSlot)
-	Return SendPacket(0xC, $HEADER_HERO_TOGGLE_SKILL, GetHeroID($aHeroNumber), $aSkillSlot - 1)
+	Return SendPacket(0xC, $HEADER_HERO_FLAG_ALL, GetHeroID($aHeroNumber), $aSkillSlot - 1)
 EndFunc
 
 
@@ -1321,7 +1321,7 @@ Func GoPlayer($aAgent)
 	Else
 		$lAgentID = ConvertID($aAgent)
 	EndIf
-	Return SendPacket(0x8, $HEADER_AGENT_FOLLOW , $lAgentID)
+	Return SendPacket(0x8, $HEADER_INTERACT_PLAYER , $lAgentID)
 EndFunc
 
 
@@ -1334,7 +1334,7 @@ Func GoNPC($aAgent)
 		$lAgentID = ConvertID($aAgent)
 	EndIf
 
-	Return SendPacket(0xC, $HEADER_NPC_TALK, $lAgentID)
+	Return SendPacket(0xC, $HEADER_INTERACT_NPC, $lAgentID)
 EndFunc
 
 
@@ -1412,7 +1412,7 @@ Func Attack($aAgent, $aCallTarget = False)
 	Else
 		$lAgentID = ConvertID($aAgent)
 	EndIf
-	Return SendPacket(0xC, $HEADER_ATTACK_AGENT, $lAgentID, $aCallTarget)
+	Return SendPacket(0xC, $HEADER_ACTION_ATTACK, $lAgentID, $aCallTarget)
 EndFunc
 
 
@@ -1512,19 +1512,19 @@ EndFunc
 
 ;~ Returns to outpost after resigning/failure.
 Func ReturnToOutpost()
-	Return SendPacket(0x4, $HEADER_OUTPOST_RETURN)
+	Return SendPacket(0x4, $HEADER_PARTY_RETURN_TO_OUTPOST)
 EndFunc
 
 
 ;~ Enter a challenge mission/pvp.
 Func EnterChallenge()
-	Return SendPacket(0x8, $HEADER_MISSION_ENTER, 1)
+	Return SendPacket(0x8, $HEADER_PARTY_ENTER_CHALLENGE, 1)
 EndFunc
 
 
 ;~ Enter a foreign challenge mission/pvp.
 Func EnterChallengeForeign()
-	Return SendPacket(0x8, $HEADER_MISSION_FOREIGN_ENTER, 0)
+	Return SendPacket(0x8, $HEADER_PARTY_ENTER_FOREIGN_MISSION, 0)
 EndFunc
 
 
@@ -1548,13 +1548,13 @@ EndFunc
 #Region Quest
 ;~ Accept a quest from an NPC.
 Func AcceptQuest($aQuestID)
-	Return SendPacket(0x8, $HEADER_QUEST_ACCEPT, '0x008' & Hex($aQuestID, 3) & '01')
+	Return SendPacket(0x8, $HEADER_DIALOG_SEND, '0x008' & Hex($aQuestID, 3) & '01')
 EndFunc
 
 
 ;~ Accept the reward for a quest.
 Func QuestReward($aQuestID)
-	Return SendPacket(0x8, $HEADER_QUEST_REWARD, '0x008' & Hex($aQuestID, 3) & '07')
+	Return SendPacket(0x8, $HEADER_DIALOG_SEND, '0x008' & Hex($aQuestID, 3) & '07')
 EndFunc
 
 
@@ -1952,7 +1952,7 @@ EndFunc
 
 ;~ Cancel current action.
 Func CancelAction()
-	Return SendPacket(0x4, $HEADER_CANCEL_ACTION)
+	Return SendPacket(0x4, $HEADER_ACTION_CANCEL)
 EndFunc
 
 
@@ -2022,7 +2022,7 @@ Func DropBuff($aSkillID, $aAgentID, $aHeroNumber = 0)
 				DllCall($mKernelHandle, 'int', 'ReadProcessMemory', 'int', $mGWProcHandle, 'int', $lBuffStructAddress[0], 'ptr', DllStructGetPtr($lBuffStruct), 'int', DllStructGetSize($lBuffStruct), 'int', '')
 				If (DllStructGetData($lBuffStruct, 'SkillID') == $aSkillID) And (DllStructGetData($lBuffStruct, 'TargetId') == ConvertID($aAgentID)) Then
 					out(DllStructGetData($lBuffStruct, 'BuffId'))
-					Return SendPacket(0x8, $HEADER_STOP_MAINTAIN_ENCH, DllStructGetData($lBuffStruct, 'BuffId'))
+					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($lBuffStruct, 'BuffId'))
 					ExitLoop 2
 				EndIf
 			Next
@@ -2052,7 +2052,7 @@ EndFunc
 
 ;~ Switches to/from Hard Mode.
 Func SwitchMode($aMode)
-	Return SendPacket(0x8, $HEADER_MODE_SWITCH, $aMode)
+	Return SendPacket(0x8, $HEADER_SET_DIFFICULTY, $aMode)
 EndFunc
 
 
@@ -2065,9 +2065,9 @@ EndFunc
 ;~ Donate Kurzick or Luxon faction.
 Func DonateFaction($aFaction)
 	If StringLeft($aFaction, 1) = 'k' Then
-		Return SendPacket(0x10, $HEADER_FACTION_DONATE, 0, 0, 5000)
+		Return SendPacket(0x10, $HEADER_FACTION_DEPOSIT, 0, 0, 5000)
 	Else
-		Return SendPacket(0x10, $HEADER_FACTION_DONATE, 0, 1, 5000)
+		Return SendPacket(0x10, $HEADER_FACTION_DEPOSIT, 0, 1, 5000)
 	EndIf
 EndFunc
 
@@ -2298,7 +2298,7 @@ EndFunc
 
 ;~ Change your secondary profession.
 Func ChangeSecondProfession($aProfession, $aHeroNumber = 0)
-	Return SendPacket(0xC, $HEADER_CHANGE_SECONDARY, GetHeroID($aHeroNumber), $aProfession)
+	Return SendPacket(0xC, $HEADER_PROFESSION_CHANGE, GetHeroID($aHeroNumber), $aProfession)
 EndFunc
 
 
@@ -2380,7 +2380,7 @@ Func SetDisplayedTitle($aTitle = 0)
 	If $aTitle Then
 		Return SendPacket(0x8, $HEADER_TITLE_DISPLAY, $aTitle)
 	Else
-		Return SendPacket(0x4, $HEADER_TITLE_CLEAR)
+		Return SendPacket(0x4, $HEADER_TITLE_HIDE)
 	EndIf
 EndFunc
 
