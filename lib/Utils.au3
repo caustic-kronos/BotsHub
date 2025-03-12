@@ -263,6 +263,7 @@ Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
 	Local Static $openedChests[]
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
+	Local $openedChest = False
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
 		If $Map_Chests[$gadgetID] == null Then ContinueLoop
@@ -278,8 +279,10 @@ Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
 			RndSleep(1000)
 			$openedChests[DllStructGetData($agents[$i], 'ID')] = 1
 			PickUpItems()
+			$openedChest = True
 		EndIf
 	Next
+	Return $openedChest
 EndFunc
 
 

@@ -1546,7 +1546,7 @@ Global Const $ID_Serpent_Axe						= 118
 ; Missing IDs
 ; New weapons
 ;Global Const $ID_Dragon_Fangs						=
-;Global Const $ID_Spiritbinder						=
+Global Const $ID_Spiritbinder						= 2467
 ;Global Const $ID_Japan_First_Anniversary_Shield	=
 ;Global Const $ID_Soulbreaker						=
 ;Global Const $ID_Sunspear							=
@@ -1747,7 +1747,7 @@ Local $UltraRareWeapons_Array = [ _
 Global Const $Map_UltraRareWeapons = MapFromArray($UltraRareWeapons_Array)
 
 Local $RareWeapons_Array = [ _
-	$ID_Earth_Staff, _
+	$ID_Spiritbinder, $ID_Earth_Staff, _
 	_ ; Axes
 	$ID_Sephis_Axe, $ID_Serpent_Axe, _
 	_ ; Bows

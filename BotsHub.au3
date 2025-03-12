@@ -58,6 +58,7 @@
 #include 'src/Farm-Luxon.au3'
 #include 'src/Farm-Mantids.au3'
 #include 'src/Farm-MinisterialCommendations.au3'
+#include 'src/Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-Vaettirs.au3'
@@ -318,6 +319,7 @@ Func _GUICtrlTab_SetBkColor($gui, $parentTab, $color)
 EndFunc
 
 
+#Region Handlers
 ;~ Handles WM_NOTIFY elements, like combobox arrow clicks
 Func WM_COMMAND_Handler($windowHandle, $messageCode, $packedParameters, $controlHandle)
 	Local $notificationCode = BitShift($packedParameters, 16)
@@ -406,8 +408,10 @@ Func GuiButtonHandler()
 			MsgBox(0, 'Error', 'This button is not coded yet.')
 	EndSwitch
 EndFunc
+#EndRegion Handlers
 
 
+#Region Console
 ;~ Print debug to console with timestamp
 Func Debug($TEXT)
 	Out($TEXT, $LVL_DEBUG)
@@ -459,9 +463,11 @@ Func Out($TEXT, $LOGLEVEL = 1)
 		_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
 	EndIf
 EndFunc
-
+#EndRegion Console
 #EndRegion GUI
 
+
+#Region Main loops
 main()
 
 ;------------------------------------------------------
@@ -604,8 +610,10 @@ Func RunFarmLoop($Farm)
 	UpdateStats($result, $timer)
 	Return $result
 EndFunc
+#EndRegion Main loops
 
 
+#Region Setup
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
 	$RAPTORS_FARM_SETUP						= False
@@ -622,6 +630,7 @@ Func ResetBotsSetups()
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$CORSAIRS_FARM_SETUP					= False
+	;$PONGMEI_FARM_SETUP					= False
 EndFunc
 
 
@@ -706,8 +715,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
 	EndSwitch
 EndFunc
+#EndRegion Setup
 
 
+#Region Configuration
 ;~ Fill the choice of configuration
 Func FillConfigurationCombo($configuration = 'Default Configuration')
 	Local $files = _FileListToArray(@ScriptDir & '/conf/', '*.json', $FLTA_FILES)
@@ -852,6 +863,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_LootLunarTokens, _JSON_Get($jsonObject, 'loot.consumables.lunar_tokens') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 EndFunc
+#EndRegion Configuration
 
 
 #Region Authentification and Login
@@ -899,84 +911,6 @@ Func RefreshCharactersComboBox()
 		$comboList &= '|' & $gameClients[$i][3]
 	Next
 	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, UBound($gameClients) > 0 ? $gameClients[0][3] : '')
-EndFunc
-
-
-;~ Function to login from cmd, not tested
-; TODO: test it
-Func LOGIN($char_name = 'fail', $ProcessID = False)
-	If $char_name = '' Then
-		MsgBox(0, 'Error', 'char_name' & $char_name)
-		Exit
-	EndIf
-
-	If $ProcessID = False Then
-		MsgBox(0, 'Error', 'ProcessID' & $ProcessID)
-		Exit
-	EndIf
-
-	RndSleep(1000)
-
-	Local $WindowList=WinList('Guild Wars')
-	Local $WinHandle = False
-
-	For $i = 1 to $WindowList[0][0]
-		If WinGetProcess($WindowList[$i][1])= $ProcessID Then
-			$WinHandle=$WindowList[$i][1]
-		EndIf
-	Next
-
-	If $WinHandle = False Then
-		MsgBox(0, 'Error', 'WinHandle' & $WinHandle)
-		Exit
-	EndIf
-
-	Local $lCheck = False
-	Local $lDeadLock = Timerinit()
-
-	ControlSend($WinHandle, '', '', '{enter}')
-	RndSleep(1000)
-	WinSetTitle($WinHandle, '', $char_name & ' - Guild Wars')
-	While Not $lCheck And TimerDiff($lDeadLock) < 15000
-		RndSleep(50)
-		$lCheck = GetMapLoading() <> 2
-	WEnd
-
-	If $lCheck = False Then
-		ControlSend($WinHandle, '', '', '{enter}')
-		$lDeadLock = Timerinit()
-		While Not $lCheck And TimerDiff($lDeadLock) < 15000
-			RndSleep(50)
-			$lCheck = GetMapLoading() <> 2
-		WEnd
-	EndIf
-
-	If $lCheck = False Then
-		ControlSend($WinHandle, '', '', '{enter}')
-		$lDeadLock = Timerinit()
-		While Not $lCheck And TimerDiff($lDeadLock) < 15000
-			RndSleep(50)
-			$lCheck = GetMapLoading() <> 2
-		WEnd
-	EndIf
-
-	If $lCheck = False Then
-		ControlSend($WinHandle, '', '', '{enter}')
-		$lDeadLock = Timerinit()
-		While Not $lCheck And TimerDiff($lDeadLock) < 15000
-			RndSleep(50)
-			$lCheck = GetMapLoading() <> 2
-		WEnd
-	EndIf
-
-	If $lCheck = False Then
-		MsgBox(0, 'Error', 'lcheck')
-
-		ProcessClose($ProcessID)
-		Exit
-	Else
-		RndSleep(3000)
-	EndIf
 EndFunc
 #EndRegion Authentification and Login
 
@@ -1041,3 +975,9 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_SunspearTitle, 'Sunspear: ' & GetSunspearTitle() - $SunspearTitlePoints)
 EndFunc
 #EndRegion Statistics management
+
+#Region Utils
+Func IsHardmodeEnabled()
+	Return GUICtrlRead($GUI_Checkbox_HM) == $GUI_CHECKED
+EndFunc
+#EndRegion Utils
