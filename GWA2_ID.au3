@@ -149,6 +149,7 @@ Global Const $ID_Marksmanship		= 25
 ;Global Const $ID_	= 27
 ;Global Const $ID_	= 28
 Global Const $ID_Dagger_Mastery		= 29
+Global Const $ID_Critical_Strikes	= 99 ;wrong value
 ;Global Const $ID_	= 30		;CriticalStrikes or Lethal or Shadow
 ;Global Const $ID_	= 31		;CriticalStrikes or Lethal or Shadow
 ;Global Const $ID_	= 32		;CriticalStrikes or Lethal or Shadow
@@ -213,7 +214,7 @@ Global Const $ID_Type_Unequipped		= 46	;?
 Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor salvage'], [$TYPE_LEADHAND, 'TYPE_LEADHAND ?'], [$ID_Type_Axe, 'Axe'], [$ID_Type_Bag, 'Bag'], [$ID_Type_Foot_Armor, 'Foot armor'], _
 													[$ID_Type_Bow, 'Bow'], [$ID_Type_Bundle, 'Bundle'], [$ID_Type_Chest_Armor, 'Chest armor'], [$ID_Type_Upgrade, 'Upgrade'], [$ID_Type_Usable, 'Usables'], _
 													[$ID_Type_Dye, 'Dye'], [$ID_Type_Material, 'Material'], [$ID_Type_Offhand, 'Offhand'], [$ID_Type_Hand_Armor, 'Hand armor'], [$ID_Type_Celestial_Sigil, 'Celestial Sigil'], [$ID_Type_Hammer, 'Hammer'], _
-													[$ID_Type_Headgear_Armor, 'Headgear armor'], [$ID_Type_Trophy_2, 'TROPHY 2 ?'], [$ID_Type_Key, 'Key'], [$ID_Type_Leg_Armor, 'Leg armor'], _
+													[$ID_Type_Headgear_Armor, 'Headgear armor'], [$ID_Type_Trophy_2, 'Trophy2'], [$ID_Type_Key, 'Key'], [$ID_Type_Leg_Armor, 'Leg armor'], _
 													[$ID_Type_Money, 'Money'], [$ID_Type_Quest_Item, 'Quest item'], [$ID_Type_Wand, 'Wand'], [$ID_Type_Shield, 'Shield'], [$ID_Type_Staff, 'Staff'], _
 													[$ID_Type_Sword, 'Sword'], [$ID_Type_Kit, 'Kit'], [$ID_Type_Trophy, 'Trophy'], [$ID_Type_Scroll, 'Scroll'], _
 													[$ID_Type_Dagger, 'Dagger'], [$ID_Type_Present, 'PRESENT ?'], [$ID_Type_Minipet, 'Minipet'], [$ID_Type_Scythe, 'Scythe'], _

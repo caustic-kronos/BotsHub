@@ -23,6 +23,8 @@ Local Const $KournansBotVersion = '0.1'
 
 ; ==== Constantes ====
 Local Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
+Local Const $RKournansHeroSkillbar = 'OgATY5LhVB6C+Zn76OzGAAAA'
+Local Const $RtKournansHeroSkillbar = 'OACjAyhDJPBTy58M5CAAAAAAAA'
 Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Magic' & @CRLF _
 	& '- 13 in Energy Storage' & @CRLF _

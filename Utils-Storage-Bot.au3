@@ -57,7 +57,7 @@ Local $SCHEMA_LOOKUP_TYPE = ['type_ID', 'type']
 
 ; Those lookups are built from the data table filled by the user
 Local $TABLE_LOOKUP_MODEL = 'LOOKUP_MODEL'
-Local $SCHEMA_LOOKUP_MODEL = ['model_ID', 'model_name', 'OS']
+Local $SCHEMA_LOOKUP_MODEL = ['type_ID', 'model_ID', 'model_name', 'OS']
 
 Local $TABLE_LOOKUP_UPGRADES = 'LOOKUP_UPGRADES'
 Local $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa', 'name', 'propagate']
@@ -132,7 +132,12 @@ EndFunc
 ;~ Connect to the database storing information about items
 Func ConnectToDatabase()
 	_SQLite_Startup()
-	$SQLITE_DB = _SQLite_Open('data/items_database.db3')
+	If @error Then Exit MsgBox(16, "SQLite Error", "Failed to start SQLite")
+	FileChangeDir(@ScriptDir)
+	$SQLITE_DB = _SQLite_Open('data\items_database.db3')
+	If @error Then Exit MsgBox(16, "SQLite Error", "Failed to open database: " & _SQLite_ErrMsg())
+	;_SQLite_SetSafeMode(False)
+	Out('Opened database at ' & @ScriptDir & '\data\items_database.db3')
 EndFunc
 
 
@@ -240,7 +245,7 @@ EndFunc
 Func SQLExecute($query)
 	;Out($query)
 	Local $return = _SQLite_Exec($SQLITE_DB, $query)
-	If $return <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query, $GUI_CONSOLE_RED_COLOR)
+	If $return <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error, $GUI_CONSOLE_RED_COLOR)
 EndFunc
 
 
@@ -304,7 +309,7 @@ Func AddToFilledData($batchID)
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_RARITY & ' rarities ON raw.rarity_ID = rarities.rarity_ID' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_TYPE & ' types ON raw.type_ID = types.type_ID' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_ATTRIBUTE & ' attributes ON raw.attribute_ID = attributes.attribute_ID' & @CRLF _
-		& 'LEFT JOIN ' & $TABLE_LOOKUP_MODEL & ' names ON raw.model_ID = names.model_ID;'
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_MODEL & ' names ON raw.type_ID = names.type_ID AND raw.model_ID = names.model_ID;'
 	SQLExecute($InsertQuery)
 EndFunc
 
@@ -360,10 +365,10 @@ Func CompleteModelLookupTable()
 	Local $query
 	Out('Completing model lookup ')
 	$query = 'INSERT INTO ' & $TABLE_LOOKUP_MODEL & @CRLF _
-		& 'SELECT DISTINCT model_id, name, OS' & @CRLF _
+		& 'SELECT DISTINCT type_id, model_id, name, OS' & @CRLF _
 		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
 		& 'WHERE name IS NOT NULL' & @CRLF _
-		& '	AND model_ID NOT IN (SELECT model_ID FROM ' & $TABLE_LOOKUP_MODEL & ');'
+		& '	AND (type_ID, model_ID) NOT IN (SELECT type_ID, model_ID FROM ' & $TABLE_LOOKUP_MODEL & ');'
 	SQLExecute($query)
 EndFunc
 

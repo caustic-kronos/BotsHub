@@ -66,7 +66,7 @@ Global Const $HEADER_INTERACT_NPC = 0x38		; talks/goes to npc
 Global Const $HEADER_MOVE_TO_COORD = 0x3D		; Moves to specified coordinates
 Global Const $HEADER_ITEM_INTERACT = 0x3E		; Interacts with an item in the environment to either pick it up or interact
 Global Const $HEADER_ROTATE_PLAYER = 0x3F		; Rotates the player character
-Global Const $HEADER_ITEM_MOVE_EX	0x73
+Global Const $HEADER_ITEM_MOVE_EX = 0x73
 
 ; GAME_CMSG_ - Inventory and Items
 Global Const $HEADER_DROP_ITEM = 0x2B				; Drops item from inventory to ground

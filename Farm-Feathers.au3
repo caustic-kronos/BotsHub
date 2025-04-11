@@ -23,7 +23,7 @@ Opt('MustDeclareVars', 1)
 Local Const $FeathersBotVersion = '3.0'
 
 ; ==== Constantes ====
-Local Const $DAFeathersFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
+Local Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
 Local Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Prayers' & @CRLF _
 	& '- 10 in Scythe Mastery' & @CRLF _
@@ -238,7 +238,7 @@ Func Kill($aWaitForSettle = True)
 	RndSleep(50)
 	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 	If $aWaitForSettle Then
-		If Not WaitForSettle(1000, 210) Then Return False
+		If Not WaitForSettle() Then Return False
 	EndIf
 	SendChat("stuck", "/")
 	RndSleep(50)
@@ -288,7 +288,7 @@ Func Kill($aWaitForSettle = True)
 EndFunc
 
 
-Func WaitForSettle($FarRange,$CloseRange, $Timeout = 10000)
+Func WaitForSettle($Timeout = 10000)
 	Local $Target
 	Local $Deadlock = TimerInit()
 	While Not GetIsDead(-2) And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($Deadlock) < 5000)
@@ -298,21 +298,20 @@ Func WaitForSettle($FarRange,$CloseRange, $Timeout = 10000)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 		Sleep(250)
-		$Target = GetFarthestEnemyToAgent(-2,$FarRange)
+		$Target = GetFurthestNPCInRangeOfCoords(null, DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $RANGE_EARSHOT)
 	WEnd 
 
-	If GetNumberOfFoesInRangeOfAgent(-2, 900) == 0 Then Return False
+	If CountFoesInRangeOfAgent(-2, 900) == 0 Then Return False
 
 	Local $Deadlock = TimerInit()
-	While (GetDistance(-2, $Target) > $CloseRange) And (TimerDiff($Deadlock) < $Timeout)
-		If IAmDisconnected() = True Then Return
+	While (GetDistance(-2, $Target) > $RANGE_NEARBY) And (TimerDiff($Deadlock) < $Timeout)
 		If GetIsDead(-2) Then Return False
 		If DllStructGetData(GetAgentByID(-2), "HP") < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
-		Sleep(250)
-		$Target = GetFarthestEnemyToAgent(-2,$FarRange)
+		Sleep(250)	
+		$Target = GetFurthestNPCInRangeOfCoords(null, DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $RANGE_EARSHOT)
 	WEnd 
 	Return True
 EndFunc

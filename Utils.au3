@@ -29,8 +29,10 @@ Func RunTests($STATUS)
 	;	ReadOneItemData(6, $i)
 	;Next
 	
-	Local $item = GetItemBySlot(1,3)
-	StoreItemInXunlaiStorage($item)
+	;UseConsumable($ID_Birthday_Cupcake)
+	
+	;Local $item = GetItemBySlot(1,3)
+	;StoreItemInXunlaiStorage($item)
 	;_dlldisplay($item)
 	;Out(DllStructGetData($item, 'Equiped'))
 	;MoveItem($item, 6, 1)

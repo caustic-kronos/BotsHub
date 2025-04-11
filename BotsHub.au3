@@ -57,7 +57,7 @@ GUI built with GuiBuilderPlus
 #include 'Farm-Luxon.au3'
 #include 'Farm-Mantids.au3'
 #include 'Farm-MinisterialCommendations.au3'
-#include 'Farm-Pongmei.au3'
+;#include 'Farm-Pongmei.au3'
 #include 'Farm-Raptors.au3'
 #include 'Farm-SpiritSlaves.au3'
 #include 'Farm-Vaettirs.au3'
@@ -377,7 +377,7 @@ Func main()
 		LOGIN($CHARACTER_NAME, $PROCESS_ID)
 		$STATUS = 'INITIALIZED'
 	ElseIf $RUN_MODE == 'AUTOLOAD' Then
-		Local $loggedCharNames = ScanGW()
+		Local $loggedCharNames = ScanGameClientsForCharacters()
 		If ($loggedCharNames[0] > 0) Then
 			Local $comboChoices = '|' & _ArrayToString($loggedCharNames, '|', 1)
 			GUICtrlSetData($GUI_Combo_CharacterChoice, $comboChoices, $loggedCharNames[1])
@@ -607,12 +607,12 @@ Func Authentification()
 	ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
 		$proc_id_int = Number($PROCESS_ID, 2)
 		Out('Running via pid ' & $proc_id_int)
-		If Initialize($proc_id_int, True, True, False) = 0 Then
+		If InitializeGameClientData($proc_id_int, True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat "' & $proc_id_int & '" ' & VarGetType($proc_id_int) & '')
 			Return 1
 		EndIf
 	Else
-		If Initialize($CharacterName, True, True, False) = 0 Then
+		If InitializeGameClientData($CharacterName, True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a GW client with a character named "' & $CharacterName & '"')
 			Return 1
 		EndIf
