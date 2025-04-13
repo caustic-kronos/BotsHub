@@ -367,18 +367,18 @@ Global Const $RARITY_Red	= 33026
 Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_White, 'White'], [$RARITY_Blue, 'Blue'], [$RARITY_Purple, 'Purple'], [$RARITY_Gold, 'Gold'], [$RARITY_Green, 'Green'], [$RARITY_Red, 'Red']]
 
 #Region Merchant Items
-Global Const $ID_Belt_Pouch				= 34
-Global Const $ID_Bag					= 35
-Global Const $ID_Rune_of_Holding		= 2988
-Global Const $ID_Identification_Kit		= 2989
-Global Const $ID_SUP_Identification_Kit	= 5899
-Global Const $ID_Salvage_Kit			= 2992
-Global Const $ID_EXP_Salvage_Kit		= 2991
-Global Const $ID_SUP_Salvage_Kit		= 5900
-Global Const $ID_Small_Equipment_Pack	= 31221
-Global Const $ID_Light_Equipment_Pack	= 31222
-Global Const $ID_Large_Equipment_Pack	= 31223
-Global Const $ID_Heavy_Equipment_Pack	= 31224
+Global Const $ID_Belt_Pouch						= 34
+Global Const $ID_Bag							= 35
+Global Const $ID_Rune_of_Holding				= 2988
+Global Const $ID_Identification_Kit				= 2989
+Global Const $ID_Superior_Identification_Kit	= 5899
+Global Const $ID_Salvage_Kit					= 2992
+Global Const $ID_Expert_Salvage_Kit				= 2991
+Global Const $ID_Superior_Salvage_Kit			= 5900
+Global Const $ID_Small_Equipment_Pack			= 31221
+Global Const $ID_Light_Equipment_Pack			= 31222
+Global Const $ID_Large_Equipment_Pack			= 31223
+Global Const $ID_Heavy_Equipment_Pack			= 31224
 #EndRegion Merchant Items
 
 
@@ -416,7 +416,7 @@ Global Const $Map_Keys					= MapFromArray($Keys_Array)
 #EndRegion Keys
 
 
-Local Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_EXP_Salvage_Kit, $ID_Salvage_Kit, $ID_SUP_Identification_Kit, $ID_SUP_Salvage_Kit, $ID_Lockpick]
+Local Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_Expert_Salvage_Kit, $ID_Salvage_Kit, $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit, $ID_Lockpick]
 Global Const $Map_General_Items		= MapFromArray($General_Items_Array)
 
 

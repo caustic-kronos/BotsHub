@@ -25,6 +25,9 @@ Func RunTests($STATUS)
 	;SortInventory()
 	;PostFarmActions()
 	
+	PickUpItems()
+
+	
 	;For $i = 1 To 38
 	;	ReadOneItemData(6, $i)
 	;Next
@@ -151,23 +154,25 @@ EndFunc
 Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
 
-	Local $agent
 	Local $item
+	Local $agentID
 	Local $deadlock
-	For $id = 1 To GetMaxAgents()
+	Local $agents = GetAgentArray(0x400)
+	For $i = $agents[0] To 1 Step -1
+		Local $agent = $agents[$i]
 		If (GetIsDead(-2)) Then Return
-		$agent = GetAgentByID($id)
-		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
 		If Not GetCanPickUp($agent) Then ContinueLoop
 		If GetDistance(-2, $agent) > $range Then ContinueLoop
-		$item = GetItemByAgentID($id)
+		
+		$agentID = DllStructGetData($agent, 'ID')
+		$item = GetItemByAgentID($agentID)
 
 		If ($ShouldPickItem($item)) Then
 			If $defendFunction <> null Then $defendFunction()
-			If Not GetAgentExists($id) Then ContinueLoop
+			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($id)
+			While GetAgentExists($agentID)
 				RndSleep(50)
 				If GetIsDead(-2) Then Return
 				If TimerDiff($deadlock) > 10000 Then ExitLoop

@@ -1558,46 +1558,32 @@ Func GoNPC($agent)
 EndFunc
 
 
-;~ Talks to NPC and waits until you reach them.
-Func GoToNPC($agent)
-	Local $me
-	Local $blockedCount = 0
-	Local $mapLoading = GetMapLoading(), $mapLoadingOld
-	Move(GetAgentInfo($agent, 'X'), GetAgentInfo($agent, 'Y'), 100)
-	Sleep(100)
-	GoNPC($agent)
-	Do
-		Sleep(100)
-		$me = GetAgentByID(-2)
-		If GetAgentInfo($me, 'HP') <= 0 Then ExitLoop
-		$mapLoadingOld = $mapLoading
-		$mapLoading = GetMapLoading()
-		If $mapLoading <> $mapLoadingOld Then ExitLoop
-		If GetAgentInfo($me, 'MoveX') == 0 And GetAgentInfo($me, 'MoveY') == 0 Then
-			$blockedCount += 1
-			Move(GetAgentInfo($agent, 'X'), GetAgentInfo($agent, 'Y'), 100)
-			Sleep(100)
-			GoNPC($agent)
-		EndIf
-	Until ComputeDistance(GetAgentInfo($me, 'X'), GetAgentInfo($me, 'Y'), GetAgentInfo($agent, 'X'), GetAgentInfo($agent, 'Y')) < 250 Or $blockedCount > 14
-	Sleep(GetPing() + Random(1500, 2000, 1))
-EndFunc
-
-
 ;~ Run to a signpost.
 Func GoSignpost($agent)
 	Return SendPacket(0xC, $HEADER_SIGNPOST_RUN, ConvertID($agent), 0)
 EndFunc
 
 
+;~ Talks to NPC and waits until you reach them.
+Func GoToNPC($agent)
+	GoToAgent($agent, GoNPC)
+EndFunc
+
+
 ;~ Go to signpost and waits until you reach it.
 Func GoToSignpost($agent)
+	GoToAgent($agent, GoSignpost)
+EndFunc
+
+
+;~ Talks to an agent and waits until you reach it.
+Func GoToAgent($agent, $GoFunction)
 	Local $me
 	Local $blockedCount = 0
 	Local $mapLoading = GetInstanceType(), $mapLoadingOld
 	Move(GetAgentInfo($agent, 'X'), GetAgentInfo($agent, 'Y'), 100)
 	Sleep(100)
-	GoSignpost($agent)
+	$GoFunction($agent)
 	Do
 		Sleep(100)
 		$me = GetAgentByID(-2)
@@ -1607,9 +1593,9 @@ Func GoToSignpost($agent)
 		If $mapLoading <> $mapLoadingOld Then ExitLoop
 		If GetAgentInfo($me, 'MoveX') == 0 And GetAgentInfo($me, 'MoveY') == 0 Then
 			$blockedCount += 1
-			Move(DllStructGetData($agent, 'X'), GetAgentInfo($agent, 'Y'), 100)
+			Move(GetAgentInfo($agent, 'X'), GetAgentInfo($agent, 'Y'), 100)
 			Sleep(100)
-			GoSignpost($agent)
+			$GoFunction($agent)
 		EndIf
 	Until ComputeDistance(GetAgentInfo($me, 'X'), GetAgentInfo($me, 'Y'), GetAgentInfo($agent, 'X'), GetAgentInfo($agent, 'Y')) < 250 Or $blockedCount > 14
 	Sleep(GetPing() + Random(1500, 2000, 1))
@@ -1624,61 +1610,37 @@ EndFunc
 
 ;~ Turn character to the left.
 Func TurnLeft($turn)
-	If $turn Then
-		Return PerformAction(0xA2, 0x1E)
-	Else
-		Return PerformAction(0xA2, 0x20)
-	EndIf
+	Return PerformAction(0xA2, $turn ? 0x1E : 0x20)
 EndFunc
 
 
 ;~ Turn character to the right.
 Func TurnRight($turn)
-	If $turn Then
-		Return PerformAction(0xA3, 0x1E)
-	Else
-		Return PerformAction(0xA3, 0x20)
-	EndIf
+	Return PerformAction(0xA3, $turn ? 0x1E : 0x20)
 EndFunc
 
 
 ;~ Move backwards.
 Func MoveBackward($move)
-	If $move Then
-		Return PerformAction(0xAC, 0x1E)
-	Else
-		Return PerformAction(0xAC, 0x20)
-	EndIf
+	Return PerformAction(0xAC, $move ? 0x1E : 0x20)
 EndFunc
 
 
 ;~ Run forwards.
 Func MoveForward($move)
-	If $move Then
-		Return PerformAction(0xAD, 0x1E)
-	Else
-		Return PerformAction(0xAD, 0x20)
-	EndIf
+	Return PerformAction(0xAD, $move ? 0x1E : 0x20)
 EndFunc
 
 
 ;~ Strafe to the left.
 Func StrafeLeft($strafe)
-	If $strafe Then
-		Return PerformAction(0x91, 0x1E)
-	Else
-		Return PerformAction(0x91, 0x20)
-	EndIf
+	Return PerformAction(0x91, $strafe ? 0x1E : 0x20)
 EndFunc
 
 
 ;~ Strafe to the right.
 Func StrafeRight($strafe)
-	If $strafe Then
-		Return PerformAction(0x92, 0x1E)
-	Else
-		Return PerformAction(0x92, 0x20)
-	EndIf
+	Return PerformAction(0x92, $strafe ? 0x1E : 0x20)
 EndFunc
 
 
@@ -1864,21 +1826,13 @@ EndFunc
 
 ;~ Toggle a hero panel.
 Func ToggleHeroPanel($hero)
-	If $hero < 4 Then
-		Return PerformAction(0xDB + $hero, 0x1E)
-	ElseIf $hero < 8 Then
-		Return PerformAction(0xFE + $hero, 0x1E)
-	EndIf
+	Return PerformAction(($hero < 4 ? 0xDB : 0xFE) + $hero, 0x1E)
 EndFunc
 
 
 ;~ Toggle hero's pet panel.
 Func ToggleHeroPetPanel($hero)
-	If $hero < 4 Then
-		Return PerformAction(0xDF + $hero, 0x1E)
-	ElseIf $hero < 8 Then
-		Return PerformAction(0xFA + $hero, 0x1E)
-	EndIf
+	Return PerformAction(($hero < 4 ? 0xDF : 0xFA) + $hero, 0x1E)
 EndFunc
 
 
@@ -2037,9 +1991,9 @@ EndFunc
 Func RestoreWindowState($windowHandle, $previousWindowState)
 	If Not $windowHandle Or Not $previousWindowState Then Return 0
 
-	Local $states[6] = [1, 2, 4, 8, 16, 32], $currentWindowState = WinGetState($windowHandle)
-	For $i = 0 To UBound($states) - 1
-		If BitAND($previousWindowState, $states[$i]) And Not BitAND($currentWindowState, $states[$i]) Then WinSetState($windowHandle, '', $states[$i])
+	Local $currentWindowState = WinGetState($windowHandle)
+	For $state In [1, 2, 4, 8, 16, 32]
+		If BitAND($previousWindowState, $state) And Not BitAND($currentWindowState, $state) Then WinSetState($windowHandle, '', $state)
 	Next
 EndFunc
 
@@ -2052,21 +2006,13 @@ EndFunc
 
 ;~ Display the names of allies.
 Func DisplayAllies($display)
-	If $display Then
-		Return PerformAction(0x89, 0x1E)
-	Else
-		Return PerformAction(0x89, 0x20)
-	EndIf
+	Return PerformAction(0x89, $display ? 0x1E : 0x20)
 EndFunc
 
 
 ;~ Display the names of enemies.
 Func DisplayEnemies($display)
-	If $display Then
-		Return PerformAction(0x94, 0x1E)
-	Else
-		Return PerformAction(0x94, 0x20)
-	EndIf
+	Return PerformAction(0x94, $display ? 0x1E : 0x20)
 EndFunc
 #EndRegion Display
 
@@ -2074,24 +2020,14 @@ EndFunc
 #Region Chat
 ;~ Write a message in chat (can only be seen by user).
 Func WriteChat($message, $sender = 'GWA2')
-	Local $message
 	Local $address = 256 * $queueCounter + $queueBaseAddress
-
-	If $queueCounter = $queueSize Then
-		$queueCounter = 0
-	Else
-		$queueCounter = $queueCounter + 1
-	EndIf
-
+	;FIXME: rewrite with modulo
+	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1;
 	If StringLen($sender) > 19 Then $sender = StringLeft($sender, 19)
 
 	MemoryWrite($address + 4, $sender, 'wchar[20]')
 
-	If StringLen($message) > 100 Then
-		$message = StringLeft($message, 100)
-	Else
-		$message = $message
-	EndIf
+	If StringLen($message) > 100 Then $message = StringLeft($message, 100)
 
 	MemoryWrite($address + 44, $message, 'wchar[101]')
 	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', $writeChatStructPtr, 'int', 4, 'int', '')
@@ -2103,7 +2039,6 @@ EndFunc
 ;~ Send a whisper to another player.
 Func SendWhisper($receiver, $message)
 	Local $total = 'whisper ' & $receiver & ',' & $message
-	Local $message
 	If StringLen($total) > 120 Then
 		$message = StringLeft($total, 120)
 	Else
@@ -2117,18 +2052,9 @@ EndFunc
 ;~ Send a message to chat.
 Func SendChat($message, $channel = '!')
 	Local $address = 256 * $queueCounter + $queueBaseAddress
-
-	If $queueCounter = $queueSize Then
-		$queueCounter = 0
-	Else
-		$queueCounter = $queueCounter + 1
-	EndIf
-
-	If StringLen($message) > 120 Then
-		$message = StringLeft($message, 120)
-	Else
-		$message = $message
-	EndIf
+	;FIXME: rewrite with modulo
+	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1;
+	If StringLen($message) > 120 Then $message = StringLeft($message, 120)
 
 	MemoryWrite($address + 12, $channel & $message, 'wchar[122]')
 	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', $sendChatStructPtr, 'int', 8, 'int', '')
@@ -2155,8 +2081,7 @@ EndFunc
 	
 	
 Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
-	If GetIsDead(-2) Then Return
-	If Not IsRecharged($skillSlot) Then Return
+	If GetIsDead(-2) Or Not IsRecharged($skillSlot) Then Return
 	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
 	Local $Energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy(-2) < $Energy Then Return
@@ -2208,11 +2133,7 @@ EndFunc
 
 ;~ Suppress action.
 Func SuppressAction($suppressAction)
-	If $suppressAction Then
-		Return PerformAction(0xD0, 0x1E)
-	Else
-		Return PerformAction(0xD0, 0x20)
-	EndIf
+	Return PerformAction(0xD0, $suppressAction ? 0x1E : 0x20)
 EndFunc
 
 
@@ -2235,6 +2156,7 @@ Func DropBuff($skillID, $agentID, $heroIndex = 0)
 	ReDim $offset[5]
 	$offset[3] = 0x508
 	Local $buffer
+	Local $buffStruct = DllStructCreate($buffStructTemplate)
 	For $i = 0 To $count[1] - 1
 		$offset[4] = 0x24 * $i
 		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
@@ -2244,7 +2166,6 @@ Func DropBuff($skillID, $agentID, $heroIndex = 0)
 			For $j = 0 To $buffCount - 1
 				$offset[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-				Local $buffStruct = DllStructCreate($buffStructTemplate)
 				DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == ConvertID($agentID)) Then
 					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffId'))
@@ -2289,11 +2210,7 @@ EndFunc
 
 ;~ Donate Kurzick or Luxon faction.
 Func DonateFaction($faction)
-	If StringLeft($faction, 1) = 'k' Then
-		Return SendPacket(0x10, $HEADER_FACTION_DEPOSIT, 0, 0, 5000)
-	Else
-		Return SendPacket(0x10, $HEADER_FACTION_DEPOSIT, 0, 1, 5000)
-	EndIf
+	Return SendPacket(0x10, $HEADER_FACTION_DEPOSIT, 0, StringLeft($faction, 1) = 'k' ? 0 : 1, 5000)
 EndFunc
 
 
@@ -2528,11 +2445,7 @@ EndFunc
 
 ;~ Changes game language to english.
 Func EnsureEnglish($ensureEnglish)
-	If $ensureEnglish Then
-		MemoryWrite($forceEnglishLanguageFlag, 1)
-	Else
-		MemoryWrite($forceEnglishLanguageFlag, 0)
-	EndIf
+	MemoryWrite($forceEnglishLanguageFlag, $ensureEnglish ? 1 : 0)
 EndFunc
 
 
@@ -2566,11 +2479,7 @@ EndFunc
 ;~ Internal use only.
 Func Enqueue($ptr, $aSize)
 	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $aSize, 'int', '')
-	If $queueCounter = $queueSize Then
-		$queueCounter = 0
-	Else
-		$queueCounter = $queueCounter + 1
-	EndIf
+	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 EndFunc
 
 
@@ -2634,199 +2543,157 @@ EndFunc
 
 ;~ Returns Hero title progress.
 Func GetHeroTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x4]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x4)
 EndFunc
 
 
 ;~ Returns Gladiator title progress.
 Func GetGladiatorTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x7C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x7C)
 EndFunc
 
 
 ;~ Returns Codex title progress.
 Func GetCodexTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x75C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x75C)
 EndFunc
 
 
 ;~ Returns Kurzick title progress.
 Func GetKurzickTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0xCC]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0xCC)
 EndFunc
 
 
 ;~ Returns Luxon title progress.
 Func GetLuxonTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0xF4]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0xF4)
 EndFunc
 
 
 ;~ Returns drunkard title progress.
 Func GetDrunkardTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x11C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x11C)
 EndFunc
 
 
 ;~ Returns survivor title progress.
 Func GetSurvivorTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x16C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x16C)
 EndFunc
 
 
 ;~ Returns max titles
 Func GetMaxTitles()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x194]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x194)
 EndFunc
 
 
 ;~ Returns lucky title progress.
 Func GetLuckyTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x25C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x25C)
 EndFunc
 
 
 ;~ Returns unlucky title progress.
 Func GetUnluckyTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x284]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x284)
 EndFunc
 
 
 ;~ Returns Sunspear title progress.
 Func GetSunspearTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x2AC]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x2AC)
 EndFunc
 
 
 ;~ Returns Lightbringer title progress.
 Func GetLightbringerTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x324]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x324)
 EndFunc
 
 
 ;~ Returns Commander title progress.
 Func GetCommanderTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x374]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x374)
 EndFunc
 
 
 ;~ Returns Gamer title progress.
 Func GetGamerTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x39C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x39C)
 EndFunc
 
 
 ;~ Returns Legendary Guardian title progress.
 Func GetLegendaryGuardianTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x4DC]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x4DC)
 EndFunc
 
 
 ;~ Returns sweets title progress.
 Func GetSweetTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x554]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x554)
 EndFunc
 
 
 ;~ Returns Asura title progress.
 Func GetAsuraTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x5F4]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x5F4)
 EndFunc
 
 
 ;~ Returns Deldrimor title progress.
 Func GetDeldrimorTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x61C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x61C)
 EndFunc
 
 
 ;~ Returns Vanguard title progress.
 Func GetVanguardTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x644]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x644)
 EndFunc
 
 
 ;~ Returns Norn title progress.
 Func GetNornTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x66C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x66C)
 EndFunc
 
 
 ;~ Returns mastery of the north title progress.
 Func GetNorthMasteryTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x694]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x694)
 EndFunc
 
 
 ;~ Returns party title progress.
 Func GetPartyTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x6BC]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x6BC)
 EndFunc
 
 
 ;~ Returns Zaishen title progress.
 Func GetZaishenTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x6E4]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x6E4)
 EndFunc
 
 
 ;~ Returns treasure hunter title progress.
 Func GetTreasureTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x70C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetTitleProgress(0x70C)
 EndFunc
 
 
 ;~ Returns wisdom title progress.
 Func GetWisdomTitle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, 0x734]
+	Return GetTitleProgress(0x734)
+EndFunc
+
+
+;~ Return title progression - common part for most titles
+Func GetTitleProgress($finalOffset)
+	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, $finalOffset]
 	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
 	Return $result[1]
 EndFunc
@@ -2843,63 +2710,55 @@ EndFunc
 #Region Faction
 ;~ Returns current Kurzick faction.
 Func GetKurzickFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x748]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x748)
 EndFunc
 
 
 ;~ Returns max Kurzick faction.
 Func GetMaxKurzickFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x7B8]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x7B8)
 EndFunc
 
 
 ;~ Returns current Luxon faction.
 Func GetLuxonFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x758]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x758)
 EndFunc
 
 
 ;~ Returns max Luxon faction.
 Func GetMaxLuxonFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x7BC]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x7BC)
 EndFunc
 
 
 ;~ Returns current Balthazar faction.
 Func GetBalthazarFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x798]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x798)
 EndFunc
 
 
 ;~ Returns max Balthazar faction.
 Func GetMaxBalthazarFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x7C0]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x7C0)
 EndFunc
 
 
 ;~ Returns current Imperial faction.
 Func GetImperialFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x76C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	Return $result[1]
+	Return GetFaction(0x76C)
 EndFunc
 
 
 ;~ Returns max Imperial faction.
 Func GetMaxImperialFaction()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x7C4]
+	Return GetFaction(0x7C4)
+EndFunc
+
+
+;~ Returns the faction points depending on the offset provided
+Func GetFaction($finalOffset)
+	Local $offset[4] = [0, 0x18, 0x2C, $finalOffset]
 	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
 	Return $result[1]
 EndFunc
@@ -2919,7 +2778,7 @@ EndFunc
 ;~ Tests if an item is identified.
 Func GetIsIdentified($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
-	Return BitAND(DllStructGetData($item, 'interaction'), 1) > 0
+	Return BitAND(DllStructGetData($item, 'Interaction'), 1) > 0
 EndFunc
 
 
@@ -2970,8 +2829,9 @@ EndFunc
 ;~ Returns modstruct of an item.
 Func GetModStruct($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
-	If DllStructGetData($item, 'modstruct') = 0 Then Return
-	Return MemoryRead(DllStructGetData($item, 'modstruct'), 'Byte[' & DllStructGetData($item, 'modstructsize') * 4 & ']')
+	Local $modstruct = DllStructGetData($item, 'modstruct')
+	If $modstruct = 0 Then Return
+	Return MemoryRead($modstruct, 'Byte[' & DllStructGetData($item, 'modstructsize') * 4 & ']')
 EndFunc
 
 
@@ -2985,11 +2845,7 @@ EndFunc
 ;~ Tests if you can pick up an item.
 Func GetCanPickUp($agent)
 	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
-	If GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0 Then
-		Return True
-	Else
-		Return False
-	EndIf
+	Return GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0
 EndFunc
 
 
@@ -3010,7 +2866,7 @@ Func GetItemBySlot($bag, $slot)
 
 	Local $itemPtr = DllStructGetData($bag, 'ItemArray')
 	Local $buffer = DllStructCreate('ptr')
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', DllStructGetData($bag, 'ItemArray') + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 	Local $itemStruct = DllStructCreate($itemStructTemplate)
 	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 	Return $itemStruct
@@ -3101,81 +2957,84 @@ Func GetGoldCharacter()
 EndFunc
 
 
+;~ Returns item ID of basic salvage kit in inventory.
+Func FindBasicSalvageKit()
+	Local $kits = [$ID_Salvage_Kit]
+	Return FindKit($kits)
+EndFunc
+
+
+;~ Returns item ID of salvage kit in inventory (except basic)
 Func FindSalvageKit()
-	Local $kit = 0
-	Local $uses = 101
-	Local $item
-	For $i = 1 To 16
-		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
-			$item = GetItemBySlot($i, $j)
-			Switch DllStructGetData($item, 'ModelID')
-				Case 2992
-					If DllStructGetData($item, 'Value') / 2 < $uses Then
-						$kit = DllStructGetData($item, 'ID')
-						$uses = DllStructGetData($item, 'Value') / 2
-					EndIf
-				Case Else
-					ContinueLoop
-			EndSwitch
-		Next
-	Next
-	Return $kit
+	Local $kits = [$ID_Expert_Salvage_Kit, $ID_Superior_Salvage_Kit]
+	Return FindKit($kits)
 EndFunc
 
 
-;~ Returns item ID of salvage kit in inventory.
-Func FindExpertSalvageKit()
-	Local $kit = 0
-	Local $uses = 101
-	Local $item
-	For $i = 1 To 16
-		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
-			$item = GetItemBySlot($i, $j)
-			Switch DllStructGetData($item, 'ModelID')
-				Case 2991
-					If DllStructGetData($item, 'Value') / 8 < $uses Then
-						$kit = DllStructGetData($item, 'ID')
-						$uses = DllStructGetData($item, 'Value') / 8
-					EndIf
-				Case 5900
-					If DllStructGetData($item, 'Value') / 10 < $uses Then
-						$kit = DllStructGetData($item, 'ID')
-						$uses = DllStructGetData($item, 'Value') / 10
-					EndIf
-				Case Else
-					ContinueLoop
-			EndSwitch
-		Next
-	Next
-	Return $kit
-EndFunc
-
-
-;~ Returns item ID of ID kit in inventory.
+;~ Returns item ID of identification kit in inventory.
 Func FindIdentificationKit()
-	Local $item
+	Local $kits = [$ID_Identification_Kit, $ID_Superior_Identification_Kit]
+	Return FindKit($kits)
+EndFunc
+
+
+;~ Returns item ID of  kit in inventory.
+Func FindKit($enabledModelIDs)
 	Local $kit = 0
 	Local $uses = 101
+	Local $item, $modelID, $value, $id
+
 	For $i = 1 To 16
 		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
 			$item = GetItemBySlot($i, $j)
-			Switch DllStructGetData($item, 'ModelID')
-				Case 2989
-					If DllStructGetData($item, 'Value') / 2 < $uses Then
-						$kit = DllStructGetData($item, 'ID')
-						$uses = DllStructGetData($item, 'Value') / 2
+			$modelID = DllStructGetData($item, 'ModelID')
+
+			; Skip this item if model is not in our list
+			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
+
+			$id = DllStructGetData($item, 'ID')
+			$value = DllStructGetData($item, 'Value')
+
+			Switch $modelID
+				Case $ID_Salvage_Kit
+					If $value / 2 < $uses Then
+						$uses = $value / 2
+						$kit = $id
 					EndIf
-				Case 5899
-					If DllStructGetData($item, 'Value') / 2.5 < $uses Then
-						$kit = DllStructGetData($item, 'ID')
-						$uses = DllStructGetData($item, 'Value') / 2.5
+				Case $ID_Expert_Salvage_Kit
+					If $value / 8 < $uses Then
+						$uses = $value / 8
+						$kit = $id
 					EndIf
-				Case Else
-					ContinueLoop
+				Case $ID_Superior_Salvage_Kit
+					If $value / 10 < $uses Then
+						$uses = $value / 10
+						$kit = $id
+					EndIf
+				Case $ID_Identification_Kit
+					If $value / 2 < $uses Then
+						$uses = $value / 2
+						$kit = $id
+					EndIf
+				Case $ID_Superior_Identification_Kit
+					If $value / 2.5 < $uses Then
+						$uses = $value / 2.5
+						$kit = $id
+					EndIf
 			EndSwitch
 		Next
 	Next
+
 	Return $kit
+EndFunc
+
+
+;~ Return True if item is present in array, else False - duplicate in Utils
+Func FindKitArrayContainsHelper($array, $item)
+	For $i = 0 To UBound($array) - 1
+		If $array[$i] == $item Then Return True
+	Next
+	Return False
 EndFunc
 
 
@@ -3211,12 +3070,7 @@ EndFunc
 #Region H&H
 ;~ Returns number of heroes you control.
 Func GetHeroCount()
-	Local $offset[5]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x4C
-	$offset[3] = 0x54
-	$offset[4] = 0x2C
+	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x2C]
 	Local $heroCount = MemoryReadPtr($baseAddressPtr, $offset)
 	Return $heroCount[1]
 EndFunc
@@ -3225,31 +3079,20 @@ EndFunc
 ;~ Returns agent ID of a hero.
 Func GetHeroID($heroIndex)
 	If $heroIndex == 0 Then Return GetMyID()
-	Local $offset[6]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x4C
-	$offset[3] = 0x54
-	$offset[4] = 0x24
-	$offset[5] = 0x18 * ($heroIndex - 1)
+	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0x18 * ($heroIndex - 1)]
 	Local $agentID = MemoryReadPtr($baseAddressPtr, $offset)
 	Return $agentID[1]
 EndFunc
 
 
 ;~ Returns hero number by agent ID.
-Func GetHeroNumberByAgentID($agentID)
+Func GetHeroNumberByAgentID($heroID)
 	Local $agentID
-	Local $offset[6]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x4C
-	$offset[3] = 0x54
-	$offset[4] = 0x24
+	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 0x18 * ($i - 1)
 		$agentID = MemoryReadPtr($baseAddressPtr, $offset)
-		If $agentID[1] == ConvertID($agentID) Then Return $i
+		If $agentID[1] == ConvertID($heroID) Then Return $i
 	Next
 	Return 0
 EndFunc
@@ -3258,12 +3101,7 @@ EndFunc
 ;~ Returns hero number by hero ID.
 Func GetHeroNumberByHeroID($heroID)
 	Local $agentID
-	Local $offset[6]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x4C
-	$offset[3] = 0x54
-	$offset[4] = 0x24
+	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 8 + 0x18 * ($i - 1)
 		$agentID = MemoryReadPtr($baseAddressPtr, $offset)
@@ -3293,7 +3131,7 @@ EndFunc
 
 ;~ Tests if a hero's skill slot is disabled.
 Func GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot)
-	Return BitAND(2 ^ ($skillSlot - 1), DllStructGetData(GetSkillbar($heroIndex), 'Disabled')) > 0
+	Return BitAND(BitShift(1, -($skillSlot - 1)), DllStructGetData(GetSkillbar($heroIndex), 'Disabled')) > 0
 EndFunc
 #EndRegion H&H
 
@@ -3580,45 +3418,59 @@ Func GetAgentByName($agentName)
 EndFunc
 
 
-;~ Returns the nearest agent to an agent.
-Func GetNearestAgentToAgent($agent = -2)
-	Local $nearestAgent, $nearestDistance = 100000000
-	Local $distance
-	Local $agentArray = GetAgentArray()
-	Local $agentID = GetAgentInfo($agent, 'ID')
+;~ Returns the nearest signpost to an agent.
+Func GetNearestSignpostToAgent($agent = -2)
+	Return GetNearestAgentToAgent($agent, 0x200)
+EndFunc
 
-	For $i = 1 To $agentArray[0]
-		$distance = (GetAgentInfo($agent, 'X') - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + (GetAgentInfo($agent, 'Y') - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
 
-		If $distance < $nearestDistance Then
-			If GetAgentInfo($agentArray[$i], 'ID') == $agentID Then ContinueLoop
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
+;~ Returns the nearest NPC to an agent.
+Func GetNearestNPCToAgent($agent)
+	Return GetNearestAgentToAgent($agent, 0xDB, NPCAgentFilter)
+EndFunc
 
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
+
+;~ Return True if an agent is an enemy, False else
+Func NPCAgentFilter($agent)
+	If GetAgentInfo($agent, 'Allegiance') <> 6 Then Return False
+	If GetAgentInfo($agent, 'HP') <= 0 Then Return False
+	If BitAND(GetAgentInfo($agent, 'Effects'), 0x0010) > 0 Then Return False
+	Return True
 EndFunc
 
 
 ;~ Returns the nearest enemy to an agent.
 Func GetNearestEnemyToAgent($agent = -2)
+	Return GetNearestAgentToAgent($agent, 0xDB, EnemyAgentFilter)
+EndFunc
+
+
+;~ Return True if an agent is an enemy, False else
+Func EnemyAgentFilter($agent)
+	If GetAgentInfo($agent, 'Allegiance') <> 3 Then Return False
+	If GetAgentInfo($agent, 'HP') <= 0 Then Return False
+	If BitAND(GetAgentInfo($agent, 'Effects'), 0x0010) > 0 Then Return False
+	If GetAgentInfo($agent, 'TypeMap') == 262144 Then Return False	;It's a spirit
+	Return True
+EndFunc
+
+
+;~ Returns the nearest agent to an agent.
+Func GetNearestAgentToAgent($agent = -2, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
-	Local $agentArray = GetAgentArray(0xDB)
-
+	Local $agentArray = GetAgentArray($agentType)
 	Local $agentID = GetAgentInfo($agent, 'ID')
+	Local $ownID = GetAgentInfo(-2, 'ID')
+	Local $X = GetAgentInfo($agent, 'X')
+	Local $Y = GetAgentInfo($agent, 'Y')
 
 	For $i = 1 To $agentArray[0]
-		If GetAgentInfo($agentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If BitAND(GetAgentInfo($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'TypeMap') == 262144 Then ContinueLoop	;It's a spirit
-
-		$distance = (GetAgentInfo($agent, 'X') - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + (GetAgentInfo($agent, 'Y') - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
+		If GetAgentInfo($agentArray[$i], 'ID') == $agentID Then ContinueLoop
+		If GetAgentInfo($agentArray[$i], 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
+		$distance = ($X - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + ($Y - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
 		If $distance < $nearestDistance Then
-			If GetAgentInfo($agentArray[$i], 'ID') == $agentID Then ContinueLoop
 			$nearestAgent = $agentArray[$i]
 			$nearestDistance = $distance
 		EndIf
@@ -3629,42 +3481,46 @@ Func GetNearestEnemyToAgent($agent = -2)
 EndFunc
 
 
-;~ Returns the nearest agent to a set of coordinates.
-Func GetNearestAgentToCoords($X, $Y)
-	Local $nearestAgent, $nearestDistance = 100000000
-	Local $distance
-	Local $agentArray = GetAgentArray()
+;~ Returns the nearest item to an agent.
+Func GetNearestItemToAgent($agent = -2, $canPickUp = True)
+	If $canPickUp Then
+		Return GetNearestAgentToAgent($agent, 0x400, GetCanPickUp)
+	Else
+		Return GetNearestAgentToAgent($agent, 0x400)
+	EndIf
+EndFunc
 
-	For $i = 1 To $agentArray[0]
-		$distance = ($X - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + ($Y - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
-		If $distance < $nearestDistance Then
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
 
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
+;~ Returns the nearest signpost to a set of coordinates.
+Func GetNearestSignpostToCoords($X, $Y)
+	Return GetNearestAgentToCoords($X, $Y, 0x200)
+EndFunc
+
+
+;~ Returns the nearest NPC to a set of coordinates.
+Func GetNearestNPCToCoords($X, $Y)
+	Return GetNearestAgentToCoords($X, $Y, 0xDB, NPCAgentFilter)
 EndFunc
 
 
 ;~ Returns the nearest enemy to coordinates
 Func GetNearestEnemyToCoords($X, $Y)
+	Return GetNearestAgentToCoords($X, $Y, 0xDB, EnemyAgentFilter)
+EndFunc
+
+
+;~ Returns the nearest agent to a set of coordinates.
+Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
-	Local $agentArray = GetAgentArray(0xDB)
-
-	Local $meID = GetAgentInfo(-2, 'ID')
+	Local $agentArray = GetAgentArray($agentType)
+	Local $ownID = GetAgentInfo(-2, 'ID')
 
 	For $i = 1 To $agentArray[0]
+		If GetAgentInfo($agentArray[$i], 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
 		$distance = ($X - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + ($Y - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
-		If GetAgentInfo($agentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If BitAND(GetAgentInfo($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[GetAgentInfo($agentArray[$i], 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
-
 		If $distance < $nearestDistance Then
-			If GetAgentInfo($agentArray[$i], 'ID') == $meID Then ContinueLoop
 			$nearestAgent = $agentArray[$i]
 			$nearestDistance = $distance
 		EndIf
@@ -3680,121 +3536,6 @@ Func GetAgentByPlayerNumber($playerNumber)
 	For $i = 1 To $agentArray[0]
 		If GetAgentInfo($agentArray[$i], 'Allegiance') == 1 And GetAgentInfo($agentArray[$i], 'PlayerNumber') == $playerNumber Then Return $agentArray[$i]
 	Next
-EndFunc
-
-
-;~ Returns the nearest signpost to an agent.
-Func GetNearestSignpostToAgent($agent = -2)
-	Local $nearestAgent, $nearestDistance = 100000000
-	Local $distance
-	Local $agentArray = GetAgentArray(0x200)
-
-	Local $agentID = GetAgentInfo($agent, 'ID')
-
-	For $i = 1 To $agentArray[0]
-		$distance = (GetAgentInfo($agentArray[$i], 'Y') - GetAgentInfo($agent, 'Y')) ^ 2 + (GetAgentInfo($agentArray[$i], 'X') - GetAgentInfo($agent, 'X')) ^ 2
-		If $distance < $nearestDistance Then
-			If GetAgentInfo($agentArray[$i], 'ID') == $agentID Then ContinueLoop
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
-
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
-EndFunc
-
-
-;~ Returns the nearest signpost to a set of coordinates.
-Func GetNearestSignpostToCoords($X, $Y)
-	Local $nearestAgent, $nearestDistance = 100000000
-	Local $distance
-	Local $agentArray = GetAgentArray(0x200)
-
-	For $i = 1 To $agentArray[0]
-		$distance = ($X - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + ($Y - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
-
-		If $distance < $nearestDistance Then
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
-
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
-EndFunc
-
-
-;~ Returns the nearest NPC to an agent.
-Func GetNearestNPCToAgent($agent)
-	Local $nearestAgent, $nearestDistance = 100000000
-	Local $distance
-	Local $agentArray = GetAgentArray(0xDB)
-
-	Local $lID = GetAgentInfo($agent, 'ID')
-
-	For $i = 1 To $agentArray[0]
-		If GetAgentInfo($agentArray[$i], 'Allegiance') <> 6 Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If BitAND(GetAgentInfo($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-
-		$distance = (GetAgentInfo($agent, 'X') - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + (GetAgentInfo($agent, 'Y') - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
-		If $distance < $nearestDistance Then
-			If GetAgentInfo($agentArray[$i], 'ID') == $lID Then ContinueLoop
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
-
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
-EndFunc
-
-
-;~ Returns the nearest NPC to a set of coordinates.
-Func GetNearestNPCToCoords($X, $Y)
-	Local $nearestAgent, $nearestDistance = 100000000
-	Local $distance
-	Local $agentArray = GetAgentArray(0xDB)
-
-	For $i = 1 To $agentArray[0]
-		If GetAgentInfo($agentArray[$i], 'Allegiance') <> 6 Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If BitAND(GetAgentInfo($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-
-		$distance = ($X - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + ($Y - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
-
-		If $distance < $nearestDistance Then
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
-
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
-EndFunc
-
-
-;~ Returns the nearest item to an agent.
-Func GetNearestItemToAgent($agent = -2, $canPickUp = True)
-	Local $nearestAgent, $nearestDistance = 1000
-	Local $distance
-	Local $agentArray = GetAgentArray(0x400)
-
-	Local $agentID = GetAgentInfo($agent, 'ID')
-
-	For $i = 1 To $agentArray[0]
-		If $canPickUp And Not GetCanPickUp($agentArray[$i]) Then ContinueLoop
-		$distance = (GetAgentInfo($agent, 'X') - GetAgentInfo($agentArray[$i], 'X')) ^ 2 + (GetAgentInfo($agent, 'Y') - GetAgentInfo($agentArray[$i], 'Y')) ^ 2
-		If $distance < $nearestDistance Then
-			If GetAgentInfo($agentArray[$i], 'ID') == $agentID Then ContinueLoop
-			$nearestAgent = $agentArray[$i]
-			$nearestDistance = $distance
-		EndIf
-	Next
-
-	SetExtended(Sqrt($nearestDistance))
-	Return $nearestAgent
 EndFunc
 
 
@@ -3847,7 +3588,8 @@ Func GetAgentArray($type = 0)
 	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 	Local $returnArray[$count + 1] = [$count]
 	For $i = 1 To $count
-		$returnArray[$i] = DllStructCreate('ptr vtable;byte unknown1[24];byte unknown2[4];ptr NextAgent;byte unknown3[8];long Id;float Z;byte unknown4[8];float BoxHoverWidth;float BoxHoverHeight;byte unknown5[8];float Rotation;byte unknown6[8];long NameProperties;byte unknown7[24];float X;float Y;byte unknown8[8];float NameTagX;float NameTagY;float NameTagZ;byte unknown9[12];long Type;float MoveX;float MoveY;byte unknown10[28];long Owner;byte unknown30[8];long ExtraType;byte unknown11[24];float AttackSpeed;float AttackSpeedModifier;word PlayerNumber;byte unknown12[6];ptr Equip;byte unknown13[10];byte Primary;byte Secondary;byte Level;byte Team;byte unknown14[6];float EnergyPips;byte unknown[4];float EnergyPercent;long MaxEnergy;byte unknown15[4];float HPPips;byte unknown16[4];float HP;long MaxHP;long Effects;byte unknown17[4];byte Hex;byte unknown18[18];long ModelState;long TypeMap;byte unknown19[16];long InSpiritRange;byte unknown20[16];long LoginNumber;float ModelMode;byte unknown21[4];long ModelAnimation;byte unknown22[32];byte LastStrike;byte Allegiance;word WeaponType;word Skill;byte unknown23[4];word WeaponItemId;word OffhandItemId')
+		;$returnArray[$i] = DllStructCreate('ptr vtable;byte unknown1[24];byte unknown2[4];ptr NextAgent;byte unknown3[8];long Id;float Z;byte unknown4[8];float BoxHoverWidth;float BoxHoverHeight;byte unknown5[8];float Rotation;byte unknown6[8];long NameProperties;byte unknown7[24];float X;float Y;byte unknown8[8];float NameTagX;float NameTagY;float NameTagZ;byte unknown9[12];long Type;float MoveX;float MoveY;byte unknown10[28];long Owner;byte unknown30[8];long ExtraType;byte unknown11[24];float AttackSpeed;float AttackSpeedModifier;word PlayerNumber;byte unknown12[6];ptr Equip;byte unknown13[10];byte Primary;byte Secondary;byte Level;byte Team;byte unknown14[6];float EnergyPips;byte unknown[4];float EnergyPercent;long MaxEnergy;byte unknown15[4];float HPPips;byte unknown16[4];float HP;long MaxHP;long Effects;byte unknown17[4];byte Hex;byte unknown18[18];long ModelState;long TypeMap;byte unknown19[16];long InSpiritRange;byte unknown20[16];long LoginNumber;float ModelMode;byte unknown21[4];long ModelAnimation;byte unknown22[32];byte LastStrike;byte Allegiance;word WeaponType;word Skill;byte unknown23[4];word WeaponItemId;word OffhandItemId')
+		$returnArray[$i] = DllStructCreate($agentStructTemplate)
 		$struct = DllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
 		DllStructSetData($struct, 1, DllStructGetData($buffer, $i))
 	Next
@@ -3860,13 +3602,20 @@ Func GetIsHardMode()
 EndFunc
 
 
+;~ Return the number of enemy agents targeting the given agent.
+Func GetAgentDanger($agent, $agentArray = 0)
+	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
+	Return GetPartyDanger($agentArray, [1, $agent])[1]
+EndFunc
+
+
 ;~ Returns the 'danger level' of each party member
 ;~ Param1: an array returned by GetAgentArray(). This is totally optional, but can greatly improve script speed.
 ;~ Param2: an array returned by GetParty() This is totally optional, but can greatly improve script speed.
 Func GetPartyDanger($agentArray = 0, $party = 0)
 	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
 	If $party == 0 Then $party = GetParty($agentArray)
-
+	
 	Local $resultArray[$party[0] + 1]
 	$resultArray[0] = $party[0]
 	For $i = 1 To $resultArray[0]
@@ -3877,16 +3626,19 @@ Func GetPartyDanger($agentArray = 0, $party = 0)
 		If BitAND(GetAgentInfo($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If Not GetIsLiving($agentArray[$i]) Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'Allegiance') > 3 Then ContinueLoop ; ignore NPCs, spirits, minions, pets
+		Local $allegiance = GetAgentInfo($agentArray[$i], 'Allegiance')
+		If $allegiance > 3 Then ContinueLoop ; ignore NPCs, spirits, minions, pets
 
+		Local $targetID = GetTarget(GetAgentInfo($agentArray[$i], 'ID'))
+		Local $team = GetAgentInfo($agentArray[$i], 'Team')
 		For $j = 1 To $party[0]
-			If GetTarget(GetAgentInfo($agentArray[$i], 'ID')) == GetAgentInfo($party[$j], 'ID') Then
+			If $targetID == GetAgentInfo($party[$j], 'ID') Then
 				If GetDistance($agentArray[$i], $party[$j]) < 5000 Then
-					If GetAgentInfo($agentArray[$i], 'Team') <> 0 Then
-						If GetAgentInfo($agentArray[$i], 'Team') <> GetAgentInfo($party[$j], 'Team') Then
+					If $team <> 0 Then
+						If $team <> GetAgentInfo($party[$j], 'Team') Then
 							$resultArray[$j] += 1
 						EndIf
-					ElseIf GetAgentInfo($agentArray[$i], 'Allegiance') <> GetAgentInfo($party[$j], 'Allegiance') Then
+					ElseIf $allegiance <> GetAgentInfo($party[$j], 'Allegiance') Then
 						$resultArray[$j] += 1
 					EndIf
 				EndIf
@@ -3894,32 +3646,6 @@ Func GetPartyDanger($agentArray = 0, $party = 0)
 		Next
 	Next
 	Return $resultArray
-EndFunc
-
-
-;~ Return the number of enemy agents targeting the given agent.
-Func GetAgentDanger($agent, $agentArray = 0)
-	Local $count = 0
-	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
-
-	For $i = 1 To $agentArray[0]
-		If BitAND(GetAgentInfo($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If Not GetIsLiving($agentArray[$i]) Then ContinueLoop
-		If GetAgentInfo($agentArray[$i], 'Allegiance') > 3 Then ContinueLoop ; ignore NPCs, spirits, minions, pets
-		If GetTarget(GetAgentInfo($agentArray[$i], 'ID')) == GetAgentInfo($agent, 'ID') Then
-			If GetDistance($agentArray[$i], $agent) < 5000 Then
-				If GetAgentInfo($agentArray[$i], 'Team') <> 0 Then
-					If GetAgentInfo($agentArray[$i], 'Team') <> GetAgentInfo($agent, 'Team') Then
-						$count += 1
-					EndIf
-				ElseIf GetAgentInfo($agentArray[$i], 'Allegiance') <> GetAgentInfo($agent, 'Allegiance') Then
-					$count += 1
-				EndIf
-			EndIf
-		EndIf
-	Next
-	Return $count
 EndFunc
 #EndRegion Agent
 
@@ -3971,15 +3697,10 @@ EndFunc
 ;~ Tests if an agent is attacking.
 Func GetIsAttacking($agent)
 	Switch GetAgentInfo($agent, 'ModelState')
-		Case 0x60
+		Case 0x60, 0x440, 0x460
 			Return True
-		Case 0x440
-			Return True
-		Case 0x460
-			Return True
-		Case Else
-			Return False
 	EndSwitch
+	Return False
 EndFunc
 
 
@@ -4078,11 +3799,7 @@ EndFunc
 #Region Buff
 ;~ Returns current number of buffs being maintained.
 Func GetBuffCount($heroIndex = 0)
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x510
+	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
 	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
 	ReDim $offset[5]
 	$offset[3] = 0x508
@@ -4102,11 +3819,7 @@ EndFunc
 Func GetIsTargetBuffed($skillID, $agentID, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x510
+	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
 	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
 	ReDim $offset[5]
 	$offset[3] = 0x508
@@ -4134,11 +3847,7 @@ EndFunc
 
 ;~ Returns buff struct.
 Func GetBuffByIndex($buffIndex, $heroIndex = 0)
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x510
+	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
 	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
 	ReDim $offset[5]
 	$offset[3] = 0x508
@@ -4164,11 +3873,7 @@ EndFunc
 #Region Misc
 ;~ Returns skillbar struct.
 Func GetSkillbar($heroIndex = 0)
-	Local $offset[5]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x6F0
+	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
 	For $i = 0 To GetHeroCount()
 		$offset[4] = $i * 0xBC
 		Local $skillbarStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
@@ -4338,11 +4043,7 @@ Func GetAttributeByID($attributeID, $withRunes = False, $heroIndex = 0)
 		$offset[4] = 0x3D8 * $i
 		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
 		If $buffer[1] == $agentID Then
-			If $withRunes Then
-				$offset[4] = 0x3D8 * $i + 0x14 * $attributeID + 0xC
-			Else
-				$offset[4] = 0x3D8 * $i + 0x14 * $attributeID + 0x8
-			EndIf
+			$offset[4] = 0x3D8 * $i + 0x14 * $attributeID + $withRunes ? 0xC : 0x8
 			$buffer = MemoryReadPtr($baseAddressPtr, $offset)
 			Return $buffer[1]
 		EndIf
@@ -4360,11 +4061,7 @@ EndFunc
 
 ;~ Tests if an area has been vanquished.
 Func GetAreaVanquished()
-	If GetFoesToKill() = 0 Then
-		Return True
-	Else
-		Return False
-	EndIf
+	Return GetFoesToKill() = 0
 EndFunc
 
 
@@ -4764,11 +4461,9 @@ EndFunc
 ;~ Internal use only.
 Func Bin64ToDec($binary)
 	Local $result = 0
-
 	For $i = 1 To StringLen($binary)
-		If StringMid($binary, $i, 1) == 1 Then $result += 2 ^ ($i - 1)
+		If StringMid($binary, $i, 1) == 1 Then $result += BitShift(1, -($i - 1))
 	Next
-
 	Return $result
 EndFunc
 
@@ -6882,11 +6577,7 @@ EndFunc
 
 
 Func ToggleTradePatch($enableTradePatch = True)
-	If $enableTradePatch Then
-		MemoryWrite($tradeHackAddress, 0xC3, 'BYTE')
-	Else
-		MemoryWrite($tradeHackAddress, 0x55, 'BYTE')
-	EndIf
+	MemoryWrite($tradeHackAddress, $enableTradePatch ? 0xC3 : 0x55, 'BYTE')
 EndFunc
 
 
