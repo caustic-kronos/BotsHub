@@ -1,3 +1,17 @@
+; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Copyright 2025 caustic-kronos
+;
+; Licensed under the Apache License, Version 2.0 (the "License");
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+; http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an "AS IS" BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+
 #include-once
 
 #include <array.au3>
@@ -25,7 +39,8 @@ Func RunTests($STATUS)
 	;SortInventory()
 	;PostFarmActions()
 	
-	PickUpItems()
+	;FindIdentificationKitOrBuySome()
+	BuyItem(6, 1, 500)
 
 	
 	;For $i = 1 To 38
@@ -919,7 +934,6 @@ EndFunc
 Func FindIdentificationKitOrBuySome()
 	Local $IdentificationKitID = FindIdentificationKit()
 	If $IdentificationKitID <> 0 Then Return $IdentificationKitID
-
 	If GetGoldCharacter() < 500 And GetGoldStorage() > 499 Then
 		WithdrawGold(500)
 		RndSleep(500)

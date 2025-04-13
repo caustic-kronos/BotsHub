@@ -13,9 +13,9 @@ Modified by: Night
 #RequireAdmin
 #NoTrayIcon
 
-#include 'GWA2_Headers.au3'
-#include 'GWA2.au3'
-#include 'Utils.au3'
+#include '../lib/GWA2_Headers.au3'
+#include '../lib/GWA2.au3'
+#include '../lib/Utils.au3'
 
 ; Possible improvements :
 ; - Update movements to be depending on raptors positions to make sure almost all raptors are aggroed (especially boss group)

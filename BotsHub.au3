@@ -1,13 +1,18 @@
-#cs
-#################################
-#								#
-#			Bot Hub				#
-#								#
-#################################
-Author: Night
-Inspired by: Vaettir from gigi
-GUI built with GuiBuilderPlus
-#ce
+; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Copyright 2025 caustic-kronos
+;
+; Licensed under the Apache License, Version 2.0 (the "License");
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+; http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an "AS IS" BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+
+;GUI built with GuiBuilderPlus
 
 ; TODO - important:
 ; - write small bot that : -salvage items -get material ID -write in file salvaged material
@@ -42,28 +47,28 @@ GUI built with GuiBuilderPlus
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
 
-#include 'GWA2_Headers.au3'
-#include 'GWA2.au3'
-#include 'GWA2_ID.au3'
-#include 'Farm-Corsairs.au3'
-#include 'Farm-DragonMoss.au3'
-#include 'Farm-EdenIris.au3'
-#include 'Farm-Feathers.au3'
-#include 'Farm-Follower.au3'
-#include 'Farm-JadeBrotherhood.au3'
-#include 'Farm-Kournans.au3'
-#include 'Farm-Kurzick.au3'
-#include 'Farm-Lightbringer.au3'
-#include 'Farm-Luxon.au3'
-#include 'Farm-Mantids.au3'
-#include 'Farm-MinisterialCommendations.au3'
+#include 'lib/GWA2_Headers.au3'
+#include 'lib/GWA2.au3'
+#include 'lib/GWA2_ID.au3'
+#include 'src/Farm-Corsairs.au3'
+#include 'src/Farm-DragonMoss.au3'
+#include 'src/Farm-EdenIris.au3'
+#include 'src/Farm-Feathers.au3'
+#include 'src/Farm-Follower.au3'
+#include 'src/Farm-JadeBrotherhood.au3'
+#include 'src/Farm-Kournans.au3'
+#include 'src/Farm-Kurzick.au3'
+#include 'src/Farm-Lightbringer.au3'
+#include 'src/Farm-Luxon.au3'
+#include 'src/Farm-Mantids.au3'
+#include 'src/Farm-MinisterialCommendations.au3'
 ;#include 'Farm-Pongmei.au3'
-#include 'Farm-Raptors.au3'
-#include 'Farm-SpiritSlaves.au3'
-#include 'Farm-Vaettirs.au3'
-#include 'Utils.au3'
-#include 'Utils-OmniFarmer.au3'
-#include 'Utils-Storage-Bot.au3'
+#include 'src/Farm-Raptors.au3'
+#include 'src/Farm-SpiritSlaves.au3'
+#include 'src/Farm-Vaettirs.au3'
+#include 'lib/Utils.au3'
+#include 'lib/Utils-OmniFarmer.au3'
+#include 'lib/Utils-Storage-Bot.au3'
 
 #EndRegion Includes
 
@@ -85,6 +90,8 @@ Global $STATUS = 'STOPPED'
 Local $RUN_MODE = 'AUTOLOAD'
 Local $PROCESS_ID = ''
 Local $CHARACTER_NAME = ''
+
+Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic'
 #EndRegion Variables
 
 #Region GUI
@@ -122,7 +129,7 @@ Func createGUI()
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
-	GUICtrlSetData($GUI_Combo_FarmChoice, 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic', 'Choose a farm')
+	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetOnEvent($GUI_Combo_FarmChoice, 'GuiButtonHandler')
 	$GUI_StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
 	GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)

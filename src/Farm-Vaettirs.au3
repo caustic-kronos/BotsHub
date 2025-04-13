@@ -5,7 +5,7 @@
 #								#
 #################################
 Author: gigi
-Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night (v.0.4)
+Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night
 #CE
 
 #include-once
@@ -13,10 +13,10 @@ Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from mone
 
 #include <Date.au3>
 
-#include 'GWA2.au3'
-#include 'GWA2_Headers.au3'
-#include 'GWA2_ID.au3'
-#include 'Utils.au3'
+#include '../lib/GWA2.au3'
+#include '../lib/GWA2_Headers.au3'
+#include '../lib/GWA2_ID.au3'
+#include '../lib/Utils.au3'
 
 Opt('MustDeclareVars', 1)
 

@@ -1,0 +1,128 @@
+INSCRIPTION
+"Strength and Honor"			15^50				Damage +10...15% (while Health is above 50%)
+"Guided by Fate"				15^ench				Damage +10...15% (while Enchanted)
+"Dance with Death"				15^stance			Damage +10...15% (while in a Stance)
+"To the Pain!"					15^-10a				Damage +14...15% Armor -10 (while attacking)
+"Brawn over Brains"				15^-5e				Damage +14...15% Energy -5
+"Too Much Information"			15vhex				Damage +10...15% (vs. Hexed foes)
+"Vengeance is Mine"				20^<50				Damage +10...20% (while Health is below 50%)
+"Don't Fear the Reaper"			20^hex				Damage +10...20% (while Hexed)
+"Don't Think Twice"				mahct^10				Halves casting time of spells (Chance: 5...10%)
+"I have the power!"				5e					Energy +5
+"Let the Memory Live Again"		mahsr^10				Halves skill recharge of spells (Chance: 5...10%)
+"Aptitude not Attitude"			hct^20				Halves casting time of spells of item's attribute (Chance: 10...20%)
+"Seize the Day"					15e^-1e/s			Energy +10...15 Energy regeneration -1
+"Hale and Hearty"				5e^50				Energy +4...5 (while Health is above 50%)
+"Have Faith"					5e^ench				Energy +4...5 (while Enchanted)
+"Don't call it a comeback!"		7e^<50				Energy +5...7 (while Health is below 50%)
+"I am Sorrow."					7e^hex				Energy +5...7 (while Hexed)
+"Serenity Now"					ahsr^10				Halves skill recharge of spells (Chance: 7...10%)
+"Forget Me Not"					hsr^20				Halves skill recharge of spells of item's attribute (Chance: 15...20%)
+"Live for Today"				15e^-1e/s			Energy +10...15 Energy regeneration -1
+"Faith is My Shield"			5a^ench				Armor +4...5 (while Enchanted)
+"Ignorance is Bliss"			5a^-5e				Armor +4...5 Energy -5
+"Life is Pain"					5a^-20h				Armor +4...5 Health -20
+"Man for All Seasons"			5a^elem				Armor +4...5 (vs. Elemental damage)
+"Survival of the Fittest"		5a^phys				Armor +4...5 (vs. Physical damage)
+"Might Makes Right"				5a^attack			Armor +4...5 (while attacking)
+"Knowing is Half the Battle"	5a^cast				Armor +5 (while casting)
+"Down But Not Out"				10a^<50				Armor +5...10 (while Health is below 50%)
+"Hail to the King"				5a^50				Armor +4...5 (while Health is above 50%)
+"Be Just and Fear Not"			10a^hex				Armor +5...10 (while hexed)
+"Luck of the Draw"				-5^20				Received physical damage -5 (Chance: 11...20%)
+"Sheltered by Faith"			-2^ench				Received physical damage -1...2 (while Enchanted)
+"Nothing to Fear"				-3^hex				Received physical damage -1...3 (while Hexed)
+"Run For Your Life!"			-2^stance			Received physical damage -1...2 (while in a Stance)
+"Master of My Domain!"			1^20				Item's attribute +1 (Chance: 11...20%)
+"Not the Face!"					10a^blunt			Armor +5...10 (vs. Blunt damage)
+"Leaf on the Wind"				10a^cold			Armor +5...10 (vs. Cold damage)
+"Like a Rolling Stone"			10a^earth			Armor +5...10 (vs. Earth damage)
+"Riders on the Storm"			10a^lightning		Armor +5...10 (vs. Lightning damage)
+"Sleep Now in the Fire"			10a^fire			Armor +5...10 (vs. Fire damage)
+"Through Thick and Thin"		10a^piercing		Armor +5...10 (vs. Piercing damage)
+"The Riddle of Steel"			10a^slashing		Armor +5...10 (vs. Slashing damage)
+"Fear Cuts Deeper"				-20%bleed			Reduces Bleeding duration on you by 20% (Stacking)
+"I Can See Clearly Now"			-20%blind			Reduces Blind duration on you by 20% (Stacking)
+"Swift as the Wind"				-20%cripple			Reduces Crippled duration on you by 20% (Stacking)
+"Strength of Body"				-20%deepwound		Reduces Deep Wound duration on you by 20% (Stacking)
+"Cast Out the Unclean"			-20%disease			Reduces Disease duration on you by 20% (Stacking)
+"Pure of Heart"					-20%poison			Reduces Poison duration on you by 20% (Stacking)
+"Soundness of Mind"				-20%dazed			Reduces Dazed duration on you by 20% (Stacking)
+"Only the Strong Survive"		-20%weakness		Reduces Weakness duration on you by 20% (Stacking)
+"Measure for Measure"			salvageable			Highly salvageable
+"Show me the money!"			rare				Improved sale value
+Zealous strength				15^-1e/s			Damage +10...15% Energy regeneration -1
+Vampiric strength				15^-1h/s			Damage +10...15% Health regeneration -1
+Aptitude not Attitude			hct^20attribute		Halves casting time of spells of attribute (Chance: 10...20%)
+Forget Me Not					hsr^20attribute		Halves skill recharge of spells of attribute (Chance: 15...20%)
+Master of <Attribute>			1^20attribute		Attribute +1 (Chance: 11...20%)
+Defence against Charrs			10a^charrs			Armor +5...10 (vs. Charrs)
+Defence against Demons			10a^demons     		Armor +5...10 (vs. Demons)
+Defence against Dragons			10a^dragons    		Armor +5...10 (vs. Dragons)
+Defence against Dwarves			10a^dwarves    		Armor +5...10 (vs. Dwarves)
+Defence against Giants			10a^giants     		Armor +5...10 (vs. Giants)
+Defence against Ogres			10a^ogres      		Armor +5...10 (vs. Ogres)
+Defence against Plants			10a^plants     		Armor +5...10 (vs. Plants)
+Defence against Skeletons		10a^skeletons  		Armor +5...10 (vs. Skeletons)
+Defence against Tengus			10a^tengus     		Armor +5...10 (vs. Tengus)
+Defence against Trolls			10a^trolls     		Armor +5...10 (vs. Trolls)
+Defence against Undeads			10a^undeads    		Armor +5...10 (vs. Undeads)
+
+
+PREFIX
+Barbed							33%bleed			Lengthens Bleeding duration on foes by 33%
+Crippling						33%cripple			Lengthens Crippled duration on foes by 33%
+Cruel							33%deepwound		Lengthens Deep Wound duration on foes by 33%
+Heavy							33%weakness			Lengthens Weakness duration on foes by 33%
+Poisonous						33%poison			Lengthens Poison duration on foes by 33%
+Silencing						33%dazed			Lengthens Dazed duration on foes by 33%
+Ebon							ebon				Earth damage
+Fiery							fiery				Fire damage
+Icy								icy					Cold damage
+Shocking						shocking			Lightning damage
+Furious							adre^10				Double Adrenaline on hit (Chance: 2-10%)
+Sundering						pene20^20			Armor penetration +20% (Chance: 10-20%)
+Vampiric						5^-1h/s				Life Draining: 1-5, 1-3 Health regeneration: -1
+Zealous							1^-1e/s				Energy gain on hit: 1 Energy regeneration: -1
+Adept							hct^20				Halves casting time of spells of item's attribute (Chance: 10-20%)
+Adept							hct^20attribute		Halves casting time of spells of attribute (Chance: 10-20%)
+Defensive						5a					Armor +4-5
+Hale							30h					Health +10-30
+Insightful						5e					Energy +1-5
+Swift							ahct^10				Halves casting time of spells (Chance: 2-10%)
+
+
+SUFFIX
+of Defense						5a					Armor +4-5
+of Shelter						7a^phys				Armor +4-7 (vs. physical damage)
+of Warding						7a^elem				Armor +4-7 (vs. elemental damage)
+of Enchanting					20%ench				Enchantments last 10-20% longer
+of Swiftness					ahct^10				Halves casting time of spells (Chance: 5-10%)
+of Aptitude						hct^20				Halves casting time of item's attribute spells (Chance: 10-20%)
+of Aptitude						hct^20attribute		Halves casting time of attribute spells (Chance: 10-20%)
+of Fortitude					30					Health +10-30	Yes	Yes4
+of Devotion						45^ench				Health +30-45 (while Enchanted)
+of Endurance					45^stance			Health +30-45 (while in a Stance)
+of Valor						60^hex				Health +45-60 (while Hexed)
+of Mastery						1^20				Item's attribute +1 (10-20% chance while using skills)
+of <Attribute>					1^20attribute		Attribute +1 (10-20% chance while using skills)
+of Quickening					ahsr^10				Halves skill recharge of spells (Chance: 5-10%)
+of Memory						hsr^20				Halves skill recharge of item's attribute spells (Chance: 10-20%)
+of Memory						hsr^20attribute		Halves skill recharge of attribute spells (Chance: 10-20%)
+of Charr slaying				20^charr			Damage +10-20% (vs. Charrs)
+of Demon slaying				20^demons      		Damage +10-20% (vs. Demons)
+of Dragon slaying				20^dragons     		Damage +10-20% (vs. Dragons)
+of Dwarve slaying				20^dwarves     		Damage +10-20% (vs. Dwarves)
+of Giant slaying				20^giants      		Damage +10-20% (vs. Giants)
+of Ogre slaying					20^ogres       		Damage +10-20% (vs. Ogres)
+of Plant slaying				20^plants      		Damage +10-20% (vs. Plants)
+of Skeleton slaying				20^skeletons   		Damage +10-20% (vs. Skeletons)
+of Tengu slaying				20^tengu       		Damage +10-20% (vs. Tengus)
+of Troll slaying				20^trolls      		Damage +10-20% (vs. Trolls)
+of Undead slaying				20^undead      		Damage +10-20% (vs. Undeads)
+
+
+Rules :
+- inscriptions can all be grouped with just : 	effect and OS
+- prefixes and suffixes grouped with just :		effect and weapon type
+	EXCEPT for focii and shields grouped with : effect and weapon type and OS
