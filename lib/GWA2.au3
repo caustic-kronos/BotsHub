@@ -701,7 +701,7 @@ Func ScanGWBasePatterns()
 	_('ScanTraderFunction:')
 	AddPatternToInjection('83FF10761468D2210000')
 	_('ScanTraderHook:')
-	AddPatternToInjection('8955FC6A008D55F8B9BB')
+	AddPatternToInjection('50516A466A06')
 	_('ScanSleep:')
 	AddPatternToInjection('6A0057FF15D8408A006860EA0000')
 	_('ScanSalvageFunction:')
@@ -1138,24 +1138,28 @@ EndFunc
 ;~ Buys a superior identification kit.
 Func BuySuperiorIdentificationKit($amount = 1)
 	BuyItem(6, $amount, 500)
+	RndSleep(1000)
 EndFunc
 
 
 ;~ Buys a basic salvage kit.
 Func BuySalvageKit($amount = 1)
 	BuyItem(2, $amount, 100)
+	RndSleep(1000)
 EndFunc
 
 
 ;~ Buys an expert salvage kit.
 Func BuyExpertSalvageKit($amount = 1)
 	BuyItem(3, $amount, 400)
+	RndSleep(1000)
 EndFunc
 
 
 ;~ Buys an expert salvage kit.
 Func BuySuperiorSalvageKit($amount = 1)
 	BuyItem(4, $amount, 2000)
+	RndSleep(1000)
 EndFunc
 
 
@@ -1260,15 +1264,14 @@ Func TraderRequest($modelID, $extraID = -1)
 	Local $itemPtr, $itemID
 	Local $found = False
 	Local $quoteID = MemoryRead($traderQuoteId)
-
+	Local $itemStruct = DllStructCreate($itemStructTemplate)
+	
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
 		
-		Local $itemStruct = DllStructCreate($itemStructTemplate)
 		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
-
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID And DllStructGetData($itemStruct, 'bag') = 0 And DllStructGetData($itemStruct, 'AgentID') == 0 Then
 			If $extraID = -1 Or DllStructGetData($itemStruct, 'ExtraID') = $extraID Then
 				$found = True
@@ -3588,7 +3591,6 @@ Func GetAgentArray($type = 0)
 	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 	Local $returnArray[$count + 1] = [$count]
 	For $i = 1 To $count
-		;$returnArray[$i] = DllStructCreate('ptr vtable;byte unknown1[24];byte unknown2[4];ptr NextAgent;byte unknown3[8];long Id;float Z;byte unknown4[8];float BoxHoverWidth;float BoxHoverHeight;byte unknown5[8];float Rotation;byte unknown6[8];long NameProperties;byte unknown7[24];float X;float Y;byte unknown8[8];float NameTagX;float NameTagY;float NameTagZ;byte unknown9[12];long Type;float MoveX;float MoveY;byte unknown10[28];long Owner;byte unknown30[8];long ExtraType;byte unknown11[24];float AttackSpeed;float AttackSpeedModifier;word PlayerNumber;byte unknown12[6];ptr Equip;byte unknown13[10];byte Primary;byte Secondary;byte Level;byte Team;byte unknown14[6];float EnergyPips;byte unknown[4];float EnergyPercent;long MaxEnergy;byte unknown15[4];float HPPips;byte unknown16[4];float HP;long MaxHP;long Effects;byte unknown17[4];byte Hex;byte unknown18[18];long ModelState;long TypeMap;byte unknown19[16];long InSpiritRange;byte unknown20[16];long LoginNumber;float ModelMode;byte unknown21[4];long ModelAnimation;byte unknown22[32];byte LastStrike;byte Allegiance;word WeaponType;word Skill;byte unknown23[4];word WeaponItemId;word OffhandItemId')
 		$returnArray[$i] = DllStructCreate($agentStructTemplate)
 		$struct = DllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
 		DllStructSetData($struct, 1, DllStructGetData($buffer, $i))
@@ -5025,9 +5027,16 @@ EndFunc
 ;~ Internal use only.
 Func CreateTraderHook()
 	_('TraderHookProc:')
+	_('push eax')
+	_('mov eax,dword[ebx+28] -> 8b 43 28')
+	_('mov eax,[eax] -> 8b 00')
 	_('mov dword[TraderCostID],eax')
+	_('mov eax,dword[ebx+28] -> 8b 43 28')
+	_('mov eax,[eax+4] -> 8b 40 04')
 	_('mov dword[TraderCostValue],eax')
-
+	_('pop eax')
+	_('mov ebx,dword[ebp+C] -> 8B 5D 0C')
+	_('mov esi,eax')
 	_('push eax')
 	_('mov eax,dword[TraderQuoteID]')
 	_('inc eax')
@@ -5037,8 +5046,6 @@ Func CreateTraderHook()
 	_('TraderSkipReset:')
 	_('mov dword[TraderQuoteID],eax')
 	_('pop eax')
-	_('mov ebp,esp')
-	_('sub esp,8')
 	_('ljmp TraderHookReturn')
 EndFunc
 
@@ -6278,6 +6285,8 @@ Func _($asm)
 					$opCode = '8B5B18'
 				Case 'mov ecx,dword[ecx+0xF4]'
 					$opCode = '8B89F4000000'
+				Case 'cmp ah,00'
+					$lOpCode = '80FC00'
 				Case Else
 					MsgBox(0x0, 'ASM', 'Could not assemble: ' & $asm)
 					Exit

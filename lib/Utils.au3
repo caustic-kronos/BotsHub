@@ -300,12 +300,11 @@ EndFunc
 ;~ Find and open chests in the given range (earshot by default)
 Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
 	Local Static $openedChests[]
-	Local $extraType
+	Local $gadgetID
 	Local $agents = GetAgentArray(0x200) ;0x200 = type: static
 	For $i = 1 To $agents[0]
-		$extraType = DllStructGetData($agents[$i], 'ExtraType')
-
-		If $Map_Chests[$extraType] == null Then ContinueLoop
+		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
+		If $Map_Chests[$gadgetID] == null Then ContinueLoop
 		If GetDistance(-2, $agents[$i]) > $range Then ContinueLoop
 
 		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
@@ -1394,6 +1393,7 @@ Func PrintNPCInformations($npc)
 	Out('NameProperties: ' & DllStructGetData($npc, 'NameProperties'))
 	Out('Type: ' & DllStructGetData($npc, 'Type'))
 	Out('ExtraType: ' & DllStructGetData($npc, 'ExtraType'))
+	Out('GadgetID: ' & DllStructGetData($npc, 'GadgetID'))
 EndFunc
 
 
@@ -1788,6 +1788,7 @@ Func MapClearKillFoes()
 			RndSleep(1000)
 		EndIf
 		$skillNumber = 1
+		PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST)
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	WEnd
 	RndSleep(1000)

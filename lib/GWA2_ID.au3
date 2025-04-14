@@ -163,19 +163,22 @@ Global Const $ID_Marksmanship		= 25
 ;Global Const $ID_	= 27
 ;Global Const $ID_	= 28
 Global Const $ID_Dagger_Mastery		= 29
-Global Const $ID_Critical_Strikes	= 99 ;wrong value
-;Global Const $ID_	= 30		;CriticalStrikes or Lethal or Shadow
+Global Const $ID_Critical_Strikes	= 30 ;CriticalStrikes or Lethal or Shadow
 ;Global Const $ID_	= 31		;CriticalStrikes or Lethal or Shadow
 ;Global Const $ID_	= 32		;CriticalStrikes or Lethal or Shadow
 Global Const $ID_Restoration_Magic	= 33
 Global Const $ID_Channeling_Magic	= 34
-Global Const $ID_Spawning_Power		= 35
-;Global Const $ID_	= 36
-;Global Const $ID_	= 37
+Global Const $ID_Communing			= 35
+Global Const $ID_Spawning_Power		= 36
+Global Const $ID_Spear_Mastery		= 37
 Global Const $ID_Command			= 38
 Global Const $ID_Motivation			= 39
 Global Const $ID_Leadership			= 40
+;Global Const $ID_	= 41		;Earth Prayers or Wind Prayers or Scythe Mastery
+;Global Const $ID_	= 42		;Earth Prayers or Wind Prayers or Scythe Mastery
+;Global Const $ID_	= 43		;Earth Prayers or Wind Prayers or Scythe Mastery
 Global Const $ID_Mysticism			= 44
+Global Const $ID_All_Primary_Caster	= 45
 Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], [$ID_Blood_Magic, 'Blood Magic'], _
 													[$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], [$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], _
 													[$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], [$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], _
@@ -259,10 +262,10 @@ Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damag
 
 
 #Region MapMarkers
-Global Const $ID_ExtraType_Smol_Chest		= 6062 ;Istani chests
-Global Const $ID_ExtraType_NM_Chest			= 4582
-Global Const $ID_ExtraType_HM_Chest			= 8141
-Local Const $Chests_Array[]					= [$ID_ExtraType_Smol_Chest, $ID_ExtraType_NM_Chest, $ID_ExtraType_HM_Chest]
+Global Const $ID_GadgetID_Smol_Chest		= 6062 ;Istani chests
+Global Const $ID_GadgetID_NM_Chest			= 4582
+Global Const $ID_GadgetID_HM_Chest			= 8141
+Local Const $Chests_Array[]					= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest]
 Global Const $Map_Chests					= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
 
