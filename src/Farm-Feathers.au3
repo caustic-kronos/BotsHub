@@ -73,7 +73,7 @@ Func SetupFeathersFarm()
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveGroup()
-	LoadSkillTemplate($DAFeathersFarmerSkillbar)
+	;LoadSkillTemplate($DAFeathersFarmerSkillbar)
 
 	Out('Entering Jaya Bluffs')
 	Local $Me = GetAgentByID(-2)
