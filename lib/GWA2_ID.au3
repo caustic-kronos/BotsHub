@@ -113,6 +113,7 @@ Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Riven_Earth				= 501
 Global Const $ID_Jaga_Moraine				= 546
 Global Const $ID_Rata_Sum					= 640
+Global Const $ID_Eye_of_the_North			= 642
 Global Const $ID_Longeyes_Ledge				= 650
 #EndRegion Game Locations
 

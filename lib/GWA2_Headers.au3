@@ -32,7 +32,7 @@ Global Const $HEADER_TRADE_INITIATE = 0x48		; Initiates a trade with another pla
 Global Const $HEADER_TRANSACT_ITEMS = 0x4C		; Confirms a transaction involving items
 
 ; NPC Trade
-Global Const $HEADER_REQUEST_QUOTE = 0x4A		; Requests a quote or price for an item
+Global Const $HEADER_REQUEST_QUOTE = 0x4B		; Requests a quote or price for an item
 
 ; GAME_CMSG_ - Connection and Ping
 Global Const $HEADER_DISCONNECT = 0x08			; Disconnects from the server or session

@@ -1331,7 +1331,7 @@ Func TraderRequestSell($item)
 
 	Local $itemID = $item
 	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
-	DllStructSetData($requestQuoteStructSell, 1, $HEADER_REQUEST_QUOTE)
+	;DllStructSetData($requestQuoteStructSell, 1, $HEADER_REQUEST_QUOTE)
 	DllStructSetData($requestQuoteStructSell, 2, $itemID)
 	Enqueue($requestQuoteStructSellPtr, 8)
 

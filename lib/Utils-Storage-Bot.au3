@@ -541,6 +541,80 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem)
 EndFunc
 
 
+;~ Sell materials to materials merchant in EOTN
+Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
+	If GetMapID() <> $ID_Eye_of_the_North Then
+		DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	EndIf
+	Out('Moving to materials merchant')
+	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
+	GoToNPC($materialMerchant)
+	RndSleep(250)
+	
+	Local $item, $itemID
+	For $bagIndex = 1 To 4
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If $shouldSellItem($item) Then
+				$itemID = DllStructGetData($item, 'ID')
+				Local $totalAmount = DllStructGetData($item, 'Quantity')
+				Out('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
+				While $totalAmount > 9
+					TraderRequestSell($itemID)
+					Sleep(250 + GetPing())
+					TraderSell()
+					Sleep(250 + GetPing())
+					$totalAmount -= 10
+					;Safety net incase some sell orders didn't go through
+					If ($totalAmount < 10) Then 
+						$item = GetItemBySlot($bagIndex, $i)
+						$totalAmount = DllStructGetData($item, 'Quantity')
+					EndIf
+				WEnd
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+;~ Sell rare materials to rare materials merchant in EOTN
+Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial)
+	If GetMapID() <> $ID_Eye_of_the_North Then
+		DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	EndIf
+	Out('Moving to rare materials merchant')
+	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
+	GoToNPC($rareMaterialMerchant)
+	RndSleep(250)
+	
+	Local $item, $itemID
+	For $bagIndex = 1 To 4
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If $shouldSellItem($item) Then
+				$itemID = DllStructGetData($item, 'ID')
+				Local $totalAmount = DllStructGetData($item, 'Quantity')
+				Out('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
+				While $totalAmount > 0
+					TraderRequestSell($itemID)
+					Sleep(250 + GetPing())
+					TraderSell()
+					Sleep(250 + GetPing())
+					$totalAmount -= 1
+					;Safety net incase some sell orders didn't go through
+					If ($totalAmount < 1) Then 
+						$item = GetItemBySlot($bagIndex, $i)
+						$totalAmount = DllStructGetData($item, 'Quantity')
+					EndIf
+				WEnd
+			EndIf
+		Next
+	Next
+EndFunc
+
+
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Out('Storing items')
 	Local $item, $itemID
@@ -650,6 +724,21 @@ Func DefaultShouldSellItem($item)
 
 	Return False
 EndFunc
+
+
+;~ Return true if the item should be sold to the material merchant
+Func DefaultShouldSellMaterial($item)
+	If IsBasicMaterial($item) Then Return True
+	Return False
+EndFunc
+
+
+;~ Return true if the item should be sold to the material merchant
+Func DefaultShouldSellRareMaterial($item)
+	If IsRareMaterial($item) Then Return True
+	Return False
+EndFunc
+
 
 Func HasSalvageInscription($item)
 	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '1F0208243E0432251D0008260F16A8A7', '00082600011826900098260F1CA8A7000000C', '1F0208243E0432251D0008260810B8A7000000C']
