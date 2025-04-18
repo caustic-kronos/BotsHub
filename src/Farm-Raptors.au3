@@ -37,15 +37,15 @@ Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 12 in curses' & @CRLF _
 	& '- 12+ in tactics' & @CRLF _
 	& '- 9+ in swordsmanship (enough to use your sword)'& @CRLF _
-	& '- A Tactics shield with the inscription "Through Thick and Thin" (+10 armor against Piercing damage)' & @CRLF _
-	& '- A sword "of Shelter", prefix and inscription do not matter' & @CRLF _
+	& '- A Tactics shield with the inscription Through Thick and Thin (+10 armor against Piercing damage)' & @CRLF _
+	& '- A sword of Shelter, prefix and inscription do not matter' & @CRLF _
 	& '- Knight insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '		and all of his skills locked'
-	
-	
+
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Raptors_MarkOfPain = 1
 Local Const $Raptors_IAmUnstoppable = 2
@@ -248,10 +248,10 @@ EndFunc
 Func KillRaptors()
 	Local $MoPTarget
 	Local $lAgentArray
-	
+
 	If GetIsDead(-2) Then Return
 	Out('Clearing Raptors')
-	
+
 	If ($RAPTORS_PROFESSION == 1) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		RndSleep(20)
@@ -300,7 +300,7 @@ Func KillRaptors()
 		UseSkillEx($Raptors_MarkOfPain, $MoPTarget)
 		RndSleep(50)
 	WEnd
-	
+
 	If ($RAPTORS_PROFESSION == 1) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		UseSkillEx($Raptors_SoldiersDefense)
@@ -311,7 +311,7 @@ Func KillRaptors()
 		WEnd
 
 		Out('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
-	
+
 		UseSkillEx($Raptors_ShieldBash)
 		RndSleep(20)
 		While Not GetIsDead(-2) And CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) == 130
@@ -382,17 +382,17 @@ Func IsBodyBlocked()
 
 	While DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0
 		$blocked += 1
-		Out("Blocked: " & $blocked)
+		Out('Blocked: ' & $blocked)
 		If $blocked > 1 Then
 			$angle += $PI / 4
 		EndIf
-		
+
 		If ($blocked > 4 Or DllStructGetData(GetAgentByID(-2), 'HP') < 0.90) Then
 			SendStuckCommand()
 		EndIf
-		
+
 		If $blocked > 7 Then
-			Out("Completely blocked")
+			Out('Completely blocked')
 			Return True
 		EndIf
 		Move(DllStructGetData(GetAgentByID(-2), 'X') + 300 * sin($angle), DllStructGetData(GetAgentByID(-2), 'Y') + 300 * cos($angle), 0)
@@ -405,7 +405,7 @@ EndFunc
 Func SendStuckCommand()
 	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
 	If CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then
-		Out("Sending /stuck", $GUI_CONSOLE_YELLOW_COLOR)
+		Out('Sending /stuck', $GUI_CONSOLE_YELLOW_COLOR)
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()
 		RndSleep(GetPing())

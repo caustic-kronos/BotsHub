@@ -1,13 +1,13 @@
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
+; Licensed under the Apache License, Version 2.0 (the 'License');
 ; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ; http://www.apache.org/licenses/LICENSE-2.0
 ;
 ; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
+; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
@@ -1595,5 +1595,459 @@ Global Const $ID_Casting_20		= '00140828'
 Global Const $ID_Recharge_20	= '00142828'
 
 #EndRegion Mods
+
+
+#Region Runes
+Global Const $ID_Warrior_Knights_Insignia = 			'19152'
+Global Const $ID_Warrior_Lieutenants_Insignia =			'19153'
+Global Const $ID_Warrior_Stonefist_Insignia =			'19154'
+Global Const $ID_Warrior_Dreadnought_Insignia =			'19155'
+Global Const $ID_Warrior_Sentinels_Insignia =			'19156'
+Global Const $ID_Warrior_Minor_Absorption =				'903'
+Global Const $ID_Warrior_Minor_Axe_Mastery =			'903'
+Global Const $ID_Warrior_Minor_Hammer_Mastery =			'903'
+Global Const $ID_Warrior_Minor_Strength =				'903'
+Global Const $ID_Warrior_Minor_Swordsmanship =			'903'
+Global Const $ID_Warrior_Minor_Tactics =				'903'
+Global Const $ID_Warrior_Major_Absorption =				'5558'
+Global Const $ID_Warrior_Major_Axe_Mastery =			'5558'
+Global Const $ID_Warrior_Major_Hammer_Mastery =			'5558'
+Global Const $ID_Warrior_Major_Strength =				'5558'
+Global Const $ID_Warrior_Major_Swordsmanship =			'5558'
+Global Const $ID_Warrior_Major_Tactics =				'5558'
+Global Const $ID_Warrior_Superior_Axe_Mastery =			'5559'
+Global Const $ID_Warrior_Superior_Hammer_Mastery =		'5559'
+Global Const $ID_Warrior_Superior_Strength =			'5559'
+Global Const $ID_Warrior_Superior_Swordsmanship =		'5559'
+Global Const $ID_Warrior_Superior_Tactics =				'5559'
+Global Const $ID_Warrior_Superior_Absorption =			'5559'
+Global Const $ID_Ranger_Frostbound_Insignia =			'19157'
+Global Const $ID_Ranger_Pyrebound_Insignia =			'19159'
+Global Const $ID_Ranger_Stormbound_Insignia =			'19160'
+Global Const $ID_Ranger_Scouts_Insignia =				'19162'
+Global Const $ID_Ranger_Earthbound_Insignia =			'19158'
+Global Const $ID_Ranger_Beastmasters_Insignia =			'19161'
+Global Const $ID_Ranger_Minor_Beast_Mastery =			'904'
+Global Const $ID_Ranger_Minor_Expertise =				'904'
+Global Const $ID_Ranger_Minor_Marksmanship =			'904'
+Global Const $ID_Ranger_Minor_Wilderness_Survival =		'904'
+Global Const $ID_Ranger_Major_Beast_Mastery =			'5560'
+Global Const $ID_Ranger_Major_Expertise =				'5560'
+Global Const $ID_Ranger_Major_Marksmanship =			'5560'
+Global Const $ID_Ranger_Major_Wilderness_Survival =		'5560'
+Global Const $ID_Ranger_Superior_Beast_Mastery =		'5561'
+Global Const $ID_Ranger_Superior_Expertise =			'5561'
+Global Const $ID_Ranger_Superior_Marksmanship =			'5561'
+Global Const $ID_Ranger_Superior_Wilderness_Survival =	'5561'
+Global Const $ID_Monk_Wanderers_Insignia =				'19149'
+Global Const $ID_Monk_Disciples_Insignia =				'19150'
+Global Const $ID_Monk_Anchorites_Insignia =				'19151'
+Global Const $ID_Monk_Minor_Divine_Favor =				'902'
+Global Const $ID_Monk_Minor_Healing_Prayers =			'902'
+Global Const $ID_Monk_Minor_Protection_Prayers =		'902'
+Global Const $ID_Monk_Minor_Smiting_Prayers =			'902'
+Global Const $ID_Monk_Major_Healing_Prayers =			'5556'
+Global Const $ID_Monk_Major_Protection_Prayers =		'5556'
+Global Const $ID_Monk_Major_Smiting_Prayers =			'5556'
+Global Const $ID_Monk_Major_Divine_Favor =				'5556'
+Global Const $ID_Monk_Superior_Divine_Favor =			'5557'
+Global Const $ID_Monk_Superior_Healing_Prayers =		'5557'
+Global Const $ID_Monk_Superior_Protection_Prayers =		'5557'
+Global Const $ID_Monk_Superior_Smiting_Prayers =		'5557'
+Global Const $ID_Necromancer_Bloodstained_Insignia =	'19138'
+Global Const $ID_Necromancer_Tormentors_Insignia =		'19139'
+Global Const $ID_Necromancer_Bonelace_Insignia =		'19141'
+Global Const $ID_Necromancer_Minion_Masters_Insignia =	'19142'
+Global Const $ID_Necromancer_Blighters_Insignia =		'19143'
+Global Const $ID_Necromancer_Undertakers_Insignia =		'19140'
+Global Const $ID_Necromancer_Minor_Blood_Magic =		'900'
+Global Const $ID_Necromancer_Minor_Curses =				'900'
+Global Const $ID_Necromancer_Minor_Death_Magic =		'900'
+Global Const $ID_Necromancer_Minor_Soul_Reaping =		'900'
+Global Const $ID_Necromancer_Major_Blood_Magic =		'5552'
+Global Const $ID_Necromancer_Major_Curses =				'5552'
+Global Const $ID_Necromancer_Major_Death_Magic =		'5552'
+Global Const $ID_Necromancer_Major_Soul_Reaping =		'5552'
+Global Const $ID_Necromancer_Superior_Blood_Magic =		'5553'
+Global Const $ID_Necromancer_Superior_Curses =			'5553'
+Global Const $ID_Necromancer_Superior_Death_Magic =		'5553'
+Global Const $ID_Necromancer_Superior_Soul_Reaping =	'5553'
+Global Const $ID_Mesmer_Virtuosos_Insignia =			'19130'
+Global Const $ID_Mesmer_Artificers_Insignia =			'19128'
+Global Const $ID_Mesmer_Prodigys_Insignia =				'19129'
+Global Const $ID_Mesmer_Minor_Domination_Magic =		'899'
+Global Const $ID_Mesmer_Minor_Fast_Casting =			'899'
+Global Const $ID_Mesmer_Minor_Illusion_Magic =			'899'
+Global Const $ID_Mesmer_Minor_Inspiration_Magic =		'899'
+Global Const $ID_Mesmer_Major_Domination_Magic =		'3612'
+Global Const $ID_Mesmer_Major_Fast_Casting =			'3612'
+Global Const $ID_Mesmer_Major_Illusion_Magic =			'3612'
+Global Const $ID_Mesmer_Major_Inspiration_Magic =		'3612'
+Global Const $ID_Mesmer_Superior_Domination_Magic =		'5549'
+Global Const $ID_Mesmer_Superior_Fast_Casting =			'5549'
+Global Const $ID_Mesmer_Superior_Illusion_Magic =		'5549'
+Global Const $ID_Mesmer_Superior_Inspiration_Magic =	'5549'
+Global Const $ID_Elementalist_Hydromancer_Insignia =	'19145'
+Global Const $ID_Elementalist_Geomancer_Insignia =		'19146'
+Global Const $ID_Elementalist_Pyromancer_Insignia =		'19147'
+Global Const $ID_Elementalist_Aeromancer_Insignia =		'19148'
+Global Const $ID_Elementalist_Prismatic_Insignia =		'19144'
+Global Const $ID_Elementalist_Minor_Air_Magic =			'901'
+Global Const $ID_Elementalist_Minor_Earth_Magic =		'901'
+Global Const $ID_Elementalist_Minor_Energy_Storage =	'901'
+Global Const $ID_Elementalist_Minor_Water_Magic =		'901'
+Global Const $ID_Elementalist_Minor_Fire_Magic =		'901'
+Global Const $ID_Elementalist_Major_Air_Magic =			'5554'
+Global Const $ID_Elementalist_Major_Earth_Magic =		'5554'
+Global Const $ID_Elementalist_Major_Energy_Storage =	'5554'
+Global Const $ID_Elementalist_Major_Fire_Magic =		'5554'
+Global Const $ID_Elementalist_Major_Water_Magic =		'5554'
+Global Const $ID_Elementalist_Superior_Air_Magic =		'5555'
+Global Const $ID_Elementalist_Superior_Earth_Magic =	'5555'
+Global Const $ID_Elementalist_Superior_Energy_Storage =	'5555'
+Global Const $ID_Elementalist_Superior_Fire_Magic =		'5555'
+Global Const $ID_Elementalist_Superior_Water_Magic =	'5555'
+Global Const $ID_Assassin_Vanguards_Insignia =			'19124'
+Global Const $ID_Assassin_Infiltrators_Insignia =		'19125'
+Global Const $ID_Assassin_Saboteurs_Insignia =			'19126'
+Global Const $ID_Assassin_Nightstalkers_Insignia =		'19127'
+Global Const $ID_Assassin_Minor_Critical_Strikes =		'6324'
+Global Const $ID_Assassin_Minor_Dagger_Mastery =		'6324'
+Global Const $ID_Assassin_Minor_Deadly_Arts =			'6324'
+Global Const $ID_Assassin_Minor_Shadow_Arts =			'6324'
+Global Const $ID_Assassin_Major_Critical_Strikes =		'6325'
+Global Const $ID_Assassin_Major_Dagger_Mastery =		'6325'
+Global Const $ID_Assassin_Major_Deadly_Arts =			'6325'
+Global Const $ID_Assassin_Major_Shadow_Arts =			'6325'
+Global Const $ID_Assassin_Superior_Critical_Strikes =	'6326'
+Global Const $ID_Assassin_Superior_Dagger_Mastery =		'6326'
+Global Const $ID_Assassin_Superior_Deadly_Arts =		'6326'
+Global Const $ID_Assassin_Superior_Shadow_Arts =		'6326'
+Global Const $ID_Ritualist_Shamans_Insignia =			'19165'
+Global Const $ID_Ritualist_Ghost_Forge_Insignia =		'19166'
+Global Const $ID_Ritualist_Mystics_Insignia =			'19167'
+Global Const $ID_Ritualist_Minor_Channeling_Magic =		'6327'
+Global Const $ID_Ritualist_Minor_Communing =			'6327'
+Global Const $ID_Ritualist_Minor_Restoration_Magic =	'6327'
+Global Const $ID_Ritualist_Minor_Spawning_Power =		'6327'
+Global Const $ID_Ritualist_Major_Channeling_Magic =		'6328'
+Global Const $ID_Ritualist_Major_Communing =			'6328'
+Global Const $ID_Ritualist_Major_Restoration_Magic =	'6328'
+Global Const $ID_Ritualist_Major_Spawning_Power =		'6328'
+Global Const $ID_Ritualist_Superior_Channeling_Magic =	'6329'
+Global Const $ID_Ritualist_Superior_Communing =			'6329'
+Global Const $ID_Ritualist_Superior_Restoration_Magic =	'6329'
+Global Const $ID_Ritualist_Superior_Spawning_Power =	'6329'
+Global Const $ID_Dervish_Windwalker_Insignia =			'19163'
+Global Const $ID_Dervish_Forsaken_Insignia =			'19164'
+Global Const $ID_Dervish_Minor_Earth_Prayers =			'15545'
+Global Const $ID_Dervish_Minor_Mysticism =				'15545'
+Global Const $ID_Dervish_Minor_Scythe_Mastery =			'15545'
+Global Const $ID_Dervish_Minor_Wind_Prayers =			'15545'
+Global Const $ID_Dervish_Major_Earth_Prayers =			'15546'
+Global Const $ID_Dervish_Major_Mysticism =				'15546'
+Global Const $ID_Dervish_Major_Scythe_Mastery =			'15546'
+Global Const $ID_Dervish_Major_Wind_Prayers =			'15546'
+Global Const $ID_Dervish_Superior_Earth_Prayers =		'15547'
+Global Const $ID_Dervish_Superior_Mysticism =			'15547'
+Global Const $ID_Dervish_Superior_Scythe_Mastery =		'15547'
+Global Const $ID_Dervish_Superior_Wind_Prayers =		'15547'
+Global Const $ID_Paragon_Centurions_Insignia =			'19168'
+Global Const $ID_Paragon_Minor_Command =				'15548'
+Global Const $ID_Paragon_Minor_Leadership =				'15548'
+Global Const $ID_Paragon_Minor_Motivation =				'15548'
+Global Const $ID_Paragon_Minor_Spear_Mastery =			'15548'
+Global Const $ID_Paragon_Major_Command =				'15549'
+Global Const $ID_Paragon_Major_Leadership =				'15549'
+Global Const $ID_Paragon_Major_Motivation =				'15549'
+Global Const $ID_Paragon_Major_Spear_Mastery =			'15549'
+Global Const $ID_Paragon_Superior_Command =				'15550'
+Global Const $ID_Paragon_Superior_Leadership =			'15550'
+Global Const $ID_Paragon_Superior_Motivation =			'15550'
+Global Const $ID_Paragon_Superior_Spear_Mastery =		'15550'
+Global Const $ID_Survivor_Insignia =					'19132'
+Global Const $ID_Radiant_Insignia =						'19131'
+Global Const $ID_Stalwart_Insignia =					'19133'
+Global Const $ID_Brawlers_Insignia =					'19134'
+Global Const $ID_Blessed_Insignia =						'19135'
+Global Const $ID_Heralds_Insignia =						'19136'
+Global Const $ID_Sentrys_Insignia =						'19137'
+Global Const $ID_Rune_of_Minor_Vigor =					'898'
+Global Const $ID_Rune_of_Vitae =						'898'
+Global Const $ID_Rune_of_Attunement =					'898'
+Global Const $ID_Rune_of_Major_Vigor =					'5550'
+Global Const $ID_Rune_of_Recovery =						'5550'
+Global Const $ID_Rune_of_Restoration =					'5550'
+Global Const $ID_Rune_of_Clarity =						'5550'
+Global Const $ID_Rune_of_Purity =						'5550'
+Global Const $ID_Rune_of_Superior_Vigor =				'5551'
+
+
+Global Const $Struct_Warrior_Knights_Insignia = 			'F9010824'
+Global Const $Struct_Warrior_Lieutenants_Insignia =			'08020824'
+Global Const $Struct_Warrior_Stonefist_Insignia =			'09020824'
+Global Const $Struct_Warrior_Dreadnought_Insignia =			'FA010824'
+Global Const $Struct_Warrior_Sentinels_Insignia =			'FB010824'
+Global Const $Struct_Warrior_Minor_Absorption =				'EA02E827'
+Global Const $Struct_Warrior_Minor_Axe_Mastery =			'0112E821'
+Global Const $Struct_Warrior_Minor_Hammer_Mastery =			'0113E821'
+Global Const $Struct_Warrior_Minor_Strength =				'0111E821'
+Global Const $Struct_Warrior_Minor_Swordsmanship =			'0114E821'
+Global Const $Struct_Warrior_Minor_Tactics =				'0115E821'
+Global Const $Struct_Warrior_Major_Absorption =				'EA02E927'
+Global Const $Struct_Warrior_Major_Axe_Mastery =			'0212E8217301'
+Global Const $Struct_Warrior_Major_Hammer_Mastery =			'0213E8217301'
+Global Const $Struct_Warrior_Major_Strength =				'0211E8217301'
+Global Const $Struct_Warrior_Major_Swordsmanship =			'0214E8217301'
+Global Const $Struct_Warrior_Major_Tactics =				'0215E8217301'
+Global Const $Struct_Warrior_Superior_Axe_Mastery =			'0312E8217F01'
+Global Const $Struct_Warrior_Superior_Hammer_Mastery =		'0313E8217F01'
+Global Const $Struct_Warrior_Superior_Strength =			'0311E8217F01'
+Global Const $Struct_Warrior_Superior_Swordsmanship =		'0314E8217F01'
+Global Const $Struct_Warrior_Superior_Tactics =				'0315E8217F01'
+Global Const $Struct_Warrior_Superior_Absorption =			'EA02EA27'
+Global Const $Struct_Ranger_Frostbound_Insignia =			'FC010824'
+Global Const $Struct_Ranger_Pyrebound_Insignia =			'FE010824'
+Global Const $Struct_Ranger_Stormbound_Insignia =			'FF010824'
+Global Const $Struct_Ranger_Scouts_Insignia =				'01020824'
+Global Const $Struct_Ranger_Earthbound_Insignia =			'FD010824'
+Global Const $Struct_Ranger_Beastmasters_Insignia =			'00020824'
+Global Const $Struct_Ranger_Minor_Beast_Mastery =			'0116E821'
+Global Const $Struct_Ranger_Minor_Expertise =				'0117E821'
+Global Const $Struct_Ranger_Minor_Marksmanship =			'0119E821'
+Global Const $Struct_Ranger_Minor_Wilderness_Survival =		'0118E821'
+Global Const $Struct_Ranger_Major_Beast_Mastery =			'0216E8217501'
+Global Const $Struct_Ranger_Major_Expertise =				'0217E8217501'
+Global Const $Struct_Ranger_Major_Marksmanship =			'0219E8217501'
+Global Const $Struct_Ranger_Major_Wilderness_Survival =		'0218E8217501'
+Global Const $Struct_Ranger_Superior_Beast_Mastery =		'0316E8218101'
+Global Const $Struct_Ranger_Superior_Expertise =			'0317E8218101'
+Global Const $Struct_Ranger_Superior_Marksmanship =			'0319E8218101'
+Global Const $Struct_Ranger_Superior_Wilderness_Survival =	'0318E8218101'
+Global Const $Struct_Monk_Wanderers_Insignia =				'F6010824'
+Global Const $Struct_Monk_Disciples_Insignia =				'F7010824'
+Global Const $Struct_Monk_Anchorites_Insignia =				'F8010824'
+Global Const $Struct_Monk_Minor_Divine_Favor =				'0110E821'
+Global Const $Struct_Monk_Minor_Healing_Prayers =			'010DE821'
+Global Const $Struct_Monk_Minor_Protection_Prayers =		'010FE821'
+Global Const $Struct_Monk_Minor_Smiting_Prayers =			'010EE821'
+Global Const $Struct_Monk_Major_Healing_Prayers =			'020DE8217101'
+Global Const $Struct_Monk_Major_Protection_Prayers =		'020FE8217101'
+Global Const $Struct_Monk_Major_Smiting_Prayers =			'020EE8217101'
+Global Const $Struct_Monk_Major_Divine_Favor =				'0210E8217101'
+Global Const $Struct_Monk_Superior_Divine_Favor =			'0310E8217D01'
+Global Const $Struct_Monk_Superior_Healing_Prayers =		'030DE8217D01'
+Global Const $Struct_Monk_Superior_Protection_Prayers =		'030FE8217D01'
+Global Const $Struct_Monk_Superior_Smiting_Prayers =		'030EE8217D01'
+Global Const $Struct_Necromancer_Bloodstained_Insignia =	'0A020824'
+Global Const $Struct_Necromancer_Tormentors_Insignia =		'EC010824'
+Global Const $Struct_Necromancer_Bonelace_Insignia =		'EE010824'
+Global Const $Struct_Necromancer_Minion_Masters_Insignia =	'EF010824'
+Global Const $Struct_Necromancer_Blighters_Insignia =		'F0010824'
+Global Const $Struct_Necromancer_Undertakers_Insignia =		'ED010824'
+Global Const $Struct_Necromancer_Minor_Blood_Magic =		'0104E821'
+Global Const $Struct_Necromancer_Minor_Curses =				'0107E821'
+Global Const $Struct_Necromancer_Minor_Death_Magic =		'0105E821'
+Global Const $Struct_Necromancer_Minor_Soul_Reaping =		'0106E821'
+Global Const $Struct_Necromancer_Major_Blood_Magic =		'0204E8216D01'
+Global Const $Struct_Necromancer_Major_Curses =				'0207E8216D01'
+Global Const $Struct_Necromancer_Major_Death_Magic =		'0205E8216D01'
+Global Const $Struct_Necromancer_Major_Soul_Reaping =		'0206E8216D01'
+Global Const $Struct_Necromancer_Superior_Blood_Magic =		'0304E8217901'
+Global Const $Struct_Necromancer_Superior_Curses =			'0307E8217901'
+Global Const $Struct_Necromancer_Superior_Death_Magic =		'0305E8217901'
+Global Const $Struct_Necromancer_Superior_Soul_Reaping =	'0306E8217901'
+Global Const $Struct_Mesmer_Virtuosos_Insignia =			'E4010824'
+Global Const $Struct_Mesmer_Artificers_Insignia =			'E2010824'
+Global Const $Struct_Mesmer_Prodigys_Insignia =				'E3010824'
+Global Const $Struct_Mesmer_Minor_Domination_Magic =		'0102E821'
+Global Const $Struct_Mesmer_Minor_Fast_Casting =			'0100E821'
+Global Const $Struct_Mesmer_Minor_Illusion_Magic =			'0101E821'
+Global Const $Struct_Mesmer_Minor_Inspiration_Magic =		'0103E821'
+Global Const $Struct_Mesmer_Major_Domination_Magic =		'0202E8216B01'
+Global Const $Struct_Mesmer_Major_Fast_Casting =			'0200E8216B01'
+Global Const $Struct_Mesmer_Major_Illusion_Magic =			'0201E8216B01'
+Global Const $Struct_Mesmer_Major_Inspiration_Magic =		'0203E8216B01'
+Global Const $Struct_Mesmer_Superior_Domination_Magic =		'0302E8217701'
+Global Const $Struct_Mesmer_Superior_Fast_Casting =			'0300E8217701'
+Global Const $Struct_Mesmer_Superior_Illusion_Magic =		'0301E8217701'
+Global Const $Struct_Mesmer_Superior_Inspiration_Magic =	'0303E8217701'
+Global Const $Struct_Elementalist_Hydromancer_Insignia =	'F2010824'
+Global Const $Struct_Elementalist_Geomancer_Insignia =		'F3010824'
+Global Const $Struct_Elementalist_Pyromancer_Insignia =		'F4010824'
+Global Const $Struct_Elementalist_Aeromancer_Insignia =		'F5010824'
+Global Const $Struct_Elementalist_Prismatic_Insignia =		'F1010824'
+Global Const $Struct_Elementalist_Minor_Air_Magic =			'0108E821'
+Global Const $Struct_Elementalist_Minor_Earth_Magic =		'0109E821'
+Global Const $Struct_Elementalist_Minor_Energy_Storage =	'010CE821'
+Global Const $Struct_Elementalist_Minor_Water_Magic =		'010BE821'
+Global Const $Struct_Elementalist_Minor_Fire_Magic =		'010AE821'
+Global Const $Struct_Elementalist_Major_Air_Magic =			'0208E8216F01'
+Global Const $Struct_Elementalist_Major_Earth_Magic =		'0209E8216F01'
+Global Const $Struct_Elementalist_Major_Energy_Storage =	'020CE8216F01'
+Global Const $Struct_Elementalist_Major_Fire_Magic =		'020AE8216F01'
+Global Const $Struct_Elementalist_Major_Water_Magic =		'020BE8216F01'
+Global Const $Struct_Elementalist_Superior_Air_Magic =		'0308E8217B01'
+Global Const $Struct_Elementalist_Superior_Earth_Magic =	'0309E8217B01'
+Global Const $Struct_Elementalist_Superior_Energy_Storage =	'030CE8217B01'
+Global Const $Struct_Elementalist_Superior_Fire_Magic =		'030AE8217B01'
+Global Const $Struct_Elementalist_Superior_Water_Magic =	'030BE8217B01'
+Global Const $Struct_Assassin_Vanguards_Insignia =			'DE010824'
+Global Const $Struct_Assassin_Infiltrators_Insignia =		'DF010824'
+Global Const $Struct_Assassin_Saboteurs_Insignia =			'E0010824'
+Global Const $Struct_Assassin_Nightstalkers_Insignia =		'E1010824'
+Global Const $Struct_Assassin_Minor_Critical_Strikes =		'0123E821'
+Global Const $Struct_Assassin_Minor_Dagger_Mastery =		'011DE821'
+Global Const $Struct_Assassin_Minor_Deadly_Arts =			'011EE821'
+Global Const $Struct_Assassin_Minor_Shadow_Arts =			'011FE821'
+Global Const $Struct_Assassin_Major_Critical_Strikes =		'0223E8217902'
+Global Const $Struct_Assassin_Major_Dagger_Mastery =		'021DE8217902'
+Global Const $Struct_Assassin_Major_Deadly_Arts =			'021EE8217902'
+Global Const $Struct_Assassin_Major_Shadow_Arts =			'021FE8217902'
+Global Const $Struct_Assassin_Superior_Critical_Strikes =	'0323E8217B02'
+Global Const $Struct_Assassin_Superior_Dagger_Mastery =		'031DE8217B02'
+Global Const $Struct_Assassin_Superior_Deadly_Arts =		'031EE8217B02'
+Global Const $Struct_Assassin_Superior_Shadow_Arts =		'031FE8217B02'
+Global Const $Struct_Ritualist_Shamans_Insignia =			'04020824'
+Global Const $Struct_Ritualist_Ghost_Forge_Insignia =		'05020824'
+Global Const $Struct_Ritualist_Mystics_Insignia =			'06020824'
+Global Const $Struct_Ritualist_Minor_Channeling_Magic =		'0122E821'
+Global Const $Struct_Ritualist_Minor_Communing =			'0120E821'
+Global Const $Struct_Ritualist_Minor_Restoration_Magic =	'0121E821'
+Global Const $Struct_Ritualist_Minor_Spawning_Power =		'0124E821'
+Global Const $Struct_Ritualist_Major_Channeling_Magic =		'0222E8217F02'
+Global Const $Struct_Ritualist_Major_Communing =			'0220E8217F02'
+Global Const $Struct_Ritualist_Major_Restoration_Magic =	'0221E8217F02'
+Global Const $Struct_Ritualist_Major_Spawning_Power =		'0224E8217F02'
+Global Const $Struct_Ritualist_Superior_Channeling_Magic =	'0322E8218102'
+Global Const $Struct_Ritualist_Superior_Communing =			'0320E8218102'
+Global Const $Struct_Ritualist_Superior_Restoration_Magic =	'0321E8218102'
+Global Const $Struct_Ritualist_Superior_Spawning_Power =	'0324E8218102'
+Global Const $Struct_Dervish_Windwalker_Insignia =			'02020824'
+Global Const $Struct_Dervish_Forsaken_Insignia =			'03020824'
+Global Const $Struct_Dervish_Minor_Earth_Prayers =			'012BE821'
+Global Const $Struct_Dervish_Minor_Mysticism =				'012CE821'
+Global Const $Struct_Dervish_Minor_Scythe_Mastery =			'0129E821'
+Global Const $Struct_Dervish_Minor_Wind_Prayers =			'012AE821'
+Global Const $Struct_Dervish_Major_Earth_Prayers =			'022BE8210703'
+Global Const $Struct_Dervish_Major_Mysticism =				'022CE8210703'
+Global Const $Struct_Dervish_Major_Scythe_Mastery =			'0229E8210703'
+Global Const $Struct_Dervish_Major_Wind_Prayers =			'022AE8210703'
+Global Const $Struct_Dervish_Superior_Earth_Prayers =		'032BE8210903'
+Global Const $Struct_Dervish_Superior_Mysticism =			'032CE8210903'
+Global Const $Struct_Dervish_Superior_Scythe_Mastery =		'0329E8210903'
+Global Const $Struct_Dervish_Superior_Wind_Prayers =		'032AE8210903'
+Global Const $Struct_Paragon_Centurions_Insignia =			'07020824'
+Global Const $Struct_Paragon_Minor_Command =				'0126E821'
+Global Const $Struct_Paragon_Minor_Leadership =				'0128E821'
+Global Const $Struct_Paragon_Minor_Motivation =				'0127E821'
+Global Const $Struct_Paragon_Minor_Spear_Mastery =			'0125E821'
+Global Const $Struct_Paragon_Major_Command =				'0226E8210D03'
+Global Const $Struct_Paragon_Major_Leadership =				'0228E8210D03'
+Global Const $Struct_Paragon_Major_Motivation =				'0227E8210D03'
+Global Const $Struct_Paragon_Major_Spear_Mastery =			'0225E8210D03'
+Global Const $Struct_Paragon_Superior_Command =				'0326E8210F03'
+Global Const $Struct_Paragon_Superior_Leadership =			'0328E8210F03'
+Global Const $Struct_Paragon_Superior_Motivation =			'0327E8210F03'
+Global Const $Struct_Paragon_Superior_Spear_Mastery =		'0325E8210F03'
+Global Const $Struct_Survivor_Insignia =					'E6010824'
+Global Const $Struct_Radiant_Insignia =						'E5010824'
+Global Const $Struct_Stalwart_Insignia =					'E7010824'
+Global Const $Struct_Brawlers_Insignia =					'E8010824'
+Global Const $Struct_Blessed_Insignia =						'E9010824'
+Global Const $Struct_Heralds_Insignia =						'EA010824'
+Global Const $Struct_Sentrys_Insignia =						'EB010824'
+Global Const $Struct_Rune_of_Minor_Vigor =					'C202E827'
+Global Const $Struct_Rune_of_Vitae =						'000A4823'
+Global Const $Struct_Rune_of_Attunement =					'0200D822'
+Global Const $Struct_Rune_of_Major_Vigor =					'C202E927'
+Global Const $Struct_Rune_of_Recovery =						'07047827'
+Global Const $Struct_Rune_of_Restoration =					'00037827'
+Global Const $Struct_Rune_of_Clarity =						'01087827'
+Global Const $Struct_Rune_of_Purity =						'05067827'
+Global Const $Struct_Rune_of_Superior_Vigor =				'C202EA27'
+
+; Insignias are present at index 0 of their armor salvageable item
+Local Const $Insignia_IDs_Array[] = [ _
+	$ID_Warrior_Knights_Insignia, $ID_Warrior_Lieutenants_Insignia, $ID_Warrior_Stonefist_Insignia, $ID_Warrior_Dreadnought_Insignia, $ID_Warrior_Sentinels_Insignia, $ID_Ranger_Frostbound_Insignia, _
+	$ID_Ranger_Pyrebound_Insignia, $ID_Ranger_Stormbound_Insignia, $ID_Ranger_Scouts_Insignia, $ID_Ranger_Earthbound_Insignia, $ID_Ranger_Beastmasters_Insignia, $ID_Monk_Wanderers_Insignia, _
+	$ID_Monk_Disciples_Insignia, $ID_Monk_Anchorites_Insignia, $ID_Necromancer_Bloodstained_Insignia, $ID_Necromancer_Tormentors_Insignia, $ID_Necromancer_Bonelace_Insignia, $ID_Necromancer_Minion_Masters_Insignia, _
+	$ID_Necromancer_Blighters_Insignia, $ID_Necromancer_Undertakers_Insignia, $ID_Mesmer_Virtuosos_Insignia, $ID_Mesmer_Artificers_Insignia, $ID_Mesmer_Prodigys_Insignia, $ID_Elementalist_Hydromancer_Insignia, _
+	$ID_Elementalist_Geomancer_Insignia, $ID_Elementalist_Pyromancer_Insignia, $ID_Elementalist_Aeromancer_Insignia, $ID_Elementalist_Prismatic_Insignia, $ID_Assassin_Vanguards_Insignia, _
+	$ID_Assassin_Infiltrators_Insignia, $ID_Assassin_Saboteurs_Insignia, $ID_Assassin_Nightstalkers_Insignia, $ID_Ritualist_Shamans_Insignia, $ID_Ritualist_Ghost_Forge_Insignia, $ID_Ritualist_Mystics_Insignia, _
+	$ID_Dervish_Windwalker_Insignia, $ID_Dervish_Forsaken_Insignia, $ID_Paragon_Centurions_Insignia, $ID_Survivor_Insignia, $ID_Radiant_Insignia, $ID_Stalwart_Insignia, $ID_Brawlers_Insignia, $ID_Blessed_Insignia, _
+	$ID_Heralds_Insignia, $ID_Sentrys_Insignia _
+]
+Global Const $Map_Insignia_IDs = MapFromArray($Insignia_IDs_Array)
+
+; Runes are present at index 1 of their armor salvageable item
+Local Const $Rune_IDs_Array[] = [ _
+	$ID_Warrior_Minor_Absorption, $ID_Warrior_Minor_Axe_Mastery, $ID_Warrior_Minor_Hammer_Mastery, $ID_Warrior_Minor_Strength, $ID_Warrior_Minor_Swordsmanship, $ID_Warrior_Minor_Tactics, $ID_Warrior_Major_Absorption, _
+	$ID_Warrior_Major_Axe_Mastery, $ID_Warrior_Major_Hammer_Mastery, $ID_Warrior_Major_Strength, $ID_Warrior_Major_Swordsmanship, $ID_Warrior_Major_Tactics, $ID_Warrior_Superior_Axe_Mastery, _
+	$ID_Warrior_Superior_Hammer_Mastery, $ID_Warrior_Superior_Strength, $ID_Warrior_Superior_Swordsmanship, $ID_Warrior_Superior_Tactics, $ID_Warrior_Superior_Absorption, $ID_Ranger_Minor_Beast_Mastery, _
+	$ID_Ranger_Minor_Expertise, $ID_Ranger_Minor_Marksmanship, $ID_Ranger_Minor_Wilderness_Survival, $ID_Ranger_Major_Beast_Mastery, $ID_Ranger_Major_Expertise, $ID_Ranger_Major_Marksmanship, _
+	$ID_Ranger_Major_Wilderness_Survival, $ID_Ranger_Superior_Beast_Mastery, $ID_Ranger_Superior_Expertise, $ID_Ranger_Superior_Marksmanship, $ID_Ranger_Superior_Wilderness_Survival, $ID_Monk_Minor_Divine_Favor, _
+	$ID_Monk_Minor_Healing_Prayers, $ID_Monk_Minor_Protection_Prayers, $ID_Monk_Minor_Smiting_Prayers, $ID_Monk_Major_Healing_Prayers, $ID_Monk_Major_Protection_Prayers, $ID_Monk_Major_Smiting_Prayers, _
+	$ID_Monk_Major_Divine_Favor, $ID_Monk_Superior_Divine_Favor, $ID_Monk_Superior_Healing_Prayers, $ID_Monk_Superior_Protection_Prayers, $ID_Monk_Superior_Smiting_Prayers, $ID_Necromancer_Minor_Blood_Magic, _
+	$ID_Necromancer_Minor_Curses, $ID_Necromancer_Minor_Death_Magic, $ID_Necromancer_Minor_Soul_Reaping, $ID_Necromancer_Major_Blood_Magic, $ID_Necromancer_Major_Curses, $ID_Necromancer_Major_Death_Magic, _
+	$ID_Necromancer_Major_Soul_Reaping, $ID_Necromancer_Superior_Blood_Magic, $ID_Necromancer_Superior_Curses, $ID_Necromancer_Superior_Death_Magic, $ID_Necromancer_Superior_Soul_Reaping, $ID_Mesmer_Minor_Domination_Magic, _
+	$ID_Mesmer_Minor_Fast_Casting, $ID_Mesmer_Minor_Illusion_Magic, $ID_Mesmer_Minor_Inspiration_Magic, $ID_Mesmer_Major_Domination_Magic, $ID_Mesmer_Major_Fast_Casting, $ID_Mesmer_Major_Illusion_Magic, _
+	$ID_Mesmer_Major_Inspiration_Magic, $ID_Mesmer_Superior_Domination_Magic, $ID_Mesmer_Superior_Fast_Casting, $ID_Mesmer_Superior_Illusion_Magic, $ID_Mesmer_Superior_Inspiration_Magic, $ID_Elementalist_Minor_Air_Magic, _
+	$ID_Elementalist_Minor_Earth_Magic, $ID_Elementalist_Minor_Energy_Storage, $ID_Elementalist_Minor_Water_Magic, $ID_Elementalist_Minor_Fire_Magic, $ID_Elementalist_Major_Air_Magic, $ID_Elementalist_Major_Earth_Magic, _
+	$ID_Elementalist_Major_Energy_Storage, $ID_Elementalist_Major_Fire_Magic, $ID_Elementalist_Major_Water_Magic, $ID_Elementalist_Superior_Air_Magic, $ID_Elementalist_Superior_Earth_Magic, _
+	$ID_Elementalist_Superior_Energy_Storage, $ID_Elementalist_Superior_Fire_Magic, $ID_Elementalist_Superior_Water_Magic, $ID_Assassin_Minor_Critical_Strikes, $ID_Assassin_Minor_Dagger_Mastery, _
+	$ID_Assassin_Minor_Deadly_Arts, $ID_Assassin_Minor_Shadow_Arts, $ID_Assassin_Major_Critical_Strikes, $ID_Assassin_Major_Dagger_Mastery, $ID_Assassin_Major_Deadly_Arts, $ID_Assassin_Major_Shadow_Arts, _
+	$ID_Assassin_Superior_Critical_Strikes, $ID_Assassin_Superior_Dagger_Mastery, $ID_Assassin_Superior_Deadly_Arts, $ID_Assassin_Superior_Shadow_Arts, $ID_Ritualist_Minor_Channeling_Magic, $ID_Ritualist_Minor_Communing, _
+	$ID_Ritualist_Minor_Restoration_Magic, $ID_Ritualist_Minor_Spawning_Power, $ID_Ritualist_Major_Channeling_Magic, $ID_Ritualist_Major_Communing, $ID_Ritualist_Major_Restoration_Magic, $ID_Ritualist_Major_Spawning_Power, _
+	$ID_Ritualist_Superior_Channeling_Magic, $ID_Ritualist_Superior_Communing, $ID_Ritualist_Superior_Restoration_Magic, $ID_Ritualist_Superior_Spawning_Power, $ID_Dervish_Minor_Earth_Prayers, $ID_Dervish_Minor_Mysticism, _
+	$ID_Dervish_Minor_Scythe_Mastery, $ID_Dervish_Minor_Wind_Prayers, $ID_Dervish_Major_Earth_Prayers, $ID_Dervish_Major_Mysticism, $ID_Dervish_Major_Scythe_Mastery, $ID_Dervish_Major_Wind_Prayers, _
+	$ID_Dervish_Superior_Earth_Prayers, $ID_Dervish_Superior_Mysticism, $ID_Dervish_Superior_Scythe_Mastery, $ID_Dervish_Superior_Wind_Prayers, $ID_Paragon_Minor_Command, $ID_Paragon_Minor_Leadership, _
+	$ID_Paragon_Minor_Motivation, $ID_Paragon_Minor_Spear_Mastery, $ID_Paragon_Major_Command, $ID_Paragon_Major_Leadership, $ID_Paragon_Major_Motivation, $ID_Paragon_Major_Spear_Mastery, $ID_Paragon_Superior_Command, _
+	$ID_Paragon_Superior_Leadership, $ID_Paragon_Superior_Motivation, $ID_Paragon_Superior_Spear_Mastery, $ID_Rune_of_Minor_Vigor, $ID_Rune_of_Vitae, $ID_Rune_of_Attunement, $ID_Rune_of_Major_Vigor, $ID_Rune_of_Recovery, _
+	$ID_Rune_of_Restoration, $ID_Rune_of_Clarity, $ID_Rune_of_Purity, $ID_Rune_of_Superior_Vigor _
+]
+Global Const $Map_Rune_IDs = MapFromArray($Rune_IDs_Array)
+
+; Insignias are present at index 0 of their armor salvageable item
+Local Const $Insignia_Structs_Array[] = [ _
+	$Struct_Warrior_Knights_Insignia, $Struct_Warrior_Lieutenants_Insignia, $Struct_Warrior_Stonefist_Insignia, $Struct_Warrior_Dreadnought_Insignia, $Struct_Warrior_Sentinels_Insignia, $Struct_Ranger_Frostbound_Insignia, _
+	$Struct_Ranger_Pyrebound_Insignia, $Struct_Ranger_Stormbound_Insignia, $Struct_Ranger_Scouts_Insignia, $Struct_Ranger_Earthbound_Insignia, $Struct_Ranger_Beastmasters_Insignia, $Struct_Monk_Wanderers_Insignia, _
+	$Struct_Monk_Disciples_Insignia, $Struct_Monk_Anchorites_Insignia, $Struct_Necromancer_Bloodstained_Insignia, $Struct_Necromancer_Tormentors_Insignia, $Struct_Necromancer_Bonelace_Insignia, $Struct_Necromancer_Minion_Masters_Insignia, _
+	$Struct_Necromancer_Blighters_Insignia, $Struct_Necromancer_Undertakers_Insignia, $Struct_Mesmer_Virtuosos_Insignia, $Struct_Mesmer_Artificers_Insignia, $Struct_Mesmer_Prodigys_Insignia, $Struct_Elementalist_Hydromancer_Insignia, _
+	$Struct_Elementalist_Geomancer_Insignia, $Struct_Elementalist_Pyromancer_Insignia, $Struct_Elementalist_Aeromancer_Insignia, $Struct_Elementalist_Prismatic_Insignia, $Struct_Assassin_Vanguards_Insignia, _
+	$Struct_Assassin_Infiltrators_Insignia, $Struct_Assassin_Saboteurs_Insignia, $Struct_Assassin_Nightstalkers_Insignia, $Struct_Ritualist_Shamans_Insignia, $Struct_Ritualist_Ghost_Forge_Insignia, $Struct_Ritualist_Mystics_Insignia, _
+	$Struct_Dervish_Windwalker_Insignia, $Struct_Dervish_Forsaken_Insignia, $Struct_Paragon_Centurions_Insignia, $Struct_Survivor_Insignia, $Struct_Radiant_Insignia, $Struct_Stalwart_Insignia, $Struct_Brawlers_Insignia, $Struct_Blessed_Insignia, _
+	$Struct_Heralds_Insignia, $Struct_Sentrys_Insignia _
+]
+Global Const $Map_Insignia_Structs = MapFromArray($Insignia_Structs_Array)
+
+; Runes are present at index 1 of their armor salvageable item
+Local Const $Rune_Structs_Array[] = [ _
+	$Struct_Warrior_Minor_Absorption, $Struct_Warrior_Minor_Axe_Mastery, $Struct_Warrior_Minor_Hammer_Mastery, $Struct_Warrior_Minor_Strength, $Struct_Warrior_Minor_Swordsmanship, $Struct_Warrior_Minor_Tactics, $Struct_Warrior_Major_Absorption, _
+	$Struct_Warrior_Major_Axe_Mastery, $Struct_Warrior_Major_Hammer_Mastery, $Struct_Warrior_Major_Strength, $Struct_Warrior_Major_Swordsmanship, $Struct_Warrior_Major_Tactics, $Struct_Warrior_Superior_Axe_Mastery, _
+	$Struct_Warrior_Superior_Hammer_Mastery, $Struct_Warrior_Superior_Strength, $Struct_Warrior_Superior_Swordsmanship, $Struct_Warrior_Superior_Tactics, $Struct_Warrior_Superior_Absorption, $Struct_Ranger_Minor_Beast_Mastery, _
+	$Struct_Ranger_Minor_Expertise, $Struct_Ranger_Minor_Marksmanship, $Struct_Ranger_Minor_Wilderness_Survival, $Struct_Ranger_Major_Beast_Mastery, $Struct_Ranger_Major_Expertise, $Struct_Ranger_Major_Marksmanship, _
+	$Struct_Ranger_Major_Wilderness_Survival, $Struct_Ranger_Superior_Beast_Mastery, $Struct_Ranger_Superior_Expertise, $Struct_Ranger_Superior_Marksmanship, $Struct_Ranger_Superior_Wilderness_Survival, $Struct_Monk_Minor_Divine_Favor, _
+	$Struct_Monk_Minor_Healing_Prayers, $Struct_Monk_Minor_Protection_Prayers, $Struct_Monk_Minor_Smiting_Prayers, $Struct_Monk_Major_Healing_Prayers, $Struct_Monk_Major_Protection_Prayers, $Struct_Monk_Major_Smiting_Prayers, _
+	$Struct_Monk_Major_Divine_Favor, $Struct_Monk_Superior_Divine_Favor, $Struct_Monk_Superior_Healing_Prayers, $Struct_Monk_Superior_Protection_Prayers, $Struct_Monk_Superior_Smiting_Prayers, $Struct_Necromancer_Minor_Blood_Magic, _
+	$Struct_Necromancer_Minor_Curses, $Struct_Necromancer_Minor_Death_Magic, $Struct_Necromancer_Minor_Soul_Reaping, $Struct_Necromancer_Major_Blood_Magic, $Struct_Necromancer_Major_Curses, $Struct_Necromancer_Major_Death_Magic, _
+	$Struct_Necromancer_Major_Soul_Reaping, $Struct_Necromancer_Superior_Blood_Magic, $Struct_Necromancer_Superior_Curses, $Struct_Necromancer_Superior_Death_Magic, $Struct_Necromancer_Superior_Soul_Reaping, $Struct_Mesmer_Minor_Domination_Magic, _
+	$Struct_Mesmer_Minor_Fast_Casting, $Struct_Mesmer_Minor_Illusion_Magic, $Struct_Mesmer_Minor_Inspiration_Magic, $Struct_Mesmer_Major_Domination_Magic, $Struct_Mesmer_Major_Fast_Casting, $Struct_Mesmer_Major_Illusion_Magic, _
+	$Struct_Mesmer_Major_Inspiration_Magic, $Struct_Mesmer_Superior_Domination_Magic, $Struct_Mesmer_Superior_Fast_Casting, $Struct_Mesmer_Superior_Illusion_Magic, $Struct_Mesmer_Superior_Inspiration_Magic, $Struct_Elementalist_Minor_Air_Magic, _
+	$Struct_Elementalist_Minor_Earth_Magic, $Struct_Elementalist_Minor_Energy_Storage, $Struct_Elementalist_Minor_Water_Magic, $Struct_Elementalist_Minor_Fire_Magic, $Struct_Elementalist_Major_Air_Magic, $Struct_Elementalist_Major_Earth_Magic, _
+	$Struct_Elementalist_Major_Energy_Storage, $Struct_Elementalist_Major_Fire_Magic, $Struct_Elementalist_Major_Water_Magic, $Struct_Elementalist_Superior_Air_Magic, $Struct_Elementalist_Superior_Earth_Magic, _
+	$Struct_Elementalist_Superior_Energy_Storage, $Struct_Elementalist_Superior_Fire_Magic, $Struct_Elementalist_Superior_Water_Magic, $Struct_Assassin_Minor_Critical_Strikes, $Struct_Assassin_Minor_Dagger_Mastery, _
+	$Struct_Assassin_Minor_Deadly_Arts, $Struct_Assassin_Minor_Shadow_Arts, $Struct_Assassin_Major_Critical_Strikes, $Struct_Assassin_Major_Dagger_Mastery, $Struct_Assassin_Major_Deadly_Arts, $Struct_Assassin_Major_Shadow_Arts, _
+	$Struct_Assassin_Superior_Critical_Strikes, $Struct_Assassin_Superior_Dagger_Mastery, $Struct_Assassin_Superior_Deadly_Arts, $Struct_Assassin_Superior_Shadow_Arts, $Struct_Ritualist_Minor_Channeling_Magic, $Struct_Ritualist_Minor_Communing, _
+	$Struct_Ritualist_Minor_Restoration_Magic, $Struct_Ritualist_Minor_Spawning_Power, $Struct_Ritualist_Major_Channeling_Magic, $Struct_Ritualist_Major_Communing, $Struct_Ritualist_Major_Restoration_Magic, $Struct_Ritualist_Major_Spawning_Power, _
+	$Struct_Ritualist_Superior_Channeling_Magic, $Struct_Ritualist_Superior_Communing, $Struct_Ritualist_Superior_Restoration_Magic, $Struct_Ritualist_Superior_Spawning_Power, $Struct_Dervish_Minor_Earth_Prayers, $Struct_Dervish_Minor_Mysticism, _
+	$Struct_Dervish_Minor_Scythe_Mastery, $Struct_Dervish_Minor_Wind_Prayers, $Struct_Dervish_Major_Earth_Prayers, $Struct_Dervish_Major_Mysticism, $Struct_Dervish_Major_Scythe_Mastery, $Struct_Dervish_Major_Wind_Prayers, _
+	$Struct_Dervish_Superior_Earth_Prayers, $Struct_Dervish_Superior_Mysticism, $Struct_Dervish_Superior_Scythe_Mastery, $Struct_Dervish_Superior_Wind_Prayers, $Struct_Paragon_Minor_Command, $Struct_Paragon_Minor_Leadership, _
+	$Struct_Paragon_Minor_Motivation, $Struct_Paragon_Minor_Spear_Mastery, $Struct_Paragon_Major_Command, $Struct_Paragon_Major_Leadership, $Struct_Paragon_Major_Motivation, $Struct_Paragon_Major_Spear_Mastery, $Struct_Paragon_Superior_Command, _
+	$Struct_Paragon_Superior_Leadership, $Struct_Paragon_Superior_Motivation, $Struct_Paragon_Superior_Spear_Mastery, $Struct_Rune_of_Minor_Vigor, $Struct_Rune_of_Vitae, $Struct_Rune_of_Attunement, $Struct_Rune_of_Major_Vigor, $Struct_Rune_of_Recovery, _
+	$Struct_Rune_of_Restoration, $Struct_Rune_of_Clarity, $Struct_Rune_of_Purity, $Struct_Rune_of_Superior_Vigor _
+]
+Global Const $Map_Rune_Structs = MapFromArray($Rune_Structs_Array)
+#EndRegion Runes
 
 #EndRegion Items

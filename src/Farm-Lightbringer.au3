@@ -1,13 +1,13 @@
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
+; Licensed under the Apache License, Version 2.0 (the 'License');
 ; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ; http://www.apache.org/licenses/LICENSE-2.0
 ;
 ; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
+; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
@@ -19,8 +19,8 @@
 #include '../lib/GWA2.au3'
 
 Local Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
-	& '- the quest "A Show of Force"' & @CRLF _
-	& '- the quest "Requiem for a Brain"' & @CRLF _
+	& '- the quest A Show of Force' & @CRLF _
+	& '- the quest Requiem for a Brain' & @CRLF _
 	& '- rune of doom in your inventory' & @CRLF _
 	& '- use low level heroes to level them up' & @CRLF _
 	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
@@ -137,7 +137,7 @@ Func FarmTheSulfurousWastes()
 	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) Then Return 1
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
 	;If MultipleMoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
-	If MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) Then Return 1  			; range 2200
+	If MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) Then Return 1	; range 2200
 	If MultipleMoveToAndAggro('Undead Ritualist Boss Group', -21500, -6000, -20400, -7400, -19500, -9500) Then Return 1
 	If MultipleMoveToAndAggro('Third Margonite Group', -22000, -9400, -22800, -9800) Then Return 1
 	If MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) Then Return 1

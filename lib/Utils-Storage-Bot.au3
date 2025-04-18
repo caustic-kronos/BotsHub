@@ -1,13 +1,13 @@
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
+; Licensed under the Apache License, Version 2.0 (the 'License');
 ; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ; http://www.apache.org/licenses/LICENSE-2.0
 ;
 ; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
+; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
@@ -146,10 +146,10 @@ EndFunc
 ;~ Connect to the database storing information about items
 Func ConnectToDatabase()
 	_SQLite_Startup()
-	If @error Then Exit MsgBox(16, "SQLite Error", "Failed to start SQLite")
+	If @error Then Exit MsgBox(16, 'SQLite Error', 'Failed to start SQLite')
 	FileChangeDir(@ScriptDir)
 	$SQLITE_DB = _SQLite_Open('data\items_database.db3')
-	If @error Then Exit MsgBox(16, "SQLite Error", "Failed to open database: " & _SQLite_ErrMsg())
+	If @error Then Exit MsgBox(16, 'SQLite Error', 'Failed to open database: ' & _SQLite_ErrMsg())
 	;_SQLite_SetSafeMode(False)
 	Out('Opened database at ' & @ScriptDir & '\data\items_database.db3')
 EndFunc
@@ -167,14 +167,14 @@ Func InitializeDatabase()
 	CreateTable($TABLE_LOOKUP_ATTRIBUTE, $SCHEMA_LOOKUP_ATTRIBUTE)
 	CreateTable($TABLE_LOOKUP_RARITY, $SCHEMA_LOOKUP_RARITY)
 	CreateTable($TABLE_LOOKUP_TYPE, $SCHEMA_LOOKUP_TYPE)
-	
+
 	CreateTable($TABLE_LOOKUP_MODEL, $SCHEMA_LOOKUP_MODEL)
 	CreateTable($TABLE_LOOKUP_UPGRADES, $SCHEMA_LOOKUP_UPGRADES)
-	
+
 	CreateTable($TABLE_DATA_RAW, $SCHEMA_DATA_RAW)
 	CreateTable($TABLE_DATA_USER, $SCHEMA_DATA_USER)
 
-	Local $columnsTypeIsNumber[] = [true, false]
+	Local $columnsTypeIsNumber[] = [True, False]
 	If TableIsEmpty($TABLE_LOOKUP_TYPE) Then FillTable($TABLE_LOOKUP_TYPE, $columnsTypeIsNumber, $Item_Types_Double_Array)
 	If TableIsEmpty($TABLE_LOOKUP_ATTRIBUTE) Then FillTable($TABLE_LOOKUP_ATTRIBUTE, $columnsTypeIsNumber, $Attributes_Double_Array)
 	If TableIsEmpty($TABLE_LOOKUP_RARITY) Then FillTable($TABLE_LOOKUP_RARITY, $columnsTypeIsNumber, $Rarities_Double_Array)
@@ -217,7 +217,7 @@ Func FillTable($table, Const ByRef $isNumber, Const ByRef $values)
 		$query = StringLeft($query, StringLen($query) - 2)
 		$query &= '), '
 	Next
-	
+
 	$query = StringLeft($query, StringLen($query) - 2)
 	$query &= ';'
 	SQLExecute($query)
@@ -250,16 +250,16 @@ EndFunc
 ;~ Query database
 Func SQLQuery($query, ByRef $queryResult)
 	;Out($query)
-	Local $return = _SQLite_Query($SQLITE_DB, $query, $queryResult)
-	If $return <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query, $GUI_CONSOLE_RED_COLOR)
+	Local $result = _SQLite_Query($SQLITE_DB, $query, $queryResult)
+	If $result <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query, $GUI_CONSOLE_RED_COLOR)
 EndFunc
 
 
 ;~ Execute a request on the database
 Func SQLExecute($query)
 	;Out($query)
-	Local $return = _SQLite_Exec($SQLITE_DB, $query)
-	If $return <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error, $GUI_CONSOLE_RED_COLOR)
+	Local $result = _SQLite_Exec($SQLITE_DB, $query)
+	If $result <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error, $GUI_CONSOLE_RED_COLOR)
 EndFunc
 
 
@@ -301,11 +301,11 @@ Func StoreAllItemsData()
 			Sleep(20)
 		Next
 	Next
-	
+
 	$InsertQuery = StringLeft($InsertQuery, StringLen($InsertQuery) - 3) & @CRLF & ';'
 	SQLExecute($InsertQuery)
 	SQLExecute('COMMIT;')
-	
+
 	AddToFilledData($batchID)
 	CompleteItemsMods($batchID)
 EndFunc
@@ -338,15 +338,15 @@ Func CompleteItemsMods($batchID)
 			& 'SET ' & $upgradeType & ' = (' & @CRLF _
 			& '	SELECT upgrades.effect' & @CRLF _
 			& '	FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
-			& '	WHERE upgrades.propagate = 1' & @CRLF _									
-			& '		AND upgrades.OS = ' & $TABLE_DATA_USER & '.OS' & @CRLF _							
-			& '		AND upgrades.weapon = type_ID' & @CRLF _						
-			& '		AND upgrades.hexa IS NOT NULL' & @CRLF _							
-			& "		AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _		
-			& "		AND modstruct LIKE ('%' || upgrades.hexa || '%')" & @CRLF _			
+			& '	WHERE upgrades.propagate = 1' & @CRLF _
+			& '		AND upgrades.OS = ' & $TABLE_DATA_USER & '.OS' & @CRLF _
+			& '		AND upgrades.weapon = type_ID' & @CRLF _
+			& '		AND upgrades.hexa IS NOT NULL' & @CRLF _
+			& "		AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _
+			& "		AND modstruct LIKE ('%' || upgrades.hexa || '%')" & @CRLF _
 			& ')' & @CRLF _
 			& 'WHERE ' & $upgradeType & ' IS NULL' & @CRLF _
-			& '	AND batch = ' & $batchID & @CRLF _										
+			& '	AND batch = ' & $batchID & @CRLF _
 			& '	AND EXISTS (' & @CRLF _
 			& '		SELECT upgrades.effect' & @CRLF _
 			& '		FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
@@ -466,7 +466,7 @@ Func SellGoldScrolls()
 		GoToNPC($scrollTrader)
 		RndSleep(500)
 	EndIf
-	
+
 	Local $item, $itemID
 	For $bagIndex = 1 To 5
 		Local $bag = GetBag($bagIndex)
@@ -490,13 +490,13 @@ Func MoveItemsOutOfEquipmentBag()
 	Local $inventoryEmptySlots = FindAllEmptySlots(1, 4)
 	Local $countEmptySlots = UBound($inventoryEmptySlots) / 2
 	Local $cursor = 0
-	If $countEmptySlots <= $cursor Then 
+	If $countEmptySlots <= $cursor Then
 		Out('No space in inventory to move the items from the equipment bag')
 		Return
 	EndIf
-	
+
 	For $slot = 1 To DllStructGetData($equipmentBag, 'slots')
-		If $countEmptySlots <= $cursor Then 
+		If $countEmptySlots <= $cursor Then
 			Out('No space in inventory to move the items from the equipment bag')
 			Return
 		EndIf
@@ -525,7 +525,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem)
 		GoToNPC($merchant)
 		RndSleep(500)
 	EndIf
-	
+
 	Local $item, $itemID
 	For $bagIndex = 1 To 5
 		Local $bag = GetBag($bagIndex)
@@ -550,7 +550,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	GoToNPC($materialMerchant)
 	RndSleep(250)
-	
+
 	Local $item, $itemID
 	For $bagIndex = 1 To 4
 		Local $bag = GetBag($bagIndex)
@@ -567,7 +567,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 					Sleep(250 + GetPing())
 					$totalAmount -= 10
 					;Safety net incase some sell orders didn't go through
-					If ($totalAmount < 10) Then 
+					If ($totalAmount < 10) Then
 						$item = GetItemBySlot($bagIndex, $i)
 						$totalAmount = DllStructGetData($item, 'Quantity')
 					EndIf
@@ -587,7 +587,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	GoToNPC($rareMaterialMerchant)
 	RndSleep(250)
-	
+
 	Local $item, $itemID
 	For $bagIndex = 1 To 4
 		Local $bag = GetBag($bagIndex)
@@ -604,7 +604,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 					Sleep(250 + GetPing())
 					$totalAmount -= 1
 					;Safety net incase some sell orders didn't go through
-					If ($totalAmount < 1) Then 
+					If ($totalAmount < 1) Then
 						$item = GetItemBySlot($bagIndex, $i)
 						$totalAmount = DllStructGetData($item, 'Quantity')
 					EndIf
@@ -637,7 +637,7 @@ Func StoreItemInXunlaiStorage($item)
 	Local $itemID, $storageSlot, $amount
 	$itemID = DllStructGetData($item, 'ModelID')
 	$amount = DllStructGetData($item, 'Quantity')
-	
+
 	If IsMaterial($item) Then
 		Local $materialStorageLocation = $Map_Material_Location[$itemID]
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)

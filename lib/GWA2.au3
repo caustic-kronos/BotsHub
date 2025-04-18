@@ -333,12 +333,12 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 	EndIf
 
 	ScanGWBasePatterns()
-	
+
 	; Read memory values for game data
 	$baseAddressPtr = MemoryRead(GetScannedAddress('ScanBasePointer', 8))
 	If @error Then logCriticalErrors('Failed to read base pointer')
 	SetValue('BasePointer', '0x' & Hex($baseAddressPtr, 8))
-	
+
 	$regionId = MemoryRead(GetScannedAddress('ScanRegion', -0x3))
 	$instanceInfoPtr = MemoryRead(GetScannedAddress('ScanInstanceInfo', 0xE))
 	$areaInfoPtr = MemoryRead(GetScannedAddress('ScanAreaInfo', 0x6))
@@ -347,7 +347,7 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 	SetValue('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
 	SetValue('LoadFinishedStart', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 1), 8))
 	SetValue('LoadFinishedReturn', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 6), 8))
-	
+
 	$agentBaseAddress = MemoryRead(GetScannedAddress('ScanAgentBasePointer', 8) + 0xC - 7)
 	If @error Then logCriticalErrors('Failed to read agent base')
 	SetValue('AgentBase', '0x' & Hex($agentBaseAddress, 8))
@@ -390,7 +390,7 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 
 	$tempValue = GetScannedAddress('ScanBuildNumber', 0x2C)
 	If @error Then logCriticalErrors('Failed to read build number address')
-	
+
 	$buildNumber = MemoryRead($tempValue + MemoryRead($tempValue) + 5)
 	If @error Then logCriticalErrors('Failed to read build number')
 
@@ -402,7 +402,7 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 
 	$currentStatus = MemoryRead(GetScannedAddress('ScanChangeStatusFunction', 35))
 	If @error Then logCriticalErrors('Failed to read current status')
-	
+
 	;$characterSlots = MemoryRead(GetScannedAddress('ScanCharslots', 22))
 	;If @error Then logCriticalErrors('Failed to read character slots')
 
@@ -410,38 +410,38 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 	If @error Then logCriticalErrors('Failed to read engine address')
 	SetValue('MainStart', '0x' & Hex($tempValue, 8))
 	SetValue('MainReturn', '0x' & Hex($tempValue + 5, 8))
-	
+
 	$tempValue = GetScannedAddress('ScanRenderFunc', -0x67)
 	If @error Then logCriticalErrors('Failed to read render function address')
 	SetValue('RenderingMod', '0x' & Hex($tempValue, 8))
 	SetValue('RenderingModReturn', '0x' & Hex($tempValue + 10, 8))
-	
+
 	$tempValue = GetScannedAddress('ScanTargetLog', 1)
 	If @error Then logCriticalErrors('Failed to read target log address')
 	SetValue('TargetLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('TargetLogReturn', '0x' & Hex($tempValue + 5, 8))
-	
+
 	$tempValue = GetScannedAddress('ScanSkillLog', 1)
 	If @error Then logCriticalErrors('Failed to read skill log address')
 	SetValue('SkillLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('SkillLogReturn', '0x' & Hex($tempValue + 5, 8))
-	
+
 	$tempValue = GetScannedAddress('ScanSkillCompleteLog', -4)
 	If @error Then logCriticalErrors('Failed to read skill complete log address')
 	SetValue('SkillCompleteLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('SkillCompleteLogReturn', '0x' & Hex($tempValue + 5, 8))
-	
+
 	$tempValue = GetScannedAddress('ScanSkillCancelLog', 5)
 	If @error Then logCriticalErrors('Failed to read skill cancel log address')
 	SetValue('SkillCancelLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('SkillCancelLogReturn', '0x' & Hex($tempValue + 6, 8))
-	
+
 	$tempValue = GetScannedAddress('ScanChatLog', 18)
 	If @error Then logCriticalErrors('Failed to read chat log address')
 	SetValue('ChatLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('ChatLogReturn', '0x' & Hex($tempValue + 6, 8))
-	
-	$tempValue = GetScannedAddress('ScanTraderHook', -0x2F)    ; was -7
+
+	$tempValue = GetScannedAddress('ScanTraderHook', -0x2F)			; was -7
 	If @error Then logCriticalErrors('Failed to read trader hook address')
 	SetValue('TraderHookStart', '0x' & Hex($tempValue, 8))
 	SetValue('TraderHookReturn', '0x' & Hex($tempValue + 5, 8))
@@ -450,17 +450,17 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 	If @error Then logCriticalErrors('Failed to read dialog log address')
 	SetValue('DialogLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('DialogLogReturn', '0x' & Hex($tempValue + 5, 8))
-	
-	$tempValue = GetScannedAddress('ScanStringFilter1', -5)    ; was -0x23
+
+	$tempValue = GetScannedAddress('ScanStringFilter1', -5)			; was -0x23
 	If @error Then logCriticalErrors('Failed to read string filter 1 address')
 	SetValue('StringFilter1Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter1Return', '0x' & Hex($tempValue + 5, 8))
-	
-	$tempValue = GetScannedAddress('ScanStringFilter2', 0x16)    ; was 0x61
+
+	$tempValue = GetScannedAddress('ScanStringFilter2', 0x16)		; was 0x61
 	If @error Then logCriticalErrors('Failed to read string filter 2 address')
 	SetValue('StringFilter2Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter2Return', '0x' & Hex($tempValue + 5, 8))
-	
+
 	SetValue('PostMessage', '0x' & Hex(MemoryRead(GetScannedAddress('ScanPostMessage', 11)), 8))
 	If @error Then logCriticalErrors('Failed to read post message')
 	SetValue('Sleep', MemoryRead(MemoryRead(GetValue('ScanSleep') + 8) + 3))
@@ -620,7 +620,7 @@ Func ScanGWBasePatterns()
 	AddPatternToInjection('8B0C9085C97419')
 	_('ScanCurrentTarget:')
 	AddPatternToInjection('83C4085F8BE55DC3CCCCCCCCCCCCCCCCCCCCCC55')
-	
+
 	_('ScanMyID:')
 	AddPatternToInjection('83EC08568BF13B15')
 	_('ScanEngine:')
@@ -639,7 +639,7 @@ Func ScanGWBasePatterns()
 	AddPatternToInjection('558BEC83EC208D45F0')
 	_('ScanPing:')
 	AddPatternToInjection('E874651600')
-	
+
 	_('ScanMapID:')
 	AddPatternToInjection('558BEC8B450885C074078B')
 
@@ -657,7 +657,7 @@ Func ScanGWBasePatterns()
 
 	_('ScanLanguage:')
 	AddPatternToInjection('C38B75FC8B04B5')
-	
+
 	_('ScanUseSkillFunction:')
 	AddPatternToInjection('85F6745B83FE1174')
 	_('ScanPacketSendFunction:')
@@ -833,7 +833,7 @@ Func ScanGWBasePatterns()
 		; Create a new thread in the target process to execute the scan routine
 		Local $thread = DllCall($kernelHandle, 'int', 'CreateRemoteThread', 'int', $processHandle, 'ptr', 0, 'int', 0, 'int', GetLabelInfo('ScanProc'), 'ptr', 0, 'int', 0, 'int', 0)
 		; Get the thread ID
-		$thread = $thread[0] 
+		$thread = $thread[0]
 
 		; Wait for the thread to finish executing
 		Local $result
@@ -901,7 +901,7 @@ Func ScanMemoryForPattern($patternBinary, $onMatchFunc = Null)
 		If $mbi[4] = 4096 Then
 			Local $buffer = DllStructCreate('byte[' & $mbi[3] & ']')
 			DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
-			
+
 			Local $tmpMemoryData = DllStructGetData($buffer, 1)
 			$tmpMemoryData = BinaryToString($tmpMemoryData)
 
@@ -1265,12 +1265,12 @@ Func TraderRequest($modelID, $extraID = -1)
 	Local $found = False
 	Local $quoteID = MemoryRead($traderQuoteId)
 	Local $itemStruct = DllStructCreate($itemStructTemplate)
-	
+
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
-		
+
 		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID And DllStructGetData($itemStruct, 'bag') = 0 And DllStructGetData($itemStruct, 'AgentID') == 0 Then
 			If $extraID = -1 Or DllStructGetData($itemStruct, 'ExtraID') = $extraID Then
@@ -1321,7 +1321,7 @@ Func TraderRequestBuy($item)
 	Until $found Or TimerDiff($deadlock) > GetPing() + 5000
 
 	Return $found
- EndFunc
+EndFunc
 
 
 ;~ Request a quote to sell an item to the trader.
@@ -1671,7 +1671,7 @@ EndFunc
 
 ;~ Internal use for map travel.
 Func ZoneMap($mapID, $district = 0)
-	MoveMap($mapID, GetRegion(), $district, GetLanguage());
+	MoveMap($mapID, GetRegion(), $district, GetLanguage())
 EndFunc
 
 
@@ -2025,7 +2025,7 @@ EndFunc
 Func WriteChat($message, $sender = 'GWA2')
 	Local $address = 256 * $queueCounter + $queueBaseAddress
 	;FIXME: rewrite with modulo
-	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1;
+	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 	If StringLen($sender) > 19 Then $sender = StringLeft($sender, 19)
 
 	MemoryWrite($address + 4, $sender, 'wchar[20]')
@@ -2056,7 +2056,7 @@ EndFunc
 Func SendChat($message, $channel = '!')
 	Local $address = 256 * $queueCounter + $queueBaseAddress
 	;FIXME: rewrite with modulo
-	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1;
+	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 	If StringLen($message) > 120 Then $message = StringLeft($message, 120)
 
 	MemoryWrite($address + 12, $channel & $message, 'wchar[122]')
@@ -2081,8 +2081,8 @@ Func UseSkill($skillSlot, $target = -2, $callTarget = False)
 	DllStructSetData($useSkillStruct, 4, $callTarget)
 	Enqueue($useSkillStructPtr, 16)
 EndFunc
-	
-	
+
+
 Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
 	If GetIsDead(-2) Or Not IsRecharged($skillSlot) Then Return
 	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
@@ -3617,7 +3617,7 @@ EndFunc
 Func GetPartyDanger($agentArray = 0, $party = 0)
 	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
 	If $party == 0 Then $party = GetParty($agentArray)
-	
+
 	Local $resultArray[$party[0] + 1]
 	$resultArray[0] = $party[0]
 	For $i = 1 To $resultArray[0]
@@ -3993,7 +3993,7 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 				$resultArray[0] = $effectCount[1]
 
 				For $i = 0 To $effectCount[1] - 1
-                    $resultArray[$i + 1] = DllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
+					$resultArray[$i + 1] = DllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
 					DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', '')
 				Next
@@ -4294,7 +4294,7 @@ Func GetProfPrimaryAttribute($profession)
 		Case $ID_Paragon
 			Return $ID_Leadership
 		Case $ID_Dervish
-			Return $ID_Mysticism	
+			Return $ID_Mysticism
 	EndSwitch
 EndFunc
 #EndRegion Misc
@@ -5332,7 +5332,7 @@ Func CreateCommands()
 	_('call UseHeroSkillFunction')
 	_('add esp,C')
 	_('ljmp CommandReturn')
-	
+
 ;~	_('CommandToggleLanguage:')
 
 	_('CommandSendChat:')

@@ -28,7 +28,7 @@ Local Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
 Local Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- +4 Shadow Arts' & @CRLF _
 	& '- Blessed insignias'& @CRLF _
-	& '- A shield with the inscription "Like a rolling stone" (+10 armor against earth damage)' & @CRLF _
+	& '- A shield with the inscription Like a rolling stone (+10 armor against earth damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration' & @CRLF _
 	& '- Cupcakes'
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form) is better than UseSkillEx(2))

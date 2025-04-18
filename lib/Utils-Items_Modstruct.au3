@@ -188,7 +188,7 @@ Func IsPerfectStaff($aItem)
 			Else
 				Return False
 			EndIf
-		Case else
+		Case Else
 			MsgBox(0, 'Error', 'This staff attribute is not recognised.')
 	EndSwitch
 	Return False
@@ -487,7 +487,7 @@ Func IsPerfectCaster($aItem)
 				EndIf
 			EndIf
 			Return False
-		Case else
+		Case Else
 			MsgBox(0, 'Error', 'This attribute is not recognised.')
 	EndSwitch
 	Return False
@@ -502,7 +502,7 @@ Func IsRareRune($aItem)
 	Local $Prodigy = StringInStr($ModStruct, 'C60330A5000528A7', 0, 1)			; Prodigy insignia
 	Local $SupDom = StringInStr($ModStruct, '30250302E821770', 0, 1)			; Superior Domination
 	Local $Shamans = StringInStr($ModStruct, '080430A50005F8A', 0, 1)			; Shamans insignia
-	
+
 	If $SupVigor > 0 Or $WindWalker > 0 Or $MinorMyst > 0 Or $SupEarthPrayers > 0 Or $Prodigy > 0 Or $SupDom > 0 Or $Shamans > 0 Then
 		Return True
 	Else
@@ -512,27 +512,27 @@ EndFunc
 
 
 Func IsNiceMod($aItem)
-	Local $ModStruct = GetModStruct($aItem)
-	Local $t         = DllStructGetData($aItem, 'Type')
-	
+	Local $ModStruct	= GetModStruct($aItem)
+	Local $t			= DllStructGetData($aItem, 'Type')
+
 	Local $ArmorAlways = StringInStr($ModStruct, '05000821', 0 ,1); Armor +5
 	If $ArmorAlways > 0 And ($t = 36) Then; 26 is Staff Head or Wrapping
 		Return True
 		Return False
 	EndIf
-	
+
 	Local $FuriousPrefix = StringInStr($ModStruct, '0A00B823', 0 ,1); Axe haft, Dagger Tang, Hammer Haft, Scythe Snathe, Spearhead, Sword Hilt
 	If $FuriousPrefix > 0 And ($t = 36) Then
 		Return True
 		Return False
 	EndIf
-	
+
 	Local $HealthAlways = StringInStr($ModStruct, '001E4823', 0 ,1); +30 Health
 	If $HealthAlways > 0 And ($t = 24 Or $t = 27 Or $t = 36) Then; 12 is focus core, 26 can be Staff Head or Wrap
 		Return True
 		Return False
 	EndIf
-	
+
 	Local $ofEnchanting = StringInStr($ModStruct, '1400B822', 0 ,1); +20% Enchantment Duration
 	If $ofEnchanting > 0 And ($t = 26 Or $t = 36) Then; 26 is Staff Wrapping
 		Return True
@@ -576,8 +576,8 @@ Func IsNiceMod($aItem)
 	;         Return True
 	;         Return False
 	;     EndIf
-	
-	
+
+
 	; reduce blind dazed cripple -33%
 	; Local $ICanSeeClearlyNow = StringInStr($ModStruct, '00015828', 0 ,1); Reduces Blind duration on you by 20%
 	;     If $ICanSeeClearlyNow > 0 Then
@@ -602,12 +602,12 @@ Func IsNiceMod($aItem)
 			Return True
 			Return False
 		EndIf
-	
+
 	Local $HSR20 = StringInStr($ModStruct, '00142828', 0, 1); Halves skill recharge of spells (Chance: 20%)
 		If $HSR20 > 0 And ($t = 12 Or $t = 22) Then; 12 is Forget Me Not, 22 is Wand Wrapping of Memory
 			Return True
 			Return False
 		EndIf
-	
+
 	Return False
 EndFunc

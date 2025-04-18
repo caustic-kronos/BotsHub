@@ -1,9 +1,9 @@
 ;############################
-;#  by rheek				#
-;#  modified by mhaendler	#
-;# GWCA Update By 3vcloud	#
-;# C+ to LUA   By MrJambix	#
-;#  improved by night		#
+;#	by rheek				#
+;#	modified by mhaendler	#
+;#	GWCA Update	By 3vcloud	#
+;#	C+ to LUA	By MrJambix	#
+;#	improved by night		#
 ;############################
 ; v1.7, source: github.com/rheek123/GwBotApiPatcher
 ;

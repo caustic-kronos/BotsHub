@@ -1,13 +1,13 @@
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
+; Licensed under the Apache License, Version 2.0 (the 'License');
 ; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ; http://www.apache.org/licenses/LICENSE-2.0
 ;
 ; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
+; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
@@ -31,7 +31,7 @@ Local Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
 Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
-	& '- A shield with the inscription "Through Thick and Thin" (+10 armor against Piercing damage)' & @CRLF _
+	& '- A shield with the inscription Through Thick and Thin (+10 armor against Piercing damage)' & @CRLF _
 	& '- A spear +5 energy +5 armor or +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
@@ -150,7 +150,7 @@ Func CorsairsFarmLoop()
 
 	For $i = 0 To 13
 		DefendAgainstCorsairs()
-		if $i < 13 Then Attack(GetNearestEnemyToAgent(-2))
+		If $i < 13 Then Attack(GetNearestEnemyToAgent(-2))
 		RndSleep(1000)
 	Next
 
