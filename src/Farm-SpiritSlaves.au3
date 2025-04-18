@@ -33,7 +33,7 @@ Local Const $SpiritSlavesFarmInformations = 'For best results, have :' & @CRLF _
 	& '- any PCons you wish to use' & @CRLF _
 	& '- the quest Destroy the Ungrateful Slaves not completed'
 
-Local $SpiritSlaves_Farm_Setup = False
+Local $SPIRIT_SLAVES_FARM_SETUP = False
 
 Local $loggingFile
 
@@ -58,7 +58,7 @@ Local Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray
 Func SpiritSlavesFarm($STATUS)
 	$loggingFile = FileOpen('logs/spiritslaves_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
-	While Not($SpiritSlaves_Farm_Setup)
+	While Not($SPIRIT_SLAVES_FARM_SETUP)
 		SpiritSlavesFarmSetup()
 	WEnd
 
@@ -150,7 +150,7 @@ Func SpiritSlavesFarmSetup()
 		MoveTo(-9714, -10767)
 		MoveTo(-7919, -10530)
 	EndIf
-	$SpiritSlaves_Farm_Setup = True
+	$SPIRIT_SLAVES_FARM_SETUP = True
 EndFunc
 
 
@@ -380,7 +380,7 @@ Func RestartAfterDeath()
 	While GetIsDead(-2)
 		RndSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
-			$SpiritSlaves_Farm_Setup = True
+			$SPIRIT_SLAVES_FARM_SETUP = True
 			Out('Travelling to Bone Palace')
 			DistrictTravel($ID_Bone_Palace, $ID_EUROPE, $ID_FRENCH)
 			Return 1
