@@ -107,7 +107,7 @@ Global $GUI_Group_RunInfos, $GUI_Label_Runs, $GUI_Label_Failures, $GUI_Label_Tim
 
 Global $GUI_Group_ItemsLooted, $GUI_Label_ChunkOfDrakeFlesh, $GUI_Label_SkaleFins, $GUI_Label_GlacialStones, $GUI_Label_DiessaChalices, $GUI_Label_RinRelics, $GUI_Label_WintersdayGifts, $GUI_Label_MargoniteGemstone, $GUI_Label_StygianGemstone, $GUI_Label_TitanGemstone, $GUI_Label_TormentGemstone
 Global $GUI_Group_Titles, $GUI_Label_AsuraTitle, $GUI_Label_DeldrimorTitle, $GUI_Label_NornTitle, $GUI_Label_VanguardTitle, $GUI_Label_KurzickTitle, $GUI_Label_LuxonTitle, $GUI_Label_LightbringerTitle, $GUI_Label_SunspearTitle
-Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
+Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_BuyEctoplasm, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables
 Global $GUI_Group_BaseLootOptions, $GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, $GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
 Global $GUI_Group_RarityLootOptions, $GUI_Checkbox_LootGoldItems, $GUI_Checkbox_LootPurpleItems, $GUI_Checkbox_LootBlueItems, $GUI_Checkbox_LootWhiteItems, $GUI_Checkbox_LootGreenItems
@@ -194,15 +194,15 @@ Func createGUI()
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 304, 156, 20)
 	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 334, 156, 20)
+	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 364, 156, 20)
 
-	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 31, 364, 156, 20)
-	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 205, 364, 75, 20)
+	GUICtrlCreateGroup('', -99, -99, 1, 1)
+	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('Consumables to consume', 305, 40, 271, 361)
+	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 256, 20)
+	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 315, 364, 156, 20)
+	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 490, 364, 75, 20)
 	GUICtrlSetBkColor($GUI_Button_DynamicExecution, $GUI_BLUE_COLOR)
 	GUICtrlSetOnEvent($GUI_Button_DynamicExecution, 'GuiButtonHandler')
-	GUICtrlCreateGroup('', -99, -99, 1, 1)
-
-	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('Consumables to consume', 305, 40, 271, 361)
-	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 156, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$GUI_Tab_LootOptions = GUICtrlCreateTabItem('Loot options')
@@ -497,15 +497,17 @@ EndFunc
 ; Function to deal with inventory during farm
 Func DuringFarmActions()
 	; This function means we need to have salvaging tools on during farm /!\
-	; Not much that can be done during farm other than salvaging what can be salvaged
+	; Not much that can be done during farm other than :
+	;-identifying what can be identified
+	;-salvaging what can be salvaged
 EndFunc
 
 ; Function to deal with inventory after farm
 Func PostFarmActions()
 	; Operations order :
 	; 1-Store unid if desired	-> not implemented
-	; 2-Sort
-	; 3-Identify
+	; 2-Sort items
+	; 3-Identify items
 	; 4-Collect data
 	; 5-Salvage ?
 	; 6-Sell materials
@@ -525,15 +527,6 @@ Func PostFarmActions()
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then
-			DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		EndIf
-	
-		; Can't sell gold scrolls since the function crash
-		;If (FindAnyInInventory($Gold_Scrolls_Array)) Then SellGoldScrolls()
-		SellEverythingToMerchant()
-	EndIf
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then
 			DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
@@ -545,9 +538,9 @@ Func PostFarmActions()
 		;SalvageItems()
 		;StoreInXunlaiStorage()
 		; Need a second pass at merchant after recycling the inscriptions out
-		If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
-			SellEverythingToMerchant()
-		EndIf
+		;If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
+		;	SellEverythingToMerchant()
+		;EndIf
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then
@@ -555,8 +548,19 @@ Func PostFarmActions()
 		EndIf
 		
 		SellMaterialsToMerchant()
+		SellRareMaterialsToMerchant()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then
+			DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		EndIf
+	
+		; Can't sell gold scrolls since the function crash
+		;If (FindAnyInInventory($Gold_Scrolls_Array)) Then SellGoldScrolls()
+		SellEverythingToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
 EndFunc
 
 

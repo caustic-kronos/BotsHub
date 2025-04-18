@@ -476,7 +476,7 @@ Func SellGoldScrolls()
 			If $itemID <> 0 And IsGoldScroll($itemID) Then
 				Out('ok')
 				TraderRequestSell($item)
-				RndSleep(250 + GetPing())
+				RndSleep(500 + GetPing())
 				TraderSell()
 			EndIf
 		Next
@@ -509,22 +509,15 @@ Func MoveItemsOutOfEquipmentBag()
 		EndIf
 	Next
 EndFunc
-		;SalvageInscriptions()
-		;UpgradeWithSalvageInscriptions()
-		;SalvageItems()
-		;StoreInXunlaiStorage()
-
-
 
 
 ;~ Sell general items to trader
-Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem)
-	If GetMapID() == $ID_Rata_Sum Then
-		Out('Moving to Merchant')
-		Local $merchant = GetNearestNPCToCoords(19500, 14750)
-		GoToNPC($merchant)
-		RndSleep(500)
-	EndIf
+Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	Out('Moving to merchant')
+	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	GoToNPC($merchant)
+	RndSleep(500)
 
 	Local $item, $itemID
 	For $bagIndex = 1 To 5
@@ -533,8 +526,12 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem)
 			$item = GetItemBySlot($bagIndex, $i)
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 And $shouldSellItem($item) Then
-				SellItem($item, DllStructGetData($item, 'Quantity'))
-				RndSleep(3000)
+				If $dryRun Then
+					Out('Will sell item at ' & $bagIndex & ':' & $i)
+				Else
+					SellItem($item, DllStructGetData($item, 'Quantity'))
+				EndIf
+				RndSleep(500 + GetPing())
 			EndIf
 		Next
 	Next
@@ -543,13 +540,11 @@ EndFunc
 
 ;~ Sell materials to materials merchant in EOTN
 Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
-	If GetMapID() <> $ID_Eye_of_the_North Then
-		DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-	EndIf
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to materials merchant')
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	GoToNPC($materialMerchant)
-	RndSleep(250)
+	RndSleep(500)
 
 	Local $item, $itemID
 	For $bagIndex = 1 To 4
@@ -580,9 +575,7 @@ EndFunc
 
 ;~ Sell rare materials to rare materials merchant in EOTN
 Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial)
-	If GetMapID() <> $ID_Eye_of_the_North Then
-		DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-	EndIf
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	GoToNPC($rareMaterialMerchant)
@@ -615,6 +608,52 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 EndFunc
 
 
+;~ Buy rare material from rare materials merchant in EOTN
+Func BuyRareMaterialFromMerchant($materialModelID, $amount)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	Out('Moving to rare materials merchant')
+	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
+	GoToNPC($rareMaterialMerchant)
+	RndSleep(250)
+
+	For $i = 1 To $amount
+		TraderRequest($materialModelID)
+		Sleep(500 + GetPing())
+		Local $traderPrice = GetTraderCostValue()
+		Out('Buying for ' & $traderPrice)
+		TraderBuy()
+		Sleep(250 + GetPing())
+	Next
+	;TODO: add safety net to check amount of items bought and buy some more if needed
+EndFunc
+
+
+;~ Buy rare material from rare materials merchant in EOTN until you have little or no money left
+;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
+;~ So please only use with $poorThreshold > 5k
+Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	Out('Moving to rare materials merchant')
+	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
+	GoToNPC($rareMaterialMerchant)
+	RndSleep(250)
+
+	TraderRequest($materialModelID)
+	Sleep(500 + GetPing())
+	Local $traderPrice = GetTraderCostValue()
+	Local $amount = Floor((GetGoldCharacter() - $poorThreshold) / $traderPrice)
+	Out('Buying ' & $amount & ' items for ' & $traderPrice)
+	While $amount > 0
+		TraderBuy()
+		Sleep(250 + GetPing())
+		TraderRequest($materialModelID)
+		Sleep(500 + GetPing())
+		$traderPrice = GetTraderCostValue()
+		$amount -= 1
+	WEnd
+EndFunc
+
+
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Out('Storing items')
 	Local $item, $itemID
@@ -626,6 +665,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			If $itemID <> 0 And $shouldStoreItem($item) Then
 				Out('Moving ' & $bagIndex & ';' & $i)
 				StoreItemInXunlaiStorage($item)
+				RndSleep(50)
 			EndIf
 		Next
 	Next
@@ -682,7 +722,7 @@ Func DefaultShouldStoreItem($item)
 		Return True
 	ElseIf IsBasicMaterial($item) Then
 		Return True
-	ElseIf ($itemID == $ID_Identification_Kit Or $itemID == $ID_SUP_Identification_Kit) Then
+	ElseIf ($itemID == $ID_Identification_Kit Or $itemID == $ID_Superior_Identification_Kit) Then
 		Return True
 	ElseIf IsRareMaterial($item) Then
 		Return True
@@ -749,314 +789,13 @@ Func HasSalvageInscription($item)
 	Return False
 EndFunc
 
+
 Func ShouldKeepWeapon($itemID)
-	Local $ID_Model_Great_Conch = 2415
-	Local $ID_Model_Elemental_Sword = 2267
+	Local $ID_Model_Great_Conch = 2415			;Salvages to dust
+	Local $ID_Model_Elemental_Sword = 2267		;Salvages to dust
 	Local $shouldKeepWeaponsArray[] = [$ID_Model_Great_Conch, $ID_Model_Elemental_Sword]
 	Local $Map_shouldKeepWeapons = MapFromArray($shouldKeepWeaponsArray)
 	If $Map_shouldKeepWeapons[$itemID] <> null Then Return True
 	Return False
 EndFunc
 #EndRegion Inventory
-
-
-#Region Guild Hall
-;~ Checks to see which Guild Hall you are in and the spawn point
-Func CheckGuildHall()
-	Switch GetMapID()
-		Case $ID_Warriors_Isle
-			$WarriorsIsle = True
-		Case $ID_Hunters_Isle
-			$HuntersIsle = True
-		Case $ID_Wizards_Isle
-			$WizardsIsle = True
-		Case $ID_Burning_Isle
-			$BurningIsle = True
-		Case $ID_Frozen_Isle
-			$FrozenIsle = True
-		Case $ID_Nomads_Isle
-			$NomadsIsle = True
-		Case $ID_Druids_Isle
-			$DruidsIsle = True
-		Case $ID_Isle_Of_The_Dead
-			$IsleOfTheDead = True
-		Case $ID_Isle_Of_Weeping_Stone
-			$IsleOfWeepingStone = True
-		Case $ID_Isle_Of_Jade
-			$IsleOfJade = True
-		Case $ID_Imperial_Isle
-			$ImperialIsle = True
-		Case $ID_Isle_Of_Meditation
-			$IsleOfMeditation = True
-		Case $ID_Uncharted_Isle
-			$UnchartedIsle = True
-		Case $ID_Isle_Of_Wurms
-			$IsleOfWurms = True
-			CheckIsleOfWurms()
-		Case $ID_Corrupted_Isle
-			$CorruptedIsle = True
-			CheckCorruptedIsle()
-		Case $ID_Isle_Of_Solitude
-			$IsleOfSolitude = True
-		Case Else
-			Out('Guild Hall not recognised')
-	EndSwitch
-EndFunc
-
-
-;~ If there is a missing Guild Hall from the below listing, it is because there is only 1 spawn point in that Guild Hall
-Func CheckIsleOfWurms()
-	If CheckArea(8682, 2265) Then
-		If MoveTo(8263, 2971) Then Return True
-		Return False
-	ElseIf CheckArea(6697, 3631) Then
-		If MoveTo(7086, 2983) And MoveTo(8263, 2971) Then Return True
-		Return False
-	ElseIf CheckArea(6716, 2929) Then
-		If MoveTo(8263, 2971) Then Return True
-		Return False
-	Else
-		Return False
-	EndIf
-EndFunc
-
-
-Func CheckCorruptedIsle()
-	If CheckArea(-4830, 5985) Then
-		If MoveTo(-4830, 5985) Then Return True
-		Return False
-	ElseIf CheckArea(-3778, 6214) Then
-		If MoveTo(-3778, 6214) Then Return True
-		Return False
-	ElseIf CheckArea(-5209, 4468) Then
-		If MoveTo(-4352, 5232) Then Return True
-		Return False
-	Else
-		Return False
-	EndIf
-EndFunc
-
-
-;# Go to the chest and talk to it
-Func Chest()
-	Local $Waypoints_by_XunlaiChest[16][3] = [ _
-			[$BurningIsle, -5285, -2545], _
-			[$DruidsIsle, -1792, 5444], _
-			[$FrozenIsle, -115, 3775], _
-			[$HuntersIsle, 4855, 7527], _
-			[$IsleOfTheDead, -4562, -1525], _
-			[$NomadsIsle, 4630, 4580], _
-			[$WarriorsIsle, 4224, 7006], _
-			[$WizardsIsle, 4858, 9446], _
-			[$ImperialIsle, 2184, 13125], _
-			[$IsleOfJade, 8614, 2660], _
-			[$IsleOfMeditation, -726, 7630], _
-			[$IsleOfWeepingStone, -1573, 7303], _
-			[$CorruptedIsle, -4868, 5998], _
-			[$IsleOfSolitude, 4478, 3055], _
-			[$IsleOfWurms, 8586, 3603], _
-			[$UnchartedIsle, 4522, -4451]]
-	For $i = 0 To (UBound($Waypoints_by_XunlaiChest) - 1)
-		If ($Waypoints_by_XunlaiChest[$i][0] == True) Then
-			Do
-				GenericRandomPath($Waypoints_by_XunlaiChest[$i][1], $Waypoints_by_XunlaiChest[$i][2], Random(60, 80, 2))
-			Until CheckArea($Waypoints_by_XunlaiChest[$i][1], $Waypoints_by_XunlaiChest[$i][2])
-		EndIf
-	Next
-	Local $chestName = 'Xunlai Chest'
-	Local $chest = GetAgentByName($chestName)
-	If IsDllStruct($chest) Then
-		Out('Going to ' & $chestName)
-		GoToNPC($chest)
-		RndSleep(3500)
-	EndIf
-EndFunc
-
-
-;~ Go to the merchant and talk to him
-Func GoToMerchant()
-	Local $Waypoints_by_Merchant[29][3] = [ _
-			[$BurningIsle, -4439, -2088], _
-			[$BurningIsle, -4772, -362], _
-			[$BurningIsle, -3637, 1088], _
-			[$BurningIsle, -2506, 988], _
-			[$DruidsIsle, -2037, 2964], _
-			[$FrozenIsle, 99, 2660], _
-			[$FrozenIsle, 71, 834], _
-			[$FrozenIsle, -299, 79], _
-			[$HuntersIsle, 5156, 7789], _
-			[$HuntersIsle, 4416, 5656], _
-			[$IsleOfTheDead, -4066, -1203], _
-			[$NomadsIsle, 5129, 4748], _
-			[$WarriorsIsle, 4159, 8540], _
-			[$WarriorsIsle, 5575, 9054], _
-			[$WizardsIsle, 4288, 8263], _
-			[$WizardsIsle, 3583, 9040], _
-			[$ImperialIsle, 1415, 12448], _
-			[$ImperialIsle, 1746, 11516], _
-			[$IsleOfJade, 8825, 3384], _
-			[$IsleOfJade, 10142, 3116], _
-			[$IsleOfMeditation, -331, 8084], _
-			[$IsleOfMeditation, -1745, 8681], _
-			[$IsleOfMeditation, -2197, 8076], _
-			[$IsleOfWeepingStone, -3095, 8535], _
-			[$IsleOfWeepingStone, -3988, 7588], _
-			[$CorruptedIsle, -4670, 5630], _
-			[$IsleOfSolitude, 2970, 1532], _
-			[$IsleOfWurms, 8284, 3578], _
-			[$UnchartedIsle, 1503, -2830]]
-	For $i = 0 To (UBound($Waypoints_by_Merchant) - 1)
-		If ($Waypoints_by_Merchant[$i][0] == True) Then
-			Do
-				GenericRandomPath($Waypoints_by_Merchant[$i][1], $Waypoints_by_Merchant[$i][2], Random(60, 80, 2))
-			Until CheckArea($Waypoints_by_Merchant[$i][1], $Waypoints_by_Merchant[$i][2])
-		EndIf
-	Next
-
-	Out('Going to Merchant')
-	Local $me, $guy
-	Do
-		RndSleep(250)
-		$me = GetAgentByID(-2)
-		$guy = GetNearestNPCToCoords(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'))
-	Until DllStructGetData($guy, 'Id') <> 0
-	ChangeTarget($guy)
-	RndSleep(250)
-	GoNPC($guy)
-	RndSleep(250)
-	Do
-		MoveTo(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
-		RndSleep(500)
-		GoNPC($guy)
-		RndSleep(250)
-		$me = GetAgentByID(-2)
-	Until ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
-	RndSleep(1000)
-EndFunc
-
-
-;# Move randomly towards somewhere
-Func GenericRandomPath($aPosX, $aPosY, $aRandom = 50, $STOPSMIN = 1, $STOPSMAX = 5, $NumberOfStops = -1)
-	If $NumberOfStops = -1 Then $NumberOfStops = Random($STOPSMIN, $STOPSMAX, 1)
-	Local $lAgent = GetAgentByID(-2)
-	Local $MyPosX = DllStructGetData($lAgent, 'X')
-	Local $MyPosY = DllStructGetData($lAgent, 'Y')
-	Local $Distance = ComputeDistance($MyPosX, $MyPosY, $aPosX, $aPosY)
-	If $NumberOfStops = 0 Or $Distance < 200 Then
-		MoveTo($aPosX, $aPosY, $aRandom)
-	Else
-		Local $M = Random(0, 1)
-		Local $N = $NumberOfStops - $M
-		Local $StepX = (($M * $aPosX) + ($N * $MyPosX)) / ($M + $N)
-		Local $StepY = (($M * $aPosY) + ($N * $MyPosY)) / ($M + $N)
-		MoveTo($StepX, $StepY, $aRandom)
-		GenericRandomPath($aPosX, $aPosY, $aRandom, $STOPSMIN, $STOPSMAX, $NumberOfStops - 1)
-	EndIf
-EndFunc
-
-Func RareMaterialTrader()
-	Local $Waypoints_by_RareMatTrader[36][3] = [ _
-			[$BurningIsle, -3793, 1069], _
-			[$BurningIsle, -2798, -74], _
-			[$DruidsIsle, -989, 4493], _
-			[$FrozenIsle, 71, 834], _
-			[$FrozenIsle, 99, 2660], _
-			[$FrozenIsle, -385, 3254], _
-			[$FrozenIsle, -983, 3195], _
-			[$HuntersIsle, 3267, 6557], _
-			[$IsleOfTheDead, -3415, -1658], _
-			[$NomadsIsle, 1930, 4129], _
-			[$NomadsIsle, 462, 4094], _
-			[$WarriorsIsle, 4108, 8404], _
-			[$WarriorsIsle, 3403, 6583], _
-			[$WarriorsIsle, 3415, 5617], _
-			[$WizardsIsle, 3610, 9619], _
-			[$ImperialIsle, 759, 11465], _
-			[$IsleOfJade, 8919, 3459], _
-			[$IsleOfJade, 6789, 2781], _
-			[$IsleOfJade, 6566, 2248], _
-			[$IsleOfMeditation, -2197, 8076], _
-			[$IsleOfMeditation, -1745, 8681], _
-			[$IsleOfMeditation, -331, 8084], _
-			[$IsleOfMeditation, 422, 8769], _
-			[$IsleOfMeditation, 549, 9531], _
-			[$IsleOfWeepingStone, -3988, 7588], _
-			[$IsleOfWeepingStone, -3095, 8535], _
-			[$IsleOfWeepingStone, -2431, 7946], _
-			[$IsleOfWeepingStone, -1618, 8797], _
-			[$CorruptedIsle, -4424, 5645], _
-			[$CorruptedIsle, -4443, 4679], _
-			[$IsleOfSolitude, 3172, 3728], _
-			[$IsleOfSolitude, 3221, 4789], _
-			[$IsleOfSolitude, 3745, 4542], _
-			[$IsleOfWurms, 8353, 2995], _
-			[$IsleOfWurms, 6708, 3093], _
-			[$UnchartedIsle, 2530, -2403]]
-	For $i = 0 To (UBound($Waypoints_by_RareMatTrader) - 1)
-		If ($Waypoints_by_RareMatTrader[$i][0] == True) Then
-			Do
-				GenericRandomPath($Waypoints_by_RareMatTrader[$i][1], $Waypoints_by_RareMatTrader[$i][2], Random(60, 80, 2))
-			Until CheckArea($Waypoints_by_RareMatTrader[$i][1], $Waypoints_by_RareMatTrader[$i][2])
-		EndIf
-	Next
-	Local $lRareTrader = 'Rare Material Trader'
-	Local $lRare = GetAgentByName($lRareTrader)
-	If IsDllStruct($lRare) Then
-		Out('Going to ' & $lRareTrader)
-		GoToNPC($lRare)
-		RndSleep(Random(3000, 4200))
-	EndIf
-	;~This section does the buying
-	Local $MatID
-	TraderRequest($MatID)
-	Sleep(500 + 3 * GetPing())
-	While GetGoldCharacter() > 20*1000
-		TraderRequest($MatID)
-		Sleep(500 + 3 * GetPing())
-		TraderBuy()
-	WEnd
-EndFunc
-#EndRegion Guild Hall
-
-
-
-
-#Region Unused
-;Bolt ons from Chest Bot script i.e. Storing Golds, unids, consumables etc.
-#Region Storage
-Func StoreItemsEx()
-	Out('Storing Items')
-	Local $aItem, $m, $Q, $lbag, $Slot, $Full, $NSlot
-	For $i = 1 To 4
-		$lbag = GetBag($i)
-		For $j = 1 To DllStructGetData($lbag, 'Slots')
-			$aItem = GetItemBySlot($lbag, $j)
-			If DllStructGetData($aItem, 'ID') = 0 Then ContinueLoop
-			$m = DllStructGetData($aItem, 'ModelID')
-			$Q = DllStructGetData($aItem, 'quantity')
-
-			If($Map_StackableItems[$m] <> null And ($Q = 250)) Then
-				Do
-					For $Bag = 8 To 12
-						$Slot = FindEmptySlot($Bag)
-						$Slot = @extended
-						If $Slot <> 0 Then
-							$Full = False
-							$NSlot = $Slot
-							ExitLoop 2
-						Else
-							$Full = True
-						EndIf
-						Sleep(400)
-					Next
-				Until $Full = True
-				If $Full = False Then
-					MoveItem($aItem, $Bag, $NSlot)
-					Sleep(GetPing() + 500)
-				EndIf
-			EndIf
-		Next
-	Next
-EndFunc
-
-#EndRegion Unused

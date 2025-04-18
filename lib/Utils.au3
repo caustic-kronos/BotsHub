@@ -32,31 +32,18 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	;MoveItemsOutOfEquipmentBag()
-	;MoveItemsInEquipmentBag()
-	;StoreEverythingInXunlaiStorage()
-	;SellEverythingToMerchant()
-	;SortInventory()
 	;PostFarmActions()
 	
-	;FindIdentificationKitOrBuySome()
-	BuyItem(6, 1, 500)
-
+	;while true
+	;	Local $me = GetAgentByID(-2)
+	;	Out('X:' & DllStructGetData($me, 'X') & ';Y:' & DllStructGetData($me, 'Y'))
+	;	Sleep(1000)
+	;wend
+		
+	;Local $item = GetItemBySlot(1, 1)
+	;Local $itemPtr = GetItemPtrBySlot(1, 1)
+	;Local $itemID = DllStructGetData($item, 'ID')
 	
-	;For $i = 1 To 38
-	;	ReadOneItemData(6, $i)
-	;Next
-	
-	;UseConsumable($ID_Birthday_Cupcake)
-	
-	;Local $item = GetItemBySlot(1,3)
-	;StoreItemInXunlaiStorage($item)
-	;_dlldisplay($item)
-	;Out(DllStructGetData($item, 'Equiped'))
-	;MoveItem($item, 6, 1)
-	;Local $name = GetAgentName($item)
-	;Out($name)
-	;Sleep(2000)
 	;StartSalvage($item)
 	;Sleep(2000)
 	;SalvageMaterials()
@@ -912,20 +899,17 @@ EndFunc
 #CE
 
 
-Func SalvageItem($item, $kit)
-	Local $itemID = DllStructGetData($item, 'ID')
-	Local $lOffset[4] = [0, 0x18, 0x2C, 0x690]
+Func SalvageItem($itemID, $kit)
+	If IsDllStruct($itemID) Then $itemID = DllStructGetData($itemID, 'ID')
+	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
 	Out('Reading')
-
-	Local $salvageSessionID = LoggingMemoryReadPtr($mBasePointer, $lOffset)
-
+	Local $salvageSessionID = MemoryReadPtr($baseAddressPtr, $offset)
 	Out('Salvage session ' & $salvageSessionID[1])
-
-	DllStructSetData($mSalvage, 2, $itemID)
-	DllStructSetData($mSalvage, 3, $kit)
-	DllStructSetData($mSalvage, 4, $salvageSessionID[1])
+	DllStructSetData($salvageStruct, 2, $itemID)
+	DllStructSetData($salvageStruct, 3, $kit)
+	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
 	Out('Enqueueing')
-	LoggingEnqueue($mSalvagePtr, 16)
+	Enqueue($salvageStructPtr, 16)
 EndFunc
 
 
