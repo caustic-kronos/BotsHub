@@ -368,6 +368,11 @@ main()
 ; Description.....:	run the main program
 ;------------------------------------------------------
 Func main()
+	If @AutoItVersion < '3.3.16.0' Then
+		MsgBox(16, 'Error', 'This bot requires AutoIt version 3.3.16.0 or higher. You are using ' & @AutoItVersion & '.')
+		Exit
+	EndIf
+
 	createGUI()
 	GUISetState(@SW_SHOWNORMAL)
 	Out('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
