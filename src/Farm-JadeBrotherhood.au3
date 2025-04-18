@@ -58,7 +58,7 @@ Local $DeadlockTimer
 Local $Deadlocked = False
 
 #Region GUI
-Global $Jade_Brotherhood_Farm_Setup = False
+Global $JADE_BROTHERHOOD_FARM_SETUP = False
 
 
 ;~ Main method to farm Jade Brotherhood for q8
@@ -67,9 +67,9 @@ Func JadeBrotherhoodFarm($STATUS)
 		TravelTo($ID_The_Marketplace)
 	EndIf
 
-	If Not $Jade_Brotherhood_Farm_Setup Then
+	If Not $JADE_BROTHERHOOD_FARM_SETUP Then
 		SetupJadeBrotherhoodFarm()
-		$Jade_Brotherhood_Farm_Setup = True
+		$JADE_BROTHERHOOD_FARM_SETUP = True
 	EndIf
 
 	If $STATUS <> 'RUNNING' Then Return

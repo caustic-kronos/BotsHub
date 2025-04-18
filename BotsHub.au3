@@ -189,12 +189,12 @@ Func createGUI()
 	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
 	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort Items', 31, 154, 156, 20)
 	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 184, 156, 20)
-	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 214, 156, 20)
-	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 244, 156, 20)
+	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 214, 156, 20)
+	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 244, 156, 20)
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
-	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 304, 156, 20)
-	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 334, 156, 20)
-	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 364, 156, 20)
+	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 304, 156, 20)
+	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 334, 156, 20)
+	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 364, 156, 20)
 
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('Consumables to consume', 305, 40, 271, 361)
@@ -417,9 +417,13 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots(4, 4) < 5) Then PostFarmActions()
+				If (CountSlots(4, 4) < 5) Then 
+					PostFarmActions()
+					ResetBotsSetups()
+				EndIf
 				If (CountSlots(4, 4) < 5) Then
 					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
+					ResetBotsSetups()
 					$STATUS = 'WILL_PAUSE'
 				EndIf
 			EndIf
@@ -509,12 +513,11 @@ Func PostFarmActions()
 	; 2-Sort items
 	; 3-Identify items
 	; 4-Collect data
-	; 5-Salvage ?
+	; 5-Salvage ?				-> doesn't work yet
 	; 6-Sell materials
 	; 7-Sell items
-	; 8-Store items
-	; 9-Buy ectos with excedent
-
+	; 8-Buy ectos with excedent
+	; 9-Store items
 
 	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then Out("Storing unidentified gold items is not a functionality for now.", $GUI_CONSOLE_RED_COLOR)
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
@@ -559,8 +562,24 @@ Func PostFarmActions()
 		;If (FindAnyInInventory($Gold_Scrolls_Array)) Then SellGoldScrolls()
 		SellEverythingToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
+	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+EndFunc
+
+
+Func ResetBotsSetups()
+	$RAPTORS_FARM_SETUP = False
+	$DM_FARM_SETUP = False
+	$IRIS_FARM_SETUP = False
+	$FEATHERS_FARM_SETUP = False
+	$FOLLOWER_SETUP = False
+	$JADE_BROTHERHOOD_FARM_SETUP = False
+	$KOURNANS_FARM_SETUP = False
+	$LIGHTBRINGER_FARM_SETUP = False
+	$MANTIDS_FARM_SETUP = False
+	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
+	$SPIRIT_SLAVES_FARM_SETUP = False
+	$CORSAIRS_FARM_SETUP = False
 EndFunc
 
 

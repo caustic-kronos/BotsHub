@@ -29,7 +29,7 @@ Local Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
 ;Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
 Local Const $weaponAttackTime = 1700
 
-Local $Lightbringer_Farm_Setup = False
+Local $LIGHTBRINGER_FARM_SETUP = False
 Local $loggingFile
 
 Local Const $Junundu_Strike = 1
@@ -45,7 +45,7 @@ Local Const $Junundu_Leave = 8
 ; - interact with chests along the way
 
 Func LightbringerFarm($STATUS)
-	If Not $Lightbringer_Farm_Setup Then LightbringerFarmSetup()
+	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
 
 	If $STATUS <> 'RUNNING' Then Return 2
 
@@ -81,7 +81,7 @@ Func LightbringerFarmSetup()
 
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
-	$Lightbringer_Farm_Setup = True
+	$LIGHTBRINGER_FARM_SETUP = True
 EndFunc
 
 Func ToTheSulfurousWastes()

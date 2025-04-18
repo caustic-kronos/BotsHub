@@ -754,6 +754,7 @@ Func DefaultShouldSellItem($item)
 
 	If $itemID == $ID_Saurian_bone Then Return True
 	If IsBlueScroll($itemID) Then Return True
+	If IsGoldScroll($itemID) And $itemID <> $ID_UW_Scroll And $itemID <> $ID_FoW_Scroll Then Return True
 	If IsWeapon($item) Then
 		If Not GetIsIdentified($item) Then Return False
 		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False

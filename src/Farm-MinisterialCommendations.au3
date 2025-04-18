@@ -34,7 +34,7 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
 	& '- any PCons you wish to use'
 
-Local $Ministerial_Commendations_Farm_Setup = False
+Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 
 Local $loggingFile
 
@@ -117,7 +117,7 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 #CE
 
 Func MinisterialCommendationsFarm($STATUS)
-	If Not($Ministerial_Commendations_Farm_Setup) Then Setup()
+	If Not($MINISTERIAL_COMMENDATIONS_FARM_SETUP) Then Setup()
 	$loggingFile = FileOpen('logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Out('Entering quest')
@@ -180,7 +180,7 @@ Func Setup()
 	AddHero($ID_Olias)
 
 	SwitchMode($ID_HARD_MODE)
-	$Ministerial_Commendations_Farm_Setup = True
+	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
 EndFunc
 
 

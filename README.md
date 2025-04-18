@@ -1,5 +1,6 @@
 # [BotsHub]
 A bot for GuildWars, written in AutoIt.
+It needs AutoIt version 3.3.16.0 or higher to run.
 
 > ⚠️ Disclaimer: This project is not affiliated with or endorsed by ArenaNet - GuildWars. Use at your own risk.
 
