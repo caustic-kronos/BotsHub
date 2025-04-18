@@ -1,13 +1,13 @@
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
+; Licensed under the Apache License, Version 2.0 (the 'License');
 ; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ; http://www.apache.org/licenses/LICENSE-2.0
 ;
 ; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
+; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
@@ -79,19 +79,19 @@ Func SetupFeathersFarm()
 	Local $Me = GetAgentByID(-2)
 	Local $X = DllStructGetData($Me, 'X')
 	Local $Y = DllStructGetData($Me, 'Y')
-	
+
 	If ComputeDistance($X, $Y, 17300, 17300) > 5000 Then
 		MoveTo(17000, 12400)
 	EndIf
-	
+
 	If ComputeDistance($X, $Y, 17300, 17300) > 4400 Then
 		MoveTo(19000, 13450)
 	EndIf
-	
+
 	If ComputeDistance($X, $Y, 17300, 17300) > 1800 Then
 		MoveTo(18750, 16000)
 	EndIf
-	
+
 	MoveTo(17300, 17300)
 	Move(16800, 17550)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
@@ -107,13 +107,13 @@ Func FeathersFarmLoop()
 	Move(16800, 17550)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 
-	Out("Running to Sensali.")
+	Out('Running to Sensali.')
 	UseConsumable($ID_Birthday_Cupcake)
 	MoveTo(9000, -12680)
 	MoveTo(7588, -10609)
 	MoveTo(2900, -9700)
 	MoveTo(1540, -6995)
-	Out("Farming Sensali.")
+	Out('Farming Sensali.')
 	MoveKill(-472, -4342, False)
 	MoveKill(-1536, -1686)
 	MoveKill(586, -76)
@@ -131,7 +131,7 @@ Func FeathersFarmLoop()
 	MoveKill(-10303, 4110)
 	MoveKill(-10500, 5500)
 	MoveKill(-9700, 2400)
-		
+
 	If GetIsDead(-2) Then
 		BackToSeitungHarborOutpost()
 		Return 1
@@ -155,7 +155,7 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 	If GetIsDead(-2) Then Return
 	Local $me = GetAgentByID(-2)
 	Local $deadlock = TimerInit()
-	
+
 	Move($x, $y)
 	While Not GetIsDead(-2) And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > 250
 		If TimerDiff($deadlock) > $timeOut Then
@@ -170,10 +170,10 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
 		$me = GetAgentByID(-2)
-		If DllStructGetData($me, "HP") < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
+		If DllStructGetData($me, 'HP') < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If DllStructGetData($me, 'MoveX') = 0 And DllStructGetData($me, 'MoveY') = 0 Then Move($x, $y)
 		RndSleep(250)
-	WEnd 
+	WEnd
 EndFunc
 
 Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
@@ -182,8 +182,8 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 	Local $Angle = 0
 	Local $lStuckCount = 0
 	Local $Blocked = 0
-	Local $lDeadlock = TimerInit()	
-	
+	Local $lDeadlock = TimerInit()
+
 	Move($x, $y)
 	While ComputeDistance(DllStructGetData($Me, 'X'), DllStructGetData($Me, 'Y'), $x, $y) > 250
 		If TimerDiff($lDeadlock) > $aTimeout Then
@@ -199,7 +199,7 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 		If GetIsDead(-2) Then Return False
 		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
-		If DllStructGetData($Me, "HP") < 0.9 Then
+		If DllStructGetData($Me, 'HP') < 0.9 Then
 			If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 			If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		EndIf
@@ -224,7 +224,7 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 		$lStuckCount += 1
 		If $lStuckCount > 25 Then
 			$lStuckCount = 0
-			SendChat("stuck", "/")
+			SendChat('stuck', '/')
 			RndSleep(50)
 		EndIf
 		RndSleep(250)
@@ -234,17 +234,17 @@ EndFunc ;==> MoveKill
 
 Func Kill($aWaitForSettle = True)
 	If GetIsDead(-2) Then Return
-	
+
 	Local $lDeadlock, $lTimeout = 2*60*1000
-		
+
 	Local $lStuckCount = 0
-	SendChat("stuck", "/")
+	SendChat('stuck', '/')
 	RndSleep(50)
 	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 	If $aWaitForSettle Then
 		If Not WaitForSettle() Then Return False
 	EndIf
-	SendChat("stuck", "/")
+	SendChat('stuck', '/')
 	RndSleep(50)
 	TargetNearestEnemy()
 	ChangeWeaponSet(1)
@@ -254,9 +254,9 @@ Func Kill($aWaitForSettle = True)
 		UseSkillEx($Feathers_EremitesAttack, -1)
 	EndIf
 	ChangeWeaponSet(1)
-	
+
 	$lDeadlock = TimerInit()
-	
+
 	While CountFoesInRangeOfAgent(-2, 900, IsSensali) > 0
 		If TimerDiff($lDeadlock) > $lTimeout Then
 			Resign()
@@ -277,12 +277,12 @@ Func Kill($aWaitForSettle = True)
 		$lStuckCount += 1
 		If $lStuckCount > 100 Then
 			$lStuckCount = 0
-			SendChat("stuck", "/")
+			SendChat('stuck', '/')
 			RndSleep(50)
 		EndIf
-		
+
 		Sleep(250)
-		Attack(-1)		
+		Attack(-1)
 	WEnd
 	RndSleep(500)
 	Out('Looting')
@@ -297,26 +297,26 @@ Func WaitForSettle($Timeout = 10000)
 	Local $Deadlock = TimerInit()
 	While Not GetIsDead(-2) And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($Deadlock) < 5000)
 		If GetIsDead(-2) Then Return False
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.7 Then Return True
+		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 		Sleep(250)
 		$Target = GetFurthestNPCInRangeOfCoords(null, DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $RANGE_EARSHOT)
-	WEnd 
+	WEnd
 
 	If CountFoesInRangeOfAgent(-2, 900) == 0 Then Return False
 
 	Local $Deadlock = TimerInit()
 	While (GetDistance(-2, $Target) > $RANGE_NEARBY) And (TimerDiff($Deadlock) < $Timeout)
 		If GetIsDead(-2) Then Return False
-		If DllStructGetData(GetAgentByID(-2), "HP") < 0.7 Then Return True
+		If DllStructGetData(GetAgentByID(-2), 'HP') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
-		Sleep(250)	
+		Sleep(250)
 		$Target = GetFurthestNPCInRangeOfCoords(null, DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $RANGE_EARSHOT)
-	WEnd 
+	WEnd
 	Return True
 EndFunc
 
