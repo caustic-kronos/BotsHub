@@ -57,12 +57,12 @@ Local $Follower_MaintainSkill7 = null
 Local $Follower_MaintainSkill8 = null
 Local $Follower_RunningSkill = null
 
-Local $FollowerFarmSetup = False
+Local $FOLLOWER_SETUP = False
 Local $playerIDs
 
 ;~ Main loop
 Func FollowerFarm($STATUS)
-	If Not $FollowerFarmSetup Then FollowerSetup()
+	If Not $FOLLOWER_SETUP Then FollowerSetup()
 
 	While $STATUS == 'RUNNING' And CountSlots(4, 4) > 5
 		Switch $Player_Profession_ID
@@ -92,7 +92,7 @@ Func FollowerFarm($STATUS)
 		EndSwitch
 	WEnd
 
-	$FollowerFarmSetup = False
+	$FOLLOWER_SETUP = False
 	AdlibUnRegister()
 
 	If $STATUS <> 'RUNNING' Then Return 2
@@ -128,7 +128,7 @@ Func FollowerSetup()
 		Case Else
 			DefaultSetup()
 	EndSwitch
-	$FollowerFarmSetup = True
+	$FOLLOWER_SETUP = True
 EndFunc
 
 
