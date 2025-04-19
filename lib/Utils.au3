@@ -1252,7 +1252,7 @@ EndFunc
 
 
 ;~ Create a map from an array to have a one liner map instanciation
-Func MapFromArray(Const $keys)
+Func MapFromArray($keys)
 	Local $map[]
 	For $i = 0 To UBound($keys) - 1
 		$map[$keys[$i]] = 1
@@ -1262,7 +1262,7 @@ EndFunc
 
 
 ;~ Create a map from a double array to have a one liner map instanciation with values
-Func MapFromDoubleArray(Const $keysAndValues)
+Func MapFromDoubleArray($keysAndValues)
 	Local $map[]
 	For $i = 0 To UBound($keysAndValues) - 1
 		$map[$keysAndValues[$i][0]] = $keysAndValues[$i][1]
@@ -1272,10 +1272,11 @@ EndFunc
 
 
 ;~ Create a map from two arrays to have a one liner map instanciation with values
-Func MapFromArrays(Const $keys, Const $values)
+Func MapFromArrays($keys, $values)
 	Local $map[]
 	For $i = 0 To UBound($keys) - 1
-		$map[$keys[$i]] = $values[$i]
+		Local $val = $values[$i]
+		$map[$keys[$i]] = $val
 	Next
 	Return $map
 EndFunc
