@@ -80,6 +80,7 @@ Local $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
+	;SellEverythingToMerchant(DefaultShouldSellItem, True)
 	PostFarmActions()
 	Return 2
 EndFunc
@@ -518,13 +519,15 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			$itemID = DllStructGetData($item, 'ModelID')
-			If $itemID <> 0 And $shouldSellItem($item) Then
-				If $dryRun Then
-					Out('Will sell item at ' & $bagIndex & ':' & $i)
+			If $itemID <> 0 Then
+				If $shouldSellItem($item) Then
+					If Not $dryRun Then 
+						SellItem($item, DllStructGetData($item, 'Quantity'))
+						RndSleep(500 + GetPing())
+					EndIf
 				Else
-					SellItem($item, DllStructGetData($item, 'Quantity'))
+					If $dryRun Then Out('Will not sell item at ' & $bagIndex & ':' & $i)
 				EndIf
-				RndSleep(500 + GetPing())
 			EndIf
 		Next
 	Next
