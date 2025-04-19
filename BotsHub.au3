@@ -524,7 +524,10 @@ Func PostFarmActions()
 
 	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then Out("Storing unidentified gold items is not a functionality for now.", $GUI_CONSOLE_RED_COLOR)
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then IdentifyAllItems()
+	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		IdentifyAllItems()
+	EndIf
 	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then 
 		ConnectToDatabase()
 		InitializeDatabase()
@@ -534,9 +537,7 @@ Func PostFarmActions()
 		DisconnectFromDatabase()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then
-			DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		EndIf
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 		
 		MoveItemsOutOfEquipmentBag()
 		;SalvageInscriptions()
