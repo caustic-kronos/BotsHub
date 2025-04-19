@@ -16,6 +16,9 @@
 
 ; TODO - important:
 ; - write small bot that : -salvage items -get material ID -write in file salvaged material
+; - salvaging
+; - keeping items depending on their mods
+; - checking and using proper inventory/xunlai storage size
 
 ; TODO - secondary:
 ; - change bots to have cleaner return system

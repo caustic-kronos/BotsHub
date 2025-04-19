@@ -21,6 +21,7 @@
 #include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
 #include 'Utils.au3'
+#include 'Utils-Items_Modstructs.au3'
 
 Opt('MustDeclareVars', 1)
 
@@ -79,15 +80,7 @@ Local $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
-	;Out('Travel to Guild Hall')
-	;TravelGH()
-	;WaitMapLoading()
-	;Out('Checking Guild Hall')
-	;CheckGuildHall()
-
 	PostFarmActions()
-
-	;StoreEverythingInXunlaiStorage()
 	Return 2
 EndFunc
 
@@ -758,10 +751,12 @@ Func DefaultShouldSellItem($item)
 	If IsWeapon($item) Then
 		If Not GetIsIdentified($item) Then Return False
 		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False
-		If HasSalvageInscription($item) Then Return False
 		If ShouldKeepWeapon($itemID) Then Return False
+		;If HasSalvageInscription($item) Then Return False ;should be included in next line
+		If ContainsValuableUpgrades($item) Then Return False
 		Return True
 	EndIf
+	If isArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
 
 	Return False
 EndFunc
@@ -782,7 +777,7 @@ EndFunc
 
 
 Func HasSalvageInscription($item)
-	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '1F0208243E0432251D0008260F16A8A7', '00082600011826900098260F1CA8A7000000C', '1F0208243E0432251D0008260810B8A7000000C']
+	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '00082600011826900098260F1CA8A7000000C']
 	Local $modstruct = GetModStruct($item)
 	For $salvageableModStruct in $salvageableInscription
 		If StringInStr($modstruct, $salvageableModStruct) Then Return True

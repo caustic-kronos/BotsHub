@@ -44,10 +44,9 @@ And that's it !
 To use it:
 1. Install AutoIt.
 2. Run `BotsHub.au3` with AutoIt.
-
-(Optional) To make the data collection functional, AutoIT needs the SQLite library:
-3. You can find the lib folder the files SQLite.au3 and SQLite.dll.au3
-4. Copy those files to your Program Files/AutoIt3/Include folder.
+3. (Optional) To make the data collection functional, AutoIT needs the SQLite library:
+	1. You can find the lib folder the files SQLite.au3 and SQLite.dll.au3
+	2. Copy those files to your Program Files/AutoIt3/Include folder.
 
 ## License
 This project is licensed under the Apache License 2.0 – see the [LICENSE](LICENSE) file.
