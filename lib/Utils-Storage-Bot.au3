@@ -683,9 +683,10 @@ Func StoreItemInXunlaiStorage($item)
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equiped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return
+		$amount = DllStructGetData($item, 'Quantity')
 	EndIf
 	If (IsStackableItemButNotMaterial($itemID) Or IsMaterial($item)) And $amount < 250 Then
-		$existingStacks = FindAllInXunlaiStorage($itemID)
+		$existingStacks = FindAllInXunlaiStorage($item)
 		For $bagIndex = 0 To Ubound($existingStacks) - 1 Step 2
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
@@ -694,7 +695,7 @@ Func StoreItemInXunlaiStorage($item)
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 				RndSleep(50 + GetPing())
 				$amount = $amount + $existingAmount - 250
-				If $amount < 0 Then Return
+				If $amount <= 0 Then Return
 			EndIf
 		Next
 	EndIf
@@ -767,15 +768,32 @@ EndFunc
 
 ;~ Return true if the item should be sold to the material merchant
 Func DefaultShouldSellMaterial($item)
-	If IsBasicMaterial($item) Then Return True
-	Return False
+	If Not IsBasicMaterial($item) Then Return False
+	
+	;Lazy instantiation
+	Local Static $materialsKeptArray = [$ID_Pile_of_Glittering_Dust, $ID_Feather]
+	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
+
+	Local $modelID = DllStructGetData($item, 'ModelID')
+	If $mapMaterialsKept[$modelId] <> null Then Return False
+
+	Return True
 EndFunc
 
 
 ;~ Return true if the item should be sold to the material merchant
 Func DefaultShouldSellRareMaterial($item)
-	If IsRareMaterial($item) Then Return True
-	Return False
+	If Not IsRareMaterial($item) Then Return False
+
+	;Lazy instantiation
+	Local Static $materialsKeptArray = [$ID_Glob_of_Ectoplasm, $ID_Obsidian_Shard]
+	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
+	
+	Local $modelID = DllStructGetData($item, 'ModelID')
+	Out($mapMaterialsKept[$modelId])
+	If $mapMaterialsKept[$modelId] <> null Then Return False
+
+	Return True
 EndFunc
 
 
