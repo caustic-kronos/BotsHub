@@ -36,9 +36,6 @@ Global $packetlocation
 ; Flags
 Global $disableRendering
 
-; GUI
-Global $mainGui = GUICreate('GWA2')
-
 ; Game-related variables
 ; Game memory - queue, targets, skills
 Global $queueCounter, $queueSize, $queueBaseAddress
@@ -530,8 +527,6 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 	$lastDialogId = GetValue('LastDialogID')
 
 	; EventSystem
-	If $useEventSystem Then MemoryWrite(GetValue('CallbackHandle'), $mainGui)
-	If @error Then logCriticalErrors('Failed to write CallbackHandle')
 	DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 	If @error Then logCriticalErrors('Failed to set invite guild command')
 	DllStructSetData($inviteGuildStruct, 2, 0x4C)

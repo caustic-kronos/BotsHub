@@ -417,7 +417,7 @@ Func BotHubLoop()
 				$STATUS = 'WILL_PAUSE'
 			Else
 				If (CountSlots(4, 4) < 5) Then 
-					PostFarmActions()
+					InventoryManagement()
 					ResetBotsSetups()
 				EndIf
 				If (CountSlots(4, 4) < 5) Then
@@ -494,72 +494,6 @@ Func RunFarmLoop($Farm)
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch
 	Return 2
-EndFunc
-
-
-; Function to deal with inventory during farm
-Func DuringFarmActions()
-	; This function means we need to have salvaging tools on during farm /!\
-	; Not much that can be done during farm other than :
-	;-identifying what can be identified
-	;-salvaging what can be salvaged
-EndFunc
-
-; Function to deal with inventory after farm
-Func PostFarmActions()
-	; Operations order :
-	; 1-Store unid if desired	-> not implemented
-	; 2-Sort items
-	; 3-Identify items
-	; 4-Collect data
-	; 5-Salvage ?				-> doesn't work yet
-	; 6-Sell materials
-	; 7-Sell items
-	; 8-Buy ectos with excedent
-	; 9-Store items
-
-	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then Out("Storing unidentified gold items is not a functionality for now.", $GUI_CONSOLE_RED_COLOR)
-	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		IdentifyAllItems()
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then 
-		ConnectToDatabase()
-		InitializeDatabase()
-		CompleteModelLookupTable()
-		CompleteUpgradeLookupTable()
-		StoreAllItemsData()
-		DisconnectFromDatabase()
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		
-		MoveItemsOutOfEquipmentBag()
-		;SalvageInscriptions()
-		;UpgradeWithSalvageInscriptions()
-		;SalvageItems()
-		;StoreInXunlaiStorage()
-		; Need a second pass at merchant after recycling the inscriptions out
-		;If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
-		;	SellEverythingToMerchant()
-		;EndIf
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		
-		SellMaterialsToMerchant()
-		SellRareMaterialsToMerchant()
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-	
-		; Can't sell gold scrolls since the function crash
-		;If (FindAnyInInventory($Gold_Scrolls_Array)) Then SellGoldScrolls()
-		SellEverythingToMerchant()
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
-	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
 
 

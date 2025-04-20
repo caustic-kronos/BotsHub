@@ -21,7 +21,7 @@
 #include <File.au3>
 
 ; ==== Constantes ====
-Local Const $DWCommendationsFarmerSkillbar = 'OgGlQpVq6smsGFA0XwTsDmL29RTSgB'
+Local Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
 Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- 13 Earth Prayers' &@CRLF _
@@ -36,6 +36,7 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 
 Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 
+Local Const $loggingEnabled = False
 Local $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
@@ -118,7 +119,7 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 
 Func MinisterialCommendationsFarm($STATUS)
 	If Not($MINISTERIAL_COMMENDATIONS_FARM_SETUP) Then Setup()
-	$loggingFile = FileOpen('logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	If $loggingEnabled Then $loggingFile = FileOpen('logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Out('Entering quest')
 	EnterQuest()
@@ -143,7 +144,7 @@ Func MinisterialCommendationsFarm($STATUS)
 	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
 	Out('Waiting for spike')
-	_FileWriteLog($loggingFile, 'Waiting for ball')
+	LogIntoFile('Waiting for ball')
 	WaitForPurityBall()
 
 	If (IsFail()) Then Return ResignAndReturnToOutpost()
@@ -156,10 +157,16 @@ Func MinisterialCommendationsFarm($STATUS)
 	Out('Picking up loot')
 	PickUpItems(HealWhilePickingItems)
 
-
-	Out('Travelling back to KC')
-	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
-	FileClose($loggingFile)
+	;Out('Travelling back to KC')
+	;DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	
+	Out('Porting to KC')
+	Resign()
+	RndSleep(3500)
+	ReturnToOutpost()
+	WaitMapLoading($ID_Kaineng_City, 10000, 2000)	
+	
+	If $loggingEnabled Then FileClose($loggingFile)
 	Return 0
 EndFunc
 
@@ -219,6 +226,7 @@ Func PrepareToFight()
 	UseHeroSkill($Hero_Ritualist_SoS, $Splinter_Weapon_Skill_Position, -2)		;SoS - Splinter Weapon
 	UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)		;Prot - Armor of Unfeeling
 	RndSleep(11000)
+	UseConsumable($ID_Birthday_Cupcake)
 	UseHeroSkill($Hero_Mesmer_DPS_1, $Energy_Surge_Skill_Position)				;ESurge1 - ESurge
 	UseHeroSkill($Hero_Mesmer_DPS_2, $Energy_Surge_Skill_Position)				;ESurge2 - ESurge
 	UseHeroSkill($Hero_Mesmer_DPS_3, $Energy_Surge_Skill_Position)				;ESurge3 - ESurge
@@ -276,7 +284,7 @@ EndFunc
 
 Func InitialFight()
 	Local $deadlock = TimerInit()
-	_FileWriteLog($loggingFile, 'New run started')
+	LogIntoFile('New run started')
 	RndSleep(1000)
 	Local $foesInRange = CountFoesInRangeOfAgent(-2, $RANGE_COMPASS)
 
@@ -338,7 +346,7 @@ Func InitialFight()
 
 	UseHeroSkill($Hero_Ritualist_SoS, $Mend_Body_And_Soul_Skill_Position, 58)
 	UseHeroSkill($Hero_Necro_BiP, $Mend_Body_And_Soul_Skill_Position, 58)
-	_FileWriteLog($loggingFile, 'Initial fight duration - ' & Round(TimerDiff($deadlock)/1000) & 's')
+	LogIntoFile('Initial fight duration - ' & Round(TimerDiff($deadlock)/1000) & 's')
 
 	; Move all heroes to not interfere with loot
 	CommandAll(-7075, -5685)
@@ -414,7 +422,7 @@ Func WaitForPurityBall()
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 	WEnd
 
-	_FileWriteLog($loggingFile, 'Initial foes count - ' & CountFoesOnTopOfTheStairs())
+	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
 	While Not GetisDead(-2) And TimerDiff($deadlock) < 75000 And Not IsFurthestMobInBall()
 		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
@@ -460,7 +468,7 @@ Func WaitForPurityBall()
 		RndSleep(250)
 	WEnd
 	If (TimerDiff($deadlock) > 75000) Then Out('Timed out waiting for mobs to ball')
-	_FileWriteLog($loggingFile, 'Ball ready - ' & Round(TimerDiff($deadlock)/1000) & 's')
+	LogIntoFile('Ball ready - ' & Round(TimerDiff($deadlock)/1000) & 's')
 EndFunc
 
 
@@ -479,10 +487,10 @@ EndFunc
 Func ResignAndReturnToOutpost()
 	If GetIsDead(58) Then
 		Out('Miku died.')
-		_FileWriteLog($loggingFile, 'Miku died.')
+		LogIntoFile('Miku died.')
 	ElseIf GetIsDead(-2) Then
 		Out('Player died')
-		_FileWriteLog($loggingFile, 'Character died.')
+		LogIntoFile('Character died.')
 	EndIf
 	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
 	Return 1
@@ -584,8 +592,8 @@ Func KillMinistryOfPurity()
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 	WEnd
 	If (TimerDiff($deadlock) > 10000) Then Out('Left ' & $foesCount & ' mobs alive out of ' & $initialFoeCount & ' foes')
-	_FileWriteLog($loggingFile, 'Mobs killed - ' & ($initialFoeCount - $foesCount))
-	_FileWriteLog($loggingFile, 'Mobs left alive - ' & $foesCount)
+	LogIntoFile('Mobs killed - ' & ($initialFoeCount - $foesCount))
+	LogIntoFile('Mobs left alive - ' & $foesCount)
 
 	RndSleep(250)
 EndFunc
@@ -637,4 +645,8 @@ EndFunc
 
 Func IsUnderTheStairs($agent)
 	Return Not IsOverLine(1, 1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+EndFunc
+
+Func LogIntoFile($string)
+	If $loggingEnabled Then _FileWriteLog($loggingFile, $string)
 EndFunc

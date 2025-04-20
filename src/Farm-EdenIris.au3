@@ -29,7 +29,6 @@ Local Const $EdenIrisBotVersion = '0.4'
 ; ==== Constantes ====
 Local Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
 
-#Region GUI
 Local $IRIS_FARM_SETUP = False
 
 ;~ Main method to farm Red Iris Flowers in Eden
