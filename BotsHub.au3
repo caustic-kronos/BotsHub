@@ -17,16 +17,12 @@
 ; TODO - important:
 ; - write small bot that : -salvage items -get material ID -write in file salvaged material
 ; - salvaging
-; - keeping items depending on their mods
 ; - checking and using proper inventory/xunlai storage size
 
 ; TODO - secondary:
 ; - change bots to have cleaner return system
 ; - add option to choose between random travel and specific travel
-; - add option for : running bot once, bot X times, bot until inventory full, or bot loop
 
-; BUGLIST :
-;
 
 ; Night's tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot)
@@ -65,7 +61,6 @@
 #include 'src/Farm-Luxon.au3'
 #include 'src/Farm-Mantids.au3'
 #include 'src/Farm-MinisterialCommendations.au3'
-;#include 'Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-Vaettirs.au3'
@@ -194,6 +189,7 @@ Func createGUI()
 	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 184, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 214, 156, 20)
 	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 244, 156, 20)
+	GUICtrlSetState($GUI_Checkbox_SalvageItems,$GUI_DISABLE)
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
 	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 304, 156, 20)
 	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 334, 156, 20)
@@ -550,17 +546,13 @@ Func PostFarmActions()
 		;EndIf
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then
-			DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		EndIf
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 		
 		SellMaterialsToMerchant()
 		SellRareMaterialsToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then
-			DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		EndIf
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	
 		; Can't sell gold scrolls since the function crash
 		;If (FindAnyInInventory($Gold_Scrolls_Array)) Then SellGoldScrolls()
