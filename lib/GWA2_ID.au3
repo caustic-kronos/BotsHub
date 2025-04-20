@@ -54,17 +54,17 @@ Global Const $ID_RUSSIAN		= 10
 
 
 #Region Game Locations
-;~ Generic
+; Generic
 Global Const $ID_Outpost					= 0
 Global Const $ID_Explorable					= 1
 Global Const $ID_Loading					= 2
-;~ Eden
+; Eden
 Global Const $ID_Ashford_Abbey				= 164
 Global Const $ID_Lakeside_County			= 146
-;~ Battle Isles
+; Battle Isles
 Global Const $ID_Great_Temple_of_Balthazar	= 248
 Global Const $ID_Embark_Beach				= 857
-;~ Prophecies
+; Prophecies
 Global Const $ID_Warriors_Isle				= 4
 Global Const $ID_Hunters_Isle				= 5
 Global Const $ID_Wizards_Isle				= 6
@@ -73,7 +73,7 @@ Global Const $ID_Frozen_Isle				= 176
 Global Const $ID_Nomads_Isle				= 177
 Global Const $ID_Druids_Isle				= 178
 Global Const $ID_Isle_Of_The_Dead			= 179
-;~ Factions
+; Factions
 Global Const $ID_House_Zu_Heltzer			= 77
 Global Const $ID_Kaineng_City				= 194
 Global Const $ID_Jaya_Bluffs				= 196
@@ -94,7 +94,7 @@ Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Aspenwood_Gate_Luxon		= 389
 Global Const $ID_Drazach_Thicket			= 861
 Global Const $ID_Kaineng_A_Chance_Encounter	= 861
-;~ Nightfall
+; Nightfall
 Global Const $ID_Sunward_Marches			= 373
 Global Const $ID_Sunspear_Sanctuary			= 387
 Global Const $ID_Command_Post				= 436
@@ -108,7 +108,7 @@ Global Const $ID_Corrupted_Isle				= 537
 Global Const $ID_Isle_Of_Solitude			= 538
 Global Const $ID_Remains_of_Sahlahja		= 545
 Global Const $ID_Moddok_Crevice				= 427
-;~ EotN
+; EotN
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Riven_Earth				= 501
 Global Const $ID_Jaga_Moraine				= 546
@@ -164,7 +164,7 @@ Global Const $ID_Marksmanship		= 25
 ;Global Const $ID_	= 27
 ;Global Const $ID_	= 28
 Global Const $ID_Dagger_Mastery		= 29
-Global Const $ID_Critical_Strikes	= 30 ;CriticalStrikes or Lethal or Shadow
+Global Const $ID_Critical_Strikes	= 30	;CriticalStrikes or Lethal or Shadow
 ;Global Const $ID_	= 31		;CriticalStrikes or Lethal or Shadow
 Global Const $ID_Communing			= 32
 Global Const $ID_Restoration_Magic	= 33
@@ -243,7 +243,7 @@ Global Const $Weapon_Types_Array			= [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offha
 Global Const $Map_Armor_Types			= MapFromArray($Armor_Types_Array)
 Global Const $Map_Weapon_Types			= MapFromArray($Weapon_Types_Array)
 
-;~ Damage relative to the req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
+; Damage relative to the req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
 Local Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Local Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Local Const $Focus_Max_Damage_Per_Level				=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
@@ -263,7 +263,7 @@ Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damag
 
 
 #Region MapMarkers
-Global Const $ID_GadgetID_Smol_Chest		= 6062 ;Istani chests
+Global Const $ID_GadgetID_Smol_Chest		= 6062		;Istani chests
 Global Const $ID_GadgetID_NM_Chest			= 4582
 Global Const $ID_GadgetID_HM_Chest			= 8141
 Local Const $Chests_Array[]					= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest]
@@ -344,12 +344,12 @@ Global Const $ID_Wastrels_Demise				= 1335
 ; Assassin
 Global Const $ID_Shadow_Refuge					= 814
 Global Const $ID_Shroud_of_Distress				= 1031
-;Ritualist
+; Ritualist
 Global Const $ID_Union							= 911
 Global Const $ID_Shelter						= 982
 Global Const $ID_Soul_Twisting					= 1240
 Global Const $ID_Displacement					= 1249
-;Paragon
+; Paragon
 Global Const $ID_Burning_Refrain				= 1576
 Global Const $ID_Heroic_Refrain					= 3431
 ; PvE
@@ -542,9 +542,9 @@ Global Const $Map_Material_Location				= MapFromDoubleArray($Materials_Double_Ar
 Global Const $ID_Amulet_of_the_Mists		= 6069
 Global Const $ID_Book_of_Secrets			= 19197
 Global Const $ID_Droknars_Key				= 26724
-Global Const $ID_Imperial_Dragons_Tear		= 30205; Not tradeable
+Global Const $ID_Imperial_Dragons_Tear		= 30205		; Not tradeable
 Global Const $ID_Deldrimor_Talisman			= 30693
-Global Const $ID_Medal_of_Honor				= 35122 ; Not tradeable
+Global Const $ID_Medal_of_Honor				= 35122		; Not tradeable
 #EndRegion Endgame Rewards
 
 
@@ -590,8 +590,8 @@ Global Const $ID_Snowman_Summoner		= 6376
 Global Const $ID_Bottle_Rocket			= 21809
 Global Const $ID_Champagne_Popper		= 21810
 Global Const $ID_Sparkler				= 21813
-Global Const $ID_Crate_of_Fireworks		= 29436 ; Not spammable
-Global Const $ID_Disco_Ball				= 29543 ; Not Spammable
+Global Const $ID_Crate_of_Fireworks		= 29436		; Not spammable
+Global Const $ID_Disco_Ball				= 29543		; Not Spammable
 Global Const $ID_Party_Beacon			= 36683
 Local Const $Spammable_Party_Array[]	= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon]
 Local Const $All_Festive_Array[]		= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon, $ID_Crate_of_Fireworks, $ID_Disco_Ball]
@@ -623,13 +623,13 @@ Global Const $ID_Golden_Egg				= 22752
 Global Const $ID_Candy_Apple			= 28431
 Global Const $ID_Candy_Corn				= 28432
 Global Const $ID_Slice_of_Pumpkin_Pie	= 28436
-Global Const $ID_Lunar_Fortune_2008		= 29425 ; Rat
-Global Const $ID_Lunar_Fortune_2009		= 29426 ; Ox
-Global Const $ID_Lunar_Fortune_2010		= 29427 ; Tiger
-Global Const $ID_Lunar_Fortune_2011		= 29428 ; Rabbit
-Global Const $ID_Lunar_Fortune_2012		= 29429 ; Dragon
-Global Const $ID_Lunar_Fortune_2013		= 29430 ; Snake
-Global Const $ID_Lunar_Fortune_2014		= 29431 ; Horse
+Global Const $ID_Lunar_Fortune_2008		= 29425		; Rat
+Global Const $ID_Lunar_Fortune_2009		= 29426		; Ox
+Global Const $ID_Lunar_Fortune_2010		= 29427		; Tiger
+Global Const $ID_Lunar_Fortune_2011		= 29428		; Rabbit
+Global Const $ID_Lunar_Fortune_2012		= 29429		; Dragon
+Global Const $ID_Lunar_Fortune_2013		= 29430		; Snake
+Global Const $ID_Lunar_Fortune_2014		= 29431		; Horse
 Global Const $ID_Blue_Rock_Candy		= 31151
 Global Const $ID_Green_Rock_Candy		= 31152
 Global Const $ID_Red_Rock_Candy			= 31153
@@ -707,24 +707,24 @@ Global Const $ID_Cloth_of_the_Brotherhood	= 27322
 
 
 #Region Polymock
-Global Const $ID_Polymock_Wind_Rider			= 24356 ; Gold
-Global Const $ID_Polymock_Gargoyle				= 24361 ; White
-Global Const $ID_Polymock_Mergoyle				= 24369 ; White
-Global Const $ID_Polymock_Skale					= 24373 ; White
-Global Const $ID_Polymock_Fire_Imp				= 24359 ; White
-Global Const $ID_Polymock_Kappa					= 24367 ; Purple
-Global Const $ID_Polymock_Ice_Imp				= 24366 ; White
-Global Const $ID_Polymock_Earth_Elemental		= 24357 ; Purple
-Global Const $ID_Polymock_Ice_Elemental			= 24365 ; Purple
-Global Const $ID_Polymock_Fire_Elemental		= 24358 ; Purple
-Global Const $ID_Polymock_Aloe_Seed				= 24355 ; Purple
-Global Const $ID_Polymock_Mirage_Iboga			= 24363 ; Gold
-Global Const $ID_Polymock_Gaki					= 24360 ; Gold
-;Global Const $ID_Polymock_Mantis_Dreamweaver	= ; Gold
-Global Const $ID_Polymock_Mursaat_Elementalist	= 24370 ; Gold
-Global Const $ID_Polymock_Ruby_Djinn			= 24371 ; Gold
-Global Const $ID_Polymock_Naga_Shaman			= 24372 ; Gold
-Global Const $ID_Polymock_Stone_Rain			= 24374 ; Gold
+Global Const $ID_Polymock_Wind_Rider			= 24356		; Gold
+Global Const $ID_Polymock_Gargoyle				= 24361		; White
+Global Const $ID_Polymock_Mergoyle				= 24369		; White
+Global Const $ID_Polymock_Skale					= 24373		; White
+Global Const $ID_Polymock_Fire_Imp				= 24359		; White
+Global Const $ID_Polymock_Kappa					= 24367		; Purple
+Global Const $ID_Polymock_Ice_Imp				= 24366		; White
+Global Const $ID_Polymock_Earth_Elemental		= 24357		; Purple
+Global Const $ID_Polymock_Ice_Elemental			= 24365		; Purple
+Global Const $ID_Polymock_Fire_Elemental		= 24358		; Purple
+Global Const $ID_Polymock_Aloe_Seed				= 24355		; Purple
+Global Const $ID_Polymock_Mirage_Iboga			= 24363		; Gold
+Global Const $ID_Polymock_Gaki					= 24360		; Gold
+;Global Const $ID_Polymock_Mantis_Dreamweaver	=			; Gold
+Global Const $ID_Polymock_Mursaat_Elementalist	= 24370		; Gold
+Global Const $ID_Polymock_Ruby_Djinn			= 24371		; Gold
+Global Const $ID_Polymock_Naga_Shaman			= 24372		; Gold
+Global Const $ID_Polymock_Stone_Rain			= 24374		; Gold
 #EndRegion Polymock
 
 
@@ -752,7 +752,7 @@ Global Const $ID_Sack_of_Random_Junk				= 34213
 ;Global Const $ID_Reverie_Gift	=
 Global Const $ID_Ministerial_Commendation			= 36985
 Global Const $ID_Imperial_Guard_Requisition_Order	= 29108
-Global Const $ID_Imperial_Guard_Lockbox				= 30212 ; Not tradeable
+Global Const $ID_Imperial_Guard_Lockbox				= 30212		; Not tradeable
 ;Global Const $ID_Proof_of_Flames	=
 ;Global Const $ID_Proof_of_Mountains	=
 ;Global Const $ID_Proof_of_Waves	=
@@ -768,7 +768,7 @@ Global Const $ID_Festival_Prize						= 15478
 ;Global Const $ID_Ghoulish_Grab_Bag	=
 ;Global Const $ID_Ghoulish_Accessory_Token	=
 ;Global Const $ID_Frozen_Accessory_Token	=
-;;Global Const $ID_Wintersday_Grab_Bag	=
+;Global Const $ID_Wintersday_Grab_Bag	=
 Global Const $ID_Armbrace_of_Truth					= 21127
 Global Const $ID_Margonite_Gemstone					= 21128
 Global Const $ID_Stygian_Gemstone					= 21129
@@ -1030,10 +1030,10 @@ Global Const $ID_Paragon_Tome			= 21805
 ; All Tomes
 Local Const $Tomes_Array[]				= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, $ID_Ritualist_EliteTome, _
 	$ID_Paragon_EliteTome, $ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
-;~ Elite Tomes
+; Elite Tomes
 Local Const $Elite_Tomes_Array[]		= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, _
 	$ID_Ritualist_EliteTome, $ID_Paragon_EliteTome]
-;~ Normal Tomes
+; Normal Tomes
 Local Const $Regular_Tomes_Array[]		= [$ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
 Global Const $Map_Tomes					= MapFromArray($Tomes_Array)
 Global Const $Map_Elite_Tomes			= MapFromArray($Elite_Tomes_Array)
@@ -1323,7 +1323,7 @@ Global Const $ID_Panda_Mini								= 15517
 
 
 #Region Envoy Weapons
-;Envoy Skinned Greens
+; Envoy Skinned Greens
 ; Green Envoys
 Global Const $ID_Demrikovs_Judgement	= 36670
 Global Const $ID_Vetauras_Harbinger		= 36678
@@ -1430,7 +1430,7 @@ Global Const $ID_Celestial_Compass_Channeling		= 1885
 #EndRegion Celestial Compass
 
 #Region Other skins
-Global Const $ID_Great_Conch 						= 2415
+Global Const $ID_Great_Conch						= 2415
 Global Const $ID_Elemental_Sword					= 2267
 Global Const $ID_Ruby_Maul							= 2274
 Global Const $ID_Peacocks_Wrath						= 2433
@@ -1453,7 +1453,7 @@ Global Const $ID_Celestial_Longbow					= 1068
 Global Const $ID_Adamantine_Shield					= 1892
 #EndRegion Other skins
 
-;This map could potentially be limited to its function use
+; This map could potentially be limited to its function use
 Local $StackableItems	= $Blue_Scrolls_Array
 _ArrayConcatenate($StackableItems, $Gold_Scrolls_Array)
 _ArrayConcatenate($StackableItems, $Sweet_Pcons_Array)
@@ -1466,6 +1466,7 @@ _ArrayConcatenate($StackableItems, $Alcohols_Array)
 _ArrayConcatenate($StackableItems, $Tomes_Array)
 _ArrayConcatenate($StackableItems, $Trophies_Array)
 _ArrayConcatenate($StackableItems, $Map_Pieces_Array)
+_ArrayConcatenate($StackableItems, $Reward_Trophies_Array)
 _ArrayAdd($StackableItems, $ID_Dyes)
 _ArrayAdd($StackableItems, $ID_Lockpick)
 _ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_1)

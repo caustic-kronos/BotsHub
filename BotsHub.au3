@@ -1,18 +1,18 @@
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
-; Licensed under the Apache License, Version 2.0 (the "License");
+; Licensed under the Apache License, Version 2.0 (the 'License');
 ; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ; http://www.apache.org/licenses/LICENSE-2.0
 ;
 ; Unless required by applicable law or agreed to in writing, software
-; distributed under the License is distributed on an "AS IS" BASIS,
+; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-;GUI built with GuiBuilderPlus
+; GUI built with GuiBuilderPlus
 
 ; TODO - important:
 ; - write small bot that : -salvage items -get material ID -write in file salvaged material
@@ -82,9 +82,9 @@ Local Const $GUI_CONSOLE_GREEN_COLOR = 0xCA4FFF
 Local Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
 Local Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 
-;STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
+; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
-;-1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
+; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
 Local $RUN_MODE = 'AUTOLOAD'
 Local $PROCESS_ID = ''
 Local $CHARACTER_NAME = ''
@@ -245,19 +245,17 @@ Func createGUI()
 	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm infos')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Label_CharacterBuild = GUICtrlCreateLabel('Character build:', 30, 55, 80, 21)
-	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit("", 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
+	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit('', 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
 	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
-	$GUI_Edit_HeroBuild = GUICtrlCreateEdit("", 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
-	
+	$GUI_Edit_HeroBuild = GUICtrlCreateEdit('', 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
+
 	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Label_ToDoList = GUICtrlCreateLabel('GUI TODO :' & @CRLF _
 		& '- add option to choose between random travel and specific travel' & @CRLF _
-		& '- add option for running bot once, bot X times, bot until inventory full, or bot loop' & @CRLF _
 		& '- write small bot that salvage items (does not work for now), get material ID, write in file salvaged material' & @CRLF _
 		& '- change bots to have cleaner return system' & @CRLF _
-		& '- change system so that the checkbox are not read by other bots' & @CRLF _
 	, 30, 95, 531, 26)
 	GUICtrlCreateTabItem('')
 
@@ -298,7 +296,7 @@ Func GuiButtonHandler()
 			Switch GUICtrlRead($GUI_Tabs_Parent)
 				Case 0
 					ControlShow($GUI_GWBotHub, '', $GUI_Console)
-				Case else
+				Case Else
 					ControlHide($GUI_GWBotHub, '', $GUI_Console)
 			EndSwitch
 		Case $GUI_Combo_FarmChoice
@@ -337,7 +335,7 @@ Func GuiButtonHandler()
 			EndIf
 		Case $GUI_EVENT_CLOSE
 			Exit
-		Case else
+		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
 	EndSwitch
 EndFunc
@@ -346,7 +344,7 @@ Func TabEventManager()
 	Switch GUICtrlRead($GUI_Tabs_Parent)
 		Case 0
 			ControlShow($GUI_GWBotHub, '', $GUI_Console)
-		Case else
+		Case Else
 			ControlHide($GUI_GWBotHub, '', $GUI_Console)
 	EndSwitch
 EndFunc
@@ -412,11 +410,11 @@ Func BotHubLoop()
 			Local $timer = TimerInit()
 			Local $success = RunFarmLoop($Farm)
 			UpdateStats($success, $timer)
-			
+
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots(4, 4) < 5) Then 
+				If (CountSlots(4, 4) < 5) Then
 					InventoryManagement()
 					ResetBotsSetups()
 				EndIf
@@ -490,7 +488,7 @@ Func RunFarmLoop($Farm)
 			Out('Dynamic execution')
 		Case 'Tests'
 			RunTests($STATUS)
-		Case else
+		Case Else
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch
 	Return 2
@@ -587,7 +585,7 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
-		Case else
+		Case Else
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
@@ -608,12 +606,12 @@ Func Authentification()
 		$proc_id_int = Number($PROCESS_ID, 2)
 		Out('Running via pid ' & $proc_id_int)
 		If InitializeGameClientData($proc_id_int, True, True, False) = 0 Then
-			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat "' & $proc_id_int & '" ' & VarGetType($proc_id_int) & '')
+			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $proc_id_int & '>> ' & VarGetType($proc_id_int) & '')
 			Return 1
 		EndIf
 	Else
 		If InitializeGameClientData($CharacterName, True, True, False) = 0 Then
-			MsgBox(0, 'Error', 'Could not find a GW client with a character named "' & $CharacterName & '"')
+			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $CharacterName & '>>')
 			Return 1
 		EndIf
 	EndIf
@@ -651,7 +649,7 @@ Func LOGIN($char_name = 'fail', $ProcessID = False)
 	RndSleep(1000)
 
 	Local $WindowList=WinList('Guild Wars')
-	Local $WinHandle = False;
+	Local $WinHandle = False
 
 	For $i = 1 to $WindowList[0][0]
 		If WinGetProcess($WindowList[$i][1])= $ProcessID Then
@@ -736,7 +734,7 @@ Func UpdateStats($success, $timer)
 	Local Static $GoldItemsCount = CountGoldItems()
 	;Local Static $ItemStacks = CountItemStacks()
 
-	;Either bot did not run yet or ran but was paused
+	; Either bot did not run yet or ran but was paused
 	If $success == 0 Then
 		$runs += 1
 		$time += TimerDiff($timer)
@@ -746,7 +744,7 @@ Func UpdateStats($success, $timer)
 		$time += TimerDiff($timer)
 	EndIf
 
-	;Global stats
+	; Global stats
 	GUICtrlSetData($GUI_Label_Runs, 'Runs: ' & $runs)
 	GUICtrlSetData($GUI_Label_Failures, 'Failures: ' & $failures)
 	GUICtrlSetData($GUI_Label_Time, 'Time: ' & Floor($time/3600000) & 'h' & Floor(Mod($time, 3600000)/60000) & 'min' & Floor(Mod($time, 60000)/1000) & 's')
@@ -756,7 +754,7 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_GoldItems, 'Gold Items: ' & CountGoldItems() - $GoldItemsCount)
 	GUICtrlSetData($GUI_Label_Experience, 'Experience: ' & (GetExperience() - $ExperienceCount))
 
-	;Title stats
+	; Title stats
 	GUICtrlSetData($GUI_Label_AsuraTitle, 'Asura: ' & GetAsuraTitle() - $AsuraTitlePoints)
 	GUICtrlSetData($GUI_Label_DeldrimorTitle, 'Deldrimor: ' & GetDeldrimorTitle() - $DeldrimorTitlePoints)
 	GUICtrlSetData($GUI_Label_NornTitle, 'Norn: ' & GetNornTitle() - $NornTitlePoints)

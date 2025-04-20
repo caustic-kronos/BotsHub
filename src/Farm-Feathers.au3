@@ -227,7 +227,7 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 		EndIf
 		RndSleep(250)
 	WEnd
-EndFunc ;==> MoveKill
+EndFunc
 
 
 Func Kill($aWaitForSettle = True)

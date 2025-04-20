@@ -120,23 +120,23 @@ Global Const $HEADER_PARTY_SEARCH_TYPE = 0xAD				; Sets the type of party search
 Global Const $HEADER_PARTY_READY_STATUS = 0xAE				; Indicates ready status in a party
 
 
-;=BUFFS=
+; =BUFFS=
 Global Const $HEADER_BUFF_DROP = 0x28			; Drops buff, cancel enchantmant, whatever you call it
 
-;=TRAVEL=
+; =TRAVEL=
 Global Const $HEADER_MAP_TRAVEL = 0xB0			; Travels to outpost via worldmap
 Global Const $HEADER_GUILDHALL_TRAVEL = 0xAF	; Travels to guild hall
 Global Const $HEADER_GUILDHALL_LEAVE = 0xB1		; Leaves Guildhall
 
-;=FACTION=
+; =FACTION=
 Global Const $HEADER_FACTION_DEPOSIT = 0x34		; Donates kurzick/luxon faction to ally
 
-;=TITLE=
+; =TITLE=
 Global Const $HEADER_TITLE_DISPLAY = 0x57		; Displays title
 Global Const $HEADER_TITLE_HIDE = 0x58			; Hides title
 Global Const $HEADER_TITLE_UPDATE = 0xF5
 
-;=DIALOG=
+; =DIALOG=
 Global Const $HEADER_HOM_DIALOG = 0x59
 Global Const $HEADER_CINEMATIC_SKIP = 0x62		; Skips the cinematic
 
@@ -154,11 +154,11 @@ Global Const $HEADER_LOAD_SKILLBAR = 0x5C			; Loads a complete build
 Global Const $HEADER_SKILLBAR_SKILL_REPLACE = 0x5D	; Replaces a skill in the skill bar
 Global Const $HEADER_PLAYER_ATTR_SET = 0x98
 
-;=CHEST=
+; =CHEST=
 Global Const $HEADER_OPEN_CHEST = 0x52				; interacts with chest or signpost
 
-;=CHAT=
+; =CHAT=
 Global Const $HEADER_SEND_CHAT = 0x63				; Needed for sending messages in chat
 
-;=MOVEMENT=
+; =MOVEMENT=
 Global Const $HEADER_MOVEMENT_TICK = 0x1F

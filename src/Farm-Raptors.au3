@@ -204,7 +204,7 @@ Func GetRaptors()
 	Out('Gathering Raptors')
 
 	Move(-20695, -9900, 20)
-	;Using the nearest to agent could result in targeting Angorodon if they are badly placed
+	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)

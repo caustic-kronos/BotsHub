@@ -123,8 +123,8 @@ Func KournansFarmLoop()
 	MoveTo(13500, -4000)
 	MoveTo(11500, -2500)
 
-	;Find the kournans and get in spirit range
-	;Move to the correct range of the enemies (who are not enemies at this points)(close so that they are affected by spirits but not too close)
+	; Find the kournans and get in spirit range
+	; Move to the correct range of the enemies (who are not enemies at this points)(close so that they are affected by spirits but not too close)
 	Local $targetFoe = GetNearestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_SPIRIT - 500)
 	Local $X = DllStructGetData(GetAgentById(-2), 'X')
@@ -163,10 +163,10 @@ EndFunc
 
 Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_EdgeOfExtinction)
-	;Get closer to the non-enemies to trigger them into enemies
+	; Get closer to the non-enemies to trigger them into enemies
 	Local $targetFoe = GetFurthestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_EARSHOT - 50)
-	;Move back to be safe for a few seconds
+	; Move back to be safe for a few seconds
 	MoveTo($safeX, $safeY)
 	RndSleep(4000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_MuddyTerrain)
@@ -183,10 +183,10 @@ EndFunc
 
 Func CastFullSpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_EdgeOfExtinction)
-	;Get closer to the non-enemies to trigger them into enemies
+	; Get closer to the non-enemies to trigger them into enemies
 	Local $targetFoe = GetFurthestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_EARSHOT -100)
-	;Move back to be safe for a few seconds
+	; Move back to be safe for a few seconds
 	MoveTo($safeX, $safeY)
 	RndSleep(5000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_Brambles)

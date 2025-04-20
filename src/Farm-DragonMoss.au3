@@ -88,9 +88,9 @@ Func DragonMossFarmLoop()
 	UseSkillEx($DM_StormChaser)
 	RndSleep(50)
 	MoveTo(-8400, 18450)
-	;Can talk to get benediction here
+	; Can talk to get benediction here
 
-	;Move to spot before aggro
+	; Move to spot before aggro
 	MoveTo(-6350, 16750)
 	UseSkillEx($DM_ShroudOfDistress)
 	RndSleep(50)
@@ -98,11 +98,11 @@ Func DragonMossFarmLoop()
 	RndSleep(50)
 	UseSkillEx($DM_ShadowForm)
 	RndSleep(50)
-	;Aggro
+	; Aggro
 	MoveTo(-5400, 15675, UseIMSWhenAvailable)
 	MoveTo(-6150, 18000, 0, UseIMSWhenAvailable)
 	RndSleep(2000)
-	;Safety
+	; Safety
 	MoveTo(-6575, 18575, 0)
 	UseSkillEx($DM_DwarvenStability)
 	While Not GetIsDead(-2) And Not IsRecharged($DM_ShadowForm)
@@ -117,7 +117,7 @@ Func DragonMossFarmLoop()
 		Return 1
 	EndIf
 	RndSleep(1000)
-	;Killing
+	; Killing
 	Local $target = GetNearestEnemyToAgent(-2)
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])

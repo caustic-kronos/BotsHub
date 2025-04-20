@@ -86,7 +86,7 @@ Func ManageInventory($STATUS)
 EndFunc
 
 
-; Function to deal with inventory after farm
+;~ Function to deal with inventory after farm
 Func InventoryManagement()
 	; Operations order :
 	; 1-Store unid if desired	-> not implemented
@@ -98,13 +98,13 @@ Func InventoryManagement()
 	; 7-Sell items
 	; 8-Buy ectos with excedent
 	; 9-Store items
-	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage(GetIsIdentified)
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage(GetIsUnidentified)
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 		IdentifyAllItems()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then 
+	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
 		ConnectToDatabase()
 		InitializeDatabase()
 		CompleteModelLookupTable()
@@ -114,7 +114,7 @@ Func InventoryManagement()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		
+
 		MoveItemsOutOfEquipmentBag()
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
@@ -122,7 +122,7 @@ Func InventoryManagement()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-		
+
 		SellMaterialsToMerchant()
 		SellRareMaterialsToMerchant()
 	EndIf
@@ -135,12 +135,12 @@ Func InventoryManagement()
 EndFunc
 
 
-; Function to deal with inventory during farm
+;~ Function to deal with inventory during farm
 Func DuringFarmActions()
 	; This function means we need to have salvaging tools on during farm /!\
 	; Not much that can be done during farm other than :
-	;-identifying what can be identified
-	;-salvaging what can be salvaged
+	; -identifying what can be identified
+	; -salvaging what can be salvaged
 EndFunc
 
 
@@ -207,7 +207,7 @@ Func ConnectToDatabase()
 EndFunc
 
 
-;# Disconnect from the database
+;~ Disconnect from the database
 Func DisconnectFromDatabase()
 	_SQLite_Close()
 	_SQLite_Shutdown()
@@ -577,7 +577,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 Then
 				If $shouldSellItem($item) Then
-					If Not $dryRun Then 
+					If Not $dryRun Then
 						SellItem($item, DllStructGetData($item, 'Quantity'))
 						RndSleep(500 + GetPing())
 					EndIf
@@ -613,7 +613,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 					TraderSell()
 					Sleep(250 + GetPing())
 					$totalAmount -= 10
-					;Safety net incase some sell orders didn't go through
+					; Safety net incase some sell orders didn't go through
 					If ($totalAmount < 10) Then
 						$item = GetItemBySlot($bagIndex, $i)
 						$totalAmount = DllStructGetData($item, 'Quantity')
@@ -648,7 +648,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 					TraderSell()
 					Sleep(250 + GetPing())
 					$totalAmount -= 1
-					;Safety net incase some sell orders didn't go through
+					; Safety net incase some sell orders didn't go through
 					If ($totalAmount < 1) Then
 						$item = GetItemBySlot($bagIndex, $i)
 						$totalAmount = DllStructGetData($item, 'Quantity')
@@ -676,7 +676,7 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 		TraderBuy()
 		Sleep(250 + GetPing())
 	Next
-	;TODO: add safety net to check amount of items bought and buy some more if needed
+	; TODO: add safety net to check amount of items bought and buy some more if needed
 EndFunc
 
 
@@ -825,8 +825,8 @@ EndFunc
 ;~ Return true if the item should be sold to the material merchant
 Func DefaultShouldSellMaterial($item)
 	If Not IsBasicMaterial($item) Then Return False
-	
-	;Lazy instantiation
+
+	; Lazy instantiation
 	Local Static $materialsKeptArray = [$ID_Pile_of_Glittering_Dust, $ID_Feather]
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
@@ -841,10 +841,10 @@ EndFunc
 Func DefaultShouldSellRareMaterial($item)
 	If Not IsRareMaterial($item) Then Return False
 
-	;Lazy instantiation
+	; Lazy instantiation
 	Local Static $materialsKeptArray = [$ID_Glob_of_Ectoplasm, $ID_Obsidian_Shard]
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
-	
+
 	Local $modelID = DllStructGetData($item, 'ModelID')
 	Out($mapMaterialsKept[$modelId])
 	If $mapMaterialsKept[$modelId] <> null Then Return False
@@ -865,13 +865,13 @@ EndFunc
 
 Func ShouldKeepWeapon($itemID)
 	Local Static $shouldKeepWeaponsArray = [ _
-		_;Salvages to dust
+		_	;Salvages to dust
 		$ID_Great_Conch, $ID_Elemental_Sword, _
-		_;Salvages to dust, sometimes
+		_	;Salvages to dust, sometimes
 		$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow, _
-		_;Salvages to ruby, very rarely ...
-		_;$ID_Ruby_Maul, _
-		_;Expensive - don't sell
+		_	;Salvages to ruby, very rarely ...
+		_	;$ID_Ruby_Maul, _
+		_	;Expensive - don't sell
 		$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, _
 		$ID_Froggy_Air, $ID_Froggy_Earth, $ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, $ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, _
 		$ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
