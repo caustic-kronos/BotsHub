@@ -737,15 +737,18 @@ EndFunc
 
 
 ;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else
-Func FindAllInStorages($firstBag, $lastBag, $itemID)
-	Local $item
+Func FindAllInStorages($firstBag, $lastBag, $item)
 	Local $itemBagsAndSlots[0] = []
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $extraID = ($itemID == $ID_Dyes) ? DllStructGetData($item, 'ExtraID') : -1
+	Out($extraID)
+	Local $storageItem
 
 	For $bag = $firstBag To $lastBag
 		Local $bagSize = GetMaxSlots($bag)
 		For $slot = 1 To $bagSize
-			$item = GetItemBySlot($bag, $slot)
-			If(DllStructGetData($item, 'ModelID') == $itemID) Then
+			$storageItem = GetItemBySlot($bag, $slot)
+			If (DllStructGetData($storageItem, 'ModelID') == $itemID) And ($extraId == -1 Or DllStructGetData($storageItem, 'ExtraID') == $extraID) Then
 				_ArrayAdd($itemBagsAndSlots, $bag)
 				_ArrayAdd($itemBagsAndSlots, $slot)
 			EndIf
@@ -756,14 +759,14 @@ EndFunc
 
 
 ;~ Look for an item in inventory
-Func FindAllInInventory($itemID)
-	Return FindAllInStorages(1, 5, $itemID)
+Func FindAllInInventory($item)
+	Return FindAllInStorages(1, 5, $item)
 EndFunc
 
 
 ;~ Look for an item in xunlai storage
-Func FindAllInXunlaiStorage($itemID)
-	Return FindAllInStorages(8, 21, $itemID)
+Func FindAllInXunlaiStorage($item)
+	Return FindAllInStorages(8, 21, $item)
 EndFunc
 
 
