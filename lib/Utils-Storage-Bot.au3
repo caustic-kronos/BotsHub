@@ -81,8 +81,66 @@ Local $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
 	;SellEverythingToMerchant(DefaultShouldSellItem, True)
-	PostFarmActions()
+	InventoryManagement()
 	Return 2
+EndFunc
+
+
+; Function to deal with inventory after farm
+Func InventoryManagement()
+	; Operations order :
+	; 1-Store unid if desired	-> not implemented
+	; 2-Sort items
+	; 3-Identify items
+	; 4-Collect data
+	; 5-Salvage ?				-> doesn't work yet
+	; 6-Sell materials
+	; 7-Sell items
+	; 8-Buy ectos with excedent
+	; 9-Store items
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage(GetIsIdentified)
+	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		IdentifyAllItems()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then 
+		ConnectToDatabase()
+		InitializeDatabase()
+		CompleteModelLookupTable()
+		CompleteUpgradeLookupTable()
+		StoreAllItemsData()
+		DisconnectFromDatabase()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		
+		MoveItemsOutOfEquipmentBag()
+		;SalvageInscriptions()
+		;UpgradeWithSalvageInscriptions()
+		;SalvageItems()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		
+		SellMaterialsToMerchant()
+		SellRareMaterialsToMerchant()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		SellEverythingToMerchant()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
+	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+EndFunc
+
+
+; Function to deal with inventory during farm
+Func DuringFarmActions()
+	; This function means we need to have salvaging tools on during farm /!\
+	; Not much that can be done during farm other than :
+	;-identifying what can be identified
+	;-salvaging what can be salvaged
 EndFunc
 
 
@@ -333,7 +391,6 @@ Func CompleteItemsMods($batchID)
 			& '	SELECT upgrades.effect' & @CRLF _
 			& '	FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
 			& '	WHERE upgrades.propagate = 1' & @CRLF _
-			& '		AND upgrades.OS = ' & $TABLE_DATA_USER & '.OS' & @CRLF _
 			& '		AND upgrades.weapon = type_ID' & @CRLF _
 			& '		AND upgrades.hexa IS NOT NULL' & @CRLF _
 			& "		AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _
@@ -345,7 +402,6 @@ Func CompleteItemsMods($batchID)
 			& '		SELECT upgrades.effect' & @CRLF _
 			& '		FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
 			& '		WHERE upgrades.propagate = 1' & @CRLF _
-			& '			AND upgrades.OS = ' & $TABLE_DATA_USER & '.OS' & @CRLF _
 			& '			AND upgrades.weapon = type_ID' & @CRLF _
 			& '			AND upgrades.hexa IS NOT NULL' & @CRLF _
 			& "			AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _
@@ -808,10 +864,30 @@ EndFunc
 
 
 Func ShouldKeepWeapon($itemID)
-	Local $ID_Model_Great_Conch = 2415			;Salvages to dust
-	Local $ID_Model_Elemental_Sword = 2267		;Salvages to dust
-	Local $shouldKeepWeaponsArray[] = [$ID_Model_Great_Conch, $ID_Model_Elemental_Sword]
-	Local $Map_shouldKeepWeapons = MapFromArray($shouldKeepWeaponsArray)
+	Local Static $shouldKeepWeaponsArray = [ _
+		_;Salvages to dust
+		$ID_Great_Conch, $ID_Elemental_Sword, _
+		_;Salvages to dust, sometimes
+		$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow, _
+		_;Salvages to ruby, very rarely ...
+		_;$ID_Ruby_Maul, _
+		_;Expensive - don't sell
+		$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, _
+		$ID_Froggy_Air, $ID_Froggy_Earth, $ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, $ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, _
+		$ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
+		$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, _
+		$ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, $ID_Bone_Dragon_Staff_Death, _
+		$ID_Bone_Dragon_Staff_Air, $ID_Bone_Dragon_Staff_Earth, $ID_Bone_Dragon_Staff_Energy_Storage, $ID_Bone_Dragon_Staff_Fire, $ID_Bone_Dragon_Staff_Water, _
+		$ID_Bone_Dragon_Staff_Divine, $ID_Bone_Dragon_Staff_Healing, $ID_Bone_Dragon_Staff_Protection, $ID_Bone_Dragon_Staff_Smiting, _
+		$ID_Bone_Dragon_Staff_Communing, $ID_Bone_Dragon_Staff_Spawning, $ID_Bone_Dragon_Staff_Restoration, $ID_Bone_Dragon_Staff_Channeling, _
+		$ID_Celestial_Compass_Domination, $ID_Celestial_Compass_Fast_Casting, $ID_Celestial_Compass_Illusion, $ID_Celestial_Compass_Inspiration, _
+		$ID_Celestial_Compass_Soul_Reaping, $ID_Celestial_Compass_Blood, $ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, _
+		$ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
+		$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, _
+		$ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
+	]
+
+	Local Static $Map_shouldKeepWeapons = MapFromArray($shouldKeepWeaponsArray)
 	If $Map_shouldKeepWeapons[$itemID] <> null Then Return True
 	Return False
 EndFunc

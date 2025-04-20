@@ -166,10 +166,10 @@ Global Const $ID_Marksmanship		= 25
 Global Const $ID_Dagger_Mastery		= 29
 Global Const $ID_Critical_Strikes	= 30 ;CriticalStrikes or Lethal or Shadow
 ;Global Const $ID_	= 31		;CriticalStrikes or Lethal or Shadow
-;Global Const $ID_	= 32		;CriticalStrikes or Lethal or Shadow
+Global Const $ID_Communing			= 32
 Global Const $ID_Restoration_Magic	= 33
 Global Const $ID_Channeling_Magic	= 34
-Global Const $ID_Communing			= 35
+;Global Const $ID_	= 35		;CriticalStrikes or Lethal or Shadow
 Global Const $ID_Spawning_Power		= 36
 Global Const $ID_Spear_Mastery		= 37
 Global Const $ID_Command			= 38
@@ -1367,69 +1367,93 @@ Global Const $ID_Froggy_Channeling		= 1975
 
 
 #Region Bone Dragon Staff
-Global Const $ID_BDS_Domination		= 1987
-Global Const $ID_BDS_Fast_Casting	= 1988
-Global Const $ID_BDS_Illusion		= 1989
-Global Const $ID_BDS_Inspiration	= 1990
-Global Const $ID_BDS_Soul_Reaping	= 1991
-Global Const $ID_BDS_Blood			= 1992
-Global Const $ID_BDS_Curses			= 1993
-Global Const $ID_BDS_Death			= 1994
-Global Const $ID_BDS_Air			= 1995
-Global Const $ID_BDS_Earth			= 1996
-Global Const $ID_BDS_Energy_Storage	= 1997
-Global Const $ID_BDS_Fire			= 1998
-Global Const $ID_BDS_Water			= 1999
-Global Const $ID_BDS_Divine			= 2000
-Global Const $ID_BDS_Healing		= 2001
-Global Const $ID_BDS_Protection		= 2002
-Global Const $ID_BDS_Smiting		= 2003
-Global Const $ID_BDS_Communing		= 2004
-Global Const $ID_BDS_Spawning		= 2005
-Global Const $ID_BDS_Restoration	= 2006
-Global Const $ID_BDS_Channeling		= 2007
+Global Const $ID_Bone_Dragon_Staff_Domination		= 1987
+Global Const $ID_Bone_Dragon_Staff_Fast_Casting		= 1988
+Global Const $ID_Bone_Dragon_Staff_Illusion			= 1989
+Global Const $ID_Bone_Dragon_Staff_Inspiration		= 1990
+Global Const $ID_Bone_Dragon_Staff_Soul_Reaping		= 1991
+Global Const $ID_Bone_Dragon_Staff_Blood			= 1992
+Global Const $ID_Bone_Dragon_Staff_Curses			= 1993
+Global Const $ID_Bone_Dragon_Staff_Death			= 1994
+Global Const $ID_Bone_Dragon_Staff_Air				= 1995
+Global Const $ID_Bone_Dragon_Staff_Earth			= 1996
+Global Const $ID_Bone_Dragon_Staff_Energy_Storage	= 1997
+Global Const $ID_Bone_Dragon_Staff_Fire				= 1998
+Global Const $ID_Bone_Dragon_Staff_Water			= 1999
+Global Const $ID_Bone_Dragon_Staff_Divine			= 2000
+Global Const $ID_Bone_Dragon_Staff_Healing			= 2001
+Global Const $ID_Bone_Dragon_Staff_Protection		= 2002
+Global Const $ID_Bone_Dragon_Staff_Smiting			= 2003
+Global Const $ID_Bone_Dragon_Staff_Communing		= 2004
+Global Const $ID_Bone_Dragon_Staff_Spawning			= 2005
+Global Const $ID_Bone_Dragon_Staff_Restoration		= 2006
+Global Const $ID_Bone_Dragon_Staff_Channeling		= 2007
 #EndRegion Bone Dragon Staff
 
 
 #Region Wintergreen Weapons
-Global Const $ID_Wintergreen_Axe		= 15835
-Global Const $ID_Wintergreen_Bow		= 15836
-Global Const $ID_Wintergreen_Sword		= 16130
-Global Const $ID_Wintergreen_Daggers	= 15838
-Global Const $ID_Wintergreen_Hammer		= 15839
-Global Const $ID_Wintergreen_Wand		= 15840
-Global Const $ID_Wintergreen_Scythe		= 15877
-Global Const $ID_Wintergreen_Shield		= 15878
-Global Const $ID_Wintergreen_Spear		= 15971
-Global Const $ID_Wintergreen_Staff		= 16128
+Global Const $ID_Wintergreen_Axe					= 15835
+Global Const $ID_Wintergreen_Bow					= 15836
+Global Const $ID_Wintergreen_Sword					= 16130
+Global Const $ID_Wintergreen_Daggers				= 15838
+Global Const $ID_Wintergreen_Hammer					= 15839
+Global Const $ID_Wintergreen_Wand					= 15840
+Global Const $ID_Wintergreen_Scythe					= 15877
+Global Const $ID_Wintergreen_Shield					= 15878
+Global Const $ID_Wintergreen_Spear					= 15971
+Global Const $ID_Wintergreen_Staff					= 16128
 #EndRegion Wintergreen Weapons
 
 
 #Region Celestial Compass
-Global Const $ID_CC_Domination		= 1055
-Global Const $ID_CC_Fast_Casting	= 1058
-Global Const $ID_CC_Illusion		= 1060
-Global Const $ID_CC_Inspiration		= 1064
-Global Const $ID_CC_Soul_Reaping	= 1752
-Global Const $ID_CC_Blood			= 1065
-Global Const $ID_CC_Curses			= 1066
-Global Const $ID_CC_Death			= 1067
-Global Const $ID_CC_Air				= 1768
-Global Const $ID_CC_Earth			= 1769
-Global Const $ID_CC_Energy_Storage	= 1770
-Global Const $ID_CC_Fire			= 1771
-Global Const $ID_CC_Water			= 1772
-Global Const $ID_CC_Divine			= 1773
-Global Const $ID_CC_Healing			= 1870
-Global Const $ID_CC_Protection		= 1879
-Global Const $ID_CC_Smiting			= 1880
-Global Const $ID_CC_Communing		= 1881
-Global Const $ID_CC_Spawning		= 1883
-Global Const $ID_CC_Restoration		= 1884
-Global Const $ID_CC_Channeling		= 1885
+Global Const $ID_Celestial_Compass_Domination		= 1055
+Global Const $ID_Celestial_Compass_Fast_Casting		= 1058
+Global Const $ID_Celestial_Compass_Illusion			= 1060
+Global Const $ID_Celestial_Compass_Inspiration		= 1064
+Global Const $ID_Celestial_Compass_Soul_Reaping		= 1752
+Global Const $ID_Celestial_Compass_Blood			= 1065
+Global Const $ID_Celestial_Compass_Curses			= 1066
+Global Const $ID_Celestial_Compass_Death			= 1067
+Global Const $ID_Celestial_Compass_Air				= 1768
+Global Const $ID_Celestial_Compass_Earth			= 1769
+Global Const $ID_Celestial_Compass_Energy_Storage	= 1770
+Global Const $ID_Celestial_Compass_Fire				= 1771
+Global Const $ID_Celestial_Compass_Water			= 1772
+Global Const $ID_Celestial_Compass_Divine			= 1773
+Global Const $ID_Celestial_Compass_Healing			= 1870
+Global Const $ID_Celestial_Compass_Protection		= 1879
+Global Const $ID_Celestial_Compass_Smiting			= 1880
+Global Const $ID_Celestial_Compass_Communing		= 1881
+Global Const $ID_Celestial_Compass_Spawning			= 1883
+Global Const $ID_Celestial_Compass_Restoration		= 1884
+Global Const $ID_Celestial_Compass_Channeling		= 1885
 #EndRegion Celestial Compass
 
+#Region Other skins
+Global Const $ID_Great_Conch 						= 2415
+Global Const $ID_Elemental_Sword					= 2267
+Global Const $ID_Ruby_Maul							= 2274
+Global Const $ID_Peacocks_Wrath						= 2433
+Global Const $ID_Quicksilver						= 2242
+Global Const $ID_Dadao_Sword						= 739
+Global Const $ID_Shinobi_Blade						= 744
+Global Const $ID_Dragon_Staff						= 736
+Global Const $ID_Bo_Staff							= 735
+Global Const $ID_Diamond_Aegis						= 783
+Global Const $ID_Bladed_Shield						= 777
+Global Const $ID_Platinum_Wand						= 1011
+Global Const $ID_Celestial_Shield					= 943
+Global Const $ID_Celestial_Shield_2					= 942
+Global Const $ID_Celestial_Scepter					= 926
+Global Const $ID_Celestial_Sword					= 790
+Global Const $ID_Celestial_Daggers					= 761
+Global Const $ID_Celestial_Hammer					= 769
+Global Const $ID_Celestial_Axe						= 747
+Global Const $ID_Celestial_Longbow					= 1068
+Global Const $ID_Adamantine_Shield					= 1892
+#EndRegion Other skins
 
+;This map could potentially be limited to its function use
 Local $StackableItems	= $Blue_Scrolls_Array
 _ArrayConcatenate($StackableItems, $Gold_Scrolls_Array)
 _ArrayConcatenate($StackableItems, $Sweet_Pcons_Array)

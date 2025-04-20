@@ -32,6 +32,11 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
+	While($STATUS == 'RUNNING')
+		GetOwnLocation()
+		Sleep(2000)
+	WEnd
+	
 	;PostFarmActions()
 	
 	;while true
@@ -133,8 +138,8 @@ EndFunc
 ;~ Travel to specified map and specified district/language
 Func DistrictTravel($mapID, $district, $language)
 	MoveMap($mapID, $district, 0, $language)
-	WaitMapLoading($mapID, 30000)
-	RndSleep(3000)
+	WaitMapLoading($mapID, 20000)
+	RndSleep(2000)
 EndFunc
 
 
@@ -145,8 +150,8 @@ Func RandomDistrictTravel($mapID, $district = 7)
 	Local $Language[11] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
 	Local $Random = Random(0, $district - 1, 1)
 	MoveMap($mapID, $Region[$Random], 0, $Language[$Random])
-	WaitMapLoading($mapID, 30000)
-	RndSleep(3000)
+	WaitMapLoading($mapID, 20000)
+	RndSleep(2000)
 EndFunc
 #EndRegion Map and travel
 

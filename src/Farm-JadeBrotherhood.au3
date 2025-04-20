@@ -57,7 +57,6 @@ Local Const $Brotherhood_MakeHaste = 3
 Local $DeadlockTimer
 Local $Deadlocked = False
 
-#Region GUI
 Global $JADE_BROTHERHOOD_FARM_SETUP = False
 
 
