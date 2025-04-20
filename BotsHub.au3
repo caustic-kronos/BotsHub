@@ -17,16 +17,12 @@
 ; TODO - important:
 ; - write small bot that : -salvage items -get material ID -write in file salvaged material
 ; - salvaging
-; - keeping items depending on their mods
 ; - checking and using proper inventory/xunlai storage size
 
 ; TODO - secondary:
 ; - change bots to have cleaner return system
 ; - add option to choose between random travel and specific travel
-; - add option for : running bot once, bot X times, bot until inventory full, or bot loop
 
-; BUGLIST :
-;
 
 ; Night's tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot)
@@ -65,7 +61,6 @@
 #include 'src/Farm-Luxon.au3'
 #include 'src/Farm-Mantids.au3'
 #include 'src/Farm-MinisterialCommendations.au3'
-;#include 'Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-Vaettirs.au3'
