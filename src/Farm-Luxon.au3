@@ -59,7 +59,7 @@ Func LuxonFactionFarm($STATUS)
 	Local $result = VanquishMountQinkai()
 	AdlibUnRegister('LuxonGroupIsAlive')
 
-	;Temporarily change a failure into a pause for debugging :
+	; Temporarily change a failure into a pause for debugging :
 	If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
 	If (CountSlots() < 10) Then
@@ -82,7 +82,6 @@ Func LuxonFarmSetup()
 		If $DonatePoints Then
 			Do
 				DonateFaction('Luxon')
-				;DonateFaction(1) ;Could be this call ?
 				RndSleep(500)
 			Until GetLuxonFaction() < 5000
 		Else

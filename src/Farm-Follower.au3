@@ -64,7 +64,7 @@ Local $playerIDs
 Func FollowerFarm($STATUS)
 	If Not $FOLLOWER_SETUP Then FollowerSetup()
 
-	While $STATUS == 'RUNNING' And CountSlots(4, 4) > 5
+	While $STATUS == 'RUNNING' And CountSlots(1, 5) > 5
 		Switch $Player_Profession_ID
 			Case $ID_Warrior
 				FollowerLoop()
@@ -249,7 +249,7 @@ Func ParagonRefreshShouts()
 
 		Local $ownID = DllStructGetData(GetAgentByID(-2), 'ID')
 
-		;This solution is imperfect because we recast HR every time
+		; This solution is imperfect because we recast HR every time
 		Local Static $i = 1
 		If $partyMembers[0] > 1 Then
 			If DllStructGetData($partyMembers[$i], 'ID') == $ownID Or $i > $partyMembers[0] Then $i = Mod($i, $partyMembers[0]) + 1
@@ -264,7 +264,7 @@ Func ParagonRefreshShouts()
 			$i = Mod($i, $partyMembers[0]) + 1
 		EndIf
 
-		;This solution would be better - but effects can't be accessed on other heroes/characters
+		; This solution would be better - but effects can't be accessed on other heroes/characters
 		;Local $HeroNumber
 		;For $i = 1 To $partyMembers[0]
 		;	If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop

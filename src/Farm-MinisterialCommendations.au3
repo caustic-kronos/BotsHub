@@ -118,7 +118,7 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 #CE
 
 Func MinisterialCommendationsFarm($STATUS)
-	If Not($MINISTERIAL_COMMENDATIONS_FARM_SETUP) Then Setup()
+	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
 	If $loggingEnabled Then $loggingFile = FileOpen('logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Out('Entering quest')
@@ -157,15 +157,9 @@ Func MinisterialCommendationsFarm($STATUS)
 	Out('Picking up loot')
 	PickUpItems(HealWhilePickingItems)
 
-	;Out('Travelling back to KC')
-	;DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
-	
-	Out('Porting to KC')
-	Resign()
-	RndSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Kaineng_City, 10000, 2000)	
-	
+	Out('Travelling back to KC')
+	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+
 	If $loggingEnabled Then FileClose($loggingFile)
 	Return 0
 EndFunc

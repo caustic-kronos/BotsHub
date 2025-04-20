@@ -22,7 +22,7 @@
 
 Opt('MustDeclareVars', 1)
 
-;Note: mobs aggro correspond to earshot range
+; Note: mobs aggro correspond to earshot range
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 
@@ -36,19 +36,17 @@ Func RunTests($STATUS)
 		GetOwnLocation()
 		Sleep(2000)
 	WEnd
-	
-	;PostFarmActions()
-	
+
 	;while true
 	;	Local $me = GetAgentByID(-2)
 	;	Out('X:' & DllStructGetData($me, 'X') & ';Y:' & DllStructGetData($me, 'Y'))
 	;	Sleep(1000)
 	;wend
-		
+
 	;Local $item = GetItemBySlot(1, 1)
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $itemID = DllStructGetData($item, 'ID')
-	
+
 	;StartSalvage($item)
 	;Sleep(2000)
 	;SalvageMaterials()
@@ -99,7 +97,7 @@ Func DynamicExecution($args)
 		Case 4
 			Out('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3] & ' ' & $arguments[4])
 			Call($arguments[1], $arguments[2], $arguments[3], $arguments[4])
-		Case else
+		Case Else
 			MsgBox(0, 'Error', 'Too many arguments provided to that function.')
 	EndSwitch
 EndFunc
@@ -170,7 +168,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 		If (GetIsDead(-2)) Then Return
 		If Not GetCanPickUp($agent) Then ContinueLoop
 		If GetDistance(-2, $agent) > $range Then ContinueLoop
-		
+
 		$agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)
 
@@ -198,7 +196,7 @@ EndFunc
 Func DefaultShouldPickItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
-	;Only pick gold if character has less than 99k in inventory
+	; Only pick gold if character has less than 99k in inventory
 	If (($itemID == $ID_Money) And (GetGoldCharacter() < 99000)) Then
 		Return True
 	ElseIf IsBasicMaterial($item) Then
@@ -269,7 +267,7 @@ Func PickOnlyImportantItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
 	Local $rarity = GetRarity($item)
-	;Only pick gold if character has less than 99k in inventory
+	; Only pick gold if character has less than 99k in inventory
 	If IsRareMaterial($item) Then
 		Return True
 	ElseIf ($itemID == $ID_Dyes) Then
@@ -293,7 +291,7 @@ EndFunc
 Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
 	Local Static $openedChests[]
 	Local $gadgetID
-	Local $agents = GetAgentArray(0x200) ;0x200 = type: static
+	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
 		If $Map_Chests[$gadgetID] == null Then ContinueLoop
@@ -331,14 +329,14 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = null)
 		GoSignpost($agent)
 		RndSleep(100)
 		$me = GetAgentByID(-2)
-	WEnd 
+	WEnd
 	RndSleep(500)
 EndFunc
 #EndRegion Loot Chests
 
 
 #Region Inventory or Chest
-; Find the first empty slot in the given bag
+;~ Find the first empty slot in the given bag
 Func FindEmptySlot($bag)
 	Local $item
 	For $slot = 1 To DllStructGetData(GetBag($bag), 'Slots')
@@ -349,7 +347,7 @@ Func FindEmptySlot($bag)
 EndFunc
 
 
-; Find all empty slots in the given bag
+;~ Find all empty slots in the given bag
 Func FindEmptySlots($bagId)
 	Local $bag = GetBag($bagId)
 	Local $emptySlots[0] = []
@@ -365,12 +363,12 @@ Func FindEmptySlots($bagId)
 EndFunc
 
 
-; Find first empty slot in chest
+;~ Find first empty slot in chest
 Func FindChestFirstEmptySlot()
 	Local $bagEmptySlot[2] = [0, 0]
 	For $i = 8 To 21
 		$bagEmptySlot[1] = FindEmptySlot($i)
-		If $bagEmptySlot[1] <> 0 Then 
+		If $bagEmptySlot[1] <> 0 Then
 			$bagEmptySlot[0] = $i
 			Return $bagEmptySlot
 		EndIf
@@ -380,19 +378,19 @@ EndFunc
 
 
 
-; Find all empty slots in inventory
+;~ Find all empty slots in inventory
 Func FindInventoryEmptySlots()
 	Return FindAllEmptySlots(1, 5)
 EndFunc
 
 
-; Find all empty slots in chest
+;~ Find all empty slots in chest
 Func FindChestEmptySlots()
 	Return FindAllEmptySlots(8, 21)
 EndFunc
 
 
-; Find all empty slots in the given bags
+;~ Find all empty slots in the given bags
 Func FindAllEmptySlots($firstBag, $lastBag)
 	Local $emptySlots[0] = []
 	For $i = $firstBag To $lastBag
@@ -432,17 +430,17 @@ EndFunc
 Func MoveItemsInEquipmentBag()
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
-	If $countEmptySlots < 1 Then 
+	If $countEmptySlots < 1 Then
 		Out('No space in inventory to move the items from the equipment bag')
 		Return
 	EndIf
-	
+
 	Local $cursor = 1
 	For $bagId = 1 To 4
 		For $slot = 1 To DllStructGetData(GetBag($bagId), 'slots')
 			Local $item = GetItemBySlot($bagId, $slot)
 			If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
-				If $countEmptySlots < 1 Then 
+				If $countEmptySlots < 1 Then
 					Out('No space in inventory to move the items from the equipment bag')
 					Return
 				EndIf
@@ -478,7 +476,7 @@ Func SortInventory()
 			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
 			$items[$k] = $item
 			$k += 1
-			;Weapon
+			; Weapon
 			If IsWeapon($item) Then
 				$rarity = GetRarity($item)
 				If ($rarity == $RARITY_Gold) Then
@@ -492,7 +490,7 @@ Func SortInventory()
 				ElseIf ($rarity == $RARITY_White) Then
 					$itemsCounts[15] += 1
 				EndIf
-			;ArmorSalvage
+			; ArmorSalvage
 			ElseIf IsArmorSalvageItem($item) Then
 				$rarity = GetRarity($item)
 				If ($rarity == $RARITY_Gold) Then
@@ -504,28 +502,28 @@ Func SortInventory()
 				ElseIf ($rarity == $RARITY_White) Then
 					$itemsCounts[10] += 1
 				EndIf
-			;Trophies
+			; Trophies
 			ElseIf IsTrophy($itemID) Then
 				$itemsCounts[3] += 1
-			;Consumables
+			; Consumables
 			ElseIf IsConsumable($itemID) Then
 				$itemsCounts[2] += 1
-			;Materials
+			; Materials
 			ElseIf IsMaterial($item) Then
 				$itemsCounts[5] += 1
-			;Lockpick
+			; Lockpick
 			ElseIf ($itemID == $ID_Lockpick) Then
 				$itemsCounts[0] += 1
-			;Tomes
+			; Tomes
 			ElseIf IsTome($itemID) Then
 				$itemsCounts[4] += 1
-			;Armor
+			; Armor
 			ElseIf IsArmor($item) Then
 				$itemsCounts[16] += 1
-			;Books
+			; Books
 			ElseIf IsBook($item) Then
 				$itemsCounts[1] += 1
-			;Others
+			; Others
 			Else
 				$itemsCounts[6] += 1
 			EndIf
@@ -551,7 +549,7 @@ Func SortInventory()
 		If $itemID == 0 Then ExitLoop
 		RndSleep(10)
 
-		;Weapon
+		; Weapon
 		If IsWeapon($item) Then
 			$rarity = GetRarity($item)
 			If ($rarity == $RARITY_Gold) Then
@@ -565,7 +563,7 @@ Func SortInventory()
 			ElseIf ($rarity == $RARITY_White) Then
 				$category = 15
 			EndIf
-		;ArmorSalvage
+		; ArmorSalvage
 		ElseIf isArmorSalvageItem($item) Then
 			$rarity = GetRarity($item)
 			If ($rarity == $RARITY_Gold) Then
@@ -577,32 +575,32 @@ Func SortInventory()
 			ElseIf ($rarity == $RARITY_White) Then
 				$category = 10
 			EndIf
-		;Trophies
+		; Trophies
 		ElseIf IsTrophy($itemID) Then
 			$category = 3
-		;Consumables
+		; Consumables
 		ElseIf IsConsumable($itemID) Then
 			$category = 2
-		;Materials
+		; Materials
 		ElseIf IsMaterial($item) Then
 			$category = 5
-		;Lockpick
+		; Lockpick
 		ElseIf ($itemID == $ID_Lockpick) Then
 			$category = 0
-		;Tomes
+		; Tomes
 		ElseIf IsTome($itemID) Then
 			$category = 4
-		;Armor
+		; Armor
 		ElseIf IsArmor($item) Then
 			$category = 16
-		;Books
+		; Books
 		ElseIf IsBook($item) Then
 			$category = 1
-		;Others
+		; Others
 		Else
 			$category = 6
 		EndIf
-		
+
 		$bagAndSlot = GetBagAndSlotFromGeneralSlot($bagsSizes, $itemsPositions[$category])
 		;Out('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
 		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
@@ -629,7 +627,7 @@ Func GetBagAndSlotFromGeneralSlot($bagsSizes, $generalSlot)
 			$bagAndSlot[0] = $i
 			$bagAndSlot[1] = $generalSlot
 			Return $bagAndSlot
-		Else 
+		Else
 			$generalSlot -= $bagsSizes[$i]
 		EndIf
 	Next
@@ -647,7 +645,7 @@ Func GenericMoveItem($bagsSizes, $item, $genericSlot)
 			Out('to bag ' & $i & ' position ' & $genericSlot)
 			;MoveItem($item, $i, $genericSlot)
 			Return
-		Else 
+		Else
 			$genericSlot -= $bagsSizes[$i]
 		EndIf
 	Next
@@ -800,7 +798,7 @@ EndFunc
 
 #Region Use Items
 ;~ Uses a consumable from inventory, if present
-Func UseConsumable($ID_consumable, $forceUse = false)
+Func UseConsumable($ID_consumable, $forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
 	Local $ConsumableSlot = findInInventory($ID_consumable)
 	UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
@@ -850,7 +848,7 @@ Func IdentifyAllItems()
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 
 			Local $identificationKit = FindIdentificationKitOrBuySome()
-			If Not GetIsIdentified($item) Then 
+			If Not GetIsIdentified($item) Then
 				IdentifyItem($item)
 				RndSleep(100)
 			EndIf
@@ -965,7 +963,6 @@ EndFunc
 
 #Region Merchants
 ;~ Return True if the item should be sold to the merchant
-; TODO : refine which items should be sold and which should not
 Func ShouldSellItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
@@ -1014,9 +1011,9 @@ EndFunc
 Func GetItemMaxDmg($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	Local $modString = GetModStruct($item)
-	Local $position = StringInStr($modString, 'A8A7'); Weapon Damage
-	If $position = 0 Then $position = StringInStr($modString, 'C867'); Energy (focus)
-	If $position = 0 Then $position = StringInStr($modString, 'B8A7'); Armor (shield)
+	Local $position = StringInStr($modString, 'A8A7')					; Weapon Damage
+	If $position = 0 Then $position = StringInStr($modString, 'C867')	; Energy (focus)
+	If $position = 0 Then $position = StringInStr($modString, 'B8A7')	; Armor (shield)
 	If $position = 0 Then Return 0
 	Return Int('0x' & StringMid($modString, $position - 2, 2))
 EndFunc
@@ -1176,7 +1173,7 @@ Func IsLowReqMaxDamage($item)
 			If $damage = 35 Then Return True
 		Case $ID_Type_Scythe
 			If $damage = 41 Then Return True
-		Case else
+		Case Else
 			Return False
 	EndSwitch
 	Return False
@@ -1210,7 +1207,7 @@ Func IsNoReqMaxDamage($item)
 			If $damage = 15 Then Return True
 		Case $ID_Type_Scythe
 			If $damage = 17 Then Return True
-		Case else
+		Case Else
 			Return False
 	EndSwitch
 	Return False
@@ -1290,7 +1287,7 @@ Func MapFromArrays($keys, $values)
 EndFunc
 
 
-; Find common longest substring in two strings
+;~ Find common longest substring in two strings
 Func LongestCommonSubstringOfTwo($string1, $string2)
 	Local $longestCommonSubstrings[0]
 	Local $string1characters = StringSplit($string1, '')
@@ -1324,7 +1321,7 @@ Func LongestCommonSubstringOfTwo($string1, $string2)
 EndFunc
 
 
-; Find common longest substring in array of strings
+;~ Find common longest substring in array of strings
 Func LongestCommonSubstring($strings)
 	Local $longestCommonSubstring = ''
 	If UBound($strings) = 0 Then Return ''
@@ -1462,7 +1459,7 @@ EndFunc
 
 ;~ Small helper to filter party members - TODO: remove this
 Func PartyMemberFilter($agent)
-	return BitAND(DllStructGetData($agent, 'TypeMap'), 131072)
+	Return BitAND(DllStructGetData($agent, 'TypeMap'), 131072)
 EndFunc
 #EndRegion Getting NPCs
 
@@ -1808,79 +1805,12 @@ EndFunc
 
 
 
-
-
-
-
-
-;~ Store weapons, badly written
-;~ TODO: unused, keep until storage function is written
-Func Weapons($BagIndex, $SlotCount)
-	Local $aItem
-	Local $Bag
-	Local $Slot
-	Local $Full
-	Local $NSlot
-	For $I = 1 To $SlotCount
-		Local $aItem = GetItemBySlot($BagIndex, $I)
-		If DllStructGetData($aItem, 'ID') = 0 Then ContinueLoop
-		Local $ModStruct = GetModStruct($aItem)
-		Local $Energy = StringInStr($ModStruct, '0500D822', 0, 1) ;~String for +5e mod
-		Switch DllStructGetData($aItem, 'Type')
-			Case 2, 5, 15, 27, 32, 35, 36
-				If $Energy > 0 Then
-					Do
-						For $Bag = 8 To 12
-							$Slot = FindEmptySlot($Bag)
-							$Slot = @extended
-							If $Slot <> 0 Then
-								$Full = False
-								$NSlot = $Slot
-								ExitLoop 2
-							Else
-								$Full = True
-							EndIf
-							RndSleep(400)
-						Next
-					Until $Full = True
-					If $Full = False Then
-						MoveItem($aItem, $Bag, $NSlot)
-						RndSleep(500)
-					EndIf
-				EndIf
-		EndSwitch
-	Next
-EndFunc
-
-
-;~ Waits until all foes are in Range
-; TODO: unused, keep
-Func WaitUntilAllFoesAreInRange($lRange)
-	Local $lAgentArray = GetAgentArray(0xDB)
-	Local $lDistance
-	While True
-		RndSleep(100)
-		If GetIsDead(-2) Then Return
-		StayAlive($lAgentArray)
-		For $i = 1 To $lAgentArray[0]
-			$lDistance = GetPseudoDistance(GetAgentByID(-2), $lAgentArray[$i])
-			If $lDistance < $RANGE_SPELLCAST_2 And $lDistance > $lRange^2 Then Return
-		Next
-	WEnd
-EndFunc
-
-
-
-
-
-
-
 Func _dlldisplay($tStruct)
 	Local $pNextPtr, $pCurrentPtr = DllStructGetPtr($tStruct, 1)
 	Local $iOffset = 0, $iDllSize = DllStructGetSize($tStruct)
 	Local $vElVal, $sType, $iTypeSize, $iElSize, $iArrCount, $iAlign
 
-	Local $aStruct[1][5] = [['-', $pCurrentPtr, '<struct>', 0, '-']] ; #|Offset|Type|Size|Value'
+	Local $aStruct[1][5] = [['-', $pCurrentPtr, '<struct>', 0, '-']]	; #|Offset|Type|Size|Value'
 
 	; loop through elements
 	For $iE = 1 To 2 ^ 63
@@ -1920,11 +1850,11 @@ Func _dlldisplay($tStruct)
 		EndSwitch
 		DllStructSetData($tStruct, $iE, $vElVal, 1)
 
-		;calculate element total size based on distance to next element
+		; calculate element total size based on distance to next element
 		$pNextPtr = DllStructGetPtr($tStruct, $iE + 1)
 		$iElSize = $pNextPtr ? Int($pNextPtr - $pCurrentPtr) : $iDllSize
 
-		;calculate true array count. Walk index backwards till there is NOT an error
+		; calculate true array count. Walk index backwards till there is NOT an error
 		$iArrCount = Int($iElSize / $iTypeSize)
 		While $iArrCount > 1
 			DllStructGetData($tStruct, $iE, $iArrCount)
@@ -1932,18 +1862,20 @@ Func _dlldisplay($tStruct)
 			$iArrCount -= 1
 		WEnd
 
-		;alignment is whatever space is left
+		; alignment is whatever space is left
 		$iAlign = $iElSize - ($iArrCount * $iTypeSize)
 		$iElSize -= $iAlign
 
-		;Add/print values and alignment
+		; Add/print values and alignment
 		Switch $sType
 			Case 'wchar', 'char', 'byte'
 				_ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '[' & $iArrCount & ']|' & $iElSize & '|' & DllStructGetData($tStruct, $iE))
-			Case Else ; 'uint', 'int', 'ushort', 'short', 'double', 'float', 'ptr'
+			; 'uint', 'int', 'ushort', 'short', 'double', 'float', 'ptr'
+			Case Else
 				If $iArrCount > 1 Then
 					_ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '[' & $iArrCount & ']' & '|' & $iElSize & ' (' & $iTypeSize & ')|' & (DllStructGetData($tStruct, $iE) ? '[1] ' & $vElVal : '-'))
-					If DllStructGetData($tStruct, $iE) Then ; skip empty arrays
+					; skip empty arrays
+					If DllStructGetData($tStruct, $iE) Then
 						For $j = 2 To $iArrCount
 							_ArrayAdd($aStruct, '-|' & $iOffset + ($iTypeSize * ($j - 1)) & '|-|-|[' & $j & '] ' & DllStructGetData($tStruct, $iE, $j))
 						Next
@@ -1954,10 +1886,10 @@ Func _dlldisplay($tStruct)
 		EndSwitch
 		If $iAlign Then _ArrayAdd($aStruct, '-|-|<alignment>|' & ($iAlign) & '|-')
 
-		;if no next ptr then this was the last/only element
+		; if no next ptr then this was the last/only element
 		If Not $pNextPtr Then ExitLoop
 
-		;update offset, size and next ptr
+		; update offset, size and next ptr
 		$iOffset += $iElSize + $iAlign
 		$iDllSize -= $iElSize + $iAlign
 		$pCurrentPtr = $pNextPtr

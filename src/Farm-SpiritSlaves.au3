@@ -49,7 +49,7 @@ Local Const $SS_Mirage_Cloak = 7
 Local Const $SS_Ebon_Battle_Standard_of_Honor = 8
 ;Local Const $SS_Heart_of_Fury = 8
 
-;Reduction from mysticism (50%) and increase from spirit (30%) are included
+; Reduction from mysticism (50%) and increase from spirit (30%) are included
 Local Const $SS_SkillsArray =		[$SS_Sand_Shards,	$SS_I_am_unstoppable,	$SS_Mystic_Vigor,	$SS_Vow_of_Strength,	$SS_Extend_Enchantments,	$SS_Deaths_Charge,	$SS_Mirage_Cloak,	$SS_Ebon_Battle_Standard_of_Honor]
 Local Const $SS_SkillsCostsArray =	[7,					7,						4,					4,						7,							7,					7,					13]
 Local Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray)
@@ -226,7 +226,7 @@ Func FarmSouthGroup()
 		CleanseFromCripple()
 	WEnd
 	CleanseFromCripple()
-	;We want foes between -8055;-9200 and -8055;-9300
+	; We want foes between -8055;-9200 and -8055;-9300
 	Move(-7735, -8380)
 	$foesCount = CountFoesInRangeOfAgent(-2, 950)
 	$deadlock = TimerInit()
@@ -417,9 +417,9 @@ EndFunc
 ;~ Give True if the given agent is past a specific line where we should take aggro
 Func IsPastAggroLine($agent)
 	Return Not IsOverLine(1, 0, 6750, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-	;6500 works too, but slightly too early, some mobs stay downstairs
+	; 6500 works too, but slightly too early, some mobs stay downstairs
 	;Return Not IsOverLine(1, 0, 6500, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-	;7000 works but is slightly too late, sometimes mobs do not get aggroed
+	; 7000 works but is slightly too late, sometimes mobs do not get aggroed
 	;Return Not IsOverLine(1, 0, 7000, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 

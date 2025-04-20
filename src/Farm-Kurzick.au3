@@ -50,7 +50,7 @@ Func KurzickFactionFarm($STATUS)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('KurzickGroupIsAlive')
 
-	;Temporarily change a failure into a pause for debugging :
+	; Temporarily change a failure into a pause for debugging :
 	If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
 	If (CountSlots() < 15) Then

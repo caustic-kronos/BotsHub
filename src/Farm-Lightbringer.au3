@@ -26,7 +26,7 @@ Local Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
 	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
 	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
 
-;Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
+; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
 Local Const $weaponAttackTime = 1700
 
 Local $LIGHTBRINGER_FARM_SETUP = False

@@ -8,13 +8,13 @@ Modified by: MrZambix, Night, and more
 #RequireAdmin
 
 ; Additional directives
-#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#Region		;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Outfile_type=a3x
 #AutoIt3Wrapper_Run_AU3Check=n
 #AutoIt3Wrapper_Run_Tidy=y
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/pe /sf /tl
-#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#EndRegion	;**** Directives created by AutoIt3Wrapper_GUI ****
 
 If @AutoItX64 Then
 	MsgBox(16, 'Error!', 'Please run all bots in 32-bit (x86) mode.')
@@ -100,7 +100,7 @@ Global $changeTargetStructPtr = DllStructGetPtr($changeTargetStruct)
 Global $packetStruct = DllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')	;	commandPackSendPtr;-;-;-;characterName;-
 Global $packetStructPtr = DllStructGetPtr($packetStruct)
 
-Global $writeChatStruct = DllStructCreate('ptr')																			;	commandWriteChatPtr
+Global $writeChatStruct = DllStructCreate('ptr')																		;	commandWriteChatPtr
 Global $writeChatStructPtr = DllStructGetPtr($writeChatStruct)
 
 Global $sellItemStruct = DllStructCreate('ptr;dword;dword;dword')														;	commandSellItemPtr;totalSoldValue;itemID;ScanBuyItemBase
@@ -162,7 +162,7 @@ Global $labelsStruct[1][2]
 #EndRegion CommandStructs
 
 #Region GWA2 Structs
-;Don't create global DllStruct for those (can exist simultaneously in several instances)
+; Don't create global DllStruct for those (can exist simultaneously in several instances)
 Global $agentStructTemplate = 'ptr vtable;dword unknown1[4];dword timer;dword timer2;ptr nextAgent;dword unknown2[3];long Id;float Z;float width1;float height1;float width2;float height2;float width3;float height3;float rotation;float rotation_cos;float rotation_sin;dword NameProperties;dword ground;dword h0060;float terrain_normal_x;float terrain_normal_y;dword terrain_normal_z;byte h0070[4];float X;float Y;dword plane;byte h0080[4];float NameTagX;float NameTagY;float NameTagZ;short visual_effects;short h0092;dword h0094[2];long Type;float MoveX;float MoveY;dword h00A8;float rotation_cos2;float rotation_sin2;dword h00B4[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword h00D4[3];float animation_type;dword h00E4[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short agent_model_type;dword transmog_npc_id;ptr Equip;dword h0100;ptr tags;short h0108;byte Primary;byte Secondary;byte Level;byte Team;byte h010E[2];dword h0110;float energy_regen;float overcast;float EnergyPercent;dword MaxEnergy;dword h0124;float HPPips;dword h012C;float HP;dword MaxHP;dword Effects;dword h013C;byte Hex;byte h0141[19];dword ModelState;dword TypeMap;dword h015C[4];dword InSpiritRange;dword visible_effects;dword visible_effects_ID;dword visible_effects_has_ended;dword h017C;dword LoginNumber;float animation_speed;dword animation_code;dword animation_id;byte h0190[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short h01B6;byte weapon_item_type;byte offhand_item_type;short WeaponItemId;short OffhandItemId'
 Global $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
 Global $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
@@ -172,16 +172,16 @@ Global $attributeStructTemplate = 'dword profession_id;dword attribute_id;dword 
 Global $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
 Global $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte unknown1;short ExtraId;short Value;byte unknown2[2];short Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown3[8];short ItemFormula;byte IsSalvageable;byte unknown4;byte Quantity;byte Equipped;byte Profession;byte Type2;byte Slot'
 Global $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unlnown1;long MapTo;ptr Description;ptr Objective'
-;Grey area, unlikely to exist several at the same time
+; Grey area, unlikely to exist several at the same time
 Global $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
-;Safe zone, can just create DllStruct globally
+; Safe zone, can just create DllStruct globally
 Global $worldStruct = DllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
-;Considered to be added in non-global - but since code is synchronous those shouldn't really get overwritten
-;useSkillStruct
-;moveStruct
-;changeTargetStruct
-;packetStruct
-;useHeroSkillStruct
+; Considered to be added in non-global - but since code is synchronous those shouldn't really get overwritten
+; useSkillStruct
+; moveStruct
+; changeTargetStruct
+; packetStruct
+; useHeroSkillStruct
 #EndRegion
 
 #Region Memory
@@ -291,7 +291,7 @@ Func ScanGameClientsForCharacters()
 EndFunc
 
 
-; Retrieves the window handle for the specified game process
+;~ Retrieves the window handle for the specified game process
 Func GetWindowHandleForProcess($process)
 	Local $wins = WinList()
 	For $i = 1 To UBound($wins) - 1
@@ -844,10 +844,10 @@ Func ScanGWBasePatterns()
 EndFunc
 
 
-; Retrieve Guild Wars process base address
+;~ Retrieve Guild Wars process base address
 Func GetGWBase()
 	; Scan for Guild Wars process and get base address
-	Local $gwBaseAddress = ScanForProcess() - 4096 ; Subtract 4096 from the process address to get the base address
+	Local $gwBaseAddress = ScanForProcess() - 4096			; Subtract 4096 from the process address to get the base address
 
 	; Convert base address to hexadecimal string
 	$gwBaseAddress = '0x' & Hex($gwBaseAddress)
@@ -857,21 +857,21 @@ Func GetGWBase()
 EndFunc
 
 
-; Find process by scanning memory
+;~ Find process by scanning memory
 Func ScanForProcess()
 	Local $pattern = BinaryToString('0x558BEC83EC105356578B7D0833F63BFE')
 	Return ScanMemoryForPattern($pattern)
 EndFunc
 
 
-; Find character names by scanning memory
+;~ Find character names by scanning memory
 Func ScanForCharname()
 	Local $patternBinary = BinaryToString('0x6A14FF751868')
 	Return ScanMemoryForPattern($patternBinary, HandleCharNameMatch)
 EndFunc
 
 
-; Helper for ScanForCharName
+;~ Helper for ScanForCharName
 Func HandleCharNameMatch($baseAddress, $matchOffset)
 	Local $tmpAddress = $baseAddress + $matchOffset - 1
 	Local $tmpBuffer = DllStructCreate('ptr')
@@ -881,7 +881,7 @@ Func HandleCharNameMatch($baseAddress, $matchOffset)
 EndFunc
 
 
-; Scan memory for a pattern - used to find process and to find character names
+;~ Scan memory for a pattern - used to find process and to find character names
 Func ScanMemoryForPattern($patternBinary, $onMatchFunc = Null)
 	Local $currentSearchAddress = 0x00000000
 	Local $mbiBuffer = DllStructCreate('dword;dword;dword;dword;dword;dword;dword')
@@ -937,6 +937,21 @@ EndFunc
 
 #Region Commands
 #Region Item
+;~ Starts a salvaging session of an item.
+Func StartSalvageWithKit($item, $salvageKit)
+	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
+	Local $salvageSessionID = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $itemID = $item
+	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
+
+	DllStructSetData($salvageStruct, 2, $itemID)
+	DllStructSetData($salvageStruct, 3, $salvageKit)
+	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
+
+	Enqueue($salvageStructPtr, 16)
+EndFunc
+
+
 ;~ Starts a salvaging session of an item.
 Func StartSalvage($item)
 	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
@@ -1171,7 +1186,7 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 	For $i = $materialsArraySize To 0 Step -1
 		Local $checkQuantity = CountItemInBagsByModelID($materialsArray[$i][0])
 		If $materialsArray[$i][1] * $amount > $checkQuantity Then
-			;amount of missing mats in @extended
+			; amount of missing mats in @extended
 			Return SetExtended($materialsArray[$i][1] * $amount - $checkQuantity, $materialsArray[$i][0])
 		EndIf
 	Next
@@ -1196,7 +1211,8 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 	Next
 	Local $memorySize = $materialCount * 4
 	Local $memoryBuffer = DllCall($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $memorySize, 'dword', 0x1000, 'dword', 0x40)
-	If $memoryBuffer = 0 Then Return 0 ; couldnt allocate enough memory
+	; Couldnt allocate enough memory
+	If $memoryBuffer = 0 Then Return 0
 	Local $buffer = DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', '')
 	If $buffer = 0 Then Return
 	DllStructSetData($craftItemStruct, 1, GetValue('CommandCraftItemEx'))
@@ -1468,7 +1484,8 @@ EndFunc
 
 
 ;~ Change a hero's aggression level.
-Func SetHeroAggression($heroIndex, $aggressionLevel) ;0=Fight, 1=Guard, 2=Avoid
+;~ 0=Fight, 1=Guard, 2=Avoid
+Func SetHeroAggression($heroIndex, $aggressionLevel)
 	Local $heroID = GetHeroID($heroIndex)
 	Return SendPacket(0xC, $HEADER_HERO_BEHAVIOR, $heroID, $aggressionLevel)
 EndFunc
@@ -2019,7 +2036,7 @@ EndFunc
 ;~ Write a message in chat (can only be seen by user).
 Func WriteChat($message, $sender = 'GWA2')
 	Local $address = 256 * $queueCounter + $queueBaseAddress
-	;FIXME: rewrite with modulo
+	; FIXME: rewrite with modulo
 	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 	If StringLen($sender) > 19 Then $sender = StringLeft($sender, 19)
 
@@ -2050,7 +2067,7 @@ EndFunc
 ;~ Send a message to chat.
 Func SendChat($message, $channel = '!')
 	Local $address = 256 * $queueCounter + $queueBaseAddress
-	;FIXME: rewrite with modulo
+	; FIXME: rewrite with modulo
 	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 	If StringLen($message) > 120 Then $message = StringLeft($message, 120)
 
@@ -2241,17 +2258,17 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $heroID = GetHeroID($heroIndex)
 	Local $splitBuildTemplate = StringSplit($buildTemplate, '')
 
-	Local $tempValuelateType ; 4 Bits
-	Local $versionNumber ; 4 Bits
-	Local $professionBits ; 2 Bits -> P
-	Local $primaryProfession ; P Bits
-	Local $secondaryProfession ; P Bits
-	Local $attributesCount ; 4 Bits
-	Local $attributesBits ; 4 Bits -> A
-	Local $attributes[1][2] ; A Bits + 4 Bits (for each Attribute)
-	Local $skillsBits ; 4 Bits -> S
-	Local $skills[8] ; S Bits * 8
-	Local $opTail ; 1 Bit
+	Local $tempValuelateType	; 4 Bits
+	Local $versionNumber		; 4 Bits
+	Local $professionBits		; 2 Bits -> P
+	Local $primaryProfession	; P Bits
+	Local $secondaryProfession	; P Bits
+	Local $attributesCount		; 4 Bits
+	Local $attributesBits		; 4 Bits -> A
+	Local $attributes[1][2]		; A Bits + 4 Bits (for each Attribute)
+	Local $skillsBits			; 4 Bits -> S
+	Local $skills[8]			; S Bits * 8
+	Local $opTail				; 1 Bit
 
 	$buildTemplate = ''
 	For $i = 1 To $splitBuildTemplate[0]
@@ -2503,37 +2520,37 @@ Func SetDisplayedTitle($title = 0)
 EndFunc
 
 
-; Set the title to Spearmarshall
+;~ Set the title to Spearmarshall
 Func SetTitleSpearmarshall()
 	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Sunspear_Title)
 EndFunc
 
 
-; Set the title to Lightbringer
+;~ Set the title to Lightbringer
 Func SetTitleLightbringer()
 	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Lightbringer_Title)
 EndFunc
 
 
-; Set the title to Asuran
+;~ Set the title to Asuran
 Func SetTitleAsuran()
 	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Asura_Title)
 EndFunc
 
 
-; Set the title to Dwarven
+;~ Set the title to Dwarven
 Func SetTitleDwarven()
 	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Dwarf_Title)
 EndFunc
 
 
-; Set the title to Ebon Vanguard
+;~ Set the title to Ebon Vanguard
 Func SetTitleEbonVanguard()
 	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Ebon_Vanguard_Title)
 EndFunc
 
 
-; Set the title to Norn
+;~ Set the title to Norn
 Func SetTitleNorn()
 	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Norn_Title)
 EndFunc
@@ -2777,6 +2794,12 @@ EndFunc
 Func GetIsIdentified($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	Return BitAND(DllStructGetData($item, 'Interaction'), 1) > 0
+EndFunc
+
+
+;~ Tests if an item is unidentified.
+Func GetIsUnidentified($item)
+	Return Not GetIsIdentified($item)
 EndFunc
 
 
@@ -3553,7 +3576,7 @@ Func GetParty($agentArray = 0)
 EndFunc
 
 
-; Returns true if any party member is dead
+;~ Returns true if any party member is dead
 Func CheckIfAnyPartyMembersDead()
 	Local $partyArray = GetParty()
 	For $i = 1 To $partyArray[0]
@@ -3624,7 +3647,7 @@ Func GetPartyDanger($agentArray = 0, $party = 0)
 		If GetAgentInfo($agentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If Not GetIsLiving($agentArray[$i]) Then ContinueLoop
 		Local $allegiance = GetAgentInfo($agentArray[$i], 'Allegiance')
-		If $allegiance > 3 Then ContinueLoop ; ignore NPCs, spirits, minions, pets
+		If $allegiance > 3 Then ContinueLoop			; ignore NPCs, spirits, minions, pets
 
 		Local $targetID = GetTarget(GetAgentInfo($agentArray[$i], 'ID'))
 		Local $team = GetAgentInfo($agentArray[$i], 'Team')
@@ -4017,7 +4040,7 @@ Func GetEffectTimeRemaining($effect, $heroIndex = 0)
 	Return DllStructGetData($effect, 'Duration') * 1000
 	; Problem here is that DllStructGetData($effect, 'TimeStamp') returns the timestamp when the effect started
 	; But we don't have current timestamp : GetSkillTimer doesn't return it and returns something fixed
-	; Return DllStructGetData($effect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($effect, 'TimeStamp'))
+	;Return DllStructGetData($effect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($effect, 'TimeStamp'))
 EndFunc
 
 
