@@ -76,6 +76,7 @@ Global Const $ID_Isle_Of_The_Dead			= 179
 ; Factions
 Global Const $ID_House_Zu_Heltzer			= 77
 Global Const $ID_Kaineng_City				= 194
+Global Const $ID_Kaineng_City_Events		= 817
 Global Const $ID_Jaya_Bluffs				= 196
 Global Const $ID_Mount_Qinkai				= 200
 Global Const $ID_Ferndale					= 210
@@ -1339,7 +1340,7 @@ Global Const $ID_Envoy_Scythe			= 36677
 ;Global Const $ID_Chaotic_Envoy_Staff	=
 ;Global Const $ID_Dark_Envoy_Staff	=
 ;Global Const $ID_Elemental_Envoy_Staff	=
-;Global Const $ID_Divine_Envoy_Staff	=
+Global Const $ID_Divine_Envoy_Staff	= 36674
 ;Global Const $ID_Spiritual_Envoy_Staff	=
 #EndRegion Envoy Weapons
 
@@ -1432,28 +1433,134 @@ Global Const $ID_Celestial_Compass_Restoration		= 1884
 Global Const $ID_Celestial_Compass_Channeling		= 1885
 #EndRegion Celestial Compass
 
-#Region Other skins
-Global Const $ID_Great_Conch						= 2415
-Global Const $ID_Elemental_Sword					= 2267
-Global Const $ID_Ruby_Maul							= 2274
-Global Const $ID_Peacocks_Wrath						= 2433
-Global Const $ID_Quicksilver						= 2242
-Global Const $ID_Dadao_Sword						= 739
-Global Const $ID_Shinobi_Blade						= 744
-Global Const $ID_Dragon_Staff						= 736
-Global Const $ID_Bo_Staff							= 735
-Global Const $ID_Diamond_Aegis						= 783
-Global Const $ID_Bladed_Shield						= 777
-Global Const $ID_Platinum_Wand						= 1011
-Global Const $ID_Celestial_Shield					= 943
-Global Const $ID_Celestial_Shield_2					= 942
+
+#Region Celestial
+Global Const $ID_Celestial_Shield					= 942
+Global Const $ID_Celestial_Shield_2					= 943
 Global Const $ID_Celestial_Scepter					= 926
 Global Const $ID_Celestial_Sword					= 790
 Global Const $ID_Celestial_Daggers					= 761
 Global Const $ID_Celestial_Hammer					= 769
 Global Const $ID_Celestial_Axe						= 747
+Global Const $ID_Celestial_Staff					= 785
 Global Const $ID_Celestial_Longbow					= 1068
+#EndRegion Celestial
+
+
+#Region Other skins
+;Global Const $ID_Amethyst_Aegis					=
+;Global Const $ID_Divine_Scroll						=
+;Global Const $ID_Jeweled_Daggers					=
+;Global Const $ID_Pronged_Fan						=
+;Global Const $ID_Ruby_Daggers						=
+
+;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
+;3270						; magma shield/summit shield ???
+;870, 873, 869, 1101 		; more canthan rare skins
+;1569, 1439, 1563, 1557		; Elonian Swords (Colossal, Ornate, Tattooed, Dead, etc)
+
 Global Const $ID_Adamantine_Shield					= 1892
+Global Const $ID_Aegis								= 323
+Global Const $ID_Amber_Shield						= 940
+Global Const $ID_Amber_Shield_2						= 941
+Global Const $ID_Bladed_Shield						= 777
+Global Const $ID_Bladed_Shield_2					= 778
+Global Const $ID_Bo_Staff							= 735
+Global Const $ID_Butterfly_Sword					= 397 
+Global Const $ID_Colossal_Scimitar					= 1556
+Global Const $ID_Crenellated_scimitar				= 791
+Global Const $ID_Crystalline_Sword					= 399
+Global Const $ID_Dadao_Sword						= 739
+Global Const $ID_Darkwing_Defender					= 1052
+Global Const $ID_Defender							= 331
+Global Const $ID_Dhuums_Soul_Reaper					= 32823
+Global Const $ID_Diamond_Aegis						= 783
+Global Const $ID_Diamond_Aegis_2					= 1469
+Global Const $ID_Diamond_Aegis_3					= 2294
+Global Const $ID_Divine_Scroll						= 905		; Canthan version
+Global Const $ID_Draconic_Aegis						= 1896
+Global Const $ID_Draconic_Scythe					= 1978
+Global Const $ID_Dragon_Staff						= 736
+Global Const $ID_Dwarven_Axe						= 114
+Global Const $ID_Eaglecrest_Axe						= 1985
+Global Const $ID_Earth_Scroll						= 177
+Global Const $ID_Earth_Scroll_2						= 178
+Global Const $ID_Earth_Scroll_3						= 568
+Global Const $ID_Earth_Staff						= 603		; Orrian version
+Global Const $ID_Echovald_Shield					= 944
+Global Const $ID_Echovald_Shield_2					= 945
+Global Const $ID_Elemental_Sword					= 2267
+Global Const $ID_Emblazoned_Defender				= 947
+Global Const $ID_Emerald_Blade						= 1976
+Global Const $ID_Enameled_Shield					= 2236
+Global Const $ID_Eternal_Bow						= 133
+Global Const $ID_Eternal_Shield						= 332
+Global Const $ID_Exalted_Aegis						= 1037
+Global Const $ID_Falchion							= 405
+Global Const $ID_Fellblade							= 400
+Global Const $ID_Fiery_Dragon_Sword					= 1612
+Global Const $ID_Fire_Staff							= 887		; Canthan version 
+Global Const $ID_Flamberge							= 2250
+Global Const $ID_Gemstone_Axe						= 701
+Global Const $ID_Gloom_Shield						= 1315
+Global Const $ID_Golden_Phoenix_Blade				= 795
+Global Const $ID_Gothic_Defender					= 950
+Global Const $ID_Gothic_Defender_2					= 951
+Global Const $ID_Great_Conch						= 2415
+Global Const $ID_Guardian_of_the_Hunt				= 1320
+Global Const $ID_Guardian_of_the_Hunt_2				= 1321
+Global Const $ID_Illusory_Staff						= 1916
+Global Const $ID_Iridescent_Aegis					= 2299
+Global Const $ID_Jitte								= 741
+Global Const $ID_Jug_divine_favor					= 1022
+Global Const $ID_Jug_energy_storage					= 875
+Global Const $ID_Jug_soul_reaping					= 874
+Global Const $ID_Kappa_Shield						= 952
+Global Const $ID_Kappa_Shield_2						= 953
+Global Const $ID_Katana								= 742
+Global Const $ID_Magma_Shield						= 344
+Global Const $ID_Oni_Blade							= 794
+Global Const $ID_Oni_Daggers						= 766
+Global Const $ID_Ornate_Buckler						= 326
+Global Const $ID_Ornate_Shield						= 955
+Global Const $ID_Orr_Staff							= 603
+Global Const $ID_Outcast_Shield						= 956
+Global Const $ID_Outcast_Shield_2					= 958
+Global Const $ID_Paper_Fan							= 775
+Global Const $ID_Paper_Fan_2						= 776
+Global Const $ID_Paper_Fan_3						= 789
+Global Const $ID_Paper_Fan_4						= 866
+Global Const $ID_Paper_Fan_5						= 858
+Global Const $ID_Paper_Lantern						= 896
+Global Const $ID_Peacocks_Wrath						= 2433
+Global Const $ID_Plagueborn_Focus					= 1026
+Global Const $ID_Plagueborn_Focus_2					= 1027
+Global Const $ID_Plagueborn_Shield					= 959
+Global Const $ID_Plagueborn_Shield_2				= 960
+Global Const $ID_Platinum_Wand						= 1011
+Global Const $ID_Quicksilver						= 2242
+Global Const $ID_Raven_Staff						= 391
+Global Const $ID_Reinforced_Buckler					= 327
+Global Const $ID_Ruby_Maul							= 2274
+Global Const $ID_Sea_Purse_Shield					= 1589
+Global Const $ID_Sephis_Axe							= 120
+Global Const $ID_Serpent_Axe						= 118
+Global Const $ID_Shadow_Shield						= 336
+Global Const $ID_Shield_of_the_Wing					= 334
+Global Const $ID_Shinobi_Blade						= 744
+Global Const $ID_Skeleton_Shield					= 337
+Global Const $ID_Skull_Shield						= 338
+Global Const $ID_Spiked_Targe						= 871
+Global Const $ID_Spiked_Targe_2						= 872
+Global Const $ID_Stone_Summit_Shield				= 341
+Global Const $ID_Storm_Bow							= 145
+Global Const $ID_Summit_Warlord_Shield				= 342
+Global Const $ID_Tall_Shield						= 343
+Global Const $ID_Tatooed_Scimitar					= 1197
+Global Const $ID_Tower_Shield						= 345
+Global Const $ID_Voltaic_Spear						= 2071
+Global Const $ID_Wingcrest_Maul						= 2048
+Global Const $ID_Zodiac_Shield						= 1039
 #EndRegion Other skins
 
 ; This map could potentially be limited to its function use

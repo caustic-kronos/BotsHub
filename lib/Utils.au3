@@ -32,16 +32,11 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	While($STATUS == 'RUNNING')
-		GetOwnLocation()
-		Sleep(2000)
-	WEnd
-
-	;while true
-	;	Local $me = GetAgentByID(-2)
-	;	Out('X:' & DllStructGetData($me, 'X') & ';Y:' & DllStructGetData($me, 'Y'))
-	;	Sleep(1000)
-	;wend
+	;While($STATUS == 'RUNNING')
+	;	GetOwnLocation()
+	;	Sleep(2000)
+	;WEnd
+	SellEverythingToMerchant(DefaultShouldSellItem, True)
 
 	;Local $item = GetItemBySlot(1, 1)
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
@@ -955,6 +950,13 @@ Func FindSalvageKitOrBuySome()
 		WithdrawGold(400)
 		RndSleep(400)
 	EndIf
+	
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	Out('Moving to merchant')
+	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	GoToNPC($merchant)
+	RndSleep(500)
+	
 	Local $j = 0
 	Do
 		BuyItem(3, 1, 400)
