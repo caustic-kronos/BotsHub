@@ -45,6 +45,7 @@
 #include <GuiEdit.au3>
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
+#include 'lib/JSON.au3'
 
 #include 'lib/GWA2_Headers.au3'
 #include 'lib/GWA2.au3'
@@ -116,6 +117,8 @@ Global $GUI_Group_ConsumablesLootOption, $GUI_Checkbox_LootCandyCaneShards, $GUI
 Global $GUI_Label_CharacterBuild, $GUI_Label_HeroBuild, $GUI_Edit_CharacterBuild, $GUI_Edit_HeroBuild, $GUI_Label_FarmInformations
 
 Global $GUI_Label_ToDoList
+
+Global $GUI_Combo_ConfigChoice
 
 ;------------------------------------------------------
 ; Title...........:	_guiCreate
@@ -248,16 +251,14 @@ Func createGUI()
 	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit('', 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
 	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
 	$GUI_Edit_HeroBuild = GUICtrlCreateEdit('', 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
-
 	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
+	
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
-	$GUI_Label_ToDoList = GUICtrlCreateLabel('GUI TODO :' & @CRLF _
-		& '- add option to choose between random travel and specific travel' & @CRLF _
-		& '- write small bot that salvage items (does not work for now), get material ID, write in file salvaged material' & @CRLF _
-		& '- change bots to have cleaner return system' & @CRLF _
-	, 30, 95, 531, 26)
 	GUICtrlCreateTabItem('')
+
+	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('default_configuration', 450, 10, 136, 20)
+	GUICtrlSetOnEvent($GUI_Combo_ConfigChoice, 'GuiButtonHandler')
 
 	GUICtrlSetState($GUI_Checkbox_HM, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, $GUI_CHECKED)
@@ -302,6 +303,9 @@ Func GuiButtonHandler()
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)
+		Case $GUI_Combo_ConfigChoice
+			Local $Configuration = GUICtrlRead($GUI_Combo_ConfigChoice)
+			UpdateConfiguration($Configuration)
 		Case $GUI_Button_DynamicExecution
 			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_StartButton
@@ -340,6 +344,7 @@ Func GuiButtonHandler()
 	EndSwitch
 EndFunc
 
+
 Func TabEventManager()
 	Switch GUICtrlRead($GUI_Tabs_Parent)
 		Case 0
@@ -348,6 +353,7 @@ Func TabEventManager()
 			ControlHide($GUI_GWBotHub, '', $GUI_Console)
 	EndSwitch
 EndFunc
+
 
 ;~ Print to console with timestamp
 Func Out($TEXT, $color = $GUI_LIGHT_GREY_COLOR)
@@ -396,9 +402,11 @@ Func main()
 		GUICtrlDelete($GUI_Combo_CharacterChoice)
 		$GUI_Combo_CharacterChoice = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
 	EndIf
+	FillConfigurationCombo()
 
 	BotHubLoop()
 EndFunc
+
 
 ;~ Main loop of the program
 Func BotHubLoop()
@@ -590,6 +598,138 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
 	EndSwitch
+EndFunc
+
+
+;~ Fill the choice of configuration
+Func FillConfigurationCombo()
+	Local $files = _FileListToArray(@ScriptDir & '/conf/', '*.json', $FLTA_FILES)
+	Local $comboList = 'Save configuration'
+	If @error == 0 Then
+		For $file In $files
+			Local $fileNameTrimmed = StringTrimRight($file, 5)
+			If $fileNameTrimmed <> '' Then 
+				$comboList &= '|'
+				$comboList &= $fileNameTrimmed
+			EndIf
+		Next
+	EndIf
+	GUICtrlSetData($GUI_Combo_ConfigChoice, '', '')
+	GUICtrlSetData($GUI_Combo_ConfigChoice, $comboList, 'default_configuration')
+EndFunc
+
+
+;~ Deal with changes of configuration
+Func UpdateConfiguration($configuration)
+	If $configuration == 'Save configuration' Then
+		Local $configurationCount = 0
+		While FileExists(@ScriptDir & '/conf/saved_configuration' & $configurationCount & '.json')
+			$configurationCount += 1
+		WEnd
+		Local $configFile = FileOpen(@ScriptDir & '/conf/saved_configuration' & $configurationCount & '.json' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		Local $jsonString = WriteConfigToJson()
+		;Out($jsonString)
+		FileWrite($configFile, $jsonString)
+		FileClose($configFile)
+		FillConfigurationCombo()
+		Out('Saved configuration saved_configuration' & $configurationCount) 
+	Else
+		Local $configFile = FileOpen(@ScriptDir & '/conf/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
+		Local $jsonString = FileRead($configFile)
+		;Out($jsonString)
+		ReadConfigFromJson($jsonString)
+		FileClose($configFile)
+		Out('Loaded configuration <' & $configuration & '>') 
+	EndIf
+EndFunc
+
+
+;~ Writes current config to a json string
+Func WriteConfigToJson()
+	Local $jsonObject
+	_JSON_addChangeDelete($jsonObject, 'main.character', GUICtrlRead($GUI_Combo_CharacterChoice))
+	_JSON_addChangeDelete($jsonObject, 'main.farm', GUICtrlRead($GUI_Combo_FarmChoice))
+	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', GUICtrlRead($GUI_Checkbox_LoopRuns) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', GUICtrlRead($GUI_Checkbox_HM) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.store_unid', GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.sort_items', GUICtrlRead($GUI_Checkbox_SortItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.identify_items', GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.collect_data', GUICtrlRead($GUI_Checkbox_CollectData) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.salvage_items', GUICtrlRead($GUI_Checkbox_SalvageItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.sell_materials', GUICtrlRead($GUI_Checkbox_SellMaterials) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.sell_items', GUICtrlRead($GUI_Checkbox_SellItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.buy_ectos', GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.store_leftovers', GUICtrlRead($GUI_Checkbox_StoreTheRest) == 1)
+	_JSON_addChangeDelete($jsonObject, 'consumables.consume', GUICtrlRead($GUI_Checkbox_UseConsumables) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.everything', GUICtrlRead($GUI_Checkbox_LootEverything) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.nothing', GUICtrlRead($GUI_Checkbox_LootNothing) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.rare_materials', GUICtrlRead($GUI_Checkbox_LootRareMaterials) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.base_materials', GUICtrlRead($GUI_Checkbox_LootBasicMaterials) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.all_dyes', GUICtrlRead($GUI_Checkbox_LootDyes) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.salvageable_items', GUICtrlRead($GUI_Checkbox_LootSalvageItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.tomes', GUICtrlRead($GUI_Checkbox_LootTomes) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.scrolls', GUICtrlRead($GUI_Checkbox_LootScrolls) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.keys', GUICtrlRead($GUI_Checkbox_LootKeys) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.farm.glacial_stones', GUICtrlRead($GUI_Checkbox_LootGlacialStones) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.farm.map_pieces', GUICtrlRead($GUI_Checkbox_LootMapPieces) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.farm.trophies', GUICtrlRead($GUI_Checkbox_LootTrophies) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.rarities.white', GUICtrlRead($GUI_Checkbox_LootWhiteItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.rarities.blue', GUICtrlRead($GUI_Checkbox_LootBlueItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.rarities.purple', GUICtrlRead($GUI_Checkbox_LootPurpleItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.rarities.gold', GUICtrlRead($GUI_Checkbox_LootGoldItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.rarities.green', GUICtrlRead($GUI_Checkbox_LootGreenItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.consumables.sweets', GUICtrlRead($GUI_Checkbox_LootSweets) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.consumables.alcohols', GUICtrlRead($GUI_Checkbox_LootAlcohols) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.consumables.festive', GUICtrlRead($GUI_Checkbox_LootFestiveItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.consumables.trick_or_treat_bags', GUICtrlRead($GUI_Checkbox_LootToTBags) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.consumables.candy_cane_shards', GUICtrlRead($GUI_Checkbox_LootCandyCaneShards) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.consumables.lunar_tokens', GUICtrlRead($GUI_Checkbox_LootLunarTokens) == 1)
+	Local $jsonString = _JSON_Generate($jsonObject)
+	Return $jsonString
+EndFunc
+
+
+;~ Read given config from JSON
+Func ReadConfigFromJson($jsonString)
+	Local $jsonObject = _JSON_Parse($jsonString)
+	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
+	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
+	GUICtrlSetState($GUI_Checkbox_LoopRuns, _JSON_Get($jsonObject, 'run.loop_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_HM, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, _JSON_Get($jsonObject, 'run.store_unid') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_SortItems, _JSON_Get($jsonObject, 'run.sort_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_IdentifyGoldItems, _JSON_Get($jsonObject, 'run.identify_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_CollectData, _JSON_Get($jsonObject, 'run.collect_data') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_SalvageItems, _JSON_Get($jsonObject, 'run.salvage_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_SellMaterials, _JSON_Get($jsonObject, 'run.sell_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_SellItems, _JSON_Get($jsonObject, 'run.sell_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_BuyEctoplasm, _JSON_Get($jsonObject, 'run.buy_ectos') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_StoreTheRest, _JSON_Get($jsonObject, 'run.store_leftovers') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'consumables.consume') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootEverything, _JSON_Get($jsonObject, 'loot.everything') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootNothing, _JSON_Get($jsonObject, 'loot.nothing') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootRareMaterials, _JSON_Get($jsonObject, 'loot.rare_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootBasicMaterials, _JSON_Get($jsonObject, 'loot.base_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootDyes, _JSON_Get($jsonObject, 'loot.all_dyes') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootSalvageItems, _JSON_Get($jsonObject, 'loot.salvageable_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootTomes, _JSON_Get($jsonObject, 'loot.tomes') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootScrolls, _JSON_Get($jsonObject, 'loot.scrolls') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootKeys, _JSON_Get($jsonObject, 'loot.keys') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootGlacialStones, _JSON_Get($jsonObject, 'loot.farm.glacial_stones') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootMapPieces, _JSON_Get($jsonObject, 'loot.farm.map_pieces') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootTrophies, _JSON_Get($jsonObject, 'loot.farm.trophies') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootWhiteItems, _JSON_Get($jsonObject, 'loot.rarities.white') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootBlueItems, _JSON_Get($jsonObject, 'loot.rarities.blue') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootPurpleItems, _JSON_Get($jsonObject, 'loot.rarities.purple') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootGoldItems, _JSON_Get($jsonObject, 'loot.rarities.gold') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootGreenItems, _JSON_Get($jsonObject, 'loot.rarities.green') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootSweets, _JSON_Get($jsonObject, 'loot.consumables.sweets') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootAlcohols, _JSON_Get($jsonObject, 'loot.consumables.alcohols') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootFestiveItems, _JSON_Get($jsonObject, 'loot.consumables.festive') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootToTBags, _JSON_Get($jsonObject, 'loot.consumables.trick_or_treat_bags') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootCandyCaneShards, _JSON_Get($jsonObject, 'loot.consumables.candy_cane_shards') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootLunarTokens, _JSON_Get($jsonObject, 'loot.consumables.lunar_tokens') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 EndFunc
 
 

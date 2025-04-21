@@ -119,7 +119,7 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 
 Func MinisterialCommendationsFarm($STATUS)
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
-	If $loggingEnabled Then $loggingFile = FileOpen('logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	If $loggingEnabled Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Out('Entering quest')
 	EnterQuest()

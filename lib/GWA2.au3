@@ -6676,7 +6676,7 @@ EndFunc
 
 ;~ Log critical errors to a file - don't use for any other purpose (opens and closes files in a very inefficient manner)
 Func logCriticalErrors($log)
-	Local $loggingFile = FileOpen('logs/critical_errors.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	Local $loggingFile = FileOpen(@ScriptDir & '/logs/critical_errors.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 	FileWrite($loggingFile, '[' & @YEAR & @MONTH & @DAY & '-' & @HOUR & ':' & @MIN & @SEC & ']-' & $log)
 	FileClose($loggingFile)
 EndFunc

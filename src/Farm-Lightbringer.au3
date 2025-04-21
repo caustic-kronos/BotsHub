@@ -57,7 +57,7 @@ Func LightbringerFarm($STATUS)
 EndFunc
 
 Func LightbringerFarmSetup()
-	$loggingFile = FileOpen('logs/lightbringer_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	$loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
 		Out('Travelling to Remains of Sahlahja')
