@@ -403,7 +403,7 @@ Func main()
 		$GUI_Combo_CharacterChoice = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
 	EndIf
 	FillConfigurationCombo()
-
+	LoadDefaultConfiguration()
 	BotHubLoop()
 EndFunc
 
@@ -598,6 +598,18 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, '')
 	EndSwitch
+EndFunc
+
+
+;~ Load default configuration if it exists
+Func LoadDefaultConfiguration()
+	If FileExists(@ScriptDir & '/conf/default_configuration.json') Then
+		Local $configFile = FileOpen(@ScriptDir & '/conf/default_configuration.json' , $FO_READ + $FO_UTF8)
+		Local $jsonString = FileRead($configFile)
+		ReadConfigFromJson($jsonString)
+		FileClose($configFile)
+		Out('Loaded default configuration') 
+	EndIf
 EndFunc
 
 

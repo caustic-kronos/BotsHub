@@ -1,3 +1,5 @@
+The 13 laws of AutoIt coding
+
 1- Only use single quotes, unless you need to escape them			"
 2- Only use tabulations for indentation								^ +
 3- Don't leave spaces at the end of lines							[ \t]+$
@@ -7,9 +9,9 @@
 7- Use consistent case for AutoIt keywords							^[^;\r\n]+\b\K(if|then|elseif|else|endif|func|endfunc|for|next|while|wend|do|until|return|switch|case|endswitch|continueloop|exitloop|select|endselect|true|false)\b
 8- Also use consistent naming for variables							((Local|Global|Const)\s+)+\K\$[a-zA-Z_][a-zA-Z0-9_]*
 9- Also use consistent naming for functions							Func[ \t]+\K[a-zA-Z_][a-zA-Z0-9_]*
-10- Align your comments												^[ \t]*;
-11- Separate your comments from the code with tabulations			[^\t\n]+;
-12- Comment your functions											^\r\n\r\nFunc
+10- Align your line comments										^[ \t]*;
+11- Separate your code comments from the code with tabulations		[^\t\n]+;
+12- Work on your TODOs and FIXMEs									(?i)\b(TODO|FIXME|NOTE)\b
+13- Comment and describe your functions								^\r\n\r\nFunc
 																	^;[^~].*\r\nFunc
 																	^[^;].*\r\nFunc
-13- Work on your TODOs and FIXMEs									(?i)\b(TODO|FIXME|NOTE)\b
