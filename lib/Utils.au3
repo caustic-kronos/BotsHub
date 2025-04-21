@@ -927,6 +927,13 @@ Func FindIdentificationKitOrBuySome()
 		WithdrawGold(500)
 		RndSleep(500)
 	EndIf
+	
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	Out('Moving to merchant')
+	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	GoToNPC($merchant)
+	RndSleep(500)
+	
 	Local $j = 0
 	Do
 		BuyItem(6, 1, 500)
