@@ -134,59 +134,62 @@ Global Const $ID_Dervish		= 10
 
 
 #Region Weapon Attributes
-Global Const $ID_Fast_Casting		= 0
-Global Const $ID_Illusion_Magic		= 1
-Global Const $ID_Domination_Magic	= 2
-Global Const $ID_Inspiration_Magic	= 3
-Global Const $ID_Blood_Magic		= 4
-Global Const $ID_Death_Magic		= 5
-Global Const $ID_Soul_Reaping		= 6
-Global Const $ID_Curses				= 7
-Global Const $ID_Air_Magic			= 8
-Global Const $ID_Earth_Magic		= 9
-Global Const $ID_Fire_Magic			= 10
-Global Const $ID_Water_Magic		= 11
-Global Const $ID_Energy_Storage		= 12
-Global Const $ID_Healing_Prayers	= 13
-Global Const $ID_Smiting_Prayers	= 14
-Global Const $ID_Protection_Prayers	= 15
-Global Const $ID_Divine_Favor		= 16
-Global Const $ID_Strength			= 17
-Global Const $ID_Axe_Mastery		= 18
-Global Const $ID_Hammer_Mastery		= 19
-Global Const $ID_Swordsmanship		= 20
-Global Const $ID_Tactics			= 21
-;Global Const $ID_	= 22		;BeastMastery or Survival
-Global Const $ID_Expertise			= 23
-;Global Const $ID_	= 24		;BeastMastery or Survival
-Global Const $ID_Marksmanship		= 25
-;Global Const $ID_	= 26
-;Global Const $ID_	= 27
-;Global Const $ID_	= 28
-Global Const $ID_Dagger_Mastery		= 29
-Global Const $ID_Critical_Strikes	= 30	;CriticalStrikes or Lethal or Shadow
-;Global Const $ID_	= 31		;CriticalStrikes or Lethal or Shadow
-Global Const $ID_Communing			= 32
-Global Const $ID_Restoration_Magic	= 33
-Global Const $ID_Channeling_Magic	= 34
-;Global Const $ID_	= 35		;CriticalStrikes or Lethal or Shadow
-Global Const $ID_Spawning_Power		= 36
-Global Const $ID_Spear_Mastery		= 37
-Global Const $ID_Command			= 38
-Global Const $ID_Motivation			= 39
-Global Const $ID_Leadership			= 40
-;Global Const $ID_	= 41		;Earth Prayers or Wind Prayers or Scythe Mastery
-;Global Const $ID_	= 42		;Earth Prayers or Wind Prayers or Scythe Mastery
-;Global Const $ID_	= 43		;Earth Prayers or Wind Prayers or Scythe Mastery
-Global Const $ID_Mysticism			= 44
-Global Const $ID_All_Primary_Caster	= 45
-Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], [$ID_Blood_Magic, 'Blood Magic'], _
-													[$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], [$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], _
-													[$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], [$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], _
-													[$ID_Divine_Favor, 'Divine Favor'], [$ID_Strength, 'Strength'], [$ID_Axe_Mastery, 'Axe Mastery'], [$ID_Hammer_Mastery, 'Hammer Mastery'], _
-													[$ID_Swordsmanship, 'Swordsmanship'], [$ID_Tactics, 'Tactics'], [$ID_Expertise, 'Expertise'], [$ID_Marksmanship, 'Marksmanship'], [$ID_Dagger_Mastery, 'Dagger Mastery'], _
-													[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Command, 'Command'], _
-													[$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Mysticism, 'Mysticism']]
+Global Const $ID_Fast_Casting			= 0
+Global Const $ID_Illusion_Magic			= 1
+Global Const $ID_Domination_Magic		= 2
+Global Const $ID_Inspiration_Magic		= 3
+Global Const $ID_Blood_Magic			= 4
+Global Const $ID_Death_Magic			= 5
+Global Const $ID_Soul_Reaping			= 6
+Global Const $ID_Curses					= 7
+Global Const $ID_Air_Magic				= 8
+Global Const $ID_Earth_Magic			= 9
+Global Const $ID_Fire_Magic				= 10
+Global Const $ID_Water_Magic			= 11
+Global Const $ID_Energy_Storage			= 12
+Global Const $ID_Healing_Prayers		= 13
+Global Const $ID_Smiting_Prayers		= 14
+Global Const $ID_Protection_Prayers		= 15
+Global Const $ID_Divine_Favor			= 16
+Global Const $ID_Strength				= 17
+Global Const $ID_Axe_Mastery			= 18
+Global Const $ID_Hammer_Mastery			= 19
+Global Const $ID_Swordsmanship			= 20
+Global Const $ID_Tactics				= 21
+;Global Const $ID_						= 22		;BeastMastery or Survival
+Global Const $ID_Expertise				= 23
+;Global Const $ID_						= 24		;BeastMastery or Survival
+Global Const $ID_Marksmanship			= 25
+;Global Const $ID_						= 26
+;Global Const $ID_						= 27
+;Global Const $ID_						= 28
+Global Const $ID_Dagger_Mastery			= 29
+Global Const $ID_Critical_Strikes		= 30		;CriticalStrikes or Lethal or Shadow
+;Global Const $ID_						= 31		;CriticalStrikes or Lethal or Shadow
+Global Const $ID_Communing				= 32
+Global Const $ID_Restoration_Magic		= 33
+Global Const $ID_Channeling_Magic		= 34
+;Global Const $ID_						= 35		;CriticalStrikes or Lethal or Shadow
+Global Const $ID_Spawning_Power			= 36
+Global Const $ID_Spear_Mastery			= 37
+Global Const $ID_Command				= 38
+Global Const $ID_Motivation				= 39
+Global Const $ID_Leadership				= 40
+Global Const $ID_Scythe_Mastery			= 41
+;Global Const $ID_						= 42		;Earth Prayers or Wind Prayers
+;Global Const $ID_						= 43		;Earth Prayers or Wind Prayers
+Global Const $ID_Mysticism				= 44
+Global Const $ID_All_Caster_Primaries	= 45
+Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], _
+												[$ID_Blood_Magic, 'Blood Magic'], [$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], _
+												[$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], [$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], _
+												[$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], [$ID_Divine_Favor, 'Divine Favor'], _
+												[$ID_Strength, 'Strength'], [$ID_Axe_Mastery, 'Axe Mastery'], [$ID_Hammer_Mastery, 'Hammer Mastery'], [$ID_Swordsmanship, 'Swordsmanship'], [$ID_Tactics, 'Tactics'], _
+												[$ID_Expertise, 'Expertise'], [$ID_Marksmanship, 'Marksmanship'], _
+												[$ID_Dagger_Mastery, 'Dagger Mastery'], [$ID_Critical_Strikes, 'Critical Strikes'], _
+												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
+												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
+												[$ID_Mysticism, 'Mysticism'], [$ID_Scythe_Mastery, 'Scythe Mastery']]
 #EndRegion Weapon Attributes
 
 
