@@ -34,6 +34,10 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
 	& '- any PCons you wish to use'
 
+; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
+;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City 
+Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City_Events 
+
 Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 
 Local Const $loggingEnabled = False
@@ -158,7 +162,7 @@ Func MinisterialCommendationsFarm($STATUS)
 	PickUpItems(HealWhilePickingItems)
 
 	Out('Travelling back to KC')
-	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	DistrictTravel($ID_Current_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
 
 	If $loggingEnabled Then FileClose($loggingFile)
 	Return 0
@@ -166,9 +170,10 @@ EndFunc
 
 
 Func Setup()
-	If GetMapID() <> $ID_Kaineng_City Then
+	Local $mapID = GetMapID()
+	If $mapID <> $ID_Current_Kaineng_City Then
 		Out('Travelling to Kaineng City')
-		DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Current_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
 	EndIf
 	LeaveGroup()
 
@@ -486,7 +491,7 @@ Func ResignAndReturnToOutpost()
 		Out('Player died')
 		LogIntoFile('Character died.')
 	EndIf
-	DistrictTravel($ID_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	DistrictTravel($ID_Current_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
 	Return 1
 EndFunc
 
