@@ -50,3 +50,14 @@ Enormous modifications were made, to the point this bot is probably not in any w
 ---
 
 If you are the author of any of the above and would like changes to attribution or removal, please open an issue or contact me on github @caustic-kronos.
+
+
+## Dependencies
+
+### autoit-json-udf
+- Authors: AspirinJunkie, Sven Seyfert (SOLVE-SMART)
+- License: WTFPL license
+
+### SQLite3 AutoIt library
+- Authors: Fida Florian (piccaso), jchd, jpm
+- License: Unknown

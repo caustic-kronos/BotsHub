@@ -245,8 +245,9 @@ Local $STRUCT_INHERENT_ZEALOUS_STRENGTH = $STRUCT_ENERGY_REGENERATION	;+15% dama
 
 Local $STRUCT_INHERENT_VAMPIRIC_STRENGTH = '0100E820'					;+15% damage health regeneration -1 - health regeneration -1 part
 ;Local $STRUCT_INHERENT_VAMPIRIC_STRENGTH_2 = '0F003822'				;+15% damage -1 health regeneration - +15% damage part
-
 #EndRegion martial weapons
+
+; Missing the inherent hsr^20 and hct^20 for specific attributes
 
 #Region focus and shield OS
 ; 10 armor VS ...

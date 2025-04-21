@@ -57,7 +57,7 @@ Local Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray
 
 ;~ Main loop of the farm
 Func SpiritSlavesFarm($STATUS)
-	$loggingFile = FileOpen('logs/spiritslaves_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	$loggingFile = FileOpen(@ScriptDir & '/logs/spiritslaves_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	While Not($SPIRIT_SLAVES_FARM_SETUP)
 		SpiritSlavesFarmSetup()

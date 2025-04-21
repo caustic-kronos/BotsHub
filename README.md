@@ -48,6 +48,10 @@ To use it:
 	1. You can find the lib folder the files SQLite.au3 and SQLite.dll.au3
 	2. Copy those files to your Program Files/AutoIt3/Include folder.
 
+## Dependencies
+- [AutoIt JSON UDF](https://github.com/Sylvan86/autoit-json-udf) – For JSON parsing - WTFPL license.
+- [SQLite UDF](https://www.autoitscript.com/autoit3/pkgmgr/sqlite/) – For database operations.
+
 ## License
 This project is licensed under the Apache License 2.0 – see the [LICENSE](LICENSE) file.
 
