@@ -359,6 +359,9 @@ Global Const $ID_Heroic_Refrain					= 3431
 ; PvE
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_Mental_Block					= 2417
+; Food and drink boosts
+Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
+Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolat Bunny
 #EndRegion Skill IDs
 
 
@@ -695,6 +698,7 @@ Global Const $ID_Herring						= 26502		; Mini Black Moa Chick incubator item
 Global Const $ID_Encrypted_Charr_Battle_Plans	= 27976
 Global Const $ID_Ministerial_Decree				= 29109		; WoC quest item
 Global Const $ID_Keirans_Bow					= 35829		; Not really a drop
+Global Const $ID_Jar_of_Invigoration			= 27133
 Local Const $Map_Pieces_Array[]					= [$ID_Map_Piece_TL, $ID_Map_Piece_TR, $ID_Map_Piece_BL, $ID_Map_Piece_BR]
 Global Const $Map_Map_Pieces					= MapFromArray($Map_Pieces_Array)
 #EndRegion Stupid Drops
