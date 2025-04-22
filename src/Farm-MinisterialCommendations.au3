@@ -199,6 +199,7 @@ Func EnterQuest()
 	EndIf
 
 	RndSleep(1000)
+	UseCitySpeedBoost()
 	GoToNPC(GetNearestNPCToCoords(2240, -1264))
 	RndSleep(250)
 	Dialog(0x00000084)

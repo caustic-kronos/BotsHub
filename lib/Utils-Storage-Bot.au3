@@ -497,6 +497,7 @@ Func ValidateNewUpgrades($upgradeType)
 		& '	FROM ' & $TABLE_DATA_USER & ' data' & @CRLF _
 		& '	WHERE data.OS = ' & $TABLE_LOOKUP_UPGRADES & '.OS' & @CRLF _
 		& "		AND upgrade_type = '" & $upgradeType & "'" & @CRLF _
+		& "		AND data.rarity = 'Gold'" & @CRLF _
 		& '		AND data.type_ID = weapon' & @CRLF _
 		& "		AND data.modstruct LIKE ('%' || hexa || '%')" & @CRLF _
 		& '		AND data.' & $upgradeType & ' <> effect' & @CRLF _
@@ -507,7 +508,7 @@ EndFunc
 
 
 #Region Inventory
-;~ Don't use : for now TraderRequestSell make the game crash
+;~ No need to use this function, scrolls are sold at the same price at regular merchant
 ;~ Sell gold scrolls to scroll trader
 Func SellGoldScrolls()
 	If GetMapID() == $ID_Rata_Sum Then
@@ -566,6 +567,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	UseCitySpeedBoost()
 	GoToNPC($merchant)
 	RndSleep(500)
 
@@ -595,6 +597,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to materials merchant')
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
+	UseCitySpeedBoost()
 	GoToNPC($materialMerchant)
 	RndSleep(500)
 
@@ -630,6 +633,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
+	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
 	RndSleep(250)
 
@@ -665,6 +669,7 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
+	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
 	RndSleep(250)
 
@@ -687,6 +692,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
+	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
 	RndSleep(250)
 

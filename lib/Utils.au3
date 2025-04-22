@@ -217,6 +217,8 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf ($itemID == $ID_Ministerial_Commendation) Then
 		Return True
+	ElseIf ($itemID == $ID_Jar_of_Invigoration) Then
+		Return False
 	ElseIf IsMapPiece($itemID) Then
 		Return GUICtrlRead($GUI_Checkbox_LootMapPieces) == $GUI_CHECKED
 	ElseIf IsStackableItemButNotMaterial($itemID) Then
@@ -793,6 +795,22 @@ EndFunc
 
 #Region Use Items
 ;~ Uses a consumable from inventory, if present
+Func UseCitySpeedBoost($forceUse = False)
+	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
+	
+	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_2)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) > 0 Then Return
+
+	Local $ConsumableSlot = findInInventory($ID_Sugary_Blue_Drink)
+	If $ConsumableSlot[0] <> 0 Then
+		UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+	Else
+		$ConsumableSlot = findInInventory($ID_Chocolate_Bunny)
+		If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+	EndIf
+EndFunc
+
+
+;~ Uses a consumable from inventory, if present
 Func UseConsumable($ID_consumable, $forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
 	Local $ConsumableSlot = findInInventory($ID_consumable)
@@ -926,6 +944,7 @@ Func FindIdentificationKitOrBuySome()
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	UseCitySpeedBoost()
 	GoToNPC($merchant)
 	RndSleep(500)
 	
@@ -954,6 +973,7 @@ Func FindSalvageKitOrBuySome()
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
 	Out('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	UseCitySpeedBoost()
 	GoToNPC($merchant)
 	RndSleep(500)
 	
@@ -976,7 +996,6 @@ Func ShouldSellItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
 	Local $rarity = GetRarity($item)
-	;Local $requirement = GetItemReq($item)
 	If IsBasicMaterial($item) Then
 		Return False
 	ElseIf IsRareMaterial($item) Then
@@ -1159,67 +1178,15 @@ EndFunc
 
 ;~ Identify is an item is q7-q8 with max damage
 Func IsLowReqMaxDamage($item)
-	Local $type = DllStructGetData($item, 'Type')
 	Local $requirement = GetItemReq($item)
-	Local $damage = GetItemMaxDmg($item)
-
-	If $requirement > 8 Then Return False
-
-	Switch $type
-		Case $ID_Type_Offhand
-			If $damage = 12 Then Return True
-		Case $ID_Type_Shield
-			If $damage = 16 Then Return True
-		Case $ID_Type_Dagger
-			If $damage = 17 Then Return True
-		Case $ID_Type_Sword, $ID_Type_Wand, $ID_Type_Staff
-			If $damage = 22 Then Return True
-		Case $ID_Type_Spear
-			If $damage = 27 Then Return True
-		Case $ID_Type_Axe, $ID_Type_Bow
-			If $damage = 28 Then Return True
-		Case $ID_Type_Hammer
-			If $damage = 35 Then Return True
-		Case $ID_Type_Scythe
-			If $damage = 41 Then Return True
-		Case Else
-			Return False
-	EndSwitch
-	Return False
+	Return $requirement < 9 And IsMaxDamageForReq($item)
 EndFunc
 
 
 ;~ Identify if an item is q0 with max damage
 Func IsNoReqMaxDamage($item)
-	Local $type = DllStructGetData($item, 'Type')
 	Local $requirement = GetItemReq($item)
-	Local $damage = GetItemMaxDmg($item)
-
-	If $requirement > 0 Then Return False
-
-	Switch $type
-		Case $ID_Type_Offhand
-			If $damage = 6 Then Return True
-		Case $ID_Type_Shield
-			If $damage = 8 Then Return True
-		Case $ID_Type_Dagger
-			If $damage = 8 Then Return True
-		Case $ID_Type_Sword
-			If $damage = 10 Then Return True
-		Case $ID_Type_Wand, $ID_Type_Staff
-			If $damage = 11 Then Return True
-		Case $ID_Type_Spear, $ID_Type_Axe
-			If $damage = 12 Then Return True
-		Case $ID_Type_Bow
-			If $damage = 13 Then Return True
-		Case $ID_Type_Hammer
-			If $damage = 15 Then Return True
-		Case $ID_Type_Scythe
-			If $damage = 17 Then Return True
-		Case Else
-			Return False
-	EndSwitch
-	Return False
+	Return $requirement == 0 And IsMaxDamageForReq($item)
 EndFunc
 
 

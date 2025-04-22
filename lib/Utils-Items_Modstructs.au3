@@ -77,8 +77,8 @@ Global Const $Map_Weapon_Mods				= MapFromArray($Weapon_Mods_Array)
 
 #Region Weapon Inscriptions
 #Region Common Inscriptions
-Local $STRUCT_INSCRIPTION_MEASURE_FOR_MEASURE = '32000826'				;salvageable
-Local $STRUCT_INSCRIPTION_SHOW_ME_THE_MONEY = '3200F805'				;rare/money
+Local $STRUCT_INSCRIPTION_MEASURE_FOR_MEASURE = '1F0208243E0432251'		;salvageable
+Local $STRUCT_INSCRIPTION_SHOW_ME_THE_MONEY = '1E0208243C043225'		;rare/money
 
 Local $STRUCT_INSCRIPTION_STRENGTH_AND_HONOR = '0F327822'				;+15% while health > 50%
 Local $STRUCT_INSCRIPTION_GUIDED_BY_FATE = '0F006822'					;+15% while enchanted
