@@ -63,7 +63,7 @@ EndFunc
 
 Func SetupDragonMossFarm()
 	Out('Setting up farm')
-	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	Out('Entering Drazach Thicket')

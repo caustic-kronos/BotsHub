@@ -2,6 +2,8 @@
 A bot for GuildWars, written in AutoIt.
 It needs AutoIt version 3.3.16.0 or higher to run.
 
+> ⚠️ This bot operates autonomously and can perform actions such as selling or modifying items without direct user intervention. ​Please ensure that any valuable or important items are securely stored or protected before activating the bot. The developers are not responsible for any unintended consequences resulting from the bot's actions.
+
 > ⚠️ Disclaimer: This project is not affiliated with or endorsed by ArenaNet - GuildWars. Use at your own risk.
 
 ## Features
@@ -39,8 +41,6 @@ To add a new bot, drop your script into the `/src/` folder and follow these step
 And that's it !
 
 ## Usage
-> ⚠️ This bot is experimental and provided for educational purposes only.
-
 To use it:
 1. Install AutoIt.
 2. Run `BotsHub.au3` with AutoIt.

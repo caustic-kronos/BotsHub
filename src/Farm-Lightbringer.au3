@@ -61,7 +61,7 @@ Func LightbringerFarmSetup()
 
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
 		Out('Travelling to Remains of Sahlahja')
-		DistrictTravel($ID_Remains_of_Sahlahja, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	EndIf
 	LeaveGroup()
 
@@ -260,6 +260,6 @@ EndFunc
 Func ReturnToSahlahjaOutpost()
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
 		Out('Travelling to Remains of Sahlahja')
-		DistrictTravel($ID_Remains_of_Sahlahja, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	EndIf
 EndFunc

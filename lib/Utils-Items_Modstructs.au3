@@ -154,7 +154,7 @@ Local $STRUCT_INSCRIPTION_STRENGTH_OF_BODY = '00045828'				;-20 deep wound durat
 Local $STRUCT_INSCRIPTION_CAST_OUT_THE_UNCLEAN = '00055828'			;-20 disease duration
 Local $STRUCT_INSCRIPTION_CAST_OUT_THE_UNCLEAN_OS = 'E3017824'		;-20 disease duration
 Local $STRUCT_INSCRIPTION_PURE_OF_HEART = '00065828'				;-20 poison duration
-Local $STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE = '00085828'		;-20 weakness duration
+Local $STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE = '00085828'		;-20 weakness duration								; incorrect
 #EndRegion Focus and Shield Inscriptions
 #EndRegion Offhand Inscriptions
 
@@ -195,7 +195,7 @@ Local $STRUCT_MOD_OF_DRAGON_SLAYING = '00098080'
 #Region martial mods
 Local $STRUCT_MOD_BARBED_PREFIX = 'DE016824'					;+33% bleeding
 Local $STRUCT_MOD_CRUEL_PREFIX = 'E2016824'						;+33% deep wound
-Local $STRUCT_MOD_CRIPPLING_PREFIX = 'E1016824'					;+33% crippled
+Local $STRUCT_MOD_CRIPPLING_PREFIX = 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
 Local $STRUCT_MOD_HEAVY_PREFIX = 'E601824'						;+33% weakness
 Local $STRUCT_MOD_POISONOUS_PREFIX = 'E4016824'					;+33% poison
 Local $STRUCT_MOD_SILENCING_PREFIX = 'E5016824'           		;+33% dazed

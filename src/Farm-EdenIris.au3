@@ -33,7 +33,7 @@ Local $IRIS_FARM_SETUP = False
 
 ;~ Main method to farm Red Iris Flowers in Eden
 Func EdenIrisFarm($STATUS)
-	If GetMapID() <> $ID_Ashford_Abbey Then DistrictTravel($ID_Ashford_Abbey, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Ashford_Abbey Then DistrictTravel($ID_Ashford_Abbey, $DISTRICT_NAME)
 
 	If Not $IRIS_FARM_SETUP Then
 		SetupEdenIrisFarm()

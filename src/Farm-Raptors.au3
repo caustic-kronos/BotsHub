@@ -80,7 +80,7 @@ Local $chatStuckTimer = TimerInit()
 
 ;~ Main method to farm Raptors
 Func RaptorFarm($STATUS)
-	If GetMapID() <> $ID_Rata_Sum Then DistrictTravel($ID_Rata_Sum, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Rata_Sum Then DistrictTravel($ID_Rata_Sum, $DISTRICT_NAME)
 
 	$RAPTORS_PROFESSION = GetHeroProfession(0)		;Gets our own profession
 	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return 2

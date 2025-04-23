@@ -42,7 +42,7 @@ Local Const $ID_unknown_outpost_deposit_points = 193
 Func LuxonFactionFarm($STATUS)
 	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then
 		Out('Moving to Outpost')
-		DistrictTravel($ID_Aspenwood_Gate_Luxon, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 		WaitMapLoading($ID_Aspenwood_Gate_Luxon, 10000, 2000)
 	EndIf
 
@@ -74,7 +74,7 @@ EndFunc
 Func LuxonFarmSetup()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
 		Out('Turning in Luxon faction')
-		DistrictTravel($ID_unknown_outpost_deposit_points, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
 		WaitMapLoading($ID_unknown_outpost_deposit_points, 10000, 2000)
 		RndSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
@@ -94,7 +94,7 @@ Func LuxonFarmSetup()
 			RndSleep(550)
 		EndIf
 		RndSleep(500)
-		DistrictTravel($ID_Aspenwood_Gate_Luxon, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 		WaitMapLoading($ID_Aspenwood_Gate_Luxon, 10000, 2000)
 	EndIf
 
