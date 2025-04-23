@@ -68,7 +68,7 @@ EndFunc
 
 Func SetupFeathersFarm()
 	Out('Setting up farm')
-	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveGroup()
 	;LoadSkillTemplate($DAFeathersFarmerSkillbar)

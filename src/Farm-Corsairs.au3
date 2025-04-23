@@ -67,7 +67,7 @@ EndFunc
 
 Func SetupCorsairsFarm()
 	Out('Setting up farm')
-	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)

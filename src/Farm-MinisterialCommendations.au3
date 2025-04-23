@@ -162,7 +162,7 @@ Func MinisterialCommendationsFarm($STATUS)
 	PickUpItems(HealWhilePickingItems)
 
 	Out('Travelling back to KC')
-	DistrictTravel($ID_Current_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
 	If $loggingEnabled Then FileClose($loggingFile)
 	Return 0
@@ -173,7 +173,7 @@ Func Setup()
 	Local $mapID = GetMapID()
 	If $mapID <> $ID_Current_Kaineng_City Then
 		Out('Travelling to Kaineng City')
-		DistrictTravel($ID_Current_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 	EndIf
 	LeaveGroup()
 
@@ -492,7 +492,7 @@ Func ResignAndReturnToOutpost()
 		Out('Player died')
 		LogIntoFile('Character died.')
 	EndIf
-	DistrictTravel($ID_Current_Kaineng_City, $ID_EUROPE, $ID_FRENCH)
+	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 	Return 1
 EndFunc
 

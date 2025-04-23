@@ -39,7 +39,7 @@ Local $DonatePoints = True
 Func KurzickFactionFarm($STATUS)
 	If GetMapID() <> $ID_House_Zu_Heltzer Then
 		Out('Moving to Outpost')
-		DistrictTravel($ID_House_Zu_Heltzer, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 		WaitMapLoading($ID_House_Zu_Heltzer, 10000, 2000)
 	EndIf
 

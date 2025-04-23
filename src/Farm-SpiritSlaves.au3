@@ -97,7 +97,7 @@ Func SpiritSlavesFarmSetup()
 	If GetMapID() <> $ID_The_Shattered_Ravines Then
 		If GetMapID() <> $ID_Bone_Palace Then
 			Out('Travelling to Bone Palace')
-			DistrictTravel($ID_Bone_Palace, $ID_EUROPE, $ID_FRENCH)
+			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
 		EndIf
 		SwitchMode($ID_HARD_MODE)
 		LeaveGroup()
@@ -383,7 +383,7 @@ Func RestartAfterDeath()
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$SPIRIT_SLAVES_FARM_SETUP = True
 			Out('Travelling to Bone Palace')
-			DistrictTravel($ID_Bone_Palace, $ID_EUROPE, $ID_FRENCH)
+			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
 			Return 1
 		EndIf
 	WEnd

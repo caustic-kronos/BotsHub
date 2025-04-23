@@ -73,7 +73,7 @@ EndFunc
 
 Func SetupMantidsFarm()
 	Out('Setting up farm')
-	If GetMapID() <> $ID_Nahpui_Quarter Then DistrictTravel($ID_Nahpui_Quarter, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Nahpui_Quarter Then DistrictTravel($ID_Nahpui_Quarter, $DISTRICT_NAME)
 
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()

@@ -63,7 +63,7 @@ EndFunc
 Func RunToJagaMoraine()
 	If GetMapID() <> $ID_Longeyes_Ledge Then
 		Out('Travelling to Longeyes Ledge')
-		DistrictTravel($ID_Longeyes_Ledge, $ID_EUROPE, $ID_FRENCH)
+		DistrictTravel($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)

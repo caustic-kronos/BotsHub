@@ -100,8 +100,8 @@ Func InventoryManagement()
 	; 9-Store items
 	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage(GetIsUnidentified)
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED And HasUnidentifiedItems() Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		IdentifyAllItems()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
@@ -113,24 +113,22 @@ Func InventoryManagement()
 		DisconnectFromDatabase()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		MoveItemsOutOfEquipmentBag()
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
 		;SalvageItems()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
-
-		SellMaterialsToMerchant()
-		SellRareMaterialsToMerchant()
+	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED And HasMaterials() Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+		If HasBasicMaterials() Then SellMaterialsToMerchant()
+		If HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		SellEverythingToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
 
@@ -158,7 +156,7 @@ EndFunc
 Func ReadAllItemsData()
 	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
 	Local $item, $output
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $slot = 1 To DllStructGetData($bag, 'slots')
 			$output = GetOneItemData($bagIndex, $slot)
@@ -326,7 +324,7 @@ Func StoreAllItemsData()
 	Out('Scanning and storing all items data')
 	SQLExecute('BEGIN;')
 	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -519,7 +517,7 @@ Func SellGoldScrolls()
 	EndIf
 
 	Local $item, $itemID
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -564,7 +562,7 @@ EndFunc
 
 ;~ Sell general items to trader
 Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Out('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
@@ -572,7 +570,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 	RndSleep(500)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -592,9 +590,41 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 EndFunc
 
 
+;~ Returns true if there are materials in inventory
+Func HasMaterials()
+	Return HasInInventory(IsMaterial)
+EndFunc
+
+
+;~ Returns true if there are basic materials in inventory
+Func HasBasicMaterials()
+	Return HasInInventory(IsBasicMaterial)
+EndFunc
+
+
+;~ Returns true if there are rare materials in inventory
+Func HasRareMaterials()
+	Return HasInInventory(IsRareMaterial)
+EndFunc
+
+
+;~ Returns true if there are items in inventory satisfying condition
+Func HasInInventory($condition)
+	Local $item, $itemID
+	For $bagIndex = 1 To 4
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If $condition($item) Then Return True
+		Next
+	Next
+	Return False
+EndFunc
+
+
 ;~ Sell materials to materials merchant in EOTN
 Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Out('Moving to materials merchant')
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	UseCitySpeedBoost()
@@ -630,7 +660,7 @@ EndFunc
 
 ;~ Sell rare materials to rare materials merchant in EOTN
 Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial)
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
@@ -666,7 +696,7 @@ EndFunc
 
 ;~ Buy rare material from rare materials merchant in EOTN
 Func BuyRareMaterialFromMerchant($materialModelID, $amount)
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
@@ -689,7 +719,11 @@ EndFunc
 ;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
 ;~ So please only use with $poorThreshold > 5k
 Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000)
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+	If CountSlots(1, 4) == 0 Then
+		Out('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
+		Return
+	EndIf
 	Out('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
@@ -715,7 +749,7 @@ EndFunc
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Out('Storing items')
 	Local $item, $itemID
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -811,7 +845,6 @@ Func DefaultShouldSellItem($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $rarity = GetRarity($item)
 
-	If $itemID == $ID_Saurian_bone Then Return True
 	If IsBlueScroll($itemID) Then Return True
 	If IsGoldScroll($itemID) And $itemID <> $ID_UW_Scroll And $itemID <> $ID_FoW_Scroll Then Return True
 	If IsWeapon($item) Then
@@ -877,23 +910,9 @@ Func ShouldKeepWeapon($itemID)
 		$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow, _
 		_	;Salvages to ruby, very rarely ...
 		_	;$ID_Ruby_Maul, _
-		_	;Expensive - don't sell
-		$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, _
-		$ID_Froggy_Air, $ID_Froggy_Earth, $ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, $ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, _
-		$ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
-		$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, _
-		$ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, $ID_Bone_Dragon_Staff_Death, _
-		$ID_Bone_Dragon_Staff_Air, $ID_Bone_Dragon_Staff_Earth, $ID_Bone_Dragon_Staff_Energy_Storage, $ID_Bone_Dragon_Staff_Fire, $ID_Bone_Dragon_Staff_Water, _
-		$ID_Bone_Dragon_Staff_Divine, $ID_Bone_Dragon_Staff_Healing, $ID_Bone_Dragon_Staff_Protection, $ID_Bone_Dragon_Staff_Smiting, _
-		$ID_Bone_Dragon_Staff_Communing, $ID_Bone_Dragon_Staff_Spawning, $ID_Bone_Dragon_Staff_Restoration, $ID_Bone_Dragon_Staff_Channeling, _
-		$ID_Celestial_Compass_Domination, $ID_Celestial_Compass_Fast_Casting, $ID_Celestial_Compass_Illusion, $ID_Celestial_Compass_Inspiration, _
-		$ID_Celestial_Compass_Soul_Reaping, $ID_Celestial_Compass_Blood, $ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, _
-		$ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
-		$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, _
-		$ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
 	]
-
 	Local Static $Map_shouldKeepWeapons = MapFromArray($shouldKeepWeaponsArray)
+	If $Map_UltraRareWeapons[$itemID] <> null Then Return True
 	If $Map_shouldKeepWeapons[$itemID] <> null Then Return True
 	Return False
 EndFunc

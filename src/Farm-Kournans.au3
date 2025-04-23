@@ -83,7 +83,7 @@ EndFunc
 
 Func SetupKournansFarm()
 	Out('Setting up farm')
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 
 	LeaveGroup()
 	RndSleep(50)

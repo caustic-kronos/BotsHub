@@ -38,18 +38,35 @@ Global Const $ID_HARD_MODE		= 1
 
 #Region Locations
 Global Const $ID_EUROPE			= 2
-Global Const $ID_INTERNATIONAL	= -2
-Global Const $ID_KOREA			= 1
-Global Const $ID_CHINA			= 3
-Global Const $ID_JAPAN			= 4
-
+Global Const $ID_INTERNATIONAL	= -2	; incorrect
+Global Const $ID_KOREA			= 1		; incorrect
+Global Const $ID_CHINA			= 3		; incorrect
+Global Const $ID_JAPAN			= 4		; incorrect
 Global Const $ID_ENGLISH		= 0
 Global Const $ID_FRENCH			= 2
 Global Const $ID_GERMAN			= 3
 Global Const $ID_ITALIAN		= 4
-Global Const $ID_SPANISH		= 5
 Global Const $ID_POLISH			= 9
 Global Const $ID_RUSSIAN		= 10
+Global Const $ID_SPANISH		= 5
+
+Local Const $ID_English_District					=	[$ID_ENGLISH, $ID_EUROPE]
+Local Const $ID_French_District						=	[$ID_FRENCH, $ID_EUROPE]
+Local Const $ID_German_District						=	[$ID_GERMAN, $ID_EUROPE]
+Local Const $ID_Italian_District					=	[$ID_ITALIAN, $ID_EUROPE]
+Local Const $ID_Polish_District						=	[$ID_POLISH, $ID_EUROPE]
+Local Const $ID_Russian_District					=	[$ID_RUSSIAN, $ID_EUROPE]
+Local Const $ID_Spanish_District					=	[$ID_SPANISH, $ID_EUROPE]
+Local Const $ID_American_District					=	[$ID_ENGLISH, $ID_ENGLISH]
+Local Const $ID_Chinese_District					=	[$ID_CHINA, $ID_ENGLISH]
+Local Const $ID_Japanese_District					=	[$ID_JAPAN, $ID_ENGLISH]
+Local Const $ID_Korean_District						=	[$ID_KOREA, $ID_ENGLISH]
+Local Const $ID_International_District				=	[$ID_INTERNATIONAL, $ID_ENGLISH]
+
+Local Const $DistrictNames							=	['English', 'French', 'German', 'Italian', 'Polish', 'Russian', 'Spanish', 'America', 'China', 'Japan', 'Korea', 'International']
+Local Const $DistrictAndRegionIds					=	[$ID_English_District, $ID_French_District, $ID_German_District, $ID_Italian_District, $ID_Polish_District, $ID_Russian_District, _
+															$ID_Spanish_District, $ID_American_District, $ID_Chinese_District, $ID_Japanese_District, $ID_Korean_District, $ID_International_District]
+Global Const $RegionMap								=	MapFromArrays($DistrictNames, $DistrictAndRegionIds)
 #EndRegion Locations
 
 
@@ -1516,9 +1533,9 @@ Global Const $ID_Guardian_of_the_Hunt_2				= 1321
 Global Const $ID_Illusory_Staff						= 1916
 Global Const $ID_Iridescent_Aegis					= 2299
 Global Const $ID_Jitte								= 741
-Global Const $ID_Jug_divine_favor					= 1022
-Global Const $ID_Jug_energy_storage					= 875
-Global Const $ID_Jug_soul_reaping					= 874
+Global Const $ID_Jug								= 1022
+Global Const $ID_Jug_2								= 875
+Global Const $ID_Jug_3								= 874
 Global Const $ID_Kappa_Shield						= 952
 Global Const $ID_Kappa_Shield_2						= 953
 Global Const $ID_Katana								= 742
@@ -1566,6 +1583,21 @@ Global Const $ID_Voltaic_Spear						= 2071
 Global Const $ID_Wingcrest_Maul						= 2048
 Global Const $ID_Zodiac_Shield						= 1039
 #EndRegion Other skins
+
+
+Local $UltraRareWeapons								= [ _
+	$ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, _
+	$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, $ID_Froggy_Air, $ID_Froggy_Earth, _
+	$ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, $ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, $ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
+	$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, $ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, _
+	$ID_Bone_Dragon_Staff_Death, $ID_Bone_Dragon_Staff_Air, $ID_Bone_Dragon_Staff_Earth, $ID_Bone_Dragon_Staff_Energy_Storage, $ID_Bone_Dragon_Staff_Fire, $ID_Bone_Dragon_Staff_Water, $ID_Bone_Dragon_Staff_Divine, $ID_Bone_Dragon_Staff_Healing, _
+	$ID_Bone_Dragon_Staff_Protection, $ID_Bone_Dragon_Staff_Smiting, $ID_Bone_Dragon_Staff_Communing, $ID_Bone_Dragon_Staff_Spawning, $ID_Bone_Dragon_Staff_Restoration, $ID_Bone_Dragon_Staff_Channeling, _
+	$ID_Celestial_Compass_Domination, $ID_Celestial_Compass_Fast_Casting, $ID_Celestial_Compass_Illusion, $ID_Celestial_Compass_Inspiration, $ID_Celestial_Compass_Soul_Reaping, $ID_Celestial_Compass_Blood, _
+	$ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, $ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
+	$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, $ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
+]
+Global Const $Map_UltraRareWeapons					= MapFromArray($UltraRareWeapons)
+
 
 ; This map could potentially be limited to its function use
 Local $StackableItems	= $Blue_Scrolls_Array

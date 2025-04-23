@@ -45,11 +45,12 @@
 #include <GuiEdit.au3>
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
-#include 'lib/JSON.au3'
+#include <Math.au3>
 
 #include 'lib/GWA2_Headers.au3'
 #include 'lib/GWA2.au3'
 #include 'lib/GWA2_ID.au3'
+#include 'lib/JSON.au3'
 #include 'src/Farm-Corsairs.au3'
 #include 'src/Farm-DragonMoss.au3'
 #include 'src/Farm-EdenIris.au3'
@@ -89,8 +90,11 @@ Global $STATUS = 'STOPPED'
 Local $RUN_MODE = 'AUTOLOAD'
 Local $PROCESS_ID = ''
 Local $CHARACTER_NAME = ''
+Local $DISTRICT_NAME = 'English'
+Local $BAG_NUMBER = 5
 
 Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic'
+Local $AVAILABLE_DISTRICTS = 'China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
 #Region GUI
@@ -107,6 +111,7 @@ Global $GUI_Group_RunInfos, $GUI_Label_Runs, $GUI_Label_Failures, $GUI_Label_Tim
 Global $GUI_Group_ItemsLooted, $GUI_Label_ChunkOfDrakeFlesh, $GUI_Label_SkaleFins, $GUI_Label_GlacialStones, $GUI_Label_DiessaChalices, $GUI_Label_RinRelics, $GUI_Label_WintersdayGifts, $GUI_Label_MargoniteGemstone, $GUI_Label_StygianGemstone, $GUI_Label_TitanGemstone, $GUI_Label_TormentGemstone
 Global $GUI_Group_Titles, $GUI_Label_AsuraTitle, $GUI_Label_DeldrimorTitle, $GUI_Label_NornTitle, $GUI_Label_VanguardTitle, $GUI_Label_KurzickTitle, $GUI_Label_LuxonTitle, $GUI_Label_LightbringerTitle, $GUI_Label_SunspearTitle
 Global $GUI_Group_GlobalOptions, $GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, $GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_BuyEctoplasm, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution
+Global $GUI_Label_BagNumber, $GUI_Input_BagNumber, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables
 Global $GUI_Group_BaseLootOptions, $GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, $GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
 Global $GUI_Group_RarityLootOptions, $GUI_Checkbox_LootGoldItems, $GUI_Checkbox_LootPurpleItems, $GUI_Checkbox_LootBlueItems, $GUI_Checkbox_LootWhiteItems, $GUI_Checkbox_LootGreenItems
@@ -118,7 +123,7 @@ Global $GUI_Label_CharacterBuild, $GUI_Label_HeroBuild, $GUI_Edit_CharacterBuild
 
 Global $GUI_Label_ToDoList
 
-Global $GUI_Combo_ConfigChoice
+Global $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
 
 ;------------------------------------------------------
 ; Title...........:	_guiCreate
@@ -197,10 +202,17 @@ Func createGUI()
 	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 304, 156, 20)
 	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 334, 156, 20)
 	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 364, 156, 20)
-
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
-	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('Consumables to consume', 305, 40, 271, 361)
+	
+	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('More options', 305, 40, 271, 361)
 	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 256, 20)
+	$GUI_Label_BagNumber = GUICtrlCreateLabel('Number of bags:', 315, 95, 80, 20)
+	$GUI_Input_BagNumber = GUICtrlCreateInput('5', 400, 95, 20, 20, $ES_NUMBER)
+	GUICtrlSetOnEvent($GUI_Input_BagNumber, 'GuiButtonHandler')
+	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 315, 125, 70, 20)
+	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('English', 400, 122, 100, 20)
+	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'English')
+	GUICtrlSetOnEvent($GUI_Combo_DistrictChoice, 'GuiButtonHandler')
 	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 315, 364, 156, 20)
 	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 490, 364, 75, 20)
 	GUICtrlSetBkColor($GUI_Button_DynamicExecution, $GUI_BLUE_COLOR)
@@ -257,8 +269,13 @@ Func createGUI()
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	GUICtrlCreateTabItem('')
 
-	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('default_configuration', 450, 10, 136, 20)
+	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('Default Configuration', 425, 12, 136, 20)
 	GUICtrlSetOnEvent($GUI_Combo_ConfigChoice, 'GuiButtonHandler')
+
+	$GUI_Icon_SaveConfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 565, 12, 20, 20)
+	GUICtrlSetOnEvent($GUI_Icon_SaveConfig, "GuiButtonHandler")
+	;Local $GUI_Button_SaveConfig = GUICtrlCreateButton(".", 567 - 80, 12, 60, 60, $BS_ICON)
+	;GUICtrlSetImage($GUI_Button_SaveConfig, @ScriptDir & '/doc/save.jpg')
 
 	GUICtrlSetState($GUI_Checkbox_HM, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, $GUI_CHECKED)
@@ -281,6 +298,8 @@ Func createGUI()
 	GUICtrlSetState($GUI_Checkbox_LootTrophies, $GUI_CHECKED)
 EndFunc
 
+
+;~ Change the color of a tab
 Func _GUICtrlTab_SetBkColor($gui, $parentTab, $color)
 	Local $aTabPos = ControlGetPos($gui, '', $parentTab)
 	Local $aTab_Rect = _GUICtrlTab_GetItemRect($parentTab, -1)
@@ -289,6 +308,7 @@ Func _GUICtrlTab_SetBkColor($gui, $parentTab, $color)
 	GUICtrlSetBkColor(-1, $color)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 EndFunc
+
 
 ;~ Handle start button usage
 Func GuiButtonHandler()
@@ -303,9 +323,24 @@ Func GuiButtonHandler()
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)
+		Case $GUI_Input_BagNumber
+			$BAG_NUMBER = Number(GUICtrlRead($GUI_Input_BagNumber))
+			$BAG_NUMBER = _Max($BAG_NUMBER, 1)
+			$BAG_NUMBER = _Min($BAG_NUMBER, 5)
 		Case $GUI_Combo_ConfigChoice
 			Local $Configuration = GUICtrlRead($GUI_Combo_ConfigChoice)
-			UpdateConfiguration($Configuration)
+			ChangeConfiguration($Configuration)
+		Case $GUI_Combo_DistrictChoice
+			$DISTRICT_NAME = GUICtrlRead($GUI_Combo_DistrictChoice)
+		Case $GUI_Icon_SaveConfig
+			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_DISABLE)
+			Local $filePath = FileSaveDialog("", @ScriptDir & "\conf", "(*.json)")
+			If @error <> 0 Then
+				Out("Failed to write JSON configuration.")
+			Else
+				SaveConfiguration($filePath)
+			EndIf
+			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_ENABLE)
 		Case $GUI_Button_DynamicExecution
 			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_StartButton
@@ -422,11 +457,11 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots(4, 4) < 5) Then
+				If (CountSlots(4, $BAG_NUMBER) < 5) Then
 					InventoryManagement()
 					ResetBotsSetups()
 				EndIf
-				If (CountSlots(4, 4) < 5) Then
+				If (CountSlots(4, $BAG_NUMBER) < 5) Then
 					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
 					ResetBotsSetups()
 					$STATUS = 'WILL_PAUSE'
@@ -448,6 +483,7 @@ Func BotHubLoop()
 EndFunc
 
 
+;~ Main loop to run farms
 Func RunFarmLoop($Farm)
 	UpdateStats(-1, null)
 	Switch $Farm
@@ -503,22 +539,24 @@ Func RunFarmLoop($Farm)
 EndFunc
 
 
+;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
-	$RAPTORS_FARM_SETUP = False
-	$DM_FARM_SETUP = False
-	$IRIS_FARM_SETUP = False
-	$FEATHERS_FARM_SETUP = False
-	$FOLLOWER_SETUP = False
-	$JADE_BROTHERHOOD_FARM_SETUP = False
-	$KOURNANS_FARM_SETUP = False
-	$LIGHTBRINGER_FARM_SETUP = False
-	$MANTIDS_FARM_SETUP = False
-	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
-	$SPIRIT_SLAVES_FARM_SETUP = False
-	$CORSAIRS_FARM_SETUP = False
+	$RAPTORS_FARM_SETUP						= False
+	$DM_FARM_SETUP 							= False
+	$IRIS_FARM_SETUP 						= False
+	$FEATHERS_FARM_SETUP 					= False
+	$FOLLOWER_SETUP 						= False
+	$JADE_BROTHERHOOD_FARM_SETUP 			= False
+	$KOURNANS_FARM_SETUP		 			= False
+	$LIGHTBRINGER_FARM_SETUP 				= False
+	$MANTIDS_FARM_SETUP 					= False
+	$MINISTERIAL_COMMENDATIONS_FARM_SETUP 	= False
+	$SPIRIT_SLAVES_FARM_SETUP 				= False
+	$CORSAIRS_FARM_SETUP 					= False
 EndFunc
 
 
+;~ Update the farm description written on the rightmost tab
 Func UpdateFarmDescription($Farm)
 	Switch $Farm
 		Case 'Corsairs'
@@ -601,10 +639,29 @@ Func UpdateFarmDescription($Farm)
 EndFunc
 
 
+;~ Fill the choice of configuration
+Func FillConfigurationCombo()
+	Local $files = _FileListToArray(@ScriptDir & '/conf/', '*.json', $FLTA_FILES)
+	Local $comboList = ''
+	If @error == 0 Then
+		For $file In $files
+			Local $fileNameTrimmed = StringTrimRight($file, 5)
+			If $fileNameTrimmed <> '' Then 
+				$comboList &= $fileNameTrimmed
+				$comboList &= '|'
+			EndIf
+		Next
+	EndIf
+	If $comboList <> '' Then $comboList = StringTrimRight($comboList, 1)
+	GUICtrlSetData($GUI_Combo_ConfigChoice, '', '')
+	GUICtrlSetData($GUI_Combo_ConfigChoice, $comboList, 'Default Configuration')
+EndFunc
+
+
 ;~ Load default configuration if it exists
 Func LoadDefaultConfiguration()
-	If FileExists(@ScriptDir & '/conf/default_configuration.json') Then
-		Local $configFile = FileOpen(@ScriptDir & '/conf/default_configuration.json' , $FO_READ + $FO_UTF8)
+	If FileExists(@ScriptDir & '/conf/Default Configuration.json') Then
+		Local $configFile = FileOpen(@ScriptDir & '/conf/Default Configuration.json' , $FO_READ + $FO_UTF8)
 		Local $jsonString = FileRead($configFile)
 		ReadConfigFromJson($jsonString)
 		FileClose($configFile)
@@ -613,46 +670,24 @@ Func LoadDefaultConfiguration()
 EndFunc
 
 
-;~ Fill the choice of configuration
-Func FillConfigurationCombo()
-	Local $files = _FileListToArray(@ScriptDir & '/conf/', '*.json', $FLTA_FILES)
-	Local $comboList = 'Save configuration'
-	If @error == 0 Then
-		For $file In $files
-			Local $fileNameTrimmed = StringTrimRight($file, 5)
-			If $fileNameTrimmed <> '' Then 
-				$comboList &= '|'
-				$comboList &= $fileNameTrimmed
-			EndIf
-		Next
-	EndIf
-	GUICtrlSetData($GUI_Combo_ConfigChoice, '', '')
-	GUICtrlSetData($GUI_Combo_ConfigChoice, $comboList, 'default_configuration')
+;~ Change to a different configuration
+Func ChangeConfiguration($configuration)
+	Local $configFile = FileOpen(@ScriptDir & '/conf/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
+	Local $jsonString = FileRead($configFile)
+	ReadConfigFromJson($jsonString)
+	FileClose($configFile)
+	Out('Loaded configuration <' & $configuration & '>') 
 EndFunc
 
 
-;~ Deal with changes of configuration
-Func UpdateConfiguration($configuration)
-	If $configuration == 'Save configuration' Then
-		Local $configurationCount = 0
-		While FileExists(@ScriptDir & '/conf/saved_configuration' & $configurationCount & '.json')
-			$configurationCount += 1
-		WEnd
-		Local $configFile = FileOpen(@ScriptDir & '/conf/saved_configuration' & $configurationCount & '.json' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-		Local $jsonString = WriteConfigToJson()
-		;Out($jsonString)
-		FileWrite($configFile, $jsonString)
-		FileClose($configFile)
-		FillConfigurationCombo()
-		Out('Saved configuration saved_configuration' & $configurationCount) 
-	Else
-		Local $configFile = FileOpen(@ScriptDir & '/conf/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
-		Local $jsonString = FileRead($configFile)
-		;Out($jsonString)
-		ReadConfigFromJson($jsonString)
-		FileClose($configFile)
-		Out('Loaded configuration <' & $configuration & '>') 
-	EndIf
+;~ Save a new configuration
+Func SaveConfiguration($configurationPath)
+	Local $configFile = FileOpen($configurationPath, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)
+	Local $jsonString = WriteConfigToJson()
+	FileWrite($configFile, $jsonString)
+	FileClose($configFile)
+	FillConfigurationCombo()
+	Out('Saved configuration ' & $configurationPath) 
 EndFunc
 
 
@@ -672,6 +707,8 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.sell_items', GUICtrlRead($GUI_Checkbox_SellItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.buy_ectos', GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.store_leftovers', GUICtrlRead($GUI_Checkbox_StoreTheRest) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
+	_JSON_addChangeDelete($jsonObject, 'run.bag_number', Number(GUICtrlRead($GUI_Input_BagNumber)))
 	_JSON_addChangeDelete($jsonObject, 'consumables.consume', GUICtrlRead($GUI_Checkbox_UseConsumables) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.everything', GUICtrlRead($GUI_Checkbox_LootEverything) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.nothing', GUICtrlRead($GUI_Checkbox_LootNothing) == 1)
@@ -717,6 +754,10 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_SellItems, _JSON_Get($jsonObject, 'run.sell_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_BuyEctoplasm, _JSON_Get($jsonObject, 'run.buy_ectos') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_StoreTheRest, _JSON_Get($jsonObject, 'run.store_leftovers') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetData($GUI_Combo_DistrictChoice, '', '')
+	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, _JSON_Get($jsonObject, 'run.district'))
+	$DISTRICT_NAME = GUICtrlRead($GUI_Combo_DistrictChoice)
+	GUICtrlSetData($GUI_Input_BagNumber, _JSON_Get($jsonObject, 'run.bag_number'))
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'consumables.consume') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootEverything, _JSON_Get($jsonObject, 'loot.everything') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootNothing, _JSON_Get($jsonObject, 'loot.nothing') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -774,6 +815,7 @@ Func Authentification()
 	Return 0
 EndFunc
 
+
 ;~ Lock an account for multiboxing
 Func UpdateLock()
 	Local $characterName = GetCharname()
@@ -784,6 +826,7 @@ Func UpdateLock()
 		FileClose($fileHandle)
 	EndIf
 EndFunc
+
 
 ; Function to login from cmd, not tested
 ; TODO: test it
@@ -861,7 +904,6 @@ Func LOGIN($char_name = 'fail', $ProcessID = False)
 		RndSleep(3000)
 	EndIf
 EndFunc
-
 #EndRegion Authentification and Login
 
 
@@ -915,20 +957,5 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_LuxonTitle, 'Luxon: ' & GetLuxonTitle() - $LuxonTitlePoints)
 	GUICtrlSetData($GUI_Label_LightbringerTitle, 'Lightbringer: ' & GetLightbringerTitle() - $LightbringerTitlePoints)
 	GUICtrlSetData($GUI_Label_SunspearTitle, 'Sunspear: ' & GetSunspearTitle() - $SunspearTitlePoints)
-EndFunc
-
-
-Func CountGoldItems()
-	Local $goldItemsCount = 0
-	Local $item
-	For $bagIndex = 1 To 5
-		Local $bag = GetBag($bagIndex)
-		For $i = 1 To DllStructGetData($bag, 'slots')
-			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-			If ((IsWeapon($item) Or IsArmorSalvageItem($item)) And GetRarity($item) == $RARITY_Gold) Then $goldItemsCount += 1
-		Next
-	Next
-	Return $goldItemsCount
 EndFunc
 #EndRegion Statistics management

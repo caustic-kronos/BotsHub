@@ -128,9 +128,10 @@ Func GetOwnLocation()
 EndFunc
 
 
-;~ Travel to specified map and specified district/language
-Func DistrictTravel($mapID, $district, $language)
-	MoveMap($mapID, $district, 0, $language)
+;~ Travel to specified map and specified district
+Func DistrictTravel($mapID, $district)
+	Local $districtAndRegion = $RegionMap[$district]
+	MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
 	WaitMapLoading($mapID, 20000)
 	RndSleep(2000)
 EndFunc
@@ -377,7 +378,7 @@ EndFunc
 
 ;~ Find all empty slots in inventory
 Func FindInventoryEmptySlots()
-	Return FindAllEmptySlots(1, 5)
+	Return FindAllEmptySlots(1, $BAG_NUMBER)
 EndFunc
 
 
@@ -399,7 +400,7 @@ EndFunc
 
 
 ;~ Count available slots in the inventory
-Func CountSlots($fromBag = 1, $toBag = 5)
+Func CountSlots($fromBag = 1, $toBag = $BAG_NUMBER)
 	Local $bag
 	Local $availableSlots = 0
 	; If bag is missing it just won't count
@@ -425,6 +426,7 @@ EndFunc
 
 ;~ Move items in the equipment bag
 Func MoveItemsInEquipmentBag()
+	If $BAG_NUMBER < 5 Then Return
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
 	If $countEmptySlots < 1 Then
@@ -451,7 +453,6 @@ Func MoveItemsInEquipmentBag()
 EndFunc
 
 
-
 ;~ Sort the inventory in this order :
 Func SortInventory()
 	Out('Sorting inventory')
@@ -462,7 +463,7 @@ Func SortInventory()
 	Local $bag, $item, $itemID, $rarity
 	Local $items[80]
 	Local $k = 0
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		$bag = GetBag($bagIndex)
 		$bagsSizes[$bagIndex] = DllStructGetData($bag, 'slots')
 		$bagsSize += $bagsSizes[$bagIndex]
@@ -683,13 +684,29 @@ Func GetBirthdayCupcakeCount()
 EndFunc
 
 
+;~ Counts gold items in inventory
+Func CountGoldItems()
+	Local $goldItemsCount = 0
+	Local $item
+	For $bagIndex = 1 To $BAG_NUMBER
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			If ((IsWeapon($item) Or IsArmorSalvageItem($item)) And GetRarity($item) == $RARITY_Gold) Then $goldItemsCount += 1
+		Next
+	Next
+	Return $goldItemsCount
+EndFunc
+
+
 ;~ Look for any of the given items in bags and return bag and slot of an item, [0, 0] if none are present (positions start at 1)
 Func FindAnyInInventory(ByRef $itemIDs)
 	Local $item
 	Local $itemBagAndSlot[2]
 	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
 
-	For $bag = 1 To 5
+	For $bag = 1 To $BAG_NUMBER
 		Local $bagSize = GetMaxSlots($bag)
 		For $slot = 1 To $bagSize
 			$item = GetItemBySlot($bag, $slot)
@@ -707,7 +724,7 @@ EndFunc
 
 ;~ Look for an item in inventory
 Func FindInInventory($itemID)
-	Return FindInStorages(1, 5, $itemID)
+	Return FindInStorages(1, $BAG_NUMBER, $itemID)
 EndFunc
 
 
@@ -760,7 +777,7 @@ EndFunc
 
 ;~ Look for an item in inventory
 Func FindAllInInventory($item)
-	Return FindAllInStorages(1, 5, $item)
+	Return FindAllInStorages(1, $BAG_NUMBER, $item)
 EndFunc
 
 
@@ -850,10 +867,25 @@ Func GetKitUsesLeft($kitID)
 EndFunc
 
 
+;~ Returns true if there are unidentified items in inventory
+Func HasUnidentifiedItems()
+	For $bagIndex = 1 To $BAG_NUMBER
+		Local $bag = GetBag($bagIndex)
+		Local $item
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			If Not GetIsIdentified($item) Then Return True
+		Next
+	Next
+	Return False
+EndFunc
+
+
 ;~ Identify all items from inventory
 Func IdentifyAllItems()
 	Out('Identifying all items')
-	For $bagIndex = 1 To 5
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		Local $item
 		For $i = 1 To DllStructGetData($bag, 'slots')
@@ -941,7 +973,7 @@ Func FindIdentificationKitOrBuySome()
 		RndSleep(500)
 	EndIf
 	
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Out('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
@@ -970,7 +1002,7 @@ Func FindSalvageKitOrBuySome()
 		RndSleep(400)
 	EndIf
 	
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $ID_EUROPE, $ID_FRENCH)
+	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Out('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
