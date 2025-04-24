@@ -79,6 +79,7 @@ EndFunc
 Func SetupJadeBrotherhoodFarm()
 	Out('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
+	LeaveGroup()
 	AddHero($ID_General_Morgahn)
 	LoadSkillTemplate($JB_Skillbar)
 	LoadSkillTemplate($JB_Hero_Skillbar, 1)
@@ -152,7 +153,8 @@ Func TalkToAiko()
 	GoNearestNPCToCoords(-13923, -5098)
 	RndSleep(1000)
 	Out('Taking quest')
-	AcceptQuest(457)
+	; QuestID 0x1C9 = 457
+	AcceptQuest(0x1C9)
 	Move(-11303, -6545, 40)
 	RndSleep(4500)
 EndFunc

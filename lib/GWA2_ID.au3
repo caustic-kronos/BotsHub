@@ -208,6 +208,7 @@ Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting']
 												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
 												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
 												[$ID_Mysticism, 'Mysticism'], [$ID_Scythe_Mastery, 'Scythe Mastery']]
+Local Const $Unknown_Attributes				= []
 Local Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
 Local Const $Necromancer_Attributes			= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
 Local Const $Elementalist_Attributes		= [$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage]
@@ -219,8 +220,8 @@ Local Const $Ritualist_Attributes			= [$ID_Communing, $ID_Restoration_Magic, $ID
 Local Const $Paragon_Attributes				= [$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership]
 Local Const $Dervish_Attributes				= [$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism]
 
-Local Const $All_Profession_IDs				=	[$ID_Mesmer, $ID_Necromancer, $ID_Elementalist, $ID_Monk, $ID_Warrior, $ID_Ranger, $ID_Assassin, $ID_Ritualist, $ID_Paragon, $ID_Dervish]
-Local Const $All_Profession_Attributes		=	[$Mesmer_Attributes, $Necromancer_Attributes, $Elementalist_Attributes, $Monk_Attributes, $Warrior_Attributes, $Ranger_Attributes, _
+Local Const $All_Profession_IDs				=	[$ID_Unknown, $ID_Mesmer, $ID_Necromancer, $ID_Elementalist, $ID_Monk, $ID_Warrior, $ID_Ranger, $ID_Assassin, $ID_Ritualist, $ID_Paragon, $ID_Dervish]
+Local Const $All_Profession_Attributes		=	[$Unknown_Attributes, $Mesmer_Attributes, $Necromancer_Attributes, $Elementalist_Attributes, $Monk_Attributes, $Warrior_Attributes, $Ranger_Attributes, _
 															$Assassin_Attributes, $Ritualist_Attributes, $Paragon_Attributes, $Dervish_Attributes]
 Global Const $AttributesByProfessionMap[]	=	MapFromArrays($All_Profession_IDs, $All_Profession_Attributes)
 #EndRegion Weapon Attributes
