@@ -85,11 +85,11 @@ Func LightbringerFarmSetup()
 EndFunc
 
 Func ToTheSulfurousWastes()
-	Do
+	While GetMapID() <> $ID_The_Sulfurous_Wastes
 		MoveTo(1527, -4114)
 		Move(1970, -4353)
 		WaitMapLoading($ID_The_Sulfurous_Wastes, 10000, 4000)
-	Until GetMapID() = $ID_The_Sulfurous_Wastes
+	WEnd
 EndFunc
 
 Func CountPartyDeaths()
@@ -234,7 +234,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	WEnd
 
 	Local $foes = 1
-	Do
+	While $foes <> 0
 		$target = GetNearestEnemyToAgent(-2)
 		If (IsRecharged($Junundu_Tunnel)) Then UseSkillEx($Junundu_Tunnel)
 		CallTarget($target)
@@ -242,7 +242,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 		If (GetSkillbarSkillAdrenaline($Junundu_Smash) == 130) Then UseSkillEx($Junundu_Smash)
 		AttackOrUseSkill($weaponAttackTime, $Junundu_Bite, $Junundu_Strike)
 		$foes = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
-	Until $foes == 0
+	WEnd
 
 	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)

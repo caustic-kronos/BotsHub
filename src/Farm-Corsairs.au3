@@ -71,6 +71,7 @@ Func SetupCorsairsFarm()
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)
+	LoadSkillTemplate($RACorsairsFarmerSkillbar)
 	Out('Preparations complete')
 EndFunc
 
@@ -179,9 +180,9 @@ Func CorsairsFarmLoop()
 	Out('Looting')
 	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
 	If $foesCount == 0 Then
-		PickUpItems(OnlyCastTogetherAsOne, AlsoPickLowReqItems)
+		PickUpItems(OnlyCastTogetherAsOne)
 	Else
-		PickUpItems(DefendAgainstCorsairs, AlsoPickLowReqItems)
+		PickUpItems(DefendAgainstCorsairs)
 	EndIf
 
 	BackToModdokCreviceOutpost()

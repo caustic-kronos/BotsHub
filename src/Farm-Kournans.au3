@@ -30,6 +30,7 @@ Local Const $KournansBotVersion = '0.1'
 Local Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
 Local Const $RKournansHeroSkillbar = 'OgATY5LhVB6C+Zn76OzGAAAA'
 Local Const $RtKournansHeroSkillbar = 'OACjAyhDJPBTy58M5CAAAAAAAA'
+Local Const $PKournansHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
 Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Magic' & @CRLF _
 	& '- 13 in Energy Storage' & @CRLF _
@@ -93,6 +94,14 @@ Func SetupKournansFarm()
 	RndSleep(50)
 	AddHero($ID_General_Morgahn)
 	RndSleep(50)
+	
+	LoadSkillTemplate($ElAKournansFarmerSkillbar)
+	LoadSkillTemplate($RKournansHeroSkillbar, 1)
+	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
+	LoadSkillTemplate($PKournansHeroSkillbar, 3)
+	DisableAllHeroSkills(1)
+	DisableAllHeroSkills(2)
+	
 	SwitchMode($ID_HARD_MODE)
 	RndSleep(50)
 	Out('Abandonning quest')

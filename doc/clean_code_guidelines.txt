@@ -15,3 +15,4 @@ The 13 laws of AutoIt coding
 13- Comment and describe your functions								^\r\n\r\nFunc
 																	^;[^~].*\r\nFunc
 																	^[^;].*\r\nFunc
+14- Only use While WEnd for coherence and easy comprehension		until

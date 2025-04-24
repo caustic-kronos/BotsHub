@@ -80,10 +80,10 @@ Func LuxonFarmSetup()
 		GoNearestNPCToCoords(9076, -1111)
 
 		If $DonatePoints Then
-			Do
+			While GetLuxonFaction() >= 5000
 				DonateFaction('Luxon')
 				RndSleep(500)
-			Until GetLuxonFaction() < 5000
+			WEnd
 		Else
 			Out('Buying Jade Shards')
 			Dialog(131)

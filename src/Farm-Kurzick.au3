@@ -69,10 +69,10 @@ Func KurzickFarmSetup()
 		GoNearestNPCToCoords(5390, 1524)
 
 		If $DonatePoints Then
-			Do
+			While GetKurzickFaction() >= 5000
 				DonateFaction('kurzick')
 				RndSleep(500)
-			Until GetKurzickFaction() < 5000
+			WEnd
 		Else
 			Out('Buying Amber fragments')
 			Dialog(131)

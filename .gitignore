@@ -1,3 +1,5 @@
 examples/*
 logs/*
 data/*
+conf/*
+!conf/Default Configuration.json

@@ -66,6 +66,7 @@ Func RunTests($STATUS)
 EndFunc
 
 
+
 Func PrintNPCState($npc)
 	Out('ID: ' & DllStructGetData($npc, 'ID'))
 	Out('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
@@ -173,16 +174,15 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($agentID)
+			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
 				RndSleep(50)
 				If GetIsDead(-2) Then Return
-				If TimerDiff($deadlock) > 10000 Then ExitLoop
 			WEnd
 		EndIf
 	Next
 
 	If ((DllStructGetData(GetBag(3), 'Slots') - DllStructGetData(GetBag(3), 'ItemsCount')) == 0) Then
-		MoveItemsInEquipmentBag()
+		MoveItemsToEquipmentBag()
 	EndIf
 EndFunc
 
@@ -226,7 +226,7 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
-	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
+	ElseIf $rarity <> $RARITY_White And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
 		Return True
@@ -246,18 +246,12 @@ EndFunc
 
 
 ;~ Return True if the item should be picked up
-;~ Pick everything that is usually picked but also low req that have the maximum damage for their level
-Func AlsoPickLowReqItems($item)
-	If IsWeapon($item) And GetRarity($item) <> $RARITY_White And GetItemReq($item) < 9 And IsMaxDamageForReq($item) Then Return True
-	Return DefaultShouldPickItem($item)
-EndFunc
-
-;~ Return True if the item should be picked up
 ;~ Pick everything that is usually picked but also max damage purple and blue
 ;~ Only useful for OS items since max damage q9 blue/purple inscribable items are worthless
 Func AlsoPickMaxPurpleAndBlueItems($item)
 
 EndFunc
+
 
 ;~ Return True if the item should be picked up
 ;~ Only pick rare materials, black and white dyes, lockpicks, gold items and green items
@@ -272,7 +266,7 @@ Func PickOnlyImportantItem($item)
 		Return (($itemExtraID == $ID_Black_Dye) Or ($itemExtraID == $ID_White_Dye))
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
-	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
+	ElseIf $rarity <> $RARITY_White And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return True
@@ -424,13 +418,13 @@ Func CountSlotsChest()
 EndFunc
 
 
-;~ Move items in the equipment bag
-Func MoveItemsInEquipmentBag()
+;~ Move items to the equipment bag
+Func MoveItemsToEquipmentBag()
 	If $BAG_NUMBER < 5 Then Return
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
 	If $countEmptySlots < 1 Then
-		Out('No space in inventory to move the items from the equipment bag')
+		;Out('No space in equipment bag to move the items to')
 		Return
 	EndIf
 
@@ -440,7 +434,7 @@ Func MoveItemsInEquipmentBag()
 			Local $item = GetItemBySlot($bagId, $slot)
 			If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
 				If $countEmptySlots < 1 Then
-					Out('No space in inventory to move the items from the equipment bag')
+					;Out('No space in equipment bag to move the items to')
 					Return
 				EndIf
 				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
@@ -981,14 +975,15 @@ Func FindIdentificationKitOrBuySome()
 	RndSleep(500)
 	
 	Local $j = 0
-	Do
+	While $IdentificationKitID == 0
+		If $j = 3 Then Return 0
 		BuyItem(6, 1, 500)
 		RndSleep(500)
 		$j = $j + 1
-	Until FindIdentificationKit() <> 0 Or $j = 3
-	If $j = 3 Then Return 0
+		$IdentificationKitID = FindIdentificationKit()
+	WEnd
 	RndSleep(500)
-	Return FindIdentificationKit()
+	Return $IdentificationKitID
 EndFunc
 
 
@@ -1010,14 +1005,15 @@ Func FindSalvageKitOrBuySome()
 	RndSleep(500)
 	
 	Local $j = 0
-	Do
+	While $SalvageKitID == 0
+		If $j = 3 Then Return 0
 		BuyItem(3, 1, 400)
-		RndSleep(400)
+		RndSleep(500)
 		$j = $j + 1
-	Until FindSalvageKit() <> 0 Or $j = 3
-	If $j = 3 Then Return 0
-	RndSleep(400)
-	Return FindSalvageKit()
+		$SalvageKitID = FindSalvageKit()
+	WEnd
+	RndSleep(500)
+	Return $SalvageKitID
 EndFunc
 #EndRegion Identification and Salvage
 
@@ -1210,6 +1206,7 @@ EndFunc
 
 ;~ Identify is an item is q7-q8 with max damage
 Func IsLowReqMaxDamage($item)
+	If Not IsWeapon($item) Then Return False
 	Local $requirement = GetItemReq($item)
 	Return $requirement < 9 And IsMaxDamageForReq($item)
 EndFunc
@@ -1217,6 +1214,7 @@ EndFunc
 
 ;~ Identify if an item is q0 with max damage
 Func IsNoReqMaxDamage($item)
+	If Not IsWeapon($item) Then Return False
 	Local $requirement = GetItemReq($item)
 	Return $requirement == 0 And IsMaxDamageForReq($item)
 EndFunc
@@ -1224,6 +1222,7 @@ EndFunc
 
 ;~ Identify if an item has max damage for its requirement
 Func IsMaxDamageForReq($item)
+	If Not IsWeapon($item) Then Return False
 	Local $type = DllStructGetData($item, 'Type')
 	Local $requirement = GetItemReq($item)
 	Local $damage = GetItemMaxDmg($item)
@@ -1650,22 +1649,22 @@ EndFunc
 
 ;~ Go to the NPC the closest to given coordinates
 Func GoNearestNPCToCoords($x, $y)
-	Local $guy
-	Do
+	Local $guy = GetNearestNPCToCoords($x, $y)
+	While DllStructGetData($guy, 'ID') == 0
 		RndSleep(100)
 		$guy = GetNearestNPCToCoords($x, $y)
-	Until DllStructGetData($guy, 'Id') <> 0
+	WEnd
 	ChangeTarget($guy)
 	RndSleep(250)
 	GoNPC($guy)
 	RndSleep(250)
-	Do
+	While ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) > 250
 		RndSleep(250)
 		Move(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
 		RndSleep(250)
 		GoNPC($guy)
 		RndSleep(250)
-	Until ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) < 250
+	WEnd
 	RndSleep(250)
 EndFunc
 
@@ -1810,6 +1809,149 @@ EndFunc
 #EndRegion Map Clearing Utilities
 #EndRegion Actions
 
+
+#Region Skill and Templates
+;~ Loads skill template code.
+Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
+	Local $heroID = GetHeroID($heroIndex)
+	Local $splitBuildTemplate = StringSplit($buildTemplate, '')
+
+	Local $tempValuelateType	; 4 Bits
+	Local $versionNumber		; 4 Bits
+	Local $professionBits		; 2 Bits -> P
+	Local $primaryProfession	; P Bits
+	Local $secondaryProfession	; P Bits
+	Local $attributesCount		; 4 Bits
+	Local $attributesBits		; 4 Bits -> A
+	Local $attributes[1][2]		; A Bits + 4 Bits (for each Attribute)
+	Local $skillsBits			; 4 Bits -> S
+	Local $skills[8]			; S Bits * 8
+	Local $opTail				; 1 Bit
+
+	$buildTemplate = ''
+	For $i = 1 To $splitBuildTemplate[0]
+		$buildTemplate &= Base64ToBin64($splitBuildTemplate[$i])
+	Next
+
+	$tempValuelateType = Bin64ToDec(StringLeft($buildTemplate, 4))
+	$buildTemplate = StringTrimLeft($buildTemplate, 4)
+	If $tempValuelateType <> 14 Then Return False
+
+	$versionNumber = Bin64ToDec(StringLeft($buildTemplate, 4))
+	$buildTemplate = StringTrimLeft($buildTemplate, 4)
+
+	$professionBits = Bin64ToDec(StringLeft($buildTemplate, 2)) * 2 + 4
+	$buildTemplate = StringTrimLeft($buildTemplate, 2)
+
+	$primaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
+	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
+	If $primaryProfession <> GetHeroProfession($heroIndex) Then Return False
+
+	$secondaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
+	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
+
+	$attributesCount = Bin64ToDec(StringLeft($buildTemplate, 4))
+	$buildTemplate = StringTrimLeft($buildTemplate, 4)
+
+	$attributesBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 4
+	$buildTemplate = StringTrimLeft($buildTemplate, 4)
+
+	$attributes[0][0] = $attributesCount
+	For $i = 1 To $attributesCount
+		If Bin64ToDec(StringLeft($buildTemplate, $attributesBits)) == GetProfPrimaryAttribute($primaryProfession) Then
+			$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
+			$attributes[0][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
+			$buildTemplate = StringTrimLeft($buildTemplate, 4)
+			ContinueLoop
+		EndIf
+		$attributes[0][0] += 1
+		ReDim $attributes[$attributes[0][0] + 1][2]
+		$attributes[$i][0] = Bin64ToDec(StringLeft($buildTemplate, $attributesBits))
+		$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
+		$attributes[$i][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
+		$buildTemplate = StringTrimLeft($buildTemplate, 4)
+	Next
+	
+	$skillsBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 8
+	$buildTemplate = StringTrimLeft($buildTemplate, 4)
+
+	For $i = 0 To 7
+		$skills[$i] = Bin64ToDec(StringLeft($buildTemplate, $skillsBits))
+		$buildTemplate = StringTrimLeft($buildTemplate, $skillsBits)
+	Next
+
+	$opTail = Bin64ToDec($buildTemplate)
+
+	$attributes[0][0] = $secondaryProfession
+	
+	LoadAttributes($attributes, $secondaryProfession, $heroIndex)
+	
+	LoadSkillBar($skills[0], $skills[1], $skills[2], $skills[3], $skills[4], $skills[5], $skills[6], $skills[7], $heroIndex)
+EndFunc
+
+
+;~ Load attributes from a two dimensional array.
+Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
+	Local $heroID = GetHeroID($heroIndex)
+	Local $primaryAttribute
+	Local $deadlock
+	Local $level
+
+	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
+
+	$deadlock = TimerInit()
+	; Setting up secondary profession
+	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
+		While GetHeroProfession($heroIndex, True) <> $secondaryProfession And TimerDiff($deadlock) < 8000
+			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
+			Sleep(50)
+		WEnd
+	EndIf
+
+	; Cleaning the attributes array to have only values between 0 and 12
+	For $i = 1 To UBound($attributesArray) - 1
+		If $attributesArray[$i][1] > 12 Then $attributesArray[$i][1] = 12
+		If $attributesArray[$i][1] < 0 Then $attributesArray[$i][1] = 0
+	Next
+
+	; Only way to do this is to set all attributes to 0 and then increasing them as many times as needed
+	EmptyAttributes($secondaryProfession, $heroIndex)
+	
+	; Now that all attributes are at 0, we increase them by the times needed
+	; Using GetAttributeByID during the increase is a bad idea because it counts points from runes too
+	For $i = 1 To UBound($attributesArray) - 1
+		For $j = 1 To $attributesArray[$i][1]
+			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
+			Sleep(50 + GetPing())
+		Next
+	Next
+	Sleep(250)
+
+	; If there are any points left, we put them in the primary attribute (it's often not tracked by the $attributesArray)
+	For $i = 0 To 11
+		IncreaseAttribute($primaryAttribute, $heroIndex)
+		Sleep(50 + GetPing())
+	Next
+EndFunc
+
+
+;~ Set all attributes of the character/hero to 0
+Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
+	For $attribute In $AttributesByProfessionMap[GetHeroProfession($heroIndex)]
+		For $i = 0 To 11
+			DecreaseAttribute($attribute, $heroIndex)
+			Sleep(20 + GetPing())
+		Next
+	Next
+	
+	For $attribute In $AttributesByProfessionMap[$secondaryProfession]
+		For $i = 0 To 11
+			DecreaseAttribute($attribute, $heroIndex)
+			Sleep(20 + GetPing())
+		Next
+	Next
+EndFunc
+#EndRegion Skill and Templates
 
 
 

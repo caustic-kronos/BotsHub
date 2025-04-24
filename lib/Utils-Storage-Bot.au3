@@ -540,13 +540,13 @@ Func MoveItemsOutOfEquipmentBag()
 	Local $countEmptySlots = UBound($inventoryEmptySlots) / 2
 	Local $cursor = 0
 	If $countEmptySlots <= $cursor Then
-		Out('No space in inventory to move the items from the equipment bag')
+		Out('No space in inventory to move the items out of the equipment bag')
 		Return
 	EndIf
 
 	For $slot = 1 To DllStructGetData($equipmentBag, 'slots')
 		If $countEmptySlots <= $cursor Then
-			Out('No space in inventory to move the items from the equipment bag')
+			Out('No space in inventory to move the items out of the equipment bag')
 			Return
 		EndIf
 		Local $item = GetItemBySlot(5, $slot)
@@ -907,7 +907,7 @@ Func ShouldKeepWeapon($itemID)
 		_	;Salvages to dust
 		$ID_Great_Conch, $ID_Elemental_Sword, _
 		_	;Salvages to dust, sometimes
-		$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow, _
+		$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow _
 		_	;Salvages to ruby, very rarely ...
 		_	;$ID_Ruby_Maul, _
 	]

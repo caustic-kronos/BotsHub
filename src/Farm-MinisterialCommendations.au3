@@ -176,6 +176,8 @@ Func Setup()
 		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 	EndIf
 	LeaveGroup()
+	
+	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 
 	AddHero($ID_Gwen)
 	AddHero($ID_Norgu)

@@ -102,6 +102,7 @@ Func SpiritSlavesFarmSetup()
 		SwitchMode($ID_HARD_MODE)
 		LeaveGroup()
 
+		LoadSkillTemplate($SpiritSlaves_Skillbar)
 		SetDisplayedTitle($ID_Lightbringer_Title)
 
 		; Exiting to Jokos Domain
@@ -335,7 +336,7 @@ Func KillSequence()
 	If (GetIsDead(-2)) Then Return
 	CleanseFromCripple()
 	RndSleep(1000)
-	PickUpItems(CleanseFromCripple, AlsoPickLowReqItems)
+	PickUpItems(CleanseFromCripple)
 EndFunc
 
 
