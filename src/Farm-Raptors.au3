@@ -30,7 +30,7 @@ Opt('MustDeclareVars', 1)
 Local Const $RaptorBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $WNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'
+Local Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
 Local Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
 Local Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
 Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
@@ -97,8 +97,9 @@ Func SetupRaptorFarm()
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
-	;DisableAllHeroSkills()
-	GUICtrlSetState($GUI_Checkbox_LootGreenItems, $GUI_UNCHECKED)
+	LoadSkillTemplate($WNRaptorFarmerSkillbar)
+	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
+	DisableAllHeroSkills(1)
 	MoveTo(19649, 16791)
 	Move(20084, 16854)
 	RndSleep(1000)
@@ -108,14 +109,6 @@ Func SetupRaptorFarm()
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
 	Out('Resign preparation complete')
-EndFunc
-
-
-;~ Unused for now
-Func DisableAllHeroSkills()
-	For $i = 1 to 8
-		DisableHeroSkillSlot(1, $i)
-	Next
 EndFunc
 
 
@@ -208,9 +201,12 @@ Func GetRaptors()
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)
-	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain)
+	
+	Local $count = 0
+	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain) And $count < 200
 		UseSkillEx($Raptors_MarkOfPain, $target)
-		RndSleep(20)
+		RndSleep(50)
+		$count += 1
 	WEnd
 	RndSleep(250)
 
@@ -286,17 +282,19 @@ Func KillRaptors()
 	EndIf
 
 	Local $count = 0
-	While Not GetIsDead(-2) And (Not IsRecharged($Raptors_MarkOfPain) Or CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) < CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) - 6) And $count < 20
+	While Not GetIsDead(-2) And (Not IsRecharged($Raptors_MarkOfPain) Or CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) < CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) - 6) And $count < 40
 		RndSleep(250)
 		$count += 1
 		If $count > 10 Then
-			If SendStuckCommand() Then $count = 0
+			SendStuckCommand()
 		EndIf
 	WEnd
 
-	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain)
+	$count = 0
+	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain) And $count < 200
 		UseSkillEx($Raptors_MarkOfPain, $MoPTarget)
 		RndSleep(50)
+		$count += 1
 	WEnd
 
 	If ($RAPTORS_PROFESSION == 1) Then
@@ -304,8 +302,10 @@ Func KillRaptors()
 		UseSkillEx($Raptors_SoldiersDefense)
 		RndSleep(50)
 
-		While Not GetIsDead(-2) And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130
+		$count = 0
+		While Not GetIsDead(-2) And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130 And $count < 200
 			RndSleep(50)
+			$count += 1
 		WEnd
 
 		Out('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
@@ -380,7 +380,7 @@ Func IsBodyBlocked()
 
 	While DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0
 		$blocked += 1
-		Out('Blocked: ' & $blocked)
+		;Out('Blocked: ' & $blocked)
 		If $blocked > 1 Then
 			$angle += $PI / 4
 		EndIf

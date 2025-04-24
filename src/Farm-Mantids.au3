@@ -78,6 +78,10 @@ Func SetupMantidsFarm()
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_General_Morgahn)
+	
+	LoadSkillTemplate($RAMantidsFarmerSkillbar)
+	LoadSkillTemplate($MantidsHeroSkillbar, 1)
+	DisableAllHeroSkills(1)
 
 	Out('Entering Wajjun Bazaar')
 	MoveTo(-22000, 12500)

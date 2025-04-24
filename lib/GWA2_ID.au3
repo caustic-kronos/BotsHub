@@ -152,52 +152,52 @@ Global Const $ID_Dervish		= 10
 
 
 #Region Weapon Attributes
-Global Const $ID_Fast_Casting			= 0
-Global Const $ID_Illusion_Magic			= 1
-Global Const $ID_Domination_Magic		= 2
-Global Const $ID_Inspiration_Magic		= 3
-Global Const $ID_Blood_Magic			= 4
-Global Const $ID_Death_Magic			= 5
-Global Const $ID_Soul_Reaping			= 6
-Global Const $ID_Curses					= 7
-Global Const $ID_Air_Magic				= 8
-Global Const $ID_Earth_Magic			= 9
-Global Const $ID_Fire_Magic				= 10
-Global Const $ID_Water_Magic			= 11
-Global Const $ID_Energy_Storage			= 12
-Global Const $ID_Healing_Prayers		= 13
-Global Const $ID_Smiting_Prayers		= 14
-Global Const $ID_Protection_Prayers		= 15
-Global Const $ID_Divine_Favor			= 16
-Global Const $ID_Strength				= 17
-Global Const $ID_Axe_Mastery			= 18
-Global Const $ID_Hammer_Mastery			= 19
-Global Const $ID_Swordsmanship			= 20
-Global Const $ID_Tactics				= 21
-;Global Const $ID_						= 22		;BeastMastery or Survival
-Global Const $ID_Expertise				= 23
-;Global Const $ID_						= 24		;BeastMastery or Survival
-Global Const $ID_Marksmanship			= 25
-;Global Const $ID_						= 26
-;Global Const $ID_						= 27
-;Global Const $ID_						= 28
-Global Const $ID_Dagger_Mastery			= 29
-Global Const $ID_Critical_Strikes		= 30		;CriticalStrikes or Lethal or Shadow
-;Global Const $ID_						= 31		;CriticalStrikes or Lethal or Shadow
-Global Const $ID_Communing				= 32
-Global Const $ID_Restoration_Magic		= 33
-Global Const $ID_Channeling_Magic		= 34
-;Global Const $ID_						= 35		;CriticalStrikes or Lethal or Shadow
-Global Const $ID_Spawning_Power			= 36
-Global Const $ID_Spear_Mastery			= 37
-Global Const $ID_Command				= 38
-Global Const $ID_Motivation				= 39
-Global Const $ID_Leadership				= 40
-Global Const $ID_Scythe_Mastery			= 41
-;Global Const $ID_						= 42		;Earth Prayers or Wind Prayers
-;Global Const $ID_						= 43		;Earth Prayers or Wind Prayers
-Global Const $ID_Mysticism				= 44
-Global Const $ID_All_Caster_Primaries	= 45
+Global Const $ID_Fast_Casting				= 0
+Global Const $ID_Illusion_Magic				= 1
+Global Const $ID_Domination_Magic			= 2
+Global Const $ID_Inspiration_Magic			= 3
+Global Const $ID_Blood_Magic				= 4
+Global Const $ID_Death_Magic				= 5
+Global Const $ID_Soul_Reaping				= 6
+Global Const $ID_Curses						= 7
+Global Const $ID_Air_Magic					= 8
+Global Const $ID_Earth_Magic				= 9
+Global Const $ID_Fire_Magic					= 10
+Global Const $ID_Water_Magic				= 11
+Global Const $ID_Energy_Storage				= 12
+Global Const $ID_Healing_Prayers			= 13
+Global Const $ID_Smiting_Prayers			= 14
+Global Const $ID_Protection_Prayers			= 15
+Global Const $ID_Divine_Favor				= 16
+Global Const $ID_Strength					= 17
+Global Const $ID_Axe_Mastery				= 18
+Global Const $ID_Hammer_Mastery				= 19
+Global Const $ID_Swordsmanship				= 20
+Global Const $ID_Tactics					= 21
+Global Const $ID_BeastMastery				= 22
+Global Const $ID_Expertise					= 23
+Global Const $ID_Wilderness_Survival		= 24
+Global Const $ID_Marksmanship				= 25
+;Global Const $ID_gap						= 26
+;Global Const $ID_gap						= 27
+;Global Const $ID_gap						= 28
+Global Const $ID_Dagger_Mastery				= 29
+Global Const $ID_Deadly_Arts				= 30
+Global Const $ID_Shadow_Arts				= 31
+Global Const $ID_Communing					= 32
+Global Const $ID_Restoration_Magic			= 33
+Global Const $ID_Channeling_Magic			= 34
+Global Const $ID_Critical_Strikes			= 35
+Global Const $ID_Spawning_Power				= 36
+Global Const $ID_Spear_Mastery				= 37
+Global Const $ID_Command					= 38
+Global Const $ID_Motivation					= 39
+Global Const $ID_Leadership					= 40
+Global Const $ID_Scythe_Mastery				= 41
+Global Const $ID_Wind_Prayers				= 42
+Global Const $ID_Earth_Prayers				= 43
+Global Const $ID_Mysticism					= 44
+Global Const $ID_All_Caster_Primaries		= 45
 Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], _
 												[$ID_Blood_Magic, 'Blood Magic'], [$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], _
 												[$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], [$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], _
@@ -208,6 +208,21 @@ Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting']
 												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
 												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
 												[$ID_Mysticism, 'Mysticism'], [$ID_Scythe_Mastery, 'Scythe Mastery']]
+Local Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
+Local Const $Necromancer_Attributes			= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
+Local Const $Elementalist_Attributes		= [$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage]
+Local Const $Monk_Attributes				= [$ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor]
+Local Const $Warrior_Attributes				= [$ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics]
+Local Const $Ranger_Attributes				= [$ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship]
+Local Const $Assassin_Attributes			= [$ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes]
+Local Const $Ritualist_Attributes			= [$ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power]
+Local Const $Paragon_Attributes				= [$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership]
+Local Const $Dervish_Attributes				= [$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism]
+
+Local Const $All_Profession_IDs				=	[$ID_Mesmer, $ID_Necromancer, $ID_Elementalist, $ID_Monk, $ID_Warrior, $ID_Ranger, $ID_Assassin, $ID_Ritualist, $ID_Paragon, $ID_Dervish]
+Local Const $All_Profession_Attributes		=	[$Mesmer_Attributes, $Necromancer_Attributes, $Elementalist_Attributes, $Monk_Attributes, $Warrior_Attributes, $Ranger_Attributes, _
+															$Assassin_Attributes, $Ritualist_Attributes, $Paragon_Attributes, $Dervish_Attributes]
+Global Const $AttributesByProfessionMap[]	=	MapFromArrays($All_Profession_IDs, $All_Profession_Attributes)
 #EndRegion Weapon Attributes
 
 

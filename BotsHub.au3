@@ -457,11 +457,11 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots(4, $BAG_NUMBER) < 5) Then
+				If (CountSlots(1, $BAG_NUMBER) < 5) Then
 					InventoryManagement()
 					ResetBotsSetups()
 				EndIf
-				If (CountSlots(4, $BAG_NUMBER) < 5) Then
+				If (CountSlots(1, $BAG_NUMBER) < 5) Then
 					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
 					ResetBotsSetups()
 					$STATUS = 'WILL_PAUSE'
@@ -863,36 +863,36 @@ Func LOGIN($char_name = 'fail', $ProcessID = False)
 	ControlSend($WinHandle, '', '', '{enter}')
 	RndSleep(1000)
 	WinSetTitle($WinHandle, '', $char_name & ' - Guild Wars')
-	Do
+	While Not $lCheck And TimerDiff($lDeadLock) < 15000
 		RndSleep(50)
 		$lCheck = GetMapLoading() <> 2
-	Until $lCheck Or TimerDiff($lDeadLock)>15000
+	WEnd
 
 	If $lCheck = False Then
 		ControlSend($WinHandle, '', '', '{enter}')
 		$lDeadLock = Timerinit()
-		Do
+		While Not $lCheck And TimerDiff($lDeadLock) < 15000
 			RndSleep(50)
 			$lCheck = GetMapLoading() <> 2
-		Until $lCheck Or TimerDiff($lDeadLock)>15000
+		WEnd
 	EndIf
 
 	If $lCheck = False Then
 		ControlSend($WinHandle, '', '', '{enter}')
 		$lDeadLock = Timerinit()
-		Do
+		While Not $lCheck And TimerDiff($lDeadLock) < 15000
 			RndSleep(50)
 			$lCheck = GetMapLoading() <> 2
-		Until $lCheck Or TimerDiff($lDeadLock)>15000
+		WEnd
 	EndIf
 
 	If $lCheck = False Then
 		ControlSend($WinHandle, '', '', '{enter}')
 		$lDeadLock = Timerinit()
-		Do
+		While Not $lCheck And TimerDiff($lDeadLock) < 15000
 			RndSleep(50)
 			$lCheck = GetMapLoading() <> 2
-		Until $lCheck Or TimerDiff($lDeadLock)>15000
+		WEnd
 	EndIf
 
 	If $lCheck = False Then

@@ -71,7 +71,7 @@ Func SetupFeathersFarm()
 	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveGroup()
-	;LoadSkillTemplate($DAFeathersFarmerSkillbar)
+	LoadSkillTemplate($DAFeathersFarmerSkillbar)
 
 	Out('Entering Jaya Bluffs')
 	Local $Me = GetAgentByID(-2)
@@ -260,10 +260,10 @@ Func Kill($aWaitForSettle = True)
 			Resign()
 			Sleep(3000)
 			$lDeadlock = TimerInit()
-			Do
+			While Not GetIsDead(-2) And TimerDiff($lDeadlock) < 30000
 				Sleep(3000)
 				If TimerDiff($lDeadlock) > 15000 Then Resign()
-			Until GetIsDead(-2) Or TimerDiff($lDeadlock) > 30000
+			WEnd
 			If GetIsDead(-2) Then Return False
 		EndIf
 		If GetIsDead(-2) Then Return

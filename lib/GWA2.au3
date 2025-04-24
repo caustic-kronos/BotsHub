@@ -1491,21 +1491,29 @@ Func SetHeroAggression($heroIndex, $aggressionLevel)
 EndFunc
 
 
+;~ Disable all skills on a hero's skill bar.
+Func DisableAllHeroSkills($heroIndex)
+	For $i = 1 to 8
+		DisableHeroSkillSlot($heroIndex, $i)
+	Next
+EndFunc
+
+
 ;~ Disable a skill on a hero's skill bar.
 Func DisableHeroSkillSlot($heroIndex, $skillSlot)
-	If Not GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ChangeHeroSkillSlotState($heroIndex, $skillSlot)
+	If Not GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ToggleHeroSkillSlot($heroIndex, $skillSlot)
 EndFunc
 
 
 ;~ Enable a skill on a hero's skill bar.
 Func EnableHeroSkillSlot($heroIndex, $skillSlot)
-	If GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ChangeHeroSkillSlotState($heroIndex, $skillSlot)
+	If GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ToggleHeroSkillSlot($heroIndex, $skillSlot)
 EndFunc
 
 
 ;~ Internal use for enabling or disabling hero skills
-Func ChangeHeroSkillSlotState($heroIndex, $skillSlot)
-	Return SendPacket(0xC, $HEADER_HERO_FLAG_ALL, GetHeroID($heroIndex), $skillSlot - 1)
+Func ToggleHeroSkillSlot($heroIndex, $skillSlot)
+	Return SendPacket(0xC, $HEADER_HERO_SKILL_TOGGLE, GetHeroID($heroIndex), $skillSlot - 1)
 EndFunc
 
 
@@ -2250,169 +2258,6 @@ EndFunc
 ;~ Load all skills onto a skillbar simultaneously.
 Func LoadSkillBar($skill1 = 0, $skill2 = 0, $skill3 = 0, $skill4 = 0, $skill5 = 0, $skill6 = 0, $skill7 = 0, $skill8 = 0, $heroIndex = 0)
 	SendPacket(0x2C, $HEADER_LOAD_SKILLBAR, GetHeroID($heroIndex), 8, $skill1, $skill2, $skill3, $skill4, $skill5, $skill6, $skill7, $skill8)
-EndFunc
-
-
-;~ Loads skill template code.
-Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
-	Local $heroID = GetHeroID($heroIndex)
-	Local $splitBuildTemplate = StringSplit($buildTemplate, '')
-
-	Local $tempValuelateType	; 4 Bits
-	Local $versionNumber		; 4 Bits
-	Local $professionBits		; 2 Bits -> P
-	Local $primaryProfession	; P Bits
-	Local $secondaryProfession	; P Bits
-	Local $attributesCount		; 4 Bits
-	Local $attributesBits		; 4 Bits -> A
-	Local $attributes[1][2]		; A Bits + 4 Bits (for each Attribute)
-	Local $skillsBits			; 4 Bits -> S
-	Local $skills[8]			; S Bits * 8
-	Local $opTail				; 1 Bit
-
-	$buildTemplate = ''
-	For $i = 1 To $splitBuildTemplate[0]
-		$buildTemplate &= Base64ToBin64($splitBuildTemplate[$i])
-	Next
-
-	$tempValuelateType = Bin64ToDec(StringLeft($buildTemplate, 4))
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-	If $tempValuelateType <> 14 Then Return False
-
-	$versionNumber = Bin64ToDec(StringLeft($buildTemplate, 4))
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	$professionBits = Bin64ToDec(StringLeft($buildTemplate, 2)) * 2 + 4
-	$buildTemplate = StringTrimLeft($buildTemplate, 2)
-
-	$primaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
-	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
-	If $primaryProfession <> GetHeroProfession($heroIndex) Then Return False
-
-	$secondaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
-	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
-
-	$attributesCount = Bin64ToDec(StringLeft($buildTemplate, 4))
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	$attributesBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 4
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	$attributes[0][0] = $attributesCount
-	For $i = 1 To $attributesCount
-		If Bin64ToDec(StringLeft($buildTemplate, $attributesBits)) == GetProfPrimaryAttribute($primaryProfession) Then
-			$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
-			$attributes[0][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
-			$buildTemplate = StringTrimLeft($buildTemplate, 4)
-			ContinueLoop
-		EndIf
-		$attributes[0][0] += 1
-		ReDim $attributes[$attributes[0][0] + 1][2]
-		$attributes[$i][0] = Bin64ToDec(StringLeft($buildTemplate, $attributesBits))
-		$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
-		$attributes[$i][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
-		$buildTemplate = StringTrimLeft($buildTemplate, 4)
-	Next
-
-	$skillsBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 8
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	For $i = 0 To 7
-		$skills[$i] = Bin64ToDec(StringLeft($buildTemplate, $skillsBits))
-		$buildTemplate = StringTrimLeft($buildTemplate, $skillsBits)
-	Next
-
-	$opTail = Bin64ToDec($buildTemplate)
-
-	$attributes[0][0] = $secondaryProfession
-	LoadAttributes($attributes, $heroIndex)
-	LoadSkillBar($skills[0], $skills[1], $skills[2], $skills[3], $skills[4], $skills[5], $skills[6], $skills[7], $heroIndex)
-EndFunc
-
-
-;~ Load attributes from a two dimensional array.
-Func LoadAttributes($attributesArray, $heroIndex = 0)
-	Local $primaryAttribute
-	Local $deadlock
-	Local $heroID = GetHeroID($heroIndex)
-	Local $level
-
-	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
-
-	If $attributesArray[0][0] <> 0 And GetHeroProfession($heroIndex, True) <> $attributesArray[0][0] And GetHeroProfession($heroIndex) <> $attributesArray[0][0] Then
-		Do
-			$deadlock = TimerInit()
-			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
-			Do
-				Sleep(20)
-			Until GetHeroProfession($heroIndex, True) == $attributesArray[0][0] Or TimerDiff($deadlock) > 5000
-		Until GetHeroProfession($heroIndex, True) == $attributesArray[0][0]
-	EndIf
-
-	$attributesArray[0][0] = $primaryAttribute
-	For $i = 0 To UBound($attributesArray) - 1
-		If $attributesArray[$i][1] > 12 Then $attributesArray[$i][1] = 12
-		If $attributesArray[$i][1] < 0 Then $attributesArray[$i][1] = 0
-	Next
-
-	While GetAttributeByID($primaryAttribute, False, $heroIndex) > $attributesArray[0][1]
-		$level = GetAttributeByID($primaryAttribute, False, $heroIndex)
-		$deadlock = TimerInit()
-		DecreaseAttribute($primaryAttribute, $heroIndex)
-		Do
-			Sleep(20)
-		Until GetAttributeByID($primaryAttribute, False, $heroIndex) < $level Or TimerDiff($deadlock) > 5000
-		Sleep(20)
-	WEnd
-	For $i = 1 To UBound($attributesArray) - 1
-		While GetAttributeByID($attributesArray[$i][0], False, $heroIndex) > $attributesArray[$i][1]
-			$level = GetAttributeByID($attributesArray[$i][0], False, $heroIndex)
-			$deadlock = TimerInit()
-			DecreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Do
-				Sleep(20)
-			Until GetAttributeByID($attributesArray[$i][0], False, $heroIndex) < $level Or TimerDiff($deadlock) > 5000
-			Sleep(20)
-		WEnd
-	Next
-	For $i = 0 To 44
-		If GetAttributeByID($i, False, $heroIndex) > 0 Then
-			If $i = $primaryAttribute Then ContinueLoop
-			For $j = 1 To UBound($attributesArray) - 1
-				If $i = $attributesArray[$j][0] Then ContinueLoop 2
-			Next
-			While GetAttributeByID($i, False, $heroIndex) > 0
-				$level = GetAttributeByID($i, False, $heroIndex)
-				$deadlock = TimerInit()
-				DecreaseAttribute($i, $heroIndex)
-				Do
-					Sleep(20)
-				Until GetAttributeByID($i, False, $heroIndex) < $level Or TimerDiff($deadlock) > 5000
-				Sleep(20)
-			WEnd
-		EndIf
-	Next
-
-	While GetAttributeByID($primaryAttribute, False, $heroIndex) < $attributesArray[0][1]
-		$level = GetAttributeByID($primaryAttribute, False, $heroIndex)
-		$deadlock = TimerInit()
-		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Do
-			Sleep(20)
-		Until GetAttributeByID($primaryAttribute, False, $heroIndex) > $level Or TimerDiff($deadlock) > 5000
-		Sleep(20)
-	WEnd
-	For $i = 1 To UBound($attributesArray) - 1
-		While GetAttributeByID($attributesArray[$i][0], False, $heroIndex) < $attributesArray[$i][1]
-			$level = GetAttributeByID($attributesArray[$i][0], False, $heroIndex)
-			$deadlock = TimerInit()
-			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Do
-				Sleep(20)
-			Until GetAttributeByID($attributesArray[$i][0], False, $heroIndex) > $level Or TimerDiff($deadlock) > 5000
-			Sleep(20)
-		WEnd
-	Next
 EndFunc
 
 

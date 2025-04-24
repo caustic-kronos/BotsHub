@@ -69,6 +69,8 @@ Func RunToJagaMoraine()
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 
+	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
+
 	Out('Exiting Outpost')
 	MoveTo(-26472, 16217)
 	WaitMapLoading($ID_Bjora_Marches)
@@ -133,7 +135,7 @@ Func MoveRunning($lDestX, $lDestY)
 
 	Move($lDestX, $lDestY)
 
-	Do
+	While ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $lDestX, $lDestY) > 250
 		RndSleep(500)
 
 		TargetNearestEnemy()
@@ -154,8 +156,7 @@ Func MoveRunning($lDestX, $lDestY)
 		If DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0 Then
 			Move($lDestX, $lDestY)
 		EndIf
-
-	Until ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $lDestX, $lDestY) < 250
+	WEnd
 	Return True
 EndFunc
 
@@ -253,10 +254,10 @@ Func KillMobs()
 	Local $lAgentArray
 
 	Out('Killing')
-	Do
+	While TimerDiff($timer) > $Shadow_Form_Timer And TimerDiff($deadlockTimer) < 20000
 		WaitFor(100)
 		If GetIsDead(-2) Then Return
-	Until (TimerDiff($timer)) < $Shadow_Form_Timer Or (TimerDiff($deadlockTimer) > 20000)
+	WEnd
 
 	UseShadowForm(True)
 
@@ -356,7 +357,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 
 	Move($lDestX, $lDestY, $lRandom)
 
-	Do
+	While ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $lDestX, $lDestY) > $lRandom * 1.5
 		RndSleep(50)
 		$lAgentArray = GetAgentArray(0xDB)
 		If GetIsDead(-2) Then Return False
@@ -364,9 +365,9 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 
 		If DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0 Then
 			If $lHosCount > 6 Then
-				Do	; suicide
+				While Not GetIsDead(-2)
 					RndSleep(1000)
-				Until GetIsDead(-2)
+				WEnd
 				Return False
 			EndIf
 
@@ -410,8 +411,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 				EndIf
 			EndIf
 		EndIf
-
-	Until ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $lDestX, $lDestY) < $lRandom*1.5
+	WEnd
 	Return True
 EndFunc
 
@@ -421,12 +421,12 @@ Func WaitFor($lMs)
 	If GetIsDead(-2) Then Return
 	Local $lAgentArray
 	Local $lTimer = TimerInit()
-	Do
+	While TimerDiff($lTimer) < $lMs
 		RndSleep(100)
 		If GetIsDead(-2) Then Return
 		$lAgentArray = GetAgentArray(0xDB)
 		StayAlive($lAgentArray)
-	Until TimerDiff($lTimer) > $lMs
+	WEnd
 EndFunc
 
 
