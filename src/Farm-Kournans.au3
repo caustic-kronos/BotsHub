@@ -28,9 +28,9 @@ Local Const $KournansBotVersion = '0.1'
 
 ; ==== Constantes ====
 Local Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
-Local Const $RKournansHeroSkillbar = 'OgATY5LhVB6C+Zn76OzGAAAA'
+Local Const $RKournansHeroSkillbar = 'OgATYnLjZB6C+Zn76OzGAAAA'
 Local Const $RtKournansHeroSkillbar = 'OACjAyhDJPBTy58M5CAAAAAAAA'
-Local Const $PKournansHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
+Local Const $PKournansHeroSkillbar = 'OQijEqmMKO84dM92HbiH26YcMA'
 Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Magic' & @CRLF _
 	& '- 13 in Energy Storage' & @CRLF _
@@ -86,6 +86,7 @@ Func SetupKournansFarm()
 	Out('Setting up farm')
 	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 
+	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	RndSleep(50)
 	AddHero($ID_Margrid_The_Sly)
@@ -102,10 +103,7 @@ Func SetupKournansFarm()
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
 	
-	SwitchMode($ID_HARD_MODE)
 	RndSleep(50)
-	Out('Abandonning quest')
-	AbandonQuest(0x23E)
 	Out('Entering Command Post')
 	MoveTo(-1500, 2000)
 	MoveTo(0, 5000)
@@ -119,6 +117,8 @@ EndFunc
 
 ;~ Farm loop
 Func KournansFarmLoop()
+	Out('Abandonning quest')
+	AbandonQuest(0x23E)
 	Out('Entering Command Post')
 	MoveTo(0, 5000)
 	WaitMapLoading($ID_Command_Post, 10000, 2000)
@@ -164,8 +164,6 @@ Func KournansFarmLoop()
 	PickUpItems()
 	Local $result = GetIsDead(-2) ? 1 : 0
 	BackToSunspearSanctuary()
-	Out('Abandonning quest')
-	AbandonQuest(0x23E)
 	Return $result
 EndFunc
 
@@ -219,10 +217,11 @@ EndFunc
 Func TalkToMargrid()
 	Out('Talking to Margrid')
 	GoNearestNPCToCoords(1250, 7300)
-	RndSleep(250)
-	Out('Taking quest')
-	AcceptQuest(0x23E)
 	RndSleep(1000)
+	Out('Taking quest')
+	; QuestID 0x23E = 574
+	AcceptQuest(0x23E)
+	RndSleep(500)
 EndFunc
 
 
