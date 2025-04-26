@@ -125,43 +125,43 @@ Func MinisterialCommendationsFarm($STATUS)
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
 	If $loggingEnabled Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
-	Out('Entering quest')
+	Info('Entering quest')
 	EnterQuest()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
 	If $STATUS <> 'RUNNING' Then Return 2
 
-	Out('Preparing to fight')
+	Info('Preparing to fight')
 	PrepareToFight()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
 	If $STATUS <> 'RUNNING' Then Return 2
 
-	Out('Fighting the first group')
+	Info('Fighting the first group')
 	InitialFight()
 
 	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
-	Out('Running to kill spot')
+	Info('Running to kill spot')
 	RunToKillSpot()
 
 	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
-	Out('Waiting for spike')
+	Info('Waiting for spike')
 	LogIntoFile('Waiting for ball')
 	WaitForPurityBall()
 
 	If (IsFail()) Then Return ResignAndReturnToOutpost()
 
-	Out('Spiking the farm group')
+	Info('Spiking the farm group')
 	KillMinistryOfPurity()
 
 	RndSleep(1000)
 
-	Out('Picking up loot')
+	Info('Picking up loot')
 	PickUpItems(HealWhilePickingItems)
 
-	Out('Travelling back to KC')
+	Info('Travelling back to KC')
 	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
 	If $loggingEnabled Then FileClose($loggingFile)
@@ -172,7 +172,7 @@ EndFunc
 Func Setup()
 	Local $mapID = GetMapID()
 	If $mapID <> $ID_Current_Kaineng_City Then
-		Out('Travelling to Kaineng City')
+		Info('Travelling to Kaineng City')
 		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 	EndIf
 	LeaveGroup()
@@ -315,7 +315,7 @@ Func InitialFight()
 			If $deathTimer <> null Then $deathTimer = null
 		EndIf
 	WEnd
-	If (TimerDiff($deadlock) > 80000) Then Out('Timed out waiting for most mobs to be dead')
+	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for most mobs to be dead')
 
 	PickUpItems(null, PickOnlyImportantItem)
 
@@ -344,7 +344,7 @@ Func InitialFight()
 		Move(-4693, -3137)
 		RndSleep(750)
 	WEnd
-	If (TimerDiff($deadlock) > 80000) Then Out('Timed out waiting for all mobs to be dead')
+	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for all mobs to be dead')
 
 	UseHeroSkill($Hero_Ritualist_SoS, $Mend_Body_And_Soul_Skill_Position, 58)
 	UseHeroSkill($Hero_Necro_BiP, $Mend_Body_And_Soul_Skill_Position, 58)
@@ -469,7 +469,7 @@ Func WaitForPurityBall()
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
 		RndSleep(250)
 	WEnd
-	If (TimerDiff($deadlock) > 75000) Then Out('Timed out waiting for mobs to ball')
+	If (TimerDiff($deadlock) > 75000) Then Info('Timed out waiting for mobs to ball')
 	LogIntoFile('Ball ready - ' & Round(TimerDiff($deadlock)/1000) & 's')
 EndFunc
 
@@ -488,10 +488,10 @@ EndFunc
 ;~ Return to outpost in case of failure
 Func ResignAndReturnToOutpost()
 	If GetIsDead(58) Then
-		Out('Miku died.')
+		Warn('Miku died.')
 		LogIntoFile('Miku died.')
 	ElseIf GetIsDead(-2) Then
-		Out('Player died')
+		Warn('Player died')
 		LogIntoFile('Character died.')
 	EndIf
 	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
@@ -593,7 +593,7 @@ Func KillMinistryOfPurity()
 		EndIf
 		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_ADJACENT)
 	WEnd
-	If (TimerDiff($deadlock) > 10000) Then Out('Left ' & $foesCount & ' mobs alive out of ' & $initialFoeCount & ' foes')
+	If (TimerDiff($deadlock) > 10000) Then Info('Left ' & $foesCount & ' mobs alive out of ' & $initialFoeCount & ' foes')
 	LogIntoFile('Mobs killed - ' & ($initialFoeCount - $foesCount))
 	LogIntoFile('Mobs left alive - ' & $foesCount)
 

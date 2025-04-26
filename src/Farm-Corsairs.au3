@@ -66,19 +66,19 @@ EndFunc
 
 
 Func SetupCorsairsFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)
 	LoadSkillTemplate($RACorsairsFarmerSkillbar)
-	Out('Preparations complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func CorsairsFarmLoop()
-	Out('Entering mission')
+	Info('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 	RndSleep(250)
 	Dialog(0x00000084)
@@ -177,7 +177,7 @@ Func CorsairsFarmLoop()
 		Return 1
 	EndIf
 
-	Out('Looting')
+	Info('Looting')
 	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
 	If $foesCount == 0 Then
 		PickUpItems(OnlyCastTogetherAsOne)
@@ -231,7 +231,7 @@ EndFunc
 
 
 Func BackToModdokCreviceOutpost()
-	Out('Porting to Moddok Crevice (city)')
+	Info('Porting to Moddok Crevice (city)')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

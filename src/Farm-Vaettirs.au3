@@ -62,7 +62,7 @@ EndFunc
 ;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
 Func RunToJagaMoraine()
 	If GetMapID() <> $ID_Longeyes_Ledge Then
-		Out('Travelling to Longeyes Ledge')
+		Info('Travelling to Longeyes Ledge')
 		DistrictTravel($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	EndIf
 
@@ -71,7 +71,7 @@ Func RunToJagaMoraine()
 
 	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
 
-	Out('Exiting Outpost')
+	Info('Exiting Outpost')
 	MoveTo(-26472, 16217)
 	WaitMapLoading($ID_Bjora_Marches)
 
@@ -81,7 +81,7 @@ Func RunToJagaMoraine()
 
 	SetDisplayedTitle($ID_Norn_Title)
 
-	Out('Running to Jaga Moraine')
+	Info('Running to Jaga Moraine')
 	Local $Array_Longeyes_Ledge[31][3] = [ _
 		[1, 15003.8,	-16598.1], _
 		[1, 15003.8,	-16598.1], _
@@ -168,7 +168,7 @@ Func VaettirsFarmLoop()
 	KillMobs()
 	WaitFor(1200)
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 
 	Return RezoneToJagaMoraine()
@@ -177,7 +177,7 @@ EndFunc
 
 ;~ Self explanatory
 Func AggroAllMobs()
-	Out('Aggroing left')
+	Info('Aggroing left')
 	MoveTo(13501, -20925)
 	MoveTo(13172, -22137)
 	TargetNearestEnemy()
@@ -196,7 +196,7 @@ Func AggroAllMobs()
 	MoveAggroing(8684, -20833, 150)
 	MoveAggroing(8982, -20576, 150)
 
-	Out('Waiting for left ball')
+	Info('Waiting for left ball')
 	WaitFor(12*1000)
 
 	If GetDistance() < 1000 Then
@@ -209,7 +209,7 @@ Func AggroAllMobs()
 
 	TargetNearestEnemy()
 
-	Out('Aggroing right')
+	Info('Aggroing right')
 	MoveAggroing(10196, -20124, 150)
 	MoveAggroing(9976, -18338, 150)
 	MoveAggroing(11316, -18056, 150)
@@ -223,7 +223,7 @@ Func AggroAllMobs()
 	TargetNearestEnemy()
 	MoveAggroing(12476, -16157)
 
-	Out('Waiting for right ball')
+	Info('Waiting for right ball')
 	WaitFor(15*1000)
 
 	If GetDistance() < 1000 Then
@@ -253,7 +253,7 @@ Func KillMobs()
 	Local $Shadow_Form_Timer = TimerDiff($timer)
 	Local $lAgentArray
 
-	Out('Killing')
+	Info('Killing')
 	While TimerDiff($timer) > $Shadow_Form_Timer And TimerDiff($deadlockTimer) < 20000
 		WaitFor(100)
 		If GetIsDead(-2) Then Return
@@ -320,13 +320,13 @@ Func RezoneToJagaMoraine()
 	If GetIsDead(-2) Then $success = 1
 	If $Deadlocked Then $success 1
 
-	Out('Zoning out and back in')
+	Info('Zoning out and back in')
 	MoveAggroing(12289, -17700)
 	MoveAggroing(15318, -20351)
 
 	Local $deadlockTimer = TimerInit()
 	While GetIsDead(-2)
-		Out('Waiting for resurrection')
+		Info('Waiting for resurrection')
 		RndSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$Deadlocked = True

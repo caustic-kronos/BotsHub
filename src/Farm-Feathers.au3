@@ -67,13 +67,13 @@ EndFunc
 
 
 Func SetupFeathersFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveGroup()
 	LoadSkillTemplate($DAFeathersFarmerSkillbar)
 
-	Out('Entering Jaya Bluffs')
+	Info('Entering Jaya Bluffs')
 	Local $Me = GetAgentByID(-2)
 	Local $X = DllStructGetData($Me, 'X')
 	Local $Y = DllStructGetData($Me, 'Y')
@@ -95,23 +95,23 @@ Func SetupFeathersFarm()
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 	Move(10970, -13360)
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
-	Out('Preparations complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func FeathersFarmLoop()
-	Out('Entering Jaya Bluffs')
+	Info('Entering Jaya Bluffs')
 	Move(16800, 17550)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 
-	Out('Running to Sensali.')
+	Info('Running to Sensali.')
 	UseConsumable($ID_Birthday_Cupcake)
 	MoveTo(9000, -12680)
 	MoveTo(7588, -10609)
 	MoveTo(2900, -9700)
 	MoveTo(1540, -6995)
-	Out('Farming Sensali.')
+	Info('Farming Sensali.')
 	MoveKill(-472, -4342, False)
 	MoveKill(-1536, -1686)
 	MoveKill(586, -76)
@@ -141,7 +141,7 @@ EndFunc
 
 
 Func BackToSeitungHarborOutpost()
-	Out('Porting to Seitung Harbor')
+	Info('Porting to Seitung Harbor')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()
@@ -283,7 +283,7 @@ Func Kill($aWaitForSettle = True)
 		Attack(-1)
 	WEnd
 	RndSleep(500)
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 	CheckForChests()
 	ChangeWeaponSet(2)

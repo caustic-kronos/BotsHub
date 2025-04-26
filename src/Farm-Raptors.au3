@@ -93,7 +93,7 @@ EndFunc
 
 ;~ Setup the Raptor farm for faster farm
 Func SetupRaptorFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
@@ -108,13 +108,13 @@ Func SetupRaptorFarm()
 	RndSleep(1000)
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
-	Out('Resign preparation complete')
+	Info('Resign preparation complete')
 EndFunc
 
 
 ;~ Farm loop
 Func RaptorsFarmLoop()
-	Out('Exiting to Riven Earth')
+	Info('Exiting to Riven Earth')
 	Move(20084, 16854)
 	RndSleep(1000)
 	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
@@ -123,13 +123,13 @@ Func RaptorsFarmLoop()
 	UseHeroSkill(1, $Raptors_Incoming)
 	GetBlessing()
 	MoveToBaseOfCave()
-	Out('Moving Hero away')
+	Info('Moving Hero away')
 	CommandAll(-25309, -4212)
 	GetRaptors()
 	KillRaptors()
 	RndSleep(1000)
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems(DefendWhilePickingUpItems)
 	RndSleep(1000)
 	PickUpItems(DefendWhilePickingUpItems)
@@ -159,7 +159,7 @@ EndFunc
 Func GetBlessing()
 	Local $Asura = GetAsuraTitle()
 	If $Asura < 160000 Then
-		Out('Getting asura title blessing')
+		Info('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
 		RndSleep(300)
 		Dialog(132)
@@ -171,7 +171,7 @@ EndFunc
 ;~ Move to the entrance of the raptors cave
 Func MoveToBaseOfCave()
 	If GetIsDead(-2) Then Return
-	Out('Moving to Cave')
+	Info('Moving to Cave')
 	Move(-22015, -7502)
 	RndSleep(7000)
 	UseHeroSkill(1, $Raptors_FallBack)
@@ -194,7 +194,7 @@ EndFunc
 
 ;~ Aggro all raptors
 Func GetRaptors()
-	Out('Gathering Raptors')
+	Info('Gathering Raptors')
 
 	Move(-20695, -9900, 20)
 	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
@@ -244,7 +244,7 @@ Func KillRaptors()
 	Local $lAgentArray
 
 	If GetIsDead(-2) Then Return
-	Out('Clearing Raptors')
+	Info('Clearing Raptors')
 
 	If ($RAPTORS_PROFESSION == 1) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
@@ -291,7 +291,9 @@ Func KillRaptors()
 	WEnd
 
 	$count = 0
-	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain) And $count < 200
+	Local $timer = TimerInit()
+	; There is an issue here with infinite loop despite the count (wtf!) so added a timer as well
+	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain) And $count < 200 And TimerDiff($timer) < 10000
 		UseSkillEx($Raptors_MarkOfPain, $MoPTarget)
 		RndSleep(50)
 		$count += 1
@@ -308,7 +310,7 @@ Func KillRaptors()
 			$count += 1
 		WEnd
 
-		Out('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
+		Info('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
 
 		UseSkillEx($Raptors_ShieldBash)
 		RndSleep(20)
@@ -317,7 +319,7 @@ Func KillRaptors()
 			RndSleep(250)
 		WEnd
 	Else
-		Out('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
+		Info('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
 		While Not GetIsDead(-2) And CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 10
 			UseSkillEx($Raptors_EremitesAttack, GetNearestEnemyToAgent(-2))
 			RndSleep(250)
@@ -329,7 +331,7 @@ EndFunc
 ;~ Return to Rata Sum
 Func BackToTown()
 	Local $result = AssertFarmResult()
-	Out('Porting to Rata Sum')
+	Info('Porting to Rata Sum')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()
@@ -341,13 +343,13 @@ EndFunc
 ;~ Check whether or not the farm was successful
 Func AssertFarmResult()
 	If GetIsDead(-2) Then
-		Out('Character died')
+		Info('Character died')
 		Return 1
 	EndIf
 
 	Local $survivors = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
 	If $survivors > 1 Then
-		Out($survivors & ' raptors survived')
+		Info($survivors & ' raptors survived')
 		Return 1
 	Else
 		Return 0
@@ -380,7 +382,7 @@ Func IsBodyBlocked()
 
 	While DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0
 		$blocked += 1
-		;Out('Blocked: ' & $blocked)
+		Debug('Blocked: ' & $blocked)
 		If $blocked > 1 Then
 			$angle += $PI / 4
 		EndIf
@@ -390,7 +392,7 @@ Func IsBodyBlocked()
 		EndIf
 
 		If $blocked > 7 Then
-			Out('Completely blocked')
+			Debug('Completely blocked')
 			Return True
 		EndIf
 		Move(DllStructGetData(GetAgentByID(-2), 'X') + 300 * sin($angle), DllStructGetData(GetAgentByID(-2), 'Y') + 300 * cos($angle), 0)
@@ -403,7 +405,7 @@ EndFunc
 Func SendStuckCommand()
 	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
 	If CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then
-		Out('Sending /stuck', $GUI_CONSOLE_YELLOW_COLOR)
+		Warn('Sending /stuck')
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()
 		RndSleep(GetPing())

@@ -47,7 +47,7 @@ EndFunc
 
 
 Func SetupEdenIrisFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	MoveTo(-11600, -6250)
 	Move(-11000, -6250)
 	RndSleep(1000)
@@ -55,7 +55,7 @@ Func SetupEdenIrisFarm()
 	Move(-11600, -6250)
 	RndSleep(1000)
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
-	Out('Resign preparation complete')
+	Info('Resign preparation complete')
 EndFunc
 
 ;~ Farm loop
@@ -92,7 +92,7 @@ Func PickUpIris()
 		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
 		$lItem = GetItemByAgentID($i)
 		If (DllStructGetData(($lItem), 'ModelID') == $ID_Red_Iris_Flower) Then
-			Out('Iris: ' & Round(DllStructGetData($lAgent, 'X')) & ', Y: ' & Round(DllStructGetData($lAgent, 'Y')))
+			Info('Iris: ' & Round(DllStructGetData($lAgent, 'X')) & ', Y: ' & Round(DllStructGetData($lAgent, 'Y')))
 			Local $loggingFile = FileOpen(@ScriptDir & '/logs/edeniris_farm.csv' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 			FileWrite($loggingFile, Round(DllStructGetData($lAgent, 'X')) & ',' & Round(DllStructGetData($lAgent, 'Y')))
 			PickUpItem($lItem)
@@ -101,7 +101,7 @@ Func PickUpIris()
 				RndSleep(500)
 				If GetIsDead(-2) Then Return
 				If TimerDiff($lDeadlock) > 20000 Then
-					Out('Could not get iris at ' & DllStructGetData($lAgent, 'X') & ', ' & DllStructGetData($lAgent, 'Y'))
+					Info('Could not get iris at ' & DllStructGetData($lAgent, 'X') & ', ' & DllStructGetData($lAgent, 'Y'))
 					$success = False
 					ExitLoop
 				EndIf

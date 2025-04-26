@@ -77,7 +77,7 @@ EndFunc
 
 ;~ Setup for the jade brotherhood farm
 Func SetupJadeBrotherhoodFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_General_Morgahn)
@@ -96,15 +96,15 @@ Func SetupJadeBrotherhoodFarm()
 	Move(-13960, -11700)
 	RndSleep(1000)
 	WaitMapLoading($ID_The_Marketplace)
-	Out('Jade Brotherhood farm setup')
+	Info('Jade Brotherhood farm setup')
 EndFunc
 
 
 ;~ Farm loop
 Func JadeBrotherhoodFarmLoop()
-	Out('Abandonning quest')
+	Info('Abandonning quest')
 	AbandonQuest(457)
-	Out('Exiting to Bukdek Byway')
+	Info('Exiting to Bukdek Byway')
 	Move(16551, 19860)
 	RndSleep(1000)
 	WaitMapLoading($ID_Bukdek_Byway)
@@ -120,7 +120,7 @@ Func JadeBrotherhoodFarmLoop()
 
 	RndSleep(1000)
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 
 	If ($Deadlocked) Then Return BackToTheMarketplace(1)
@@ -129,7 +129,7 @@ EndFunc
 
 
 Func MoveToSeparationWithHero()
-	Out('Moving to crossing')
+	Info('Moving to crossing')
 	UseHeroSkill(1, $Brotherhood_Incoming)
 	RndSleep(50)
 	CommandAll(-10475, -9685)
@@ -142,17 +142,17 @@ Func MoveToSeparationWithHero()
 	RndSleep(50)
 	Move(-11983, -6261, 40)
 	RndSleep(300)
-	Out('Moving Hero away')
+	Info('Moving Hero away')
 	CommandAll(-8447, -10099)
 	RndSleep(7000)
 EndFunc
 
 
 Func TalkToAiko()
-	Out('Talking to Aiko')
+	Info('Talking to Aiko')
 	GoNearestNPCToCoords(-13923, -5098)
 	RndSleep(1000)
-	Out('Taking quest')
+	Info('Taking quest')
 	; QuestID 0x1C9 = 457
 	AcceptQuest(0x1C9)
 	Move(-11303, -6545, 40)
@@ -161,7 +161,7 @@ EndFunc
 
 
 Func WaitForBall()
-	Out('Waiting for ball')
+	Info('Waiting for ball')
 	If GetIsDead(-2) Then Return
 	RndSleep(4500)
 	Local $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
@@ -169,8 +169,8 @@ Func WaitForBall()
 	; Aiko counts
 	While ($foesBalled <> 8 Or $peasantsAlive > 1)
 		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		Out('Foes balled : ' & $foesBalled)
-		Out('Peasants alive : ' & $peasantsAlive)
+		Info('Foes balled : ' & $foesBalled)
+		Info('Peasants alive : ' & $peasantsAlive)
 		RndSleep(4500)
 		$prevFoesBalled = $foesBalled
 		$prevPeasantsAlive = $peasantsAlive
@@ -191,7 +191,7 @@ Func KillJadeBrotherhood()
 
 	If GetIsDead(-2) Then Return
 
-	Out('Clearing Jade Brotherhood')
+	Info('Clearing Jade Brotherhood')
 	UseSkillEx($JB_DrunkerMaster)
 	RndSleep(50)
 	UseSkillEx($JB_SandShards)
@@ -248,7 +248,7 @@ EndFunc
 
 
 Func BackToTheMarketplace($success)
-	Out('Porting to The Marketplace')
+	Info('Porting to The Marketplace')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

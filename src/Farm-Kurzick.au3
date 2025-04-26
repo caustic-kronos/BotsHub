@@ -38,7 +38,7 @@ Local $DonatePoints = True
 ;~ Main loop
 Func KurzickFactionFarm($STATUS)
 	If GetMapID() <> $ID_House_Zu_Heltzer Then
-		Out('Moving to Outpost')
+		Info('Moving to Outpost')
 		DistrictTravel($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 		WaitMapLoading($ID_House_Zu_Heltzer, 10000, 2000)
 	EndIf
@@ -54,7 +54,7 @@ Func KurzickFactionFarm($STATUS)
 	If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
 	If (CountSlots() < 15) Then
-		Out('Inventory full, pausing.')
+		Warn('Inventory full, pausing.')
 		$result = 2
 	EndIf
 
@@ -64,7 +64,7 @@ EndFunc
 
 Func KurzickFarmSetup()
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
-		Out('Turning in Kurzick faction')
+		Info('Turning in Kurzick faction')
 		RndSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
 
@@ -74,7 +74,7 @@ Func KurzickFarmSetup()
 				RndSleep(500)
 			WEnd
 		Else
-			Out('Buying Amber fragments')
+			Info('Buying Amber fragments')
 			Dialog(131)
 			RndSleep(550)
 			Local $temp = Floor(GetKurzickFaction() / 5000)
@@ -86,7 +86,7 @@ Func KurzickFarmSetup()
 	EndIf
 
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Out('Withdrawing gold for shrines benediction')
+		Info('Withdrawing gold for shrines benediction')
 		RndSleep(250)
 		WithdrawGold(100)
 		RndSleep(250)
@@ -103,7 +103,7 @@ Func VanquishFerndale()
 	WaitMapLoading($ID_Ferndale, 10000, 2000)
 	$groupIsAlive = True
 
-	Out('Taking blessing')
+	Info('Taking blessing')
 	GoNearestNPCToCoords(-12909, 15616)
 	Dialog(0x81)
 	Sleep(1000)
@@ -247,7 +247,7 @@ Func VanquishFerndale()
 	If MapClearMoveAndAggro(7148, 11167, 'Dredge Patrol 55', 4000) Then Return 1
 	If MapClearMoveAndAggro(5427, 10834, 'Dredge Patrol 56', 10000) Then Return 1
 	If Not GetAreaVanquished() Then
-		Out('The map has not been completely vanquished.', $GUI_CONSOLE_RED_COLOR)
+		Error('The map has not been completely vanquished.')
 		Return 1
 	EndIf
 	Return 0

@@ -72,7 +72,7 @@ EndFunc
 
 
 Func SetupMantidsFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Nahpui_Quarter Then DistrictTravel($ID_Nahpui_Quarter, $DISTRICT_NAME)
 
 	SwitchMode($ID_HARD_MODE)
@@ -83,20 +83,20 @@ Func SetupMantidsFarm()
 	LoadSkillTemplate($MantidsHeroSkillbar, 1)
 	DisableAllHeroSkills(1)
 
-	Out('Entering Wajjun Bazaar')
+	Info('Entering Wajjun Bazaar')
 	MoveTo(-22000, 12500)
 	MoveTo(-21750, 14500)
 	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
 	MoveTo(9100, -19600)
 	MoveTo(9100, -20500)
 	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
-	Out('Preparations complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func MantidsFarmLoop()
-	Out('Entering Wajjun Bazaar')
+	Info('Entering Wajjun Bazaar')
 	Local $target
 	If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetAgentById(-2), 'Y'))) Then MoveTo(-22000, 12500)
 	MoveTo(-21750, 14500)
@@ -183,7 +183,7 @@ Func MantidsFarmLoop()
 		Return 1
 	EndIf
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 	CheckForChests()
 
@@ -207,7 +207,7 @@ EndFunc
 
 
 Func BackToNahpuiQuarterOutpost()
-	Out('Porting to Nahpui Quarter')
+	Info('Porting to Nahpui Quarter')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

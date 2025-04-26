@@ -67,23 +67,23 @@ Func SpiritSlavesFarm($STATUS)
 
 	UseConsumable($ID_Slice_of_Pumpkin_Pie)
 
-	Out('Killing group 1 @ North')
+	Info('Killing group 1 @ North')
 	FarmNorthGroup()
 	If (GetIsDead(-2)) Then Return RestartAfterDeath()
-	Out('Killing group 2 @ South')
+	Info('Killing group 2 @ South')
 	FarmSouthGroup()
 	If (GetIsDead(-2)) Then Return RestartAfterDeath()
-	Out('Killing group 3 @ South')
+	Info('Killing group 3 @ South')
 	FarmSouthGroup()
 	If (GetIsDead(-2)) Then Return RestartAfterDeath()
-	Out('Killing group 4 @ North')
+	Info('Killing group 4 @ North')
 	FarmNorthGroup()
 	If (GetIsDead(-2)) Then Return RestartAfterDeath()
-	Out('Killing group 5 @ North')
+	Info('Killing group 5 @ North')
 	FarmNorthGroup()
 	If (GetIsDead(-2)) Then Return RestartAfterDeath()
 
-	Out('Moving out of the zone and back again')
+	Info('Moving out of the zone and back again')
 	Move(-7735, -8380)
 	RezoneToTheShatteredRavines()
 
@@ -96,7 +96,7 @@ EndFunc
 Func SpiritSlavesFarmSetup()
 	If GetMapID() <> $ID_The_Shattered_Ravines Then
 		If GetMapID() <> $ID_Bone_Palace Then
-			Out('Travelling to Bone Palace')
+			Info('Travelling to Bone Palace')
 			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
 		EndIf
 		SwitchMode($ID_HARD_MODE)
@@ -116,7 +116,7 @@ Func SpiritSlavesFarmSetup()
 		; Going to wurm's spoor
 		ChangeTarget(GetNearestSignpostToCoords(-10938, 4254))
 		RndSleep(500)
-		Out('Taking wurm')
+		Info('Taking wurm')
 		ActionInteract()
 		RndSleep(1500)
 		UseSkillEx(5)
@@ -144,7 +144,7 @@ Func SpiritSlavesFarmSetup()
 
 		; Entering The Shattered Ravines
 		ChangeWeaponSet(1)
-		Out('Entering The Shattered Ravines : careful')
+		Info('Entering The Shattered Ravines : careful')
 		MoveTo(-4500, 20150)
 		MoveTo(-4500, 21000)
 		WaitMapLoading($ID_The_Shattered_Ravines, 10000, 2000)
@@ -158,7 +158,7 @@ EndFunc
 
 ;~ Rezoning to reset the farm
 Func RezoneToTheShatteredRavines()
-	Out('Rezoning')
+	Info('Rezoning')
 	; Exiting to Jokos Domain
 	MoveTo(-7800, -10250)
 	MoveTo(-9000, -10900)
@@ -309,11 +309,11 @@ Func KillSequence()
 			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance(-2, $casterFoe)
 			If $foesCount < 5 And GetDistance(-2, $casterFoe) > $RANGE_ADJACENT Then
-				Out('One foe is distant')
+				Debug('One foe is distant')
 				If $casterFoesMap[$casterFoeId] == null Then
 					$casterFoesMap[$casterFoeId] = 0
 				ElseIf $casterFoesMap[$casterFoeId] == 2 Then
-					Out('Moving to fight that foe')
+					Debug('Moving to fight that foe')
 					Local $timer = TimerInit()
 					;MoveAvoidingBodyBlock(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'X'), 1000)
 					While Not GetIsDead(-2) And GetDistance(-2, $casterFoe) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
@@ -355,9 +355,9 @@ Func WaitForFoesBall()
 		RndSleep(3000)
 		$target = GetNearestEnemyToCoords(-8598, -5810)
 		$foesCount = CountFoesInRangeOfAgent($target, $RANGE_AREA)
-		;Out('foes: ' & $foesCount & '/8')
+		Debug('foes: ' & $foesCount & '/8')
 	WEnd
-	If (TimerDiff($deadlock) > 120000) Then Out('Timed out waiting for mobs to ball')
+	If (TimerDiff($deadlock) > 120000) Then Info('Timed out waiting for mobs to ball')
 EndFunc
 
 
@@ -371,19 +371,19 @@ Func WaitForAlliesDead()
 		RndSleep(5000)
 		$target = GetNearestNPCToCoords(-8598, -5810)
 	WEnd
-	If (TimerDiff($deadlock) > 120000) Then Out('Timed out waiting for allies to be dead')
+	If (TimerDiff($deadlock) > 120000) Then Info('Timed out waiting for allies to be dead')
 EndFunc
 
 
 ;~ Respawn and rezone if we die
 Func RestartAfterDeath()
 	Local $deadlockTimer = TimerInit()
-	Out('Waiting for resurrection')
+	Info('Waiting for resurrection')
 	While GetIsDead(-2)
 		RndSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$SPIRIT_SLAVES_FARM_SETUP = True
-			Out('Travelling to Bone Palace')
+			Info('Travelling to Bone Palace')
 			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
 			Return 1
 		EndIf

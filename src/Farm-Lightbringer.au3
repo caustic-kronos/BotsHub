@@ -60,7 +60,7 @@ Func LightbringerFarmSetup()
 	$loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
-		Out('Travelling to Remains of Sahlahja')
+		Info('Travelling to Remains of Sahlahja')
 		DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	EndIf
 	LeaveGroup()
@@ -101,14 +101,14 @@ Func CountPartyDeaths()
 EndFunc
 
 Func FarmTheSulfurousWastes()
-	Out('Taking Sunspear Undead Blessing')
+	Info('Taking Sunspear Undead Blessing')
 	GoToNPC(GetNearestNPCToCoords(-660, 16000))
 	Dialog(0x83)
 	RndSleep(1000)
 	Dialog(0x85)
 	RndSleep(1000)
 
-	Out('Entering Junundu')
+	Info('Entering Junundu')
 	MoveTo(-615, 13450)
 	RndSleep(5000)
 	TargetNearestItem()
@@ -126,7 +126,7 @@ Func FarmTheSulfurousWastes()
 	MoveTo(-13000, 9500)
 	If MultipleMoveToAndAggro('Third Undead Group', -13250, 6750) Then Return 1
 
-	Out('Taking Lightbringer Margonite Blessing')
+	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
 	MoveTo(-20600, 7270)
 	GoToNPC(GetNearestNPCToCoords(-20600, 7270))
@@ -143,7 +143,7 @@ Func FarmTheSulfurousWastes()
 	If MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) Then Return 1
 	If MultipleMoveToAndAggro('Fifth Margonite Group', -22800, -13500, -21300, -14000) Then Return 1
 
-	Out('Picking Up Tome')
+	Info('Picking Up Tome')
 	SpeedTeam()
 	MoveTo(-21300, -14000)
 	TargetNearestItem()
@@ -157,7 +157,7 @@ Func FarmTheSulfurousWastes()
 	If MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) Then Return 1
 	If MultipleMoveToAndAggro('Temple Monolith Groups', -22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100) Then Return 1
 
-	Out('Spawning Margonite bosses')
+	Info('Spawning Margonite bosses')
 	SpeedTeam()
 	MoveTo(-16000, -13100)
 	SpeedTeam()
@@ -201,7 +201,7 @@ EndFunc
 ;~ Main method for moving around and aggroing/killing mobs
 ;~ Return True if the group is dead, False if not
 Func MoveToAndAggro($foesGroup, $x, $y)
-	Out('Killing ' & $foesGroup)
+	Info('Killing ' & $foesGroup)
 	Local $range = 1650
 
 	; Get close enough to cast spells but not Aggro
@@ -259,7 +259,7 @@ EndFunc
 
 Func ReturnToSahlahjaOutpost()
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
-		Out('Travelling to Remains of Sahlahja')
+		Info('Travelling to Remains of Sahlahja')
 		DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	EndIf
 EndFunc

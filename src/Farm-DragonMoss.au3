@@ -62,25 +62,25 @@ EndFunc
 
 
 Func SetupDragonMossFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	LoadSkillTemplate($RADragonMossFarmerSkillbar)
-	Out('Entering Drazach Thicket')
+	Info('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)
 	MoveTo(-11000, -24000)
 	WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
 	MoveTo(-11100, 19700)
 	MoveTo(-11300, 19900)
 	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
-	Out('Preparations complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func DragonMossFarmLoop()
-	Out('Entering Drazach Thicket')
+	Info('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)
 	MoveTo(-11000, -24000)
 	WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
@@ -147,7 +147,7 @@ Func DragonMossFarmLoop()
 
 	RndSleep(1000)
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 
 	BackToSaintAnjekaOutpost()
@@ -161,7 +161,7 @@ EndFunc
 
 
 Func BackToSaintAnjekaOutpost()
-	Out('Porting to Saint Anjekas Shrine')
+	Info('Porting to Saint Anjekas Shrine')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

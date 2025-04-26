@@ -83,7 +83,7 @@ EndFunc
 
 
 Func SetupKournansFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 
 	SwitchMode($ID_HARD_MODE)
@@ -104,22 +104,22 @@ Func SetupKournansFarm()
 	DisableAllHeroSkills(2)
 	
 	RndSleep(50)
-	Out('Entering Command Post')
+	Info('Entering Command Post')
 	MoveTo(-1500, 2000)
 	MoveTo(0, 5000)
 	WaitMapLoading($ID_Command_Post, 10000, 2000)
 	MoveTo(-200, 4350)
 	MoveTo(-500, 3500)
 	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
-	Out('Preparations complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func KournansFarmLoop()
-	Out('Abandonning quest')
+	Info('Abandonning quest')
 	AbandonQuest(0x23E)
-	Out('Entering Command Post')
+	Info('Entering Command Post')
 	MoveTo(0, 5000)
 	WaitMapLoading($ID_Command_Post, 10000, 2000)
 	MoveTo(1250, 7300)
@@ -160,7 +160,7 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_Aftershock)
 	UseSkillEx($Kournans_Shockwave)
 	RndSleep(2000)
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 	Local $result = GetIsDead(-2) ? 1 : 0
 	BackToSunspearSanctuary()
@@ -215,10 +215,10 @@ EndFunc
 
 
 Func TalkToMargrid()
-	Out('Talking to Margrid')
+	Info('Talking to Margrid')
 	GoNearestNPCToCoords(1250, 7300)
 	RndSleep(1000)
-	Out('Taking quest')
+	Info('Taking quest')
 	; QuestID 0x23E = 574
 	AcceptQuest(0x23E)
 	RndSleep(500)
@@ -226,7 +226,7 @@ EndFunc
 
 
 Func BackToSunspearSanctuary()
-	Out('Porting to Sunspear Sanctuary')
+	Info('Porting to Sunspear Sanctuary')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

@@ -41,7 +41,7 @@ Local Const $ID_unknown_outpost_deposit_points = 193
 ;~ Main loop
 Func LuxonFactionFarm($STATUS)
 	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then
-		Out('Moving to Outpost')
+		Info('Moving to Outpost')
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 		WaitMapLoading($ID_Aspenwood_Gate_Luxon, 10000, 2000)
 	EndIf
@@ -63,7 +63,7 @@ Func LuxonFactionFarm($STATUS)
 	If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
 	If (CountSlots() < 10) Then
-		Out('Inventory full, pausing.')
+		Info('Inventory full, pausing.')
 		$result = 2
 	EndIf
 
@@ -73,7 +73,7 @@ EndFunc
 
 Func LuxonFarmSetup()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
-		Out('Turning in Luxon faction')
+		Info('Turning in Luxon faction')
 		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
 		WaitMapLoading($ID_unknown_outpost_deposit_points, 10000, 2000)
 		RndSleep(200)
@@ -85,7 +85,7 @@ Func LuxonFarmSetup()
 				RndSleep(500)
 			WEnd
 		Else
-			Out('Buying Jade Shards')
+			Info('Buying Jade Shards')
 			Dialog(131)
 			RndSleep(500)
 			$temp = Floor(GetLuxonFaction() / 5000)
@@ -99,7 +99,7 @@ Func LuxonFarmSetup()
 	EndIf
 
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Out('Withdrawing gold for shrines benediction')
+		Info('Withdrawing gold for shrines benediction')
 		RndSleep(250)
 		WithdrawGold(100)
 		RndSleep(250)
@@ -110,7 +110,7 @@ EndFunc
 
 
 Func VanquishMountQinkai()
-	Out('Taking blessing')
+	Info('Taking blessing')
 	GoNearestNPCToCoords(-8394, -9801)
 	Dialog(0x85)
 	RndSleep(1000)
@@ -161,7 +161,7 @@ Func VanquishMountQinkai()
 	If MapClearMoveAndAggro(14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT) Then Return 1
 	If MapClearMoveAndAggro(13000, -6000, 'Leftovers', $RANGE_COMPASS) Then Return 1
 	If Not GetAreaVanquished() Then
-		Out('The map has not been completely vanquished.', $GUI_CONSOLE_RED_COLOR)
+		Error('The map has not been completely vanquished.')
 		Return 1
 	EndIf
 	Return 0

@@ -934,6 +934,7 @@ Global Const $ID_Naga_Pelt					= 833
 Global Const $ID_Feathered_Crest			= 835
 Global Const $ID_Feathered_Scalp			= 836
 Global Const $ID_Kappa_Hatchling_Shell		= 838
+Global Const $ID_Stolen_Supplies			= 840
 Global Const $ID_Black_Pearl				= 841
 Global Const $ID_Rot_Wallow_Tusk			= 842
 Global Const $ID_Kraken_Eye					= 843
@@ -1034,7 +1035,7 @@ Local Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spike
 	$ID_Decayed_Orr_Emblem, $ID_Igneous_Spider_Leg, $ID_Molten_Eye, $ID_Fiery_Crest, $ID_Igneous_Hump, $ID_Unctuous_Remains, $ID_Mahgo_Claw, $ID_Molten_Heart, $ID_Corrosive_Spider_Leg, $ID_Umbral_Eye, $ID_Shadowy_Crest, $ID_Dark_Remains, _
 	$ID_Gloom_Seed, $ID_Umbral_Skeletal_Limb, $ID_Shadowy_Husk, $ID_Enslavement_Stone, $ID_Kurzick_Bauble, $ID_Jade_Bracelet, $ID_Luxon_Pendant, $ID_Bone_Charm, $ID_Truffle, $ID_Skull_Juju, $ID_Mantid_Pincer, $ID_Stone_Horn, $ID_Keen_Oni_Claw, _
 	$ID_Dredge_Incisor, $ID_Dragon_Root, $ID_Stone_Carving, $ID_Warden_Horn, $ID_Pulsating_Growth, $ID_Forgotten_Trinket_Box, $ID_Augmented_Flesh, $ID_Putrid_Cyst, $ID_Mantis_Pincer, $ID_Naga_Pelt, $ID_Feathered_Crest, $ID_Feathered_Scalp, _
-	$ID_Kappa_Hatchling_Shell, $ID_Black_Pearl, $ID_Rot_Wallow_Tusk, $ID_Kraken_Eye, $ID_Azure_Crest, $ID_Kirin_Horn, $ID_Keen_Oni_Talon, $ID_Naga_Skin, $ID_Guardian_Moss, $ID_Archaic_Kappa_Shell, $ID_Stolen_Provisions, $ID_Soul_Stone, _
+	$ID_Kappa_Hatchling_Shell, $ID_Stolen_Supplies, $ID_Black_Pearl, $ID_Rot_Wallow_Tusk, $ID_Kraken_Eye, $ID_Azure_Crest, $ID_Kirin_Horn, $ID_Keen_Oni_Talon, $ID_Naga_Skin, $ID_Guardian_Moss, $ID_Archaic_Kappa_Shell, $ID_Stolen_Provisions, $ID_Soul_Stone, _
 	$ID_Vermin_Hide, $ID_Venerable_Mantid_Pincer, $ID_Celestial_Essence, $ID_Moon_Shell, $ID_Copper_Shilling, $ID_Gold_Doubloon, $ID_Silver_Bullion_Coin, $ID_Demonic_Relic, $ID_Margonite_Mask, $ID_Kournan_Pendant, $ID_Mummy_Wrapping, _
 	$ID_Sandblasted_Lodestone, $ID_Inscribed_Shard, $ID_Dusty_Insect_Carapace, $ID_Giant_Tusk, $ID_Insect_Appendage, $ID_Juvenile_Termite_Leg, $ID_Sentient_Root, $ID_Sentient_Seed, $ID_Skale_Tooth, $ID_Skale_Claw, $ID_Skeleton_Bone, $ID_Cobalt_Talon, _
 	$ID_Skree_Wing, $ID_Insect_Carapace, $ID_Sentient_Lodestone, $ID_Immolated_Djinn_Essence, $ID_Roaring_Ether_Claw, $ID_Mandragor_Husk, $ID_Mandragor_Swamproot, $ID_Behemoth_Hide, $ID_Geode, $ID_Hunting_Minotaur_Horn, $ID_Mandragor_Root, _

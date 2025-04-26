@@ -36,7 +36,7 @@ Func RunTests($STATUS)
 	;	GetOwnLocation()
 	;	Sleep(2000)
 	;WEnd
-	SellEverythingToMerchant(DefaultShouldSellItem, True)
+	;SellEverythingToMerchant(DefaultShouldSellItem, True)
 
 	;Local $item = GetItemBySlot(1, 1)
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
@@ -54,11 +54,11 @@ Func RunTests($STATUS)
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
 	;_dlldisplay($target)
-	;Out(GetEnergy(-2))
-	;Out(GetSkillTimer())
-	;Out(DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'TimeStamp'))
-	;Out(GetEffectTimeRemaining(GetEffect($ID_Shroud_of_Distress)))
-	;Out(_dlldisplay(GetEffect($ID_Shroud_of_Distress)))
+	;Info(GetEnergy(-2))
+	;Info(GetSkillTimer())
+	;Info(DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'TimeStamp'))
+	;Info(GetEffectTimeRemaining(GetEffect($ID_Shroud_of_Distress)))
+	;Info(_dlldisplay(GetEffect($ID_Shroud_of_Distress)))
 	;RndSleep(1000)
 
 	;Return 0
@@ -68,9 +68,9 @@ EndFunc
 
 
 Func PrintNPCState($npc)
-	Out('ID: ' & DllStructGetData($npc, 'ID'))
-	Out('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
-	Out('ModelState: ' & DllStructGetData($npc, 'ModelState'))
+	Info('ID: ' & DllStructGetData($npc, 'ID'))
+	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
+	Info('ModelState: ' & DllStructGetData($npc, 'ModelState'))
 EndFunc
 
 
@@ -79,19 +79,19 @@ Func DynamicExecution($args)
 	Local $arguments = ParseFunctionArguments($args)
 	Switch $arguments[0]
 		Case 0
-			Out('Call to nothing ?!')
+			Error('Call to nothing ?!')
 			Return
 		Case 1
-			Out('Call to ' & $arguments[1])
+			Info('Call to ' & $arguments[1])
 			Call($arguments[1])
 		Case 2
-			Out('Call to ' & $arguments[1] & ' ' & $arguments[2])
+			Info('Call to ' & $arguments[1] & ' ' & $arguments[2])
 			Call($arguments[1], $arguments[2])
 		Case 3
-			Out('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3])
+			Info('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3])
 			Call($arguments[1], $arguments[2], $arguments[3])
 		Case 4
-			Out('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3] & ' ' & $arguments[4])
+			Info('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3] & ' ' & $arguments[4])
 			Call($arguments[1], $arguments[2], $arguments[3], $arguments[4])
 		Case Else
 			MsgBox(0, 'Error', 'Too many arguments provided to that function.')
@@ -105,17 +105,17 @@ Func ParseFunctionArguments($functionCall)
 	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
 
 	Local $arguments[2] = [1, $functionName]
-	Out($functionName)
+	Info($functionName)
 	Local $commaPosition = $openParenthesisPosition + 1
 	Local $temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
 	While $temp <> 0
 		_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, $temp - $commaPosition))
-		Out(StringMid($functionCall, $commaPosition, $temp - $commaPosition))
+		Info(StringMid($functionCall, $commaPosition, $temp - $commaPosition))
 		$commaPosition = $temp + 1
 		$temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
 	WEnd
 	_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
-	Out(StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
+	Info(StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
 	$arguments[0] = Ubound($arguments) - 1
 	Return $arguments
 EndFunc
@@ -125,7 +125,7 @@ EndFunc
 ;~ Get your own location
 Func GetOwnLocation()
 	Local $lMe = GetAgentByID(-2)
-	Out('X: ' & DllStructGetData($lMe, 'X') & ', Y: ' & DllStructGetData($lMe, 'Y'))
+	Info('X: ' & DllStructGetData($lMe, 'X') & ', Y: ' & DllStructGetData($lMe, 'Y'))
 EndFunc
 
 
@@ -424,7 +424,7 @@ Func MoveItemsToEquipmentBag()
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
 	If $countEmptySlots < 1 Then
-		;Out('No space in equipment bag to move the items to')
+		Debug('No space in equipment bag to move the items to')
 		Return
 	EndIf
 
@@ -434,7 +434,7 @@ Func MoveItemsToEquipmentBag()
 			Local $item = GetItemBySlot($bagId, $slot)
 			If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
 				If $countEmptySlots < 1 Then
-					;Out('No space in equipment bag to move the items to')
+					Debug('No space in equipment bag to move the items to')
 					Return
 				EndIf
 				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
@@ -449,7 +449,7 @@ EndFunc
 
 ;~ Sort the inventory in this order :
 Func SortInventory()
-	Out('Sorting inventory')
+	Info('Sorting inventory')
 	;						0-Lockpicks 1-Books	2-Consumables	3-Trophies	4-Tomes	5-Materials	6-Others	7-Armor Salvageables[Gold,	8-Purple,	9-Blue	10-White]	11-Weapons [Green,	12-Gold,	13-Purple,	14-Blue,	15-White]	16-Armor (Armor salvageables, weapons and armor start from the end)
 	Local $itemsCounts = [	0,			0,		0,				0,			0,		0,			0,			0,							0,			0,		0,			0,					0,			0,			0,			0,			0]
 	Local $bagsSizes[6]
@@ -594,7 +594,7 @@ Func SortInventory()
 		EndIf
 
 		$bagAndSlot = GetBagAndSlotFromGeneralSlot($bagsSizes, $itemsPositions[$category])
-		;Out('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
+		Debug('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
 		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
 		$itemsPositions[$category] += 1
 		RndSleep(50)
@@ -634,27 +634,27 @@ Func GenericMoveItem($bagsSizes, $item, $genericSlot)
 	Local $i = 1
 	For $i = 1 To 4
 		If $genericSlot <= $bagsSizes[$i] Then
-			Out('to bag ' & $i & ' position ' & $genericSlot)
+			Debug('to bag ' & $i & ' position ' & $genericSlot)
 			;MoveItem($item, $i, $genericSlot)
 			Return
 		Else
 			$genericSlot -= $bagsSizes[$i]
 		EndIf
 	Next
-	Out('to bag ' & $i & ' position ' & $genericSlot)
+	Debug('to bag ' & $i & ' position ' & $genericSlot)
 	;MoveItem($item, $i, $genericSlot)
 EndFunc
 
 
 ;~ Balance character gold to the amount given
 Func BalanceCharacterGold($goldAmount)
-	Out('Balancing characters gold')
+	Info('Balancing characters gold')
 	Local $GCharacter = GetGoldCharacter()
 	Local $GStorage = GetGoldStorage()
 	If $GStorage > 950000 Then
-		Out('Too much gold in chest, use some.')
+		Info('Too much gold in chest, use some.')
 	ElseIf $GStorage < 50000 Then
-		Out('Not enough gold in chest, get some.')
+		Info('Not enough gold in chest, get some.')
 	ElseIf $GCharacter > $goldAmount Then
 		DepositGold($GCharacter - $goldAmount)
 	ElseIf $GCharacter < $goldAmount Then
@@ -752,7 +752,6 @@ Func FindAllInStorages($firstBag, $lastBag, $item)
 	Local $itemBagsAndSlots[0] = []
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $extraID = ($itemID == $ID_Dyes) ? DllStructGetData($item, 'ExtraID') : -1
-	Out($extraID)
 	Local $storageItem
 
 	For $bag = $firstBag To $lastBag
@@ -878,7 +877,7 @@ EndFunc
 
 ;~ Identify all items from inventory
 Func IdentifyAllItems()
-	Out('Identifying all items')
+	Info('Identifying all items')
 	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		Local $item
@@ -898,9 +897,9 @@ EndFunc
 
 ;~ Salvage all items from inventory (non functional)
 Func SalvageAllItems()
-	Out('Salvaging all items')
+	Info('Salvaging all items')
 	For $bagIndex = 1 To 4
-		Out('Salvaging bag' & $bagIndex)
+		Debug('Salvaging bag' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $i = 1 To $bagSize
 			SalvageItemAt($bagIndex, $i)
@@ -910,23 +909,23 @@ EndFunc
 
 
 Func SalvageItemAt($bag, $slot)
-	Out('Salvaging bag ' & $bag & ', slot ' & $slot)
+	Debug('Salvaging bag ' & $bag & ', slot ' & $slot)
 	Local $item = GetItemBySlot($bag, $slot)
-	Out('ItemID ' & DllStructGetData($item, 'ID'))
+	Debug('ItemID ' & DllStructGetData($item, 'ID'))
 	If DllStructGetData($item, 'ID') = 0 Then Return
 
 	Local $salvageKit = FindSalvageKitOrBuySome()
-	Out('Salvage kit ' & $salvageKit)
+	Debug('Salvage kit ' & $salvageKit)
 	If (ShouldSalvageItem($item) And CountSlots() > 0) Then
-		Out('Starting salvage')
+		Debug('Starting salvage')
 		SalvageItem($item, $salvageKit)
 	;	RndSleep(500)
 	;	If GetRarity($item) == $RARITY_gold Then
-	;		Out('Sending enter')
+	;		Debug('Sending enter')
 	;		ControlSend(GetWindowHandle(), '', '', '{Enter}')
 	;		RndSleep(500)
 	;	EndIf
-	;	Out('Salvage done')
+	;	Debug('Salvage done')
 	EndIf
 EndFunc
 
@@ -947,13 +946,13 @@ EndFunc
 Func SalvageItem($itemID, $kit)
 	If IsDllStruct($itemID) Then $itemID = DllStructGetData($itemID, 'ID')
 	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
-	Out('Reading')
+	Debug('Reading')
 	Local $salvageSessionID = MemoryReadPtr($baseAddressPtr, $offset)
-	Out('Salvage session ' & $salvageSessionID[1])
+	Debug('Salvage session ' & $salvageSessionID[1])
 	DllStructSetData($salvageStruct, 2, $itemID)
 	DllStructSetData($salvageStruct, 3, $kit)
 	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
-	Out('Enqueueing')
+	Debug('Enqueueing')
 	Enqueue($salvageStructPtr, 16)
 EndFunc
 
@@ -968,7 +967,7 @@ Func FindIdentificationKitOrBuySome()
 	EndIf
 	
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Out('Moving to merchant')
+	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
@@ -998,7 +997,7 @@ Func FindSalvageKitOrBuySome()
 	EndIf
 	
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Out('Moving to merchant')
+	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
@@ -1380,17 +1379,17 @@ EndFunc
 #Region NPCs
 ;~ Print NPC informations
 Func PrintNPCInformations($npc)
-	Out('ID: ' & DllStructGetData($npc, 'ID'))
-	Out('X: ' & DllStructGetData($npc, 'X'))
-	Out('Y: ' & DllStructGetData($npc, 'Y'))
-	Out('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
-	Out('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
-	Out('Effects: ' & DllStructGetData($npc, 'Effects'))
-	Out('ModelState: ' & DllStructGetData($npc, 'ModelState'))
-	Out('NameProperties: ' & DllStructGetData($npc, 'NameProperties'))
-	Out('Type: ' & DllStructGetData($npc, 'Type'))
-	Out('ExtraType: ' & DllStructGetData($npc, 'ExtraType'))
-	Out('GadgetID: ' & DllStructGetData($npc, 'GadgetID'))
+	Info('ID: ' & DllStructGetData($npc, 'ID'))
+	Info('X: ' & DllStructGetData($npc, 'X'))
+	Info('Y: ' & DllStructGetData($npc, 'Y'))
+	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
+	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
+	Info('Effects: ' & DllStructGetData($npc, 'Effects'))
+	Info('ModelState: ' & DllStructGetData($npc, 'ModelState'))
+	Info('NameProperties: ' & DllStructGetData($npc, 'NameProperties'))
+	Info('Type: ' & DllStructGetData($npc, 'Type'))
+	Info('ExtraType: ' & DllStructGetData($npc, 'ExtraType'))
+	Info('GadgetID: ' & DllStructGetData($npc, 'GadgetID'))
 EndFunc
 
 
@@ -1731,7 +1730,7 @@ EndFunc
 
 #Region Map Clearing Utilities
 Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
-	Out('Hunting ' & $s)
+	Info('Hunting ' & $s)
 	Local $blocked = 0
 	Local $me = GetAgentByID(-2)
 	Local $coordsX = DllStructGetData($me, 'X')
@@ -1800,7 +1799,7 @@ Func IsGroupAlive()
 			$deadMembers += 1
 		EndIf
 		If $deadMembers >= 5 Then
-			Out('Group wiped, back to oupost to save time.')
+			Notice('Group wiped, back to oupost to save time.')
 			Return False
 		EndIf
 	Next

@@ -102,7 +102,7 @@ EndFunc
 
 Func FollowerSetup()
 	$Player_Profession_ID = GetHeroProfession(0, False)
-	Out('Setting up follower bot')
+	Info('Setting up follower bot')
 	Switch $Player_Profession_ID
 		Case $ID_Warrior
 			DefaultSetup()
@@ -138,12 +138,12 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	GoPlayer($firstPlayerID)
 	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 	If $foesCount > 0 Then
-		Out('Foes in range detected, starting fight')
+		Debug('Foes in range detected, starting fight')
 		While Not GetIsDead(-2) And $foesCount > 0
 			$FightFunction()
 			$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT)
 		WEnd
-		Out('Fight is over')
+		Debug('Fight is over')
 	EndIf
 	CheckForChests()
 
@@ -198,7 +198,7 @@ EndFunc
 
 
 Func ParagonSetup()
-	Out('Paragon setup - Heroic Refrain')
+	Info('Paragon setup - Heroic Refrain')
 
 	Local $Heroic_Refrain = 8
 	;Local $Aggressive_Refrain = 7
@@ -225,7 +225,7 @@ EndFunc
 
 
 Func ParagonRefreshShouts()
-	Out('Refresh shouts on group')
+	Info('Refresh shouts on group')
 	Local Static $selfRecast = False
 	MoveToMiddleOfGroupWithTimeout(5000)
 	RndSleep(20)
