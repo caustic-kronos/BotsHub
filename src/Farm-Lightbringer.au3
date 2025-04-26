@@ -217,7 +217,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 
 	Local $skillCastTimer
 
-	Local $target = GetNearestNPCInRangeOfCoords(3, $x, $y, $range)
+	Local $target = GetNearestNPCInRangeOfCoords($x, $y, 3, $range)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		CheckForChests($RANGE_SPIRIT)
@@ -233,18 +233,20 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 		RndSleep(20)
 	WEnd
 
+	Local $me = GetMyAgent()
 	Local $foes = 1
 	While $foes <> 0
-		$target = GetNearestEnemyToAgent(-2)
+		$target = GetNearestEnemyToAgent($me)
 		If (IsRecharged($Junundu_Tunnel)) Then UseSkillEx($Junundu_Tunnel)
 		CallTarget($target)
 		Sleep(20)
 		If (GetSkillbarSkillAdrenaline($Junundu_Smash) == 130) Then UseSkillEx($Junundu_Smash)
 		AttackOrUseSkill($weaponAttackTime, $Junundu_Bite, $Junundu_Strike)
-		$foes = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
+		$me = GetMyAgent()
+		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
 
-	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
+	If DllStructGetData($me, 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
 	RndSleep(1000)

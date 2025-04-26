@@ -134,10 +134,11 @@ Func KournansFarmLoop()
 
 	; Find the kournans and get in spirit range
 	; Move to the correct range of the enemies (who are not enemies at this points)(close so that they are affected by spirits but not too close)
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(9600, -650, null, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_SPIRIT - 500)
-	Local $X = DllStructGetData(GetAgentById(-2), 'X')
-	Local $Y = DllStructGetData(GetAgentById(-2), 'Y')
+	Local $me = GetMyAgent()
+	Local $X = DllStructGetData($me, 'X')
+	Local $Y = DllStructGetData($me, 'Y')
 	CommandAll($X, $Y)
 	RndSleep(2000)
 	CastOnlyNecessarySpiritsAndBoons($X, $Y)
@@ -162,7 +163,7 @@ Func KournansFarmLoop()
 	RndSleep(2000)
 	Info('Looting')
 	PickUpItems()
-	Local $result = GetIsDead(-2) ? 1 : 0
+	Local $result = GetIsDead() ? 1 : 0
 	BackToSunspearSanctuary()
 	Return $result
 EndFunc
@@ -183,7 +184,7 @@ Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_RitualLord)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_EarthBind)
 	RndSleep(1500)
-	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, -2)
+	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, GetMyAgent())
 	RndSleep(1500)
 EndFunc
 
@@ -209,7 +210,7 @@ Func CastFullSpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_RitualLord)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_EarthBind)
 	RndSleep(1500)
-	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, -2)
+	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, GetMyAgent())
 	RndSleep(1500)
 EndFunc
 

@@ -88,7 +88,7 @@ Func CorsairsFarmLoop()
 	RndSleep(100)
 	UseSkillEx($Corsairs_WhirlingDefense)
 	RndSleep(100)
-	UseHeroSkill(1, $Corsairs_MakeHaste, -2)
+	UseHeroSkill(1, $Corsairs_MakeHaste, GetMyAgent())
 	RndSleep(100)
 	$Bohseda_Timer = TimerInit()
 	CommandHero(1, -13750, -10150)
@@ -102,7 +102,7 @@ Func CorsairsFarmLoop()
 	CastAllDefensiveSkills()
 	MoveTo(-7300, -4500)
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
@@ -110,14 +110,14 @@ Func CorsairsFarmLoop()
 	MoveTo(-8100, -6550)
 	DefendAgainstCorsairs()
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
 
 	MoveTo(-8850, -6950)
 	WaitForEnemyInRange()
-	UseSkillEx($Corsairs_HeartOfShadow, GetNearestEnemyToAgent(-2))
+	UseSkillEx($Corsairs_HeartOfShadow, GetNearestEnemyToAgent(GetMyAgent()))
 	DefendAgainstCorsairs()
 
 	MoveTo(-9783,-7073, 0)
@@ -126,7 +126,7 @@ Func CorsairsFarmLoop()
 	RndSleep(20)
 	CastAllDefensiveSkills()
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
@@ -137,23 +137,23 @@ Func CorsairsFarmLoop()
 	Dialog(0x00000085)
 	RndSleep(1000)
 
-	While IsRecharged($Corsairs_WhirlingDefense) And Not GetIsDead(-2)
+	While IsRecharged($Corsairs_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($Corsairs_WhirlingDefense)
 		RndSleep(200)
 	WEnd
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
 
 	For $i = 0 To 13
 		DefendAgainstCorsairs()
-		If $i < 13 Then Attack(GetNearestEnemyToAgent(-2))
+		If $i < 13 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RndSleep(1000)
 	Next
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
@@ -163,22 +163,22 @@ Func CorsairsFarmLoop()
 	RndSleep(100)
 
 	Local $counter = 0
-	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_AREA)
-	While Not GetIsDead(-2) And $foesCount > 0 And $counter < 22
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
+	While Not GetIsDead() And $foesCount > 0 And $counter < 22
 		DefendAgainstCorsairs()
-		If $counter > 3 Then Attack(GetNearestEnemyToAgent(-2))
+		If $counter > 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RndSleep(1000)
 		$counter = $counter + 1
-		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_AREA)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	WEnd
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
 		Return 1
 	EndIf
 
 	Info('Looting')
-	$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_SPIRIT)
+	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPIRIT)
 	If $foesCount == 0 Then
 		PickUpItems(OnlyCastTogetherAsOne)
 	Else
@@ -240,17 +240,19 @@ EndFunc
 
 
 Func WaitForEnemyInRange()
-	Local $target = GetNearestEnemyToAgent(-2)
-	While (Not GetIsDead(-2) And GetDistance($target, -2) > $RANGE_SPELLCAST)
+	Local $me = GetMyAgent()
+	Local $target = GetNearestEnemyToAgent($me)
+	While (Not GetIsDead() And GetDistance($target, $me) > $RANGE_SPELLCAST)
 		DefendAgainstCorsairs()
 		RndSleep(500)
-		$target = GetNearestEnemyToAgent(-2)
+		$me = GetMyAgent()
+		$target = GetNearestEnemyToAgent($me)
 	WEnd
 EndFunc
 
 
 Func WaitForBohseda()
-	While (Not GetIsDead(-2) And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy(-2) < 30))
+	While (Not GetIsDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
 		DefendAgainstCorsairs(True)
 		RndSleep(500)
 	WEnd

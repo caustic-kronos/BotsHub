@@ -106,41 +106,41 @@ Func DragonMossFarmLoop()
 	; Safety
 	MoveTo(-6575, 18575, 0)
 	UseSkillEx($DM_DwarvenStability)
-	While Not GetIsDead(-2) And Not IsRecharged($DM_ShadowForm)
+	While Not GetIsDead() And Not IsRecharged($DM_ShadowForm)
 		RndSleep(500)
 	WEnd
 	UseSkillEx($DM_DeadlyParadox)
 	RndSleep(50)
 	UseSkillEx($DM_ShadowForm)
 	RndSleep(50)
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToSaintAnjekaOutpost()
 		Return 1
 	EndIf
 	RndSleep(1000)
 	; Killing
-	Local $target = GetNearestEnemyToAgent(-2)
+	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
-	While IsRecharged($DM_DeathsCharge) And Not GetIsDead(-2)
+	While IsRecharged($DM_DeathsCharge) And Not GetIsDead()
 		UseSkillEx($DM_DeathsCharge, $target)
 		RndSleep(200)
 	WEnd
-	While IsRecharged($DM_WhirlingDefense) And Not GetIsDead(-2)
+	While IsRecharged($DM_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($DM_WhirlingDefense)
 		RndSleep(200)
 	WEnd
 
-	Local $foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	Local $counter = 0
-	While Not GetIsDead(-2) And $foesCount > 0 And $counter < 16
+	While Not GetIsDead() And $foesCount > 0 And $counter < 16
 		If IsRecharged($DM_ShadowForm) Then UseSkillEx($DM_ShadowForm)
 		RndSleep(1000)
 		$counter = $counter + 1
-		$foesCount = CountFoesInRangeOfAgent(-2, $RANGE_NEARBY)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
 
-	If GetIsDead(-2) Then
+	If GetIsDead() Then
 		BackToSaintAnjekaOutpost()
 		Return 1
 	EndIf

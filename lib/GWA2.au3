@@ -164,6 +164,7 @@ Global $labelsStruct[1][2]
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
 Global $agentStructTemplate = 'ptr vtable;dword unknown1[4];dword timer;dword timer2;ptr nextAgent;dword unknown2[3];long Id;float Z;float width1;float height1;float width2;float height2;float width3;float height3;float rotation;float rotation_cos;float rotation_sin;dword NameProperties;dword ground;dword h0060;float terrain_normal_x;float terrain_normal_y;dword terrain_normal_z;byte h0070[4];float X;float Y;dword plane;byte h0080[4];float NameTagX;float NameTagY;float NameTagZ;short visual_effects;short h0092;dword h0094[2];long Type;float MoveX;float MoveY;dword h00A8;float rotation_cos2;float rotation_sin2;dword h00B4[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword h00D4[3];float animation_type;dword h00E4[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short agent_model_type;dword transmog_npc_id;ptr Equip;dword h0100;ptr tags;short h0108;byte Primary;byte Secondary;byte Level;byte Team;byte h010E[2];dword h0110;float energy_regen;float overcast;float EnergyPercent;dword MaxEnergy;dword h0124;float HPPips;dword h012C;float HP;dword MaxHP;dword Effects;dword h013C;byte Hex;byte h0141[19];dword ModelState;dword TypeMap;dword h015C[4];dword InSpiritRange;dword visible_effects;dword visible_effects_ID;dword visible_effects_has_ended;dword h017C;dword LoginNumber;float animation_speed;dword animation_code;dword animation_id;byte h0190[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short h01B6;byte weapon_item_type;byte offhand_item_type;short WeaponItemId;short OffhandItemId'
+;Global $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
 Global $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
 Global $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
 Global $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword Id1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword Id2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword Id3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword Id4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword Id5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword Id6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword Id7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword Id8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
@@ -1495,6 +1496,7 @@ EndFunc
 Func DisableAllHeroSkills($heroIndex)
 	For $i = 1 to 8
 		DisableHeroSkillSlot($heroIndex, $i)
+		Sleep(20 + GetPing())
 	Next
 EndFunc
 
@@ -1519,8 +1521,10 @@ EndFunc
 
 ;~ Order a hero to use a skill.
 Func UseHeroSkill($hero, $skillSlot, $target = 0)
+	Local $targetId = 0
+	If $target <> 0 Then $targetId = DllStructGetData($target, 'ID')
 	DllStructSetData($useHeroSkillStruct, 2, GetHeroID($hero))
-	DllStructSetData($useHeroSkillStruct, 3, ConvertID($target))
+	DllStructSetData($useHeroSkillStruct, 3, $targetId)
 	DllStructSetData($useHeroSkillStruct, 4, $skillSlot - 1)
 	Enqueue($useHeroSkillStructPtr, 16)
 EndFunc
@@ -1553,7 +1557,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = null)
 
 	Do
 		Sleep(100)
-		$me = GetAgentByID(-2)
+		$me = GetMyAgent()
 		If DllStructGetData($me, 'HP') <= 0 Then ExitLoop
 		$mapLoadingOld = $mapLoading
 		$mapLoading = GetInstanceType()
@@ -1571,19 +1575,19 @@ EndFunc
 
 ;~ Run to or follow a player.
 Func GoPlayer($agent)
-	Return SendPacket(0x8, $HEADER_INTERACT_PLAYER , ConvertID($agent))
+	Return SendPacket(0x8, $HEADER_INTERACT_PLAYER , DllStructGetData($agent, 'ID'))
 EndFunc
 
 
 ;~ Talk to an NPC
 Func GoNPC($agent)
-	Return SendPacket(0xC, $HEADER_INTERACT_NPC, ConvertID($agent))
+	Return SendPacket(0xC, $HEADER_INTERACT_NPC, DllStructGetData($agent, 'ID'))
 EndFunc
 
 
 ;~ Run to a signpost.
 Func GoSignpost($agent)
-	Return SendPacket(0xC, $HEADER_SIGNPOST_RUN, ConvertID($agent), 0)
+	Return SendPacket(0xC, $HEADER_SIGNPOST_RUN, DllStructGetData($agent, 'ID'), 0)
 EndFunc
 
 
@@ -1609,7 +1613,7 @@ Func GoToAgent($agent, $GoFunction)
 	$GoFunction($agent)
 	Do
 		Sleep(100)
-		$me = GetAgentByID(-2)
+		$me = GetMyAgent()
 		If DllStructGetData($me, 'HP') <= 0 Then ExitLoop
 		$mapLoadingOld = $mapLoading
 		$mapLoading = GetInstanceType()
@@ -1627,7 +1631,7 @@ EndFunc
 
 ;~ Attack an agent.
 Func Attack($agent, $callTarget = False)
-	Return SendPacket(0xC, $HEADER_ACTION_ATTACK, ConvertID($agent), $callTarget)
+	Return SendPacket(0xC, $HEADER_ACTION_ATTACK, DllStructGetData($agent, 'ID'), $callTarget)
 EndFunc
 
 
@@ -1875,14 +1879,14 @@ EndFunc
 #Region Targeting
 ;~ Target an agent.
 Func ChangeTarget($agent)
-	DllStructSetData($changeTargetStruct, 2, ConvertID($agent))
+	DllStructSetData($changeTargetStruct, 2, DllStructGetData($agent, 'ID'))
 	Enqueue($changeTargetStructPtr, 8)
 EndFunc
 
 
 ;~ Call target.
 Func CallTarget($target)
-	Return SendPacket(0xC, $HEADER_CALL_TARGET, 0xA, ConvertID($target))
+	Return SendPacket(0xC, $HEADER_CALL_TARGET, 0xA, DllStructGetData($target, 'ID'))
 EndFunc
 
 
@@ -2095,25 +2099,26 @@ EndFunc
 
 
 ;~ Use a skill.
-Func UseSkill($skillSlot, $target = -2, $callTarget = False)
+Func UseSkill($skillSlot, $target, $callTarget = False)
+	If $target == -2 Then $target = GetMyAgent()
 	DllStructSetData($useSkillStruct, 2, $skillSlot)
-	DllStructSetData($useSkillStruct, 3, ConvertID($target))
+	DllStructSetData($useSkillStruct, 3, DllStructGetData($target, 'ID'))
 	DllStructSetData($useSkillStruct, 4, $callTarget)
 	Enqueue($useSkillStructPtr, 16)
 EndFunc
 
 
 Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
-	If GetIsDead(-2) Or Not IsRecharged($skillSlot) Then Return
+	If GetIsDead() Or Not IsRecharged($skillSlot) Then Return
 	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
 	Local $Energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy(-2) < $Energy Then Return
+	If GetEnergy() < $Energy Then Return
 	Local $aftercast = DllStructGetData($Skill, 'Aftercast')
 	Local $deadlock = TimerInit()
 	UseSkill($skillSlot, $target)
 	Do
 		Sleep(50)
-		If GetIsDead(-2) Then Return
+		If GetIsDead() Then Return
 	Until (Not IsRecharged($skillSlot)) Or (TimerDiff($deadlock) > $timeout)
 	Sleep($aftercast * 1000)
 EndFunc
@@ -2167,7 +2172,7 @@ EndFunc
 
 
 ;~ Stop maintaining enchantment on target.
-Func DropBuff($skillID, $agentID, $heroIndex = 0)
+Func DropBuff($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
 	Local $offset[4]
@@ -2190,7 +2195,7 @@ Func DropBuff($skillID, $agentID, $heroIndex = 0)
 				$offset[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
 				DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
-				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == ConvertID($agentID)) Then
+				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID')) Then
 					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffId'))
 					ExitLoop 2
 				EndIf
@@ -2750,12 +2755,11 @@ EndFunc
 
 
 ;~ Returns item by agent ID.
-Func GetItemByAgentID($agent)
+Func GetItemByAgentID($agentID)
 	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
 	Local $itemArraySize = MemoryReadPtr($baseAddressPtr, $offset)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
-	Local $agentID = ConvertID($agent)
 
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
@@ -2787,18 +2791,18 @@ EndFunc
 
 
 ;~ Returns the nearest item by model ID to an agent.
-Func GetNearestItemByModelIDToAgent($modelID, $agent = -2)
+Func GetNearestItemByModelIDToAgent($modelID, $agent)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
 	If GetMaxAgents() > 0 Then
 		For $i = 1 To GetMaxAgents()
-			Local $a = GetAgentPtr($i)
-			If Not GetIsMovable($a) Then ContinueLoop
+			Local $agentPtr = GetAgentByID($i)
+			If Not GetIsMovable($agentPtr) Then ContinueLoop
 			Local $agentModelID = DllStructGetData(GetItemByAgentID($i), 'ModelID')
 			If $agentModelID = $modelID Then
-				$distance = (DllStructGetData($agent, 'X') - DllStructGetData($a, 'X')) ^ 2 + (DllStructGetData($agent, 'Y') - DllStructGetData($a, 'Y')) ^ 2
+				$distance = (DllStructGetData($agent, 'X') - DllStructGetData($agentPtr, 'X')) ^ 2 + (DllStructGetData($agent, 'Y') - DllStructGetData($agentPtr, 'Y')) ^ 2
 				If $distance < $nearestDistance Then
-					$nearestAgent = $a
+					$nearestAgent = $agentPtr
 					$nearestDistance = $distance
 				EndIf
 			EndIf
@@ -2958,7 +2962,7 @@ Func GetHeroNumberByAgentID($heroID)
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 0x18 * ($i - 1)
 		$agentID = MemoryReadPtr($baseAddressPtr, $offset)
-		If $agentID[1] == ConvertID($heroID) Then Return $i
+		If $agentID[1] == $heroID Then Return $i
 	Next
 	Return 0
 EndFunc
@@ -2971,7 +2975,7 @@ Func GetHeroNumberByHeroID($heroID)
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 8 + 0x18 * ($i - 1)
 		$agentID = MemoryReadPtr($baseAddressPtr, $offset)
-		If $agentID[1] == ConvertID($heroID) Then Return $i
+		If $agentID[1] == $heroID Then Return $i
 	Next
 	Return 0
 EndFunc
@@ -3003,8 +3007,15 @@ EndFunc
 
 
 #Region Agent
+;~ Return agent of the player
+Func GetMyAgent()
+	Return GetAgentByID(GetMyID())
+EndFunc
+
+
 ;~ Returns an agent struct.
-Func GetAgentByID($agentID = -2)
+Func GetAgentByID($agentID)
+	If $agentID = -2 Then $agentID = GetMyID()
 	Local $agentPtr = GetAgentPtr($agentID)
 	Local $agentStruct = DllStructCreate($agentStructTemplate)
 	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', '')
@@ -3013,8 +3024,8 @@ EndFunc
 
 
 ;~ Internal use for GetAgentByID()
-Func GetAgentPtr($agentID = -2)
-	Local $offset[3] = [0, 4 * ConvertID($agentID), 0]
+Func GetAgentPtr($agentID)
+	Local $offset[3] = [0, 4 * $agentID, 0]
 	Local $lAgentStructAddress = MemoryReadPtr($agentBaseAddress, $offset)
 	Return $lAgentStructAddress[0]
 EndFunc
@@ -3028,7 +3039,7 @@ EndFunc
 
 ;~ Returns the target of an agent.
 Func GetTarget($agent)
-	Return MemoryRead(GetValue('TargetLogBase') + 4 * ConvertID($agent))
+	Return MemoryRead(GetValue('TargetLogBase') + 4 * DllStructGetData($agent, 'ID'))
 EndFunc
 
 
@@ -3072,7 +3083,7 @@ EndFunc
 
 
 ;~ Returns the nearest signpost to an agent.
-Func GetNearestSignpostToAgent($agent = -2)
+Func GetNearestSignpostToAgent($agent)
 	Return GetNearestAgentToAgent($agent, 0x200)
 EndFunc
 
@@ -3093,7 +3104,7 @@ EndFunc
 
 
 ;~ Returns the nearest enemy to an agent.
-Func GetNearestEnemyToAgent($agent = -2)
+Func GetNearestEnemyToAgent($agent)
 	Return GetNearestAgentToAgent($agent, 0xDB, EnemyAgentFilter)
 EndFunc
 
@@ -3109,12 +3120,12 @@ EndFunc
 
 
 ;~ Returns the nearest agent to an agent.
-Func GetNearestAgentToAgent($agent = -2, $agentType = 0, $agentFilter = Null)
+Func GetNearestAgentToAgent($agent, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
 	Local $agentArray = GetAgentArray($agentType)
 	Local $agentID = DllStructGetData($agent, 'ID')
-	Local $ownID = DllStructGetData(-2, 'ID')
+	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 	Local $X = DllStructGetData($agent, 'X')
 	Local $Y = DllStructGetData($agent, 'Y')
 
@@ -3135,7 +3146,7 @@ EndFunc
 
 
 ;~ Returns the nearest item to an agent.
-Func GetNearestItemToAgent($agent = -2, $canPickUp = True)
+Func GetNearestItemToAgent($agent, $canPickUp = True)
 	If $canPickUp Then
 		Return GetNearestAgentToAgent($agent, 0x400, GetCanPickUp)
 	Else
@@ -3167,7 +3178,7 @@ Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
 	Local $agentArray = GetAgentArray($agentType)
-	Local $ownID = DllStructGetData(-2, 'ID')
+	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
 	For $i = 1 To $agentArray[0]
 		If DllStructGetData($agentArray[$i], 'ID') == $ownID Then ContinueLoop
@@ -3281,7 +3292,7 @@ Func GetPartyDanger($agentArray = 0, $party = 0)
 		Local $allegiance = DllStructGetData($agentArray[$i], 'Allegiance')
 		If $allegiance > 3 Then ContinueLoop			; ignore NPCs, spirits, minions, pets
 
-		Local $targetID = GetTarget(DllStructGetData($agentArray[$i], 'ID'))
+		Local $targetID = DllStructGetData(GetTarget($agentArray[$i]), 'ID')
 		Local $team = DllStructGetData($agentArray[$i], 'Team')
 		For $j = 1 To $party[0]
 			If $targetID == DllStructGetData($party[$j], 'ID') Then
@@ -3323,12 +3334,13 @@ EndFunc
 
 ;~ Returns energy of an agent. (Only self/heroes)
 Func GetEnergy($agent = -2)
+	If $agent == -2 Then $agent = GetMyAgent()
 	Return DllStructGetData($agent, 'EnergyPercent') * DllStructGetData($agent, 'MaxEnergy')
 EndFunc
 
 
 ;~ Returns health of an agent. (Must have caused numerical change in health)
-Func GetHealth($agent = -2)
+Func GetHealth($agent)
 	Return DllStructGetData($agent, 'HP') * DllStructGetData($agent, 'MaxHP')
 EndFunc
 
@@ -3375,7 +3387,8 @@ EndFunc
 
 
 ;~ Tests if an agent is dead.
-Func GetIsDead($agent)
+Func GetIsDead($agent = -2)
+	If $agent == -2 Then $agent = GetMyAgent()
 	Return BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0
 EndFunc
 
@@ -3432,7 +3445,7 @@ EndFunc
 
 ;~ Returns the name of an agent.
 Func GetAgentName($agent)
-	Local $address = $stringLogBaseAddress + 256 * ConvertID($agent)
+	Local $address = $stringLogBaseAddress + 256 * DllStructGetData($agent, 'ID')
 	Local $agentName = MemoryRead($address, 'wchar [128]')
 
 	If $agentName = '' Then
@@ -3468,7 +3481,7 @@ EndFunc
 
 
 ;~ Tests if you are currently maintaining buff on target.
-Func GetIsTargetBuffed($skillID, $agentID, $heroIndex = 0)
+Func GetIsTargetBuffed($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
 	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
@@ -3487,7 +3500,7 @@ Func GetIsTargetBuffed($skillID, $agentID, $heroIndex = 0)
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
 				Local $buffStruct = DllStructCreate($buffStructTemplate)
 				DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
-				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == ConvertID($agentID)) Then
+				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID') Then
 					Return $j + 1
 				EndIf
 			Next
@@ -3748,24 +3761,6 @@ Func GetMyID()
 EndFunc
 
 
-Func GetMyIDTest()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x680, 0x14]
-	Local $ptr = $baseAddressPtr
-	For $i = 0 To UBound($offset) - 2
-		$ptr = MemoryRead($ptr + $offset[$i+1], 'ptr')
-		If $ptr = 0 Or $ptr > 0x7FFFFFFF Then
-			Error('Invalid ptr at level ' & $i & ' → 0x' & Hex($ptr) & @CRLF)
-			Return -1
-		EndIf
-	Next
-
-	Local $myID = MemoryRead($ptr, 'dword')
-	Notice('Resolved MyID: ' & $myID & ' at 0x' & Hex($ptr) & @CRLF)
-
-	If $myID = 0 Or $myID > 999999 Then Return -1
-	Return $myID
-EndFunc
-
 ;~ Returns current target.
 Func GetCurrentTarget()
 	Return GetAgentByID(GetCurrentTargetID())
@@ -3993,7 +3988,7 @@ EndFunc
 
 
 ;~ Returns the distance between two agents.
-Func GetDistance($agent1 = -1, $agent2 = -2)
+Func GetDistance($agent1, $agent2)
 	Return Sqrt((DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2)
 EndFunc
 
@@ -4010,7 +4005,7 @@ Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 	Local $oddNodes = False
 	If $edges < 3 Then Return False
 	If $X = 0 Then
-		Local $me = GetAgentByID(-2)
+		Local $me = GetMyAgent()
 		$X = DllStructGetData($me, 'X')
 		$Y = DllStructGetData($me, 'Y')
 	EndIf
@@ -4026,23 +4021,6 @@ Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 		$j = $i
 	Next
 	Return $oddNodes
-EndFunc
-
-
-;~ Internal use for handing -1 and -2 agent IDs.
-Func ConvertID($agentID)
-	Select
-		Case $agentID = -2
-			Return GetMyID()
-		Case $agentID = -1
-			Return GetCurrentTargetID()
-		Case IsPtr($agentID) <> 0
-			Return MemoryRead($agentID + 0x2C, 'long')
-		Case IsDllStruct($agentID) <> 0
-			Return DllStructGetData($agentID, 'ID')
-		Case Else
-			Return $agentID
-	EndSelect
 EndFunc
 
 
@@ -6044,8 +6022,9 @@ EndFunc
 
 Func CheckArea($X, $Y)
 	Local $result = False
-	Local $agentX = DllStructGetData(-2, 'X')
-	Local $agentY = DllStructGetData(-2, 'Y')
+	Local $me = GetMyAgent()
+	Local $agentX = DllStructGetData($me, 'X')
+	Local $agentY = DllStructGetData($me, 'Y')
 
 	If ($agentX < $X + 500) And ($agentX > $X - 500) And ($agentY < $Y + 500) And ($agentY > $Y - 500) Then
 		$result = True
@@ -6137,17 +6116,18 @@ EndFunc
 Func GetBestTarget($range = 1320)
 	Local $bestTarget, $distance, $lowestSum = 100000000
 	Local $agentArray = GetAgentArray(0xDB)
+	Local $me = GetMyAgent()
 	For $i = 1 To $agentArray[0]
 		Local $distancesSum = 0
 		If DllStructGetData($agentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
 		If DllStructGetData($agentArray[$i], 'HP') <= 0 Then ContinueLoop
 		If DllStructGetData($agentArray[$i], 'ID') = GetMyID() Then ContinueLoop
-		If GetDistance($agentArray[$i]) > $range Then ContinueLoop
+		If GetDistance($agentArray[$i], $me) > $range Then ContinueLoop
 		For $j = 1 To $agentArray[0]
 			If DllStructGetData($agentArray[$j], 'Allegiance') <> 3 Then ContinueLoop
 			If DllStructGetData($agentArray[$j], 'HP') <= 0 Then ContinueLoop
 			If DllStructGetData($agentArray[$j], 'ID') = GetMyID() Then ContinueLoop
-			If GetDistance($agentArray[$j]) > $range Then ContinueLoop
+			If GetDistance($agentArray[$j], $me) > $range Then ContinueLoop
 			$distance = GetDistance($agentArray[$i], $agentArray[$j])
 			$distancesSum += $distance
 		Next
@@ -6176,14 +6156,7 @@ EndFunc
 
 
 Func TradePlayer($agent)
-	Local $agentID
-
-	If IsDllStruct($agent) Then
-		$agentID = DllStructGetData($agent, 'ID')
-	Else
-		$agentID = ConvertID($agent)
-	EndIf
-	SendPacket(0x08, $HEADER_TRADE_PLAYER, $agentID)
+	SendPacket(0x08, $HEADER_TRADE_PLAYER, DllStructGetData($agent, 'ID'))
 EndFunc
 
 

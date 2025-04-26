@@ -83,25 +83,25 @@ EndFunc
 
 ;~ Loot only iris
 Func PickUpIris()
-	Local $lAgent
-	Local $lItem
-	Local $lDeadlock
+	Local $agent
+	Local $item
+	Local $deadlock
 	Local $success = True
 	For $i = 1 To GetMaxAgents()
-		$lAgent = GetAgentByID($i)
-		If (DllStructGetData($lAgent, 'Type') <> 0x400) Then ContinueLoop
-		$lItem = GetItemByAgentID($i)
-		If (DllStructGetData(($lItem), 'ModelID') == $ID_Red_Iris_Flower) Then
-			Info('Iris: ' & Round(DllStructGetData($lAgent, 'X')) & ', Y: ' & Round(DllStructGetData($lAgent, 'Y')))
+		$agent = GetAgentByID($i)
+		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
+		$item = GetItemByAgentID($i)
+		If (DllStructGetData(($item), 'ModelID') == $ID_Red_Iris_Flower) Then
+			Info('Iris: ' & Round(DllStructGetData($agent, 'X')) & ', Y: ' & Round(DllStructGetData($agent, 'Y')))
 			Local $loggingFile = FileOpen(@ScriptDir & '/logs/edeniris_farm.csv' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-			FileWrite($loggingFile, Round(DllStructGetData($lAgent, 'X')) & ',' & Round(DllStructGetData($lAgent, 'Y')))
-			PickUpItem($lItem)
-			$lDeadlock = TimerInit()
+			FileWrite($loggingFile, Round(DllStructGetData($agent, 'X')) & ',' & Round(DllStructGetData($agent, 'Y')))
+			PickUpItem($item)
+			$deadlock = TimerInit()
 			While GetAgentExists($i)
 				RndSleep(500)
-				If GetIsDead(-2) Then Return
-				If TimerDiff($lDeadlock) > 20000 Then
-					Info('Could not get iris at ' & DllStructGetData($lAgent, 'X') & ', ' & DllStructGetData($lAgent, 'Y'))
+				If GetIsDead() Then Return
+				If TimerDiff($deadlock) > 20000 Then
+					Info('Could not get iris at ' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y'))
 					$success = False
 					ExitLoop
 				EndIf
