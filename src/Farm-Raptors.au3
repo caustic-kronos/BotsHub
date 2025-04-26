@@ -93,7 +93,7 @@ EndFunc
 
 ;~ Setup the Raptor farm for faster farm
 Func SetupRaptorFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
@@ -108,13 +108,13 @@ Func SetupRaptorFarm()
 	RndSleep(1000)
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
-	Out('Resign preparation complete')
+	Info('Resign preparation complete')
 EndFunc
 
 
 ;~ Farm loop
 Func RaptorsFarmLoop()
-	Out('Exiting to Riven Earth')
+	Info('Exiting to Riven Earth')
 	Move(20084, 16854)
 	RndSleep(1000)
 	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
@@ -123,13 +123,13 @@ Func RaptorsFarmLoop()
 	UseHeroSkill(1, $Raptors_Incoming)
 	GetBlessing()
 	MoveToBaseOfCave()
-	Out('Moving Hero away')
+	Info('Moving Hero away')
 	CommandAll(-25309, -4212)
 	GetRaptors()
 	KillRaptors()
 	RndSleep(1000)
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems(DefendWhilePickingUpItems)
 	RndSleep(1000)
 	PickUpItems(DefendWhilePickingUpItems)
@@ -141,16 +141,16 @@ EndFunc
 ;~ Defend skills to use while looting in case some mobs are still alive
 Func DefendWhilePickingUpItems()
 	If $RAPTORS_PROFESSION == 1 Then
-		If GetEnergy(-2) > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		If GetEnergy(-2) > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
-		If GetEnergy(-2) > 5 And IsRecharged($Raptors_SoldiersDefense) Then
+		If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
+		If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
+		If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
 			UseSkillEx($Raptors_SoldiersDefense)
-		ElseIf GetEnergy(-2) > 10 And IsRecharged($Raptors_WaryStance) Then
+		ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
 			UseSkillEx($Raptors_WaryStance)
 		EndIf
 	Else
-		If GetEnergy(-2) > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
-		If GetEnergy(-2) > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
+		If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
+		If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
 	EndIf
 EndFunc
 
@@ -159,7 +159,7 @@ EndFunc
 Func GetBlessing()
 	Local $Asura = GetAsuraTitle()
 	If $Asura < 160000 Then
-		Out('Getting asura title blessing')
+		Info('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
 		RndSleep(300)
 		Dialog(132)
@@ -171,30 +171,30 @@ EndFunc
 ;~ Move to the entrance of the raptors cave
 Func MoveToBaseOfCave()
 	If GetIsDead(-2) Then Return
-	Out('Moving to Cave')
+	Info('Moving to Cave')
 	Move(-22015, -7502)
 	RndSleep(7000)
 	UseHeroSkill(1, $Raptors_FallBack)
 	RndSleep(500)
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_IAmUnstoppable)
 	Moveto(-21333, -8384)
-	UseHeroSkill(1, $Raptors_EnduringHarmony, -2)
-	If ($RAPTORS_PROFESSION == 10) Then UseSkill($Raptors_SignetOfMysticSpeed)
+	UseHeroSkill(1, $Raptors_EnduringHarmony, GetMyAgent())
+	If ($RAPTORS_PROFESSION == 10) Then UseSkill($Raptors_SignetOfMysticSpeed, GetMyAgent())
 	RndSleep(1800)
-	UseHeroSkill(1, $Raptors_MakeHaste, -2)
+	UseHeroSkill(1, $Raptors_MakeHaste, GetMyAgent())
 	RndSleep(20)
 	UseHeroSkill(1, $Raptors_StandYourGround)
 	RndSleep(20)
 	UseHeroSkill(1, $Raptors_CantTouchThis)
 	RndSleep(20)
-	UseHeroSkill(1, $Raptors_BladeturnRefrain, -2)
+	UseHeroSkill(1, $Raptors_BladeturnRefrain, GetMyAgent())
 	Move(-20930, -9480, 40)
 EndFunc
 
 
 ;~ Aggro all raptors
 Func GetRaptors()
-	Out('Gathering Raptors')
+	Info('Gathering Raptors')
 
 	Move(-20695, -9900, 20)
 	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
@@ -203,7 +203,7 @@ Func GetRaptors()
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)
 	
 	Local $count = 0
-	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain) And $count < 200
+	While Not GetIsDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200
 		UseSkillEx($Raptors_MarkOfPain, $target)
 		RndSleep(50)
 		$count += 1
@@ -217,7 +217,7 @@ Func GetRaptors()
 	If MoveAggroingRaptors(-21000, -12200) Then Return
 	If MoveAggroingRaptors(-21500, -12000) Then Return
 	If MoveAggroingRaptors(-22000, -12000) Then Return
-	TargetNearestEnemy()
+	$target = GetNearestEnemyToAgent(GetMyAgent())
 	If $RAPTORS_PROFESSION == 10 Then UseSkillEx($Raptors_MirageCloak)
 	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) Then Return
 	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) Then Return
@@ -243,8 +243,8 @@ Func KillRaptors()
 	Local $MoPTarget
 	Local $lAgentArray
 
-	If GetIsDead(-2) Then Return
-	Out('Clearing Raptors')
+	If GetIsDead() Then Return
+	Info('Clearing Raptors')
 
 	If ($RAPTORS_PROFESSION == 1) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
@@ -263,8 +263,9 @@ Func KillRaptors()
 	EndIf
 
 	Local $rekoff_boss = GetNearestBossFoe()
-	If GetDistance(-2, $rekoff_boss) > $RANGE_SPELLCAST Then
-		$MoPTarget = GetNearestEnemyToAgent(-2)
+	Local $me = GetMyAgent()
+	If GetDistance($me, $rekoff_boss) > $RANGE_SPELLCAST Then
+		$MoPTarget = GetNearestEnemyToAgent($me)
 	Else
 		$MoPTarget = GetNearestEnemyToAgent($rekoff_boss)
 	EndIf
@@ -281,8 +282,10 @@ Func KillRaptors()
 		RndSleep(20)
 	EndIf
 
+	Debug('Waiting on MoP to be recharged and foes to be in range')
 	Local $count = 0
-	While Not GetIsDead(-2) And (Not IsRecharged($Raptors_MarkOfPain) Or CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) < CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) - 6) And $count < 40
+	While Not GetIsDead() And Not IsRecharged($Raptors_MarkOfPain) And CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) < CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) - 2 And $count < 40
+		Debug('Waiting ' & $count)
 		RndSleep(250)
 		$count += 1
 		If $count > 10 Then
@@ -290,8 +293,11 @@ Func KillRaptors()
 		EndIf
 	WEnd
 
+	Debug('Using MoP')
 	$count = 0
-	While Not GetIsDead(-2) And IsRecharged($Raptors_MarkOfPain) And $count < 200
+	Local $timer = TimerInit()
+	; There is an issue here with infinite loop despite the count (wtf!) so added a timer as well
+	While Not GetIsDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200 And TimerDiff($timer) < 10000
 		UseSkillEx($Raptors_MarkOfPain, $MoPTarget)
 		RndSleep(50)
 		$count += 1
@@ -302,25 +308,29 @@ Func KillRaptors()
 		UseSkillEx($Raptors_SoldiersDefense)
 		RndSleep(50)
 
+		Debug('Using Whirlwind attack')
 		$count = 0
-		While Not GetIsDead(-2) And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130 And $count < 200
+		While Not GetIsDead() And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130 And $count < 200
 			RndSleep(50)
 			$count += 1
 		WEnd
 
-		Out('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
-
+		Local $me = GetMyAgent()
+		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
 		UseSkillEx($Raptors_ShieldBash)
 		RndSleep(20)
-		While Not GetIsDead(-2) And CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) == 130
-			UseSkillEx($Raptors_WhirlwindAttack, GetNearestEnemyToAgent(-2))
+		Debug('Using Whirlwind attack a second time')
+		While Not GetIsDead() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) == 130
+			UseSkillEx($Raptors_WhirlwindAttack, GetNearestEnemyToAgent($me))
 			RndSleep(250)
+			$me = GetMyAgent()
 		WEnd
 	Else
-		Out('Spiking ' & CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) & ' raptors')
-		While Not GetIsDead(-2) And CountFoesInRangeOfAgent(-2, $RANGE_EARSHOT) > 10
-			UseSkillEx($Raptors_EremitesAttack, GetNearestEnemyToAgent(-2))
+		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
+		While Not GetIsDead() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10
+			UseSkillEx($Raptors_EremitesAttack, GetNearestEnemyToAgent($me))
 			RndSleep(250)
+			$me = GetMyAgent()
 		WEnd
 	EndIf
 EndFunc
@@ -329,7 +339,7 @@ EndFunc
 ;~ Return to Rata Sum
 Func BackToTown()
 	Local $result = AssertFarmResult()
-	Out('Porting to Rata Sum')
+	Info('Porting to Rata Sum')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()
@@ -340,14 +350,14 @@ EndFunc
 
 ;~ Check whether or not the farm was successful
 Func AssertFarmResult()
-	If GetIsDead(-2) Then
-		Out('Character died')
+	If GetIsDead() Then
+		Info('Character died')
 		Return 1
 	EndIf
 
-	Local $survivors = CountFoesInRangeOfAgent(-2, $RANGE_SPELLCAST)
+	Local $survivors = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	If $survivors > 1 Then
-		Out($survivors & ' raptors survived')
+		Info($survivors & ' raptors survived')
 		Return 1
 	Else
 		Return 0
@@ -359,10 +369,12 @@ EndFunc
 Func MoveAggroingRaptors($x, $y)
 	Move($x, $y, 0)
 
-	While Not GetIsDead(-2) And ComputeDistance(DllStructGetData(GetAgentByID(-2), 'X'), DllStructGetData(GetAgentByID(-2), 'Y'), $x, $y) > $RANGE_NEARBY
+	Local $me = GetMyAgent()
+	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > $RANGE_NEARBY
 		If IsBodyBlocked() Then Return True
 		RndSleep(100)
 		Move($x, $y)
+		$me = GetMyAgent()
 	WEnd
 	Return False
 EndFunc
@@ -374,27 +386,29 @@ Func IsBodyBlocked()
 	Local Const $PI = 3.14159
 	Local $angle = 0
 
-	If DllStructGetData(GetAgentByID(-2), 'HP') < 0.90 Then
+	Local $me = GetMyAgent()
+	If DllStructGetData($me, 'HP') < 0.90 Then
 		SendStuckCommand()
 	EndIf
 
-	While DllStructGetData(GetAgentByID(-2), 'MoveX') == 0 And DllStructGetData(GetAgentByID(-2), 'MoveY') == 0
+	While DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
 		$blocked += 1
-		;Out('Blocked: ' & $blocked)
+		Debug('Blocked: ' & $blocked)
 		If $blocked > 1 Then
 			$angle += $PI / 4
 		EndIf
 
-		If ($blocked > 4 Or DllStructGetData(GetAgentByID(-2), 'HP') < 0.90) Then
+		If ($blocked > 4 Or DllStructGetData($me, 'HP') < 0.90) Then
 			SendStuckCommand()
 		EndIf
 
 		If $blocked > 7 Then
-			Out('Completely blocked')
+			Debug('Completely blocked')
 			Return True
 		EndIf
-		Move(DllStructGetData(GetAgentByID(-2), 'X') + 300 * sin($angle), DllStructGetData(GetAgentByID(-2), 'Y') + 300 * cos($angle), 0)
+		Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle), 0)
 		RndSleep(250)
+		$me = GetMyAgent()
 	WEnd
 	Return False
 EndFunc
@@ -402,8 +416,8 @@ EndFunc
 
 Func SendStuckCommand()
 	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
-	If CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then
-		Out('Sending /stuck', $GUI_CONSOLE_YELLOW_COLOR)
+	If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then
+		Warn('Sending /stuck')
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()
 		RndSleep(GetPing())
@@ -421,7 +435,7 @@ EndFunc
 
 ;~ Get nearest foe that is a boss - null if no boss
 Func GetNearestBossFoe()
-	Local $bossFoes = GetFoesInRangeOfAgent(-2, $RANGE_COMPASS, GetIsBoss)
+	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
 	If $bossFoes[0] == 1 Then Return $bossFoes[1]
 	Return null
 EndFunc

@@ -74,13 +74,21 @@
 
 #Region Variables
 Local Const $GW_BOT_HUB_VERSION = '1.0'
-Local Const $GUI_LIGHT_GREY_COLOR = 16777215
+
+Local Const $LVL_DEBUG = 0
+Local Const $LVL_INFO = 1
+Local Const $LVL_NOTICE = 2
+Local Const $LVL_WARNING = 3
+Local Const $LVL_ERROR = 4
+
 Local Const $GUI_GREY_COLOR = 13158600
 Local Const $GUI_BLUE_COLOR = 11192062
-Local Const $GUI_RED_COLOR = 16751781
 Local Const $GUI_YELLOW_COLOR = 16777192
+Local Const $GUI_RED_COLOR = 16751781
+
+Local Const $GUI_CONSOLE_GREY_COLOR = 16777215
 Local Const $GUI_CONSOLE_BLUE_COLOR = 0xFF7000
-Local Const $GUI_CONSOLE_GREEN_COLOR = 0xCA4FFF
+Local Const $GUI_CONSOLE_GREEN_COLOR = 13434828
 Local Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
 Local Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 
@@ -89,6 +97,7 @@ Global $STATUS = 'STOPPED'
 ; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
 Local $RUN_MODE = 'AUTOLOAD'
 Local $PROCESS_ID = ''
+Local $LOG_LEVEL = 1
 Local $CHARACTER_NAME = ''
 Local $DISTRICT_NAME = 'English'
 Local $BAG_NUMBER = 5
@@ -149,7 +158,7 @@ Func createGUI()
 
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
-	_GUICtrlRichEdit_SetCharColor($GUI_Console, $GUI_LIGHT_GREY_COLOR)
+	_GUICtrlRichEdit_SetCharColor($GUI_Console, $GUI_CONSOLE_GREY_COLOR)
 	_GUICtrlRichEdit_SetBkColor($GUI_Console, 0)
 
 	$GUI_Group_RunInfos = GUICtrlCreateGroup('Infos', 21, 39, 271, 176)
@@ -329,14 +338,14 @@ Func GuiButtonHandler()
 			$BAG_NUMBER = _Min($BAG_NUMBER, 5)
 		Case $GUI_Combo_ConfigChoice
 			Local $Configuration = GUICtrlRead($GUI_Combo_ConfigChoice)
-			ChangeConfiguration($Configuration)
+			LoadConfiguration($Configuration)
 		Case $GUI_Combo_DistrictChoice
 			$DISTRICT_NAME = GUICtrlRead($GUI_Combo_DistrictChoice)
 		Case $GUI_Icon_SaveConfig
 			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_DISABLE)
 			Local $filePath = FileSaveDialog("", @ScriptDir & "\conf", "(*.json)")
 			If @error <> 0 Then
-				Out("Failed to write JSON configuration.")
+				Warn("Failed to write JSON configuration.")
 			Else
 				SaveConfiguration($filePath)
 			EndIf
@@ -345,19 +354,19 @@ Func GuiButtonHandler()
 			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_StartButton
 			If $STATUS == 'STOPPED' Then
-				Out('Initializing...')
+				Info('Initializing...')
 				If (Authentification() <> 0) Then Return
 				$STATUS = 'INITIALIZED'
 
-				Out('Starting...')
+				Info('Starting...')
 				$STATUS = 'RUNNING'
 				GUICtrlSetData($GUI_StartButton, 'Pause')
 				GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
 			ElseIf $STATUS == 'INITIALIZED' Then
-				Out('Starting...')
+				Info('Starting...')
 				$STATUS = 'RUNNING'
 			ElseIf $STATUS == 'RUNNING' Then
-				Out('Pausing...')
+				Info('Pausing...')
 				GUICtrlSetData($GUI_StartButton, 'Will pause after this run')
 				GUICtrlSetState($GUI_StartButton, $GUI_Disable)
 				GUICtrlSetBkColor($GUI_StartButton, $GUI_YELLOW_COLOR)
@@ -365,7 +374,7 @@ Func GuiButtonHandler()
 			ElseIf $STATUS == 'WILL_PAUSE' Then
 				MsgBox(0, 'Error', 'You should not be able to press Pause when bot it already pausing.')
 			ElseIf $STATUS == 'PAUSED' Then
-				Out('Restarting...')
+				Info('Restarting...')
 				GUICtrlSetData($GUI_StartButton, 'Pause')
 				GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
 				$STATUS = 'RUNNING'
@@ -390,11 +399,59 @@ Func TabEventManager()
 EndFunc
 
 
+;~ Print debug to console with timestamp
+Func Debug($TEXT)
+	Out($TEXT, $LVL_DEBUG)
+EndFunc
+
+
+;~ Print info to console with timestamp
+Func Info($TEXT)
+	Out($TEXT, $LVL_INFO)
+EndFunc
+
+
+;~ Print notice to console with timestamp
+Func Notice($TEXT)
+	Out($TEXT, $LVL_NOTICE)
+EndFunc
+
+
+;~ Print warning to console with timestamp
+Func Warn($TEXT)
+	Out($TEXT, $LVL_WARNING)
+EndFunc
+
+
+;~ Print error to console with timestamp
+Func Error($TEXT)
+	Out($TEXT, $LVL_ERROR)
+EndFunc
+
+
 ;~ Print to console with timestamp
-Func Out($TEXT, $color = $GUI_LIGHT_GREY_COLOR)
-	_GUICtrlRichEdit_SetCharColor($GUI_Console, $color)
-	_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
-	UpdateLock()
+;~ LOGLEVEL= 0-Debug, 1-Info, 2-Notice, 3-Warning, 4-Error
+Func Out($TEXT, $LOGLEVEL = 1)
+	If $LOGLEVEL >= $LOG_LEVEL Then
+		Local $logColor
+		Switch $LOGLEVEL
+			Case $LVL_DEBUG
+				$logColor = $GUI_CONSOLE_GREEN_COLOR
+			Case $LVL_INFO
+				$logColor = $GUI_CONSOLE_GREY_COLOR
+			Case $LVL_NOTICE
+				$logColor = $GUI_CONSOLE_BLUE_COLOR
+			Case $LVL_WARNING
+				$logColor = $GUI_CONSOLE_YELLOW_COLOR
+			Case $LVL_ERROR
+				$logColor = $GUI_CONSOLE_RED_COLOR
+		EndSwitch
+		_GUICtrlRichEdit_SetCharColor($GUI_Console, $logColor)
+		_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
+		UpdateLock()
+	Else
+		;-
+	EndIf
 EndFunc
 
 #EndRegion GUI
@@ -413,7 +470,7 @@ Func main()
 
 	createGUI()
 	GUISetState(@SW_SHOWNORMAL)
-	Out('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
+	Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
 
 	If $CmdLine[0] <> 0 Then
 		$RUN_MODE = 'CMD'
@@ -450,10 +507,7 @@ Func BotHubLoop()
 
 		If ($STATUS == 'RUNNING') Then
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
-			Local $timer = TimerInit()
 			Local $success = RunFarmLoop($Farm)
-			UpdateStats($success, $timer)
-
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
@@ -462,7 +516,7 @@ Func BotHubLoop()
 					ResetBotsSetups()
 				EndIf
 				If (CountSlots(1, $BAG_NUMBER) < 5) Then
-					Out('Inventory full, pausing.', $GUI_CONSOLE_RED_COLOR)
+					Notice('Inventory full, pausing.')
 					ResetBotsSetups()
 					$STATUS = 'WILL_PAUSE'
 				EndIf
@@ -472,7 +526,7 @@ Func BotHubLoop()
 		EndIf
 
 		If ($STATUS == 'WILL_PAUSE') Then
-			Out('Paused.', $GUI_CONSOLE_BLUE_COLOR)
+			Warn('Paused.')
 			$STATUS = 'PAUSED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Enable)
@@ -485,7 +539,9 @@ EndFunc
 
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
+	Local $result = 2
 	UpdateStats(-1, null)
+	Local $timer = TimerInit()
 	Switch $Farm
 		Case 'Choose a farm'
 			MsgBox(0, 'Error', 'No farm chosen.')
@@ -493,49 +549,50 @@ Func RunFarmLoop($Farm)
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
 		Case 'Corsairs'
-			Return CorsairsFarm($STATUS)
+			$result =  CorsairsFarm($STATUS)
 		Case 'Dragon Moss'
-			Return DragonMossFarm($STATUS)
+			$result =  DragonMossFarm($STATUS)
 		Case 'Eden Iris'
-			Return EdenIrisFarm($STATUS)
+			$result =  EdenIrisFarm($STATUS)
 		Case 'Feathers'
-			Return FeathersFarm($STATUS)
+			$result =  FeathersFarm($STATUS)
 		Case 'Follow'
-			Return FollowerFarm($STATUS)
+			$result =  FollowerFarm($STATUS)
 		Case 'Jade Brotherhood'
-			Return JadeBrotherhoodFarm($STATUS)
+			$result =  JadeBrotherhoodFarm($STATUS)
 		Case 'Kournans'
-			Return KournansFarm($STATUS)
+			$result =  KournansFarm($STATUS)
 		Case 'Kurzick'
-			Return KurzickFactionFarm($STATUS)
+			$result =  KurzickFactionFarm($STATUS)
 		Case 'Lightbringer'
-			Return LightbringerFarm($STATUS)
+			$result =  LightbringerFarm($STATUS)
 		Case 'Luxon'
-			Return LuxonFactionFarm($STATUS)
+			$result =  LuxonFactionFarm($STATUS)
 		Case 'Mantids'
-			Return MantidsFarm($STATUS)
+			$result =  MantidsFarm($STATUS)
 		Case 'Ministerial Commendations'
-			Return MinisterialCommendationsFarm($STATUS)
+			$result =  MinisterialCommendationsFarm($STATUS)
 		Case 'OmniFarm'
-			Return OmniFarm($STATUS)
+			$result =  OmniFarm($STATUS)
 		Case 'Pongmei'
-			Return PongmeiChestFarm($STATUS)
+			$result =  PongmeiChestFarm($STATUS)
 		Case 'Raptors'
-			Return RaptorFarm($STATUS)
+			$result =  RaptorFarm($STATUS)
 		Case 'SpiritSlaves'
-			Return SpiritSlavesFarm($STATUS)
+			$result =  SpiritSlavesFarm($STATUS)
 		Case 'Vaettirs'
-			Return VaettirFarm($STATUS)
+			$result =  VaettirFarm($STATUS)
 		Case 'Storage'
-			Return ManageInventory($STATUS)
+			$result =  ManageInventory($STATUS)
 		Case 'Dynamic'
-			Out('Dynamic execution')
+			Info('Dynamic execution')
 		Case 'Tests'
 			RunTests($STATUS)
 		Case Else
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch
-	Return 2
+	UpdateStats($result, $timer)
+	Return $result
 EndFunc
 
 
@@ -640,7 +697,7 @@ EndFunc
 
 
 ;~ Fill the choice of configuration
-Func FillConfigurationCombo()
+Func FillConfigurationCombo($configuration = 'Default Configuration')
 	Local $files = _FileListToArray(@ScriptDir & '/conf/', '*.json', $FLTA_FILES)
 	Local $comboList = ''
 	If @error == 0 Then
@@ -654,7 +711,7 @@ Func FillConfigurationCombo()
 	EndIf
 	If $comboList <> '' Then $comboList = StringTrimRight($comboList, 1)
 	GUICtrlSetData($GUI_Combo_ConfigChoice, '', '')
-	GUICtrlSetData($GUI_Combo_ConfigChoice, $comboList, 'Default Configuration')
+	GUICtrlSetData($GUI_Combo_ConfigChoice, $comboList, $configuration)
 EndFunc
 
 
@@ -665,18 +722,18 @@ Func LoadDefaultConfiguration()
 		Local $jsonString = FileRead($configFile)
 		ReadConfigFromJson($jsonString)
 		FileClose($configFile)
-		Out('Loaded default configuration') 
+		Info('Loaded default configuration') 
 	EndIf
 EndFunc
 
 
 ;~ Change to a different configuration
-Func ChangeConfiguration($configuration)
+Func LoadConfiguration($configuration)
 	Local $configFile = FileOpen(@ScriptDir & '/conf/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
 	Local $jsonString = FileRead($configFile)
 	ReadConfigFromJson($jsonString)
 	FileClose($configFile)
-	Out('Loaded configuration <' & $configuration & '>') 
+	Info('Loaded configuration <' & $configuration & '>') 
 EndFunc
 
 
@@ -686,8 +743,9 @@ Func SaveConfiguration($configurationPath)
 	Local $jsonString = WriteConfigToJson()
 	FileWrite($configFile, $jsonString)
 	FileClose($configFile)
-	FillConfigurationCombo()
-	Out('Saved configuration ' & $configurationPath) 
+	Local $configurationName = StringTrimRight(StringMid($configurationPath, StringInStr($configurationPath, '\', 0, -1) + 1), 5)
+	FillConfigurationCombo($configurationName)
+	Info('Saved configuration ' & $configurationPath) 
 EndFunc
 
 
@@ -794,10 +852,10 @@ Func Authentification()
 		MsgBox(0, 'Error', 'No character name given.')
 		Return 1
 	ElseIf($CharacterName == 'No character selected') Then
-		Out('Running without authentification.')
+		Warn('Running without authentification.')
 	ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
 		$proc_id_int = Number($PROCESS_ID, 2)
-		Out('Running via pid ' & $proc_id_int)
+		Info('Running via pid ' & $proc_id_int)
 		If InitializeGameClientData($proc_id_int, True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $proc_id_int & '>> ' & VarGetType($proc_id_int) & '')
 			Return 1
@@ -914,7 +972,10 @@ Func UpdateStats($success, $timer)
 	Local Static $failures = 0
 	Local Static $time = 0
 
-	Local Static $GoldCount = GetGoldCharacter()
+	Local Static $TotalGold = 0
+	Local Static $InitialGold = 0
+	Local Static $TotalGoldItems = 0
+	Local Static $InitialGoldItems = 0
 	Local Static $ExperienceCount = GetExperience()
 
 	Local Static $AsuraTitlePoints = GetAsuraTitle()
@@ -925,13 +986,16 @@ Func UpdateStats($success, $timer)
 	Local Static $SunspearTitlePoints = GetSunspearTitle()
 	Local Static $KurzickTitlePoints = GetKurzickTitle()
 	Local Static $LuxonTitlePoints = GetLuxonTitle()
-	Local Static $GoldItemsCount = CountGoldItems()
-	;Local Static $ItemStacks = CountItemStacks()
 
-	; Either bot did not run yet or ran but was paused
-	If $success == 0 Then
+	; Before every farm loop
+	If $success == -1 Then
+		$InitialGold = GetGoldCharacter()
+		$InitialGoldItems = CountGoldItems()
+	; Not success, not failure, paused
+	ElseIf $success == 0 Then
 		$runs += 1
 		$time += TimerDiff($timer)
+	; Failure
 	ElseIf $success == 1 Then
 		$failures += 1
 		$runs += 1
@@ -944,8 +1008,10 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_Time, 'Time: ' & Floor($time/3600000) & 'h' & Floor(Mod($time, 3600000)/60000) & 'min' & Floor(Mod($time, 60000)/1000) & 's')
 	Local $timePerRun = $runs == 0 ? 0 : $time / $runs
 	GUICtrlSetData($GUI_Label_TimePerRun, 'Time per run: ' & Floor($timePerRun/60000) & 'min' & Floor(Mod($timePerRun, 60000)/1000) & 's')
-	GUICtrlSetData($GUI_Label_Gold, 'Gold: ' & Floor((GetGoldCharacter() - $GoldCount)/1000) & 'k' & Mod((GetGoldCharacter() - $GoldCount), 1000) & 'g')
-	GUICtrlSetData($GUI_Label_GoldItems, 'Gold Items: ' & CountGoldItems() - $GoldItemsCount)
+	$TotalGold += GetGoldCharacter() - $InitialGold
+	GUICtrlSetData($GUI_Label_Gold, 'Gold: ' & Floor($TotalGold/1000) & 'k' & Mod($TotalGold, 1000) & 'g')
+	$TotalGoldItems += CountGoldItems() - $InitialGoldItems
+	GUICtrlSetData($GUI_Label_GoldItems, 'Gold Items: ' & $TotalGoldItems)
 	GUICtrlSetData($GUI_Label_Experience, 'Experience: ' & (GetExperience() - $ExperienceCount))
 
 	; Title stats

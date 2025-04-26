@@ -83,7 +83,7 @@ EndFunc
 
 
 Func SetupKournansFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 
 	SwitchMode($ID_HARD_MODE)
@@ -104,22 +104,22 @@ Func SetupKournansFarm()
 	DisableAllHeroSkills(2)
 	
 	RndSleep(50)
-	Out('Entering Command Post')
+	Info('Entering Command Post')
 	MoveTo(-1500, 2000)
 	MoveTo(0, 5000)
 	WaitMapLoading($ID_Command_Post, 10000, 2000)
 	MoveTo(-200, 4350)
 	MoveTo(-500, 3500)
 	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
-	Out('Preparations complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func KournansFarmLoop()
-	Out('Abandonning quest')
+	Info('Abandonning quest')
 	AbandonQuest(0x23E)
-	Out('Entering Command Post')
+	Info('Entering Command Post')
 	MoveTo(0, 5000)
 	WaitMapLoading($ID_Command_Post, 10000, 2000)
 	MoveTo(1250, 7300)
@@ -134,10 +134,11 @@ Func KournansFarmLoop()
 
 	; Find the kournans and get in spirit range
 	; Move to the correct range of the enemies (who are not enemies at this points)(close so that they are affected by spirits but not too close)
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(9600, -650, null, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_SPIRIT - 500)
-	Local $X = DllStructGetData(GetAgentById(-2), 'X')
-	Local $Y = DllStructGetData(GetAgentById(-2), 'Y')
+	Local $me = GetMyAgent()
+	Local $X = DllStructGetData($me, 'X')
+	Local $Y = DllStructGetData($me, 'Y')
 	CommandAll($X, $Y)
 	RndSleep(2000)
 	CastOnlyNecessarySpiritsAndBoons($X, $Y)
@@ -160,9 +161,9 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_Aftershock)
 	UseSkillEx($Kournans_Shockwave)
 	RndSleep(2000)
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
-	Local $result = GetIsDead(-2) ? 1 : 0
+	Local $result = GetIsDead() ? 1 : 0
 	BackToSunspearSanctuary()
 	Return $result
 EndFunc
@@ -183,7 +184,7 @@ Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_RitualLord)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_EarthBind)
 	RndSleep(1500)
-	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, -2)
+	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, GetMyAgent())
 	RndSleep(1500)
 EndFunc
 
@@ -209,16 +210,16 @@ Func CastFullSpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_RitualLord)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_EarthBind)
 	RndSleep(1500)
-	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, -2)
+	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, GetMyAgent())
 	RndSleep(1500)
 EndFunc
 
 
 Func TalkToMargrid()
-	Out('Talking to Margrid')
+	Info('Talking to Margrid')
 	GoNearestNPCToCoords(1250, 7300)
 	RndSleep(1000)
-	Out('Taking quest')
+	Info('Taking quest')
 	; QuestID 0x23E = 574
 	AcceptQuest(0x23E)
 	RndSleep(500)
@@ -226,7 +227,7 @@ EndFunc
 
 
 Func BackToSunspearSanctuary()
-	Out('Porting to Sunspear Sanctuary')
+	Info('Porting to Sunspear Sanctuary')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()

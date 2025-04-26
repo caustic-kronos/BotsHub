@@ -145,23 +145,23 @@ EndFunc
 #Region Reading items data
 ;~ Read data from item at bagIndex and slot and print it in the console
 Func ReadOneItemData($bagIndex, $slot)
-	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
+	Info('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
 	Local $output = GetOneItemData($bagIndex, $slot)
 	If $output == '' Then Return
-	Out($output)
+	Info($output)
 EndFunc
 
 
 ;~ Read data from all items in inventory and print it in the console
 Func ReadAllItemsData()
-	Out('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
+	Info('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
 	Local $item, $output
 	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $slot = 1 To DllStructGetData($bag, 'slots')
 			$output = GetOneItemData($bagIndex, $slot)
 			If $output == '' Then ContinueLoop
-			Out($output)
+			Info($output)
 			RndSleep(50)
 		Next
 	Next
@@ -201,7 +201,7 @@ Func ConnectToDatabase()
 	$SQLITE_DB = _SQLite_Open('data\items_database.db3')
 	If @error Then Exit MsgBox(16, 'SQLite Error', 'Failed to open database: ' & _SQLite_ErrMsg())
 	;_SQLite_SetSafeMode(False)
-	Out('Opened database at ' & @ScriptDir & '\data\items_database.db3')
+	Info('Opened database at ' & @ScriptDir & '\data\items_database.db3')
 EndFunc
 
 
@@ -299,17 +299,17 @@ EndFunc
 
 ;~ Query database
 Func SQLQuery($query, ByRef $queryResult)
-	;Out($query)
+	Debug($query)
 	Local $result = _SQLite_Query($SQLITE_DB, $query, $queryResult)
-	If $result <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query, $GUI_CONSOLE_RED_COLOR)
+	If $result <> 0 Then Error('Query failed ! Failure on : ' & @CRLF & $query)
 EndFunc
 
 
 ;~ Execute a request on the database
 Func SQLExecute($query)
-	;Out($query)
+	Debug($query)
 	Local $result = _SQLite_Exec($SQLITE_DB, $query)
-	If $result <> 0 Then Out('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error, $GUI_CONSOLE_RED_COLOR)
+	If $result <> 0 Then Error('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error)
 EndFunc
 
 
@@ -321,7 +321,7 @@ Func StoreAllItemsData()
 	Local $InsertQuery, $item
 	Local $batchID = GetPreviousBatchID() + 1
 
-	Out('Scanning and storing all items data')
+	Info('Scanning and storing all items data')
 	SQLExecute('BEGIN;')
 	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
 	For $bagIndex = 1 To $BAG_NUMBER
@@ -380,7 +380,7 @@ EndFunc
 
 ;~ Auto fill the items mods based on the known modstructs
 Func CompleteItemsMods($batchID)
-	Out('Completing items mods')
+	Info('Completing items mods')
 	Local $upgradeTypes[3] = ['prefix', 'suffix', 'inscription']
 	Local $query
 	For $upgradeType In $upgradeTypes
@@ -425,7 +425,7 @@ EndFunc
 ;~ Complete model name lookup table
 Func CompleteModelLookupTable()
 	Local $query
-	Out('Completing model lookup ')
+	Info('Completing model lookup ')
 	$query = 'INSERT INTO ' & $TABLE_LOOKUP_MODEL & @CRLF _
 		& 'SELECT DISTINCT type_id, model_id, name, OS' & @CRLF _
 		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
@@ -437,7 +437,7 @@ EndFunc
 
 ;~ Complete mods data by cross-comparing all modstructs from items that have the same mods and deduce the mod hexa from it
 Func CompleteUpgradeLookupTable()
-	Out('Completing upgrade lookup')
+	Info('Completing upgrade lookup')
 	Local $modTypes[3] = ['prefix', 'suffix', 'inscription']
 	For $upgradeType In $modTypes
 		InsertNewUpgrades($upgradeType)
@@ -510,7 +510,7 @@ EndFunc
 ;~ Sell gold scrolls to scroll trader
 Func SellGoldScrolls()
 	If GetMapID() == $ID_Rata_Sum Then
-		Out('Moving to Scroll Trader')
+		Info('Moving to Scroll Trader')
 		Local $scrollTrader = GetNearestNPCToCoords(19250, 14275)
 		GoToNPC($scrollTrader)
 		RndSleep(500)
@@ -523,7 +523,6 @@ Func SellGoldScrolls()
 			$item = GetItemBySlot($bagIndex, $i)
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 And IsGoldScroll($itemID) Then
-				Out('ok')
 				TraderRequestSell($item)
 				RndSleep(500 + GetPing())
 				TraderSell()
@@ -540,13 +539,13 @@ Func MoveItemsOutOfEquipmentBag()
 	Local $countEmptySlots = UBound($inventoryEmptySlots) / 2
 	Local $cursor = 0
 	If $countEmptySlots <= $cursor Then
-		Out('No space in inventory to move the items out of the equipment bag')
+		Warn('No space in inventory to move the items out of the equipment bag')
 		Return
 	EndIf
 
 	For $slot = 1 To DllStructGetData($equipmentBag, 'slots')
 		If $countEmptySlots <= $cursor Then
-			Out('No space in inventory to move the items out of the equipment bag')
+			Warn('No space in inventory to move the items out of the equipment bag')
 			Return
 		EndIf
 		Local $item = GetItemBySlot(5, $slot)
@@ -563,7 +562,7 @@ EndFunc
 ;~ Sell general items to trader
 Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Out('Moving to merchant')
+	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
@@ -582,7 +581,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 						RndSleep(500 + GetPing())
 					EndIf
 				Else
-					If $dryRun Then Out('Will not sell item at ' & $bagIndex & ':' & $i)
+					If $dryRun Then Info('Will not sell item at ' & $bagIndex & ':' & $i)
 				EndIf
 			EndIf
 		Next
@@ -625,7 +624,7 @@ EndFunc
 ;~ Sell materials to materials merchant in EOTN
 Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Out('Moving to materials merchant')
+	Info('Moving to materials merchant')
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	UseCitySpeedBoost()
 	GoToNPC($materialMerchant)
@@ -639,7 +638,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 			If $shouldSellItem($item) Then
 				$itemID = DllStructGetData($item, 'ID')
 				Local $totalAmount = DllStructGetData($item, 'Quantity')
-				Out('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
+				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
 				While $totalAmount > 9
 					TraderRequestSell($itemID)
 					Sleep(250 + GetPing())
@@ -661,7 +660,7 @@ EndFunc
 ;~ Sell rare materials to rare materials merchant in EOTN
 Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Out('Moving to rare materials merchant')
+	Info('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
@@ -675,7 +674,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 			If $shouldSellItem($item) Then
 				$itemID = DllStructGetData($item, 'ID')
 				Local $totalAmount = DllStructGetData($item, 'Quantity')
-				Out('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
+				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
 				While $totalAmount > 0
 					TraderRequestSell($itemID)
 					Sleep(250 + GetPing())
@@ -697,7 +696,7 @@ EndFunc
 ;~ Buy rare material from rare materials merchant in EOTN
 Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Out('Moving to rare materials merchant')
+	Info('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
@@ -707,7 +706,7 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 		TraderRequest($materialModelID)
 		Sleep(500 + GetPing())
 		Local $traderPrice = GetTraderCostValue()
-		Out('Buying for ' & $traderPrice)
+		Debug('Buying for ' & $traderPrice)
 		TraderBuy()
 		Sleep(250 + GetPing())
 	Next
@@ -721,10 +720,10 @@ EndFunc
 Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	If CountSlots(1, 4) == 0 Then
-		Out('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
+		Warn('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
 		Return
 	EndIf
-	Out('Moving to rare materials merchant')
+	Info('Moving to rare materials merchant')
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
@@ -734,7 +733,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	Sleep(500 + GetPing())
 	Local $traderPrice = GetTraderCostValue()
 	Local $amount = Floor((GetGoldCharacter() - $poorThreshold) / $traderPrice)
-	Out('Buying ' & $amount & ' items for ' & $traderPrice)
+	Info('Buying ' & $amount & ' items for ' & $traderPrice)
 	While $amount > 0
 		TraderBuy()
 		Sleep(250 + GetPing())
@@ -747,7 +746,7 @@ EndFunc
 
 
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
-	Out('Storing items')
+	Info('Storing items')
 	Local $item, $itemID
 	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
@@ -755,7 +754,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			$item = GetItemBySlot($bagIndex, $i)
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 And $shouldStoreItem($item) Then
-				Out('Moving ' & $bagIndex & ';' & $i)
+				Debug('Moving ' & $bagIndex & ';' & $i)
 				StoreItemInXunlaiStorage($item)
 				RndSleep(50)
 			EndIf
@@ -787,7 +786,7 @@ Func StoreItemInXunlaiStorage($item)
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then
-				Out('To ' & $existingStacks[$bagIndex] & ';' & $existingStacks[$bagIndex + 1])
+				Debug('To ' & $existingStacks[$bagIndex] & ';' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 				RndSleep(50 + GetPing())
 				$amount = $amount + $existingAmount - 250
@@ -797,10 +796,10 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	$storageSlot = FindChestFirstEmptySlot()
 	If $storageSlot[0] == 0 Then
-		Out('Storage is full')
+		Warn('Storage is full')
 		Return
 	EndIf
-	Out('To ' & $storageSlot[0] & ';' & $storageSlot[1])
+	Debug('To ' & $storageSlot[0] & ';' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
 	RndSleep(50 + GetPing())
 EndFunc
@@ -885,7 +884,6 @@ Func DefaultShouldSellRareMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	Out($mapMaterialsKept[$modelId])
 	If $mapMaterialsKept[$modelId] <> null Then Return False
 
 	Return True

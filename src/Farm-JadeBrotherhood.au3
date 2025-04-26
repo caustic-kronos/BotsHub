@@ -77,7 +77,7 @@ EndFunc
 
 ;~ Setup for the jade brotherhood farm
 Func SetupJadeBrotherhoodFarm()
-	Out('Setting up farm')
+	Info('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_General_Morgahn)
@@ -96,15 +96,15 @@ Func SetupJadeBrotherhoodFarm()
 	Move(-13960, -11700)
 	RndSleep(1000)
 	WaitMapLoading($ID_The_Marketplace)
-	Out('Jade Brotherhood farm setup')
+	Info('Jade Brotherhood farm setup')
 EndFunc
 
 
 ;~ Farm loop
 Func JadeBrotherhoodFarmLoop()
-	Out('Abandonning quest')
+	Info('Abandonning quest')
 	AbandonQuest(457)
-	Out('Exiting to Bukdek Byway')
+	Info('Exiting to Bukdek Byway')
 	Move(16551, 19860)
 	RndSleep(1000)
 	WaitMapLoading($ID_Bukdek_Byway)
@@ -112,15 +112,15 @@ Func JadeBrotherhoodFarmLoop()
 	MoveToSeparationWithHero()
 	$DeadlockTimer = TimerInit()
 	TalkToAiko()
-	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
+	If GetIsDead() Then Return BackToTheMarketplace(1)
 	WaitForBall()
-	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
+	If GetIsDead() Then Return BackToTheMarketplace(1)
 	KillJadeBrotherhood()
-	If GetIsDead(-2) Then Return BackToTheMarketplace(1)
+	If GetIsDead() Then Return BackToTheMarketplace(1)
 
 	RndSleep(1000)
 
-	Out('Looting')
+	Info('Looting')
 	PickUpItems()
 
 	If ($Deadlocked) Then Return BackToTheMarketplace(1)
@@ -129,30 +129,30 @@ EndFunc
 
 
 Func MoveToSeparationWithHero()
-	Out('Moving to crossing')
+	Info('Moving to crossing')
 	UseHeroSkill(1, $Brotherhood_Incoming)
 	RndSleep(50)
 	CommandAll(-10475, -9685)
 	RndSleep(50)
 	Move(-10475, -9685)
 	RndSleep(7500)
-	UseHeroSkill(1, $Brotherhood_EnduringHarmony, -2)
+	UseHeroSkill(1, $Brotherhood_EnduringHarmony, GetMyAgent())
 	RndSleep(1500)
-	UseHeroSkill(1, $Brotherhood_MakeHaste, -2)
+	UseHeroSkill(1, $Brotherhood_MakeHaste, GetMyAgent())
 	RndSleep(50)
 	Move(-11983, -6261, 40)
 	RndSleep(300)
-	Out('Moving Hero away')
+	Info('Moving Hero away')
 	CommandAll(-8447, -10099)
 	RndSleep(7000)
 EndFunc
 
 
 Func TalkToAiko()
-	Out('Talking to Aiko')
+	Info('Talking to Aiko')
 	GoNearestNPCToCoords(-13923, -5098)
 	RndSleep(1000)
-	Out('Taking quest')
+	Info('Taking quest')
 	; QuestID 0x1C9 = 457
 	AcceptQuest(0x1C9)
 	Move(-11303, -6545, 40)
@@ -161,16 +161,16 @@ EndFunc
 
 
 Func WaitForBall()
-	Out('Waiting for ball')
-	If GetIsDead(-2) Then Return
+	Info('Waiting for ball')
+	If GetIsDead() Then Return
 	RndSleep(4500)
 	Local $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
 	Local $prevFoesBalled = 0, $prevPeasantsAlive = 100
 	; Aiko counts
 	While ($foesBalled <> 8 Or $peasantsAlive > 1)
-		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		Out('Foes balled : ' & $foesBalled)
-		Out('Peasants alive : ' & $peasantsAlive)
+		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		Debug('Foes balled : ' & $foesBalled)
+		Debug('Peasants alive : ' & $peasantsAlive)
 		RndSleep(4500)
 		$prevFoesBalled = $foesBalled
 		$prevPeasantsAlive = $peasantsAlive
@@ -189,9 +189,9 @@ Func KillJadeBrotherhood()
 	Local $EnchantmentsTimer
 	Local $target
 
-	If GetIsDead(-2) Then Return
+	If GetIsDead() Then Return
 
-	Out('Clearing Jade Brotherhood')
+	Info('Clearing Jade Brotherhood')
 	UseSkillEx($JB_DrunkerMaster)
 	RndSleep(50)
 	UseSkillEx($JB_SandShards)
@@ -208,7 +208,7 @@ Func KillJadeBrotherhood()
 	RndSleep(500)
 	$EnchantmentsTimer = TimerInit()
 	While IsRecharged($JB_DeathsCharge)
-		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		UseSkillEx($JB_DeathsCharge, $target)
 		RndSleep(50)
 	WEnd
@@ -216,39 +216,39 @@ Func KillJadeBrotherhood()
 	RndSleep(50)
 	UseSkillEx($JB_EremitesAttack, $target)
 	While IsRecharged($JB_EremitesAttack)
-		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		UseSkillEx($JB_EremitesAttack, $target)
 		RndSleep(50)
 	WEnd
 
-	While CountFoesInRangeOfAgent(-2, 1250) > 0
-		If GetIsDead(-2) Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		If GetEnergy(-2) >= 6 And IsRecharged($JB_SandShards) Then
+	While CountFoesInRangeOfAgent(GetMyAgent(), 1250) > 0
+		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If GetEnergy() >= 6 And IsRecharged($JB_SandShards) Then
 			UseSkillEx($JB_SandShards)
 			RndSleep(50)
 		EndIf
-		If GetEnergy(-2) >= 6 And TimerDiff($EnchantmentsTimer) > 18000 Then
+		If GetEnergy() >= 6 And TimerDiff($EnchantmentsTimer) > 18000 Then
 			UseSkillEx($JB_VowOfStrength)
 			RndSleep(300)
 			UseSkillEx($JB_MysticVigor)
 			RndSleep(300)
 			$EnchantmentsTimer = TimerInit()
 		EndIf
-		If GetEnergy(-2) >= 3 And IsRecharged($JB_ArmorOfSanctity) Then
+		If GetEnergy() >= 3 And IsRecharged($JB_ArmorOfSanctity) Then
 			UseSkillEx($JB_ArmorOfSanctity)
 			RndSleep(300)
 		EndIf
-		TargetNearestEnemy()
+		$target = GetNearestEnemyToAgent(GetMyAgent())
 		RndSleep(250)
-		ChangeTarget(-1)
-		Attack(-1)
+		ChangeTarget($target)
+		Attack($target)
 		RndSleep(250)
 	WEnd
 EndFunc
 
 
 Func BackToTheMarketplace($success)
-	Out('Porting to The Marketplace')
+	Info('Porting to The Marketplace')
 	Resign()
 	RndSleep(3500)
 	ReturnToOutpost()
@@ -257,27 +257,25 @@ Func BackToTheMarketplace($success)
 EndFunc
 
 
-Func TargetMobInCenter($aAgent, $aRange)
-	Local $lAgent, $lDistance
-	Local $lCount = 0, $sumX = 0, $sumY = 0
-
-	If Not IsDllStruct($aAgent) Then $aAgent = GetAgentByID($aAgent)
+Func TargetMobInCenter($targetAgent, $range)
+	Local $agent, $distance
+	Local $count = 0, $sumX = 0, $sumY = 0
 
 	For $i = 1 To GetMaxAgents()
-		$lAgent = GetAgentByID($i)
-		If DllStructGetData($lAgent, 'Type') <> 0xDB Then ContinueLoop
-		If DllStructGetData($lAgent, 'Allegiance') <> 3 Then ContinueLoop
-		If DllStructGetData($lAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($lAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		$lDistance = GetDistance($aAgent, $lAgent)
-		If $lDistance > $aRange Then ContinueLoop
-		$lCount += 1
-		$sumX += DllStructGetData($lAgent, 'X')
-		$sumY += DllStructGetData($lAgent, 'Y')
+		$agent = GetAgentByID($i)
+		If DllStructGetData($agent, 'Type') <> 0xDB Then ContinueLoop
+		If DllStructGetData($agent, 'Allegiance') <> 3 Then ContinueLoop
+		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0 Then ContinueLoop
+		$distance = GetDistance($targetAgent, $agent)
+		If $distance > $range Then ContinueLoop
+		$count += 1
+		$sumX += DllStructGetData($agent, 'X')
+		$sumY += DllStructGetData($agent, 'Y')
 	Next
-	$sumX = $sumX / $lCount
-	$sumY = $sumY / $lCount
+	$sumX = $sumX / $count
+	$sumY = $sumY / $count
 
-	$lAgent = GetNearestEnemyToCoords($sumX, $sumY)
-	Return $lAgent
+	$agent = GetNearestEnemyToCoords($sumX, $sumY)
+	Return $agent
 EndFunc

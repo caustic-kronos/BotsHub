@@ -16,3 +16,4 @@ The 13 laws of AutoIt coding
 																	^;[^~].*\r\nFunc
 																	^[^;].*\r\nFunc
 14- Only use While WEnd for coherence and easy comprehension		until
+15- Review your logging to keep coherent and remove Out calls		(Out|Debug|Info|Notice|Warn|Error)\(
