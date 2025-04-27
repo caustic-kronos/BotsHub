@@ -145,7 +145,7 @@ Func MoveRunning($destX, $destY)
 			UseSkillEx($Skill_Shadow_Form )
 			$timer = TimerInit()
 		EndIf
-		
+
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HP') < 0.9 And GetEnergy() > 10 And IsRecharged($Skill_Shroud_of_Distress) And TimerDiff($timer) < 15000 Then UseSkillEx($Skill_Shroud_of_Distress)
 		If DllStructGetData($me, 'HP') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, $target)
@@ -254,7 +254,7 @@ Func KillMobs()
 	Local $Shadow_Form_Timer = TimerDiff($timer)
 	Local $agentArray
 	Local $target
-	
+
 	Info('Killing')
 	While TimerDiff($timer) > $Shadow_Form_Timer And TimerDiff($deadlockTimer) < 20000
 		WaitFor(100)
@@ -322,9 +322,9 @@ Func VaettirsKillSequence()
 		WaitFor(100)
 		If GetIsDead() Then Return
 	WEnd
-	
+
 	Info('Killing')
-	
+
 	Local $deadlock = TimerInit()
 	Local $agentArray = GetAgentArray(0xDB)
 	Local $target
@@ -346,14 +346,14 @@ Func VaettirsKillSequence()
 				If $target == Null Then ExitLoop
 				UseSkillEx($Skill_Arcane_Echo, $target)
 			EndIf
-			
+
 			; Use wastrel if possible
 			If IsRecharged($Skill_Wastrels_Demise) Then
 				$target = GetGoodTarget()
 				If $target == Null Then ExitLoop
 				UseSkillEx($Skill_Wastrels_Demise, $target)
 			EndIf
-	
+
 			UseShadowForm(True)
 			RndSleep(100)
 			$agentArray = GetAgentArray(0xDB)

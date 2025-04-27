@@ -20,13 +20,13 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-; Possible improvements :
+; Possible improvements : none, this is perfect ;)
 
 Opt('MustDeclareVars', 1)
 
 Local Const $MantidsBotVersion = '0.1'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $RAMantidsFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
 Local Const $MantidsHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
 Local Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
@@ -71,6 +71,7 @@ Func MantidsFarm($STATUS)
 EndFunc
 
 
+;~ Mantids farm setup
 Func SetupMantidsFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Nahpui_Quarter Then DistrictTravel($ID_Nahpui_Quarter, $DISTRICT_NAME)
@@ -78,7 +79,7 @@ Func SetupMantidsFarm()
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_General_Morgahn)
-	
+
 	LoadSkillTemplate($RAMantidsFarmerSkillbar)
 	LoadSkillTemplate($MantidsHeroSkillbar, 1)
 	DisableAllHeroSkills(1)
@@ -94,7 +95,7 @@ Func SetupMantidsFarm()
 EndFunc
 
 
-;~ Farm loop
+;~ Mantids farm loop
 Func MantidsFarmLoop()
 	Info('Entering Wajjun Bazaar')
 	Local $target
@@ -194,11 +195,14 @@ Func MantidsFarmLoop()
 EndFunc
 
 
+;~ Paragon Hero uses Fallback
 Func UseFallBack()
 	UseHeroSkill(1, $Mantids_FallBack)
 	AdlibUnRegister()
 EndFunc
 
+
+;~ Use Whirling Defense skill
 Func UseWhirlingDefense()
 	While IsRecharged($Mantids_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($Mantids_WhirlingDefense)
@@ -208,6 +212,7 @@ Func UseWhirlingDefense()
 EndFunc
 
 
+;~ Resign and return to Nahpui Quarter
 Func BackToNahpuiQuarterOutpost()
 	Info('Porting to Nahpui Quarter')
 	Resign()

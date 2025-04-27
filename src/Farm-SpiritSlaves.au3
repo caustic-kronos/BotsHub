@@ -231,7 +231,7 @@ Func FarmSouthGroup()
 		CleanseFromCripple()
 	WEnd
 	CleanseFromCripple()
-	; We want foes between -8055;-9200 and -8055;-9300
+	; We want foes between -8055,-9200 and -8055,-9300
 	Move(-7735, -8380)
 	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
 	$deadlock = TimerInit()

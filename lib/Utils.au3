@@ -36,10 +36,10 @@ Func RunTests($STATUS)
 	;	GetOwnLocation()
 	;	Sleep(2000)
 	;WEnd
-	
+
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $itemID = DllStructGetData($item, 'ID')
-	
+
 	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
@@ -53,13 +53,6 @@ Func RunTests($STATUS)
 
 	;Return 0
 	Return 2
-EndFunc
-
-
-Func PrintNPCState($npc)
-	Info('ID: ' & DllStructGetData($npc, 'ID'))
-	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
-	Info('ModelState: ' & DllStructGetData($npc, 'ModelState'))
 EndFunc
 
 
@@ -120,16 +113,20 @@ EndFunc
 
 ;~ Travel to specified map and specified district
 Func DistrictTravel($mapID, $district)
-	Local $districtAndRegion = $RegionMap[$district]
-	MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
-	WaitMapLoading($mapID, 20000)
-	RndSleep(2000)
+	If $district == 'Random' Then 
+		RandomDistrictTravel($mapID)
+	Else
+		Local $districtAndRegion = $RegionMap[$district]
+		MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
+		WaitMapLoading($mapID, 20000)
+		RndSleep(2000)
+	EndIf
 EndFunc
 
 
 ;~ Travel to specified map to a random district
 ;~ 7=eu, 8=eu+int, 11=all(incl. asia)
-Func RandomDistrictTravel($mapID, $district = 7)
+Func RandomDistrictTravel($mapID, $district = 6)
 	Local $Region[11] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_INTERNATIONAL, $ID_KOREA, $ID_CHINA, $ID_JAPAN]
 	Local $Language[11] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
 	Local $Random = Random(0, $district - 1, 1)
@@ -231,14 +228,6 @@ Func DefaultShouldPickItem($item)
 		Return GUICtrlRead($GUI_Checkbox_LootWhiteItems) == $GUI_CHECKED
 	EndIf
 	Return False
-EndFunc
-
-
-;~ Return True if the item should be picked up
-;~ Pick everything that is usually picked but also max damage purple and blue
-;~ Only useful for OS items since max damage q9 blue/purple inscribable items are worthless
-Func AlsoPickMaxPurpleAndBlueItems($item)
-
 EndFunc
 
 
@@ -357,7 +346,6 @@ Func FindChestFirstEmptySlot()
 	Next
 	Return $bagEmptySlot
 EndFunc
-
 
 
 ;~ Find all empty slots in inventory
@@ -592,6 +580,7 @@ Func SortInventory()
 EndFunc
 
 
+;~ Turns the bag index and the slot index into a general index
 Func GetGeneralSlot($bagsSizes, $bag, $slot)
 	Local $generalSlot = $slot
 	For $i = 1 To $bag - 1
@@ -601,6 +590,7 @@ Func GetGeneralSlot($bagsSizes, $bag, $slot)
 EndFunc
 
 
+;~ Turns a general index into the bag index and the slot index
 Func GetBagAndSlotFromGeneralSlot($bagsSizes, $generalSlot)
 	Local $bagAndSlot[2]
 	Local $i = 1
@@ -797,7 +787,7 @@ EndFunc
 ;~ Uses a consumable from inventory, if present
 Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
-	
+
 	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_2)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) > 0 Then Return
 
 	Local $ConsumableSlot = findInInventory($ID_Sugary_Blue_Drink)
@@ -932,27 +922,13 @@ Func SalvageItem($item)
 	For $i = 1 To DllStructGetData($item, 'Quantity')
 		$salvageKit = FindSalvageKitOrBuySome()
 		StartSalvageWithKit($item, $salvageKit)
-		Sleep(100 + GetPing())			
-		If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then 
+		Sleep(100 + GetPing())
+		If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 			ValidateSalvage()
-			Sleep(100 + GetPing())			
+			Sleep(100 + GetPing())
 		EndIf
 	Next
 EndFunc
-
-
-#CS
-10:45 - Starting...
-10:45 - Salvaging bag 1, slot 6
-10:45 - ItemID 2251
-10:45 - Salvage kit 1274
-10:45 - Starting salvage
-10:45 - Salvage session
-10:45 - Enqueueing
-10:45 - Sending enter
-10:45 - Salvage done
-10:45 - Paused.
-#CE
 
 
 ;~ Find an identification Kit in inventory or buy one. Return the kit or 0 if no kit was bought
@@ -963,14 +939,14 @@ Func FindIdentificationKitOrBuySome()
 		WithdrawGold(500)
 		RndSleep(500)
 	EndIf
-	
+
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
 	RndSleep(500)
-	
+
 	Local $j = 0
 	While $IdentificationKit == 0
 		If $j = 3 Then Return 0
@@ -997,14 +973,14 @@ Func FindSalvageKitOrBuySome($basicSalvageKit = True)
 		WithdrawGold(400)
 		RndSleep(400)
 	EndIf
-	
+
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
 	RndSleep(500)
-	
+
 	Local $j = 0
 	While $SalvageKit == 0
 		If $j = 3 Then Return 0
@@ -1041,124 +1017,151 @@ Func IsGeneralItem($itemID)
 EndFunc
 
 
+;~ Returns true if the item is an armor salvage
 Func IsArmorSalvageItem($item)
 	Return DllStructGetData($item, 'type') == $ID_Type_Armor_Salvage
 EndFunc
 
 
+;~ Returns true if the item is a book
 Func IsBook($item)
 	Return DllStructGetData($item, 'type') == $ID_Type_Book
 EndFunc
 
 
+;~ Returns true if the item is stackable
 Func IsStackableItemButNotMaterial($itemID)
 	Return $Map_StackableItemsExceptMaterials[$itemID] <> null
 EndFunc
 
 
+;~ Returns true if the item is a material, basic or rare
 Func IsMaterial($item)
 	Return DllStructGetData($item, 'Type') == 11 And $Map_All_Materials[DllStructGetData($item, 'ModelID')] <> null
 EndFunc
 
 
+;~ Returns true if the item is a basic material
 Func IsBasicMaterial($item)
 	Return DllStructGetData($item, 'Type') == 11 And $Map_Basic_Materials[DllStructGetData($item, 'ModelID')] <> null
 EndFunc
 
 
+;~ Returns true if the item is a rare material
 Func IsRareMaterial($item)
 	Return DllStructGetData($item, 'Type') == 11 And $Map_Rare_Materials[DllStructGetData($item, 'ModelID')] <> null
 EndFunc
 
+
+;~ Returns true if the item is a consumable
 Func IsConsumable($itemID)
 	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID)
 EndFunc
 
+
+;~ Returns true if the item is an alcohol
 Func IsAlcohol($itemID)
 	Return $Map_Alcohols[$itemID] <> null
 EndFunc
 
 
+;~ Returns true if the item is a festive item
 Func IsFestive($itemID)
 	Return $Map_Festive[$itemID] <> null
 EndFunc
 
 
+;~ Returns true if the item is a sweet
 Func IsTownSweet($itemID)
 	Return $Map_Town_Sweets[$itemID] <> null
 EndFunc
 
 
+;~ Returns true if the item is a PCon
 Func IsPCon($itemID)
 	Return $Map_Sweet_Pcons[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a sweet removing doubl... death penalty
 Func IsDPRemovalSweet($itemID)
 	Return $Map_DPRemoval_Sweets[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a special drop
 Func IsSpecialDrop($itemID)
 	Return $Map_Special_Drops[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a summoning stone
 Func IsSummoningStone($itemID)
 	Return $Map_Summoning_Stones[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a party tonic
 Func IsPartyTonic($itemID)
 	Return $Map_Party_Tonics[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is an everlasting tonic
 Func IsEverlastingTonic($itemID)
 	Return $Map_EL_Tonics[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a trophy
 Func IsTrophy($itemID)
 	Return $Map_Trophies[$itemID] <> null Or $Map_Reward_Trophies[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is an armor
 Func IsArmor($item)
 	Return $Map_Armor_Types[DllStructGetData($item, 'type')] <> null
 EndFunc
 
 
+;~ Return true if the item is a weapon
 Func IsWeapon($item)
 	Return $Map_Weapon_Types[DllStructGetData($item, 'type')] <> null
 EndFunc
 
 
+;~ Return true if the item is a weapon mod
 Func IsWeaponMod($itemID)
 	Return $Map_Weapon_Mods[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a tome
 Func IsTome($itemID)
 	Return $Map_Tomes[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a gold scroll
 Func IsGoldScroll($itemID)
 	Return $Map_Gold_Scrolls[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a blue scroll
 Func IsBlueScroll($itemID)
 	Return $Map_Blue_Scrolls[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a key
 Func IsKey($itemID)
 	Return $Map_Keys[$itemID] <> null
 EndFunc
 
 
+;~ Return true if the item is a map piece
 Func IsMapPiece($itemID)
 	Return $Map_Map_Pieces[$itemID] <> null
 EndFunc
@@ -1421,7 +1424,8 @@ Func GetPartyInRangeOfAgent($agent, $range = 0)
 	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 1, $range, PartyMemberFilter)
 EndFunc
 
-;~ Small helper to filter party members - TODO: remove this
+
+;~ Small helper to filter party members
 Func PartyMemberFilter($agent)
 	Return BitAND(DllStructGetData($agent, 'TypeMap'), 131072)
 EndFunc
@@ -1548,6 +1552,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coord
 EndFunc
 
 
+;~ TODO: check that this method is still better, I improved the original
 ;~ Get NPCs in range of the given coordinates
 Func BetterGetNearestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
 	Local $me = GetMyAgent()
@@ -1581,6 +1586,7 @@ EndFunc
 
 
 #Region Actions
+;~ Move while trying to avoid body block
 Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Local $timer = TimerInit()
 	Local Const $PI = 3.141592653589793
@@ -1694,6 +1700,7 @@ EndFunc
 
 
 #Region Map Clearing Utilities
+;~ Clear a zone around the coordinates provided
 Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
 	Info('Hunting ' & $s)
 	Local $blocked = 0
@@ -1727,6 +1734,7 @@ Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
 EndFunc
 
 
+;~ Kill foes by casting skills from 1 to 8
 Func MapClearKillFoes()
 	Local $me = GetMyAgent()
 	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = -1
@@ -1759,6 +1767,7 @@ Func MapClearKillFoes()
 EndFunc
 
 
+;~ Returns True if the group is alive
 Func IsGroupAlive()
 	Local $deadMembers = 0
 	For $i = 1 to GetHeroCount()
@@ -1837,7 +1846,7 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 		$attributes[$i][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
 		$buildTemplate = StringTrimLeft($buildTemplate, 4)
 	Next
-	
+
 	$skillsBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 8
 	$buildTemplate = StringTrimLeft($buildTemplate, 4)
 
@@ -1849,9 +1858,9 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	$opTail = Bin64ToDec($buildTemplate)
 
 	$attributes[0][0] = $secondaryProfession
-	
+
 	LoadAttributes($attributes, $secondaryProfession, $heroIndex)
-	
+
 	LoadSkillBar($skills[0], $skills[1], $skills[2], $skills[3], $skills[4], $skills[5], $skills[6], $skills[7], $heroIndex)
 EndFunc
 
@@ -1882,7 +1891,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 
 	; Only way to do this is to set all attributes to 0 and then increasing them as many times as needed
 	EmptyAttributes($secondaryProfession, $heroIndex)
-	
+
 	; Now that all attributes are at 0, we increase them by the times needed
 	; Using GetAttributeByID during the increase is a bad idea because it counts points from runes too
 	For $i = 1 To UBound($attributesArray) - 1
@@ -1909,7 +1918,7 @@ Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
 			Sleep(20 + GetPing())
 		Next
 	Next
-	
+
 	For $attribute In $AttributesByProfessionMap[$secondaryProfession]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
@@ -1920,101 +1929,100 @@ EndFunc
 #EndRegion Skill and Templates
 
 
+;~ Function to print a structure in a table - pretty brutal tbh
+Func _dlldisplay($struct)
+	Local $nextPtr, $currentPtr = DllStructGetPtr($struct, 1)
+	Local $offset = 0, $dllSize = DllStructGetSize($struct)
+	Local $elementValue, $type, $typeSize, $elementSize, $arrayCount, $aligns
 
-Func _dlldisplay($tStruct)
-	Local $pNextPtr, $pCurrentPtr = DllStructGetPtr($tStruct, 1)
-	Local $iOffset = 0, $iDllSize = DllStructGetSize($tStruct)
-	Local $vElVal, $sType, $iTypeSize, $iElSize, $iArrCount, $iAlign
-
-	Local $aStruct[1][5] = [['-', $pCurrentPtr, '<struct>', 0, '-']]	; #|Offset|Type|Size|Value'
+	Local $structArray[1][5] = [['-', $currentPtr, '<struct>', 0, '-']]	; #|Offset|Type|Size|Value'
 
 	; loop through elements
-	For $iE = 1 To 2 ^ 63
-
+	For $i = 1 To 2 ^ 63
 		; backup first index value, establish type and typesize of element, restore first index value
-		$vElVal = DllStructGetData($tStruct, $iE, 1)
-		Switch VarGetType($vElVal)
+		$elementValue = DllStructGetData($struct, $i, 1)
+		Switch VarGetType($elementValue)
 			Case 'Int32', 'Int64'
-				DllStructSetData($tStruct, $iE, 0x7777666655554433, 1)
-				Switch DllStructGetData($tStruct, $iE, 1)
+				DllStructSetData($struct, $i, 0x7777666655554433, 1)
+				Switch DllStructGetData($struct, $i, 1)
 					Case 0x7777666655554433
-						$sType = 'int64'
-						$iTypeSize = 8
+						$type = 'int64'
+						$typeSize = 8
 					Case 0x55554433
-						DllStructSetData($tStruct, $iE, 0x88887777, 1)
-						$sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? 'uint' : 'int')
-						$iTypeSize = 4
+						DllStructSetData($struct, $i, 0x88887777, 1)
+						$type = (DllStructGetData($struct, $i, 1) > 0 ? 'uint' : 'int')
+						$typeSize = 4
 					Case 0x4433
-						DllStructSetData($tStruct, $iE, 0x8888, 1)
-						$sType = (DllStructGetData($tStruct, $iE, 1) > 0 ? 'ushort' : 'short')
-						$iTypeSize = 2
+						DllStructSetData($struct, $i, 0x8888, 1)
+						$type = (DllStructGetData($struct, $i, 1) > 0 ? 'ushort' : 'short')
+						$typeSize = 2
 					Case 0x33
-						$sType = 'byte'
-						$iTypeSize = 1
+						$type = 'byte'
+						$typeSize = 1
 				EndSwitch
 			Case 'Ptr'
-				$sType = 'ptr'
-				$iTypeSize = @AutoItX64 ? 8 : 4
+				$type = 'ptr'
+				$typeSize = @AutoItX64 ? 8 : 4
 			Case 'String'
-				DllStructSetData($tStruct, $iE, ChrW(0x2573), 1)
-				$sType = (DllStructGetData($tStruct, $iE, 1) = ChrW(0x2573) ? 'wchar' : 'char')
-				$iTypeSize = ($sType = 'wchar') ? 2 : 1
+				DllStructSetData($struct, $i, ChrW(0x2573), 1)
+				$type = (DllStructGetData($struct, $i, 1) = ChrW(0x2573) ? 'wchar' : 'char')
+				$typeSize = ($type = 'wchar') ? 2 : 1
 			Case 'Double'
-				DllStructSetData($tStruct, $iE, 10 ^ - 15, 1)
-				$sType = (DllStructGetData($tStruct, $iE, 1) = 10 ^ - 15 ? 'double' : 'float')
-				$iTypeSize = ($sType = 'double') ? 8 : 4
+				DllStructSetData($struct, $i, 10 ^ - 15, 1)
+				$type = (DllStructGetData($struct, $i, 1) = 10 ^ - 15 ? 'double' : 'float')
+				$typeSize = ($type = 'double') ? 8 : 4
 		EndSwitch
-		DllStructSetData($tStruct, $iE, $vElVal, 1)
+		DllStructSetData($struct, $i, $elementValue, 1)
 
 		; calculate element total size based on distance to next element
-		$pNextPtr = DllStructGetPtr($tStruct, $iE + 1)
-		$iElSize = $pNextPtr ? Int($pNextPtr - $pCurrentPtr) : $iDllSize
+		$nextPtr = DllStructGetPtr($struct, $i + 1)
+		$elementSize = $nextPtr ? Int($nextPtr - $currentPtr) : $dllSize
 
 		; calculate true array count. Walk index backwards till there is NOT an error
-		$iArrCount = Int($iElSize / $iTypeSize)
-		While $iArrCount > 1
-			DllStructGetData($tStruct, $iE, $iArrCount)
+		$arrayCount = Int($elementSize / $typeSize)
+		While $arrayCount > 1
+			DllStructGetData($struct, $i, $arrayCount)
 			If Not @error Then ExitLoop
-			$iArrCount -= 1
+			$arrayCount -= 1
 		WEnd
 
 		; alignment is whatever space is left
-		$iAlign = $iElSize - ($iArrCount * $iTypeSize)
-		$iElSize -= $iAlign
+		$aligns = $elementSize - ($arrayCount * $typeSize)
+		$elementSize -= $aligns
 
 		; Add/print values and alignment
-		Switch $sType
+		Switch $type
 			Case 'wchar', 'char', 'byte'
-				_ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '[' & $iArrCount & ']|' & $iElSize & '|' & DllStructGetData($tStruct, $iE))
+				_ArrayAdd($structArray, $i & '|' & $offset & '|' & $type & '[' & $arrayCount & ']|' & $elementSize & '|' & DllStructGetData($struct, $i))
 			; 'uint', 'int', 'ushort', 'short', 'double', 'float', 'ptr'
 			Case Else
-				If $iArrCount > 1 Then
-					_ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '[' & $iArrCount & ']' & '|' & $iElSize & ' (' & $iTypeSize & ')|' & (DllStructGetData($tStruct, $iE) ? '[1] ' & $vElVal : '-'))
+				If $arrayCount > 1 Then
+					_ArrayAdd($structArray, $i & '|' & $offset & '|' & $type & '[' & $arrayCount & ']' & '|' & $elementSize & ' (' & $typeSize & ')|' & (DllStructGetData($struct, $i) ? '[1] ' & $elementValue : '-'))
 					; skip empty arrays
-					If DllStructGetData($tStruct, $iE) Then
-						For $j = 2 To $iArrCount
-							_ArrayAdd($aStruct, '-|' & $iOffset + ($iTypeSize * ($j - 1)) & '|-|-|[' & $j & '] ' & DllStructGetData($tStruct, $iE, $j))
+					If DllStructGetData($struct, $i) Then
+						For $j = 2 To $arrayCount
+							_ArrayAdd($structArray, '-|' & $offset + ($typeSize * ($j - 1)) & '|-|-|[' & $j & '] ' & DllStructGetData($struct, $i, $j))
 						Next
 					EndIf
 				Else
-					_ArrayAdd($aStruct, $iE & '|' & $iOffset & '|' & $sType & '|' & $iElSize & '|' & $vElVal)
+					_ArrayAdd($structArray, $i & '|' & $offset & '|' & $type & '|' & $elementSize & '|' & $elementValue)
 				EndIf
 		EndSwitch
-		If $iAlign Then _ArrayAdd($aStruct, '-|-|<alignment>|' & ($iAlign) & '|-')
+		If $aligns Then _ArrayAdd($structArray, '-|-|<alignment>|' & ($aligns) & '|-')
 
 		; if no next ptr then this was the last/only element
-		If Not $pNextPtr Then ExitLoop
+		If Not $nextPtr Then ExitLoop
 
 		; update offset, size and next ptr
-		$iOffset += $iElSize + $iAlign
-		$iDllSize -= $iElSize + $iAlign
-		$pCurrentPtr = $pNextPtr
+		$offset += $elementSize + $aligns
+		$dllSize -= $elementSize + $aligns
+		$currentPtr = $nextPtr
 
 	Next
 
-	_ArrayAdd($aStruct, '-|' & DllStructGetPtr($tStruct) + DllStructGetSize($tStruct) & '|<endstruct>|' & DllStructGetSize($tStruct) & '|-')
+	_ArrayAdd($structArray, '-|' & DllStructGetPtr($struct) + DllStructGetSize($struct) & '|<endstruct>|' & DllStructGetSize($struct) & '|-')
 
-	_ArrayDisplay($aStruct, '', '', 64, Default, '#|Offset|Type|Size|Value')
+	_ArrayDisplay($structArray, '', '', 64, Default, '#|Offset|Type|Size|Value')
 
-	Return $aStruct
+	Return $structArray
 EndFunc

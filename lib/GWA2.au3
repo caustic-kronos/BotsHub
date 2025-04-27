@@ -163,8 +163,7 @@ Global $labelsStruct[1][2]
 
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
-Global $agentStructTemplate = 'ptr vtable;dword unknown1[4];dword timer;dword timer2;ptr nextAgent;dword unknown2[3];long Id;float Z;float width1;float height1;float width2;float height2;float width3;float height3;float rotation;float rotation_cos;float rotation_sin;dword NameProperties;dword ground;dword h0060;float terrain_normal_x;float terrain_normal_y;dword terrain_normal_z;byte h0070[4];float X;float Y;dword plane;byte h0080[4];float NameTagX;float NameTagY;float NameTagZ;short visual_effects;short h0092;dword h0094[2];long Type;float MoveX;float MoveY;dword h00A8;float rotation_cos2;float rotation_sin2;dword h00B4[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword h00D4[3];float animation_type;dword h00E4[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short agent_model_type;dword transmog_npc_id;ptr Equip;dword h0100;ptr tags;short h0108;byte Primary;byte Secondary;byte Level;byte Team;byte h010E[2];dword h0110;float energy_regen;float overcast;float EnergyPercent;dword MaxEnergy;dword h0124;float HPPips;dword h012C;float HP;dword MaxHP;dword Effects;dword h013C;byte Hex;byte h0141[19];dword ModelState;dword TypeMap;dword h015C[4];dword InSpiritRange;dword visible_effects;dword visible_effects_ID;dword visible_effects_has_ended;dword h017C;dword LoginNumber;float animation_speed;dword animation_code;dword animation_id;byte h0190[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short h01B6;byte weapon_item_type;byte offhand_item_type;short WeaponItemId;short OffhandItemId'
-;Global $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
+Global $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
 Global $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
 Global $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
 Global $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword Id1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword Id2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword Id3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword Id4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword Id5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword Id6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword Id7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword Id8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
@@ -1296,6 +1295,7 @@ Func TraderBuy()
 EndFunc
 
 
+;~ Request to buy an item to a trader, returns the quote value
 Func TraderRequestBuy($item)
 	Local $found = False
 	Local $quoteID = MemoryRead($traderQuoteId)
@@ -1991,6 +1991,7 @@ Func ToggleRendering()
 EndFunc
 
 
+;~ Returns True if the game is being rendered
 Func GetIsRendering()
 	Return MemoryRead($disableRendering) <> 1
 EndFunc
@@ -2080,7 +2081,7 @@ Func ChangeWeaponSet($weaponSet)
 EndFunc
 
 
-;~ Use a skill.
+;~ Use a skill, doesn't wait for the skill to be done
 Func UseSkill($skillSlot, $target, $callTarget = False)
 	If $target == -2 Then $target = GetMyAgent()
 	DllStructSetData($useSkillStruct, 2, $skillSlot)
@@ -2090,6 +2091,7 @@ Func UseSkill($skillSlot, $target, $callTarget = False)
 EndFunc
 
 
+;~ Use a skill and wait for it to be done
 Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
 	If GetIsDead() Or Not IsRecharged($skillSlot) Then Return
 	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
@@ -2106,6 +2108,7 @@ Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
 EndFunc
 
 
+;~ Returns True if the skill at the skillslot given is recharged
 Func IsRecharged($skillSlot)
 	Return GetSkillbarSkillRecharge($skillSlot) == 0
 EndFunc
@@ -2635,6 +2638,7 @@ Func GetIsUnidentified($item)
 EndFunc
 
 
+;~ Returns if material is rare.
 Func GetIsRareMaterial($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	If DllStructGetData($item, 'Type') <> 11 Then Return False
@@ -3173,6 +3177,7 @@ Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 EndFunc
 
 
+;~ Returns agent corresponding to the given player number
 Func GetAgentByPlayerNumber($playerNumber)
 	Local $agentArray = GetAgentArray()
 	For $i = 1 To $agentArray[0]
@@ -3238,6 +3243,7 @@ Func GetAgentArray($type = 0)
 EndFunc
 
 
+;~ Return True if hard mode is on
 Func GetIsHardMode()
 	Return GetPartyState(0x10)
 EndFunc
@@ -3527,6 +3533,8 @@ Func GetSkillbar($heroIndex = 0)
 		EndIf
 	Next
 EndFunc
+
+
 ;~ Returns the skill ID of an equipped skill.
 Func GetSkillbarSkillID($skillSlot, $heroIndex = 0)
 	Return DllStructGetData(GetSkillbar($heroIndex), 'ID' & $skillSlot)
@@ -3577,7 +3585,7 @@ Func GetMorale($heroIndex = 0)
 EndFunc
 
 
-;~ Returns Attribute struct.
+;~ Returns attribute struct.
 Func GetAttributeInfoByID($attributeID)
 	Local $attributeStructAddress = $attributeInfoPtr + (0x14 * $attributeID)
 	Local $attributeStruct = DllStructCreate($attributeStructTemplate)
@@ -3586,18 +3594,21 @@ Func GetAttributeInfoByID($attributeID)
 EndFunc
 
 
+;~ Returns profession associated with an attribute
 Func GetAttributeProfession($attributeID)
 	Local $attributeInfo = GetAttributeInfoByID($attributeID)
 	Return DllStructGetData($attributeInfo, 'profession_id')
 EndFunc
 
 
+;~ TODO: try this
 Func GetAttributeNameID($attributeID)
 	Local $attributeInfo = GetAttributeInfoByID($attributeID)
 	Return DllStructGetData($attributeInfo, 'name_id')
 EndFunc
 
 
+;~ TODO: try this
 Func GetAttributeIsPvE($attributeID)
 	Local $attributeInfo = GetAttributeInfoByID($attributeID)
 	Return DllStructGetData($attributeInfo, 'is_pve')
@@ -3673,7 +3684,7 @@ Func GetSkillTimer()
 EndFunc
 
 
-;~ Returns level of an attribute.
+;~ Returns level of an attribute - takes runes into account
 Func GetAttributeByID($attributeID, $withRunes = False, $heroIndex = 0)
 	Local $agentID = GetHeroID($heroIndex)
 	Local $buffer
@@ -3733,9 +3744,6 @@ EndFunc
 ;~ Returns your agent ID.
 Func GetMyID()
 	Return MemoryRead($myID)
-	;Local $offset[5] = [0, 0x18, 0x2C, 0x680, 0x14]
-	;Local $result = MemoryReadPtr($baseAddressPtr, $offset)
-	;Return $result[1]
 EndFunc
 
 
@@ -3757,11 +3765,13 @@ Func GetPing()
 EndFunc
 
 
+;~ Returns current map ID
 Func GetMapID()
 	Return MemoryRead($mapID)
 EndFunc
 
 
+;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetInstanceType()
 	Local $offset[1] = [0x4]
 	Local $result = MemoryReadPtr($instanceInfoPtr, $offset, 'dword')
@@ -3769,6 +3779,7 @@ Func GetInstanceType()
 EndFunc
 
 
+;~ Returns the area infos corresponding to the given map
 Func GetAreaInfoByID($mapID = 0)
 	If $mapID = 0 Then $mapID = GetMapID()
 
@@ -3780,18 +3791,21 @@ Func GetAreaInfoByID($mapID = 0)
 EndFunc
 
 
+;~ Returns the campaign of a given map
 Func GetMapCampaign($mapID = 0)
 	Local $mapStruct = GetAreaInfoByID($mapID)
 	Return DllStructGetData($mapStruct, 'campaign')
 EndFunc
 
 
+;~ Returns the region of a given map
 Func GetMapRegion($mapID = 0)
 	Local $mapStruct = GetAreaInfoByID($mapID)
 	Return DllStructGetData($mapStruct, 'region')
 EndFunc
 
 
+;~ TODO: what does this do ?
 Func GetMapRegionType($mapID = 0)
 	Local $mapStruct = GetAreaInfoByID($mapID)
 	Return DllStructGetData($mapStruct, 'regiontype')
@@ -3896,6 +3910,7 @@ Func GetBuildNumber()
 EndFunc
 
 
+;~ Returns primary attribute from the provided profession
 Func GetProfPrimaryAttribute($profession)
 	Switch $profession
 		Case $ID_Warrior
@@ -3971,13 +3986,14 @@ Func GetDistance($agent1, $agent2)
 EndFunc
 
 
-;~ Return the square of the distance between two agents.
+;~ Returns the square of the distance between two agents.
 Func GetPseudoDistance($agent1, $agent2)
 	Return (DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2
 EndFunc
 
 
 ;~ Checks if a point is within a polygon defined by an array
+;~ Point-in-Polygon algorithm — Ray Casting Method - pretty cool stuff !
 Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 	Local $edges = UBound($areaCoordinates)
 	Local $oddNodes = False
@@ -3987,12 +4003,12 @@ Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 		$X = DllStructGetData($me, 'X')
 		$Y = DllStructGetData($me, 'Y')
 	EndIf
-	$j = $edges - 1
+	Local $j = $edges - 1
 	For $i = 0 To $edges - 1
 		If (($areaCoordinates[$i][1] < $Y And $areaCoordinates[$j][1] >= $Y) _
 				Or ($areaCoordinates[$j][1] < $Y And $areaCoordinates[$i][1] >= $Y)) _
 				And ($areaCoordinates[$i][0] <= $X Or $areaCoordinates[$j][0] <= $X) Then
-			If ($areaCoordinates[$i][0] + ($Y - $areaCoordinates[$i][1]) / ($areaCoordinates[$j][1] - $areaCoordinates[$i][1]) * ($areaCoordinates[$j][0] - $areaCoordinates[$i][0]) < $aPosX) Then
+			If ($areaCoordinates[$i][0] + ($Y - $areaCoordinates[$i][1]) / ($areaCoordinates[$j][1] - $areaCoordinates[$i][1]) * ($areaCoordinates[$j][0] - $areaCoordinates[$i][0]) < $X) Then
 				$oddNodes = Not $oddNodes
 			EndIf
 		EndIf
@@ -4002,6 +4018,7 @@ Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 EndFunc
 
 
+;~ Invites a player into the guild using his character name
 Func InviteGuild($characterName)
 	If GetAgentExists(-2) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
@@ -4018,6 +4035,7 @@ Func InviteGuild($characterName)
 EndFunc
 
 
+;~ Invites a player as a guest into the guild using his character name
 Func InviteGuest($characterName)
 	If GetAgentExists(-2) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
@@ -4261,6 +4279,7 @@ Func SetEvent($skillActivate = '', $skillCancel = '', $skillComplete = '', $chat
 EndFunc
 
 
+;~ Internal use only.
 Func ProcessChatMessage($chatLogStruct)
 	Local $messageType = DllStructGetData($chatLogStruct, 1)
 	Local $message = DllStructGetData($chatLogStruct, 'message[512]')
@@ -4309,6 +4328,7 @@ EndFunc
 
 
 #Region Modification
+;~ Internal use only.
 Func ModifyMemory()
 	$asmInjectionSize = 0
 	$asmCodeOffset = 0
@@ -5152,17 +5172,18 @@ EndFunc
 #Region Online Status
 ;~ Change online status. 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
 Func SetPlayerStatus($status)
-	If (($status >= 0 And $status <= 3) And (GetPlayerStatus() <> $status)) Then
-		DllStructSetData($changeStatusStruct, 2, $status)
-
-		Enqueue($changeStatusStructPtr, 8)
-		Return True
-	Else
+	If $status < 0 Or $status > 3 Or GetPlayerStatus() == $status Then
+		Warn('Provided an incorrect status - or the player is already in the provided status.')
 		Return False
 	EndIf
+
+	DllStructSetData($changeStatusStruct, 2, $status)
+	Enqueue($changeStatusStructPtr, 8)
+	Return True
 EndFunc
 
 
+;~ Returns player status : 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
 Func GetPlayerStatus()
 	Return MemoryRead($currentStatus)
 EndFunc
@@ -5998,19 +6019,6 @@ Func __ProcessGetName($pid)
 EndFunc
 
 
-Func CheckArea($X, $Y)
-	Local $result = False
-	Local $me = GetMyAgent()
-	Local $agentX = DllStructGetData($me, 'X')
-	Local $agentY = DllStructGetData($me, 'Y')
-
-	If ($agentX < $X + 500) And ($agentX > $X - 500) And ($agentY < $Y + 500) And ($agentY > $Y - 500) Then
-		$result = True
-	EndIf
-	Return $result
-EndFunc
-
-
 Func Disconnected()
 	Local $check = False
 	Local $deadlock = TimerInit()
@@ -6091,33 +6099,7 @@ Func GetPartyWaitingForMission()
 EndFunc
 
 
-Func GetBestTarget($range = 1320)
-	Local $bestTarget, $distance, $lowestSum = 100000000
-	Local $agentArray = GetAgentArray(0xDB)
-	Local $me = GetMyAgent()
-	For $i = 1 To $agentArray[0]
-		Local $distancesSum = 0
-		If DllStructGetData($agentArray[$i], 'Allegiance') <> 3 Then ContinueLoop
-		If DllStructGetData($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If DllStructGetData($agentArray[$i], 'ID') = GetMyID() Then ContinueLoop
-		If GetDistance($agentArray[$i], $me) > $range Then ContinueLoop
-		For $j = 1 To $agentArray[0]
-			If DllStructGetData($agentArray[$j], 'Allegiance') <> 3 Then ContinueLoop
-			If DllStructGetData($agentArray[$j], 'HP') <= 0 Then ContinueLoop
-			If DllStructGetData($agentArray[$j], 'ID') = GetMyID() Then ContinueLoop
-			If GetDistance($agentArray[$j], $me) > $range Then ContinueLoop
-			$distance = GetDistance($agentArray[$i], $agentArray[$j])
-			$distancesSum += $distance
-		Next
-		If $distancesSum < $lowestSum Then
-			$lowestSum = $distancesSum
-			$bestTarget = $agentArray[$i]
-		EndIf
-	Next
-	Return $bestTarget
-EndFunc
-
-
+;~ Wait for map to be loaded
 Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 5000)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 	Local $deadlock = TimerInit()
@@ -6133,11 +6115,13 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 5000)
 EndFunc
 
 
+;~ Initiate a trade with the given player agent
 Func TradePlayer($agent)
 	SendPacket(0x08, $HEADER_TRADE_PLAYER, DllStructGetData($agent, 'ID'))
 EndFunc
 
 
+;~ Like pressing the 'Accept' button in a trade.
 Func AcceptTrade()
 	Return SendPacket(0x4, $HEADER_TRADE_ACCEPT)
 EndFunc
@@ -6167,7 +6151,7 @@ Func OfferItem($itemID, $amount = 1)
 EndFunc
 
 
-;~ Returns: 1 - Trade windows exist; 3 - Offer; 7 - Accepted Trade
+;~ Returns: 1 - Trade windows exist 3 - Offer 7 - Accepted Trade
 Func TradeWinExist()
 	Local $offset = [0, 0x18, 0x58, 0]
 	Return MemoryReadPtr($baseAddressPtr, $offset)[1]
@@ -6201,30 +6185,7 @@ Func GetLastDialogIDHex(Const ByRef $ID)
 EndFunc
 
 
-;~ Returns array with itemIDs of Items in Bags with correct ModelID.
-Func GetBagItemIDByModelID($modelID)
-	Local $resultArray[291][3]
-	Local $count = 0
-	For $bag = 1 To 17
-		Local $bagPtr = GetBag($bag)
-		Local $lSlots = MemoryRead($bagPtr + 32, 'long')
-		For $slot = 1 To $lSlots
-			Local $itemPtr = GetItemPtrBySlot($bagPtr, $slot)
-			Local $itemMID = MemoryRead($itemPtr + 44, 'long')
-			If $itemMID = $modelID Then
-				Local $itemID = MemoryRead($itemPtr, 'long')
-				$resultArray[$count][0] = $itemID
-				$resultArray[$count][1] = $bag
-				$resultArray[$count][2] = $slot
-				$count += 1
-			EndIf
-		Next
-	Next
-	ReDim $resultArray[$count][3]
-	Return $itemID
-EndFunc
-
-
+;~ Returns pointer to the bag at the bag index provided
 Func GetBagPtr($bagIndex)
 	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x4 * $bagIndex]
 	Local $itemStructAddress = MemoryReadPtr($baseAddressPtr, $offset, 'ptr')
@@ -6232,6 +6193,7 @@ Func GetBagPtr($bagIndex)
 EndFunc
 
 
+;~ Returns pointer to the item at the slot provided
 Func GetItemPtrBySlot($bag, $slot)
 	If IsPtr($bag) Then
 		$bagPtr = $bag

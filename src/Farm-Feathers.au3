@@ -20,13 +20,13 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-; Possible improvements :
+; Possible improvements : rewrite it all
 
 Opt('MustDeclareVars', 1)
 
 Local Const $FeathersBotVersion = '3.0'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
 Local Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Prayers' & @CRLF _
@@ -53,7 +53,7 @@ Local Const $ModelID_Sensali_Cutter = 3948
 
 Local $FEATHERS_FARM_SETUP = False
 
-;~ Main method to farm Feathers
+;~ Main method to farm feathers
 Func FeathersFarm($STATUS)
 	If Not $FEATHERS_FARM_SETUP Then
 		SetupFeathersFarm()
@@ -66,6 +66,7 @@ Func FeathersFarm($STATUS)
 EndFunc
 
 
+;~ Feathers farm setup
 Func SetupFeathersFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
@@ -140,6 +141,7 @@ Func FeathersFarmLoop()
 EndFunc
 
 
+;~ Return to Seitung Harbor outpost
 Func BackToSeitungHarborOutpost()
 	Info('Porting to Seitung Harbor')
 	Resign()
@@ -149,6 +151,7 @@ Func BackToSeitungHarborOutpost()
 EndFunc
 
 
+;~ Move and ... run ? Who the fuck wrote this ?
 Func MoveRun($x, $y, $timeOut = 2*60*1000)
 	If GetIsDead() Then Return
 	Local $me = GetMyAgent()
@@ -175,6 +178,8 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 	WEnd
 EndFunc
 
+
+;~ Move and kill I suppose
 Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 	If GetIsDead() Then Return False
 	Local $Angle = 0
@@ -234,6 +239,7 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 EndFunc
 
 
+;~ Kill foes
 Func Kill($aWaitForSettle = True)
 	If GetIsDead() Then Return
 
@@ -294,6 +300,7 @@ Func Kill($aWaitForSettle = True)
 EndFunc
 
 
+;~ Wait for foes to settle, I guess ?
 Func WaitForSettle($Timeout = 10000)
 	Local $me = GetMyAgent()
 	Local $target
@@ -326,6 +333,7 @@ Func WaitForSettle($Timeout = 10000)
 EndFunc
 
 
+;~ Return True if agent is a Sensali
 Func IsSensali($agent)
 	Local $playerNumber = DllStructGetData($agent, 'PlayerNumber')
 	If $playerNumber = $ModelID_Sensali_Claw Or $playerNumber = $ModelID_Sensali_Darkfeather Or $playerNumber = $ModelID_Sensali_Cutter Then

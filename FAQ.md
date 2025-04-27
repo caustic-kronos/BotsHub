@@ -34,7 +34,7 @@ Please ensure that any valuable or important items are safely stored or protecte
 The developers are not responsible for any unintended consequences resulting from the bot’s actions.
 </details>
 
-<details> <summary><strong>Q: Why isn't the data tracking option working? I get a "Failed to load sqlite" error.</strong></summary>
+<details> <summary><strong>Q: Why isn't the data tracking option working? I get a 'Failed to load sqlite' error.</strong></summary>
 You need the SQLite AutoIt library installed:
 
 Copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder.

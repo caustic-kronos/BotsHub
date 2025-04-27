@@ -26,7 +26,7 @@ Opt('MustDeclareVars', 1)
 
 Local Const $CorsairsBotVersion = '0.4'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
 Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
@@ -65,6 +65,7 @@ Func CorsairsFarm($STATUS)
 EndFunc
 
 
+;~ Corsairs farm setup
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
@@ -190,6 +191,7 @@ Func CorsairsFarmLoop()
 EndFunc
 
 
+;~ Function to use all defensive skills
 Func CastAllDefensiveSkills()
 	UseSkillEx($Corsairs_ShroudOfDistress)
 	RndSleep(20)
@@ -202,6 +204,7 @@ Func CastAllDefensiveSkills()
 EndFunc
 
 
+;~ Function to survive once enemies are dead
 Func OnlyCastTogetherAsOne()
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
@@ -210,6 +213,7 @@ Func OnlyCastTogetherAsOne()
 EndFunc
 
 
+;~ Function to defend against the corsairs
 Func DefendAgainstCorsairs($Hidden = False)
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
@@ -230,6 +234,7 @@ Func DefendAgainstCorsairs($Hidden = False)
 EndFunc
 
 
+;~ Resign and returns to Modook Crevice (city)
 Func BackToModdokCreviceOutpost()
 	Info('Porting to Moddok Crevice (city)')
 	Resign()
@@ -239,6 +244,7 @@ Func BackToModdokCreviceOutpost()
 EndFunc
 
 
+;~ Wait for closest enemy to be in range
 Func WaitForEnemyInRange()
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
@@ -251,6 +257,7 @@ Func WaitForEnemyInRange()
 EndFunc
 
 
+;~ Wait for Bohseda and Dunkoro to shut up and for Bohseda to be interactible
 Func WaitForBohseda()
 	While (Not GetIsDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
 		DefendAgainstCorsairs(True)

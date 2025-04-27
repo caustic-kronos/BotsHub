@@ -1538,7 +1538,7 @@ Global Const $ID_Celestial_Longbow					= 1068
 
 ;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
 ;3270						; magma shield/summit shield ???
-;870, 873, 869, 1101 		; more canthan rare skins
+;870, 873, 869, 1101		; more canthan rare skins
 ;1569, 1439, 1563, 1557		; Elonian Swords (Colossal, Ornate, Tattooed, Dead, etc)
 
 Global Const $ID_Adamantine_Shield					= 1892
@@ -1548,7 +1548,7 @@ Global Const $ID_Amber_Shield_2						= 941
 Global Const $ID_Bladed_Shield						= 777
 Global Const $ID_Bladed_Shield_2					= 778
 Global Const $ID_Bo_Staff							= 735
-Global Const $ID_Butterfly_Sword					= 397 
+Global Const $ID_Butterfly_Sword					= 397
 Global Const $ID_Colossal_Scimitar					= 1556
 Global Const $ID_Crenellated_scimitar				= 791
 Global Const $ID_Crystalline_Sword					= 399
@@ -1581,7 +1581,7 @@ Global Const $ID_Exalted_Aegis						= 1037
 Global Const $ID_Falchion							= 405
 Global Const $ID_Fellblade							= 400
 Global Const $ID_Fiery_Dragon_Sword					= 1612
-Global Const $ID_Fire_Staff							= 887		; Canthan version 
+Global Const $ID_Fire_Staff							= 887		; Canthan version
 Global Const $ID_Flamberge							= 2250
 Global Const $ID_Gemstone_Axe						= 701
 Global Const $ID_Gloom_Shield						= 1315

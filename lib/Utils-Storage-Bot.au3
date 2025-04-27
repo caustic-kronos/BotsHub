@@ -25,28 +25,7 @@
 
 Opt('MustDeclareVars', 1)
 
-
 Local $SQLITE_DB
-
-#Region Guild Hall Globals
-Local $WarriorsIsle = False
-Local $HuntersIsle = False
-Local $WizardsIsle = False
-Local $BurningIsle = False
-Local $FrozenIsle = False
-Local $NomadsIsle = False
-Local $DruidsIsle = False
-Local $IsleOfTheDead = False
-Local $IsleOfWeepingStone = False
-Local $IsleOfJade = False
-Local $ImperialIsle = False
-Local $IsleOfMeditation = False
-Local $UnchartedIsle = False
-Local $IsleOfWurms = False
-Local $CorruptedIsle = False
-Local $IsleOfSolitude = False
-#EndRegion Guild Hall Globals
-
 
 #Region Tables
 ; Those tables are built automatically and one is completed by the user
@@ -312,8 +291,6 @@ Func SQLExecute($query)
 	Local $result = _SQLite_Exec($SQLITE_DB, $query)
 	If $result <> 0 Then Error('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error)
 EndFunc
-
-
 #EndRegion Database Utils
 
 
@@ -362,8 +339,7 @@ Func StoreAllItemsData()
 EndFunc
 
 
-Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription']
-
+;~ Insert data into the RAW data table
 Func AddToFilledData($batchID)
 	Local $InsertQuery = 'WITH raw AS (' & @CRLF _
 		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, modstruct, extra_ID, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
@@ -448,6 +424,7 @@ Func CompleteUpgradeLookupTable()
 EndFunc
 
 
+;~ Insert upgrades not already present in database
 Func InsertNewUpgrades($upgradeType)
 	Local $query = 'INSERT INTO ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
 		& "SELECT DISTINCT OS, '" & $upgradeType & "', type_ID, " & $upgradeType & ', NULL, NULL, 0' & @CRLF _
@@ -458,6 +435,7 @@ Func InsertNewUpgrades($upgradeType)
 EndFunc
 
 
+;~ Update upgrades with their hexa struct if we manage to find enough similarities
 Func UpdateNewUpgrades($upgradeType)
 	Local $queryResult, $row
 	Local $mapItemStruct[]
@@ -486,6 +464,7 @@ Func UpdateNewUpgrades($upgradeType)
 EndFunc
 
 
+;~ Validate that the upgrades hexa structs we found are correct
 Func ValidateNewUpgrades($upgradeType)
 	Local $query
 	$query = 'UPDATE ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
@@ -746,6 +725,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 EndFunc
 
 
+;~ Store all item in the Xunlai Storage
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Info('Storing items')
 	Local $item, $itemID
@@ -755,7 +735,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			$item = GetItemBySlot($bagIndex, $i)
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 And $shouldStoreItem($item) Then
-				Debug('Moving ' & $bagIndex & ';' & $i)
+				Debug('Moving ' & $bagIndex & ':' & $i)
 				StoreItemInXunlaiStorage($item)
 				RndSleep(50)
 			EndIf
@@ -764,6 +744,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 EndFunc
 
 
+;~ Store an item in the Xunlai Storage
 Func StoreItemInXunlaiStorage($item)
 	Local $existingStacks
 	Local $itemID, $storageSlot, $amount
@@ -787,7 +768,7 @@ Func StoreItemInXunlaiStorage($item)
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then
-				Debug('To ' & $existingStacks[$bagIndex] & ';' & $existingStacks[$bagIndex + 1])
+				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 				RndSleep(50 + GetPing())
 				$amount = $amount + $existingAmount - 250
@@ -800,11 +781,10 @@ Func StoreItemInXunlaiStorage($item)
 		Warn('Storage is full')
 		Return
 	EndIf
-	Debug('To ' & $storageSlot[0] & ';' & $storageSlot[1])
+	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
 	RndSleep(50 + GetPing())
 EndFunc
-
 
 
 ;~ Return True if the item should be stored in Xunlai Storage
@@ -851,7 +831,8 @@ Func DefaultShouldSellItem($item)
 		If Not GetIsIdentified($item) Then Return False
 		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False
 		If ShouldKeepWeapon($itemID) Then Return False
-		;If HasSalvageInscription($item) Then Return False ;should be included in next line
+		; This should be included in next line
+		;If HasSalvageInscription($item) Then Return False
 		If ContainsValuableUpgrades($item) Then Return False
 		Return True
 	EndIf
@@ -893,6 +874,7 @@ Func DefaultShouldSellRareMaterial($item)
 EndFunc
 
 
+;~ Returns true if an item has a 'Salvageable' inscription
 Func HasSalvageInscription($item)
 	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '00082600011826900098260F1CA8A7000000C']
 	Local $modstruct = GetModStruct($item)
@@ -903,10 +885,15 @@ Func HasSalvageInscription($item)
 EndFunc
 
 
+;~ Return true if the weapon should be kept (not sold, not salvaged)
+;~ Items that should be kept : 	- ultra rare items (ex: Voltaic Spear)
+;~								- rare items that are perfect or close to it (ex: a good Magma Shield)
+;~								- low req weapons
+;~								- weapons with good mods
 Func ShouldKeepWeapon($itemID)
 	Local Static $shouldKeepWeaponsArray = [ _
 		_	;Salvages to dust
-		_ 	;$ID_Great_Conch, $ID_Elemental_Sword, _
+		_	;$ID_Great_Conch, $ID_Elemental_Sword, _
 		_	;Salvages to dust, sometimes
 		_	;$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow _
 		_	;Salvages to ruby, very rarely ...
