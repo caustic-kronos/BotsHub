@@ -832,18 +832,24 @@ EndFunc
 
 #Region Identification and Salvage
 ;~ Return True if the item should be salvaged
-; TODO : refine which items should be salvaged and which should not
 Func ShouldSalvageItem($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
-	If IsWeapon($item) And GetRarity($item) <> $RARITY_Green Then
+	Local $rarity = GetRarity($item)
+	If $rarity == $RARITY_Green Then Return False
+	If IsWeapon($item) Then
+		If $rarity == $RARITY_White Then Return True
+		If IsLowReqMaxDamage($item) Then Return False
+		If Not GetIsIdentified($item) Then Return False
+		If ShouldKeepWeapon($itemID) Then Return False
+		;If HasSalvageInscription($item) Then Return False
+		If ContainsValuableUpgrades($item) Then Return False
 		Return False
-	ElseIf $itemID == $ID_Glacial_Stone Then
-		Return True
-	ElseIf $itemID == $ID_Saurian_Bone Then
-		Return True
-	ElseIf IsTrophy($item) Then
-		Return False
-	ElseIf IsTrophy($item) Then
+	EndIf
+	If IsTrophy($itemID) Then
+		If $Map_Feather_Trophies[$itemID] <> Null Then Return True
+		If $Map_Dust_Trophies[$itemID] <> Null Then Return True
+		If $Map_Bones_Trophies[$itemID] <> Null Then Return True
+		If $Map_Fiber_Trophies[$itemID] <> Null Then Return True
 		Return False
 	EndIf
 	Return False
@@ -894,8 +900,12 @@ EndFunc
 
 ;~ Salvage all items from inventory
 Func SalvageAllItems()
+	If (CountSlots() < 1) Then
+		Warn('Not enough room in inventory to salvage items')
+		Return
+	EndIf
 	Info('Salvaging all items')
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Debug('Salvaging bag' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $i = 1 To $bagSize
@@ -909,8 +919,7 @@ EndFunc
 Func SalvageItemAt($bag, $slot)
 	Local $item = GetItemBySlot($bag, $slot)
 	If DllStructGetData($item, 'ID') = 0 Then Return
-
-	If (ShouldSalvageItem($item) And CountSlots() > 0) Then
+	If ShouldSalvageItem($item) Then
 		SalvageItem($item)
 	EndIf
 EndFunc
