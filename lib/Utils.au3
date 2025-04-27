@@ -10,7 +10,7 @@
 ; distributed under the License is distributed on an 'AS IS' BASIS,
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
-; limitations under the License.
+; limitations under the License.d
 
 #include-once
 
@@ -36,20 +36,9 @@ Func RunTests($STATUS)
 	;	GetOwnLocation()
 	;	Sleep(2000)
 	;WEnd
-	;SellEverythingToMerchant(DefaultShouldSellItem, True)
-
-	;Local $item = GetItemBySlot(1, 1)
+	
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $itemID = DllStructGetData($item, 'ID')
-
-	;StartSalvage($item)
-	;Sleep(2000)
-	;SalvageMaterials()
-	;SalvageMod(2)
-	;Sleep(2000)
-	;CancelSalvage()
-	;EndSalvage()
-	;Sleep(2000)
 	
 	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	;Local $target = GetCurrentTarget()
@@ -845,8 +834,15 @@ EndFunc
 ;~ Return True if the item should be salvaged
 ; TODO : refine which items should be salvaged and which should not
 Func ShouldSalvageItem($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
 	If IsWeapon($item) And GetRarity($item) <> $RARITY_Green Then
+		Return False
+	ElseIf $itemID == $ID_Glacial_Stone Then
 		Return True
+	ElseIf $itemID == $ID_Saurian_Bone Then
+		Return True
+	ElseIf IsTrophy($item) Then
+		Return False
 	ElseIf IsTrophy($item) Then
 		Return False
 	EndIf
@@ -886,7 +882,7 @@ Func IdentifyAllItems()
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 
-			Local $identificationKit = FindIdentificationKitOrBuySome()
+			FindIdentificationKitOrBuySome()
 			If Not GetIsIdentified($item) Then
 				IdentifyItem($item)
 				RndSleep(100)
@@ -896,7 +892,7 @@ Func IdentifyAllItems()
 EndFunc
 
 
-;~ Salvage all items from inventory (non functional)
+;~ Salvage all items from inventory
 Func SalvageAllItems()
 	Info('Salvaging all items')
 	For $bagIndex = 1 To 4
@@ -909,26 +905,32 @@ Func SalvageAllItems()
 EndFunc
 
 
+;~ Salvage an item based on its position in the inventory
 Func SalvageItemAt($bag, $slot)
-	Debug('Salvaging bag ' & $bag & ', slot ' & $slot)
 	Local $item = GetItemBySlot($bag, $slot)
-	Debug('ItemID ' & DllStructGetData($item, 'ID'))
 	If DllStructGetData($item, 'ID') = 0 Then Return
 
-	Local $salvageKit = FindSalvageKitOrBuySome()
-	Debug('Salvage kit ' & $salvageKit)
 	If (ShouldSalvageItem($item) And CountSlots() > 0) Then
-		Debug('Starting salvage')
-		SalvageItem($item, $salvageKit)
-	;	RndSleep(500)
-	;	If GetRarity($item) == $RARITY_gold Then
-	;		Debug('Sending enter')
-	;		ControlSend(GetWindowHandle(), '', '', '{Enter}')
-	;		RndSleep(500)
-	;	EndIf
-	;	Debug('Salvage done')
+		SalvageItem($item)
 	EndIf
 EndFunc
+
+
+;~ Salvage the given item - FIXME: fails for weapons/armorsalvageable when using expert kits and better because they open a window
+Func SalvageItem($item)
+	Local $rarity = GetRarity($item)
+	Local $salvageKit
+	For $i = 1 To DllStructGetData($item, 'Quantity')
+		$salvageKit = FindSalvageKitOrBuySome()
+		StartSalvageWithKit($item, $salvageKit)
+		Sleep(100 + GetPing())			
+		If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then 
+			ValidateSalvage()
+			Sleep(100 + GetPing())			
+		EndIf
+	Next
+EndFunc
+
 
 #CS
 10:45 - Starting...
@@ -944,24 +946,10 @@ EndFunc
 #CE
 
 
-Func SalvageItem($itemID, $kit)
-	If IsDllStruct($itemID) Then $itemID = DllStructGetData($itemID, 'ID')
-	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
-	Debug('Reading')
-	Local $salvageSessionID = MemoryReadPtr($baseAddressPtr, $offset)
-	Debug('Salvage session ' & $salvageSessionID[1])
-	DllStructSetData($salvageStruct, 2, $itemID)
-	DllStructSetData($salvageStruct, 3, $kit)
-	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
-	Debug('Enqueueing')
-	Enqueue($salvageStructPtr, 16)
-EndFunc
-
-
-;~ Find an identification Kit in inventory or buy one. Return the ID of the kit or 0 if no kit was bought
+;~ Find an identification Kit in inventory or buy one. Return the kit or 0 if no kit was bought
 Func FindIdentificationKitOrBuySome()
-	Local $IdentificationKitID = FindIdentificationKit()
-	If $IdentificationKitID <> 0 Then Return $IdentificationKitID
+	Local $IdentificationKit = FindIdentificationKit()
+	If $IdentificationKit <> 0 Then Return $IdentificationKit
 	If GetGoldCharacter() < 500 And GetGoldStorage() > 499 Then
 		WithdrawGold(500)
 		RndSleep(500)
@@ -975,22 +963,26 @@ Func FindIdentificationKitOrBuySome()
 	RndSleep(500)
 	
 	Local $j = 0
-	While $IdentificationKitID == 0
+	While $IdentificationKit == 0
 		If $j = 3 Then Return 0
-		BuyItem(6, 1, 500)
-		RndSleep(500)
+		BuySuperiorIdentificationKit()
 		$j = $j + 1
-		$IdentificationKitID = FindIdentificationKit()
+		$IdentificationKit = FindIdentificationKit()
 	WEnd
 	RndSleep(500)
-	Return $IdentificationKitID
+	Return $IdentificationKit
 EndFunc
 
 
 ;~ Find a salvage Kit in inventory or buy one. Return the ID of the kit or 0 if no kit was bought
-Func FindSalvageKitOrBuySome()
-	Local $SalvageKitID = FindSalvageKit()
-	If $SalvageKitID <> 0 Then Return $SalvageKitID
+Func FindSalvageKitOrBuySome($basicSalvageKit = True)
+	Local $SalvageKit
+	If $basicSalvageKit Then
+		$SalvageKit = FindBasicSalvageKit()
+	Else
+		$SalvageKit = FindSalvageKit()
+	EndIf
+	If $SalvageKit <> 0 Then Return $SalvageKit
 
 	If GetGoldCharacter() < 400 And GetGoldStorage() > 399 Then
 		WithdrawGold(400)
@@ -1005,61 +997,20 @@ Func FindSalvageKitOrBuySome()
 	RndSleep(500)
 	
 	Local $j = 0
-	While $SalvageKitID == 0
+	While $SalvageKit == 0
 		If $j = 3 Then Return 0
-		BuyItem(3, 1, 400)
-		RndSleep(500)
+		If $basicSalvageKit Then
+			BuySalvageKit()
+			$SalvageKit = FindBasicSalvageKit()
+		Else
+			BuyExpertSalvageKit()
+			$SalvageKit = FindSalvageKit()
+		EndIf
 		$j = $j + 1
-		$SalvageKitID = FindSalvageKit()
 	WEnd
-	RndSleep(500)
-	Return $SalvageKitID
+	Return $SalvageKit
 EndFunc
 #EndRegion Identification and Salvage
-
-
-#Region Merchants
-;~ Return True if the item should be sold to the merchant
-Func ShouldSellItem($item)
-	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
-	Local $rarity = GetRarity($item)
-	If IsBasicMaterial($item) Then
-		Return False
-	ElseIf IsRareMaterial($item) Then
-		Return False
-	ElseIf IsTome($itemID) Then
-		Return False
-	ElseIf IsGoldScroll($itemID) Then
-		Return True
-	ElseIf IsBlueScroll($itemID) Then
-		Return True
-	ElseIf ($itemID == $ID_Lockpick)Then
-		Return False
-	ElseIf IsKey($itemID) Then
-		Return True
-	ElseIf ($itemID == $ID_Dyes) Then
-		Return False
-	ElseIf ($itemID == $ID_Glacial_Stone) Then
-		Return False
-	ElseIf IsMapPiece($itemID) Then
-		Return False
-	ElseIf IsStackableItemButNotMaterial($itemID) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Gold) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Green) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Purple) Then
-		Return False
-	ElseIf ($rarity == $RARITY_Blue) Then
-		Return False
-	ElseIf ($rarity == $RARITY_White) Then
-		Return False
-	EndIf
-	Return False
-EndFunc
-#EndRegion Merchants
 
 
 #Region Items tests

@@ -32,7 +32,8 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& '- Blessed insignias or Windwalker insignias'& @CRLF _
 	& '- A tactics shield q9 or less with the inscription Sleep now in the fire (+10 armor against fire damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
-	& '- any PCons you wish to use'
+	& '- any PCons you wish to use' & @CRLF _
+	& 'This bot doesnt load hero builds - please use your own teambuild'
 
 ; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
 ;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City 

@@ -60,3 +60,8 @@ Made by caustic-kronos
 Also known as: Kronos, Night, Svarog
 
 Feel free to reach out or contribute!
+
+## FAQ
+
+Check out the [![FAQ](https://img.shields.io/badge/FAQ-Click_Here-blue)](FAQ.md) for common questions and detailed answers!
+

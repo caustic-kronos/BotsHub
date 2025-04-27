@@ -429,7 +429,10 @@ Global Const $ID_Bag							= 35
 Global Const $ID_Rune_of_Holding				= 2988
 Global Const $ID_Identification_Kit				= 2989
 Global Const $ID_Superior_Identification_Kit	= 5899
+; 10 uses
 Global Const $ID_Salvage_Kit					= 2992
+; 25 uses
+Global Const $ID_Salvage_Kit_2					= 2993
 Global Const $ID_Expert_Salvage_Kit				= 2991
 Global Const $ID_Superior_Salvage_Kit			= 5900
 Global Const $ID_Small_Equipment_Pack			= 31221
@@ -473,7 +476,7 @@ Global Const $Map_Keys					= MapFromArray($Keys_Array)
 #EndRegion Keys
 
 
-Local Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_Expert_Salvage_Kit, $ID_Salvage_Kit, $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit, $ID_Lockpick]
+Local Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_Expert_Salvage_Kit, $ID_Salvage_Kit, $ID_Salvage_Kit_2, $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit, $ID_Lockpick]
 Global Const $Map_General_Items		= MapFromArray($General_Items_Array)
 
 

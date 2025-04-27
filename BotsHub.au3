@@ -106,6 +106,7 @@ Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Br
 Local $AVAILABLE_DISTRICTS = 'China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
+
 #Region GUI
 Opt('GUIOnEventMode', 1)
 Opt('GUICloseOnESC', 0)
