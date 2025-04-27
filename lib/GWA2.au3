@@ -946,25 +946,7 @@ Func StartSalvageWithKit($item, $salvageKit)
 	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
 
 	DllStructSetData($salvageStruct, 2, $itemID)
-	DllStructSetData($salvageStruct, 3, $salvageKit)
-	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
-
-	Enqueue($salvageStructPtr, 16)
-EndFunc
-
-
-;~ Starts a salvaging session of an item.
-Func StartSalvage($item)
-	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
-	Local $salvageSessionID = MemoryReadPtr($baseAddressPtr, $offset)
-	Local $itemID = $item
-	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
-
-	Local $salvageKit = FindSalvageKit()
-	If $salvageKit = 0 Then Return
-
-	DllStructSetData($salvageStruct, 2, $itemID)
-	DllStructSetData($salvageStruct, 3, $salvageKit)
+	DllStructSetData($salvageStruct, 3, DllStructGetData($salvageKit, 'ID'))
 	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
 
 	Enqueue($salvageStructPtr, 16)
@@ -1024,7 +1006,7 @@ Func IdentifyItem($item)
 	Local $identificationKit = FindIdentificationKit()
 	If $identificationKit == 0 Then Return
 
-	SendPacket(0xC, $HEADER_ITEM_IDENTIFY, $identificationKit, $itemID)
+	SendPacket(0xC, $HEADER_ITEM_IDENTIFY, DllStructGetData($identificationKit, 'ID'), $itemID)
 
 	Local $deadlock = TimerInit()
 	Do
@@ -2829,7 +2811,7 @@ EndFunc
 
 ;~ Returns item ID of basic salvage kit in inventory.
 Func FindBasicSalvageKit()
-	Local $kits = [$ID_Salvage_Kit]
+	Local $kits = [$ID_Salvage_Kit, $ID_Salvage_Kit_2]
 	Return FindKit($kits)
 EndFunc
 
@@ -2848,11 +2830,11 @@ Func FindIdentificationKit()
 EndFunc
 
 
-;~ Returns item ID of  kit in inventory.
+;~ Returns kit
 Func FindKit($enabledModelIDs)
 	Local $kit = 0
 	Local $uses = 101
-	Local $item, $modelID, $value, $id
+	Local $item, $modelID, $value
 
 	For $i = 1 To 16
 		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
@@ -2861,48 +2843,44 @@ Func FindKit($enabledModelIDs)
 
 			; Skip this item if model is not in our list
 			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
-
-			$id = DllStructGetData($item, 'ID')
 			$value = DllStructGetData($item, 'Value')
-
 			Switch $modelID
-				Case $ID_Salvage_Kit
+				Case $ID_Salvage_Kit, $ID_Salvage_Kit_2
 					If $value / 2 < $uses Then
 						$uses = $value / 2
-						$kit = $id
+						$kit = $item
 					EndIf
 				Case $ID_Expert_Salvage_Kit
 					If $value / 8 < $uses Then
 						$uses = $value / 8
-						$kit = $id
+						$kit = $item
 					EndIf
 				Case $ID_Superior_Salvage_Kit
 					If $value / 10 < $uses Then
 						$uses = $value / 10
-						$kit = $id
+						$kit = $item
 					EndIf
 				Case $ID_Identification_Kit
 					If $value / 2 < $uses Then
 						$uses = $value / 2
-						$kit = $id
+						$kit = $item
 					EndIf
 				Case $ID_Superior_Identification_Kit
 					If $value / 2.5 < $uses Then
 						$uses = $value / 2.5
-						$kit = $id
+						$kit = $item
 					EndIf
 			EndSwitch
 		Next
 	Next
-
 	Return $kit
 EndFunc
 
 
 ;~ Return True if item is present in array, else False - duplicate in Utils
-Func FindKitArrayContainsHelper($array, $item)
+Func FindKitArrayContainsHelper($array, $itemModelID)
 	For $i = 0 To UBound($array) - 1
-		If $array[$i] == $item Then Return True
+		If $array[$i] == $itemModelID Then Return True
 	Next
 	Return False
 EndFunc

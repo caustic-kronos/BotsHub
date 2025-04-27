@@ -93,7 +93,7 @@ Func InventoryManagement()
 	; 2-Sort items
 	; 3-Identify items
 	; 4-Collect data
-	; 5-Salvage ?				-> doesn't work yet
+	; 5-Salvage
 	; 6-Sell materials
 	; 7-Sell items
 	; 8-Buy ectos with excedent
@@ -115,9 +115,10 @@ Func InventoryManagement()
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		MoveItemsOutOfEquipmentBag()
+		SalvageAllItems()
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
-		;SalvageItems()
+		;SalvageMaterials()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED And HasMaterials() Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
@@ -854,6 +855,7 @@ Func DefaultShouldSellItem($item)
 		If ContainsValuableUpgrades($item) Then Return False
 		Return True
 	EndIf
+	If IsKey($itemID) Then Return True
 	If isArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
 
 	Return False
@@ -866,6 +868,7 @@ Func DefaultShouldSellMaterial($item)
 
 	; Lazy instantiation
 	Local Static $materialsKeptArray = [$ID_Pile_of_Glittering_Dust, $ID_Feather]
+	;Local Static $materialsKeptArray = []
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
@@ -903,9 +906,9 @@ EndFunc
 Func ShouldKeepWeapon($itemID)
 	Local Static $shouldKeepWeaponsArray = [ _
 		_	;Salvages to dust
-		$ID_Great_Conch, $ID_Elemental_Sword, _
+		_ 	;$ID_Great_Conch, $ID_Elemental_Sword, _
 		_	;Salvages to dust, sometimes
-		$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow _
+		_	;$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow _
 		_	;Salvages to ruby, very rarely ...
 		_	;$ID_Ruby_Maul, _
 	]
