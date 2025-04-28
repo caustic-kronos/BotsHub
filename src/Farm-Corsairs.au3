@@ -20,7 +20,8 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-; Possible improvements :
+; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
+; Using third hero for more speed is a bad idea - you'd lose aggro
 
 Opt('MustDeclareVars', 1)
 
@@ -92,7 +93,8 @@ Func CorsairsFarmLoop()
 	UseHeroSkill(1, $Corsairs_MakeHaste, GetMyAgent())
 	RndSleep(100)
 	$Bohseda_Timer = TimerInit()
-	CommandHero(1, -13750, -10150)
+	; Furthest point from Bohseda
+	CommandHero(1, -13778, -10156)
 
 	MoveTo(-9050, -7000)
 	Local $Captain_Bohseda = GetNearestNPCToCoords(-9850, -7250)

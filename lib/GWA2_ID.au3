@@ -471,7 +471,7 @@ Global Const $ID_Zaishen_Key			= 28571
 Global Const $ID_Bogroots_Boss_Key		= 2593
 Local Const $Keys_Array[]				= [$ID_Ascalonian_Key, $ID_Steel_Key, $ID_Krytan_Key, $ID_Maguuma_Key, $ID_Elonian_Key, $ID_Shiverpeak_Key, $ID_Darkstone_Key, $ID_Miners_Key, $ID_Shing_Jea_Key, $ID_Canthan_Key, $ID_Kurzick_Key, _
 											$ID_Stoneroot_Key, $ID_Luxon_Key, $ID_Deep_Jade_Key, $ID_Forbidden_Key, $ID_Istani_Key, $ID_Kournan_Key, $ID_Vabbian_Key, $ID_Ancient_Elonian_Key, $ID_Margonite_Key, $ID_Demonic_Key, $ID_Phantom_Key, _
-											$ID_Obsidian_Key, $ID_Lockpick, $ID_Bogroots_Boss_Key, $ID_Zaishen_Key]
+											$ID_Obsidian_Key, $ID_Bogroots_Boss_Key, $ID_Zaishen_Key]
 Global Const $Map_Keys					= MapFromArray($Keys_Array)
 #EndRegion Keys
 

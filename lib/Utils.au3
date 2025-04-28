@@ -194,8 +194,8 @@ Func DefaultShouldPickItem($item)
 	ElseIf IsKey($itemID) Then
 		Return GUICtrlRead($GUI_Checkbox_LootKeys) == $GUI_CHECKED
 	ElseIf ($itemID == $ID_Dyes) Then
-		Local $itemExtraID = DllStructGetData($item, 'ExtraID')
-		Return (($itemExtraID == $ID_Black_Dye) Or ($itemExtraID == $ID_White_Dye) Or (GUICtrlRead($GUI_Checkbox_LootDyes) == $GUI_CHECKED))
+		Local $dyeColor = DllStructGetData($item, 'DyeColor')
+		Return (($dyeColor == $ID_Black_Dye) Or ($dyeColor == $ID_White_Dye) Or (GUICtrlRead($GUI_Checkbox_LootDyes) == $GUI_CHECKED))
 	ElseIf ($itemID == $ID_Glacial_Stone) Then
 		Return GUICtrlRead($GUI_Checkbox_LootGlacialStones) == $GUI_CHECKED
 	ElseIf ($itemID == $ID_Jade_Bracelet) Then
@@ -235,13 +235,13 @@ EndFunc
 ;~ Only pick rare materials, black and white dyes, lockpicks, gold items and green items
 Func PickOnlyImportantItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $itemExtraID = DllStructGetData($item, 'ExtraID')
+	Local $dyeColor = DllStructGetData($item, 'DyeColor')
 	Local $rarity = GetRarity($item)
 	; Only pick gold if character has less than 99k in inventory
 	If IsRareMaterial($item) Then
 		Return True
 	ElseIf ($itemID == $ID_Dyes) Then
-		Return (($itemExtraID == $ID_Black_Dye) Or ($itemExtraID == $ID_White_Dye))
+		Return (($dyeColor == $ID_Black_Dye) Or ($dyeColor == $ID_White_Dye))
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And IsWeapon($item) And IsLowReqMaxDamage($item) Then
@@ -731,14 +731,14 @@ EndFunc
 Func FindAllInStorages($firstBag, $lastBag, $item)
 	Local $itemBagsAndSlots[0] = []
 	Local $itemID = DllStructGetData($item, 'ModelID')
-	Local $extraID = ($itemID == $ID_Dyes) ? DllStructGetData($item, 'ExtraID') : -1
+	Local $dyeColor = ($itemID == $ID_Dyes) ? DllStructGetData($item, 'DyeColor') : -1
 	Local $storageItem
 
 	For $bag = $firstBag To $lastBag
 		Local $bagSize = GetMaxSlots($bag)
 		For $slot = 1 To $bagSize
 			$storageItem = GetItemBySlot($bag, $slot)
-			If (DllStructGetData($storageItem, 'ModelID') == $itemID) And ($extraId == -1 Or DllStructGetData($storageItem, 'ExtraID') == $extraID) Then
+			If (DllStructGetData($storageItem, 'ModelID') == $itemID) And ($dyeColor == -1 Or DllStructGetData($storageItem, 'DyeColor') == $dyeColor) Then
 				_ArrayAdd($itemBagsAndSlots, $bag)
 				_ArrayAdd($itemBagsAndSlots, $slot)
 			EndIf
@@ -772,7 +772,7 @@ Func GetInventoryItemCount($itemID)
 			$item = GetItemBySlot($bag, $j)
 
 			If $Map_Dyes[$itemID] <> null Then
-				If ((DllStructGetData($item, 'ModelID') == $ID_Dyes) And (DllStructGetData($item, 'ExtraID') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
+				If ((DllStructGetData($item, 'ModelID') == $ID_Dyes) And (DllStructGetData($item, 'DyeColor') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
 			Else
 				If DllStructGetData($item, 'ModelID') == $itemID Then $amountItem += DllStructGetData($item, 'Quantity')
 			EndIf
@@ -827,6 +827,7 @@ Func ShouldSalvageItem($item)
 	Local $rarity = GetRarity($item)
 	If $rarity == $RARITY_Green Then Return False
 	If IsWeapon($item) Then
+		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
 		If $rarity == $RARITY_White Then Return True
 		If IsLowReqMaxDamage($item) Then Return False
 		If Not GetIsIdentified($item) Then Return False
@@ -1026,6 +1027,18 @@ EndFunc
 ;~ Returns true if the item is a book
 Func IsBook($item)
 	Return DllStructGetData($item, 'type') == $ID_Type_Book
+EndFunc
+
+
+;~ Returns true if the item is stackable
+Func IsStackable($item)
+	Return BitAND(DllStructGetData($item, 'Interaction'), 0x80000) <> 0
+EndFunc
+
+
+;~ Returns true if the item is inscribable
+Func IsInscribable($item)
+	Return BitAND(DllStructGetData($item, 'Interaction'), 0x08000000) <> 0
 EndFunc
 
 
@@ -1354,6 +1367,27 @@ Func PrintNPCInformations($npc)
 	Info('Type: ' & DllStructGetData($npc, 'Type'))
 	Info('ExtraType: ' & DllStructGetData($npc, 'ExtraType'))
 	Info('GadgetID: ' & DllStructGetData($npc, 'GadgetID'))
+EndFunc
+
+
+;~ Print Item informations
+Func PrintItemInformations($item)
+	Info('ID: ' & DllStructGetData($item, 'ID'))
+	Info('ModStruct: ' & GetModStruct($item))
+	Info('ModStructSize: ' & DllStructGetData($item, 'ModStructSize'))
+	Info('ModelFileID: ' & DllStructGetData($item, 'ModelFileID'))
+	Info('Type: ' & DllStructGetData($item, 'Type'))
+	Info('DyeColor: ' & DllStructGetData($item, 'DyeColor'))
+	Info('Value: ' & DllStructGetData($item, 'Value'))
+	Info('Interaction: ' & DllStructGetData($item, 'Interaction'))
+	Info('ModelId: ' & DllStructGetData($item, 'ModelId'))
+	Info('ItemFormula: ' & DllStructGetData($item, 'ItemFormula'))
+	Info('IsMaterialSalvageable: ' & DllStructGetData($item, 'IsMaterialSalvageable'))
+	Info('Quantity: ' & DllStructGetData($item, 'Quantity'))
+	Info('Equipped: ' & DllStructGetData($item, 'Equipped'))
+	Info('Profession: ' & DllStructGetData($item, 'Profession'))
+	Info('Type2: ' & DllStructGetData($item, 'Type2'))
+	Info('Slot: ' & DllStructGetData($item, 'Slot'))
 EndFunc
 
 

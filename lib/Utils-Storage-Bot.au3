@@ -323,7 +323,7 @@ Func StoreAllItemsData()
 			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
 			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
 			$InsertQuery &= GetRarity($item) & ', '
-			$InsertQuery &= DllStructGetData($item, 'ExtraID') & ', '
+			$InsertQuery &= DllStructGetData($item, 'DyeColor') & ', '
 			$InsertQuery &= DllStructGetData($item, 'ID')
 			$InsertQuery &= '),' & @CRLF
 			Sleep(20)
@@ -832,7 +832,6 @@ Func DefaultShouldSellItem($item)
 		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False
 		If ShouldKeepWeapon($itemID) Then Return False
 		; This should be included in next line
-		;If HasSalvageInscription($item) Then Return False
 		If ContainsValuableUpgrades($item) Then Return False
 		Return True
 	EndIf
