@@ -23,7 +23,7 @@ Func ContainsValuableUpgrades($item)
 	If Not $modstruct Then Return False
 
 	If IsWeapon($item) Then
-		If HasSalvageInscription($item) Then Return True
+		;If HasSalvageInscription($item) Then Return True
 		Local $itemType = DllStructGetData($item, 'type')
 		For $struct In $ValuableModsByType[$itemType]
 			If StringInStr($ModStruct, $struct) > 0 Then Return True
@@ -749,7 +749,7 @@ Func CreateValuableModsByTypeMap()
 	$map[$ID_Type_Wand] = $Wand_Mods_Array
 	Local $Staff_Mods_Array = [ _
 		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING, _
-		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_ENCHANTING, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20, _
+		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_ELEMENTALIST, $STRUCT_MOD_OF_THE_RANGER, $STRUCT_MOD_OF_THE_MESMER, $STRUCT_MOD_OF_THE_MONK, $STRUCT_MOD_OF_THE_RITUALIST, $STRUCT_MOD_OF_THE_DERVISH _
 	]
 	$map[$ID_Type_Staff] = $Staff_Mods_Array
@@ -776,7 +776,6 @@ Func CreateValuableModsByTypeMap()
 	]
 	$map[$ID_Type_Sword] = $Sword_Mods_Array
 	Local $Dagger_Mods_Array = [ _
-		$STRUCT_MOD_ZEALOUS_PREFIX, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_ELEMENTALIST, $STRUCT_MOD_OF_THE_WARRIOR, $STRUCT_MOD_OF_THE_RANGER, $STRUCT_MOD_OF_THE_RITUALIST, $STRUCT_MOD_OF_THE_ASSASSIN, $STRUCT_MOD_OF_THE_DERVISH _
 	]
 	$map[$ID_Type_Dagger] = $Dagger_Mods_Array

@@ -30,11 +30,11 @@ Local $SQLITE_DB
 #Region Tables
 ; Those tables are built automatically and one is completed by the user
 Local $TABLE_DATA_RAW = 'DATA_RAW'
-Local $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'modstruct', 'quantity', 'value', 'rarity_ID', 'extra_ID', 'ID']
+Local $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
 							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
 
 Local $TABLE_DATA_USER = 'DATA_USER'
-Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'extra_ID', 'ID']
+Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
 
 Local $TABLE_DATA_SALVAGE = 'DATA_SALVAGE'
 Local $SCHEMA_DATA_SALVAGE = ['batch', 'model_ID', 'material', 'amount']
@@ -93,7 +93,7 @@ Func InventoryManagement()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-		MoveItemsOutOfEquipmentBag()
+		If $BAG_NUMBER == 5 Then MoveItemsOutOfEquipmentBag()
 		SalvageAllItems()
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
@@ -319,6 +319,7 @@ Func StoreAllItemsData()
 			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
 			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
 			$InsertQuery &= DllStructGetData($item, 'nameString') & "', '"
+			$InsertQuery &= (IsInscribable($item, 'nameString') ? 0 : 1) & "', '"
 			$InsertQuery &= GetModStruct($item) & "', "
 			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
 			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
@@ -342,10 +343,10 @@ EndFunc
 ;~ Insert data into the RAW data table
 Func AddToFilledData($batchID)
 	Local $InsertQuery = 'WITH raw AS (' & @CRLF _
-		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, modstruct, extra_ID, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
+		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, OS, modstruct, dye_color, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
 		& ')' & @CRLF _
 		& 'INSERT INTO ' & $TABLE_DATA_USER & @CRLF _
-		& 'SELECT raw.batch, raw.bag, raw.slot, rarities.rarity, types.type, requirement, attributes.attribute, raw.value, names.model_name, names.OS, NULL, NULL, NULL, raw.type_ID, raw.model_ID, raw.name_string, raw.modstruct, raw.extra_ID, raw.ID' & @CRLF _
+		& 'SELECT raw.batch, raw.bag, raw.slot, rarities.rarity, types.type, requirement, attributes.attribute, raw.value, names.model_name, raw.OS, NULL, NULL, NULL, raw.type_ID, raw.model_ID, raw.name_string, raw.modstruct, raw.dye_color, raw.ID' & @CRLF _
 		& 'FROM raw' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_RARITY & ' rarities ON raw.rarity_ID = rarities.rarity_ID' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_TYPE & ' types ON raw.type_ID = types.type_ID' & @CRLF _
@@ -486,32 +487,6 @@ EndFunc
 
 
 #Region Inventory
-;~ No need to use this function, scrolls are sold at the same price at regular merchant
-;~ Sell gold scrolls to scroll trader
-Func SellGoldScrolls()
-	If GetMapID() == $ID_Rata_Sum Then
-		Info('Moving to Scroll Trader')
-		Local $scrollTrader = GetNearestNPCToCoords(19250, 14275)
-		GoToNPC($scrollTrader)
-		RndSleep(500)
-	EndIf
-
-	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
-		Local $bag = GetBag($bagIndex)
-		For $i = 1 To DllStructGetData($bag, 'slots')
-			$item = GetItemBySlot($bagIndex, $i)
-			$itemID = DllStructGetData($item, 'ModelID')
-			If $itemID <> 0 And IsGoldScroll($itemID) Then
-				TraderRequestSell($item)
-				RndSleep(500 + GetPing())
-				TraderSell()
-			EndIf
-		Next
-	Next
-EndFunc
-
-
 ;~ Move all items out of the equipment bag so they can be salvaged
 Func MoveItemsOutOfEquipmentBag()
 	Local $equipmentBag = GetBag(5)
@@ -590,7 +565,7 @@ EndFunc
 ;~ Returns true if there are items in inventory satisfying condition
 Func HasInInventory($condition)
 	Local $item, $itemID
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -611,7 +586,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	RndSleep(500)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -647,7 +622,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	RndSleep(250)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)

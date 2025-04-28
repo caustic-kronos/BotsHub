@@ -198,7 +198,7 @@ Func createGUI()
 	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
 	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
 	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort Items', 31, 154, 156, 20)
-	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 184, 156, 20)
+	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify all items', 31, 184, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 214, 156, 20)
 	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 244, 156, 20)
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
@@ -491,7 +491,9 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots(1, $BAG_NUMBER) < 5) Then
+				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
+				; So bag 5 will always fill before 4 - hence we can count items up to bag 4
+				If (CountSlots(1, _Min($BAG_NUMBER, 4)) < 5) Then
 					InventoryManagement()
 					ResetBotsSetups()
 				EndIf

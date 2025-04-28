@@ -32,6 +32,7 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
+	
 	;While($STATUS == 'RUNNING')
 	;	GetOwnLocation()
 	;	Sleep(2000)
@@ -167,7 +168,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 		EndIf
 	Next
 
-	If ((DllStructGetData(GetBag(3), 'Slots') - DllStructGetData(GetBag(3), 'ItemsCount')) == 0) Then
+	If $BAG_NUMBER == 5 And CountSlots(1, 3) == 0 Then
 		MoveItemsToEquipmentBag()
 	EndIf
 EndFunc
@@ -407,10 +408,10 @@ Func MoveItemsToEquipmentBag()
 	EndIf
 
 	Local $cursor = 1
-	For $bagId = 1 To 4
+	For $bagId = 4 To 1 Step -1
 		For $slot = 1 To DllStructGetData(GetBag($bagId), 'slots')
 			Local $item = GetItemBySlot($bagId, $slot)
-			If DllStructGetData($item, 'ID') <> 0 And (isArmorSalvageItem($item) Or IsWeapon($item)) Then
+			If DllStructGetData($item, 'ID') <> 0 And (isArmor($item) Or IsWeapon($item)) Then
 				If $countEmptySlots < 1 Then
 					Debug('No space in equipment bag to move the items to')
 					Return
@@ -765,7 +766,7 @@ Func GetInventoryItemCount($itemID)
 	Local $amountItem
 	Local $bag
 	Local $item
-	For $i = 1 To 4
+	For $i = 1 To $BAG_NUMBER
 		$bag = GetBag($i)
 		Local $bagSize = DllStructGetData($bag, 'Slots')
 		For $j = 1 To $bagSize
@@ -948,6 +949,13 @@ Func FindIdentificationKitOrBuySome()
 	GoToNPC($merchant)
 	RndSleep(500)
 
+	Local $xunlaiTemporarySlot = 0
+	; There is no space in inventory, we need to store something in Xunlai to buy identification kit
+	If CountSlots(1, 4) == 0 Then
+		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
+		MoveItem(GetItemBySlot(1, 1), $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
+	EndIf
+
 	Local $j = 0
 	While $IdentificationKit == 0
 		If $j = 3 Then Return 0
@@ -956,6 +964,7 @@ Func FindIdentificationKitOrBuySome()
 		$IdentificationKit = FindIdentificationKit()
 	WEnd
 	RndSleep(500)
+	If $IdentificationKit <> 0 And $xunlaiTemporarySlot <> 0 Then MoveItem($IdentificationKit, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	Return $IdentificationKit
 EndFunc
 
@@ -982,6 +991,13 @@ Func FindSalvageKitOrBuySome($basicSalvageKit = True)
 	GoToNPC($merchant)
 	RndSleep(500)
 
+	Local $xunlaiTemporarySlot = 0
+	; There is no space in inventory, we need to store something in Xunlai to buy salvage kit
+	If CountSlots(1, 4) == 0 Then
+		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
+		MoveItem(GetItemBySlot(1, 1), $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
+	EndIf
+
 	Local $j = 0
 	While $SalvageKit == 0
 		If $j = 3 Then Return 0
@@ -994,6 +1010,7 @@ Func FindSalvageKitOrBuySome($basicSalvageKit = True)
 		EndIf
 		$j = $j + 1
 	WEnd
+	If $SalvageKit <> 0 And $xunlaiTemporarySlot <> 0 Then MoveItem($SalvageKit, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	Return $SalvageKit
 EndFunc
 #EndRegion Identification and Salvage

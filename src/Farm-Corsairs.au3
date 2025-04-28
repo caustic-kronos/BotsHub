@@ -49,6 +49,9 @@ Local Const $Corsairs_DeathsCharge = 8
 
 ; Hero Build
 Local Const $Corsairs_MakeHaste = 1
+Local Const $Corsairs_CauterySignet = 2
+Local Const $Corsairs_Winnowing = 1
+Local Const $Corsairs_MysticHealing = 2
 
 Local $CORSAIRS_FARM_SETUP = False
 Local $Bohseda_Timer
@@ -73,7 +76,12 @@ Func SetupCorsairsFarm()
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)
+	AddHero($ID_Melonni)
 	LoadSkillTemplate($RACorsairsFarmerSkillbar)
+	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 1)
+	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 2)
+	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
+	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
 	Info('Preparations complete')
 EndFunc
 
@@ -95,7 +103,7 @@ Func CorsairsFarmLoop()
 	$Bohseda_Timer = TimerInit()
 	; Furthest point from Bohseda
 	CommandHero(1, -13778, -10156)
-
+	CommandHero(2, -10850, -7025)
 	MoveTo(-9050, -7000)
 	Local $Captain_Bohseda = GetNearestNPCToCoords(-9850, -7250)
 	UseSkillEx($Corsairs_HeartOfShadow, $Captain_Bohseda)
@@ -123,8 +131,10 @@ Func CorsairsFarmLoop()
 	UseSkillEx($Corsairs_HeartOfShadow, GetNearestEnemyToAgent(GetMyAgent()))
 	DefendAgainstCorsairs()
 
+	UseHeroSkill(2, $Corsairs_Winnowing)
 	MoveTo(-9783,-7073, 0)
 	WaitForBohseda()
+	CommandHero(2, -13778, -10156)
 	UseSkillEx($Corsairs_DwarvenStability)
 	RndSleep(20)
 	CastAllDefensiveSkills()
@@ -150,9 +160,9 @@ Func CorsairsFarmLoop()
 		Return 1
 	EndIf
 
-	For $i = 0 To 13
+	For $i = 0 To 7
 		DefendAgainstCorsairs()
-		If $i < 13 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
+		If $i < 6 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RndSleep(1000)
 	Next
 
@@ -163,11 +173,12 @@ Func CorsairsFarmLoop()
 
 	Local $target = GetNearestEnemyToCoords(-8920, -6950)
 	UseSkillEx($Corsairs_DeathsCharge, $target)
+	CancelAction()
 	RndSleep(100)
 
 	Local $counter = 0
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	While Not GetIsDead() And $foesCount > 0 And $counter < 22
+	While Not GetIsDead() And $foesCount > 0 And $counter < 28
 		DefendAgainstCorsairs()
 		If $counter > 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RndSleep(1000)
