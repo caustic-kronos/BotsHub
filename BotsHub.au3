@@ -14,15 +14,9 @@
 
 ; GUI built with GuiBuilderPlus
 
-; TODO - important:
-; - write small bot that : -salvage items -get material ID -write in file salvaged material
-; - salvaging
-; - checking and using proper inventory/xunlai storage size
-
-; TODO - secondary:
+; TODO :
+; - after salvage, get material ID and write in file salvaged material
 ; - change bots to have cleaner return system
-; - add option to choose between random travel and specific travel
-
 
 ; Night's tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot)
@@ -99,11 +93,11 @@ Local $RUN_MODE = 'AUTOLOAD'
 Local $PROCESS_ID = ''
 Local $LOG_LEVEL = 1
 Local $CHARACTER_NAME = ''
-Local $DISTRICT_NAME = 'English'
+Local $DISTRICT_NAME = 'Random'
 Local $BAG_NUMBER = 5
 
 Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic'
-Local $AVAILABLE_DISTRICTS = 'China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
+Local $AVAILABLE_DISTRICTS = 'Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
 
@@ -204,24 +198,23 @@ Func createGUI()
 	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
 	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
 	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort Items', 31, 154, 156, 20)
-	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify Gold Items', 31, 184, 156, 20)
+	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify all items', 31, 184, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 214, 156, 20)
 	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 244, 156, 20)
-	GUICtrlSetState($GUI_Checkbox_SalvageItems,$GUI_DISABLE)
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
 	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 304, 156, 20)
 	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 334, 156, 20)
 	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 364, 156, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
-	
+
 	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('More options', 305, 40, 271, 361)
 	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 256, 20)
 	$GUI_Label_BagNumber = GUICtrlCreateLabel('Number of bags:', 315, 95, 80, 20)
 	$GUI_Input_BagNumber = GUICtrlCreateInput('5', 400, 95, 20, 20, $ES_NUMBER)
 	GUICtrlSetOnEvent($GUI_Input_BagNumber, 'GuiButtonHandler')
 	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 315, 125, 70, 20)
-	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('English', 400, 122, 100, 20)
-	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'English')
+	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('Random', 400, 122, 100, 20)
+	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'Random')
 	GUICtrlSetOnEvent($GUI_Combo_DistrictChoice, 'GuiButtonHandler')
 	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 315, 364, 156, 20)
 	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 490, 364, 75, 20)
@@ -274,7 +267,7 @@ Func createGUI()
 	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
 	$GUI_Edit_HeroBuild = GUICtrlCreateEdit('', 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
 	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
-	
+
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	GUICtrlCreateTabItem('')
@@ -283,9 +276,7 @@ Func createGUI()
 	GUICtrlSetOnEvent($GUI_Combo_ConfigChoice, 'GuiButtonHandler')
 
 	$GUI_Icon_SaveConfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 565, 12, 20, 20)
-	GUICtrlSetOnEvent($GUI_Icon_SaveConfig, "GuiButtonHandler")
-	;Local $GUI_Button_SaveConfig = GUICtrlCreateButton(".", 567 - 80, 12, 60, 60, $BS_ICON)
-	;GUICtrlSetImage($GUI_Button_SaveConfig, @ScriptDir & '/doc/save.jpg')
+	GUICtrlSetOnEvent($GUI_Icon_SaveConfig, 'GuiButtonHandler')
 
 	GUICtrlSetState($GUI_Checkbox_HM, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, $GUI_CHECKED)
@@ -344,9 +335,9 @@ Func GuiButtonHandler()
 			$DISTRICT_NAME = GUICtrlRead($GUI_Combo_DistrictChoice)
 		Case $GUI_Icon_SaveConfig
 			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_DISABLE)
-			Local $filePath = FileSaveDialog("", @ScriptDir & "\conf", "(*.json)")
+			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf', '(*.json)')
 			If @error <> 0 Then
-				Warn("Failed to write JSON configuration.")
+				Warn('Failed to write JSON configuration.')
 			Else
 				SaveConfiguration($filePath)
 			EndIf
@@ -386,16 +377,6 @@ Func GuiButtonHandler()
 			Exit
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
-	EndSwitch
-EndFunc
-
-
-Func TabEventManager()
-	Switch GUICtrlRead($GUI_Tabs_Parent)
-		Case 0
-			ControlShow($GUI_GWBotHub, '', $GUI_Console)
-		Case Else
-			ControlHide($GUI_GWBotHub, '', $GUI_Console)
 	EndSwitch
 EndFunc
 
@@ -450,8 +431,6 @@ Func Out($TEXT, $LOGLEVEL = 1)
 		_GUICtrlRichEdit_SetCharColor($GUI_Console, $logColor)
 		_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
 		UpdateLock()
-	Else
-		;-
 	EndIf
 EndFunc
 
@@ -512,7 +491,9 @@ Func BotHubLoop()
 			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
-				If (CountSlots(1, $BAG_NUMBER) < 5) Then
+				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
+				; So bag 5 will always fill before 4 - hence we can count items up to bag 4
+				If (CountSlots(1, _Min($BAG_NUMBER, 4)) < 5) Then
 					InventoryManagement()
 					ResetBotsSetups()
 				EndIf
@@ -600,17 +581,19 @@ EndFunc
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
 	$RAPTORS_FARM_SETUP						= False
-	$DM_FARM_SETUP 							= False
-	$IRIS_FARM_SETUP 						= False
-	$FEATHERS_FARM_SETUP 					= False
-	$FOLLOWER_SETUP 						= False
-	$JADE_BROTHERHOOD_FARM_SETUP 			= False
-	$KOURNANS_FARM_SETUP		 			= False
-	$LIGHTBRINGER_FARM_SETUP 				= False
-	$MANTIDS_FARM_SETUP 					= False
-	$MINISTERIAL_COMMENDATIONS_FARM_SETUP 	= False
-	$SPIRIT_SLAVES_FARM_SETUP 				= False
-	$CORSAIRS_FARM_SETUP 					= False
+	$DM_FARM_SETUP							= False
+	$IRIS_FARM_SETUP						= False
+	$FEATHERS_FARM_SETUP					= False
+	$JADE_BROTHERHOOD_FARM_SETUP			= False
+	$KOURNANS_FARM_SETUP					= False
+	$MANTIDS_FARM_SETUP						= False
+	$SPIRIT_SLAVES_FARM_SETUP				= False
+	; Those don't need to be reset - group didn't change, build didn't change,
+	; and there is no need to refresh portal
+	;$FOLLOWER_SETUP						= False
+	;$LIGHTBRINGER_FARM_SETUP				= False
+	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
+	;$CORSAIRS_FARM_SETUP					= False
 EndFunc
 
 
@@ -704,7 +687,7 @@ Func FillConfigurationCombo($configuration = 'Default Configuration')
 	If @error == 0 Then
 		For $file In $files
 			Local $fileNameTrimmed = StringTrimRight($file, 5)
-			If $fileNameTrimmed <> '' Then 
+			If $fileNameTrimmed <> '' Then
 				$comboList &= $fileNameTrimmed
 				$comboList &= '|'
 			EndIf
@@ -723,7 +706,7 @@ Func LoadDefaultConfiguration()
 		Local $jsonString = FileRead($configFile)
 		ReadConfigFromJson($jsonString)
 		FileClose($configFile)
-		Info('Loaded default configuration') 
+		Info('Loaded default configuration')
 	EndIf
 EndFunc
 
@@ -734,7 +717,7 @@ Func LoadConfiguration($configuration)
 	Local $jsonString = FileRead($configFile)
 	ReadConfigFromJson($jsonString)
 	FileClose($configFile)
-	Info('Loaded configuration <' & $configuration & '>') 
+	Info('Loaded configuration <' & $configuration & '>')
 EndFunc
 
 
@@ -746,7 +729,7 @@ Func SaveConfiguration($configurationPath)
 	FileClose($configFile)
 	Local $configurationName = StringTrimRight(StringMid($configurationPath, StringInStr($configurationPath, '\', 0, -1) + 1), 5)
 	FillConfigurationCombo($configurationName)
-	Info('Saved configuration ' & $configurationPath) 
+	Info('Saved configuration ' & $configurationPath)
 EndFunc
 
 
@@ -887,7 +870,7 @@ Func UpdateLock()
 EndFunc
 
 
-; Function to login from cmd, not tested
+;~ Function to login from cmd, not tested
 ; TODO: test it
 Func LOGIN($char_name = 'fail', $ProcessID = False)
 	If $char_name = '' Then

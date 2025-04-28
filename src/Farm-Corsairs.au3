@@ -20,13 +20,14 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-; Possible improvements :
+; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
+; Using third hero for more speed is a bad idea - you'd lose aggro
 
 Opt('MustDeclareVars', 1)
 
 Local Const $CorsairsBotVersion = '0.4'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
 Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
@@ -48,6 +49,9 @@ Local Const $Corsairs_DeathsCharge = 8
 
 ; Hero Build
 Local Const $Corsairs_MakeHaste = 1
+Local Const $Corsairs_CauterySignet = 2
+Local Const $Corsairs_Winnowing = 1
+Local Const $Corsairs_MysticHealing = 2
 
 Local $CORSAIRS_FARM_SETUP = False
 Local $Bohseda_Timer
@@ -65,13 +69,19 @@ Func CorsairsFarm($STATUS)
 EndFunc
 
 
+;~ Corsairs farm setup
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)
+	AddHero($ID_Melonni)
 	LoadSkillTemplate($RACorsairsFarmerSkillbar)
+	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 1)
+	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 2)
+	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
+	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
 	Info('Preparations complete')
 EndFunc
 
@@ -91,8 +101,9 @@ Func CorsairsFarmLoop()
 	UseHeroSkill(1, $Corsairs_MakeHaste, GetMyAgent())
 	RndSleep(100)
 	$Bohseda_Timer = TimerInit()
-	CommandHero(1, -13750, -10150)
-
+	; Furthest point from Bohseda
+	CommandHero(1, -13778, -10156)
+	CommandHero(2, -10850, -7025)
 	MoveTo(-9050, -7000)
 	Local $Captain_Bohseda = GetNearestNPCToCoords(-9850, -7250)
 	UseSkillEx($Corsairs_HeartOfShadow, $Captain_Bohseda)
@@ -120,8 +131,10 @@ Func CorsairsFarmLoop()
 	UseSkillEx($Corsairs_HeartOfShadow, GetNearestEnemyToAgent(GetMyAgent()))
 	DefendAgainstCorsairs()
 
+	UseHeroSkill(2, $Corsairs_Winnowing)
 	MoveTo(-9783,-7073, 0)
 	WaitForBohseda()
+	CommandHero(2, -13778, -10156)
 	UseSkillEx($Corsairs_DwarvenStability)
 	RndSleep(20)
 	CastAllDefensiveSkills()
@@ -147,9 +160,9 @@ Func CorsairsFarmLoop()
 		Return 1
 	EndIf
 
-	For $i = 0 To 13
+	For $i = 0 To 7
 		DefendAgainstCorsairs()
-		If $i < 13 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
+		If $i < 6 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RndSleep(1000)
 	Next
 
@@ -160,11 +173,12 @@ Func CorsairsFarmLoop()
 
 	Local $target = GetNearestEnemyToCoords(-8920, -6950)
 	UseSkillEx($Corsairs_DeathsCharge, $target)
+	CancelAction()
 	RndSleep(100)
 
 	Local $counter = 0
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	While Not GetIsDead() And $foesCount > 0 And $counter < 22
+	While Not GetIsDead() And $foesCount > 0 And $counter < 28
 		DefendAgainstCorsairs()
 		If $counter > 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RndSleep(1000)
@@ -190,6 +204,7 @@ Func CorsairsFarmLoop()
 EndFunc
 
 
+;~ Function to use all defensive skills
 Func CastAllDefensiveSkills()
 	UseSkillEx($Corsairs_ShroudOfDistress)
 	RndSleep(20)
@@ -202,6 +217,7 @@ Func CastAllDefensiveSkills()
 EndFunc
 
 
+;~ Function to survive once enemies are dead
 Func OnlyCastTogetherAsOne()
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
@@ -210,6 +226,7 @@ Func OnlyCastTogetherAsOne()
 EndFunc
 
 
+;~ Function to defend against the corsairs
 Func DefendAgainstCorsairs($Hidden = False)
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
@@ -230,6 +247,7 @@ Func DefendAgainstCorsairs($Hidden = False)
 EndFunc
 
 
+;~ Resign and returns to Modook Crevice (city)
 Func BackToModdokCreviceOutpost()
 	Info('Porting to Moddok Crevice (city)')
 	Resign()
@@ -239,6 +257,7 @@ Func BackToModdokCreviceOutpost()
 EndFunc
 
 
+;~ Wait for closest enemy to be in range
 Func WaitForEnemyInRange()
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
@@ -251,6 +270,7 @@ Func WaitForEnemyInRange()
 EndFunc
 
 
+;~ Wait for Bohseda and Dunkoro to shut up and for Bohseda to be interactible
 Func WaitForBohseda()
 	While (Not GetIsDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
 		DefendAgainstCorsairs(True)

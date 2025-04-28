@@ -26,7 +26,7 @@ Opt('MustDeclareVars', 1)
 
 Local Const $DragonMossBotVersion = '0.1'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
 Local Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
@@ -61,6 +61,7 @@ Func DragonMossFarm($STATUS)
 EndFunc
 
 
+;~ Dragon moss farm setup
 Func SetupDragonMossFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
@@ -155,11 +156,13 @@ Func DragonMossFarmLoop()
 EndFunc
 
 
+;~ If storm chaser is available, uses it
 Func UseIMSWhenAvailable()
 	If IsRecharged($DM_StormChaser) Then UseSkillEx($DM_StormChaser)
 EndFunc
 
 
+;~ Return to Saint Anjeka outpost
 Func BackToSaintAnjekaOutpost()
 	Info('Porting to Saint Anjekas Shrine')
 	Resign()

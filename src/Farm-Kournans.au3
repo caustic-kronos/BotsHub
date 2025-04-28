@@ -26,7 +26,7 @@ Opt('MustDeclareVars', 1)
 
 Local Const $KournansBotVersion = '0.1'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
 Local Const $RKournansHeroSkillbar = 'OgATYnLjZB6C+Zn76OzGAAAA'
 Local Const $RtKournansHeroSkillbar = 'OACjAyhDJPBTy58M5CAAAAAAAA'
@@ -69,7 +69,7 @@ Local Const $Kournans_DeathPactSignet = 4
 
 Local $KOURNANS_FARM_SETUP = False
 
-;~ Main method to farm Corsairs
+;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
 	If Not $KOURNANS_FARM_SETUP Then
 		SetupKournansFarm()
@@ -82,6 +82,7 @@ Func KournansFarm($STATUS)
 EndFunc
 
 
+;~ Kournans farm setup
 Func SetupKournansFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
@@ -95,14 +96,14 @@ Func SetupKournansFarm()
 	RndSleep(50)
 	AddHero($ID_General_Morgahn)
 	RndSleep(50)
-	
+
 	LoadSkillTemplate($ElAKournansFarmerSkillbar)
 	LoadSkillTemplate($RKournansHeroSkillbar, 1)
 	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
 	LoadSkillTemplate($PKournansHeroSkillbar, 3)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
-	
+
 	RndSleep(50)
 	Info('Entering Command Post')
 	MoveTo(-1500, 2000)
@@ -115,7 +116,7 @@ Func SetupKournansFarm()
 EndFunc
 
 
-;~ Farm loop
+;~ Kournans farm loop
 Func KournansFarmLoop()
 	Info('Abandonning quest')
 	AbandonQuest(0x23E)
@@ -169,6 +170,7 @@ Func KournansFarmLoop()
 EndFunc
 
 
+;~ Cast the mandatory spirits and boons
 Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_EdgeOfExtinction)
 	; Get closer to the non-enemies to trigger them into enemies
@@ -189,6 +191,7 @@ Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
 EndFunc
 
 
+;~ Cast all of the spirits and boons - it is not necessary
 Func CastFullSpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_EdgeOfExtinction)
 	; Get closer to the non-enemies to trigger them into enemies
@@ -215,6 +218,7 @@ Func CastFullSpiritsAndBoons($safeX, $safeY)
 EndFunc
 
 
+;~ Talk to Margrid and take her quest
 Func TalkToMargrid()
 	Info('Talking to Margrid')
 	GoNearestNPCToCoords(1250, 7300)
@@ -226,6 +230,7 @@ Func TalkToMargrid()
 EndFunc
 
 
+;~ Return to Sunspear Sanctuary
 Func BackToSunspearSanctuary()
 	Info('Porting to Sunspear Sanctuary')
 	Resign()

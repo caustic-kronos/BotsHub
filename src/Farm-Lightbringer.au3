@@ -221,7 +221,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		CheckForChests($RANGE_SPIRIT)
-		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ';' & $y & ' with distance set to ' & $range)
+		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ':' & $y & ' with distance set to ' & $range)
 		Return False
 	EndIf
 

@@ -20,7 +20,7 @@
 #include '../lib/Utils.au3'
 #include <File.au3>
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
 Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
@@ -36,9 +36,9 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 
 ; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
-;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City 
-Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City_Events 
-Local Const $ID_Miku_Agent = 58 
+;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City
+Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City_Events
+Local Const $ID_Miku_Agent = 58
 
 Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 
@@ -123,6 +123,7 @@ last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
 DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 #CE
 
+;~ Main loop of the Ministerial Commendations farm
 Func MinisterialCommendationsFarm($STATUS)
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
 	If $loggingEnabled Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
@@ -171,6 +172,7 @@ Func MinisterialCommendationsFarm($STATUS)
 EndFunc
 
 
+;~ Setup for the farm - load build and heroes, move in the correct zone
 Func Setup()
 	Local $mapID = GetMapID()
 	If $mapID <> $ID_Current_Kaineng_City Then
@@ -178,7 +180,7 @@ Func Setup()
 		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 	EndIf
 	LeaveGroup()
-	
+
 	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 
 	AddHero($ID_Gwen)
@@ -194,6 +196,7 @@ Func Setup()
 EndFunc
 
 
+;~ Enter the mission A Chance Encounter
 Func EnterQuest()
 	Local $me = GetMyAgent()
 	Local $coordsX = DllStructGetData($me, 'X')
@@ -213,6 +216,7 @@ Func EnterQuest()
 EndFunc
 
 
+;~ Prepare the group for the initial fight
 Func PrepareToFight()
 	;StartingPositions()
 	StartingPositions()
@@ -287,6 +291,7 @@ Func AlternateStartingPositions()
 EndFunc
 
 
+;~ Deal with the initial group fight
 Func InitialFight()
 	Local $deadlock = TimerInit()
 	LogIntoFile('New run started')
@@ -393,6 +398,8 @@ Func RenewSpirits()
 	SoulTwistingRitualistUseSoulTwisting()
 EndFunc
 
+
+;~ The soul twisting ritualist uses soul twisting - sic
 Func SoulTwistingRitualistUseSoulTwisting()
 	If GetEffectTimeRemaining(GetEffect($Soul_Twisting_Skill_Position, $Hero_Ritualist_Prot)) == 0 Then
 		UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)					;Prot - Soul Twisting
@@ -604,6 +611,7 @@ Func KillMinistryOfPurity()
 EndFunc
 
 
+;~ Heal the character while he is picking items
 Func HealWhilePickingItems()
 	If DllStructGetData(GetMyAgent(), 'HP') < 0.90 Then
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
@@ -633,25 +641,31 @@ Func IsFurthestMobInBall()
 EndFunc
 
 
+;~ Count number of foes on top of the stairs
 Func CountFoesOnTopOfTheStairs()
 	Return CountFoesInRangeOfAgent(GetMyAgent(), 0, IsOnTopOfTheStairs)
 EndFunc
 
 
+;~ Count number of foes under the stairs
 Func CountFoesUnderTheStairs()
 	Return CountFoesInRangeOfAgent(GetMyAgent(), 0, IsUnderTheStairs)
 EndFunc
 
 
+;~ Returns whether an agent is on top of the stairs
 Func IsOnTopOfTheStairs($agent)
 	Return IsOverLine(1, 1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 
 
+;~ Returns whether an agent is under the stairs
 Func IsUnderTheStairs($agent)
 	Return Not IsOverLine(1, 1, 4800, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 EndFunc
 
+
+;~ Log string into the log file
 Func LogIntoFile($string)
 	If $loggingEnabled Then _FileWriteLog($loggingFile, $string)
 EndFunc

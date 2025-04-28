@@ -23,7 +23,7 @@ Func ContainsValuableUpgrades($item)
 	If Not $modstruct Then Return False
 
 	If IsWeapon($item) Then
-		If HasSalvageInscription($item) Then Return True
+		;If HasSalvageInscription($item) Then Return True
 		Local $itemType = DllStructGetData($item, 'type')
 		For $struct In $ValuableModsByType[$itemType]
 			If StringInStr($ModStruct, $struct) > 0 Then Return True
@@ -99,8 +99,8 @@ Local $STRUCT_INSCRIPTION_LET_THE_MEMORY_LIVE_AGAIN = '000AA823'		;hsr 10
 #EndRegion Martial Inscriptions
 
 #Region Caster Weapon Inscriptions
-Local $STRUCT_INSCRIPTION_HALE_AND_HEARTY = '05320823'            		;+5e while health > 50%
-Local $STRUCT_INSCRIPTION_HAVE_FAITH = '0500F822'                  		;+5e while enchanted
+Local $STRUCT_INSCRIPTION_HALE_AND_HEARTY = '05320823'					;+5e while health > 50%
+Local $STRUCT_INSCRIPTION_HAVE_FAITH = '0500F822'						;+5e while enchanted
 Local $STRUCT_INSCRIPTION_DONT_CALL_IT_A_COME_BACK = '07321823'			;+7e while health < 50%
 Local $STRUCT_INSCRIPTION_I_AM_SORROW = '07002823'						;+7e while hexed
 Local $STRUCT_INSCRIPTION_SEIZE_THE_DAY_1 = $STRUCT_15_ENERGY			;+15e energy regeneration -1 - +15e part
@@ -116,28 +116,28 @@ Local $STRUCT_INSCRIPTION_SERENITY_NOW = '000AA823'							;hsr 10
 
 Local $STRUCT_INSCRIPTION_HAIL_TO_THE_KING = '0532A821'						;+5 armor while health > 50%
 Local $STRUCT_INSCRIPTION_FAITH_IS_MY_SHIELD = '05009821'					;+5 armor while enchanted
-Local $STRUCT_INSCRIPTION_MIGHT_MAKES_RIGHT = '05007821'           			;+5 armor while attacking
-Local $STRUCT_INSCRIPTION_KNOWING_IS_HALF_THE_BATTLE = '05008821'  			;+5 armor while casting
-Local $STRUCT_INSCRIPTION_MAN_FOR_ALL_SEASONS = '05002821'         			;+5 armor vs elemental damage
-Local $STRUCT_INSCRIPTION_SURVIVAL_OF_THE_FITTEST = '05005821'     			;+5 armor vs physical damage
-Local $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS_1 = '05000821'        			;+5 armor ^ -5 energy - +5 armor part
+Local $STRUCT_INSCRIPTION_MIGHT_MAKES_RIGHT = '05007821'					;+5 armor while attacking
+Local $STRUCT_INSCRIPTION_KNOWING_IS_HALF_THE_BATTLE = '05008821'			;+5 armor while casting
+Local $STRUCT_INSCRIPTION_MAN_FOR_ALL_SEASONS = '05002821'					;+5 armor vs elemental damage
+Local $STRUCT_INSCRIPTION_SURVIVAL_OF_THE_FITTEST = '05005821'				;+5 armor vs physical damage
+Local $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS_1 = '05000821'					;+5 armor ^ -5 energy - +5 armor part
 Local $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS_2 = $STRUCT_MINUS_5_ENERGY		;+5 armor ^ -5 energy - -5 energy part
-Local $STRUCT_INSCRIPTION_LIFE_IS_PAIN = '1400D820'              			;+5 armor ^ -20 health - -20 health part
-;Local $STRUCT_INSCRIPTION_LIFE_IS_PAIN_2 = '05000821'              		;+5 armor ^ -20 health - +5 armor part
-Local $STRUCT_INSCRIPTION_DOWN_BUT_NOT_OUT = '0A32B821'            			;+10 armor while health < 50%
-Local $STRUCT_INSCRIPTION_BE_JUST_AND_FEAR_NOT = '0A00C821'        			;+10 armor while hexed
-Local $STRUCT_INSCRIPTION_LIVE_FOR_TODAY_1 = $STRUCT_15_ENERGY        		;+15 energy ^ -1 energy regeneration - +15 energy part
+Local $STRUCT_INSCRIPTION_LIFE_IS_PAIN = '1400D820'							;+5 armor ^ -20 health - -20 health part
+;Local $STRUCT_INSCRIPTION_LIFE_IS_PAIN_2 = '05000821'						;+5 armor ^ -20 health - +5 armor part
+Local $STRUCT_INSCRIPTION_DOWN_BUT_NOT_OUT = '0A32B821'						;+10 armor while health < 50%
+Local $STRUCT_INSCRIPTION_BE_JUST_AND_FEAR_NOT = '0A00C821'					;+10 armor while hexed
+Local $STRUCT_INSCRIPTION_LIVE_FOR_TODAY_1 = $STRUCT_15_ENERGY				;+15 energy ^ -1 energy regeneration - +15 energy part
 Local $STRUCT_INSCRIPTION_LIVE_FOR_TODAY_2 = $STRUCT_ENERGY_REGENERATION	;+15 energy ^ -1 energy regeneration - energy regeneration -1 part
 #EndRegion Focus Inscriptions
 
 #Region Focus and Shield Inscriptions
 Local $STRUCT_INSCRIPTION_MASTER_OF_MY_DOMAIN = '00143828'			;+1^20% item attribute
 
-Local $STRUCT_INSCRIPTION_NOT_THE_FACE = '0A0018A1'            		;+10 armor vs blunt
-Local $STRUCT_INSCRIPTION_LEAF_ON_THE_WIND = '0A0318A1'        		;+10 armor vs cold
-Local $STRUCT_INSCRIPTION_LIKE_A_ROLLING_STONE = '0A0B18A1'    		;+10 armor vs earth
-Local $STRUCT_INSCRIPTION_SLEEP_NOW_IN_THE_FIRE = '0A0518A1'   		;+10 armor vs fire
-Local $STRUCT_INSCRIPTION_RIDERS_ON_THE_STORM = '0A0418A1'     		;+10 armor vs lightning
+Local $STRUCT_INSCRIPTION_NOT_THE_FACE = '0A0018A1'					;+10 armor vs blunt
+Local $STRUCT_INSCRIPTION_LEAF_ON_THE_WIND = '0A0318A1'				;+10 armor vs cold
+Local $STRUCT_INSCRIPTION_LIKE_A_ROLLING_STONE = '0A0B18A1'			;+10 armor vs earth
+Local $STRUCT_INSCRIPTION_SLEEP_NOW_IN_THE_FIRE = '0A0518A1'		;+10 armor vs fire
+Local $STRUCT_INSCRIPTION_RIDERS_ON_THE_STORM = '0A0418A1'			;+10 armor vs lightning
 Local $STRUCT_INSCRIPTION_THROUGH_THICK_AND_THIN = '0A0118A1'		;+10 armor vs piercing
 Local $STRUCT_INSCRIPTION_THE_RIDDLE_OF_STEEL = '0A0218A1'			;+10 armor vs slashing
 
@@ -198,7 +198,7 @@ Local $STRUCT_MOD_CRUEL_PREFIX = 'E2016824'						;+33% deep wound
 Local $STRUCT_MOD_CRIPPLING_PREFIX = 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
 Local $STRUCT_MOD_HEAVY_PREFIX = 'E601824'						;+33% weakness
 Local $STRUCT_MOD_POISONOUS_PREFIX = 'E4016824'					;+33% poison
-Local $STRUCT_MOD_SILENCING_PREFIX = 'E5016824'           		;+33% dazed
+Local $STRUCT_MOD_SILENCING_PREFIX = 'E5016824'					;+33% dazed
 
 Local $STRUCT_MOD_EBON_PREFIX = '000BB824'
 Local $STRUCT_MOD_FIERY_PREFIX = '0005B824'
@@ -231,7 +231,7 @@ Local $STRUCT_MOD_HSR_10 = '000AA823'
 #Region staff mods
 Local $STRUCT_MOD_OF_DEVOTION = '002D6823'								;+45 health while enchanted
 Local $STRUCT_MOD_OF_ENDURANCE = '002D8823'								;+45 health while in a stance
-Local $STRUCT_MOD_OF_VALOR = '003C7823'                					;+60 health while hexed
+Local $STRUCT_MOD_OF_VALOR = '003C7823'									;+60 health while hexed
 
 Local $STRUCT_MOD_STAFF_MASTERY  = '00143828'							;+1^20%
 #EndRegion staff mods
@@ -749,7 +749,7 @@ Func CreateValuableModsByTypeMap()
 	$map[$ID_Type_Wand] = $Wand_Mods_Array
 	Local $Staff_Mods_Array = [ _
 		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING, _
-		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_ENCHANTING, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20, _
+		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_ELEMENTALIST, $STRUCT_MOD_OF_THE_RANGER, $STRUCT_MOD_OF_THE_MESMER, $STRUCT_MOD_OF_THE_MONK, $STRUCT_MOD_OF_THE_RITUALIST, $STRUCT_MOD_OF_THE_DERVISH _
 	]
 	$map[$ID_Type_Staff] = $Staff_Mods_Array
@@ -776,7 +776,6 @@ Func CreateValuableModsByTypeMap()
 	]
 	$map[$ID_Type_Sword] = $Sword_Mods_Array
 	Local $Dagger_Mods_Array = [ _
-		$STRUCT_MOD_ZEALOUS_PREFIX, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_ELEMENTALIST, $STRUCT_MOD_OF_THE_WARRIOR, $STRUCT_MOD_OF_THE_RANGER, $STRUCT_MOD_OF_THE_RITUALIST, $STRUCT_MOD_OF_THE_ASSASSIN, $STRUCT_MOD_OF_THE_DERVISH _
 	]
 	$map[$ID_Type_Dagger] = $Dagger_Mods_Array

@@ -25,37 +25,16 @@
 
 Opt('MustDeclareVars', 1)
 
-
 Local $SQLITE_DB
-
-#Region Guild Hall Globals
-Local $WarriorsIsle = False
-Local $HuntersIsle = False
-Local $WizardsIsle = False
-Local $BurningIsle = False
-Local $FrozenIsle = False
-Local $NomadsIsle = False
-Local $DruidsIsle = False
-Local $IsleOfTheDead = False
-Local $IsleOfWeepingStone = False
-Local $IsleOfJade = False
-Local $ImperialIsle = False
-Local $IsleOfMeditation = False
-Local $UnchartedIsle = False
-Local $IsleOfWurms = False
-Local $CorruptedIsle = False
-Local $IsleOfSolitude = False
-#EndRegion Guild Hall Globals
-
 
 #Region Tables
 ; Those tables are built automatically and one is completed by the user
 Local $TABLE_DATA_RAW = 'DATA_RAW'
-Local $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'modstruct', 'quantity', 'value', 'rarity_ID', 'extra_ID', 'ID']
+Local $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
 							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
 
 Local $TABLE_DATA_USER = 'DATA_USER'
-Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'extra_ID', 'ID']
+Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
 
 Local $TABLE_DATA_SALVAGE = 'DATA_SALVAGE'
 Local $SCHEMA_DATA_SALVAGE = ['batch', 'model_ID', 'material', 'amount']
@@ -114,7 +93,7 @@ Func InventoryManagement()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-		MoveItemsOutOfEquipmentBag()
+		If $BAG_NUMBER == 5 Then MoveItemsOutOfEquipmentBag()
 		SalvageAllItems()
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
@@ -312,8 +291,6 @@ Func SQLExecute($query)
 	Local $result = _SQLite_Exec($SQLITE_DB, $query)
 	If $result <> 0 Then Error('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error)
 EndFunc
-
-
 #EndRegion Database Utils
 
 
@@ -342,11 +319,12 @@ Func StoreAllItemsData()
 			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
 			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
 			$InsertQuery &= DllStructGetData($item, 'nameString') & "', '"
+			$InsertQuery &= (IsInscribable($item, 'nameString') ? 0 : 1) & "', '"
 			$InsertQuery &= GetModStruct($item) & "', "
 			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
 			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
 			$InsertQuery &= GetRarity($item) & ', '
-			$InsertQuery &= DllStructGetData($item, 'ExtraID') & ', '
+			$InsertQuery &= DllStructGetData($item, 'DyeColor') & ', '
 			$InsertQuery &= DllStructGetData($item, 'ID')
 			$InsertQuery &= '),' & @CRLF
 			Sleep(20)
@@ -362,14 +340,13 @@ Func StoreAllItemsData()
 EndFunc
 
 
-Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription']
-
+;~ Insert data into the RAW data table
 Func AddToFilledData($batchID)
 	Local $InsertQuery = 'WITH raw AS (' & @CRLF _
-		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, modstruct, extra_ID, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
+		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, OS, modstruct, dye_color, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
 		& ')' & @CRLF _
 		& 'INSERT INTO ' & $TABLE_DATA_USER & @CRLF _
-		& 'SELECT raw.batch, raw.bag, raw.slot, rarities.rarity, types.type, requirement, attributes.attribute, raw.value, names.model_name, names.OS, NULL, NULL, NULL, raw.type_ID, raw.model_ID, raw.name_string, raw.modstruct, raw.extra_ID, raw.ID' & @CRLF _
+		& 'SELECT raw.batch, raw.bag, raw.slot, rarities.rarity, types.type, requirement, attributes.attribute, raw.value, names.model_name, raw.OS, NULL, NULL, NULL, raw.type_ID, raw.model_ID, raw.name_string, raw.modstruct, raw.dye_color, raw.ID' & @CRLF _
 		& 'FROM raw' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_RARITY & ' rarities ON raw.rarity_ID = rarities.rarity_ID' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_TYPE & ' types ON raw.type_ID = types.type_ID' & @CRLF _
@@ -448,6 +425,7 @@ Func CompleteUpgradeLookupTable()
 EndFunc
 
 
+;~ Insert upgrades not already present in database
 Func InsertNewUpgrades($upgradeType)
 	Local $query = 'INSERT INTO ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
 		& "SELECT DISTINCT OS, '" & $upgradeType & "', type_ID, " & $upgradeType & ', NULL, NULL, 0' & @CRLF _
@@ -458,6 +436,7 @@ Func InsertNewUpgrades($upgradeType)
 EndFunc
 
 
+;~ Update upgrades with their hexa struct if we manage to find enough similarities
 Func UpdateNewUpgrades($upgradeType)
 	Local $queryResult, $row
 	Local $mapItemStruct[]
@@ -486,6 +465,7 @@ Func UpdateNewUpgrades($upgradeType)
 EndFunc
 
 
+;~ Validate that the upgrades hexa structs we found are correct
 Func ValidateNewUpgrades($upgradeType)
 	Local $query
 	$query = 'UPDATE ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
@@ -507,32 +487,6 @@ EndFunc
 
 
 #Region Inventory
-;~ No need to use this function, scrolls are sold at the same price at regular merchant
-;~ Sell gold scrolls to scroll trader
-Func SellGoldScrolls()
-	If GetMapID() == $ID_Rata_Sum Then
-		Info('Moving to Scroll Trader')
-		Local $scrollTrader = GetNearestNPCToCoords(19250, 14275)
-		GoToNPC($scrollTrader)
-		RndSleep(500)
-	EndIf
-
-	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
-		Local $bag = GetBag($bagIndex)
-		For $i = 1 To DllStructGetData($bag, 'slots')
-			$item = GetItemBySlot($bagIndex, $i)
-			$itemID = DllStructGetData($item, 'ModelID')
-			If $itemID <> 0 And IsGoldScroll($itemID) Then
-				TraderRequestSell($item)
-				RndSleep(500 + GetPing())
-				TraderSell()
-			EndIf
-		Next
-	Next
-EndFunc
-
-
 ;~ Move all items out of the equipment bag so they can be salvaged
 Func MoveItemsOutOfEquipmentBag()
 	Local $equipmentBag = GetBag(5)
@@ -611,7 +565,7 @@ EndFunc
 ;~ Returns true if there are items in inventory satisfying condition
 Func HasInInventory($condition)
 	Local $item, $itemID
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -632,7 +586,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	RndSleep(500)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -668,7 +622,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	RndSleep(250)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To 4
+	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -746,6 +700,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 EndFunc
 
 
+;~ Store all item in the Xunlai Storage
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Info('Storing items')
 	Local $item, $itemID
@@ -755,7 +710,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			$item = GetItemBySlot($bagIndex, $i)
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 And $shouldStoreItem($item) Then
-				Debug('Moving ' & $bagIndex & ';' & $i)
+				Debug('Moving ' & $bagIndex & ':' & $i)
 				StoreItemInXunlaiStorage($item)
 				RndSleep(50)
 			EndIf
@@ -764,6 +719,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 EndFunc
 
 
+;~ Store an item in the Xunlai Storage
 Func StoreItemInXunlaiStorage($item)
 	Local $existingStacks
 	Local $itemID, $storageSlot, $amount
@@ -787,7 +743,7 @@ Func StoreItemInXunlaiStorage($item)
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then
-				Debug('To ' & $existingStacks[$bagIndex] & ';' & $existingStacks[$bagIndex + 1])
+				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 				RndSleep(50 + GetPing())
 				$amount = $amount + $existingAmount - 250
@@ -800,11 +756,10 @@ Func StoreItemInXunlaiStorage($item)
 		Warn('Storage is full')
 		Return
 	EndIf
-	Debug('To ' & $storageSlot[0] & ';' & $storageSlot[1])
+	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
 	RndSleep(50 + GetPing())
 EndFunc
-
 
 
 ;~ Return True if the item should be stored in Xunlai Storage
@@ -851,7 +806,7 @@ Func DefaultShouldSellItem($item)
 		If Not GetIsIdentified($item) Then Return False
 		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False
 		If ShouldKeepWeapon($itemID) Then Return False
-		;If HasSalvageInscription($item) Then Return False ;should be included in next line
+		; This should be included in next line
 		If ContainsValuableUpgrades($item) Then Return False
 		Return True
 	EndIf
@@ -893,6 +848,7 @@ Func DefaultShouldSellRareMaterial($item)
 EndFunc
 
 
+;~ Returns true if an item has a 'Salvageable' inscription
 Func HasSalvageInscription($item)
 	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '00082600011826900098260F1CA8A7000000C']
 	Local $modstruct = GetModStruct($item)
@@ -903,10 +859,15 @@ Func HasSalvageInscription($item)
 EndFunc
 
 
+;~ Return true if the weapon should be kept (not sold, not salvaged)
+;~ Items that should be kept : 	- ultra rare items (ex: Voltaic Spear)
+;~								- rare items that are perfect or close to it (ex: a good Magma Shield)
+;~								- low req weapons
+;~								- weapons with good mods
 Func ShouldKeepWeapon($itemID)
 	Local Static $shouldKeepWeaponsArray = [ _
 		_	;Salvages to dust
-		_ 	;$ID_Great_Conch, $ID_Elemental_Sword, _
+		_	;$ID_Great_Conch, $ID_Elemental_Sword, _
 		_	;Salvages to dust, sometimes
 		_	;$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow _
 		_	;Salvages to ruby, very rarely ...

@@ -471,7 +471,7 @@ Global Const $ID_Zaishen_Key			= 28571
 Global Const $ID_Bogroots_Boss_Key		= 2593
 Local Const $Keys_Array[]				= [$ID_Ascalonian_Key, $ID_Steel_Key, $ID_Krytan_Key, $ID_Maguuma_Key, $ID_Elonian_Key, $ID_Shiverpeak_Key, $ID_Darkstone_Key, $ID_Miners_Key, $ID_Shing_Jea_Key, $ID_Canthan_Key, $ID_Kurzick_Key, _
 											$ID_Stoneroot_Key, $ID_Luxon_Key, $ID_Deep_Jade_Key, $ID_Forbidden_Key, $ID_Istani_Key, $ID_Kournan_Key, $ID_Vabbian_Key, $ID_Ancient_Elonian_Key, $ID_Margonite_Key, $ID_Demonic_Key, $ID_Phantom_Key, _
-											$ID_Obsidian_Key, $ID_Lockpick, $ID_Bogroots_Boss_Key, $ID_Zaishen_Key]
+											$ID_Obsidian_Key, $ID_Bogroots_Boss_Key, $ID_Zaishen_Key]
 Global Const $Map_Keys					= MapFromArray($Keys_Array)
 #EndRegion Keys
 
@@ -853,7 +853,7 @@ Global Const $ID_Bleached_Carapace			= 449
 Global Const $ID_Topaz_Crest				= 450
 Global Const $ID_Encrusted_Lodestone		= 451
 Global Const $ID_Massive_Jawbone			= 452
-Global Const $ID_Iridescant_Griffon_Wing	= 453
+Global Const $ID_Iridescent_Griffon_Wing	= 453
 Global Const $ID_Dessicated_Hydra_Claw		= 454
 Global Const $ID_Minotaur_Horn				= 455
 Global Const $ID_Jade_Mandible				= 457
@@ -875,20 +875,26 @@ Global Const $ID_Demonic_Fang				= 473
 Global Const $ID_Phantom_Residue			= 474
 Global Const $ID_Gruesome_Sternum			= 475
 Global Const $ID_Demonic_Remains			= 476
+;Global Const $ID_Ghostly_Remains			= XXX
 Global Const $ID_Stormy_Eye					= 477
 Global Const $ID_Scar_Behemoth_Jaw			= 478
 Global Const $ID_Fetid_Carapace				= 479
+;Global Const $ID_Gargoyle_Skull			= XXX
 Global Const $ID_Singed_Gargoyle_Skull		= 480
+;Global Const $ID_Seared_Ribcage			= XXX
 Global Const $ID_Gruesome_Ribcage			= 482
 Global Const $ID_Rawhide_Belt				= 483
 Global Const $ID_Leathery_Claw				= 484
 Global Const $ID_Scorched_Seed				= 485
 Global Const $ID_Scorched_Lodestone			= 486
+;Global Const $ID_Grawl_Necklace			= XXX
 Global Const $ID_Ornate_Grawl_Necklace		= 487
 Global Const $ID_Shiverpeak_Mane			= 488
 Global Const $ID_Frostfire_Fang				= 489
+;Global Const $ID_Dark_Flame_Fang				= XXX
 Global Const $ID_Icy_Hump					= 490
 Global Const $ID_Huge_Jawbone				= 492
+;Global Const $ID_Gargantuan_Jawbone		= XXX
 Global Const $ID_Frosted_Griffon_Wing		= 493
 Global Const $ID_Frigid_Heart				= 494
 Global Const $ID_Curved_Mintaur_Horn		= 495
@@ -906,12 +912,16 @@ Global Const $ID_Fiery_Crest				= 508
 Global Const $ID_Igneous_Hump				= 510
 Global Const $ID_Unctuous_Remains			= 511
 Global Const $ID_Mahgo_Claw					= 513
+;Global Const $ID_Dark_Claw					= XXX
 Global Const $ID_Molten_Heart				= 514
 Global Const $ID_Corrosive_Spider_Leg		= 518
 Global Const $ID_Umbral_Eye					= 519
 Global Const $ID_Shadowy_Crest				= 520
 Global Const $ID_Dark_Remains				= 522
 Global Const $ID_Gloom_Seed					= 523
+;Global Const $ID_Spiny_Seed				= XXX
+;Global Const $ID_Unnatural_Seed			= XXX
+;Global Const $ID_Skeletal_Limb				= XXX
 Global Const $ID_Umbral_Skeletal_Limb		= 525
 Global Const $ID_Shadowy_Husk				= 526
 Global Const $ID_Enslavement_Stone			= 532
@@ -923,8 +933,11 @@ Global Const $ID_Truffle					= 813
 Global Const $ID_Skull_Juju					= 814
 Global Const $ID_Mantid_Pincer				= 815
 Global Const $ID_Stone_Horn					= 816
+;Global Const $ID_Oni_Talon					= XXX
+;Global Const $ID_Oni_Claw					= XXX
 Global Const $ID_Keen_Oni_Claw				= 817
 Global Const $ID_Dredge_Incisor				= 818
+;Global Const $ID_Dredge_Charm				= XXX
 Global Const $ID_Dragon_Root				= 819
 Global Const $ID_Stone_Carving				= 820
 Global Const $ID_Warden_Horn				= 822
@@ -973,12 +986,16 @@ Global Const $ID_Skale_Tooth				= 1603
 Global Const $ID_Skale_Claw					= 1604
 Global Const $ID_Skeleton_Bone				= 1605
 Global Const $ID_Cobalt_Talon				= 1609
+;Global Const $ID_Rinkhal_Talon				= XXX
+;Global Const $ID_Bull_Trainer_Giant_Jawbone = XXXX
+;Global Const $ID_Fledgling_Skree_Wing					= XXXX
 Global Const $ID_Skree_Wing					= 1610
 Global Const $ID_Insect_Carapace			= 1617
 Global Const $ID_Sentient_Lodestone			= 1619
 Global Const $ID_Immolated_Djinn_Essence	= 1620
 Global Const $ID_Roaring_Ether_Claw			= 1629
 Global Const $ID_Mandragor_Husk				= 1668
+;Global Const $ID_Mandragor_Carapace			= XXX
 Global Const $ID_Mandragor_Swamproot		= 1671
 Global Const $ID_Behemoth_Hide				= 1675
 Global Const $ID_Geode						= 1681
@@ -1016,6 +1033,7 @@ Global Const $ID_Fibrous_Mandragor_Root		= 27051
 Global Const $ID_Superb_Charr_Carving		= 27052
 Global Const $ID_Stone_Grawl_Necklace		= 27053
 Global Const $ID_Mantid_Ungula				= 27054
+;Global Const $ID_Vampiric_Fang				= XXX
 Global Const $ID_Skale_Fang					= 27055
 Global Const $ID_Stone_Claw					= 27057
 Global Const $ID_Skelk_Fang					= 27060
@@ -1026,11 +1044,19 @@ Global Const $ID_Beetle_Egg					= 27066
 Global Const $ID_Blob_of_Ooze				= 27067
 Global Const $ID_Chromatic_Scale			= 27069
 Global Const $ID_Dryder_Web					= 27070
+;Global Const $ID_Ebon_Dryder_Web			= XXX
+;Global Const $ID_Spider_Web				= XXX
+;Global Const $ID_Spider_Web_2				= XXX
+;Global Const $ID_Maguuma_Spider_Web		= XXX
+;Global Const $ID_Silken_Spider_Web			= XXX
+;Global Const $ID_Ethereal_Garment			= XXX
+;Global Const $ID_Frozen_Remnant			= XXX
+;Global Const $ID_Smoking_Remains			= XXX
 Global Const $ID_Vaettir_Essence			= 27071
 Global Const $ID_Krait_Skin					= 27729
 Global Const $ID_Undead_Bone				= 27974
 Local Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spiked_Crest, $ID_Hardened_Hump, $ID_Mergoyle_Skull, $ID_Glowing_Heart, $ID_Forest_Minotaur_Horn, $ID_Shadowy_Remnant, $ID_Abnormal_Seed, $ID_Bog_Skale_Fin, _
-	$ID_Feathered_Caromi_Scalp, $ID_Shriveled_Eye, $ID_Dune_Burrower_Jaw, $ID_Losaru_Mane, $ID_Bleached_Carapace, $ID_Topaz_Crest, $ID_Encrusted_Lodestone, $ID_Massive_Jawbone, $ID_Iridescant_Griffon_Wing, $ID_Dessicated_Hydra_Claw, _
+	$ID_Feathered_Caromi_Scalp, $ID_Shriveled_Eye, $ID_Dune_Burrower_Jaw, $ID_Losaru_Mane, $ID_Bleached_Carapace, $ID_Topaz_Crest, $ID_Encrusted_Lodestone, $ID_Massive_Jawbone, $ID_Iridescent_Griffon_Wing, $ID_Dessicated_Hydra_Claw, _
 	$ID_Minotaur_Horn, $ID_Jade_Mandible, $ID_Forgotten_Seal, $ID_White_Mantle_Emblem, $ID_White_Mantle_Badge, $ID_Mursaat_Token, $ID_Ebon_Spider_Leg, $ID_Ancient_Eye, $ID_Behemoth_Jaw, $ID_Maguuma_Mane, $ID_Thorny_Carapace, $ID_Tangled_Seed, _
 	$ID_Mossy_Mandible, $ID_Jungle_Skale_Fin, $ID_Jungle_Troll_Tusk, $ID_Obsidian_Burrower_Jaw, $ID_Demonic_Fang, $ID_Phantom_Residue, $ID_Gruesome_Sternum, $ID_Demonic_Remains, $ID_Stormy_Eye, $ID_Scar_Behemoth_Jaw, $ID_Fetid_Carapace, _
 	$ID_Singed_Gargoyle_Skull, $ID_Gruesome_Ribcage, $ID_Rawhide_Belt, $ID_Leathery_Claw, $ID_Scorched_Seed, $ID_Scorched_Lodestone, $ID_Ornate_Grawl_Necklace, $ID_Shiverpeak_Mane, $ID_Frostfire_Fang, $ID_Icy_Hump, $ID_Huge_Jawbone, _
@@ -1047,6 +1073,21 @@ Local Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spike
 	$ID_Berserker_Horn, $ID_Glacial_Stone, $ID_Frozen_Wurm_Husk, $ID_Mountain_Root, $ID_Pile_of_Elemental_Dust, $ID_Fibrous_Mandragor_Root, $ID_Superb_Charr_Carving, $ID_Stone_Grawl_Necklace, $ID_Mantid_Ungula, $ID_Skale_Fang, $ID_Stone_Claw, $ID_Skelk_Fang, _
 	$ID_Fungal_Root, $ID_Flesh_Reaver_Morsel, $ID_Golem_Runestone, $ID_Beetle_Egg, $ID_Blob_of_Ooze, $ID_Chromatic_Scale, $ID_Dryder_Web, $ID_Vaettir_Essence, $ID_Krait_Skin, $ID_Undead_Bone]
 Global Const $Map_Trophies	= MapFromArray($Trophies_Array)
+
+Local Const $Feather_Trophies_Array[]	= [$ID_Feathered_Caromi_Scalp, $ID_Feathered_Avicara_Scalp, $ID_Feathered_Crest, $ID_Feathered_Scalp, $ID_Skree_Wing, $ID_Frosted_Griffon_Wing, $ID_Iridescent_Griffon_Wing, $ID_Quetzal_Crest]
+Global Const $Map_Feather_Trophies	= MapFromArray($Feather_Trophies_Array)
+Local Const $Dust_Trophies_Array[]	= [$ID_Amphibian_Tongue, $ID_Ancient_Eye, $ID_Augmented_Flesh, $ID_Azure_Remains, $ID_Beetle_Egg, $ID_Black_Pearl, $ID_Blob_of_Ooze, $ID_Dark_Remains, $ID_Demonic_Fang, $ID_Demonic_Remains, $ID_Dryder_Web, _
+										$ID_Enslavement_Stone, $ID_Frostfire_Fang, $ID_Frozen_Wurm_Husk, $ID_Glacial_Stone, $ID_Heket_Tongue, $ID_Iboga_Petal, $ID_Immolated_Djinn_Essence, $ID_Jade_Bracelet, $ID_Kirin_Horn, $ID_Losaru_Mane, _
+										$ID_Maguuma_Mane, $ID_Molten_Eye, $ID_Moon_Shell, $ID_Mursaat_Token, $ID_Phantom_Residue, $ID_Pile_of_Elemental_Dust, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Sentient_Root, $ID_Sentient_Seed, _
+										$ID_Sentient_Spore, $ID_Shadowy_Remnant, $ID_Shiverpeak_Mane, $ID_Shriveled_Eye, $ID_Stormy_Eye, $ID_Umbral_Eye, $ID_Unctuous_Remains, $ID_Vaettir_Essence]
+Global Const $Map_Dust_Trophies	= MapFromArray($Dust_Trophies_Array)
+Local Const $Bones_Trophies_Array[]	= [$ID_Augmented_Flesh, $ID_Berserker_Horn, $ID_Bone_Charm, $ID_Curved_Mintaur_Horn, $ID_Dredge_Incisor, $ID_Flesh_Reaver_Morsel, $ID_Giant_Tusk, $ID_Gruesome_Ribcage, $ID_Gruesome_Sternum, $ID_Huge_Jawbone, _
+	$ID_Hunting_Minotaur_Horn, $ID_Jungle_Troll_Tusk, $ID_Keen_Oni_Claw, $ID_Massive_Jawbone, $ID_Mergoyle_Skull, $ID_Minotaur_Horn, $ID_Mountain_Troll_Tusk, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Saurian_Bone, _
+	$ID_Singed_Gargoyle_Skull, $ID_Skale_Claw, $ID_Skale_Fang, $ID_Skale_Tooth, $ID_Skeleton_Bone, $ID_Skelk_Claw, $ID_Skelk_Fang, $ID_Skree_Wing, $ID_Umbral_Skeletal_Limb, $ID_Undead_Bone, $ID_Warden_Horn]
+Global Const $Map_Bones_Trophies	= MapFromArray($Bones_Trophies_Array)
+Local Const $Fiber_Trophies_Array[]	= [$ID_Abnormal_Seed, $ID_Tangled_Seed, $ID_Scorched_Seed, $ID_Ornate_Grawl_Necklace, $ID_Alpine_Seed, $ID_Intricate_Grawl_Necklace, $ID_Gloom_Seed, $ID_Dragon_Root, $ID_Guardian_Moss, $ID_Sentient_Root, _
+	$ID_Sentient_Seed, $ID_Mandragor_Root, $ID_Iboga_Petal, $ID_Sentient_Spore, $ID_Sentient_Vine, $ID_Mountain_Root, $ID_Fibrous_Mandragor_Root, $ID_Fungal_Root]
+Global Const $Map_Fiber_Trophies	= MapFromArray($Fiber_Trophies_Array)
 #EndRegion Stackable Trophies
 
 
@@ -1497,7 +1538,7 @@ Global Const $ID_Celestial_Longbow					= 1068
 
 ;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
 ;3270						; magma shield/summit shield ???
-;870, 873, 869, 1101 		; more canthan rare skins
+;870, 873, 869, 1101		; more canthan rare skins
 ;1569, 1439, 1563, 1557		; Elonian Swords (Colossal, Ornate, Tattooed, Dead, etc)
 
 Global Const $ID_Adamantine_Shield					= 1892
@@ -1507,7 +1548,7 @@ Global Const $ID_Amber_Shield_2						= 941
 Global Const $ID_Bladed_Shield						= 777
 Global Const $ID_Bladed_Shield_2					= 778
 Global Const $ID_Bo_Staff							= 735
-Global Const $ID_Butterfly_Sword					= 397 
+Global Const $ID_Butterfly_Sword					= 397
 Global Const $ID_Colossal_Scimitar					= 1556
 Global Const $ID_Crenellated_scimitar				= 791
 Global Const $ID_Crystalline_Sword					= 399
@@ -1540,7 +1581,7 @@ Global Const $ID_Exalted_Aegis						= 1037
 Global Const $ID_Falchion							= 405
 Global Const $ID_Fellblade							= 400
 Global Const $ID_Fiery_Dragon_Sword					= 1612
-Global Const $ID_Fire_Staff							= 887		; Canthan version 
+Global Const $ID_Fire_Staff							= 887		; Canthan version
 Global Const $ID_Flamberge							= 2250
 Global Const $ID_Gemstone_Axe						= 701
 Global Const $ID_Gloom_Shield						= 1315

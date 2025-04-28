@@ -29,9 +29,9 @@ It needs AutoIt version 3.3.16.0 or higher to run.
 To add a new bot, drop your script into the `/src/` folder and follow these steps:
 1. Name the script like `Farm-<Name>.au3`.
 2. Add an include line in `BotsHub.au3`:
-   ```autoit
-   #include 'src/Farm-<Name>.au3'
-   ```
+	```autoit
+	#include 'src/Farm-<Name>.au3'
+	```
 3. Add the farm to the `$AVAILABLE_FARMS` list with its name <Name> (use | as a separator).
 4. Add two lines in BotsHub - RunFarmLoop :
 	```autoit

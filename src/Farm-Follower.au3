@@ -30,7 +30,7 @@ Opt('MustDeclareVars', 1)
 
 Local Const $FollowerBotVersion = '0.1'
 
-; ==== Constantes ====
+; ==== Constants ====
 Local Const $FollowerSkillbar = ''
 Local Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
 	& 'It will attack everything that gets in range.' & @CRLF _
@@ -100,6 +100,7 @@ Func FollowerFarm($STATUS)
 EndFunc
 
 
+;~ Follower setup
 Func FollowerSetup()
 	$Player_Profession_ID = GetHeroProfession(0, False)
 	Info('Setting up follower bot')
@@ -132,6 +133,7 @@ Func FollowerSetup()
 EndFunc
 
 
+;~ Follower loop
 Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	Local Static $firstPlayer = GetFirstPlayerOfGroup()
 	$RunFunction()
@@ -153,6 +155,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 EndFunc
 
 
+;~ Default class setup
 Func DefaultSetup()
 	$Follower_AttackSkill1 = 1
 	$Follower_AttackSkill2 = 2
@@ -165,17 +168,20 @@ Func DefaultSetup()
 EndFunc
 
 
+;~ Default class run method
 Func DefaultRun()
 	If $Follower_RunningSkill <> null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
 EndFunc
 
 
+;~ Default class fight method
 Func DefaultFight()
 	AttackOrUseSkill(1000, $Follower_MaintainSkill1, $Follower_MaintainSkill2, $Follower_MaintainSkill3, $Follower_MaintainSkill4, $Follower_MaintainSkill5, $Follower_MaintainSkill6, $Follower_MaintainSkill7, $Follower_MaintainSkill8)
 	AttackOrUseSkill(1000, $Follower_AttackSkill1, $Follower_AttackSkill2, $Follower_AttackSkill3, $Follower_AttackSkill4, $Follower_AttackSkill5, $Follower_AttackSkill6, $Follower_AttackSkill7, $Follower_AttackSkill8)
 EndFunc
 
 
+;~ Ranger follower setup
 Func RangerSetup()
 	Local $Wild_Blow = 1
 	Local $Soldiers_Strike = 2
@@ -197,6 +203,7 @@ Func RangerSetup()
 EndFunc
 
 
+;~ Paragon follower setup
 Func ParagonSetup()
 	Info('Paragon setup - Heroic Refrain')
 
@@ -224,6 +231,7 @@ Func ParagonSetup()
 EndFunc
 
 
+;~ Paragon function to cast shouts on all group members
 Func ParagonRefreshShouts()
 	Info('Refresh shouts on group')
 	Local Static $selfRecast = False
@@ -284,6 +292,7 @@ Func ParagonRefreshShouts()
 EndFunc
 
 
+;~ Paragon fight function
 Func ParagonFight()
 	If IsRecharged($Follower_MaintainSkill7) Then UseSkillEx($Follower_MaintainSkill7)
 	RndSleep(GetPing() + 20)
@@ -300,6 +309,7 @@ Func ParagonFight()
 EndFunc
 
 
+;~ Get first player of the group other than yourself
 Func GetFirstPlayerOfGroup()
 	Local $partyMembers = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')

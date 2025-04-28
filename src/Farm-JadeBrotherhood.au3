@@ -100,7 +100,7 @@ Func SetupJadeBrotherhoodFarm()
 EndFunc
 
 
-;~ Farm loop
+;~ Jade Brotherhood farm loop
 Func JadeBrotherhoodFarmLoop()
 	Info('Abandonning quest')
 	AbandonQuest(457)
@@ -128,6 +128,7 @@ Func JadeBrotherhoodFarmLoop()
 EndFunc
 
 
+;~ Separate from paragon hero - you'll be missed Morgahn
 Func MoveToSeparationWithHero()
 	Info('Moving to crossing')
 	UseHeroSkill(1, $Brotherhood_Incoming)
@@ -148,6 +149,7 @@ Func MoveToSeparationWithHero()
 EndFunc
 
 
+;~ Talk to Aiko and take her quest
 Func TalkToAiko()
 	Info('Talking to Aiko')
 	GoNearestNPCToCoords(-13923, -5098)
@@ -160,6 +162,7 @@ Func TalkToAiko()
 EndFunc
 
 
+;~ Wait for mobs to be properly balled
 Func WaitForBall()
 	Info('Waiting for ball')
 	If GetIsDead() Then Return
@@ -185,6 +188,8 @@ Func WaitForBall()
 	WEnd
 EndFunc
 
+
+;~ Kill the jade brotherhood group
 Func KillJadeBrotherhood()
 	Local $EnchantmentsTimer
 	Local $target
@@ -247,6 +252,7 @@ Func KillJadeBrotherhood()
 EndFunc
 
 
+;~ Return to the Marketplace
 Func BackToTheMarketplace($success)
 	Info('Porting to The Marketplace')
 	Resign()
@@ -257,6 +263,7 @@ Func BackToTheMarketplace($success)
 EndFunc
 
 
+;~ Target mob in the center of a group of mob - needs an agent belonging to that group
 Func TargetMobInCenter($targetAgent, $range)
 	Local $agent, $distance
 	Local $count = 0, $sumX = 0, $sumY = 0

@@ -46,6 +46,7 @@ Func EdenIrisFarm($STATUS)
 EndFunc
 
 
+;~ Iris farm short setup
 Func SetupEdenIrisFarm()
 	Info('Setting up farm')
 	MoveTo(-11600, -6250)

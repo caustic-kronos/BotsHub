@@ -21,6 +21,7 @@
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
+; - noticed some scenarios where map is not cleared - check whether this can be fixed by adding a few additional locations
 
 Opt('MustDeclareVars', 1)
 
@@ -36,7 +37,7 @@ Local Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 Local $groupIsAlive = True
 Local $DonatePoints = True
 
-;~ Main loop
+;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
 	If GetMapID() <> $ID_House_Zu_Heltzer Then
 		Info('Moving to Outpost')
@@ -52,7 +53,7 @@ Func KurzickFactionFarm($STATUS)
 	AdlibUnRegister('KurzickGroupIsAlive')
 
 	; Temporarily change a failure into a pause for debugging :
-	If $result == 1 Then $result = 2
+	;If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
 	If (CountSlots() < 15) Then
 		Warn('Inventory full, pausing.')
@@ -63,6 +64,7 @@ Func KurzickFactionFarm($STATUS)
 EndFunc
 
 
+;~ Setup for kurzick farm
 Func KurzickFarmSetup()
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		Info('Turning in Kurzick faction')
@@ -97,6 +99,7 @@ Func KurzickFarmSetup()
 EndFunc
 
 
+;~ Vanquish the Ferndale map
 Func VanquishFerndale()
 	MoveTo(7810, -726)
 	MoveTo(10042, -1173)
@@ -255,6 +258,7 @@ Func VanquishFerndale()
 EndFunc
 
 
+;~ Updates the groupIsAlive variable, this function is run on a fixed timer
 Func KurzickGroupIsAlive()
 	$groupIsAlive = IsGroupAlive()
 EndFunc

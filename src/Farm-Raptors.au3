@@ -201,7 +201,7 @@ Func GetRaptors()
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)
-	
+
 	Local $count = 0
 	While Not GetIsDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200
 		UseSkillEx($Raptors_MarkOfPain, $target)
@@ -414,6 +414,7 @@ Func IsBodyBlocked()
 EndFunc
 
 
+;~ Send /stuck - don't overuse
 Func SendStuckCommand()
 	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
 	If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then

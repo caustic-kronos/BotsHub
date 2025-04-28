@@ -39,7 +39,7 @@ Local $DonatePoints = True
 
 Local Const $ID_unknown_outpost_deposit_points = 193
 
-;~ Main loop
+;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
 	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then
 		Info('Moving to Outpost')
@@ -61,7 +61,7 @@ Func LuxonFactionFarm($STATUS)
 	AdlibUnRegister('LuxonGroupIsAlive')
 
 	; Temporarily change a failure into a pause for debugging :
-	If $result == 1 Then $result = 2
+	;If $result == 1 Then $result = 2
 	If $STATUS <> 'RUNNING' Then Return 2
 	If (CountSlots() < 10) Then
 		Info('Inventory full, pausing.')
@@ -72,6 +72,7 @@ Func LuxonFactionFarm($STATUS)
 EndFunc
 
 
+;~ Setup for the luxon points farm
 Func LuxonFarmSetup()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
 		Info('Turning in Luxon faction')
@@ -110,6 +111,7 @@ Func LuxonFarmSetup()
 EndFunc
 
 
+;~ Vanquish the map
 Func VanquishMountQinkai()
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-8394, -9801)
@@ -169,39 +171,7 @@ Func VanquishMountQinkai()
 EndFunc
 
 
-Func UnusedOldScanning()
-	If MapClearMoveAndAggro(-13046, -9347, 'Yeti 1') Then Return 1
-	If MapClearMoveAndAggro(-17348, -9895, 'Yeti 2') Then Return 1
-	If MapClearMoveAndAggro(-14702, -6671, 'Oni and Wallows 1') Then Return 1
-	If MapClearMoveAndAggro(-11080, -6126, 'Oni and Wallows 2', 2000) Then Return 1
-	If MapClearMoveAndAggro(-13426, -2344, 'Yeti') Then Return 1
-	If MapClearMoveAndAggro(-15055, -3226, 'TomTom') Then Return 1
-	If MapClearMoveAndAggro(-9448, -283, 'Guardian and Wallows') Then Return 1
-	If MapClearMoveAndAggro(-9918, 2826, 'Yeti 1', 2000) Then Return 1
-	If MapClearMoveAndAggro(-8721, 7682, 'Yeti 2') Then Return 1
-	If MapClearMoveAndAggro(-3250, 8400, 'Yeti 3', $RANGE_SPIRIT) Then Return 1
-	If MapClearMoveAndAggro(-7474, -1144, 'Guardian and Wallows 1') Then Return 1
-	If MapClearMoveAndAggro(-9666, 2625, 'Guardian and Wallows 2') Then Return 1
-	If MapClearMoveAndAggro(-5895, -3959, 'Guardian and Wallows 3') Then Return 1
-	If MapClearMoveAndAggro(-3509, -8000, 'Patrol') Then Return 1
-	If MapClearMoveAndAggro(-195, -9095, 'Oni 1') Then Return 1
-	If MapClearMoveAndAggro(6298, -8707, 'Oni 2') Then Return 1
-	If MapClearMoveAndAggro(3981, -3295, 'Bridge') Then Return 1
-	If MapClearMoveAndAggro(496, -2581, 'Naga 1', 2000) Then Return 1
-	If MapClearMoveAndAggro(2069, 1127, 'Guardian and Wallows 1') Then Return 1
-	If MapClearMoveAndAggro(5859, 1599, 'Guardian and Wallows 2') Then Return 1
-	If MapClearMoveAndAggro(6412, 6572, 'Guardian and Wallows 3') Then Return 1
-	If MapClearMoveAndAggro(8550, 7000, 'Naga 1', $RANGE_SPIRIT) Then Return 1
-	If MapClearMoveAndAggro(11000, 8250, 'Naga 2', $RANGE_SPIRIT) Then Return 1
-	If MapClearMoveAndAggro(14403, 6938, 'Oni 1') Then Return 1
-	If MapClearMoveAndAggro(18080, 3127, 'Oni 2') Then Return 1
-	If MapClearMoveAndAggro(13518, -35, 'Naga 1') Then Return 1
-	If MapClearMoveAndAggro(13450, -6084, 'Naga 2', 4000) Then Return 1
-	If MapClearMoveAndAggro(13764, -4816, 'Naga 3', 4000) Then Return 1
-	If MapClearMoveAndAggro(13450, -6084, 'Naga 4', 4000) Then Return 1
-	If MapClearMoveAndAggro(13764, -4816, 'Naga 5', 4000) Then Return 1
-EndFunc
-
+;~ Updates the groupIsAlive variable, this function is run on a fixed timer
 Func LuxonGroupIsAlive()
 	$groupIsAlive = IsGroupAlive()
 EndFunc
