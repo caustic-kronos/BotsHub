@@ -835,8 +835,9 @@ Func ShouldSalvageItem($item)
 		If ShouldKeepWeapon($itemID) Then Return False
 		;If HasSalvageInscription($item) Then Return False
 		If ContainsValuableUpgrades($item) Then Return False
-		Return False
+		Return True
 	EndIf
+	If IsArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
 	If IsTrophy($itemID) Then
 		If $Map_Feather_Trophies[$itemID] <> Null Then Return True
 		If $Map_Dust_Trophies[$itemID] <> Null Then Return True
