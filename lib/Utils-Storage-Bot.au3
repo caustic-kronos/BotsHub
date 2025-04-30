@@ -737,7 +737,7 @@ Func StoreItemInXunlaiStorage($item)
 		If $newCountMaterial - $countMaterial == $amount Then Return
 		$amount = DllStructGetData($item, 'Quantity')
 	EndIf
-	If (IsStackableItemButNotMaterial($itemID) Or IsMaterial($item)) And $amount < 250 Then
+	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
 		$existingStacks = FindAllInXunlaiStorage($item)
 		For $bagIndex = 0 To Ubound($existingStacks) - 1 Step 2
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
@@ -800,19 +800,83 @@ Func DefaultShouldSellItem($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $rarity = GetRarity($item)
 
+	If $rarity == $RARITY_Green Then Return False
+	If IsKey($itemID) Then Return True
 	If IsBlueScroll($itemID) Then Return True
 	If IsGoldScroll($itemID) And $itemID <> $ID_UW_Scroll And $itemID <> $ID_FoW_Scroll Then Return True
-	If IsWeapon($item) Then
-		If Not GetIsIdentified($item) Then Return False
-		If $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then Return False
-		If ShouldKeepWeapon($itemID) Then Return False
-		; This should be included in next line
-		If ContainsValuableUpgrades($item) Then Return False
-		Return True
-	EndIf
-	If IsKey($itemID) Then Return True
 	If isArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
+	If IsWeapon($item) Then
+		Return Not ShouldKeepWeapon($item)
+	EndIf
+	Return False
+EndFunc
 
+
+;~ Return True if the item should be salvaged
+Func DefaultShouldSalvageItem($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $rarity = GetRarity($item)
+	
+	If $rarity == $RARITY_Green Then Return False
+	If IsTrophy($itemID) Then
+		If $Map_Feather_Trophies[$itemID] <> Null Then Return True
+		If $Map_Dust_Trophies[$itemID] <> Null Then Return True
+		If $Map_Bones_Trophies[$itemID] <> Null Then Return True
+		If $Map_Fiber_Trophies[$itemID] <> Null Then Return True
+		Return False
+	EndIf
+	If IsArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
+	If IsWeapon($item) Then
+		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
+		Return Not ShouldKeepWeapon($item)
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if the item should not be sold or salvaged
+Func ShouldKeepWeapon($item)
+	Local Static $lowReqValuableWeaponTypes = [$ID_Type_Shield, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
+	Local Static $valuableOSWeaponTypes = [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff]
+	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)
+	
+	Local $rarity = GetRarity($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $type = DllStructGetData($item, 'Type')
+	; Throwing white items
+	If $rarity == $RARITY_White Then Return False
+	; Keeping green items
+	If $rarity == $RARITY_Green Then Return True
+	; Keeping unidentified items
+	If Not GetIsIdentified($item) Then Return True
+	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
+	If $Map_UltraRareWeapons[$itemID] <> null Then Return True
+	; Keeping items that contain good upgrades
+	If ContainsValuableUpgrades($item) Then Return True
+	; Throwing items without good damage/energy/armor
+	If Not IsMaxDamageForReq($item) Then Return False
+	; Inscribable are kept only if : 1) rare skin and q9 2) low req of a good type
+	If IsInscribable($item) Then
+		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
+		If GetItemReq($item) == 9 And $Map_RareWeapons[$itemID] <> Null Then Return True
+		Return False
+	; OS ... it's more complicated
+	Else
+		If GetItemReq($item) >= 9 Then
+			; OS high req are kept only if : 1) perfect mods and good type or good skin 2) rare skin and almost perfect mods
+			If HasPerfectMods($item) And ($Map_RareWeapons[$itemID] <> Null Or $valuableOSWeaponTypesMap[DllStructGetData($item, 'type')] <> Null) Then Return True
+			If $Map_RareWeapons[$itemID] == Null Then Return False
+			If HasAlmostPerfectMods($item) Then Return True
+			Return False
+		Else
+			; Low req are kept if they have perfect mods, almost perfect mods, or a rare skin with somewhat okay mods
+			If HasPerfectMods($item) Then Return True
+			If HasAlmostPerfectMods($item) Then Return True
+			If $Map_RareWeapons[$itemID] <> Null And HasOkayMods($item) Then Return True
+			Return False
+		EndIf
+	EndIf
 	Return False
 EndFunc
 
@@ -855,27 +919,6 @@ Func HasSalvageInscription($item)
 	For $salvageableModStruct in $salvageableInscription
 		If StringInStr($modstruct, $salvageableModStruct) Then Return True
 	Next
-	Return False
-EndFunc
-
-
-;~ Return true if the weapon should be kept (not sold, not salvaged)
-;~ Items that should be kept : 	- ultra rare items (ex: Voltaic Spear)
-;~								- rare items that are perfect or close to it (ex: a good Magma Shield)
-;~								- low req weapons
-;~								- weapons with good mods
-Func ShouldKeepWeapon($itemID)
-	Local Static $shouldKeepWeaponsArray = [ _
-		_	;Salvages to dust
-		_	;$ID_Great_Conch, $ID_Elemental_Sword, _
-		_	;Salvages to dust, sometimes
-		_	;$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Longbow _
-		_	;Salvages to ruby, very rarely ...
-		_	;$ID_Ruby_Maul, _
-	]
-	Local Static $Map_shouldKeepWeapons = MapFromArray($shouldKeepWeaponsArray)
-	If $Map_UltraRareWeapons[$itemID] <> null Then Return True
-	If $Map_shouldKeepWeapons[$itemID] <> null Then Return True
 	Return False
 EndFunc
 #EndRegion Inventory

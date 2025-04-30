@@ -209,7 +209,7 @@ Func DefaultShouldPickItem($item)
 		Return False
 	ElseIf IsMapPiece($itemID) Then
 		Return GUICtrlRead($GUI_Checkbox_LootMapPieces) == $GUI_CHECKED
-	ElseIf IsStackableItemButNotMaterial($itemID) Then
+	ElseIf IsStackable($item) Then
 		Return True
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return True
@@ -822,33 +822,6 @@ EndFunc
 
 
 #Region Identification and Salvage
-;~ Return True if the item should be salvaged
-Func ShouldSalvageItem($item)
-	Local $itemID = DllStructGetData($item, 'ModelID')
-	Local $rarity = GetRarity($item)
-	If $rarity == $RARITY_Green Then Return False
-	If IsWeapon($item) Then
-		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
-		If $rarity == $RARITY_White Then Return True
-		If IsLowReqMaxDamage($item) Then Return False
-		If Not GetIsIdentified($item) Then Return False
-		If ShouldKeepWeapon($itemID) Then Return False
-		;If HasSalvageInscription($item) Then Return False
-		If ContainsValuableUpgrades($item) Then Return False
-		Return True
-	EndIf
-	If IsArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
-	If IsTrophy($itemID) Then
-		If $Map_Feather_Trophies[$itemID] <> Null Then Return True
-		If $Map_Dust_Trophies[$itemID] <> Null Then Return True
-		If $Map_Bones_Trophies[$itemID] <> Null Then Return True
-		If $Map_Fiber_Trophies[$itemID] <> Null Then Return True
-		Return False
-	EndIf
-	Return False
-EndFunc
-
-
 ;~ Get the number of uses of a kit
 Func GetKitUsesLeft($kitID)
 	Local $kitStruct = GetModStruct($kitID)
@@ -912,7 +885,7 @@ EndFunc
 Func SalvageItemAt($bag, $slot)
 	Local $item = GetItemBySlot($bag, $slot)
 	If DllStructGetData($item, 'ID') = 0 Then Return
-	If ShouldSalvageItem($item) Then
+	If DefaultShouldSalvageItem($item) Then
 		SalvageItem($item)
 	EndIf
 EndFunc
@@ -1057,12 +1030,6 @@ EndFunc
 ;~ Returns true if the item is inscribable
 Func IsInscribable($item)
 	Return BitAND(DllStructGetData($item, 'Interaction'), 0x08000000) <> 0
-EndFunc
-
-
-;~ Returns true if the item is stackable
-Func IsStackableItemButNotMaterial($itemID)
-	Return $Map_StackableItemsExceptMaterials[$itemID] <> null
 EndFunc
 
 

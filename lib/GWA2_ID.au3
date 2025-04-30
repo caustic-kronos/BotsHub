@@ -1408,49 +1408,69 @@ Global Const $ID_Panda_Mini								= 15517
 #EndRegion Minis
 
 
+#Region Ultra rare skins
+; Missing IDs
+;Global Const $ID_Dryad_Bow							=
+;Global Const $ID_Storm_Daggers						=
+;Global Const $ID_Demon_Fangs						=
+;Global Const $ID_Bonecage_Scythe					=
+;Global Const $ID_Clockwork_Scythe					=
+;Global Const $ID_Insectoid_Scythe					=
+;Global Const $ID_Tentacle_Scythe					=
+;Global Const $ID_Demoncrest_Spear					=
+;Global Const $ID_Eternal_Blade						=
+;Global Const $ID_Obsidian_Edge						=
+;Global Const $ID_Onyx_Scepter						=
+;Global Const $ID_Topaz_Scepter						=
+
+;Global Const $ID_Envoy_Sword						=
+;Global Const $ID_Envoy_Axe							=
+;Global Const $ID_Chaotic_Envoy_Staff				=
+;Global Const $ID_Dark_Envoy_Staff					=
+;Global Const $ID_Elemental_Envoy_Staff				=
+;Global Const $ID_Spiritual_Envoy_Staff				=
+
+Global Const $ID_Emerald_Blade						= 1976
+Global Const $ID_Voltaic_Spear						= 2071
+Global Const $ID_Dhuums_Soul_Reaper					= 32823
+Global Const $ID_Eaglecrest_Axe						= 1985
+Global Const $ID_Wingcrest_Maul						= 2048
+
 #Region Envoy Weapons
-; Envoy Skinned Greens
 ; Green Envoys
-Global Const $ID_Demrikovs_Judgement	= 36670
-Global Const $ID_Vetauras_Harbinger		= 36678
-Global Const $ID_Torivos_Rage			= 36680
-Global Const $ID_Heleynes_Insight		= 36676
+Global Const $ID_Demrikovs_Judgement				= 36670
+Global Const $ID_Vetauras_Harbinger					= 36678
+Global Const $ID_Torivos_Rage						= 36680
+Global Const $ID_Heleynes_Insight					= 36676
 ; Gold Envoys
-;Global Const $ID_Envoy_Sword	=
-Global Const $ID_Envoy_Scythe			= 36677
-;Global Const $ID_Envoy_Axe	=
-;Global Const $ID_Chaotic_Envoy_Staff	=
-;Global Const $ID_Dark_Envoy_Staff	=
-;Global Const $ID_Elemental_Envoy_Staff	=
-Global Const $ID_Divine_Envoy_Staff	= 36674
-;Global Const $ID_Spiritual_Envoy_Staff	=
+Global Const $ID_Envoy_Scythe						= 36677
+
+Global Const $ID_Divine_Envoy_Staff					= 36674
 #EndRegion Envoy Weapons
 
-
 #Region Froggy
-Global Const $ID_Froggy_Domination		= 1953
-Global Const $ID_Froggy_Fast_Casting	= 1956
-Global Const $ID_Froggy_Illusion		= 1957
-Global Const $ID_Froggy_Inspiration		= 1958
-Global Const $ID_Froggy_Soul_Reaping	= 1959
-Global Const $ID_Froggy_Blood			= 1960
-Global Const $ID_Froggy_Curses			= 1961
-Global Const $ID_Froggy_Death			= 1962
-Global Const $ID_Froggy_Air				= 1963
-Global Const $ID_Froggy_Earth			= 1964
-Global Const $ID_Froggy_Energy_Storage	= 1965
-Global Const $ID_Froggy_Fire			= 1966
-Global Const $ID_Froggy_Water			= 1967
-Global Const $ID_Froggy_Divine			= 1968
-Global Const $ID_Froggy_Healing			= 1969
-Global Const $ID_Froggy_Protection		= 1970
-Global Const $ID_Froggy_Smiting			= 1971
-Global Const $ID_Froggy_Communing		= 1972
-Global Const $ID_Froggy_Spawning		= 1973
-Global Const $ID_Froggy_Restoration		= 1974
-Global Const $ID_Froggy_Channeling		= 1975
+Global Const $ID_Froggy_Domination					= 1953
+Global Const $ID_Froggy_Fast_Casting				= 1956
+Global Const $ID_Froggy_Illusion					= 1957
+Global Const $ID_Froggy_Inspiration					= 1958
+Global Const $ID_Froggy_Soul_Reaping				= 1959
+Global Const $ID_Froggy_Blood						= 1960
+Global Const $ID_Froggy_Curses						= 1961
+Global Const $ID_Froggy_Death						= 1962
+Global Const $ID_Froggy_Air							= 1963
+Global Const $ID_Froggy_Earth						= 1964
+Global Const $ID_Froggy_Energy_Storage				= 1965
+Global Const $ID_Froggy_Fire						= 1966
+Global Const $ID_Froggy_Water						= 1967
+Global Const $ID_Froggy_Divine						= 1968
+Global Const $ID_Froggy_Healing						= 1969
+Global Const $ID_Froggy_Protection					= 1970
+Global Const $ID_Froggy_Smiting						= 1971
+Global Const $ID_Froggy_Communing					= 1972
+Global Const $ID_Froggy_Spawning					= 1973
+Global Const $ID_Froggy_Restoration					= 1974
+Global Const $ID_Froggy_Channeling					= 1975
 #EndRegion Froggy
-
 
 #Region Bone Dragon Staff
 Global Const $ID_Bone_Dragon_Staff_Domination		= 1987
@@ -1476,7 +1496,6 @@ Global Const $ID_Bone_Dragon_Staff_Restoration		= 2006
 Global Const $ID_Bone_Dragon_Staff_Channeling		= 2007
 #EndRegion Bone Dragon Staff
 
-
 #Region Wintergreen Weapons
 Global Const $ID_Wintergreen_Axe					= 15835
 Global Const $ID_Wintergreen_Bow					= 15836
@@ -1489,7 +1508,6 @@ Global Const $ID_Wintergreen_Shield					= 15878
 Global Const $ID_Wintergreen_Spear					= 15971
 Global Const $ID_Wintergreen_Staff					= 16128
 #EndRegion Wintergreen Weapons
-
 
 #Region Celestial Compass
 Global Const $ID_Celestial_Compass_Domination		= 1055
@@ -1514,7 +1532,135 @@ Global Const $ID_Celestial_Compass_Spawning			= 1883
 Global Const $ID_Celestial_Compass_Restoration		= 1884
 Global Const $ID_Celestial_Compass_Channeling		= 1885
 #EndRegion Celestial Compass
+#EndRegion Ultra rare skins
 
+
+#Region Rare skins
+; Which skin is that ID ? Only obsidian one is worth it
+; Called orr staff but there are no orr staves
+Global Const $ID_Earth_Staff						= 603
+; Are those two the 'good' versions ?
+Global Const $ID_Sephis_Axe							= 120
+Global Const $ID_Serpent_Axe						= 118
+
+; Missing IDs
+; New weapons
+;Global Const $ID_Dragon_Fangs						=
+;Global Const $ID_Spiritbinder						=
+;Global Const $ID_Japan_First_Anniversary_Shield	=
+;Global Const $ID_Soulbreaker						=
+;Global Const $ID_Sunspear							=
+;Global Const $ID_Canthan_Targe						=
+;Global Const $ID_War_Pick							=
+;Global Const $ID_Ithas_Bow							=
+;Global Const $ID_Censors_Icon						=
+;Global Const $ID_Bone_Idol							=
+;Global Const $ID_Chimeric_Prism					=
+
+;Global Const $ID_Naga_Shortbow						=
+;Global Const $ID_Naga_Longbow						=
+;Global Const $ID_Chaos_Axe							=
+;Global Const $ID_Amethyst_Aegis					=
+;Global Const $ID_Demonic_Aegis						=
+;Global Const $ID_Pronged_Fan						=
+;Global Const $ID_Straw_Effigy						=
+;Global Const $ID_Colossal_Pick						=
+;Global Const $ID_Desolation_Maul					=
+;Global Const $ID_Cockatrice_Staff					=
+;Global Const $ID_Dead_Staff						=
+;Global Const $ID_Forbidden_Staff					=
+;Global Const $ID_Ghostly_Staff						=
+;Global Const $ID_Outcast_Staff						=
+;Global Const $ID_Platinum_Staff					=
+;Global Const $ID_Shadow_Staff						=
+;Global Const $ID_Zodiac_Staff						=
+;Global Const $ID_Broadsword						=
+;Global Const $ID_Dragons_Breath_Wand				=
+;Global Const $ID_Golden_Pillar						=
+;Global Const $ID_Jellyfish_Wand					=
+;Global Const $ID_Koi_Scepter						=
+;Global Const $ID_Voltaic_Wand						=
+;Global Const $ID_Water_Spirit_Rod					=
+;Global Const $ID_Wayward_Wand						=
+
+;Global Const $ID_ALL_ZODIAC_WEAPONS				=
+
+; This one needs to be the twin serpent version
+;Global Const $ID_Jeweled_Staff						=
+; This one needs to be the eye version
+;Global Const $ID_Flame_Artifact					=
+
+; Unknown IDs
+;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
+;3270						; magma shield/summit shield ???
+;870, 873, 869, 1101		; more canthan rare skins
+;1569, 1439, 1563, 1557		; Elonian Swords (Colossal, Ornate, Tattooed, Dead, etc)
+
+; Bow
+Global Const $ID_Eternal_Bow						= 133
+Global Const $ID_Storm_Bow							= 145
+
+; Focii
+Global Const $ID_Paper_Fan							= 775
+Global Const $ID_Paper_Fan_2						= 776
+Global Const $ID_Paper_Fan_3						= 789
+Global Const $ID_Paper_Fan_4						= 866
+Global Const $ID_Paper_Fan_5						= 858
+Global Const $ID_Paper_Lantern						= 896
+Global Const $ID_Jug								= 1022
+Global Const $ID_Jug_2								= 875
+Global Const $ID_Jug_3								= 874
+Global Const $ID_Plagueborn_Focus					= 1026
+Global Const $ID_Plagueborn_Focus_2					= 1027
+
+; Scythe
+Global Const $ID_Draconic_Scythe					= 1978
+
+; Shield
+Global Const $ID_Draconic_Aegis						= 1896
+Global Const $ID_Eternal_Shield						= 332
+Global Const $ID_Amber_Shield						= 940
+Global Const $ID_Amber_Shield_2						= 941
+Global Const $ID_Bladed_Shield						= 777
+Global Const $ID_Bladed_Shield_2					= 778
+Global Const $ID_Echovald_Shield					= 944
+Global Const $ID_Echovald_Shield_2					= 945
+Global Const $ID_Emblazoned_Defender				= 947
+Global Const $ID_Exalted_Aegis						= 1037
+Global Const $ID_Gothic_Defender					= 950
+Global Const $ID_Gothic_Defender_2					= 951
+Global Const $ID_Guardian_of_the_Hunt				= 1320
+Global Const $ID_Guardian_of_the_Hunt_2				= 1321
+Global Const $ID_Kappa_Shield						= 952
+Global Const $ID_Kappa_Shield_2						= 953
+Global Const $ID_Magma_Shield						= 344
+Global Const $ID_Ornate_Shield						= 955
+Global Const $ID_Plagueborn_Shield					= 959
+Global Const $ID_Plagueborn_Shield_2				= 960
+Global Const $ID_Outcast_Shield						= 956
+Global Const $ID_Outcast_Shield_2					= 958
+Global Const $ID_Sea_Purse_Shield					= 1589
+Global Const $ID_Stone_Summit_Shield				= 341
+Global Const $ID_Summit_Warlord_Shield				= 342
+
+; Staff
+Global Const $ID_Bo_Staff							= 735
+Global Const $ID_Dragon_Staff						= 736
+Global Const $ID_Raven_Staff						= 391
+
+; Sword
+Global Const $ID_Crystalline_Sword					= 399
+Global Const $ID_Katana								= 742
+Global Const $ID_Oni_Blade							= 794
+Global Const $ID_Shinobi_Blade						= 744
+Global Const $ID_Colossal_Scimitar					= 1556
+Global Const $ID_Dadao_Sword						= 739
+Global Const $ID_Golden_Phoenix_Blade				= 795
+Global Const $ID_Jitte								= 741
+Global Const $ID_Tatooed_Scimitar					= 1197
+
+; Wand
+Global Const $ID_Platinum_Wand						= 1011
 
 #Region Celestial
 Global Const $ID_Celestial_Shield					= 942
@@ -1528,126 +1674,63 @@ Global Const $ID_Celestial_Staff					= 785
 Global Const $ID_Celestial_Longbow					= 1068
 #EndRegion Celestial
 
+#Region Zodiac
+Global Const $ID_Zodiac_Shield						= 1039
+#EndRegion Zodiac
+#EndRegion Rare skins
+
 
 #Region Other skins
-;Global Const $ID_Amethyst_Aegis					=
+; Missing IDs
 ;Global Const $ID_Divine_Scroll						=
 ;Global Const $ID_Jeweled_Daggers					=
-;Global Const $ID_Pronged_Fan						=
 ;Global Const $ID_Ruby_Daggers						=
 
-;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
-;3270						; magma shield/summit shield ???
-;870, 873, 869, 1101		; more canthan rare skins
-;1569, 1439, 1563, 1557		; Elonian Swords (Colossal, Ornate, Tattooed, Dead, etc)
-
-Global Const $ID_Adamantine_Shield					= 1892
-Global Const $ID_Aegis								= 323
-Global Const $ID_Amber_Shield						= 940
-Global Const $ID_Amber_Shield_2						= 941
-Global Const $ID_Bladed_Shield						= 777
-Global Const $ID_Bladed_Shield_2					= 778
-Global Const $ID_Bo_Staff							= 735
-Global Const $ID_Butterfly_Sword					= 397
-Global Const $ID_Colossal_Scimitar					= 1556
-Global Const $ID_Crenellated_scimitar				= 791
-Global Const $ID_Crystalline_Sword					= 399
-Global Const $ID_Dadao_Sword						= 739
-Global Const $ID_Darkwing_Defender					= 1052
-Global Const $ID_Defender							= 331
-Global Const $ID_Dhuums_Soul_Reaper					= 32823
-Global Const $ID_Diamond_Aegis						= 783
-Global Const $ID_Diamond_Aegis_2					= 1469
-Global Const $ID_Diamond_Aegis_3					= 2294
+Global Const $ID_Great_Conch						= 2415
+Global Const $ID_Ruby_Maul							= 2274
+Global Const $ID_Elemental_Sword					= 2267
+Global Const $ID_Illusory_Staff						= 1916
+Global Const $ID_Quicksilver						= 2242
+Global Const $ID_Fire_Staff							= 887		; Canthan version
 Global Const $ID_Divine_Scroll						= 905		; Canthan version
-Global Const $ID_Draconic_Aegis						= 1896
-Global Const $ID_Draconic_Scythe					= 1978
-Global Const $ID_Dragon_Staff						= 736
-Global Const $ID_Dwarven_Axe						= 114
-Global Const $ID_Eaglecrest_Axe						= 1985
 Global Const $ID_Earth_Scroll						= 177
 Global Const $ID_Earth_Scroll_2						= 178
 Global Const $ID_Earth_Scroll_3						= 568
-Global Const $ID_Earth_Staff						= 603		; Orrian version
-Global Const $ID_Echovald_Shield					= 944
-Global Const $ID_Echovald_Shield_2					= 945
-Global Const $ID_Elemental_Sword					= 2267
-Global Const $ID_Emblazoned_Defender				= 947
-Global Const $ID_Emerald_Blade						= 1976
-Global Const $ID_Enameled_Shield					= 2236
-Global Const $ID_Eternal_Bow						= 133
-Global Const $ID_Eternal_Shield						= 332
-Global Const $ID_Exalted_Aegis						= 1037
-Global Const $ID_Falchion							= 405
 Global Const $ID_Fellblade							= 400
 Global Const $ID_Fiery_Dragon_Sword					= 1612
-Global Const $ID_Fire_Staff							= 887		; Canthan version
+Global Const $ID_Butterfly_Sword					= 397
+Global Const $ID_Crenellated_scimitar				= 791
+Global Const $ID_Falchion							= 405
 Global Const $ID_Flamberge							= 2250
 Global Const $ID_Gemstone_Axe						= 701
-Global Const $ID_Gloom_Shield						= 1315
-Global Const $ID_Golden_Phoenix_Blade				= 795
-Global Const $ID_Gothic_Defender					= 950
-Global Const $ID_Gothic_Defender_2					= 951
-Global Const $ID_Great_Conch						= 2415
-Global Const $ID_Guardian_of_the_Hunt				= 1320
-Global Const $ID_Guardian_of_the_Hunt_2				= 1321
-Global Const $ID_Illusory_Staff						= 1916
 Global Const $ID_Iridescent_Aegis					= 2299
-Global Const $ID_Jitte								= 741
-Global Const $ID_Jug								= 1022
-Global Const $ID_Jug_2								= 875
-Global Const $ID_Jug_3								= 874
-Global Const $ID_Kappa_Shield						= 952
-Global Const $ID_Kappa_Shield_2						= 953
-Global Const $ID_Katana								= 742
-Global Const $ID_Magma_Shield						= 344
-Global Const $ID_Oni_Blade							= 794
-Global Const $ID_Oni_Daggers						= 766
-Global Const $ID_Ornate_Buckler						= 326
-Global Const $ID_Ornate_Shield						= 955
-Global Const $ID_Orr_Staff							= 603
-Global Const $ID_Outcast_Shield						= 956
-Global Const $ID_Outcast_Shield_2					= 958
-Global Const $ID_Paper_Fan							= 775
-Global Const $ID_Paper_Fan_2						= 776
-Global Const $ID_Paper_Fan_3						= 789
-Global Const $ID_Paper_Fan_4						= 866
-Global Const $ID_Paper_Fan_5						= 858
-Global Const $ID_Paper_Lantern						= 896
 Global Const $ID_Peacocks_Wrath						= 2433
-Global Const $ID_Plagueborn_Focus					= 1026
-Global Const $ID_Plagueborn_Focus_2					= 1027
-Global Const $ID_Plagueborn_Shield					= 959
-Global Const $ID_Plagueborn_Shield_2				= 960
-Global Const $ID_Platinum_Wand						= 1011
-Global Const $ID_Quicksilver						= 2242
-Global Const $ID_Raven_Staff						= 391
+Global Const $ID_Ornate_Buckler						= 326
 Global Const $ID_Reinforced_Buckler					= 327
-Global Const $ID_Ruby_Maul							= 2274
-Global Const $ID_Sea_Purse_Shield					= 1589
-Global Const $ID_Sephis_Axe							= 120
-Global Const $ID_Serpent_Axe						= 118
-Global Const $ID_Shadow_Shield						= 336
 Global Const $ID_Shield_of_the_Wing					= 334
-Global Const $ID_Shinobi_Blade						= 744
 Global Const $ID_Skeleton_Shield					= 337
 Global Const $ID_Skull_Shield						= 338
 Global Const $ID_Spiked_Targe						= 871
 Global Const $ID_Spiked_Targe_2						= 872
-Global Const $ID_Stone_Summit_Shield				= 341
-Global Const $ID_Storm_Bow							= 145
-Global Const $ID_Summit_Warlord_Shield				= 342
 Global Const $ID_Tall_Shield						= 343
-Global Const $ID_Tatooed_Scimitar					= 1197
+
+Global Const $ID_Adamantine_Shield					= 1892
+Global Const $ID_Aegis								= 323
+Global Const $ID_Darkwing_Defender					= 1052
+Global Const $ID_Defender							= 331
+Global Const $ID_Diamond_Aegis						= 783
+Global Const $ID_Diamond_Aegis_2					= 1469
+Global Const $ID_Diamond_Aegis_3					= 2294
+Global Const $ID_Enameled_Shield					= 2236
+Global Const $ID_Gloom_Shield						= 1315
+Global Const $ID_Shadow_Shield						= 336
 Global Const $ID_Tower_Shield						= 345
-Global Const $ID_Voltaic_Spear						= 2071
-Global Const $ID_Wingcrest_Maul						= 2048
-Global Const $ID_Zodiac_Shield						= 1039
+Global Const $ID_Dwarven_Axe						= 114
+Global Const $ID_Oni_Daggers						= 766
 #EndRegion Other skins
 
-
-Local $UltraRareWeapons								= [ _
-	$ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, _
+Local $UltraRareWeapons_Array = [ _
+	$ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, $ID_Emerald_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, _
 	$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, $ID_Froggy_Air, $ID_Froggy_Earth, _
 	$ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, $ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, $ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
 	$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, $ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, _
@@ -1657,31 +1740,34 @@ Local $UltraRareWeapons								= [ _
 	$ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, $ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
 	$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, $ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
 ]
-Global Const $Map_UltraRareWeapons					= MapFromArray($UltraRareWeapons)
+Global Const $Map_UltraRareWeapons = MapFromArray($UltraRareWeapons_Array)
 
-
-; This map could potentially be limited to its function use
-Local $StackableItems	= $Blue_Scrolls_Array
-_ArrayConcatenate($StackableItems, $Gold_Scrolls_Array)
-_ArrayConcatenate($StackableItems, $Sweet_Pcons_Array)
-_ArrayConcatenate($StackableItems, $Special_Drops)
-_ArrayConcatenate($StackableItems, $DPRemoval_Sweets)
-_ArrayConcatenate($StackableItems, $Town_Sweets_Array)
-_ArrayConcatenate($StackableItems, $Party_Tonics_Array)
-_ArrayConcatenate($StackableItems, $All_Festive_Array)
-_ArrayConcatenate($StackableItems, $Alcohols_Array)
-_ArrayConcatenate($StackableItems, $Tomes_Array)
-_ArrayConcatenate($StackableItems, $Trophies_Array)
-_ArrayConcatenate($StackableItems, $Map_Pieces_Array)
-_ArrayConcatenate($StackableItems, $Reward_Trophies_Array)
-_ArrayAdd($StackableItems, $ID_Dyes)
-_ArrayAdd($StackableItems, $ID_Lockpick)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_1)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_2)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_3)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_4)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_5)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_6)
-_ArrayAdd($StackableItems, $ID_UNKNOWN_STACKABLE_7)
-Global Const $Map_StackableItemsExceptMaterials	= MapFromArray($StackableItems)
+Local $RareWeapons_Array = [ _
+	$ID_Earth_Staff, _
+	_ ; Axes
+	$ID_Sephis_Axe, $ID_Serpent_Axe, _
+	_ ; Bows
+	$ID_Eternal_Bow, $ID_Storm_Bow, _
+	_ ; Focii
+	$ID_Paper_Fan, $ID_Paper_Fan_2, $ID_Paper_Fan_3, $ID_Paper_Fan_4, $ID_Paper_Fan_5, $ID_Paper_Lantern, $ID_Jug, $ID_Jug_2, $ID_Jug_3, $ID_Plagueborn_Focus, $ID_Plagueborn_Focus_2, _
+	_ ; Scythes
+	$ID_Draconic_Scythe, _
+	_ ; Shields
+	$ID_Draconic_Aegis, $ID_Eternal_Shield, $ID_Emblazoned_Defender, $ID_Exalted_Aegis, _
+	$ID_Amber_Shield, $ID_Amber_Shield_2, $ID_Bladed_Shield, $ID_Bladed_Shield_2, $ID_Echovald_Shield, $ID_Echovald_Shield_2, $ID_Gothic_Defender, $ID_Gothic_Defender_2, $ID_Guardian_of_the_Hunt, $ID_Guardian_of_the_Hunt_2, _
+	$ID_Kappa_Shield, $ID_Kappa_Shield_2, $ID_Ornate_Shield, $ID_Plagueborn_Shield, $ID_Plagueborn_Shield_2, $ID_Outcast_Shield, $ID_Outcast_Shield_2, $ID_Sea_Purse_Shield, _
+	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, _
+	_ ; Staves
+	$ID_Bo_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, _
+	_ ; Swords
+	$ID_Crystalline_Sword, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Jitte, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, _
+	_ ; Wands
+	$ID_Platinum_Wand, _
+	_ ; Celestial weapons
+	$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Staff, $ID_Celestial_Longbow, _
+	_ ; Zodiac weapons
+	$ID_Zodiac_Shield _
+]
+Global Const $Map_RareWeapons = MapFromArray($RareWeapons_Array)
 #EndRegion Items
+

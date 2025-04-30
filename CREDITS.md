@@ -13,6 +13,13 @@ This project includes or is based on work by other developers. Full credit to th
 - Notes: Major modifications were made (variable renaming and refactoring). Main, original structure and addresses were kept.
 - License: GNU LESSER GENERAL PUBLIC LICENSE
 
+### "Utils-Items_Modstructs.au3"
+- Authors: Kronos
+- Contributor: Underavelvetmoon
+- Notes: modstructs were obtained from many sources.
+But special thanks to Underavelvetmoon for sharing his work on the modstructs used in this part of the code.
+- License: licensed under Apache 2.0
+
 ### "Farm-Vaettirs.au3"
 - Author: gigi
 - Contributors: Pink Musen, Deroni93, Dragonel (with help from moneyvsmoney), Kronos
