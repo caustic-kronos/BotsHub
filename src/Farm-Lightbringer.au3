@@ -41,9 +41,8 @@ Local Const $Junundu_Feast = 6
 Local Const $Junundu_Wail = 7
 Local Const $Junundu_Leave = 8
 
-; Improvements :
-; - interact with chests along the way
 
+;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
 Func LightbringerFarm($STATUS)
 	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
 
@@ -56,8 +55,10 @@ Func LightbringerFarm($STATUS)
 	Return $success
 EndFunc
 
+
+;~ Setup for the Lightbringer farm
 Func LightbringerFarmSetup()
-	$loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
 		Info('Travelling to Remains of Sahlahja')
@@ -84,6 +85,8 @@ Func LightbringerFarmSetup()
 	$LIGHTBRINGER_FARM_SETUP = True
 EndFunc
 
+
+;~ Move out of city into the Sulfurous Wastes
 Func ToTheSulfurousWastes()
 	While GetMapID() <> $ID_The_Sulfurous_Wastes
 		MoveTo(1527, -4114)
@@ -92,6 +95,8 @@ Func ToTheSulfurousWastes()
 	WEnd
 EndFunc
 
+
+;~ Count number of dead members of the group
 Func CountPartyDeaths()
 	Local $partyDeaths = 0
 	For $i = 1 to 7
@@ -100,6 +105,8 @@ Func CountPartyDeaths()
 	Return $partyDeaths
 EndFunc
 
+
+;~ Farm the Sulfurous Wastes - main function
 Func FarmTheSulfurousWastes()
 	Info('Taking Sunspear Undead Blessing')
 	GoToNPC(GetNearestNPCToCoords(-660, 16000))
@@ -174,6 +181,8 @@ Func FarmTheSulfurousWastes()
 	Return 0
 EndFunc
 
+
+;~ All team uses Junundu_Tunnel to speed group up
 Func SpeedTeam()
 	If (IsRecharged($Junundu_Tunnel)) Then
 		UseSkillEx($Junundu_Tunnel)
@@ -187,6 +196,8 @@ Func SpeedTeam()
 	EndIf
 EndFunc
 
+
+;~ Move and aggro mobs at several locations
 Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = null, $location1y = null, $location2x = null, $location2y = null, $location3x = null, $location3y = null, $location4x = null, $location4y = null)
 	For $i = 0 To 4
 		If (Eval('location' & $i & 'x') == null) Then ExitLoop
@@ -195,7 +206,6 @@ Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $locat
 	Next
 	Return False
 EndFunc
-
 
 
 ;~ Main method for moving around and aggroing/killing mobs
@@ -221,7 +231,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		CheckForChests($RANGE_SPIRIT)
-		_FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ':' & $y & ' with distance set to ' & $range)
+		If $LOG_LEVEL == 0 Then _FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ':' & $y & ' with distance set to ' & $range)
 		Return False
 	EndIf
 
@@ -259,6 +269,8 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	Return False
 EndFunc
 
+
+;~ Return to Remains of Sahlahja
 Func ReturnToSahlahjaOutpost()
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then
 		Info('Travelling to Remains of Sahlahja')

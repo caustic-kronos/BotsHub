@@ -18,7 +18,7 @@
 
 
 ;~ Determines whether the provided item has expensive mods
-Func ContainsValuableUpgrades($item, $valuableUpgradesMap)
+Func ContainsValuableUpgrades($item)
 	Local $modstruct = GetModStruct($item)
 	If Not $modstruct Then Return False
 
@@ -52,7 +52,7 @@ Func HasPerfectMods($item)
 		; For martial weapons, only 1 inherent mod and the weapon is perfect
 		Case $ID_Type_Axe, $ID_Type_Bow, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger
 			For $struct In $typeMods
-				If StringInStr($ModStruct, $struct) > 0 Then 
+				If StringInStr($ModStruct, $struct) > 0 Then
 					; If the mod found is vampiric or zealous strength, we need to check we are not mixing it with vampiric or zealous mod
 					If $struct == $STRUCT_INHERENT_ZEALOUS_STRENGTH Then
 						If StringInStr($ModStruct, $STRUCT_MOD_ZEALOUS_PREFIX) Then ContinueLoop
@@ -64,14 +64,14 @@ Func HasPerfectMods($item)
 				EndIf
 			Next
 			Return False
-		; For caster weapons, only 1 inherent mod as well, but no risk of zealous/vampiric
-		Case $ID_Type_Wand, $ID_Type_Staff
+		; For staff, only 1 inherent mod as well, but no risk of zealous/vampiric
+		Case $ID_Type_Staff
 			For $struct In $typeMods
 				If StringInStr($ModStruct, $struct) > 0 Then Return True
 			Next
 			Return False
-		; For offhand and shield, there are 2 inherent mods, we need to check twice
-		Case $ID_Type_Offhand, $ID_Type_Shield
+		; For wand, offhand and shield, there are 2 inherent mods, we need to check twice
+		Case $ID_Type_Wand, $ID_Type_Offhand, $ID_Type_Shield
 			Local $count = 0
 			For $struct In $typeMods
 				If StringInStr($ModStruct, $struct) > 0 Then $count += 1
@@ -370,17 +370,17 @@ Local $STRUCT_INHERENT_OF_ILLUSION_MAGIC = '0118240'
 Local $STRUCT_INHERENT_OF_DOMINATION_MAGIC = '0218240'
 Local $STRUCT_INHERENT_OF_INSPIRATION = '0318240'
 Local $STRUCT_INHERENT_OF_BLOOD_MAGIC = '0418240'
-Local $STRUCT_INHERENT_OF_DEATH_MAGIC = '0518240'          
-Local $STRUCT_INHERENT_OF_SOUL_REAPING = '0518240'         
-Local $STRUCT_INHERENT_OF_CURSE_MAGIC = '0718240'          
-Local $STRUCT_INHERENT_OF_AIR_MAGIC = '0818240'            
-Local $STRUCT_INHERENT_OF_EARTH_MAGIC = '0918240'          
-Local $STRUCT_INHERENT_OF_FIRE_MAGIC = '0A18240'           
-Local $STRUCT_INHERENT_OF_WATER_MAGIC = '0B18240'          
-Local $STRUCT_INHERENT_OF_HEALING_PRAYERS = '0D18240'      
-Local $STRUCT_INHERENT_OF_SMITING_PRAYERS = '0E18240'      
-Local $STRUCT_INHERENT_OF_PROTECTION_PRAYERS = '0F18240'   
-Local $STRUCT_INHERENT_OF_DIVINE_FAVOR = '1018240'         
+Local $STRUCT_INHERENT_OF_DEATH_MAGIC = '0518240'
+Local $STRUCT_INHERENT_OF_SOUL_REAPING = '0518240'
+Local $STRUCT_INHERENT_OF_CURSE_MAGIC = '0718240'
+Local $STRUCT_INHERENT_OF_AIR_MAGIC = '0818240'
+Local $STRUCT_INHERENT_OF_EARTH_MAGIC = '0918240'
+Local $STRUCT_INHERENT_OF_FIRE_MAGIC = '0A18240'
+Local $STRUCT_INHERENT_OF_WATER_MAGIC = '0B18240'
+Local $STRUCT_INHERENT_OF_HEALING_PRAYERS = '0D18240'
+Local $STRUCT_INHERENT_OF_SMITING_PRAYERS = '0E18240'
+Local $STRUCT_INHERENT_OF_PROTECTION_PRAYERS = '0F18240'
+Local $STRUCT_INHERENT_OF_DIVINE_FAVOR = '1018240'
 Local $STRUCT_INHERENT_OF_COMMUNING_MAGIC = '14201824'
 Local $STRUCT_INHERENT_OF_RESTORATION_MAGIC = '14211824'
 Local $STRUCT_INHERENT_OF_CHANNELING_MAGIC = '14221824'
@@ -902,7 +902,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 		$STRUCT_INHERENT_ZEALOUS_STRENGTH, _
 		$STRUCT_INHERENT_VAMPIRIC_STRENGTH _
 	]
-	
+
 	; Those are common to caster weapons and focii
 	Local $casterAndFocus = [ _
 		$STRUCT_INHERENT_FIRE_MAGIC_HCT, _
@@ -946,7 +946,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 		$STRUCT_INHERENT_CURSES_HCT, _
 		$STRUCT_INHERENT_CURSES_HSR _
 	]
-	
+
 	; Those are common to shield and focus - They might be less interesting on one or the other so maybe it will need to be splitted further
 	Local $shieldAndFocus = [ _
 		$STRUCT_INSCRIPTION_NOT_THE_FACE, _
@@ -993,7 +993,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 		$STRUCT_MOD_OF_ENDURANCE, _
 		$STRUCT_MOD_30_HEALTH _
 	]
-	
+
 	Local $casterWeapons = [ _
 		$STRUCT_INSCRIPTION_HALE_AND_HEARTY, _
 		$STRUCT_INSCRIPTION_HAVE_FAITH, _
@@ -1013,7 +1013,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	]
 	_ArrayAdd($focus, $casterAndFocus)
 	_ArrayAdd($focus, $shieldAndFocus)
-	
+
 	Local $shield = [ _
 		$STRUCT_INSCRIPTION_I_CAN_SEE_CLEARLY_NOW, _
 		$STRUCT_INSCRIPTION_SWIFT_AS_THE_WIND, _

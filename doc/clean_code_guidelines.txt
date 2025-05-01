@@ -12,7 +12,7 @@ The 15 laws of AutoIt coding
 10- Align your line comments										^[ \t]*;
 11- Separate your code comments from the code with tabulations		[^\t\n]+;
 12- Work on your TODOs and FIXMEs									(?i)\b(TODO|FIXME|NOTE)\b
-13- Comment and describe your functions								^\r\n\r\nFunc
+13- Comment and describe your functions								\r\n\r\nFunc
 																	^;[^~].*\r\nFunc
 																	^[^;].*\r\nFunc
 14- Only use While WEnd for coherence and easy comprehension		until

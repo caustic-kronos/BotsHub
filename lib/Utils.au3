@@ -114,7 +114,7 @@ EndFunc
 
 ;~ Travel to specified map and specified district
 Func DistrictTravel($mapID, $district)
-	If $district == 'Random' Then 
+	If $district == 'Random' Then
 		RandomDistrictTravel($mapID)
 	Else
 		Local $districtAndRegion = $RegionMap[$district]

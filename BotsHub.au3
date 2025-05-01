@@ -17,6 +17,7 @@
 ; TODO :
 ; - after salvage, get material ID and write in file salvaged material
 ; - change bots to have cleaner return system
+; - add true locking mechanism to prevent trying to run several bots on the same account at the same time
 
 ; Night's tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot)
@@ -86,6 +87,9 @@ Local Const $GUI_CONSOLE_GREEN_COLOR = 13434828
 Local Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
 Local Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 
+Global Const $GUI_WM_COMMAND = 0x0111
+Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
+
 ; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
 ; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
@@ -138,6 +142,7 @@ Func createGUI()
 	GUISetBkColor($GUI_GREY_COLOR, $GUI_GWBotHub)
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
+	GUICtrlSetOnEvent($GUI_Combo_CharacterChoice, 'GuiButtonHandler')
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
 	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetOnEvent($GUI_Combo_FarmChoice, 'GuiButtonHandler')
@@ -297,6 +302,8 @@ Func createGUI()
 	GUICtrlSetState($GUI_Checkbox_LootLunarTokens, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootCandyCaneShards, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootTrophies, $GUI_CHECKED)
+
+	GUIRegisterMsg($WM_COMMAND, 'WM_COMMAND_Handler')
 EndFunc
 
 
@@ -311,6 +318,23 @@ Func _GUICtrlTab_SetBkColor($gui, $parentTab, $color)
 EndFunc
 
 
+;~ Handles WM_NOTIFY elements, like combobox arrow clicks
+Func WM_COMMAND_Handler($windowHandle, $messageCode, $packedParameters, $controlHandle)
+	Local $notificationCode = BitShift($packedParameters, 16)
+	Local $controlID = BitAND($packedParameters, 0xFFFF)
+
+	If $notificationCode = $GUI_COMBOBOX_DROPDOWN_OPENED Then
+		Switch $controlID
+			Case $GUI_Combo_CharacterChoice
+				ScanAndUpdateGameClients()
+				RefreshCharactersComboBox()
+		EndSwitch
+	EndIf
+
+	Return $GUI_RUNDEFMSG
+EndFunc
+
+
 ;~ Handle start button usage
 Func GuiButtonHandler()
 	Switch @GUI_CtrlId
@@ -321,6 +345,10 @@ Func GuiButtonHandler()
 				Case Else
 					ControlHide($GUI_GWBotHub, '', $GUI_Console)
 			EndSwitch
+		Case $GUI_Combo_CharacterChoice
+			If (Authentification() <> 0) Then
+				Error('Couldnt authenticate with provided character name')
+			EndIf
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)
@@ -349,7 +377,6 @@ Func GuiButtonHandler()
 				Info('Initializing...')
 				If (Authentification() <> 0) Then Return
 				$STATUS = 'INITIALIZED'
-
 				Info('Starting...')
 				$STATUS = 'RUNNING'
 				GUICtrlSetData($GUI_StartButton, 'Pause')
@@ -430,7 +457,6 @@ Func Out($TEXT, $LOGLEVEL = 1)
 		EndSwitch
 		_GUICtrlRichEdit_SetCharColor($GUI_Console, $logColor)
 		_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
-		UpdateLock()
 	EndIf
 EndFunc
 
@@ -445,12 +471,17 @@ main()
 Func main()
 	If @AutoItVersion < '3.3.16.0' Then
 		MsgBox(16, 'Error', 'This bot requires AutoIt version 3.3.16.0 or higher. You are using ' & @AutoItVersion & '.')
-		Exit
+		Exit 1
+	EndIf
+	If @AutoItX64 Then
+		MsgBox(16, 'Error!', 'Please run all bots in 32-bit (x86) mode.')
+		Exit 1
 	EndIf
 
 	createGUI()
 	GUISetState(@SW_SHOWNORMAL)
 	Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
+
 
 	If $CmdLine[0] <> 0 Then
 		$RUN_MODE = 'CMD'
@@ -465,11 +496,8 @@ Func main()
 		LOGIN($CHARACTER_NAME, $PROCESS_ID)
 		$STATUS = 'INITIALIZED'
 	ElseIf $RUN_MODE == 'AUTOLOAD' Then
-		Local $loggedCharNames = ScanGameClientsForCharacters()
-		If ($loggedCharNames[0] > 0) Then
-			Local $comboChoices = '|' & _ArrayToString($loggedCharNames, '|', 1)
-			GUICtrlSetData($GUI_Combo_CharacterChoice, $comboChoices, $loggedCharNames[1])
-		EndIf
+		ScanAndUpdateGameClients()
+		RefreshCharactersComboBox()
 	Else
 		GUICtrlDelete($GUI_Combo_CharacterChoice)
 		$GUI_Combo_CharacterChoice = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
@@ -503,14 +531,14 @@ Func BotHubLoop()
 					$STATUS = 'WILL_PAUSE'
 				EndIf
 			EndIf
-		Else
-			If Random(1, 10, 1) = 1 Then UpdateLock()
 		EndIf
 
 		If ($STATUS == 'WILL_PAUSE') Then
 			Warn('Paused.')
 			$STATUS = 'PAUSED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
+			; Enabling changing account is non trivial
+			;GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Enable)
 			GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Enable)
 			GUICtrlSetState($GUI_StartButton, $GUI_Enable)
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
@@ -688,13 +716,11 @@ Func FillConfigurationCombo($configuration = 'Default Configuration')
 		For $file In $files
 			Local $fileNameTrimmed = StringTrimRight($file, 5)
 			If $fileNameTrimmed <> '' Then
-				$comboList &= $fileNameTrimmed
 				$comboList &= '|'
+				$comboList &= $fileNameTrimmed
 			EndIf
 		Next
 	EndIf
-	If $comboList <> '' Then $comboList = StringTrimRight($comboList, 1)
-	GUICtrlSetData($GUI_Combo_ConfigChoice, '', '')
 	GUICtrlSetData($GUI_Combo_ConfigChoice, $comboList, $configuration)
 EndFunc
 
@@ -831,11 +857,11 @@ EndFunc
 #Region Authentification and Login
 ;~ Initialize connection to GW with the character name or process id given
 Func Authentification()
-	Local $CharacterName = GUICtrlRead($GUI_Combo_CharacterChoice)
-	If ($CharacterName == '') Then
+	Local $characterName = GUICtrlRead($GUI_Combo_CharacterChoice)
+	If ($characterName == '') Then
 		MsgBox(0, 'Error', 'No character name given.')
 		Return 1
-	ElseIf($CharacterName == 'No character selected') Then
+	ElseIf($characterName == 'No character selected') Then
 		Warn('Running without authentification.')
 	ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
 		$proc_id_int = Number($PROCESS_ID, 2)
@@ -845,28 +871,34 @@ Func Authentification()
 			Return 1
 		EndIf
 	Else
-		If InitializeGameClientData($CharacterName, True, True, False) = 0 Then
-			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $CharacterName & '>>')
+		Local $clientIndex = FindClientIndexByCharacterName($characterName)
+		If $clientIndex == -1 Then
+			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $characterName & '>>')
 			Return 1
+		Else
+			SelectClient($clientIndex)
+			OpenDebugLogFile()
+			If InitializeGameClientData(True, True, False) = 0 Then
+				MsgBox(0, 'Error', 'Failed game initialisation')
+				Return 1
+			EndIf
 		EndIf
 	EndIf
 	EnsureEnglish(True)
 	GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Disable)
 	GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Disable)
-	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & GetCharname())
+	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & $characterName)
 	Return 0
 EndFunc
 
 
-;~ Lock an account for multiboxing
-Func UpdateLock()
-	Local $characterName = GetCharname()
-	If $characterName Then
-		Local $fileName = @ScriptDir & '\lock\' & $characterName & '.lock'
-		Local $fileHandle = FileOpen($fileName, $FO_OVERWRITE)
-		FileWrite($fileHandle, @HOUR & ':' & @MIN)
-		FileClose($fileHandle)
-	EndIf
+;~ Fill characters combobox
+Func RefreshCharactersComboBox()
+	Local $comboList = ''
+	For $i = 0 To UBound($gameClients) - 1
+		$comboList &= '|' & $gameClients[$i][3]
+	Next
+	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, UBound($gameClients) > 0 ? $gameClients[0][3] : '')
 EndFunc
 
 

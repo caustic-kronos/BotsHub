@@ -42,7 +42,6 @@ Local Const $ID_Miku_Agent = 58
 
 Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 
-Local Const $loggingEnabled = False
 Local $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
@@ -126,7 +125,7 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 ;~ Main loop of the Ministerial Commendations farm
 Func MinisterialCommendationsFarm($STATUS)
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
-	If $loggingEnabled Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Info('Entering quest')
 	EnterQuest()
@@ -167,7 +166,7 @@ Func MinisterialCommendationsFarm($STATUS)
 	Info('Travelling back to KC')
 	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
-	If $loggingEnabled Then FileClose($loggingFile)
+	If $LOG_LEVEL == 0 Then FileClose($loggingFile)
 	Return 0
 EndFunc
 
@@ -549,6 +548,7 @@ Func KillMinistryOfPurity()
 	;~ Whirlwind attack needs specific care to be used
 	While IsRecharged($Skill_Whirlwind_Attack)
 		If GetIsDead() Then Return
+		RndSleep(200)
 
 		; Heroes with Mystic Healing provide additional long range support
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
@@ -564,8 +564,9 @@ Func KillMinistryOfPurity()
 		EndIf
 
 		UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(GetMyAgent()))
-		RndSleep(250)
+		RndSleep(50)
 	WEnd
+	CancelAction()
 
 	RndSleep(250)
 	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_ADJACENT)
@@ -667,5 +668,5 @@ EndFunc
 
 ;~ Log string into the log file
 Func LogIntoFile($string)
-	If $loggingEnabled Then _FileWriteLog($loggingFile, $string)
+	If $LOG_LEVEL == 0 Then _FileWriteLog($loggingFile, $string)
 EndFunc

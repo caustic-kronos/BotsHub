@@ -36,8 +36,6 @@ Local Const $SpiritSlavesFarmInformations = 'For best results, have :' & @CRLF _
 
 Local $SPIRIT_SLAVES_FARM_SETUP = False
 
-Local $loggingFile
-
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
 Local Const $SS_Sand_Shards = 1
 Local Const $SS_I_am_unstoppable = 2
@@ -57,8 +55,6 @@ Local Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray
 
 ;~ Main loop of the farm
 Func SpiritSlavesFarm($STATUS)
-	$loggingFile = FileOpen(@ScriptDir & '/logs/spiritslaves_farm.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-
 	While Not($SPIRIT_SLAVES_FARM_SETUP)
 		SpiritSlavesFarmSetup()
 	WEnd
@@ -87,7 +83,6 @@ Func SpiritSlavesFarm($STATUS)
 	Move(-7735, -8380)
 	RezoneToTheShatteredRavines()
 
-	FileClose($loggingFile)
 	Return 0
 EndFunc
 

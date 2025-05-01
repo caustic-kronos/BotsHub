@@ -94,8 +94,6 @@ Func PickUpIris()
 		$item = GetItemByAgentID($i)
 		If (DllStructGetData(($item), 'ModelID') == $ID_Red_Iris_Flower) Then
 			Info('Iris: ' & Round(DllStructGetData($agent, 'X')) & ', Y: ' & Round(DllStructGetData($agent, 'Y')))
-			Local $loggingFile = FileOpen(@ScriptDir & '/logs/edeniris_farm.csv' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-			FileWrite($loggingFile, Round(DllStructGetData($agent, 'X')) & ',' & Round(DllStructGetData($agent, 'Y')))
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($i)
@@ -107,12 +105,6 @@ Func PickUpIris()
 					ExitLoop
 				EndIf
 			WEnd
-			If $success Then
-				FileWrite($loggingFile, ',1' & @CRLF)
-			Else
-				FileWrite($loggingFile, ',0' & @CRLF)
-			EndIf
-			FileClose($loggingFile)
 			Return True
 		EndIf
 	Next

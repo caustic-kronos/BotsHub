@@ -804,7 +804,7 @@ Func DefaultShouldSellItem($item)
 	If IsKey($itemID) Then Return True
 	If IsBlueScroll($itemID) Then Return True
 	If IsGoldScroll($itemID) And $itemID <> $ID_UW_Scroll And $itemID <> $ID_FoW_Scroll Then Return True
-	If isArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
+	If isArmorSalvageItem($item) Then Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
 	If IsWeapon($item) Then
 		Return Not ShouldKeepWeapon($item)
 	EndIf
@@ -816,7 +816,7 @@ EndFunc
 Func DefaultShouldSalvageItem($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $rarity = GetRarity($item)
-	
+
 	If $rarity == $RARITY_Green Then Return False
 	If IsTrophy($itemID) Then
 		If $Map_Feather_Trophies[$itemID] <> Null Then Return True
@@ -825,7 +825,7 @@ Func DefaultShouldSalvageItem($item)
 		If $Map_Fiber_Trophies[$itemID] <> Null Then Return True
 		Return False
 	EndIf
-	If IsArmorSalvageItem($item) Then Return Not ContainsValuableUpgrades($item)
+	If IsArmorSalvageItem($item) Then Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
 	If IsWeapon($item) Then
 		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
 		Return Not ShouldKeepWeapon($item)
@@ -840,7 +840,7 @@ Func ShouldKeepWeapon($item)
 	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
 	Local Static $valuableOSWeaponTypes = [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff]
 	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)
-	
+
 	Local $rarity = GetRarity($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $type = DllStructGetData($item, 'Type')

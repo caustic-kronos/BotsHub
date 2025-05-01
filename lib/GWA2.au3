@@ -4,6 +4,9 @@ Modified by: MrZambix, Night, and more
 #CE
 
 #include-once
+
+#include 'Utils-Debugger.au3'
+
 ; Required for memory access, opening external process handles and injecting code
 #RequireAdmin
 
@@ -16,16 +19,22 @@ Modified by: MrZambix, Night, and more
 #Au3Stripper_Parameters=/pe /sf /tl
 #EndRegion	;**** Directives created by AutoIt3Wrapper_GUI ****
 
-If @AutoItX64 Then
-	MsgBox(16, 'Error!', 'Please run all bots in 32-bit (x86) mode.')
-	Exit 1
-EndIf
-
 
 #Region Declarations
 Global $gwa2Version = '0.0.0'
+
 ; Windows and process handles
-Global $kernelHandle, $processHandle, $windowHandle
+Global $kernelHandle = DllOpen('kernel32.dll')
+; Each slot will be a 4-elements array: [0] = PID, [1] = handle (or 0 if invalidated), [2] = window, [3] = character name
+Global $gameClients[0][4]
+Global $selectedClientIndex = -1
+
+If Not $kernelHandle Then
+	MsgBox(16, 'Error', 'Failed to open kernel32.dll')
+	Exit
+Else
+	OnAutoItExitRegister('CloseAllHandles')
+EndIf
 
 ; Memory interaction
 Global $baseAddress = 0x00C50000
@@ -85,76 +94,76 @@ Global $mapID, $mapLoading, $mapIsLoaded
 
 
 #Region CommandStructs
-Global $inviteGuildStruct = DllStructCreate('ptr;dword;dword header;dword counter;wchar name[32];dword type')			;	commandPackSendPtr;-;-;-;characterName;-
+Global $inviteGuildStruct = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')	;	commandPackSendPtr;-;-;-;characterName;-
 Global $inviteGuildStructPtr = DllStructGetPtr($inviteGuildStruct)
 
-Global $useSkillStruct = DllStructCreate('ptr;dword;dword;dword')														;	useSkillCommandPtr;skillSlot,targetID,callTarget
+Global $useSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')																		;	useSkillCommandPtr;skillSlot,targetID,callTarget
 Global $useSkillStructPtr = DllStructGetPtr($useSkillStruct)
 
-Global $moveStruct = DllStructCreate('ptr;float;float;float')															;	commandMovePtr;X;Y;-
+Global $moveStruct = SafeDllStructCreate('ptr;float;float;float')																			;	commandMovePtr;X;Y;-
 Global $moveStructPtr = DllStructGetPtr($moveStruct)
 
-Global $changeTargetStruct = DllStructCreate('ptr;dword')																;	commandChangeTargetPtr;targetID
+Global $changeTargetStruct = SafeDllStructCreate('ptr;dword')																				;	commandChangeTargetPtr;targetID
 Global $changeTargetStructPtr = DllStructGetPtr($changeTargetStruct)
 
-Global $packetStruct = DllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')	;	commandPackSendPtr;-;-;-;characterName;-
+Global $packetStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')					;	commandPackSendPtr;-;-;-;characterName;-
 Global $packetStructPtr = DllStructGetPtr($packetStruct)
 
-Global $writeChatStruct = DllStructCreate('ptr')																		;	commandWriteChatPtr
+Global $writeChatStruct = SafeDllStructCreate('ptr')																						;	commandWriteChatPtr
 Global $writeChatStructPtr = DllStructGetPtr($writeChatStruct)
 
-Global $sellItemStruct = DllStructCreate('ptr;dword;dword;dword')														;	commandSellItemPtr;totalSoldValue;itemID;ScanBuyItemBase
+Global $sellItemStruct = SafeDllStructCreate('ptr;dword;dword;dword')																		;	commandSellItemPtr;totalSoldValue;itemID;ScanBuyItemBase
 Global $sellItemStructPtr = DllStructGetPtr($sellItemStruct)
 
-Global $actionStruct = DllStructCreate('ptr;dword;dword;')																;	commandActionPtr;action;flag
+Global $actionStruct = SafeDllStructCreate('ptr;dword;dword;')																				;	commandActionPtr;action;flag
 Global $actionStructPtr = DllStructGetPtr($actionStruct)
 
-Global $toggleLanguageStruct = DllStructCreate('ptr;dword')																;	commandToggleLanguagePtr;-
+Global $toggleLanguageStruct = SafeDllStructCreate('ptr;dword')																				;	commandToggleLanguagePtr;-
 Global $toggleLanguageStructPtr = DllStructGetPtr($toggleLanguageStruct)
 
-Global $useHeroSkillStruct = DllStructCreate('ptr;dword;dword;dword')													;	etc...
+Global $useHeroSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')																	;	etc...
 Global $useHeroSkillStructPtr = DllStructGetPtr($useHeroSkillStruct)
 
-Global $buyItemStruct = DllStructCreate('ptr;dword;dword;dword;dword')
+Global $buyItemStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword')
 Global $buyItemStructPtr = DllStructGetPtr($buyItemStruct)
 
-Global $craftItemStruct = DllStructCreate('ptr;dword;dword;ptr;dword;dword')
+Global $craftItemStruct = SafeDllStructCreate('ptr;dword;dword;ptr;dword;dword')
 Global $craftItemStructPtr = DllStructGetPtr($craftItemStruct)
 
-Global $sendChatStruct = DllStructCreate('ptr;dword')
+Global $sendChatStruct = SafeDllStructCreate('ptr;dword')
 Global $sendChatStructPtr = DllStructGetPtr($sendChatStruct)
 
-Global $requestQuoteStruct = DllStructCreate('ptr;dword')
+Global $requestQuoteStruct = SafeDllStructCreate('ptr;dword')
 Global $requestQuoteStructPtr = DllStructGetPtr($requestQuoteStruct)
 
-Global $requestQuoteStructSell = DllStructCreate('ptr;dword')
+Global $requestQuoteStructSell = SafeDllStructCreate('ptr;dword')
 Global $requestQuoteStructSellPtr = DllStructGetPtr($requestQuoteStructSell)
 
-Global $traderBuyStruct = DllStructCreate('ptr')
+Global $traderBuyStruct = SafeDllStructCreate('ptr')
 Global $traderBuyStructPtr = DllStructGetPtr($traderBuyStruct)
 
-Global $traderSellStruct = DllStructCreate('ptr')
+Global $traderSellStruct = SafeDllStructCreate('ptr')
 Global $traderSellStructPtr = DllStructGetPtr($traderSellStruct)
 
-Global $salvageStruct = DllStructCreate('ptr;dword;dword;dword')
+Global $salvageStruct = SafeDllStructCreate('ptr;dword;dword;dword')
 Global $salvageStructPtr = DllStructGetPtr($salvageStruct)
 
-Global $increaseAttributeStruct = DllStructCreate('ptr;dword;dword')
+Global $increaseAttributeStruct = SafeDllStructCreate('ptr;dword;dword')
 Global $increaseAttributeStructPtr = DllStructGetPtr($increaseAttributeStruct)
 
-Global $decreaseAttributeStruct = DllStructCreate('ptr;dword;dword')
+Global $decreaseAttributeStruct = SafeDllStructCreate('ptr;dword;dword')
 Global $decreaseAttributeStructPtr = DllStructGetPtr($decreaseAttributeStruct)
 
-Global $maxAttributesStruct = DllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
+Global $maxAttributesStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
 Global $maxAttributesStructPtr = DllStructGetPtr($maxAttributesStruct)
 
-Global $setAttributesStruct = DllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
+Global $setAttributesStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
 Global $setAttributesStructPtr = DllStructGetPtr($setAttributesStruct)
 
-Global $makeAgentArrayStruct = DllStructCreate('ptr;dword')
+Global $makeAgentArrayStruct = SafeDllStructCreate('ptr;dword')
 Global $makeAgentArrayStructPtr = DllStructGetPtr($makeAgentArrayStruct)
 
-Global $changeStatusStruct = DllStructCreate('ptr;dword')
+Global $changeStatusStruct = SafeDllStructCreate('ptr;dword')
 Global $changeStatusStructPtr = DllStructGetPtr($changeStatusStruct)
 
 Global $tradeHackAddress
@@ -175,7 +184,7 @@ Global $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr N
 ; Grey area, unlikely to exist several at the same time
 Global $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
 ; Safe zone, can just create DllStruct globally
-Global $worldStruct = DllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
+Global $worldStruct = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
 ; Considered to be added in non-global - but since code is synchronous those shouldn't really get overwritten
 ; useSkillStruct
 ; moveStruct
@@ -185,43 +194,38 @@ Global $worldStruct = DllStructCreate('long MinGridWidth;long MinGridHeight;long
 #EndRegion
 
 #Region Memory
-;~ Opens a process for memory manipulation based on the provided process ID.
-Func MemoryOpen($pid)
-	$kernelHandle = DllOpen('kernel32.dll')
-	Local $openProcess = DllCall($kernelHandle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $pid)
-	$processHandle = $openProcess[0]
-EndFunc
-
-
-;~ Closes the opened process handle, releasing any associated resources.
-Func MemoryClose()
-	DllCall($kernelHandle, 'int', 'CloseHandle', 'int', $processHandle)
-	DllClose($kernelHandle)
+;~ Close all handles once bot stops
+Func CloseAllHandles()
+	For $gameClient In $gameClients
+		If $gameClient[0] <> -1 Then SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $gameClient[1])
+	Next
+	If $kernelHandle Then DllClose($kernelHandle)
 EndFunc
 
 
 ;~ Writes a binary string to a specified memory address in the process.
 Func WriteBinary($binaryString, $address)
-	Local $data = DllStructCreate('byte[' & 0.5 * StringLen($binaryString) & ']'), $i
+	Local $data = SafeDllStructCreate('byte[' & 0.5 * StringLen($binaryString) & ']')
 	For $i = 1 To DllStructGetSize($data)
 		DllStructSetData($data, 1, Dec(StringMid($binaryString, 2 * $i - 1, 2)), $i)
 	Next
-	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
 EndFunc
 
 
 ;~ Writes the specified data to a memory address of a given type (default is 'dword').
 Func MemoryWrite($address, $data, $type = 'dword')
-	Local $buffer = DllStructCreate($type)
+	Local $buffer = SafeDllStructCreate($type)
 	DllStructSetData($buffer, 1, $data)
-	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 EndFunc
 
 
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
-Func MemoryRead($address, $type = 'dword')
-	Local $buffer = DllStructCreate($type)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+Func MemoryRead($address, $type = 'dword', $handleOverride = -1)
+	Local $buffer = SafeDllStructCreate($type)
+	Local $handle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $handle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 	Return DllStructGetData($buffer, 1)
 EndFunc
 
@@ -229,10 +233,11 @@ EndFunc
 ;~ Reads data from a memory address, following pointer chains based on the provided offsets.
 Func MemoryReadPtr($address, $offset, $type = 'dword')
 	Local $ptrCount = UBound($offset) - 2
-	Local $buffer = DllStructCreate('dword')
+	Local $buffer = SafeDllStructCreate('dword')
+	Local $processHandle = GetProcessHandle()
 	For $i = 0 To $ptrCount
 		$address += $offset[$i]
-		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 		$address = DllStructGetData($buffer, 1)
 		If $address == 0 Then
 			Local $data[2] = [0, 0]
@@ -240,8 +245,8 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 		EndIf
 	Next
 	$address += $offset[$ptrCount + 1]
-	$buffer = DllStructCreate($type)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	$buffer = SafeDllStructCreate($type)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 	Local $data[2] = [$address, DllStructGetData($buffer, 1)]
 	Return $data
 EndFunc
@@ -255,39 +260,124 @@ EndFunc
 
 
 #Region Initialisation
-;~ Returns a list of logged characters
-Func GetLoggedCharNames()
-	Local $array = ScanGameClientsForCharacters()
-	; No characters logged
-	If $array[0] == 0 Then Return ''
-	Local $result = $array[1]
-	For $i = 2 To $array[0]
-		$result &= '|' & $array[$i]
-	Next
-	Return $result
+;~ Return currently chosen process ID
+Func GetPID()
+	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+		Return $gameClients[$selectedClientIndex][0]
+	EndIf
+	Return
 EndFunc
 
 
-;~ Returns an array of logged characters of gw windows (at pos 0 there is the size of the array)
-Func ScanGameClientsForCharacters()
+;~ Return currently chosen process handle
+Func GetProcessHandle()
+	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+		Return $gameClients[$selectedClientIndex][1]
+	EndIf
+	Return
+EndFunc
+
+
+;~ Return currently chosen window handle
+Func GetWindowHandle()
+	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+		Return $gameClients[$selectedClientIndex][2]
+	EndIf
+	Return
+EndFunc
+
+
+;~ Return currently chosen character name
+Func GetCharacterName()
+	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+		Return $gameClients[$selectedClientIndex][3]
+	EndIf
+	Return
+EndFunc
+
+
+;~ Select the client -PID, process handle, window handle and character- to use for the bot
+Func SelectClient($index)
+	If $index >= 0 And $index < UBound($gameClients) Then
+		$selectedClientIndex = $index
+		Return True
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Scan all existing GW game clients
+Func ScanAndUpdateGameClients()
 	Local $processList = ProcessList('gw.exe')
-	Local $returnArray[1] = [0]
+	If @error Or $processList[0][0] = 0 Then Return
 
-	For $i = 1 To $processList[0][0]
-		MemoryOpen($processList[$i][1])
-
-		If $processHandle Then
-			$returnArray[0] += 1
-			ReDim $returnArray[$returnArray[0] + 1]
-			$returnArray[$returnArray[0]] = ScanForCharname()
-		EndIf
-
-		MemoryClose()
-
-		$processHandle = 0
+	; Step 1: Mark all existing entries as 'unseen'
+	Local $clientCount = UBound($gameClients)
+	Local $seen[$clientCount]
+	For $i = 0 To $clientCount - 1
+		$seen[$i] = False
 	Next
 
-	Return $returnArray
+	; Step 2: Process current gw.exe instances
+	For $i = 1 To $processList[0][0]
+		Local $pid = $processList[$i][1]
+		Local $index = FindClientIndexByPID($pid)
+
+		If $index <> -1 Then
+			; Existing client, mark as seen
+			$seen[$index] = True
+		Else
+			; New client, add to array
+			Local $openProcess = SafeDllCall9($kernelHandle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $pid)
+			Local $handle = IsArray($openProcess) ? $openProcess[0] : 0
+			If $handle <> 0 Then
+				Local $windowHandle = GetWindowHandleForProcess($pid)
+				Local $characterName = ScanForCharname($handle)
+				AddClient($pid, $handle, $windowHandle, $characterName)
+			Else
+				Error('GW Process with incorrect handle.')
+			EndIf
+		EndIf
+	Next
+
+	; Step 3: Invalidate unseen (terminated) processes
+	For $i = 0 To $clientCount - 1
+		If Not $seen[$i] Then
+			$GameClients[$i][0] = -1
+			$GameClients[$i][1] = -1
+			$GameClients[$i][2] = -1
+			$GameClients[$i][3] = ''
+		EndIf
+	Next
+EndFunc
+
+
+;~ Finds index in $gameClients by PID
+Func FindClientIndexByPID($pid)
+	For $i = 0 To UBound($gameClients) - 1
+		If $gameClients[$i][0] = $pid Then Return $i
+	Next
+	Return -1
+EndFunc
+
+
+;~ Finds index in $gameClients by character name
+Func FindClientIndexByCharacterName($characterName)
+	For $i = 0 To UBound($gameClients) - 1
+		If $gameClients[$i][3] = $characterName Then Return $i
+	Next
+	Return -1
+EndFunc
+
+
+;~ Adds a new client entry to $gameClients
+Func AddClient($pid, $handle, $windowHandle, $characterName)
+	Local $newIndex = UBound($gameClients)
+	ReDim $gameClients[$newIndex + 1][4]
+	$GameClients[$newIndex][0] = $pid
+	$GameClients[$newIndex][1] = $handle
+	$GameClients[$newIndex][2] = $windowHandle
+	$GameClients[$newIndex][3] = $characterName
 EndFunc
 
 
@@ -301,33 +391,9 @@ EndFunc
 
 
 ;~ Injects GWA2 into the game client.
-Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog = False, $initUseEventSystem = True)
-	Local $gwProcessID
+Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $initUseEventSystem = True)
 	$useStringLogging = $initUseStringLog
 	$useEventSystem = $initUseEventSystem
-
-	; Check if $gwProcess is a string or a process ID
-	If IsString($gwProcess) Then
-		; Find the process ID of the game client
-		Local $processList = ProcessList('gw.exe')
-		For $i = 1 To $processList[0][0]
-			$gwProcessID = $processList[$i][1]
-			$windowHandle = GetWindowHandleForProcess($gwProcessID)
-			MemoryOpen($gwProcessID)
-			If $processHandle Then
-				; Check if the character name matches
-				If StringRegExp(ScanForCharname(), $gwProcess) = 1 Then ExitLoop
-			EndIf
-			MemoryClose()
-			$processHandle = 0
-		Next
-	Else
-		; Use the provided process ID
-		$gwProcessID = $gwProcess
-		$windowHandle = GetWindowHandleForProcess($gwProcessID)
-		MemoryOpen($gwProcess)
-		ScanForCharname()
-	EndIf
 
 	ScanGWBasePatterns()
 
@@ -573,10 +639,10 @@ Func InitializeGameClientData($gwProcess, $changeTitle = True, $initUseStringLog
 	If @error Then logCriticalErrors('Failed to set CommandMakeAgentArray command')
 	DllStructSetData($changeStatusStruct, 1, GetValue('CommandChangeStatus'))
 	If @error Then logCriticalErrors('Failed to set CommandChangeStatus command')
-	If $changeTitle Then WinSetTitle($windowHandle, '', 'Guild Wars - ' & GetCharname())
+	If $changeTitle Then WinSetTitle(GetWindowHandle(), '', 'Guild Wars - ' & GetCharacterName())
 	If @error Then logCriticalErrors('Failed to change window title')
 	SetMaxMemory()
-	Return $windowHandle
+	Return GetWindowHandle()
 EndFunc
 
 
@@ -807,7 +873,7 @@ Func ScanGWBasePatterns()
 	; Check if the scan memory address is empty (no previous injection)
 	If $scanMemory = 0 Then
 		; Allocate a new block of memory for the scan routine
-		$memoryInterface = DllCall($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 0x40)
+		$memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 0x40)
 		; Get the allocated memory address
 		$memoryInterface = $memoryInterface[0]
 		; Write the allocated memory address to the scan memory location
@@ -826,7 +892,7 @@ Func ScanGWBasePatterns()
 		WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
 
 		; Create a new thread in the target process to execute the scan routine
-		Local $thread = DllCall($kernelHandle, 'int', 'CreateRemoteThread', 'int', $processHandle, 'ptr', 0, 'int', 0, 'int', GetLabelInfo('ScanProc'), 'ptr', 0, 'int', 0, 'int', 0)
+		Local $thread = SafeDllCall17($kernelHandle, 'int', 'CreateRemoteThread', 'int', GetProcessHandle(), 'ptr', 0, 'int', 0, 'int', GetLabelInfo('ScanProc'), 'ptr', 0, 'int', 0, 'int', 0)
 		; Get the thread ID
 		$thread = $thread[0]
 
@@ -835,84 +901,62 @@ Func ScanGWBasePatterns()
 		; Wait until the thread is no longer waiting (258 is the WAIT_TIMEOUT constant)
 		Do
 			; Wait for up to 50ms for the thread to finish
-			$result = DllCall($kernelHandle, 'int', 'WaitForSingleObject', 'int', $thread, 'int', 50)
+			$result = SafeDllCall7($kernelHandle, 'int', 'WaitForSingleObject', 'int', $thread, 'int', 50)
 		Until $result[0] <> 258
 
 		; Close the thread handle to free up system resources
-		DllCall($kernelHandle, 'int', 'CloseHandle', 'int', $thread)
+		SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
-EndFunc
-
-
-;~ Retrieve Guild Wars process base address
-Func GetGWBase()
-	; Scan for Guild Wars process and get base address
-	Local $gwBaseAddress = ScanForProcess() - 4096			; Subtract 4096 from the process address to get the base address
-
-	; Convert base address to hexadecimal string
-	$gwBaseAddress = '0x' & Hex($gwBaseAddress)
-
-	; Return base address as hexadecimal string
-	Return $gwBaseAddress
 EndFunc
 
 
 ;~ Find process by scanning memory
 Func ScanForProcess()
-	Local $pattern = BinaryToString('0x558BEC83EC105356578B7D0833F63BFE')
-	Return ScanMemoryForPattern($pattern)
+	Local $scannedMemory = ScanMemoryForPattern(GetProcessHandle(), BinaryToString('0x558BEC83EC105356578B7D0833F63BFE'))
+	Return $scannedMemory[0]
 EndFunc
 
 
 ;~ Find character names by scanning memory
-Func ScanForCharname()
-	Local $patternBinary = BinaryToString('0x6A14FF751868')
-	Return ScanMemoryForPattern($patternBinary, HandleCharNameMatch)
-EndFunc
-
-
-;~ Helper for ScanForCharName
-Func HandleCharNameMatch($baseAddress, $matchOffset)
+Func ScanForCharname($processHandle)
+	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A14FF751868'))
+	Local $baseAddress = $scannedMemory[1]
+	Local $matchOffset = $scannedMemory[2]
 	Local $tmpAddress = $baseAddress + $matchOffset - 1
-	Local $tmpBuffer = DllStructCreate('ptr')
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($tmpBuffer), 'int', DllStructGetSize($tmpBuffer), 'int', '')
-	$characterName = DllStructGetData($tmpBuffer, 1)
-	Return GetCharname()
+	Local $tmpBuffer = SafeDllStructCreate('ptr')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($tmpBuffer), 'int', DllStructGetSize($tmpBuffer), 'int', '')
+	Local $characterName = DllStructGetData($tmpBuffer, 1)
+	Return MemoryRead($characterName, 'wchar[30]', $processHandle)
 EndFunc
 
 
 ;~ Scan memory for a pattern - used to find process and to find character names
-Func ScanMemoryForPattern($patternBinary, $onMatchFunc = Null)
+Func ScanMemoryForPattern($processHandle, $patternBinary)
 	Local $currentSearchAddress = 0x00000000
-	Local $mbiBuffer = DllStructCreate('dword;dword;dword;dword;dword;dword;dword')
+	Local $mbiBuffer = SafeDllStructCreate('dword;dword;dword;dword;dword;dword;dword')
 
 	While $currentSearchAddress < 0x01F00000
-		Local $mbi[7]
-		DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($mbiBuffer), 'int', DllStructGetSize($mbiBuffer))
-		For $i = 0 To 6
-			$mbi[$i] = StringStripWS(DllStructGetData($mbiBuffer, ($i + 1)), 3)
-		Next
+		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($mbiBuffer), 'int', DllStructGetSize($mbiBuffer))
+		Local $memoryBaseAddress = DllStructGetData($mbiBuffer, 1)
+		Local $regionSize = DllStructGetData($mbiBuffer, 4)
+		Local $state = DllStructGetData($mbiBuffer, 5)
 
-		If $mbi[4] = 4096 Then
-			Local $buffer = DllStructCreate('byte[' & $mbi[3] & ']')
-			DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+		If $state = 4096 Then
+			Local $buffer = SafeDllStructCreate('byte[' & $regionSize & ']')
+			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
 
 			Local $tmpMemoryData = DllStructGetData($buffer, 1)
 			$tmpMemoryData = BinaryToString($tmpMemoryData)
 
 			Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
 			If $matchOffset > 0 Then
-				If IsFunc($onMatchFunc) Then
-					Return Call($onMatchFunc, $currentSearchAddress, $matchOffset)
-				Else
-					; default behavior: return base address
-					Return $mbi[0]
-				EndIf
+				Local $match[3] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
+				Return $match
 			EndIf
 		EndIf
-		$currentSearchAddress += $mbi[3]
+		$currentSearchAddress += $regionSize
 	WEnd
-	Return ''
+	Return Null
 EndFunc
 
 
@@ -961,13 +1005,15 @@ EndFunc
 
 ;~ Get itemID from an item structure or pointer
 Func GetItemID($item)
+	Local $result
 	If IsPtr($item) Then
-		Return MemoryRead($item, 'long')
+		$result = MemoryRead($item, 'long')
 	ElseIf IsDllStruct($item) Then
-		Return DllStructGetData($item, 'ID')
+		$result = DllStructGetData($item, 'ID')
 	Else
-		Return $item
+		$result = $item
 	EndIf
+	Return $result
 EndFunc
 
 
@@ -1184,7 +1230,7 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 	For $i = 1 To $materialCount - 1
 		$craftingMaterialType &= ';dword'
 	Next
-	$craftingMaterialStruct = DllStructCreate($craftingMaterialType)
+	$craftingMaterialStruct = SafeDllStructCreate($craftingMaterialType)
 	$craftingMaterialStructPtr = DllStructGetPtr($craftingMaterialStruct)
 	For $i = 1 To $materialCount
 		Local $size = StringInStr($materialString, ';')
@@ -1192,10 +1238,11 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 		$materialString = StringTrimLeft($materialString, $size)
 	Next
 	Local $memorySize = $materialCount * 4
-	Local $memoryBuffer = DllCall($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $memorySize, 'dword', 0x1000, 'dword', 0x40)
+	Local $processHandle = GetProcessHandle()
+	Local $memoryBuffer = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $memorySize, 'dword', 0x1000, 'dword', 0x40)
 	; Couldnt allocate enough memory
 	If $memoryBuffer = 0 Then Return 0
-	Local $buffer = DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', '')
+	Local $buffer = SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', '')
 	If $buffer = 0 Then Return
 	DllStructSetData($craftItemStruct, 1, GetValue('CommandCraftItemEx'))
 	DllStructSetData($craftItemStruct, 2, $amount)
@@ -1213,7 +1260,7 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 		Sleep(250)
 		$currentAmount = CountItemInBagsByModelID($materialsArray[0][0])
 	Until $currentAmount <> $checkQuantity Or $gold <> GetGoldCharacter() Or TimerDiff($deadlock) > 5000
-	DllCall($kernelHandle, 'ptr', 'VirtualFreeEx', 'handle', $processHandle, 'ptr', $memoryBuffer[0], 'int', 0, 'dword', 0x8000)
+	SafeDllCall11($kernelHandle, 'ptr', 'VirtualFreeEx', 'handle', $processHandle, 'ptr', $memoryBuffer[0], 'int', 0, 'dword', 0x8000)
 	; should be zero if items were successfully crafted
 	Return SetExtended($checkQuantity - $currentAmount - $materialsArray[0][1] * $amount, True)
 EndFunc
@@ -1257,14 +1304,14 @@ Func TraderRequest($modelID, $dyeColor = -1)
 	Local $itemPtr, $itemID
 	Local $found = False
 	Local $quoteID = MemoryRead($traderQuoteId)
-	Local $itemStruct = DllStructCreate($itemStructTemplate)
-
+	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
+	Local $processHandle = GetProcessHandle()
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
 
-		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID And DllStructGetData($itemStruct, 'bag') = 0 And DllStructGetData($itemStruct, 'AgentID') == 0 Then
 			If $dyeColor = -1 Or DllStructGetData($itemStruct, 'DyeColor') = $dyeColor Then
 				$found = True
@@ -2040,7 +2087,7 @@ Func WriteChat($message, $sender = 'GWA2')
 	If StringLen($message) > 100 Then $message = StringLeft($message, 100)
 
 	MemoryWrite($address + 44, $message, 'wchar[101]')
-	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', $writeChatStructPtr, 'int', 4, 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $writeChatStructPtr, 'int', 4, 'int', '')
 
 	If StringLen($message) > 100 Then WriteChat(StringTrimLeft($message, 100), $sender)
 EndFunc
@@ -2067,7 +2114,7 @@ Func SendChat($message, $channel = '!')
 	If StringLen($message) > 120 Then $message = StringLeft($message, 120)
 
 	MemoryWrite($address + 12, $channel & $message, 'wchar[122]')
-	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', $sendChatStructPtr, 'int', 8, 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $sendChatStructPtr, 'int', 8, 'int', '')
 
 	If StringLen($message) > 120 Then SendChat(StringTrimLeft($message, 120), $channel)
 EndFunc
@@ -2169,7 +2216,8 @@ Func DropBuff($skillID, $agent, $heroIndex = 0)
 	ReDim $offset[5]
 	$offset[3] = 0x508
 	Local $buffer
-	Local $buffStruct = DllStructCreate($buffStructTemplate)
+	Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
+	Local $processHandle = GetProcessHandle()
 	For $i = 0 To $count[1] - 1
 		$offset[4] = 0x24 * $i
 		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
@@ -2179,7 +2227,7 @@ Func DropBuff($skillID, $agent, $heroIndex = 0)
 			For $j = 0 To $buffCount - 1
 				$offset[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-				DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
+				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID')) Then
 					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffId'))
 					ExitLoop 2
@@ -2315,28 +2363,28 @@ EndFunc
 
 ;~ Emptys Guild Wars client memory
 Func ClearMemory()
-	DllCall($kernelHandle, 'int', 'SetProcessWorkingSetSize', 'int', $processHandle, 'int', -1, 'int', -1)
+	SafeDllCall9($kernelHandle, 'int', 'SetProcessWorkingSetSize', 'int', GetProcessHandle(), 'int', -1, 'int', -1)
 EndFunc
 
 
 ;~ Changes the maximum memory Guild Wars can use.
 Func SetMaxMemory($maxMemory = 157286400)
-	DllCall($kernelHandle, 'int', 'SetProcessWorkingSetSizeEx', 'int', $processHandle, 'int', 1, 'int', $maxMemory, 'int', 6)
+	SafeDllCall11($kernelHandle, 'int', 'SetProcessWorkingSetSizeEx', 'int', GetProcessHandle(), 'int', 1, 'int', $maxMemory, 'int', 6)
 EndFunc
 #EndRegion Misc
 
 
 ;~ Internal use only.
 Func Enqueue($ptr, $aSize)
-	DllCall($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $aSize, 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $aSize, 'int', '')
 	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 EndFunc
 
 
 ;~ Converts float to integer.
 Func FloatToInt($float)
-	Local $floatStruct = DllStructCreate('float')
-	Local $int = DllStructCreate('int', DllStructGetPtr($floatStruct))
+	Local $floatStruct = SafeDllStructCreate('float')
+	Local $int = SafeDllStructCreate('int', DllStructGetPtr($floatStruct))
 	DllStructSetData($floatStruct, 1, $float)
 	Return DllStructGetData($int, 1)
 EndFunc
@@ -2711,8 +2759,8 @@ Func GetBag($bag)
 	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x4 * $bag]
 	Local $bagPtr = MemoryReadPtr($baseAddressPtr, $offset)
 	If $bagPtr[1] = 0 Then Return
-	Local $bagStruct = DllStructCreate($bagStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $bagPtr[1], 'ptr', DllStructGetPtr($bagStruct), 'int', DllStructGetSize($bagStruct), 'int', '')
+	Local $bagStruct = SafeDllStructCreate($bagStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $bagPtr[1], 'ptr', DllStructGetPtr($bagStruct), 'int', DllStructGetSize($bagStruct), 'int', '')
 	Return $bagStruct
 EndFunc
 
@@ -2722,10 +2770,10 @@ Func GetItemBySlot($bag, $slot)
 	If Not IsDllStruct($bag) Then $bag = GetBag($bag)
 
 	Local $itemPtr = DllStructGetData($bag, 'ItemArray')
-	Local $buffer = DllStructCreate('ptr')
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
-	Local $itemStruct = DllStructCreate($itemStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+	Local $buffer = SafeDllStructCreate('ptr')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 	Return $itemStruct
 EndFunc
 
@@ -2734,8 +2782,8 @@ EndFunc
 Func GetItemByItemID($itemID)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0x4 * $itemID]
 	Local $itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
-	Local $itemStruct = DllStructCreate($itemStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 	Return $itemStruct
 EndFunc
 
@@ -2746,13 +2794,14 @@ Func GetItemByAgentID($agentID)
 	Local $itemArraySize = MemoryReadPtr($baseAddressPtr, $offset)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
+	Local $processHandle = GetProcessHandle()
 
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
-		Local $itemStruct = DllStructCreate($itemStructTemplate)
-		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 		If DllStructGetData($itemStruct, 'AgentID') = $agentID Then Return $itemStruct
 	Next
 EndFunc
@@ -2769,8 +2818,8 @@ Func GetItemByModelID($modelID)
 		$offset[4] = 0x4 * $itemID
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
-		Local $itemStruct = DllStructCreate($itemStructTemplate)
-		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID Then Return $itemStruct
 	Next
 EndFunc
@@ -2999,8 +3048,8 @@ EndFunc
 Func GetAgentByID($agentID)
 	If $agentID = -2 Then $agentID = GetMyID()
 	Local $agentPtr = GetAgentPtr($agentID)
-	Local $agentStruct = DllStructCreate($agentStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', '')
+	Local $agentStruct = SafeDllStructCreate($agentStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', '')
 	Return $agentStruct
 EndFunc
 
@@ -3228,17 +3277,20 @@ Func GetAgentArray($type = 0)
 		$count = MemoryRead($agentCopyCount, 'long')
 	Until $count >= 0 Or TimerDiff($deadlock) > 5000
 	If $count < 0 Then $count = 0
-	For $i = 1 To $count
-		$buffer &= 'Byte[448];'
-	Next
-	$buffer = DllStructCreate($buffer)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	
 	Local $returnArray[$count + 1] = [$count]
-	For $i = 1 To $count
-		$returnArray[$i] = DllStructCreate($agentStructTemplate)
-		$struct = DllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
-		DllStructSetData($struct, 1, DllStructGetData($buffer, $i))
-	Next
+	If $count > 0 Then
+		For $i = 1 To $count
+			$buffer &= 'Byte[448];'
+		Next
+		$buffer = SafeDllStructCreate($buffer)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+		For $i = 1 To $count
+			$returnArray[$i] = SafeDllStructCreate($agentStructTemplate)
+			$struct = SafeDllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
+			DllStructSetData($struct, 1, DllStructGetData($buffer, $i))
+		Next
+	EndIf
 	Return $returnArray
 EndFunc
 
@@ -3482,8 +3534,8 @@ Func GetIsTargetBuffed($skillID, $agent, $heroIndex = 0)
 			For $j = 0 To $buffCount - 1
 				$offset[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-				Local $buffStruct = DllStructCreate($buffStructTemplate)
-				DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
+				Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
+				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID') Then
 					Return $j + 1
 				EndIf
@@ -3509,8 +3561,8 @@ Func GetBuffByIndex($buffIndex, $heroIndex = 0)
 			ReDim $offset[6]
 			$offset[5] = 0 + 0x10 * ($buffIndex - 1)
 			$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-			Local $buffStruct = DllStructCreate($buffStructTemplate)
-			DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
+			Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
+			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
 			Return $buffStruct
 		EndIf
 	Next
@@ -3526,8 +3578,8 @@ Func GetSkillbar($heroIndex = 0)
 	For $i = 0 To GetHeroCount()
 		$offset[4] = $i * 0xBC
 		Local $skillbarStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-		Local $skillbarStruct = DllStructCreate($skillbarStructTemplate)
-		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', '')
+		Local $skillbarStruct = SafeDllStructCreate($skillbarStructTemplate)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', '')
 		If DllStructGetData($skillbarStruct, 'AgentId') == GetHeroID($heroIndex) Then
 			Return $skillbarStruct
 		EndIf
@@ -3558,8 +3610,8 @@ EndFunc
 ;~ Returns skill struct.
 Func GetSkillByID($skillID)
 	Local $skillstructAddress = $skillBaseAddress + (160 * $skillID)
-	Local $skillStruct = DllStructCreate($skillStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', '')
+	Local $skillStruct = SafeDllStructCreate($skillStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', '')
 	Return $skillStruct
 EndFunc
 
@@ -3588,8 +3640,8 @@ EndFunc
 ;~ Returns attribute struct.
 Func GetAttributeInfoByID($attributeID)
 	Local $attributeStructAddress = $attributeInfoPtr + (0x14 * $attributeID)
-	Local $attributeStruct = DllStructCreate($attributeStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $attributeStructAddress, 'ptr', DllStructGetPtr($attributeStruct), 'int', DllStructGetSize($attributeStruct), 'int', '')
+	Local $attributeStruct = SafeDllStructCreate($attributeStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $attributeStructAddress, 'ptr', DllStructGetPtr($attributeStruct), 'int', DllStructGetSize($attributeStruct), 'int', '')
 	Return $attributeStruct
 EndFunc
 
@@ -3645,16 +3697,16 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 				$resultArray[0] = $effectCount[1]
 
 				For $i = 0 To $effectCount[1] - 1
-					$resultArray[$i + 1] = DllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
+					$resultArray[$i + 1] = SafeDllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
-					DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', '')
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', '')
 				Next
 
 				ExitLoop
 			Else
 				For $i = 0 To $effectCount[1] - 1
-					Local $effectStruct = DllStructCreate($effectStructTemplate)
-					DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', '')
+					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', '')
 
 					If DllStructGetData($effectStruct, 'SkillID') = $skillID Then
 						Return $effectStruct
@@ -3784,8 +3836,8 @@ Func GetAreaInfoByID($mapID = 0)
 	If $mapID = 0 Then $mapID = GetMapID()
 
 	Local $areaInfoAddress = $areaInfoPtr + (0x7C * $mapID)
-	Local $areaInfoStruct = DllStructCreate($areaInfoStructTemplate)
-	DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $areaInfoAddress, 'ptr', DllStructGetPtr($areaInfoStruct), 'int', DllStructGetSize($areaInfoStruct), 'int', '')
+	Local $areaInfoStruct = SafeDllStructCreate($areaInfoStructTemplate)
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $areaInfoAddress, 'ptr', DllStructGetPtr($areaInfoStruct), 'int', DllStructGetSize($areaInfoStruct), 'int', '')
 
 	Return $areaInfoStruct
 EndFunc
@@ -3865,16 +3917,10 @@ Func GetQuestByID($questID = 0)
 	For $i = 0 To $questLogSize[1]
 		$offset[4] = 0x34 * $i
 		$questPtr = MemoryReadPtr($baseAddressPtr, $offset)
-		Local $questStruct = DllStructCreate($questStructTemplate)
-		DllCall($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $questPtr[0], 'ptr', DllStructGetPtr($questStruct), 'int', DllStructGetSize($questStruct), 'int', '')
+		Local $questStruct = SafeDllStructCreate($questStructTemplate)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($questStruct), 'int', DllStructGetSize($questStruct), 'int', '')
 		If DllStructGetData($questStruct, 'ID') = $questID Then Return $questStruct
 	Next
-EndFunc
-
-
-;~ Returns your characters name.
-Func GetCharname()
-	Return MemoryRead($characterName, 'wchar[30]')
 EndFunc
 
 
@@ -3965,12 +4011,6 @@ EndFunc
 ;~ Sleep a period of time, plus or minus a tolerance
 Func TolSleep($amount = 150, $randomAmount = 50)
 	Sleep(Random($amount - $randomAmount, $amount + $randomAmount))
-EndFunc
-
-
-;~ Returns window handle of Guild Wars.
-Func GetWindowHandle()
-	Return $windowHandle
 EndFunc
 
 
@@ -4344,7 +4384,7 @@ Func ModifyMemory()
 
 	Switch $memoryInterface
 		Case 0
-			$memoryInterface = DllCall($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 64)
+			$memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 64)
 			$memoryInterface = $memoryInterface[0]
 			MemoryWrite(MemoryRead($baseAddress), $memoryInterface)
 			CompleteASMCode()
@@ -6029,7 +6069,8 @@ Func Disconnected()
 	If $check = False Then
 		Error('Disconnected!')
 		Error('Attempting to reconnect.')
-		ControlSend(GetWindowHandle(), '', '', '{Enter}')
+		Local $windowHandle = GetWindowHandle()
+		ControlSend($windowHandle, '', '', '{Enter}')
 		$deadlock = TimerInit()
 		Do
 			Sleep(20)
@@ -6038,7 +6079,7 @@ Func Disconnected()
 		If $check = False Then
 			Error('Failed to Reconnect 1!')
 			Error('Retrying.')
-			ControlSend(GetWindowHandle(), '', '', '{Enter}')
+			ControlSend($windowHandle, '', '', '{Enter}')
 			$deadlock = TimerInit()
 			Do
 				Sleep(20)
@@ -6047,7 +6088,7 @@ Func Disconnected()
 			If $check = False Then
 				Error('Failed to Reconnect 2!')
 				Error('Retrying.')
-				ControlSend(GetWindowHandle(), '', '', '{Enter}')
+				ControlSend($windowHandle, '', '', '{Enter}')
 				$deadlock = TimerInit()
 				Do
 					Sleep(20)
@@ -6209,19 +6250,13 @@ EndFunc
 
 ;~ Returns amount of slots of bag.
 Func GetMaxSlots($bag)
+	Local $slots
 	If IsPtr($bag) Then
-		Return MemoryRead($bag + 32, 'long')
+		$slots = MemoryRead($bag + 32, 'long')
 	ElseIf IsDllStruct($bag) Then
-		Return DllStructGetData($bag, 'Slots')
+		$slots = DllStructGetData($bag, 'Slots')
 	Else
-		Return MemoryRead(GetBagPtr($bag) + 32, 'long')
+		$slots = MemoryRead(GetBagPtr($bag) + 32, 'long')
 	EndIf
-EndFunc
-
-
-;~ Log critical errors to a file - don't use for any other purpose (opens and closes files in a very inefficient manner)
-Func logCriticalErrors($log)
-	Local $loggingFile = FileOpen(@ScriptDir & '/logs/critical_errors.log' , $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-	FileWrite($loggingFile, '[' & @YEAR & @MONTH & @DAY & '-' & @HOUR & ':' & @MIN & @SEC & ']-' & $log)
-	FileClose($loggingFile)
+	Return $slots
 EndFunc
