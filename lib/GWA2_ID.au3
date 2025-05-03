@@ -1561,8 +1561,6 @@ Global Const $ID_Serpent_Axe						= 118
 ;Global Const $ID_Naga_Longbow						=
 ;Global Const $ID_Chaos_Axe							=
 ;Global Const $ID_Amethyst_Aegis					=
-;Global Const $ID_Demonic_Aegis						=
-;Global Const $ID_Pronged_Fan						=
 ;Global Const $ID_Straw_Effigy						=
 ;Global Const $ID_Colossal_Pick						=
 ;Global Const $ID_Desolation_Maul					=
@@ -1571,30 +1569,25 @@ Global Const $ID_Serpent_Axe						= 118
 ;Global Const $ID_Forbidden_Staff					=
 ;Global Const $ID_Ghostly_Staff						=
 ;Global Const $ID_Outcast_Staff						=
-;Global Const $ID_Platinum_Staff					=
 ;Global Const $ID_Shadow_Staff						=
-;Global Const $ID_Zodiac_Staff						=
-;Global Const $ID_Broadsword						=
 ;Global Const $ID_Dragons_Breath_Wand				=
 ;Global Const $ID_Golden_Pillar						=
 ;Global Const $ID_Jellyfish_Wand					=
 ;Global Const $ID_Koi_Scepter						=
-;Global Const $ID_Voltaic_Wand						=
 ;Global Const $ID_Water_Spirit_Rod					=
 ;Global Const $ID_Wayward_Wand						=
 
+;Global Const $ID_Zodiac_Staff						=
 ;Global Const $ID_ALL_ZODIAC_WEAPONS				=
 
-; This one needs to be the twin serpent version
-;Global Const $ID_Jeweled_Staff						=
 ; This one needs to be the eye version
 ;Global Const $ID_Flame_Artifact					=
 
 ; Unknown IDs
 ;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
 ;3270						; magma shield/summit shield ???
-;870, 873, 869, 1101		; more canthan rare skins
-;1569, 1439, 1563, 1557		; Elonian Swords (Colossal, Ornate, Tattooed, Dead, etc)
+;870, 869, 1101				; more canthan rare skins
+;1439, 1557			; Elonian Swords (Colossal, Tattooed, Dead, etc)
 
 ; Bow
 Global Const $ID_Eternal_Bow						= 133
@@ -1604,19 +1597,24 @@ Global Const $ID_Storm_Bow							= 145
 Global Const $ID_Paper_Fan							= 775
 Global Const $ID_Paper_Fan_2						= 776
 Global Const $ID_Paper_Fan_3						= 789
-Global Const $ID_Paper_Fan_4						= 866
-Global Const $ID_Paper_Fan_5						= 858
+Global Const $ID_Paper_Fan_4						= 858
+Global Const $ID_Paper_Fan_5						= 866
 Global Const $ID_Paper_Lantern						= 896
-Global Const $ID_Jug								= 1022
+Global Const $ID_Jug								= 874
 Global Const $ID_Jug_2								= 875
-Global Const $ID_Jug_3								= 874
+Global Const $ID_Jug_3								= 1022
+;Global Const $ID_Jug_?								= 
 Global Const $ID_Plagueborn_Focus					= 1026
 Global Const $ID_Plagueborn_Focus_2					= 1027
+;Global Const $ID_Plagueborn_Focus_?					= 
+Global Const $ID_Pronged_Fan						= 1728
+;Global Const $ID_Pronged_Fan_?						= 
 
 ; Scythe
 Global Const $ID_Draconic_Scythe					= 1978
 
 ; Shield
+Global Const $ID_Demonic_Aegis						= 1893
 Global Const $ID_Draconic_Aegis						= 1896
 Global Const $ID_Eternal_Shield						= 332
 Global Const $ID_Amber_Shield						= 940
@@ -1645,22 +1643,29 @@ Global Const $ID_Summit_Warlord_Shield				= 342
 
 ; Staff
 Global Const $ID_Bo_Staff							= 735
+Global Const $ID_Platinum_Staff						= 873
 Global Const $ID_Dragon_Staff						= 736
 Global Const $ID_Raven_Staff						= 391
+Global Const $ID_Jeweled_Staff						= 352
+;Global Const $ID_Jeweled_Staff_?						= 
 
 ; Sword
 Global Const $ID_Crystalline_Sword					= 399
-Global Const $ID_Katana								= 742
-Global Const $ID_Oni_Blade							= 794
-Global Const $ID_Shinobi_Blade						= 744
-Global Const $ID_Colossal_Scimitar					= 1556
+Global Const $ID_Broadsword							= 737
 Global Const $ID_Dadao_Sword						= 739
-Global Const $ID_Golden_Phoenix_Blade				= 795
 Global Const $ID_Jitte								= 741
+Global Const $ID_Katana								= 742
+Global Const $ID_Shinobi_Blade						= 744
+Global Const $ID_Oni_Blade							= 794
+Global Const $ID_Golden_Phoenix_Blade				= 795
+Global Const $ID_Colossal_Scimitar					= 1556
 Global Const $ID_Tatooed_Scimitar					= 1197
+Global Const $ID_Adamantine_Falchion				= 1563
+Global Const $ID_Ornate_Scimitar					= 1569
 
 ; Wand
 Global Const $ID_Platinum_Wand						= 1011
+Global Const $ID_Voltaic_Wand						= 1018
 
 #Region Celestial
 Global Const $ID_Celestial_Shield					= 942
@@ -1682,7 +1687,6 @@ Global Const $ID_Zodiac_Shield						= 1039
 
 #Region Other skins
 ; Missing IDs
-;Global Const $ID_Divine_Scroll						=
 ;Global Const $ID_Jeweled_Daggers					=
 ;Global Const $ID_Ruby_Daggers						=
 
@@ -1749,20 +1753,20 @@ Local $RareWeapons_Array = [ _
 	_ ; Bows
 	$ID_Eternal_Bow, $ID_Storm_Bow, _
 	_ ; Focii
-	$ID_Paper_Fan, $ID_Paper_Fan_2, $ID_Paper_Fan_3, $ID_Paper_Fan_4, $ID_Paper_Fan_5, $ID_Paper_Lantern, $ID_Jug, $ID_Jug_2, $ID_Jug_3, $ID_Plagueborn_Focus, $ID_Plagueborn_Focus_2, _
+	$ID_Paper_Fan, $ID_Paper_Fan_2, $ID_Paper_Fan_3, $ID_Paper_Fan_4, $ID_Paper_Fan_5, $ID_Paper_Lantern, $ID_Jug, $ID_Jug_2, $ID_Jug_3, $ID_Plagueborn_Focus, $ID_Plagueborn_Focus_2, $ID_Pronged_Fan, _
 	_ ; Scythes
 	$ID_Draconic_Scythe, _
 	_ ; Shields
-	$ID_Draconic_Aegis, $ID_Eternal_Shield, $ID_Emblazoned_Defender, $ID_Exalted_Aegis, _
+	$ID_Demonic_Aegis, $ID_Draconic_Aegis, $ID_Eternal_Shield, $ID_Emblazoned_Defender, $ID_Exalted_Aegis, _
 	$ID_Amber_Shield, $ID_Amber_Shield_2, $ID_Bladed_Shield, $ID_Bladed_Shield_2, $ID_Echovald_Shield, $ID_Echovald_Shield_2, $ID_Gothic_Defender, $ID_Gothic_Defender_2, $ID_Guardian_of_the_Hunt, $ID_Guardian_of_the_Hunt_2, _
 	$ID_Kappa_Shield, $ID_Kappa_Shield_2, $ID_Ornate_Shield, $ID_Plagueborn_Shield, $ID_Plagueborn_Shield_2, $ID_Outcast_Shield, $ID_Outcast_Shield_2, $ID_Sea_Purse_Shield, _
 	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, _
 	_ ; Staves
-	$ID_Bo_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, _
+	$ID_Bo_Staff, $ID_Platinum_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, $ID_Jeweled_Staff, _
 	_ ; Swords
-	$ID_Crystalline_Sword, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Jitte, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, _
+	$ID_Crystalline_Sword, $ID_Jitte, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Jitte, $ID_Broadsword, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, $ID_Adamantine_Falchion, $ID_Ornate_Scimitar, _
 	_ ; Wands
-	$ID_Platinum_Wand, _
+	$ID_Platinum_Wand, $ID_Voltaic_Wand, _
 	_ ; Celestial weapons
 	$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Staff, $ID_Celestial_Longbow, _
 	_ ; Zodiac weapons

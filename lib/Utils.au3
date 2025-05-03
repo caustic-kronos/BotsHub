@@ -32,7 +32,7 @@ Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	
+	;SellEverythingToMerchant(DefaultShouldSellItem, True)
 	;While($STATUS == 'RUNNING')
 	;	GetOwnLocation()
 	;	Sleep(2000)
@@ -633,9 +633,9 @@ Func BalanceCharacterGold($goldAmount)
 	Local $GCharacter = GetGoldCharacter()
 	Local $GStorage = GetGoldStorage()
 	If $GStorage > 950000 Then
-		Info('Too much gold in chest, use some.')
+		Warn('Too much gold in chest, use some.')
 	ElseIf $GStorage < 50000 Then
-		Info('Not enough gold in chest, get some.')
+		Warn('Not enough gold in chest, get some.')
 	ElseIf $GCharacter > $goldAmount Then
 		DepositGold($GCharacter - $goldAmount)
 	ElseIf $GCharacter < $goldAmount Then

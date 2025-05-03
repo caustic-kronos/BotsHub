@@ -1409,7 +1409,6 @@ EndFunc
 
 ;~ Deposit gold into storage.
 Func DepositGold($amount = 0)
-	Local $amount
 	Local $storageGold = GetGoldStorage()
 	Local $characterGold = GetGoldCharacter()
 

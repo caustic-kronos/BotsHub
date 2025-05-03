@@ -11,7 +11,7 @@
 ; This file offers wrapper alternatives to those operations that log the calls and potentially the errors
 ; This can then be used in conjunction with the crash log to see which call created the crash
 
-Global Const $debugMode = False
+Global Const $debugMode = True
 Global $logHandle
 Global $ContextStack[100]
 Global $ContextDepth = 0
@@ -76,8 +76,8 @@ EndFunc
 Func SafeDllStructCreate($type, $ptr = -1)
 	If Not $debugMode Then Return $ptr <> -1 ? DllStructCreate($type, $ptr) : DllStructCreate($type)
 	Local $call = 'DllStructCreate(type=' & $type & ',ptr=' & $ptr & ')'
-	DebuggerLog('Call to ' & $call)
-	DebuggerLog('Context{' & GetCurrentContext() & '}')
+	;DebuggerLog('Call to ' & $call)
+	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	If $ptr <> -1 And Not IsPtr($ptr) Then
 		DebuggerLog('[ERROR] Invalid pointer passed to ' & $call)
 	EndIf
@@ -95,8 +95,8 @@ EndFunc
 Func SafeDllStructGetData($struct, $element)
 	If Not $debugMode Then Return DllStructGetData($struct, $element)
 	Local $call = 'DllStructGetData(struct=' & $struct & ',element=' & $element & ')'
-	DebuggerLog('Call to ' & $call)
-	DebuggerLog('Context{' & GetCurrentContext() & '}')
+	;DebuggerLog('Call to ' & $call)
+	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	If Not IsDllStruct($struct) Then
 		DebuggerLog('[ERROR] Invalid DllStruct passed to ' & $call)
 	EndIf
@@ -128,8 +128,8 @@ Func SafeDllCall($dll, $retType, $function, $p4, $p5, $p6 = Null, $p7 = Null, $p
 	EndIf
 	$call &= ')'
 
-	DebuggerLog('Call to ' & $call)
-	DebuggerLog('Context{' & GetCurrentContext() & '}')
+	;DebuggerLog('Call to ' & $call)
+	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	Local $result
 	If $p16 <> Null Then
 		$result = DllCall($dll, $retType, $function, $p4, $p5, $p6, $p7, $p8, $p9, $p10, $p11, $p12, $p13, $p14, $p15, $p16, $p17)
