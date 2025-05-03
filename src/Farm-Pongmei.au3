@@ -37,7 +37,7 @@ Local Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Windwalker insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
-	& 'Note: in HM, Am Fah and Jade Brotherhood hit really hard - a higher death ratio is to be expected'
+	& 'Note: in HM, very frequent failures on Am Fah - I suggest cutting that part of the farm if you wish to run in HM'
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Pongmei_DwarvenStability) is better than UseSkillEx(1))
 Local Const $Pongmei_DwarvenStability = 1
 Local Const $Pongmei_Zealous_Renewal = 2
@@ -189,8 +189,8 @@ Func SkipToPreventBackTracking($X, $Y, $nextX, $nextY)
 EndFunc
 
 
-;~ Main function to fun as a Dervish
-Func DervishRun($X, $Y, $aReturnIfNoLockpicksAvailable = True)
+;~ Main function to run as a Dervish
+Func DervishRun($X, $Y)
 	; We could potentially improve bot by avoiding using run stance right before Shadow Form, but that's a very tiny improvement
 	;Local Static $shadowFormLastUse = Null
 	If FindInInventory($ID_Lockpick)[0] == 0 Then

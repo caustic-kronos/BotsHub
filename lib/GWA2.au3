@@ -2374,8 +2374,8 @@ EndFunc
 
 
 ;~ Internal use only.
-Func Enqueue($ptr, $aSize)
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $aSize, 'int', '')
+Func Enqueue($ptr, $size)
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $size, 'int', '')
 	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 EndFunc
 
@@ -3056,8 +3056,8 @@ EndFunc
 ;~ Internal use for GetAgentByID()
 Func GetAgentPtr($agentID)
 	Local $offset[3] = [0, 4 * $agentID, 0]
-	Local $lAgentStructAddress = MemoryReadPtr($agentBaseAddress, $offset)
-	Return $lAgentStructAddress[0]
+	Local $agentStructAddress = MemoryReadPtr($agentBaseAddress, $offset)
+	Return $agentStructAddress[0]
 EndFunc
 
 
@@ -5952,7 +5952,7 @@ Func _($asm)
 				Case 'mov ecx,dword[ecx+0xF4]'
 					$opCode = '8B89F4000000'
 				Case 'cmp ah,00'
-					$lOpCode = '80FC00'
+					$opCode = '80FC00'
 				Case Else
 					MsgBox(0x0, 'ASM', 'Could not assemble: ' & $asm)
 					Exit
@@ -6036,8 +6036,8 @@ EndFunc
 ; #FUNCTION# ====================================================================================================================
 ; Name...........:	_ProcessGetName
 ; Description ...:	Returns a string containing the process name that belongs to a given PID.
-; Syntax.........:	_ProcessGetName( $iPID )
-; Parameters ....:	$iPID - The PID of a currently running process
+; Syntax.........:	_ProcessGetName( $pid )
+; Parameters ....:	$pid - The PID of a currently running process
 ; Return values .:	Success		- The name of the process
 ;					Failure		- Blank string and sets @error
 ;						1 - Process doesn't exist

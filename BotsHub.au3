@@ -143,7 +143,6 @@ Func createGUI()
 	GUISetBkColor($GUI_GREY_COLOR, $GUI_GWBotHub)
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
-	GUICtrlSetOnEvent($GUI_Combo_CharacterChoice, 'GuiButtonHandler')
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
 	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetOnEvent($GUI_Combo_FarmChoice, 'GuiButtonHandler')
@@ -310,10 +309,10 @@ EndFunc
 
 ;~ Change the color of a tab
 Func _GUICtrlTab_SetBkColor($gui, $parentTab, $color)
-	Local $aTabPos = ControlGetPos($gui, '', $parentTab)
-	Local $aTab_Rect = _GUICtrlTab_GetItemRect($parentTab, -1)
+	Local $tabPosition = ControlGetPos($gui, '', $parentTab)
+	Local $tabRectangle = _GUICtrlTab_GetItemRect($parentTab, -1)
 
-	GUICtrlCreateLabel('', $aTabPos[0]+2, $aTabPos[1]+$aTab_Rect[3]+4, $aTabPos[2]-6, $aTabPos[3]-$aTab_Rect[3]-7)
+	GUICtrlCreateLabel('', $tabPosition[0]+2, $tabPosition[1]+$tabRectangle[3]+4, $tabPosition[2]-6, $tabPosition[3]-$tabRectangle[3]-7)
 	GUICtrlSetBkColor(-1, $color)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 EndFunc
@@ -347,10 +346,6 @@ Func GuiButtonHandler()
 				Case Else
 					ControlHide($GUI_GWBotHub, '', $GUI_Console)
 			EndSwitch
-		Case $GUI_Combo_CharacterChoice
-			If (Authentification() <> 0) Then
-				Error('Couldnt authenticate with provided character name')
-			EndIf
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)

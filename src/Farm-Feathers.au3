@@ -180,24 +180,24 @@ EndFunc
 
 
 ;~ Move and kill I suppose
-Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
+Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 	If GetIsDead() Then Return False
 	Local $Angle = 0
-	Local $lStuckCount = 0
+	Local $stuckCount = 0
 	Local $Blocked = 0
-	Local $lDeadlock = TimerInit()
+	Local $deadlock = TimerInit()
 
 	Move($x, $y)
 	Local $me = GetMyAgent()
 	; TODO: fix this mess
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > 250
-		If TimerDiff($lDeadlock) > $aTimeout Then
+		If TimerDiff($deadlock) > $timeout Then
 			Resign()
 			Sleep(3000)
-			$lDeadlock = TimerInit()
-			While Not GetIsDead() And TimerDiff($lDeadlock) < 30000
+			$deadlock = TimerInit()
+			While Not GetIsDead() And TimerDiff($deadlock) < 30000
 				Sleep(3000)
-				If TimerDiff($lDeadlock) > 15000 Then Resign()
+				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
 			If GetIsDead() Then Return False
 		EndIf
@@ -212,7 +212,7 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 		$me = GetMyAgent()
 		If CountFoesInRangeOfAgent($me, 1200, IsSensali) > 1 Then
 			Sleep(2000)
-			Kill($aWaitForSettle)
+			Kill($waitForSettle)
 		EndIf
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') = 0 And DllStructGetData($me, 'MoveY') = 0 Then
@@ -227,9 +227,9 @@ Func MoveKill($x, $y, $aWaitForSettle = True, $aTimeout = 5*60*1000)
 				Move($x, $y)
 			EndIf
 		EndIf
-		$lStuckCount += 1
-		If $lStuckCount > 25 Then
-			$lStuckCount = 0
+		$stuckCount += 1
+		If $stuckCount > 25 Then
+			$stuckCount = 0
 			SendChat('stuck', '/')
 			RndSleep(50)
 		EndIf
@@ -240,16 +240,16 @@ EndFunc
 
 
 ;~ Kill foes
-Func Kill($aWaitForSettle = True)
+Func Kill($waitForSettle = True)
 	If GetIsDead() Then Return
 
-	Local $lDeadlock, $lTimeout = 2*60*1000
+	Local $deadlock, $timeout = 2*60*1000
 
-	Local $lStuckCount = 0
+	Local $stuckCount = 0
 	SendChat('stuck', '/')
 	RndSleep(50)
 	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
-	If $aWaitForSettle Then
+	If $waitForSettle Then
 		If Not WaitForSettle() Then Return False
 	EndIf
 	SendChat('stuck', '/')
@@ -263,16 +263,16 @@ Func Kill($aWaitForSettle = True)
 	EndIf
 	ChangeWeaponSet(1)
 
-	$lDeadlock = TimerInit()
+	$deadlock = TimerInit()
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), 900, IsSensali) > 0
-		If TimerDiff($lDeadlock) > $lTimeout Then
+		If TimerDiff($deadlock) > $timeout Then
 			Resign()
 			Sleep(3000)
-			$lDeadlock = TimerInit()
-			While Not GetIsDead() And TimerDiff($lDeadlock) < 30000
+			$deadlock = TimerInit()
+			While Not GetIsDead() And TimerDiff($deadlock) < 30000
 				Sleep(3000)
-				If TimerDiff($lDeadlock) > 15000 Then Resign()
+				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
 			If GetIsDead() Then Return False
 		EndIf
@@ -282,9 +282,9 @@ Func Kill($aWaitForSettle = True)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 And CountFoesInRangeOfAgent(GetMyAgent(), 300, IsSensali) > 1 Then UseSkillEx($Feathers_SandShards)
 		If IsRecharged($Feathers_VowOfStrength) <= 0 Then UseSkillEx($Feathers_VowOfStrength)
-		$lStuckCount += 1
-		If $lStuckCount > 100 Then
-			$lStuckCount = 0
+		$stuckCount += 1
+		If $stuckCount > 100 Then
+			$stuckCount = 0
 			SendChat('stuck', '/')
 			RndSleep(50)
 		EndIf

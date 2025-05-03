@@ -241,8 +241,6 @@ EndFunc
 ;~ Kill raptors
 Func KillRaptors()
 	Local $MoPTarget
-	Local $lAgentArray
-
 	If GetIsDead() Then Return
 	Info('Clearing Raptors')
 

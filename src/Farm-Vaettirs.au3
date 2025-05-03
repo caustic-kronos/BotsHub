@@ -396,57 +396,57 @@ EndFunc
 
 
 ;~ Move to destX, destY, while staying alive vs vaettirs
-Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
+Func MoveAggroing($X, $Y, $random = 150)
 	If GetIsDead() Then Return
 
 	Local $agentArray
-	Local $lBlocked
-	Local $lHosCount
-	Local $lAngle
+	Local $blockedCount
+	Local $heartOfShadowUsageCount
+	Local $angle
 	Local $stuckTimer = TimerInit()
 
-	Move($lDestX, $lDestY, $lRandom)
+	Move($X, $Y, $random)
 
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $lDestX, $lDestY) > $lRandom * 1.5
+	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > $random * 1.5
 		$agentArray = GetAgentArray(0xDB)
 		If GetIsDead() Then Return False
 		StayAlive($agentArray)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
-			If $lHosCount > 6 Then
+			If $heartOfShadowUsageCount > 6 Then
 				While Not GetIsDead()
 					RndSleep(1000)
 				WEnd
 				Return False
 			EndIf
 
-			$lBlocked += 1
+			$blockedCount += 1
 			$me = GetMyAgent()
-			If $lBlocked < 5 Then
-				Move($lDestX, $lDestY, $lRandom)
-			ElseIf $lBlocked < 10 Then
-				$lAngle += 40
-				Move(DllStructGetData($me, 'X')+300*sin($lAngle), DllStructGetData($me, 'Y')+300*cos($lAngle))
+			If $blockedCount < 5 Then
+				Move($X, $Y, $random)
+			ElseIf $blockedCount < 10 Then
+				$angle += 40
+				Move(DllStructGetData($me, 'X')+300*sin($angle), DllStructGetData($me, 'Y')+300*cos($angle))
 			ElseIf IsRecharged($Skill_Heart_of_Shadow) Then
-				If $lHosCount==0 And GetDistance($me, $target) < 1000 Then
+				If $heartOfShadowUsageCount==0 And GetDistance($me, $target) < 1000 Then
 					UseSkillEx($Skill_Heart_of_Shadow, $target)
 				Else
 					UseSkillEx($Skill_Heart_of_Shadow, $me)
 				EndIf
-				$lBlocked = 0
-				$lHosCount += 1
+				$blockedCount = 0
+				$heartOfShadowUsageCount += 1
 			EndIf
 		Else
-			If $lBlocked > 0 Then
+			If $blockedCount > 0 Then
 				; use a timer to avoid spamming /stuck
 				If TimerDiff($ChatStuckTimer) > 3000 Then
 					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
 				EndIf
-				$lBlocked = 0
-				$lHosCount = 0
+				$blockedCount = 0
+				$heartOfShadowUsageCount = 0
 			EndIf
 
 			; target is far, we probably got stuck
@@ -493,68 +493,67 @@ Func StayAlive(Const ByRef $agentArray)
 		$timer = TimerInit()
 	EndIf
 
-	Local $lEnergy = GetEnergy()
-	Local $lAdjCount, $lAreaCount, $lSpellcastCount, $lProximityCount
-	Local $lDistance
+	Local $adjacentCount, $areaCount, $spellcastCount, $proximityCount
+	Local $distance
 	Local $me = GetMyAgent()
 	For $i = 1 To $agentArray[0]
 		If DllStructGetData($agentArray[$i], 'Allegiance') <> 0x3 Then ContinueLoop
 		If DllStructGetData($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		$lDistance = GetPseudoDistance($me, $agentArray[$i])
-		If $lDistance < 1200*1200 Then
-			$lProximityCount += 1
-			If $lDistance < $RANGE_SPELLCAST_2 Then
-				$lSpellcastCount += 1
-				If $lDistance < $RANGE_AREA_2 Then
-					$lAreaCount += 1
-					If $lDistance < $RANGE_ADJACENT_2 Then
-						$lAdjCount += 1
+		$distance = GetPseudoDistance($me, $agentArray[$i])
+		If $distance < 1200*1200 Then
+			$proximityCount += 1
+			If $distance < $RANGE_SPELLCAST_2 Then
+				$spellcastCount += 1
+				If $distance < $RANGE_AREA_2 Then
+					$areaCount += 1
+					If $distance < $RANGE_ADJACENT_2 Then
+						$adjacentCount += 1
 					EndIf
 				EndIf
 			EndIf
 		EndIf
 	Next
 
-	UseShadowForm($lProximityCount)
+	UseShadowForm($proximityCount)
 
 	If IsRecharged($Skill_Shroud_of_Distress) And TimerDiff($timer) < 15000 Then
-		If $lSpellcastCount > 0 And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0 Then
+		If $spellcastCount > 0 And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0 Then
 			UseSkillEx($Skill_Shroud_of_Distress)
 		ElseIf DllStructGetData(GetMyAgent(), 'HP') < 0.6 Then
 			UseSkillEx($Skill_Shroud_of_Distress)
-		ElseIf $lAdjCount > 20 Then
+		ElseIf $adjacentCount > 20 Then
 			UseSkillEx($Skill_Shroud_of_Distress)
 			EndIf
 		Else
 	EndIf
 
-	UseShadowForm($lProximityCount)
+	UseShadowForm($proximityCount)
 
 	If IsRecharged($Skill_Way_of_Perfection) And TimerDiff($timer) < 15000 Then
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.5 Then
 			UseSkillEx($Skill_Way_of_Perfection)
-		ElseIf $lAdjCount > 20 Then
+		ElseIf $adjacentCount > 20 Then
 			UseSkillEx($Skill_Way_of_Perfection)
 			EndIf
 		Else
 	EndIf
 
-	UseShadowForm($lProximityCount)
+	UseShadowForm($proximityCount)
 
 	If IsRecharged($Skill_Channeling) And TimerDiff($timer) < 15000 Then
-		If $lAreaCount > 5 And GetEffectTimeRemaining($ID_Channeling) < 2000 Then
+		If $areaCount > 5 And GetEffectTimeRemaining($ID_Channeling) < 2000 Then
 			UseSkillEx($Skill_Channeling)
 			Else
 		EndIf
 	EndIf
 
-	UseShadowForm($lProximityCount)
+	UseShadowForm($proximityCount)
 EndFunc
 
 
 ;~ Uses Shadow Form if there's anything close and if its recharged
-Func UseShadowForm($lProximityCount)
-	If $lProximityCount > 0 And IsRecharged($Skill_Shadow_Form) Then
+Func UseShadowForm($proximityCount)
+	If $proximityCount > 0 And IsRecharged($Skill_Shadow_Form) Then
 		UseSkillEx($Skill_Deadly_Paradox)
 		UseSkillEx($Skill_Shadow_Form)
 		$timer = TimerInit()

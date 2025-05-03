@@ -409,7 +409,6 @@ EndFunc
 
 ;~ Run to farm spot
 Func RunToKillSpot()
-	Local $lDeadLock = TimerInit()
 	MoveTo(-4199, -1475)
 	MoveTo(-4709, -609)
 	MoveTo(-3116, 650)
