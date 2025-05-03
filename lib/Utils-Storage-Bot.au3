@@ -108,7 +108,7 @@ Func InventoryManagement()
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		SellEverythingToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000)
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
 
@@ -672,7 +672,7 @@ EndFunc
 ;~ Buy rare material from rare materials merchant in EOTN until you have little or no money left
 ;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
 ;~ So please only use with $poorThreshold > 5k
-Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000)
+Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	If CountSlots(1, 4) == 0 Then
 		Warn('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
@@ -684,15 +684,29 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	GoToNPC($rareMaterialMerchant)
 	RndSleep(250)
 
-	TraderRequest($materialModelID)
+	Local $IDMaterialToBuy = $materialModelID
+	TraderRequest($IDMaterialToBuy)
 	Sleep(500 + GetPing())
 	Local $traderPrice = GetTraderCostValue()
+	If $traderPrice <= 0 Then
+		Error('Couldnt get trader price for the original material')
+		If ($backupMaterialModelID <> Null) Then
+			TraderRequest($backupMaterialModelID)
+			Sleep(500 + GetPing())
+			Local $traderPrice = GetTraderCostValue()
+			If $traderPrice <= 0 Then Return
+			$IDMaterialToBuy = $backupMaterialModelID
+			Notice('Falling back to backup material')
+		Else
+			Return
+		EndIf
+	EndIf
 	Local $amount = Floor((GetGoldCharacter() - $poorThreshold) / $traderPrice)
 	Info('Buying ' & $amount & ' items for ' & $traderPrice)
 	While $amount > 0
 		TraderBuy()
 		Sleep(250 + GetPing())
-		TraderRequest($materialModelID)
+		TraderRequest($IDMaterialToBuy)
 		Sleep(500 + GetPing())
 		$traderPrice = GetTraderCostValue()
 		$amount -= 1
@@ -702,6 +716,8 @@ EndFunc
 
 ;~ Store all item in the Xunlai Storage
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
+	Info('Storing money')
+	BalanceCharacterGold(10000)
 	Info('Storing items')
 	Local $item, $itemID
 	For $bagIndex = 1 To $BAG_NUMBER

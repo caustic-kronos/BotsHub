@@ -13,7 +13,6 @@ Some loot options are directly configurable through the interface.
 For more advanced customization, you will need to edit the files manually:
 - For mods : in GWA2-Items_Modstructs.au3, at the end of the file, there is a function: Func CreateValuableModsByTypeMap(). Adding mods to the lists inside this function will make the bot keep items with those mods.
 - For weapons : in Utils-Storage-Bot.au3, near the end of the file, you will find an array called Local Static $shouldKeepWeaponsArray. Adding item ModelIDs to this array will tell the bot not to sell those items.
-
 Note: A more practical looting configuration system is planned for a future update.
 </details>
 
@@ -25,6 +24,10 @@ When builds vary a lot, it is up to the player to add the necessary heroes and s
 <details> <summary><strong>Q: The bot fails with 'Variable subscript badly formatted' on `Local $map[]`. What’s wrong?</strong></summary>
 This bot uses maps, a feature introduced in AutoIt v3.3.16.0.
 Please check your AutoIt version and update it if necessary.
+</details>
+
+<details> <summary><strong>Q: The bot fails with 'not accessible variable' on `Local $maxDamage = $weaponMaxDamages[$requirement]` in /lib/Utils.au3. How to solve that?</strong></summary>
+Reinstalling AutoIt solves this issue.
 </details>
 
 <details> <summary><strong>Q: The bot sold my super expensive item! What can I do?</strong></summary>
