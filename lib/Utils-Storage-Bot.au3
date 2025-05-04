@@ -745,11 +745,11 @@ Func StoreItemInXunlaiStorage($item)
 	If IsMaterial($item) Then
 		Local $materialStorageLocation = $Map_Material_Location[$itemID]
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
-		Local $countMaterial = DllStructGetData($materialInStorage, 'Equiped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
+		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		MoveItem($item, 6, $materialStorageLocation)
 		RndSleep(50 + GetPing())
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
-		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equiped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
+		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return
 		$amount = DllStructGetData($item, 'Quantity')
 	EndIf
@@ -800,12 +800,10 @@ Func DefaultShouldStoreItem($item)
 		Return True
 	ElseIf ($itemID == $ID_Lockpick) Then
 		Return False
-	ElseIf $rarity <> $RARITY_White And IsLowReqMaxDamage($item) Then
-		Return True
-	ElseIf ($rarity == $RARITY_Gold) Then
-		Return True
-	ElseIf ($rarity == $RARITY_Green) Then
-		Return True
+	ElseIf IsWeapon($item) Then
+		Return ShouldKeepWeapon($item)
+	ElseIf isArmorSalvageItem($item) Then
+		Return ContainsValuableUpgrades($item)
 	EndIf
 	Return False
 EndFunc
@@ -860,6 +858,8 @@ Func ShouldKeepWeapon($item)
 	Local $rarity = GetRarity($item)
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $type = DllStructGetData($item, 'Type')
+	; Keeping equipped items
+	If DllStructGetData($item, 'Equipped') Then Return True
 	; Throwing white items
 	If $rarity == $RARITY_White Then Return False
 	; Keeping green items

@@ -102,7 +102,7 @@ Local $DISTRICT_NAME = 'Random'
 Local $BAG_NUMBER = 5
 
 Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic'
-Local $AVAILABLE_DISTRICTS = 'Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
+Local $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
 
@@ -817,6 +817,7 @@ Func ReadConfigFromJson($jsonString)
 	Local $jsonObject = _JSON_Parse($jsonString)
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
 	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
+	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, _JSON_Get($jsonObject, 'run.loop_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_HM, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, _JSON_Get($jsonObject, 'run.store_unid') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -828,10 +829,14 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_SellItems, _JSON_Get($jsonObject, 'run.sell_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_BuyEctoplasm, _JSON_Get($jsonObject, 'run.buy_ectos') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_StoreTheRest, _JSON_Get($jsonObject, 'run.store_leftovers') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetData($GUI_Combo_DistrictChoice, '', '')
-	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, _JSON_Get($jsonObject, 'run.district'))
-	$DISTRICT_NAME = GUICtrlRead($GUI_Combo_DistrictChoice)
-	GUICtrlSetData($GUI_Input_BagNumber, _JSON_Get($jsonObject, 'run.bag_number'))
+	Local $district = _JSON_Get($jsonObject, 'run.district')
+	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, $district)
+	$DISTRICT_NAME = $district
+	Local $bagNumber = _JSON_Get($jsonObject, 'run.bag_number')
+	$bagNumber = _Max($bagNumber, 1)
+	$bagNumber = _Min($bagNumber, 5)
+	$BAG_NUMBER = $bagNumber
+	GUICtrlSetData($GUI_Input_BagNumber, $bagNumber)
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'consumables.consume') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootEverything, _JSON_Get($jsonObject, 'loot.everything') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootNothing, _JSON_Get($jsonObject, 'loot.nothing') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -856,7 +861,6 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_LootToTBags, _JSON_Get($jsonObject, 'loot.consumables.trick_or_treat_bags') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootCandyCaneShards, _JSON_Get($jsonObject, 'loot.consumables.candy_cane_shards') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootLunarTokens, _JSON_Get($jsonObject, 'loot.consumables.lunar_tokens') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 EndFunc
 #EndRegion Configuration
 

@@ -901,10 +901,10 @@ Func SalvageItem($item)
 	For $i = 1 To DllStructGetData($item, 'Quantity')
 		$salvageKit = FindSalvageKitOrBuySome()
 		StartSalvageWithKit($item, $salvageKit)
-		Sleep(100 + GetPing())
+		Sleep(150 + GetPing())
 		If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 			ValidateSalvage()
-			Sleep(100 + GetPing())
+			Sleep(150 + GetPing())
 		EndIf
 	Next
 EndFunc
