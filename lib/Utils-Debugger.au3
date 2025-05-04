@@ -11,7 +11,7 @@
 ; This file offers wrapper alternatives to those operations that log the calls and potentially the errors
 ; This can then be used in conjunction with the crash log to see which call created the crash
 
-Global Const $debugMode = True
+Global Const $debugMode = False
 Global $logHandle
 Global $ContextStack[100]
 Global $ContextDepth = 0
