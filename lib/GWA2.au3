@@ -217,7 +217,7 @@ EndFunc
 Func MemoryWrite($address, $data, $type = 'dword')
 	Local $buffer = SafeDllStructCreate($type)
 	DllStructSetData($buffer, 1, $data)
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 EndFunc
 
 
@@ -225,7 +225,7 @@ EndFunc
 Func MemoryRead($address, $type = 'dword', $handleOverride = -1)
 	Local $buffer = SafeDllStructCreate($type)
 	Local $handle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $handle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $handle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Return DllStructGetData($buffer, 1)
 EndFunc
 
@@ -237,7 +237,7 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To $ptrCount
 		$address += $offset[$i]
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		$address = DllStructGetData($buffer, 1)
 		If $address == 0 Then
 			Local $data[2] = [0, 0]
@@ -246,7 +246,7 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 	Next
 	$address += $offset[$ptrCount + 1]
 	$buffer = SafeDllStructCreate($type)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Local $data[2] = [$address, DllStructGetData($buffer, 1)]
 	Return $data
 EndFunc
@@ -903,9 +903,6 @@ Func ScanGWBasePatterns()
 			; Wait for up to 50ms for the thread to finish
 			$result = SafeDllCall7($kernelHandle, 'int', 'WaitForSingleObject', 'int', $thread, 'int', 50)
 		Until $result[0] <> 258
-
-		; Close the thread handle to free up system resources
-		SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
 EndFunc
 
@@ -924,7 +921,7 @@ Func ScanForCharname($processHandle)
 	Local $matchOffset = $scannedMemory[2]
 	Local $tmpAddress = $baseAddress + $matchOffset - 1
 	Local $tmpBuffer = SafeDllStructCreate('ptr')
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($tmpBuffer), 'int', DllStructGetSize($tmpBuffer), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($tmpBuffer), 'int', DllStructGetSize($tmpBuffer), 'int', 0)
 	Local $characterName = DllStructGetData($tmpBuffer, 1)
 	Return MemoryRead($characterName, 'wchar[30]', $processHandle)
 EndFunc
@@ -943,7 +940,7 @@ Func ScanMemoryForPattern($processHandle, $patternBinary)
 
 		If $state = 4096 Then
 			Local $buffer = SafeDllStructCreate('byte[' & $regionSize & ']')
-			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 
 			Local $tmpMemoryData = DllStructGetData($buffer, 1)
 			$tmpMemoryData = BinaryToString($tmpMemoryData)
@@ -1242,7 +1239,7 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 	Local $memoryBuffer = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $memorySize, 'dword', 0x1000, 'dword', 0x40)
 	; Couldnt allocate enough memory
 	If $memoryBuffer = 0 Then Return 0
-	Local $buffer = SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', '')
+	Local $buffer = SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', 0)
 	If $buffer = 0 Then Return
 	DllStructSetData($craftItemStruct, 1, GetValue('CommandCraftItemEx'))
 	DllStructSetData($craftItemStruct, 2, $amount)
@@ -1311,7 +1308,7 @@ Func TraderRequest($modelID, $dyeColor = -1)
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
 
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID And DllStructGetData($itemStruct, 'bag') = 0 And DllStructGetData($itemStruct, 'AgentID') == 0 Then
 			If $dyeColor = -1 Or DllStructGetData($itemStruct, 'DyeColor') = $dyeColor Then
 				$found = True
@@ -2086,7 +2083,7 @@ Func WriteChat($message, $sender = 'GWA2')
 	If StringLen($message) > 100 Then $message = StringLeft($message, 100)
 
 	MemoryWrite($address + 44, $message, 'wchar[101]')
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $writeChatStructPtr, 'int', 4, 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $writeChatStructPtr, 'int', 4, 'int', 0)
 
 	If StringLen($message) > 100 Then WriteChat(StringTrimLeft($message, 100), $sender)
 EndFunc
@@ -2113,7 +2110,7 @@ Func SendChat($message, $channel = '!')
 	If StringLen($message) > 120 Then $message = StringLeft($message, 120)
 
 	MemoryWrite($address + 12, $channel & $message, 'wchar[122]')
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $sendChatStructPtr, 'int', 8, 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $sendChatStructPtr, 'int', 8, 'int', 0)
 
 	If StringLen($message) > 120 Then SendChat(StringTrimLeft($message, 120), $channel)
 EndFunc
@@ -2226,7 +2223,7 @@ Func DropBuff($skillID, $agent, $heroIndex = 0)
 			For $j = 0 To $buffCount - 1
 				$offset[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
+				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID')) Then
 					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffId'))
 					ExitLoop 2
@@ -2375,7 +2372,7 @@ EndFunc
 
 ;~ Internal use only.
 Func Enqueue($ptr, $size)
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $size, 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $size, 'int', 0)
 	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
 EndFunc
 
@@ -2759,7 +2756,7 @@ Func GetBag($bag)
 	Local $bagPtr = MemoryReadPtr($baseAddressPtr, $offset)
 	If $bagPtr[1] = 0 Then Return
 	Local $bagStruct = SafeDllStructCreate($bagStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $bagPtr[1], 'ptr', DllStructGetPtr($bagStruct), 'int', DllStructGetSize($bagStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $bagPtr[1], 'ptr', DllStructGetPtr($bagStruct), 'int', DllStructGetSize($bagStruct), 'int', 0)
 	Return $bagStruct
 EndFunc
 
@@ -2770,9 +2767,9 @@ Func GetItemBySlot($bag, $slot)
 
 	Local $itemPtr = DllStructGetData($bag, 'ItemArray')
 	Local $buffer = SafeDllStructCreate('ptr')
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 	Return $itemStruct
 EndFunc
 
@@ -2782,7 +2779,7 @@ Func GetItemByItemID($itemID)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0x4 * $itemID]
 	Local $itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 	Return $itemStruct
 EndFunc
 
@@ -2800,7 +2797,7 @@ Func GetItemByAgentID($agentID)
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
 		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'AgentID') = $agentID Then Return $itemStruct
 	Next
 EndFunc
@@ -2818,7 +2815,7 @@ Func GetItemByModelID($modelID)
 		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
 		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID Then Return $itemStruct
 	Next
 EndFunc
@@ -3048,7 +3045,7 @@ Func GetAgentByID($agentID)
 	If $agentID = -2 Then $agentID = GetMyID()
 	Local $agentPtr = GetAgentPtr($agentID)
 	Local $agentStruct = SafeDllStructCreate($agentStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', 0)
 	Return $agentStruct
 EndFunc
 
@@ -3283,7 +3280,7 @@ Func GetAgentArray($type = 0)
 			$buffer &= 'Byte[448];'
 		Next
 		$buffer = SafeDllStructCreate($buffer)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		For $i = 1 To $count
 			$returnArray[$i] = SafeDllStructCreate($agentStructTemplate)
 			$struct = SafeDllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
@@ -3534,7 +3531,7 @@ Func GetIsTargetBuffed($skillID, $agent, $heroIndex = 0)
 				$offset[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
 				Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
-				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
+				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID') Then
 					Return $j + 1
 				EndIf
@@ -3561,7 +3558,7 @@ Func GetBuffByIndex($buffIndex, $heroIndex = 0)
 			$offset[5] = 0 + 0x10 * ($buffIndex - 1)
 			$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
 			Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
-			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', '')
+			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 			Return $buffStruct
 		EndIf
 	Next
@@ -3578,7 +3575,7 @@ Func GetSkillbar($heroIndex = 0)
 		$offset[4] = $i * 0xBC
 		Local $skillbarStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
 		Local $skillbarStruct = SafeDllStructCreate($skillbarStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
 		If DllStructGetData($skillbarStruct, 'AgentId') == GetHeroID($heroIndex) Then
 			Return $skillbarStruct
 		EndIf
@@ -3610,7 +3607,7 @@ EndFunc
 Func GetSkillByID($skillID)
 	Local $skillstructAddress = $skillBaseAddress + (160 * $skillID)
 	Local $skillStruct = SafeDllStructCreate($skillStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', 0)
 	Return $skillStruct
 EndFunc
 
@@ -3640,7 +3637,7 @@ EndFunc
 Func GetAttributeInfoByID($attributeID)
 	Local $attributeStructAddress = $attributeInfoPtr + (0x14 * $attributeID)
 	Local $attributeStruct = SafeDllStructCreate($attributeStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $attributeStructAddress, 'ptr', DllStructGetPtr($attributeStruct), 'int', DllStructGetSize($attributeStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $attributeStructAddress, 'ptr', DllStructGetPtr($attributeStruct), 'int', DllStructGetSize($attributeStruct), 'int', 0)
 	Return $attributeStruct
 EndFunc
 
@@ -3698,14 +3695,14 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 				For $i = 0 To $effectCount[1] - 1
 					$resultArray[$i + 1] = SafeDllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', '')
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', 0)
 				Next
 
 				ExitLoop
 			Else
 				For $i = 0 To $effectCount[1] - 1
 					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', '')
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
 
 					If DllStructGetData($effectStruct, 'SkillID') = $skillID Then
 						Return $effectStruct
@@ -3836,7 +3833,7 @@ Func GetAreaInfoByID($mapID = 0)
 
 	Local $areaInfoAddress = $areaInfoPtr + (0x7C * $mapID)
 	Local $areaInfoStruct = SafeDllStructCreate($areaInfoStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $areaInfoAddress, 'ptr', DllStructGetPtr($areaInfoStruct), 'int', DllStructGetSize($areaInfoStruct), 'int', '')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $areaInfoAddress, 'ptr', DllStructGetPtr($areaInfoStruct), 'int', DllStructGetSize($areaInfoStruct), 'int', 0)
 
 	Return $areaInfoStruct
 EndFunc
@@ -3917,7 +3914,7 @@ Func GetQuestByID($questID = 0)
 		$offset[4] = 0x34 * $i
 		$questPtr = MemoryReadPtr($baseAddressPtr, $offset)
 		Local $questStruct = SafeDllStructCreate($questStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($questStruct), 'int', DllStructGetSize($questStruct), 'int', '')
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($questStruct), 'int', DllStructGetSize($questStruct), 'int', 0)
 		If DllStructGetData($questStruct, 'ID') = $questID Then Return $questStruct
 	Next
 EndFunc
