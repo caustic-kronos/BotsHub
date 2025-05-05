@@ -5,14 +5,18 @@
 ; DllCall
 ;
 ; Other operations that can also create crashes :
-; DllStructGetData
-; DllStructSetData
+
 ;
 ; This file offers wrapper alternatives to those operations that log the calls and potentially the errors
 ; This can then be used in conjunction with the crash log to see which call created the crash
 
+; Additional elements to wrap or protect :
+; - invalid memory access (ReadProcessMemory, WriteProcessMemory) -> use VirtualQueryEx to confirm memory is readable/writable
+; - DllStructGetData
+; - DllStructSetData
+
 Global Const $debugMode = False
-Global $logHandle
+Global $logHandle = -1
 Global $ContextStack[100]
 Global $ContextDepth = 0
 
@@ -37,10 +41,12 @@ EndFunc
 
 ;~ Log critical error in a OneShot way - only use for very specific usage
 Func LogCriticalError($log)
-	Local $logFile = @ScriptDir & '/logs/dll_debug-' & GetCharacterName() & '.log'
-	$logHandle = FileOpen($logFile, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	If $logHandle == -1 Then
+		Local $logFile = @ScriptDir & '/logs/dll_debug-' & GetCharacterName() & '.log'
+		$logHandle = FileOpen($logFile, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	EndIf
 	DebuggerLog($log)
-	FileClose($logHandle)
+	If $logHandle <> -1 Then FileClose($logHandle)
 EndFunc
 
 ;~ Write log in log file
@@ -101,6 +107,20 @@ Func SafeDllStructGetData($struct, $element)
 		DebuggerLog('[ERROR] Invalid DllStruct passed to ' & $call)
 	EndIf
 	Local $data = DllStructGetData($struct, $element)
+	If @error Then DebuggerLog('[ERROR] Failure on ' & $call)
+	Return $data
+EndFunc
+
+;~ DllStructSetData wrapper
+Func SafeDllStructSetData($struct, $element)
+	If Not $debugMode Then Return DllStructSetData($struct, $element)
+	Local $call = 'DllStructSetData(struct=' & $struct & ',element=' & $element & ')'
+	;DebuggerLog('Call to ' & $call)
+	;DebuggerLog('Context{' & GetCurrentContext() & '}')
+	If Not IsDllStruct($struct) Then
+		DebuggerLog('[ERROR] Invalid DllStruct passed to ' & $call)
+	EndIf
+	Local $data = DllStructSetData($struct, $element)
 	If @error Then DebuggerLog('[ERROR] Failure on ' & $call)
 	Return $data
 EndFunc

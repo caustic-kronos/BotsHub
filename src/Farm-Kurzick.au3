@@ -54,12 +54,6 @@ Func KurzickFactionFarm($STATUS)
 
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2
-	If $STATUS <> 'RUNNING' Then Return 2
-	If (CountSlots() < 15) Then
-		Warn('Inventory full, pausing.')
-		$result = 2
-	EndIf
-
 	Return $result
 EndFunc
 
