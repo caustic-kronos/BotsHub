@@ -619,11 +619,10 @@ Func ResetBotsSetups()
 	$KOURNANS_FARM_SETUP					= False
 	$MANTIDS_FARM_SETUP						= False
 	$SPIRIT_SLAVES_FARM_SETUP				= False
-	; Those don't need to be reset - group didn't change, build didn't change,
-	; and there is no need to refresh portal
+	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
+	; BUT those bots MUST tp to the correct map on every loop
 	;$FOLLOWER_SETUP						= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
-	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$CORSAIRS_FARM_SETUP					= False
 	;$PONGMEI_FARM_SETUP					= False
 EndFunc

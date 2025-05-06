@@ -36,8 +36,8 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 
 ; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
-;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City
-Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City_Events
+Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City
+;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City_Events
 Local Const $ID_Miku_Agent = 58
 
 Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
@@ -126,7 +126,11 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 Func MinisterialCommendationsFarm($STATUS)
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-	TravelToKaineng()
+	; Need to be done here in case bot comes back from inventory management
+	If GetMapID() <> $ID_Current_Kaineng_City Then
+		Info('Travelling to Kaineng City')
+		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
+	EndIf
 
 	Info('Entering quest')
 	EnterQuest()
@@ -174,7 +178,6 @@ EndFunc
 
 ;~ Setup for the farm - load build and heroes, move in the correct zone
 Func Setup()
-	TravelToKaineng()
 	LeaveGroup()
 
 	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
@@ -189,16 +192,6 @@ Func Setup()
 
 	SwitchMode($ID_HARD_MODE)
 	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
-EndFunc
-
-
-;~ Travel to Kaineng City
-Func TravelToKaineng()
-	Local $mapID = GetMapID()
-	If $mapID <> $ID_Current_Kaineng_City Then
-		Info('Travelling to Kaineng City')
-		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	EndIf
 EndFunc
 
 

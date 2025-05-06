@@ -72,7 +72,6 @@ EndFunc
 ;~ Corsairs farm setup
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	AddHero($ID_Dunkoro)
@@ -88,6 +87,9 @@ EndFunc
 
 ;~ Farm loop
 Func CorsairsFarmLoop()
+	; Need to be done here in case bot comes back from inventory management
+	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
+
 	Info('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 	RndSleep(250)
