@@ -62,6 +62,7 @@
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-Vaettirs.au3'
+#include 'src/Farm-Voltaic.au3'
 #include 'lib/Utils.au3'
 #include 'lib/Utils-OmniFarmer.au3'
 #include 'lib/Utils-Storage-Bot.au3'
@@ -101,7 +102,7 @@ Local $CHARACTER_NAME = ''
 Local $DISTRICT_NAME = 'Random'
 Local $BAG_NUMBER = 5
 
-Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Storage|Tests|Dynamic'
+Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Voltaic|Storage|Tests|Dynamic'
 Local $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -593,6 +594,8 @@ Func RunFarmLoop($Farm)
 			$result =  SpiritSlavesFarm($STATUS)
 		Case 'Vaettirs'
 			$result =  VaettirFarm($STATUS)
+		Case 'Voltaic'
+			$result =  VoltaicFarm($STATUS)
 		Case 'Storage'
 			$result =  ManageInventory($STATUS)
 		Case 'Dynamic'
@@ -623,8 +626,10 @@ Func ResetBotsSetups()
 	; BUT those bots MUST tp to the correct map on every loop
 	;$FOLLOWER_SETUP						= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
+	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$CORSAIRS_FARM_SETUP					= False
 	;$PONGMEI_FARM_SETUP					= False
+	;$VOLTAIC_FARM_SETUP					= False
 EndFunc
 
 
@@ -699,6 +704,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
+		Case 'Voltaic'		
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $VoltaicFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $VoltaicFarmInformations)
 		Case 'Storage'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')

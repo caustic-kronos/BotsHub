@@ -1688,43 +1688,59 @@ EndFunc
 
 
 ;~ Use one of the skill mentionned if available, else attack
+;~ Credits to Shiva for auto-attack improvement
 Func AttackOrUseSkill($attackSleep, $skill = null, $skill2 = null, $skill3 = null, $skill4 = null, $skill5 = null, $skill6 = null, $skill7 = null, $skill8 = null)
 	Local $me = GetMyAgent()
+	Local $target = GetNearestEnemyToAgent($me)
+
+    ; Start auto-attack first
+    Attack($target)
+	; Small delay to ensure attack starts
+    RndSleep(20)
+
 	If ($skill <> null And IsRecharged($skill)) Then
-		UseSkillEx($skill, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill, $target)
+		RndSleep(20)
 	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then
-		UseSkillEx($skill2, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill2, $target)
+		RndSleep(20)
 	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then
-		UseSkillEx($skill3, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill3, $target)
+		RndSleep(20)
 	ElseIf ($skill4 <> null And IsRecharged($skill4)) Then
-		UseSkillEx($skill4, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill4, $target)
+		RndSleep(20)
 	ElseIf ($skill5 <> null And IsRecharged($skill5)) Then
-		UseSkillEx($skill5, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill5, $target)
+		RndSleep(20)
 	ElseIf ($skill6 <> null And IsRecharged($skill6)) Then
-		UseSkillEx($skill6, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill6, $target)
+		RndSleep(20)
 	ElseIf ($skill7 <> null And IsRecharged($skill7)) Then
-		UseSkillEx($skill7, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill7, $target)
+		RndSleep(20)
 	ElseIf ($skill8 <> null And IsRecharged($skill8)) Then
-		UseSkillEx($skill8, GetNearestEnemyToAgent($me))
-		RndSleep(50)
+		UseSkillEx($skill8, $target)
+		RndSleep(20)
 	Else
-		Attack(GetNearestEnemyToAgent($me))
 		RndSleep($attackSleep)
 	EndIf
 EndFunc
 
 
 #Region Map Clearing Utilities
+;~ Safer version to not pick items while fighting and not open chests from too far
+;~ Usually better in dungeons
+Func SafeMoveAggroAndKill($x, $y, $s = '', $range = 1450)
+	MoveAggroAndKill($x, $y, $s, $range, $range - 100, False)
+EndFunc
+
+
 ;~ Clear a zone around the coordinates provided
-Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
-	Info('Hunting ' & $s)
+;~ Credits to Shiva for auto-attack improvement
+Func MoveAggroAndKill($x, $y, $s = '', $range = 1450, $chestOpenRange = $RANGE_SPIRIT, $lootInFights = True)
+	If Not IsGroupAlive() Then Return True
+	If $s <> '' Then Info($s)
 	Local $blocked = 0
 	Local $me = GetMyAgent()
 	Local $coordsX = DllStructGetData($me, 'X')
@@ -1735,12 +1751,13 @@ Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
 	Local $oldCoordsX
 	Local $oldCoordsY
 	Local $nearestEnemy
+	; GroupIsAlive is caller's responsibility to fill
 	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldCoordsX = $coordsX
 		$oldCoordsY = $coordsY
 		$me = GetMyAgent()
 		$nearestEnemy = GetNearestEnemyToAgent($me)
-		If GetDistance($me, $nearestEnemy) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then MapClearKillFoes()
+		If GetDistance($me, $nearestEnemy) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then DefaultKillFoes($lootInFights)
 		$coordsX = DllStructGetData($me, 'X')
 		$coordsY = DllStructGetData($me, 'Y')
 		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
@@ -1750,14 +1767,14 @@ Func MapClearMoveAndAggro($x, $y, $s = '', $range = 1450)
 			Move($x, $y)
 		EndIf
 		RndSleep(500)
-		CheckForChests($RANGE_SPIRIT)
+		CheckForChests($chestOpenRange)
 	WEnd
 	If Not $groupIsAlive Then Return True
 EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
-Func MapClearKillFoes()
+Func DefaultKillFoes($lootInFights = True)
 	Local $me = GetMyAgent()
 	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = -1
 	GetAlmostInRangeOfAgent($target)
@@ -1767,20 +1784,27 @@ Func MapClearKillFoes()
 		If DllStructGetData($target, 'ID') <> $targetId Then
 			$targetId = DllStructGetData($target, 'ID')
 			CallTarget($target)
+			; Start auto-attack on new target
+			Attack($target)
+			RndSleep(20)
 		EndIf
-		RndSleep(50)
+		; Always ensure auto-attack is active before using skills
+        Attack($target)
+        RndSleep(20)
+		
+		RndSleep(20)
 		While Not IsRecharged($skillNumber) And $skillNumber < 9
 			$skillNumber += 1
 		WEnd
 		If $skillNumber < 9 Then
 			UseSkillEx($skillNumber, $target)
-			RndSleep(50)
-		Else
-			Attack($target)
-			RndSleep(1000)
+			RndSleep(20)
+        Else
+			; Just wait for auto-attack to continue
+            RndSleep(1000)
 		EndIf
 		$skillNumber = 1
-		PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST)
+		If $lootInFights Then PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
@@ -1796,7 +1820,7 @@ Func IsGroupAlive()
 		If GetIsDead(GetHeroID($i)) = True Then
 			$deadMembers += 1
 		EndIf
-		If $deadMembers >= 5 Then
+		If $deadMembers >= 8 Then
 			Notice('Group wiped, back to oupost to save time.')
 			Return False
 		EndIf
