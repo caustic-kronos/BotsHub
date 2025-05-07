@@ -37,6 +37,8 @@ Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- Dunkoro'
+Local Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Corsairs_DwarvenStability = 1
 Local Const $Corsairs_WhirlingDefense = 2

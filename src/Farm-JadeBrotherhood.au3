@@ -37,6 +37,8 @@ Local Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '- The Missing Daughter quest not completed'
+Local Const $JADEBROTHERHOOD_FARM_DURATION = 3 * 60 * 1000
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
 Local Const $JB_DrunkerMaster = 1
 Local Const $JB_SandShards = 2

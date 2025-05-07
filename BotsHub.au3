@@ -552,8 +552,10 @@ EndFunc
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
 	Local $result = 2
-	UpdateStats(-1, null)
+	Local $timePerRun = UpdateStats(-1, null)
 	Local $timer = TimerInit()
+	UpdateProgressBar(True, $timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
+	AdlibRegister('UpdateProgressBar', 5000)
 	Switch $Farm
 		Case 'Choose a farm'
 			MsgBox(0, 'Error', 'No farm chosen.')
@@ -605,6 +607,8 @@ Func RunFarmLoop($Farm)
 		Case Else
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch
+	AdlibUnRegister('UpdateProgressBar')
+	GUICtrlSetData($GUI_FarmProgress, 100)
 	UpdateStats($result, $timer)
 	Return $result
 EndFunc
@@ -980,6 +984,71 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_LuxonTitle, 'Luxon: ' & GetLuxonTitle() - $LuxonTitlePoints)
 	GUICtrlSetData($GUI_Label_LightbringerTitle, 'Lightbringer: ' & GetLightbringerTitle() - $LightbringerTitlePoints)
 	GUICtrlSetData($GUI_Label_SunspearTitle, 'Sunspear: ' & GetSunspearTitle() - $SunspearTitlePoints)
+	Return $timePerRun
+EndFunc
+
+
+;~ Update the progress bar
+Func UpdateProgressBar($resetTime = False, $totalDuration = 0)
+	Local Static $timer
+	Local Static $duration
+	If IsDeclared("totalDuration") And $totalDuration <> 0 Then
+		$duration = $totalDuration
+	EndIf
+	If IsDeclared("resetTime") And $resetTime Then
+		$timer = TimerInit()
+	EndIf
+	Local $progress = Floor((TimerDiff($timer) / $duration) * 100)
+	If $progress > 98 Then $progress = 98
+	GUICtrlSetData($GUI_FarmProgress, $progress)
+EndFunc
+
+
+;~ Select correct farm duration
+Func SelectFarmDuration($Farm)
+	Switch $Farm
+		Case 'Corsairs'
+			Return $CORSAIRS_FARM_DURATION
+		Case 'Dragon Moss'
+			Return $DRAGONMOSS_FARM_DURATION
+		Case 'Eden Iris'
+			Return $IRIS_FARM_DURATION
+		Case 'Feathers'
+			Return $FEATHERS_FARM_DURATION
+		Case 'Follow'
+			Return 30 * 60 * 1000
+		Case 'Jade Brotherhood'
+			Return $JADEBROTHERHOOD_FARM_DURATION
+		Case 'Kournans'
+			Return $KOURNANS_FARM_DURATION
+		Case 'Kurzick'
+			Return $KURZICKS_FARM_DURATION
+		Case 'Lightbringer'
+			Return $LIGHTBRINGER_FARM_DURATION
+		Case 'Luxon'
+			Return $LUXONS_FARM_DURATION
+		Case 'Mantids'
+			Return $MANTIDS_FARM_DURATION
+		Case 'Ministerial Commendations'
+			Return $COMMENDATIONS_FARM_DURATION
+		Case 'OmniFarm'
+			Return 5 * 60 * 1000
+		Case 'Pongmei'
+			Return $PONGMEI_FARM_DURATION
+		Case 'Raptors'
+			Return $RAPTORS_FARM_DURATION
+		Case 'SpiritSlaves'
+			Return $SPIRIT_SLAVES_FARM_DURATION
+		Case 'Vaettirs'
+			Return $VAETTIRS_FARM_DURATION
+		Case 'Voltaic'		
+			Return $VOLTAIC_FARM_DURATION
+		Case 'Storage'
+			Return 2 * 60 * 1000
+		Case Else
+			Return 2 * 60 * 1000
+	EndSwitch
+
 EndFunc
 #EndRegion Statistics management
 

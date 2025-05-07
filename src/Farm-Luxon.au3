@@ -32,6 +32,7 @@ Local Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
+Local Const $LUXONS_FARM_DURATION = 25 * 60 * 1000
 
 Local $groupIsAlive = True
 Local $DonatePoints = True

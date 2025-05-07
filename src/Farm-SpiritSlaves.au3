@@ -33,6 +33,7 @@ Local Const $SpiritSlavesFarmInformations = 'For best results, have :' & @CRLF _
 	& '- any PCons you wish to use' & @CRLF _
 	& '- the quest Destroy the Ungrateful Slaves not completed' & @CRLF _
 	& 'Note: the farm works less efficiently during events because of the amount of loot'
+Local Const $SPIRIT_SLAVES_FARM_DURATION = 10 * 60 * 1000
 
 Local $SPIRIT_SLAVES_FARM_SETUP = False
 

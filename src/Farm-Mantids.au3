@@ -37,6 +37,8 @@ Local Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A one hand weapon with +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
+Local Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
 Local Const $Mantids_DeadlyParadox = 1
 Local Const $Mantids_ShadowForm = 2

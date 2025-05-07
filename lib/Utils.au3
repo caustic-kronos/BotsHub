@@ -1816,8 +1816,8 @@ EndFunc
 ;~ Returns True if the group is alive
 Func IsGroupAlive()
 	Local $deadMembers = 0
-	For $i = 1 to GetHeroCount()
-		If GetIsDead(GetHeroID($i)) = True Then
+	For $i = 0 to GetHeroCount()
+		If GetIsDead(GetAgentById(GetHeroID($i))) Then
 			$deadMembers += 1
 		EndIf
 		If $deadMembers >= 8 Then

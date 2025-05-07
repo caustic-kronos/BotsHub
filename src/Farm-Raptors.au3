@@ -44,7 +44,7 @@ Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '		and all of his skills locked'
-
+Local Const $RAPTORS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Raptors_MarkOfPain = 1

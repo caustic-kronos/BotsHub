@@ -25,6 +25,7 @@ Local Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
 	& '- use low level heroes to level them up' & @CRLF _
 	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
 	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
+Local Const $LIGHTBRINGER_FARM_DURATION = 25 * 60 * 1000
 
 ; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
 Local Const $weaponAttackTime = 1700
@@ -96,7 +97,7 @@ EndFunc
 Func CountPartyDeaths()
 	Local $partyDeaths = 0
 	For $i = 1 to 7
-		If GetIsDead(GetHeroID($i)) = True Then $partyDeaths +=1
+		If GetIsDead(GetAgentById(GetHeroID($i))) Then $partyDeaths +=1
 	Next
 	Return $partyDeaths
 EndFunc

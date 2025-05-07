@@ -22,8 +22,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $VoltaicBotVersion = '0.4'
-
 ; ==== Constants ====
 Local Const $VoltaicFarmerSkillbar = ''
 Local Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
@@ -33,6 +31,7 @@ Local Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
 	& '- a build that can be run from skill 1 to 8 (no complex combos or conditional skills)' & @CRLF _
 	& 'In NM, bot takes 13min (with cons), 15min (without cons) on average' & @CRLF _
 	& 'Not tested in HM.'
+Local Const $VOLTAIC_FARM_DURATION = 15 * 60 * 1000
 
 Local $VOLTAIC_FARM_SETUP = False
 Local $voltaicDeathsCount = 0
@@ -162,7 +161,7 @@ Func UseCons()
 EndFunc
 
 
-;~ Use all consumables
+;~ Use the legionnaire summoning crystal if available
 Func UseSummon()
 	UseConsumable($ID_Legionnaire_Summoning_Crystal, True)
 EndFunc
@@ -178,7 +177,7 @@ Func IsFailure()
 EndFunc
 
 
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer
+;~ Updates the voltaicDeathsCount variable, this function is run on a fixed timer
 Func VoltaicGroupIsAlive()
 	$voltaicDeathsCount += IsGroupAlive() ? 0 : 1
 EndFunc
