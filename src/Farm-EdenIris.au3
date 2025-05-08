@@ -24,11 +24,10 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $EdenIrisBotVersion = '0.4'
-
 ; ==== Constantes ====
 Local Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
-Local Const $IRIS_FARM_DURATION = 60 * 1000
+; Average duration ~ 35s
+Local Const $IRIS_FARM_DURATION = 35 * 1000
 
 Local $IRIS_FARM_SETUP = False
 

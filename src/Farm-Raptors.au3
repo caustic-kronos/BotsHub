@@ -44,7 +44,8 @@ Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '		and all of his skills locked'
-Local Const $RAPTORS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
+; Average duration ~ 1m10s ~ First run is 1m30s with setup
+Local Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Local Const $Raptors_MarkOfPain = 1
@@ -282,7 +283,7 @@ Func KillRaptors()
 
 	Debug('Waiting on MoP to be recharged and foes to be in range')
 	Local $count = 0
-	While Not GetIsDead() And Not IsRecharged($Raptors_MarkOfPain) And CountFoesInRangeOfAgent(-2, $RANGE_NEARBY) < CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) - 2 And $count < 40
+	While Not GetIsDead() And (Not IsRecharged($Raptors_MarkOfPain) Or Not RaptorsAreBalled()) And $count < 40
 		Debug('Waiting ' & $count)
 		RndSleep(250)
 		$count += 1
@@ -333,6 +334,12 @@ Func KillRaptors()
 	EndIf
 EndFunc
 
+
+;~ Mobs are sufficiently balled
+Func RaptorsAreBalled()
+	; Tolerance 2 : we accept that maximum 2 foes are still out of the ball
+	Return CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA) >= CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) - 2
+EndFunc
 
 ;~ Return to Rata Sum
 Func BackToTown()

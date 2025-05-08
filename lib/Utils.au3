@@ -1821,7 +1821,6 @@ Func IsGroupAlive()
 			$deadMembers += 1
 		EndIf
 		If $deadMembers >= 8 Then
-			Notice('Group wiped, back to oupost to save time.')
 			Return False
 		EndIf
 	Next

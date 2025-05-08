@@ -37,7 +37,8 @@ Local Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A shield' & @CRLF _
 	& '- Windwalker or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-Local Const $FEATHERS_FARM_DURATION = 15 * 60 * 1000
+; Average duration ~ 8m20
+Local Const $FEATHERS_FARM_DURATION = (8 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Feathers_SandShards) is better than UseSkillEx(1))
 Local Const $Feathers_SandShards = 1

@@ -34,7 +34,8 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
 	& '- any PCons you wish to use' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
-Local Const $COMMENDATIONS_FARM_DURATION = 3 * 60 * 1000
+; Average duration ~ 3m20
+Local Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
 
 ; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
 Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City

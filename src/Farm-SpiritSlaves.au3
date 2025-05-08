@@ -22,7 +22,8 @@
 
 ; ==== Constantes ====
 Local Const $SpiritSlaves_Skillbar = 'OgejkOrMLTmXfXfb0kkX4OcX5iA'
-Local Const $SpiritSlavesFarmInformations = 'For best results, have :' & @CRLF _
+Local Const $SpiritSlavesFarmInformations = '[CURRENTLY BROKEN]' & @CRLF _
+	& 'For best results, have :' & @CRLF _
 	& '- 16 Earth Prayers' &@CRLF _
 	& '- 13 Mysticism' & @CRLF _
 	& '- 4 Scythe Mastery' & @CRLF _

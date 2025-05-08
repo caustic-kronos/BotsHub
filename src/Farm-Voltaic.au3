@@ -31,7 +31,7 @@ Local Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
 	& '- a build that can be run from skill 1 to 8 (no complex combos or conditional skills)' & @CRLF _
 	& 'In NM, bot takes 13min (with cons), 15min (without cons) on average' & @CRLF _
 	& 'Not tested in HM.'
-Local Const $VOLTAIC_FARM_DURATION = 15 * 60 * 1000
+Local Const $VOLTAIC_FARM_DURATION = 16 * 60 * 1000
 
 Local $VOLTAIC_FARM_SETUP = False
 Local $voltaicDeathsCount = 0
@@ -171,6 +171,7 @@ EndFunc
 Func IsFailure()
 	If ($voltaicDeathsCount > 5) Then 
 		AdlibUnregister('VoltaicGroupIsAlive')
+		Notice('Group wiped.')
 		Return True
 	EndIf
 	Return False

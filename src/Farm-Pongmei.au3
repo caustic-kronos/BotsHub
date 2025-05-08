@@ -38,7 +38,8 @@ Local Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- Windwalker insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& 'Note: in HM, very frequent failures on Am Fah - I suggest cutting that part of the farm if you wish to run in HM'
-Local Const $PONGMEI_FARM_DURATION = 4 * 60 * 1000
+; Average duration ~ 4m20s
+Local Const $PONGMEI_FARM_DURATION = (4 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Pongmei_DwarvenStability) is better than UseSkillEx(1))
 Local Const $Pongmei_DwarvenStability = 1
