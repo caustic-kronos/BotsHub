@@ -14,6 +14,7 @@
 
 Global Const $debugMode = False
 Global Const $addContext = True
+
 Local $logHandle = -1
 Local $ContextStack[100]
 Local $ContextDepth = 0
@@ -87,8 +88,6 @@ EndFunc
 Func SafeDllStructCreate($type, $ptr = -1)
 	If Not $debugMode Then Return $ptr <> -1 ? DllStructCreate($type, $ptr) : DllStructCreate($type)
 	Local $call = 'DllStructCreate(type=' & $type & ',ptr=' & $ptr & ')'
-	;DebuggerLog('Call to ' & $call)
-	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	If $ptr <> -1 And Not IsPtr($ptr) Then
 		DebuggerLog('[ERROR] Invalid pointer passed to ' & $call)
 	EndIf
@@ -106,8 +105,6 @@ EndFunc
 Func SafeDllStructGetData($struct, $element)
 	If Not $debugMode Then Return DllStructGetData($struct, $element)
 	Local $call = 'DllStructGetData(struct=' & $struct & ',element=' & $element & ')'
-	;DebuggerLog('Call to ' & $call)
-	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	If Not IsDllStruct($struct) Then
 		DebuggerLog('[ERROR] Invalid DllStruct passed to ' & $call)
 	EndIf
@@ -120,8 +117,6 @@ EndFunc
 Func SafeDllStructSetData($struct, $element)
 	If Not $debugMode Then Return DllStructSetData($struct, $element)
 	Local $call = 'DllStructSetData(struct=' & $struct & ',element=' & $element & ')'
-	;DebuggerLog('Call to ' & $call)
-	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	If Not IsDllStruct($struct) Then
 		DebuggerLog('[ERROR] Invalid DllStruct passed to ' & $call)
 	EndIf
@@ -187,7 +182,10 @@ Func SafeDllCall($dll, $retType, $function, $p4, $p5, $p6 = Null, $p7 = Null, $p
 		If $p5 == Null Then DebuggerLog('Error null value in call to ' & $call)
 		$result = DllCall($dll, $retType, $function, $p4, $p5)
 	EndIf
-	If @error <> 0 Or $result[0] = $functionErrorCodes[$function] Then DebuggerLog('[ERROR] Failure on ' & $call)
+	If @error <> 0 Or $result[0] = $functionErrorCodes[$function] Then 
+		Local $errorCode = DllCall($dll, 'dword', 'GetLastError')
+		DebuggerLog('[ERROR] Code[' & $errorCode[0] & '] on ' & $call)
+	EndIf
 	Return $result
 EndFunc
 
@@ -269,7 +267,7 @@ EndFunc
 
 ;~ Determine if the provided address is writable by the given process
 Func IsMemoryReadable($processHandle, $address, $size)
-	Local $memoryInfo = DllStructCreate('dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type')
+	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
 	DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
 	If @error Then
 		DebuggerLog('Read - VirtualQueryEx call failed')
@@ -317,7 +315,7 @@ EndFunc
 
 ;~ Determine if the provided address is writable by the given process
 Func IsMemoryWritable($processHandle, $address, $size)
-	Local $memoryInfo = DllStructCreate('dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type')
+	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
 	DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
 	If @error Then
 		DebuggerLog('Write - VirtualQueryEx call failed')

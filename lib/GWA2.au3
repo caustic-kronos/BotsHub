@@ -172,18 +172,18 @@ Global $labelsStruct[1][2]
 
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
-Global $memoryInfoStructTemplate = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
-Global $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
-Global $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
-Global $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
-Global $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword Id1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword Id2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword Id3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword Id4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword Id5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword Id6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword Id7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword Id8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
-Global $skillStructTemplate = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long Effect1;long Condition;long Effect2;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
-Global $attributeStructTemplate = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
-Global $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
-Global $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
-Global $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unlnown1;long MapTo;ptr Description;ptr Objective'
+Global Const $memoryInfoStructTemplate = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
+Global Const $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
+Global Const $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
+Global Const $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
+Global Const $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword Id1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword Id2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword Id3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword Id4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword Id5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword Id6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword Id7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword Id8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
+Global Const $skillStructTemplate = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long Effect1;long Condition;long Effect2;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
+Global Const $attributeStructTemplate = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
+Global Const $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
+Global Const $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
+Global Const $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unlnown1;long MapTo;ptr Description;ptr Objective'
 ; Grey area, unlikely to exist several at the same time
-Global $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
+Global Const $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
 ; Safe zone, can just create DllStruct globally
 Global $worldStruct = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
 ; Considered to be added in non-global - but since code is synchronous those shouldn't really get overwritten
@@ -401,75 +401,82 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	; Read memory values for game data
 	$baseAddressPtr = MemoryRead(GetScannedAddress('ScanBasePointer', 8))
 	If @error Then logCriticalErrors('Failed to read base pointer')
+	
 	SetValue('BasePointer', '0x' & Hex($baseAddressPtr, 8))
-
 	$regionId = MemoryRead(GetScannedAddress('ScanRegion', -0x3))
-	$instanceInfoPtr = MemoryRead(GetScannedAddress('ScanInstanceInfo', 0xE))
+	
+	; FIXME: this call fails
+	;$instanceInfoPtr = MemoryRead(GetScannedAddress('ScanInstanceInfo', 0xE))
+	
 	$areaInfoPtr = MemoryRead(GetScannedAddress('ScanAreaInfo', 0x6))
 	$attributeInfoPtr = MemoryRead(GetScannedAddress('ScanAttributeInfo', -0x3))
-
 	SetValue('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
 	SetValue('LoadFinishedStart', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 1), 8))
 	SetValue('LoadFinishedReturn', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 6), 8))
-
+	
 	$agentBaseAddress = MemoryRead(GetScannedAddress('ScanAgentBasePointer', 8) + 0xC - 7)
 	If @error Then logCriticalErrors('Failed to read agent base')
 	SetValue('AgentBase', '0x' & Hex($agentBaseAddress, 8))
 	$maxAgents = $agentBaseAddress + 8
 	SetValue('MaxAgents', '0x' & Hex($maxAgents, 8))
+	
 	$agentArrayAddress = MemoryRead(GetScannedAddress('ScanAgentArray', -0x3))
 	If @error Then logCriticalErrors('Failed to read agent array')
 
 	$myID = MemoryRead(GetScannedAddress('ScanMyID', -3))
 	If @error Then logCriticalErrors('Failed to read my ID')
 	SetValue('MyID', '0x' & Hex($myID, 8))
-
+	
 	$currentTargetAgentId = MemoryRead(GetScannedAddress('ScanCurrentTarget', -14))
 	If @error Then logCriticalErrors('Failed to read current target')
-
+	
 	$packetlocation = Hex(MemoryRead(GetScannedAddress('ScanBaseOffset', 11)), 8)
 	If @error Then logCriticalErrors('Failed to read packet location')
 	SetValue('PacketLocation', '0x' & $packetlocation)
-
+	
 	$scanPingAddress = MemoryRead(GetScannedAddress('ScanPing', -0x3))
 	If @error Then logCriticalErrors('Failed to read ping')
-
+	
 	$mapID = MemoryRead(GetScannedAddress('ScanMapID', 28))
 	If @error Then logCriticalErrors('Failed to read map ID')
-
-	$mapLoading = MemoryRead(GetScannedAddress('ScanMapLoading', 0xB))
-	If @error Then logCriticalErrors('Failed to read loading status')
-
-	$isLoggedIn = MemoryRead(GetScannedAddress('ScanLoggedIn', 0x3))
-	If @error Then logCriticalErrors('Failed to read login status')
-
+	
+	; FIXME: this call fails
+	;$mapLoading = MemoryRead(GetScannedAddress('ScanMapLoading', 0xB))
+	;If @error Then logCriticalErrors('Failed to read loading status')
+	
+	; FIXME: this call fails
+	;$isLoggedIn = MemoryRead(GetScannedAddress('ScanLoggedIn', 0x3))
+	;If @error Then logCriticalErrors('Failed to read login status')
+	
 	$languageId = MemoryRead(GetScannedAddress('ScanMapInfo', 11)) + 0xC
 	If @error Then logCriticalErrors('Failed to read language and region')
-
+	
 	$skillBaseAddress = MemoryRead(GetScannedAddress('ScanSkillBase', 8))
 	If @error Then logCriticalErrors('Failed to read skill base')
-
+	
 	$skillTimer = MemoryRead(GetScannedAddress('ScanSkillTimer', -3))
 	If @error Then logCriticalErrors('Failed to read skill timer')
-
+	
 	$tempValue = GetScannedAddress('ScanBuildNumber', 0x2C)
 	If @error Then logCriticalErrors('Failed to read build number address')
-
-	$buildNumber = MemoryRead($tempValue + MemoryRead($tempValue) + 5)
-	If @error Then logCriticalErrors('Failed to read build number')
-
+	
+	; FIXME: these calls fail
+	;$buildNumber = MemoryRead($tempValue + MemoryRead($tempValue) + 5)
+	;If @error Then logCriticalErrors('Failed to read build number')
+	
 	$zoomWhenStill = GetScannedAddress('ScanZoomStill', 0x33)
 	If @error Then logCriticalErrors('Failed to read zoom still address')
-
+	
 	$zoomWhenMoving = GetScannedAddress('ScanZoomMoving', 0x21)
 	If @error Then logCriticalErrors('Failed to read zoom moving address')
-
+	
 	$currentStatus = MemoryRead(GetScannedAddress('ScanChangeStatusFunction', 35))
 	If @error Then logCriticalErrors('Failed to read current status')
-
+	
+	; FIXME: this call fails
 	;$characterSlots = MemoryRead(GetScannedAddress('ScanCharslots', 22))
 	;If @error Then logCriticalErrors('Failed to read character slots')
-
+	
 	$tempValue = GetScannedAddress('ScanEngine', -0x22)
 	If @error Then logCriticalErrors('Failed to read engine address')
 	SetValue('MainStart', '0x' & Hex($tempValue, 8))
@@ -525,46 +532,68 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('StringFilter2Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter2Return', '0x' & Hex($tempValue + 5, 8))
 
-	SetValue('PostMessage', '0x' & Hex(MemoryRead(GetScannedAddress('ScanPostMessage', 11)), 8))
-	If @error Then logCriticalErrors('Failed to read post message')
-	SetValue('Sleep', MemoryRead(MemoryRead(GetValue('ScanSleep') + 8) + 3))
-	If @error Then logCriticalErrors('Failed to read sleep')
+	; FIXME: this call fails
+	;SetValue('PostMessage', '0x' & Hex(MemoryRead(GetScannedAddress('ScanPostMessage', 11)), 8))
+	;If @error Then logCriticalErrors('Failed to read post message')
+	
+	; FIXME: this call fails
+	;SetValue('Sleep', MemoryRead(MemoryRead(GetValue('ScanSleep') + 8) + 3))
+	;If @error Then logCriticalErrors('Failed to read sleep')
+	
 	SetValue('SalvageFunction', '0x' & Hex(GetScannedAddress('ScanSalvageFunction', -10), 8))
 	If @error Then logCriticalErrors('Failed to read salvage function')
+
 	SetValue('SalvageGlobal', '0x' & Hex(MemoryRead(GetScannedAddress('ScanSalvageGlobal', 1) - 0x4), 8))
 	If @error Then logCriticalErrors('Failed to read salvage global')
+
 	SetValue('IncreaseAttributeFunction', '0x' & Hex(GetScannedAddress('ScanIncreaseAttributeFunction', -0x5A), 8))
 	If @error Then logCriticalErrors('Failed to read increase attribute function')
+
 	SetValue('DecreaseAttributeFunction', '0x' & Hex(GetScannedAddress('ScanDecreaseAttributeFunction', 25), 8))
 	If @error Then logCriticalErrors('Failed to read decrease attribute function')
+
 	SetValue('MoveFunction', '0x' & Hex(GetScannedAddress('ScanMoveFunction', 1), 8))
 	If @error Then logCriticalErrors('Failed to read move function')
+
 	SetValue('UseSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseSkillFunction', -0x125), 8))
 	If @error Then logCriticalErrors('Failed to read use skill function')
+
 	SetValue('ChangeTargetFunction', '0x' & Hex(GetScannedAddress('ScanChangeTargetFunction', -0x0086) + 1, 8))
 	If @error Then logCriticalErrors('Failed to read change target function')
+
 	SetValue('WriteChatFunction', '0x' & Hex(GetScannedAddress('ScanWriteChatFunction', -0x3D), 8))
 	If @error Then logCriticalErrors('Failed to read write chat function')
+
 	SetValue('SellItemFunction', '0x' & Hex(GetScannedAddress('ScanSellItemFunction', -85), 8))
 	If @error Then logCriticalErrors('Failed to read sell item function')
+
 	SetValue('PacketSendFunction', '0x' & Hex(GetScannedAddress('ScanPacketSendFunction', -0x50), 8))
 	If @error Then logCriticalErrors('Failed to read packet send function')
+
 	SetValue('ActionBase', '0x' & Hex(MemoryRead(GetScannedAddress('ScanActionBase', -3)), 8))
 	If @error Then logCriticalErrors('Failed to read action base')
+
 	SetValue('ActionFunction', '0x' & Hex(GetScannedAddress('ScanActionFunction', -3), 8))
 	If @error Then logCriticalErrors('Failed to read action function')
+
 	SetValue('UseHeroSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseHeroSkillFunction', -0x59), 8))
 	If @error Then logCriticalErrors('Failed to read use hero skill function')
+	
 	SetValue('BuyItemBase', '0x' & Hex(MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)), 8))
 	If @error Then logCriticalErrors('Failed to read buy item base')
+	
 	SetValue('TransactionFunction', '0x' & Hex(GetScannedAddress('ScanTransactionFunction', -0x7E), 8))
 	If @error Then logCriticalErrors('Failed to read transaction function')
+	
 	SetValue('RequestQuoteFunction', '0x' & Hex(GetScannedAddress('ScanRequestQuoteFunction', -0x34), 8))
 	If @error Then logCriticalErrors('Failed to read request quote function')
+	
 	SetValue('TraderFunction', '0x' & Hex(GetScannedAddress('ScanTraderFunction', -0x1E), 8))
 	If @error Then logCriticalErrors('Failed to read trader function')
+	
 	SetValue('ClickToMoveFix', '0x' & Hex(GetScannedAddress('ScanClickToMoveFix', 1), 8))
 	If @error Then logCriticalErrors('Failed to read click to move fix')
+	
 	SetValue('ChangeStatusFunction', '0x' & Hex(GetScannedAddress('ScanChangeStatusFunction', 1), 8))
 	If @error Then logCriticalErrors('Failed to read change status function')
 	SetValue('QueueSize', '0x00000010')
@@ -573,12 +602,15 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('TargetLogSize', '0x00000200')
 	SetValue('StringLogSize', '0x00000200')
 	SetValue('CallbackEvent', '0x00000501')
+	
 	$tradeHackAddress = GetScannedAddress('ScanTradeHack', 0)
 	If @error Then logCriticalErrors('Failed to read trade hack address')
+	
 	ModifyMemory()
-
+	
 	$queueCounter = MemoryRead(GetValue('QueueCounter'))
 	If @error Then logCriticalErrors('Failed to read queue counter')
+	
 	$queueSize = GetValue('QueueSize') - 1
 	$queueBaseAddress = GetValue('QueueBase')
 	;$targetLogBase = GetValue('TargetLogBase')
@@ -932,26 +964,32 @@ EndFunc
 ;~ Scan memory for a pattern - used to find process and to find character names
 Func ScanMemoryForPattern($processHandle, $patternBinary)
 	Local $currentSearchAddress = 0x00000000
-	Local $mbiBuffer = SafeDllStructCreate('dword;dword;dword;dword;dword;dword;dword')
+	Local $memoryInfos = SafeDllStructCreate($memoryInfoStructTemplate)
 
+	; Iterating over regions
 	While $currentSearchAddress < 0x01F00000
-		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($mbiBuffer), 'int', DllStructGetSize($mbiBuffer))
-		Local $memoryBaseAddress = DllStructGetData($mbiBuffer, 1)
-		Local $regionSize = DllStructGetData($mbiBuffer, 4)
-		Local $state = DllStructGetData($mbiBuffer, 5)
-
-		If $state = 4096 Then
-			Local $buffer = SafeDllStructCreate('byte[' & $regionSize & ']')
-			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
-
-			Local $tmpMemoryData = DllStructGetData($buffer, 1)
-			$tmpMemoryData = BinaryToString($tmpMemoryData)
-
-			Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
-			If $matchOffset > 0 Then
-				Local $match[3] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
-				Return $match
-			EndIf
+		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($memoryInfos), 'int', DllStructGetSize($memoryInfos))
+		Local $memoryBaseAddress = DllStructGetData($memoryInfos, 'BaseAddress')
+		Local $regionSize = DllStructGetData($memoryInfos, 'RegionSize')
+		Local $state = DllStructGetData($memoryInfos, 'State')
+		Local $protect = DllStructGetData($memoryInfos, 'Protect')
+		
+		; If memory is committed and not guarded
+		If $state = 0x1000 And BitAND($protect, 0x100) = 0 Then
+			$protect = BitAND($protect, 0xFF)
+			; If memory is allowed to be read
+			Switch $protect
+				Case 0x02, 0x04, 0x08, 0x20, 0x40, 0x80
+					Local $buffer = SafeDllStructCreate('byte[' & $regionSize & ']')
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+					Local $tmpMemoryData = DllStructGetData($buffer, 1)
+					$tmpMemoryData = BinaryToString($tmpMemoryData)
+					Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
+					If $matchOffset > 0 Then
+						Local $match[3] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
+						Return $match
+					EndIf
+			EndSwitch
 		EndIf
 		$currentSearchAddress += $regionSize
 	WEnd
@@ -2365,8 +2403,8 @@ EndFunc
 
 
 ;~ Changes the maximum memory Guild Wars can use.
-Func SetMaxMemory($maxMemory = 157286400)
-	SafeDllCall11($kernelHandle, 'int', 'SetProcessWorkingSetSizeEx', 'int', GetProcessHandle(), 'int', 1, 'int', $maxMemory, 'int', 6)
+Func SetMaxMemory()
+	SafeDllCall11($kernelHandle, 'int', 'SetProcessWorkingSetSizeEx', 'int', GetProcessHandle(), 'int', 1024 * 1024, 'int', 256 * 1024 * 1024, 'dword', 0)
 EndFunc
 #EndRegion Misc
 
@@ -4408,15 +4446,22 @@ Func ModifyMemory()
 			MemoryWrite(MemoryRead($baseAddress), $memoryInterface)
 			CompleteASMCode()
 			WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
+			; FIXME: This instruction fails
 			MemoryWrite(GetValue('QueuePtr'), GetValue('QueueBase'))
 		Case Else
 			CompleteASMCode()
 	EndSwitch
+	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
 	WriteDetour('MainStart', 'MainProc')
+	; FIXME: This instruction fails
 	WriteDetour('TargetLogStart', 'TargetLogProc')
+	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
 	WriteDetour('TraderHookStart', 'TraderHookProc')
+	; FIXME: This instruction fails
 	WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
+	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
 	WriteDetour('RenderingMod', 'RenderingModProc')
+	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
 	WriteDetour('DialogLogStart', 'DialogLogProc')
 EndFunc
 
