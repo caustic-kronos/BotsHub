@@ -65,15 +65,15 @@ EndFunc
 Func VoltaicFarmLoop()
 	; Need to be done here in case bot comes back from inventory management
 	If GetMapID() <> $ID_Umbral_Grotto Then DistrictTravel($ID_Umbral_Grotto, $DISTRICT_NAME)
-	
+
 	$voltaicDeathsCount = 0
 	Info('Making way to portal')
 	MoveTo(-22846, 9056)
 	Move(-22735, 6339)
 	WaitMapLoading($ID_Verdant_Cascades)
-	
+
 	AdlibRegister('VoltaicGroupIsAlive', 10000)
-	
+
 	Local $timer = TimerInit()
 	Local $aggroRange = $RANGE_SPELLCAST + 200
 	MoveAggroAndKill(-19887, 6074, '1', $aggroRange)
@@ -108,9 +108,9 @@ Func VoltaicFarmLoop()
 	RndSleep(250)
 	Dialog(132)
 	RndSleep(500)
-	
+
 	If IsHardmodeEnabled() Then UseCons()
-	
+
 	Sleep(1000)
 	While $voltaicDeathsCount < 6 And Not IsInRange (-18500, -8000, 1250)
 		; Waiting to be alive before retrying
@@ -169,7 +169,7 @@ EndFunc
 
 ;~ Did run fail ?
 Func IsFailure()
-	If ($voltaicDeathsCount > 5) Then 
+	If ($voltaicDeathsCount > 5) Then
 		AdlibUnregister('VoltaicGroupIsAlive')
 		Notice('Group wiped.')
 		Return True

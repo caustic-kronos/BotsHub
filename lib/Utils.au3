@@ -901,10 +901,10 @@ Func SalvageItem($item)
 	For $i = 1 To DllStructGetData($item, 'Quantity')
 		$salvageKit = FindSalvageKitOrBuySome()
 		StartSalvageWithKit($item, $salvageKit)
-		Sleep(150 + GetPing())
+		Sleep(GetPing() + 100)
 		If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 			ValidateSalvage()
-			Sleep(150 + GetPing())
+			Sleep(GetPing() + 100)
 		EndIf
 	Next
 EndFunc
@@ -1693,10 +1693,10 @@ Func AttackOrUseSkill($attackSleep, $skill = null, $skill2 = null, $skill3 = nul
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
 
-    ; Start auto-attack first
-    Attack($target)
+	; Start auto-attack first
+	Attack($target)
 	; Small delay to ensure attack starts
-    RndSleep(20)
+	RndSleep(20)
 
 	If ($skill <> null And IsRecharged($skill)) Then
 		UseSkillEx($skill, $target)
@@ -1789,9 +1789,9 @@ Func DefaultKillFoes($lootInFights = True)
 			RndSleep(20)
 		EndIf
 		; Always ensure auto-attack is active before using skills
-        Attack($target)
-        RndSleep(20)
-		
+		Attack($target)
+		RndSleep(20)
+
 		RndSleep(20)
 		While Not IsRecharged($skillNumber) And $skillNumber < 9
 			$skillNumber += 1
@@ -1799,9 +1799,9 @@ Func DefaultKillFoes($lootInFights = True)
 		If $skillNumber < 9 Then
 			UseSkillEx($skillNumber, $target)
 			RndSleep(20)
-        Else
+		Else
 			; Just wait for auto-attack to continue
-            RndSleep(1000)
+			RndSleep(1000)
 		EndIf
 		$skillNumber = 1
 		If $lootInFights Then PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST)
@@ -1942,7 +1942,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	For $i = 1 To UBound($attributesArray) - 1
 		For $j = 1 To $attributesArray[$i][1]
 			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Sleep(100 + GetPing())
+			Sleep(GetPing() + 100)
 		Next
 	Next
 	Sleep(250)
@@ -1950,7 +1950,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	; If there are any points left, we put them in the primary attribute (it's often not tracked by the $attributesArray)
 	For $i = 0 To 11
 		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Sleep(100 + GetPing())
+		Sleep(GetPing() + 100)
 	Next
 EndFunc
 
@@ -1960,14 +1960,14 @@ Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
 	For $attribute In $AttributesByProfessionMap[GetHeroProfession($heroIndex)]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(20 + GetPing())
+			Sleep(GetPing() + 20)
 		Next
 	Next
 
 	For $attribute In $AttributesByProfessionMap[$secondaryProfession]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(20 + GetPing())
+			Sleep(GetPing() + 20)
 		Next
 	Next
 EndFunc

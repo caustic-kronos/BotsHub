@@ -3,10 +3,7 @@
 ; Main operations that can cause crash
 ; DllStructCreate
 ; DllCall
-;
-; Other operations that can also create crashes :
 
-;
 ; This file offers wrapper alternatives to those operations that log the calls and potentially the errors
 ; This can then be used in conjunction with the crash log to see which call created the crash
 
@@ -16,6 +13,7 @@
 ; - DllStructSetData
 
 Global Const $debugMode = False
+Global Const $addContext = True
 Local $logHandle = -1
 Local $ContextStack[100]
 Local $ContextDepth = 0
@@ -54,29 +52,33 @@ EndFunc
 
 ;~ Write log in log file
 Func DebuggerLog($msg)
-	FileWriteLine($logHandle, '[' & @YEAR & '-' & @MON & '-' & @MDAY & ' ' & @HOUR & ':' & @MIN & ':' & @MSEC & '] - ' & $msg)
+	Local $log = '[' & @YEAR & '-' & @MON & '-' & @MDAY & ' ' & @HOUR & ':' & @MIN & ':' & @MSEC & ']-'
+	If $addContext Then $log &= '[' & GetCurrentContext() & ']-'
+	FileWriteLine($logHandle, $log & $msg)
 EndFunc
 
 ;~ Add context to create a simili stack trace
 Func PushContext($label)
-	If Not $debugMode Then Return
+	If Not $debugMode Or Not $addContext Then Return
 	$ContextStack[$ContextDepth] = $label
 	$ContextDepth += 1
 EndFunc
 
 ;~ Pop last element from stack trace
-Func PopContext()
-	If Not $debugMode Then Return
+Func PopContext($useless = '')
+	If Not $debugMode Or Not $addContext Then Return
 	$ContextDepth -= 1
 	$ContextStack[$ContextDepth] = ''
 EndFunc
 
 ;~ Get current context
 Func GetCurrentContext()
+	If Not $debugMode Or Not $addContext Then Return ''
 	Local $joined = ''
 	For $i = 0 To $ContextDepth - 1
-		$joined &= $i & '-' & $ContextStack[$i] & ' | '
+		$joined &= $ContextStack[$i] & '|'
 	Next
+	If $joined <> '' Then $joined = StringTrimRight($joined, 1)
 	Return $joined
 EndFunc
 
@@ -156,13 +158,10 @@ Func SafeDllCall($dll, $retType, $function, $p4, $p5, $p6 = Null, $p7 = Null, $p
 		EndIf
 	EndIf
 	$call &= ')'
-	
-	;If $function == 'ReadProcessMemory' Then
-	;	If Not IsMemoryReadable($p5, $p7, 0) Then DebuggerLog('Unreadable memory in call to ' & $call)
-	;ElseIf $function == 'WriteProcessMemory' Then
-	;	If Not IsMemoryWritable($p5, $p7, 0) Then DebuggerLog('Unwritable memory in call to ' & $call)
-	;EndIf
-	
+
+	If $function == 'ReadProcessMemory' Then IsMemoryReadable($p5, $p7, 0)
+	If $function == 'WriteProcessMemory' Then IsMemoryWritable($p5, $p7, 0)
+
 	;DebuggerLog('Call to ' & $call)
 	;DebuggerLog('Context{' & GetCurrentContext() & '}')
 	Local $result
@@ -270,96 +269,96 @@ EndFunc
 
 ;~ Determine if the provided address is writable by the given process
 Func IsMemoryReadable($processHandle, $address, $size)
-    Local $memoryInfo = DllStructCreate('dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type')
-    DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
-    If @error Then
+	Local $memoryInfo = DllStructCreate('dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type')
+	DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+	If @error Then
 		DebuggerLog('Read - VirtualQueryEx call failed')
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Check that the memory is committed (MEM_COMMIT = 0x1000)
+	; Check that the memory is committed (MEM_COMMIT = 0x1000)
 	Local $state = DllStructGetData($memoryInfo, 'State')
-    If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then
+	If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then
 		DebuggerLog('Read - Memory is not committed - ' & $state)
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Ensure the requested range fits inside the memory region
-    Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
-    Local $regionSize  = DllStructGetData($memoryInfo, 'RegionSize')
-    If ($address - $regionStart) + $size > $regionSize Then
+	; Ensure the requested range fits inside the memory region
+	Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
+	Local $regionSize  = DllStructGetData($memoryInfo, 'RegionSize')
+	If ($address - $regionStart) + $size > $regionSize Then
 		DebuggerLog('Read - Range doesnt fit in the memory region')
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Retrieve the protection flags and filter out the guard bit if present.
-    Local $protect = DllStructGetData($memoryInfo, 'Protect')
-    If BitAND($protect, 0x100) <> 0 Then
-        ; The PAGE_GUARD attribute is set – treat the region as non-accessible
+	; Retrieve the protection flags and filter out the guard bit if present.
+	Local $protect = DllStructGetData($memoryInfo, 'Protect')
+	If BitAND($protect, 0x100) <> 0 Then
+		; The PAGE_GUARD attribute is set – treat the region as non-accessible
 		DebuggerLog('Read - Region page is guarded - ' & $protect)
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Remove any extra bits (like PAGE_GUARD) by masking with 0xFF.
-    $protect = BitAND($protect, 0xFF)
+	; Remove any extra bits (like PAGE_GUARD) by masking with 0xFF.
+	$protect = BitAND($protect, 0xFF)
 
-    ; Allowed readable protection values:
-    ; PAGE_READONLY (0x02), PAGE_READWRITE (0x04), PAGE_WRITECOPY (0x08),
-    ; PAGE_EXECUTE_READ (0x20), PAGE_EXECUTE_READWRITE (0x40), PAGE_EXECUTE_WRITECOPY (0x80)
-    Switch $protect
-        Case 0x02, 0x04, 0x08, 0x20, 0x40, 0x80
-            Return True
-        Case Else
+	; Allowed readable protection values:
+	; PAGE_READONLY (0x02), PAGE_READWRITE (0x04), PAGE_WRITECOPY (0x08),
+	; PAGE_EXECUTE_READ (0x20), PAGE_EXECUTE_READWRITE (0x40), PAGE_EXECUTE_WRITECOPY (0x80)
+	Switch $protect
+		Case 0x02, 0x04, 0x08, 0x20, 0x40, 0x80
+			Return True
+		Case Else
 			DebuggerLog('Read - Address is not readable - ' & $protect)
-            Return False
-    EndSwitch
+			Return False
+	EndSwitch
 EndFunc
 
 
 ;~ Determine if the provided address is writable by the given process
 Func IsMemoryWritable($processHandle, $address, $size)
-    Local $memoryInfo = DllStructCreate('dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type')
-    DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
-    If @error Then
+	Local $memoryInfo = DllStructCreate('dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type')
+	DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+	If @error Then
 		DebuggerLog('Write - VirtualQueryEx call failed')
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Check that the memory is committed (MEM_COMMIT = 0x1000)
+	; Check that the memory is committed (MEM_COMMIT = 0x1000)
 	Local $state = DllStructGetData($memoryInfo, 'State')
-    If $state <> 0x1000 Then
+	If $state <> 0x1000 Then
 		DebuggerLog('Write - Memory is not committed - ' & $state)
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Ensure the requested range fits inside the memory region
-    Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
-    Local $regionSize  = DllStructGetData($memoryInfo, 'RegionSize')
-    If ($address - $regionStart) + $size > $regionSize Then
+	; Ensure the requested range fits inside the memory region
+	Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
+	Local $regionSize  = DllStructGetData($memoryInfo, 'RegionSize')
+	If ($address - $regionStart) + $size > $regionSize Then
 		DebuggerLog('Write - Range doesnt fit in the memory region')
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Retrieve the protection flags and filter out the guard bit
-    Local $protect = DllStructGetData($memoryInfo, 'Protect')
-    If BitAND($protect, 0x100) <> 0 Then
+	; Retrieve the protection flags and filter out the guard bit
+	Local $protect = DllStructGetData($memoryInfo, 'Protect')
+	If BitAND($protect, 0x100) <> 0 Then
 		DebuggerLog('Write - Region page is guarded - ' & $protect)
-        Return False
-    EndIf
+		Return False
+	EndIf
 
-    ; Mask to get the base protection (ignore extra bits)
-    $protect = BitAND($protect, 0xFF)
+	; Mask to get the base protection (ignore extra bits)
+	$protect = BitAND($protect, 0xFF)
 
-    ; Allowed writable protection values:
-    ; PAGE_READWRITE (0x04), PAGE_WRITECOPY (0x08),
-    ; PAGE_EXECUTE_READWRITE (0x40), PAGE_EXECUTE_WRITECOPY (0x80)
-    Switch $protect
-        Case 0x04, 0x08, 0x40, 0x80
-            Return True
-        Case Else
+	; Allowed writable protection values:
+	; PAGE_READWRITE (0x04), PAGE_WRITECOPY (0x08),
+	; PAGE_EXECUTE_READWRITE (0x40), PAGE_EXECUTE_WRITECOPY (0x80)
+	Switch $protect
+		Case 0x04, 0x08, 0x40, 0x80
+			Return True
+		Case Else
 			DebuggerLog('Write - Address is not writable - ' & $protect)
-            Return False
-    EndSwitch
+			Return False
+	EndSwitch
 EndFunc
 
 
@@ -379,7 +378,7 @@ On of these is the cause of the crash
 		SIZE_T  *lpNumberOfBytesRead
 	);
 	AutoIt: 'int', 'ReadProcessMemory', 'int', hProcess, 'int', address, 'ptr', buffer, 'int', size, 'int', ''
-	
+
 	BOOL WriteProcessMemory(
 		HANDLE  hProcess,
 		LPVOID  lpBaseAddress,
@@ -387,7 +386,7 @@ On of these is the cause of the crash
 		SIZE_T  nSize,
 		SIZE_T  *lpNumberOfBytesWritten
 	);
-	
+
 	LPVOID VirtualAllocEx(
 		HANDLE hProcess,
 		LPVOID lpAddress,
@@ -395,61 +394,66 @@ On of these is the cause of the crash
 		DWORD  flAllocationType,
 		DWORD  flProtect
 	);
-	
+
 	SIZE_T VirtualQueryEx(
 		HANDLE                    hProcess,
 		LPCVOID                   lpAddress,
 		PMEMORY_BASIC_INFORMATION lpBuffer,
 		SIZE_T                    dwLength
 	);
-	
+
 	BOOL SetProcessWorkingSetSize(
 		HANDLE hProcess,
 		SIZE_T dwMinimumWorkingSetSize,
 		SIZE_T dwMaximumWorkingSetSize
 	);
-	
+
 	BOOL SetProcessWorkingSetSizeEx(
 		HANDLE hProcess,
 		SIZE_T dwMinimumWorkingSetSize,
 		SIZE_T dwMaximumWorkingSetSize,
 		DWORD  Flags
 	);
-	
-	
+
+
 SafeDllCall9($kernelHandle,		'int',	'SetProcessWorkingSetSize',		'int',		GetProcessHandle(),	'int',	-1,												'int',			-1)
 SafeDllCall11($kernelHandle,	'int',	'SetProcessWorkingSetSizeEx',	'int',		GetProcessHandle(),	'int',	1,												'int',			$maxMemory,									'int',		6)
 SafeDllCall11($kernelHandle,	'int',	'VirtualQueryEx',				'int',		$processHandle,		'int',	$currentSearchAddress,							'ptr',			DllStructGetPtr($mbiBuffer),				'int',		DllStructGetSize($mbiBuffer))
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$handle,			'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$buffStructAddress[0],							'ptr',			DllStructGetPtr($buffStruct),				'int',		DllStructGetSize($buffStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$currentSearchAddress,							'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$tmpAddress	+	6,								'ptr',			DllStructGetPtr($tmpBuffer),				'int',		DllStructGetSize($tmpBuffer),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$agentCopyBase,									'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$agentPtr,										'ptr',			DllStructGetPtr($agentStruct),				'int',		DllStructGetSize($agentStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$areaInfoAddress,								'ptr',			DllStructGetPtr($areaInfoStruct),			'int',		DllStructGetSize($areaInfoStruct),	'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$attributeStructAddress,						'ptr',			DllStructGetPtr($attributeStruct),			'int',		DllStructGetSize($attributeStruct),	'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$bagPtr[1],										'ptr',			DllStructGetPtr($bagStruct),				'int',		DllStructGetSize($bagStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$buffStructAddress[0],							'ptr',			DllStructGetPtr($buffStruct),				'int',		DllStructGetSize($buffStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$buffStructAddress[0],							'ptr',			DllStructGetPtr($buffStruct),				'int',		DllStructGetSize($buffStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$effectStructAddress[0]	+	24	*	$i,			'ptr',			DllStructGetPtr($effectStruct),				'int',		24,									'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$effectStructAddress[1],						'ptr',			DllStructGetPtr($resultArray[$i	+	1]),	'int',		24,									'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$itemPtr	+	4	*	($slot	-	1),			'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$questPtr[0],									'ptr',			DllStructGetPtr($questStruct),				'int',		DllStructGetSize($questStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$skillbarStructAddress[0],						'ptr',			DllStructGetPtr($skillbarStruct),			'int',		DllStructGetSize($skillbarStruct),	'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$skillstructAddress,							'ptr',			DllStructGetPtr($skillStruct),				'int',		DllStructGetSize($skillStruct),		'int',		'')
-SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	DllStructGetData($buffer,	1),					'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'')
+
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$handle,			'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')	;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$buffStructAddress[0],							'ptr',			DllStructGetPtr($buffStruct),				'int',		DllStructGetSize($buffStruct),		'int',		'') ;16
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$buffStructAddress[0],							'ptr',			DllStructGetPtr($buffStruct),				'int',		DllStructGetSize($buffStruct),		'int',		'') ;16
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$buffStructAddress[0],							'ptr',			DllStructGetPtr($buffStruct),				'int',		DllStructGetSize($buffStruct),		'int',		'') ;16
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$currentSearchAddress,							'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'') ;84
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'') ;84
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'') ;84
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$itemPtr[1],									'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'') ;84
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	DllStructGetData($buffer,	1),					'ptr',			DllStructGetPtr($itemStruct),				'int',		DllStructGetSize($itemStruct),		'int',		'') ;84
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		$processHandle,		'int',	$tmpAddress	+	6,								'ptr',			DllStructGetPtr($tmpBuffer),				'int',		DllStructGetSize($tmpBuffer),		'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$agentCopyBase,									'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$agentPtr,										'ptr',			DllStructGetPtr($agentStruct),				'int',		DllStructGetSize($agentStruct),		'int',		'') ;448
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$areaInfoAddress,								'ptr',			DllStructGetPtr($areaInfoStruct),			'int',		DllStructGetSize($areaInfoStruct),	'int',		'') ;124
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$attributeStructAddress,						'ptr',			DllStructGetPtr($attributeStruct),			'int',		DllStructGetSize($attributeStruct),	'int',		'') ;20
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$bagPtr[1],										'ptr',			DllStructGetPtr($bagStruct),				'int',		DllStructGetSize($bagStruct),		'int',		'') ;36
+
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$effectStructAddress[0]	+	24	*	$i,			'ptr',			DllStructGetPtr($effectStruct),				'int',		24,									'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$effectStructAddress[1],						'ptr',			DllStructGetPtr($resultArray[$i	+	1]),	'int',		24,									'int',		'') ;
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$itemPtr	+	4	*	($slot	-	1),			'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'') ;
+
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$questPtr[0],									'ptr',			DllStructGetPtr($questStruct),				'int',		DllStructGetSize($questStruct),		'int',		'') ;52
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$skillbarStructAddress[0],						'ptr',			DllStructGetPtr($skillbarStruct),			'int',		DllStructGetSize($skillbarStruct),	'int',		'') ;188
+SafeDllCall13($kernelHandle,	'int',	'ReadProcessMemory',			'int',		GetProcessHandle(),	'int',	$skillstructAddress,							'ptr',			DllStructGetPtr($skillStruct),				'int',		DllStructGetSize($skillStruct),		'int',		'') ;168
+
 SafeDllCall13($kernelHandle,	'int',	'WriteProcessMemory',			'int',		GetProcessHandle(),	'int',	$address,										'ptr',			$sendChatStructPtr,							'int',		8,									'int',		'')
 SafeDllCall13($kernelHandle,	'int',	'WriteProcessMemory',			'int',		GetProcessHandle(),	'int',	$address,										'ptr',			$writeChatStructPtr,						'int',		4,									'int',		'')
 SafeDllCall13($kernelHandle,	'int',	'WriteProcessMemory',			'int',		GetProcessHandle(),	'int',	$address,										'ptr',			DllStructGetPtr($buffer),					'int',		DllStructGetSize($buffer),			'int',		'')
 SafeDllCall13($kernelHandle,	'int',	'WriteProcessMemory',			'int',		GetProcessHandle(),	'int',	256	*	$queueCounter	+	$queueBaseAddress,	'ptr',			$ptr,										'int',		$size,								'int',		'')
 SafeDllCall13($kernelHandle,	'int',	'WriteProcessMemory',			'int',		GetProcessHandle(),	'ptr',	$address,										'ptr',			DllStructGetPtr($data),						'int',		DllStructGetSize($data),			'int',		0)
 SafeDllCall13($kernelHandle,	'int',	'WriteProcessMemory',			'int',		$processHandle,		'int',	$memoryBuffer[0],								'ptr',			$craftingMaterialStructPtr,					'int',		$memorySize,						'int',		'')
+
 SafeDllCall13($kernelHandle,	'ptr',	'VirtualAllocEx',				'handle',	GetProcessHandle(),	'ptr',	0,												'ulong_ptr',	$asmInjectionSize,							'dword',	0x1000,								'dword',	0x40)
 SafeDllCall13($kernelHandle,	'ptr',	'VirtualAllocEx',				'handle',	GetProcessHandle(),	'ptr',	0,												'ulong_ptr',	$asmInjectionSize,							'dword',	0x1000,								'dword',	64)
 SafeDllCall13($kernelHandle,	'ptr',	'VirtualAllocEx',				'handle',	$processHandle,		'ptr',	0,												'ulong_ptr',	$memorySize,								'dword',	0x1000,								'dword',	0x40)

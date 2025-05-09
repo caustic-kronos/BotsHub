@@ -458,7 +458,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 				If TimerDiff($ChatStuckTimer) > 3000 Then
 					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
-					RndSleep(GetPing())
+					RndSleep(GetPing() + 20)
 					; we werent stuck, but target broke aggro. select a new one
 					If GetDistance($me, $target) > 1100 Then
 						$target = GetNearestEnemyToAgent($me)

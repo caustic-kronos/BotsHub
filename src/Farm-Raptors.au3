@@ -426,7 +426,7 @@ Func SendStuckCommand()
 		Warn('Sending /stuck')
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()
-		RndSleep(GetPing())
+		RndSleep(GetPing() + 20)
 		Return True
 	EndIf
 	Return False

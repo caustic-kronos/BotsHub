@@ -708,7 +708,7 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
-		Case 'Voltaic'		
+		Case 'Voltaic'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $VoltaicFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VoltaicFarmInformations)
@@ -992,10 +992,10 @@ EndFunc
 Func UpdateProgressBar($resetTime = False, $totalDuration = 0)
 	Local Static $timer
 	Local Static $duration
-	If IsDeclared("totalDuration") And $totalDuration <> 0 Then
+	If IsDeclared('totalDuration') And $totalDuration <> 0 Then
 		$duration = $totalDuration
 	EndIf
-	If IsDeclared("resetTime") And $resetTime Then
+	If IsDeclared('resetTime') And $resetTime Then
 		$timer = TimerInit()
 	EndIf
 	Local $progress = Floor((TimerDiff($timer) / $duration) * 100)
@@ -1041,7 +1041,7 @@ Func SelectFarmDuration($Farm)
 			Return $SPIRIT_SLAVES_FARM_DURATION
 		Case 'Vaettirs'
 			Return $VAETTIRS_FARM_DURATION
-		Case 'Voltaic'		
+		Case 'Voltaic'
 			Return $VOLTAIC_FARM_DURATION
 		Case 'Storage'
 			Return 2 * 60 * 1000

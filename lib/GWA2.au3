@@ -62,7 +62,7 @@ Global $agentBaseAddress, $baseAddressPtr, $agentArrayAddress
 
 ; Regional and account info
 Global $regionId, $languageId
-Global $currentPing, $characterSlots, $characterName
+Global $scanPingAddress, $characterSlots, $characterName
 
 ; Map status
 Global $maxAgents, $isLoggedIn, $agentCopyCount, $agentCopyBase
@@ -172,6 +172,7 @@ Global $labelsStruct[1][2]
 
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
+Global $memoryInfoStructTemplate = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
 Global $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short PlayerNumber;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
 Global $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
 Global $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
@@ -224,8 +225,8 @@ EndFunc
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
 Func MemoryRead($address, $type = 'dword', $handleOverride = -1)
 	Local $buffer = SafeDllStructCreate($type)
-	Local $handle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $handle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	Local $processHandle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Return DllStructGetData($buffer, 1)
 EndFunc
 
@@ -430,7 +431,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	If @error Then logCriticalErrors('Failed to read packet location')
 	SetValue('PacketLocation', '0x' & $packetlocation)
 
-	$currentPing = MemoryRead(GetScannedAddress('ScanPing', -0x14))
+	$scanPingAddress = MemoryRead(GetScannedAddress('ScanPing', -0x3))
 	If @error Then logCriticalErrors('Failed to read ping')
 
 	$mapID = MemoryRead(GetScannedAddress('ScanMapID', 28))
@@ -699,8 +700,7 @@ Func ScanGWBasePatterns()
 	_('ScanMoveFunction:')
 	AddPatternToInjection('558BEC83EC208D45F0')
 	_('ScanPing:')
-	AddPatternToInjection('E874651600')
-
+	AddPatternToInjection('568B750889165E')
 	_('ScanMapID:')
 	AddPatternToInjection('558BEC8B450885C074078B')
 
@@ -908,6 +908,7 @@ EndFunc
 
 
 ;~ Find process by scanning memory
+;~ This process is located at 0x00401000, i.e.: shifted of 0x1000 from real start of the process. Why do we start here ? PE Headers ?
 Func ScanForProcess()
 	Local $scannedMemory = ScanMemoryForPattern(GetProcessHandle(), BinaryToString('0x558BEC83EC105356578B7D0833F63BFE'))
 	Return $scannedMemory[0]
@@ -920,10 +921,11 @@ Func ScanForCharname($processHandle)
 	Local $baseAddress = $scannedMemory[1]
 	Local $matchOffset = $scannedMemory[2]
 	Local $tmpAddress = $baseAddress + $matchOffset - 1
-	Local $tmpBuffer = SafeDllStructCreate('ptr')
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($tmpBuffer), 'int', DllStructGetSize($tmpBuffer), 'int', 0)
-	Local $characterName = DllStructGetData($tmpBuffer, 1)
-	Return MemoryRead($characterName, 'wchar[30]', $processHandle)
+	Local $buffer = SafeDllStructCreate('ptr')
+	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	Local $characterName = DllStructGetData($buffer, 1)
+	Local $result = MemoryRead($characterName, 'wchar[30]', $processHandle)
+	Return $result
 EndFunc
 
 
@@ -996,7 +998,7 @@ EndFunc
 ;~ Doesn't work - Should validate salvage
 Func ValidateSalvage()
 	ControlSend(GetWindowHandle(), '', '', '{Enter}')
-	Sleep(GetPing() + 750)
+	Sleep(GetPing() + 1000)
 EndFunc
 
 
@@ -1067,7 +1069,6 @@ Func IdentifyBag($bag, $identifyWhiteItems = False, $identifyGoldItems = True)
 		If GetRarity($item) == $RARITY_White And $identifyWhiteItems == False Then ContinueLoop
 		If GetRarity($item) == $RARITY_Gold And $identifyGoldItems == False Then ContinueLoop
 		IdentifyItem($item)
-		Sleep(GetPing())
 	Next
 EndFunc
 
@@ -1521,7 +1522,7 @@ EndFunc
 Func DisableAllHeroSkills($heroIndex)
 	For $i = 1 to 8
 		DisableHeroSkillSlot($heroIndex, $i)
-		Sleep(20 + GetPing())
+		Sleep(GetPing() + 20)
 	Next
 EndFunc
 
@@ -1650,7 +1651,7 @@ Func GoToAgent($agent, $GoFunction)
 			$GoFunction($agent)
 		EndIf
 	Until ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y')) < 250 Or $blockedCount > 14
-	Sleep(GetPing() + Random(1500, 2000, 1))
+	Sleep(GetPing() + 1000)
 EndFunc
 
 
@@ -2768,6 +2769,13 @@ Func GetItemBySlot($bag, $slot)
 	Local $itemPtr = DllStructGetData($bag, 'ItemArray')
 	Local $buffer = SafeDllStructCreate('ptr')
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+
+	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
+	SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+	If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then
+		Return 0
+	EndIf
+
 	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 	Return $itemStruct
@@ -3273,7 +3281,7 @@ Func GetAgentArray($type = 0)
 		$count = MemoryRead($agentCopyCount, 'long')
 	Until $count >= 0 Or TimerDiff($deadlock) > 5000
 	If $count < 0 Then $count = 0
-	
+
 	Local $returnArray[$count + 1] = [$count]
 	If $count > 0 Then
 		For $i = 1 To $count
@@ -3809,7 +3817,22 @@ EndFunc
 
 ;~ Returns current ping.
 Func GetPing()
-	Return MemoryRead($currentPing)
+	Local $ping = MemoryRead($scanPingAddress)
+	Return $ping < 10 ? 10 : $ping
+EndFunc
+
+
+;~ Alternate way to get ping, reads directly from game memory without call to ScanPing
+Func AlternateGetPing()
+	Local $baseAddress = ScanForProcess()
+	; This address is relative to the CheatEngine GW base address
+	; The GW base address we get from ScanForProcess() is 0x1000 after the one from CheatEngine
+	; So we need to remove that 0x1000 if we want to have the correct value
+	Local $relativePingAddress = 0x6594A8
+	Local $pingAddress = $baseAddress + $relativePingAddress - 0x1000
+	Local $pingBuffer = DllStructCreate('dword')
+	Local $result = SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'ptr', $pingAddress, 'ptr', DllStructGetPtr($pingBuffer), 'int', DllStructGetSize($pingBuffer), 'int', 0)
+	Return DllStructGetData($pingBuffer, 1)
 EndFunc
 
 

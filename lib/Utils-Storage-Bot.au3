@@ -68,7 +68,7 @@ EndFunc
 ;~ Function to deal with inventory after farm
 Func InventoryManagement()
 	; Operations order :
-	; 1-Store unid if desired	-> not implemented
+	; 1-Store unid if desired
 	; 2-Sort items
 	; 3-Identify items
 	; 4-Collect data
@@ -101,11 +101,15 @@ Func InventoryManagement()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED And HasMaterials() Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+		; If we have more than 70k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		If GetGoldCharacter() > 70000 Then BalanceCharacterGold(70000)
 		If HasBasicMaterials() Then SellMaterialsToMerchant()
 		If HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+		; If we have more than 70k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		If GetGoldCharacter() > 70000 Then BalanceCharacterGold(70000)
 		SellEverythingToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
@@ -533,7 +537,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 				If $shouldSellItem($item) Then
 					If Not $dryRun Then
 						SellItem($item, DllStructGetData($item, 'Quantity'))
-						RndSleep(500 + GetPing())
+						RndSleep(GetPing() + 200)
 					EndIf
 				Else
 					If $dryRun Then Info('Will not sell item at ' & $bagIndex & ':' & $i)
@@ -596,9 +600,9 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
 				While $totalAmount > 9
 					TraderRequestSell($itemID)
-					Sleep(250 + GetPing())
+					Sleep(GetPing() + 200)
 					TraderSell()
-					Sleep(250 + GetPing())
+					Sleep(GetPing() + 200)
 					$totalAmount -= 10
 					; Safety net incase some sell orders didn't go through
 					If ($totalAmount < 10) Then
@@ -632,9 +636,9 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
 				While $totalAmount > 0
 					TraderRequestSell($itemID)
-					Sleep(250 + GetPing())
+					Sleep(GetPing() + 200)
 					TraderSell()
-					Sleep(250 + GetPing())
+					Sleep(GetPing() + 200)
 					$totalAmount -= 1
 					; Safety net incase some sell orders didn't go through
 					If ($totalAmount < 1) Then
@@ -659,11 +663,11 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 
 	For $i = 1 To $amount
 		TraderRequest($materialModelID)
-		Sleep(500 + GetPing())
+		Sleep(GetPing() + 200)
 		Local $traderPrice = GetTraderCostValue()
 		Debug('Buying for ' & $traderPrice)
 		TraderBuy()
-		Sleep(250 + GetPing())
+		Sleep(GetPing() + 200)
 	Next
 	; TODO: add safety net to check amount of items bought and buy some more if needed
 EndFunc
@@ -686,13 +690,13 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 
 	Local $IDMaterialToBuy = $materialModelID
 	TraderRequest($IDMaterialToBuy)
-	Sleep(500 + GetPing())
+	Sleep(GetPing() + 200)
 	Local $traderPrice = GetTraderCostValue()
 	If $traderPrice <= 0 Then
 		Error('Couldnt get trader price for the original material')
 		If ($backupMaterialModelID <> Null) Then
 			TraderRequest($backupMaterialModelID)
-			Sleep(500 + GetPing())
+			Sleep(GetPing() + 200)
 			Local $traderPrice = GetTraderCostValue()
 			If $traderPrice <= 0 Then Return
 			$IDMaterialToBuy = $backupMaterialModelID
@@ -705,9 +709,9 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	Info('Buying ' & $amount & ' items for ' & $traderPrice)
 	While $amount > 0
 		TraderBuy()
-		Sleep(250 + GetPing())
+		Sleep(GetPing() + 200)
 		TraderRequest($IDMaterialToBuy)
-		Sleep(500 + GetPing())
+		Sleep(GetPing() + 200)
 		$traderPrice = GetTraderCostValue()
 		$amount -= 1
 	WEnd
@@ -747,7 +751,7 @@ Func StoreItemInXunlaiStorage($item)
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		MoveItem($item, 6, $materialStorageLocation)
-		RndSleep(50 + GetPing())
+		RndSleep(GetPing() + 20)
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return
@@ -761,7 +765,7 @@ Func StoreItemInXunlaiStorage($item)
 			If $existingAmount < 250 Then
 				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
-				RndSleep(50 + GetPing())
+				RndSleep(GetPing() + 20)
 				$amount = $amount + $existingAmount - 250
 				If $amount <= 0 Then Return
 			EndIf
@@ -774,7 +778,7 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
-	RndSleep(50 + GetPing())
+	RndSleep(GetPing() + 20)
 EndFunc
 
 

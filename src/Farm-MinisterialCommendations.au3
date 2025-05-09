@@ -449,20 +449,20 @@ Func WaitForPurityBall()
 		EndIf
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
 			UseSkillEx($Skill_Conviction)
-			RndSleep(50)
+			RndSleep(GetPing() + 100)
 
 			If IsRecharged($Skill_Vital_Boon) Then
 				UseSkillEx($Skill_Vital_Boon)
-				RndSleep(GetPing() + 1000)
+				RndSleep(GetPing() + 20)
 			EndIf
 		EndIf
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
 		;	UseSkillEx($Skill_Mystic_Regeneration)
-		;	RndSleep(GetPing() + 300)
+		;	RndSleep(GetPing() + 20)
 		;EndIf
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
-			RndSleep(GetPing() + 1000)
+			RndSleep(GetPing() + 20)
 		EndIf
 
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.45 And IsRecharged($Skill_Grenths_Aura) Then
@@ -622,10 +622,10 @@ Func HealWhilePickingItems()
 		EndIf
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
-			RndSleep(GetPing() + 1000)
+			RndSleep(GetPing() + 20)
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
 		;	UseSkillEx($Skill_Mystic_Regeneration)
-		;	RndSleep(GetPing() + 300)
+		;	RndSleep(GetPing() + 20)
 		EndIf
 		; Heroes with Mystic Healing provide additional long range support
 		UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
