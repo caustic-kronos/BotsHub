@@ -1594,7 +1594,7 @@ EndFunc
 #Region Movement
 ;~ Move to a location. Returns True if successful
 Func Move($X, $Y, $random = 50)
-	If GetAgentExists(-2) Then
+	If GetAgentExists(GetMyAgent()) Then
 		DllStructSetData($moveStruct, 2, $X + Random(-$random, $random))
 		DllStructSetData($moveStruct, 3, $Y + Random(-$random, $random))
 		Enqueue($moveStructPtr, 16)
@@ -3101,8 +3101,8 @@ EndFunc
 
 
 ;~ Test if an agent exists.
-Func GetAgentExists($agentID)
-	Return GetAgentPtr($agentID) <> 0
+Func GetAgentExists($agent)
+	Return GetAgentPtr(DllStructGetData($agent, 'ID')) <> 0
 EndFunc
 
 
@@ -3921,7 +3921,7 @@ EndFunc
 
 ;~ Returns if map has been loaded.
 Func GetMapIsLoaded()
-	Return GetAgentExists(-2)
+	Return GetAgentExists(GetMyAgent())
 EndFunc
 
 
@@ -4109,7 +4109,7 @@ EndFunc
 
 ;~ Invites a player into the guild using his character name
 Func InviteGuild($characterName)
-	If GetAgentExists(-2) Then
+	If GetAgentExists(GetMyAgent()) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 		DllStructSetData($inviteGuildStruct, 2, 0x4C)
 		DllStructSetData($inviteGuildStruct, 3, 0xBC)
@@ -4126,7 +4126,7 @@ EndFunc
 
 ;~ Invites a player as a guest into the guild using his character name
 Func InviteGuest($characterName)
-	If GetAgentExists(-2) Then
+	If GetAgentExists(GetMyAgent()) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 		DllStructSetData($inviteGuildStruct, 2, 0x4C)
 		DllStructSetData($inviteGuildStruct, 3, 0xBC)
@@ -4162,7 +4162,7 @@ EndFunc
 
 ;~ Internal use only.
 Func PerformAction($action, $flag)
-	If GetAgentExists(-2) Then
+	If GetAgentExists(GetMyAgent()) Then
 		DllStructSetData($actionStruct, 2, $action)
 		DllStructSetData($actionStruct, 3, $flag)
 		Enqueue($actionStructPtr, 12)
@@ -6120,7 +6120,7 @@ Func Disconnected()
 	Local $deadlock = TimerInit()
 	Do
 		Sleep(20)
-		$check = GetInstanceType() <> 2 And GetAgentExists(-2)
+		$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
 	Until $check Or TimerDiff($deadlock) > 5000
 	If $check = False Then
 		Error('Disconnected!')
@@ -6130,7 +6130,7 @@ Func Disconnected()
 		$deadlock = TimerInit()
 		Do
 			Sleep(20)
-			$check = GetInstanceType() <> 2 And GetAgentExists(-2)
+			$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
 		Until $check Or TimerDiff($deadlock) > 60000
 		If $check = False Then
 			Error('Failed to Reconnect 1!')
@@ -6139,7 +6139,7 @@ Func Disconnected()
 			$deadlock = TimerInit()
 			Do
 				Sleep(20)
-				$check = GetInstanceType() <> 2 And GetAgentExists(-2)
+				$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
 			Until $check Or TimerDiff($deadlock) > 60000
 			If $check = False Then
 				Error('Failed to Reconnect 2!')
@@ -6148,7 +6148,7 @@ Func Disconnected()
 				$deadlock = TimerInit()
 				Do
 					Sleep(20)
-					$check = GetInstanceType() <> 2 And GetAgentExists(-2)
+					$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
 				Until $check Or TimerDiff($deadlock) > 60000
 				If $check = False Then
 					Error('Could not reconnect!')
@@ -6206,7 +6206,7 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 5000)
 		$skillbarStruct = MemoryReadPtr($baseAddressPtr, $offset, 'ptr')
 		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
-	Until GetAgentExists(-2) And $skillbarStruct[0] <> 0 And (GetMapID() = $mapID Or $mapID = -1)
+	Until GetAgentExists(GetMyAgent()) And $skillbarStruct[0] <> 0 And (GetMapID() = $mapID Or $mapID = -1)
 	RndSleep($waitingTime)
 	Return True
 EndFunc

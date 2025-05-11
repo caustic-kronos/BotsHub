@@ -159,10 +159,10 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 
 		If ($ShouldPickItem($item)) Then
 			If $defendFunction <> null Then $defendFunction()
-			If Not GetAgentExists($agentID) Then ContinueLoop
+			If Not GetAgentExists($agent) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
+			While GetAgentExists($agent) And TimerDiff($deadlock) < 10000
 				RndSleep(50)
 				If GetIsDead() Then Return
 			WEnd
