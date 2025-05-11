@@ -64,16 +64,18 @@ EndFunc
 
 ;~ Add context to create a simili stack trace
 Func PushContext($label)
-	If Not $debugMode Or Not $addContext Then Return
+	If Not $debugMode Or Not $addContext Then Return False
 	$ContextStack[$ContextDepth] = $label
 	$ContextDepth += 1
+	Return True
 EndFunc
 
 ;~ Pop last element from stack trace
 Func PopContext($useless = '')
-	If Not $debugMode Or Not $addContext Then Return
+	If Not $debugMode Or Not $addContext Then Return False
 	$ContextDepth -= 1
 	$ContextStack[$ContextDepth] = ''
+	Return True
 EndFunc
 
 ;~ Get current context

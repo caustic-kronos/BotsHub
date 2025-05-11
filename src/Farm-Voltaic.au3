@@ -128,6 +128,7 @@ Func VoltaicFarmLoop()
 		SafeMoveAggroAndKill(-15000, -7500, 'Fourth group, again', $aggroRange)
 		SafeMoveAggroAndKill(-16500, -8000, 'Fifth group', $aggroRange)
 		SafeMoveAggroAndKill(-18500, -8000, 'To the shrine', $aggroRange)
+		If IsFailure() Then Return 1
 	WEnd
 	While $voltaicDeathsCount < 6 And Not IsInRange (-17500, -14250, 1250)
 		; Waiting to be alive before retrying
@@ -138,8 +139,8 @@ Func VoltaicFarmLoop()
 		SafeMoveAggroAndKill(-18500, -11500, 'Pre-Boss group', $aggroRange)
 		SafeMoveAggroAndKill(-17700, -12500, 'Boss group', $aggroRange)
 		SafeMoveAggroAndKill(-17500, -14250, 'Final group', $aggroRange)
+		If IsFailure() Then Return 1
 	WEnd
-	If IsFailure() Then Return 1
 	; Chest
 	Move(-17500, -14250)
 	Info('Opening chest')

@@ -816,7 +816,7 @@ EndFunc
 ;~ Uses the Item from $bag at position $slot (positions start at 1)
 Func UseItemBySlot($bag, $slot)
 	If $bag > 0 And $slot > 0 Then
-		If Not GetIsDead() And GetMapLoading() <> 2 Then
+		If Not GetIsDead() And GetInstanceType() <> 2 Then
 			Local $item = GetItemBySlot($bag, $slot)
 			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf
@@ -1733,7 +1733,7 @@ EndFunc
 ;~ Safer version to not pick items while fighting and not open chests from too far
 ;~ Usually better in dungeons
 Func SafeMoveAggroAndKill($x, $y, $s = '', $range = 1450)
-	MoveAggroAndKill($x, $y, $s, $range, $range - 100, False)
+	Return MoveAggroAndKill($x, $y, $s, $range, $range - 100, False)
 EndFunc
 
 

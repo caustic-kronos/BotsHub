@@ -349,15 +349,15 @@ EndFunc
 ;~ Move to a location in a limited time
 Func MoveToMiddleOfGroupWithTimeout($timeOut)
 	Local $me = GetMyAgent()
-	Local $lMapLoadingOld, $lMapLoading = GetMapLoading()
+	Local $oldMapID, $mapID = GetMapID()
 	Local $timer = TimerInit()
 	Local $position = FindMiddleOfGroup()
 	Move($position[0], $position[1], 0)
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
 		If GetIsDead() Then ExitLoop
-		$lMapLoadingOld = $lMapLoading
-		$lMapLoading = GetMapLoading()
-		If $lMapLoading <> $lMapLoadingOld Then ExitLoop
+		$oldMapID = $mapID
+		$mapID = GetMapID()
+		If $mapID <> $oldMapID Then ExitLoop
 		$position = FindMiddleOfGroup()
 		Sleep(200)
 		$me = GetMyAgent()
