@@ -16,19 +16,19 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 Opt('MustDeclareVars', 1)
 
-Local Const $JB_VERSION = '0.1'
-Local Const $JB_Timeout = 120000
+Global Const $JB_VERSION = '0.1'
+Global Const $JB_Timeout = 120000
 
 ; ==== Constants ====
-Local Const $JB_Skillbar = 'OgejkirMrSqimXfXfbrXaXNX4OA'
-Local Const $JB_Hero_Skillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
-Local Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
+Global Const $JB_Skillbar = 'OgejkirMrSqimXfXfbrXaXNX4OA'
+Global Const $JB_Hero_Skillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
+Global Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in earth prayers' & @CRLF _
 	& '- 11+ in mysticism' & @CRLF _
 	& '- 9+ in scythe mastery (enough to use your scythe)'& @CRLF _
@@ -38,27 +38,27 @@ Local Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '- The Missing Daughter quest not completed'
 ; Average duration ~ 3m ~ First run is 3m20s with setup
-Local Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
+Global Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
-Local Const $JB_DrunkerMaster = 1
-Local Const $JB_SandShards = 2
-Local Const $JB_MysticVigor = 3
-Local Const $JB_VowOfStrength = 4
-Local Const $JB_ArmorOfSanctity = 5
-Local Const $JB_StaggeringForce = 6
-Local Const $JB_EremitesAttack = 7
-Local Const $JB_DeathsCharge = 8
+Global Const $JB_DrunkerMaster = 1
+Global Const $JB_SandShards = 2
+Global Const $JB_MysticVigor = 3
+Global Const $JB_VowOfStrength = 4
+Global Const $JB_ArmorOfSanctity = 5
+Global Const $JB_StaggeringForce = 6
+Global Const $JB_EremitesAttack = 7
+Global Const $JB_DeathsCharge = 8
 
 ; Hero Build
-Local Const $Brotherhood_Mystic_Healing = 1
-Local Const $Brotherhood_Incoming = 7
-Local Const $Brotherhood_FallBack = 6
-Local Const $Brotherhood_EnduringHarmony = 2
-Local Const $Brotherhood_MakeHaste = 3
+Global Const $Brotherhood_Mystic_Healing = 1
+Global Const $Brotherhood_Incoming = 7
+Global Const $Brotherhood_FallBack = 6
+Global Const $Brotherhood_EnduringHarmony = 2
+Global Const $Brotherhood_MakeHaste = 3
 
-Local $DeadlockTimer
-Local $Deadlocked = False
+Global $DeadlockTimer
+Global $Deadlocked = False
 
 Global $JADE_BROTHERHOOD_FARM_SETUP = False
 

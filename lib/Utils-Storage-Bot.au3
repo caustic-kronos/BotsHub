@@ -16,45 +16,45 @@
 
 #include <SQLite.au3>
 #include <SQLite.dll.au3>
-
-#include 'GWA2.au3'
 #include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
+#include 'GWA2.au3'
 #include 'Utils.au3'
 #include 'Utils-Items_Modstructs.au3'
+#include 'Utils-Debugger.au3'
 
 Opt('MustDeclareVars', 1)
 
-Local $SQLITE_DB
+Global $SQLITE_DB
 
 #Region Tables
 ; Those tables are built automatically and one is completed by the user
-Local $TABLE_DATA_RAW = 'DATA_RAW'
-Local $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
+Global $TABLE_DATA_RAW = 'DATA_RAW'
+Global $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
 							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
 
-Local $TABLE_DATA_USER = 'DATA_USER'
-Local $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
+Global $TABLE_DATA_USER = 'DATA_USER'
+Global $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
 
-Local $TABLE_DATA_SALVAGE = 'DATA_SALVAGE'
-Local $SCHEMA_DATA_SALVAGE = ['batch', 'model_ID', 'material', 'amount']
+Global $TABLE_DATA_SALVAGE = 'DATA_SALVAGE'
+Global $SCHEMA_DATA_SALVAGE = ['batch', 'model_ID', 'material', 'amount']
 
 ; Those 3 lookups are filled directly when database is created
-Local $TABLE_LOOKUP_ATTRIBUTE = 'LOOKUP_ATTRIBUTE'
-Local $SCHEMA_LOOKUP_ATTRIBUTE = ['attribute_ID', 'attribute']
+Global $TABLE_LOOKUP_ATTRIBUTE = 'LOOKUP_ATTRIBUTE'
+Global $SCHEMA_LOOKUP_ATTRIBUTE = ['attribute_ID', 'attribute']
 
-Local $TABLE_LOOKUP_RARITY = 'LOOKUP_RARITY'
-Local $SCHEMA_LOOKUP_RARITY = ['rarity_ID', 'rarity']
+Global $TABLE_LOOKUP_RARITY = 'LOOKUP_RARITY'
+Global $SCHEMA_LOOKUP_RARITY = ['rarity_ID', 'rarity']
 
-Local $TABLE_LOOKUP_TYPE = 'LOOKUP_TYPE'
-Local $SCHEMA_LOOKUP_TYPE = ['type_ID', 'type']
+Global $TABLE_LOOKUP_TYPE = 'LOOKUP_TYPE'
+Global $SCHEMA_LOOKUP_TYPE = ['type_ID', 'type']
 
 ; Those lookups are built from the data table filled by the user
-Local $TABLE_LOOKUP_MODEL = 'LOOKUP_MODEL'
-Local $SCHEMA_LOOKUP_MODEL = ['type_ID', 'model_ID', 'model_name', 'OS']
+Global $TABLE_LOOKUP_MODEL = 'LOOKUP_MODEL'
+Global $SCHEMA_LOOKUP_MODEL = ['type_ID', 'model_ID', 'model_name', 'OS']
 
-Local $TABLE_LOOKUP_UPGRADES = 'LOOKUP_UPGRADES'
-Local $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa', 'name', 'propagate']
+Global $TABLE_LOOKUP_UPGRADES = 'LOOKUP_UPGRADES'
+Global $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa', 'name', 'propagate']
 #EndRegion Tables
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage

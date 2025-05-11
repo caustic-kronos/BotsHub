@@ -16,19 +16,19 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
 
 Opt('MustDeclareVars', 1)
 
-Local Const $DragonMossBotVersion = '0.1'
+Global Const $DragonMossBotVersion = '0.1'
 
 ; ==== Constants ====
-Local Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
-Local Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
+Global Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Wilderness Survival' & @CRLF _
@@ -36,19 +36,19 @@ Local Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-Local Const $DRAGONMOSS_FARM_DURATION = 2 * 60 * 1000
+Global Const $DRAGONMOSS_FARM_DURATION = 2 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DwarvenStability) is better than UseSkillEx(1))
-Local Const $DM_DwarvenStability = 1
-Local Const $DM_StormChaser = 2
-Local Const $DM_ShroudOfDistress = 3
-Local Const $DM_DeadlyParadox = 4
-Local Const $DM_ShadowForm = 5
-Local Const $DM_MentalBlock = 6
-Local Const $DM_DeathsCharge = 7
-Local Const $DM_WhirlingDefense = 8
+Global Const $DM_DwarvenStability = 1
+Global Const $DM_StormChaser = 2
+Global Const $DM_ShroudOfDistress = 3
+Global Const $DM_DeadlyParadox = 4
+Global Const $DM_ShadowForm = 5
+Global Const $DM_MentalBlock = 6
+Global Const $DM_DeathsCharge = 7
+Global Const $DM_WhirlingDefense = 8
 
-Local $DM_FARM_SETUP = False
+Global $DM_FARM_SETUP = False
 
 ;~ Main method to farm Dragon Moss
 Func DragonMossFarm($STATUS)

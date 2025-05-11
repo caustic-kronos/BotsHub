@@ -16,8 +16,8 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
@@ -25,11 +25,11 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constantes ====
-Local Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
+Global Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
 ; Average duration ~ 35s
-Local Const $IRIS_FARM_DURATION = 35 * 1000
+Global Const $IRIS_FARM_DURATION = 35 * 1000
 
-Local $IRIS_FARM_SETUP = False
+Global $IRIS_FARM_SETUP = False
 
 ;~ Main method to farm Red Iris Flowers in Eden
 Func EdenIrisFarm($STATUS)
@@ -87,7 +87,6 @@ Func PickUpIris()
 	Local $agent
 	Local $item
 	Local $deadlock
-	Local $success = True
 	For $i = 1 To GetMaxAgents()
 		$agent = GetAgentByID($i)
 		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
@@ -101,8 +100,7 @@ Func PickUpIris()
 				If GetIsDead() Then Return
 				If TimerDiff($deadlock) > 20000 Then
 					Info('Could not get iris at ' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y'))
-					$success = False
-					ExitLoop
+					Return False
 				EndIf
 			WEnd
 			Return True

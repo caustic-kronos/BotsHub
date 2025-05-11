@@ -31,42 +31,42 @@ Global Const $ID_UNKNOWN_STACKABLE_7	= 7052
 
 
 #Region Modes
-Global Const $ID_NORMAL_MODE	= 0
-Global Const $ID_HARD_MODE		= 1
+Global Const $ID_NORMAL_MODE			= 0
+Global Const $ID_HARD_MODE				= 1
 #EndRegion Modes
 
 
 #Region Locations
-Global Const $ID_EUROPE			= 2
-Global Const $ID_INTERNATIONAL	= -2	; incorrect
-Global Const $ID_KOREA			= 1		; incorrect
-Global Const $ID_CHINA			= 3		; incorrect
-Global Const $ID_JAPAN			= 4		; incorrect
-Global Const $ID_ENGLISH		= 0
-Global Const $ID_FRENCH			= 2
-Global Const $ID_GERMAN			= 3
-Global Const $ID_ITALIAN		= 4
-Global Const $ID_POLISH			= 9
-Global Const $ID_RUSSIAN		= 10
-Global Const $ID_SPANISH		= 5
+Global Const $ID_EUROPE					= 2
+Global Const $ID_INTERNATIONAL			= -2	; incorrect
+Global Const $ID_KOREA					= 1		; incorrect
+Global Const $ID_CHINA					= 3		; incorrect
+Global Const $ID_JAPAN					= 4		; incorrect
+Global Const $ID_ENGLISH				= 0
+Global Const $ID_FRENCH					= 2
+Global Const $ID_GERMAN					= 3
+Global Const $ID_ITALIAN				= 4
+Global Const $ID_POLISH					= 9
+Global Const $ID_RUSSIAN				= 10
+Global Const $ID_SPANISH				= 5
 
-Local Const $ID_English_District					=	[$ID_ENGLISH, $ID_EUROPE]
-Local Const $ID_French_District						=	[$ID_FRENCH, $ID_EUROPE]
-Local Const $ID_German_District						=	[$ID_GERMAN, $ID_EUROPE]
-Local Const $ID_Italian_District					=	[$ID_ITALIAN, $ID_EUROPE]
-Local Const $ID_Polish_District						=	[$ID_POLISH, $ID_EUROPE]
-Local Const $ID_Russian_District					=	[$ID_RUSSIAN, $ID_EUROPE]
-Local Const $ID_Spanish_District					=	[$ID_SPANISH, $ID_EUROPE]
-Local Const $ID_American_District					=	[$ID_ENGLISH, $ID_ENGLISH]
-Local Const $ID_Chinese_District					=	[$ID_CHINA, $ID_ENGLISH]
-Local Const $ID_Japanese_District					=	[$ID_JAPAN, $ID_ENGLISH]
-Local Const $ID_Korean_District						=	[$ID_KOREA, $ID_ENGLISH]
-Local Const $ID_International_District				=	[$ID_INTERNATIONAL, $ID_ENGLISH]
+Global Const $ID_English_District		=	[$ID_ENGLISH, $ID_EUROPE]
+Global Const $ID_French_District		=	[$ID_FRENCH, $ID_EUROPE]
+Global Const $ID_German_District		=	[$ID_GERMAN, $ID_EUROPE]
+Global Const $ID_Italian_District		=	[$ID_ITALIAN, $ID_EUROPE]
+Global Const $ID_Polish_District		=	[$ID_POLISH, $ID_EUROPE]
+Global Const $ID_Russian_District		=	[$ID_RUSSIAN, $ID_EUROPE]
+Global Const $ID_Spanish_District		=	[$ID_SPANISH, $ID_EUROPE]
+Global Const $ID_American_District		=	[$ID_ENGLISH, $ID_ENGLISH]
+Global Const $ID_Chinese_District		=	[$ID_CHINA, $ID_ENGLISH]
+Global Const $ID_Japanese_District		=	[$ID_JAPAN, $ID_ENGLISH]
+Global Const $ID_Korean_District		=	[$ID_KOREA, $ID_ENGLISH]
+Global Const $ID_International_District	=	[$ID_INTERNATIONAL, $ID_ENGLISH]
 
-Local Const $DistrictNames							=	['English', 'French', 'German', 'Italian', 'Polish', 'Russian', 'Spanish', 'America', 'China', 'Japan', 'Korea', 'International']
-Local Const $DistrictAndRegionIds					=	[$ID_English_District, $ID_French_District, $ID_German_District, $ID_Italian_District, $ID_Polish_District, $ID_Russian_District, _
+Global Const $DistrictNames				=	['English', 'French', 'German', 'Italian', 'Polish', 'Russian', 'Spanish', 'America', 'China', 'Japan', 'Korea', 'International']
+Global Const $DistrictAndRegionIds		=	[$ID_English_District, $ID_French_District, $ID_German_District, $ID_Italian_District, $ID_Polish_District, $ID_Russian_District, _
 															$ID_Spanish_District, $ID_American_District, $ID_Chinese_District, $ID_Japanese_District, $ID_Korean_District, $ID_International_District]
-Global Const $RegionMap								=	MapFromArrays($DistrictNames, $DistrictAndRegionIds)
+Global Const $RegionMap					=	MapFromArrays($DistrictNames, $DistrictAndRegionIds)
 #EndRegion Locations
 
 
@@ -211,64 +211,64 @@ Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting']
 												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
 												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
 												[$ID_Mysticism, 'Mysticism'], [$ID_Scythe_Mastery, 'Scythe Mastery']]
-Local Const $Unknown_Attributes				= []
-Local Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
-Local Const $Necromancer_Attributes			= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
-Local Const $Elementalist_Attributes		= [$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage]
-Local Const $Monk_Attributes				= [$ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor]
-Local Const $Warrior_Attributes				= [$ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics]
-Local Const $Ranger_Attributes				= [$ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship]
-Local Const $Assassin_Attributes			= [$ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes]
-Local Const $Ritualist_Attributes			= [$ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power]
-Local Const $Paragon_Attributes				= [$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership]
-Local Const $Dervish_Attributes				= [$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism]
+Global Const $Unknown_Attributes			= []
+Global Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
+Global Const $Necromancer_Attributes		= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
+Global Const $Elementalist_Attributes		= [$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage]
+Global Const $Monk_Attributes				= [$ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor]
+Global Const $Warrior_Attributes			= [$ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics]
+Global Const $Ranger_Attributes				= [$ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship]
+Global Const $Assassin_Attributes			= [$ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes]
+Global Const $Ritualist_Attributes			= [$ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power]
+Global Const $Paragon_Attributes			= [$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership]
+Global Const $Dervish_Attributes			= [$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism]
 
-Local Const $All_Profession_IDs				=	[$ID_Unknown, $ID_Mesmer, $ID_Necromancer, $ID_Elementalist, $ID_Monk, $ID_Warrior, $ID_Ranger, $ID_Assassin, $ID_Ritualist, $ID_Paragon, $ID_Dervish]
-Local Const $All_Profession_Attributes		=	[$Unknown_Attributes, $Mesmer_Attributes, $Necromancer_Attributes, $Elementalist_Attributes, $Monk_Attributes, $Warrior_Attributes, $Ranger_Attributes, _
+Global Const $All_Profession_IDs			=	[$ID_Unknown, $ID_Mesmer, $ID_Necromancer, $ID_Elementalist, $ID_Monk, $ID_Warrior, $ID_Ranger, $ID_Assassin, $ID_Ritualist, $ID_Paragon, $ID_Dervish]
+Global Const $All_Profession_Attributes		=	[$Unknown_Attributes, $Mesmer_Attributes, $Necromancer_Attributes, $Elementalist_Attributes, $Monk_Attributes, $Warrior_Attributes, $Ranger_Attributes, _
 															$Assassin_Attributes, $Ritualist_Attributes, $Paragon_Attributes, $Dervish_Attributes]
 Global Const $AttributesByProfessionMap[]	=	MapFromArrays($All_Profession_IDs, $All_Profession_Attributes)
 #EndRegion Weapon Attributes
 
 
 #Region Type IDs
-Global Const $ID_Type_Armor_Salvage		= 0
-Global Const $TYPE_LEADHAND				= 1		;?
-Global Const $ID_Type_Axe				= 2
-Global Const $ID_Type_Bag				= 3
-Global Const $ID_Type_Foot_Armor		= 4
-Global Const $ID_Type_Bow				= 5
-Global Const $ID_Type_Bundle			= 6
-Global Const $ID_Type_Chest_Armor		= 7
-Global Const $ID_Type_Upgrade			= 8
-Global Const $ID_Type_Usable			= 9
-Global Const $ID_Type_Dye				= 10
-Global Const $ID_Type_Material			= 11	;Also includes Zcoins
-Global Const $ID_Type_Offhand			= 12
-Global Const $ID_Type_Hand_Armor		= 13
-Global Const $ID_Type_Celestial_Sigil	= 14
-Global Const $ID_Type_Hammer			= 15
-Global Const $ID_Type_Headgear_Armor	= 16
-Global Const $ID_Type_Trophy_2			= 17
-Global Const $ID_Type_Key				= 18
-Global Const $ID_Type_Leg_Armor			= 19
-Global Const $ID_Type_Money				= 20
-Global Const $ID_Type_Quest_Item		= 21
-Global Const $ID_Type_Wand				= 22
-Global Const $ID_Type_Shield			= 24
-Global Const $ID_Type_Staff				= 26
-Global Const $ID_Type_Sword				= 27
-Global Const $ID_Type_Kit				= 29	;? + Keg Ale
-Global Const $ID_Type_Trophy			= 30
-Global Const $ID_Type_Scroll			= 31
-Global Const $ID_Type_Dagger			= 32
-Global Const $ID_Type_Present			= 33	;?
-Global Const $ID_Type_Minipet			= 34
-Global Const $ID_Type_Scythe			= 35
-Global Const $ID_Type_Spear				= 36
-Global Const $ID_Type_Book				= 43
-Global Const $ID_Type_Costume_Body		= 44
-Global Const $ID_Type_Costume_Headpiece	= 45
-Global Const $ID_Type_Unequipped		= 46	;?
+Global Const $ID_Type_Armor_Salvage			= 0
+Global Const $TYPE_LEADHAND					= 1		;?
+Global Const $ID_Type_Axe					= 2
+Global Const $ID_Type_Bag					= 3
+Global Const $ID_Type_Foot_Armor			= 4
+Global Const $ID_Type_Bow					= 5
+Global Const $ID_Type_Bundle				= 6
+Global Const $ID_Type_Chest_Armor			= 7
+Global Const $ID_Type_Upgrade				= 8
+Global Const $ID_Type_Usable				= 9
+Global Const $ID_Type_Dye					= 10
+Global Const $ID_Type_Material				= 11	;Also includes Zcoins
+Global Const $ID_Type_Offhand				= 12
+Global Const $ID_Type_Hand_Armor			= 13
+Global Const $ID_Type_Celestial_Sigil		= 14
+Global Const $ID_Type_Hammer				= 15
+Global Const $ID_Type_Headgear_Armor		= 16
+Global Const $ID_Type_Trophy_2				= 17
+Global Const $ID_Type_Key					= 18
+Global Const $ID_Type_Leg_Armor				= 19
+Global Const $ID_Type_Money					= 20
+Global Const $ID_Type_Quest_Item			= 21
+Global Const $ID_Type_Wand					= 22
+Global Const $ID_Type_Shield				= 24
+Global Const $ID_Type_Staff					= 26
+Global Const $ID_Type_Sword					= 27
+Global Const $ID_Type_Kit					= 29	;? + Keg Ale
+Global Const $ID_Type_Trophy				= 30
+Global Const $ID_Type_Scroll				= 31
+Global Const $ID_Type_Dagger				= 32
+Global Const $ID_Type_Present				= 33	;?
+Global Const $ID_Type_Minipet				= 34
+Global Const $ID_Type_Scythe				= 35
+Global Const $ID_Type_Spear					= 36
+Global Const $ID_Type_Book					= 43
+Global Const $ID_Type_Costume_Body			= 44
+Global Const $ID_Type_Costume_Headpiece		= 45
+Global Const $ID_Type_Unequipped			= 46	;?
 Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor salvage'], [$TYPE_LEADHAND, 'TYPE_LEADHAND ?'], [$ID_Type_Axe, 'Axe'], [$ID_Type_Bag, 'Bag'], [$ID_Type_Foot_Armor, 'Foot armor'], _
 													[$ID_Type_Bow, 'Bow'], [$ID_Type_Bundle, 'Bundle'], [$ID_Type_Chest_Armor, 'Chest armor'], [$ID_Type_Upgrade, 'Upgrade'], [$ID_Type_Usable, 'Usables'], _
 													[$ID_Type_Dye, 'Dye'], [$ID_Type_Material, 'Material'], [$ID_Type_Offhand, 'Offhand'], [$ID_Type_Hand_Armor, 'Hand armor'], [$ID_Type_Celestial_Sigil, 'Celestial Sigil'], [$ID_Type_Hammer, 'Hammer'], _
@@ -278,36 +278,36 @@ Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor sa
 													[$ID_Type_Dagger, 'Dagger'], [$ID_Type_Present, 'PRESENT ?'], [$ID_Type_Minipet, 'Minipet'], [$ID_Type_Scythe, 'Scythe'], _
 													[$ID_Type_Spear, 'Spear'], [$ID_Type_Book, 'Book'], [$ID_Type_Costume_Body, 'Costume body'], [$ID_Type_Costume_Headpiece, 'Costume headpiece'], [$ID_Type_Unequipped, 'TYPE UNEQUIPED ?']]
 
-Local Const $Armor_Types_Array			= [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
+Global Const $Armor_Types_Array				= [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
 Global Const $Weapon_Types_Array			= [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-Global Const $Map_Armor_Types			= MapFromArray($Armor_Types_Array)
-Global Const $Map_Weapon_Types			= MapFromArray($Weapon_Types_Array)
+Global Const $Map_Armor_Types				= MapFromArray($Armor_Types_Array)
+Global Const $Map_Weapon_Types				= MapFromArray($Weapon_Types_Array)
 
 ; Damage relative to the req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
-Local Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Local Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Local Const $Focus_Max_Damage_Per_Level				=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
-Local Const $Hammer_Max_Damage_Per_Level			=	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
-Local Const $Wand_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Local Const $Shield_Max_Damage_Per_Level			=	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
-Local Const $Staff_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Local Const $Sword_Max_Damage_Per_Level				=	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
-Local Const $Dagger_Max_Damage_Per_Level			=	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
-Local Const $Scythe_Max_Damage_Per_Level			=	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
-Local Const $Spear_Max_Damage_Per_Level				=	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
-Local Const $Weapons_Max_Damage_Per_Level_Keys		=	[$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-Local Const $Weapons_Max_Damage_Per_Level_Values	=	[$Axe_Max_Damage_Per_Level, $Bow_Max_Damage_Per_Level, $Focus_Max_Damage_Per_Level, $Hammer_Max_Damage_Per_Level, $Wand_Max_Damage_Per_Level, $Shield_Max_Damage_Per_Level, _
+Global Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Global Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Global Const $Focus_Max_Damage_Per_Level				=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
+Global Const $Hammer_Max_Damage_Per_Level			=	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
+Global Const $Wand_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Global Const $Shield_Max_Damage_Per_Level			=	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
+Global Const $Staff_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Global Const $Sword_Max_Damage_Per_Level				=	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
+Global Const $Dagger_Max_Damage_Per_Level			=	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
+Global Const $Scythe_Max_Damage_Per_Level			=	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
+Global Const $Spear_Max_Damage_Per_Level				=	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
+Global Const $Weapons_Max_Damage_Per_Level_Keys		=	[$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+Global Const $Weapons_Max_Damage_Per_Level_Values	=	[$Axe_Max_Damage_Per_Level, $Bow_Max_Damage_Per_Level, $Focus_Max_Damage_Per_Level, $Hammer_Max_Damage_Per_Level, $Wand_Max_Damage_Per_Level, $Shield_Max_Damage_Per_Level, _
 															$Staff_Max_Damage_Per_Level, $Sword_Max_Damage_Per_Level, $Dagger_Max_Damage_Per_Level, $Scythe_Max_Damage_Per_Level, $Spear_Max_Damage_Per_Level]
 Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damage_Per_Level_Keys, $Weapons_Max_Damage_Per_Level_Values)
 #EndRegion Type IDs
 
 
 #Region MapMarkers
-Global Const $ID_GadgetID_Smol_Chest		= 6062		;Istani chests
-Global Const $ID_GadgetID_NM_Chest			= 4582
-Global Const $ID_GadgetID_HM_Chest			= 8141
-Local Const $Chests_Array[]					= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest]
-Global Const $Map_Chests					= MapFromArray($Chests_Array)
+Global Const $ID_GadgetID_Smol_Chest	= 6062		;Istani chests
+Global Const $ID_GadgetID_NM_Chest		= 4582
+Global Const $ID_GadgetID_HM_Chest		= 8141
+Global Const $Chests_Array[]			= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest]
+Global Const $Map_Chests				= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
 
 
@@ -415,15 +415,15 @@ Global Const $ID_Weakness	= 486
 
 
 #Region Items
-Global Const $ID_Money		= 2511
+Global Const $ID_Money					= 2511
 
-Global Const $RARITY_White	= 2621
-Global Const $RARITY_Gray	= 2622
-Global Const $RARITY_Blue	= 2623
-Global Const $RARITY_Gold	= 2624
-Global Const $RARITY_Purple	= 2626
-Global Const $RARITY_Green	= 2627
-Global Const $RARITY_Red	= 33026
+Global Const $RARITY_White				= 2621
+Global Const $RARITY_Gray				= 2622
+Global Const $RARITY_Blue				= 2623
+Global Const $RARITY_Gold				= 2624
+Global Const $RARITY_Purple				= 2626
+Global Const $RARITY_Green				= 2627
+Global Const $RARITY_Red				= 33026
 Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_White, 'White'], [$RARITY_Blue, 'Blue'], [$RARITY_Purple, 'Purple'], [$RARITY_Gold, 'Gold'], [$RARITY_Green, 'Green'], [$RARITY_Red, 'Red']]
 
 #Region Merchant Items
@@ -472,14 +472,14 @@ Global Const $ID_Obsidian_Key			= 5971
 Global Const $ID_Lockpick				= 22751
 Global Const $ID_Zaishen_Key			= 28571
 Global Const $ID_Bogroots_Boss_Key		= 2593
-Local Const $Keys_Array[]				= [$ID_Ascalonian_Key, $ID_Steel_Key, $ID_Krytan_Key, $ID_Maguuma_Key, $ID_Elonian_Key, $ID_Shiverpeak_Key, $ID_Darkstone_Key, $ID_Miners_Key, $ID_Shing_Jea_Key, $ID_Canthan_Key, $ID_Kurzick_Key, _
+Global Const $Keys_Array[]				= [$ID_Ascalonian_Key, $ID_Steel_Key, $ID_Krytan_Key, $ID_Maguuma_Key, $ID_Elonian_Key, $ID_Shiverpeak_Key, $ID_Darkstone_Key, $ID_Miners_Key, $ID_Shing_Jea_Key, $ID_Canthan_Key, $ID_Kurzick_Key, _
 											$ID_Stoneroot_Key, $ID_Luxon_Key, $ID_Deep_Jade_Key, $ID_Forbidden_Key, $ID_Istani_Key, $ID_Kournan_Key, $ID_Vabbian_Key, $ID_Ancient_Elonian_Key, $ID_Margonite_Key, $ID_Demonic_Key, $ID_Phantom_Key, _
 											$ID_Obsidian_Key, $ID_Bogroots_Boss_Key, $ID_Zaishen_Key]
 Global Const $Map_Keys					= MapFromArray($Keys_Array)
 #EndRegion Keys
 
 
-Local Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_Expert_Salvage_Kit, $ID_Salvage_Kit, $ID_Salvage_Kit_2, $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit, $ID_Lockpick]
+Global Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_Expert_Salvage_Kit, $ID_Salvage_Kit, $ID_Salvage_Kit_2, $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit, $ID_Lockpick]
 Global Const $Map_General_Items		= MapFromArray($General_Items_Array)
 
 
@@ -497,7 +497,7 @@ Global Const $ID_Black_Dye	= 10
 Global Const $ID_Gray_Dye	= 11
 Global Const $ID_White_Dye	= 12
 Global Const $ID_Pink_Dye	= 13
-Local Const $Dyes_Array[]	= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
+Global Const $Dyes_Array[]	= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
 Global Const $Map_Dyes		= MapFromArray($Dyes_Array)
 #EndRegion Dyes
 
@@ -514,7 +514,7 @@ Global Const $ID_Hunters_Insight_Scroll		= 5976
 Global Const $ID_Scroll_of_the_Lightbringer	= 21233
 Global Const $ID_Deep_Scroll				= 22279
 Global Const $ID_FoW_Scroll					= 22280
-Local Const $Blue_Scrolls_Array[]			= [$ID_Adventurers_Insight_Scroll, $ID_Rampagers_Insight_Scroll, $ID_Hunters_Insight_Scroll]
+Global Const $Blue_Scrolls_Array[]			= [$ID_Adventurers_Insight_Scroll, $ID_Rampagers_Insight_Scroll, $ID_Hunters_Insight_Scroll]
 Global Const $Gold_Scrolls_Array[]			= [$ID_Urgoz_Scroll, $ID_UW_Scroll, $ID_Heros_Insight_Scroll, $ID_Berserkers_Insight_Scroll, $ID_Slayers_Insight_Scroll, $ID_Scroll_of_the_Lightbringer, $ID_Deep_Scroll, $ID_FoW_Scroll]
 Global Const $Map_Blue_Scrolls				= MapFromArray($Blue_Scrolls_Array)
 Global Const $Map_Gold_Scrolls				= MapFromArray($Gold_Scrolls_Array)
@@ -559,22 +559,22 @@ Global Const $ID_Granite_Slab					= 955
 Global Const $ID_Pile_of_Glittering_Dust		= 929
 Global Const $ID_Plant_Fibers					= 934
 Global Const $ID_Feather						= 933
-Local Const $Rare_Materials_Double_Array[][]	= [	[$ID_Fur_Square, 'Fur Square'], [$ID_Bolt_of_Linen, 'Bolt of Linen'], [$ID_Bolt_of_Damask, 'Bolt of Damask'], [$ID_Bolt_of_Silk, 'Bolt of Silk'], [$ID_Glob_of_Ectoplasm, 'Glob of Ectoplasm'], _
+Global Const $Rare_Materials_Double_Array[][]	= [	[$ID_Fur_Square, 'Fur Square'], [$ID_Bolt_of_Linen, 'Bolt of Linen'], [$ID_Bolt_of_Damask, 'Bolt of Damask'], [$ID_Bolt_of_Silk, 'Bolt of Silk'], [$ID_Glob_of_Ectoplasm, 'Glob of Ectoplasm'], _
 													[$ID_Steel_Ingot, 'Steel Ingot'], [$ID_Deldrimor_Steel_Ingot, 'Deldrimor Steel Ingot'], [$ID_Monstrous_Claw, 'Monstrous Claw'], [$ID_Monstrous_Eye, 'Monstrous Eye'], [$ID_Monstrous_Fang, 'Monstrous Fang'], _
 													[$ID_Ruby, 'Ruby'], [$ID_Sapphire, 'Sapphire'], [$ID_Diamond, 'Diamond'], [$ID_Onyx_Gemstone, 'Onyx Gemstones'], [$ID_Lump_of_Charcoal, 'Lumps of Charcoal'], [$ID_Obsidian_Shard, 'Obsidian Shard'], _
 													[$ID_Tempered_Glass_Vial, 'Tempered Glass Vial'], [$ID_Leather_Square, 'Leather Squares'], [$ID_Elonian_Leather_Square, 'Elonian Leather Square'], [$ID_Vial_of_Ink, 'Vial of Ink'], _
 													[$ID_Rolls_of_Parchment, 'Rolls of Parchment'], [$ID_Rolls_of_Vellum, 'Rolls of Vellum'], [$ID_Spiritwood_Planks, 'Spiritwood Planks'], [$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
 Global Const $Map_Rare_Materials				= MapFromDoubleArray($Rare_Materials_Double_Array)
-Local Const $Rare_Materials_Array[]				= [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
+Global Const $Rare_Materials_Array[]				= [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
 													$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, _
 													$ID_Rolls_of_Parchment, $ID_Rolls_of_Vellum, $ID_Spiritwood_Planks, $ID_Amber_Chunk, $ID_Jadeite_Shard]
-Local Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
-Local $All_Materials_Array						= $Rare_Materials_Array
+Global Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
+Global $All_Materials_Array						= $Rare_Materials_Array
 _ArrayConcatenate($All_Materials_Array, $Basic_Materials_Array)
 Global Const $Map_Basic_Materials				= MapFromArray($Basic_Materials_Array)
 Global Const $Map_All_Materials					= MapFromArray($All_Materials_Array)
 
-Local Const $Materials_Double_Array[][]			= [	[$ID_Bone, 1], [$ID_Iron_Ingot, 2], [$ID_Tanned_Hide_Square, 3], [$ID_Scale, 4], [$ID_Chitin_Fragment, 5], [$ID_Bolt_of_Cloth, 6], [$ID_Wood_Plank, 7], [$ID_Granite_Slab, 9], [$ID_Pile_of_Glittering_Dust, 10], [$ID_Plant_Fibers, 11], [$ID_Feather, 12], _
+Global Const $Materials_Double_Array[][]		= [	[$ID_Bone, 1], [$ID_Iron_Ingot, 2], [$ID_Tanned_Hide_Square, 3], [$ID_Scale, 4], [$ID_Chitin_Fragment, 5], [$ID_Bolt_of_Cloth, 6], [$ID_Wood_Plank, 7], [$ID_Granite_Slab, 9], [$ID_Pile_of_Glittering_Dust, 10], [$ID_Plant_Fibers, 11], [$ID_Feather, 12], _
 													[$ID_Fur_Square, 13], [$ID_Bolt_of_Linen, 14], [$ID_Bolt_of_Damask, 15], [$ID_Bolt_of_Silk, 16], [$ID_Glob_of_Ectoplasm, 17], [$ID_Steel_Ingot, 18], [$ID_Deldrimor_Steel_Ingot, 19], [$ID_Monstrous_Claw, 20], [$ID_Monstrous_Eye, 21], [$ID_Monstrous_Fang, 22], _
 													[$ID_Ruby, 23], [$ID_Sapphire, 24], [$ID_Diamond, 25], [$ID_Onyx_Gemstone, 26], [$ID_Lump_of_Charcoal, 27], [$ID_Obsidian_Shard, 28], [$ID_Tempered_Glass_Vial, 30], [$ID_Leather_Square, 31], [$ID_Elonian_Leather_Square, 32], [$ID_Vial_of_Ink, 33], _
 													[$ID_Rolls_of_Parchment, 34], [$ID_Rolls_of_Vellum, 35], [$ID_Spiritwood_Planks, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
@@ -615,13 +615,13 @@ Global Const $ID_Keg_of_Aged_Hunters_Ale	= 31146
 Global Const $ID_Krytan_Brandy				= 35124
 Global Const $ID_Battle_Isle_Iced_Tea		= 36682
 ; For pickup use
-Local Const $Alcohols_Array[]				= [$ID_Hunters_Ale, $ID_Flask_of_Firewater, $ID_Dwarven_Ale, $ID_Witchs_Brew, $ID_Spiked_Eggnog, $ID_Vial_of_Absinthe, $ID_Eggnog, $ID_Bottle_of_Rice_Wine, $ID_Zehtukas_Jug, $ID_Bottle_of_Juniberry_Gin, _
+Global Const $Alcohols_Array[]				= [$ID_Hunters_Ale, $ID_Flask_of_Firewater, $ID_Dwarven_Ale, $ID_Witchs_Brew, $ID_Spiked_Eggnog, $ID_Vial_of_Absinthe, $ID_Eggnog, $ID_Bottle_of_Rice_Wine, $ID_Zehtukas_Jug, $ID_Bottle_of_Juniberry_Gin, _
 												$ID_Bottle_of_Vabbian_Wine, $ID_Shamrock_Ale, $ID_Aged_Dwarven_Ale, $ID_Hard_Apple_Cider, $ID_Bottle_of_Grog, $ID_Aged_Hunters_Ale, $ID_Keg_of_Aged_Hunters_Ale, $ID_Krytan_Brandy, $ID_Battle_Isle_Iced_Tea]
 ; For using them
-Local Const $OnePoint_Alcohols_Array[]		= [$ID_Hunters_Ale, $ID_Dwarven_Ale, $ID_Witchs_Brew, $ID_Vial_of_Absinthe, $ID_Eggnog, $ID_Bottle_of_Rice_Wine, $ID_Zehtukas_Jug, $ID_Bottle_of_Juniberry_Gin, $ID_Bottle_of_Vabbian_Wine, _
+Global Const $OnePoint_Alcohols_Array[]		= [$ID_Hunters_Ale, $ID_Dwarven_Ale, $ID_Witchs_Brew, $ID_Vial_of_Absinthe, $ID_Eggnog, $ID_Bottle_of_Rice_Wine, $ID_Zehtukas_Jug, $ID_Bottle_of_Juniberry_Gin, $ID_Bottle_of_Vabbian_Wine, _
 												$ID_Shamrock_Ale, $ID_Hard_Apple_Cider]
-Local Const $ThreePoint_Alcohols_Array[]	= [$ID_Flask_of_Firewater, $ID_Spiked_Eggnog, $ID_Aged_Dwarven_Ale, $ID_Bottle_of_Grog, $ID_Aged_Hunters_Ale, $ID_Keg_of_Aged_Hunters_Ale, $ID_Krytan_Brandy]
-Local Const $FiftyPoint_Alcohols_Array[]	= [$ID_Battle_Isle_Iced_Tea]
+Global Const $ThreePoint_Alcohols_Array[]	= [$ID_Flask_of_Firewater, $ID_Spiked_Eggnog, $ID_Aged_Dwarven_Ale, $ID_Bottle_of_Grog, $ID_Aged_Hunters_Ale, $ID_Keg_of_Aged_Hunters_Ale, $ID_Krytan_Brandy]
+Global Const $FiftyPoint_Alcohols_Array[]	= [$ID_Battle_Isle_Iced_Tea]
 Global Const $Map_Alcohols					= MapFromArray($Alcohols_Array)
 Global Const $Map_OnePoint_Alcohols			= MapFromArray($OnePoint_Alcohols_Array)
 Global Const $Map_ThreePoint_Alcohols		= MapFromArray($ThreePoint_Alcohols_Array)
@@ -639,8 +639,8 @@ Global Const $ID_Sparkler				= 21813
 Global Const $ID_Crate_of_Fireworks		= 29436		; Not spammable
 Global Const $ID_Disco_Ball				= 29543		; Not Spammable
 Global Const $ID_Party_Beacon			= 36683
-Local Const $Spammable_Party_Array[]	= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon]
-Local Const $All_Festive_Array[]		= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon, $ID_Crate_of_Fireworks, $ID_Disco_Ball]
+Global Const $Spammable_Party_Array[]	= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon]
+Global Const $All_Festive_Array[]		= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon, $ID_Crate_of_Fireworks, $ID_Disco_Ball]
 Global Const $Map_Spammable_Party		= MapFromArray($Spammable_Party_Array)
 Global Const $Map_Festive				= MapFromArray($All_Festive_Array)
 #EndRegion Party
@@ -657,7 +657,7 @@ Global Const $ID_MiniTreats_of_Purity	= 30208
 Global Const $ID_Jar_of_Honey			= 31150
 Global Const $ID_Krytan_Lokum			= 35125
 Global Const $ID_Delicious_Cake			= 36681
-Local Const $Town_Sweets_Array[]		= [$ID_Creme_Brulee, $ID_Red_Bean_Cake, $ID_Mandragor_Root_Cake, $ID_Fruitcake, $ID_Sugary_Blue_Drink, $ID_Chocolate_Bunny, $ID_MiniTreats_of_Purity, $ID_Jar_of_Honey, $ID_Krytan_Lokum, $ID_Delicious_Cake]
+Global Const $Town_Sweets_Array[]		= [$ID_Creme_Brulee, $ID_Red_Bean_Cake, $ID_Mandragor_Root_Cake, $ID_Fruitcake, $ID_Sugary_Blue_Drink, $ID_Chocolate_Bunny, $ID_MiniTreats_of_Purity, $ID_Jar_of_Honey, $ID_Krytan_Lokum, $ID_Delicious_Cake]
 Global Const $Map_Town_Sweets			= MapFromArray($Town_Sweets_Array)
 
 #Region Sweet Pcon
@@ -680,7 +680,7 @@ Global Const $ID_Blue_Rock_Candy		= 31151
 Global Const $ID_Green_Rock_Candy		= 31152
 Global Const $ID_Red_Rock_Candy			= 31153
 Global Const $ID_War_Supplies			= 35121
-Local Const $Sweet_Pcons_Array			= [$ID_Drake_Kabob, $ID_Bowl_of_Skalefin_Soup, $ID_Pahnai_Salad, $ID_Birthday_Cupcake, $ID_Golden_Egg, $ID_Candy_Apple, $ID_Candy_Corn, $ID_Slice_of_Pumpkin_Pie, _
+Global Const $Sweet_Pcons_Array			= [$ID_Drake_Kabob, $ID_Bowl_of_Skalefin_Soup, $ID_Pahnai_Salad, $ID_Birthday_Cupcake, $ID_Golden_Egg, $ID_Candy_Apple, $ID_Candy_Corn, $ID_Slice_of_Pumpkin_Pie, _
 											$ID_Lunar_Fortune_2014, $ID_Blue_Rock_Candy, $ID_Green_Rock_Candy, $ID_Red_Rock_Candy, $ID_War_Supplies]
 Global Const $Map_Sweet_Pcons			= MapFromArray($Sweet_Pcons_Array)
 #EndRegion Sweet Pcon
@@ -699,7 +699,7 @@ Global Const $ID_Pumpkin_Cookie				= 28433
 Global Const $ID_Oath_of_Purity				= 30206
 Global Const $ID_Seal_of_the_Dragon_Empire	= 30211
 Global Const $ID_Shining_Blade_Ration		= 35127
-Local Const $DPRemoval_Sweets[]				= [$ID_Peppermint_CC, $ID_Refined_Jelly, $ID_Wintergreen_CC, $ID_Rainbow_CC, $ID_Four_Leaf_Clover, $ID_Honeycomb, $ID_Pumpkin_Cookie, $ID_Shining_Blade_Ration]
+Global Const $DPRemoval_Sweets[]			= [$ID_Peppermint_CC, $ID_Refined_Jelly, $ID_Wintergreen_CC, $ID_Rainbow_CC, $ID_Four_Leaf_Clover, $ID_Honeycomb, $ID_Pumpkin_Cookie, $ID_Shining_Blade_Ration]
 Global Const $Map_DPRemoval_Sweets			= MapFromArray($DPRemoval_Sweets)
 #EndRegion DP Removal
 
@@ -715,7 +715,7 @@ Global Const $ID_Wayfarer_Mark				= 37765
 Global Const $ID_Lunar_Token				= 21833
 Global Const $ID_Lunar_Tokens				= 28433
 Global Const $ID_ToT						= 28434
-Local Const $Special_Drops[]				= [$ID_CC_Shard, $ID_Victory_Token, $ID_Wintersday_Gift, $ID_Wayfarer_Mark, $ID_Lunar_Token, $ID_Lunar_Tokens, $ID_ToT]
+Global Const $Special_Drops[]				= [$ID_CC_Shard, $ID_Victory_Token, $ID_Wintersday_Gift, $ID_Wayfarer_Mark, $ID_Lunar_Token, $ID_Lunar_Tokens, $ID_ToT]
 Global Const $Map_Special_Drops				= MapFromArray($Special_Drops)
 #EndRegion Special Drops
 
@@ -738,7 +738,7 @@ Global Const $ID_Encrypted_Charr_Battle_Plans	= 27976
 Global Const $ID_Ministerial_Decree				= 29109		; WoC quest item
 Global Const $ID_Keirans_Bow					= 35829		; Not really a drop
 Global Const $ID_Jar_of_Invigoration			= 27133
-Local Const $Map_Pieces_Array[]					= [$ID_Map_Piece_TL, $ID_Map_Piece_TR, $ID_Map_Piece_BL, $ID_Map_Piece_BR]
+Global Const $Map_Pieces_Array[]				= [$ID_Map_Piece_TL, $ID_Map_Piece_TR, $ID_Map_Piece_BL, $ID_Map_Piece_BR]
 Global Const $Map_Map_Pieces					= MapFromArray($Map_Pieces_Array)
 #EndRegion Stupid Drops
 
@@ -795,27 +795,27 @@ Global Const $ID_Royal_Gift							= 35120
 Global Const $ID_Confessors_Orders					= 35123
 Global Const $ID_Paper_Wrapped_Parcel				= 34212
 Global Const $ID_Sack_of_Random_Junk				= 34213
-;Global Const $ID_Legion_Loot_Bag	=
-;Global Const $ID_Reverie_Gift	=
+;Global Const $ID_Legion_Loot_Bag					=
+;Global Const $ID_Reverie_Gift						=
 Global Const $ID_Ministerial_Commendation			= 36985
 Global Const $ID_Imperial_Guard_Requisition_Order	= 29108
 Global Const $ID_Imperial_Guard_Lockbox				= 30212		; Not tradeable
-;Global Const $ID_Proof_of_Flames	=
-;Global Const $ID_Proof_of_Mountains	=
-;Global Const $ID_Proof_of_Waves	=
-;Global Const $ID_Proof_of_Winds	=
-;Global Const $ID_Racing_Medal	=
+;Global Const $ID_Proof_of_Flames					=
+;Global Const $ID_Proof_of_Mountains				=
+;Global Const $ID_Proof_of_Waves					=
+;Global Const $ID_Proof_of_Winds					=
+;Global Const $ID_Racing_Medal						=
 Global Const $ID_Glob_of_Frozen_Ectoplasm			= 21509
-;Global Const $ID_Celestial_Miniature_Token	=
-;Global Const $ID_Dragon_Festival_Grab_Bag	=
+;Global Const $ID_Celestial_Miniature_Token			=
+;Global Const $ID_Dragon_Festival_Grab_Bag			=
 Global Const $ID_Red_Gift_Bag						= 21811
-;Global Const $ID_Lunar_Festival_Grab_Bag	=
+;Global Const $ID_Lunar_Festival_Grab_Bag			=
 Global Const $ID_Festival_Prize						= 15478
-;Global Const $ID_Imperial_Mask_Token	=
-;Global Const $ID_Ghoulish_Grab_Bag	=
-;Global Const $ID_Ghoulish_Accessory_Token	=
-;Global Const $ID_Frozen_Accessory_Token	=
-;Global Const $ID_Wintersday_Grab_Bag	=
+;Global Const $ID_Imperial_Mask_Token				=
+;Global Const $ID_Ghoulish_Grab_Bag					=
+;Global Const $ID_Ghoulish_Accessory_Token			=
+;Global Const $ID_Frozen_Accessory_Token			=
+;Global Const $ID_Wintersday_Grab_Bag				=
 Global Const $ID_Armbrace_of_Truth					= 21127
 Global Const $ID_Margonite_Gemstone					= 21128
 Global Const $ID_Stygian_Gemstone					= 21129
@@ -829,11 +829,11 @@ Global Const $ID_Heros_Zaishen_Strongbox			= 36666
 Global Const $ID_Gladiators_Zaishen_Strongbox		= 36667
 Global Const $ID_Strategists_Zaishen_Strongbox		= 36668
 Global Const $ID_Zhos_Journal						= 25866
-Local Const $Reward_Trophies_Array	= [$ID_Copper_Zaishen_Coin, $ID_Gold_Zaishen_Coin, $ID_Silver_Zaishen_Coin, $ID_Monastery_Credit, $ID_Imperial_Commendation, $ID_Luxon_Totem, $ID_Equipment_Requisition, $ID_Battle_Commendation, $ID_Kournan_Coin, $ID_Trade_Contract, _
+Global Const $Reward_Trophies_Array	= [$ID_Copper_Zaishen_Coin, $ID_Gold_Zaishen_Coin, $ID_Silver_Zaishen_Coin, $ID_Monastery_Credit, $ID_Imperial_Commendation, $ID_Luxon_Totem, $ID_Equipment_Requisition, $ID_Battle_Commendation, $ID_Kournan_Coin, $ID_Trade_Contract, _
 	$ID_Ancient_Artifact, $ID_Inscribed_Secret, $ID_Burol_Ironfists_Commendation, $ID_Bison_Championship_Token, $ID_Monumental_Tapestry, $ID_Royal_Gift, $ID_War_Supplies, $ID_Confessors_Orders, $ID_Paper_Wrapped_Parcel, $ID_Sack_of_Random_Junk, $ID_Ministerial_Commendation, _
 	$ID_Imperial_Guard_Requisition_Order, $ID_Imperial_Guard_Lockbox, $ID_Glob_of_Frozen_Ectoplasm, $ID_Red_Gift_Bag, $ID_Festival_Prize, $ID_Armbrace_of_Truth, $ID_Margonite_Gemstone, $ID_Stygian_Gemstone, $ID_Titan_Gemstone, $ID_Torment_Gemstone, $ID_Coffer_of_Whispers, _
 	$ID_Gift_of_the_Traveller, $ID_Gift_of_the_Huntsman, $ID_Champions_Zaishen_Strongbox, $ID_Heros_Zaishen_Strongbox, $ID_Gladiators_Zaishen_Strongbox, $ID_Strategists_Zaishen_Strongbox, $ID_Zhos_Journal]
-Global Const $Map_Reward_Trophies	= MapFromArray($Reward_Trophies_Array)
+Global Const $Map_Reward_Trophies					= MapFromArray($Reward_Trophies_Array)
 #EndRegion Reward Trophy
 
 
@@ -1058,7 +1058,7 @@ Global Const $ID_Dryder_Web					= 27070
 Global Const $ID_Vaettir_Essence			= 27071
 Global Const $ID_Krait_Skin					= 27729
 Global Const $ID_Undead_Bone				= 27974
-Local Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spiked_Crest, $ID_Hardened_Hump, $ID_Mergoyle_Skull, $ID_Glowing_Heart, $ID_Forest_Minotaur_Horn, $ID_Shadowy_Remnant, $ID_Abnormal_Seed, $ID_Bog_Skale_Fin, _
+Global Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spiked_Crest, $ID_Hardened_Hump, $ID_Mergoyle_Skull, $ID_Glowing_Heart, $ID_Forest_Minotaur_Horn, $ID_Shadowy_Remnant, $ID_Abnormal_Seed, $ID_Bog_Skale_Fin, _
 	$ID_Feathered_Caromi_Scalp, $ID_Shriveled_Eye, $ID_Dune_Burrower_Jaw, $ID_Losaru_Mane, $ID_Bleached_Carapace, $ID_Topaz_Crest, $ID_Encrusted_Lodestone, $ID_Massive_Jawbone, $ID_Iridescent_Griffon_Wing, $ID_Dessicated_Hydra_Claw, _
 	$ID_Minotaur_Horn, $ID_Jade_Mandible, $ID_Forgotten_Seal, $ID_White_Mantle_Emblem, $ID_White_Mantle_Badge, $ID_Mursaat_Token, $ID_Ebon_Spider_Leg, $ID_Ancient_Eye, $ID_Behemoth_Jaw, $ID_Maguuma_Mane, $ID_Thorny_Carapace, $ID_Tangled_Seed, _
 	$ID_Mossy_Mandible, $ID_Jungle_Skale_Fin, $ID_Jungle_Troll_Tusk, $ID_Obsidian_Burrower_Jaw, $ID_Demonic_Fang, $ID_Phantom_Residue, $ID_Gruesome_Sternum, $ID_Demonic_Remains, $ID_Stormy_Eye, $ID_Scar_Behemoth_Jaw, $ID_Fetid_Carapace, _
@@ -1077,20 +1077,20 @@ Local Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spike
 	$ID_Fungal_Root, $ID_Flesh_Reaver_Morsel, $ID_Golem_Runestone, $ID_Beetle_Egg, $ID_Blob_of_Ooze, $ID_Chromatic_Scale, $ID_Dryder_Web, $ID_Vaettir_Essence, $ID_Krait_Skin, $ID_Undead_Bone]
 Global Const $Map_Trophies	= MapFromArray($Trophies_Array)
 
-Local Const $Feather_Trophies_Array[]	= [$ID_Feathered_Caromi_Scalp, $ID_Feathered_Avicara_Scalp, $ID_Feathered_Crest, $ID_Feathered_Scalp, $ID_Skree_Wing, $ID_Frosted_Griffon_Wing, $ID_Iridescent_Griffon_Wing, $ID_Quetzal_Crest]
-Global Const $Map_Feather_Trophies	= MapFromArray($Feather_Trophies_Array)
-Local Const $Dust_Trophies_Array[]	= [$ID_Amphibian_Tongue, $ID_Ancient_Eye, $ID_Augmented_Flesh, $ID_Azure_Remains, $ID_Beetle_Egg, $ID_Black_Pearl, $ID_Blob_of_Ooze, $ID_Dark_Remains, $ID_Demonic_Fang, $ID_Demonic_Remains, $ID_Dryder_Web, _
-										$ID_Enslavement_Stone, $ID_Frostfire_Fang, $ID_Frozen_Wurm_Husk, $ID_Glacial_Stone, $ID_Heket_Tongue, $ID_Iboga_Petal, $ID_Immolated_Djinn_Essence, $ID_Jade_Bracelet, $ID_Kirin_Horn, $ID_Losaru_Mane, _
-										$ID_Maguuma_Mane, $ID_Molten_Eye, $ID_Moon_Shell, $ID_Mursaat_Token, $ID_Phantom_Residue, $ID_Pile_of_Elemental_Dust, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Sentient_Root, $ID_Sentient_Seed, _
-										$ID_Sentient_Spore, $ID_Shadowy_Remnant, $ID_Shiverpeak_Mane, $ID_Shriveled_Eye, $ID_Stormy_Eye, $ID_Umbral_Eye, $ID_Unctuous_Remains, $ID_Vaettir_Essence]
-Global Const $Map_Dust_Trophies	= MapFromArray($Dust_Trophies_Array)
-Local Const $Bones_Trophies_Array[]	= [$ID_Augmented_Flesh, $ID_Berserker_Horn, $ID_Bone_Charm, $ID_Curved_Mintaur_Horn, $ID_Dredge_Incisor, $ID_Flesh_Reaver_Morsel, $ID_Giant_Tusk, $ID_Gruesome_Ribcage, $ID_Gruesome_Sternum, $ID_Huge_Jawbone, _
-	$ID_Hunting_Minotaur_Horn, $ID_Jungle_Troll_Tusk, $ID_Keen_Oni_Claw, $ID_Massive_Jawbone, $ID_Mergoyle_Skull, $ID_Minotaur_Horn, $ID_Mountain_Troll_Tusk, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Saurian_Bone, _
-	$ID_Singed_Gargoyle_Skull, $ID_Skale_Claw, $ID_Skale_Fang, $ID_Skale_Tooth, $ID_Skeleton_Bone, $ID_Skelk_Claw, $ID_Skelk_Fang, $ID_Skree_Wing, $ID_Umbral_Skeletal_Limb, $ID_Undead_Bone, $ID_Warden_Horn]
-Global Const $Map_Bones_Trophies	= MapFromArray($Bones_Trophies_Array)
-Local Const $Fiber_Trophies_Array[]	= [$ID_Abnormal_Seed, $ID_Tangled_Seed, $ID_Scorched_Seed, $ID_Ornate_Grawl_Necklace, $ID_Alpine_Seed, $ID_Intricate_Grawl_Necklace, $ID_Gloom_Seed, $ID_Dragon_Root, $ID_Guardian_Moss, $ID_Sentient_Root, _
-	$ID_Sentient_Seed, $ID_Mandragor_Root, $ID_Iboga_Petal, $ID_Sentient_Spore, $ID_Sentient_Vine, $ID_Mountain_Root, $ID_Fibrous_Mandragor_Root, $ID_Fungal_Root]
-Global Const $Map_Fiber_Trophies	= MapFromArray($Fiber_Trophies_Array)
+Global Const $Feather_Trophies_Array[]		= [$ID_Feathered_Caromi_Scalp, $ID_Feathered_Avicara_Scalp, $ID_Feathered_Crest, $ID_Feathered_Scalp, $ID_Skree_Wing, $ID_Frosted_Griffon_Wing, $ID_Iridescent_Griffon_Wing, $ID_Quetzal_Crest]
+Global Const $Map_Feather_Trophies			= MapFromArray($Feather_Trophies_Array)
+Global Const $Dust_Trophies_Array[]			= [$ID_Amphibian_Tongue, $ID_Ancient_Eye, $ID_Augmented_Flesh, $ID_Azure_Remains, $ID_Beetle_Egg, $ID_Black_Pearl, $ID_Blob_of_Ooze, $ID_Dark_Remains, $ID_Demonic_Fang, $ID_Demonic_Remains, $ID_Dryder_Web, _
+												$ID_Enslavement_Stone, $ID_Frostfire_Fang, $ID_Frozen_Wurm_Husk, $ID_Glacial_Stone, $ID_Heket_Tongue, $ID_Iboga_Petal, $ID_Immolated_Djinn_Essence, $ID_Jade_Bracelet, $ID_Kirin_Horn, $ID_Losaru_Mane, _
+												$ID_Maguuma_Mane, $ID_Molten_Eye, $ID_Moon_Shell, $ID_Mursaat_Token, $ID_Phantom_Residue, $ID_Pile_of_Elemental_Dust, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Sentient_Root, $ID_Sentient_Seed, _
+												$ID_Sentient_Spore, $ID_Shadowy_Remnant, $ID_Shiverpeak_Mane, $ID_Shriveled_Eye, $ID_Stormy_Eye, $ID_Umbral_Eye, $ID_Unctuous_Remains, $ID_Vaettir_Essence]
+Global Const $Map_Dust_Trophies				= MapFromArray($Dust_Trophies_Array)
+Global Const $Bones_Trophies_Array[]		= [$ID_Augmented_Flesh, $ID_Berserker_Horn, $ID_Bone_Charm, $ID_Curved_Mintaur_Horn, $ID_Dredge_Incisor, $ID_Flesh_Reaver_Morsel, $ID_Giant_Tusk, $ID_Gruesome_Ribcage, $ID_Gruesome_Sternum, $ID_Huge_Jawbone, _
+												$ID_Hunting_Minotaur_Horn, $ID_Jungle_Troll_Tusk, $ID_Keen_Oni_Claw, $ID_Massive_Jawbone, $ID_Mergoyle_Skull, $ID_Minotaur_Horn, $ID_Mountain_Troll_Tusk, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Saurian_Bone, _
+												$ID_Singed_Gargoyle_Skull, $ID_Skale_Claw, $ID_Skale_Fang, $ID_Skale_Tooth, $ID_Skeleton_Bone, $ID_Skelk_Claw, $ID_Skelk_Fang, $ID_Skree_Wing, $ID_Umbral_Skeletal_Limb, $ID_Undead_Bone, $ID_Warden_Horn]
+Global Const $Map_Bones_Trophies			= MapFromArray($Bones_Trophies_Array)
+Global Const $Fiber_Trophies_Array[]		= [$ID_Abnormal_Seed, $ID_Tangled_Seed, $ID_Scorched_Seed, $ID_Ornate_Grawl_Necklace, $ID_Alpine_Seed, $ID_Intricate_Grawl_Necklace, $ID_Gloom_Seed, $ID_Dragon_Root, $ID_Guardian_Moss, $ID_Sentient_Root, _
+												$ID_Sentient_Seed, $ID_Mandragor_Root, $ID_Iboga_Petal, $ID_Sentient_Spore, $ID_Sentient_Vine, $ID_Mountain_Root, $ID_Fibrous_Mandragor_Root, $ID_Fungal_Root]
+Global Const $Map_Fiber_Trophies			= MapFromArray($Fiber_Trophies_Array)
 #EndRegion Stackable Trophies
 
 
@@ -1117,13 +1117,13 @@ Global Const $ID_Dervish_Tome			= 21803
 Global Const $ID_Ritualist_Tome			= 21804
 Global Const $ID_Paragon_Tome			= 21805
 ; All Tomes
-Local Const $Tomes_Array[]				= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, $ID_Ritualist_EliteTome, _
+Global Const $Tomes_Array[]				= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, $ID_Ritualist_EliteTome, _
 	$ID_Paragon_EliteTome, $ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
 ; Elite Tomes
-Local Const $Elite_Tomes_Array[]		= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, _
+Global Const $Elite_Tomes_Array[]		= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, _
 	$ID_Ritualist_EliteTome, $ID_Paragon_EliteTome]
 ; Normal Tomes
-Local Const $Regular_Tomes_Array[]		= [$ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
+Global Const $Regular_Tomes_Array[]		= [$ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
 Global Const $Map_Tomes					= MapFromArray($Tomes_Array)
 Global Const $Map_Elite_Tomes			= MapFromArray($Elite_Tomes_Array)
 Global Const $Map_Regular_Tomes			= MapFromArray($Regular_Tomes_Array)
@@ -1138,7 +1138,7 @@ Global Const $ID_Powerstone_of_Courage	= 24862
 Global Const $ID_Scroll_of_Resurrection	= 26501
 Global Const $ID_Star_of_Transference	= 25896
 Global Const $ID_Perfect_Salvage_Kit	= 25881
-Local Const $Consets_Array[]			= [$ID_Essence_of_Celerity, $ID_Armor_of_Salvation, $ID_Grail_of_Might]
+Global Const $Consets_Array[]			= [$ID_Essence_of_Celerity, $ID_Armor_of_Salvation, $ID_Grail_of_Might]
 Global Const $Map_Consets				= MapFromArray($Consets_Array)
 #EndRegion Consumable Crafter Items
 
@@ -1165,7 +1165,7 @@ Global Const $ID_Ghastly_Summon					= 32557
 Global Const $ID_Celestial_Summon				= 34176
 Global Const $ID_Shining_Blade_Summon			= 35126
 Global Const $ID_Legionnaire_Summoning_Crystal	= 37810
-Local Const $Summoning_Stones_Array[]			= [$ID_Merchant_Summon, $ID_Tengu_Summon, $ID_Imperial_Guard_Summon, $ID_Automaton_Summon, $ID_Chitinous_Summon, $ID_Mystical_Summon, $ID_Amber_Summon, $ID_Artic_Summon, $ID_Demonic_Summon, _
+Global Const $Summoning_Stones_Array[]			= [$ID_Merchant_Summon, $ID_Tengu_Summon, $ID_Imperial_Guard_Summon, $ID_Automaton_Summon, $ID_Chitinous_Summon, $ID_Mystical_Summon, $ID_Amber_Summon, $ID_Artic_Summon, $ID_Demonic_Summon, _
 													$ID_Gelatinous_Summon, $ID_Fossilized__Summon, $ID_Jadeite_Summon, $ID_Mischievous_Summon, $ID_Frosty_Summon, $ID_Mysterious_Summon, $ID_Zaishen_Summon, $ID_Ghastly_Summon, $ID_Celestial_Summon, $ID_Shining_Blade_Summon]
 Global Const $Map_Summoning_Stones				= MapFromArray($Summoning_Stones_Array)
 #EndRegion Summoning Stones
@@ -1195,7 +1195,7 @@ Global Const $ID_Zaishen_Tonic				= 31144
 Global Const $ID_Unseen_Tonic				= 31172
 Global Const $ID_Spooky_Tonic				= 37771
 Global Const $ID_Minutely_Mad_King_Tonic	= 37772
-Local Const $Party_Tonics_Array[]			= [$ID_Sinister_Automatonic_Tonic, $ID_Transmogrifier_Tonic, $ID_Yuletide_Tonic, $ID_Beetle_Juice_Tonic, $ID_Abyssal_Tonic, $ID_Cerebral_Tonic, $ID_Macabre_Tonic, $ID_Trapdoor_Tonic, $ID_Searing_Tonic, _
+Global Const $Party_Tonics_Array[]			= [$ID_Sinister_Automatonic_Tonic, $ID_Transmogrifier_Tonic, $ID_Yuletide_Tonic, $ID_Beetle_Juice_Tonic, $ID_Abyssal_Tonic, $ID_Cerebral_Tonic, $ID_Macabre_Tonic, $ID_Trapdoor_Tonic, $ID_Searing_Tonic, _
 												$ID_Automatonic_Tonic, $ID_Skeletonic_Tonic, $ID_Boreal_Tonic, $ID_Gelatinous_Tonic, $ID_Phantasmal_Tonic, $ID_Abominable_Tonic, $ID_Frosty_Tonic, $ID_Mischievious_Tonic, $ID_Mysterious_Tonic, _
 												$ID_Cottontail_Tonic, $ID_Zaishen_Tonic, $ID_Unseen_Tonic, $ID_Spooky_Tonic, $ID_Minutely_Mad_King_Tonic]
 Global Const $Map_Party_Tonics				= MapFromArray($Party_Tonics_Array)
@@ -1267,7 +1267,7 @@ Global Const $ID_EL_Zenmai_Tonic				= 36439
 Global Const $ID_EL_Vekk_Tonic					= 36441
 Global Const $ID_EL_Xandra_Tonic				= 36443
 Global Const $ID_EL_Crate_of_Fireworks			= 31147
-Local Const $EL_Tonic_Array[]					= []
+Global Const $EL_Tonic_Array[]					= []
 Global Const $Map_EL_Tonics						= MapFromArray($EL_Tonic_Array)
 #EndRegion EL Tonics
 #EndRegion Tonics
@@ -1395,7 +1395,7 @@ Global Const $ID_Celestial_Monkey_Mini					= 29421
 Global Const $ID_Celestial_Rooster_Mini					= 29422
 Global Const $ID_Celestial_Dog_Mini						= 29423
 Global Const $ID_World_Famous_Racing_Beetle_Mini		= 37792
-;Global Const $ID_Legionnaire_Mini	=
+;Global Const $ID_Legionnaire_Mini						=
 ; Promotional
 Global Const $ID_Asura_Mini								= 22189
 Global Const $ID_Destroyer_of_Flesh_Mini				= 22250
@@ -1403,11 +1403,11 @@ Global Const $ID_Gray_Giant_Mini						= 17053
 Global Const $ID_Grawl_Mini								= 22822
 Global Const $ID_Ceratadon_Mini							= 28416
 ; Miscellaneous
-;Global Const $ID_Kanaxai_Mini	=
+;Global Const $ID_Kanaxai_Mini							=
 Global Const $ID_Polar_Bear_Mini						= 21439
 Global Const $ID_Mad_Kings_Guard_Mini					= 32555
 Global Const $ID_Panda_Mini								= 15517
-;Global Const $ID_Longhair_Yeti_Mini	=
+;Global Const $ID_Longhair_Yeti_Mini					=
 #EndRegion Minis
 
 
@@ -2022,7 +2022,7 @@ Global Const $ID_Dwarven_Axe						= 114
 Global Const $ID_Oni_Daggers						= 766
 #EndRegion Other skins
 
-Local $UltraRareWeapons_Array = [ _
+Global $UltraRareWeapons_Array = [ _
 	$ID_Glacial_Blades_Sword, $ID_Glacial_Blades_Dagger, _
 	$ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, $ID_Emerald_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, _
 	$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, $ID_Froggy_Air, $ID_Froggy_Earth, _
@@ -2036,7 +2036,7 @@ Local $UltraRareWeapons_Array = [ _
 ]
 Global Const $Map_UltraRareWeapons = MapFromArray($UltraRareWeapons_Array)
 
-Local $RareWeapons_Array = [ _
+Global $RareWeapons_Array = [ _
 	$ID_Spiritbinder, $ID_Earth_Staff, _
 	_ ; Axes
 	$ID_Sephis_Axe, $ID_Serpent_Axe, _
@@ -2114,4 +2114,3 @@ Local $RareWeapons_Array = [ _
 ]
 Global Const $Map_RareWeapons = MapFromArray($RareWeapons_Array)
 #EndRegion Items
-

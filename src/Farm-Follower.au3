@@ -16,8 +16,8 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
@@ -28,37 +28,37 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $FollowerBotVersion = '0.1'
+Global Const $FollowerBotVersion = '0.1'
 
 ; ==== Constants ====
-Local Const $FollowerSkillbar = ''
-Local Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
+Global Const $FollowerSkillbar = ''
+Global Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
 	& 'It will attack everything that gets in range.' & @CRLF _
 	& 'It will loot all items it can loot.' & @CRLF _
 	& 'It will also loot all chests in range.'
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Local $Player_Profession_ID
-Local $Follower_AttackSkill1 = null
-Local $Follower_AttackSkill2 = null
-Local $Follower_AttackSkill3 = null
-Local $Follower_AttackSkill4 = null
-Local $Follower_AttackSkill5 = null
-Local $Follower_AttackSkill6 = null
-Local $Follower_AttackSkill7 = null
-Local $Follower_AttackSkill8 = null
-Local $Follower_MaintainSkill1 = null
-Local $Follower_MaintainSkill2 = null
-Local $Follower_MaintainSkill3 = null
-Local $Follower_MaintainSkill4 = null
-Local $Follower_MaintainSkill5 = null
-Local $Follower_MaintainSkill6 = null
-Local $Follower_MaintainSkill7 = null
-Local $Follower_MaintainSkill8 = null
-Local $Follower_RunningSkill = null
+Global $Player_Profession_ID
+Global $Follower_AttackSkill1 = null
+Global $Follower_AttackSkill2 = null
+Global $Follower_AttackSkill3 = null
+Global $Follower_AttackSkill4 = null
+Global $Follower_AttackSkill5 = null
+Global $Follower_AttackSkill6 = null
+Global $Follower_AttackSkill7 = null
+Global $Follower_AttackSkill8 = null
+Global $Follower_MaintainSkill1 = null
+Global $Follower_MaintainSkill2 = null
+Global $Follower_MaintainSkill3 = null
+Global $Follower_MaintainSkill4 = null
+Global $Follower_MaintainSkill5 = null
+Global $Follower_MaintainSkill6 = null
+Global $Follower_MaintainSkill7 = null
+Global $Follower_MaintainSkill8 = null
+Global $Follower_RunningSkill = null
 
-Local $FOLLOWER_SETUP = False
-Local $playerIDs
+Global $FOLLOWER_SETUP = False
+Global $playerIDs
 
 ;~ Main loop
 Func FollowerFarm($STATUS)

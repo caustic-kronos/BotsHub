@@ -15,44 +15,43 @@
 #include-once
 
 #include 'GWA2.au3'
-#include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
 #include 'Utils.au3'
 
 ; ==== Constantes ====
-Local Const $FarmerSkillbar = ''
-Local Const $FarmInformations = ''
+Global Const $FarmerSkillbar = ''
+Global Const $FarmInformations = ''
 
-Local $Farm_Setup = False
+Global $Farm_Setup = False
 
-Local $loggingFile
+Global $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
-Local Const $Skill_ = 0
+Global Const $Skill_ = 0
 
 ; Common skill to all heroes
-Local Const $Mystic_Healing_Skill_Position = 1
-Local Const $Faithful_Intervention_Skill_Position = 8
+Global Const $Mystic_Healing_Skill_Position = 1
+Global Const $Faithful_Intervention_Skill_Position = 8
 
 ; BiP Necro
-Local Const $BiP_Skill_Position = 7
+Global Const $BiP_Skill_Position = 7
 
 ; Zephyr Ranger - Quickening Zephyr and serpent's quickness must be locked so hero doesn't use them
-Local Const $Serpents_Quickness_Skill_Position = 6
-Local Const $Quickening_Zephyr_Skill_Position = 7
+Global Const $Serpents_Quickness_Skill_Position = 6
+Global Const $Quickening_Zephyr_Skill_Position = 7
 
-Local $Quickening_Zephyr_Cast_Timer
+Global $Quickening_Zephyr_Cast_Timer
 
 ; Order heros are added to the team
-Local Const $Hero_Dervish_1 = 1
-Local Const $Hero_Dervish_2 = 2
-Local Const $Hero_Dervish_3 = 3
-Local Const $Hero_Zephyr_Ranger = 4
-Local Const $Hero_BiP_Necro_1 = 5
-Local Const $Hero_BiP_Necro_2 = 6
-Local Const $Hero_Speed_Paragon = 7
+Global Const $Hero_Dervish_1 = 1
+Global Const $Hero_Dervish_2 = 2
+Global Const $Hero_Dervish_3 = 3
+Global Const $Hero_Zephyr_Ranger = 4
+Global Const $Hero_BiP_Necro_1 = 5
+Global Const $Hero_BiP_Necro_2 = 6
+Global Const $Hero_Speed_Paragon = 7
 
-Local Const $ID_necro_mercenary_hero = $ID_Mercenary_Hero_3
+Global Const $ID_necro_mercenary_hero = $ID_Mercenary_Hero_3
 
 
 ;~ Shouldn't be used - doesn't farm anything

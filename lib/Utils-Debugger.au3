@@ -12,15 +12,19 @@
 ; - DllStructGetData
 ; - DllStructSetData
 
-Global Const $debugMode = False
-Global Const $addContext = True
+#include-once
 
-Local $logHandle = -1
-Local $ContextStack[100]
-Local $ContextDepth = 0
-Local $functionNames = ['SetProcessWorkingSetSizeEx','VirtualQueryEx','VirtualFreeEx','VirtualAllocEx','ReadProcessMemory','WriteProcessMemory','CreateRemoteThread','CloseHandle','WaitForSingleObject','OpenProcess','SetProcessWorkingSetSize']
-Local $errorCodes = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0] ; VirtualQueryEx error code is 0 - but it shouldn't be caught
-Local $functionErrorCodes = MapFromArrays($functionNames, $errorCodes)
+#include 'Utils.au3'
+
+Global Const $debugMode = False
+Global Const $addContext = False
+
+Global $logHandle = -1
+Global $ContextStack[100]
+Global $ContextDepth = 0
+Global $functionNames = ['SetProcessWorkingSetSizeEx','VirtualQueryEx','VirtualFreeEx','VirtualAllocEx','ReadProcessMemory','WriteProcessMemory','CreateRemoteThread','CloseHandle','WaitForSingleObject','OpenProcess','SetProcessWorkingSetSize']
+Global $errorCodes = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0] ; VirtualQueryEx error code is 0 - but it shouldn't be caught
+Global $functionErrorCodes = MapFromArrays($functionNames, $errorCodes)
 
 ;~ Opens log file
 Func OpenDebugLogFile()
@@ -82,6 +86,19 @@ Func GetCurrentContext()
 	If $joined <> '' Then $joined = StringTrimRight($joined, 1)
 	Return $joined
 EndFunc
+
+
+;~ Dump bytes to see memory
+Func MemoryDump($address, $size)
+    Local $buffer = DllStructCreate("byte[" & $size & "]")
+    DllCall($kernelHandle, "bool", "ReadProcessMemory", "handle", GetProcessHandle(), "ptr", $address, "struct*", $buffer, "ulong_ptr", $size, "ptr", 0)
+    Local $output = ""
+    For $i = 1 To $size
+        $output &= Hex(DllStructGetData($buffer, 1, $i), 2) & " "
+    Next
+    Return $output
+EndFunc
+
 
 ; === Wrapper Functions ===
 ;~ DllStructCreate wrapper

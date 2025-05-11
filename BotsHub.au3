@@ -43,9 +43,12 @@
 #include <Math.au3>
 
 #include 'lib/GWA2_Headers.au3'
-#include 'lib/GWA2.au3'
 #include 'lib/GWA2_ID.au3'
-#include 'lib/JSON.au3'
+#include 'lib/GWA2.au3'
+#include 'lib/Utils.au3'
+#include 'lib/Utils-Debugger.au3'
+#include 'lib/Utils-OmniFarmer.au3'
+#include 'lib/Utils-Storage-Bot.au3'
 #include 'src/Farm-Corsairs.au3'
 #include 'src/Farm-DragonMoss.au3'
 #include 'src/Farm-EdenIris.au3'
@@ -63,31 +66,28 @@
 #include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
-#include 'lib/Utils.au3'
-#include 'lib/Utils-OmniFarmer.au3'
-#include 'lib/Utils-Storage-Bot.au3'
-
+#include 'lib/JSON.au3'
 #EndRegion Includes
 
 #Region Variables
-Local Const $GW_BOT_HUB_VERSION = '1.0'
+Global Const $GW_BOT_HUB_VERSION = '1.0'
 
-Local Const $LVL_DEBUG = 0
-Local Const $LVL_INFO = 1
-Local Const $LVL_NOTICE = 2
-Local Const $LVL_WARNING = 3
-Local Const $LVL_ERROR = 4
+Global Const $LVL_DEBUG = 0
+Global Const $LVL_INFO = 1
+Global Const $LVL_NOTICE = 2
+Global Const $LVL_WARNING = 3
+Global Const $LVL_ERROR = 4
 
-Local Const $GUI_GREY_COLOR = 13158600
-Local Const $GUI_BLUE_COLOR = 11192062
-Local Const $GUI_YELLOW_COLOR = 16777192
-Local Const $GUI_RED_COLOR = 16751781
+Global Const $GUI_GREY_COLOR = 13158600
+Global Const $GUI_BLUE_COLOR = 11192062
+Global Const $GUI_YELLOW_COLOR = 16777192
+Global Const $GUI_RED_COLOR = 16751781
 
-Local Const $GUI_CONSOLE_GREY_COLOR = 16777215
-Local Const $GUI_CONSOLE_BLUE_COLOR = 0xFF7000
-Local Const $GUI_CONSOLE_GREEN_COLOR = 13434828
-Local Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
-Local Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
+Global Const $GUI_CONSOLE_GREY_COLOR = 16777215
+Global Const $GUI_CONSOLE_BLUE_COLOR = 0xFF7000
+Global Const $GUI_CONSOLE_GREEN_COLOR = 13434828
+Global Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
+Global Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
@@ -95,15 +95,15 @@ Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 ; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
 ; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
-Local $RUN_MODE = 'AUTOLOAD'
-Local $PROCESS_ID = ''
-Local $LOG_LEVEL = 1
-Local $CHARACTER_NAME = ''
-Local $DISTRICT_NAME = 'Random'
-Local $BAG_NUMBER = 5
+Global $RUN_MODE = 'AUTOLOAD'
+Global $PROCESS_ID = ''
+Global $LOG_LEVEL = 1
+Global $CHARACTER_NAME = ''
+Global $DISTRICT_NAME = 'Random'
+Global $BAG_NUMBER = 5
 
-Local $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Voltaic|Storage|Tests|Dynamic'
-Local $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
 
@@ -112,8 +112,8 @@ Opt('GUIOnEventMode', 1)
 Opt('GUICloseOnESC', 0)
 Opt('MustDeclareVars', 1)
 
-Local $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI_Tab_LootOptions, $GUI_Tab_FarmInfos, $GUI_Tab_LootComponents
-Local $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress
+Global $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI_Tab_LootOptions, $GUI_Tab_FarmInfos, $GUI_Tab_LootComponents
+Global $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress
 
 Global $GUI_Console
 Global $GUI_Group_RunInfos, $GUI_Label_Runs, $GUI_Label_Failures, $GUI_Label_Time, $GUI_Label_TimePerRun, $GUI_Label_Gold, $GUI_Label_GoldItems, $GUI_Label_Experience
@@ -495,7 +495,7 @@ Func main()
 
 		$CHARACTER_NAME = $CmdLine[1]
 		$PROCESS_ID = $CmdLine[2]
-		LOGIN($CHARACTER_NAME, $PROCESS_ID)
+		; Login with $CHARACTER_NAME or $PROCESS_ID
 		$STATUS = 'INITIALIZED'
 	ElseIf $RUN_MODE == 'AUTOLOAD' Then
 		ScanAndUpdateGameClients()
@@ -887,9 +887,9 @@ Func Authentification()
 	ElseIf($characterName == 'No character selected') Then
 		Warn('Running without authentification.')
 	ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
-		$proc_id_int = Number($PROCESS_ID, 2)
+		Local $proc_id_int = Number($PROCESS_ID, 2)
 		Info('Running via pid ' & $proc_id_int)
-		If InitializeGameClientData($proc_id_int, True, True, False) = 0 Then
+		If InitializeGameClientData(True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $proc_id_int & '>> ' & VarGetType($proc_id_int) & '')
 			Return 1
 		EndIf

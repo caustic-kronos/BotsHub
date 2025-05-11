@@ -15,32 +15,33 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
+#include '../lib/Utils.au3'
 
-Local Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
 	& '- the quest A Show of Force' & @CRLF _
 	& '- the quest Requiem for a Brain' & @CRLF _
 	& '- rune of doom in your inventory' & @CRLF _
 	& '- use low level heroes to level them up' & @CRLF _
 	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
 	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
-Local Const $LIGHTBRINGER_FARM_DURATION = 25 * 60 * 1000
+Global Const $LIGHTBRINGER_FARM_DURATION = 25 * 60 * 1000
 
 ; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
-Local Const $weaponAttackTime = 1700
+Global Const $weaponAttackTime = 1700
 
-Local $LIGHTBRINGER_FARM_SETUP = False
-Local $loggingFile
+Global $LIGHTBRINGER_FARM_SETUP = False
+Global $loggingFile
 
-Local Const $Junundu_Strike = 1
-Local Const $Junundu_Smash = 2
-Local Const $Junundu_Bite = 3
-Local Const $Junundu_Siege = 4
-Local Const $Junundu_Tunnel = 5
-Local Const $Junundu_Feast = 6
-Local Const $Junundu_Wail = 7
-Local Const $Junundu_Leave = 8
+Global Const $Junundu_Strike = 1
+Global Const $Junundu_Smash = 2
+Global Const $Junundu_Bite = 3
+Global Const $Junundu_Siege = 4
+Global Const $Junundu_Tunnel = 5
+Global Const $Junundu_Feast = 6
+Global Const $Junundu_Wail = 7
+Global Const $Junundu_Leave = 8
 
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
@@ -228,7 +229,6 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		CheckForChests($RANGE_SPIRIT)
-		If $LOG_LEVEL == 0 Then _FileWriteLog($loggingFile, $foesGroup & ' not found around ' & $x & ':' & $y & ' with distance set to ' & $range)
 		Return False
 	EndIf
 

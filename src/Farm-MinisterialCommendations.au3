@@ -15,14 +15,13 @@
 #include-once
 
 #include '../lib/GWA2.au3'
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 #include <File.au3>
 
 ; ==== Constants ====
-Local Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
-Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
+Global Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- 13 Earth Prayers' &@CRLF _
 	& '- 7 Mysticism' & @CRLF _
@@ -35,67 +34,67 @@ Local Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF 
 	& '- any PCons you wish to use' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 3m20
-Local Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
+Global Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
 
 ; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
-Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City
+Global Const $ID_Current_Kaineng_City = $ID_Kaineng_City
 ;Local Const $ID_Current_Kaineng_City = $ID_Kaineng_City_Events
-Local Const $ID_Miku_Agent = 58
+Global Const $ID_Miku_Agent = 58
 
-Local $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
+Global $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 
-Local $loggingFile
+Global $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
-Local Const $Skill_Conviction = 1
-Local Const $Skill_Grenths_Aura = 2
-Local Const $Skill_I_am_unstoppable = 3
-;Local Const $Skill_Healing_Signet = 4
-Local Const $Skill_Mystic_Regeneration = 4
-Local Const $Skill_Vital_Boon = 4
-Local Const $Skill_To_the_limit = 5
-Local Const $Skill_Ebon_Battle_Standard_of_Honor = 6
-Local Const $Skill_Hundred_Blades = 7
-Local Const $Skill_Whirlwind_Attack = 8
+Global Const $Skill_Conviction = 1
+Global Const $Skill_Grenths_Aura = 2
+Global Const $Skill_I_am_unstoppable = 3
+;Global Const $Skill_Healing_Signet = 4
+Global Const $Skill_Mystic_Regeneration = 4
+Global Const $Skill_Vital_Boon = 4
+Global Const $Skill_To_the_limit = 5
+Global Const $Skill_Ebon_Battle_Standard_of_Honor = 6
+Global Const $Skill_Hundred_Blades = 7
+Global Const $Skill_Whirlwind_Attack = 8
 
 ; ESurge mesmers
-Local Const $Energy_Surge_Skill_Position = 1
-Local Const $ESurge2_Mystic_Healing_Skill_Position = 8
+Global Const $Energy_Surge_Skill_Position = 1
+Global Const $ESurge2_Mystic_Healing_Skill_Position = 8
 ; Ineptitude mesmer
-Local Const $Stand_your_ground_Skill_position = 6
-Local Const $Make_Haste_Skill_position = 7
+Global Const $Stand_your_ground_Skill_position = 6
+Global Const $Make_Haste_Skill_position = 7
 ; SoS Ritualist
-Local Const $SoS_Skill_Position = 1
-Local Const $Splinter_Weapon_Skill_Position = 2
-Local Const $Essence_Strike_Skill_Position = 3
-Local Const $Mend_Body_And_Soul_Skill_Position = 5
-Local Const $Spirit_Light = 6
-Local Const $Strength_of_honor_Skill_Position = 8
-Local Const $SoS_Mystic_Healing_Skill_Position = 8
+Global Const $SoS_Skill_Position = 1
+Global Const $Splinter_Weapon_Skill_Position = 2
+Global Const $Essence_Strike_Skill_Position = 3
+Global Const $Mend_Body_And_Soul_Skill_Position = 5
+Global Const $Spirit_Light = 6
+Global Const $Strength_of_honor_Skill_Position = 8
+Global Const $SoS_Mystic_Healing_Skill_Position = 8
 ; Prot Ritualist
-Local Const $SBoon_of_creation_Skill_Position = 1
-Local Const $Soul_Twisting_Skill_Position = 1
-Local Const $Shelter_Skill_Position = 2
-Local Const $Union_Skill_Position = 3
-Local Const $Displacement_Skill_Position = 4
-Local Const $Armor_of_Unfeeling_Skill_Position = 4
-Local Const $Prot_Mystic_Healing_Skill_Position = 7
+Global Const $SBoon_of_creation_Skill_Position = 1
+Global Const $Soul_Twisting_Skill_Position = 1
+Global Const $Shelter_Skill_Position = 2
+Global Const $Union_Skill_Position = 3
+Global Const $Displacement_Skill_Position = 4
+Global Const $Armor_of_Unfeeling_Skill_Position = 4
+Global Const $Prot_Mystic_Healing_Skill_Position = 7
 ; BiP Necro
-Local Const $Recovery_Skill_Position = 8
-Local Const $Blood_bond_Skill_Position = 4
-Local Const $Spirit_Transfer = 4
+Global Const $Recovery_Skill_Position = 8
+Global Const $Blood_bond_Skill_Position = 4
+Global Const $Spirit_Transfer = 4
 
 ; Order heros are added to the team
-Local Const $Hero_Mesmer_DPS_1 = 1
-Local Const $Hero_Mesmer_DPS_2 = 2
-Local Const $Hero_Mesmer_DPS_3 = 3
-Local Const $Hero_Mesmer_Ineptitude = 4
-Local Const $Hero_Ritualist_SoS = 5
-Local Const $Hero_Ritualist_Prot = 6
-Local Const $Hero_Necro_BiP = 7
+Global Const $Hero_Mesmer_DPS_1 = 1
+Global Const $Hero_Mesmer_DPS_2 = 2
+Global Const $Hero_Mesmer_DPS_3 = 3
+Global Const $Hero_Mesmer_Ineptitude = 4
+Global Const $Hero_Ritualist_SoS = 5
+Global Const $Hero_Ritualist_Prot = 6
+Global Const $Hero_Necro_BiP = 7
 
-Local Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
-Local Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
+Global Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
+Global Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
 
 #CS
 Character location :	X: -6322.51318359375, Y: -5266.85986328125

@@ -16,25 +16,25 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Local Const $VoltaicFarmerSkillbar = ''
-Local Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $VoltaicFarmerSkillbar = ''
+Global Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
 	& '- completed EotN story once' & @CRLF _
 	& '- a full and efficient 7-hero-team' & @CRLF _
 	& '- a hero with Frozen Soil' & @CRLF _
 	& '- a build that can be run from skill 1 to 8 (no complex combos or conditional skills)' & @CRLF _
 	& 'In NM, bot takes 13min (with cons), 15min (without cons) on average' & @CRLF _
 	& 'Not tested in HM.'
-Local Const $VOLTAIC_FARM_DURATION = 16 * 60 * 1000
+Global Const $VOLTAIC_FARM_DURATION = 16 * 60 * 1000
 
-Local $VOLTAIC_FARM_SETUP = False
-Local $voltaicDeathsCount = 0
+Global $VOLTAIC_FARM_SETUP = False
+Global $voltaicDeathsCount = 0
 
 ;~ Main method to farm Voltaic
 Func VoltaicFarm($STATUS)

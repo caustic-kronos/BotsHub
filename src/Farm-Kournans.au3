@@ -16,22 +16,22 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
 
 Opt('MustDeclareVars', 1)
 
-Local Const $KournansBotVersion = '0.1'
+Global Const $KournansBotVersion = '0.1'
 
 ; ==== Constants ====
-Local Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
-Local Const $RKournansHeroSkillbar = 'OgATYnLjZB6C+Zn76OzGAAAA'
-Local Const $RtKournansHeroSkillbar = 'OACjAyhDJPBTy58M5CAAAAAAAA'
-Local Const $PKournansHeroSkillbar = 'OQijEqmMKO84dM92HbiH26YcMA'
-Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
+Global Const $RKournansHeroSkillbar = 'OgATYnLjZB6C+Zn76OzGAAAA'
+Global Const $RtKournansHeroSkillbar = 'OACjAyhDJPBTy58M5CAAAAAAAA'
+Global Const $PKournansHeroSkillbar = 'OQijEqmMKO84dM92HbiH26YcMA'
+Global Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Magic' & @CRLF _
 	& '- 13 in Energy Storage' & @CRLF _
 	& '- 3 in Shadow Arts' & @CRLF _
@@ -41,35 +41,35 @@ Local Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- The quest Fish in a Barrel not completed'
 ; Average duration ~ 2m10s ~ First run is 2m40s with setup
-Local Const $KOURNANS_FARM_DURATION = (2 * 60 + 25) * 1000
+Global Const $KOURNANS_FARM_DURATION = (2 * 60 + 25) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Local Const $Kournans_Intensity = 1
-Local Const $Kournans_EbonBattleStandardOfHonor = 2
-Local Const $Kournans_Mindbender = 3
-Local Const $Kournans_Earthquake = 4
-Local Const $Kournans_DragonsStomp = 5
-Local Const $Kournans_DeathsCharge = 6
-Local Const $Kournans_Aftershock = 7
-Local Const $Kournans_Shockwave = 8
+Global Const $Kournans_Intensity = 1
+Global Const $Kournans_EbonBattleStandardOfHonor = 2
+Global Const $Kournans_Mindbender = 3
+Global Const $Kournans_Earthquake = 4
+Global Const $Kournans_DragonsStomp = 5
+Global Const $Kournans_DeathsCharge = 6
+Global Const $Kournans_Aftershock = 7
+Global Const $Kournans_Shockwave = 8
 
-Local Const $Hero_Kournans_Margrid = 1
-Local Const $Hero_Kournans_Xandra = 2
+Global Const $Hero_Kournans_Margrid = 1
+Global Const $Hero_Kournans_Xandra = 2
 
-Local Const $Kournans_EdgeOfExtinction = 1
-Local Const $Kournans_Lacerate = 2
-Local Const $Kournans_Brambles = 3
-Local Const $Kournans_NaturesRenewal = 4
-Local Const $Kournans_MuddyTerrain = 5
-Local Const $Kournans_Pestilence = 6
+Global Const $Kournans_EdgeOfExtinction = 1
+Global Const $Kournans_Lacerate = 2
+Global Const $Kournans_Brambles = 3
+Global Const $Kournans_NaturesRenewal = 4
+Global Const $Kournans_MuddyTerrain = 5
+Global Const $Kournans_Pestilence = 6
 
-Local Const $Kournans_RitualLord = 1
-Local Const $Kournans_EarthBind = 2
-Local Const $Kournans_VitalWeapon = 3
-Local Const $Kournans_DeathPactSignet = 4
+Global Const $Kournans_RitualLord = 1
+Global Const $Kournans_EarthBind = 2
+Global Const $Kournans_VitalWeapon = 3
+Global Const $Kournans_DeathPactSignet = 4
 
 
-Local $KOURNANS_FARM_SETUP = False
+Global $KOURNANS_FARM_SETUP = False
 
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)

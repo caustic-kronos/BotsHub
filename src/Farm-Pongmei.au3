@@ -16,8 +16,8 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
@@ -25,11 +25,11 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $PongmeiBotVersion = '0.1'
+Global Const $PongmeiBotVersion = '0.1'
 
 ; ==== Constantes ====
-Local Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
-Local Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
+Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
+Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Deadly Arts' & @CRLF _
@@ -39,21 +39,21 @@ Local Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& 'Note: in HM, very frequent failures on Am Fah - I suggest cutting that part of the farm if you wish to run in HM'
 ; Average duration ~ 4m20s
-Local Const $PONGMEI_FARM_DURATION = (4 * 60 + 20) * 1000
+Global Const $PONGMEI_FARM_DURATION = (4 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Pongmei_DwarvenStability) is better than UseSkillEx(1))
-Local Const $Pongmei_DwarvenStability = 1
-Local Const $Pongmei_Zealous_Renewal = 2
-Local Const $Pongmei_Pious_Haste = 3
-Local Const $Pongmei_DeathsCharge = 4
-Local Const $Pongmei_HeartOfShadow = 5
-Local Const $Pongmei_IAmUnstoppable = 6
-Local Const $Pongmei_DeadlyParadox = 7
-Local Const $Pongmei_ShadowForm = 8
+Global Const $Pongmei_DwarvenStability = 1
+Global Const $Pongmei_Zealous_Renewal = 2
+Global Const $Pongmei_Pious_Haste = 3
+Global Const $Pongmei_DeathsCharge = 4
+Global Const $Pongmei_HeartOfShadow = 5
+Global Const $Pongmei_IAmUnstoppable = 6
+Global Const $Pongmei_DeadlyParadox = 7
+Global Const $Pongmei_ShadowForm = 8
 
-Local Const $ID_paragon_mercenary_hero = $ID_Mercenary_Hero_5
+Global Const $ID_paragon_mercenary_hero = $ID_Mercenary_Hero_5
 
-Local $PONGMEI_FARM_SETUP = False
+Global $PONGMEI_FARM_SETUP = False
 
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)

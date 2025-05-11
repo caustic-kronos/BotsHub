@@ -11,43 +11,40 @@ Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from mone
 #include-once
 #NoTrayIcon
 
-#include <Date.au3>
-
 #include '../lib/GWA2.au3'
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 Opt('MustDeclareVars', 1)
 
 
-Local Const $VaettirBotVersion = '0.4'
+Global Const $VaettirBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
-Local Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
+Global Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- +4 Shadow Arts' & @CRLF _
 	& '- Blessed insignias'& @CRLF _
 	& '- A shield with the inscription Like a rolling stone (+10 armor against earth damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration' & @CRLF _
 	& '- Cupcakes'
 ; Average duration ~ 3m40 ~ First run is 6m30s with setup and run
-Local Const $VAETTIRS_FARM_DURATION = (6 * 60 + 30) * 1000
+Global Const $VAETTIRS_FARM_DURATION = (6 * 60 + 30) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form) is better than UseSkillEx(2))
-Local Const $Skill_Deadly_Paradox = 1
-Local Const $Skill_Shadow_Form = 2
-Local Const $Skill_Shroud_of_Distress = 3
-Local Const $Skill_Way_of_Perfection = 4
-Local Const $Skill_Heart_of_Shadow = 5
-Local Const $Skill_Channeling = 6
-Local Const $Skill_Arcane_Echo = 7
-Local Const $Skill_Wastrels_Demise = 8
+Global Const $Skill_Deadly_Paradox = 1
+Global Const $Skill_Shadow_Form = 2
+Global Const $Skill_Shroud_of_Distress = 3
+Global Const $Skill_Way_of_Perfection = 4
+Global Const $Skill_Heart_of_Shadow = 5
+Global Const $Skill_Channeling = 6
+Global Const $Skill_Arcane_Echo = 7
+Global Const $Skill_Wastrels_Demise = 8
 
 ; ==== Global variables ====
-Local $ChatStuckTimer = TimerInit()
-Local $Deadlocked = False
-Local $timer = TimerInit()
+Global $ChatStuckTimer = TimerInit()
+Global $Deadlocked = False
+Global $timer = TimerInit()
 
 
 ;~ Main method to farm Vaettirs

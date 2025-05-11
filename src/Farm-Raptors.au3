@@ -13,8 +13,8 @@ Modified by: Night
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
@@ -27,13 +27,13 @@ Modified by: Night
 
 Opt('MustDeclareVars', 1)
 
-Local Const $RaptorBotVersion = '0.4'
+Global Const $RaptorBotVersion = '0.4'
 
 ; ==== Constantes ====
-Local Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
-Local Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
-Local Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
-Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
+Global Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
+Global Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
+Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 12 in curses' & @CRLF _
 	& '- 12+ in tactics' & @CRLF _
 	& '- 9+ in swordsmanship (enough to use your sword)'& @CRLF _
@@ -45,39 +45,39 @@ Local Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
 	& '		and all of his skills locked'
 ; Average duration ~ 1m10s ~ First run is 1m30s with setup
-Local Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
+Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Local Const $Raptors_MarkOfPain = 1
-Local Const $Raptors_IAmUnstoppable = 2
-Local Const $Raptors_ProtectorsDefense = 3
-Local Const $Raptors_WaryStance = 4
-Local Const $Raptors_HundredBlades = 5
-Local Const $Raptors_SoldiersDefense = 6
-Local Const $Raptors_WhirlwindAttack = 7
-Local Const $Raptors_ShieldBash = 8
+Global Const $Raptors_MarkOfPain = 1
+Global Const $Raptors_IAmUnstoppable = 2
+Global Const $Raptors_ProtectorsDefense = 3
+Global Const $Raptors_WaryStance = 4
+Global Const $Raptors_HundredBlades = 5
+Global Const $Raptors_SoldiersDefense = 6
+Global Const $Raptors_WhirlwindAttack = 7
+Global Const $Raptors_ShieldBash = 8
 
-Local Const $Raptors_SignetOfMysticSpeed = 2
-Local Const $Raptors_MirageCloak = 3
-Local Const $Raptors_VowOfStrength = 4
-Local Const $Raptors_ArmorOfSanctity = 5
-Local Const $Raptors_DustCloak = 6
-Local Const $Raptors_PiousFury = 7
-Local Const $Raptors_EremitesAttack = 8
+Global Const $Raptors_SignetOfMysticSpeed = 2
+Global Const $Raptors_MirageCloak = 3
+Global Const $Raptors_VowOfStrength = 4
+Global Const $Raptors_ArmorOfSanctity = 5
+Global Const $Raptors_DustCloak = 6
+Global Const $Raptors_PiousFury = 7
+Global Const $Raptors_EremitesAttack = 8
 
 ; Hero Build
-Local Const $Raptors_VocalWasSogolon = 1
-Local Const $Raptors_Incoming = 2
-Local Const $Raptors_FallBack = 3
-Local Const $Raptors_EnduringHarmony = 4
-Local Const $Raptors_MakeHaste = 5
-Local Const $Raptors_StandYourGround = 6
-Local Const $Raptors_CantTouchThis = 7
-Local Const $Raptors_BladeturnRefrain = 8
+Global Const $Raptors_VocalWasSogolon = 1
+Global Const $Raptors_Incoming = 2
+Global Const $Raptors_FallBack = 3
+Global Const $Raptors_EnduringHarmony = 4
+Global Const $Raptors_MakeHaste = 5
+Global Const $Raptors_StandYourGround = 6
+Global Const $Raptors_CantTouchThis = 7
+Global Const $Raptors_BladeturnRefrain = 8
 
-Local $RAPTORS_FARM_SETUP = False
-Local $RAPTORS_PROFESSION = 1
-Local $chatStuckTimer = TimerInit()
+Global $RAPTORS_FARM_SETUP = False
+Global $RAPTORS_PROFESSION = 1
+Global $chatStuckTimer = TimerInit()
 
 ;~ Main method to farm Raptors
 Func RaptorFarm($STATUS)

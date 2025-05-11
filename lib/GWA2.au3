@@ -5,6 +5,9 @@ Modified by: MrZambix, Night, and more
 
 #include-once
 
+#include 'GWA2_Headers.au3'
+#include 'GWA2_ID.au3'
+#include 'Utils.au3'
 #include 'Utils-Debugger.au3'
 
 ; Required for memory access, opening external process handles and injecting code
@@ -405,9 +408,9 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('BasePointer', '0x' & Hex($baseAddressPtr, 8))
 	$regionId = MemoryRead(GetScannedAddress('ScanRegion', -0x3))
 	
-	; FIXME: this call fails
-	;$instanceInfoPtr = MemoryRead(GetScannedAddress('ScanInstanceInfo', 0xE))
-	
+	$tempValue = GetScannedAddress('ScanInstanceInfo', -0x04)
+	$instanceInfoPtr = MemoryRead($tempValue + MemoryRead($tempValue + 0x01) + 0x05 + 0x01, "dword")
+
 	$areaInfoPtr = MemoryRead(GetScannedAddress('ScanAreaInfo', 0x6))
 	$attributeInfoPtr = MemoryRead(GetScannedAddress('ScanAttributeInfo', -0x3))
 	SetValue('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
@@ -828,7 +831,7 @@ Func ScanGWBasePatterns()
 	_('ScanClickCoords:')
 	AddPatternToInjection('8B451C85C0741CD945F8')
 	_('ScanInstanceInfo:')
-	AddPatternToInjection('6A2C50E80000000083C408C7')
+	AddPatternToInjection('85c07417ff7508e8')
 	_('ScanAreaInfo:')
 	AddPatternToInjection('6BC67C5E05')
 	_('ScanAttributeInfo:')
@@ -1431,11 +1434,7 @@ EndFunc
 
 ;~ Drop gold on the ground.
 Func DropGold($amount = 0)
-	Local $amount
-
-	If $amount > 0 Then
-		$amount = $amount
-	Else
+	If $amount <= 0 Then
 		$amount = GetGoldCharacter()
 	EndIf
 
@@ -1462,13 +1461,10 @@ EndFunc
 
 ;~ Withdraw gold from storage.
 Func WithdrawGold($amount = 0)
-	Local $amount
 	Local $storageGold = GetGoldStorage()
 	Local $characterGold = GetGoldCharacter()
 
-	If $amount > 0 And $storageGold >= $amount Then
-		$amount = $amount
-	Else
+	If $amount <= 0 Or $storageGold < $amount Then
 		$amount = $storageGold
 	EndIf
 
@@ -3860,17 +3856,13 @@ Func GetPing()
 EndFunc
 
 
-;~ Alternate way to get ping, reads directly from game memory without call to ScanPing
-Func AlternateGetPing()
+;~ Alternate way to get anything, reads directly from game memory without call to Scan something - but is not robust and will break anytime the game changes
+Func GetDataFromRelativeAddress($relativeCheatEngineAddress, $size)
 	Local $baseAddress = ScanForProcess()
-	; This address is relative to the CheatEngine GW base address
-	; The GW base address we get from ScanForProcess() is 0x1000 after the one from CheatEngine
-	; So we need to remove that 0x1000 if we want to have the correct value
-	Local $relativePingAddress = 0x6594A8
-	Local $pingAddress = $baseAddress + $relativePingAddress - 0x1000
-	Local $pingBuffer = DllStructCreate('dword')
-	Local $result = SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'ptr', $pingAddress, 'ptr', DllStructGetPtr($pingBuffer), 'int', DllStructGetSize($pingBuffer), 'int', 0)
-	Return DllStructGetData($pingBuffer, 1)
+	Local $fullAddress = $baseAddress + $relativeCheatEngineAddress - 0x1000
+	Local $buffer = DllStructCreate('byte[' & $size & ']')
+	Local $result = SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	Return $buffer
 EndFunc
 
 
@@ -3882,7 +3874,7 @@ EndFunc
 
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetInstanceType()
-	Local $offset[1] = [0x4]
+	Local $offset[1] = [0x00]
 	Local $result = MemoryReadPtr($instanceInfoPtr, $offset, 'dword')
 	Return $result[1]
 EndFunc

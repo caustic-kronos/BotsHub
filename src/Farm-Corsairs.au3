@@ -16,8 +16,8 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
@@ -25,11 +25,11 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $CorsairsBotVersion = '0.4'
+Global Const $CorsairsBotVersion = '0.4'
 
 ; ==== Constants ====
-Local Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
-Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
+Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- A shield with the inscription Through Thick and Thin (+10 armor against Piercing damage)' & @CRLF _
@@ -37,26 +37,26 @@ Local Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- Dunkoro'
-Local Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
+Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Local Const $Corsairs_DwarvenStability = 1
-Local Const $Corsairs_WhirlingDefense = 2
-Local Const $Corsairs_HeartOfShadow = 3
-Local Const $Corsairs_ShroudOfDistress = 4
-Local Const $Corsairs_TogetherAsOne = 5
-Local Const $Corsairs_MentalBlock = 6
-Local Const $Corsairs_FeignedNeutrality = 7
-Local Const $Corsairs_DeathsCharge = 8
+Global Const $Corsairs_DwarvenStability = 1
+Global Const $Corsairs_WhirlingDefense = 2
+Global Const $Corsairs_HeartOfShadow = 3
+Global Const $Corsairs_ShroudOfDistress = 4
+Global Const $Corsairs_TogetherAsOne = 5
+Global Const $Corsairs_MentalBlock = 6
+Global Const $Corsairs_FeignedNeutrality = 7
+Global Const $Corsairs_DeathsCharge = 8
 
 ; Hero Build
-Local Const $Corsairs_MakeHaste = 1
-Local Const $Corsairs_CauterySignet = 2
-Local Const $Corsairs_Winnowing = 1
-Local Const $Corsairs_MysticHealing = 2
+Global Const $Corsairs_MakeHaste = 1
+Global Const $Corsairs_CauterySignet = 2
+Global Const $Corsairs_Winnowing = 1
+Global Const $Corsairs_MysticHealing = 2
 
-Local $CORSAIRS_FARM_SETUP = False
-Local $Bohseda_Timer
+Global $CORSAIRS_FARM_SETUP = False
+Global $Bohseda_Timer
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)

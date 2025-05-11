@@ -16,8 +16,8 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements :
@@ -25,19 +25,19 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $KurzickFactionBotVersion = '0.1'
+Global Const $KurzickFactionBotVersion = '0.1'
 
 ; ==== Constantes ====
-Local Const $KurzickFactionSkillbar = ''
-Local Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
+Global Const $KurzickFactionSkillbar = ''
+Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 40m
-Local Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
+Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
 
-Local $groupIsAlive = True
-Local $DonatePoints = True
+Global $groupIsAlive = True
+Global $DonatePoints = True
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)

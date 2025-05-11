@@ -16,19 +16,19 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements : rewrite it all
 
 Opt('MustDeclareVars', 1)
 
-Local Const $FeathersBotVersion = '3.0'
+Global Const $FeathersBotVersion = '3.0'
 
 ; ==== Constants ====
-Local Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
-Local Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
+Global Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Prayers' & @CRLF _
 	& '- 10 in Scythe Mastery' & @CRLF _
 	& '- 10 in Mysticism' & @CRLF _
@@ -38,23 +38,23 @@ Local Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 	& '- Windwalker or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
 ; Average duration ~ 8m20
-Local Const $FEATHERS_FARM_DURATION = (8 * 60 + 20) * 1000
+Global Const $FEATHERS_FARM_DURATION = (8 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Feathers_SandShards) is better than UseSkillEx(1))
-Local Const $Feathers_SandShards = 1
-Local Const $Feathers_VowOfStrength = 2
-Local Const $Feathers_StaggeringForce = 3
-Local Const $Feathers_EremitesAttack = 4
-Local Const $Feathers_Dash = 5
-Local Const $Feathers_DwarvenStability = 6
-Local Const $Feathers_Conviction = 7
-Local Const $Feathers_MysticRegeneration = 8
+Global Const $Feathers_SandShards = 1
+Global Const $Feathers_VowOfStrength = 2
+Global Const $Feathers_StaggeringForce = 3
+Global Const $Feathers_EremitesAttack = 4
+Global Const $Feathers_Dash = 5
+Global Const $Feathers_DwarvenStability = 6
+Global Const $Feathers_Conviction = 7
+Global Const $Feathers_MysticRegeneration = 8
 
-Local Const $ModelID_Sensali_Claw = 3944
-Local Const $ModelID_Sensali_Darkfeather = 3946
-Local Const $ModelID_Sensali_Cutter = 3948
+Global Const $ModelID_Sensali_Claw = 3944
+Global Const $ModelID_Sensali_Darkfeather = 3946
+Global Const $ModelID_Sensali_Cutter = 3948
 
-Local $FEATHERS_FARM_SETUP = False
+Global $FEATHERS_FARM_SETUP = False
 
 ;~ Main method to farm feathers
 Func FeathersFarm($STATUS)
@@ -307,8 +307,8 @@ EndFunc
 Func WaitForSettle($Timeout = 10000)
 	Local $me = GetMyAgent()
 	Local $target
-	Local $Deadlock = TimerInit()
-	While Not GetIsDead() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($Deadlock) < 5000)
+	Local $deadlock = TimerInit()
+	While Not GetIsDead() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
 		If GetIsDead() Then Return False
 		If DllStructGetData($me, 'HP') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
@@ -321,8 +321,8 @@ Func WaitForSettle($Timeout = 10000)
 
 	If CountFoesInRangeOfAgent($me, 900) == 0 Then Return False
 
-	Local $Deadlock = TimerInit()
-	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($Deadlock) < $Timeout)
+	$deadlock = TimerInit()
+	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($deadlock) < $Timeout)
 		If GetIsDead() Then Return False
 		If DllStructGetData($me, 'HP') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)

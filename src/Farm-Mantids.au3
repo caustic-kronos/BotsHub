@@ -16,20 +16,20 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
 #include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
 ; Possible improvements : none, this is perfect ;)
 
 Opt('MustDeclareVars', 1)
 
-Local Const $MantidsBotVersion = '0.1'
+Global Const $MantidsBotVersion = '0.1'
 
 ; ==== Constants ====
-Local Const $RAMantidsFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
-Local Const $MantidsHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
-Local Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $RAMantidsFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
+Global Const $MantidsHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
+Global Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 14 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 8 in Beast Mastery' & @CRLF _
@@ -37,28 +37,28 @@ Local Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A one hand weapon with +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-Local Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
+Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
-Local Const $Mantids_DeadlyParadox = 1
-Local Const $Mantids_ShadowForm = 2
-Local Const $Mantids_ShroudOfDistress = 3
-Local Const $Mantids_LightningReflexes = 4
-Local Const $Mantids_WayOfPerfection = 5
-Local Const $Mantids_DeathsCharge = 6
-Local Const $Mantids_WhirlingDefense = 7
-Local Const $Mantids_EdgeOfExtinction = 8
+Global Const $Mantids_DeadlyParadox = 1
+Global Const $Mantids_ShadowForm = 2
+Global Const $Mantids_ShroudOfDistress = 3
+Global Const $Mantids_LightningReflexes = 4
+Global Const $Mantids_WayOfPerfection = 5
+Global Const $Mantids_DeathsCharge = 6
+Global Const $Mantids_WhirlingDefense = 7
+Global Const $Mantids_EdgeOfExtinction = 8
 
 ; Hero Build
-Local Const $Mantids_VocalWasSogolon = 1
-Local Const $Mantids_Incoming = 2
-Local Const $Mantids_FallBack = 3
-Local Const $Mantids_EnduringHarmony = 5
-Local Const $Mantids_TheyreOnFire = 6
-Local Const $Mantids_MakeHaste = 7
-Local Const $Mantids_BladeturnRefrain = 8
+Global Const $Mantids_VocalWasSogolon = 1
+Global Const $Mantids_Incoming = 2
+Global Const $Mantids_FallBack = 3
+Global Const $Mantids_EnduringHarmony = 5
+Global Const $Mantids_TheyreOnFire = 6
+Global Const $Mantids_MakeHaste = 7
+Global Const $Mantids_BladeturnRefrain = 8
 
-Local $MANTIDS_FARM_SETUP = False
+Global $MANTIDS_FARM_SETUP = False
 
 ;~ Main method to farm Mantids
 Func MantidsFarm($STATUS)
