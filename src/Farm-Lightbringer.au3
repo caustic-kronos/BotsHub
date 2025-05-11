@@ -98,7 +98,8 @@ EndFunc
 Func CountPartyDeaths()
 	Local $partyDeaths = 0
 	For $i = 1 to 7
-		If GetIsDead(GetAgentById(GetHeroID($i))) Then $partyDeaths +=1
+		Local $heroID = GetHeroID($i)
+		If Not GetAgentExists($heroID) Or GetIsDead(GetAgentById($heroID)) Then $partyDeaths +=1
 	Next
 	Return $partyDeaths
 EndFunc

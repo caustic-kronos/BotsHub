@@ -239,19 +239,33 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 	Local $ptrCount = UBound($offset) - 2
 	Local $buffer = SafeDllStructCreate('dword')
 	Local $processHandle = GetProcessHandle()
-	For $i = 0 To $ptrCount
-		$address += $offset[$i]
+	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
+	Local $data[2] = [0, 0]
+
+	; This loops serves as a control - if ExitLoop is reached in the inner loop, we can skip the rest of the outer loop
+	For $j = 0 To 0
+		For $i = 0 To $ptrCount
+			$address += $offset[$i]
+
+			SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+			If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then ExitLoop 2
+
+			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+			$address = DllStructGetData($buffer, 1)
+			If $address == 0 Then ExitLoop 2
+		Next
+		$address += $offset[$ptrCount + 1]
+		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+		If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then ExitLoop
+		
+		$buffer = SafeDllStructCreate($type)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
-		$address = DllStructGetData($buffer, 1)
-		If $address == 0 Then
-			Local $data[2] = [0, 0]
-			Return $data
-		EndIf
+		$data[0] = $address
+		$data[1] = DllStructGetData($buffer, 1)
+		Return $data
 	Next
-	$address += $offset[$ptrCount + 1]
-	$buffer = SafeDllStructCreate($type)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
-	Local $data[2] = [$address, DllStructGetData($buffer, 1)]
+	; This can be valid when trying to access an agent out of range for instance
+	DebuggerLog('Tried to access an invalid address')
 	Return $data
 EndFunc
 
@@ -1594,7 +1608,7 @@ EndFunc
 #Region Movement
 ;~ Move to a location. Returns True if successful
 Func Move($X, $Y, $random = 50)
-	If GetAgentExists(GetMyAgent()) Then
+	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($moveStruct, 2, $X + Random(-$random, $random))
 		DllStructSetData($moveStruct, 3, $Y + Random(-$random, $random))
 		Enqueue($moveStructPtr, 16)
@@ -1609,7 +1623,7 @@ EndFunc
 Func MoveTo($X, $Y, $random = 50, $doWhileRunning = null)
 	Local $blockedCount = 0
 	Local $me
-	Local $mapLoading = GetInstanceType(), $mapLoadingOld
+	Local $mapID = GetMapID(), $oldMapID
 	Local $destinationX = $X + Random(-$random, $random)
 	Local $destinationY = $Y + Random(-$random, $random)
 
@@ -1619,9 +1633,9 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = null)
 		Sleep(100)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HP') <= 0 Then ExitLoop
-		$mapLoadingOld = $mapLoading
-		$mapLoading = GetInstanceType()
-		If $mapLoading <> $mapLoadingOld Then ExitLoop
+		$oldMapID = $mapID
+		$mapID = GetMapID()
+		If $mapID <> $oldMapID Then ExitLoop
 		If $doWhileRunning <> null Then $doWhileRunning()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
 			$blockedCount += 1
@@ -2773,15 +2787,15 @@ EndFunc
 
 ;~ Tests if an item is assigned to you.
 Func GetAssignedToMe($agent)
-	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
-	Return DllStructGetData($agent, 'Owner') == GetMyID()
+	Local $result = DllStructGetData($agent, 'Owner') == GetMyID()
+	Return $result
 EndFunc
 
 
 ;~ Tests if you can pick up an item.
 Func GetCanPickUp($agent)
-	If Not IsDllStruct($agent) Then $agent = GetAgentByID($agent)
-	Return GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0
+	Local $result = GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0
+	Return $result
 EndFunc
 
 
@@ -2840,7 +2854,9 @@ Func GetItemByAgentID($agentID)
 		If $itemPtr[1] = 0 Then ContinueLoop
 		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
-		If DllStructGetData($itemStruct, 'AgentID') = $agentID Then Return $itemStruct
+		If DllStructGetData($itemStruct, 'AgentID') = $agentID Then
+			Return $itemStruct
+		EndIf
 	Next
 EndFunc
 
@@ -3103,8 +3119,8 @@ EndFunc
 
 
 ;~ Test if an agent exists.
-Func GetAgentExists($agent)
-	Local $agentPtr = GetAgentPtr(DllStructGetData($agent, 'ID'))
+Func GetAgentExists($agentID)
+	Local $agentPtr = GetAgentPtr($agentID)
 	Return $agentPtr <> 0
 EndFunc
 
@@ -3119,6 +3135,7 @@ EndFunc
 Func GetAgentByPlayerName($playerName)
 	For $i = 1 To GetMaxAgents()
 		If GetPlayerName($i) = $playerName Then
+			; FIXME: check that agent exists before returning (player could be too far)
 			Return GetAgentByID($i)
 		EndIf
 	Next
@@ -3466,7 +3483,8 @@ EndFunc
 ;~ Tests if an agent is dead.
 Func GetIsDead($agent = -2)
 	If $agent == -2 Then $agent = GetMyAgent()
-	Return BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0
+	Local $result = BitAND(DllStructGetData($agent, 'Effects'), 0x0010)
+	Return $result > 0
 EndFunc
 
 ;~ Tests if an agent has a deep wound.
@@ -3924,7 +3942,7 @@ EndFunc
 
 ;~ Returns if map has been loaded.
 Func GetMapIsLoaded()
-	Return GetAgentExists(GetMyAgent())
+	Return GetAgentExists(GetMyID())
 EndFunc
 
 
@@ -4112,7 +4130,7 @@ EndFunc
 
 ;~ Invites a player into the guild using his character name
 Func InviteGuild($characterName)
-	If GetAgentExists(GetMyAgent()) Then
+	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 		DllStructSetData($inviteGuildStruct, 2, 0x4C)
 		DllStructSetData($inviteGuildStruct, 3, 0xBC)
@@ -4129,7 +4147,7 @@ EndFunc
 
 ;~ Invites a player as a guest into the guild using his character name
 Func InviteGuest($characterName)
-	If GetAgentExists(GetMyAgent()) Then
+	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 		DllStructSetData($inviteGuildStruct, 2, 0x4C)
 		DllStructSetData($inviteGuildStruct, 3, 0xBC)
@@ -4165,7 +4183,7 @@ EndFunc
 
 ;~ Internal use only.
 Func PerformAction($action, $flag)
-	If GetAgentExists(GetMyAgent()) Then
+	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($actionStruct, 2, $action)
 		DllStructSetData($actionStruct, 3, $flag)
 		Enqueue($actionStructPtr, 12)
@@ -6123,7 +6141,7 @@ Func Disconnected()
 	Local $deadlock = TimerInit()
 	Do
 		Sleep(20)
-		$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
+		$check = GetInstanceType() <> 2 And GetAgentExists(GetMyID())
 	Until $check Or TimerDiff($deadlock) > 5000
 	If $check = False Then
 		Error('Disconnected!')
@@ -6133,7 +6151,7 @@ Func Disconnected()
 		$deadlock = TimerInit()
 		Do
 			Sleep(20)
-			$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
+			$check = GetInstanceType() <> 2 And GetAgentExists(GetMyID())
 		Until $check Or TimerDiff($deadlock) > 60000
 		If $check = False Then
 			Error('Failed to Reconnect 1!')
@@ -6142,7 +6160,7 @@ Func Disconnected()
 			$deadlock = TimerInit()
 			Do
 				Sleep(20)
-				$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
+				$check = GetInstanceType() <> 2 And GetAgentExists(GetMyID())
 			Until $check Or TimerDiff($deadlock) > 60000
 			If $check = False Then
 				Error('Failed to Reconnect 2!')
@@ -6151,7 +6169,7 @@ Func Disconnected()
 				$deadlock = TimerInit()
 				Do
 					Sleep(20)
-					$check = GetInstanceType() <> 2 And GetAgentExists(GetMyAgent())
+					$check = GetInstanceType() <> 2 And GetAgentExists(GetMyID())
 				Until $check Or TimerDiff($deadlock) > 60000
 				If $check = False Then
 					Error('Could not reconnect!')

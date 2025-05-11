@@ -254,6 +254,7 @@ Func KillMobs()
 	Local $Shadow_Form_Timer = TimerDiff($timer)
 	Local $agentArray
 	Local $target
+	Local $targetID
 
 	Info('Killing')
 	While TimerDiff($timer) > $Shadow_Form_Timer And TimerDiff($deadlockTimer) < 20000
@@ -269,9 +270,10 @@ Func KillMobs()
 
 	$deadlockTimer = TimerInit()
 	$target = GetNearestEnemyToAgent(GetMyAgent())
+	$targetID = DllStructGetData($target, 'ID')
 	RndSleep(100)
 
-	While GetAgentExists($target) And DllStructGetData($target, 'HP') > 0
+	While GetAgentExists($targetID) And DllStructGetData($target, 'HP') > 0
 		RndSleep(50)
 		If GetIsDead() Then Return
 		$agentArray = GetAgentArray(0xDB)
@@ -304,6 +306,7 @@ Func KillMobs()
 		; Check if target has ran away
 		If GetDistance(GetMyAgent(), $target) > $RANGE_EARSHOT Then
 			$target = GetNearestEnemyToAgent(GetMyAgent())
+			$targetID = DllStructGetData($target, 'ID')
 			RndSleep(100)
 			If DllStructGetData($target, 'HP') = 0 Or GetDistance(GetMyAgent(), $target) > $RANGE_AREA Then ExitLoop
 		EndIf

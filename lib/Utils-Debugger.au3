@@ -57,9 +57,10 @@ EndFunc
 
 ;~ Write log in log file
 Func DebuggerLog($msg)
-	Local $log = '[' & @YEAR & '-' & @MON & '-' & @MDAY & ' ' & @HOUR & ':' & @MIN & ':' & @MSEC & ']-'
+	Local $log = '[' & @YEAR & '-' & @MON & '-' & @MDAY & ' ' & @HOUR & ':' & @MIN & ':' & @SEC & ':' & @MSEC & ']-'
 	If $addContext Then $log &= '[' & GetCurrentContext() & ']-'
 	FileWriteLine($logHandle, $log & $msg)
+	Debug($msg)
 EndFunc
 
 ;~ Add context to create a simili stack trace

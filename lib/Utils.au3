@@ -159,10 +159,10 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 
 		If ($ShouldPickItem($item)) Then
 			If $defendFunction <> null Then $defendFunction()
-			If Not GetAgentExists($agent) Then ContinueLoop
+			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($agent) And TimerDiff($deadlock) < 10000
+			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
 				RndSleep(50)
 				If GetIsDead() Then Return
 			WEnd
@@ -1770,7 +1770,7 @@ Func MoveAggroAndKill($x, $y, $s = '', $range = 1450, $chestOpenRange = $RANGE_S
 		RndSleep(500)
 		CheckForChests($chestOpenRange)
 	WEnd
-	If Not $groupIsAlive Then Return True
+	Return Not $groupIsAlive
 EndFunc
 
 
@@ -1818,14 +1818,12 @@ EndFunc
 Func IsGroupAlive()
 	Local $deadMembers = 0
 	For $i = 0 to GetHeroCount()
-		If GetIsDead(GetAgentById(GetHeroID($i))) Then
+		Local $heroID = GetHeroID($i)
+		If Not GetAgentExists($heroID) Or GetIsDead(GetAgentById($heroID)) Then
 			$deadMembers += 1
 		EndIf
-		If $deadMembers >= 8 Then
-			Return False
-		EndIf
 	Next
-	Return True
+	Return $deadMembers < 8
 EndFunc
 #EndRegion Map Clearing Utilities
 #EndRegion Actions

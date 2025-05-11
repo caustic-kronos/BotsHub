@@ -353,8 +353,8 @@ Func InitialFight()
 	WEnd
 	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for all mobs to be dead')
 
-	UseHeroSkill($Hero_Ritualist_SoS, $Mend_Body_And_Soul_Skill_Position, GetAgentByID($ID_Miku_Agent))
-	UseHeroSkill($Hero_Necro_BiP, $Mend_Body_And_Soul_Skill_Position, GetAgentByID($ID_Miku_Agent))
+	UseHeroSkill($Hero_Ritualist_SoS, $Mend_Body_And_Soul_Skill_Position, GetMikuAgentOrMine())
+	UseHeroSkill($Hero_Necro_BiP, $Mend_Body_And_Soul_Skill_Position, GetMikuAgentOrMine())
 	LogIntoFile('Initial fight duration - ' & Round(TimerDiff($deadlock)/1000) & 's')
 
 	; Move all heroes to not interfere with loot
@@ -362,12 +362,18 @@ Func InitialFight()
 EndFunc
 
 
+;~ Returns the agent of Miku or the character if Miku is too far
+Func GetMikuAgentOrMine()
+	If GetAgentExists($ID_Miku_Agent) Then Return GetAgentByID($ID_Miku_Agent)
+	Return GetMyAgent()
+EndFunc
+
 ;~ Heal Miku and character if they need it
 Func HelpMikuAndCharacter()
 	Local $me = GetMyAgent()
-	If DllStructGetData(GetAgentByID($ID_Miku_Agent), 'HP') < 0.50 Then
-		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, GetAgentByID($ID_Miku_Agent))
-		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, GetAgentByID($ID_Miku_Agent))
+	If DllStructGetData(GetMikuAgentOrMine(), 'HP') < 0.50 Then
+		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, GetMikuAgentOrMine())
+		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, GetMikuAgentOrMine())
 	ElseIf DllStructGetData($me, 'HP') < 0.40 Then
 		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, $me)
 		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, $me)

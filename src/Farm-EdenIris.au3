@@ -95,7 +95,7 @@ Func PickUpIris()
 			Info('Iris: ' & Round(DllStructGetData($agent, 'X')) & ', Y: ' & Round(DllStructGetData($agent, 'Y')))
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($agent)
+			While GetAgentExists($i)
 				RndSleep(500)
 				If GetIsDead() Then Return
 				If TimerDiff($deadlock) > 20000 Then
