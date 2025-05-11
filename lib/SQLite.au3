@@ -126,8 +126,8 @@ Global Const $SQLITE_TYPE_NULL = 5
 	Changelog:
 	26.11.05	Added _SQLite_QueryReset()
 	26.11.05	Added _SQLite_QueryFinalize()
-	26.11.05 	Added _SQLite_SaveMode()
-	26.11.05 	Implemented SaveMode
+	26.11.05	Added _SQLite_SaveMode()
+	26.11.05	Implemented SaveMode
 	27.11.05	Renamed _SQLite_FetchArray() -> _SQLite_FetchData()
 	27.11.05	Added _SQLite_FetchNames(), Example
 	28.11.05	Removed _SQLite_Commit(), _SQLite_Close() handles $SQLITE_BUSY issues
@@ -832,9 +832,9 @@ Func _SQLite_SQLiteExe($sDatabaseFile, $sInput, ByRef $sOutput, $sSQLiteExeFilen
 		FileWrite($hInputFile, $sInput)
 		FileClose($hInputFile)
 		Local $sCmd = @ComSpec & " /c " & FileGetShortName($sSQLiteExeFilename) & '  "' _
-				 & FileGetShortName($sDatabaseFile) _
-				 & '" > "' & FileGetShortName($sOutputFile) _
-				 & '" < "' & FileGetShortName($sInputFile) & '"'
+				& FileGetShortName($sDatabaseFile) _
+				& '" > "' & FileGetShortName($sOutputFile) _
+				& '" < "' & FileGetShortName($sInputFile) & '"'
 		Local $nErrorLevel = RunWait($sCmd, @WorkingDir, @SW_HIDE)
 		If $bDebug = True Then
 			Local $nErrorTemp = @error

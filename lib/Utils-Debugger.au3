@@ -90,13 +90,13 @@ EndFunc
 
 ;~ Dump bytes to see memory
 Func MemoryDump($address, $size)
-    Local $buffer = DllStructCreate("byte[" & $size & "]")
-    DllCall($kernelHandle, "bool", "ReadProcessMemory", "handle", GetProcessHandle(), "ptr", $address, "struct*", $buffer, "ulong_ptr", $size, "ptr", 0)
-    Local $output = ""
-    For $i = 1 To $size
-        $output &= Hex(DllStructGetData($buffer, 1, $i), 2) & " "
-    Next
-    Return $output
+	Local $buffer = DllStructCreate('byte[' & $size & ']')
+	DllCall($kernelHandle, 'bool', 'ReadProcessMemory', 'handle', GetProcessHandle(), 'ptr', $address, 'struct*', $buffer, 'ulong_ptr', $size, 'ptr', 0)
+	Local $output = ''
+	For $i = 1 To $size
+		$output &= Hex(DllStructGetData($buffer, 1, $i), 2) & ' '
+	Next
+	Return $output
 EndFunc
 
 
@@ -199,7 +199,7 @@ Func SafeDllCall($dll, $retType, $function, $p4, $p5, $p6 = Null, $p7 = Null, $p
 		If $p5 == Null Then DebuggerLog('Error null value in call to ' & $call)
 		$result = DllCall($dll, $retType, $function, $p4, $p5)
 	EndIf
-	If @error <> 0 Or $result[0] = $functionErrorCodes[$function] Then 
+	If @error <> 0 Or $result[0] = $functionErrorCodes[$function] Then
 		Local $errorCode = DllCall($dll, 'dword', 'GetLastError')
 		DebuggerLog('[ERROR] Code[' & $errorCode[0] & '] on ' & $call)
 	EndIf

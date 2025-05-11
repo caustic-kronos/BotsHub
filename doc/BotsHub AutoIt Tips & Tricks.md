@@ -12,10 +12,10 @@ A concise cheat sheet of powerful functions, techniques, and utilities in AutoIt
 
 ## 🧠 Dynamic Behavior & Reflection
 
-* `Call("FuncName", ...)` → Run user-defined functions dynamically.
-* `Execute("code")` → Run strings as code (dangerous, but powerful).
-* `Eval("varName")` → Get value of a variable by name.
-* `Assign("varName", $value)` → Set variable dynamically.
+* `Call('FuncName', ...)` → Run user-defined functions dynamically.
+* `Execute('code')` → Run strings as code (dangerous, but powerful).
+* `Eval('varName')` → Get value of a variable by name.
+* `Assign('varName', $value)` → Set variable dynamically.
 
 ## 🛠️ Process, File & Resource Handling
 
@@ -35,7 +35,7 @@ A concise cheat sheet of powerful functions, techniques, and utilities in AutoIt
 ## 🔍 Debugging & Tracing
 
 * `ConsoleWrite()` → Print debug output to SciTE.
-* `AutoItSetOption("TrayIconDebug", 1)` → Enables tray icon debugging.
+* `AutoItSetOption('TrayIconDebug', 1)` → Enables tray icon debugging.
 * `#AutoIt3Wrapper_Run_Debug_Mode=Y` → Debug mode directive.
 * `HotKeySet()` → Register emergency stop or debugging shortcuts.
 

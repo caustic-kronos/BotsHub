@@ -7,9 +7,9 @@ INSCRIPTION
 "Too Much Information"			15vhex				Damage +10...15% (vs. Hexed foes)
 "Vengeance is Mine"				20^<50				Damage +10...20% (while Health is below 50%)
 "Don't Fear the Reaper"			20^hex				Damage +10...20% (while Hexed)
-"Don't Think Twice"				mahct^10				Halves casting time of spells (Chance: 5...10%)
+"Don't Think Twice"				mahct^10			Halves casting time of spells (Chance: 5...10%)
 "I have the power!"				5e					Energy +5
-"Let the Memory Live Again"		mahsr^10				Halves skill recharge of spells (Chance: 5...10%)
+"Let the Memory Live Again"		mahsr^10			Halves skill recharge of spells (Chance: 5...10%)
 "Aptitude not Attitude"			hct^20				Halves casting time of spells of item's attribute (Chance: 10...20%)
 "Seize the Day"					15e^-1e/s			Energy +10...15 Energy regeneration -1
 "Hale and Hearty"				5e^50				Energy +4...5 (while Health is above 50%)
@@ -57,16 +57,16 @@ Aptitude not Attitude			hct^20attribute		Halves casting time of spells of attrib
 Forget Me Not					hsr^20attribute		Halves skill recharge of spells of attribute (Chance: 15...20%)
 Master of <Attribute>			1^20attribute		Attribute +1 (Chance: 11...20%)
 Defence against Charrs			10a^charrs			Armor +5...10 (vs. Charrs)
-Defence against Demons			10a^demons     		Armor +5...10 (vs. Demons)
-Defence against Dragons			10a^dragons    		Armor +5...10 (vs. Dragons)
-Defence against Dwarves			10a^dwarves    		Armor +5...10 (vs. Dwarves)
-Defence against Giants			10a^giants     		Armor +5...10 (vs. Giants)
-Defence against Ogres			10a^ogres      		Armor +5...10 (vs. Ogres)
-Defence against Plants			10a^plants     		Armor +5...10 (vs. Plants)
-Defence against Skeletons		10a^skeletons  		Armor +5...10 (vs. Skeletons)
-Defence against Tengus			10a^tengus     		Armor +5...10 (vs. Tengus)
-Defence against Trolls			10a^trolls     		Armor +5...10 (vs. Trolls)
-Defence against Undeads			10a^undeads    		Armor +5...10 (vs. Undeads)
+Defence against Demons			10a^demons			Armor +5...10 (vs. Demons)
+Defence against Dragons			10a^dragons			Armor +5...10 (vs. Dragons)
+Defence against Dwarves			10a^dwarves			Armor +5...10 (vs. Dwarves)
+Defence against Giants			10a^giants			Armor +5...10 (vs. Giants)
+Defence against Ogres			10a^ogres			Armor +5...10 (vs. Ogres)
+Defence against Plants			10a^plants			Armor +5...10 (vs. Plants)
+Defence against Skeletons		10a^skeletons		Armor +5...10 (vs. Skeletons)
+Defence against Tengus			10a^tengus			Armor +5...10 (vs. Tengus)
+Defence against Trolls			10a^trolls			Armor +5...10 (vs. Trolls)
+Defence against Undeads			10a^undeads			Armor +5...10 (vs. Undeads)
 
 
 PREFIX
@@ -110,19 +110,19 @@ of Quickening					ahsr^10				Halves skill recharge of spells (Chance: 5-10%)
 of Memory						hsr^20				Halves skill recharge of item's attribute spells (Chance: 10-20%)
 of Memory						hsr^20attribute		Halves skill recharge of attribute spells (Chance: 10-20%)
 of Charr slaying				20^charr			Damage +10-20% (vs. Charrs)
-of Demon slaying				20^demons      		Damage +10-20% (vs. Demons)
-of Dragon slaying				20^dragons     		Damage +10-20% (vs. Dragons)
-of Dwarve slaying				20^dwarves     		Damage +10-20% (vs. Dwarves)
-of Giant slaying				20^giants      		Damage +10-20% (vs. Giants)
-of Ogre slaying					20^ogres       		Damage +10-20% (vs. Ogres)
-of Plant slaying				20^plants      		Damage +10-20% (vs. Plants)
-of Skeleton slaying				20^skeletons   		Damage +10-20% (vs. Skeletons)
-of Tengu slaying				20^tengu       		Damage +10-20% (vs. Tengus)
-of Troll slaying				20^trolls      		Damage +10-20% (vs. Trolls)
-of Undead slaying				20^undead      		Damage +10-20% (vs. Undeads)
+of Demon slaying				20^demons			Damage +10-20% (vs. Demons)
+of Dragon slaying				20^dragons			Damage +10-20% (vs. Dragons)
+of Dwarve slaying				20^dwarves			Damage +10-20% (vs. Dwarves)
+of Giant slaying				20^giants			Damage +10-20% (vs. Giants)
+of Ogre slaying					20^ogres			Damage +10-20% (vs. Ogres)
+of Plant slaying				20^plants			Damage +10-20% (vs. Plants)
+of Skeleton slaying				20^skeletons		Damage +10-20% (vs. Skeletons)
+of Tengu slaying				20^tengu			Damage +10-20% (vs. Tengus)
+of Troll slaying				20^trolls			Damage +10-20% (vs. Trolls)
+of Undead slaying				20^undead			Damage +10-20% (vs. Undeads)
 
 
 Rules :
-- inscriptions can all be grouped with just : 	effect and OS
+- inscriptions can all be grouped with just :	effect and OS
 - prefixes and suffixes grouped with just :		effect and weapon type
 	EXCEPT for focii and shields grouped with : effect and weapon type and OS

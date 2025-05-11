@@ -103,7 +103,7 @@ Func PongmeiChestFarmLoop($STATUS)
 	Else
 		SwitchMode($ID_NORMAL_MODE)
 	EndIf
-	
+
 	MoveTo(-25366, 1524)
 	MoveTo(-25614, 1705)
 	MoveTo(-26200, 2800)
@@ -295,9 +295,9 @@ EndFunc
 ;~ Use defensive skills while opening chests
 Func DefendWhileOpeningChests()
 	Local $nearestFoe = GetNearestEnemyToAgent(GetMyAgent())
-	
+
 	If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($Pongmei_IAmUnstoppable)
-	
+
 	If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
 		UseSkillEx($Pongmei_DeadlyParadox)
 		RndSleep(20)
