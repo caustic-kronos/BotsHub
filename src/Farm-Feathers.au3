@@ -341,7 +341,6 @@ Func IsSensali($agent)
 	Local $playerNumber = DllStructGetData($agent, 'PlayerNumber')
 	If $playerNumber = $ModelID_Sensali_Claw Or $playerNumber = $ModelID_Sensali_Darkfeather Or $playerNumber = $ModelID_Sensali_Cutter Then
 		Return True
-	Else
-		Return False
 	EndIf
+	Return False
 EndFunc

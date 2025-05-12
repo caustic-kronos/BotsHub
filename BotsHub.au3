@@ -819,8 +819,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'loot.consumables.trick_or_treat_bags', GUICtrlRead($GUI_Checkbox_LootToTBags) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.consumables.candy_cane_shards', GUICtrlRead($GUI_Checkbox_LootCandyCaneShards) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.consumables.lunar_tokens', GUICtrlRead($GUI_Checkbox_LootLunarTokens) == 1)
-	Local $jsonString = _JSON_Generate($jsonObject)
-	Return $jsonString
+	Return _JSON_Generate($jsonObject)
 EndFunc
 
 

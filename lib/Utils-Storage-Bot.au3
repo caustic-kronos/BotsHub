@@ -911,9 +911,7 @@ Func DefaultShouldSellMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	If $mapMaterialsKept[$modelId] <> null Then Return False
-
-	Return True
+	Return $mapMaterialsKept[$modelId] == null
 EndFunc
 
 
@@ -926,9 +924,7 @@ Func DefaultShouldSellRareMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	If $mapMaterialsKept[$modelId] <> null Then Return False
-
-	Return True
+	Return $mapMaterialsKept[$modelId] == null
 EndFunc
 
 

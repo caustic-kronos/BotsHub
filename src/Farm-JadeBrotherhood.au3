@@ -285,7 +285,5 @@ Func TargetMobInCenter($targetAgent, $range)
 	Next
 	$sumX = $sumX / $count
 	$sumY = $sumY / $count
-
-	$agent = GetNearestEnemyToCoords($sumX, $sumY)
-	Return $agent
+	Return GetNearestEnemyToCoords($sumX, $sumY)
 EndFunc

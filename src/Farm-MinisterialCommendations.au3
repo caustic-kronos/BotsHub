@@ -491,12 +491,7 @@ EndFunc
 
 ;~ Return True if mission failed (you or Miku died)
 Func IsFail()
-	If GetIsDead($ID_Miku_Agent) Then
-		Return True
-	Elseif GetIsDead() Then
-		Return True
-	EndIf
-	Return False
+	Return GetIsDead($ID_Miku_Agent) Or GetIsDead()
 EndFunc
 
 
@@ -643,8 +638,7 @@ EndFunc
 ;~ Return True if the furthest foe from the player (direction center of Kaineng) is adjacent
 Func IsFurthestMobInBall()
 	Local $furthestEnemy = GetNearestEnemyToCoords(1817, -798)
-	If GetDistance($furthestEnemy, GetMyAgent()) > $RANGE_NEARBY Then Return False
-	Return True
+	Return GetDistance($furthestEnemy, GetMyAgent()) <= $RANGE_NEARBY
 EndFunc
 
 

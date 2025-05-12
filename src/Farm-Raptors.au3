@@ -234,8 +234,7 @@ EndFunc
 Func IsBossAggroed()
 	Local $boss = GetNearestBossFoe()
 	Local Static $unaggroedState = DllStructGetData($boss, 'TypeMap')
-	If DllStructGetData($boss, 'TypeMap') == $unaggroedState Then Return False
-	Return True
+	Return DllStructGetData($boss, 'TypeMap') <> $unaggroedState
 EndFunc
 
 
@@ -364,9 +363,8 @@ Func AssertFarmResult()
 	If $survivors > 1 Then
 		Info($survivors & ' raptors survived')
 		Return 1
-	Else
-		Return 0
 	EndIf
+	Return 0
 EndFunc
 
 
@@ -442,6 +440,5 @@ EndFunc
 ;~ Get nearest foe that is a boss - null if no boss
 Func GetNearestBossFoe()
 	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
-	If $bossFoes[0] == 1 Then Return $bossFoes[1]
-	Return null
+	Return $bossFoes[0] == 1 ? $bossFoes[1] : null
 EndFunc

@@ -94,9 +94,7 @@ Func FollowerFarm($STATUS)
 
 	$FOLLOWER_SETUP = False
 	AdlibUnRegister()
-
-	If $STATUS <> 'RUNNING' Then Return 2
-	Return 0
+	Return $STATUS <> 'RUNNING' ? 2 : 0
 EndFunc
 
 

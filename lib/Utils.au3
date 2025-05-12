@@ -1202,8 +1202,7 @@ EndFunc
 #Region Utils
 ;~ Return the value if it's not null else the defaultValue
 Func GetOrDefault($value, $defaultValue)
-	If ($value == null) Then Return $defaultValue
-	Return $value
+	Return ($value == null) ? $defaultValue : $value
 EndFunc
 
 
@@ -1333,11 +1332,8 @@ Func IsOverLine($coefficientX, $coefficientY, $fixedCoefficient, $posX, $posY)
 	Local $position = $posX * $coefficientX + $posY * $coefficientY + $fixedCoefficient
 	If $position > 0 Then
 		Return True
-	ElseIf $position < 0 Then
-		Return False
-	Else
-		Return False
 	EndIf
+	Return False
 EndFunc
 #EndRegion Utils
 
