@@ -155,7 +155,6 @@ Func createGUI()
 
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 581, 401)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
-	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
 
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
@@ -340,13 +339,6 @@ EndFunc
 ;~ Handle start button usage
 Func GuiButtonHandler()
 	Switch @GUI_CtrlId
-		Case $GUI_Tabs_Parent
-			Switch GUICtrlRead($GUI_Tabs_Parent)
-				Case 0
-					ControlShow($GUI_GWBotHub, '', $GUI_Console)
-				Case Else
-					ControlHide($GUI_GWBotHub, '', $GUI_Console)
-			EndSwitch
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)

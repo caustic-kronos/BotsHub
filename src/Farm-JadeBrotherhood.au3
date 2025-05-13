@@ -206,7 +206,8 @@ Func KillJadeBrotherhood()
 	RndSleep(50)
 
 	$target = GetNearestEnemyToCoords(-13262, -5486)
-	$target = TargetMobInCenter($target, 360)
+	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
+	$target = GetNearestEnemyToCoords($center[0], $center[1])
 	GetAlmostInRangeOfAgent($target)
 	UseSkillEx($JB_MysticVigor)
 	RndSleep(300)
@@ -263,27 +264,4 @@ Func BackToTheMarketplace($success)
 	ReturnToOutpost()
 	WaitMapLoading($ID_The_Marketplace)
 	Return $success
-EndFunc
-
-
-;~ Target mob in the center of a group of mob - needs an agent belonging to that group
-Func TargetMobInCenter($targetAgent, $range)
-	Local $agent, $distance
-	Local $count = 0, $sumX = 0, $sumY = 0
-
-	For $i = 1 To GetMaxAgents()
-		$agent = GetAgentByID($i)
-		If DllStructGetData($agent, 'Type') <> 0xDB Then ContinueLoop
-		If DllStructGetData($agent, 'Allegiance') <> 3 Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		$distance = GetDistance($targetAgent, $agent)
-		If $distance > $range Then ContinueLoop
-		$count += 1
-		$sumX += DllStructGetData($agent, 'X')
-		$sumY += DllStructGetData($agent, 'Y')
-	Next
-	$sumX = $sumX / $count
-	$sumY = $sumY / $count
-	Return GetNearestEnemyToCoords($sumX, $sumY)
 EndFunc

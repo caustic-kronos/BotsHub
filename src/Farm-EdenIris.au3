@@ -87,11 +87,12 @@ Func PickUpIris()
 	Local $agent
 	Local $item
 	Local $deadlock
-	For $i = 1 To GetMaxAgents()
-		$agent = GetAgentByID($i)
-		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
-		$item = GetItemByAgentID($i)
-		If (DllStructGetData(($item), 'ModelID') == $ID_Red_Iris_Flower) Then
+	Local $agents = GetAgentArray(0x400)
+	For $i = 1 To $agents[0]
+		Local $agent = $agents[$i]
+		Local $agentID = DllStructGetData($agent, 'ID')
+		$item = GetItemByAgentID($agentID)
+		If (DllStructGetData($item, 'ModelID') == $ID_Red_Iris_Flower) Then
 			Info('Iris: ' & Round(DllStructGetData($agent, 'X')) & ', Y: ' & Round(DllStructGetData($agent, 'Y')))
 			PickUpItem($item)
 			$deadlock = TimerInit()

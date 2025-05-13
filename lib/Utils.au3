@@ -218,6 +218,10 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
 		Return True
+	; Temporary addition to find glacial blades
+	ElseIf $itemID == $ID_Glacial_Blades_Sword Or $itemID == $ID_Glacial_Blades_Dagger Then
+		Notice('Glacial Blades Sword or Dagger found')
+		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return GUICtrlRead($GUI_Checkbox_LootGoldItems) == $GUI_CHECKED
 	ElseIf ($rarity == $RARITY_Green) Then
@@ -1838,7 +1842,7 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $secondaryProfession	; P Bits
 	Local $attributesCount		; 4 Bits
 	Local $attributesBits		; 4 Bits -> A
-	Local $attributes[1][2]		; A Bits + 4 Bits (for each Attribute)
+	Local $attributes[10][2]	; A Bits + 4 Bits (for each Attribute)
 	Local $skillsBits			; 4 Bits -> S
 	Local $skills[8]			; S Bits * 8
 	Local $opTail				; 1 Bit
@@ -1871,16 +1875,9 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	$attributesBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 4
 	$buildTemplate = StringTrimLeft($buildTemplate, 4)
 
-	$attributes[0][0] = $attributesCount
+	$attributes[0][0] = $secondaryProfession	
+	$attributes[0][1] = $attributesCount	
 	For $i = 1 To $attributesCount
-		If Bin64ToDec(StringLeft($buildTemplate, $attributesBits)) == GetProfPrimaryAttribute($primaryProfession) Then
-			$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
-			$attributes[0][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
-			$buildTemplate = StringTrimLeft($buildTemplate, 4)
-			ContinueLoop
-		EndIf
-		$attributes[0][0] += 1
-		ReDim $attributes[$attributes[0][0] + 1][2]
 		$attributes[$i][0] = Bin64ToDec(StringLeft($buildTemplate, $attributesBits))
 		$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
 		$attributes[$i][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
@@ -1897,7 +1894,6 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 
 	$opTail = Bin64ToDec($buildTemplate)
 
-	$attributes[0][0] = $secondaryProfession
 
 	LoadAttributes($attributes, $secondaryProfession, $heroIndex)
 
@@ -1924,7 +1920,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	EndIf
 
 	; Cleaning the attributes array to have only values between 0 and 12
-	For $i = 1 To UBound($attributesArray) - 1
+	For $i = 1 To $attributesArray[0][1]
 		If $attributesArray[$i][1] > 12 Then $attributesArray[$i][1] = 12
 		If $attributesArray[$i][1] < 0 Then $attributesArray[$i][1] = 0
 	Next
@@ -1934,7 +1930,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 
 	; Now that all attributes are at 0, we increase them by the times needed
 	; Using GetAttributeByID during the increase is a bad idea because it counts points from runes too
-	For $i = 1 To UBound($attributesArray) - 1
+	For $i = 1 To $attributesArray[0][1]
 		For $j = 1 To $attributesArray[$i][1]
 			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
 			Sleep(GetPing() + 100)
@@ -1942,7 +1938,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	Next
 	Sleep(250)
 
-	; If there are any points left, we put them in the primary attribute (it's often not tracked by the $attributesArray)
+	; If there are any points left, we put them in the primary attribute
 	For $i = 0 To 11
 		IncreaseAttribute($primaryAttribute, $heroIndex)
 		Sleep(GetPing() + 100)

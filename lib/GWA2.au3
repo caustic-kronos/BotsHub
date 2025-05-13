@@ -170,7 +170,7 @@ Global $changeStatusStruct = SafeDllStructCreate('ptr;dword')
 Global $changeStatusStructPtr = DllStructGetPtr($changeStatusStruct)
 
 Global $tradeHackAddress
-Global $labelsStruct[1][2]
+Global $labelsMap[]
 #EndRegion CommandStructs
 
 #Region GWA2 Structs
@@ -698,18 +698,12 @@ EndFunc
 
 ;~ Retrieves the value associated with the specified key (internal use only)
 Func GetValue($key)
-	For $i = 1 To $labelsStruct[0][0]
-		If $labelsStruct[$i][0] = $key Then Return Number($labelsStruct[$i][1])
-	Next
-	Return -1
+	Return $labelsMap[$key] <> null ? $labelsMap[$key] : -1
 EndFunc
 
 ;~ Sets the value for the specified key (internal use only)
 Func SetValue($key, $value)
-	$labelsStruct[0][0] += 1
-	ReDim $labelsStruct[$labelsStruct[0][0] + 1][2]
-	$labelsStruct[$labelsStruct[0][0]][0] = $key
-	$labelsStruct[$labelsStruct[0][0]][1] = $value
+	$labelsMap[$key] = $value
 EndFunc
 
 ;~ Scan patterns for Guild Wars game client.
@@ -2249,26 +2243,21 @@ EndFunc
 Func DropBuff($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x510
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
-	ReDim $offset[5]
-	$offset[3] = 0x508
+	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+
 	Local $buffer
+	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To $count[1] - 1
-		$offset[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		$offset2[4] = 0x24 * $i
+		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			$offset[4] = 0x4 + 0x24 * $i
-			ReDim $offset[6]
+			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
 			For $j = 0 To $buffCount - 1
-				$offset[5] = 0 + 0x10 * $j
-				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
+				$offset3[5] = 0 + 0x10 * $j
+				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset3)
 				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID')) Then
 					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffId'))
@@ -3286,16 +3275,25 @@ EndFunc
 ;~ Returns array of party members
 ;~ Param: an array returned by GetAgentArray. This is totally optional, but can greatly improve script speed.
 Func GetParty($agentArray = 0)
-	Local $resultArray[1] = [0]
 	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
+	Local $partySize = 0
 	For $i = 1 To $agentArray[0]
 		If DllStructGetData($agentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
 		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 131072) Then ContinueLoop
-		$resultArray[0] += 1
-		ReDim $resultArray[$resultArray[0] + 1]
-		$resultArray[$resultArray[0]] = $agentArray[$i]
+		$partySize += 1
 	Next
-	Return $resultArray
+
+	Local $result[$partySize + 1]
+	$result[0] = $partySize
+
+	Local $index = 1
+	For $i = 1 To $agentArray[0]
+		If DllStructGetData($agentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
+		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 131072) Then ContinueLoop
+		$result[$index] = $agentArray[$i]
+		$index += 1
+	Next
+	Return $result
 EndFunc
 
 
@@ -3546,14 +3544,13 @@ EndFunc
 #Region Buff
 ;~ Returns current number of buffs being maintained.
 Func GetBuffCount($heroIndex = 0)
-	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
-	ReDim $offset[5]
-	$offset[3] = 0x508
+	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
 	Local $buffer
+	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	For $i = 0 To $count[1] - 1
-		$offset[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		$offset2[4] = 0x24 * $i
+		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
 			Return MemoryRead($buffer[0] + 0xC)
 		EndIf
@@ -3566,20 +3563,18 @@ EndFunc
 Func GetIsTargetBuffed($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
-	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
-	ReDim $offset[5]
-	$offset[3] = 0x508
+	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
 	Local $buffer
+	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	For $i = 0 To $count[1] - 1
-		$offset[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		$offset2[4] = 0x24 * $i
+		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			$offset[4] = 0x4 + 0x24 * $i
-			ReDim $offset[6]
+			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
 			For $j = 0 To $buffCount - 1
-				$offset[5] = 0 + 0x10 * $j
-				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
+				$offset3[5] = 0 + 0x10 * $j
+				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset3)
 				Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
 				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID') Then
@@ -3594,19 +3589,16 @@ EndFunc
 
 ;~ Returns buff struct.
 Func GetBuffByIndex($buffIndex, $heroIndex = 0)
-	Local $offset[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
-	ReDim $offset[5]
-	$offset[3] = 0x508
+	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	Local $buffer
 	For $i = 0 To $count[1] - 1
-		$offset[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		$offset2[4] = 0x24 * $i
+		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			$offset[4] = 0x4 + 0x24 * $i
-			ReDim $offset[6]
-			$offset[5] = 0 + 0x10 * ($buffIndex - 1)
-			$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
+			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0x10 * ($buffIndex - 1)]
+			$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset3)
 			Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
 			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 			Return $buffStruct
@@ -3664,20 +3656,10 @@ EndFunc
 ;~ Returns current morale.
 Func GetMorale($heroIndex = 0)
 	Local $agentID = GetHeroID($heroIndex)
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x638
-	Local $index = MemoryReadPtr($baseAddressPtr, $offset)
-	ReDim $offset[6]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x62C
-	$offset[4] = 8 + 0xC * BitAND($agentID, $index[1])
-	$offset[5] = 0x18
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $offset1[4] = [0, 0x18, 0x2C, 0x638]
+	Local $index = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $offset2[6] = [0, 0x18, 0x2C, 0x62C, 8 + 0xC * BitAND($agentID, $index[1]), 0x18]
+	Local $result = MemoryReadPtr($baseAddressPtr, $offset2)
 	Return $result[1] - 100
 EndFunc
 
@@ -3715,39 +3697,29 @@ EndFunc
 ;~ Returns effect struct or array of effects.
 Func GetEffect($skillID = 0, $heroIndex = 0)
 	Local $effectCount, $effectStructAddress
-	Local $resultArray[1] = [0]
-
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0x510
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset)
-	ReDim $offset[5]
-	$offset[3] = 0x508
+	; Offsets have to be kept separate - else we risk cross-call contamination - Avoid ReDim !
+	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
 	Local $buffer
 	For $i = 0 To $count[1] - 1
-		$offset[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0x24 * $i]
+		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			$offset[4] = 0x1C + 0x24 * $i
-			$effectCount = MemoryReadPtr($baseAddressPtr, $offset)
-			ReDim $offset[6]
-			$offset[4] = 0x14 + 0x24 * $i
-			$offset[5] = 0
-			$effectStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
+			Local $offset3[5] = [0, 0x18, 0x2C, 0x508, 0x1C + 0x24 * $i]
+			$effectCount = MemoryReadPtr($baseAddressPtr, $offset3)
+
+			Local $offset4[6] = [0, 0x18, 0x2C, 0x508, 0x14 + 0x24 * $i, 0]
+			$effectStructAddress = MemoryReadPtr($baseAddressPtr, $offset4)
 
 			If $skillID = 0 Then
-				ReDim $resultArray[$effectCount[1] + 1]
+				Local $resultArray[$effectCount[1] + 1]
 				$resultArray[0] = $effectCount[1]
-
 				For $i = 0 To $effectCount[1] - 1
-					$resultArray[$i + 1] = SafeDllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
+					$resultArray[1 + $i] = SafeDllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
 					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', 0)
 				Next
-
-				ExitLoop
+				Return $resultArray
 			Else
 				For $i = 0 To $effectCount[1] - 1
 					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
@@ -3760,7 +3732,8 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 			EndIf
 		EndIf
 	Next
-	Return $resultArray
+	Local $emptyArray[1] = [0]
+	Return $emptyArray
 EndFunc
 
 
@@ -6032,10 +6005,13 @@ Func CompleteASMCode()
 	Local $currentOffset = Dec(Hex($memoryInterface)) + $asmCodeOffset
 	Local $token
 
-	For $i = 1 To $labelsStruct[0][0]
-		If StringLeft($labelsStruct[$i][0], 6) = 'Label_' Then
-			$labelsStruct[$i][0] = StringTrimLeft($labelsStruct[$i][0], 6)
-			$labelsStruct[$i][1] = $memoryInterface + $labelsStruct[$i][1]
+	Local $labelsKeys = MapKeys($labelsMap)
+	For $key In $labelsKeys
+		If StringLeft($key, 6) = 'Label_' Then
+			Local $value = $labelsMap[$key]
+			Local $newKey = StringTrimLeft($key, 6)
+			$labelsMap[$newKey] = $memoryInterface + $value
+			MapRemove($labelsMap, $key)
 		EndIf
 	Next
 

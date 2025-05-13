@@ -1726,7 +1726,7 @@ Global Const $ID_Sunspear								= 2471
 
 #Region EotN
 Global Const $ID_Darksteel_Longbow						= 2472
-Global Const $ID_Glacial_Blades_Sword					= 999999
+Global Const $ID_Glacial_Blades_Sword					= 2473
 Global Const $ID_Glacial_Blades_Dagger					= 2474
 Global Const $ID_Hourglass_Staff_Domination_Magic		= 2475
 Global Const $ID_Hourglass_Staff_Fast_Casting			= 2476
