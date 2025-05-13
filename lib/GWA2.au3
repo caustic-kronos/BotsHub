@@ -29,7 +29,7 @@ Global $gwa2Version = '0.0.0'
 ; Windows and process handles
 Global $kernelHandle = DllOpen('kernel32.dll')
 ; Each slot will be a 4-elements array: [0] = PID, [1] = handle (or 0 if invalidated), [2] = window, [3] = character name
-Global $gameClients[0][4]
+Global $gameClients[31][4]
 Global $selectedClientIndex = -1
 
 If Not $kernelHandle Then
@@ -200,8 +200,8 @@ Global $worldStruct = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;
 #Region Memory
 ;~ Close all handles once bot stops
 Func CloseAllHandles()
-	For $gameClient In $gameClients
-		If $gameClient[0] <> -1 Then SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $gameClient[1])
+	For $index = 1 To $gameClients[0][0]
+		If $gameClients[$index][0] <> -1 Then SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $gameClients[$index][1])
 	Next
 	If $kernelHandle Then DllClose($kernelHandle)
 EndFunc
@@ -280,7 +280,7 @@ EndFunc
 #Region Initialisation
 ;~ Return currently chosen process ID
 Func GetPID()
-	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
 		Return $gameClients[$selectedClientIndex][0]
 	EndIf
 	Return
@@ -289,7 +289,7 @@ EndFunc
 
 ;~ Return currently chosen process handle
 Func GetProcessHandle()
-	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
 		Return $gameClients[$selectedClientIndex][1]
 	EndIf
 	Return
@@ -298,7 +298,7 @@ EndFunc
 
 ;~ Return currently chosen window handle
 Func GetWindowHandle()
-	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
 		Return $gameClients[$selectedClientIndex][2]
 	EndIf
 	Return
@@ -307,7 +307,7 @@ EndFunc
 
 ;~ Return currently chosen character name
 Func GetCharacterName()
-	If $selectedClientIndex >= 0 And $selectedClientIndex < UBound($gameClients) Then
+	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
 		Return $gameClients[$selectedClientIndex][3]
 	EndIf
 	Return
@@ -316,7 +316,7 @@ EndFunc
 
 ;~ Select the client -PID, process handle, window handle and character- to use for the bot
 Func SelectClient($index)
-	If $index >= 0 And $index < UBound($gameClients) Then
+	If $index > 0 And $index <= $gameClients[0][0] Then
 		$selectedClientIndex = $index
 		Return True
 	EndIf
@@ -330,9 +330,9 @@ Func ScanAndUpdateGameClients()
 	If @error Or $processList[0][0] = 0 Then Return
 
 	; Step 1: Mark all existing entries as 'unseen'
-	Local $clientCount = UBound($gameClients)
-	Local $seen[$clientCount]
-	For $i = 0 To $clientCount - 1
+	Local $initialClientCount = $GameClients[0][0]
+	Local $seen[$initialClientCount + 1]
+	For $i = 1 To $GameClients[0][0]
 		$seen[$i] = False
 	Next
 
@@ -359,7 +359,7 @@ Func ScanAndUpdateGameClients()
 	Next
 
 	; Step 3: Invalidate unseen (terminated) processes
-	For $i = 0 To $clientCount - 1
+	For $i = 1 To $initialClientCount
 		If Not $seen[$i] Then
 			$GameClients[$i][0] = -1
 			$GameClients[$i][1] = -1
@@ -372,7 +372,7 @@ EndFunc
 
 ;~ Finds index in $gameClients by PID
 Func FindClientIndexByPID($pid)
-	For $i = 0 To UBound($gameClients) - 1
+	For $i = 1 To $gameClients[0][0]
 		If $gameClients[$i][0] = $pid Then Return $i
 	Next
 	Return -1
@@ -381,7 +381,7 @@ EndFunc
 
 ;~ Finds index in $gameClients by character name
 Func FindClientIndexByCharacterName($characterName)
-	For $i = 0 To UBound($gameClients) - 1
+	For $i = 1 To $gameClients[0][0]
 		If $gameClients[$i][3] = $characterName Then Return $i
 	Next
 	Return -1
@@ -390,8 +390,11 @@ EndFunc
 
 ;~ Adds a new client entry to $gameClients
 Func AddClient($pid, $handle, $windowHandle, $characterName)
-	Local $newIndex = UBound($gameClients)
-	ReDim $gameClients[$newIndex + 1][4]
+	$gameClients[0][0] += 1
+	Local $newIndex = $gameClients[0][0]
+	If $newIndex > UBound($gameClients) - 1 Then
+		Error('GameClients array is full. Cannot add new client. Restart the bot.')
+	EndIf
 	$GameClients[$newIndex][0] = $pid
 	$GameClients[$newIndex][1] = $handle
 	$GameClients[$newIndex][2] = $windowHandle
@@ -3721,9 +3724,9 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 				Next
 				Return $resultArray
 			Else
-				For $i = 0 To $effectCount[1] - 1
+				For $j = 0 To $effectCount[1] - 1
 					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $j, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
 
 					If DllStructGetData($effectStruct, 'SkillID') = $skillID Then
 						Return $effectStruct

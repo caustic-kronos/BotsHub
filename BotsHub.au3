@@ -155,6 +155,7 @@ Func createGUI()
 
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 581, 401)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
+	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
 
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
@@ -339,6 +340,15 @@ EndFunc
 ;~ Handle start button usage
 Func GuiButtonHandler()
 	Switch @GUI_CtrlId
+		Case $GUI_Tabs_Parent
+			Switch GUICtrlRead($GUI_Tabs_Parent)
+				Case 0
+					ControlEnable($GUI_GWBotHub, '', $GUI_Console)
+					ControlShow($GUI_GWBotHub, '', $GUI_Console)
+				Case Else
+					ControlDisable($GUI_GWBotHub, '', $GUI_Console)
+					ControlHide($GUI_GWBotHub, '', $GUI_Console)
+			EndSwitch
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)
@@ -909,10 +919,10 @@ EndFunc
 ;~ Fill characters combobox
 Func RefreshCharactersComboBox()
 	Local $comboList = ''
-	For $i = 0 To UBound($gameClients) - 1
-		$comboList &= '|' & $gameClients[$i][3]
+	For $i = 1 To $gameClients[0][0]
+		If $gameClients[$i][0] <> -1 Then $comboList &= '|' & $gameClients[$i][3]
 	Next
-	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, UBound($gameClients) > 0 ? $gameClients[0][3] : '')
+	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, $gameClients[0][0] > 0 ? $gameClients[1][3] : '')
 EndFunc
 #EndRegion Authentification and Login
 

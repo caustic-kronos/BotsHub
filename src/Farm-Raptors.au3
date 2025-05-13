@@ -420,7 +420,7 @@ EndFunc
 ;~ Send /stuck - don't overuse
 Func SendStuckCommand()
 	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
-	If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 8000 Then
+	If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then
 		Warn('Sending /stuck')
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()
