@@ -37,18 +37,24 @@ Global Const $ID_HARD_MODE				= 1
 
 
 #Region Locations
+Global Const $ID_AMERICA				= 0
+Global Const $ID_ASIA_KOREA				= 1
 Global Const $ID_EUROPE					= 2
-Global Const $ID_INTERNATIONAL			= -2	; incorrect
-Global Const $ID_KOREA					= 1		; incorrect
-Global Const $ID_CHINA					= 3		; incorrect
-Global Const $ID_JAPAN					= 4		; incorrect
+Global Const $ID_ASIA_CHINA				= 3
+Global Const $ID_ASIA_JAPAN				= 4
+Global Const $ID_INTERNATIONAL			= -2
+
 Global Const $ID_ENGLISH				= 0
 Global Const $ID_FRENCH					= 2
 Global Const $ID_GERMAN					= 3
 Global Const $ID_ITALIAN				= 4
+Global Const $ID_SPANISH				= 5
 Global Const $ID_POLISH					= 9
 Global Const $ID_RUSSIAN				= 10
-Global Const $ID_SPANISH				= 5
+
+Global Const $ID_KOREA					= 0
+Global Const $ID_CHINA					= 0
+Global Const $ID_JAPAN					= 0
 
 Global Const $ID_English_District		=	[$ID_ENGLISH, $ID_EUROPE]
 Global Const $ID_French_District		=	[$ID_FRENCH, $ID_EUROPE]
@@ -57,11 +63,13 @@ Global Const $ID_Italian_District		=	[$ID_ITALIAN, $ID_EUROPE]
 Global Const $ID_Polish_District		=	[$ID_POLISH, $ID_EUROPE]
 Global Const $ID_Russian_District		=	[$ID_RUSSIAN, $ID_EUROPE]
 Global Const $ID_Spanish_District		=	[$ID_SPANISH, $ID_EUROPE]
-Global Const $ID_American_District		=	[$ID_ENGLISH, $ID_ENGLISH]
-Global Const $ID_Chinese_District		=	[$ID_CHINA, $ID_ENGLISH]
-Global Const $ID_Japanese_District		=	[$ID_JAPAN, $ID_ENGLISH]
-Global Const $ID_Korean_District		=	[$ID_KOREA, $ID_ENGLISH]
-Global Const $ID_International_District	=	[$ID_INTERNATIONAL, $ID_ENGLISH]
+
+Global Const $ID_American_District		=	[$ID_ENGLISH, $ID_AMERICA]
+
+Global Const $ID_Chinese_District		=	[$ID_ENGLISH, $ID_ASIA_CHINA]
+Global Const $ID_Japanese_District		=	[$ID_ENGLISH, $ID_ASIA_JAPAN]
+Global Const $ID_Korean_District		=	[$ID_ENGLISH, $ID_ASIA_KOREA]
+Global Const $ID_International_District	=	[$ID_ENGLISH, $ID_INTERNATIONAL]
 
 Global Const $DistrictNames				=	['English', 'French', 'German', 'Italian', 'Polish', 'Russian', 'Spanish', 'America', 'China', 'Japan', 'Korea', 'International']
 Global Const $DistrictAndRegionIds		=	[$ID_English_District, $ID_French_District, $ID_German_District, $ID_Italian_District, $ID_Polish_District, $ID_Russian_District, _
@@ -1578,7 +1586,6 @@ Global Const $ID_Spiritbinder						= 2467
 ;Global Const $ID_Jellyfish_Wand					=
 ;Global Const $ID_Koi_Scepter						=
 ;Global Const $ID_Water_Spirit_Rod					=
-;Global Const $ID_Wayward_Wand						=
 
 ;Global Const $ID_Zodiac_Staff						=
 ;Global Const $ID_ALL_ZODIAC_WEAPONS				=
@@ -1669,6 +1676,7 @@ Global Const $ID_Ornate_Scimitar					= 1569
 ; Wand
 Global Const $ID_Platinum_Wand						= 1011
 Global Const $ID_Voltaic_Wand						= 1018
+Global Const $ID_Wayward_Wand						= 977
 
 #Region Celestial
 Global Const $ID_Celestial_Shield					= 942
@@ -1684,6 +1692,7 @@ Global Const $ID_Celestial_Longbow					= 1068
 
 #Region Zodiac
 Global Const $ID_Zodiac_Shield						= 1039
+Global Const $ID_Zodiac_Longbow						= 966
 #EndRegion Zodiac
 #EndRegion Rare skins
 
@@ -2056,7 +2065,7 @@ Global $RareWeapons_Array = [ _
 	_ ; Swords
 	$ID_Crystalline_Sword, $ID_Jitte, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Jitte, $ID_Broadsword, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, $ID_Adamantine_Falchion, $ID_Ornate_Scimitar, _
 	_ ; Wands
-	$ID_Platinum_Wand, $ID_Voltaic_Wand, _
+	$ID_Platinum_Wand, $ID_Voltaic_Wand, $ID_Wayward_Wand, _
 	_ ; Celestial weapons
 	$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Staff, $ID_Celestial_Longbow, _
 	_ ; Zodiac weapons

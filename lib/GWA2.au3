@@ -1753,14 +1753,6 @@ EndFunc
 
 
 #Region Travel
-;~ Map travel to an outpost, returns True if successful
-Func TravelTo($mapID, $district = 0)
-	If GetMapID() = $mapID And $district = 0 And GetInstanceType() = 0 Then Return True
-	ZoneMap($mapID, $district)
-	Return WaitMapLoading($mapID)
-EndFunc
-
-
 ;~ Internal use for map travel.
 Func ZoneMap($mapID, $district = 0)
 	MoveMap($mapID, GetRegion(), $district, GetLanguage())

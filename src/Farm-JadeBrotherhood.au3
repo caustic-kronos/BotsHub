@@ -65,7 +65,7 @@ Global $JADE_BROTHERHOOD_FARM_SETUP = False
 
 ;~ Main method to farm Jade Brotherhood for q8
 Func JadeBrotherhoodFarm($STATUS)
-	If GetMapID() <> $ID_The_Marketplace Then TravelTo($ID_The_Marketplace)
+	If GetMapID() <> $ID_The_Marketplace Then DistrictTravel($ID_The_Marketplace, $DISTRICT_NAME)
 
 	If Not $JADE_BROTHERHOOD_FARM_SETUP Then
 		SetupJadeBrotherhoodFarm()
