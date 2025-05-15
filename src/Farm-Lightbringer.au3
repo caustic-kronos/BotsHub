@@ -89,6 +89,7 @@ Func ToTheSulfurousWastes()
 	While GetMapID() <> $ID_The_Sulfurous_Wastes
 		MoveTo(1527, -4114)
 		Move(1970, -4353)
+		RndSleep(1000)
 		WaitMapLoading($ID_The_Sulfurous_Wastes, 10000, 4000)
 	WEnd
 EndFunc

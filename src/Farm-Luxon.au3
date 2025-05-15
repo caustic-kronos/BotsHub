@@ -55,7 +55,8 @@ Func LuxonFactionFarm($STATUS)
 
 	MoveTo(-4268, 11628)
 	MoveTo(-4980, 12425)
-	MoveTo(-5493, 13712)
+	Move(-5493, 13712)
+	RndSleep(1000)
 	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
 	$groupIsAlive = True
 	AdlibRegister('LuxonGroupIsAlive', 10000)

@@ -72,7 +72,8 @@ Func RunToJagaMoraine()
 	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
 
 	Info('Exiting Outpost')
-	MoveTo(-26472, 16217)
+	Move(-26472, 16217)
+	RndSleep(1000)
 	WaitMapLoading($ID_Bjora_Marches)
 
 	RndSleep(500)

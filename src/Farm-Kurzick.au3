@@ -100,6 +100,7 @@ Func VanquishFerndale()
 	MoveTo(7810, -726)
 	MoveTo(10042, -1173)
 	Move(10446, -1147, 5)
+	RndSleep(1000)
 	WaitMapLoading($ID_Ferndale, 10000, 2000)
 	$groupIsAlive = True
 

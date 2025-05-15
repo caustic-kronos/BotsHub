@@ -69,19 +69,18 @@ Global Const $Splinter_Weapon_Skill_Position = 2
 Global Const $Essence_Strike_Skill_Position = 3
 Global Const $Mend_Body_And_Soul_Skill_Position = 5
 Global Const $Spirit_Light = 6
-Global Const $Strength_of_honor_Skill_Position = 8
 Global Const $SoS_Mystic_Healing_Skill_Position = 8
 ; Prot Ritualist
-Global Const $SBoon_of_creation_Skill_Position = 1
 Global Const $Soul_Twisting_Skill_Position = 1
 Global Const $Shelter_Skill_Position = 2
 Global Const $Union_Skill_Position = 3
 Global Const $Displacement_Skill_Position = 4
-Global Const $Armor_of_Unfeeling_Skill_Position = 4
+Global Const $Armor_of_Unfeeling_Skill_Position = 5
+Global Const $SBoon_of_creation_Skill_Position = 6
 Global Const $Prot_Mystic_Healing_Skill_Position = 7
 ; BiP Necro
 Global Const $Recovery_Skill_Position = 8
-Global Const $Blood_bond_Skill_Position = 4
+Global Const $Blood_bond_Skill_Position = 2
 Global Const $Spirit_Transfer = 4
 
 ; Order heros are added to the team

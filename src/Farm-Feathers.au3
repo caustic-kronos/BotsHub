@@ -96,8 +96,10 @@ Func SetupFeathersFarm()
 
 	MoveTo(17300, 17300)
 	Move(16800, 17550)
+	RndSleep(1000)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 	Move(10970, -13360)
+	RndSleep(1000)
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
 	Info('Preparations complete')
 EndFunc
@@ -107,6 +109,7 @@ EndFunc
 Func FeathersFarmLoop()
 	Info('Entering Jaya Bluffs')
 	Move(16800, 17550)
+	RndSleep(1000)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 
 	Info('Running to Sensali.')
