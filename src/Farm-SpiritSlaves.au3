@@ -415,7 +415,7 @@ EndFunc
 
 ;~ Cleanse if the character has a condition (cripple)
 Func CleanseFromCripple()
-	If (GetHasCondition(GetMyAgent())) Then UseSkillEx($SS_I_am_unstoppable)
+	If (GetHasCondition(GetMyAgent()) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0) Then UseSkillEx($SS_I_am_unstoppable)
 EndFunc
 
 

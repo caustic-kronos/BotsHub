@@ -60,6 +60,7 @@ Global $Bohseda_Timer
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
+	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
 	If Not $CORSAIRS_FARM_SETUP Then
 		SetupCorsairsFarm()
 		$CORSAIRS_FARM_SETUP = True
@@ -89,9 +90,6 @@ EndFunc
 
 ;~ Farm loop
 Func CorsairsFarmLoop()
-	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
-
 	Info('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 	RndSleep(250)

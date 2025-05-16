@@ -22,15 +22,12 @@
 Global Const $FarmerSkillbar = ''
 Global Const $FarmInformations = ''
 
-Global $Farm_Setup = False
-
-Global $loggingFile
-
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
-Global Const $Skill_ = 0
 
 ; Common skill to all heroes
 Global Const $Mystic_Healing_Skill_Position = 1
+; Except for the ranger and the necros
+Global Const $Cautery_Signet_Skill_Position = 2
 Global Const $Faithful_Intervention_Skill_Position = 8
 
 ; BiP Necro
@@ -39,8 +36,6 @@ Global Const $BiP_Skill_Position = 7
 ; Zephyr Ranger - Quickening Zephyr and serpent's quickness must be locked so hero doesn't use them
 Global Const $Serpents_Quickness_Skill_Position = 6
 Global Const $Quickening_Zephyr_Skill_Position = 7
-
-Global $Quickening_Zephyr_Cast_Timer
 
 ; Order heros are added to the team
 Global Const $Hero_Dervish_1 = 1
@@ -53,6 +48,8 @@ Global Const $Hero_Speed_Paragon = 7
 
 Global Const $ID_necro_mercenary_hero = $ID_Mercenary_Hero_3
 
+Global $Quickening_Zephyr_Cast_Timer
+Global $steady_Healing_Healer_Index = 0
 
 ;~ Shouldn't be used - doesn't farm anything
 Func OmniFarm($STATUS)
@@ -71,9 +68,7 @@ EndFunc
 ;~ Shouldn't be used
 Func HealingLoop()
 	While $STATUS == 'RUNNING'
-		;RndSleep(5000)
-		;HealingUnit()
-		HealingUnitAutoLoop()
+		ManualFarmAutoHealingLoop()
 	WEnd
 EndFunc
 
@@ -81,7 +76,6 @@ EndFunc
 ;~ Can be used in other farm bots
 Func OmniFarmSetupWithMandatoryHero($ID_Additional_Hero)
 	LeaveGroup()
-
 	AddHero($ID_Additional_Hero)
 	AddHero($ID_Kahmu)
 	AddHero($ID_MOX)
@@ -95,19 +89,24 @@ EndFunc
 ;~ Can be used in other farm bots
 Func OmniFarmFullSetup()
 	LeaveGroup()
-
-	AddHero($ID_General_Morgahn)
-	AddHero($ID_Kahmu)
-	AddHero($ID_MOX)
 	AddHero($ID_Melonni)
+	AddHero($ID_MOX)
+	AddHero($ID_Kahmu)
 	AddHero($ID_Pyre_Fierceshot)
 	AddHero($ID_Olias)
 	AddHero($ID_necro_mercenary_hero)
+	AddHero($ID_General_Morgahn)
+	DisableHeroSkillSlot($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
+	DisableHeroSkillSlot($Hero_Zephyr_Ranger, $Serpents_Quickness_Skill_Position)
 EndFunc
 
 
 ;~ Can be used in other farm bots
 Func PrepareZephyrSpirit()
+	UseHeroSkill($Hero_Zephyr_Ranger, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
+	UseHeroSkill($Hero_BiP_Necro_1, $Faithful_Intervention_Skill_Position)
+	RndSleep(10)
 	UseHeroSkill($Hero_Speed_Paragon, $Faithful_Intervention_Skill_Position)
 	RndSleep(10)
 	UseHeroSkill($Hero_Dervish_1, $Faithful_Intervention_Skill_Position)
@@ -116,24 +115,58 @@ Func PrepareZephyrSpirit()
 	RndSleep(10)
 	UseHeroSkill($Hero_Dervish_3, $Faithful_Intervention_Skill_Position)
 	RndSleep(10)
-	UseHeroSkill($Hero_BiP_Necro_1, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
 	UseHeroSkill($Hero_BiP_Necro_2, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
-	UseHeroSkill($Hero_Zephyr_Ranger, $Faithful_Intervention_Skill_Position)
-	RndSleep(1000)
+	RndSleep(2000)
 	UseHeroSkill($Hero_BiP_Necro_1, $BiP_Skill_Position, GetHeroID($Hero_Zephyr_Ranger))
-	RndSleep(1500)
+	RndSleep(10)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Serpents_Quickness_Skill_Position)
-	RndSleep(1000)
+	RndSleep(10)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 	$Quickening_Zephyr_Cast_Timer = TimerInit()
-	RndSleep(7500)
+	RndSleep(5500)
+EndFunc
+
+
+Func RegisterSteadyHealingUnit()
+	AdlibRegister('SteadyHealingUnit', 350)
+EndFunc
+
+
+Func UnregisterSteadyHealingUnit()
+	AdlibUnRegister('SteadyHealingUnit')
+EndFunc
+
+;~ Can be used in other farm bots
+Func SteadyHealingUnit()
+	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 32000 And GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
+		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
+		$Quickening_Zephyr_Cast_Timer = TimerInit()
+	EndIf
+
+	Local Static $healerArray[6] = [$Hero_Dervish_1, $Hero_Dervish_2, $Hero_Dervish_3, $Hero_BiP_Necro_1, $Hero_BiP_Necro_2, $Hero_Speed_Paragon]
+	; Heroes with Mystic Healing provide additional long range support
+	UseHeroSkill($healerArray[$steady_Healing_Healer_Index], $Mystic_Healing_Skill_Position)
+	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 6000 And $steady_Healing_Healer_Index == 5 Then
+		UseHeroSkill($Hero_Zephyr_Ranger, $Mystic_Healing_Skill_Position)
+	EndIf
+
+	If (GetHasCondition(GetMyAgent()) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0) Then
+		Switch $steady_Healing_Healer_Index
+			Case 3
+				UseHeroSkill($healerArray[2], $Cautery_Signet_Skill_Position)
+			Case 4
+				UseHeroSkill($healerArray[5], $Cautery_Signet_Skill_Position)
+			Case Else
+				UseHeroSkill($healerArray[$steady_Healing_Healer_Index], $Cautery_Signet_Skill_Position)
+		EndSwitch
+	EndIf
+	$steady_Healing_Healer_Index += 1
+	$steady_Healing_Healer_Index = Mod($steady_Healing_Healer_Index, 6)
 EndFunc
 
 
 ;~ Can be used in other farm bots - has no latency - can be used at most once every 5s
-Func HealingUnit()
+Func BurstHealingUnit()
 	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
@@ -153,7 +186,7 @@ EndFunc
 
 
 ;~ Shouldn't be used in other farm bots - made to run continuously, so has strong latency (about 5s)
-Func HealingUnitAutoLoop()
+Func ManualFarmAutoHealingLoop()
 	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()

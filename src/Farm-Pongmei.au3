@@ -57,6 +57,8 @@ Global $PONGMEI_FARM_SETUP = False
 
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)
+	; Need to be done here in case bot comes back from inventory management
+	If GetMapID() <> $ID_Boreas_Seabed Then DistrictTravel($ID_Boreas_Seabed, $DISTRICT_NAME)
 	If Not $PONGMEI_FARM_SETUP Then
 		SetupPongmeiFarm()
 		$PONGMEI_FARM_SETUP = True
@@ -81,6 +83,12 @@ Func SetupPongmeiFarm()
 	AddHero($ID_Goren)
 	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
 
+	If IsHardmodeEnabled() Then
+		SwitchMode($ID_HARD_MODE)
+	Else
+		SwitchMode($ID_NORMAL_MODE)
+	EndIf
+
 	; Reloading the city map is useless here, we always port back to the same places anyway
 	;Info('Entering Pongmei Valley')
 	;MoveTo(-25614, 1705)
@@ -95,8 +103,6 @@ EndFunc
 
 ;~ Pongmei Chest farm loop
 Func PongmeiChestFarmLoop($STATUS)
-	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Boreas_Seabed Then DistrictTravel($ID_Boreas_Seabed, $DISTRICT_NAME)
 	Info('Starting chest farm run')
 	If IsHardmodeEnabled() Then
 		SwitchMode($ID_HARD_MODE)

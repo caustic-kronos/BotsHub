@@ -58,6 +58,7 @@ Global $FEATHERS_FARM_SETUP = False
 
 ;~ Main method to farm feathers
 Func FeathersFarm($STATUS)
+	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
 	If Not $FEATHERS_FARM_SETUP Then
 		SetupFeathersFarm()
 		$FEATHERS_FARM_SETUP = True
@@ -72,7 +73,6 @@ EndFunc
 ;~ Feathers farm setup
 Func SetupFeathersFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveGroup()
 	LoadSkillTemplate($DAFeathersFarmerSkillbar)

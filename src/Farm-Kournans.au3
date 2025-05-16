@@ -73,6 +73,7 @@ Global $KOURNANS_FARM_SETUP = False
 
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
+	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	If Not $KOURNANS_FARM_SETUP Then
 		SetupKournansFarm()
 		$KOURNANS_FARM_SETUP = True
@@ -87,7 +88,6 @@ EndFunc
 ;~ Kournans farm setup
 Func SetupKournansFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()

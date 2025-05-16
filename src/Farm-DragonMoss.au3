@@ -52,6 +52,7 @@ Global $DM_FARM_SETUP = False
 
 ;~ Main method to farm Dragon Moss
 Func DragonMossFarm($STATUS)
+	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	If Not $DM_FARM_SETUP Then
 		SetupDragonMossFarm()
 		$DM_FARM_SETUP = True
@@ -66,7 +67,6 @@ EndFunc
 ;~ Dragon moss farm setup
 Func SetupDragonMossFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveGroup()
 	LoadSkillTemplate($RADragonMossFarmerSkillbar)

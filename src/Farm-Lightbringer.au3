@@ -46,9 +46,8 @@ Global Const $Junundu_Leave = 8
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
 Func LightbringerFarm($STATUS)
-	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
-	; Need to be done here in case bot comes back from inventory management
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
+	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return 2
 
 	ToTheSulfurousWastes()

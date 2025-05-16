@@ -669,7 +669,7 @@ Func UpdateFarmDescription($Farm)
 		Case 'Kournans'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $ElAKournansFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, $CorsairsFarmInformations)
+			GUICtrlSetData($GUI_Label_FarmInformations, $KournansFarmInformations)
 		Case 'Kurzick'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $KurzickFactionSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')

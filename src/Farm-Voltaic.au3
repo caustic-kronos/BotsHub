@@ -38,6 +38,9 @@ Global $voltaicDeathsCount = 0
 
 ;~ Main method to farm Voltaic
 Func VoltaicFarm($STATUS)
+	; Need to be done here in case bot comes back from inventory management
+	If GetMapID() <> $ID_Umbral_Grotto Then DistrictTravel($ID_Umbral_Grotto, $DISTRICT_NAME)
+
 	If Not $VOLTAIC_FARM_SETUP Then
 		SetupVoltaicFarm()
 		$VOLTAIC_FARM_SETUP = True
@@ -63,9 +66,6 @@ EndFunc
 
 ;~ Farm loop
 Func VoltaicFarmLoop()
-	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Umbral_Grotto Then DistrictTravel($ID_Umbral_Grotto, $DISTRICT_NAME)
-
 	$voltaicDeathsCount = 0
 	Info('Making way to portal')
 	MoveTo(-22846, 9056)
