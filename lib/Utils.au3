@@ -793,6 +793,33 @@ EndFunc
 
 
 #Region Use Items
+;~ Team member has too much malus
+Func TeamHasTooMuchMalus()
+	Local $party = GetParty()
+	For $i = 0 To $party[0]
+		If GetMorale($i) < 0 Then Return True
+	Next
+	Return False
+EndFunc
+
+
+;~ Use morale booster on team
+Func UseMoraleConsumableIfNeeded()
+	While TeamHasTooMuchMalus() Then
+		Local $usedMoraleBooster = False
+		For $DPRemoval_Sweet In $DPRemoval_Sweets
+			Local $ConsumableSlot = findInInventory($DPRemoval_Sweet)
+			If $ConsumableSlot[0] <> 0 Then
+				UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+				$usedMoraleBooster = True
+			EndIf
+		Next
+		If Not $usedMoraleBooster Then Return False
+	WEnd
+	Return True
+EndFunc
+
+
 ;~ Uses a consumable from inventory, if present
 Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
@@ -813,7 +840,7 @@ EndFunc
 Func UseConsumable($ID_consumable, $forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
 	Local $ConsumableSlot = findInInventory($ID_consumable)
-	UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+	If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 EndFunc
 
 

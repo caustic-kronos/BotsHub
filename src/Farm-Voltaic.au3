@@ -117,7 +117,8 @@ Func VoltaicFarmLoop()
 		While Not IsGroupAlive()
 			Sleep(2000)
 		WEnd
-		UseSummon()
+		UseMoraleConsumableIfNeeded()
+		UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
 		SafeMoveAggroAndKill(-13500, -15750, 'In front of the door', $aggroRange)
 		SafeMoveAggroAndKill(-12500, -15000, 'Before the bridge', $aggroRange)
 		SafeMoveAggroAndKill(-10400, -14800, 'After the bridge', $aggroRange)
@@ -135,7 +136,8 @@ Func VoltaicFarmLoop()
 		While Not IsGroupAlive()
 			Sleep(2000)
 		WEnd
-		UseSummon()
+		UseMoraleConsumableIfNeeded()
+		UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
 		SafeMoveAggroAndKill(-18500, -11500, 'Pre-Boss group', $aggroRange)
 		SafeMoveAggroAndKill(-17700, -12500, 'Boss group', $aggroRange)
 		SafeMoveAggroAndKill(-17500, -14250, 'Final group', $aggroRange)
@@ -159,12 +161,6 @@ Func UseCons()
 	UseConsumable($ID_Armor_of_Salvation)
 	UseConsumable($ID_Essence_of_Celerity)
 	UseConsumable($ID_Grail_of_Might)
-EndFunc
-
-
-;~ Use the legionnaire summoning crystal if available
-Func UseSummon()
-	UseConsumable($ID_Legionnaire_Summoning_Crystal, True)
 EndFunc
 
 

@@ -768,12 +768,12 @@ Global Const $Struct_Rune_of_Superior_Vigor					= 'C202EA27'
 ; Runes are present at index 1 of their armor salvageable item
 Global Const $Valuable_Rune_And_Insignia_Structs_Array[]	= [ _
 	$Struct_Warrior_Sentinels_Insignia, _
-	$Struct_Ranger_Beastmasters_Insignia, _
-	$Struct_Monk_Anchorites_Insignia, _				;Not that valuable, but I need those
-	$Struct_Monk_Minor_Divine_Favor, _
-	$Struct_Necromancer_Bloodstained_Insignia, _
+	_ ;$Struct_Ranger_Beastmasters_Insignia, _
+	_ ;$Struct_Monk_Anchorites_Insignia, _				;Not that valuable, but I need those
+	_ ;$Struct_Monk_Minor_Divine_Favor, _
+	_ ;$Struct_Necromancer_Bloodstained_Insignia, _
 	$Struct_Necromancer_Tormentors_Insignia, _
-	$Struct_Necromancer_Minor_Soul_Reaping, _
+	_ ;$Struct_Necromancer_Minor_Soul_Reaping, _
 	$Struct_Necromancer_Major_Soul_Reaping, _
 	$Struct_Necromancer_Superior_Death_Magic, _
 	$Struct_Mesmer_Prodigys_Insignia, _
@@ -783,22 +783,22 @@ Global Const $Valuable_Rune_And_Insignia_Structs_Array[]	= [ _
 	$Struct_Mesmer_Major_Domination_Magic, _
 	$Struct_Mesmer_Superior_Domination_Magic, _
 	$Struct_Mesmer_Superior_Illusion_Magic, _
-	$Struct_Elementalist_Minor_Energy_Storage, _
+	_ ;$Struct_Elementalist_Minor_Energy_Storage, _
 	$Struct_Assassin_Nightstalkers_Insignia, _
-	$Struct_Assassin_Minor_Critical_Strikes, _
+	_ ;$Struct_Assassin_Minor_Critical_Strikes, _
 	$Struct_Ritualist_Shamans_Insignia, _
-	$Struct_Ritualist_Minor_Spawning_Power, _
+	_ ;$Struct_Ritualist_Minor_Spawning_Power, _
 	$Struct_Ritualist_Superior_Communing, _
 	$Struct_Ritualist_Superior_Spawning_Power, _
 	$Struct_Dervish_Windwalker_Insignia, _
-	$Struct_Dervish_Minor_Mysticism, _
+	_ ;$Struct_Dervish_Minor_Mysticism, _
 	$Struct_Dervish_Minor_Scythe_Mastery, _
-	$Struct_Dervish_Superior_Earth_Prayers, _
+	_ ;$Struct_Dervish_Superior_Earth_Prayers, _
 	$Struct_Paragon_Centurions_Insignia, _
-	$Struct_Survivor_Insignia, _
-	$Struct_Brawlers_Insignia, _
-	$Struct_Blessed_Insignia, _
-	$Struct_Rune_of_Vitae, _
+	_ ;$Struct_Survivor_Insignia, _
+	_ ;$Struct_Brawlers_Insignia, _
+	_ ;$Struct_Blessed_Insignia, _
+	_ ;$Struct_Rune_of_Vitae, _
 	$Struct_Rune_of_Clarity, _
 	$Struct_Rune_of_Minor_Vigor, _
 	$Struct_Rune_of_Major_Vigor, _
