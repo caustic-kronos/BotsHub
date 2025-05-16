@@ -19,6 +19,19 @@
 #include '../lib/Utils.au3'
 #include '../lib/Utils-Debugger.au3'
 
+; ==== Constants ====
+Global Const $GemstoneFarmSkillbar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
+Global Const $GemstoneHeroSkillbar = 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm'
+Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
+	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
+	& '- Strong hero build' &@CRLF _
+	& ' ' & @CRLF _
+	& ' ' & @CRLF _
+	& 'Usage:' & @CRLF _
+	& '- travel DoA, select NM, start the bot' & @CRLF _
+; Average duration ~ 12m30sec
+Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
+
 ;=== Configuration / Globals ===
 Global $g_runs            = 0
 Global $g_lastXP          = 0
@@ -31,7 +44,6 @@ Global $gemStoneDeathCount = 0
 
 Global $GEMSTONE_FARM_SETUP = False
 
-Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
 Global Const $ID_Zhellix_Agent  = 15
 
 Func GemstoneFarm($STATUS)
@@ -259,10 +271,7 @@ ENDFUNC
 
 FUNC PICKUPLOOTANDMOVEBACK()
 	IF GETISDEAD(-2) THEN RETURN
-	LOCAL $C = PICKUPLOOTCOUNTER()
-	IF $C > 0 THEN
-		Info("Picked up items: " & $C)
-	ENDIF
+	PickUpItems() 
 	MOVETO($g_startX, $g_startY)
 ENDFUNC
 
@@ -275,31 +284,6 @@ Func GETACTIVATIONTIME($skillID)
     Local $skill = GetSkillByID($skillID)
     Return DllStructGetData($skill, "Activation") * 1000
 EndFunc
-
-; Helper to count total items in inventory (all bags)
-Func GetTotalInventoryItemCount()
-    Local $totalItems = 0
-    For $bag = 1 To $BAG_NUMBER
-        Local $bagStruct = GetBag($bag)
-        If Not IsDllStruct($bagStruct) Then ContinueLoop
-        Local $slotCount = DllStructGetData($bagStruct, 'Slots')
-        For $slot = 1 To $slotCount
-            Local $item = GetItemBySlot($bag, $slot)
-            If Not IsDllStruct($item) Then ContinueLoop
-            If DllStructGetData($item, 'Id') = 0 Then ContinueLoop
-            $totalItems += DllStructGetData($item, 'Quantity')
-        Next
-    Next
-    Return $totalItems
-EndFunc
-
-Func PICKUPLOOTCOUNTER()
-    Local $before = GetTotalInventoryItemCount()
-    PickUpItems()                      
-    Local $after  = GetTotalInventoryItemCount()
-    Return $after - $before
-EndFunc
-
 
 FUNC GemKillTHEBOWGUY()
 	Info("Enemy Info of range, hunting!")

@@ -670,6 +670,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
+		Case 'Gemstone'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneFarmInformations)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)
