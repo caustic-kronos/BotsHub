@@ -25,10 +25,15 @@ Global Const $GemstoneHeroSkillbar = 'https://gwpvx.fandom.com/wiki/Build:Team_-
 Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
 	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
 	& '- Strong hero build' &@CRLF _
+	& '- Hero order: 1. ST Ritu, 2. SoS Ritu, 3. BiP Necro, Rest' &@CRLF _
 	& ' ' & @CRLF _
-	& ' ' & @CRLF _
-	& 'Usage:' & @CRLF _
-	& '- travel DoA, select NM, start the bot' & @CRLF _
+	& 'Equipment:' & @CRLF _
+	& '- 5x Artificer Rune' & @CRLF _
+	& '- 1x Superior Vigor ' & @CRLF _
+	& '- 1x Minor Fast Casting + 1x Major Fast Casting' & @CRLF _
+	& '- 2x Vitae ' & @CRLF _
+	& '- 40/40 DOM Set' & @CRLF _
+	& '- Character Stats: 14 Fast Casting, 13 Domination Magic' & @CRLF _
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
 
