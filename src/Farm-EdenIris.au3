@@ -53,6 +53,7 @@ Func SetupEdenIrisFarm()
 	Move(-11000, -6250)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	MoveTo(-11000, -6250)
 	Move(-11600, -6250)
 	RndSleep(1000)
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
@@ -93,14 +94,14 @@ Func PickUpIris()
 		Local $agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)
 		If (DllStructGetData($item, 'ModelID') == $ID_Red_Iris_Flower) Then
-			Info('Iris: ' & Round(DllStructGetData($agent, 'X')) & ', Y: ' & Round(DllStructGetData($agent, 'Y')))
+			Info('Iris: (' & Round(DllStructGetData($agent, 'X')) & ',' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($i)
 				RndSleep(500)
 				If GetIsDead() Then Return
 				If TimerDiff($deadlock) > 20000 Then
-					Info('Could not get iris at ' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y'))
+					Info('Could not get iris at (' & DllStructGetData($agent, 'X') & ',' & DllStructGetData($agent, 'Y') & ')')
 					Return False
 				EndIf
 			WEnd

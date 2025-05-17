@@ -68,8 +68,9 @@ EndFunc
 Func VoltaicFarmLoop()
 	$voltaicDeathsCount = 0
 	Info('Making way to portal')
-	MoveTo(-22846, 9056)
+	MoveTo(-23200, 7100)
 	Move(-22735, 6339)
+	RndSleep(1000)
 	WaitMapLoading($ID_Verdant_Cascades)
 
 	AdlibRegister('VoltaicGroupIsAlive', 10000)

@@ -54,7 +54,7 @@ Func LuxonFactionFarm($STATUS)
 	If $STATUS <> 'RUNNING' Then Return 2
 
 	MoveTo(-4268, 11628)
-	MoveTo(-4980, 12425)
+	MoveTo(-5300, 13300)
 	Move(-5493, 13712)
 	RndSleep(1000)
 	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)

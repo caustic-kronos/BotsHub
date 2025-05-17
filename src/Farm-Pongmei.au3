@@ -111,7 +111,7 @@ Func PongmeiChestFarmLoop($STATUS)
 	EndIf
 
 	MoveTo(-25366, 1524)
-	MoveTo(-25614, 1705)
+	MoveTo(-26000, 2400)
 	Move(-26200, 2800)
 	RndSleep(1000)
 	WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)

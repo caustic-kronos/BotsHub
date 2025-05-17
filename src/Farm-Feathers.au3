@@ -98,6 +98,7 @@ Func SetupFeathersFarm()
 	Move(16800, 17550)
 	RndSleep(1000)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
+	Move(10500, -13100)
 	Move(10970, -13360)
 	RndSleep(1000)
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
@@ -108,6 +109,7 @@ EndFunc
 ;~ Farm loop
 Func FeathersFarmLoop()
 	Info('Entering Jaya Bluffs')
+	MoveTo(17300, 17300)
 	Move(16800, 17550)
 	RndSleep(1000)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
@@ -228,7 +230,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 			Else
 				$me = GetMyAgent()
 				$Angle += 40
-				Move(DllStructGetData($me, 'X')+300*sin($Angle), DllStructGetData($me, 'Y')+300*cos($Angle))
+				Move(DllStructGetData($me, 'X')+300*sin($Angle), DllStructGetData($me, 'Y') + 300*cos($Angle))
 				Sleep(2000)
 				Move($x, $y)
 			EndIf

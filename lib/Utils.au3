@@ -109,7 +109,7 @@ EndFunc
 ;~ Get your own location
 Func GetOwnLocation()
 	Local $me = GetMyAgent()
-	Info('X: ' & DllStructGetData($me, 'X') & ', Y: ' & DllStructGetData($me, 'Y'))
+	Info('(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
 EndFunc
 
 
@@ -1231,6 +1231,58 @@ EndFunc
 
 
 #Region Utils
+;~ Mapping function
+Func ToggleMapping()
+	Local Static $isMapping = False
+	Local Static $mappingFile
+	If $isMapping Then
+		AdlibUnregister('MappingWrite')
+		FileClose($mappingFile)
+		$isMapping = False
+	Else
+		$mappingFile = FileOpen(@ScriptDir & '/logs/mapping.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		MappingWrite($mappingFile)
+		AdlibRegister('MappingWrite', 1000)
+		$isMapping = True
+	EndIf
+EndFunc
+
+
+;~ Write mapping log in file
+Func MappingWrite($file = Null)
+	Local Static $mappingFile = 0
+	; Initialisation the first time when called outside of AdlibRegister
+	If (IsDeclared('file') And $file <> Null) Then
+		$mappingFile = $file
+		Return
+	EndIf
+	Local $me = GetMyAgent()
+	Local $log = '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')'
+	Local $chestString = ScanForChests($RANGE_COMPASS)
+	If $chestString <> Null Then _FileWriteLog($mappingFile, $chestString)
+	_FileWriteLog($mappingFile, $log)
+EndFunc
+
+
+;~ This doesn't open chest, it only scans for them and print their location
+Func ScanForChests($range)
+	Local Static $foundChests[]
+	Local $gadgetID
+	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
+	For $i = 1 To $agents[0]
+		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
+		If $Map_Chests[$gadgetID] == null Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
+		Local $chestID = DllStructGetData($agents[$i], 'ID')
+		If $foundChests[$chestID] <> 1 Then
+			$foundChests[$chestID] = 1
+			Return 'Chest ' & $chestID & ' - (' & DllStructGetData($agents[$i], 'X') & ',' & DllStructGetData($agents[$i], 'Y') & ')'
+		EndIf
+	Next
+	Return Null
+EndFunc
+
+
 ;~ Return the value if it's not null else the defaultValue
 Func GetOrDefault($value, $defaultValue)
 	Return ($value == null) ? $defaultValue : $value
