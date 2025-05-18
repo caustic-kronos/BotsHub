@@ -102,7 +102,6 @@ Global $LOG_LEVEL = 1
 Global $CHARACTER_NAME = ''
 Global $DISTRICT_NAME = 'Random'
 Global $BAG_NUMBER = 5
-Global $START_GOLD, $START_MARGONITE_COUNT, $START_STYGIAN_COUNT, $START_TITAN_COUNT, $START_TORMENT_COUNT, $START_ECTO_COUNT
 Global $TIMESDEPOSITED = 0
 
 Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Voltaic|Storage|Tests|Dynamic'
@@ -558,7 +557,6 @@ EndFunc
 
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
-	FillStartVariables()
 	Local $result = 2
 	Local $timePerRun = UpdateStats(-1, null)
 	Local $timer = TimerInit()
@@ -951,6 +949,11 @@ Func UpdateStats($success, $timer)
 	Local Static $TotalGoldItems = 0
 	Local Static $InitialGoldItems = 0
 	Local Static $ExperienceCount = GetExperience()
+	Local Static $MargoniteGemstoneCount = UpdateGemstoneCounts('Margonite')
+	Local Static $StygianGemstoneCount = UpdateGemstoneCounts('Stygian')
+	Local Static $TitanGemstoneCount = UpdateGemstoneCounts('Titan')
+	Local Static $TormentGemstoneCount = UpdateGemstoneCounts('Torment')
+	Local Static $EctoCount = UpdateEctoCount()
 
 	Local Static $AsuraTitlePoints = GetAsuraTitle()
 	Local Static $DeldrimorTitlePoints = GetDeldrimorTitle()
@@ -982,7 +985,7 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_Time, 'Time: ' & Floor($time/3600000) & 'h' & Floor(Mod($time, 3600000)/60000) & 'min' & Floor(Mod($time, 60000)/1000) & 's')
 	Local $timePerRun = $runs == 0 ? 0 : $time / $runs
 	GUICtrlSetData($GUI_Label_TimePerRun, 'Time per run: ' & Floor($timePerRun/60000) & 'min' & Floor(Mod($timePerRun, 60000)/1000) & 's')
-	Local $DiffGold = GetGoldCharacter() - $START_GOLD
+	Local $DiffGold = GetGoldCharacter() - $InitialGold
 	Local $DiffGoldDeposit = $DiffGold + ($TIMESDEPOSITED * 60000)
 	GUICtrlSetData($GUI_Label_Gold, 'Gold: ' & Floor($DiffGoldDeposit/1000) & 'k' & Mod($DiffGoldDeposit, 1000) & 'g')
 	$TotalGoldItems += CountGoldItems() - $InitialGoldItems
@@ -1082,15 +1085,6 @@ Func UpdateEctoCount()
 	GUICtrlSetData($GUI_Label_Ectos, 'Ectos: ' & $countEcto)
 
 	Return $countEcto
-EndFunc
-
-Func FillStartVariables()
-	$START_GOLD = GetGoldCharacter()
-	$START_MARGONITE_COUNT = UpdateGemstoneCounts('Margonite')
-	$START_STYGIAN_COUNT = UpdateGemstoneCounts('Stygian')
-	$START_TITAN_COUNT = UpdateGemstoneCounts('Titan')
-	$START_TORMENT_COUNT = UpdateGemstoneCounts('Torment')
-	$START_ECTO_COUNT = UpdateEctoCount()
 EndFunc
 
 ;~ Update the progress bar
