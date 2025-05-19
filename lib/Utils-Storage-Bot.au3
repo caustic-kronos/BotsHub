@@ -112,7 +112,7 @@ Func InventoryManagement()
 		If GetGoldCharacter() > 70000 Then BalanceCharacterGold(70000)
 		SellEverythingToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() > 100000 Then 
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() < 100000 Then 
 		DepositGold(60000)
 		Info("Deposited Gold")
 		$TIMESDEPOSITED += 1

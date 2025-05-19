@@ -1027,13 +1027,13 @@ Func UpdateGemstoneCounts($saveCount = '')
             Local $stack  = DllStructGetData($aItem, "Quantity")
 
             Switch $itemID
-                Case 21128
+                Case $ID_Margonite_Gemstone
                     $countMargonite += $stack
-                Case 21129
+                Case $ID_Stygian_Gemstone
                     $countStygian += $stack
-                Case 21130
+                Case $ID_Titan_Gemstone
                     $countTitan += $stack
-                Case 21131
+                Case $ID_Torment_Gemstone
                     $countTorment += $stack
             EndSwitch
 
@@ -1076,7 +1076,7 @@ Func UpdateEctoCount()
             Local $stack  = DllStructGetData($aItem, "Quantity")
 
             Switch $itemID
-                Case 930
+                Case $ID_Glob_Of_Ectoplasm
                     $countEcto += $stack
             EndSwitch
         Next

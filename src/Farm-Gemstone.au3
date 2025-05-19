@@ -43,7 +43,6 @@ Global Const $StartX    = -3606
 Global Const $StartY    = -5347    
 Global Const $FightDist = 1500
 Global $TotalSkills = 7
-Global $GemstoneDeathCount = 0
 
 Global $GemstoneFarmSetup = False
 
@@ -75,9 +74,8 @@ Func GemstoneFarm($STATUS)
 
     If $STATUS <> 'RUNNING' Then Return 2
 
-    AdlibRegister('GemStoneGroupIsAlive', 10000)
     GemstoneFarmLoop()
-    AdlibUnRegister('GemStoneGroupIsAlive')
+
     Return 0
 EndFunc
 
@@ -123,12 +121,7 @@ EndFunc
 
 ; TODO add check if group is still alive
 Func RunFail()
-    If GetIsDead($ID_ZhellixAgent) Or GetIsDead(GetMyAgent()) Then Return 1
-EndFunc
-
-;~ Updates the GemstoneDeathCount variable
-Func GemStoneGroupIsAlive()
-    $GemstoneDeathCount += IsGroupAlive() ? 0 : 1
+    If GetIsDead($ID_ZhellixAgent) Or Not IsGroupAlive() Then Return 1
 EndFunc
 
 ;~ Return to outpost in case of failure
@@ -147,11 +140,9 @@ Func Defend()
     Sleep(5000)
 
     While ZhellixWaiting()
-        GemStoneGroupIsAlive()
         If RunFail() Then Return ResignAndReturnToGate()
         Sleep(1000)
         Fight()
-        If GetIsDead() Then Return
         PickUpItems()
         MoveTo($StartX, $StartY)
     WEnd
@@ -161,7 +152,7 @@ Func Fight()
     Info('Fighting!')
     If GetIsDead() Then Return
     Local $target = GetNearestEnemyToAgent(GetMyAgent())
-    If GetDistance(GetMyAgent(), $target) < $FightDist And DLLSTRUCTGETDATA($target, 'ID') <> 0 Then
+    If GetDistance(GetMyAgent(), $target) < $FightDist And DllStructGetData($target, 'ID') <> 0 Then
         GemKill()
     EndIf
 EndFunc
@@ -187,25 +178,25 @@ Func GemKill()
             $distance = GetDistance($target, GetMyAgent())
         EndIf
 
-        If DLLSTRUCTGETDATA($target, 'ID') <> 0 And $distance < $FightDist Then
+        If DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist Then
             ChangeTarget($target)
             RndSleep(150)
             CallTarget($target)
             RndSleep(150)
             Attack($target)
             RndSleep(150)
-        ElseIf DLLSTRUCTGETDATA($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead() Then
+        ElseIf DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead() Then
             ExitLoop
         EndIf
 
         For $i = 0 To UBound($Gem_SkillsArray) - 1
-			Local $targetHp = DLLSTRUCTGETDATA(GetCurrentTarget(), 'HP')
+			Local $targetHp = DllStructGetData(GetCurrentTarget(), 'HP')
             If GetIsDead() Then ExitLoop
             If $targetHp = 0 Then ExitLoop
             If $distance > $FightDist And Not $specialTarget Then ExitLoop
 
             Local $skillPos = $Gem_SkillsArray[$i]
-            Local $recharge = DLLSTRUCTGETDATA(GetSkillbarSkillRecharge($skillPos, 0), 0)
+            Local $recharge = DllStructGetData(GetSkillbarSkillRecharge($skillPos, 0), 0)
             Local $energy   = GetEnergy()
 
             If $recharge = 0 And $energy >= $gemSkillCostsMap[$skillPos] Then
@@ -214,7 +205,7 @@ Func GemKill()
             EndIf
         Next
 
-    Until DLLSTRUCTGETDATA($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead()
+    Until DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead()
 
     If Not GetIsDead() Then MoveTo($StartX, $StartY)
 EndFunc
@@ -224,20 +215,12 @@ Func IsDreamerDryderOrAnurKi($agent)
     Return $modelType == $ID_Dryder Or $modelType == $ID_Dreamer Or $modelType == $ID_AnurKi
 EndFunc
 
-Func GetEnergyCost($skillId)
-    Local $skill = GetSkillByID($skillId)
-    Return DllStructGetData($skill, 'EnergyCost')
-EndFunc
-
-Func GetActivationTime($skillId)
-    Local $skill = GetSkillByID($skillId)
-    Return DllStructGetData($skill, 'Activation') * 1000
-EndFunc
-
 Func ZhellixWaiting()
     If GetMapLoading() == 2 Then
         Disconnected()
     EndIf
+
+	If Not IsGroupAlive() Then ResignAndReturnToGate()
 
     Local $aNPCs = GetNPCsInRangeOfAgent(GetMyAgent(), Null, 1500)
 
