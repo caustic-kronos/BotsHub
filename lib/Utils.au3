@@ -301,6 +301,16 @@ Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null, $BlockedFun
 EndFunc
 
 
+;~ Count amount of chests opened
+Func CountOpenedChests()
+	Local $chestsOpened = 0
+	Local $keys = MapKeys($chestsMap)
+	For $key In $keys
+		$chestsOpened += $chestsMap[$key] == 2 ? 1 : 0
+	Next
+	Return $chestsOpened
+EndFunc
+
 ;~ Clearing map of chests
 Func ClearChestsMap()
 	; Redefining the variable clears it for maps
@@ -800,7 +810,7 @@ Func GetInventoryItemCount($itemID)
 			$item = GetItemBySlot($bag, $j)
 
 			If $Map_Dyes[$itemID] <> null Then
-				If ((DllStructGetData($item, 'ModelID') == $ID_Dyes) And (DllStructGetData($item, 'DyeColor') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
+				If (DllStructGetData($item, 'ModelID') == $ID_Dyes) And (DllStructGetData($item, 'DyeColor') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
 			Else
 				If DllStructGetData($item, 'ModelID') == $itemID Then $amountItem += DllStructGetData($item, 'Quantity')
 			EndIf

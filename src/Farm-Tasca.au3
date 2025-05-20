@@ -187,11 +187,11 @@ Func TascaChestFarmLoop($STATUS)
 	If ($annoyingChest <> Null) Then
 		TASCADervishRun(6000, 21500)
 		TASCADervishRun(7000, 20500)
-		TASCADervishRun(7000, 18000)
 		$annoyingChest = ScanForChests(2000, True, 5500, 18000)
 		Local $target = GetTargetToEscapeWithDeathsCharge(DllStructGetData($annoyingChest, 'X'), DllStructGetData($annoyingChest, 'Y'))
 		UseSkillEx($Tasca_DeathsCharge, $target)
 		$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+		RndSleep(1000)
 	EndIf
 
 	ToggleMapping()
@@ -242,7 +242,7 @@ Func TASCADervishRun($X, $Y)
 		;EndIf
 
 		; We only start unblocking after 10 times 250 ms which is 2s50 -> that's because knockdown lasts 2s
-		If $blockedCounter > 5 And GetEnergy() >= 10 Then
+		If $blockedCounter > 10 And GetEnergy() >= 10 Then
 			Local $target = GetTargetToEscapeWithDeathsCharge($X, $Y)
 			If $target <> 0 And IsRecharged($Tasca_DeathsCharge) Then
 				UseSkillEx($Tasca_DeathsCharge, $target)
@@ -310,13 +310,16 @@ Func TascaDefendFunction($X, $Y)
 		Local $enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 		If $enemiesAreNear Or ($X <> 0 And AreFoesInFront($X, $Y)) Then
 			If $enemiesAreNear And IsRecharged($Tasca_IAmUnstoppable) Then UseSkillEx($Tasca_IAmUnstoppable)
-			While GetEnergy() < 20 And $enemiesAreNear
+			While Not GetIsDead() And GetEnergy() < 20 And $enemiesAreNear
 				Sleep(250)
 				$target = GetNearestEnemyToAgent($me)
 				$enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 			WEnd
 			AdlibRegister('UseDeadlyParadox', 750)
-			UseSkillEx($Tasca_ShadowForm, $me)
+			While Not GetIsDead() And IsRecharged($Tasca_ShadowForm)
+				UseSkillEx($Tasca_ShadowForm, $me)
+				Sleep(GetPing() + 20)
+			WEnd
 			$Timer_Shadowform = TimerInit()
 			Sleep(GetPing() + 20)
 			If ($Timer_DwarvenStability == Null Or TimerDiff($Timer_DwarvenStability) > 34000) And GetEnergy() >= 5 Then
@@ -338,9 +341,9 @@ EndFunc
 
 ;~ Use Whirling Defense skill
 Func UseDeadlyParadox()
-	While IsRecharged($Tasca_DeadlyParadox) And Not GetIsDead()
+	While Not GetIsDead() And IsRecharged($Tasca_DeadlyParadox)
 		UseSkillEx($Tasca_DeadlyParadox)
-		RndSleep(50)
+		Sleep(GetPing() + 20)
 	WEnd
 	AdlibUnRegister('UseDeadlyParadox')
 EndFunc
