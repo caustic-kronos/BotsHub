@@ -54,7 +54,7 @@ Global $Quickening_Zephyr_Cast_Timer
 Func OmniFarm($STATUS)
 	;If Not($Farm_Setup) Then OmniFarmSetup()
 
-	Out('Preparing the spirit setup')
+	Info('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
 	If $STATUS <> 'RUNNING' Then Return 2
