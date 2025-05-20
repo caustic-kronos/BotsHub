@@ -172,7 +172,7 @@ Func createGUI()
 	$GUI_Label_Gold = GUICtrlCreateLabel('Gold: 0', 31, 144, 246, 16)
 	$GUI_Label_GoldItems = GUICtrlCreateLabel('Gold Items: 0', 31, 164, 246, 16)
 	$GUI_Label_Experience = GUICtrlCreateLabel('Experience: 0', 31, 184, 246, 16)
-	$GUI_Label_Ectos = GUICtrlCreateLabel('Ectos: 0', 128, 144, 246, 16)
+	$GUI_Label_Ectos = GUICtrlCreateLabel('Ectos: 0', 168, 144, 246, 16)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$GUI_Group_ItemsLooted = GUICtrlCreateGroup('Items', 306, 39, 271, 241)
@@ -214,7 +214,7 @@ Func createGUI()
 	$GUI_Checkbox_SellItems = GUICtrlCreateCheckbox('Sell Items', 31, 304, 156, 20)
 	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy ectoplasm', 31, 334, 156, 20)
 	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store the rest', 31, 364, 100, 20)
-	$GUI_Checkbox_StoreGold = GUICtrlCreateCheckbox('Store Gold', 128, 364, 156, 20)
+	$GUI_Checkbox_StoreGold = GUICtrlCreateCheckbox('Store Gold', 168, 364, 100, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('More options', 305, 40, 271, 361)
@@ -1009,43 +1009,41 @@ Func UpdateStats($success, $timer)
 	Return $timePerRun
 EndFunc
 
+
 ;~ Update the gemstone counters
 Func UpdateGemstoneCounts($saveCount = '')
-    Local $countTitan   = 0
-    Local $countStygian = 0
-    Local $countTorment = 0
-    Local $countMargonite = 0
+	Local $countTitan   = 0
+	Local $countStygian = 0
+	Local $countTorment = 0
+	Local $countMargonite = 0
 
-    For $bag = 1 To $BAG_NUMBER
-        Local $aBag = GetBag($bag)	
-        If @error Then ContinueLoop
-        Local $slots = DllStructGetData($aBag, "Slots")
-        For $slot = 1 To $slots
-            Local $aItem = GetItemBySlot($aBag, $slot)
-            If @error Then ContinueLoop 
-            Local $itemID = DllStructGetData($aItem, "ModelID")
-            Local $stack  = DllStructGetData($aItem, "Quantity")
-
-            Switch $itemID
-                Case $ID_Margonite_Gemstone
-                    $countMargonite += $stack
-                Case $ID_Stygian_Gemstone
-                    $countStygian += $stack
-                Case $ID_Titan_Gemstone
-                    $countTitan += $stack
-                Case $ID_Torment_Gemstone
-                    $countTorment += $stack
-            EndSwitch
-
-			
-        Next
-    Next
+	For $bagIndex = 1 To $BAG_NUMBER
+		Local $bag = GetBag($bagIndex)	
+		If @error Then ContinueLoop
+		Local $slots = DllStructGetData($bag, "Slots")
+		For $slot = 1 To $slots
+			Local $item = GetItemBySlot($bag, $slot)
+			If @error Then ContinueLoop 
+			Local $itemID = DllStructGetData($item, "ModelID")
+			Local $stack  = DllStructGetData($item, "Quantity")
+			Switch $itemID
+				Case $ID_Margonite_Gemstone
+					$countMargonite += $stack
+				Case $ID_Stygian_Gemstone
+					$countStygian += $stack
+				Case $ID_Titan_Gemstone
+					$countTitan += $stack
+				Case $ID_Torment_Gemstone
+					$countTorment += $stack
+			EndSwitch
+		Next
+	Next
 	
-    ; Update the GUI labels with the new counts
-    GUICtrlSetData($GUI_Label_MargoniteGemstone, 'Margonite Gemstone: ' & $countMargonite)
-    GUICtrlSetData($GUI_Label_StygianGemstone, 'Stygian Gemstone: ' & $countStygian)
-    GUICtrlSetData($GUI_Label_TitanGemstone, 'Titan Gemstone: ' & $countTitan)
-    GUICtrlSetData($GUI_Label_TormentGemstone, 'Torment Gemstone: ' & $countTorment)
+	; Update the GUI labels with the new counts
+	GUICtrlSetData($GUI_Label_MargoniteGemstone, 'Margonite Gemstone: ' & $countMargonite)
+	GUICtrlSetData($GUI_Label_StygianGemstone, 'Stygian Gemstone: ' & $countStygian)
+	GUICtrlSetData($GUI_Label_TitanGemstone, 'Titan Gemstone: ' & $countTitan)
+	GUICtrlSetData($GUI_Label_TormentGemstone, 'Torment Gemstone: ' & $countTorment)
 
 	Switch $saveCount
 		Case 'Margonite'
@@ -1061,26 +1059,27 @@ Func UpdateGemstoneCounts($saveCount = '')
 	EndSwitch
 EndFunc
 
+
 ;~ Update the Ecto counter
 Func UpdateEctoCount()
 	Local $countEcto = 0
 
 	For $bag = 1 To $BAG_NUMBER
-        Local $aBag = GetBag($bag)	
-        If @error Then ContinueLoop
-        Local $slots = DllStructGetData($aBag, "Slots")
-        For $slot = 1 To $slots
-            Local $aItem = GetItemBySlot($aBag, $slot)
-            If @error Then ContinueLoop 
-            Local $itemID = DllStructGetData($aItem, "ModelID")
-            Local $stack  = DllStructGetData($aItem, "Quantity")
-
-            Switch $itemID
-                Case $ID_Glob_Of_Ectoplasm
-                    $countEcto += $stack
-            EndSwitch
-        Next
-    Next
+		Local $aBag = GetBag($bag)	
+		If @error Then ContinueLoop
+		Local $slots = DllStructGetData($aBag, "Slots")
+		For $slot = 1 To $slots
+			Local $aItem = GetItemBySlot($aBag, $slot)
+			If @error Then ContinueLoop 
+			Local $itemID = DllStructGetData($aItem, "ModelID")
+			Local $stack  = DllStructGetData($aItem, "Quantity")
+					
+			Switch $itemID
+				Case $ID_Glob_Of_Ectoplasm
+					$countEcto += $stack
+			EndSwitch
+		Next
+	Next
 
 	GUICtrlSetData($GUI_Label_Ectos, 'Ectos: ' & $countEcto)
 

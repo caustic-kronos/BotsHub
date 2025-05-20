@@ -55,7 +55,7 @@ Global $steady_Healing_Healer_Index = 0
 Func OmniFarm($STATUS)
 	;If Not($Farm_Setup) Then OmniFarmSetup()
 
-	Out('Preparing the spirit setup')
+	Info('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
 	If $STATUS <> 'RUNNING' Then Return 2

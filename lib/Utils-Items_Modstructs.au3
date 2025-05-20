@@ -295,7 +295,7 @@ Global $STRUCT_MOD_OF_DEVOTION							= '002D6823'					;+45 health while enchante
 Global $STRUCT_MOD_OF_ENDURANCE							= '002D8823'					;+45 health while in a stance
 Global $STRUCT_MOD_OF_VALOR								= '003C7823'					;+60 health while hexed
 
-Global $STRUCT_MOD_STAFF_MASTERY 						= '00143828'					;+1^20%
+Global $STRUCT_MOD_STAFF_MASTERY						= '00143828'					;+1^20%
 #EndRegion staff mods
 #EndRegion Mods
 

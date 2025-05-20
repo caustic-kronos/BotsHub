@@ -23,26 +23,25 @@
 Global Const $GemstoneFarmSkillbar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
 Global Const $GemstoneHeroSkillbar = 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm'
 Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
-    & '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
-    & '- Strong hero build' &@CRLF _
-    & '- Hero order: 1. ST Ritu, 2. SoS Ritu, 3. BiP Necro, Rest' &@CRLF _
-    & ' ' & @CRLF _
-    & 'Equipment:' & @CRLF _
-    & '- 5x Artificer Rune' & @CRLF _
-    & '- 1x Superior Vigor ' & @CRLF _
-    & '- 1x Minor Fast Casting + 1x Major Fast Casting' & @CRLF _
-    & '- 2x Vitae ' & @CRLF _
-    & '- 40/40 DOM Set' & @CRLF _
-    & '- Character Stats: 14 Fast Casting, 13 Domination Magic' & @CRLF _
+	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
+	& '- Strong hero build' &@CRLF _
+	& '- Hero order: 1. ST Ritu, 2. SoS Ritu, 3. BiP Necro, Rest' &@CRLF _
+	& ' ' & @CRLF _
+	& 'Equipment:' & @CRLF _
+	& '- 5x Artificer Rune' & @CRLF _
+	& '- 1x Superior Vigor ' & @CRLF _
+	& '- 1x Minor Fast Casting + 1x Major Fast Casting' & @CRLF _
+	& '- 2x Vitae ' & @CRLF _
+	& '- 40/40 DOM Set' & @CRLF _
+	& '- Character Stats: 14 Fast Casting, 13 Domination Magic' & @CRLF _
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
 
 ;=== Configuration / Globals ===
-Global $gRuns            = 0
-Global Const $StartX    = -3606    
-Global Const $StartY    = -5347    
+Global $gemRuns            = 0
+Global Const $StartX    = -3606
+Global Const $StartY    = -5347
 Global Const $FightDist = 1500
-Global $TotalSkills = 7
 
 Global $GemstoneFarmSetup = False
 
@@ -66,178 +65,192 @@ Global Const $ID_Dryder = 5215
 Global Const $ID_Dreamer = 5216
 Global Const $ID_AnurKi = 5169
 
+
+;~ Main Gemstone farm entry function
 Func GemstoneFarm($STATUS)
-    If Not $GemstoneFarmSetup Then
-        SetupGemstoneFarm()
-        $GemstoneFarmSetup = True
-    EndIf
+	If Not $GemstoneFarmSetup Then
+		SetupGemstoneFarm()
+		$GemstoneFarmSetup = True
+	EndIf
 
-    If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return 2
 
-    GemstoneFarmLoop()
+	GemstoneFarmLoop()
 
-    Return 0
+	Return 0
 EndFunc
+
 
 ;~ Gemstone farm setup
 Func SetupGemstoneFarm()
-    Info('Setting up farm')
-    SwitchMode($ID_NORMAL_MODE)
-    Info('Preparations complete')
+	Info('Setting up farm')
+	SwitchMode($ID_NORMAL_MODE)
+	Info('Preparations complete')
 EndFunc
+
 
 ;~ Gemstone farm loop
 Func GemstoneFarmLoop()
-    ; Ensure correct map
-    If GetMapID() <> $ID_Gate_Of_Anguish Then
-        DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-        WaitMapLoading()
-    EndIf
-
-    TalkToZhellix()
-    WalkToSpot()
-    Defend()
+	; Ensure correct map
+	If GetMapID() <> $ID_Gate_Of_Anguish Then
+		DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+		WaitMapLoading()
+	EndIf
+	TalkToZhellix()
+	WalkToSpot()
+	Defend()
 EndFunc
 
+
+;~ Talking to Zhellix
 Func TalkToZhellix()
-    $gRuns += 1
-    Info('Starting run ' & $gRuns)
-    Local $z = GetNearestNpcToCoords(6086, -13397)
-    ChangeTarget($z)
-    GoToNPC($z)
-    Dialog(0x84)
-    WaitMapLoading()
+	$gemRuns += 1
+	Info('Starting run ' & $gemRuns)
+	Local $z = GetNearestNpcToCoords(6086, -13397)
+	ChangeTarget($z)
+	GoToNPC($z)
+	Dialog(0x84)
+	WaitMapLoading()
 EndFunc
 
+
+;~ Getting into positions
 Func WalkToSpot()
-    Sleep(2000)
-    CommandHero(3, -3190, -4928)
-    CommandHero(2, -3050, -5304)
-    CommandAll(-3449, -5229)
-    MoveTo($StartX, $StartY)
+	Sleep(2000)
+	CommandHero(3, -3190, -4928)
+	CommandHero(2, -3050, -5304)
+	CommandAll(-3449, -5229)
+	MoveTo($StartX, $StartY)
 
-    UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
+	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
 EndFunc
 
-; TODO add check if group is still alive
+;~ Check if run failed
 Func RunFail()
-    If GetIsDead($ID_ZhellixAgent) Or Not IsGroupAlive() Then Return 1
+	If GetIsDead($ID_ZhellixAgent) Or Not IsGroupAlive() Then Return 1
 EndFunc
+
 
 ;~ Return to outpost in case of failure
 Func ResignAndReturnToGate()
-    If GetIsDead($ID_ZhellixAgent) Then
-        Warn('Zhellix died.')
-    ElseIf GetIsDead() Then
-        Warn('Player died')
-    EndIf
-    DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-    Return 1
+	If GetIsDead($ID_ZhellixAgent) Then
+		Warn('Zhellix died.')
+	ElseIf GetIsDead() Then
+		Warn('Player died')
+	EndIf
+	DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+	Return 1
 EndFunc
 
+;~ Defending function
 Func Defend()
-    Info('Defending...')
-    Sleep(5000)
+	Info('Defending...')
+	Sleep(5000)
 
-    While ZhellixWaiting()
-        If RunFail() Then Return ResignAndReturnToGate()
-        Sleep(1000)
-        Fight()
-        PickUpItems()
-        MoveTo($StartX, $StartY)
-    WEnd
+	While ZhellixWaiting()
+		If RunFail() Then Return ResignAndReturnToGate()
+		Sleep(1000)
+		Fight()
+		PickUpItems()
+		MoveTo($StartX, $StartY)
+	WEnd
 EndFunc
 
+
+;~ Fighting!
 Func Fight()
-    Info('Fighting!')
-    If GetIsDead() Then Return
-    Local $target = GetNearestEnemyToAgent(GetMyAgent())
-    If GetDistance(GetMyAgent(), $target) < $FightDist And DllStructGetData($target, 'ID') <> 0 Then
-        GemKill()
-    EndIf
+	Info('Fighting!')
+	If GetIsDead() Then Return
+	Local $target = GetNearestEnemyToAgent(GetMyAgent())
+	If GetDistance(GetMyAgent(), $target) < $FightDist And DllStructGetData($target, 'ID') <> 0 Then GemKill()
 EndFunc
 
+
+;~ More fighting!
 Func GemKill()
-    If GetIsDead() Then Return
-    Do
-        If GetMapLoading() == 2 Then Disconnected()
+	If GetIsDead() Then Return
+	Do
+		If GetMapLoading() == 2 Then Disconnected()
 
-        Local $targetsInRangeArr = GetFoesInRangeOfAgent(GetMyAgent(), 1700, IsDreamerDryderOrAnurKi)
-        Local $target = 0
-        Local $distance = 0
-        Local $specialTarget = False
+		Local $targetsInRangeArr = GetFoesInRangeOfAgent(GetMyAgent(), 1700, IsDreamerDryderOrAnurKi)
+		Local $target = 0
+		Local $distance = 0
+		Local $specialTarget = False
 
-        If IsArray($targetsInRangeArr) And UBound($targetsInRangeArr) > 0 Then
-            $target = $targetsInRangeArr[0]
-            $specialTarget = True
-        EndIf
+		If IsArray($targetsInRangeArr) And UBound($targetsInRangeArr) > 0 Then
+			$target = $targetsInRangeArr[0]
+			$specialTarget = True
+		EndIf
 
-        ;— if no special target, fall back
-        If $target = 0 Then
-            $target = GetNearestEnemyToAgent(GetMyAgent())
-            $distance = GetDistance($target, GetMyAgent())
-        EndIf
+		;— if no special target, fall back
+		If $target = 0 Then
+			$target = GetNearestEnemyToAgent(GetMyAgent())
+			$distance = GetDistance($target, GetMyAgent())
+		EndIf
 
-        If DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist Then
-            ChangeTarget($target)
-            RndSleep(150)
-            CallTarget($target)
-            RndSleep(150)
-            Attack($target)
-            RndSleep(150)
-        ElseIf DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead() Then
-            ExitLoop
-        EndIf
+		If DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist Then
+			ChangeTarget($target)
+			RndSleep(150)
+			CallTarget($target)
+			RndSleep(150)
+			Attack($target)
+			RndSleep(150)
+		ElseIf DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead() Then
+			ExitLoop
+		EndIf
 
-        For $i = 0 To UBound($Gem_SkillsArray) - 1
+		For $i = 0 To UBound($Gem_SkillsArray) - 1
 			Local $targetHp = DllStructGetData(GetCurrentTarget(), 'HP')
-            If GetIsDead() Then ExitLoop
-            If $targetHp = 0 Then ExitLoop
-            If $distance > $FightDist And Not $specialTarget Then ExitLoop
+			If GetIsDead() Then ExitLoop
+			If $targetHp = 0 Then ExitLoop
+			If $distance > $FightDist And Not $specialTarget Then ExitLoop
 
-            Local $skillPos = $Gem_SkillsArray[$i]
-            Local $recharge = DllStructGetData(GetSkillbarSkillRecharge($skillPos, 0), 0)
-            Local $energy   = GetEnergy()
+			Local $skillPos = $Gem_SkillsArray[$i]
+			Local $recharge = DllStructGetData(GetSkillbarSkillRecharge($skillPos, 0), 0)
+			Local $energy   = GetEnergy()
 
-            If $recharge = 0 And $energy >= $gemSkillCostsMap[$skillPos] Then
-                UseSkillEx($skillPos, $target)
-                RndSleep(500)
-            EndIf
-        Next
+			If $recharge = 0 And $energy >= $gemSkillCostsMap[$skillPos] Then
+				UseSkillEx($skillPos, $target)
+				RndSleep(500)
+			EndIf
+		Next
 
-    Until DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead()
+	Until DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead()
 
-    If Not GetIsDead() Then MoveTo($StartX, $StartY)
+	If Not GetIsDead() Then MoveTo($StartX, $StartY)
 EndFunc
 
+
+;~ Utility to find priority targets
 Func IsDreamerDryderOrAnurKi($agent)
-    Local $modelType = DllStructGetData($agent, 'AgentModelType')
-    Return $modelType == $ID_Dryder Or $modelType == $ID_Dreamer Or $modelType == $ID_AnurKi
+	Local $modelType = DllStructGetData($agent, 'AgentModelType')
+	Return $modelType == $ID_Dryder Or $modelType == $ID_Dreamer Or $modelType == $ID_AnurKi
 EndFunc
 
+
+;~ Find Zhellix
 Func ZhellixWaiting()
-    If GetMapLoading() == 2 Then
-        Disconnected()
-    EndIf
+	If GetMapLoading() == 2 Then
+		Disconnected()
+	EndIf
 
 	If Not IsGroupAlive() Then ResignAndReturnToGate()
 
-    Local $aNPCs = GetNPCsInRangeOfAgent(GetMyAgent(), Null, 1500)
+	Local $aNPCs = GetNPCsInRangeOfAgent(GetMyAgent(), Null, 1500)
 
-    Local $zhellixAgent = 0
-    If IsArray($aNPCs) Then
-        For $i = 1 To $aNPCs[0]
-            If DllStructGetData($aNPCs[$i], 'PlayerNumber') = $ID_Zhellix Then
-                $zhellixAgent = $aNPCs[$i]
-                ExitLoop
-            EndIf
-        Next
-    EndIf
+	Local $zhellixAgent = 0
+	If IsArray($aNPCs) Then
+		For $i = 1 To $aNPCs[0]
+			If DllStructGetData($aNPCs[$i], 'PlayerNumber') = $ID_Zhellix Then
+				$zhellixAgent = $aNPCs[$i]
+				ExitLoop
+			EndIf
+		Next
+	EndIf
 
-    If (IsDllStruct($zhellixAgent) And GetDistance(GetMyAgent(), $zhellixAgent) < 1500) _
-       Or CountFoesInRangeOfAgent(GetMyAgent(), 1300) > 0 Then
-        Return True
-    Else
-        Return False
-    EndIf
+	If (IsDllStruct($zhellixAgent) And GetDistance(GetMyAgent(), $zhellixAgent) < 1500) Or CountFoesInRangeOfAgent(GetMyAgent(), 1300) > 0 Then
+		Return True
+	Else
+		Return False
+	EndIf
 EndFunc
