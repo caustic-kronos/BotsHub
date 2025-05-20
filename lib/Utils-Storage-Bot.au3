@@ -515,6 +515,11 @@ Func MoveItemsOutOfEquipmentBag()
 		Local $item = GetItemBySlot(5, $slot)
 		Local $itemID = DllStructGetData($item, 'ModelID')
 		If $itemID <> 0 Then
+			If IsArmor($item) Then ContinueLoop
+			If DllStructGetData($item, 'Equipped') Then ContinueLoop
+			If DllStructGetData($item, 'Customized') <> 0 Then ContinueLoop
+			If GetRarity($item) == $RARITY_Green Then ContinueLoop
+			If $Map_UltraRareWeapons[$itemID] <> null Then ContinueLoop
 			MoveItem($item, $inventoryEmptySlots[2 * $cursor], $inventoryEmptySlots[2 * $cursor + 1])
 			$cursor += 1
 			RndSleep(50)
@@ -869,6 +874,8 @@ Func ShouldKeepWeapon($item)
 	Local $type = DllStructGetData($item, 'Type')
 	; Keeping equipped items
 	If DllStructGetData($item, 'Equipped') Then Return True
+	; Keeping customized items
+	If DllStructGetData($item, 'Customized') <> 0 Then Return True
 	; Throwing white items
 	If $rarity == $RARITY_White Then Return False
 	; Keeping green items

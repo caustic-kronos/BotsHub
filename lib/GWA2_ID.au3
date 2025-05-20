@@ -318,7 +318,7 @@ Global Const $ID_GadgetID_Smol_Chest	= 6062		;Istani chests
 Global Const $ID_GadgetID_NM_Chest		= 4582
 Global Const $ID_GadgetID_HM_Chest		= 8141
 Global Const $Chests_Array[]			= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest]
-Global Const $Map_Chests				= MapFromArray($Chests_Array)
+Global Const $Map_Chests_IDs			= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
 
 

@@ -64,6 +64,7 @@
 #include 'src/Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SpiritSlaves.au3'
+#include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
 #include 'src/Farm-Gemstone.au3'
@@ -104,7 +105,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAG_NUMBER = 5
 Global $TIMESDEPOSITED = 0
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Vaettirs|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -602,6 +603,8 @@ Func RunFarmLoop($Farm)
 			$result =  RaptorFarm($STATUS)
 		Case 'SpiritSlaves'
 			$result =  SpiritSlavesFarm($STATUS)
+		Case 'Tasca'
+			$result =  TascaChestFarm($STATUS)
 		Case 'Vaettirs'
 			$result =  VaettirFarm($STATUS)
 		Case 'Voltaic'
@@ -618,6 +621,7 @@ Func RunFarmLoop($Farm)
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
 	UpdateStats($result, $timer)
+	ClearChestsMap()
 	Return $result
 EndFunc
 #EndRegion Main loops
@@ -634,6 +638,7 @@ Func ResetBotsSetups()
 	$KOURNANS_FARM_SETUP					= False
 	$MANTIDS_FARM_SETUP						= False
 	$SPIRIT_SLAVES_FARM_SETUP				= False
+	$TASCA_FARM_SETUP						= False
 	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$FOLLOWER_SETUP						= False
@@ -716,6 +721,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $SpiritSlavesFarmInformations)
+		Case 'Tasca'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $TascaChestRunInformations)
 		Case 'Vaettirs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
@@ -893,9 +902,6 @@ EndFunc
 Func Authentification()
 	Local $characterName = GUICtrlRead($GUI_Combo_CharacterChoice)
 	If ($characterName == '') Then
-		MsgBox(0, 'Error', 'No character name given.')
-		Return 1
-	ElseIf($characterName == 'No character selected') Then
 		Warn('Running without authentification.')
 	ElseIf $PROCESS_ID And $RUN_MODE == 'CMD' Then
 		Local $proc_id_int = Number($PROCESS_ID, 2)
@@ -1139,6 +1145,8 @@ Func SelectFarmDuration($Farm)
 			Return $RAPTORS_FARM_DURATION
 		Case 'SpiritSlaves'
 			Return $SPIRIT_SLAVES_FARM_DURATION
+		Case 'Tasca'
+			Return $TASCA_FARM_DURATION
 		Case 'Vaettirs'
 			Return $VAETTIRS_FARM_DURATION
 		Case 'Voltaic'

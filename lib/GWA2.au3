@@ -257,7 +257,7 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 		$address += $offset[$ptrCount + 1]
 		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
 		If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then ExitLoop
-		
+
 		$buffer = SafeDllStructCreate($type)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		$data[0] = $address
@@ -3814,7 +3814,8 @@ EndFunc
 
 ;~ Returns current target.
 Func GetCurrentTarget()
-	Return GetAgentByID(GetCurrentTargetID())
+	Local $currentTargetId = GetCurrentTargetID()
+	Return $currentTargetId == 0 ? Null : GetAgentByID(GetCurrentTargetID())
 EndFunc
 
 

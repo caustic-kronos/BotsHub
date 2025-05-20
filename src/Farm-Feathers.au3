@@ -321,7 +321,7 @@ Func WaitForSettle($Timeout = 10000)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 		Sleep(250)
 		$me = GetMyAgent()
-		$target = GetFurthestNPCInRangeOfCoords(null, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+		$target = GetFurthestNPCInRangeOfCoords(3, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 	WEnd
 
 	If CountFoesInRangeOfAgent($me, 900) == 0 Then Return False
@@ -335,7 +335,7 @@ Func WaitForSettle($Timeout = 10000)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 		Sleep(250)
 		$me = GetMyAgent()
-		$target = GetFurthestNPCInRangeOfCoords(null, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+		$target = GetFurthestNPCInRangeOfCoords(3, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 	WEnd
 	Return True
 EndFunc
