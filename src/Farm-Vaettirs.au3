@@ -178,10 +178,23 @@ Func VaettirsFarmLoop()
 EndFunc
 
 
+;~ Get Norn blessing only if title is not maxed yet
+Func GetVaettirsNornBlessing()
+	Local $norn = GetNornTitle()
+	If $norn < 160000 Then
+		Info('Getting norn title blessing')
+		GoNearestNPCToCoords(13400, -20800)
+		RndSleep(300)
+		Dialog(132)
+	EndIf
+	RndSleep(350)
+EndFunc
+
+
 ;~ Self explanatory
 Func AggroAllMobs()
 	Info('Aggroing left')
-	MoveTo(13501, -20925)
+	GetVaettirsNornBlessing()
 	MoveTo(13172, -22137)
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	MoveAggroing(12496, -22600, 150)

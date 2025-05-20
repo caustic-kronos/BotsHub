@@ -124,7 +124,7 @@ Func RaptorsFarmLoop()
 	UseHeroSkill(1, $Raptors_VocalWasSogolon)
 	RndSleep(1200)
 	UseHeroSkill(1, $Raptors_Incoming)
-	GetBlessing()
+	GetRaptorsAsuraBlessing()
 	MoveToBaseOfCave()
 	Info('Moving Hero away')
 	CommandAll(-25309, -4212)
@@ -159,7 +159,7 @@ EndFunc
 
 
 ;~ Get Asura blessing only if title is not maxed yet
-Func GetBlessing()
+Func GetRaptorsAsuraBlessing()
 	Local $Asura = GetAsuraTitle()
 	If $Asura < 160000 Then
 		Info('Getting asura title blessing')
