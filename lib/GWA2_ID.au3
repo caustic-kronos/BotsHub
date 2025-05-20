@@ -136,6 +136,7 @@ Global Const $ID_Corrupted_Isle				= 537
 Global Const $ID_Isle_Of_Solitude			= 538
 Global Const $ID_Remains_of_Sahlahja		= 545
 Global Const $ID_Moddok_Crevice				= 427
+Global Const $ID_Gate_Of_Anguish			= 474
 ; EotN
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Riven_Earth				= 501
