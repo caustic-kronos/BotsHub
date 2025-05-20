@@ -49,7 +49,6 @@ Global Const $Hero_Speed_Paragon = 7
 Global Const $ID_necro_mercenary_hero = $ID_Mercenary_Hero_3
 
 Global $Quickening_Zephyr_Cast_Timer
-Global $steady_Healing_Healer_Index = 0
 
 ;~ Shouldn't be used - doesn't farm anything
 Func OmniFarm($STATUS)
@@ -127,30 +126,60 @@ Func PrepareZephyrSpirit()
 EndFunc
 
 
-Func RegisterSteadyHealingUnit()
-	AdlibRegister('SteadyHealingUnit', 350)
+;~ Runs healing every 3100ms - burst heal every 3100ms, might be too slow
+Func RegisterBurstHealingUnit()
+	AdlibRegister('BurstHealingUnit', 3100)
+EndFunc
+
+;~ Unregister after previous function
+Func UnregisterBurstHealingUnit()
+	AdlibUnRegister('BurstHealingUnit')
 EndFunc
 
 
+;~ Runs healing every 1600ms - seems fine
+Func RegisterTwiceHealingUnit()
+	AdlibRegister('TwiceHealingUnit', 1600)
+EndFunc
+
+;~ Unregister after previous function
+Func UnregisterTwiceHealingUnit()
+	AdlibUnRegister('TwiceHealingUnit')
+EndFunc
+
+
+;~ Runs healing every 600ms - seems a bit too intensive, creates strain and issues in bots
+Func RegisterSteadyHealingUnit()
+	AdlibRegister('SteadyHealingUnit', 600)
+EndFunc
+
+;~ Unregister after previous function
 Func UnregisterSteadyHealingUnit()
 	AdlibUnRegister('SteadyHealingUnit')
 EndFunc
 
-;~ Can be used in other farm bots
+
+;~ Can be used in other farm bots, might be too intensive (it needs to be called every 600ms)
 Func SteadyHealingUnit()
-	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 32000 And GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
+	Local Static $adlibBusy = False
+	Local Static $steady_Healing_Healer_Index = 0
+	Local Static $healerArray[6] = [$Hero_Dervish_1, $Hero_Dervish_2, $Hero_Dervish_3, $Hero_BiP_Necro_1, $Hero_BiP_Necro_2, $Hero_Speed_Paragon]
+
+	If $adlibBusy Then Return
+	$adlibBusy = True
+
+	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 38000 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf
 
-	Local Static $healerArray[6] = [$Hero_Dervish_1, $Hero_Dervish_2, $Hero_Dervish_3, $Hero_BiP_Necro_1, $Hero_BiP_Necro_2, $Hero_Speed_Paragon]
 	; Heroes with Mystic Healing provide additional long range support
 	UseHeroSkill($healerArray[$steady_Healing_Healer_Index], $Mystic_Healing_Skill_Position)
 	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 6000 And $steady_Healing_Healer_Index == 5 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Mystic_Healing_Skill_Position)
 	EndIf
 
-	If (GetHasCondition(GetMyAgent()) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0) Then
+	If GetHasCondition(GetMyAgent()) Then
 		Switch $steady_Healing_Healer_Index
 			Case 3
 				UseHeroSkill($healerArray[2], $Cautery_Signet_Skill_Position)
@@ -162,32 +191,82 @@ Func SteadyHealingUnit()
 	EndIf
 	$steady_Healing_Healer_Index += 1
 	$steady_Healing_Healer_Index = Mod($steady_Healing_Healer_Index, 6)
+	$adlibBusy = False
 EndFunc
 
 
-;~ Can be used in other farm bots - has no latency - can be used at most once every 5s
-Func BurstHealingUnit()
-	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
+;~ Can be used in other farm bots - has no latency - can be used at most once every 1600ms
+Func TwiceHealingUnit()
+	Local Static $adlibBusy = False
+	Local Static $steady_Healing_Healer_Index = 0
+
+	If $adlibBusy Then Return
+	$adlibBusy = True
+
+	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 38000 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf
 
 	; Heroes with Mystic Healing provide additional long range support
-	UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)
-	UseHeroSkill($Hero_Dervish_1, $Mystic_Healing_Skill_Position)
-	UseHeroSkill($Hero_Dervish_2, $Mystic_Healing_Skill_Position)
-	UseHeroSkill($Hero_Dervish_3, $Mystic_Healing_Skill_Position)
-	UseHeroSkill($Hero_BiP_Necro_1, $Mystic_Healing_Skill_Position)
-	UseHeroSkill($Hero_BiP_Necro_2, $Mystic_Healing_Skill_Position)
-	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 6000 Then
-		UseHeroSkill($Hero_Zephyr_Ranger, $Mystic_Healing_Skill_Position)
+	If $steady_Healing_Healer_Index == 0 Then
+		UseHeroSkill($Hero_Dervish_1, $Mystic_Healing_Skill_Position)
+		UseHeroSkill($Hero_Dervish_2, $Mystic_Healing_Skill_Position)
+		UseHeroSkill($Hero_BiP_Necro_1, $Mystic_Healing_Skill_Position)
+		$steady_Healing_Healer_Index = 1
+	Else
+		UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)
+		UseHeroSkill($Hero_Dervish_3, $Mystic_Healing_Skill_Position)
+		UseHeroSkill($Hero_BiP_Necro_2, $Mystic_Healing_Skill_Position)
+		If TimerDiff($Quickening_Zephyr_Cast_Timer) > 6000 Then
+			UseHeroSkill($Hero_Zephyr_Ranger, $Mystic_Healing_Skill_Position)
+		EndIf
+		$steady_Healing_Healer_Index = 0
 	EndIf
+
+	$adlibBusy = False
+EndFunc
+
+
+;~ Can be used in other farm bots - has no latency - can be used at most once every 5s
+Func BurstHealingUnit()
+	Local Static $adlibBusy = False
+	If $adlibBusy Then Return
+	$adlibBusy = True
+
+	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 38000 Then
+		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
+		$Quickening_Zephyr_Cast_Timer = TimerInit()
+	EndIf
+
+	Local $lifeRatio = DllStructGetData(GetMyAgent(), 'HP')
+	; Heroes with Mystic Healing provide additional long range support
+	If $lifeRatio < 1 Then
+		UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)
+		If $lifeRatio < 0.9 Then
+			UseHeroSkill($Hero_BiP_Necro_1, $Mystic_Healing_Skill_Position)
+			If $lifeRatio < 0.8 Then
+				UseHeroSkill($Hero_BiP_Necro_2, $Mystic_Healing_Skill_Position)
+				If $lifeRatio < 0.7 Then
+					UseHeroSkill($Hero_Dervish_1, $Mystic_Healing_Skill_Position)
+					If $lifeRatio < 0.6 Then
+						UseHeroSkill($Hero_Dervish_2, $Mystic_Healing_Skill_Position)
+						If $lifeRatio < 0.5 Then
+							UseHeroSkill($Hero_Dervish_3, $Mystic_Healing_Skill_Position)
+							If $lifeRatio < 0.4 And TimerDiff($Quickening_Zephyr_Cast_Timer) > 6000 Then UseHeroSkill($Hero_Zephyr_Ranger, $Mystic_Healing_Skill_Position)
+						EndIf
+					EndIf
+				EndIf
+			EndIf
+		EndIf
+	EndIf
+	$adlibBusy = False
 EndFunc
 
 
 ;~ Shouldn't be used in other farm bots - made to run continuously, so has strong latency (about 5s)
 Func ManualFarmAutoHealingLoop()
-	If GetSkillbarSkillRecharge($Quickening_Zephyr_Skill_Position, $Hero_Zephyr_Ranger) == 0 Then
+	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 38000 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf

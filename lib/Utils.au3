@@ -23,13 +23,19 @@
 
 Opt('MustDeclareVars', 1)
 
-; Note: mobs aggro correspond to earshot range
+; Mobs aggro correspond to earshot range
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 
 Global Const $SpiritTypes_Array[3] = [278528, 311296]
 Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
 
+; Map containing the IDs of the opened chests - this map should be cleared at every loop
+; Null - chest not found yet (sic)
+; 0 - chest found but not flagged and not opened
+; 1 - chest found and flagged
+; 2 - chest found and opened
+Global $chestsMap[]
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
@@ -264,25 +270,29 @@ EndFunc
 
 #Region Loot Chests
 ;~ Find and open chests in the given range (earshot by default)
-Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
-	Local Static $openedChests[]
+Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null, $BlockedFunction = null)
+	If GetIsDead() Then Return
+
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
 	Local $openedChest = False
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
-		If $Map_Chests[$gadgetID] == null Then ContinueLoop
+		If $Map_Chests_IDs[$gadgetID] == null Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
 
-		If $openedChests[DllStructGetData($agents[$i], 'ID')] <> 1 Then
+		If $chestsMap[DllStructGetData($agents[$i], 'ID')] <> 2 Then
 			;MoveTo(DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y'))		;Fail half the time
 			;GoSignpost($agents[$i])															;Seems to work but serious rubberbanding
 			;GoToSignpost($agents[$i])															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
-			GoToSignpostWhileDefending($agents[$i], $DefendFunction)							;Final solution
-			RndSleep(500)
+			GoToSignpostWhileDefending($agents[$i], $DefendFunction, $BlockedFunction)			;Final solution
+			If GetIsDead() Then Return
+			RndSleep(200)
 			OpenChest()
-			RndSleep(1000)
-			$openedChests[DllStructGetData($agents[$i], 'ID')] = 1
+			If GetIsDead() Then Return
+			RndSleep(GetPing() + 1000)
+			If GetIsDead() Then Return
+			$chestsMap[DllStructGetData($agents[$i], 'ID')] = 2
 			PickUpItems()
 			$openedChest = True
 		EndIf
@@ -291,8 +301,15 @@ Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null)
 EndFunc
 
 
+;~ Clearing map of chests
+Func ClearChestsMap()
+	; Redefining the variable clears it for maps
+	Global $chestsMap[]
+EndFunc
+
+
 ;~ Go to signpost and waits until you reach it.
-Func GoToSignpostWhileDefending($agent, $DefendFunction = null)
+Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction = Null)
 	Local $me = GetMyAgent()
 	Local $X = DllStructGetData($agent, 'X')
 	Local $Y = DllStructGetData($agent, 'Y')
@@ -300,9 +317,12 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = null)
 	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
 		Move($X, $Y, 100)
 		RndSleep(100)
-		If $DefendFunction <> null Then $DefendFunction()
+		If $DefendFunction <> Null Then $DefendFunction()
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+			If $BlockedFunction <> Null And $blocked > 10 Then
+				$BlockedFunction()
+			EndIf
 			$blocked += 1
 			Move($X, $Y, 100)
 		EndIf
@@ -310,7 +330,6 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = null)
 		RndSleep(100)
 		$me = GetMyAgent()
 	WEnd
-	RndSleep(500)
 EndFunc
 #EndRegion Loot Chests
 
@@ -805,7 +824,7 @@ EndFunc
 
 ;~ Use morale booster on team
 Func UseMoraleConsumableIfNeeded()
-	While TeamHasTooMuchMalus() Then
+	While TeamHasTooMuchMalus()
 		Local $usedMoraleBooster = False
 		For $DPRemoval_Sweet In $DPRemoval_Sweets
 			Local $ConsumableSlot = findInInventory($DPRemoval_Sweet)
@@ -888,9 +907,8 @@ Func IdentifyAllItems()
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-
-			FindIdentificationKitOrBuySome()
 			If Not GetIsIdentified($item) Then
+				FindIdentificationKitOrBuySome()
 				IdentifyItem($item)
 				RndSleep(100)
 			EndIf
@@ -1232,16 +1250,21 @@ EndFunc
 
 #Region Utils
 ;~ Mapping function
-Func ToggleMapping()
+;~ Mapping mode corresponds to : 0 - everything, 1 - only location, 2 - only chests
+Func ToggleMapping($mappingMode = 0)
+	; Toggle variable
 	Local Static $isMapping = False
 	Local Static $mappingFile
+	Local Static $chestFile
 	If $isMapping Then
 		AdlibUnregister('MappingWrite')
 		FileClose($mappingFile)
+		FileClose($chestFile)
 		$isMapping = False
 	Else
 		$mappingFile = FileOpen(@ScriptDir & '/logs/mapping.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-		MappingWrite($mappingFile)
+		$chestFile = FileOpen(@ScriptDir & '/logs/chests.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		MappingWrite($mappingFile, $chestFile, $mappingMode)
 		AdlibRegister('MappingWrite', 1000)
 		$isMapping = True
 	EndIf
@@ -1249,34 +1272,58 @@ EndFunc
 
 
 ;~ Write mapping log in file
-Func MappingWrite($file = Null)
+Func MappingWrite($mapfile = Null, $chestingFile = Null, $mode = Null)
 	Local Static $mappingFile = 0
+	Local Static $chestFile = 0
+	Local Static $mappingMode = 0
+	Local $mustReturn = False
 	; Initialisation the first time when called outside of AdlibRegister
-	If (IsDeclared('file') And $file <> Null) Then
-		$mappingFile = $file
-		Return
+	If (IsDeclared('mapfile') And $mapfile <> Null) Then
+		$mappingFile = $mapfile
+		$mustReturn = True
 	EndIf
-	Local $me = GetMyAgent()
-	Local $log = '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')'
-	Local $chestString = ScanForChests($RANGE_COMPASS)
-	If $chestString <> Null Then _FileWriteLog($mappingFile, $chestString)
-	_FileWriteLog($mappingFile, $log)
+	If (IsDeclared('chestingFile') And $chestingFile <> Null) Then
+		$chestFile = $chestingFile
+		$mustReturn = True
+	EndIf
+	If (IsDeclared('mode') And $mode <> Null) Then
+		$mappingMode = $mode
+		$mustReturn = True
+	EndIf
+	If $mustReturn Then Return
+	If $mappingMode <> 2 Then
+		Local $me = GetMyAgent()
+		_FileWriteLog($mappingFile, '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
+	EndIf
+	If $mappingMode <> 1 Then
+		Local $chest = ScanForChests($RANGE_COMPASS)
+		If $chest <> Null Then
+			Local $chestString = 'Chest ' & DllStructGetData($chest, 'ID') & ' - (' & DllStructGetData($chest, 'X') & ',' & DllStructGetData($chest, 'Y') & ')'
+			_FileWriteLog($chestFile, $chestString)
+		EndIf
+	EndIf
 EndFunc
 
 
-;~ This doesn't open chest, it only scans for them and print their location
-Func ScanForChests($range)
-	Local Static $foundChests[]
+;~ Scans for chests and return the first one found around the player or the given coordinates
+;~ If flagged is set to true, it will return previously found chests
+Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
+	If $X == Null Then
+		Local $me = GetMyAgent()
+		$X = DllStructGetData($me, 'X')
+		$Y = DllStructGetData($me, 'Y')
+	EndIf
 	Local $gadgetID
-	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
+	;0x200 = type: static
+	Local $agents = GetAgentArray(0x200)
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
-		If $Map_Chests[$gadgetID] == null Then ContinueLoop
-		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
+		If $Map_Chests_IDs[$gadgetID] == null Then ContinueLoop
+		If ComputeDistance($X, $Y, DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y')) > $range Then ContinueLoop
 		Local $chestID = DllStructGetData($agents[$i], 'ID')
-		If $foundChests[$chestID] <> 1 Then
-			$foundChests[$chestID] = 1
-			Return 'Chest ' & $chestID & ' - (' & DllStructGetData($agents[$i], 'X') & ',' & DllStructGetData($agents[$i], 'Y') & ')'
+		If $chestsMap[$chestID] == Null Or $chestsMap[$chestID] == 0 Or ($flagged And $chestsMap[$chestID] == 1) Then
+			$chestsMap[$chestID] = 1
+			Return $agents[$i]
 		EndIf
 	Next
 	Return Null
@@ -1428,6 +1475,7 @@ Func PrintNPCInformations($npc)
 	Info('X: ' & DllStructGetData($npc, 'X'))
 	Info('Y: ' & DllStructGetData($npc, 'Y'))
 	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
+	Info('PlayerNumber: ' & DllStructGetData($npc, 'PlayerNumber'))
 	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
 	Info('Effects: ' & DllStructGetData($npc, 'Effects'))
 	Info('ModelState: ' & DllStructGetData($npc, 'ModelState'))
@@ -1642,8 +1690,8 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coord
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
 		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
-		Local $curDistance = GetDistance($me, $curAgent)
 		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		Local $curDistance = GetDistance($me, $curAgent)
 		If $curDistance > $furthestDistance Then
 			$returnAgent = $curAgent
 			$furthestDistance = $curDistance
@@ -1893,6 +1941,102 @@ Func DefaultKillFoes($lootInFights = True)
 EndFunc
 
 
+;~ Kill foes by casting skills from 1 to 8
+Func PriorityKillFoes($lootInFights = True)
+	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(GetMyAgent())
+	GetAlmostInRangeOfAgent($target)
+	ChangeTarget($target)
+	; At first we target the closest mob to have the surprise effect
+	While $groupIsAlive And $target <> Null
+		If GetCurrentTarget() == Null Then
+			$target = GetHighestPriorityFoe(GetMyAgent(), $RANGE_SPIRIT)
+			ChangeTarget($target)
+			Sleep(GetPing() + 20)
+			CallTarget($target)
+			; Start auto-attack on new target
+			Attack($target)
+			Sleep(GetPing() + 20)
+		EndIf
+		If $target <> Null Then
+			While Not IsRecharged($skillNumber) And $skillNumber < 9
+				$skillNumber += 1
+			WEnd
+			If $skillNumber < 9 Then
+				UseSkillEx($skillNumber, $target)
+				RndSleep(20)
+			Else
+				; Just wait for auto-attack to continue
+				RndSleep(1000)
+			EndIf
+			$skillNumber = 1
+		EndIf
+		If $lootInFights Then PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST + 250)
+		RndSleep(20)
+	WEnd
+	RndSleep(1000)
+	PickUpItems()
+EndFunc
+
+
+;~ Create a map containing foes and their priority level
+Func CreateMobsPriorityMap()
+	;Voltaic farm foes
+	Local $PN_SS_Defender		= 6499
+	Local $PN_SS_Priest			= 6498
+	Local $PN_Modniir_Priest	= 6512
+	Local $PN_SS_Summoner		= 6507
+	Local $PN_SS_Warder			= 6497
+	Local $PN_SS_Dominator		= 6493
+	Local $PN_SS_Blasphemer		= 6496
+	Local $PN_SS_Dreamer		= 6494
+	Local $PN_SS_Contaminator	= 6495
+
+	; Priority map : 0 biggest kill priority, and then it's decreasing
+	Local $map[]
+	$map[$PN_SS_Defender] = 0
+	$map[$PN_SS_Priest] = 0
+	$map[$PN_Modniir_Priest] = 0
+	$map[$PN_SS_Summoner] = 1
+	$map[$PN_SS_Warder] = 2
+	$map[$PN_SS_Dominator] = 2
+	$map[$PN_SS_Blasphemer] = 2
+	$map[$PN_SS_Dreamer] = 2
+	Return $map
+EndFunc
+
+
+;~ Returns the highest priority foe around an agent
+Func GetHighestPriorityFoe($agent, $range = $RANGE_SPELLCAST)
+	Local Static $mobsPriorityMap = CreateMobsPriorityMap()
+	Local $agentArray = GetAgentArray(0xDB)
+	Local $X = DllStructGetData($agent, 'X')
+	Local $Y = DllStructGetData($agent, 'Y')
+	Local $highestPriorityTarget = Null
+	Local $priorityLevel = 99999
+
+	For $i = 1 To $agentArray[0]
+		If Not EnemyAgentFilter($agentArray[$i]) Then ContinueLoop
+		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
+		If DllStructGetData($agentArray[$i], 'TypeMap') == 0 Then ContinueLoop
+		;If DllStructGetData($agentArray[$i], 'ID') == $agentID Then ContinueLoop
+		Local $distance = ComputeDistance($X, $y, DllStructGetData($agentArray[$i], 'X'), DllStructGetData($agentArray[$i], 'Y'))
+		If $distance < $range Then
+			Local $priority = $mobsPriorityMap[DllStructGetData($agentArray[$i], 'PlayerNumber')]
+			If ($priority == Null) Then
+				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agentArray[$i]
+				ContinueLoop
+			EndIf
+			If ($priority == 0) Then Return $agentArray[$i]
+			If ($priority < $priorityLevel) Then
+				$highestPriorityTarget = $agentArray[$i]
+				$priorityLevel = $priority
+			EndIf
+		EndIf
+	Next
+	Return $highestPriorityTarget
+EndFunc
+
+
 ;~ Returns True if the group is alive
 Func IsGroupAlive()
 	Local $deadMembers = 0
@@ -1954,8 +2098,8 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	$attributesBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 4
 	$buildTemplate = StringTrimLeft($buildTemplate, 4)
 
-	$attributes[0][0] = $secondaryProfession	
-	$attributes[0][1] = $attributesCount	
+	$attributes[0][0] = $secondaryProfession
+	$attributes[0][1] = $attributesCount
 	For $i = 1 To $attributesCount
 		$attributes[$i][0] = Bin64ToDec(StringLeft($buildTemplate, $attributesBits))
 		$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
@@ -2136,7 +2280,7 @@ Func _dlldisplay($struct)
 	Next
 
 	_ArrayAdd($structArray, '-|' & DllStructGetPtr($struct) + DllStructGetSize($struct) & '|<endstruct>|' & DllStructGetSize($struct) & '|-')
-
+	_ArrayToClip($structArray)
 	_ArrayDisplay($structArray, '', '', 64, Default, '#|Offset|Type|Size|Value')
 
 	Return $structArray

@@ -259,7 +259,7 @@ Func AreFoesInFront($X, $Y)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 250)
+	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 350)
 	Local $foe
 	For $i = 1 To $foes[0]
 		$foe = $foes[$i]
@@ -275,12 +275,35 @@ Func GetNPCInTheBack($X, $Y)
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
 	Local $npcs = GetNPCsInRangeOfAgent($me, $RANGE_SPELLCAST)
-	Local $npc
+	Local $bestNpc = Null
+	; dot product ranges from -1 (directly behind) to 1 (directly ahead)
+	Local $minDot = 1
+
+	Local $moveX = $X - $myX
+	Local $moveY = $Y - $myY
+	; Same computation as in ComputeDistance
+	Local $myMovementVector = Sqrt($moveX ^ 2 + $moveY ^ 2)
+	If $myMovementVector = 0 Then Return Null
+	; Normalizing movement vector
+	$moveX /= $myMovementVector
+	$moveY /= $myMovementVector
+
 	For $i = 1 To $npcs[0]
-		$npc = $npcs[$i]
-		If ((ComputeDistance($X, $Y, $myX, $myY) - ComputeDistance($X, $Y, DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'))) < 0) Then Return $npc
+		Local $npc = $npcs[$i]
+		Local $npcMoveX = DllStructGetData($npc, 'X') - $myX
+		Local $npcMoveY = DllStructGetData($npc, 'Y') - $myY
+		Local $npcMovementVector = Sqrt($npcMoveX ^ 2 + $npcMoveY ^ 2)
+		If $npcMovementVector = 0 Then ContinueLoop
+		$npcMoveX /= $npcMovementVector
+		$npcMoveY /= $npcMovementVector
+
+		; Dot product
+		Local $dot = $npcMoveX * $moveX + $npcMoveY * $moveY
+		If $dot < $minDot Then
+			$minDot = $dot
+			$bestNpc = $npc
 	Next
-	Return Null
+	Return $bestNpc
 EndFunc
 
 
