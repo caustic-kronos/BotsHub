@@ -466,7 +466,7 @@ EndFunc
 ;~ Sort the inventory in this order :
 Func SortInventory()
 	Info('Sorting inventory')
-	;						0-Lockpicks 1-Books	2-Consumables	3-Trophies	4-Tomes	5-Materials	6-Others	7-Armor Salvageables[Gold,	8-Purple,	9-Blue	10-White]	11-Weapons [Green,	12-Gold,	13-Purple,	14-Blue,	15-White]	16-Armor (Armor salvageables, weapons and armor start from the end)
+	;						0-Lockpicks 1-Books	2-Consumables	3-Trophies	4-Tomes	5-Materials	6-Others	7-Armor Salvageables[Gold,	8-Purple,	9-Blue	10-White]	11-Weapons [White,	12-Blue,	13-Purple,	14-Gold,	15-Green]	16-Armor (Armor salvageables, weapons and armor start from the end)
 	Local $itemsCounts = [	0,			0,		0,				0,			0,		0,			0,			0,							0,			0,		0,			0,					0,			0,			0,			0,			0]
 	Local $bagsSizes[6]
 	Local $bagsSize = 0
@@ -488,15 +488,15 @@ Func SortInventory()
 			If IsWeapon($item) Then
 				$rarity = GetRarity($item)
 				If ($rarity == $RARITY_Gold) Then
-					$itemsCounts[12] += 1
+					$itemsCounts[14] += 1
 				ElseIf ($rarity == $RARITY_Purple) Then
 					$itemsCounts[13] += 1
 				ElseIf ($rarity == $RARITY_Blue) Then
-					$itemsCounts[14] += 1
+					$itemsCounts[12] += 1
 				ElseIf ($rarity == $RARITY_Green) Then
-					$itemsCounts[11] += 1
-				ElseIf ($rarity == $RARITY_White) Then
 					$itemsCounts[15] += 1
+				ElseIf ($rarity == $RARITY_White) Then
+					$itemsCounts[11] += 1
 				EndIf
 			; ArmorSalvage
 			ElseIf IsArmorSalvageItem($item) Then
@@ -561,15 +561,15 @@ Func SortInventory()
 		If IsWeapon($item) Then
 			$rarity = GetRarity($item)
 			If ($rarity == $RARITY_Gold) Then
-				$category = 12
+				$category = 14
 			ElseIf ($rarity == $RARITY_Purple) Then
 				$category = 13
 			ElseIf ($rarity == $RARITY_Blue) Then
-				$category = 14
+				$category = 12
 			ElseIf ($rarity == $RARITY_Green) Then
-				$category = 11
-			ElseIf ($rarity == $RARITY_White) Then
 				$category = 15
+			ElseIf ($rarity == $RARITY_White) Then
+				$category = 11
 			EndIf
 		; ArmorSalvage
 		ElseIf isArmorSalvageItem($item) Then

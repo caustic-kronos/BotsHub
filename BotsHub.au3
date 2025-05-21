@@ -172,12 +172,12 @@ Func createGUI()
 	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
 
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
-	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 225, 271, 176, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
+	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 175, 271, 226, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
 	_GUICtrlRichEdit_SetCharColor($GUI_Console, $GUI_CONSOLE_GREY_COLOR)
 	_GUICtrlRichEdit_SetBkColor($GUI_Console, 0)
 
 	; === Run Infos ===
-	$GUI_Group_RunInfos = GUICtrlCreateGroup('Infos', 21, 39, 271, 176)
+	$GUI_Group_RunInfos = GUICtrlCreateGroup('Infos', 21, 39, 271, 126)
 	$GUI_Label_Runs_Text = GUICtrlCreateLabel('Runs:', 31, 64, 65, 16)
 	$GUI_Label_Runs_Value = GUICtrlCreateLabel('0', 91, 64, 50, 16, $SS_RIGHT)
 	$GUI_Label_Time_Text = GUICtrlCreateLabel('Time:', 31, 84, 45, 16)
@@ -855,6 +855,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.sell_items', GUICtrlRead($GUI_Checkbox_SellItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.buy_ectos', GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.store_leftovers', GUICtrlRead($GUI_Checkbox_StoreTheRest) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.store_gold', GUICtrlRead($GUI_Checkbox_StoreGold) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
 	_JSON_addChangeDelete($jsonObject, 'run.bag_number', Number(GUICtrlRead($GUI_Input_BagNumber)))
 	_JSON_addChangeDelete($jsonObject, 'consumables.consume', GUICtrlRead($GUI_Checkbox_UseConsumables) == 1)
@@ -902,6 +903,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_SellItems, _JSON_Get($jsonObject, 'run.sell_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_BuyEctoplasm, _JSON_Get($jsonObject, 'run.buy_ectos') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_StoreTheRest, _JSON_Get($jsonObject, 'run.store_leftovers') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_StoreGold, _JSON_Get($jsonObject, 'run.store_gold') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	Local $district = _JSON_Get($jsonObject, 'run.district')
 	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, $district)
 	$DISTRICT_NAME = $district
@@ -1021,7 +1023,7 @@ Func UpdateStats($success, $timer)
 	Local $itemCounts = CountTheseItems($itemsToCount)
 	Local $goldItemsCount = CountGoldItems()
 	Local $goldCharacter = GetGoldCharacter()
-	; Before every farm loop
+	; -1 : Before every farm loop
 	If $success == -1 Then
 		$InitialGold = $goldCharacter
 		$InitialGoldItems = $goldItemsCount
@@ -1030,16 +1032,17 @@ Func UpdateStats($success, $timer)
 		$InitialStygianGemstones = $itemCounts[2]
 		$InitialTitanGemstones = $itemCounts[3]
 		$InitialTormentGemstones = $itemCounts[4]
-	; Not success, not failure, paused
+	; 0 : Success
 	ElseIf $success == 0 Then
 		$runs += 1
 		$time += TimerDiff($timer)
-	; Failure
+	; 1 : Failure
 	ElseIf $success == 1 Then
 		$failures += 1
 		$runs += 1
 		$time += TimerDiff($timer)
 	EndIf
+	; 2 : Pause
 
 	; Global stats
 	GUICtrlSetData($GUI_Label_Runs_Value, $runs)

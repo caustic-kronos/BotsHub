@@ -15,7 +15,8 @@
 		"sell_items": false,
 		"buy_ectos": false,
 		"store_leftovers": false,
-		"district": "English",
+		"store_gold": false,
+		"district": "Random",
 		"bag_number": 5
 	},
 	"consumables": {

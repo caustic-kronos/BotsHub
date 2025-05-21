@@ -32,12 +32,12 @@ Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Deadly Arts' & @CRLF _
-	& '- A shield with +30 or +45 health under enchantment' & @CRLF _
-	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
+	& '- A staff +20e and +20% enchantment duration' & @CRLF _
+	& '- caster weapons on all heroes' & @CRLF _
 	& '- Windwalker insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
-; Average duration ~ 2m30s
-Global Const $TASCA_FARM_DURATION = (2 * 60 + 30) * 1000
+; Average duration ~ 3m
+Global Const $TASCA_FARM_DURATION = (3 * 60) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Tasca_DwarvenStability) is better than UseSkillEx(1))
 Global Const $Tasca_ShroudOfDistress = 1
@@ -101,6 +101,7 @@ Func TascaChestFarmLoop($STATUS)
 	RndSleep(1000)
 	WaitMapLoading($ID_Tascas_Demise, 10000, 1000)
 
+	Info('Starting chest run')
 	UseConsumable($ID_Birthday_Cupcake, True)
 	; Calling it here to already use shroud of distress and dwarven stability and have enough mana later on
 	CommandAll(-11300, 21389)
@@ -112,81 +113,70 @@ Func TascaChestFarmLoop($STATUS)
 
 	Local $openedChests = 0
 	ToggleMapping(2)
-	Info('#1 - chest')
 	TASCADervishRun(-2000, 17500)
-	Info('#2')
 	TASCADervishRun(1000, 16500)
+	Info('#1/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#3')
 	TASCADervishRun(3000, 15000)
-	Info('#4')
 	TASCADervishRun(5900, 14500)
 	Local $annoyingChest = ScanForChests(2000, True, 5500, 18000)
-	Out('Will we go to the shitty chest ? ' & ($annoyingChest <> Null))
-	Info('#5')
+	Notice('Bonus chest ? ' & ($annoyingChest <> Null))
 	TASCADervishRun(6750, 14500)
+	Info('#2/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#6')
 	TASCADervishRun(8000, 15000)
-	Info('#7')
 	TASCADervishRun(9500, 16000)
-	Info('#8 - chest')
 	TASCADervishRun(10500, 18000)
+	Info('#3/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#9 - chest')
 	TASCADervishRun(11500, 19500)
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#10 - chest')
 	TASCADervishRun(12500, 21000)
 	; Very far chests here, spirit range is needed
+	Info('#4/13')
 	$openedChests += CheckForChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#11')
 	TASCADervishRun(13000, 23500)
+	Info('#5/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#12 - chest')
 	TASCADervishRun(12000, 25000)
+	Info('#6/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#13')
 	TASCADervishRun(11500, 26000)
+	Info('#7/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#14 - chest')
 	TASCADervishRun(9750, 26750)
+	Info('#8/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#15 - chest')
 	TASCADervishRun(7750, 26125)
+	Info('#9/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#16 - chest')
 	TASCADervishRun(6500, 27500)
+	Info('#10/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#17 - chest')
 	TASCADervishRun(5000, 28000)
 	; Chest can be all the way north of the map - need extreme range here
 	$openedChests += CheckForChests($RANGE_SPIRIT + 500, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#18 - chest')
 	TASCADervishRun(4000, 27000)
 	; Chest can be all the way west of the map - need extreme range here
+	Info('#11/13')
 	$openedChests += CheckForChests($RANGE_SPIRIT + 500, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#19 - chest')
 	TASCADervishRun(4000, 26000)
 	$openedChests += CheckForChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#20')
 	TASCADervishRun(5000, 25000)
-	Info('#21 - chest')
 	TASCADervishRun(6000, 22000)
+	Info('#12/13')
 	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-	Info('#22')
 	TASCADervishRun(4500, 21500)
 	If ($annoyingChest == Null) Then $annoyingChest = ScanForChests(2000, True, 5500, 18000)
-	Out('Will we go to the shitty chest ? ' & ($annoyingChest <> Null))
-	Info('#23 - chest')
-	;TASCADervishRun(1500, 21500)
-	;$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	Notice('Bonus chest ? ' & ($annoyingChest <> Null))
 	TASCADervishRun(3000, 21500)
+	Info('#13/13')
 	$openedChests += CheckForChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 
 	If ($annoyingChest <> Null) Then
 		TASCADervishRun(6000, 21500)
 		TASCADervishRun(7000, 20500)
+		Info('#Bonus chest')
 		$annoyingChest = ScanForChests(2000, True, 5500, 18000)
 		Local $target = GetTargetToEscapeWithDeathsCharge(DllStructGetData($annoyingChest, 'X'), DllStructGetData($annoyingChest, 'Y'))
 		UseSkillEx($Tasca_DeathsCharge, $target)
@@ -195,10 +185,9 @@ Func TascaChestFarmLoop($STATUS)
 	EndIf
 
 	ToggleMapping()
-
-	Info('Opened ' & $openedChests & ' chests.')
-	Local $success = Not GetIsDead() ? 0 : 1
 	UnregisterBurstHealingUnit()
+	Info('Opened ' & $openedChests & ' chests.')
+	Local $success = (($openedChests > 0) Or Not GetIsDead()) ? 0 : 1
 	BackToTheGraniteCitadel()
 	Return $success
 EndFunc
