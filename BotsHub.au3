@@ -623,10 +623,10 @@ Func RunFarmLoop($Farm)
 			$result =  FeathersFarm($STATUS)
 		Case 'Follow'
 			$result =  FollowerFarm($STATUS)
+		Case 'Froggy'
+			$result =  FroggyFarm($STATUS)
 		Case 'Gemstone'
 			$result = GemstoneFarm($STATUS)
-		Case 'Froggy'
-			$result =  FroggyFarm($STATUS)	
 		Case 'Jade Brotherhood'
 			$result =  JadeBrotherhoodFarm($STATUS)
 		Case 'Kournans'
@@ -722,14 +722,14 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
-		Case 'Gemstone'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneFarmInformations)
 		Case 'Froggy'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FroggyFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FroggyFarmInformations)
+		Case 'Gemstone'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneFarmInformations)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)

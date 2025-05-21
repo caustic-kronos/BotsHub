@@ -22,36 +22,28 @@
 
 Opt('MustDeclareVars', 1)
 
-Local Const $FroggyBotVersion = '0.4'
-
 ; ==== Constants ====
-Local Const $FroggyFarmerSkillbar = ''
-Local Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
-	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
-	& '32mn average in NM' & @CRLF _
-	& '41mn average in HM with cons (automatically used if HM is on)' & @CRLF _
+Global Const $FroggyFarmerSkillbar = ''
+Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
+	& '32m average in NM' & @CRLF _
+	& '41m average in HM with consets (automatically used if HM is on)' & @CRLF _
 
-Local $Froggy_FARM_SETUP = False
-Local $FroggyDeathsCount = 0
+Global $FROGGY_FARM_SETUP = False
+Global $FroggyDeathsCount = 0
+
 
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
-	If Not $Froggy_FARM_SETUP Then
+	If Not $FROGGY_FARM_SETUP Then
 		SetupFroggyFarm()
-		$Froggy_FARM_SETUP = True
+		$FROGGY_FARM_SETUP = True
 	EndIf
 
 	If $STATUS <> 'RUNNING' Then Return 2
 
 	Return FroggyFarmLoop()
 EndFunc
-
-
-
-; ==== Global variables ====
-Local $ChatStuckTimer = TimerInit()
-Local $Deadlocked = False
-Local $timer = TimerInit()
 
 
 ;~ Froggy farm setup
@@ -76,30 +68,29 @@ Func SetupFroggyFarm()
 		Sleep(500)
 		MoveTo(-9550, -20400)
 		Move(-9451, -19766)
-	WEnd	
+	WEnd
 	AdlibRegister('FroggyGroupIsAlive', 10000)
-	
-	Local $timer = TimerInit()
+
 	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('Making way to Bogroot')
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (4671, 7094, 1250)
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (4671, 7094, 1250)
 		MoveAggroAndKill(-4559, -14406, 'I majored in pain, with a minor in suffering', $aggroRange)
 		MoveAggroAndKill(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $aggroRange)
 		MoveAggroAndKill(-928, -8699, 'I am fire! I am war! What are you?', $aggroRange)
 		MoveAggroAndKill(4200, -4897, 'Praise Joko!', $aggroRange)
 		MoveAggroAndKill(4671, 7094, 'I can outrun a centaur', $aggroRange)
-		If IsFailure_Froggy() Then Return 1
+		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (12280, 22585, 1250)
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (12280, 22585, 1250)
 		MoveAggroAndKill(11570, 6120, 'More violets I say. Less violence', $aggroRange)
 		MoveAggroAndKill(11025, 11710, 'Wow. Thats quality armor.', $aggroRange)
 		MoveAggroAndKill(14624, 19314, 'By Ogdens Hammer, what savings!', $aggroRange)
 		MoveAggroAndKill(14650, 19417, 'Night has a smol PP', $aggroRange)
 		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $aggroRange)
-		If IsFailure_Froggy() Then Return 1
+		If FroggyIsFailure() Then Return 1
 	WEnd
-
+	AdlibUnRegister('FroggyGroupIsAlive')
 	Info('Preparations complete')
 EndFunc
 
@@ -107,8 +98,7 @@ EndFunc
 ;~ Farm loop
 Func FroggyFarmLoop()
 	AdlibRegister('FroggyGroupIsAlive', 10000)
-	
-	Local $timer = TimerInit()
+
 	Local $aggroRange = $RANGE_SPELLCAST + 100
 
 	Info('Get quest reward')
@@ -117,11 +107,11 @@ Func FroggyFarmLoop()
 	RndSleep(250)
 	Dialog(0x833907)
 	RndSleep(500)
-	;quest validation doubled to secure bot
+	; Quest validation doubled to secure bot
 	GoToNPC(GetNearestNPCToCoords(12500, 22648))
 	RndSleep(250)
 	Dialog(0x833907)
-	RndSleep(500)	
+	RndSleep(500)
 
 	Info('Get in dungeon to reset quest')
 	MoveTo(12228, 22677)
@@ -159,21 +149,21 @@ Func FroggyFarmLoop()
 	RndSleep(250)
 	Dialog(0x833901)
 	RndSleep(500)
-	;quest pickup doubled to secure bot
+	; Quest pickup doubled to secure bot
 	GoToNPC(GetNearestNPCToCoords(12500, 22648))
 	RndSleep(250)
 	Dialog(0x833901)
-	RndSleep(500)	
+	RndSleep(500)
 	Info('Talk to Tekk if already had quest')
 	GoToNPC(GetNearestNPCToCoords(12500, 22648))
 	RndSleep(250)
 	Dialog(0x833905)
-	RndSleep(500)	
-	;quest pickup doubled to secure bot
+	RndSleep(500)
+	; Quest pickup doubled to secure bot
 	GoToNPC(GetNearestNPCToCoords(12500, 22648))
 	RndSleep(250)
 	Dialog(0x833905)
-	RndSleep(500)		
+	RndSleep(500)
 
 	Info('Get back in')
 	MoveTo(12228, 22677)
@@ -198,19 +188,18 @@ Func FroggyFarmLoop()
 	WEnd
 	Info('------------------------------------')
 	Info('First floor')
-	If IsHardmodeEnabled() Then UseCons_Froggy()
-	;UseSummon_Froggy()
+	If IsHardmodeEnabled() Then UseConset()
 
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (6078, 4483, 1250)
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (6078, 4483, 1250)
 		SafeMoveAggroAndKill(17619, 2687, 'Moving near duo', $aggroRange)
 		SafeMoveAggroAndKill(18168, 4788, 'Killing one from duo', $aggroRange)
 		SafeMoveAggroAndKill(18880, 7749, 'Triggering beacon 1', $aggroRange)
-		
+
 		Info('Getting blessing')
 		MoveTo(19063, 7875)
 		GoToNPC(GetNearestNPCToCoords(19058, 7952))
 		RndSleep(250)
-		Dialog(0x84)	
+		Dialog(0x84)
 		RndSleep(250)
 
 		SafeMoveAggroAndKill(13080, 7822, 'Moving towards nettles cave', $aggroRange)
@@ -218,7 +207,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(6078, 4483, 'Nettles cave exit group', $aggroRange)
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (-1501, -8590, 1250)
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (-1501, -8590, 1250)
 		SafeMoveAggroAndKill(4960, 1984, 'Triggering beacon 2', $aggroRange)
 		SafeMoveAggroAndKill(3567, -278, 'Massive frog cave', $aggroRange)
 		SafeMoveAggroAndKill(1763, -607, 'Im getting buried here!', $aggroRange)
@@ -227,8 +216,8 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(-115, -8569, 'Ragna-rock n roll!', $aggroRange)
 		SafeMoveAggroAndKill(-1501, -8590, 'Triggering beacon 3', $aggroRange)
 	WEnd
-	
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (7171, -17934, 1250)	
+
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (7171, -17934, 1250)
 		SafeMoveAggroAndKill(-115, -8569, 'You played two hours and died like this?!', $aggroRange)
 		SafeMoveAggroAndKill(1966, -11018, 'Last cave entrance', $aggroRange)
 		SafeMoveAggroAndKill(5775, -12761, 'Youre interrupting my calculations', $aggroRange)
@@ -238,7 +227,7 @@ Func FroggyFarmLoop()
 	WEnd
 
 	Info('Going through portal')
-	Move(7600, -19100)	
+	Move(7600, -19100)
 	RndSleep(2000)
 	While Not WaitMapLoading($ID_Bogroot_lvl2)
 		MoveTo(7171, -17934)
@@ -249,15 +238,14 @@ Func FroggyFarmLoop()
 
 	Info('------------------------------------')
 	Info('Second floor')
-	If IsHardmodeEnabled() Then UseCons_Froggy()
-	;UseSummon_Froggy()
+	If IsHardmodeEnabled() Then UseConset()
 
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (-719, 11140, 1250)	
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (-719, 11140, 1250)
 		Info('Getting blessing')
 		MoveTo(-11072, -5522)
 		GoToNPC(GetNearestNPCToCoords(-11055, -5533))
 		RndSleep(250)
-		Dialog(0x84)	
+		Dialog(0x84)
 		RndSleep(250)
 
 		SafeMoveAggroAndKill(-10931, -4584, 'Moving in cave', $aggroRange)
@@ -274,7 +262,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(-719, 11140, 'Triggering incubus cave exit beacon', $aggroRange)
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (8398, 4358, 1250)	
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (8398, 4358, 1250)
 		SafeMoveAggroAndKill(3130, 12731, 'Beetle zone', $aggroRange)
 		SafeMoveAggroAndKill(3535, 13860, 'Aiur will be restored', $aggroRange)
 		SafeMoveAggroAndKill(5717, 13357, 'Eternal obedience', $aggroRange)
@@ -282,13 +270,13 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(8117, 7465, 'Gokir fight', $aggroRange)
 		SafeMoveAggroAndKill(8398, 4358, 'Triggering beacon 2', $aggroRange)
 	WEnd
-	
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (19597, -11553, 1250)	
+
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (19597, -11553, 1250)
 		SafeMoveAggroAndKill(9829, -1175, 'The Death Fleet descends', $aggroRange)
 		SafeMoveAggroAndKill(10932, -5203, 'I hear and obey', $aggroRange)
 		SafeMoveAggroAndKill(13305, -6475, 'Target in range.', $aggroRange)
 		SafeMoveAggroAndKill(16841, -5619, 'Keyboss', $aggroRange)
-		
+
 		RndSleep(500)
 		PickUpItems()
 
@@ -320,7 +308,7 @@ Func FroggyFarmLoop()
 
 	Local $aggroRange = $RANGE_SPELLCAST + 300
 
-	While $FroggyDeathsCount < 6 And Not IsInRange_Froggy (16861, -19254, 1250)	
+	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (16861, -19254, 1250)
 		Info('------------------------------------')
 		Info('Boss area')
 		SafeMoveAggroAndKill(17494, -14149, 'Our enemies will be undone', $aggroRange)
@@ -331,7 +319,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $aggroRange)
 		SafeMoveAggroAndKill(16861, -19254, 'Move there for safer loop exit', $aggroRange)
 	WEnd
-	If IsFailure_Froggy() Then Return 1	
+	If FroggyIsFailure() Then Return 1
 
 	; Chest
 	MoveTo(15910, -19134)
@@ -343,7 +331,7 @@ Func FroggyFarmLoop()
 	ActionInteract()
 	RndSleep(2500)
 	PickUpItems()
-	;doubled to secure the looting
+	; Doubled to secure the looting
 	MoveTo(15590, -18853)
 	MoveTo(15027, -19102)
 	RndSleep(5000)
@@ -352,35 +340,22 @@ Func FroggyFarmLoop()
 	RndSleep(2500)
 	PickUpItems()
 
+	AdlibUnRegister('FroggyGroupIsAlive')
 	Info('Chest looted')
 	Info('Waiting for timer end + some more')
 	Sleep(190000)
 	While Not WaitMapLoading($ID_Sparkfly_Swamp)
 		Sleep(500)
-	WEnd	
+	WEnd
 	Info('Finished Run')
-
+	
 	Return 0
 EndFunc
 
 
-;~ Use all consumables
-Func UseCons_Froggy()
-	UseConsumable($ID_Armor_of_Salvation)
-	UseConsumable($ID_Essence_of_Celerity)
-	UseConsumable($ID_Grail_of_Might)
-EndFunc
-
-
-;~ Use all consumables
-Func UseSummon_Froggy()
-	UseConsumable($ID_Legionnaire_Summoning_Crystal, True)
-EndFunc
-
-
 ;~ Did run fail ?
-Func IsFailure_Froggy()
-	If ($FroggyDeathsCount > 5) Then 
+Func FroggyIsFailure()
+	If ($FroggyDeathsCount > 5) Then
 		AdlibUnregister('FroggyGroupIsAlive')
 		Return True
 	EndIf
@@ -395,7 +370,7 @@ EndFunc
 
 
 ;~ Is in range of coordinates
-Func IsInRange_Froggy($X, $Y, $range)
+Func FroggyIsInRange($X, $Y, $range)
 	Local $myX = DllStructGetData(GetMyAgent(), 'X')
 	Local $myY = DllStructGetData(GetMyAgent(), 'Y')
 

@@ -110,7 +110,7 @@ Func VoltaicFarmLoop()
 	Dialog(132)
 	RndSleep(500)
 
-	If IsHardmodeEnabled() Then UseCons()
+	If IsHardmodeEnabled() Then UseConset()
 
 	Sleep(1000)
 	While $voltaicDeathsCount < 6 And Not IsInRange (-18500, -8000, 1250)
@@ -154,14 +154,6 @@ Func VoltaicFarmLoop()
 	PickUpItems()
 	Info('Finished Run')
 	Return 0
-EndFunc
-
-
-;~ Use all consumables
-Func UseCons()
-	UseConsumable($ID_Armor_of_Salvation)
-	UseConsumable($ID_Essence_of_Celerity)
-	UseConsumable($ID_Grail_of_Might)
 EndFunc
 
 
