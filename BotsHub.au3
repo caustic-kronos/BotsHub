@@ -33,6 +33,7 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <ScrollBarsConstants.au3>
+#include <SliderConstants.au3>
 #include <WindowsConstants.au3>
 #include <ComboConstants.au3>
 #include <FileConstants.au3>
@@ -40,6 +41,7 @@
 #include <GuiEdit.au3>
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
+#include <GuiScrollBars.au3>
 #include <Math.au3>
 
 #include 'lib/GWA2_Headers.au3'
@@ -325,6 +327,32 @@ Func createGUI()
 
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+
+		Global $aComponentsList = [ _
+		    "Glacial Stone", "Skale Fin", "Drake Flesh", "Ebon Dust", "Icy Lodestone", _
+		    "Elemental Residue", "Bone Charm", "Titan Rune", "Charr Tooth", "Spider Leg", _
+		    "Shiverpeak Mane", "Mursaat Token", "Shadow Core", "Forgotten Trinket", _
+		    "Destroyer Core", "Tapestry Shred", "Spectral Remains", "Demonic Remains", "Etc..." _
+		]
+
+
+
+		; === Scrollable area inside tab ===
+		Global $Scroll_GUI = GUICreate("", 540, 330, 30, 50, $WS_CHILD, $WS_EX_CONTROLPARENT, $GUI_GWBotHub)
+		_GUIScrollBars_Init($Scroll_GUI, 100, 100)
+		GUISetBkColor(0xff0000, $Scroll_GUI)
+
+		GUISwitch($Scroll_GUI)
+		Global $Checkboxes[UBound($aComponentsList)]
+		Local $yPos = 10
+		For $i = 0 To UBound($aComponentsList) - 1
+		    $Checkboxes[$i] = GUICtrlCreateCheckbox($aComponentsList[$i], 10, $yPos, 250, 20)
+		    $yPos += 24
+		Next
+
+		GUISwitch($GUI_GWBotHub)
+		_WinAPI_SetParent($Scroll_GUI, $GUI_GWBotHub)
+
 	GUICtrlCreateTabItem('')
 
 	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('Default Configuration', 425, 12, 136, 20)
@@ -354,7 +382,105 @@ Func createGUI()
 	GUICtrlSetState($GUI_Checkbox_LootTrophies, $GUI_CHECKED)
 
 	GUIRegisterMsg($WM_COMMAND, 'WM_COMMAND_Handler')
+	GUIRegisterMsg($WM_VSCROLL, "WM_VSCROLL")
+	GUIRegisterMsg($WM_NCHITTEST, "WM_NCHITTEST")
 EndFunc
+
+Func WM_VSCROLL($hWnd, $iMsg, $wParam, $lParam)
+    #forceref $iMsg, $wParam, $lParam
+    Local $iScrollCode = BitAND($wParam, 0x0000FFFF)
+    Local $iIndex = -1, $iCharY, $iPosY
+    Local $iMin, $iMax, $iPage, $iPos, $iTrackPos
+
+    For $x = 0 To UBound($__g_aSB_WindowInfo) - 1
+        If $__g_aSB_WindowInfo[$x][0] = $hWnd Then
+            $iIndex = $x
+            $iCharY = $__g_aSB_WindowInfo[$iIndex][3]
+            ExitLoop
+        EndIf
+    Next
+    If $iIndex = -1 Then Return 0
+
+    ; Get all the vertial scroll bar information
+    Local $tSCROLLINFO = _GUIScrollBars_GetScrollInfoEx($hWnd, $SB_VERT)
+    $iMin = DllStructGetData($tSCROLLINFO, "nMin")
+    $iMax = DllStructGetData($tSCROLLINFO, "nMax")
+    $iPage = DllStructGetData($tSCROLLINFO, "nPage")
+    ; Save the position for comparison later on
+    $iPosY = DllStructGetData($tSCROLLINFO, "nPos")
+    $iPos = $iPosY
+    $iTrackPos = DllStructGetData($tSCROLLINFO, "nTrackPos")
+
+    Switch $iScrollCode
+        Case $SB_TOP ; user clicked the HOME keyboard key
+            DllStructSetData($tSCROLLINFO, "nPos", $iMin)
+
+        Case $SB_BOTTOM ; user clicked the END keyboard key
+            DllStructSetData($tSCROLLINFO, "nPos", $iMax)
+
+        Case $SB_LINEUP ; user clicked the top arrow
+            DllStructSetData($tSCROLLINFO, "nPos", $iPos - 1)
+
+        Case $SB_LINEDOWN ; user clicked the bottom arrow
+            DllStructSetData($tSCROLLINFO, "nPos", $iPos + 1)
+
+        Case $SB_PAGEUP ; user clicked the scroll bar shaft above the scroll box
+            DllStructSetData($tSCROLLINFO, "nPos", $iPos - $iPage)
+
+        Case $SB_PAGEDOWN ; user clicked the scroll bar shaft below the scroll box
+            DllStructSetData($tSCROLLINFO, "nPos", $iPos + $iPage)
+
+        Case $SB_THUMBTRACK ; user dragged the scroll box
+            DllStructSetData($tSCROLLINFO, "nPos", $iTrackPos)
+    EndSwitch
+
+    ; // Set the position and then retrieve it.  Due to adjustments
+    ; //   by Windows it may not be the same as the value set.
+
+    DllStructSetData($tSCROLLINFO, "fMask", $SIF_POS)
+    _GUIScrollBars_SetScrollInfo($hWnd, $SB_VERT, $tSCROLLINFO)
+    _GUIScrollBars_GetScrollInfo($hWnd, $SB_VERT, $tSCROLLINFO)
+    ;// If the position has changed, scroll the window and update it
+    $iPos = DllStructGetData($tSCROLLINFO, "nPos")
+
+    If ($iPos <> $iPosY) Then
+        _GUIScrollBars_ScrollWindow($hWnd, 0, $iCharY * ($iPosY - $iPos))
+        $iPosY = $iPos
+    EndIf
+
+    Return $GUI_RUNDEFMSG
+EndFunc   ;==>WM_VSCROLL
+
+Global $hDll = DllOpen("user32.dll")
+
+;===============================================
+Func WM_NCHITTEST($hWnd, $iMsg, $wParam, $lParam)
+
+;~  If $hWnd = $childwindo1 Or $hWnd = $childwindo2 Then
+;~      Return $HTVSCROLL
+;~  EndIf
+
+    If $hWnd = $Scroll_GUI Then
+
+        ; This works but opens & closes user32.dll plenty of times => commented.
+        ; Local $iRet = _WinAPI_DefWindowProc($hWnd, $iMsg, $wParam, $lParam)
+
+        ; Same as _WinAPI_DefWindowProc() in WinAPISysWin.au3 but uses $hDll
+        Local $iRet = DllCall($hDll, "lresult", "DefWindowProc", "hwnd", $hWnd, _
+            "uint", $iMsg, "wparam", $wParam, "lparam", $lParam)[0]
+
+        ; ConsoleWrite($iRet)
+
+        Switch $iRet
+            Case $HTVSCROLL
+                Return $HTVSCROLL
+            Case Else
+                Return $HTCLIENT
+        EndSwitch
+    EndIf
+
+    Return $GUI_RUNDEFMSG
+EndFunc   ;==>WM_NCHITTEST
 
 
 ;~ Change the color of a tab
@@ -390,14 +516,7 @@ EndFunc
 Func GuiButtonHandler()
 	Switch @GUI_CtrlId
 		Case $GUI_Tabs_Parent
-			Switch GUICtrlRead($GUI_Tabs_Parent)
-				Case 0
-					ControlEnable($GUI_GWBotHub, '', $GUI_Console)
-					ControlShow($GUI_GWBotHub, '', $GUI_Console)
-				Case Else
-					ControlDisable($GUI_GWBotHub, '', $GUI_Console)
-					ControlHide($GUI_GWBotHub, '', $GUI_Console)
-			EndSwitch
+			TabHandler()
 		Case $GUI_Combo_FarmChoice
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			UpdateFarmDescription($Farm)
@@ -453,6 +572,33 @@ Func GuiButtonHandler()
 			Exit
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
+	EndSwitch
+EndFunc
+
+
+Func TabHandler()
+	Switch GUICtrlRead($GUI_Tabs_Parent)
+		Case 0
+			ControlDisable($GUI_GWBotHub, '', $Scroll_GUI)
+			ControlHide($GUI_GWBotHub, '', $Scroll_GUI)
+
+			ControlEnable($GUI_GWBotHub, '', $GUI_Console)
+			ControlShow($GUI_GWBotHub, '', $GUI_Console)
+		Case 4
+			ControlDisable($GUI_GWBotHub, '', $GUI_Console)
+			ControlHide($GUI_GWBotHub, '', $GUI_Console)
+
+			ControlEnable($GUI_GWBotHub, '', $Scroll_GUI)
+			ControlShow($GUI_GWBotHub, '', $Scroll_GUI)
+			ControlShow($GUI_GWBotHub, '', $Checkboxes[1])
+			GUICtrlSetState($Checkboxes[1], $GUI_FOCUS)
+			_WinAPI_RedrawWindow($Checkboxes[1], 0, 0, $RDW_INVALIDATE + $RDW_UPDATENOW)
+		Case Else
+			ControlDisable($GUI_GWBotHub, '', $GUI_Console)
+			ControlHide($GUI_GWBotHub, '', $GUI_Console)
+
+			ControlDisable($GUI_GWBotHub, '', $Scroll_GUI)
+			ControlHide($GUI_GWBotHub, '', $Scroll_GUI)
 	EndSwitch
 EndFunc
 #EndRegion Handlers
@@ -658,6 +804,7 @@ Func RunFarmLoop($Farm)
 		Case 'Voltaic'
 			$result =  VoltaicFarm($STATUS)
 		Case 'Storage'
+			ResetBotsSetups()
 			$result =  ManageInventory($STATUS)
 		Case 'Dynamic'
 			Info('Dynamic execution')
