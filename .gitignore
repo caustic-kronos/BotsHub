@@ -1,5 +1,6 @@
-examples/*
-logs/*
-data/*
-conf/*
-!conf/Default Configuration.json
+logs/**
+data/**
+conf/characters/*
+conf/loot/*
+!conf/characters/Default Configuration.json
+!conf/loot/upgrade_components.json
