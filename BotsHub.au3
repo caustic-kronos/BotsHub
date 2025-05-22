@@ -54,6 +54,7 @@
 #include 'src/Farm-EdenIris.au3'
 #include 'src/Farm-Feathers.au3'
 #include 'src/Farm-Follower.au3'
+#include 'src/Farm-Froggy.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
@@ -64,6 +65,7 @@
 #include 'src/Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SpiritSlaves.au3'
+#include 'src/Farm-SoO.au3'
 #include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
@@ -105,7 +107,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAG_NUMBER = 5
 Global $TIMESDEPOSITED = 0
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -621,6 +623,8 @@ Func RunFarmLoop($Farm)
 			$result =  FeathersFarm($STATUS)
 		Case 'Follow'
 			$result =  FollowerFarm($STATUS)
+		Case 'Froggy'
+			$result =  FroggyFarm($STATUS)
 		Case 'Gemstone'
 			$result = GemstoneFarm($STATUS)
 		Case 'Jade Brotherhood'
@@ -643,6 +647,8 @@ Func RunFarmLoop($Farm)
 			$result =  PongmeiChestFarm($STATUS)
 		Case 'Raptors'
 			$result =  RaptorFarm($STATUS)
+		Case 'SoO'
+			$result =  SoOFarm($STATUS)	
 		Case 'SpiritSlaves'
 			$result =  SpiritSlavesFarm($STATUS)
 		Case 'Tasca'
@@ -675,9 +681,11 @@ Func ResetBotsSetups()
 	$DM_FARM_SETUP							= False
 	$IRIS_FARM_SETUP						= False
 	$FEATHERS_FARM_SETUP					= False
+	$FROGGY_FARM_SETUP						= False
 	$JADE_BROTHERHOOD_FARM_SETUP			= False
 	$KOURNANS_FARM_SETUP					= False
 	$MANTIDS_FARM_SETUP						= False
+	$SOO_FARM_SETUP							= False
 	$SPIRIT_SLAVES_FARM_SETUP				= False
 	$TASCA_FARM_SETUP						= False
 	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
@@ -714,6 +722,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
+		Case 'Froggy'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $FroggyFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $FroggyFarmInformations)
 		Case 'Gemstone'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
@@ -758,6 +770,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $PRunnerHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $RaptorsFarmInformations)
+		Case 'SoO'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $SoOFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $SoOFarmInformations)
 		Case 'SpiritSlaves'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')

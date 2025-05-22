@@ -849,6 +849,14 @@ Func UseMoraleConsumableIfNeeded()
 EndFunc
 
 
+;~ Use Armor of Salvation, Essence of Celerity and Grail of Might
+Func UseConset()
+	UseConsumable($ID_Armor_of_Salvation)
+	UseConsumable($ID_Essence_of_Celerity)
+	UseConsumable($ID_Grail_of_Might)
+EndFunc
+
+
 ;~ Uses a consumable from inventory, if present
 Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
