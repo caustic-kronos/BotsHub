@@ -105,6 +105,7 @@ Global $LOG_LEVEL = 1
 Global $CHARACTER_NAME = ''
 Global $DISTRICT_NAME = 'Random'
 Global $BAG_NUMBER = 5
+Global $INVENTORY_SPACE_NEEDED = 5
 Global $TIMESDEPOSITED = 0
 
 Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
@@ -574,11 +575,11 @@ Func BotHubLoop()
 			Else
 				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
 				; So bag 5 will always fill before 4 - hence we can count items up to bag 4
-				If (CountSlots(1, _Min($BAG_NUMBER, 4)) < 5) Then
+				If (CountSlots(1, _Min($BAG_NUMBER, 4)) <= $INVENTORY_SPACE_NEEDED) Then
 					InventoryManagement()
 					ResetBotsSetups()
 				EndIf
-				If (CountSlots(1, $BAG_NUMBER) < 5) Then
+				If (CountSlots(1, $BAG_NUMBER) <= $INVENTORY_SPACE_NEEDED) Then
 					Notice('Inventory full, pausing.')
 					ResetBotsSetups()
 					$STATUS = 'WILL_PAUSE'
@@ -614,50 +615,73 @@ Func RunFarmLoop($Farm)
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
 		Case 'Corsairs'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  CorsairsFarm($STATUS)
 		Case 'Dragon Moss'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  DragonMossFarm($STATUS)
 		Case 'Eden Iris'
+			$INVENTORY_SPACE_NEEDED = 2
 			$result =  EdenIrisFarm($STATUS)
 		Case 'Feathers'
+			$INVENTORY_SPACE_NEEDED = 10
 			$result =  FeathersFarm($STATUS)
 		Case 'Follow'
+			$INVENTORY_SPACE_NEEDED = 15
 			$result =  FollowerFarm($STATUS)
 		Case 'Froggy'
+			$INVENTORY_SPACE_NEEDED = 10
 			$result =  FroggyFarm($STATUS)
 		Case 'Gemstone'
+			$INVENTORY_SPACE_NEEDED = 10
 			$result = GemstoneFarm($STATUS)
 		Case 'Jade Brotherhood'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  JadeBrotherhoodFarm($STATUS)
 		Case 'Kournans'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  KournansFarm($STATUS)
 		Case 'Kurzick'
+			$INVENTORY_SPACE_NEEDED = 15
 			$result =  KurzickFactionFarm($STATUS)
 		Case 'Lightbringer'
+			$INVENTORY_SPACE_NEEDED = 10
 			$result =  LightbringerFarm($STATUS)
 		Case 'Luxon'
+			$INVENTORY_SPACE_NEEDED = 10
 			$result =  LuxonFactionFarm($STATUS)
 		Case 'Mantids'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  MantidsFarm($STATUS)
 		Case 'Ministerial Commendations'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  MinisterialCommendationsFarm($STATUS)
 		Case 'OmniFarm'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  OmniFarm($STATUS)
 		Case 'Pongmei'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  PongmeiChestFarm($STATUS)
 		Case 'Raptors'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  RaptorFarm($STATUS)
 		Case 'SoO'
+			$INVENTORY_SPACE_NEEDED = 15
 			$result =  SoOFarm($STATUS)	
 		Case 'SpiritSlaves'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  SpiritSlavesFarm($STATUS)
 		Case 'Tasca'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  TascaChestFarm($STATUS)
 		Case 'Vaettirs'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  VaettirFarm($STATUS)
 		Case 'Voltaic'
+			$INVENTORY_SPACE_NEEDED = 10
 			$result =  VoltaicFarm($STATUS)
 		Case 'Storage'
+			$INVENTORY_SPACE_NEEDED = 5
 			$result =  ManageInventory($STATUS)
 		Case 'Dynamic'
 			Info('Dynamic execution')
