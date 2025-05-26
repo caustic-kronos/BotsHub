@@ -26,8 +26,9 @@ Opt('MustDeclareVars', 1)
 Global Const $FroggyFarmerSkillbar = ''
 Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
-	& '32m average in NM' & @CRLF _
-	& '41m average in HM with consets (automatically used if HM is on)' & @CRLF _
+	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
+	& '32mn average in NM' & @CRLF _
+	& '41mn  average in HM with consets (automatically used if HM is on)' & @CRLF _
 
 Global $FROGGY_FARM_SETUP = False
 Global $FroggyDeathsCount = 0
@@ -97,6 +98,8 @@ EndFunc
 
 ;~ Farm loop
 Func FroggyFarmLoop()
+	$FroggyDeathsCount = 0
+
 	AdlibRegister('FroggyGroupIsAlive', 10000)
 
 	Local $aggroRange = $RANGE_SPELLCAST + 100

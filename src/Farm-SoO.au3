@@ -26,8 +26,9 @@ Opt('MustDeclareVars', 1)
 Global Const $SoOFarmerSkillbar = ''
 Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
-	& 'xxmn average in NM' & @CRLF _
-	& 'xxmn average in HM with cons (automatically used if HM is on)' & @CRLF _
+	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
+	& '45mn average in NM' & @CRLF _
+	& '60mn average in HM with cons (automatically used if HM is on)' & @CRLF _
 
 Global Const $ID_SoO_Torch = 22342
 
@@ -103,6 +104,8 @@ EndFunc
 
 ;~ Farm loop
 Func SoOFarmLoop()
+	$SoODeathsCount = 0
+
 	AdlibRegister('SoOGroupIsAlive', 10000)
 
 	Local $aggroRange = $RANGE_SPELLCAST + 100
@@ -514,7 +517,8 @@ Func SoOFarmLoop()
 		SafeMoveAggroAndKill(9796, 18960, '5', $aggroRange)
 		SafeMoveAggroAndKill(14068, 19549, '6', $aggroRange)
 		SafeMoveAggroAndKill(16186, 17667, '7', $aggroRange)
-		SafeMoveAggroAndKill(15533, 16779, '8', $aggroRange)
+		SafeMoveAggroAndKill(15718, 15624, '8', $aggroRange)
+		SafeMoveAggroAndKill(16806, 16895, '9', $aggroRange)
 		
 		Info('Open torch chest')
 		ClearTarget()
@@ -577,7 +581,8 @@ Func SoOFarmLoop()
 		ActionInteract()
 		Sleep(250)
 
-		Moveto(6988, 13337)
+		Moveto(8000, 14708)
+		Moveto(6102, 12590)
 
 		Info('Light up brazier 4')
 		Moveto(5549, 9920)
@@ -739,7 +744,7 @@ Func SoOFarmLoop()
 	While Not WaitMapLoading($ID_Arbor_Bay)
 		Sleep(500)
 	WEnd
-
+	
 	Info('Finished Run')
 	Return 0
 EndFunc
