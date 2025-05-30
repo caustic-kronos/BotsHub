@@ -109,7 +109,7 @@ Global $INVENTORY_SPACE_NEEDED = 5
 Global $TIMESDEPOSITED = 0
 
 Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
-Global $AVAILABLE_DISTRICTS = '|Random|China|English|Europe|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
+Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
 
@@ -667,7 +667,7 @@ Func RunFarmLoop($Farm)
 			$result =  RaptorFarm($STATUS)
 		Case 'SoO'
 			$INVENTORY_SPACE_NEEDED = 15
-			$result =  SoOFarm($STATUS)	
+			$result =  SoOFarm($STATUS)
 		Case 'SpiritSlaves'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result =  SpiritSlavesFarm($STATUS)
@@ -1131,7 +1131,7 @@ Func CountTheseItems($itemArray)
 	Local $arraySize = UBound($itemArray)
 	Local $counts[$arraySize]
 	For $bagIndex = 1 To $BAG_NUMBER
-		Local $bag = GetBag($bagIndex)	
+		Local $bag = GetBag($bagIndex)
 		Local $slots = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $slots
 			Local $item = GetItemBySlot($bag, $slot)

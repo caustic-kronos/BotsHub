@@ -51,7 +51,9 @@ Global $timer = TimerInit()
 Func VaettirFarm($STATUS)
 	If $Deadlocked Then Return 2
 
-	If GetMapID() <> $ID_Jaga_Moraine Then RunToJagaMoraine()
+	While GetMapID() <> $ID_Jaga_Moraine
+		RunToJagaMoraine()
+	WEnd
 
 	If $STATUS <> 'RUNNING' Then Return 2
 

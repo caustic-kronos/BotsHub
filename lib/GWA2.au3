@@ -3921,7 +3921,8 @@ Func GetLanguage()
 EndFunc
 
 
-;~ Returns quest struct.
+;~ Returns quest
+;~ LogState = 0(no such quest) - 1(quest in progress) - 2(quest over and out) - 3(quest over, still in map)
 Func GetQuestByID($questID = 0)
 	Local $questPtr, $questLogSize, $quest
 	Local $offset[4] = [0, 0x18, 0x2C, 0x534]
