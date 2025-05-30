@@ -26,11 +26,13 @@ Opt('MustDeclareVars', 1)
 Global Const $FroggyFarmerSkillbar = ''
 Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
-	& '32m average in NM' & @CRLF _
-	& '41m average in HM with consets (automatically used if HM is on)' & @CRLF _
+	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
+	& '32mn average in NM' & @CRLF _
+	& '41mn  average in HM with consets (automatically used if HM is on)'
 
 Global $FROGGY_FARM_SETUP = False
 Global $FroggyDeathsCount = 0
+Global Const $ID_Froggy_Quest = 0x339
 
 
 ;~ Main method to farm Froggy
@@ -83,10 +85,9 @@ Func SetupFroggyFarm()
 	WEnd
 
 	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (12280, 22585, 1250)
-		MoveAggroAndKill(11570, 6120, 'More violets I say. Less violence', $aggroRange)
 		MoveAggroAndKill(11025, 11710, 'Wow. Thats quality armor.', $aggroRange)
 		MoveAggroAndKill(14624, 19314, 'By Ogdens Hammer, what savings!', $aggroRange)
-		MoveAggroAndKill(14650, 19417, 'Night has a smol PP', $aggroRange)
+		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $aggroRange)
 		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $aggroRange)
 		If FroggyIsFailure() Then Return 1
 	WEnd
@@ -97,6 +98,8 @@ EndFunc
 
 ;~ Farm loop
 Func FroggyFarmLoop()
+	$FroggyDeathsCount = 0
+
 	AdlibRegister('FroggyGroupIsAlive', 10000)
 
 	Local $aggroRange = $RANGE_SPELLCAST + 100
@@ -288,22 +291,22 @@ Func FroggyFarmLoop()
 
 		Info('Open dungeon door')
 		ClearTarget()
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		Moveto(17888, -6243)
 		ActionInteract()
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		ActionInteract()
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		Moveto(17888, -6243)
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		ActionInteract()
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		ActionInteract()
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		Moveto(17888, -6243)
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		ActionInteract()
-		RndSleep(500)
+		Sleep(GetPing() + 500)
 		ActionInteract()
 
 		SafeMoveAggroAndKill(18363, -8696, 'Going to boss area', $aggroRange)
@@ -314,7 +317,8 @@ Func FroggyFarmLoop()
 
 	Local $aggroRange = $RANGE_SPELLCAST + 300
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (16861, -19254, 1250)
+	Local $questState = 1
+	While $SoODeathsCount < 6 And $questState <> 3
 		Info('------------------------------------')
 		Info('Boss area')
 		UseMoraleConsumableIfNeeded()
@@ -324,7 +328,9 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(14365, -17681, 'Boss fight', $aggroRange)
 		SafeMoveAggroAndKill(15286, -17662, 'All hail! King of the losers!', $aggroRange)
 		SafeMoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $aggroRange)
-		SafeMoveAggroAndKill(16861, -19254, 'Move there for safer loop exit', $aggroRange)
+
+		$questState = DllStructGetData(GetQuestByID($ID_Froggy_Quest), 'LogState')
+		Sleep(1000)
 	WEnd
 	If FroggyIsFailure() Then Return 1
 
@@ -355,7 +361,7 @@ Func FroggyFarmLoop()
 		Sleep(500)
 	WEnd
 	Info('Finished Run')
-	
+
 	Return 0
 EndFunc
 

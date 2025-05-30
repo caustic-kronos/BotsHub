@@ -3923,7 +3923,7 @@ EndFunc
 
 ;~ Returns quest struct.
 Func GetQuestByID($questID = 0)
-	Local $questPtr, $questLogSize, $questID
+	Local $questPtr, $questLogSize, $quest
 	Local $offset[4] = [0, 0x18, 0x2C, 0x534]
 
 	$questLogSize = MemoryReadPtr($baseAddressPtr, $offset)
@@ -3932,19 +3932,17 @@ Func GetQuestByID($questID = 0)
 		$offset[1] = 0x18
 		$offset[2] = 0x2C
 		$offset[3] = 0x528
-		$questID = MemoryReadPtr($baseAddressPtr, $offset)
-		$questID = $questID[1]
-	Else
-		$questID = $questID
+		$quest = MemoryReadPtr($baseAddressPtr, $offset)
+		$questID = $quest[1]
 	EndIf
 
 	Local $offset[5] = [0, 0x18, 0x2C, 0x52C, 0]
 	For $i = 0 To $questLogSize[1]
 		$offset[4] = 0x34 * $i
 		$questPtr = MemoryReadPtr($baseAddressPtr, $offset)
-		Local $questStruct = SafeDllStructCreate($questStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($questStruct), 'int', DllStructGetSize($questStruct), 'int', 0)
-		If DllStructGetData($questStruct, 'ID') = $questID Then Return $questStruct
+		$quest = SafeDllStructCreate($questStructTemplate)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($quest), 'int', DllStructGetSize($quest), 'int', 0)
+		If DllStructGetData($quest, 'ID') = $questID Then Return $quest
 	Next
 EndFunc
 
