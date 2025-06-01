@@ -3921,10 +3921,10 @@ Func GetLanguage()
 EndFunc
 
 
-;~ Returns quest struct.
+;~ Returns quest
 ;~ LogState = 0(no such quest) - 1(quest in progress) - 2(quest over and out) - 3(quest over, still in map)
 Func GetQuestByID($questID = 0)
-	Local $questPtr, $questLogSize, $questStruct
+	Local $questPtr, $questLogSize, $quest
 	Local $offset[4] = [0, 0x18, 0x2C, 0x534]
 
 	$questLogSize = MemoryReadPtr($baseAddressPtr, $offset)
@@ -3933,7 +3933,7 @@ Func GetQuestByID($questID = 0)
 		$offset[1] = 0x18
 		$offset[2] = 0x2C
 		$offset[3] = 0x528
-		$questStruct = MemoryReadPtr($baseAddressPtr, $offset)
+		$quest = MemoryReadPtr($baseAddressPtr, $offset)
 		$questID = $quest[1]
 	EndIf
 
@@ -3941,9 +3941,9 @@ Func GetQuestByID($questID = 0)
 	For $i = 0 To $questLogSize[1]
 		$offset[4] = 0x34 * $i
 		$questPtr = MemoryReadPtr($baseAddressPtr, $offset)
-		$questStruct = SafeDllStructCreate($questStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($questStruct), 'int', DllStructGetSize($questStruct), 'int', 0)
-		If DllStructGetData($questStruct, 'ID') = $questID Then Return $questStruct
+		$quest = SafeDllStructCreate($questStructTemplate)
+		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($quest), 'int', DllStructGetSize($quest), 'int', 0)
+		If DllStructGetData($quest, 'ID') = $questID Then Return $quest
 	Next
 EndFunc
 
