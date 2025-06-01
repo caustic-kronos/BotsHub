@@ -818,6 +818,28 @@ Func GetInventoryItemCount($itemID)
 	Next
 	Return $amountItem
 EndFunc
+
+
+;~ Update the gemstone counters
+Func CountTheseItems($itemArray)
+	Local $arraySize = UBound($itemArray)
+	Local $counts[$arraySize]
+	For $bagIndex = 1 To $BAG_NUMBER
+		Local $bag = GetBag($bagIndex)	
+		Local $slots = DllStructGetData($bag, 'Slots')
+		For $slot = 1 To $slots
+			Local $item = GetItemBySlot($bag, $slot)
+			Local $itemID = DllStructGetData($item, 'ModelID')
+			For $i = 0 To $arraySize - 1
+				If $itemID == $itemArray[$i] Then
+					$counts[$i] += DllStructGetData($item, 'Quantity')
+					ExitLoop
+				EndIf
+			Next
+		Next
+	Next
+	Return $counts
+EndFunc
 #EndRegion Count and find items
 
 
