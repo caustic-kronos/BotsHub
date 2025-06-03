@@ -1505,6 +1505,13 @@ Func IsOverLine($coefficientX, $coefficientY, $fixedCoefficient, $posX, $posY)
 	EndIf
 	Return False
 EndFunc
+
+
+;~ Is agent in range of coordinates
+Func IsAgentInRange($agent, $X, $Y, $range)
+	If ComputeDistance(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $X, $Y) < $range Then Return True
+	Return False
+EndFunc
 #EndRegion Utils
 
 

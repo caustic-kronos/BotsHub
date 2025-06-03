@@ -75,7 +75,7 @@ Func SetupFroggyFarm()
 
 	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('Making way to Bogroot')
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (4671, 7094, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
 		MoveAggroAndKill(-4559, -14406, 'I majored in pain, with a minor in suffering', $aggroRange)
 		MoveAggroAndKill(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $aggroRange)
 		MoveAggroAndKill(-928, -8699, 'I am fire! I am war! What are you?', $aggroRange)
@@ -84,7 +84,7 @@ Func SetupFroggyFarm()
 		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (12280, 22585, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 12280, 22585, 1250)
 		MoveAggroAndKill(11025, 11710, 'Wow. Thats quality armor.', $aggroRange)
 		MoveAggroAndKill(14624, 19314, 'By Ogdens Hammer, what savings!', $aggroRange)
 		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $aggroRange)
@@ -193,7 +193,7 @@ Func FroggyFarmLoop()
 	Info('First floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (6078, 4483, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 6078, 4483, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(17619, 2687, 'Moving near duo', $aggroRange)
 		SafeMoveAggroAndKill(18168, 4788, 'Killing one from duo', $aggroRange)
@@ -211,7 +211,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(6078, 4483, 'Nettles cave exit group', $aggroRange)
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (-1501, -8590, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -1501, -8590, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(4960, 1984, 'Triggering beacon 2', $aggroRange)
 		SafeMoveAggroAndKill(3567, -278, 'Massive frog cave', $aggroRange)
@@ -222,7 +222,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(-1501, -8590, 'Triggering beacon 3', $aggroRange)
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (7171, -17934, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 7171, -17934, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(-115, -8569, 'You played two hours and died like this?!', $aggroRange)
 		SafeMoveAggroAndKill(1966, -11018, 'Last cave entrance', $aggroRange)
@@ -246,7 +246,7 @@ Func FroggyFarmLoop()
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (-719, 11140, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -719, 11140, 1250)
 		Info('Getting blessing')
 		MoveTo(-11072, -5522)
 		GoToNPC(GetNearestNPCToCoords(-11055, -5533))
@@ -269,7 +269,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(-719, 11140, 'Triggering incubus cave exit beacon', $aggroRange)
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (8398, 4358, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 8398, 4358, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(3130, 12731, 'Beetle zone', $aggroRange)
 		SafeMoveAggroAndKill(3535, 13860, 'Aiur will be restored', $aggroRange)
@@ -279,7 +279,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(8398, 4358, 'Triggering beacon 2', $aggroRange)
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not FroggyIsInRange (19597, -11553, 1250)
+	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 19597, -11553, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(9829, -1175, 'The Death Fleet descends', $aggroRange)
 		SafeMoveAggroAndKill(10932, -5203, 'I hear and obey', $aggroRange)
@@ -318,7 +318,7 @@ Func FroggyFarmLoop()
 	Local $aggroRange = $RANGE_SPELLCAST + 300
 
 	Local $questState = 1
-	While $SoODeathsCount < 6 And $questState <> 3
+	While $FroggyDeathsCount < 6 And $questState <> 3
 		Info('------------------------------------')
 		Info('Boss area')
 		UseMoraleConsumableIfNeeded()
@@ -379,16 +379,4 @@ EndFunc
 ;~ Updates the groupIsAlive variable, this function is run on a fixed timer
 Func FroggyGroupIsAlive()
 	$FroggyDeathsCount += IsGroupAlive() ? 0 : 1
-EndFunc
-
-
-;~ Is in range of coordinates
-Func FroggyIsInRange($X, $Y, $range)
-	Local $myX = DllStructGetData(GetMyAgent(), 'X')
-	Local $myY = DllStructGetData(GetMyAgent(), 'Y')
-
-	If ($myX < $X + $range) And ($myX > $X - $range) And ($myY < $Y + $range) And ($myY > $Y - $range) Then
-		Return True
-	EndIf
-	Return False
 EndFunc

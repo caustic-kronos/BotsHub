@@ -1059,9 +1059,9 @@ EndFunc
 
 ;~ Replace valuable runes/insignias/inscriptions/mods default list by the list of elements present in interface
 Func RefreshValuableListsFromInterface()
-	$Valuable_Runes_And_Insignias_Structs_Array[] = CreateValuableRunesAndInsigniasArray()
-	$ValuableModsByOSWeaponType = CreateValuableModsByOSWeaponTypeMap()
-	$ValuableModsByWeaponType = CreateValuableModsByWeaponTypeMap()
+	$Valuable_Runes_And_Insignias_Structs_Array = CreateValuableRunesAndInsigniasArray()
+	;$ValuableModsByOSWeaponType = CreateValuableModsByOSWeaponTypeMap()
+	;$ValuableModsByWeaponType = CreateValuableModsByWeaponTypeMap()
 EndFunc
 
 

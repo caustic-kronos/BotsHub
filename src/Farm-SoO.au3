@@ -84,7 +84,7 @@ Func SetupSoOFarm()
 	Dialog(0x84)
 	RndSleep(500)
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange (11156, -17802, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 11156, -17802, 1250)
 		MoveAggroAndKill(13122, 10437, '1', $aggroRange)
 		MoveAggroAndKill(10668, 6530, '2', $aggroRange)
 		MoveAggroAndKill(9028, -1613, '3', $aggroRange)
@@ -203,7 +203,7 @@ Func SoOFarmLoop()
 	Info('First floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange(9232, 11483, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(-11686, 10427, 'Getting blessing', $aggroRange)
 		GoToNPC(GetNearestNPCToCoords(-11657, 10465))
@@ -223,7 +223,7 @@ Func SoOFarmLoop()
 		SafeMoveAggroAndKill(9232, 11483, 'Triggering beacon 2', $aggroRange)
 	WEnd
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange(16134, 11781, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(6291, 10358, 'Killing boss for key', $aggroRange)
 		RndSleep(500)
@@ -235,7 +235,7 @@ Func SoOFarmLoop()
 		SafeMoveAggroAndKill(16134, 11781, 'Triggering beacon 3', $aggroRange)
 	WEnd
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange(20002, 903, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 20002, 903, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(15441, 9372, '1', $aggroRange)
 		SafeMoveAggroAndKill(14348, 6452, '2', $aggroRange)
@@ -271,7 +271,7 @@ Func SoOFarmLoop()
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange(-18725, -9171, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -18725, -9171, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(-14032, -19407, 'Getting blessing', $aggroRange)
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
@@ -483,7 +483,7 @@ Func SoOFarmLoop()
 	Info('Third floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange (-1265, 7891, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -1265, 7891, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(17325, 18961, 'Getting blessing', $aggroRange)
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
@@ -501,7 +501,7 @@ Func SoOFarmLoop()
 		SafeMoveAggroAndKill(-1265, 7891, '6', $aggroRange)
 	WEnd
 
-	While $SoODeathsCount < 6 And Not SoOIsInRange (-9214, 6323, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9214, 6323, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(-1537, 8503, 'Triggering beacon 2', $aggroRange)
 		SafeMoveAggroAndKill(-4519, 6447, '1', $aggroRange)
@@ -763,18 +763,6 @@ EndFunc
 ;~ Updates the groupIsAlive variable, this function is run on a fixed timer
 Func SoOGroupIsAlive()
 	$SoODeathsCount += IsGroupAlive() ? 0 : 1
-EndFunc
-
-
-;~ Is in range of coordinates
-Func SoOIsInRange($X, $Y, $range)
-	Local $myX = DllStructGetData(GetMyAgent(), 'X')
-	Local $myY = DllStructGetData(GetMyAgent(), 'Y')
-
-	If ($myX < $X + $range) And ($myX > $X - $range) And ($myY < $Y + $range) And ($myY > $Y - $range) Then
-		Return True
-	EndIf
-	Return False
 EndFunc
 
 

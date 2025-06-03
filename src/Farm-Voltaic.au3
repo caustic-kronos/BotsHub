@@ -113,7 +113,7 @@ Func VoltaicFarmLoop()
 	If IsHardmodeEnabled() Then UseConset()
 
 	Sleep(1000)
-	While $voltaicDeathsCount < 6 And Not IsInRange (-18500, -8000, 1250)
+	While $voltaicDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -18500, -8000, 1250)
 		; Waiting to be alive before retrying
 		While Not IsGroupAlive()
 			Sleep(2000)
@@ -132,7 +132,7 @@ Func VoltaicFarmLoop()
 		SafeMoveAggroAndKill(-18500, -8000, 'To the shrine', $aggroRange)
 		If IsFailure() Then Return 1
 	WEnd
-	While $voltaicDeathsCount < 6 And Not IsInRange (-17500, -14250, 1250)
+	While $voltaicDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
 		; Waiting to be alive before retrying
 		While Not IsGroupAlive()
 			Sleep(2000)
@@ -171,16 +171,4 @@ EndFunc
 ;~ Updates the voltaicDeathsCount variable, this function is run on a fixed timer
 Func VoltaicGroupIsAlive()
 	$voltaicDeathsCount += IsGroupAlive() ? 0 : 1
-EndFunc
-
-
-;~ Is in range of coordinates
-Func IsInRange($X, $Y, $range)
-	Local $myX = DllStructGetData(GetMyAgent(), 'X')
-	Local $myY = DllStructGetData(GetMyAgent(), 'Y')
-
-	If ($myX < $X + $range) And ($myX > $X - $range) And ($myY < $Y + $range) And ($myY > $Y - $range) Then
-		Return True
-	EndIf
-	Return False
 EndFunc

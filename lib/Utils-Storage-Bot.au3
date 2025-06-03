@@ -328,7 +328,7 @@ Func StoreAllItemsData()
 			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
 			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
 			$InsertQuery &= DllStructGetData($item, 'nameString') & "', '"
-			$InsertQuery &= (IsInscribable($item, 'nameString') ? 0 : 1) & "', '"
+			$InsertQuery &= (IsInscribable($item) ? 0 : 1) & "', '"
 			$InsertQuery &= GetModStruct($item) & "', "
 			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
 			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '

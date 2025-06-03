@@ -56,6 +56,7 @@
 #include 'src/Farm-EdenIris.au3'
 #include 'src/Farm-Feathers.au3'
 #include 'src/Farm-Follower.au3'
+#include 'src/Farm-FoW.au3'
 #include 'src/Farm-Froggy.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
@@ -111,7 +112,7 @@ Global $BAG_NUMBER = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 Global $TIMESDEPOSITED = 0
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -751,6 +752,9 @@ Func RunFarmLoop($Farm)
 		Case 'Follow'
 			$INVENTORY_SPACE_NEEDED = 15
 			$result =  FollowerFarm($STATUS)
+		Case 'FoW'
+			$INVENTORY_SPACE_NEEDED = 30
+			$result =  FoWFarm($STATUS)
 		Case 'Froggy'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result =  FroggyFarm($STATUS)
@@ -828,6 +832,7 @@ Func ResetBotsSetups()
 	$DM_FARM_SETUP							= False
 	$IRIS_FARM_SETUP						= False
 	$FEATHERS_FARM_SETUP					= False
+	$FOW_FARM_SETUP							= False
 	$FROGGY_FARM_SETUP						= False
 	$JADE_BROTHERHOOD_FARM_SETUP			= False
 	$KOURNANS_FARM_SETUP					= False
@@ -869,6 +874,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
+		Case 'FoW'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $FoWFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $FoWFarmInformations)
 		Case 'Froggy'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $FroggyFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')

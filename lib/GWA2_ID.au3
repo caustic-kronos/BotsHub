@@ -89,12 +89,15 @@ Global Const $ID_Lakeside_County			= 146
 ; Battle Isles
 Global Const $ID_Great_Temple_of_Balthazar	= 248
 Global Const $ID_Embark_Beach				= 857
+; Common
+Global Const $ID_Fissure_of_Woe				= 34
 ; Prophecies
 Global Const $ID_Warriors_Isle				= 4
 Global Const $ID_Hunters_Isle				= 5
 Global Const $ID_Wizards_Isle				= 6
 Global Const $ID_Burning_Isle				= 52
 Global Const $ID_Tascas_Demise				= 92
+Global Const $ID_Temple_of_the_Ages			= 138
 Global Const $ID_The_Granite_Citadel		= 156
 Global Const $ID_Frozen_Isle				= 176
 Global Const $ID_Nomads_Isle				= 177
