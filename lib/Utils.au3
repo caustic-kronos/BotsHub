@@ -2086,14 +2086,68 @@ EndFunc
 
 ;~ Returns True if the group is alive
 Func IsGroupAlive()
-	Local $deadMembers = 0
-	For $i = 0 to GetHeroCount()
+	Local Static $heroesWithRez = FindHeroesWithRez()
+	For $i In $heroesWithRez
 		Local $heroID = GetHeroID($i)
-		If Not GetAgentExists($heroID) Or GetIsDead(GetAgentById($heroID)) Then
-			$deadMembers += 1
-		EndIf
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then Return True
 	Next
-	Return $deadMembers < 8
+	Return False
+EndFunc
+
+
+;~ Return an array of the player and the members of the group with a rez
+Func FindHeroesWithRez()
+	Local $heroes[7]
+	Local $count = 0
+    For $heroNumber = 1 To GetHeroCount()
+        Local $heroID = GetHeroID($heroNumber)
+        For $skillSlot = 1 To 8
+            Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
+            If IsRezSkill($skill) Then
+				$heroes[$count] = $heroNumber
+				$count += 1
+            EndIf
+        Next
+    Next
+	Local $result[$count + 1]
+	$result[0] = 0
+	For $i = 1 To $count
+		$result[$i] = $heroes[$i - 1]
+	Next
+	Return $result
+EndFunc
+
+
+;~ Return true if the provided skill is a rez skill - signets excluded
+Func IsRezSkill($skill)
+	Local $By_Urals_Hammer			= 2217
+	Local $Junundu_Wail				= 1865
+	;Local $Resurrection_Signet		= 2
+	;Local $Sunspear_Rebirth_Signet	= 1816
+	Local $Eternal_Aura				= 2109
+	Local $We_Shall_Return			= 1592
+	Local $Signet_of_Return			= 1778
+	Local $Death_Pact_Signet		= 1481
+	Local $Flesh_of_My_Flesh		= 791
+	Local $Lively_Was_Naomei		= 1222
+	Local $Restoration				= 963
+	Local $Light_of_Dwayna			= 304
+	Local $Rebirth					= 306
+	Local $Renew_Life				= 1263
+	Local $Restore_Life				= 314
+	Local $Resurrect				= 305
+	Local $Resurrection_Chant		= 1128
+	Local $Unyielding_Aura			= 268
+	Local $Vengeance				= 315
+    Switch $skill
+        Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
+			$Eternal_Aura, _
+			$We_Shall_Return, $Signet_of_Return, _
+			$Death_Pact_Signet, $Flesh_of_My_Flesh, $Lively_Was_Naomei, $Restoration, _
+			$Light_of_Dwayna, $Rebirth, $Renew_Life, $Restore_Life, $Resurrect, $Resurrection_Chant, $Unyielding_Aura, $Vengeance
+            Return True
+    EndSwitch
+	Return False
 EndFunc
 #EndRegion Map Clearing Utilities
 #EndRegion Actions
