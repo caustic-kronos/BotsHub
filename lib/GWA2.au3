@@ -1527,9 +1527,17 @@ Func CancelHero($heroIndex)
 EndFunc
 
 
-;~ Clear the position flag from all heroes.
+;~ Clear the full-party position flag.
 Func CancelAll()
 	Return SendPacket(0x10, $HEADER_HERO_FLAG_ALL, 0x7F800000, 0x7F800000, 0)
+EndFunc
+
+
+;~ Clear the position flag from all heroes.
+Func CancelAllHeroes()
+	For $heroIndex = 1 To GetHeroCount()
+		CancelHero($heroIndex)
+	Next
 EndFunc
 
 

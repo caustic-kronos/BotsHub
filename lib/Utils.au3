@@ -2014,7 +2014,7 @@ Func DefaultKillFoes($lootInFights = True)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
-	CancelAll()
+	CancelAllHeroes()
 	RndSleep(1000)
 	PickUpItems()
 EndFunc

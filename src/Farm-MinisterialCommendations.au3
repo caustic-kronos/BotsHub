@@ -326,14 +326,7 @@ Func InitialFight()
 	PickUpItems(null, PickOnlyImportantItem)
 
 	; Unflag all heroes
-	;CancelAll()
-	CancelHero(1)
-	CancelHero(2)
-	CancelHero(3)
-	CancelHero(4)
-	CancelHero(5)
-	CancelHero(6)
-	CancelHero(7)
+	CancelAllHeroes()
 
 	; Hero cast speed on character
 	UseHeroSkill($Hero_Mesmer_Ineptitude, $Make_Haste_Skill_position, GetMyAgent())
