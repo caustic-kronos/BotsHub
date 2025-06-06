@@ -345,17 +345,6 @@ EndFunc
 
 
 #Region Inventory or Chest
-;~ Find the first empty slot in the given bag
-Func FindEmptySlot($bag)
-	Local $item
-	For $slot = 1 To DllStructGetData(GetBag($bag), 'Slots')
-		$item = GetItemBySlot($bag, $slot)
-		If DllStructGetData($item, 'ID') = 0 Then Return $slot
-	Next
-	Return 0
-EndFunc
-
-
 ;~ Find all empty slots in the given bag
 Func FindEmptySlots($bagId)
 	Local $bag = GetBag($bagId)
@@ -374,8 +363,14 @@ EndFunc
 
 ;~ Find first empty slot in chest
 Func FindChestFirstEmptySlot()
+	Return FindFirstEmptySlot(8, 21)
+EndFunc
+
+
+;~ Find first empty slot in bags from firstBag to lastBag
+Func FindFirstEmptySlot($firstBag, $lastBag)
 	Local $bagEmptySlot[2] = [0, 0]
-	For $i = 8 To 21
+	For $i = $firstBag To $lastBag
 		$bagEmptySlot[1] = FindEmptySlot($i)
 		If $bagEmptySlot[1] <> 0 Then
 			$bagEmptySlot[0] = $i
@@ -383,6 +378,17 @@ Func FindChestFirstEmptySlot()
 		EndIf
 	Next
 	Return $bagEmptySlot
+EndFunc
+
+
+;~ Find the first empty slot in the given bag
+Func FindEmptySlot($bag)
+	Local $item
+	For $slot = 1 To DllStructGetData(GetBag($bag), 'Slots')
+		$item = GetItemBySlot($bag, $slot)
+		If DllStructGetData($item, 'ID') = 0 Then Return $slot
+	Next
+	Return 0
 EndFunc
 
 
@@ -959,17 +965,41 @@ EndFunc
 
 ;~ Salvage all items from inventory
 Func SalvageAllItems()
-	If (CountSlots() < 1) Then
-		Warn('Not enough room in inventory to salvage items')
-		Return
+	Local $movedItem = Null
+	If (CountSlots(1, 4) < 1) Then
+		; There is no space in inventory, we need to store something in Xunlai to start the salvage
+		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
+		$movedItem = GetItemBySlot(_Min(4, $BAG_NUMBER), 1)
+		MoveItem($movedItem, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	EndIf
+
 	Info('Salvaging all items')
+	Local $trophiesItems[120]
+	Local $trophyIndex = 0
 	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Debug('Salvaging bag' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
-		For $i = 1 To $bagSize
-			SalvageItemAt($bagIndex, $i)
+		For $slot = 1 To $bagSize
+			Local $item = GetItemBySlot($bagIndex, $slot)
+			If IsTrophy(DllStructGetData($item, 'ModelID')) Then
+				; Trophies should be salvaged at the end, because they create a lot of materials
+				$trophiesItems[$trophyIndex] = $bagIndex
+				$trophiesItems[$trophyIndex + 1] = $slot
+				$trophyIndex += 2
+			Else
+				SalvageItemAt($bagIndex, $slot)
+			EndIf
 		Next
+	Next
+
+	If $movedItem <> Null Then
+		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $BAG_NUMBER))
+		MoveItem($movedItem, $bagEmptySlot[0], $bagEmptySlot[1])
+		SalvageItemAt($bagEmptySlot[0], $bagEmptySlot[1])
+	EndIf
+
+	For $i = 0 To $trophyIndex - 2
+		SalvageItemAt($trophiesItems[$i], $trophiesItems[$i + 1])
 	Next
 EndFunc
 
@@ -1061,7 +1091,7 @@ Func FindSalvageKitOrBuySome($basicSalvageKit = True)
 	Local $xunlaiTemporarySlot = 0
 	; There is no space in inventory, we need to store something in Xunlai to buy salvage kit
 	If CountSlots(1, 4) == 0 Then
-		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
+		$xunlaiTemporarySlot = FindChestFirstEmptySlot()
 		MoveItem(GetItemBySlot(1, 1), $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	EndIf
 
@@ -1953,6 +1983,7 @@ Func DefaultKillFoes($lootInFights = True)
 	Local $me = GetMyAgent()
 	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = -1
 	GetAlmostInRangeOfAgent($target)
+	FanFlagHeroes()
 
 	While $groupIsAlive And $foesCount > 0
 		$target = GetNearestEnemyToAgent($me)
@@ -1983,6 +2014,7 @@ Func DefaultKillFoes($lootInFights = True)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
+	CancelAll()
 	RndSleep(1000)
 	PickUpItems()
 EndFunc
@@ -2148,6 +2180,46 @@ Func IsRezSkill($skill)
             Return True
     EndSwitch
 	Return False
+EndFunc
+
+
+;~ Take current character's position (AND orientation) to flag heroes in a fan position
+Func FanFlagHeroes()
+	Local $heroCount = GetHeroCount()
+	; Change your hero locations here
+	Switch $heroCount
+		Case 3
+			Local $heroFlagPositions[3] = [1, 2, 3]				; right, left, behind
+		Case 5
+			Local $heroFlagPositions[5] = [1, 2, 3, 4, 5]		; right, left, behind, behind right, behind left
+		Case 7
+			Local $heroFlagPositions[7] = [1, 2, 6, 3, 4, 5, 7]	; right, left, behind, behind right, behind left, way behind right, way behind left
+		Case Else
+			Local $heroFlagPositions[0] = []
+	EndSwitch
+
+	Local $me = GetMyAgent()
+	Local $X = DllStructGetData($me, 'X')
+	Local $Y = DllStructGetData($me, 'Y')
+	Local $rotationX = DllStructGetData($me, 'RotationCos')
+	Local $rotationY = DllStructGetData($me, 'RotationSin')
+	Local $distance = $RANGE_AREA + 50
+	
+	; To the right
+	If $heroCount > 0 Then CommandHero($heroFlagPositions[0], $X + $rotationY * $distance, $Y - $rotationX * $distance)
+	; To the left
+	If $heroCount > 1 Then CommandHero($heroFlagPositions[1], $X - $rotationY * $distance, $Y + $rotationX * $distance)
+	; Straight behind
+	If $heroCount > 2 Then CommandHero($heroFlagPositions[2], $X - $rotationX * $distance, $Y - $rotationY * $distance)
+	; To the right, behind
+	If $heroCount > 3 Then CommandHero($heroFlagPositions[3], $X + ($rotationY - $rotationX) * $distance, $Y - ($rotationX + $rotationY) * $distance)
+	; To the left, behind
+	If $heroCount > 4 Then CommandHero($heroFlagPositions[4], $X - ($rotationY + $rotationX) * $distance, $Y + ($rotationX - $rotationY) * $distance)
+	; To the right, way behind
+	If $heroCount > 5 Then CommandHero($heroFlagPositions[5], $X + ($rotationY / 2 - 2 * $rotationX) * $distance, $Y - (2 * $rotationY + $rotationX / 2) * $distance)
+	; To the left, way behind
+	If $heroCount > 6 Then CommandHero($heroFlagPositions[6], $X - ($rotationY / 2 + 2 * $rotationX) * $distance, $Y + ($rotationX / 2 - 2 * $rotationY) * $distance)
+
 EndFunc
 #EndRegion Map Clearing Utilities
 #EndRegion Actions

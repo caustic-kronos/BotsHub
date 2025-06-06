@@ -240,7 +240,7 @@ Func ClearSoOFloor1()
 		SafeMoveAggroAndKill(16134, 11781, 'Triggering beacon 3', $aggroRange)
 	WEnd
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 20002, 903, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(15441, 9372, '1', $aggroRange)
 		SafeMoveAggroAndKill(14550, 7350, '2', $aggroRange)
@@ -248,9 +248,13 @@ Func ClearSoOFloor1()
 		SafeMoveAggroAndKill(14200, 5600, '3', $aggroRange)
 		; Poison trap between 3 and 4
 		SafeMoveAggroAndKill(14750, 5250, '4', $aggroRange)
+	WEnd
+
+	Info('Going through portal')
+	Local $mapLoaded = False
+	While Not $mapLoaded
 		Info('Open dungeon door')
 		ClearTarget()
-
 		; Doubled to secure
 		For $i = 1 To 2
 			MoveTo(15041, 5475)
@@ -260,14 +264,10 @@ Func ClearSoOFloor1()
 			RndSleep(500)
 		Next
 
-		SafeMoveAggroAndKill(17146, 2643, '5', $aggroRange)
-		SafeMoveAggroAndKill(18209, 1609, '6', $aggroRange)
-		SafeMoveAggroAndKill(20002, 903, '7', $aggroRange)
-	WEnd
+		SafeMoveAggroAndKill(17146, 2643, '1', $aggroRange)
+		SafeMoveAggroAndKill(18209, 1609, '2', $aggroRange)
+		SafeMoveAggroAndKill(20002, 903, '3', $aggroRange)
 
-	Info('Going through portal')
-	Local $mapLoaded = False
-	While Not $mapLoaded
 		MoveTo(20002, 903)
 		Move(20400, 1300)
 		RndSleep(2000)
@@ -374,7 +374,11 @@ Func ClearSoOFloor2()
 		SafeMoveAggroAndKill(-14674, -4442, '21', $aggroRange)
 		SafeMoveAggroAndKill(-16007, -8640, '22', $aggroRange)
 		SafeMoveAggroAndKill(-17735, -9337, '23', $aggroRange)
+	WEnd
 
+	Info('Going through portal')
+	Local $mapLoaded = False
+	While Not $mapLoaded
 		Info('Open dungeon door')
 		ClearTarget()
 		For $i = 1 To 3
@@ -384,12 +388,6 @@ Func ClearSoOFloor2()
 			Sleep(GetPing() + 500)
 			ActionInteract()
 		Next
-		MoveTo(-18725, -9171)
-	WEnd
-
-	Info('Going through portal')
-	Local $mapLoaded = False
-	While Not $mapLoaded
 		MoveTo(-18725, -9171)
 		Move(-19300, -8200)
 		RndSleep(2000)
@@ -425,7 +423,7 @@ Func ClearSoOFloor3()
 		SafeMoveAggroAndKill(-1265, 7891, '9', $aggroRange)
 	WEnd
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9214, 6323, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
 		UseMoraleConsumableIfNeeded()
 		SafeMoveAggroAndKill(-1537, 8503, 'Triggering beacon 2', $aggroRange)
 		SafeMoveAggroAndKill(-4519, 6447, '1', $aggroRange)
@@ -488,7 +486,12 @@ Func ClearSoOFloor3()
 		PickUpItems()
 
 		SafeMoveAggroAndKill(-9202, 6165, '17', $aggroRange)
+	WEnd
 
+	$aggroRange = $RANGE_SPELLCAST + 300
+
+	Local $questState = 1
+	While $SoODeathsCount < 6 And $questState <> 3
 		Info('Open dungeon door')
 		ClearTarget()
 
@@ -500,12 +503,7 @@ Func ClearSoOFloor3()
 			Sleep(GetPing() + 500)
 			ActionInteract()
 		Next
-	WEnd
 
-	$aggroRange = $RANGE_SPELLCAST + 300
-
-	Local $questState = 1
-	While $SoODeathsCount < 6 And $questState <> 3
 		Info('Boss room')
 		UseMoraleConsumableIfNeeded()
 		; Poison trap between 1 2 and 3
