@@ -212,42 +212,49 @@ Func ClearSoOFloor1()
 		Dialog(0x84)
 		RndSleep(500)
 
+		MoveTo(-11750, 9925)
 		SafeMoveAggroAndKill(-10486, 9587, '1', $aggroRange)
 		SafeMoveAggroAndKill(-6196, 10260, '2', $aggroRange)
-		SafeMoveAggroAndKill(-3450, 11725, '3', $aggroRange)
+		SafeMoveAggroAndKill(-4000, 12000, '3', $aggroRange)
 		; Poison trap between 3 and 4
-		SafeMoveAggroAndKill(-1250, 13000, '4', $aggroRange)
-		SafeMoveAggroAndKill(2734, 16041, '5', $aggroRange)
-		SafeMoveAggroAndKill(3550, 14750, '6', $aggroRange)
+		SafeMoveAggroAndKill(-2200, 13000, '4', $aggroRange)
+		SafeMoveAggroAndKill(2650, 16200, '5', $aggroRange)
+		; too close to walls
+		SafeMoveAggroAndKill(3350, 15400, '6', $aggroRange)
 		; Poison trap between 6 and 7
-		SafeMoveAggroAndKill(5300, 13050, '7', $aggroRange)
+		; too close to walls
+		SafeMoveAggroAndKill(4200, 14325, '7', $aggroRange)
 		; Poison trap between 7 and 8
-		SafeMoveAggroAndKill(7000, 13300, '8', $aggroRange)
-		SafeMoveAggroAndKill(8056, 12349, '9', $aggroRange)
-		SafeMoveAggroAndKill(9232, 11483, 'Triggering beacon 2', $aggroRange)
+		; too close to walls
+		SafeMoveAggroAndKill(7600, 12500, '8', $aggroRange)
+		SafeMoveAggroAndKill(9200, 12000, 'Triggering beacon 2', $aggroRange)
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(6291, 10358, 'Killing boss for key', $aggroRange)
+		; too close to walls
+		SafeMoveAggroAndKill(7300, 12200, '', $aggroRange)
+		SafeMoveAggroAndKill(6300, 10400, 'Killing boss for key', $aggroRange)
 		PickUpItems()
 		SafeMoveAggroAndKill(11200, 13900, '1', $aggroRange)
 		; Poison trap between 1 and 2
-		MoveTo(12050, 15000)
-		SafeMoveAggroAndKill(13255, 15175, '2', $aggroRange)
-		SafeMoveAggroAndKill(15708, 17138, '3', $aggroRange)
-		SafeMoveAggroAndKill(16884, 12527, '4', $aggroRange)
-		SafeMoveAggroAndKill(16134, 11781, 'Triggering beacon 3', $aggroRange)
+		FanFlagHeroes()
+		MoveTo(12500, 14250)
+		MoveTo(11200, 13900)
+		RndSleep(2000)
+		; too close to walls
+		SafeMoveAggroAndKill(12500, 14250, '2', $aggroRange)
+		SafeMoveAggroAndKill(13750, 15900, '3', $aggroRange)
+		SafeMoveAggroAndKill(16000, 17000, '4', $aggroRange)
+		SafeMoveAggroAndKill(16000, 12000, 'Triggering beacon 3', $aggroRange)
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(15441, 9372, '1', $aggroRange)
-		SafeMoveAggroAndKill(14550, 7350, '2', $aggroRange)
-		; Poison trap between 2 and 3
-		SafeMoveAggroAndKill(14200, 5600, '3', $aggroRange)
-		; Poison trap between 3 and 4
-		SafeMoveAggroAndKill(14750, 5250, '4', $aggroRange)
+		; Poison trap between 1, 2 and 3
+		SafeMoveAggroAndKill(14000, 7400, '1', $aggroRange)
+		SafeMoveAggroAndKill(14400, 6000, '2', $aggroRange)
+		SafeMoveAggroAndKill(15000, 5300, '3', $aggroRange)
 	WEnd
 
 	Info('Going through portal')
@@ -264,11 +271,10 @@ Func ClearSoOFloor1()
 			RndSleep(500)
 		Next
 
-		SafeMoveAggroAndKill(17146, 2643, '1', $aggroRange)
-		SafeMoveAggroAndKill(18209, 1609, '2', $aggroRange)
-		SafeMoveAggroAndKill(20002, 903, '3', $aggroRange)
+		SafeMoveAggroAndKill(18000, 1900, '1', $aggroRange)
+		SafeMoveAggroAndKill(19700, 700, '2', $aggroRange)
 
-		MoveTo(20002, 903)
+		MoveTo(20000, 900)
 		Move(20400, 1300)
 		RndSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_2)
@@ -291,9 +297,8 @@ Func ClearSoOFloor2()
 		Dialog(0x84)
 		RndSleep(500)
 
-		SafeMoveAggroAndKill(-14215, -17456, '1', $aggroRange)
-		SafeMoveAggroAndKill(-16191, -16740, '2', $aggroRange)
-		SafeMoveAggroAndKill(-16616, -16499, '3', $aggroRange)
+		SafeMoveAggroAndKill(-14600, -16650, '1', $aggroRange)
+		SafeMoveAggroAndKill(-16600, -16500, '2', $aggroRange)
 
 		Info('Open torch chest')
 		ClearTarget()
@@ -311,10 +316,10 @@ Func ClearSoOFloor2()
 		Info('Pick up torch')
 		PickUpTorch()
 
-		SafeMoveAggroAndKill(-9259, -17322, '4', $aggroRange)
+		SafeMoveAggroAndKill(-9300, -17300, '3', $aggroRange)
 		; Pick up again in case of death
 		PickUpTorch()
-		SafeMoveAggroAndKill(-11242, -14612, '5', $aggroRange)
+		SafeMoveAggroAndKill(-9600, -16600, '4', $aggroRange)
 		; Pick up again in case of death
 		PickUpTorch()
 		InteractWithTorchOrBrazierAt(-11242, -14612, 'Light up torch')
@@ -330,28 +335,29 @@ Func ClearSoOFloor2()
 		DropBundle()
 		RndSleep(500)
 		Info('Kill group')
-		SafeMoveAggroAndKill(-9358, -12411, '6', $aggroRange)
-		SafeMoveAggroAndKill(-10143, -11136, '7', $aggroRange)
-		SafeMoveAggroAndKill(-8871, -9951, '8', $aggroRange)
-		SafeMoveAggroAndKill(-7722, -11522, '9', $aggroRange)
+		SafeMoveAggroAndKill(-9358, -12411, '5', $aggroRange)
+		SafeMoveAggroAndKill(-10143, -11136, '6', $aggroRange)
+		SafeMoveAggroAndKill(-8871, -9951, '7', $aggroRange)
+		SafeMoveAggroAndKill(-7722, -11522, '8', $aggroRange)
 
 		MoveTo(-8912, -13586)
 		Sleep(500)
 		Info('Pick up torch')
 		PickUpTorch()
 
-		SafeMoveAggroAndKill(-10542, -9557, '10', $aggroRange)
-		SafeMoveAggroAndKill(-10727, -4438, '11', $aggroRange)
+		SafeMoveAggroAndKill(-10500, -9600, '9', $aggroRange)
+		SafeMoveAggroAndKill(-11000, -7800, '10', $aggroRange)
+		SafeMoveAggroAndKill(-11000, -6000, '11', $aggroRange)
 		; Pick up again in case of death
 		PickUpTorch()
 		; Poison trap between 12 and 13
-		SafeMoveAggroAndKill(-6886, -4236, '12', $aggroRange)
+		SafeMoveAggroAndKill(-6900, -4200, '12', $aggroRange)
 		; Pick up again in case of death
 		PickUpTorch()
-		SafeMoveAggroAndKill(-5873, -3392, '13', $aggroRange)
+		SafeMoveAggroAndKill(-5000, -3500, '13', $aggroRange)
 		; Pick up again in case of death
 		PickUpTorch()
-		SafeMoveAggroAndKill(-4073, -4072, '14', $aggroRange)
+		SafeMoveAggroAndKill(-4000, -4000, '14', $aggroRange)
 		PickUpTorch()
 		SafeMoveAggroAndKill(-3900, -4163, '15', $aggroRange)
 		PickUpTorch()
@@ -371,9 +377,9 @@ Func ClearSoOFloor2()
 		SafeMoveAggroAndKill(-9000, -4350, '19', $aggroRange)
 		; Poison trap between 19 and 20
 		SafeMoveAggroAndKill(-11204, -4331, '20', $aggroRange)
-		SafeMoveAggroAndKill(-14674, -4442, '21', $aggroRange)
-		SafeMoveAggroAndKill(-16007, -8640, '22', $aggroRange)
-		SafeMoveAggroAndKill(-17735, -9337, '23', $aggroRange)
+		SafeMoveAggroAndKill(-11500, -8400, '21', $aggroRange)
+		SafeMoveAggroAndKill(-16000, -8700, '22', $aggroRange)
+		SafeMoveAggroAndKill(-17500, -9500, '23', $aggroRange)
 	WEnd
 
 	Info('Going through portal')
@@ -403,7 +409,7 @@ Func ClearSoOFloor3()
 	If IsHardmodeEnabled() Then UseConset()
 	Local $aggroRange = $RANGE_SPELLCAST + 100
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -1265, 7891, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 1100, 7100, 1250)
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
@@ -411,25 +417,26 @@ Func ClearSoOFloor3()
 		Dialog(0x84)
 		RndSleep(500)
 
-		SafeMoveAggroAndKill(17544, 18810, '1', $aggroRange)
+		SafeMoveAggroAndKill(16000, 18400, '1', $aggroRange)
 		SafeMoveAggroAndKill(10000, 19425, '2', $aggroRange)
 		; Poison trap between 2 and 3
 		SafeMoveAggroAndKill(9600, 18700, '3', $aggroRange)
-		SafeMoveAggroAndKill(8908, 17239, '4', $aggroRange)
-		SafeMoveAggroAndKill(6527, 12936, '5', $aggroRange)
-		SafeMoveAggroAndKill(3025, 8401, '6', $aggroRange)
-		SafeMoveAggroAndKill(949, 7412, '7', $aggroRange)
-		SafeMoveAggroAndKill(-347, 6459, '8', $aggroRange)
-		SafeMoveAggroAndKill(-1265, 7891, '9', $aggroRange)
+		SafeMoveAggroAndKill(9100, 18000, '4', $aggroRange)
+		SafeMoveAggroAndKill(9000, 17000, '5', $aggroRange)
+		SafeMoveAggroAndKill(8000, 15000, '6', $aggroRange)
+		SafeMoveAggroAndKill(4000, 9200, '7', $aggroRange)
+		SafeMoveAggroAndKill(1800, 7500, '8', $aggroRange)
+		SafeMoveAggroAndKill(2300, 8000, '9', $aggroRange)
+		SafeMoveAggroAndKill(1100, 7100, '10', $aggroRange)
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(-1537, 8503, 'Triggering beacon 2', $aggroRange)
-		SafeMoveAggroAndKill(-4519, 6447, '1', $aggroRange)
+		SafeMoveAggroAndKill(-2300, 8000, 'Triggering beacon 2', $aggroRange)
+		SafeMoveAggroAndKill(-4500, 6500, '1', $aggroRange)
 		SafeMoveAggroAndKill(-6523, 5533, '2', $aggroRange)
-		SafeMoveAggroAndKill(-8892, 4015, '3', $aggroRange)
-		SafeMoveAggroAndKill(-11581, 2165, '4', $aggroRange)
+		SafeMoveAggroAndKill(-10000, 3400, '3', $aggroRange)
+		SafeMoveAggroAndKill(-11500, 3500, '4', $aggroRange)
 
 		Info('Run time, fun time')
 		SafeMoveAggroAndKill(-4723, 6703, '5', $aggroRange)
@@ -438,9 +445,6 @@ Func ClearSoOFloor3()
 		SafeMoveAggroAndKill(5846, 11037, '8', $aggroRange)
 		SafeMoveAggroAndKill(9796, 18960, '9', $aggroRange)
 		SafeMoveAggroAndKill(14068, 19549, '10', $aggroRange)
-		SafeMoveAggroAndKill(16186, 17667, '11', $aggroRange)
-		SafeMoveAggroAndKill(15718, 15624, '12', $aggroRange)
-		SafeMoveAggroAndKill(16806, 16895, '13', $aggroRange)
 
 		Info('Open torch chest')
 		ClearTarget()
@@ -478,14 +482,12 @@ Func ClearSoOFloor3()
 		RndSleep(500)
 
 		Info('Keyboss')
-		SafeMoveAggroAndKill(-10637, 2904, '14', $aggroRange)
-		SafeMoveAggroAndKill(-9481, 1639, '15', $aggroRange)
-		SafeMoveAggroAndKill(-10936, 4004, '16', $aggroRange)
+		SafeMoveAggroAndKill(-11600, 2400, '14', $aggroRange)
+		SafeMoveAggroAndKill(-10000, 3000, '15', $aggroRange)
 
-		MoveTo(-9984, 2908)
 		PickUpItems()
 
-		SafeMoveAggroAndKill(-9202, 6165, '17', $aggroRange)
+		SafeMoveAggroAndKill(-9200, 6000, '16', $aggroRange)
 	WEnd
 
 	$aggroRange = $RANGE_SPELLCAST + 300
@@ -515,9 +517,9 @@ Func ClearSoOFloor3()
 		SafeMoveAggroAndKill(-13300, 13550, '5', $aggroRange)
 		MoveTo(13900, 13500)
 		; Fire traps between 5 6 and 7
-		SafeMoveAggroAndKill(-15500, 15500, '6', $aggroRange)
+		SafeMoveAggroAndKill(-15250, 15900, '6', $aggroRange)
 		Info('Boss fight, go in and move around to make sure its aggroed')
-		SafeMoveAggroAndKill(-16500, 16600, '7', $aggroRange)
+		SafeMoveAggroAndKill(-16300, 16600, '7', $aggroRange)
 		SafeMoveAggroAndKill(-15850, 17500, '8', $aggroRange)
 		$questState = DllStructGetData(GetQuestByID($ID_SoO_Quest_Lost_Souls), 'LogState')
 		Sleep(1000)

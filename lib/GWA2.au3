@@ -3192,7 +3192,7 @@ EndFunc
 
 ;~ Returns the nearest agent to an agent.
 Func GetNearestAgentToAgent($agent, $agentType = 0, $agentFilter = Null)
-	Local $nearestAgent, $nearestDistance = 100000000
+	Local $nearestAgent = Null, $nearestDistance = 100000000
 	Local $distance
 	Local $agentArray = GetAgentArray($agentType)
 	Local $agentID = DllStructGetData($agent, 'ID')
