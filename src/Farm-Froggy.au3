@@ -63,13 +63,12 @@ Func SetupFroggyFarm()
 	$FroggyDeathsCount = 0
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
-	MoveTo(-9550, -20400)
-	Move(-9451, -19766)
-	RndSleep(2000)
-	While Not WaitMapLoading($ID_Sparkfly_Swamp)
-		Sleep(500)
+	Local $mapLoaded = False
+	While Not $mapLoaded
 		MoveTo(-9550, -20400)
 		Move(-9451, -19766)
+		RndSleep(2000)
+		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
 	AdlibRegister('FroggyGroupIsAlive', 10000)
 
@@ -99,96 +98,88 @@ EndFunc
 ;~ Farm loop
 Func FroggyFarmLoop()
 	$FroggyDeathsCount = 0
-
+	GetRewardRefreshAndTakeFroggyQuest()
 	AdlibRegister('FroggyGroupIsAlive', 10000)
+	ClearFroggyFloor1()
+	ClearFroggyFloor2()
+	AdlibUnRegister('FroggyGroupIsAlive')
+	Info('Waiting for timer end')
+	Sleep(190000)
+	While Not WaitMapLoading($ID_Sparkfly_Swamp)
+		Sleep(500)
+	WEnd
+	Info('Finished Run')
+	Return 0
+EndFunc
 
-	Local $aggroRange = $RANGE_SPELLCAST + 100
 
+;~ Take quest rewards, refresh quest by entering dungeon and exiting it, then take quest again and reenter dungeon
+Func GetRewardRefreshAndTakeFroggyQuest()
 	Info('Get quest reward')
 	MoveTo(12061, 22485)
-	GoToNPC(GetNearestNPCToCoords(12500, 22648))
-	RndSleep(250)
-	Dialog(0x833907)
-	RndSleep(500)
+
 	; Quest validation doubled to secure bot
-	GoToNPC(GetNearestNPCToCoords(12500, 22648))
-	RndSleep(250)
-	Dialog(0x833907)
-	RndSleep(500)
+	For $i = 1 To 2
+		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+		RndSleep(250)
+		Dialog(0x833907)
+		RndSleep(500)
+	Next
 
 	Info('Get in dungeon to reset quest')
 	MoveTo(12228, 22677)
-	RndSleep(500)
 	MoveTo(12470, 25036)
-	RndSleep(500)
-	MoveTo(12968, 26219)
-	RndSleep(500)
-	Move(13097, 26393)
-	RndSleep(2000)
-	While Not WaitMapLoading($ID_Bogroot_lvl1)
-		Sleep(500)
+	Local $mapLoaded = False
+	While Not $mapLoaded
 		MoveTo(12968, 26219)
 		Move(13097, 26393)
+		RndSleep(2000)
+		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl1)
 	WEnd
-	RndSleep(2000)
 
 	Info('Get out of dungeon to reset quest')
-	RndSleep(2000)
-	MoveTo(14876, 632)
-	RndSleep(500)
-	Move(14700, 450)
-	RndSleep(2000)
-	While Not WaitMapLoading($ID_Sparkfly_Swamp)
-		Info('Stuck, retrying')
-		Sleep(500)
+	$mapLoaded = False
+	While Not $mapLoaded
 		MoveTo(14876, 632)
 		Move(14700, 450)
+		RndSleep(2000)
+		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
-	RndSleep(2000)
 
 	Info('Get quest')
 	MoveTo(12061, 22485)
-	GoToNPC(GetNearestNPCToCoords(12500, 22648))
-	RndSleep(250)
-	Dialog(0x833901)
-	RndSleep(500)
-	; Quest pickup doubled to secure bot
-	GoToNPC(GetNearestNPCToCoords(12500, 22648))
-	RndSleep(250)
-	Dialog(0x833901)
-	RndSleep(500)
+	; Quest validation doubled to secure bot
+	For $i = 1 To 2
+		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+		RndSleep(250)
+		Dialog(0x833901)
+		RndSleep(500)
+	Next
 	Info('Talk to Tekk if already had quest')
-	GoToNPC(GetNearestNPCToCoords(12500, 22648))
-	RndSleep(250)
-	Dialog(0x833905)
-	RndSleep(500)
 	; Quest pickup doubled to secure bot
-	GoToNPC(GetNearestNPCToCoords(12500, 22648))
-	RndSleep(250)
-	Dialog(0x833905)
-	RndSleep(500)
+	For $i = 1 To 2
+		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+		RndSleep(250)
+		Dialog(0x833905)
+		RndSleep(500)
+	Next
 
 	Info('Get back in')
 	MoveTo(12228, 22677)
-	RndSleep(500)
 	MoveTo(12470, 25036)
-	RndSleep(500)
-	MoveTo(12968, 26219)
-	RndSleep(500)
-	Move(13097, 26393)
-	RndSleep(2000)
-	While Not WaitMapLoading($ID_Bogroot_lvl1)
-		Sleep(500)
+	$mapLoaded = False
+	While Not $mapLoaded
 		MoveTo(12968, 26219)
 		Move(13097, 26393)
+		RndSleep(2000)
+		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl1)
 	WEnd
-	RndSleep(2000)
+EndFunc
 
 
-	; Waiting to be alive before retrying
-	While Not IsGroupAlive()
-		Sleep(2000)
-	WEnd
+;~ Clear Froggy floor 1
+Func ClearFroggyFloor1()
+	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('------------------------------------')
 	Info('First floor')
 	If IsHardmodeEnabled() Then UseConset()
@@ -233,15 +224,19 @@ Func FroggyFarmLoop()
 	WEnd
 
 	Info('Going through portal')
-	Move(7600, -19100)
-	RndSleep(2000)
-	While Not WaitMapLoading($ID_Bogroot_lvl2)
+	Local $mapLoaded = False
+	While Not $mapLoaded
 		MoveTo(7171, -17934)
 		Move(7600, -19100)
-		Sleep(500)
+		RndSleep(2000)
+		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl2)
 	WEnd
-	RndSleep(2000)
+EndFunc
 
+
+;~ Clear Froggy floor 2
+Func ClearFroggyFloor2()
+	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('------------------------------------')
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
@@ -291,23 +286,15 @@ Func FroggyFarmLoop()
 
 		Info('Open dungeon door')
 		ClearTarget()
-		Sleep(GetPing() + 500)
-		Moveto(17888, -6243)
-		ActionInteract()
-		Sleep(GetPing() + 500)
-		ActionInteract()
-		Sleep(GetPing() + 500)
-		Moveto(17888, -6243)
-		Sleep(GetPing() + 500)
-		ActionInteract()
-		Sleep(GetPing() + 500)
-		ActionInteract()
-		Sleep(GetPing() + 500)
-		Moveto(17888, -6243)
-		Sleep(GetPing() + 500)
-		ActionInteract()
-		Sleep(GetPing() + 500)
-		ActionInteract()
+
+		For $i = 1 To 3
+			MoveTo(17888, -6243)
+			Sleep(GetPing() + 500)
+			ActionInteract()
+			Sleep(GetPing() + 500)
+			ActionInteract()
+			Sleep(GetPing() + 500)
+		Next
 
 		SafeMoveAggroAndKill(18363, -8696, 'Going to boss area', $aggroRange)
 		SafeMoveAggroAndKill(16631, -11655, 'I will do all that must be done', $aggroRange)
@@ -315,7 +302,7 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(19597, -11553, 'Triggering boss beacon', $aggroRange)
 	WEnd
 
-	Local $aggroRange = $RANGE_SPELLCAST + 300
+	$aggroRange = $RANGE_SPELLCAST + 300
 
 	Local $questState = 1
 	While $FroggyDeathsCount < 6 And $questState <> 3
@@ -330,7 +317,6 @@ Func FroggyFarmLoop()
 		SafeMoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $aggroRange)
 
 		$questState = DllStructGetData(GetQuestByID($ID_Froggy_Quest), 'LogState')
-		Sleep(1000)
 	WEnd
 	If FroggyIsFailure() Then Return 1
 
@@ -339,30 +325,14 @@ Func FroggyFarmLoop()
 	MoveTo(15329, -18948)
 	MoveTo(15086, -19132)
 	Info('Opening chest')
-	RndSleep(5000)
-	TargetNearestItem()
-	ActionInteract()
-	RndSleep(2500)
-	PickUpItems()
 	; Doubled to secure the looting
-	MoveTo(15590, -18853)
-	MoveTo(15027, -19102)
-	RndSleep(5000)
-	TargetNearestItem()
-	ActionInteract()
-	RndSleep(2500)
-	PickUpItems()
-
-	AdlibUnRegister('FroggyGroupIsAlive')
-	Info('Chest looted')
-	Info('Waiting for timer end + some more')
-	Sleep(190000)
-	While Not WaitMapLoading($ID_Sparkfly_Swamp)
-		Sleep(500)
-	WEnd
-	Info('Finished Run')
-
-	Return 0
+	For $i = 1 To 2
+		TargetNearestItem()
+		ActionInteract()
+		RndSleep(2500)
+		PickUpItems()
+		RndSleep(5000)
+	Next
 EndFunc
 
 

@@ -112,7 +112,7 @@ Func SoOFarmLoop()
 
 	AdlibRegister('SoOGroupIsAlive', 10000)
 
-	GetRewardRefreshAndTakeQuest()
+	GetRewardRefreshAndTakeSoOQuest()
 	ClearSoOFloor1()
 	ClearSoOFloor2()
 	ClearSoOFloor3()
@@ -130,7 +130,7 @@ EndFunc
 
 
 ;~ Take quest rewards, refresh quest by entering dungeon and exiting it, then take quest again and reenter dungeon
-Func GetRewardRefreshAndTakeQuest()
+Func GetRewardRefreshAndTakeSoOQuest()
 	Info('Get quest reward')
 	MoveTo(11996, -17846)
 	; Doubled to secure
@@ -242,6 +242,7 @@ Func ClearSoOFloor1()
 		MoveTo(12500, 14250)
 		MoveTo(11200, 13900)
 		RndSleep(2000)
+		CancelAllHeroes()
 		; too close to walls
 		SafeMoveAggroAndKill(12500, 14250, '2', $aggroRange)
 		SafeMoveAggroAndKill(13750, 15900, '3', $aggroRange)
@@ -289,7 +290,7 @@ Func ClearSoOFloor2()
 	If IsHardmodeEnabled() Then UseConset()
 	Local $aggroRange = $RANGE_SPELLCAST + 100
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -18725, -9171, 1250)
+	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
