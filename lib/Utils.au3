@@ -945,7 +945,7 @@ EndFunc
 
 
 ;~ Identify all items from inventory
-Func IdentifyAllItems()
+Func IdentifyAllItems($buyKit = True)
 	Info('Identifying all items')
 	For $bagIndex = 1 To $BAG_NUMBER
 		Local $bag = GetBag($bagIndex)
@@ -954,17 +954,29 @@ Func IdentifyAllItems()
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 			If Not GetIsIdentified($item) Then
-				FindIdentificationKitOrBuySome()
+				Local $IdentificationKit = FindIdentificationKit()
+				If $IdentificationKit == 0 Then
+					If $buyKit Then
+						BuyIdentificationKitInEOTN()
+					Else
+						Return False
+					EndIf
+				EndIf
 				IdentifyItem($item)
 				RndSleep(100)
 			EndIf
 		Next
 	Next
+	Return True
 EndFunc
 
 
 ;~ Salvage all items from inventory
-Func SalvageAllItems()
+Func SalvageAllItems($buyKit = True)
+	Local $kit = GetSalvageKit($buyKit)
+	If $kit == 0 Then Return False
+	Local $uses = DllStructGetData($kit, 'Value') / 2
+
 	Local $movedItem = Null
 	If (CountSlots(1, 4) < 1) Then
 		; There is no space in inventory, we need to store something in Xunlai to start the salvage
@@ -974,20 +986,28 @@ Func SalvageAllItems()
 	EndIf
 
 	Info('Salvaging all items')
-	Local $trophiesItems[120]
+	Local $trophiesItems[60]
 	Local $trophyIndex = 0
 	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
 		Debug('Salvaging bag' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 			If IsTrophy(DllStructGetData($item, 'ModelID')) Then
 				; Trophies should be salvaged at the end, because they create a lot of materials
-				$trophiesItems[$trophyIndex] = $bagIndex
-				$trophiesItems[$trophyIndex + 1] = $slot
-				$trophyIndex += 2
+				$trophiesItems[$trophyIndex] = $item
+				$trophyIndex += 1
 			Else
-				SalvageItemAt($bagIndex, $slot)
+				If DefaultShouldSalvageItem($item) Then
+					SalvageItem($item, $kit)
+					$uses -= 1
+					If $uses < 1 Then
+						$kit = GetSalvageKit($buyKit)
+						If $kit == 0 Then Return False
+						$uses = DllStructGetData($kit, 'Value') / 2
+					EndIf
+				EndIf
 			EndIf
 		Next
 	Next
@@ -995,12 +1015,42 @@ Func SalvageAllItems()
 	If $movedItem <> Null Then
 		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $BAG_NUMBER))
 		MoveItem($movedItem, $bagEmptySlot[0], $bagEmptySlot[1])
-		SalvageItemAt($bagEmptySlot[0], $bagEmptySlot[1])
+		If DefaultShouldSalvageItem($movedItem) Then
+			SalvageItem($movedItem, $kit)
+			$uses -= 1
+			If $uses < 1 Then
+				$kit = GetSalvageKit($buyKit)
+				If $kit == 0 Then Return False
+				$uses = DllStructGetData($kit, 'Value') / 2
+			EndIf
+		EndIf
 	EndIf
 
-	For $i = 0 To $trophyIndex - 2
-		SalvageItemAt($trophiesItems[$i], $trophiesItems[$i + 1])
+	For $i = 0 To $trophyIndex - 1
+		If DefaultShouldSalvageItem($trophiesItems[$i]) Then
+			For $k = 0 To DllStructGetData($trophiesItems[$k], 'Quantity') - 1
+				SalvageItem($trophiesItems[$i], $kit)
+				$uses -= 1
+				If $uses < 1 Then
+					$kit = GetSalvageKit($buyKit)
+					If $kit == 0 Then Return False
+					$uses = DllStructGetData($kit, 'Value') / 2
+				EndIf
+			Next
+		EndIf
 	Next
+EndFunc
+
+
+;~ Get a salvage kit from inventory, or buy one if not present
+;~ Returns the kit or 0 if it was not found and not bought
+Func GetSalvageKit($buyKit = True)
+	Local $kit = FindBasicSalvageKit()
+	If $kit == 0 And $buyKit Then
+		BuySalvageKitInEOTN()
+		$kit = FindBasicSalvageKit()
+	EndIf
+	Return $kit
 EndFunc
 
 
@@ -1009,33 +1059,54 @@ Func SalvageItemAt($bag, $slot)
 	Local $item = GetItemBySlot($bag, $slot)
 	If DllStructGetData($item, 'ID') = 0 Then Return
 	If DefaultShouldSalvageItem($item) Then
-		SalvageItem($item)
+		SalvageItem($item, $salvageKit)
 	EndIf
 EndFunc
 
 
 ;~ Salvage the given item - FIXME: fails for weapons/armorsalvageable when using expert kits and better because they open a window
-Func SalvageItem($item)
+Func SalvageItem($item, $salvageKit)
 	Local $rarity = GetRarity($item)
-	Local $salvageKit
-	For $i = 1 To DllStructGetData($item, 'Quantity')
-		$salvageKit = FindSalvageKitOrBuySome()
-		StartSalvageWithKit($item, $salvageKit)
+	StartSalvageWithKit($item, $salvageKit)
+	Sleep(GetPing() + 200)
+	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
+		ValidateSalvage()
 		Sleep(GetPing() + 200)
-		If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
-			ValidateSalvage()
-			Sleep(GetPing() + 200)
-		EndIf
-	Next
+	EndIf
+	Return True
 EndFunc
 
 
-;~ Find an identification Kit in inventory or buy one. Return the kit or 0 if no kit was bought
-Func FindIdentificationKitOrBuySome()
-	Local $IdentificationKit = FindIdentificationKit()
-	If $IdentificationKit <> 0 Then Return $IdentificationKit
-	If GetGoldCharacter() < 500 And GetGoldStorage() > 499 Then
-		WithdrawGold(500)
+;~ Buy salvage kits in EOTN
+Func BuySalvageKitInEOTN($amount = 1)
+	Return BuyInEOTN($ID_Salvage_Kit_2, 2, 100, $amount, False)
+EndFunc
+
+
+;~ Buy expert salvage kits in EOTN
+Func BuyExpertSalvageKitInEOTN($amount = 1)
+	Return BuyInEOTN($ID_Expert_Salvage_Kit, 3, 400, $amount, False)
+EndFunc
+
+
+;~ Buy superior salvage kits in EOTN
+Func BuySuperiorSalvageKitInEOTN($amount = 1)
+	Return BuyInEOTN($ID_Superior_Salvage_Kit, 4, 2000, $amount, False)
+EndFunc
+
+
+;~ Buy superior identification kits in EOTN
+Func BuySuperiorIdentificationKitInEOTN($amount = 1)
+	Return BuyInEOTN($ID_Superior_Identification_Kit, 6, 500, $amount, False)
+EndFunc
+
+
+;~ Buy merchant items in EOTN
+;~ FIXME: error if total price is superior to 100k, add a loop for that
+;~ FIXME: error if amount is superior to 250, add another loop for that
+Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False)
+	If GetGoldCharacter() < $amount * $itemPrice And GetGoldStorage() > $amount * $itemPrice - 1 Then
+		WithdrawGold($amount * $itemPrice)
 		RndSleep(500)
 	EndIf
 
@@ -1047,68 +1118,33 @@ Func FindIdentificationKitOrBuySome()
 	RndSleep(500)
 
 	Local $xunlaiTemporarySlot = 0
-	; There is no space in inventory, we need to store something in Xunlai to buy identification kit
-	If CountSlots(1, 4) == 0 Then
-		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
-		MoveItem(GetItemBySlot(1, 1), $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
+	; There is no space in inventory, we need to store things in Xunlai to buy items
+	If ($stackable And CountSlots(1, 4) < 1) Or (Not $stackable And CountSlots(1, 4) < $amount) Then
+		$xunlaiTemporarySlot = FindChestEmptySlots()
+		Local $freeSpace = $stackable ? 1 : $amount
+		For $i = 0 To $freeSpace - 1
+			MoveItem(GetItemBySlot(1, $i + 1), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
+		Next
 	EndIf
 
-	Local $j = 0
-	While $IdentificationKit == 0
-		If $j = 3 Then Return 0
-		BuySuperiorIdentificationKit()
-		$j = $j + 1
-		$IdentificationKit = FindIdentificationKit()
+	Local $itemCount = GetInventoryItemCount($itemID)
+	Local $targetItemCount = $itemCount + $amount
+	Local $tryCount = 0
+	While $itemCount < $targetItemCount
+		If $tryCount == 10 Then Return False
+		BuyItem($itemPosition, $amount, $itemPrice)
+		RndSleep(1000)
+		$tryCount += 1
+		$itemCount = GetInventoryItemCount($itemID)
 	WEnd
+
 	RndSleep(500)
-	If $IdentificationKit <> 0 And $xunlaiTemporarySlot <> 0 Then MoveItem($IdentificationKit, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
-	Return $IdentificationKit
-EndFunc
-
-
-;~ Find a salvage Kit in inventory or buy one. Return the ID of the kit or 0 if no kit was bought
-Func FindSalvageKitOrBuySome($basicSalvageKit = True)
-	Local $SalvageKit
-	If $basicSalvageKit Then
-		$SalvageKit = FindBasicSalvageKit()
-	Else
-		$SalvageKit = FindSalvageKit()
+	If $xunlaiTemporarySlot <> 0 Then
+		Local $freeSpace = $stackable ? 1 : $amount
+		For $i = 0 To $freeSpace - 1
+			MoveItem(GetItemByItemID($itemID), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
+		Next
 	EndIf
-	If $SalvageKit <> 0 Then Return $SalvageKit
-
-	If GetGoldCharacter() < 400 And GetGoldStorage() > 399 Then
-		WithdrawGold(400)
-		RndSleep(400)
-	EndIf
-
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Info('Moving to merchant')
-	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
-	UseCitySpeedBoost()
-	GoToNPC($merchant)
-	RndSleep(500)
-
-	Local $xunlaiTemporarySlot = 0
-	; There is no space in inventory, we need to store something in Xunlai to buy salvage kit
-	If CountSlots(1, 4) == 0 Then
-		$xunlaiTemporarySlot = FindChestFirstEmptySlot()
-		MoveItem(GetItemBySlot(1, 1), $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
-	EndIf
-
-	Local $j = 0
-	While $SalvageKit == 0
-		If $j = 3 Then Return 0
-		If $basicSalvageKit Then
-			BuySalvageKit()
-			$SalvageKit = FindBasicSalvageKit()
-		Else
-			BuyExpertSalvageKit()
-			$SalvageKit = FindSalvageKit()
-		EndIf
-		$j = $j + 1
-	WEnd
-	If $SalvageKit <> 0 And $xunlaiTemporarySlot <> 0 Then MoveItem($SalvageKit, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
-	Return $SalvageKit
 EndFunc
 #EndRegion Identification and Salvage
 

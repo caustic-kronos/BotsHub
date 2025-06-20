@@ -60,13 +60,13 @@ Global $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hex
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
 	;SellEverythingToMerchant(DefaultShouldSellItem, True)
-	InventoryManagement()
+	ActiveInventoryManagement()
 	Return 2
 EndFunc
 
 
 ;~ Function to deal with inventory after farm
-Func InventoryManagement()
+Func ActiveInventoryManagement()
 	; Operations order :
 	; 1-Store unid if desired
 	; 2-Sort items
@@ -95,8 +95,7 @@ Func InventoryManagement()
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		SalvageAllItems()
 		If $BAG_NUMBER == 5 Then
-			MoveItemsOutOfEquipmentBag()
-			SalvageAllItems()
+			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems()
 		EndIf
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
@@ -126,11 +125,35 @@ EndFunc
 
 
 ;~ Function to deal with inventory during farm
-Func DuringFarmActions()
-	; This function means we need to have salvaging tools on during farm /!\
-	; Not much that can be done during farm other than :
-	; -identifying what can be identified
-	; -salvaging what can be salvaged
+Func PassiveInventoryManagement()
+	; Operations order :
+	; 1-Check if we have at least 1 identification kit and 1 salvage kit
+	; 2-If not, buy until we have 4 identification kits and 12 salvaged kits
+	; 3-Sort items
+	; 4-Identify items
+	; 5-Salvage
+	Local $resetRequired = False
+	Local $superiorIdentificationKits = [$ID_Superior_Identification_Kit]
+	Local $identificationKitsCount = GetInventoryKitCount($superiorIdentificationKits)
+	Local $salvageKits = [$ID_Salvage_Kit, $ID_Salvage_Kit_2]
+	Local $salvageKitsCount = GetInventoryKitCount($salvageKits)
+	
+	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
+		Info('Buying kits for passive inventory management')
+		If GetMapID() <> $ID_Eye_of_the_North Then
+			DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+			$resetRequired = True
+		EndIf
+		If 4 - $identificationKitsCount > 0 Then BuyIdentificationKitInEOTN(3 - $identificationKitsCount)
+		If 12 - $salvageKitsCount > 0 Then BuySalvageKitInEOTN(12 - $salvageKitsCount)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	IdentifyAllItems(False)
+	SalvageAllItems(False)
+	If $BAG_NUMBER == 5 Then
+		If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)
+	EndIf
+	Return $resetRequired
 EndFunc
 
 
@@ -507,13 +530,13 @@ Func MoveItemsOutOfEquipmentBag()
 	Local $cursor = 0
 	If $countEmptySlots <= $cursor Then
 		Warn('No space in inventory to move the items out of the equipment bag')
-		Return
+		Return 0
 	EndIf
 
 	For $slot = 1 To DllStructGetData($equipmentBag, 'slots')
 		If $countEmptySlots <= $cursor Then
 			Warn('No space in inventory to move the items out of the equipment bag')
-			Return
+			Return 0
 		EndIf
 		Local $item = GetItemBySlot(5, $slot)
 		Local $itemID = DllStructGetData($item, 'ModelID')
@@ -528,6 +551,7 @@ Func MoveItemsOutOfEquipmentBag()
 			RndSleep(50)
 		EndIf
 	Next
+	Return $cursor
 EndFunc
 
 
@@ -804,7 +828,9 @@ Func DefaultShouldStoreItem($item)
 	ElseIf IsBasicMaterial($item) Then
 		Return True
 	ElseIf ($itemID == $ID_Identification_Kit Or $itemID == $ID_Superior_Identification_Kit) Then
-		Return True
+		Return False
+	ElseIf ($itemID == $ID_Salvage_Kit Or $itemID == $ID_Salvage_Kit_2 Or $itemID == $ID_Expert_Salvage_Kit Or $itemID == $ID_Superior_Salvage_Kit) Then
+		Return False
 	ElseIf IsRareMaterial($item) Then
 		Return True
 	ElseIf IsTome($itemID) Then

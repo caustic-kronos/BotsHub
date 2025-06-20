@@ -2922,6 +2922,25 @@ Func FindIdentificationKit()
 EndFunc
 
 
+;~ Returns kits
+Func GetInventoryKitCount($enabledModelIDs)
+	Local $kitCount = 0
+	Local $item, $modelID
+
+	For $i = 1 To 4
+		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
+			$item = GetItemBySlot($i, $j)
+			$modelID = DllStructGetData($item, 'ModelID')
+
+			; Skip this item if model is not in our list
+			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
+			$kitCount += 1
+		Next
+	Next
+	Return $kitCount
+EndFunc
+
+
 ;~ Returns kit
 Func FindKit($enabledModelIDs)
 	Local $kit = 0
