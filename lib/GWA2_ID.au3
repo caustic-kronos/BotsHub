@@ -106,24 +106,27 @@ Global Const $ID_Isle_Of_The_Dead			= 179
 ; Factions
 Global Const $ID_House_Zu_Heltzer			= 77
 Global Const $ID_Kaineng_City				= 194
-Global Const $ID_Kaineng_City_Events		= 817
+Global Const $ID_Drazach_Thicket			= 195
 Global Const $ID_Jaya_Bluffs				= 196
 Global Const $ID_Mount_Qinkai				= 200
+Global Const $ID_Silent_Surf				= 203
 Global Const $ID_Ferndale					= 210
 Global Const $ID_Pongmei_Valley				= 211
 Global Const $ID_Nahpui_Quarter				= 216
 Global Const $ID_Boreas_Seabed				= 219
+Global Const $ID_The_Eternal_Grove			= 222
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
 Global Const $ID_Seitung_Harbor				= 250
 Global Const $ID_Isle_Of_Weeping_Stone		= 275
 Global Const $ID_Isle_Of_Jade				= 276
+Global Const $ID_Leviathan_Pits				= 279
 Global Const $ID_The_Marketplace			= 303
 Global Const $ID_Imperial_Isle				= 359
 Global Const $ID_Isle_Of_Meditation			= 360
 Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Aspenwood_Gate_Luxon		= 389
-Global Const $ID_Drazach_Thicket			= 861
+Global Const $ID_Kaineng_City_Events		= 817
 Global Const $ID_Kaineng_A_Chance_Encounter	= 861
 ; Nightfall
 Global Const $ID_Sunward_Marches			= 373
@@ -455,9 +458,9 @@ Global Const $ID_Bag							= 35
 Global Const $ID_Rune_of_Holding				= 2988
 Global Const $ID_Identification_Kit				= 2989
 Global Const $ID_Superior_Identification_Kit	= 5899
-; 10 uses
-Global Const $ID_Salvage_Kit					= 2992
 ; 25 uses
+Global Const $ID_Salvage_Kit					= 2992
+; 10 uses
 Global Const $ID_Salvage_Kit_2					= 2993
 Global Const $ID_Expert_Salvage_Kit				= 2991
 Global Const $ID_Superior_Salvage_Kit			= 5900

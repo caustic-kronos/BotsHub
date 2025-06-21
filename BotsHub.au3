@@ -744,77 +744,77 @@ Func RunFarmLoop($Farm)
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
 		Case 'Corsairs'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  CorsairsFarm($STATUS)
+			$result = CorsairsFarm($STATUS)
 		Case 'Dragon Moss'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  DragonMossFarm($STATUS)
+			$result = DragonMossFarm($STATUS)
 		Case 'Eden Iris'
 			$INVENTORY_SPACE_NEEDED = 2
-			$result =  EdenIrisFarm($STATUS)
+			$result = EdenIrisFarm($STATUS)
 		Case 'Feathers'
 			$INVENTORY_SPACE_NEEDED = 10
-			$result =  FeathersFarm($STATUS)
+			$result = FeathersFarm($STATUS)
 		Case 'Follow'
 			$INVENTORY_SPACE_NEEDED = 15
-			$result =  FollowerFarm($STATUS)
+			$result = FollowerFarm($STATUS)
 		Case 'FoW'
 			$INVENTORY_SPACE_NEEDED = 30
-			$result =  FoWFarm($STATUS)
+			$result = FoWFarm($STATUS)
 		Case 'Froggy'
 			$INVENTORY_SPACE_NEEDED = 10
-			$result =  FroggyFarm($STATUS)
+			$result = FroggyFarm($STATUS)
 		Case 'Gemstone'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = GemstoneFarm($STATUS)
 		Case 'Jade Brotherhood'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  JadeBrotherhoodFarm($STATUS)
+			$result = JadeBrotherhoodFarm($STATUS)
 		Case 'Kournans'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  KournansFarm($STATUS)
+			$result = KournansFarm($STATUS)
 		Case 'Kurzick'
 			$INVENTORY_SPACE_NEEDED = 15
-			$result =  KurzickFactionFarm($STATUS)
+			$result = KurzickFactionFarm($STATUS)
 		Case 'Lightbringer'
 			$INVENTORY_SPACE_NEEDED = 10
-			$result =  LightbringerFarm($STATUS)
+			$result = LightbringerFarm($STATUS)
 		Case 'Luxon'
 			$INVENTORY_SPACE_NEEDED = 10
-			$result =  LuxonFactionFarm($STATUS)
+			$result = LuxonFactionFarm($STATUS)
 		Case 'Mantids'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  MantidsFarm($STATUS)
+			$result = MantidsFarm($STATUS)
 		Case 'Ministerial Commendations'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  MinisterialCommendationsFarm($STATUS)
+			$result = MinisterialCommendationsFarm($STATUS)
 		Case 'OmniFarm'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  OmniFarm($STATUS)
+			$result = OmniFarm($STATUS)
 		Case 'Pongmei'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  PongmeiChestFarm($STATUS)
+			$result = PongmeiChestFarm($STATUS)
 		Case 'Raptors'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  RaptorFarm($STATUS)
+			$result = RaptorFarm($STATUS)
 		Case 'SoO'
 			$INVENTORY_SPACE_NEEDED = 15
-			$result =  SoOFarm($STATUS)
+			$result = SoOFarm($STATUS)
 		Case 'SpiritSlaves'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  SpiritSlavesFarm($STATUS)
+			$result = SpiritSlavesFarm($STATUS)
 		Case 'Tasca'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  TascaChestFarm($STATUS)
+			$result = TascaChestFarm($STATUS)
 		Case 'Vaettirs'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result =  VaettirFarm($STATUS)
+			$result = VaettirFarm($STATUS)
 		Case 'Voltaic'
 			$INVENTORY_SPACE_NEEDED = 10
-			$result =  VoltaicFarm($STATUS)
+			$result = VoltaicFarm($STATUS)
 		Case 'Storage'
 			$INVENTORY_SPACE_NEEDED = 5
 			ResetBotsSetups()
-			$result =  ManageInventory($STATUS)
+			$result = ManageInventory($STATUS)
 		Case 'Dynamic'
 			Info('Dynamic execution')
 		Case 'Tests'

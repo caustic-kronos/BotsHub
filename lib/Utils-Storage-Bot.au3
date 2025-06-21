@@ -144,7 +144,7 @@ Func PassiveInventoryManagement()
 			DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 			$resetRequired = True
 		EndIf
-		If 4 - $identificationKitsCount > 0 Then BuyIdentificationKitInEOTN(3 - $identificationKitsCount)
+		If 4 - $identificationKitsCount > 0 Then BuySuperiorIdentificationKitInEOTN(4 - $identificationKitsCount)
 		If 12 - $salvageKitsCount > 0 Then BuySalvageKitInEOTN(12 - $salvageKitsCount)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
@@ -539,13 +539,9 @@ Func MoveItemsOutOfEquipmentBag()
 			Return 0
 		EndIf
 		Local $item = GetItemBySlot(5, $slot)
-		Local $itemID = DllStructGetData($item, 'ModelID')
-		If $itemID <> 0 Then
+		If DllStructGetData($item, 'ModelID') <> 0 Then
 			If IsArmor($item) Then ContinueLoop
-			If DllStructGetData($item, 'Equipped') Then ContinueLoop
-			If DllStructGetData($item, 'Customized') <> 0 Then ContinueLoop
-			If GetRarity($item) == $RARITY_Green Then ContinueLoop
-			If $Map_UltraRareWeapons[$itemID] <> null Then ContinueLoop
+			If Not DefaultShouldSalvageItem($item) Then ContinueLoop
 			MoveItem($item, $inventoryEmptySlots[2 * $cursor], $inventoryEmptySlots[2 * $cursor + 1])
 			$cursor += 1
 			RndSleep(50)

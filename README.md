@@ -43,7 +43,7 @@ To add a new bot, drop your script into the `/src/` folder and follow these step
 4. Add two lines in BotsHub - RunFarmLoop :
 	```autoit
 	Case '<Name>'
-		Return <Name>Farm($STATUS)
+		$result = <Name>Farm($STATUS)
 	```
 And that's it !
 
@@ -97,6 +97,35 @@ Copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder.
 No — if a bot isn’t included, I don’t have it.
 Feel free to create and add more bots; it’s pretty simple!
 </details>
+
+## 📌 Planned Features
+
+- 🔥✅ **Passive inventory management**
+- ⚡🛠️ **User interface for mods and inscriptions**
+- ⚡🕓 **Add more detailed loot options**
+- ⚡🛠️ **FoW completion bot**
+- 💡🕓 **Fix the Spirit Slaves farm**
+- 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
+- 🧠💭 **Boreal chest run bot** - 2 requests
+- 🧠💭 **War Supplies bot** - 2 requests
+- 🧠💭 **Kilroy bot** - 1 request
+- 🧠💭 **Asura/Norn/Vanguard/Dwarf title farm bot** - 1 request
+- 🧠💭 **LDOA bot** - 1 request
+- 🧠💭 **Citadel of Flame farm bot** - 1 request
+- 🧠💭 **Make 'Enter Mission' functional**
+- 🧠💭 **Improve crash recovery**
+
+### Legend
+
+- 🔥 High priority  
+- ⚡ Medium priority  
+- 💡 Low priority
+- 🧠 No priority
+
+- ✅ Completed
+- 🛠️ In progress
+- 🕓 Planned
+- 💭 Wishlist
 
 ## Dependencies
 - [AutoIt JSON UDF](https://github.com/Sylvan86/autoit-json-udf) – For JSON parsing - WTFPL license.

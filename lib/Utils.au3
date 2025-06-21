@@ -272,6 +272,7 @@ EndFunc
 ;~ Find and open chests in the given range (earshot by default)
 Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null, $BlockedFunction = null)
 	If GetIsDead() Then Return
+	If FindInInventory($ID_Lockpick)[0] == 0 Then Return
 
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
@@ -806,7 +807,7 @@ EndFunc
 
 ;~ Counts anything in inventory
 Func GetInventoryItemCount($itemID)
-	Local $amountItem
+	Local $amountItem = 0
 	Local $bag
 	Local $item
 	For $i = 1 To $BAG_NUMBER
@@ -957,7 +958,7 @@ Func IdentifyAllItems($buyKit = True)
 				Local $IdentificationKit = FindIdentificationKit()
 				If $IdentificationKit == 0 Then
 					If $buyKit Then
-						BuyIdentificationKitInEOTN()
+						BuySuperiorIdentificationKitInEOTN()
 					Else
 						Return False
 					EndIf
@@ -1079,25 +1080,41 @@ EndFunc
 
 ;~ Buy salvage kits in EOTN
 Func BuySalvageKitInEOTN($amount = 1)
-	Return BuyInEOTN($ID_Salvage_Kit_2, 2, 100, $amount, False)
+	While $amount > 10
+		BuyInEOTN($ID_Salvage_Kit, 2, 100, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInEOTN($ID_Salvage_Kit, 2, 100, $amount, False)
 EndFunc
 
 
 ;~ Buy expert salvage kits in EOTN
 Func BuyExpertSalvageKitInEOTN($amount = 1)
-	Return BuyInEOTN($ID_Expert_Salvage_Kit, 3, 400, $amount, False)
+	While $amount > 10
+		BuyInEOTN($ID_Expert_Salvage_Kit, 3, 400, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInEOTN($ID_Expert_Salvage_Kit, 3, 400, $amount, False)
 EndFunc
 
 
 ;~ Buy superior salvage kits in EOTN
 Func BuySuperiorSalvageKitInEOTN($amount = 1)
-	Return BuyInEOTN($ID_Superior_Salvage_Kit, 4, 2000, $amount, False)
+	While $amount > 10
+		BuyInEOTN($ID_Superior_Salvage_Kit, 4, 2000, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInEOTN($ID_Superior_Salvage_Kit, 4, 2000, $amount, False)
 EndFunc
 
 
 ;~ Buy superior identification kits in EOTN
 Func BuySuperiorIdentificationKitInEOTN($amount = 1)
-	Return BuyInEOTN($ID_Superior_Identification_Kit, 6, 500, $amount, False)
+	While $amount > 10
+		BuyInEOTN($ID_Superior_Identification_Kit, 6, 500, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInEOTN($ID_Superior_Identification_Kit, 6, 500, $amount, False)
 EndFunc
 
 
@@ -1142,7 +1159,7 @@ Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 	If $xunlaiTemporarySlot <> 0 Then
 		Local $freeSpace = $stackable ? 1 : $amount
 		For $i = 0 To $freeSpace - 1
-			MoveItem(GetItemByItemID($itemID), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
+			MoveItem(GetItemByModelID($itemID), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
 		Next
 	EndIf
 EndFunc
