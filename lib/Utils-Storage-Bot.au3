@@ -132,7 +132,6 @@ Func PassiveInventoryManagement()
 	; 3-Sort items
 	; 4-Identify items
 	; 5-Salvage
-	Local $resetRequired = False
 	Local $superiorIdentificationKits = [$ID_Superior_Identification_Kit]
 	Local $identificationKitsCount = GetInventoryKitCount($superiorIdentificationKits)
 	Local $salvageKits = [$ID_Salvage_Kit, $ID_Salvage_Kit_2]
@@ -140,12 +139,12 @@ Func PassiveInventoryManagement()
 	
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
 		Info('Buying kits for passive inventory management')
-		If GetMapID() <> $ID_Eye_of_the_North Then
-			DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-			$resetRequired = True
-		EndIf
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+		; Since we are in EOTN, might as well clear inventory
+		ActiveInventoryManagement()
 		If 4 - $identificationKitsCount > 0 Then BuySuperiorIdentificationKitInEOTN(4 - $identificationKitsCount)
 		If 12 - $salvageKitsCount > 0 Then BuySalvageKitInEOTN(12 - $salvageKitsCount)
+		Return True
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 	IdentifyAllItems(False)
@@ -153,7 +152,7 @@ Func PassiveInventoryManagement()
 	If $BAG_NUMBER == 5 Then
 		If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)
 	EndIf
-	Return $resetRequired
+	Return False
 EndFunc
 
 

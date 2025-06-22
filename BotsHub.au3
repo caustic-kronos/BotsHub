@@ -825,6 +825,8 @@ Func RunFarmLoop($Farm)
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
 	UpdateStats($result, $timer)
+	ClearMemory()
+	; _PurgeHook()
 	Return $result
 EndFunc
 #EndRegion Main loops
