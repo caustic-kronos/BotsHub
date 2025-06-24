@@ -312,15 +312,15 @@ Global Const $Map_Weapon_Types				= MapFromArray($Weapon_Types_Array)
 ; Damage relative to the req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
 Global Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Global Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Global Const $Focus_Max_Damage_Per_Level				=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
+Global Const $Focus_Max_Damage_Per_Level			=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
 Global Const $Hammer_Max_Damage_Per_Level			=	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
 Global Const $Wand_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
 Global Const $Shield_Max_Damage_Per_Level			=	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
-Global Const $Staff_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Global Const $Sword_Max_Damage_Per_Level				=	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
+Global Const $Staff_Max_Damage_Per_Level			=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Global Const $Sword_Max_Damage_Per_Level			=	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
 Global Const $Dagger_Max_Damage_Per_Level			=	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
 Global Const $Scythe_Max_Damage_Per_Level			=	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
-Global Const $Spear_Max_Damage_Per_Level				=	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
+Global Const $Spear_Max_Damage_Per_Level			=	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
 Global Const $Weapons_Max_Damage_Per_Level_Keys		=	[$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
 Global Const $Weapons_Max_Damage_Per_Level_Values	=	[$Axe_Max_Damage_Per_Level, $Bow_Max_Damage_Per_Level, $Focus_Max_Damage_Per_Level, $Hammer_Max_Damage_Per_Level, $Wand_Max_Damage_Per_Level, $Shield_Max_Damage_Per_Level, _
 															$Staff_Max_Damage_Per_Level, $Sword_Max_Damage_Per_Level, $Dagger_Max_Damage_Per_Level, $Scythe_Max_Damage_Per_Level, $Spear_Max_Damage_Per_Level]
@@ -329,11 +329,12 @@ Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damag
 
 
 #Region MapMarkers
-Global Const $ID_GadgetID_Smol_Chest	= 6062		;Istani chests
-Global Const $ID_GadgetID_NM_Chest		= 4582
-Global Const $ID_GadgetID_HM_Chest		= 8141
-Global Const $Chests_Array[]			= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest]
-Global Const $Map_Chests_IDs			= MapFromArray($Chests_Array)
+Global Const $ID_GadgetID_Smol_Chest		= 6062		;Istani chests
+Global Const $ID_GadgetID_NM_Chest			= 4582
+Global Const $ID_GadgetID_HM_Chest			= 8141
+Global Const $ID_GadgetID_Obsidian_Chest	= 74
+Global Const $Chests_Array[]				= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest, $ID_GadgetID_Obsidian_Chest]
+Global Const $Map_Chests_IDs				= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
 
 
@@ -1615,7 +1616,7 @@ Global Const $ID_Spiritbinder						= 2467
 ;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
 ;3270						; magma shield/summit shield ???
 ;870, 869, 1101				; more canthan rare skins
-;1439, 1557			; Elonian Swords (Colossal, Tattooed, Dead, etc)
+;1439, 1557					; Elonian Swords (Colossal, Tattooed, Dead, etc)
 
 ; Bow
 Global Const $ID_Eternal_Bow						= 133

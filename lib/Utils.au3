@@ -45,6 +45,9 @@ Func RunTests($STATUS)
 	;	Sleep(2000)
 	;WEnd
 
+	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
+	;~ ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
+
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $itemID = DllStructGetData($item, 'ID')
 
@@ -1374,7 +1377,7 @@ EndFunc
 #Region Utils
 ;~ Mapping function
 ;~ Mapping mode corresponds to : 0 - everything, 1 - only location, 2 - only chests
-Func ToggleMapping($mappingMode = 0)
+Func ToggleMapping($mappingMode = 0, $mappingPath = @ScriptDir & '/logs/mapping.log', $chestPath = @ScriptDir & '/logs/chests.log')
 	; Toggle variable
 	Local Static $isMapping = False
 	Local Static $mappingFile
@@ -1385,8 +1388,10 @@ Func ToggleMapping($mappingMode = 0)
 		FileClose($chestFile)
 		$isMapping = False
 	Else
-		$mappingFile = FileOpen(@ScriptDir & '/logs/mapping.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-		$chestFile = FileOpen(@ScriptDir & '/logs/chests.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		Info('Logging mapping to : ' & $mappingPath)
+		Info('Logging chests to : ' & $chestPath)
+		$mappingFile = FileOpen($mappingPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		$chestFile = FileOpen($chestPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 		MappingWrite($mappingFile, $chestFile, $mappingMode)
 		AdlibRegister('MappingWrite', 1000)
 		$isMapping = True

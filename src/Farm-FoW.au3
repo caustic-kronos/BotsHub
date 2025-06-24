@@ -1,4 +1,4 @@
-; Author: Kronos ?
+; Author: TDawg
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -96,26 +96,6 @@ Func FoWFarmLoop()
 	If ForestOfTheWailingLord() Then Return 1
 	If GriffonRun() Then Return 1
 	If TempleLoot() Then Return 1
-
-
-	TowerOfCourage()
-	Info('Tower of Courage cleared')
-	TheGreatBattleField()
-	Info('Temple quest retrieved')
-	TheSpiderCave_and_FissureShore()
-	Info('Temple Restored')
-	LakeOfFire()
-	Info('Lake of Fire cleared')
-	TowerOfStrengh()
-	Info('Tower of Strengh cleared')
-	BurningForest()
-	Info('Burning Forest cleared')
-	ForestOfTheWailingLord()
-	Info('Forest of Wailing Lords cleared')
-	GriffonRun()
-	Info('Done, GG')
-	TempleLoot()
-	Info('Looted, gratz on the obby edge')
 
 	AdlibUnRegister('FoWGroupIsAlive')
 	Return 0
@@ -335,11 +315,13 @@ Func LakeOfFire()
 	SafeMoveAggroAndKill(20447, -8116, '4', $aggroRange)
 	SafeMoveAggroAndKill(20716, -12441, '5', $aggroRange)
 	SafeMoveAggroAndKill(18274, -14007, '6', $aggroRange)
-	;SafeMoveAggroAndKill(19595, -15322, '7', $aggroRange)
-
+	SafeMoveAggroAndKill(19450, -15000, '7', $aggroRange)
 EndFunc
 
 Func TowerOfStrengh()
+	; Issues :
+	; 1- not waiting for npc so will skip going in the tower at the end
+	; 2- not killing shardwolf
 	Info('Clearing area of Tower of Strengh')
 	MoveTo(18274, -14007)
 	MoveTo(20716, -12441)
@@ -360,7 +342,14 @@ Func TowerOfStrengh()
 	SafeMoveAggroAndKill(10307, -5857, '2', $aggroRange)
 	SafeMoveAggroAndKill(15341, -1369, '3', $aggroRange)
 	SafeMoveAggroAndKill(16754, -1744, '4', $aggroRange)
-
+	ShardWolfKill()
+	; Entering the tower garantees the nps arrived
+	Local $me = GetMyAgent()
+	While ComputeDistance(DllStructGetData(GetMyAgent(), 'X'), DllStructGetData($me, 'Y'), 16700, -1700) > $RANGE_NEARBY
+		MoveTo(16700, -1700)
+		Sleep(1000)
+		$me = GetMyAgent()
+	WEnd
 EndFunc
 
 Func BurningForest()
@@ -410,7 +399,8 @@ Func ForestOfTheWailingLord()
 
 	ShardWolfKill()
 
-	SafeMoveAggroAndKill(-20185, 13965, '6', $aggroRange)
+	; Safer move
+	SafeMoveAggroAndKill(-20185, 13965, '6', $aggroRange - 500)
 	
 	Info('Safely pulling')
 	CommandHero(1, -20167, 13585)
@@ -421,22 +411,17 @@ Func ForestOfTheWailingLord()
 	CommandHero(6, -19759, 13784)
 	CommandHero(7, -19923, 13580)
 	
+	; Issue 1: mobs have been cleared before
+	; Issue 2: quest state is not 3 once mobs are cleared, it's 19 - corrected
 	Local $questState = 1
-	While $questState <> 3
+	While $questState <> 19
 		MoveTo(-21068, 14640)
+		Sleep(3000)
 		MoveTo(-20488, 14182)
-
+		Sleep(17000)
 		$questState = DllStructGetData(GetQuestByID($ID_Quest_WailingLord), 'LogState')
-		Sleep(30000)
 	WEnd
-	
-	CancelHero(1)
-	CancelHero(2)
-	CancelHero(3)
-	CancelHero(4)
-	CancelHero(5)
-	CancelHero(6)
-	CancelHero(7)
+	CancelAllHeroes()
 
 	Info('Getting The Griffon quest')
 	MoveTo(-21567, 15010)
@@ -448,7 +433,7 @@ Func ForestOfTheWailingLord()
 EndFunc
 
 Func GriffonRun()
-	Info('Preclearing area')
+	Info('Preclearing area for griffons')
 	SafeMoveAggroAndKill(-16904, 9813, '1', $aggroRange)
 	SafeMoveAggroAndKill(-7357, 5041, '2', $aggroRange)
 	SafeMoveAggroAndKill(-6761, -4260, '3', $aggroRange)
@@ -458,29 +443,33 @@ Func GriffonRun()
 
 	ShardWolfKill()
 	
-	Info('Going to grab them')
+	Info('Grabbing griffons')
 	SafeMoveAggroAndKill(-13824, -2768, '1', $aggroRange)
 	SafeMoveAggroAndKill(-9634, -5868, '2', $aggroRange)
 	SafeMoveAggroAndKill(-6761, -4260, '3', $aggroRange)
 	SafeMoveAggroAndKill(-7357, 5041, '4', $aggroRange)
 	SafeMoveAggroAndKill(-18205, 9378, '5', $aggroRange)
 	
-	MoveTo(-22136, 10208)
-	MoveTo(-7357, 5041)
-	MoveTo(-6761, -4260)
-	MoveTo(-9634, -5868)
-	MoveTo(-15951, -1902)
-
+	Info('Leading griffons back')
+	SafeMoveAggroAndKill(-20100, 9450, '1', $aggroRange)
+	SafeMoveAggroAndKill(-17600, 9750, '2', $aggroRange)
+	SafeMoveAggroAndKill(-12850, 6700, '3', $aggroRange)
+	SafeMoveAggroAndKill(-9550, 6300, '4', $aggroRange)
+	SafeMoveAggroAndKill(-7650, 5050, '5', $aggroRange)
+	SafeMoveAggroAndKill(-6500, -3600, '6', $aggroRange)
+	SafeMoveAggroAndKill(-7350, -4700, '7', $aggroRange)
+	SafeMoveAggroAndKill(-10000, -4900, '8', $aggroRange)
+	SafeMoveAggroAndKill(-12450, -3200, '9', $aggroRange)
+	SafeMoveAggroAndKill(-15650, -1750, '10', $aggroRange)
 EndFunc
 
 Func TempleLoot()
-	MoveTo(-6957, -5548)
-	MoveTo(-6410, 2020)
-	MoveTo(1584, 7083)
-	MoveTo(1695, 2168)
-	MoveTo(259, 1286)
-	MoveTo(1551, 63)
-	
+	MoveTo(-9800, -4800)
+	MoveTo(-6800, -3800)
+	MoveTo(-8000, 5100)
+	MoveTo(1550, 5200)
+	MoveTo(1700, 2400)
+	MoveTo(1800, 400)
 	Info('Opening chest')
 	MoveTo(1833, 371)
 	RndSleep(5000)

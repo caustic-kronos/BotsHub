@@ -41,8 +41,9 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 - Author: Crux
 - License: licensed under Apache 2.0
 
-### "Farm-Froggy.au3" "Farm-SoO.au3"
+### "Farm-Froggy.au3" "Farm-SoO.au3" "Farm-FoW.au3"
 - Author: TDawg
+- Contributor: Kronos
 - License: licensed under Apache 2.0
 
 ### "Farm-Lightbringer.au3" "Farm-Luxon.au3" "Farm-Kurzick.au3"
