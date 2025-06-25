@@ -674,8 +674,8 @@ Func GenericMoveItem($bagsSizes, $item, $genericSlot)
 EndFunc
 
 
-;~ Balance character gold to the amount given
-Func BalanceCharacterGold($goldAmount)
+;~ Balance character gold to the amount given - mode 0 = full balance, mode 1 = only withdraw, mode 2 = only deposit
+Func BalanceCharacterGold($goldAmount, $mode = 0)
 	Info('Balancing characters gold')
 	Local $GCharacter = GetGoldCharacter()
 	Local $GStorage = GetGoldStorage()
@@ -683,9 +683,9 @@ Func BalanceCharacterGold($goldAmount)
 		Warn('Too much gold in chest, use some.')
 	ElseIf $GStorage < 50000 Then
 		Warn('Not enough gold in chest, get some.')
-	ElseIf $GCharacter > $goldAmount Then
+	ElseIf $GCharacter > $goldAmount And $mode <> 1 Then
 		DepositGold($GCharacter - $goldAmount)
-	ElseIf $GCharacter < $goldAmount Then
+	ElseIf $GCharacter < $goldAmount And $mode <> 2 Then
 		WithdrawGold($goldAmount - $GCharacter)
 	EndIf
 	Return True

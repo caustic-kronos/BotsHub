@@ -103,15 +103,15 @@ Func ActiveInventoryManagement()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellMaterials) == $GUI_CHECKED And HasMaterials() Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-		; If we have more than 70k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
-		If GetGoldCharacter() > 70000 Then BalanceCharacterGold(70000)
+		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		If HasBasicMaterials() Then SellMaterialsToMerchant()
 		If HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SellItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
-		; If we have more than 70k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
-		If GetGoldCharacter() > 70000 Then BalanceCharacterGold(70000)
+		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		SellEverythingToMerchant()
 	EndIf
 	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() < 100000 Then
@@ -119,7 +119,7 @@ Func ActiveInventoryManagement()
 		Info('Deposited Gold')
 		$TIMESDEPOSITED += 1
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 70000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
 
