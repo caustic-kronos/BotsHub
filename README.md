@@ -8,13 +8,12 @@ It needs AutoIt version 3.3.16.0 or higher to run.
 
 ## Features
 - Shared interface for all bots
-- Centralized farm tracking
-- Title tracking system
-- Run & Loot automation
-- Customizable consumable usage
-- Detailed farm info (builds, equipment, etc.)
-- Easy plug-and-play support for new bots
-- Automatic loot data storage: tracks looted items and their details (IDs, prices, modstruct, etc.) in a SQLite database
+- Shared farm, loot and title tracking
+- Shared inventory management
+- Many options : items sorting, identification, salvage, materials selling, items selling, buying ectoplasms, storing gold and items, using equipment bag, town location, detailed - looting ...
+- Interface with farm informations (build, equipment, etc)
+- Simple plug-and-play support for new bots
+- (optional) Loot database
 
 ## Repository Structure
 - `BotsHub.au3`: Main launcher script that acts as a hub for all bots.
@@ -31,6 +30,36 @@ To use it:
 3. (Optional) To make the data collection functional, AutoIT needs the SQLite library:
 	1. You can find the lib folder the files SQLite.au3 and SQLite.dll.au3
 	2. Copy those files to your Program Files/AutoIt3/Include folder.
+
+## Existing Bots
+### Farms
+- Raptors farm (festive items, golds, materials)
+- Vaettirs farm (festive items, golds, materials)
+- Jaya Bluffs Sensali farm (feathers, bones)
+- Drazach Thicket DragonMoss farm (Fibers, Gothic Defender, Echovald shield, Ornate shield)
+- Waijun Bazaar mantids farm (celestial weapons, chitin, dust)
+- Moddok Crevice corsairs farm (Runes, Colossal scimitar, Q8)
+- Missing Daughter Jade Brotherhood farm (Q8, jade bracelets)
+- Fish in a Barrel kournans farm (Q8, runes)
+- Spirit Slaves farm (Q8, dust, bones)
+- A Chance Encounter farm (Ministerial Commendations, faction skins)
+- Eden Iris farm (iris)
+### Vanquishes / Titles
+- Ferndale vanquish (Kurzick faction points)
+- Mount Qinkai vanquish (Luxon faction points)
+- Sulfurous Wastes farm (Lightbringer points)
+### Dungeons/Elite zones
+- Bogroot dungeon farm (Froggy)
+- SoO dungeon farm (Dragon Bone Staff)
+- Slaver's Exile dungeon farm (Voltaic Spears)
+- FoW farm (Obsidian shard, Obsidian Edge, shadow weapons)
+- DoA farm (gemstones)
+### Chest runs
+- Pongmei chest run (faction skins, Q8)
+- Tasca chest farm (Magma shield, Stone Summit Shield, Summit Warlord Shield)
+### Others
+- Follow bot
+- Inventory management
 
 ## Adding Your Own Bots
 To add a new bot, drop your script into the `/src/` folder and follow these steps:
