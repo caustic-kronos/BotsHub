@@ -143,7 +143,7 @@ Global $GUI_Group_Titles, _
 Global $GUI_Group_GlobalOptions, _
 		$GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, _
 		$GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_StoreGold, $GUI_Checkbox_BuyEctoplasm
-Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables, $GUI_Checkbox_FarmMaterials
+Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables, $GUI_Checkbox_FarmMaterials, $GUI_Checkbox_DisableRendering
 Global $GUI_Group_BaseLootOptions, _
 		$GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, _
 		$GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
@@ -280,6 +280,7 @@ Func createGUI()
 	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'Random')
 	GUICtrlSetOnEvent($GUI_Combo_DistrictChoice, 'GuiButtonHandler')
 	$GUI_Checkbox_FarmMaterials = GUICtrlCreateCheckbox('Farm materials', 315, 154, 256, 20)
+	$GUI_Checkbox_DisableRendering = GUICtrlCreateCheckbox('Disable rendering', 315, 183, 256, 20)
 	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 315, 364, 156, 20)
 	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 490, 364, 75, 20)
 	GUICtrlSetBkColor($GUI_Button_DynamicExecution, $GUI_BLUE_COLOR)
@@ -692,6 +693,7 @@ Func BotHubLoop()
 		Sleep(1000)
 
 		If ($STATUS == 'RUNNING') Then
+			If GUICtrlRead($GUI_Checkbox_DisableRendering) == $GUI_CHECKED And GetIsRendering() Then DisableRendering()
 			If GUICtrlRead($GUI_Checkbox_FarmMaterials) = $GUI_CHECKED Then
 				Local $resetRequired = PassiveInventoryManagement()
 				If $resetRequired Then ResetBotsSetups()
@@ -718,6 +720,7 @@ Func BotHubLoop()
 		If ($STATUS == 'WILL_PAUSE') Then
 			Warn('Paused.')
 			$STATUS = 'PAUSED'
+			If GUICtrlRead($GUI_Checkbox_DisableRendering) == $GUI_CHECKED And Not GetIsRendering() Then EnableRendering()
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			; Enabling changing account is non trivial
 			;GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Enable)
@@ -1038,6 +1041,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
 	_JSON_addChangeDelete($jsonObject, 'run.bag_number', Number(GUICtrlRead($GUI_Input_BagNumber)))
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials', Number(GUICtrlRead($GUI_Checkbox_FarmMaterials)))
+	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', Number(GUICtrlRead($GUI_Checkbox_DisableRendering)))
 	_JSON_addChangeDelete($jsonObject, 'consumables.consume', GUICtrlRead($GUI_Checkbox_UseConsumables) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.everything', GUICtrlRead($GUI_Checkbox_LootEverything) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.nothing', GUICtrlRead($GUI_Checkbox_LootNothing) == 1)
@@ -1093,6 +1097,7 @@ Func ReadConfigFromJson($jsonString)
 	$BAG_NUMBER = $bagNumber
 	GUICtrlSetData($GUI_Input_BagNumber, $bagNumber)
 	GUICtrlSetState($GUI_Checkbox_FarmMaterials, _JSON_Get($jsonObject, 'run.farm_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_DisableRendering, _JSON_Get($jsonObject, 'run.disable_rendering') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'consumables.consume') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootEverything, _JSON_Get($jsonObject, 'loot.everything') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootNothing, _JSON_Get($jsonObject, 'loot.nothing') ? $GUI_CHECKED : $GUI_UNCHECKED)

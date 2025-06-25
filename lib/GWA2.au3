@@ -46,7 +46,7 @@ Global $asmInjectionString, $asmInjectionSize, $asmCodeOffset
 Global $packetlocation
 
 ; Flags
-Global $disableRendering
+Global $disableRenderingAddress
 
 ; Game-related variables
 ; Game memory - queue, targets, skills
@@ -640,7 +640,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	$traderQuoteId = GetValue('TraderQuoteID')
 	$traderCostId = GetValue('TraderCostID')
 	$traderCostValue = GetValue('TraderCostValue')
-	$disableRendering = GetValue('DisableRendering')
+	$disableRenderingAddress = GetValue('DisableRendering')
 	$agentCopyCount = GetValue('AgentCopyCount')
 	$agentCopyBase = GetValue('AgentCopyBase')
 	$lastDialogId = GetValue('LastDialogID')
@@ -2050,8 +2050,7 @@ Func EnableRendering($showWindow = True)
 		If $windowHandle <> $previousWindow And $previousWindow Then RestoreWindowState($previousWindow, $previousWindowState)
 	EndIf
 	If Not GetIsRendering() Then
-		$disableRendering = True
-		If Not MemoryWrite($disableRendering, 0) Then Return SetError(@error, False)
+		If Not MemoryWrite($disableRenderingAddress, 0) Then Return SetError(@error, False)
 		Sleep(250)
 	EndIf
 	Return 1
@@ -2063,8 +2062,7 @@ Func DisableRendering($hideWindow = True)
 	Local $windowHandle = GetWindowHandle()
 	If $hideWindow And WinGetState($windowHandle) Then WinSetState($windowHandle, '', @SW_HIDE)
 	If GetIsRendering() Then
-		$disableRendering = False
-		If Not MemoryWrite($disableRendering, 1) Then Return SetError(@error, False)
+		If Not MemoryWrite($disableRenderingAddress, 1) Then Return SetError(@error, False)
 		Sleep(250)
 	EndIf
 	Return 1
@@ -2079,7 +2077,7 @@ EndFunc
 
 ;~ Returns True if the game is being rendered
 Func GetIsRendering()
-	Return MemoryRead($disableRendering) <> 1
+	Return MemoryRead($disableRenderingAddress) <> 1
 EndFunc
 
 
@@ -2088,7 +2086,8 @@ Func RestoreWindowState($windowHandle, $previousWindowState)
 	If Not $windowHandle Or Not $previousWindowState Then Return 0
 
 	Local $currentWindowState = WinGetState($windowHandle)
-	For $state In [1, 2, 4, 8, 16, 32]
+	Local $states = [1, 2, 4, 8, 16, 32] ; SW_HIDE, SW_SHOWNORMAL, SW_SHOWMINIMIZED, SW_SHOWMAXIMIZED, SW_MINIMIZE, SW_RESTORE
+	For $state In $states
 		If BitAND($previousWindowState, $state) And Not BitAND($currentWindowState, $state) Then WinSetState($windowHandle, '', $state)
 	Next
 EndFunc
