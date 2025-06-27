@@ -45,13 +45,6 @@ Func RunTests($STATUS)
 	;	Sleep(2000)
 	;WEnd
 
-	Out(GetIsRendering())
-	DisableRendering()
-	Out(GetIsRendering())
-	Sleep(5000)
-	Out(GetIsRendering())
-	EnableRendering()
-	Out(GetIsRendering())
 
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
 	;~ ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
