@@ -303,7 +303,7 @@ Func Kill($waitForSettle = True)
 	RndSleep(500)
 	Info('Looting')
 	PickUpItems()
-	CheckForChests()
+	FindAndOpenChests()
 	ChangeWeaponSet(2)
 EndFunc
 

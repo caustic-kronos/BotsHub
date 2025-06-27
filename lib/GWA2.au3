@@ -169,6 +169,9 @@ Global $makeAgentArrayStructPtr = DllStructGetPtr($makeAgentArrayStruct)
 Global $changeStatusStruct = SafeDllStructCreate('ptr;dword')
 Global $changeStatusStructPtr = DllStructGetPtr($changeStatusStruct)
 
+Global $enterMissionStruct = SafeDllStructCreate('ptr')
+Global $enterMissionStructPtr = DllStructGetPtr($enterMissionStruct)
+
 Global $tradeHackAddress
 Global $labelsMap[]
 #EndRegion CommandStructs
@@ -574,6 +577,9 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 
 	SetValue('MoveFunction', '0x' & Hex(GetScannedAddress('ScanMoveFunction', 1), 8))
 	If @error Then logCriticalErrors('Failed to read move function')
+	$tempValue = GetScannedAddress('ScanEnterMissionFunction', 0x52)
+	SetValue('EnterMissionFunction', '0x' & Hex(GetCallTargetAddress($tempValue), 8))
+	If @error Then logCriticalErrors('Failed to read EnterMission function')
 
 	SetValue('UseSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseSkillFunction', -0x125), 8))
 	If @error Then logCriticalErrors('Failed to read use skill function')
@@ -692,10 +698,25 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	If @error Then logCriticalErrors('Failed to set CommandMakeAgentArray command')
 	DllStructSetData($changeStatusStruct, 1, GetValue('CommandChangeStatus'))
 	If @error Then logCriticalErrors('Failed to set CommandChangeStatus command')
+	DllStructSetData($enterMissionStruct, 1, GetValue('CommandEnterMission'))
+	If @error Then logCriticalErrors('Failed to set CommandEnterMission command')
 	If $changeTitle Then WinSetTitle(GetWindowHandle(), '', 'Guild Wars - ' & GetCharacterName())
 	If @error Then logCriticalErrors('Failed to change window title')
 	SetMaxMemory()
 	Return GetWindowHandle()
+EndFunc
+
+
+;~ Get the address provided to a call (ie: strips the E8 instruction, and sums current call address with the obtained offset)
+Func GetCallTargetAddress($address)
+    Local $offset = MemoryRead($address + 0x01, 'dword')
+    If $offset > 0x7FFFFFFF Then
+		Warn('Offset is larger than 0x7FFFFFFF, adjusting for 64-bit address space.')
+        $offset -= 0x100000000
+    EndIf
+    Local $targetAddress = $address + 5 + $offset
+
+    Return $targetAddress
 EndFunc
 
 
@@ -849,6 +870,9 @@ Func ScanGWBasePatterns()
 	AddPatternToInjection('BA3300000089088d4004')
 	_('ScanWorldConst:')
 	AddPatternToInjection('8D0476C1E00405')
+	_('ScanEnterMissionFunction:')
+	AddPatternToInjection('A900001000743A')
+
 
 	_('ScanProc:')													; Label for the scan procedure
 	_('pushad')														; Push all general-purpose registers onto the stack to save their values
@@ -1781,7 +1805,7 @@ EndFunc
 
 ;~ Enter a challenge mission/pvp.
 Func EnterChallenge()
-	Return SendPacket(0x8, $HEADER_PARTY_ENTER_CHALLENGE, 1)
+	Enqueue($enterMissionStructPtr, 4)
 EndFunc
 
 
@@ -4426,6 +4450,7 @@ Func ModifyMemory()
 	CreateStringLog()
 	CreateRenderingMod()
 	CreateCommands()
+	CreateUICommands()
 	CreateDialogHook()
 	$memoryInterface = MemoryRead(MemoryRead($baseAddress), 'ptr')
 
@@ -5259,6 +5284,16 @@ Func CreateCommands()
 	_('pop ebx')
 	_('pop edx')
 	_('ljmp CommandReturn')
+EndFunc
+
+
+;~ Create UI commands like EnterMission
+Func CreateUICommands()
+    _('CommandEnterMission:')
+    _('push 1')
+    _('call EnterMissionFunction')
+    _('add esp,4')
+    _('ljmp CommandReturn')
 EndFunc
 #EndRegion Modification
 

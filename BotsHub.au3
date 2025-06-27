@@ -58,6 +58,7 @@
 #include 'src/Farm-Follower.au3'
 #include 'src/Farm-FoW.au3'
 #include 'src/Farm-Froggy.au3'
+#include 'src/Farm-Gemstone.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
@@ -67,12 +68,11 @@
 #include 'src/Farm-MinisterialCommendations.au3'
 #include 'src/Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
-#include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-SoO.au3'
+#include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
-#include 'src/Farm-Gemstone.au3'
 #include 'lib/JSON.au3'
 #EndRegion Includes
 

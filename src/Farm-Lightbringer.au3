@@ -229,7 +229,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	Local $target = GetNearestNPCInRangeOfCoords($x, $y, 3, $range)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
-		CheckForChests($RANGE_SPIRIT)
+		FindAndOpenChests($RANGE_SPIRIT)
 		Return False
 	EndIf
 
@@ -262,7 +262,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	If CountPartyDeaths() > 5 Then Return True
 
 	PickUpItems()
-	CheckForChests($RANGE_SPIRIT)
+	FindAndOpenChests($RANGE_SPIRIT)
 
 	Return False
 EndFunc

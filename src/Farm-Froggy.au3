@@ -32,6 +32,7 @@ Global Const $FroggyFarmInformations = 'For best results, dont cheap out on hero
 
 Global $FROGGY_FARM_SETUP = False
 Global $FroggyDeathsCount = 0
+Global Const $froggyAggroRange = $RANGE_SPELLCAST + 100
 Global Const $ID_Froggy_Quest = 0x339
 
 
@@ -72,22 +73,21 @@ Func SetupFroggyFarm()
 	WEnd
 	AdlibRegister('FroggyGroupIsAlive', 10000)
 
-	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('Making way to Bogroot')
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
-		MoveAggroAndKill(-4559, -14406, 'I majored in pain, with a minor in suffering', $aggroRange)
-		MoveAggroAndKill(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $aggroRange)
-		MoveAggroAndKill(-928, -8699, 'I am fire! I am war! What are you?', $aggroRange)
-		MoveAggroAndKill(4200, -4897, 'Praise Joko!', $aggroRange)
-		MoveAggroAndKill(4671, 7094, 'I can outrun a centaur', $aggroRange)
+		MoveAggroAndKill(-4559, -14406, 'I majored in pain, with a minor in suffering', $froggyAggroRange)
+		MoveAggroAndKill(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $froggyAggroRange)
+		MoveAggroAndKill(-928, -8699, 'I am fire! I am war! What are you?', $froggyAggroRange)
+		MoveAggroAndKill(4200, -4897, 'Praise Joko!', $froggyAggroRange)
+		MoveAggroAndKill(4671, 7094, 'I can outrun a centaur', $froggyAggroRange)
 		If FroggyIsFailure() Then Return 1
 	WEnd
 
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 12280, 22585, 1250)
-		MoveAggroAndKill(11025, 11710, 'Wow. Thats quality armor.', $aggroRange)
-		MoveAggroAndKill(14624, 19314, 'By Ogdens Hammer, what savings!', $aggroRange)
-		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $aggroRange)
-		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $aggroRange)
+		MoveAggroAndKill(11025, 11710, 'Wow. Thats quality armor.', $froggyAggroRange)
+		MoveAggroAndKill(14624, 19314, 'By Ogdens Hammer, what savings!', $froggyAggroRange)
+		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $froggyAggroRange)
+		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 		If FroggyIsFailure() Then Return 1
 	WEnd
 	AdlibUnRegister('FroggyGroupIsAlive')
@@ -179,16 +179,15 @@ EndFunc
 
 ;~ Clear Froggy floor 1
 Func ClearFroggyFloor1()
-	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('------------------------------------')
 	Info('First floor')
 	If IsHardmodeEnabled() Then UseConset()
 
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 6078, 4483, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(17619, 2687, 'Moving near duo', $aggroRange)
-		SafeMoveAggroAndKill(18168, 4788, 'Killing one from duo', $aggroRange)
-		SafeMoveAggroAndKill(18880, 7749, 'Triggering beacon 1', $aggroRange)
+		MoveAggroAndKill(17619, 2687, 'Moving near duo', $froggyAggroRange)
+		MoveAggroAndKill(18168, 4788, 'Killing one from duo', $froggyAggroRange)
+		MoveAggroAndKill(18880, 7749, 'Triggering beacon 1', $froggyAggroRange)
 
 		Info('Getting blessing')
 		MoveTo(19063, 7875)
@@ -197,28 +196,28 @@ Func ClearFroggyFloor1()
 		Dialog(0x84)
 		RndSleep(250)
 
-		SafeMoveAggroAndKill(13080, 7822, 'Moving towards nettles cave', $aggroRange)
-		SafeMoveAggroAndKill(9946, 6963, 'Nettles cave', $aggroRange)
-		SafeMoveAggroAndKill(6078, 4483, 'Nettles cave exit group', $aggroRange)
+		MoveAggroAndKill(13080, 7822, 'Moving towards nettles cave', $froggyAggroRange)
+		MoveAggroAndKill(9946, 6963, 'Nettles cave', $froggyAggroRange)
+		MoveAggroAndKill(6078, 4483, 'Nettles cave exit group', $froggyAggroRange)
 	WEnd
 
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -1501, -8590, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(4960, 1984, 'Triggering beacon 2', $aggroRange)
-		SafeMoveAggroAndKill(3567, -278, 'Massive frog cave', $aggroRange)
-		SafeMoveAggroAndKill(1763, -607, 'Im getting buried here!', $aggroRange)
-		SafeMoveAggroAndKill(224, -2238, 'Massive frog cave exit', $aggroRange)
-		SafeMoveAggroAndKill(-1175, -4994, 'Moving through poison jets', $aggroRange)
-		SafeMoveAggroAndKill(-115, -8569, 'Ragna-rock n roll!', $aggroRange)
-		SafeMoveAggroAndKill(-1501, -8590, 'Triggering beacon 3', $aggroRange)
+		MoveAggroAndKill(4960, 1984, 'Triggering beacon 2', $froggyAggroRange)
+		MoveAggroAndKill(3567, -278, 'Massive frog cave', $froggyAggroRange)
+		MoveAggroAndKill(1763, -607, 'Im getting buried here!', $froggyAggroRange)
+		MoveAggroAndKill(224, -2238, 'Massive frog cave exit', $froggyAggroRange)
+		MoveAggroAndKill(-1175, -4994, 'Moving through poison jets', $froggyAggroRange)
+		MoveAggroAndKill(-115, -8569, 'Ragna-rock n roll!', $froggyAggroRange)
+		MoveAggroAndKill(-1501, -8590, 'Triggering beacon 3', $froggyAggroRange)
 	WEnd
 
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 7171, -17934, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(-115, -8569, 'You played two hours and died like this?!', $aggroRange)
-		SafeMoveAggroAndKill(1966, -11018, 'Last cave entrance', $aggroRange)
-		SafeMoveAggroAndKill(5775, -12761, 'Youre interrupting my calculations', $aggroRange)
-		SafeMoveAggroAndKill(6125, -15820, 'Commander, a word...', $aggroRange)
+		MoveAggroAndKill(-115, -8569, 'You played two hours and died like this?!', $froggyAggroRange)
+		MoveAggroAndKill(1966, -11018, 'Last cave entrance', $froggyAggroRange)
+		MoveAggroAndKill(5775, -12761, 'Youre interrupting my calculations', $froggyAggroRange)
+		MoveAggroAndKill(6125, -15820, 'Commander, a word...', $froggyAggroRange)
 		Info('Last cave exit')
 		MoveTo(7171, -17934)
 	WEnd
@@ -236,7 +235,6 @@ EndFunc
 
 ;~ Clear Froggy floor 2
 Func ClearFroggyFloor2()
-	Local $aggroRange = $RANGE_SPELLCAST + 100
 	Info('------------------------------------')
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
@@ -250,36 +248,36 @@ Func ClearFroggyFloor2()
 		RndSleep(250)
 
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(-10931, -4584, 'Moving in cave', $aggroRange)
-		SafeMoveAggroAndKill(-10121, -3175, 'Moving near river ', $aggroRange)
-		SafeMoveAggroAndKill(-9646, -1005, 'Going through river ', $aggroRange)
-		SafeMoveAggroAndKill(-8548, 601, 'Moving to incubus cave', $aggroRange)
-		SafeMoveAggroAndKill(-7217, 3353, 'Incubus cave entrance', $aggroRange)
-		SafeMoveAggroAndKill(-8229, 5519, 'Wololo', $aggroRange)
-		SafeMoveAggroAndKill(-9434, 8479, 'Help! The crusaders are attacking our trade routes!', $aggroRange)
-		SafeMoveAggroAndKill(-8182, 10187, 'La Hire wishes to kill something', $aggroRange)
-		SafeMoveAggroAndKill(-6440, 11526, 'The blood on La Hires sword is almost dry!', $aggroRange)
-		SafeMoveAggroAndKill(-3963, 10050, 'It is a good day for La Hire to die... ', $aggroRange)
-		SafeMoveAggroAndKill(-1992, 11950, 'Ill be back, Saracen dogs!', $aggroRange)
-		SafeMoveAggroAndKill(-719, 11140, 'Triggering incubus cave exit beacon', $aggroRange)
+		MoveAggroAndKill(-10931, -4584, 'Moving in cave', $froggyAggroRange)
+		MoveAggroAndKill(-10121, -3175, 'Moving near river ', $froggyAggroRange)
+		MoveAggroAndKill(-9646, -1005, 'Going through river ', $froggyAggroRange)
+		MoveAggroAndKill(-8548, 601, 'Moving to incubus cave', $froggyAggroRange)
+		MoveAggroAndKill(-7217, 3353, 'Incubus cave entrance', $froggyAggroRange)
+		MoveAggroAndKill(-8229, 5519, 'Wololo', $froggyAggroRange)
+		MoveAggroAndKill(-9434, 8479, 'Help! The crusaders are attacking our trade routes!', $froggyAggroRange)
+		MoveAggroAndKill(-8182, 10187, 'La Hire wishes to kill something', $froggyAggroRange)
+		MoveAggroAndKill(-6440, 11526, 'The blood on La Hires sword is almost dry!', $froggyAggroRange)
+		MoveAggroAndKill(-3963, 10050, 'It is a good day for La Hire to die... ', $froggyAggroRange)
+		MoveAggroAndKill(-1992, 11950, 'Ill be back, Saracen dogs!', $froggyAggroRange)
+		MoveAggroAndKill(-719, 11140, 'Triggering incubus cave exit beacon', $froggyAggroRange)
 	WEnd
 
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 8398, 4358, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(3130, 12731, 'Beetle zone', $aggroRange)
-		SafeMoveAggroAndKill(3535, 13860, 'Aiur will be restored', $aggroRange)
-		SafeMoveAggroAndKill(5717, 13357, 'Eternal obedience', $aggroRange)
-		SafeMoveAggroAndKill(6945, 9820, 'Beetle zone exit', $aggroRange)
-		SafeMoveAggroAndKill(8117, 7465, 'Gokir fight', $aggroRange)
-		SafeMoveAggroAndKill(8398, 4358, 'Triggering beacon 2', $aggroRange)
+		MoveAggroAndKill(3130, 12731, 'Beetle zone', $froggyAggroRange)
+		MoveAggroAndKill(3535, 13860, 'Aiur will be restored', $froggyAggroRange)
+		MoveAggroAndKill(5717, 13357, 'Eternal obedience', $froggyAggroRange)
+		MoveAggroAndKill(6945, 9820, 'Beetle zone exit', $froggyAggroRange)
+		MoveAggroAndKill(8117, 7465, 'Gokir fight', $froggyAggroRange)
+		MoveAggroAndKill(8398, 4358, 'Triggering beacon 2', $froggyAggroRange)
 	WEnd
 
 	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 19597, -11553, 1250)
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(9829, -1175, 'The Death Fleet descends', $aggroRange)
-		SafeMoveAggroAndKill(10932, -5203, 'I hear and obey', $aggroRange)
-		SafeMoveAggroAndKill(13305, -6475, 'Target in range.', $aggroRange)
-		SafeMoveAggroAndKill(16841, -5619, 'Keyboss', $aggroRange)
+		MoveAggroAndKill(9829, -1175, 'The Death Fleet descends', $froggyAggroRange)
+		MoveAggroAndKill(10932, -5203, 'I hear and obey', $froggyAggroRange)
+		MoveAggroAndKill(13305, -6475, 'Target in range.', $froggyAggroRange)
+		MoveAggroAndKill(16841, -5619, 'Keyboss', $froggyAggroRange)
 
 		RndSleep(500)
 		PickUpItems()
@@ -296,25 +294,25 @@ Func ClearFroggyFloor2()
 			Sleep(GetPing() + 500)
 		Next
 
-		SafeMoveAggroAndKill(18363, -8696, 'Going to boss area', $aggroRange)
-		SafeMoveAggroAndKill(16631, -11655, 'I will do all that must be done', $aggroRange)
-		SafeMoveAggroAndKill(19122, -12284, 'Glory to the Firstborn', $aggroRange)
-		SafeMoveAggroAndKill(19597, -11553, 'Triggering boss beacon', $aggroRange)
+		MoveAggroAndKill(18363, -8696, 'Going to boss area', $froggyAggroRange)
+		MoveAggroAndKill(16631, -11655, 'I will do all that must be done', $froggyAggroRange)
+		MoveAggroAndKill(19122, -12284, 'Glory to the Firstborn', $froggyAggroRange)
+		MoveAggroAndKill(19597, -11553, 'Triggering boss beacon', $froggyAggroRange)
 	WEnd
 
-	$aggroRange = $RANGE_SPELLCAST + 300
+	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
 
 	Local $questState = 1
 	While $FroggyDeathsCount < 6 And $questState <> 3
 		Info('------------------------------------')
 		Info('Boss area')
 		UseMoraleConsumableIfNeeded()
-		SafeMoveAggroAndKill(17494, -14149, 'Our enemies will be undone', $aggroRange)
-		SafeMoveAggroAndKill(14641, -15081, 'I live to serve.', $aggroRange)
-		SafeMoveAggroAndKill(13934, -17384, 'The mission is in peril!', $aggroRange)
-		SafeMoveAggroAndKill(14365, -17681, 'Boss fight', $aggroRange)
-		SafeMoveAggroAndKill(15286, -17662, 'All hail! King of the losers!', $aggroRange)
-		SafeMoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $aggroRange)
+		MoveAggroAndKill(17494, -14149, 'Our enemies will be undone', $largeFroggyAggroRange)
+		MoveAggroAndKill(14641, -15081, 'I live to serve.', $largeFroggyAggroRange)
+		MoveAggroAndKill(13934, -17384, 'The mission is in peril!', $largeFroggyAggroRange)
+		MoveAggroAndKill(14365, -17681, 'Boss fight', $largeFroggyAggroRange)
+		MoveAggroAndKill(15286, -17662, 'All hail! King of the losers!', $largeFroggyAggroRange)
+		MoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $largeFroggyAggroRange)
 
 		$questState = DllStructGetData(GetQuestByID($ID_Froggy_Quest), 'LogState')
 	WEnd

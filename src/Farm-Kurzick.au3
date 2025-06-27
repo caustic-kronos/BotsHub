@@ -139,7 +139,7 @@ Func VanquishFerndale()
 	If MoveAggroAndKill(-4650, 2812, 'Dredge Patrol Again') Then Return 1
 
 	If MoveAggroAndKill(-9326, 1601, 'Missing Patrol 1') Then Return 1
-	If MoveAggroAndKill(-11000, 2219, 'Missing Patrol 2', 5000) Then Return 1
+	If MoveAggroAndKill(-11000, 2219, 'Missing Patrol 2', $RANGE_COMPASS) Then Return 1
 	If MoveAggroAndKill(-6313, 2778, 'Missing Patrol 3') Then Return 1
 
 	If MoveAggroAndKill(-4447, 1055, 'Dredge Patrol', 3000) Then Return 1
@@ -150,7 +150,7 @@ Func VanquishFerndale()
 
 	If MoveAggroAndKill(-2541, -3848, 'Warden Group / Mesmer Boss 1', 3000) Then Return 1
 	If MoveAggroAndKill(-2108, -5549, 'Warden Group / Mesmer Boss 2', 3000) Then Return 1
-	If MoveAggroAndKill(-1649, -7250, 'Warden Group / Mesmer Boss 3', 2500) Then Return 1
+	If MoveAggroAndKill(-1649, -7250, 'Warden Group / Mesmer Boss 3', $RANGE_SPIRIT) Then Return 1
 
 	If MoveAggroAndKill(0, -10000, 'Dredge Patrol and Mesmer Boss', $RANGE_SPIRIT) Then Return 1
 
@@ -246,7 +246,7 @@ Func VanquishFerndale()
 	If MoveAggroAndKill(7384, 14094, 'Dredge Patrol 53', 4000) Then Return 1
 	If MoveAggroAndKill(8223, 12552, 'Dredge Patrol 54', 4000) Then Return 1
 	If MoveAggroAndKill(7148, 11167, 'Dredge Patrol 55', 4000) Then Return 1
-	If MoveAggroAndKill(5427, 10834, 'Dredge Patrol 56', 10000) Then Return 1
+	If MoveAggroAndKill(5427, 10834, 'Dredge Patrol 56', 2 * $RANGE_COMPASS) Then Return 1
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return 1

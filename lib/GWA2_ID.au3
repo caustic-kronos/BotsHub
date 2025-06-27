@@ -118,6 +118,7 @@ Global Const $ID_The_Eternal_Grove			= 222
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
 Global Const $ID_Seitung_Harbor				= 250
+Global Const $ID_Urgoz_Warren				= 266
 Global Const $ID_Isle_Of_Weeping_Stone		= 275
 Global Const $ID_Isle_Of_Jade				= 276
 Global Const $ID_Leviathan_Pits				= 279

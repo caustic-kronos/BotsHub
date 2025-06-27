@@ -45,6 +45,7 @@ Func RunTests($STATUS)
 	;	Sleep(2000)
 	;WEnd
 
+	EnterChallenge()
 
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
 	;~ ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
@@ -273,11 +274,32 @@ EndFunc
 
 
 #Region Loot Chests
+;~ Find chests in the given range (earshot by default)
+Func FindChest($range = $RANGE_EARSHOT)
+	If GetIsDead() Then Return Null
+	If FindInInventory($ID_Lockpick)[0] == 0 Then Return Null
+
+	Local $gadgetID
+	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
+	Local $chest
+	Local $chestCount = 0
+	For $i = 1 To $agents[0]
+		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
+		If $Map_Chests_IDs[$gadgetID] == null Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
+
+		If $chestsMap[DllStructGetData($agents[$i], 'ID')] <> 2 Then
+			Return $agents[$i]
+		EndIf
+	Next
+	Return Null
+EndFunc
+
+
 ;~ Find and open chests in the given range (earshot by default)
-Func CheckForChests($range = $RANGE_EARSHOT, $DefendFunction = null, $BlockedFunction = null)
+Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = null, $BlockedFunction = null)
 	If GetIsDead() Then Return
 	If FindInInventory($ID_Lockpick)[0] == 0 Then Return
-
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
 	Local $openedChest = False
@@ -331,7 +353,7 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 	Local $blocked = 0
 	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
 		Move($X, $Y, 100)
-		RndSleep(100)
+		RndSleep(GetPing() + 50)
 		If $DefendFunction <> Null Then $DefendFunction()
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
@@ -341,10 +363,11 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 			$blocked += 1
 			Move($X, $Y, 100)
 		EndIf
-		GoSignpost($agent)
-		RndSleep(100)
+		RndSleep(GetPing() + 50)
 		$me = GetMyAgent()
 	WEnd
+	GoSignpost($agent)
+	RndSleep(GetPing() + 100)
 EndFunc
 #EndRegion Loot Chests
 
@@ -1517,6 +1540,16 @@ Func MapFromArrays($keys, $values)
 EndFunc
 
 
+;~ Clone a map
+Func CloneMap($original)
+	Local $clone[]
+	For $key In MapKeys($original)
+		$clone[$key] = $original[$key]
+	Next
+	Return $clone
+EndFunc
+
+
 ;~ Find common longest substring in two strings
 Func LongestCommonSubstringOfTwo($string1, $string2)
 	Local $longestCommonSubstrings[0]
@@ -1610,6 +1643,7 @@ Func PrintNPCInformations($npc)
 	Info('ID: ' & DllStructGetData($npc, 'ID'))
 	Info('X: ' & DllStructGetData($npc, 'X'))
 	Info('Y: ' & DllStructGetData($npc, 'Y'))
+	Info('HP: ' & DllStructGetData($npc, 'HP'))
 	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
 	Info('PlayerNumber: ' & DllStructGetData($npc, 'PlayerNumber'))
 	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
@@ -1993,42 +2027,54 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-;~ Safer version to not pick items while fighting and not open chests from too far
-;~ Usually better in dungeons
-Func SafeMoveAggroAndKill($x, $y, $s = '', $range = 1450)
-	Return MoveAggroAndKill($x, $y, $s, $range, $range - 100, False)
-EndFunc
+Global $DEFAULT_MOVEAGGROANDKILL_OPTIONS[]
+$DEFAULT_MOVEAGGROANDKILL_OPTIONS['openChests'] = True
+$DEFAULT_MOVEAGGROANDKILL_OPTIONS['chestOpenRange'] = $RANGE_SPIRIT
+$DEFAULT_MOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = False
+
+Global $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS[] = CloneMap($DEFAULT_MOVEAGGROANDKILL_OPTIONS)
+$DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = True
 
 
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
-Func FlagMoveAggroAndKill($x, $y, $s = '', $range = 1450)
-	Return MoveAggroAndKill($x, $y, $s, $range, $range - 100, False, True)
+Func FlagMoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
+	If $options = Null Then
+		$options = $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS
+	Else
+		$options['flagHeroesOnFight'] = True
+	EndIf
+	Return MoveAggroAndKill($x, $y, $log, $range, $options)
 EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
-Func MoveAggroAndKill($x, $y, $s = '', $range = 1450, $chestOpenRange = $RANGE_SPIRIT, $lootInFights = True, $flagHeroesOnFight = False)
+Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
+	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
+
 	If Not IsGroupAlive() Then Return True
-	If $s <> '' Then Info($s)
-	Local $blocked = 0
+	If $log <> '' Then Info($log)
 	Local $me = GetMyAgent()
 	Local $coordsX = DllStructGetData($me, 'X')
 	Local $coordsY = DllStructGetData($me, 'Y')
+	Local $blocked = 0
 
 	Move($x, $y)
 
 	Local $oldCoordsX
 	Local $oldCoordsY
-	Local $nearestEnemy
+	Local $target
+	Local $chest
 	; GroupIsAlive is caller's responsibility to fill
 	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldCoordsX = $coordsX
 		$oldCoordsY = $coordsY
 		$me = GetMyAgent()
-		$nearestEnemy = GetNearestEnemyToAgent($me)
-		If GetDistance($me, $nearestEnemy) < $range And DllStructGetData($nearestEnemy, 'ID') <> 0 Then DefaultKillFoes($lootInFights, $flagHeroesOnFight)
+		$target = GetNearestEnemyToAgent($me)
+		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then 
+			DefaultKillFoes($options['flagHeroesOnFight'])
+		EndIf
 		$coordsX = DllStructGetData($me, 'X')
 		$coordsY = DllStructGetData($me, 'Y')
 		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
@@ -2038,32 +2084,41 @@ Func MoveAggroAndKill($x, $y, $s = '', $range = 1450, $chestOpenRange = $RANGE_S
 			Move($x, $y)
 		EndIf
 		RndSleep(500)
-		CheckForChests($chestOpenRange)
+		PickUpItems(null, DefaultShouldPickItem, $range)
+		If $options['openChests'] Then
+			$chest = FindChest($options['chestOpenRange'])
+			If $chest <> Null Then
+				$options['openChests'] = False
+				MoveAggroAndKill(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), 'Found a chest', $range, $options)
+				$options['openChests'] = True
+				FindAndOpenChests($options['chestOpenRange'])
+			EndIf
+		EndIf
 	WEnd
 	Return Not $groupIsAlive
 EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
-Func DefaultKillFoes($lootInFights = True, $flagHeroesOnFight = False)
+Func DefaultKillFoes($flagHeroesOnFight = False)
 	Local $me = GetMyAgent()
-	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = -1
+	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = DllStructGetData($target, 'ID')
 	GetAlmostInRangeOfAgent($target)
 	If $flagHeroesOnFight Then FanFlagHeroes()
 
 	While $groupIsAlive And $foesCount > 0
-		$target = GetNearestEnemyToAgent($me)
-		If DllStructGetData($target, 'ID') <> $targetId Then
+		$target = GetAgentById($targetId)
+		If ($target == Null Or GetIsDead($target)) Then
+			$target = GetNearestEnemyToAgent($me)
 			$targetId = DllStructGetData($target, 'ID')
 			CallTarget($target)
 			; Start auto-attack on new target
 			Attack($target)
 			RndSleep(20)
 		EndIf
+
 		; Always ensure auto-attack is active before using skills
 		Attack($target)
-		RndSleep(20)
-
 		RndSleep(20)
 		While Not IsRecharged($skillNumber) And $skillNumber < 9
 			$skillNumber += 1
@@ -2076,7 +2131,7 @@ Func DefaultKillFoes($lootInFights = True, $flagHeroesOnFight = False)
 			RndSleep(1000)
 		EndIf
 		$skillNumber = 1
-		If $lootInFights Then PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST)
+		PickUpItems(null, DefaultShouldPickItem, $RANGE_AREA)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd

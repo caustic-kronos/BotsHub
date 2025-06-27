@@ -32,6 +32,7 @@ Global Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
 	& 'In NM, bot takes 13min (with cons), 15min (without cons) on average' & @CRLF _
 	& 'Not tested in HM.'
 Global Const $VOLTAIC_FARM_DURATION = 16 * 60 * 1000
+Global Const $VSAggroRange = $RANGE_SPELLCAST + 200
 
 Global $VOLTAIC_FARM_SETUP = False
 Global $voltaicDeathsCount = 0
@@ -76,20 +77,19 @@ Func VoltaicFarmLoop()
 	AdlibRegister('VoltaicGroupIsAlive', 10000)
 
 	Local $timer = TimerInit()
-	Local $aggroRange = $RANGE_SPELLCAST + 200
-	MoveAggroAndKill(-19887, 6074, '1', $aggroRange)
+	MoveAggroAndKill(-19887, 6074, '1', $VSAggroRange)
 	Info('Making way to Slavers')
-	MoveAggroAndKill(-10273, 3251, '2', $aggroRange)
-	MoveAggroAndKill(-6878, -329, '3', $aggroRange)
-	MoveAggroAndKill(-3041, -3446, '4', $aggroRange)
-	MoveAggroAndKill(3571, -9501, '5', $aggroRange)
-	MoveAggroAndKill(10764, -6448, '6', $aggroRange)
-	MoveAggroAndKill(13063, -4396, '7', $aggroRange)
+	MoveAggroAndKill(-10273, 3251, '2', $VSAggroRange)
+	MoveAggroAndKill(-6878, -329, '3', $VSAggroRange)
+	MoveAggroAndKill(-3041, -3446, '4', $VSAggroRange)
+	MoveAggroAndKill(3571, -9501, '5', $VSAggroRange)
+	MoveAggroAndKill(10764, -6448, '6', $VSAggroRange)
+	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
 	If IsFailure() Then Return 1
 	Info('At the Troll Bridge - TROLL TOLL')
-	MoveAggroAndKill(18054, -3275, '8', $aggroRange)
-	MoveAggroAndKill(20966, -6476, '9', $aggroRange)
-	MoveAggroAndKill(25298, -9456, '10', $aggroRange)
+	MoveAggroAndKill(18054, -3275, '8', $VSAggroRange)
+	MoveAggroAndKill(20966, -6476, '9', $VSAggroRange)
+	MoveAggroAndKill(25298, -9456, '10', $VSAggroRange)
 	If IsFailure() Then Return 1
 	Move(25729, -9360)
 	Info('Entering Slavers')
@@ -120,16 +120,16 @@ Func VoltaicFarmLoop()
 		WEnd
 		UseMoraleConsumableIfNeeded()
 		UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
-		SafeMoveAggroAndKill(-13500, -15750, 'In front of the door', $aggroRange)
-		SafeMoveAggroAndKill(-12500, -15000, 'Before the bridge', $aggroRange)
-		SafeMoveAggroAndKill(-10400, -14800, 'After the bridge', $aggroRange)
-		SafeMoveAggroAndKill(-11500, -13300, 'First group', $aggroRange)
-		SafeMoveAggroAndKill(-13400, -11500, 'Second group', $aggroRange)
-		SafeMoveAggroAndKill(-13700, -9550, 'Third group', $aggroRange)
-		SafeMoveAggroAndKill(-14100, -8600, 'Fourth group', $aggroRange)
-		SafeMoveAggroAndKill(-15000, -7500, 'Fourth group, again', $aggroRange)
-		SafeMoveAggroAndKill(-16500, -8000, 'Fifth group', $aggroRange)
-		SafeMoveAggroAndKill(-18500, -8000, 'To the shrine', $aggroRange)
+		MoveAggroAndKill(-13500, -15750, 'In front of the door', $VSAggroRange)
+		MoveAggroAndKill(-12500, -15000, 'Before the bridge', $VSAggroRange)
+		MoveAggroAndKill(-10400, -14800, 'After the bridge', $VSAggroRange)
+		MoveAggroAndKill(-11500, -13300, 'First group', $VSAggroRange)
+		MoveAggroAndKill(-13400, -11500, 'Second group', $VSAggroRange)
+		MoveAggroAndKill(-13700, -9550, 'Third group', $VSAggroRange)
+		MoveAggroAndKill(-14100, -8600, 'Fourth group', $VSAggroRange)
+		MoveAggroAndKill(-15000, -7500, 'Fourth group, again', $VSAggroRange)
+		MoveAggroAndKill(-16500, -8000, 'Fifth group', $VSAggroRange)
+		MoveAggroAndKill(-18500, -8000, 'To the shrine', $VSAggroRange)
 		If IsFailure() Then Return 1
 	WEnd
 	While $voltaicDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
@@ -139,9 +139,9 @@ Func VoltaicFarmLoop()
 		WEnd
 		UseMoraleConsumableIfNeeded()
 		UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
-		SafeMoveAggroAndKill(-18500, -11500, 'Pre-Boss group', $aggroRange)
-		SafeMoveAggroAndKill(-17700, -12500, 'Boss group', $aggroRange)
-		SafeMoveAggroAndKill(-17500, -14250, 'Final group', $aggroRange)
+		MoveAggroAndKill(-18500, -11500, 'Pre-Boss group', $VSAggroRange)
+		MoveAggroAndKill(-17700, -12500, 'Boss group', $VSAggroRange)
+		MoveAggroAndKill(-17500, -14250, 'Final group', $VSAggroRange)
 		If IsFailure() Then Return 1
 	WEnd
 	; Chest

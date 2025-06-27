@@ -192,7 +192,7 @@ Func MantidsFarmLoop()
 
 	Info('Looting')
 	PickUpItems()
-	CheckForChests()
+	FindAndOpenChests()
 
 	BackToNahpuiQuarterOutpost()
 	Return 0

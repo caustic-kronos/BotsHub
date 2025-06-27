@@ -145,7 +145,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 		WEnd
 		Debug('Fight is over')
 	EndIf
-	CheckForChests()
+	FindAndOpenChests()
 
 	PickUpItems(null, DefaultShouldPickItem, 1500)
 

@@ -116,62 +116,62 @@ Func TascaChestFarmLoop($STATUS)
 	TASCADervishRun(-2000, 17500)
 	TASCADervishRun(1000, 16500)
 	Info('#1/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(3000, 15000)
 	TASCADervishRun(5900, 14500)
 	Local $annoyingChest = ScanForChests(2000, True, 5500, 18000)
 	Notice('Bonus chest ? ' & ($annoyingChest <> Null))
 	TASCADervishRun(6750, 14500)
 	Info('#2/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(8000, 15000)
 	TASCADervishRun(9500, 16000)
 	TASCADervishRun(10500, 18000)
 	Info('#3/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(11500, 19500)
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(12500, 21000)
 	; Very far chests here, spirit range is needed
 	Info('#4/13')
-	$openedChests += CheckForChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(13000, 23500)
 	Info('#5/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(12000, 25000)
 	Info('#6/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(11500, 26000)
 	Info('#7/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(9750, 26750)
 	Info('#8/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(7750, 26125)
 	Info('#9/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(6500, 27500)
 	Info('#10/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(5000, 28000)
 	; Chest can be all the way north of the map - need extreme range here
-	$openedChests += CheckForChests($RANGE_SPIRIT + 500, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_SPIRIT + 500, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(4000, 27000)
 	; Chest can be all the way west of the map - need extreme range here
 	Info('#11/13')
-	$openedChests += CheckForChests($RANGE_SPIRIT + 500, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_SPIRIT + 500, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(4000, 26000)
-	$openedChests += CheckForChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(5000, 25000)
 	TASCADervishRun(6000, 22000)
 	Info('#12/13')
-	$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 	TASCADervishRun(4500, 21500)
 	If ($annoyingChest == Null) Then $annoyingChest = ScanForChests(2000, True, 5500, 18000)
 	Notice('Bonus chest ? ' & ($annoyingChest <> Null))
 	TASCADervishRun(3000, 21500)
 	Info('#13/13')
-	$openedChests += CheckForChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_SPIRIT, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 
 	If ($annoyingChest <> Null) Then
 		TASCADervishRun(6000, 21500)
@@ -180,7 +180,7 @@ Func TascaChestFarmLoop($STATUS)
 		$annoyingChest = ScanForChests(2000, True, 5500, 18000)
 		Local $target = GetTargetToEscapeWithDeathsCharge(DllStructGetData($annoyingChest, 'X'), DllStructGetData($annoyingChest, 'Y'))
 		UseSkillEx($Tasca_DeathsCharge, $target)
-		$openedChests += CheckForChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
+		$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 		RndSleep(1000)
 	EndIf
 
@@ -280,7 +280,7 @@ Func UnblockWhenOpeningChests()
 EndFunc
 
 
-;~ Wrapper for TascaDefendFunction to be used in CheckForChests
+;~ Wrapper for TascaDefendFunction to be used in FindAndOpenChests
 Func TascaDefendFunctionForChests()
 	Return TascaDefendFunction(0, 0)
 EndFunc
