@@ -84,8 +84,9 @@ Global Const $ID_Outpost					= 0
 Global Const $ID_Explorable					= 1
 Global Const $ID_Loading					= 2
 ; Eden
-Global Const $ID_Ashford_Abbey				= 164
 Global Const $ID_Lakeside_County			= 146
+Global Const $ID_Ascalon_City_Presearing	= 148
+Global Const $ID_Ashford_Abbey				= 164
 ; Battle Isles
 Global Const $ID_Great_Temple_of_Balthazar	= 248
 Global Const $ID_Embark_Beach				= 857

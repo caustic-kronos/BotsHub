@@ -55,6 +55,7 @@
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
+#include 'src/Farm-LDOA.au3'
 #include 'src/Farm-Lightbringer.au3'
 #include 'src/Farm-Luxon.au3'
 #include 'src/Farm-Mantids.au3'
@@ -105,7 +106,7 @@ Global $BAG_NUMBER = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 Global $TIMESDEPOSITED = 0
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -775,6 +776,9 @@ Func RunFarmLoop($Farm)
 		Case 'Kurzick'
 			$INVENTORY_SPACE_NEEDED = 15
 			$result = KurzickFactionFarm($STATUS)
+		Case 'LDOA'
+			$INVENTORY_SPACE_NEEDED = 0
+			$result = LDOATitleFarm($STATUS)
 		Case 'Lightbringer'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = LightbringerFarm($STATUS)
@@ -850,6 +854,7 @@ Func ResetBotsSetups()
 	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$FOLLOWER_SETUP						= False
+	;$LDOA_FARM_SETUP						= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$CORSAIRS_FARM_SETUP					= False
@@ -905,6 +910,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $KurzickFactionSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
+		Case 'LDOA'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $LDOASkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, '')
+			GUICtrlSetData($GUI_Label_FarmInformations, $LDOAInformations)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
 			GUICtrlSetData($GUI_Edit_HeroBuild, '')
@@ -1411,6 +1420,8 @@ Func SelectFarmDuration($Farm)
 			Return $KOURNANS_FARM_DURATION
 		Case 'Kurzick'
 			Return $KURZICKS_FARM_DURATION
+		Case 'LDOA'
+			Return $LDOA_FARM_DURATION
 		Case 'Lightbringer'
 			Return $LIGHTBRINGER_FARM_DURATION
 		Case 'Luxon'
