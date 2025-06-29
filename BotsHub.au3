@@ -28,13 +28,6 @@
 #NoTrayIcon
 
 #Region Includes
-; TODO: cleanup needed here, remove any of those if there are no issues showing up
-;#include <ButtonConstants.au3>
-;#include <EditConstants.au3>
-;#include <ComboConstants.au3>
-;#include <FileConstants.au3>
-;#include <Date.au3>
-;#include <GuiEdit.au3>
 
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
@@ -379,7 +372,7 @@ Func createGUI()
 	GUICtrlSetState($GUI_Checkbox_LootTrophies, $GUI_CHECKED)
 
 	GUIRegisterMsg($WM_COMMAND, 'WM_COMMAND_Handler')
-	GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY_Handler")
+	GUIRegisterMsg($WM_NOTIFY, 'WM_NOTIFY_Handler')
 EndFunc
 
 
@@ -414,51 +407,51 @@ EndFunc
 
 ;~ Handles WM_NOTIFY elements, like treeview clicks
 Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifyStruct)
-    Local $notificationHeader = DllStructCreate("hwnd sourceHandle;int controlId;int notificationCode", $paramNotifyStruct)
-    Local $sourceHandle = DllStructGetData($notificationHeader, "sourceHandle")
-    Local $notificationCode = DllStructGetData($notificationHeader, "notificationCode")
+	Local $notificationHeader = DllStructCreate('hwnd sourceHandle;int controlId;int notificationCode', $paramNotifyStruct)
+	Local $sourceHandle = DllStructGetData($notificationHeader, 'sourceHandle')
+	Local $notificationCode = DllStructGetData($notificationHeader, 'notificationCode')
 
-    If $sourceHandle = GUICtrlGetHandle($GUI_TreeView_Components) Then
-        Switch $notificationCode
-            Case $NM_CLICK
-                Local $mousePos = _WinAPI_GetMousePos(True, $sourceHandle)
-                Local $hitTestResult = _GUICtrlTreeView_HitTestEx($sourceHandle, DllStructGetData($mousePos, 1), DllStructGetData($mousePos, 2))
-                Local $clickedItem = DllStructGetData($hitTestResult, "Item")
-                Local $hitFlags = DllStructGetData($hitTestResult, "Flags")
+	If $sourceHandle = GUICtrlGetHandle($GUI_TreeView_Components) Then
+		Switch $notificationCode
+			Case $NM_CLICK
+				Local $mousePos = _WinAPI_GetMousePos(True, $sourceHandle)
+				Local $hitTestResult = _GUICtrlTreeView_HitTestEx($sourceHandle, DllStructGetData($mousePos, 1), DllStructGetData($mousePos, 2))
+				Local $clickedItem = DllStructGetData($hitTestResult, 'Item')
+				Local $hitFlags = DllStructGetData($hitTestResult, 'Flags')
 
-                If $clickedItem <> 0 And BitAND($hitFlags, $TVHT_ONITEMSTATEICON) Then
-                    toggleCheckboxCascade($sourceHandle, $clickedItem, True)
-                EndIf
+				If $clickedItem <> 0 And BitAND($hitFlags, $TVHT_ONITEMSTATEICON) Then
+					toggleCheckboxCascade($sourceHandle, $clickedItem, True)
+				EndIf
 
-            Case $TVN_KEYDOWN
-                Local $keyInfo = DllStructCreate("hwnd;int;int;short key;uint", $paramNotifyStruct)
-                Local $selectedItem = _GUICtrlTreeView_GetSelection($sourceHandle)
+			Case $TVN_KEYDOWN
+				Local $keyInfo = DllStructCreate('hwnd;int;int;short key;uint', $paramNotifyStruct)
+				Local $selectedItem = _GUICtrlTreeView_GetSelection($sourceHandle)
 				; Spacebar pressed
-                If DllStructGetData($keyInfo, "key") = 0x20 And $selectedItem Then
-                    toggleCheckboxCascade($sourceHandle, $selectedItem, True)
-                EndIf
-        EndSwitch
-    EndIf
+				If DllStructGetData($keyInfo, 'key') = 0x20 And $selectedItem Then
+					toggleCheckboxCascade($sourceHandle, $selectedItem, True)
+				EndIf
+		EndSwitch
+	EndIf
 
-    Return $GUI_RUNDEFMSG
+	Return $GUI_RUNDEFMSG
 EndFunc
 
 
 ;~ Toggles checkbox state on a TreeView item and cascades it to children
 Func ToggleCheckboxCascade($treeViewHandle, $itemHandle, $toggleFromRoot = False)
-    Local $isChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $itemHandle)
-    If $toggleFromRoot Then $isChecked = Not $isChecked
+	Local $isChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $itemHandle)
+	If $toggleFromRoot Then $isChecked = Not $isChecked
 
-    If _GUICtrlTreeView_GetChildren($treeViewHandle, $itemHandle) Then
-        Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $itemHandle)
-        Do
-            _GUICtrlTreeView_SetChecked($treeViewHandle, $childHandle, $isChecked)
-            If _GUICtrlTreeView_GetChildren($treeViewHandle, $childHandle) Then
-                toggleCheckboxCascade($treeViewHandle, $childHandle)
-            EndIf
-            $childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
-        Until $childHandle = 0
-    EndIf
+	If _GUICtrlTreeView_GetChildren($treeViewHandle, $itemHandle) Then
+		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $itemHandle)
+		While $childHandle <> 0
+			_GUICtrlTreeView_SetChecked($treeViewHandle, $childHandle, $isChecked)
+			If _GUICtrlTreeView_GetChildren($treeViewHandle, $childHandle) Then
+				toggleCheckboxCascade($treeViewHandle, $childHandle)
+			EndIf
+			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
+		WEnd
+	EndIf
 EndFunc
 
 
@@ -578,7 +571,7 @@ Func StartButtonHandler()
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
 			$STATUS = 'RUNNING'
 		Case Else
-			MsgBox(0, 'Error', 'Unknown status "' & $STATUS & '"')
+			MsgBox(0, 'Error', 'Unknown status <' & $STATUS & '>')
 	EndSwitch
 EndFunc
 #EndRegion Handlers
@@ -1172,7 +1165,7 @@ EndFunc
 
 ;~ Utility function to add treeview elements to a JSON object
 Func AddLeavesToJSONObject(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	Out($currentPath)
+	Debug($currentPath)
 	_JSON_addChangeDelete($context, $currentPath, _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem))
 EndFunc
 

@@ -89,14 +89,6 @@ Func SetupPongmeiFarm()
 		SwitchMode($ID_NORMAL_MODE)
 	EndIf
 
-	; Reloading the city map is useless here, we always port back to the same places anyway
-	;Info('Entering Pongmei Valley')
-	;MoveTo(-25614, 1705)
-	;MoveTo(-26200, 2800)
-	;WaitMapLoading($ID_Pongmei_Valley, 10000, 1000)
-	;MoveTo(22800, 200)
-	;MoveTo(23200, -800)
-	;WaitMapLoading($ID_Boreas_Seabed, 10000, 1000)
 	Info('Preparations complete')
 EndFunc
 

@@ -859,7 +859,7 @@ Func CountTheseItems($itemArray)
 	Local $arraySize = UBound($itemArray)
 	Local $counts[$arraySize]
 	For $bagIndex = 1 To $BAG_NUMBER
-		Local $bag = GetBag($bagIndex)	
+		Local $bag = GetBag($bagIndex)
 		Local $slots = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $slots
 			Local $item = GetItemBySlot($bag, $slot)
@@ -2072,7 +2072,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 		$oldCoordsY = $coordsY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
-		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then 
+		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
 			DefaultKillFoes($options['flagHeroesOnFight'])
 		EndIf
 		$coordsX = DllStructGetData($me, 'X')
@@ -2252,16 +2252,16 @@ EndFunc
 Func FindHeroesWithRez()
 	Local $heroes[7]
 	Local $count = 0
-    For $heroNumber = 1 To GetHeroCount()
-        Local $heroID = GetHeroID($heroNumber)
-        For $skillSlot = 1 To 8
-            Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
-            If IsRezSkill($skill) Then
+	For $heroNumber = 1 To GetHeroCount()
+		Local $heroID = GetHeroID($heroNumber)
+		For $skillSlot = 1 To 8
+			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
+			If IsRezSkill($skill) Then
 				$heroes[$count] = $heroNumber
 				$count += 1
-            EndIf
-        Next
-    Next
+			EndIf
+		Next
+	Next
 	Local $result[$count + 1]
 	$result[0] = 0
 	For $i = 1 To $count
@@ -2292,14 +2292,14 @@ Func IsRezSkill($skill)
 	Local $Resurrection_Chant		= 1128
 	Local $Unyielding_Aura			= 268
 	Local $Vengeance				= 315
-    Switch $skill
-        Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
+	Switch $skill
+		Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
 			$Eternal_Aura, _
 			$We_Shall_Return, $Signet_of_Return, _
 			$Death_Pact_Signet, $Flesh_of_My_Flesh, $Lively_Was_Naomei, $Restoration, _
 			$Light_of_Dwayna, $Rebirth, $Renew_Life, $Restore_Life, $Resurrect, $Resurrection_Chant, $Unyielding_Aura, $Vengeance
-            Return True
-    EndSwitch
+			Return True
+	EndSwitch
 	Return False
 EndFunc
 

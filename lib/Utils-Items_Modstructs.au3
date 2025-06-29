@@ -1068,7 +1068,7 @@ EndFunc
 ;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
 Func CreateValuableRunesAndInsigniasArray()
 	Local $tickedRunesAndInsignias = GetComponentsTickedCheckboxes('Armor upgrades')
-	Local $Valuable_Runes_And_Insignias_Structs_Array[UBound($tickedRunesAndInsignias)] 
+	Local $Valuable_Runes_And_Insignias_Structs_Array[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
 		Local $varName = $tickedRunesAndInsignias[$i]
 		$varName = 'Struct_' & StringReplace(StringReplace(StringTrimLeft($varName, 15), '.', '_'), ' ', '_')
@@ -1084,7 +1084,7 @@ Func CreateValuableModsByOSWeaponTypeMap()
 	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
 	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
 	For $i = 0 To UBound($tickedInscriptions) - 1
-		Out($tickedInscriptions[$i])
+		Info($tickedInscriptions[$i])
 	Next
 	Return Null
 EndFunc
@@ -1096,7 +1096,7 @@ Func CreateValuableModsByWeaponTypeMap()
 	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
 	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
 	For $i = 0 To UBound($tickedInscriptions) - 1
-		Out($tickedInscriptions[$i])
+		Info($tickedInscriptions[$i])
 	Next
 	Return Null
 EndFunc

@@ -146,8 +146,8 @@ Feel free to create and add more bots; it’s pretty simple!
 
 ### Legend
 
-- 🔥 High priority  
-- ⚡ Medium priority  
+- 🔥 High priority
+- ⚡ Medium priority
 - 💡 Low priority
 - 🧠 No priority
 

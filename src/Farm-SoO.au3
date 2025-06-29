@@ -200,7 +200,7 @@ EndFunc
 Func ClearSoOFloor1()
 	Info('------------------------------------')
 	Info('First floor')
-	
+
 	If IsHardmodeEnabled() Then UseConset()
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
 		UseMoraleConsumableIfNeeded()

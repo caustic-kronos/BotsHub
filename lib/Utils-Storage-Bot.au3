@@ -136,7 +136,7 @@ Func PassiveInventoryManagement()
 	Local $identificationKitsCount = GetInventoryKitCount($superiorIdentificationKits)
 	Local $salvageKits = [$ID_Salvage_Kit, $ID_Salvage_Kit_2]
 	Local $salvageKitsCount = GetInventoryKitCount($salvageKits)
-	
+
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
 		Info('Buying kits for passive inventory management')
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
