@@ -758,7 +758,7 @@ Func RunFarmLoop($Farm)
 			$INVENTORY_SPACE_NEEDED = 15
 			$result = FollowerFarm($STATUS)
 		Case 'FoW'
-			$INVENTORY_SPACE_NEEDED = 30
+			$INVENTORY_SPACE_NEEDED = 15
 			$result = FoWFarm($STATUS)
 		Case 'Froggy'
 			$INVENTORY_SPACE_NEEDED = 10
@@ -1403,6 +1403,8 @@ Func SelectFarmDuration($Farm)
 			Return $FEATHERS_FARM_DURATION
 		Case 'Follow'
 			Return 30 * 60 * 1000
+		Case 'FoW'
+			Return $FOW_FARM_DURATION
 		Case 'Gemstone'
 			Return $GEMSTONE_FARM_DURATION
 		Case 'Jade Brotherhood'

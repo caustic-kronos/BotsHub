@@ -988,6 +988,8 @@ EndFunc
 ;~ Find character names by scanning memory
 Func ScanForCharname($processHandle)
 	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A14FF751868'))
+	; If you have issues finding your character name, tries this line instead of the previous one :
+	;Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x00E20878'))
 	Local $baseAddress = $scannedMemory[1]
 	Local $matchOffset = $scannedMemory[2]
 	Local $tmpAddress = $baseAddress + $matchOffset - 1
