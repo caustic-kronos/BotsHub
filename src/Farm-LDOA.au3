@@ -27,7 +27,6 @@ Opt('MustDeclareVars', 1)
 
 ; ==== Constantes ====
 Global Const $LDOASkillbar = 'OgAScncGK+yM+1Z030WA'
-Global Const $ID_LDOA_CharrAtGate = 0x2E
 Global Const $LDOAInformations = 'For best results, have :' & @CRLF _
 	& '- Complete this list' & @CRLF _
 	& ''
@@ -44,19 +43,10 @@ Global Const $LDOA_Skill6 = 6
 Global Const $LDOA_Skill7 = 7
 Global Const $LDOA_Skill8 = 8
 
-; ==== Outpost ====
-Global Const $ID_MAP_Ranik = 166
-Global Const $ID_MAP_Foible = 165
-Global Const $ID_MAP_Ashford = 164
-Global Const $ID_MAP_Barradin = 163
-Global Const $ID_Regent_Valley = 162
-Global Const $ID_Wizards_Folly = 161
-
+Global Const $ID_Quest_CharrAtTheGate = 0x2E
 
 Global $LDOA_FARM_SETUP = False
 
-; Outpost Running
-Global $TRAVEL_TIMEOUT = 10000 ; 10 seconds
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
@@ -67,7 +57,7 @@ Func LDOATitleFarm($STATUS)
 		$LDOA_FARM_SETUP = True
 	EndIf
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North for inventory management
-	; This means that inventory management will have to be "duplicated" here in this bot
+	; This means that inventory management will have to be 'duplicated' here in this bot
 	If (CountSlots(1, _Min($BAG_NUMBER, 4)) <= 5) Then
 		PresearingInventoryManagement()
 		; This line might not be necessary because we might deal with inventory in the same outpost we use for the farm
@@ -96,7 +86,7 @@ Func SetupLDOATitleFarm()
 		; Examples present in the Else but feel free to have different stuff here depending on how you make the bot
 	Else
 		; LoadSkillTemplate($mapBuildsPerProfession[GetHeroProfession(0, False)])
-		LoadSkillTemplate($LDOASkillbar)
+		;LoadSkillTemplate($LDOASkillbar)
 		; If you need to reload a map quickly after resign do something like that here
 		;MoveTo(-22000, 12500)
 		;Move(-21750, 14500)
@@ -116,72 +106,62 @@ Func LDOATitleFarmLoop($STATUS)
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
 	Info('Current level: ' & $level)
 
-	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
-		Info("LDOA 2-10")
+	If DllStructGetData(GetMyAgent(), 'Level') < 11 Then
+		Info('LDOA 2-10')
 		LDOATitleFarmUnder10()
 	Else
-		Info("LDOA 11-20")
+		Info('LDOA 11-20')
 		LDOATitleFarmAfter10()
 	EndIf
+	; If we level to 11, we reset the setup so that the bot starts on the 11-20 part
 	Local $newLevel = DllStructGetData(GetMyAgent(), 'Level')
-	; If we level to 10, we reset the setup so that the bot starts on the 10-20 part
-	;If $level == 9 And $newLevel > $level Then $LDOA_FARM_SETUP = False
-	EndFunc
-	
-Func CharrAtTheGate()
+	If $level == 10 And $newLevel > $level Then $LDOA_FARM_SETUP = False
+EndFunc
+
+
+Func SetupCharrAtTheGateQuest()
+	RndSleep(GetPing() + 750)
 	AbandonQuest(0x2E)
-	RndSleep(500)
+	RndSleep(GetPing() + 750)
 	MoveTo(7974, 6142)
 	MoveTo(5668, 10667)
 	GoToNPC(GetNearestNPCToCoords(5668, 10667))
-	RndSleep(500)
+	RndSleep(GetPing() + 750)
 	Dialog(0x802E01)
+	RndSleep(GetPing() + 750)
 EndFunc
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
-	Local $Charr = DllStructGetData(GetQuestByID($ID_LDOA_CharrAtGate), 'Logstate')
-	
-	If $Charr = 0 Then
-		Info("Taking quest Charr at the gate.")
-		CharrAtTheGate()
-	ElseIf $Charr = 1 Then
-		Info("Good to go!!")
-	ElseIf $Charr = 3 Then
-		Info("Resetting quest.")
-		CharrAtTheGate()
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
+	If $questStatus == 0 Then
+		Info('Taking quest Charr at the gate.')
+		SetupCharrAtTheGateQuest()
+	ElseIf $questStatus == 1 Then
+		Info('Good to go !!')
+	ElseIf $questStatus == 3 Then
+		Info('Resetting quest.')
+		SetupCharrAtTheGateQuest()
 	EndIf
-	
-	RndSleep(3000)
+
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	
+
 	AdlibRegister('CheckIfDead', 250)
-	
-	RndSleep(250)
 	MoveTo(6220, 4470, 30)
-    RndSleep(200)
-    Info("Going to the gate")
-    RndSleep(200)
-    MoveTo(3180, 6468, 30)
-    RndSleep(200)
-    MoveTo(360, 6575, 30)
-    RndSleep(200)
-    MoveTo(-3140, 9610, 30)
-    RndSleep(700)
-    MoveTo(-3640, 10930, 30)
-    RndSleep(700)
-    MoveTo(-4165, 10655, 30)
-	AdlibRegister('CheckCharr', 500)
+	Info('Going to the gate')
+	MoveTo(3180, 6468, 30)
+	MoveTo(360, 6575, 30)
+	MoveTo(-3140, 9610, 30)
+	MoveTo(-3640, 10930, 30)
+	MoveTo(-4165, 10655, 30)
 	AdlibUnRegister('CheckIfDead')
+	AdlibRegister('CheckCharr', 500)
 	Sleep(2000)
 	AdlibUnRegister('CheckCharr')
-
-	;Info('Looting')
-	;PickUpItems()
 
 	BackToAscalon()
 	Return 0
@@ -190,64 +170,53 @@ EndFunc
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-;	Local $myQuestID = $QUEST_ID_Hamnet
-	
+	;Local $myQuestID = $QUEST_ID_Hamnet
 	;If HasQuest($myQuestID) Then
-	;	Info("Quest is in log!")
+	;	Info('Quest is in log!')
 	;Else
-	;	Info("Quest is not in log.")
+	;	Info('Quest is not in log.')
 	;EndIf
-	
 	OutpostRun()
-	
-	
 	Return 0
 EndFunc
+
 
 ;~ Run to every outpost in pre
 Func OutpostRun()
 	BackToAscalon()
-	Info("Starting outpost run...")
-	RndSleep(500)
-	Info("...peeling bananas...")
-	RndSleep(250)
-	TravelWithTimeout(164, "Ashford")
-	RndSleep(1000)
-	TravelWithTimeout(165, "Foible")
-	RndSleep(1000)
-	TravelWithTimeout(166, "Ranik")
-	
-	
+	RndSleep(2000)
+	Info('Starting outpost run...')
+	Info('...peeling bananas...')
+	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
+	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
+	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
 EndFunc
+
 
 ;~ Farmer Hamnet farm
 Func Hamnet()
-	
+
 EndFunc
 
-;~ Outpost Checker
-Func TravelWithTimeout($mapID, $onFailFunc)
-    Local $startTime = TimerInit()
-    Local $oldMapID = GetMapID()
-    
-	RandomDistrictTravel($mapID)
 
-    While TimerDiff($startTime) < $TRAVEL_TIMEOUT
-        If GetMapID() = $mapID Then
-            Info("Travel successful.")
-            Return True
-        EndIf
-        Sleep(500)
-    WEnd
-	    Info("Travel failed.")
-    Call($onFailFunc)
-    Return False
+;~ Outpost checker
+Func TravelWithTimeout($mapID, $onFailFunc)
+	Local $startTime = TimerInit()
+	RandomDistrictTravel($mapID)
+	While TimerDiff($startTime) < 10000
+		If GetMapID() == $mapID Then
+			Info('Travel successful.')
+			Return
+		EndIf
+		Sleep(1000)
+	WEnd
+	Info('Travel failed.')
+	Call($onFailFunc)
 EndFunc
 
 ;~ I like bananas
 Func Ashford()
-    Info("Starting run to Ashford Abbey.." )
-	RndSleep(250)
+	Info('Starting run to Ashford Abbey..' )
 	Info('Entering Lakeside County!')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -257,17 +226,17 @@ Func Ashford()
 	MoveTo(1894, -3264, 30)
 	MoveTo(-2573, -6357, 30)
 	MoveTo(-5396, -6940, 30)
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(-11100, -6252)
-	WaitMapLoading($ID_MAP_Ashford, 10000, 2000)
-	RndSleep(250)
-	Info("Made it to Ashford Abbey")
-	RndSleep(250)
+	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
+	Info('Made it to Ashford Abbey')
 EndFunc
 
+;~ I like watermelon
 Func Foible()
-    Info("Starting run to Foible's Fair.." )
-	RndSleep(250)
+	Info('Starting run to Foibles Fair..' )
 	Info('Entering Lakeside County!')
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(-11300, -6195, 30)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-11171, -8574, 30)
@@ -277,6 +246,7 @@ Func Foible()
 	MoveTo(-10931, -19169, 30)
 	MoveTo(-12742, -19890, 30)
 	Info('Entering Wizards Folly!')
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(-13800, -20047)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 	MoveTo(8532, 17711, 30)
@@ -285,18 +255,17 @@ Func Foible()
 	MoveTo(2135, 8630, 30)
 	MoveTo(1502, 6804, 30)
 	MoveTo(457, 7310, 30)
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(400, 7700)
-	WaitMapLoading($ID_MAP_Foible, 10000, 2000)
-	RndSleep(250)
-	Info("Made it to Foible's Fair")
-	RndSleep(250)
+	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
+	Info('Made it to Foibles Fair')
 EndFunc
 
 Func Ranik()
-    Info("Starting run to Fort Ranik.." )
-	RandomDistrictTravel($ID_MAP_Ashford)
-	RndSleep(250)
+	Info('Starting run to Fort Ranik..' )
+	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(-11300, -6195, 30)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-7084, -6604, 30)
@@ -308,6 +277,7 @@ Func Ranik()
 	MoveTo(1996, -18588, 30)
 	MoveTo(4010, -19728, 30)
 	Info('Entering Regent Valley!')
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(5000, -19782, 30)
 	WaitMapLoading($ID_Regent_Valley, 10000, 2000)
 	MoveTo(-14142, 15133, 30)
@@ -328,17 +298,16 @@ Func Ranik()
 	MoveTo(22143, 3527, 30)
 	MoveTo(22613, 5474, 30)
 	MoveTo(22550, 6748, 30)
+	; FIXME: Need a MoveTo close to the portal and then a Move outside
 	MoveTo(22551, 7300)
-	WaitMapLoading($ID_MAP_Ranik, 10000, 2000)
-	RndSleep(250)
-	Info("Made it to Fort Ranik!")
-	RndSleep(250)
-	
+	WaitMapLoading($ID_Fort_Ranik_Presearing, 10000, 2000)
+	Info('Made it to Fort Ranik!')
 EndFunc
 
 Func Barradin()
-    Info("Starting run to The Barradin Estate.." )
+	Info('Starting run to The Barradin Estate..' )
 EndFunc
+
 
 ;~ Check for remaining charr
 Func CheckCharr()
@@ -349,13 +318,15 @@ Func CheckCharr()
 	EndIf
 EndFunc
 
- ;~ Return to Ascalon if we're dead
+
+;~ Return to Ascalon if we're dead
 Func CheckIfDead()
 	If GetIsDead() Then
 		BackToAscalon()
 		Return 1
 	EndIf
 EndFunc
+
 
 ;~ Resign and return to Ascalon
 Func BackToAscalon()
