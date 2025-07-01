@@ -143,7 +143,7 @@ Func TowerOfCourage()
 		$waitCount += 1
 		$me = GetMyAgent()
 	WEnd
-	MoveAggroAndKill(-15500, -2000, '5')
+	MoveAggroAndKill(-15500, -2000)
 
 	Info('Getting Tower of Courage quest and reward')
 	MoveTo(-15700, -1700)
@@ -311,7 +311,7 @@ Func TheSpiderCave_and_FissureShore()
 	MoveAggroAndKill(-6100, -11400, '5')
 	MoveAggroAndKill(-7800, -13400, '6')
 	MoveAggroAndKill(-8400, -15800, '7')
-	MoveAggroAndKill(-8600, -17300, '5')
+	MoveAggroAndKill(-8600, -17300, '8')
 
 	MoveTo(-10000, -18500)
 	MoveTo(-12900, -18000)
@@ -333,22 +333,24 @@ Func LakeOfFire()
 	MoveAggroAndKill(4500, -9800, '1')
 	MoveAggroAndKill(7350, -11250, '2')
 	MoveAggroAndKill(9600, -8500, '3')
-	MoveAggroAndKill(20500, -8100, '4')
-	MoveAggroAndKill(20700, -12400, '5')
-	MoveAggroAndKill(18300, -14000, '6')
-	MoveAggroAndKill(19500, -15000, '7')
+	MoveAggroAndKill(15250, -9500, '4')
+	MoveAggroAndKill(20500, -8100, '5')
+	MoveAggroAndKill(20500, -12400, '6', $RANGE_EARSHOT)
+	MoveAggroAndKill(18300, -14000, '7', $RANGE_EARSHOT)
+	MoveAggroAndKill(19500, -15000, '8', $RANGE_EARSHOT)
 EndFunc
 
 
 Func TowerOfStrengh()
 	Info('Clearing area of Tower of Strengh')
-	MoveTo(18250, -14000)
-	MoveTo(20700, -12400)
+	MoveTo(18300, -14000)
+	MoveTo(20500, -12400)
 	MoveTo(20500, -8100)
+	MoveTo(15250, -9500)
 	MoveTo(9600, -8500)
-	MoveAggroAndKill(11500, -4600, '3')
-	MoveAggroAndKill(15000, -3100, '4')
-	MoveAggroAndKill(15800, -300, '5')
+	MoveAggroAndKill(11500, -4600, '1')
+	MoveAggroAndKill(15000, -3100, '2')
+	MoveAggroAndKill(15800, -300, '3')
 
 	Info('Going to trigger pnj')
 	MoveAggroAndKill(15300, -1400, '1')
@@ -361,7 +363,7 @@ Func TowerOfStrengh()
 	MoveAggroAndKill(10300, -5900, '2')
 	MoveAggroAndKill(15400, -1400, '3')
 	MoveAggroAndKill(16750, -1750, '4')
-	MoveAggroAndKill(12300, 250, '4')
+	MoveAggroAndKill(12300, 250, '5')
 	KillShardWolf()
 	; Entering the tower garantees the npc arrived
 	Local $me = GetMyAgent()
@@ -389,15 +391,19 @@ Func BurningForest()
 	RndSleep(GetPing() + 750)
 
 	Info('Clearing Burning Forest')
-	FlagMoveAggroAndKill(15000, 9000, '1')
-	FlagMoveAggroAndKill(17500, 9500, '1')
-	FlagMoveAggroAndKill(20000, 10000, '2')
-	FlagMoveAggroAndKill(20000, 12000, '4')
-	FlagMoveAggroAndKill(22500, 14000, '5')
+	FlagMoveAggroAndKill(12800, 7900, '1')
+	FlagMoveAggroAndKill(14800, 8500, '2')
+	FlagMoveAggroAndKill(16500, 9100, '3')
+	FlagMoveAggroAndKill(19000, 8400, '4')
+	FlagMoveAggroAndKill(20800, 8500, '5')
+	FlagMoveAggroAndKill(21700, 12600, '6')
+	FlagMoveAggroAndKill(22000, 15000, '7')
+	FlagMoveAggroAndKill(19500, 14500, '8')
+	FlagMoveAggroAndKill(17400, 13500, '9')
 	KillShardWolf()
-	FlagMoveAggroAndKill(22500, 16000, '6')
-	FlagMoveAggroAndKill(21000, 15000, '7')
-	FlagMoveAggroAndKill(16000, 10000, '8')
+	FlagMoveAggroAndKill(16200, 11000, '10')
+	FlagMoveAggroAndKill(15000, 92000, '11')
+	FlagMoveAggroAndKill(13000, 7700, '12')
 
 	Info('Getting the Slaves of Menzies quest reward')
 	MoveTo(12000, 6600)
@@ -420,17 +426,17 @@ Func ForestOfTheWailingLord()
 	MoveAggroAndKill(-17500, 9750, '1')
 	MoveAggroAndKill(-20200, 9500, '2')
 	MoveAggroAndKill(-22000, 11000, '3')
-	MoveAggroAndKill(-20000, 13000, '3')
-	MoveAggroAndKill(-19000, 14500, '4')
-	MoveAggroAndKill(-18000, 15000, '5')
-	MoveAggroAndKill(-16000, 13500, '6')
+	MoveAggroAndKill(-20000, 13000, '4', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKill(-19000, 14500, '5', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKill(-18000, 15000, '6')
+	MoveAggroAndKill(-16000, 13500, '7')
 
 	KillShardWolf()
 
-	MoveAggroAndKill(-20000, 13000, '7', $RANGE_SPELLCAST + 200)
-	MoveAggroAndKill(-18000, 11000, '8', $RANGE_SPELLCAST + 200)
-	; Safer move
-	MoveAggroAndKill(-20200, 14000, '9', $RANGE_SPELLCAST + 200)
+	; Safer moves
+	MoveAggroAndKill(-20000, 13000, '8', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKill(-18000, 11000, '9', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKill(-20200, 14000, '10', $RANGE_SPELLCAST + 200)
 
 	Info('Safely pulling')
 	CommandHero(1, -20200, 13600)
@@ -568,21 +574,24 @@ EndFunc
 Func PickUpUnholyTexts()
 	Local $agent
 	Local $item
-	Local $deadlock
+	Local $attempts = 1
 	For $i = 1 To GetMaxAgents()
 		$agent = GetAgentByID($i)
 		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
 		$item = GetItemByAgentID($i)
-		If (DllStructGetData(($item), 'ModelID') == $ID_FoW_Unholy_Texts) Then
+		If (DllStructGetData($item, 'ModelID') == $ID_FoW_Unholy_Texts) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
-			$deadlock = TimerInit()
 			While Not GetIsDead() And GetAgentExists($i)
-				If TimerDiff($deadlock) > 20000 Then
+				If Mod($attempts, 20) == 0 Then
+					Local $attempt = Floor($attempts / 20)
 					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
-					Return False
+					Error('Attempt ' & $attempt)
+					Local $attemptPlaces[8] = [2300, 14700, 1800, 16500, 4400, 15800, 1900, 13800]
+					MoveTo($attemptPlaces[Floor($attempts / 10)] - 2, $attemptPlaces[Floor($attempts / 10) - 1])
 				EndIf
-				RndSleep(500)
+				$attempts += 1
+				RndSleep(1000)
 			WEnd
 			Return True
 		EndIf

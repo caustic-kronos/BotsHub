@@ -2078,6 +2078,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
 			DefaultKillFoes($flagHeroes)
+			PickUpItems(null, DefaultShouldPickItem, $range)
 			; If one member of group is dead, go to rez him before proceeding
 		EndIf
 		$coordsX = DllStructGetData($me, 'X')
@@ -2091,7 +2092,6 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 			EndIf
 		EndIf
 		RndSleep(500)
-		PickUpItems(null, DefaultShouldPickItem, $range)
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
