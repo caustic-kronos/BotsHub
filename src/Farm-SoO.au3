@@ -36,7 +36,6 @@ Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
 Global $SOO_FARM_SETUP = False
 Global $SoODeathsCount = 0
-Local $questState = 999
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
@@ -110,8 +109,7 @@ EndFunc
 ;~ Farm loop
 Func SoOFarmLoop()
 	$SoODeathsCount = 0
-	$questState = 999
-	
+
 	AdlibRegister('SoOGroupIsAlive', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
@@ -470,7 +468,7 @@ Func ClearSoOFloor3()
 		InteractWithTorchOrBrazierAt(5549, 9920, 'Light up brazier 3')
 		InteractWithTorchOrBrazierAt(-536, 6109, 'Light up brazier 4')
 		MoveTo(-2346, 7961)
-		MoveTo(-4329, 6606)	
+		MoveTo(-4329, 6606)
 		InteractWithTorchOrBrazierAt(-3814, 5599, 'Light up brazier 5')
 		InteractWithTorchOrBrazierAt(-4959, 7558, 'Light up brazier 6')
 		InteractWithTorchOrBrazierAt(-7532, 4536, 'Light up brazier 7')
@@ -493,6 +491,7 @@ Func ClearSoOFloor3()
 
 	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
 
+	Local $questState = 999
 	While $SoODeathsCount < 6 And $questState <> 3
 		Info('Open dungeon door')
 		ClearTarget()
@@ -521,11 +520,10 @@ Func ClearSoOFloor3()
 		Info('Boss fight, go in and move around to make sure its aggroed')
 		FlagMoveAggroAndKill(-16300, 16600, '7', $LargerSoOAggroRange)
 		FlagMoveAggroAndKill(-15850, 17500, '8', $LargerSoOAggroRange)
-	
+
 		$questState = DllStructGetData(GetQuestByID($ID_SoO_Quest_Lost_Souls), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
-	
-	Sleep(1000)
+		Sleep(1000)
 	WEnd
 
 	; Doubled to try securing the looting

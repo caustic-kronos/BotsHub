@@ -34,7 +34,6 @@ Global $FROGGY_FARM_SETUP = False
 Global $FroggyDeathsCount = 0
 Global Const $froggyAggroRange = $RANGE_SPELLCAST + 100
 Global Const $ID_Froggy_Quest = 0x339
-Local $questState = 999
 
 
 ;~ Main method to farm Froggy
@@ -99,7 +98,6 @@ EndFunc
 ;~ Farm loop
 Func FroggyFarmLoop()
 	$FroggyDeathsCount = 0
-	$questState = 999
 	GetRewardRefreshAndTakeFroggyQuest()
 	AdlibRegister('FroggyGroupIsAlive', 10000)
 	ClearFroggyFloor1()
@@ -304,6 +302,7 @@ Func ClearFroggyFloor2()
 
 	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
 
+	Local $questState = 999
 	While $FroggyDeathsCount < 6 And $questState <> 3
 		Info('------------------------------------')
 		Info('Boss area')
