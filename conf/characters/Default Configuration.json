@@ -7,7 +7,7 @@
 		"loop_mode": true,
 		"hard_mode": true,
 		"store_unid": false,
-		"sort_items": true,
+		"sort_items": false,
 		"identify_items": false,
 		"collect_data": false,
 		"salvage_items": false,
@@ -17,7 +17,9 @@
 		"store_leftovers": false,
 		"store_gold": false,
 		"district": "Random",
-		"bag_number": 5
+		"bag_number": 5,
+		"farm_materials": false,
+		"disable_rendering": false
 	},
 	"consumables": {
 		"consume": true
