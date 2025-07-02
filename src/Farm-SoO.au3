@@ -36,7 +36,7 @@ Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
 Global $SOO_FARM_SETUP = False
 Global $SoODeathsCount = 0
-
+Local $questState = 999
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
@@ -70,6 +70,7 @@ EndFunc
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
 	$SoODeathsCount = 0
+
 	Info('Making way to portal')
 	MoveTo(16448, 14830)
 	Local $mapLoaded = False
@@ -92,7 +93,7 @@ Func RunToShardsOfOrrDungeon()
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 11156, -17802, 1250)
 		MoveAggroAndKill(13122, 10437, '1', $SoOAggroRange)
 		MoveAggroAndKill(10668, 6530, '2', $SoOAggroRange)
-		MoveAggroAndKill(9028, -1613, '3', $SoOAggroRange)
+		MoveAggroAndKill(11891, -224, '3', $SoOAggroRange)
 		MoveAggroAndKill(8803, -5104, '4', $SoOAggroRange)
 		MoveAggroAndKill(8125, -8247, '5', $SoOAggroRange)
 		If SoOIsFailure() Then Return 1
@@ -109,7 +110,8 @@ EndFunc
 ;~ Farm loop
 Func SoOFarmLoop()
 	$SoODeathsCount = 0
-
+	$questState = 999
+	
 	AdlibRegister('SoOGroupIsAlive', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
@@ -270,8 +272,8 @@ Func ClearSoOFloor1()
 			RndSleep(500)
 		Next
 
-		MoveAggroAndKill(18000, 1900, '1', $SoOAggroRange)
-		MoveAggroAndKill(19700, 700, '2', $SoOAggroRange)
+		FlagMoveAggroAndKill(18000, 1900, '1', $SoOAggroRange)
+		FlagMoveAggroAndKill(19700, 700, '2', $SoOAggroRange)
 
 		MoveTo(20000, 900)
 		Move(20400, 1300)
@@ -333,10 +335,10 @@ Func ClearSoOFloor2()
 		DropBundle()
 		RndSleep(500)
 		Info('Kill group')
-		MoveAggroAndKill(-9358, -12411, '5', $SoOAggroRange)
-		MoveAggroAndKill(-10143, -11136, '6', $SoOAggroRange)
-		MoveAggroAndKill(-8871, -9951, '7', $SoOAggroRange)
-		MoveAggroAndKill(-7722, -11522, '8', $SoOAggroRange)
+		FlagMoveAggroAndKill(-9358, -12411, '5', $SoOAggroRange)
+		FlagMoveAggroAndKill(-10143, -11136, '6', $SoOAggroRange)
+		FlagMoveAggroAndKill(-8871, -9951, '7', $SoOAggroRange)
+		FlagMoveAggroAndKill(-7722, -11522, '8', $SoOAggroRange)
 
 		MoveTo(-8912, -13586)
 		Sleep(500)
@@ -368,9 +370,9 @@ Func ClearSoOFloor2()
 		DropBundle()
 		RndSleep(500)
 
-		MoveAggroAndKill(-6553, -2347, '16', $SoOAggroRange)
-		MoveAggroAndKill(-7733, -2487, '17', $SoOAggroRange)
-		MoveAggroAndKill(-6481, -2668, '18', $SoOAggroRange)
+		FlagMoveAggroAndKill(-6553, -2347, '16', $SoOAggroRange)
+		FlagMoveAggroAndKill(-7733, -2487, '17', $SoOAggroRange)
+		FlagMoveAggroAndKill(-6481, -2668, '18', $SoOAggroRange)
 		PickUpItems()
 		MoveAggroAndKill(-9000, -4350, '19', $SoOAggroRange)
 		; Poison trap between 19 and 20
@@ -414,17 +416,19 @@ Func ClearSoOFloor3()
 		Dialog(0x84)
 		RndSleep(500)
 
-		MoveAggroAndKill(16000, 18400, '1', $SoOAggroRange)
-		MoveAggroAndKill(10000, 19425, '2', $SoOAggroRange)
-		; Poison trap between 2 and 3
-		MoveAggroAndKill(9600, 18700, '3', $SoOAggroRange)
-		MoveAggroAndKill(9100, 18000, '4', $SoOAggroRange)
-		MoveAggroAndKill(9000, 17000, '5', $SoOAggroRange)
-		MoveAggroAndKill(8000, 15000, '6', $SoOAggroRange)
-		MoveAggroAndKill(4000, 9200, '7', $SoOAggroRange)
-		MoveAggroAndKill(1800, 7500, '8', $SoOAggroRange)
-		MoveAggroAndKill(2300, 8000, '9', $SoOAggroRange)
-		MoveAggroAndKill(1100, 7100, '10', $SoOAggroRange)
+		MoveAggroAndKill(16337, 16366, '1', $SoOAggroRange)
+		MoveAggroAndKill(16313, 17997, '2', $SoOAggroRange)
+		MoveAggroAndKill(16000, 18400, '3', $SoOAggroRange)
+		MoveAggroAndKill(10000, 19425, '4', $SoOAggroRange)
+		; Poison trap between 4 and 5
+		MoveAggroAndKill(9600, 18700, '5', $SoOAggroRange)
+		MoveAggroAndKill(9100, 18000, '6', $SoOAggroRange)
+		FlagMoveAggroAndKill(9000, 17000, '7', $SoOAggroRange)
+		FlagMoveAggroAndKill(8000, 15000, '8', $SoOAggroRange)
+		MoveAggroAndKill(4000, 9200, '9', $SoOAggroRange)
+		MoveAggroAndKill(1800, 7500, '10', $SoOAggroRange)
+		MoveAggroAndKill(2300, 8000, '11', $SoOAggroRange)
+		MoveAggroAndKill(1100, 7100, '12', $SoOAggroRange)
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
@@ -466,7 +470,7 @@ Func ClearSoOFloor3()
 		InteractWithTorchOrBrazierAt(5549, 9920, 'Light up brazier 3')
 		InteractWithTorchOrBrazierAt(-536, 6109, 'Light up brazier 4')
 		MoveTo(-2346, 7961)
-		MoveTo(-4329, 6606)
+		MoveTo(-4329, 6606)	
 		InteractWithTorchOrBrazierAt(-3814, 5599, 'Light up brazier 5')
 		InteractWithTorchOrBrazierAt(-4959, 7558, 'Light up brazier 6')
 		InteractWithTorchOrBrazierAt(-7532, 4536, 'Light up brazier 7')
@@ -489,7 +493,6 @@ Func ClearSoOFloor3()
 
 	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
 
-	Local $questState = 1
 	While $SoODeathsCount < 6 And $questState <> 3
 		Info('Open dungeon door')
 		ClearTarget()
@@ -514,12 +517,15 @@ Func ClearSoOFloor3()
 		MoveAggroAndKill(-13300, 13550, '5', $LargerSoOAggroRange)
 		MoveTo(13900, 13500)
 		; Fire traps between 5 6 and 7
-		MoveAggroAndKill(-15250, 15900, '6', $LargerSoOAggroRange)
+		FlagMoveAggroAndKill(-15250, 15900, '6', $LargerSoOAggroRange)
 		Info('Boss fight, go in and move around to make sure its aggroed')
-		MoveAggroAndKill(-16300, 16600, '7', $LargerSoOAggroRange)
-		MoveAggroAndKill(-15850, 17500, '8', $LargerSoOAggroRange)
+		FlagMoveAggroAndKill(-16300, 16600, '7', $LargerSoOAggroRange)
+		FlagMoveAggroAndKill(-15850, 17500, '8', $LargerSoOAggroRange)
+	
 		$questState = DllStructGetData(GetQuestByID($ID_SoO_Quest_Lost_Souls), 'LogState')
-		Sleep(1000)
+		Info('Quest state end of boss loop : ' & $questState)
+	
+	Sleep(1000)
 	WEnd
 
 	; Doubled to try securing the looting

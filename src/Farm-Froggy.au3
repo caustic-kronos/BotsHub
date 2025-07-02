@@ -34,6 +34,7 @@ Global $FROGGY_FARM_SETUP = False
 Global $FroggyDeathsCount = 0
 Global Const $froggyAggroRange = $RANGE_SPELLCAST + 100
 Global Const $ID_Froggy_Quest = 0x339
+Local $questState = 999
 
 
 ;~ Main method to farm Froggy
@@ -98,6 +99,7 @@ EndFunc
 ;~ Farm loop
 Func FroggyFarmLoop()
 	$FroggyDeathsCount = 0
+	$questState = 999
 	GetRewardRefreshAndTakeFroggyQuest()
 	AdlibRegister('FroggyGroupIsAlive', 10000)
 	ClearFroggyFloor1()
@@ -302,7 +304,6 @@ Func ClearFroggyFloor2()
 
 	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
 
-	Local $questState = 1
 	While $FroggyDeathsCount < 6 And $questState <> 3
 		Info('------------------------------------')
 		Info('Boss area')
@@ -311,10 +312,11 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKill(14641, -15081, 'I live to serve.', $largeFroggyAggroRange)
 		MoveAggroAndKill(13934, -17384, 'The mission is in peril!', $largeFroggyAggroRange)
 		MoveAggroAndKill(14365, -17681, 'Boss fight', $largeFroggyAggroRange)
-		MoveAggroAndKill(15286, -17662, 'All hail! King of the losers!', $largeFroggyAggroRange)
-		MoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $largeFroggyAggroRange)
+		FlagMoveAggroAndKill(15286, -17662, 'All hail! King of the losers!', $largeFroggyAggroRange)
+		FlagMoveAggroAndKill(15804, -19107, 'Oh fuck its huge', $largeFroggyAggroRange)
 
 		$questState = DllStructGetData(GetQuestByID($ID_Froggy_Quest), 'LogState')
+		Info('Quest state end of boss loop : ' & $questState)
 	WEnd
 	If FroggyIsFailure() Then Return 1
 
