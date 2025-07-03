@@ -112,9 +112,11 @@ Global Const $ID_Mount_Qinkai				= 200
 Global Const $ID_Silent_Surf				= 203
 Global Const $ID_Ferndale					= 210
 Global Const $ID_Pongmei_Valley				= 211
+Global Const $ID_Minister_Chos_Estate		= 214
 Global Const $ID_Nahpui_Quarter				= 216
 Global Const $ID_Boreas_Seabed				= 219
 Global Const $ID_The_Eternal_Grove			= 222
+Global Const $ID_Sunqua_Vale				= 238
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
 Global Const $ID_Seitung_Harbor				= 250
@@ -922,7 +924,7 @@ Global Const $ID_Scorched_Lodestone			= 486
 Global Const $ID_Ornate_Grawl_Necklace		= 487
 Global Const $ID_Shiverpeak_Mane			= 488
 Global Const $ID_Frostfire_Fang				= 489
-;Global Const $ID_Dark_Flame_Fang				= XXX
+;Global Const $ID_Dark_Flame_Fang			= XXX
 Global Const $ID_Icy_Hump					= 490
 Global Const $ID_Huge_Jawbone				= 492
 ;Global Const $ID_Gargantuan_Jawbone		= XXX
@@ -1019,14 +1021,14 @@ Global Const $ID_Skeleton_Bone				= 1605
 Global Const $ID_Cobalt_Talon				= 1609
 ;Global Const $ID_Rinkhal_Talon				= XXX
 ;Global Const $ID_Bull_Trainer_Giant_Jawbone = XXXX
-;Global Const $ID_Fledgling_Skree_Wing					= XXXX
+;Global Const $ID_Fledgling_Skree_Wing		= XXXX
 Global Const $ID_Skree_Wing					= 1610
 Global Const $ID_Insect_Carapace			= 1617
 Global Const $ID_Sentient_Lodestone			= 1619
 Global Const $ID_Immolated_Djinn_Essence	= 1620
 Global Const $ID_Roaring_Ether_Claw			= 1629
 Global Const $ID_Mandragor_Husk				= 1668
-;Global Const $ID_Mandragor_Carapace			= XXX
+;Global Const $ID_Mandragor_Carapace		= XXX
 Global Const $ID_Mandragor_Swamproot		= 1671
 Global Const $ID_Behemoth_Hide				= 1675
 Global Const $ID_Geode						= 1681
@@ -1441,31 +1443,52 @@ Global Const $ID_Panda_Mini								= 15517
 
 #Region Ultra rare skins
 ; Missing IDs
-;Global Const $ID_Dryad_Bow							=
-;Global Const $ID_Storm_Daggers						=
-;Global Const $ID_Demon_Fangs						=
-;Global Const $ID_Bonecage_Scythe					=
-;Global Const $ID_Clockwork_Scythe					=
-;Global Const $ID_Insectoid_Scythe					=
-;Global Const $ID_Tentacle_Scythe					=
-;Global Const $ID_Demoncrest_Spear					=
-;Global Const $ID_Eternal_Blade						=
-;Global Const $ID_Obsidian_Edge						=
-;Global Const $ID_Onyx_Scepter						=
-;Global Const $ID_Topaz_Scepter						=
+;Global Const $ID_Astral_Staff
+;Global Const $ID_Dryad_Bow
+;Global Const $ID_Goldhorn_Staff
+;Global Const $ID_Notched_Blade
+;Global Const $ID_Cerulean_Edge
+;Global Const $ID_Chrysocola_Staff
+;Global Const $ID_Cobalt_Staff
+;Global Const $ID_Violet_Edge
+;Global Const $ID_Bonecage_Scythe
+;Global Const $ID_Demon_Fangs
+;Global Const $ID_Icicle_Staff
+;Global Const $ID_Tentacle_Scythe
+;Global Const $ID_Turquoise_Staff
+;Global Const $ID_Emerald_Edge
+;Global Const $ID_Moldavite_Staff
+;Global Const $ID_Ancient_Moss_Staff
+;Global Const $ID_Topaz_Scepter
+;Global Const $ID_Golden_Hammer
+;Global Const $ID_Suntouched_Staff
+;Global Const $ID_Clockwork_Scythe
+;Global Const $ID_Crystal_Flame_Staff
+;Global Const $ID_Signet_Shield
+;Global Const $ID_Steelhead_Scythe
+;Global Const $ID_Insectoid_Scythe
+;Global Const $ID_Insectoid_Staff
+;Global Const $ID_Embercrest_Staff
+;Global Const $ID_Singing_Blade
 
-;Global Const $ID_Envoy_Sword						=
-;Global Const $ID_Envoy_Axe							=
 ;Global Const $ID_Chaotic_Envoy_Staff				=
 ;Global Const $ID_Dark_Envoy_Staff					=
 ;Global Const $ID_Elemental_Envoy_Staff				=
 ;Global Const $ID_Spiritual_Envoy_Staff				=
 
+
+Global Const $ID_Eternal_Blade						= 1045
+Global Const $ID_Obsidian_Edge						= 1900
 Global Const $ID_Emerald_Blade						= 1976
+Global Const $ID_Storm_Daggers						= 1986
 Global Const $ID_Voltaic_Spear						= 2071
 Global Const $ID_Dhuums_Soul_Reaper					= 32823
+Global Const $ID_Aureate_Blade						= 2124
 Global Const $ID_Eaglecrest_Axe						= 1985
 Global Const $ID_Wingcrest_Maul						= 2048
+Global Const $ID_Demoncrest_Spear					= 2079
+Global Const $ID_Silverwing_Recurve_Bow				= 2039
+Global Const $ID_Onyx_Scepter						= 2394
 
 #Region Envoy Weapons
 ; Green Envoys
@@ -1474,9 +1497,10 @@ Global Const $ID_Vetauras_Harbinger					= 36678
 Global Const $ID_Torivos_Rage						= 36680
 Global Const $ID_Heleynes_Insight					= 36676
 ; Gold Envoys
-Global Const $ID_Envoy_Scythe						= 36677
-
+Global Const $ID_Envoy_Sword						= 36669
+Global Const $ID_Envoy_Axe							= 36679
 Global Const $ID_Divine_Envoy_Staff					= 36674
+Global Const $ID_Envoy_Scythe						= 36677
 #EndRegion Envoy Weapons
 
 #Region Froggy
@@ -1575,22 +1599,8 @@ Global Const $ID_Sephis_Axe							= 120
 Global Const $ID_Serpent_Axe						= 118
 
 ; Missing IDs
-; New weapons
-;Global Const $ID_Dragon_Fangs						=
-Global Const $ID_Spiritbinder						= 2467
-;Global Const $ID_Japan_First_Anniversary_Shield	=
-;Global Const $ID_Soulbreaker						=
-;Global Const $ID_Sunspear							=
-;Global Const $ID_Canthan_Targe						=
-;Global Const $ID_War_Pick							=
-;Global Const $ID_Ithas_Bow							=
-;Global Const $ID_Censors_Icon						=
-;Global Const $ID_Bone_Idol							=
-;Global Const $ID_Chimeric_Prism					=
-
 ;Global Const $ID_Naga_Shortbow						=
 ;Global Const $ID_Naga_Longbow						=
-;Global Const $ID_Chaos_Axe							=
 ;Global Const $ID_Amethyst_Aegis					=
 ;Global Const $ID_Straw_Effigy						=
 ;Global Const $ID_Colossal_Pick						=
@@ -1618,6 +1628,8 @@ Global Const $ID_Spiritbinder						= 2467
 ;3270						; magma shield/summit shield ???
 ;870, 869, 1101				; more canthan rare skins
 ;1439, 1557					; Elonian Swords (Colossal, Tattooed, Dead, etc)
+
+Global Const $ID_Chaos_Axe							= 111
 
 ; Bow
 Global Const $ID_Eternal_Bow						= 133
@@ -1719,22 +1731,24 @@ Global Const $ID_Zodiac_Longbow						= 966
 
 #Region Anniversary Weapon skins
 #Region Tyria
-Global Const $ID_Bone_Idol_Soul_Reaping					= 2017
-Global Const $ID_Bone_Idol_Blood_Magic					= 2018
-Global Const $ID_Bone_Idol_Curses						= 2019
-Global Const $ID_Bone_Idol_Death_Magic					= 2020
-Global Const $ID_Canthan_Targe_Strength					= 999999
-Global Const $ID_Canthan_Targe_Tactic					= 999999
-Global Const $ID_Censors_Icon_Divine_Favor				= 2100
-Global Const $ID_Censors_Icon_Healing_Prayers			= 2101
-Global Const $ID_Censors_Icon_Protection_Prayers		= 999999
-Global Const $ID_Censors_Icon_Smiting_Prayers			= 999999
+Global Const $ID_Ithas_Bow								= 2011
 Global Const $ID_Chimeric_Prism_Fast_Casting			= 2012
 Global Const $ID_Chimeric_Prism_Soul_Reaping			= 2013
 Global Const $ID_Chimeric_Prism_Energy_Storage			= 2014
 Global Const $ID_Chimeric_Prism_Divine_Favor			= 2015
 Global Const $ID_Chimeric_Prism_Spawning_Power			= 2016
-Global Const $ID_Ithas_Bow								= 2011
+Global Const $ID_Bone_Idol_Soul_Reaping					= 2017
+Global Const $ID_Bone_Idol_Blood_Magic					= 2018
+Global Const $ID_Bone_Idol_Curses						= 2019
+Global Const $ID_Bone_Idol_Death_Magic					= 2020
+Global Const $ID_Canthan_Targe_Tactic					= 2444
+Global Const $ID_Canthan_Targe_Strength					= 2445
+Global Const $ID_Canthan_Targe_Leadership				= 2446
+Global Const $ID_Censors_Icon_Divine_Favor				= 2100
+Global Const $ID_Censors_Icon_Healing_Prayers			= 2101
+Global Const $ID_Censors_Icon_Protection_Prayers		= 999999
+Global Const $ID_Censors_Icon_Smiting_Prayers			= 999999
+
 Global Const $ID_War_Pick								= 999999
 #EndRegion Tyria
 
@@ -1744,19 +1758,20 @@ Global Const $ID_SpiritBinder_Communing					= 2464
 Global Const $ID_SpiritBinder_Spawning_Power			= 2465
 Global Const $ID_SpiritBinder_Restoration				= 2466
 Global Const $ID_SpiritBinder_Channeling				= 2467
-Global Const $ID_Japan_1st_Anniversary_Shield_Strength	= 2470
+Global Const $ID_Japan_1st_Anniversary_Shield_Strength	= 2469
 Global Const $ID_Japan_1st_Anniversary_Shield_Tactic	= 2470
+Global Const $ID_Japan_1st_Anniversary_Shield_Leadership= 2470
 #EndRegion Cantha
 
 #Region Elona
-Global Const $ID_Soulbreaker							= 999999
+Global Const $ID_Soulbreaker							= 2468
 Global Const $ID_Sunspear								= 2471
 #EndRegion Elona
 
 #Region EotN
 Global Const $ID_Darksteel_Longbow						= 2472
-Global Const $ID_Glacial_Blades_Sword					= 2473
-Global Const $ID_Glacial_Blades_Dagger					= 2474
+Global Const $ID_Glacial_Blade							= 2473
+Global Const $ID_Glacial_Blades							= 2474
 Global Const $ID_Hourglass_Staff_Domination_Magic		= 2475
 Global Const $ID_Hourglass_Staff_Fast_Casting			= 2476
 Global Const $ID_Hourglass_Staff_Illusion_Magic			= 2477
@@ -1792,55 +1807,72 @@ Global Const $ID_Greater_Stoneblade						= 1956
 #EndRegion EotN
 
 #Region Any
-Global Const $ID_Bears_Sloth							= 999999
-Global Const $ID_Foxs_Greed_Domination_Magic			= 999999
-Global Const $ID_Foxs_Greed_Fast_Casting				= 999999
-Global Const $ID_Foxs_Greed_Illusion_Magic				= 999999
-Global Const $ID_Foxs_Greed_Inspiration_Magic			= 999999
-Global Const $ID_Foxs_Greed_Soul_Reaping				= 999999
-Global Const $ID_Foxs_Greed_Blood_Magic					= 999999
-Global Const $ID_Foxs_Greed_Curses						= 999999
-Global Const $ID_Foxs_Greed_Death_Magic					= 999999
-Global Const $ID_Foxs_Greed_Air_Magic					= 999999
-Global Const $ID_Foxs_Greed_Earth_Magic					= 999999
-Global Const $ID_Foxs_Greed_Energy_Storage				= 999999
-Global Const $ID_Foxs_Greed_Fire_Magic					= 999999
-Global Const $ID_Foxs_Greed_Water_Magic					= 999999
-Global Const $ID_Foxs_Greed_Divine_Favor				= 999999
-Global Const $ID_Foxs_Greed_Healing_Prayers				= 999999
-Global Const $ID_Foxs_Greed_Protection_Prayers			= 2070
-Global Const $ID_Foxs_Greed_Smiting_Prayers				= 999999
-Global Const $ID_Foxs_Greed_Communing					= 2081
-Global Const $ID_Foxs_Greed_Spawning_Power				= 2082
-Global Const $ID_Foxs_Greed_Restoration					= 2083
-Global Const $ID_Foxs_Greed_Channeling					= 999999
-Global Const $ID_Hogs_Gluttony_Command					= 999999
-Global Const $ID_Hogs_Gluttony_Leadership				= 2440
-Global Const $ID_Hogs_Gluttony_Strength					= 2339
-Global Const $ID_Hogs_Gluttony_Tactics					= 2438
-Global Const $ID_Lions_Pride_Domination_Magic			= 999999
-Global Const $ID_Lions_Pride_Fast_Casting				= 999999
-Global Const $ID_Lions_Pride_Illusion_Magic				= 999999
-Global Const $ID_Lions_Pride_Inspiration_Magic			= 999999
-Global Const $ID_Lions_Pride_Soul_Reaping				= 999999
-Global Const $ID_Lions_Pride_Blood_Magic				= 999999
-Global Const $ID_Lions_Pride_Curses						= 999999
-Global Const $ID_Lions_Pride_Death_Magic				= 2020
+Global Const $ID_Scorpion_Bow							= 2008
+Global Const $ID_Scorpions_Lust							= 2009
+Global Const $ID_Black_Hawks_Lust						= 2010
+Global Const $ID_Storm_Ember_Air_Magic					= 2021
+Global Const $ID_Storm_Ember_Earth_Magic				= 2022
+Global Const $ID_Storm_Ember_Energy_Storage				= 2023
+Global Const $ID_Storm_Ember_Fire_Magic					= 2024
+Global Const $ID_Storm_Ember_Water_Magic				= 2025
 Global Const $ID_Lions_Pride_Air_Magic					= 2026
 Global Const $ID_Lions_Pride_Earth_Magic				= 2027
 Global Const $ID_Lions_Pride_Energy_Storage				= 2028
 Global Const $ID_Lions_Pride_Fire_Magic					= 2029
 Global Const $ID_Lions_Pride_Water_Magic				= 2030
-Global Const $ID_Lions_Pride_Divine_Favor				= 999999
-Global Const $ID_Lions_Pride_Healing_Prayers			= 999999
-Global Const $ID_Lions_Pride_Protection_Prayers			= 999999
-Global Const $ID_Lions_Pride_Smiting_Prayers			= 999999
-Global Const $ID_Lions_Pride_Communing					= 2492
-Global Const $ID_Lions_Pride_Spawning_Power				= 999999
-Global Const $ID_Lions_Pride_Restoration				= 999999
-Global Const $ID_Lions_Pride_Channeling					= 999999
-Global Const $ID_Scorpions_Lust							= 2009
-Global Const $ID_Scorpion_Bow							= 2008
+
+Global Const $ID_Tigers_Pride_Domination_Magic			= 999999
+Global Const $ID_Tigers_Pride_Fast_Casting				= 2031
+Global Const $ID_Tigers_Pride_Illusion_Magic			= 999999
+Global Const $ID_Tigers_Pride_Inspiration_Magic			= 999999
+Global Const $ID_Tigers_Pride_Soul_Reaping				= 2045
+Global Const $ID_Tigers_Pride_Blood_Magic				= 999999
+Global Const $ID_Tigers_Pride_Curses					= 999999
+Global Const $ID_Tigers_Pride_Death_Magic				= 999999
+Global Const $ID_Tigers_Pride_Air_Magic					= 999999
+Global Const $ID_Tigers_Pride_Earth_Magic				= 999999
+Global Const $ID_Tigers_Pride_Energy_Storage			= 2047
+Global Const $ID_Tigers_Pride_Fire_Magic				= 999999
+Global Const $ID_Tigers_Pride_Water_Magic				= 999999
+Global Const $ID_Tigers_Pride_Divine_Favor				= 2054
+Global Const $ID_Tigers_Pride_Healing_Prayers			= 999999
+Global Const $ID_Tigers_Pride_Protection_Prayers		= 999999
+Global Const $ID_Tigers_Pride_Smiting_Prayers			= 999999
+Global Const $ID_Tigers_Pride_Communing					= 2055
+Global Const $ID_Tigers_Pride_Spawning_Power			= 999999
+Global Const $ID_Tigers_Pride_Restoration				= 999999
+Global Const $ID_Tigers_Pride_Channeling				= 999999
+
+Global Const $ID_Heavens_Arch_Divine_Favor				= 2056
+Global Const $ID_Heavens_Arch_Healing_Prayers			= 2057
+Global Const $ID_Heavens_Arch_Protection_Prayers		= 2066
+Global Const $ID_Heavens_Arch_Smiting_Prayers			= 2067
+
+Global Const $ID_Foxs_Greed_Divine_Favor				= 2068
+Global Const $ID_Foxs_Greed_Healing_Prayers				= 2069
+Global Const $ID_Foxs_Greed_Protection_Prayers			= 2070
+Global Const $ID_Foxs_Greed_Smiting_Prayers				= 2080
+Global Const $ID_Foxs_Greed_Communing					= 2081
+Global Const $ID_Foxs_Greed_Spawning_Power				= 2082
+Global Const $ID_Foxs_Greed_Restoration					= 2083
+Global Const $ID_Foxs_Greed_Channeling					= 2084
+
+Global Const $ID_Wolfs_Greed_Divine_Favor				= 2085
+Global Const $ID_Wolfs_Greed_Healing_Prayers			= 2087
+Global Const $ID_Wolfs_Greed_Protection_Prayers			= 2088
+Global Const $ID_Wolfs_Greed_Smiting_Prayers			= 2090
+Global Const $ID_Wolfs_Greed_Communing					= 2091
+Global Const $ID_Wolfs_Greed_Spawning_Power				= 2092
+Global Const $ID_Wolfs_Greed_Restoration				= 2094
+Global Const $ID_Wolfs_Greed_Channeling					= 2095
+
+Global Const $ID_Bears_Sloth							= 2239
+
+Global Const $ID_Hogs_Gluttony_Command					= 999999
+Global Const $ID_Hogs_Gluttony_Tactics					= 2438
+Global Const $ID_Hogs_Gluttony_Strength					= 2339
+Global Const $ID_Hogs_Gluttony_Leadership				= 2440
+
 Global Const $ID_Snakes_Envy_Domination_Magic			= 999999
 Global Const $ID_Snakes_Envy_Fast_Casting				= 999999
 Global Const $ID_Snakes_Envy_Illusion_Magic				= 999999
@@ -1864,8 +1896,8 @@ Global Const $ID_Snakes_Envy_Restoration				= 999999
 Global Const $ID_Snakes_Envy_Channeling					= 999999
 Global Const $ID_Unicorns_Wrath_Domination_Magic		= 2246
 Global Const $ID_Unicorns_Wrath_Fast_Casting			= 2424
-Global Const $ID_Unicorns_Wrath_Illusion_Magic			= 999999
-Global Const $ID_Unicorns_Wrath_Inspiration_Magic		= 999999
+Global Const $ID_Unicorns_Wrath_Illusion_Magic			= 2425
+Global Const $ID_Unicorns_Wrath_Inspiration_Magic		= 2426
 Global Const $ID_Unicorns_Wrath_Soul_Reaping			= 2427
 Global Const $ID_Unicorns_Wrath_Blood_Magic				= 999999
 Global Const $ID_Unicorns_Wrath_Curses					= 999999
@@ -1883,9 +1915,8 @@ Global Const $ID_Unicorns_Wrath_Communing				= 2430
 Global Const $ID_Unicorns_Wrath_Spawning_Power			= 999999
 Global Const $ID_Unicorns_Wrath_Restoration				= 999999
 Global Const $ID_Unicorns_Wrath_Channeling				= 999999
-Global Const $ID_Black_Hawks_Lust						= 2010
 Global Const $ID_Dragons_Envy_Domination_Magic			= 999999
-Global Const $ID_Dragons_Envy_Fast_Casting				= 999999
+Global Const $ID_Dragons_Envy_Fast_Casting				= 2455
 Global Const $ID_Dragons_Envy_Illusion_Magic			= 999999
 Global Const $ID_Dragons_Envy_Inspiration_Magic			= 999999
 Global Const $ID_Dragons_Envy_Soul_Reaping				= 2456
@@ -1910,65 +1941,24 @@ Global Const $ID_Peacocks_Wrath_Fast_Casting			= 2432
 Global Const $ID_Peacocks_Wrath_Illusion_Magic			= 2433
 Global Const $ID_Peacocks_Wrath_Inspiration_Magic		= 2434
 Global Const $ID_Rhinos_Sloth							= 2240
-Global Const $ID_Spiders_Gluttony_Command				= 2442
-Global Const $ID_Spiders_Gluttony_Leadership			= 2443
-Global Const $ID_Spiders_Gluttony_Strength				= 2442
 Global Const $ID_Spiders_Gluttony_Tactics				= 2441
-Global Const $ID_Tigers_Pride_Domination_Magic			= 999999
-Global Const $ID_Tigers_Pride_Fast_Casting				= 2031
-Global Const $ID_Tigers_Pride_Illusion_Magic			= 999999
-Global Const $ID_Tigers_Pride_Inspiration_Magic			= 999999
-Global Const $ID_Tigers_Pride_Soul_Reaping				= 2045
-Global Const $ID_Tigers_Pride_Blood_Magic				= 999999
-Global Const $ID_Tigers_Pride_Curses					= 999999
-Global Const $ID_Tigers_Pride_Death_Magic				= 999999
-Global Const $ID_Tigers_Pride_Air_Magic					= 999999
-Global Const $ID_Tigers_Pride_Earth_Magic				= 999999
-Global Const $ID_Tigers_Pride_Energy_Storage			= 2047
-Global Const $ID_Tigers_Pride_Fire_Magic				= 999999
-Global Const $ID_Tigers_Pride_Water_Magic				= 999999
-Global Const $ID_Tigers_Pride_Divine_Favor				= 999999
-Global Const $ID_Tigers_Pride_Healing_Prayers			= 999999
-Global Const $ID_Tigers_Pride_Protection_Prayers		= 999999
-Global Const $ID_Tigers_Pride_Smiting_Prayers			= 999999
-Global Const $ID_Tigers_Pride_Communing					= 2055
-Global Const $ID_Tigers_Pride_Spawning_Power			= 999999
-Global Const $ID_Tigers_Pride_Restoration				= 999999
-Global Const $ID_Tigers_Pride_Channeling				= 999999
-Global Const $ID_Wolfs_Greed_Domination_Magic			= 999999
-Global Const $ID_Wolfs_Greed_Fast_Casting				= 999999
-Global Const $ID_Wolfs_Greed_Illusion_Magic				= 999999
-Global Const $ID_Wolfs_Greed_Inspiration_Magic			= 999999
-Global Const $ID_Wolfs_Greed_Soul_Reaping				= 999999
-Global Const $ID_Wolfs_Greed_Blood_Magic				= 999999
-Global Const $ID_Wolfs_Greed_Curses						= 999999
-Global Const $ID_Wolfs_Greed_Death_Magic				= 999999
-Global Const $ID_Wolfs_Greed_Air_Magic					= 999999
-Global Const $ID_Wolfs_Greed_Earth_Magic				= 999999
-Global Const $ID_Wolfs_Greed_Energy_Storage				= 999999
-Global Const $ID_Wolfs_Greed_Fire_Magic					= 999999
-Global Const $ID_Wolfs_Greed_Water_Magic				= 999999
-Global Const $ID_Wolfs_Greed_Divine_Favor				= 999999
-Global Const $ID_Wolfs_Greed_Healing_Prayers			= 2087
-Global Const $ID_Wolfs_Greed_Protection_Prayers			= 2088
-Global Const $ID_Wolfs_Greed_Smiting_Prayers			=  2090
-Global Const $ID_Wolfs_Greed_Communing					= 2091
-Global Const $ID_Wolfs_Greed_Spawning_Power				= 2092
-Global Const $ID_Wolfs_Greed_Restoration				= 2094
-Global Const $ID_Wolfs_Greed_Channeling					= 2095
+Global Const $ID_Spiders_Gluttony_Strength				= 2442
+Global Const $ID_Spiders_Gluttony_Leadership			= 2443
+Global Const $ID_Spiders_Gluttony_Command				= 999999
+
 Global Const $ID_Furious_Bonecrusher					= 2133
 Global Const $ID_Bronze_Guardian_Command				= 999999
-Global Const $ID_Bronze_Guardian_Leadership				=  2437
-Global Const $ID_Bronze_Guardian_Strength				= 2436
 Global Const $ID_Bronze_Guardian_Tactics				= 2435
+Global Const $ID_Bronze_Guardian_Strength				= 2436
+Global Const $ID_Bronze_Guardian_Leadership				= 2437
 Global Const $ID_Deaths_Head_Domination_Magic			= 999999
 Global Const $ID_Deaths_Head_Fast_Casting				= 999999
 Global Const $ID_Deaths_Head_Illusion_Magic				= 999999
 Global Const $ID_Deaths_Head_Inspiration_Magic			= 999999
 Global Const $ID_Deaths_Head_Soul_Reaping				= 2447
-Global Const $ID_Deaths_Head_Blood_Magic				= 999999
-Global Const $ID_Deaths_Head_Curses						= 999999
-Global Const $ID_Deaths_Head_Death_Magic				= 999999
+Global Const $ID_Deaths_Head_Blood_Magic				= 2448
+Global Const $ID_Deaths_Head_Curses						= 2449
+Global Const $ID_Deaths_Head_Death_Magic				= 2450
 Global Const $ID_Deaths_Head_Air_Magic					= 999999
 Global Const $ID_Deaths_Head_Earth_Magic				= 999999
 Global Const $ID_Deaths_Head_Energy_Storage				= 999999
@@ -1978,27 +1968,19 @@ Global Const $ID_Deaths_Head_Divine_Favor				= 999999
 Global Const $ID_Deaths_Head_Healing_Prayers			= 999999
 Global Const $ID_Deaths_Head_Protection_Prayers			= 999999
 Global Const $ID_Deaths_Head_Smiting_Prayers			= 999999
-Global Const $ID_Deaths_Head_Communing					= 2448
+Global Const $ID_Deaths_Head_Communing					= 999999
 Global Const $ID_Deaths_Head_Spawning_Power				= 999999
 Global Const $ID_Deaths_Head_Restoration				= 999999
 Global Const $ID_Deaths_Head_Channeling					= 999999
-Global Const $ID_Heavens_Arch_Divine_Favor				= 2056
-Global Const $ID_Heavens_Arch_Healing_Prayers			= 2057
-Global Const $ID_Heavens_Arch_Protection_Prayers		= 2066
-Global Const $ID_Heavens_Arch_Smiting_Prayers			= 2067
 Global Const $ID_Quicksilver_Domination_Magic			= 2242
 Global Const $ID_Quicksilver_Fast_Casting				= 2243
 Global Const $ID_Quicksilver_Illusion_Magic				= 2244
 Global Const $ID_Quicksilver_Inspiration_Magic			= 2445
-Global Const $ID_Storm_Ember_Air_Magic					= 2021
-Global Const $ID_Storm_Ember_Earth_Magic				= 2022
-Global Const $ID_Storm_Ember_Energy_Storage				= 2023
-Global Const $ID_Storm_Ember_Fire_Magic					= 2024
-Global Const $ID_Storm_Ember_Water_Magic				= 2025
-Global Const $ID_Ominous_Aegis_Command					= 999999
-Global Const $ID_Ominous_Aegis_Leadership				= 999999
-Global Const $ID_Ominous_Aegis_Strength					= 999999
 Global Const $ID_Ominous_Aegis_Tactics					= 2461
+Global Const $ID_Ominous_Aegis_Strength					= 2462
+Global Const $ID_Ominous_Aegis_Leadership				= 2463
+Global Const $ID_Ominous_Aegis_Command					= 999999
+
 #EndRegion Any
 #EndRegion Anniversary Weapon skins
 
@@ -2052,23 +2034,37 @@ Global Const $ID_Oni_Daggers						= 766
 #EndRegion Other skins
 
 Global $UltraRareWeapons_Array = [ _
-	$ID_Glacial_Blades_Sword, $ID_Glacial_Blades_Dagger, _
-	$ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, $ID_Emerald_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, _
-	$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, $ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, $ID_Froggy_Air, $ID_Froggy_Earth, _
-	$ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, $ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, $ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
-	$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, $ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, _
-	$ID_Bone_Dragon_Staff_Death, $ID_Bone_Dragon_Staff_Air, $ID_Bone_Dragon_Staff_Earth, $ID_Bone_Dragon_Staff_Energy_Storage, $ID_Bone_Dragon_Staff_Fire, $ID_Bone_Dragon_Staff_Water, $ID_Bone_Dragon_Staff_Divine, $ID_Bone_Dragon_Staff_Healing, _
-	$ID_Bone_Dragon_Staff_Protection, $ID_Bone_Dragon_Staff_Smiting, $ID_Bone_Dragon_Staff_Communing, $ID_Bone_Dragon_Staff_Spawning, $ID_Bone_Dragon_Staff_Restoration, $ID_Bone_Dragon_Staff_Channeling, _
-	$ID_Celestial_Compass_Domination, $ID_Celestial_Compass_Fast_Casting, $ID_Celestial_Compass_Illusion, $ID_Celestial_Compass_Inspiration, $ID_Celestial_Compass_Soul_Reaping, $ID_Celestial_Compass_Blood, _
-	$ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, $ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
-	$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, $ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
+	$ID_Glacial_Blade, $ID_Glacial_Blades, $ID_Crystalline_Sword, _
+	$ID_Eternal_Blade, $ID_Obsidian_Edge, $ID_Emerald_Blade, $ID_Storm_Daggers, $ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, _
+	$ID_Aureate_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, $ID_Demoncrest_Spear, $ID_Silverwing_Recurve_Bow, $ID_Onyx_Scepter _
+	_
+	$ID_Demrikovs_Judgement, $ID_Vetauras_Harbinger, $ID_Torivos_Rage, $ID_Heleynes_Insight, _
+	$ID_Envoy_Sword, $ID_Envoy_Axe, $ID_Divine_Envoy_Staff, $ID_Envoy_Scythe, _
+	_
+	$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, _
+	$ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, _
+	$ID_Froggy_Air, $ID_Froggy_Earth, $ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, _
+	$ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, _
+	$ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
+	_
+	$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, _
+	$ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, $ID_Bone_Dragon_Staff_Death, _
+	$ID_Bone_Dragon_Staff_Air, $ID_Bone_Dragon_Staff_Earth, $ID_Bone_Dragon_Staff_Energy_Storage, $ID_Bone_Dragon_Staff_Fire, $ID_Bone_Dragon_Staff_Water, _
+	$ID_Bone_Dragon_Staff_Divine, $ID_Bone_Dragon_Staff_Healing, $ID_Bone_Dragon_Staff_Protection, $ID_Bone_Dragon_Staff_Smiting, _
+	$ID_Bone_Dragon_Staff_Communing, $ID_Bone_Dragon_Staff_Spawning, $ID_Bone_Dragon_Staff_Restoration, $ID_Bone_Dragon_Staff_Channeling, _
+	_
+	$ID_Celestial_Compass_Domination, $ID_Celestial_Compass_Fast_Casting, $ID_Celestial_Compass_Illusion, $ID_Celestial_Compass_Inspiration, _
+	$ID_Celestial_Compass_Soul_Reaping, $ID_Celestial_Compass_Blood, $ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, _
+	$ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
+	$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, _
+	$ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
 ]
 Global Const $Map_UltraRareWeapons = MapFromArray($UltraRareWeapons_Array)
 
 Global $RareWeapons_Array = [ _
-	$ID_Spiritbinder, $ID_Earth_Staff, _
+	$ID_Earth_Staff, _
 	_ ; Axes
-	$ID_Sephis_Axe, $ID_Serpent_Axe, _
+	$ID_Sephis_Axe, $ID_Serpent_Axe, $ID_Chaos_Axe, _
 	_ ; Bows
 	$ID_Eternal_Bow, $ID_Storm_Bow, _
 	_ ; Focii
@@ -2083,7 +2079,7 @@ Global $RareWeapons_Array = [ _
 	_ ; Staves
 	$ID_Bo_Staff, $ID_Platinum_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, $ID_Jeweled_Staff, _
 	_ ; Swords
-	$ID_Crystalline_Sword, $ID_Jitte, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Jitte, $ID_Broadsword, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, $ID_Adamantine_Falchion, $ID_Ornate_Scimitar, _
+	$ID_Jitte, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Broadsword, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, $ID_Adamantine_Falchion, $ID_Ornate_Scimitar, _
 	_ ; Wands
 	$ID_Platinum_Wand, $ID_Voltaic_Wand, $ID_Wayward_Wand, _
 	_ ; Celestial weapons
@@ -2092,28 +2088,25 @@ Global $RareWeapons_Array = [ _
 	$ID_Zodiac_Shield, _
 	_ ; Anniversary weapons
 	_ ; Tyria
-	$ID_Bone_Idol_Soul_Reaping, $ID_Bone_Idol_Blood_Magic, $ID_Bone_Idol_Curses, $ID_Bone_Idol_Death_Magic, $ID_Canthan_Targe_Strength, $ID_Canthan_Targe_Tactic, _
+	$ID_Bone_Idol_Soul_Reaping, $ID_Bone_Idol_Blood_Magic, $ID_Bone_Idol_Curses, $ID_Bone_Idol_Death_Magic, $ID_Canthan_Targe_Strength, $ID_Canthan_Targe_Tactic, $ID_Canthan_Targe_Leadership, _
 	$ID_Censors_Icon_Divine_Favor, $ID_Censors_Icon_Healing_Prayers, $ID_Censors_Icon_Protection_Prayers, $ID_Censors_Icon_Smiting_Prayers, $ID_Chimeric_Prism_Fast_Casting, _
 	$ID_Chimeric_Prism_Soul_Reaping, $ID_Chimeric_Prism_Energy_Storage, $ID_Chimeric_Prism_Divine_Favor, $ID_Chimeric_Prism_Spawning_Power, $ID_Ithas_Bow, $ID_War_Pick, _
 	_ ; Cantha
-	$ID_Dragon_Fangs, $ID_SpiritBinder_Communing, $ID_SpiritBinder_Spawning_Power, $ID_SpiritBinder_Restoration, $ID_SpiritBinder_Channeling, $ID_Japan_1st_Anniversary_Shield_Strength, $ID_Japan_1st_Anniversary_Shield_Tactic, _
+	$ID_Dragon_Fangs, $ID_SpiritBinder_Communing, $ID_SpiritBinder_Spawning_Power, $ID_SpiritBinder_Restoration, $ID_SpiritBinder_Channeling, _
+	$ID_Japan_1st_Anniversary_Shield_Strength, $ID_Japan_1st_Anniversary_Shield_Tactic, $ID_Japan_1st_Anniversary_Shield_Leadership, _
 	_ ; Nightfall
 	$ID_Soulbreaker, $ID_Sunspear, _
 	_ ; EotN
-	$ID_Darksteel_Longbow, $ID_Glacial_Blades_Sword, $ID_Glacial_Blades_Dagger, $ID_Hourglass_Staff_Domination_Magic, $ID_Hourglass_Staff_Fast_Casting, $ID_Hourglass_Staff_Illusion_Magic, _
+	$ID_Darksteel_Longbow, $ID_Glacial_Blade, $ID_Glacial_Blades, $ID_Hourglass_Staff_Domination_Magic, $ID_Hourglass_Staff_Fast_Casting, $ID_Hourglass_Staff_Illusion_Magic, _
 	$ID_Hourglass_Staff_Inspiration_Magic, $ID_Hourglass_Staff_Soul_Reaping, $ID_Hourglass_Staff_Blood_Magic, $ID_Hourglass_Staff_Curses, $ID_Hourglass_Staff_Death_Magic, _
 	$ID_Hourglass_Staff_Air_Magic, $ID_Hourglass_Staff_Earth_Magic, $ID_Hourglass_Staff_Energy_Storage, $ID_Hourglass_Staff_Fire_Magic, $ID_Hourglass_Staff_Water_Magic, _
 	$ID_Hourglass_Staff_Divine_Favor, $ID_Hourglass_Staff_Healing_Prayers, $ID_Hourglass_Staff_Protection_Prayers, $ID_Hourglass_Staff_Smiting_Prayers, $ID_Hourglass_Staff_Communing, _
 	$ID_Hourglass_Staff_Spawning_Power, $ID_Hourglass_Staff_Restoration, $ID_Hourglass_Staff_Channeling, $ID_Arced_Blade, $ID_Greater_Arced_Blade, _
 	_ ; Common
-	$ID_Bears_Sloth, $ID_Foxs_Greed_Domination_Magic, $ID_Foxs_Greed_Fast_Casting, $ID_Foxs_Greed_Illusion_Magic, $ID_Foxs_Greed_Inspiration_Magic, $ID_Foxs_Greed_Soul_Reaping, _
-	$ID_Foxs_Greed_Blood_Magic, $ID_Foxs_Greed_Curses, $ID_Foxs_Greed_Death_Magic, $ID_Foxs_Greed_Air_Magic, $ID_Foxs_Greed_Earth_Magic, $ID_Foxs_Greed_Energy_Storage, _
-	$ID_Foxs_Greed_Fire_Magic, $ID_Foxs_Greed_Water_Magic, $ID_Foxs_Greed_Divine_Favor, $ID_Foxs_Greed_Healing_Prayers, $ID_Foxs_Greed_Protection_Prayers, $ID_Foxs_Greed_Smiting_Prayers, _
+	$ID_Bears_Sloth, $ID_Foxs_Greed_Divine_Favor, $ID_Foxs_Greed_Healing_Prayers, $ID_Foxs_Greed_Protection_Prayers, $ID_Foxs_Greed_Smiting_Prayers, _
 	$ID_Foxs_Greed_Communing, $ID_Foxs_Greed_Spawning_Power, $ID_Foxs_Greed_Restoration, $ID_Foxs_Greed_Channeling, $ID_Hogs_Gluttony_Command, $ID_Hogs_Gluttony_Leadership, _
-	$ID_Hogs_Gluttony_Strength, $ID_Hogs_Gluttony_Tactics, $ID_Lions_Pride_Domination_Magic, $ID_Lions_Pride_Fast_Casting, $ID_Lions_Pride_Illusion_Magic, $ID_Lions_Pride_Inspiration_Magic, _
-	$ID_Lions_Pride_Soul_Reaping, $ID_Lions_Pride_Blood_Magic, $ID_Lions_Pride_Curses, $ID_Lions_Pride_Death_Magic, $ID_Lions_Pride_Air_Magic, $ID_Lions_Pride_Earth_Magic, _
-	$ID_Lions_Pride_Energy_Storage, $ID_Lions_Pride_Fire_Magic, $ID_Lions_Pride_Water_Magic, $ID_Lions_Pride_Divine_Favor, $ID_Lions_Pride_Healing_Prayers, $ID_Lions_Pride_Protection_Prayers, _
-	$ID_Lions_Pride_Smiting_Prayers, $ID_Lions_Pride_Communing, $ID_Lions_Pride_Spawning_Power, $ID_Lions_Pride_Restoration, $ID_Lions_Pride_Channeling, $ID_Scorpions_Lust, $ID_Scorpion_Bow, _
+	$ID_Hogs_Gluttony_Strength, $ID_Hogs_Gluttony_Tactics, $ID_Lions_Pride_Air_Magic, $ID_Lions_Pride_Earth_Magic, $ID_Lions_Pride_Energy_Storage, $ID_Lions_Pride_Fire_Magic, _
+	$ID_Lions_Pride_Water_Magic, $ID_Scorpions_Lust, $ID_Scorpion_Bow, _
 	$ID_Snakes_Envy_Domination_Magic, $ID_Snakes_Envy_Fast_Casting, $ID_Snakes_Envy_Illusion_Magic, $ID_Snakes_Envy_Inspiration_Magic, $ID_Snakes_Envy_Soul_Reaping, $ID_Snakes_Envy_Blood_Magic, _
 	$ID_Snakes_Envy_Curses, $ID_Snakes_Envy_Death_Magic, $ID_Snakes_Envy_Air_Magic, $ID_Snakes_Envy_Earth_Magic, $ID_Snakes_Envy_Energy_Storage, $ID_Snakes_Envy_Fire_Magic, _
 	$ID_Snakes_Envy_Water_Magic, $ID_Snakes_Envy_Divine_Favor, $ID_Snakes_Envy_Healing_Prayers, $ID_Snakes_Envy_Protection_Prayers, $ID_Snakes_Envy_Smiting_Prayers, $ID_Snakes_Envy_Communing, _
@@ -2129,9 +2122,7 @@ Global $RareWeapons_Array = [ _
 	$ID_Spiders_Gluttony_Strength, $ID_Spiders_Gluttony_Tactics, $ID_Tigers_Pride_Domination_Magic, $ID_Tigers_Pride_Fast_Casting, $ID_Tigers_Pride_Illusion_Magic, $ID_Tigers_Pride_Inspiration_Magic, _
 	$ID_Tigers_Pride_Soul_Reaping, $ID_Tigers_Pride_Blood_Magic, $ID_Tigers_Pride_Curses, $ID_Tigers_Pride_Death_Magic, $ID_Tigers_Pride_Air_Magic, $ID_Tigers_Pride_Earth_Magic, _
 	$ID_Tigers_Pride_Energy_Storage, $ID_Tigers_Pride_Fire_Magic, $ID_Tigers_Pride_Water_Magic, $ID_Tigers_Pride_Divine_Favor, $ID_Tigers_Pride_Healing_Prayers, $ID_Tigers_Pride_Protection_Prayers, _
-	$ID_Tigers_Pride_Smiting_Prayers, $ID_Tigers_Pride_Communing, $ID_Tigers_Pride_Spawning_Power, $ID_Tigers_Pride_Restoration, $ID_Tigers_Pride_Channeling, $ID_Wolfs_Greed_Domination_Magic, _
-	$ID_Wolfs_Greed_Fast_Casting, $ID_Wolfs_Greed_Illusion_Magic, $ID_Wolfs_Greed_Inspiration_Magic, $ID_Wolfs_Greed_Soul_Reaping, $ID_Wolfs_Greed_Blood_Magic, $ID_Wolfs_Greed_Curses, _
-	$ID_Wolfs_Greed_Death_Magic, $ID_Wolfs_Greed_Air_Magic, $ID_Wolfs_Greed_Earth_Magic, $ID_Wolfs_Greed_Energy_Storage, $ID_Wolfs_Greed_Fire_Magic, $ID_Wolfs_Greed_Water_Magic, _
+	$ID_Tigers_Pride_Smiting_Prayers, $ID_Tigers_Pride_Communing, $ID_Tigers_Pride_Spawning_Power, $ID_Tigers_Pride_Restoration, $ID_Tigers_Pride_Channeling, _
 	$ID_Wolfs_Greed_Divine_Favor, $ID_Wolfs_Greed_Healing_Prayers, $ID_Wolfs_Greed_Protection_Prayers, $ID_Wolfs_Greed_Smiting_Prayers, $ID_Wolfs_Greed_Communing, $ID_Wolfs_Greed_Spawning_Power, _
 	$ID_Wolfs_Greed_Restoration, $ID_Wolfs_Greed_Channeling, $ID_Furious_Bonecrusher, $ID_Bronze_Guardian_Command, $ID_Bronze_Guardian_Leadership, $ID_Bronze_Guardian_Strength, _
 	$ID_Bronze_Guardian_Tactics, $ID_Deaths_Head_Domination_Magic, $ID_Deaths_Head_Fast_Casting, $ID_Deaths_Head_Illusion_Magic, $ID_Deaths_Head_Inspiration_Magic, $ID_Deaths_Head_Soul_Reaping, _

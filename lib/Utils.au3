@@ -230,7 +230,7 @@ Func DefaultShouldPickItem($item)
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
 		Return True
 	; Temporary addition to find glacial blades
-	ElseIf $itemID == $ID_Glacial_Blades_Sword Or $itemID == $ID_Glacial_Blades_Dagger Then
+	ElseIf $itemID == $ID_Glacial_Blades Or $itemID == $ID_Glacial_Blade Then
 		Notice('Glacial Blades Sword or Dagger found')
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
