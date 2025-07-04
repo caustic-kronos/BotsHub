@@ -46,7 +46,7 @@ Global Const $LDOA_Skill8 = 8
 Global Const $ID_Quest_CharrAtTheGate = 0x2E
 
 Global $LDOA_FARM_SETUP = False
-
+Global $OutpostCheck = False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
@@ -84,7 +84,10 @@ Func SetupLDOATitleFarm()
 	Local $me = GetMyAgent()
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
 		; Examples present in the Else but feel free to have different stuff here depending on how you make the bot
-	Else
+	ElseIf $OutpostCheck == False Then
+		Info('Checking for outposts...')
+		OutpostRun()
+		$OutpostCheck = True
 		; LoadSkillTemplate($mapBuildsPerProfession[GetHeroProfession(0, False)])
 		;LoadSkillTemplate($LDOASkillbar)
 		; If you need to reload a map quickly after resign do something like that here
@@ -134,23 +137,24 @@ EndFunc
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
 	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
+	Local $me = GetMyAgent()
+	
 	If $questStatus == 0 Then
 		Info('Taking quest Charr at the gate.')
 		SetupCharrAtTheGateQuest()
 	ElseIf $questStatus == 1 Then
-		Info('Good to go !!')
+		Info('Good to go!')
 	ElseIf $questStatus == 3 Then
 		Info('Resetting quest.')
 		SetupCharrAtTheGateQuest()
 	EndIf
 
+	; If we have the quest, we can start the farm
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-
-	AdlibRegister('CheckIfDead', 250)
 	MoveTo(6220, 4470, 30)
 	Info('Going to the gate')
 	MoveTo(3180, 6468, 30)
@@ -158,12 +162,14 @@ Func LDOATitleFarmUnder10()
 	MoveTo(-3140, 9610, 30)
 	MoveTo(-3640, 10930, 30)
 	MoveTo(-4165, 10655, 30)
-	AdlibUnRegister('CheckIfDead')
-	AdlibRegister('CheckCharr', 500)
-	Sleep(2000)
-	AdlibUnRegister('CheckCharr')
 
-	BackToAscalon()
+	If GetIsDead() Then BackToAscalon()
+
+	While CountFoesInRangeOfAgent($me, 2000) == 1 Then
+		BackToAscalon()
+		Return 0
+	WEnd
+	
 	Return 0
 EndFunc
 
@@ -176,7 +182,7 @@ Func LDOATitleFarmAfter10()
 	;Else
 	;	Info('Quest is not in log.')
 	;EndIf
-	OutpostRun()
+
 	Return 0
 EndFunc
 
@@ -190,6 +196,7 @@ Func OutpostRun()
 	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
 	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
+	TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
 EndFunc
 
 
@@ -202,7 +209,9 @@ EndFunc
 ;~ Outpost checker
 Func TravelWithTimeout($mapID, $onFailFunc)
 	Local $startTime = TimerInit()
+
 	RandomDistrictTravel($mapID)
+	
 	While TimerDiff($startTime) < 10000
 		If GetMapID() == $mapID Then
 			Info('Travel successful.')
@@ -216,6 +225,7 @@ EndFunc
 
 ;~ I like bananas
 Func Ashford()
+	; This function is used to run to Ashford Abbey
 	Info('Starting run to Ashford Abbey..' )
 	Info('Entering Lakeside County!')
 	MoveTo(7500, 5500)
@@ -226,18 +236,20 @@ Func Ashford()
 	MoveTo(1894, -3264, 30)
 	MoveTo(-2573, -6357, 30)
 	MoveTo(-5396, -6940, 30)
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-11100, -6252)
+	Move(-11100, -6252)
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	Info('Made it to Ashford Abbey')
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Ashford()
 EndFunc
 
 ;~ I like watermelon
 Func Foible()
+	; This function is used to run to Foibles Fair
 	Info('Starting run to Foibles Fair..' )
 	Info('Entering Lakeside County!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-11300, -6195, 30)
+	Move(-11300, -6195, 30)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-11171, -8574, 30)
 	MoveTo(-12776, -15329, 30)
@@ -246,8 +258,7 @@ Func Foible()
 	MoveTo(-10931, -19169, 30)
 	MoveTo(-12742, -19890, 30)
 	Info('Entering Wizards Folly!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-13800, -20047)
+	Move(-13800, -20047)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 	MoveTo(8532, 17711, 30)
 	MoveTo(7954, 16162, 30)
@@ -255,18 +266,20 @@ Func Foible()
 	MoveTo(2135, 8630, 30)
 	MoveTo(1502, 6804, 30)
 	MoveTo(457, 7310, 30)
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(400, 7700)
+	Move(400, 7700)
 	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 	Info('Made it to Foibles Fair')
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Foibles()
 EndFunc
 
 Func Ranik()
+	; This function is used to run to Fort Ranik
 	Info('Starting run to Fort Ranik..' )
 	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-11300, -6195, 30)
+	Move(-11300, -6195, 30)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-7084, -6604, 30)
 	MoveTo(-6273, -7232, 30)
@@ -277,8 +290,7 @@ Func Ranik()
 	MoveTo(1996, -18588, 30)
 	MoveTo(4010, -19728, 30)
 	Info('Entering Regent Valley!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(5000, -19782, 30)
+	Move(5000, -19782, 30)
 	WaitMapLoading($ID_Regent_Valley, 10000, 2000)
 	MoveTo(-14142, 15133, 30)
 	MoveTo(-11645, 14192, 30)
@@ -298,33 +310,19 @@ Func Ranik()
 	MoveTo(22143, 3527, 30)
 	MoveTo(22613, 5474, 30)
 	MoveTo(22550, 6748, 30)
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(22551, 7300)
+	Move(22551, 7300)
 	WaitMapLoading($ID_Fort_Ranik_Presearing, 10000, 2000)
 	Info('Made it to Fort Ranik!')
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Ranik()
 EndFunc
 
 Func Barradin()
+	; This function is used to run to The Barradin Estate
 	Info('Starting run to The Barradin Estate..' )
-EndFunc
-
-
-;~ Check for remaining charr
-Func CheckCharr()
-	Local $me = GetMyAgent()
-	If CountFoesInRangeOfAgent($me, 2000) <= 1 Then
-		BackToAscalon()
-		Return 1
-	EndIf
-EndFunc
-
-
-;~ Return to Ascalon if we're dead
-Func CheckIfDead()
-	If GetIsDead() Then
-		BackToAscalon()
-		Return 1
-	EndIf
+	; If we are dead, we will try again
+	If GetIsDead() Then Barradin()
 EndFunc
 
 
