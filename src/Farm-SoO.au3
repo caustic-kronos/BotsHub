@@ -112,15 +112,16 @@ EndFunc
 Func SoOFarmLoop()
 	$SoODeathsCount = 0
 	$questState = 999
-	
-	AdlibRegister('SoOGroupIsAlive', 10000)
+		AdlibRegister('SoOGroupIsAlive', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
-	ClearSoOFloor1()
-	ClearSoOFloor2()
-	ClearSoOFloor3()
-
+    If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
+        $SOO_FARM_SETUP = False
+        Return 1
+    EndIf	
+	
 	AdlibUnRegister('SoOGroupIsAlive')
+
 	Info('Waiting for timer end')
 	Sleep(190000)
 	While Not WaitMapLoading($ID_Arbor_Bay)
@@ -569,6 +570,7 @@ EndFunc
 Func SoOIsFailure()
 	If ($SoODeathsCount > 5) Then
 		AdlibUnregister('SoOGroupIsAlive')
+		Notice('Group wiped.')
 		Return True
 	EndIf
 	Return False

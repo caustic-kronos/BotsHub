@@ -1442,20 +1442,22 @@ Global Const $ID_Panda_Mini								= 15517
 #Region Ultra rare skins
 ; Missing IDs
 ;Global Const $ID_Dryad_Bow							=
-;Global Const $ID_Storm_Daggers						=
+Global Const $ID_Storm_Daggers						= 1986
 ;Global Const $ID_Demon_Fangs						=
 ;Global Const $ID_Bonecage_Scythe					=
 ;Global Const $ID_Clockwork_Scythe					=
 ;Global Const $ID_Insectoid_Scythe					=
 ;Global Const $ID_Tentacle_Scythe					=
 ;Global Const $ID_Demoncrest_Spear					=
-;Global Const $ID_Eternal_Blade						=
+Global Const $ID_Eternal_Blade						= 1045
 ;Global Const $ID_Obsidian_Edge						=
-;Global Const $ID_Onyx_Scepter						=
+Global Const $ID_Onyx_Scepter						= 2394
 ;Global Const $ID_Topaz_Scepter						=
+Global Const $ID_Silverwing_Recurve_Bow 			= 2039
+Global Const $ID_Aureate_Blade						= 2124
 
-;Global Const $ID_Envoy_Sword						=
-;Global Const $ID_Envoy_Axe							=
+Global Const $ID_Envoy_Sword						= 36669
+Global Const $ID_Envoy_Axe							= 36679
 ;Global Const $ID_Chaotic_Envoy_Staff				=
 ;Global Const $ID_Dark_Envoy_Staff					=
 ;Global Const $ID_Elemental_Envoy_Staff				=

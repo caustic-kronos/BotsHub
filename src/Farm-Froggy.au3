@@ -100,11 +100,16 @@ EndFunc
 Func FroggyFarmLoop()
 	$FroggyDeathsCount = 0
 	$questState = 999
-	GetRewardRefreshAndTakeFroggyQuest()
 	AdlibRegister('FroggyGroupIsAlive', 10000)
-	ClearFroggyFloor1()
-	ClearFroggyFloor2()
+
+	GetRewardRefreshAndTakeFroggyQuest()
+    If (ClearFroggyFloor1() == 1 Or ClearFroggyFloor2() == 1) Then
+        $FROGGY_FARM_SETUP = False
+        Return 1
+    EndIf
+
 	AdlibUnRegister('FroggyGroupIsAlive')
+
 	Info('Waiting for timer end')
 	Sleep(190000)
 	While Not WaitMapLoading($ID_Sparkfly_Swamp)
@@ -346,6 +351,7 @@ EndFunc
 Func FroggyIsFailure()
 	If ($FroggyDeathsCount > 5) Then
 		AdlibUnregister('FroggyGroupIsAlive')
+		Notice('Group wiped.')
 		Return True
 	EndIf
 	Return False
