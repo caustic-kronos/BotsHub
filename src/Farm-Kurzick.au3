@@ -36,7 +36,6 @@ Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
 
-Global $groupIsAlive = True
 Global $DonatePoints = True
 
 ;~ Main loop for the kurzick faction farm
@@ -50,9 +49,9 @@ Func KurzickFactionFarm($STATUS)
 	KurzickFarmSetup()
 
 	If $STATUS <> 'RUNNING' Then Return 2
-	AdlibRegister('KurzickGroupIsAlive', 10000)
+	AdlibRegister('TrackGroupStatus', 10000)
 	Local $result = VanquishFerndale()
-	AdlibUnRegister('KurzickGroupIsAlive')
+	AdlibUnRegister('TrackGroupStatus')
 
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2
@@ -102,7 +101,7 @@ Func VanquishFerndale()
 	Move(10446, -1147, 5)
 	RndSleep(1000)
 	WaitMapLoading($ID_Ferndale, 10000, 2000)
-	$groupIsAlive = True
+	ResetFailuresCounter()
 
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-12909, 15616)
@@ -252,11 +251,4 @@ Func VanquishFerndale()
 		Return 1
 	EndIf
 	Return 0
-EndFunc
-
-
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer
-Func KurzickGroupIsAlive()
-	$groupIsAlive = IsGroupAlive()
-	If Not $groupIsAlive Then Notice('Group wiped.')
 EndFunc

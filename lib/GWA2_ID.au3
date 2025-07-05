@@ -1454,16 +1454,11 @@ Global Const $ID_Panda_Mini								= 15517
 ;Global Const $ID_Bonecage_Scythe
 ;Global Const $ID_Demon_Fangs
 ;Global Const $ID_Icicle_Staff
-;Global Const $ID_Tentacle_Scythe
 ;Global Const $ID_Turquoise_Staff
 ;Global Const $ID_Emerald_Edge
-;Global Const $ID_Moldavite_Staff
-;Global Const $ID_Ancient_Moss_Staff
 ;Global Const $ID_Topaz_Scepter
 ;Global Const $ID_Golden_Hammer
-;Global Const $ID_Suntouched_Staff
 ;Global Const $ID_Clockwork_Scythe
-;Global Const $ID_Crystal_Flame_Staff
 ;Global Const $ID_Signet_Shield
 ;Global Const $ID_Steelhead_Scythe
 ;Global Const $ID_Insectoid_Scythe
@@ -1475,7 +1470,6 @@ Global Const $ID_Panda_Mini								= 15517
 ;Global Const $ID_Dark_Envoy_Staff					=
 ;Global Const $ID_Elemental_Envoy_Staff				=
 ;Global Const $ID_Spiritual_Envoy_Staff				=
-
 
 Global Const $ID_Eternal_Blade						= 1045
 Global Const $ID_Obsidian_Edge						= 1900
@@ -1489,6 +1483,11 @@ Global Const $ID_Wingcrest_Maul						= 2048
 Global Const $ID_Demoncrest_Spear					= 2079
 Global Const $ID_Silverwing_Recurve_Bow				= 2039
 Global Const $ID_Onyx_Scepter						= 2394
+Global Const $ID_Tentacle_Scythe					= 2063
+Global Const $ID_Moldavite_Staff					= 2328
+Global Const $ID_Ancient_Moss_Staff					= 2376
+Global Const $ID_Suntouched_Staff					= 2381
+Global Const $ID_Crystal_Flame_Staff				= 2366
 
 #Region Envoy Weapons
 ; Green Envoys
@@ -2037,6 +2036,7 @@ Global $UltraRareWeapons_Array = [ _
 	$ID_Glacial_Blade, $ID_Glacial_Blades, $ID_Crystalline_Sword, _
 	$ID_Eternal_Blade, $ID_Obsidian_Edge, $ID_Emerald_Blade, $ID_Storm_Daggers, $ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, _
 	$ID_Aureate_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, $ID_Demoncrest_Spear, $ID_Silverwing_Recurve_Bow, $ID_Onyx_Scepter, _
+	$ID_Tentacle_Scythe, $ID_Moldavite_Staff, $ID_Ancient_Moss_Staff, $ID_Suntouched_Staff, $ID_Crystal_Flame_Staff, _
 	_
 	$ID_Demrikovs_Judgement, $ID_Vetauras_Harbinger, $ID_Torivos_Rage, $ID_Heleynes_Insight, _
 	$ID_Envoy_Sword, $ID_Envoy_Axe, $ID_Divine_Envoy_Staff, $ID_Envoy_Scythe, _

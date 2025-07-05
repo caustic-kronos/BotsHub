@@ -32,8 +32,8 @@ Global Const $FoWFarmInformations = 'For best results, dont cheap out on heroes'
 Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 
 Global $FOW_FARM_SETUP = False
-Global $FoWDeathsCount = 0
 Global Const $ID_Quest_WailingLord = 0xCC
+Global Const $ID_Quest_TheEternalForgemaster = 0xD1
 Global Const $Shard_Wolf_PlayerNumber = 2835
 Global Const $ID_FoW_Unholy_Texts = 2619
 
@@ -83,8 +83,8 @@ EndFunc
 
 ;~ Farm loop
 Func FoWFarmLoop()
-	AdlibRegister('FoWGroupIsAlive', 10000)
-	$FoWDeathsCount = 0
+	ResetFailuresCounter()
+	AdlibRegister('TrackGroupStatus', 10000)
 	If IsHardmodeEnabled() Then UseConset()
 
 	If TowerOfCourage() Then Return 1
@@ -103,7 +103,7 @@ Func FoWFarmLoop()
 	If GriffonRun() Then Return 1
 	If TempleLoot() Then Return 1
 
-	AdlibUnRegister('FoWGroupIsAlive')
+	AdlibUnRegister('TrackGroupStatus')
 	Return 0
 EndFunc
 
@@ -128,7 +128,7 @@ Func TowerOfCourage()
 	Info('Waiting for door to open')
 	Local $waitCount = 0
 	Local $me = GetMyAgent()
-	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), -15000, -2000) > $RANGE_ADJACENT
+	While Not IsRunFailed() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), -15000, -2000) > $RANGE_ADJACENT
 		If $waitCount == 20 Then
 			Info('Rastigan is not moving, lets nudge him')
 			MoveAggroAndKill(-15500, -3500)
@@ -233,14 +233,18 @@ Func TheTempleOfWar()
 	MoveAggroAndKill(1000, 500, '1')
 	MoveAggroAndKill(2000, 250, '2')
 	MoveAggroAndKill(2500, -300, '3')
+	MoveAggroAndKill(1850, -150, '4')
+
+	Local $questState = 999
+	While Not IsRunFailed() And $questState <> 0x13
+		$questState = DllStructGetData(GetQuestByID($ID_Quest_TheEternalForgemaster), 'LogState')
+		Info('The Eternal Forgemaster not finished yet : ' & $questState)
+		Sleep(1000)
+	WEnd
 
 	Info('Getting the Eternal Forgemaster quest reward')
-	MoveTo(1850, -150)
 	Local $npc = GetNearestNPCToCoords(1850, -200)
-	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
-	Dialog(0x80D107)
-	RndSleep(GetPing() + 750)
+	TakeQuestOrReward($npc, $ID_Quest_TheEternalForgemaster, 0x80D107, 0)
 
 	Info('Getting the Defend the Temple of War quest')
 	MoveTo(1850, -150)
@@ -352,23 +356,25 @@ Func TowerOfStrengh()
 	MoveAggroAndKill(11500, -4600, '1')
 	MoveAggroAndKill(15000, -3100, '2')
 	MoveAggroAndKill(15800, -300, '3')
+	MoveAggroAndKill(17600, 2200, '4')
+	MoveAggroAndKill(15000, 1000, '5')
+	MoveAggroAndKill(13000, 500, '6')
+	MoveAggroAndKill(12000, 0, '7')
+	KillShardWolf()
+	MoveAggroAndKill(15000, -1000, '7')
 
 	Info('Going to trigger pnj')
-	MoveAggroAndKill(15300, -1400, '1')
-	MoveAggroAndKill(10300, -5900, '2')
-	MoveAggroAndKill(6500, -11200, '3')
-	MoveAggroAndKill(1600, -7200, '4')
+	MoveAggroAndKill(10300, -5900, '1')
+	MoveAggroAndKill(6500, -11200, '2')
+	MoveAggroAndKill(1600, -7200, '3')
 
 	Info('And back to tower')
 	MoveAggroAndKill(6500, -12000, '1')
 	MoveAggroAndKill(10300, -5900, '2')
 	MoveAggroAndKill(15400, -1400, '3')
-	MoveAggroAndKill(16750, -1750, '4')
-	MoveAggroAndKill(12300, 250, '5')
-	KillShardWolf()
 	; Entering the tower garantees the npc arrived
 	Local $me = GetMyAgent()
-	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), 16700, -1700) > $RANGE_NEARBY
+	While Not IsRunFailed() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), 16700, -1700) > $RANGE_NEARBY
 		MoveTo(16700, -1700)
 		Sleep(1000)
 		$me = GetMyAgent()
@@ -449,7 +455,7 @@ Func ForestOfTheWailingLord()
 	CommandHero(7, -19900, 13600)
 
 	Local $questState = 1
-	While Not GetIsDead() And $questState <> 19
+	While Not IsRunFailed() And $questState <> 19
 		MoveTo(-21000, 14600)
 		Sleep(3000)
 		MoveTo(-20500, 14200)
@@ -555,22 +561,6 @@ Func TempleLoot()
 EndFunc
 
 
-;~ Did run fail ?
-Func FoWIsFailure()
-	If ($FoWDeathsCount > 5) Then
-		AdlibUnregister('FoWGroupIsAlive')
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer
-Func FoWGroupIsAlive()
-	$FoWDeathsCount += IsGroupAlive() ? 0 : 1
-EndFunc
-
-
 ;~ Pick up the Unholy Texts
 Func PickUpUnholyTexts()
 	Local $agent
@@ -583,7 +573,7 @@ Func PickUpUnholyTexts()
 		If (DllStructGetData($item, 'ModelID') == $ID_FoW_Unholy_Texts) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
-			While Not GetIsDead() And GetAgentExists($i)
+			While Not GetIsDead() And Not IsRunFailed() And GetAgentExists($i)
 				If Mod($attempts, 20) == 0 Then
 					Local $attempt = Floor($attempts / 20)
 					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
@@ -601,13 +591,13 @@ Func PickUpUnholyTexts()
 EndFunc
 
 
-; Return true if agent is a shardwolf
+;~ Return true if agent is a shardwolf
 Func IsShardWolf($agent)
 	Return DllStructGetData($agent, 'PlayerNumber') == $Shard_Wolf_PlayerNumber
 EndFunc
 
 
-; Kill shardwolf if found
+;~ Kill shardwolf if found
 Func KillShardWolf()
 	Local $agents = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, IsShardWolf)
 	; Shard Wolf found

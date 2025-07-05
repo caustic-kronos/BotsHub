@@ -35,7 +35,6 @@ Global Const $ID_SoO_Torch = 22342
 Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
 Global $SOO_FARM_SETUP = False
-Global $SoODeathsCount = 0
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
@@ -68,7 +67,7 @@ EndFunc
 
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
-	$SoODeathsCount = 0
+	ResetFailuresCounter()
 
 	Info('Making way to portal')
 	MoveTo(16448, 14830)
@@ -80,7 +79,7 @@ Func RunToShardsOfOrrDungeon()
 		$mapLoaded = WaitMapLoading($ID_Arbor_Bay)
 	WEnd
 
-	AdlibRegister('SoOGroupIsAlive', 10000)
+	AdlibRegister('TrackGroupStatus', 10000)
 
 	Info('Making way to Shards of Orr')
 	MoveTo(16327, 11607)
@@ -89,28 +88,28 @@ Func RunToShardsOfOrrDungeon()
 	Dialog(0x84)
 	RndSleep(500)
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 11156, -17802, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 11156, -17802, 1250)
 		MoveAggroAndKill(13122, 10437, '1', $SoOAggroRange)
 		MoveAggroAndKill(10668, 6530, '2', $SoOAggroRange)
 		MoveAggroAndKill(11891, -224, '3', $SoOAggroRange)
 		MoveAggroAndKill(8803, -5104, '4', $SoOAggroRange)
 		MoveAggroAndKill(8125, -8247, '5', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
+		If IsRunFailed() Then Return 1
 
 		MoveAggroAndKill(8634, -11529, '6', $SoOAggroRange)
 		MoveAggroAndKill(9559, -13494, '7', $SoOAggroRange)
 		MoveAggroAndKill(10314, -16111, '8', $SoOAggroRange)
 		MoveAggroAndKill(11156, -17802, '9', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
-	AdlibUnRegister('SoOGroupIsAlive')
+	If IsRunFailed() Then Return 1
+	AdlibUnRegister('TrackGroupStatus')
 EndFunc
 
 
 ;~ Farm loop
 Func SoOFarmLoop()
-	$SoODeathsCount = 0
-	AdlibRegister('SoOGroupIsAlive', 10000)
+	ResetFailuresCounter()
+	AdlibRegister('TrackGroupStatus', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
     If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
@@ -118,7 +117,7 @@ Func SoOFarmLoop()
         Return 1
     EndIf	
 	
-	AdlibUnRegister('SoOGroupIsAlive')
+	AdlibUnRegister('TrackGroupStatus')
 
 	Info('Waiting for timer end')
 	Sleep(190000)
@@ -204,7 +203,7 @@ Func ClearSoOFloor1()
 	Info('First floor')
 
 	If IsHardmodeEnabled() Then UseConset()
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-11657, 10465))
@@ -228,10 +227,9 @@ Func ClearSoOFloor1()
 		; too close to walls
 		MoveAggroAndKill(7600, 12500, '8', $SoOAggroRange)
 		MoveAggroAndKill(9200, 12000, 'Triggering beacon 2', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
 		UseMoraleConsumableIfNeeded()
 		; too close to walls
 		MoveAggroAndKill(7300, 12200, '', $SoOAggroRange)
@@ -249,21 +247,19 @@ Func ClearSoOFloor1()
 		MoveAggroAndKill(13750, 15900, '3', $SoOAggroRange)
 		MoveAggroAndKill(16000, 17000, '4', $SoOAggroRange)
 		MoveAggroAndKill(16000, 12000, 'Triggering beacon 3', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
 		UseMoraleConsumableIfNeeded()
 		; Poison trap between 1, 2 and 3
 		MoveAggroAndKill(14000, 7400, '1', $SoOAggroRange)
 		MoveAggroAndKill(14400, 6000, '2', $SoOAggroRange)
 		MoveAggroAndKill(15000, 5300, '3', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
 
 	Info('Going through portal')
 	Local $mapLoaded = False
-	While Not $mapLoaded
+	While Not IsRunFailed() And Not $mapLoaded
 		Info('Open dungeon door')
 		ClearTarget()
 		; Doubled to secure
@@ -282,8 +278,8 @@ Func ClearSoOFloor1()
 		Move(20400, 1300)
 		RndSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_2)
-		If SoOIsFailure() Then Return 1
 	WEnd
+	If IsRunFailed() Then Return 1
 EndFunc
 
 
@@ -293,7 +289,7 @@ Func ClearSoOFloor2()
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
@@ -384,12 +380,11 @@ Func ClearSoOFloor2()
 		MoveAggroAndKill(-11500, -8400, '21', $SoOAggroRange)
 		MoveAggroAndKill(-16000, -8700, '22', $SoOAggroRange)
 		MoveAggroAndKill(-17500, -9500, '23', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
 
 	Info('Going through portal')
 	Local $mapLoaded = False
-	While Not $mapLoaded
+	While Not IsRunFailed() And Not $mapLoaded
 		Info('Open dungeon door')
 		ClearTarget()
 		For $i = 1 To 3
@@ -403,8 +398,8 @@ Func ClearSoOFloor2()
 		Move(-19300, -8200)
 		RndSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_3)
-		If SoOIsFailure() Then Return 1
 	WEnd
+	If IsRunFailed() Then Return 1
 EndFunc
 
 
@@ -414,7 +409,7 @@ Func ClearSoOFloor3()
 	Info('Third floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 1100, 7100, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 1100, 7100, 1250)
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
@@ -435,10 +430,9 @@ Func ClearSoOFloor3()
 		MoveAggroAndKill(1800, 7500, '10', $SoOAggroRange)
 		MoveAggroAndKill(2300, 8000, '11', $SoOAggroRange)
 		MoveAggroAndKill(1100, 7100, '12', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
 
-	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(-2300, 8000, 'Triggering beacon 2', $SoOAggroRange)
 		MoveAggroAndKill(-4500, 6500, '1', $SoOAggroRange)
@@ -496,13 +490,11 @@ Func ClearSoOFloor3()
 		PickUpItems()
 
 		MoveAggroAndKill(-9200, 6000, '16', $SoOAggroRange)
-		If SoOIsFailure() Then Return 1
 	WEnd
 
 	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
-
 	Local $questState = 999
-	While $SoODeathsCount < 6 And $questState <> 3
+	While Not IsRunFailed() And $questState <> 3
 		Info('Open dungeon door')
 		ClearTarget()
 
@@ -534,8 +526,8 @@ Func ClearSoOFloor3()
 		$questState = DllStructGetData(GetQuestByID($ID_SoO_Quest_Lost_Souls), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
 		Sleep(1000)
-		If SoOIsFailure() Then Return 1
 	WEnd
+	If IsRunFailed() Then Return 1
 
 	; Doubled to try securing the looting
 	For $i = 1 To 2
@@ -561,23 +553,6 @@ Func InteractWithTorchOrBrazierAt($X, $Y, $message)
 	Sleep(GetPing() + 1000)
 	ActionInteract()
 	Sleep(250)
-EndFunc
-
-
-;~ Did run fail ?
-Func SoOIsFailure()
-	If ($SoODeathsCount > 5) Then
-		AdlibUnregister('SoOGroupIsAlive')
-		Notice('Group wiped.')
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer
-Func SoOGroupIsAlive()
-	$SoODeathsCount += IsGroupAlive() ? 0 : 1
 EndFunc
 
 

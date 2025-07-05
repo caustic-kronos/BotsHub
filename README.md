@@ -141,7 +141,6 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🧠💭 **Asura/Norn/Vanguard/Dwarf title farm bot** - 1 request
 - 🧠💭 **LDOA bot** - 1 request
 - 🧠💭 **Citadel of Flame farm bot** - 1 request
-- 🧠💭 **Make 'Enter Mission' functional**
 - 🧠💭 **Improve crash recovery**
 
 ### Legend

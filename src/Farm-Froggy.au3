@@ -31,7 +31,6 @@ Global Const $FroggyFarmInformations = 'For best results, dont cheap out on hero
 	& '41mn  average in HM with consets (automatically used if HM is on)'
 
 Global $FROGGY_FARM_SETUP = False
-Global $FroggyDeathsCount = 0
 Global Const $froggyAggroRange = $RANGE_SPELLCAST + 100
 Global Const $ID_Froggy_Quest = 0x339
 
@@ -61,7 +60,7 @@ Func SetupFroggyFarm()
 		SwitchMode($ID_NORMAL_MODE)
 	EndIf
 
-	$FroggyDeathsCount = 0
+	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
 	Local $mapLoaded = False
@@ -71,34 +70,33 @@ Func SetupFroggyFarm()
 		RndSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
-	AdlibRegister('FroggyGroupIsAlive', 10000)
+	AdlibRegister('TrackGroupStatus', 10000)
 
 	Info('Making way to Bogroot')
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
 		MoveAggroAndKill(-4559, -14406, 'I majored in pain, with a minor in suffering', $froggyAggroRange)
 		MoveAggroAndKill(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $froggyAggroRange)
 		MoveAggroAndKill(-928, -8699, 'I am fire! I am war! What are you?', $froggyAggroRange)
 		MoveAggroAndKill(4200, -4897, 'Praise Joko!', $froggyAggroRange)
 		MoveAggroAndKill(4671, 7094, 'I can outrun a centaur', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 12280, 22585, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 12280, 22585, 1250)
 		MoveAggroAndKill(11025, 11710, 'Wow. Thats quality armor.', $froggyAggroRange)
 		MoveAggroAndKill(14624, 19314, 'By Ogdens Hammer, what savings!', $froggyAggroRange)
 		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $froggyAggroRange)
 		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
-	AdlibUnRegister('FroggyGroupIsAlive')
+	If IsRunFailed() Then Return 1
+	AdlibUnRegister('TrackGroupStatus')
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func FroggyFarmLoop()
-	$FroggyDeathsCount = 0
-	AdlibRegister('FroggyGroupIsAlive', 10000)
+	ResetFailuresCounter()
+	AdlibRegister('TrackGroupStatus', 10000)
 
 	GetRewardRefreshAndTakeFroggyQuest()
     If (ClearFroggyFloor1() == 1 Or ClearFroggyFloor2() == 1) Then
@@ -106,7 +104,7 @@ Func FroggyFarmLoop()
         Return 1
     EndIf
 
-	AdlibUnRegister('FroggyGroupIsAlive')
+	AdlibUnRegister('TrackGroupStatus')
 
 	Info('Waiting for timer end')
 	Sleep(190000)
@@ -188,7 +186,7 @@ Func ClearFroggyFloor1()
 	Info('First floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 6078, 4483, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 6078, 4483, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(17619, 2687, 'Moving near duo', $froggyAggroRange)
 		MoveAggroAndKill(18168, 4788, 'Killing one from duo', $froggyAggroRange)
@@ -204,10 +202,9 @@ Func ClearFroggyFloor1()
 		MoveAggroAndKill(13080, 7822, 'Moving towards nettles cave', $froggyAggroRange)
 		MoveAggroAndKill(9946, 6963, 'Nettles cave', $froggyAggroRange)
 		MoveAggroAndKill(6078, 4483, 'Nettles cave exit group', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -1501, -8590, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -1501, -8590, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(4960, 1984, 'Triggering beacon 2', $froggyAggroRange)
 		MoveAggroAndKill(3567, -278, 'Massive frog cave', $froggyAggroRange)
@@ -216,10 +213,9 @@ Func ClearFroggyFloor1()
 		MoveAggroAndKill(-1175, -4994, 'Moving through poison jets', $froggyAggroRange)
 		MoveAggroAndKill(-115, -8569, 'Ragna-rock n roll!', $froggyAggroRange)
 		MoveAggroAndKill(-1501, -8590, 'Triggering beacon 3', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 7171, -17934, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 7171, -17934, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(-115, -8569, 'You played two hours and died like this?!', $froggyAggroRange)
 		MoveAggroAndKill(1966, -11018, 'Last cave entrance', $froggyAggroRange)
@@ -227,8 +223,8 @@ Func ClearFroggyFloor1()
 		MoveAggroAndKill(6125, -15820, 'Commander, a word...', $froggyAggroRange)
 		Info('Last cave exit')
 		MoveTo(7171, -17934)
-		If FroggyIsFailure() Then Return 1
 	WEnd
+	If IsRunFailed() Then Return 1
 
 	Info('Going through portal')
 	Local $mapLoaded = False
@@ -247,7 +243,7 @@ Func ClearFroggyFloor2()
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -719, 11140, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -719, 11140, 1250)
 		Info('Getting blessing')
 		MoveTo(-11072, -5522)
 		GoToNPC(GetNearestNPCToCoords(-11055, -5533))
@@ -268,10 +264,9 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKill(-3963, 10050, 'It is a good day for La Hire to die... ', $froggyAggroRange)
 		MoveAggroAndKill(-1992, 11950, 'Ill be back, Saracen dogs!', $froggyAggroRange)
 		MoveAggroAndKill(-719, 11140, 'Triggering incubus cave exit beacon', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 8398, 4358, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 8398, 4358, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(3130, 12731, 'Beetle zone', $froggyAggroRange)
 		MoveAggroAndKill(3535, 13860, 'Aiur will be restored', $froggyAggroRange)
@@ -279,10 +274,9 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKill(6945, 9820, 'Beetle zone exit', $froggyAggroRange)
 		MoveAggroAndKill(8117, 7465, 'Gokir fight', $froggyAggroRange)
 		MoveAggroAndKill(8398, 4358, 'Triggering beacon 2', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
 
-	While $FroggyDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 19597, -11553, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 19597, -11553, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(9829, -1175, 'The Death Fleet descends', $froggyAggroRange)
 		MoveAggroAndKill(10932, -5203, 'I hear and obey', $froggyAggroRange)
@@ -308,13 +302,11 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKill(16631, -11655, 'I will do all that must be done', $froggyAggroRange)
 		MoveAggroAndKill(19122, -12284, 'Glory to the Firstborn', $froggyAggroRange)
 		MoveAggroAndKill(19597, -11553, 'Triggering boss beacon', $froggyAggroRange)
-		If FroggyIsFailure() Then Return 1
 	WEnd
 
 	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
-
 	Local $questState = 999
-	While $FroggyDeathsCount < 6 And $questState <> 3
+	While Not IsRunFailed() And $questState <> 3
 		Info('------------------------------------')
 		Info('Boss area')
 		UseMoraleConsumableIfNeeded()
@@ -327,8 +319,8 @@ Func ClearFroggyFloor2()
 
 		$questState = DllStructGetData(GetQuestByID($ID_Froggy_Quest), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
-		If FroggyIsFailure() Then Return 1
 	WEnd
+	If IsRunFailed() Then Return 1
 
 	; Chest
 	MoveTo(15910, -19134)
@@ -343,21 +335,4 @@ Func ClearFroggyFloor2()
 		PickUpItems()
 		RndSleep(5000)
 	Next
-EndFunc
-
-
-;~ Did run fail ?
-Func FroggyIsFailure()
-	If ($FroggyDeathsCount > 5) Then
-		AdlibUnregister('FroggyGroupIsAlive')
-		Notice('Group wiped.')
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer
-Func FroggyGroupIsAlive()
-	$FroggyDeathsCount += IsGroupAlive() ? 0 : 1
 EndFunc

@@ -126,8 +126,9 @@ Func WalkToSpot()
 EndFunc
 
 ;~ Check if run failed
-Func RunFail()
-	If GetIsDead($ID_ZhellixAgent) Or Not IsGroupAlive() Then Return 1
+Func DoARunFailed()
+	If GetIsDead($ID_ZhellixAgent) Or Not HasRezMemberAlive() Then Return True
+	Return False
 EndFunc
 
 
@@ -148,7 +149,7 @@ Func Defend()
 	Sleep(5000)
 
 	While ZhellixWaiting()
-		If RunFail() Then Return ResignAndReturnToGate()
+		If DoARunFailed() Then Return ResignAndReturnToGate()
 		Sleep(1000)
 		Fight()
 		PickUpItems()
@@ -234,7 +235,7 @@ Func ZhellixWaiting()
 		Disconnected()
 	EndIf
 
-	If Not IsGroupAlive() Then ResignAndReturnToGate()
+	If Not HasRezMemberAlive() Then ResignAndReturnToGate()
 
 	Local $aNPCs = GetNPCsInRangeOfAgent(GetMyAgent(), Null, 1500)
 

@@ -34,12 +34,10 @@ Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
+Global Const $ID_unknown_outpost_deposit_points = 193
 
-Global $groupIsAlive = True
 Global $DonatePoints = True
 
-
-Global Const $ID_unknown_outpost_deposit_points = 193
 
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
@@ -58,10 +56,10 @@ Func LuxonFactionFarm($STATUS)
 	Move(-5493, 13712)
 	RndSleep(1000)
 	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
-	$groupIsAlive = True
-	AdlibRegister('LuxonGroupIsAlive', 10000)
+	ResetFailuresCounter()
+	AdlibRegister('TrackGroupStatus', 10000)
 	Local $result = VanquishMountQinkai()
-	AdlibUnRegister('LuxonGroupIsAlive')
+	AdlibUnRegister('TrackGroupStatus')
 
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2
@@ -165,11 +163,4 @@ Func VanquishMountQinkai()
 		Return 1
 	EndIf
 	Return 0
-EndFunc
-
-
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer
-Func LuxonGroupIsAlive()
-	$groupIsAlive = IsGroupAlive()
-	If Not $groupIsAlive Then Notice('Group wiped.')
 EndFunc

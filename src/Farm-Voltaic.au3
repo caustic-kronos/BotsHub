@@ -35,7 +35,6 @@ Global Const $VOLTAIC_FARM_DURATION = 16 * 60 * 1000
 Global Const $VSAggroRange = $RANGE_SPELLCAST + 200
 
 Global $VOLTAIC_FARM_SETUP = False
-Global $voltaicDeathsCount = 0
 
 ;~ Main method to farm Voltaic
 Func VoltaicFarm($STATUS)
@@ -67,14 +66,14 @@ EndFunc
 
 ;~ Farm loop
 Func VoltaicFarmLoop()
-	$voltaicDeathsCount = 0
+	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-23200, 7100)
 	Move(-22735, 6339)
 	RndSleep(1000)
 	WaitMapLoading($ID_Verdant_Cascades)
 
-	AdlibRegister('VoltaicGroupIsAlive', 10000)
+	AdlibRegister('TrackGroupStatus', 10000)
 
 	Local $timer = TimerInit()
 	MoveAggroAndKill(-19887, 6074, '1', $VSAggroRange)
@@ -85,12 +84,20 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(3571, -9501, '5', $VSAggroRange)
 	MoveAggroAndKill(10764, -6448, '6', $VSAggroRange)
 	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
-	If IsFailure() Then Return 1
+	If IsRunFailed() Then 
+		AdlibUnregister('TrackGroupStatus')
+		Return 1
+	EndIf
+
 	Info('At the Troll Bridge - TROLL TOLL')
 	MoveAggroAndKill(18054, -3275, '8', $VSAggroRange)
 	MoveAggroAndKill(20966, -6476, '9', $VSAggroRange)
 	MoveAggroAndKill(25298, -9456, '10', $VSAggroRange)
-	If IsFailure() Then Return 1
+	If IsRunFailed() Then
+		AdlibUnregister('TrackGroupStatus')
+		Return 1
+	EndIf
+
 	Move(25729, -9360)
 	Info('Entering Slavers')
 	While Not WaitMapLoading($ID_Slavers_Exile)
@@ -113,9 +120,9 @@ Func VoltaicFarmLoop()
 	If IsHardmodeEnabled() Then UseConset()
 
 	Sleep(1000)
-	While $voltaicDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -18500, -8000, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -18500, -8000, 1250)
 		; Waiting to be alive before retrying
-		While Not IsGroupAlive()
+		While Not IsGroupCurrentlyAlive()
 			Sleep(2000)
 		WEnd
 		UseMoraleConsumableIfNeeded()
@@ -130,11 +137,10 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKill(-15000, -7500, 'Fourth group, again', $VSAggroRange)
 		MoveAggroAndKill(-16500, -8000, 'Fifth group', $VSAggroRange)
 		MoveAggroAndKill(-18500, -8000, 'To the shrine', $VSAggroRange)
-		If IsFailure() Then Return 1
 	WEnd
-	While $voltaicDeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
 		; Waiting to be alive before retrying
-		While Not IsGroupAlive()
+		While Not IsGroupCurrentlyAlive()
 			Sleep(2000)
 		WEnd
 		UseMoraleConsumableIfNeeded()
@@ -142,8 +148,11 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKill(-18500, -11500, 'Pre-Boss group', $VSAggroRange)
 		MoveAggroAndKill(-17700, -12500, 'Boss group', $VSAggroRange)
 		MoveAggroAndKill(-17500, -14250, 'Final group', $VSAggroRange)
-		If IsFailure() Then Return 1
 	WEnd
+	If IsRunFailed() Then
+		AdlibUnregister('TrackGroupStatus')
+		Return 1
+	EndIf
 	; Chest
 	Move(-17500, -14250)
 	Info('Opening chest')
@@ -153,22 +162,6 @@ Func VoltaicFarmLoop()
 	Sleep(2500)
 	PickUpItems()
 	Info('Finished Run')
+	AdlibUnregister('TrackGroupStatus')
 	Return 0
-EndFunc
-
-
-;~ Did run fail ?
-Func IsFailure()
-	If ($voltaicDeathsCount > 5) Then
-		AdlibUnregister('VoltaicGroupIsAlive')
-		Notice('Group wiped.')
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Updates the voltaicDeathsCount variable, this function is run on a fixed timer
-Func VoltaicGroupIsAlive()
-	$voltaicDeathsCount += IsGroupAlive() ? 0 : 1
 EndFunc

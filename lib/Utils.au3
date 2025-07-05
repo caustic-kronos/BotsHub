@@ -45,7 +45,6 @@ Func RunTests($STATUS)
 	;	Sleep(2000)
 	;WEnd
 
-	EnterChallenge()
 
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
 	;~ ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
@@ -228,10 +227,6 @@ Func DefaultShouldPickItem($item)
 	ElseIf $rarity <> $RARITY_White And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
-		Return True
-	; Temporary addition to find glacial blades
-	ElseIf $itemID == $ID_Glacial_Blades Or $itemID == $ID_Glacial_Blade Then
-		Notice('Glacial Blades Sword or Dagger found')
 		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
 		Return GUICtrlRead($GUI_Checkbox_LootGoldItems) == $GUI_CHECKED
@@ -980,7 +975,7 @@ Func IdentifyAllItems($buyKit = True)
 		Local $item
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
 			If Not GetIsIdentified($item) Then
 				Local $IdentificationKit = FindIdentificationKit()
 				If $IdentificationKit == 0 Then
@@ -1096,10 +1091,10 @@ EndFunc
 Func SalvageItem($item, $salvageKit)
 	Local $rarity = GetRarity($item)
 	StartSalvageWithKit($item, $salvageKit)
-	Sleep(GetPing() + 1000)
+	Sleep(GetPing() + 400)
 	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 		ValidateSalvage()
-		Sleep(GetPing() + 1000)
+		Sleep(GetPing() + 400)
 	EndIf
 	Return True
 EndFunc
@@ -1161,12 +1156,17 @@ Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 	GoToNPC($merchant)
 	RndSleep(500)
 
-	Local $xunlaiTemporarySlot = 0
+	Local $xunlaiTemporarySlot = Null
+	Local $spaceNeeded = $stackable ? 1 : $amount
 	; There is no space in inventory, we need to store things in Xunlai to buy items
-	If ($stackable And CountSlots(1, 4) < 1) Or (Not $stackable And CountSlots(1, 4) < $amount) Then
+	If (CountSlots(1, 4) < $spaceNeeded) Then
 		$xunlaiTemporarySlot = FindChestEmptySlots()
-		Local $freeSpace = $stackable ? 1 : $amount
-		For $i = 0 To $freeSpace - 1
+		If UBound($xunlaiTemporarySlot) < $spaceNeeded Then
+			Error('Not enough space in inventory and storage to buy anything')
+			Return False
+		EndIf
+
+		For $i = 0 To $spaceNeeded - 1
 			MoveItem(GetItemBySlot(1, $i + 1), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
 		Next
 	EndIf
@@ -1183,7 +1183,7 @@ Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 	WEnd
 
 	RndSleep(500)
-	If $xunlaiTemporarySlot <> 0 Then
+	If $xunlaiTemporarySlot <> Null Then
 		Local $freeSpace = $stackable ? 1 : $amount
 		For $i = 0 To $freeSpace - 1
 			MoveItem(GetItemByModelID($itemID), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
@@ -1905,6 +1905,128 @@ EndFunc
 #EndRegion NPCs
 
 
+#Region Quests and group status
+;~ Take a quest or a reward - for reward, expectedState should be 0 once reward taken
+Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
+	Local $questState = 999
+	While $questState <> $expectedState
+		Info('Current quest state : ' & $questState)
+		GoToNPC($npc)
+		RndSleep(GetPing() + 750)
+		Dialog($dialogID)
+		RndSleep(GetPing() + 750)
+		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	WEnd
+EndFunc
+
+
+;~ Did run fail ?
+Func IsRunFailed()
+	If ($groupFailuresCount > 5) Then
+		Notice('Group wiped ' & $groupFailuresCount & ' times, run is considered failed.')		
+		Return True
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Is group alive right now
+Func IsGroupCurrentlyAlive()
+	Return $groupIsAlive
+EndFunc
+
+
+Global $groupFailuresCount = 0
+Global $groupIsAlive = True
+
+
+;~ Reset the failures counter
+Func ResetFailuresCounter()
+	$groupFailuresCount = 0
+	$groupIsAlive = True
+EndFunc
+
+
+;~ Updates the groupIsAlive variable, this function is run on a fixed timer (10s)
+Func TrackGroupStatus()
+	If (Not HasRezMemberAlive()) Then
+		$groupFailuresCount += 1
+		Notice('Group wiped for the ' & $groupFailuresCount & ' time')
+		$groupIsAlive = False
+	Else
+		$groupIsAlive = True
+	EndIf
+EndFunc
+
+
+;~ Returns True if the group is alive
+Func HasRezMemberAlive()
+	Local Static $heroesWithRez = FindHeroesWithRez()
+	For $i In $heroesWithRez
+		Local $heroID = GetHeroID($i)
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then Return True
+	Next
+	Return False
+EndFunc
+
+
+;~ Return an array of the player and the members of the group with a rez
+Func FindHeroesWithRez()
+	Local $heroes[7]
+	Local $count = 0
+	For $heroNumber = 1 To GetHeroCount()
+		Local $heroID = GetHeroID($heroNumber)
+		For $skillSlot = 1 To 8
+			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
+			If IsRezSkill($skill) Then
+				$heroes[$count] = $heroNumber
+				$count += 1
+			EndIf
+		Next
+	Next
+	Local $result[$count + 1]
+	$result[0] = 0
+	For $i = 1 To $count
+		$result[$i] = $heroes[$i - 1]
+	Next
+	Return $result
+EndFunc
+
+
+;~ Return true if the provided skill is a rez skill - signets excluded
+Func IsRezSkill($skill)
+	Local $By_Urals_Hammer			= 2217
+	Local $Junundu_Wail				= 1865
+	;Local $Resurrection_Signet		= 2
+	;Local $Sunspear_Rebirth_Signet	= 1816
+	Local $Eternal_Aura				= 2109
+	Local $We_Shall_Return			= 1592
+	Local $Signet_of_Return			= 1778
+	Local $Death_Pact_Signet		= 1481
+	Local $Flesh_of_My_Flesh		= 791
+	Local $Lively_Was_Naomei		= 1222
+	Local $Restoration				= 963
+	Local $Light_of_Dwayna			= 304
+	Local $Rebirth					= 306
+	Local $Renew_Life				= 1263
+	Local $Restore_Life				= 314
+	Local $Resurrect				= 305
+	Local $Resurrection_Chant		= 1128
+	Local $Unyielding_Aura			= 268
+	Local $Vengeance				= 315
+	Switch $skill
+		Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
+			$Eternal_Aura, _
+			$We_Shall_Return, $Signet_of_Return, _
+			$Death_Pact_Signet, $Flesh_of_My_Flesh, $Lively_Was_Naomei, $Restoration, _
+			$Light_of_Dwayna, $Rebirth, $Renew_Life, $Restore_Life, $Resurrect, $Resurrection_Chant, $Unyielding_Aura, $Vengeance
+			Return True
+	EndSwitch
+	Return False
+EndFunc
+#EndRegion Quests and group status
+
+
 #Region Actions
 ;~ Move while trying to avoid body block
 Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
@@ -2051,7 +2173,7 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If Not IsGroupAlive() Then Return True
+	If Not $groupIsAlive Then Return True
 
 	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
 	Local $flagHeroes = ($options <> Null And $options['flagHeroesOnFight'] <> Null) ? $options['flagHeroesOnFight'] : False
@@ -2241,73 +2363,6 @@ Func GetHighestPriorityFoe($agent, $range = $RANGE_SPELLCAST)
 		EndIf
 	Next
 	Return $highestPriorityTarget
-EndFunc
-
-
-;~ Returns True if the group is alive
-Func IsGroupAlive()
-	Local Static $heroesWithRez = FindHeroesWithRez()
-	For $i In $heroesWithRez
-		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then Return True
-	Next
-	Return False
-EndFunc
-
-
-;~ Return an array of the player and the members of the group with a rez
-Func FindHeroesWithRez()
-	Local $heroes[7]
-	Local $count = 0
-	For $heroNumber = 1 To GetHeroCount()
-		Local $heroID = GetHeroID($heroNumber)
-		For $skillSlot = 1 To 8
-			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
-			If IsRezSkill($skill) Then
-				$heroes[$count] = $heroNumber
-				$count += 1
-			EndIf
-		Next
-	Next
-	Local $result[$count + 1]
-	$result[0] = 0
-	For $i = 1 To $count
-		$result[$i] = $heroes[$i - 1]
-	Next
-	Return $result
-EndFunc
-
-
-;~ Return true if the provided skill is a rez skill - signets excluded
-Func IsRezSkill($skill)
-	Local $By_Urals_Hammer			= 2217
-	Local $Junundu_Wail				= 1865
-	;Local $Resurrection_Signet		= 2
-	;Local $Sunspear_Rebirth_Signet	= 1816
-	Local $Eternal_Aura				= 2109
-	Local $We_Shall_Return			= 1592
-	Local $Signet_of_Return			= 1778
-	Local $Death_Pact_Signet		= 1481
-	Local $Flesh_of_My_Flesh		= 791
-	Local $Lively_Was_Naomei		= 1222
-	Local $Restoration				= 963
-	Local $Light_of_Dwayna			= 304
-	Local $Rebirth					= 306
-	Local $Renew_Life				= 1263
-	Local $Restore_Life				= 314
-	Local $Resurrect				= 305
-	Local $Resurrection_Chant		= 1128
-	Local $Unyielding_Aura			= 268
-	Local $Vengeance				= 315
-	Switch $skill
-		Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
-			$Eternal_Aura, _
-			$We_Shall_Return, $Signet_of_Return, _
-			$Death_Pact_Signet, $Flesh_of_My_Flesh, $Lively_Was_Naomei, $Restoration, _
-			$Light_of_Dwayna, $Rebirth, $Renew_Life, $Restore_Life, $Resurrect, $Resurrection_Chant, $Unyielding_Aura, $Vengeance
-			Return True
-	EndSwitch
-	Return False
 EndFunc
 
 
