@@ -2036,7 +2036,7 @@ Global Const $ID_Oni_Daggers						= 766
 Global $UltraRareWeapons_Array = [ _
 	$ID_Glacial_Blade, $ID_Glacial_Blades, $ID_Crystalline_Sword, _
 	$ID_Eternal_Blade, $ID_Obsidian_Edge, $ID_Emerald_Blade, $ID_Storm_Daggers, $ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, _
-	$ID_Aureate_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, $ID_Demoncrest_Spear, $ID_Silverwing_Recurve_Bow, $ID_Onyx_Scepter _
+	$ID_Aureate_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, $ID_Demoncrest_Spear, $ID_Silverwing_Recurve_Bow, $ID_Onyx_Scepter, _
 	_
 	$ID_Demrikovs_Judgement, $ID_Vetauras_Harbinger, $ID_Torivos_Rage, $ID_Heleynes_Insight, _
 	$ID_Envoy_Sword, $ID_Envoy_Axe, $ID_Divine_Envoy_Staff, $ID_Envoy_Scythe, _

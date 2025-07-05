@@ -96,6 +96,7 @@ Func RunToShardsOfOrrDungeon()
 		MoveAggroAndKill(8803, -5104, '4', $SoOAggroRange)
 		MoveAggroAndKill(8125, -8247, '5', $SoOAggroRange)
 		If SoOIsFailure() Then Return 1
+
 		MoveAggroAndKill(8634, -11529, '6', $SoOAggroRange)
 		MoveAggroAndKill(9559, -13494, '7', $SoOAggroRange)
 		MoveAggroAndKill(10314, -16111, '8', $SoOAggroRange)
@@ -109,15 +110,16 @@ EndFunc
 ;~ Farm loop
 Func SoOFarmLoop()
 	$SoODeathsCount = 0
-
 	AdlibRegister('SoOGroupIsAlive', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
-	ClearSoOFloor1()
-	ClearSoOFloor2()
-	ClearSoOFloor3()
-
+    If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
+        $SOO_FARM_SETUP = False
+        Return 1
+    EndIf	
+	
 	AdlibUnRegister('SoOGroupIsAlive')
+
 	Info('Waiting for timer end')
 	Sleep(190000)
 	While Not WaitMapLoading($ID_Arbor_Bay)
@@ -226,6 +228,7 @@ Func ClearSoOFloor1()
 		; too close to walls
 		MoveAggroAndKill(7600, 12500, '8', $SoOAggroRange)
 		MoveAggroAndKill(9200, 12000, 'Triggering beacon 2', $SoOAggroRange)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
@@ -246,6 +249,7 @@ Func ClearSoOFloor1()
 		MoveAggroAndKill(13750, 15900, '3', $SoOAggroRange)
 		MoveAggroAndKill(16000, 17000, '4', $SoOAggroRange)
 		MoveAggroAndKill(16000, 12000, 'Triggering beacon 3', $SoOAggroRange)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
@@ -254,6 +258,7 @@ Func ClearSoOFloor1()
 		MoveAggroAndKill(14000, 7400, '1', $SoOAggroRange)
 		MoveAggroAndKill(14400, 6000, '2', $SoOAggroRange)
 		MoveAggroAndKill(15000, 5300, '3', $SoOAggroRange)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	Info('Going through portal')
@@ -277,6 +282,7 @@ Func ClearSoOFloor1()
 		Move(20400, 1300)
 		RndSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_2)
+		If SoOIsFailure() Then Return 1
 	WEnd
 EndFunc
 
@@ -378,6 +384,7 @@ Func ClearSoOFloor2()
 		MoveAggroAndKill(-11500, -8400, '21', $SoOAggroRange)
 		MoveAggroAndKill(-16000, -8700, '22', $SoOAggroRange)
 		MoveAggroAndKill(-17500, -9500, '23', $SoOAggroRange)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	Info('Going through portal')
@@ -396,6 +403,7 @@ Func ClearSoOFloor2()
 		Move(-19300, -8200)
 		RndSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_3)
+		If SoOIsFailure() Then Return 1
 	WEnd
 EndFunc
 
@@ -414,8 +422,8 @@ Func ClearSoOFloor3()
 		Dialog(0x84)
 		RndSleep(500)
 
-		MoveAggroAndKill(16337, 16366, '1', $SoOAggroRange)
-		MoveAggroAndKill(16313, 17997, '2', $SoOAggroRange)
+		FlagMoveAggroAndKill(16337, 16366, '1', $SoOAggroRange)
+		FlagMoveAggroAndKill(16313, 17997, '2', $SoOAggroRange)
 		MoveAggroAndKill(16000, 18400, '3', $SoOAggroRange)
 		MoveAggroAndKill(10000, 19425, '4', $SoOAggroRange)
 		; Poison trap between 4 and 5
@@ -427,6 +435,7 @@ Func ClearSoOFloor3()
 		MoveAggroAndKill(1800, 7500, '10', $SoOAggroRange)
 		MoveAggroAndKill(2300, 8000, '11', $SoOAggroRange)
 		MoveAggroAndKill(1100, 7100, '12', $SoOAggroRange)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	While $SoODeathsCount < 6 And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
@@ -487,6 +496,7 @@ Func ClearSoOFloor3()
 		PickUpItems()
 
 		MoveAggroAndKill(-9200, 6000, '16', $SoOAggroRange)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
@@ -524,6 +534,7 @@ Func ClearSoOFloor3()
 		$questState = DllStructGetData(GetQuestByID($ID_SoO_Quest_Lost_Souls), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
 		Sleep(1000)
+		If SoOIsFailure() Then Return 1
 	WEnd
 
 	; Doubled to try securing the looting
@@ -557,6 +568,7 @@ EndFunc
 Func SoOIsFailure()
 	If ($SoODeathsCount > 5) Then
 		AdlibUnregister('SoOGroupIsAlive')
+		Notice('Group wiped.')
 		Return True
 	EndIf
 	Return False
