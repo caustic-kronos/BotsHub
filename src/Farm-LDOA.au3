@@ -44,6 +44,7 @@ Global Const $LDOA_Skill7 = 7
 Global Const $LDOA_Skill8 = 8
 
 Global Const $ID_Quest_CharrAtTheGate = 0x2E
+Global Const $ID_Quest_FarmerHamnet = 0x4A1
 
 Global $LDOA_FARM_SETUP = False
 Global $OutpostCheck = False
@@ -80,6 +81,7 @@ Func SetupLDOATitleFarm()
 	Info('Setting up farm')
 
 	LeaveGroup()
+	SendChat('/bonus')
 
 	Local $me = GetMyAgent()
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
@@ -123,6 +125,9 @@ EndFunc
 
 
 Func SetupCharrAtTheGateQuest()
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	Info('Setting up Charr at the gate quest...')
+
 	RndSleep(GetPing() + 750)
 	AbandonQuest(0x2E)
 	RndSleep(GetPing() + 750)
@@ -140,12 +145,12 @@ Func LDOATitleFarmUnder10()
 	Local $me = GetMyAgent()
 	
 	If $questStatus == 0 Then
-		Info('Taking quest Charr at the gate.')
+		Info('**Quest not found**')
 		SetupCharrAtTheGateQuest()
 	ElseIf $questStatus == 1 Then
 		Info('Good to go!')
 	ElseIf $questStatus == 3 Then
-		Info('Resetting quest.')
+		Info('Resetting the quest...')
 		SetupCharrAtTheGateQuest()
 	EndIf
 
@@ -176,12 +181,19 @@ EndFunc
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-	;Local $myQuestID = $QUEST_ID_Hamnet
-	;If HasQuest($myQuestID) Then
-	;	Info('Quest is in log!')
-	;Else
-	;	Info('Quest is not in log.')
-	;EndIf
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+
+	;~ Get quest if we dont have it
+	If $questStatus == 0 Then
+		Info('Quest not found, setting up...')
+		SetupHamnetQuest()
+	
+	;~ If we have the quest, we can start the farm
+	ElseIf $questStatus == 1 Then
+		Info('Quest found, Good to go!')
+	EndIf
+
+	Hamnet()
 
 	Return 0
 EndFunc
@@ -200,8 +212,39 @@ Func OutpostRun()
 EndFunc
 
 
+;~ Setup Hamnet quest
+Func SetupHamnetQuest()
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	Info('Setting up Hamnet quest...')
+
+	RndSleep(GetPing() + 750)
+	MoveTo(9516, 7668)
+	MoveTo(9815, 7809)
+	MoveTo(10280, 7895)
+	MoveTo(10564, 7832)
+	GoToNPC(GetNearestNPCToCoords(10564, 7832))
+	RndSleep(GetPing() + 750)
+
+EndFunc
+
 ;~ Farmer Hamnet farm
 Func Hamnet()
+	Info('Starting Hamnet farm...')
+	Info('Heading to Foibles Fair!')
+	RandomDistrictTravel($ID_Foibles_Fair)
+
+	RndSleep(GetPing() + 750)
+
+	MoveTo(-183, 9002)
+	MoveTo(356, 7834)
+	Info('Entering Wizards Folly!')
+	Move(390, 7800)
+	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
+
+	UseConsumable($ID_Igneous_Summoning_Stone)
+	Info('Using Igneous Summoning Stone')
+
+	MoveAggroAndKill(2750, 4050, '', 1000, Null)
 
 EndFunc
 
