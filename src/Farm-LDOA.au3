@@ -81,7 +81,6 @@ Func SetupLDOATitleFarm()
 	Info('Setting up farm')
 
 	LeaveGroup()
-	SendChat('/bonus')
 
 	Local $me = GetMyAgent()
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
@@ -291,6 +290,7 @@ EndFunc
 Func Foible()
 	; This function is used to run to Foibles Fair
 	Info('Starting run to Foibles Fair..' )
+	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
 	Move(-11300, -6195, 30)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
