@@ -228,10 +228,10 @@ Func SetupHamnetQuest()
 	Info('Setting up Hamnet quest...')
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+	Local $questStatus1 = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
 
 	;~ Get quest if not already obtained
-	If $questStatus == 0 Then
+	If $questStatus1 == 0 Then
 		Info('Quest not found, setting up...')
 		RndSleep(GetPing() + 750)
 		MoveTo(9516, 7668)
@@ -241,7 +241,7 @@ Func SetupHamnetQuest()
 		GoToNPC(GetNearestNPCToCoords(10564, 7832))
 		RndSleep(GetPing() + 750)
 	;~ If we have the quest, we can start the farm
-	ElseIf $questStatus == 1 Then
+	ElseIf $questStatus1 == 1 Then
 		Info('Quest found, Good to go!')
 	EndIf
 EndFunc
@@ -306,23 +306,22 @@ Func Ashford()
 	
 	RndSleep(GetPing() + 750)
 	
-	UseConsumable($ID_Igneous_Summoning_Stone)
-	Info('Using Igneous Summoning Stone')
-
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseSS($ID_Lakeside_County)
 	MoveTo(4555, 1182)
 	MoveTo(1894, -3264)
 	MoveTo(-2573, -6357)
 	MoveTo(-5396, -6940)
 	Move(-11100, -6252)
-	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
-	Info('Made it to Ashford Abbey')
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Ashford()
+
+	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
+	Info('Made it to Ashford Abbey')
 EndFunc
 
 ;~ I like watermelon
@@ -334,11 +333,9 @@ Func Foible()
 		
 	RndSleep(GetPing() + 750)
 	
-	UseConsumable($ID_Igneous_Summoning_Stone)
-	Info('Using Igneous Summoning Stone')
-
 	Move(-11300, -6195)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseSS($ID_Lakeside_County)
 	MoveTo(-11171, -8574)
 	MoveTo(-12776, -15329)
 	MoveTo(-12745, -16338)
@@ -348,6 +345,7 @@ Func Foible()
 	Info('Entering Wizards Folly!')
 	Move(-13800, -20047)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
+	UseSS($ID_Wizards_Folly)
 	MoveTo(8532, 17711)
 	MoveTo(7954, 16162)
 	MoveTo(4469, 12834)
@@ -355,11 +353,12 @@ Func Foible()
 	MoveTo(1502, 6804)
 	MoveTo(457, 7310)
 	Move(400, 7700)
-	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
-	Info('Made it to Foibles Fair')
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Foibles()
+	
+	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
+	Info('Made it to Foibles Fair')
 EndFunc
 
 Func Ranik()
@@ -370,11 +369,9 @@ Func Ranik()
 		
 	RndSleep(GetPing() + 750)
 	
-	UseConsumable($ID_Igneous_Summoning_Stone)
-	Info('Using Igneous Summoning Stone')
-
 	Move(-11300, -6195)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseSS($ID_Lakeside_County)
 	MoveTo(-7084, -6604)
 	MoveTo(-6273, -7232)
 	MoveTo(-5036, -11749)
@@ -386,6 +383,7 @@ Func Ranik()
 	Info('Entering Regent Valley!')
 	Move(5000, -19782)
 	WaitMapLoading($ID_Regent_Valley, 10000, 2000)
+	UseSS($ID_Regent_Valley)
 	MoveTo(-14142, 15133)
 	MoveTo(-11645, 14192)
 	MoveTo(-7095, 10418)
@@ -405,11 +403,12 @@ Func Ranik()
 	MoveTo(22613, 5474)
 	MoveTo(22550, 6748)
 	Move(22551, 7300)
-	WaitMapLoading($ID_Fort_Ranik_Presearing, 10000, 2000)
-	Info('Made it to Fort Ranik!')
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Ranik()
+	
+	WaitMapLoading($ID_Fort_Ranik_Presearing, 10000, 2000)
+	Info('Made it to Fort Ranik!')
 EndFunc
 
 Func Barradin()
@@ -480,4 +479,16 @@ Func PresearingInventoryManagement()
 		$TIMESDEPOSITED += 1
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+EndFunc
+
+Func UseSS($m)
+	While 1
+		If GetMapID() == $m Then
+			UseConsumable($ID_Igneous_Summoning_Stone)
+			Info('Using Igneous Summoning Stone')
+			ExitLoop
+		Else
+			Sleep(100)
+		EndIf
+	WEnd
 EndFunc
