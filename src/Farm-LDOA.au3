@@ -283,6 +283,12 @@ Func Ashford()
 	; This function is used to run to Ashford Abbey
 	Info('Starting run to Ashford Abbey..' )
 	Info('Entering Lakeside County!')
+	
+	RndSleep(GetPing() + 750)
+	
+	UseConsumable($ID_Igneous_Summoning_Stone)
+	Info('Using Igneous Summoning Stone')
+
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RndSleep(1000)
@@ -305,6 +311,12 @@ Func Foible()
 	Info('Starting run to Foibles Fair..' )
 	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
+		
+	RndSleep(GetPing() + 750)
+	
+	UseConsumable($ID_Igneous_Summoning_Stone)
+	Info('Using Igneous Summoning Stone')
+
 	Move(-11300, -6195)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-11171, -8574)
@@ -335,6 +347,12 @@ Func Ranik()
 	Info('Starting run to Fort Ranik..' )
 	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
+		
+	RndSleep(GetPing() + 750)
+	
+	UseConsumable($ID_Igneous_Summoning_Stone)
+	Info('Using Igneous Summoning Stone')
+	
 	Move(-11300, -6195)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-7084, -6604)
