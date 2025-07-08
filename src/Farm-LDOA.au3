@@ -174,7 +174,8 @@ Func LDOATitleFarmUnder10()
 			Sleep(100)
 		Else
 			BackToAscalon()
-		Return 0
+			ExitLoop
+		EndIf
 	WEnd
 	
 	Return 0
