@@ -85,6 +85,8 @@ Func SetupLDOATitleFarm()
 
 	Local $me = GetMyAgent()
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
+		Info('LDOA 2-10')
+		SetupCharrAtTheGateQuest()
 		; Examples present in the Else but feel free to have different stuff here depending on how you make the bot
 	ElseIf $OutpostCheck == False Then
 		Info('Checking for outposts...')
@@ -92,7 +94,7 @@ Func SetupLDOATitleFarm()
 		$OutpostCheck = True
 
 		RndSleep(GetPing() + 750)
-
+		Info('LDOA 11-20')
 		SetupHamnetQuest()
 		; LoadSkillTemplate($mapBuildsPerProfession[GetHeroProfession(0, False)])
 		;LoadSkillTemplate($LDOASkillbar)
@@ -116,10 +118,8 @@ Func LDOATitleFarmLoop($STATUS)
 	Info('Current level: ' & $level)
 
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
-		Info('LDOA 2-10')
 		LDOATitleFarmUnder10()
 	Else
-		Info('LDOA 11-20')
 		LDOATitleFarmAfter10()
 	EndIf
 	; If we level to 11, we reset the setup so that the bot starts on the 11-20 part
@@ -134,25 +134,19 @@ Func SetupCharrAtTheGateQuest()
 
 	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
 
-	If $questStatus == 0 Then
-		Info('**Quest not found**')
-		SetupCharrAtTheGateQuest()
+	If $questStatus == 0 OR 3 Then
+		RndSleep(GetPing() + 750)
+		AbandonQuest(0x2E)
+		RndSleep(GetPing() + 750)
+		MoveTo(7974, 6142)
+		MoveTo(5668, 10667)
+		GoToNPC(GetNearestNPCToCoords(5668, 10667))
+		RndSleep(GetPing() + 750)
+		Dialog(0x802E01)
+		RndSleep(GetPing() + 750)
 	ElseIf $questStatus == 1 Then
 		Info('Good to go!')
-	ElseIf $questStatus == 3 Then
-		Info('Resetting the quest...')
-		SetupCharrAtTheGateQuest()
 	EndIf
-
-	RndSleep(GetPing() + 750)
-	AbandonQuest(0x2E)
-	RndSleep(GetPing() + 750)
-	MoveTo(7974, 6142)
-	MoveTo(5668, 10667)
-	GoToNPC(GetNearestNPCToCoords(5668, 10667))
-	RndSleep(GetPing() + 750)
-	Dialog(0x802E01)
-	RndSleep(GetPing() + 750)
 EndFunc
 
 ;~ Farm to do to level to level 10
@@ -190,7 +184,19 @@ EndFunc
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-	Hamnet()
+	Local $level = DllStructGetData(GetMyAgent(), 'Level')
+
+	While 1
+		If $level < 20 Then
+			Info('Current level: ' & $level)
+			Hamnet()
+		Else
+			Info('Current level: ' & $level & ', stopping farm.')
+			BackToAscalon()
+			Return 0
+		EndIf
+	Wend
+
 	Return 0
 EndFunc
 
@@ -204,13 +210,13 @@ Func OutpostRun()
 	Info('Starting outpost run...')
 	Info('...peeling bananas...')
 	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
-	Sleep(250)
+	Sleep(500)
 	Info('...eating watermelons...')
 	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
-	Sleep(250)
+	Sleep(500)
 	Info('...licking strawberries...')
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
-	Sleep(250)
+	Sleep(500)
 	Info('...and finally, glazing cherries...')
 	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
 EndFunc
@@ -254,10 +260,21 @@ Func Hamnet()
 	Move(390, 7800)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 
-	UseConsumable($ID_Igneous_Summoning_Stone)
-	Info('Using Igneous Summoning Stone')
+	While 1
+		If GetMapID() == $ID_Wizards_Folly Then
+			UseConsumable($ID_Igneous_Summoning_Stone)
+			Info('Using Igneous Summoning Stone')
+			ExitLoop
+		Else
+			Sleep(100)
+		EndIf
+	WEnd
 
 	MoveAggroAndKill(2750, 4050, '', 1000, Null)
+
+	ReturnToOutpost()
+	Inf0('Returning to Foibles Fair')
+	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 
 	; If level < 20, we can continue farming
 
