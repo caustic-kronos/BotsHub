@@ -127,6 +127,18 @@ Func SetupCharrAtTheGateQuest()
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	Info('Setting up Charr at the gate quest...')
 
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
+
+	If $questStatus == 0 Then
+		Info('**Quest not found**')
+		SetupCharrAtTheGateQuest()
+	ElseIf $questStatus == 1 Then
+		Info('Good to go!')
+	ElseIf $questStatus == 3 Then
+		Info('Resetting the quest...')
+		SetupCharrAtTheGateQuest()
+	EndIf
+
 	RndSleep(GetPing() + 750)
 	AbandonQuest(0x2E)
 	RndSleep(GetPing() + 750)
@@ -140,19 +152,8 @@ EndFunc
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
 	Local $me = GetMyAgent()
 	
-	If $questStatus == 0 Then
-		Info('**Quest not found**')
-		SetupCharrAtTheGateQuest()
-	ElseIf $questStatus == 1 Then
-		Info('Good to go!')
-	ElseIf $questStatus == 3 Then
-		Info('Resetting the quest...')
-		SetupCharrAtTheGateQuest()
-	EndIf
-
 	; If we have the quest, we can start the farm
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
@@ -184,17 +185,7 @@ EndFunc
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
-
-	;~ Get quest if we dont have it
-	If $questStatus == 0 Then
-		Info('Quest not found, setting up...')
-		SetupHamnetQuest()
 	
-	;~ If we have the quest, we can start the farm
-	ElseIf $questStatus == 1 Then
-		Info('Quest found, Good to go!')
-	EndIf
 
 	Hamnet()
 
@@ -211,13 +202,13 @@ Func OutpostRun()
 	Info('Starting outpost run...')
 	Info('...peeling bananas...')
 	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
-	Sleep(1000)
+	Sleep(500)
 	Info('...eating watermelons...')
 	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
-	Sleep(1000)
+	Sleep(500)
 	Info('...licking strawberries...')
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
-	Sleep(1000)
+	Sleep(500)
 	Info('...and finally, glazing cherries...')
 	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
 EndFunc
@@ -228,6 +219,18 @@ Func SetupHamnetQuest()
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	Info('Setting up Hamnet quest...')
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+
+	;~ Get quest if we dont have it
+	If $questStatus == 0 Then
+		Info('Quest not found, setting up...')
+		SetupHamnetQuest()
+	
+	;~ If we have the quest, we can start the farm
+	ElseIf $questStatus == 1 Then
+		Info('Quest found, Good to go!')
+	EndIf
 
 	RndSleep(GetPing() + 750)
 	MoveTo(9516, 7668)
@@ -257,6 +260,8 @@ Func Hamnet()
 	Info('Using Igneous Summoning Stone')
 
 	MoveAggroAndKill(2750, 4050, '', 1000, Null)
+
+	; If level < 20, we can continue farming
 
 EndFunc
 
@@ -352,7 +357,7 @@ Func Ranik()
 	
 	UseConsumable($ID_Igneous_Summoning_Stone)
 	Info('Using Igneous Summoning Stone')
-	
+
 	Move(-11300, -6195)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-7084, -6604)
