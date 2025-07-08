@@ -89,6 +89,10 @@ Func SetupLDOATitleFarm()
 		Info('Checking for outposts...')
 		OutpostRun()
 		$OutpostCheck = True
+
+		RndSleep(GetPing() + 750)
+
+		SetupHamnetQuest()
 		; LoadSkillTemplate($mapBuildsPerProfession[GetHeroProfession(0, False)])
 		;LoadSkillTemplate($LDOASkillbar)
 		; If you need to reload a map quickly after resign do something like that here
@@ -202,13 +206,13 @@ Func OutpostRun()
 	Info('Starting outpost run...')
 	Info('...peeling bananas...')
 	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
-	Sleep(500)
+	Sleep(250)
 	Info('...eating watermelons...')
 	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
-	Sleep(500)
+	Sleep(250)
 	Info('...licking strawberries...')
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
-	Sleep(500)
+	Sleep(250)
 	Info('...and finally, glazing cherries...')
 	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
 EndFunc
