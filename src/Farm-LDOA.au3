@@ -81,6 +81,7 @@ Func SetupLDOATitleFarm()
 	Info('Setting up farm')
 
 	LeaveGroup()
+	SendChat('bonus', '/')
 
 	Local $me = GetMyAgent()
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
@@ -189,10 +190,7 @@ EndFunc
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-	
-
 	Hamnet()
-
 	Return 0
 EndFunc
 
@@ -226,24 +224,20 @@ Func SetupHamnetQuest()
 
 	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
 
-	;~ Get quest if we dont have it
+	;~ Get quest if not already obtained
 	If $questStatus == 0 Then
 		Info('Quest not found, setting up...')
-		SetupHamnetQuest()
-	
+		RndSleep(GetPing() + 750)
+		MoveTo(9516, 7668)
+		MoveTo(9815, 7809)
+		MoveTo(10280, 7895)
+		MoveTo(10564, 7832)
+		GoToNPC(GetNearestNPCToCoords(10564, 7832))
+		RndSleep(GetPing() + 750)
 	;~ If we have the quest, we can start the farm
 	ElseIf $questStatus == 1 Then
 		Info('Quest found, Good to go!')
 	EndIf
-
-	RndSleep(GetPing() + 750)
-	MoveTo(9516, 7668)
-	MoveTo(9815, 7809)
-	MoveTo(10280, 7895)
-	MoveTo(10564, 7832)
-	GoToNPC(GetNearestNPCToCoords(10564, 7832))
-	RndSleep(GetPing() + 750)
-
 EndFunc
 
 ;~ Farmer Hamnet farm
