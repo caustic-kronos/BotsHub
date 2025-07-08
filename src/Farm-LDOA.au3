@@ -273,7 +273,7 @@ Func Hamnet()
 	MoveAggroAndKill(2750, 4050, '', 1000, Null)
 
 	ReturnToOutpost()
-	Inf0('Returning to Foibles Fair')
+	Info('Returning to Foibles Fair')
 	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 
 	; If level < 20, we can continue farming
