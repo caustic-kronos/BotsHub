@@ -205,17 +205,19 @@ EndFunc
 ;~ Run to every outpost in pre
 Func OutpostRun()
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+	
 	RndSleep(2000)
 	Info('Starting outpost run...')
 	Info('...peeling bananas...')
 	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
-	RndSleep(GetPing() + 750)
+	Sleep(1000)
 	Info('...eating watermelons...')
 	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
-	RndSleep(GetPing() + 750)
+	Sleep(1000)
 	Info('...licking strawberries...')
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
-	RndSleep(GetPing() + 750)
+	Sleep(1000)
 	Info('...and finally, glazing cherries...')
 	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
 EndFunc
@@ -225,6 +227,7 @@ EndFunc
 Func SetupHamnetQuest()
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	Info('Setting up Hamnet quest...')
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 
 	RndSleep(GetPing() + 750)
 	MoveTo(9516, 7668)
@@ -264,7 +267,7 @@ Func TravelWithTimeout($mapID, $onFailFunc)
 
 	RandomDistrictTravel($mapID)
 	
-	While TimerDiff($startTime) < 1000
+	While TimerDiff($startTime) < 10000
 		If GetMapID() == $mapID Then
 			Info('Travel successful.')
 			Return
