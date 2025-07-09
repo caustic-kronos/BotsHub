@@ -170,13 +170,12 @@ EndFunc
 ;~ More fighting!
 Func GemKill()
 	If GetIsDead() Then Return
-
+	Local $target = GetNearestEnemyToAgent(GetMyAgent())
+	Local $distance = 0
 	While Not GetIsDead() And DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist
 		If GetMapLoading() == 2 Then Disconnected()
 
 		Local $targetsInRangeArr = GetFoesInRangeOfAgent(GetMyAgent(), 1700, IsDreamerDryderOrAnurKi)
-		Local $target = 0
-		Local $distance = 0
 		Local $specialTarget = False
 
 		If IsArray($targetsInRangeArr) And UBound($targetsInRangeArr) > 0 Then
