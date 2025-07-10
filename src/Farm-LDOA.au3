@@ -127,7 +127,7 @@ Func LDOATitleFarmLoop($STATUS)
 	If $level == 10 And $newLevel > $level Then $LDOA_FARM_SETUP = False
 EndFunc
 
-
+;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	Info('Setting up Charr at the gate quest...')
@@ -153,7 +153,6 @@ EndFunc
 Func LDOATitleFarmUnder10()
 	Local $me = GetMyAgent()
 	
-	; If we have the quest, we can start the farm
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -181,47 +180,6 @@ Func LDOATitleFarmUnder10()
 	Return 0
 EndFunc
 
-
-;~ Farm to do to level to level 20
-Func LDOATitleFarmAfter10()
-	Local $level = DllStructGetData(GetMyAgent(), 'Level')
-
-	While 1
-		If $level < 20 Then
-			Info('Current level: ' & $level)
-			Hamnet()
-		Else
-			Info('Current level: ' & $level & ', stopping farm.')
-			BackToAscalon()
-			Return 0
-		EndIf
-	Wend
-
-	Return 0
-EndFunc
-
-
-;~ Run to every outpost in pre
-Func OutpostRun()
-	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
-	
-	RndSleep(2000)
-	Info('Starting outpost run...')
-	Info('...peeling bananas...')
-	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
-	Sleep(500)
-	Info('...eating watermelons...')
-	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
-	Sleep(500)
-	Info('...licking strawberries...')
-	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
-	Sleep(500)
-	Info('...and finally, glazing cherries...')
-	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
-EndFunc
-
-
 ;~ Setup Hamnet quest
 Func SetupHamnetQuest()
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
@@ -246,9 +204,28 @@ Func SetupHamnetQuest()
 	EndIf
 EndFunc
 
+;~ Farm to do to level to level 20
+Func LDOATitleFarmAfter10()
+	Local $level = DllStructGetData(GetMyAgent(), 'Level')
+
+	Info('Starting Hamnet farm...')
+
+	While 1
+		If $level < 20 Then
+			Info('Current level: ' & $level)
+			Hamnet()
+		Else
+			Info('Current level: ' & $level & ', stopping farm.')
+			BackToAscalon()
+			ExitLoop
+		EndIf
+	Wend
+
+	Return 0
+EndFunc
+
 ;~ Farmer Hamnet farm
 Func Hamnet()
-	Info('Starting Hamnet farm...')
 	Info('Heading to Foibles Fair!')
 	RandomDistrictTravel($ID_Foibles_Fair)
 
@@ -270,16 +247,30 @@ Func Hamnet()
 		EndIf
 	WEnd
 
-	MoveAggroAndKill(2750, 4050, '', 1000, Null)
+	MoveAggroAndKill(2418, 5437, '', 1000, Null)
+
+	If GetIsDead() Then Hamnet()
 
 	ReturnToOutpost()
 	Info('Returning to Foibles Fair')
 	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
-
-	; If level < 20, we can continue farming
-
 EndFunc
 
+;~ Run to every outpost in pre
+Func OutpostRun()
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+	
+	RndSleep(2000)
+	Info('Starting outpost run...')
+	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
+	Sleep(500)
+	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
+	Sleep(500)
+	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
+	Sleep(500)
+	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
+EndFunc
 
 ;~ Outpost checker
 Func TravelWithTimeout($mapID, $onFailFunc)
@@ -289,16 +280,16 @@ Func TravelWithTimeout($mapID, $onFailFunc)
 	
 	While TimerDiff($startTime) < 10000
 		If GetMapID() == $mapID Then
-			Info('Travel successful.')
+			Info('Travel to ' & $mapID & ' successful.')
 			Return
 		EndIf
 		Sleep(1000)
 	WEnd
-	Info('Travel failed.')
+	Info('Travel to ' & $mapID & ' failed.')
 	Call($onFailFunc)
 EndFunc
 
-;~ I like bananas
+;~ Run to Ashford Abbey
 Func Ashford()
 	; This function is used to run to Ashford Abbey
 	Info('Starting run to Ashford Abbey..' )
@@ -324,9 +315,8 @@ Func Ashford()
 	Info('Made it to Ashford Abbey')
 EndFunc
 
-;~ I like watermelon
+;~ Run to Foibles Fair
 Func Foible()
-	; This function is used to run to Foibles Fair
 	Info('Starting run to Foibles Fair..' )
 	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
@@ -361,8 +351,8 @@ Func Foible()
 	Info('Made it to Foibles Fair')
 EndFunc
 
+;~ Run to Fort Ranik
 Func Ranik()
-	; This function is used to run to Fort Ranik
 	Info('Starting run to Fort Ranik..' )
 	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
@@ -411,13 +401,12 @@ Func Ranik()
 	Info('Made it to Fort Ranik!')
 EndFunc
 
+;~ Run to Barradin Estate
 Func Barradin()
-	; This function is used to run to The Barradin Estate
 	Info('Starting run to The Barradin Estate..' )
 	; If we are dead, we will try again
 	If GetIsDead() Then Barradin()
 EndFunc
-
 
 ;~ Resign and return to Ascalon
 Func BackToAscalon()
@@ -427,7 +416,6 @@ Func BackToAscalon()
 	ReturnToOutpost()
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 EndFunc
-
 
 ;~ Function to deal with inventory after farm, in presearing
 Func PresearingInventoryManagement()
@@ -481,6 +469,7 @@ Func PresearingInventoryManagement()
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
 
+;~ Use Igneous Summoning Stone
 Func UseSS($m)
 	While 1
 		If GetMapID() == $m Then
