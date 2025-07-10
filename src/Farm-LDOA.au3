@@ -182,6 +182,9 @@ EndFunc
 
 ;~ Setup Hamnet quest
 Func SetupHamnetQuest()
+	Info('I think Ill just call it There and Back Again, a Hobbits Holiday ♥')
+	RandomDistrictTravel($ID_Ashford_Abbey)
+
 	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	Info('Setting up Hamnet quest...')
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
