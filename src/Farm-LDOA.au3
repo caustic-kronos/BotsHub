@@ -247,7 +247,7 @@ Func Hamnet()
 		EndIf
 	WEnd
 
-	MoveAggroAndKill(2418, 5437, '', 1000, Null)
+	MoveAggroAndKill(2418, 5437, '', 2000, Null)
 
 	If GetIsDead() Then Hamnet()
 
