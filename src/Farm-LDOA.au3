@@ -280,12 +280,12 @@ Func TravelWithTimeout($mapID, $onFailFunc)
 	
 	While TimerDiff($startTime) < 10000
 		If GetMapID() == $mapID Then
-			Info('Travel to ' & $mapID & ' successful.')
+			Info('Travel successful.')
 			Return
 		EndIf
 		Sleep(1000)
 	WEnd
-	Info('Travel to ' & $mapID & ' failed.')
+	Info('Travel failed.')
 	Call($onFailFunc)
 EndFunc
 
@@ -333,7 +333,7 @@ Func Foible()
 	MoveTo(-10931, -19169)
 	MoveTo(-12742, -19890)
 	Info('Entering Wizards Folly!')
-	Move(-13800, -20047)
+	Move(-13880, -20100)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 	UseSS($ID_Wizards_Folly)
 	MoveTo(8532, 17711)
