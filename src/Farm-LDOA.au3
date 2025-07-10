@@ -278,7 +278,7 @@ Func TravelWithTimeout($mapID, $onFailFunc)
 
 	RandomDistrictTravel($mapID)
 	
-	While TimerDiff($startTime) < 10000
+	While TimerDiff($startTime) < 15000
 		If GetMapID() == $mapID Then
 			Info('Travel successful.')
 			Return
