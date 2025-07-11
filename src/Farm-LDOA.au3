@@ -110,8 +110,8 @@ Func InitialSetupLDOA()
 	Local $SerS = FindInInventory($ID_Serrated_Shield)
 
 	If $LumS[0] > -1 AND $SerS[0] > -1 Then
-		EquipItem(6508)      ; Equip Luminescent Scepter
-		EquipItem(6514)      ; Equip Serrated Shield
+		EquipItem($ID_Luminescent_Scepter)      ; Equip Luminescent Scepter
+		EquipItem($ID_Serrated_Shield)      ; Equip Serrated Shield
 	EndIf
 		
 		
