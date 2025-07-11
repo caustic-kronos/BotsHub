@@ -108,8 +108,9 @@ EndFunc
 Func InitialSetupLDOA()
 	Local $LumS = FindInInventory($ID_Luminescent_Scepter)
 	Local $SerS = FindInInventory($ID_Serrated_Shield)
-
+Info($LumS & ' ' & $SerS)
 	If $LumS[0] <> 0 AND $SerS[0] <> 0 Then
+		Info('Equipping Luminescent Scepter and Serrated Shield')
 		EquipItem($ID_Luminescent_Scepter)      ; Equip Luminescent Scepter
 		EquipItem($ID_Serrated_Shield)      ; Equip Serrated Shield
 	EndIf
