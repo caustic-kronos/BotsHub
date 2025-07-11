@@ -111,8 +111,8 @@ Func InitialSetupLDOA()
 	
 	If $LumS[0] <> 0 AND $SerS[0] <> 0 Then
 		Info('Equipping Luminescent Scepter and Serrated Shield')
-		EquipItemBySlot($LumS[0], $LumS[1])      ; Equip Luminescent Scepter
-		EquipItemBySlot($SerS[0], $SerS[1])      ; Equip Serrated Shield
+		UseItemBySlot($LumS[0], $LumS[1])      ; Equip Luminescent Scepter
+		UseItemBySlot($SerS[0], $SerS[1])      ; Equip Serrated Shield
 	EndIf
 		
 		
