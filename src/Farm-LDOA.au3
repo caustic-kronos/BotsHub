@@ -109,7 +109,11 @@ Func InitialSetupLDOA()
 	Local $LumS = FindInInventory($ID_Luminescent_Scepter)
 	Local $SerS = FindInInventory($ID_Serrated_Shield)
 
-	If $LumS[0] <> 0 And $SerS[0] <> 0 Then EquipItemBySlot($LumS[0], $LumS[1] & $SerS[0], $SerS[1])
+	If $LumS[0] <> 0 AND $SerS[0] <> 0 Then
+		EquipItemBySlot($LumS[0], $LumS[1])      ; Equip Luminescent Scepter
+		EquipItemBySlot($SerS[0], $SerS[1])      ; Equip Serrated Shield
+	EndIf
+		
 		
 	;~ First Sir Tydus quest to get some skills
 	;MoveTo(10399, 318)
