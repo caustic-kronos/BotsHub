@@ -111,7 +111,7 @@ Func InitialSetupLDOA()
 	Dialog(0x80DD01)
 	RndSleep(GetPing() + 750)
 	MoveTo(7607, 5552)
-	Move(7390,5380)
+	Move(7300,5300)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 EndFunc
 
