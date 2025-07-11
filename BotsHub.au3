@@ -138,7 +138,7 @@ Global $GUI_Group_GlobalOptions, _
 		$GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_StoreGold, $GUI_Checkbox_BuyEctoplasm
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables, $GUI_Checkbox_FarmMaterials, $GUI_Checkbox_DisableRendering
 Global $GUI_Group_BaseLootOptions, _
-		$GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootSalvageItems, _
+		$GUI_Checkbox_LootEverything, $GUI_Checkbox_LootNothing, $GUI_Checkbox_LootRareMaterials, $GUI_Checkbox_LootBasicMaterials, $GUI_Checkbox_LootKeys, $GUI_Checkbox_LootArmorSalvageables, _
 		$GUI_Checkbox_LootTomes, $GUI_Checkbox_LootDyes, $GUI_Checkbox_LootScrolls
 Global $GUI_Group_RarityLootOptions, _
 		$GUI_Checkbox_LootGoldItems, $GUI_Checkbox_LootPurpleItems, $GUI_Checkbox_LootBlueItems, $GUI_Checkbox_LootWhiteItems, $GUI_Checkbox_LootGreenItems
@@ -289,7 +289,7 @@ Func createGUI()
 	$GUI_Checkbox_LootNothing = GUICtrlCreateCheckbox('Loot nothing', 31, 94, 96, 20)
 	$GUI_Checkbox_LootRareMaterials = GUICtrlCreateCheckbox('Rare materials', 31, 124, 96, 20)
 	$GUI_Checkbox_LootBasicMaterials = GUICtrlCreateCheckbox('Basic materials', 30, 155, 96, 20)
-	$GUI_Checkbox_LootSalvageItems = GUICtrlCreateCheckbox('Salvage items', 151, 64, 111, 20)
+	$GUI_Checkbox_LootArmorSalvageables = GUICtrlCreateCheckbox('Armor salvageables', 151, 64, 111, 20)
 	$GUI_Checkbox_LootTomes = GUICtrlCreateCheckbox('Tomes', 151, 94, 111, 20)
 	$GUI_Checkbox_LootKeys = GUICtrlCreateCheckbox('Keys', 151, 154, 96, 20)
 	$GUI_Checkbox_LootDyes = GUICtrlCreateCheckbox('Dyes (all)', 31, 184, 96, 20)
@@ -357,7 +357,7 @@ Func createGUI()
 	GUICtrlSetState($GUI_Checkbox_LootRareMaterials, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootBasicMaterials, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootKeys, $GUI_CHECKED)
-	GUICtrlSetState($GUI_Checkbox_LootSalvageItems, $GUI_CHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootArmorSalvageables, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootTomes, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootScrolls, $GUI_CHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootGoldItems, $GUI_CHECKED)
@@ -1045,7 +1045,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'loot.rare_materials', GUICtrlRead($GUI_Checkbox_LootRareMaterials) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.base_materials', GUICtrlRead($GUI_Checkbox_LootBasicMaterials) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.all_dyes', GUICtrlRead($GUI_Checkbox_LootDyes) == 1)
-	_JSON_addChangeDelete($jsonObject, 'loot.salvageable_items', GUICtrlRead($GUI_Checkbox_LootSalvageItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'loot.salvageable_items', GUICtrlRead($GUI_Checkbox_LootArmorSalvageables) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.tomes', GUICtrlRead($GUI_Checkbox_LootTomes) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.scrolls', GUICtrlRead($GUI_Checkbox_LootScrolls) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.keys', GUICtrlRead($GUI_Checkbox_LootKeys) == 1)
@@ -1101,7 +1101,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_LootRareMaterials, _JSON_Get($jsonObject, 'loot.rare_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootBasicMaterials, _JSON_Get($jsonObject, 'loot.base_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootDyes, _JSON_Get($jsonObject, 'loot.all_dyes') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetState($GUI_Checkbox_LootSalvageItems, _JSON_Get($jsonObject, 'loot.salvageable_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_LootArmorSalvageables, _JSON_Get($jsonObject, 'loot.salvageable_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootTomes, _JSON_Get($jsonObject, 'loot.tomes') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootScrolls, _JSON_Get($jsonObject, 'loot.scrolls') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_LootKeys, _JSON_Get($jsonObject, 'loot.keys') ? $GUI_CHECKED : $GUI_UNCHECKED)
