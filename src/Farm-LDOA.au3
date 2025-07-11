@@ -516,6 +516,7 @@ Func UseSS($m)
 			Else
 				Info('Igneous Summoning Stone not found in inventory.')
 				ExitLoop
+			EndIf
 		Else
 			Sleep(100)
 		EndIf
