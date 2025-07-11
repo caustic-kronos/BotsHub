@@ -101,7 +101,13 @@ Func SetupLDOATitleFarm()
 	Info('Preparations complete')
 EndFunc
 
+;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
+	Local $LumS = FindInInventory($ID_Luminescent_Scepter)
+	Local $SerS = FindInInventory($ID_Serrated_Shield)
+
+	If $LumS[0] <> 0 And $SerS[0] <> 0 Then EquipItemBySlot($LumS[0], $LumS[1] & $SerS[0], $SerS[1])
+		
 	;~ First Sir Tydus quest to get some skills
 	;MoveTo(10399, 318)
 	;MoveTo(11004, 1409)
@@ -110,6 +116,7 @@ Func InitialSetupLDOA()
 	;RndSleep(GetPing() + 750)
 	;Dialog(0x80DD01)
 	;RndSleep(GetPing() + 750)
+	
 	MoveTo(7607, 5552)
 	Move(7175,5229)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
@@ -122,8 +129,18 @@ Func InitialSetupLDOA()
 	RndSleep(GetPing() + 750)
 	MoveTo(4187, -948)
 	MoveAggroAndKill(4207, -2892, '', 2500, Null)
-
-
+	MoveTo(3771, -1729)
+	MoveTo(6069, 3865)
+	GoToNPC(GetNearestNPCToCoords(6069, 3865))
+	RndSleep(GetPing() + 750)
+	Dialog(0x805507)
+	RndSleep(GetPing() + 750)
+	MoveTo(2785, 7736)
+	GoToNPC(GetNearestNPCToCoords(2785, 7736))
+	RndSleep(GetPing() + 750)
+	Dialog(0x804703)
+	RndSleep(250)
+	Dialog(0x804701)
 EndFunc
 
 ;~ LDOA Title farm loop
@@ -488,11 +505,17 @@ EndFunc
 
 ;~ Use Igneous Summoning Stone
 Func UseSS($m)
+	Local $InvSS = FindInInventory($ID_Igneous_Summoning_Stone)
+	
 	While 1
 		If GetMapID() == $m Then
-			UseConsumable($ID_Igneous_Summoning_Stone)
-			Info('Using Igneous Summoning Stone')
-			ExitLoop
+			If $InvSS[0] <> 0 Then
+				UseConsumable($ID_Igneous_Summoning_Stone)
+				Info('Using Igneous Summoning Stone')
+				ExitLoop
+			Else
+				Info('Igneous Summoning Stone not found in inventory.')
+				ExitLoop
 		Else
 			Sleep(100)
 		EndIf
