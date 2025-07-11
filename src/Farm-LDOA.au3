@@ -115,7 +115,6 @@ Func InitialSetupLDOA()
 		UseItemBySlot($SerS[0], $SerS[1])      ; Equip Serrated Shield
 	EndIf
 		
-		
 	;~ First Sir Tydus quest to get some skills
 	;MoveTo(10399, 318)
 	;MoveTo(11004, 1409)
