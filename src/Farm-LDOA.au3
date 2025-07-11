@@ -83,11 +83,12 @@ Func SetupLDOATitleFarm()
 	LeaveGroup()
 	SendChat('bonus', '/')
 
-	Local $me = GetMyAgent()
-	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
+	If DllStructGetData(GetMyAgent(), 'Level') == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == 0 Then
+		Info('LDOA 1-2')
+		InitialSetupLDOA()
+	ElseIf DllStructGetData(GetMyAgent(), 'Level') >= 2 AND < 11 Then
 		Info('LDOA 2-10')
 		SetupCharrAtTheGateQuest()
-		; Examples present in the Else but feel free to have different stuff here depending on how you make the bot
 	ElseIf $OutpostCheck == False Then
 		Info('Checking for outposts...')
 		OutpostRun()
@@ -96,21 +97,23 @@ Func SetupLDOATitleFarm()
 		RndSleep(GetPing() + 750)
 		Info('LDOA 11-20')
 		SetupHamnetQuest()
-		; LoadSkillTemplate($mapBuildsPerProfession[GetHeroProfession(0, False)])
-		;LoadSkillTemplate($LDOASkillbar)
-		; If you need to reload a map quickly after resign do something like that here
-		;MoveTo(-22000, 12500)
-		;Move(-21750, 14500)
-		;RndSleep(1000)
-		;WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-		;MoveTo(9100, -19600)
-		;Move(9100, -20500)
-		;RndSleep(1000)
-		;WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 	EndIf
 	Info('Preparations complete')
 EndFunc
 
+Func InitialSetupLDOA()
+	;~ First Sir Tydus quest to get some skills
+	MoveTo(10399, 318)
+	MoveTo(11004, 1409)
+	MoveTo(11691, 3435)
+	GoToNPC(GetNearestNPCToCoords(11691, 3435))
+	RndSleep(GetPing() + 750)
+	Dialog(0x80DD01)
+	RndSleep(GetPing() + 750)
+	MoveTo(7607, 5552)
+	Move(7390,5380)
+	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+EndFunc
 
 ;~ LDOA Title farm loop
 Func LDOATitleFarmLoop($STATUS)
