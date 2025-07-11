@@ -111,8 +111,19 @@ Func InitialSetupLDOA()
 	Dialog(0x80DD01)
 	RndSleep(GetPing() + 750)
 	MoveTo(7607, 5552)
-	Move(7300,5300)
+	Move(7175,5229)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	MoveTo(6116, 3995)
+	GoToNPC(GetNearestNPCToCoords(6116, 3995))
+	RndSleep(GetPing() + 750)
+	Dialog(0x80DD07)
+	RndSleep(250)
+	Dialog(0x805501)
+	RndSleep(GetPing() + 750)
+	MoveTo(4187, -948)
+	MoveAggroAndKill(4207, -2892, '', 2500, Null)
+
+
 EndFunc
 
 ;~ LDOA Title farm loop
