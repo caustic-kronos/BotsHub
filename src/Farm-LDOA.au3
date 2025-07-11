@@ -46,6 +46,9 @@ Global Const $LDOA_Skill8 = 8
 Global Const $ID_Quest_CharrAtTheGate = 0x2E
 Global Const $ID_Quest_FarmerHamnet = 0x4A1
 
+Global Const $ID_Luminescent_Scepter = 6508
+Global Const $ID_Serrated_Shield = 6514
+
 Global $LDOA_FARM_SETUP = False
 Global $OutpostCheck = False
 
