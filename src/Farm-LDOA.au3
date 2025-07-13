@@ -92,7 +92,7 @@ Func SetupLDOATitleFarm()
 	ElseIf DllStructGetData(GetMyAgent(), 'Level') >= 2 AND < 11 Then
 		Info('LDOA 2-10')
 		SetupCharrAtTheGateQuest()
-	ElseIf $OutpostCheck == False Then
+	Else $OutpostCheck == False Then
 		Info('Checking for outposts...')
 		OutpostRun()
 		$OutpostCheck = True
