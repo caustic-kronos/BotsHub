@@ -81,15 +81,17 @@ EndFunc
 
 ;~ LDOA Title farm setup
 Func SetupLDOATitleFarm()
+	Local $Level = DllStructGetData(GetMyAgent(), 'Level')
+	
 	Info('Setting up farm')
 
 	LeaveGroup()
 	SendChat('bonus', '/')
 
-	If DllStructGetData(GetMyAgent(), 'Level') == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == 0 Then
+	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == 0 Then
 		Info('LDOA 1-2')
 		InitialSetupLDOA()
-	ElseIf DllStructGetData(GetMyAgent(), 'Level') >= 2 AND < 11 Then
+	ElseIf $Level >= 2 AND $Level < 11 Then
 		Info('LDOA 2-10')
 		SetupCharrAtTheGateQuest()
 	Else
