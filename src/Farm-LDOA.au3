@@ -78,7 +78,6 @@ Func LDOATitleFarm($STATUS)
 	Return LDOATitleFarmLoop($STATUS)
 EndFunc
 
-
 ;~ LDOA Title farm setup
 Func SetupLDOATitleFarm()
 	Local $Level = DllStructGetData(GetMyAgent(), 'Level')
@@ -313,7 +312,8 @@ Func OutpostRun()
 	Sleep(500)
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
 	Sleep(500)
-	;TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
+	TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
+	Sleep(500)
 EndFunc
 
 ;~ Outpost checker
@@ -346,11 +346,11 @@ Func Ashford()
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	UseSS($ID_Lakeside_County)
-	MoveTo(4555, 1182)
-	MoveTo(1894, -3264)
-	MoveTo(-2573, -6357)
-	MoveTo(-5396, -6940)
-	Move(-11100, -6252)
+	MoveTo(2560, -2331) ;~ 1  
+	MoveTo(-1247, -6084) ;~ 2  
+	MoveTo( -5310, -6951) ;~ 3  
+	MoveTo(-11026, -6238) ;~ 4  
+	Move(-11444, -6237) ;~ 5
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Ashford()
@@ -367,26 +367,25 @@ Func Foible()
 		
 	RndSleep(GetPing() + 750)
 	
-	Move(-11300, -6195)
+	MoveTo(-11455, -6238) ;~ 1
+	Move(-11037, -6240) ;~ 2  
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	UseSS($ID_Lakeside_County)
-	MoveTo(-11171, -8574)
-	MoveTo(-12776, -15329)
-	MoveTo(-12745, -16338)
-	MoveTo(-11832, -18630)
-	MoveTo(-10931, -19169)
-	MoveTo(-12742, -19890)
+	UseSS($ID_Lakeside_County)  
+	MoveTo(-11809, -12198) ;~ 3  
+	MoveTo(-12893, -16093) ;~ 4  
+	MoveTo(-11566, -18712) ;~ 5  
+	MoveTo(-11246, -19376) ;~ 6  
+	MoveTo(-13738, -20079) ;~ 7  
 	Info('Entering Wizards Folly!')
-	Move(-13880, -20100)
+	Move(9875, 19853) ;~ 8 
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 	UseSS($ID_Wizards_Folly)
-	MoveTo(8532, 17711)
-	MoveTo(7954, 16162)
-	MoveTo(4469, 12834)
-	MoveTo(2135, 8630)
-	MoveTo(1502, 6804)
-	MoveTo(457, 7310)
-	Move(400, 7700)
+	MoveTo(8648, 17730) ;~ 9  
+	MoveTo(7497, 15763) ;~ 10  
+	MoveTo(2840, 10383) ;~ 11  
+	MoveTo(1648, 7527) ;~ 12  
+	MoveTo(536, 7315) ;~ 13 
+	Move(337, 7924) ;~ 14  
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Foibles()
@@ -403,40 +402,35 @@ Func Ranik()
 		
 	RndSleep(GetPing() + 750)
 	
-	Move(-11300, -6195)
+	MoveTo(-11465, -6221) ;~ 1  
+	Move(-11045, -6234) ;~ 2  
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	UseSS($ID_Lakeside_County)
-	MoveTo(-7084, -6604)
-	MoveTo(-6273, -7232)
-	MoveTo(-5036, -11749)
-	MoveTo(-4122, -12667)
-	MoveTo(-623, -15112)
-	MoveTo(1222, -16433)
-	MoveTo(1996, -18588)
-	MoveTo(4010, -19728)
+	MoveTo(-6996, -6842) ;~ 3  
+	MoveTo(-4559, -12343) ;~ 4  
+	MoveTo(-3589, -13032) ;~ 5  
+	MoveTo(737, -16091) ;~ 6  
+	MoveTo(2205, -18452) ;~ 7  
+	MoveTo(4100, -19770) ;~ 8  
 	Info('Entering Regent Valley!')
-	Move(5000, -19782)
+	Move(-15504, 16947) ;~ 9  
 	WaitMapLoading($ID_Regent_Valley, 10000, 2000)
 	UseSS($ID_Regent_Valley)
-	MoveTo(-14142, 15133)
-	MoveTo(-11645, 14192)
-	MoveTo(-7095, 10418)
-	MoveTo(-4281, 9187)
-	MoveTo(-1670, 7490)
-	MoveTo(133, 6428)
-	MoveTo(2964, 6071)
-	MoveTo(4726, 5436)
-	MoveTo(6471, 5315)
-	MoveTo(7790, 3655)
-	MoveTo(9429, 2774)
-	MoveTo(12229, 2543)
-	MoveTo(16141, 1263)
-	MoveTo(18846, 1482)
-	MoveTo(19132, 2047)
-	MoveTo(22143, 3527)
-	MoveTo(22613, 5474)
-	MoveTo(22550, 6748)
-	Move(22551, 7300)
+	MoveAvoidingBodyBlock(-13479, 14598, 20000) ;~ 10  
+	MoveAvoidingBodyBlock(-11850, 14655, 20000) ;~ 11  
+	MoveAvoidingBodyBlock(-8092, 11137, 20000) ;~ 12  
+	MoveAvoidingBodyBlock(-3485, 8705, 20000) ;~ 13  
+	MoveAvoidingBodyBlock(497, 6267, 20000) ;~ 14  
+	MoveAvoidingBodyBlock(6250, 5387, 20000) ;~ 15  
+	MoveAvoidingBodyBlock(7605, 4062, 20000) ;~ 16  
+	MoveAvoidingBodyBlock(9897, 2728, 20000) ;~ 17  
+	MoveAvoidingBodyBlock(13312, 2072, 20000) ;~ 18  
+	MoveAvoidingBodyBlock(14977, 1361, 20000) ;~ 19  
+	MoveAvoidingBodyBlock(18820, 1496, 20000) ;~ 20  
+	MoveAvoidingBodyBlock(19241, 2153, 20000) ;~ 21  
+	MoveAvoidingBodyBlock(22297, 4014, 20000) ;~ 22  
+	MoveAvoidingBodyBlock(22554, 6949, 20000) ;~ 23  
+	Move(22540, 7575) ;~ 24  
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Ranik()
@@ -448,6 +442,12 @@ EndFunc
 ;~ Run to Barradin Estate
 Func Barradin()
 	Info('Starting run to The Barradin Estate..' )
+	RandomDistrictTravel($ID_Ashford_Abbey)
+	Info('Entering Lakeside County!')
+		
+	RndSleep(GetPing() + 750)
+
+
 	; If we are dead, we will try again
 	If GetIsDead() Then Barradin()
 EndFunc
