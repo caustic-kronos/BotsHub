@@ -91,7 +91,7 @@ Func SetupLDOATitleFarm()
 	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == 0 Then
 		Info('LDOA 1-2')
 		InitialSetupLDOA()
-	ElseIf $Level >= 2 AND $Level < 11 Then
+	ElseIf $Level >= 2 AND $Level <= 10 Then
 		Info('LDOA 2-10')
 		SetupCharrAtTheGateQuest()
 	Else
