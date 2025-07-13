@@ -88,7 +88,7 @@ Func SetupLDOATitleFarm()
 	LeaveGroup()
 	SendChat('bonus', '/')
 
-	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == 0 Then
+	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == '0' Then
 		Info('LDOA 1-2')
 		InitialSetupLDOA()
 	ElseIf $Level >= 2 AND $Level <= 10 Then
