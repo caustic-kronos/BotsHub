@@ -86,6 +86,7 @@ Func SetupLDOATitleFarm()
 
 	LeaveGroup()
 	SendChat('bonus', '/')
+	GetWeapons()
 
 	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == '0' Then
 		Info('LDOA 1-2')
@@ -106,8 +107,8 @@ Func SetupLDOATitleFarm()
 	Info('Preparations complete')
 EndFunc
 
-;~ Initial setup for LDOA title farm if new char, this is done only once
-Func InitialSetupLDOA()
+;~ Get weapons for LDOA title farm
+Func GetWeapons()
 	Local $LumS = FindInInventory($ID_Luminescent_Scepter)
 	Local $SerS = FindInInventory($ID_Serrated_Shield)
 	
@@ -116,15 +117,18 @@ Func InitialSetupLDOA()
 		UseItemBySlot($LumS[0], $LumS[1])      ; Equip Luminescent Scepter
 		UseItemBySlot($SerS[0], $SerS[1])      ; Equip Serrated Shield
 	EndIf
-		
+EndFunc
+
+;~ Initial setup for LDOA title farm if new char, this is done only once
+Func InitialSetupLDOA()
 	;~ First Sir Tydus quest to get some skills
-	;MoveTo(10399, 318)
-	;MoveTo(11004, 1409)
-	;MoveTo(11691, 3435)
-	;GoToNPC(GetNearestNPCToCoords(11691, 3435))
-	;RndSleep(GetPing() + 750)
-	;Dialog(0x80DD01)
-	;RndSleep(GetPing() + 750)
+	MoveTo(10399, 318)
+	MoveTo(11004, 1409)
+	MoveTo(11691, 3435)
+	GoToNPC(GetNearestNPCToCoords(11691, 3435))
+	RndSleep(GetPing() + 750)
+	Dialog(0x80DD01)
+	RndSleep(GetPing() + 750)
 	
 	MoveTo(7607, 5552)
 	Move(7175,5229)
@@ -132,8 +136,8 @@ Func InitialSetupLDOA()
 	MoveTo(6116, 3995)
 	GoToNPC(GetNearestNPCToCoords(6116, 3995))
 	RndSleep(GetPing() + 750)
-	;Dialog(0x80DD07)
-	;RndSleep(250)
+	Dialog(0x80DD07)
+	RndSleep(250)
 	Dialog(0x805501)
 	RndSleep(GetPing() + 750)
 	MoveTo(4187, -948)
@@ -152,123 +156,83 @@ Func InitialSetupLDOA()
 	Dialog(0x804701)
 EndFunc
 
-;~ Load profession
+#cs
+;~ Load profession -- Had the idea, but not really sure how to implement it yet
 Func LoadBuildTemplate()
-Global Const $ID_Unknown      = 0
-Global Const $ID_Warrior      = 1
-Global Const $ID_Ranger       = 2
-Global Const $ID_Monk         = 3
-Global Const $ID_Necromancer  = 4
-Global Const $ID_Mesmer       = 5
-Global Const $ID_Elementalist = 6
+	Local $primaryProfession = DllStructGetData(GetMyAgent(), 'Profession')
+	Local $secondaryProfession = DllStructGetData(GetMyAgent(), 'SecondaryProfession')
 
 Switch $primaryProfession
     Case $ID_Warrior
-        ConsoleWrite("Primary: Warrior" & @CRLF)
-        If $secondaryProfession <> $ID_Unknown Then
-            Switch $secondaryProfession
-                Case $ID_Ranger
-                    ConsoleWrite("Secondary: Ranger" & @CRLF)
-                Case $ID_Monk
-                    ConsoleWrite("Secondary: Monk" & @CRLF)
-                Case $ID_Necromancer
-                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
-                Case $ID_Mesmer
-                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
-                Case $ID_Elementalist
-                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
-            EndSwitch
-        EndIf
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
 
-    Case $ID_Ranger
-        ConsoleWrite("Primary: Ranger" & @CRLF)
-        If $secondaryProfession <> $ID_Unknown Then
-            Switch $secondaryProfession
-                Case $ID_Warrior
-                    ConsoleWrite("Secondary: Warrior" & @CRLF)
-                Case $ID_Monk
-                    ConsoleWrite("Secondary: Monk" & @CRLF)
-                Case $ID_Necromancer
-                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
-                Case $ID_Mesmer
-                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
-                Case $ID_Elementalist
-                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
-            EndSwitch
-        EndIf
+		Case $ID_Ranger
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
 
-    Case $ID_Monk
-        ConsoleWrite("Primary: Monk" & @CRLF)
-        If $secondaryProfession <> $ID_Unknown Then
-            Switch $secondaryProfession
-                Case $ID_Warrior
-                    ConsoleWrite("Secondary: Warrior" & @CRLF)
-                Case $ID_Ranger
-                    ConsoleWrite("Secondary: Ranger" & @CRLF)
-                Case $ID_Necromancer
-                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
-                Case $ID_Mesmer
-                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
-                Case $ID_Elementalist
-                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
-            EndSwitch
-        EndIf
+		Case $ID_Monk
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
 
-    Case $ID_Necromancer
-        ConsoleWrite("Primary: Necromancer" & @CRLF)
-        If $secondaryProfession <> $ID_Unknown Then
-            Switch $secondaryProfession
-                Case $ID_Warrior
-                    ConsoleWrite("Secondary: Warrior" & @CRLF)
-                Case $ID_Ranger
-                    ConsoleWrite("Secondary: Ranger" & @CRLF)
-                Case $ID_Monk
-                    ConsoleWrite("Secondary: Monk" & @CRLF)
-                Case $ID_Mesmer
-                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
-                Case $ID_Elementalist
-                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
-            EndSwitch
-        EndIf
+		Case $ID_Necromancer
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
 
-    Case $ID_Mesmer
-        ConsoleWrite("Primary: Mesmer" & @CRLF)
-        If $secondaryProfession <> $ID_Unknown Then
-            Switch $secondaryProfession
-                Case $ID_Warrior
-                    ConsoleWrite("Secondary: Warrior" & @CRLF)
-                Case $ID_Ranger
-                    ConsoleWrite("Secondary: Ranger" & @CRLF)
-                Case $ID_Monk
-                    ConsoleWrite("Secondary: Monk" & @CRLF)
-                Case $ID_Necromancer
-                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
-                Case $ID_Elementalist
-                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
-            EndSwitch
-        EndIf
+		Case $ID_Mesmer
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
 
-    Case $ID_Elementalist
-        ConsoleWrite("Primary: Elementalist" & @CRLF)
-        If $secondaryProfession <> $ID_Unknown Then
-            Switch $secondaryProfession
-                Case $ID_Warrior
-                    ConsoleWrite("Secondary: Warrior" & @CRLF)
-                Case $ID_Ranger
-                    ConsoleWrite("Secondary: Ranger" & @CRLF)
-                Case $ID_Monk
-                    ConsoleWrite("Secondary: Monk" & @CRLF)
-                Case $ID_Necromancer
-                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
-                Case $ID_Mesmer
-                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
-            EndSwitch
-        EndIf
+		Case $ID_Elementalist
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			EndSwitch
+		EndIf
 
-    Case Else
-        ConsoleWrite("Unknown profession" & @CRLF)
-EndSwitch
+		Case Else
+	EndSwitch
 EndFunc
+#ce
 
 ;~ LDOA Title farm loop
 Func LDOATitleFarmLoop($STATUS)
@@ -565,9 +529,42 @@ Func Barradin()
 		
 	RndSleep(GetPing() + 750)
 
+	MoveTo(-11445, -6228) ;~ 1  
+	Move(-11023, -6232) ;~ 2
+	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseSS($ID_Lakeside_County)  
+	MoveTo(-11280, 1103) ;~ 3  
+	MoveTo(-11601, 3398) ;~ 4  
+	MoveTo(-10132, 6921) ;~ 5  
+	MoveTo(-14363, 10094) ;~ 6
+	Info('Entering Green Hills County!')
+	Move(21918, 13053) ;~ 7
+	WaitMapLoading($ID_Green_Hills_County, 10000, 2000)
+	UseSS($ID_Green_Hills_County)  
+	MoveAvoidingBodyBlock(20577, 12039, 20000) ;~ 8  
+	MoveAvoidingBodyBlock(18023, 12529, 20000) ;~ 9  
+	MoveAvoidingBodyBlock(13583, 5991, 20000) ;~ 10  
+	MoveAvoidingBodyBlock(12076, 3308, 20000) ;~ 11  
+	MoveAvoidingBodyBlock(10281, 1164, 20000) ;~ 12  
+	MoveAvoidingBodyBlock(11603, -523, 20000) ;~ 13  
+	MoveAvoidingBodyBlock(10870, -2085, 20000) ;~ 14  
+	MoveAvoidingBodyBlock(6763, -3873, 20000) ;~ 15  
+	MoveAvoidingBodyBlock(1843, -2556, 20000) ;~ 16  
+	MoveAvoidingBodyBlock(-987, -2137, 20000) ;~ 17  
+	MoveAvoidingBodyBlock(-1813, -2055, 20000) ;~ 18  
+	MoveAvoidingBodyBlock(-4040, -478, 20000) ;~ 19  
+	MoveAvoidingBodyBlock(-6625, -189, 20000) ;~ 20  
+	MoveAvoidingBodyBlock(-7552, -121, 20000) ;~ 21  
+	MoveAvoidingBodyBlock(-7902, 510, 20000) ;~ 22  
+	MoveAvoidingBodyBlock(-7827, 1420, 20000) ;~ 23  
+	MoveAvoidingBodyBlock(-7444, 1423, 20000) ;~ 24  
+	Move(-7158, 1430) ;~ 25  
 
 	; If we are dead, we will try again
 	If GetIsDead() Then Barradin()
+
+	WaitMapLoading($ID_Barradin_Estate, 10000, 2000)
+	Info('Made it to Barradin Estate!')
 EndFunc
 
 ;~ Resign and return to Ascalon
