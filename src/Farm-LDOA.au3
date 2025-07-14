@@ -86,6 +86,7 @@ Func SetupLDOATitleFarm()
 
 	LeaveGroup()
 	SendChat('bonus', '/')
+	RndSleep(GetPing() + 750)
 	GetWeapons()
 
 	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == '0' Then
