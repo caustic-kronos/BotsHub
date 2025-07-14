@@ -152,6 +152,124 @@ Func InitialSetupLDOA()
 	Dialog(0x804701)
 EndFunc
 
+;~ Load profession
+Func LoadBuildTemplate()
+Global Const $ID_Unknown      = 0
+Global Const $ID_Warrior      = 1
+Global Const $ID_Ranger       = 2
+Global Const $ID_Monk         = 3
+Global Const $ID_Necromancer  = 4
+Global Const $ID_Mesmer       = 5
+Global Const $ID_Elementalist = 6
+
+Switch $primaryProfession
+    Case $ID_Warrior
+        ConsoleWrite("Primary: Warrior" & @CRLF)
+        If $secondaryProfession <> $ID_Unknown Then
+            Switch $secondaryProfession
+                Case $ID_Ranger
+                    ConsoleWrite("Secondary: Ranger" & @CRLF)
+                Case $ID_Monk
+                    ConsoleWrite("Secondary: Monk" & @CRLF)
+                Case $ID_Necromancer
+                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
+                Case $ID_Mesmer
+                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
+                Case $ID_Elementalist
+                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
+            EndSwitch
+        EndIf
+
+    Case $ID_Ranger
+        ConsoleWrite("Primary: Ranger" & @CRLF)
+        If $secondaryProfession <> $ID_Unknown Then
+            Switch $secondaryProfession
+                Case $ID_Warrior
+                    ConsoleWrite("Secondary: Warrior" & @CRLF)
+                Case $ID_Monk
+                    ConsoleWrite("Secondary: Monk" & @CRLF)
+                Case $ID_Necromancer
+                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
+                Case $ID_Mesmer
+                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
+                Case $ID_Elementalist
+                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
+            EndSwitch
+        EndIf
+
+    Case $ID_Monk
+        ConsoleWrite("Primary: Monk" & @CRLF)
+        If $secondaryProfession <> $ID_Unknown Then
+            Switch $secondaryProfession
+                Case $ID_Warrior
+                    ConsoleWrite("Secondary: Warrior" & @CRLF)
+                Case $ID_Ranger
+                    ConsoleWrite("Secondary: Ranger" & @CRLF)
+                Case $ID_Necromancer
+                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
+                Case $ID_Mesmer
+                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
+                Case $ID_Elementalist
+                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
+            EndSwitch
+        EndIf
+
+    Case $ID_Necromancer
+        ConsoleWrite("Primary: Necromancer" & @CRLF)
+        If $secondaryProfession <> $ID_Unknown Then
+            Switch $secondaryProfession
+                Case $ID_Warrior
+                    ConsoleWrite("Secondary: Warrior" & @CRLF)
+                Case $ID_Ranger
+                    ConsoleWrite("Secondary: Ranger" & @CRLF)
+                Case $ID_Monk
+                    ConsoleWrite("Secondary: Monk" & @CRLF)
+                Case $ID_Mesmer
+                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
+                Case $ID_Elementalist
+                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
+            EndSwitch
+        EndIf
+
+    Case $ID_Mesmer
+        ConsoleWrite("Primary: Mesmer" & @CRLF)
+        If $secondaryProfession <> $ID_Unknown Then
+            Switch $secondaryProfession
+                Case $ID_Warrior
+                    ConsoleWrite("Secondary: Warrior" & @CRLF)
+                Case $ID_Ranger
+                    ConsoleWrite("Secondary: Ranger" & @CRLF)
+                Case $ID_Monk
+                    ConsoleWrite("Secondary: Monk" & @CRLF)
+                Case $ID_Necromancer
+                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
+                Case $ID_Elementalist
+                    ConsoleWrite("Secondary: Elementalist" & @CRLF)
+            EndSwitch
+        EndIf
+
+    Case $ID_Elementalist
+        ConsoleWrite("Primary: Elementalist" & @CRLF)
+        If $secondaryProfession <> $ID_Unknown Then
+            Switch $secondaryProfession
+                Case $ID_Warrior
+                    ConsoleWrite("Secondary: Warrior" & @CRLF)
+                Case $ID_Ranger
+                    ConsoleWrite("Secondary: Ranger" & @CRLF)
+                Case $ID_Monk
+                    ConsoleWrite("Secondary: Monk" & @CRLF)
+                Case $ID_Necromancer
+                    ConsoleWrite("Secondary: Necromancer" & @CRLF)
+                Case $ID_Mesmer
+                    ConsoleWrite("Secondary: Mesmer" & @CRLF)
+            EndSwitch
+        EndIf
+
+    Case Else
+        ConsoleWrite("Unknown profession" & @CRLF)
+EndSwitch
+EndFunc
+
 ;~ LDOA Title farm loop
 Func LDOATitleFarmLoop($STATUS)
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
