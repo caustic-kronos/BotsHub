@@ -359,6 +359,7 @@ Func LDOATitleFarmAfter10()
 
 	While 1
 		If $level < 20 Then
+			RndSleep(500)
 			Info('Current level: ' & $level)
 			Hamnet()
 		Else
