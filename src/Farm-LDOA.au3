@@ -351,7 +351,7 @@ Func SetupHamnetQuest()
 		MoveTo(10564, 7832)
 		GoToNPC(GetNearestNPCToCoords(10564, 7832))
 		RndSleep(GetPing() + 750)
-		Dialog()
+		;~ Dialog()
 		RndSleep(GetPing() + 750)
 		;~ Check for quest again as might not be on rotation
 		If $questStatus1 == 0 Then
