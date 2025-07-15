@@ -89,7 +89,7 @@ Func SetupLDOATitleFarm()
 	RndSleep(GetPing() + 750)
 	GetWeapons()
 
-	If $Level == 1 AND DllStructGetData(GetMyAgent(), 'Experience') == '0' Then
+	If $Level == 1 AND Then
 		Info('LDOA 1-2')
 		InitialSetupLDOA()
 	ElseIf $Level >= 2 AND $Level <= 10 Then
@@ -122,6 +122,8 @@ EndFunc
 
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
+	Local $level = DllStructGetData(GetMyAgent(), 'Level'
+	Info('Current level: ' & $level)
 	;~ First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
@@ -155,6 +157,8 @@ Func InitialSetupLDOA()
 	Dialog(0x804703)
 	RndSleep(250)
 	Dialog(0x804701)
+	
+	;- Do until player is level 2
 EndFunc
 
 #cs
@@ -239,7 +243,7 @@ EndFunc
 Func LDOATitleFarmLoop($STATUS)
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
 	Info('Current level: ' & $level)
-
+	
 	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
 		LDOATitleFarmUnder10()
 	Else
