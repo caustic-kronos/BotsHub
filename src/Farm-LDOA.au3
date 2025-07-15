@@ -159,9 +159,25 @@ Func InitialSetupLDOA()
 	RndSleep(250)
 	Dialog(0x804701)
 	
-	;- Do until player is level 2
+	Ashford()
+	KillWorms()
 EndFunc
 
+;~ Kill some worms, level 2 needed for CharrAtGate
+Func KillWorms()
+	Local $level = 1
+	Info('Here wormy, wormy!')
+	
+	While $level < 2
+		
+		
+		If GetIsDead() Then Killworms()
+		
+		Sleep(500)
+		Local $level = DllStructGetData(GetMyAgent(), 'Level')
+		Info('Current level: ' & $level)
+	WEnd
+EndFunc
 #cs
 ;~ Load profession -- Had the idea, but not really sure how to implement it yet
 Func LoadBuildTemplate()
