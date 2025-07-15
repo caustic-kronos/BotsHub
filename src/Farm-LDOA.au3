@@ -85,12 +85,12 @@ Func SetupLDOATitleFarm()
 	Info('Setting up farm')
 
 	LeaveGroup()
-	SendChat('bonus', '/')
-	RndSleep(GetPing() + 750)
-	GetWeapons()
 
 	If $Level == 1 AND Then
 		Info('LDOA 1-2')
+		SendChat('bonus', '/')
+		RndSleep(GetPing() + 750)
+		GetWeapons()
 		InitialSetupLDOA()
 	ElseIf $Level >= 2 AND $Level <= 10 Then
 		Info('LDOA 2-10')
