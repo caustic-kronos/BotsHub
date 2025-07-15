@@ -61,6 +61,7 @@ Func LDOATitleFarm($STATUS)
 		SetupLDOATitleFarm()
 		$LDOA_FARM_SETUP = True
 	EndIf
+	; Here we check if the quest is available, if not, we stop the farm
 	If $HammyBools == True Then
 		Info('Quest not available, wait for rotation.')
 		$LDOA_FARM_SETUP = False
@@ -175,8 +176,20 @@ Func KillWorms()
 	Info('Here wormy, wormy!')
 	
 	While $level < 2
+		If GetMapID() <> $ID_Ashford_Abbey Then RandomDistrictTravel($ID_Ashford_Abbey)
 		
+		MoveTo(-11455, -6238)
+		Move(-11037, -6240)  
+		WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+		UseSS($ID_Lakeside_County)
 		
+		MoveTo(-10433, -6021)
+		MoveAggroAndKill(-9551, -5499, '', 3000, Null)
+		MoveAggroAndKill(-9545, -4205, '', 3000, Null)
+		MoveAggroAndKill(-9551, -2929, '', 3000, Null)
+		MoveAggroAndKill(-9559, -1324, '', 3000, Null)
+		MoveAggroAndKill(-9451, -301, '', 3000, Null)
+
 		If GetIsDead() Then Killworms()
 		
 		Sleep(500)
@@ -184,7 +197,7 @@ Func KillWorms()
 		Info('Current level: ' & $level)
 	WEnd
 EndFunc
-#cs
+#cs LOAD BUILDS
 ;~ Load profession -- Had the idea, but not really sure how to implement it yet
 Func LoadBuildTemplate()
 	Local $primaryProfession = DllStructGetData(GetMyAgent(), 'Profession')
