@@ -397,16 +397,7 @@ Func Hamnet()
 	Info('Entering Wizards Folly!')
 	Move(390, 7800)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
-
-	While 1
-		If GetMapID() == $ID_Wizards_Folly Then
-			UseConsumable($ID_Igneous_Summoning_Stone)
-			Info('Using Igneous Summoning Stone')
-			ExitLoop
-		Else
-			Sleep(100)
-		EndIf
-	WEnd
+	UseSS($ID_Wizards_Folly)
 
 	MoveAggroAndKill(2418, 5437, '', 2000, Null)
 
