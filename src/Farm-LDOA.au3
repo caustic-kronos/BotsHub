@@ -351,6 +351,13 @@ Func SetupHamnetQuest()
 		MoveTo(10564, 7832)
 		GoToNPC(GetNearestNPCToCoords(10564, 7832))
 		RndSleep(GetPing() + 750)
+		Dialog()
+		RndSleep(GetPing() + 750)
+		;~ Check for quest again as might not be on rotation
+		If $questStatus1 == 0 Then
+			$HammyBools = True
+			LDOATitleFarm()
+		EndIf
 	;~ If we have the quest, we can start the farm
 	ElseIf $questStatus1 == 1 Then
 		Info('Quest found, Good to go!')
