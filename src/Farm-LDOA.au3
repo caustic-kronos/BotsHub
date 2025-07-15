@@ -51,6 +51,7 @@ Global Const $ID_Serrated_Shield = 6514
 
 Global $LDOA_FARM_SETUP = False
 Global $OutpostCheck = False
+Global $HammyBools = False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
@@ -59,6 +60,11 @@ Func LDOATitleFarm($STATUS)
 	If Not $LDOA_FARM_SETUP Then
 		SetupLDOATitleFarm()
 		$LDOA_FARM_SETUP = True
+	EndIf
+	If $HammyBools == True Then
+		Info('Quest not available, wait for rotation.')
+		$LDOA_FARM_SETUP = False
+		Return 2
 	EndIf
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North for inventory management
 	; This means that inventory management will have to be 'duplicated' here in this bot
