@@ -26,10 +26,11 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constantes ====
-Global Const $LDOASkillbar = 'OgAScncGK+yM+1Z030WA'
-Global Const $LDOAInformations = 'For best results, have :' & @CRLF _
-	& '- Complete this list' & @CRLF _
-	& ''
+Global Const $LDOASkillbar = 'Any build will do providing, it is a heal and damage.'
+Global Const $LDOAInformations = 'The bot will:' & @CRLF _
+	& '- Go right off the bat, on a new character after the cutscene.' & @CRLF _
+	& '- If you are already level 2, it wont setup your bar or weapons, you can choose.' & @CRLF _
+	& '- It will get you LDOA, this is not a farming bot.' 
 ; Average duration ~ 10m
 Global Const $LDOA_FARM_DURATION = (10 * 60) * 1000
 
