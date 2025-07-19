@@ -26,10 +26,11 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constantes ====
-Global Const $LDOASkillbar = 'OgAScncGK+yM+1Z030WA'
-Global Const $LDOAInformations = 'For best results, have :' & @CRLF _
-	& '- Complete this list' & @CRLF _
-	& ''
+Global Const $LDOASkillbar = 'Any build will do providing, it is a heal and damage.'
+Global Const $LDOAInformations = 'The bot will:' & @CRLF _
+	& '- Go right off the bat, on a new character after the cutscene.' & @CRLF _
+	& '- If you are already level 2, it wont setup your bar or weapons, you can choose.' & @CRLF _
+	& '- It will get you LDOA, this is not a farming bot.' 
 ; Average duration ~ 10m
 Global Const $LDOA_FARM_DURATION = (10 * 60) * 1000
 
@@ -44,9 +45,14 @@ Global Const $LDOA_Skill7 = 7
 Global Const $LDOA_Skill8 = 8
 
 Global Const $ID_Quest_CharrAtTheGate = 0x2E
+Global Const $ID_Quest_FarmerHamnet = 0x4A1
+
+Global Const $ID_Luminescent_Scepter = 6508
+Global Const $ID_Serrated_Shield = 6514
 
 Global $LDOA_FARM_SETUP = False
-
+Global $OutpostCheck = False
+Global $HammyBools = False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
@@ -55,6 +61,12 @@ Func LDOATitleFarm($STATUS)
 	If Not $LDOA_FARM_SETUP Then
 		SetupLDOATitleFarm()
 		$LDOA_FARM_SETUP = True
+	EndIf
+	; Here we check if the quest is available, if not, we stop the farm
+	If $HammyBools == True Then
+		Info('Quest not available, wait for rotation.')
+		$LDOA_FARM_SETUP = False
+		Return 2
 	EndIf
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North for inventory management
 	; This means that inventory management will have to be 'duplicated' here in this bot
@@ -74,43 +86,204 @@ Func LDOATitleFarm($STATUS)
 	Return LDOATitleFarmLoop($STATUS)
 EndFunc
 
-
 ;~ LDOA Title farm setup
 Func SetupLDOATitleFarm()
+	Local $Level = DllStructGetData(GetMyAgent(), 'Level')
+	
 	Info('Setting up farm')
 
 	LeaveGroup()
 
-	Local $me = GetMyAgent()
-	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
-		; Examples present in the Else but feel free to have different stuff here depending on how you make the bot
+	If $Level == 1 AND Then
+		Info('LDOA 1-2')
+		SendChat('bonus', '/')
+		RndSleep(GetPing() + 750)
+		GetWeapons()
+		InitialSetupLDOA()
+	ElseIf $Level >= 2 AND $Level <= 10 Then
+		Info('LDOA 2-10')
+		SetupCharrAtTheGateQuest()
 	Else
-		; LoadSkillTemplate($mapBuildsPerProfession[GetHeroProfession(0, False)])
-		;LoadSkillTemplate($LDOASkillbar)
-		; If you need to reload a map quickly after resign do something like that here
-		;MoveTo(-22000, 12500)
-		;Move(-21750, 14500)
-		;RndSleep(1000)
-		;WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-		;MoveTo(9100, -19600)
-		;Move(9100, -20500)
-		;RndSleep(1000)
-		;WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+		$OutpostCheck == False Then
+		Info('Checking for outposts...')
+		OutpostRun()
+		$OutpostCheck = True
+
+		RndSleep(GetPing() + 750)
+		Info('LDOA 11-20')
+		SetupHamnetQuest()
 	EndIf
 	Info('Preparations complete')
 EndFunc
 
+;~ Get weapons for LDOA title farm
+Func GetWeapons()
+	Local $LumS = FindInInventory($ID_Luminescent_Scepter)
+	Local $SerS = FindInInventory($ID_Serrated_Shield)
+	
+	If $LumS[0] <> 0 AND $SerS[0] <> 0 Then
+		Info('Equipping Luminescent Scepter and Serrated Shield')
+		UseItemBySlot($LumS[0], $LumS[1])      ; Equip Luminescent Scepter
+		UseItemBySlot($SerS[0], $SerS[1])      ; Equip Serrated Shield
+	EndIf
+EndFunc
+
+;~ Initial setup for LDOA title farm if new char, this is done only once
+Func InitialSetupLDOA()
+	Local $level = DllStructGetData(GetMyAgent(), 'Level'
+	Info('Current level: ' & $level)
+	;~ First Sir Tydus quest to get some skills
+	MoveTo(10399, 318)
+	MoveTo(11004, 1409)
+	MoveTo(11691, 3435)
+	GoToNPC(GetNearestNPCToCoords(11691, 3435))
+	RndSleep(GetPing() + 750)
+	Dialog(0x80DD01)
+	RndSleep(GetPing() + 750)
+	
+	MoveTo(7607, 5552)
+	Move(7175,5229)
+	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseSS($ID_Lakeside_County)
+	MoveTo(6116, 3995)
+	GoToNPC(GetNearestNPCToCoords(6116, 3995))
+	RndSleep(GetPing() + 750)
+	Dialog(0x80DD07)
+	RndSleep(250)
+	Dialog(0x805501)
+	RndSleep(GetPing() + 750)
+	MoveTo(4187, -948)
+	MoveAggroAndKill(4207, -2892, '', 2500, Null)
+	MoveTo(3771, -1729)
+	MoveTo(6069, 3865)
+	GoToNPC(GetNearestNPCToCoords(6069, 3865))
+	RndSleep(GetPing() + 750)
+	Dialog(0x805507)
+	RndSleep(GetPing() + 750)
+	MoveTo(2785, 7736)
+	GoToNPC(GetNearestNPCToCoords(2785, 7736))
+	RndSleep(GetPing() + 750)
+	Dialog(0x804703)
+	RndSleep(250)
+	Dialog(0x804701)
+	
+	Ashford()
+	KillWorms()
+EndFunc
+
+;~ Kill some worms, level 2 needed for CharrAtGate
+Func KillWorms()
+	Local $level = 1
+	Info('Here wormy, wormy!')
+	
+	While $level < 2
+		If GetMapID() <> $ID_Ashford_Abbey Then RandomDistrictTravel($ID_Ashford_Abbey)
+		
+		MoveTo(-11455, -6238)
+		Move(-11037, -6240)  
+		WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+		UseSS($ID_Lakeside_County)
+		
+		MoveTo(-10433, -6021)
+		MoveAggroAndKill(-9551, -5499, '', 3000, Null)
+		MoveAggroAndKill(-9545, -4205, '', 3000, Null)
+		MoveAggroAndKill(-9551, -2929, '', 3000, Null)
+		MoveAggroAndKill(-9559, -1324, '', 3000, Null)
+		MoveAggroAndKill(-9451, -301, '', 3000, Null)
+
+		If GetIsDead() Then Killworms()
+		
+		Sleep(500)
+		Local $level = DllStructGetData(GetMyAgent(), 'Level')
+		Info('Current level: ' & $level)
+	WEnd
+EndFunc
+#cs LOAD BUILDS
+;~ Load profession -- Had the idea, but not really sure how to implement it yet
+Func LoadBuildTemplate()
+	Local $primaryProfession = DllStructGetData(GetMyAgent(), 'Profession')
+	Local $secondaryProfession = DllStructGetData(GetMyAgent(), 'SecondaryProfession')
+
+Switch $primaryProfession
+    Case $ID_Warrior
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
+
+		Case $ID_Ranger
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
+
+		Case $ID_Monk
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
+
+		Case $ID_Necromancer
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Mesmer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
+
+		Case $ID_Mesmer
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Elementalist
+			EndSwitch
+		EndIf
+
+		Case $ID_Elementalist
+		If $secondaryProfession <> $ID_Unknown Then
+			Switch $secondaryProfession
+			Case $ID_Warrior
+			Case $ID_Ranger
+			Case $ID_Monk
+			Case $ID_Necromancer
+			Case $ID_Mesmer
+			EndSwitch
+		EndIf
+
+		Case Else
+	EndSwitch
+EndFunc
+#ce
 
 ;~ LDOA Title farm loop
 Func LDOATitleFarmLoop($STATUS)
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
 	Info('Current level: ' & $level)
-
-	If DllStructGetData(GetMyAgent(), 'Level') < 11 Then
-		Info('LDOA 2-10')
+	
+	If DllStructGetData(GetMyAgent(), 'Level') < 10 Then
 		LDOATitleFarmUnder10()
 	Else
-		Info('LDOA 11-20')
 		LDOATitleFarmAfter10()
 	EndIf
 	; If we level to 11, we reset the setup so that the bot starts on the 11-20 part
@@ -118,39 +291,37 @@ Func LDOATitleFarmLoop($STATUS)
 	If $level == 10 And $newLevel > $level Then $LDOA_FARM_SETUP = False
 EndFunc
 
-
+;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	RndSleep(GetPing() + 750)
-	AbandonQuest(0x2E)
-	RndSleep(GetPing() + 750)
-	MoveTo(7974, 6142)
-	MoveTo(5668, 10667)
-	GoToNPC(GetNearestNPCToCoords(5668, 10667))
-	RndSleep(GetPing() + 750)
-	Dialog(0x802E01)
-	RndSleep(GetPing() + 750)
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	Info('Setting up Charr at the gate quest...')
+
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
+
+	If $questStatus == 0 OR 3 Then
+		RndSleep(GetPing() + 750)
+		AbandonQuest(0x2E)
+		RndSleep(GetPing() + 750)
+		MoveTo(7974, 6142)
+		MoveTo(5668, 10667)
+		GoToNPC(GetNearestNPCToCoords(5668, 10667))
+		RndSleep(GetPing() + 750)
+		Dialog(0x802E01)
+		RndSleep(GetPing() + 750)
+	ElseIf $questStatus == 1 Then
+		Info('Good to go!')
+	EndIf
 EndFunc
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
-	If $questStatus == 0 Then
-		Info('Taking quest Charr at the gate.')
-		SetupCharrAtTheGateQuest()
-	ElseIf $questStatus == 1 Then
-		Info('Good to go !!')
-	ElseIf $questStatus == 3 Then
-		Info('Resetting quest.')
-		SetupCharrAtTheGateQuest()
-	EndIf
-
+	Local $me = GetMyAgent()
+	
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-
-	AdlibRegister('CheckIfDead', 250)
 	MoveTo(6220, 4470, 30)
 	Info('Going to the gate')
 	MoveTo(3180, 6468, 30)
@@ -158,52 +329,123 @@ Func LDOATitleFarmUnder10()
 	MoveTo(-3140, 9610, 30)
 	MoveTo(-3640, 10930, 30)
 	MoveTo(-4165, 10655, 30)
-	AdlibUnRegister('CheckIfDead')
-	AdlibRegister('CheckCharr', 500)
-	Sleep(2000)
-	AdlibUnRegister('CheckCharr')
 
-	BackToAscalon()
+	If GetIsDead() Then BackToAscalon()
+
+	While 1
+		If CountFoesInRangeOfAgent($me, 2000) >= 2 Then 
+			Sleep(100)
+		Else
+			BackToAscalon()
+			ExitLoop
+		EndIf
+	WEnd
+	
 	Return 0
 EndFunc
 
+;~ Setup Hamnet quest
+Func SetupHamnetQuest()
+	Info('I think Ill just call it There and Back Again, a Hobbits Holiday ♥')
+	RandomDistrictTravel($ID_Ashford_Abbey)
+
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	Info('Setting up Hamnet quest...')
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+
+	Local $questStatus1 = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+
+	;~ Get quest if not already obtained
+	If $questStatus1 == 0 Then
+		Info('Quest not found, setting up...')
+		RndSleep(GetPing() + 750)
+		MoveTo(9516, 7668)
+		MoveTo(9815, 7809)
+		MoveTo(10280, 7895)
+		MoveTo(10564, 7832)
+		GoToNPC(GetNearestNPCToCoords(10564, 7832))
+		RndSleep(GetPing() + 750)
+		;~ Dialog(0x84A101)
+		RndSleep(GetPing() + 750)
+		;~ Check for quest again as might not be on rotation
+		If $questStatus1 == 0 Then
+			$HammyBools = True
+			LDOATitleFarm()
+		EndIf
+	;~ If we have the quest, we can start the farm
+	ElseIf $questStatus1 == 1 Then
+		Info('Quest found, Good to go!')
+	EndIf
+EndFunc
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-	;Local $myQuestID = $QUEST_ID_Hamnet
-	;If HasQuest($myQuestID) Then
-	;	Info('Quest is in log!')
-	;Else
-	;	Info('Quest is not in log.')
-	;EndIf
-	OutpostRun()
+	Local $level = DllStructGetData(GetMyAgent(), 'Level')
+
+	Info('Starting Hamnet farm...')
+
+	While 1
+		If $level < 20 Then
+			RndSleep(500)
+			Info('Current level: ' & $level)
+			Hamnet()
+		Else
+			Info('Current level: ' & $level & ', stopping farm.')
+			BackToAscalon()
+			ExitLoop
+		EndIf
+	Wend
+
 	Return 0
 EndFunc
 
+;~ Farmer Hamnet farm
+Func Hamnet()
+	Info('Heading to Foibles Fair!')
+	RandomDistrictTravel($ID_Foibles_Fair)
+
+	RndSleep(GetPing() + 750)
+
+	MoveTo(-183, 9002)
+	MoveTo(356, 7834)
+	Info('Entering Wizards Folly!')
+	Move(390, 7800)
+	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
+	UseSS($ID_Wizards_Folly)
+
+	MoveAggroAndKill(2418, 5437, '', 2000, Null)
+
+	If GetIsDead() Then Hamnet()
+
+	ReturnToOutpost()
+	Info('Returning to Foibles Fair')
+	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
+EndFunc
 
 ;~ Run to every outpost in pre
 Func OutpostRun()
-	BackToAscalon()
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+	
 	RndSleep(2000)
 	Info('Starting outpost run...')
-	Info('...peeling bananas...')
 	TravelWithTimeout($ID_Ashford_Abbey, 'Ashford')
+	Sleep(500)
 	TravelWithTimeout($ID_Foibles_Fair, 'Foible')
+	Sleep(500)
 	TravelWithTimeout($ID_Fort_Ranik_Presearing, 'Ranik')
+	Sleep(500)
+	TravelWithTimeout($ID_Barradin_Estate, 'Barradin')
+	Sleep(500)
 EndFunc
-
-
-;~ Farmer Hamnet farm
-Func Hamnet()
-
-EndFunc
-
 
 ;~ Outpost checker
 Func TravelWithTimeout($mapID, $onFailFunc)
 	Local $startTime = TimerInit()
+
 	RandomDistrictTravel($mapID)
-	While TimerDiff($startTime) < 10000
+	
+	While TimerDiff($startTime) < 15000
 		If GetMapID() == $mapID Then
 			Info('Travel successful.')
 			Return
@@ -214,119 +456,157 @@ Func TravelWithTimeout($mapID, $onFailFunc)
 	Call($onFailFunc)
 EndFunc
 
-;~ I like bananas
+;~ Run to Ashford Abbey
 Func Ashford()
+	; This function is used to run to Ashford Abbey
 	Info('Starting run to Ashford Abbey..' )
 	Info('Entering Lakeside County!')
+	
+	RndSleep(GetPing() + 750)
+	
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RndSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	MoveTo(4555, 1182, 30)
-	MoveTo(1894, -3264, 30)
-	MoveTo(-2573, -6357, 30)
-	MoveTo(-5396, -6940, 30)
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-11100, -6252)
+	UseSS($ID_Lakeside_County)
+	MoveTo(2560, -2331) ;~ 1  
+	MoveTo(-1247, -6084) ;~ 2  
+	MoveTo( -5310, -6951) ;~ 3  
+	MoveTo(-11026, -6238) ;~ 4  
+	Move(-11444, -6237) ;~ 5
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Ashford()
+
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	Info('Made it to Ashford Abbey')
 EndFunc
 
-;~ I like watermelon
+;~ Run to Foibles Fair
 Func Foible()
 	Info('Starting run to Foibles Fair..' )
+	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-11300, -6195, 30)
+		
+	RndSleep(GetPing() + 750)
+	
+	MoveTo(-11455, -6238) ;~ 1
+	Move(-11037, -6240) ;~ 2  
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	MoveTo(-11171, -8574, 30)
-	MoveTo(-12776, -15329, 30)
-	MoveTo(-12745, -16338, 30)
-	MoveTo(-11832, -18630, 30)
-	MoveTo(-10931, -19169, 30)
-	MoveTo(-12742, -19890, 30)
+	UseSS($ID_Lakeside_County)  
+	MoveTo(-11809, -12198) ;~ 3  
+	MoveTo(-12893, -16093) ;~ 4  
+	MoveTo(-11566, -18712) ;~ 5  
+	MoveTo(-11246, -19376) ;~ 6  
+	MoveTo(-13738, -20079) ;~ 7  
 	Info('Entering Wizards Folly!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-13800, -20047)
+	Move(9875, 19853) ;~ 8 
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
-	MoveTo(8532, 17711, 30)
-	MoveTo(7954, 16162, 30)
-	MoveTo(4469, 12834, 30)
-	MoveTo(2135, 8630, 30)
-	MoveTo(1502, 6804, 30)
-	MoveTo(457, 7310, 30)
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(400, 7700)
+	UseSS($ID_Wizards_Folly)
+	MoveTo(8648, 17730) ;~ 9  
+	MoveTo(7497, 15763) ;~ 10  
+	MoveTo(2840, 10383) ;~ 11  
+	MoveTo(1648, 7527) ;~ 12  
+	MoveTo(536, 7315) ;~ 13 
+	Move(337, 7924) ;~ 14  
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Foibles()
+	
 	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 	Info('Made it to Foibles Fair')
 EndFunc
 
+;~ Run to Fort Ranik
 Func Ranik()
 	Info('Starting run to Fort Ranik..' )
 	RandomDistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(-11300, -6195, 30)
+		
+	RndSleep(GetPing() + 750)
+	
+	MoveTo(-11465, -6221) ;~ 1  
+	Move(-11045, -6234) ;~ 2  
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	MoveTo(-7084, -6604, 30)
-	MoveTo(-6273, -7232, 30)
-	MoveTo(-5036, -11749, 30)
-	MoveTo(-4122, -12667, 30)
-	MoveTo(-623, -15112, 30)
-	MoveTo(1222, -16433, 30)
-	MoveTo(1996, -18588, 30)
-	MoveTo(4010, -19728, 30)
+	UseSS($ID_Lakeside_County)
+	MoveTo(-6996, -6842) ;~ 3  
+	MoveTo(-4559, -12343) ;~ 4  
+	MoveTo(-3589, -13032) ;~ 5  
+	MoveTo(737, -16091) ;~ 6  
+	MoveTo(2205, -18452) ;~ 7  
+	MoveTo(4100, -19770) ;~ 8  
 	Info('Entering Regent Valley!')
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(5000, -19782, 30)
+	Move(-15504, 16947) ;~ 9  
 	WaitMapLoading($ID_Regent_Valley, 10000, 2000)
-	MoveTo(-14142, 15133, 30)
-	MoveTo(-11645, 14192, 30)
-	MoveTo(-7095, 10418, 30)
-	MoveTo(-4281, 9187, 30)
-	MoveTo(-1670, 7490, 30)
-	MoveTo(133, 6428, 30)
-	MoveTo(2964, 6071, 30)
-	MoveTo(4726, 5436, 30)
-	MoveTo(6471, 5315, 30)
-	MoveTo(7790, 3655, 30)
-	MoveTo(9429, 2774, 30)
-	MoveTo(12229, 2543, 30)
-	MoveTo(16141, 1263, 30)
-	MoveTo(18846, 1482, 30)
-	MoveTo(19132, 2047, 30)
-	MoveTo(22143, 3527, 30)
-	MoveTo(22613, 5474, 30)
-	MoveTo(22550, 6748, 30)
-	; FIXME: Need a MoveTo close to the portal and then a Move outside
-	MoveTo(22551, 7300)
+	UseSS($ID_Regent_Valley)
+	MoveAvoidingBodyBlock(-13479, 14598, 20000) ;~ 10  
+	MoveAvoidingBodyBlock(-11850, 14655, 20000) ;~ 11  
+	MoveAvoidingBodyBlock(-8092, 11137, 20000) ;~ 12  
+	MoveAvoidingBodyBlock(-3485, 8705, 20000) ;~ 13  
+	MoveAvoidingBodyBlock(497, 6267, 20000) ;~ 14  
+	MoveAvoidingBodyBlock(6250, 5387, 20000) ;~ 15  
+	MoveAvoidingBodyBlock(7605, 4062, 20000) ;~ 16  
+	MoveAvoidingBodyBlock(9897, 2728, 20000) ;~ 17  
+	MoveAvoidingBodyBlock(13312, 2072, 20000) ;~ 18  
+	MoveAvoidingBodyBlock(14977, 1361, 20000) ;~ 19  
+	MoveAvoidingBodyBlock(18820, 1496, 20000) ;~ 20  
+	MoveAvoidingBodyBlock(19241, 2153, 20000) ;~ 21  
+	MoveAvoidingBodyBlock(22297, 4014, 20000) ;~ 22  
+	MoveAvoidingBodyBlock(22554, 6949, 20000) ;~ 23  
+	Move(22540, 7575) ;~ 24  
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Ranik()
+	
 	WaitMapLoading($ID_Fort_Ranik_Presearing, 10000, 2000)
 	Info('Made it to Fort Ranik!')
 EndFunc
 
+;~ Run to Barradin Estate
 Func Barradin()
 	Info('Starting run to The Barradin Estate..' )
+	RandomDistrictTravel($ID_Ashford_Abbey)
+	Info('Entering Lakeside County!')
+		
+	RndSleep(GetPing() + 750)
+
+	MoveTo(-11445, -6228) ;~ 1  
+	Move(-11023, -6232) ;~ 2
+	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseSS($ID_Lakeside_County)  
+	MoveTo(-11280, 1103) ;~ 3  
+	MoveTo(-11601, 3398) ;~ 4  
+	MoveTo(-10132, 6921) ;~ 5  
+	MoveTo(-14363, 10094) ;~ 6
+	Info('Entering Green Hills County!')
+	Move(21918, 13053) ;~ 7
+	WaitMapLoading($ID_Green_Hills_County, 10000, 2000)
+	UseSS($ID_Green_Hills_County)  
+	MoveAvoidingBodyBlock(20577, 12039, 20000) ;~ 8  
+	MoveAvoidingBodyBlock(18023, 12529, 20000) ;~ 9  
+	MoveAvoidingBodyBlock(13583, 5991, 20000) ;~ 10  
+	MoveAvoidingBodyBlock(12076, 3308, 20000) ;~ 11  
+	MoveAvoidingBodyBlock(10281, 1164, 20000) ;~ 12  
+	MoveAvoidingBodyBlock(11603, -523, 20000) ;~ 13  
+	MoveAvoidingBodyBlock(10870, -2085, 20000) ;~ 14  
+	MoveAvoidingBodyBlock(6763, -3873, 20000) ;~ 15  
+	MoveAvoidingBodyBlock(1843, -2556, 20000) ;~ 16  
+	MoveAvoidingBodyBlock(-987, -2137, 20000) ;~ 17  
+	MoveAvoidingBodyBlock(-1813, -2055, 20000) ;~ 18  
+	MoveAvoidingBodyBlock(-4040, -478, 20000) ;~ 19  
+	MoveAvoidingBodyBlock(-6625, -189, 20000) ;~ 20  
+	MoveAvoidingBodyBlock(-7552, -121, 20000) ;~ 21  
+	MoveAvoidingBodyBlock(-7902, 510, 20000) ;~ 22  
+	MoveAvoidingBodyBlock(-7827, 1420, 20000) ;~ 23  
+	MoveAvoidingBodyBlock(-7444, 1423, 20000) ;~ 24  
+	Move(-7158, 1430) ;~ 25  
+
+	; If we are dead, we will try again
+	If GetIsDead() Then Barradin()
+
+	WaitMapLoading($ID_Barradin_Estate, 10000, 2000)
+	Info('Made it to Barradin Estate!')
 EndFunc
-
-
-;~ Check for remaining charr
-Func CheckCharr()
-	Local $me = GetMyAgent()
-	If CountFoesInRangeOfAgent($me, 2000) <= 1 Then
-		BackToAscalon()
-		Return 1
-	EndIf
-EndFunc
-
-
-;~ Return to Ascalon if we're dead
-Func CheckIfDead()
-	If GetIsDead() Then
-		BackToAscalon()
-		Return 1
-	EndIf
-EndFunc
-
 
 ;~ Resign and return to Ascalon
 Func BackToAscalon()
@@ -336,7 +616,6 @@ Func BackToAscalon()
 	ReturnToOutpost()
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 EndFunc
-
 
 ;~ Function to deal with inventory after farm, in presearing
 Func PresearingInventoryManagement()
@@ -388,4 +667,24 @@ Func PresearingInventoryManagement()
 		$TIMESDEPOSITED += 1
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+EndFunc
+
+;~ Use Igneous Summoning Stone
+Func UseSS($m)
+	Local $InvSS = FindInInventory($ID_Igneous_Summoning_Stone)
+	
+	While 1
+		If GetMapID() == $m Then
+			If $InvSS[0] <> 0 Then
+				UseConsumable($ID_Igneous_Summoning_Stone)
+				Info('Using Igneous Summoning Stone')
+				ExitLoop
+			Else
+				Info('Igneous Summoning Stone not found in inventory.')
+				ExitLoop
+			EndIf
+		Else
+			Sleep(100)
+		EndIf
+	WEnd
 EndFunc
