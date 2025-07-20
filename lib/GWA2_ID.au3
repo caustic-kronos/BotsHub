@@ -86,6 +86,7 @@ Global Const $ID_Loading					= 2
 ; Presearing
 Global Const $ID_Lakeside_County			= 146
 Global Const $ID_Ascalon_City_Presearing	= 148
+Global Const $ID_Green_Hills_County			= 160
 Global Const $ID_Wizards_Folly				= 161
 Global Const $ID_Regent_Valley				= 162
 Global Const $ID_The_Barradin_Estate		= 163
