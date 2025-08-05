@@ -137,10 +137,10 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Boreal chest run bot** - 2 requests
 - 🧠💭 **War Supplies bot** - 2 requests
+- 🧠💭 **Citadel of Flame farm bot** - 2 requests
 - 🧠💭 **Kilroy bot** - 1 request
 - 🧠💭 **Asura/Norn/Vanguard/Dwarf title farm bot** - 1 request
 - 🧠💭 **LDOA bot** - 1 request
-- 🧠💭 **Citadel of Flame farm bot** - 1 request
 - 🧠💭 **Improve crash recovery**
 
 ### Legend

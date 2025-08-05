@@ -292,8 +292,10 @@ Func ClearFroggyFloor2()
 		For $i = 1 To 3
 			MoveTo(17888, -6243)
 			Sleep(GetPing() + 500)
+			TargetNearestItem()
 			ActionInteract()
 			Sleep(GetPing() + 500)
+			TargetNearestItem()
 			ActionInteract()
 			Sleep(GetPing() + 500)
 		Next
