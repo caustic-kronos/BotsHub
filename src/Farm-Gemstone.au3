@@ -94,7 +94,6 @@ Func GemstoneFarmLoop()
 	; Ensure correct map
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-		WaitMapLoading()
 	EndIf
 	TalkToZhellix()
 	WalkToSpot()

@@ -332,11 +332,12 @@ Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damag
 
 
 #Region MapMarkers
-Global Const $ID_GadgetID_Smol_Chest		= 6062		;Istani chests
-Global Const $ID_GadgetID_NM_Chest			= 4582
-Global Const $ID_GadgetID_HM_Chest			= 8141
-Global Const $ID_GadgetID_Obsidian_Chest	= 74
-Global Const $Chests_Array[]				= [$ID_GadgetID_Smol_Chest, $ID_GadgetID_NM_Chest, $ID_GadgetID_HM_Chest, $ID_GadgetID_Obsidian_Chest]
+Global Const $GadgetID_Istani_Chest			= 6062
+Global Const $GadgetID_Shing_Jea_Chest		= 4579
+Global Const $GadgetID_NM_Chest				= 4582
+Global Const $GadgetID_HM_Chest				= 8141
+Global Const $GadgetID_Obsidian_Chest		= 74
+Global Const $Chests_Array[]				= [$GadgetID_Istani_Chest, $GadgetID_Shing_Jea_Chest, $GadgetID_NM_Chest, $GadgetID_HM_Chest, $GadgetID_Obsidian_Chest]
 Global Const $Map_Chests_IDs				= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
 

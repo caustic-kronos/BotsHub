@@ -43,7 +43,6 @@ Func KurzickFactionFarm($STATUS)
 	If GetMapID() <> $ID_House_Zu_Heltzer Then
 		Info('Moving to Outpost')
 		DistrictTravel($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-		WaitMapLoading($ID_House_Zu_Heltzer, 10000, 2000)
 	EndIf
 
 	KurzickFarmSetup()
