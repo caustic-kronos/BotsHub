@@ -23,7 +23,6 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $SoOFarmerSkillbar = ''
 Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
@@ -112,11 +111,11 @@ Func SoOFarmLoop()
 	AdlibRegister('TrackGroupStatus', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
-    If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
-        $SOO_FARM_SETUP = False
-        Return 1
-    EndIf	
-	
+	If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
+		$SOO_FARM_SETUP = False
+		Return 1
+	EndIf
+
 	AdlibUnRegister('TrackGroupStatus')
 
 	Info('Waiting for timer end')

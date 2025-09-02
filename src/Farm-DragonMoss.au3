@@ -24,8 +24,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $DragonMossBotVersion = '0.1'
-
 ; ==== Constants ====
 Global Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
 Global Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _

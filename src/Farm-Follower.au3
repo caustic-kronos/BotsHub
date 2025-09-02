@@ -28,10 +28,7 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $FollowerBotVersion = '0.1'
-
 ; ==== Constants ====
-Global Const $FollowerSkillbar = ''
 Global Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
 	& 'It will attack everything that gets in range.' & @CRLF _
 	& 'It will loot all items it can loot.' & @CRLF _

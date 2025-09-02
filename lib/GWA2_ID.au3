@@ -134,23 +134,29 @@ Global Const $ID_Kaineng_A_Chance_Encounter	= 861
 ; Nightfall
 Global Const $ID_Sunward_Marches			= 373
 Global Const $ID_Sunspear_Sanctuary			= 387
+Global Const $ID_Kodash_Bazaar				= 414
+Global Const $ID_Mirror_of_Lyss				= 419
+Global Const $ID_Moddok_Crevice				= 427
 Global Const $ID_Command_Post				= 436
 Global Const $ID_Jokos_Domain				= 437
 Global Const $ID_Bone_Palace				= 438
 Global Const $ID_The_Shattered_Ravines		= 441
 Global Const $ID_The_Sulfurous_Wastes		= 444
+Global Const $ID_Gate_Of_Anguish			= 474
 Global Const $ID_Uncharted_Isle				= 529
 Global Const $ID_Isle_Of_Wurms				= 530
 Global Const $ID_Corrupted_Isle				= 537
 Global Const $ID_Isle_Of_Solitude			= 538
 Global Const $ID_Remains_of_Sahlahja		= 545
-Global Const $ID_Moddok_Crevice				= 427
-Global Const $ID_Gate_Of_Anguish			= 474
+Global Const $ID_Dajkah_Inlet_Outpost		= 554
+Global Const $ID_Dajkah_Inlet_Mission		= 554
+Global Const $ID_Nexus						= 555
 ; EotN
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Arbor_Bay					= 485
 Global Const $ID_Riven_Earth				= 501
 Global Const $ID_Jaga_Moraine				= 546
+Global Const $ID_Varajar_Fells				= 553
 Global Const $ID_Sparkfly_Swamp				= 558
 Global Const $ID_Verdant_Cascades			= 566
 Global Const $ID_Slavers_Exile				= 577
@@ -164,6 +170,9 @@ Global Const $ID_Gadds_Camp					= 638
 Global Const $ID_Umbral_Grotto				= 639
 Global Const $ID_Rata_Sum					= 640
 Global Const $ID_Eye_of_the_North			= 642
+Global Const $ID_Olafstead					= 645
+Global Const $ID_Dalada_Uplands				= 647
+Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
 #EndRegion Game Locations
 

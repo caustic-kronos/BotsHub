@@ -25,8 +25,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $PongmeiBotVersion = '0.1'
-
 ; ==== Constantes ====
 Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
 Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _

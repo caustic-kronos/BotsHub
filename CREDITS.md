@@ -46,6 +46,11 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 - Contributor: Kronos
 - License: licensed under Apache 2.0
 
+### 'Farm-Norn.au3' 'Farm-NexusChallenge.au3' 'Farm-SunspearArmor.au3' 'Farm-Lightbringer2.au3' 'Farm-Vanguard.au3'
+- Author: An anonymous fan of Dhuum
+- Contributor: Kronos
+- License: licensed under Apache 2.0
+
 ### 'Farm-Lightbringer.au3' 'Farm-Luxon.au3' 'Farm-Kurzick.au3'
 - Author: unknown
 - Contributor: Kronos

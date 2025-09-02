@@ -23,11 +23,10 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $FoWFarmerSkillbar = ''
 Global Const $FoWFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded areas' & @CRLF _
 	& 'XXmn average in NM' & @CRLF _
-	& 'YYmn  average in HM with consets (automatically used if HM is on)' & @CRLF _
+	& 'YYmn average in HM with consets (automatically used if HM is on)' & @CRLF _
 	& 'If you add a summon to this farm, do it so that it despawned once doing green forest'
 Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 

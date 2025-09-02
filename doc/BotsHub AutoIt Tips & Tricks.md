@@ -6,7 +6,7 @@ A concise cheat sheet of powerful functions, techniques, and utilities in AutoIt
 
 ## ⚛️ Execution Flow & Scheduling
 
-* `AdlibRegister()` / `AdlibUnRegister()`  → Simulate multithreading, e.g. background checks.
+* `AdlibRegister()` / `AdlibUnRegister()` → Simulate multithreading, e.g. background checks.
 * `OnAutoItExitRegister()` → Clean-up actions on script exit.
 * `TimerInit()` / `TimerDiff()` → Measure execution time, delay logic.
 

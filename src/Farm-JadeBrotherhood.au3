@@ -22,7 +22,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $JB_VERSION = '0.1'
 Global Const $JB_Timeout = 120000
 
 ; ==== Constants ====

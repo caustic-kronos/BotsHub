@@ -23,12 +23,11 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $FroggyFarmerSkillbar = ''
 Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '32mn average in NM' & @CRLF _
-	& '41mn  average in HM with consets (automatically used if HM is on)'
+	& '41mn average in HM with consets (automatically used if HM is on)'
 
 Global $FROGGY_FARM_SETUP = False
 Global Const $froggyAggroRange = $RANGE_SPELLCAST + 100
@@ -99,10 +98,10 @@ Func FroggyFarmLoop()
 	AdlibRegister('TrackGroupStatus', 10000)
 
 	GetRewardRefreshAndTakeFroggyQuest()
-    If (ClearFroggyFloor1() == 1 Or ClearFroggyFloor2() == 1) Then
-        $FROGGY_FARM_SETUP = False
-        Return 1
-    EndIf
+	If (ClearFroggyFloor1() == 1 Or ClearFroggyFloor2() == 1) Then
+		$FROGGY_FARM_SETUP = False
+		Return 1
+	EndIf
 
 	AdlibUnRegister('TrackGroupStatus')
 

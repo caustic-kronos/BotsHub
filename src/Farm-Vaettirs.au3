@@ -17,9 +17,6 @@ Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from mone
 
 Opt('MustDeclareVars', 1)
 
-
-Global Const $VaettirBotVersion = '0.4'
-
 ; ==== Constantes ====
 Global Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
 Global Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _

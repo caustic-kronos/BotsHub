@@ -23,7 +23,6 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $VoltaicFarmerSkillbar = ''
 Global Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
 	& '- completed EotN story once' & @CRLF _
 	& '- a full and efficient 7-hero-team' & @CRLF _
@@ -84,7 +83,7 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(3571, -9501, '5', $VSAggroRange)
 	MoveAggroAndKill(10764, -6448, '6', $VSAggroRange)
 	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
-	If IsRunFailed() Then 
+	If IsRunFailed() Then
 		AdlibUnregister('TrackGroupStatus')
 		Return 1
 	EndIf

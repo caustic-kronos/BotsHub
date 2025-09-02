@@ -1923,7 +1923,7 @@ EndFunc
 ;~ Did run fail ?
 Func IsRunFailed()
 	If ($groupFailuresCount > 5) Then
-		Notice('Group wiped ' & $groupFailuresCount & ' times, run is considered failed.')		
+		Notice('Group wiped ' & $groupFailuresCount & ' times, run is considered failed.')
 		Return True
 	EndIf
 	Return False

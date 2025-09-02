@@ -24,8 +24,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $MantidsBotVersion = '0.1'
-
 ; ==== Constants ====
 Global Const $RAMantidsFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
 Global Const $MantidsHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'

@@ -303,7 +303,7 @@ Func IsMemoryReadable($processHandle, $address, $size)
 
 	; Ensure the requested range fits inside the memory region
 	Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
-	Local $regionSize  = DllStructGetData($memoryInfo, 'RegionSize')
+	Local $regionSize = DllStructGetData($memoryInfo, 'RegionSize')
 	If ($address - $regionStart) + $size > $regionSize Then
 		DebuggerLog('Read - Range doesnt fit in the memory region')
 		Return False
@@ -351,7 +351,7 @@ Func IsMemoryWritable($processHandle, $address, $size)
 
 	; Ensure the requested range fits inside the memory region
 	Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
-	Local $regionSize  = DllStructGetData($memoryInfo, 'RegionSize')
+	Local $regionSize = DllStructGetData($memoryInfo, 'RegionSize')
 	If ($address - $regionStart) + $size > $regionSize Then
 		DebuggerLog('Write - Range doesnt fit in the memory region')
 		Return False

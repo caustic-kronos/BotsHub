@@ -24,8 +24,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $KournansBotVersion = '0.1'
-
 ; ==== Constants ====
 Global Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
 Global Const $RKournansHeroSkillbar = 'OgATYnLjZB6C+Zn76OzGAAAA'

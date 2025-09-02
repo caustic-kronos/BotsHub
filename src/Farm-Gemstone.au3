@@ -38,9 +38,9 @@ Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
 Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
 
 ;=== Configuration / Globals ===
-Global $gemRuns            = 0
-Global Const $StartX    = -3606
-Global Const $StartY    = -5347
+Global $gemRuns = 0
+Global Const $StartX = -3606
+Global Const $StartY = -5347
 Global Const $FightDist = 1500
 
 Global $GemstoneFarmSetup = False
@@ -55,11 +55,11 @@ Global Const $Gem_Signet_Of_Disruption = 6
 Global Const $Gem_Wastrels_Demise = 7
 Global Const $Gem_Mistrust = 8
 
-Global Const $Gem_SkillsArray =		[$Gem_Symbolic_Celerity, $Gem_Symbolic_Posture, $Gem_Keystone_Signet, $Gem_Unnatural_Signet,  $Gem_Signet_Of_Clumsiness, $Gem_Signet_Of_Disruption, $Gem_Wastrels_Demise, $Gem_Mistrust]
+Global Const $Gem_SkillsArray =		[$Gem_Symbolic_Celerity, $Gem_Symbolic_Posture, $Gem_Keystone_Signet, $Gem_Unnatural_Signet, $Gem_Signet_Of_Clumsiness, $Gem_Signet_Of_Disruption, $Gem_Wastrels_Demise, $Gem_Mistrust]
 Global Const $Gem_SkillsCostsArray =	[15,					10,						0,					0,						0,							0,							5,					10]
 Global Const $gemSkillCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
 
-Global Const $ID_ZhellixAgent  = 15
+Global Const $ID_ZhellixAgent = 15
 Global Const $ID_Zhellix = 5221
 Global Const $ID_Dryder = 5215
 Global Const $ID_Dreamer = 5216
@@ -207,7 +207,7 @@ Func GemKill()
 
 			Local $skillPos = $Gem_SkillsArray[$i]
 			Local $recharge = DllStructGetData(GetSkillbarSkillRecharge($skillPos, 0), 0)
-			Local $energy   = GetEnergy()
+			Local $energy = GetEnergy()
 
 			If $recharge = 0 And $energy >= $gemSkillCostsMap[$skillPos] Then
 				UseSkillEx($skillPos, $target)

@@ -66,6 +66,13 @@
 #include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
+
+#include 'src/Farm-Norn.au3'
+#include 'src/Farm-NexusChallenge.au3'
+#include 'src/Farm-SunspearArmor.au3'
+#include 'src/Farm-Vanguard.au3'
+#include 'src/Farm-Lightbringer2.au3'
+
 #include 'lib/JSON.au3'
 #EndRegion Includes
 
@@ -105,7 +112,7 @@ Global $BAG_NUMBER = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 Global $TIMESDEPOSITED = 0
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Luxon|Mantids|Ministerial Commendations|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Tasca|Vaettirs|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -742,6 +749,23 @@ Func RunFarmLoop($Farm)
 			$STATUS = 'INITIALIZED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+
+		Case 'Norn'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = NornTitleFarm($STATUS)
+		Case 'Nexus Challenge'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = NexusChallengeFarm($STATUS)
+		Case 'Sunspear Armor'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = SunspearArmorFarm($STATUS)
+		Case 'Lightbringer 2'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = LightbringerFarm2($STATUS)
+		Case 'Vanguard'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = VanguardVQFarm($STATUS)
+
 		Case 'Corsairs'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = CorsairsFarm($STATUS)
@@ -847,6 +871,7 @@ Func ResetBotsSetups()
 	$SOO_FARM_SETUP							= False
 	$SPIRIT_SLAVES_FARM_SETUP				= False
 	$TASCA_FARM_SETUP						= False
+	$LIGHTBRINGER_FARM2_SETUP				= False
 	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$FOLLOWER_SETUP						= False
@@ -860,34 +885,26 @@ EndFunc
 
 ;~ Update the farm description written on the rightmost tab
 Func UpdateFarmDescription($Farm)
+	GUICtrlSetData($GUI_Edit_CharacterBuild, '')
+	GUICtrlSetData($GUI_Edit_HeroBuild, '')
+	GUICtrlSetData($GUI_Label_FarmInformations, '')
 	Switch $Farm
 		Case 'Corsairs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $CorsairsFarmInformations)
 		Case 'Dragon Moss'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RADragonMossFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $DragonMossFarmInformations)
 		Case 'Eden Iris'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $EdenIrisFarmInformations)
 		Case 'Feathers'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $DAFeathersFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FeathersFarmInformations)
 		Case 'Follow'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $FollowerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
 		Case 'FoW'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $FoWFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FoWFarmInformations)
 		Case 'Froggy'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $FroggyFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FroggyFarmInformations)
 		Case 'Gemstone'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
@@ -899,19 +916,12 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $JB_FarmInformations)
 		Case 'Kournans'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $ElAKournansFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $KournansFarmInformations)
 		Case 'Kurzick'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $KurzickFactionSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
 		Case 'Lightbringer'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarmInformations)
 		Case 'Luxon'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $LuxonFactionInformations)
 		Case 'Mantids'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RAMantidsFarmerSkillbar)
@@ -919,48 +929,43 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $MantidsFarmInformations)
 		Case 'Ministerial Commendations'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $DWCommendationsFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $CommendationsFarmInformations)
-		Case 'OmniFarm'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, '')
 		Case 'Pongmei'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $PongmeiChestRunnerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $PongmeiChestRunInformations)
 		Case 'Raptors'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $PRunnerHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $RaptorsFarmInformations)
 		Case 'SoO'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $SoOFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $SoOFarmInformations)
 		Case 'SpiritSlaves'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $SpiritSlavesFarmInformations)
 		Case 'Tasca'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaChestRunnerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $TascaChestRunInformations)
 		Case 'Vaettirs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
 		Case 'Voltaic'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $VoltaicFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VoltaicFarmInformations)
+		Case 'Norn'
+			GUICtrlSetData($GUI_Label_FarmInformations, $NornFarmInformations)
+		Case 'Nexus Challenge'
+			GUICtrlSetData($GUI_Label_FarmInformations, $NexusChallengeinformations)
+		Case 'Sunspear Armor'
+			GUICtrlSetData($GUI_Label_FarmInformations, $SunspearArmorInformations)
+		Case 'Lightbringer 2'
+			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarm2Informations)
+		Case 'Vanguard'
+			GUICtrlSetData($GUI_Label_FarmInformations, $VanguardTitleFarmInformations)
+		Case 'OmniFarm'
+			Return
 		Case 'Storage'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, '')
+			Return
 		Case Else
-			GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-			GUICtrlSetData($GUI_Edit_HeroBuild, '')
-			GUICtrlSetData($GUI_Label_FarmInformations, '')
+			Return
 	EndSwitch
 EndFunc
 #EndRegion Setup
@@ -1437,6 +1442,18 @@ Func SelectFarmDuration($Farm)
 			Return $VOLTAIC_FARM_DURATION
 		Case 'Storage'
 			Return 2 * 60 * 1000
+
+		Case 'Norn'
+			Return $NORN_FARM_DURATION
+		Case 'Nexus Challenge'
+			Return $NEXUS_CHALLENGE_FARM_DURATION
+		Case 'Sunspear Armor'
+			Return $SUNSPEAR_ARMOR_FARM_DURATION
+		Case 'Lightbringer 2'
+			Return $LIGHTBRINGER_FARM2_DURATION
+		Case 'Vanguard'
+			Return $VANGUARD_TITLE_FARM_DURATION
+
 		Case Else
 			Return 2 * 60 * 1000
 	EndSwitch

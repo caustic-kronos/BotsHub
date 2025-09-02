@@ -27,8 +27,6 @@ Modified by: Night
 
 Opt('MustDeclareVars', 1)
 
-Global Const $RaptorBotVersion = '0.4'
-
 ; ==== Constantes ====
 Global Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
 Global Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage

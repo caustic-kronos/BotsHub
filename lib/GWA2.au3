@@ -24,8 +24,6 @@ Modified by: MrZambix, Night, and more
 
 
 #Region Declarations
-Global $gwa2Version = '0.0.0'
-
 ; Windows and process handles
 Global $kernelHandle = DllOpen('kernel32.dll')
 ; Each slot will be a 4-elements array: [0] = PID, [1] = handle (or 0 if invalidated), [2] = window, [3] = character name

@@ -18,10 +18,6 @@
 #include 'GWA2_ID.au3'
 #include 'Utils.au3'
 
-; ==== Constantes ====
-Global Const $FarmerSkillbar = ''
-Global Const $FarmInformations = ''
-
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
 
 ; Common skill to all heroes

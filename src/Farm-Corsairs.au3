@@ -25,8 +25,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $CorsairsBotVersion = '0.4'
-
 ; ==== Constants ====
 Global Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
 Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _

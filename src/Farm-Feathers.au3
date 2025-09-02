@@ -24,8 +24,6 @@
 
 Opt('MustDeclareVars', 1)
 
-Global Const $FeathersBotVersion = '3.0'
-
 ; ==== Constants ====
 Global Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
 Global Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
