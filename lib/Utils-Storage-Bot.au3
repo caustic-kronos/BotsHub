@@ -763,7 +763,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			$itemID = DllStructGetData($item, 'ModelID')
 			If $itemID <> 0 And $shouldStoreItem($item) Then
 				Debug('Moving ' & $bagIndex & ':' & $i)
-				StoreItemInXunlaiStorage($item)
+				If Not StoreItemInXunlaiStorage($item) Then Return False
 				RndSleep(50)
 			EndIf
 		Next
@@ -786,7 +786,7 @@ Func StoreItemInXunlaiStorage($item)
 		RndSleep(GetPing() + 20)
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
-		If $newCountMaterial - $countMaterial == $amount Then Return
+		If $newCountMaterial - $countMaterial == $amount Then Return True
 		$amount = DllStructGetData($item, 'Quantity')
 	EndIf
 	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
@@ -799,18 +799,19 @@ Func StoreItemInXunlaiStorage($item)
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 				RndSleep(GetPing() + 20)
 				$amount = $amount + $existingAmount - 250
-				If $amount <= 0 Then Return
+				If $amount <= 0 Then Return True
 			EndIf
 		Next
 	EndIf
 	$storageSlot = FindChestFirstEmptySlot()
 	If $storageSlot[0] == 0 Then
 		Warn('Storage is full')
-		Return
+		Return False
 	EndIf
 	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
 	RndSleep(GetPing() + 20)
+	Return True
 EndFunc
 
 
