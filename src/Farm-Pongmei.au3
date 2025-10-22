@@ -105,7 +105,7 @@ Func PongmeiChestFarmLoop($STATUS)
 	MoveTo(-25366, 1524)
 	MoveTo(-26000, 2400)
 	Move(-26200, 2800)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)
 
 	Local $openedChests = 0
@@ -171,7 +171,7 @@ EndFunc
 Func BackToBoreasSeabed()
 	Info('Porting to Boreas Seabed')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Boreas_Seabed, 10000, 1000)
 EndFunc
@@ -214,7 +214,7 @@ Func DervishRun($X, $Y)
 		If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And AreFoesInFront($X, $Y) Then
 			If IsRecharged($Pongmei_IAmUnstoppable) Then UseSkillEx($Pongmei_IAmUnstoppable)
 			UseSkillEx($Pongmei_DeadlyParadox)
-			RndSleep(20)
+			RandomSleep(20)
 			UseSkillEx($Pongmei_ShadowForm)
 			;$shadowFormLastUse = TimerInit()
 		EndIf
@@ -223,7 +223,7 @@ Func DervishRun($X, $Y)
 		If $energy >= 7 And IsRecharged($Pongmei_Pious_Haste) And (Not IsRecharged($Pongmei_DwarvenStability) Or ($energy >= 12 And IsRecharged($Pongmei_DwarvenStability))) Then
 			If IsRecharged($Pongmei_DwarvenStability) Then UseSkillEx($Pongmei_DwarvenStability)
 			UseSkillEx($Pongmei_Zealous_Renewal)
-			RndSleep(20)
+			RandomSleep(20)
 			UseSkillEx($Pongmei_Pious_Haste)
 		EndIf
 
@@ -323,7 +323,7 @@ Func DefendWhileOpeningChests()
 
 	If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
 		UseSkillEx($Pongmei_DeadlyParadox)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Pongmei_ShadowForm)
 	EndIf
 EndFunc

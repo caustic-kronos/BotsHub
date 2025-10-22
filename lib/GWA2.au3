@@ -1247,28 +1247,28 @@ EndFunc
 ;~ Buys a superior identification kit.
 Func BuySuperiorIdentificationKit($amount = 1)
 	BuyItem(6, $amount, 500)
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
 ;~ Buys a basic salvage kit.
 Func BuySalvageKit($amount = 1)
 	BuyItem(2, $amount, 100)
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
 ;~ Buys an expert salvage kit.
 Func BuyExpertSalvageKit($amount = 1)
 	BuyItem(3, $amount, 400)
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
 ;~ Buys an expert salvage kit.
 Func BuySuperiorSalvageKit($amount = 1)
 	BuyItem(4, $amount, 2000)
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
@@ -4062,7 +4062,7 @@ EndFunc
 #Region Other Functions
 #Region Misc
 ;~ Sleep a random amount of time.
-Func RndSleep($baseAmount, $randomFactor = Null)
+Func RandomSleep($baseAmount, $randomFactor = Null)
 	Local $randomAmount
 	Select
 		Case $randomFactor <> Null
@@ -6240,7 +6240,7 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 5000)
 		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
 	Until GetMyID() <> 0 And $skillbarStruct[0] <> 0 And (GetMapID() = $mapID Or $mapID = -1)
-	RndSleep($waitingTime)
+	RandomSleep($waitingTime)
 	Return True
 EndFunc
 

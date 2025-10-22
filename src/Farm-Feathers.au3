@@ -96,11 +96,11 @@ Func SetupFeathersFarm()
 
 	MoveTo(17300, 17300)
 	Move(16800, 17550)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 	Move(10500, -13100)
 	Move(10970, -13360)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
 	Info('Preparations complete')
 EndFunc
@@ -111,7 +111,7 @@ Func FeathersFarmLoop()
 	Info('Entering Jaya Bluffs')
 	MoveTo(17300, 17300)
 	Move(16800, 17550)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
 
 	Info('Running to Sensali.')
@@ -153,7 +153,7 @@ EndFunc
 Func BackToSeitungHarborOutpost()
 	Info('Porting to Seitung Harbor')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
 EndFunc
@@ -181,7 +181,7 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HP') < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If DllStructGetData($me, 'MoveX') = 0 And DllStructGetData($me, 'MoveY') = 0 Then Move($x, $y)
-		RndSleep(250)
+		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
 EndFunc
@@ -239,9 +239,9 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		If $stuckCount > 25 Then
 			$stuckCount = 0
 			SendChat('stuck', '/')
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
-		RndSleep(250)
+		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
 EndFunc
@@ -255,13 +255,13 @@ Func Kill($waitForSettle = True)
 
 	Local $stuckCount = 0
 	SendChat('stuck', '/')
-	RndSleep(50)
+	RandomSleep(50)
 	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 	If $waitForSettle Then
 		If Not WaitForSettle() Then Return False
 	EndIf
 	SendChat('stuck', '/')
-	RndSleep(50)
+	RandomSleep(50)
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeWeaponSet(1)
 	If IsRecharged($Feathers_VowOfStrength) Then UseSkillEx($Feathers_VowOfStrength)
@@ -294,13 +294,13 @@ Func Kill($waitForSettle = True)
 		If $stuckCount > 100 Then
 			$stuckCount = 0
 			SendChat('stuck', '/')
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 
 		Sleep(250)
 		Attack($target)
 	WEnd
-	RndSleep(500)
+	RandomSleep(500)
 	Info('Looting')
 	PickUpItems()
 	FindAndOpenChests()

@@ -50,21 +50,21 @@ EndFunc
 
 Func NorntitleSetup()
 	;LeaveGroup()
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Norgu)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Gwen)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Razah)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Master_Of_Whispers)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Livia)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Olias)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Xandra)
-	;RndSleep(500)
+	;RandomSleep(500)
 	SwitchMode($ID_HARD_MODE)
 EndFunc
 
@@ -72,7 +72,7 @@ EndFunc
 Func NornTitle()
 	MoveTo(222, 756)
 	MoveTo(-1435, 1217)
-	RndSleep(5000)
+	RandomSleep(5000)
 	WaitMapLoading($ID_Varajar_Fells, 10000, 2000)
 	MoveTo(-2484, 118)
 	MoveTo(-3059, -419)
@@ -81,9 +81,9 @@ Func NornTitle()
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-2034, -4512))
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x84)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If MoveAggroAndKill(-5278, -5771, 'Berzerker') Then Return 1
 	If MoveAggroAndKill(-5456, -7921, 'Berzerker') Then Return 1
@@ -96,7 +96,7 @@ Func NornTitle()
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-25274, -11970))
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	MoveTo(-22275, -12462)
 	If MoveAggroAndKill(-21671, -2163, 'Berzerker') Then Return 1

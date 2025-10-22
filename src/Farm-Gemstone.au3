@@ -192,11 +192,11 @@ Func GemKill()
 
 		If DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist Then
 			ChangeTarget($target)
-			RndSleep(150)
+			RandomSleep(150)
 			CallTarget($target)
-			RndSleep(150)
+			RandomSleep(150)
 			Attack($target)
-			RndSleep(150)
+			RandomSleep(150)
 		ElseIf DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead() Then
 			ExitLoop
 		EndIf
@@ -213,7 +213,7 @@ Func GemKill()
 
 			If $recharge = 0 And $energy >= $gemSkillCostsMap[$skillPos] Then
 				UseSkillEx($skillPos, $target)
-				RndSleep(500)
+				RandomSleep(500)
 			EndIf
 		Next
 	WEnd

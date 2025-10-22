@@ -101,11 +101,11 @@ Func SetupRaptorFarm()
 	DisableAllHeroSkills(1)
 	MoveTo(19700, 16800)
 	Move(20084, 16854)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
 	MoveTo(-25800, -4150)
 	Move(-26309, -4112)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
 	Info('Resign preparation complete')
@@ -117,10 +117,10 @@ Func RaptorsFarmLoop()
 	Info('Exiting to Riven Earth')
 	MoveTo(19700, 16800)
 	Move(20084, 16854)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
 	UseHeroSkill(1, $Raptors_VocalWasSogolon)
-	RndSleep(1200)
+	RandomSleep(1200)
 	UseHeroSkill(1, $Raptors_Incoming)
 	GetRaptorsAsuraBlessing()
 	MoveToBaseOfCave()
@@ -128,11 +128,11 @@ Func RaptorsFarmLoop()
 	CommandAll(-25309, -4212)
 	GetRaptors()
 	KillRaptors()
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	Info('Looting')
 	PickUpItems(DefendWhilePickingUpItems)
-	RndSleep(1000)
+	RandomSleep(1000)
 	PickUpItems(DefendWhilePickingUpItems)
 
 	Return BackToTown()
@@ -162,10 +162,10 @@ Func GetRaptorsAsuraBlessing()
 	If $Asura < 160000 Then
 		Info('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
-		RndSleep(300)
+		RandomSleep(300)
 		Dialog(132)
 	EndIf
-	RndSleep(350)
+	RandomSleep(350)
 EndFunc
 
 
@@ -174,20 +174,20 @@ Func MoveToBaseOfCave()
 	If GetIsDead(-2) Then Return
 	Info('Moving to Cave')
 	Move(-22015, -7502)
-	RndSleep(7000)
+	RandomSleep(7000)
 	UseHeroSkill(1, $Raptors_FallBack)
-	RndSleep(500)
+	RandomSleep(500)
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_IAmUnstoppable)
 	Moveto(-21333, -8384)
 	UseHeroSkill(1, $Raptors_EnduringHarmony, GetMyAgent())
 	If ($RAPTORS_PROFESSION == 10) Then UseSkill($Raptors_SignetOfMysticSpeed, GetMyAgent())
-	RndSleep(1800)
+	RandomSleep(1800)
 	UseHeroSkill(1, $Raptors_MakeHaste, GetMyAgent())
-	RndSleep(20)
+	RandomSleep(20)
 	UseHeroSkill(1, $Raptors_StandYourGround)
-	RndSleep(20)
+	RandomSleep(20)
 	UseHeroSkill(1, $Raptors_CantTouchThis)
-	RndSleep(20)
+	RandomSleep(20)
 	UseHeroSkill(1, $Raptors_BladeturnRefrain, GetMyAgent())
 	Move(-20930, -9480, 40)
 EndFunc
@@ -206,10 +206,10 @@ Func GetRaptors()
 	Local $count = 0
 	While Not GetIsDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200
 		UseSkillEx($Raptors_MarkOfPain, $target)
-		RndSleep(50)
+		RandomSleep(50)
 		$count += 1
 	WEnd
-	RndSleep(250)
+	RandomSleep(250)
 
 	IsBossAggroed()
 	If MoveAggroingRaptors(-20000, -10300) Then Return
@@ -246,18 +246,18 @@ Func KillRaptors()
 
 	If ($RAPTORS_PROFESSION == 1) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Raptors_ProtectorsDefense)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Raptors_HundredBlades)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Raptors_WaryStance)
-		RndSleep(20)
+		RandomSleep(20)
 	Else
 		UseSkillEx($Raptors_VowOfStrength)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Raptors_ArmorOfSanctity)
-		RndSleep(20)
+		RandomSleep(20)
 	EndIf
 
 	Local $rekoff_boss = GetNearestBossFoe()
@@ -275,16 +275,16 @@ Func KillRaptors()
 
 	If ($RAPTORS_PROFESSION == 10) Then
 		UseSkillEx($Raptors_DustCloak)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Raptors_PiousFury)
-		RndSleep(20)
+		RandomSleep(20)
 	EndIf
 
 	Debug('Waiting on MoP to be recharged and foes to be in range')
 	Local $count = 0
 	While Not GetIsDead() And (Not IsRecharged($Raptors_MarkOfPain) Or Not RaptorsAreBalled()) And $count < 40
 		Debug('Waiting ' & $count)
-		RndSleep(250)
+		RandomSleep(250)
 		$count += 1
 		If $count > 10 Then
 			SendStuckCommand()
@@ -297,37 +297,37 @@ Func KillRaptors()
 	; There is an issue here with infinite loop despite the count (wtf!) so added a timer as well
 	While Not GetIsDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200 And TimerDiff($timer) < 10000
 		UseSkillEx($Raptors_MarkOfPain, $MoPTarget)
-		RndSleep(50)
+		RandomSleep(50)
 		$count += 1
 	WEnd
 
 	If ($RAPTORS_PROFESSION == 1) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		UseSkillEx($Raptors_SoldiersDefense)
-		RndSleep(50)
+		RandomSleep(50)
 
 		Debug('Using Whirlwind attack')
 		$count = 0
 		While Not GetIsDead() And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130 And $count < 200
-			RndSleep(50)
+			RandomSleep(50)
 			$count += 1
 		WEnd
 
 		Local $me = GetMyAgent()
 		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
 		UseSkillEx($Raptors_ShieldBash)
-		RndSleep(20)
+		RandomSleep(20)
 		Debug('Using Whirlwind attack a second time')
 		While Not GetIsDead() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) == 130
 			UseSkillEx($Raptors_WhirlwindAttack, GetNearestEnemyToAgent($me))
-			RndSleep(250)
+			RandomSleep(250)
 			$me = GetMyAgent()
 		WEnd
 	Else
 		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
 		While Not GetIsDead() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10
 			UseSkillEx($Raptors_EremitesAttack, GetNearestEnemyToAgent($me))
-			RndSleep(250)
+			RandomSleep(250)
 			$me = GetMyAgent()
 		WEnd
 	EndIf
@@ -345,7 +345,7 @@ Func BackToTown()
 	Local $result = AssertFarmResult()
 	Info('Porting to Rata Sum')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	Return $result
@@ -375,7 +375,7 @@ Func MoveAggroingRaptors($x, $y)
 	Local $me = GetMyAgent()
 	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > $RANGE_NEARBY
 		If IsBodyBlocked() Then Return True
-		RndSleep(100)
+		RandomSleep(100)
 		Move($x, $y)
 		$me = GetMyAgent()
 	WEnd
@@ -410,7 +410,7 @@ Func IsBodyBlocked()
 			Return True
 		EndIf
 		Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle), 0)
-		RndSleep(250)
+		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
 	Return False
@@ -424,7 +424,7 @@ Func SendStuckCommand()
 		Warn('Sending /stuck')
 		SendChat('stuck', '/')
 		$chatStuckTimer = TimerInit()
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 		Return True
 	EndIf
 	Return False

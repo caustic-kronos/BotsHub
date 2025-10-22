@@ -63,7 +63,7 @@ Func RunTests($STATUS)
 	;Info(DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'TimeStamp'))
 	;Info(GetEffectTimeRemaining(GetEffect($ID_Shroud_of_Distress)))
 	;Info(_dlldisplay(GetEffect($ID_Shroud_of_Distress)))
-	;RndSleep(1000)
+	;RandomSleep(1000)
 
 	;Return 0
 	Return 2
@@ -133,7 +133,7 @@ Func DistrictTravel($mapID, $district)
 		Local $districtAndRegion = $RegionMap[$district]
 		MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
 		WaitMapLoading($mapID, 20000)
-		RndSleep(2000)
+		RandomSleep(2000)
 	EndIf
 EndFunc
 
@@ -146,7 +146,7 @@ Func RandomDistrictTravel($mapID, $district = 12)
 	Local $Random = Random(0, $district - 1, 1)
 	MoveMap($mapID, $Region[$Random], 0, $Language[$Random])
 	WaitMapLoading($mapID, 20000)
-	RndSleep(2000)
+	RandomSleep(2000)
 EndFunc
 #EndRegion Map and travel
 
@@ -175,7 +175,7 @@ Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
-				RndSleep(50)
+				RandomSleep(50)
 				If GetIsDead() Then Return
 			WEnd
 		EndIf
@@ -311,10 +311,10 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $Blocked
 			;GoToSignpost($agents[$i])															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
 			GoToSignpostWhileDefending($agents[$i], $DefendFunction, $BlockedFunction)			;Final solution
 			If GetIsDead() Then Return
-			RndSleep(200)
+			RandomSleep(200)
 			OpenChest()
 			If GetIsDead() Then Return
-			RndSleep(GetPing() + 1000)
+			RandomSleep(GetPing() + 1000)
 			If GetIsDead() Then Return
 			$chestsMap[DllStructGetData($agents[$i], 'ID')] = 2
 			PickUpItems()
@@ -350,7 +350,7 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 	Local $blocked = 0
 	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
 		Move($X, $Y, 100)
-		RndSleep(GetPing() + 50)
+		RandomSleep(GetPing() + 50)
 		If $DefendFunction <> Null Then $DefendFunction()
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
@@ -360,11 +360,11 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 			$blocked += 1
 			Move($X, $Y, 100)
 		EndIf
-		RndSleep(GetPing() + 50)
+		RandomSleep(GetPing() + 50)
 		$me = GetMyAgent()
 	WEnd
 	GoSignpost($agent)
-	RndSleep(GetPing() + 100)
+	RandomSleep(GetPing() + 100)
 EndFunc
 #EndRegion Loot Chests
 
@@ -487,7 +487,7 @@ Func MoveItemsToEquipmentBag()
 				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
 				$cursor += 2
 				$countEmptySlots -= 1
-				RndSleep(50)
+				RandomSleep(50)
 			EndIf
 		Next
 	Next
@@ -586,7 +586,7 @@ Func SortInventory()
 	For $item In $items
 		$itemID = DllStructGetData($item, 'ModelID')
 		If $itemID == 0 Then ExitLoop
-		RndSleep(10)
+		RandomSleep(10)
 
 		; Weapon
 		If IsWeapon($item) Then
@@ -644,7 +644,7 @@ Func SortInventory()
 		Debug('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
 		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
 		$itemsPositions[$category] += 1
-		RndSleep(50)
+		RandomSleep(50)
 	Next
 EndFunc
 
@@ -988,7 +988,7 @@ Func IdentifyAllItems($buyKit = True)
 					EndIf
 				EndIf
 				IdentifyItem($item)
-				RndSleep(100)
+				RandomSleep(100)
 			EndIf
 		Next
 	Next
@@ -1148,7 +1148,7 @@ EndFunc
 Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False)
 	If GetGoldCharacter() < $amount * $itemPrice And GetGoldStorage() > $amount * $itemPrice - 1 Then
 		WithdrawGold($amount * $itemPrice)
-		RndSleep(500)
+		RandomSleep(500)
 	EndIf
 
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
@@ -1156,7 +1156,7 @@ Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
-	RndSleep(500)
+	RandomSleep(500)
 
 	Local $xunlaiTemporarySlot = Null
 	Local $spaceNeeded = $stackable ? 1 : $amount
@@ -1179,12 +1179,12 @@ Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 	While $itemCount < $targetItemCount
 		If $tryCount == 10 Then Return False
 		BuyItem($itemPosition, $amount, $itemPrice)
-		RndSleep(1000)
+		RandomSleep(1000)
 		$tryCount += 1
 		$itemCount = GetInventoryItemCount($itemID)
 	WEnd
 
-	RndSleep(500)
+	RandomSleep(500)
 	If $xunlaiTemporarySlot <> Null Then
 		Local $freeSpace = $stackable ? 1 : $amount
 		For $i = 0 To $freeSpace - 1
@@ -1914,9 +1914,9 @@ Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
 	While $questState <> $expectedState
 		Info('Current quest state : ' & $questState)
 		GoToNPC($npc)
-		RndSleep(GetPing() + 750)
+		RandomSleep(GetPing() + 750)
 		Dialog($dialogID)
-		RndSleep(GetPing() + 750)
+		RandomSleep(GetPing() + 750)
 		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 	WEnd
 EndFunc
@@ -2037,7 +2037,7 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Local $me = GetMyAgent()
 	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
 		Move($coordX, $coordY)
-		RndSleep(100)
+		RandomSleep(100)
 		;Local $blocked = -1
 		;Local $angle = 0
 		;While Not GetIsDead() And DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
@@ -2049,7 +2049,7 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 		;		Return False
 		;	EndIf
 		;	Move(DllStructGetData($me, 'X') + 150 * sin($angle), DllStructGetData($me, 'Y') + 150 * cos($angle))
-		;	RndSleep(50)
+		;	RandomSleep(50)
 		;WEnd
 		$me = GetMyAgent()
 	WEnd
@@ -2061,23 +2061,23 @@ Func GoNearestNPCToCoords($x, $y)
 	Local $guy = GetNearestNPCToCoords($x, $y)
 	Local $me = GetMyAgent()
 	While DllStructGetData($guy, 'ID') == 0
-		RndSleep(100)
+		RandomSleep(100)
 		$guy = GetNearestNPCToCoords($x, $y)
 	WEnd
 	ChangeTarget($guy)
-	RndSleep(250)
+	RandomSleep(250)
 	GoNPC($guy)
-	RndSleep(250)
+	RandomSleep(250)
 	$me = GetMyAgent()
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) > 250
-		RndSleep(250)
+		RandomSleep(250)
 		Move(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
-		RndSleep(250)
+		RandomSleep(250)
 		GoNPC($guy)
-		RndSleep(250)
+		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
-	RndSleep(250)
+	RandomSleep(250)
 EndFunc
 
 
@@ -2085,7 +2085,7 @@ EndFunc
 Func AggroAgent($tgtAgent)
 	While Not GetIsDead() And GetDistance(GetMyAgent(), $tgtAgent) > $RANGE_EARSHOT - 100
 		Move(DllStructGetData($tgtAgent, 'X'), DllStructGetData($tgtAgent, 'Y'))
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 EndFunc
 
@@ -2118,34 +2118,34 @@ Func AttackOrUseSkill($attackSleep, $skill = Null, $skill2 = Null, $skill3 = Nul
 	; Start auto-attack first
 	Attack($target)
 	; Small delay to ensure attack starts
-	RndSleep(20)
+	RandomSleep(20)
 
 	If ($skill <> Null And IsRecharged($skill)) Then
 		UseSkillEx($skill, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill2 <> Null And IsRecharged($skill2)) Then
 		UseSkillEx($skill2, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill3 <> Null And IsRecharged($skill3)) Then
 		UseSkillEx($skill3, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill4 <> Null And IsRecharged($skill4)) Then
 		UseSkillEx($skill4, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill5 <> Null And IsRecharged($skill5)) Then
 		UseSkillEx($skill5, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill6 <> Null And IsRecharged($skill6)) Then
 		UseSkillEx($skill6, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill7 <> Null And IsRecharged($skill7)) Then
 		UseSkillEx($skill7, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	ElseIf ($skill8 <> Null And IsRecharged($skill8)) Then
 		UseSkillEx($skill8, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	Else
-		RndSleep($attackSleep)
+		RandomSleep($attackSleep)
 	EndIf
 EndFunc
 
@@ -2211,11 +2211,11 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 			$blocked += 1
 			If $blocked > 6 Then
 				Move($coordsX, $coordsY, 500)
-				RndSleep(500)
+				RandomSleep(500)
 				Move($x, $y)
 			EndIf
 		EndIf
-		RndSleep(500)
+		RandomSleep(500)
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -2245,21 +2245,21 @@ Func DefaultKillFoes($flagHeroesOnFight = False)
 			CallTarget($target)
 			; Start auto-attack on new target
 			Attack($target)
-			RndSleep(20)
+			RandomSleep(20)
 		EndIf
 
 		; Always ensure auto-attack is active before using skills
 		Attack($target)
-		RndSleep(20)
+		RandomSleep(20)
 		While Not IsRecharged($skillNumber) And $skillNumber < 9
 			$skillNumber += 1
 		WEnd
 		If $skillNumber < 9 Then
 			UseSkillEx($skillNumber, $target)
-			RndSleep(20)
+			RandomSleep(20)
 		Else
 			; Just wait for auto-attack to continue
-			RndSleep(1000)
+			RandomSleep(1000)
 		EndIf
 		$skillNumber = 1
 		PickUpItems(Null, DefaultShouldPickItem, $RANGE_AREA)
@@ -2267,7 +2267,7 @@ Func DefaultKillFoes($flagHeroesOnFight = False)
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 200)
 	WEnd
 	If $flagHeroesOnFight Then CancelAllHeroes()
-	RndSleep(1000)
+	RandomSleep(1000)
 	PickUpItems()
 EndFunc
 
@@ -2294,17 +2294,17 @@ Func PriorityKillFoes($lootInFights = True)
 			WEnd
 			If $skillNumber < 9 Then
 				UseSkillEx($skillNumber, $target)
-				RndSleep(20)
+				RandomSleep(20)
 			Else
 				; Just wait for auto-attack to continue
-				RndSleep(1000)
+				RandomSleep(1000)
 			EndIf
 			$skillNumber = 1
 		EndIf
 		If $lootInFights Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST + 250)
-		RndSleep(20)
+		RandomSleep(20)
 	WEnd
-	RndSleep(1000)
+	RandomSleep(1000)
 	PickUpItems()
 EndFunc
 

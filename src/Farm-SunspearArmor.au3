@@ -50,21 +50,21 @@ EndFunc
 
 Func SunspearArmorSetup()
 	;LeaveGroup()
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Norgu)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Gwen)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Razah)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Master_Of_Whispers)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Livia)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Olias)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Xandra)
-	;RndSleep(500)
+	;RandomSleep(500)
 	$SUNSPEAR_ARMOR_FARM_SETUP = True
 	Info('Setup completed')
 EndFunc
@@ -72,12 +72,12 @@ EndFunc
 ;~ Cleaning SunspearArmors func
 Func SunspearArmorClean()
 	GoToNPC(GetNearestNPCToCoords(-2884, -2572))
-	RndSleep(250)
+	RandomSleep(250)
 	Dialog(0x00000087)
-	RndSleep(500)
+	RandomSleep(500)
 	WaitMapLoading($ID_Dajkah_Inlet_Mission, 10000, 2000)
 	MoveTo(25752.28, -3139.02)
-	RndSleep(62000)
+	RandomSleep(62000)
 	If MoveAggroAndKill(22595, -484) Then Return 1
 	If MoveAggroAndKill(21032, 1357) Then Return 1
 	If MoveAggroAndKill(20006, 3631) Then Return 1
@@ -114,10 +114,10 @@ Func SunspearArmorClean()
 	If MoveAggroAndKill(-20928, 3428) Then Return 1
 	MoveTo(-20263, 4476)
 	If MoveAggroAndKill(-19880, 4086, 'Lord 5') Then Return 1
-	RndSleep(500)
+	RandomSleep(500)
 	Resign()
-	RndSleep(3500)
-	RndSleep(12000)
+	RandomSleep(3500)
+	RandomSleep(12000)
 	WaitMapLoading($ID_Dajkah_Inlet_Outpost, 10000, 2000)
 	Return 0
 EndFunc

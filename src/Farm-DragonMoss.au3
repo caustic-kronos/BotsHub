@@ -73,11 +73,11 @@ Func SetupDragonMossFarm()
 	Info('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)
 	Move(-11000, -24000)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
 	Info('Preparations complete')
 EndFunc
@@ -88,60 +88,60 @@ Func DragonMossFarmLoop()
 	Info('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)
 	Move(-11000, -24000)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
 	UseSkillEx($DM_DwarvenStability)
-	RndSleep(50)
+	RandomSleep(50)
 	UseSkillEx($DM_StormChaser)
-	RndSleep(50)
+	RandomSleep(50)
 	MoveTo(-8400, 18450)
 	; Can talk to get benediction here
 
 	; Move to spot before aggro
 	MoveTo(-6350, 16750)
 	UseSkillEx($DM_ShroudOfDistress)
-	RndSleep(50)
+	RandomSleep(50)
 	UseSkillEx($DM_DeadlyParadox)
-	RndSleep(50)
+	RandomSleep(50)
 	UseSkillEx($DM_ShadowForm)
-	RndSleep(50)
+	RandomSleep(50)
 	; Aggro
 	MoveTo(-5400, 15675, UseIMSWhenAvailable)
 	MoveTo(-6150, 18000, 0, UseIMSWhenAvailable)
-	RndSleep(2000)
+	RandomSleep(2000)
 	; Safety
 	MoveTo(-6575, 18575, 0)
 	UseSkillEx($DM_DwarvenStability)
 	While Not GetIsDead() And Not IsRecharged($DM_ShadowForm)
-		RndSleep(500)
+		RandomSleep(500)
 	WEnd
 	UseSkillEx($DM_DeadlyParadox)
-	RndSleep(50)
+	RandomSleep(50)
 	UseSkillEx($DM_ShadowForm)
-	RndSleep(50)
+	RandomSleep(50)
 	If GetIsDead() Then
 		BackToSaintAnjekaOutpost()
 		Return 1
 	EndIf
-	RndSleep(1000)
+	RandomSleep(1000)
 	; Killing
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
 	While IsRecharged($DM_DeathsCharge) And Not GetIsDead()
 		UseSkillEx($DM_DeathsCharge, $target)
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 	While IsRecharged($DM_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($DM_WhirlingDefense)
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	Local $counter = 0
 	While Not GetIsDead() And $foesCount > 0 And $counter < 16
 		If IsRecharged($DM_ShadowForm) Then UseSkillEx($DM_ShadowForm)
-		RndSleep(1000)
+		RandomSleep(1000)
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
@@ -151,7 +151,7 @@ Func DragonMossFarmLoop()
 		Return 1
 	EndIf
 
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	Info('Looting')
 	PickUpItems()
@@ -171,7 +171,7 @@ EndFunc
 Func BackToSaintAnjekaOutpost()
 	Info('Porting to Saint Anjekas Shrine')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
 EndFunc

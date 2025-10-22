@@ -92,16 +92,16 @@ EndFunc
 Func CorsairsFarmLoop()
 	Info('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
-	RndSleep(250)
+	RandomSleep(250)
 	Dialog(0x00000084)
-	RndSleep(500)
+	RandomSleep(500)
 	WaitMapLoading($ID_Moddok_Crevice)
 	UseSkillEx($Corsairs_DwarvenStability)
-	RndSleep(100)
+	RandomSleep(100)
 	UseSkillEx($Corsairs_WhirlingDefense)
-	RndSleep(100)
+	RandomSleep(100)
 	UseHeroSkill(1, $Corsairs_MakeHaste, GetMyAgent())
-	RndSleep(100)
+	RandomSleep(100)
 	$Bohseda_Timer = TimerInit()
 	; Furthest point from Bohseda
 	CommandHero(1, -13778, -10156)
@@ -109,7 +109,7 @@ Func CorsairsFarmLoop()
 	MoveTo(-9050, -7000)
 	Local $Captain_Bohseda = GetNearestNPCToCoords(-9850, -7250)
 	UseSkillEx($Corsairs_HeartOfShadow, $Captain_Bohseda)
-	RndSleep(100)
+	RandomSleep(100)
 	MoveTo(-8020, -6500)
 	MoveTo(-7400, -4750)
 	CastAllDefensiveSkills()
@@ -138,7 +138,7 @@ Func CorsairsFarmLoop()
 	WaitForBohseda()
 	CommandHero(2, -13778, -10156)
 	UseSkillEx($Corsairs_DwarvenStability)
-	RndSleep(20)
+	RandomSleep(20)
 	CastAllDefensiveSkills()
 
 	If GetIsDead() Then
@@ -148,13 +148,13 @@ Func CorsairsFarmLoop()
 
 	MoveTo(-9730,-7350, 0)
 	GoNPC($Captain_Bohseda)
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x00000085)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	While IsRecharged($Corsairs_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($Corsairs_WhirlingDefense)
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 
 	If GetIsDead() Then
@@ -165,7 +165,7 @@ Func CorsairsFarmLoop()
 	For $i = 0 To 7
 		DefendAgainstCorsairs()
 		If $i < 6 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
-		RndSleep(1000)
+		RandomSleep(1000)
 	Next
 
 	If GetIsDead() Then
@@ -176,14 +176,14 @@ Func CorsairsFarmLoop()
 	Local $target = GetNearestEnemyToCoords(-8920, -6950)
 	UseSkillEx($Corsairs_DeathsCharge, $target)
 	CancelAction()
-	RndSleep(100)
+	RandomSleep(100)
 
 	Local $counter = 0
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	While Not GetIsDead() And $foesCount > 0 And $counter < 28
 		DefendAgainstCorsairs()
 		If $counter > 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
-		RndSleep(1000)
+		RandomSleep(1000)
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	WEnd
@@ -209,13 +209,13 @@ EndFunc
 ;~ Function to use all defensive skills
 Func CastAllDefensiveSkills()
 	UseSkillEx($Corsairs_ShroudOfDistress)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Corsairs_TogetherAsOne)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Corsairs_MentalBlock)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Corsairs_FeignedNeutrality)
-	RndSleep(20)
+	RandomSleep(20)
 EndFunc
 
 
@@ -223,7 +223,7 @@ EndFunc
 Func OnlyCastTogetherAsOne()
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 	EndIf
 EndFunc
 
@@ -232,19 +232,19 @@ EndFunc
 Func DefendAgainstCorsairs($Hidden = False)
 	If IsRecharged($Corsairs_TogetherAsOne) Then
 		UseSkillEx($Corsairs_TogetherAsOne)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 	EndIf
 	If Not $Hidden And IsRecharged($Corsairs_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 Then
 		UseSkillEx($Corsairs_MentalBlock)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 	EndIf
 	If Not $Hidden And IsRecharged($Corsairs_ShroudOfDistress) Then
 		UseSkillEx($Corsairs_ShroudOfDistress)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 	EndIf
 	If Not $Hidden And IsRecharged($Corsairs_FeignedNeutrality) Then
 		UseSkillEx($Corsairs_FeignedNeutrality)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 	EndIf
 EndFunc
 
@@ -253,7 +253,7 @@ EndFunc
 Func BackToModdokCreviceOutpost()
 	Info('Porting to Moddok Crevice (city)')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Moddok_Crevice, 10000, 2000)
 EndFunc
@@ -265,7 +265,7 @@ Func WaitForEnemyInRange()
 	Local $target = GetNearestEnemyToAgent($me)
 	While (Not GetIsDead() And GetDistance($target, $me) > $RANGE_SPELLCAST)
 		DefendAgainstCorsairs()
-		RndSleep(500)
+		RandomSleep(500)
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 	WEnd
@@ -276,6 +276,6 @@ EndFunc
 Func WaitForBohseda()
 	While (Not GetIsDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
 		DefendAgainstCorsairs(True)
-		RndSleep(500)
+		RandomSleep(500)
 	WEnd
 EndFunc

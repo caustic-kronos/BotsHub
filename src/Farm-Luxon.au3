@@ -52,7 +52,7 @@ Func LuxonFactionFarm($STATUS)
 	MoveTo(-4268, 11628)
 	MoveTo(-5300, 13300)
 	Move(-5493, 13712)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
 	ResetFailuresCounter()
 	AdlibRegister('TrackGroupStatus', 10000)
@@ -70,32 +70,32 @@ Func LuxonFarmSetup()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
 		Info('Turning in Luxon faction')
 		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
-		RndSleep(200)
+		RandomSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
 
 		If $DonatePoints Then
 			While GetLuxonFaction() >= 5000
 				DonateFaction('Luxon')
-				RndSleep(500)
+				RandomSleep(500)
 			WEnd
 		Else
 			Info('Buying Jade Shards')
 			Dialog(131)
-			RndSleep(500)
+			RandomSleep(500)
 			$temp = Floor(GetLuxonFaction() / 5000)
 			$id = 8388609 + ($temp * 256)
 			Dialog($id)
-			RndSleep(550)
+			RandomSleep(550)
 		EndIf
-		RndSleep(500)
+		RandomSleep(500)
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	EndIf
 
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
-		RndSleep(250)
+		RandomSleep(250)
 		WithdrawGold(100)
-		RndSleep(250)
+		RandomSleep(250)
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
@@ -107,9 +107,9 @@ Func VanquishMountQinkai()
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-8394, -9801)
 	Dialog(0x85)
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x86)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If MoveAggroAndKill(-11400, -9000, 'Yetis') Then Return 1
 	If MoveAggroAndKill(-13500, -10000, 'Yeti 1') Then Return 1

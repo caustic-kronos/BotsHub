@@ -76,7 +76,7 @@ Func RunToShardsOfOrrDungeon()
 	While Not $mapLoaded
 		MoveTo(15827, 13368)
 		Move(15450, 12680)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Arbor_Bay)
 	WEnd
 
@@ -85,9 +85,9 @@ Func RunToShardsOfOrrDungeon()
 	Info('Making way to Shards of Orr')
 	MoveTo(16327, 11607)
 	GoToNPC(GetNearestNPCToCoords(16362, 11627))
-	RndSleep(250)
+	RandomSleep(250)
 	Dialog(0x84)
-	RndSleep(500)
+	RandomSleep(500)
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 11156, -17802, 1250)
 		MoveAggroAndKill(13122, 10437, '1', $SoOAggroRange)
@@ -138,9 +138,9 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	; Doubled to secure
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12056, -17882))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x832407)
-		RndSleep(500)
+		RandomSleep(500)
 	Next
 
 	Info('Get in dungeon to reset quest')
@@ -150,7 +150,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	While Not $mapLoaded
 		MoveTo(9519, -19968)
 		Move(9250, -20200)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_1)
 	WEnd
 
@@ -159,7 +159,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	While Not $mapLoaded
 		MoveTo(-15000, 8600)
 		Move(-15650, 8900)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Arbor_Bay)
 	WEnd
 
@@ -171,18 +171,18 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	; Doubled to secure
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12056, -17882))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x832401)
-		RndSleep(500)
+		RandomSleep(500)
 	Next
 
 	Info('Talk to Shandra again if already had quest')
 	; Doubled to secure
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12056, -17882))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x832405)
-		RndSleep(500)
+		RandomSleep(500)
 	Next
 
 	Info('Get back in')
@@ -192,7 +192,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	While Not $mapLoaded
 		MoveTo(9519, -19968)
 		Move(9250, -20200)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_1)
 	WEnd
 EndFunc
@@ -208,9 +208,9 @@ Func ClearSoOFloor1()
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-11657, 10465))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x84)
-		RndSleep(500)
+		RandomSleep(500)
 
 		MoveTo(-11750, 9925)
 		MoveAggroAndKill(-10486, 9587, '1', $SoOAggroRange)
@@ -241,7 +241,7 @@ Func ClearSoOFloor1()
 		FanFlagHeroes()
 		MoveTo(12500, 14250)
 		MoveTo(11200, 13900)
-		RndSleep(2000)
+		RandomSleep(2000)
 		CancelAllHeroes()
 		; too close to walls
 		MoveAggroAndKill(12500, 14250, '2', $SoOAggroRange)
@@ -267,10 +267,10 @@ Func ClearSoOFloor1()
 		For $i = 1 To 2
 			MoveTo(15041, 5475)
 			TargetNearestItem()
-			RndSleep(500)
+			RandomSleep(500)
 			ActionInteract()
 			ActionInteract()
-			RndSleep(500)
+			RandomSleep(500)
 		Next
 
 		FlagMoveAggroAndKill(18000, 1900, '1', $SoOAggroRange)
@@ -278,7 +278,7 @@ Func ClearSoOFloor1()
 
 		MoveTo(20000, 900)
 		Move(20400, 1300)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_2)
 	WEnd
 	If IsRunFailed() Then Return 1
@@ -295,9 +295,9 @@ Func ClearSoOFloor2()
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x84)
-		RndSleep(500)
+		RandomSleep(500)
 
 		MoveAggroAndKill(-14600, -16650, '1', $SoOAggroRange)
 		MoveAggroAndKill(-16600, -16500, '2', $SoOAggroRange)
@@ -336,7 +336,7 @@ Func ClearSoOFloor2()
 
 		Info('Drop torch')
 		DropBundle()
-		RndSleep(500)
+		RandomSleep(500)
 		Info('Kill group')
 		FlagMoveAggroAndKill(-9358, -12411, '5', $SoOAggroRange)
 		FlagMoveAggroAndKill(-10143, -11136, '6', $SoOAggroRange)
@@ -371,7 +371,7 @@ Func ClearSoOFloor2()
 
 		Info('Drop torch')
 		DropBundle()
-		RndSleep(500)
+		RandomSleep(500)
 
 		FlagMoveAggroAndKill(-6553, -2347, '16', $SoOAggroRange)
 		FlagMoveAggroAndKill(-7733, -2487, '17', $SoOAggroRange)
@@ -400,7 +400,7 @@ Func ClearSoOFloor2()
 		Next
 		MoveTo(-18725, -9171)
 		Move(-19300, -8200)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_3)
 	WEnd
 	If IsRunFailed() Then Return 1
@@ -417,9 +417,9 @@ Func ClearSoOFloor3()
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x84)
-		RndSleep(500)
+		RandomSleep(500)
 
 		FlagMoveAggroAndKill(16337, 16366, '1', $SoOAggroRange)
 		FlagMoveAggroAndKill(16313, 17997, '2', $SoOAggroRange)
@@ -486,7 +486,7 @@ Func ClearSoOFloor3()
 
 		Info('Drop torch')
 		DropBundle()
-		RndSleep(500)
+		RandomSleep(500)
 
 		Info('Keyboss')
 		MoveAggroAndKill(-11600, 2400, '14', $SoOAggroRange)
@@ -541,7 +541,7 @@ Func ClearSoOFloor3()
 		Info('Opening Fendis chest')
 		TargetNearestItem()
 		ActionInteract()
-		RndSleep(2500)
+		RandomSleep(2500)
 		PickUpItems()
 	Next
 	MoveTo(-15700, 17150)
@@ -577,7 +577,7 @@ Func PickUpTorch()
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($i)
-				RndSleep(500)
+				RandomSleep(500)
 				If GetIsDead() Then Return
 				If TimerDiff($deadlock) > 20000 Then
 					Error('Could not get torch at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')

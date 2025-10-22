@@ -90,7 +90,7 @@ Func ToTheSulfurousWastes()
 	While GetMapID() <> $ID_The_Sulfurous_Wastes
 		MoveTo(1527, -4114)
 		Move(1970, -4353)
-		RndSleep(1000)
+		RandomSleep(1000)
 		WaitMapLoading($ID_The_Sulfurous_Wastes, 10000, 4000)
 	WEnd
 EndFunc
@@ -112,17 +112,17 @@ Func FarmTheSulfurousWastes()
 	Info('Taking Sunspear Undead Blessing')
 	GoToNPC(GetNearestNPCToCoords(-660, 16000))
 	Dialog(0x83)
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x85)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	Info('Entering Junundu')
 	MoveTo(-615, 13450)
-	RndSleep(5000)
+	RandomSleep(5000)
 	TargetNearestItem()
-	RndSleep(1500)
+	RandomSleep(1500)
 	ActionInteract()
-	RndSleep(1500)
+	RandomSleep(1500)
 
 	If MultipleMoveToAndAggro('First Undead Group', -800, 12000, -1700, 9800) Then Return 1
 	If MultipleMoveToAndAggro('Second Undead Group', -3000, 10900, -4500, 11500) Then Return 1
@@ -138,9 +138,9 @@ Func FarmTheSulfurousWastes()
 	SpeedTeam()
 	MoveTo(-20600, 7270)
 	GoToNPC(GetNearestNPCToCoords(-20600, 7270))
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x85)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) Then Return 1
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
@@ -155,11 +155,11 @@ Func FarmTheSulfurousWastes()
 	SpeedTeam()
 	MoveTo(-21300, -14000)
 	TargetNearestItem()
-	RndSleep(50)
+	RandomSleep(50)
 	ActionInteract()
-	RndSleep(2000)
+	RandomSleep(2000)
 	DropBundle()
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If MultipleMoveToAndAggro('Sixth Margonite Group', -22800, -13500, -23000, -10600, -21500, -9500) Then Return 1
 	If MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) Then Return 1
@@ -170,13 +170,13 @@ Func FarmTheSulfurousWastes()
 	MoveTo(-16000, -13100)
 	SpeedTeam()
 	MoveTo(-18180, -13540)
-	RndSleep(1000)
+	RandomSleep(1000)
 	TargetNearestItem()
-	RndSleep(250)
+	RandomSleep(250)
 	ActionInteract()
-	RndSleep(3000)
+	RandomSleep(3000)
 	DropBundle()
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If MultipleMoveToAndAggro('Margonite Boss Group', -18000, -13100) Then Return 1
 	Return 0
@@ -240,7 +240,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	$skillCastTimer = TimerInit()
 	While IsRecharged($Junundu_Siege) And TimerDiff($skillCastTimer) < 3000
 		UseSkillEx($Junundu_Siege, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	WEnd
 
 	Local $me = GetMyAgent()
@@ -259,7 +259,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	If DllStructGetData($me, 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If CountPartyDeaths() > 5 Then Return True
 

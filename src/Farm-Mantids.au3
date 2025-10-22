@@ -88,11 +88,11 @@ Func SetupMantidsFarm()
 	Info('Entering Wajjun Bazaar')
 	MoveTo(-22000, 12500)
 	Move(-21750, 14500)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
 	MoveTo(9100, -19600)
 	Move(9100, -20500)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
 	Info('Preparations complete')
 EndFunc
@@ -104,27 +104,27 @@ Func MantidsFarmLoop()
 	Local $target
 	If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)
 	Move(-21750, 14500)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
 	UseHeroSkill(1, $Mantids_VocalWasSogolon)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_Incoming)
 	AdlibRegister('UseFallBack', 8000)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_EnduringHarmony, GetMyAgent())
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_TheyreOnFire)
 	UseHeroSkill(1, $Mantids_MakeHaste, GetMyAgent())
 	UseSkillEx($Mantids_DeadlyParadox)
-	RndSleep(20)
+	RandomSleep(20)
 	UseHeroSkill(1, $Mantids_BladeturnRefrain, GetMyAgent())
 	UseSkillEx($Mantids_ShroudOfDistress)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Mantids_ShadowForm)
-	RndSleep(20)
+	RandomSleep(20)
 	CommandAll(9000, -19500)
 
 	; Aggro the three groups
@@ -143,14 +143,14 @@ Func MantidsFarmLoop()
 	; Monk Balling spot
 	MoveTo(1050, -14950, 0)
 	While Not IsRecharged($Mantids_ShadowForm)
-		RndSleep(500)
+		RandomSleep(500)
 	WEnd
 	UseSkillEx($Mantids_ShadowForm)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Mantids_LightningReflexes)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Mantids_WayOfPerfection)
-	RndSleep(2000)
+	RandomSleep(2000)
 	If GetIsDead() Then
 		BackToNahpuiQuarterOutpost()
 		Return 1
@@ -160,11 +160,11 @@ Func MantidsFarmLoop()
 	$target = GetNearestEnemyToCoords(-450, -14400)
 	While IsRecharged($Mantids_DeathsCharge) And Not GetIsDead()
 		UseSkillEx($Mantids_DeathsCharge, $target)
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 	MoveTo(-230, -14100)
 	MoveTo(-800, -14750)
-	RndSleep(1500)
+	RandomSleep(1500)
 
 	; Killing
 	MoveTo(-230, -14100)
@@ -178,12 +178,12 @@ Func MantidsFarmLoop()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	Local $counter = 0
 	While Not GetIsDead() And $foesCount > 0 And $counter < 3
-		RndSleep(1000)
+		RandomSleep(1000)
 		$counter = $counter + 1
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	WEnd
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If GetIsDead() Then
 		BackToNahpuiQuarterOutpost()
@@ -210,7 +210,7 @@ EndFunc
 Func UseWhirlingDefense()
 	While IsRecharged($Mantids_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($Mantids_WhirlingDefense)
-		RndSleep(50)
+		RandomSleep(50)
 	WEnd
 	AdlibUnRegister()
 EndFunc
@@ -220,7 +220,7 @@ EndFunc
 Func BackToNahpuiQuarterOutpost()
 	Info('Porting to Nahpui Quarter')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
 EndFunc

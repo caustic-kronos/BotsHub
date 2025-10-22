@@ -86,11 +86,11 @@ Func SetupTascaFarm()
 	Info('Entering Tascas Demise')
 	MoveTo(-10000, 18875)
 	Move(-9250, 19850)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Tascas_Demise, 10000, 1000)
 	MoveTo(-9250, 19850)
 	Move(-10000, 18875)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_The_Granite_Citadel, 10000, 1000)
 	Info('Preparations complete')
 EndFunc
@@ -100,7 +100,7 @@ EndFunc
 Func TascaChestFarmLoop($STATUS)
 	MoveTo(-10000, 18875)
 	Move(-9250, 19850)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Tascas_Demise, 10000, 1000)
 
 	Info('Starting chest run')
@@ -183,7 +183,7 @@ Func TascaChestFarmLoop($STATUS)
 		Local $target = GetTargetToEscapeWithDeathsCharge(DllStructGetData($annoyingChest, 'X'), DllStructGetData($annoyingChest, 'Y'))
 		UseSkillEx($Tasca_DeathsCharge, $target)
 		$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
-		RndSleep(1000)
+		RandomSleep(1000)
 	EndIf
 
 	ToggleMapping()
@@ -200,7 +200,7 @@ Func BackToTheGraniteCitadel()
 	Info('Porting to the Granite Citadel')
 	While GetMapID() <> $ID_The_Granite_Citadel
 		Resign()
-		RndSleep(3500)
+		RandomSleep(3500)
 		ReturnToOutpost()
 		WaitMapLoading($ID_The_Granite_Citadel, 10000, 1000)
 	WEnd

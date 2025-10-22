@@ -53,11 +53,11 @@ Func SetupEdenIrisFarm()
 	Info('Setting up farm')
 	MoveTo(-11600, -6250)
 	Move(-11000, -6250)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(-11000, -6250)
 	Move(-11600, -6250)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	Info('Resign preparation complete')
 EndFunc
@@ -65,7 +65,7 @@ EndFunc
 ;~ Farm loop
 Func EdenIrisFarmLoop()
 	Move(-11000, -6250)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	If PickUpIris() Then
 		Return ReturnToAshfordAbbey()
@@ -100,7 +100,7 @@ Func PickUpIris()
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID)
-				RndSleep(500)
+				RandomSleep(500)
 				If GetIsDead() Then Return
 				If TimerDiff($deadlock) > 20000 Then
 					Info('Could not get iris at (' & DllStructGetData($agent, 'X') & ',' & DllStructGetData($agent, 'Y') & ')')
@@ -116,7 +116,7 @@ EndFunc
 ;~ Return to Ashford Abbey
 Func ReturnToAshfordAbbey()
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 EndFunc

@@ -61,31 +61,31 @@ EndFunc
 Func KurzickFarmSetup()
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		Info('Turning in Kurzick faction')
-		RndSleep(200)
+		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
 
 		If $DonatePoints Then
 			While GetKurzickFaction() >= 5000
 				DonateFaction('kurzick')
-				RndSleep(500)
+				RandomSleep(500)
 			WEnd
 		Else
 			Info('Buying Amber fragments')
 			Dialog(131)
-			RndSleep(550)
+			RandomSleep(550)
 			Local $temp = Floor(GetKurzickFaction() / 5000)
 			Local $id = 8388609 + ($temp * 256)
 			Dialog($id)
-			RndSleep(550)
+			RandomSleep(550)
 		EndIf
-		RndSleep(500)
+		RandomSleep(500)
 	EndIf
 
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
-		RndSleep(250)
+		RandomSleep(250)
 		WithdrawGold(100)
-		RndSleep(250)
+		RandomSleep(250)
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
@@ -97,7 +97,7 @@ Func VanquishFerndale()
 	MoveTo(7810, -726)
 	MoveTo(10042, -1173)
 	Move(10446, -1147, 5)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Ferndale, 10000, 2000)
 	ResetFailuresCounter()
 
@@ -110,7 +110,7 @@ Func VanquishFerndale()
 	Dialog(0x84)
 	Sleep(1000)
 	Dialog(0x86)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	If MoveAggroAndKill(-11733, 16729, 'Mantis Group 1') Then Return 1
 	If MoveAggroAndKill(-11942, 18468, 'Mantis Group 2') Then Return 1

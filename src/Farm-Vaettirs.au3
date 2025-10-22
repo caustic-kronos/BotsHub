@@ -73,12 +73,12 @@ Func RunToJagaMoraine()
 	Info('Exiting Outpost')
 	MoveTo(-26000, 16000)
 	Move(-26472, 16217)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Bjora_Marches)
 
-	RndSleep(500)
+	RandomSleep(500)
 	UseConsumable($ID_Birthday_Cupcake)
-	RndSleep(500)
+	RandomSleep(500)
 
 	SetDisplayedTitle($ID_Norn_Title)
 
@@ -143,7 +143,7 @@ Func MoveRunning($X, $Y)
 
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then Move($X, $Y)
-		RndSleep(500)
+		RandomSleep(500)
 		$me = GetMyAgent()
 	WEnd
 	Return True
@@ -152,7 +152,7 @@ EndFunc
 
 ;~ Farm loop
 Func VaettirsFarmLoop()
-	RndSleep(1000)
+	RandomSleep(1000)
 	AggroAllMobs()
 	;KillMobs()
 	VaettirsKillSequence()
@@ -172,10 +172,10 @@ Func GetVaettirsNornBlessing()
 	If $nornTitlePoints < 160000 Then
 		Info('Getting norn title blessing')
 		GoNearestNPCToCoords(13400, -20800)
-		RndSleep(300)
+		RandomSleep(300)
 		Dialog(132)
 	EndIf
-	RndSleep(350)
+	RandomSleep(350)
 EndFunc
 
 
@@ -276,7 +276,7 @@ Func VaettirsKillSequence()
 				If $target <> Null Then UseSkillEx($Skill_Wastrels_Demise, $target)
 			EndIf
 
-			RndSleep(100)
+			RandomSleep(100)
 			VaettirsStayAlive()
 			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 		WEnd
@@ -296,7 +296,7 @@ Func RezoneToJagaMoraine()
 	Local $deadlockTimer = TimerInit()
 	While GetIsDead()
 		Info('Waiting for resurrection')
-		RndSleep(1000)
+		RandomSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$Deadlocked = True
 			Return 1
@@ -333,7 +333,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
 			If $heartOfShadowUsageCount > 6 Then
 				While Not GetIsDead()
-					RndSleep(1000)
+					RandomSleep(1000)
 				WEnd
 				Return False
 			EndIf
@@ -371,7 +371,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 				If TimerDiff($ChatStuckTimer) > 3000 Then
 					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
-					RndSleep(GetPing() + 20)
+					RandomSleep(GetPing() + 20)
 					; we werent stuck, but target broke aggro. select a new one
 					If GetDistance($me, $target) > 1100 Then
 						$target = GetNearestEnemyToAgent($me)
@@ -379,7 +379,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 				EndIf
 			EndIf
 		EndIf
-		RndSleep(100)
+		RandomSleep(100)
 		$me = GetMyAgent()
 	WEnd
 	Return True
@@ -391,7 +391,7 @@ Func VaettirsSleepAndStayAlive($waitingTime)
 	If GetIsDead() Then Return
 	Local $timer = TimerInit()
 	While TimerDiff($timer) < $waitingTime
-		RndSleep(100)
+		RandomSleep(100)
 		If GetIsDead() Then Return
 		VaettirsStayAlive()
 	WEnd

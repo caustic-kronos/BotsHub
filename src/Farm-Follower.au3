@@ -148,7 +148,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 
 	PickUpItems(Null, DefaultShouldPickItem, 1500)
 
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
@@ -233,18 +233,18 @@ Func ParagonRefreshShouts()
 	Info('Refresh shouts on group')
 	Local Static $selfRecast = False
 	MoveToMiddleOfGroupWithTimeout(5000)
-	RndSleep(20)
+	RandomSleep(20)
 	Local $partyMembers = GetPartyInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	If $partyMembers[0] < 4 Then Return
 
 	UseSkillEx($Follower_MaintainSkill8)
-	RndSleep(20)
+	RandomSleep(20)
 	If ($selfRecast Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain)) == 0) And GetEnergy() > 15 Then
 		UseSkillEx($Follower_MaintainSkill1, GetMyAgent())
-		RndSleep(20)
+		RandomSleep(20)
 		If $selfRecast Then
 			UseSkillEx($Follower_MaintainSkill2, GetMyAgent())
-			RndSleep(20)
+			RandomSleep(20)
 			$selfRecast = False
 		Else
 			$selfRecast = True
@@ -260,11 +260,11 @@ Func ParagonRefreshShouts()
 			If DllStructGetData($partyMembers[$i], 'ID') == $ownID Or $i > $partyMembers[0] Then $i = Mod($i, $partyMembers[0]) + 1
 			If GetEnergy() > 15 Then
 				UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
-				RndSleep(20)
+				RandomSleep(20)
 			EndIf
 			If GetEnergy() > 20 Then
 				UseSkillEx($Follower_MaintainSkill2, $partyMembers[$i])
-				RndSleep(20)
+				RandomSleep(20)
 			EndIf
 			$i = Mod($i, $partyMembers[0]) + 1
 		EndIf
@@ -276,12 +276,12 @@ Func ParagonRefreshShouts()
 		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
 		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy() > 15 Then
 		;		UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
-		;		RndSleep(GetPing() + 20)
+		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
 		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Burning_Refrain), $HeroNumber) == 0) And GetEnergy() > 20 Then
 		;		UseSkillEx($Follower_MaintainSkill2, $partyMembers[$i])
-		;		RndSleep(GetPing() + 20)
+		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
 		;Next
@@ -292,17 +292,17 @@ EndFunc
 ;~ Paragon fight function
 Func ParagonFight()
 	If IsRecharged($Follower_MaintainSkill7) Then UseSkillEx($Follower_MaintainSkill7)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If IsRecharged($Follower_MaintainSkill6) Then UseSkillEx($Follower_MaintainSkill6)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If IsRecharged($Follower_MaintainSkill3) Then UseSkillEx($Follower_MaintainSkill3)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If GetSkillbarSkillAdrenaline($Follower_MaintainSkill5) < 200 And IsRecharged($Follower_MaintainSkill4) Then UseSkillEx($Follower_MaintainSkill4)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If GetSkillbarSkillAdrenaline($Follower_MaintainSkill5) == 200 Then UseSkillEx($Follower_MaintainSkill5)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	Attack(GetNearestEnemyToAgent(GetMyAgent()))
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 

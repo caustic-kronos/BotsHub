@@ -68,7 +68,7 @@ Func SetupFroggyFarm()
 	While Not $mapLoaded
 		MoveTo(-9550, -20400)
 		Move(-9451, -19766)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
 	AdlibRegister('TrackGroupStatus', 10000)
@@ -125,9 +125,9 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	; Quest validation doubled to secure bot
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12500, 22648))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x833907)
-		RndSleep(500)
+		RandomSleep(500)
 	Next
 
 	Info('Get in dungeon to reset quest')
@@ -137,7 +137,7 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	While Not $mapLoaded
 		MoveTo(12968, 26219)
 		Move(13097, 26393)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl1)
 	WEnd
 
@@ -146,7 +146,7 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	While Not $mapLoaded
 		MoveTo(14876, 632)
 		Move(14700, 450)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
 
@@ -155,17 +155,17 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	; Quest validation doubled to secure bot
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12500, 22648))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x833901)
-		RndSleep(500)
+		RandomSleep(500)
 	Next
 	Info('Talk to Tekk if already had quest')
 	; Quest pickup doubled to secure bot
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12500, 22648))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x833905)
-		RndSleep(500)
+		RandomSleep(500)
 	Next
 
 	Info('Get back in')
@@ -175,7 +175,7 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	While Not $mapLoaded
 		MoveTo(12968, 26219)
 		Move(13097, 26393)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl1)
 	WEnd
 EndFunc
@@ -196,9 +196,9 @@ Func ClearFroggyFloor1()
 		Info('Getting blessing')
 		MoveTo(19063, 7875)
 		GoToNPC(GetNearestNPCToCoords(19058, 7952))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x84)
-		RndSleep(250)
+		RandomSleep(250)
 
 		MoveAggroAndKill(13080, 7822, 'Moving towards nettles cave', $froggyAggroRange)
 		MoveAggroAndKill(9946, 6963, 'Nettles cave', $froggyAggroRange)
@@ -232,7 +232,7 @@ Func ClearFroggyFloor1()
 	While Not $mapLoaded
 		MoveTo(7171, -17934)
 		Move(7600, -19100)
-		RndSleep(2000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl2)
 	WEnd
 EndFunc
@@ -248,9 +248,9 @@ Func ClearFroggyFloor2()
 		Info('Getting blessing')
 		MoveTo(-11072, -5522)
 		GoToNPC(GetNearestNPCToCoords(-11055, -5533))
-		RndSleep(250)
+		RandomSleep(250)
 		Dialog(0x84)
-		RndSleep(250)
+		RandomSleep(250)
 
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKill(-10931, -4584, 'Moving in cave', $froggyAggroRange)
@@ -284,7 +284,7 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKill(13305, -6475, 'Target in range.', $froggyAggroRange)
 		MoveAggroAndKill(16841, -5619, 'Keyboss', $froggyAggroRange)
 
-		RndSleep(500)
+		RandomSleep(500)
 		PickUpItems()
 
 		Info('Open dungeon door')
@@ -334,8 +334,8 @@ Func ClearFroggyFloor2()
 	For $i = 1 To 2
 		TargetNearestItem()
 		ActionInteract()
-		RndSleep(2500)
+		RandomSleep(2500)
 		PickUpItems()
-		RndSleep(5000)
+		RandomSleep(5000)
 	Next
 EndFunc

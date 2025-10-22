@@ -178,7 +178,7 @@ Func ReadAllItemsData()
 			$output = GetOneItemData($bagIndex, $slot)
 			If $output == '' Then ContinueLoop
 			Info($output)
-			RndSleep(50)
+			RandomSleep(50)
 		Next
 	Next
 EndFunc
@@ -545,7 +545,7 @@ Func MoveItemsOutOfEquipmentBag()
 			If Not DefaultShouldSalvageItem($item) Then ContinueLoop
 			MoveItem($item, $inventoryEmptySlots[2 * $cursor], $inventoryEmptySlots[2 * $cursor + 1])
 			$cursor += 1
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 	Next
 	Return $cursor
@@ -559,7 +559,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
-	RndSleep(500)
+	RandomSleep(500)
 
 	Local $item, $itemID
 	For $bagIndex = 1 To $BAG_NUMBER
@@ -571,7 +571,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 				If $shouldSellItem($item) Then
 					If Not $dryRun Then
 						SellItem($item, DllStructGetData($item, 'Quantity'))
-						RndSleep(GetPing() + 200)
+						RandomSleep(GetPing() + 200)
 					EndIf
 				Else
 					If $dryRun Then Info('Will not sell item at ' & $bagIndex & ':' & $i)
@@ -621,7 +621,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	UseCitySpeedBoost()
 	GoToNPC($materialMerchant)
-	RndSleep(500)
+	RandomSleep(500)
 
 	Local $item, $itemID
 	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
@@ -657,7 +657,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
-	RndSleep(250)
+	RandomSleep(250)
 
 	Local $item, $itemID
 	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
@@ -693,7 +693,7 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
-	RndSleep(250)
+	RandomSleep(250)
 
 	For $i = 1 To $amount
 		TraderRequest($materialModelID)
@@ -720,7 +720,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
-	RndSleep(250)
+	RandomSleep(250)
 
 	Local $IDMaterialToBuy = $materialModelID
 	TraderRequest($IDMaterialToBuy)
@@ -766,7 +766,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			If $itemID <> 0 And $shouldStoreItem($item) Then
 				Debug('Moving ' & $bagIndex & ':' & $i)
 				If Not StoreItemInXunlaiStorage($item) Then Return False
-				RndSleep(50)
+				RandomSleep(50)
 			EndIf
 		Next
 	Next
@@ -785,7 +785,7 @@ Func StoreItemInXunlaiStorage($item)
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		MoveItem($item, 6, $materialStorageLocation)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return True
@@ -799,7 +799,7 @@ Func StoreItemInXunlaiStorage($item)
 			If $existingAmount < 250 Then
 				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
-				RndSleep(GetPing() + 20)
+				RandomSleep(GetPing() + 20)
 				$amount = $amount + $existingAmount - 250
 				If $amount <= 0 Then Return True
 			EndIf
@@ -812,7 +812,7 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	Return True
 EndFunc
 

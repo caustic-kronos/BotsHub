@@ -48,13 +48,13 @@ EndFunc
 
 Func NexusChallengeSetup()
 	;LeaveGroup()
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Norgu)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Xandra)
-	;RndSleep(500)
+	;RandomSleep(500)
 	;AddHero($ID_Master_Of_Whispers)
-	;RndSleep(500)
+	;RandomSleep(500)
 	SwitchMode($ID_NORMAL_MODE)
 EndFunc
 
@@ -67,7 +67,7 @@ Func NexusChallenge()
 	Sleep(1000)
 	Dialog(0x88)
 	Sleep(1000)
-	RndSleep(4000)
+	RandomSleep(4000)
 	WaitMapLoading($ID_Nexus, 10000, 2000)
 	Sleep(50000)
 
