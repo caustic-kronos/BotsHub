@@ -1,7 +1,7 @@
-#CS
-Author: gigi
-Modified by: MrZambix, Night, and more
-#CE
+#CS ===========================================================================
+; Author: gigi
+; Modified by: MrZambix, Night, and more
+#CE ===========================================================================
 
 #include-once
 

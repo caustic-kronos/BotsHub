@@ -1,3 +1,4 @@
+#CS ===========================================================================
 ; AutoIt Wrapper and Logging Framework for Memory Operations
 ; Use to debug GW crashes when using bot
 ; Main operations that can cause crash
@@ -11,6 +12,7 @@
 ; - invalid memory access (ReadProcessMemory, WriteProcessMemory) -> use VirtualQueryEx to confirm memory is readable/writable
 ; - DllStructGetData
 ; - DllStructSetData
+#CE ===========================================================================
 
 #include-once
 
@@ -285,7 +287,7 @@ Func IsValidType($type, $value)
 EndFunc
 
 
-;~ Determine if the provided address is writable by the given process
+;~ Determine if the provided address is readable by the given process
 Func IsMemoryReadable($processHandle, $address, $size)
 	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
 	DllCall($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
@@ -386,8 +388,8 @@ EndFunc
 
 
 
-#CS
-On of these is the cause of the crash
+#CS ===========================================================================
+One of these is the cause of the crash
 	BOOL ReadProcessMemory(
 		HANDLE  hProcess,
 		LPCVOID lpBaseAddress,
@@ -476,4 +478,4 @@ SafeDllCall13($kernelHandle,	'ptr',	'VirtualAllocEx',				'handle',	GetProcessHan
 SafeDllCall13($kernelHandle,	'ptr',	'VirtualAllocEx',				'handle',	GetProcessHandle(),	'ptr',	0,												'ulong_ptr',	$asmInjectionSize,							'dword',	0x1000,								'dword',	64)
 SafeDllCall13($kernelHandle,	'ptr',	'VirtualAllocEx',				'handle',	$processHandle,		'ptr',	0,												'ulong_ptr',	$memorySize,								'dword',	0x1000,								'dword',	0x40)
 
-#CE
+#CE ===========================================================================

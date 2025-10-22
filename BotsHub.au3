@@ -1,3 +1,4 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
@@ -23,6 +24,7 @@
 ; - Always refresh agents before getting data from them (agent = snapshot)
 ;		(so only use $me if you are sure nothing important changes between $me definition and $me usage)
 ; - AdlibRegister('NotifyHangingBot', 120000) can be used to simulate multithreading
+#CE ===========================================================================
 
 #RequireAdmin
 #NoTrayIcon

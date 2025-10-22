@@ -1,3 +1,4 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
 ; Copyright 2025 caustic-kronos
 ;
@@ -11,6 +12,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 
@@ -32,7 +34,7 @@ Global Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF
 	& '- A tactics shield q9 or less with the inscription Sleep now in the fire (+10 armor against fire damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
 	& '- any PCons you wish to use' & @CRLF _
-	& 'This bot doesnt load hero builds - please use your own teambuild'
+	& 'This bot doesn''t load hero builds - please use your own teambuild'
 ; Average duration ~ 3m20
 Global Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
 
@@ -95,7 +97,7 @@ Global Const $Hero_Necro_BiP = 7
 Global Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
 Global Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
 
-#CS
+#CS ===========================================================================
 Character location :	X: -6322.51318359375, Y: -5266.85986328125
 Heroes locations :
 - Me1 dps				X: -6488.185546875, Y: -5084.078125
@@ -120,7 +122,7 @@ Travel :
 last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
 
 DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
-#CE
+#CE ===========================================================================
 
 ;~ Main loop of the Ministerial Commendations farm
 Func MinisterialCommendationsFarm($STATUS)
