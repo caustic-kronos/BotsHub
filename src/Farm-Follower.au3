@@ -38,23 +38,23 @@ Global Const $FollowerInformations = 'This bot makes your character follow the f
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Global $Player_Profession_ID
-Global $Follower_AttackSkill1 = null
-Global $Follower_AttackSkill2 = null
-Global $Follower_AttackSkill3 = null
-Global $Follower_AttackSkill4 = null
-Global $Follower_AttackSkill5 = null
-Global $Follower_AttackSkill6 = null
-Global $Follower_AttackSkill7 = null
-Global $Follower_AttackSkill8 = null
-Global $Follower_MaintainSkill1 = null
-Global $Follower_MaintainSkill2 = null
-Global $Follower_MaintainSkill3 = null
-Global $Follower_MaintainSkill4 = null
-Global $Follower_MaintainSkill5 = null
-Global $Follower_MaintainSkill6 = null
-Global $Follower_MaintainSkill7 = null
-Global $Follower_MaintainSkill8 = null
-Global $Follower_RunningSkill = null
+Global $Follower_AttackSkill1 = Null
+Global $Follower_AttackSkill2 = Null
+Global $Follower_AttackSkill3 = Null
+Global $Follower_AttackSkill4 = Null
+Global $Follower_AttackSkill5 = Null
+Global $Follower_AttackSkill6 = Null
+Global $Follower_AttackSkill7 = Null
+Global $Follower_AttackSkill8 = Null
+Global $Follower_MaintainSkill1 = Null
+Global $Follower_MaintainSkill2 = Null
+Global $Follower_MaintainSkill3 = Null
+Global $Follower_MaintainSkill4 = Null
+Global $Follower_MaintainSkill5 = Null
+Global $Follower_MaintainSkill6 = Null
+Global $Follower_MaintainSkill7 = Null
+Global $Follower_MaintainSkill8 = Null
+Global $Follower_RunningSkill = Null
 
 Global $FOLLOWER_SETUP = False
 Global $playerIDs
@@ -146,7 +146,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	EndIf
 	FindAndOpenChests()
 
-	PickUpItems(null, DefaultShouldPickItem, 1500)
+	PickUpItems(Null, DefaultShouldPickItem, 1500)
 
 	RndSleep(1000)
 EndFunc
@@ -167,7 +167,7 @@ EndFunc
 
 ;~ Default class run method
 Func DefaultRun()
-	If $Follower_RunningSkill <> null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
+	If $Follower_RunningSkill <> Null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
 EndFunc
 
 

@@ -437,8 +437,8 @@ Func IsRubberBanding()
 EndFunc
 
 
-;~ Get nearest foe that is a boss - null if no boss
+;~ Get nearest foe that is a boss - Null if no boss
 Func GetNearestBossFoe()
 	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
-	Return $bossFoes[0] == 1 ? $bossFoes[1] : null
+	Return $bossFoes[0] == 1 ? $bossFoes[1] : Null
 EndFunc

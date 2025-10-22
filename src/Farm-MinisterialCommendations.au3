@@ -306,26 +306,26 @@ Func InitialFight()
 		If IsFail() Then Return
 	WEnd
 
-	Local $deathTimer = null
+	Local $deathTimer = Null
 	; Now there are enemies let's fight until one mob is left
 	While $foesInRange > 1 And TimerDiff($deadlock) < 80000
 		HelpMikuAndCharacter()
 		;RenewSpirits()
 		AttackOrUseSkill(1300, $Skill_I_am_unstoppable, $Skill_Hundred_Blades, $Skill_To_the_limit)
 		If IsFail() Then
-			If $deathTimer = null Then
+			If $deathTimer = Null Then
 				$deathTimer = TimerInit()
 			ElseIf TimerDiff($deathTimer) > 10000 Then
 				Return
 			EndIf
 		Else
 			$foesInRange = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS)
-			If $deathTimer <> null Then $deathTimer = null
+			If $deathTimer <> Null Then $deathTimer = Null
 		EndIf
 	WEnd
 	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for most mobs to be dead')
 
-	PickUpItems(null, PickOnlyImportantItem)
+	PickUpItems(Null, PickOnlyImportantItem)
 
 	; Unflag all heroes
 	CancelAllHeroes()

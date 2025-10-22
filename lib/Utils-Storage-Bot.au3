@@ -910,7 +910,7 @@ Func ShouldKeepWeapon($item)
 	; Keeping unidentified items
 	If Not GetIsIdentified($item) Then Return True
 	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
-	If $Map_UltraRareWeapons[$itemID] <> null Then Return True
+	If $Map_UltraRareWeapons[$itemID] <> Null Then Return True
 	; Keeping items that contain good upgrades
 	If ContainsValuableUpgrades($item) Then Return True
 	; Throwing items without good damage/energy/armor
@@ -950,7 +950,7 @@ Func DefaultShouldSellMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	Return $mapMaterialsKept[$modelId] == null
+	Return $mapMaterialsKept[$modelId] == Null
 EndFunc
 
 
@@ -963,7 +963,7 @@ Func DefaultShouldSellRareMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	Return $mapMaterialsKept[$modelId] == null
+	Return $mapMaterialsKept[$modelId] == Null
 EndFunc
 
 

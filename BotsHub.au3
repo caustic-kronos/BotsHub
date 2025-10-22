@@ -741,7 +741,7 @@ EndFunc
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
 	Local $result = 2
-	Local $timePerRun = UpdateStats(-1, null)
+	Local $timePerRun = UpdateStats(-1, Null)
 	Local $timer = TimerInit()
 	UpdateProgressBar(True, $timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
 	AdlibRegister('UpdateProgressBar', 5000)

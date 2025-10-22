@@ -276,7 +276,7 @@ Func UnblockWhenOpeningChests()
 		If $target == Null Then $target = GetMyAgent()
 		UseSkillEx($Tasca_HeartOfShadow, $target)
 	ElseIf IsRecharged($Tasca_DeathsCharge) Then
-		Local $target = GetFurthestNPCInRangeOfCoords(3, null, null, $RANGE_SPELLCAST)
+		Local $target = GetFurthestNPCInRangeOfCoords(3, Null, Null, $RANGE_SPELLCAST)
 		If $target <> 0 Then UseSkillEx($Tasca_DeathsCharge, $target)
 	EndIf
 EndFunc

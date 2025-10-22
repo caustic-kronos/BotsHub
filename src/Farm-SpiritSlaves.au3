@@ -311,12 +311,12 @@ Func KillSequence()
 		Local $me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 		If $foesCount > 0 Then
-			Local $casterFoe = GetFurthestNPCInRangeOfCoords(3, null, null, $RANGE_AREA + 88)
+			Local $casterFoe = GetFurthestNPCInRangeOfCoords(3, Null, Null, $RANGE_AREA + 88)
 			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance($me, $casterFoe)
 			If $foesCount < 5 And GetDistance($me, $casterFoe) > $RANGE_ADJACENT Then
 				Debug('One foe is distant')
-				If $casterFoesMap[$casterFoeId] == null Then
+				If $casterFoesMap[$casterFoeId] == Null Then
 					$casterFoesMap[$casterFoeId] = 0
 				ElseIf $casterFoesMap[$casterFoeId] == 2 Then
 					Debug('Moving to fight that foe')

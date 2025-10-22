@@ -720,7 +720,7 @@ EndFunc
 
 ;~ Retrieves the value associated with the specified key (internal use only)
 Func GetValue($key)
-	Return $labelsMap[$key] <> null ? $labelsMap[$key] : -1
+	Return $labelsMap[$key] <> Null ? $labelsMap[$key] : -1
 EndFunc
 
 ;~ Sets the value for the specified key (internal use only)
@@ -1646,7 +1646,7 @@ EndFunc
 
 
 ;~ Move to a location and wait until you reach it.
-Func MoveTo($X, $Y, $random = 50, $doWhileRunning = null)
+Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 	Local $blockedCount = 0
 	Local $me
 	Local $mapID = GetMapID(), $oldMapID
@@ -1662,7 +1662,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = null)
 		$oldMapID = $mapID
 		$mapID = GetMapID()
 		If $mapID <> $oldMapID Then ExitLoop
-		If $doWhileRunning <> null Then $doWhileRunning()
+		If $doWhileRunning <> Null Then $doWhileRunning()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
 			$blockedCount += 1
 			$destinationX = $X + Random(-$random, $random)
@@ -4062,10 +4062,10 @@ EndFunc
 #Region Other Functions
 #Region Misc
 ;~ Sleep a random amount of time.
-Func RndSleep($baseAmount, $randomFactor = null)
+Func RndSleep($baseAmount, $randomFactor = Null)
 	Local $randomAmount
 	Select
-		Case $randomFactor <> null
+		Case $randomFactor <> Null
 			$randomAmount = $baseAmount * $randomFactor
 		Case $baseAmount >= 15000
 			$randomAmount = $baseAmount * 0.025

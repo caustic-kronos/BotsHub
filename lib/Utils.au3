@@ -153,7 +153,7 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
+Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
 
 	Local $item
@@ -170,7 +170,7 @@ Func PickUpItems($defendFunction = null, $ShouldPickItem = DefaultShouldPickItem
 		$item = GetItemByAgentID($agentID)
 
 		If ($ShouldPickItem($item)) Then
-			If $defendFunction <> null Then $defendFunction()
+			If $defendFunction <> Null Then $defendFunction()
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
@@ -282,7 +282,7 @@ Func FindChest($range = $RANGE_EARSHOT)
 	Local $chestCount = 0
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
-		If $Map_Chests_IDs[$gadgetID] == null Then ContinueLoop
+		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
 
 		If $chestsMap[DllStructGetData($agents[$i], 'ID')] <> 2 Then
@@ -294,7 +294,7 @@ EndFunc
 
 
 ;~ Find and open chests in the given range (earshot by default)
-Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = null, $BlockedFunction = null)
+Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $BlockedFunction = Null)
 	If GetIsDead() Then Return
 	If FindInInventory($ID_Lockpick)[0] == 0 Then Return
 	Local $gadgetID
@@ -302,7 +302,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = null, $Blocked
 	Local $openedChest = False
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
-		If $Map_Chests_IDs[$gadgetID] == null Then ContinueLoop
+		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
 
 		If $chestsMap[DllStructGetData($agents[$i], 'ID')] <> 2 Then
@@ -840,7 +840,7 @@ Func GetInventoryItemCount($itemID)
 		For $j = 1 To $bagSize
 			$item = GetItemBySlot($bag, $j)
 
-			If $Map_Dyes[$itemID] <> null Then
+			If $Map_Dyes[$itemID] <> Null Then
 				If (DllStructGetData($item, 'ModelID') == $ID_Dyes) And (DllStructGetData($item, 'DyeColor') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
 			Else
 				If DllStructGetData($item, 'ModelID') == $itemID Then $amountItem += DllStructGetData($item, 'Quantity')
@@ -1210,7 +1210,7 @@ EndFunc
 
 ;~ Return True if the item is a kit or a lockpick - used in Storage Bot to not sell those
 Func IsGeneralItem($itemID)
-	Return $Map_General_Items[$itemID] <> null
+	Return $Map_General_Items[$itemID] <> Null
 EndFunc
 
 
@@ -1240,19 +1240,19 @@ EndFunc
 
 ;~ Returns true if the item is a material, basic or rare
 Func IsMaterial($item)
-	Return DllStructGetData($item, 'Type') == 11 And $Map_All_Materials[DllStructGetData($item, 'ModelID')] <> null
+	Return DllStructGetData($item, 'Type') == 11 And $Map_All_Materials[DllStructGetData($item, 'ModelID')] <> Null
 EndFunc
 
 
 ;~ Returns true if the item is a basic material
 Func IsBasicMaterial($item)
-	Return DllStructGetData($item, 'Type') == 11 And $Map_Basic_Materials[DllStructGetData($item, 'ModelID')] <> null
+	Return DllStructGetData($item, 'Type') == 11 And $Map_Basic_Materials[DllStructGetData($item, 'ModelID')] <> Null
 EndFunc
 
 
 ;~ Returns true if the item is a rare material
 Func IsRareMaterial($item)
-	Return DllStructGetData($item, 'Type') == 11 And $Map_Rare_Materials[DllStructGetData($item, 'ModelID')] <> null
+	Return DllStructGetData($item, 'Type') == 11 And $Map_Rare_Materials[DllStructGetData($item, 'ModelID')] <> Null
 EndFunc
 
 
@@ -1264,109 +1264,109 @@ EndFunc
 
 ;~ Returns true if the item is an alcohol
 Func IsAlcohol($itemID)
-	Return $Map_Alcohols[$itemID] <> null
+	Return $Map_Alcohols[$itemID] <> Null
 EndFunc
 
 
 ;~ Returns true if the item is a festive item
 Func IsFestive($itemID)
-	Return $Map_Festive[$itemID] <> null
+	Return $Map_Festive[$itemID] <> Null
 EndFunc
 
 
 ;~ Returns true if the item is a sweet
 Func IsTownSweet($itemID)
-	Return $Map_Town_Sweets[$itemID] <> null
+	Return $Map_Town_Sweets[$itemID] <> Null
 EndFunc
 
 
 ;~ Returns true if the item is a PCon
 Func IsPCon($itemID)
-	Return $Map_Sweet_Pcons[$itemID] <> null
+	Return $Map_Sweet_Pcons[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a sweet removing doubl... death penalty
 Func IsDPRemovalSweet($itemID)
-	Return $Map_DPRemoval_Sweets[$itemID] <> null
+	Return $Map_DPRemoval_Sweets[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a special drop
 Func IsSpecialDrop($itemID)
-	Return $Map_Special_Drops[$itemID] <> null
+	Return $Map_Special_Drops[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a summoning stone
 Func IsSummoningStone($itemID)
-	Return $Map_Summoning_Stones[$itemID] <> null
+	Return $Map_Summoning_Stones[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a party tonic
 Func IsPartyTonic($itemID)
-	Return $Map_Party_Tonics[$itemID] <> null
+	Return $Map_Party_Tonics[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is an everlasting tonic
 Func IsEverlastingTonic($itemID)
-	Return $Map_EL_Tonics[$itemID] <> null
+	Return $Map_EL_Tonics[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a trophy
 Func IsTrophy($itemID)
-	Return $Map_Trophies[$itemID] <> null Or $Map_Reward_Trophies[$itemID] <> null
+	Return $Map_Trophies[$itemID] <> Null Or $Map_Reward_Trophies[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is an armor
 Func IsArmor($item)
-	Return $Map_Armor_Types[DllStructGetData($item, 'type')] <> null
+	Return $Map_Armor_Types[DllStructGetData($item, 'type')] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a weapon
 Func IsWeapon($item)
-	Return $Map_Weapon_Types[DllStructGetData($item, 'type')] <> null
+	Return $Map_Weapon_Types[DllStructGetData($item, 'type')] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a weapon mod
 Func IsWeaponMod($itemID)
-	Return $Map_Weapon_Mods[$itemID] <> null
+	Return $Map_Weapon_Mods[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a tome
 Func IsTome($itemID)
-	Return $Map_Tomes[$itemID] <> null
+	Return $Map_Tomes[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a gold scroll
 Func IsGoldScroll($itemID)
-	Return $Map_Gold_Scrolls[$itemID] <> null
+	Return $Map_Gold_Scrolls[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a blue scroll
 Func IsBlueScroll($itemID)
-	Return $Map_Blue_Scrolls[$itemID] <> null
+	Return $Map_Blue_Scrolls[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a key
 Func IsKey($itemID)
-	Return $Map_Keys[$itemID] <> null
+	Return $Map_Keys[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a map piece
 Func IsMapPiece($itemID)
-	Return $Map_Map_Pieces[$itemID] <> null
+	Return $Map_Map_Pieces[$itemID] <> Null
 EndFunc
 
 
@@ -1472,7 +1472,7 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
 	Local $agents = GetAgentArray(0x200)
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
-		If $Map_Chests_IDs[$gadgetID] == null Then ContinueLoop
+		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If ComputeDistance($X, $Y, DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y')) > $range Then ContinueLoop
 		Local $chestID = DllStructGetData($agents[$i], 'ID')
 		If $chestsMap[$chestID] == Null Or $chestsMap[$chestID] == 0 Or ($flagged And $chestsMap[$chestID] == 1) Then
@@ -1484,9 +1484,9 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
 EndFunc
 
 
-;~ Return the value if it's not null else the defaultValue
+;~ Return the value if it's not Null else the defaultValue
 Func GetOrDefault($value, $defaultValue)
-	Return ($value == null) ? $defaultValue : $value
+	Return ($value == Null) ? $defaultValue : $value
 EndFunc
 
 
@@ -1501,7 +1501,7 @@ EndFunc
 
 ;~ Add to a Map of arrays (create key and new array if unexisting, add to existant array if existing)
 Func AppendArrayMap($map, $key, $element)
-	If ($map[$key] == null) Then
+	If ($map[$key] == Null) Then
 		Local $newArray[1] = [$element]
 		$map[$key] = $newArray
 	Else
@@ -1681,25 +1681,25 @@ EndFunc
 
 #Region Counting NPCs
 ;~ Count foes in range of the given agent
-Func CountFoesInRangeOfAgent($agent, $range = 0, $condition = null)
+Func CountFoesInRangeOfAgent($agent, $range = 0, $condition = Null)
 	Return CountNPCsInRangeOfAgent($agent, 3, $range, $condition)
 EndFunc
 
 
 ;~ Count foes in range of the given coordinates
-Func CountFoesInRangeOfCoords($xCoord = null, $yCoord = null, $range = 0, $condition = null)
+Func CountFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = 0, $condition = Null)
 	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
 EndFunc
 
 
 ;~ Count allies in range of the given coordinates
-Func CountAlliesInRangeOfCoords($xCoord = null, $yCoord = null, $range = 0, $condition = null)
+Func CountAlliesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = 0, $condition = Null)
 	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 6, $range, $condition)
 EndFunc
 
 
 ;~ Count NPCs in range of the given agent
-Func CountNPCsInRangeOfAgent($agent, $npcAllegiance = null, $range = 0, $condition = null)
+Func CountNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = 0, $condition = Null)
 	Return CountNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $npcAllegiance, $range, $condition)
 EndFunc
 #EndRegion Counting NPCs
@@ -1724,19 +1724,19 @@ EndFunc
 
 
 ;~ Get foes in range of the given agent
-Func GetFoesInRangeOfAgent($agent, $range = 0, $condition = null)
+Func GetFoesInRangeOfAgent($agent, $range = 0, $condition = Null)
 	Return GetNPCsInRangeOfAgent($agent, 3, $range, $condition)
 EndFunc
 
 
 ;~ Get foes in range of the given coordinates
-Func GetFoesInRangeOfCoords($xCoord = null, $yCoord = null, $range = 0, $condition = null)
+Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = 0, $condition = Null)
 	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
 EndFunc
 
 
 ;~ Get NPCs in range of the given agent
-Func GetNPCsInRangeOfAgent($agent, $npcAllegiance = null, $range = 0, $condition = null)
+Func GetNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = 0, $condition = Null)
 	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $npcAllegiance, $range, $condition)
 EndFunc
 
@@ -1755,7 +1755,7 @@ EndFunc
 
 
 ;~ Count NPCs in range of the given coordinates
-Func CountNPCsInRangeOfCoords($coordX = null, $coordY = null, $npcAllegiance = null, $range = 0, $condition = null)
+Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = 0, $condition = Null)
 	;Return GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition)[0]
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
@@ -1763,19 +1763,19 @@ Func CountNPCsInRangeOfCoords($coordX = null, $coordY = null, $npcAllegiance = n
 
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
 		If $range > 0 Then
-			If $coordX == null Or $coordY == null Then
+			If $coordX == Null Or $coordY == Null Then
 				Local $me = GetMyAgent()
 				$coordX = DllStructGetData($me, 'X')
 				$coordY = DllStructGetData($me, 'Y')
 			EndIf
 			If ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
 		EndIf
-		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 		$count += 1
 	Next
 
@@ -1784,26 +1784,26 @@ EndFunc
 
 
 ;~ Get NPCs in range of the given coordinates
-Func GetNPCsInRangeOfCoords($coordX = null, $coordY = null, $npcAllegiance = null, $range = 0, $condition = null)
+Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = 0, $condition = Null)
 	Local $agents = GetAgentArray(0xDB)
 	Local $curAgent
 	Local $returnAgents[1] = [0]
 
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
 		If $range > 0 Then
-			If $coordX == null Or $coordY == null Then
+			If $coordX == Null Or $coordY == Null Then
 				Local $me = GetMyAgent()
 				$coordX = DllStructGetData($me, 'X')
 				$coordY = DllStructGetData($me, 'Y')
 			EndIf
 			If ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
 		EndIf
-		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 
 		_ArrayAdd($returnAgents, $curAgent)
 		$returnAgents[0] += 1
@@ -1813,24 +1813,24 @@ EndFunc
 
 
 ;~ Get NPCs in range of the given coordinates
-Func GetNearestNPCInRangeOfCoords($coordX = null, $coordY = null, $npcAllegiance = null, $range = 0, $condition = null)
+Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = 0, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $smallestDistance = 99999
 	Local $returnAgent
 	Local $curAgent
 
-	If $coordX == null Or $coordY == null Then
+	If $coordX == Null Or $coordY == Null Then
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
-		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
+		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
 		Local $curDistance = GetDistance($me, $curAgent)
 		If $curDistance < $smallestDistance Then
@@ -1844,24 +1844,24 @@ EndFunc
 
 
 ;~ Get NPCs in range of the given coordinates
-Func GetFurthestNPCInRangeOfCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = 0, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $furthestDistance = 0
 	Local $returnAgent
 	Local $curAgent
 
-	If $coordX == null Or $coordY == null Then
+	If $coordX == Null Or $coordY == Null Then
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
-		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
+		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
 		Local $curDistance = GetDistance($me, $curAgent)
 		If $curDistance > $furthestDistance Then
@@ -1876,24 +1876,24 @@ EndFunc
 
 ;~ TODO: check that this method is still better, I improved the original
 ;~ Get NPCs in range of the given coordinates
-Func BetterGetNearestNPCToCoords($npcAllegiance = null, $coordX = null, $coordY = null, $range = 0, $condition = null)
+Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = 0, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $smallestDistance = 99999
 	Local $returnAgent
 	Local $curAgent
 
-	If $coordX == null Or $coordY == null Then
+	If $coordX == Null Or $coordY == Null Then
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
 	For $i = 1 To $agents[0]
 		$curAgent = $agents[$i]
-		If $npcAllegiance <> null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> null Then ContinueLoop	;It's a spirit
-		If $condition <> null And $condition($curAgent) == False Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
+		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 		Local $curDistance = ComputeDistance(DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y'), $coordX, $coordY)
 		If $range > 0 And $curDistance > $range Then ContinueLoop
 		If $curDistance < $smallestDistance Then
@@ -2111,7 +2111,7 @@ EndFunc
 
 ;~ Use one of the skill mentionned if available, else attack
 ;~ Credits to Shiva for auto-attack improvement
-Func AttackOrUseSkill($attackSleep, $skill = null, $skill2 = null, $skill3 = null, $skill4 = null, $skill5 = null, $skill6 = null, $skill7 = null, $skill8 = null)
+Func AttackOrUseSkill($attackSleep, $skill = Null, $skill2 = Null, $skill3 = Null, $skill4 = Null, $skill5 = Null, $skill6 = Null, $skill7 = Null, $skill8 = Null)
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
 
@@ -2120,28 +2120,28 @@ Func AttackOrUseSkill($attackSleep, $skill = null, $skill2 = null, $skill3 = nul
 	; Small delay to ensure attack starts
 	RndSleep(20)
 
-	If ($skill <> null And IsRecharged($skill)) Then
+	If ($skill <> Null And IsRecharged($skill)) Then
 		UseSkillEx($skill, $target)
 		RndSleep(20)
-	ElseIf ($skill2 <> null And IsRecharged($skill2)) Then
+	ElseIf ($skill2 <> Null And IsRecharged($skill2)) Then
 		UseSkillEx($skill2, $target)
 		RndSleep(20)
-	ElseIf ($skill3 <> null And IsRecharged($skill3)) Then
+	ElseIf ($skill3 <> Null And IsRecharged($skill3)) Then
 		UseSkillEx($skill3, $target)
 		RndSleep(20)
-	ElseIf ($skill4 <> null And IsRecharged($skill4)) Then
+	ElseIf ($skill4 <> Null And IsRecharged($skill4)) Then
 		UseSkillEx($skill4, $target)
 		RndSleep(20)
-	ElseIf ($skill5 <> null And IsRecharged($skill5)) Then
+	ElseIf ($skill5 <> Null And IsRecharged($skill5)) Then
 		UseSkillEx($skill5, $target)
 		RndSleep(20)
-	ElseIf ($skill6 <> null And IsRecharged($skill6)) Then
+	ElseIf ($skill6 <> Null And IsRecharged($skill6)) Then
 		UseSkillEx($skill6, $target)
 		RndSleep(20)
-	ElseIf ($skill7 <> null And IsRecharged($skill7)) Then
+	ElseIf ($skill7 <> Null And IsRecharged($skill7)) Then
 		UseSkillEx($skill7, $target)
 		RndSleep(20)
-	ElseIf ($skill8 <> null And IsRecharged($skill8)) Then
+	ElseIf ($skill8 <> Null And IsRecharged($skill8)) Then
 		UseSkillEx($skill8, $target)
 		RndSleep(20)
 	Else
@@ -2202,7 +2202,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
 			DefaultKillFoes($flagHeroes)
-			PickUpItems(null, DefaultShouldPickItem, $range)
+			PickUpItems(Null, DefaultShouldPickItem, $range)
 			; If one member of group is dead, go to rez him before proceeding
 		EndIf
 		$coordsX = DllStructGetData($me, 'X')
@@ -2262,7 +2262,7 @@ Func DefaultKillFoes($flagHeroesOnFight = False)
 			RndSleep(1000)
 		EndIf
 		$skillNumber = 1
-		PickUpItems(null, DefaultShouldPickItem, $RANGE_AREA)
+		PickUpItems(Null, DefaultShouldPickItem, $RANGE_AREA)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 200)
 	WEnd
@@ -2301,7 +2301,7 @@ Func PriorityKillFoes($lootInFights = True)
 			EndIf
 			$skillNumber = 1
 		EndIf
-		If $lootInFights Then PickUpItems(null, DefaultShouldPickItem, $RANGE_SPELLCAST + 250)
+		If $lootInFights Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST + 250)
 		RndSleep(20)
 	WEnd
 	RndSleep(1000)

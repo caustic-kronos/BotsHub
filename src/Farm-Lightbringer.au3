@@ -199,9 +199,9 @@ EndFunc
 
 
 ;~ Move and aggro mobs at several locations
-Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = null, $location1y = null, $location2x = null, $location2y = null, $location3x = null, $location3y = null, $location4x = null, $location4y = null)
+Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = Null, $location1y = Null, $location2x = Null, $location2y = Null, $location3x = Null, $location3y = Null, $location4x = Null, $location4y = Null)
 	For $i = 0 To 4
-		If (Eval('location' & $i & 'x') == null) Then ExitLoop
+		If (Eval('location' & $i & 'x') == Null) Then ExitLoop
 		SpeedTeam()
 		If MoveToAndAggro($foesGroup, Eval('location' & $i & 'x'), Eval('location' & $i & 'y')) Then Return True
 	Next
