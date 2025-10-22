@@ -874,7 +874,7 @@ Func ResetBotsSetups()
 	$SPIRIT_SLAVES_FARM_SETUP				= False
 	$TASCA_FARM_SETUP						= False
 	$LIGHTBRINGER_FARM2_SETUP				= False
-	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
+	; Those don't need to be reset - party didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$FOLLOWER_SETUP						= False
 	;$LIGHTBRINGER_FARM_SETUP				= False

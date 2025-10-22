@@ -68,7 +68,7 @@ EndFunc
 Func SetupDragonMossFarm()
 	Info('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
+	LeaveParty()
 	LoadSkillTemplate($RADragonMossFarmerSkillbar)
 	Info('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)

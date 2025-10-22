@@ -1907,7 +1907,7 @@ EndFunc
 #EndRegion NPCs
 
 
-#Region Quests and group status
+#Region Quests and party status
 ;~ Take a quest or a reward - for reward, expectedState should be 0 once reward taken
 Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
 	Local $questState = 999
@@ -1924,44 +1924,44 @@ EndFunc
 
 ;~ Did run fail ?
 Func IsRunFailed()
-	If ($groupFailuresCount > 5) Then
-		Notice('Group wiped ' & $groupFailuresCount & ' times, run is considered failed.')
+	If ($partyFailuresCount > 5) Then
+		Notice('Party wiped ' & $partyFailuresCount & ' times, run is considered failed.')
 		Return True
 	EndIf
 	Return False
 EndFunc
 
 
-;~ Is group alive right now
-Func IsGroupCurrentlyAlive()
-	Return $groupIsAlive
+;~ Is party alive right now
+Func IsPartyCurrentlyAlive()
+	Return $partyIsAlive
 EndFunc
 
 
-Global $groupFailuresCount = 0
-Global $groupIsAlive = True
+Global $partyFailuresCount = 0
+Global $partyIsAlive = True
 
 
 ;~ Reset the failures counter
 Func ResetFailuresCounter()
-	$groupFailuresCount = 0
-	$groupIsAlive = True
+	$partyFailuresCount = 0
+	$partyIsAlive = True
 EndFunc
 
 
-;~ Updates the groupIsAlive variable, this function is run on a fixed timer (10s)
-Func TrackGroupStatus()
+;~ Updates the partyIsAlive variable, this function is run on a fixed timer (10s)
+Func TrackPartyStatus()
 	If (Not HasRezMemberAlive()) Then
-		$groupFailuresCount += 1
-		Notice('Group wiped for the ' & $groupFailuresCount & ' time')
-		$groupIsAlive = False
+		$partyFailuresCount += 1
+		Notice('Party wiped for the ' & $partyFailuresCount & ' time')
+		$partyIsAlive = False
 	Else
-		$groupIsAlive = True
+		$partyIsAlive = True
 	EndIf
 EndFunc
 
 
-;~ Returns True if the group is alive
+;~ Returns True if the party is alive
 Func HasRezMemberAlive()
 	Local Static $heroesWithRez = FindHeroesWithRez()
 	For $i In $heroesWithRez
@@ -1972,7 +1972,7 @@ Func HasRezMemberAlive()
 EndFunc
 
 
-;~ Return an array of the player and the members of the group with a rez
+;~ Return an array of the player and the members of the party with a rez
 Func FindHeroesWithRez()
 	Local $heroes[7]
 	Local $count = 0
@@ -2026,7 +2026,7 @@ Func IsRezSkill($skill)
 	EndSwitch
 	Return False
 EndFunc
-#EndRegion Quests and group status
+#EndRegion Quests and party status
 
 
 #Region Actions
@@ -2175,7 +2175,7 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If Not $groupIsAlive Then Return True
+	If Not $partyIsAlive Then Return True
 
 	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
 	Local $flagHeroes = ($options <> Null And $options['flagHeroesOnFight'] <> Null) ? $options['flagHeroesOnFight'] : False
@@ -2194,8 +2194,8 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 	Local $oldCoordsY
 	Local $target
 	Local $chest
-	; GroupIsAlive is caller's responsibility to fill
-	While $groupIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
+	; PartyIsAlive is caller's responsibility to fill
+	While $partyIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldCoordsX = $coordsX
 		$oldCoordsY = $coordsY
 		$me = GetMyAgent()
@@ -2203,7 +2203,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
 			DefaultKillFoes($flagHeroes)
 			PickUpItems(Null, DefaultShouldPickItem, $range)
-			; If one member of group is dead, go to rez him before proceeding
+			; If one member of party is dead, go to rez him before proceeding
 		EndIf
 		$coordsX = DllStructGetData($me, 'X')
 		$coordsY = DllStructGetData($me, 'Y')
@@ -2226,7 +2226,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 			EndIf
 		EndIf
 	WEnd
-	Return Not $groupIsAlive
+	Return Not $partyIsAlive
 EndFunc
 
 
@@ -2237,7 +2237,7 @@ Func DefaultKillFoes($flagHeroesOnFight = False)
 	GetAlmostInRangeOfAgent($target)
 	If $flagHeroesOnFight Then FanFlagHeroes()
 
-	While $groupIsAlive And $foesCount > 0
+	While $partyIsAlive And $foesCount > 0
 		$target = GetAgentById($targetId)
 		If ($target == Null Or GetIsDead($target)) Then
 			$target = GetNearestEnemyToAgent($me)
@@ -2278,7 +2278,7 @@ Func PriorityKillFoes($lootInFights = True)
 	GetAlmostInRangeOfAgent($target)
 	ChangeTarget($target)
 	; At first we target the closest mob to have the surprise effect
-	While $groupIsAlive And $target <> Null
+	While $partyIsAlive And $target <> Null
 		If GetCurrentTarget() == Null Then
 			$target = GetHighestPriorityFoe(GetMyAgent(), $RANGE_SPIRIT)
 			ChangeTarget($target)

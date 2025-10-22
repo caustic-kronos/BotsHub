@@ -66,7 +66,7 @@ Func RunToJagaMoraine()
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
+	LeaveParty()
 
 	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
 

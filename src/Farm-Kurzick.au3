@@ -47,9 +47,9 @@ Func KurzickFactionFarm($STATUS)
 	KurzickFarmSetup()
 
 	If $STATUS <> 'RUNNING' Then Return 2
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishFerndale()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2

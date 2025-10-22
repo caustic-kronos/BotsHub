@@ -31,7 +31,7 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
+Global Const $FollowerInformations = 'This bot makes your character follow the first other player in party.' & @CRLF _
 	& 'It will attack everything that gets in range.' & @CRLF _
 	& 'It will loot all items it can loot.' & @CRLF _
 	& 'It will also loot all chests in range.'
@@ -132,7 +132,7 @@ EndFunc
 
 ;~ Follower loop
 Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
-	Local Static $firstPlayer = GetFirstPlayerOfGroup()
+	Local Static $firstPlayer = GetFirstPlayerOfParty()
 	$RunFunction()
 	GoPlayer($firstPlayer)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
@@ -228,11 +228,11 @@ Func ParagonSetup()
 EndFunc
 
 
-;~ Paragon function to cast shouts on all group members
+;~ Paragon function to cast shouts on all party members
 Func ParagonRefreshShouts()
-	Info('Refresh shouts on group')
+	Info('Refresh shouts on party')
 	Local Static $selfRecast = False
-	MoveToMiddleOfGroupWithTimeout(5000)
+	MoveToMiddleOfPartyWithTimeout(5000)
 	RandomSleep(20)
 	Local $partyMembers = GetPartyInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	If $partyMembers[0] < 4 Then Return
@@ -306,8 +306,8 @@ Func ParagonFight()
 EndFunc
 
 
-;~ Get first player of the group other than yourself
-Func GetFirstPlayerOfGroup()
+;~ Get first player of the party other than yourself
+Func GetFirstPlayerOfParty()
 	Local $partyMembers = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 	Local $firstPlayer
@@ -323,8 +323,8 @@ Func GetFirstPlayerOfGroup()
 EndFunc
 
 
-;~ Returns the coordinates in the middle of the group
-Func FindMiddleOfGroup()
+;~ Returns the coordinates in the middle of the party
+Func FindMiddleOfParty()
 	Local $position[2] = [0, 0]
 	Local $partyMembers = GetParty()
 	Local $partySize = 0
@@ -344,18 +344,18 @@ EndFunc
 
 
 ;~ Move to a location in a limited time
-Func MoveToMiddleOfGroupWithTimeout($timeOut)
+Func MoveToMiddleOfPartyWithTimeout($timeOut)
 	Local $me = GetMyAgent()
 	Local $oldMapID, $mapID = GetMapID()
 	Local $timer = TimerInit()
-	Local $position = FindMiddleOfGroup()
+	Local $position = FindMiddleOfParty()
 	Move($position[0], $position[1], 0)
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
 		If GetIsDead() Then ExitLoop
 		$oldMapID = $mapID
 		$mapID = GetMapID()
 		If $mapID <> $oldMapID Then ExitLoop
-		$position = FindMiddleOfGroup()
+		$position = FindMiddleOfParty()
 		Sleep(200)
 		$me = GetMyAgent()
 	WEnd

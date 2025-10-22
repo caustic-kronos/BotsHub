@@ -64,7 +64,7 @@ EndFunc
 Func LightbringerFarmSetup()
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_Melonni)
 	;AddHero($ID_MOX)
 	;AddHero($ID_Kahmu)
@@ -96,7 +96,7 @@ Func ToTheSulfurousWastes()
 EndFunc
 
 
-;~ Count number of dead members of the group
+;~ Count number of dead members of the party
 Func CountPartyDeaths()
 	Local $partyDeaths = 0
 	For $i = 1 to 7
@@ -183,7 +183,7 @@ Func FarmTheSulfurousWastes()
 EndFunc
 
 
-;~ All team uses Junundu_Tunnel to speed group up
+;~ All team uses Junundu_Tunnel to speed party up
 Func SpeedTeam()
 	If (IsRecharged($Junundu_Tunnel)) Then
 		UseSkillEx($Junundu_Tunnel)
@@ -210,7 +210,7 @@ EndFunc
 
 
 ;~ Main method for moving around and aggroing/killing mobs
-;~ Return True if the group is dead, False if not
+;~ Return True if the party is dead, False if not
 Func MoveToAndAggro($foesGroup, $x, $y)
 	Info('Killing ' & $foesGroup)
 	Local $range = 1650

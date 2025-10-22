@@ -55,9 +55,9 @@ Func LuxonFactionFarm($STATUS)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
 	ResetFailuresCounter()
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishMountQinkai()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2

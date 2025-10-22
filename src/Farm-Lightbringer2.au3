@@ -40,16 +40,16 @@ Func LightbringerFarm2($STATUS)
 	EndIf
 	If Not $LIGHTBRINGER_FARM2_SETUP Then LightbringerSetup()
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = Lightbringer()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2
 	Return $result
 EndFunc
 
 Func LightbringerSetup()
-	;LeaveGroup()
+	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
 	;RandomSleep(500)

@@ -40,14 +40,14 @@ Func NexusChallengeFarm($STATUS)
 
 	NexusChallengeSetup()
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 	Return $result
 EndFunc
 
 Func NexusChallengeSetup()
-	;LeaveGroup()
+	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
 	;RandomSleep(500)

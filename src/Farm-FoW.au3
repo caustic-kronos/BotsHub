@@ -72,7 +72,7 @@ EndFunc
 ;~ FoW farm setup
 Func SetupFoWFarm()
 	Info('Setting up farm')
-	; Make group
+	; Make party
 	If IsHardmodeEnabled() Then
 		SwitchMode($ID_HARD_MODE)
 	Else
@@ -85,7 +85,7 @@ EndFunc
 ;~ Farm loop
 Func FoWFarmLoop()
 	ResetFailuresCounter()
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	If IsHardmodeEnabled() Then UseConset()
 
 	If TowerOfCourage() Then Return 1
@@ -104,7 +104,7 @@ Func FoWFarmLoop()
 	If GriffonRun() Then Return 1
 	If TempleLoot() Then Return 1
 
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 	Return 0
 EndFunc
 

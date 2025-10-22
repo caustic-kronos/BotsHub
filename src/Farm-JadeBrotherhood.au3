@@ -83,7 +83,7 @@ EndFunc
 Func SetupJadeBrotherhoodFarm()
 	Info('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	LoadSkillTemplate($JB_Skillbar)
 	LoadSkillTemplate($JB_Hero_Skillbar, 1)

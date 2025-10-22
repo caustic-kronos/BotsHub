@@ -80,7 +80,7 @@ Func RunToShardsOfOrrDungeon()
 		$mapLoaded = WaitMapLoading($ID_Arbor_Bay)
 	WEnd
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 
 	Info('Making way to Shards of Orr')
 	MoveTo(16327, 11607)
@@ -103,14 +103,14 @@ Func RunToShardsOfOrrDungeon()
 		MoveAggroAndKill(11156, -17802, '9', $SoOAggroRange)
 	WEnd
 	If IsRunFailed() Then Return 1
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 EndFunc
 
 
 ;~ Farm loop
 Func SoOFarmLoop()
 	ResetFailuresCounter()
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
 	If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
@@ -118,7 +118,7 @@ Func SoOFarmLoop()
 		Return 1
 	EndIf
 
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 
 	Info('Waiting for timer end')
 	Sleep(190000)

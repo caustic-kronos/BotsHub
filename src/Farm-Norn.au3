@@ -40,16 +40,16 @@ Func NornTitleFarm($STATUS)
 	EndIf
 	NorntitleSetup()
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NornTitle()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2
 	Return $result
 EndFunc
 
 Func NorntitleSetup()
-	;LeaveGroup()
+	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
 	;RandomSleep(500)

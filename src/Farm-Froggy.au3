@@ -71,7 +71,7 @@ Func SetupFroggyFarm()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 
 	Info('Making way to Bogroot')
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
@@ -89,7 +89,7 @@ Func SetupFroggyFarm()
 		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
 	If IsRunFailed() Then Return 1
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 	Info('Preparations complete')
 EndFunc
 
@@ -97,7 +97,7 @@ EndFunc
 ;~ Farm loop
 Func FroggyFarmLoop()
 	ResetFailuresCounter()
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 
 	GetRewardRefreshAndTakeFroggyQuest()
 	If (ClearFroggyFloor1() == 1 Or ClearFroggyFloor2() == 1) Then
@@ -105,7 +105,7 @@ Func FroggyFarmLoop()
 		Return 1
 	EndIf
 
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 
 	Info('Waiting for timer end')
 	Sleep(190000)

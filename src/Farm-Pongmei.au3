@@ -73,7 +73,7 @@ EndFunc
 ;~ Pongmei chest farm setup
 Func SetupPongmeiFarm()
 	Info('Setting up farm')
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	AddHero($ID_Hayda)
 	AddHero($ID_paragon_mercenary_hero)

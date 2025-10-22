@@ -76,7 +76,7 @@ EndFunc
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_Dunkoro)
 	AddHero($ID_Melonni)
 	LoadSkillTemplate($RACorsairsFarmerSkillbar)

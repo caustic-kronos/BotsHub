@@ -74,7 +74,7 @@ EndFunc
 Func SetupFeathersFarm()
 	Info('Setting up farm')
 	SwitchMode($ID_NORMAL_MODE)
-	LeaveGroup()
+	LeaveParty()
 	LoadSkillTemplate($DAFeathersFarmerSkillbar)
 
 	Info('Entering Jaya Bluffs')

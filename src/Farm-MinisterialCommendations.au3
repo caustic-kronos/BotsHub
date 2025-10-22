@@ -180,7 +180,7 @@ EndFunc
 
 ;~ Setup for the farm - load build and heroes, move in the correct zone
 Func Setup()
-	LeaveGroup()
+	LeaveParty()
 
 	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 
@@ -217,7 +217,7 @@ Func EnterQuest()
 EndFunc
 
 
-;~ Prepare the group for the initial fight
+;~ Prepare the party for the initial fight
 Func PrepareToFight()
 	;StartingPositions()
 	StartingPositions()

@@ -2308,7 +2308,7 @@ EndFunc
 
 
 ;~ Leave your party.
-Func LeaveGroup($kickHeroes = True)
+Func LeaveParty($kickHeroes = True)
 	If $kickHeroes Then KickAllHeroes()
 	Return SendPacket(0x4, $HEADER_PARTY_LEAVE)
 EndFunc

@@ -97,7 +97,7 @@ Func SpiritSlavesFarmSetup()
 			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
 		EndIf
 		SwitchMode($ID_HARD_MODE)
-		LeaveGroup()
+		LeaveParty()
 
 		LoadSkillTemplate($SpiritSlaves_Skillbar)
 		SetDisplayedTitle($ID_Lightbringer_Title)

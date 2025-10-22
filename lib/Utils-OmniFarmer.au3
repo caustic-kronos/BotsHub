@@ -72,7 +72,7 @@ EndFunc
 
 ;~ Can be used in other farm bots
 Func OmniFarmSetupWithMandatoryHero($ID_Additional_Hero)
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_Additional_Hero)
 	AddHero($ID_Kahmu)
 	AddHero($ID_MOX)
@@ -85,7 +85,7 @@ EndFunc
 
 ;~ Can be used in other farm bots
 Func OmniFarmFullSetup()
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_Melonni)
 	AddHero($ID_MOX)
 	AddHero($ID_Kahmu)

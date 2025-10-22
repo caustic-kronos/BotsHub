@@ -74,7 +74,7 @@ Func VoltaicFarmLoop()
 	RandomSleep(1000)
 	WaitMapLoading($ID_Verdant_Cascades)
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 
 	Local $timer = TimerInit()
 	MoveAggroAndKill(-19887, 6074, '1', $VSAggroRange)
@@ -86,7 +86,7 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(10764, -6448, '6', $VSAggroRange)
 	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
 	If IsRunFailed() Then
-		AdlibUnregister('TrackGroupStatus')
+		AdlibUnregister('TrackPartyStatus')
 		Return 1
 	EndIf
 
@@ -95,7 +95,7 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(20966, -6476, '9', $VSAggroRange)
 	MoveAggroAndKill(25298, -9456, '10', $VSAggroRange)
 	If IsRunFailed() Then
-		AdlibUnregister('TrackGroupStatus')
+		AdlibUnregister('TrackPartyStatus')
 		Return 1
 	EndIf
 
@@ -123,7 +123,7 @@ Func VoltaicFarmLoop()
 	Sleep(1000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -18500, -8000, 1250)
 		; Waiting to be alive before retrying
-		While Not IsGroupCurrentlyAlive()
+		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
 		UseMoraleConsumableIfNeeded()
@@ -141,7 +141,7 @@ Func VoltaicFarmLoop()
 	WEnd
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
 		; Waiting to be alive before retrying
-		While Not IsGroupCurrentlyAlive()
+		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
 		UseMoraleConsumableIfNeeded()
@@ -151,7 +151,7 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKill(-17500, -14250, 'Final group', $VSAggroRange)
 	WEnd
 	If IsRunFailed() Then
-		AdlibUnregister('TrackGroupStatus')
+		AdlibUnregister('TrackPartyStatus')
 		Return 1
 	EndIf
 	; Chest
@@ -163,6 +163,6 @@ Func VoltaicFarmLoop()
 	Sleep(2500)
 	PickUpItems()
 	Info('Finished Run')
-	AdlibUnregister('TrackGroupStatus')
+	AdlibUnregister('TrackPartyStatus')
 	Return 0
 EndFunc

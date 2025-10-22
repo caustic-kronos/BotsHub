@@ -90,7 +90,7 @@ Func SetupKournansFarm()
 	Info('Setting up farm')
 
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
+	LeaveParty()
 	RandomSleep(50)
 	AddHero($ID_Margrid_The_Sly)
 	RandomSleep(50)

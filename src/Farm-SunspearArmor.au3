@@ -40,16 +40,16 @@ Func SunspearArmorFarm($STATUS)
 	EndIf
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = SunspearArmorClean()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == 1 Then $result = 2
 	Return $result
 EndFunc
 
 Func SunspearArmorSetup()
-	;LeaveGroup()
+	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
 	;RandomSleep(500)
