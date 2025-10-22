@@ -421,7 +421,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 
 	; Read memory values for game data
 	$baseAddressPtr = MemoryRead(GetScannedAddress('ScanBasePointer', 8))
-	If @error Then logCriticalErrors('Failed to read base pointer')
+	If @error Then LogCriticalError('Failed to read base pointer')
 
 	SetValue('BasePointer', '0x' & Hex($baseAddressPtr, 8))
 	$regionId = MemoryRead(GetScannedAddress('ScanRegion', -0x3))
@@ -436,190 +436,190 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('LoadFinishedReturn', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 6), 8))
 
 	$agentBaseAddress = MemoryRead(GetScannedAddress('ScanAgentBasePointer', 8) + 0xC - 7)
-	If @error Then logCriticalErrors('Failed to read agent base')
+	If @error Then LogCriticalError('Failed to read agent base')
 	SetValue('AgentBase', '0x' & Hex($agentBaseAddress, 8))
 	$maxAgents = $agentBaseAddress + 8
 	SetValue('MaxAgents', '0x' & Hex($maxAgents, 8))
 
 	$agentArrayAddress = MemoryRead(GetScannedAddress('ScanAgentArray', -0x3))
-	If @error Then logCriticalErrors('Failed to read agent array')
+	If @error Then LogCriticalError('Failed to read agent array')
 
 	$myID = MemoryRead(GetScannedAddress('ScanMyID', -3))
-	If @error Then logCriticalErrors('Failed to read my ID')
+	If @error Then LogCriticalError('Failed to read my ID')
 	SetValue('MyID', '0x' & Hex($myID, 8))
 
 	$currentTargetAgentId = MemoryRead(GetScannedAddress('ScanCurrentTarget', -14))
-	If @error Then logCriticalErrors('Failed to read current target')
+	If @error Then LogCriticalError('Failed to read current target')
 
 	$packetlocation = Hex(MemoryRead(GetScannedAddress('ScanBaseOffset', 11)), 8)
-	If @error Then logCriticalErrors('Failed to read packet location')
+	If @error Then LogCriticalError('Failed to read packet location')
 	SetValue('PacketLocation', '0x' & $packetlocation)
 
 	$scanPingAddress = MemoryRead(GetScannedAddress('ScanPing', -0x3))
-	If @error Then logCriticalErrors('Failed to read ping')
+	If @error Then LogCriticalError('Failed to read ping')
 
 	$mapID = MemoryRead(GetScannedAddress('ScanMapID', 28))
-	If @error Then logCriticalErrors('Failed to read map ID')
+	If @error Then LogCriticalError('Failed to read map ID')
 
 	; FIXME: this call fails
 	;$mapLoading = MemoryRead(GetScannedAddress('ScanMapLoading', 0xB))
-	;If @error Then logCriticalErrors('Failed to read loading status')
+	;If @error Then LogCriticalError('Failed to read loading status')
 
 	; FIXME: this call fails
 	;$isLoggedIn = MemoryRead(GetScannedAddress('ScanLoggedIn', 0x3))
-	;If @error Then logCriticalErrors('Failed to read login status')
+	;If @error Then LogCriticalError('Failed to read login status')
 
 	$languageId = MemoryRead(GetScannedAddress('ScanMapInfo', 11)) + 0xC
-	If @error Then logCriticalErrors('Failed to read language and region')
+	If @error Then LogCriticalError('Failed to read language and region')
 
 	$skillBaseAddress = MemoryRead(GetScannedAddress('ScanSkillBase', 8))
-	If @error Then logCriticalErrors('Failed to read skill base')
+	If @error Then LogCriticalError('Failed to read skill base')
 
 	$skillTimer = MemoryRead(GetScannedAddress('ScanSkillTimer', -3))
-	If @error Then logCriticalErrors('Failed to read skill timer')
+	If @error Then LogCriticalError('Failed to read skill timer')
 
 	$tempValue = GetScannedAddress('ScanBuildNumber', 0x2C)
-	If @error Then logCriticalErrors('Failed to read build number address')
+	If @error Then LogCriticalError('Failed to read build number address')
 
 	; FIXME: these calls fail
 	;$buildNumber = MemoryRead($tempValue + MemoryRead($tempValue) + 5)
-	;If @error Then logCriticalErrors('Failed to read build number')
+	;If @error Then LogCriticalError('Failed to read build number')
 
 	$zoomWhenStill = GetScannedAddress('ScanZoomStill', 0x33)
-	If @error Then logCriticalErrors('Failed to read zoom still address')
+	If @error Then LogCriticalError('Failed to read zoom still address')
 
 	$zoomWhenMoving = GetScannedAddress('ScanZoomMoving', 0x21)
-	If @error Then logCriticalErrors('Failed to read zoom moving address')
+	If @error Then LogCriticalError('Failed to read zoom moving address')
 
 	$currentStatus = MemoryRead(GetScannedAddress('ScanChangeStatusFunction', 35))
-	If @error Then logCriticalErrors('Failed to read current status')
+	If @error Then LogCriticalError('Failed to read current status')
 
 	; FIXME: this call fails
 	;$characterSlots = MemoryRead(GetScannedAddress('ScanCharslots', 22))
-	;If @error Then logCriticalErrors('Failed to read character slots')
+	;If @error Then LogCriticalError('Failed to read character slots')
 
 	$tempValue = GetScannedAddress('ScanEngine', -0x22)
-	If @error Then logCriticalErrors('Failed to read engine address')
+	If @error Then LogCriticalError('Failed to read engine address')
 	SetValue('MainStart', '0x' & Hex($tempValue, 8))
 	SetValue('MainReturn', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanRenderFunc', -0x67)
-	If @error Then logCriticalErrors('Failed to read render function address')
+	If @error Then LogCriticalError('Failed to read render function address')
 	SetValue('RenderingMod', '0x' & Hex($tempValue, 8))
 	SetValue('RenderingModReturn', '0x' & Hex($tempValue + 10, 8))
 
 	$tempValue = GetScannedAddress('ScanTargetLog', 1)
-	If @error Then logCriticalErrors('Failed to read target log address')
+	If @error Then LogCriticalError('Failed to read target log address')
 	SetValue('TargetLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('TargetLogReturn', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanSkillLog', 1)
-	If @error Then logCriticalErrors('Failed to read skill log address')
+	If @error Then LogCriticalError('Failed to read skill log address')
 	SetValue('SkillLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('SkillLogReturn', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanSkillCompleteLog', -4)
-	If @error Then logCriticalErrors('Failed to read skill complete log address')
+	If @error Then LogCriticalError('Failed to read skill complete log address')
 	SetValue('SkillCompleteLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('SkillCompleteLogReturn', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanSkillCancelLog', 5)
-	If @error Then logCriticalErrors('Failed to read skill cancel log address')
+	If @error Then LogCriticalError('Failed to read skill cancel log address')
 	SetValue('SkillCancelLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('SkillCancelLogReturn', '0x' & Hex($tempValue + 6, 8))
 
 	$tempValue = GetScannedAddress('ScanChatLog', 18)
-	If @error Then logCriticalErrors('Failed to read chat log address')
+	If @error Then LogCriticalError('Failed to read chat log address')
 	SetValue('ChatLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('ChatLogReturn', '0x' & Hex($tempValue + 6, 8))
 
 	$tempValue = GetScannedAddress('ScanTraderHook', -0x2F)			; was -7
-	If @error Then logCriticalErrors('Failed to read trader hook address')
+	If @error Then LogCriticalError('Failed to read trader hook address')
 	SetValue('TraderHookStart', '0x' & Hex($tempValue, 8))
 	SetValue('TraderHookReturn', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanDialogLog', -4)
-	If @error Then logCriticalErrors('Failed to read dialog log address')
+	If @error Then LogCriticalError('Failed to read dialog log address')
 	SetValue('DialogLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('DialogLogReturn', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanStringFilter1', -5)			; was -0x23
-	If @error Then logCriticalErrors('Failed to read string filter 1 address')
+	If @error Then LogCriticalError('Failed to read string filter 1 address')
 	SetValue('StringFilter1Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter1Return', '0x' & Hex($tempValue + 5, 8))
 
 	$tempValue = GetScannedAddress('ScanStringFilter2', 0x16)		; was 0x61
-	If @error Then logCriticalErrors('Failed to read string filter 2 address')
+	If @error Then LogCriticalError('Failed to read string filter 2 address')
 	SetValue('StringFilter2Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter2Return', '0x' & Hex($tempValue + 5, 8))
 
 	; FIXME: this call fails
 	;SetValue('PostMessage', '0x' & Hex(MemoryRead(GetScannedAddress('ScanPostMessage', 11)), 8))
-	;If @error Then logCriticalErrors('Failed to read post message')
+	;If @error Then LogCriticalError('Failed to read post message')
 
 	; FIXME: this call fails
 	;SetValue('Sleep', MemoryRead(MemoryRead(GetValue('ScanSleep') + 8) + 3))
-	;If @error Then logCriticalErrors('Failed to read sleep')
+	;If @error Then LogCriticalError('Failed to read sleep')
 
 	SetValue('SalvageFunction', '0x' & Hex(GetScannedAddress('ScanSalvageFunction', -10), 8))
-	If @error Then logCriticalErrors('Failed to read salvage function')
+	If @error Then LogCriticalError('Failed to read salvage function')
 
 	SetValue('SalvageGlobal', '0x' & Hex(MemoryRead(GetScannedAddress('ScanSalvageGlobal', 1) - 0x4), 8))
-	If @error Then logCriticalErrors('Failed to read salvage global')
+	If @error Then LogCriticalError('Failed to read salvage global')
 
 	SetValue('IncreaseAttributeFunction', '0x' & Hex(GetScannedAddress('ScanIncreaseAttributeFunction', -0x5A), 8))
-	If @error Then logCriticalErrors('Failed to read increase attribute function')
+	If @error Then LogCriticalError('Failed to read increase attribute function')
 
 	SetValue('DecreaseAttributeFunction', '0x' & Hex(GetScannedAddress('ScanDecreaseAttributeFunction', 25), 8))
-	If @error Then logCriticalErrors('Failed to read decrease attribute function')
+	If @error Then LogCriticalError('Failed to read decrease attribute function')
 
 	SetValue('MoveFunction', '0x' & Hex(GetScannedAddress('ScanMoveFunction', 1), 8))
-	If @error Then logCriticalErrors('Failed to read move function')
+	If @error Then LogCriticalError('Failed to read move function')
 	$tempValue = GetScannedAddress('ScanEnterMissionFunction', 0x52)
 	SetValue('EnterMissionFunction', '0x' & Hex(GetCallTargetAddress($tempValue), 8))
-	If @error Then logCriticalErrors('Failed to read EnterMission function')
+	If @error Then LogCriticalError('Failed to read EnterMission function')
 
 	SetValue('UseSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseSkillFunction', -0x125), 8))
-	If @error Then logCriticalErrors('Failed to read use skill function')
+	If @error Then LogCriticalError('Failed to read use skill function')
 
 	SetValue('ChangeTargetFunction', '0x' & Hex(GetScannedAddress('ScanChangeTargetFunction', -0x0086) + 1, 8))
-	If @error Then logCriticalErrors('Failed to read change target function')
+	If @error Then LogCriticalError('Failed to read change target function')
 
 	SetValue('WriteChatFunction', '0x' & Hex(GetScannedAddress('ScanWriteChatFunction', -0x3D), 8))
-	If @error Then logCriticalErrors('Failed to read write chat function')
+	If @error Then LogCriticalError('Failed to read write chat function')
 
 	SetValue('SellItemFunction', '0x' & Hex(GetScannedAddress('ScanSellItemFunction', -85), 8))
-	If @error Then logCriticalErrors('Failed to read sell item function')
+	If @error Then LogCriticalError('Failed to read sell item function')
 
 	SetValue('PacketSendFunction', '0x' & Hex(GetScannedAddress('ScanPacketSendFunction', -0x50), 8))
-	If @error Then logCriticalErrors('Failed to read packet send function')
+	If @error Then LogCriticalError('Failed to read packet send function')
 
 	SetValue('ActionBase', '0x' & Hex(MemoryRead(GetScannedAddress('ScanActionBase', -3)), 8))
-	If @error Then logCriticalErrors('Failed to read action base')
+	If @error Then LogCriticalError('Failed to read action base')
 
 	SetValue('ActionFunction', '0x' & Hex(GetScannedAddress('ScanActionFunction', -3), 8))
-	If @error Then logCriticalErrors('Failed to read action function')
+	If @error Then LogCriticalError('Failed to read action function')
 
 	SetValue('UseHeroSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseHeroSkillFunction', -0x59), 8))
-	If @error Then logCriticalErrors('Failed to read use hero skill function')
+	If @error Then LogCriticalError('Failed to read use hero skill function')
 
 	SetValue('BuyItemBase', '0x' & Hex(MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)), 8))
-	If @error Then logCriticalErrors('Failed to read buy item base')
+	If @error Then LogCriticalError('Failed to read buy item base')
 
 	SetValue('TransactionFunction', '0x' & Hex(GetScannedAddress('ScanTransactionFunction', -0x7E), 8))
-	If @error Then logCriticalErrors('Failed to read transaction function')
+	If @error Then LogCriticalError('Failed to read transaction function')
 
 	SetValue('RequestQuoteFunction', '0x' & Hex(GetScannedAddress('ScanRequestQuoteFunction', -0x34), 8))
-	If @error Then logCriticalErrors('Failed to read request quote function')
+	If @error Then LogCriticalError('Failed to read request quote function')
 
 	SetValue('TraderFunction', '0x' & Hex(GetScannedAddress('ScanTraderFunction', -0x1E), 8))
-	If @error Then logCriticalErrors('Failed to read trader function')
+	If @error Then LogCriticalError('Failed to read trader function')
 
 	SetValue('ClickToMoveFix', '0x' & Hex(GetScannedAddress('ScanClickToMoveFix', 1), 8))
-	If @error Then logCriticalErrors('Failed to read click to move fix')
+	If @error Then LogCriticalError('Failed to read click to move fix')
 
 	SetValue('ChangeStatusFunction', '0x' & Hex(GetScannedAddress('ScanChangeStatusFunction', 1), 8))
-	If @error Then logCriticalErrors('Failed to read change status function')
+	If @error Then LogCriticalError('Failed to read change status function')
 	SetValue('QueueSize', '0x00000010')
 	SetValue('SkillLogSize', '0x00000010')
 	SetValue('ChatLogSize', '0x00000010')
@@ -628,12 +628,12 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('CallbackEvent', '0x00000501')
 
 	$tradeHackAddress = GetScannedAddress('ScanTradeHack', 0)
-	If @error Then logCriticalErrors('Failed to read trade hack address')
+	If @error Then LogCriticalError('Failed to read trade hack address')
 
 	ModifyMemory()
 
 	$queueCounter = MemoryRead(GetValue('QueueCounter'))
-	If @error Then logCriticalErrors('Failed to read queue counter')
+	If @error Then LogCriticalError('Failed to read queue counter')
 
 	$queueSize = GetValue('QueueSize') - 1
 	$queueBaseAddress = GetValue('QueueBase')
@@ -651,55 +651,55 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 
 	; EventSystem
 	DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
-	If @error Then logCriticalErrors('Failed to set invite guild command')
+	If @error Then LogCriticalError('Failed to set invite guild command')
 	DllStructSetData($inviteGuildStruct, 2, 0x4C)
-	If @error Then logCriticalErrors('Failed to set invite guild subcommand')
+	If @error Then LogCriticalError('Failed to set invite guild subcommand')
 	DllStructSetData($useSkillStruct, 1, GetValue('CommandUseSkill'))
-	If @error Then logCriticalErrors('Failed to set CommandUseSkill command')
+	If @error Then LogCriticalError('Failed to set CommandUseSkill command')
 	DllStructSetData($moveStruct, 1, GetValue('CommandMove'))
-	If @error Then logCriticalErrors('Failed to set CommandMove command')
+	If @error Then LogCriticalError('Failed to set CommandMove command')
 	DllStructSetData($changeTargetStruct, 1, GetValue('CommandChangeTarget'))
-	If @error Then logCriticalErrors('Failed to set CommandChangeTarget command')
+	If @error Then LogCriticalError('Failed to set CommandChangeTarget command')
 	DllStructSetData($packetStruct, 1, GetValue('CommandPacketSend'))
-	If @error Then logCriticalErrors('Failed to set CommandPacketSend command')
+	If @error Then LogCriticalError('Failed to set CommandPacketSend command')
 	DllStructSetData($sellItemStruct, 1, GetValue('CommandSellItem'))
-	If @error Then logCriticalErrors('Failed to set CommandSellItem command')
+	If @error Then LogCriticalError('Failed to set CommandSellItem command')
 	DllStructSetData($actionStruct, 1, GetValue('CommandAction'))
-	If @error Then logCriticalErrors('Failed to set CommandAction command')
+	If @error Then LogCriticalError('Failed to set CommandAction command')
 	DllStructSetData($toggleLanguageStruct, 1, GetValue('CommandToggleLanguage'))
-	If @error Then logCriticalErrors('Failed to set CommandToggleLanguage command')
+	If @error Then LogCriticalError('Failed to set CommandToggleLanguage command')
 	DllStructSetData($useHeroSkillStruct, 1, GetValue('CommandUseHeroSkill'))
-	If @error Then logCriticalErrors('Failed to set CommandUseHeroSkill command')
+	If @error Then LogCriticalError('Failed to set CommandUseHeroSkill command')
 	DllStructSetData($buyItemStruct, 1, GetValue('CommandBuyItem'))
-	If @error Then logCriticalErrors('Failed to set CommandBuyItem command')
+	If @error Then LogCriticalError('Failed to set CommandBuyItem command')
 	DllStructSetData($sendChatStruct, 1, GetValue('CommandSendChat'))
-	If @error Then logCriticalErrors('Failed to set CommandSendChat command')
+	If @error Then LogCriticalError('Failed to set CommandSendChat command')
 	DllStructSetData($sendChatStruct, 2, $HEADER_SEND_CHAT)
-	If @error Then logCriticalErrors('Failed to set send chat subcommand')
+	If @error Then LogCriticalError('Failed to set send chat subcommand')
 	DllStructSetData($writeChatStruct, 1, GetValue('CommandWriteChat'))
-	If @error Then logCriticalErrors('Failed to set CommandWriteChat command')
+	If @error Then LogCriticalError('Failed to set CommandWriteChat command')
 	DllStructSetData($requestQuoteStruct, 1, GetValue('CommandRequestQuote'))
-	If @error Then logCriticalErrors('Failed to set CommandRequestQuote command')
+	If @error Then LogCriticalError('Failed to set CommandRequestQuote command')
 	DllStructSetData($requestQuoteStructSell, 1, GetValue('CommandRequestQuoteSell'))
-	If @error Then logCriticalErrors('Failed to set CommandRequestQuoteSell command')
+	If @error Then LogCriticalError('Failed to set CommandRequestQuoteSell command')
 	DllStructSetData($traderBuyStruct, 1, GetValue('CommandTraderBuy'))
-	If @error Then logCriticalErrors('Failed to set CommandTraderBuy command')
+	If @error Then LogCriticalError('Failed to set CommandTraderBuy command')
 	DllStructSetData($traderSellStruct, 1, GetValue('CommandTraderSell'))
-	If @error Then logCriticalErrors('Failed to set CommandTraderSell command')
+	If @error Then LogCriticalError('Failed to set CommandTraderSell command')
 	DllStructSetData($salvageStruct, 1, GetValue('CommandSalvage'))
-	If @error Then logCriticalErrors('Failed to set CommandSalvage command')
+	If @error Then LogCriticalError('Failed to set CommandSalvage command')
 	DllStructSetData($increaseAttributeStruct, 1, GetValue('CommandIncreaseAttribute'))
-	If @error Then logCriticalErrors('Failed to set CommandIncreaseAttribute command')
+	If @error Then LogCriticalError('Failed to set CommandIncreaseAttribute command')
 	DllStructSetData($decreaseAttributeStruct, 1, GetValue('CommandDecreaseAttribute'))
-	If @error Then logCriticalErrors('Failed to set CommandDecreaseAttribute command')
+	If @error Then LogCriticalError('Failed to set CommandDecreaseAttribute command')
 	DllStructSetData($makeAgentArrayStruct, 1, GetValue('CommandMakeAgentArray'))
-	If @error Then logCriticalErrors('Failed to set CommandMakeAgentArray command')
+	If @error Then LogCriticalError('Failed to set CommandMakeAgentArray command')
 	DllStructSetData($changeStatusStruct, 1, GetValue('CommandChangeStatus'))
-	If @error Then logCriticalErrors('Failed to set CommandChangeStatus command')
+	If @error Then LogCriticalError('Failed to set CommandChangeStatus command')
 	DllStructSetData($enterMissionStruct, 1, GetValue('CommandEnterMission'))
-	If @error Then logCriticalErrors('Failed to set CommandEnterMission command')
+	If @error Then LogCriticalError('Failed to set CommandEnterMission command')
 	If $changeTitle Then WinSetTitle(GetWindowHandle(), '', 'Guild Wars - ' & GetCharacterName())
-	If @error Then logCriticalErrors('Failed to change window title')
+	If @error Then LogCriticalError('Failed to change window title')
 	SetMaxMemory()
 	Return GetWindowHandle()
 EndFunc
