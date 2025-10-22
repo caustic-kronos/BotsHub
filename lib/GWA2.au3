@@ -1339,7 +1339,7 @@ EndFunc
 
 ;~ Find an item with the provided modelId in your inventory and return its itemID
 Func GetItemIDFromModelID($modelID)
-	For $i = 1 To $BAG_NUMBER
+	For $i = 1 To $BAGS_COUNT
 		For $j = 1 To DllStructGetData(GetBag($i), 'slots')
 			Local $item = GetItemBySlot($i, $j)
 			If DllStructGetData($item, 'ModelId') == $modelID Then Return DllStructGetData($item, 'Id')

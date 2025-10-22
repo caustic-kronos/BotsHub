@@ -96,7 +96,7 @@ Func ActiveInventoryManagement()
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		SalvageAllItems()
-		If $BAG_NUMBER == 5 Then
+		If $BAGS_COUNT == 5 Then
 			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems()
 		EndIf
 		;SalvageInscriptions()
@@ -151,7 +151,7 @@ Func PassiveInventoryManagement()
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 	IdentifyAllItems(False)
 	SalvageAllItems(False)
-	If $BAG_NUMBER == 5 Then
+	If $BAGS_COUNT == 5 Then
 		If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)
 	EndIf
 	Return False
@@ -172,7 +172,7 @@ EndFunc
 Func ReadAllItemsData()
 	Info('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
 	Local $item, $output
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $slot = 1 To DllStructGetData($bag, 'slots')
 			$output = GetOneItemData($bagIndex, $slot)
@@ -338,7 +338,7 @@ Func StoreAllItemsData()
 	Info('Scanning and storing all items data')
 	SQLExecute('BEGIN;')
 	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -562,7 +562,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 	RandomSleep(500)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -603,7 +603,7 @@ EndFunc
 ;~ Returns true if there are items in inventory satisfying condition
 Func HasInInventory($condition)
 	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -624,7 +624,7 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	RandomSleep(500)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
+	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -660,7 +660,7 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	RandomSleep(250)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
+	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -758,7 +758,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	BalanceCharacterGold(10000)
 	Info('Storing items')
 	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)

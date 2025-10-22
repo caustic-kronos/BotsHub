@@ -181,7 +181,7 @@ Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 		EndIf
 	Next
 
-	If $BAG_NUMBER == 5 And CountSlots(1, 3) == 0 Then
+	If $BAGS_COUNT == 5 And CountSlots(1, 3) == 0 Then
 		MoveItemsToEquipmentBag()
 	EndIf
 EndFunc
@@ -419,7 +419,7 @@ EndFunc
 
 ;~ Find all empty slots in inventory
 Func FindInventoryEmptySlots()
-	Return FindAllEmptySlots(1, $BAG_NUMBER)
+	Return FindAllEmptySlots(1, $BAGS_COUNT)
 EndFunc
 
 
@@ -441,7 +441,7 @@ EndFunc
 
 
 ;~ Count available slots in the inventory
-Func CountSlots($fromBag = 1, $toBag = $BAG_NUMBER)
+Func CountSlots($fromBag = 1, $toBag = $BAGS_COUNT)
 	Local $bag
 	Local $availableSlots = 0
 	; If bag is missing it just won't count
@@ -467,7 +467,7 @@ EndFunc
 
 ;~ Move items to the equipment bag
 Func MoveItemsToEquipmentBag()
-	If $BAG_NUMBER < 5 Then Return
+	If $BAGS_COUNT < 5 Then Return
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
 	If $countEmptySlots < 1 Then
@@ -504,7 +504,7 @@ Func SortInventory()
 	Local $bag, $item, $itemID, $rarity
 	Local $items[80]
 	Local $k = 0
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		$bag = GetBag($bagIndex)
 		$bagsSizes[$bagIndex] = DllStructGetData($bag, 'slots')
 		$bagsSize += $bagsSizes[$bagIndex]
@@ -731,7 +731,7 @@ EndFunc
 Func CountGoldItems()
 	Local $goldItemsCount = 0
 	Local $item
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -749,7 +749,7 @@ Func FindAnyInInventory(ByRef $itemIDs)
 	Local $itemBagAndSlot[2]
 	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
 
-	For $bag = 1 To $BAG_NUMBER
+	For $bag = 1 To $BAGS_COUNT
 		Local $bagSize = GetMaxSlots($bag)
 		For $slot = 1 To $bagSize
 			$item = GetItemBySlot($bag, $slot)
@@ -767,7 +767,7 @@ EndFunc
 
 ;~ Look for an item in inventory
 Func FindInInventory($itemID)
-	Return FindInStorages(1, $BAG_NUMBER, $itemID)
+	Return FindInStorages(1, $BAGS_COUNT, $itemID)
 EndFunc
 
 
@@ -819,7 +819,7 @@ EndFunc
 
 ;~ Look for an item in inventory
 Func FindAllInInventory($item)
-	Return FindAllInStorages(1, $BAG_NUMBER, $item)
+	Return FindAllInStorages(1, $BAGS_COUNT, $item)
 EndFunc
 
 
@@ -834,7 +834,7 @@ Func GetInventoryItemCount($itemID)
 	Local $amountItem = 0
 	Local $bag
 	Local $item
-	For $i = 1 To $BAG_NUMBER
+	For $i = 1 To $BAGS_COUNT
 		$bag = GetBag($i)
 		Local $bagSize = DllStructGetData($bag, 'Slots')
 		For $j = 1 To $bagSize
@@ -855,7 +855,7 @@ EndFunc
 Func CountTheseItems($itemArray)
 	Local $arraySize = UBound($itemArray)
 	Local $counts[$arraySize]
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		Local $slots = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $slots
@@ -956,7 +956,7 @@ EndFunc
 
 ;~ Returns true if there are unidentified items in inventory
 Func HasUnidentifiedItems()
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		Local $item
 		For $i = 1 To DllStructGetData($bag, 'slots')
@@ -972,7 +972,7 @@ EndFunc
 ;~ Identify all items from inventory
 Func IdentifyAllItems($buyKit = True)
 	Info('Identifying all items')
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		Local $item
 		For $i = 1 To DllStructGetData($bag, 'slots')
@@ -1006,14 +1006,14 @@ Func SalvageAllItems($buyKit = True)
 	If (CountSlots(1, 4) < 1) Then
 		; There is no space in inventory, we need to store something in Xunlai to start the salvage
 		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
-		$movedItem = GetItemBySlot(_Min(4, $BAG_NUMBER), 1)
+		$movedItem = GetItemBySlot(_Min(4, $BAGS_COUNT), 1)
 		MoveItem($movedItem, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	EndIf
 
 	Info('Salvaging all items')
 	Local $trophiesItems[60]
 	Local $trophyIndex = 0
-	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
+	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
 		Debug('Salvaging bag' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
@@ -1038,7 +1038,7 @@ Func SalvageAllItems($buyKit = True)
 	Next
 
 	If $movedItem <> Null Then
-		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $BAG_NUMBER))
+		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $BAGS_COUNT))
 		MoveItem($movedItem, $bagEmptySlot[0], $bagEmptySlot[1])
 		If DefaultShouldSalvageItem($movedItem) Then
 			SalvageItem($movedItem, $kit)
