@@ -48,51 +48,51 @@ Global $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 Global $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
-Global Const $Skill_Conviction = 1
-Global Const $Skill_Grenths_Aura = 2
-Global Const $Skill_I_am_unstoppable = 3
-;Global Const $Skill_Healing_Signet = 4
-Global Const $Skill_Mystic_Regeneration = 4
-Global Const $Skill_Vital_Boon = 4
-Global Const $Skill_To_the_limit = 5
-Global Const $Skill_Ebon_Battle_Standard_of_Honor = 6
-Global Const $Skill_Hundred_Blades = 7
-Global Const $Skill_Whirlwind_Attack = 8
+Global Const $Skill_Conviction 						= 1
+Global Const $Skill_Grenths_Aura 					= 2
+Global Const $Skill_I_am_unstoppable 				= 3
+;Global Const $Skill_Healing_Signet 				= 4
+Global Const $Skill_Mystic_Regeneration 			= 4
+Global Const $Skill_Vital_Boon 						= 4
+Global Const $Skill_To_the_limit 					= 5
+Global Const $Skill_Ebon_Battle_Standard_of_Honor 	= 6
+Global Const $Skill_Hundred_Blades 					= 7
+Global Const $Skill_Whirlwind_Attack 				= 8
 
 ; ESurge mesmers
-Global Const $Energy_Surge_Skill_Position = 1
+Global Const $Energy_Surge_Skill_Position 			= 1
 Global Const $ESurge2_Mystic_Healing_Skill_Position = 8
 ; Ineptitude mesmer
-Global Const $Stand_your_ground_Skill_position = 6
-Global Const $Make_Haste_Skill_position = 7
+Global Const $Stand_your_ground_Skill_position 		= 6
+Global Const $Make_Haste_Skill_position 			= 7
 ; SoS Ritualist
-Global Const $SoS_Skill_Position = 1
-Global Const $Splinter_Weapon_Skill_Position = 2
-Global Const $Essence_Strike_Skill_Position = 3
-Global Const $Mend_Body_And_Soul_Skill_Position = 5
-Global Const $Spirit_Light = 6
-Global Const $SoS_Mystic_Healing_Skill_Position = 8
+Global Const $SoS_Skill_Position 					= 1
+Global Const $Splinter_Weapon_Skill_Position 		= 2
+Global Const $Essence_Strike_Skill_Position 		= 3
+Global Const $Mend_Body_And_Soul_Skill_Position 	= 5
+Global Const $Spirit_Light 							= 6
+Global Const $SoS_Mystic_Healing_Skill_Position 	= 8
 ; Prot Ritualist
-Global Const $Soul_Twisting_Skill_Position = 1
-Global Const $Shelter_Skill_Position = 2
-Global Const $Union_Skill_Position = 3
-Global Const $Displacement_Skill_Position = 4
-Global Const $Armor_of_Unfeeling_Skill_Position = 5
-Global Const $SBoon_of_creation_Skill_Position = 6
-Global Const $Prot_Mystic_Healing_Skill_Position = 7
+Global Const $Soul_Twisting_Skill_Position 			= 1
+Global Const $Shelter_Skill_Position 				= 2
+Global Const $Union_Skill_Position 					= 3
+Global Const $Displacement_Skill_Position 			= 4
+Global Const $Armor_of_Unfeeling_Skill_Position 	= 5
+Global Const $SBoon_of_creation_Skill_Position 		= 6
+Global Const $Prot_Mystic_Healing_Skill_Position 	= 7
 ; BiP Necro
-Global Const $Recovery_Skill_Position = 8
+Global Const $Recovery_Skill_Position 	= 8
 Global Const $Blood_bond_Skill_Position = 2
-Global Const $Spirit_Transfer = 4
+Global Const $Spirit_Transfer 			= 4
 
 ; Order heros are added to the team
-Global Const $Hero_Mesmer_DPS_1 = 1
-Global Const $Hero_Mesmer_DPS_2 = 2
-Global Const $Hero_Mesmer_DPS_3 = 3
-Global Const $Hero_Mesmer_Ineptitude = 4
-Global Const $Hero_Ritualist_SoS = 5
-Global Const $Hero_Ritualist_Prot = 6
-Global Const $Hero_Necro_BiP = 7
+Global Const $Hero_Mesmer_DPS_1 		= 1
+Global Const $Hero_Mesmer_DPS_2 		= 2
+Global Const $Hero_Mesmer_DPS_3 		= 3
+Global Const $Hero_Mesmer_Ineptitude 	= 4
+Global Const $Hero_Ritualist_SoS 		= 5
+Global Const $Hero_Ritualist_Prot 		= 6
+Global Const $Hero_Necro_BiP 			= 7
 
 Global Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
 Global Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2

@@ -26,7 +26,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
 ; Average duration ~ 35s
 Global Const $IRIS_FARM_DURATION = 35 * 1000

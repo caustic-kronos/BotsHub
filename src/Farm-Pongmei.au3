@@ -27,7 +27,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
 Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
@@ -42,14 +42,14 @@ Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 Global Const $PONGMEI_FARM_DURATION = (4 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Pongmei_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Pongmei_DwarvenStability = 1
-Global Const $Pongmei_Zealous_Renewal = 2
-Global Const $Pongmei_Pious_Haste = 3
-Global Const $Pongmei_DeathsCharge = 4
-Global Const $Pongmei_HeartOfShadow = 5
-Global Const $Pongmei_IAmUnstoppable = 6
-Global Const $Pongmei_DeadlyParadox = 7
-Global Const $Pongmei_ShadowForm = 8
+Global Const $Pongmei_DwarvenStability 	= 1
+Global Const $Pongmei_Zealous_Renewal 	= 2
+Global Const $Pongmei_Pious_Haste 		= 3
+Global Const $Pongmei_DeathsCharge 		= 4
+Global Const $Pongmei_HeartOfShadow 	= 5
+Global Const $Pongmei_IAmUnstoppable 	= 6
+Global Const $Pongmei_DeadlyParadox 	= 7
+Global Const $Pongmei_ShadowForm 		= 8
 
 Global Const $ID_paragon_mercenary_hero = $ID_Mercenary_Hero_5
 

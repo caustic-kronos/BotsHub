@@ -41,14 +41,14 @@ Global Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $FEATHERS_FARM_DURATION = (8 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Feathers_SandShards) is better than UseSkillEx(1))
-Global Const $Feathers_SandShards = 1
-Global Const $Feathers_VowOfStrength = 2
-Global Const $Feathers_StaggeringForce = 3
-Global Const $Feathers_EremitesAttack = 4
-Global Const $Feathers_Dash = 5
-Global Const $Feathers_DwarvenStability = 6
-Global Const $Feathers_Conviction = 7
-Global Const $Feathers_MysticRegeneration = 8
+Global Const $Feathers_SandShards 			= 1
+Global Const $Feathers_VowOfStrength 		= 2
+Global Const $Feathers_StaggeringForce 		= 3
+Global Const $Feathers_EremitesAttack 		= 4
+Global Const $Feathers_Dash 				= 5
+Global Const $Feathers_DwarvenStability 	= 6
+Global Const $Feathers_Conviction 			= 7
+Global Const $Feathers_MysticRegeneration 	= 8
 
 Global Const $ModelID_Sensali_Claw = 3944
 Global Const $ModelID_Sensali_Darkfeather = 3946

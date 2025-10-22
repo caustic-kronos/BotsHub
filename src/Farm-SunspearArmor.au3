@@ -25,7 +25,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $SunspearArmorInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'
 ; Average duration ~ 15m
 Global Const $SUNSPEAR_ARMOR_FARM_DURATION = 15 * 60 * 1000

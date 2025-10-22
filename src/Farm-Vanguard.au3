@@ -25,10 +25,11 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $VanguardTitleFarmInformations = 'Vanguard title farm'
 ; Average duration ~ 45m
 Global Const $VANGUARD_TITLE_FARM_DURATION = 45 * 60 * 1000
+
 
 ;~ Main loop for the vanguard faction farm
 Func VanguardVQFarm($STATUS)

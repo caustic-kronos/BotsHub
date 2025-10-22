@@ -39,14 +39,14 @@ Global Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $DRAGONMOSS_FARM_DURATION = 2 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DwarvenStability) is better than UseSkillEx(1))
-Global Const $DM_DwarvenStability = 1
-Global Const $DM_StormChaser = 2
-Global Const $DM_ShroudOfDistress = 3
-Global Const $DM_DeadlyParadox = 4
-Global Const $DM_ShadowForm = 5
-Global Const $DM_MentalBlock = 6
-Global Const $DM_DeathsCharge = 7
-Global Const $DM_WhirlingDefense = 8
+Global Const $DM_DwarvenStability 	= 1
+Global Const $DM_StormChaser 		= 2
+Global Const $DM_ShroudOfDistress 	= 3
+Global Const $DM_DeadlyParadox 		= 4
+Global Const $DM_ShadowForm 		= 5
+Global Const $DM_MentalBlock 		= 6
+Global Const $DM_DeathsCharge 		= 7
+Global Const $DM_WhirlingDefense 	= 8
 
 Global $DM_FARM_SETUP = False
 

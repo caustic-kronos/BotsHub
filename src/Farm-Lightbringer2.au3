@@ -25,7 +25,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $LightbringerFarm2Informations = 'Lightbringer title farm'
 ; Average duration ~ 45m
 Global Const $LIGHTBRINGER_FARM2_DURATION = 45 * 60 * 1000

@@ -36,14 +36,14 @@ Global Const $weaponAttackTime = 1700
 Global $LIGHTBRINGER_FARM_SETUP = False
 Global $loggingFile
 
-Global Const $Junundu_Strike = 1
-Global Const $Junundu_Smash = 2
-Global Const $Junundu_Bite = 3
-Global Const $Junundu_Siege = 4
-Global Const $Junundu_Tunnel = 5
-Global Const $Junundu_Feast = 6
-Global Const $Junundu_Wail = 7
-Global Const $Junundu_Leave = 8
+Global Const $Junundu_Strike 	= 1
+Global Const $Junundu_Smash 	= 2
+Global Const $Junundu_Bite 		= 3
+Global Const $Junundu_Siege 	= 4
+Global Const $Junundu_Tunnel 	= 5
+Global Const $Junundu_Feast 	= 6
+Global Const $Junundu_Wail 		= 7
+Global Const $Junundu_Leave 	= 8
 
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map

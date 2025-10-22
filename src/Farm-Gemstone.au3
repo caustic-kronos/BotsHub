@@ -47,15 +47,15 @@ Global Const $FightDist = 1500
 
 Global $GemstoneFarmSetup = False
 
-; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
-Global Const $Gem_Symbolic_Celerity = 1
-Global Const $Gem_Symbolic_Posture = 2
-Global Const $Gem_Keystone_Signet = 3
-Global Const $Gem_Unnatural_Signet = 4
-Global Const $Gem_Signet_Of_Clumsiness = 5
-Global Const $Gem_Signet_Of_Disruption = 6
-Global Const $Gem_Wastrels_Demise = 7
-Global Const $Gem_Mistrust = 8
+;~ Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction) is better than UseSkill(1))
+Global Const $Gem_Symbolic_Celerity 	= 1
+Global Const $Gem_Symbolic_Posture 		= 2
+Global Const $Gem_Keystone_Signet 		= 3
+Global Const $Gem_Unnatural_Signet 		= 4
+Global Const $Gem_Signet_Of_Clumsiness 	= 5
+Global Const $Gem_Signet_Of_Disruption 	= 6
+Global Const $Gem_Wastrels_Demise 		= 7
+Global Const $Gem_Mistrust 				= 8
 
 Global Const $Gem_SkillsArray =		[$Gem_Symbolic_Celerity, $Gem_Symbolic_Posture, $Gem_Keystone_Signet, $Gem_Unnatural_Signet, $Gem_Signet_Of_Clumsiness, $Gem_Signet_Of_Disruption, $Gem_Wastrels_Demise, $Gem_Mistrust]
 Global Const $Gem_SkillsCostsArray =	[15,					10,						0,					0,						0,							0,							5,					10]

@@ -40,20 +40,20 @@ Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Global Const $Corsairs_DwarvenStability = 1
-Global Const $Corsairs_WhirlingDefense = 2
-Global Const $Corsairs_HeartOfShadow = 3
-Global Const $Corsairs_ShroudOfDistress = 4
-Global Const $Corsairs_TogetherAsOne = 5
-Global Const $Corsairs_MentalBlock = 6
-Global Const $Corsairs_FeignedNeutrality = 7
-Global Const $Corsairs_DeathsCharge = 8
+Global Const $Corsairs_DwarvenStability 	= 1
+Global Const $Corsairs_WhirlingDefense 		= 2
+Global Const $Corsairs_HeartOfShadow 		= 3
+Global Const $Corsairs_ShroudOfDistress 	= 4
+Global Const $Corsairs_TogetherAsOne 		= 5
+Global Const $Corsairs_MentalBlock 			= 6
+Global Const $Corsairs_FeignedNeutrality 	= 7
+Global Const $Corsairs_DeathsCharge 		= 8
 
 ; Hero Build
-Global Const $Corsairs_MakeHaste = 1
-Global Const $Corsairs_CauterySignet = 2
-Global Const $Corsairs_Winnowing = 1
-Global Const $Corsairs_MysticHealing = 2
+Global Const $Corsairs_MakeHaste 		= 1
+Global Const $Corsairs_CauterySignet 	= 2
+Global Const $Corsairs_Winnowing 		= 1
+Global Const $Corsairs_MysticHealing 	= 2
 
 Global $CORSAIRS_FARM_SETUP = False
 Global $Bohseda_Timer

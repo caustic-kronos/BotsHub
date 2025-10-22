@@ -25,10 +25,11 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $NornFarmInformations = 'Norn title farm, bring solid heroes composition'
 ; Average duration ~ 45m
 Global Const $NORN_FARM_DURATION = 45 * 60 * 1000
+
 
 ;~ Main loop for the norn faction farm
 Func NornTitleFarm($STATUS)

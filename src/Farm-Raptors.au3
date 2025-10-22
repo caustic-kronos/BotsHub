@@ -27,7 +27,7 @@ Modified by: Night
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
 Global Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
 Global Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
@@ -46,32 +46,32 @@ Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Global Const $Raptors_MarkOfPain = 1
-Global Const $Raptors_IAmUnstoppable = 2
+Global Const $Raptors_MarkOfPain 		= 1
+Global Const $Raptors_IAmUnstoppable 	= 2
 Global Const $Raptors_ProtectorsDefense = 3
-Global Const $Raptors_WaryStance = 4
-Global Const $Raptors_HundredBlades = 5
-Global Const $Raptors_SoldiersDefense = 6
-Global Const $Raptors_WhirlwindAttack = 7
-Global Const $Raptors_ShieldBash = 8
+Global Const $Raptors_WaryStance 		= 4
+Global Const $Raptors_HundredBlades 	= 5
+Global Const $Raptors_SoldiersDefense 	= 6
+Global Const $Raptors_WhirlwindAttack 	= 7
+Global Const $Raptors_ShieldBash 		= 8
 
-Global Const $Raptors_SignetOfMysticSpeed = 2
-Global Const $Raptors_MirageCloak = 3
-Global Const $Raptors_VowOfStrength = 4
-Global Const $Raptors_ArmorOfSanctity = 5
-Global Const $Raptors_DustCloak = 6
-Global Const $Raptors_PiousFury = 7
-Global Const $Raptors_EremitesAttack = 8
+Global Const $Raptors_SignetOfMysticSpeed 	= 2
+Global Const $Raptors_MirageCloak 			= 3
+Global Const $Raptors_VowOfStrength 		= 4
+Global Const $Raptors_ArmorOfSanctity 		= 5
+Global Const $Raptors_DustCloak 			= 6
+Global Const $Raptors_PiousFury 			= 7
+Global Const $Raptors_EremitesAttack 		= 8
 
 ; Hero Build
-Global Const $Raptors_VocalWasSogolon = 1
-Global Const $Raptors_Incoming = 2
-Global Const $Raptors_FallBack = 3
-Global Const $Raptors_EnduringHarmony = 4
-Global Const $Raptors_MakeHaste = 5
-Global Const $Raptors_StandYourGround = 6
-Global Const $Raptors_CantTouchThis = 7
-Global Const $Raptors_BladeturnRefrain = 8
+Global Const $Raptors_VocalWasSogolon 	= 1
+Global Const $Raptors_Incoming 			= 2
+Global Const $Raptors_FallBack 			= 3
+Global Const $Raptors_EnduringHarmony 	= 4
+Global Const $Raptors_MakeHaste 		= 5
+Global Const $Raptors_StandYourGround 	= 6
+Global Const $Raptors_CantTouchThis 	= 7
+Global Const $Raptors_BladeturnRefrain 	= 8
 
 Global $RAPTORS_FARM_SETUP = False
 Global $RAPTORS_PROFESSION = 1

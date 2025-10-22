@@ -28,7 +28,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $TascaChestRunnerSkillbar = 'Ogej4NfMLTHQ3l8I6M0kNQ4OIQA'
 Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
@@ -42,14 +42,14 @@ Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 Global Const $TASCA_FARM_DURATION = (3 * 60) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Tasca_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Tasca_ShroudOfDistress = 1
-Global Const $Tasca_DwarvenStability = 2
-Global Const $Tasca_DeadlyParadox = 3
-Global Const $Tasca_ShadowForm = 4
-Global Const $Tasca_IAmUnstoppable = 5
-Global Const $Tasca_DarkEscape = 6
-Global Const $Tasca_DeathsCharge = 7
-Global Const $Tasca_HeartOfShadow = 8
+Global Const $Tasca_ShroudOfDistress 	= 1
+Global Const $Tasca_DwarvenStability 	= 2
+Global Const $Tasca_DeadlyParadox 		= 3
+Global Const $Tasca_ShadowForm 			= 4
+Global Const $Tasca_IAmUnstoppable 		= 5
+Global Const $Tasca_DarkEscape 			= 6
+Global Const $Tasca_DeathsCharge 		= 7
+Global Const $Tasca_HeartOfShadow 		= 8
 
 Global Const $TASCA_CHEST_RANGE = 1.5 * $RANGE_SPELLCAST
 

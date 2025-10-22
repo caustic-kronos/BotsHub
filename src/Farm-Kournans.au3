@@ -44,32 +44,32 @@ Global Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $KOURNANS_FARM_DURATION = (2 * 60 + 25) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Global Const $Kournans_Intensity = 1
-Global Const $Kournans_EbonBattleStandardOfHonor = 2
-Global Const $Kournans_Mindbender = 3
-Global Const $Kournans_Earthquake = 4
-Global Const $Kournans_DragonsStomp = 5
-Global Const $Kournans_DeathsCharge = 6
-Global Const $Kournans_Aftershock = 7
-Global Const $Kournans_Shockwave = 8
+Global Const $Kournans_Intensity 					= 1
+Global Const $Kournans_EbonBattleStandardOfHonor 	= 2
+Global Const $Kournans_Mindbender 					= 3
+Global Const $Kournans_Earthquake 					= 4
+Global Const $Kournans_DragonsStomp 				= 5
+Global Const $Kournans_DeathsCharge 				= 6
+Global Const $Kournans_Aftershock 					= 7
+Global Const $Kournans_Shockwave 					= 8
 
 Global Const $Hero_Kournans_Margrid = 1
-Global Const $Hero_Kournans_Xandra = 2
+Global Const $Hero_Kournans_Xandra 	= 2
 
 Global Const $Kournans_EdgeOfExtinction = 1
-Global Const $Kournans_Lacerate = 2
-Global Const $Kournans_Brambles = 3
-Global Const $Kournans_NaturesRenewal = 4
-Global Const $Kournans_MuddyTerrain = 5
-Global Const $Kournans_Pestilence = 6
+Global Const $Kournans_Lacerate 		= 2
+Global Const $Kournans_Brambles 		= 3
+Global Const $Kournans_NaturesRenewal 	= 4
+Global Const $Kournans_MuddyTerrain 	= 5
+Global Const $Kournans_Pestilence 		= 6
 
-Global Const $Kournans_RitualLord = 1
-Global Const $Kournans_EarthBind = 2
-Global Const $Kournans_VitalWeapon = 3
-Global Const $Kournans_DeathPactSignet = 4
-
+Global Const $Kournans_RitualLord 		= 1
+Global Const $Kournans_EarthBind 		= 2
+Global Const $Kournans_VitalWeapon 		= 3
+Global Const $Kournans_DeathPactSignet 	= 4
 
 Global $KOURNANS_FARM_SETUP = False
+
 
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)

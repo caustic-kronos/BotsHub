@@ -40,23 +40,23 @@ Global Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
-Global Const $Mantids_DeadlyParadox = 1
-Global Const $Mantids_ShadowForm = 2
-Global Const $Mantids_ShroudOfDistress = 3
+Global Const $Mantids_DeadlyParadox 	= 1
+Global Const $Mantids_ShadowForm 		= 2
+Global Const $Mantids_ShroudOfDistress 	= 3
 Global Const $Mantids_LightningReflexes = 4
-Global Const $Mantids_WayOfPerfection = 5
-Global Const $Mantids_DeathsCharge = 6
-Global Const $Mantids_WhirlingDefense = 7
-Global Const $Mantids_EdgeOfExtinction = 8
+Global Const $Mantids_WayOfPerfection 	= 5
+Global Const $Mantids_DeathsCharge 		= 6
+Global Const $Mantids_WhirlingDefense 	= 7
+Global Const $Mantids_EdgeOfExtinction 	= 8
 
 ; Hero Build
-Global Const $Mantids_VocalWasSogolon = 1
-Global Const $Mantids_Incoming = 2
-Global Const $Mantids_FallBack = 3
-Global Const $Mantids_EnduringHarmony = 5
-Global Const $Mantids_TheyreOnFire = 6
-Global Const $Mantids_MakeHaste = 7
-Global Const $Mantids_BladeturnRefrain = 8
+Global Const $Mantids_VocalWasSogolon 	= 1
+Global Const $Mantids_Incoming 			= 2
+Global Const $Mantids_FallBack 			= 3
+Global Const $Mantids_EnduringHarmony 	= 5
+Global Const $Mantids_TheyreOnFire 		= 6
+Global Const $Mantids_MakeHaste 		= 7
+Global Const $Mantids_BladeturnRefrain 	= 8
 
 Global $MANTIDS_FARM_SETUP = False
 
