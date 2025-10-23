@@ -128,7 +128,7 @@ Global $GUI_Console, $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_Sta
 Global $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution, $GUI_Label_BagsCount, $GUI_Input_BagsCount, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
 
 Global $GUI_Group_RunInfos, _
-		$GUI_Label_Runs_Text, $GUI_Label_Runs_Value, $GUI_Label_Failures_Text, $GUI_Label_Failures_Value, $GUI_Label_Time_Text, $GUI_Label_Time_Value, _
+		$GUI_Label_Runs_Text, $GUI_Label_Runs_Value, $GUI_Label_Successes_Text, $GUI_Label_Successes_Value, $GUI_Label_Failures_Text, $GUI_Label_Failures_Value, $GUI_Label_Time_Text, $GUI_Label_Time_Value, _
 		$GUI_Label_TimePerRun_Text, $GUI_Label_TimePerRun_Value, $GUI_Label_Gold_Text, $GUI_Label_Gold_Value, $GUI_Label_Ectos_Text, $GUI_Label_Ectos_Value, _
 		$GUI_Label_GoldItems_Text, $GUI_Label_GoldItems_Value, $GUI_Label_Chests_Text, $GUI_Label_Chests_Value, $GUI_Label_Experience_Text, $GUI_Label_Experience_Value
 Global $GUI_Group_ItemsLooted, _
@@ -204,14 +204,16 @@ Func createGUI()
 	$GUI_Label_GoldItems_Value = GUICtrlCreateLabel('0', 91, 124, 50, 16, $SS_RIGHT)
 	$GUI_Label_Experience_Text = GUICtrlCreateLabel('Experience:', 31, 144, 65, 16)
 	$GUI_Label_Experience_Value = GUICtrlCreateLabel('0', 91, 144, 50, 16, $SS_RIGHT)
-	$GUI_Label_Failures_Text = GUICtrlCreateLabel('Failures:', 161, 64, 65, 16)
-	$GUI_Label_Failures_Value = GUICtrlCreateLabel('0', 231, 64, 50, 16, $SS_RIGHT)
-	$GUI_Label_TimePerRun_Text = GUICtrlCreateLabel('Time per run:', 161, 84, 65, 16)
-	$GUI_Label_TimePerRun_Value = GUICtrlCreateLabel('0', 231, 84, 50, 16, $SS_RIGHT)
-	$GUI_Label_Ectos_Text = GUICtrlCreateLabel('Ectos:', 161, 104, 65, 16)
-	$GUI_Label_Ectos_Value = GUICtrlCreateLabel('0', 231, 104, 50, 16, $SS_RIGHT)
-	$GUI_Label_Chests_Text = GUICtrlCreateLabel('Chests:', 161, 124, 65, 16)
-	$GUI_Label_Chests_Value = GUICtrlCreateLabel('0', 231, 124, 50, 16, $SS_RIGHT)
+	$GUI_Label_Successes_Text = GUICtrlCreateLabel('Successes:', 161, 64, 65, 16)
+	$GUI_Label_Successes_Value = GUICtrlCreateLabel('0', 231, 64, 50, 16, $SS_RIGHT)
+	$GUI_Label_Failures_Text = GUICtrlCreateLabel('Failures:', 161, 84, 65, 16)
+	$GUI_Label_Failures_Value = GUICtrlCreateLabel('0', 231, 84, 50, 16, $SS_RIGHT)
+	$GUI_Label_TimePerRun_Text = GUICtrlCreateLabel('Time per run:', 161, 104, 65, 16)
+	$GUI_Label_TimePerRun_Value = GUICtrlCreateLabel('0', 231, 104, 50, 16, $SS_RIGHT)
+	$GUI_Label_Ectos_Text = GUICtrlCreateLabel('Ectos:', 161, 124, 65, 16)
+	$GUI_Label_Ectos_Value = GUICtrlCreateLabel('0', 231, 124, 50, 16, $SS_RIGHT)
+	$GUI_Label_Chests_Text = GUICtrlCreateLabel('Chests:', 161, 144, 65, 16)
+	$GUI_Label_Chests_Value = GUICtrlCreateLabel('0', 231, 144, 50, 16, $SS_RIGHT)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	; === Items Looted ===
@@ -737,8 +739,8 @@ Func BotHubLoop()
 				If $resetRequired Then ResetBotsSetups()
 			EndIf
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
-			Local $success = RunFarmLoop($Farm)
-			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
+			Local $result = RunFarmLoop($Farm)
+			If ($result == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			Else
 				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
@@ -773,7 +775,7 @@ EndFunc
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
 	Local $result = 2
-	Local $timePerRun = UpdateStats(-1, Null)
+	Local $timePerRun = UpdateStats(-1)
 	Local $timer = TimerInit()
 	UpdateProgressBar(True, $timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
 	AdlibRegister('UpdateProgressBar', 5000)
@@ -882,7 +884,8 @@ Func RunFarmLoop($Farm)
 	EndSwitch
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
-	UpdateStats($result, $timer)
+	Local $elapsedTime = TimerDiff($timer)
+	UpdateStats($result, $elapsedTime)
 	ClearMemory()
 	; _PurgeHook()
 	Return $result
@@ -1315,11 +1318,12 @@ EndFunc
 
 #Region Statistics management
 ;~ Fill statistics
-Func UpdateStats($success, $timer)
+Func UpdateStats($result, $elapsedTime = 0)
 	; All static variables are initialized only once when UpdateStats() function is called first time
 	Local Static $runs = 0
+	Local Static $successes = 0
 	Local Static $failures = 0
-	Local Static $time = 0
+	Local Static $totalTime = 0
 	Local Static $TotalChests = 0
 	Local Static $InitialExperience = GetExperience()
 
@@ -1333,25 +1337,27 @@ Func UpdateStats($success, $timer)
 	Local Static $LuxonTitlePoints = GetLuxonTitle()
 
 	; -1 : Before every farm loop
-	If $success == -1 Then
+	If $result == -1 Then
 		Info('Starting run ' & ($runs + 1))
 	; 0 : Success
-	ElseIf $success == 0 Then
+	ElseIf $result == 0 Then
+		$successes += 1
 		$runs += 1
-		$time += TimerDiff($timer)
+		$totalTime += $elapsedTime
 	; 1 : Failure
-	ElseIf $success == 1 Then
+	ElseIf $result == 1 Then
 		$failures += 1
 		$runs += 1
-		$time += TimerDiff($timer)
+		$totalTime += $elapsedTime
 	EndIf
 	; 2 : Pause
 
 	; Global stats
 	GUICtrlSetData($GUI_Label_Runs_Value, $runs)
+	GUICtrlSetData($GUI_Label_Successes_Value, $successes)
 	GUICtrlSetData($GUI_Label_Failures_Value, $failures)
-	GUICtrlSetData($GUI_Label_Time_Value, Floor($time/3600000) & 'h ' & Floor(Mod($time, 3600000)/60000) & 'min ' & Floor(Mod($time, 60000)/1000) & 's')
-	Local $timePerRun = $runs == 0 ? 0 : $time / $runs
+	GUICtrlSetData($GUI_Label_Time_Value, Floor($totalTime/3600000) & 'h ' & Floor(Mod($totalTime, 3600000)/60000) & 'min ' & Floor(Mod($totalTime, 60000)/1000) & 's')
+	Local $timePerRun = $runs == 0 ? 0 : $totalTime / $runs
 	GUICtrlSetData($GUI_Label_TimePerRun_Value, Floor($timePerRun/60000) & 'min ' & Floor(Mod($timePerRun, 60000)/1000) & 's')
 	$TotalChests += CountOpenedChests()
 	ClearChestsMap()
