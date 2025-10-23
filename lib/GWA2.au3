@@ -1670,7 +1670,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 			$destinationY = $Y + Random(-$random, $random)
 			Move($destinationX, $destinationY, 0)
 		EndIf
-	Until ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $destinationX, $destinationY) < 25 Or $blockedCount > 14
+	Until GetDistanceToPoint($me, $destinationX, $destinationY) < 25 Or $blockedCount > 14
 EndFunc
 
 
@@ -1725,7 +1725,7 @@ Func GoToAgent($agent, $GoFunction)
 			Sleep(100)
 			$GoFunction($agent)
 		EndIf
-	Until ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y')) < 250 Or $blockedCount > 14
+	Until GetDistance($me, $agent) < 250 Or $blockedCount > 14
 	Sleep(GetPing() + 1000)
 EndFunc
 
@@ -2898,7 +2898,7 @@ Func GetNearestItemByModelIDToAgent($modelID, $agent)
 			If Not GetIsMovable($itemAgent) Then ContinueLoop ;~ item is considered movable
 			Local $agentModelID = DllStructGetData(GetItemByAgentID($i), 'ModelID')
 			If $agentModelID = $modelID Then
-				$distance = (DllStructGetData($itemAgent, 'X') - DllStructGetData($agent, 'X')) ^ 2 + (DllStructGetData($itemAgent, 'Y') - DllStructGetData($agent, 'Y')) ^ 2
+				$distance = GetDistance($itemAgent, $agent)
 				If $distance < $nearestDistance Then
 					$nearestItemAgent = $itemAgent
 					$nearestDistance = $distance
@@ -3247,7 +3247,7 @@ Func GetNearestAgentToAgent($agent, $agentType = 0, $agentFilter = Null)
 		If DllStructGetData($agentArray[$i], 'ID') == $agentID Then ContinueLoop
 		If DllStructGetData($agentArray[$i], 'ID') == $ownID Then ContinueLoop
 		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
-		$distance = ($X - DllStructGetData($agentArray[$i], 'X')) ^ 2 + ($Y - DllStructGetData($agentArray[$i], 'Y')) ^ 2
+		$distance = GetDistanceToPoint($agentArray[$i], $X, $Y)
 		If $distance < $nearestDistance Then
 			$nearestAgent = $agentArray[$i]
 			$nearestDistance = $distance
@@ -3297,7 +3297,7 @@ Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 	For $i = 1 To $agentArray[0]
 		If DllStructGetData($agentArray[$i], 'ID') == $ownID Then ContinueLoop
 		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
-		$distance = ($X - DllStructGetData($agentArray[$i], 'X')) ^ 2 + ($Y - DllStructGetData($agentArray[$i], 'Y')) ^ 2
+		$distance = GetDistanceToPoint($agentArray[$i], $X, $Y)
 		If $distance < $nearestDistance Then
 			$nearestAgent = $agentArray[$i]
 			$nearestDistance = $distance
@@ -4105,6 +4105,12 @@ EndFunc
 ;~ Returns the distance between two agents.
 Func GetDistance($agent1, $agent2)
 	Return Sqrt((DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2)
+EndFunc
+
+
+;~ Returns the distance between agent and point specified by a coordinate pair.
+Func GetDistanceToPoint($agent, $X, $Y)
+	Return Sqrt(($X - DllStructGetData($agent, 'X')) ^ 2 + ($Y - DllStructGetData($agent, 'Y')) ^ 2)
 EndFunc
 
 

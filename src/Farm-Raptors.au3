@@ -373,7 +373,7 @@ Func MoveAggroingRaptors($x, $y)
 	Move($x, $y, 0)
 
 	Local $me = GetMyAgent()
-	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > $RANGE_NEARBY
+	While IsPlayerAlive() And GetDistanceToPoint($me, $x, $y) > $RANGE_NEARBY
 		If IsBodyBlocked() Then Return True
 		RandomSleep(100)
 		Move($x, $y)

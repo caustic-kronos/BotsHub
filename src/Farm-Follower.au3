@@ -350,7 +350,7 @@ Func MoveToMiddleOfPartyWithTimeout($timeOut)
 	Local $timer = TimerInit()
 	Local $position = FindMiddleOfParty()
 	Move($position[0], $position[1], 0)
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
+	While GetDistanceToPoint($me, $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
 		If IsPlayerDead() Then ExitLoop
 		$oldMapID = $mapID
 		$mapID = GetMapID()

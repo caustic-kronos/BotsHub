@@ -342,13 +342,13 @@ Func ClearChestsMap()
 EndFunc
 
 
-;~ Go to signpost and waits until you reach it.
-Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction = Null)
+;~ Go to signpost and wait until you reach it.
+Func GoToSignpostWhileDefending($signpost, $DefendFunction = Null, $BlockedFunction = Null)
 	Local $me = GetMyAgent()
-	Local $X = DllStructGetData($agent, 'X')
-	Local $Y = DllStructGetData($agent, 'Y')
+	Local $X = DllStructGetData($signpost, 'X')
+	Local $Y = DllStructGetData($signpost, 'Y')
 	Local $blocked = 0
-	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
+	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
 		Move($X, $Y, 100)
 		RandomSleep(GetPing() + 50)
 		If $DefendFunction <> Null Then $DefendFunction()
@@ -363,7 +363,7 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 		RandomSleep(GetPing() + 50)
 		$me = GetMyAgent()
 	WEnd
-	GoSignpost($agent)
+	GoSignpost($signpost)
 	RandomSleep(GetPing() + 100)
 EndFunc
 #EndRegion Loot Chests
@@ -1463,7 +1463,7 @@ EndFunc
 ;~ Scans for chests and return the first one found around the player or the given coordinates
 ;~ If flagged is set to true, it will return previously found chests
 Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
-	If $X == Null Then
+	If $X == Null Or $Y == Null Then
 		Local $me = GetMyAgent()
 		$X = DllStructGetData($me, 'X')
 		$Y = DllStructGetData($me, 'Y')
@@ -1474,7 +1474,7 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
 	For $i = 1 To $agents[0]
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
 		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
-		If ComputeDistance($X, $Y, DllStructGetData($agents[$i], 'X'), DllStructGetData($agents[$i], 'Y')) > $range Then ContinueLoop
+		If GetDistanceToPoint($agents[$i], $X, $Y) > $range Then ContinueLoop
 		Local $chestID = DllStructGetData($agents[$i], 'ID')
 		If $chestsMap[$chestID] == Null Or $chestsMap[$chestID] == 0 Or ($flagged And $chestsMap[$chestID] == 1) Then
 			$chestsMap[$chestID] = 1
@@ -1634,7 +1634,7 @@ EndFunc
 
 ;~ Is agent in range of coordinates
 Func IsAgentInRange($agent, $X, $Y, $range)
-	If ComputeDistance(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $X, $Y) < $range Then Return True
+	If GetDistanceToPoint($agent, $X, $Y) < $range Then Return True
 	Return False
 EndFunc
 #EndRegion Utils
@@ -1774,7 +1774,7 @@ Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = N
 				$coordX = DllStructGetData($me, 'X')
 				$coordY = DllStructGetData($me, 'Y')
 			EndIf
-			If ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+			If GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
 		EndIf
 		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 		$count += 1
@@ -1802,7 +1802,7 @@ Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Nul
 				$coordX = DllStructGetData($me, 'X')
 				$coordY = DllStructGetData($me, 'Y')
 			EndIf
-			If ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+			If GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
 		EndIf
 		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
 
@@ -1832,7 +1832,7 @@ Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
 		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		If $range > 0 And GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
 		Local $curDistance = GetDistance($me, $curAgent)
 		If $curDistance < $smallestDistance Then
 			$returnAgent = $curAgent
@@ -1863,7 +1863,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
 		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-		If $range > 0 And ComputeDistance($coordX, $coordY, DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y')) > $range Then ContinueLoop
+		If $range > 0 And GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
 		Local $curDistance = GetDistance($me, $curAgent)
 		If $curDistance > $furthestDistance Then
 			$returnAgent = $curAgent
@@ -1895,7 +1895,7 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
 		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-		Local $curDistance = ComputeDistance(DllStructGetData($curAgent, 'X'), DllStructGetData($curAgent, 'Y'), $coordX, $coordY)
+		Local $curDistance = GetDistanceToPoint($curAgent, $coordX, $coordY)
 		If $range > 0 And $curDistance > $range Then ContinueLoop
 		If $curDistance < $smallestDistance Then
 			$returnAgent = $curAgent
@@ -2046,7 +2046,7 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Local $timer = TimerInit()
 	Local Const $PI = 3.141592653589793
 	Local $me = GetMyAgent()
-	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
+	While IsPlayerAlive() And GetDistanceToPoint($me, $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
 		Move($coordX, $coordY)
 		RandomSleep(100)
 		;Local $blocked = -1
@@ -2069,22 +2069,22 @@ EndFunc
 
 ;~ Go to the NPC the closest to given coordinates
 Func GoNearestNPCToCoords($x, $y)
-	Local $guy = GetNearestNPCToCoords($x, $y)
+	Local $npc = GetNearestNPCToCoords($x, $y)
 	Local $me = GetMyAgent()
-	While DllStructGetData($guy, 'ID') == 0
+	While DllStructGetData($npc, 'ID') == 0
 		RandomSleep(100)
-		$guy = GetNearestNPCToCoords($x, $y)
+		$npc = GetNearestNPCToCoords($x, $y)
 	WEnd
-	ChangeTarget($guy)
+	ChangeTarget($npc)
 	RandomSleep(250)
-	GoNPC($guy)
+	GoNPC($npc)
 	RandomSleep(250)
 	$me = GetMyAgent()
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y')) > 250
+	While GetDistance($me, $npc) > 250
 		RandomSleep(250)
-		Move(DllStructGetData($guy, 'X'), DllStructGetData($guy, 'Y'), 40)
+		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'), 40)
 		RandomSleep(250)
-		GoNPC($guy)
+		GoNPC($npc)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
@@ -2109,7 +2109,7 @@ Func GetAlmostInRangeOfAgent($tgtAgent, $proximity = ($RANGE_SPELLCAST + 100))
 	Local $xTgt = DllStructGetData($tgtAgent, 'X')
 	Local $yTgt = DllStructGetData($tgtAgent, 'Y')
 
-	Local $distance = ComputeDistance($xTgt, $yTgt, $xMe, $yMe)
+	Local $distance = GetDistance($me, $tgtAgent)
 	If ($distance < $RANGE_SPELLCAST) Then Return
 
 	Local $ratio = $proximity / $distance
@@ -2195,20 +2195,20 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 
 	If $log <> '' Then Info($log)
 	Local $me = GetMyAgent()
-	Local $coordsX = DllStructGetData($me, 'X')
-	Local $coordsY = DllStructGetData($me, 'Y')
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
 	Local $blocked = 0
 
 	Move($x, $y)
 
-	Local $oldCoordsX
-	Local $oldCoordsY
+	Local $oldMyX
+	Local $oldMyY
 	Local $target
 	Local $chest
 	; PartyIsAlive is caller's responsibility to fill
-	While $partyIsAlive And ComputeDistance($coordsX, $coordsY, $x, $y) > $RANGE_NEARBY And $blocked < 10
-		$oldCoordsX = $coordsX
-		$oldCoordsY = $coordsY
+	While $partyIsAlive And GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
+		$oldMyX = $myX
+		$oldMyY = $myY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
@@ -2216,12 +2216,12 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 			PickUpItems(Null, DefaultShouldPickItem, $range)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
-		$coordsX = DllStructGetData($me, 'X')
-		$coordsY = DllStructGetData($me, 'Y')
-		If $oldCoordsX = $coordsX And $oldCoordsY = $coordsY Then
+		$myX = DllStructGetData($me, 'X')
+		$myY = DllStructGetData($me, 'Y')
+		If $oldMyX = $myX And $oldMyY = $myY Then
 			$blocked += 1
 			If $blocked > 6 Then
-				Move($coordsX, $coordsY, 500)
+				Move($myX, $myY, 500)
 				RandomSleep(500)
 				Move($x, $y)
 			EndIf
@@ -2351,8 +2351,6 @@ EndFunc
 Func GetHighestPriorityFoe($agent, $range = $RANGE_SPELLCAST)
 	Local Static $mobsPriorityMap = CreateMobsPriorityMap()
 	Local $agentArray = GetAgentArray(0xDB)
-	Local $X = DllStructGetData($agent, 'X')
-	Local $Y = DllStructGetData($agent, 'Y')
 	Local $highestPriorityTarget = Null
 	Local $priorityLevel = 99999
 
@@ -2361,7 +2359,7 @@ Func GetHighestPriorityFoe($agent, $range = $RANGE_SPELLCAST)
 		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
 		If DllStructGetData($agentArray[$i], 'TypeMap') == 0 Then ContinueLoop
 		;If DllStructGetData($agentArray[$i], 'ID') == $agentID Then ContinueLoop
-		Local $distance = ComputeDistance($X, $y, DllStructGetData($agentArray[$i], 'X'), DllStructGetData($agentArray[$i], 'Y'))
+		Local $distance = GetDistance($agent, $agentArray[$i])
 		If $distance < $range Then
 			Local $priority = $mobsPriorityMap[DllStructGetData($agentArray[$i], 'PlayerNumber')]
 			If ($priority == Null) Then

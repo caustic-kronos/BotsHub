@@ -219,7 +219,7 @@ Func TASCADervishRun($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 150 And $blockedCounter < 20
+	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 150 And $blockedCounter < 20
 		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
 			Move($X, $Y, 0)
@@ -260,7 +260,7 @@ Func GetTargetToEscapeWithDeathsCharge($X, $Y)
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	For $i = 1 To $foes[0]
 		Local $foe = $foes[$i]
-		Local $distance = ComputeDistance($X, $Y, DllStructGetData($foe, 'X'), DllStructGetData($foe, 'Y'))
+		Local $distance = GetDistanceToPoint($foe, $X, $Y)
 		If $distance < $targetDistance Then
 			$target = $foe
 			$targetDistance = $distance

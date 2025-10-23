@@ -79,20 +79,10 @@ Func SetupFeathersFarm()
 
 	Info('Entering Jaya Bluffs')
 	Local $me = GetMyAgent()
-	Local $X = DllStructGetData($me, 'X')
-	Local $Y = DllStructGetData($me, 'Y')
 
-	If ComputeDistance($X, $Y, 17300, 17300) > 5000 Then
-		MoveTo(17000, 12400)
-	EndIf
-
-	If ComputeDistance($X, $Y, 17300, 17300) > 4400 Then
-		MoveTo(19000, 13450)
-	EndIf
-
-	If ComputeDistance($X, $Y, 17300, 17300) > 1800 Then
-		MoveTo(18750, 16000)
-	EndIf
+	If GetDistanceToPoint($me, 17300, 17300) > 5000 Then MoveTo(17000, 12400)
+	If GetDistanceToPoint($me, 17300, 17300) > 4400 Then MoveTo(19000, 13450)
+	If GetDistanceToPoint($me, 17300, 17300) > 1800 Then MoveTo(18750, 16000)
 
 	MoveTo(17300, 17300)
 	Move(16800, 17550)
@@ -166,7 +156,7 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 	Local $deadlock = TimerInit()
 
 	Move($x, $y)
-	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > 250
+	While IsPlayerAlive() And GetDistanceToPoint($me, $x, $y) > 250
 		If TimerDiff($deadlock) > $timeOut Then
 			Resign()
 			Sleep(3000)
@@ -198,7 +188,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 	Move($x, $y)
 	Local $me = GetMyAgent()
 	; TODO: fix this mess
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > 250
+	While GetDistanceToPoint($me, $x, $y) > 250
 		If TimerDiff($deadlock) > $timeout Then
 			Resign()
 			Sleep(3000)

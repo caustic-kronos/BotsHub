@@ -180,9 +180,7 @@ EndFunc
 ;~ Method to check to which place you are the closest to
 Func SkipToPreventBackTracking($X, $Y, $nextX, $nextY)
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
-	If ComputeDistance($myX, $myY, $X, $Y) < ComputeDistance($myX, $myY, $nextX, $nextY) Then
+	If GetDistanceToPoint($me, $X, $Y) < GetDistanceToPoint($me, $nextX, $nextY) Then
 		Info('Skipping')
 		Return True
 	EndIf
@@ -203,7 +201,7 @@ Func DervishRun($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 100 And $blockedCounter < 15
+	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0 Then UseSkillEx($Pongmei_IAmUnstoppable)
 
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then
@@ -249,13 +247,11 @@ EndFunc
 ;~ Check if there are foes in front so we can use Shadow Form preemptively
 Func AreFoesInFront($X, $Y)
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 350)
 	Local $foe
 	For $i = 1 To $foes[0]
 		$foe = $foes[$i]
-		If ((ComputeDistance($X, $Y, $myX, $myY) - ComputeDistance($X, $Y, DllStructGetData($foe, 'X'), DllStructGetData($foe, 'Y'))) > 0) Then Return True
+		If ((GetDistanceToPoint($me, $X, $Y) - GetDistanceToPoint($foe, $X, $Y)) > 0) Then Return True
 	Next
 	Return False
 EndFunc
@@ -309,7 +305,7 @@ Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $foe
 	For $i = 1 To $foes[0]
 		$foe = $foes[$i]
-		If ((ComputeDistance($X, $Y, $myX, $myY) - ComputeDistance($X, $Y, DllStructGetData($foe, 'X'), DllStructGetData($foe, 'Y'))) > $distance) Then Return $foe
+		If ((GetDistanceToPoint($me, $X, $Y) - GetDistanceToPoint($foe, $X, $Y)) > $distance) Then Return $foe
 	Next
 	Return Null
 EndFunc

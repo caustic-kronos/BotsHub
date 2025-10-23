@@ -129,7 +129,7 @@ Func TowerOfCourage()
 	Info('Waiting for door to open')
 	Local $waitCount = 0
 	Local $me = GetMyAgent()
-	While Not IsRunFailed() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), -15000, -2000) > $RANGE_ADJACENT
+	While Not IsRunFailed() And GetDistanceToPoint($me, -15000, -2000) > $RANGE_ADJACENT
 		If $waitCount == 20 Then
 			Info('Rastigan is not moving, lets nudge him')
 			MoveAggroAndKill(-15500, -3500)
@@ -375,7 +375,7 @@ Func TowerOfStrengh()
 	MoveAggroAndKill(15400, -1400, '3')
 	; Entering the tower garantees the npc arrived
 	Local $me = GetMyAgent()
-	While Not IsRunFailed() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), 16700, -1700) > $RANGE_NEARBY
+	While Not IsRunFailed() And GetDistanceToPoint($me, 16700, -1700) > $RANGE_NEARBY
 		MoveTo(16700, -1700)
 		Sleep(1000)
 		$me = GetMyAgent()

@@ -374,7 +374,7 @@ Func WaitForAlliesDead()
 	Local $target = GetNearestNPCToCoords(-8598, -5810)
 
 	; Wait until foes are in range of allies
-	While ComputeDistance(-8598, -5810, DllStructGetData($target, 'X'), DllStructGetData($target, 'Y')) < $RANGE_EARSHOT And TimerDiff($deadlock) < 120000
+	While GetDistanceToPoint($target, -8598, -5810) < $RANGE_EARSHOT And TimerDiff($deadlock) < 120000
 		RandomSleep(5000)
 		$target = GetNearestNPCToCoords(-8598, -5810)
 	WEnd

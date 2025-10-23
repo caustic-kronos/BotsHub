@@ -131,7 +131,7 @@ Func MoveRunning($X, $Y)
 
 	Local $target
 	Local $me = GetMyAgent()
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250
+	While GetDistanceToPoint($me, $X, $Y) > 250
 		If IsPlayerDead() Then Return False
 		$target = GetNearestEnemyToAgent($me)
 
@@ -326,7 +326,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > $random * 1.5
+	While GetDistanceToPoint($me, $X, $Y) > $random * 1.5
 		If IsPlayerDead() Then Return False
 		VaettirsStayAlive()
 		$me = GetMyAgent()
