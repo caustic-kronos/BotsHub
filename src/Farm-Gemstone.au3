@@ -26,8 +26,9 @@ Global Const $GemstoneFarmSkillbar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
 Global Const $GemstoneHeroSkillbar = 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm'
 Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
 	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
+	& '- Recommended to have maxed out Lightbringer title' & @CRLF _
 	& '- Strong hero build' &@CRLF _
-	& '- Hero order: 1. ST Ritu, 2. SoS Ritu, 3. BiP Necro, Rest' &@CRLF _
+	& '- Hero order: 1. ST Ritu, 2. SoS Ritu, 3. BiP Necro, 4. MM Lich Necro, Rest - Energy Surge mesmers' &@CRLF _
 	& ' ' & @CRLF _
 	& 'Equipment:' & @CRLF _
 	& '- 5x Artificer Rune' & @CRLF _
@@ -36,6 +37,10 @@ Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
 	& '- 2x Vitae ' & @CRLF _
 	& '- 40/40 DOM Set' & @CRLF _
 	& '- Character Stats: 14 Fast Casting, 13 Domination Magic' & @CRLF _
+	& ' ' & @CRLF _
+	& 'Ebony Citadel of Mallyx location is unlocked after defeating all 4 Lords of Anguish in Mallyx the Unyielding quest.' & @CRLF _
+	& 'Caution: do not defeat Mallyx the Unyielding, because this will finish the quest which would require to do 4 DoA parts all over again to get access to Ebony Citadel of Mallyx' & @CRLF _
+	& 'This bot doesn''t defeat Mallyx the Unyielding, only attempts to defeat all 19 waves, which doesn''t finish the quest' & @CRLF _
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
 
