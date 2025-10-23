@@ -369,7 +369,7 @@ Func createGUI()
 	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit('', 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
 	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
 	$GUI_Edit_HeroBuild = GUICtrlCreateEdit('', 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
-	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
+	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 400)
 	GUICtrlCreateTabItem('')
 
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
