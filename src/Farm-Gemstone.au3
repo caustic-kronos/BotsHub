@@ -40,7 +40,6 @@ Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
 Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
 
 ;=== Configuration / Globals ===
-Global $gemRuns = 0
 Global Const $StartX = -3606
 Global Const $StartY = -5347
 Global Const $FightDist = 1500
@@ -105,8 +104,6 @@ EndFunc
 
 ;~ Talking to Zhellix
 Func TalkToZhellix()
-	$gemRuns += 1
-	Info('Starting run ' & $gemRuns)
 	Local $z = GetNearestNpcToCoords(6086, -13397)
 	ChangeTarget($z)
 	GoToNPC($z)

@@ -885,6 +885,11 @@ Func RunFarmLoop($Farm)
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
 	Local $elapsedTime = TimerDiff($timer)
+	If $result == 0 Then
+		Info('Run Successful after: ' & ConvertTimeToMinutesString($elapsedTime))
+	ElseIf $result == 1 Then
+		Info('Run failed after: ' & ConvertTimeToMinutesString($elapsedTime))
+	EndIf
 	UpdateStats($result, $elapsedTime)
 	ClearMemory()
 	; _PurgeHook()
@@ -1356,9 +1361,9 @@ Func UpdateStats($result, $elapsedTime = 0)
 	GUICtrlSetData($GUI_Label_Runs_Value, $runs)
 	GUICtrlSetData($GUI_Label_Successes_Value, $successes)
 	GUICtrlSetData($GUI_Label_Failures_Value, $failures)
-	GUICtrlSetData($GUI_Label_Time_Value, Floor($totalTime/3600000) & 'h ' & Floor(Mod($totalTime, 3600000)/60000) & 'min ' & Floor(Mod($totalTime, 60000)/1000) & 's')
+	GUICtrlSetData($GUI_Label_Time_Value, ConvertTimeToHourString($totalTime))
 	Local $timePerRun = $runs == 0 ? 0 : $totalTime / $runs
-	GUICtrlSetData($GUI_Label_TimePerRun_Value, Floor($timePerRun/60000) & 'min ' & Floor(Mod($timePerRun, 60000)/1000) & 's')
+	GUICtrlSetData($GUI_Label_TimePerRun_Value, ConvertTimeToMinutesString($timePerRun))
 	$TotalChests += CountOpenedChests()
 	ClearChestsMap()
 	GUICtrlSetData($GUI_Label_Chests_Value, $TotalChests)
@@ -1637,8 +1642,19 @@ Func SelectFarmDuration($Farm)
 EndFunc
 #EndRegion Statistics management
 
+
 #Region Utils
 Func IsHardmodeEnabled()
 	Return GUICtrlRead($GUI_Checkbox_HM) == $GUI_CHECKED
+EndFunc
+
+
+Func ConvertTimeToHourString($time)
+	Return Floor($time/3600000) & 'h ' & Floor(Mod($time, 3600000)/60000) & 'min ' & Floor(Mod($time, 60000)/1000) & 's'
+EndFunc
+
+
+Func ConvertTimeToMinutesString($time)
+	Return Floor($time/60000) & 'min ' & Floor(Mod($time, 60000)/1000) & 's'
 EndFunc
 #EndRegion Utils
