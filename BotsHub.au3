@@ -165,7 +165,7 @@ Global $GUI_Label_ToDoList
 ; Description.....:	Create the main GUI
 ;------------------------------------------------------
 Func createGUI()
-	$GUI_GWBotHub = GUICreate('GW Bot Hub', 600, 450, 851, 263)
+	$GUI_GWBotHub = GUICreate('GW Bot Hub', 600, 450, -1, -1) ; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
 	GUISetBkColor($GUI_GREY_COLOR, $GUI_GWBotHub)
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
