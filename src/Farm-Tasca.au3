@@ -220,7 +220,7 @@ Func TASCADervishRun($X, $Y)
 	Local $me = GetMyAgent()
 	Local $energy
 	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 150 And $blockedCounter < 20
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
 			Move($X, $Y, 0)
 		EndIf

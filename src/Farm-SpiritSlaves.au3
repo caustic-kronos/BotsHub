@@ -129,7 +129,7 @@ Func SpiritSlavesFarmSetup()
 		MoveTo(-8261, 12808)
 		Move(-3838, 19196)
 		$me = GetMyAgent()
-		While IsPlayerAlive() And DllStructGetData($me, 'MoveX') <> 0 And DllStructGetData($me, 'MoveY') <> 0
+		While IsPlayerAlive() And IsPlayerMoving()
 			If (CountFoesInRangeOfAgent($me, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)
 			RandomSleep(500)
 			$me = GetMyAgent()

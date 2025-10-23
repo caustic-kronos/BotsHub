@@ -142,7 +142,7 @@ Func MoveRunning($X, $Y)
 		If DllStructGetData($me, 'HP') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, $target)
 
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then Move($X, $Y)
+		If Not IsPlayerMoving() Then Move($X, $Y)
 		RandomSleep(500)
 		$me = GetMyAgent()
 	WEnd
@@ -330,7 +330,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 		If IsPlayerDead() Then Return False
 		VaettirsStayAlive()
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			If $heartOfShadowUsageCount > 6 Then
 				While IsPlayerAlive()
 					RandomSleep(1000)

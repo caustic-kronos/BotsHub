@@ -1664,7 +1664,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 		$mapID = GetMapID()
 		If $mapID <> $oldMapID Then ExitLoop
 		If $doWhileRunning <> Null Then $doWhileRunning()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			$destinationX = $X + Random(-$random, $random)
 			$destinationY = $Y + Random(-$random, $random)
@@ -1719,7 +1719,7 @@ Func GoToAgent($agent, $GoFunction)
 		$mapLoadingOld = $mapLoading
 		$mapLoading = GetInstanceType()
 		If $mapLoading <> $mapLoadingOld Then ExitLoop
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
 			Sleep(100)
@@ -3476,6 +3476,13 @@ EndFunc
 ;~ Tests if an agent is moving.
 Func GetIsMoving($agent)
 	Return DllStructGetData($agent, 'MoveX') <> 0 Or DllStructGetData($agent, 'MoveY') <> 0
+EndFunc
+
+
+;~ Tests if player is moving.
+Func IsPlayerMoving()
+	Local $me = GetMyAgent()
+	Return DllStructGetData($me, 'MoveX') <> 0 Or DllStructGetData($me, 'MoveY') <> 0
 EndFunc
 
 

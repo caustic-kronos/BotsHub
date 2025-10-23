@@ -228,7 +228,7 @@ Func DervishRun($X, $Y)
 		EndIf
 
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
 			Move($X, $Y, 0)
 		EndIf

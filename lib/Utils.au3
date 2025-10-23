@@ -353,7 +353,7 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 		RandomSleep(GetPing() + 50)
 		If $DefendFunction <> Null Then $DefendFunction()
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			If $BlockedFunction <> Null And $blocked > 10 Then
 				$BlockedFunction()
 			EndIf
@@ -2051,7 +2051,7 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 		RandomSleep(100)
 		;Local $blocked = -1
 		;Local $angle = 0
-		;While IsPlayerAlive() And DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
+		;While Not IsPlayerMoving()
 		;	$blocked += 1
 		;	If $blocked > 0 Then
 		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4

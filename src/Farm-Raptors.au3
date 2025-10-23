@@ -394,7 +394,7 @@ Func IsBodyBlocked()
 		SendStuckCommand()
 	EndIf
 
-	While DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
+	While Not IsPlayerMoving()
 		$blocked += 1
 		Debug('Blocked: ' & $blocked)
 		If $blocked > 1 Then

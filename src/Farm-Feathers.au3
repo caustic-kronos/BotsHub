@@ -180,7 +180,7 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HP') < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
-		If DllStructGetData($me, 'MoveX') = 0 And DllStructGetData($me, 'MoveY') = 0 Then Move($x, $y)
+		If Not IsPlayerMoving() Then Move($x, $y)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
@@ -223,7 +223,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 			Kill($waitForSettle)
 		EndIf
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') = 0 And DllStructGetData($me, 'MoveY') = 0 Then
+		If Not IsPlayerMoving() Then
 			$Blocked += 1
 			If $Blocked <= 5 Then
 				Move($x, $y)
