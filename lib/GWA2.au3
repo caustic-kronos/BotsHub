@@ -1164,6 +1164,7 @@ EndFunc
 
 ;~ Picks up an item.
 Func PickUpItem($item)
+	If GetIsDead(GetMyAgent()) Then Return
 	Local $agentID
 	If Not IsDllStruct($item) Then
 		$agentID = $item
@@ -1348,7 +1349,7 @@ Func GetItemIDFromModelID($modelID)
 EndFunc
 
 
-;~ Get item from merchant corresponding given modelID
+;~ Get item from merchant corresponding to given modelID
 Func GetMerchantItemPtrByModelId($modelID)
 	Local $offsets[5] = [0, 0x18, 0x40, 0xB8]
 	Local $merchantBaseAddress = GetMerchantItemsBase()
@@ -2889,22 +2890,22 @@ EndFunc
 
 ;~ Returns the nearest item by model ID to an agent.
 Func GetNearestItemByModelIDToAgent($modelID, $agent)
-	Local $nearestAgent, $nearestDistance = 100000000
+	Local $nearestItemAgent, $nearestDistance = 100000000
 	Local $distance
 	If GetMaxAgents() > 0 Then
 		For $i = 1 To GetMaxAgents()
-			Local $agentPtr = GetAgentByID($i)
-			If Not GetIsMovable($agentPtr) Then ContinueLoop
+			Local $itemAgent = GetAgentByID($i)
+			If Not GetIsMovable($itemAgent) Then ContinueLoop ;~ item is considered movable
 			Local $agentModelID = DllStructGetData(GetItemByAgentID($i), 'ModelID')
 			If $agentModelID = $modelID Then
-				$distance = (DllStructGetData($agent, 'X') - DllStructGetData($agentPtr, 'X')) ^ 2 + (DllStructGetData($agent, 'Y') - DllStructGetData($agentPtr, 'Y')) ^ 2
+				$distance = (DllStructGetData($itemAgent, 'X') - DllStructGetData($agent, 'X')) ^ 2 + (DllStructGetData($itemAgent, 'Y') - DllStructGetData($agent, 'Y')) ^ 2
 				If $distance < $nearestDistance Then
-					$nearestAgent = $agentPtr
+					$nearestItemAgent = $itemAgent
 					$nearestDistance = $distance
 				EndIf
 			EndIf
 		Next
-		Return $nearestAgent
+		Return $nearestItemAgent
 	EndIf
 EndFunc
 
@@ -3011,10 +3012,10 @@ Func FindKit($enabledModelIDs)
 EndFunc
 
 
-;~ Return True if item is present in array, else False - duplicate in Utils
-Func FindKitArrayContainsHelper($array, $itemModelID)
-	For $i = 0 To UBound($array) - 1
-		If $array[$i] == $itemModelID Then Return True
+;~ Return True if item is present in array of items, else False - duplicate in Utils
+Func FindKitArrayContainsHelper($itemsArray, $itemModelID)
+	For $i = 0 To UBound($itemsArray) - 1
+		If $itemsArray[$i] == $itemModelID Then Return True
 	Next
 	Return False
 EndFunc
@@ -6325,12 +6326,13 @@ EndFunc
 
 ;~ Returns pointer to the item at the slot provided
 Func GetItemPtrBySlot($bag, $slot)
+	Local $bagPtr = Null
 	If IsPtr($bag) Then
 		$bagPtr = $bag
 	Else
 		If $bag < 1 Or $bag > 17 Then Return 0
 		If $slot < 1 Or $slot > GetMaxSlots($bag) Then Return 0
-		Local $bagPtr = GetBagPtr($bag)
+		$bagPtr = GetBagPtr($bag)
 	EndIf
 	Local $itemArrayPtr = MemoryRead($bagPtr + 24, 'ptr')
 	Return MemoryRead($itemArrayPtr + 4 * ($slot - 1), 'ptr')

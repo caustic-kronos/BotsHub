@@ -41,7 +41,7 @@ Global $chestsMap[]
 
 ;~ Main method from utils, used only to run tests
 Func RunTests($STATUS)
-	;SellEverythingToMerchant(DefaultShouldSellItem, True)
+	;SellItemsToMerchant(DefaultShouldSellItem, True)
 	;While($STATUS == 'RUNNING')
 	;	GetOwnLocation()
 	;	Sleep(2000)
@@ -413,7 +413,7 @@ Func FindEmptySlot($bag)
 		$item = GetItemBySlot($bag, $slot)
 		If DllStructGetData($item, 'ID') = 0 Then Return $slot
 	Next
-	Return 0
+	Return 0 ; slots are indexed from 1, 0 if no empty slot found
 EndFunc
 
 
@@ -444,7 +444,7 @@ EndFunc
 Func CountSlots($fromBag = 1, $toBag = $BAGS_COUNT)
 	Local $bag
 	Local $availableSlots = 0
-	; If bag is missing it just won't count
+	; If bag is missing it just won't count (Slots = 0, ItemsCount = 0)
 	For $i = $fromBag To $toBag
 		$bag = GetBag($i)
 		$availableSlots += DllStructGetData($bag, 'Slots') - DllStructGetData($bag, 'ItemsCount')
@@ -471,7 +471,7 @@ Func MoveItemsToEquipmentBag()
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
 	If $countEmptySlots < 1 Then
-		Debug('No space in equipment bag to move the items to')
+		Warn('No space in equipment bag to move the items to')
 		Return
 	EndIf
 
@@ -481,7 +481,7 @@ Func MoveItemsToEquipmentBag()
 			Local $item = GetItemBySlot($bagId, $slot)
 			If DllStructGetData($item, 'ID') <> 0 And (isArmor($item) Or IsWeapon($item)) Then
 				If $countEmptySlots < 1 Then
-					Debug('No space in equipment bag to move the items to')
+					Warn('No space in equipment bag to move the items to')
 					Return
 				EndIf
 				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
@@ -697,7 +697,7 @@ EndFunc
 
 ;~ Balance character gold to the amount given - mode 0 = full balance, mode 1 = only withdraw, mode 2 = only deposit
 Func BalanceCharacterGold($goldAmount, $mode = 0)
-	Info('Balancing characters gold')
+	Info('Balancing character''s gold')
 	Local $GCharacter = GetGoldCharacter()
 	Local $GStorage = GetGoldStorage()
 	If $GStorage > 950000 Then
@@ -777,7 +777,7 @@ Func FindInXunlaiStorage($itemID)
 EndFunc
 
 
-;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else
+;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else (bags and slots are indexed from 1 as in GWToolbox)
 Func FindInStorages($firstBag, $lastBag, $itemID)
 	Local $item
 	Local $itemBagAndSlot[2] = [0, 0]
@@ -891,7 +891,7 @@ Func UseMoraleConsumableIfNeeded()
 	While TeamHasTooMuchMalus()
 		Local $usedMoraleBooster = False
 		For $DPRemoval_Sweet In $DPRemoval_Sweets
-			Local $ConsumableSlot = findInInventory($DPRemoval_Sweet)
+			Local $ConsumableSlot = FindInInventory($DPRemoval_Sweet)
 			If $ConsumableSlot[0] <> 0 Then
 				UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 				$usedMoraleBooster = True
@@ -917,11 +917,11 @@ Func UseCitySpeedBoost($forceUse = False)
 
 	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_2)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) > 0 Then Return
 
-	Local $ConsumableSlot = findInInventory($ID_Sugary_Blue_Drink)
+	Local $ConsumableSlot = FindInInventory($ID_Sugary_Blue_Drink)
 	If $ConsumableSlot[0] <> 0 Then
 		UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 	Else
-		$ConsumableSlot = findInInventory($ID_Chocolate_Bunny)
+		$ConsumableSlot = FindInInventory($ID_Chocolate_Bunny)
 		If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 	EndIf
 EndFunc
@@ -930,7 +930,7 @@ EndFunc
 ;~ Uses a consumable from inventory, if present
 Func UseConsumable($ID_consumable, $forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
-	Local $ConsumableSlot = findInInventory($ID_consumable)
+	Local $ConsumableSlot = FindInInventory($ID_consumable)
 	If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 EndFunc
 
@@ -1015,7 +1015,7 @@ Func SalvageAllItems($buyKit = True)
 	Local $trophiesItems[60]
 	Local $trophyIndex = 0
 	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
-		Debug('Salvaging bag' & $bagIndex)
+		Info('Salvaging bag' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)

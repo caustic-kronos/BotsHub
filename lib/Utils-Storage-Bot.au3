@@ -61,7 +61,7 @@ Global $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hex
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
-	;SellEverythingToMerchant(DefaultShouldSellItem, True)
+	;SellItemsToMerchant(DefaultShouldSellItem, True)
 	ActiveInventoryManagement()
 	Return 2
 EndFunc
@@ -70,18 +70,19 @@ EndFunc
 ;~ Function to deal with inventory after farm
 Func ActiveInventoryManagement()
 	; Operations order :
-	; 1-Store unid if desired
+	; 1-Store unids if desired
 	; 2-Sort items
 	; 3-Identify items
 	; 4-Collect data
 	; 5-Salvage
 	; 6-Sell materials
 	; 7-Sell items
-	; 8-Buy ectos with excedent
+	; 8-Buy ectos with surplus
 	; 9-Store items
-	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage(GetIsUnidentified)
+	; 10-Balance character's gold level
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED And HasUnidentifiedItems() Then
+	If GUICtrlRead($GUI_Checkbox_IdentifyAllItems) == $GUI_CHECKED And HasUnidentifiedItems() Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		IdentifyAllItems()
 	EndIf
@@ -114,14 +115,18 @@ Func ActiveInventoryManagement()
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
-		SellEverythingToMerchant()
+		SellItemsToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() < 100000 Then
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then ; max gold in Xunlai chest is 1000 platinums
 		DepositGold(60000)
 		Info('Deposited Gold')
 	EndIf
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_UNCHECKED Then
+		Info('Balancing character''s gold level')
+		BalanceCharacterGold(10000)
+	EndIf
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
-	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreItemsInXunlaiStorage()
 EndFunc
 
 
@@ -272,7 +277,7 @@ Func FillTable($table, Const ByRef $isNumber, Const ByRef $values)
 	Local $query = 'INSERT INTO ' & $table & ' VALUES '
 	For $i = 0 To UBound($values) - 1
 		$query &= '('
-		For $j = 0 To Ubound($values,2) - 1
+		For $j = 0 To UBound($values,2) - 1
 			If $isNumber[$j] Then
 				$query &= $values[$i][$j] & ', '
 			Else
@@ -552,7 +557,7 @@ EndFunc
 
 
 ;~ Sell general items to trader
-Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
+Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
@@ -560,6 +565,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 	GoToNPC($merchant)
 	RandomSleep(500)
 
+	Info('Selling items')
 	Local $item, $itemID
 	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
@@ -751,10 +757,44 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 EndFunc
 
 
-;~ Store all item in the Xunlai Storage
+;~ Tests if an item is an identified gold item
+Func IsIdentifiedGoldItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_Gold)
+EndFunc
+
+
+;~ Tests if an item is an identified blue item
+Func IsIdentifiedBlueItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_Blue)
+EndFunc
+
+
+;~ Tests if an item is an identified purple item
+Func IsIdentifiedPurpleItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_Purple)
+EndFunc
+
+
+;~ Tests if an item is an unidentified gold item
+Func IsUnidentifiedGoldItem($item)
+	Return Not GetIsIdentified($item) And (GetRarity($item) == $RARITY_Gold)
+EndFunc
+
+
+;~ helper function for StoreEverythingInXunlaiStorage function
+Func StoreAllItems($item = Null)
+	Return True
+EndFunc
+
+
+;~ Store all items in the Xunlai Storage
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
-	Info('Storing money')
-	BalanceCharacterGold(10000)
+	StoreItemsInXunlaiStorage(StoreAllItems)
+EndFunc
+
+
+;~ Store selected items in the Xunlai Storage
+Func StoreItemsInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Info('Storing items')
 	Local $item, $itemID
 	For $bagIndex = 1 To $BAGS_COUNT
@@ -792,7 +832,7 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
 		$existingStacks = FindAllInXunlaiStorage($item)
-		For $bagIndex = 0 To Ubound($existingStacks) - 1 Step 2
+		For $bagIndex = 0 To UBound($existingStacks) - 1 Step 2
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then

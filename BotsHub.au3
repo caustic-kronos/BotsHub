@@ -148,7 +148,7 @@ Global $GUI_Group_Titles, _
 		$GUI_Label_VanguardTitle_Text, $GUI_Label_VanguardTitle_Value, $GUI_Label_KurzickTitle_Text, $GUI_Label_KurzickTitle_Value, $GUI_Label_LuxonTitle_Text, $GUI_Label_LuxonTitle_Value, _
 		$GUI_Label_LightbringerTitle_Text, $GUI_Label_LightbringerTitle_Value, $GUI_Label_SunspearTitle_Text, $GUI_Label_SunspearTitle_Value
 Global $GUI_Group_GlobalOptions, _
-		$GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, _
+		$GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyAllItems, _
 		$GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_StoreGold, $GUI_Checkbox_BuyEctoplasm
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables, $GUI_Checkbox_FarmMaterials, $GUI_Checkbox_DisableRendering
 Global $GUI_Group_BaseLootOptions, _
@@ -296,7 +296,7 @@ Func createGUI()
 	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
 	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
 	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort Items', 31, 154, 156, 20)
-	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify all items', 31, 184, 156, 20)
+	$GUI_Checkbox_IdentifyAllItems = GUICtrlCreateCheckbox('Identify all items', 31, 184, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 214, 156, 20)
 	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 244, 156, 20)
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
@@ -1073,7 +1073,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', GUICtrlRead($GUI_Checkbox_HM) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.store_unid', GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', GUICtrlRead($GUI_Checkbox_SortItems) == 1)
-	_JSON_addChangeDelete($jsonObject, 'run.identify_items', GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.identify_items', GUICtrlRead($GUI_Checkbox_IdentifyAllItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', GUICtrlRead($GUI_Checkbox_CollectData) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.salvage_items', GUICtrlRead($GUI_Checkbox_SalvageItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.sell_materials', GUICtrlRead($GUI_Checkbox_SellMaterials) == 1)
@@ -1123,7 +1123,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_HM, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, _JSON_Get($jsonObject, 'run.store_unid') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SortItems, _JSON_Get($jsonObject, 'run.sort_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetState($GUI_Checkbox_IdentifyGoldItems, _JSON_Get($jsonObject, 'run.identify_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_IdentifyAllItems, _JSON_Get($jsonObject, 'run.identify_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_CollectData, _JSON_Get($jsonObject, 'run.collect_data') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SalvageItems, _JSON_Get($jsonObject, 'run.salvage_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SellMaterials, _JSON_Get($jsonObject, 'run.sell_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
