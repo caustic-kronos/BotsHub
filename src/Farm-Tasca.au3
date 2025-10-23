@@ -189,7 +189,7 @@ Func TascaChestFarmLoop($STATUS)
 	ToggleMapping()
 	UnregisterBurstHealingUnit()
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $result = (($openedChests > 0) Or Not IsPlayerDead()) ? $SUCCESS : $FAIL
+	Local $result = (($openedChests > 0) Or IsPlayerAlive()) ? $SUCCESS : $FAIL
 	BackToTheGraniteCitadel()
 	Return $result
 EndFunc
@@ -219,7 +219,7 @@ Func TASCADervishRun($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 150 And $blockedCounter < 20
+	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 150 And $blockedCounter < 20
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
 			$blockedCounter += 1
 			Move($X, $Y, 0)
@@ -302,13 +302,13 @@ Func TascaDefendFunction($X, $Y)
 		Local $enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 		If $enemiesAreNear Or ($X <> 0 And AreFoesInFront($X, $Y)) Then
 			If $enemiesAreNear And IsRecharged($Tasca_IAmUnstoppable) Then UseSkillEx($Tasca_IAmUnstoppable)
-			While Not IsPlayerDead() And GetEnergy() < 20 And $enemiesAreNear
+			While IsPlayerAlive() And GetEnergy() < 20 And $enemiesAreNear
 				Sleep(250)
 				$target = GetNearestEnemyToAgent($me)
 				$enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 			WEnd
 			AdlibRegister('UseDeadlyParadox', 750)
-			While Not IsPlayerDead() And IsRecharged($Tasca_ShadowForm)
+			While IsPlayerAlive() And IsRecharged($Tasca_ShadowForm)
 				UseSkillEx($Tasca_ShadowForm, $me)
 				Sleep(GetPing() + 20)
 			WEnd
@@ -333,7 +333,7 @@ EndFunc
 
 ;~ Use Whirling Defense skill
 Func UseDeadlyParadox()
-	While Not IsPlayerDead() And IsRecharged($Tasca_DeadlyParadox)
+	While IsPlayerAlive() And IsRecharged($Tasca_DeadlyParadox)
 		UseSkillEx($Tasca_DeadlyParadox)
 		Sleep(GetPing() + 20)
 	WEnd

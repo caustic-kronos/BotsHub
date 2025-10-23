@@ -112,7 +112,7 @@ Func DragonMossFarmLoop()
 	; Safety
 	MoveTo(-6575, 18575, 0)
 	UseSkillEx($DM_DwarvenStability)
-	While Not IsPlayerDead() And Not IsRecharged($DM_ShadowForm)
+	While IsPlayerAlive() And Not IsRecharged($DM_ShadowForm)
 		RandomSleep(500)
 	WEnd
 	UseSkillEx($DM_DeadlyParadox)
@@ -128,18 +128,18 @@ Func DragonMossFarmLoop()
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
-	While IsRecharged($DM_DeathsCharge) And Not IsPlayerDead()
+	While IsRecharged($DM_DeathsCharge) And IsPlayerAlive()
 		UseSkillEx($DM_DeathsCharge, $target)
 		RandomSleep(200)
 	WEnd
-	While IsRecharged($DM_WhirlingDefense) And Not IsPlayerDead()
+	While IsRecharged($DM_WhirlingDefense) And IsPlayerAlive()
 		UseSkillEx($DM_WhirlingDefense)
 		RandomSleep(200)
 	WEnd
 
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	Local $counter = 0
-	While Not IsPlayerDead() And $foesCount > 0 And $counter < 16
+	While IsPlayerAlive() And $foesCount > 0 And $counter < 16
 		If IsRecharged($DM_ShadowForm) Then UseSkillEx($DM_ShadowForm)
 		RandomSleep(1000)
 		$counter = $counter + 1

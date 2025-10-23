@@ -204,7 +204,7 @@ Func GetRaptors()
 	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)
 
 	Local $count = 0
-	While Not IsPlayerDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200
+	While IsPlayerAlive() And IsRecharged($Raptors_MarkOfPain) And $count < 200
 		UseSkillEx($Raptors_MarkOfPain, $target)
 		RandomSleep(50)
 		$count += 1
@@ -282,7 +282,7 @@ Func KillRaptors()
 
 	Debug('Waiting on MoP to be recharged and foes to be in range')
 	Local $count = 0
-	While Not IsPlayerDead() And (Not IsRecharged($Raptors_MarkOfPain) Or Not RaptorsAreBalled()) And $count < 40
+	While IsPlayerAlive() And (Not IsRecharged($Raptors_MarkOfPain) Or Not RaptorsAreBalled()) And $count < 40
 		Debug('Waiting ' & $count)
 		RandomSleep(250)
 		$count += 1
@@ -295,7 +295,7 @@ Func KillRaptors()
 	$count = 0
 	Local $timer = TimerInit()
 	; There is an issue here with infinite loop despite the count (wtf!) so added a timer as well
-	While Not IsPlayerDead() And IsRecharged($Raptors_MarkOfPain) And $count < 200 And TimerDiff($timer) < 10000
+	While IsPlayerAlive() And IsRecharged($Raptors_MarkOfPain) And $count < 200 And TimerDiff($timer) < 10000
 		UseSkillEx($Raptors_MarkOfPain, $MoPTarget)
 		RandomSleep(50)
 		$count += 1
@@ -308,7 +308,7 @@ Func KillRaptors()
 
 		Debug('Using Whirlwind attack')
 		$count = 0
-		While Not IsPlayerDead() And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130 And $count < 200
+		While IsPlayerAlive() And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) <> 130 And $count < 200
 			RandomSleep(50)
 			$count += 1
 		WEnd
@@ -318,14 +318,14 @@ Func KillRaptors()
 		UseSkillEx($Raptors_ShieldBash)
 		RandomSleep(20)
 		Debug('Using Whirlwind attack a second time')
-		While Not IsPlayerDead() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) == 130
+		While IsPlayerAlive() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($Raptors_WhirlwindAttack) == 130
 			UseSkillEx($Raptors_WhirlwindAttack, GetNearestEnemyToAgent($me))
 			RandomSleep(250)
 			$me = GetMyAgent()
 		WEnd
 	Else
 		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
-		While Not IsPlayerDead() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10
+		While IsPlayerAlive() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10
 			UseSkillEx($Raptors_EremitesAttack, GetNearestEnemyToAgent($me))
 			RandomSleep(250)
 			$me = GetMyAgent()
@@ -373,7 +373,7 @@ Func MoveAggroingRaptors($x, $y)
 	Move($x, $y, 0)
 
 	Local $me = GetMyAgent()
-	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > $RANGE_NEARBY
+	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > $RANGE_NEARBY
 		If IsBodyBlocked() Then Return True
 		RandomSleep(100)
 		Move($x, $y)

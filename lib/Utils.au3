@@ -348,7 +348,7 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 	Local $X = DllStructGetData($agent, 'X')
 	Local $Y = DllStructGetData($agent, 'Y')
 	Local $blocked = 0
-	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
+	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
 		Move($X, $Y, 100)
 		RandomSleep(GetPing() + 50)
 		If $DefendFunction <> Null Then $DefendFunction()
@@ -938,7 +938,7 @@ EndFunc
 ;~ Uses the Item from $bag at position $slot (positions start at 1)
 Func UseItemBySlot($bag, $slot)
 	If $bag > 0 And $slot > 0 Then
-		If Not IsPlayerDead() And GetInstanceType() <> 2 Then
+		If IsPlayerAlive() And GetInstanceType() <> 2 Then
 			Local $item = GetItemBySlot($bag, $slot)
 			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf
@@ -1927,6 +1927,12 @@ Func IsPlayerDead()
 	Return BitAND(DllStructGetData(GetMyAgent(), 'Effects'), 0x0010) > 0
 EndFunc
 
+
+Func IsPlayerAlive()
+	Return BitAND(DllStructGetData(GetMyAgent(), 'Effects'), 0x0010) == 0
+EndFunc
+
+
 ;~ Did run fail ?
 Func IsRunFailed()
 	If ($partyFailuresCount > 5) Then
@@ -2040,12 +2046,12 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Local $timer = TimerInit()
 	Local Const $PI = 3.141592653589793
 	Local $me = GetMyAgent()
-	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
+	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
 		Move($coordX, $coordY)
 		RandomSleep(100)
 		;Local $blocked = -1
 		;Local $angle = 0
-		;While Not IsPlayerDead() And DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
+		;While IsPlayerAlive() And DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
 		;	$blocked += 1
 		;	If $blocked > 0 Then
 		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4
@@ -2088,7 +2094,7 @@ EndFunc
 
 ;~ Aggro a foe
 Func AggroAgent($tgtAgent)
-	While Not IsPlayerDead() And GetDistance(GetMyAgent(), $tgtAgent) > $RANGE_EARSHOT - 100
+	While IsPlayerAlive() And GetDistance(GetMyAgent(), $tgtAgent) > $RANGE_EARSHOT - 100
 		Move(DllStructGetData($tgtAgent, 'X'), DllStructGetData($tgtAgent, 'Y'))
 		RandomSleep(200)
 	WEnd

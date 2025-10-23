@@ -161,7 +161,7 @@ Func PongmeiChestFarmLoop($STATUS)
 	DervishRun(-13876, -5626)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $result = $openedChests > 0 And Not IsPlayerDead() ? $SUCCESS : $FAIL
+	Local $result = $openedChests > 0 And IsPlayerAlive() ? $SUCCESS : $FAIL
 	BackToBoreasSeabed()
 	Return $result
 EndFunc
@@ -203,7 +203,7 @@ Func DervishRun($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 100 And $blockedCounter < 15
+	While IsPlayerAlive() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 100 And $blockedCounter < 15
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0 Then UseSkillEx($Pongmei_IAmUnstoppable)
 
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then

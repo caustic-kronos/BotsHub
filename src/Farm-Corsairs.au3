@@ -152,7 +152,7 @@ Func CorsairsFarmLoop()
 	Dialog(0x00000085)
 	RandomSleep(1000)
 
-	While IsRecharged($Corsairs_WhirlingDefense) And Not IsPlayerDead()
+	While IsRecharged($Corsairs_WhirlingDefense) And IsPlayerAlive()
 		UseSkillEx($Corsairs_WhirlingDefense)
 		RandomSleep(200)
 	WEnd
@@ -180,7 +180,7 @@ Func CorsairsFarmLoop()
 
 	Local $counter = 0
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	While Not IsPlayerDead() And $foesCount > 0 And $counter < 28
+	While IsPlayerAlive() And $foesCount > 0 And $counter < 28
 		DefendAgainstCorsairs()
 		If $counter > 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RandomSleep(1000)
@@ -263,7 +263,7 @@ EndFunc
 Func WaitForEnemyInRange()
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
-	While (Not IsPlayerDead() And GetDistance($target, $me) > $RANGE_SPELLCAST)
+	While (IsPlayerAlive() And GetDistance($target, $me) > $RANGE_SPELLCAST)
 		DefendAgainstCorsairs()
 		RandomSleep(500)
 		$me = GetMyAgent()
@@ -274,7 +274,7 @@ EndFunc
 
 ;~ Wait for Bohseda and Dunkoro to shut up and for Bohseda to be interactible
 Func WaitForBohseda()
-	While (Not IsPlayerDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
+	While (IsPlayerAlive() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
 		DefendAgainstCorsairs(True)
 		RandomSleep(500)
 	WEnd

@@ -138,7 +138,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	If $foesCount > 0 Then
 		Debug('Foes in range detected, starting fight')
-		While Not IsPlayerDead() And $foesCount > 0
+		While IsPlayerAlive() And $foesCount > 0
 			$FightFunction()
 			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 		WEnd

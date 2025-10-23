@@ -158,7 +158,7 @@ Func MantidsFarmLoop()
 
 	; Balling the rest
 	$target = GetNearestEnemyToCoords(-450, -14400)
-	While IsRecharged($Mantids_DeathsCharge) And Not IsPlayerDead()
+	While IsRecharged($Mantids_DeathsCharge) And IsPlayerAlive()
 		UseSkillEx($Mantids_DeathsCharge, $target)
 		RandomSleep(200)
 	WEnd
@@ -177,7 +177,7 @@ Func MantidsFarmLoop()
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	Local $counter = 0
-	While Not IsPlayerDead() And $foesCount > 0 And $counter < 3
+	While IsPlayerAlive() And $foesCount > 0 And $counter < 3
 		RandomSleep(1000)
 		$counter = $counter + 1
 		$me = GetMyAgent()
@@ -208,7 +208,7 @@ EndFunc
 
 ;~ Use Whirling Defense skill
 Func UseWhirlingDefense()
-	While IsRecharged($Mantids_WhirlingDefense) And Not IsPlayerDead()
+	While IsRecharged($Mantids_WhirlingDefense) And IsPlayerAlive()
 		UseSkillEx($Mantids_WhirlingDefense)
 		RandomSleep(50)
 	WEnd

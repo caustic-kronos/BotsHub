@@ -248,7 +248,7 @@ EndFunc
 ;~ Kill a mob group
 Func VaettirsKillSequence()
 	; Wait for shadow form to have been casted very recently
-	While Not IsPlayerDead() And TimerDiff($shadowFormTimer) > 5000
+	While IsPlayerAlive() And TimerDiff($shadowFormTimer) > 5000
 		If IsPlayerDead() Then Return
 		Sleep(100)
 		VaettirsStayAlive()
@@ -263,7 +263,7 @@ Func VaettirsKillSequence()
 		UseSkillEx($Skill_Arcane_Echo)
 		$target = GetWastrelsTarget()
 		UseSkillEx($Skill_Wastrels_Demise, $target)
-		While Not IsPlayerDead() And $foesCount > 0 And TimerDiff($deadlock) < 60000
+		While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 60000
 			; Use echoed wastrel if possible
 			If IsRecharged($Skill_Arcane_Echo) And GetSkillbarSkillID($Skill_Arcane_Echo) == $ID_Wastrels_Demise Then
 				$target = GetWastrelsTarget()
@@ -332,7 +332,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
 			If $heartOfShadowUsageCount > 6 Then
-				While Not IsPlayerDead()
+				While IsPlayerAlive()
 					RandomSleep(1000)
 				WEnd
 				Return False

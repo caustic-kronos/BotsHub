@@ -129,7 +129,7 @@ Func SpiritSlavesFarmSetup()
 		MoveTo(-8261, 12808)
 		Move(-3838, 19196)
 		$me = GetMyAgent()
-		While Not IsPlayerDead() And DllStructGetData($me, 'MoveX') <> 0 And DllStructGetData($me, 'MoveY') <> 0
+		While IsPlayerAlive() And DllStructGetData($me, 'MoveX') <> 0 And DllStructGetData($me, 'MoveY') <> 0
 			If (CountFoesInRangeOfAgent($me, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)
 			RandomSleep(500)
 			$me = GetMyAgent()
@@ -227,7 +227,7 @@ Func FarmSouthGroup()
 	; Wait until an enemy is past the correct aggro line
 	Local $foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
 	Local $deadlock = TimerInit()
-	While Not IsPlayerDead() And $foesCount < 8 And TimerDiff($deadlock) < 120000
+	While IsPlayerAlive() And $foesCount < 8 And TimerDiff($deadlock) < 120000
 		RandomSleep(100)
 		$foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
 		CleanseFromCripple()
@@ -238,7 +238,7 @@ Func FarmSouthGroup()
 	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
 	$deadlock = TimerInit()
 	; Wait until an enemy is aggroed
-	While Not IsPlayerDead() And $foesCount == 0 And TimerDiff($deadlock) < 120000
+	While IsPlayerAlive() And $foesCount == 0 And TimerDiff($deadlock) < 120000
 		RandomSleep(100)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
 	WEnd
@@ -281,7 +281,7 @@ Func KillSequence()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	Local $casterFoesMap[]
 	ChangeWeaponSet(2)
-	While Not IsPlayerDead() And $foesCount > 0 And TimerDiff($deadlock) < 100000
+	While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 100000
 		If IsRecharged($SS_Mystic_Vigor) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Vigor)) == 0 And GetEnergy() > $skillCostsMap[$SS_Mystic_Vigor] Then
 			UseSkillEx($SS_Mystic_Vigor)
 			RandomSleep(20)
@@ -322,7 +322,7 @@ Func KillSequence()
 					Debug('Moving to fight that foe')
 					Local $timer = TimerInit()
 					;MoveAvoidingBodyBlock(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'X'), 1000)
-					While Not IsPlayerDead() And GetDistance($me, $casterFoe) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
+					While IsPlayerAlive() And GetDistance($me, $casterFoe) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
 						Move(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'Y'))
 						RandomSleep(100)
 					WEnd
@@ -357,7 +357,7 @@ Func WaitForFoesBall()
 	Local $validation = 0
 
 	; Wait until all foes are balled
-	While Not IsPlayerDead() And $foesCount < 8 And $validation < 2 And TimerDiff($deadlock) < 120000
+	While IsPlayerAlive() And $foesCount < 8 And $validation < 2 And TimerDiff($deadlock) < 120000
 		If $foesCount == 8 Then $validation += 1
 		RandomSleep(3000)
 		$target = GetNearestEnemyToCoords(-8598, -5810)
@@ -402,7 +402,7 @@ EndFunc
 
 ;~ Wait to have enough energy before jumping into the next group
 Func WaitForEnergy()
-	While (GetEnergy() < 20) And Not IsPlayerDead()
+	While (GetEnergy() < 20) And IsPlayerAlive()
 		RandomSleep(1000)
 	WEnd
 EndFunc
@@ -410,7 +410,7 @@ EndFunc
 
 ;~ Wait to have death's charge recharged
 Func WaitForDeathsCharge()
-	While Not IsRecharged($SS_Deaths_Charge) And Not IsPlayerDead()
+	While Not IsRecharged($SS_Deaths_Charge) And IsPlayerAlive()
 		RandomSleep(1000)
 	WEnd
 EndFunc

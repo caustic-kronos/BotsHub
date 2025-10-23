@@ -428,14 +428,14 @@ Func WaitForPurityBall()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 
 	; Wait until an enemy is in melee range
-	While Not IsPlayerDead() And $foesCount == 0 And TimerDiff($deadlock) < 55000
+	While IsPlayerAlive() And $foesCount == 0 And TimerDiff($deadlock) < 55000
 		RandomSleep(1000)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
 
 	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
-	While Not IsPlayerDead() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130)
+	While IsPlayerAlive() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130)
 		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
 			UseSkillEx($Skill_To_the_limit)
 			RandomSleep(50)
