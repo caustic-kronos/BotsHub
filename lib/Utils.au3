@@ -851,7 +851,8 @@ Func GetInventoryItemCount($itemID)
 EndFunc
 
 
-;~ Update the gemstone counters
+;~ Count quantity of each item in inventory, specified in provided array of items
+;~ Returns a corresponding array of counters, of the same size as provided array
 Func CountTheseItems($itemArray)
 	Local $arraySize = UBound($itemArray)
 	Local $counts[$arraySize]

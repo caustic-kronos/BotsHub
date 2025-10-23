@@ -119,7 +119,6 @@ Func ActiveInventoryManagement()
 	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() < 100000 Then
 		DepositGold(60000)
 		Info('Deposited Gold')
-		$TIMESDEPOSITED += 1
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
