@@ -64,7 +64,7 @@ Func FeathersFarm($STATUS)
 		$FEATHERS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return FeathersFarmLoop()
 EndFunc
@@ -141,11 +141,11 @@ Func FeathersFarmLoop()
 
 	If GetIsDead() Then
 		BackToSeitungHarborOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	BackToSeitungHarborOutpost()
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 

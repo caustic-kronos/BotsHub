@@ -64,7 +64,7 @@ Func TascaChestFarm($STATUS)
 		$TASCA_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return TascaChestFarmLoop($STATUS)
 EndFunc
@@ -189,9 +189,9 @@ Func TascaChestFarmLoop($STATUS)
 	ToggleMapping()
 	UnregisterBurstHealingUnit()
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $success = (($openedChests > 0) Or Not GetIsDead()) ? 0 : 1
+	Local $result = (($openedChests > 0) Or Not GetIsDead()) ? $SUCCESS : $FAIL
 	BackToTheGraniteCitadel()
-	Return $success
+	Return $result
 EndFunc
 
 
@@ -212,7 +212,7 @@ Func TASCADervishRun($X, $Y)
 	If GetIsDead() Then Return
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
 		Error('Out of lockpicks')
-		Return 2
+		Return $PAUSE
 	EndIf
 
 	Move($X, $Y, 0)
@@ -249,6 +249,7 @@ Func TASCADervishRun($X, $Y)
 		Sleep(250)
 		$me = GetMyAgent()
 	WEnd
+	Return $SUCCESS
 EndFunc
 
 

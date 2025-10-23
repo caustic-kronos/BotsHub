@@ -101,13 +101,17 @@ Global Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 
+; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
+Global Const $NOT_STARTED = -1
+Global Const $SUCCESS = 0
+Global Const $FAIL = 1
+Global Const $PAUSE = 2
 
 ; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
-; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
 Global $RUN_MODE = 'AUTOLOAD'
 Global $PROCESS_ID = ''
-Global $LOG_LEVEL = 1
+Global $LOG_LEVEL = $LVL_INFO
 Global $CHARACTER_NAME = ''
 Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
@@ -591,7 +595,7 @@ Func StartButtonHandler()
 	Switch $STATUS
 		Case 'STOPPED'
 			Info('Initializing...')
-			If (Authentification() <> 0) Then Return
+			If (Authentification() <> $SUCCESS) Then Return
 			$STATUS = 'INITIALIZED'
 			Info('Starting...')
 			$STATUS = 'RUNNING'
@@ -751,7 +755,7 @@ Func BotHubLoop()
 			EndIf
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			Local $result = RunFarmLoop($Farm)
-			If ($result == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
+			If ($result == $PAUSE Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
 			EndIf
 		EndIf
@@ -773,8 +777,8 @@ EndFunc
 
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
-	Local $result = 2
-	Local $timePerRun = UpdateStats(-1)
+	Local $result = $NOT_STARTED
+	Local $timePerRun = UpdateStats($NOT_STARTED)
 	Local $timer = TimerInit()
 	UpdateProgressBar(True, $timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
 	AdlibRegister('UpdateProgressBar', 5000)
@@ -884,9 +888,9 @@ Func RunFarmLoop($Farm)
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
 	Local $elapsedTime = TimerDiff($timer)
-	If $result == 0 Then
+	If $result == $SUCCESS Then
 		Info('Run Successful after: ' & ConvertTimeToMinutesString($elapsedTime))
-	ElseIf $result == 1 Then
+	ElseIf $result == $FAIL Then
 		Info('Run failed after: ' & ConvertTimeToMinutesString($elapsedTime))
 	EndIf
 	UpdateStats($result, $elapsedTime)
@@ -1195,7 +1199,7 @@ Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 EndFunc
 
 
-;~
+;~ Getting ticked components from checkboxes as array
 Func GetComponentsTickedCheckboxes($startingPoint)
 	Return BuildArrayFromTreeView($GUI_TreeView_Components, _GUICtrlTreeView_FindItem($GUI_TreeView_Components, $startingPoint))
 EndFunc
@@ -1285,19 +1289,19 @@ Func Authentification()
 		Info('Running via pid ' & $proc_id_int)
 		If InitializeGameClientData(True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $proc_id_int & '>> ' & VarGetType($proc_id_int) & '')
-			Return 1
+			Return $FAIL
 		EndIf
 	Else
 		Local $clientIndex = FindClientIndexByCharacterName($characterName)
 		If $clientIndex == -1 Then
 			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $characterName & '>>')
-			Return 1
+			Return $FAIL
 		Else
 			SelectClient($clientIndex)
 			OpenDebugLogFile()
 			If InitializeGameClientData(True, True, False) = 0 Then
 				MsgBox(0, 'Error', 'Failed game initialisation')
-				Return 1
+				Return $FAIL
 			EndIf
 		EndIf
 	EndIf
@@ -1305,7 +1309,7 @@ Func Authentification()
 	GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Disable)
 	GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Disable)
 	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & $characterName)
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -1340,21 +1344,21 @@ Func UpdateStats($result, $elapsedTime = 0)
 	Local Static $KurzickTitlePoints = GetKurzickTitle()
 	Local Static $LuxonTitlePoints = GetLuxonTitle()
 
-	; -1 : Before every farm loop
-	If $result == -1 Then
+	; $NOT_STARTED = -1 : Before every farm loop
+	If $result == $NOT_STARTED Then
 		Info('Starting run ' & ($runs + 1))
-	; 0 : Success
-	ElseIf $result == 0 Then
+	; $SUCCESS = 0 : Successful farm run
+	ElseIf $result == $SUCCESS Then
 		$successes += 1
 		$runs += 1
 		$totalTime += $elapsedTime
-	; 1 : Failure
-	ElseIf $result == 1 Then
+	; $FAIL = 1 : Failed farm run
+	ElseIf $result == $FAIL Then
 		$failures += 1
 		$runs += 1
 		$totalTime += $elapsedTime
 	EndIf
-	; 2 : Pause
+	; $PAUSE = 2 : Paused run or will pause
 
 	; Global stats
 	GUICtrlSetData($GUI_Label_Runs_Value, $runs)

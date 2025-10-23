@@ -50,13 +50,13 @@ Global Const $Junundu_Leave 	= 8
 Func LightbringerFarm($STATUS)
 	If GetMapID() <> $ID_Remains_of_Sahlahja Then DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	ToTheSulfurousWastes()
 
-	Local $success = FarmTheSulfurousWastes()
+	Local $result = FarmTheSulfurousWastes()
 	ReturnToSahlahjaOutpost()
-	Return $success
+	Return $result
 EndFunc
 
 
@@ -124,15 +124,15 @@ Func FarmTheSulfurousWastes()
 	ActionInteract()
 	RandomSleep(1500)
 
-	If MultipleMoveToAndAggro('First Undead Group', -800, 12000, -1700, 9800) Then Return 1
-	If MultipleMoveToAndAggro('Second Undead Group', -3000, 10900, -4500, 11500) Then Return 1
+	If MultipleMoveToAndAggro('First Undead Group', -800, 12000, -1700, 9800) Then Return $FAIL
+	If MultipleMoveToAndAggro('Second Undead Group', -3000, 10900, -4500, 11500) Then Return $FAIL
 	SpeedTeam()
 	MoveTo(-7500, 11925)
 	SpeedTeam()
 	MoveTo(-9800, 12400)
 	SpeedTeam()
 	MoveTo(-13000, 9500)
-	If MultipleMoveToAndAggro('Third Undead Group', -13250, 6750) Then Return 1
+	If MultipleMoveToAndAggro('Third Undead Group', -13250, 6750) Then Return $FAIL
 
 	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
@@ -142,14 +142,14 @@ Func FarmTheSulfurousWastes()
 	Dialog(0x85)
 	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) Then Return 1
+	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) Then Return $FAIL
 	; Skipping this group because it can bring heroes on land and make them go out of Wurm
-	;If MultipleMoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
-	If MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) Then Return 1	; range 2200
-	If MultipleMoveToAndAggro('Undead Ritualist Boss Group', -21500, -6000, -20400, -7400, -19500, -9500) Then Return 1
-	If MultipleMoveToAndAggro('Third Margonite Group', -22000, -9400, -22800, -9800) Then Return 1
-	If MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) Then Return 1
-	If MultipleMoveToAndAggro('Fifth Margonite Group', -22800, -13500, -21300, -14000) Then Return 1
+	;If MultipleMoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return $FAIL
+	If MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) Then Return $FAIL	; range 2200
+	If MultipleMoveToAndAggro('Undead Ritualist Boss Group', -21500, -6000, -20400, -7400, -19500, -9500) Then Return $FAIL
+	If MultipleMoveToAndAggro('Third Margonite Group', -22000, -9400, -22800, -9800) Then Return $FAIL
+	If MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) Then Return $FAIL
+	If MultipleMoveToAndAggro('Fifth Margonite Group', -22800, -13500, -21300, -14000) Then Return $FAIL
 
 	Info('Picking Up Tome')
 	SpeedTeam()
@@ -161,9 +161,9 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('Sixth Margonite Group', -22800, -13500, -23000, -10600, -21500, -9500) Then Return 1
-	If MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) Then Return 1
-	If MultipleMoveToAndAggro('Temple Monolith Groups', -22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100) Then Return 1
+	If MultipleMoveToAndAggro('Sixth Margonite Group', -22800, -13500, -23000, -10600, -21500, -9500) Then Return $FAIL
+	If MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) Then Return $FAIL
+	If MultipleMoveToAndAggro('Temple Monolith Groups', -22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100) Then Return $FAIL
 
 	Info('Spawning Margonite bosses')
 	SpeedTeam()
@@ -178,8 +178,8 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('Margonite Boss Group', -18000, -13100) Then Return 1
-	Return 0
+	If MultipleMoveToAndAggro('Margonite Boss Group', -18000, -13100) Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 

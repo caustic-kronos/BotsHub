@@ -63,7 +63,7 @@ Func FoWFarm($STATUS)
 	RandomSleep(GetPing() + 750)
 	WaitMapLoading($ID_Fissure_of_Woe)
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return FoWFarmLoop()
 EndFunc
@@ -88,24 +88,24 @@ Func FoWFarmLoop()
 	AdlibRegister('TrackPartyStatus', 10000)
 	If IsHardmodeEnabled() Then UseConset()
 
-	If TowerOfCourage() Then Return 1
+	If TowerOfCourage() Then Return $FAIL
 	; Fix : if unholy texts are not picked up, move to different place, and retry, until it works
-	If TheGreatBattleField() Then Return 1
-	If TheTempleOfWar() Then Return 1
-	If TheSpiderCave_and_FissureShore() Then Return 1
+	If TheGreatBattleField() Then Return $FAIL
+	If TheTempleOfWar() Then Return $FAIL
+	If TheSpiderCave_and_FissureShore() Then Return $FAIL
 	; Fix: blocking point before the boss, either try to loot something unreachable or to open an unreachable chest
-	If LakeOfFire() Then Return 1
-	If TowerOfStrengh() Then Return 1
+	If LakeOfFire() Then Return $FAIL
+	If TowerOfStrengh() Then Return $FAIL
 	; Fix : pathing should be updated to avoid over aggro
-	If BurningForest() Then Return 1
+	If BurningForest() Then Return $FAIL
 	; Fix : pathing incorrect making you potentially clear in front of Wailing Lord without the flags
 	; Also makes you take griffons before clearing the path for them
-	If ForestOfTheWailingLord() Then Return 1
-	If GriffonRun() Then Return 1
-	If TempleLoot() Then Return 1
+	If ForestOfTheWailingLord() Then Return $FAIL
+	If GriffonRun() Then Return $FAIL
+	If TempleLoot() Then Return $FAIL
 
 	AdlibUnRegister('TrackPartyStatus')
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 

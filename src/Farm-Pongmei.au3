@@ -64,7 +64,7 @@ Func PongmeiChestFarm($STATUS)
 		$PONGMEI_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return PongmeiChestFarmLoop($STATUS)
 EndFunc
@@ -161,9 +161,9 @@ Func PongmeiChestFarmLoop($STATUS)
 	DervishRun(-13876, -5626)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $success = $openedChests > 0 And Not GetIsDead() ? 0 : 1
+	Local $result = $openedChests > 0 And Not GetIsDead() ? $SUCCESS : $FAIL
 	BackToBoreasSeabed()
-	Return $success
+	Return $result
 EndFunc
 
 
@@ -196,7 +196,7 @@ Func DervishRun($X, $Y)
 	;Local Static $shadowFormLastUse = Null
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
 		Error('Out of lockpicks')
-		Return 2
+		Return $PAUSE
 	EndIf
 
 	Move($X, $Y, 0)
@@ -311,7 +311,7 @@ Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 		$foe = $foes[$i]
 		If ((ComputeDistance($X, $Y, $myX, $myY) - ComputeDistance($X, $Y, DllStructGetData($foe, 'X'), DllStructGetData($foe, 'Y'))) > $distance) Then Return $foe
 	Next
-	Return 0
+	Return Null
 EndFunc
 
 
@@ -320,7 +320,6 @@ Func DefendWhileOpeningChests()
 	Local $nearestFoe = GetNearestEnemyToAgent(GetMyAgent())
 
 	If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($Pongmei_IAmUnstoppable)
-
 	If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
 		UseSkillEx($Pongmei_DeadlyParadox)
 		RandomSleep(20)

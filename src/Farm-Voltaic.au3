@@ -47,7 +47,7 @@ Func VoltaicFarm($STATUS)
 		$VOLTAIC_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return VoltaicFarmLoop()
 EndFunc
@@ -87,7 +87,7 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
 	If IsRunFailed() Then
 		AdlibUnregister('TrackPartyStatus')
-		Return 1
+		Return $FAIL
 	EndIf
 
 	Info('At the Troll Bridge - TROLL TOLL')
@@ -96,7 +96,7 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(25298, -9456, '10', $VSAggroRange)
 	If IsRunFailed() Then
 		AdlibUnregister('TrackPartyStatus')
-		Return 1
+		Return $FAIL
 	EndIf
 
 	Move(25729, -9360)
@@ -152,7 +152,7 @@ Func VoltaicFarmLoop()
 	WEnd
 	If IsRunFailed() Then
 		AdlibUnregister('TrackPartyStatus')
-		Return 1
+		Return $FAIL
 	EndIf
 	; Chest
 	Move(-17500, -14250)
@@ -164,5 +164,5 @@ Func VoltaicFarmLoop()
 	PickUpItems()
 	Info('Finished Run')
 	AdlibUnregister('TrackPartyStatus')
-	Return 0
+	Return $SUCCESS
 EndFunc

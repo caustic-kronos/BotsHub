@@ -67,7 +67,7 @@ Func MantidsFarm($STATUS)
 		$MANTIDS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return MantidsFarmLoop()
 EndFunc
@@ -153,7 +153,7 @@ Func MantidsFarmLoop()
 	RandomSleep(2000)
 	If GetIsDead() Then
 		BackToNahpuiQuarterOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	; Balling the rest
@@ -187,7 +187,7 @@ Func MantidsFarmLoop()
 
 	If GetIsDead() Then
 		BackToNahpuiQuarterOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	Info('Looting')
@@ -195,7 +195,7 @@ Func MantidsFarmLoop()
 	FindAndOpenChests()
 
 	BackToNahpuiQuarterOutpost()
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 

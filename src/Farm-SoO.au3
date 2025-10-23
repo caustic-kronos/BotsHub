@@ -44,7 +44,7 @@ Func SoOFarm($STATUS)
 		$SOO_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return SoOFarmLoop()
 EndFunc
@@ -95,14 +95,14 @@ Func RunToShardsOfOrrDungeon()
 		MoveAggroAndKill(11891, -224, '3', $SoOAggroRange)
 		MoveAggroAndKill(8803, -5104, '4', $SoOAggroRange)
 		MoveAggroAndKill(8125, -8247, '5', $SoOAggroRange)
-		If IsRunFailed() Then Return 1
+		If IsRunFailed() Then Return $FAIL
 
 		MoveAggroAndKill(8634, -11529, '6', $SoOAggroRange)
 		MoveAggroAndKill(9559, -13494, '7', $SoOAggroRange)
 		MoveAggroAndKill(10314, -16111, '8', $SoOAggroRange)
 		MoveAggroAndKill(11156, -17802, '9', $SoOAggroRange)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 	AdlibUnRegister('TrackPartyStatus')
 EndFunc
 
@@ -113,9 +113,9 @@ Func SoOFarmLoop()
 	AdlibRegister('TrackPartyStatus', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
-	If (ClearSoOFloor1() == 1 Or ClearSoOFloor2() == 1 Or ClearSoOFloor3() == 1) Then
+	If (ClearSoOFloor1() == $FAIL Or ClearSoOFloor2() == $FAIL Or ClearSoOFloor3() == $FAIL) Then
 		$SOO_FARM_SETUP = False
-		Return 1
+		Return $FAIL
 	EndIf
 
 	AdlibUnRegister('TrackPartyStatus')
@@ -127,7 +127,7 @@ Func SoOFarmLoop()
 	WEnd
 
 	Info('Finished Run')
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -281,7 +281,7 @@ Func ClearSoOFloor1()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_2)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 EndFunc
 
 
@@ -403,7 +403,7 @@ Func ClearSoOFloor2()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_3)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 EndFunc
 
 
@@ -533,7 +533,7 @@ Func ClearSoOFloor3()
 		Info('Quest state end of boss loop : ' & $questState)
 		Sleep(1000)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 
 	; Doubled to try securing the looting
 	For $i = 1 To 2

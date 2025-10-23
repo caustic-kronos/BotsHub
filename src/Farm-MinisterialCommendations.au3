@@ -138,13 +138,13 @@ Func MinisterialCommendationsFarm($STATUS)
 	EnterQuest()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Info('Preparing to fight')
 	PrepareToFight()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Info('Fighting the first group')
 	InitialFight()
@@ -174,7 +174,7 @@ Func MinisterialCommendationsFarm($STATUS)
 	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
 	If $LOG_LEVEL == 0 Then FileClose($loggingFile)
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -499,7 +499,7 @@ Func ResignAndReturnToOutpost()
 		LogIntoFile('Character died.')
 	EndIf
 	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	Return 1
+	Return $FAIL
 EndFunc
 
 

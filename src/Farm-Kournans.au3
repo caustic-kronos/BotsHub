@@ -79,7 +79,7 @@ Func KournansFarm($STATUS)
 		$KOURNANS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return KournansFarmLoop()
 EndFunc
@@ -172,7 +172,7 @@ Func KournansFarmLoop()
 	RandomSleep(2000)
 	Info('Looting')
 	PickUpItems()
-	Local $result = GetIsDead() ? 1 : 0
+	Local $result = GetIsDead() ? $FAIL : $SUCCESS
 	BackToSunspearSanctuary()
 	Return $result
 EndFunc

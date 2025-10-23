@@ -52,7 +52,7 @@ Func VaettirFarm($STATUS)
 		RunToJagaMoraine()
 	WEnd
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return VaettirsFarmLoop()
 EndFunc
@@ -286,8 +286,8 @@ EndFunc
 
 ;~ Exit Jaga Moraine to Bjora Marches and get back into Jaga Moraine
 Func RezoneToJagaMoraine()
-	Local $success = 0
-	If GetIsDead() Then $success = 1
+	Local $result = $SUCCESS
+	If GetIsDead() Then $result = $FAIL
 
 	Info('Zoning out and back in')
 	MoveAggroing(12289, -17700)
@@ -299,7 +299,7 @@ Func RezoneToJagaMoraine()
 		RandomSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$Deadlocked = True
-			Return 1
+			Return $FAIL
 		EndIf
 	WEnd
 	MoveTo(15600, -20500)
@@ -309,7 +309,7 @@ Func RezoneToJagaMoraine()
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
 
-	Return $success
+	Return $result
 EndFunc
 
 

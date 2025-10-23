@@ -61,7 +61,7 @@ Func SpiritSlavesFarm($STATUS)
 		SpiritSlavesFarmSetup()
 	WEnd
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	UseConsumable($ID_Slice_of_Pumpkin_Pie)
 
@@ -85,7 +85,7 @@ Func SpiritSlavesFarm($STATUS)
 	Move(-7735, -8380)
 	RezoneToTheShatteredRavines()
 
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -392,11 +392,11 @@ Func RestartAfterDeath()
 			$SPIRIT_SLAVES_FARM_SETUP = True
 			Info('Travelling to Bone Palace')
 			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
-			Return 1
+			Return $FAIL
 		EndIf
 	WEnd
 	RezoneToTheShatteredRavines()
-	Return 1
+	Return $FAIL
 EndFunc
 
 

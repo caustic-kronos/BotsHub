@@ -55,11 +55,10 @@ Func OmniFarm($STATUS)
 	Info('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	HealingLoop()
 
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 ;~ Shouldn't be used

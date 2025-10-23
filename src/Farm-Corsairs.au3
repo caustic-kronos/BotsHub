@@ -66,7 +66,7 @@ Func CorsairsFarm($STATUS)
 		$CORSAIRS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return CorsairsFarmLoop()
 EndFunc
@@ -117,7 +117,7 @@ Func CorsairsFarmLoop()
 
 	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	MoveTo(-8100, -6550)
@@ -125,7 +125,7 @@ Func CorsairsFarmLoop()
 
 	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	MoveTo(-8850, -6950)
@@ -143,7 +143,7 @@ Func CorsairsFarmLoop()
 
 	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	MoveTo(-9730,-7350, 0)
@@ -159,7 +159,7 @@ Func CorsairsFarmLoop()
 
 	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	For $i = 0 To 7
@@ -170,7 +170,7 @@ Func CorsairsFarmLoop()
 
 	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	Local $target = GetNearestEnemyToCoords(-8920, -6950)
@@ -190,7 +190,7 @@ Func CorsairsFarmLoop()
 
 	If GetIsDead() Then
 		BackToModdokCreviceOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	Info('Looting')
@@ -202,7 +202,7 @@ Func CorsairsFarmLoop()
 	EndIf
 
 	BackToModdokCreviceOutpost()
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 

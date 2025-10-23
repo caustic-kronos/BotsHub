@@ -63,7 +63,7 @@ Global $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hex
 Func ManageInventory($STATUS)
 	;SellItemsToMerchant(DefaultShouldSellItem, True)
 	ActiveInventoryManagement()
-	Return 2
+	Return $PAUSE
 EndFunc
 
 

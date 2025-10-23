@@ -72,28 +72,28 @@ Func NexusChallenge()
 	Sleep(50000)
 
 	; Sinon on fait les 5 groupes
-	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return 1
-	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return 1
-	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return 1
-	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return 1
-	If MoveAggroAndKill(2479, -1967, 'Group 5') Then Return 1
-	If MoveAggroAndKill(1572, -616, 'Group 6') Then Return 1
-	If MoveAggroAndKill(668, -3516, 'Group 7') Then Return 1
-	If MoveAggroAndKill(-3723, -3662, 'Group 8') Then Return 1
-	If MoveAggroAndKill(-3809, 880, 'Group 9') Then Return 1
+	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return $FAIL
+	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return $FAIL
+	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return $FAIL
+	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return $FAIL
+	If MoveAggroAndKill(2479, -1967, 'Group 5') Then Return $FAIL
+	If MoveAggroAndKill(1572, -616, 'Group 6') Then Return $FAIL
+	If MoveAggroAndKill(668, -3516, 'Group 7') Then Return $FAIL
+	If MoveAggroAndKill(-3723, -3662, 'Group 8') Then Return $FAIL
+	If MoveAggroAndKill(-3809, 880, 'Group 9') Then Return $FAIL
 	Notice('First loop completed')
-	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return 1
-	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return 1
-	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return 1
-	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return 1
-	If MoveAggroAndKill(2479, -1967, 'Group 5') Then Return 1
-	If MoveAggroAndKill(1572, -616, 'Group 6') Then Return 1
-	If MoveAggroAndKill(668, -3516, 'Group 7') Then Return 1
-	If MoveAggroAndKill(-3723, -3662, 'Group 8') Then Return 1
-	If MoveAggroAndKill(-3809, 880, 'Group 9') Then Return 1
+	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return $FAIL
+	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return $FAIL
+	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return $FAIL
+	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return $FAIL
+	If MoveAggroAndKill(2479, -1967, 'Group 5') Then Return $FAIL
+	If MoveAggroAndKill(1572, -616, 'Group 6') Then Return $FAIL
+	If MoveAggroAndKill(668, -3516, 'Group 7') Then Return $FAIL
+	If MoveAggroAndKill(-3723, -3662, 'Group 8') Then Return $FAIL
+	If MoveAggroAndKill(-3809, 880, 'Group 9') Then Return $FAIL
 	Notice('Second loop completed, reset')
-	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return 1
-	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return 1
-	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return 1
-	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return 1
+	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return $FAIL
+	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return $FAIL
+	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return $FAIL
+	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return $FAIL
 EndFunc

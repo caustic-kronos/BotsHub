@@ -79,11 +79,11 @@ Func GemstoneFarm($STATUS)
 		$GemstoneFarmSetup = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GemstoneFarmLoop()
 
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -143,7 +143,7 @@ Func ResignAndReturnToGate()
 		Warn('Player died')
 	EndIf
 	DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-	Return 1
+	Return $FAIL
 EndFunc
 
 ;~ Defending function

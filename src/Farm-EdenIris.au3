@@ -42,7 +42,7 @@ Func EdenIrisFarm($STATUS)
 		$IRIS_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return EdenIrisFarmLoop()
 EndFunc

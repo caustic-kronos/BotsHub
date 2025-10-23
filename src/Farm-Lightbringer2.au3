@@ -44,7 +44,7 @@ Func LightbringerFarm2($STATUS)
 	Local $result = Lightbringer()
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
-	;If $result == 1 Then $result = 2
+	;If $result == $FAIL Then $result = $PAUSE
 	Return $result
 EndFunc
 
@@ -95,21 +95,21 @@ Func Lightbringer()
 	MoveTo(-10600, -12671)
 	MoveTo(-4785, -14912)
 
-	If MoveAggroAndKill(-2451, -15086, 'Group 1/10') Then Return 1
-	If MoveAggroAndKill(1174, -13787, 'Plants') Then Return 1
-	If MoveAggroAndKill(6728, -12014, 'Plants') Then Return 1
-	If MoveAggroAndKill(9554, -14517, 'Kournans + boss') Then Return 1
-	If MoveAggroAndKill(16856, -14068, 'Plants') Then Return 1
-	If MoveAggroAndKill(19428, -13168, 'Group 2/10') Then Return 1
-	If MoveAggroAndKill(16961, -7251, 'Group 3/10') Then Return 1
-	If MoveAggroAndKill(20212, -5510, 'Group 4/10') Then Return 1
-	If MoveAggroAndKill(20373, -580, 'Group 5/10') Then Return 1
-	If MoveAggroAndKill(19778, 2882, 'Group 6/10') Then Return 1
-	If MoveAggroAndKill(19561, 6432, 'Group 7/10') Then Return 1
-	If MoveAggroAndKill(15914, 10322, 'Group 8/10') Then Return 1
+	If MoveAggroAndKill(-2451, -15086, 'Group 1/10') Then Return $FAIL
+	If MoveAggroAndKill(1174, -13787, 'Plants') Then Return $FAIL
+	If MoveAggroAndKill(6728, -12014, 'Plants') Then Return $FAIL
+	If MoveAggroAndKill(9554, -14517, 'Kournans + boss') Then Return $FAIL
+	If MoveAggroAndKill(16856, -14068, 'Plants') Then Return $FAIL
+	If MoveAggroAndKill(19428, -13168, 'Group 2/10') Then Return $FAIL
+	If MoveAggroAndKill(16961, -7251, 'Group 3/10') Then Return $FAIL
+	If MoveAggroAndKill(20212, -5510, 'Group 4/10') Then Return $FAIL
+	If MoveAggroAndKill(20373, -580, 'Group 5/10') Then Return $FAIL
+	If MoveAggroAndKill(19778, 2882, 'Group 6/10') Then Return $FAIL
+	If MoveAggroAndKill(19561, 6432, 'Group 7/10') Then Return $FAIL
+	If MoveAggroAndKill(15914, 10322, 'Group 8/10') Then Return $FAIL
 	MoveTo(12116, 7908)
-	If MoveAggroAndKill(12932, 6907, 'Group 9/10') Then Return 1
-	If MoveAggroAndKill(12956, 2637, 'Group 10/10') Then Return 1
+	If MoveAggroAndKill(12932, 6907, 'Group 9/10') Then Return $FAIL
+	If MoveAggroAndKill(12956, 2637, 'Group 10/10') Then Return $FAIL
 	Info('Groups are destroyed, resign and do it again')
 	MoveTo(12856, 2627)
 	RandomSleep(500)
@@ -117,5 +117,5 @@ Func Lightbringer()
 	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
-	Return 0
+	Return $SUCCESS
 EndFunc

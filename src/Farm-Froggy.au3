@@ -43,7 +43,7 @@ Func FroggyFarm($STATUS)
 		$FROGGY_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return FroggyFarmLoop()
 EndFunc
@@ -88,7 +88,7 @@ Func SetupFroggyFarm()
 		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $froggyAggroRange)
 		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 	AdlibUnRegister('TrackPartyStatus')
 	Info('Preparations complete')
 EndFunc
@@ -100,9 +100,9 @@ Func FroggyFarmLoop()
 	AdlibRegister('TrackPartyStatus', 10000)
 
 	GetRewardRefreshAndTakeFroggyQuest()
-	If (ClearFroggyFloor1() == 1 Or ClearFroggyFloor2() == 1) Then
+	If (ClearFroggyFloor1() == $FAIL Or ClearFroggyFloor2() == $FAIL) Then
 		$FROGGY_FARM_SETUP = False
-		Return 1
+		Return $FAIL
 	EndIf
 
 	AdlibUnRegister('TrackPartyStatus')
@@ -113,7 +113,7 @@ Func FroggyFarmLoop()
 		Sleep(500)
 	WEnd
 	Info('Finished Run')
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -225,7 +225,7 @@ Func ClearFroggyFloor1()
 		Info('Last cave exit')
 		MoveTo(7171, -17934)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 
 	Info('Going through portal')
 	Local $mapLoaded = False
@@ -323,7 +323,7 @@ Func ClearFroggyFloor2()
 		$questState = DllStructGetData(GetQuestByID($ID_Froggy_Quest), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
 	WEnd
-	If IsRunFailed() Then Return 1
+	If IsRunFailed() Then Return $FAIL
 
 	; Chest
 	MoveTo(15910, -19134)

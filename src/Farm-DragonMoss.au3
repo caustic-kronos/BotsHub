@@ -58,7 +58,7 @@ Func DragonMossFarm($STATUS)
 		$DM_FARM_SETUP = True
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return DragonMossFarmLoop()
 EndFunc
@@ -121,7 +121,7 @@ Func DragonMossFarmLoop()
 	RandomSleep(50)
 	If GetIsDead() Then
 		BackToSaintAnjekaOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 	RandomSleep(1000)
 	; Killing
@@ -148,7 +148,7 @@ Func DragonMossFarmLoop()
 
 	If GetIsDead() Then
 		BackToSaintAnjekaOutpost()
-		Return 1
+		Return $FAIL
 	EndIf
 
 	RandomSleep(1000)
@@ -157,7 +157,7 @@ Func DragonMossFarmLoop()
 	PickUpItems()
 
 	BackToSaintAnjekaOutpost()
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 

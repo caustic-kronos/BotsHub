@@ -82,9 +82,9 @@ Func RaptorFarm($STATUS)
 	If GetMapID() <> $ID_Rata_Sum Then DistrictTravel($ID_Rata_Sum, $DISTRICT_NAME)
 
 	$RAPTORS_PROFESSION = GetHeroProfession(0)		;Gets our own profession
-	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return 2
+	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return $PAUSE
 	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return RaptorsFarmLoop()
 EndFunc
@@ -356,15 +356,15 @@ EndFunc
 Func AssertFarmResult()
 	If GetIsDead() Then
 		Info('Character died')
-		Return 1
+		Return $FAIL
 	EndIf
 
 	Local $survivors = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	If $survivors > 1 Then
 		Info($survivors & ' raptors survived')
-		Return 1
+		Return $FAIL
 	EndIf
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
