@@ -125,14 +125,14 @@ EndFunc
 
 ;~ Move to X, Y. This is to be used in the run from across Bjora Marches
 Func MoveRunning($X, $Y)
-	If GetIsDead() Then Return False
+	If IsPlayerDead() Then Return False
 
 	Move($X, $Y)
 
 	Local $target
 	Local $me = GetMyAgent()
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250
-		If GetIsDead() Then Return False
+		If IsPlayerDead() Then Return False
 		$target = GetNearestEnemyToAgent($me)
 
 		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then TryUseShadowForm()
@@ -248,8 +248,8 @@ EndFunc
 ;~ Kill a mob group
 Func VaettirsKillSequence()
 	; Wait for shadow form to have been casted very recently
-	While Not GetIsDead() And TimerDiff($shadowFormTimer) > 5000
-		If GetIsDead() Then Return
+	While Not IsPlayerDead() And TimerDiff($shadowFormTimer) > 5000
+		If IsPlayerDead() Then Return
 		Sleep(100)
 		VaettirsStayAlive()
 	WEnd
@@ -263,7 +263,7 @@ Func VaettirsKillSequence()
 		UseSkillEx($Skill_Arcane_Echo)
 		$target = GetWastrelsTarget()
 		UseSkillEx($Skill_Wastrels_Demise, $target)
-		While Not GetIsDead() And $foesCount > 0 And TimerDiff($deadlock) < 60000
+		While Not IsPlayerDead() And $foesCount > 0 And TimerDiff($deadlock) < 60000
 			; Use echoed wastrel if possible
 			If IsRecharged($Skill_Arcane_Echo) And GetSkillbarSkillID($Skill_Arcane_Echo) == $ID_Wastrels_Demise Then
 				$target = GetWastrelsTarget()
@@ -287,14 +287,14 @@ EndFunc
 ;~ Exit Jaga Moraine to Bjora Marches and get back into Jaga Moraine
 Func RezoneToJagaMoraine()
 	Local $result = $SUCCESS
-	If GetIsDead() Then $result = $FAIL
+	If IsPlayerDead() Then $result = $FAIL
 
 	Info('Zoning out and back in')
 	MoveAggroing(12289, -17700)
 	MoveAggroing(15318, -20351)
 
 	Local $deadlockTimer = TimerInit()
-	While GetIsDead()
+	While IsPlayerDead()
 		Info('Waiting for resurrection')
 		RandomSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
@@ -315,7 +315,7 @@ EndFunc
 
 ;~ Move to destX, destY, while staying alive vs vaettirs
 Func MoveAggroing($X, $Y, $random = 150)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	Local $blockedCount
 	Local $heartOfShadowUsageCount
@@ -327,12 +327,12 @@ Func MoveAggroing($X, $Y, $random = 150)
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > $random * 1.5
-		If GetIsDead() Then Return False
+		If IsPlayerDead() Then Return False
 		VaettirsStayAlive()
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
 			If $heartOfShadowUsageCount > 6 Then
-				While Not GetIsDead()
+				While Not IsPlayerDead()
 					RandomSleep(1000)
 				WEnd
 				Return False
@@ -388,11 +388,11 @@ EndFunc
 
 ;~ Wait while staying alive at the same time (like Sleep(..), but without the dying part)
 Func VaettirsSleepAndStayAlive($waitingTime)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	Local $timer = TimerInit()
 	While TimerDiff($timer) < $waitingTime
 		RandomSleep(100)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		VaettirsStayAlive()
 	WEnd
 EndFunc

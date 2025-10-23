@@ -172,7 +172,7 @@ Func KournansFarmLoop()
 	RandomSleep(2000)
 	Info('Looting')
 	PickUpItems()
-	Local $result = GetIsDead() ? $FAIL : $SUCCESS
+	Local $result = IsPlayerDead() ? $FAIL : $SUCCESS
 	BackToSunspearSanctuary()
 	Return $result
 EndFunc

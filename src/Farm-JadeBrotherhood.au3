@@ -117,11 +117,11 @@ Func JadeBrotherhoodFarmLoop()
 	MoveToSeparationWithHero()
 	$DeadlockTimer = TimerInit()
 	TalkToAiko()
-	If GetIsDead() Then Return BackToTheMarketplace(1)
+	If IsPlayerDead() Then Return BackToTheMarketplace(1)
 	WaitForBall()
-	If GetIsDead() Then Return BackToTheMarketplace(1)
+	If IsPlayerDead() Then Return BackToTheMarketplace(1)
 	KillJadeBrotherhood()
-	If GetIsDead() Then Return BackToTheMarketplace(1)
+	If IsPlayerDead() Then Return BackToTheMarketplace(1)
 
 	RandomSleep(1000)
 
@@ -170,13 +170,13 @@ EndFunc
 ;~ Wait for mobs to be properly balled
 Func WaitForBall()
 	Info('Waiting for ball')
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	RandomSleep(4500)
 	Local $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
 	Local $prevFoesBalled = 0, $prevPeasantsAlive = 100
 	; Aiko counts
 	While ($foesBalled <> 8 Or $peasantsAlive > 1)
-		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		Debug('Foes balled : ' & $foesBalled)
 		Debug('Peasants alive : ' & $peasantsAlive)
 		RandomSleep(4500)
@@ -199,7 +199,7 @@ Func KillJadeBrotherhood()
 	Local $EnchantmentsTimer
 	Local $target
 
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	Info('Clearing Jade Brotherhood')
 	UseSkillEx($JB_DrunkerMaster)
@@ -219,7 +219,7 @@ Func KillJadeBrotherhood()
 	RandomSleep(500)
 	$EnchantmentsTimer = TimerInit()
 	While IsRecharged($JB_DeathsCharge)
-		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		UseSkillEx($JB_DeathsCharge, $target)
 		RandomSleep(50)
 	WEnd
@@ -227,13 +227,13 @@ Func KillJadeBrotherhood()
 	RandomSleep(50)
 	UseSkillEx($JB_EremitesAttack, $target)
 	While IsRecharged($JB_EremitesAttack)
-		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		UseSkillEx($JB_EremitesAttack, $target)
 		RandomSleep(50)
 	WEnd
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), 1250) > 0
-		If GetIsDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
 		If GetEnergy() >= 6 And IsRecharged($JB_SandShards) Then
 			UseSkillEx($JB_SandShards)
 			RandomSleep(50)

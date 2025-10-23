@@ -101,7 +101,7 @@ Func PickUpIris()
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID)
 				RandomSleep(500)
-				If GetIsDead() Then Return
+				If IsPlayerDead() Then Return
 				If TimerDiff($deadlock) > 20000 Then
 					Info('Could not get iris at (' & DllStructGetData($agent, 'X') & ',' & DllStructGetData($agent, 'Y') & ')')
 					Return False

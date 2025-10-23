@@ -138,7 +138,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	If $foesCount > 0 Then
 		Debug('Foes in range detected, starting fight')
-		While Not GetIsDead() And $foesCount > 0
+		While Not IsPlayerDead() And $foesCount > 0
 			$FightFunction()
 			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 		WEnd
@@ -351,7 +351,7 @@ Func MoveToMiddleOfPartyWithTimeout($timeOut)
 	Local $position = FindMiddleOfParty()
 	Move($position[0], $position[1], 0)
 	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
-		If GetIsDead() Then ExitLoop
+		If IsPlayerDead() Then ExitLoop
 		$oldMapID = $mapID
 		$mapID = GetMapID()
 		If $mapID <> $oldMapID Then ExitLoop

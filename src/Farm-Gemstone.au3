@@ -139,7 +139,7 @@ EndFunc
 Func ResignAndReturnToGate()
 	If GetIsDead($ID_ZhellixAgent) Then
 		Warn('Zhellix died.')
-	ElseIf GetIsDead() Then
+	ElseIf IsPlayerDead() Then
 		Warn('Player died')
 	EndIf
 	DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
@@ -164,7 +164,7 @@ EndFunc
 ;~ Fighting!
 Func Fight()
 	Info('Fighting!')
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	If GetDistance(GetMyAgent(), $target) < $FightDist And DllStructGetData($target, 'ID') <> 0 Then GemKill()
 EndFunc
@@ -172,10 +172,10 @@ EndFunc
 
 ;~ More fighting!
 Func GemKill()
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $distance = 0
-	While Not GetIsDead() And DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist
+	While Not IsPlayerDead() And DllStructGetData($target, 'ID') <> 0 And $distance < $FightDist
 		If GetMapLoading() == 2 Then Disconnected()
 
 		Local $targetsInRangeArr = GetFoesInRangeOfAgent(GetMyAgent(), 1700, IsDreamerDryderOrAnurKi)
@@ -199,13 +199,13 @@ Func GemKill()
 			RandomSleep(150)
 			Attack($target)
 			RandomSleep(150)
-		ElseIf DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or GetIsDead() Then
+		ElseIf DllStructGetData($target, 'ID') = 0 Or $distance > $FightDist Or IsPlayerDead() Then
 			ExitLoop
 		EndIf
 
 		For $i = 0 To UBound($Gem_SkillsArray) - 1
 			Local $targetHp = DllStructGetData(GetCurrentTarget(), 'HP')
-			If GetIsDead() Then ExitLoop
+			If IsPlayerDead() Then ExitLoop
 			If $targetHp = 0 Then ExitLoop
 			If $distance > $FightDist And Not $specialTarget Then ExitLoop
 
@@ -220,7 +220,7 @@ Func GemKill()
 		Next
 	WEnd
 
-	If Not GetIsDead() Then MoveTo($StartX, $StartY)
+	If Not IsPlayerDead() Then MoveTo($StartX, $StartY)
 EndFunc
 
 

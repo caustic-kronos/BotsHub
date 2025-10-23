@@ -162,7 +162,7 @@ Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 	Local $agents = GetAgentArray(0x400)
 	For $i = $agents[0] To 1 Step -1
 		Local $agent = $agents[$i]
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		If Not GetCanPickUp($agent) Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agent) > $range Then ContinueLoop
 
@@ -176,7 +176,7 @@ Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
 				RandomSleep(50)
-				If GetIsDead() Then Return
+				If IsPlayerDead() Then Return
 			WEnd
 		EndIf
 	Next
@@ -273,7 +273,7 @@ EndFunc
 #Region Loot Chests
 ;~ Find chests in the given range (earshot by default)
 Func FindChest($range = $RANGE_EARSHOT)
-	If GetIsDead() Then Return Null
+	If IsPlayerDead() Then Return Null
 	If FindInInventory($ID_Lockpick)[0] == 0 Then Return Null
 
 	Local $gadgetID
@@ -295,7 +295,7 @@ EndFunc
 
 ;~ Find and open chests in the given range (earshot by default)
 Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $BlockedFunction = Null)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	If FindInInventory($ID_Lockpick)[0] == 0 Then Return
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
@@ -310,12 +310,12 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $Blocked
 			;GoSignpost($agents[$i])															;Seems to work but serious rubberbanding
 			;GoToSignpost($agents[$i])															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
 			GoToSignpostWhileDefending($agents[$i], $DefendFunction, $BlockedFunction)			;Final solution
-			If GetIsDead() Then Return
+			If IsPlayerDead() Then Return
 			RandomSleep(200)
 			OpenChest()
-			If GetIsDead() Then Return
+			If IsPlayerDead() Then Return
 			RandomSleep(GetPing() + 1000)
-			If GetIsDead() Then Return
+			If IsPlayerDead() Then Return
 			$chestsMap[DllStructGetData($agents[$i], 'ID')] = 2
 			PickUpItems()
 			$openedChest = True
@@ -348,7 +348,7 @@ Func GoToSignpostWhileDefending($agent, $DefendFunction = Null, $BlockedFunction
 	Local $X = DllStructGetData($agent, 'X')
 	Local $Y = DllStructGetData($agent, 'Y')
 	Local $blocked = 0
-	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
+	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250 And $blocked < 15
 		Move($X, $Y, 100)
 		RandomSleep(GetPing() + 50)
 		If $DefendFunction <> Null Then $DefendFunction()
@@ -938,7 +938,7 @@ EndFunc
 ;~ Uses the Item from $bag at position $slot (positions start at 1)
 Func UseItemBySlot($bag, $slot)
 	If $bag > 0 And $slot > 0 Then
-		If Not GetIsDead() And GetInstanceType() <> 2 Then
+		If Not IsPlayerDead() And GetInstanceType() <> 2 Then
 			Local $item = GetItemBySlot($bag, $slot)
 			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf
@@ -1923,6 +1923,10 @@ Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
 EndFunc
 
 
+Func IsPlayerDead()
+	Return BitAND(DllStructGetData(GetMyAgent(), 'Effects'), 0x0010) > 0
+EndFunc
+
 ;~ Did run fail ?
 Func IsRunFailed()
 	If ($partyFailuresCount > 5) Then
@@ -2036,12 +2040,12 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Local $timer = TimerInit()
 	Local Const $PI = 3.141592653589793
 	Local $me = GetMyAgent()
-	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
+	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
 		Move($coordX, $coordY)
 		RandomSleep(100)
 		;Local $blocked = -1
 		;Local $angle = 0
-		;While Not GetIsDead() And DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
+		;While Not IsPlayerDead() And DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0
 		;	$blocked += 1
 		;	If $blocked > 0 Then
 		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4
@@ -2084,7 +2088,7 @@ EndFunc
 
 ;~ Aggro a foe
 Func AggroAgent($tgtAgent)
-	While Not GetIsDead() And GetDistance(GetMyAgent(), $tgtAgent) > $RANGE_EARSHOT - 100
+	While Not IsPlayerDead() And GetDistance(GetMyAgent(), $tgtAgent) > $RANGE_EARSHOT - 100
 		Move(DllStructGetData($tgtAgent, 'X'), DllStructGetData($tgtAgent, 'Y'))
 		RandomSleep(200)
 	WEnd

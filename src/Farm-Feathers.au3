@@ -139,7 +139,7 @@ Func FeathersFarmLoop()
 	MoveKill(-10500, 5500)
 	MoveKill(-9700, 2400)
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToSeitungHarborOutpost()
 		Return $FAIL
 	EndIf
@@ -161,17 +161,17 @@ EndFunc
 
 ;~ Move and ... run ? Who the fuck wrote this ?
 Func MoveRun($x, $y, $timeOut = 2*60*1000)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	Local $me = GetMyAgent()
 	Local $deadlock = TimerInit()
 
 	Move($x, $y)
-	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > 250
+	While Not IsPlayerDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $x, $y) > 250
 		If TimerDiff($deadlock) > $timeOut Then
 			Resign()
 			Sleep(3000)
 			$deadlock = TimerInit()
-			While Not GetIsDead() And TimerDiff($deadlock) < 30000
+			While Not IsPlayerDead() And TimerDiff($deadlock) < 30000
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
@@ -189,7 +189,7 @@ EndFunc
 
 ;~ Move and kill I suppose
 Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
-	If GetIsDead() Then Return False
+	If IsPlayerDead() Then Return False
 	Local $Angle = 0
 	Local $stuckCount = 0
 	Local $Blocked = 0
@@ -203,13 +203,13 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 			Resign()
 			Sleep(3000)
 			$deadlock = TimerInit()
-			While Not GetIsDead() And TimerDiff($deadlock) < 30000
+			While Not IsPlayerDead() And TimerDiff($deadlock) < 30000
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
-			If GetIsDead() Then Return False
+			If IsPlayerDead() Then Return False
 		EndIf
-		If GetIsDead() Then Return False
+		If IsPlayerDead() Then Return False
 		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
 		$me = GetMyAgent()
@@ -249,7 +249,7 @@ EndFunc
 
 ;~ Kill foes
 Func Kill($waitForSettle = True)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	Local $deadlock, $timeout = 2*60*1000
 
@@ -278,13 +278,13 @@ Func Kill($waitForSettle = True)
 			Resign()
 			Sleep(3000)
 			$deadlock = TimerInit()
-			While Not GetIsDead() And TimerDiff($deadlock) < 30000
+			While Not IsPlayerDead() And TimerDiff($deadlock) < 30000
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
-			If GetIsDead() Then Return False
+			If IsPlayerDead() Then Return False
 		EndIf
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		$target = GetNearestEnemyToAgent(GetMyAgent())
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
@@ -313,8 +313,8 @@ Func WaitForSettle($Timeout = 10000)
 	Local $me = GetMyAgent()
 	Local $target
 	Local $deadlock = TimerInit()
-	While Not GetIsDead() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
-		If GetIsDead() Then Return False
+	While Not IsPlayerDead() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
+		If IsPlayerDead() Then Return False
 		If DllStructGetData($me, 'HP') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
@@ -328,7 +328,7 @@ Func WaitForSettle($Timeout = 10000)
 
 	$deadlock = TimerInit()
 	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($deadlock) < $Timeout)
-		If GetIsDead() Then Return False
+		If IsPlayerDead() Then Return False
 		If DllStructGetData($me, 'HP') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)

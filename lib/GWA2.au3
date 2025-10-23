@@ -2203,7 +2203,7 @@ EndFunc
 
 ;~ Use a skill and wait for it to be done
 Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
-	If GetIsDead() Or Not IsRecharged($skillSlot) Then Return
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return
 	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
 	Local $Energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy() < $Energy Then Return
@@ -2212,7 +2212,7 @@ Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
 	UseSkill($skillSlot, $target)
 	Do
 		Sleep(50)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 	Until (Not IsRecharged($skillSlot)) Or (TimerDiff($deadlock) > $timeout)
 	Sleep($aftercast * 1000)
 EndFunc

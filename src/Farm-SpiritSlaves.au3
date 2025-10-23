@@ -67,19 +67,19 @@ Func SpiritSlavesFarm($STATUS)
 
 	Info('Killing group 1 @ North')
 	FarmNorthGroup()
-	If GetIsDead() Then Return RestartAfterDeath()
+	If IsPlayerDead() Then Return RestartAfterDeath()
 	Info('Killing group 2 @ South')
 	FarmSouthGroup()
-	If GetIsDead() Then Return RestartAfterDeath()
+	If IsPlayerDead() Then Return RestartAfterDeath()
 	Info('Killing group 3 @ South')
 	FarmSouthGroup()
-	If GetIsDead() Then Return RestartAfterDeath()
+	If IsPlayerDead() Then Return RestartAfterDeath()
 	Info('Killing group 4 @ North')
 	FarmNorthGroup()
-	If GetIsDead() Then Return RestartAfterDeath()
+	If IsPlayerDead() Then Return RestartAfterDeath()
 	Info('Killing group 5 @ North')
 	FarmNorthGroup()
-	If GetIsDead() Then Return RestartAfterDeath()
+	If IsPlayerDead() Then Return RestartAfterDeath()
 
 	Info('Moving out of the zone and back again')
 	Move(-7735, -8380)
@@ -129,21 +129,21 @@ Func SpiritSlavesFarmSetup()
 		MoveTo(-8261, 12808)
 		Move(-3838, 19196)
 		$me = GetMyAgent()
-		While Not GetIsDead() And DllStructGetData($me, 'MoveX') <> 0 And DllStructGetData($me, 'MoveY') <> 0
+		While Not IsPlayerDead() And DllStructGetData($me, 'MoveX') <> 0 And DllStructGetData($me, 'MoveY') <> 0
 			If (CountFoesInRangeOfAgent($me, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)
 			RandomSleep(500)
 			$me = GetMyAgent()
 		WEnd
 
 		; If dead it's not worth rezzing better just restart running
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 
 		MoveTo(-4486, 19700)
 		RandomSleep(3000)
 		MoveTo(-4486, 19700)
 
 		; If dead it's not worth rezzing better just restart running
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 
 		; Entering The Shattered Ravines
 		ChangeWeaponSet(1)
@@ -201,7 +201,7 @@ Func FarmNorthGroup()
 	RandomSleep(20)
 	UseSkillEx($SS_Extend_Enchantments)
 	RandomSleep(20)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
 	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
@@ -213,7 +213,7 @@ Func FarmNorthGroup()
 	If GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 	RandomSleep(20)
 
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	KillSequence()
 EndFunc
@@ -227,7 +227,7 @@ Func FarmSouthGroup()
 	; Wait until an enemy is past the correct aggro line
 	Local $foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
 	Local $deadlock = TimerInit()
-	While Not GetIsDead() And $foesCount < 8 And TimerDiff($deadlock) < 120000
+	While Not IsPlayerDead() And $foesCount < 8 And TimerDiff($deadlock) < 120000
 		RandomSleep(100)
 		$foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
 		CleanseFromCripple()
@@ -238,11 +238,11 @@ Func FarmSouthGroup()
 	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
 	$deadlock = TimerInit()
 	; Wait until an enemy is aggroed
-	While Not GetIsDead() And $foesCount == 0 And TimerDiff($deadlock) < 120000
+	While Not IsPlayerDead() And $foesCount == 0 And TimerDiff($deadlock) < 120000
 		RandomSleep(100)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
 	WEnd
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	ChangeWeaponSet(1)
 	MoveTo(-7800, -7680, 0)
@@ -254,7 +254,7 @@ Func FarmSouthGroup()
 	UseSkillEx($SS_Vow_of_Strength)
 	RandomSleep(200)
 
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
 	Local $targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
@@ -269,7 +269,7 @@ Func FarmSouthGroup()
 	If GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 	RandomSleep(20)
 
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 
 	KillSequence()
 EndFunc
@@ -281,7 +281,7 @@ Func KillSequence()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	Local $casterFoesMap[]
 	ChangeWeaponSet(2)
-	While Not GetIsDead() And $foesCount > 0 And TimerDiff($deadlock) < 100000
+	While Not IsPlayerDead() And $foesCount > 0 And TimerDiff($deadlock) < 100000
 		If IsRecharged($SS_Mystic_Vigor) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Vigor)) == 0 And GetEnergy() > $skillCostsMap[$SS_Mystic_Vigor] Then
 			UseSkillEx($SS_Mystic_Vigor)
 			RandomSleep(20)
@@ -322,7 +322,7 @@ Func KillSequence()
 					Debug('Moving to fight that foe')
 					Local $timer = TimerInit()
 					;MoveAvoidingBodyBlock(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'X'), 1000)
-					While Not GetIsDead() And GetDistance($me, $casterFoe) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
+					While Not IsPlayerDead() And GetDistance($me, $casterFoe) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
 						Move(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'Y'))
 						RandomSleep(100)
 					WEnd
@@ -340,7 +340,7 @@ Func KillSequence()
 	WEnd
 	ChangeWeaponSet(1)
 
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	CleanseFromCripple()
 	RandomSleep(1000)
 	PickUpItems(CleanseFromCripple)
@@ -357,7 +357,7 @@ Func WaitForFoesBall()
 	Local $validation = 0
 
 	; Wait until all foes are balled
-	While Not GetIsDead() And $foesCount < 8 And $validation < 2 And TimerDiff($deadlock) < 120000
+	While Not IsPlayerDead() And $foesCount < 8 And $validation < 2 And TimerDiff($deadlock) < 120000
 		If $foesCount == 8 Then $validation += 1
 		RandomSleep(3000)
 		$target = GetNearestEnemyToCoords(-8598, -5810)
@@ -386,7 +386,7 @@ EndFunc
 Func RestartAfterDeath()
 	Local $deadlockTimer = TimerInit()
 	Info('Waiting for resurrection')
-	While GetIsDead()
+	While IsPlayerDead()
 		RandomSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$SPIRIT_SLAVES_FARM_SETUP = True
@@ -402,7 +402,7 @@ EndFunc
 
 ;~ Wait to have enough energy before jumping into the next group
 Func WaitForEnergy()
-	While (GetEnergy() < 20) And Not GetIsDead()
+	While (GetEnergy() < 20) And Not IsPlayerDead()
 		RandomSleep(1000)
 	WEnd
 EndFunc
@@ -410,7 +410,7 @@ EndFunc
 
 ;~ Wait to have death's charge recharged
 Func WaitForDeathsCharge()
-	While Not IsRecharged($SS_Deaths_Charge) And Not GetIsDead()
+	While Not IsRecharged($SS_Deaths_Charge) And Not IsPlayerDead()
 		RandomSleep(1000)
 	WEnd
 EndFunc

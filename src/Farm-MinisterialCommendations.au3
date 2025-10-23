@@ -428,14 +428,14 @@ Func WaitForPurityBall()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 
 	; Wait until an enemy is in melee range
-	While Not GetIsDead() And $foesCount == 0 And TimerDiff($deadlock) < 55000
+	While Not IsPlayerDead() And $foesCount == 0 And TimerDiff($deadlock) < 55000
 		RandomSleep(1000)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
 
 	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
-	While Not GetIsDead() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130)
+	While Not IsPlayerDead() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130)
 		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
 			UseSkillEx($Skill_To_the_limit)
 			RandomSleep(50)
@@ -485,7 +485,7 @@ EndFunc
 
 ;~ Return True if mission failed (you or Miku died)
 Func IsFail()
-	Return GetIsDead($ID_Miku_Agent) Or GetIsDead()
+	Return GetIsDead($ID_Miku_Agent) Or IsPlayerDead()
 EndFunc
 
 
@@ -494,7 +494,7 @@ Func ResignAndReturnToOutpost()
 	If GetIsDead($ID_Miku_Agent) Then
 		Warn('Miku died.')
 		LogIntoFile('Miku died.')
-	ElseIf GetIsDead() Then
+	ElseIf IsPlayerDead() Then
 		Warn('Player died')
 		LogIntoFile('Character died.')
 	EndIf
@@ -514,7 +514,7 @@ Func KillMinistryOfPurity()
 	EndIf
 
 	While IsRecharged($Skill_Ebon_Battle_Standard_of_Honor)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
 		RandomSleep(50)
 
@@ -527,13 +527,13 @@ Func KillMinistryOfPurity()
 	WEnd
 
 	While IsRecharged($Skill_Hundred_Blades)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		UseSkillEx($Skill_Hundred_Blades)
 		RandomSleep(50)
 	WEnd
 
 	If IsRecharged($Skill_Grenths_Aura) Then
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		UseSkillEx($Skill_Grenths_Aura)
 		RandomSleep(50)
 	EndIf
@@ -542,7 +542,7 @@ Func KillMinistryOfPurity()
 
 	;~ Whirlwind attack needs specific care to be used
 	While IsRecharged($Skill_Whirlwind_Attack)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		RandomSleep(200)
 
 		; Heroes with Mystic Healing provide additional long range support
@@ -569,7 +569,7 @@ Func KillMinistryOfPurity()
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
 	While $foesCount > 0 And TimerDiff($deadlock) < 10000
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
@@ -590,7 +590,7 @@ Func KillMinistryOfPurity()
 		;	RandomSleep(300)
 		ElseIf GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) == 130 Then
 			While IsRecharged($Skill_Whirlwind_Attack) And TimerDiff($deadlock) < 10000
-				If GetIsDead() Then Return
+				If IsPlayerDead() Then Return
 				UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(GetMyAgent()))
 				RandomSleep(250)
 			WEnd

@@ -115,7 +115,7 @@ Func CorsairsFarmLoop()
 	CastAllDefensiveSkills()
 	MoveTo(-7300, -4500)
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToModdokCreviceOutpost()
 		Return $FAIL
 	EndIf
@@ -123,7 +123,7 @@ Func CorsairsFarmLoop()
 	MoveTo(-8100, -6550)
 	DefendAgainstCorsairs()
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToModdokCreviceOutpost()
 		Return $FAIL
 	EndIf
@@ -141,7 +141,7 @@ Func CorsairsFarmLoop()
 	RandomSleep(20)
 	CastAllDefensiveSkills()
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToModdokCreviceOutpost()
 		Return $FAIL
 	EndIf
@@ -152,12 +152,12 @@ Func CorsairsFarmLoop()
 	Dialog(0x00000085)
 	RandomSleep(1000)
 
-	While IsRecharged($Corsairs_WhirlingDefense) And Not GetIsDead()
+	While IsRecharged($Corsairs_WhirlingDefense) And Not IsPlayerDead()
 		UseSkillEx($Corsairs_WhirlingDefense)
 		RandomSleep(200)
 	WEnd
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToModdokCreviceOutpost()
 		Return $FAIL
 	EndIf
@@ -168,7 +168,7 @@ Func CorsairsFarmLoop()
 		RandomSleep(1000)
 	Next
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToModdokCreviceOutpost()
 		Return $FAIL
 	EndIf
@@ -180,7 +180,7 @@ Func CorsairsFarmLoop()
 
 	Local $counter = 0
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	While Not GetIsDead() And $foesCount > 0 And $counter < 28
+	While Not IsPlayerDead() And $foesCount > 0 And $counter < 28
 		DefendAgainstCorsairs()
 		If $counter > 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RandomSleep(1000)
@@ -188,7 +188,7 @@ Func CorsairsFarmLoop()
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	WEnd
 
-	If GetIsDead() Then
+	If IsPlayerDead() Then
 		BackToModdokCreviceOutpost()
 		Return $FAIL
 	EndIf
@@ -263,7 +263,7 @@ EndFunc
 Func WaitForEnemyInRange()
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
-	While (Not GetIsDead() And GetDistance($target, $me) > $RANGE_SPELLCAST)
+	While (Not IsPlayerDead() And GetDistance($target, $me) > $RANGE_SPELLCAST)
 		DefendAgainstCorsairs()
 		RandomSleep(500)
 		$me = GetMyAgent()
@@ -274,7 +274,7 @@ EndFunc
 
 ;~ Wait for Bohseda and Dunkoro to shut up and for Bohseda to be interactible
 Func WaitForBohseda()
-	While (Not GetIsDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
+	While (Not IsPlayerDead() And (TimerDiff($Bohseda_Timer) < 53000 Or Not IsRecharged($Corsairs_WhirlingDefense) Or GetEnergy() < 30))
 		DefendAgainstCorsairs(True)
 		RandomSleep(500)
 	WEnd
