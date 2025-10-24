@@ -66,12 +66,9 @@ Global $JADE_BROTHERHOOD_FARM_SETUP = False
 
 ;~ Main method to farm Jade Brotherhood for q8
 Func JadeBrotherhoodFarm($STATUS)
-	If GetMapID() <> $ID_The_Marketplace Then DistrictTravel($ID_The_Marketplace, $DISTRICT_NAME)
-
-	If Not $JADE_BROTHERHOOD_FARM_SETUP Then
-		SetupJadeBrotherhoodFarm()
-		$JADE_BROTHERHOOD_FARM_SETUP = True
-	EndIf
+	; Need to be done here in case bot comes back from inventory management
+	If Not $JADE_BROTHERHOOD_FARM_SETUP Then SetupJadeBrotherhoodFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	If $STATUS <> 'RUNNING' Then Return
 
@@ -82,6 +79,7 @@ EndFunc
 ;~ Setup for the jade brotherhood farm
 Func SetupJadeBrotherhoodFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
@@ -100,12 +98,14 @@ Func SetupJadeBrotherhoodFarm()
 	Move(-14000, -11700)
 	RandomSleep(1000)
 	WaitMapLoading($ID_The_Marketplace)
-	Info('Jade Brotherhood farm setup')
+	$JADE_BROTHERHOOD_FARM_SETUP = True
+	Info('Jade Brotherhood farm set up')
 EndFunc
 
 
 ;~ Jade Brotherhood farm loop
 Func JadeBrotherhoodFarmLoop()
+	If GetMapID() <> $ID_The_Marketplace Then Return $FAIL
 	Info('Abandonning quest')
 	AbandonQuest(0x1C9)
 	Info('Exiting to Bukdek Byway')

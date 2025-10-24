@@ -32,13 +32,8 @@ Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm($STATUS)
-	If GetMapID() <> $ID_Nexus Then
-		Info('Moving to Nexus')
-		DistrictTravel($ID_Nexus, $DISTRICT_NAME)
-		WaitMapLoading($ID_Nexus, 10000, 2000)
-	EndIf
-
 	NexusChallengeSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
@@ -47,7 +42,10 @@ Func NexusChallengeFarm($STATUS)
 EndFunc
 
 Func NexusChallengeSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Lightbringer_Title)
+	SwitchMode($ID_NORMAL_MODE)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
@@ -56,11 +54,12 @@ Func NexusChallengeSetup()
 	;RandomSleep(500)
 	;AddHero($ID_Master_Of_Whispers)
 	;RandomSleep(500)
-	SwitchMode($ID_NORMAL_MODE)
+	Info('Preparations complete')
 EndFunc
 
-;~ Cleaning NexusChallenges func
+;~ Cleaning NexusChallenges function
 Func NexusChallenge()
+	If GetMapID() <> $ID_Nexus Then Return $FAIL
 	; Lance la quête
 	MoveTo(-2218, -5033)
 	GoToNPC(GetNearestNPCToCoords(-2218, -5033))

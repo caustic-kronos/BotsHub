@@ -39,9 +39,9 @@ Global $SOO_FARM_SETUP = False
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
+	; Need to be done here in case bot comes back from inventory management
 	If Not $SOO_FARM_SETUP Then
-		SetupSoOFarm()
-		$SOO_FARM_SETUP = True
+		If SetupSoOFarm() == $FAIL Then Return $FAIL
 	EndIf
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
@@ -53,12 +53,12 @@ EndFunc
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Vloxs_Fall Then DistrictTravel($ID_Vloxs_Fall, $DISTRICT_NAME)
-
+	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchToHardModeIfEnabled()
-	RunToShardsOfOrrDungeon()
+	If RunToShardsOfOrrDungeon() == $FAIL Then Return $FAIL
+	$SOO_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -98,8 +98,8 @@ Func RunToShardsOfOrrDungeon()
 		MoveAggroAndKill(10314, -16111, '8', $SoOAggroRange)
 		MoveAggroAndKill(11156, -17802, '9', $SoOAggroRange)
 	WEnd
-	If IsRunFailed() Then Return $FAIL
 	AdlibUnRegister('TrackPartyStatus')
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -164,7 +164,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	MoveTo(11177, -17683)
 	MoveTo(11996, -17846)
 
-	; Doubled to secure
+	; Doubled to secure bot
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12056, -17882))
 		RandomSleep(250)
@@ -173,7 +173,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	Next
 
 	Info('Talk to Shandra again if already had quest')
-	; Doubled to secure
+	; Doubled to secure bot
 	For $i = 1 To 2
 		GoToNPC(GetNearestNPCToCoords(12056, -17882))
 		RandomSleep(250)
@@ -259,7 +259,7 @@ Func ClearSoOFloor1()
 	While Not IsRunFailed() And Not $mapLoaded
 		Info('Open dungeon door')
 		ClearTarget()
-		; Doubled to secure
+		; Doubled to secure bot
 		For $i = 1 To 2
 			MoveTo(15041, 5475)
 			TargetNearestItem()
@@ -302,7 +302,7 @@ Func ClearSoOFloor2()
 		ClearTarget()
 		Sleep(GetPing() + 500)
 
-		For $i = 1 To 2
+		For $i = 1 To 2 ; Doubled to secure bot
 			MoveTo(-14709, -16548)
 			TargetNearestItem()
 			Sleep(1500)

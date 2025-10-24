@@ -38,9 +38,9 @@ Global Const $ID_Froggy_Quest = 0x339
 
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
+	; Need to be done here in case bot comes back from inventory management
 	If Not $FROGGY_FARM_SETUP Then
-		SetupFroggyFarm()
-		$FROGGY_FARM_SETUP = True
+		If SetupFroggyFarm() == $FAIL Then Return $FAIL
 	EndIf
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
@@ -52,12 +52,19 @@ EndFunc
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Gadds_Camp Then DistrictTravel($ID_Gadds_Camp, $DISTRICT_NAME)
-
+	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
 	ResetFailuresCounter()
+	RunToBogroot()
+	If IsRunFailed() Then Return $FAIL
+	AdlibUnRegister('TrackPartyStatus')
+	$FROGGY_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func RunToBogroot()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
 	Local $mapLoaded = False
@@ -84,14 +91,12 @@ Func SetupFroggyFarm()
 		MoveAggroAndKill(14650, 19417, 'More violets I say. Less violence', $froggyAggroRange)
 		MoveAggroAndKill(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
-	If IsRunFailed() Then Return $FAIL
-	AdlibUnRegister('TrackPartyStatus')
-	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func FroggyFarmLoop()
+	If GetMapID() <> $ID_Bogroot_lvl1 And GetMapID() <> $ID_Bogroot_lvl2 Then Return $FAIL
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 

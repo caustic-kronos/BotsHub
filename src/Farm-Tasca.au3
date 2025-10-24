@@ -58,12 +58,7 @@ Global $TASCA_FARM_SETUP = False
 ;~ Main method to chest farm Tasca
 Func TascaChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_The_Granite_Citadel Then DistrictTravel($ID_The_Granite_Citadel, $DISTRICT_NAME)
-	If Not $TASCA_FARM_SETUP Then
-		SetupTascaFarm()
-		$TASCA_FARM_SETUP = True
-	EndIf
-
+	If Not $TASCA_FARM_SETUP Then SetupTascaFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return TascaChestFarmLoop($STATUS)
@@ -73,12 +68,13 @@ EndFunc
 ;~ Tasca chest farm setup
 Func SetupTascaFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
 	UseCitySpeedBoost()
 	OmniFarmFullSetup()
 	;LoadSkillTemplate($TascaChestRunnerSkillbar)
 	SwitchToHardModeIfEnabled()
 
-	Info('Entering Tascas Demise')
+	Info('Entering Tasca''s Demise')
 	MoveTo(-10000, 18875)
 	Move(-9250, 19850)
 	RandomSleep(1000)
@@ -87,12 +83,14 @@ Func SetupTascaFarm()
 	Move(-10000, 18875)
 	RandomSleep(1000)
 	WaitMapLoading($ID_The_Granite_Citadel, 10000, 1000)
+	$TASCA_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Tasca Chest farm loop
 Func TascaChestFarmLoop($STATUS)
+	If GetMapID() <> $ID_The_Granite_Citadel Then Return $FAIL
 	MoveTo(-10000, 18875)
 	Move(-9250, 19850)
 	RandomSleep(1000)

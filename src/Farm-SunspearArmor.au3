@@ -33,12 +33,9 @@ Global $SUNSPEAR_ARMOR_FARM_SETUP = False
 
 ;~ Main loop for the Sunspear Armor farm
 Func SunspearArmorFarm($STATUS)
-	If GetMapID() <> $ID_Dajkah_Inlet_Outpost Then
-		Info('Moving to Kodash Bazaar')
-		DistrictTravel($ID_Dajkah_Inlet_Outpost, $DISTRICT_NAME)
-		WaitMapLoading($ID_Dajkah_Inlet_Outpost, 10000, 2000)
-	EndIf
+	; Need to be done here in case bot comes back from inventory management
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = SunspearArmorClean()
@@ -48,7 +45,10 @@ Func SunspearArmorFarm($STATUS)
 	Return $result
 EndFunc
 
+
 Func SunspearArmorSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Dajkah_Inlet_Outpost, $DISTRICT_NAME)
 	SwitchToHardModeIfEnabled()
 	;LeaveParty()
 	;RandomSleep(500)
@@ -70,8 +70,10 @@ Func SunspearArmorSetup()
 	Info('Setup completed')
 EndFunc
 
-;~ Cleaning SunspearArmors func
+
+;~ Cleaning Sunspear Armors function
 Func SunspearArmorClean()
+	If GetMapID() <> $ID_Dajkah_Inlet_Outpost Then Return $FAIL
 	GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 	RandomSleep(250)
 	Dialog(0x00000087)

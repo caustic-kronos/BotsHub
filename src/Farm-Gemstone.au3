@@ -74,11 +74,8 @@ Global Const $ID_AnurKi = 5169
 
 ;~ Main Gemstone farm entry function
 Func GemstoneFarm($STATUS)
-	If Not $GemstoneFarmSetup Then
-		SetupGemstoneFarm()
-		$GemstoneFarmSetup = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $GemstoneFarmSetup Then SetupGemstoneFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GemstoneFarmLoop()
@@ -90,19 +87,18 @@ EndFunc
 ;~ Gemstone farm setup
 Func SetupGemstoneFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
+	;~ Assuming all heroes have been set up correctly
+	$GemstoneFarmSetup = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Gemstone farm loop
 Func GemstoneFarmLoop()
-	; Ensure correct map
-	If GetMapID() <> $ID_Gate_Of_Anguish Then
-		DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-	EndIf
-	TalkToZhellix()
+	If TalkToZhellix() == $FAIL Then Return $FAIL
 	WalkToSpot()
 	Defend()
 EndFunc
@@ -110,11 +106,13 @@ EndFunc
 
 ;~ Talking to Zhellix
 Func TalkToZhellix()
-	Local $z = GetNearestNpcToCoords(6086, -13397)
-	ChangeTarget($z)
-	GoToNPC($z)
+	If GetMapID() <> $ID_Gate_Of_Anguish Then Return $FAIL
+	Local $Zhellix = GetNearestNpcToCoords(6081, -13314)
+	ChangeTarget($Zhellix)
+	GoToNPC($Zhellix)
 	Dialog(0x84)
-	WaitMapLoading()
+	WaitMapLoading($ID_Ebony_Citadel_Of_Mallyx)
+	Return GetMapID() == $ID_Ebony_Citadel_Of_Mallyx? $SUCCESS : $FAIL
 EndFunc
 
 

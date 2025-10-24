@@ -33,23 +33,23 @@ Global Const $NORN_FARM_DURATION = 45 * 60 * 1000
 
 ;~ Main loop for the norn faction farm
 Func NornTitleFarm($STATUS)
-	If GetMapID() <> $ID_Olafstead Then
-		Info('Moving to Olafstead')
-		DistrictTravel($ID_Olafstead, $DISTRICT_NAME)
-		WaitMapLoading($ID_Olafstead, 10000, 2000)
-	EndIf
-	NorntitleSetup()
+	NornTitleFarmSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	AdlibRegister('TrackPartyStatus', 10000)
-	Local $result = NornTitle()
+	Local $result = VanquishVarajarFells()
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
 	Return $result
 EndFunc
 
-Func NorntitleSetup()
+
+Func NornTitleFarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Norn_Title)
+	SwitchMode($ID_HARD_MODE)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
@@ -66,11 +66,13 @@ Func NorntitleSetup()
 	;RandomSleep(500)
 	;AddHero($ID_Xandra)
 	;RandomSleep(500)
-	SwitchMode($ID_HARD_MODE)
+	Info('Preparations complete')
 EndFunc
 
-;~ Cleaning Norntitles func
-Func NornTitle()
+
+;~ Cleaning Varajar Fells function
+Func VanquishVarajarFells()
+	If GetMapID() <> $ID_Olafstead Then Return $FAIL
 	MoveTo(222, 756)
 	MoveTo(-1435, 1217)
 	RandomSleep(5000)

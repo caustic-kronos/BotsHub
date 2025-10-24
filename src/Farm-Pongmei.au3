@@ -58,12 +58,7 @@ Global $PONGMEI_FARM_SETUP = False
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Boreas_Seabed Then DistrictTravel($ID_Boreas_Seabed, $DISTRICT_NAME)
-	If Not $PONGMEI_FARM_SETUP Then
-		SetupPongmeiFarm()
-		$PONGMEI_FARM_SETUP = True
-	EndIf
-
+	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return PongmeiChestFarmLoop($STATUS)
@@ -73,6 +68,7 @@ EndFunc
 ;~ Pongmei chest farm setup
 Func SetupPongmeiFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	AddHero($ID_Hayda)
@@ -84,18 +80,15 @@ Func SetupPongmeiFarm()
 	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
 
 	SwitchToHardModeIfEnabled()
+	$PONGMEI_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Pongmei Chest farm loop
 Func PongmeiChestFarmLoop($STATUS)
+	If GetMapID() <> $ID_Boreas_Seabed Then Return $FAIL
 	Info('Starting chest farm run')
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
 
 	MoveTo(-25366, 1524)
 	MoveTo(-26000, 2400)

@@ -60,12 +60,8 @@ Global $Bohseda_Timer
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
-	If GetMapID() <> $ID_Moddok_Crevice Then DistrictTravel($ID_Moddok_Crevice, $DISTRICT_NAME)
-	If Not $CORSAIRS_FARM_SETUP Then
-		SetupCorsairsFarm()
-		$CORSAIRS_FARM_SETUP = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $CORSAIRS_FARM_SETUP Then SetupCorsairsFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return CorsairsFarmLoop()
@@ -75,6 +71,7 @@ EndFunc
 ;~ Corsairs farm setup
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	AddHero($ID_Dunkoro)
@@ -84,12 +81,14 @@ Func SetupCorsairsFarm()
 	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 2)
 	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
 	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
+	$CORSAIRS_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func CorsairsFarmLoop()
+	If GetMapID() <> $ID_Moddok_Crevice Then Return $FAIL
 	Info('Entering mission')
 	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 	RandomSleep(250)

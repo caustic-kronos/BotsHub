@@ -33,23 +33,24 @@ Global $LIGHTBRINGER_FARM2_SETUP = False
 
 ;~ Main loop for the Lightbringer title farm
 Func LightbringerFarm2($STATUS)
-	If GetMapID() <> $ID_Kodash_Bazaar Then
-		Info('Moving to Kodash Bazaar')
-		DistrictTravel($ID_Kodash_Bazaar, $DISTRICT_NAME)
-		WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
-	EndIf
-	If Not $LIGHTBRINGER_FARM2_SETUP Then LightbringerSetup()
+	; Need to be done here in case bot comes back from inventory management
+	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	AdlibRegister('TrackPartyStatus', 10000)
-	Local $result = Lightbringer()
+	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
 	Return $result
 EndFunc
 
-Func LightbringerSetup()
+
+Func Lightbringer2FarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Lightbringer_Title)
+	SwitchMode($ID_HARD_MODE)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
@@ -66,7 +67,6 @@ Func LightbringerSetup()
 	;RandomSleep(500)
 	;AddHero($ID_Xandra)
 	;RandomSleep(500)
-	SwitchMode($ID_HARD_MODE)
 	MoveTo(-2186, -1916)
 	MoveTo(-3811, 1177)
 	MoveTo(-953, 4199)
@@ -80,8 +80,10 @@ Func LightbringerSetup()
 	Info('Setup completed')
 EndFunc
 
-;~ Cleaning Lightbringers func
-Func Lightbringer()
+
+;~ Cleaning Lightbringers function
+Func FarmMirrorOfLyss()
+	If GetMapID() <> $ID_Kodash_Bazaar Then Return $FAIL
 	MoveTo(-850, 4700)
 	RandomSleep(5000)
 	WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)

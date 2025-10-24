@@ -803,7 +803,7 @@ Func RunFarmLoop($Farm)
 			$result = LightbringerFarm2($STATUS)
 		Case 'Vanguard'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result = VanguardVQFarm($STATUS)
+			$result = VanguardTitleFarm($STATUS)
 
 		Case 'Corsairs'
 			$INVENTORY_SPACE_NEEDED = 5
@@ -904,27 +904,28 @@ EndFunc
 #Region Setup
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
-	$RAPTORS_FARM_SETUP						= False
 	$DM_FARM_SETUP							= False
-	$IRIS_FARM_SETUP						= False
 	$FEATHERS_FARM_SETUP					= False
 	$FOW_FARM_SETUP							= False
 	$FROGGY_FARM_SETUP						= False
+	$IRIS_FARM_SETUP						= False
 	$JADE_BROTHERHOOD_FARM_SETUP			= False
 	$KOURNANS_FARM_SETUP					= False
+	$LIGHTBRINGER_FARM2_SETUP				= False
 	$MANTIDS_FARM_SETUP						= False
+	$RAPTORS_FARM_SETUP						= False
 	$SOO_FARM_SETUP							= False
 	$SPIRIT_SLAVES_FARM_SETUP				= False
 	$TASCA_FARM_SETUP						= False
-	$LIGHTBRINGER_FARM2_SETUP				= False
 	; Those don't need to be reset - party didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
+	;$CORSAIRS_FARM_SETUP					= False
 	;$FOLLOWER_SETUP						= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
-	;$CORSAIRS_FARM_SETUP					= False
 	;$PONGMEI_FARM_SETUP					= False
 	;$VOLTAIC_FARM_SETUP					= False
+	;$WARSUPPLY_FARM_SETUP					= False
 EndFunc
 
 

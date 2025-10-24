@@ -73,12 +73,8 @@ Global $KOURNANS_FARM_SETUP = False
 
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
-	If Not $KOURNANS_FARM_SETUP Then
-		SetupKournansFarm()
-		$KOURNANS_FARM_SETUP = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $KOURNANS_FARM_SETUP Then SetupKournansFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return KournansFarmLoop()
@@ -88,7 +84,7 @@ EndFunc
 ;~ Kournans farm setup
 Func SetupKournansFarm()
 	Info('Setting up farm')
-
+	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	RandomSleep(50)
@@ -117,12 +113,14 @@ Func SetupKournansFarm()
 	Move(-500, 3500)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
+	$KOURNANS_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Kournans farm loop
 Func KournansFarmLoop()
+	If GetMapID() <> $ID_Sunspear_Sanctuary Then Return $FAIL
 	Info('Abandonning quest')
 	AbandonQuest(0x23E)
 	Info('Entering Command Post')

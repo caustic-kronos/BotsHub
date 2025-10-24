@@ -52,12 +52,8 @@ Global $DM_FARM_SETUP = False
 
 ;~ Main method to farm Dragon Moss
 Func DragonMossFarm($STATUS)
-	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then DistrictTravel($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
-	If Not $DM_FARM_SETUP Then
-		SetupDragonMossFarm()
-		$DM_FARM_SETUP = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $DM_FARM_SETUP Then SetupDragonMossFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return DragonMossFarmLoop()
@@ -67,6 +63,7 @@ EndFunc
 ;~ Dragon moss farm setup
 Func SetupDragonMossFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	LoadSkillTemplate($RADragonMossFarmerSkillbar)
@@ -79,12 +76,14 @@ Func SetupDragonMossFarm()
 	Move(-11300, 19900)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
+	$DM_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func DragonMossFarmLoop()
+	If GetMapID() <> $ID_Moddok_Crevice Then Return $FAIL
 	Info('Entering Drazach Thicket')
 	MoveTo(-11400, -22650)
 	Move(-11000, -24000)
@@ -161,7 +160,7 @@ Func DragonMossFarmLoop()
 EndFunc
 
 
-;~ If storm chaser is available, uses it
+;~ If storm chaser is available, use it
 Func UseIMSWhenAvailable()
 	If IsRecharged($DM_StormChaser) Then UseSkillEx($DM_StormChaser)
 EndFunc

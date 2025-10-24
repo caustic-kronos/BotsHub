@@ -79,8 +79,7 @@ Global $chatStuckTimer = TimerInit()
 
 ;~ Main method to farm Raptors
 Func RaptorFarm($STATUS)
-	If GetMapID() <> $ID_Rata_Sum Then DistrictTravel($ID_Rata_Sum, $DISTRICT_NAME)
-
+	; Need to be done here in case bot comes back from inventory management
 	$RAPTORS_PROFESSION = GetHeroProfession(0)		;Gets our own profession
 	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return $PAUSE
 	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
@@ -93,6 +92,7 @@ EndFunc
 ;~ Setup the Raptor farm for faster farm
 Func SetupRaptorFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	AddHero($ID_General_Morgahn)
@@ -108,12 +108,13 @@ Func SetupRaptorFarm()
 	RandomSleep(1000)
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
-	Info('Resign preparation complete')
+	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func RaptorsFarmLoop()
+	If GetMapID() <> $ID_Rata_Sum Then Return $FAIL
 	Info('Exiting to Riven Earth')
 	MoveTo(19700, 16800)
 	Move(20084, 16854)

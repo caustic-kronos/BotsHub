@@ -58,12 +58,8 @@ Global $FEATHERS_FARM_SETUP = False
 
 ;~ Main method to farm feathers
 Func FeathersFarm($STATUS)
-	If GetMapID() <> $ID_Seitung_Harbor Then DistrictTravel($ID_Seitung_Harbor, $DISTRICT_NAME)
-	If Not $FEATHERS_FARM_SETUP Then
-		SetupFeathersFarm()
-		$FEATHERS_FARM_SETUP = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $FEATHERS_FARM_SETUP Then SetupFeathersFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return FeathersFarmLoop()
@@ -73,6 +69,7 @@ EndFunc
 ;~ Feathers farm setup
 Func SetupFeathersFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
 	LoadSkillTemplate($DAFeathersFarmerSkillbar)
@@ -92,12 +89,14 @@ Func SetupFeathersFarm()
 	Move(10970, -13360)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
+	$FEATHERS_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func FeathersFarmLoop()
+	If GetMapID() <> $ID_Seitung_Harbor Then Return $FAIL
 	Info('Entering Jaya Bluffs')
 	MoveTo(17300, 17300)
 	Move(16800, 17550)

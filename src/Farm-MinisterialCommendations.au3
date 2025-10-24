@@ -21,6 +21,8 @@
 #include '../lib/Utils.au3'
 #include <File.au3>
 
+Opt('MustDeclareVars', 1)
+
 ; ==== Constants ====
 Global Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
 Global Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF _
@@ -127,15 +129,42 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 ;~ Main loop of the Ministerial Commendations farm
 Func MinisterialCommendationsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Current_Kaineng_City Then
-		Info('Travelling to Kaineng City')
-		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	EndIf
-	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
+	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then SetupMinisterialCommendationsFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+
+	Local $result = MinisterialCommendationsFarmLoop()
+	Return $result
+EndFunc
+
+
+;~ Setup for the farm - load build and heroes, move in the correct zone
+Func SetupMinisterialCommendationsFarm()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
+	LeaveParty()
+
+	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
+
+	AddHero($ID_Gwen)
+	AddHero($ID_Norgu)
+	AddHero($ID_Razah)
+	AddHero($ID_mesmer_mercenary_hero)
+	AddHero($ID_ritualist_mercenary_hero)
+	AddHero($ID_Xandra)
+	AddHero($ID_Olias)
+
+	SwitchMode($ID_HARD_MODE)
+	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func MinisterialCommendationsFarmLoop()
+	If GetMapID() <> $ID_Current_Kaineng_City Then Return $FAIL
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Info('Entering quest')
-	EnterQuest()
+	EnterAChanceEncounterQuest()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
@@ -178,27 +207,8 @@ Func MinisterialCommendationsFarm($STATUS)
 EndFunc
 
 
-;~ Setup for the farm - load build and heroes, move in the correct zone
-Func Setup()
-	LeaveParty()
-
-	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
-
-	AddHero($ID_Gwen)
-	AddHero($ID_Norgu)
-	AddHero($ID_Razah)
-	AddHero($ID_mesmer_mercenary_hero)
-	AddHero($ID_ritualist_mercenary_hero)
-	AddHero($ID_Xandra)
-	AddHero($ID_Olias)
-
-	SwitchMode($ID_HARD_MODE)
-	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
-EndFunc
-
-
 ;~ Enter the mission A Chance Encounter
-Func EnterQuest()
+Func EnterAChanceEncounterQuest()
 	Local $me = GetMyAgent()
 	Local $coordsX = DllStructGetData($me, 'X')
 	Local $coordsY = DllStructGetData($me, 'Y')
@@ -211,7 +221,7 @@ Func EnterQuest()
 	UseCitySpeedBoost()
 	GoToNPC(GetNearestNPCToCoords(2240, -1264))
 	RandomSleep(250)
-	Dialog(0x00000084)
+	Dialog(0x84)
 	RandomSleep(500)
 	WaitMapLoading($ID_Kaineng_A_Chance_Encounter)
 EndFunc
@@ -361,6 +371,7 @@ Func GetMikuAgentOrMine()
 	If GetAgentExists($ID_Miku_Agent) Then Return GetAgentByID($ID_Miku_Agent)
 	Return GetMyAgent()
 EndFunc
+
 
 ;~ Heal Miku and character if they need it
 Func HelpMikuAndCharacter()
@@ -540,7 +551,7 @@ Func KillMinistryOfPurity()
 
 	Local $initialFoeCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 
-	;~ Whirlwind attack needs specific care to be used
+	; Whirlwind attack needs specific care to be used
 	While IsRecharged($Skill_Whirlwind_Attack)
 		If IsPlayerDead() Then Return
 		RandomSleep(200)

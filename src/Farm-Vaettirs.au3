@@ -53,18 +53,14 @@ Func VaettirFarm($STATUS)
 	WEnd
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
-
 	Return VaettirsFarmLoop()
 EndFunc
 
 
 ;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
 Func RunToJagaMoraine()
-	If GetMapID() <> $ID_Longeyes_Ledge Then
-		Info('Travelling to Longeyes Ledge')
-		DistrictTravel($ID_Longeyes_Ledge, $DISTRICT_NAME)
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 

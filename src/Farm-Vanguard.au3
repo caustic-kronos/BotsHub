@@ -32,24 +32,24 @@ Global Const $VANGUARD_TITLE_FARM_DURATION = 45 * 60 * 1000
 
 
 ;~ Main loop for the vanguard faction farm
-Func VanguardVQFarm($STATUS)
-	If GetMapID() <> $ID_Doomlore_Shrine Then
-		Info('Moving to Doomlore Shrine')
-		DistrictTravel($ID_Doomlore_Shrine, $DISTRICT_NAME)
-		WaitMapLoading($ID_Doomlore_Shrine, 10000, 2000)
-	EndIf
-	VanguardVQSetup()
+Func VanguardTitleFarm($STATUS)
+	VanguardFarmSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	AdlibRegister('TrackPartyStatus', 10000)
-	Local $result = VanguardVQ()
+	Local $result = VanquishDaladaUplands()
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
 	Return $result
 EndFunc
 
-Func VanguardVQSetup()
+
+Func VanguardFarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Ebon_Vanguard_Title)
+	SwitchMode($ID_HARD_MODE)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
@@ -66,11 +66,13 @@ Func VanguardVQSetup()
 	;RandomSleep(500)
 	;AddHero($ID_Xandra)
 	;RandomSleep(500)
-	SwitchMode($ID_HARD_MODE)
+	Info('Preparations complete')
 EndFunc
 
-;~ Cleaning VanguardVQs func
-Func VanguardVQ()
+
+;~ Cleaning Dalada Uplands function
+Func VanquishDaladaUplands()
+	If GetMapID() <> $ID_Doomlore_Shrine Then Return $FAIL
 	MoveTo(-15231, 13608)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Dalada_Uplands, 10000, 2000)

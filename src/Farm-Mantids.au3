@@ -62,11 +62,8 @@ Global $MANTIDS_FARM_SETUP = False
 
 ;~ Main method to farm Mantids
 Func MantidsFarm($STATUS)
-	If Not $MANTIDS_FARM_SETUP Then
-		SetupMantidsFarm()
-		$MANTIDS_FARM_SETUP = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $MANTIDS_FARM_SETUP Then SetupMantidsFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return MantidsFarmLoop()
@@ -76,7 +73,7 @@ EndFunc
 ;~ Mantids farm setup
 Func SetupMantidsFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Nahpui_Quarter Then DistrictTravel($ID_Nahpui_Quarter, $DISTRICT_NAME)
+	TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
@@ -94,12 +91,14 @@ Func SetupMantidsFarm()
 	Move(9100, -20500)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
+	$MANTIDS_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Mantids farm loop
 Func MantidsFarmLoop()
+	If GetMapID() <> $ID_Nahpui_Quarter Then Return $FAIL
 	Info('Entering Wajjun Bazaar')
 	Local $target
 	If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)

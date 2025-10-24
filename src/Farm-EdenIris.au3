@@ -35,13 +35,8 @@ Global $IRIS_FARM_SETUP = False
 
 ;~ Main method to farm Red Iris Flowers in Eden
 Func EdenIrisFarm($STATUS)
-	If GetMapID() <> $ID_Ashford_Abbey Then DistrictTravel($ID_Ashford_Abbey, $DISTRICT_NAME)
-
-	If Not $IRIS_FARM_SETUP Then
-		SetupEdenIrisFarm()
-		$IRIS_FARM_SETUP = True
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return EdenIrisFarmLoop()
@@ -51,6 +46,7 @@ EndFunc
 ;~ Iris farm short setup
 Func SetupEdenIrisFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
 	MoveTo(-11600, -6250)
 	Move(-11000, -6250)
 	RandomSleep(1000)
@@ -59,11 +55,13 @@ Func SetupEdenIrisFarm()
 	Move(-11600, -6250)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
-	Info('Resign preparation complete')
+	$IRIS_FARM_SETUP = True
+	Info('Preparations complete')
 EndFunc
 
 ;~ Farm loop
 Func EdenIrisFarmLoop()
+	If GetMapID() <> $ID_Ashford_Abbey Then Return $FAIL
 	Move(-11000, -6250)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)

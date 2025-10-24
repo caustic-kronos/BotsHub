@@ -40,13 +40,7 @@ Global $VOLTAIC_FARM_SETUP = False
 ;~ Main method to farm Voltaic
 Func VoltaicFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Umbral_Grotto Then DistrictTravel($ID_Umbral_Grotto, $DISTRICT_NAME)
-
-	If Not $VOLTAIC_FARM_SETUP Then
-		SetupVoltaicFarm()
-		$VOLTAIC_FARM_SETUP = True
-	EndIf
-
+	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Return VoltaicFarmLoop()
@@ -56,13 +50,16 @@ EndFunc
 ;~ Voltaic farm setup
 Func SetupVoltaicFarm()
 	Info('Setting up farm')
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	SwitchToHardModeIfEnabled()
+	$VOLTAIC_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func VoltaicFarmLoop()
+	If GetMapID() <> $ID_Umbral_Grotto Then Return $FAIL
 	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-23200, 7100)

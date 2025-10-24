@@ -40,20 +40,10 @@ Global $DonatePoints = True
 
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
-	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then
-		Info('Moving to Outpost')
-		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
-	EndIf
-
 	LuxonFarmSetup()
-
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	MoveTo(-4268, 11628)
-	MoveTo(-5300, 13300)
-	Move(-5493, 13712)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
+	GoToMountQinkai()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishMountQinkai()
@@ -67,23 +57,25 @@ EndFunc
 
 ;~ Setup for the luxon points farm
 Func LuxonFarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
-		Info('Turning in Luxon faction')
 		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
 		RandomSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
 
 		If $DonatePoints Then
+			Info('Donating Luxon faction points')
 			While GetLuxonFaction() >= 5000
 				DonateFaction('Luxon')
 				RandomSleep(500)
 			WEnd
 		Else
-			Info('Buying Jade Shards')
+			Info('Converting Luxon faction points into Jadeite Shards')
 			Dialog(0x83)
 			RandomSleep(500)
-			$temp = Floor(GetLuxonFaction() / 5000)
-			$dialogID = 0x800001 + ($temp * 256)
+			Local $temp = Floor(GetLuxonFaction() / 5000)
+			Local $dialogID = 0x800001 + ($temp * 256)
 			Dialog($dialogID)
 			RandomSleep(550)
 		EndIf
@@ -99,11 +91,26 @@ Func LuxonFarmSetup()
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
+	Info('Setup completed')
 EndFunc
 
 
-;~ Vanquish the map
+;~ Move out of outpost into Mount Qinkai
+Func GoToMountQinkai()
+	Info('Moving to Mount Qinkai')
+	While GetMapID() <> $ID_Mount_Qinkai
+		MoveTo(-4268, 11628)
+		MoveTo(-5300, 13300)
+		Move(-5493, 13712)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
+	WEnd
+EndFunc
+
+
+;~ Vanquish the Mount Qinkai map
 Func VanquishMountQinkai()
+	If GetMapID() <> $ID_Mount_Qinkai Then Return $FAIL
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-8394, -9801)
 	Dialog(0x85)

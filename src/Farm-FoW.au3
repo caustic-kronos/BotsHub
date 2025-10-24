@@ -44,13 +44,19 @@ Global Const $ID_FoW_Unholy_Texts = 2619
 
 ;~ Main method to farm FoW
 Func FoWFarm($STATUS)
-	If Not $FOW_FARM_SETUP Then
-		SetupFoWFarm()
-		$FOW_FARM_SETUP = True
-	EndIf
-
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Temple_of_the_Ages Then DistrictTravel($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	Return FoWFarmLoop()
+EndFunc
+
+
+;~ FoW farm setup
+Func SetupFoWFarm()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	; Make party
+	SwitchToHardModeIfEnabled()
 	Info('Making way to Balthazar statue')
 	MoveTo(-2500, 18700)
 	SendChat('/kneel', '')
@@ -62,24 +68,14 @@ Func FoWFarm($STATUS)
 	Dialog(0x86)
 	RandomSleep(GetPing() + 750)
 	WaitMapLoading($ID_Fissure_of_Woe)
-
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
-
-	Return FoWFarmLoop()
-EndFunc
-
-
-;~ FoW farm setup
-Func SetupFoWFarm()
-	Info('Setting up farm')
-	; Make party
-	SwitchToHardModeIfEnabled()
+	$FOW_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
 ;~ Farm loop
 Func FoWFarmLoop()
+	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	If IsHardmodeEnabled() Then UseConset()

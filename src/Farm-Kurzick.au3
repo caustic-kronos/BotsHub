@@ -39,14 +39,11 @@ Global $DonatePoints = True
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
-	If GetMapID() <> $ID_House_Zu_Heltzer Then
-		Info('Moving to Outpost')
-		DistrictTravel($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-	EndIf
-
 	KurzickFarmSetup()
-
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
+
+	GoToFerndale()
+	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('TrackPartyStatus')
@@ -59,18 +56,20 @@ EndFunc
 
 ;~ Setup for kurzick farm
 Func KurzickFarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
-		Info('Turning in Kurzick faction')
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
 
 		If $DonatePoints Then
+			Info('Donating Kurzick faction points')
 			While GetKurzickFaction() >= 5000
 				DonateFaction('kurzick')
 				RandomSleep(500)
 			WEnd
 		Else
-			Info('Buying Amber fragments')
+			Info('Converting Kurzick faction points into Amber Chunks')
 			Dialog(0x83)
 			RandomSleep(550)
 			Local $temp = Floor(GetKurzickFaction() / 5000)
@@ -89,18 +88,26 @@ Func KurzickFarmSetup()
 	EndIf
 
 	SwitchMode($ID_HARD_MODE)
+	Info('Preparations complete')
+EndFunc
+
+
+;~ Move out of outpost into Ferndale
+Func GoToFerndale()
+	Info('Moving to Ferndale')
+	While GetMapID() <> $ID_Ferndale
+		MoveTo(7810, -726)
+		MoveTo(10042, -1173)
+		Move(10446, -1147)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Ferndale, 10000, 2000)
+	WEnd
 EndFunc
 
 
 ;~ Vanquish the Ferndale map
 Func VanquishFerndale()
-	MoveTo(7810, -726)
-	MoveTo(10042, -1173)
-	Move(10446, -1147, 5)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Ferndale, 10000, 2000)
-	ResetFailuresCounter()
-
+	If GetMapID() <> $ID_Ferndale Then Return $FAIL
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-12909, 15616)
 	Dialog(0x81)
