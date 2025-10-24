@@ -1707,7 +1707,46 @@ EndFunc
 
 
 #Region Getting NPCs
-;~ Returns the coordinates in the middle of a group of foes
+;~ Move to the middle of the party team within specified limited timeout
+Func MoveToMiddleOfPartyWithTimeout($timeOut)
+	Local $me = GetMyAgent()
+	Local $oldMapID, $mapID = GetMapID()
+	Local $timer = TimerInit()
+	Local $position = FindMiddleOfParty()
+	Move($position[0], $position[1], 0)
+	While GetDistanceToPoint($me, $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
+		If IsPlayerDead() Then ExitLoop
+		$oldMapID = $mapID
+		$mapID = GetMapID()
+		If $mapID <> $oldMapID Then ExitLoop
+		$position = FindMiddleOfParty()
+		Sleep(200)
+		$me = GetMyAgent()
+	WEnd
+EndFunc
+
+
+;~ Returns the coordinates in the middle of the party team in 2 elements array
+Func FindMiddleOfParty()
+	Local $position[2] = [0, 0]
+	Local $party = GetParty()
+	Local $partySize = 0
+	Local $me = GetMyAgent()
+	Local $ownID = DllStructGetData($me, 'ID')
+	For $i = 0 To UBound($party) - 1
+		If GetDistance($me, $party[$i]) < $RANGE_SPIRIT And DllStructGetData($party[$i], 'ID') <> $ownID Then
+			$position[0] += DllStructGetData($party[$i], 'X')
+			$position[1] += DllStructGetData($party[$i], 'Y')
+			$partySize += 1
+		EndIf
+	Next
+	$position[0] = $position[0] / $partySize ;~ arithmetic mean calculation for X axis
+	$position[1] = $position[1] / $partySize ;~ arithmetic mean calculation for Y axis
+	Return $position
+EndFunc
+
+
+;~ Returns the coordinates in the middle of a group of foes nearest to provided position
 Func FindMiddleOfFoes($posX, $posY, $range)
 	Local $position[2] = [0, 0]
 	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
