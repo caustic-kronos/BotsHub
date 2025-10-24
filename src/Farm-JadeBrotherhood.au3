@@ -107,7 +107,7 @@ EndFunc
 ;~ Jade Brotherhood farm loop
 Func JadeBrotherhoodFarmLoop()
 	Info('Abandonning quest')
-	AbandonQuest(457)
+	AbandonQuest(0x1C9)
 	Info('Exiting to Bukdek Byway')
 	MoveTo(16500, 19400)
 	Move(16551, 19860)

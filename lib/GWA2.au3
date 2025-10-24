@@ -2067,9 +2067,9 @@ EndFunc
 Func EnableRendering($showWindow = True)
 	Local $windowHandle = GetWindowHandle(), $prevGwState = WinGetState($windowHandle), $previousWindow = WinGetHandle('[ACTIVE]', ''), $previousWindowState = WinGetState($previousWindow)
 	If $showWindow And $prevGwState Then
-		If BitAND($prevGwState, 16) Then
+		If BitAND($prevGwState, 0x10) Then
 			WinSetState($windowHandle, '', @SW_RESTORE)
-		ElseIf Not BitAND($prevGwState, 2) Then
+		ElseIf Not BitAND($prevGwState, 0x02) Then
 			WinSetState($windowHandle, '', @SW_SHOW)
 		EndIf
 		If $windowHandle <> $previousWindow And $previousWindow Then RestoreWindowState($previousWindow, $previousWindowState)
@@ -2734,7 +2734,7 @@ EndFunc
 ;~ Tests if an item is identified.
 Func GetIsIdentified($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
-	Return BitAND(DllStructGetData($item, 'Interaction'), 1) > 0
+	Return BitAND(DllStructGetData($item, 'Interaction'), 0x1) > 0
 EndFunc
 
 
@@ -3228,7 +3228,7 @@ Func EnemyAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> 3 Then Return False
 	If DllStructGetData($agent, 'HP') <= 0 Then Return False
 	If BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0 Then Return False
-	If DllStructGetData($agent, 'TypeMap') == 262144 Then Return False	;It's a spirit
+	If DllStructGetData($agent, 'TypeMap') == 0x40000 Then Return False	;~ It's a spirit created by rangers (0x40001 for ritualist's spirits and bone minions)
 	Return True
 EndFunc
 
@@ -3327,7 +3327,7 @@ Func GetParty($agentArray = 0)
 	Local $partySize = 0
 	For $i = 1 To $agentArray[0]
 		If DllStructGetData($agentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
-		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 131072) Then ContinueLoop
+		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 0x20000) Then ContinueLoop
 		$partySize += 1
 	Next
 
@@ -3337,7 +3337,7 @@ Func GetParty($agentArray = 0)
 	Local $index = 1
 	For $i = 1 To $agentArray[0]
 		If DllStructGetData($agentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
-		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 131072) Then ContinueLoop
+		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 0x20000) Then ContinueLoop
 		$result[$index] = $agentArray[$i]
 		$index += 1
 	Next
@@ -3566,7 +3566,7 @@ EndFunc
 
 ;~ Tests if an agent is a boss.
 Func GetIsBoss($agent)
-	Return BitAND(DllStructGetData($agent, 'TypeMap'), 1024) > 0
+	Return BitAND(DllStructGetData($agent, 'TypeMap'), 0x400) > 0
 EndFunc
 
 

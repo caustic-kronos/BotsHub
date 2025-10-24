@@ -163,7 +163,7 @@ Func GetRaptorsAsuraBlessing()
 		Info('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
 		RandomSleep(300)
-		Dialog(132)
+		Dialog(0x84)
 	EndIf
 	RandomSleep(350)
 EndFunc

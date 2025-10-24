@@ -115,7 +115,7 @@ Func VoltaicFarmLoop()
 	Sleep(500)
 	GoToNPC(GetNearestNPCToCoords(-12135, -18210))
 	RandomSleep(250)
-	Dialog(132)
+	Dialog(0x84)
 	RandomSleep(500)
 
 	If IsHardmodeEnabled() Then UseConset()

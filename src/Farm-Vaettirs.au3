@@ -173,7 +173,7 @@ Func GetVaettirsNornBlessing()
 		Info('Getting norn title blessing')
 		GoNearestNPCToCoords(13400, -20800)
 		RandomSleep(300)
-		Dialog(132)
+		Dialog(0x84)
 	EndIf
 	RandomSleep(350)
 EndFunc

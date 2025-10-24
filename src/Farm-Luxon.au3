@@ -80,11 +80,11 @@ Func LuxonFarmSetup()
 			WEnd
 		Else
 			Info('Buying Jade Shards')
-			Dialog(131)
+			Dialog(0x83)
 			RandomSleep(500)
 			$temp = Floor(GetLuxonFaction() / 5000)
-			$id = 8388609 + ($temp * 256)
-			Dialog($id)
+			$dialogID = 0x800001 + ($temp * 256)
+			Dialog($dialogID)
 			RandomSleep(550)
 		EndIf
 		RandomSleep(500)
