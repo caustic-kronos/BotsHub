@@ -85,7 +85,9 @@ Func RaptorFarm($STATUS)
 	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return RaptorsFarmLoop()
+	Local $result = RaptorsFarmLoop()
+	ReturnBackToOutpost($ID_Rata_Sum)
+	Return $result
 EndFunc
 
 
@@ -136,7 +138,7 @@ Func RaptorsFarmLoop()
 	RandomSleep(1000)
 	PickUpItems(DefendWhilePickingUpItems)
 
-	Return BackToTown()
+	Return CheckFarmResult()
 EndFunc
 
 
@@ -231,7 +233,7 @@ Func GetRaptors()
 EndFunc
 
 
-;~ Returns true if the nearest boss is aggroed. Require being called once before the boss is aggroed.
+;~ Returns true if the nearest boss is aggroed. Requires being called once before the boss is aggroed.
 Func IsBossAggroed()
 	Local $boss = GetNearestBossFoe()
 	Local Static $unaggroedState = DllStructGetData($boss, 'TypeMap')
@@ -242,7 +244,7 @@ EndFunc
 ;~ Kill raptors
 Func KillRaptors()
 	Local $MoPTarget
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 	Info('Clearing Raptors')
 
 	If ($RAPTORS_PROFESSION == 1) Then
@@ -341,20 +343,9 @@ Func RaptorsAreBalled()
 	Return CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA) >= CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) - 2
 EndFunc
 
-;~ Return to Rata Sum
-Func BackToTown()
-	Local $result = AssertFarmResult()
-	Info('Porting to Rata Sum')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
-	Return $result
-EndFunc
-
 
 ;~ Check whether or not the farm was successful
-Func AssertFarmResult()
+Func CheckFarmResult()
 	If IsPlayerDead() Then
 		Info('Character died')
 		Return $FAIL

@@ -44,8 +44,9 @@ Func FroggyFarm($STATUS)
 	EndIf
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
-
-	Return FroggyFarmLoop()
+	Local $result = FroggyFarmLoop()
+	TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
@@ -236,6 +237,7 @@ Func ClearFroggyFloor1()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl2)
 	WEnd
+	Return $SUCCESS
 EndFunc
 
 
@@ -291,7 +293,7 @@ Func ClearFroggyFloor2()
 		Info('Open dungeon door')
 		ClearTarget()
 
-		For $i = 1 To 3
+		For $i = 1 To 3 ; Tripled to secure bot
 			MoveTo(17888, -6243)
 			Sleep(GetPing() + 500)
 			TargetNearestItem()
@@ -339,4 +341,5 @@ Func ClearFroggyFloor2()
 		PickUpItems()
 		RandomSleep(5000)
 	Next
+	Return $SUCCESS
 EndFunc

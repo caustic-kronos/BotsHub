@@ -78,9 +78,11 @@ Func GemstoneFarm($STATUS)
 	If Not $GemstoneFarmSetup Then SetupGemstoneFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	GemstoneFarmLoop()
-
-	Return $SUCCESS
+	Local $result = GemstoneFarmLoop()
+	If $result == $SUCCESS Then Info("Successfully cleared all 19 waves")
+	If $result == $FAIL Then Info("Could not clear all 19 waves")
+	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
@@ -100,7 +102,9 @@ EndFunc
 Func GemstoneFarmLoop()
 	If TalkToZhellix() == $FAIL Then Return $FAIL
 	WalkToSpot()
-	Defend()
+	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
+	If Defend() == $FAIL Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -123,27 +127,8 @@ Func WalkToSpot()
 	CommandHero(2, -3050, -5304)
 	CommandAll(-3449, -5229)
 	MoveTo($StartX, $StartY)
-
-	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
 EndFunc
 
-;~ Check if run failed
-Func DoARunFailed()
-	If GetIsDead($ID_ZhellixAgent) Or IsPartyWiped() Then Return True
-	Return False
-EndFunc
-
-
-;~ Return to outpost in case of failure
-Func ResignAndReturnToGate()
-	If GetIsDead($ID_ZhellixAgent) Then
-		Warn('Zhellix died.')
-	ElseIf IsPlayerDead() Then
-		Warn('Player died')
-	EndIf
-	DistrictTravel($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-	Return $FAIL
-EndFunc
 
 ;~ Defending function
 Func Defend()
@@ -151,12 +136,22 @@ Func Defend()
 	Sleep(5000)
 
 	While ZhellixWaiting()
-		If DoARunFailed() Then Return ResignAndReturnToGate()
+		If IsDoARunFailed() Then Return $FAIL
 		Sleep(1000)
 		Fight()
 		PickUpItems()
 		MoveTo($StartX, $StartY)
 	WEnd
+	Return IsDoARunFailed()? $FAIL : $SUCCESS ;~ if ritual completed then successful run
+EndFunc
+
+
+;~ Check if run failed
+Func IsDoARunFailed()
+	Local $Zhellix = GetAgentByID($AgentID_Zhellix)
+	If GetIsDead($Zhellix) Then Warn('Zhellix dead')
+	If IsPlayerDead() Then Warn('Player dead')
+	Return GetIsDead($Zhellix) Or Not HasRezMemberAlive()
 EndFunc
 
 

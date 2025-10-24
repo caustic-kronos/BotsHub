@@ -42,6 +42,7 @@ Func LightbringerFarm2($STATUS)
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
+	ReturnBackToOutpost($ID_Kodash_Bazaar)
 	Return $result
 EndFunc
 
@@ -113,12 +114,7 @@ Func FarmMirrorOfLyss()
 	MoveTo(12116, 7908)
 	If MoveAggroAndKill(12932, 6907, 'Group 9/10') Then Return $FAIL
 	If MoveAggroAndKill(12956, 2637, 'Group 10/10') Then Return $FAIL
-	Info('Groups are destroyed, resign and do it again')
-	MoveTo(12856, 2627)
-	RandomSleep(500)
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
+	
+	Info('Groups are destroyed, resigning and doing it again')
 	Return $SUCCESS
 EndFunc

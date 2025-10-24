@@ -77,7 +77,9 @@ Func KournansFarm($STATUS)
 	If Not $KOURNANS_FARM_SETUP Then SetupKournansFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return KournansFarmLoop()
+	Local $result = KournansFarmLoop()
+	ReturnBackToOutpost($ID_Sunspear_Sanctuary)
+	Return $result
 EndFunc
 
 
@@ -170,9 +172,7 @@ Func KournansFarmLoop()
 	RandomSleep(2000)
 	Info('Looting')
 	PickUpItems()
-	Local $result = IsPlayerDead() ? $FAIL : $SUCCESS
-	BackToSunspearSanctuary()
-	Return $result
+	Return IsPlayerDead() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -233,14 +233,4 @@ Func TalkToMargrid()
 	; QuestID 0x23E = 574
 	AcceptQuest(0x23E)
 	RandomSleep(500)
-EndFunc
-
-
-;~ Return to Sunspear Sanctuary
-Func BackToSunspearSanctuary()
-	Info('Porting to Sunspear Sanctuary')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
 EndFunc

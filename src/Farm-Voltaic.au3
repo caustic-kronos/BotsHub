@@ -43,7 +43,12 @@ Func VoltaicFarm($STATUS)
 	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return VoltaicFarmLoop()
+	AdlibRegister('TrackPartyStatus', 10000)
+	Local $result = VoltaicFarmLoop()
+	AdlibUUnregister('TrackPartyStatus', 10000)
+	; Local $timer = TimerInit()
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
@@ -67,9 +72,6 @@ Func VoltaicFarmLoop()
 	RandomSleep(1000)
 	WaitMapLoading($ID_Verdant_Cascades)
 
-	AdlibRegister('TrackPartyStatus', 10000)
-
-	Local $timer = TimerInit()
 	MoveAggroAndKill(-19887, 6074, '1', $VSAggroRange)
 	Info('Making way to Slavers')
 	MoveAggroAndKill(-10273, 3251, '2', $VSAggroRange)
@@ -78,19 +80,13 @@ Func VoltaicFarmLoop()
 	MoveAggroAndKill(3571, -9501, '5', $VSAggroRange)
 	MoveAggroAndKill(10764, -6448, '6', $VSAggroRange)
 	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
-	If IsRunFailed() Then
-		AdlibUnregister('TrackPartyStatus')
-		Return $FAIL
-	EndIf
+	If IsRunFailed() Then Return $FAIL
 
 	Info('At the Troll Bridge - TROLL TOLL')
 	MoveAggroAndKill(18054, -3275, '8', $VSAggroRange)
 	MoveAggroAndKill(20966, -6476, '9', $VSAggroRange)
 	MoveAggroAndKill(25298, -9456, '10', $VSAggroRange)
-	If IsRunFailed() Then
-		AdlibUnregister('TrackPartyStatus')
-		Return $FAIL
-	EndIf
+	If IsRunFailed() Then Return $FAIL
 
 	Move(25729, -9360)
 	Info('Entering Slavers')
@@ -143,10 +139,7 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKill(-17700, -12500, 'Boss group', $VSAggroRange)
 		MoveAggroAndKill(-17500, -14250, 'Final group', $VSAggroRange)
 	WEnd
-	If IsRunFailed() Then
-		AdlibUnregister('TrackPartyStatus')
-		Return $FAIL
-	EndIf
+	If IsRunFailed() Then Return $FAIL
 	; Chest
 	Move(-17500, -14250)
 	Info('Opening chest')
@@ -156,6 +149,5 @@ Func VoltaicFarmLoop()
 	Sleep(2500)
 	PickUpItems()
 	Info('Finished Run')
-	AdlibUnregister('TrackPartyStatus')
 	Return $SUCCESS
 EndFunc

@@ -47,7 +47,10 @@ Func FoWFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
-	Return FoWFarmLoop()
+
+	Local $result = FoWFarmLoop()
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
@@ -521,7 +524,7 @@ Func TempleLoot()
 	MoveTo(1800, 400)
 	Info('Opening chest')
 	; Doubled to secure looting
-	For $i = 0 To 1
+	For $i = 1 To 2
 		MoveTo(1800, 400)
 		RandomSleep(5000)
 		TargetNearestItem()

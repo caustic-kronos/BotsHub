@@ -61,7 +61,9 @@ Func PongmeiChestFarm($STATUS)
 	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return PongmeiChestFarmLoop($STATUS)
+	Local $result = PongmeiChestFarmLoop($STATUS)
+	ReturnBackToOutpost($ID_Boreas_Seabed)
+	Return $result
 EndFunc
 
 
@@ -149,19 +151,7 @@ Func PongmeiChestFarmLoop($STATUS)
 	DervishRun(-13876, -5626)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $result = $openedChests > 0 And IsPlayerAlive() ? $SUCCESS : $FAIL
-	BackToBoreasSeabed()
-	Return $result
-EndFunc
-
-
-;~ Returning to Boreas Seabed
-Func BackToBoreasSeabed()
-	Info('Porting to Boreas Seabed')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Boreas_Seabed, 10000, 1000)
+	Return $openedChests > 0 And IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -284,7 +274,7 @@ Func GetNPCInTheBack($X, $Y)
 EndFunc
 
 
-;~ Get a foe that is in front of you and close enough to use Death Charge on
+;~ Get a foe that in front of player and close enough to point (X, Y) to use Death Charge on
 Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')

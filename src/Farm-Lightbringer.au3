@@ -56,7 +56,7 @@ Func LightbringerFarm($STATUS)
 
 	GoToTheSulfurousWastes()
 	Local $result = FarmTheSulfurousWastes()
-	ReturnToSahlahjaOutpost()
+	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
@@ -255,13 +255,4 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	FindAndOpenChests($RANGE_SPIRIT)
 
 	Return False
-EndFunc
-
-
-;~ Return to Remains of Sahlahja
-Func ReturnToSahlahjaOutpost()
-	If GetMapID() <> $ID_Remains_of_Sahlahja Then
-		Info('Travelling to Remains of Sahlahja')
-		DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
-	EndIf
 EndFunc

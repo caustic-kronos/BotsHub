@@ -56,7 +56,9 @@ Func DragonMossFarm($STATUS)
 	If Not $DM_FARM_SETUP Then SetupDragonMossFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return DragonMossFarmLoop()
+	Local $result = DragonMossFarmLoop()
+	ReturnBackToOutpost($ID_Saint_Anjekas_Shrine)
+	Return $result
 EndFunc
 
 
@@ -118,10 +120,7 @@ Func DragonMossFarmLoop()
 	RandomSleep(50)
 	UseSkillEx($DM_ShadowForm)
 	RandomSleep(50)
-	If IsPlayerDead() Then
-		BackToSaintAnjekaOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(1000)
 	; Killing
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
@@ -144,18 +143,13 @@ Func DragonMossFarmLoop()
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
-
-	If IsPlayerDead() Then
-		BackToSaintAnjekaOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	RandomSleep(1000)
 
 	Info('Looting')
 	PickUpItems()
 
-	BackToSaintAnjekaOutpost()
 	Return $SUCCESS
 EndFunc
 
@@ -163,14 +157,4 @@ EndFunc
 ;~ If storm chaser is available, use it
 Func UseIMSWhenAvailable()
 	If IsRecharged($DM_StormChaser) Then UseSkillEx($DM_StormChaser)
-EndFunc
-
-
-;~ Return to Saint Anjeka outpost
-Func BackToSaintAnjekaOutpost()
-	Info('Porting to Saint Anjekas Shrine')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
 EndFunc

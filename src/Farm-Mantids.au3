@@ -66,7 +66,9 @@ Func MantidsFarm($STATUS)
 	If Not $MANTIDS_FARM_SETUP Then SetupMantidsFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return MantidsFarmLoop()
+	Local $result = MantidsFarmLoop()
+	ReturnBackToOutpost($ID_Nahpui_Quarter)
+	Return $result
 EndFunc
 
 
@@ -150,10 +152,7 @@ Func MantidsFarmLoop()
 	RandomSleep(20)
 	UseSkillEx($Mantids_WayOfPerfection)
 	RandomSleep(2000)
-	If IsPlayerDead() Then
-		BackToNahpuiQuarterOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	; Balling the rest
 	$target = GetNearestEnemyToCoords(-450, -14400)
@@ -184,16 +183,12 @@ Func MantidsFarmLoop()
 	WEnd
 	RandomSleep(1000)
 
-	If IsPlayerDead() Then
-		BackToNahpuiQuarterOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	Info('Looting')
 	PickUpItems()
 	FindAndOpenChests()
 
-	BackToNahpuiQuarterOutpost()
 	Return $SUCCESS
 EndFunc
 
@@ -212,14 +207,4 @@ Func UseWhirlingDefense()
 		RandomSleep(50)
 	WEnd
 	AdlibUnRegister()
-EndFunc
-
-
-;~ Resign and return to Nahpui Quarter
-Func BackToNahpuiQuarterOutpost()
-	Info('Porting to Nahpui Quarter')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
 EndFunc

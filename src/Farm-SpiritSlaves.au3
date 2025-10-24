@@ -69,20 +69,15 @@ Func SpiritSlavesFarm($STATUS)
 	UseConsumable($ID_Slice_of_Pumpkin_Pie)
 
 	Info('Killing group 1 @ North')
-	FarmNorthGroup()
-	If IsPlayerDead() Then Return RestartAfterDeath()
+	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
 	Info('Killing group 2 @ South')
-	FarmSouthGroup()
-	If IsPlayerDead() Then Return RestartAfterDeath()
+	If FarmSouthGroup() == $FAIL Then Return RestartAfterDeath()
 	Info('Killing group 3 @ South')
-	FarmSouthGroup()
-	If IsPlayerDead() Then Return RestartAfterDeath()
+	If FarmSouthGroup() == $FAIL Then Return RestartAfterDeath()
 	Info('Killing group 4 @ North')
-	FarmNorthGroup()
-	If IsPlayerDead() Then Return RestartAfterDeath()
+	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
 	Info('Killing group 5 @ North')
-	FarmNorthGroup()
-	If IsPlayerDead() Then Return RestartAfterDeath()
+	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
 
 	Info('Moving out of the zone and back again')
 	Move(-7735, -8380)
@@ -202,7 +197,7 @@ Func FarmNorthGroup()
 	RandomSleep(20)
 	UseSkillEx($SS_Extend_Enchantments)
 	RandomSleep(20)
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
 	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
@@ -214,9 +209,9 @@ Func FarmNorthGroup()
 	If GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 	RandomSleep(20)
 
-	If IsPlayerDead() Then Return
-
-	KillSequence()
+	If IsPlayerDead() Then Return $FAIL
+	If KillSequence() == $FAIL Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -243,7 +238,7 @@ Func FarmSouthGroup()
 		RandomSleep(100)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
 	WEnd
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 
 	ChangeWeaponSet(1)
 	MoveTo(-7800, -7680, 0)
@@ -255,7 +250,7 @@ Func FarmSouthGroup()
 	UseSkillEx($SS_Vow_of_Strength)
 	RandomSleep(200)
 
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
 	Local $targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
@@ -270,9 +265,9 @@ Func FarmSouthGroup()
 	If GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
 	RandomSleep(20)
 
-	If IsPlayerDead() Then Return
-
-	KillSequence()
+	If IsPlayerDead() Then Return $FAIL
+	If KillSequence() == $FAIL Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -341,10 +336,12 @@ Func KillSequence()
 	WEnd
 	ChangeWeaponSet(1)
 
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 	CleanseFromCripple()
 	RandomSleep(1000)
 	PickUpItems(CleanseFromCripple)
+	If IsPlayerDead() Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 

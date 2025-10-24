@@ -41,6 +41,7 @@ Func VanguardTitleFarm($STATUS)
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
+	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	Return $result
 EndFunc
 

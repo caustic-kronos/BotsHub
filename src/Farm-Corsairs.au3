@@ -64,7 +64,9 @@ Func CorsairsFarm($STATUS)
 	If Not $CORSAIRS_FARM_SETUP Then SetupCorsairsFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return CorsairsFarmLoop()
+	Local $result = CorsairsFarmLoop()
+	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
@@ -113,19 +115,11 @@ Func CorsairsFarmLoop()
 	MoveTo(-7400, -4750)
 	CastAllDefensiveSkills()
 	MoveTo(-7300, -4500)
-
-	If IsPlayerDead() Then
-		BackToModdokCreviceOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	MoveTo(-8100, -6550)
 	DefendAgainstCorsairs()
-
-	If IsPlayerDead() Then
-		BackToModdokCreviceOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	MoveTo(-8850, -6950)
 	WaitForEnemyInRange()
@@ -139,11 +133,7 @@ Func CorsairsFarmLoop()
 	UseSkillEx($Corsairs_DwarvenStability)
 	RandomSleep(20)
 	CastAllDefensiveSkills()
-
-	If IsPlayerDead() Then
-		BackToModdokCreviceOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	MoveTo(-9730,-7350, 0)
 	GoNPC($Captain_Bohseda)
@@ -155,22 +145,14 @@ Func CorsairsFarmLoop()
 		UseSkillEx($Corsairs_WhirlingDefense)
 		RandomSleep(200)
 	WEnd
-
-	If IsPlayerDead() Then
-		BackToModdokCreviceOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	For $i = 0 To 7
 		DefendAgainstCorsairs()
 		If $i < 6 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		RandomSleep(1000)
 	Next
-
-	If IsPlayerDead() Then
-		BackToModdokCreviceOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	Local $target = GetNearestEnemyToCoords(-8920, -6950)
 	UseSkillEx($Corsairs_DeathsCharge, $target)
@@ -186,11 +168,7 @@ Func CorsairsFarmLoop()
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	WEnd
-
-	If IsPlayerDead() Then
-		BackToModdokCreviceOutpost()
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	Info('Looting')
 	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPIRIT)
@@ -200,7 +178,6 @@ Func CorsairsFarmLoop()
 		PickUpItems(DefendAgainstCorsairs)
 	EndIf
 
-	BackToModdokCreviceOutpost()
 	Return $SUCCESS
 EndFunc
 
@@ -248,21 +225,11 @@ Func DefendAgainstCorsairs($Hidden = False)
 EndFunc
 
 
-;~ Resign and returns to Modook Crevice (city)
-Func BackToModdokCreviceOutpost()
-	Info('Porting to Moddok Crevice (city)')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Moddok_Crevice, 10000, 2000)
-EndFunc
-
-
-;~ Wait for closest enemy to be in range
+;~ Wait for closest enemy to come within range
 Func WaitForEnemyInRange()
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
-	While (IsPlayerAlive() And GetDistance($target, $me) > $RANGE_SPELLCAST)
+	While (IsPlayerAlive() And GetDistance($me, $target) > $RANGE_SPELLCAST)
 		DefendAgainstCorsairs()
 		RandomSleep(500)
 		$me = GetMyAgent()

@@ -61,7 +61,9 @@ Func TascaChestFarm($STATUS)
 	If Not $TASCA_FARM_SETUP Then SetupTascaFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return TascaChestFarmLoop($STATUS)
+	Local $result = TascaChestFarmLoop($STATUS)
+	ReturnBackToOutpost($ID_The_Granite_Citadel)
+	Return $result
 EndFunc
 
 
@@ -182,27 +184,13 @@ Func TascaChestFarmLoop($STATUS)
 	ToggleMapping()
 	UnregisterBurstHealingUnit()
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $result = (($openedChests > 0) Or IsPlayerAlive()) ? $SUCCESS : $FAIL
-	BackToTheGraniteCitadel()
-	Return $result
-EndFunc
-
-
-;~ Returning to the Granite Citadel
-Func BackToTheGraniteCitadel()
-	Info('Porting to the Granite Citadel')
-	While GetMapID() <> $ID_The_Granite_Citadel
-		Resign()
-		RandomSleep(3500)
-		ReturnToOutpost()
-		WaitMapLoading($ID_The_Granite_Citadel, 10000, 1000)
-	WEnd
+	Return (($openedChests > 0) Or IsPlayerAlive()) ? $SUCCESS : $FAIL
 EndFunc
 
 
 ;~ Main function to run as a Dervish
 Func TASCADervishRun($X, $Y)
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
 		Error('Out of lockpicks')
 		Return $PAUSE
@@ -225,7 +213,7 @@ Func TASCADervishRun($X, $Y)
 		;	If $target <> 0 Then UseSkillEx($Tasca_DeathsCharge, $target)
 		;EndIf
 
-		; We only start unblocking after 10 times 250 ms which is 2s50 -> that's because knockdown lasts 2s
+		; We only start unblocking after 10 times 250 ms which is 2.5 s -> that's because knockdown lasts 2s
 		If $blockedCounter > 10 And GetEnergy() >= 10 Then
 			Local $target = GetTargetToEscapeWithDeathsCharge($X, $Y)
 			If $target <> 0 And IsRecharged($Tasca_DeathsCharge) Then

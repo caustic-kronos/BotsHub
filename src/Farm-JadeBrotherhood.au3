@@ -70,9 +70,9 @@ Func JadeBrotherhoodFarm($STATUS)
 	If Not $JADE_BROTHERHOOD_FARM_SETUP Then SetupJadeBrotherhoodFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	If $STATUS <> 'RUNNING' Then Return
-
-	Return JadeBrotherhoodFarmLoop()
+	Local $result = JadeBrotherhoodFarmLoop()
+	ReturnBackToOutpost($ID_The_Marketplace)
+	Return $result
 EndFunc
 
 
@@ -117,19 +117,19 @@ Func JadeBrotherhoodFarmLoop()
 	MoveToSeparationWithHero()
 	$DeadlockTimer = TimerInit()
 	TalkToAiko()
-	If IsPlayerDead() Then Return BackToTheMarketplace(1)
+	If IsPlayerDead() Then Return $FAIL
 	WaitForBall()
-	If IsPlayerDead() Then Return BackToTheMarketplace(1)
+	If IsPlayerDead() Then Return $FAIL
 	KillJadeBrotherhood()
-	If IsPlayerDead() Then Return BackToTheMarketplace(1)
+	If IsPlayerDead() Then Return $FAIL
 
 	RandomSleep(1000)
 
 	Info('Looting')
 	PickUpItems()
 
-	If ($Deadlocked) Then Return BackToTheMarketplace(1)
-	Return BackToTheMarketplace(0)
+	If $Deadlocked Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -255,15 +255,4 @@ Func KillJadeBrotherhood()
 		Attack($target)
 		RandomSleep(250)
 	WEnd
-EndFunc
-
-
-;~ Return to the Marketplace
-Func BackToTheMarketplace($success)
-	Info('Porting to The Marketplace')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_The_Marketplace)
-	Return $success
 EndFunc

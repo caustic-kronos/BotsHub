@@ -39,7 +39,9 @@ Func EdenIrisFarm($STATUS)
 	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return EdenIrisFarmLoop()
+	Local $result = EdenIrisFarmLoop()
+	ReturnBackToOutpost($ID_Ashford_Abbey)
+	Return $result
 EndFunc
 
 
@@ -65,25 +67,17 @@ Func EdenIrisFarmLoop()
 	Move(-11000, -6250)
 	RandomSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	If PickUpIris() Then
-		Return ReturnToAshfordAbbey()
-	EndIf
+	If PickUpIris() Then Return $SUCCESS
 	Moveto(-11000, -7850)
-	If PickUpIris() Then
-		Return ReturnToAshfordAbbey()
-	EndIf
+	If PickUpIris() Then Return $SUCCESS
 	Moveto(-11200, -10500)
-	If PickUpIris() Then
-		Return ReturnToAshfordAbbey()
-	EndIf
+	If PickUpIris() Then Return $SUCCESS
 	Moveto(-10500, -13000)
-	If PickUpIris() Then
-		Return ReturnToAshfordAbbey()
-	EndIf
-	Return ReturnToAshfordAbbey()
+	If PickUpIris() Then Return $SUCCESS
+	Return $FAIL
 EndFunc
 
-;~ Loot only iris
+;~ Loot only iris, return True if collected, False otherwise
 Func PickUpIris()
 	Local $agent
 	Local $item
@@ -99,7 +93,7 @@ Func PickUpIris()
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID)
 				RandomSleep(500)
-				If IsPlayerDead() Then Return
+				If IsPlayerDead() Then Return False
 				If TimerDiff($deadlock) > 20000 Then
 					Info('Could not get iris at (' & DllStructGetData($agent, 'X') & ',' & DllStructGetData($agent, 'Y') & ')')
 					Return False
@@ -109,12 +103,4 @@ Func PickUpIris()
 		EndIf
 	Next
 	Return False
-EndFunc
-
-;~ Return to Ashford Abbey
-Func ReturnToAshfordAbbey()
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 EndFunc

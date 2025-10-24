@@ -133,6 +133,7 @@ Func MinisterialCommendationsFarm($STATUS)
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = MinisterialCommendationsFarmLoop()
+	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
@@ -165,31 +166,28 @@ Func MinisterialCommendationsFarmLoop()
 
 	Info('Entering quest')
 	EnterAChanceEncounterQuest()
-	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
+	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return $FAIL
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Info('Preparing to fight')
 	PrepareToFight()
-	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
+	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return $FAIL
 
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Info('Fighting the first group')
 	InitialFight()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
+	If (IsFail()) Then Return $FAIL
 
 	Info('Running to kill spot')
 	RunToKillSpot()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
+	If (IsFail()) Then Return $FAIL
 
 	Info('Waiting for spike')
 	LogIntoFile('Waiting for ball')
 	WaitForPurityBall()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
+	If (IsFail()) Then Return $FAIL
 
 	Info('Spiking the farm group')
 	KillMinistryOfPurity()
@@ -198,9 +196,6 @@ Func MinisterialCommendationsFarmLoop()
 
 	Info('Picking up loot')
 	PickUpItems(HealWhilePickingItems)
-
-	Info('Travelling back to KC')
-	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
 	If $LOG_LEVEL == 0 Then FileClose($loggingFile)
 	Return $SUCCESS
@@ -496,21 +491,16 @@ EndFunc
 
 ;~ Return True if mission failed (you or Miku died)
 Func IsFail()
-	Return GetIsDead($ID_Miku_Agent) Or IsPlayerDead()
-EndFunc
-
-
-;~ Return to outpost in case of failure
-Func ResignAndReturnToOutpost()
 	If GetIsDead($ID_Miku_Agent) Then
 		Warn('Miku died.')
 		LogIntoFile('Miku died.')
+		Return True
 	ElseIf IsPlayerDead() Then
 		Warn('Player died')
 		LogIntoFile('Character died.')
+		Return True
 	EndIf
-	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	Return $FAIL
+	Return False
 EndFunc
 
 

@@ -38,6 +38,7 @@ Func NexusChallengeFarm($STATUS)
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
+	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
 	Return $result
 EndFunc
 

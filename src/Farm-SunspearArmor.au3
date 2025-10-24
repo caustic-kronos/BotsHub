@@ -42,6 +42,7 @@ Func SunspearArmorFarm($STATUS)
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
+	TravelToOutpost($ID_Dajkah_Inlet_Outpost, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
@@ -118,9 +119,5 @@ Func SunspearArmorClean()
 	MoveTo(-20263, 4476)
 	If MoveAggroAndKill(-19880, 4086, 'Lord 5') Then Return $FAIL
 	RandomSleep(500)
-	Resign()
-	RandomSleep(3500)
-	RandomSleep(12000)
-	WaitMapLoading($ID_Dajkah_Inlet_Outpost, 10000, 2000)
 	Return $SUCCESS
 EndFunc

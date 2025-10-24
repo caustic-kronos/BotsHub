@@ -51,6 +51,7 @@ Func LuxonFactionFarm($STATUS)
 
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
+	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	Return $result
 EndFunc
 

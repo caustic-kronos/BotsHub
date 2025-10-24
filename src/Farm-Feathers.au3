@@ -62,7 +62,9 @@ Func FeathersFarm($STATUS)
 	If Not $FEATHERS_FARM_SETUP Then SetupFeathersFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Return FeathersFarmLoop()
+	Local $result = FeathersFarmLoop()
+	ReturnBackToOutpost($ID_Seitung_Harbor)
+	Return $result
 EndFunc
 
 
@@ -128,29 +130,14 @@ Func FeathersFarmLoop()
 	MoveKill(-10500, 5500)
 	MoveKill(-9700, 2400)
 
-	If IsPlayerDead() Then
-		BackToSeitungHarborOutpost()
-		Return $FAIL
-	EndIf
-
-	BackToSeitungHarborOutpost()
+	If IsPlayerDead() Then Return $FAIL
 	Return $SUCCESS
-EndFunc
-
-
-;~ Return to Seitung Harbor outpost
-Func BackToSeitungHarborOutpost()
-	Info('Porting to Seitung Harbor')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
 EndFunc
 
 
 ;~ Move and ... run ? Who the fuck wrote this ?
 Func MoveRun($x, $y, $timeOut = 2*60*1000)
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return False
 	Local $me = GetMyAgent()
 	Local $deadlock = TimerInit()
 
@@ -173,12 +160,13 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
+	Return True
 EndFunc
 
 
 ;~ Move and kill I suppose
 Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
-	If IsPlayerDead() Then Return False
+	If IsPlayerDead() Then Return $FAIL
 	Local $Angle = 0
 	Local $stuckCount = 0
 	Local $Blocked = 0
@@ -196,9 +184,9 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
-			If IsPlayerDead() Then Return False
+			If IsPlayerDead() Then Return $FAIL
 		EndIf
-		If IsPlayerDead() Then Return False
+		If IsPlayerDead() Then Return $FAIL
 		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
 		$me = GetMyAgent()
@@ -233,12 +221,13 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Kill foes
 Func Kill($waitForSettle = True)
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 
 	Local $deadlock, $timeout = 2*60*1000
 
@@ -247,7 +236,7 @@ Func Kill($waitForSettle = True)
 	RandomSleep(50)
 	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 	If $waitForSettle Then
-		If Not WaitForSettle() Then Return False
+		If Not WaitForSettle() Then Return $FAIL
 	EndIf
 	SendChat('stuck', '/')
 	RandomSleep(50)
@@ -271,9 +260,9 @@ Func Kill($waitForSettle = True)
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
-			If IsPlayerDead() Then Return False
+			If IsPlayerDead() Then Return $FAIL
 		EndIf
-		If IsPlayerDead() Then Return
+		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent(GetMyAgent())
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
@@ -294,6 +283,7 @@ Func Kill($waitForSettle = True)
 	PickUpItems()
 	FindAndOpenChests()
 	ChangeWeaponSet(2)
+	Return $SUCCESS
 EndFunc
 
 
