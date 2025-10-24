@@ -1569,28 +1569,27 @@ EndFunc
 
 
 ;~ Find common longest substring in two strings
-Func LongestCommonSubstringOfTwo($string1, $string2)
-	Local $longestCommonSubstrings[0]
-	Local $string1characters = StringSplit($string1, '')
-	Local $string2characters = StringSplit($string2, '')
-
-	Local $array[$string1characters[0] + 1][$string2characters[0] + 1]
+Func LongestCommonSubstringOfTwoStrings($string1, $string2)
+	Local $longestCommonSubstrings[0] ; dynamic 1D array indexed from 0
+	Local $string1characters = StringSplit($string1, '') ; splitting $string1 into array of characters
+	Local $string2characters = StringSplit($string2, '') ; splitting $string2 into array of characters
+	; deleting first element of string arrays (which has the count of characters in AutoIT) to have string arrays indexed from 0
+	_ArrayDelete($string1characters, 0)
+	_ArrayDelete($string2characters, 0)
 	Local $LongestCommonSubstringSize = 0
+	Local $array[UBound($string1characters) + 1][UBound($string2characters) + 1]
+	FillArray($array, 0) ; fill array with zeroes just in case
 
-	For $i = 1 To $string1characters[0]
-		For $j = 1 To $string2characters[0]
-			If ($string1characters[$i] == $string2characters[$j]) Then
-				If ($i = 1 OR $j = 1) Then
-					$array[$i][$j] = 1
-				Else
-					$array[$i][$j] = $array[$i-1][$j-1] + 1
-				EndIf
+	For $i = 1 To UBound($string1characters)
+		For $j = 1 To UBound($string2characters)
+			If ($string1characters[$i-1] == $string2characters[$j-1]) Then
+				$array[$i][$j] = $array[$i-1][$j-1] + 1
 				If $array[$i][$j] > $LongestCommonSubstringSize Then
 					$LongestCommonSubstringSize = $array[$i][$j]
-					Local $longestCommonSubstrings[0]
-					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize - 1))
+					Local $longestCommonSubstrings[0] ; resetting to empty array
+					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
 				ElseIf $array[$i][$j] = $LongestCommonSubstringSize Then
-					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize - 1))
+					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
 				EndIf
 			Else
 				$array[$i][$j] = 0
@@ -1598,11 +1597,11 @@ Func LongestCommonSubstringOfTwo($string1, $string2)
 		Next
 	Next
 
-	Return $longestCommonSubstrings[0]
+	Return $longestCommonSubstrings[0] ; return first string from the array of longest substrings (there might be more than 1 with the same maximal size)
 EndFunc
 
 
-;~ Find common longest substring in array of strings
+;~ Find common longest substring in array of strings, indexed from 0
 Func LongestCommonSubstring($strings)
 	Local $longestCommonSubstring = ''
 	If UBound($strings) = 0 Then Return ''
@@ -1623,7 +1622,7 @@ Func LongestCommonSubstring($strings)
 EndFunc
 
 
-;~ Return True if find is into every string in the array of strings
+;~ Returns True if find substring is in every string in the array of strings
 Func IsSubstring($find, $strings)
 	If UBound($strings) < 1 And StringLen($find) < 1 Then
 		Return False
@@ -2544,7 +2543,9 @@ EndFunc
 ;~ Loads skill template code.
 Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $heroID = GetHeroID($heroIndex)
-	Local $splitBuildTemplate = StringSplit($buildTemplate, '')
+	Local $BuildTemplateChars = StringSplit($buildTemplate, '') ;~ splitting build template string into array of characters
+	;~ deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
+	_ArrayDelete($BuildTemplateChars, 0)
 
 	Local $tempValuelateType	; 4 Bits
 	Local $versionNumber		; 4 Bits
@@ -2559,8 +2560,8 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $opTail				; 1 Bit
 
 	$buildTemplate = ''
-	For $i = 1 To $splitBuildTemplate[0]
-		$buildTemplate &= Base64ToBin64($splitBuildTemplate[$i])
+	For $character in $BuildTemplateChars
+		$buildTemplate &= Base64ToBin64($character)
 	Next
 
 	$tempValuelateType = Bin64ToDec(StringLeft($buildTemplate, 4))
