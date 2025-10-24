@@ -1648,7 +1648,7 @@ Func PrintNPCInformations($npc)
 	Info('Y: ' & DllStructGetData($npc, 'Y'))
 	Info('HP: ' & DllStructGetData($npc, 'HP'))
 	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
-	Info('PlayerNumber: ' & DllStructGetData($npc, 'PlayerNumber'))
+	Info('ModelID: ' & DllStructGetData($npc, 'ModelID'))
 	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
 	Info('Effects: ' & DllStructGetData($npc, 'Effects'))
 	Info('ModelState: ' & DllStructGetData($npc, 'ModelState'))
@@ -2361,7 +2361,7 @@ Func GetHighestPriorityFoe($agent, $range = $RANGE_SPELLCAST)
 		;If DllStructGetData($agentArray[$i], 'ID') == $agentID Then ContinueLoop
 		Local $distance = GetDistance($agent, $agentArray[$i])
 		If $distance < $range Then
-			Local $priority = $mobsPriorityMap[DllStructGetData($agentArray[$i], 'PlayerNumber')]
+			Local $priority = $mobsPriorityMap[DllStructGetData($agentArray[$i], 'ModelID')]
 			If ($priority == Null) Then
 				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agentArray[$i]
 				ContinueLoop

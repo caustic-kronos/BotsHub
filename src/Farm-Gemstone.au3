@@ -244,7 +244,7 @@ Func ZhellixWaiting()
 	Local $zhellixAgent = 0
 	If IsArray($aNPCs) Then
 		For $i = 1 To $aNPCs[0]
-			If DllStructGetData($aNPCs[$i], 'PlayerNumber') = $ID_Zhellix Then
+			If DllStructGetData($aNPCs[$i], 'ModelID') = $ID_Zhellix Then
 				$zhellixAgent = $aNPCs[$i]
 				ExitLoop
 			EndIf

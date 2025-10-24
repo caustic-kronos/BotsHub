@@ -35,7 +35,7 @@ Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 Global $FOW_FARM_SETUP = False
 Global Const $ID_Quest_WailingLord = 0xCC
 Global Const $ID_Quest_TheEternalForgemaster = 0xD1
-Global Const $Shard_Wolf_PlayerNumber = 2835
+Global Const $Shard_Wolf_ModelID = 2835
 Global Const $ID_FoW_Unholy_Texts = 2619
 
 
@@ -594,7 +594,7 @@ EndFunc
 
 ;~ Return true if agent is a shardwolf
 Func IsShardWolf($agent)
-	Return DllStructGetData($agent, 'PlayerNumber') == $Shard_Wolf_PlayerNumber
+	Return DllStructGetData($agent, 'ModelID') == $Shard_Wolf_ModelID
 EndFunc
 
 
