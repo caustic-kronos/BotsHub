@@ -44,7 +44,7 @@ Global $chestsMap[]
 Func RunTests($STATUS)
 	;SellItemsToMerchant(DefaultShouldSellItem, True)
 	;While($STATUS == 'RUNNING')
-	;	GetOwnLocation()
+	;	GetOwnPosition()
 	;	Sleep(2000)
 	;WEnd
 
@@ -119,15 +119,16 @@ EndFunc
 
 
 #Region Map and travel
-;~ Get your own location
-Func GetOwnLocation()
+;~ Get your own position on map
+Func GetOwnPosition()
 	Local $me = GetMyAgent()
 	Info('(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
 EndFunc
 
 
 ;~ Travel to specified map and specified district
-Func DistrictTravel($mapID, $district)
+Func DistrictTravel($mapID, $district = 'Random')
+	If GetMapID() == $mapID Then Return
 	If $district == 'Random' Then
 		RandomDistrictTravel($mapID)
 	Else
@@ -148,6 +149,42 @@ Func RandomDistrictTravel($mapID, $district = 12)
 	MoveMap($mapID, $Region[$Random], 0, $Language[$Random])
 	WaitMapLoading($mapID, 20000)
 	RandomSleep(2000)
+EndFunc
+
+
+Func TravelToOutpost($outpostId, $district = 'Random')
+	Local $startLocation = GetMapID()
+	Local $outpostName = $LocationMapNames[$outpostId]
+	If GetMapID() == $outpostId Then
+		Warn('Player is already in ' & $outpostName & ' (outpost)')
+		Return $SUCCESS
+	Endif
+	Info('Travelling to ' & $outpostName & ' (outpost)')
+	DistrictTravel($outpostId, $district)
+	RandomSleep(2000)
+	If GetMapID() == $startLocation Then
+		Warn('Player probably does not have access to specified location')
+		Disconnected()
+	EndIf
+	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
+EndFunc
+
+
+;~ Return back to outpost from exploration/mission map using resign functionality. This can put player closer to exit portal in outpost
+Func ReturnBackToOutpost($outpostId)
+	Local $outpostName = $LocationMapNames[$outpostId]
+	Info('Returning to ' & $outpostName & ' (outpost)')
+	If GetMapID() == $outpostId Then
+		Warn('Player is already in ' & $outpostName & ' (outpost)')
+		Return $SUCCESS
+	Endif
+	RandomSleep(500)
+	Resign()
+	RandomSleep(2500)
+	ReturnToOutpost()
+	RandomSleep(2500)
+	WaitMapLoading($outpostId, 10000, 2500)
+	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
 EndFunc
 #EndRegion Map and travel
 

@@ -6261,7 +6261,7 @@ Func GetPartyWaitingForMission()
 EndFunc
 
 
-;~ Wait for map to be loaded
+;~ Wait for map to be loaded, True if map loaded correctly, False otherwise
 Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 5000)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 	Local $deadlock = TimerInit()
