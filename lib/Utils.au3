@@ -1491,12 +1491,28 @@ Func GetOrDefault($value, $defaultValue)
 EndFunc
 
 
-;~ Return True if item is present in array, else False
+;~ Returns True if item is present in array, else False, assuming that array is indexed from 0
 Func ArrayContains($array, $item)
 	For $i = 0 To UBound($array) - 1
 		If $array[$i] == $item Then Return True
 	Next
 	Return False
+EndFunc
+
+
+;~ Fill 1D or 2D array by reference with a specified value, assuming that array is indexed from 0
+Func FillArray(ByRef $array, $value)
+	If UBound($array, $UBOUND_DIMENSIONS) == 1 Then
+		For $i = 0 To UBound($array) - 1
+			$array[$i] = $value
+		Next
+	ElseIf UBound($array, $UBOUND_DIMENSIONS) == 2 Then
+		For $i = 0 To UBound($array, $UBOUND_ROWS) - 1
+			For $j = 0 To UBound($array, $UBOUND_COLUMNS) - 1
+				$array[$i][$j] = $value
+			Next
+		Next
+	EndIf
 EndFunc
 
 
@@ -1522,7 +1538,7 @@ Func MapFromArray($keys)
 EndFunc
 
 
-;~ Create a map from a double array to have a one liner map instanciation with values
+;~ Create a map from a double array of dimensions [N, 2] to have a one liner map instanciation with values
 Func MapFromDoubleArray($keysAndValues)
 	Local $map[]
 	For $i = 0 To UBound($keysAndValues) - 1
@@ -1536,8 +1552,7 @@ EndFunc
 Func MapFromArrays($keys, $values)
 	Local $map[]
 	For $i = 0 To UBound($keys) - 1
-		Local $val = $values[$i]
-		$map[$keys[$i]] = $val
+		$map[$keys[$i]] = $values[$i]
 	Next
 	Return $map
 EndFunc
