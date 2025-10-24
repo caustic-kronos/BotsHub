@@ -1705,13 +1705,13 @@ EndFunc
 
 
 ;~ Talks to an agent and waits until you reach it.
-Func GoToAgent($agent, $GoFunction)
+Func GoToAgent($agent, $GoFunction = Null)
 	Local $me
 	Local $blockedCount = 0
 	Local $mapLoading = GetInstanceType(), $mapLoadingOld
 	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
 	Sleep(100)
-	$GoFunction($agent)
+	If $GoFunction <> Null Then $GoFunction($agent)
 	Do
 		Sleep(100)
 		$me = GetMyAgent()
@@ -1723,7 +1723,7 @@ Func GoToAgent($agent, $GoFunction)
 			$blockedCount += 1
 			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
 			Sleep(100)
-			$GoFunction($agent)
+			If $GoFunction <> Null Then $GoFunction($agent)
 		EndIf
 	Until GetDistance($me, $agent) < 250 Or $blockedCount > 14
 	Sleep(GetPing() + 1000)
@@ -3541,6 +3541,7 @@ EndFunc
 ;~ Tests if an agent is dead.
 Func GetIsDead($agent = -2)
 	If $agent == -2 Then $agent = GetMyAgent()
+	If $agent == Null Then Return True ; for case when targeted agent becomes dead then GetCurrentTarget() returns Null. Caution about other cases
 	Return BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0
 EndFunc
 

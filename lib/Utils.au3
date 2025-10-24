@@ -2323,7 +2323,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
-			DefaultKillFoes($flagHeroes)
+			KillFoesInArea($flagHeroes)
 			PickUpItems(Null, DefaultShouldPickItem, $range)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
@@ -2353,136 +2353,121 @@ EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
-Func DefaultKillFoes($flagHeroesOnFight = False)
+Func KillFoesInArea($flagHeroes = False, $fightRange = $RANGE_SPELLCAST, $priorityMobs = False, $lootInFights = False, $skillsCostMap = Null)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 	Local $me = GetMyAgent()
-	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = DllStructGetData($target, 'ID')
-	GetAlmostInRangeOfAgent($target)
-	If $flagHeroesOnFight Then FanFlagHeroes()
+	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
+	Local $target = GetNearestEnemyToAgent($me)
+	If $target <> Null Then GetAlmostInRangeOfAgent($target) ;~ get as close as possible to foe to have surprise effect when attacking
+	If $flagHeroes Then FanFlagHeroes(260) ;~ 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 
 	While IsPlayerOrPartyAlive() And $foesCount > 0
-		$target = GetAgentById($targetId)
-		If ($target == Null Or GetIsDead($target)) Then
-			$target = GetNearestEnemyToAgent($me)
-			$targetId = DllStructGetData($target, 'ID')
-			CallTarget($target)
-			; Start auto-attack on new target
-			Attack($target)
-			RandomSleep(20)
-		EndIf
-
-		; Always ensure auto-attack is active before using skills
-		Attack($target)
-		RandomSleep(20)
-		While Not IsRecharged($skillNumber) And $skillNumber < 9
-			$skillNumber += 1
-		WEnd
-		If $skillNumber < 9 Then
-			UseSkillEx($skillNumber, $target)
-			RandomSleep(20)
-		Else
-			; Just wait for auto-attack to continue
-			RandomSleep(1000)
-		EndIf
-		$skillNumber = 1
-		$me = GetMyAgent()
-		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 200)
-	WEnd
-	If $flagHeroesOnFight Then CancelAllHeroes()
-	RandomSleep(1000)
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST)
-	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
-EndFunc
-
-
-;~ Kill foes by casting skills from 1 to 8
-Func PriorityKillFoes($lootInFights = True)
-	If IsPlayerAndPartyWiped() Then Return $FAIL
-	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(GetMyAgent())
-	GetAlmostInRangeOfAgent($target)
-	ChangeTarget($target)
-	; At first we target the closest mob to have the surprise effect
-	While IsPlayerOrPartyAlive() And $target <> Null
-		If GetCurrentTarget() == Null Then
-			$target = GetHighestPriorityFoe(GetMyAgent(), $RANGE_SPIRIT)
+		If $priorityMobs Then $target = GetHighestPriorityFoe($me, $fightRange)
+		If Not $priorityMobs Or $target == Null Then $target = GetNearestEnemyToAgent($me)
+		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
 			ChangeTarget($target)
-			Sleep(GetPing() + 20)
+			Sleep(100)
 			CallTarget($target)
-			; Start auto-attack on new target
-			Attack($target)
-			Sleep(GetPing() + 20)
-		EndIf
-		If $target <> Null Then
-			While Not IsRecharged($skillNumber) And $skillNumber < 9
-				$skillNumber += 1
+			Sleep(100)
+			Attack($target) ;~ Start auto-attack on new target
+			Sleep(100)
+
+			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
+			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
+			While Not IsPlayerDead() And Not GetIsDead(GetCurrentTarget()) And $target <> Null And DllStructGetData($target, 'ID') <> 0
+				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>
+
+				Attack($target) ; Always ensure auto-attack is active before using skills
+				Sleep(100)
+
+				Local $sufficientEnergy = ($skillsCostMap <> Null) ? (GetEnergy() >= $skillsCostMap[$i]) : True ; if no skill energy cost map is provided then attempt to use skills anyway
+				If IsRecharged($i) And $sufficientEnergy Then
+					UseSkillEx($i, $target)
+					Sleep(500)
+				EndIf
 			WEnd
-			If $skillNumber < 9 Then
-				UseSkillEx($skillNumber, $target)
-				RandomSleep(20)
-			Else
-				; Just wait for auto-attack to continue
-				RandomSleep(1000)
-			EndIf
-			$skillNumber = 1
 		EndIf
-		If $lootInFights Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST + 250)
-		RandomSleep(20)
+
+		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+		$me = GetMyAgent()
+		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	WEnd
-	RandomSleep(1000)
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST)
+	If $flagHeroes Then CancelAllHeroes()
+	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
 ;~ Create a map containing foes and their priority level
 Func CreateMobsPriorityMap()
-	;Voltaic farm foes
-	Local $PN_SS_Defender		= 6499
-	Local $PN_SS_Priest			= 6498
-	Local $PN_Modniir_Priest	= 6512
-	Local $PN_SS_Summoner		= 6507
-	Local $PN_SS_Warder			= 6497
+	; Voltaic farm foes model IDs
 	Local $PN_SS_Dominator		= 6493
-	Local $PN_SS_Blasphemer		= 6496
 	Local $PN_SS_Dreamer		= 6494
 	Local $PN_SS_Contaminator	= 6495
+	Local $PN_SS_Blasphemer		= 6496
+	Local $PN_SS_Warder			= 6497
+	Local $PN_SS_Priest			= 6498
+	Local $PN_SS_Defender		= 6499
+	Local $PN_SS_Summoner		= 6507
+	Local $PN_Modniir_Priest	= 6512
 
-	; Priority map : 0 biggest kill priority, and then it's decreasing
+	; Gemstone farm foes model IDs
+	Local $Gem_AnurKaya 		= 5166
+	Local $Gem_AnurSu 			= 5168
+	Local $Gem_AnurKi 			= 5169
+	Local $Gem_RageTitan 		= 5196
+	Local $Gem_WaterTormentor 	= 5206
+	Local $Gem_HeartTormentor 	= 5207
+	Local $Gem_Dryder 			= 5215
+	Local $Gem_Dreamer 			= 5216
+
+	; Priority map : 0 highest kill priority, bigger numbers mean lesser priority
 	Local $map[]
-	$map[$PN_SS_Defender] = 0
-	$map[$PN_SS_Priest] = 0
-	$map[$PN_Modniir_Priest] = 0
-	$map[$PN_SS_Summoner] = 1
-	$map[$PN_SS_Warder] = 2
-	$map[$PN_SS_Dominator] = 2
-	$map[$PN_SS_Blasphemer] = 2
-	$map[$PN_SS_Dreamer] = 2
+	$map[$PN_SS_Defender] 		= 0
+	$map[$PN_SS_Priest] 		= 0
+	$map[$PN_Modniir_Priest] 	= 0
+	$map[$PN_SS_Summoner] 		= 1
+	$map[$PN_SS_Warder] 		= 2
+	$map[$PN_SS_Dominator] 		= 2
+	$map[$PN_SS_Blasphemer] 	= 2
+	$map[$PN_SS_Dreamer] 		= 2
+	$map[$PN_SS_Contaminator] 	= 2
+
+	$map[$Gem_Dryder] 			= 0
+	$map[$Gem_RageTitan] 		= 1
+	$map[$Gem_AnurKi] 			= 2
+	$map[$Gem_AnurSu] 			= 3
+	$map[$Gem_AnurKaya] 		= 4
+	$map[$Gem_Dreamer] 			= 5
+	$map[$Gem_HeartTormentor] 	= 6
+	$map[$Gem_WaterTormentor] 	= 7
 	Return $map
 EndFunc
 
 
-;~ Returns the highest priority foe around an agent
-Func GetHighestPriorityFoe($agent, $range = $RANGE_SPELLCAST)
+;~ Returns the highest priority foe around a target agent
+Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
 	Local Static $mobsPriorityMap = CreateMobsPriorityMap()
-	Local $agentArray = GetAgentArray(0xDB)
+	Local $agents = GetFoesInRangeOfAgent(GetMyAgent(), $range)
 	Local $highestPriorityTarget = Null
 	Local $priorityLevel = 99999
+	Local $agentID = DllStructGetData($targetAgent, 'ID')
 
-	For $i = 1 To $agentArray[0]
-		If Not EnemyAgentFilter($agentArray[$i]) Then ContinueLoop
+	For $i = 1 To UBound($agents)
+		If Not EnemyAgentFilter($agents[$i]) Then ContinueLoop
 		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
-		If DllStructGetData($agentArray[$i], 'TypeMap') == 0 Then ContinueLoop
-		;If DllStructGetData($agentArray[$i], 'ID') == $agentID Then ContinueLoop
-		Local $distance = GetDistance($agent, $agentArray[$i])
+		; If DllStructGetData($agents[$i], 'TypeMap') == 0 Then ContinueLoop ;~ TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack
+		If DllStructGetData($agents[$i], 'ID') == $agentID Then ContinueLoop
+		Local $distance = GetDistance($targetAgent, $agents[$i])
 		If $distance < $range Then
-			Local $priority = $mobsPriorityMap[DllStructGetData($agentArray[$i], 'ModelID')]
-			If ($priority == Null) Then
-				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agentArray[$i]
+			Local $priority = $mobsPriorityMap[DllStructGetData($agents[$i], 'ModelID')]
+			If ($priority == Null) Then ;~ map returns Null for all other mobs that don't exist in map
+				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agents[$i]
 				ContinueLoop
 			EndIf
-			If ($priority == 0) Then Return $agentArray[$i]
+			If ($priority == 0) Then Return $agents[$i]
 			If ($priority < $priorityLevel) Then
-				$highestPriorityTarget = $agentArray[$i]
+				$highestPriorityTarget = $agents[$i]
 				$priorityLevel = $priority
 			EndIf
 		EndIf
@@ -2546,8 +2531,8 @@ EndFunc
 ;~ Loads skill template code.
 Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $heroID = GetHeroID($heroIndex)
-	Local $BuildTemplateChars = StringSplit($buildTemplate, '') ;~ splitting build template string into array of characters
-	;~ deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
+	Local $BuildTemplateChars = StringSplit($buildTemplate, '') ; splitting build template string into array of characters
+	; deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
 	_ArrayDelete($BuildTemplateChars, 0)
 
 	Local $tempValuelateType	; 4 Bits
