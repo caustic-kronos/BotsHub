@@ -56,11 +56,7 @@ EndFunc
 ;~ Voltaic farm setup
 Func SetupVoltaicFarm()
 	Info('Setting up farm')
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	SwitchToHardModeIfEnabled()
 	Info('Preparations complete')
 EndFunc
 

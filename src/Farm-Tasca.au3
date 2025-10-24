@@ -76,12 +76,7 @@ Func SetupTascaFarm()
 	UseCitySpeedBoost()
 	OmniFarmFullSetup()
 	;LoadSkillTemplate($TascaChestRunnerSkillbar)
-
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	SwitchToHardModeIfEnabled()
 
 	Info('Entering Tascas Demise')
 	MoveTo(-10000, 18875)

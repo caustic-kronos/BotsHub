@@ -55,12 +55,7 @@ Func SetupFroggyFarm()
 	; Need to be done here in case bot comes back from inventory management
 	If GetMapID() <> $ID_Gadds_Camp Then DistrictTravel($ID_Gadds_Camp, $DISTRICT_NAME)
 
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
-
+	SwitchToHardModeIfEnabled()
 	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)

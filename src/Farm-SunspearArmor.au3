@@ -49,6 +49,7 @@ Func SunspearArmorFarm($STATUS)
 EndFunc
 
 Func SunspearArmorSetup()
+	SwitchToHardModeIfEnabled()
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)

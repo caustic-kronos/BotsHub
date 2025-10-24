@@ -83,12 +83,7 @@ Func SetupPongmeiFarm()
 	AddHero($ID_Goren)
 	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
 
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
-
+	SwitchToHardModeIfEnabled()
 	Info('Preparations complete')
 EndFunc
 

@@ -73,11 +73,7 @@ EndFunc
 Func SetupFoWFarm()
 	Info('Setting up farm')
 	; Make party
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	SwitchToHardModeIfEnabled()
 	Info('Preparations complete')
 EndFunc
 

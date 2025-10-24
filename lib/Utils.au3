@@ -1965,6 +1965,15 @@ Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
 EndFunc
 
 
+Func SwitchToHardModeIfEnabled()
+	If IsHardmodeEnabled() Then
+		SwitchMode($ID_HARD_MODE)
+	Else
+		SwitchMode($ID_NORMAL_MODE)
+	EndIf
+EndFunc
+
+
 ;~ Count number of alive heroes of the player's party
 Func CountAliveHeroes()
 	Local $aliveHeroes = 0

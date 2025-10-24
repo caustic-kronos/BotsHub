@@ -56,11 +56,7 @@ Func SetupSoOFarm()
 	; Need to be done here in case bot comes back from inventory management
 	If GetMapID() <> $ID_Vloxs_Fall Then DistrictTravel($ID_Vloxs_Fall, $DISTRICT_NAME)
 
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	SwitchToHardModeIfEnabled()
 	RunToShardsOfOrrDungeon()
 	Info('Preparations complete')
 EndFunc
