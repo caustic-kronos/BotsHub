@@ -25,9 +25,10 @@
 
 Opt('MustDeclareVars', 1)
 
-; Mobs aggro correspond to earshot range
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
+; Mobs aggro correspond to earshot range
+Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
 
 Global Const $SpiritTypes_Array[2] = [0x44000, 0x4C000]
 Global Const $Map_SpiritTypes = MapFromArray($SpiritTypes_Array)
@@ -49,7 +50,7 @@ Func RunTests($STATUS)
 
 
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
-	;~ ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
+	; ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
 
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $itemID = DllStructGetData($item, 'ID')
@@ -153,7 +154,7 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
+Func PickUpItems($DefendFunction = Null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
 
 	Local $item
@@ -170,7 +171,7 @@ Func PickUpItems($defendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 		$item = GetItemByAgentID($agentID)
 
 		If ($ShouldPickItem($item)) Then
-			If $defendFunction <> Null Then $defendFunction()
+			If $DefendFunction <> Null Then $DefendFunction()
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
@@ -1516,7 +1517,7 @@ Func FillArray(ByRef $array, $value)
 EndFunc
 
 
-;~ Add to a Map of arrays (create key and new array if unexisting, add to existant array if existing)
+;~ Add to a Map of arrays (create key and new array if unexisting, add to existent array if existing)
 Func AppendArrayMap($map, $key, $element)
 	If ($map[$key] == Null) Then
 		Local $newArray[1] = [$element]
@@ -1696,25 +1697,25 @@ EndFunc
 
 #Region Counting NPCs
 ;~ Count foes in range of the given agent
-Func CountFoesInRangeOfAgent($agent, $range = 0, $condition = Null)
+Func CountFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
 	Return CountNPCsInRangeOfAgent($agent, 3, $range, $condition)
 EndFunc
 
 
 ;~ Count foes in range of the given coordinates
-Func CountFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = 0, $condition = Null)
+Func CountFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
 	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
 EndFunc
 
 
 ;~ Count allies in range of the given coordinates
-Func CountAlliesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = 0, $condition = Null)
+Func CountAlliesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
 	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 6, $range, $condition)
 EndFunc
 
 
 ;~ Count NPCs in range of the given agent
-Func CountNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = 0, $condition = Null)
+Func CountNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Return CountNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $npcAllegiance, $range, $condition)
 EndFunc
 #EndRegion Counting NPCs
@@ -1778,25 +1779,25 @@ EndFunc
 
 
 ;~ Get foes in range of the given agent
-Func GetFoesInRangeOfAgent($agent, $range = 0, $condition = Null)
+Func GetFoesInRangeOfAgent($agent, $range = Null, $condition = Null)
 	Return GetNPCsInRangeOfAgent($agent, 3, $range, $condition)
 EndFunc
 
 
 ;~ Get foes in range of the given coordinates
-Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = 0, $condition = Null)
+Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = Null, $condition = Null)
 	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
 EndFunc
 
 
 ;~ Get NPCs in range of the given agent
-Func GetNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = 0, $condition = Null)
+Func GetNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = Null, $condition = Null)
 	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $npcAllegiance, $range, $condition)
 EndFunc
 
 
-;~ Get party in range of the given agent
-Func GetPartyInRangeOfAgent($agent, $range = 0)
+;~ Get party members in range of the given agent
+Func GetPartyInRangeOfAgent($agent, $range = Null)
 	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 1, $range, PartyMemberFilter)
 EndFunc
 
@@ -1808,155 +1809,136 @@ EndFunc
 #EndRegion Getting NPCs
 
 
-;~ Count NPCs in range of the given coordinates
-Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = 0, $condition = Null)
+;~ Count NPCs in range of the given coordinates. If range is Null then all found NPCs are counted, as with infinite range
+Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
 	;Return GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition)[0]
 	Local $agents = GetAgentArray(0xDB)
-	Local $curAgent
 	Local $count = 0
 
+	If $coordX == Null Or $coordY == Null Then
+		Local $me = GetMyAgent()
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
 	For $i = 1 To $agents[0]
-		$curAgent = $agents[$i]
-		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
-		If $range > 0 Then
-			If $coordX == Null Or $coordY == Null Then
-				Local $me = GetMyAgent()
-				$coordX = DllStructGetData($me, 'X')
-				$coordY = DllStructGetData($me, 'Y')
-			EndIf
-			If GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
-		EndIf
-		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($agents[$i], 'TypeMap')] <> Null Then ContinueLoop	;~ It's a spirit
+		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
+		If $range <> Null And $range < GetDistanceToPoint($agents[$i], $coordX, $coordY) Then ContinueLoop
 		$count += 1
 	Next
-
 	Return $count
 EndFunc
 
 
-;~ Get NPCs in range of the given coordinates
-Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = 0, $condition = Null)
+;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
+Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
 	Local $agents = GetAgentArray(0xDB)
-	Local $curAgent
 	Local $returnAgents[1] = [0]
 
+	If $coordX == Null Or $coordY == Null Then
+		Local $me = GetMyAgent()
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
 	For $i = 1 To $agents[0]
-		$curAgent = $agents[$i]
-		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
-		If $range > 0 Then
-			If $coordX == Null Or $coordY == Null Then
-				Local $me = GetMyAgent()
-				$coordX = DllStructGetData($me, 'X')
-				$coordY = DllStructGetData($me, 'Y')
-			EndIf
-			If GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
-		EndIf
-		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-
-		_ArrayAdd($returnAgents, $curAgent)
+		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($agents[$i], 'TypeMap')] <> Null Then ContinueLoop	;~ It's a spirit
+		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
+		If $range <> Null And $range < GetDistanceToPoint($agents[$i], $coordX, $coordY) Then ContinueLoop
+		_ArrayAdd($returnAgents, $agents[$i])
 		$returnAgents[0] += 1
 	Next
 	Return $returnAgents
 EndFunc
 
 
-;~ Get NPCs in range of the given coordinates
-Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = 0, $condition = Null)
+;~ Get NPC closest to the player and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
+Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $smallestDistance = 99999
-	Local $returnAgent
-	Local $curAgent
+	Local $nearestAgent = Null
 
 	If $coordX == Null Or $coordY == Null Then
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
 	For $i = 1 To $agents[0]
-		$curAgent = $agents[$i]
-		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
-		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-		If $range > 0 And GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
-		Local $curDistance = GetDistance($me, $curAgent)
+		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($agents[$i], 'TypeMap')] <> Null Then ContinueLoop	;~ It's a spirit
+		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
+		If $range <> Null And $range < GetDistanceToPoint($agents[$i], $coordX, $coordY) Then ContinueLoop
+		Local $curDistance = GetDistance($me, $agents[$i])
 		If $curDistance < $smallestDistance Then
-			$returnAgent = $curAgent
+			$nearestAgent = $agents[$i]
 			$smallestDistance = $curDistance
 		EndIf
 	Next
-
-	Return $returnAgent
+	Return $nearestAgent
 EndFunc
 
 
-;~ Get NPCs in range of the given coordinates
-Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = 0, $condition = Null)
+;~ Get NPC furthest to the player and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
+Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = Null, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $furthestDistance = 0
-	Local $returnAgent
-	Local $curAgent
+	Local $furthestAgent = Null
 
 	If $coordX == Null Or $coordY == Null Then
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
 	For $i = 1 To $agents[0]
-		$curAgent = $agents[$i]
-		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
-		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-		If $range > 0 And GetDistanceToPoint($curAgent, $coordX, $coordY) > $range Then ContinueLoop
-		Local $curDistance = GetDistance($me, $curAgent)
+		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($agents[$i], 'TypeMap')] <> Null Then ContinueLoop	;~ It's a spirit
+		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
+		If $range <> Null And $range < GetDistanceToPoint($agents[$i], $coordX, $coordY) Then ContinueLoop
+		Local $curDistance = GetDistance($me, $agents[$i])
 		If $curDistance > $furthestDistance Then
-			$returnAgent = $curAgent
+			$furthestAgent = $agents[$i]
 			$furthestDistance = $curDistance
 		EndIf
 	Next
-
-	Return $returnAgent
+	Return $furthestAgent
 EndFunc
 
 
 ;~ TODO: check that this method is still better, I improved the original
-;~ Get NPCs in range of the given coordinates
-Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = 0, $condition = Null)
+;~ Get NPC closest to the given coordinates and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
+Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = Null, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $smallestDistance = 99999
-	Local $returnAgent
-	Local $curAgent
+	Local $nearestAgent = Null
 
 	If $coordX == Null Or $coordY == Null Then
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
 	For $i = 1 To $agents[0]
-		$curAgent = $agents[$i]
-		If $npcAllegiance <> Null And DllStructGetData($curAgent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($curAgent, 'HP') <= 0 Then ContinueLoop
-		If BitAND(DllStructGetData($curAgent, 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($curAgent, 'TypeMap')] <> Null Then ContinueLoop	;It's a spirit
-		If $condition <> Null And $condition($curAgent) == False Then ContinueLoop
-		Local $curDistance = GetDistanceToPoint($curAgent, $coordX, $coordY)
-		If $range > 0 And $curDistance > $range Then ContinueLoop
+		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($agents[$i], 'TypeMap')] <> Null Then ContinueLoop	;~ It's a spirit
+		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
+		Local $curDistance = GetDistanceToPoint($agents[$i], $coordX, $coordY)
+		If $range <> Null And $range < $curDistance Then ContinueLoop
 		If $curDistance < $smallestDistance Then
-			$returnAgent = $curAgent
+			$nearestAgent = $agents[$i]
 			$smallestDistance = $curDistance
 		EndIf
 	Next
-
-	Return $returnAgent
+	Return $nearestAgent
 EndFunc
 #EndRegion NPCs
 
@@ -2194,71 +2176,55 @@ EndFunc
 
 
 ;~ Aggro a foe
-Func AggroAgent($tgtAgent)
-	While IsPlayerAlive() And GetDistance(GetMyAgent(), $tgtAgent) > $RANGE_EARSHOT - 100
-		Move(DllStructGetData($tgtAgent, 'X'), DllStructGetData($tgtAgent, 'Y'))
+Func AggroAgent($targetAgent)
+	While IsPlayerAlive() And GetDistance(GetMyAgent(), $targetAgent) > $RANGE_EARSHOT - 100
+		Move(DllStructGetData($targetAgent, 'X'), DllStructGetData($targetAgent, 'Y'))
 		RandomSleep(200)
 	WEnd
 EndFunc
 
 
 ;~ Get close to a mob without aggroing it
-Func GetAlmostInRangeOfAgent($tgtAgent, $proximity = ($RANGE_SPELLCAST + 100))
+Func GetAlmostInRangeOfAgent($targetAgent, $proximity = ($RANGE_SPELLCAST + 100))
 	Local $me = GetMyAgent()
-	Local $xMe = DllStructGetData($me, 'X')
-	Local $yMe = DllStructGetData($me, 'Y')
-	Local $xTgt = DllStructGetData($tgtAgent, 'X')
-	Local $yTgt = DllStructGetData($tgtAgent, 'Y')
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+	Local $targetX = DllStructGetData($targetAgent, 'X')
+	Local $targetY = DllStructGetData($targetAgent, 'Y')
+	Local $distance = GetDistance($me, $targetAgent)
 
-	Local $distance = GetDistance($me, $tgtAgent)
-	If ($distance < $RANGE_SPELLCAST) Then Return
+	If ($distance <= $proximity) Then Return
 
 	Local $ratio = $proximity / $distance
 
-	Local $xGo = $xMe + ($xTgt - $xMe) * (1 - $ratio)
-	Local $yGo = $yMe + ($yTgt - $yMe) * (1 - $ratio)
-	MoveTo($xGo, $yGo, 0)
+	Local $goX = $myX + ($targetX - $myX) * (1 - $ratio)
+	Local $goY = $myY + ($targetY - $myY) * (1 - $ratio)
+	MoveTo($goX, $goY, 0)
 EndFunc
 
 
-;~ Use one of the skill mentionned if available, else attack
+;~ Attack and use one of the skill provided if available, else wait for specified duration
 ;~ Credits to Shiva for auto-attack improvement
-Func AttackOrUseSkill($attackSleep, $skill = Null, $skill2 = Null, $skill3 = Null, $skill4 = Null, $skill5 = Null, $skill6 = Null, $skill7 = Null, $skill8 = Null)
+Func AttackOrUseSkill($attackSleep, $skill1 = Null, $skill2 = Null, $skill3 = Null, $skill4 = Null, $skill5 = Null, $skill6 = Null, $skill7 = Null, $skill8 = Null)
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
+	Local $skillUsed = False
 
 	; Start auto-attack first
 	Attack($target)
 	; Small delay to ensure attack starts
 	RandomSleep(20)
 
-	If ($skill <> Null And IsRecharged($skill)) Then
-		UseSkillEx($skill, $target)
-		RandomSleep(20)
-	ElseIf ($skill2 <> Null And IsRecharged($skill2)) Then
-		UseSkillEx($skill2, $target)
-		RandomSleep(20)
-	ElseIf ($skill3 <> Null And IsRecharged($skill3)) Then
-		UseSkillEx($skill3, $target)
-		RandomSleep(20)
-	ElseIf ($skill4 <> Null And IsRecharged($skill4)) Then
-		UseSkillEx($skill4, $target)
-		RandomSleep(20)
-	ElseIf ($skill5 <> Null And IsRecharged($skill5)) Then
-		UseSkillEx($skill5, $target)
-		RandomSleep(20)
-	ElseIf ($skill6 <> Null And IsRecharged($skill6)) Then
-		UseSkillEx($skill6, $target)
-		RandomSleep(20)
-	ElseIf ($skill7 <> Null And IsRecharged($skill7)) Then
-		UseSkillEx($skill7, $target)
-		RandomSleep(20)
-	ElseIf ($skill8 <> Null And IsRecharged($skill8)) Then
-		UseSkillEx($skill8, $target)
-		RandomSleep(20)
-	Else
-		RandomSleep($attackSleep)
-	EndIf
+	For $i = 1 To 8
+		Local $skillSlot = Eval('skill' & $i) ; skill index provided as parameter to this function
+		If ($skillSlot <> Null And IsRecharged($skillSlot)) Then
+			UseSkillEx($skillSlot, $target)
+			RandomSleep(20)
+			$skillUsed = True
+			ExitLoop
+		EndIf
+	Next
+	If Not $skillUsed Then RandomSleep($attackSleep)
 EndFunc
 
 
