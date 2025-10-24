@@ -111,8 +111,8 @@ Func RunToJagaMoraine()
 		[-19250,	5431], _
 		[-19968,	5564] _
 	]
-	For $i = 0 To (UBound($pathToJaga) - 1)
-		If Not MoveRunning($pathToJaga[$i][0], $pathToJaga[$i][1]) Then Return
+	For $i = 0 To UBound($pathToJaga) - 1
+		If MoveRunning($pathToJaga[$i][0], $pathToJaga[$i][1]) == $FAIL Then Return $FAIL
 	Next
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
@@ -121,14 +121,14 @@ EndFunc
 
 ;~ Move to X, Y. This is to be used in the run from across Bjora Marches
 Func MoveRunning($X, $Y)
-	If IsPlayerDead() Then Return False
+	If IsPlayerDead() Then Return $FAIL
 
 	Move($X, $Y)
 
 	Local $target
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, $X, $Y) > 250
-		If IsPlayerDead() Then Return False
+		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent($me)
 
 		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then TryUseShadowForm()
@@ -142,13 +142,14 @@ Func MoveRunning($X, $Y)
 		RandomSleep(500)
 		$me = GetMyAgent()
 	WEnd
-	Return True
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Farm loop
 Func VaettirsFarmLoop()
 	RandomSleep(1000)
+	GetVaettirsNornBlessing()
 	AggroAllMobs()
 	;KillMobs()
 	VaettirsKillSequence()
@@ -179,7 +180,6 @@ EndFunc
 Func AggroAllMobs()
 	Local $target
 	Info('Aggroing left')
-	GetVaettirsNornBlessing()
 	MoveTo(13172, -22137)
 	MoveAggroing(12496, -22600, 150)
 	MoveAggroing(11375, -22761, 150)
@@ -311,7 +311,7 @@ EndFunc
 
 ;~ Move to destX, destY, while staying alive vs vaettirs
 Func MoveAggroing($X, $Y, $random = 150)
-	If IsPlayerDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 
 	Local $blockedCount
 	Local $heartOfShadowUsageCount
@@ -331,7 +331,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 				While IsPlayerAlive()
 					RandomSleep(1000)
 				WEnd
-				Return False
+				Return $FAIL
 			EndIf
 
 			$blockedCount += 1
@@ -378,7 +378,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 		RandomSleep(100)
 		$me = GetMyAgent()
 	WEnd
-	Return True
+	Return $SUCCESS
 EndFunc
 
 
@@ -417,13 +417,9 @@ Func VaettirsStayAlive()
 	Next
 
 	If $foesNear Then TryUseShadowForm()
-
 	If $adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HP') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0) Then TryUseShroudOfDistress()
-
 	If $foesNear Then TryUseShadowForm()
-
 	If $areaCount > 5 Then TryUseChanneling()
-
 	If $foesNear Then TryUseShadowForm()
 EndFunc
 
