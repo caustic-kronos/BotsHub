@@ -1909,6 +1909,9 @@ EndFunc
 
 
 #Region Quests and party status
+Global $partyFailuresCount = 0
+Global $partyIsAlive = True
+
 ;~ Take a quest or a reward - for reward, expectedState should be 0 once reward taken
 Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
 	Local $questState = 999
@@ -1923,6 +1926,25 @@ Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
 EndFunc
 
 
+;~ Count number of alive heroes of the player's party
+Func CountAliveHeroes()
+	Local $aliveHeroes = 0
+	For $i = 1 to 7
+		Local $heroID = GetHeroID($i)
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then $aliveHeroes += 1
+	Next
+	Return $aliveHeroes
+EndFunc
+
+
+;~ Count number of alive members of the player's party including 7 heroes and player
+Func CountAlivePartyMembers()
+	Local $alivePartyMembers = CountAliveHeroes()
+	If Not IsPlayerDead Then $alivePartyMembers += 1
+	Return $alivePartyMembers
+EndFunc
+
+
 Func IsPlayerDead()
 	Return BitAND(DllStructGetData(GetMyAgent(), 'Effects'), 0x0010) > 0
 EndFunc
@@ -1930,6 +1952,26 @@ EndFunc
 
 Func IsPlayerAlive()
 	Return BitAND(DllStructGetData(GetMyAgent(), 'Effects'), 0x0010) == 0
+EndFunc
+
+
+Func IsPartyWiped()
+	Return Not HasRezMemberAlive()
+EndFunc
+
+
+Func IsPlayerAndPartyWiped()
+	Return IsPlayerDead() And Not HasRezMemberAlive()
+EndFunc
+
+
+Func IsPartyAlive()
+	Return HasRezMemberAlive()
+EndFunc
+
+
+Func IsPlayerOrPartyAlive()
+	Return IsPlayerAlive() Or HasRezMemberAlive()
 EndFunc
 
 
@@ -1949,10 +1991,6 @@ Func IsPartyCurrentlyAlive()
 EndFunc
 
 
-Global $partyFailuresCount = 0
-Global $partyIsAlive = True
-
-
 ;~ Reset the failures counter
 Func ResetFailuresCounter()
 	$partyFailuresCount = 0
@@ -1962,7 +2000,7 @@ EndFunc
 
 ;~ Updates the partyIsAlive variable, this function is run on a fixed timer (10s)
 Func TrackPartyStatus()
-	If (Not HasRezMemberAlive()) Then
+	If IsPartyWiped() Then
 		$partyFailuresCount += 1
 		Notice('Party wiped for the ' & $partyFailuresCount & ' time')
 		$partyIsAlive = False
@@ -1972,7 +2010,7 @@ Func TrackPartyStatus()
 EndFunc
 
 
-;~ Returns True if the party is alive
+;~ Returns True if the party is alive, that is if there is still an alive hero with resurrection skill
 Func HasRezMemberAlive()
 	Local Static $heroesWithRez = FindHeroesWithRez()
 	For $i In $heroesWithRez
@@ -2008,25 +2046,25 @@ EndFunc
 
 ;~ Return true if the provided skill is a rez skill - signets excluded
 Func IsRezSkill($skill)
-	Local $By_Urals_Hammer			= 2217
-	Local $Junundu_Wail				= 1865
-	;Local $Resurrection_Signet		= 2
-	;Local $Sunspear_Rebirth_Signet	= 1816
-	Local $Eternal_Aura				= 2109
-	Local $We_Shall_Return			= 1592
-	Local $Signet_of_Return			= 1778
-	Local $Death_Pact_Signet		= 1481
-	Local $Flesh_of_My_Flesh		= 791
-	Local $Lively_Was_Naomei		= 1222
-	Local $Restoration				= 963
-	Local $Light_of_Dwayna			= 304
-	Local $Rebirth					= 306
-	Local $Renew_Life				= 1263
-	Local $Restore_Life				= 314
-	Local $Resurrect				= 305
-	Local $Resurrection_Chant		= 1128
-	Local $Unyielding_Aura			= 268
-	Local $Vengeance				= 315
+	Local Static $By_Urals_Hammer			= 2217
+	Local Static $Junundu_Wail				= 1865
+	;Local Static $Resurrection_Signet		= 2
+	;Local Static $Sunspear_Rebirth_Signet	= 1816
+	Local Static $Eternal_Aura				= 2109
+	Local Static $We_Shall_Return			= 1592
+	Local Static $Signet_of_Return			= 1778
+	Local Static $Death_Pact_Signet			= 1481
+	Local Static $Flesh_of_My_Flesh			= 791
+	Local Static $Lively_Was_Naomei			= 1222
+	Local Static $Restoration				= 963
+	Local Static $Light_of_Dwayna			= 304
+	Local Static $Rebirth					= 306
+	Local Static $Renew_Life				= 1263
+	Local Static $Restore_Life				= 314
+	Local Static $Resurrect					= 305
+	Local Static $Resurrection_Chant		= 1128
+	Local Static $Unyielding_Aura			= 268
+	Local Static $Vengeance					= 315
 	Switch $skill
 		Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
 			$Eternal_Aura, _
@@ -2041,7 +2079,7 @@ EndFunc
 
 
 #Region Actions
-;~ Move while trying to avoid body block
+;~ Move to specified position while trying to avoid body block
 Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Local $timer = TimerInit()
 	Local Const $PI = 3.141592653589793
@@ -2051,7 +2089,7 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 		RandomSleep(100)
 		;Local $blocked = -1
 		;Local $angle = 0
-		;While Not IsPlayerMoving()
+		;While IsPlayerAlive() And Not IsPlayerMoving()
 		;	$blocked += 1
 		;	If $blocked > 0 Then
 		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4
@@ -2067,7 +2105,8 @@ Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
 	Return True
 EndFunc
 
-;~ Go to the NPC the closest to given coordinates
+
+;~ Go to the NPC closest to the given coordinates
 Func GoNearestNPCToCoords($x, $y)
 	Local $npc = GetNearestNPCToCoords($x, $y)
 	Local $me = GetMyAgent()
@@ -2161,6 +2200,14 @@ Func AttackOrUseSkill($attackSleep, $skill = Null, $skill2 = Null, $skill3 = Nul
 EndFunc
 
 
+Func AllHeroesUseSkill($skillSlot, $target = 0)
+	For $i = 1 to 7
+		Local $heroID = GetHeroID($i)
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
+	Next
+EndFunc
+
+
 #Region Map Clearing Utilities
 Global $DEFAULT_MOVEAGGROANDKILL_OPTIONS[]
 $DEFAULT_MOVEAGGROANDKILL_OPTIONS['openChests'] = True
@@ -2186,7 +2233,7 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If Not $partyIsAlive Then Return True
+	If IsPlayerAndPartyWiped() Then Return True
 
 	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
 	Local $flagHeroes = ($options <> Null And $options['flagHeroesOnFight'] <> Null) ? $options['flagHeroesOnFight'] : False
@@ -2205,8 +2252,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 	Local $oldMyY
 	Local $target
 	Local $chest
-	; PartyIsAlive is caller's responsibility to fill
-	While $partyIsAlive And GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
+	While IsPlayerOrPartyAlive() And GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldMyX = $myX
 		$oldMyY = $myY
 		$me = GetMyAgent()
@@ -2237,18 +2283,19 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 			EndIf
 		EndIf
 	WEnd
-	Return Not $partyIsAlive
+	Return IsPlayerOrPartyAlive()
 EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
 Func DefaultKillFoes($flagHeroesOnFight = False)
+	If IsPlayerAndPartyWiped() Then Return $FAIL
 	Local $me = GetMyAgent()
 	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent($me), $targetId = DllStructGetData($target, 'ID')
 	GetAlmostInRangeOfAgent($target)
 	If $flagHeroesOnFight Then FanFlagHeroes()
 
-	While $partyIsAlive And $foesCount > 0
+	While IsPlayerOrPartyAlive() And $foesCount > 0
 		$target = GetAgentById($targetId)
 		If ($target == Null Or GetIsDead($target)) Then
 			$target = GetNearestEnemyToAgent($me)
@@ -2273,23 +2320,24 @@ Func DefaultKillFoes($flagHeroesOnFight = False)
 			RandomSleep(1000)
 		EndIf
 		$skillNumber = 1
-		PickUpItems(Null, DefaultShouldPickItem, $RANGE_AREA)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 200)
 	WEnd
 	If $flagHeroesOnFight Then CancelAllHeroes()
 	RandomSleep(1000)
-	PickUpItems()
+	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST)
+	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
 Func PriorityKillFoes($lootInFights = True)
+	If IsPlayerAndPartyWiped() Then Return $FAIL
 	Local $skillNumber = 1, $foesCount = 999, $target = GetNearestEnemyToAgent(GetMyAgent())
 	GetAlmostInRangeOfAgent($target)
 	ChangeTarget($target)
 	; At first we target the closest mob to have the surprise effect
-	While $partyIsAlive And $target <> Null
+	While IsPlayerOrPartyAlive() And $target <> Null
 		If GetCurrentTarget() == Null Then
 			$target = GetHighestPriorityFoe(GetMyAgent(), $RANGE_SPIRIT)
 			ChangeTarget($target)
@@ -2316,7 +2364,8 @@ Func PriorityKillFoes($lootInFights = True)
 		RandomSleep(20)
 	WEnd
 	RandomSleep(1000)
-	PickUpItems()
+	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST)
+	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

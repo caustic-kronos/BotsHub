@@ -96,17 +96,6 @@ Func ToTheSulfurousWastes()
 EndFunc
 
 
-;~ Count number of dead members of the party
-Func CountPartyDeaths()
-	Local $partyDeaths = 0
-	For $i = 1 to 7
-		Local $heroID = GetHeroID($i)
-		If Not GetAgentExists($heroID) Or GetIsDead(GetAgentById($heroID)) Then $partyDeaths +=1
-	Next
-	Return $partyDeaths
-EndFunc
-
-
 ;~ Farm the Sulfurous Wastes - main function
 Func FarmTheSulfurousWastes()
 	Info('Taking Sunspear Undead Blessing')
@@ -187,13 +176,7 @@ EndFunc
 Func SpeedTeam()
 	If (IsRecharged($Junundu_Tunnel)) Then
 		UseSkillEx($Junundu_Tunnel)
-		UseHeroSkill(1, $Junundu_Tunnel)
-		UseHeroSkill(2, $Junundu_Tunnel)
-		UseHeroSkill(3, $Junundu_Tunnel)
-		UseHeroSkill(4, $Junundu_Tunnel)
-		UseHeroSkill(5, $Junundu_Tunnel)
-		UseHeroSkill(6, $Junundu_Tunnel)
-		UseHeroSkill(7, $Junundu_Tunnel)
+		AllHeroesUseSkill($Junundu_Tunnel)
 	EndIf
 EndFunc
 
@@ -256,13 +239,12 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
 
-	If DllStructGetData($me, 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
+	If DllStructGetData($me, 'HP') < 0.75 Or CountAliveHeroes() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
 	RandomSleep(1000)
 
-	If CountPartyDeaths() > 5 Then Return True
-
+	If CountAliveHeroes() < 2 Then Return True ; situation when most of the team is wiped
 	PickUpItems()
 	FindAndOpenChests($RANGE_SPIRIT)
 

@@ -130,7 +130,7 @@ EndFunc
 
 ;~ Check if run failed
 Func DoARunFailed()
-	If GetIsDead($ID_ZhellixAgent) Or Not HasRezMemberAlive() Then Return True
+	If GetIsDead($ID_ZhellixAgent) Or IsPartyWiped() Then Return True
 	Return False
 EndFunc
 
@@ -237,7 +237,7 @@ Func ZhellixWaiting()
 		Disconnected()
 	EndIf
 
-	If Not HasRezMemberAlive() Then ResignAndReturnToGate()
+	If IsPartyWiped() Then ResignAndReturnToGate()
 
 	Local $aNPCs = GetNPCsInRangeOfAgent(GetMyAgent(), Null, 1500)
 
