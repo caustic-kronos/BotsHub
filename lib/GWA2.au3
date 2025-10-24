@@ -26,8 +26,10 @@
 #Region Declarations
 ; Windows and process handles
 Global $kernelHandle = DllOpen('kernel32.dll')
-; Each slot will be a 4-elements array: [0] = PID, [1] = handle (or 0 if invalidated), [2] = window, [3] = character name
-Global $gameClients[31][4]
+Global const $MAX_CLIENTS = 30
+; Each gameClient will be a 4-elements array: [0] = PID, [1] = process handle (or 0 if invalidated), [2] = window handle, [3] = character name
+; Caution, first element of this 2D array $gameClients[0][0] is considered a count of currently inserted elements (like in AutoIT ProcessList() function), hence $MAX_CLIENTS+1
+Global $gameClients[$MAX_CLIENTS+1][4]
 Global $selectedClientIndex = -1
 
 If Not $kernelHandle Then
@@ -185,7 +187,7 @@ Global Const $skillStructTemplate = 'long ID;long Unknown1;long campaign;long Ty
 Global Const $attributeStructTemplate = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
 Global Const $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
 Global Const $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
-Global Const $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unlnown1;long MapTo;ptr Description;ptr Objective'
+Global Const $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unknown1;long MapTo;ptr Description;ptr Objective'
 ; Grey area, unlikely to exist several at the same time
 Global Const $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
 ; Safe zone, can just create DllStruct globally
@@ -333,9 +335,7 @@ Func ScanAndUpdateGameClients()
 	; Step 1: Mark all existing entries as 'unseen'
 	Local $initialClientCount = $GameClients[0][0]
 	Local $seen[$initialClientCount + 1]
-	For $i = 1 To $GameClients[0][0]
-		$seen[$i] = False
-	Next
+	FillArray($seen, False)
 
 	; Step 2: Process current gw.exe instances
 	For $i = 1 To $processList[0][0]
@@ -348,11 +348,11 @@ Func ScanAndUpdateGameClients()
 		Else
 			; New client, add to array
 			Local $openProcess = SafeDllCall9($kernelHandle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $pid)
-			Local $handle = IsArray($openProcess) ? $openProcess[0] : 0
-			If $handle <> 0 Then
+			Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
+			If $processHandle <> 0 Then
 				Local $windowHandle = GetWindowHandleForProcess($pid)
-				Local $characterName = ScanForCharname($handle)
-				AddClient($pid, $handle, $windowHandle, $characterName)
+				Local $characterName = ScanForCharname($processHandle)
+				AddClient($pid, $processHandle, $windowHandle, $characterName)
 			Else
 				Error('GW Process with incorrect handle.')
 			EndIf
@@ -390,14 +390,14 @@ EndFunc
 
 
 ;~ Adds a new client entry to $gameClients
-Func AddClient($pid, $handle, $windowHandle, $characterName)
+Func AddClient($pid, $processHandle, $windowHandle, $characterName)
 	$gameClients[0][0] += 1
 	Local $newIndex = $gameClients[0][0]
 	If $newIndex > UBound($gameClients) - 1 Then
 		Error('GameClients array is full. Cannot add new client. Restart the bot.')
 	EndIf
 	$GameClients[$newIndex][0] = $pid
-	$GameClients[$newIndex][1] = $handle
+	$GameClients[$newIndex][1] = $processHandle
 	$GameClients[$newIndex][2] = $windowHandle
 	$GameClients[$newIndex][3] = $characterName
 EndFunc
@@ -2419,7 +2419,7 @@ Func ChangeMaxZoom($zoom = 750)
 EndFunc
 
 
-;~ Emptys Guild Wars client memory
+;~ Empties Guild Wars client memory
 Func ClearMemory()
 	SafeDllCall9($kernelHandle, 'int', 'SetProcessWorkingSetSize', 'int', GetProcessHandle(), 'int', -1, 'int', -1)
 EndFunc
@@ -2895,7 +2895,7 @@ Func GetNearestItemByModelIDToAgent($modelID, $agent)
 	If GetMaxAgents() > 0 Then
 		For $i = 1 To GetMaxAgents()
 			Local $itemAgent = GetAgentByID($i)
-			If Not GetIsMovable($itemAgent) Then ContinueLoop ;~ item is considered movable
+			If Not GetIsMovable($itemAgent) Then ContinueLoop ; item is considered movable
 			Local $agentModelID = DllStructGetData(GetItemByAgentID($i), 'ModelID')
 			If $agentModelID = $modelID Then
 				$distance = GetDistance($itemAgent, $agent)
@@ -3068,16 +3068,16 @@ Func GetHeroID($heroIndex)
 EndFunc
 
 
-;~ Returns hero number by agent ID.
-Func GetHeroNumberByAgentID($heroID)
-	Local $agentID
+;~ Returns hero number by agent ID. If no heroes found with provided agent ID then function returns Null
+Func GetHeroNumberByAgentID($agentID)
+	Local $heroID
 	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 0x18 * ($i - 1)
-		$agentID = MemoryReadPtr($baseAddressPtr, $offset)
-		If $agentID[1] == $heroID Then Return $i
+		$heroID = MemoryReadPtr($baseAddressPtr, $offset)
+		If $heroID[1] == $agentID Then Return $i
 	Next
-	Return 0
+	Return Null
 EndFunc
 
 
@@ -3156,14 +3156,14 @@ Func GetTarget($agent)
 EndFunc
 
 
-;~ Returns agent by player name.
+;~ Returns agent by player name or Null if player with provided name not found.
 Func GetAgentByPlayerName($playerName)
 	For $i = 1 To GetMaxAgents()
-		If GetPlayerName($i) = $playerName Then
-			; FIXME: check that agent exists before returning (player could be too far)
-			Return GetAgentByID($i)
-		EndIf
+		If Not GetAgentExists($i) Then ContinueLoop
+		Local $agent = GetAgentByID($i)
+		If GetPlayerName($agent) == $playerName Then Return $agent
 	Next
+	Return Null
 EndFunc
 
 
@@ -3208,11 +3208,11 @@ Func GetNearestNPCToAgent($agent)
 EndFunc
 
 
-;~ Return True if an agent is an enemy, False else
+;~ Return True if an agent is an NPC, False otherwise
 Func NPCAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> 6 Then Return False
 	If DllStructGetData($agent, 'HP') <= 0 Then Return False
-	If BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0 Then Return False
+	If GetIsDead($agent) Then Return False
 	Return True
 EndFunc
 
@@ -3223,31 +3223,28 @@ Func GetNearestEnemyToAgent($agent)
 EndFunc
 
 
-;~ Return True if an agent is an enemy, False else
+;~ Return True if an agent is an enemy, False otherwise
 Func EnemyAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> 3 Then Return False
 	If DllStructGetData($agent, 'HP') <= 0 Then Return False
-	If BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0 Then Return False
-	If DllStructGetData($agent, 'TypeMap') == 0x40000 Then Return False	;~ It's a spirit created by rangers (0x40001 for ritualist's spirits and bone minions)
+	If GetIsDead($agent) Then Return False
+	If DllStructGetData($agent, 'TypeMap') == 0x40000 Then Return False	; It's a spirit created by rangers (0x40001 for ritualist's spirits and bone minions)
 	Return True
 EndFunc
 
 
-;~ Returns the nearest agent to an agent.
-Func GetNearestAgentToAgent($agent, $agentType = 0, $agentFilter = Null)
-	Local $nearestAgent = Null, $nearestDistance = 100000000
-	Local $distance
+;~ Returns the nearest agent to specified target agent. $agentFilter is a function which returns True for the agents that should be considered, False for those to skip
+Func GetNearestAgentToAgent($targetAgent, $agentType = 0, $agentFilter = Null)
+	Local $nearestAgent = Null, $distance = Null, $nearestDistance = 100000000
 	Local $agentArray = GetAgentArray($agentType)
-	Local $agentID = DllStructGetData($agent, 'ID')
+	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
-	Local $X = DllStructGetData($agent, 'X')
-	Local $Y = DllStructGetData($agent, 'Y')
 
 	For $i = 1 To $agentArray[0]
-		If DllStructGetData($agentArray[$i], 'ID') == $agentID Then ContinueLoop
+		If DllStructGetData($agentArray[$i], 'ID') == $targetAgentID Then ContinueLoop
 		If DllStructGetData($agentArray[$i], 'ID') == $ownID Then ContinueLoop
 		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
-		$distance = GetDistanceToPoint($agentArray[$i], $X, $Y)
+		$distance = GetDistance($agentArray[$i], $agents[$i])
 		If $distance < $nearestDistance Then
 			$nearestAgent = $agentArray[$i]
 			$nearestDistance = $distance
@@ -3395,50 +3392,68 @@ Func GetIsHardMode()
 EndFunc
 
 
-;~ Return the number of enemy agents targeting the given agent.
-Func GetAgentDanger($agent, $agentArray = 0)
-	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
-	Return GetPartyDanger($agentArray, [1, $agent])[1]
+;~ Return the number of enemy agents targeting the given party member.
+Func GetPartyMemberDanger($agent, $agents = Null)
+	If $agents == Null Then $agents = GetAgentArray(0xDB)
+	$party = GetParty($agents)
+	$partyMemberDangers = GetPartyDanger($agents)
+
+	For $i = 1 To UBound($party)
+		;If $party[$i] == $agent Then Return $partyMemberDangers[$i]
+		If DllStructGetData($party[$i], 'ID') == DllStructGetData($agent, 'ID') Then Return partyMemberDangers[$i]
+	Next
+	Return Null
 EndFunc
 
 
 ;~ Returns the 'danger level' of each party member
 ;~ Param1: an array returned by GetAgentArray(). This is totally optional, but can greatly improve script speed.
 ;~ Param2: an array returned by GetParty() This is totally optional, but can greatly improve script speed.
-Func GetPartyDanger($agentArray = 0, $party = 0)
-	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
-	If $party == 0 Then $party = GetParty($agentArray)
+Func GetPartyDanger($agents = Null, $party = Null)
+	If $agents == Null Then $agents = GetAgentArray(0xDB)
+	If $party == Null Then $party = GetParty($agents)
 
-	Local $resultArray[$party[0] + 1]
-	$resultArray[0] = $party[0]
-	For $i = 1 To $resultArray[0]
-		$resultArray[$i] = 0
-	Next
+	Local $resultLevels[UBound($party)]
+	FillArray($resultLevels, 0)
 
-	For $i = 1 To $agentArray[0]
-		If BitAND(DllStructGetData($agentArray[$i], 'Effects'), 0x0010) > 0 Then ContinueLoop
-		If DllStructGetData($agentArray[$i], 'HP') <= 0 Then ContinueLoop
-		If Not GetIsLiving($agentArray[$i]) Then ContinueLoop
-		Local $allegiance = DllStructGetData($agentArray[$i], 'Allegiance')
-		If $allegiance > 3 Then ContinueLoop			; ignore NPCs, spirits, minions, pets
+	For $i = 1 To UBound($agents)
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agents[$i]) Then ContinueLoop
+		Local $allegiance = DllStructGetData($agents[$i], 'Allegiance')
+		If $allegiance > 3 Then ContinueLoop			;~ ignore NPCs, spirits, minions, pets
 
-		Local $targetID = DllStructGetData(GetTarget($agentArray[$i]), 'ID')
-		Local $team = DllStructGetData($agentArray[$i], 'Team')
-		For $j = 1 To $party[0]
-			If $targetID == DllStructGetData($party[$j], 'ID') Then
-				If GetDistance($agentArray[$i], $party[$j]) < 5000 Then
+		Local $targetID = DllStructGetData(GetTarget($agents[$i]), 'ID')
+		Local $team = DllStructGetData($agents[$i], 'Team')
+		For $j = 1 To UBound($party)
+			If $targetID == DllStructGetData($party[$i], 'ID') Then
+				If GetDistance($agents[$i], $party[$j]) < 5000 Then ;~ distance 5000 is equal to compass map range, beyond that can't target
 					If $team <> 0 Then
 						If $team <> DllStructGetData($party[$j], 'Team') Then
-							$resultArray[$j] += 1
+							$resultLevels[$i] += 1 ;~ agent from different team targeting party member
 						EndIf
 					ElseIf $allegiance <> DllStructGetData($party[$j], 'Allegiance') Then
-						$resultArray[$j] += 1
+						$resultLevels[$i] += 1 ;~ agent from different allegiance targeting party member
 					EndIf
 				EndIf
 			EndIf
 		Next
 	Next
-	Return $resultArray
+	Return $resultLevels
+EndFunc
+
+
+;~ 	Description: Returns different States about Party. Check with BitAND.
+;~ 	0x8 = Leader starts Mission / Leader is travelling with Party
+;~ 	0x10 = Hardmode enabled
+;~ 	0x20 = Party defeated
+;~ 	0x40 = Guild Battle
+;~ 	0x80 = Party Leader
+;~ 	0x100 = Observe-Mode
+Func GetPartyState($aFlag)
+    Local $lOffset[4] = [0, 0x18, 0x4C, 0x14]
+    Local $lBitMask = MemoryReadPtr($mBasePointer,$lOffset)
+    Return BitAND($lBitMask[1], $aFlag) > 0
 EndFunc
 #EndRegion Agent
 
