@@ -144,6 +144,7 @@ Global Const $ID_Jokos_Domain				= 437
 Global Const $ID_Bone_Palace				= 438
 Global Const $ID_The_Shattered_Ravines		= 441
 Global Const $ID_The_Sulfurous_Wastes		= 444
+Global Const $ID_Ebony_Citadel_Of_Mallyx	= 445
 Global Const $ID_Gate_Of_Anguish			= 474
 Global Const $ID_Uncharted_Isle				= 529
 Global Const $ID_Isle_Of_Wurms				= 530
@@ -173,9 +174,36 @@ Global Const $ID_Umbral_Grotto				= 639
 Global Const $ID_Rata_Sum					= 640
 Global Const $ID_Eye_of_the_North			= 642
 Global Const $ID_Olafstead					= 645
+Global Const $ID_Hall_of_Monuments			= 646
 Global Const $ID_Dalada_Uplands				= 647
 Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
+
+Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, _
+											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
+											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
+											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
+											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, $ID_The_Marketplace, _
+											$ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, $ID_Kaineng_A_Chance_Encounter, _
+											$ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, $ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, _
+											$ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, $ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, _
+											$ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet_Outpost, $ID_Dajkah_Inlet_Mission, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Riven_Earth, $ID_Jaga_Moraine, _
+											$ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
+											$ID_Bogroot_lvl1, $ID_Bogroot_lvl2, $ID_Vloxs_Fall, $ID_Gadds_Camp, $ID_Umbral_Grotto, $ID_Rata_Sum, $ID_Eye_of_the_North, $ID_Olafstead, $ID_Hall_of_Monuments, _
+											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge]
+
+Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Warriors Isle', 'Hunters Isle', _
+											'Wizards Isle', 'Burning Isle', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
+											'House Zu Heltzer', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', _
+											'Nahpui Quarter', 'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
+											'Isle Of Jade', 'Leviathan Pits', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
+											'Kaineng A Chance Encounter', 'Sunward Marches', 'Sunspear Sanctuary', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', 'Jokos Domain', _
+											'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
+											'Remains of Sahlahja', 'Dajkah Inlet Outpost', 'Dajkah Inlet Mission', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', _
+											'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', 'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', _
+											'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', 'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge']
+
+Global Const $LocationMapNames			=	MapFromArrays($LocationIds, $LocationNames)
 #EndRegion Game Locations
 
 
@@ -184,11 +212,11 @@ Global Const $ID_Unknown		= 0
 Global Const $ID_Warrior		= 1
 Global Const $ID_Ranger			= 2
 Global Const $ID_Monk			= 3
-Global Const $ID_Mesmer			= 5
 Global Const $ID_Necromancer	= 4
+Global Const $ID_Mesmer			= 5
 Global Const $ID_Elementalist	= 6
-Global Const $ID_Ritualist		= 8
 Global Const $ID_Assassin		= 7
+Global Const $ID_Ritualist		= 8
 Global Const $ID_Paragon		= 9
 Global Const $ID_Dervish		= 10
 #EndRegion Professions
@@ -450,7 +478,7 @@ Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_Mental_Block					= 2417
 ; Food and drink boosts
 Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
-Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolat Bunny
+Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
 #EndRegion Skill IDs
 
 
