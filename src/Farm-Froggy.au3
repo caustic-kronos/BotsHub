@@ -55,6 +55,7 @@ Func SetupFroggyFarm()
 	; Need to be done here in case bot comes back from inventory management
 	If GetMapID() <> $ID_Gadds_Camp Then DistrictTravel($ID_Gadds_Camp, $DISTRICT_NAME)
 
+	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
 	ResetFailuresCounter()
 	Info('Making way to portal')

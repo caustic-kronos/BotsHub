@@ -49,6 +49,7 @@ Func VanguardVQFarm($STATUS)
 EndFunc
 
 Func VanguardVQSetup()
+	SetDisplayedTitle($ID_Ebon_Vanguard_Title)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)

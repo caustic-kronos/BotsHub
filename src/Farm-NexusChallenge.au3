@@ -47,6 +47,7 @@ Func NexusChallengeFarm($STATUS)
 EndFunc
 
 Func NexusChallengeSetup()
+	SetDisplayedTitle($ID_Lightbringer_Title)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)

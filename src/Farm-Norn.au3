@@ -49,6 +49,7 @@ Func NornTitleFarm($STATUS)
 EndFunc
 
 Func NorntitleSetup()
+	SetDisplayedTitle($ID_Norn_Title)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)

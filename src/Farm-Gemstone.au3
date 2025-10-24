@@ -90,6 +90,7 @@ EndFunc
 ;~ Gemstone farm setup
 Func SetupGemstoneFarm()
 	Info('Setting up farm')
+	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
 	Info('Preparations complete')
 EndFunc

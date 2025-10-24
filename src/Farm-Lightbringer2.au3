@@ -49,6 +49,7 @@ Func LightbringerFarm2($STATUS)
 EndFunc
 
 Func LightbringerSetup()
+	SetDisplayedTitle($ID_Lightbringer_Title)
 	;LeaveParty()
 	;RandomSleep(500)
 	;AddHero($ID_Norgu)
