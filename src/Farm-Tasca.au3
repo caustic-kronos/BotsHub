@@ -239,11 +239,11 @@ Func GetTargetToEscapeWithDeathsCharge($X, $Y)
 	Local $targetDistance = 999999
 	Local $target
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
-	For $i = 1 To $foes[0]
-		Local $foe = $foes[$i]
-		Local $distance = GetDistanceToPoint($foe, $X, $Y)
+	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return Null
+	For $i = 0 To UBound($foes) - 1
+		Local $distance = GetDistanceToPoint($foes[$i], $X, $Y)
 		If $distance < $targetDistance Then
-			$target = $foe
+			$target = $foes[$i]
 			$targetDistance = $distance
 		EndIf
 	Next

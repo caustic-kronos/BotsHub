@@ -198,13 +198,12 @@ Func PickUpItems($DefendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 	Local $agentID
 	Local $deadlock
 	Local $agents = GetAgentArray(0x400)
-	For $i = $agents[0] To 1 Step -1
-		Local $agent = $agents[$i]
+	For $i = 0 To UBound($agents) - 1
 		If IsPlayerDead() Then Return
-		If Not GetCanPickUp($agent) Then ContinueLoop
-		If GetDistance(GetMyAgent(), $agent) > $range Then ContinueLoop
+		If Not GetCanPickUp($agents[$i]) Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
 
-		$agentID = DllStructGetData($agent, 'ID')
+		$agentID = DllStructGetData($agents[$i], 'ID')
 		$item = GetItemByAgentID($agentID)
 
 		If ($ShouldPickItem($item)) Then
@@ -318,7 +317,7 @@ Func FindChest($range = $RANGE_EARSHOT)
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
 	Local $chest
 	Local $chestCount = 0
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
 		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
@@ -338,7 +337,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $Blocked
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
 	Local $openedChest = False
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
 		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agents[$i]) > $range Then ContinueLoop
@@ -917,7 +916,7 @@ EndFunc
 ;~ Team member has too much malus
 Func TeamHasTooMuchMalus()
 	Local $party = GetParty()
-	For $i = 0 To $party[0]
+	For $i = 0 To UBound($party)
 		If GetMorale($i) < 0 Then Return True
 	Next
 	Return False
@@ -1509,7 +1508,7 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
 	Local $gadgetID
 	;0x200 = type: static
 	Local $agents = GetAgentArray(0x200)
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		$gadgetID = DllStructGetData($agents[$i], 'GadgetID')
 		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If GetDistanceToPoint($agents[$i], $X, $Y) > $range Then ContinueLoop
@@ -1837,14 +1836,12 @@ Func FindMiddleOfFoes($posX, $posY, $range)
 	Local $position[2] = [0, 0]
 	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
 	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $RANGE_AREA)
-	Local $foe
-	For $i = 1 To $foes[0]
-		$foe = $foes[$i]
-		$position[0] += DllStructGetData($foe, 'X')
-		$position[1] += DllStructGetData($foe, 'Y')
+	For $i = 0 To UBound($foes) - 1
+		$position[0] += DllStructGetData($foes[$i], 'X')
+		$position[1] += DllStructGetData($foes[$i], 'Y')
 	Next
-	$position[0] = $position[0] / $foes[0]
-	$position[1] = $position[1] / $foes[0]
+	$position[0] = $position[0] / Ubound($foes) ;~ arithmetic mean calculation for X axis
+	$position[1] = $position[1] / Ubound($foes) ;~ arithmetic mean calculation for Y axis
 	Return $position
 EndFunc
 
@@ -1882,7 +1879,7 @@ EndFunc
 
 ;~ Count NPCs in range of the given coordinates. If range is Null then all found NPCs are counted, as with infinite range
 Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
-	;Return GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition)[0]
+	;Return UBound(GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition))
 	Local $agents = GetAgentArray(0xDB)
 	Local $count = 0
 
@@ -1891,7 +1888,7 @@ Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = N
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
 		If GetIsDead($agents[$i]) Then ContinueLoop
@@ -1907,14 +1904,14 @@ EndFunc
 ;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
 Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
 	Local $agents = GetAgentArray(0xDB)
-	Local $returnAgents[1] = [0]
+	Local $returnAgents[0] ;~ dynamic 1D array of agents, indexed from 0
 
 	If $coordX == Null Or $coordY == Null Then
 		Local $me = GetMyAgent()
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
 		If GetIsDead($agents[$i]) Then ContinueLoop
@@ -1922,7 +1919,6 @@ Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Nul
 		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
 		If $range <> Null And $range < GetDistanceToPoint($agents[$i], $coordX, $coordY) Then ContinueLoop
 		_ArrayAdd($returnAgents, $agents[$i])
-		$returnAgents[0] += 1
 	Next
 	Return $returnAgents
 EndFunc
@@ -1939,7 +1935,7 @@ Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
 		If GetIsDead($agents[$i]) Then ContinueLoop
@@ -1967,7 +1963,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
 		If GetIsDead($agents[$i]) Then ContinueLoop
@@ -1996,7 +1992,7 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
-	For $i = 1 To $agents[0]
+	For $i = 0 To UBound($agents) - 1
 		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
 		If GetIsDead($agents[$i]) Then ContinueLoop
@@ -2136,26 +2132,19 @@ Func HasRezMemberAlive()
 EndFunc
 
 
-;~ Return an array of the player and the members of the party with a rez
+;~ Return an array of heroes in the party with a resurrection skill, indexed from 0
 Func FindHeroesWithRez()
-	Local $heroes[7]
-	Local $count = 0
+	Local $heroes[0]
 	For $heroNumber = 1 To GetHeroCount()
 		Local $heroID = GetHeroID($heroNumber)
 		For $skillSlot = 1 To 8
 			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
 			If IsRezSkill($skill) Then
-				$heroes[$count] = $heroNumber
-				$count += 1
+				_ArrayAdd($heroes, $heroNumber) ;~ addition to dynamic array with automatic resizing
 			EndIf
 		Next
 	Next
-	Local $result[$count + 1]
-	$result[0] = 0
-	For $i = 1 To $count
-		$result[$i] = $heroes[$i - 1]
-	Next
-	Return $result
+	Return $heroes
 EndFunc
 
 
@@ -2524,7 +2513,7 @@ Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
 	Local $priorityLevel = 99999
 	Local $agentID = DllStructGetData($targetAgent, 'ID')
 
-	For $i = 1 To UBound($agents)
+	For $i = 0 To UBound($agents) - 1
 		If Not EnemyAgentFilter($agents[$i]) Then ContinueLoop
 		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
 		; If DllStructGetData($agents[$i], 'TypeMap') == 0 Then ContinueLoop ;~ TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack

@@ -235,7 +235,7 @@ Func ParagonRefreshShouts()
 	MoveToMiddleOfPartyWithTimeout(5000)
 	RandomSleep(20)
 	Local $partyMembers = GetPartyInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
-	If $partyMembers[0] < 4 Then Return
+	If UBound($partyMembers) < 4 Then Return
 
 	UseSkillEx($Follower_MaintainSkill8)
 	RandomSleep(20)
@@ -250,37 +250,37 @@ Func ParagonRefreshShouts()
 			$selfRecast = True
 		EndIf
 	Else
-		$partyMembers = GetParty()
+		$party = GetParty()
 
 		Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
 		; This solution is imperfect because we recast HR every time
 		Local Static $i = 1
-		If $partyMembers[0] > 1 Then
-			If DllStructGetData($partyMembers[$i], 'ID') == $ownID Or $i > $partyMembers[0] Then $i = Mod($i, $partyMembers[0]) + 1
+		If UBound($party) > 1 Then
+			If DllStructGetData($party[$i], 'ID') == $ownID Or $i > UBound($party) Then $i = Mod($i, UBound($party)) + 1
 			If GetEnergy() > 15 Then
-				UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
+				UseSkillEx($Follower_MaintainSkill1, $party[$i])
 				RandomSleep(20)
 			EndIf
 			If GetEnergy() > 20 Then
-				UseSkillEx($Follower_MaintainSkill2, $partyMembers[$i])
+				UseSkillEx($Follower_MaintainSkill2, $party[$i])
 				RandomSleep(20)
 			EndIf
-			$i = Mod($i, $partyMembers[0]) + 1
+			$i = Mod($i, UBound($party)) + 1
 		EndIf
 
 		; This solution would be better - but effects can't be accessed on other heroes/characters
 		;Local $HeroNumber
-		;For $i = 1 To $partyMembers[0]
-		;	If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop
-		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
-		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy() > 15 Then
-		;		UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
+		;For $i = 0 To UBound($party) - 1
+		;	If DllStructGetData($party[$i], 'ID') == $ownID Then ContinueLoop
+		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($party[$i], 'ID'))
+		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy() > 15 Then
+		;		UseSkillEx($Follower_MaintainSkill1, $party[$i])
 		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
-		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Burning_Refrain), $HeroNumber) == 0) And GetEnergy() > 20 Then
-		;		UseSkillEx($Follower_MaintainSkill2, $partyMembers[$i])
+		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_Burning_Refrain), $HeroNumber) == 0) And GetEnergy() > 20 Then
+		;		UseSkillEx($Follower_MaintainSkill2, $party[$i])
 		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
@@ -306,18 +306,18 @@ Func ParagonFight()
 EndFunc
 
 
-;~ Get first player of the party other than yourself
+;~ Get first player of the party team other than yourself. If no other player found in the party team then function returns Null
 Func GetFirstPlayerOfParty()
-	Local $partyMembers = GetParty()
+	Local $party = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 	Local $firstPlayer
-	For $i = 1 To $partyMembers[0]
-		If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop
-		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
-		If $HeroNumber == 0 Then
-			$firstPlayer = $partyMembers[$i]
-			ExitLoop
+	For $i = 0 To UBound($party) - 1
+		If DllStructGetData($party[$i], 'ID') == $ownID Then ContinueLoop
+		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($party[$i], 'ID'))
+		If $HeroNumber == Null Then
+			$firstPlayer = $party[$i]
+			Return $firstPlayer
 		EndIf
 	Next
-	Return $firstPlayer
+	Return Null
 EndFunc

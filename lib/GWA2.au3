@@ -3237,17 +3237,17 @@ EndFunc
 ;~ Returns the nearest agent to specified target agent. $agentFilter is a function which returns True for the agents that should be considered, False for those to skip
 Func GetNearestAgentToAgent($targetAgent, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent = Null, $distance = Null, $nearestDistance = 100000000
-	Local $agentArray = GetAgentArray($agentType)
+	Local $agents = GetAgentArray($agentType)
 	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
-	For $i = 1 To $agentArray[0]
-		If DllStructGetData($agentArray[$i], 'ID') == $targetAgentID Then ContinueLoop
-		If DllStructGetData($agentArray[$i], 'ID') == $ownID Then ContinueLoop
-		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
-		$distance = GetDistance($agentArray[$i], $agents[$i])
+	For $i = 0 To UBound($agents) - 1
+		If DllStructGetData($agents[$i], 'ID') == $targetAgentID Then ContinueLoop
+		If DllStructGetData($agents[$i], 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agents[$i]) Then ContinueLoop
+		$distance = GetDistance($targetAgent, $agents[$i])
 		If $distance < $nearestDistance Then
-			$nearestAgent = $agentArray[$i]
+			$nearestAgent = $agents[$i]
 			$nearestDistance = $distance
 		EndIf
 	Next
@@ -3289,15 +3289,15 @@ EndFunc
 Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
-	Local $agentArray = GetAgentArray($agentType)
+	Local $agents = GetAgentArray($agentType)
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
-	For $i = 1 To $agentArray[0]
-		If DllStructGetData($agentArray[$i], 'ID') == $ownID Then ContinueLoop
-		If $agentFilter <> Null And Not $agentFilter($agentArray[$i]) Then ContinueLoop
-		$distance = GetDistanceToPoint($agentArray[$i], $X, $Y)
+	For $i = 0 To UBound($agents) - 1
+		If DllStructGetData($agents[$i], 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agents[$i]) Then ContinueLoop
+		$distance = GetDistanceToPoint($agents[$i], $X, $Y)
 		If $distance < $nearestDistance Then
-			$nearestAgent = $agentArray[$i]
+			$nearestAgent = $agents[$i]
 			$nearestDistance = $distance
 		EndIf
 	Next
@@ -3310,9 +3310,9 @@ EndFunc
 ;~ Returns agent corresponding to the given unique Model ID that specify every object in game, e.g. NPC (can be accessed with GWToolbox).
 ;~ There can be multiple same agents, e.g. NPCs in map that have same ModelID but different agent IDs. Each agent in map is assigned unique temporary agentID
 Func GetAgentByModelID($modelID)
-	Local $agentArray = GetAgentArray()
-	For $i = 1 To $agentArray[0]
-		If DllStructGetData($agentArray[$i], 'ModelID') == $modelID Then Return $agentArray[$i]
+	Local $agents = GetAgentArray()
+	For $i = 0 To UBound($agents) - 1
+		If DllStructGetData($agents[$i], 'ModelID') == $modelID Then Return $agents[$i]
 	Next
 	Return Null
 EndFunc
@@ -3320,34 +3320,24 @@ EndFunc
 
 ;~ Returns array of party members
 ;~ Param: an array returned by GetAgentArray. This is totally optional, but can greatly improve script speed.
-Func GetParty($agentArray = 0)
-	If $agentArray == 0 Then $agentArray = GetAgentArray(0xDB)
-	Local $partySize = 0
-	For $i = 1 To $agentArray[0]
-		If DllStructGetData($agentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
-		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 0x20000) Then ContinueLoop
-		$partySize += 1
-	Next
+Func GetParty($agents = Null)
+	Local $resultArray[0] ;~ dynamic 1D array of agents, indexed from 0
+	If $agents == Null Then $agents = GetAgentArray(0xDB)
 
-	Local $result[$partySize + 1]
-	$result[0] = $partySize
-
-	Local $index = 1
-	For $i = 1 To $agentArray[0]
-		If DllStructGetData($agentArray[$i], 'Allegiance') <> 1 Then ContinueLoop
-		If Not BitAND(DllStructGetData($agentArray[$i], 'TypeMap'), 0x20000) Then ContinueLoop
-		$result[$index] = $agentArray[$i]
-		$index += 1
+	For $i = 0 To UBound($agents) - 1
+		If DllStructGetData($agents[$i], 'Allegiance') <> 1 Then ContinueLoop
+		If Not BitAND(DllStructGetData($agents[$i], 'TypeMap'), 0x20000) Then ContinueLoop
+		_ArrayAdd($resultArray, $agents[$i]) ;~ addition to dynamic array with automatic resizing
 	Next
-	Return $result
+	Return $resultArray
 EndFunc
 
 
 ;~ Returns true if any party member is dead
 Func CheckIfAnyPartyMembersDead()
-	Local $partyArray = GetParty()
-	For $i = 1 To $partyArray[0]
-		If GetIsDead($partyArray[$i]) Then
+	Local $party = GetParty() ;~ array of party members
+	For $i = 0 To UBound($party) - 1
+		If GetIsDead($party[$i]) Then
 			Return True
 		EndIf
 	Next
@@ -3370,17 +3360,17 @@ Func GetAgentArray($type = 0)
 	Until $count >= 0 Or TimerDiff($deadlock) > 5000
 	If $count < 0 Then $count = 0
 
-	Local $returnArray[$count + 1] = [$count]
+	Local $returnArray[$count] ; 1D array of agents, indexed from 0
 	If $count > 0 Then
-		For $i = 1 To $count
-			$buffer &= 'Byte[448];'
+		For $i = 0 To $count - 1
+			$buffer &= 'Byte[448];' ; 448 = size of $agentStructTemplate in bytes
 		Next
 		$buffer = SafeDllStructCreate($buffer)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
-		For $i = 1 To $count
+		For $i = 0 To $count - 1
 			$returnArray[$i] = SafeDllStructCreate($agentStructTemplate)
 			$struct = SafeDllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
-			DllStructSetData($struct, 1, DllStructGetData($buffer, $i))
+			DllStructSetData($struct, 1, DllStructGetData($buffer, $i + 1))
 		Next
 	EndIf
 	Return $returnArray
@@ -3399,7 +3389,7 @@ Func GetPartyMemberDanger($agent, $agents = Null)
 	$party = GetParty($agents)
 	$partyMemberDangers = GetPartyDanger($agents)
 
-	For $i = 1 To UBound($party)
+	For $i = 0 To UBound($party) - 1
 		;If $party[$i] == $agent Then Return $partyMemberDangers[$i]
 		If DllStructGetData($party[$i], 'ID') == DllStructGetData($agent, 'ID') Then Return partyMemberDangers[$i]
 	Next
@@ -3417,7 +3407,7 @@ Func GetPartyDanger($agents = Null, $party = Null)
 	Local $resultLevels[UBound($party)]
 	FillArray($resultLevels, 0)
 
-	For $i = 1 To UBound($agents)
+	For $i = 0 To UBound($agents) - 1
 		If GetIsDead($agents[$i]) Then ContinueLoop
 		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
 		If GetIsDead($agents[$i]) Then ContinueLoop
@@ -3426,7 +3416,7 @@ Func GetPartyDanger($agents = Null, $party = Null)
 
 		Local $targetID = DllStructGetData(GetTarget($agents[$i]), 'ID')
 		Local $team = DllStructGetData($agents[$i], 'Team')
-		For $j = 1 To UBound($party)
+		For $j = 0 To UBound($party) - 1
 			If $targetID == DllStructGetData($party[$i], 'ID') Then
 				If GetDistance($agents[$i], $party[$j]) < 5000 Then ;~ distance 5000 is equal to compass map range, beyond that can't target
 					If $team <> 0 Then

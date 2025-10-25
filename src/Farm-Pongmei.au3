@@ -222,14 +222,13 @@ Func DervishRun($X, $Y)
 EndFunc
 
 
-;~ Check if there are foes in front so we can use Shadow Form preemptively
+;~ Check if there are foes near point (X, Y) in front of player so we can use Shadow Form preemptively
 Func AreFoesInFront($X, $Y)
 	Local $me = GetMyAgent()
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 350)
-	Local $foe
-	For $i = 1 To $foes[0]
-		$foe = $foes[$i]
-		If ((GetDistanceToPoint($me, $X, $Y) - GetDistanceToPoint($foe, $X, $Y)) > 0) Then Return True
+	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return False
+	For $i = 0 To UBound($foes) - 1
+		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foes[$i], $X, $Y)) > 0 Then Return True
 	Next
 	Return False
 EndFunc
@@ -254,10 +253,9 @@ Func GetNPCInTheBack($X, $Y)
 	$moveX /= $myMovementVector
 	$moveY /= $myMovementVector
 
-	For $i = 1 To $npcs[0]
-		Local $npc = $npcs[$i]
-		Local $npcMoveX = DllStructGetData($npc, 'X') - $myX
-		Local $npcMoveY = DllStructGetData($npc, 'Y') - $myY
+	For $i = 0 To UBound($npcs) - 1
+		Local $npcMoveX = DllStructGetData($npcs[$i], 'X') - $myX
+		Local $npcMoveY = DllStructGetData($npcs[$i], 'Y') - $myY
 		Local $npcMovementVector = Sqrt($npcMoveX ^ 2 + $npcMoveY ^ 2)
 		If $npcMovementVector = 0 Then ContinueLoop
 		$npcMoveX /= $npcMovementVector
@@ -267,7 +265,7 @@ Func GetNPCInTheBack($X, $Y)
 		Local $dot = $npcMoveX * $moveX + $npcMoveY * $moveY
 		If $dot < $minDot Then
 			$minDot = $dot
-			$bestNpc = $npc
+			$bestNpc = $npcs[$i]
 		EndIf
 	Next
 	Return $bestNpc
@@ -280,10 +278,9 @@ Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
-	Local $foe
-	For $i = 1 To $foes[0]
-		$foe = $foes[$i]
-		If ((GetDistanceToPoint($me, $X, $Y) - GetDistanceToPoint($foe, $X, $Y)) > $distance) Then Return $foe
+	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return Null
+	For $i = 0 To UBound($foes) - 1
+		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foes[$i], $X, $Y)) > $distance Then Return $foes[$i]
 	Next
 	Return Null
 EndFunc
