@@ -1699,6 +1699,30 @@ Func IsAgentInRange($agent, $X, $Y, $range)
 	If GetDistanceToPoint($agent, $X, $Y) < $range Then Return True
 	Return False
 EndFunc
+
+
+;~ Alias function for DllStructCreate. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
+Func CreateStruct($structDefinition)
+    Return DllStructCreate($structDefinition)
+EndFunc
+
+
+;~ Alias function for DllStructSetData. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
+Func SetStructData($object, $dataString, $value)
+    DllStructSetData($object, $dataString, $value)
+EndFunc
+
+
+;~ Alias function for DllStructGetData. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
+Func GetStructData($object, $dataString)
+    Return DllStructGetData($object, $dataString)
+EndFunc
+
+
+;~ Alias function for DllStructGetSize. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
+Func GetStructSize($object)
+    Return DllStructGetSize($object)
+EndFunc
 #EndRegion Utils
 
 
