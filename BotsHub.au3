@@ -68,6 +68,7 @@
 #include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
+#include 'src/Farm-WarSupplyKeiran.au3'
 
 #include 'src/Farm-Norn.au3'
 #include 'src/Farm-NexusChallenge.au3'
@@ -117,7 +118,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -874,6 +875,9 @@ Func RunFarmLoop($Farm)
 		Case 'Voltaic'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = VoltaicFarm($STATUS)
+		Case 'War Supply Keiran'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = WarSupplyKeiranFarm($STATUS)
 		Case 'Storage'
 			$INVENTORY_SPACE_NEEDED = 5
 			ResetBotsSetups()
@@ -1006,6 +1010,8 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarm2Informations)
 		Case 'Vanguard'
 			GUICtrlSetData($GUI_Label_FarmInformations, $VanguardTitleFarmInformations)
+		Case 'War Supply Keiran'
+			GUICtrlSetData($GUI_Label_FarmInformations, $WarSupplyKeiranInformations)
 		Case 'OmniFarm'
 			Return
 		Case 'Storage'
@@ -1638,6 +1644,8 @@ Func SelectFarmDuration($Farm)
 			Return $LIGHTBRINGER_FARM2_DURATION
 		Case 'Vanguard'
 			Return $VANGUARD_TITLE_FARM_DURATION
+		Case 'War Supply Keiran'
+			Return $WAR_SUPPLY_FARM_DURATION
 
 		Case Else
 			Return 2 * 60 * 1000
