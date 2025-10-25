@@ -68,6 +68,14 @@ Global Const $Gem_SkillsArray 		= [$Gem_Symbolic_Celerity, $Gem_Symbolic_Posture
 Global Const $Gem_SkillsCostsArray 	= [15,					   10,					  0,					0,					   0,						  0,						 5,					   10]
 Global Const $GemSkillsCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
 
+Global $GemstoneFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
+$GemstoneFightOptions.Item('fightRange') 		= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
+$GemstoneFightOptions.Item('flagHeroesOnFight') = False ; heroes will be flagged before fight to defend the start location
+$GemstoneFightOptions.Item('priorityMobs') 		= True
+$GemstoneFightOptions.Item('skillsCostMap') 	= $GemSkillsCostsMap
+$GemstoneFightOptions.Item('lootInFights') 		= False ; loot only when no foes are in range
+$GemstoneFightOptions.Item('openChests') 		= False ; there are no chests in Ebony Citadel of Mallyx location
+
 Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15 (can be accessed in GWToolbox)
 Global Const $ModelID_Zhellix = 5221 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
 
@@ -139,7 +147,7 @@ Func Defend()
 		If TimerDiff($GemstoneFarmTimer) > $MAX_GEMSTONE_FARM_DURATION Then Return $FAIL
 		If IsDoARunFailed() Then Return $FAIL
 		Sleep(500)
-		KillFoesInArea(False, $AGGRO_RANGE, True, False, $GemSkillsCostsMap)
+		KillFoesInArea($GemstoneFightOptions)
 		PickUpItems()
 		MoveTo($DefendX, $DefendY)
 	WEnd

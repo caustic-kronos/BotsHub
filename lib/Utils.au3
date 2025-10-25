@@ -1606,6 +1606,16 @@ Func CloneMap($original)
 EndFunc
 
 
+;~ Clone a dictiomary map. Dictionary map has an advantage that it is inherently passed by reference to functions as the same object without the need of copying
+Func CloneDictMap($original)
+	Local $clone = ObjCreate("Scripting.Dictionary")
+	For $key In $original.Keys
+		$clone.Add($key, $original.Item($key))
+	Next
+	Return $clone
+EndFunc
+
+
 ;~ Find common longest substring in two strings
 Func LongestCommonSubstringOfTwoStrings($string1, $string2)
 	Local $longestCommonSubstrings[0] ; dynamic 1D array indexed from 0
@@ -2274,51 +2284,56 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-Global $DEFAULT_MOVEAGGROANDKILL_OPTIONS[]
-$DEFAULT_MOVEAGGROANDKILL_OPTIONS['openChests'] = True
-$DEFAULT_MOVEAGGROANDKILL_OPTIONS['chestOpenRange'] = $RANGE_SPIRIT
-$DEFAULT_MOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = False
-$DEFAULT_MOVEAGGROANDKILL_OPTIONS['fightRange'] = $RANGE_EARSHOT * 1.5
+Global $Default_MoveAggroAndKill_Options = ObjCreate("Scripting.Dictionary")
+$Default_MoveAggroAndKill_Options.Add('fightFunction', KillFoesInArea)
+$Default_MoveAggroAndKill_Options.Add('fightRange', $RANGE_EARSHOT * 1.5)
+$Default_MoveAggroAndKill_Options.Add('flagHeroesOnFight', False)
+$Default_MoveAggroAndKill_Options.Add('callTarget', True)
+$Default_MoveAggroAndKill_Options.Add('priorityMobs', False)
+$Default_MoveAggroAndKill_Options.Add('skillsMask', Null)
+$Default_MoveAggroAndKill_Options.Add('skillsCostMap', Null)
+$Default_MoveAggroAndKill_Options.Add('skillsCastTimeMap', Null)
+$Default_MoveAggroAndKill_Options.Add('lootInFights', False)
+$Default_MoveAggroAndKill_Options.Add('openChests', True)
+$Default_MoveAggroAndKill_Options.Add('chestOpenRange', $RANGE_SPIRIT)
+$Default_MoveAggroAndKill_Options.Add('fightDuration', 60000) ; default 60 seconds fight duration
 
-Global $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS[] = CloneMap($DEFAULT_MOVEAGGROANDKILL_OPTIONS)
-$DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = True
+Global $Default_FlagMoveAggroAndKill_Options = CloneDictMap($Default_MoveAggroAndKill_Options)
+$Default_FlagMoveAggroAndKill_Options.Item('flagHeroesOnFight') = True
 
 
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
-Func FlagMoveAggroAndKill($x, $y, $log = '', $options = Null)
-	If $options = Null Then $options = CloneMap($DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS)
-	$options['flagHeroesOnFight'] = True
+Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $Default_FlagMoveAggroAndKill_Options)
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
- Version to specify fight range as parameter instead of in options map
+
+;~ Version to specify fight range as parameter instead of in options map
 Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneMap($DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS)
-	$options['fightRange'] = $range
+	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
+	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
 Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneMap($DEFAULT_MOVEAGGROANDKILL_OPTIONS)
-	$options['fightRange'] = $range
-	$options['flagHeroesOnFight'] = True
+	If $options = Null Then $options = CloneDictMap($Default_FlagMoveAggroAndKill_Options)
+	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
-Func MoveAggroAndKill($x, $y, $log = '', $options = Null)
+Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
-	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
-	Local $flagHeroes = ($options <> Null And $options['flagHeroesOnFight'] <> Null) ? $options['flagHeroesOnFight'] : False
-	Local $openChests = ($options <> Null And $options['openChests'] <> Null) ? $options['openChests'] : True
-	Local $chestOpenRange = ($options <> Null And $options['chestOpenRange'] <> Null) ? $options['chestOpenRange'] : $RANGE_SPIRIT
-	Local $fightRange = ($options <> Null And $options['fightRange'] <> Null) ? $options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
+	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
+	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
+	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 
 	If $log <> '' Then Info($log)
 	Local $me = GetMyAgent()
@@ -2338,7 +2353,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = Null)
 		$me = GetMyAgent() ; updating/sampling player's agent data
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
-			If KillFoesInArea($flagHeroes) == $FAIL Then ExitLoop
+			If $fightFunction($options) == $FAIL Then ExitLoop
 			RandomSleep(500)
 			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; If one member of party is dead, go to rez him before proceeding
@@ -2361,9 +2376,9 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = Null)
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
-				$options['openChests'] = False
-				MoveAggroAndKill(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), 'Found a chest', $range, $options)
-				$options['openChests'] = True
+				$options.Item('openChests') = False
+				MoveAggroAndKill(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), 'Found a chest', $options)
+				$options.Item('openChests') = True
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
@@ -2373,8 +2388,17 @@ EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
-Func KillFoesInArea($flagHeroes = False, $fightRange = $RANGE_SPELLCAST, $priorityMobs = False, $lootInFights = False, $skillsCostMap = Null)
+Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
+
+	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
+	Local $flagHeroes = ($options.Item('flagHeroesOnFight') <> Null) ? $options.Item('flagHeroesOnFight') : False
+	Local $callTarget = ($options.Item('callTarget') <> Null) ? $options.Item('callTarget') : True
+	Local $priorityMobs = ($options.Item('priorityMobs') <> Null) ? $options.Item('priorityMobs') : False
+	Local $lootInFights = ($options.Item('lootInFights') <> Null) ? $options.Item('lootInFights') : False
+	Local $skillsMask = ($options.Item('skillsMask') <> Null And IsArray($options.Item('skillsMask')) And UBound($options.Item('skillsMask')) == 8) ? $options.Item('skillsMask') : Null
+	Local $skillsCostMap = ($options.Item('skillsCostMap') <> Null And UBound($options.Item('skillsCostMap')) == 8) ? $options.Item('skillsCostMap') : Null
+
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = GetNearestEnemyToAgent($me)
@@ -2387,8 +2411,10 @@ Func KillFoesInArea($flagHeroes = False, $fightRange = $RANGE_SPELLCAST, $priori
 		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
 			ChangeTarget($target)
 			Sleep(100)
-			CallTarget($target)
-			Sleep(100)
+			If $callTarget Then
+				CallTarget($target)
+				Sleep(100)
+			EndIf
 			Attack($target) ;~ Start auto-attack on new target
 			Sleep(100)
 
@@ -2396,6 +2422,7 @@ Func KillFoesInArea($flagHeroes = False, $fightRange = $RANGE_SPELLCAST, $priori
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
 			While Not IsPlayerDead() And Not GetIsDead(GetCurrentTarget()) And $target <> Null And DllStructGetData($target, 'ID') <> 0
 				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>
+				If $skillsMask <> Null And $skillsMask[$i-1] == False Then ContinueLoop ; optional skillsMask indexed from 0, tells which skills to use or skip
 
 				Attack($target) ; Always ensure auto-attack is active before using skills
 				Sleep(100)
