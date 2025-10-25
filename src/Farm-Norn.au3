@@ -89,93 +89,91 @@ Func VanquishVarajarFells()
 	Dialog(0x84)
 	RandomSleep(1000)
 
-	If MoveAggroAndKill(-5278, -5771, 'Berzerker') Then Return $FAIL
-	If MoveAggroAndKill(-5456, -7921, 'Berzerker') Then Return $FAIL
-	If MoveAggroAndKill(-8793, -5837, 'Berzerker') Then Return $FAIL
-
-	If MoveAggroAndKill(-14092, -9662, 'Vaettir and Berzerker') Then Return $FAIL
-	If MoveAggroAndKill(-17260, -7906, 'Vaettir and Berzerker') Then Return $FAIL
-
-	If MoveAggroAndKill(-21964, -12877, 'Jotun', 2500) Then Return $FAIL
+	If MoveAggroAndKill(-5278, -5771, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(-5456, -7921, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(-8793, -5837, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(-14092, -9662, 'Vaettir and Berserker') == $FAIL Or _
+		MoveAggroAndKill(-17260, -7906, 'Vaettir and Berserker') == $FAIL Or _
+		MoveAggroAndKill(-21964, -12877, 'Jotun', 2500) == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-25274, -11970))
 	RandomSleep(1000)
 
 	MoveTo(-22275, -12462)
-	If MoveAggroAndKill(-21671, -2163, 'Berzerker') Then Return $FAIL
-	If MoveAggroAndKill(-19592, 772, 'Berzerker') Then Return $FAIL
-	If MoveAggroAndKill(-13795, -751, 'Berzerker') Then Return $FAIL
-	If MoveAggroAndKill(-17012, -5376, 'Berzerker') Then Return $FAIL
+	If MoveAggroAndKill(-21671, -2163, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(-19592, 772, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(-13795, -751, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(-17012, -5376, 'Berserker') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-12071, -4274))
 
-	If MoveAggroAndKill(-8351, -2633, 'Berzerker') Then Return $FAIL
+	If MoveAggroAndKill(-8351, -2633, 'Berserker') == $FAIL Then Return $FAIL
 	MoveTo(-4362, -1610)
-	If MoveAggroAndKill(-4316, 4033, 'Lake') Then Return $FAIL
-	If MoveAggroAndKill(-8809, 5639, 'Lake') Then Return $FAIL
-	If MoveAggroAndKill(-14916, 2475, 'Lake') Then Return $FAIL
+	If MoveAggroAndKill(-4316, 4033, 'Lake') == $FAIL Or _
+		MoveAggroAndKill(-8809, 5639, 'Lake') == $FAIL Or _
+		MoveAggroAndKill(-14916, 2475, 'Lake') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-11282, 5466))
 
-	If MoveAggroAndKill(-16051, 6492, 'Elemental') Then Return $FAIL
-	If MoveAggroAndKill(-16934, 11145, 'Elemental') Then Return $FAIL
-	If MoveAggroAndKill(-19378, 14555, 'Elemental') Then Return $FAIL
+	If MoveAggroAndKill(-16051, 6492, 'Elemental') == $FAIL Or _
+		MoveAggroAndKill(-16934, 11145, 'Elemental') == $FAIL Or _
+		MoveAggroAndKill(-19378, 14555, 'Elemental') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-22751, 14163))
 
-	If MoveAggroAndKill(-15932, 9386, '') Then Return $FAIL
+	If MoveAggroAndKill(-15932, 9386, '') == $FAIL Then Return $FAIL
 	MoveTo(-13777, 8097)
-	If MoveAggroAndKill(-4729, 15385, 'Lake') Then Return $FAIL
+	If MoveAggroAndKill(-4729, 15385, 'Lake') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-2290, 14879))
 
-	If MoveAggroAndKill(-1810, 4679, 'Modnir') Then Return $FAIL
+	If MoveAggroAndKill(-1810, 4679, 'Modniir') == $FAIL Then Return $FAIL
 	MoveTo(-6911, 5240)
-	If MoveAggroAndKill(-15471, 6384, 'Boss') Then Return $FAIL
+	If MoveAggroAndKill(-15471, 6384, 'Boss') == $FAIL Then Return $FAIL
 	MoveTo(-411, 5874)
-	If MoveAggroAndKill(2859, 3982, 'Modniir') Then Return $FAIL
-	If MoveAggroAndKill(4909, -4259, 'Ice Imp') Then Return $FAIL
-	If MoveAggroAndKill(7514, -6587, 'Ice Imp') Then Return $FAIL
-	If MoveAggroAndKill(3800, -6182, 'Berserker') Then Return $FAIL
-	If MoveAggroAndKill(7755, -11467, 'Berserker') Then Return $FAIL
-	If MoveAggroAndKill(15403, -4243, 'Elementals and Griffins') Then Return $FAIL
-	If MoveAggroAndKill(21597, -6798, 'Elementals and Griffins') Then Return $FAIL
+	If MoveAggroAndKill(2859, 3982, 'Modniir') == $FAIL Or _
+		MoveAggroAndKill(4909, -4259, 'Ice Imp') == $FAIL Or _
+		MoveAggroAndKill(7514, -6587, 'Ice Imp') == $FAIL Or _
+		MoveAggroAndKill(3800, -6182, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(7755, -11467, 'Berserker') == $FAIL Or _
+		MoveAggroAndKill(15403, -4243, 'Elementals and Griffins') == $FAIL Or _
+		MoveAggroAndKill(21597, -6798, 'Elementals and Griffins') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(24522, -6532))
 
-	If MoveAggroAndKill(22883, -4248, '') Then Return $FAIL
-	If MoveAggroAndKill(18606, -1894, '') Then Return $FAIL
-	If MoveAggroAndKill(14969, -4048, '') Then Return $FAIL
-	If MoveAggroAndKill(13599, -7339, '') Then Return $FAIL
-	If MoveAggroAndKill(10056, -4967, 'Ice Imp') Then Return $FAIL
-	If MoveAggroAndKill(10147, -1630, 'Ice Imp') Then Return $FAIL
-	If MoveAggroAndKill(8963, 4043, 'Ice Imp') Then Return $FAIL
+	If MoveAggroAndKill(22883, -4248, '') == $FAIL Or _
+		MoveAggroAndKill(18606, -1894, '') == $FAIL Or _
+		MoveAggroAndKill(14969, -4048, '') == $FAIL Or _
+		MoveAggroAndKill(13599, -7339, '') == $FAIL Or _
+		MoveAggroAndKill(10056, -4967, 'Ice Imp') == $FAIL Or _
+		MoveAggroAndKill(10147, -1630, 'Ice Imp') == $FAIL Or _
+		MoveAggroAndKill(8963, 4043, 'Ice Imp') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(8963, 4043))
 
-	If MoveAggroAndKill(15576, 7156, '') Then Return $FAIL
-	If MoveAggroAndKill(22838, 7914, 'Berserker', 2500) Then Return $FAIL
+	If MoveAggroAndKill(15576, 7156, '') == $FAIL Or _
+		MoveAggroAndKill(22838, 7914, 'Berserker', 2500) == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(22961, 12757))
 
 	MoveTo(18067, 8766)
-	If MoveAggroAndKill(13311, 11917, 'Modniir and Elemental') Then Return $FAIL
+	If MoveAggroAndKill(13311, 11917, 'Modniir and Elemental') == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(13714, 14520))
 
-	If MoveAggroAndKill(11126, 10443, 'Modniir and Elemental') Then Return $FAIL
-	If MoveAggroAndKill(5575, 4696, 'Modniir and Elemental', 2500) Then Return $FAIL
-	If MoveAggroAndKill(-503, 9182, 'Modniir and Elemental') Then Return $FAIL
-	If MoveAggroAndKill(1582, 15275, 'Modniir and Elemental', 2500) Then Return $FAIL
-	If MoveAggroAndKill(7857, 10409, 'Modniir and Elemental', 2500) Then Return $FAIL
+	If MoveAggroAndKill(11126, 10443, 'Modniir and Elemental') == $FAIL Or _
+		MoveAggroAndKill(5575, 4696, 'Modniir and Elemental', 2500) == $FAIL Or _
+		MoveAggroAndKill(-503, 9182, 'Modniir and Elemental') == $FAIL Or _
+		MoveAggroAndKill(1582, 15275, 'Modniir and Elemental', 2500) == $FAIL Or _
+		MoveAggroAndKill(7857, 10409, 'Modniir and Elemental', 2500) == $FAIL Then Return $FAIL
 	Return $SUCCESS
 EndFunc

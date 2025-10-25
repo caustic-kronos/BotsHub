@@ -2298,7 +2298,7 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If IsPlayerAndPartyWiped() Then Return True
+	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
 	Local $flagHeroes = ($options <> Null And $options['flagHeroesOnFight'] <> Null) ? $options['flagHeroesOnFight'] : False
@@ -2320,13 +2320,17 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 	While IsPlayerOrPartyAlive() And GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldMyX = $myX
 		$oldMyY = $myY
-		$me = GetMyAgent()
+		$me = GetMyAgent() ; updating/sampling player's agent data
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
-			KillFoesInArea($flagHeroes)
-			PickUpItems(Null, DefaultShouldPickItem, $range)
+			If KillFoesInArea($flagHeroes) == $FAIL Then ExitLoop
+			RandomSleep(500)
+			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $range)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
+		RandomSleep(250)
+		If IsPlayerDead() Then Return $FAIL
+		$me = GetMyAgent() ; updating/sampling player's agent data
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
 		If $oldMyX = $myX And $oldMyY = $myY Then
@@ -2336,8 +2340,9 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 				RandomSleep(500)
 				Move($x, $y)
 			EndIf
+		Else
+			$blocked = 0 ; reset of block count if player got unstuck
 		EndIf
-		RandomSleep(500)
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -2348,7 +2353,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 			EndIf
 		EndIf
 	WEnd
-	Return IsPlayerOrPartyAlive()
+	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

@@ -95,26 +95,35 @@ Func FarmMirrorOfLyss()
 	RandomSleep(1000)
 	Dialog(0x85)
 	RandomSleep(1000)
-	MoveTo(-13760, -13924)
-	MoveTo(-10600, -12671)
-	MoveTo(-4785, -14912)
+	MoveAggroAndKill(-13760, -13924, 'Path 1')
+	MoveAggroAndKill(-10600, -12671, 'Path 2')
+	MoveAggroAndKill(-4785, -14912, 'Path 3')
 
-	If MoveAggroAndKill(-2451, -15086, 'Group 1/10') Then Return $FAIL
-	If MoveAggroAndKill(1174, -13787, 'Plants') Then Return $FAIL
-	If MoveAggroAndKill(6728, -12014, 'Plants') Then Return $FAIL
-	If MoveAggroAndKill(9554, -14517, 'Kournans + boss') Then Return $FAIL
-	If MoveAggroAndKill(16856, -14068, 'Plants') Then Return $FAIL
-	If MoveAggroAndKill(19428, -13168, 'Group 2/10') Then Return $FAIL
-	If MoveAggroAndKill(16961, -7251, 'Group 3/10') Then Return $FAIL
-	If MoveAggroAndKill(20212, -5510, 'Group 4/10') Then Return $FAIL
-	If MoveAggroAndKill(20373, -580, 'Group 5/10') Then Return $FAIL
-	If MoveAggroAndKill(19778, 2882, 'Group 6/10') Then Return $FAIL
-	If MoveAggroAndKill(19561, 6432, 'Group 7/10') Then Return $FAIL
-	If MoveAggroAndKill(15914, 10322, 'Group 8/10') Then Return $FAIL
-	MoveTo(12116, 7908)
-	If MoveAggroAndKill(12932, 6907, 'Group 9/10') Then Return $FAIL
-	If MoveAggroAndKill(12956, 2637, 'Group 10/10') Then Return $FAIL
-	
+	Local $foes[15][3] = [ _ ; 14 groups to clear + 1 position change
+		[-2451, -15086, 'Group 1/10'], _
+		[1174, -13787, 'Plants'], _
+		[6728, -12014, 'Plants'], _
+		[9554, -14517, 'Kournans + boss'], _
+		[16856, -14068, 'Plants'], _
+		[19428, -13168, 'Group 2/10'], _
+		[16961, -7251, 'Group 3/10'], _
+		[20212, -5510, 'Group 4/10'], _
+		[20373, -580, 'Group 5/10'], _
+		[19778, 2882, 'Group 6/10'], _
+		[19561, 6432, 'Group 7/10'], _
+		[15914, 10322, 'Group 8/10'], _
+		[12116, 7908, 'Moving to position'], _
+		[12932, 6907, 'Group 9/10'], _
+		[12956, 2637, 'Group 10/10'] _
+	]
+	Local $x, $y, $log, $range
+	For $i = 0 To UBound($foes) - 1
+		$x = $foes[$i][0]
+		$y = $foes[$i][1]
+		$log = $foes[$i][2]
+		If MoveAggroAndKill($x, $y, $log) == $FAIL Then Return $FAIL
+	Next
+
 	Info('Groups are destroyed, resigning and doing it again')
 	Return $SUCCESS
 EndFunc

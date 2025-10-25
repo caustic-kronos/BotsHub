@@ -119,49 +119,60 @@ Func VanquishMountQinkai()
 	Dialog(0x86)
 	RandomSleep(1000)
 
-	If MoveAggroAndKill(-11400, -9000, 'Yetis') Then Return $FAIL
-	If MoveAggroAndKill(-13500, -10000, 'Yeti 1') Then Return $FAIL
-	If MoveAggroAndKill(-15000, -8000, 'Yeti 2') Then Return $FAIL
-	If MoveAggroAndKill(-17500, -10500, 'Yeti Ranger Boss') Then Return $FAIL
-	If MoveAggroAndKill(-12000, -4500, 'Rot Wallows') Then Return $FAIL
-	If MoveAggroAndKill(-12500, -3000, 'Yeti 3') Then Return $FAIL
-	If MoveAggroAndKill(-14000, -2500, 'Yeti Ritualist Boss') Then Return $FAIL
-	If MoveAggroAndKill(-12000, -3000, 'Leftovers', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(-10500, -500, 'Rot Wallow 1', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(-11000, 5000, 'Yeti 4') Then Return $FAIL
-	If MoveAggroAndKill(-10000, 7000, 'Yeti 5') Then Return $FAIL
-	If MoveAggroAndKill(-8500, 8000, 'Yeti Monk Boss') Then Return $FAIL
-	If MoveAggroAndKill(-5000, 6500, 'Yeti 6') Then Return $FAIL
-	If MoveAggroAndKill(-3000, 8000, 'Yeti 7', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(-5000, 4000, 'Yeti 8') Then Return $FAIL
-	If MoveAggroAndKill(-7000, 1000, 'Leftovers', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(-9000, -1500, 'Leftovers', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(-6500, -4500, 'Rot Wallow 2', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(-7000, -7500, 'Rot Wallow 3') Then Return $FAIL
-	If MoveAggroAndKill(-4000, -7500, 'Leftovers', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(0, -9500, 'Rot Wallow 4') Then Return $FAIL
-	If MoveAggroAndKill(5000, -7000, 'Oni 1') Then Return $FAIL
-	If MoveAggroAndKill(6500, -8500, 'Oni 2', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(5000, -3500, 'Leftovers', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(500, -2000, 'Leftovers') Then Return $FAIL
-	If MoveAggroAndKill(-1500, -3000, 'Naga 1') Then Return $FAIL
-	If MoveAggroAndKill(1000, 1000, 'Rot Wallow 5') Then Return $FAIL
-	If MoveAggroAndKill(6500, 1000, 'Rot Wallow 6') Then Return $FAIL
-	If MoveAggroAndKill(5500, 5000, 'Leftovers') Then Return $FAIL
-	If MoveAggroAndKill(4000, 5500, 'Rot Wallow 7') Then Return $FAIL
-	If MoveAggroAndKill(6500, 7500, 'Rot Wallow 8') Then Return $FAIL
-	If MoveAggroAndKill(8000, 6000, 'Naga 2') Then Return $FAIL
-	If MoveAggroAndKill(9500, 7000, 'Naga 3') Then Return $FAIL
-	If MoveAggroAndKill(10500, 8000, 'Naga 4', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(12000, 7500, 'Naga 5', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(16000, 7000, 'Naga 6') Then Return $FAIL
-	If MoveAggroAndKill(15500, 4500, 'Leftovers') Then Return $FAIL
-	If MoveAggroAndKill(18000, 3000, 'Oni 3') Then Return $FAIL
-	If MoveAggroAndKill(16500, 1000, 'Leftovers') Then Return $FAIL
-	If MoveAggroAndKill(13500, -1500, 'Naga 7', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(12500, -3500, 'Naga 8', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT) Then Return $FAIL
-	If MoveAggroAndKill(13000, -6000, 'Leftovers', $RANGE_COMPASS) Then Return $FAIL
+	Local $foes[43][4] = [ _ ; 43 groups to vanquish
+		[-11400, -9000, 'Yetis', $AGGRO_RANGE], _
+		[-13500, -10000, 'Yeti 1', $AGGRO_RANGE], _
+		[-15000, -8000, 'Yeti 2', $AGGRO_RANGE], _
+		[-17500, -10500, 'Yeti Ranger Boss', $AGGRO_RANGE], _
+		[-12000, -4500, 'Rot Wallows', $AGGRO_RANGE], _
+		[-12500, -3000, 'Yeti 3', $AGGRO_RANGE], _
+		[-14000, -2500, 'Yeti Ritualist Boss', $AGGRO_RANGE], _
+		[-12000, -3000, 'Leftovers', $RANGE_SPIRIT], _
+		[-10500, -500, 'Rot Wallow 1', $RANGE_SPIRIT], _
+		[-11000, 5000, 'Yeti 4', $AGGRO_RANGE], _
+		[-10000, 7000, 'Yeti 5', $AGGRO_RANGE], _
+		[-8500, 8000, 'Yeti Monk Boss', $AGGRO_RANGE], _
+		[-5000, 6500, 'Yeti 6', $AGGRO_RANGE], _
+		[-3000, 8000, 'Yeti 7', $RANGE_SPIRIT], _
+		[-5000, 4000, 'Yeti 8', $AGGRO_RANGE], _
+		[-7000, 1000, 'Leftovers', $RANGE_SPIRIT], _
+		[-9000, -1500, 'Leftovers', $RANGE_SPIRIT], _
+		[-6500, -4500, 'Rot Wallow 2', $RANGE_SPIRIT], _
+		[-7000, -7500, 'Rot Wallow 3', $AGGRO_RANGE], _
+		[-4000, -7500, 'Leftovers', $RANGE_SPIRIT], _
+		[0, -9500, 'Rot Wallow 4', $AGGRO_RANGE], _
+		[5000, -7000, 'Oni 1', $AGGRO_RANGE], _
+		[6500, -8500, 'Oni 2', $RANGE_SPIRIT], _
+		[5000, -3500, 'Leftovers', $RANGE_SPIRIT], _
+		[500, -2000, 'Leftovers', $AGGRO_RANGE], _
+		[-1500, -3000, 'Naga 1', $AGGRO_RANGE], _
+		[1000, 1000, 'Rot Wallow 5', $AGGRO_RANGE], _
+		[6500, 1000, 'Rot Wallow 6', $AGGRO_RANGE], _
+		[5500, 5000, 'Leftovers', $AGGRO_RANGE], _
+		[4000, 5500, 'Rot Wallow 7', $AGGRO_RANGE], _
+		[6500, 7500, 'Rot Wallow 8', $AGGRO_RANGE], _
+		[8000, 6000, 'Naga 2', $AGGRO_RANGE], _
+		[9500, 7000, 'Naga 3', $AGGRO_RANGE], _
+		[10500, 8000, 'Naga 4', $RANGE_SPIRIT], _
+		[12000, 7500, 'Naga 5', $RANGE_SPIRIT], _
+		[16000, 7000, 'Naga 6', $AGGRO_RANGE], _
+		[15500, 4500, 'Leftovers', $AGGRO_RANGE], _
+		[18000, 3000, 'Oni 3', $AGGRO_RANGE], _
+		[16500, 1000, 'Leftovers', $AGGRO_RANGE], _
+		[13500, -1500, 'Naga 7', $RANGE_SPIRIT], _
+		[12500, -3500, 'Naga 8', $RANGE_SPIRIT], _
+		[14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT], _
+		[13000, -6000, 'Leftovers', $RANGE_COMPASS] _
+	]
+	Local $x, $y, $log, $range
+	For $i = 0 To UBound($foes) - 1
+		$x = $foes[$i][0]
+		$y = $foes[$i][1]
+		$log = $foes[$i][2]
+		$range = $foes[$i][3]
+		If MoveAggroAndKill($x, $y, $log, $range) == $FAIL Then Return $FAIL
+	Next
+
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL

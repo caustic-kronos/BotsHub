@@ -45,8 +45,8 @@ Func VoltaicFarm($STATUS)
 
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VoltaicFarmLoop()
-	AdlibUUnregister('TrackPartyStatus', 10000)
 	; Local $timer = TimerInit()
+	AdlibUnregister('TrackPartyStatus')
 	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	Return $result
 EndFunc
