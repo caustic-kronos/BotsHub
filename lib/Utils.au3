@@ -2327,6 +2327,38 @@ Global $Default_FlagMoveAggroAndKill_Options = CloneDictMap($Default_MoveAggroAn
 $Default_FlagMoveAggroAndKill_Options.Item('flagHeroesOnFight') = True
 
 
+;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
+Func WaitAndFightEnemiesInArea($options = $Default_MoveAggroAndKill_Options)
+	If IsPlayerAndPartyWiped() Then Return $FAIL
+
+	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
+	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
+	Local $fightDuration = ($options.Item('fightDuration') <> Null) ? $options.Item('fightDuration') : 60000
+
+	Local $me = GetMyAgent()
+	Local $target = Null
+	Local $distance = 99999
+	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
+	Local $timer = TimerInit()
+
+	While $foesCount > 0 Or TimerDiff($timer) < $fightDuration
+		If IsPlayerAndPartyWiped() Then Return $FAIL
+		RandomSleep(250)
+		$target = GetNearestEnemyToAgent($me)
+		If $target == Null Or (DllStructGetData($target, 'ID') == 0) Then ContinueLoop
+		$distance = GetDistance($me, $target)
+		If $distance < $fightRange And $fightFunction <> Null Then
+			If $fightFunction($options) == $FAIL Then ExitLoop
+		EndIf
+		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+		RandomSleep(250)
+		$me = GetMyAgent()
+		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
+	WEnd
+	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+EndFunc
+
+
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
 Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $Default_FlagMoveAggroAndKill_Options)
