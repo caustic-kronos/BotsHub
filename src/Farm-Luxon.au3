@@ -170,7 +170,7 @@ Func VanquishMountQinkai()
 		$y = $foes[$i][1]
 		$log = $foes[$i][2]
 		$range = $foes[$i][3]
-		If MoveAggroAndKill($x, $y, $log, $range) == $FAIL Then Return $FAIL
+		If MoveAggroAndKillInRange($x, $y, $log, $range) == $FAIL Then Return $FAIL
 	Next
 
 	If Not GetAreaVanquished() Then

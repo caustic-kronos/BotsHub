@@ -94,7 +94,7 @@ Func VanquishVarajarFells()
 		MoveAggroAndKill(-8793, -5837, 'Berserker') == $FAIL Or _
 		MoveAggroAndKill(-14092, -9662, 'Vaettir and Berserker') == $FAIL Or _
 		MoveAggroAndKill(-17260, -7906, 'Vaettir and Berserker') == $FAIL Or _
-		MoveAggroAndKill(-21964, -12877, 'Jotun', 2500) == $FAIL Then Return $FAIL
+		MoveAggroAndKillInRange(-21964, -12877, 'Jotun', 2500) == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-25274, -11970))
@@ -159,7 +159,7 @@ Func VanquishVarajarFells()
 	GoToNPC(GetNearestNPCToCoords(8963, 4043))
 
 	If MoveAggroAndKill(15576, 7156, '') == $FAIL Or _
-		MoveAggroAndKill(22838, 7914, 'Berserker', 2500) == $FAIL Then Return $FAIL
+		MoveAggroAndKillInRange(22838, 7914, 'Berserker', 2500) == $FAIL Then Return $FAIL
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(22961, 12757))
@@ -171,9 +171,9 @@ Func VanquishVarajarFells()
 	GoToNPC(GetNearestNPCToCoords(13714, 14520))
 
 	If MoveAggroAndKill(11126, 10443, 'Modniir and Elemental') == $FAIL Or _
-		MoveAggroAndKill(5575, 4696, 'Modniir and Elemental', 2500) == $FAIL Or _
+		MoveAggroAndKillInRange(5575, 4696, 'Modniir and Elemental', 2500) == $FAIL Or _
 		MoveAggroAndKill(-503, 9182, 'Modniir and Elemental') == $FAIL Or _
-		MoveAggroAndKill(1582, 15275, 'Modniir and Elemental', 2500) == $FAIL Or _
-		MoveAggroAndKill(7857, 10409, 'Modniir and Elemental', 2500) == $FAIL Then Return $FAIL
+		MoveAggroAndKillInRange(1582, 15275, 'Modniir and Elemental', 2500) == $FAIL Or _
+		MoveAggroAndKillInRange(7857, 10409, 'Modniir and Elemental', 2500) == $FAIL Then Return $FAIL
 	Return $SUCCESS
 EndFunc

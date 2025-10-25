@@ -2278,6 +2278,7 @@ Global $DEFAULT_MOVEAGGROANDKILL_OPTIONS[]
 $DEFAULT_MOVEAGGROANDKILL_OPTIONS['openChests'] = True
 $DEFAULT_MOVEAGGROANDKILL_OPTIONS['chestOpenRange'] = $RANGE_SPIRIT
 $DEFAULT_MOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = False
+$DEFAULT_MOVEAGGROANDKILL_OPTIONS['fightRange'] = $RANGE_EARSHOT * 1.5
 
 Global $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS[] = CloneMap($DEFAULT_MOVEAGGROANDKILL_OPTIONS)
 $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = True
@@ -2285,25 +2286,39 @@ $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS['flagHeroesOnFight'] = True
 
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
-Func FlagMoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then
-		$options = $DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS
-	Else
-		$options['flagHeroesOnFight'] = True
-	EndIf
-	Return MoveAggroAndKill($x, $y, $log, $range, $options)
+Func FlagMoveAggroAndKill($x, $y, $log = '', $options = Null)
+	If $options = Null Then $options = CloneMap($DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS)
+	$options['flagHeroesOnFight'] = True
+	Return MoveAggroAndKill($x, $y, $log, $options)
+EndFunc
+
+ Version to specify fight range as parameter instead of in options map
+Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
+	If $options = Null Then $options = CloneMap($DEFAULT_FLAGMOVEAGGROANDKILL_OPTIONS)
+	$options['fightRange'] = $range
+	Return MoveAggroAndKill($x, $y, $log, $options)
+EndFunc
+
+
+;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
+Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
+	If $options = Null Then $options = CloneMap($DEFAULT_MOVEAGGROANDKILL_OPTIONS)
+	$options['fightRange'] = $range
+	$options['flagHeroesOnFight'] = True
+	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
-Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
+Func MoveAggroAndKill($x, $y, $log = '', $options = Null)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	If $options = Null Then $options = $DEFAULT_MOVEAGGROANDKILL_OPTIONS
 	Local $flagHeroes = ($options <> Null And $options['flagHeroesOnFight'] <> Null) ? $options['flagHeroesOnFight'] : False
 	Local $openChests = ($options <> Null And $options['openChests'] <> Null) ? $options['openChests'] : True
 	Local $chestOpenRange = ($options <> Null And $options['chestOpenRange'] <> Null) ? $options['chestOpenRange'] : $RANGE_SPIRIT
+	Local $fightRange = ($options <> Null And $options['fightRange'] <> Null) ? $options['fightRange'] : $RANGE_EARSHOT * 1.5
 
 	If $log <> '' Then Info($log)
 	Local $me = GetMyAgent()
@@ -2322,10 +2337,10 @@ Func MoveAggroAndKill($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options
 		$oldMyY = $myY
 		$me = GetMyAgent() ; updating/sampling player's agent data
 		$target = GetNearestEnemyToAgent($me)
-		If GetDistance($me, $target) < $range And DllStructGetData($target, 'ID') <> 0 Then
+		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
 			If KillFoesInArea($flagHeroes) == $FAIL Then ExitLoop
 			RandomSleep(500)
-			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $range)
+			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
 		RandomSleep(250)
