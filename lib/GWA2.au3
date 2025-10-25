@@ -1154,6 +1154,47 @@ Func EquipItem($item)
 EndFunc
 
 
+;~ Equips an item specified by item's model ID. No impact if item is already equipped
+Func EquipItemByModelID($itemModelID)
+	Local $item = GetItemByModelID($itemModelID)
+	If Not IsDllStruct($item) Then Return False
+	If DllStructGetData($item, 'ModelId') <> $itemModelID Then Return False
+	Return SendPacket(0x8, $HEADER_ITEM_EQUIP, DllStructGetData($item, 'ID'))
+EndFunc
+
+
+;~ Checks if item specified by item's model ID is equipped in any weapon slot
+Func IsItemEquipped($itemModelID)
+	Local $item = GetItemByModelID($itemModelID)
+	If Not IsDllStruct($item) Then Return False
+	If DllStructGetData($item, 'ModelId') <> $itemModelID Then Return False
+	Return DllStructGetData($item, 'Equipped') > 0 ; Equipped value is 0 if not equipped in any slot
+EndFunc
+
+
+;~ Checks if item specified by item's model ID is equipped in specified weapon slot (from 1 to 4)
+Func IsItemEquippedInWeaponSlot($itemModelID, $weaponSlot)
+	If $weaponSlot <> 1 And $weaponSlot <> 2 And $weaponSlot <> 3 And $weaponSlot <> 4 Then Return False
+	Local $item = GetItemByModelID($itemModelID)
+	If Not IsDllStruct($item) Then Return False
+	If DllStructGetData($item, 'ModelId') <> $itemModelID Then Return False
+
+	Local $equipValue = DllStructGetData($item, 'Equipped')
+	; Equipped value in item struct is a bitmask of size 1 byte (from 0 to 255). Only first 4 bits are used so values are from 0 to 15
+	; Bits from 1 to 4 say if item is equipped in weapon slot 1 to 4 respectively. If item is unequipped then value is 0. If the same item is equipped in all 4 slots then value is 15 = 1+2+4+8 = 2^0+2^1+2^2+2^3
+	Return BitAND($equipValue, 2 ^ ($weaponSlot - 1)) > 0
+EndFunc
+
+
+;~ Checks if item specified by item's model ID is located in any bag or backpack or is equipped in any weapon slot
+Func ItemExistsInInventory($itemModelID)
+	Local $item = GetItemByModelID($itemModelID)
+	If Not IsDllStruct($item) Then Return False
+	If DllStructGetData($item, 'ModelId') <> $itemModelID Then Return False
+	Return DllStructGetData($item, 'Equipped') > 0 Or DllStructGetData($item, 'Slot') > 0 ; slots are numbered from 1, if item is not in any bag then Slot is 0
+EndFunc
+
+
 ;~ Uses an item.
 Func UseItem($item)
 	Local $itemID = $item
