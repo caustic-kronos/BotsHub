@@ -350,6 +350,26 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 			Next
 		EndIf
 
+		; fix for the pathological situation when Miku stays behind player and doesn't attack mobs, because mobs are standing a bit too far beyond Miku's range but still can attack the player from sufficient distance (rangers and spellcasters)
+		;Local $isFoeAttackingPlayer = False
+		;Local $isFoeAttackingMiku = False
+		Local $isPlayerAttacking = False
+		Local $isFoeAttacking = False
+		Local $isMikuAttacking = False
+		Local $isFoeInRangeOfMiku = False
+		For $foe In $foes
+			If BitAND(DllStructGetData($foe, 'TypeMap'), 0x1) == 1 Then $isFoeAttacking = True ; first bit in TypeMap corresponds to attack stance
+			If GetDistance($Miku, $foe) < $RANGE_EARSHOT Then $isFoeInRangeOfMiku = True
+			;If GetTarget($foe) == $AgentID_Player Then $isFoeAttackingPlayer = True ; unfortunately GetTarget() always returns 0, so can't be used here
+			;If GetTarget($foe) == $AgentID_Miku Then $isFoeAttackingMiku = True ; unfortunately GetTarget() always returns 0, so can't be used here
+		Next
+		If BitAND(DllStructGetData($me, 'TypeMap'), 0x1) == 1 Then $isPlayerAttacking = True ; first bit in TypeMap corresponds to attack stance
+		If BitAND(DllStructGetData($Miku, 'TypeMap'), 0x1) == 1 Then $isMikuAttacking = True ; first bit in TypeMap corresponds to attack stance
+		If ($isPlayerAttacking And $isFoeAttacking And Not $isFoeInRangeOfMiku And Not $isMikuAttacking And IsPlayerAlive() And Not GetIsDead($Miku)) Then
+			Move(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 300) ; move to Miku's position to trigger fight between Miku and mobs
+			ContinueLoop
+		EndIf
+
 		; if target is Null then select a new target for ordinary bow attack skills 2, 4, 5 or exit the loop when there are no more targets in range
 		If $target == Null Or GetIsDead($target) Or GetIsDead(GetCurrentTarget()) Or DllStructGetData($target, 'ID') == 0 Then
 			$me = GetMyAgent()
