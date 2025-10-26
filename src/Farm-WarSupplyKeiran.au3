@@ -99,6 +99,12 @@ Func SetupWarSupplyFarm()
 	Else
 		Info('Found Keiran''s bow in player''s inventory')
 	EndIf
+	Info('Changing Weapons: Slot-4 Keiran Bow')
+	ChangeWeaponSet(4)
+	If Not IsItemEquippedInWeaponSlot($ID_Keirans_Bow, 4) Then
+		Info('Equipping Keiran''s bow')
+		EquipItemByModelID($ID_Keirans_Bow)
+	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	$WARSUPPLY_FARM_SETUP = True
 	Info('Preparations complete')
@@ -127,8 +133,7 @@ Func WarSupplyFarmLoop()
 	If $result == $FAIL Then
 		If IsPlayerDead() Then Warn('Player died')
 		ReturnBackToOutpost($ID_Hall_of_Monuments)
-		Sleep(2000)
-		ChangeWeaponSet(4)
+		Sleep(3000)
 	EndIf
 	return $result
 EndFunc
@@ -154,10 +159,6 @@ Func EnterAuspiciousBeginningsQuest()
 	Info('Entering Auspicious Beginnings quest')
 	Info('Changing Weapons: Slot-4 Keiran Bow')
 	ChangeWeaponSet(4)
-	If Not IsItemEquippedInWeaponSlot($ID_Keirans_Bow, 4) Then
-		Info('Equipping Keiran''s bow')
-    	EquipItemByModelID($ID_Keirans_Bow)
-	EndIf
 	MoveTo(-6445, 6415)
 	Local $scryingPool = GetNearestNpcToCoords(-6662, 6584)
 	ChangeTarget($scryingPool)
@@ -187,7 +188,6 @@ Func RunQuest()
 	If RunWayPoints() == $FAIL Then Return $FAIL
 	; clearing final area
 	If WaitAndFightEnemiesInArea($WarSupplyFightOptions) == $FAIL Then Return $FAIL
-	ChangeWeaponSet(4)
 
 	; loop to wait out in-game countdown to exit quest automatically
 	Local $deadlock = TimerInit()
