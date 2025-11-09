@@ -54,6 +54,7 @@
 #include 'src/Farm-FoW.au3'
 #include 'src/Farm-Froggy.au3'
 #include 'src/Farm-Gemstone.au3'
+#include 'src/Farm-GemstoneStygian.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
@@ -118,7 +119,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -830,6 +831,9 @@ Func RunFarmLoop($Farm)
 		Case 'Gemstone'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = GemstoneFarm($STATUS)
+		Case 'Gemstone Stygian'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = GemstoneStygianFarm($STATUS)
 		Case 'Jade Brotherhood'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = JadeBrotherhoodFarm($STATUS)
@@ -912,6 +916,7 @@ Func ResetBotsSetups()
 	$FEATHERS_FARM_SETUP					= False
 	$FOW_FARM_SETUP							= False
 	$FROGGY_FARM_SETUP						= False
+	$GEMSTONE_STYGIAN_FARM_SETUP			= False
 	$IRIS_FARM_SETUP						= False
 	$JADE_BROTHERHOOD_FARM_SETUP			= False
 	$KOURNANS_FARM_SETUP					= False
@@ -960,6 +965,9 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneFarmInformations)
+		Case 'Gemstone Stygian'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $StygianAssasinSkillBar & '		' & $StygianMesmerSkillBar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneStygianFarmInformations)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)
@@ -1603,6 +1611,8 @@ Func SelectFarmDuration($Farm)
 			Return $FOW_FARM_DURATION
 		Case 'Gemstone'
 			Return $GEMSTONE_FARM_DURATION
+		Case 'Gemstone Stygian'
+			Return $GEMSTONE_STYGIAN_FARM_DURATION
 		Case 'Jade Brotherhood'
 			Return $JADEBROTHERHOOD_FARM_DURATION
 		Case 'Kournans'
