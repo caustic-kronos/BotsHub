@@ -2377,17 +2377,18 @@ EndFunc
 Func ClearAttributes($heroIndex = 0)
 	Local $level
 	If GetInstanceType() <> 0 Then Return
-	For $i = 0 To 44
-		If GetAttributeByID($i, False, $heroIndex) > 0 Then
+	For $i = 0 To UBound($Attributes_Array) - 1
+		Local $attributeID = $Attributes_Array[$i]
+		If GetAttributeByID($attributeID, False, $heroIndex) > 0 Then
 			Do
-				$level = GetAttributeByID($i, False, $heroIndex)
+				$level = GetAttributeByID($attributeID, False, $heroIndex)
 				$deadlock = TimerInit()
-				DecreaseAttribute($i, $heroIndex)
+				DecreaseAttribute($attributeID, $heroIndex)
 				Do
 					Sleep(20)
-				Until $level > GetAttributeByID($i, False, $heroIndex) Or TimerDiff($deadlock) > 5000
+				Until $level > GetAttributeByID($attributeID, False, $heroIndex) Or TimerDiff($deadlock) > 5000
 				Sleep(100)
-			Until GetAttributeByID($i, False, $heroIndex) == 0
+			Until GetAttributeByID($attributeID, False, $heroIndex) == 0
 		EndIf
 	Next
 EndFunc

@@ -194,7 +194,7 @@ Global Const $ID_Dervish		= 10
 #EndRegion Professions
 
 
-#Region Weapon Attributes
+#Region Profession Attributes
 Global Const $ID_Fast_Casting				= 0
 Global Const $ID_Illusion_Magic				= 1
 Global Const $ID_Domination_Magic			= 2
@@ -221,9 +221,9 @@ Global Const $ID_BeastMastery				= 22
 Global Const $ID_Expertise					= 23
 Global Const $ID_Wilderness_Survival		= 24
 Global Const $ID_Marksmanship				= 25
-;Global Const $ID_gap						= 26
-;Global Const $ID_gap						= 27
-;Global Const $ID_gap						= 28
+;Global Const $ID_Empty_Attribute_1			= 26
+;Global Const $ID_Empty_Attribute_2			= 27
+;Global Const $ID_Empty_Attribute_3			= 28
 Global Const $ID_Dagger_Mastery				= 29
 Global Const $ID_Deadly_Arts				= 30
 Global Const $ID_Shadow_Arts				= 31
@@ -241,16 +241,27 @@ Global Const $ID_Wind_Prayers				= 42
 Global Const $ID_Earth_Prayers				= 43
 Global Const $ID_Mysticism					= 44
 Global Const $ID_All_Caster_Primaries		= 45
+Global Const $Attributes_Array[]	= [	$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic, _
+                                        $ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses, _
+                                        $ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage, _
+                                        $ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor, _
+                                        $ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics, _
+                                        $ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship, _
+                                        _ ;$ID_Empty_Attribute_1, $ID_Empty_Attribute_2, $ID_Empty_Attribute_3, _
+                                        $ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes, _
+                                        $ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power, _
+                                        $ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership, _
+                                        $ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism ]
 Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], _
 												[$ID_Blood_Magic, 'Blood Magic'], [$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], _
 												[$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], [$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], _
 												[$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], [$ID_Divine_Favor, 'Divine Favor'], _
 												[$ID_Strength, 'Strength'], [$ID_Axe_Mastery, 'Axe Mastery'], [$ID_Hammer_Mastery, 'Hammer Mastery'], [$ID_Swordsmanship, 'Swordsmanship'], [$ID_Tactics, 'Tactics'], _
-												[$ID_Expertise, 'Expertise'], [$ID_Marksmanship, 'Marksmanship'], _
-												[$ID_Dagger_Mastery, 'Dagger Mastery'], [$ID_Critical_Strikes, 'Critical Strikes'], _
+												[$ID_BeastMastery, 'Beast Mastery'], [$ID_Expertise, 'Expertise'], [$ID_Wilderness_Survival, 'Wilderness Survival'], [$ID_Marksmanship, 'Marksmanship'], _
+												[$ID_Dagger_Mastery, 'Dagger Mastery'], [$ID_Deadly_Arts, 'Deadly Arts'], [$ID_Shadow_Arts, 'Shadow Arts'], [$ID_Critical_Strikes, 'Critical Strikes'], _
 												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
 												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
-												[$ID_Mysticism, 'Mysticism'], [$ID_Scythe_Mastery, 'Scythe Mastery']]
+												[$ID_Scythe_Mastery, 'Scythe Mastery'], [$ID_Wind_Prayers, 'Wind Prayers'], [$ID_Earth_Prayers, 'Earth Prayers'], [$ID_Mysticism, 'Mysticism']]
 Global Const $Unknown_Attributes			= []
 Global Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
 Global Const $Necromancer_Attributes		= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
