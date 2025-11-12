@@ -1085,8 +1085,8 @@ EndFunc
 Func CreateValuableModsByOSWeaponTypeMap()
 	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
 	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
-	For $i = 0 To UBound($tickedInscriptions) - 1
-		Info($tickedInscriptions[$i])
+	For $tickedInscription In $tickedInscriptions
+		Info($tickedInscription)
 	Next
 	Return Null
 EndFunc
@@ -1097,8 +1097,8 @@ EndFunc
 Func CreateValuableModsByWeaponTypeMap()
 	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
 	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
-	For $i = 0 To UBound($tickedInscriptions) - 1
-		Info($tickedInscriptions[$i])
+	For $tickedInscription In $tickedInscriptions
+		Info($tickedInscription)
 	Next
 	Return Null
 EndFunc

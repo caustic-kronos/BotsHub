@@ -83,18 +83,18 @@ Func PickUpIris()
 	Local $item
 	Local $deadlock
 	Local $agents = GetAgentArray(0x400)
-	For $i = 0 To UBound($agents) - 1
-		Local $agentID = DllStructGetData($agents[$i], 'ID')
+	For $agent In $agents
+		Local $agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)
 		If (DllStructGetData($item, 'ModelID') == $ID_Red_Iris_Flower) Then
-			Info('Iris: (' & Round(DllStructGetData($agents[$i], 'X')) & ',' & Round(DllStructGetData($agents[$i], 'Y')) & ')')
+			Info('Iris: (' & Round(DllStructGetData($agent, 'X')) & ',' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID)
 				RandomSleep(500)
 				If IsPlayerDead() Then Return False
 				If TimerDiff($deadlock) > 20000 Then
-					Info('Could not get iris at (' & DllStructGetData($agents[$i], 'X') & ',' & DllStructGetData($agents[$i], 'Y') & ')')
+					Info('Could not get iris at (' & DllStructGetData($agent, 'X') & ',' & DllStructGetData($agent, 'Y') & ')')
 					Return False
 				EndIf
 			WEnd

@@ -1179,9 +1179,9 @@ Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 	Local $GUI_HandleTree[]
 	If IsMap($jsonNode) Then
 		Local $keys = MapKeys($jsonNode)
-		For $i = 0 To UBound($keys) - 1
-			Local $keyHandle = GUICtrlCreateTreeViewItem($keys[$i], $parentItem)
-			Local $valueHandle = BuildTreeViewFromJSON($keyHandle, $jsonNode[$keys[$i]])
+		For $key In $keys
+			Local $keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
+			Local $valueHandle = BuildTreeViewFromJSON($keyHandle, $jsonNode[$key])
 			If $valueHandle == True Then
 				_GUICtrlTreeView_SetChecked($GUI_TreeView_Components, $keyHandle, True)
 			Else

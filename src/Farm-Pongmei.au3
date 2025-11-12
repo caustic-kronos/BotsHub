@@ -227,8 +227,8 @@ Func AreFoesInFront($X, $Y)
 	Local $me = GetMyAgent()
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 350)
 	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return False
-	For $i = 0 To UBound($foes) - 1
-		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foes[$i], $X, $Y)) > 0 Then Return True
+	For $foe In $foes
+		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foe, $X, $Y)) > 0 Then Return True
 	Next
 	Return False
 EndFunc
@@ -253,9 +253,9 @@ Func GetNPCInTheBack($X, $Y)
 	$moveX /= $myMovementVector
 	$moveY /= $myMovementVector
 
-	For $i = 0 To UBound($npcs) - 1
-		Local $npcMoveX = DllStructGetData($npcs[$i], 'X') - $myX
-		Local $npcMoveY = DllStructGetData($npcs[$i], 'Y') - $myY
+	For $npc In $npcs
+		Local $npcMoveX = DllStructGetData($npc, 'X') - $myX
+		Local $npcMoveY = DllStructGetData($npc, 'Y') - $myY
 		Local $npcMovementVector = Sqrt($npcMoveX ^ 2 + $npcMoveY ^ 2)
 		If $npcMovementVector = 0 Then ContinueLoop
 		$npcMoveX /= $npcMovementVector
@@ -265,7 +265,7 @@ Func GetNPCInTheBack($X, $Y)
 		Local $dot = $npcMoveX * $moveX + $npcMoveY * $moveY
 		If $dot < $minDot Then
 			$minDot = $dot
-			$bestNpc = $npcs[$i]
+			$bestNpc = $npc
 		EndIf
 	Next
 	Return $bestNpc
@@ -279,8 +279,8 @@ Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $myY = DllStructGetData($me, 'Y')
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return Null
-	For $i = 0 To UBound($foes) - 1
-		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foes[$i], $X, $Y)) > $distance Then Return $foes[$i]
+	For $foe In $foes
+		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foe, $X, $Y)) > $distance Then Return $foe
 	Next
 	Return Null
 EndFunc

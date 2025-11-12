@@ -400,8 +400,8 @@ Func VaettirsStayAlive()
 	Local $distance
 	Local $me = GetMyAgent()
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), 1200)
-	For $i = 0 To UBound($foes) - 1
-		$distance = GetDistance($me, $foes[$i])
+	For $foe In $foes
+		$distance = GetDistance($me, $foe)
 		If $distance < 1200 Then
 			$foesNear = True
 			If $distance < $RANGE_SPELLCAST Then
@@ -456,10 +456,10 @@ EndFunc
 ;~ Returns a good target for wastrels
 Func GetWastrelsTarget()
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
-	For $i = 0 To UBound($foes) - 1
-		If GetHasHex($foes[$i]) Then ContinueLoop
-		If Not GetIsEnchanted($foes[$i]) Then ContinueLoop
-		Return $foes[$i]
+	For $foe In $foes
+		If GetHasHex($foe) Then ContinueLoop
+		If Not GetIsEnchanted($foe) Then ContinueLoop
+		Return $foe
 	Next
 	Return Null
 EndFunc

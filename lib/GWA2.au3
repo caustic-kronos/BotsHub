@@ -3015,8 +3015,8 @@ EndFunc
 
 ;~ Return True if item is present in array of items, else False - duplicate in Utils
 Func FindKitArrayContainsHelper($itemsArray, $itemModelID)
-	For $i = 0 To UBound($itemsArray) - 1
-		If $itemsArray[$i] == $itemModelID Then Return True
+	For $itemArrayModelID In $itemsArray
+		If $itemArrayModelID == $itemModelID Then Return True
 	Next
 	Return False
 EndFunc
@@ -3241,13 +3241,13 @@ Func GetNearestAgentToAgent($targetAgent, $agentType = 0, $agentFilter = Null)
 	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
-	For $i = 0 To UBound($agents) - 1
-		If DllStructGetData($agents[$i], 'ID') == $targetAgentID Then ContinueLoop
-		If DllStructGetData($agents[$i], 'ID') == $ownID Then ContinueLoop
-		If $agentFilter <> Null And Not $agentFilter($agents[$i]) Then ContinueLoop
-		$distance = GetDistance($targetAgent, $agents[$i])
+	For $agent In $agents
+		If DllStructGetData($agent, 'ID') == $targetAgentID Then ContinueLoop
+		If DllStructGetData($agent, 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agent) Then ContinueLoop
+		$distance = GetDistance($targetAgent, $agent)
 		If $distance < $nearestDistance Then
-			$nearestAgent = $agents[$i]
+			$nearestAgent = $agent
 			$nearestDistance = $distance
 		EndIf
 	Next
@@ -3292,12 +3292,12 @@ Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 	Local $agents = GetAgentArray($agentType)
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
-	For $i = 0 To UBound($agents) - 1
-		If DllStructGetData($agents[$i], 'ID') == $ownID Then ContinueLoop
-		If $agentFilter <> Null And Not $agentFilter($agents[$i]) Then ContinueLoop
-		$distance = GetDistanceToPoint($agents[$i], $X, $Y)
+	For $agent In $agents
+		If DllStructGetData($agent, 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agent) Then ContinueLoop
+		$distance = GetDistanceToPoint($agent, $X, $Y)
 		If $distance < $nearestDistance Then
-			$nearestAgent = $agents[$i]
+			$nearestAgent = $agent
 			$nearestDistance = $distance
 		EndIf
 	Next
@@ -3311,8 +3311,8 @@ EndFunc
 ;~ There can be multiple same agents, e.g. NPCs in map that have same ModelID but different agent IDs. Each agent in map is assigned unique temporary agentID
 Func GetAgentByModelID($modelID)
 	Local $agents = GetAgentArray()
-	For $i = 0 To UBound($agents) - 1
-		If DllStructGetData($agents[$i], 'ModelID') == $modelID Then Return $agents[$i]
+	For $agent In $agents
+		If DllStructGetData($agent, 'ModelID') == $modelID Then Return $agent
 	Next
 	Return Null
 EndFunc
@@ -3340,9 +3340,9 @@ EndFunc
 
 ;~ Returns true if any party member is dead
 Func CheckIfAnyPartyMembersDead()
-	Local $party = GetParty() ;~ array of party members
-	For $i = 0 To UBound($party) - 1
-		If GetIsDead($party[$i]) Then
+	Local $party = GetParty() ; array of party members
+	For $member In $party
+		If GetIsDead($member) Then
 			Return True
 		EndIf
 	Next
@@ -3394,9 +3394,9 @@ Func GetPartyMemberDanger($agent, $agents = Null)
 	$party = GetParty($agents)
 	$partyMemberDangers = GetPartyDanger($agents)
 
-	For $i = 0 To UBound($party) - 1
-		;If $party[$i] == $agent Then Return $partyMemberDangers[$i]
-		If DllStructGetData($party[$i], 'ID') == DllStructGetData($agent, 'ID') Then Return partyMemberDangers[$i]
+	For $member In $party
+		;If $member == $agent Then Return $partyMemberDangers[$i]
+		If DllStructGetData($member, 'ID') == DllStructGetData($agent, 'ID') Then Return partyMemberDangers[$i]
 	Next
 	Return Null
 EndFunc
@@ -3413,23 +3413,24 @@ Func GetPartyDanger($agents = Null, $party = Null)
 	FillArray($resultLevels, 0)
 
 	For $i = 0 To UBound($agents) - 1
-		If GetIsDead($agents[$i]) Then ContinueLoop
-		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
-		If GetIsDead($agents[$i]) Then ContinueLoop
-		Local $allegiance = DllStructGetData($agents[$i], 'Allegiance')
-		If $allegiance > 3 Then ContinueLoop			;~ ignore NPCs, spirits, minions, pets
+		Local $agent = $agents[$i]
+		If GetIsDead($agent) Then ContinueLoop
+		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agent) Then ContinueLoop
+		Local $allegiance = DllStructGetData($agent, 'Allegiance')
+		If $allegiance > 3 Then ContinueLoop			; ignore NPCs, spirits, minions, pets
 
-		Local $targetID = DllStructGetData(GetTarget($agents[$i]), 'ID')
-		Local $team = DllStructGetData($agents[$i], 'Team')
-		For $j = 0 To UBound($party) - 1
-			If $targetID == DllStructGetData($party[$i], 'ID') Then
-				If GetDistance($agents[$i], $party[$j]) < 5000 Then ;~ distance 5000 is equal to compass map range, beyond that can't target
+		Local $targetID = DllStructGetData(GetTarget($agent), 'ID')
+		Local $team = DllStructGetData($agent, 'Team')
+		For $member In $party
+			If $targetID == DllStructGetData($member, 'ID') Then
+				If GetDistance($agent, $member) < 5000 Then ; distance 5000 is equal to compass map range, beyond that can't target
 					If $team <> 0 Then
-						If $team <> DllStructGetData($party[$j], 'Team') Then
-							$resultLevels[$i] += 1 ;~ agent from different team targeting party member
+						If $team <> DllStructGetData($member, 'Team') Then
+							$resultLevels[$i] += 1 ; agent from different team targeting party member
 						EndIf
-					ElseIf $allegiance <> DllStructGetData($party[$j], 'Allegiance') Then
-						$resultLevels[$i] += 1 ;~ agent from different allegiance targeting party member
+					ElseIf $allegiance <> DllStructGetData($member, 'Allegiance') Then
+						$resultLevels[$i] += 1 ; agent from different allegiance targeting party member
 					EndIf
 				EndIf
 			EndIf
