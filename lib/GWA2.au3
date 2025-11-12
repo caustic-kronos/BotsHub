@@ -3321,15 +3321,20 @@ EndFunc
 ;~ Returns array of party members
 ;~ Param: an array returned by GetAgentArray. This is totally optional, but can greatly improve script speed.
 Func GetParty($agents = Null)
-	Local $resultArray[0] ;~ dynamic 1D array of agents, indexed from 0
 	If $agents == Null Then $agents = GetAgentArray(0xDB)
-
-	For $i = 0 To UBound($agents) - 1
-		If DllStructGetData($agents[$i], 'Allegiance') <> 1 Then ContinueLoop
-		If Not BitAND(DllStructGetData($agents[$i], 'TypeMap'), 0x20000) Then ContinueLoop
-		_ArrayAdd($resultArray, $agents[$i]) ;~ addition to dynamic array with automatic resizing
+	Local $fullParty[8] ; 1D array of full party 8 members, indexed from 0
+	Local $partySize = 0
+	For $agent In $agents
+		If DllStructGetData($agent, 'Allegiance') <> 1 Then ContinueLoop
+		If Not BitAND(DllStructGetData($agent, 'TypeMap'), 0x20000) Then ContinueLoop
+		$fullParty[$partySize] = $agent
+		$partySize += 1
 	Next
-	Return $resultArray
+	Local $party[$partySize] ; 1D array of party members, indexed from 0, in case party is smaller than 8 members
+	For $i = 0 To $partySize - 1
+		$party[$i] = $fullParty[$i]
+	Next
+	Return $party
 EndFunc
 
 

@@ -1904,23 +1904,29 @@ EndFunc
 ;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
 Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
 	Local $agents = GetAgentArray(0xDB)
-	Local $returnAgents[0] ;~ dynamic 1D array of agents, indexed from 0
+	Local $allAgents[GetMaxAgents()] ; 1D array of agents, indexed from 0
+	Local $npcCount = 0
 
 	If $coordX == Null Or $coordY == Null Then
 		Local $me = GetMyAgent()
 		$coordX = DllStructGetData($me, 'X')
 		$coordY = DllStructGetData($me, 'Y')
 	EndIf
-	For $i = 0 To UBound($agents) - 1
-		If $npcAllegiance <> Null And DllStructGetData($agents[$i], 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agents[$i], 'HP') <= 0 Then ContinueLoop
-		If GetIsDead($agents[$i]) Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($agents[$i], 'TypeMap')] <> Null Then ContinueLoop	;~ It's a spirit
-		If $condition <> Null And $condition($agents[$i]) == False Then ContinueLoop
-		If $range <> Null And $range < GetDistanceToPoint($agents[$i], $coordX, $coordY) Then ContinueLoop
-		_ArrayAdd($returnAgents, $agents[$i])
+	For $agent In $agents
+		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If GetIsDead($agent) Then ContinueLoop
+		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
+		If $condition <> Null And $condition($agent) == False Then ContinueLoop
+		If $range <> Null And $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
+		$allAgents[$npcCount] = $agent
+		$npcCount += 1
 	Next
-	Return $returnAgents
+	Local $npcAgents[$npcCount] ; 1D array of npc agents, indexed from 0
+	For $i = 0 To $npcCount - 1
+		$npcAgents[$i] = $allAgents[$i]
+	Next
+	Return $npcAgents
 EndFunc
 
 
@@ -2134,17 +2140,23 @@ EndFunc
 
 ;~ Return an array of heroes in the party with a resurrection skill, indexed from 0
 Func FindHeroesWithRez()
-	Local $heroes[0]
+	Local $heroes[7] ; 1D array of all heroes, indexed from 0
+	Local $count = 0
 	For $heroNumber = 1 To GetHeroCount()
 		Local $heroID = GetHeroID($heroNumber)
 		For $skillSlot = 1 To 8
 			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
 			If IsRezSkill($skill) Then
-				_ArrayAdd($heroes, $heroNumber) ;~ addition to dynamic array with automatic resizing
+				$heroes[$count] = $heroNumber
+				$count += 1
 			EndIf
 		Next
 	Next
-	Return $heroes
+	Local $heroesWithRez[$count] ; 1D array of heroes with resurrection skill, indexed from 0
+	For $i = 0 To $count - 1
+		$heroesWithRez[$i] = $heroes[$i]
+	Next
+	Return $heroesWithRez
 EndFunc
 
 
