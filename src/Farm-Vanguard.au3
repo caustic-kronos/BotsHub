@@ -36,6 +36,7 @@ Func VanguardTitleFarm($STATUS)
 	VanguardFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToDaladaUplands()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishDaladaUplands()
 	AdlibUnRegister('TrackPartyStatus')
@@ -71,12 +72,21 @@ Func VanguardFarmSetup()
 EndFunc
 
 
+;~ Move out of outpost into Dalada Uplands
+Func GoToDaladaUplands()
+	If GetMapID() <> $ID_Doomlore_Shrine Then TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
+	Info('Moving to Dalada Uplands')
+	While GetMapID() <> $ID_Dalada_Uplands
+		MoveTo(-15231, 13608)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Dalada_Uplands, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Cleaning Dalada Uplands function
 Func VanquishDaladaUplands()
-	If GetMapID() <> $ID_Doomlore_Shrine Then Return $FAIL
-	MoveTo(-15231, 13608)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Dalada_Uplands, 10000, 2000)
+	If GetMapID() <> $ID_Dalada_Uplands Then Return $FAIL
 
 	GoToNPC(GetNearestNPCToCoords(-14939, 11018))
 	Sleep(1000)

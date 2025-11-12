@@ -98,8 +98,9 @@ EndFunc
 
 ;~ Move out of outpost into Mount Qinkai
 Func GoToMountQinkai()
-	Info('Moving to Mount Qinkai')
+	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Mount_Qinkai
+		Info('Moving to Mount Qinkai')
 		MoveTo(-4268, 11628)
 		MoveTo(-5300, 13300)
 		Move(-5493, 13712)

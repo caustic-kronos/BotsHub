@@ -61,6 +61,7 @@ Func PongmeiChestFarm($STATUS)
 	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToPongmeiValley()
 	Local $result = PongmeiChestFarmLoop($STATUS)
 	ReturnBackToOutpost($ID_Boreas_Seabed)
 	Return $result
@@ -87,16 +88,24 @@ Func SetupPongmeiFarm()
 EndFunc
 
 
+;~ Move out of outpost into Pongmei Valley
+Func GoToPongmeiValley()
+	If GetMapID() <> $ID_Boreas_Seabed Then TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Pongmei_Valley
+		Info('Moving to Pongmei Valley')
+		MoveTo(-25366, 1524)
+		MoveTo(-26000, 2400)
+		Move(-26200, 2800)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Pongmei Chest farm loop
 Func PongmeiChestFarmLoop($STATUS)
-	If GetMapID() <> $ID_Boreas_Seabed Then Return $FAIL
+	If GetMapID() <> $ID_Pongmei_Valley Then Return $FAIL
 	Info('Starting chest farm run')
-
-	MoveTo(-25366, 1524)
-	MoveTo(-26000, 2400)
-	Move(-26200, 2800)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)
 
 	Local $openedChests = 0
 

@@ -66,6 +66,7 @@ Func MantidsFarm($STATUS)
 	If Not $MANTIDS_FARM_SETUP Then SetupMantidsFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToWajjunBazaar()
 	Local $result = MantidsFarmLoop()
 	ReturnBackToOutpost($ID_Nahpui_Quarter)
 	Return $result
@@ -84,11 +85,7 @@ Func SetupMantidsFarm()
 	LoadSkillTemplate($MantidsHeroSkillbar, 1)
 	DisableAllHeroSkills(1)
 
-	Info('Entering Wajjun Bazaar')
-	MoveTo(-22000, 12500)
-	Move(-21750, 14500)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+	GoToWajjunBazaar()
 	MoveTo(9100, -19600)
 	Move(9100, -20500)
 	RandomSleep(1000)
@@ -98,15 +95,25 @@ Func SetupMantidsFarm()
 EndFunc
 
 
+;~ Move out of outpost into Wajjun Bazaar
+Func GoToWajjunBazaar()
+	If GetMapID() <> $ID_Nahpui_Quarter Then TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Wajjun_Bazaar
+		Info('Moving to Wajjun Bazaar')
+		;If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)
+		MoveTo(-22000, 12500)
+		Move(-21750, 14500)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Mantids farm loop
 Func MantidsFarmLoop()
-	If GetMapID() <> $ID_Nahpui_Quarter Then Return $FAIL
-	Info('Entering Wajjun Bazaar')
+	If GetMapID() <> $ID_Wajjun_Bazaar Then Return $FAIL
 	Local $target
-	If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)
-	Move(-21750, 14500)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+
 	UseHeroSkill(1, $Mantids_VocalWasSogolon)
 	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_Incoming)

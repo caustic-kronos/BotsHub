@@ -95,8 +95,9 @@ EndFunc
 
 ;~ Move out of outpost into Ferndale
 Func GoToFerndale()
-	Info('Moving to Ferndale')
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Ferndale
+		Info('Moving to Ferndale')
 		MoveTo(7810, -726)
 		MoveTo(10042, -1173)
 		Move(10446, -1147)

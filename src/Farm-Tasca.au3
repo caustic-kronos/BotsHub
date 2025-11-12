@@ -61,6 +61,7 @@ Func TascaChestFarm($STATUS)
 	If Not $TASCA_FARM_SETUP Then SetupTascaFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToTascasDemise()
 	Local $result = TascaChestFarmLoop($STATUS)
 	ReturnBackToOutpost($ID_The_Granite_Citadel)
 	Return $result
@@ -76,11 +77,7 @@ Func SetupTascaFarm()
 	;LoadSkillTemplate($TascaChestRunnerSkillbar)
 	SwitchToHardModeIfEnabled()
 
-	Info('Entering Tasca''s Demise')
-	MoveTo(-10000, 18875)
-	Move(-9250, 19850)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Tascas_Demise, 10000, 1000)
+	GoToTascasDemise()
 	MoveTo(-9250, 19850)
 	Move(-10000, 18875)
 	RandomSleep(1000)
@@ -90,13 +87,22 @@ Func SetupTascaFarm()
 EndFunc
 
 
+;~ Move out of outpost into Tasca's Demise
+Func GoToTascasDemise()
+	If GetMapID() <> $ID_The_Granite_Citadel Then TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Tascas_Demise
+		Info('Moving to Tasca''s Demise')
+		MoveTo(-10000, 18875)
+		Move(-9250, 19850)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Tascas_Demise, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Tasca Chest farm loop
 Func TascaChestFarmLoop($STATUS)
-	If GetMapID() <> $ID_The_Granite_Citadel Then Return $FAIL
-	MoveTo(-10000, 18875)
-	Move(-9250, 19850)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Tascas_Demise, 10000, 1000)
+	If GetMapID() <> $ID_Tascas_Demise Then Return $FAIL
 
 	Info('Starting chest run')
 	UseConsumable($ID_Birthday_Cupcake, True)

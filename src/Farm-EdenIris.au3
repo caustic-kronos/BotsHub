@@ -39,6 +39,7 @@ Func EdenIrisFarm($STATUS)
 	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToLakesideCounty()
 	Local $result = EdenIrisFarmLoop()
 	ReturnBackToOutpost($ID_Ashford_Abbey)
 	Return $result
@@ -49,10 +50,7 @@ EndFunc
 Func SetupEdenIrisFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
-	MoveTo(-11600, -6250)
-	Move(-11000, -6250)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	GoToLakesideCounty()
 	MoveTo(-11000, -6250)
 	Move(-11600, -6250)
 	RandomSleep(1000)
@@ -61,12 +59,23 @@ Func SetupEdenIrisFarm()
 	Info('Preparations complete')
 EndFunc
 
+
+;~ Move out of outpost into Lakeside County
+Func GoToLakesideCounty()
+	If GetMapID() <> $ID_Ashford_Abbey Then TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Lakeside_County
+		Info('Moving to Lakeside County')
+		MoveTo(-11600, -6250)
+		Move(-11000, -6250)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Farm loop
 Func EdenIrisFarmLoop()
-	If GetMapID() <> $ID_Ashford_Abbey Then Return $FAIL
-	Move(-11000, -6250)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	If GetMapID() <> $ID_Lakeside_County Then Return $FAIL
 	If PickUpIris() Then Return $SUCCESS
 	Moveto(-11000, -7850)
 	If PickUpIris() Then Return $SUCCESS
@@ -76,6 +85,7 @@ Func EdenIrisFarmLoop()
 	If PickUpIris() Then Return $SUCCESS
 	Return $FAIL
 EndFunc
+
 
 ;~ Loot only iris, return True if collected, False otherwise
 Func PickUpIris()

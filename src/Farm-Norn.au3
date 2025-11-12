@@ -36,6 +36,7 @@ Func NornTitleFarm($STATUS)
 	NornTitleFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToVarajarFells()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishVarajarFells()
 	AdlibUnRegister('TrackPartyStatus')
@@ -71,13 +72,23 @@ Func NornTitleFarmSetup()
 EndFunc
 
 
+;~ Move out of outpost into the Varajar Fells
+Func GoToVarajarFells()
+	If GetMapID() <> $ID_Olafstead Then TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Varajar_Fells
+		Info('Moving to the Varajar Fells')
+		MoveTo(222, 756)
+		MoveTo(-1435, 1217)
+		RandomSleep(5000)
+		WaitMapLoading($ID_Varajar_Fells, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Cleaning Varajar Fells function
 Func VanquishVarajarFells()
-	If GetMapID() <> $ID_Olafstead Then Return $FAIL
-	MoveTo(222, 756)
-	MoveTo(-1435, 1217)
-	RandomSleep(5000)
-	WaitMapLoading($ID_Varajar_Fells, 10000, 2000)
+	If GetMapID() <> $ID_Varajar_Fells Then Return $FAIL
+
 	MoveTo(-2484, 118)
 	MoveTo(-3059, -419)
 	MoveTo(-3301, -2008)

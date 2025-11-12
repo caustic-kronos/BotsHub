@@ -62,6 +62,7 @@ Func FeathersFarm($STATUS)
 	If Not $FEATHERS_FARM_SETUP Then SetupFeathersFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToJayaBluffs()
 	Local $result = FeathersFarmLoop()
 	ReturnBackToOutpost($ID_Seitung_Harbor)
 	Return $result
@@ -83,10 +84,7 @@ Func SetupFeathersFarm()
 	If GetDistanceToPoint($me, 17300, 17300) > 4400 Then MoveTo(19000, 13450)
 	If GetDistanceToPoint($me, 17300, 17300) > 1800 Then MoveTo(18750, 16000)
 
-	MoveTo(17300, 17300)
-	Move(16800, 17550)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
+	GoToJayaBluffs()
 	Move(10500, -13100)
 	Move(10970, -13360)
 	RandomSleep(1000)
@@ -96,14 +94,22 @@ Func SetupFeathersFarm()
 EndFunc
 
 
+;~ Move out of outpost into Jaya Bluffs
+Func GoToJayaBluffs()
+	If GetMapID() <> $ID_Seitung_Harbor Then TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Jaya_Bluffs
+		Info('Moving to Jaya Bluffs')
+		MoveTo(17300, 17300)
+		Move(16800, 17550)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Farm loop
 Func FeathersFarmLoop()
-	If GetMapID() <> $ID_Seitung_Harbor Then Return $FAIL
-	Info('Entering Jaya Bluffs')
-	MoveTo(17300, 17300)
-	Move(16800, 17550)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
+	If GetMapID() <> $ID_Jaya_Bluffs Then Return $FAIL
 
 	Info('Running to Sensali.')
 	UseConsumable($ID_Birthday_Cupcake)

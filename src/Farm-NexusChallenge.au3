@@ -35,16 +35,26 @@ Func NexusChallengeFarm($STATUS)
 	NexusChallengeSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	EnterNexusChallengeMission()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
+	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
 	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
+
 Func NexusChallengeSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Nexus Then
+		TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	Else ; resigning to return to outpost in case when player is in Nexus Challenge that has the same map ID as Nexus outpost (555)
+		Resign()
+		Sleep(4000)
+		ReturnToOutpost()
+		Sleep(6000)
+	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
 	;LeaveParty()
@@ -58,18 +68,29 @@ Func NexusChallengeSetup()
 	Info('Preparations complete')
 EndFunc
 
-;~ Cleaning NexusChallenges function
+
+Func EnterNexusChallengeMission()
+	If GetMapID() <> $ID_Nexus Then TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is hard to tell if player left the outpost
+	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
+	Local Static $StartX = -391
+	Local Static $StartY = -335
+	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+		Info('Entering Nexus mission')
+		; Lance la quête
+		MoveTo(-2218, -5033)
+		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
+		Notice('Talking to NPC')
+		Sleep(1000)
+		Dialog(0x88)
+		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
+	WEnd
+EndFunc
+
+
+;~ Cleaning Nexus challenge function
 Func NexusChallenge()
 	If GetMapID() <> $ID_Nexus Then Return $FAIL
-	; Lance la quête
-	MoveTo(-2218, -5033)
-	GoToNPC(GetNearestNPCToCoords(-2218, -5033))
-	Notice('Talking to NPC')
-	Sleep(1000)
-	Dialog(0x88)
-	Sleep(1000)
-	RandomSleep(4000)
-	WaitMapLoading($ID_Nexus, 10000, 2000)
 	Sleep(50000)
 
 	; Sinon on fait les 5 groupes

@@ -64,6 +64,7 @@ Func CorsairsFarm($STATUS)
 	If Not $CORSAIRS_FARM_SETUP Then SetupCorsairsFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()
 	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
 	Return $result
@@ -73,7 +74,14 @@ EndFunc
 ;~ Corsairs farm setup
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Moddok_Crevice Then
+		TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+	Else ; resigning to return to outpost in case when player is in Moddok Crevice mission that has the same map ID as Moddok Crevice outpost (427)
+		Resign()
+		Sleep(4000)
+		ReturnToOutpost()
+		Sleep(6000)
+	EndIf
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	AddHero($ID_Dunkoro)
@@ -88,15 +96,26 @@ Func SetupCorsairsFarm()
 EndFunc
 
 
+Func EnterCorsairsModdokCreviceMission()
+	If GetMapID() <> $ID_Moddok_Crevice Then TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+	; Unfortunately Moddok Crevice mission map has the same map ID as Moddok Crevice outpost, so it is hard to tell if player left the outpost
+	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
+	Local Static $StartX = -11468
+	Local Static $StartY = -7267
+	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+		Info('Entering Moddok Crevice mission')
+		GoToNPC(GetNearestNPCToCoords(-13875, -12800))
+		RandomSleep(250)
+		Dialog(0x84)
+		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
+	WEnd
+EndFunc
+
+
 ;~ Farm loop
 Func CorsairsFarmLoop()
 	If GetMapID() <> $ID_Moddok_Crevice Then Return $FAIL
-	Info('Entering mission')
-	GoToNPC(GetNearestNPCToCoords(-13875, -12800))
-	RandomSleep(250)
-	Dialog(0x00000084)
-	RandomSleep(500)
-	WaitMapLoading($ID_Moddok_Crevice)
+
 	UseSkillEx($Corsairs_DwarvenStability)
 	RandomSleep(100)
 	UseSkillEx($Corsairs_WhirlingDefense)
@@ -138,7 +157,7 @@ Func CorsairsFarmLoop()
 	MoveTo(-9730,-7350, 0)
 	GoNPC($Captain_Bohseda)
 	RandomSleep(1000)
-	Dialog(0x00000085)
+	Dialog(0x85)
 	RandomSleep(1000)
 
 	While IsRecharged($Corsairs_WhirlingDefense) And IsPlayerAlive()

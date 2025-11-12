@@ -89,10 +89,11 @@ Func LightbringerFarmSetup()
 EndFunc
 
 
-;~ Move out of city into the Sulfurous Wastes
+;~ Move out of outpost into the Sulfurous Wastes
 Func GoToTheSulfurousWastes()
-	Info('Moving to the Sulfurous Wastes')
+	If GetMapID() <> $ID_Remains_of_Sahlahja Then TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	While GetMapID() <> $ID_The_Sulfurous_Wastes
+		Info('Moving to the Sulfurous Wastes')
 		MoveTo(1527, -4114)
 		Move(1970, -4353)
 		RandomSleep(1000)

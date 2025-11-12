@@ -70,6 +70,7 @@ Func JadeBrotherhoodFarm($STATUS)
 	If Not $JADE_BROTHERHOOD_FARM_SETUP Then SetupJadeBrotherhoodFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToBukdekByway()
 	Local $result = JadeBrotherhoodFarmLoop()
 	ReturnBackToOutpost($ID_The_Marketplace)
 	Return $result
@@ -87,11 +88,7 @@ Func SetupJadeBrotherhoodFarm()
 	LoadSkillTemplate($JB_Hero_Skillbar, 1)
 	DisableAllHeroSkills(1)
 
-	MoveTo(16106, 18497)
-	MoveTo(16500, 19400)
-	Move(16551, 19860)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Bukdek_Byway)
+	GoToBukdekByway()
 	RandomSleep(50)
 	UseHeroSkill(1, $Brotherhood_Incoming)
 	MoveTo(-14000, -11000)
@@ -103,16 +100,28 @@ Func SetupJadeBrotherhoodFarm()
 EndFunc
 
 
+;~ Move out of outpost into Bukdek Byway
+Func GoToBukdekByway()
+	If GetMapID() <> $ID_The_Marketplace Then TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
+	If GetQuestByID(0x1C9) <> Null Then
+		Info('Abandoning quest')
+		AbandonQuest(0x1C9)
+	EndIf
+	While GetMapID() <> $ID_Bukdek_Byway
+		Info('Moving to Bukdek Byway')
+		MoveTo(16106, 18497)
+		MoveTo(16500, 19400)
+		Move(16551, 19860)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Bukdek_Byway)
+	WEnd
+EndFunc
+
+
 ;~ Jade Brotherhood farm loop
 Func JadeBrotherhoodFarmLoop()
-	If GetMapID() <> $ID_The_Marketplace Then Return $FAIL
-	Info('Abandonning quest')
-	AbandonQuest(0x1C9)
-	Info('Exiting to Bukdek Byway')
-	MoveTo(16500, 19400)
-	Move(16551, 19860)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Bukdek_Byway)
+	If GetMapID() <> $ID_Bukdek_Byway Then Return $FAIL
+
 	RandomSleep(50)
 	MoveToSeparationWithHero()
 	$DeadlockTimer = TimerInit()

@@ -77,6 +77,7 @@ Func KournansFarm($STATUS)
 	If Not $KOURNANS_FARM_SETUP Then SetupKournansFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToCommandPost()
 	Local $result = KournansFarmLoop()
 	ReturnBackToOutpost($ID_Sunspear_Sanctuary)
 	Return $result
@@ -105,12 +106,7 @@ Func SetupKournansFarm()
 	DisableAllHeroSkills(2)
 
 	RandomSleep(50)
-	Info('Entering Command Post')
-	MoveTo(-1500, 2000)
-	MoveTo(-600, 3700)
-	Move(0, 5000)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Command_Post, 10000, 2000)
+	GoToCommandPost()
 	MoveTo(-200, 4350)
 	Move(-500, 3500)
 	RandomSleep(1000)
@@ -120,16 +116,28 @@ Func SetupKournansFarm()
 EndFunc
 
 
+;~ Move out of outpost into Command Post
+Func GoToCommandPost()
+	If GetMapID() <> $ID_Sunspear_Sanctuary Then TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
+	If GetQuestByID(0x23E) <> Null Then
+		Info('Abandoning quest')
+		AbandonQuest(0x23E)
+	EndIf
+	While GetMapID() <> $ID_Command_Post
+		Info('Moving to Command Post')
+		MoveTo(-1500, 2000)
+		MoveTo(-600, 3700)
+		Move(0, 5000)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Command_Post, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Kournans farm loop
 Func KournansFarmLoop()
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then Return $FAIL
-	Info('Abandonning quest')
-	AbandonQuest(0x23E)
-	Info('Entering Command Post')
-	MoveTo(-600, 3700)
-	Move(0, 5000)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Command_Post, 10000, 2000)
+	If GetMapID() <> $ID_Command_Post Then Return $FAIL
+
 	MoveTo(1250, 7300)
 	TalkToMargrid()
 	MoveTo(800, 6500)

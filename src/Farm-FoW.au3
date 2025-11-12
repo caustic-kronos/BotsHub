@@ -48,6 +48,7 @@ Func FoWFarm($STATUS)
 	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	EnterFissureOfWoe()
 	Local $result = FoWFarmLoop()
 	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	Return $result
@@ -60,7 +61,13 @@ Func SetupFoWFarm()
 	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	; Make party
 	SwitchToHardModeIfEnabled()
-	Info('Making way to Balthazar statue')
+	$FOW_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func EnterFissureOfWoe()
+	Info('Making way to Balthazar statue to enter Fissure of Woe')
 	MoveTo(-2500, 18700)
 	SendChat('/kneel', '')
 	RandomSleep(3000)
@@ -71,8 +78,6 @@ Func SetupFoWFarm()
 	Dialog(0x86)
 	RandomSleep(GetPing() + 750)
 	WaitMapLoading($ID_Fissure_of_Woe)
-	$FOW_FARM_SETUP = True
-	Info('Preparations complete')
 EndFunc
 
 

@@ -37,6 +37,7 @@ Func LightbringerFarm2($STATUS)
 	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToMirrorOfLyss()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
@@ -68,12 +69,7 @@ Func Lightbringer2FarmSetup()
 	;RandomSleep(500)
 	;AddHero($ID_Xandra)
 	;RandomSleep(500)
-	MoveTo(-2186, -1916)
-	MoveTo(-3811, 1177)
-	MoveTo(-953, 4199)
-	MoveTo(-850, 4700)
-	RandomSleep(5000)
-	WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
+	GoToMirrorOfLyss()
 	MoveTo(-19350, -16900)
 	RandomSleep(5000)
 	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
@@ -82,14 +78,26 @@ Func Lightbringer2FarmSetup()
 EndFunc
 
 
+;~ Move out of outpost into Mirror of Lyss
+Func GoToMirrorOfLyss()
+	If GetMapID() <> $ID_Kodash_Bazaar Then TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Mirror_of_Lyss
+		Info('Moving to Mirror of Lyss')
+		MoveTo(-2186, -1916)
+		MoveTo(-3811, 1177)
+		MoveTo(-953, 4199)
+		MoveTo(-850, 4700)
+		RandomSleep(5000)
+		WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Cleaning Lightbringers function
 Func FarmMirrorOfLyss()
-	If GetMapID() <> $ID_Kodash_Bazaar Then Return $FAIL
-	MoveTo(-850, 4700)
-	RandomSleep(5000)
-	WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
-	MoveTo(-19296, -14111)
+	If GetMapID() <> $ID_Mirror_of_Lyss Then Return $FAIL
 
+	MoveTo(-19296, -14111)
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-20867, -13147))
 	RandomSleep(1000)

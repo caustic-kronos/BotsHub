@@ -43,6 +43,7 @@ Func VoltaicFarm($STATUS)
 	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToVerdantCascades()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VoltaicFarmLoop()
 	; Local $timer = TimerInit()
@@ -62,15 +63,23 @@ Func SetupVoltaicFarm()
 EndFunc
 
 
+;~ Move out of outpost into Verdant Cascades
+Func GoToVerdantCascades()
+	If GetMapID() <> $ID_Umbral_Grotto Then TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Verdant_Cascades
+		Info('Moving to Verdant Cascades')
+		MoveTo(-23200, 7100)
+		Move(-22735, 6339)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Verdant_Cascades, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Farm loop
 Func VoltaicFarmLoop()
-	If GetMapID() <> $ID_Umbral_Grotto Then Return $FAIL
+	If GetMapID() <> $ID_Verdant_Cascades Then Return $FAIL
 	ResetFailuresCounter()
-	Info('Making way to portal')
-	MoveTo(-23200, 7100)
-	Move(-22735, 6339)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Verdant_Cascades)
 
 	MoveAggroAndKillInRange(-19887, 6074, '1', $VSAggroRange)
 	Info('Making way to Slavers')

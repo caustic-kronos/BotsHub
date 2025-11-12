@@ -151,8 +151,7 @@ Global Const $ID_Isle_Of_Wurms				= 530
 Global Const $ID_Corrupted_Isle				= 537
 Global Const $ID_Isle_Of_Solitude			= 538
 Global Const $ID_Remains_of_Sahlahja		= 545
-Global Const $ID_Dajkah_Inlet_Outpost		= 554
-Global Const $ID_Dajkah_Inlet_Mission		= 554
+Global Const $ID_Dajkah_Inlet				= 554
 Global Const $ID_Nexus						= 555
 ; EotN
 Global Const $ID_Bjora_Marches				= 482
@@ -188,7 +187,7 @@ Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_As
 											$ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, $ID_Kaineng_A_Chance_Encounter, _
 											$ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, $ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, _
 											$ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, $ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, _
-											$ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet_Outpost, $ID_Dajkah_Inlet_Mission, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Riven_Earth, $ID_Jaga_Moraine, _
+											$ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Riven_Earth, $ID_Jaga_Moraine, _
 											$ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
 											$ID_Bogroot_lvl1, $ID_Bogroot_lvl2, $ID_Vloxs_Fall, $ID_Gadds_Camp, $ID_Umbral_Grotto, $ID_Rata_Sum, $ID_Eye_of_the_North, $ID_Olafstead, $ID_Hall_of_Monuments, _
 											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge]
@@ -200,7 +199,7 @@ Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford A
 											'Isle Of Jade', 'Leviathan Pits', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
 											'Kaineng A Chance Encounter', 'Sunward Marches', 'Sunspear Sanctuary', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', 'Jokos Domain', _
 											'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
-											'Remains of Sahlahja', 'Dajkah Inlet Outpost', 'Dajkah Inlet Mission', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', _
+											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', _
 											'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', 'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', _
 											'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', 'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge']
 

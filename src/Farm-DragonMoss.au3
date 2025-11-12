@@ -56,6 +56,7 @@ Func DragonMossFarm($STATUS)
 	If Not $DM_FARM_SETUP Then SetupDragonMossFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToDrazachThicket()
 	Local $result = DragonMossFarmLoop()
 	ReturnBackToOutpost($ID_Saint_Anjekas_Shrine)
 	Return $result
@@ -69,11 +70,7 @@ Func SetupDragonMossFarm()
 	SwitchMode($ID_HARD_MODE)
 	LeaveParty()
 	LoadSkillTemplate($RADragonMossFarmerSkillbar)
-	Info('Entering Drazach Thicket')
-	MoveTo(-11400, -22650)
-	Move(-11000, -24000)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
+	GoToDrazachThicket()
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
 	RandomSleep(1000)
@@ -83,14 +80,23 @@ Func SetupDragonMossFarm()
 EndFunc
 
 
+;~ Move out of outpost into Drazach Thicket
+Func GoToDrazachThicket()
+	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Drazach_Thicket
+		Info('Moving to Drazach Thicket')
+		MoveTo(-11400, -22650)
+		Move(-11000, -24000)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
+	WEnd
+EndFunc
+
+
 ;~ Farm loop
 Func DragonMossFarmLoop()
-	If GetMapID() <> $ID_Moddok_Crevice Then Return $FAIL
-	Info('Entering Drazach Thicket')
-	MoveTo(-11400, -22650)
-	Move(-11000, -24000)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
+	If GetMapID() <> $ID_Drazach_Thicket Then Return $FAIL
+
 	UseSkillEx($DM_DwarvenStability)
 	RandomSleep(50)
 	UseSkillEx($DM_StormChaser)

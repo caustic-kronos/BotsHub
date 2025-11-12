@@ -85,6 +85,7 @@ Func RaptorFarm($STATUS)
 	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	GoToRivenEarth()
 	Local $result = RaptorsFarmLoop()
 	ReturnBackToOutpost($ID_Rata_Sum)
 	Return $result
@@ -101,10 +102,7 @@ Func SetupRaptorFarm()
 	LoadSkillTemplate($WNRaptorFarmerSkillbar)
 	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
 	DisableAllHeroSkills(1)
-	MoveTo(19700, 16800)
-	Move(20084, 16854)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
+	GoToRivenEarth()
 	MoveTo(-25800, -4150)
 	Move(-26309, -4112)
 	RandomSleep(1000)
@@ -114,14 +112,23 @@ Func SetupRaptorFarm()
 EndFunc
 
 
+;~ Move out of outpost into Riven Earth
+Func GoToRivenEarth()
+	If GetMapID() <> $ID_Rata_Sum Then TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Riven_Earth
+		Info('Moving to Riven Earth')
+		MoveTo(19700, 16800)
+		Move(20084, 16854)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Riven_Earth, 10000, 2000)
+	WEnd
+EndFunc
+
+
 ;~ Farm loop
 Func RaptorsFarmLoop()
-	If GetMapID() <> $ID_Rata_Sum Then Return $FAIL
-	Info('Exiting to Riven Earth')
-	MoveTo(19700, 16800)
-	Move(20084, 16854)
-	RandomSleep(1000)
-	WaitMapLoading($ID_Riven_Earth, 10000, 2000)
+	If GetMapID() <> $ID_Riven_Earth Then Return $FAIL
+
 	UseHeroSkill(1, $Raptors_VocalWasSogolon)
 	RandomSleep(1200)
 	UseHeroSkill(1, $Raptors_Incoming)

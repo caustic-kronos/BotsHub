@@ -37,19 +37,27 @@ Func SunspearArmorFarm($STATUS)
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	EnterSunspearArmorMission()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = SunspearArmorClean()
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
-	TravelToOutpost($ID_Dajkah_Inlet_Outpost, $DISTRICT_NAME)
+	TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
 
 Func SunspearArmorSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Dajkah_Inlet_Outpost, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Dajkah_Inlet Then
+		TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	Else ; resigning to return to outpost in case when player is in Dajkah Inlet Challenge that has the same map ID as Dajkah Inlet outpost (554)
+		Resign()
+		Sleep(4000)
+		ReturnToOutpost()
+		Sleep(6000)
+	EndIf
 	SwitchToHardModeIfEnabled()
 	;LeaveParty()
 	;RandomSleep(500)
@@ -72,14 +80,25 @@ Func SunspearArmorSetup()
 EndFunc
 
 
+Func EnterSunspearArmorMission()
+	If GetMapID() <> $ID_Dajkah_Inlet Then TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	Info('Entering Dajkah Inlet mission')
+	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is hard to tell if player left the outpost
+	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map
+	Local Static $StartX = 29886
+	Local Static $StartY = -3956
+	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
+		RandomSleep(250)
+		Dialog(0x87)
+		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
+	WEnd
+EndFunc
+
+
 ;~ Cleaning Sunspear Armors function
 Func SunspearArmorClean()
-	If GetMapID() <> $ID_Dajkah_Inlet_Outpost Then Return $FAIL
-	GoToNPC(GetNearestNPCToCoords(-2884, -2572))
-	RandomSleep(250)
-	Dialog(0x00000087)
-	RandomSleep(500)
-	WaitMapLoading($ID_Dajkah_Inlet_Mission, 10000, 2000)
+	If GetMapID() <> $ID_Dajkah_Inlet Then Return $FAIL
 	MoveTo(25752.28, -3139.02)
 	RandomSleep(62000)
 	If MoveAggroAndKill(22595, -484) == $FAIL Or _
