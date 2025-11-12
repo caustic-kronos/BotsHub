@@ -48,7 +48,6 @@ Global Const $WAR_SUPPLY_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_WAR_SUPPLY_FARM_DURATION = 16 * 60 * 1000
 Global $WarSupplyFarmTimer = Null
 Global $WARSUPPLY_FARM_SETUP = False
-Global $AuspiciousBeginningsMapID = 849
 
 Global Const $KeiranSniperShot 			= 1 ; number of Keiran's Sniper Shot skill on Keiran's skillbar
 Global Const $KeiranGravestoneMarker 	= 2 ; number of Gravestone Marker skill on Keiran's skillbar
@@ -165,13 +164,13 @@ Func EnterAuspiciousBeginningsQuest()
 	GoToNPC($scryingPool)
 	RandomSleep(1000)
 	Dialog($questDialogID)
-	WaitMapLoading($AuspiciousBeginningsMapID, 15000, 7000)
-	Return GetMapID() == $AuspiciousBeginningsMapID ? $SUCCESS : $FAIL
+	WaitMapLoading($ID_Auspicious_Beginnings, 15000, 7000)
+	Return GetMapID() == $ID_Auspicious_Beginnings ? $SUCCESS : $FAIL
 EndFunc
 
 
 Func RunQuest()
-	If GetMapID() <> $AuspiciousBeginningsMapID Then Return $FAIL
+	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
 	Info('Running Auspicious Beginnings quest ')
 	RandomSleep(1000)
 	$WarSupplyFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
@@ -233,7 +232,7 @@ Func RunWayPoints()
  	Info("Running through way points")
 	Local $x, $y, $log, $range
 	For $i = 0 To UBound($wayPoints) - 1
-		;If GetMapLoading() == 2 Or (GetMapID() <> $AuspiciousBeginningsMapID And GetMapID() <> $ID_Hall_of_Monuments) Then Disconnected()
+		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_Auspicious_Beginnings And GetMapID() <> $ID_Hall_of_Monuments) Then Disconnected()
 		$x = $wayPoints[$i][0]
 		$y = $wayPoints[$i][1]
 		$log = $wayPoints[$i][2]
@@ -242,7 +241,7 @@ Func RunWayPoints()
 		If $i == 9 Or $i == 10 Then Sleep(3000) ; wait for pre forest group to clear it because not clearing it can result in fail by Miku pulling this group into forest (2-3 groups at once)
 		While IsPlayerAlive() ; Between waypoints ensure that everything is fine with player and Miku
 			If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
-			If GetMapID() <> $AuspiciousBeginningsMapID Then ExitLoop
+			If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
 			Local $me = GetMyAgent()
 			Local $Miku = GetAgentByID($AgentID_Miku)
 			If DllStructGetData($Miku, 'X') == 0 And DllStructGetData($Miku, 'Y') == 0 Then Return $FAIL ; check against some impossible scenarios
@@ -266,30 +265,8 @@ EndFunc
 Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 	Info('Fighting')
 	If(IsPLayerDead()) Then Return $FAIL
-	If GetMapID() <> $AuspiciousBeginningsMapID Then Return $FAIL
+	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
 	If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
-
-	; dangerous AoE skills that can be used by foes in Auspicious Beginnings quest
-	Local Static $MeteorShower 		= 192
-	Local Static $FireStorm 		= 197
-	Local Static $RayOfJudgement 	= 830
-	Local Static $UnsteadyGround 	= 1083
-	Local Static $SandStorm 		= 1372
-	Local Static $SavannahHeat 		= 1380
-
-	; other easy to interrupt, important skills that can be used by foes in Auspicious Beginnings quest
-	Local Static $HealingSignet 		= 1
-	Local Static $ResurrectionSignet 	= 2
-	Local Static $Empathy 				= 26
-	Local Static $AnimateBoneMinions 	= 85
-	;Local Static $DeathNova 			= 104
-	Local Static $Vengeance 			= 315
-	Local Static $TrollUnguent 			= 446
-	Local Static $FleshOfMyFlesh 		= 791
-	Local Static $AnimateFleshGolem 	= 832
-	Local Static $ResurrectionChant 	= 1128
-	Local Static $RenewLife 			= 1263
-	Local Static $SignetOfReturn 		= 1778
 
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : 1200
 	Local $priorityMobs = ($options.Item('priorityMobs') <> Null) ? $options.Item('priorityMobs') : True
@@ -300,7 +277,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 	Local $target = Null
 
 	While IsPlayerAlive()
-		If GetMapID() <> $AuspiciousBeginningsMapID Then ExitLoop
+		If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
 		If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 		; refreshing/sampling all agents state at the start of every loop iteration to not operate on some old, inadequate data
 		$me = GetMyAgent()

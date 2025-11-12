@@ -178,6 +178,7 @@ Global Const $ID_Hall_of_Monuments			= 646
 Global Const $ID_Dalada_Uplands				= 647
 Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
+Global Const $ID_Auspicious_Beginnings		= 849
 
 Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, _
 											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
@@ -444,6 +445,48 @@ Global Const $ID_Norn_Title				= 0x29
 
 
 #Region Skill IDs
+; Warrior
+Global Const $ID_Healing_Signet					= 1
+Global Const $ID_To_The_Limit					= 316
+Global Const $ID_For_Great_Justice				= 343
+Global Const $ID_100_Blades						= 381
+Global Const $ID_Whirlwind_Attack				= 2107
+; Ranger
+Global Const $ID_Troll_Unguent					= 446
+Global Const $ID_Whirling_Defense				= 450
+; Monk
+Global Const $ID_Vengeance						= 315
+Global Const $ID_Ray_of_Judgement				= 830
+Global Const $ID_Resurrection_Chant				= 1128
+Global Const $ID_Renew_Life						= 1263
+; Necromancer
+Global Const $ID_Animate_Bone_Minions			= 85
+Global Const $ID_Death_Nova						= 104
+Global Const $ID_Animate_Flesh_Golem			= 832
+; Mesmer
+Global Const $ID_Empathy 						= 26
+Global Const $ID_Channeling						= 38
+Global Const $ID_Arcane_Echo					= 75
+Global Const $ID_Wastrels_Demise				= 1335
+; Elementalist
+Global Const $ID_Meteor_Shower					= 192
+Global Const $ID_Fire_Storm						= 197
+Global Const $ID_Unsteady_Ground				= 1083
+Global Const $ID_Sand_Storm						= 1372
+Global Const $ID_Savannah_Heat					= 1380
+; Assassin
+Global Const $ID_Shadow_Refuge					= 814
+Global Const $ID_Shroud_of_Distress				= 1031
+; Ritualist
+Global Const $ID_Flesh_of_My_Flesh				= 791
+Global Const $ID_Union							= 911
+Global Const $ID_Shelter						= 982
+Global Const $ID_Soul_Twisting					= 1240
+Global Const $ID_Displacement					= 1249
+; Paragon
+Global Const $ID_Burning_Refrain				= 1576
+Global Const $ID_Signet_of_Return				= 1778
+Global Const $ID_Heroic_Refrain					= 3431
 ; Dervish
 Global Const $ID_Mirage_Cloak					= 1500
 Global Const $ID_Mystic_Vigor					= 1503
@@ -452,27 +495,8 @@ Global Const $ID_Sand_Shards					= 1510
 Global Const $ID_Mystic_Regeneration			= 1516
 Global Const $ID_Conviction						= 1540
 Global Const $ID_Heart_of_Fury					= 1762
-; Warrior
-Global Const $ID_Healing_Signet					= 1
-Global Const $ID_To_The_Limit					= 316
-Global Const $ID_For_Great_Justice				= 343
-Global Const $ID_100_Blades						= 381
-Global Const $ID_Whirlwind_Attack				= 2107
-; Mesmer
-Global Const $ID_Channeling						= 38
-Global Const $ID_Arcane_Echo					= 75
-Global Const $ID_Wastrels_Demise				= 1335
-; Assassin
-Global Const $ID_Shadow_Refuge					= 814
-Global Const $ID_Shroud_of_Distress				= 1031
-; Ritualist
-Global Const $ID_Union							= 911
-Global Const $ID_Shelter						= 982
-Global Const $ID_Soul_Twisting					= 1240
-Global Const $ID_Displacement					= 1249
-; Paragon
-Global Const $ID_Burning_Refrain				= 1576
-Global Const $ID_Heroic_Refrain					= 3431
+; Common
+Global Const $ID_Resurrection_Signet			= 2
 ; PvE
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_Mental_Block					= 2417
