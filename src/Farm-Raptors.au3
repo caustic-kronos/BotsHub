@@ -98,10 +98,8 @@ Func SetupRaptorFarm()
 	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
-	AddHero($ID_General_Morgahn)
+	SetupTeamRaptorFarm()
 	LoadSkillTemplate($WNRaptorFarmerSkillbar)
-	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
-	DisableAllHeroSkills(1)
 	GoToRivenEarth()
 	MoveTo(-25800, -4150)
 	Move(-26309, -4112)
@@ -109,6 +107,20 @@ Func SetupRaptorFarm()
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamRaptorFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	AddHero($ID_General_Morgahn)
+	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
+	DisableAllHeroSkills(1)
+	Sleep(1000)
+	If GetPartySize() <> 2 Then
+    	Warn("Could not set up party correctly. Team size different than 2")
+	EndIf
 EndFunc
 
 

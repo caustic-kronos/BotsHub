@@ -83,16 +83,29 @@ Func SetupCorsairsFarm()
 		Sleep(6000)
 	EndIf
 	SwitchMode($ID_HARD_MODE)
+	SetupTeamCorsairsFarm()
+	LoadSkillTemplate($RACorsairsFarmerSkillbar)
+	$CORSAIRS_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamCorsairsFarm()
+	Info('Setting up team')
+	Sleep(500)
 	LeaveParty()
+	Sleep(500)
 	AddHero($ID_Dunkoro)
 	AddHero($ID_Melonni)
-	LoadSkillTemplate($RACorsairsFarmerSkillbar)
+	Sleep(1000)
+	If GetPartySize() <> 3 Then
+    	Warn("Could not set up party correctly. Team size different than 3")
+		Return $FAIL
+	EndIf
 	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 1)
 	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 2)
 	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
 	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
-	$CORSAIRS_FARM_SETUP = True
-	Info('Preparations complete')
 EndFunc
 
 

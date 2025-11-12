@@ -57,6 +57,7 @@ EndFunc
 Func SetupVoltaicFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	; Assuming that team has been set up correctly manually
 	SwitchToHardModeIfEnabled()
 	$VOLTAIC_FARM_SETUP = True
 	Info('Preparations complete')

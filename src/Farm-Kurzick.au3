@@ -59,6 +59,7 @@ EndFunc
 Func KurzickFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	; Assuming that team has been set up correctly manually
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)

@@ -60,6 +60,7 @@ Func SetupFoWFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	; Make party
+	; Assuming that team has been set up correctly manually
 	SwitchToHardModeIfEnabled()
 	$FOW_FARM_SETUP = True
 	Info('Preparations complete')

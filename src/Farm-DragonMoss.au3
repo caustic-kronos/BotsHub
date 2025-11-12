@@ -68,7 +68,7 @@ Func SetupDragonMossFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveParty()
+	LeaveParty() ; solo farmer
 	LoadSkillTemplate($RADragonMossFarmerSkillbar)
 	GoToDrazachThicket()
 	MoveTo(-11100, 19700)

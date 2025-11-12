@@ -59,24 +59,35 @@ Func SunspearArmorSetup()
 		Sleep(6000)
 	EndIf
 	SwitchToHardModeIfEnabled()
-	;LeaveParty()
-	;RandomSleep(500)
-	;AddHero($ID_Norgu)
-	;RandomSleep(500)
-	;AddHero($ID_Gwen)
-	;RandomSleep(500)
-	;AddHero($ID_Razah)
-	;RandomSleep(500)
-	;AddHero($ID_Master_Of_Whispers)
-	;RandomSleep(500)
-	;AddHero($ID_Livia)
-	;RandomSleep(500)
-	;AddHero($ID_Olias)
-	;RandomSleep(500)
-	;AddHero($ID_Xandra)
-	;RandomSleep(500)
+	; Assuming that team has been set up correctly manually
+	;SetupTeamSunspearArmorFarm()
 	$SUNSPEAR_ARMOR_FARM_SETUP = True
 	Info('Setup completed')
+EndFunc
+
+
+Func SetupTeamSunspearArmorFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	RandomSleep(500)
+	AddHero($ID_Norgu)
+	RandomSleep(500)
+	AddHero($ID_Gwen)
+	RandomSleep(500)
+	AddHero($ID_Razah)
+	RandomSleep(500)
+	AddHero($ID_Master_Of_Whispers)
+	RandomSleep(500)
+	AddHero($ID_Livia)
+	RandomSleep(500)
+	AddHero($ID_Olias)
+	RandomSleep(500)
+	AddHero($ID_Xandra)
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
 EndFunc
 
 

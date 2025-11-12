@@ -57,15 +57,27 @@ Func NexusChallengeSetup()
 	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
-	;LeaveParty()
-	;RandomSleep(500)
-	;AddHero($ID_Norgu)
-	;RandomSleep(500)
-	;AddHero($ID_Xandra)
-	;RandomSleep(500)
-	;AddHero($ID_Master_Of_Whispers)
-	;RandomSleep(500)
+
+	; Assuming that team has been set up correctly manually
+	;SetupTeamNexusChallengeFarm()
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamNexusChallengeFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	RandomSleep(500)
+	AddHero($ID_Norgu)
+	RandomSleep(500)
+	AddHero($ID_Xandra)
+	RandomSleep(500)
+	AddHero($ID_Master_Of_Whispers)
+	Sleep(1000)
+	If GetPartySize() <> 4 Then
+    	Warn("Could not set up party correctly. Team size different than 4")
+	EndIf
 EndFunc
 
 

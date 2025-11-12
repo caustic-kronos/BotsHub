@@ -82,11 +82,9 @@ Func SetupJadeBrotherhoodFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveParty()
-	AddHero($ID_General_Morgahn)
+
+	SetupTeamJadeBrotherhoodFarm()
 	LoadSkillTemplate($JB_Skillbar)
-	LoadSkillTemplate($JB_Hero_Skillbar, 1)
-	DisableAllHeroSkills(1)
 
 	GoToBukdekByway()
 	RandomSleep(50)
@@ -97,6 +95,20 @@ Func SetupJadeBrotherhoodFarm()
 	WaitMapLoading($ID_The_Marketplace)
 	$JADE_BROTHERHOOD_FARM_SETUP = True
 	Info('Jade Brotherhood farm set up')
+EndFunc
+
+
+Func SetupTeamJadeBrotherhoodFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	AddHero($ID_General_Morgahn)
+	LoadSkillTemplate($JB_Hero_Skillbar, 1)
+	DisableAllHeroSkills(1)
+	Sleep(1000)
+	If GetPartySize() <> 2 Then
+    	Warn("Could not set up party correctly. Team size different than 2")
+	EndIf
 EndFunc
 
 

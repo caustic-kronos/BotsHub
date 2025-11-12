@@ -105,11 +105,32 @@ Func SetupGemstoneFarm()
 		ReturnToOutpost()
 		Sleep(6000)
 	EndIf
-	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
-	; Assuming all heroes have been set up correctly
+	SetDisplayedTitle($ID_Lightbringer_Title)
+	; Assuming that team has been set up correctly manually
+	;SetupTeamGemstoneFarm()
 	$GemstoneFarmSetup = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamGemstoneFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	Sleep(500)
+	AddHero($ID_Gwen)
+	AddHero($ID_Norgu)
+	AddHero($ID_Razah)
+	AddHero($ID_Master_Of_Whispers)
+	AddHero($ID_Olias)
+	AddHero($ID_Livia)
+	AddHero($ID_Xandra)
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+		Return $FAIL
+	EndIf
 EndFunc
 
 

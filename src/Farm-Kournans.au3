@@ -89,21 +89,9 @@ Func SetupKournansFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveParty()
-	RandomSleep(50)
-	AddHero($ID_Margrid_The_Sly)
-	RandomSleep(50)
-	AddHero($ID_Xandra)
-	RandomSleep(50)
-	AddHero($ID_General_Morgahn)
-	RandomSleep(50)
 
+	SetupTeamKournansFarm()
 	LoadSkillTemplate($ElAKournansFarmerSkillbar)
-	LoadSkillTemplate($RKournansHeroSkillbar, 1)
-	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
-	LoadSkillTemplate($PKournansHeroSkillbar, 3)
-	DisableAllHeroSkills(1)
-	DisableAllHeroSkills(2)
 
 	RandomSleep(50)
 	GoToCommandPost()
@@ -113,6 +101,29 @@ Func SetupKournansFarm()
 	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
 	$KOURNANS_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamKournansFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	RandomSleep(50)
+	AddHero($ID_Margrid_The_Sly)
+	RandomSleep(50)
+	AddHero($ID_Xandra)
+	RandomSleep(50)
+	AddHero($ID_General_Morgahn)
+	Sleep(1000)
+	If GetPartySize() <> 4 Then
+    	Warn("Could not set up party correctly. Team size different than 4")
+		Return $FAIL
+	EndIf
+	LoadSkillTemplate($RKournansHeroSkillbar, 1)
+	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
+	LoadSkillTemplate($PKournansHeroSkillbar, 3)
+	DisableAllHeroSkills(1)
+	DisableAllHeroSkills(2)
 EndFunc
 
 

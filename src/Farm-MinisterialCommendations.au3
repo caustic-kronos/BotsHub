@@ -142,10 +142,20 @@ EndFunc
 Func SetupMinisterialCommendationsFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	LeaveParty()
 
+	SetupTeamMinisterialCommendationsFarm()
 	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 
+	SwitchMode($ID_HARD_MODE)
+	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamMinisterialCommendationsFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
 	AddHero($ID_Gwen)
 	AddHero($ID_Norgu)
 	AddHero($ID_Razah)
@@ -153,10 +163,10 @@ Func SetupMinisterialCommendationsFarm()
 	AddHero($ID_ritualist_mercenary_hero)
 	AddHero($ID_Xandra)
 	AddHero($ID_Olias)
-
-	SwitchMode($ID_HARD_MODE)
-	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
-	Info('Preparations complete')
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
 EndFunc
 
 

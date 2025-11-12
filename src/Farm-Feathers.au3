@@ -74,7 +74,7 @@ Func SetupFeathersFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
-	LeaveParty()
+	LeaveParty() ; solo farmer
 	LoadSkillTemplate($DAFeathersFarmerSkillbar)
 
 	Info('Entering Jaya Bluffs')

@@ -62,8 +62,9 @@ Func RunToJagaMoraine()
 	; Need to be done here in case bot comes back from inventory management
 	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveParty()
-
+	SetDisplayedTitle($ID_Norn_Title)
+	LeaveParty() ; solo farmer
+	Info('Setting up build skillbar')
 	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
 
 	Info('Exiting Outpost')
@@ -75,8 +76,6 @@ Func RunToJagaMoraine()
 	RandomSleep(500)
 	UseConsumable($ID_Birthday_Cupcake)
 	RandomSleep(500)
-
-	SetDisplayedTitle($ID_Norn_Title)
 
 	Info('Running to Jaga Moraine')
 	Local $pathToJaga[30][2] = [ _

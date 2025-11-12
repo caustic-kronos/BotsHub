@@ -54,6 +54,7 @@ EndFunc
 Func SetupFroggyFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	; Assuming that team has been set up correctly manually
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
 	ResetFailuresCounter()

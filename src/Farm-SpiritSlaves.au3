@@ -92,8 +92,7 @@ Func SpiritSlavesFarmSetup()
 	If GetMapID() <> $ID_The_Shattered_Ravines Then
 		If TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 		SwitchMode($ID_HARD_MODE)
-		LeaveParty()
-
+		LeaveParty() ; solo farmer
 		LoadSkillTemplate($SpiritSlaves_Skillbar)
 		SetDisplayedTitle($ID_Lightbringer_Title)
 

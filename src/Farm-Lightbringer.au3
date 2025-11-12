@@ -67,6 +67,17 @@ Func LightbringerFarmSetup()
 	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
+	SetupTeamLightbringerFarm()
+	SetDisplayedTitle($ID_Lightbringer_Title)
+	SwitchMode($ID_HARD_MODE)
+	$LIGHTBRINGER_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamLightbringerFarm()
+	Info('Setting up team')
+	Sleep(500)
 	LeaveParty()
 	AddHero($ID_Melonni)
 	;AddHero($ID_MOX)
@@ -81,11 +92,10 @@ Func LightbringerFarmSetup()
 	AddHero($ID_Tahlkora)
 	;AddHero($ID_Dunkoro)
 	;AddHero($ID_Ogden)
-
-	SetDisplayedTitle($ID_Lightbringer_Title)
-	SwitchMode($ID_HARD_MODE)
-	$LIGHTBRINGER_FARM_SETUP = True
-	Info('Preparations complete')
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
 EndFunc
 
 

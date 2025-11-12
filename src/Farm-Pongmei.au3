@@ -72,6 +72,19 @@ EndFunc
 Func SetupPongmeiFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+
+	SetupTeamPongmeiChestFarm()
+	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
+
+	SwitchToHardModeIfEnabled()
+	$PONGMEI_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamPongmeiChestFarm()
+	Info('Setting up team')
+	Sleep(500)
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	AddHero($ID_Hayda)
@@ -80,11 +93,10 @@ Func SetupPongmeiFarm()
 	AddHero($ID_Tahlkora)
 	AddHero($ID_Ogden)
 	AddHero($ID_Goren)
-	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
-
-	SwitchToHardModeIfEnabled()
-	$PONGMEI_FARM_SETUP = True
-	Info('Preparations complete')
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
 EndFunc
 
 

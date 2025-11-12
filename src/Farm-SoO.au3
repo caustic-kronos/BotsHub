@@ -55,6 +55,7 @@ EndFunc
 Func SetupSoOFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	; Assuming that team has been set up correctly manually
 	SwitchToHardModeIfEnabled()
 	If RunToShardsOfOrrDungeon() == $FAIL Then Return $FAIL
 	$SOO_FARM_SETUP = True
