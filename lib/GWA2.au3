@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: gigi
-; Modified by: MrZambix, Night, and more
+; Modified by: MrZambix, Night, Gahais, and more
 #CE ===========================================================================
 
 #include-once

@@ -6,7 +6,7 @@
 #################################
 Author: Rattiev
 Based on : Vaettir Bot by gigi
-Modified by: Night
+Modified by: Night, Gahais
 #CE ===========================================================================
 
 #include-once

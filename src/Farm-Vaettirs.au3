@@ -5,7 +5,7 @@
 #								#
 #################################
 Author: gigi
-Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night
+Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night, Gahais
 #CE ===========================================================================
 
 #include-once

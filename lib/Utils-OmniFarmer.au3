@@ -1,5 +1,6 @@
 #CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -35,7 +36,7 @@ Global Const $BiP_Skill_Position = 7
 Global Const $Serpents_Quickness_Skill_Position = 6
 Global Const $Quickening_Zephyr_Skill_Position = 7
 
-; Order heros are added to the team
+; Order in which heroes are added to the team
 Global Const $Hero_Dervish_1 = 1
 Global Const $Hero_Dervish_2 = 2
 Global Const $Hero_Dervish_3 = 3
