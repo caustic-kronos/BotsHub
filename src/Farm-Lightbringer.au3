@@ -130,15 +130,50 @@ Func FarmTheSulfurousWastes()
 	ActionInteract()
 	RandomSleep(1500)
 
-	If MultipleMoveToAndAggro('First Undead Group', -800, 12000, -1700, 9800) == $FAIL Or _
-		MultipleMoveToAndAggro('Second Undead Group', -3000, 10900, -4500, 11500) == $FAIL Then Return $FAIL
+	Local Static $foes[30][3] = [ _ ; 30 groups to vanquish
+		[-800, 12000, 'First Undead Group 1'], _
+		[-1700, 9800, 'First Undead Group 2'], _
+		[-3000, 10900, 'Second Undead Group 1'], _
+		[-4500, 11500, 'Second Undead Group 2'], _
+		[-13250, 6750, 'Third Undead Group'], _
+		[-22000, 9000, 'First Margonite Group 1'], _
+		[-22350, 11100, 'First Margonite Group 2'], _
+		_ ; Skipping this group because it can bring heroes on land and make them go out of Wurm
+		_ ;[-21200, 10750, 'Second Margonite Group 1'], _
+		_ ;[-20250, 11000, 'Second Margonite Group 2'], _
+		[-19000, 5700, 'Djinn Group Group 1'], _ ; range 2200
+		[-20800, 600, 'Djinn Group Group 2'], _ ; range 2200
+		[-22000, -1200, 'Djinn Group Group 3'], _ ; range 2200
+		[-21500, -6000, 'Undead Ritualist Boss Group 1'], _
+		[-20400, -7400, 'Undead Ritualist Boss Group 2'], _
+		[-19500, -9500, 'Undead Ritualist Boss Group 3'], _
+		[-22000, -9400, 'Third Margonite Group 1'], _
+		[-22800, -9800, 'Third Margonite Group 2'], _
+		[-23000, -10600, 'Fourth Margonite Group 1'], _
+		[-23150, -12250, 'Fourth Margonite Group 2'], _
+		[-22800, -13500, 'Fifth Margonite Group 1'], _
+		[-21300, -14000, 'Fifth Margonite Group 2'], _
+		[-22800, -13500, 'Sixth Margonite Group 1'], _
+		[-23000, -10600, 'Sixth Margonite Group 2'], _
+		[-21500, -9500, 'Sixth Margonite Group 3'], _
+		[-21000, -9500, 'Seventh Margonite Group 1'], _
+		[-19500, -8500, 'Seventh Margonite Group 2'], _
+		[-22000, -9400, 'Temple Monolith Group 1'], _
+		[-23000, -10600, 'Temple Monolith Group 2'], _
+		[-22800, -13500, 'Temple Monolith Group 3'], _
+		[-19500, -13100, 'Temple Monolith Group 4'], _
+		[-18000, -13100, 'Temple Monolith Group 5'], _
+		[-18000, -13100, 'Margonite Boss Group'] _
+	]
+
+	If MoveToAndAggroGroups($foes, 1, 4) == $FAIL Then Return $FAIL
 	SpeedTeam()
 	MoveTo(-7500, 11925)
 	SpeedTeam()
 	MoveTo(-9800, 12400)
 	SpeedTeam()
 	MoveTo(-13000, 9500)
-	If MoveToAndAggro('Third Undead Group', -13250, 6750) == $FAIL Then Return $FAIL
+	If MoveToAndAggroGroups($foes, 5, 5) == $FAIL Then Return $FAIL
 
 	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
@@ -148,15 +183,7 @@ Func FarmTheSulfurousWastes()
 	Dialog(0x85)
 	RandomSleep(1000)
 
-	; Skipping this group because it can bring heroes on land and make them go out of Wurm
-	; If MultipleMoveToAndAggro('Second Margonite Group', -21200, 10750, -20250, 11000) == $FAIL Or _
-	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) == $FAIL Or _
-		MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) == $FAIL Or _ ; range 2200
-		MultipleMoveToAndAggro('Undead Ritualist Boss Group', -21500, -6000, -20400, -7400, -19500, -9500) == $FAIL Or _
-		MultipleMoveToAndAggro('Third Margonite Group', -22000, -9400, -22800, -9800) == $FAIL Or _
-		MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) == $FAIL Or _
-		MultipleMoveToAndAggro('Fifth Margonite Group', -22800, -13500, -21300, -14000) == $FAIL _
-		Then Return $FAIL
+	If MoveToAndAggroGroups($foes, 6, 19) == $FAIL Then Return $FAIL
 
 	Info('Picking Up Tome')
 	SpeedTeam()
@@ -168,10 +195,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('Sixth Margonite Group', -22800, -13500, -23000, -10600, -21500, -9500) == $FAIL Or _
-		MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) == $FAIL Or _
-		MultipleMoveToAndAggro('Temple Monolith Groups', -22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100) == $FAIL _
-		Then Return $FAIL
+	If MoveToAndAggroGroups($foes, 20, 29) == $FAIL Then Return $FAIL
 
 	Info('Spawning Margonite bosses')
 	SpeedTeam()
@@ -186,7 +210,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MoveToAndAggro('Margonite Boss Group', -18000, -13100) == $FAIL Then Return $FAIL
+	If MoveToAndAggroGroups($foes, 30, 30) == $FAIL Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
@@ -200,24 +224,28 @@ Func SpeedTeam()
 EndFunc
 
 
-;~ Move and aggro a group of mob at any number of locations (might be used optionally)
+;~ Move, aggro and vanquish groups of mobs specified in $foes array
+;~ $firstGroup and $lastGroup specify start and end of range of groups within provided array to vanquish
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func RepeatedMoveToAndAggro($foesGroup, $locations)
-	For $i = 0 To UBound($locations) - 1
+Func MoveToAndAggroGroups($foes, $firstGroup, $lastGroup)
+	If IsPlayerAndPartyWiped() Then Return $FAIL
+	If $firstGroup < 1 Or UBound($foes) < $lastGroup  Then Return $FAIL
+	If $firstGroup > $lastGroup Then Return $FAIL
+	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
 		SpeedTeam()
-		If MoveToAndAggro($foesGroup, $locations[$i][0], $locations[$i][1]) == $FAIL Then Return $FAIL
+		If MoveToAndAggro($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 	Return $SUCCESS
 EndFunc
 
 
-;~ Move and aggro a group of mob at maximally 5 locations
+;~ Optional function to move and aggro a group of mob at maximally 5 locations
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
 Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = Null, $location1y = Null, $location2x = Null, $location2y = Null, $location3x = Null, $location3y = Null, $location4x = Null, $location4y = Null)
 	For $i = 0 To 4
 		If (Eval('location' & $i & 'x') == Null) Then ExitLoop
 		SpeedTeam()
-		If MoveToAndAggro($foesGroup, Eval('location' & $i & 'x'), Eval('location' & $i & 'y')) == $FAIL Then Return $FAIL
+		If MoveToAndAggro(Eval('location' & $i & 'x'), Eval('location' & $i & 'y'), $foesGroup) == $FAIL Then Return $FAIL
 	Next
 	Return $SUCCESS
 EndFunc
@@ -225,7 +253,7 @@ EndFunc
 
 ;~ Main method for moving around and aggroing/killing mobs
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func MoveToAndAggro($foesGroup, $x, $y)
+Func MoveToAndAggro($x, $y, $foesGroup)
 	Info('Killing ' & $foesGroup)
 	Local $range = 1650
 

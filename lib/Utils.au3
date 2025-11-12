@@ -2359,6 +2359,30 @@ Func WaitAndFightEnemiesInArea($options = $Default_MoveAggroAndKill_Options)
 EndFunc
 
 
+;~ Move, aggro and vanquish groups of mobs specified in 2D $foes array
+;~ 2D $foes array should have 3 elements/columns in each row: x coordinate, y coordinate and group name.
+;~ Optionally 2D $foes array can have 4th element/column for each row: range in which group should be aggroed
+;~ $firstGroup and $lastGroup specify start and end of range of groups within provided array to vanquish
+;~ Return $FAIL if the party is dead, $SUCCESS if not
+Func MoveAggroAndKillGroups($foes, $firstGroup, $lastGroup)
+	If IsPlayerAndPartyWiped() Then Return $FAIL
+	If Not IsArray($foes) Or UBound($foes, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
+	If UBound($foes, $UBOUND_COLUMNS) <> 3 And UBound($foes, $UBOUND_COLUMNS) <> 4 Then Return $FAIL
+	If $firstGroup < 1 Or UBound($foes) < $lastGroup  Then Return $FAIL
+	If $firstGroup > $lastGroup Then Return $FAIL
+	Local $x, $y, $log, $range
+	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
+		If IsPlayerAndPartyWiped() Then Return $FAIL
+		$x = $foes[$i][0]
+		$y = $foes[$i][1]
+		$log = $foes[$i][2]
+		$range = (UBound($foes, $UBOUND_COLUMNS) == 4)? $foes[$i][3] : $AGGRO_RANGE
+		If MoveAggroAndKillInRange($x, $y, $log, $range) == $FAIL Then Return $FAIL
+	Next
+	Return $SUCCESS
+EndFunc
+
+
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
 Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $Default_FlagMoveAggroAndKill_Options)
@@ -2459,8 +2483,8 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = GetNearestEnemyToAgent($me)
-	If $target <> Null Then GetAlmostInRangeOfAgent($target) ;~ get as close as possible to foe to have surprise effect when attacking
-	If $flagHeroes Then FanFlagHeroes(260) ;~ 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
+	If $target <> Null Then GetAlmostInRangeOfAgent($target) ; get as close as possible to foe to have surprise effect when attacking
+	If $flagHeroes Then FanFlagHeroes(260) ; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 
 	While IsPlayerOrPartyAlive() And $foesCount > 0
 		If $priorityMobs Then $target = GetHighestPriorityFoe($me, $fightRange)
@@ -2472,7 +2496,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 				CallTarget($target)
 				Sleep(100)
 			EndIf
-			Attack($target) ;~ Start auto-attack on new target
+			Attack($target) ; Start auto-attack on new target
 			Sleep(100)
 
 			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
@@ -2525,7 +2549,7 @@ Func CreateMobsPriorityMap()
 	Local $Gem_Dryder 			= 5215
 	Local $Gem_Dreamer 			= 5216
 
-	;~ War Supply farm foes model ids, why so many? (o_O)
+	; War Supply farm foes model IDs, why so many? (o_O)
 	Local $WarSupply_Peacekeeper_1	= 8095
 	Local $WarSupply_Peacekeeper_2	= 8096
 	Local $WarSupply_Peacekeeper_3	= 8097

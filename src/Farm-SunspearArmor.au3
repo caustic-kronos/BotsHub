@@ -112,42 +112,51 @@ Func SunspearArmorClean()
 	If GetMapID() <> $ID_Dajkah_Inlet Then Return $FAIL
 	MoveTo(25752.28, -3139.02)
 	RandomSleep(62000)
-	If MoveAggroAndKill(22595, -484) == $FAIL Or _
-		MoveAggroAndKill(21032, 1357) == $FAIL Or _
-		MoveAggroAndKill(20006, 3631) == $FAIL Or _
-		MoveAggroAndKill(20548, 4762, 'Lord 1') == $FAIL Or _
-		MoveAggroAndKill(20834, 5205, 'Cleaning') == $FAIL Or _
-		MoveAggroAndKill(20548, 4762) == $FAIL Then Return $FAIL
-	MoveTo(18991, 3166)
+
+	Local Static $foes[33][3] = [ _ ; 23 groups to vanquish + 10 movements
+		[22595, -484, 'Moving and aggroing'], _
+		[21032, 1357, 'Moving and aggroing'], _
+		[20006, 3631, 'Moving and aggroing'], _
+		[20548, 4762, 'Lord 1'], _
+		[20834, 5205, 'Cleaning'], _
+		[20548, 4762, 'Moving and aggroing'], _
+		[18991, 3166, 'Moving'], _
+		[17809, 3999, 'Moving'], _
+		[3043, -625, 'Cleaning right downstairs'], _
+		[-459, -2790, 'Cleaning left downstairs'], _
+		[-2337, -5236, 'Moving'], _
+		[-3041, -5971, 'Cleaning left upstairs'], _
+		[-4624, -5597, 'Moving and aggroing'], _
+		[-3602, -4455, 'Lord 2'], _
+		[-4624, -5597, 'Moving and aggroing'], _
+		[-3041, -5971, 'Moving and aggroing'], _
+		[-459, -2790, 'Moving and aggroing'], _
+		[3043, -625, 'Moving and aggroing'], _
+		[4878, 2035, 'Moving'], _
+		[5258, 2388, 'Cleaning right upstairs'], _
+		[4425, 3445, 'Lord 3'], _
+		[5258, 2388, 'Moving'], _
+		[4878, 2035, 'Moving'], _
+		[-1775, 1634, 'Moving'], _
+		[-2077, 1961, 'Moving'], _
+		[-22281, -1947, 'Moving'], _
+		[-24882, -2719, 'Moving and aggroing'], _
+		[-28780, -3676, 'Lord 4'], _
+		[-24882, -2719, 'Moving and aggroing'], _
+		[-21963, 624, 'Last Lords gate'], _
+		[-20928, 3428, 'Moving and aggroing'], _
+		[-20263, 4476, 'Moving'], _
+		[-19880, 4086, 'Lord 5'] _
+	]
+
+	If MoveAggroAndKillGroups($foes, 1, 7) == $FAIL Then Return $FAIL
 	Info('Bridge 1')
-	MoveTo(17809, 3999)
+	If MoveAggroAndKillGroups($foes, 8, 8) == $FAIL Then Return $FAIL
 	Info('Bridge 2')
-	If MoveAggroAndKill(3043, -625, 'Cleaning right downstairs') == $FAIL Or _
-		MoveAggroAndKill(-459, -2790, 'Cleaning left downstairs') == $FAIL Then Return $FAIL
-	MoveTo(-2337, -5236)
-	If MoveAggroAndKill(-3041, -5971, 'Cleaning left upstairs') == $FAIL Or _
-		MoveAggroAndKill(-4624, -5597) == $FAIL Or _
-		MoveAggroAndKill(-3602, -4455, 'Lord 2') == $FAIL Or _
-		MoveAggroAndKill(-4624, -5597) == $FAIL Or _
-		MoveAggroAndKill(-3041, -5971) == $FAIL Or _
-		MoveAggroAndKill(-459, -2790) == $FAIL Or _
-		MoveAggroAndKill(3043, -625) == $FAIL Then Return $FAIL
-	MoveTo(4878, 2035)
-	If MoveAggroAndKill(5258, 2388, 'Cleaning right upstairs') == $FAIL Or _
-		MoveAggroAndKill(4425, 3445, 'Lord 3') == $FAIL Then Return $FAIL
-	MoveTo(5258, 2388)
-	MoveTo(4878, 2035)
-	MoveTo(-1775, 1634)
-	MoveTo(-2077, 1961)
+	If MoveAggroAndKillGroups($foes, 9, 25) == $FAIL Then Return $FAIL
 	Info('2nd portal')
-	MoveTo(-22281, -1947)
-	If MoveAggroAndKill(-24882, -2719) == $FAIL Or _
-		MoveAggroAndKill(-28780, -3676, 'Lord 4') == $FAIL Or _
-		MoveAggroAndKill(-24882, -2719) == $FAIL Or _
-		MoveAggroAndKill(-21963, 624, 'Last Lords gate') == $FAIL Or _
-		MoveAggroAndKill(-20928, 3428) == $FAIL Then Return $FAIL
-	MoveTo(-20263, 4476)
-	If MoveAggroAndKill(-19880, 4086, 'Lord 5') == $FAIL Then Return $FAIL
+	If MoveAggroAndKillGroups($foes, 26, 33) == $FAIL Then Return $FAIL
+
 	RandomSleep(500)
 	Return $SUCCESS
 EndFunc

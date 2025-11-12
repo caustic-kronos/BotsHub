@@ -118,7 +118,7 @@ Func FarmMirrorOfLyss()
 	MoveAggroAndKill(-10600, -12671, 'Path 2')
 	MoveAggroAndKill(-4785, -14912, 'Path 3')
 
-	Local $foes[15][3] = [ _ ; 14 groups to clear + 1 position change
+	Local Static $foes[15][3] = [ _ ; 14 groups to clear + 1 position change
 		[-2451, -15086, 'Group 1/10'], _
 		[1174, -13787, 'Plants'], _
 		[6728, -12014, 'Plants'], _
@@ -135,14 +135,8 @@ Func FarmMirrorOfLyss()
 		[12932, 6907, 'Group 9/10'], _
 		[12956, 2637, 'Group 10/10'] _
 	]
-	Local $x, $y, $log, $range
-	For $i = 0 To UBound($foes) - 1
-		$x = $foes[$i][0]
-		$y = $foes[$i][1]
-		$log = $foes[$i][2]
-		If MoveAggroAndKill($x, $y, $log) == $FAIL Then Return $FAIL
-	Next
 
+	If MoveAggroAndKillGroups($foes, 1, UBound($foes)) == $FAIL Then Return $FAIL
 	Info('Groups are destroyed, resigning and doing it again')
 	Return $SUCCESS
 EndFunc

@@ -122,7 +122,7 @@ Func VanquishFerndale()
 	Dialog(0x86)
 	RandomSleep(1000)
 
-	Local $foes[117][4] = [ _ ; 117 groups to vanquish
+	Local Static $foes[117][4] = [ _ ; 117 groups to vanquish
 		[-11733, 16729, 'Mantis Group 1', $AGGRO_RANGE], _
 		[-11942, 18468, 'Mantis Group 2', $AGGRO_RANGE], _
 		[-11178, 20073, 'Mantis Group 3', $AGGRO_RANGE], _
@@ -241,15 +241,8 @@ Func VanquishFerndale()
 		[7148, 11167, 'Dredge Patrol 55', 4000], _
 		[5427, 10834, 'Dredge Patrol 56', 2 * $RANGE_COMPASS] _
 	]
-	Local $x, $y, $log, $range
-	For $i = 0 To UBound($foes) - 1
-		$x = $foes[$i][0]
-		$y = $foes[$i][1]
-		$log = $foes[$i][2]
-		$range = $foes[$i][3]
-		If MoveAggroAndKillInRange($x, $y, $log, $range) == $FAIL Then Return $FAIL
-	Next
 
+	If MoveAggroAndKillGroups($foes, 1, UBound($foes)) == $FAIL Then Return $FAIL
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL

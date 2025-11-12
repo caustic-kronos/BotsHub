@@ -106,35 +106,31 @@ Func NexusChallenge()
 	Sleep(50000)
 
 	; Sinon on fait les 5 groupes
-	Local $foes[18][3] = [ _ ;~ 9 groups to defeat in each loop
-		[1-2675, 3301, 'Group 1'], _ ;~ First loop
-		[1-55, 3297, 'Group 2'], _
-		[1-1759, 993, 'Group 3'], _
-		[13834, 2759, 'Group 4'], _
-		[12479, -1967, 'Group 5'], _
-		[11572, -616, 'Group 6'], _
-		[1668, -3516, 'Group 7'], _
-		[1-3723, -3662, 'Group 8'], _
-		[1-3809, 880, 'Group 9'], _
-		[1-2675, 3301, 'Group 1'], _ ;~ Second loop
-		[1-55, 3297, 'Group 2'], _
-		[1-1759, 993, 'Group 3'], _
-		[13834, 2759, 'Group 4'], _
-		[12479, -1967, 'Group 5'], _
-		[11572, -616, 'Group 6'], _
-		[1668, -3516, 'Group 7'], _
-		[1-3723, -3662, 'Group 8'], _
-		[1-3809, 880, 'Group 9'] _
+	Local Static $foes[18][3] = [ _ ; 9 groups to defeat in each loop
+		[-2675, 3301, 'Group 1'], _ ; First loop
+		[-55, 3297, 'Group 2'], _
+		[-1759, 993, 'Group 3'], _
+		[3834, 2759, 'Group 4'], _
+		[2479, -1967, 'Group 5'], _
+		[1572, -616, 'Group 6'], _
+		[668, -3516, 'Group 7'], _
+		[-3723, -3662, 'Group 8'], _
+		[-3809, 880, 'Group 9'], _
+		[-2675, 3301, 'Group 1'], _ ; Second loop
+		[-55, 3297, 'Group 2'], _
+		[-1759, 993, 'Group 3'], _
+		[3834, 2759, 'Group 4'], _
+		[2479, -1967, 'Group 5'], _
+		[1572, -616, 'Group 6'], _
+		[668, -3516, 'Group 7'], _
+		[-3723, -3662, 'Group 8'], _
+		[-3809, 880, 'Group 9'] _
 	]
-		Local $x, $y, $log, $range
-		For $i = 0 To UBound($foes) - 1
-			$x = $foes[$i][0]
-			$y = $foes[$i][1]
-			$log = $foes[$i][2]
-			If MoveAggroAndKill($x, $y, $log) == $FAIL Then Return $FAIL
-			If $i == 8 Then Notice('First loop completed')
-			If $i == 17 Then Notice('Second loop completed, reset')
-		Next
+
+	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
+	Notice('First loop completed')
+	If MoveAggroAndKillGroups($foes, 10, 18) == $FAIL Then Return $FAIL
+	Notice('Second loop completed, reset')
 
 	Return $SUCCESS
 EndFunc

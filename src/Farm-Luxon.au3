@@ -121,7 +121,7 @@ Func VanquishMountQinkai()
 	Dialog(0x86)
 	RandomSleep(1000)
 
-	Local $foes[43][4] = [ _ ; 43 groups to vanquish
+	Local Static $foes[43][4] = [ _ ; 43 groups to vanquish
 		[-11400, -9000, 'Yetis', $AGGRO_RANGE], _
 		[-13500, -10000, 'Yeti 1', $AGGRO_RANGE], _
 		[-15000, -8000, 'Yeti 2', $AGGRO_RANGE], _
@@ -166,15 +166,8 @@ Func VanquishMountQinkai()
 		[14000, -6000, 'Outcast Warrior Boss', $RANGE_SPIRIT], _
 		[13000, -6000, 'Leftovers', $RANGE_COMPASS] _
 	]
-	Local $x, $y, $log, $range
-	For $i = 0 To UBound($foes) - 1
-		$x = $foes[$i][0]
-		$y = $foes[$i][1]
-		$log = $foes[$i][2]
-		$range = $foes[$i][3]
-		If MoveAggroAndKillInRange($x, $y, $log, $range) == $FAIL Then Return $FAIL
-	Next
 
+	If MoveAggroAndKillGroups($foes, 1, UBound($foes)) == $FAIL Then Return $FAIL
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
