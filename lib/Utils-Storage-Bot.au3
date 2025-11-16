@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 
@@ -59,27 +62,28 @@ Global $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hex
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
-	;SellEverythingToMerchant(DefaultShouldSellItem, True)
+	;SellItemsToMerchant(DefaultShouldSellItem, True)
 	ActiveInventoryManagement()
-	Return 2
+	Return $PAUSE
 EndFunc
 
 
 ;~ Function to deal with inventory after farm
 Func ActiveInventoryManagement()
 	; Operations order :
-	; 1-Store unid if desired
+	; 1-Store unids if desired
 	; 2-Sort items
 	; 3-Identify items
 	; 4-Collect data
 	; 5-Salvage
 	; 6-Sell materials
 	; 7-Sell items
-	; 8-Buy ectos with excedent
+	; 8-Buy ectos with surplus
 	; 9-Store items
-	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage(GetIsUnidentified)
+	; 10-Balance character's gold level
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == $GUI_CHECKED And HasUnidentifiedItems() Then
+	If GUICtrlRead($GUI_Checkbox_IdentifyAllItems) == $GUI_CHECKED And HasUnidentifiedItems() Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		IdentifyAllItems()
 	EndIf
@@ -94,7 +98,7 @@ Func ActiveInventoryManagement()
 	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		SalvageAllItems()
-		If $BAG_NUMBER == 5 Then
+		If $BAGS_COUNT == 5 Then
 			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems()
 		EndIf
 		;SalvageInscriptions()
@@ -112,15 +116,18 @@ Func ActiveInventoryManagement()
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
-		SellEverythingToMerchant()
+		SellItemsToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() < 100000 Then
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then ; max gold in Xunlai chest is 1000 platinums
 		DepositGold(60000)
 		Info('Deposited Gold')
-		$TIMESDEPOSITED += 1
+	EndIf
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_UNCHECKED Then
+		Info('Balancing character''s gold level')
+		BalanceCharacterGold(10000)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
-	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
+	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreItemsInXunlaiStorage()
 EndFunc
 
 
@@ -149,7 +156,7 @@ Func PassiveInventoryManagement()
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 	IdentifyAllItems(False)
 	SalvageAllItems(False)
-	If $BAG_NUMBER == 5 Then
+	If $BAGS_COUNT == 5 Then
 		If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)
 	EndIf
 	Return False
@@ -170,13 +177,13 @@ EndFunc
 Func ReadAllItemsData()
 	Info('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
 	Local $item, $output
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $slot = 1 To DllStructGetData($bag, 'slots')
 			$output = GetOneItemData($bagIndex, $slot)
 			If $output == '' Then ContinueLoop
 			Info($output)
-			RndSleep(50)
+			RandomSleep(50)
 		Next
 	Next
 EndFunc
@@ -271,7 +278,7 @@ Func FillTable($table, Const ByRef $isNumber, Const ByRef $values)
 	Local $query = 'INSERT INTO ' & $table & ' VALUES '
 	For $i = 0 To UBound($values) - 1
 		$query &= '('
-		For $j = 0 To Ubound($values,2) - 1
+		For $j = 0 To UBound($values,2) - 1
 			If $isNumber[$j] Then
 				$query &= $values[$i][$j] & ', '
 			Else
@@ -336,7 +343,7 @@ Func StoreAllItemsData()
 	Info('Scanning and storing all items data')
 	SQLExecute('BEGIN;')
 	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -543,7 +550,7 @@ Func MoveItemsOutOfEquipmentBag()
 			If Not DefaultShouldSalvageItem($item) Then ContinueLoop
 			MoveItem($item, $inventoryEmptySlots[2 * $cursor], $inventoryEmptySlots[2 * $cursor + 1])
 			$cursor += 1
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 	Next
 	Return $cursor
@@ -551,16 +558,17 @@ EndFunc
 
 
 ;~ Sell general items to trader
-Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
+Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
 	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
 	GoToNPC($merchant)
-	RndSleep(500)
+	RandomSleep(500)
 
+	Info('Selling items')
 	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -569,7 +577,7 @@ Func SellEverythingToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun =
 				If $shouldSellItem($item) Then
 					If Not $dryRun Then
 						SellItem($item, DllStructGetData($item, 'Quantity'))
-						RndSleep(GetPing() + 200)
+						RandomSleep(GetPing() + 200)
 					EndIf
 				Else
 					If $dryRun Then Info('Will not sell item at ' & $bagIndex & ':' & $i)
@@ -601,7 +609,7 @@ EndFunc
 ;~ Returns true if there are items in inventory satisfying condition
 Func HasInInventory($condition)
 	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -619,10 +627,10 @@ Func SellMaterialsToMerchant($shouldSellItem = DefaultShouldSellMaterial)
 	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	UseCitySpeedBoost()
 	GoToNPC($materialMerchant)
-	RndSleep(500)
+	RandomSleep(500)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
+	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -655,10 +663,10 @@ Func SellRareMaterialsToMerchant($shouldSellItem = DefaultShouldSellRareMaterial
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
-	RndSleep(250)
+	RandomSleep(250)
 
 	Local $item, $itemID
-	For $bagIndex = 1 To _Min(4, $BAG_NUMBER)
+	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -691,7 +699,7 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
-	RndSleep(250)
+	RandomSleep(250)
 
 	For $i = 1 To $amount
 		TraderRequest($materialModelID)
@@ -718,7 +726,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
 	GoToNPC($rareMaterialMerchant)
-	RndSleep(250)
+	RandomSleep(250)
 
 	Local $IDMaterialToBuy = $materialModelID
 	TraderRequest($IDMaterialToBuy)
@@ -750,13 +758,47 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 EndFunc
 
 
-;~ Store all item in the Xunlai Storage
+;~ Tests if an item is an identified gold item
+Func IsIdentifiedGoldItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_Gold)
+EndFunc
+
+
+;~ Tests if an item is an identified blue item
+Func IsIdentifiedBlueItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_Blue)
+EndFunc
+
+
+;~ Tests if an item is an identified purple item
+Func IsIdentifiedPurpleItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_Purple)
+EndFunc
+
+
+;~ Tests if an item is an unidentified gold item
+Func IsUnidentifiedGoldItem($item)
+	Return Not GetIsIdentified($item) And (GetRarity($item) == $RARITY_Gold)
+EndFunc
+
+
+;~ helper function for StoreEverythingInXunlaiStorage function
+Func StoreAllItems($item = Null)
+	Return True
+EndFunc
+
+
+;~ Store all items in the Xunlai Storage
 Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
-	Info('Storing money')
-	BalanceCharacterGold(10000)
+	StoreItemsInXunlaiStorage(StoreAllItems)
+EndFunc
+
+
+;~ Store selected items in the Xunlai Storage
+Func StoreItemsInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 	Info('Storing items')
 	Local $item, $itemID
-	For $bagIndex = 1 To $BAG_NUMBER
+	For $bagIndex = 1 To $BAGS_COUNT
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
@@ -764,7 +806,7 @@ Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 			If $itemID <> 0 And $shouldStoreItem($item) Then
 				Debug('Moving ' & $bagIndex & ':' & $i)
 				If Not StoreItemInXunlaiStorage($item) Then Return False
-				RndSleep(50)
+				RandomSleep(50)
 			EndIf
 		Next
 	Next
@@ -783,7 +825,7 @@ Func StoreItemInXunlaiStorage($item)
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		MoveItem($item, 6, $materialStorageLocation)
-		RndSleep(GetPing() + 20)
+		RandomSleep(GetPing() + 20)
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return True
@@ -791,13 +833,13 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
 		$existingStacks = FindAllInXunlaiStorage($item)
-		For $bagIndex = 0 To Ubound($existingStacks) - 1 Step 2
+		For $bagIndex = 0 To UBound($existingStacks) - 1 Step 2
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then
 				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
-				RndSleep(GetPing() + 20)
+				RandomSleep(GetPing() + 20)
 				$amount = $amount + $existingAmount - 250
 				If $amount <= 0 Then Return True
 			EndIf
@@ -810,7 +852,7 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	Return True
 EndFunc
 
@@ -908,7 +950,7 @@ Func ShouldKeepWeapon($item)
 	; Keeping unidentified items
 	If Not GetIsIdentified($item) Then Return True
 	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
-	If $Map_UltraRareWeapons[$itemID] <> null Then Return True
+	If $Map_UltraRareWeapons[$itemID] <> Null Then Return True
 	; Keeping items that contain good upgrades
 	If ContainsValuableUpgrades($item) Then Return True
 	; Throwing items without good damage/energy/armor
@@ -948,7 +990,7 @@ Func DefaultShouldSellMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	Return $mapMaterialsKept[$modelId] == null
+	Return $mapMaterialsKept[$modelId] == Null
 EndFunc
 
 
@@ -961,7 +1003,7 @@ Func DefaultShouldSellRareMaterial($item)
 	Local Static $mapMaterialsKept = MapFromArray($materialsKeptArray)
 
 	Local $modelID = DllStructGetData($item, 'ModelID')
-	Return $mapMaterialsKept[$modelId] == null
+	Return $mapMaterialsKept[$modelId] == Null
 EndFunc
 
 

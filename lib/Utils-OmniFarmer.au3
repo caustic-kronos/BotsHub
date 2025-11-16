@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 
@@ -33,7 +36,7 @@ Global Const $BiP_Skill_Position = 7
 Global Const $Serpents_Quickness_Skill_Position = 6
 Global Const $Quickening_Zephyr_Skill_Position = 7
 
-; Order heros are added to the team
+; Order in which heroes are added to the team
 Global Const $Hero_Dervish_1 = 1
 Global Const $Hero_Dervish_2 = 2
 Global Const $Hero_Dervish_3 = 3
@@ -53,11 +56,10 @@ Func OmniFarm($STATUS)
 	Info('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	HealingLoop()
 
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 ;~ Shouldn't be used
@@ -70,7 +72,7 @@ EndFunc
 
 ;~ Can be used in other farm bots
 Func OmniFarmSetupWithMandatoryHero($ID_Additional_Hero)
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_Additional_Hero)
 	AddHero($ID_Kahmu)
 	AddHero($ID_MOX)
@@ -83,7 +85,7 @@ EndFunc
 
 ;~ Can be used in other farm bots
 Func OmniFarmFullSetup()
-	LeaveGroup()
+	LeaveParty()
 	AddHero($ID_Melonni)
 	AddHero($ID_MOX)
 	AddHero($ID_Kahmu)
@@ -99,26 +101,26 @@ EndFunc
 ;~ Can be used in other farm bots
 Func PrepareZephyrSpirit()
 	UseHeroSkill($Hero_Zephyr_Ranger, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_BiP_Necro_1, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_Speed_Paragon, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_Dervish_1, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_Dervish_2, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_Dervish_3, $Faithful_Intervention_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_BiP_Necro_2, $Faithful_Intervention_Skill_Position)
-	RndSleep(2000)
+	RandomSleep(2000)
 	UseHeroSkill($Hero_BiP_Necro_1, $BiP_Skill_Position, GetHeroID($Hero_Zephyr_Ranger))
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Serpents_Quickness_Skill_Position)
-	RndSleep(10)
+	RandomSleep(10)
 	UseHeroSkill($Hero_Zephyr_Ranger, $Quickening_Zephyr_Skill_Position)
 	$Quickening_Zephyr_Cast_Timer = TimerInit()
-	RndSleep(5500)
+	RandomSleep(5500)
 EndFunc
 
 
@@ -269,22 +271,22 @@ Func ManualFarmAutoHealingLoop()
 
 	; Heroes with Mystic Healing provide additional long range support
 	UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)
-	RndSleep(430)
+	RandomSleep(430)
 	UseHeroSkill($Hero_Dervish_1, $Mystic_Healing_Skill_Position)
-	RndSleep(430)
+	RandomSleep(430)
 	UseHeroSkill($Hero_Dervish_2, $Mystic_Healing_Skill_Position)
-	RndSleep(430)
+	RandomSleep(430)
 	UseHeroSkill($Hero_Dervish_3, $Mystic_Healing_Skill_Position)
-	RndSleep(430)
+	RandomSleep(430)
 	UseHeroSkill($Hero_BiP_Necro_1, $Mystic_Healing_Skill_Position)
-	RndSleep(430)
+	RandomSleep(430)
 	UseHeroSkill($Hero_BiP_Necro_2, $Mystic_Healing_Skill_Position)
-	RndSleep(430)
+	RandomSleep(430)
 	If TimerDiff($Quickening_Zephyr_Cast_Timer) > 6000 Then
 		UseHeroSkill($Hero_Zephyr_Ranger, $Mystic_Healing_Skill_Position)
-		RndSleep(430)
+		RandomSleep(430)
 	Else
-		RndSleep(430)
+		RandomSleep(430)
 	EndIf
-	RndSleep(70)
+	RandomSleep(70)
 EndFunc

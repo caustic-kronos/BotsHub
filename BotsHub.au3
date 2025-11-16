@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -23,6 +25,7 @@
 ; - Always refresh agents before getting data from them (agent = snapshot)
 ;		(so only use $me if you are sure nothing important changes between $me definition and $me usage)
 ; - AdlibRegister('NotifyHangingBot', 120000) can be used to simulate multithreading
+#CE ===========================================================================
 
 #RequireAdmin
 #NoTrayIcon
@@ -52,6 +55,7 @@
 #include 'src/Farm-FoW.au3'
 #include 'src/Farm-Froggy.au3'
 #include 'src/Farm-Gemstone.au3'
+#include 'src/Farm-GemstoneStygian.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
@@ -66,6 +70,7 @@
 #include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Voltaic.au3'
+#include 'src/Farm-WarSupplyKeiran.au3'
 
 #include 'src/Farm-Norn.au3'
 #include 'src/Farm-NexusChallenge.au3'
@@ -99,20 +104,23 @@ Global Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 
+; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
+Global Const $NOT_STARTED = -1
+Global Const $SUCCESS = 0
+Global Const $FAIL = 1
+Global Const $PAUSE = 2
 
 ; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'
-; -1 = did not start, 0 = ran fine, 1 = failed, 2 = pause
 Global $RUN_MODE = 'AUTOLOAD'
 Global $PROCESS_ID = ''
-Global $LOG_LEVEL = 1
+Global $LOG_LEVEL = $LVL_INFO
 Global $CHARACTER_NAME = ''
 Global $DISTRICT_NAME = 'Random'
-Global $BAG_NUMBER = 5
+Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
-Global $TIMESDEPOSITED = 0
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -124,24 +132,30 @@ Opt('MustDeclareVars', 1)
 
 Global $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI_Tab_LootOptions, $GUI_Tab_FarmInfos, $GUI_Tab_LootComponents
 Global $GUI_Console, $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress
-Global $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution, $GUI_Label_BagNumber, $GUI_Input_BagNumber, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
+Global $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution, $GUI_Label_BagsCount, $GUI_Input_BagsCount, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
 
 Global $GUI_Group_RunInfos, _
-		$GUI_Label_Runs_Text, $GUI_Label_Runs_Value, $GUI_Label_Failures_Text, $GUI_Label_Failures_Value, $GUI_Label_Time_Text, $GUI_Label_Time_Value, _
+		$GUI_Label_Runs_Text, $GUI_Label_Runs_Value, $GUI_Label_Successes_Text, $GUI_Label_Successes_Value, $GUI_Label_Failures_Text, $GUI_Label_Failures_Value, $GUI_Label_Time_Text, $GUI_Label_Time_Value, _
 		$GUI_Label_TimePerRun_Text, $GUI_Label_TimePerRun_Value, $GUI_Label_Gold_Text, $GUI_Label_Gold_Value, $GUI_Label_Ectos_Text, $GUI_Label_Ectos_Value, _
 		$GUI_Label_GoldItems_Text, $GUI_Label_GoldItems_Value, $GUI_Label_Chests_Text, $GUI_Label_Chests_Value, $GUI_Label_Experience_Text, $GUI_Label_Experience_Value
 Global $GUI_Group_ItemsLooted, _
 		$GUI_Label_ChunkOfDrakeFlesh_Text, $GUI_Label_ChunkOfDrakeFlesh_Value, $GUI_Label_SkaleFins_Text, $GUI_Label_SkaleFins_Value, _
 		$GUI_Label_GlacialStones_Text, $GUI_Label_GlacialStones_Value, $GUI_Label_DiessaChalices_Text, $GUI_Label_DiessaChalices_Value, _
-		$GUI_Label_RinRelics_Text, $GUI_Label_RinRelics_Value, $GUI_Label_WintersdayGifts_Text, $GUI_Label_WintersdayGifts_Value, _
+		$GUI_Label_WarSupplies_Text, $GUI_Label_WarSupplies_Value, $GUI_Label_DestroyerCores_Text, $GUI_Label_DestroyerCores_Value, _
+		$GUI_Label_MinisterialCommendations_Text, $GUI_Label_MinisterialCommendations_Value, $GUI_Label_RinRelics_Text, $GUI_Label_RinRelics_Value, _
+		$GUI_Label_WintersdayGifts_Text, $GUI_Label_WintersdayGifts_Value, $GUI_Label_DeliciousCakes_Text, $GUI_Label_DeliciousCakes_Value, _
 		$GUI_Label_MargoniteGemstone_Text, $GUI_Label_MargoniteGemstone_Value, $GUI_Label_StygianGemstone_Text, $GUI_Label_StygianGemstone_Value, _
-		$GUI_Label_TitanGemstone_Text, $GUI_Label_TitanGemstone_Value, $GUI_Label_TormentGemstone_Text, $GUI_Label_TormentGemstone_Value
+		$GUI_Label_TitanGemstone_Text, $GUI_Label_TitanGemstone_Value, $GUI_Label_TormentGemstone_Text, $GUI_Label_TormentGemstone_Value, _
+		$GUI_Label_TrickOrTreats_Text, $GUI_Label_TrickOrTreats_Value, $GUI_Label_BirthdayCupcakes_Text, $GUI_Label_BirthdayCupcakes_Value, _
+		$GUI_Label_GoldenEggs_Text, $GUI_Label_GoldenEggs_Value, $GUI_Label_PumpkinPieSlices_Text, $GUI_Label_PumpkinPieSlices_Value, _
+		$GUI_Label_HoneyCombs_Text, $GUI_Label_HoneyCombs_Value, $GUI_Label_FruitCakes_Text, $GUI_Label_FruitCakes_Value, _
+		$GUI_Label_SugaryBlueDrinks_Text, $GUI_Label_SugaryBlueDrinks_Value, $GUI_Label_ChocolateBunnies_Text, $GUI_Label_ChocolateBunnies_Value
 Global $GUI_Group_Titles, _
 		$GUI_Label_AsuraTitle_Text, $GUI_Label_AsuraTitle_Value, $GUI_Label_DeldrimorTitle_Text, $GUI_Label_DeldrimorTitle_Value, $GUI_Label_NornTitle_Text, $GUI_Label_NornTitle_Value, _
 		$GUI_Label_VanguardTitle_Text, $GUI_Label_VanguardTitle_Value, $GUI_Label_KurzickTitle_Text, $GUI_Label_KurzickTitle_Value, $GUI_Label_LuxonTitle_Text, $GUI_Label_LuxonTitle_Value, _
 		$GUI_Label_LightbringerTitle_Text, $GUI_Label_LightbringerTitle_Value, $GUI_Label_SunspearTitle_Text, $GUI_Label_SunspearTitle_Value
 Global $GUI_Group_GlobalOptions, _
-		$GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyGoldItems, _
+		$GUI_Checkbox_LoopRuns, $GUI_Checkbox_HM, $GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_CollectData, $GUI_Checkbox_IdentifyAllItems, _
 		$GUI_Checkbox_SalvageItems, $GUI_Checkbox_SellItems, $GUI_Checkbox_SellMaterials, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_StoreGold, $GUI_Checkbox_BuyEctoplasm
 Global $GUI_Group_ConsumableOptions, $GUI_Checkbox_UseConsumables, $GUI_Checkbox_FarmMaterials, $GUI_Checkbox_DisableRendering
 Global $GUI_Group_BaseLootOptions, _
@@ -163,7 +177,7 @@ Global $GUI_Label_ToDoList
 ; Description.....:	Create the main GUI
 ;------------------------------------------------------
 Func createGUI()
-	$GUI_GWBotHub = GUICreate('GW Bot Hub', 600, 450, 851, 263)
+	$GUI_GWBotHub = GUICreate('GW Bot Hub', 600, 450, -1, -1) ; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
 	GUISetBkColor($GUI_GREY_COLOR, $GUI_GWBotHub)
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
@@ -197,38 +211,67 @@ Func createGUI()
 	$GUI_Label_GoldItems_Value = GUICtrlCreateLabel('0', 91, 124, 50, 16, $SS_RIGHT)
 	$GUI_Label_Experience_Text = GUICtrlCreateLabel('Experience:', 31, 144, 65, 16)
 	$GUI_Label_Experience_Value = GUICtrlCreateLabel('0', 91, 144, 50, 16, $SS_RIGHT)
-	$GUI_Label_Failures_Text = GUICtrlCreateLabel('Failures:', 161, 64, 65, 16)
-	$GUI_Label_Failures_Value = GUICtrlCreateLabel('0', 231, 64, 50, 16, $SS_RIGHT)
-	$GUI_Label_TimePerRun_Text = GUICtrlCreateLabel('Time per run:', 161, 84, 65, 16)
-	$GUI_Label_TimePerRun_Value = GUICtrlCreateLabel('0', 231, 84, 50, 16, $SS_RIGHT)
-	$GUI_Label_Ectos_Text = GUICtrlCreateLabel('Ectos:', 161, 104, 65, 16)
-	$GUI_Label_Ectos_Value = GUICtrlCreateLabel('0', 231, 104, 50, 16, $SS_RIGHT)
-	$GUI_Label_Chests_Text = GUICtrlCreateLabel('Chests:', 161, 124, 65, 16)
-	$GUI_Label_Chests_Value = GUICtrlCreateLabel('0', 231, 124, 50, 16, $SS_RIGHT)
+	$GUI_Label_Successes_Text = GUICtrlCreateLabel('Successes:', 161, 64, 65, 16)
+	$GUI_Label_Successes_Value = GUICtrlCreateLabel('0', 231, 64, 50, 16, $SS_RIGHT)
+	$GUI_Label_Failures_Text = GUICtrlCreateLabel('Failures:', 161, 84, 65, 16)
+	$GUI_Label_Failures_Value = GUICtrlCreateLabel('0', 231, 84, 50, 16, $SS_RIGHT)
+	$GUI_Label_TimePerRun_Text = GUICtrlCreateLabel('Time per run:', 161, 104, 65, 16)
+	$GUI_Label_TimePerRun_Value = GUICtrlCreateLabel('0', 231, 104, 50, 16, $SS_RIGHT)
+	$GUI_Label_Ectos_Text = GUICtrlCreateLabel('Ectos:', 161, 124, 65, 16)
+	$GUI_Label_Ectos_Value = GUICtrlCreateLabel('0', 231, 124, 50, 16, $SS_RIGHT)
+	$GUI_Label_Chests_Text = GUICtrlCreateLabel('Chests:', 161, 144, 65, 16)
+	$GUI_Label_Chests_Value = GUICtrlCreateLabel('0', 231, 144, 50, 16, $SS_RIGHT)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	; === Items Looted ===
 	$GUI_Group_ItemsLooted = GUICtrlCreateGroup('Items', 306, 39, 271, 241)
-	$GUI_Label_GlacialStones_Text = GUICtrlCreateLabel('Glacial Stones:', 316, 64, 140, 16)
-	$GUI_Label_GlacialStones_Value = GUICtrlCreateLabel('0', 502, 64, 60, 16, $SS_RIGHT)
-	$GUI_Label_ChunkOfDrakeFlesh_Text = GUICtrlCreateLabel('Chunk Of Drake Flesh:', 316, 84, 140, 16)
-	$GUI_Label_ChunkOfDrakeFlesh_Value = GUICtrlCreateLabel('0', 502, 84, 60, 16, $SS_RIGHT)
-	$GUI_Label_SkaleFins_Text = GUICtrlCreateLabel('Skale Fins:', 316, 104, 140, 16)
-	$GUI_Label_SkaleFins_Value = GUICtrlCreateLabel('0', 502, 104, 60, 16, $SS_RIGHT)
-	$GUI_Label_WintersdayGifts_Text = GUICtrlCreateLabel('Wintersday Gifts:', 316, 124, 140, 16)
-	$GUI_Label_WintersdayGifts_Value = GUICtrlCreateLabel('0', 502, 124, 60, 16, $SS_RIGHT)
-	$GUI_Label_DiessaChalices_Text = GUICtrlCreateLabel('Diessa Chalices:', 316, 144, 140, 16)
-	$GUI_Label_DiessaChalices_Value = GUICtrlCreateLabel('0', 502, 144, 60, 16, $SS_RIGHT)
-	$GUI_Label_RinRelics_Text = GUICtrlCreateLabel('Rin Relics:', 316, 164, 140, 16)
-	$GUI_Label_RinRelics_Value = GUICtrlCreateLabel('0', 502, 164, 60, 16, $SS_RIGHT)
-	$GUI_Label_MargoniteGemstone_Text = GUICtrlCreateLabel('Margonite Gemstone:', 316, 184, 140, 16)
-	$GUI_Label_MargoniteGemstone_Value = GUICtrlCreateLabel('0', 502, 184, 60, 16, $SS_RIGHT)
-	$GUI_Label_StygianGemstone_Text = GUICtrlCreateLabel('Stygian Gemstone:', 316, 205, 140, 16)
-	$GUI_Label_StygianGemstone_Value = GUICtrlCreateLabel('0', 502, 205, 60, 16, $SS_RIGHT)
-	$GUI_Label_TitanGemstone_Text = GUICtrlCreateLabel('Titan Gemstone:', 316, 229, 140, 16)
-	$GUI_Label_TitanGemstone_Value = GUICtrlCreateLabel('0', 502, 229, 60, 16, $SS_RIGHT)
-	$GUI_Label_TormentGemstone_Text = GUICtrlCreateLabel('Torment Gemstone:', 316, 250, 140, 16)
-	$GUI_Label_TormentGemstone_Value = GUICtrlCreateLabel('0', 502, 250, 60, 16, $SS_RIGHT)
+	$GUI_Label_ChunkOfDrakeFlesh_Text = GUICtrlCreateLabel('Chunks Of Drake Flesh:', 316, 64, 140, 16)
+	$GUI_Label_ChunkOfDrakeFlesh_Value = GUICtrlCreateLabel('0', 395, 64, 60, 16, $SS_RIGHT)
+	$GUI_Label_SkaleFins_Text = GUICtrlCreateLabel('Skale Fins:', 470, 64, 140, 16)
+	$GUI_Label_SkaleFins_Value = GUICtrlCreateLabel('0', 505, 64, 60, 16, $SS_RIGHT)
+	$GUI_Label_MinisterialCommendations_Text = GUICtrlCreateLabel('Ministerial Commendations:', 316, 84, 140, 16)
+	$GUI_Label_MinisterialCommendations_Value = GUICtrlCreateLabel('0', 395, 84, 60, 16, $SS_RIGHT)
+	$GUI_Label_WintersdayGifts_Text = GUICtrlCreateLabel('Wintersday Gifts:', 470, 84, 140, 16)
+	$GUI_Label_WintersdayGifts_Value = GUICtrlCreateLabel('0', 505, 84, 60, 16, $SS_RIGHT)
+
+	$GUI_Label_MargoniteGemstone_Text = GUICtrlCreateLabel('Margonite Gemstones:', 316, 104, 140, 16)
+	$GUI_Label_MargoniteGemstone_Value = GUICtrlCreateLabel('0', 372, 104, 60, 16, $SS_RIGHT)
+	$GUI_Label_StygianGemstone_Text = GUICtrlCreateLabel('Stygian Gemstones:', 316, 124, 140, 16)
+	$GUI_Label_StygianGemstone_Value = GUICtrlCreateLabel('0', 372, 124, 60, 16, $SS_RIGHT)
+	$GUI_Label_TitanGemstone_Text = GUICtrlCreateLabel('Titan Gemstones:', 316, 144, 140, 16)
+	$GUI_Label_TitanGemstone_Value = GUICtrlCreateLabel('0', 372, 144, 60, 16, $SS_RIGHT)
+	$GUI_Label_TormentGemstone_Text = GUICtrlCreateLabel('Torment Gemstones:', 316, 164, 140, 16)
+	$GUI_Label_TormentGemstone_Value = GUICtrlCreateLabel('0', 372, 164, 60, 16, $SS_RIGHT)
+
+	$GUI_Label_GlacialStones_Text = GUICtrlCreateLabel('Glacial Stones:', 316, 184, 140, 16)
+	$GUI_Label_GlacialStones_Value = GUICtrlCreateLabel('0', 372, 184, 60, 16, $SS_RIGHT)
+	$GUI_Label_DestroyerCores_Text = GUICtrlCreateLabel('Destroyer Cores:', 316, 204, 140, 16)
+	$GUI_Label_DestroyerCores_Value = GUICtrlCreateLabel('0', 372, 204, 60, 16, $SS_RIGHT)
+	$GUI_Label_DiessaChalices_Text = GUICtrlCreateLabel('Diessa Chalices:', 316, 224, 140, 16)
+	$GUI_Label_DiessaChalices_Value = GUICtrlCreateLabel('0', 372, 224, 60, 16, $SS_RIGHT)
+	$GUI_Label_RinRelics_Text = GUICtrlCreateLabel('Rin Relics:', 316, 244, 140, 16)
+	$GUI_Label_RinRelics_Value = GUICtrlCreateLabel('0', 372, 244, 60, 16, $SS_RIGHT)
+	$GUI_Label_WarSupplies_Text = GUICtrlCreateLabel('War Supplies:', 316, 264, 140, 16)
+	$GUI_Label_WarSupplies_Value = GUICtrlCreateLabel('0', 372, 264, 60, 16, $SS_RIGHT)
+
+	$GUI_Label_BirthdayCupcakes_Text = GUICtrlCreateLabel('Birthday Cupcakes:', 446, 104, 140, 16)
+	$GUI_Label_BirthdayCupcakes_Value = GUICtrlCreateLabel('0', 505, 104, 60, 16, $SS_RIGHT)
+	$GUI_Label_TrickOrTreats_Text = GUICtrlCreateLabel('Trick or Treat Bags:', 446, 124, 140, 16)
+	$GUI_Label_TrickOrTreats_Value = GUICtrlCreateLabel('0', 505, 124, 60, 16, $SS_RIGHT)
+	$GUI_Label_PumpkinPieSlices_Text = GUICtrlCreateLabel('Slices of Pumpkin Pie:', 446, 144, 140, 16)
+	$GUI_Label_PumpkinPieSlices_Value = GUICtrlCreateLabel('0', 505, 144, 60, 16, $SS_RIGHT)
+	$GUI_Label_GoldenEggs_Text = GUICtrlCreateLabel('Golden Eggs:', 446, 164, 140, 16)
+	$GUI_Label_GoldenEggs_Value = GUICtrlCreateLabel('0', 505, 164, 60, 16, $SS_RIGHT)
+	$GUI_Label_HoneyCombs_Text = GUICtrlCreateLabel('Honey Combs:', 446, 184, 140, 16)
+	$GUI_Label_HoneyCombs_Value = GUICtrlCreateLabel('0', 505, 184, 60, 16, $SS_RIGHT)
+	$GUI_Label_FruitCakes_Text = GUICtrlCreateLabel('Fruit Cakes:', 446, 204, 140, 16)
+	$GUI_Label_FruitCakes_Value = GUICtrlCreateLabel('0', 505, 204, 60, 16, $SS_RIGHT)
+	$GUI_Label_SugaryBlueDrinks_Text = GUICtrlCreateLabel('Sugary Blue Drinks:', 446, 224, 140, 16)
+	$GUI_Label_SugaryBlueDrinks_Value = GUICtrlCreateLabel('0', 505, 224, 60, 16, $SS_RIGHT)
+	$GUI_Label_ChocolateBunnies_Text = GUICtrlCreateLabel('Chocolate Bunnies:', 446, 244, 140, 16)
+	$GUI_Label_ChocolateBunnies_Value = GUICtrlCreateLabel('0', 505, 244, 60, 16, $SS_RIGHT)
+	$GUI_Label_DeliciousCakes_Text = GUICtrlCreateLabel('Delicious Cakes:', 446, 264, 140, 16)
+	$GUI_Label_DeliciousCakes_Value = GUICtrlCreateLabel('0', 505, 264, 60, 16, $SS_RIGHT)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	; === Titles ===
@@ -242,13 +285,13 @@ Func createGUI()
 	$GUI_Label_VanguardTitle_Text = GUICtrlCreateLabel('Vanguard:', 316, 374, 60, 16)
 	$GUI_Label_VanguardTitle_Value = GUICtrlCreateLabel('0', 372, 374, 60, 16, $SS_RIGHT)
 	$GUI_Label_KurzickTitle_Text = GUICtrlCreateLabel('Kurzick:', 446, 314, 60, 16)
-	$GUI_Label_KurzickTitle_Value = GUICtrlCreateLabel('0', 502, 314, 60, 16, $SS_RIGHT)
+	$GUI_Label_KurzickTitle_Value = GUICtrlCreateLabel('0', 505, 314, 60, 16, $SS_RIGHT)
 	$GUI_Label_LuxonTitle_Text = GUICtrlCreateLabel('Luxon:', 446, 334, 60, 16)
-	$GUI_Label_LuxonTitle_Value = GUICtrlCreateLabel('0', 502, 334, 60, 16, $SS_RIGHT)
+	$GUI_Label_LuxonTitle_Value = GUICtrlCreateLabel('0', 505, 334, 60, 16, $SS_RIGHT)
 	$GUI_Label_LightbringerTitle_Text = GUICtrlCreateLabel('Lightbringer:', 446, 354, 60, 16)
-	$GUI_Label_LightbringerTitle_Value = GUICtrlCreateLabel('0', 502, 354, 60, 16, $SS_RIGHT)
+	$GUI_Label_LightbringerTitle_Value = GUICtrlCreateLabel('0', 505, 354, 60, 16, $SS_RIGHT)
 	$GUI_Label_SunspearTitle_Text = GUICtrlCreateLabel('Sunspear:', 446, 374, 60, 16)
-	$GUI_Label_SunspearTitle_Value = GUICtrlCreateLabel('0', 502, 374, 60, 16, $SS_RIGHT)
+	$GUI_Label_SunspearTitle_Value = GUICtrlCreateLabel('0', 505, 374, 60, 16, $SS_RIGHT)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
@@ -260,7 +303,7 @@ Func createGUI()
 	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('HM', 31, 94, 156, 20)
 	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store Unidentified Gold Items', 31, 124, 156, 20)
 	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort Items', 31, 154, 156, 20)
-	$GUI_Checkbox_IdentifyGoldItems = GUICtrlCreateCheckbox('Identify all items', 31, 184, 156, 20)
+	$GUI_Checkbox_IdentifyAllItems = GUICtrlCreateCheckbox('Identify all items', 31, 184, 156, 20)
 	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data', 31, 214, 156, 20)
 	$GUI_Checkbox_SalvageItems = GUICtrlCreateCheckbox('Salvage items', 31, 244, 156, 20)
 	$GUI_Checkbox_SellMaterials = GUICtrlCreateCheckbox('Sell Materials', 31, 274, 156, 20)
@@ -272,9 +315,9 @@ Func createGUI()
 
 	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('More options', 305, 40, 271, 361)
 	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 256, 20)
-	$GUI_Label_BagNumber = GUICtrlCreateLabel('Number of bags:', 315, 95, 80, 20)
-	$GUI_Input_BagNumber = GUICtrlCreateInput('5', 400, 95, 20, 20, $ES_NUMBER)
-	GUICtrlSetOnEvent($GUI_Input_BagNumber, 'GuiButtonHandler')
+	$GUI_Label_BagsCount = GUICtrlCreateLabel('Number of bags:', 315, 95, 80, 20)
+	$GUI_Input_BagsCount = GUICtrlCreateInput('5', 400, 95, 20, 20, $ES_NUMBER)
+	GUICtrlSetOnEvent($GUI_Input_BagsCount, 'GuiButtonHandler')
 	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 315, 125, 70, 20)
 	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('Random', 400, 122, 100, 20)
 	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'Random')
@@ -333,7 +376,7 @@ Func createGUI()
 	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit('', 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
 	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
 	$GUI_Edit_HeroBuild = GUICtrlCreateEdit('', 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
-	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 156)
+	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 531, 400)
 	GUICtrlCreateTabItem('')
 
 	$GUI_Tab_LootComponents = GUICtrlCreateTabItem('Loot components')
@@ -481,10 +524,10 @@ Func GuiButtonHandler()
 			TabHandler()
 		Case $GUI_Combo_FarmChoice
 			UpdateFarmDescription(GUICtrlRead($GUI_Combo_FarmChoice))
-		Case $GUI_Input_BagNumber
-			$BAG_NUMBER = Number(GUICtrlRead($GUI_Input_BagNumber))
-			$BAG_NUMBER = _Max($BAG_NUMBER, 1)
-			$BAG_NUMBER = _Min($BAG_NUMBER, 5)
+		Case $GUI_Input_BagsCount
+			$BAGS_COUNT = Number(GUICtrlRead($GUI_Input_BagsCount))
+			$BAGS_COUNT = _Max($BAGS_COUNT, 1)
+			$BAGS_COUNT = _Min($BAGS_COUNT, 5)
 		Case $GUI_Combo_ConfigChoice
 			LoadConfiguration(GUICtrlRead($GUI_Combo_ConfigChoice))
 		Case $GUI_Combo_DistrictChoice
@@ -555,7 +598,7 @@ Func StartButtonHandler()
 	Switch $STATUS
 		Case 'STOPPED'
 			Info('Initializing...')
-			If (Authentification() <> 0) Then Return
+			If (Authentification() <> $SUCCESS) Then Return
 			$STATUS = 'INITIALIZED'
 			Info('Starting...')
 			$STATUS = 'RUNNING'
@@ -698,26 +741,25 @@ Func BotHubLoop()
 			Else
 				If Not GetIsRendering() Then EnableRendering()
 			EndIf
+			; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
+			; So bag 5 will always fill before 4 - hence we can count items up to bag 4
+			If (CountSlots(1, _Min($BAGS_COUNT, 4)) < $INVENTORY_SPACE_NEEDED) Then
+				ActiveInventoryManagement()
+				ResetBotsSetups()
+			EndIf
+			If (CountSlots(1, $BAGS_COUNT) < $INVENTORY_SPACE_NEEDED) Then
+				Notice('Inventory full, pausing.')
+				ResetBotsSetups()
+				$STATUS = 'WILL_PAUSE'
+			EndIf
 			If GUICtrlRead($GUI_Checkbox_FarmMaterials) = $GUI_CHECKED Then
 				Local $resetRequired = PassiveInventoryManagement()
 				If $resetRequired Then ResetBotsSetups()
 			EndIf
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
-			Local $success = RunFarmLoop($Farm)
-			If ($success == 2 Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
+			Local $result = RunFarmLoop($Farm)
+			If ($result == $PAUSE Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$STATUS = 'WILL_PAUSE'
-			Else
-				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
-				; So bag 5 will always fill before 4 - hence we can count items up to bag 4
-				If (CountSlots(1, _Min($BAG_NUMBER, 4)) <= $INVENTORY_SPACE_NEEDED) Then
-					ActiveInventoryManagement()
-					ResetBotsSetups()
-				EndIf
-				If (CountSlots(1, $BAG_NUMBER) <= $INVENTORY_SPACE_NEEDED) Then
-					Notice('Inventory full, pausing.')
-					ResetBotsSetups()
-					$STATUS = 'WILL_PAUSE'
-				EndIf
 			EndIf
 		EndIf
 
@@ -738,8 +780,8 @@ EndFunc
 
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
-	Local $result = 2
-	Local $timePerRun = UpdateStats(-1, null)
+	Local $result = $NOT_STARTED
+	Local $timePerRun = UpdateStats($NOT_STARTED)
 	Local $timer = TimerInit()
 	UpdateProgressBar(True, $timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
 	AdlibRegister('UpdateProgressBar', 5000)
@@ -764,7 +806,7 @@ Func RunFarmLoop($Farm)
 			$result = LightbringerFarm2($STATUS)
 		Case 'Vanguard'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result = VanguardVQFarm($STATUS)
+			$result = VanguardTitleFarm($STATUS)
 
 		Case 'Corsairs'
 			$INVENTORY_SPACE_NEEDED = 5
@@ -790,6 +832,9 @@ Func RunFarmLoop($Farm)
 		Case 'Gemstone'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = GemstoneFarm($STATUS)
+		Case 'Gemstone Stygian'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = GemstoneStygianFarm($STATUS)
 		Case 'Jade Brotherhood'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = JadeBrotherhoodFarm($STATUS)
@@ -835,6 +880,9 @@ Func RunFarmLoop($Farm)
 		Case 'Voltaic'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = VoltaicFarm($STATUS)
+		Case 'War Supply Keiran'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = WarSupplyKeiranFarm($STATUS)
 		Case 'Storage'
 			$INVENTORY_SPACE_NEEDED = 5
 			ResetBotsSetups()
@@ -848,7 +896,13 @@ Func RunFarmLoop($Farm)
 	EndSwitch
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
-	UpdateStats($result, $timer)
+	Local $elapsedTime = TimerDiff($timer)
+	If $result == $SUCCESS Then
+		Info('Run Successful after: ' & ConvertTimeToMinutesString($elapsedTime))
+	ElseIf $result == $FAIL Then
+		Info('Run failed after: ' & ConvertTimeToMinutesString($elapsedTime))
+	EndIf
+	UpdateStats($result, $elapsedTime)
 	ClearMemory()
 	; _PurgeHook()
 	Return $result
@@ -859,27 +913,29 @@ EndFunc
 #Region Setup
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
-	$RAPTORS_FARM_SETUP						= False
 	$DM_FARM_SETUP							= False
-	$IRIS_FARM_SETUP						= False
 	$FEATHERS_FARM_SETUP					= False
 	$FOW_FARM_SETUP							= False
 	$FROGGY_FARM_SETUP						= False
+	$GEMSTONE_STYGIAN_FARM_SETUP			= False
+	$IRIS_FARM_SETUP						= False
 	$JADE_BROTHERHOOD_FARM_SETUP			= False
 	$KOURNANS_FARM_SETUP					= False
+	$LIGHTBRINGER_FARM2_SETUP				= False
 	$MANTIDS_FARM_SETUP						= False
+	$RAPTORS_FARM_SETUP						= False
 	$SOO_FARM_SETUP							= False
 	$SPIRIT_SLAVES_FARM_SETUP				= False
 	$TASCA_FARM_SETUP						= False
-	$LIGHTBRINGER_FARM2_SETUP				= False
-	; Those don't need to be reset - group didn't change, build didn't change, and there is no need to refresh portal
+	; Those don't need to be reset - party didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
+	;$CORSAIRS_FARM_SETUP					= False
 	;$FOLLOWER_SETUP						= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
-	;$CORSAIRS_FARM_SETUP					= False
 	;$PONGMEI_FARM_SETUP					= False
 	;$VOLTAIC_FARM_SETUP					= False
+	;$WARSUPPLY_FARM_SETUP					= False
 EndFunc
 
 
@@ -910,6 +966,9 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneFarmInformations)
+		Case 'Gemstone Stygian'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $StygianAssasinSkillBar & '		' & $StygianMesmerSkillBar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneStygianFarmInformations)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)
@@ -960,6 +1019,8 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarm2Informations)
 		Case 'Vanguard'
 			GUICtrlSetData($GUI_Label_FarmInformations, $VanguardTitleFarmInformations)
+		Case 'War Supply Keiran'
+			GUICtrlSetData($GUI_Label_FarmInformations, $WarSupplyKeiranInformations)
 		Case 'OmniFarm'
 			Return
 		Case 'Storage'
@@ -1032,7 +1093,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', GUICtrlRead($GUI_Checkbox_HM) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.store_unid', GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', GUICtrlRead($GUI_Checkbox_SortItems) == 1)
-	_JSON_addChangeDelete($jsonObject, 'run.identify_items', GUICtrlRead($GUI_Checkbox_IdentifyGoldItems) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.identify_items', GUICtrlRead($GUI_Checkbox_IdentifyAllItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', GUICtrlRead($GUI_Checkbox_CollectData) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.salvage_items', GUICtrlRead($GUI_Checkbox_SalvageItems) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.sell_materials', GUICtrlRead($GUI_Checkbox_SellMaterials) == 1)
@@ -1041,7 +1102,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.store_leftovers', GUICtrlRead($GUI_Checkbox_StoreTheRest) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.store_gold', GUICtrlRead($GUI_Checkbox_StoreGold) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
-	_JSON_addChangeDelete($jsonObject, 'run.bag_number', Number(GUICtrlRead($GUI_Input_BagNumber)))
+	_JSON_addChangeDelete($jsonObject, 'run.bags_count', Number(GUICtrlRead($GUI_Input_BagsCount)))
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials', GUICtrlRead($GUI_Checkbox_FarmMaterials) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', GUICtrlRead($GUI_Checkbox_DisableRendering) == 1)
 	_JSON_addChangeDelete($jsonObject, 'consumables.consume', GUICtrlRead($GUI_Checkbox_UseConsumables) == 1)
@@ -1082,7 +1143,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_HM, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, _JSON_Get($jsonObject, 'run.store_unid') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SortItems, _JSON_Get($jsonObject, 'run.sort_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetState($GUI_Checkbox_IdentifyGoldItems, _JSON_Get($jsonObject, 'run.identify_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_IdentifyAllItems, _JSON_Get($jsonObject, 'run.identify_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_CollectData, _JSON_Get($jsonObject, 'run.collect_data') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SalvageItems, _JSON_Get($jsonObject, 'run.salvage_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SellMaterials, _JSON_Get($jsonObject, 'run.sell_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -1093,11 +1154,11 @@ Func ReadConfigFromJson($jsonString)
 	Local $district = _JSON_Get($jsonObject, 'run.district')
 	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, $district)
 	$DISTRICT_NAME = $district
-	Local $bagNumber = _JSON_Get($jsonObject, 'run.bag_number')
-	$bagNumber = _Max($bagNumber, 1)
-	$bagNumber = _Min($bagNumber, 5)
-	$BAG_NUMBER = $bagNumber
-	GUICtrlSetData($GUI_Input_BagNumber, $bagNumber)
+	Local $bagsCount = _JSON_Get($jsonObject, 'run.bags_count')
+	$bagsCount = _Max($bagsCount, 1)
+	$bagsCount = _Min($bagsCount, 5)
+	$BAGS_COUNT = $bagsCount
+	GUICtrlSetData($GUI_Input_BagsCount, $bagsCount)
 	GUICtrlSetState($GUI_Checkbox_FarmMaterials, _JSON_Get($jsonObject, 'run.farm_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_DisableRendering, _JSON_Get($jsonObject, 'run.disable_rendering') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'consumables.consume') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -1133,9 +1194,9 @@ Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 	Local $GUI_HandleTree[]
 	If IsMap($jsonNode) Then
 		Local $keys = MapKeys($jsonNode)
-		For $i = 0 To UBound($keys) - 1
-			Local $keyHandle = GUICtrlCreateTreeViewItem($keys[$i], $parentItem)
-			Local $valueHandle = BuildTreeViewFromJSON($keyHandle, $jsonNode[$keys[$i]])
+		For $key In $keys
+			Local $keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
+			Local $valueHandle = BuildTreeViewFromJSON($keyHandle, $jsonNode[$key])
 			If $valueHandle == True Then
 				_GUICtrlTreeView_SetChecked($GUI_TreeView_Components, $keyHandle, True)
 			Else
@@ -1154,7 +1215,7 @@ Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 EndFunc
 
 
-;~
+;~ Getting ticked components from checkboxes as array
 Func GetComponentsTickedCheckboxes($startingPoint)
 	Return BuildArrayFromTreeView($GUI_TreeView_Components, _GUICtrlTreeView_FindItem($GUI_TreeView_Components, $startingPoint))
 EndFunc
@@ -1244,19 +1305,19 @@ Func Authentification()
 		Info('Running via pid ' & $proc_id_int)
 		If InitializeGameClientData(True, True, False) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $proc_id_int & '>> ' & VarGetType($proc_id_int) & '')
-			Return 1
+			Return $FAIL
 		EndIf
 	Else
 		Local $clientIndex = FindClientIndexByCharacterName($characterName)
 		If $clientIndex == -1 Then
 			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $characterName & '>>')
-			Return 1
+			Return $FAIL
 		Else
 			SelectClient($clientIndex)
 			OpenDebugLogFile()
 			If InitializeGameClientData(True, True, False) = 0 Then
 				MsgBox(0, 'Error', 'Failed game initialisation')
-				Return 1
+				Return $FAIL
 			EndIf
 		EndIf
 	EndIf
@@ -1264,7 +1325,7 @@ Func Authentification()
 	GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Disable)
 	GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Disable)
 	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & $characterName)
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -1281,28 +1342,14 @@ EndFunc
 
 #Region Statistics management
 ;~ Fill statistics
-Func UpdateStats($success, $timer)
-	Local Static $itemsToCount[5] = [$ID_Glob_Of_Ectoplasm, $ID_Margonite_Gemstone, $ID_Stygian_Gemstone, $ID_Titan_Gemstone, $ID_Torment_Gemstone]
+Func UpdateStats($result, $elapsedTime = 0)
+	; All static variables are initialized only once when UpdateStats() function is called first time
 	Local Static $runs = 0
+	Local Static $successes = 0
 	Local Static $failures = 0
-	Local Static $time = 0
-
-	Local Static $TotalGold = 0
-	Local Static $InitialGold = 0
-	Local Static $TotalEctos = 0
-	Local Static $InitialEctos = 0
-	Local Static $TotalGoldItems = 0
-	Local Static $InitialGoldItems = 0
+	Local Static $totalTime = 0
 	Local Static $TotalChests = 0
-	Local Static $ExperienceCount = GetExperience()
-	Local Static $TotalMargoniteGemstones = 0
-	Local Static $InitialMargoniteGemstones = 0
-	Local Static $TotalStygianGemstones = 0
-	Local Static $InitialStygianGemstones = 0
-	Local Static $TotalTitanGemstones = 0
-	Local Static $InitialTitanGemstones = 0
-	Local Static $TotalTormentGemstones = 0
-	Local Static $InitialTormentGemstones = 0
+	Local Static $InitialExperience = GetExperience()
 
 	Local Static $AsuraTitlePoints = GetAsuraTitle()
 	Local Static $DeldrimorTitlePoints = GetDeldrimorTitle()
@@ -1313,57 +1360,33 @@ Func UpdateStats($success, $timer)
 	Local Static $KurzickTitlePoints = GetKurzickTitle()
 	Local Static $LuxonTitlePoints = GetLuxonTitle()
 
-	Local $itemCounts = CountTheseItems($itemsToCount)
-	Local $goldItemsCount = CountGoldItems()
-	Local $goldCharacter = GetGoldCharacter()
-	; -1 : Before every farm loop
-	If $success == -1 Then
-		$InitialGold = $goldCharacter
-		$InitialGoldItems = $goldItemsCount
-		$InitialEctos = $itemCounts[0]
-		$InitialMargoniteGemstones = $itemCounts[1]
-		$InitialStygianGemstones = $itemCounts[2]
-		$InitialTitanGemstones = $itemCounts[3]
-		$InitialTormentGemstones = $itemCounts[4]
-	; 0 : Success
-	ElseIf $success == 0 Then
+	; $NOT_STARTED = -1 : Before every farm loop
+	If $result == $NOT_STARTED Then
+		Info('Starting run ' & ($runs + 1))
+	; $SUCCESS = 0 : Successful farm run
+	ElseIf $result == $SUCCESS Then
+		$successes += 1
 		$runs += 1
-		$time += TimerDiff($timer)
-	; 1 : Failure
-	ElseIf $success == 1 Then
+		$totalTime += $elapsedTime
+	; $FAIL = 1 : Failed farm run
+	ElseIf $result == $FAIL Then
 		$failures += 1
 		$runs += 1
-		$time += TimerDiff($timer)
+		$totalTime += $elapsedTime
 	EndIf
-	; 2 : Pause
+	; $PAUSE = 2 : Paused run or will pause
 
 	; Global stats
 	GUICtrlSetData($GUI_Label_Runs_Value, $runs)
+	GUICtrlSetData($GUI_Label_Successes_Value, $successes)
 	GUICtrlSetData($GUI_Label_Failures_Value, $failures)
-	GUICtrlSetData($GUI_Label_Time_Value, Floor($time/3600000) & 'h ' & Floor(Mod($time, 3600000)/60000) & 'min ' & Floor(Mod($time, 60000)/1000) & 's')
-	Local $timePerRun = $runs == 0 ? 0 : $time / $runs
-	GUICtrlSetData($GUI_Label_TimePerRun_Value, Floor($timePerRun/60000) & 'min ' & Floor(Mod($timePerRun, 60000)/1000) & 's')
-	Local $DiffGold = $goldCharacter - $InitialGold
-	Local $DiffGoldDeposit = $DiffGold + ($TIMESDEPOSITED * 60000)
-	GUICtrlSetData($GUI_Label_Gold_Value, Floor($DiffGoldDeposit/1000) & 'k' & Mod($DiffGoldDeposit, 1000) & 'g')
-	$TotalEctos += $itemCounts[0] - $InitialEctos
-	GUICtrlSetData($GUI_Label_Ectos_Value, $TotalEctos)
-	$TotalGoldItems += $goldItemsCount - $InitialGoldItems
-	GUICtrlSetData($GUI_Label_GoldItems_Value, $TotalGoldItems)
+	GUICtrlSetData($GUI_Label_Time_Value, ConvertTimeToHourString($totalTime))
+	Local $timePerRun = $runs == 0 ? 0 : $totalTime / $runs
+	GUICtrlSetData($GUI_Label_TimePerRun_Value, ConvertTimeToMinutesString($timePerRun))
 	$TotalChests += CountOpenedChests()
 	ClearChestsMap()
 	GUICtrlSetData($GUI_Label_Chests_Value, $TotalChests)
-	GUICtrlSetData($GUI_Label_Experience_Value, (GetExperience() - $ExperienceCount))
-
-	; Items stats
-	$TotalMargoniteGemstones += $itemCounts[1] - $InitialMargoniteGemstones
-	GUICtrlSetData($GUI_Label_MargoniteGemstone_Value, $TotalMargoniteGemstones)
-	$TotalStygianGemstones += $itemCounts[2] - $InitialStygianGemstones
-	GUICtrlSetData($GUI_Label_StygianGemstone_Value, $TotalStygianGemstones)
-	$TotalTitanGemstones += $itemCounts[3] - $InitialTitanGemstones
-	GUICtrlSetData($GUI_Label_TitanGemstone_Value, $TotalTitanGemstones)
-	$TotalTormentGemstones += $itemCounts[4] - $InitialTormentGemstones
-	GUICtrlSetData($GUI_Label_TormentGemstone_Value, $TotalTormentGemstones)
+	GUICtrlSetData($GUI_Label_Experience_Value, (GetExperience() - $InitialExperience))
 
 	; Title stats
 	GUICtrlSetData($GUI_Label_AsuraTitle_Value, GetAsuraTitle() - $AsuraTitlePoints)
@@ -1375,7 +1398,184 @@ Func UpdateStats($success, $timer)
 	GUICtrlSetData($GUI_Label_LightbringerTitle_Value, GetLightbringerTitle() - $LightbringerTitlePoints)
 	GUICtrlSetData($GUI_Label_SunspearTitle_Value, GetSunspearTitle() - $SunspearTitlePoints)
 
+	UpdateItemStats()
+
 	Return $timePerRun
+EndFunc
+
+
+Func UpdateItemStats()
+	; All static variables are initialized only once when UpdateStats() function is called first time
+	Local Static $itemsToCount[23] = [$ID_Glob_Of_Ectoplasm, _
+		$ID_Margonite_Gemstone, $ID_Stygian_Gemstone, $ID_Titan_Gemstone, $ID_Torment_Gemstone, _
+		$ID_Diessa_Chalice, $ID_Golden_Rin_Relic, $ID_Destroyer_Core, $ID_Glacial_Stone, _
+		$ID_War_Supplies, $ID_Ministerial_Commendation, $ID_Chunk_of_Drake_Flesh, $ID_Skale_Fin, _
+		$ID_Wintersday_Gift, $ID_ToT, $ID_Birthday_Cupcake, $ID_Golden_Egg, $ID_Slice_of_Pumpkin_Pie, _
+		$ID_Honeycomb, $ID_Fruitcake, $ID_Sugary_Blue_Drink, $ID_Chocolate_Bunny, $ID_Delicious_Cake]
+	Local $itemCounts = CountTheseItems($itemsToCount)
+	Local $goldItemsCount = CountGoldItems()
+
+	Local Static $PreRunGold = GetGoldCharacter()
+	Local Static $PreRunGoldItems = $goldItemsCount
+	Local Static $TotalGold = 0
+	Local Static $TotalGoldItems = 0
+
+	Local Static $PreRunEctos = $itemCounts[0]
+	Local Static $PreRunMargoniteGemstones = $itemCounts[1]
+	Local Static $PreRunStygianGemstones = $itemCounts[2]
+	Local Static $PreRunTitanGemstones = $itemCounts[3]
+	Local Static $PreRunTormentGemstones = $itemCounts[4]
+	Local Static $PreRunDiessaChalices = $itemCounts[5]
+	Local Static $PreRunRinRelics = $itemCounts[6]
+	Local Static $PreRunDestroyerCores = $itemCounts[7]
+	Local Static $PreRunGlacialStones = $itemCounts[8]
+	Local Static $PreRunWarSupplies = $itemCounts[9]
+	Local Static $PreRunMinisterialCommendations = $itemCounts[10]
+	Local Static $PreRunChunksOfDrakeFlesh = $itemCounts[11]
+	Local Static $PreRunSkaleFins = $itemCounts[12]
+	Local Static $PreRunWintersdayGifts = $itemCounts[13]
+	Local Static $PreRunTrickOrTreats = $itemCounts[14]
+	Local Static $PreRunBirthdayCupcakes = $itemCounts[15]
+	Local Static $PreRunGoldenEggs = $itemCounts[16]
+	Local Static $PreRunPumpkinPieSlices = $itemCounts[17]
+	Local Static $PreRunHoneyCombs = $itemCounts[18]
+	Local Static $PreRunFruitCakes = $itemCounts[19]
+	Local Static $PreRunSugaryBlueDrinks = $itemCounts[20]
+	Local Static $PreRunChocolateBunnies = $itemCounts[21]
+	Local Static $PreRunDeliciousCakes = $itemCounts[22]
+
+	Local Static $TotalEctos = 0
+	Local Static $TotalMargoniteGemstones = 0
+	Local Static $TotalStygianGemstones = 0
+	Local Static $TotalTitanGemstones = 0
+	Local Static $TotalTormentGemstones = 0
+	Local Static $TotalDiessaChalices = 0
+	Local Static $TotalRinRelics = 0
+	Local Static $TotalDestroyerCores = 0
+	Local Static $TotalGlacialStones = 0
+	Local Static $TotalWarSupplies = 0
+	Local Static $TotalMinisterialCommendations = 0
+	Local Static $TotalChunksOfDrakeFlesh = 0
+	Local Static $TotalSkaleFins = 0
+	Local Static $TotalWintersdayGifts = 0
+	Local Static $TotalTrickOrTreats = 0
+	Local Static $TotalBirthdayCupcakes = 0
+	Local Static $TotalGoldenEggs = 0
+	Local Static $TotalPumpkinPieSlices = 0
+	Local Static $TotalHoneyCombs = 0
+	Local Static $TotalFruitCakes = 0
+	Local Static $TotalSugaryBlueDrinks = 0
+	Local Static $TotalChocolateBunnies = 0
+	Local Static $TotalDeliciousCakes = 0
+
+	; Items stats, including inventory management situations when some items got sold or stored in chest, to update counters accordingly
+	; Counting income surplus of every item group after each finished run
+	Local $RunIncomeGold = GetGoldCharacter() - $PreRunGold
+	Local $RunIncomeGoldItems = $goldItemsCount - $PreRunGoldItems
+	Local $RunIncomeEctos = $itemCounts[0] - $PreRunEctos
+	Local $RunIncomeMargoniteGemstones = $itemCounts[1] - $PreRunMargoniteGemstones
+	Local $RunIncomeStygianGemstones = $itemCounts[2] - $PreRunStygianGemstones
+	Local $RunIncomeTitanGemstones = $itemCounts[3] - $PreRunTitanGemstones
+	Local $RunIncomeTormentGemstones = $itemCounts[4] - $PreRunTormentGemstones
+	Local $RunIncomeDiessaChalices = $itemCounts[5] - $PreRunDiessaChalices
+	Local $RunIncomeRinRelics = $itemCounts[6] - $PreRunRinRelics
+	Local $RunIncomeDestroyerCores = $itemCounts[7] - $PreRunDestroyerCores
+	Local $RunIncomeGlacialStones = $itemCounts[8] - $PreRunGlacialStones
+	Local $RunIncomeWarSupplies = $itemCounts[9] - $PreRunWarSupplies
+	Local $RunIncomeMinisterialCommendations = $itemCounts[10] - $PreRunMinisterialCommendations
+	Local $RunIncomeChunksOfDrakeFlesh = $itemCounts[11] - $PreRunChunksOfDrakeFlesh
+	Local $RunIncomeSkaleFins = $itemCounts[12] - $PreRunSkaleFins
+	Local $RunIncomeWintersdayGifts = $itemCounts[13] - $PreRunWintersdayGifts
+	Local $RunIncomeTrickOrTreats = $itemCounts[14] - $PreRunTrickOrTreats
+	Local $RunIncomeBirthdayCupcakes = $itemCounts[15] - $PreRunBirthdayCupcakes
+	Local $RunIncomeGoldenEggs = $itemCounts[16] - $PreRunGoldenEggs
+	Local $RunIncomePumpkinPieSlices = $itemCounts[17] - $PreRunPumpkinPieSlices
+	Local $RunIncomeHoneyCombs = $itemCounts[18] - $PreRunHoneyCombs
+	Local $RunIncomeFruitCakes = $itemCounts[19] - $PreRunFruitCakes
+	Local $RunIncomeSugaryBlueDrinks = $itemCounts[20] - $PreRunSugaryBlueDrinks
+	Local $RunIncomeChocolateBunnies = $itemCounts[21] - $PreRunChocolateBunnies
+	Local $RunIncomeDeliciousCakes = $itemCounts[22] - $PreRunDeliciousCakes
+
+	; If income is positive then updating cumulative item stats. Income is negative when selling or storing items in chest
+	If $RunIncomeGold > 0 Then $TotalGold += $RunIncomeGold
+	If $RunIncomeGoldItems > 0 Then $TotalGoldItems += $RunIncomeGoldItems
+	If $RunIncomeEctos > 0 Then $TotalEctos += $RunIncomeEctos
+	If $RunIncomeMargoniteGemstones > 0 Then $TotalMargoniteGemstones += $RunIncomeMargoniteGemstones
+	If $RunIncomeStygianGemstones > 0 Then $TotalStygianGemstones += $RunIncomeStygianGemstones
+	If $RunIncomeTitanGemstones > 0 Then $TotalTitanGemstones += $RunIncomeTitanGemstones
+	If $RunIncomeTormentGemstones > 0 Then $TotalTormentGemstones += $RunIncomeTormentGemstones
+	If $RunIncomeDiessaChalices > 0 Then $TotalDiessaChalices += $RunIncomeDiessaChalices
+	If $RunIncomeRinRelics > 0 Then $TotalRinRelics += $RunIncomeRinRelics
+	If $RunIncomeDestroyerCores > 0 Then $TotalDestroyerCores += $RunIncomeDestroyerCores
+	If $RunIncomeGlacialStones > 0 Then $TotalGlacialStones += $RunIncomeGlacialStones
+	If $RunIncomeWarSupplies > 0 Then $TotalWarSupplies += $RunIncomeWarSupplies
+	If $RunIncomeMinisterialCommendations > 0 Then $TotalMinisterialCommendations += $RunIncomeMinisterialCommendations
+	If $RunIncomeChunksOfDrakeFlesh > 0 Then $TotalChunksOfDrakeFlesh += $RunIncomeChunksOfDrakeFlesh
+	If $RunIncomeSkaleFins > 0 Then $TotalSkaleFins += $RunIncomeSkaleFins
+	If $RunIncomeWintersdayGifts > 0 Then $TotalWintersdayGifts += $RunIncomeWintersdayGifts
+	If $RunIncomeTrickOrTreats > 0 Then $TotalTrickOrTreats += $RunIncomeTrickOrTreats
+	If $RunIncomeBirthdayCupcakes > 0 Then $TotalBirthdayCupcakes += $RunIncomeBirthdayCupcakes
+	If $RunIncomeGoldenEggs > 0 Then $TotalGoldenEggs += $RunIncomeGoldenEggs
+	If $RunIncomePumpkinPieSlices > 0 Then $TotalPumpkinPieSlices += $RunIncomePumpkinPieSlices
+	If $RunIncomeHoneyCombs > 0 Then $TotalHoneyCombs += $RunIncomeHoneyCombs
+	If $RunIncomeFruitCakes > 0 Then $TotalFruitCakes += $RunIncomeFruitCakes
+	If $RunIncomeSugaryBlueDrinks > 0 Then $TotalSugaryBlueDrinks += $RunIncomeSugaryBlueDrinks
+	If $RunIncomeChocolateBunnies > 0 Then $TotalChocolateBunnies += $RunIncomeChocolateBunnies
+	If $RunIncomeDeliciousCakes > 0 Then $TotalDeliciousCakes += $RunIncomeDeliciousCakes
+
+	; updating GUI labels with cumulative items counters
+	GUICtrlSetData($GUI_Label_Gold_Value, Floor($TotalGold/1000) & 'k' & Mod($TotalGold, 1000) & 'g')
+	GUICtrlSetData($GUI_Label_GoldItems_Value, $TotalGoldItems)
+	GUICtrlSetData($GUI_Label_Ectos_Value, $TotalEctos)
+	GUICtrlSetData($GUI_Label_MargoniteGemstone_Value, $TotalMargoniteGemstones)
+	GUICtrlSetData($GUI_Label_StygianGemstone_Value, $TotalStygianGemstones)
+	GUICtrlSetData($GUI_Label_TitanGemstone_Value, $TotalTitanGemstones)
+	GUICtrlSetData($GUI_Label_TormentGemstone_Value, $TotalTormentGemstones)
+	GUICtrlSetData($GUI_Label_DiessaChalices_Value, $TotalDiessaChalices)
+	GUICtrlSetData($GUI_Label_RinRelics_Value, $TotalRinRelics)
+	GUICtrlSetData($GUI_Label_DestroyerCores_Value, $TotalDestroyerCores)
+	GUICtrlSetData($GUI_Label_GlacialStones_Value, $TotalGlacialStones)
+	GUICtrlSetData($GUI_Label_WarSupplies_Value, $TotalWarSupplies)
+	GUICtrlSetData($GUI_Label_MinisterialCommendations_Value, $TotalMinisterialCommendations)
+	GUICtrlSetData($GUI_Label_ChunkOfDrakeFlesh_Value, $TotalChunksOfDrakeFlesh)
+	GUICtrlSetData($GUI_Label_SkaleFins_Value, $TotalSkaleFins)
+	GUICtrlSetData($GUI_Label_WintersdayGifts_Value, $TotalWintersdayGifts)
+	GUICtrlSetData($GUI_Label_TrickOrTreats_Value, $TotalTrickOrTreats)
+	GUICtrlSetData($GUI_Label_BirthdayCupcakes_Value, $TotalBirthdayCupcakes)
+	GUICtrlSetData($GUI_Label_GoldenEggs_Value, $TotalGoldenEggs)
+	GUICtrlSetData($GUI_Label_PumpkinPieSlices_Value, $TotalPumpkinPieSlices)
+	GUICtrlSetData($GUI_Label_HoneyCombs_Value, $TotalHoneyCombs)
+	GUICtrlSetData($GUI_Label_FruitCakes_Value, $TotalFruitCakes)
+	GUICtrlSetData($GUI_Label_SugaryBlueDrinks_Value, $TotalSugaryBlueDrinks)
+	GUICtrlSetData($GUI_Label_ChocolateBunnies_Value, $TotalChocolateBunnies)
+	GUICtrlSetData($GUI_Label_DeliciousCakes_Value, $TotalDeliciousCakes)
+
+	; resetting items counters to count income surplus for the next run
+	$PreRunGold = GetGoldCharacter()
+	$PreRunGoldItems = $goldItemsCount
+ 	$PreRunEctos = $itemCounts[0]
+ 	$PreRunMargoniteGemstones = $itemCounts[1]
+ 	$PreRunStygianGemstones = $itemCounts[2]
+ 	$PreRunTitanGemstones = $itemCounts[3]
+ 	$PreRunTormentGemstones = $itemCounts[4]
+ 	$PreRunDiessaChalices = $itemCounts[5]
+ 	$PreRunRinRelics = $itemCounts[6]
+ 	$PreRunDestroyerCores = $itemCounts[7]
+ 	$PreRunGlacialStones = $itemCounts[8]
+ 	$PreRunWarSupplies = $itemCounts[9]
+ 	$PreRunMinisterialCommendations = $itemCounts[10]
+ 	$PreRunChunksOfDrakeFlesh = $itemCounts[11]
+ 	$PreRunSkaleFins = $itemCounts[12]
+ 	$PreRunWintersdayGifts = $itemCounts[13]
+ 	$PreRunTrickOrTreats = $itemCounts[14]
+ 	$PreRunBirthdayCupcakes = $itemCounts[15]
+ 	$PreRunGoldenEggs = $itemCounts[16]
+ 	$PreRunPumpkinPieSlices = $itemCounts[17]
+ 	$PreRunHoneyCombs = $itemCounts[18]
+ 	$PreRunFruitCakes = $itemCounts[19]
+ 	$PreRunSugaryBlueDrinks = $itemCounts[20]
+ 	$PreRunChocolateBunnies = $itemCounts[21]
+ 	$PreRunDeliciousCakes = $itemCounts[22]
 EndFunc
 
 
@@ -1412,6 +1612,8 @@ Func SelectFarmDuration($Farm)
 			Return $FOW_FARM_DURATION
 		Case 'Gemstone'
 			Return $GEMSTONE_FARM_DURATION
+		Case 'Gemstone Stygian'
+			Return $GEMSTONE_STYGIAN_FARM_DURATION
 		Case 'Jade Brotherhood'
 			Return $JADEBROTHERHOOD_FARM_DURATION
 		Case 'Kournans'
@@ -1453,6 +1655,8 @@ Func SelectFarmDuration($Farm)
 			Return $LIGHTBRINGER_FARM2_DURATION
 		Case 'Vanguard'
 			Return $VANGUARD_TITLE_FARM_DURATION
+		Case 'War Supply Keiran'
+			Return $WAR_SUPPLY_FARM_DURATION
 
 		Case Else
 			Return 2 * 60 * 1000
@@ -1461,8 +1665,19 @@ Func SelectFarmDuration($Farm)
 EndFunc
 #EndRegion Statistics management
 
+
 #Region Utils
 Func IsHardmodeEnabled()
 	Return GUICtrlRead($GUI_Checkbox_HM) == $GUI_CHECKED
+EndFunc
+
+
+Func ConvertTimeToHourString($time)
+	Return Floor($time/3600000) & 'h ' & Floor(Mod($time, 3600000)/60000) & 'min ' & Floor(Mod($time, 60000)/1000) & 's'
+EndFunc
+
+
+Func ConvertTimeToMinutesString($time)
+	Return Floor($time/60000) & 'min ' & Floor(Mod($time, 60000)/1000) & 's'
 EndFunc
 #EndRegion Utils

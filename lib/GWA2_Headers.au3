@@ -1,3 +1,4 @@
+#CS ===========================================================================
 ;############################
 ;#	by rheek				#
 ;#	modified by mhaendler	#
@@ -6,11 +7,12 @@
 ;#	improved by night		#
 ;############################
 ; v1.7, source: github.com/rheek123/GwBotApiPatcher
-; This file contains all headers that gwa2 uses to communicate with the gameservers directly.
+; This file contains all headers that gwa2 uses to communicate with the game servers directly.
 ; The headers are named variables. The names should indicate what the header is about.
 ; The comments give a litte more detail about what the header does.
 ; If you need to update the headers, the comments give hints about what action to trigger while recording CtoGS packets..
 ; Night edit : if you wish to have a better, updated list of those headers, look up Opcodes.h from GWCA, the values are the same
+#CE ===========================================================================
 
 #include-once
 

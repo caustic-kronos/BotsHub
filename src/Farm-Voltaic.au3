@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -38,64 +41,63 @@ Global $VOLTAIC_FARM_SETUP = False
 ;~ Main method to farm Voltaic
 Func VoltaicFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Umbral_Grotto Then DistrictTravel($ID_Umbral_Grotto, $DISTRICT_NAME)
+	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	If Not $VOLTAIC_FARM_SETUP Then
-		SetupVoltaicFarm()
-		$VOLTAIC_FARM_SETUP = True
-	EndIf
-
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Return VoltaicFarmLoop()
+	GoToVerdantCascades()
+	AdlibRegister('TrackPartyStatus', 10000)
+	Local $result = VoltaicFarmLoop()
+	; Local $timer = TimerInit()
+	AdlibUnregister('TrackPartyStatus')
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
 ;~ Voltaic farm setup
 Func SetupVoltaicFarm()
 	Info('Setting up farm')
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	; Assuming that team has been set up correctly manually
+	SwitchToHardModeIfEnabled()
+	$VOLTAIC_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+;~ Move out of outpost into Verdant Cascades
+Func GoToVerdantCascades()
+	If GetMapID() <> $ID_Umbral_Grotto Then TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Verdant_Cascades
+		Info('Moving to Verdant Cascades')
+		MoveTo(-23200, 7100)
+		Move(-22735, 6339)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Verdant_Cascades, 10000, 2000)
+	WEnd
 EndFunc
 
 
 ;~ Farm loop
 Func VoltaicFarmLoop()
+	If GetMapID() <> $ID_Verdant_Cascades Then Return $FAIL
 	ResetFailuresCounter()
-	Info('Making way to portal')
-	MoveTo(-23200, 7100)
-	Move(-22735, 6339)
-	RndSleep(1000)
-	WaitMapLoading($ID_Verdant_Cascades)
 
-	AdlibRegister('TrackGroupStatus', 10000)
-
-	Local $timer = TimerInit()
-	MoveAggroAndKill(-19887, 6074, '1', $VSAggroRange)
+	MoveAggroAndKillInRange(-19887, 6074, '1', $VSAggroRange)
 	Info('Making way to Slavers')
-	MoveAggroAndKill(-10273, 3251, '2', $VSAggroRange)
-	MoveAggroAndKill(-6878, -329, '3', $VSAggroRange)
-	MoveAggroAndKill(-3041, -3446, '4', $VSAggroRange)
-	MoveAggroAndKill(3571, -9501, '5', $VSAggroRange)
-	MoveAggroAndKill(10764, -6448, '6', $VSAggroRange)
-	MoveAggroAndKill(13063, -4396, '7', $VSAggroRange)
-	If IsRunFailed() Then
-		AdlibUnregister('TrackGroupStatus')
-		Return 1
-	EndIf
+	MoveAggroAndKillInRange(-10273, 3251, '2', $VSAggroRange)
+	MoveAggroAndKillInRange(-6878, -329, '3', $VSAggroRange)
+	MoveAggroAndKillInRange(-3041, -3446, '4', $VSAggroRange)
+	MoveAggroAndKillInRange(3571, -9501, '5', $VSAggroRange)
+	MoveAggroAndKillInRange(10764, -6448, '6', $VSAggroRange)
+	MoveAggroAndKillInRange(13063, -4396, '7', $VSAggroRange)
+	If IsRunFailed() Then Return $FAIL
 
 	Info('At the Troll Bridge - TROLL TOLL')
-	MoveAggroAndKill(18054, -3275, '8', $VSAggroRange)
-	MoveAggroAndKill(20966, -6476, '9', $VSAggroRange)
-	MoveAggroAndKill(25298, -9456, '10', $VSAggroRange)
-	If IsRunFailed() Then
-		AdlibUnregister('TrackGroupStatus')
-		Return 1
-	EndIf
+	MoveAggroAndKillInRange(18054, -3275, '8', $VSAggroRange)
+	MoveAggroAndKillInRange(20966, -6476, '9', $VSAggroRange)
+	MoveAggroAndKillInRange(25298, -9456, '10', $VSAggroRange)
+	If IsRunFailed() Then Return $FAIL
 
 	Move(25729, -9360)
 	Info('Entering Slavers')
@@ -112,46 +114,43 @@ Func VoltaicFarmLoop()
 	Info('Now in Justicar')
 	Sleep(500)
 	GoToNPC(GetNearestNPCToCoords(-12135, -18210))
-	RndSleep(250)
-	Dialog(132)
-	RndSleep(500)
+	RandomSleep(250)
+	Dialog(0x84)
+	RandomSleep(500)
 
 	If IsHardmodeEnabled() Then UseConset()
 
 	Sleep(1000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -18500, -8000, 1250)
 		; Waiting to be alive before retrying
-		While Not IsGroupCurrentlyAlive()
+		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
 		UseMoraleConsumableIfNeeded()
 		UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
-		MoveAggroAndKill(-13500, -15750, 'In front of the door', $VSAggroRange)
-		MoveAggroAndKill(-12500, -15000, 'Before the bridge', $VSAggroRange)
-		MoveAggroAndKill(-10400, -14800, 'After the bridge', $VSAggroRange)
-		MoveAggroAndKill(-11500, -13300, 'First group', $VSAggroRange)
-		MoveAggroAndKill(-13400, -11500, 'Second group', $VSAggroRange)
-		MoveAggroAndKill(-13700, -9550, 'Third group', $VSAggroRange)
-		MoveAggroAndKill(-14100, -8600, 'Fourth group', $VSAggroRange)
-		MoveAggroAndKill(-15000, -7500, 'Fourth group, again', $VSAggroRange)
-		MoveAggroAndKill(-16500, -8000, 'Fifth group', $VSAggroRange)
-		MoveAggroAndKill(-18500, -8000, 'To the shrine', $VSAggroRange)
+		MoveAggroAndKillInRange(-13500, -15750, 'In front of the door', $VSAggroRange)
+		MoveAggroAndKillInRange(-12500, -15000, 'Before the bridge', $VSAggroRange)
+		MoveAggroAndKillInRange(-10400, -14800, 'After the bridge', $VSAggroRange)
+		MoveAggroAndKillInRange(-11500, -13300, 'First group', $VSAggroRange)
+		MoveAggroAndKillInRange(-13400, -11500, 'Second group', $VSAggroRange)
+		MoveAggroAndKillInRange(-13700, -9550, 'Third group', $VSAggroRange)
+		MoveAggroAndKillInRange(-14100, -8600, 'Fourth group', $VSAggroRange)
+		MoveAggroAndKillInRange(-15000, -7500, 'Fourth group, again', $VSAggroRange)
+		MoveAggroAndKillInRange(-16500, -8000, 'Fifth group', $VSAggroRange)
+		MoveAggroAndKillInRange(-18500, -8000, 'To the shrine', $VSAggroRange)
 	WEnd
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
 		; Waiting to be alive before retrying
-		While Not IsGroupCurrentlyAlive()
+		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
 		UseMoraleConsumableIfNeeded()
 		UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
-		MoveAggroAndKill(-18500, -11500, 'Pre-Boss group', $VSAggroRange)
-		MoveAggroAndKill(-17700, -12500, 'Boss group', $VSAggroRange)
-		MoveAggroAndKill(-17500, -14250, 'Final group', $VSAggroRange)
+		MoveAggroAndKillInRange(-18500, -11500, 'Pre-Boss group', $VSAggroRange)
+		MoveAggroAndKillInRange(-17700, -12500, 'Boss group', $VSAggroRange)
+		MoveAggroAndKillInRange(-17500, -14250, 'Final group', $VSAggroRange)
 	WEnd
-	If IsRunFailed() Then
-		AdlibUnregister('TrackGroupStatus')
-		Return 1
-	EndIf
+	If IsRunFailed() Then Return $FAIL
 	; Chest
 	Move(-17500, -14250)
 	Info('Opening chest')
@@ -161,6 +160,5 @@ Func VoltaicFarmLoop()
 	Sleep(2500)
 	PickUpItems()
 	Info('Finished Run')
-	AdlibUnregister('TrackGroupStatus')
-	Return 0
+	Return $SUCCESS
 EndFunc

@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -29,30 +32,30 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $FollowerInformations = 'This bot makes your character follow the first other player in group.' & @CRLF _
+Global Const $FollowerInformations = 'This bot makes your character follow the first other player in party.' & @CRLF _
 	& 'It will attack everything that gets in range.' & @CRLF _
 	& 'It will loot all items it can loot.' & @CRLF _
 	& 'It will also loot all chests in range.'
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Global $Player_Profession_ID
-Global $Follower_AttackSkill1 = null
-Global $Follower_AttackSkill2 = null
-Global $Follower_AttackSkill3 = null
-Global $Follower_AttackSkill4 = null
-Global $Follower_AttackSkill5 = null
-Global $Follower_AttackSkill6 = null
-Global $Follower_AttackSkill7 = null
-Global $Follower_AttackSkill8 = null
-Global $Follower_MaintainSkill1 = null
-Global $Follower_MaintainSkill2 = null
-Global $Follower_MaintainSkill3 = null
-Global $Follower_MaintainSkill4 = null
-Global $Follower_MaintainSkill5 = null
-Global $Follower_MaintainSkill6 = null
-Global $Follower_MaintainSkill7 = null
-Global $Follower_MaintainSkill8 = null
-Global $Follower_RunningSkill = null
+Global $Follower_AttackSkill1 = Null
+Global $Follower_AttackSkill2 = Null
+Global $Follower_AttackSkill3 = Null
+Global $Follower_AttackSkill4 = Null
+Global $Follower_AttackSkill5 = Null
+Global $Follower_AttackSkill6 = Null
+Global $Follower_AttackSkill7 = Null
+Global $Follower_AttackSkill8 = Null
+Global $Follower_MaintainSkill1 = Null
+Global $Follower_MaintainSkill2 = Null
+Global $Follower_MaintainSkill3 = Null
+Global $Follower_MaintainSkill4 = Null
+Global $Follower_MaintainSkill5 = Null
+Global $Follower_MaintainSkill6 = Null
+Global $Follower_MaintainSkill7 = Null
+Global $Follower_MaintainSkill8 = Null
+Global $Follower_RunningSkill = Null
 
 Global $FOLLOWER_SETUP = False
 Global $playerIDs
@@ -61,7 +64,7 @@ Global $playerIDs
 Func FollowerFarm($STATUS)
 	If Not $FOLLOWER_SETUP Then FollowerSetup()
 
-	While $STATUS == 'RUNNING' And CountSlots(1, $BAG_NUMBER) > 5
+	While $STATUS == 'RUNNING' And CountSlots(1, $BAGS_COUNT) > 5
 		Switch $Player_Profession_ID
 			Case $ID_Warrior
 				FollowerLoop()
@@ -91,7 +94,7 @@ Func FollowerFarm($STATUS)
 
 	$FOLLOWER_SETUP = False
 	AdlibUnRegister()
-	Return $STATUS <> 'RUNNING' ? 2 : 0
+	Return $STATUS <> 'RUNNING' ? $PAUSE : $SUCCESS
 EndFunc
 
 
@@ -130,13 +133,13 @@ EndFunc
 
 ;~ Follower loop
 Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
-	Local Static $firstPlayer = GetFirstPlayerOfGroup()
+	Local Static $firstPlayer = GetFirstPlayerOfParty()
 	$RunFunction()
 	GoPlayer($firstPlayer)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	If $foesCount > 0 Then
 		Debug('Foes in range detected, starting fight')
-		While Not GetIsDead() And $foesCount > 0
+		While IsPlayerAlive() And $foesCount > 0
 			$FightFunction()
 			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 		WEnd
@@ -144,9 +147,9 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	EndIf
 	FindAndOpenChests()
 
-	PickUpItems(null, DefaultShouldPickItem, 1500)
+	PickUpItems(Null, DefaultShouldPickItem, 1500)
 
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
@@ -165,7 +168,7 @@ EndFunc
 
 ;~ Default class run method
 Func DefaultRun()
-	If $Follower_RunningSkill <> null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
+	If $Follower_RunningSkill <> Null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
 EndFunc
 
 
@@ -226,60 +229,60 @@ Func ParagonSetup()
 EndFunc
 
 
-;~ Paragon function to cast shouts on all group members
+;~ Paragon function to cast shouts on all party members
 Func ParagonRefreshShouts()
-	Info('Refresh shouts on group')
+	Info('Refresh shouts on party')
 	Local Static $selfRecast = False
-	MoveToMiddleOfGroupWithTimeout(5000)
-	RndSleep(20)
+	MoveToMiddleOfPartyWithTimeout(5000)
+	RandomSleep(20)
 	Local $partyMembers = GetPartyInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
-	If $partyMembers[0] < 4 Then Return
+	If UBound($partyMembers) < 4 Then Return
 
 	UseSkillEx($Follower_MaintainSkill8)
-	RndSleep(20)
+	RandomSleep(20)
 	If ($selfRecast Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain)) == 0) And GetEnergy() > 15 Then
 		UseSkillEx($Follower_MaintainSkill1, GetMyAgent())
-		RndSleep(20)
+		RandomSleep(20)
 		If $selfRecast Then
 			UseSkillEx($Follower_MaintainSkill2, GetMyAgent())
-			RndSleep(20)
+			RandomSleep(20)
 			$selfRecast = False
 		Else
 			$selfRecast = True
 		EndIf
 	Else
-		$partyMembers = GetParty()
+		$party = GetParty()
 
 		Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 
 		; This solution is imperfect because we recast HR every time
 		Local Static $i = 1
-		If $partyMembers[0] > 1 Then
-			If DllStructGetData($partyMembers[$i], 'ID') == $ownID Or $i > $partyMembers[0] Then $i = Mod($i, $partyMembers[0]) + 1
+		If UBound($party) > 1 Then
+			If DllStructGetData($party[$i], 'ID') == $ownID Or $i > UBound($party) Then $i = Mod($i, UBound($party)) + 1
 			If GetEnergy() > 15 Then
-				UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
-				RndSleep(20)
+				UseSkillEx($Follower_MaintainSkill1, $party[$i])
+				RandomSleep(20)
 			EndIf
 			If GetEnergy() > 20 Then
-				UseSkillEx($Follower_MaintainSkill2, $partyMembers[$i])
-				RndSleep(20)
+				UseSkillEx($Follower_MaintainSkill2, $party[$i])
+				RandomSleep(20)
 			EndIf
-			$i = Mod($i, $partyMembers[0]) + 1
+			$i = Mod($i, UBound($party)) + 1
 		EndIf
 
 		; This solution would be better - but effects can't be accessed on other heroes/characters
 		;Local $HeroNumber
-		;For $i = 1 To $partyMembers[0]
-		;	If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop
-		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
-		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy() > 15 Then
-		;		UseSkillEx($Follower_MaintainSkill1, $partyMembers[$i])
-		;		RndSleep(GetPing() + 20)
+		;For $member In $party
+		;	If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
+		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
+		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy() > 15 Then
+		;		UseSkillEx($Follower_MaintainSkill1, $member)
+		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
-		;	If ($HeroNumber == 0 Or GetEffectTimeRemaining(GetEffect($ID_Burning_Refrain), $HeroNumber) == 0) And GetEnergy() > 20 Then
-		;		UseSkillEx($Follower_MaintainSkill2, $partyMembers[$i])
-		;		RndSleep(GetPing() + 20)
+		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_Burning_Refrain), $HeroNumber) == 0) And GetEnergy() > 20 Then
+		;		UseSkillEx($Follower_MaintainSkill2, $member)
+		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
 		;Next
@@ -290,71 +293,32 @@ EndFunc
 ;~ Paragon fight function
 Func ParagonFight()
 	If IsRecharged($Follower_MaintainSkill7) Then UseSkillEx($Follower_MaintainSkill7)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If IsRecharged($Follower_MaintainSkill6) Then UseSkillEx($Follower_MaintainSkill6)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If IsRecharged($Follower_MaintainSkill3) Then UseSkillEx($Follower_MaintainSkill3)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If GetSkillbarSkillAdrenaline($Follower_MaintainSkill5) < 200 And IsRecharged($Follower_MaintainSkill4) Then UseSkillEx($Follower_MaintainSkill4)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	If GetSkillbarSkillAdrenaline($Follower_MaintainSkill5) == 200 Then UseSkillEx($Follower_MaintainSkill5)
-	RndSleep(GetPing() + 20)
+	RandomSleep(GetPing() + 20)
 	Attack(GetNearestEnemyToAgent(GetMyAgent()))
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
-;~ Get first player of the group other than yourself
-Func GetFirstPlayerOfGroup()
-	Local $partyMembers = GetParty()
+;~ Get first player of the party team other than yourself. If no other player found in the party team then function returns Null
+Func GetFirstPlayerOfParty()
+	Local $party = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
 	Local $firstPlayer
-	For $i = 1 To $partyMembers[0]
-		If DllStructGetData($partyMembers[$i], 'ID') == $ownID Then ContinueLoop
-		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($partyMembers[$i], 'ID'))
-		If $HeroNumber == 0 Then
-			$firstPlayer = $partyMembers[$i]
-			ExitLoop
+	For $member In $party
+		If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
+		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
+		If $HeroNumber == Null Then
+			$firstPlayer = $member
+			Return $firstPlayer
 		EndIf
 	Next
-	Return $firstPlayer
-EndFunc
-
-
-;~ Returns the coordinates in the middle of the group
-Func FindMiddleOfGroup()
-	Local $position[2] = [0, 0]
-	Local $partyMembers = GetParty()
-	Local $partySize = 0
-	Local $me = GetMyAgent()
-	Local $ownID = DllStructGetData($me, 'ID')
-	For $i = 1 To $partyMembers[0]
-		If GetDistance($me, $partyMembers[$i]) < $RANGE_SPIRIT And DllStructGetData($partyMembers[$i], 'ID') <> $ownID Then
-			$position[0] += DllStructGetData($partyMembers[$i], 'X')
-			$position[1] += DllStructGetData($partyMembers[$i], 'Y')
-			$partySize += 1
-		EndIf
-	Next
-	$position[0] = $position[0] / $partySize
-	$position[1] = $position[1] / $partySize
-	Return $position
-EndFunc
-
-
-;~ Move to a location in a limited time
-Func MoveToMiddleOfGroupWithTimeout($timeOut)
-	Local $me = GetMyAgent()
-	Local $oldMapID, $mapID = GetMapID()
-	Local $timer = TimerInit()
-	Local $position = FindMiddleOfGroup()
-	Move($position[0], $position[1], 0)
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
-		If GetIsDead() Then ExitLoop
-		$oldMapID = $mapID
-		$mapID = GetMapID()
-		If $mapID <> $oldMapID Then ExitLoop
-		$position = FindMiddleOfGroup()
-		Sleep(200)
-		$me = GetMyAgent()
-	WEnd
+	Return Null
 EndFunc

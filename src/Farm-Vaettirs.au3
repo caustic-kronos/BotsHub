@@ -1,12 +1,12 @@
-#CS
+#CS ===========================================================================
 #################################
 #								#
 #			Vaettir Bot			#
 #								#
 #################################
 Author: gigi
-Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night
-#CE
+Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night, Gahais
+#CE ===========================================================================
 
 #include-once
 #NoTrayIcon
@@ -17,7 +17,7 @@ Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from mone
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
 Global Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- +4 Shadow Arts' & @CRLF _
@@ -29,14 +29,14 @@ Global Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $VAETTIRS_FARM_DURATION = 4 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form) is better than UseSkillEx(2))
-Global Const $Skill_Deadly_Paradox = 1
-Global Const $Skill_Shadow_Form = 2
-Global Const $Skill_Shroud_of_Distress = 3
-Global Const $Skill_Way_of_Perfection = 4
-Global Const $Skill_Heart_of_Shadow = 5
-Global Const $Skill_Channeling = 6
-Global Const $Skill_Arcane_Echo = 7
-Global Const $Skill_Wastrels_Demise = 8
+Global Const $Skill_Deadly_Paradox 		= 1
+Global Const $Skill_Shadow_Form 		= 2
+Global Const $Skill_Shroud_of_Distress 	= 3
+Global Const $Skill_Way_of_Perfection 	= 4
+Global Const $Skill_Heart_of_Shadow 	= 5
+Global Const $Skill_Channeling 			= 6
+Global Const $Skill_Arcane_Echo 		= 7
+Global Const $Skill_Wastrels_Demise 	= 8
 
 ; ==== Global variables ====
 Global $ChatStuckTimer = TimerInit()
@@ -52,35 +52,30 @@ Func VaettirFarm($STATUS)
 		RunToJagaMoraine()
 	WEnd
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return VaettirsFarmLoop()
 EndFunc
 
 
 ;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
 Func RunToJagaMoraine()
-	If GetMapID() <> $ID_Longeyes_Ledge Then
-		Info('Travelling to Longeyes Ledge')
-		DistrictTravel($ID_Longeyes_Ledge, $DISTRICT_NAME)
-	EndIf
-
+	; Need to be done here in case bot comes back from inventory management
+	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
-
+	SetDisplayedTitle($ID_Norn_Title)
+	LeaveParty() ; solo farmer
+	Info('Setting up build skillbar')
 	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
 
 	Info('Exiting Outpost')
 	MoveTo(-26000, 16000)
 	Move(-26472, 16217)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Bjora_Marches)
 
-	RndSleep(500)
+	RandomSleep(500)
 	UseConsumable($ID_Birthday_Cupcake)
-	RndSleep(500)
-
-	SetDisplayedTitle($ID_Norn_Title)
+	RandomSleep(500)
 
 	Info('Running to Jaga Moraine')
 	Local $pathToJaga[30][2] = [ _
@@ -115,8 +110,8 @@ Func RunToJagaMoraine()
 		[-19250,	5431], _
 		[-19968,	5564] _
 	]
-	For $i = 0 To (UBound($pathToJaga) - 1)
-		If Not MoveRunning($pathToJaga[$i][0], $pathToJaga[$i][1]) Then Return
+	For $i = 0 To UBound($pathToJaga) - 1
+		If MoveRunning($pathToJaga[$i][0], $pathToJaga[$i][1]) == $FAIL Then Return $FAIL
 	Next
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
@@ -125,14 +120,14 @@ EndFunc
 
 ;~ Move to X, Y. This is to be used in the run from across Bjora Marches
 Func MoveRunning($X, $Y)
-	If GetIsDead() Then Return False
+	If IsPlayerDead() Then Return $FAIL
 
 	Move($X, $Y)
 
 	Local $target
 	Local $me = GetMyAgent()
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 250
-		If GetIsDead() Then Return False
+	While GetDistanceToPoint($me, $X, $Y) > 250
+		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent($me)
 
 		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then TryUseShadowForm()
@@ -142,17 +137,18 @@ Func MoveRunning($X, $Y)
 		If DllStructGetData($me, 'HP') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, $target)
 
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then Move($X, $Y)
-		RndSleep(500)
+		If Not IsPlayerMoving() Then Move($X, $Y)
+		RandomSleep(500)
 		$me = GetMyAgent()
 	WEnd
-	Return True
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Farm loop
 Func VaettirsFarmLoop()
-	RndSleep(1000)
+	RandomSleep(1000)
+	GetVaettirsNornBlessing()
 	AggroAllMobs()
 	;KillMobs()
 	VaettirsKillSequence()
@@ -172,10 +168,10 @@ Func GetVaettirsNornBlessing()
 	If $nornTitlePoints < 160000 Then
 		Info('Getting norn title blessing')
 		GoNearestNPCToCoords(13400, -20800)
-		RndSleep(300)
-		Dialog(132)
+		RandomSleep(300)
+		Dialog(0x84)
 	EndIf
-	RndSleep(350)
+	RandomSleep(350)
 EndFunc
 
 
@@ -183,7 +179,6 @@ EndFunc
 Func AggroAllMobs()
 	Local $target
 	Info('Aggroing left')
-	GetVaettirsNornBlessing()
 	MoveTo(13172, -22137)
 	MoveAggroing(12496, -22600, 150)
 	MoveAggroing(11375, -22761, 150)
@@ -248,8 +243,8 @@ EndFunc
 ;~ Kill a mob group
 Func VaettirsKillSequence()
 	; Wait for shadow form to have been casted very recently
-	While Not GetIsDead() And TimerDiff($shadowFormTimer) > 5000
-		If GetIsDead() Then Return
+	While IsPlayerAlive() And TimerDiff($shadowFormTimer) > 5000
+		If IsPlayerDead() Then Return
 		Sleep(100)
 		VaettirsStayAlive()
 	WEnd
@@ -263,7 +258,7 @@ Func VaettirsKillSequence()
 		UseSkillEx($Skill_Arcane_Echo)
 		$target = GetWastrelsTarget()
 		UseSkillEx($Skill_Wastrels_Demise, $target)
-		While Not GetIsDead() And $foesCount > 0 And TimerDiff($deadlock) < 60000
+		While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 60000
 			; Use echoed wastrel if possible
 			If IsRecharged($Skill_Arcane_Echo) And GetSkillbarSkillID($Skill_Arcane_Echo) == $ID_Wastrels_Demise Then
 				$target = GetWastrelsTarget()
@@ -276,7 +271,7 @@ Func VaettirsKillSequence()
 				If $target <> Null Then UseSkillEx($Skill_Wastrels_Demise, $target)
 			EndIf
 
-			RndSleep(100)
+			RandomSleep(100)
 			VaettirsStayAlive()
 			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 		WEnd
@@ -286,20 +281,20 @@ EndFunc
 
 ;~ Exit Jaga Moraine to Bjora Marches and get back into Jaga Moraine
 Func RezoneToJagaMoraine()
-	Local $success = 0
-	If GetIsDead() Then $success = 1
+	Local $result = $SUCCESS
+	If IsPlayerDead() Then $result = $FAIL
 
 	Info('Zoning out and back in')
 	MoveAggroing(12289, -17700)
 	MoveAggroing(15318, -20351)
 
 	Local $deadlockTimer = TimerInit()
-	While GetIsDead()
+	While IsPlayerDead()
 		Info('Waiting for resurrection')
-		RndSleep(1000)
+		RandomSleep(1000)
 		If TimerDiff($deadlockTimer) > 60000 Then
 			$Deadlocked = True
-			Return 1
+			Return $FAIL
 		EndIf
 	WEnd
 	MoveTo(15600, -20500)
@@ -309,13 +304,13 @@ Func RezoneToJagaMoraine()
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
 
-	Return $success
+	Return $result
 EndFunc
 
 
 ;~ Move to destX, destY, while staying alive vs vaettirs
 Func MoveAggroing($X, $Y, $random = 150)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return $FAIL
 
 	Local $blockedCount
 	Local $heartOfShadowUsageCount
@@ -326,16 +321,16 @@ Func MoveAggroing($X, $Y, $random = 150)
 
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
-	While ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > $random * 1.5
-		If GetIsDead() Then Return False
+	While GetDistanceToPoint($me, $X, $Y) > $random * 1.5
+		If IsPlayerDead() Then Return False
 		VaettirsStayAlive()
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			If $heartOfShadowUsageCount > 6 Then
-				While Not GetIsDead()
-					RndSleep(1000)
+				While IsPlayerAlive()
+					RandomSleep(1000)
 				WEnd
-				Return False
+				Return $FAIL
 			EndIf
 
 			$blockedCount += 1
@@ -371,7 +366,7 @@ Func MoveAggroing($X, $Y, $random = 150)
 				If TimerDiff($ChatStuckTimer) > 3000 Then
 					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
-					RndSleep(GetPing() + 20)
+					RandomSleep(GetPing() + 20)
 					; we werent stuck, but target broke aggro. select a new one
 					If GetDistance($me, $target) > 1100 Then
 						$target = GetNearestEnemyToAgent($me)
@@ -379,20 +374,20 @@ Func MoveAggroing($X, $Y, $random = 150)
 				EndIf
 			EndIf
 		EndIf
-		RndSleep(100)
+		RandomSleep(100)
 		$me = GetMyAgent()
 	WEnd
-	Return True
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Wait while staying alive at the same time (like Sleep(..), but without the dying part)
 Func VaettirsSleepAndStayAlive($waitingTime)
-	If GetIsDead() Then Return
+	If IsPlayerDead() Then Return
 	Local $timer = TimerInit()
 	While TimerDiff($timer) < $waitingTime
-		RndSleep(100)
-		If GetIsDead() Then Return
+		RandomSleep(100)
+		If IsPlayerDead() Then Return
 		VaettirsStayAlive()
 	WEnd
 EndFunc
@@ -421,13 +416,9 @@ Func VaettirsStayAlive()
 	Next
 
 	If $foesNear Then TryUseShadowForm()
-
 	If $adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HP') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0) Then TryUseShroudOfDistress()
-
 	If $foesNear Then TryUseShadowForm()
-
 	If $areaCount > 5 Then TryUseChanneling()
-
 	If $foesNear Then TryUseShadowForm()
 EndFunc
 

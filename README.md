@@ -33,8 +33,8 @@ To use it:
 
 ## Existing Bots
 ### Farms
-- Raptors farm (festive items, golds, materials)
-- Vaettirs farm (festive items, golds, materials)
+- Raptors farm (festive items, golds, materials, Asura points)
+- Vaettirs farm (festive items, golds, materials, Norn points)
 - Jaya Bluffs Sensali farm (feathers, bones)
 - Drazach Thicket DragonMoss farm (Fibers, Gothic Defender, Echovald shield, Ornate shield)
 - Waijun Bazaar mantids farm (celestial weapons, chitin, dust)
@@ -42,18 +42,25 @@ To use it:
 - Missing Daughter Jade Brotherhood farm (Q8, jade bracelets)
 - Fish in a Barrel kournans farm (Q8, runes)
 - Spirit Slaves farm (Q8, dust, bones)
+- Auspicious Beginnings farm (War Supplies, festive items, gold, Vanguard points)
 - A Chance Encounter farm (Ministerial Commendations, faction skins)
 - Eden Iris farm (iris)
+- Nexus Challenge (Mysterious armor hero pieces)
+- Dajkah Inlet Challenge (Sunspear armor hero pieces)
 ### Vanquishes / Titles
 - Ferndale vanquish (Kurzick faction points)
 - Mount Qinkai vanquish (Luxon faction points)
-- Sulfurous Wastes farm (Lightbringer points)
+- Sulfurous Wastes farm (Sunspear and Lightbringer points)
+- Mirror of Lyss farm (Lightbringer points)
+- Varajar Fells farm (Norn points)
+- Dalada Uplands farm (Vanguard points)
 ### Dungeons/Elite zones
 - Bogroot dungeon farm (Froggy)
 - SoO dungeon farm (Dragon Bone Staff)
 - Slaver's Exile dungeon farm (Voltaic Spears)
 - FoW farm (Obsidian shard, Obsidian Edge, shadow weapons)
-- DoA farm (gemstones)
+- DoA farm (Gemstones)
+- Stygian Veil farm (Stygian Gemstones)
 ### Chest runs
 - Pongmei chest run (faction skins, Q8)
 - Tasca chest farm (Magma shield, Stone Summit Shield, Summit Warlord Shield)
@@ -136,8 +143,7 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💡🕓 **Fix the Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Boreal chest run bot** - 2 requests
-- 🧠💭 **War Supplies bot** - 2 requests
-- 🧠💭 **Citadel of Flame farm bot** - 2 requests
+- 🧠💭 **Cathedral of Flames farm bot** - 2 requests
 - 🧠💭 **Kilroy bot** - 1 request
 - 🧠💭 **Asura/Norn/Vanguard/Dwarf title farm bot** - 1 request
 - 🧠💭 **LDOA bot** - 1 request

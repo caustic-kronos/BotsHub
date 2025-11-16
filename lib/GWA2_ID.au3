@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #include <Array.au3>
@@ -142,14 +145,14 @@ Global Const $ID_Jokos_Domain				= 437
 Global Const $ID_Bone_Palace				= 438
 Global Const $ID_The_Shattered_Ravines		= 441
 Global Const $ID_The_Sulfurous_Wastes		= 444
+Global Const $ID_Ebony_Citadel_Of_Mallyx	= 445
 Global Const $ID_Gate_Of_Anguish			= 474
 Global Const $ID_Uncharted_Isle				= 529
 Global Const $ID_Isle_Of_Wurms				= 530
 Global Const $ID_Corrupted_Isle				= 537
 Global Const $ID_Isle_Of_Solitude			= 538
 Global Const $ID_Remains_of_Sahlahja		= 545
-Global Const $ID_Dajkah_Inlet_Outpost		= 554
-Global Const $ID_Dajkah_Inlet_Mission		= 554
+Global Const $ID_Dajkah_Inlet				= 554
 Global Const $ID_Nexus						= 555
 ; EotN
 Global Const $ID_Bjora_Marches				= 482
@@ -171,9 +174,37 @@ Global Const $ID_Umbral_Grotto				= 639
 Global Const $ID_Rata_Sum					= 640
 Global Const $ID_Eye_of_the_North			= 642
 Global Const $ID_Olafstead					= 645
+Global Const $ID_Hall_of_Monuments			= 646
 Global Const $ID_Dalada_Uplands				= 647
 Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
+Global Const $ID_Auspicious_Beginnings		= 849
+
+Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, _
+											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
+											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
+											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
+											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, $ID_The_Marketplace, _
+											$ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, $ID_Kaineng_A_Chance_Encounter, _
+											$ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, $ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, _
+											$ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, $ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, _
+											$ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Riven_Earth, $ID_Jaga_Moraine, _
+											$ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
+											$ID_Bogroot_lvl1, $ID_Bogroot_lvl2, $ID_Vloxs_Fall, $ID_Gadds_Camp, $ID_Umbral_Grotto, $ID_Rata_Sum, $ID_Eye_of_the_North, $ID_Olafstead, $ID_Hall_of_Monuments, _
+											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge]
+
+Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Warriors Isle', 'Hunters Isle', _
+											'Wizards Isle', 'Burning Isle', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
+											'House Zu Heltzer', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', _
+											'Nahpui Quarter', 'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
+											'Isle Of Jade', 'Leviathan Pits', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
+											'Kaineng A Chance Encounter', 'Sunward Marches', 'Sunspear Sanctuary', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', 'Jokos Domain', _
+											'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
+											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', _
+											'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', 'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', _
+											'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', 'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge']
+
+Global Const $LocationMapNames			=	MapFromArrays($LocationIds, $LocationNames)
 #EndRegion Game Locations
 
 
@@ -182,17 +213,17 @@ Global Const $ID_Unknown		= 0
 Global Const $ID_Warrior		= 1
 Global Const $ID_Ranger			= 2
 Global Const $ID_Monk			= 3
-Global Const $ID_Mesmer			= 5
 Global Const $ID_Necromancer	= 4
+Global Const $ID_Mesmer			= 5
 Global Const $ID_Elementalist	= 6
-Global Const $ID_Ritualist		= 8
 Global Const $ID_Assassin		= 7
+Global Const $ID_Ritualist		= 8
 Global Const $ID_Paragon		= 9
 Global Const $ID_Dervish		= 10
 #EndRegion Professions
 
 
-#Region Weapon Attributes
+#Region Profession Attributes
 Global Const $ID_Fast_Casting				= 0
 Global Const $ID_Illusion_Magic				= 1
 Global Const $ID_Domination_Magic			= 2
@@ -219,9 +250,9 @@ Global Const $ID_BeastMastery				= 22
 Global Const $ID_Expertise					= 23
 Global Const $ID_Wilderness_Survival		= 24
 Global Const $ID_Marksmanship				= 25
-;Global Const $ID_gap						= 26
-;Global Const $ID_gap						= 27
-;Global Const $ID_gap						= 28
+;Global Const $ID_Empty_Attribute_1			= 26
+;Global Const $ID_Empty_Attribute_2			= 27
+;Global Const $ID_Empty_Attribute_3			= 28
 Global Const $ID_Dagger_Mastery				= 29
 Global Const $ID_Deadly_Arts				= 30
 Global Const $ID_Shadow_Arts				= 31
@@ -239,16 +270,27 @@ Global Const $ID_Wind_Prayers				= 42
 Global Const $ID_Earth_Prayers				= 43
 Global Const $ID_Mysticism					= 44
 Global Const $ID_All_Caster_Primaries		= 45
+Global Const $Attributes_Array[]	= [	$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic, _
+                                        $ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses, _
+                                        $ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage, _
+                                        $ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor, _
+                                        $ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics, _
+                                        $ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship, _
+                                        _ ;$ID_Empty_Attribute_1, $ID_Empty_Attribute_2, $ID_Empty_Attribute_3, _
+                                        $ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes, _
+                                        $ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power, _
+                                        $ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership, _
+                                        $ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism ]
 Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], _
 												[$ID_Blood_Magic, 'Blood Magic'], [$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], _
 												[$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], [$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], _
 												[$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], [$ID_Divine_Favor, 'Divine Favor'], _
 												[$ID_Strength, 'Strength'], [$ID_Axe_Mastery, 'Axe Mastery'], [$ID_Hammer_Mastery, 'Hammer Mastery'], [$ID_Swordsmanship, 'Swordsmanship'], [$ID_Tactics, 'Tactics'], _
-												[$ID_Expertise, 'Expertise'], [$ID_Marksmanship, 'Marksmanship'], _
-												[$ID_Dagger_Mastery, 'Dagger Mastery'], [$ID_Critical_Strikes, 'Critical Strikes'], _
+												[$ID_BeastMastery, 'Beast Mastery'], [$ID_Expertise, 'Expertise'], [$ID_Wilderness_Survival, 'Wilderness Survival'], [$ID_Marksmanship, 'Marksmanship'], _
+												[$ID_Dagger_Mastery, 'Dagger Mastery'], [$ID_Deadly_Arts, 'Deadly Arts'], [$ID_Shadow_Arts, 'Shadow Arts'], [$ID_Critical_Strikes, 'Critical Strikes'], _
 												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
 												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
-												[$ID_Mysticism, 'Mysticism'], [$ID_Scythe_Mastery, 'Scythe Mastery']]
+												[$ID_Scythe_Mastery, 'Scythe Mastery'], [$ID_Wind_Prayers, 'Wind Prayers'], [$ID_Earth_Prayers, 'Earth Prayers'], [$ID_Mysticism, 'Mysticism']]
 Global Const $Unknown_Attributes			= []
 Global Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
 Global Const $Necromancer_Attributes		= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
@@ -403,6 +445,57 @@ Global Const $ID_Norn_Title				= 0x29
 
 
 #Region Skill IDs
+; Warrior
+Global Const $ID_Healing_Signet					= 1
+Global Const $ID_To_The_Limit					= 316
+Global Const $ID_For_Great_Justice				= 343
+Global Const $ID_100_Blades						= 381
+Global Const $ID_Whirlwind_Attack				= 2107
+; Ranger
+Global Const $ID_Troll_Unguent					= 446
+Global Const $ID_Whirling_Defense				= 450
+; Monk
+Global Const $ID_Unyielding_Aura				= 268
+Global Const $ID_Light_of_Dwayna				= 304
+Global Const $ID_Resurrect						= 305
+Global Const $ID_Rebirth						= 306
+Global Const $ID_Restore_Life					= 314
+Global Const $ID_Vengeance						= 315
+Global Const $ID_Ray_of_Judgement				= 830
+Global Const $ID_Resurrection_Chant				= 1128
+Global Const $ID_Renew_Life						= 1263
+; Necromancer
+Global Const $ID_Animate_Bone_Minions			= 85
+Global Const $ID_Death_Nova						= 104
+Global Const $ID_Animate_Flesh_Golem			= 832
+; Mesmer
+Global Const $ID_Empathy 						= 26
+Global Const $ID_Channeling						= 38
+Global Const $ID_Arcane_Echo					= 75
+Global Const $ID_Wastrels_Demise				= 1335
+; Elementalist
+Global Const $ID_Meteor_Shower					= 192
+Global Const $ID_Fire_Storm						= 197
+Global Const $ID_Unsteady_Ground				= 1083
+Global Const $ID_Sand_Storm						= 1372
+Global Const $ID_Savannah_Heat					= 1380
+; Assassin
+Global Const $ID_Shadow_Refuge					= 814
+Global Const $ID_Shroud_of_Distress				= 1031
+; Ritualist
+Global Const $ID_Flesh_of_My_Flesh				= 791
+Global Const $ID_Union							= 911
+Global Const $ID_Restoration					= 963
+Global Const $ID_Shelter						= 982
+Global Const $ID_Lively_Was_Naomei				= 1222
+Global Const $ID_Soul_Twisting					= 1240
+Global Const $ID_Displacement					= 1249
+Global Const $ID_Death_Pact_Signet				= 1481
+; Paragon
+Global Const $ID_Burning_Refrain				= 1576
+Global Const $ID_We_Shall_Return				= 1592
+Global Const $ID_Signet_of_Return				= 1778
+Global Const $ID_Heroic_Refrain					= 3431
 ; Dervish
 Global Const $ID_Mirage_Cloak					= 1500
 Global Const $ID_Mystic_Vigor					= 1503
@@ -411,33 +504,18 @@ Global Const $ID_Sand_Shards					= 1510
 Global Const $ID_Mystic_Regeneration			= 1516
 Global Const $ID_Conviction						= 1540
 Global Const $ID_Heart_of_Fury					= 1762
-; Warrior
-Global Const $ID_Healing_Signet					= 1
-Global Const $ID_To_The_Limit					= 316
-Global Const $ID_For_Great_Justice				= 343
-Global Const $ID_100_Blades						= 381
-Global Const $ID_Whirlwind_Attack				= 2107
-; Mesmer
-Global Const $ID_Channeling						= 38
-Global Const $ID_Arcane_Echo					= 75
-Global Const $ID_Wastrels_Demise				= 1335
-; Assassin
-Global Const $ID_Shadow_Refuge					= 814
-Global Const $ID_Shroud_of_Distress				= 1031
-; Ritualist
-Global Const $ID_Union							= 911
-Global Const $ID_Shelter						= 982
-Global Const $ID_Soul_Twisting					= 1240
-Global Const $ID_Displacement					= 1249
-; Paragon
-Global Const $ID_Burning_Refrain				= 1576
-Global Const $ID_Heroic_Refrain					= 3431
+; Common
+Global Const $ID_Resurrection_Signet			= 2
 ; PvE
+Global Const $ID_Sunspear_Rebirth_Signet		= 1816
+Global Const $ID_Junundu_Wail					= 1865
+Global Const $ID_Eternal_Aura					= 2109
+Global Const $ID_By_Urals_Hammer				= 2217
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_Mental_Block					= 2417
 ; Food and drink boosts
 Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
-Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolat Bunny
+Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
 #EndRegion Skill IDs
 
 

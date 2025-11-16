@@ -4,3 +4,4 @@ conf/characters/*
 conf/loot/*
 !conf/characters/Default Configuration.json
 !conf/loot/upgrade_components.json
+.idea/

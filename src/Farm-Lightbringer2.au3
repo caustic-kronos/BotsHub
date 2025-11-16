@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: An anonymous fan of Dhuum
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -23,7 +26,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $LightbringerFarm2Informations = 'Lightbringer title farm'
 ; Average duration ~ 45m
 Global Const $LIGHTBRINGER_FARM2_DURATION = 45 * 60 * 1000
@@ -31,89 +34,110 @@ Global $LIGHTBRINGER_FARM2_SETUP = False
 
 ;~ Main loop for the Lightbringer title farm
 Func LightbringerFarm2($STATUS)
-	If GetMapID() <> $ID_Kodash_Bazaar Then
-		Info('Moving to Kodash Bazaar')
-		DistrictTravel($ID_Kodash_Bazaar, $DISTRICT_NAME)
-		WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
-	EndIf
-	If Not $LIGHTBRINGER_FARM2_SETUP Then LightbringerSetup()
+	; Need to be done here in case bot comes back from inventory management
+	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	AdlibRegister('TrackGroupStatus', 10000)
-	Local $result = Lightbringer()
-	AdlibUnRegister('TrackGroupStatus')
+	GoToMirrorOfLyss()
+	AdlibRegister('TrackPartyStatus', 10000)
+	Local $result = FarmMirrorOfLyss()
+	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
-	;If $result == 1 Then $result = 2
+	;If $result == $FAIL Then $result = $PAUSE
+	ReturnBackToOutpost($ID_Kodash_Bazaar)
 	Return $result
 EndFunc
 
-Func LightbringerSetup()
-	;LeaveGroup()
-	;RndSleep(500)
-	;AddHero($ID_Norgu)
-	;RndSleep(500)
-	;AddHero($ID_Gwen)
-	;RndSleep(500)
-	;AddHero($ID_Razah)
-	;RndSleep(500)
-	;AddHero($ID_Master_Of_Whispers)
-	;RndSleep(500)
-	;AddHero($ID_Livia)
-	;RndSleep(500)
-	;AddHero($ID_Olias)
-	;RndSleep(500)
-	;AddHero($ID_Xandra)
-	;RndSleep(500)
+
+Func Lightbringer2FarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
-	MoveTo(-2186, -1916)
-	MoveTo(-3811, 1177)
-	MoveTo(-953, 4199)
-	MoveTo(-850, 4700)
-	RndSleep(5000)
-	WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
+	; Assuming that team has been set up correctly manually
+	;SetupTeamLightbringer2Farm()
+	GoToMirrorOfLyss()
 	MoveTo(-19350, -16900)
-	RndSleep(5000)
+	RandomSleep(5000)
 	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
 	$LIGHTBRINGER_FARM2_SETUP = True
 	Info('Setup completed')
 EndFunc
 
-;~ Cleaning Lightbringers func
-Func Lightbringer()
-	MoveTo(-850, 4700)
-	RndSleep(5000)
-	WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
-	MoveTo(-19296, -14111)
 
+Func SetupTeamLightbringer2Farm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	RandomSleep(500)
+	AddHero($ID_Norgu)
+	RandomSleep(500)
+	AddHero($ID_Gwen)
+	RandomSleep(500)
+	AddHero($ID_Razah)
+	RandomSleep(500)
+	AddHero($ID_Master_Of_Whispers)
+	RandomSleep(500)
+	AddHero($ID_Livia)
+	RandomSleep(500)
+	AddHero($ID_Olias)
+	RandomSleep(500)
+	AddHero($ID_Xandra)
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
+EndFunc
+
+
+;~ Move out of outpost into Mirror of Lyss
+Func GoToMirrorOfLyss()
+	If GetMapID() <> $ID_Kodash_Bazaar Then TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Mirror_of_Lyss
+		Info('Moving to Mirror of Lyss')
+		MoveTo(-2186, -1916)
+		MoveTo(-3811, 1177)
+		MoveTo(-953, 4199)
+		MoveTo(-850, 4700)
+		RandomSleep(5000)
+		WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
+	WEnd
+EndFunc
+
+
+;~ Cleaning Lightbringers function
+Func FarmMirrorOfLyss()
+	If GetMapID() <> $ID_Mirror_of_Lyss Then Return $FAIL
+
+	MoveTo(-19296, -14111)
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-20867, -13147))
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x85)
-	RndSleep(1000)
-	MoveTo(-13760, -13924)
-	MoveTo(-10600, -12671)
-	MoveTo(-4785, -14912)
+	RandomSleep(1000)
+	MoveAggroAndKill(-13760, -13924, 'Path 1')
+	MoveAggroAndKill(-10600, -12671, 'Path 2')
+	MoveAggroAndKill(-4785, -14912, 'Path 3')
 
-	If MoveAggroAndKill(-2451, -15086, 'Group 1/10') Then Return 1
-	If MoveAggroAndKill(1174, -13787, 'Plants') Then Return 1
-	If MoveAggroAndKill(6728, -12014, 'Plants') Then Return 1
-	If MoveAggroAndKill(9554, -14517, 'Kournans + boss') Then Return 1
-	If MoveAggroAndKill(16856, -14068, 'Plants') Then Return 1
-	If MoveAggroAndKill(19428, -13168, 'Group 2/10') Then Return 1
-	If MoveAggroAndKill(16961, -7251, 'Group 3/10') Then Return 1
-	If MoveAggroAndKill(20212, -5510, 'Group 4/10') Then Return 1
-	If MoveAggroAndKill(20373, -580, 'Group 5/10') Then Return 1
-	If MoveAggroAndKill(19778, 2882, 'Group 6/10') Then Return 1
-	If MoveAggroAndKill(19561, 6432, 'Group 7/10') Then Return 1
-	If MoveAggroAndKill(15914, 10322, 'Group 8/10') Then Return 1
-	MoveTo(12116, 7908)
-	If MoveAggroAndKill(12932, 6907, 'Group 9/10') Then Return 1
-	If MoveAggroAndKill(12956, 2637, 'Group 10/10') Then Return 1
-	Info('Groups are destroyed, resign and do it again')
-	MoveTo(12856, 2627)
-	RndSleep(500)
-	Resign()
-	RndSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
-	Return 0
+	Local Static $foes[15][3] = [ _ ; 14 groups to clear + 1 position change
+		[-2451, -15086, 'Group 1/10'], _
+		[1174, -13787, 'Plants'], _
+		[6728, -12014, 'Plants'], _
+		[9554, -14517, 'Kournans + boss'], _
+		[16856, -14068, 'Plants'], _
+		[19428, -13168, 'Group 2/10'], _
+		[16961, -7251, 'Group 3/10'], _
+		[20212, -5510, 'Group 4/10'], _
+		[20373, -580, 'Group 5/10'], _
+		[19778, 2882, 'Group 6/10'], _
+		[19561, 6432, 'Group 7/10'], _
+		[15914, 10322, 'Group 8/10'], _
+		[12116, 7908, 'Moving to position'], _
+		[12932, 6907, 'Group 9/10'], _
+		[12956, 2637, 'Group 10/10'] _
+	]
+
+	If MoveAggroAndKillGroups($foes, 1, UBound($foes)) == $FAIL Then Return $FAIL
+	Info('Groups are destroyed, resigning and doing it again')
+	Return $SUCCESS
 EndFunc

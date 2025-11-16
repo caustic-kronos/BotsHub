@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: TDawg
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -33,7 +36,7 @@ Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 Global $FOW_FARM_SETUP = False
 Global Const $ID_Quest_WailingLord = 0xCC
 Global Const $ID_Quest_TheEternalForgemaster = 0xD1
-Global Const $Shard_Wolf_PlayerNumber = 2835
+Global Const $Shard_Wolf_ModelID = 2835
 Global Const $ID_FoW_Unholy_Texts = 2619
 
 
@@ -42,68 +45,69 @@ Global Const $ID_FoW_Unholy_Texts = 2619
 
 ;~ Main method to farm FoW
 Func FoWFarm($STATUS)
-	If Not $FOW_FARM_SETUP Then
-		SetupFoWFarm()
-		$FOW_FARM_SETUP = True
-	EndIf
-
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Temple_of_the_Ages Then DistrictTravel($ID_Temple_of_the_Ages, $DISTRICT_NAME)
-	Info('Making way to Balthazar statue')
-	MoveTo(-2500, 18700)
-	SendChat('/kneel', '')
-	RndSleep(3000)
-	GoToNPC(GetNearestNPCToCoords(-2500, 18700))
-	RndSleep(GetPing() + 750)
-	Dialog(0x85)
-	RndSleep(GetPing() + 750)
-	Dialog(0x86)
-	RndSleep(GetPing() + 750)
-	WaitMapLoading($ID_Fissure_of_Woe)
+	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Return FoWFarmLoop()
+	EnterFissureOfWoe()
+	Local $result = FoWFarmLoop()
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
 ;~ FoW farm setup
 Func SetupFoWFarm()
 	Info('Setting up farm')
-	; Make group
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	; Make party
+	; Assuming that team has been set up correctly manually
+	SwitchToHardModeIfEnabled()
+	$FOW_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func EnterFissureOfWoe()
+	Info('Making way to Balthazar statue to enter Fissure of Woe')
+	MoveTo(-2500, 18700)
+	SendChat('/kneel', '')
+	RandomSleep(3000)
+	GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+	RandomSleep(GetPing() + 750)
+	Dialog(0x85)
+	RandomSleep(GetPing() + 750)
+	Dialog(0x86)
+	RandomSleep(GetPing() + 750)
+	WaitMapLoading($ID_Fissure_of_Woe)
 EndFunc
 
 
 ;~ Farm loop
 Func FoWFarmLoop()
+	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
 	ResetFailuresCounter()
-	AdlibRegister('TrackGroupStatus', 10000)
+	AdlibRegister('TrackPartyStatus', 10000)
 	If IsHardmodeEnabled() Then UseConset()
 
-	If TowerOfCourage() Then Return 1
+	If TowerOfCourage() Then Return $FAIL
 	; Fix : if unholy texts are not picked up, move to different place, and retry, until it works
-	If TheGreatBattleField() Then Return 1
-	If TheTempleOfWar() Then Return 1
-	If TheSpiderCave_and_FissureShore() Then Return 1
+	If TheGreatBattleField() Then Return $FAIL
+	If TheTempleOfWar() Then Return $FAIL
+	If TheSpiderCave_and_FissureShore() Then Return $FAIL
 	; Fix: blocking point before the boss, either try to loot something unreachable or to open an unreachable chest
-	If LakeOfFire() Then Return 1
-	If TowerOfStrengh() Then Return 1
+	If LakeOfFire() Then Return $FAIL
+	If TowerOfStrengh() Then Return $FAIL
 	; Fix : pathing should be updated to avoid over aggro
-	If BurningForest() Then Return 1
+	If BurningForest() Then Return $FAIL
 	; Fix : pathing incorrect making you potentially clear in front of Wailing Lord without the flags
 	; Also makes you take griffons before clearing the path for them
-	If ForestOfTheWailingLord() Then Return 1
-	If GriffonRun() Then Return 1
-	If TempleLoot() Then Return 1
+	If ForestOfTheWailingLord() Then Return $FAIL
+	If GriffonRun() Then Return $FAIL
+	If TempleLoot() Then Return $FAIL
 
-	AdlibUnRegister('TrackGroupStatus')
-	Return 0
+	AdlibUnRegister('TrackPartyStatus')
+	Return $SUCCESS
 EndFunc
 
 
@@ -127,7 +131,7 @@ Func TowerOfCourage()
 	Info('Waiting for door to open')
 	Local $waitCount = 0
 	Local $me = GetMyAgent()
-	While Not IsRunFailed() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), -15000, -2000) > $RANGE_ADJACENT
+	While Not IsRunFailed() And GetDistanceToPoint($me, -15000, -2000) > $RANGE_ADJACENT
 		If $waitCount == 20 Then
 			Info('Rastigan is not moving, lets nudge him')
 			MoveAggroAndKill(-15500, -3500)
@@ -149,19 +153,19 @@ Func TowerOfCourage()
 	MoveTo(-15700, -1700)
 	Local $npc = GetNearestNPCToCoords(-15750, -1700)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80D401)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80D407)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting The Wailing Lord quest')
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CC01)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 EndFunc
 
 
@@ -177,9 +181,9 @@ Func TheGreatBattleField()
 	MoveTo(-7326, 11892)
 	Local $npc = GetNearestNPCToCoords(-7400, 11950)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CB01)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting Unholy Texts')
 	FlagMoveAggroAndKill(-1800, 14400, '1')
@@ -195,16 +199,16 @@ Func TheGreatBattleField()
 	Info('Getting the Army of Darkness reward')
 	MoveTo(-7300, 11900)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CB07)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting the Eternal Forgemaster quest')
 	MoveTo(-7400, 11700)
 	GoToNPC(GetNearestNPCToCoords(-7450, 11700))
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80D101)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Heading to Forge')
 	FlagMoveAggroAndKill(-4400, 10900, '1')
@@ -248,9 +252,9 @@ Func TheTempleOfWar()
 	Info('Getting the Defend the Temple of War quest')
 	MoveTo(1850, -150)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CA01)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Waiting the defense, feeling cute, might optimise later')
 	Info('Sleeping for 480s')
@@ -259,32 +263,32 @@ Func TheTempleOfWar()
 	Info('Getting the Defend the Temple of War quest reward')
 	MoveTo(1850, -150)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CA07)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting the Restore the Temple of War quest')
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CF03)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CF01)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting the Khobay the Betrayer quest')
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80E003)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80E001)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting the Tower of Strength quest')
 	MoveTo(200, -1900)
 	GoToNPC(GetNearestNPCToCoords(150, -1950))
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80D301)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 EndFunc
 
 
@@ -301,9 +305,9 @@ Func TheSpiderCave_and_FissureShore()
 	Info('Getting The Hunt quest')
 	MoveTo(3000, -14800)
 	GoToNPC(GetNearestNPCToCoords(3000, -14850))
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80D001)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	KillShardWolf()
 
@@ -373,7 +377,7 @@ Func TowerOfStrengh()
 	MoveAggroAndKill(15400, -1400, '3')
 	; Entering the tower garantees the npc arrived
 	Local $me = GetMyAgent()
-	While Not IsRunFailed() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), 16700, -1700) > $RANGE_NEARBY
+	While Not IsRunFailed() And GetDistanceToPoint($me, 16700, -1700) > $RANGE_NEARBY
 		MoveTo(16700, -1700)
 		Sleep(1000)
 		$me = GetMyAgent()
@@ -392,9 +396,9 @@ Func BurningForest()
 	MoveTo(12000, 6600)
 	Local $npc = GetNearestNPCToCoords(12050, 6500)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CE01)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Clearing Burning Forest')
 	FlagMoveAggroAndKill(12800, 7900, '1')
@@ -414,9 +418,9 @@ Func BurningForest()
 	Info('Getting the Slaves of Menzies quest reward')
 	MoveTo(12000, 6600)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CE07)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Heading to Forest of the Wailing Lords')
 	MoveAggroAndKill(9200, 12500, '1')
@@ -466,9 +470,9 @@ Func ForestOfTheWailingLord()
 	Info('Getting the Gift of Griffons quest')
 	MoveTo(-21500, 15000)
 	GoToNPC(GetNearestNPCToCoords(-21600, 15050))
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CD01)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 EndFunc
 
 
@@ -506,15 +510,15 @@ Func GriffonRun()
 	Info('Getting the Wailing Lord and the Gift of Griffons quests rewards')
 	Local $npc = GetNearestNPCToCoords(-15750, -1700)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CC06)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CC07)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CD07)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 EndFunc
 
 
@@ -527,36 +531,36 @@ Func TempleLoot()
 	MoveTo(1800, 400)
 	Info('Opening chest')
 	; Doubled to secure looting
-	For $i = 0 To 1
+	For $i = 1 To 2
 		MoveTo(1800, 400)
-		RndSleep(5000)
+		RandomSleep(5000)
 		TargetNearestItem()
 		ActionInteract()
-		RndSleep(2500)
+		RandomSleep(2500)
 		PickUpItems()
 	Next
 
 	Info('Getting Restore the Temple of War and Khobay the Betrayer quests rewards')
 	Local $npc = GetNearestNPCToCoords(1850, -200)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CF06)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80CF07)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80E006)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80E007)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 
 	Info('Getting the Tower of Strength quest reward')
 	Local $npc = GetNearestNPCToCoords(200, -1900)
 	GoToNPC($npc)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 	Dialog(0x80D307)
-	RndSleep(GetPing() + 750)
+	RandomSleep(GetPing() + 750)
 EndFunc
 
 
@@ -572,7 +576,7 @@ Func PickUpUnholyTexts()
 		If (DllStructGetData($item, 'ModelID') == $ID_FoW_Unholy_Texts) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
-			While Not GetIsDead() And Not IsRunFailed() And GetAgentExists($i)
+			While IsPlayerAlive() And Not IsRunFailed() And GetAgentExists($i)
 				If Mod($attempts, 20) == 0 Then
 					Local $attempt = Floor($attempts / 20)
 					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
@@ -581,7 +585,7 @@ Func PickUpUnholyTexts()
 					MoveTo($attemptPlaces[Floor($attempts / 10)] - 2, $attemptPlaces[Floor($attempts / 10) - 1])
 				EndIf
 				$attempts += 1
-				RndSleep(1000)
+				RandomSleep(1000)
 			WEnd
 			Return True
 		EndIf
@@ -592,16 +596,15 @@ EndFunc
 
 ;~ Return true if agent is a shardwolf
 Func IsShardWolf($agent)
-	Return DllStructGetData($agent, 'PlayerNumber') == $Shard_Wolf_PlayerNumber
+	Return DllStructGetData($agent, 'ModelID') == $Shard_Wolf_ModelID
 EndFunc
 
 
 ;~ Kill shardwolf if found
 Func KillShardWolf()
-	Local $agents = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, IsShardWolf)
-	; Shard Wolf found
-	If $agents[0] > 0 Then
-		Local $shardWolf = $agents[1]
+	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, IsShardWolf)
+	If IsArray($foes) And UBound($foes) > 0 Then ; Shard Wolf found
+		Local $shardWolf = $foes[0]
 		MoveAggroAndKill(DllStructGetData($shardWolf, 'X'), DllStructGetData($shardWolf, 'Y'))
 	EndIf
 EndFunc

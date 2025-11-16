@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #RequireAdmin
 #NoTrayIcon
@@ -18,6 +21,8 @@
 #include '../lib/GWA2.au3'
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
+
+Opt('MustDeclareVars', 1)
 
 Global Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
 	& '- the quest A Show of Force' & @CRLF _
@@ -34,35 +39,47 @@ Global Const $weaponAttackTime = 1700
 Global $LIGHTBRINGER_FARM_SETUP = False
 Global $loggingFile
 
-Global Const $Junundu_Strike = 1
-Global Const $Junundu_Smash = 2
-Global Const $Junundu_Bite = 3
-Global Const $Junundu_Siege = 4
-Global Const $Junundu_Tunnel = 5
-Global Const $Junundu_Feast = 6
-Global Const $Junundu_Wail = 7
-Global Const $Junundu_Leave = 8
+Global Const $Junundu_Strike 	= 1
+Global Const $Junundu_Smash 	= 2
+Global Const $Junundu_Bite 		= 3
+Global Const $Junundu_Siege 	= 4
+Global Const $Junundu_Tunnel 	= 5
+Global Const $Junundu_Feast 	= 6
+Global Const $Junundu_Wail 		= 7
+Global Const $Junundu_Leave 	= 8
 
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
 Func LightbringerFarm($STATUS)
-	If GetMapID() <> $ID_Remains_of_Sahlahja Then DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
+	; Need to be done here in case bot comes back from inventory management
 	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return 2
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	ToTheSulfurousWastes()
-
-	Local $success = FarmTheSulfurousWastes()
-	ReturnToSahlahjaOutpost()
-	Return $success
+	GoToTheSulfurousWastes()
+	Local $result = FarmTheSulfurousWastes()
+	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
 ;~ Setup for the Lightbringer farm
 Func LightbringerFarmSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
-	LeaveGroup()
+	SetupTeamLightbringerFarm()
+	SetDisplayedTitle($ID_Lightbringer_Title)
+	SwitchMode($ID_HARD_MODE)
+	$LIGHTBRINGER_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamLightbringerFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
 	AddHero($ID_Melonni)
 	;AddHero($ID_MOX)
 	;AddHero($ID_Kahmu)
@@ -76,140 +93,168 @@ Func LightbringerFarmSetup()
 	AddHero($ID_Tahlkora)
 	;AddHero($ID_Dunkoro)
 	;AddHero($ID_Ogden)
-
-	SetDisplayedTitle($ID_Lightbringer_Title)
-	SwitchMode($ID_HARD_MODE)
-	$LIGHTBRINGER_FARM_SETUP = True
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
 EndFunc
 
 
-;~ Move out of city into the Sulfurous Wastes
-Func ToTheSulfurousWastes()
+;~ Move out of outpost into the Sulfurous Wastes
+Func GoToTheSulfurousWastes()
+	If GetMapID() <> $ID_Remains_of_Sahlahja Then TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	While GetMapID() <> $ID_The_Sulfurous_Wastes
+		Info('Moving to the Sulfurous Wastes')
 		MoveTo(1527, -4114)
 		Move(1970, -4353)
-		RndSleep(1000)
+		RandomSleep(1000)
 		WaitMapLoading($ID_The_Sulfurous_Wastes, 10000, 4000)
 	WEnd
 EndFunc
 
 
-;~ Count number of dead members of the group
-Func CountPartyDeaths()
-	Local $partyDeaths = 0
-	For $i = 1 to 7
-		Local $heroID = GetHeroID($i)
-		If Not GetAgentExists($heroID) Or GetIsDead(GetAgentById($heroID)) Then $partyDeaths +=1
-	Next
-	Return $partyDeaths
-EndFunc
-
-
 ;~ Farm the Sulfurous Wastes - main function
 Func FarmTheSulfurousWastes()
+	If GetMapID() <> $ID_The_Sulfurous_Wastes Then Return $FAIL
 	Info('Taking Sunspear Undead Blessing')
 	GoToNPC(GetNearestNPCToCoords(-660, 16000))
 	Dialog(0x83)
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x85)
-	RndSleep(1000)
+	RandomSleep(1000)
 
 	Info('Entering Junundu')
 	MoveTo(-615, 13450)
-	RndSleep(5000)
+	RandomSleep(5000)
 	TargetNearestItem()
-	RndSleep(1500)
+	RandomSleep(1500)
 	ActionInteract()
-	RndSleep(1500)
+	RandomSleep(1500)
 
-	If MultipleMoveToAndAggro('First Undead Group', -800, 12000, -1700, 9800) Then Return 1
-	If MultipleMoveToAndAggro('Second Undead Group', -3000, 10900, -4500, 11500) Then Return 1
+	Local Static $foes[30][3] = [ _ ; 30 groups to vanquish
+		[-800, 12000, 'First Undead Group 1'], _
+		[-1700, 9800, 'First Undead Group 2'], _
+		[-3000, 10900, 'Second Undead Group 1'], _
+		[-4500, 11500, 'Second Undead Group 2'], _
+		[-13250, 6750, 'Third Undead Group'], _
+		[-22000, 9000, 'First Margonite Group 1'], _
+		[-22350, 11100, 'First Margonite Group 2'], _
+		_ ; Skipping this group because it can bring heroes on land and make them go out of Wurm
+		_ ;[-21200, 10750, 'Second Margonite Group 1'], _
+		_ ;[-20250, 11000, 'Second Margonite Group 2'], _
+		[-19000, 5700, 'Djinn Group Group 1'], _ ; range 2200
+		[-20800, 600, 'Djinn Group Group 2'], _ ; range 2200
+		[-22000, -1200, 'Djinn Group Group 3'], _ ; range 2200
+		[-21500, -6000, 'Undead Ritualist Boss Group 1'], _
+		[-20400, -7400, 'Undead Ritualist Boss Group 2'], _
+		[-19500, -9500, 'Undead Ritualist Boss Group 3'], _
+		[-22000, -9400, 'Third Margonite Group 1'], _
+		[-22800, -9800, 'Third Margonite Group 2'], _
+		[-23000, -10600, 'Fourth Margonite Group 1'], _
+		[-23150, -12250, 'Fourth Margonite Group 2'], _
+		[-22800, -13500, 'Fifth Margonite Group 1'], _
+		[-21300, -14000, 'Fifth Margonite Group 2'], _
+		[-22800, -13500, 'Sixth Margonite Group 1'], _
+		[-23000, -10600, 'Sixth Margonite Group 2'], _
+		[-21500, -9500, 'Sixth Margonite Group 3'], _
+		[-21000, -9500, 'Seventh Margonite Group 1'], _
+		[-19500, -8500, 'Seventh Margonite Group 2'], _
+		[-22000, -9400, 'Temple Monolith Group 1'], _
+		[-23000, -10600, 'Temple Monolith Group 2'], _
+		[-22800, -13500, 'Temple Monolith Group 3'], _
+		[-19500, -13100, 'Temple Monolith Group 4'], _
+		[-18000, -13100, 'Temple Monolith Group 5'], _
+		[-18000, -13100, 'Margonite Boss Group'] _
+	]
+
+	If MoveToAndAggroGroups($foes, 1, 4) == $FAIL Then Return $FAIL
 	SpeedTeam()
 	MoveTo(-7500, 11925)
 	SpeedTeam()
 	MoveTo(-9800, 12400)
 	SpeedTeam()
 	MoveTo(-13000, 9500)
-	If MultipleMoveToAndAggro('Third Undead Group', -13250, 6750) Then Return 1
+	If MoveToAndAggroGroups($foes, 5, 5) == $FAIL Then Return $FAIL
 
 	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
 	MoveTo(-20600, 7270)
 	GoToNPC(GetNearestNPCToCoords(-20600, 7270))
-	RndSleep(1000)
+	RandomSleep(1000)
 	Dialog(0x85)
-	RndSleep(1000)
+	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('First Margonite Group', -22000, 9000, -22350, 11100) Then Return 1
-	; Skipping this group because it can bring heroes on land and make them go out of Wurm
-	;If MultipleMoveToAndAggro(-21200, 10750, -20250, 11000, 'Second Margonite Group') Then Return 1
-	If MultipleMoveToAndAggro('Djinn Group', -19000, 5700, -20800, 600, -22000, -1200) Then Return 1	; range 2200
-	If MultipleMoveToAndAggro('Undead Ritualist Boss Group', -21500, -6000, -20400, -7400, -19500, -9500) Then Return 1
-	If MultipleMoveToAndAggro('Third Margonite Group', -22000, -9400, -22800, -9800) Then Return 1
-	If MultipleMoveToAndAggro('Fourth Margonite Group', -23000, -10600, -23150, -12250) Then Return 1
-	If MultipleMoveToAndAggro('Fifth Margonite Group', -22800, -13500, -21300, -14000) Then Return 1
+	If MoveToAndAggroGroups($foes, 6, 19) == $FAIL Then Return $FAIL
 
 	Info('Picking Up Tome')
 	SpeedTeam()
 	MoveTo(-21300, -14000)
 	TargetNearestItem()
-	RndSleep(50)
+	RandomSleep(50)
 	ActionInteract()
-	RndSleep(2000)
+	RandomSleep(2000)
 	DropBundle()
-	RndSleep(1000)
+	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('Sixth Margonite Group', -22800, -13500, -23000, -10600, -21500, -9500) Then Return 1
-	If MultipleMoveToAndAggro('Seventh Margonite Group', -21000, -9500, -19500, -8500) Then Return 1
-	If MultipleMoveToAndAggro('Temple Monolith Groups', -22000, -9400, -23000, -10600, -22800, -13500, -19500, -13100, -18000, -13100) Then Return 1
+	If MoveToAndAggroGroups($foes, 20, 29) == $FAIL Then Return $FAIL
 
 	Info('Spawning Margonite bosses')
 	SpeedTeam()
 	MoveTo(-16000, -13100)
 	SpeedTeam()
 	MoveTo(-18180, -13540)
-	RndSleep(1000)
+	RandomSleep(1000)
 	TargetNearestItem()
-	RndSleep(250)
+	RandomSleep(250)
 	ActionInteract()
-	RndSleep(3000)
+	RandomSleep(3000)
 	DropBundle()
-	RndSleep(1000)
+	RandomSleep(1000)
 
-	If MultipleMoveToAndAggro('Margonite Boss Group', -18000, -13100) Then Return 1
-	Return 0
+	If MoveToAndAggroGroups($foes, 30, 30) == $FAIL Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
-;~ All team uses Junundu_Tunnel to speed group up
+;~ All team uses Junundu_Tunnel to speed party up
 Func SpeedTeam()
 	If (IsRecharged($Junundu_Tunnel)) Then
 		UseSkillEx($Junundu_Tunnel)
-		UseHeroSkill(1, $Junundu_Tunnel)
-		UseHeroSkill(2, $Junundu_Tunnel)
-		UseHeroSkill(3, $Junundu_Tunnel)
-		UseHeroSkill(4, $Junundu_Tunnel)
-		UseHeroSkill(5, $Junundu_Tunnel)
-		UseHeroSkill(6, $Junundu_Tunnel)
-		UseHeroSkill(7, $Junundu_Tunnel)
+		AllHeroesUseSkill($Junundu_Tunnel)
 	EndIf
 EndFunc
 
 
-;~ Move and aggro mobs at several locations
-Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = null, $location1y = null, $location2x = null, $location2y = null, $location3x = null, $location3y = null, $location4x = null, $location4y = null)
-	For $i = 0 To 4
-		If (Eval('location' & $i & 'x') == null) Then ExitLoop
+;~ Move, aggro and vanquish groups of mobs specified in $foes array
+;~ $firstGroup and $lastGroup specify start and end of range of groups within provided array to vanquish
+;~ Return $FAIL if the party is dead, $SUCCESS if not
+Func MoveToAndAggroGroups($foes, $firstGroup, $lastGroup)
+	If IsPlayerAndPartyWiped() Then Return $FAIL
+	If $firstGroup < 1 Or UBound($foes) < $lastGroup  Then Return $FAIL
+	If $firstGroup > $lastGroup Then Return $FAIL
+	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
 		SpeedTeam()
-		If MoveToAndAggro($foesGroup, Eval('location' & $i & 'x'), Eval('location' & $i & 'y')) Then Return True
+		If MoveToAndAggro($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
-	Return False
+	Return $SUCCESS
+EndFunc
+
+
+;~ Optional function to move and aggro a group of mob at maximally 5 locations
+;~ Return $FAIL if the party is dead, $SUCCESS if not
+Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = Null, $location1y = Null, $location2x = Null, $location2y = Null, $location3x = Null, $location3y = Null, $location4x = Null, $location4y = Null)
+	For $i = 0 To 4
+		If (Eval('location' & $i & 'x') == Null) Then ExitLoop
+		SpeedTeam()
+		If MoveToAndAggro(Eval('location' & $i & 'x'), Eval('location' & $i & 'y'), $foesGroup) == $FAIL Then Return $FAIL
+	Next
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Main method for moving around and aggroing/killing mobs
-;~ Return True if the group is dead, False if not
-Func MoveToAndAggro($foesGroup, $x, $y)
+;~ Return $FAIL if the party is dead, $SUCCESS if not
+Func MoveToAndAggro($x, $y, $foesGroup)
 	Info('Killing ' & $foesGroup)
 	Local $range = 1650
 
@@ -230,7 +275,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		FindAndOpenChests($RANGE_SPIRIT)
-		Return False
+		Return $SUCCESS
 	EndIf
 
 	GetAlmostInRangeOfAgent($target)
@@ -238,7 +283,7 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 	$skillCastTimer = TimerInit()
 	While IsRecharged($Junundu_Siege) And TimerDiff($skillCastTimer) < 3000
 		UseSkillEx($Junundu_Siege, $target)
-		RndSleep(20)
+		RandomSleep(20)
 	WEnd
 
 	Local $me = GetMyAgent()
@@ -254,24 +299,14 @@ Func MoveToAndAggro($foesGroup, $x, $y)
 		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
 
-	If DllStructGetData($me, 'HP') < 0.75 Or CountPartyDeaths() > 0 Then
+	If DllStructGetData($me, 'HP') < 0.75 Or CountAliveHeroes() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
-	RndSleep(1000)
+	RandomSleep(1000)
 
-	If CountPartyDeaths() > 5 Then Return True
-
+	If CountAliveHeroes() < 2 Then Return $FAIL ; situation when most of the team is wiped
 	PickUpItems()
 	FindAndOpenChests($RANGE_SPIRIT)
 
-	Return False
-EndFunc
-
-
-;~ Return to Remains of Sahlahja
-Func ReturnToSahlahjaOutpost()
-	If GetMapID() <> $ID_Remains_of_Sahlahja Then
-		Info('Travelling to Remains of Sahlahja')
-		DistrictTravel($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
-	EndIf
+	Return $SUCCESS
 EndFunc

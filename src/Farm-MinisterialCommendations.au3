@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 
@@ -18,6 +21,8 @@
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 #include <File.au3>
+
+Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
 Global Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
@@ -32,7 +37,7 @@ Global Const $CommendationsFarmInformations = 'For best results, have :' & @CRLF
 	& '- A tactics shield q9 or less with the inscription Sleep now in the fire (+10 armor against fire damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
 	& '- any PCons you wish to use' & @CRLF _
-	& 'This bot doesnt load hero builds - please use your own teambuild'
+	& 'This bot doesn''t load hero builds - please use your own teambuild'
 ; Average duration ~ 3m20
 Global Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
 
@@ -46,56 +51,56 @@ Global $MINISTERIAL_COMMENDATIONS_FARM_SETUP = False
 Global $loggingFile
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Conviction) is better than UseSkillEx(1))
-Global Const $Skill_Conviction = 1
-Global Const $Skill_Grenths_Aura = 2
-Global Const $Skill_I_am_unstoppable = 3
-;Global Const $Skill_Healing_Signet = 4
-Global Const $Skill_Mystic_Regeneration = 4
-Global Const $Skill_Vital_Boon = 4
-Global Const $Skill_To_the_limit = 5
-Global Const $Skill_Ebon_Battle_Standard_of_Honor = 6
-Global Const $Skill_Hundred_Blades = 7
-Global Const $Skill_Whirlwind_Attack = 8
+Global Const $Skill_Conviction 						= 1
+Global Const $Skill_Grenths_Aura 					= 2
+Global Const $Skill_I_am_unstoppable 				= 3
+;Global Const $Skill_Healing_Signet 				= 4
+Global Const $Skill_Mystic_Regeneration 			= 4
+Global Const $Skill_Vital_Boon 						= 4
+Global Const $Skill_To_the_limit 					= 5
+Global Const $Skill_Ebon_Battle_Standard_of_Honor 	= 6
+Global Const $Skill_Hundred_Blades 					= 7
+Global Const $Skill_Whirlwind_Attack 				= 8
 
 ; ESurge mesmers
-Global Const $Energy_Surge_Skill_Position = 1
+Global Const $Energy_Surge_Skill_Position 			= 1
 Global Const $ESurge2_Mystic_Healing_Skill_Position = 8
 ; Ineptitude mesmer
-Global Const $Stand_your_ground_Skill_position = 6
-Global Const $Make_Haste_Skill_position = 7
+Global Const $Stand_your_ground_Skill_position 		= 6
+Global Const $Make_Haste_Skill_position 			= 7
 ; SoS Ritualist
-Global Const $SoS_Skill_Position = 1
-Global Const $Splinter_Weapon_Skill_Position = 2
-Global Const $Essence_Strike_Skill_Position = 3
-Global Const $Mend_Body_And_Soul_Skill_Position = 5
-Global Const $Spirit_Light = 6
-Global Const $SoS_Mystic_Healing_Skill_Position = 8
+Global Const $SoS_Skill_Position 					= 1
+Global Const $Splinter_Weapon_Skill_Position 		= 2
+Global Const $Essence_Strike_Skill_Position 		= 3
+Global Const $Mend_Body_And_Soul_Skill_Position 	= 5
+Global Const $Spirit_Light 							= 6
+Global Const $SoS_Mystic_Healing_Skill_Position 	= 8
 ; Prot Ritualist
-Global Const $Soul_Twisting_Skill_Position = 1
-Global Const $Shelter_Skill_Position = 2
-Global Const $Union_Skill_Position = 3
-Global Const $Displacement_Skill_Position = 4
-Global Const $Armor_of_Unfeeling_Skill_Position = 5
-Global Const $SBoon_of_creation_Skill_Position = 6
-Global Const $Prot_Mystic_Healing_Skill_Position = 7
+Global Const $Soul_Twisting_Skill_Position 			= 1
+Global Const $Shelter_Skill_Position 				= 2
+Global Const $Union_Skill_Position 					= 3
+Global Const $Displacement_Skill_Position 			= 4
+Global Const $Armor_of_Unfeeling_Skill_Position 	= 5
+Global Const $SBoon_of_creation_Skill_Position 		= 6
+Global Const $Prot_Mystic_Healing_Skill_Position 	= 7
 ; BiP Necro
-Global Const $Recovery_Skill_Position = 8
+Global Const $Recovery_Skill_Position 	= 8
 Global Const $Blood_bond_Skill_Position = 2
-Global Const $Spirit_Transfer = 4
+Global Const $Spirit_Transfer 			= 4
 
 ; Order heros are added to the team
-Global Const $Hero_Mesmer_DPS_1 = 1
-Global Const $Hero_Mesmer_DPS_2 = 2
-Global Const $Hero_Mesmer_DPS_3 = 3
-Global Const $Hero_Mesmer_Ineptitude = 4
-Global Const $Hero_Ritualist_SoS = 5
-Global Const $Hero_Ritualist_Prot = 6
-Global Const $Hero_Necro_BiP = 7
+Global Const $Hero_Mesmer_DPS_1 		= 1
+Global Const $Hero_Mesmer_DPS_2 		= 2
+Global Const $Hero_Mesmer_DPS_3 		= 3
+Global Const $Hero_Mesmer_Ineptitude 	= 4
+Global Const $Hero_Ritualist_SoS 		= 5
+Global Const $Hero_Ritualist_Prot 		= 6
+Global Const $Hero_Necro_BiP 			= 7
 
 Global Const $ID_mesmer_mercenary_hero = $ID_Mercenary_Hero_1
 Global Const $ID_ritualist_mercenary_hero = $ID_Mercenary_Hero_2
 
-#CS
+#CS ===========================================================================
 Character location :	X: -6322.51318359375, Y: -5266.85986328125
 Heroes locations :
 - Me1 dps				X: -6488.185546875, Y: -5084.078125
@@ -120,68 +125,38 @@ Travel :
 last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
 
 DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
-#CE
+#CE ===========================================================================
 
 ;~ Main loop of the Ministerial Commendations farm
 Func MinisterialCommendationsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Current_Kaineng_City Then
-		Info('Travelling to Kaineng City')
-		DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	EndIf
-	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then Setup()
-	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then SetupMinisterialCommendationsFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	Info('Entering quest')
-	EnterQuest()
-	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
-
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Info('Preparing to fight')
-	PrepareToFight()
-	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return
-
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Info('Fighting the first group')
-	InitialFight()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
-
-	Info('Running to kill spot')
-	RunToKillSpot()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
-
-	Info('Waiting for spike')
-	LogIntoFile('Waiting for ball')
-	WaitForPurityBall()
-
-	If (IsFail()) Then Return ResignAndReturnToOutpost()
-
-	Info('Spiking the farm group')
-	KillMinistryOfPurity()
-
-	RndSleep(1000)
-
-	Info('Picking up loot')
-	PickUpItems(HealWhilePickingItems)
-
-	Info('Travelling back to KC')
-	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-
-	If $LOG_LEVEL == 0 Then FileClose($loggingFile)
-	Return 0
+	Local $result = MinisterialCommendationsFarmLoop()
+	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
 ;~ Setup for the farm - load build and heroes, move in the correct zone
-Func Setup()
-	LeaveGroup()
+Func SetupMinisterialCommendationsFarm()
+	Info('Setting up farm')
+	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
+	SetupTeamMinisterialCommendationsFarm()
 	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 
+	SwitchMode($ID_HARD_MODE)
+	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamMinisterialCommendationsFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
 	AddHero($ID_Gwen)
 	AddHero($ID_Norgu)
 	AddHero($ID_Razah)
@@ -189,14 +164,57 @@ Func Setup()
 	AddHero($ID_ritualist_mercenary_hero)
 	AddHero($ID_Xandra)
 	AddHero($ID_Olias)
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
+	EndIf
+EndFunc
 
-	SwitchMode($ID_HARD_MODE)
-	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
+
+Func MinisterialCommendationsFarmLoop()
+	If GetMapID() <> $ID_Current_Kaineng_City Then Return $FAIL
+	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/commendation_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+
+	Info('Entering quest')
+	EnterAChanceEncounterQuest()
+	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return $FAIL
+
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+
+	Info('Preparing to fight')
+	PrepareToFight()
+	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return $FAIL
+
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+
+	Info('Fighting the first group')
+	InitialFight()
+	If (IsFail()) Then Return $FAIL
+
+	Info('Running to kill spot')
+	RunToKillSpot()
+	If (IsFail()) Then Return $FAIL
+
+	Info('Waiting for spike')
+	LogIntoFile('Waiting for ball')
+	WaitForPurityBall()
+	If (IsFail()) Then Return $FAIL
+
+	Info('Spiking the farm group')
+	KillMinistryOfPurity()
+
+	RandomSleep(1000)
+
+	Info('Picking up loot')
+	PickUpItems(HealWhilePickingItems)
+
+	If $LOG_LEVEL == 0 Then FileClose($loggingFile)
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Enter the mission A Chance Encounter
-Func EnterQuest()
+Func EnterAChanceEncounterQuest()
 	Local $me = GetMyAgent()
 	Local $coordsX = DllStructGetData($me, 'X')
 	Local $coordsY = DllStructGetData($me, 'Y')
@@ -205,46 +223,46 @@ Func EnterQuest()
 		MoveTo(1474, -1197, 0)
 	EndIf
 
-	RndSleep(1000)
+	RandomSleep(1000)
 	UseCitySpeedBoost()
 	GoToNPC(GetNearestNPCToCoords(2240, -1264))
-	RndSleep(250)
-	Dialog(0x00000084)
-	RndSleep(500)
+	RandomSleep(250)
+	Dialog(0x84)
+	RandomSleep(500)
 	WaitMapLoading($ID_Kaineng_A_Chance_Encounter)
 EndFunc
 
 
-;~ Prepare the group for the initial fight
+;~ Prepare the party for the initial fight
 Func PrepareToFight()
 	;StartingPositions()
 	StartingPositions()
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill($Hero_Ritualist_SoS, $SoS_Skill_Position)						;SoS - SoS
 	UseHeroSkill($Hero_Necro_BiP, $Recovery_Skill_Position)						;BiP - Recovery
-	RndSleep(2500)
+	RandomSleep(2500)
 	UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)					;Prot - Shelter
-	RndSleep(2500)
+	RandomSleep(2500)
 	UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)					;Prot - Union
-	RndSleep(2500)
+	RandomSleep(2500)
 	UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)			;Prot - Displacement
-	RndSleep(2500)
+	RandomSleep(2500)
 	UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)			;Prot - Soul Twisting
-	RndSleep(2500)
+	RandomSleep(2500)
 	UseHeroSkill($Hero_Ritualist_SoS, $Splinter_Weapon_Skill_Position, GetMyAgent())		;SoS - Splinter Weapon
 	UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)		;Prot - Armor of Unfeeling
-	RndSleep(11000)
+	RandomSleep(11000)
 	UseConsumable($ID_Birthday_Cupcake)
 	UseHeroSkill($Hero_Mesmer_DPS_1, $Energy_Surge_Skill_Position)				;ESurge1 - ESurge
 	UseHeroSkill($Hero_Mesmer_DPS_2, $Energy_Surge_Skill_Position)				;ESurge2 - ESurge
 	UseHeroSkill($Hero_Mesmer_DPS_3, $Energy_Surge_Skill_Position)				;ESurge3 - ESurge
 	UseHeroSkill($Hero_Ritualist_SoS, $Essence_Strike_Skill_Position)			;Sos - Essence Strike
 	UseHeroSkill($Hero_Necro_BiP, $Blood_bond_Skill_Position)					;BiP - Blood Bond
-	RndSleep(2500)
+	RandomSleep(2500)
 	; Enemies turn hostile now
 	UseHeroSkill($Hero_Mesmer_Ineptitude, $Stand_your_ground_Skill_position)	;Ineptitude - Stand your ground
 	UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
-	RndSleep(1000)
+	RandomSleep(1000)
 EndFunc
 
 
@@ -258,7 +276,7 @@ Func StartingPositions()
 	CommandHero($Hero_Ritualist_Prot, -5766, -5226)
 	CommandHero($Hero_Necro_BiP, -6170, -4792)
 	MoveTo(-6285, -5343)
-	RndSleep(1000)
+	RandomSleep(1000)
 	CommandHero($Hero_Ritualist_SoS, -6515, -5510)
 EndFunc
 
@@ -294,36 +312,36 @@ EndFunc
 Func InitialFight()
 	Local $deadlock = TimerInit()
 	LogIntoFile('New run started')
-	RndSleep(1000)
+	RandomSleep(1000)
 	Local $foesInRange = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS)
 
 	; Wait until there are enemies
 	While $foesInRange == 0 And TimerDiff($deadlock) < 10000
-		RndSleep(1000)
+		RandomSleep(1000)
 		$foesInRange = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS)
 		If IsFail() Then Return
 	WEnd
 
-	Local $deathTimer = null
+	Local $deathTimer = Null
 	; Now there are enemies let's fight until one mob is left
 	While $foesInRange > 1 And TimerDiff($deadlock) < 80000
 		HelpMikuAndCharacter()
 		;RenewSpirits()
 		AttackOrUseSkill(1300, $Skill_I_am_unstoppable, $Skill_Hundred_Blades, $Skill_To_the_limit)
 		If IsFail() Then
-			If $deathTimer = null Then
+			If $deathTimer = Null Then
 				$deathTimer = TimerInit()
 			ElseIf TimerDiff($deathTimer) > 10000 Then
 				Return
 			EndIf
 		Else
 			$foesInRange = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS)
-			If $deathTimer <> null Then $deathTimer = null
+			If $deathTimer <> Null Then $deathTimer = Null
 		EndIf
 	WEnd
 	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for most mobs to be dead')
 
-	PickUpItems(null, PickOnlyImportantItem)
+	PickUpItems(Null, PickOnlyImportantItem)
 
 	; Unflag all heroes
 	CancelAllHeroes()
@@ -341,7 +359,7 @@ Func InitialFight()
 	; Wait for all foes in range of Miku to be dead
 	While (CountFoesInRangeOfAgent($ID_Miku_Agent, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 80000 And Not IsFail())
 		Move(-4693, -3137)
-		RndSleep(750)
+		RandomSleep(750)
 	WEnd
 	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for all mobs to be dead')
 
@@ -359,6 +377,7 @@ Func GetMikuAgentOrMine()
 	If GetAgentExists($ID_Miku_Agent) Then Return GetAgentByID($ID_Miku_Agent)
 	Return GetMyAgent()
 EndFunc
+
 
 ;~ Heal Miku and character if they need it
 Func HelpMikuAndCharacter()
@@ -379,19 +398,19 @@ Func RenewSpirits()
 		Or GetEffectTimeRemaining(GetEffect($Shelter_Skill_Position)) == 0 Then
 			SoulTwistingRitualistUseSoulTwisting()
 			UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)						;Prot - Shelter
-			RndSleep(1250)
+			RandomSleep(1250)
 			SoulTwistingRitualistUseSoulTwisting()
 			UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)						;Prot - Union
-			RndSleep(1250)
+			RandomSleep(1250)
 			UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)			;Prot - Armor of Unfeeling
-			RndSleep(50)
+			RandomSleep(50)
 	EndIf
 	If GetEffectTimeRemaining(GetEffect($Displacement_Skill_Position)) == 0 Then
 		SoulTwistingRitualistUseSoulTwisting()
 		UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)					;Prot - Displacement
-		RndSleep(1250)
+		RandomSleep(1250)
 		UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)				;Prot - Armor of Unfeeling
-		RndSleep(50)
+		RandomSleep(50)
 	EndIf
 	SoulTwistingRitualistUseSoulTwisting()
 EndFunc
@@ -401,7 +420,7 @@ EndFunc
 Func SoulTwistingRitualistUseSoulTwisting()
 	If GetEffectTimeRemaining(GetEffect($Soul_Twisting_Skill_Position, $Hero_Ritualist_Prot)) == 0 Then
 		UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)					;Prot - Soul Twisting
-		RndSleep(50)
+		RandomSleep(50)
 	EndIf
 EndFunc
 
@@ -416,7 +435,7 @@ Func RunToKillSpot()
 	MoveTo(-815, -1898)
 	MoveTo(-690, -3769)
 	MoveTo(-850, -3961, 0)
-	RndSleep(500)
+	RandomSleep(500)
 EndFunc
 
 
@@ -426,45 +445,45 @@ Func WaitForPurityBall()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 
 	; Wait until an enemy is in melee range
-	While Not GetIsDead() And $foesCount == 0 And TimerDiff($deadlock) < 55000
-		RndSleep(1000)
+	While IsPlayerAlive() And $foesCount == 0 And TimerDiff($deadlock) < 55000
+		RandomSleep(1000)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
 
 	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
-	While Not GetIsDead() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130)
+	While IsPlayerAlive() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130)
 		If ($foesCount > 3 And IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
 			UseSkillEx($Skill_To_the_limit)
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 
 		; Use defensive and self healing skills
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.90 And IsRecharged($Skill_I_am_unstoppable) Then
 			UseSkillEx($Skill_I_am_unstoppable)
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
 			UseSkillEx($Skill_Conviction)
-			RndSleep(GetPing() + 100)
+			RandomSleep(GetPing() + 100)
 
 			If IsRecharged($Skill_Vital_Boon) Then
 				UseSkillEx($Skill_Vital_Boon)
-				RndSleep(GetPing() + 20)
+				RandomSleep(GetPing() + 20)
 			EndIf
 		EndIf
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
 		;	UseSkillEx($Skill_Mystic_Regeneration)
-		;	RndSleep(GetPing() + 20)
+		;	RandomSleep(GetPing() + 20)
 		;EndIf
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
-			RndSleep(GetPing() + 20)
+			RandomSleep(GetPing() + 20)
 		EndIf
 
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.45 And IsRecharged($Skill_Grenths_Aura) Then
 			UseSkillEx($Skill_Grenths_Aura)
-			RndSleep(250)
+			RandomSleep(250)
 		EndIf
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
@@ -474,7 +493,7 @@ Func WaitForPurityBall()
 		EndIf
 
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
-		RndSleep(250)
+		RandomSleep(250)
 	WEnd
 	If (TimerDiff($deadlock) > 75000) Then Info('Timed out waiting for mobs to ball')
 	LogIntoFile('Ball ready - ' & Round(TimerDiff($deadlock)/1000) & 's')
@@ -483,21 +502,16 @@ EndFunc
 
 ;~ Return True if mission failed (you or Miku died)
 Func IsFail()
-	Return GetIsDead($ID_Miku_Agent) Or GetIsDead()
-EndFunc
-
-
-;~ Return to outpost in case of failure
-Func ResignAndReturnToOutpost()
 	If GetIsDead($ID_Miku_Agent) Then
 		Warn('Miku died.')
 		LogIntoFile('Miku died.')
-	ElseIf GetIsDead() Then
+		Return True
+	ElseIf IsPlayerDead() Then
 		Warn('Player died')
 		LogIntoFile('Character died.')
+		Return True
 	EndIf
-	DistrictTravel($ID_Current_Kaineng_City, $DISTRICT_NAME)
-	Return 1
+	Return False
 EndFunc
 
 
@@ -508,13 +522,13 @@ Func KillMinistryOfPurity()
 
 	If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Grenths_Aura) Then
 		UseSkillEx($Skill_Grenths_Aura)
-		RndSleep(50)
+		RandomSleep(50)
 	EndIf
 
 	While IsRecharged($Skill_Ebon_Battle_Standard_of_Honor)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
-		RndSleep(50)
+		RandomSleep(50)
 
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
@@ -525,23 +539,23 @@ Func KillMinistryOfPurity()
 	WEnd
 
 	While IsRecharged($Skill_Hundred_Blades)
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		UseSkillEx($Skill_Hundred_Blades)
-		RndSleep(50)
+		RandomSleep(50)
 	WEnd
 
 	If IsRecharged($Skill_Grenths_Aura) Then
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		UseSkillEx($Skill_Grenths_Aura)
-		RndSleep(50)
+		RandomSleep(50)
 	EndIf
 
 	Local $initialFoeCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 
-	;~ Whirlwind attack needs specific care to be used
+	; Whirlwind attack needs specific care to be used
 	While IsRecharged($Skill_Whirlwind_Attack)
-		If GetIsDead() Then Return
-		RndSleep(200)
+		If IsPlayerDead() Then Return
+		RandomSleep(200)
 
 		; Heroes with Mystic Healing provide additional long range support
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
@@ -553,21 +567,21 @@ Func KillMinistryOfPurity()
 
 		If (IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
 			UseSkillEx($Skill_To_the_limit)
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 
 		UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(GetMyAgent()))
-		RndSleep(50)
+		RandomSleep(50)
 	WEnd
 	CancelAction()
 
-	RndSleep(250)
+	RandomSleep(250)
 	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_ADJACENT)
 
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
 	While $foesCount > 0 And TimerDiff($deadlock) < 10000
-		If GetIsDead() Then Return
+		If IsPlayerDead() Then Return
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
@@ -577,20 +591,20 @@ Func KillMinistryOfPurity()
 
 		If (IsRecharged($Skill_To_the_limit) And GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) < 130) Then
 			UseSkillEx($Skill_To_the_limit)
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
-			RndSleep(1000)
+			RandomSleep(1000)
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
 		;	UseSkillEx($Skill_Mystic_Regeneration)
-		;	RndSleep(300)
+		;	RandomSleep(300)
 		ElseIf GetSkillbarSkillAdrenaline($Skill_Whirlwind_Attack) == 130 Then
 			While IsRecharged($Skill_Whirlwind_Attack) And TimerDiff($deadlock) < 10000
-				If GetIsDead() Then Return
+				If IsPlayerDead() Then Return
 				UseSkillEx($Skill_Whirlwind_Attack, GetNearestEnemyToAgent(GetMyAgent()))
-				RndSleep(250)
+				RandomSleep(250)
 			WEnd
 		Else
 			AttackOrUseSkill(1300, $Skill_Conviction)
@@ -601,7 +615,7 @@ Func KillMinistryOfPurity()
 	LogIntoFile('Mobs killed - ' & ($initialFoeCount - $foesCount))
 	LogIntoFile('Mobs left alive - ' & $foesCount)
 
-	RndSleep(250)
+	RandomSleep(250)
 EndFunc
 
 
@@ -610,14 +624,14 @@ Func HealWhilePickingItems()
 	If DllStructGetData(GetMyAgent(), 'HP') < 0.90 Then
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
 			UseSkillEx($Skill_Conviction)
-			RndSleep(50)
+			RandomSleep(50)
 		EndIf
 		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
-			RndSleep(GetPing() + 20)
+			RandomSleep(GetPing() + 20)
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
 		;	UseSkillEx($Skill_Mystic_Regeneration)
-		;	RndSleep(GetPing() + 20)
+		;	RandomSleep(GetPing() + 20)
 		EndIf
 		; Heroes with Mystic Healing provide additional long range support
 		UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)

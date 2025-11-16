@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -42,112 +45,131 @@ Global Const $KournansFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $KOURNANS_FARM_DURATION = (2 * 60 + 25) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Global Const $Kournans_Intensity = 1
-Global Const $Kournans_EbonBattleStandardOfHonor = 2
-Global Const $Kournans_Mindbender = 3
-Global Const $Kournans_Earthquake = 4
-Global Const $Kournans_DragonsStomp = 5
-Global Const $Kournans_DeathsCharge = 6
-Global Const $Kournans_Aftershock = 7
-Global Const $Kournans_Shockwave = 8
+Global Const $Kournans_Intensity 					= 1
+Global Const $Kournans_EbonBattleStandardOfHonor 	= 2
+Global Const $Kournans_Mindbender 					= 3
+Global Const $Kournans_Earthquake 					= 4
+Global Const $Kournans_DragonsStomp 				= 5
+Global Const $Kournans_DeathsCharge 				= 6
+Global Const $Kournans_Aftershock 					= 7
+Global Const $Kournans_Shockwave 					= 8
 
 Global Const $Hero_Kournans_Margrid = 1
-Global Const $Hero_Kournans_Xandra = 2
+Global Const $Hero_Kournans_Xandra 	= 2
 
 Global Const $Kournans_EdgeOfExtinction = 1
-Global Const $Kournans_Lacerate = 2
-Global Const $Kournans_Brambles = 3
-Global Const $Kournans_NaturesRenewal = 4
-Global Const $Kournans_MuddyTerrain = 5
-Global Const $Kournans_Pestilence = 6
+Global Const $Kournans_Lacerate 		= 2
+Global Const $Kournans_Brambles 		= 3
+Global Const $Kournans_NaturesRenewal 	= 4
+Global Const $Kournans_MuddyTerrain 	= 5
+Global Const $Kournans_Pestilence 		= 6
 
-Global Const $Kournans_RitualLord = 1
-Global Const $Kournans_EarthBind = 2
-Global Const $Kournans_VitalWeapon = 3
-Global Const $Kournans_DeathPactSignet = 4
-
+Global Const $Kournans_RitualLord 		= 1
+Global Const $Kournans_EarthBind 		= 2
+Global Const $Kournans_VitalWeapon 		= 3
+Global Const $Kournans_DeathPactSignet 	= 4
 
 Global $KOURNANS_FARM_SETUP = False
 
+
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then DistrictTravel($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
-	If Not $KOURNANS_FARM_SETUP Then
-		SetupKournansFarm()
-		$KOURNANS_FARM_SETUP = True
-	EndIf
+	; Need to be done here in case bot comes back from inventory management
+	If Not $KOURNANS_FARM_SETUP Then SetupKournansFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Return KournansFarmLoop()
+	GoToCommandPost()
+	Local $result = KournansFarmLoop()
+	ReturnBackToOutpost($ID_Sunspear_Sanctuary)
+	Return $result
 EndFunc
 
 
 ;~ Kournans farm setup
 Func SetupKournansFarm()
 	Info('Setting up farm')
-
+	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
-	RndSleep(50)
-	AddHero($ID_Margrid_The_Sly)
-	RndSleep(50)
-	AddHero($ID_Xandra)
-	RndSleep(50)
-	AddHero($ID_General_Morgahn)
-	RndSleep(50)
 
+	SetupTeamKournansFarm()
 	LoadSkillTemplate($ElAKournansFarmerSkillbar)
+
+	RandomSleep(50)
+	GoToCommandPost()
+	MoveTo(-200, 4350)
+	Move(-500, 3500)
+	RandomSleep(1000)
+	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
+	$KOURNANS_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamKournansFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	RandomSleep(50)
+	AddHero($ID_Margrid_The_Sly)
+	RandomSleep(50)
+	AddHero($ID_Xandra)
+	RandomSleep(50)
+	AddHero($ID_General_Morgahn)
+	Sleep(1000)
+	If GetPartySize() <> 4 Then
+    	Warn("Could not set up party correctly. Team size different than 4")
+		Return $FAIL
+	EndIf
 	LoadSkillTemplate($RKournansHeroSkillbar, 1)
 	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
 	LoadSkillTemplate($PKournansHeroSkillbar, 3)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
+EndFunc
 
-	RndSleep(50)
-	Info('Entering Command Post')
-	MoveTo(-1500, 2000)
-	MoveTo(-600, 3700)
-	Move(0, 5000)
-	RndSleep(1000)
-	WaitMapLoading($ID_Command_Post, 10000, 2000)
-	MoveTo(-200, 4350)
-	Move(-500, 3500)
-	RndSleep(1000)
-	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
-	Info('Preparations complete')
+
+;~ Move out of outpost into Command Post
+Func GoToCommandPost()
+	If GetMapID() <> $ID_Sunspear_Sanctuary Then TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
+	If GetQuestByID(0x23E) <> Null Then
+		Info('Abandoning quest')
+		AbandonQuest(0x23E)
+	EndIf
+	While GetMapID() <> $ID_Command_Post
+		Info('Moving to Command Post')
+		MoveTo(-1500, 2000)
+		MoveTo(-600, 3700)
+		Move(0, 5000)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Command_Post, 10000, 2000)
+	WEnd
 EndFunc
 
 
 ;~ Kournans farm loop
 Func KournansFarmLoop()
-	Info('Abandonning quest')
-	AbandonQuest(0x23E)
-	Info('Entering Command Post')
-	MoveTo(-600, 3700)
-	Move(0, 5000)
-	RndSleep(1000)
-	WaitMapLoading($ID_Command_Post, 10000, 2000)
+	If GetMapID() <> $ID_Command_Post Then Return $FAIL
+
 	MoveTo(1250, 7300)
 	TalkToMargrid()
 	MoveTo(800, 6500)
 	MoveTo(-1000, 6300)
 	MoveTo(-3200, 9000)
 	Move(-4000, 10000)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Sunward_Marches, 10000, 2000)
 	MoveTo(13500, -4000)
 	MoveTo(11500, -2500)
 
 	; Find the kournans and get in spirit range
 	; Move to the correct range of the enemies (who are not enemies at this points)(close so that they are affected by spirits but not too close)
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(9600, -650, null, $RANGE_EARSHOT)
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(9600, -650, Null, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_SPIRIT - 500)
 	Local $me = GetMyAgent()
 	Local $X = DllStructGetData($me, 'X')
 	Local $Y = DllStructGetData($me, 'Y')
 	CommandAll($X, $Y)
-	RndSleep(2000)
+	RandomSleep(2000)
 	CastOnlyNecessarySpiritsAndBoons($X, $Y)
 	CommandAll(16000, -7000)
 
@@ -156,7 +178,7 @@ Func KournansFarmLoop()
 	Local $positionToGo = FindMiddleOfFoes(9600, -650, $RANGE_EARSHOT)
 	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	GetAlmostInRangeOfAgent($targetFoe)
-	RndSleep(50)
+	RandomSleep(50)
 	UseSkillEx($Kournans_EbonBattleStandardOfHonor)	;1s
 	;Sleep(1000)
 	UseSkillEx($Kournans_Earthquake, $targetFoe)	;3s
@@ -167,12 +189,10 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_DeathsCharge, $targetFoe)
 	UseSkillEx($Kournans_Aftershock)
 	UseSkillEx($Kournans_Shockwave)
-	RndSleep(2000)
+	RandomSleep(2000)
 	Info('Looting')
 	PickUpItems()
-	Local $result = GetIsDead() ? 1 : 0
-	BackToSunspearSanctuary()
-	Return $result
+	Return IsPlayerDead() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -180,20 +200,20 @@ EndFunc
 Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_EdgeOfExtinction)
 	; Get closer to the non-enemies to trigger them into enemies
-	Local $targetFoe = GetFurthestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
+	Local $targetFoe = GetFurthestNPCInRangeOfCoords(Null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_EARSHOT - 50)
 	; Move back to be safe for a few seconds
 	MoveTo($safeX, $safeY)
-	RndSleep(4000)
+	RandomSleep(4000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_MuddyTerrain)
-	RndSleep(6000)
+	RandomSleep(6000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_Brambles)
-	RndSleep(3000)
+	RandomSleep(3000)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_RitualLord)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_EarthBind)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, GetMyAgent())
-	RndSleep(1500)
+	RandomSleep(1500)
 EndFunc
 
 
@@ -201,26 +221,26 @@ EndFunc
 Func CastFullSpiritsAndBoons($safeX, $safeY)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_EdgeOfExtinction)
 	; Get closer to the non-enemies to trigger them into enemies
-	Local $targetFoe = GetFurthestNPCInRangeOfCoords(null, 9600, -650, $RANGE_EARSHOT)
+	Local $targetFoe = GetFurthestNPCInRangeOfCoords(Null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_EARSHOT -100)
 	; Move back to be safe for a few seconds
 	MoveTo($safeX, $safeY)
-	RndSleep(5000)
+	RandomSleep(5000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_Brambles)
-	RndSleep(6000)
+	RandomSleep(6000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_Lacerate)
-	RndSleep(4000)
+	RandomSleep(4000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_NaturesRenewal)
-	RndSleep(6000)
+	RandomSleep(6000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_MuddyTerrain)
-	RndSleep(6000)
+	RandomSleep(6000)
 	UseHeroSkill($Hero_Kournans_Margrid, $Kournans_Pestilence)
-	RndSleep(3000)
+	RandomSleep(3000)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_RitualLord)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_EarthBind)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill($Hero_Kournans_Xandra, $Kournans_VitalWeapon, GetMyAgent())
-	RndSleep(1500)
+	RandomSleep(1500)
 EndFunc
 
 
@@ -228,19 +248,9 @@ EndFunc
 Func TalkToMargrid()
 	Info('Talking to Margrid')
 	GoNearestNPCToCoords(1250, 7300)
-	RndSleep(1000)
+	RandomSleep(1000)
 	Info('Taking quest')
 	; QuestID 0x23E = 574
 	AcceptQuest(0x23E)
-	RndSleep(500)
-EndFunc
-
-
-;~ Return to Sunspear Sanctuary
-Func BackToSunspearSanctuary()
-	Info('Porting to Sunspear Sanctuary')
-	Resign()
-	RndSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
+	RandomSleep(500)
 EndFunc

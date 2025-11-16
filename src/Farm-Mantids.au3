@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -38,91 +41,110 @@ Global Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
-Global Const $Mantids_DeadlyParadox = 1
-Global Const $Mantids_ShadowForm = 2
-Global Const $Mantids_ShroudOfDistress = 3
+Global Const $Mantids_DeadlyParadox 	= 1
+Global Const $Mantids_ShadowForm 		= 2
+Global Const $Mantids_ShroudOfDistress 	= 3
 Global Const $Mantids_LightningReflexes = 4
-Global Const $Mantids_WayOfPerfection = 5
-Global Const $Mantids_DeathsCharge = 6
-Global Const $Mantids_WhirlingDefense = 7
-Global Const $Mantids_EdgeOfExtinction = 8
+Global Const $Mantids_WayOfPerfection 	= 5
+Global Const $Mantids_DeathsCharge 		= 6
+Global Const $Mantids_WhirlingDefense 	= 7
+Global Const $Mantids_EdgeOfExtinction 	= 8
 
 ; Hero Build
-Global Const $Mantids_VocalWasSogolon = 1
-Global Const $Mantids_Incoming = 2
-Global Const $Mantids_FallBack = 3
-Global Const $Mantids_EnduringHarmony = 5
-Global Const $Mantids_TheyreOnFire = 6
-Global Const $Mantids_MakeHaste = 7
-Global Const $Mantids_BladeturnRefrain = 8
+Global Const $Mantids_VocalWasSogolon 	= 1
+Global Const $Mantids_Incoming 			= 2
+Global Const $Mantids_FallBack 			= 3
+Global Const $Mantids_EnduringHarmony 	= 5
+Global Const $Mantids_TheyreOnFire 		= 6
+Global Const $Mantids_MakeHaste 		= 7
+Global Const $Mantids_BladeturnRefrain 	= 8
 
 Global $MANTIDS_FARM_SETUP = False
 
 ;~ Main method to farm Mantids
 Func MantidsFarm($STATUS)
-	If Not $MANTIDS_FARM_SETUP Then
-		SetupMantidsFarm()
-		$MANTIDS_FARM_SETUP = True
-	EndIf
+	; Need to be done here in case bot comes back from inventory management
+	If Not $MANTIDS_FARM_SETUP Then SetupMantidsFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Return MantidsFarmLoop()
+	GoToWajjunBazaar()
+	Local $result = MantidsFarmLoop()
+	ReturnBackToOutpost($ID_Nahpui_Quarter)
+	Return $result
 EndFunc
 
 
 ;~ Mantids farm setup
 Func SetupMantidsFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Nahpui_Quarter Then DistrictTravel($ID_Nahpui_Quarter, $DISTRICT_NAME)
+	TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	LeaveGroup()
-	AddHero($ID_General_Morgahn)
 
+	SetupTeamMantidsFarm()
 	LoadSkillTemplate($RAMantidsFarmerSkillbar)
-	LoadSkillTemplate($MantidsHeroSkillbar, 1)
-	DisableAllHeroSkills(1)
 
-	Info('Entering Wajjun Bazaar')
-	MoveTo(-22000, 12500)
-	Move(-21750, 14500)
-	RndSleep(1000)
-	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+	GoToWajjunBazaar()
 	MoveTo(9100, -19600)
 	Move(9100, -20500)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
+	$MANTIDS_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamMantidsFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	AddHero($ID_General_Morgahn)
+	LoadSkillTemplate($MantidsHeroSkillbar, 1)
+	DisableAllHeroSkills(1)
+	Sleep(1000)
+	If GetPartySize() <> 2 Then
+    	Warn("Could not set up party correctly. Team size different than 2")
+	EndIf
+EndFunc
+
+
+;~ Move out of outpost into Wajjun Bazaar
+Func GoToWajjunBazaar()
+	If GetMapID() <> $ID_Nahpui_Quarter Then TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Wajjun_Bazaar
+		Info('Moving to Wajjun Bazaar')
+		;If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)
+		MoveTo(-22000, 12500)
+		Move(-21750, 14500)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+	WEnd
 EndFunc
 
 
 ;~ Mantids farm loop
 Func MantidsFarmLoop()
-	Info('Entering Wajjun Bazaar')
+	If GetMapID() <> $ID_Wajjun_Bazaar Then Return $FAIL
 	Local $target
-	If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)
-	Move(-21750, 14500)
-	RndSleep(1000)
-	WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+
 	UseHeroSkill(1, $Mantids_VocalWasSogolon)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_Incoming)
 	AdlibRegister('UseFallBack', 8000)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_EnduringHarmony, GetMyAgent())
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Mantids_TheyreOnFire)
 	UseHeroSkill(1, $Mantids_MakeHaste, GetMyAgent())
 	UseSkillEx($Mantids_DeadlyParadox)
-	RndSleep(20)
+	RandomSleep(20)
 	UseHeroSkill(1, $Mantids_BladeturnRefrain, GetMyAgent())
 	UseSkillEx($Mantids_ShroudOfDistress)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Mantids_ShadowForm)
-	RndSleep(20)
+	RandomSleep(20)
 	CommandAll(9000, -19500)
 
 	; Aggro the three groups
@@ -141,28 +163,25 @@ Func MantidsFarmLoop()
 	; Monk Balling spot
 	MoveTo(1050, -14950, 0)
 	While Not IsRecharged($Mantids_ShadowForm)
-		RndSleep(500)
+		RandomSleep(500)
 	WEnd
 	UseSkillEx($Mantids_ShadowForm)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Mantids_LightningReflexes)
-	RndSleep(20)
+	RandomSleep(20)
 	UseSkillEx($Mantids_WayOfPerfection)
-	RndSleep(2000)
-	If GetIsDead() Then
-		BackToNahpuiQuarterOutpost()
-		Return 1
-	EndIf
+	RandomSleep(2000)
+	If IsPlayerDead() Then Return $FAIL
 
 	; Balling the rest
 	$target = GetNearestEnemyToCoords(-450, -14400)
-	While IsRecharged($Mantids_DeathsCharge) And Not GetIsDead()
+	While IsRecharged($Mantids_DeathsCharge) And IsPlayerAlive()
 		UseSkillEx($Mantids_DeathsCharge, $target)
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 	MoveTo(-230, -14100)
 	MoveTo(-800, -14750)
-	RndSleep(1500)
+	RandomSleep(1500)
 
 	; Killing
 	MoveTo(-230, -14100)
@@ -175,25 +194,21 @@ Func MantidsFarmLoop()
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	Local $counter = 0
-	While Not GetIsDead() And $foesCount > 0 And $counter < 3
-		RndSleep(1000)
+	While IsPlayerAlive() And $foesCount > 0 And $counter < 3
+		RandomSleep(1000)
 		$counter = $counter + 1
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	WEnd
-	RndSleep(1000)
+	RandomSleep(1000)
 
-	If GetIsDead() Then
-		BackToNahpuiQuarterOutpost()
-		Return 1
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
 
 	Info('Looting')
 	PickUpItems()
 	FindAndOpenChests()
 
-	BackToNahpuiQuarterOutpost()
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -206,19 +221,9 @@ EndFunc
 
 ;~ Use Whirling Defense skill
 Func UseWhirlingDefense()
-	While IsRecharged($Mantids_WhirlingDefense) And Not GetIsDead()
+	While IsRecharged($Mantids_WhirlingDefense) And IsPlayerAlive()
 		UseSkillEx($Mantids_WhirlingDefense)
-		RndSleep(50)
+		RandomSleep(50)
 	WEnd
 	AdlibUnRegister()
-EndFunc
-
-
-;~ Resign and return to Nahpui Quarter
-Func BackToNahpuiQuarterOutpost()
-	Info('Porting to Nahpui Quarter')
-	Resign()
-	RndSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
 EndFunc

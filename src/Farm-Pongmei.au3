@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -25,7 +28,7 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
 Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
@@ -40,14 +43,14 @@ Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 Global Const $PONGMEI_FARM_DURATION = (4 * 60 + 20) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Pongmei_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Pongmei_DwarvenStability = 1
-Global Const $Pongmei_Zealous_Renewal = 2
-Global Const $Pongmei_Pious_Haste = 3
-Global Const $Pongmei_DeathsCharge = 4
-Global Const $Pongmei_HeartOfShadow = 5
-Global Const $Pongmei_IAmUnstoppable = 6
-Global Const $Pongmei_DeadlyParadox = 7
-Global Const $Pongmei_ShadowForm = 8
+Global Const $Pongmei_DwarvenStability 	= 1
+Global Const $Pongmei_Zealous_Renewal 	= 2
+Global Const $Pongmei_Pious_Haste 		= 3
+Global Const $Pongmei_DeathsCharge 		= 4
+Global Const $Pongmei_HeartOfShadow 	= 5
+Global Const $Pongmei_IAmUnstoppable 	= 6
+Global Const $Pongmei_DeadlyParadox 	= 7
+Global Const $Pongmei_ShadowForm 		= 8
 
 Global Const $ID_paragon_mercenary_hero = $ID_Mercenary_Hero_5
 
@@ -56,22 +59,34 @@ Global $PONGMEI_FARM_SETUP = False
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Boreas_Seabed Then DistrictTravel($ID_Boreas_Seabed, $DISTRICT_NAME)
-	If Not $PONGMEI_FARM_SETUP Then
-		SetupPongmeiFarm()
-		$PONGMEI_FARM_SETUP = True
-	EndIf
+	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	If $STATUS <> 'RUNNING' Then Return 2
-
-	Return PongmeiChestFarmLoop($STATUS)
+	GoToPongmeiValley()
+	Local $result = PongmeiChestFarmLoop($STATUS)
+	ReturnBackToOutpost($ID_Boreas_Seabed)
+	Return $result
 EndFunc
 
 
 ;~ Pongmei chest farm setup
 Func SetupPongmeiFarm()
 	Info('Setting up farm')
-	LeaveGroup()
+	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+
+	SetupTeamPongmeiChestFarm()
+	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
+
+	SwitchToHardModeIfEnabled()
+	$PONGMEI_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupTeamPongmeiChestFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	AddHero($ID_Hayda)
 	AddHero($ID_paragon_mercenary_hero)
@@ -79,32 +94,31 @@ Func SetupPongmeiFarm()
 	AddHero($ID_Tahlkora)
 	AddHero($ID_Ogden)
 	AddHero($ID_Goren)
-	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
-
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
+	Sleep(1000)
+	If GetPartySize() <> 8 Then
+    	Warn("Could not set up party correctly. Team size different than 8")
 	EndIf
+EndFunc
 
-	Info('Preparations complete')
+
+;~ Move out of outpost into Pongmei Valley
+Func GoToPongmeiValley()
+	If GetMapID() <> $ID_Boreas_Seabed Then TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+	While GetMapID() <> $ID_Pongmei_Valley
+		Info('Moving to Pongmei Valley')
+		MoveTo(-25366, 1524)
+		MoveTo(-26000, 2400)
+		Move(-26200, 2800)
+		RandomSleep(1000)
+		WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)
+	WEnd
 EndFunc
 
 
 ;~ Pongmei Chest farm loop
 Func PongmeiChestFarmLoop($STATUS)
+	If GetMapID() <> $ID_Pongmei_Valley Then Return $FAIL
 	Info('Starting chest farm run')
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
-
-	MoveTo(-25366, 1524)
-	MoveTo(-26000, 2400)
-	Move(-26200, 2800)
-	RndSleep(1000)
-	WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)
 
 	Local $openedChests = 0
 
@@ -159,28 +173,14 @@ Func PongmeiChestFarmLoop($STATUS)
 	DervishRun(-13876, -5626)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
-	Local $success = $openedChests > 0 And Not GetIsDead() ? 0 : 1
-	BackToBoreasSeabed()
-	Return $success
-EndFunc
-
-
-;~ Returning to Boreas Seabed
-Func BackToBoreasSeabed()
-	Info('Porting to Boreas Seabed')
-	Resign()
-	RndSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Boreas_Seabed, 10000, 1000)
+	Return $openedChests > 0 And IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
 ;~ Method to check to which place you are the closest to
 Func SkipToPreventBackTracking($X, $Y, $nextX, $nextY)
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
-	If ComputeDistance($myX, $myY, $X, $Y) < ComputeDistance($myX, $myY, $nextX, $nextY) Then
+	If GetDistanceToPoint($me, $X, $Y) < GetDistanceToPoint($me, $nextX, $nextY) Then
 		Info('Skipping')
 		Return True
 	EndIf
@@ -194,14 +194,14 @@ Func DervishRun($X, $Y)
 	;Local Static $shadowFormLastUse = Null
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
 		Error('Out of lockpicks')
-		Return 2
+		Return $PAUSE
 	EndIf
 
 	Move($X, $Y, 0)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While Not GetIsDead() And ComputeDistance(DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $X, $Y) > 100 And $blockedCounter < 15
+	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0 Then UseSkillEx($Pongmei_IAmUnstoppable)
 
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then
@@ -212,7 +212,7 @@ Func DervishRun($X, $Y)
 		If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And AreFoesInFront($X, $Y) Then
 			If IsRecharged($Pongmei_IAmUnstoppable) Then UseSkillEx($Pongmei_IAmUnstoppable)
 			UseSkillEx($Pongmei_DeadlyParadox)
-			RndSleep(20)
+			RandomSleep(20)
 			UseSkillEx($Pongmei_ShadowForm)
 			;$shadowFormLastUse = TimerInit()
 		EndIf
@@ -221,12 +221,12 @@ Func DervishRun($X, $Y)
 		If $energy >= 7 And IsRecharged($Pongmei_Pious_Haste) And (Not IsRecharged($Pongmei_DwarvenStability) Or ($energy >= 12 And IsRecharged($Pongmei_DwarvenStability))) Then
 			If IsRecharged($Pongmei_DwarvenStability) Then UseSkillEx($Pongmei_DwarvenStability)
 			UseSkillEx($Pongmei_Zealous_Renewal)
-			RndSleep(20)
+			RandomSleep(20)
 			UseSkillEx($Pongmei_Pious_Haste)
 		EndIf
 
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'MoveX') == 0 And DllStructGetData($me, 'MoveY') == 0 Then
+		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
 			Move($X, $Y, 0)
 		EndIf
@@ -244,16 +244,13 @@ Func DervishRun($X, $Y)
 EndFunc
 
 
-;~ Check if there are foes in front so we can use Shadow Form preemptively
+;~ Check if there are foes near point (X, Y) in front of player so we can use Shadow Form preemptively
 Func AreFoesInFront($X, $Y)
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST + 350)
-	Local $foe
-	For $i = 1 To $foes[0]
-		$foe = $foes[$i]
-		If ((ComputeDistance($X, $Y, $myX, $myY) - ComputeDistance($X, $Y, DllStructGetData($foe, 'X'), DllStructGetData($foe, 'Y'))) > 0) Then Return True
+	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return False
+	For $foe In $foes
+		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foe, $X, $Y)) > 0 Then Return True
 	Next
 	Return False
 EndFunc
@@ -278,8 +275,7 @@ Func GetNPCInTheBack($X, $Y)
 	$moveX /= $myMovementVector
 	$moveY /= $myMovementVector
 
-	For $i = 1 To $npcs[0]
-		Local $npc = $npcs[$i]
+	For $npc In $npcs
 		Local $npcMoveX = DllStructGetData($npc, 'X') - $myX
 		Local $npcMoveY = DllStructGetData($npc, 'Y') - $myY
 		Local $npcMovementVector = Sqrt($npcMoveX ^ 2 + $npcMoveY ^ 2)
@@ -298,18 +294,17 @@ Func GetNPCInTheBack($X, $Y)
 EndFunc
 
 
-;~ Get a foe that is in front of you and close enough to use Death Charge on
+;~ Get a foe that in front of player and close enough to point (X, Y) to use Death Charge on
 Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
 	Local $foes = GetFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
-	Local $foe
-	For $i = 1 To $foes[0]
-		$foe = $foes[$i]
-		If ((ComputeDistance($X, $Y, $myX, $myY) - ComputeDistance($X, $Y, DllStructGetData($foe, 'X'), DllStructGetData($foe, 'Y'))) > $distance) Then Return $foe
+	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return Null
+	For $foe In $foes
+		If (getDistanceToPoint($me, $X, $Y) - getDistanceToPoint($foe, $X, $Y)) > $distance Then Return $foe
 	Next
-	Return 0
+	Return Null
 EndFunc
 
 
@@ -318,10 +313,9 @@ Func DefendWhileOpeningChests()
 	Local $nearestFoe = GetNearestEnemyToAgent(GetMyAgent())
 
 	If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($Pongmei_IAmUnstoppable)
-
 	If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
 		UseSkillEx($Pongmei_DeadlyParadox)
-		RndSleep(20)
+		RandomSleep(20)
 		UseSkillEx($Pongmei_ShadowForm)
 	EndIf
 EndFunc

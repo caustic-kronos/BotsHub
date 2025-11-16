@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Underavelvetmoon
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 
@@ -1083,8 +1086,8 @@ EndFunc
 Func CreateValuableModsByOSWeaponTypeMap()
 	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
 	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
-	For $i = 0 To UBound($tickedInscriptions) - 1
-		Info($tickedInscriptions[$i])
+	For $tickedInscription In $tickedInscriptions
+		Info($tickedInscription)
 	Next
 	Return Null
 EndFunc
@@ -1095,8 +1098,8 @@ EndFunc
 Func CreateValuableModsByWeaponTypeMap()
 	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
 	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
-	For $i = 0 To UBound($tickedInscriptions) - 1
-		Info($tickedInscriptions[$i])
+	For $tickedInscription In $tickedInscriptions
+		Info($tickedInscription)
 	Next
 	Return Null
 EndFunc

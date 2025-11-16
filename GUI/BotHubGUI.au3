@@ -26,7 +26,7 @@ Global $StartButton, $FarmProgress
 ; Description.....:	Create the main GUI
 ;------------------------------------------------------
 Func _guiCreate()
-	$GWBotHub = GUICreate("GW Bot Hub", 600, 450, 851, 263)
+	$GWBotHub = GUICreate("GW Bot Hub", 600, 450, -1, -1) ; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
 
 	$CharacterChoiceCombo = GUICtrlCreateCombo("No character selected", 10, 420, 136, 20)
 	$FarmChoiceCombo = GUICtrlCreateCombo("Choose a farm", 155, 420, 136, 20)

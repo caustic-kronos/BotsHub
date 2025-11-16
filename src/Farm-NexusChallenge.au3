@@ -1,4 +1,6 @@
+#CS ===========================================================================
 ; Author: An anonymous fan of Dhuum
+; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -11,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+#CE ===========================================================================
 
 #include-once
 #RequireAdmin
@@ -23,75 +26,112 @@
 
 Opt('MustDeclareVars', 1)
 
-; ==== Constantes ====
+; ==== Constants ====
 Global Const $NexusChallengeinformations = 'Mysterious armor farm'
 ; Average duration ~ 20m
 Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm($STATUS)
-	If GetMapID() <> $ID_Nexus Then
-		Info('Moving to Nexus')
-		DistrictTravel($ID_Nexus, $DISTRICT_NAME)
-		WaitMapLoading($ID_Nexus, 10000, 2000)
-	EndIf
-
 	NexusChallengeSetup()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	AdlibRegister('TrackGroupStatus', 10000)
+	EnterNexusChallengeMission()
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
-	AdlibUnRegister('TrackGroupStatus')
+	AdlibUnRegister('TrackPartyStatus')
+	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
+	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
+
 Func NexusChallengeSetup()
-	;LeaveGroup()
-	;RndSleep(500)
-	;AddHero($ID_Norgu)
-	;RndSleep(500)
-	;AddHero($ID_Xandra)
-	;RndSleep(500)
-	;AddHero($ID_Master_Of_Whispers)
-	;RndSleep(500)
+	Info('Setting up farm')
+	If GetMapID() <> $ID_Nexus Then
+		TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	Else ; resigning to return to outpost in case when player is in Nexus Challenge that has the same map ID as Nexus outpost (555)
+		Resign()
+		Sleep(4000)
+		ReturnToOutpost()
+		Sleep(6000)
+	EndIf
+	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
+
+	; Assuming that team has been set up correctly manually
+	;SetupTeamNexusChallengeFarm()
+	Info('Preparations complete')
 EndFunc
 
-;~ Cleaning NexusChallenges func
+
+Func SetupTeamNexusChallengeFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	RandomSleep(500)
+	AddHero($ID_Norgu)
+	RandomSleep(500)
+	AddHero($ID_Xandra)
+	RandomSleep(500)
+	AddHero($ID_Master_Of_Whispers)
+	Sleep(1000)
+	If GetPartySize() <> 4 Then
+    	Warn("Could not set up party correctly. Team size different than 4")
+	EndIf
+EndFunc
+
+
+Func EnterNexusChallengeMission()
+	If GetMapID() <> $ID_Nexus Then TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is hard to tell if player left the outpost
+	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
+	Local Static $StartX = -391
+	Local Static $StartY = -335
+	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+		Info('Entering Nexus mission')
+		; Lance la quête
+		MoveTo(-2218, -5033)
+		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
+		Notice('Talking to NPC')
+		Sleep(1000)
+		Dialog(0x88)
+		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
+	WEnd
+EndFunc
+
+
+;~ Cleaning Nexus challenge function
 Func NexusChallenge()
-	; Lance la quête
-	MoveTo(-2218, -5033)
-	GoToNPC(GetNearestNPCToCoords(-2218, -5033))
-	Notice('Talking to NPC')
-	Sleep(1000)
-	Dialog(0x88)
-	Sleep(1000)
-	RndSleep(4000)
-	WaitMapLoading($ID_Nexus, 10000, 2000)
+	If GetMapID() <> $ID_Nexus Then Return $FAIL
 	Sleep(50000)
 
 	; Sinon on fait les 5 groupes
-	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return 1
-	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return 1
-	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return 1
-	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return 1
-	If MoveAggroAndKill(2479, -1967, 'Group 5') Then Return 1
-	If MoveAggroAndKill(1572, -616, 'Group 6') Then Return 1
-	If MoveAggroAndKill(668, -3516, 'Group 7') Then Return 1
-	If MoveAggroAndKill(-3723, -3662, 'Group 8') Then Return 1
-	If MoveAggroAndKill(-3809, 880, 'Group 9') Then Return 1
+	Local Static $foes[18][3] = [ _ ; 9 groups to defeat in each loop
+		[-2675, 3301, 'Group 1'], _ ; First loop
+		[-55, 3297, 'Group 2'], _
+		[-1759, 993, 'Group 3'], _
+		[3834, 2759, 'Group 4'], _
+		[2479, -1967, 'Group 5'], _
+		[1572, -616, 'Group 6'], _
+		[668, -3516, 'Group 7'], _
+		[-3723, -3662, 'Group 8'], _
+		[-3809, 880, 'Group 9'], _
+		[-2675, 3301, 'Group 1'], _ ; Second loop
+		[-55, 3297, 'Group 2'], _
+		[-1759, 993, 'Group 3'], _
+		[3834, 2759, 'Group 4'], _
+		[2479, -1967, 'Group 5'], _
+		[1572, -616, 'Group 6'], _
+		[668, -3516, 'Group 7'], _
+		[-3723, -3662, 'Group 8'], _
+		[-3809, 880, 'Group 9'] _
+	]
+
+	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
 	Notice('First loop completed')
-	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return 1
-	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return 1
-	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return 1
-	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return 1
-	If MoveAggroAndKill(2479, -1967, 'Group 5') Then Return 1
-	If MoveAggroAndKill(1572, -616, 'Group 6') Then Return 1
-	If MoveAggroAndKill(668, -3516, 'Group 7') Then Return 1
-	If MoveAggroAndKill(-3723, -3662, 'Group 8') Then Return 1
-	If MoveAggroAndKill(-3809, 880, 'Group 9') Then Return 1
+	If MoveAggroAndKillGroups($foes, 10, 18) == $FAIL Then Return $FAIL
 	Notice('Second loop completed, reset')
-	If MoveAggroAndKill(-2675, 3301, 'Group 1') Then Return 1
-	If MoveAggroAndKill(-55, 3297, 'Group 2') Then Return 1
-	If MoveAggroAndKill(-1759, 993, 'Group 3') Then Return 1
-	If MoveAggroAndKill(3834, 2759, 'Group 4') Then Return 1
+
+	Return $SUCCESS
 EndFunc

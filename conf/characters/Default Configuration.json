@@ -17,7 +17,7 @@
 		"store_leftovers": false,
 		"store_gold": false,
 		"district": "Random",
-		"bag_number": 5,
+		"bags_count": 5,
 		"farm_materials": false,
 		"disable_rendering": false
 	},
