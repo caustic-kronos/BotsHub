@@ -1833,10 +1833,10 @@ EndFunc
 
 
 ;~ Returns the coordinates in the middle of a group of foes nearest to provided position
-Func FindMiddleOfFoes($posX, $posY, $range)
+Func FindMiddleOfFoes($posX, $posY, $range = $RANGE_AREA)
 	Local $position[2] = [0, 0]
 	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
-	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $RANGE_AREA)
+	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $range)
 	For $foe In $foes
 		$position[0] += DllStructGetData($foe, 'X')
 		$position[1] += DllStructGetData($foe, 'Y')
@@ -1848,25 +1848,25 @@ EndFunc
 
 
 ;~ Get foes in range of the given agent
-Func GetFoesInRangeOfAgent($agent, $range = Null, $condition = Null)
+Func GetFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
 	Return GetNPCsInRangeOfAgent($agent, 3, $range, $condition)
 EndFunc
 
 
 ;~ Get foes in range of the given coordinates
-Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = Null, $condition = Null)
+Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
 	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
 EndFunc
 
 
 ;~ Get NPCs in range of the given agent
-Func GetNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = Null, $condition = Null)
+Func GetNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $npcAllegiance, $range, $condition)
 EndFunc
 
 
 ;~ Get party members in range of the given agent
-Func GetPartyInRangeOfAgent($agent, $range = Null)
+Func GetPartyInRangeOfAgent($agent, $range = $RANGE_AREA)
 	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 1, $range, PartyMemberFilter)
 EndFunc
 
@@ -1879,7 +1879,7 @@ EndFunc
 
 
 ;~ Count NPCs in range of the given coordinates. If range is Null then all found NPCs are counted, as with infinite range
-Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
+Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	;Return UBound(GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition))
 	Local $agents = GetAgentArray(0xDB)
 	Local $count = 0
@@ -1895,7 +1895,7 @@ Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = N
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
-		If $range <> Null And $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
+		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		$count += 1
 	Next
 	Return $count
@@ -1903,7 +1903,7 @@ EndFunc
 
 
 ;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
-Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
+Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $agents = GetAgentArray(0xDB)
 	Local $allAgents[GetMaxAgents()] ; 1D array of agents, indexed from 0
 	Local $npcCount = 0
@@ -1919,7 +1919,7 @@ Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Nul
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
-		If $range <> Null And $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
+		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		$allAgents[$npcCount] = $agent
 		$npcCount += 1
 	Next
@@ -1932,7 +1932,7 @@ EndFunc
 
 
 ;~ Get NPC closest to the player and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
-Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = Null, $condition = Null)
+Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $smallestDistance = 99999
@@ -1948,7 +1948,7 @@ Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
-		If $range <> Null And $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
+		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		Local $curDistance = GetDistance($me, $agent)
 		If $curDistance < $smallestDistance Then
 			$nearestAgent = $agent
@@ -1960,7 +1960,7 @@ EndFunc
 
 
 ;~ Get NPC furthest to the player and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
-Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = Null, $condition = Null)
+Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $furthestDistance = 0
@@ -1976,7 +1976,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
-		If $range <> Null And $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
+		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		Local $curDistance = GetDistance($me, $agent)
 		If $curDistance > $furthestDistance Then
 			$furthestAgent = $agent
@@ -1989,7 +1989,7 @@ EndFunc
 
 ;~ TODO: check that this method is still better, I improved the original
 ;~ Get NPC closest to the given coordinates and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
-Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = Null, $condition = Null)
+Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $me = GetMyAgent()
 	Local $agents = GetAgentArray(0xDB)
 	Local $smallestDistance = 99999
@@ -2006,7 +2006,7 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
 		Local $curDistance = GetDistanceToPoint($agent, $coordX, $coordY)
-		If $range <> Null And $range < $curDistance Then ContinueLoop
+		If $range < $curDistance Then ContinueLoop
 		If $curDistance < $smallestDistance Then
 			$nearestAgent = $agent
 			$smallestDistance = $curDistance
