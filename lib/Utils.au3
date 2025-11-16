@@ -192,7 +192,7 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($DefendFunction = Null, $ShouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
+Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
 
 	Local $item
@@ -207,8 +207,8 @@ Func PickUpItems($DefendFunction = Null, $ShouldPickItem = DefaultShouldPickItem
 		$agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)
 
-		If ($ShouldPickItem($item)) Then
-			If $DefendFunction <> Null Then $DefendFunction()
+		If ($shouldPickItem($item)) Then
+			If $defendFunction <> Null Then $defendFunction()
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
@@ -332,7 +332,7 @@ EndFunc
 
 
 ;~ Find and open chests in the given range (earshot by default)
-Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $BlockedFunction = Null)
+Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
 	If IsPlayerDead() Then Return
 	If FindInInventory($ID_Lockpick)[0] == 0 Then Return
 	Local $gadgetID
@@ -347,7 +347,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $DefendFunction = Null, $Blocked
 			;MoveTo(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))		;Fail half the time
 			;GoSignpost($agent)															;Seems to work but serious rubberbanding
 			;GoToSignpost($agent)															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
-			GoToSignpostWhileDefending($agent, $DefendFunction, $BlockedFunction)			;Final solution
+			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)			;Final solution
 			If IsPlayerDead() Then Return
 			RandomSleep(200)
 			OpenChest()
@@ -381,7 +381,7 @@ EndFunc
 
 
 ;~ Go to signpost and wait until you reach it.
-Func GoToSignpostWhileDefending($signpost, $DefendFunction = Null, $BlockedFunction = Null)
+Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunction = Null)
 	Local $me = GetMyAgent()
 	Local $X = DllStructGetData($signpost, 'X')
 	Local $Y = DllStructGetData($signpost, 'Y')
@@ -389,11 +389,11 @@ Func GoToSignpostWhileDefending($signpost, $DefendFunction = Null, $BlockedFunct
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
 		Move($X, $Y, 100)
 		RandomSleep(GetPing() + 50)
-		If $DefendFunction <> Null Then $DefendFunction()
+		If $defendFunction <> Null Then $defendFunction()
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then
-			If $BlockedFunction <> Null And $blocked > 10 Then
-				$BlockedFunction()
+			If $blockedFunction <> Null And $blocked > 10 Then
+				$blockedFunction()
 			EndIf
 			$blocked += 1
 			Move($X, $Y, 100)
@@ -2350,7 +2350,7 @@ Func MoveAggroAndKillGroups($foes, $firstGroup, $lastGroup)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 	If Not IsArray($foes) Or UBound($foes, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
 	If UBound($foes, $UBOUND_COLUMNS) <> 3 And UBound($foes, $UBOUND_COLUMNS) <> 4 Then Return $FAIL
-	If $firstGroup < 1 Or UBound($foes) < $lastGroup  Then Return $FAIL
+	If $firstGroup < 1 Or UBound($foes) < $lastGroup Then Return $FAIL
 	If $firstGroup > $lastGroup Then Return $FAIL
 	Local $x, $y, $log, $range
 	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
