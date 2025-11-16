@@ -455,6 +455,11 @@ Global Const $ID_Whirlwind_Attack				= 2107
 Global Const $ID_Troll_Unguent					= 446
 Global Const $ID_Whirling_Defense				= 450
 ; Monk
+Global Const $ID_Unyielding_Aura				= 268
+Global Const $ID_Light_of_Dwayna				= 304
+Global Const $ID_Resurrect						= 305
+Global Const $ID_Rebirth						= 306
+Global Const $ID_Restore_Life					= 314
 Global Const $ID_Vengeance						= 315
 Global Const $ID_Ray_of_Judgement				= 830
 Global Const $ID_Resurrection_Chant				= 1128
@@ -480,11 +485,15 @@ Global Const $ID_Shroud_of_Distress				= 1031
 ; Ritualist
 Global Const $ID_Flesh_of_My_Flesh				= 791
 Global Const $ID_Union							= 911
+Global Const $ID_Restoration					= 963
 Global Const $ID_Shelter						= 982
+Global Const $ID_Lively_Was_Naomei				= 1222
 Global Const $ID_Soul_Twisting					= 1240
 Global Const $ID_Displacement					= 1249
+Global Const $ID_Death_Pact_Signet				= 1481
 ; Paragon
 Global Const $ID_Burning_Refrain				= 1576
+Global Const $ID_We_Shall_Return				= 1592
 Global Const $ID_Signet_of_Return				= 1778
 Global Const $ID_Heroic_Refrain					= 3431
 ; Dervish
@@ -498,6 +507,10 @@ Global Const $ID_Heart_of_Fury					= 1762
 ; Common
 Global Const $ID_Resurrection_Signet			= 2
 ; PvE
+Global Const $ID_Sunspear_Rebirth_Signet		= 1816
+Global Const $ID_Junundu_Wail					= 1865
+Global Const $ID_Eternal_Aura					= 2109
+Global Const $ID_By_Urals_Hammer				= 2217
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_Mental_Block					= 2417
 ; Food and drink boosts

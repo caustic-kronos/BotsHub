@@ -2163,31 +2163,12 @@ EndFunc
 
 ;~ Return true if the provided skill is a rez skill - signets excluded
 Func IsRezSkill($skill)
-	Local Static $By_Urals_Hammer			= 2217
-	Local Static $Junundu_Wail				= 1865
-	;Local Static $Resurrection_Signet		= 2
-	;Local Static $Sunspear_Rebirth_Signet	= 1816
-	Local Static $Eternal_Aura				= 2109
-	Local Static $We_Shall_Return			= 1592
-	Local Static $Signet_of_Return			= 1778
-	Local Static $Death_Pact_Signet			= 1481
-	Local Static $Flesh_of_My_Flesh			= 791
-	Local Static $Lively_Was_Naomei			= 1222
-	Local Static $Restoration				= 963
-	Local Static $Light_of_Dwayna			= 304
-	Local Static $Rebirth					= 306
-	Local Static $Renew_Life				= 1263
-	Local Static $Restore_Life				= 314
-	Local Static $Resurrect					= 305
-	Local Static $Resurrection_Chant		= 1128
-	Local Static $Unyielding_Aura			= 268
-	Local Static $Vengeance					= 315
 	Switch $skill
-		Case $By_Urals_Hammer, $Junundu_Wail, _ ;$Resurrection_Signet, $Sunspear_Rebirth_Signet _
-			$Eternal_Aura, _
-			$We_Shall_Return, $Signet_of_Return, _
-			$Death_Pact_Signet, $Flesh_of_My_Flesh, $Lively_Was_Naomei, $Restoration, _
-			$Light_of_Dwayna, $Rebirth, $Renew_Life, $Restore_Life, $Resurrect, $Resurrection_Chant, $Unyielding_Aura, $Vengeance
+		Case $ID_By_Urals_Hammer, $ID_Junundu_Wail, _ ;$ID_Resurrection_Signet, $ID_Sunspear_Rebirth_Signet _
+			$ID_Eternal_Aura, _
+			$ID_We_Shall_Return, $ID_Signet_of_Return, _
+			$ID_Death_Pact_Signet, $ID_Flesh_of_My_Flesh, $ID_Lively_Was_Naomei, $ID_Restoration, _
+			$ID_Light_of_Dwayna, $ID_Rebirth, $ID_Renew_Life, $ID_Restore_Life, $ID_Resurrect, $ID_Resurrection_Chant, $ID_Unyielding_Aura, $ID_Vengeance
 			Return True
 	EndSwitch
 	Return False
