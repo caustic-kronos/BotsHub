@@ -40,28 +40,23 @@ Global Const $ID_Froggy_Quest = 0x339
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $FROGGY_FARM_SETUP Then
-		If SetupFroggyFarm() == $FAIL Then Return $FAIL
-	EndIf
-
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
-	Local $result = FroggyFarmLoop()
-	TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
-	Return $result
+	While Not $FROGGY_FARM_SETUP
+		SetupFroggyFarm()
+	WEnd
+	Return FroggyFarmLoop()
 EndFunc
 
 
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return
 	; Assuming that team has been set up correctly manually
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
 	ResetFailuresCounter()
 	RunToBogroot()
-	If IsRunFailed() Then Return $FAIL
-	AdlibUnRegister('TrackPartyStatus')
+	If IsRunFailed() Then Return
 	$FROGGY_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
@@ -77,9 +72,8 @@ Func RunToBogroot()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
 	WEnd
-	AdlibRegister('TrackPartyStatus', 10000)
-
 	Info('Making way to Bogroot')
+	AdlibRegister('TrackPartyStatus', 10000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
 		MoveAggroAndKillInRange(-4559, -14406, 'I majored in pain, with a minor in suffering', $froggyAggroRange)
 		MoveAggroAndKillInRange(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $froggyAggroRange)
@@ -94,12 +88,12 @@ Func RunToBogroot()
 		MoveAggroAndKillInRange(14650, 19417, 'More violets I say. Less violence', $froggyAggroRange)
 		MoveAggroAndKillInRange(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
+	AdlibUnRegister('TrackPartyStatus')
 EndFunc
 
 
 ;~ Farm loop
 Func FroggyFarmLoop()
-	If GetMapID() <> $ID_Bogroot_lvl1 And GetMapID() <> $ID_Bogroot_lvl2 Then Return $FAIL
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 
