@@ -509,7 +509,7 @@ Func MoveItemsToEquipmentBag()
 	Local $equipmentBagEmptySlots = FindEmptySlots(5)
 	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
 	If $countEmptySlots < 1 Then
-		Warn('No space in equipment bag to move the items to')
+		Debug('No space in equipment bag to move the items to')
 		Return
 	EndIf
 
@@ -519,7 +519,7 @@ Func MoveItemsToEquipmentBag()
 			Local $item = GetItemBySlot($bagId, $slot)
 			If DllStructGetData($item, 'ID') <> 0 And (isArmor($item) Or IsWeapon($item)) Then
 				If $countEmptySlots < 1 Then
-					Warn('No space in equipment bag to move the items to')
+					Debug('No space in equipment bag to move the items to')
 					Return
 				EndIf
 				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
