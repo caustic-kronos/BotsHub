@@ -34,7 +34,9 @@ Global Const $FroggyFarmInformations = 'For best results, dont cheap out on hero
 
 Global $FROGGY_FARM_SETUP = False
 Global Const $froggyAggroRange = $RANGE_SPELLCAST + 100
-Global Const $ID_Froggy_Quest = 0x339
+Global Const $ID_Froggy_Quest = 0x322
+;Tekk's war quest
+;Global Const $ID_Froggy_Quest = 0x339
 
 
 ;~ Main method to farm Froggy
@@ -113,15 +115,78 @@ EndFunc
 
 
 ;~ Take quest rewards, refresh quest by entering dungeon and exiting it, then take quest again and reenter dungeon
+;old version with Tekk's quest
+;Func GetRewardRefreshAndTakeFroggyQuest()
+;	Info('Get quest reward')
+;	MoveTo(12061, 22485)
+;
+;	; Quest validation doubled to secure bot
+;	For $i = 1 To 2
+;		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+;		RandomSleep(250)
+;		Dialog(0x833907)
+;		RandomSleep(500)
+;	Next
+;
+;	Info('Get in dungeon to reset quest')
+;	MoveTo(12228, 22677)
+;	MoveTo(12470, 25036)
+;	Local $mapLoaded = False
+;	While Not $mapLoaded
+;		MoveTo(12968, 26219)
+;		Move(13097, 26393)
+;		RandomSleep(2000)
+;		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl1)
+;	WEnd
+;
+;	Info('Get out of dungeon to reset quest')
+;	$mapLoaded = False
+;	While Not $mapLoaded
+;		MoveTo(14876, 632)
+;		Move(14700, 450)
+;		RandomSleep(2000)
+;		$mapLoaded = WaitMapLoading($ID_Sparkfly_Swamp)
+;	WEnd
+;
+;	Info('Get quest')
+;	MoveTo(12061, 22485)
+;	; Quest validation doubled to secure bot
+;	For $i = 1 To 2
+;		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+;		RandomSleep(250)
+;		Dialog(0x833901)
+;		RandomSleep(500)
+;	Next
+;	Info('Talk to Tekk if already had quest')
+;	; Quest pickup doubled to secure bot
+;	For $i = 1 To 2
+;		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+;		RandomSleep(250)
+;		Dialog(0x833905)
+;		RandomSleep(500)
+;	Next
+;
+;	Info('Get back in')
+;	MoveTo(12228, 22677)
+;	MoveTo(12470, 25036)
+;	$mapLoaded = False
+;	While Not $mapLoaded
+;		MoveTo(12968, 26219)
+;		Move(13097, 26393)
+;		RandomSleep(2000)
+;		$mapLoaded = WaitMapLoading($ID_Bogroot_lvl1)
+;	WEnd
+;EndFunc
+
 Func GetRewardRefreshAndTakeFroggyQuest()
 	Info('Get quest reward')
 	MoveTo(12061, 22485)
 
 	; Quest validation doubled to secure bot
 	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+		GoToNPC(GetNearestNPCToCoords(12308, 22836))
 		RandomSleep(250)
-		Dialog(0x833907)
+		Dialog(0x832207)
 		RandomSleep(500)
 	Next
 
@@ -149,17 +214,17 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	MoveTo(12061, 22485)
 	; Quest validation doubled to secure bot
 	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+		GoToNPC(GetNearestNPCToCoords(12308, 22836))
 		RandomSleep(250)
-		Dialog(0x833901)
+		Dialog(0x832201)
 		RandomSleep(500)
 	Next
 	Info('Talk to Tekk if already had quest')
 	; Quest pickup doubled to secure bot
 	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12500, 22648))
+		GoToNPC(GetNearestNPCToCoords(12308, 22836))
 		RandomSleep(250)
-		Dialog(0x833905)
+		Dialog(0x832205)
 		RandomSleep(500)
 	Next
 
