@@ -215,7 +215,7 @@ EndFunc
 ;~ Paragon Hero uses Fallback
 Func UseFallBack()
 	UseHeroSkill(1, $Mantids_FallBack)
-	AdlibUnRegister()
+	AdlibUnRegister('UseFallBack')
 EndFunc
 
 
@@ -225,5 +225,5 @@ Func UseWhirlingDefense()
 		UseSkillEx($Mantids_WhirlingDefense)
 		RandomSleep(50)
 	WEnd
-	AdlibUnRegister()
+	AdlibUnRegister('UseWhirlingDefense')
 EndFunc

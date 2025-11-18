@@ -88,8 +88,15 @@ Func FoWFarmLoop()
 	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
-	If IsHardmodeEnabled() Then UseConset()
+	Local $result = FoWFarmProcess()
+	AdlibUnRegister('TrackPartyStatus')
+	Return $result
+EndFunc
 
+
+;~ Farm exact process - wrapper needed to be able to deregister adlib functions
+Func FoWFarmProcess()
+	If IsHardmodeEnabled() Then UseConset()
 	If TowerOfCourage() Then Return $FAIL
 	; Fix : if unholy texts are not picked up, move to different place, and retry, until it works
 	If TheGreatBattleField() Then Return $FAIL
@@ -105,8 +112,6 @@ Func FoWFarmLoop()
 	If ForestOfTheWailingLord() Then Return $FAIL
 	If GriffonRun() Then Return $FAIL
 	If TempleLoot() Then Return $FAIL
-
-	AdlibUnRegister('TrackPartyStatus')
 	Return $SUCCESS
 EndFunc
 

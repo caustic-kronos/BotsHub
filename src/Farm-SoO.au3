@@ -94,13 +94,14 @@ Func RunToShardsOfOrrDungeon()
 		MoveAggroAndKillInRange(11891, -224, '3', $SoOAggroRange)
 		MoveAggroAndKillInRange(8803, -5104, '4', $SoOAggroRange)
 		MoveAggroAndKillInRange(8125, -8247, '5', $SoOAggroRange)
-		If IsRunFailed() Then Return $FAIL
-
+		; Can't return here - we need to deregister adlib first
+		If IsRunFailed() Then ExitLoop
 		MoveAggroAndKillInRange(8634, -11529, '6', $SoOAggroRange)
 		MoveAggroAndKillInRange(9559, -13494, '7', $SoOAggroRange)
 		MoveAggroAndKillInRange(10314, -16111, '8', $SoOAggroRange)
 		MoveAggroAndKillInRange(11156, -17802, '9', $SoOAggroRange)
 	WEnd
+
 	AdlibUnRegister('TrackPartyStatus')
 	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
@@ -112,12 +113,10 @@ Func SoOFarmLoop()
 	AdlibRegister('TrackPartyStatus', 10000)
 
 	GetRewardRefreshAndTakeSoOQuest()
-	If (ClearSoOFloor1() == $FAIL Or ClearSoOFloor2() == $FAIL Or ClearSoOFloor3() == $FAIL) Then
-		$SOO_FARM_SETUP = False
-		Return $FAIL
-	EndIf
-
+	; Failure return delayed after adlib function deregistered
+	If (ClearSoOFloor1() == $FAIL Or ClearSoOFloor2() == $FAIL Or ClearSoOFloor3() == $FAIL) Then $SOO_FARM_SETUP = False
 	AdlibUnRegister('TrackPartyStatus')
+	If Not $SOO_FARM_SETUP Then Return $FAIL
 
 	Info('Waiting for timer end')
 	Sleep(190000)

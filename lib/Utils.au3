@@ -51,7 +51,7 @@ Func RunTests($STATUS)
 
 
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
-	; ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
+	;ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
 
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $itemID = DllStructGetData($item, 'ID')

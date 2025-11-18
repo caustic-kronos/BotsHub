@@ -96,14 +96,11 @@ EndFunc
 Func FroggyFarmLoop()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
-
 	GetRewardRefreshAndTakeFroggyQuest()
-	If (ClearFroggyFloor1() == $FAIL Or ClearFroggyFloor2() == $FAIL) Then
-		$FROGGY_FARM_SETUP = False
-		Return $FAIL
-	EndIf
-
+	; Failure return delayed after adlib function deregistered
+	If (ClearFroggyFloor1() == $FAIL Or ClearFroggyFloor2() == $FAIL) Then $FROGGY_FARM_SETUP = False
 	AdlibUnRegister('TrackPartyStatus')
+	If Not $FROGGY_FARM_SETUP Then Return $FAIL
 
 	Info('Waiting for timer end')
 	Sleep(190000)
