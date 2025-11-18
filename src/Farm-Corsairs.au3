@@ -63,11 +63,9 @@ Global $Bohseda_Timer
 Func CorsairsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $CORSAIRS_FARM_SETUP Then SetupCorsairsFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
-
 	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()
-	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+	BackToModdokCreviceOutpost()
 	Return $result
 EndFunc
 
@@ -123,6 +121,16 @@ Func EnterCorsairsModdokCreviceMission()
 		Dialog(0x84)
 		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
 	WEnd
+EndFunc
+
+
+;~ Resign and returns to Modook Crevice (city)
+Func BackToModdokCreviceOutpost()
+	Info('Porting to Moddok Crevice (city)')
+	Resign()
+	RandomSleep(3500)
+	ReturnToOutpost()
+	WaitMapLoading($ID_Moddok_Crevice, 10000, 2000)
 EndFunc
 
 
