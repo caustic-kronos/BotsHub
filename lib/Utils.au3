@@ -179,11 +179,9 @@ Func ReturnBackToOutpost($outpostId)
 		Warn('Player is already in ' & $outpostName & ' (outpost)')
 		Return $SUCCESS
 	Endif
-	RandomSleep(500)
 	Resign()
 	RandomSleep(2500)
 	ReturnToOutpost()
-	RandomSleep(2500)
 	WaitMapLoading($outpostId, 10000, 2500)
 	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
 EndFunc
@@ -2073,18 +2071,8 @@ Func IsPlayerAlive()
 EndFunc
 
 
-Func IsPartyWiped()
-	Return Not HasRezMemberAlive()
-EndFunc
-
-
 Func IsPlayerAndPartyWiped()
 	Return IsPlayerDead() And Not HasRezMemberAlive()
-EndFunc
-
-
-Func IsPartyAlive()
-	Return HasRezMemberAlive()
 EndFunc
 
 
@@ -2118,7 +2106,7 @@ EndFunc
 
 ;~ Updates the partyIsAlive variable, this function is run on a fixed timer (10s)
 Func TrackPartyStatus()
-	If IsPartyWiped() Then
+	If IsPlayerAndPartyWiped() Then
 		$partyFailuresCount += 1
 		Notice('Party wiped for the ' & $partyFailuresCount & ' time')
 		$partyIsAlive = False
