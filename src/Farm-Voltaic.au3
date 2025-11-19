@@ -137,7 +137,7 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKillInRange(-14100, -8600, 'Fourth group', $VSAggroRange)
 		MoveAggroAndKillInRange(-15000, -7500, 'Fourth group, again', $VSAggroRange)
 		MoveAggroAndKillInRange(-16500, -8000, 'Fifth group', $VSAggroRange)
-		MoveAggroAndKillInRange(-18500, -8000, 'To the shrine', $VSAggroRange)
+		MoveAggroAndKillInRange(-18800, -7850, 'To the shrine', $VSAggroRange)
 	WEnd
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
 		; Waiting to be alive before retrying
