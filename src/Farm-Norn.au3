@@ -219,5 +219,10 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	If MoveAggroAndKillGroups($foes, 45, 49) == $FAIL Then Return $FAIL
+
+	If Not GetAreaVanquished() Then
+		Error('The map has not been completely vanquished.')
+		Return $FAIL
+	EndIf
 	Return $SUCCESS
 EndFunc
