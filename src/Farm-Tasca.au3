@@ -183,7 +183,7 @@ Func TascaChestFarmLoop($STATUS)
 		Info('#Bonus chest')
 		$annoyingChest = ScanForChests(2000, True, 5500, 18000)
 		Local $target = GetTargetToEscapeWithDeathsCharge(DllStructGetData($annoyingChest, 'X'), DllStructGetData($annoyingChest, 'Y'))
-		UseSkillEx($Tasca_DeathsCharge, $target)
+		If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
 		$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 		RandomSleep(1000)
 	EndIf
@@ -217,13 +217,13 @@ Func TASCADervishRun($X, $Y)
 		; Energy usage becomes too heavy if we start using DC as a speedup
 		;If GetEnergy() >= 5 And IsRecharged($Tasca_DeathsCharge) Then
 		;	Local $target = GetTargetForDeathsCharge($X, $Y, 700)
-		;	If $target <> 0 Then UseSkillEx($Tasca_DeathsCharge, $target)
+		;	If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
 		;EndIf
 
 		; We only start unblocking after 10 times 250 ms which is 2.5 s -> that's because knockdown lasts 2s
 		If $blockedCounter > 10 And GetEnergy() >= 10 Then
 			Local $target = GetTargetToEscapeWithDeathsCharge($X, $Y)
-			If $target <> 0 And IsRecharged($Tasca_DeathsCharge) Then
+			If $target <> Null And IsRecharged($Tasca_DeathsCharge) Then
 				UseSkillEx($Tasca_DeathsCharge, $target)
 				$blockedCounter = 0
 			ElseIf IsRecharged($Tasca_HeartOfShadow) Then
@@ -244,7 +244,7 @@ EndFunc
 ;~ Get a foe close enough to use Death Charge on and as close as possible to coordinates
 Func GetTargetToEscapeWithDeathsCharge($X, $Y)
 	Local $targetDistance = 999999
-	Local $target
+	Local $target = Null
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	If Not IsArray($foes) Or UBound($foes) <= 0 Then Return Null
 	For $foe In $foes
@@ -266,7 +266,7 @@ Func UnblockWhenOpeningChests()
 		UseSkillEx($Tasca_HeartOfShadow, $target)
 	ElseIf IsRecharged($Tasca_DeathsCharge) Then
 		Local $target = GetFurthestNPCInRangeOfCoords(3, Null, Null, $RANGE_SPELLCAST)
-		If $target <> 0 Then UseSkillEx($Tasca_DeathsCharge, $target)
+		If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
 	EndIf
 EndFunc
 
