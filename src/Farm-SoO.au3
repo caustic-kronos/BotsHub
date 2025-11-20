@@ -36,27 +36,34 @@ Global Const $ID_SoO_Quest_Lost_Souls = 0x324
 Global Const $ID_SoO_Torch = 22342
 Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
+Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000 ; max time = 80 minutes
+Global $SoOFarmTimer = Null
 Global $SOO_FARM_SETUP = False
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $SOO_FARM_SETUP
-		SetupSoOFarm()
-	WEnd
-	Return SoOFarmLoop()
+	If Not $SOO_FARM_SETUP Then
+		If SetupSoOFarm() == $FAIL Then Return $FAIL
+	EndIf
+
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	Local $result = SoOFarmLoop()
+	TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
+	Return $result
 EndFunc
 
 
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return
+	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	; Assuming that team has been set up correctly manually
 	SwitchToHardModeIfEnabled()
-	If RunToShardsOfOrrDungeon() == $FAIL Then Return
+	If RunToShardsOfOrrDungeon() == $FAIL Then Return $FAIL
 	$SOO_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -104,9 +111,11 @@ EndFunc
 
 ;~ Farm loop
 Func SoOFarmLoop()
-	GetRewardRefreshAndTakeSoOQuest()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
+	$SoOFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
+
+	GetRewardRefreshAndTakeSoOQuest()
 	; Failure return delayed after adlib function deregistered
 	If (ClearSoOFloor1() == $FAIL Or ClearSoOFloor2() == $FAIL Or ClearSoOFloor3() == $FAIL) Then $SOO_FARM_SETUP = False
 	AdlibUnRegister('TrackPartyStatus')
@@ -283,7 +292,8 @@ Func ClearSoOFloor2()
 	Info('Second floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
+	Local $firstRoomfirstTime = True
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -11000, -6000, 1250)
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
@@ -291,6 +301,17 @@ Func ClearSoOFloor2()
 		Dialog(0x84)
 		RandomSleep(500)
 
+		If Not $firstRoomfirstTime Then
+			MoveTo(-10033, -12701)
+			Sleep(GetPing() + 500)
+			MoveTo(-9600, -16600)
+			Sleep(GetPing() + 500)			
+			MoveTo(-9300, -17300)
+			Sleep(GetPing() + 500)
+			MoveTo(-14076, -19457)
+			Sleep(GetPing() + 500)			
+		EndIf
+		
 		MoveAggroAndKillInRange(-14600, -16650, '1', $SoOAggroRange)
 		MoveAggroAndKillInRange(-16600, -16500, '2', $SoOAggroRange)
 
@@ -345,6 +366,50 @@ Func ClearSoOFloor2()
 		MoveAggroAndKillInRange(-11000, -6000, '11', $SoOAggroRange)
 		; Pick up again in case of death
 		PickUpTorch()
+	WEnd	
+		
+	Local $secondRoomfirstTime = True	
+	Local $mapLoaded = False
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
+		While Not IsPartyCurrentlyAlive()
+			Sleep(2000)
+		WEnd	
+		UseMoraleConsumableIfNeeded()
+		
+		If IsAgentInRange(GetMyAgent(), -14076, -19457, 1250) Then
+			Info('Group wiped, moving from shrine to torch room 1 exit')
+			MoveTo(-9300, -17300)
+			Sleep(GetPing() + 500)
+			MoveTo(-9600, -16600)
+			Sleep(GetPing() + 500)			
+			MoveTo(-10033, -12701)
+			Sleep(GetPing() + 500)
+			MoveTo(-10500, -9600)
+			Sleep(GetPing() + 500)
+			MoveTo(-11000, -6000)
+			Sleep(GetPing() + 500)
+		EndIf
+		
+		If Not $secondRoomfirstTime Then
+			MoveAggroAndKill(-17500, -9500, 'If not first loop, run back from end of floor to torch room 1', $SoOAggroRange)
+			MoveTo(-16000, -8700)
+			Sleep(GetPing() + 500)			
+			MoveTo(-11500, -8400)
+			Sleep(GetPing() + 500)			
+			MoveTo(-11204, -4331)
+			Sleep(GetPing() + 500)
+			MoveTo(-10500, -9600)
+			Sleep(GetPing() + 500)		
+			MoveTo(-8912, -13586)
+			Sleep(500)
+			Info('Pick up torch')
+			PickUpTorch()			
+			MoveTo(-10500, -9600)
+			Sleep(GetPing() + 500)			
+			MoveTo(-11000, -6000)
+			Sleep(GetPing() + 500)
+		EndIf
+		
 		; Poison trap between 12 and 13
 		MoveAggroAndKillInRange(-6900, -4200, '12', $SoOAggroRange)
 		; Pick up again in case of death
@@ -375,6 +440,8 @@ Func ClearSoOFloor2()
 		MoveAggroAndKillInRange(-11500, -8400, '21', $SoOAggroRange)
 		MoveAggroAndKillInRange(-16000, -8700, '22', $SoOAggroRange)
 		MoveAggroAndKillInRange(-17500, -9500, '23', $SoOAggroRange)
+		
+		$secondRoomfirstTime = False
 	WEnd
 
 	Info('Going through portal')
@@ -428,7 +495,7 @@ Func ClearSoOFloor3()
 		MoveAggroAndKillInRange(1100, 7100, '12', $SoOAggroRange)
 	WEnd
 
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -9202, 6165, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -8650, 9200, 1250)
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(-2300, 8000, 'Triggering beacon 2', $SoOAggroRange)
 		MoveAggroAndKillInRange(-4500, 6500, '1', $SoOAggroRange)
@@ -487,11 +554,7 @@ Func ClearSoOFloor3()
 		PickUpItems()
 
 		MoveAggroAndKillInRange(-9200, 6000, '16', $SoOAggroRange)
-	WEnd
-
-	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
-	Local $questState = 999
-	While Not IsRunFailed() And $questState <> 3
+		
 		Info('Open dungeon door')
 		ClearTarget()
 
@@ -504,6 +567,18 @@ Func ClearSoOFloor3()
 			Sleep(GetPing() + 500)
 			ActionInteract()
 		Next
+
+		MoveAggroAndKillInRange(-9850, 7600, 'Added extra move to force going past door before endloop 1', $SoOAggroRange)	
+		MoveAggroAndKillInRange(-8650, 9200, 'Added extra move to force going past door before endloop 2', $SoOAggroRange)			
+	WEnd
+
+	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
+	Local $questState = 999
+	While Not IsRunFailed() And $questState <> 3
+		If TimerDiff($SoOFarmTimer) > $MAX_SOO_FARM_DURATION Then Return $FAIL		
+		
+		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $LargerSoOAggroRange)	
+		MoveAggroAndKillInRange(-9200, 6000, 'Going back to secure door opening in case run failed 2', $LargerSoOAggroRange)
 
 		Info('Boss room')
 		UseMoraleConsumableIfNeeded()
