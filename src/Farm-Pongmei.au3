@@ -206,7 +206,7 @@ Func DervishRun($X, $Y)
 
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then
 			Local $target = GetTargetForDeathsCharge($X, $Y, 700)
-			If $target <> 0 Then UseSkillEx($Pongmei_DeathsCharge, $target)
+			If $target <> Null Then UseSkillEx($Pongmei_DeathsCharge, $target)
 		EndIf
 
 		If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And AreFoesInFront($X, $Y) Then
