@@ -2471,7 +2471,9 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 
 			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
-			While Not IsPlayerDead() And Not GetIsDead(GetCurrentTarget()) And $target <> Null And DllStructGetData($target, 'ID') <> 0
+			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HP') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == 3
+				If IsPlayerDead() Then ExitLoop
+
 				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>
 				If $skillsMask <> Null And $skillsMask[$i-1] == False Then ContinueLoop ; optional skillsMask indexed from 0, tells which skills to use or skip
 
@@ -2483,6 +2485,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 					UseSkillEx($i, $target)
 					Sleep(500)
 				EndIf
+				$target = GetCurrentTarget()
 			WEnd
 		EndIf
 
