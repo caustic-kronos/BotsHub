@@ -890,7 +890,7 @@ Func RunFarmLoop($Farm)
 		Case 'Dynamic'
 			Info('Dynamic execution')
 		Case 'Tests'
-			RunTests($STATUS)
+			$result = RunTests($STATUS)
 		Case Else
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch

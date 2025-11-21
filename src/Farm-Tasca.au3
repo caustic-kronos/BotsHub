@@ -75,7 +75,7 @@ Func SetupTascaFarm()
 	TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
 	UseCitySpeedBoost()
 	OmniFarmFullSetup()
-	;LoadSkillTemplate($TascaChestRunnerSkillbar)
+	LoadSkillTemplate($TascaChestRunnerSkillbar)
 	SwitchToHardModeIfEnabled()
 
 	GoToTascasDemise()
@@ -116,7 +116,7 @@ Func TascaChestFarmLoop($STATUS)
 	RegisterBurstHealingUnit()
 
 	Local $openedChests = 0
-	ToggleMapping(2)
+	;ToggleMapping(2)
 	TASCADervishRun(-2000, 17500)
 	TASCADervishRun(1000, 16500)
 	Info('#1/13')
@@ -188,7 +188,7 @@ Func TascaChestFarmLoop($STATUS)
 		RandomSleep(1000)
 	EndIf
 
-	ToggleMapping()
+	;ToggleMapping()
 	UnregisterBurstHealingUnit()
 	Info('Opened ' & $openedChests & ' chests.')
 	Return (($openedChests > 0) Or IsPlayerAlive()) ? $SUCCESS : $FAIL
