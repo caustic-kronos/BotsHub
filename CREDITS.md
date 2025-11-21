@@ -70,7 +70,7 @@ Enormous modifications were made, to the point this bot is probably not in any w
 - Author: Gahais
 - Contributors: Danylia, RiflemanX, Zaishen Silver
 - Notes: Originally inspired from an external source, shared freely on forum.
-  Enormous modifications were made, to the point this bot is probably not in any way, shape or form close to its original version, which was named WarSupply/Keiran.
+	Enormous modifications were made, to the point this bot is probably not in any way, shape or form close to its original version, which was named WarSupply/Keiran.
 - License: licensed under Apache 2.0
 
 ### 'Farm-GemstoneStygian.au3'

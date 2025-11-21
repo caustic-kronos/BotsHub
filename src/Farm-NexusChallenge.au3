@@ -77,7 +77,7 @@ Func SetupTeamNexusChallengeFarm()
 	AddHero($ID_Master_Of_Whispers)
 	Sleep(1000)
 	If GetPartySize() <> 4 Then
-    	Warn("Could not set up party correctly. Team size different than 4")
+		Warn('Could not set up party correctly. Team size different than 4')
 	EndIf
 EndFunc
 

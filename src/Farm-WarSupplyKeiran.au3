@@ -34,10 +34,10 @@ Global Const $WarSupplyKeiranInformations = 'For best results, have :' & @CRLF _
 	& ' - (Weapon Slot-3) Shortbow +15/-5 vamp +5 armor is the best weapon' & @CRLF _
 	& ' - (Weapon Slot-4) Keiran''s Bow' & @CRLF _ ; escaped character ' with '' here
 	& ' - Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
- 	& ' - When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
- 	& ' - Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
- 	& ' - This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
- 	& ' - Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
+	& ' - When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
+	& ' - Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
+	& ' - This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
+	& ' - Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
 	& ' ' & @CRLF _
 	& 'Any character can go into Auspicious Beginnings mission if you send the right dialog ID (already in script) to Guild Wars client' & @CRLF _
 	& 'You just need the Keiran''s Bow which Gwen gives when the right dialog ID is sent to Guild Wars client' & @CRLF _
@@ -49,27 +49,27 @@ Global Const $MAX_WAR_SUPPLY_FARM_DURATION = 16 * 60 * 1000
 Global $WarSupplyFarmTimer = Null
 Global $WARSUPPLY_FARM_SETUP = False
 
-Global Const $KeiranSniperShot 			= 1 ; number of Keiran's Sniper Shot skill on Keiran's skillbar
-Global Const $KeiranGravestoneMarker 	= 2 ; number of Gravestone Marker skill on Keiran's skillbar
-Global Const $KeiranTerminalVelocity 	= 3 ; number of Terminal Velocity skill on Keiran's skillbar
-Global Const $KeiranRainOfArrows 		= 4 ; number of Rain of Arrows skill on Keiran's skillbar
-Global Const $KeiranRelentlessAssault 	= 5 ; number of Relentless Assault skill on Keiran's skillbar
-Global Const $KeiranNaturesBlessing 	= 6 ; number of Nature's Blessing skill on Keiran's skillbar
-Global Const $KeiranUnused7thSkill	 	= 7 ; empty skill slot on Keiran's skillbar
-Global Const $KeiranUnused8thSkill 		= 8 ; empty skill slot on Keiran's skillbar
+Global Const $KeiranSniperShot			= 1 ; number of Keiran's Sniper Shot skill on Keiran's skillbar
+Global Const $KeiranGravestoneMarker	= 2 ; number of Gravestone Marker skill on Keiran's skillbar
+Global Const $KeiranTerminalVelocity	= 3 ; number of Terminal Velocity skill on Keiran's skillbar
+Global Const $KeiranRainOfArrows		= 4 ; number of Rain of Arrows skill on Keiran's skillbar
+Global Const $KeiranRelentlessAssault	= 5 ; number of Relentless Assault skill on Keiran's skillbar
+Global Const $KeiranNaturesBlessing		= 6 ; number of Nature's Blessing skill on Keiran's skillbar
+Global Const $KeiranUnused7thSkill		= 7 ; empty skill slot on Keiran's skillbar
+Global Const $KeiranUnused8thSkill		= 8 ; empty skill slot on Keiran's skillbar
 
-Global Const $KeiranSkillsArray			= [$KeiranSniperShot, $KeiranGravestoneMarker, $KeiranTerminalVelocity, $KeiranRainOfArrows, $KeiranRelentlessAssault, $KeiranNaturesBlessing, $KeiranUnused7thSkill, $KeiranUnused8thSkill]
-Global Const $KeiranSkillsCostsArray 	= [2,				  2,					   1,						1,					 3,						   2,					   0,					  0]
+Global Const $KeiranSkillsArray			= [$KeiranSniperShot,	$KeiranGravestoneMarker,	$KeiranTerminalVelocity,	$KeiranRainOfArrows,	$KeiranRelentlessAssault,	$KeiranNaturesBlessing,	$KeiranUnused7thSkill,	$KeiranUnused8thSkill]
+Global Const $KeiranSkillsCostsArray	= [2,					2,							1,							1,						3,							2,						0,						0]
 Global Const $KeiranSkillsCostsMap = MapFromArrays($KeiranSkillsArray, $KeiranSkillsCostsArray) ; Keiran's energy skill cost is reduced by expertise level 20
 
 Global $WarSupplyFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
 $WarSupplyFightOptions.Item('fightFunction')	= WarSupplyFarmFight
-$WarSupplyFightOptions.Item('fightRange') 		= 1250
-$WarSupplyFightOptions.Item('fightDuration') 	= 20000 ; approximate 20 seconds max duration of initial and final fight
-$WarSupplyFightOptions.Item('priorityMobs') 	= True
-$WarSupplyFightOptions.Item('callTarget') 		= False
-$WarSupplyFightOptions.Item('lootInFights') 	= False ; loot only when no foes are in range
-$WarSupplyFightOptions.Item('openChests') 		= False ; Only Krytan chests in Auspicious Beginnings quest which may have useless loot
+$WarSupplyFightOptions.Item('fightRange')		= 1250
+$WarSupplyFightOptions.Item('fightDuration')	= 20000 ; approximate 20 seconds max duration of initial and final fight
+$WarSupplyFightOptions.Item('priorityMobs')		= True
+$WarSupplyFightOptions.Item('callTarget')		= False
+$WarSupplyFightOptions.Item('lootInFights')		= False ; loot only when no foes are in range
+$WarSupplyFightOptions.Item('openChests')		= False ; Only Krytan chests in Auspicious Beginnings quest which may have useless loot
 $WarSupplyFightOptions.Item('skillsCostMap')	= $KeiranSkillsCostsMap
 
 Global Const $AgentID_Player = 2 ; in Auspicious Beginnings location, the agent ID of Player is always assigned to 2 (can be accessed in GWToolbox)
@@ -201,35 +201,35 @@ EndFunc
 
 Func RunWayPoints()
 	Local $wayPoints[26][3] = [ _
-		[11125, -5226, "Main Path 1"], _
-		[11000, -5200, "Main Path 2"], _
-		[10750, -5500, "Main Path 3"], _
-		[10500, -5800, "Main Path 4"], _
-		[10338, -5966, "Main Path 5"], _
-		[9871, -6464, "Main Path 6"], _
-		[9500, -7000, "Main Path 7"], _
-		[8740, -7978, "Main Path 8"], _
-		[7498, -8517, "Main Path 9"], _
-		[6000, -8000, "Main Path 10"], _
-		[5000, -7500, "Fighting pre forest group"], _
-		[5193, -8514, "Trying to skip forest"], _
-		[3082, -11112, "Trying to skip forest"], _
-		[1743, -12859, "Trying to skip forest group"], _
-		[-181, -12791, "Leaving Forest"], _
-		[-2728, -11695, "Detour 16"], _
-		[-2858, -11942, "Detour 17"], _
-		[-4212, -12641, "Detour 18"], _
-		[-4276, -12771, "Detour 19"], _
-		[-6884, -11357, "Detour 20"], _
-		[-9085, -8631, "Detour 21"], _
-		[-13156, -7883, "Detour 22"], _
-		[-13768, -8158, "Final Area 23"], _
-		[-14205, -8373, "Final Area 24"], _
-		[-15876, -8903, "Final Area 25"], _
-		[-17109, -8978, "Final Area 26"] _
+		[11125, -5226, 'Main Path 1'], _
+		[11000, -5200, 'Main Path 2'], _
+		[10750, -5500, 'Main Path 3'], _
+		[10500, -5800, 'Main Path 4'], _
+		[10338, -5966, 'Main Path 5'], _
+		[9871, -6464, 'Main Path 6'], _
+		[9500, -7000, 'Main Path 7'], _
+		[8740, -7978, 'Main Path 8'], _
+		[7498, -8517, 'Main Path 9'], _
+		[6000, -8000, 'Main Path 10'], _
+		[5000, -7500, 'Fighting pre forest group'], _
+		[5193, -8514, 'Trying to skip forest'], _
+		[3082, -11112, 'Trying to skip forest'], _
+		[1743, -12859, 'Trying to skip forest group'], _
+		[-181, -12791, 'Leaving Forest'], _
+		[-2728, -11695, 'Detour 16'], _
+		[-2858, -11942, 'Detour 17'], _
+		[-4212, -12641, 'Detour 18'], _
+		[-4276, -12771, 'Detour 19'], _
+		[-6884, -11357, 'Detour 20'], _
+		[-9085, -8631, 'Detour 21'], _
+		[-13156, -7883, 'Detour 22'], _
+		[-13768, -8158, 'Final Area 23'], _
+		[-14205, -8373, 'Final Area 24'], _
+		[-15876, -8903, 'Final Area 25'], _
+		[-17109, -8978, 'Final Area 26'] _
 	]
 
- 	Info("Running through way points")
+	Info('Running through way points')
 	Local $x, $y, $log, $range
 	For $i = 0 To UBound($wayPoints) - 1
 		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_Auspicious_Beginnings And GetMapID() <> $ID_Hall_of_Monuments) Then Disconnected()
@@ -246,13 +246,13 @@ Func RunWayPoints()
 			Local $Miku = GetAgentByID($AgentID_Miku)
 			If DllStructGetData($Miku, 'X') == 0 And DllStructGetData($Miku, 'Y') == 0 Then Return $FAIL ; check against some impossible scenarios
 			; Using 6th healing skill on the way between waypoints to recover until health is full
-			If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, "HP") < 0.9 Or DllStructGetData($Miku, "HP") < 0.9) And IsPlayerAlive() Then UseSkillEx($KeiranNaturesBlessing)
+			If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HP') < 0.9 Or DllStructGetData($Miku, 'HP') < 0.9) And IsPlayerAlive() Then UseSkillEx($KeiranNaturesBlessing)
 			If CountFoesInRangeOfAgent($me, $WarSupplyFightOptions.Item('fightRange')) > 0 Then WarSupplyFarmFight($WarSupplyFightOptions)
 			If GetDistance($me, $Miku) > 1650 Then ; Ensuring that Miku is not too far
 				Info('Miku is too far. Trying to move to her location')
 				MoveTo(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 250)
 			EndIf
-			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, "HP") > 0.9 And DllStructGetData($Miku, "HP") > 0.9 Then ExitLoop ; continue running through waypoints
+			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, 'HP') > 0.9 And DllStructGetData($Miku, 'HP') > 0.9 Then ExitLoop ; continue running through waypoints
 			Sleep(1000)
 		WEnd
 		If IsPlayerDead() Then Return $FAIL
@@ -290,7 +290,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 
 		; use skills 1, 3, 6 in special circumstances, not specifically on current target
 		; only use Nature's Blessing skill when it is recharged and player's or Miku's HP is below 90%
-		If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, "HP") < 0.9 Or DllStructGetData($Miku, "HP") < 0.9) And IsPlayerAlive() Then
+		If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HP') < 0.9 Or DllStructGetData($Miku, 'HP') < 0.9) And IsPlayerAlive() Then
 			UseSkillEx($KeiranNaturesBlessing)
 		EndIf
 
@@ -310,7 +310,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 		If IsRecharged($KeiranTerminalVelocity) And IsPlayerAlive() Then
 			For $foe In $foes
 				If GetIsCasting($foe) And Not GetIsDead($foe) And DllStructGetData($foe, 'ID') <> 0 Then
-					Switch DllStructGetData($foe, "Skill")
+					Switch DllStructGetData($foe, 'Skill')
 						; if foe is casting dangerous AoE skill on player then try to interrupt it and evade AoE location
 						Case $ID_Meteor_Shower, $ID_Fire_Storm, $ID_Ray_of_Judgement, $ID_Unsteady_Ground, $ID_Sand_Storm, $ID_Savannah_Heat
 							UseSkillEx($KeiranTerminalVelocity, $foe) ; attempt to interrupt dangerous AoE skill

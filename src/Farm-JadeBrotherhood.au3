@@ -43,21 +43,21 @@ Global Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
 Global Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
-Global Const $JB_DrunkerMaster 		= 1
-Global Const $JB_SandShards 		= 2
-Global Const $JB_MysticVigor 		= 3
-Global Const $JB_VowOfStrength 		= 4
-Global Const $JB_ArmorOfSanctity 	= 5
-Global Const $JB_StaggeringForce 	= 6
-Global Const $JB_EremitesAttack 	= 7
-Global Const $JB_DeathsCharge 		= 8
+Global Const $JB_DrunkerMaster		= 1
+Global Const $JB_SandShards			= 2
+Global Const $JB_MysticVigor		= 3
+Global Const $JB_VowOfStrength		= 4
+Global Const $JB_ArmorOfSanctity	= 5
+Global Const $JB_StaggeringForce	= 6
+Global Const $JB_EremitesAttack		= 7
+Global Const $JB_DeathsCharge		= 8
 
 ; Hero Build
-Global Const $Brotherhood_Mystic_Healing 	= 1
-Global Const $Brotherhood_Incoming 			= 7
-Global Const $Brotherhood_FallBack 			= 6
-Global Const $Brotherhood_EnduringHarmony 	= 2
-Global Const $Brotherhood_MakeHaste 		= 3
+Global Const $Brotherhood_Mystic_Healing	= 1
+Global Const $Brotherhood_Incoming			= 7
+Global Const $Brotherhood_FallBack			= 6
+Global Const $Brotherhood_EnduringHarmony	= 2
+Global Const $Brotherhood_MakeHaste			= 3
 
 Global $DeadlockTimer
 Global $Deadlocked = False
@@ -108,7 +108,7 @@ Func SetupTeamJadeBrotherhoodFarm()
 	DisableAllHeroSkills(1)
 	Sleep(1000)
 	If GetPartySize() <> 2 Then
-    	Warn("Could not set up party correctly. Team size different than 2")
+		Warn('Could not set up party correctly. Team size different than 2')
 	EndIf
 EndFunc
 

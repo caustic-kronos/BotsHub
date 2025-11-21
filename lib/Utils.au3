@@ -1606,7 +1606,7 @@ EndFunc
 
 ;~ Clone a dictiomary map. Dictionary map has an advantage that it is inherently passed by reference to functions as the same object without the need of copying
 Func CloneDictMap($original)
-	Local $clone = ObjCreate("Scripting.Dictionary")
+	Local $clone = ObjCreate('Scripting.Dictionary')
 	For $key In $original.Keys
 		$clone.Add($key, $original.Item($key))
 	Next
@@ -1701,25 +1701,25 @@ EndFunc
 
 ;~ Alias function for DllStructCreate. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
 Func CreateStruct($structDefinition)
-    Return DllStructCreate($structDefinition)
+	Return DllStructCreate($structDefinition)
 EndFunc
 
 
 ;~ Alias function for DllStructSetData. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
 Func SetStructData($object, $dataString, $value)
-    DllStructSetData($object, $dataString, $value)
+	DllStructSetData($object, $dataString, $value)
 EndFunc
 
 
 ;~ Alias function for DllStructGetData. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
 Func GetStructData($object, $dataString)
-    Return DllStructGetData($object, $dataString)
+	Return DllStructGetData($object, $dataString)
 EndFunc
 
 
 ;~ Alias function for DllStructGetSize. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
 Func GetStructSize($object)
-    Return DllStructGetSize($object)
+	Return DllStructGetSize($object)
 EndFunc
 #EndRegion Utils
 
@@ -2279,7 +2279,7 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-Global $Default_MoveAggroAndKill_Options = ObjCreate("Scripting.Dictionary")
+Global $Default_MoveAggroAndKill_Options = ObjCreate('Scripting.Dictionary')
 $Default_MoveAggroAndKill_Options.Add('fightFunction', KillFoesInArea)
 $Default_MoveAggroAndKill_Options.Add('fightRange', $RANGE_EARSHOT * 1.5)
 $Default_MoveAggroAndKill_Options.Add('flagHeroesOnFight', False)
@@ -2513,14 +2513,14 @@ Func CreateMobsPriorityMap()
 	Local $PN_Modniir_Priest	= 6512
 
 	; Gemstone farm foes model IDs
-	Local $Gem_AnurKaya 		= 5166
-	Local $Gem_AnurSu 			= 5168
-	Local $Gem_AnurKi 			= 5169
-	Local $Gem_RageTitan 		= 5196
-	Local $Gem_WaterTormentor 	= 5206
-	Local $Gem_HeartTormentor 	= 5207
-	Local $Gem_Dryder 			= 5215
-	Local $Gem_Dreamer 			= 5216
+	Local $Gem_AnurKaya			= 5166
+	Local $Gem_AnurSu			= 5168
+	Local $Gem_AnurKi			= 5169
+	Local $Gem_RageTitan		= 5196
+	Local $Gem_WaterTormentor	= 5206
+	Local $Gem_HeartTormentor	= 5207
+	Local $Gem_Dryder			= 5215
+	Local $Gem_Dreamer			= 5216
 
 	; War Supply farm foes model IDs, why so many? (o_O)
 	;Local $WarSupply_Peacekeeper_1	= 8095
@@ -2597,24 +2597,24 @@ Func CreateMobsPriorityMap()
 
 	; Priority map : 0 highest kill priority, bigger numbers mean lesser priority
 	Local $map[]
-	$map[$PN_SS_Defender] 		= 0
-	$map[$PN_SS_Priest] 		= 0
-	$map[$PN_Modniir_Priest] 	= 0
-	$map[$PN_SS_Summoner] 		= 1
-	$map[$PN_SS_Warder] 		= 2
-	$map[$PN_SS_Dominator] 		= 2
-	$map[$PN_SS_Blasphemer] 	= 2
-	$map[$PN_SS_Dreamer] 		= 2
-	$map[$PN_SS_Contaminator] 	= 2
+	$map[$PN_SS_Defender]		= 0
+	$map[$PN_SS_Priest]			= 0
+	$map[$PN_Modniir_Priest]	= 0
+	$map[$PN_SS_Summoner]		= 1
+	$map[$PN_SS_Warder]			= 2
+	$map[$PN_SS_Dominator]		= 2
+	$map[$PN_SS_Blasphemer]		= 2
+	$map[$PN_SS_Dreamer]		= 2
+	$map[$PN_SS_Contaminator]	= 2
 
-	$map[$Gem_Dryder] 			= 0
-	$map[$Gem_RageTitan] 		= 1
-	$map[$Gem_AnurKi] 			= 2
-	$map[$Gem_AnurSu] 			= 3
-	$map[$Gem_AnurKaya] 		= 4
-	$map[$Gem_Dreamer] 			= 5
-	$map[$Gem_HeartTormentor] 	= 6
-	$map[$Gem_WaterTormentor] 	= 7
+	$map[$Gem_Dryder]			= 0
+	$map[$Gem_RageTitan]		= 1
+	$map[$Gem_AnurKi]			= 2
+	$map[$Gem_AnurSu]			= 3
+	$map[$Gem_AnurKaya]			= 4
+	$map[$Gem_Dreamer]			= 5
+	$map[$Gem_HeartTormentor]	= 6
+	$map[$Gem_WaterTormentor]	= 7
 
 	$map[$WarSupply_Savant_1]		= 0
 	$map[$WarSupply_Savant_2]		= 0
@@ -2628,30 +2628,30 @@ Func CreateMobsPriorityMap()
 	$map[$WarSupply_Priest_2]		= 1
 	$map[$WarSupply_Priest_3]		= 1
 	$map[$WarSupply_Priest_4]		= 1
-	$map[$WarSupply_Ritualist_1] 	= 2
-	$map[$WarSupply_Ritualist_2] 	= 2
-	$map[$WarSupply_Ritualist_3] 	= 2
-	$map[$WarSupply_Ritualist_4] 	= 2
-	$map[$WarSupply_Ritualist_5] 	= 2
-	$map[$WarSupply_Ritualist_6] 	= 2
-	$map[$WarSupply_Ritualist_7] 	= 2
-	$map[$WarSupply_Ritualist_8] 	= 2
-	$map[$WarSupply_Ritualist_9] 	= 2
-	$map[$WarSupply_Ritualist_10] 	= 2
-	$map[$WarSupply_Ritualist_11] 	= 2
+	$map[$WarSupply_Ritualist_1]	= 2
+	$map[$WarSupply_Ritualist_2]	= 2
+	$map[$WarSupply_Ritualist_3]	= 2
+	$map[$WarSupply_Ritualist_4]	= 2
+	$map[$WarSupply_Ritualist_5]	= 2
+	$map[$WarSupply_Ritualist_6]	= 2
+	$map[$WarSupply_Ritualist_7]	= 2
+	$map[$WarSupply_Ritualist_8]	= 2
+	$map[$WarSupply_Ritualist_9]	= 2
+	$map[$WarSupply_Ritualist_10]	= 2
+	$map[$WarSupply_Ritualist_11]	= 2
 	$map[$WarSupply_Abbot_1]		= 3
 	$map[$WarSupply_Abbot_2]		= 3
 	$map[$WarSupply_Abbot_3]		= 3
-	$map[$WarSupply_Sycophant_1] 	= 4
-	$map[$WarSupply_Sycophant_2] 	= 4
-	$map[$WarSupply_Sycophant_3] 	= 4
-	$map[$WarSupply_Sycophant_4] 	= 4
-	$map[$WarSupply_Sycophant_5] 	= 4
-	$map[$WarSupply_Sycophant_6] 	= 4
-	$map[$WarSupply_Fanatic_1] 		= 5
-	$map[$WarSupply_Fanatic_2] 		= 5
-	$map[$WarSupply_Fanatic_3] 		= 5
-	$map[$WarSupply_Fanatic_4] 		= 5
+	$map[$WarSupply_Sycophant_1]	= 4
+	$map[$WarSupply_Sycophant_2]	= 4
+	$map[$WarSupply_Sycophant_3]	= 4
+	$map[$WarSupply_Sycophant_4]	= 4
+	$map[$WarSupply_Sycophant_5]	= 4
+	$map[$WarSupply_Sycophant_6]	= 4
+	$map[$WarSupply_Fanatic_1]		= 5
+	$map[$WarSupply_Fanatic_2]		= 5
+	$map[$WarSupply_Fanatic_3]		= 5
+	$map[$WarSupply_Fanatic_4]		= 5
 
 	Return $map
 EndFunc

@@ -271,16 +271,16 @@ Global Const $ID_Earth_Prayers				= 43
 Global Const $ID_Mysticism					= 44
 Global Const $ID_All_Caster_Primaries		= 45
 Global Const $Attributes_Array[]	= [	$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic, _
-                                        $ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses, _
-                                        $ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage, _
-                                        $ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor, _
-                                        $ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics, _
-                                        $ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship, _
-                                        _ ;$ID_Empty_Attribute_1, $ID_Empty_Attribute_2, $ID_Empty_Attribute_3, _
-                                        $ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes, _
-                                        $ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power, _
-                                        $ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership, _
-                                        $ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism ]
+										$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses, _
+										$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage, _
+										$ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor, _
+										$ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics, _
+										$ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship, _
+										_ ;$ID_Empty_Attribute_1, $ID_Empty_Attribute_2, $ID_Empty_Attribute_3, _
+										$ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes, _
+										$ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power, _
+										$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership, _
+										$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism ]
 Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], _
 												[$ID_Blood_Magic, 'Blood Magic'], [$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], _
 												[$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], [$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], _
@@ -469,7 +469,7 @@ Global Const $ID_Animate_Bone_Minions			= 85
 Global Const $ID_Death_Nova						= 104
 Global Const $ID_Animate_Flesh_Golem			= 832
 ; Mesmer
-Global Const $ID_Empathy 						= 26
+Global Const $ID_Empathy						= 26
 Global Const $ID_Channeling						= 38
 Global Const $ID_Arcane_Echo					= 75
 Global Const $ID_Wastrels_Demise				= 1335

@@ -1,15 +1,12 @@
 #CS ===========================================================================
-======================================
-|  	  Stygian Gemstones Farm bot     |
-|			  TonReuf   		     |
-======================================
-;
+=====================================
+|	Stygian Gemstones Farm bot		|
+|			TonReuf					|
+=====================================
 ; Run it as Assassin or Mesmer
-;
 ; Rewritten for BotsHub: Gahais
 ; stygian gemstone farms in the Stygian Veil based on below articles:
 https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer
-;
 #CE ===========================================================================
 
 #include-once
@@ -29,8 +26,8 @@ Opt('MustDeclareVars', 1)
 
 #Region Configuration
 ; === Build ===
-Global Const $StygianAssasinSkillBar = "OwVTI4h9X6mSGYFct0E4uM0ZCCA"
-Global Const $StygianMesmerSkillBar = "OQdUASBPmfS3UyArgrlmA3lhOTQA"
+Global Const $StygianAssasinSkillBar = 'OwVTI4h9X6mSGYFct0E4uM0ZCCA'
+Global Const $StygianMesmerSkillBar = 'OQdUASBPmfS3UyArgrlmA3lhOTQA'
 Global $StygianPlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup and avoid creating Dll structs over and over
 
 Global Const $Stygian_WastrelsDemise		= 1
@@ -75,12 +72,12 @@ Func GemstoneStygianFarm($STATUS)
 	If GoToStygianVeil() == $FAIL Then Return $FAIL
 	Local $result = GemstoneStygianFarmLoop()
 	If $result == $SUCCESS Then
-		Info("Successfully cleared stygian mobs")
+		Info('Successfully cleared stygian mobs')
 	ElseIf $result == $FAIL Then
 		If IsPlayerDead() Then Warn('Player died')
-		Info("Could not clear stygian mobs")
+		Info('Could not clear stygian mobs')
 	EndIf
-	Info("Returning back to the outpost")
+	Info('Returning back to the outpost')
 	Sleep(1000)
 	Resign()
 	Sleep(4000)
@@ -106,7 +103,7 @@ Func SetupGemstoneStygianFarm()
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	Sleep(500)
 	If SetupPlayerStygianFarm() == $FAIL Then Return $FAIL
-    Sleep(500)
+	Sleep(500)
 	$GEMSTONE_STYGIAN_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
@@ -118,13 +115,13 @@ Func SetupPlayerStygianFarm()
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Assassin Then
 		$StygianPlayerProfession = $ID_Assassin
 		LoadSkillTemplate($StygianAssasinSkillBar)
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
+	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
 		$StygianPlayerProfession = $ID_Mesmer
 		LoadSkillTemplate($StygianMesmerSkillBar)
-    Else
-		Warn("You need to run this farm bot as Assassin or Mesmer")
+	Else
+		Warn('You need to run this farm bot as Assassin or Mesmer')
 		Return $FAIL
-    EndIf
+	EndIf
 	ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500)
 EndFunc
@@ -155,7 +152,7 @@ EndFunc
 Func GemstoneStygianFarmLoop()
 	Sleep(2000)
 	If IsPlayerDead() Then Return $FAIL
-	Info("Starting Farm")
+	Info('Starting Farm')
 	$GemstoneStygianFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	StygianMoveToPoint(2415, -10451)
@@ -164,14 +161,14 @@ Func GemstoneStygianFarmLoop()
 	RandomSleep(250)
 	If IsPlayerDead() Then Return $FAIL
 	If GetLightbringerTitle() < 50000 Then
-		Info("Taking Blessing")
+		Info('Taking Blessing')
 		GoNearestNPCToCoords(7309, -8902)
 		Sleep(1000)
 		Dialog(0x85)
 		Sleep(500)
 	EndIf
 	If IsPlayerDead() Then Return $FAIL
-	Info("Taking Quest")
+	Info('Taking Quest')
 	GoNearestNPCToCoords(7188, -9108)
 	Sleep(1000)
 	Dialog(0x82E601)
@@ -266,7 +263,7 @@ Func KillStygianMobsUsingWastrelSkills()
 	WEnd
 	RandomSleep(500)
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
- 	;If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
+	;If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
 EndFunc
 
 
@@ -297,10 +294,10 @@ Func StygianMoveToPoint($destinationX, $destinationY, $random = 150)
 	Local $ChatStuckTimer = TimerInit()
 	Move($destinationX, $destinationY, $random)
 	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $random * 1.5
-	    StygianCheckBuffs()
+		StygianCheckBuffs()
 		;TargetNearestEnemy()
-	    $target = GetNearestEnemyToAgent(GetMyAgent())
-	    ChangeTarget($target)
+		$target = GetNearestEnemyToAgent(GetMyAgent())
+		ChangeTarget($target)
 		RandomSleep(50)
 		$me = GetMyAgent()
 		If GetIsDead($me) Then Return $FAIL
@@ -318,7 +315,7 @@ Func StygianMoveToPoint($destinationX, $destinationY, $random = 150)
 		Else
 			If $blocked > 0 Then
 				If TimerDiff($ChatStuckTimer) > 3000 Then	; use a timer to avoid spamming /stuck
-					SendChat("stuck", "/")
+					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
 				EndIf
 				$blocked = 0
@@ -326,7 +323,7 @@ Func StygianMoveToPoint($destinationX, $destinationY, $random = 150)
 			StygianCheckBuffs()
 			If GetDistance($me, $target) > 1100 Then ; target is far, we probably got stuck.
 				If TimerDiff($ChatStuckTimer) > 3000 Then ; dont spam
-					SendChat("stuck", "/")
+					SendChat('stuck', '/')
 					$ChatStuckTimer = TimerInit()
 					If GetDistance($me, $target) > 1100 Then ; we werent stuck, but target broke aggro. select a new one.
 						;TargetNearestEnemy()

@@ -3481,17 +3481,17 @@ Func GetPartyDanger($agents = Null, $party = Null)
 EndFunc
 
 
-;~ 	Description: Returns different States about Party. Check with BitAND.
-;~ 	0x8 = Leader starts Mission / Leader is travelling with Party
-;~ 	0x10 = Hardmode enabled
-;~ 	0x20 = Party defeated
-;~ 	0x40 = Guild Battle
-;~ 	0x80 = Party Leader
-;~ 	0x100 = Observe-Mode
+;~	Description: Returns different States about Party. Check with BitAND.
+;~	0x8 = Leader starts Mission / Leader is travelling with Party
+;~	0x10 = Hardmode enabled
+;~	0x20 = Party defeated
+;~	0x40 = Guild Battle
+;~	0x80 = Party Leader
+;~	0x100 = Observe-Mode
 Func GetPartyState($aFlag)
-    Local $lOffset[4] = [0, 0x18, 0x4C, 0x14]
-    Local $lBitMask = MemoryReadPtr($mBasePointer,$lOffset)
-    Return BitAND($lBitMask[1], $aFlag) > 0
+	Local $lOffset[4] = [0, 0x18, 0x4C, 0x14]
+	Local $lBitMask = MemoryReadPtr($mBasePointer,$lOffset)
+	Return BitAND($lBitMask[1], $aFlag) > 0
 EndFunc
 #EndRegion Agent
 

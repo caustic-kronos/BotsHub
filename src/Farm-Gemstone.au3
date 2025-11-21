@@ -56,26 +56,26 @@ Global Const $DefendY = -5564
 Global $GemstoneFarmSetup = False
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction) is better than UseSkill(1))
-Global Const $Gem_Symbolic_Celerity 	= 1
-Global Const $Gem_Symbolic_Posture 		= 2
-Global Const $Gem_Keystone_Signet 		= 3
-Global Const $Gem_Unnatural_Signet 		= 4
-Global Const $Gem_Signet_Of_Clumsiness 	= 5
-Global Const $Gem_Signet_Of_Disruption 	= 6
-Global Const $Gem_Wastrels_Demise 		= 7
-Global Const $Gem_Mistrust 				= 8
+Global Const $Gem_Symbolic_Celerity		= 1
+Global Const $Gem_Symbolic_Posture		= 2
+Global Const $Gem_Keystone_Signet		= 3
+Global Const $Gem_Unnatural_Signet		= 4
+Global Const $Gem_Signet_Of_Clumsiness	= 5
+Global Const $Gem_Signet_Of_Disruption	= 6
+Global Const $Gem_Wastrels_Demise		= 7
+Global Const $Gem_Mistrust				= 8
 
-Global Const $Gem_SkillsArray 		= [$Gem_Symbolic_Celerity, $Gem_Symbolic_Posture, $Gem_Keystone_Signet, $Gem_Unnatural_Signet, $Gem_Signet_Of_Clumsiness, $Gem_Signet_Of_Disruption, $Gem_Wastrels_Demise, $Gem_Mistrust]
-Global Const $Gem_SkillsCostsArray 	= [15,					   10,					  0,					0,					   0,						  0,						 5,					   10]
+Global Const $Gem_SkillsArray		= [$Gem_Symbolic_Celerity,	$Gem_Symbolic_Posture,	$Gem_Keystone_Signet,	$Gem_Unnatural_Signet,	$Gem_Signet_Of_Clumsiness,	$Gem_Signet_Of_Disruption,	$Gem_Wastrels_Demise,	$Gem_Mistrust]
+Global Const $Gem_SkillsCostsArray	= [15,						10,						0,						0,						0,							0,							5,						10]
 Global Const $GemSkillsCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
 
 Global $GemstoneFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
-$GemstoneFightOptions.Item('fightRange') 		= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
+$GemstoneFightOptions.Item('fightRange')		= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
 $GemstoneFightOptions.Item('flagHeroesOnFight') = False ; heroes will be flagged before fight to defend the start location
-$GemstoneFightOptions.Item('priorityMobs') 		= True
-$GemstoneFightOptions.Item('skillsCostMap') 	= $GemSkillsCostsMap
-$GemstoneFightOptions.Item('lootInFights') 		= False ; loot only when no foes are in range
-$GemstoneFightOptions.Item('openChests') 		= False ; there are no chests in Ebony Citadel of Mallyx location
+$GemstoneFightOptions.Item('priorityMobs')		= True
+$GemstoneFightOptions.Item('skillsCostMap')		= $GemSkillsCostsMap
+$GemstoneFightOptions.Item('lootInFights')		= False ; loot only when no foes are in range
+$GemstoneFightOptions.Item('openChests')		= False ; there are no chests in Ebony Citadel of Mallyx location
 
 Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15 (can be accessed in GWToolbox)
 Global Const $ModelID_Zhellix = 5221 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
@@ -88,8 +88,8 @@ Func GemstoneFarm($STATUS)
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = GemstoneFarmLoop()
-	If $result == $SUCCESS Then Info("Successfully cleared all 19 waves")
-	If $result == $FAIL Then Info("Could not clear all 19 waves")
+	If $result == $SUCCESS Then Info('Successfully cleared all 19 waves')
+	If $result == $FAIL Then Info('Could not clear all 19 waves')
 	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
 	Return $result
 EndFunc
@@ -129,7 +129,7 @@ Func SetupTeamGemstoneFarm()
 	AddHero($ID_Xandra)
 	Sleep(1000)
 	If GetPartySize() <> 8 Then
-    	Warn("Could not set up party correctly. Team size different than 8")
+		Warn('Could not set up party correctly. Team size different than 8')
 		Return $FAIL
 	EndIf
 EndFunc

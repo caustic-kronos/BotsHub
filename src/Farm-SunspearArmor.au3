@@ -87,7 +87,7 @@ Func SetupTeamSunspearArmorFarm()
 	AddHero($ID_Xandra)
 	Sleep(1000)
 	If GetPartySize() <> 8 Then
-    	Warn("Could not set up party correctly. Team size different than 8")
+		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
 EndFunc
 

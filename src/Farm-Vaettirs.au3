@@ -29,14 +29,14 @@ Global Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $VAETTIRS_FARM_DURATION = 4 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form) is better than UseSkillEx(2))
-Global Const $Skill_Deadly_Paradox 		= 1
-Global Const $Skill_Shadow_Form 		= 2
-Global Const $Skill_Shroud_of_Distress 	= 3
-Global Const $Skill_Way_of_Perfection 	= 4
-Global Const $Skill_Heart_of_Shadow 	= 5
-Global Const $Skill_Channeling 			= 6
-Global Const $Skill_Arcane_Echo 		= 7
-Global Const $Skill_Wastrels_Demise 	= 8
+Global Const $Skill_Deadly_Paradox		= 1
+Global Const $Skill_Shadow_Form			= 2
+Global Const $Skill_Shroud_of_Distress	= 3
+Global Const $Skill_Way_of_Perfection	= 4
+Global Const $Skill_Heart_of_Shadow		= 5
+Global Const $Skill_Channeling			= 6
+Global Const $Skill_Arcane_Echo			= 7
+Global Const $Skill_Wastrels_Demise		= 8
 
 ; ==== Global variables ====
 Global $ChatStuckTimer = TimerInit()
