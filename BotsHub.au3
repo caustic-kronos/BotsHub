@@ -47,6 +47,7 @@
 #include 'lib/Utils-Debugger.au3'
 #include 'lib/Utils-OmniFarmer.au3'
 #include 'lib/Utils-Storage-Bot.au3'
+#include 'src/Farm-Boreal.au3'
 #include 'src/Farm-Corsairs.au3'
 #include 'src/Farm-DragonMoss.au3'
 #include 'src/Farm-EdenIris.au3'
@@ -119,7 +120,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -790,6 +791,9 @@ Func RunFarmLoop($Farm)
 			$STATUS = 'INITIALIZED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+		Case 'Boreal'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = BorealChestFarm($STATUS)
 		Case 'Corsairs'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = CorsairsFarm($STATUS)
@@ -910,6 +914,7 @@ EndFunc
 #Region Setup
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
+	$BOREAL_FARM_SETUP						= False
 	$DM_FARM_SETUP							= False
 	$FEATHERS_FARM_SETUP					= False
 	$FOW_FARM_SETUP							= False
@@ -942,6 +947,9 @@ Func UpdateFarmDescription($Farm)
 	GUICtrlSetData($GUI_Edit_HeroBuild, '')
 	GUICtrlSetData($GUI_Label_FarmInformations, '')
 	Switch $Farm
+		Case 'Boreal'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $BorealChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $BorealChestRunInformations)
 		Case 'Corsairs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CorsairsFarmInformations)
@@ -1595,6 +1603,8 @@ EndFunc
 ;~ Select correct farm duration
 Func SelectFarmDuration($Farm)
 	Switch $Farm
+		Case 'Boreal'
+			Return $BOREAL_FARM_DURATION
 		Case 'Corsairs'
 			Return $CORSAIRS_FARM_DURATION
 		Case 'Dragon Moss'

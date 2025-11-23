@@ -37,6 +37,11 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 - Contributors: Kronos, Gahais
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
 
+### 'Farm-Boreal.au3'
+- Author: JackLinesMatthews
+- Contributor: Kronos
+- License: licensed under Apache 2.0
+
 ### 'Farm-Gemstone.au3'
 - Author: Crux
 - Contributor: Gahais
