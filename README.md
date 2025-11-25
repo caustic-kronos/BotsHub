@@ -136,7 +136,6 @@ Feel free to create and add more bots; it’s pretty simple!
 
 ## 📌 Planned Features
 
-- 🔥✅ **Passive inventory management**
 - ⚡🛠️ **User interface for mods and inscriptions**
 - ⚡🕓 **Add more detailed loot options**
 - ⚡🛠️ **FoW completion bot**
@@ -145,7 +144,7 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🧠💭 **Boreal chest run bot** - 2 requests
 - 🧠💭 **Cathedral of Flames farm bot** - 2 requests
 - 🧠💭 **Kilroy bot** - 1 request
-- 🧠💭 **Asura/Norn/Vanguard/Dwarf title farm bot** - 1 request
+- 🧠💭 **Asura/Dwarf title farm bot** - 1 request
 - 🧠💭 **LDOA bot** - 1 request
 - 🧠💭 **Improve crash recovery**
 

@@ -60,23 +60,22 @@
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
 #include 'src/Farm-Lightbringer.au3'
+#include 'src/Farm-Lightbringer2.au3'
 #include 'src/Farm-Luxon.au3'
 #include 'src/Farm-Mantids.au3'
 #include 'src/Farm-MinisterialCommendations.au3'
+#include 'src/Farm-NexusChallenge.au3'
+#include 'src/Farm-Norn.au3'
 #include 'src/Farm-Pongmei.au3'
 #include 'src/Farm-Raptors.au3'
 #include 'src/Farm-SoO.au3'
 #include 'src/Farm-SpiritSlaves.au3'
+#include 'src/Farm-SunspearArmor.au3'
 #include 'src/Farm-Tasca.au3'
 #include 'src/Farm-Vaettirs.au3'
+#include 'src/Farm-Vanguard.au3'
 #include 'src/Farm-Voltaic.au3'
 #include 'src/Farm-WarSupplyKeiran.au3'
-
-#include 'src/Farm-Norn.au3'
-#include 'src/Farm-NexusChallenge.au3'
-#include 'src/Farm-SunspearArmor.au3'
-#include 'src/Farm-Vanguard.au3'
-#include 'src/Farm-Lightbringer2.au3'
 
 #include 'lib/JSON.au3'
 #EndRegion Includes
@@ -791,23 +790,6 @@ Func RunFarmLoop($Farm)
 			$STATUS = 'INITIALIZED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
-
-		Case 'Norn'
-			$INVENTORY_SPACE_NEEDED = 5
-			$result = NornTitleFarm($STATUS)
-		Case 'Nexus Challenge'
-			$INVENTORY_SPACE_NEEDED = 5
-			$result = NexusChallengeFarm($STATUS)
-		Case 'Sunspear Armor'
-			$INVENTORY_SPACE_NEEDED = 5
-			$result = SunspearArmorFarm($STATUS)
-		Case 'Lightbringer 2'
-			$INVENTORY_SPACE_NEEDED = 5
-			$result = LightbringerFarm2($STATUS)
-		Case 'Vanguard'
-			$INVENTORY_SPACE_NEEDED = 5
-			$result = VanguardTitleFarm($STATUS)
-
 		Case 'Corsairs'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = CorsairsFarm($STATUS)
@@ -847,6 +829,9 @@ Func RunFarmLoop($Farm)
 		Case 'Lightbringer'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = LightbringerFarm($STATUS)
+		Case 'Lightbringer 2'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = LightbringerFarm2($STATUS)
 		Case 'Luxon'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = LuxonFactionFarm($STATUS)
@@ -856,6 +841,12 @@ Func RunFarmLoop($Farm)
 		Case 'Ministerial Commendations'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = MinisterialCommendationsFarm($STATUS)
+		Case 'Nexus Challenge'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = NexusChallengeFarm($STATUS)
+		Case 'Norn'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = NornTitleFarm($STATUS)
 		Case 'OmniFarm'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = OmniFarm($STATUS)
@@ -871,12 +862,18 @@ Func RunFarmLoop($Farm)
 		Case 'SpiritSlaves'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = SpiritSlavesFarm($STATUS)
+		Case 'Sunspear Armor'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = SunspearArmorFarm($STATUS)
 		Case 'Tasca'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = TascaChestFarm($STATUS)
 		Case 'Vaettirs'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = VaettirFarm($STATUS)
+		Case 'Vanguard'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = VanguardTitleFarm($STATUS)
 		Case 'Voltaic'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = VoltaicFarm($STATUS)
@@ -980,6 +977,8 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarmInformations)
+		Case 'Lightbringer 2'
+			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarm2Informations)
 		Case 'Luxon'
 			GUICtrlSetData($GUI_Label_FarmInformations, $LuxonFactionInformations)
 		Case 'Mantids'
@@ -989,6 +988,10 @@ Func UpdateFarmDescription($Farm)
 		Case 'Ministerial Commendations'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $DWCommendationsFarmerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CommendationsFarmInformations)
+		Case 'Nexus Challenge'
+			GUICtrlSetData($GUI_Label_FarmInformations, $NexusChallengeinformations)
+		Case 'Norn'
+			GUICtrlSetData($GUI_Label_FarmInformations, $NornFarmInformations)
 		Case 'Pongmei'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $PongmeiChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $PongmeiChestRunInformations)
@@ -1001,24 +1004,18 @@ Func UpdateFarmDescription($Farm)
 		Case 'SpiritSlaves'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $SpiritSlavesFarmInformations)
+		Case 'Sunspear Armor'
+			GUICtrlSetData($GUI_Label_FarmInformations, $SunspearArmorInformations)
 		Case 'Tasca'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $TascaChestRunInformations)
 		Case 'Vaettirs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
-		Case 'Voltaic'
-			GUICtrlSetData($GUI_Label_FarmInformations, $VoltaicFarmInformations)
-		Case 'Norn'
-			GUICtrlSetData($GUI_Label_FarmInformations, $NornFarmInformations)
-		Case 'Nexus Challenge'
-			GUICtrlSetData($GUI_Label_FarmInformations, $NexusChallengeinformations)
-		Case 'Sunspear Armor'
-			GUICtrlSetData($GUI_Label_FarmInformations, $SunspearArmorInformations)
-		Case 'Lightbringer 2'
-			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarm2Informations)
 		Case 'Vanguard'
 			GUICtrlSetData($GUI_Label_FarmInformations, $VanguardTitleFarmInformations)
+		Case 'Voltaic'
+			GUICtrlSetData($GUI_Label_FarmInformations, $VoltaicFarmInformations)
 		Case 'War Supply Keiran'
 			GUICtrlSetData($GUI_Label_FarmInformations, $WarSupplyKeiranInformations)
 		Case 'OmniFarm'
@@ -1622,12 +1619,18 @@ Func SelectFarmDuration($Farm)
 			Return $KURZICKS_FARM_DURATION
 		Case 'Lightbringer'
 			Return $LIGHTBRINGER_FARM_DURATION
+		Case 'Lightbringer 2'
+			Return $LIGHTBRINGER_FARM2_DURATION
 		Case 'Luxon'
 			Return $LUXONS_FARM_DURATION
 		Case 'Mantids'
 			Return $MANTIDS_FARM_DURATION
 		Case 'Ministerial Commendations'
 			Return $COMMENDATIONS_FARM_DURATION
+		Case 'Nexus Challenge'
+			Return $NEXUS_CHALLENGE_FARM_DURATION
+		Case 'Norn'
+			Return $NORN_FARM_DURATION
 		Case 'OmniFarm'
 			Return 5 * 60 * 1000
 		Case 'Pongmei'
@@ -1636,28 +1639,20 @@ Func SelectFarmDuration($Farm)
 			Return $RAPTORS_FARM_DURATION
 		Case 'SpiritSlaves'
 			Return $SPIRIT_SLAVES_FARM_DURATION
+		Case 'Sunspear Armor'
+			Return $SUNSPEAR_ARMOR_FARM_DURATION
 		Case 'Tasca'
 			Return $TASCA_FARM_DURATION
 		Case 'Vaettirs'
 			Return $VAETTIRS_FARM_DURATION
-		Case 'Voltaic'
-			Return $VOLTAIC_FARM_DURATION
-		Case 'Storage'
-			Return 2 * 60 * 1000
-
-		Case 'Norn'
-			Return $NORN_FARM_DURATION
-		Case 'Nexus Challenge'
-			Return $NEXUS_CHALLENGE_FARM_DURATION
-		Case 'Sunspear Armor'
-			Return $SUNSPEAR_ARMOR_FARM_DURATION
-		Case 'Lightbringer 2'
-			Return $LIGHTBRINGER_FARM2_DURATION
 		Case 'Vanguard'
 			Return $VANGUARD_TITLE_FARM_DURATION
+		Case 'Voltaic'
+			Return $VOLTAIC_FARM_DURATION
 		Case 'War Supply Keiran'
 			Return $WAR_SUPPLY_FARM_DURATION
-
+		Case 'Storage'
+			Return 2 * 60 * 1000
 		Case Else
 			Return 2 * 60 * 1000
 	EndSwitch

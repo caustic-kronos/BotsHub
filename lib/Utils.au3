@@ -2106,7 +2106,8 @@ EndFunc
 
 ;~ Updates the partyIsAlive variable, this function is run on a fixed timer (10s)
 Func TrackPartyStatus()
-	If IsPlayerAndPartyWiped() Then
+	; If GetAgentExists(GetMyID()) is False, player is disconnected or between instances, do not track party status
+	If GetAgentExists(GetMyID()) And IsPlayerAndPartyWiped() Then
 		$partyFailuresCount += 1
 		Notice('Party wiped for the ' & $partyFailuresCount & ' time')
 		$partyIsAlive = False
