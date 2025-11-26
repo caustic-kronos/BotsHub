@@ -157,6 +157,7 @@ Global Const $ID_Nexus						= 555
 ; EotN
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Arbor_Bay					= 485
+Global Const $ID_Ice_Cliff_Chasms			= 499
 Global Const $ID_Riven_Earth				= 501
 Global Const $ID_Jaga_Moraine				= 546
 Global Const $ID_Varajar_Fells				= 553
@@ -178,6 +179,7 @@ Global Const $ID_Hall_of_Monuments			= 646
 Global Const $ID_Dalada_Uplands				= 647
 Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
+Global Const $ID_Boreal_Station				= 675
 Global Const $ID_Auspicious_Beginnings		= 849
 
 Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, _

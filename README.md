@@ -62,6 +62,7 @@ To use it:
 - DoA farm (Gemstones)
 - Stygian Veil farm (Stygian Gemstones)
 ### Chest runs
+- Boreal chest run (glacial blades)
 - Pongmei chest run (faction skins, Q8)
 - Tasca chest farm (Magma shield, Stone Summit Shield, Summit Warlord Shield)
 ### Others
@@ -141,7 +142,6 @@ Feel free to create and add more bots; it’s pretty simple!
 - ⚡🛠️ **FoW completion bot**
 - 💡🕓 **Fix the Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 🧠💭 **Boreal chest run bot** - 2 requests
 - 🧠💭 **Cathedral of Flames farm bot** - 2 requests
 - 🧠💭 **Kilroy bot** - 1 request
 - 🧠💭 **Asura/Dwarf title farm bot** - 1 request
