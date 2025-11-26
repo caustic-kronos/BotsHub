@@ -18,8 +18,8 @@
 
 #include 'Utils.au3'
 
-Global Const $debugMode = False
-Global Const $addContext = False
+Global Const $debugMode = True
+Global Const $addContext = True
 
 Global $logHandle = -1
 Global $ContextStack[100]

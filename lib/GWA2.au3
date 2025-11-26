@@ -224,33 +224,40 @@ EndFunc
 
 ;~ Writes a binary string to a specified memory address in the process.
 Func WriteBinary($binaryString, $address)
+	PushContext('WriteBinary')
 	Local $data = SafeDllStructCreate('byte[' & 0.5 * StringLen($binaryString) & ']')
 	For $i = 1 To DllStructGetSize($data)
 		DllStructSetData($data, 1, Dec(StringMid($binaryString, 2 * $i - 1, 2)), $i)
 	Next
 	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
+	PopContext('WriteBinary')
 EndFunc
 
 
 ;~ Writes the specified data to a memory address of a given type (default is 'dword').
 Func MemoryWrite($address, $data, $type = 'dword')
+	PushContext('MemoryWrite')
 	Local $buffer = SafeDllStructCreate($type)
 	DllStructSetData($buffer, 1, $data)
 	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	PopContext('MemoryWrite')
 EndFunc
 
 
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
 Func MemoryRead($address, $type = 'dword', $handleOverride = -1)
+	PushContext('MemoryRead')
 	Local $buffer = SafeDllStructCreate($type)
 	Local $processHandle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	PopContext('MemoryRead')
 	Return DllStructGetData($buffer, 1)
 EndFunc
 
 
 ;~ Reads data from a memory address, following pointer chains based on the provided offsets.
 Func MemoryReadPtr($address, $offset, $type = 'dword')
+	PushContext('MemoryReadPtr')
 	Local $ptrCount = UBound($offset) - 2
 	Local $buffer = SafeDllStructCreate('dword')
 	Local $processHandle = GetProcessHandle()
@@ -277,10 +284,12 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		$data[0] = $address
 		$data[1] = DllStructGetData($buffer, 1)
+		PopContext('MemoryReadPtr')
 		Return $data
 	Next
 	; This can be valid when trying to access an agent out of range for instance
 	DebuggerLog('Tried to access an invalid address')
+	PopContext('MemoryReadPtr')
 	Return $data
 EndFunc
 
@@ -426,6 +435,7 @@ EndFunc
 
 ;~ Injects GWA2 into the game client.
 Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $initUseEventSystem = True)
+	PushContext('InitializeGameClientData')
 	$useStringLogging = $initUseStringLog
 	$useEventSystem = $initUseEventSystem
 
@@ -661,6 +671,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	$agentCopyBase = GetValue('AgentCopyBase')
 	$lastDialogId = GetValue('LastDialogID')
 
+	PushContext('InitializeGameClientData-setdataregion')
 	; EventSystem
 	DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 	If @error Then LogCriticalError('Failed to set invite guild command')
@@ -710,10 +721,16 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	If @error Then LogCriticalError('Failed to set CommandChangeStatus command')
 	DllStructSetData($enterMissionStruct, 1, GetValue('CommandEnterMission'))
 	If @error Then LogCriticalError('Failed to set CommandEnterMission command')
+	PopContext('InitializeGameClientData-setdataregion')
+
+	PushContext('InitializeGameClientData-end')
 	If $changeTitle Then WinSetTitle(GetWindowHandle(), '', 'Guild Wars - ' & GetCharacterName())
 	If @error Then LogCriticalError('Failed to change window title')
 	SetMaxMemory()
-	Return GetWindowHandle()
+	Local $windowHandle = GetWindowHandle()
+	PopContext('InitializeGameClientData-end')
+	PopContext('InitializeGameClientData')
+	Return $windowHandle
 EndFunc
 
 
@@ -742,6 +759,7 @@ EndFunc
 
 ;~ Scan patterns for Guild Wars game client.
 Func ScanGWBasePatterns()
+	PushContext('ScanGWBasePatterns')
 	Local $gwBaseAddress = ScanForProcess()
 	$asmInjectionSize = 0
 	$asmCodeOffset = 0
@@ -1010,19 +1028,23 @@ Func ScanGWBasePatterns()
 
 		SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
+	PopContext('ScanGWBasePatterns')
 EndFunc
 
 
 ;~ Find process by scanning memory
 ;~ This process is located at 0x00401000, i.e.: shifted of 0x1000 from real start of the process. Why do we start here ? PE Headers ?
 Func ScanForProcess()
+	PushContext('ScanForProcess')
 	Local $scannedMemory = ScanMemoryForPattern(GetProcessHandle(), BinaryToString('0x558BEC83EC105356578B7D0833F63BFE'))
+	PopContext('ScanForProcess')
 	Return $scannedMemory[0]
 EndFunc
 
 
 ;~ Find character names by scanning memory
 Func ScanForCharname($processHandle)
+	PushContext('ScanForCharname')
 	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A14FF751868'))
 	; If you have issues finding your character name, tries this line instead of the previous one :
 	;Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x00E20878'))
@@ -1032,12 +1054,15 @@ Func ScanForCharname($processHandle)
 	Local $buffer = SafeDllStructCreate('ptr')
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Local $characterName = DllStructGetData($buffer, 1)
-	Return MemoryRead($characterName, 'wchar[30]', $processHandle)
+	Local $result = MemoryRead($characterName, 'wchar[30]', $processHandle)
+	PopContext('ScanForCharname')
+	Return $result
 EndFunc
 
 
 ;~ Scan memory for a pattern - used to find process and to find character names
 Func ScanMemoryForPattern($processHandle, $patternBinary)
+	PushContext('ScanMemoryForPattern')
 	Local $currentSearchAddress = 0x00000000
 	Local $memoryInfos = SafeDllStructCreate($memoryInfoStructTemplate)
 
@@ -1062,12 +1087,14 @@ Func ScanMemoryForPattern($processHandle, $patternBinary)
 					Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
 					If $matchOffset > 0 Then
 						Local $match[3] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
+						PopContext('ScanMemoryForPattern')
 						Return $match
 					EndIf
 			EndSwitch
 		EndIf
 		$currentSearchAddress += $regionSize
 	WEnd
+	PopContext('ScanMemoryForPattern')
 	Return Null
 EndFunc
 
@@ -1086,7 +1113,10 @@ EndFunc
 
 ;~ Retrieves the scanned memory address for a specific label and offset (internal use)
 Func GetScannedAddress($label, $offset)
-	Return MemoryRead(GetLabelInfo($label) + 8) - MemoryRead(GetLabelInfo($label) + 4) + $offset
+	PushContext('GetScannedAddress')
+	Local $result = MemoryRead(GetLabelInfo($label) + 8) - MemoryRead(GetLabelInfo($label) + 4) + $offset
+	PopContext('GetScannedAddress')
+	Return $result
 EndFunc
 #EndRegion Initialisation
 
@@ -1117,13 +1147,17 @@ EndFunc
 
 ;~ Get itemID from an item structure or pointer
 Func GetItemID($item)
+	PushContext('GetItemID')
+	Local $itemID
 	If IsPtr($item) Then
-		Return MemoryRead($item, 'long')
+		$itemID = MemoryRead($item, 'long')
 	ElseIf IsDllStruct($item) Then
-		Return DllStructGetData($item, 'ID')
+		$itemID = DllStructGetData($item, 'ID')
 	Else
-		Return $item
+		$itemID = $item
 	EndIf
+	PopContext('GetItemID')
+	Return $itemID
 EndFunc
 
 
@@ -1675,10 +1709,12 @@ EndFunc
 
 ;~ Disable all skills on a hero's skill bar.
 Func DisableAllHeroSkills($heroIndex)
+	PushContext('DisableAllHeroSkills')
 	For $i = 1 to 8
 		DisableHeroSkillSlot($heroIndex, $i)
 		Sleep(GetPing() + 20)
 	Next
+	PopContext('DisableAllHeroSkills')
 EndFunc
 
 
@@ -1715,12 +1751,15 @@ EndFunc
 #Region Movement
 ;~ Move to a location. Returns True if successful
 Func Move($X, $Y, $random = 50)
+	PushContext('Move')
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($moveStruct, 2, $X + Random(-$random, $random))
 		DllStructSetData($moveStruct, 3, $Y + Random(-$random, $random))
 		Enqueue($moveStructPtr, 16)
+		PopContext('Move')
 		Return True
 	Else
+		PopContext('Move')
 		Return False
 	EndIf
 EndFunc
@@ -1728,6 +1767,7 @@ EndFunc
 
 ;~ Move to a location and wait until you reach it.
 Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
+	PushContext('MoveTo')
 	Local $blockedCount = 0
 	Local $me
 	Local $mapID = GetMapID(), $oldMapID
@@ -1751,6 +1791,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 			Move($destinationX, $destinationY, 0)
 		EndIf
 	Until GetDistanceToPoint($me, $destinationX, $destinationY) < 25 Or $blockedCount > 14
+	PopContext('MoveTo')
 EndFunc
 
 
@@ -2283,18 +2324,29 @@ EndFunc
 
 ;~ Use a skill and wait for it to be done
 Func UseSkillEx($skillSlot, $target = -2, $timeout = 3000)
-	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return
+	PushContext('UseSkillEx')
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then 
+		PopContext('UseSkillEx')
+		Return
+	EndIf
 	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
 	Local $Energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy() < $Energy Then Return
+	If GetEnergy() < $Energy Then
+		PopContext('UseSkillEx')
+		Return
+	EndIf
 	Local $aftercast = DllStructGetData($Skill, 'Aftercast')
 	Local $deadlock = TimerInit()
 	UseSkill($skillSlot, $target)
 	Do
 		Sleep(50)
-		If IsPlayerDead() Then Return
+		If IsPlayerDead() Then
+			PopContext('UseSkillEx')
+			Return
+		EndIf
 	Until (Not IsRecharged($skillSlot)) Or (TimerDiff($deadlock) > $timeout)
 	Sleep($aftercast * 1000)
+	PopContext('UseSkillEx')
 EndFunc
 
 
@@ -2806,10 +2858,16 @@ EndFunc
 #Region Item
 ;~ Returns rarity (name color) of an item.
 Func GetRarity($item)
+	PushContext('GetRarity')
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	Local $ptr = DllStructGetData($item, 'NameString')
-	If $ptr == 0 Then Return
-	Return MemoryRead($ptr, 'ushort')
+	If $ptr == 0 Then
+		PopContext('GetRarity')
+		Return
+	EndIf
+	Local $rarity = MemoryRead($ptr, 'ushort')
+	PopContext('GetRarity')
+	Return $rarity
 EndFunc
 
 
@@ -2873,22 +2931,34 @@ EndFunc
 
 ;~ Returns modstruct of an item.
 Func GetModStruct($item)
+	PushContext('GetModStruct')
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	Local $modstruct = DllStructGetData($item, 'modstruct')
-	If $modstruct = 0 Then Return
-	Return MemoryRead($modstruct, 'Byte[' & DllStructGetData($item, 'modstructsize') * 4 & ']')
+	If $modstruct = 0 Then
+		PopContext('GetModStruct')
+		Return
+	EndIf
+	Local $result = MemoryRead($modstruct, 'Byte[' & DllStructGetData($item, 'modstructsize') * 4 & ']')
+	PopContext('GetModStruct')
+	Return $result
 EndFunc
 
 
 ;~ Tests if an item is assigned to you.
 Func GetAssignedToMe($agent)
-	Return DllStructGetData($agent, 'Owner') == GetMyID()
+	PushContext('GetAssignedToMe')
+	Local $result = DllStructGetData($agent, 'Owner') == GetMyID()
+	PopContext('GetAssignedToMe')
+	Return $result
 EndFunc
 
 
 ;~ Tests if you can pick up an item.
 Func GetCanPickUp($agent)
-	Return GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0
+	PushContext('GetCanPickUp')
+	Local $result = GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0
+	PopContext('GetCanPickUp')
+	Return $result
 EndFunc
 
 
@@ -2905,6 +2975,7 @@ EndFunc
 
 ;~ Returns item by slot.
 Func GetItemBySlot($bag, $slot)
+	PushContext('GetItemBySlot')
 	If Not IsDllStruct($bag) Then $bag = GetBag($bag)
 
 	Local $itemPtr = DllStructGetData($bag, 'ItemArray')
@@ -2913,10 +2984,14 @@ Func GetItemBySlot($bag, $slot)
 
 	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
 	SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
-	If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then Return 0
+	If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then
+		PopContext('GetItemBySlot')
+		Return 0
+	EndIf
 
 	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
+	PopContext('GetItemBySlot')
 	Return $itemStruct
 EndFunc
 
@@ -2933,6 +3008,7 @@ EndFunc
 
 ;~ Returns item by agent ID.
 Func GetItemByAgentID($agentID)
+	PushContext('GetItemByAgentID')
 	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
 	Local $itemArraySize = MemoryReadPtr($baseAddressPtr, $offset)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
@@ -2946,9 +3022,11 @@ Func GetItemByAgentID($agentID)
 		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'AgentID') = $agentID Then
+			PopContext('GetItemByAgentID')
 			Return $itemStruct
 		EndIf
 	Next
+	PopContext('GetItemByAgentID')
 EndFunc
 
 
@@ -3143,9 +3221,15 @@ EndFunc
 
 ;~ Returns agent ID of a hero.
 Func GetHeroID($heroIndex)
-	If $heroIndex == 0 Then Return GetMyID()
+	PushContext('GetHeroID')
+	If $heroIndex == 0 Then
+		Local $myID = GetMyID()
+		PopContext('GetHeroID')
+		Return $myID
+	EndIf
 	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0x18 * ($heroIndex - 1)]
 	Local $agentID = MemoryReadPtr($baseAddressPtr, $offset)
+	PopContext('GetHeroID')
 	Return $agentID[1]
 EndFunc
 
@@ -3204,16 +3288,22 @@ EndFunc
 #Region Agent
 ;~ Return agent of the player
 Func GetMyAgent()
-	Return GetAgentByID(GetMyID())
+	PushContext('GetMyAgent')
+	Local $myAgentID = GetMyID()
+	Local $myAgent = GetAgentByID($myAgentID)
+	PopContext('GetMyAgent')
+	Return $myAgent
 EndFunc
 
 
 ;~ Returns an agent struct.
 Func GetAgentByID($agentID)
+	PushContext('GetAgentByID')
 	If $agentID = -2 Then $agentID = GetMyID()
 	Local $agentPtr = GetAgentPtr($agentID)
 	Local $agentStruct = SafeDllStructCreate($agentStructTemplate)
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', 0)
+	PopContext('GetAgentByID')
 	Return $agentStruct
 EndFunc
 
@@ -3228,13 +3318,19 @@ EndFunc
 
 ;~ Test if an agent exists.
 Func GetAgentExists($agentID)
-	Return GetAgentPtr($agentID) <> 0
+	PushContext('GetAgentExists')
+	Local $agentPtr = GetAgentPtr($agentID)
+	PopContext('GetAgentExists')
+	Return $agentPtr <> 0
 EndFunc
 
 
 ;~ Returns the target of an agent.
 Func GetTarget($agent)
-	Return MemoryRead(GetValue('TargetLogBase') + 4 * DllStructGetData($agent, 'ID'))
+	PushContext('GetTarget')
+	Local $target = MemoryRead(GetValue('TargetLogBase') + 4 * DllStructGetData($agent, 'ID'))
+	PopContext('GetTarget')
+	Return $target
 EndFunc
 
 
@@ -3433,6 +3529,7 @@ EndFunc
 
 ;~ Quickly creates an array of agents of a given type
 Func GetAgentArray($type = 0)
+	PushContext('GetAgentArray')
 	Local $struct
 	Local $count
 	Local $buffer = ''
@@ -3459,6 +3556,7 @@ Func GetAgentArray($type = 0)
 			DllStructSetData($struct, 1, DllStructGetData($buffer, $i + 1))
 		Next
 	EndIf
+	PopContext('GetAgentArray')
 	Return $returnArray
 EndFunc
 
@@ -3617,9 +3715,12 @@ EndFunc
 
 ;~ Tests if an agent is dead.
 Func GetIsDead($agent = -2)
+	PushContext('GetIsDead')
 	If $agent == -2 Then $agent = GetMyAgent()
 	If $agent == Null Then Return True ; for case when targeted agent becomes dead then GetCurrentTarget() returns Null. Caution about other cases
-	Return BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0
+	Local $isDead = BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0
+	PopContext('GetIsDead')
+	Return $isDead
 EndFunc
 
 ;~ Tests if an agent has a deep wound.
@@ -3666,9 +3767,11 @@ EndFunc
 
 ;~ Returns a player's name.
 Func GetPlayerName($agent)
+	PushContext('GetPlayerName')
 	Local $loginNumber = DllStructGetData($agent, 'LoginNumber')
 	Local $offset[6] = [0, 0x18, 0x2C, 0x80C, 76 * $loginNumber + 0x28, 0]
 	Local $result = MemoryReadPtr($baseAddressPtr, $offset, 'wchar[30]')
+	PopContext('GetPlayerName')
 	Return $result[1]
 EndFunc
 
@@ -3761,6 +3864,7 @@ EndFunc
 #Region Misc
 ;~ Returns skillbar struct.
 Func GetSkillbar($heroIndex = 0)
+	PushContext('GetSkillbar')
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
 	For $i = 0 To GetHeroCount()
 		$offset[4] = $i * 0xBC
@@ -3768,9 +3872,11 @@ Func GetSkillbar($heroIndex = 0)
 		Local $skillbarStruct = SafeDllStructCreate($skillbarStructTemplate)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
 		If DllStructGetData($skillbarStruct, 'AgentId') == GetHeroID($heroIndex) Then
+			PopContext('GetSkillbar')
 			Return $skillbarStruct
 		EndIf
 	Next
+	PopContext('GetSkillbar')
 EndFunc
 
 
@@ -3845,6 +3951,7 @@ EndFunc
 
 ;~ Returns effect struct or array of effects.
 Func GetEffect($skillID = 0, $heroIndex = 0)
+	PushContext('GetEffect')
 	Local $effectCount, $effectStructAddress
 	; Offsets have to be kept separate - else we risk cross-call contamination - Avoid ReDim !
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
@@ -3868,6 +3975,7 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
 					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', 0)
 				Next
+				PopContext('GetEffect')
 				Return $resultArray
 			Else
 				For $j = 0 To $effectCount[1] - 1
@@ -3875,6 +3983,7 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $j, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
 
 					If DllStructGetData($effectStruct, 'SkillID') = $skillID Then
+						PopContext('GetEffect')
 						Return $effectStruct
 					EndIf
 				Next
@@ -3882,6 +3991,7 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 		EndIf
 	Next
 	Local $emptyArray[1] = [0]
+	PopContext('GetEffect')
 	Return $emptyArray
 EndFunc
 
@@ -3899,7 +4009,10 @@ EndFunc
 
 ;~ Returns the timestamp used for effects and skills (milliseconds).
 Func GetSkillTimer()
-	Return MemoryRead($skillTimer, 'long')
+	PushContext('GetSkillTimer')
+	Local $result = MemoryRead($skillTimer, 'long')
+	PopContext('GetSkillTimer')
+	Return $result
 EndFunc
 
 
@@ -3956,13 +4069,19 @@ EndFunc
 
 ;~ Returns number of agents currently loaded.
 Func GetMaxAgents()
-	Return MemoryRead($maxAgents)
+	PushContext('GetMaxAgents')
+	Local $result = MemoryRead($maxAgents)
+	PopContext('GetMaxAgents')
+	Return $result
 EndFunc
 
 
 ;~ Returns your agent ID.
 Func GetMyID()
-	Return MemoryRead($myID)
+	PushContext('GetMyID')
+	Local $result = MemoryRead($myID)
+	PopContext('GetMyID')
+	Return $result
 EndFunc
 
 
@@ -3981,7 +4100,9 @@ EndFunc
 
 ;~ Returns current ping.
 Func GetPing()
+	PushContext('GetPing')
 	Local $ping = MemoryRead($scanPingAddress)
+	PopContext('GetPing')
 	Return $ping < 10 ? 10 : $ping
 EndFunc
 
@@ -3998,14 +4119,19 @@ EndFunc
 
 ;~ Returns current map ID
 Func GetMapID()
-	Return MemoryRead($mapID)
+	PushContext('GetMapID')
+	Local $result = MemoryRead($mapID)
+	PopContext('GetMapID')
+	Return $result
 EndFunc
 
 
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetInstanceType()
+	PushContext('GetInstanceType')
 	Local $offset[1] = [0x00]
 	Local $result = MemoryReadPtr($instanceInfoPtr, $offset, 'dword')
+	PopContext('GetInstanceType')
 	Return $result[1]
 EndFunc
 
@@ -4045,7 +4171,10 @@ EndFunc
 
 ;~ Returns current load-state.
 Func GetMapLoading()
-	Return MemoryRead($mapLoading)
+	PushContext('GetMapLoading')
+	Local $result = MemoryRead($mapLoading)
+	PopContext('GetMapLoading')
+	Return $result
 EndFunc
 
 
@@ -4104,7 +4233,10 @@ EndFunc
 
 ;~ Returns if you're logged in.
 Func GetLoggedIn()
-	Return MemoryRead($isLoggedIn)
+	PushContext('GetLoggedIn')
+	Local $result = MemoryRead($isLoggedIn)
+	PopContext('GetLoggedIn')
+	Return $result
 EndFunc
 
 
@@ -4551,6 +4683,7 @@ EndFunc
 #Region Modification
 ;~ Internal use only.
 Func ModifyMemory()
+	PushContext('ModifyMemory')
 	$asmInjectionSize = 0
 	$asmCodeOffset = 0
 	$asmInjectionString = ''
@@ -4591,12 +4724,15 @@ Func ModifyMemory()
 		;WriteDetour('TradePartnerStart', 'TradePartnerProc')
 		If IsDeclared('g_b_AssemblerWriteDetour') Then Extend_AssemblerWriteDetour()
 	EndIf
+	PopContext('ModifyMemory')
 EndFunc
 
 
 ;~ Internal use only.
 Func WriteDetour($from, $to)
+	PushContext('WriteDetour')
 	WriteBinary('E9' & SwapEndian(Hex(GetLabelInfo($to) - GetLabelInfo($from) - 5)), GetLabelInfo($from))
+	PopContext('WriteDetour')
 EndFunc
 
 
@@ -6344,6 +6480,7 @@ EndFunc
 
 ;~ Wait for map to be loaded, True if map loaded correctly, False otherwise
 Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
+	PushContext('WaitMapLoading')
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 	Local $deadlock = TimerInit()
 	Local $skillbarStruct
@@ -6351,9 +6488,13 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
 		Sleep(200)
 		$skillbarStruct = MemoryReadPtr($baseAddressPtr, $offset, 'ptr')
 		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
-		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
+		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then
+			PopContext('WaitMapLoading')
+			Return False
+		EndIf
 	Until GetMyID() <> 0 And $skillbarStruct[0] <> 0 And (GetMapID() = $mapID Or $mapID = -1)
 	RandomSleep($waitingTime)
+	PopContext('WaitMapLoading')
 	Return True
 EndFunc
 
@@ -6453,11 +6594,15 @@ EndFunc
 
 ;~ Returns amount of slots of bag.
 Func GetMaxSlots($bag)
+	PushContext('GetMaxSlots')
+	Local $maxSlots
 	If IsPtr($bag) Then
-		Return MemoryRead($bag + 32, 'long')
+		$maxSlots = MemoryRead($bag + 32, 'long')
 	ElseIf IsDllStruct($bag) Then
-		Return DllStructGetData($bag, 'Slots')
+		$maxSlots = DllStructGetData($bag, 'Slots')
 	Else
-		Return MemoryRead(GetBagPtr($bag) + 32, 'long')
+		$maxSlots = MemoryRead(GetBagPtr($bag) + 32, 'long')
 	EndIf
+	PopContext('GetMaxSlots')
+	Return $maxSlots
 EndFunc

@@ -191,6 +191,7 @@ EndFunc
 ;~ Loot items around character
 Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
+	PushContext('PickUpItems')
 
 	Local $item
 	Local $agentID
@@ -211,7 +212,10 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
 				RandomSleep(50)
-				If IsPlayerDead() Then Return
+				If IsPlayerDead() Then
+					PopContext('PickUpItems')
+					Return
+				EndIf
 			WEnd
 		EndIf
 	Next
@@ -219,6 +223,7 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 	If $BAGS_COUNT == 5 And CountSlots(1, 3) == 0 Then
 		MoveItemsToEquipmentBag()
 	EndIf
+	PopContext('PickUpItems')
 EndFunc
 
 
@@ -770,6 +775,7 @@ EndFunc
 
 ;~ Counts gold items in inventory
 Func CountGoldItems()
+	PushContext('CountGoldItems')
 	Local $goldItemsCount = 0
 	Local $item
 	For $bagIndex = 1 To $BAGS_COUNT
@@ -780,6 +786,7 @@ Func CountGoldItems()
 			If ((IsWeapon($item) Or IsArmorSalvageItem($item)) And GetRarity($item) == $RARITY_Gold) Then $goldItemsCount += 1
 		Next
 	Next
+	PopContext('CountGoldItems')
 	Return $goldItemsCount
 EndFunc
 
@@ -2124,17 +2131,23 @@ EndFunc
 
 ;~ Returns True if the party is alive, that is if there is still an alive hero with resurrection skill
 Func HasRezMemberAlive()
+	PushContext('HasRezMemberAlive')
 	Local Static $heroesWithRez = FindHeroesWithRez()
 	For $i In $heroesWithRez
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then Return True
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then
+			PopContext('HasRezMemberAlive')
+			Return True
+		EndIf
 	Next
+	PopContext('HasRezMemberAlive')
 	Return False
 EndFunc
 
 
 ;~ Return an array of heroes in the party with a resurrection skill, indexed from 0
 Func FindHeroesWithRez()
+	PushContext('FindHeroesWithRez')
 	Local $heroes[7] ; 1D array of all heroes, indexed from 0
 	Local $count = 0
 	For $heroNumber = 1 To GetHeroCount()
@@ -2151,6 +2164,7 @@ Func FindHeroesWithRez()
 	For $i = 0 To $count - 1
 		$heroesWithRez[$i] = $heroes[$i]
 	Next
+	PopContext('FindHeroesWithRez')
 	Return $heroesWithRez
 EndFunc
 
@@ -2385,6 +2399,7 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Options)
+	PushContext('MoveAggroAndKill')
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
@@ -2440,12 +2455,15 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Op
 			EndIf
 		EndIf
 	WEnd
-	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	Local $result = IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	PopContext('MoveAggroAndKill')
+	Return $result
 EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
 Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
+	PushContext('KillFoesInArea')
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
@@ -2501,7 +2519,9 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
 	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
-	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	Local $result = IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	PopContext('KillFoesInArea')
+	Return $result
 EndFunc
 
 
@@ -2739,7 +2759,6 @@ Func FanFlagHeroes($range = $RANGE_AREA)
 	If $heroCount > 5 Then CommandHero($heroFlagPositions[5], $X + ($rotationY / 2 - 2 * $rotationX) * $distance, $Y - (2 * $rotationY + $rotationX / 2) * $distance)
 	; To the left, way behind
 	If $heroCount > 6 Then CommandHero($heroFlagPositions[6], $X - ($rotationY / 2 + 2 * $rotationX) * $distance, $Y + ($rotationX / 2 - 2 * $rotationY) * $distance)
-
 EndFunc
 #EndRegion Map Clearing Utilities
 #EndRegion Actions
@@ -2748,6 +2767,7 @@ EndFunc
 #Region Skill and Templates
 ;~ Loads skill template code.
 Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
+	PushContext('LoadSkillTemplate')
 	Local $heroID = GetHeroID($heroIndex)
 	Local $BuildTemplateChars = StringSplit($buildTemplate, '') ; splitting build template string into array of characters
 	; deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
@@ -2816,11 +2836,13 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	LoadAttributes($attributes, $secondaryProfession, $heroIndex)
 
 	LoadSkillBar($skills[0], $skills[1], $skills[2], $skills[3], $skills[4], $skills[5], $skills[6], $skills[7], $heroIndex)
+	PopContext('LoadSkillTemplate')
 EndFunc
 
 
 ;~ Load attributes from a two dimensional array.
 Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
+	PushContext('LoadAttributes')
 	Local $heroID = GetHeroID($heroIndex)
 	Local $primaryAttribute
 	Local $deadlock
@@ -2861,11 +2883,13 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 		IncreaseAttribute($primaryAttribute, $heroIndex)
 		Sleep(GetPing() + 100)
 	Next
+	PopContext('LoadAttributes')
 EndFunc
 
 
 ;~ Set all attributes of the character/hero to 0
 Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
+	PushContext('EmptyAttributes')
 	For $attribute In $AttributesByProfessionMap[GetHeroProfession($heroIndex)]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
@@ -2879,6 +2903,7 @@ Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
 			Sleep(GetPing() + 20)
 		Next
 	Next
+	PopContext('EmptyAttributes')
 EndFunc
 #EndRegion Skill and Templates
 
