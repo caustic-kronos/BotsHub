@@ -108,9 +108,9 @@ Func ZodiacFarmLoop()
 	; Move to spot before aggro
 	MoveTo(12450, 8900, 0)
 	UseHeroSkill(1, $Zodiac_VocalWasSogolon)
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Zodiac_EnduringHarmony, GetMyAgent())
-	RndSleep(1500)
+	RandomSleep(1500)
 	UseHeroSkill(1, $Zodiac_MakeHaste, GetMyAgent())
 	UseHeroSkill(1, $Zodiac_Incoming)
 	CommandAll(14000, 12000)
@@ -125,12 +125,12 @@ Func ZodiacFarmLoop()
 	MoveTo(5850, 3200)
 	TryUseZodiacShadowForm(True)
 	TryUseZodiacShroudOfDistress()
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	Out('First group')
 	ZodiacWaitForBall(6350, 3500)
 	ZodiacKillGroup(6350, 3500)
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	ZodiacMoveToAndStayAlive(7000, 2700)
 	ZodiacMoveToAndStayAlive(8000, 1500)
@@ -140,7 +140,7 @@ Func ZodiacFarmLoop()
 	Out('Second group')
 	ZodiacWaitForBall(10400, -900)
 	ZodiacKillGroup(10400, -900)
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	ZodiacMoveToAndStayAlive(12000, -500)
 	UseSkillEx($Zodiac_IAmUnstoppable)
@@ -153,23 +153,23 @@ Func ZodiacFarmLoop()
 
 	ZodiacMoveToAndStayAlive(18300, 2950)
 	ZodiacMoveToAndStayAlive(19100, 3100)
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	Out('Third group')
 	ZodiacWaitForBall(18300, 2950)
 	ZodiacKillGroup(18300, 2950)
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	ZodiacMoveToAndStayAlive(13900, -700)
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	Out('Last group')
 	ZodiacWaitForBall(18300, 2950)
 	ZodiacKillGroup(18300, 2950)
-	If GetIsDead() Then Return 1
+	If GetIsDead() Then Return $FAIL
 
 	; Bonus : add opening of chest
-	Return 0
+	Return $SUCCESS
 EndFunc
 
 
@@ -180,7 +180,7 @@ Func ZodiacMoveToAndStayAlive($X, $Y)
 		TryUseZodiacShadowForm(True)
 		TryUseZodiacShroudOfDistress()
 		Move($X, $Y)
-		RndSleep(100)
+		RandomSleep(100)
 	WEnd
 EndFunc
 
@@ -199,7 +199,7 @@ Func ZodiacWaitForBall($X, $Y)
 		Debug('Foes balled : ' & $foesBalled)
 		TryUseZodiacShadowForm(True)
 		TryUseZodiacShroudOfDistress()
-		RndSleep(200)
+		RandomSleep(200)
 	WEnd
 EndFunc
 
@@ -216,14 +216,14 @@ Func ZodiacKillGroup($X, $Y)
 	Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	Local $counter = 0
 	While Not GetIsDead() And $foesCount > 0 And $counter < 20
-		RndSleep(1000)
+		RandomSleep(1000)
 		TryUseZodiacShadowForm(False)
 		TryUseZodiacShroudOfDistress()
 		$counter = $counter + 1
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY)
 	WEnd
-	RndSleep(1000)
+	RandomSleep(1000)
 	PickUpItems()
 EndFunc
 
@@ -232,7 +232,7 @@ EndFunc
 Func BackToUrgozWarrenOutpost()
 	Info('Porting to Urgoz Warren')
 	Resign()
-	RndSleep(3500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	; The explorable map has the same ID as the outpost
 	While Not WaitMapLoading()
@@ -278,7 +278,7 @@ EndFunc
 Func UseZodiacWhirlingDefense()
 	While IsRecharged($Zodiac_WhirlingDefense) And Not GetIsDead()
 		UseSkillEx($Zodiac_WhirlingDefense)
-		RndSleep(50)
+		RandomSleep(50)
 	WEnd
 	AdlibUnRegister()
 EndFunc
