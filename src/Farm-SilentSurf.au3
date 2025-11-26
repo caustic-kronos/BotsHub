@@ -8,7 +8,7 @@ Func VQSilentSurf($STATUS)
 	EndIf
 	MoveTo(8800, -26150)
 	Move(9000, -26600, 5)
-	RndSleep(1000)
+	RandomSleep(1000)
 	WaitMapLoading($ID_Silent_Surf, 10000, 2000)
 
 	Local $vanquishRange = $RANGE_SPELLCAST + 400
@@ -98,9 +98,14 @@ Func VQSilentSurf($STATUS)
 		Sleep(1000)
 	EndIf
 	For $waypoint In $waypoints
-		If MoveAggroAndKill($waypoints[0], $waypoints[1], $waypoints[2]) Then Return 1
+		If MoveAggroAndKill($waypoints[0], $waypoints[1], $waypoints[2]) == $FAIL Then Return $FAIL
 	Next
 	For $i = UBound($waypoints) - 1 To 0 Step -1
-		If MoveAggroAndKill($waypoints[$i][0], $waypoints[$i][1], $waypoints[$i][2]) Then Return 1
+		If MoveAggroAndKill($waypoints[$i][0], $waypoints[$i][1], $waypoints[$i][2]) == $FAIL Then Return $FAIL
 	Next
+	If Not GetAreaVanquished() Then
+		Error('The map has not been completely vanquished.')
+		Return $FAIL
+	EndIf
+	Return $SUCCESS
 EndFunc
