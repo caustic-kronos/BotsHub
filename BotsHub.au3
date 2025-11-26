@@ -114,7 +114,7 @@ Global Const $PAUSE = 2
 Global $STATUS = 'STOPPED'
 Global $RUN_MODE = 'AUTOLOAD'
 Global $PROCESS_ID = ''
-Global $LOG_LEVEL = $LVL_INFO
+Global $LOG_LEVEL = $LVL_DEBUG
 Global $CHARACTER_NAME = ''
 Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
@@ -780,6 +780,7 @@ EndFunc
 
 ;~ Main loop to run farms
 Func RunFarmLoop($Farm)
+	PushContext('RunFarmLoop')
 	Local $result = $NOT_STARTED
 	Local $timePerRun = UpdateStats($NOT_STARTED)
 	Local $timer = TimerInit()
@@ -905,7 +906,8 @@ Func RunFarmLoop($Farm)
 	EndIf
 	UpdateStats($result, $elapsedTime)
 	ClearMemory()
-	; _PurgeHook()
+	;_PurgeHook()
+	PopContext('RunFarmLoop')
 	Return $result
 EndFunc
 #EndRegion Main loops
@@ -1348,6 +1350,7 @@ EndFunc
 #Region Statistics management
 ;~ Fill statistics
 Func UpdateStats($result, $elapsedTime = 0)
+	PushContext('UpdateStats')
 	; All static variables are initialized only once when UpdateStats() function is called first time
 	Local Static $runs = 0
 	Local Static $successes = 0
@@ -1402,9 +1405,8 @@ Func UpdateStats($result, $elapsedTime = 0)
 	GUICtrlSetData($GUI_Label_LuxonTitle_Value, GetLuxonTitle() - $LuxonTitlePoints)
 	GUICtrlSetData($GUI_Label_LightbringerTitle_Value, GetLightbringerTitle() - $LightbringerTitlePoints)
 	GUICtrlSetData($GUI_Label_SunspearTitle_Value, GetSunspearTitle() - $SunspearTitlePoints)
-
 	UpdateItemStats()
-
+	PopContext('UpdateStats')
 	Return $timePerRun
 EndFunc
 
