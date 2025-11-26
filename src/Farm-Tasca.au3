@@ -103,6 +103,11 @@ EndFunc
 
 ;~ Tasca Chest farm loop
 Func TascaChestFarmLoop($STATUS)
+	If FindInInventory($ID_Lockpick)[0] == 0 Then
+		Error('No lockpicks available to open chests')
+		Return $PAUSE
+	EndIf
+
 	If GetMapID() <> $ID_Tascas_Demise Then Return $FAIL
 
 	Info('Starting chest run')
@@ -198,10 +203,6 @@ EndFunc
 ;~ Main function to run as a Dervish
 Func TASCADervishRun($X, $Y)
 	If IsPlayerDead() Then Return $FAIL
-	If FindInInventory($ID_Lockpick)[0] == 0 Then
-		Error('Out of lockpicks')
-		Return $PAUSE
-	EndIf
 
 	Move($X, $Y, 0)
 	Local $blockedCounter = 0

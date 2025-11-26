@@ -310,7 +310,10 @@ EndFunc
 ;~ Find chests in the given range (earshot by default)
 Func FindChest($range = $RANGE_EARSHOT)
 	If IsPlayerDead() Then Return Null
-	If FindInInventory($ID_Lockpick)[0] == 0 Then Return Null
+	If FindInInventory($ID_Lockpick)[0] == 0 Then
+		Warning('No lockpicks available to open chests')
+		Return Null
+	EndIf
 
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
@@ -332,7 +335,10 @@ EndFunc
 ;~ Find and open chests in the given range (earshot by default)
 Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
 	If IsPlayerDead() Then Return
-	If FindInInventory($ID_Lockpick)[0] == 0 Then Return
+	If FindInInventory($ID_Lockpick)[0] == 0 Then
+		Warning('No lockpicks available to open chests')
+		Return
+	EndIf
 	Local $gadgetID
 	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
 	Local $openedChest = False

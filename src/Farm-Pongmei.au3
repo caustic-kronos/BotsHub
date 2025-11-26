@@ -117,6 +117,11 @@ EndFunc
 
 ;~ Pongmei Chest farm loop
 Func PongmeiChestFarmLoop($STATUS)
+	If FindInInventory($ID_Lockpick)[0] == 0 Then
+		Error('No lockpicks available to open chests')
+		Return $PAUSE
+	EndIf
+
 	If GetMapID() <> $ID_Pongmei_Valley Then Return $FAIL
 	Info('Starting chest farm run')
 
@@ -192,11 +197,6 @@ EndFunc
 Func DervishRun($X, $Y)
 	; We could potentially improve bot by avoiding using run stance right before Shadow Form, but that's a very tiny improvement
 	;Local Static $shadowFormLastUse = Null
-	If FindInInventory($ID_Lockpick)[0] == 0 Then
-		Error('Out of lockpicks')
-		Return $PAUSE
-	EndIf
-
 	Move($X, $Y, 0)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()

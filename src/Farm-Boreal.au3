@@ -78,6 +78,11 @@ EndFunc
 
 ;~ Boreal Chest farm loop
 Func BorealChestFarmLoop($STATUS)
+	If FindInInventory($ID_Lockpick)[0] == 0 Then
+		Error('No lockpicks available to open chests')
+		Return $PAUSE
+	EndIf
+
 	Info('Starting chest farm run')
 	If IsHardmodeEnabled() Then
 		SwitchMode($ID_HARD_MODE)
