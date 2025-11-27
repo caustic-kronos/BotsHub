@@ -311,7 +311,7 @@ EndFunc
 Func FindChest($range = $RANGE_EARSHOT)
 	If IsPlayerDead() Then Return Null
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
-		Warning('No lockpicks available to open chests')
+		WarnOnce('No lockpicks available to open chests')
 		Return Null
 	EndIf
 
@@ -336,7 +336,7 @@ EndFunc
 Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
 	If IsPlayerDead() Then Return
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
-		Warning('No lockpicks available to open chests')
+		WarnOnce('No lockpicks available to open chests')
 		Return
 	EndIf
 	Local $gadgetID

@@ -652,6 +652,16 @@ Func Warn($TEXT)
 EndFunc
 
 
+;~ Print warning to console with timestamp, only once
+Func WarnOnce($TEXT)
+	Static Local $warningMessages[]
+	If $warningMessages[$TEXT] <> 1 Then
+		Out($TEXT, $LVL_WARNING)
+		$warningMessages[$TEXT] = 1
+	EndIf
+EndFunc
+
+
 ;~ Print error to console with timestamp
 Func Error($TEXT)
 	Out($TEXT, $LVL_ERROR)
