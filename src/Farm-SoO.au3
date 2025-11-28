@@ -386,7 +386,7 @@ Func ClearSoOFloor2()
 		EndIf
 
 		If Not $secondRoomfirstTime Then
-			MoveAggroAndKill(-17500, -9500, 'If not first loop, run back from end of floor to torch room 1', $SoOAggroRange)
+			MoveAggroAndKillInRange(-17500, -9500, 'If not first loop, run back from end of floor to torch room 1', $SoOAggroRange)
 			MoveTo(-16000, -8700)
 			Sleep(GetPing() + 500)
 			MoveTo(-11500, -8400)

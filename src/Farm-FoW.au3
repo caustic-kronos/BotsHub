@@ -348,9 +348,9 @@ Func LakeOfFire()
 	MoveAggroAndKill(9600, -8500, '3')
 	MoveAggroAndKill(15250, -9500, '4')
 	MoveAggroAndKill(20500, -8100, '5')
-	MoveAggroAndKill(20500, -12400, '6', $RANGE_EARSHOT)
-	MoveAggroAndKill(18300, -14000, '7', $RANGE_EARSHOT)
-	MoveAggroAndKill(19500, -15000, '8', $RANGE_EARSHOT)
+	MoveAggroAndKillInRange(20500, -12400, '6', $RANGE_EARSHOT)
+	MoveAggroAndKillInRange(18300, -14000, '7', $RANGE_EARSHOT)
+	MoveAggroAndKillInRange(19500, -15000, '8', $RANGE_EARSHOT)
 EndFunc
 
 
@@ -441,17 +441,17 @@ Func ForestOfTheWailingLord()
 	MoveAggroAndKill(-17500, 9750, '1')
 	MoveAggroAndKill(-20200, 9500, '2')
 	MoveAggroAndKill(-22000, 11000, '3')
-	MoveAggroAndKill(-20000, 13000, '4', $RANGE_SPELLCAST + 200)
-	MoveAggroAndKill(-19000, 14500, '5', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKillInRange(-20000, 13000, '4', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKillInRange(-19000, 14500, '5', $RANGE_SPELLCAST + 200)
 	MoveAggroAndKill(-18000, 15000, '6')
 	MoveAggroAndKill(-16000, 13500, '7')
 
 	KillShardWolf()
 
 	; Safer moves
-	MoveAggroAndKill(-20000, 13000, '8', $RANGE_SPELLCAST + 200)
-	MoveAggroAndKill(-18000, 11000, '9', $RANGE_SPELLCAST + 200)
-	MoveAggroAndKill(-20200, 14000, '10', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKillInRange(-20000, 13000, '8', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKillInRange(-18000, 11000, '9', $RANGE_SPELLCAST + 200)
+	MoveAggroAndKillInRange(-20200, 14000, '10', $RANGE_SPELLCAST + 200)
 
 	Info('Safely pulling')
 	CommandHero(1, -20200, 13600)
