@@ -1558,7 +1558,8 @@ EndFunc
 #Region H&H
 ;~ Adds a hero to the party.
 Func AddHero($heroID)
-	Return SendPacket(0x8, $HEADER_HERO_ADD, $heroID)
+	SendPacket(0x8, $HEADER_HERO_ADD, $heroID)
+	Sleep(100)
 EndFunc
 
 
@@ -2352,7 +2353,8 @@ EndFunc
 ;~ Leave your party.
 Func LeaveParty($kickHeroes = True)
 	If $kickHeroes Then KickAllHeroes()
-	Return SendPacket(0x4, $HEADER_PARTY_LEAVE)
+	SendPacket(0x4, $HEADER_PARTY_LEAVE)
+	Sleep(100)
 EndFunc
 
 
