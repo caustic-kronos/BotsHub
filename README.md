@@ -27,9 +27,9 @@ It needs AutoIt version 3.3.16.0 or higher to run.
 To use it:
 1. Install AutoIt.
 2. Run `BotsHub.au3` with AutoIt.
-3. (Optional) To make the data collection functional, AutoIT needs the SQLite library:
-	1. You can find the lib folder the files SQLite.au3 and SQLite.dll.au3
-	2. Copy those files to your Program Files/AutoIt3/Include folder.
+3. (Optional) To make the data collection functional, AutoIT needs SQLite. 
+	Install SQLite on your computer and make sure it works via command or with a GUI tool such as DBBrowser.
+	The required .dll file and .au3 are already present in the repository and everything should work.
 
 ## Existing Bots
 ### Farms
@@ -125,9 +125,9 @@ The developers are not responsible for any unintended consequences resulting fro
 </details>
 
 <details> <summary><strong>Q: Why isn't the data tracking option working? I get a 'Failed to load sqlite' error.</strong></summary>
-You need the SQLite AutoIt library installed:
-
-Copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder.
+You need SQLite installed on your computer.
+You also need AutoIt to access SQLite properly via the SQLite.dll.au3, SQLite.au3 and SQLite.dll files, all present in repository.
+You might need to copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder, but this shouldn't even be necessary.
 </details>
 
 <details> <summary><strong>Q: Do you have a 'YYY' bot?</strong></summary>

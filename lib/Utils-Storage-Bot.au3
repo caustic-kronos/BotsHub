@@ -17,8 +17,8 @@
 
 #include-once
 
-#include <SQLite.au3>
-#include <SQLite.dll.au3>
+#include 'SQLite.au3'
+#include 'SQLite.dll.au3'
 #include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
 #include 'GWA2.au3'
