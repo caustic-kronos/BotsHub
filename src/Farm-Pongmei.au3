@@ -215,7 +215,7 @@ Func DervishRun($X, $Y)
 	Local $me = GetMyAgent()
 	Local $energy
 	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
-		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0 Then UseSkillEx($Pongmei_IAmUnstoppable)
+		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetEffect($ID_Crippled) <> Null Then UseSkillEx($Pongmei_IAmUnstoppable)
 
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then
 			Local $target = GetTargetForDeathsCharge($X, $Y, 700)

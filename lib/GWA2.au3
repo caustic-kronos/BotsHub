@@ -3822,39 +3822,43 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 			$effectStructAddress = MemoryReadPtr($baseAddressPtr, $offset4)
 
 			If $skillID = 0 Then
-				Local $resultArray[$effectCount[1] + 1]
-				$resultArray[0] = $effectCount[1]
+				Local $resultArray[$effectCount[1]]
 				For $i = 0 To $effectCount[1] - 1
-					$resultArray[1 + $i] = SafeDllStructCreate('long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp')
+					$resultArray[$i] = SafeDllStructCreate($effectStructTemplate)
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i + 1]), 'int', 24, 'int', 0)
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i]), 'int', 24, 'int', 0)
 				Next
 				Return $resultArray
 			Else
-				For $j = 0 To $effectCount[1] - 1
+				For $i = 0 To $effectCount[1] - 1
 					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $j, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
 
-					If DllStructGetData($effectStruct, 'SkillID') = $skillID Then
+					If DllStructGetData($effectStruct, 'SkillID') == $skillID Then
 						Return $effectStruct
 					EndIf
 				Next
 			EndIf
 		EndIf
 	Next
-	Local $emptyArray[1] = [0]
-	Return $emptyArray
+	Return Null
 EndFunc
 
 
 ;~ Returns time remaining before an effect expires, in milliseconds.
 Func GetEffectTimeRemaining($effect, $heroIndex = 0)
 	If Not IsDllStruct($effect) Then $effect = GetEffect($effect, $heroIndex)
+	; if hero or player (0) is not under specified effect then 0 will be returned here
+	If $effect == Null Then Return 0
 	If IsArray($effect) Then Return 0
-	Return DllStructGetData($effect, 'Duration') * 1000
-	; Problem here is that DllStructGetData($effect, 'TimeStamp') returns the timestamp when the effect started
-	; But we don't have current timestamp : GetSkillTimer doesn't return it and returns something fixed
-	;Return DllStructGetData($effect, 'Duration') * 1000 - (GetSkillTimer() - DllStructGetData($effect, 'TimeStamp'))
+
+	Local $effectSkill = GetSkillByID(DllStructGetData($effect, 'SkillId'))
+	Local $castTime = DllStructGetData($effectSkill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $aftercast = DllStructGetData($effectSkill, 'Aftercast') * 1000
+
+	; Caution, GetInstanceUpTime() may also include logging into account time which may not be included in in-game cast timestamps, therefore adding GetPing() + 3000 just in case
+	; Caution, other problem is that reapplying the effect doesn't always refresh its start timestamp until first previous effect elapses, therefore capping it to be always bigger or equal to 1 with _Max()
+	Return _Max(DllStructGetData($effect, 'Duration') * 1000 - (GetInstanceUpTime() - (DllStructGetData($effect, 'TimeStamp') + $castTime + $aftercast + GetPing() + 3000)), 1)
 EndFunc
 
 
