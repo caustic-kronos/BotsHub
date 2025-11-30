@@ -36,8 +36,6 @@ Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
 Global Const $ID_unknown_outpost_deposit_points = 193
 
-Global $DonatePoints = True
-
 
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
@@ -70,7 +68,8 @@ Func LuxonFarmSetup()
 		RandomSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
 
-		If $DonatePoints Then
+		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		If $donatePoints Then
 			Info('Donating Luxon faction points')
 			While GetLuxonFaction() >= 5000
 				DonateFaction('Luxon')
