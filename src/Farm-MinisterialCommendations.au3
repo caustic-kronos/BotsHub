@@ -144,8 +144,8 @@ Func SetupMinisterialCommendationsFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
 
+	SetupPlayerMinisterialCommendationsFarm()
 	SetupTeamMinisterialCommendationsFarm()
-	LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 
 	SwitchMode($ID_HARD_MODE)
 	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
@@ -153,9 +153,26 @@ Func SetupMinisterialCommendationsFarm()
 EndFunc
 
 
+Func SetupPlayerMinisterialCommendationsFarm()
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		Info('Player''s profession is dervish. Loading up recommended dervish build automatically')
+		LoadSkillTemplate($DWCommendationsFarmerSkillbar)
+	ElseIf GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+	Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+	EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
 Func SetupTeamMinisterialCommendationsFarm()
 	Info('Setting up team')
-	Sleep(500)
+	Sleep(500 + GetPing())
 	LeaveParty()
 	AddHero($ID_Gwen)
 	AddHero($ID_Norgu)
@@ -164,7 +181,7 @@ Func SetupTeamMinisterialCommendationsFarm()
 	AddHero($ID_ritualist_mercenary_hero)
 	AddHero($ID_Xandra)
 	AddHero($ID_Olias)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
