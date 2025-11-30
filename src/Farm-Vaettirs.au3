@@ -133,8 +133,8 @@ Func MoveRunning($X, $Y)
 		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then TryUseShadowForm()
 
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HP') < 0.9 And GetEnergy() > 10 Then TryUseShroudOfDistress()
-		If DllStructGetData($me, 'HP') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, $target)
+		If DllStructGetData($me, 'HealthPercent') < 0.9 And GetEnergy() > 10 Then TryUseShroudOfDistress()
+		If DllStructGetData($me, 'HealthPercent') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, $target)
 
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then Move($X, $Y)
@@ -416,7 +416,7 @@ Func VaettirsStayAlive()
 	Next
 
 	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()
-	If ($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HP') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0)) And GetEnergy() > 10 Then 
+	If ($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0)) And GetEnergy() > 10 Then
 		TryUseShroudOfDistress()
 	EndIf
 	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()

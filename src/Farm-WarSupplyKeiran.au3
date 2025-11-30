@@ -246,13 +246,13 @@ Func RunWayPoints()
 			Local $Miku = GetAgentByID($AgentID_Miku)
 			If DllStructGetData($Miku, 'X') == 0 And DllStructGetData($Miku, 'Y') == 0 Then Return $FAIL ; check against some impossible scenarios
 			; Using 6th healing skill on the way between waypoints to recover until health is full
-			If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HP') < 0.9 Or DllStructGetData($Miku, 'HP') < 0.9) And IsPlayerAlive() Then UseSkillEx($KeiranNaturesBlessing)
+			If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) And IsPlayerAlive() Then UseSkillEx($KeiranNaturesBlessing)
 			If CountFoesInRangeOfAgent($me, $WarSupplyFightOptions.Item('fightRange')) > 0 Then WarSupplyFarmFight($WarSupplyFightOptions)
 			If GetDistance($me, $Miku) > 1650 Then ; Ensuring that Miku is not too far
 				Info('Miku is too far. Trying to move to her location')
 				MoveTo(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 250)
 			EndIf
-			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, 'HP') > 0.9 And DllStructGetData($Miku, 'HP') > 0.9 Then ExitLoop ; continue running through waypoints
+			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($Miku, 'HealthPercent') > 0.9 Then ExitLoop ; continue running through waypoints
 			Sleep(1000)
 		WEnd
 		If IsPlayerDead() Then Return $FAIL
@@ -290,7 +290,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 
 		; use skills 1, 3, 6 in special circumstances, not specifically on current target
 		; only use Nature's Blessing skill when it is recharged and player's or Miku's HP is below 90%
-		If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HP') < 0.9 Or DllStructGetData($Miku, 'HP') < 0.9) And IsPlayerAlive() Then
+		If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) And IsPlayerAlive() Then
 			UseSkillEx($KeiranNaturesBlessing)
 		EndIf
 

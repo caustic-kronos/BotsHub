@@ -299,7 +299,7 @@ Func MoveToAndAggro($x, $y, $foesGroup)
 		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
 
-	If DllStructGetData($me, 'HP') < 0.75 Or CountAliveHeroes() > 0 Then
+	If DllStructGetData($me, 'HealthPercent') < 0.75 Or CountAliveHeroes() > 0 Then
 		UseSkillEx($Junundu_Wail)
 	EndIf
 	RandomSleep(1000)

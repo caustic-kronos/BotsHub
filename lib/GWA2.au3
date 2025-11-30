@@ -179,7 +179,7 @@ Global $labelsMap[]
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
 Global Const $memoryInfoStructTemplate = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
-Global Const $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
+Global Const $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HealthPercent;dword MaxHealth;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
 Global Const $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
 Global Const $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
 Global Const $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword Id1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword Id2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword Id3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword Id4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword Id5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword Id6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword Id7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword Id8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
@@ -1701,7 +1701,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 	Do
 		Sleep(100)
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HP') <= 0 Then ExitLoop
+		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
 		$oldMapID = $mapID
 		$mapID = GetMapID()
 		If $mapID <> $oldMapID Then ExitLoop
@@ -1757,7 +1757,7 @@ Func GoToAgent($agent, $GoFunction = Null)
 	Do
 		Sleep(100)
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HP') <= 0 Then ExitLoop
+		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
 		$mapLoadingOld = $mapLoading
 		$mapLoading = GetInstanceType()
 		If $mapLoading <> $mapLoadingOld Then ExitLoop
@@ -3255,7 +3255,7 @@ EndFunc
 ;~ Return True if an agent is an NPC, False otherwise
 Func NPCAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> 6 Then Return False
-	If DllStructGetData($agent, 'HP') <= 0 Then Return False
+	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
 	Return True
 EndFunc
@@ -3270,7 +3270,7 @@ EndFunc
 ;~ Return True if an agent is an enemy, False otherwise
 Func EnemyAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> 3 Then Return False
-	If DllStructGetData($agent, 'HP') <= 0 Then Return False
+	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
 	If DllStructGetData($agent, 'TypeMap') == 0x40000 Then Return False	; It's a spirit created by rangers (0x40001 for ritualist's spirits and bone minions)
 	Return True
@@ -3458,7 +3458,7 @@ Func GetPartyDanger($agents = Null, $party = Null)
 	For $i = 0 To UBound($agents) - 1
 		Local $agent = $agents[$i]
 		If GetIsDead($agent) Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		Local $allegiance = DllStructGetData($agent, 'Allegiance')
 		If $allegiance > 3 Then ContinueLoop			; ignore NPCs, spirits, minions, pets
@@ -3525,8 +3525,9 @@ EndFunc
 
 
 ;~ Returns health of an agent. (Must have caused numerical change in health)
-Func GetHealth($agent)
-	Return DllStructGetData($agent, 'HP') * DllStructGetData($agent, 'MaxHP')
+Func GetHealth($agent = -2)
+	If $agent == -2 Then $agent = GetMyAgent()
+	Return DllStructGetData($agent, 'HealthPercent') * DllStructGetData($agent, 'MaxHealth')
 EndFunc
 
 

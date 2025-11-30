@@ -1736,7 +1736,7 @@ Func PrintNPCInformations($npc)
 	Info('ID: ' & DllStructGetData($npc, 'ID'))
 	Info('X: ' & DllStructGetData($npc, 'X'))
 	Info('Y: ' & DllStructGetData($npc, 'Y'))
-	Info('HP: ' & DllStructGetData($npc, 'HP'))
+	Info('HealthPercent: ' & DllStructGetData($npc, 'HealthPercent'))
 	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
 	Info('ModelID: ' & DllStructGetData($npc, 'ModelID'))
 	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
@@ -1895,7 +1895,7 @@ Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = N
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -1919,7 +1919,7 @@ Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Nul
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -1948,7 +1948,7 @@ Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -1976,7 +1976,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -2005,7 +2005,7 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -2478,7 +2478,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 
 			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
-			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HP') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == 3
+			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == 3
 				If IsPlayerDead() Then ExitLoop
 
 				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>

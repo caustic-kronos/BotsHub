@@ -162,7 +162,7 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HP') < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
+		If DllStructGetData($me, 'HealthPercent') < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If Not IsPlayerMoving() Then Move($x, $y)
 		RandomSleep(250)
 		$me = GetMyAgent()
@@ -197,7 +197,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
 		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HP') < 0.9 Then
+		If DllStructGetData($me, 'HealthPercent') < 0.9 Then
 			If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 			If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		EndIf
@@ -301,7 +301,7 @@ Func WaitForSettle($Timeout = 10000)
 	Local $deadlock = TimerInit()
 	While IsPlayerAlive() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
 		If IsPlayerDead() Then Return False
-		If DllStructGetData($me, 'HP') < 0.7 Then Return True
+		If DllStructGetData($me, 'HealthPercent') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
@@ -315,7 +315,7 @@ Func WaitForSettle($Timeout = 10000)
 	$deadlock = TimerInit()
 	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($deadlock) < $Timeout)
 		If IsPlayerDead() Then Return False
-		If DllStructGetData($me, 'HP') < 0.7 Then Return True
+		If DllStructGetData($me, 'HealthPercent') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
 		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
 		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)

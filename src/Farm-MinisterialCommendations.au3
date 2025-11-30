@@ -382,10 +382,10 @@ EndFunc
 ;~ Heal Miku and character if they need it
 Func HelpMikuAndCharacter()
 	Local $me = GetMyAgent()
-	If DllStructGetData(GetMikuAgentOrMine(), 'HP') < 0.50 Then
+	If DllStructGetData(GetMikuAgentOrMine(), 'HealthPercent') < 0.50 Then
 		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, GetMikuAgentOrMine())
 		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, GetMikuAgentOrMine())
-	ElseIf DllStructGetData($me, 'HP') < 0.40 Then
+	ElseIf DllStructGetData($me, 'HealthPercent') < 0.40 Then
 		UseHeroSkill($Hero_Ritualist_SoS, $Spirit_Light, $me)
 		UseHeroSkill($Hero_Necro_BiP, $Spirit_Transfer, $me)
 	EndIf
@@ -459,7 +459,7 @@ Func WaitForPurityBall()
 		EndIf
 
 		; Use defensive and self healing skills
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.90 And IsRecharged($Skill_I_am_unstoppable) Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.90 And IsRecharged($Skill_I_am_unstoppable) Then
 			UseSkillEx($Skill_I_am_unstoppable)
 			RandomSleep(50)
 		EndIf
@@ -476,16 +476,16 @@ Func WaitForPurityBall()
 		;	UseSkillEx($Skill_Mystic_Regeneration)
 		;	RandomSleep(GetPing() + 20)
 		;EndIf
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
 			RandomSleep(GetPing() + 20)
 		EndIf
 
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.45 And IsRecharged($Skill_Grenths_Aura) Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.45 And IsRecharged($Skill_Grenths_Aura) Then
 			UseSkillEx($Skill_Grenths_Aura)
 			RandomSleep(250)
 		EndIf
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
 			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
@@ -520,7 +520,7 @@ Func KillMinistryOfPurity()
 	Local $deadlock
 	Local $foesCount
 
-	If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Grenths_Aura) Then
+	If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($Skill_Grenths_Aura) Then
 		UseSkillEx($Skill_Grenths_Aura)
 		RandomSleep(50)
 	EndIf
@@ -530,7 +530,7 @@ Func KillMinistryOfPurity()
 		UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
 		RandomSleep(50)
 
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
 			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
@@ -558,7 +558,7 @@ Func KillMinistryOfPurity()
 		RandomSleep(200)
 
 		; Heroes with Mystic Healing provide additional long range support
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
 			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
@@ -582,7 +582,7 @@ Func KillMinistryOfPurity()
 	$deadlock = TimerInit()
 	While $foesCount > 0 And TimerDiff($deadlock) < 10000
 		If IsPlayerDead() Then Return
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.70 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
 			UseHeroSkill($Hero_Mesmer_DPS_2, $ESurge2_Mystic_Healing_Skill_Position)
 			UseHeroSkill($Hero_Ritualist_SoS, $SoS_Mystic_Healing_Skill_Position)
@@ -594,7 +594,7 @@ Func KillMinistryOfPurity()
 			RandomSleep(50)
 		EndIf
 
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
 			RandomSleep(1000)
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
@@ -621,12 +621,12 @@ EndFunc
 
 ;~ Heal the character while he is picking items
 Func HealWhilePickingItems()
-	If DllStructGetData(GetMyAgent(), 'HP') < 0.90 Then
+	If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.90 Then
 		If IsRecharged($Skill_Conviction) And GetEffectTimeRemaining(GetEffect($ID_Conviction)) == 0 Then
 			UseSkillEx($Skill_Conviction)
 			RandomSleep(50)
 		EndIf
-		If DllStructGetData(GetMyAgent(), 'HP') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
+		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($Skill_Vital_Boon) And GetEffectTimeRemaining(GetEffect($ID_Vital_Boon)) == 0 Then
 			UseSkillEx($Skill_Vital_Boon)
 			RandomSleep(GetPing() + 20)
 		;If IsRecharged($Skill_Mystic_Regeneration) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Regeneration)) == 0 Then
