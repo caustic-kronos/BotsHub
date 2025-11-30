@@ -101,8 +101,8 @@ Global Const $FAIL = 1
 Global Const $PAUSE = 2
 Global Const $STUCK = 3
 
-; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
-Global $STATUS = 'STOPPED'
+; UNINITIALIZED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
+Global $STATUS = 'UNINITIALIZED'
 Global $RUN_MODE = 'AUTOLOAD'
 Global $PROCESS_ID = ''
 Global $LOG_LEVEL = $LVL_INFO
@@ -587,7 +587,7 @@ EndFunc
 ;~ Function handling start button
 Func StartButtonHandler()
 	Switch $STATUS
-		Case 'STOPPED'
+		Case 'UNINITIALIZED'
 			Info('Initializing...')
 			If (Authentification() <> $SUCCESS) Then Return
 			$STATUS = 'INITIALIZED'
@@ -1360,6 +1360,7 @@ Func UpdateStats($result, $elapsedTime = 0)
 	Local Static $runs = 0
 	Local Static $successes = 0
 	Local Static $failures = 0
+	Local Static $successRatio = 0
 	Local Static $totalTime = 0
 	Local Static $TotalChests = 0
 	Local Static $InitialExperience = GetExperience()
@@ -1380,11 +1381,13 @@ Func UpdateStats($result, $elapsedTime = 0)
 	ElseIf $result == $SUCCESS Then
 		$successes += 1
 		$runs += 1
+		$successRatio = Round(($successes / $runs) * 100, 2)
 		$totalTime += $elapsedTime
 	; $FAIL = 1 : Failed farm run
 	ElseIf $result == $FAIL Then
 		$failures += 1
 		$runs += 1
+		$successRatio = Round(($successes / $runs) * 100, 2)
 		$totalTime += $elapsedTime
 	EndIf
 	; $PAUSE = 2 : Paused run or will pause
@@ -1393,6 +1396,7 @@ Func UpdateStats($result, $elapsedTime = 0)
 	GUICtrlSetData($GUI_Label_Runs_Value, $runs)
 	GUICtrlSetData($GUI_Label_Successes_Value, $successes)
 	GUICtrlSetData($GUI_Label_Failures_Value, $failures)
+	GUICtrlSetData($GUI_Label_SuccessRatio_Value, $successRatio & ' %')
 	GUICtrlSetData($GUI_Label_Time_Value, ConvertTimeToHourString($totalTime))
 	Local $timePerRun = $runs == 0 ? 0 : $totalTime / $runs
 	GUICtrlSetData($GUI_Label_TimePerRun_Value, ConvertTimeToMinutesString($timePerRun))
