@@ -34,7 +34,6 @@ Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
-Global Const $ID_unknown_outpost_deposit_points = 193
 
 Global $DonatePoints = True
 
@@ -63,7 +62,7 @@ Func LuxonFarmSetup()
 	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	; Assuming that team has been set up correctly manually
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
-		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
+		DistrictTravel($ID_Cavalon, $DISTRICT_NAME)
 		RandomSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
 
