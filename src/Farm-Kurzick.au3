@@ -36,7 +36,6 @@ Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
 
-Global $DonatePoints = True
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
@@ -68,7 +67,8 @@ Func KurzickFarmSetup()
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
 
-		If $DonatePoints Then
+		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		If $donatePoints Then
 			Info('Donating Kurzick faction points')
 			While GetKurzickFaction() >= 5000
 				DonateFaction('kurzick')
