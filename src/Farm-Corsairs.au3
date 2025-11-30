@@ -30,6 +30,8 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
+Global Const $MoPCorsairsHeroSkillbar = 'OwkjAlNpJP3Ya8HRmAAAAAAAA'
+Global Const $DRCorsairsHeroSkillbar = 'OgKjwOqMGPPn7LAAAAAAA+mhD'
 Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -62,7 +64,11 @@ Global $Bohseda_Timer
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $CORSAIRS_FARM_SETUP Then SetupCorsairsFarm()
+	If Not $CORSAIRS_FARM_SETUP Then
+		If SetupCorsairsFarm() == $FAIL Then Return $PAUSE
+	EndIf
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+
 	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()
 	BackToModdokCreviceOutpost()
@@ -82,27 +88,41 @@ Func SetupCorsairsFarm()
 		Sleep(6000)
 	EndIf
 	SwitchMode($ID_HARD_MODE)
-	SetupTeamCorsairsFarm()
-	LoadSkillTemplate($RACorsairsFarmerSkillbar)
+	If SetupPlayerCorsairsFarm() == $FAIL Then Return $FAIL
+	If SetupTeamCorsairsFarm() == $FAIL Then Return $FAIL
 	$CORSAIRS_FARM_SETUP = True
 	Info('Preparations complete')
 EndFunc
 
 
+Func SetupPlayerCorsairsFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
+		LoadSkillTemplate($RACorsairsFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as ranger')
+ 		Return $FAIL
+   EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
 Func SetupTeamCorsairsFarm()
 	Info('Setting up team')
-	Sleep(500)
+	Sleep(500 + GetPing())
 	LeaveParty()
-	Sleep(500)
 	AddHero($ID_Dunkoro)
 	AddHero($ID_Melonni)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 3 Then
 		Warn('Could not set up party correctly. Team size different than 3')
 		Return $FAIL
 	EndIf
-	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 1)
-	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 2)
+	LoadSkillTemplate($MoPCorsairsHeroSkillbar, 1)
+	LoadSkillTemplate($DRCorsairsHeroSkillbar, 2)
+	Sleep(500 + GetPing())
 	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
 	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
 EndFunc

@@ -60,7 +60,9 @@ Global $FEATHERS_FARM_SETUP = False
 ;~ Main method to farm feathers
 Func FeathersFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $FEATHERS_FARM_SETUP Then SetupFeathersFarm()
+	If Not $FEATHERS_FARM_SETUP Then
+		If SetupFeathersFarm() == $FAIL Then Return $PAUSE
+	EndIf
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToJayaBluffs()
@@ -75,8 +77,8 @@ Func SetupFeathersFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
 	SwitchMode($ID_NORMAL_MODE)
+	If SetupPlayerFeathersFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer
-	LoadSkillTemplate($DAFeathersFarmerSkillbar)
 
 	Info('Entering Jaya Bluffs')
 	Local $me = GetMyAgent()
@@ -92,6 +94,20 @@ Func SetupFeathersFarm()
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
 	$FEATHERS_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerFeathersFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($DAFeathersFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as dervish')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 

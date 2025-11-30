@@ -1028,7 +1028,7 @@ Func UpdateFarmDescription($Farm)
 		Case 'Sunspear Armor'
 			GUICtrlSetData($GUI_Label_FarmInformations, $SunspearArmorInformations)
 		Case 'Tasca'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaDervishChestRunnerSkillbar & '		' & $TascaAssassinChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $TascaChestRunInformations)
 		Case 'Vaettirs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)

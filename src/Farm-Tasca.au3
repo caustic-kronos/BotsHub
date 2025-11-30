@@ -30,7 +30,8 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $TascaChestRunnerSkillbar = 'Ogej4NfMLTHQ3l8I6M0kNQ4OIQA'
+Global Const $TascaDervishChestRunnerSkillbar = 'OgejwyezHT8I6MHQ3l0kNQ4OIQ'
+Global Const $TascaAssassinChestRunnerSkillbar = 'OwBj4xf84Q8I6MHQ3l0kNQ4OIQ'
 Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -43,14 +44,14 @@ Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 Global Const $TASCA_FARM_DURATION = (3 * 60) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Tasca_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Tasca_ShroudOfDistress	= 1
-Global Const $Tasca_DwarvenStability	= 2
-Global Const $Tasca_DeadlyParadox		= 3
-Global Const $Tasca_ShadowForm			= 4
-Global Const $Tasca_IAmUnstoppable		= 5
-Global Const $Tasca_DarkEscape			= 6
-Global Const $Tasca_DeathsCharge		= 7
-Global Const $Tasca_HeartOfShadow		= 8
+Global Const $Tasca_DeadlyParadox 		= 1
+Global Const $Tasca_ShadowForm 			= 2
+Global Const $Tasca_ShroudOfDistress 	= 3
+Global Const $Tasca_DwarvenStability 	= 4
+Global Const $Tasca_IAmUnstoppable 		= 5
+Global Const $Tasca_DarkEscape 			= 6
+Global Const $Tasca_DeathsCharge 		= 7
+Global Const $Tasca_HeartOfShadow 		= 8
 
 Global Const $TASCA_CHEST_RANGE = 1.5 * $RANGE_SPELLCAST
 
@@ -59,7 +60,7 @@ Global $TASCA_FARM_SETUP = False
 ;~ Main method to chest farm Tasca
 Func TascaChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $TASCA_FARM_SETUP Then SetupTascaFarm()
+	If Not $TASCA_FARM_SETUP Then SetupTascaChestFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToTascasDemise()
@@ -70,12 +71,12 @@ EndFunc
 
 
 ;~ Tasca chest farm setup
-Func SetupTascaFarm()
+Func SetupTascaChestFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
 	UseCitySpeedBoost()
-	OmniFarmFullSetup()
-	LoadSkillTemplate($TascaChestRunnerSkillbar)
+	SetupPlayerTascaChestFarm()
+	SetupTeamTascaChestFarm()
 	SwitchToHardModeIfEnabled()
 
 	GoToTascasDemise()
@@ -85,6 +86,31 @@ Func SetupTascaFarm()
 	WaitMapLoading($ID_The_Granite_Citadel, 10000, 1000)
 	$TASCA_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerTascaChestFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($TascaDervishChestRunnerSkillbar)
+    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Assassin Then
+		LoadSkillTemplate($TascaAssassinChestRunnerSkillbar)
+    Else
+    	Warn('Should run this farm as dervish or assassin')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamTascaChestFarm()
+	Info('Setting up team according to default settings')
+	OmniFarmFullSetup()
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 

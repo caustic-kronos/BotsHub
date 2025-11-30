@@ -54,7 +54,9 @@ Global $DM_FARM_SETUP = False
 ;~ Main method to farm Dragon Moss
 Func DragonMossFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $DM_FARM_SETUP Then SetupDragonMossFarm()
+	If Not $DM_FARM_SETUP Then
+		If SetupDragonMossFarm() == $FAIL Then Return $PAUSE
+	EndIf
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToDrazachThicket()
@@ -69,8 +71,8 @@ Func SetupDragonMossFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
+	If SetupPlayerDragonMossFarm() Then Return $FAIL
 	LeaveParty() ; solo farmer
-	LoadSkillTemplate($RADragonMossFarmerSkillbar)
 	GoToDrazachThicket()
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
@@ -78,6 +80,20 @@ Func SetupDragonMossFarm()
 	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
 	$DM_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerDragonMossFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
+		LoadSkillTemplate($RADragonMossFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as ranger')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 
