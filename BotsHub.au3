@@ -1059,7 +1059,7 @@ Func RunFarmLoop($Farm)
 			$result = TascaChestFarm($STATUS)
 		Case 'Vaettirs'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result = VaettirFarm($STATUS)
+			$result = VaettirsFarm($STATUS)
 		Case 'Vanguard'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = VanguardTitleFarm($STATUS)
@@ -1123,6 +1123,7 @@ Func ResetBotsSetups()
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$PONGMEI_FARM_SETUP					= False
+	;$VAETTIRS_FARM_SETUP					= False
 	;$VOLTAIC_FARM_SETUP					= False
 	;$WARSUPPLY_FARM_SETUP					= False
 EndFunc
@@ -1213,7 +1214,8 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaDervishChestRunnerSkillbar & '		' & $TascaAssassinChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $TascaChestRunInformations)
 		Case 'Vaettirs'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar & '		' & $MeAVaettirsFarmerSkillbar & _
+				 						@CRLF & $MoAVaettirsFarmerSkillbar & '		' & $EMeVaettirsFarmerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
 		Case 'Vanguard'
 			GUICtrlSetData($GUI_Label_FarmInformations, $VanguardTitleFarmInformations)
