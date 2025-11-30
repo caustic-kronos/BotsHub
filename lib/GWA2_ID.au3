@@ -473,12 +473,18 @@ Global Const $ID_Whirlwind_Attack				= 2107
 ; Ranger
 Global Const $ID_Troll_Unguent					= 446
 Global Const $ID_Whirling_Defense				= 450
+Global Const $ID_Quickening_Zephyr				= 475
 ; Monk
 Global Const $ID_Unyielding_Aura				= 268
 Global Const $ID_Light_of_Dwayna				= 304
 Global Const $ID_Resurrect						= 305
 Global Const $ID_Rebirth						= 306
 Global Const $ID_Restore_Life					= 314
+Global Const $ID_Balthazars_Spirit				= 242
+Global Const $ID_Watchful_Spirit				= 255
+Global Const $ID_Life_Barrier					= 270
+Global Const $ID_Life_Bond						= 241
+Global Const $ID_Vital_Blessing					= 289
 Global Const $ID_Vengeance						= 315
 Global Const $ID_Ray_of_Judgement				= 830
 Global Const $ID_Resurrection_Chant				= 1128
@@ -488,19 +494,30 @@ Global Const $ID_Animate_Bone_Minions			= 85
 Global Const $ID_Death_Nova						= 104
 Global Const $ID_Animate_Flesh_Golem			= 832
 ; Mesmer
-Global Const $ID_Empathy						= 26
+Global Const $ID_Empathy 						= 26
+Global Const $ID_Sympathetic_Visage				= 34
 Global Const $ID_Channeling						= 38
 Global Const $ID_Arcane_Echo					= 75
+Global Const $ID_Ancestors_Visage				= 1054
 Global Const $ID_Wastrels_Demise				= 1335
 ; Elementalist
+Global Const $ID_Elemental_Attunement			= 164
+Global Const $ID_Meteor							= 187
+Global Const $ID_Rodgorts_Invocation			= 189
 Global Const $ID_Meteor_Shower					= 192
+Global Const $ID_Flare							= 194
+Global Const $ID_Searing_Heat					= 196
 Global Const $ID_Fire_Storm						= 197
+Global Const $ID_Glyph_of_Elemental_Power		= 198
 Global Const $ID_Unsteady_Ground				= 1083
 Global Const $ID_Sand_Storm						= 1372
 Global Const $ID_Savannah_Heat					= 1380
 ; Assassin
 Global Const $ID_Shadow_Refuge					= 814
+Global Const $ID_Shadow_Form					= 826
+Global Const $ID_Way_of_Perfection				= 1028
 Global Const $ID_Shroud_of_Distress				= 1031
+Global Const $ID_Dark_Escape					= 1037
 ; Ritualist
 Global Const $ID_Flesh_of_My_Flesh				= 791
 Global Const $ID_Union							= 911
@@ -528,10 +545,14 @@ Global Const $ID_Resurrection_Signet			= 2
 ; PvE
 Global Const $ID_Sunspear_Rebirth_Signet		= 1816
 Global Const $ID_Junundu_Wail					= 1865
+Global Const $ID_Intensity						= 2104
 Global Const $ID_Eternal_Aura					= 2109
 Global Const $ID_By_Urals_Hammer				= 2217
+Global Const $ID_Great_Dwarf_Armor				= 2220
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
+Global Const $ID_I_Am_Unstoppable				= 2356
 Global Const $ID_Mental_Block					= 2417
+Global Const $ID_Dwarven_Stability				= 2423
 ; Food and drink boosts
 Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
 Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
