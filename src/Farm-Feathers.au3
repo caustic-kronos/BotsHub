@@ -346,7 +346,7 @@ EndFunc
 ;~ Return True if agent is a Sensali
 Func IsSensali($agent)
 	Local $modelID = DllStructGetData($agent, 'ModelID')
-	If $modelID = $ModelID_Sensali_Claw Or $modelID = $ModelID_Sensali_Darkfeather Or $modelID = $ModelID_Sensali_Cutter Then
+	If $modelID == $ModelID_Sensali_Claw Or $modelID == $ModelID_Sensali_Darkfeather Or $modelID == $ModelID_Sensali_Cutter Then
 		Return True
 	EndIf
 	Return False

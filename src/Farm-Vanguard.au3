@@ -51,7 +51,7 @@ EndFunc
 
 Func VanguardTitleFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Doomlore_Shrine Then TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Ebon_Vanguard_Title)
 	SwitchMode($ID_HARD_MODE)
 	SetupPlayerVanguardTitleFarm()

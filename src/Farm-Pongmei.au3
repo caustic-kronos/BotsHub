@@ -313,7 +313,7 @@ Func GetNPCInTheBack($X, $Y)
 EndFunc
 
 
-;~ Get a foe that in front of player and close enough to point (X, Y) to use Death Charge on
+;~ Get a foe that in front of player and close enough to point (X, Y) to use Death's Charge on
 Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')

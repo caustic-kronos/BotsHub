@@ -246,7 +246,7 @@ Func TASCADervishRun($X, $Y)
 		EndIf
 
 		TascaDefendFunction($X, $Y)
-		; Energy usage becomes too heavy if we start using DC as a speedup
+		; Energy usage becomes too heavy if we start using Death's Charge as a speedup
 		;If GetEnergy() >= 5 And IsRecharged($Tasca_DeathsCharge) Then
 		;	Local $target = GetTargetForDeathsCharge($X, $Y, 700)
 		;	If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
@@ -273,7 +273,7 @@ Func TASCADervishRun($X, $Y)
 EndFunc
 
 
-;~ Get a foe close enough to use Death Charge on and as close as possible to coordinates
+;~ Get a foe close enough to use Death's Charge on and as close as possible to coordinates
 Func GetTargetToEscapeWithDeathsCharge($X, $Y)
 	Local $targetDistance = 999999
 	Local $target = Null

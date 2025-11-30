@@ -26,7 +26,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $FroggyFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '32mn average in NM' & @CRLF _

@@ -84,9 +84,9 @@ Global Const $Armor_of_Unfeeling_Skill_Position		= 5
 Global Const $SBoon_of_creation_Skill_Position		= 6
 Global Const $Prot_Mystic_Healing_Skill_Position	= 7
 ; BiP Necro
-Global Const $Recovery_Skill_Position				= 8
-Global Const $Blood_bond_Skill_Position				= 2
-Global Const $Spirit_Transfer						= 4
+Global Const $Blood_bond_Skill_Position = 2
+Global Const $Spirit_Transfer 			= 4
+Global Const $Recovery_Skill_Position 	= 8
 
 ; Order heros are added to the team
 Global Const $Hero_Mesmer_DPS_1			= 1

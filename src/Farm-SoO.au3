@@ -26,7 +26,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $SoOFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '45mn average in NM' & @CRLF _

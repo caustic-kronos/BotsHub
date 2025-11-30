@@ -31,13 +31,13 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $WarSupplyKeiranInformations = 'For best results, have :' & @CRLF _
-	& ' - (Weapon Slot-3) Shortbow +15/-5 vamp +5 armor is the best weapon' & @CRLF _
-	& ' - (Weapon Slot-4) Keiran''s Bow' & @CRLF _ ; escaped character ' with '' here
-	& ' - Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
-	& ' - When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
-	& ' - Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
-	& ' - This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
-	& ' - Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
+	& '- (Weapon Slot-3) Shortbow +15/-5 vamp +5 armor is the best weapon' & @CRLF _
+	& '- (Weapon Slot-4) Keiran''s Bow' & @CRLF _ ; escaped character ' with '' here
+	& '- Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
+	& '- When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
+	& '- Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
+	& '- This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
+	& '- Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
 	& ' ' & @CRLF _
 	& 'Any character can go into Auspicious Beginnings mission if you send the right dialog ID (already in script) to Guild Wars client' & @CRLF _
 	& 'You just need the Keiran''s Bow which Gwen gives when the right dialog ID is sent to Guild Wars client' & @CRLF _
@@ -117,9 +117,9 @@ Func GetKeiranBow()
 	Local $bowDialogID = 0x8A ; hexadecimal code of dialog id to receive keiran's bow
 	Local $Gwen = GetNearestNPCToCoords(-6583, 6672) ; coordinates of Gwen inside Hall of Monuments location
 	GoToNPC($Gwen)
-	RandomSleep(500)
+	Sleep(500 + GetPing())
 	dialog($bowDialogID) ; start a dialog with Gwen and send a packet for receiving Keiran Bow
-	RandomSleep(500)
+	Sleep(500 + GetPing())
 EndFunc
 
 

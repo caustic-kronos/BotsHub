@@ -65,7 +65,7 @@ EndFunc
 ;~ Setup for the Lightbringer farm
 Func LightbringerFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Remains_of_Sahlahja Then TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	SetupPlayerLightbringerFarm()

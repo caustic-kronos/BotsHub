@@ -51,7 +51,7 @@ EndFunc
 
 Func NornTitleFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Olafstead Then TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Norn_Title)
 	SwitchMode($ID_HARD_MODE)
 	SetupPlayerNornTitleFarm()

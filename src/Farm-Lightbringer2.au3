@@ -51,7 +51,7 @@ EndFunc
 
 Func Lightbringer2FarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Kodash_Bazaar Then TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
 	SetupPlayerLightbringer2Farm()
