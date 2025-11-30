@@ -78,7 +78,7 @@ Func RunToJagaMoraine()
 	RandomSleep(500)
 
 	Info('Running to Jaga Moraine')
-	Local $pathToJaga[30][2] = [ _
+	Local Static $pathToJaga[30][2] = [ _
 		[15003.8,	-16598.1], _
 		[15003.8,	-16598.1], _
 		[12699.5,	-14589.8], _

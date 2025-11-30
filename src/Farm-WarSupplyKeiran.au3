@@ -200,7 +200,7 @@ EndFunc
 
 
 Func RunWayPoints()
-	Local $wayPoints[26][3] = [ _
+	Local Static $wayPoints[26][3] = [ _
 		[11125, -5226, 'Main Path 1'], _
 		[11000, -5200, 'Main Path 2'], _
 		[10750, -5500, 'Main Path 3'], _
