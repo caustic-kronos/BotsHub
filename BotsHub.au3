@@ -113,6 +113,7 @@ Global $INVENTORY_SPACE_NEEDED = 5
 
 Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstones|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
+Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 #EndRegion Variables
 
 
@@ -123,7 +124,7 @@ Opt('MustDeclareVars', True)
 
 Global $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI_Tab_LootOptions, $GUI_Tab_FarmInfos, $GUI_Tab_LootComponents
 Global $GUI_Console, $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress
-Global $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution, $GUI_Label_BagsCount, $GUI_Input_BagsCount, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
+Global $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution, $GUI_Label_BagsCount, $GUI_Combo_BagsCount, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
 
 Global $GUI_Group_RunInfos, _
 		$GUI_Label_Runs_Text, $GUI_Label_Runs_Value, $GUI_Label_Successes_Text, $GUI_Label_Successes_Value, $GUI_Label_Failures_Text, $GUI_Label_Failures_Value, $GUI_Label_Time_Text, $GUI_Label_Time_Value, _
@@ -306,8 +307,8 @@ Func createGUI()
 	$GUI_Group_ConsumableOptions = GUICtrlCreateGroup('More options', 305, 40, 271, 361)
 	$GUI_Checkbox_UseConsumables = GUICtrlCreateCheckbox('Any consumable required by farm', 315, 65, 256, 20)
 	$GUI_Label_BagsCount = GUICtrlCreateLabel('Number of bags:', 315, 95, 80, 20)
-	$GUI_Input_BagsCount = GUICtrlCreateInput('5', 400, 95, 20, 20, $ES_NUMBER)
-	GUICtrlSetOnEvent($GUI_Input_BagsCount, 'GuiButtonHandler')
+	$GUI_Combo_BagsCount = GUICtrlCreateCombo('5', 400, 95, 20, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetOnEvent($GUI_Combo_BagsCount, 'GuiButtonHandler')
 	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 315, 125, 70, 20)
 	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('Random', 400, 122, 100, 20)
 	$GUI_Checkbox_HM = GUICtrlCreateCheckbox('Hard Mode', 31, 94, 156, 20)
@@ -515,8 +516,8 @@ Func GuiButtonHandler()
 			TabHandler()
 		Case $GUI_Combo_FarmChoice
 			UpdateFarmDescription(GUICtrlRead($GUI_Combo_FarmChoice))
-		Case $GUI_Input_BagsCount
-			$BAGS_COUNT = Number(GUICtrlRead($GUI_Input_BagsCount))
+		Case $GUI_Combo_BagsCount
+			$BAGS_COUNT = Number(GUICtrlRead($GUI_Combo_BagsCount))
 			$BAGS_COUNT = _Max($BAGS_COUNT, 1)
 			$BAGS_COUNT = _Min($BAGS_COUNT, 5)
 		Case $GUI_Combo_ConfigChoice
@@ -1111,7 +1112,6 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.store_leftovers', GUICtrlRead($GUI_Checkbox_StoreTheRest) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.store_gold', GUICtrlRead($GUI_Checkbox_StoreGold) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
-	_JSON_addChangeDelete($jsonObject, 'run.bags_count', Number(GUICtrlRead($GUI_Input_BagsCount)))
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials', GUICtrlRead($GUI_Checkbox_FarmMaterials) == 1)
 	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', GUICtrlRead($GUI_Checkbox_DisableRendering) == 1)
 	_JSON_addChangeDelete($jsonObject, 'consumables.consume', GUICtrlRead($GUI_Checkbox_UseConsumables) == 1)
@@ -1138,6 +1138,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'loot.consumables.trick_or_treat_bags', GUICtrlRead($GUI_Checkbox_LootToTBags) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.consumables.candy_cane_shards', GUICtrlRead($GUI_Checkbox_LootCandyCaneShards) == 1)
 	_JSON_addChangeDelete($jsonObject, 'loot.consumables.lunar_tokens', GUICtrlRead($GUI_Checkbox_LootLunarTokens) == 1)
+	_JSON_addChangeDelete($jsonObject, 'run.bags_count', Number(GUICtrlRead($GUI_Combo_BagsCount)))
 	Return _JSON_Generate($jsonObject)
 EndFunc
 
@@ -1171,7 +1172,7 @@ Func ReadConfigFromJson($jsonString)
 	$bagsCount = _Max($bagsCount, 1)
 	$bagsCount = _Min($bagsCount, 5)
 	$BAGS_COUNT = $bagsCount
-	GUICtrlSetData($GUI_Input_BagsCount, $bagsCount)
+	GUICtrlSetData($GUI_Combo_BagsCount, $bagsCount)
 	GUICtrlSetState($GUI_Checkbox_FarmMaterials, _JSON_Get($jsonObject, 'run.farm_materials') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_DisableRendering, _JSON_Get($jsonObject, 'run.disable_rendering') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'consumables.consume') ? $GUI_CHECKED : $GUI_UNCHECKED)
