@@ -232,6 +232,12 @@ Global Const $ID_Dervish		= 10
 #EndRegion Professions
 
 
+#Region Hero combat behaviour
+Global Const $ID_Hero_fighting	= 0
+Global Const $ID_Hero_guarding	= 1
+Global Const $ID_Hero_avoiding	= 2
+#EndRegion Hero combat behaviour
+
 #Region Agents Allegiance
 Global Const $ID_Allegiance_Team	= 1 ; player and team party members
 Global Const $ID_Allegiance_Animal	= 2 ; untamed animals
