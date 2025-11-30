@@ -2827,6 +2827,9 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	Local $level
 
 	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
+	If $secondaryProfession == 0 Then
+		$secondaryProfession = DllStructGetData(GetAgentByID(GetHeroID($heroIndex)), 'Secondary')
+	EndIf
 
 	$deadlock = TimerInit()
 	; Setting up secondary profession
