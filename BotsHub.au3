@@ -56,6 +56,7 @@
 #include 'src/Farm-Feathers.au3'
 #include 'src/Farm-Follower.au3'
 #include 'src/Farm-FoW.au3'
+#include 'src/Farm-FoWTowerOfCourage.au3'
 #include 'src/Farm-Froggy.au3'
 #include 'src/Farm-Gemstones.au3'
 #include 'src/Farm-GemstoneStygian.au3'
@@ -112,7 +113,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstones|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic execution'
+Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_HEROES = '|Norgu|Goren|Tahlkora|Master of Whispers|Acolyte Jin|Koss|Dunkoro|Acolyte Sousuke|Melonni|Zhed Shadowhoof|General Morgahn|Margrid the Sly|Zenmai|Olias|Razah|MOX|Keiran Thackeray|Jora|Pyre Fierceshot|Anton|Livia|Hayda|Kahmu|Gwen|Xandra|Vekk|Ogden|Miku|ZeiRi'
@@ -989,6 +990,9 @@ Func RunFarmLoop($Farm)
 		Case 'FoW'
 			$INVENTORY_SPACE_NEEDED = 15
 			$result = FoWFarm($STATUS)
+		Case 'FoW Tower of Courage'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = FoWToCFarm($STATUS)
 		Case 'Froggy'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = FroggyFarm($STATUS)
@@ -1145,6 +1149,9 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
 		Case 'FoW'
 			GUICtrlSetData($GUI_Label_FarmInformations, $FoWFarmInformations)
+		Case 'FoW Tower of Courage'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $RAFoWToCFarmerSkillBar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $FoWToCFarmInformations)
 		Case 'Froggy'
 			GUICtrlSetData($GUI_Label_FarmInformations, $FroggyFarmInformations)
 		Case 'Gemstones'
@@ -1882,6 +1889,8 @@ Func SelectFarmDuration($Farm)
 			Return 30 * 60 * 1000
 		Case 'FoW'
 			Return $FOW_FARM_DURATION
+		Case 'FoW Tower of Courage'
+			Return $FOW_TOC_FARM_DURATION
 		Case 'Gemstones'
 			Return $GEMSTONES_FARM_DURATION
 		Case 'Gemstone Stygian'
