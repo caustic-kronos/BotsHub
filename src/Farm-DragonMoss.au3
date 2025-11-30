@@ -25,7 +25,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'

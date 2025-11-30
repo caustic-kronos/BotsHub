@@ -26,7 +26,7 @@
 ; Possible improvements :
 ; - noticed some scenarios where map is not cleared - check whether this can be fixed by adding a few additional locations
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _

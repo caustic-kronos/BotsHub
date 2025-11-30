@@ -25,7 +25,7 @@
 
 ; Possible improvements : rewrite it all
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'

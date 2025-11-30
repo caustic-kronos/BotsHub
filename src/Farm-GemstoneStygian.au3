@@ -13,7 +13,7 @@ https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer
 #RequireAdmin
 #NoTrayIcon
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 #include '../lib/GWA2.au3'
 #include '../lib/GWA2_ID.au3'

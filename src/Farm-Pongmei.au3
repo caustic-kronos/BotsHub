@@ -26,7 +26,7 @@
 ; Possible improvements :
 ; Replacing shadow form by something to tank assassins and warriors instead might be better
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'

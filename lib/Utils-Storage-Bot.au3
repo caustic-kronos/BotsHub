@@ -26,7 +26,7 @@
 #include 'Utils-Items_Modstructs.au3'
 #include 'Utils-Debugger.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 Global $SQLITE_DB
 
