@@ -138,7 +138,7 @@ Func RandomDistrictTravel($mapID, $district = 12)
 EndFunc
 
 
-Func TravelToOutpost($outpostId, $district = 'Random')
+Func TravelToOutpost($outpostId, $district = 'Random', $maxWaitTime = 10000)
 	Local $startLocation = GetMapID()
 	Local $outpostName = $LocationMapNames[$outpostId]
 	If GetMapID() == $outpostId Then
@@ -147,12 +147,16 @@ Func TravelToOutpost($outpostId, $district = 'Random')
 	Endif
 	Info('Travelling to ' & $outpostName & ' (outpost)')
 	DistrictTravel($outpostId, $district)
-	RandomSleep(2000)
-	If GetMapID() == $startLocation Then
-		Warn('Player probably does not have access to specified location')
-		Disconnected()
+	Local $travelTimer = TimerInit()
+	While GetMapID() <> $outpostId And TimerDiff($travelTimer) < $maxWaitTime
+		Sleep(1000)
+	WEnd
+	If GetMapID() <> $outpostId Then
+		Warn('Player may not have access to ' & $outpostName & ' (outpost)')
+		Return $FAIL
+	Else
+		Return $SUCCESS
 	EndIf
-	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
 EndFunc
 
 
