@@ -78,11 +78,18 @@ Enormous modifications were made, to the point this bot is probably not in any w
 	Enormous modifications were made, to the point this bot is probably not in any way, shape or form close to its original version, which was named WarSupply/Keiran.
 - License: licensed under Apache 2.0
 
-### 'Farm-GemstoneStygian.au3'
+### 'Farm-GemstoneMargonite.au3' 'Farm-GemstoneStygian.au3'
 - Author: TonReuf
 - Contributor: Gahais
-- Notes: Major modifications were made.
+- Notes: Major modifications were made, to the point these bots are probably not similar to their original versions
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
+
+### 'Farm-FoWTowerOfCourage.au3'
+- Authors: Zaishen, RiflemanX, Monk Reborn
+- Contributor: Gahais
+- Notes: Major modifications were made, to the point this bot is probably not similar to its original version
+- License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
+
 
 ### 'Farm-Corsairs.au3' 'Farm-DragonMoss.au3' 'Farm-EdenIris.au3' 'Farm-Follower.au3' 'Farm-JadeBrotherhood.au3' 'Farm-Kournans.au3' 'Farm-Mantids.au3' 'Farm-Pongmei.au3' 'Farm-SpiritSlaves.au3' 'Farm-Tasca.au3'
 - Author: Kronos
