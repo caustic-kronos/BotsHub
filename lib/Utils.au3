@@ -72,49 +72,34 @@ Func RunTests($STATUS)
 EndFunc
 
 
-;~ Allows the user to run functions by hand
-Func DynamicExecution($args)
-	Local $arguments = ParseFunctionArguments($args)
-	Switch $arguments[0]
-		Case 0
-			Error('Call to nothing ?!')
-			Return
-		Case 1
-			Info('Call to ' & $arguments[1])
-			Call($arguments[1])
-		Case 2
-			Info('Call to ' & $arguments[1] & ' ' & $arguments[2])
-			Call($arguments[1], $arguments[2])
-		Case 3
-			Info('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3])
-			Call($arguments[1], $arguments[2], $arguments[3])
-		Case 4
-			Info('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3] & ' ' & $arguments[4])
-			Call($arguments[1], $arguments[2], $arguments[3], $arguments[4])
-		Case Else
-			MsgBox(0, 'Error', 'Too many arguments provided to that function.')
-	EndSwitch
+;~ Allows the user to run a function by hand in a call fun(arg1, arg2, [...])
+Func DynamicExecution($functionCall)
+	Local $openParenthesisPosition = StringInStr($functionCall, '(')
+	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
+	If $functionName == '' Then
+		Info('Call to nothing ?!')
+		Return
+	EndIf
+	Info('Call to ' & $functionName)
+	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
+	Local $functionArguments = ParseFunctionArguments($argumentsString)
+	Local $arguments[1] = ["CallArgArray"] ; special flag to be able to pass unlimited array of arguments into Call() function
+	_ArrayConcatenate($arguments, $functionArguments)
+	Call($functionName, $arguments)
 EndFunc
 
 
-;~ Find out the function name and the arguments in a call fun(arg1, arg2, [...])
-Func ParseFunctionArguments($functionCall)
-	Local $openParenthesisPosition = StringInStr($functionCall, '(')
-	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
-
-	Local $arguments[2] = [1, $functionName]
-	Info($functionName)
-	Local $commaPosition = $openParenthesisPosition + 1
-	Local $temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
-	While $temp <> 0
-		_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, $temp - $commaPosition))
-		Info(StringMid($functionCall, $commaPosition, $temp - $commaPosition))
+;~ Return the array of arguments from input string in a syntax arg1, arg2, [...]
+Func ParseFunctionArguments($args)
+	Local $arguments[0]
+	Local $temp = 0, $commaPosition = 1
+	While $commaPosition < StringLen($args)
+		$temp = StringInStr($args, ',', 0, 1, $commaPosition)
+		If $temp == 0 Then $temp = StringLen($args)
+		Info(StringMid($args, $commaPosition, $temp - $commaPosition))
+		_ArrayAdd($arguments, StringMid($args, $commaPosition, $temp - $commaPosition))
 		$commaPosition = $temp + 1
-		$temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
 	WEnd
-	_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
-	Info(StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
-	$arguments[0] = Ubound($arguments) - 1
 	Return $arguments
 EndFunc
 
