@@ -173,7 +173,7 @@ Func GemstoneStygianFarmLoop()
 	Sleep(1000)
 	Dialog(0x82E601)
 	Sleep(1000)
-	If GetQuestByID(0x2E6) == 0 Then Return $FAIL
+	If GetQuestByID(0x2E6) == Null Then Return $FAIL
 
 	If IsPlayerDead() Then Return $FAIL
 	If $StygianPlayerProfession == $ID_Assassin Or $StygianPlayerProfession == $ID_Mesmer Then

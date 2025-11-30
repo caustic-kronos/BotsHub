@@ -4073,6 +4073,7 @@ Func GetQuestByID($questID = 0)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($quest), 'int', DllStructGetSize($quest), 'int', 0)
 		If DllStructGetData($quest, 'ID') = $questID Then Return $quest
 	Next
+	Return Null
 EndFunc
 
 
