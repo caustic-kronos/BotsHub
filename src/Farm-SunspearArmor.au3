@@ -27,7 +27,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SunspearArmorInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'
+Global Const $SunspearArmorFarmInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'
 ; Average duration ~ 15m
 Global Const $SUNSPEAR_ARMOR_FARM_DURATION = 15 * 60 * 1000
 Global $SUNSPEAR_ARMOR_FARM_SETUP = False
@@ -38,13 +38,18 @@ Func SunspearArmorFarm($STATUS)
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	EnterSunspearArmorMission()
+	EnterSunspearArmorChallenge()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = SunspearArmorClean()
 	AdlibUnRegister('TrackPartyStatus')
 	; Temporarily change a failure into a pause for debugging :
 	;If $result == $FAIL Then $result = $PAUSE
-	TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	Info('Returning back to the outpost')
+	Sleep(1000)
+	Resign()
+	Sleep(4000)
+	ReturnToOutpost()
+	Sleep(6000)
 	Return $result
 EndFunc
 
@@ -92,18 +97,18 @@ Func SetupTeamSunspearArmorFarm()
 EndFunc
 
 
-Func EnterSunspearArmorMission()
+Func EnterSunspearArmorChallenge()
 	If GetMapID() <> $ID_Dajkah_Inlet Then TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
-	Info('Entering Dajkah Inlet mission')
+	Info('Entering Dajkah Inlet challenge')
 	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is hard to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map
 	Local Static $StartX = 29886
 	Local Static $StartY = -3956
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 		RandomSleep(250)
 		Dialog(0x87)
-		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
+		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered challenge
 	WEnd
 EndFunc
 
