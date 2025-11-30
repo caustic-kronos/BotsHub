@@ -2836,7 +2836,7 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
 		While GetHeroProfession($heroIndex, True) <> $secondaryProfession And TimerDiff($deadlock) < 8000
 			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
-			Sleep(50)
+			Sleep(GetPing())
 		WEnd
 	EndIf
 
@@ -2854,15 +2854,15 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	For $i = 1 To $attributesArray[0][1]
 		For $j = 1 To $attributesArray[$i][1]
 			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Sleep(GetPing() + 100)
+			Sleep(GetPing())
 		Next
 	Next
-	Sleep(250)
+	Sleep(GetPing())
 
 	; If there are any points left, we put them in the primary attribute
 	For $i = 0 To 11
 		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Sleep(GetPing() + 100)
+		Sleep(GetPing())
 	Next
 EndFunc
 
@@ -2872,14 +2872,14 @@ Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
 	For $attribute In $AttributesByProfessionMap[GetHeroProfession($heroIndex)]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 20)
+			Sleep(GetPing())
 		Next
 	Next
 
 	For $attribute In $AttributesByProfessionMap[$secondaryProfession]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 20)
+			Sleep(GetPing())
 		Next
 	Next
 EndFunc
