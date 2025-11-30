@@ -188,23 +188,6 @@ Func RaptorsFarmLoop()
 EndFunc
 
 
-;~ Defend skills to use when looting in case some mobs are still alive
-Func RaptorsDefend()
-	If $RaptorsPlayerProfession == $ID_Warrior Then
-		If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
-		If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
-			UseSkillEx($Raptors_SoldiersDefense)
-		ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
-			UseSkillEx($Raptors_WaryStance)
-		EndIf
-	Else
-		If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
-		If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
-	EndIf
-EndFunc
-
-
 ;~ Get Asura blessing only if title is not maxed yet
 Func GetRaptorsAsuraBlessing()
 	Local $Asura = GetAsuraTitle()
@@ -280,10 +263,34 @@ Func AggroRaptors()
 EndFunc
 
 
+;~ Get foe that is a boss - Null if no boss
+Func GetBossFoe()
+	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
+	Return IsArray($bossFoes) And UBound($bossFoes) > 0 ? $bossFoes[0] : Null
+EndFunc
+
+
 ;~ Returns true if the boss is aggroed, that is, if boss is in attack stance TypeMap == 0x1, not in idle stance TypeMap = 0x0
 Func IsBossAggroed()
 	Local $boss = GetBossFoe()
 	Return BitAND(DllStructGetData($boss, 'TypeMap'), 0x1) == 1
+EndFunc
+
+
+;~ Defend skills to use when looting in case some mobs are still alive
+Func RaptorsDefend()
+	If $RaptorsPlayerProfession == $ID_Warrior Then
+		If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
+		If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
+		If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
+			UseSkillEx($Raptors_SoldiersDefense)
+		ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
+			UseSkillEx($Raptors_WaryStance)
+		EndIf
+	Else
+		If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
+		If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
+	EndIf
 EndFunc
 
 
