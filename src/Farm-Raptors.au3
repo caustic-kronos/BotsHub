@@ -4,9 +4,11 @@
 #	Raptor Bot
 #								#
 #################################
-Author: Rattiev
-Based on : Vaettir Bot by gigi
-Modified by: Night, Gahais
+; Author: Rattiev
+; Based on : Vaettir Bot by gigi
+; Modified by: Night, Gahais
+; Raptor farm in Riven Earth based on below article:
+https://gwpvx.fandom.com/wiki/Build:W/N_Raptor_Farmer
 #CE ===========================================================================
 
 #include-once
@@ -28,8 +30,8 @@ Modified by: Night, Gahais
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
-Global Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
+Global Const $WNRaptorsFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
+Global Const $DNRaptorsFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
 Global Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
 Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 12 in curses' & @CRLF _
@@ -41,7 +43,10 @@ Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
-	& '		and all of his skills locked'
+	& '		and all of his skills locked' & @CRLF _
+	& ' ' & @CRLF _
+	& 'This farm bot is based on below article:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:W/N_Raptor_Farmer' & @CRLF
 ; Average duration ~ 1m10s ~ First run is 1m30s with setup
 Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
 Global $RAPTORS_FARM_SETUP = False
@@ -74,16 +79,15 @@ Global Const $Raptors_StandYourGround	= 6
 Global Const $Raptors_CantTouchThis		= 7
 Global Const $Raptors_BladeturnRefrain	= 8
 
-Global $RAPTORS_FARM_SETUP = False
-Global $RAPTORS_PROFESSION = 1
-Global $chatStuckTimer = TimerInit()
+Global $RaptorsPlayerProfession = $ID_Warrior ; global variable to remember player's profession
+
 
 ;~ Main method to farm Raptors
-Func RaptorFarm($STATUS)
+Func RaptorsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	$RAPTORS_PROFESSION = GetHeroProfession(0)		;Gets our own profession
-	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return $PAUSE
-	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
+	If Not $RAPTORS_FARM_SETUP Then
+		If SetupRaptorsFarm() == $FAIL Then Return $PAUSE
+	EndIf
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToRivenEarth()
@@ -94,7 +98,7 @@ EndFunc
 
 
 ;~ Setup the Raptor farm for faster farm
-Func SetupRaptorFarm()
+Func SetupRaptorsFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Asura_Title)
@@ -170,22 +174,23 @@ Func RaptorsFarmLoop()
 	MoveToBaseOfCave()
 	Info('Moving Hero away')
 	CommandAll(-25309, -4212)
-	GetRaptors()
-	KillRaptors()
+	If AggroRaptors() == $FAIL Then Return $FAIL
+	If KillRaptors() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
 
+	If IsPlayerDead() Then Return $FAIL
 	Info('Looting')
-	PickUpItems(DefendWhilePickingUpItems)
+	If IsPlayerAlive() Then PickUpItems(RaptorsDefend)
 	RandomSleep(1000)
-	PickUpItems(DefendWhilePickingUpItems)
+	If IsPlayerAlive() Then PickUpItems(RaptorsDefend)
 
 	Return CheckFarmResult()
 EndFunc
 
 
-;~ Defend skills to use while looting in case some mobs are still alive
-Func DefendWhilePickingUpItems()
-	If $RAPTORS_PROFESSION == 1 Then
+;~ Defend skills to use when looting in case some mobs are still alive
+Func RaptorsDefend()
+	If $RaptorsPlayerProfession == $ID_Warrior Then
 		If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
 		If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
@@ -206,8 +211,9 @@ Func GetRaptorsAsuraBlessing()
 	If $Asura < 160000 Then
 		Info('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
-		RandomSleep(300)
+		Sleep(1000)
 		Dialog(0x84)
+		Sleep(1000)
 	EndIf
 	RandomSleep(350)
 EndFunc
@@ -221,10 +227,10 @@ Func MoveToBaseOfCave()
 	RandomSleep(7000)
 	UseHeroSkill(1, $Raptors_FallBack)
 	RandomSleep(500)
-	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_IAmUnstoppable)
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then UseSkillEx($Raptors_IAmUnstoppable)
 	Moveto(-21333, -8384)
 	UseHeroSkill(1, $Raptors_EnduringHarmony, GetMyAgent())
-	If ($RAPTORS_PROFESSION == 10) Then UseSkill($Raptors_SignetOfMysticSpeed, GetMyAgent())
+	If ($RaptorsPlayerProfession == $ID_Dervish) Then UseSkillEx($Raptors_SignetOfMysticSpeed, GetMyAgent())
 	RandomSleep(1800)
 	UseHeroSkill(1, $Raptors_MakeHaste, GetMyAgent())
 	RandomSleep(20)
@@ -238,14 +244,15 @@ EndFunc
 
 
 ;~ Aggro all raptors
-Func GetRaptors()
+Func AggroRaptors()
+	If IsPlayerDead() Then Return $FAIL
 	Info('Gathering Raptors')
 
 	Move(-20695, -9900, 20)
 	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 
-	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then UseSkillEx($Raptors_ShieldBash)
 
 	Local $count = 0
 	While IsPlayerAlive() And IsRecharged($Raptors_MarkOfPain) And $count < 200
@@ -255,7 +262,6 @@ Func GetRaptors()
 	WEnd
 	RandomSleep(250)
 
-	IsBossAggroed()
 	If MoveAggroingRaptors(-20000, -10300) == $FAIL Then Return $FAIL
 	If MoveAggroingRaptors(-19500, -11500) == $FAIL Then Return $FAIL
 	If MoveAggroingRaptors(-20500, -12000) == $FAIL Then Return $FAIL
@@ -263,7 +269,7 @@ Func GetRaptors()
 	If MoveAggroingRaptors(-21500, -12000) == $FAIL Then Return $FAIL
 	If MoveAggroingRaptors(-22000, -12000) == $FAIL Then Return $FAIL
 	$target = GetNearestEnemyToAgent(GetMyAgent())
-	If $RAPTORS_PROFESSION == 10 Then UseSkillEx($Raptors_MirageCloak)
+	If $RaptorsPlayerProfession == $ID_Dervish Then UseSkillEx($Raptors_MirageCloak)
 	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $FAIL Then Return $FAIL
 	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $FAIL Then Return $FAIL
 	If IsBossAggroed() Then
@@ -274,11 +280,10 @@ Func GetRaptors()
 EndFunc
 
 
-;~ Returns true if the nearest boss is aggroed. Requires being called once before the boss is aggroed.
+;~ Returns true if the boss is aggroed, that is, if boss is in attack stance TypeMap == 0x1, not in idle stance TypeMap = 0x0
 Func IsBossAggroed()
-	Local $boss = GetNearestBossFoe()
-	Local Static $unaggroedState = DllStructGetData($boss, 'TypeMap')
-	Return DllStructGetData($boss, 'TypeMap') <> $unaggroedState
+	Local $boss = GetBossFoe()
+	Return BitAND(DllStructGetData($boss, 'TypeMap'), 0x1) == 1
 EndFunc
 
 
@@ -288,7 +293,7 @@ Func KillRaptors()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Clearing Raptors')
 
-	If ($RAPTORS_PROFESSION == 1) Then
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		RandomSleep(20)
 		UseSkillEx($Raptors_ProtectorsDefense)
@@ -304,7 +309,7 @@ Func KillRaptors()
 		RandomSleep(20)
 	EndIf
 
-	Local $rekoff_boss = GetNearestBossFoe()
+	Local $rekoff_boss = GetBossFoe()
 	Local $me = GetMyAgent()
 	If GetDistance($me, $rekoff_boss) > $RANGE_SPELLCAST Then
 		$MoPTarget = GetNearestEnemyToAgent($me)
@@ -317,7 +322,7 @@ Func KillRaptors()
 		$MoPTarget = GetCurrentTarget()
 	EndIf
 
-	If ($RAPTORS_PROFESSION == 10) Then
+	If ($RaptorsPlayerProfession == $ID_Dervish) Then
 		UseSkillEx($Raptors_DustCloak)
 		RandomSleep(20)
 		UseSkillEx($Raptors_PiousFury)
@@ -345,7 +350,7 @@ Func KillRaptors()
 		$count += 1
 	WEnd
 
-	If ($RAPTORS_PROFESSION == 1) Then
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		UseSkillEx($Raptors_SoldiersDefense)
 		RandomSleep(50)
@@ -470,8 +475,8 @@ Func IsRubberBanding()
 EndFunc
 
 
-;~ Get nearest foe that is a boss - Null if no boss
-Func GetNearestBossFoe()
+;~ Get foe that is a boss - Null if no boss
+Func GetBossFoe()
 	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
 	Return IsArray($bossFoes) And UBound($bossFoes) > 0 ? $bossFoes[0] : Null
 EndFunc
