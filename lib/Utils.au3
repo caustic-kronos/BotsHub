@@ -1773,19 +1773,19 @@ EndFunc
 #Region Counting NPCs
 ;~ Count foes in range of the given agent
 Func CountFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
-	Return CountNPCsInRangeOfAgent($agent, 3, $range, $condition)
+	Return CountNPCsInRangeOfAgent($agent, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
 ;~ Count foes in range of the given coordinates
 Func CountFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
-	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
+	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
 ;~ Count allies in range of the given coordinates
 Func CountAlliesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
-	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 6, $range, $condition)
+	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, $ID_Allegiance_Npc, $range, $condition)
 EndFunc
 
 
@@ -1853,13 +1853,13 @@ EndFunc
 
 ;~ Get foes in range of the given agent
 Func GetFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
-	Return GetNPCsInRangeOfAgent($agent, 3, $range, $condition)
+	Return GetNPCsInRangeOfAgent($agent, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
 ;~ Get foes in range of the given coordinates
 Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
-	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
+	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
@@ -1871,7 +1871,7 @@ EndFunc
 
 ;~ Get party members in range of the given agent
 Func GetPartyInRangeOfAgent($agent, $range = $RANGE_AREA)
-	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 1, $range, PartyMemberFilter)
+	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $ID_Allegiance_Team, $range, PartyMemberFilter)
 EndFunc
 
 
@@ -2478,7 +2478,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 
 			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
-			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == 3
+			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_Allegiance_Foe
 				If IsPlayerDead() Then ExitLoop
 
 				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>

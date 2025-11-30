@@ -3254,7 +3254,7 @@ EndFunc
 
 ;~ Return True if an agent is an NPC, False otherwise
 Func NPCAgentFilter($agent)
-	If DllStructGetData($agent, 'Allegiance') <> 6 Then Return False
+	If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Npc Then Return False
 	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
 	Return True
@@ -3269,7 +3269,7 @@ EndFunc
 
 ;~ Return True if an agent is an enemy, False otherwise
 Func EnemyAgentFilter($agent)
-	If DllStructGetData($agent, 'Allegiance') <> 3 Then Return False
+	If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Foe Then Return False
 	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
 	If DllStructGetData($agent, 'TypeMap') == 0x40000 Then Return False	; It's a spirit created by rangers (0x40001 for ritualist's spirits and bone minions)
@@ -3368,7 +3368,7 @@ Func GetParty($agents = Null)
 	Local $fullParty[8] ; 1D array of full party 8 members, indexed from 0
 	Local $partySize = 0
 	For $agent In $agents
-		If DllStructGetData($agent, 'Allegiance') <> 1 Then ContinueLoop
+		If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Team Then ContinueLoop
 		If Not BitAND(DllStructGetData($agent, 'TypeMap'), 0x20000) Then ContinueLoop
 		$fullParty[$partySize] = $agent
 		$partySize += 1
@@ -3461,7 +3461,7 @@ Func GetPartyDanger($agents = Null, $party = Null)
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		Local $allegiance = DllStructGetData($agent, 'Allegiance')
-		If $allegiance > 3 Then ContinueLoop			; ignore NPCs, spirits, minions, pets
+		If $allegiance > $ID_Allegiance_Foe Then ContinueLoop ; ignore spirits (4), pets (4), minions (5), NPCs (6), which have allegiance number higher than foe (3)
 
 		Local $targetID = DllStructGetData(GetTarget($agent), 'ID')
 		Local $team = DllStructGetData($agent, 'Team')

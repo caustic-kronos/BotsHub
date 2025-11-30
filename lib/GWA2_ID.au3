@@ -225,6 +225,16 @@ Global Const $ID_Dervish		= 10
 #EndRegion Professions
 
 
+#Region Agents Allegiance
+Global Const $ID_Allegiance_Team	= 1 ; player and team party members
+Global Const $ID_Allegiance_Animal	= 2 ; untamed animals
+Global Const $ID_Allegiance_Foe		= 3
+Global Const $ID_Allegiance_Spirit	= 4 ; ranger's and ritualist's spirits and tamed animals/pets
+Global Const $ID_Allegiance_Minion	= 5 ; necromancer's minions
+Global Const $ID_Allegiance_Npc		= 6
+#EndRegion Agents Allegiance
+
+
 #Region Profession Attributes
 Global Const $ID_Fast_Casting				= 0
 Global Const $ID_Illusion_Magic				= 1
