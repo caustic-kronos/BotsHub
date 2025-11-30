@@ -985,7 +985,7 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstonesHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstonesFarmInformations)
 		Case 'Gemstone Stygian'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $StygianAssasinSkillBar & '		' & $StygianMesmerSkillBar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeStygianSkillBar & '		' & $MeAStygianSkillBar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneStygianFarmInformations)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
