@@ -59,8 +59,11 @@ EndFunc
 ;~ Setup for kurzick farm
 Func KurzickFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+
+	SetupPlayerKurzickFarm()
+	SetupTeamKurzickFarm()
+
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
@@ -92,6 +95,33 @@ Func KurzickFarmSetup()
 
 	SwitchMode($ID_HARD_MODE)
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerKurzickFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamKurzickFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 

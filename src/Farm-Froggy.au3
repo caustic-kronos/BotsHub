@@ -53,7 +53,8 @@ EndFunc
 Func SetupFroggyFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return
-	; Assuming that team has been set up correctly manually
+	SetupPlayerFroggyFarm()
+	SetupTeamFroggyFarm()
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
 	ResetFailuresCounter()
@@ -61,6 +62,33 @@ Func SetupFroggyFarm()
 	If IsRunFailed() Then Return
 	$FROGGY_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerFroggyFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamFroggyFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 

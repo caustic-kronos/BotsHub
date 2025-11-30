@@ -2195,6 +2195,28 @@ Func IsRezSkill($skill)
 	EndSwitch
 	Return False
 EndFunc
+
+
+Func SetupTeamUsingGUISettings()
+	Sleep(500 + GetPing())
+	LeaveParty()
+	Sleep(500 + GetPing())
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_1)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_2)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_3)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_4)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_5)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_6)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_7)])
+	Sleep(500 + GetPing())
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
+EndFunc
 #EndRegion Quests and party status
 
 

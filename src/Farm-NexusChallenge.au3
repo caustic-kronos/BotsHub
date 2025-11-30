@@ -63,24 +63,33 @@ Func NexusChallengeSetup()
 	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
-
-	; Assuming that team has been set up correctly manually
-	;SetupTeamNexusChallengeFarm()
+	SetupPlayerNexusChallengeFarm()
+	SetupTeamNexusChallengeFarm()
 	Info('Preparations complete')
 EndFunc
 
 
+Func SetupPlayerNexusChallengeFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
 Func SetupTeamNexusChallengeFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	Sleep(1000)
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')
 	EndIf
