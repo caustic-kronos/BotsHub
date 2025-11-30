@@ -59,7 +59,7 @@ Global $PONGMEI_FARM_SETUP = False
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiFarm()
+	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiChestFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToPongmeiValley()
@@ -70,16 +70,29 @@ EndFunc
 
 
 ;~ Pongmei chest farm setup
-Func SetupPongmeiFarm()
+Func SetupPongmeiChestFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
 
+	SetupPlayerPongmeiChestFarm()
 	SetupTeamPongmeiChestFarm()
-	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
 
 	SwitchToHardModeIfEnabled()
 	$PONGMEI_FARM_SETUP = True
 	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerPongmeiChestFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($PongmeiChestRunnerSkillbar)
+    Else
+    	Warn('Should run this farm as dervish')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 

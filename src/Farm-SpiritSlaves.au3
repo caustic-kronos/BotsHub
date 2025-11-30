@@ -93,9 +93,10 @@ Func SpiritSlavesFarmSetup()
 	If GetMapID() <> $ID_The_Shattered_Ravines Then
 		If TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 		SwitchMode($ID_HARD_MODE)
-		LeaveParty() ; solo farmer
-		LoadSkillTemplate($SpiritSlaves_Skillbar)
 		SetDisplayedTitle($ID_Lightbringer_Title)
+
+		If SetupPlayerSpiritSlavesFarm() == $FAIL Then Return $FAIL
+		LeaveParty() ; solo farmer
 
 		; Exiting to Jokos Domain
 		MoveTo(-14520, 6009)
@@ -153,6 +154,20 @@ Func SpiritSlavesFarmSetup()
 	EndIf
 	$SPIRIT_SLAVES_FARM_SETUP = True
 	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerSpiritSlavesFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($SpiritSlaves_Skillbar)
+    Else
+    	Warn('Should run this farm as dervish')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 

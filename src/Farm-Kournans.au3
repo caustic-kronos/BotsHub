@@ -75,7 +75,9 @@ Global $KOURNANS_FARM_SETUP = False
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $KOURNANS_FARM_SETUP Then SetupKournansFarm()
+	If Not $KOURNANS_FARM_SETUP Then
+		If SetupKournansFarm() == $FAIL Then Return $PAUSE
+	EndIf
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToCommandPost()
@@ -91,8 +93,8 @@ Func SetupKournansFarm()
 	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 
-	SetupTeamKournansFarm()
-	LoadSkillTemplate($ElAKournansFarmerSkillbar)
+	If SetupPlayerKournansFarm() == $FAIL Then Return $FAIL
+	If SetupTeamKournansFarm() == $FAIL Then Return $FAIL
 
 	RandomSleep(50)
 	GoToCommandPost()
@@ -105,9 +107,23 @@ Func SetupKournansFarm()
 EndFunc
 
 
+Func SetupPlayerKournansFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
+		LoadSkillTemplate($ElAKournansFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as elementalist')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
 Func SetupTeamKournansFarm()
 	Info('Setting up team')
-	Sleep(500)
+	Sleep(500 + GetPing())
 	LeaveParty()
 	RandomSleep(50)
 	AddHero($ID_Margrid_The_Sly)
@@ -115,7 +131,7 @@ Func SetupTeamKournansFarm()
 	AddHero($ID_Xandra)
 	RandomSleep(50)
 	AddHero($ID_General_Morgahn)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')
 		Return $FAIL

@@ -64,7 +64,9 @@ Global $MANTIDS_FARM_SETUP = False
 ;~ Main method to farm Mantids
 Func MantidsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $MANTIDS_FARM_SETUP Then SetupMantidsFarm()
+	If Not $MANTIDS_FARM_SETUP Then
+		If SetupMantidsFarm() == $FAIL Then Return $PAUSE
+	EndIf
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToWajjunBazaar()
@@ -80,8 +82,8 @@ Func SetupMantidsFarm()
 	TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 
-	SetupTeamMantidsFarm()
-	LoadSkillTemplate($RAMantidsFarmerSkillbar)
+	If SetupPlayerMantidsFarm() == $FAIL Then Return $FAIL
+	If SetupTeamMantidsFarm() == $FAIL Then Return $FAIL
 
 	GoToWajjunBazaar()
 	MoveTo(9100, -19600)
@@ -93,14 +95,28 @@ Func SetupMantidsFarm()
 EndFunc
 
 
+Func SetupPlayerMantidsFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
+		LoadSkillTemplate($RAMantidsFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as ranger')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
 Func SetupTeamMantidsFarm()
 	Info('Setting up team')
-	Sleep(500)
+	Sleep(500 + GetPing())
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	LoadSkillTemplate($MantidsHeroSkillbar, 1)
 	DisableAllHeroSkills(1)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
 	EndIf

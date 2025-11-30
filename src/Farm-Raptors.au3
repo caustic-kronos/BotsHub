@@ -44,6 +44,7 @@ Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '		and all of his skills locked'
 ; Average duration ~ 1m10s ~ First run is 1m30s with setup
 Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
+Global $RAPTORS_FARM_SETUP = False
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Global Const $Raptors_MarkOfPain		= 1
@@ -98,7 +99,8 @@ Func SetupRaptorFarm()
 	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
-	SetupTeamRaptorFarm()
+	If SetupPlayerRaptorsFarm() == $FAIL Then Return $FAIL
+	If SetupTeamRaptorsFarm() == $FAIL Then Return $FAIL
 	GoToRivenEarth()
 	MoveTo(-25800, -4150)
 	Move(-26309, -4112)
@@ -109,17 +111,37 @@ Func SetupRaptorFarm()
 EndFunc
 
 
-Func SetupTeamRaptorFarm()
+Func SetupPlayerRaptorsFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Warrior Then
+		$RaptorsPlayerProfession = $ID_Warrior
+		LoadSkillTemplate($WNRaptorsFarmerSkillbar)
+    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		$RaptorsPlayerProfession = $ID_Dervish
+		LoadSkillTemplate($DNRaptorsFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamRaptorsFarm()
 	Info('Setting up team')
+	Sleep(500 + GetPing())
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
-	LoadSkillTemplate($WNRaptorFarmerSkillbar)
+	Sleep(500 + GetPing())
 	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
 	Sleep(250)
 	DisableAllHeroSkills(1)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
+		Return $FAIL
 	EndIf
 EndFunc
 
