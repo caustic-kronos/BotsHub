@@ -57,7 +57,7 @@
 #include 'src/Farm-Follower.au3'
 #include 'src/Farm-FoW.au3'
 #include 'src/Farm-Froggy.au3'
-#include 'src/Farm-Gemstone.au3'
+#include 'src/Farm-Gemstones.au3'
 #include 'src/Farm-GemstoneStygian.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
