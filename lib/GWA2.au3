@@ -2258,8 +2258,8 @@ EndFunc
 
 
 ;~ Returns True if the skill at the skillslot given is recharged
-Func IsRecharged($skillSlot)
-	Return GetSkillbarSkillRecharge($skillSlot) == 0
+Func IsRecharged($skillSlot, $heroIndex = 0)
+	Return GetSkillbarSkillRecharge($skillSlot, $heroIndex) == 0
 EndFunc
 
 
@@ -3749,8 +3749,15 @@ EndFunc
 
 ;~ Returns the recharge time remaining of an equipped skill in milliseconds.
 Func GetSkillbarSkillRecharge($skillSlot, $heroIndex = 0)
-	Local $timestamp = DllStructGetData(GetSkillbar($heroIndex), 'Recharge' & $skillSlot)
-	Return $timestamp == 0 ? 0 : $timestamp - GetSkillTimer()
+	Local $skillbar = GetSkillbar($heroIndex)
+	; Recharge in $skillbarStructTemplate is 0 when skill is already recharged or is the timestamp in the future when the skill will be recharged if it is recharging
+	Local $rechargeFutureTimestamp = DllStructGetData($skillbar, 'Recharge' & $skillSlot)
+	Local $skill = GetSkillByID(DllStructGetData($skillbar, 'SkillId' & $skillSlot))
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+
+	; Caution, GetInstanceUpTime() may also include logging into account time which may not be included in in-game cast timestamps, therefore adding GetPing() + 3000 just in case and capping it to be always bigger or equal to 1 with _Max(), if Recharge is non-zero
+	Return $rechargeFutureTimestamp == 0 ? 0 : _Max($rechargeFutureTimestamp + $castTime + $aftercast + GetPing() + 3000 - GetInstanceUpTime(), 1)
 EndFunc
 
 
