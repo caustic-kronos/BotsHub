@@ -167,14 +167,14 @@ Func FarmTheSulfurousWastes()
 		[-18000, -13100, 'Margonite Boss Group'] _
 	]
 
-	If MoveToAndAggroGroups($foes, 1, 4) == $FAIL Then Return $FAIL
+	If DoForArrayRows($foes, 1, 4, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
 	SpeedTeam()
 	MoveTo(-7500, 11925)
 	SpeedTeam()
 	MoveTo(-9800, 12400)
 	SpeedTeam()
 	MoveTo(-13000, 9500)
-	If MoveToAndAggroGroups($foes, 5, 5) == $FAIL Then Return $FAIL
+	If DoForArrayRows($foes, 5, 5, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
 
 	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
@@ -184,7 +184,7 @@ Func FarmTheSulfurousWastes()
 	Dialog(0x85)
 	RandomSleep(1000)
 
-	If MoveToAndAggroGroups($foes, 6, 19) == $FAIL Then Return $FAIL
+	If DoForArrayRows($foes, 6, 19, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
 
 	Info('Picking Up Tome')
 	SpeedTeam()
@@ -196,7 +196,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MoveToAndAggroGroups($foes, 20, 29) == $FAIL Then Return $FAIL
+	If DoForArrayRows($foes, 20, 29, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
 
 	Info('Spawning Margonite bosses')
 	SpeedTeam()
@@ -211,7 +211,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MoveToAndAggroGroups($foes, 30, 30) == $FAIL Then Return $FAIL
+	If DoForArrayRows($foes, 30, 30, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
@@ -225,28 +225,12 @@ Func SpeedTeam()
 EndFunc
 
 
-;~ Move, aggro and vanquish groups of mobs specified in $foes array
-;~ $firstGroup and $lastGroup specify start and end of range of groups within provided array to vanquish
-;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func MoveToAndAggroGroups($foes, $firstGroup, $lastGroup)
-	If IsPlayerAndPartyWiped() Then Return $FAIL
-	If $firstGroup < 1 Or UBound($foes) < $lastGroup  Then Return $FAIL
-	If $firstGroup > $lastGroup Then Return $FAIL
-	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
-		SpeedTeam()
-		If MoveToAndAggro($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
-	Next
-	Return $SUCCESS
-EndFunc
-
-
 ;~ Optional function to move and aggro a group of mob at maximally 5 locations
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
 Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = Null, $location1y = Null, $location2x = Null, $location2y = Null, $location3x = Null, $location3y = Null, $location4x = Null, $location4y = Null)
 	For $i = 0 To 4
 		If (Eval('location' & $i & 'x') == Null) Then ExitLoop
-		SpeedTeam()
-		If MoveToAndAggro(Eval('location' & $i & 'x'), Eval('location' & $i & 'y'), $foesGroup) == $FAIL Then Return $FAIL
+		If MoveToAndAggroWithJunundu(Eval('location' & $i & 'x'), Eval('location' & $i & 'y'), $foesGroup) == $FAIL Then Return $FAIL
 	Next
 	Return $SUCCESS
 EndFunc
@@ -254,15 +238,16 @@ EndFunc
 
 ;~ Main method for moving around and aggroing/killing mobs
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func MoveToAndAggro($x, $y, $foesGroup)
+Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	Info('Killing ' & $foesGroup)
 	Local $range = 1650
 
+	; Speed up team using Junundu Tunnel
 	; Get close enough to cast spells but not Aggro
-	; Use Junundu Siege (4) until it's in CD
+	; Use Junundu Siege (4) until it's in cooldown
 	; While there are enemies
-	;	Use Junundu Tunnel (5) unless it's on CD
-	;	Use Junundu Bite (3) off CD
+	;	Use Junundu Tunnel (5) unless it's on cooldown
+	;	Use Junundu Bite (3) off cooldown
 	;	Use Junundu Smash (2) if available
 	;		Don't use Junundu Feast (6) if an enemy died (would need to check what skill we get afterward ...)
 	;	Use Junundu Strike (1) in between
@@ -270,6 +255,7 @@ Func MoveToAndAggro($x, $y, $foesGroup)
 	; Use Junundu Wail (7) after fight only and if life is < 2400/3000 or if a team member is dead
 
 	Local $skillCastTimer
+	SpeedTeam()
 
 	Local $target = GetNearestNPCInRangeOfCoords($x, $y, $ID_Allegiance_Foe, $range)
 	If (DllStructGetData($target, 'X') == 0) Then

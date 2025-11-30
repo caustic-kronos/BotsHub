@@ -178,22 +178,47 @@ EndFunc
 ;~ Self explanatory
 Func AggroAllMobs()
 	Local $target
+
+	Local Static $vaettirs[31][2] = [ _ ; vaettirs locations
+		_ ; left ball
+		[12496, -22600], _
+		[11375, -22761], _
+		[10925, -23466], _
+		[10917, -24311], _
+		[9910, -24599], _
+		[8995, -23177], _
+		[8307, -23187], _
+		[8213, -22829], _
+		[8307, -23187], _
+		[8213, -22829], _
+		[8740, -22475], _
+		[8880, -21384], _
+		[8684, -20833], _
+		[8982, -20576], _
+		_ ; right ball
+		[10196, -20124], _
+		[9976, -18338], _
+		[11316, -18056], _
+		[10392, -17512], _
+		[10114, -16948], _
+		[10729, -16273], _
+		[10810, -15058], _
+		[11120, -15105], _
+		[11670, -15457], _
+		[12604, -15320], _
+		[12476, -16157], _
+		_ ; moving to spot
+		[12920, -17032], _
+		[12847, -17136], _
+		[12720, -17222], _
+		[12617, -17273], _
+		[12518, -17305], _
+		[12445, -17327] _
+	]
+
 	Info('Aggroing left')
 	MoveTo(13172, -22137)
-	MoveAggroing(12496, -22600, 150)
-	MoveAggroing(11375, -22761, 150)
-	MoveAggroing(10925, -23466, 150)
-	MoveAggroing(10917, -24311, 150)
-	MoveAggroing(9910, -24599, 150)
-	MoveAggroing(8995, -23177, 150)
-	MoveAggroing(8307, -23187, 150)
-	MoveAggroing(8213, -22829, 150)
-	MoveAggroing(8307, -23187, 150)
-	MoveAggroing(8213, -22829, 150)
-	MoveAggroing(8740, -22475, 150)
-	MoveAggroing(8880, -21384, 150)
-	MoveAggroing(8684, -20833, 150)
-	MoveAggroing(8982, -20576, 150)
+	If DoForArrayRows($vaettirs, 1, 14, MoveAggroing) == $FAIL Then Return $FAIL
 
 	Info('Waiting for left ball')
 	VaettirsSleepAndStayAlive(12000)
@@ -206,17 +231,7 @@ Func AggroAllMobs()
 	VaettirsSleepAndStayAlive(6000)
 
 	Info('Aggroing right')
-	MoveAggroing(10196, -20124, 150)
-	MoveAggroing(9976, -18338, 150)
-	MoveAggroing(11316, -18056, 150)
-	MoveAggroing(10392, -17512, 150)
-	MoveAggroing(10114, -16948, 150)
-	MoveAggroing(10729, -16273, 150)
-	MoveAggroing(10810, -15058, 150)
-	MoveAggroing(11120, -15105, 150)
-	MoveAggroing(11670, -15457, 150)
-	MoveAggroing(12604, -15320, 150)
-	MoveAggroing(12476, -16157)
+	If DoForArrayRows($vaettirs, 15, 25, MoveAggroing) == $FAIL Then Return $FAIL
 
 	Info('Waiting for right ball')
 	VaettirsSleepAndStayAlive(15000)
@@ -227,16 +242,7 @@ Func AggroAllMobs()
 		UseSkillEx($Skill_Heart_of_Shadow, GetMyAgent())
 	EndIf
 	VaettirsSleepAndStayAlive(5000)
-
-	MoveAggroing(12920, -17032, 30)
-	MoveAggroing(12847, -17136, 30)
-	MoveAggroing(12720, -17222, 30)
-	;VaettirsSleepAndStayAlive(300)
-	MoveAggroing(12617, -17273, 30)
-	;VaettirsSleepAndStayAlive(300)
-	MoveAggroing(12518, -17305, 20)
-	;VaettirsSleepAndStayAlive(300)
-	MoveAggroing(12445, -17327, 10)
+	If DoForArrayRows($vaettirs, 26, 31, MoveAggroing) == $FAIL Then Return $FAIL
 EndFunc
 
 

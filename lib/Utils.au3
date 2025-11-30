@@ -1584,6 +1584,34 @@ Func MapFromArrays($keys, $values)
 EndFunc
 
 
+;~ Do an operation on selected rows of 2D array. Available number of columns for array are 2, 3, 4, 5
+;~ $firstIndex and $lastIndex specify start and end of range of rows of 2D array on which $function should be performed
+;~ Return $FAIL if operation failed on any row, $SUCCESS if operation succeded for all rows od 2D array
+Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
+	If Not IsArray($array) Or UBound($array, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
+	If UBound($array, $UBOUND_COLUMNS) <> 2 And UBound($array, $UBOUND_COLUMNS) <> 3 And UBound($array, $UBOUND_COLUMNS) <> 4 And UBound($array, $UBOUND_COLUMNS) <> 5 Then Return $FAIL
+	If $firstIndex < 1 Or UBound($array) < $lastIndex Then Return $FAIL
+	If $firstIndex > $lastIndex Then Return $FAIL
+	Local $result = $SUCCESS
+	For $i = $firstIndex - 1 To $lastIndex - 1 ; Caution, array rows are indexed from 1, but $array is indexed from 0
+		If UBound($array, $UBOUND_COLUMNS) == 2 Then
+			$result = $function($array[$i][0], $array[$i][1])
+			If $result <> $SUCCESS Then Return $result
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2])
+			If $result <> $SUCCESS Then Return $result
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 4 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3])
+			If $result <> $SUCCESS Then Return $result
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 5 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3], $array[$i][4])
+			If $result <> $SUCCESS Then Return $result
+		EndIf
+	Next
+	Return $SUCCESS
+EndFunc
+
+
 ;~ Clone a map
 Func CloneMap($original)
 	Local $clone[]
@@ -2389,20 +2417,8 @@ EndFunc
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
 Func MoveAggroAndKillGroups($foes, $firstGroup, $lastGroup)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
-	If Not IsArray($foes) Or UBound($foes, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
 	If UBound($foes, $UBOUND_COLUMNS) <> 3 And UBound($foes, $UBOUND_COLUMNS) <> 4 Then Return $FAIL
-	If $firstGroup < 1 Or UBound($foes) < $lastGroup Then Return $FAIL
-	If $firstGroup > $lastGroup Then Return $FAIL
-	Local $x, $y, $log, $range
-	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
-		If IsPlayerAndPartyWiped() Then Return $FAIL
-		$x = $foes[$i][0]
-		$y = $foes[$i][1]
-		$log = $foes[$i][2]
-		$range = (UBound($foes, $UBOUND_COLUMNS) == 4)? $foes[$i][3] : $AGGRO_RANGE
-		If MoveAggroAndKillInRange($x, $y, $log, $range) == $FAIL Then Return $FAIL
-	Next
-	Return $SUCCESS
+	Return DoForArrayRows($foes, $firstGroup, $lastGroup, MoveAggroAndKillInRange)
 EndFunc
 
 
