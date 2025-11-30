@@ -24,7 +24,7 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $SunspearArmorInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'

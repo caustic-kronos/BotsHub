@@ -26,7 +26,7 @@
 ; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
 ; Using third hero for more speed is a bad idea - you'd lose aggro
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'

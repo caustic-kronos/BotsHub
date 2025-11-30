@@ -22,7 +22,7 @@
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 Global Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
 	& '- the quest A Show of Force' & @CRLF _

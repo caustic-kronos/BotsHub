@@ -23,7 +23,7 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _

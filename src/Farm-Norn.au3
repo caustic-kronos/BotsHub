@@ -24,7 +24,7 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $NornFarmInformations = 'Norn title farm, bring solid heroes composition'

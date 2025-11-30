@@ -22,7 +22,7 @@
 #include '../lib/Utils.au3'
 #include '../lib/Utils-Debugger.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $GemstonesFarmSkillbar = 'OQBCAswDPVP/DMd5Zu2Nd6B'

@@ -22,7 +22,7 @@
 #include '../lib/Utils.au3'
 #include <File.au3>
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $DWCommendationsFarmerSkillbar = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'

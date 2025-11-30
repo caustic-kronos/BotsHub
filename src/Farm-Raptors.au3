@@ -25,7 +25,7 @@ Modified by: Night, Gahais
 ; - Use pumpkin pie slices ? Reduce cast time and increase attack speed reducing chances to be interrupted during MoP or Whirlwind
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'

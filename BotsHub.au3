@@ -126,9 +126,9 @@ Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|Inter
 
 
 #Region GUI
-Opt('GUIOnEventMode', 1)
-Opt('GUICloseOnESC', 0)
-Opt('MustDeclareVars', 1)
+Opt('GUIOnEventMode', True)
+Opt('GUICloseOnESC', False)
+Opt('MustDeclareVars', True)
 
 Global $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI_Tab_LootOptions, $GUI_Tab_FarmInfos, $GUI_Tab_LootComponents
 Global $GUI_Console, $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress

@@ -27,7 +27,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $TascaChestRunnerSkillbar = 'Ogej4NfMLTHQ3l8I6M0kNQ4OIQA'

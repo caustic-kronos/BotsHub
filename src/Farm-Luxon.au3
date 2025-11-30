@@ -25,7 +25,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
