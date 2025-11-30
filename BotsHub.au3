@@ -1146,6 +1146,10 @@ EndFunc
 Func ReadConfigFromJson($jsonString)
 	Local $jsonObject = _JSON_Parse($jsonString)
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
+	; below line is a fix for a very weird bug that character combobox truly updates only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
+	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
+	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
+	; below line is a fix for a very weird bug that farm combobox sometimes updates only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
 	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
 	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, _JSON_Get($jsonObject, 'run.loop_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
