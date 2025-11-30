@@ -871,7 +871,7 @@ Func RunFarmLoop($Farm)
 			$result = PongmeiChestFarm($STATUS)
 		Case 'Raptors'
 			$INVENTORY_SPACE_NEEDED = 5
-			$result = RaptorFarm($STATUS)
+			$result = RaptorsFarm($STATUS)
 		Case 'SoO'
 			$INVENTORY_SPACE_NEEDED = 15
 			$result = SoOFarm($STATUS)
@@ -1017,7 +1017,7 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $PongmeiChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $PongmeiChestRunInformations)
 		Case 'Raptors'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorsFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroBuild, $PRunnerHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $RaptorsFarmInformations)
 		Case 'SoO'
