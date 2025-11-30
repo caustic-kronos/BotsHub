@@ -2066,8 +2066,18 @@ Func IsPlayerAlive()
 EndFunc
 
 
+Func IsPartyWiped()
+	Return Not HasRezMemberAlive()
+EndFunc
+
+
 Func IsPlayerAndPartyWiped()
 	Return IsPlayerDead() And Not HasRezMemberAlive()
+EndFunc
+
+
+Func IsPartyAlive()
+	Return HasRezMemberAlive()
 EndFunc
 
 
