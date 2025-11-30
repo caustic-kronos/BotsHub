@@ -120,7 +120,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstones|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -825,7 +825,9 @@ Func RunFarmLoop($Farm)
 		Case 'Froggy'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = FroggyFarm($STATUS)
-		Case 'Gemstone'
+		Case 'Gemstones'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = GemstonesFarm($STATUS)
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = GemstoneFarm($STATUS)
 		Case 'Gemstone Stygian'
@@ -943,6 +945,7 @@ Func ResetBotsSetups()
 	; BUT those bots MUST tp to the correct map on every loop
 	;$CORSAIRS_FARM_SETUP					= False
 	;$FOLLOWER_SETUP						= False
+	;$GEMSTONES_FARM_SETUP					= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$PONGMEI_FARM_SETUP					= False
@@ -977,10 +980,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $FoWFarmInformations)
 		Case 'Froggy'
 			GUICtrlSetData($GUI_Label_FarmInformations, $FroggyFarmInformations)
-		Case 'Gemstone'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstoneFarmSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstoneHeroSkillbar)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneFarmInformations)
+		Case 'Gemstones'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstonesFarmSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstonesHeroSkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $GemstonesFarmInformations)
 		Case 'Gemstone Stygian'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $StygianAssasinSkillBar & '		' & $StygianMesmerSkillBar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneStygianFarmInformations)
@@ -1627,8 +1630,8 @@ Func SelectFarmDuration($Farm)
 			Return 30 * 60 * 1000
 		Case 'FoW'
 			Return $FOW_FARM_DURATION
-		Case 'Gemstone'
-			Return $GEMSTONE_FARM_DURATION
+		Case 'Gemstones'
+			Return $GEMSTONES_FARM_DURATION
 		Case 'Gemstone Stygian'
 			Return $GEMSTONE_STYGIAN_FARM_DURATION
 		Case 'Jade Brotherhood'
