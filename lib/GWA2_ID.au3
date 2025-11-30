@@ -450,6 +450,23 @@ Global Const $ID_Mercenary_Hero_7	= 34
 Global Const $ID_Mercenary_Hero_8	= 35
 Global Const $ID_Miku				= 36
 Global Const $ID_ZeiRi				= 37
+
+Global Const $HeroIDs				= [$ID_Norgu, $ID_Goren, $ID_Tahlkora, $ID_Master_Of_Whispers, $ID_Acolyte_Jin, _
+									   $ID_Koss, $ID_Dunkoro, $ID_Acolyte_Sousuke, $ID_Melonni, $ID_Zhed_Shadowhoof, _
+									   $ID_General_Morgahn, $ID_Margrid_The_Sly, $ID_Zenmai, $ID_Olias, $ID_Razah, _
+									   $ID_MOX, $ID_Keiran_Thackeray, $ID_Jora, $ID_Pyre_Fierceshot, $ID_Anton, _
+									   $ID_Livia, $ID_Hayda, $ID_Kahmu, $ID_Gwen, $ID_Xandra, $ID_Vekk, $ID_Ogden, _
+									   $ID_Miku, $ID_ZeiRi]
+
+Global Const $HeroNames				= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whispers', 'Acolyte Jin', _
+										'Koss', 'Dunkoro', 'Acolyte Sousuke', 'Melonni', 'Zhed Shadowhoof', _
+										'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
+										'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
+										'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
+										'Miku', 'ZeiRi']
+
+Global Const $HeroNamesFromIDs			=	MapFromArrays($HeroIDs, $HeroNames)
+Global Const $HeroIDsFromNames			=	MapFromArrays($HeroNames, $HeroIDs)
 #EndRegion Hero IDs
 
 
