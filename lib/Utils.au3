@@ -2246,30 +2246,91 @@ EndFunc
 
 
 #Region Actions
-;~ Move to specified position while trying to avoid body block
-Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
-	Local $timer = TimerInit()
+;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
+Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_MoveDefend_Options)
+	If IsPlayerDead() Then Return $FAIL
+	Local $me = Null, $target = Null
+	Local $blocked = 0, $angle = 0, $distance = 0
 	Local Const $PI = 3.141592653589793
-	Local $me = GetMyAgent()
-	While IsPlayerAlive() And GetDistanceToPoint($me, $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
-		Move($coordX, $coordY)
-		RandomSleep(100)
-		;Local $blocked = -1
-		;Local $angle = 0
-		;While IsPlayerAlive() And Not IsPlayerMoving()
-		;	$blocked += 1
-		;	If $blocked > 0 Then
-		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4
-		;	EndIf
-		;	If $blocked > 5 Then
-		;		Return False
-		;	EndIf
-		;	Move(DllStructGetData($me, 'X') + 150 * sin($angle), DllStructGetData($me, 'Y') + 150 * cos($angle))
-		;	RandomSleep(50)
-		;WEnd
-		$me = GetMyAgent()
+
+	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
+	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
+	Local $defendFunction = ($options.Item('defendFunction') <> Null) ? $options.Item('defendFunction') : Null ; defend function to use while moving
+	Local $moveTimeOut = ($options.Item('moveTimeOut') <> Null) ? $options.Item('moveTimeOut') : 2 * 60 * 1000 ; 2 minutes max timeout, otherwise bot probably got stuck
+	Local $randomFactor = ($options.Item('randomFactor') <> Null) ? $options.Item('randomFactor') : 100 ; random factor for movement
+	Local $hosSkillSlot = ($options.Item('hosSkillSlot') <> Null) ? $options.Item('hosSkillSlot') : 0 ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
+	Local $deathChargeSkillSlot = ($options.Item('$deathChargeSkillSlot') <> Null) ? $options.Item('$deathChargeSkillSlot') : 0 ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
+	$randomFactor = _Min(_Max($randomFactor, 0), 1000) ; $randomFactor in range [0;1000]
+	If $hosSkillSlot <> 1 And $hosSkillSlot <> 2 And $hosSkillSlot <> 3 And $hosSkillSlot <> 4 And $hosSkillSlot <> 5 And $hosSkillSlot <> 6 And $hosSkillSlot <> 7 And $hosSkillSlot <> 8 Then $hosSkillSlot = 0
+	If $deathChargeSkillSlot <> 1 And $deathChargeSkillSlot <> 2 And $deathChargeSkillSlot <> 3 And $deathChargeSkillSlot <> 4 And $deathChargeSkillSlot <> 5 And $deathChargeSkillSlot <> 6 And $deathChargeSkillSlot <> 7 And $deathChargeSkillSlot <> 8 Then $deathChargeSkillSlot = 0
+
+	Local $moveTimer = TimerInit()
+	Local $chatStuckTimer = TimerInit()
+	Move($destinationX, $destinationY, $randomFactor)
+
+	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
+		If $defendFunction <> Null Then $defendFunction()
+		If TimerDiff($moveTimer) > $moveTimeOut Then Return $STUCK
+
+		If IsPlayerAlive() And Not IsPlayerMoving() Then
+			$blocked += 1
+			$angle = (-1 ^ $blocked) * ($blocked * $PI/8)
+			$me = GetMyAgent()
+			If $blocked < 6 Then
+				Move($destinationX, $destinationY, $randomFactor)
+			ElseIf $blocked > 5 Then
+				Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle), $randomFactor)
+			EndIf
+			If $blocked > 20 Then
+				; If Heart of Shadow skill is available then use it to avoid becoming stuck
+				If $hosSkillSlot > 0 Then
+					If IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
+						UseSkillEx($hosSkillSlot) ; use heart of shadow on self to get into random location
+						RandomSleep(GetPing())
+						Move($destinationX, $destinationY, $randomFactor)
+					EndIf
+				EndIf
+				; If Death's Charge skill is available then use it to avoid becoming stuck
+				If $deathChargeSkillSlot > 0 Then
+					If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
+						If IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
+							$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+							ChangeTarget($target)
+							UseSkillEx($deathChargeSkillSlot, $target)
+							RandomSleep(GetPing())
+							Move($destinationX, $destinationY, $randomFactor)
+						EndIf
+					EndIf
+				EndIf
+			EndIf
+			; Checking if no foes are in range to use /stuck only when there are no foes in range like when rubberbanding or on some obstacles
+			If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then ; use a timer to avoid spamming /stuck
+				Warn('Sending /stuck')
+				SendChat('stuck', '/')
+				$chatStuckTimer = TimerInit()
+				RandomSleep(500 + GetPing())
+			EndIf
+		Else
+			Move($destinationX, $destinationY, $randomFactor)
+			$blocked = 0 ; reset of block count if player got unstuck
+			$angle = 0
+		EndIf
+		If $openChests Then
+			$chest = FindChest($chestOpenRange)
+			If $chest <> Null Then
+				$options.Item('openChests') = False
+				MoveAvoidingBodyBlock(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), $options)
+				$options.Item('openChests') = True
+				FindAndOpenChests($chestOpenRange)
+			EndIf
+		EndIf
 	WEnd
-	Return True
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
+EndFunc
+
+
+;~ Detect if player is rubberbanding
+Func IsPlayerRubberBanding()
 EndFunc
 
 
@@ -2376,6 +2437,15 @@ $Default_MoveAggroAndKill_Options.Add('fightDuration', 60000) ; default 60 secon
 
 Global $Default_FlagMoveAggroAndKill_Options = CloneDictMap($Default_MoveAggroAndKill_Options)
 $Default_FlagMoveAggroAndKill_Options.Item('flagHeroesOnFight') = True
+
+Global $Default_MoveDefend_Options = ObjCreate('Scripting.Dictionary')
+$Default_MoveDefend_Options.Add('defendFunction', Null) ; defend function to use while moving
+$Default_MoveDefend_Options.Add('moveTimeOut', 5 * 60 * 1000) ; 2 minutes max timeout, otherwise bot probably got stuck
+$Default_MoveDefend_Options.Add('randomFactor', 100) ; random factor for movement
+$Default_MoveDefend_Options.Add('hosSkillSlot', 0) ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
+$Default_MoveDefend_Options.Add('deathChargeSkillSlot', 0) ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
+$Default_MoveDefend_Options.Add('openChests', False)
+$Default_MoveDefend_Options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
