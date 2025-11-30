@@ -49,8 +49,11 @@ Func FoWFarm($STATUS)
 	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	EnterFissureOfWoe()
-	Local $result = FoWFarmLoop()
+	Local $result = EnterFissureOfWoe()
+	If $result <> $SUCCESS Then Return $result
+	$result = FoWFarmLoop()
+	If $result == $SUCCESS Then Info('Successfully cleared Fissure of Woe')
+	If $result == $FAIL Then Info('Could not clear Fissure of Woe')
 	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	Return $result
 EndFunc
@@ -98,17 +101,39 @@ EndFunc
 
 
 Func EnterFissureOfWoe()
-	Info('Making way to Balthazar statue to enter Fissure of Woe')
-	MoveTo(-2500, 18700)
-	SendChat('/kneel', '')
-	RandomSleep(3000)
-	GoToNPC(GetNearestNPCToCoords(-2500, 18700))
-	RandomSleep(GetPing() + 750)
-	Dialog(0x85)
-	RandomSleep(GetPing() + 750)
-	Dialog(0x86)
-	RandomSleep(GetPing() + 750)
-	WaitMapLoading($ID_Fissure_of_Woe)
+	If GetMapID() <> $ID_Temple_of_the_Ages Then TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Fissure of Woe')
+		Local $fowScroll = GetItemByModelID($ID_FoW_Scroll)
+		If DllStructGetData($fowScroll, 'Slot') > 0 Then ; slots are numbered from 1, if scroll is not in any bag then Slot is 0
+			UseItem($fowScroll)
+			WaitMapLoading($ID_Fissure_of_Woe)
+			If GetMapID() <> $ID_Fissure_of_Woe Then
+				Warn('Used scroll but still could not enter Fissure of Woe. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		Else
+			Warn('Could not find scroll to enter Fissure of Woe in player''s inventory')
+			Return $PAUSE
+		EndIf
+	Else ; not using scroll method to enter Fissure of Woe
+		Info('Going to Balthazar statue to enter Fissure of Woe')
+		MoveTo(-2500, 18700)
+		SendChat('/kneel', '')
+		RandomSleep(GetPing() + 3000)
+		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+		RandomSleep(GetPing() + 750)
+		Dialog(0x85) ; entering FoW dialog option
+		RandomSleep(GetPing() + 750)
+		Dialog(0x86) ; accepting dialog option
+		RandomSleep(GetPing() + 750)
+		WaitMapLoading($ID_Fissure_of_Woe)
+		If GetMapID() <> $ID_Fissure_of_Woe Then
+			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
 EndFunc
 
 
