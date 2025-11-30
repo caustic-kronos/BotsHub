@@ -176,7 +176,7 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_Intensity)
 	UseSkillEx($Kournans_Mindbender)				;1s
 	Local $positionToGo = FindMiddleOfFoes(9600, -650, $RANGE_EARSHOT)
-	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
+	$targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	GetAlmostInRangeOfAgent($targetFoe)
 	RandomSleep(50)
 	UseSkillEx($Kournans_EbonBattleStandardOfHonor)	;1s

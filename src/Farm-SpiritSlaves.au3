@@ -184,7 +184,7 @@ Func FarmNorthGroup()
 	WaitForFoesBall()
 	WaitForEnergy()
 	WaitForDeathsCharge()
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, 3, $RANGE_EARSHOT)
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, $ID_Allegiance_Foe, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe)
 	ChangeWeaponSet(1)
 	UseSkillEx($SS_Sand_Shards)
@@ -200,7 +200,7 @@ Func FarmNorthGroup()
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
-	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
+	$targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
 
 	UseSkillEx($SS_Deaths_Charge, $targetFoe)
 	RandomSleep(20)
@@ -253,7 +253,7 @@ Func FarmSouthGroup()
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
-	Local $targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
+	Local $targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	UseSkillEx($SS_I_am_unstoppable)
 	RandomSleep(20)
 	UseSkillEx($SS_Extend_Enchantments)
@@ -307,7 +307,7 @@ Func KillSequence()
 		Local $me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 		If $foesCount > 0 Then
-			Local $casterFoe = GetFurthestNPCInRangeOfCoords(3, Null, Null, $RANGE_AREA + 88)
+			Local $casterFoe = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, Null, Null, $RANGE_AREA + 88)
 			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance($me, $casterFoe)
 			If $foesCount < 5 And GetDistance($me, $casterFoe) > $RANGE_ADJACENT Then

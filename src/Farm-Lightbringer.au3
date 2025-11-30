@@ -271,7 +271,7 @@ Func MoveToAndAggro($x, $y, $foesGroup)
 
 	Local $skillCastTimer
 
-	Local $target = GetNearestNPCInRangeOfCoords($x, $y, 3, $range)
+	Local $target = GetNearestNPCInRangeOfCoords($x, $y, $ID_Allegiance_Foe, $range)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		FindAndOpenChests($RANGE_SPIRIT)

@@ -148,15 +148,15 @@ Func MantidsFarmLoop()
 	CommandAll(9000, -19500)
 
 	; Aggro the three groups
-	$target = GetNearestNPCInRangeOfCoords(700, -16700, 3, $RANGE_EARSHOT)
+	$target = GetNearestNPCInRangeOfCoords(700, -16700, $ID_Allegiance_Foe, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(-800, -15800)
 
-	$target = GetNearestNPCInRangeOfCoords(-1350, -16250, 3, $RANGE_EARSHOT)
+	$target = GetNearestNPCInRangeOfCoords(-1350, -16250, $ID_Allegiance_Foe, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(-700, -14800)
 
-	$target = GetNearestNPCInRangeOfCoords(-1600, -14500, 3, $RANGE_EARSHOT)
+	$target = GetNearestNPCInRangeOfCoords(-1600, -14500, $ID_Allegiance_Foe, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(0, -14300)
 
