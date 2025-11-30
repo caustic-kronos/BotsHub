@@ -2489,7 +2489,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 				Local $sufficientEnergy = ($skillsCostMap <> Null) ? (GetEnergy() >= $skillsCostMap[$i]) : True ; if no skill energy cost map is provided then attempt to use skills anyway
 				If IsRecharged($i) And $sufficientEnergy Then
 					UseSkillEx($i, $target)
-					Sleep(500)
+					RandomSleep(100)
 				EndIf
 				$target = GetCurrentTarget()
 			WEnd

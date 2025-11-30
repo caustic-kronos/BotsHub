@@ -301,7 +301,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 			For $foe In $foes
 				If GetHasHex($foe) And Not GetIsDead($foe) And DllStructGetData($foe, 'ID') <> 0 Then
 					UseSkillEx($KeiranSniperShot, $foe)
-					Sleep(800)
+					RandomSleep(100)
 					ContinueLoop ; exit loop iteration to not use any skills on potentially deceased target
 				EndIf
 			Next
@@ -365,19 +365,19 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 
 		If IsRecharged($KeiranRelentlessAssault) And GetHasCondition($me) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
 			UseSkillEx($KeiranRelentlessAssault, $target)
-			Sleep(200)
+			RandomSleep(100)
 			ContinueLoop
 		EndIf
 
 		If IsRecharged($KeiranRainOfArrows) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
 			UseSkillEx($KeiranRainOfArrows, $target)
-			Sleep(200)
+			RandomSleep(100)
 			ContinueLoop
 		EndIf
 
 		If IsRecharged($KeiranGravestoneMarker) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
 			UseSkillEx($KeiranGravestoneMarker, $target)
-			Sleep(200)
+			RandomSleep(100)
 			ContinueLoop
 		EndIf
 
