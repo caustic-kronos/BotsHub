@@ -27,7 +27,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $NexusChallengeinformations = 'Mysterious armor farm'
+Global Const $NexusChallengeInformations = 'Mysterious armor farm'
 ; Average duration ~ 20m
 Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
 
@@ -41,7 +41,12 @@ Func NexusChallengeFarm($STATUS)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
 	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
-	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	Info('Returning back to the outpost')
+	Sleep(1000)
+	Resign()
+	Sleep(4000)
+	ReturnToOutpost()
+	Sleep(6000)
 	Return $result
 EndFunc
 
@@ -88,12 +93,12 @@ Func EnterNexusChallengeMission()
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
 	Local Static $StartX = -391
 	Local Static $StartY = -335
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		Info('Entering Nexus mission')
 		; Lance la quête
 		MoveTo(-2218, -5033)
 		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
-		Notice('Talking to NPC')
+		Info('Talking to NPC')
 		Sleep(1000)
 		Dialog(0x88)
 		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
@@ -129,9 +134,9 @@ Func NexusChallenge()
 	]
 
 	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
-	Notice('First loop completed')
+	Info('First loop completed')
 	If MoveAggroAndKillGroups($foes, 10, 18) == $FAIL Then Return $FAIL
-	Notice('Second loop completed, reset')
+	Info('Second loop completed, reset')
 
 	Return $SUCCESS
 EndFunc

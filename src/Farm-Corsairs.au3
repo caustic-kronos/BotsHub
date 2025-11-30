@@ -39,7 +39,10 @@ Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +5 armor or +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
-	& '- Dunkoro'
+	& '- Required hero for mission Dunkoro' & @CRLF _
+	& '' & @CRLF _
+	& 'This farm bot is based on below article:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
 Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
@@ -71,7 +74,12 @@ Func CorsairsFarm($STATUS)
 
 	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()
-	BackToModdokCreviceOutpost()
+	Info('Returning back to the outpost')
+	Sleep(1000)
+	Resign()
+	Sleep(4000)
+	ReturnToOutpost()
+	Sleep(6000)
 	Return $result
 EndFunc
 
@@ -134,23 +142,13 @@ Func EnterCorsairsModdokCreviceMission()
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
 	Local Static $StartX = -11468
 	Local Static $StartY = -7267
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		Info('Entering Moddok Crevice mission')
 		GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 		RandomSleep(250)
 		Dialog(0x84)
-		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
+		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
 	WEnd
-EndFunc
-
-
-;~ Resign and returns to Modook Crevice (city)
-Func BackToModdokCreviceOutpost()
-	Info('Porting to Moddok Crevice (city)')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Moddok_Crevice, 10000, 2000)
 EndFunc
 
 
