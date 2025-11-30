@@ -58,8 +58,10 @@ To use it:
 - Bogroot dungeon farm (Froggy)
 - SoO dungeon farm (Dragon Bone Staff)
 - Slaver's Exile dungeon farm (Voltaic Spears)
-- FoW farm (Obsidian shard, Obsidian Edge, shadow weapons)
-- DoA farm (Gemstones)
+- FoW farm (Obsidian Shards, Obsidian Edge, shadow weapons)
+- FoW Tower of Courage farm (Obsidian Shards, dust)
+- DoA farm (Gemstones, gold items)
+- City of Torc'qua farm (Margonite Gemstones)
 - Stygian Veil farm (Stygian Gemstones)
 ### Chest runs
 - Boreal chest run (glacial blades)
