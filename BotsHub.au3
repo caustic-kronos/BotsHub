@@ -35,6 +35,7 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+#include <ColorConstants.au3>
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
 #include <GuiTreeView.au3>
@@ -89,17 +90,6 @@ Global Const $LVL_INFO = 1
 Global Const $LVL_NOTICE = 2
 Global Const $LVL_WARNING = 3
 Global Const $LVL_ERROR = 4
-
-Global Const $GUI_GREY_COLOR = 13158600
-Global Const $GUI_BLUE_COLOR = 11192062
-Global Const $GUI_YELLOW_COLOR = 16777192
-Global Const $GUI_RED_COLOR = 16751781
-
-Global Const $GUI_CONSOLE_GREY_COLOR = 16777215
-Global Const $GUI_CONSOLE_BLUE_COLOR = 0xFF7000
-Global Const $GUI_CONSOLE_GREEN_COLOR = 13434828
-Global Const $GUI_CONSOLE_YELLOW_COLOR = 0x00FFFF
-Global Const $GUI_CONSOLE_RED_COLOR = 0x0000FF
 
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
@@ -179,14 +169,14 @@ Global $GUI_Label_ToDoList
 ;------------------------------------------------------
 Func createGUI()
 	$GUI_GWBotHub = GUICreate('GW Bot Hub', 600, 450, -1, -1) ; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
-	GUISetBkColor($GUI_GREY_COLOR, $GUI_GWBotHub)
+	GUISetBkColor($COLOR_SILVER, $GUI_GWBotHub)
 
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 420, 136, 20)
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 155, 420, 136, 20)
 	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetOnEvent($GUI_Combo_FarmChoice, 'GuiButtonHandler')
 	$GUI_StartButton = GUICtrlCreateButton('Start', 300, 420, 136, 21)
-	GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+	GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTBLUE)
 	GUICtrlSetOnEvent($GUI_StartButton, 'GuiButtonHandler')
 	GUISetOnEvent($GUI_EVENT_CLOSE, 'GuiButtonHandler')
 	$GUI_FarmProgress = GUICtrlCreateProgress(445, 420, 141, 21)
@@ -194,11 +184,11 @@ Func createGUI()
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 581, 401)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
 	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
-	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 175, 271, 226, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
-	_GUICtrlRichEdit_SetCharColor($GUI_Console, $GUI_CONSOLE_GREY_COLOR)
-	_GUICtrlRichEdit_SetBkColor($GUI_Console, 0)
+	_GUICtrlRichEdit_SetCharColor($GUI_Console, $COLOR_WHITE)
+	_GUICtrlRichEdit_SetBkColor($GUI_Console, $COLOR_BLACK)
 
 	; === Run Infos ===
 	$GUI_Group_RunInfos = GUICtrlCreateGroup('Infos', 21, 39, 271, 126)
@@ -297,7 +287,7 @@ Func createGUI()
 	GUICtrlCreateTabItem('')
 
 	$GUI_Tab_RunOptions = GUICtrlCreateTabItem('Run options')
-	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 
 	$GUI_Group_GlobalOptions = GUICtrlCreateGroup('Options', 21, 39, 271, 361)
 	$GUI_Checkbox_LoopRuns = GUICtrlCreateCheckbox('Loop Runs', 31, 64, 156, 20)
@@ -327,13 +317,13 @@ Func createGUI()
 	$GUI_Checkbox_DisableRendering = GUICtrlCreateCheckbox('Disable rendering', 315, 183, 256, 20)
 	$GUI_Input_DynamicExecution = GUICtrlCreateInput('', 315, 364, 156, 20)
 	$GUI_Button_DynamicExecution = GUICtrlCreateButton('Run', 490, 364, 75, 20)
-	GUICtrlSetBkColor($GUI_Button_DynamicExecution, $GUI_BLUE_COLOR)
+	GUICtrlSetBkColor($GUI_Button_DynamicExecution, $COLOR_LIGHTBLUE)
 	GUICtrlSetOnEvent($GUI_Button_DynamicExecution, 'GuiButtonHandler')
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
 	$GUI_Tab_LootOptions = GUICtrlCreateTabItem('Loot options')
-	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 
 	$GUI_Group_BaseLootOptions = GUICtrlCreateGroup('Base Loot', 21, 39, 271, 176)
 	$GUI_Checkbox_LootEverything = GUICtrlCreateCheckbox('Loot everything', 31, 64, 96, 20)
@@ -372,7 +362,7 @@ Func createGUI()
 	GUICtrlCreateTabItem('')
 
 	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm infos')
-	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_GREY_COLOR)
+	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 	$GUI_Label_CharacterBuild = GUICtrlCreateLabel('Character build:', 30, 55, 80, 21)
 	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit('', 115, 55, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
 	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
@@ -604,7 +594,7 @@ Func StartButtonHandler()
 			Info('Starting...')
 			$STATUS = 'RUNNING'
 			GUICtrlSetData($GUI_StartButton, 'Pause')
-			GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
+			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTCORAL)
 		Case 'INITIALIZED'
 			Info('Starting...')
 			$STATUS = 'RUNNING'
@@ -612,14 +602,14 @@ Func StartButtonHandler()
 			Info('Pausing...')
 			GUICtrlSetData($GUI_StartButton, 'Will pause after this run')
 			GUICtrlSetState($GUI_StartButton, $GUI_Disable)
-			GUICtrlSetBkColor($GUI_StartButton, $GUI_YELLOW_COLOR)
+			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTYELLOW)
 			$STATUS = 'WILL_PAUSE'
 		Case 'WILL_PAUSE'
 			MsgBox(0, 'Error', 'You should not be able to press Pause when bot is already pausing.')
 		Case 'PAUSED'
 			Info('Restarting...')
 			GUICtrlSetData($GUI_StartButton, 'Pause')
-			GUICtrlSetBkColor($GUI_StartButton, $GUI_RED_COLOR)
+			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTCORAL)
 			$STATUS = 'RUNNING'
 		Case Else
 			MsgBox(0, 'Error', 'Unknown status <' & $STATUS & '>')
@@ -676,15 +666,15 @@ Func Out($TEXT, $LOGLEVEL = 1)
 		Local $logColor
 		Switch $LOGLEVEL
 			Case $LVL_DEBUG
-				$logColor = $GUI_CONSOLE_GREEN_COLOR
+				$logColor = $CLR_LIGHTGREEN ; CLR is reversed BGR color
 			Case $LVL_INFO
-				$logColor = $GUI_CONSOLE_GREY_COLOR
+				$logColor = $CLR_WHITE ; CLR is reversed BGR color
 			Case $LVL_NOTICE
-				$logColor = $GUI_CONSOLE_BLUE_COLOR
+				$logColor = $CLR_TEAL ; CLR is reversed BGR color
 			Case $LVL_WARNING
-				$logColor = $GUI_CONSOLE_YELLOW_COLOR
+				$logColor = $CLR_YELLOW ; CLR is reversed BGR color
 			Case $LVL_ERROR
-				$logColor = $GUI_CONSOLE_RED_COLOR
+				$logColor = $CLR_RED ; CLR is reversed BGR color
 		EndSwitch
 		_GUICtrlRichEdit_SetCharColor($GUI_Console, $logColor)
 		_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
@@ -783,7 +773,7 @@ Func BotHubLoop()
 			;GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Enable)
 			GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Enable)
 			GUICtrlSetState($GUI_StartButton, $GUI_Enable)
-			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTBLUE)
 		EndIf
 	WEnd
 EndFunc
@@ -801,7 +791,7 @@ Func RunFarmLoop($Farm)
 			MsgBox(0, 'Error', 'No farm chosen.')
 			$STATUS = 'INITIALIZED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
-			GUICtrlSetBkColor($GUI_StartButton, $GUI_BLUE_COLOR)
+			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTBLUE)
 		Case 'Boreal'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = BorealChestFarm($STATUS)
