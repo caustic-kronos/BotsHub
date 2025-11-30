@@ -68,6 +68,14 @@ Global $GEMSTONE_STYGIAN_FARM_SETUP = False
 Global Const $Stygians_Range_Short = 800
 Global Const $Stygians_Range_Long = 1200
 
+Global $StygianRunOptions = CloneDictMap($Default_MoveDefend_Options)
+$StygianRunOptions.Item('defendFunction')		= StygianCheckRunBuffs
+$StygianRunOptions.Item('moveTimeOut')			= 3 * 60 * 1000
+$StygianRunOptions.Item('randomFactor')			= 50
+$StygianRunOptions.Item('hosSkillSlot')			= 0
+$StygianRunOptions.Item('deathChargeSkillSlot')	= 0
+$StygianRunOptions.Item('openChests')			= False
+
 
 ;~ Main loop function for farming stygian gemstones
 Func GemstoneStygianFarm($STATUS)
@@ -157,9 +165,9 @@ Func GemstoneStygianFarmLoop()
 	Info('Starting Farm')
 	$GemstoneStygianFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
-	StygianMoveToPoint(2415, -10451)
+	RunStygianFarm(2415, -10451)
 	RandomSleep(14000)
-	StygianMoveToPoint(7010, -9050)
+	RunStygianFarm(7010, -9050)
 	RandomSleep(250)
 	If IsPlayerDead() Then Return $FAIL
 	If GetLightbringerTitle() < 50000 Then
@@ -189,7 +197,7 @@ EndFunc
 Func StygianFarmMesmerAssassin()
 	If IsPlayerDead() Then Return $FAIL
 	StygianJobMesmerAssassin()
-	StygianMoveToPoint(13240, -10006)
+	RunStygianFarm(13240, -10006)
 	StygianJobMesmerAssassin()
 	MoveTo(13240, -10006)
 	; Too hard to aggro the 2 groups after that, so pick up loot
@@ -206,11 +214,11 @@ EndFunc
 Func StygianJobMesmerAssassin()
 	Local Static $SomethingToPickUp = False
 	If IsPlayerDead() Then Return $FAIL
-	StygianMoveToPoint(10575, -8170)
+	RunStygianFarm(10575, -8170)
 	MoveTo(10871, -7842, 0)
 	RandomSleep(15000)
-	StygianMoveToPoint(10575, -8170)
-	StygianMoveToPoint(12853, -9936)
+	RunStygianFarm(10575, -8170)
+	RunStygianFarm(12853, -9936)
 	RandomSleep(500)
 	If $SomethingToPickUp And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
 	MoveTo(13128, -10084)
@@ -264,6 +272,11 @@ Func KillStygianMobsUsingWastrelSkills()
 EndFunc
 
 
+Func RunStygianFarm($destinationX, $destinationY)
+	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $StygianRunOptions)
+EndFunc
+
+
 Func StygianCheckSFBuffs()
 	If IsPlayerDead() Then Return $FAIL
 	If IsRecharged($Stygian_DeadlyParadox) And IsRecharged($Stygian_ShadowForm) And GetEnergy() >= 20 Then
@@ -284,62 +297,12 @@ EndFunc
 
 Func HideToLoot()
 	If IsPlayerDead() Then Return $FAIL
-	StygianMoveToPoint(10575, -8170)
+	RunStygianFarm(10575, -8170)
 	MoveTo(10871, -7842, 0)
 	RandomSleep(15000)
-	StygianMoveToPoint(10575, -8170)
-	StygianMoveToPoint(12853, -9936)
+	RunStygianFarm(10575, -8170)
+	RunStygianFarm(12853, -9936)
 	RandomSleep(500)
 	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
-EndFunc
-
-
-Func StygianMoveToPoint($destinationX, $destinationY, $random = 150)
-	If IsPlayerDead() Then Return $FAIL
-	Local $me, $blocked, $angle, $target
-	Local $ChatStuckTimer = TimerInit()
-	Move($destinationX, $destinationY, $random)
-	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $random * 1.5
-		StygianCheckRunBuffs()
-		;TargetNearestEnemy()
-		$target = GetNearestEnemyToAgent(GetMyAgent())
-		ChangeTarget($target)
-		RandomSleep(50)
-		$me = GetMyAgent()
-		If GetIsDead($me) Then Return $FAIL
-		StygianCheckRunBuffs()
-		If Not IsPlayerMoving() Then
-			StygianCheckRunBuffs()
-			$blocked += 1
-			If $blocked < 5 Then
-				Move($destinationX, $destinationY, $random)
-			ElseIf $blocked < 30 Then
-				$angle += 40
-				StygianCheckRunBuffs()
-				Move(DllStructGetData($me, 'X')+300*sin($angle), DllStructGetData($me, 'Y')+300*cos($angle))
-			EndIf
-		Else
-			If $blocked > 0 Then
-				If TimerDiff($ChatStuckTimer) > 3000 Then	; use a timer to avoid spamming /stuck
-					SendChat('stuck', '/')
-					$ChatStuckTimer = TimerInit()
-				EndIf
-				$blocked = 0
-			EndIf
-			StygianCheckRunBuffs()
-			If GetDistance($me, $target) > 1100 Then ; target is far, we probably got stuck.
-				If TimerDiff($ChatStuckTimer) > 3000 Then ; dont spam
-					SendChat('stuck', '/')
-					$ChatStuckTimer = TimerInit()
-					If GetDistance($me, $target) > 1100 Then ; we werent stuck, but target broke aggro. select a new one.
-						;TargetNearestEnemy()
-						$target = GetNearestEnemyToAgent(GetMyAgent())
-						ChangeTarget($target)
-					EndIf
-				EndIf
-			EndIf
-		EndIf
-	Wend
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc

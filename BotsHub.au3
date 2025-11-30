@@ -109,6 +109,7 @@ Global Const $NOT_STARTED = -1
 Global Const $SUCCESS = 0
 Global Const $FAIL = 1
 Global Const $PAUSE = 2
+Global Const $STUCK = 3
 
 ; STOPPED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $STATUS = 'STOPPED'

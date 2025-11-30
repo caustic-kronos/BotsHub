@@ -45,6 +45,17 @@ Global $shadowFormTimer = TimerInit()
 Global $shroudOfDistressTimer = TimerInit()
 Global $channelingTimer = TimerInit()
 
+Global $VaettirsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
+$VaettirsMoveOptions.Item('defendFunction')			= VaettirsStayAlive
+$VaettirsMoveOptions.Item('moveTimeOut')			= 100 * 1000 ; 100 seconds max for being stuck
+$VaettirsMoveOptions.Item('randomFactor')			= 50
+$VaettirsMoveOptions.Item('hosSkillSlot')			= $Vaettir_HeartOfShadow
+$VaettirsMoveOptions.Item('deathChargeSkillSlot')	= 0
+$VaettirsMoveOptions.Item('openChests')				= False
+Global $VaettirsMoveOptionsElementalist = CloneDictMap($VaettirsMoveOptions)
+$VaettirsMoveOptionsElementalist.Item('hosSkillSlot') = 0
+
+
 ;~ Main method to farm Vaettirs
 Func VaettirFarm($STATUS)
 	While $Deadlocked Or GetMapID() <> $ID_Jaga_Moraine
@@ -111,7 +122,7 @@ Func RunToJagaMoraine()
 		[-19968,	5564] _
 	]
 	For $i = 0 To UBound($pathToJaga) - 1
-		If MoveRunning($pathToJaga[$i][0], $pathToJaga[$i][1]) == $FAIL Then Return $FAIL
+		If RunAcrossBjoraMarches($pathToJaga[$i][0], $pathToJaga[$i][1]) == $FAIL Then Return $FAIL
 	Next
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
@@ -119,14 +130,14 @@ EndFunc
 
 
 ;~ Move to X, Y. This is to be used in the run from across Bjora Marches
-Func MoveRunning($X, $Y)
+Func RunAcrossBjoraMarches($X, $Y)
 	If IsPlayerDead() Then Return $FAIL
 
 	Move($X, $Y)
 
 	Local $target
 	Local $me = GetMyAgent()
-	While GetDistanceToPoint($me, $X, $Y) > 250
+	While GetDistanceToPoint($me, $X, $Y) > $RANGE_NEARBY
 		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent($me)
 
@@ -218,7 +229,7 @@ Func AggroAllMobs()
 
 	Info('Aggroing left')
 	MoveTo(13172, -22137)
-	If DoForArrayRows($vaettirs, 1, 14, MoveAggroing) == $FAIL Then Return $FAIL
+	If DoForArrayRows($vaettirs, 1, 14, VaettirsMoveDefending) == $FAIL Then Return $FAIL
 
 	Info('Waiting for left ball')
 	VaettirsSleepAndStayAlive(12000)
@@ -231,7 +242,7 @@ Func AggroAllMobs()
 	VaettirsSleepAndStayAlive(6000)
 
 	Info('Aggroing right')
-	If DoForArrayRows($vaettirs, 15, 25, MoveAggroing) == $FAIL Then Return $FAIL
+	If DoForArrayRows($vaettirs, 15, 25, VaettirsMoveDefending) == $FAIL Then Return $FAIL
 
 	Info('Waiting for right ball')
 	VaettirsSleepAndStayAlive(15000)
@@ -242,7 +253,28 @@ Func AggroAllMobs()
 		UseSkillEx($Skill_Heart_of_Shadow, GetMyAgent())
 	EndIf
 	VaettirsSleepAndStayAlive(5000)
-	If DoForArrayRows($vaettirs, 26, 31, MoveAggroing) == $FAIL Then Return $FAIL
+	If DoForArrayRows($vaettirs, 26, 31, VaettirsMoveDefending) == $FAIL Then Return $FAIL
+EndFunc
+
+
+Func VaettirsMoveDefending($destinationX, $destinationY)
+	Local $result = Null
+	If $VaettirsPlayerProfession == $ID_Elementalist Then
+		$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptionsElementalist)
+	Else
+		$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptions)
+	EndIf
+	If $result == $STUCK Then
+		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs whenever player got surrounded and stuck
+		VaettirsKillSequence()
+		If IsPlayerAlive() Then
+			Info('Looting')
+			PickUpItems(VaettirsStayAlive, DefaultShouldPickItem, $RANGE_EARSHOT)
+		EndIf
+		If IsPlayerDead() Then Return $FAIL
+	Else
+		Return $result
+	EndIf
 EndFunc
 
 
@@ -291,8 +323,8 @@ Func RezoneToJagaMoraine()
 	If IsPlayerDead() Then $result = $FAIL
 
 	Info('Zoning out and back in')
-	MoveAggroing(12289, -17700)
-	MoveAggroing(15318, -20351)
+	VaettirsMoveDefending(12289, -17700)
+	VaettirsMoveDefending(15318, -20351)
 
 	Local $deadlockTimer = TimerInit()
 	While IsPlayerDead()
@@ -313,78 +345,6 @@ Func RezoneToJagaMoraine()
 	Return $result
 EndFunc
 
-
-;~ Move to destX, destY, while staying alive vs vaettirs
-Func MoveAggroing($X, $Y, $random = 150)
-	If IsPlayerDead() Then Return $FAIL
-
-	Local $blockedCount
-	Local $heartOfShadowUsageCount
-	Local $angle
-	Local $stuckTimer = TimerInit()
-
-	Move($X, $Y, $random)
-
-	Local $me = GetMyAgent()
-	Local $target = GetNearestEnemyToAgent($me)
-	While GetDistanceToPoint($me, $X, $Y) > $random * 1.5
-		If IsPlayerDead() Then Return False
-		VaettirsStayAlive()
-		$me = GetMyAgent()
-		If Not IsPlayerMoving() Then
-			If $heartOfShadowUsageCount > 6 Then
-				While IsPlayerAlive()
-					RandomSleep(1000)
-				WEnd
-				Return $FAIL
-			EndIf
-
-			$blockedCount += 1
-			$me = GetMyAgent()
-			If $blockedCount < 5 Then
-				Move($X, $Y, $random)
-			ElseIf $blockedCount < 10 Then
-				$angle += 40
-				Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle))
-			ElseIf IsRecharged($Skill_Heart_of_Shadow) Then
-				If $heartOfShadowUsageCount == 0 And GetDistance($me, $target) < $RANGE_SPELLCAST Then
-					UseSkillEx($Skill_Heart_of_Shadow, $target)
-				Else
-					UseSkillEx($Skill_Heart_of_Shadow, $me)
-				EndIf
-				$blockedCount = 0
-				$heartOfShadowUsageCount += 1
-			EndIf
-		Else
-			If $blockedCount > 0 Then
-				; use a timer to avoid spamming /stuck
-				If TimerDiff($ChatStuckTimer) > 3000 Then
-					SendChat('stuck', '/')
-					$ChatStuckTimer = TimerInit()
-				EndIf
-				$blockedCount = 0
-				$heartOfShadowUsageCount = 0
-			EndIf
-
-			; target is far, we probably got stuck
-			If GetDistance($me, $target) > 1100 Then
-				; dont spam
-				If TimerDiff($ChatStuckTimer) > 3000 Then
-					SendChat('stuck', '/')
-					$ChatStuckTimer = TimerInit()
-					RandomSleep(GetPing() + 20)
-					; we werent stuck, but target broke aggro. select a new one
-					If GetDistance($me, $target) > 1100 Then
-						$target = GetNearestEnemyToAgent($me)
-					EndIf
-				EndIf
-			EndIf
-		EndIf
-		RandomSleep(100)
-		$me = GetMyAgent()
-	WEnd
-	Return $SUCCESS
-EndFunc
 
 
 ;~ Wait while staying alive at the same time (like Sleep(..), but without the dying part)

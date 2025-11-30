@@ -81,6 +81,14 @@ Global Const $Raptors_BladeturnRefrain	= 8
 
 Global $RaptorsPlayerProfession = $ID_Warrior ; global variable to remember player's profession
 
+Global $RaptorsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
+$RaptorsMoveOptions.Item('defendFunction')			= Null ; not using any defense skills during movement to preserve energy
+$RaptorsMoveOptions.Item('moveTimeOut')				= 3 * 60 * 1000
+$RaptorsMoveOptions.Item('randomFactor')			= 10
+$RaptorsMoveOptions.Item('hosSkillSlot')			= 0
+$RaptorsMoveOptions.Item('deathChargeSkillSlot')	= 0
+$RaptorsMoveOptions.Item('openChests')				= False
+
 
 ;~ Main method to farm Raptors
 Func RaptorsFarm($STATUS)
@@ -244,21 +252,27 @@ Func AggroRaptors()
 	WEnd
 	RandomSleep(250)
 
-	If MoveAggroingRaptors(-20000, -10300) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-19500, -11500) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-20500, -12000) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-21000, -12200) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-21500, -12000) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-22000, -12000) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-20000, -10300) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-19500, -11500) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-20500, -12000) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-21000, -12200) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-21500, -12000) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-22000, -12000) == $STUCK Then Return $FAIL
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	If $RaptorsPlayerProfession == $ID_Dervish Then UseSkillEx($Raptors_MirageCloak)
-	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $FAIL Then Return $FAIL
-	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $FAIL Then Return $FAIL
+	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $STUCK Then Return $FAIL
+	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $STUCK Then Return $FAIL
 	If IsBossAggroed() Then
-		If MoveAggroingRaptors(-22400, -12400) == $FAIL Then Return $FAIL
+		If MoveAggroingRaptors(-22400, -12400) == $STUCK Then Return $FAIL
 	Else
-		If MoveAggroingRaptors(-23300, -12050) == $FAIL Then Return $FAIL
+		If MoveAggroingRaptors(-23300, -12050) == $STUCK Then Return $FAIL
 	EndIf
+EndFunc
+
+
+;~ Move to (X,Y) while staying alive vs raptors
+Func MoveAggroingRaptors($destinationX, $destinationY)
+	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $RaptorsMoveOptions)
 EndFunc
 
 
@@ -342,7 +356,8 @@ Func KillRaptors()
 		RandomSleep(250)
 		$count += 1
 		If $count > 10 Then
-			SendStuckCommand()
+			SendChat('stuck', '/')
+			RandomSleep(GetPing() + 20)
 		EndIf
 	WEnd
 
@@ -409,80 +424,4 @@ Func CheckFarmResult()
 		Return $FAIL
 	EndIf
 	Return $SUCCESS
-EndFunc
-
-
-;~ Move to (X,Y) while staying alive vs raptors
-Func MoveAggroingRaptors($x, $y)
-	Move($x, $y, 0)
-
-	Local $me = GetMyAgent()
-	While IsPlayerAlive() And GetDistanceToPoint($me, $x, $y) > $RANGE_NEARBY
-		If IsBodyBlocked() Then Return $FAIL
-		RandomSleep(100)
-		Move($x, $y)
-		$me = GetMyAgent()
-	WEnd
-	Return $SUCCESS
-EndFunc
-
-
-;~ Check if bodyblock and if is move randomly until not bodyblocked anymore
-Func IsBodyBlocked()
-	Local $blocked = 0
-	Local Const $PI = 3.14159
-	Local $angle = 0
-
-	Local $me = GetMyAgent()
-	If DllStructGetData($me, 'HP') < 0.90 Then
-		SendStuckCommand()
-	EndIf
-
-	While Not IsPlayerMoving()
-		$blocked += 1
-		Debug('Blocked: ' & $blocked)
-		If $blocked > 1 Then
-			$angle += $PI / 4
-		EndIf
-
-		If ($blocked > 4 Or DllStructGetData($me, 'HP') < 0.90) Then
-			SendStuckCommand()
-		EndIf
-
-		If $blocked > 7 Then
-			Debug('Completely blocked')
-			Return True
-		EndIf
-		Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle), 0)
-		RandomSleep(250)
-		$me = GetMyAgent()
-	WEnd
-	Return False
-EndFunc
-
-
-;~ Send /stuck - don't overuse
-Func SendStuckCommand()
-	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
-	If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then
-		Warn('Sending /stuck')
-		SendChat('stuck', '/')
-		$chatStuckTimer = TimerInit()
-		RandomSleep(GetPing() + 20)
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Detect if player is rubberbanding
-Func IsRubberBanding()
-
-EndFunc
-
-
-;~ Get foe that is a boss - Null if no boss
-Func GetBossFoe()
-	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
-	Return IsArray($bossFoes) And UBound($bossFoes) > 0 ? $bossFoes[0] : Null
 EndFunc
