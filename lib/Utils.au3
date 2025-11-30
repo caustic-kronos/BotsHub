@@ -2875,6 +2875,19 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 
 	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
 
+	; fix for problem when build template doesn't have second profession, but attribute points of current player/hero profession still need to be cleared
+	; in case of player it's possible to extract secondary profession property from agent struct because player exists in outposts contrary to heroes
+	; in case of heroes it isn't possible to extract secondary profession from agent struct of hero in outpost because hero agents don't exist in outposts, only in explorables
+	; therefore doing a workaround for heroes that when build template doesn't have second profession then hero second profession is changed to Monk, which clears attribute points of second profession, regardless if it was Monk or not
+	If $secondaryProfession == 0 Or $secondaryProfession == Null Then
+		If $heroIndex == 0 Then
+			$secondaryProfession = DllStructGetData(GetMyAgent(), 'Secondary')
+		Else
+			ChangeSecondProfession($ID_Monk, $heroIndex)
+			$secondaryProfession = $ID_Monk
+		EndIf
+	EndIf
+
 	$deadlock = TimerInit()
 	; Setting up secondary profession
 	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
