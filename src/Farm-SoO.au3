@@ -23,10 +23,10 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', True)
+Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $SoOFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
+Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '45mn average in NM' & @CRLF _
@@ -54,39 +54,11 @@ EndFunc
 Func SetupSoOFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return
-	SetupPlayerSoOFarm()
-	SetupTeamSoOFarm()
+	; Assuming that team has been set up correctly manually
 	SwitchToHardModeIfEnabled()
 	If RunToShardsOfOrrDungeon() == $FAIL Then Return
 	$SOO_FARM_SETUP = True
 	Info('Preparations complete')
-EndFunc
-
-
-Func SetupPlayerSoOFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		Sleep(500 + GetPing())
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-    Else
-		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
-    EndIf
-	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
-	Sleep(500 + GetPing())
-EndFunc
-
-
-Func SetupTeamSoOFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		SetupTeamUsingGUISettings()
-    Else
-		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-    EndIf
-	Sleep(500 + GetPing())
-	If GetPartySize() <> 8 Then
-    	Warn('Could not set up party correctly. Team size different than 8')
-	EndIf
 EndFunc
 
 
@@ -393,7 +365,7 @@ Func ClearSoOFloor2()
 
 	Local $secondRoomfirstTime = True
 	Local $mapLoaded = False
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
+	While Not IsRunFailed() And Not $mapLoaded
 		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
@@ -431,6 +403,7 @@ Func ClearSoOFloor2()
 			Sleep(GetPing() + 500)
 			MoveTo(-11000, -6000)
 			Sleep(GetPing() + 500)
+			PickUpTorch()
 		EndIf
 
 		; Poison trap between 12 and 13
@@ -465,11 +438,8 @@ Func ClearSoOFloor2()
 		MoveAggroAndKillInRange(-17500, -9500, '23', $SoOAggroRange)
 
 		$secondRoomfirstTime = False
-	WEnd
 
-	Info('Going through portal')
-	Local $mapLoaded = False
-	While Not IsRunFailed() And Not $mapLoaded
+		Info('Going through portal')
 		Info('Open dungeon door')
 		ClearTarget()
 		For $i = 1 To 3 ; Tripled to secure bot
@@ -480,6 +450,7 @@ Func ClearSoOFloor2()
 			ActionInteract()
 			Sleep(GetPing() + 500)
 		Next
+
 		MoveTo(-18725, -9171)
 		Move(-19300, -8200)
 		RandomSleep(2000)
