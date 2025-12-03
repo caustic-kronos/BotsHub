@@ -6,6 +6,14 @@
 #################################
 Author: gigi
 Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from moneyvsmoney), Night, Gahais
+;
+; Run this farm bot as Assassin or Mesmer or Monk or Elementalist
+;
+; Vaettir farms in Jaga Moraine based on below articles:
+https://gwpvx.fandom.com/wiki/Build:A/Me_Vaettir_Farm
+https://gwpvx.fandom.com/wiki/Build:Me/A_Vaettir_Farm
+https://gwpvx.fandom.com/wiki/Build:Mo/A_55hp_Vaettir_Farmer
+https://gwpvx.fandom.com/wiki/Build:E/Me_Obsidian_Flesh_Vaettir_Farmer
 #CE ===========================================================================
 
 #include-once
@@ -18,32 +26,66 @@ Modified by: Pink Musen (v.01), Deroni93 (v.02-3), Dragonel (with help from mone
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $AMeVaettirsFarmerSkillbar = 'OwVUI2h5lPP8Id2BkAiANBLhbKA'
+Global Const $AMeVaettirsFarmerSkillbar = 'OwVU4lPL2hN8Id2BEBSANBLhbK'
+Global Const $MeAVaettirsFarmerSkillbar = 'OQdUAMhOsPP8Id2BEBSANBLhbK'
+Global Const $MoAVaettirsFarmerSkillbar = 'OwcU8UH6lPP8IdW9ABCRyi3D5B'
+;Global Const $MoAVaettirsFarmerSkillbar = 'OwcT44P7nhHpzOgIQISW8eIPA'
+Global Const $EMeVaettirsFarmerSkillbar = 'OgVFwDKJL7Uk0n2wXlLoBgJwSwNF'
+
 Global Const $VaettirsFarmInformations = 'For best results, have :' & @CRLF _
-	& '- +4 Shadow Arts' & @CRLF _
-	& '- Blessed insignias'& @CRLF _
-	& '- A shield with the inscription Like a rolling stone (+10 armor against earth damage)' & @CRLF _
-	& '- A main hand with +20% enchantments duration' & @CRLF _
-	& '- Cupcakes'
+	& '- +4 Shadow Arts (+3+1 headgear)' & @CRLF _
+	& '- Armor with HP runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
+	& '- A shield with the inscription ''Like a rolling stone'' (+10 armor against earth damage) and +45 health while enchanted' & @CRLF _
+	& '- In case of Monk 55hp, recommended to use grim cesta -50hp and armor with 5*-75hp runes' & @CRLF _
+	& '- In case of Obsidian Flesh Elementalist, recommended to have armor full with geomancer runes' & @CRLF _
+	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _
+	& '- Cupcakes' & @CRLF _
+	& 'Recommended to have maxed out Norn title. If not maxed out then this farm is good for raising Norn rank' & @CRLF _
+	& 'Vaettir farm can be a good way to max out survivor title' & @CRLF _
+	& 'Can switch to normal mode in case of low success rate but hard mode has better loots' & @CRLF _
+	& 'You can run this farm as Assassin or Mesmer or Monk or Elementalist. Bot will set up build automatically for these professions' & @CRLF _
+	& 'This farm bot is based on below articles:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:A/Me_Vaettir_Farm' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:Me/A_Vaettir_Farm' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:Mo/A_55hp_Vaettir_Farmer' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:E/Me_Obsidian_Flesh_Vaettir_Farmer'
 ; Average duration ~ 3m40 ~ First run is 6m30s with setup and run
 Global Const $VAETTIRS_FARM_DURATION = 4 * 60 * 1000
+Global $VAETTIRS_FARM_SETUP = False
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Skill_Shadow_Form) is better than UseSkillEx(2))
-Global Const $Skill_Deadly_Paradox		= 1
-Global Const $Skill_Shadow_Form			= 2
-Global Const $Skill_Shroud_of_Distress	= 3
-Global Const $Skill_Way_of_Perfection	= 4
-Global Const $Skill_Heart_of_Shadow		= 5
-Global Const $Skill_Channeling			= 6
-Global Const $Skill_Arcane_Echo			= 7
-Global Const $Skill_Wastrels_Demise		= 8
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($Vaettir_ShadowForm) is better than UseSkillEx(2))
+Global Const $Vaettir_DeadlyParadox		= 1
+Global Const $Vaettir_ShadowForm		= 2
+Global Const $Vaettir_ShroudOfDistress	= 3
+Global Const $Vaettir_HeartOfShadow		= 4
+Global Const $Vaettir_WayOfPerfection	= 5
+Global Const $Vaettir_Channeling		= 6
+Global Const $Vaettir_ArcaneEcho		= 7
+Global Const $Vaettir_WastrelsDemise	= 8
+
+Global Const $Vaettir_Monk_ProtectiveSpirit	= 3
+Global Const $Vaettir_Monk_BalthazarsAura	= 5
+Global Const $Vaettir_Monk_KirinsWrath		= 6
+Global Const $Vaettir_Monk_SymbolOfWrath	= 7
+Global Const $Vaettir_Monk_BalthazarsSpirit	= 8
+
+Global Const $Vaettir_Elementalist_GlyphOfSwiftness	= 1
+Global Const $Vaettir_Elementalist_ObsidianFlesh	= 2
+Global Const $Vaettir_Elementalist_StonefleshAura	= 3
+Global Const $Vaettir_Elementalist_ElementalLord	= 4
+Global Const $Vaettir_Elementalist_MantraOfEarth	= 5
 
 ; ==== Global variables ====
-Global $ChatStuckTimer = TimerInit()
+Global $VaettirsPlayerProfession = $ID_Assassin ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
 Global $Deadlocked = False
-Global $shadowFormTimer = TimerInit()
-Global $shroudOfDistressTimer = TimerInit()
-Global $channelingTimer = TimerInit()
+Global $VaettirShadowFormTimer = TimerInit()
+Global $VaettirShroudOfDistressTimer = TimerInit()
+Global $VaettirChannelingTimer = TimerInit()
+Global $VaettirGlyphOfSwiftnessTimer = TimerInit()
+Global $VaettirObsidianFleshTimer = TimerInit()
+Global $VaettirStonefleshAuraTimer = TimerInit()
+Global $VaettirMantraOfEarthTimer = TimerInit()
+Global $VaettirProtectiveSpiritTimer = TimerInit()
 
 Global $VaettirsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
 $VaettirsMoveOptions.Item('defendFunction')			= VaettirsStayAlive
@@ -57,8 +99,10 @@ $VaettirsMoveOptionsElementalist.Item('hosSkillSlot') = 0
 
 
 ;~ Main method to farm Vaettirs
-Func VaettirFarm($STATUS)
+Func VaettirsFarm($STATUS)
+	If CheckPlayerVaettirsFarm() == $FAIL Then Return $PAUSE
 	While $Deadlocked Or GetMapID() <> $ID_Jaga_Moraine
+		If Not $VAETTIRS_FARM_SETUP Then SetupVaettirsFarm()
 		$Deadlocked = False
 		RunToJagaMoraine()
 	WEnd
@@ -68,15 +112,56 @@ Func VaettirFarm($STATUS)
 EndFunc
 
 
-;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
-Func RunToJagaMoraine()
-	; Need to be done here in case bot comes back from inventory management
+Func CheckPlayerVaettirsFarm()
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Assassin Then
+		$VaettirsPlayerProfession = $ID_Assassin
+    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
+		$VaettirsPlayerProfession = $ID_Mesmer
+    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Monk Then
+		$VaettirsPlayerProfession = $ID_Monk
+    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
+		$VaettirsPlayerProfession = $ID_Elementalist
+    Else
+    	Warn('Should run this farm as assassin or mesmer or monk or elementalist')
+    	Return $FAIL
+    EndIf
+	; giving more health to monk 55hp from norn title effect would screw up farm, therefore hiding displayed title for monk
+	If $VaettirsPlayerProfession <> $ID_Monk Then SetDisplayedTitle($ID_Norn_Title)
+	If $VaettirsPlayerProfession == $ID_Monk Then SetDisplayedTitle(0)
+EndFunc
+
+
+Func SetupVaettirsFarm()
+	Info('Setting up farm')
 	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	SetDisplayedTitle($ID_Norn_Title)
+	SetupPlayerVaettirsFarm()
 	LeaveParty() ; solo farmer
-	Info('Setting up build skillbar')
-	LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
+	$VAETTIRS_FARM_SETUP = True
+	Info('Preparations complete')
+EndFunc
+
+
+Func SetupPlayerVaettirsFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If $VaettirsPlayerProfession == $ID_Assassin Then
+		LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
+    ElseIf $VaettirsPlayerProfession == $ID_Mesmer Then
+		LoadSkillTemplate($MeAVaettirsFarmerSkillbar)
+    ElseIf $VaettirsPlayerProfession == $ID_Monk Then
+		LoadSkillTemplate($MoAVaettirsFarmerSkillbar)
+    ElseIf $VaettirsPlayerProfession == $ID_Elementalist Then
+		LoadSkillTemplate($EMeVaettirsFarmerSkillbar)
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
+Func RunToJagaMoraine()
+	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 
 	Info('Exiting Outpost')
 	MoveTo(-26000, 16000)
@@ -141,11 +226,13 @@ Func RunAcrossBjoraMarches($X, $Y)
 		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent($me)
 
-		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then TryUseShadowForm()
+		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then VaettirsCheckBuffs()
 
-		$me = GetMyAgent()
-		If DllStructGetData($me, 'HealthPercent') < 0.9 And GetEnergy() > 10 Then TryUseShroudOfDistress()
-		If DllStructGetData($me, 'HealthPercent') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Skill_Heart_of_Shadow) Then UseSkillEx($Skill_Heart_of_Shadow, $target)
+		If $VaettirsPlayerProfession <> $ID_Elementalist Then
+			$me = GetMyAgent()
+			If DllStructGetData($me, 'HealthPercent') < 0.9 And GetEnergy() > 10 Then VaettirsCheckShroudOfDistress()
+			If DllStructGetData($me, 'HealthPercent') < 0.5 And GetDistance($me, $target) < 500 And GetEnergy() > 5 And IsRecharged($Vaettir_HeartOfShadow) Then UseSkillEx($Vaettir_HeartOfShadow, $target)
+		EndIf
 
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then Move($X, $Y)
@@ -159,27 +246,29 @@ EndFunc
 ;~ Farm loop
 Func VaettirsFarmLoop()
 	RandomSleep(1000)
+	If $VaettirsPlayerProfession == $ID_Monk Then UseSkillEx($Vaettir_Monk_BalthazarsSpirit, GetMyAgent())
+	If $VaettirsPlayerProfession == $ID_Elementalist Then UseSkillEx($Vaettir_Elementalist_ElementalLord)
 	GetVaettirsNornBlessing()
-	AggroAllMobs()
-	;KillMobs()
+	If AggroAllMobs() == $FAIL Then Return $FAIL
 	VaettirsKillSequence()
 	Sleep(1000)
-	VaettirsStayAlive()
 
-	Info('Looting')
-	PickUpItems()
+	If IsPlayerAlive() Then
+		Info('Looting')
+		PickUpItems(VaettirsStayAlive, DefaultShouldPickItem, $RANGE_EARSHOT)
+	EndIf
 
 	Return RezoneToJagaMoraine()
 EndFunc
 
 
-;~ Get Norn blessing only if title is not maxed yet
+;~ Get Norn blessing only if title is not maxed yet. Assuming that Norn has been already defeated
 Func GetVaettirsNornBlessing()
 	Local $nornTitlePoints = GetNornTitle()
 	If $nornTitlePoints < 160000 Then
 		Info('Getting norn title blessing')
 		GoNearestNPCToCoords(13400, -20800)
-		RandomSleep(300)
+		RandomSleep(500)
 		Dialog(0x84)
 	EndIf
 	RandomSleep(350)
@@ -233,11 +322,13 @@ Func AggroAllMobs()
 
 	Info('Waiting for left ball')
 	VaettirsSleepAndStayAlive(12000)
-	$target = GetNearestEnemyToAgent(GetMyAgent())
-	If GetDistance(GetMyAgent(), $target) < $RANGE_SPELLCAST Then
-		UseSkillEx($Skill_Heart_of_Shadow, $target)
-	Else
-		UseSkillEx($Skill_Heart_of_Shadow, GetMyAgent())
+	If $VaettirsPlayerProfession <> $ID_Elementalist Then
+		$target = GetNearestEnemyToAgent(GetMyAgent())
+		If GetDistance(GetMyAgent(), $target) < $RANGE_SPELLCAST Then
+			UseSkillEx($Vaettir_HeartOfShadow, $target)
+		Else
+			UseSkillEx($Vaettir_HeartOfShadow, GetMyAgent())
+		EndIf
 	EndIf
 	VaettirsSleepAndStayAlive(6000)
 
@@ -247,10 +338,12 @@ Func AggroAllMobs()
 	Info('Waiting for right ball')
 	VaettirsSleepAndStayAlive(15000)
 	$target = GetNearestEnemyToAgent(GetMyAgent())
-	If GetDistance(GetMyAgent(), $target) < $RANGE_SPELLCAST Then
-		UseSkillEx($Skill_Heart_of_Shadow, $target)
-	Else
-		UseSkillEx($Skill_Heart_of_Shadow, GetMyAgent())
+	If $VaettirsPlayerProfession <> $ID_Elementalist Then
+		If GetDistance(GetMyAgent(), $target) < $RANGE_SPELLCAST Then
+			UseSkillEx($Vaettir_HeartOfShadow, $target)
+		Else
+			UseSkillEx($Vaettir_HeartOfShadow, GetMyAgent())
+		EndIf
 	EndIf
 	VaettirsSleepAndStayAlive(5000)
 	If DoForArrayRows($vaettirs, 26, 31, VaettirsMoveDefending) == $FAIL Then Return $FAIL
@@ -276,75 +369,6 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 		Return $result
 	EndIf
 EndFunc
-
-
-;~ Kill a mob group
-Func VaettirsKillSequence()
-	; Wait for shadow form to have been casted very recently
-	While IsPlayerAlive() And TimerDiff($shadowFormTimer) > 5000
-		If IsPlayerDead() Then Return
-		Sleep(100)
-		VaettirsStayAlive()
-	WEnd
-
-	Info('Killing')
-	Local $deadlock = TimerInit()
-	Local $target
-	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	If $foesCount > 0 Then
-		; Echo the Wastrel's Demise
-		UseSkillEx($Skill_Arcane_Echo)
-		$target = GetWastrelsTarget()
-		UseSkillEx($Skill_Wastrels_Demise, $target)
-		While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 60000
-			; Use echoed wastrel if possible
-			If IsRecharged($Skill_Arcane_Echo) And GetSkillbarSkillID($Skill_Arcane_Echo) == $ID_Wastrels_Demise Then
-				$target = GetWastrelsTarget()
-				If $target <> Null Then UseSkillEx($Skill_Arcane_Echo, $target)
-			EndIf
-
-			; Use wastrel if possible
-			If IsRecharged($Skill_Wastrels_Demise) Then
-				$target = GetWastrelsTarget()
-				If $target <> Null Then UseSkillEx($Skill_Wastrels_Demise, $target)
-			EndIf
-
-			RandomSleep(100)
-			VaettirsStayAlive()
-			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-		WEnd
-	EndIf
-EndFunc
-
-
-;~ Exit Jaga Moraine to Bjora Marches and get back into Jaga Moraine
-Func RezoneToJagaMoraine()
-	Local $result = $SUCCESS
-	If IsPlayerDead() Then $result = $FAIL
-
-	Info('Zoning out and back in')
-	VaettirsMoveDefending(12289, -17700)
-	VaettirsMoveDefending(15318, -20351)
-
-	Local $deadlockTimer = TimerInit()
-	While IsPlayerDead()
-		Info('Waiting for resurrection')
-		RandomSleep(1000)
-		If TimerDiff($deadlockTimer) > 60000 Then
-			$Deadlocked = True
-			Return $FAIL
-		EndIf
-	WEnd
-	MoveTo(15600, -20500)
-	Move(15865, -20531)
-	WaitMapLoading($ID_Bjora_Marches)
-	MoveTo(-19968, 5564)
-	Move(-20076, 5580, 30)
-	WaitMapLoading($ID_Jaga_Moraine)
-
-	Return $result
-EndFunc
-
 
 
 ;~ Wait while staying alive at the same time (like Sleep(..), but without the dying part)
@@ -381,41 +405,90 @@ Func VaettirsStayAlive()
 		EndIf
 	Next
 
-	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()
-	If ($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0)) And GetEnergy() > 10 Then
-		TryUseShroudOfDistress()
+	If $foesNear Then VaettirsCheckBuffs()
+	If ($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.6 Or _
+			($foesSpellRange And GetEffect($ID_Shroud_of_Distress) == Null)) And _
+			($VaettirsPlayerProfession == $ID_Assassin Or $VaettirsPlayerProfession == $ID_Mesmer) Then VaettirsCheckShroudOfDistress()
+	If $foesNear Then VaettirsCheckBuffs()
+	If $areaCount > 5 And $VaettirsPlayerProfession <> $ID_Monk Then VaettirsCheckChanneling()
+	If $foesNear Then VaettirsCheckBuffs()
+EndFunc
+
+
+;~ Uses Shadow Form or other buffs like Obsidian Flesh or Protective Spirit if these are recharged
+Func VaettirsCheckBuffs()
+	If $VaettirsPlayerProfession == $ID_Elementalist Then
+		VaettirsCheckObsidianFlesh()
+	Else
+		VaettirsCheckShadowForm()
 	EndIf
-	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()
-	If $areaCount > 5 Then TryUseChanneling()
-	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()
 EndFunc
 
 
 ;~ Uses Shadow Form if its recharged
-Func TryUseShadowForm()
-	If TimerDiff($shadowFormTimer) > 20000 Then
-		UseSkillEx($Skill_Deadly_Paradox)
-		UseSkillEx($Skill_Shadow_Form)
-		UseSkillEx($Skill_Way_of_Perfection)
-		$shadowFormTimer = TimerInit()
+Func VaettirsCheckShadowForm()
+	; Caution, if playing monk 55hp then protective spirit has to be already on player when casting shadow form, otherwise damage reduction to 0 won't be applied due to specific guild wars mechanics
+	; Furthermore, due to specific guild wars mechanics casting protective spirit multiple times can remove damage reduction to 0 so protective spirit has to casted only once just before Shadow Form, otherwise player will die very fast
+	If ($VaettirsPlayerProfession <> $ID_Monk And TimerDiff($VaettirShadowFormTimer) > 19000 And GetEnergy() > 20) Or _
+		($VaettirsPlayerProfession == $ID_Monk And TimerDiff($VaettirShadowFormTimer) > 19500 And GetEnergy() > 30) Then
+		If $VaettirsPlayerProfession == $ID_Monk Then UseSkillEx($Vaettir_Monk_ProtectiveSpirit)
+		UseSkillEx($Vaettir_DeadlyParadox)
+		While IsPlayerAlive() And Not IsRecharged($Vaettir_ShadowForm)
+			Sleep(50)
+		WEnd
+		UseSkillEx($Vaettir_ShadowForm)
+		If $VaettirsPlayerProfession <> $ID_Monk Then
+			While IsPlayerAlive() And Not IsRecharged($Vaettir_WayOfPerfection)
+				Sleep(50)
+			WEnd
+			UseSkillEx($Vaettir_WayOfPerfection)
+		EndIf
+		$VaettirShadowFormTimer = TimerInit()
+	EndIf
+EndFunc
+
+
+;~ Maintaining Obsidian Flesh, Stoneflesh Aura, Elemental Lord, Mantra of Earth and Channeling
+Func VaettirsCheckObsidianFlesh()
+	If IsRecharged($Vaettir_Elementalist_ElementalLord) And Not IsRecharged($Vaettir_Elementalist_ObsidianFlesh) And Not IsRecharged($Vaettir_Elementalist_StonefleshAura) Then UseSkillEx($Vaettir_Elementalist_ElementalLord)
+	If TimerDiff($VaettirObsidianFleshTimer) > 21000 And GetEnergy() > 30 Then
+		UseSkillEx($Vaettir_Elementalist_GlyphOfSwiftness)
+		While IsPlayerAlive() And Not IsRecharged($Vaettir_Elementalist_ObsidianFlesh)
+			Sleep(50)
+		WEnd
+		UseSkillEx($Vaettir_Elementalist_ObsidianFlesh)
+		$VaettirObsidianFleshTimer = TimerInit()
+	EndIf
+	If IsRecharged($Vaettir_Elementalist_StonefleshAura) And GetEnergy() > 15 Then UseSkillEx($Vaettir_Elementalist_StonefleshAura)
+	If GetMapID() == $ID_Jaga_Moraine Then ; only cast energy accumulating skills when farming Vaettirs in jaga Moraine, not during run across Bjora Marches
+		If TimerDiff($VaettirChannelingTimer) > 20000 And TimerDiff($VaettirObsidianFleshTimer) < 19000 And Not IsRecharged($Vaettir_Elementalist_StonefleshAura) And GetEnergy() > 5 Then
+			UseSkillEx($Vaettir_Channeling)
+			$VaettirChannelingTimer = TimerInit()
+		EndIf
+		If TimerDiff($VaettirMantraOfEarthTimer) > 40000 And GetEnergy() > 10 And TimerDiff($VaettirObsidianFleshTimer) < 19000 Then
+			UseSkillEx($Vaettir_Elementalist_MantraOfEarth)
+			$VaettirMantraOfEarthTimer = TimerInit()
+		EndIf
 	EndIf
 EndFunc
 
 
 ;~ Uses Shroud of distress if its recharged
-Func TryUseShroudOfDistress()
-	If TimerDiff($shroudOfDistressTimer) > 65000 And TimerDiff($shadowFormTimer) < 18000 Then
-		UseSkillEx($Skill_Shroud_of_Distress)
-		$shroudOfDistressTimer = TimerInit()
+Func VaettirsCheckShroudOfDistress()
+	If TimerDiff($VaettirShroudOfDistressTimer) > 50000 And TimerDiff($VaettirShadowFormTimer) < 18000 And GetEnergy() > 10 Then
+		UseSkillEx($Vaettir_ShroudOfDistress)
+		$VaettirShroudOfDistressTimer = TimerInit()
 	EndIf
 EndFunc
 
 
 ;~ Uses Channeling if its recharged
-Func TryUseChanneling()
-	If TimerDiff($channelingTimer) > 25000 And TimerDiff($shadowFormTimer) < 19000 Then
-		UseSkillEx($Skill_Channeling)
-		$channelingTimer = TimerInit()
+Func VaettirsCheckChanneling()
+	If TimerDiff($VaettirChannelingTimer) > 22000 And _
+		(($VaettirsPlayerProfession <> $ID_Elementalist And TimerDiff($VaettirShadowFormTimer) < 19000) Or _
+		($VaettirsPlayerProfession == $ID_Elementalist And TimerDiff($VaettirObsidianFleshTimer) < 19000)) Then
+		UseSkillEx($Vaettir_Channeling)
+		$VaettirChannelingTimer = TimerInit()
 	EndIf
 EndFunc
 
@@ -429,4 +502,110 @@ Func GetWastrelsTarget()
 		Return $foe
 	Next
 	Return Null
+EndFunc
+
+
+;~ Kill a mob group
+Func VaettirsKillSequence()
+	; Wait for shadow form or other buffs to have been casted very recently
+	While IsPlayerAlive() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA) > 0 And _
+			(((TimerDiff($VaettirShadowFormTimer) > 5000) And ($VaettirsPlayerProfession <> $ID_Elementalist)) Or _
+			((TimerDiff($VaettirObsidianFleshTimer) > 5000) And ($VaettirsPlayerProfession == $ID_Elementalist)))
+		If IsPlayerDead() Then Return
+		Sleep(100)
+		VaettirsStayAlive()
+	WEnd
+
+	Info('Killing Vaettirs')
+	If $VaettirsPlayerProfession == $ID_Assassin Or $VaettirsPlayerProfession == $ID_Mesmer Or $VaettirsPlayerProfession == $ID_Elementalist Then
+		KillVaettirsUsingWastrelSkills()
+	ElseIf $VaettirsPlayerProfession == $ID_Monk Then
+		KillVaettirsUsingSmitingSkills()
+	EndIf
+EndFunc
+
+
+Func KillVaettirsUsingWastrelSkills()
+	Local Static $MaxKillTime = 100000 ; 100 seconds max fight time
+	Local $deadlock = TimerInit()
+	Local $target
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
+	If $foesCount > 0 Then
+		; Echo the Wastrel's Demise
+		UseSkillEx($Vaettir_ArcaneEcho)
+		$target = GetWastrelsTarget()
+		UseSkillEx($Vaettir_WastrelsDemise, $target)
+		While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime
+			VaettirsStayAlive()
+
+			; Use echoed wastrel if possible
+			If IsRecharged($Vaettir_ArcaneEcho) And GetSkillbarSkillID($Vaettir_ArcaneEcho) == $ID_Wastrels_Demise Then
+				$target = GetWastrelsTarget()
+				If $target <> Null Then UseSkillEx($Vaettir_ArcaneEcho, $target) ; here Arcane echo is echoed wastrel skill
+			EndIf
+
+			; Use wastrel's demise if possible
+			If IsRecharged($Vaettir_WastrelsDemise) Then
+				$target = GetWastrelsTarget()
+				If $target <> Null Then UseSkillEx($Vaettir_WastrelsDemise, $target)
+			EndIf
+
+			RandomSleep(100)
+			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
+		WEnd
+	EndIf
+EndFunc
+
+
+Func KillVaettirsUsingSmitingSkills()
+	Local Static $MaxKillTime = 120000 ; 2 minutes max fight time
+	Local $deadlock = TimerInit()
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
+	While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime
+		VaettirsStayAlive()
+
+		If IsRecharged($Vaettir_Monk_BalthazarsAura) And TimerDiff($VaettirShadowFormTimer) < 16000 And GetEnergy() > 25 Then
+			UseSkillEx($Vaettir_Monk_BalthazarsAura)
+		EndIf
+
+		If IsRecharged($Vaettir_Monk_KirinsWrath) And TimerDiff($VaettirShadowFormTimer) < 16000 And GetEnergy() > 5 Then
+			UseSkillEx($Vaettir_Monk_KirinsWrath)
+		EndIf
+
+		If IsRecharged($Vaettir_Monk_SymbolOfWrath) And TimerDiff($VaettirShadowFormTimer) < 16000 And GetEnergy() > 5 Then
+			UseSkillEx($Vaettir_Monk_SymbolOfWrath)
+		EndIf
+
+		RandomSleep(100)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
+	WEnd
+EndFunc
+
+
+;~ Exit Jaga Moraine to Bjora Marches and get back into Jaga Moraine
+Func RezoneToJagaMoraine()
+	Local $result = $SUCCESS
+	If IsPlayerDead() Then $result = $FAIL
+
+	Info('Zoning out and back in')
+	VaettirsMoveDefending(12289, -17700)
+	VaettirsMoveDefending(15318, -20351)
+
+	Local $deadlockTimer = TimerInit()
+	While IsPlayerDead()
+		Info('Waiting for resurrection')
+		RandomSleep(1000)
+		If TimerDiff($deadlockTimer) > 60000 Then
+			$Deadlocked = True
+			Return $FAIL
+		EndIf
+	WEnd
+	MoveTo(15600, -20500)
+	Move(15865, -20531)
+	WaitMapLoading($ID_Bjora_Marches)
+	MoveTo(-19968, 5564)
+	Move(-20076, 5580, 30)
+	WaitMapLoading($ID_Jaga_Moraine)
+
+	Return $result
 EndFunc
