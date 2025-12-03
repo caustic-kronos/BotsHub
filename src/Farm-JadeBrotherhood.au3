@@ -165,8 +165,10 @@ Func JadeBrotherhoodFarmLoop()
 
 	RandomSleep(1000)
 
-	Info('Looting')
-	PickUpItems()
+	If IsPlayerAlive() Then
+		Info('Looting')
+		PickUpItems()
+	EndIf
 
 	If $Deadlocked Then Return $FAIL
 	Return $SUCCESS

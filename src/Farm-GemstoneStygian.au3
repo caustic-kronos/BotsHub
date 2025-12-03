@@ -426,7 +426,7 @@ Func KillStygianMobsUsingWastrelSkills()
 	WEnd
 	RandomSleep(500)
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
-	;If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
+	;If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 EndFunc
 
 
@@ -463,6 +463,6 @@ Func HideToLoot()
 	RunStygianFarm(10575, -8170)
 	RunStygianFarm(12853, -9936)
 	RandomSleep(500)
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
+	If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc

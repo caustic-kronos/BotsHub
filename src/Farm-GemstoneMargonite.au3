@@ -311,7 +311,7 @@ Func GemstoneMargoniteFarmLoop()
 	RandomSleep(1000 + GetPing())
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		PickUpItems(MargoniteCheckSFBuffs, DefaultShouldPickItem, $RANGE_EARSHOT)
+		PickUpItems(MargoniteCheckBuffs)
 	EndIf
 
 	Return $SUCCESS
@@ -385,7 +385,7 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 		RandomSleep(1000 + GetPing())
 		If IsPlayerAlive() Then
 			Info('Picking up loot')
-			PickUpItems(MargoniteCheckSFBuffs, DefaultShouldPickItem, $RANGE_EARSHOT)
+			PickUpItems(MargoniteCheckBuffs)
 		EndIf
 		Return IsPlayerAlive()? $SUCCESS : $FAIL
 	Else

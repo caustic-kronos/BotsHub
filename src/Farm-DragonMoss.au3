@@ -170,8 +170,10 @@ Func DragonMossFarmLoop()
 
 	RandomSleep(1000)
 
-	Info('Looting')
-	PickUpItems()
+	If IsPlayerAlive() Then
+		Info('Looting')
+		PickUpItems()
+	EndIf
 
 	Return $SUCCESS
 EndFunc

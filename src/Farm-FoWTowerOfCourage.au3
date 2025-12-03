@@ -214,7 +214,7 @@ Func FoWToCFarmLoop()
 		DefendFoWToC()
 	WEnd
 	Info('Abyssals cleared. Picking up loot')
-	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC, DefaultShouldPickItem, $RANGE_SPIRIT)
+	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC)
 	Sleep(500)
 	If MoveDefendingFoWToC(-13684, -2077) == $STUCK Then Return $FAIL
 
@@ -254,7 +254,7 @@ Func FoWToCFarmLoop()
 		DefendFoWToC(False)
 	WEnd
 	Info('Rangers cleared. Picking up loot')
-	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC, DefaultShouldPickItem, $RANGE_SPIRIT)
+	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC)
 	Sleep(500 + GetPing())
 
 	Return $SUCCESS

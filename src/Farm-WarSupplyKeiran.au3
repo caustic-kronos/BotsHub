@@ -388,7 +388,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 			ContinueLoop
 		EndIf
 	WEnd
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
