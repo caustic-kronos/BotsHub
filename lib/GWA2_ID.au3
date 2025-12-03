@@ -172,6 +172,7 @@ Global Const $ID_Remains_of_Sahlahja		= 545
 Global Const $ID_Dajkah_Inlet				= 554
 Global Const $ID_Nexus						= 555
 ; EotN
+Global Const $ID_Glints_Challenge			= 37
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Arbor_Bay					= 485
 Global Const $ID_Ice_Cliff_Chasms			= 499
