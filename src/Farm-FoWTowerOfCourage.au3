@@ -89,9 +89,7 @@ Global Const $FoWToC_ModelID_Abyssal			= 2810
 ;~ Main method to farm Fissure of Woe - Tower of Courage
 Func FoWToCFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $FOW_TOC_FARM_SETUP Then
-		If SetupFoWToCFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $FOW_TOC_FARM_SETUP And SetupFoWToCFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = EnterFissureOfWoeToC()

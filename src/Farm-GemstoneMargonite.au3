@@ -127,9 +127,7 @@ Global $MargoniteAuraOfRestorationTimer = TimerInit()
 ;~ Main loop function for farming margonite gemstones
 Func GemstoneMargoniteFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $GEMSTONE_MARGONITE_FARM_SETUP Then
-		If SetupGemstoneMargoniteFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $GEMSTONE_MARGONITE_FARM_SETUP And SetupGemstoneMargoniteFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	If GoToCityOfTorcqua() == $FAIL Then Return $FAIL

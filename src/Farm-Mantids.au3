@@ -64,9 +64,7 @@ Global $MANTIDS_FARM_SETUP = False
 ;~ Main method to farm Mantids
 Func MantidsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $MANTIDS_FARM_SETUP Then
-		If SetupMantidsFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $MANTIDS_FARM_SETUP And SetupMantidsFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToWajjunBazaar()

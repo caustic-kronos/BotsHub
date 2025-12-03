@@ -75,9 +75,7 @@ Global $KOURNANS_FARM_SETUP = False
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $KOURNANS_FARM_SETUP Then
-		If SetupKournansFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $KOURNANS_FARM_SETUP And If SetupKournansFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToCommandPost()

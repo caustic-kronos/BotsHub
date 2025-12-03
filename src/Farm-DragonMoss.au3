@@ -54,9 +54,7 @@ Global $DM_FARM_SETUP = False
 ;~ Main method to farm Dragon Moss
 Func DragonMossFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $DM_FARM_SETUP Then
-		If SetupDragonMossFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $DM_FARM_SETUP And SetupDragonMossFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToDrazachThicket()

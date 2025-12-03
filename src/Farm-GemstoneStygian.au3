@@ -109,9 +109,7 @@ $StygianRunOptions.Item('openChests')			= False
 ;~ Main loop function for farming stygian gemstones
 Func GemstoneStygianFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $GEMSTONE_STYGIAN_FARM_SETUP Then
-		If SetupGemstoneStygianFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $GEMSTONE_STYGIAN_FARM_SETUP And SetupGemstoneStygianFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	If GoToStygianVeil() == $FAIL Then Return $FAIL

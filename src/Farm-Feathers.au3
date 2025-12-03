@@ -60,9 +60,7 @@ Global $FEATHERS_FARM_SETUP = False
 ;~ Main method to farm feathers
 Func FeathersFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $FEATHERS_FARM_SETUP Then
-		If SetupFeathersFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $FEATHERS_FARM_SETUP And SetupFeathersFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToJayaBluffs()

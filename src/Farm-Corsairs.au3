@@ -67,9 +67,7 @@ Global $Bohseda_Timer
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $CORSAIRS_FARM_SETUP Then
-		If SetupCorsairsFarm() == $FAIL Then Return $PAUSE
-	EndIf
+	If Not $CORSAIRS_FARM_SETUP And SetupCorsairsFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterCorsairsModdokCreviceMission()
