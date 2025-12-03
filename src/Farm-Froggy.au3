@@ -44,9 +44,8 @@ Global $FroggyFarmTimer = Null
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $FROGGY_FARM_SETUP
-		SetupFroggyFarm()
-	WEnd
+	If Not $FROGGY_FARM_SETUP Then SetupFroggyFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return FroggyFarmLoop()
 EndFunc
 
@@ -54,15 +53,16 @@ EndFunc
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return
+	If GetMapID() <> $ID_Gadds_Camp Then TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+
 	SetupPlayerFroggyFarm()
 	SetupTeamFroggyFarm()
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
-	ResetFailuresCounter()
-	RunToBogroot()
-	If IsRunFailed() Then Return
-	$FROGGY_FARM_SETUP = True
+	While Not $FROGGY_FARM_SETUP
+		If RunToBogroot() == $FAIL Then ContinueLoop
+		$FROGGY_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -96,6 +96,8 @@ EndFunc
 
 
 Func RunToBogroot()
+	If GetMapID() <> $ID_Gadds_Camp Then TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
 	Local $mapLoaded = False

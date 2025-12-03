@@ -1134,6 +1134,7 @@ Func ResetBotsSetups()
 	$SPIRIT_SLAVES_FARM_SETUP				= False
 	$TASCA_FARM_SETUP						= False
 	$UW_FARM_SETUP							= False
+	$VAETTIRS_FARM_SETUP					= False
 	; Those don't need to be reset - party didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$CORSAIRS_FARM_SETUP					= False
@@ -1146,7 +1147,6 @@ Func ResetBotsSetups()
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
 	;$PONGMEI_FARM_SETUP					= False
-	;$VAETTIRS_FARM_SETUP					= False
 	;$VOLTAIC_FARM_SETUP					= False
 	;$WARSUPPLY_FARM_SETUP					= False
 EndFunc

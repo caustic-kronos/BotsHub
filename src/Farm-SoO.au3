@@ -40,12 +40,12 @@ Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000 ; max time = 80 minutes
 Global $SoOFarmTimer = Null
 Global $SOO_FARM_SETUP = False
 
+
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $SOO_FARM_SETUP
-		SetupSoOFarm()
-	WEnd
+	If Not $SOO_FARM_SETUP Then SetupSoOFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return SoOFarmLoop()
 EndFunc
 
@@ -53,12 +53,14 @@ EndFunc
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return
+	If GetMapID() <> $ID_Vloxs_Fall Then TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
 	SetupPlayerSoOFarm()
 	SetupTeamSoOFarm()
 	SwitchToHardModeIfEnabled()
-	If RunToShardsOfOrrDungeon() == $FAIL Then Return
-	$SOO_FARM_SETUP = True
+	While Not $SOO_FARM_SETUP
+		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop
+		$SOO_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -93,6 +95,7 @@ EndFunc
 
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
+	If GetMapID() <> $ID_Vloxs_Fall Then TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
 	ResetFailuresCounter()
 
 	Info('Making way to portal')

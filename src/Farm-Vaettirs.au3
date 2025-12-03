@@ -100,12 +100,8 @@ $VaettirsMoveOptionsElementalist.Item('hosSkillSlot') = 0
 
 ;~ Main method to farm Vaettirs
 Func VaettirsFarm($STATUS)
-	While $Deadlocked Or GetMapID() <> $ID_Jaga_Moraine
-		If Not $VAETTIRS_FARM_SETUP Then SetupVaettirsFarm()
-		$Deadlocked = False
-		RunToJagaMoraine()
-	WEnd
-
+	; Need to be done here in case bot comes back from inventory management
+	If Not $VAETTIRS_FARM_SETUP And SetupVaettirsFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return VaettirsFarmLoop()
 EndFunc
@@ -117,7 +113,12 @@ Func SetupVaettirsFarm()
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerVaettirsFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer
-	$VAETTIRS_FARM_SETUP = True
+	SwitchMode($ID_HARD_MODE)
+	While $Deadlocked Or GetMapID() <> $ID_Jaga_Moraine
+		$Deadlocked = False
+		If RunToJagaMoraine() == $FAIL Then ContinueLoop
+		$VAETTIRS_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
