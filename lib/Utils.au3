@@ -2271,8 +2271,9 @@ EndFunc
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
 Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_MoveDefend_Options)
 	If IsPlayerDead() Then Return $FAIL
-	Local $me = Null, $target = Null
-	Local $blocked = 0, $angle = 0, $distance = 0
+	Local $me = Null, $target = Null, $chest = Null
+	Local $blocked = 0, $distance = 0
+	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
 	Local Const $PI = 3.141592653589793
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
@@ -2282,7 +2283,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 	Local $randomFactor = ($options.Item('randomFactor') <> Null) ? $options.Item('randomFactor') : 100 ; random factor for movement
 	Local $hosSkillSlot = ($options.Item('hosSkillSlot') <> Null) ? $options.Item('hosSkillSlot') : 0 ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
 	Local $deathChargeSkillSlot = ($options.Item('$deathChargeSkillSlot') <> Null) ? $options.Item('$deathChargeSkillSlot') : 0 ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
-	$randomFactor = _Min(_Max($randomFactor, 0), 1000) ; $randomFactor in range [0;1000]
+	$randomFactor = _Min(_Max($randomFactor, 0), $RANGE_NEARBY) ; $randomFactor in range [0;$RANGE_NEARBY]
 	If $hosSkillSlot <> 1 And $hosSkillSlot <> 2 And $hosSkillSlot <> 3 And $hosSkillSlot <> 4 And $hosSkillSlot <> 5 And $hosSkillSlot <> 6 And $hosSkillSlot <> 7 And $hosSkillSlot <> 8 Then $hosSkillSlot = 0
 	If $deathChargeSkillSlot <> 1 And $deathChargeSkillSlot <> 2 And $deathChargeSkillSlot <> 3 And $deathChargeSkillSlot <> 4 And $deathChargeSkillSlot <> 5 And $deathChargeSkillSlot <> 6 And $deathChargeSkillSlot <> 7 And $deathChargeSkillSlot <> 8 Then $deathChargeSkillSlot = 0
 
@@ -2292,23 +2293,18 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 
 	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
 		If $defendFunction <> Null Then $defendFunction()
+		Sleep(GetPing())
 		If TimerDiff($moveTimer) > $moveTimeOut Then Return $STUCK
 
 		If IsPlayerAlive() And Not IsPlayerMoving() Then
 			$blocked += 1
-			$angle = (-1 ^ $blocked) * ($blocked * $PI/8)
 			$me = GetMyAgent()
-			If $blocked < 6 Then
-				Move($destinationX, $destinationY, $randomFactor)
-			ElseIf $blocked > 5 Then
-				Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle), $randomFactor)
-			EndIf
-			If $blocked > 20 Then
+			If $blocked > 10 Then
 				; If Heart of Shadow skill is available then use it to avoid becoming stuck
 				If $hosSkillSlot > 0 Then
 					If IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
 						UseSkillEx($hosSkillSlot) ; use heart of shadow on self to get into random location
-						RandomSleep(GetPing())
+						Sleep(GetPing())
 						Move($destinationX, $destinationY, $randomFactor)
 					EndIf
 				EndIf
@@ -2319,23 +2315,36 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 							$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 							ChangeTarget($target)
 							UseSkillEx($deathChargeSkillSlot, $target)
-							RandomSleep(GetPing())
+							Sleep(GetPing())
 							Move($destinationX, $destinationY, $randomFactor)
 						EndIf
 					EndIf
 				EndIf
 			EndIf
-			; Checking if no foes are in range to use /stuck only when there are no foes in range like when rubberbanding or on some obstacles
-			If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then ; use a timer to avoid spamming /stuck
-				Warn('Sending /stuck')
-				SendChat('stuck', '/')
-				$chatStuckTimer = TimerInit()
-				RandomSleep(500 + GetPing())
+			If $blocked < 6 Then
+				Move($destinationX, $destinationY, $randomFactor)
+				Sleep(GetPing())
+			ElseIf $blocked > 5 Then
+				$myX = DllStructGetData($me, 'X')
+				$myY = DllStructGetData($me, 'Y')
+				$randomAngle = Random(0, 2*$PI) ; range [0, 2*$PI] - full circle in radian degrees
+				$offsetX = 300 * cos($randomAngle)
+				$offsetY = 300 * sin($randomAngle)
+				Move($myX + $offsetX , $myY + $offsetY, 0) ; 0 = no random, because random offset is already calculated
+				Sleep(GetPing())
 			EndIf
 		Else
 			Move($destinationX, $destinationY, $randomFactor)
-			$blocked = 0 ; reset of block count if player got unstuck
-			$angle = 0
+			If $blocked > 0 Then
+				$blocked = 0 ; reset of block count when player started moving
+				; Checking if no foes are in range to use /stuck only when there are no foes in range like when rubberbanding or on some obstacles
+				If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then ; use a timer to avoid spamming /stuck
+					Warn('Sending /stuck')
+					SendChat('stuck', '/')
+					$chatStuckTimer = TimerInit()
+					RandomSleep(500 + GetPing())
+				EndIf
+			EndIf
 		EndIf
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
@@ -2346,8 +2355,9 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
+		Sleep(GetPing())
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
