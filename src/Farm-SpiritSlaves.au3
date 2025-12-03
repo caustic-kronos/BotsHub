@@ -355,8 +355,7 @@ Func KillSequence()
 	CleanseFromCripple()
 	RandomSleep(1000)
 	PickUpItems(CleanseFromCripple)
-	If IsPlayerDead() Then Return $FAIL
-	Return $SUCCESS
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

@@ -80,6 +80,7 @@ Func SetupPongmeiChestFarm()
 	SwitchToHardModeIfEnabled()
 	$PONGMEI_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -260,6 +261,7 @@ Func DervishRun($X, $Y)
 		Sleep(250)
 		$me = GetMyAgent()
 	WEnd
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

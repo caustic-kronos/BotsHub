@@ -58,6 +58,7 @@ Func VanguardTitleFarmSetup()
 	SetupTeamVanguardTitleFarm()
 	$VANGUARD_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -246,6 +247,8 @@ Func VanquishDaladaUplands()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

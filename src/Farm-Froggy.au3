@@ -64,6 +64,7 @@ Func SetupFroggyFarm()
 	If IsRunFailed() Then Return
 	$FROGGY_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -121,6 +122,7 @@ Func RunToBogroot()
 		MoveAggroAndKillInRange(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
 	AdlibUnRegister('TrackPartyStatus')
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 

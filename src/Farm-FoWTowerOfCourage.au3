@@ -114,6 +114,7 @@ Func SetupFoWToCFarm()
 	Sleep(500 + GetPing())
 	$FOW_TOC_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -128,6 +129,7 @@ Func SetupPlayerFowToCFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -255,7 +257,7 @@ Func FoWToCFarmLoop()
 	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC, DefaultShouldPickItem, $RANGE_SPIRIT)
 	Sleep(500 + GetPing())
 
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 

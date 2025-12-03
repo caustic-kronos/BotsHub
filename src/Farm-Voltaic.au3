@@ -63,6 +63,7 @@ Func SetupVoltaicFarm()
 	SwitchToHardModeIfEnabled()
 	$VOLTAIC_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 

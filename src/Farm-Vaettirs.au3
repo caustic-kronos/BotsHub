@@ -119,6 +119,7 @@ Func SetupVaettirsFarm()
 	LeaveParty() ; solo farmer
 	$VAETTIRS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -147,6 +148,7 @@ Func SetupPlayerVaettirsFarm()
 	If $VaettirsPlayerProfession <> $ID_Monk Then SetDisplayedTitle($ID_Norn_Title)
 	If $VaettirsPlayerProfession == $ID_Monk Then SetDisplayedTitle(0)
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -202,6 +204,7 @@ Func RunToJagaMoraine()
 	Next
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
+	Return GetMapID() == $ID_Jaga_Moraine ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -338,6 +341,7 @@ Func AggroAllMobs()
 	EndIf
 	VaettirsSleepAndStayAlive(5000)
 	If DoForArrayRows($vaettirs, 26, 31, VaettirsMoveDefending) == $FAIL Then Return $FAIL
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -356,7 +360,7 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 			Info('Looting')
 			PickUpItems(VaettirsStayAlive, DefaultShouldPickItem, $RANGE_EARSHOT)
 		EndIf
-		If IsPlayerDead() Then Return $FAIL
+		Return IsPlayerAlive()? $SUCCESS : $FAIL
 	Else
 		Return $result
 	EndIf

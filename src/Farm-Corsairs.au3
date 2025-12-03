@@ -98,6 +98,7 @@ Func SetupCorsairsFarm()
 	If SetupTeamCorsairsFarm() == $FAIL Then Return $FAIL
 	$CORSAIRS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -112,6 +113,7 @@ Func SetupPlayerCorsairsFarm()
    EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -131,6 +133,7 @@ Func SetupTeamCorsairsFarm()
 	Sleep(500 + GetPing())
 	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
 	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
+	Return $SUCCESS
 EndFunc
 
 

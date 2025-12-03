@@ -78,6 +78,7 @@ Func SetupDragonMossFarm()
 	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
 	$DM_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -92,6 +93,7 @@ Func SetupPlayerDragonMossFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 

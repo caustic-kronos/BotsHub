@@ -150,6 +150,7 @@ Func SetupMinisterialCommendationsFarm()
 	SwitchMode($ID_HARD_MODE)
 	$MINISTERIAL_COMMENDATIONS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 

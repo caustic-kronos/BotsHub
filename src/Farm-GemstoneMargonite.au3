@@ -169,6 +169,7 @@ Func SetupGemstoneMargoniteFarm()
 	Sleep(500 + GetPing())
 	$GEMSTONE_MARGONITE_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -194,6 +195,7 @@ Func SetupPlayerMargoniteFarm()
 	EndSwitch
 	;ChangeWeaponSet(4) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -208,6 +210,7 @@ Func SetupTeamMargoniteFarm()
     	Warn('Could not add monk hero to team. Team size different than 2')
 		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 
@@ -311,7 +314,7 @@ Func GemstoneMargoniteFarmLoop()
 		PickUpItems(MargoniteCheckSFBuffs, DefaultShouldPickItem, $RANGE_EARSHOT)
 	EndIf
 
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -364,7 +367,7 @@ Func WaitAggroMargonites($timeToWait)
 		MargoniteDefend()
 		RandomSleep(50)
 	WEnd
-	Return $SUCCESS
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -384,7 +387,7 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 			Info('Picking up loot')
 			PickUpItems(MargoniteCheckSFBuffs, DefaultShouldPickItem, $RANGE_EARSHOT)
 		EndIf
-		If IsPlayerDead() Then Return $FAIL
+		Return IsPlayerAlive()? $SUCCESS : $FAIL
 	Else
 		Return $result
 	EndIf
@@ -517,6 +520,7 @@ Func KillMargonitesUsingVisageSkills()
 				EndIf
 		EndSwitch
 	WEnd
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -538,4 +542,5 @@ Func KillMargonitesUsingWhirlingDefense()
 			RandomSleep(100)
 		EndIf
 	WEnd
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc

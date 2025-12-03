@@ -143,6 +143,7 @@ Func SetupGemstoneStygianFarm()
 	Sleep(500 + GetPing())
 	$GEMSTONE_STYGIAN_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -165,6 +166,7 @@ Func SetupPlayerStygianFarm()
 	EndSwitch
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 

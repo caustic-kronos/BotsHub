@@ -58,6 +58,7 @@ Func SetupEdenIrisFarm()
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	$IRIS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 

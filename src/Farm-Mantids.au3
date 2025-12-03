@@ -90,6 +90,7 @@ Func SetupMantidsFarm()
 	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
 	$MANTIDS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -104,6 +105,7 @@ Func SetupPlayerMantidsFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -117,7 +119,9 @@ Func SetupTeamMantidsFarm()
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
+		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 

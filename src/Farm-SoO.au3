@@ -60,6 +60,7 @@ Func SetupSoOFarm()
 	If RunToShardsOfOrrDungeon() == $FAIL Then Return
 	$SOO_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 

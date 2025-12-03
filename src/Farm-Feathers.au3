@@ -92,6 +92,7 @@ Func SetupFeathersFarm()
 	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
 	$FEATHERS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -106,6 +107,7 @@ Func SetupPlayerFeathersFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -151,8 +153,7 @@ Func FeathersFarmLoop()
 	MoveKill(-10500, 5500)
 	MoveKill(-9700, 2400)
 
-	If IsPlayerDead() Then Return $FAIL
-	Return $SUCCESS
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -242,7 +243,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
-	Return $SUCCESS
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 

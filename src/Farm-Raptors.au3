@@ -118,6 +118,7 @@ Func SetupRaptorsFarm()
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -137,6 +138,7 @@ Func SetupPlayerRaptorsFarm()
 	EndSwitch
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -154,6 +156,7 @@ Func SetupTeamRaptorsFarm()
 		Warn('Could not set up party correctly. Team size different than 2')
 		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 
@@ -267,6 +270,7 @@ Func AggroRaptors()
 	Else
 		If MoveAggroingRaptors(-23300, -12050) == $STUCK Then Return $FAIL
 	EndIf
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -403,6 +407,7 @@ Func KillRaptors()
 			$me = GetMyAgent()
 		WEnd
 	EndIf
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

@@ -95,6 +95,7 @@ Func KurzickFarmSetup()
 
 	SwitchMode($ID_HARD_MODE)
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -277,6 +278,8 @@ Func VanquishFerndale()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

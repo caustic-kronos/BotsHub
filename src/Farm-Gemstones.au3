@@ -115,6 +115,7 @@ Func SetupGemstonesFarm()
 	If SetupTeamGemstonesFarm() == $FAIL Then Return $FAIL
 	$GEMSTONES_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -147,6 +148,7 @@ Func SetupTeamGemstonesFarm()
 		Warn('Could not set up party correctly. Team size different than 8')
 		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 

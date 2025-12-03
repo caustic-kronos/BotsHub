@@ -96,6 +96,7 @@ Func SetupJadeBrotherhoodFarm()
 	WaitMapLoading($ID_The_Marketplace)
 	$JADE_BROTHERHOOD_FARM_SETUP = True
 	Info('Jade Brotherhood farm set up')
+	Return $SUCCESS
 EndFunc
 
 
@@ -110,6 +111,7 @@ Func SetupPlayerJadeBrotherhoodFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -125,6 +127,7 @@ Func SetupTeamJadeBrotherhoodFarm()
 		Warn('Could not set up party correctly. Team size different than 2')
 		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 

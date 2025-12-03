@@ -107,6 +107,7 @@ Func SetupWarSupplyFarm()
 	SwitchMode($ID_NORMAL_MODE)
 	$WARSUPPLY_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -258,7 +259,7 @@ Func RunWayPoints()
 		If IsPlayerDead() Then Return $FAIL
 		If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 	Next
-	Return $SUCCESS
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

@@ -74,6 +74,7 @@ Func LightbringerFarmSetup()
 	SwitchMode($ID_HARD_MODE)
 	$LIGHTBRINGER_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -236,7 +237,7 @@ Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $locat
 		If (Eval('location' & $i & 'x') == Null) Then ExitLoop
 		If MoveToAndAggroWithJunundu(Eval('location' & $i & 'x'), Eval('location' & $i & 'y'), $foesGroup) == $FAIL Then Return $FAIL
 	Next
-	Return $SUCCESS
+	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -298,5 +299,5 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	PickUpItems()
 	FindAndOpenChests($RANGE_SPIRIT)
 
-	Return $SUCCESS
+	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc

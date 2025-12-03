@@ -102,6 +102,7 @@ Func SetupKournansFarm()
 	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
 	$KOURNANS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
@@ -116,6 +117,7 @@ Func SetupPlayerKournansFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -139,6 +141,7 @@ Func SetupTeamKournansFarm()
 	LoadSkillTemplate($PKournansHeroSkillbar, 3)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
+	Return $SUCCESS
 EndFunc
 
 
@@ -206,7 +209,7 @@ Func KournansFarmLoop()
 	RandomSleep(2000)
 	Info('Looting')
 	PickUpItems()
-	Return IsPlayerDead() ? $FAIL : $SUCCESS
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 

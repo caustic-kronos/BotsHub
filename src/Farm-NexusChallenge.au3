@@ -66,6 +66,7 @@ Func NexusChallengeSetup()
 	SetupPlayerNexusChallengeFarm()
 	SetupTeamNexusChallengeFarm()
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
