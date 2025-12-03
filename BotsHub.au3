@@ -61,6 +61,7 @@
 #include 'src/Farm-Gemstones.au3'
 #include 'src/Farm-GemstoneMargonite.au3'
 #include 'src/Farm-GemstoneStygian.au3'
+#include 'src/Farm-GemstoneTorment.au3'
 #include 'src/Farm-GlintChallenge.au3'
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
@@ -117,7 +118,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_HEROES = '|Norgu|Goren|Tahlkora|Master of Whispers|Acolyte Jin|Koss|Dunkoro|Acolyte Sousuke|Melonni|Zhed Shadowhoof|General Morgahn|Margrid the Sly|Zenmai|Olias|Razah|MOX|Keiran Thackeray|Jora|Pyre Fierceshot|Anton|Livia|Hayda|Kahmu|Gwen|Xandra|Vekk|Ogden|Miku|ZeiRi'
@@ -1009,6 +1010,9 @@ Func RunFarmLoop($Farm)
 		Case 'Gemstone Stygian'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = GemstoneStygianFarm($STATUS)
+		Case 'Gemstone Torment'
+			$INVENTORY_SPACE_NEEDED = 10
+			$result = GemstoneTormentFarm($STATUS)
 		Case 'Glint Challenge'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = GlintChallengeFarm($STATUS)
@@ -1132,6 +1136,7 @@ Func ResetBotsSetups()
 	;$GEMSTONES_FARM_SETUP					= False
 	;$GEMSTONE_MARGONITE_FARM_SETUP			= False
 	;$GEMSTONE_STYGIAN_FARM_SETUP			= False
+	;$GEMSTONE_TORMENT_FARM_SETUP			= False
 	;$GLINT_CHALLENGE_SETUP					= False
 	;$LIGHTBRINGER_FARM_SETUP				= False
 	;$MINISTERIAL_COMMENDATIONS_FARM_SETUP	= False
@@ -1182,6 +1187,9 @@ Func UpdateFarmDescription($Farm)
 		Case 'Gemstone Stygian'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeStygianSkillBar & '		' & $MeAStygianSkillBar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneStygianFarmInformations)
+		Case 'Gemstone Torment'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $EATormentSkillBar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneTormentFarmInformations)
 		Case 'Glint Challenge'
 			GUICtrlSetData($GUI_Label_FarmInformations, $GlintChallengeInformations)
 		Case 'Jade Brotherhood'
@@ -1923,6 +1931,8 @@ Func SelectFarmDuration($Farm)
 			Return $GEMSTONE_MARGONITE_FARM_DURATION
 		Case 'Gemstone Stygian'
 			Return $GEMSTONE_STYGIAN_FARM_DURATION
+		Case 'Gemstone Torment'
+			Return $GEMSTONE_TORMENT_FARM_DURATION
 		Case 'Glint Challenge'
 			Return $GLINT_CHALLENGE_DURATION
 		Case 'Jade Brotherhood'
