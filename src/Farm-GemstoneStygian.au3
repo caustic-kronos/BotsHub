@@ -4,11 +4,12 @@
 |			  TonReuf   		     |
 ======================================
 ;
-; Run this farm bot as Assassin or Mesmer
+; Run this farm bot as Assassin or Mesmer or Ranger
 ;
 ; Rewritten for BotsHub: Gahais
-; Stygian gemstone farm in the Stygian Veil based on below article:
+; Stygian gemstone farm in the Stygian Veil based on below articles:
 https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer
+https://gwpvx.fandom.com/wiki/Build:R/N_HM_Stygian_Veil_Trapper
 ;
 #CE ===========================================================================
 
@@ -26,6 +27,7 @@ Opt('MustDeclareVars', True)
 ; Caution, it looks like because of this bug exploitation the guild wars client crashes very soon when using this bot with below message
 ; Assertion: !(manualAgentId && !ManagerFindAgent(manualAgentId))
 ; P:\Code\Gw\AgentView\AvSelect.cpp(419)
+; Therefore it might be better to use ranger for this farm which uses trapper build instead of this bug exploitation
 
 #Region Configuration
 ; === Build ===
@@ -33,7 +35,18 @@ Opt('MustDeclareVars', True)
 Global Const $AMeStygianSkillBar = 'OwVT8ZBPGiHRn5mat0E4uM0ZCC'
 ;Global Const $MeAStygianSkillBar = 'OQdUASBPmfS3UyArgrlmA3lhOTQA'
 Global Const $MeAStygianSkillBar = 'OQdTI4x8ZiHRn5mat0E4uM0ZCC'
-Global $StygianPlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup and avoid creating Dll structs over and over
+Global Const $RNStygianSkillBar = 'OgQTcybiZK5o5Y5wSIXc465o7AA'
+Global $StygianPlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
+Global Const $StygianRangerHeroSkillBar = 'OgMSY5LHQnh0EAAAAAAAA'
+
+; You can select which ranger hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
+; party hero ID that is used to add hero to the party team
+Global Const $StygianHeroPartyID = $ID_Acolyte_Jin
+;Global Const $StygianHeroPartyID = $ID_Margrid_The_Sly
+;Global Const $StygianHeroPartyID = $ID_Pyre_Fierceshot
+Global Const $StygianHeroIndex = 1 ; index of first hero party member in team, player index is 0
+Global $StygianHeroAgentID = Null ; agent ID that is randomly assigned to hero in exploration areas
+
 
 Global Const $Stygian_DeadlyParadox			= 1
 Global Const $Stygian_ShadowForm			= 2
@@ -43,6 +56,20 @@ Global Const $Stygian_Channeling			= 5
 Global Const $Stygian_DwarvenStability		= 6
 Global Const $Stygian_ShadowOfHaste			= 7
 Global Const $Stygian_Dash					= 8
+
+Global Const $Stygian_Ranger_DustTrap		= 1
+Global Const $Stygian_Ranger_SpikeTrap		= 2
+Global Const $Stygian_Ranger_FlameTrap		= 3
+Global Const $Stygian_Ranger_MarkOfPain		= 4
+Global Const $Stygian_Ranger_EbonStandard	= 5
+Global Const $Stygian_Ranger_TrappersSpeed	= 6
+Global Const $Stygian_Ranger_Winnowing		= 7
+Global Const $Stygian_Ranger_MuddyTerrain	= 8
+
+; ranger hero
+Global Const $Stygian_Hero_EdgeOfExtinction	= 1
+Global Const $Stygian_Hero_UnyieldingAura	= 2
+Global Const $Stygian_Hero_Succor		= 3
 #EndRegion Configuration
 
 ; ==== Constants ====
@@ -50,16 +77,18 @@ Global Const $GemstoneStygianFarmInformations = 'For best results, have :' & @CR
 	& '- Armor with HP runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
 	& '- Weapon of Enchanting (20% longer enchantments duration) to make Shadow Form permanent' & @CRLF _
 	& ' ' & @CRLF _
-	& 'You can run this farm as Assassin or Mesmer. Bot will set up build automatically for these professions' & @CRLF _
+	& 'You can run this farm as Assassin or Mesmer or Ranger. Bot will set up build automatically for these professions' & @CRLF _
 	& 'This bot farms stygian gemstones (1 of 4 types) in Stygian Veil location' & @CRLF _
 	& 'Player needs to have access to Gate of Anguish outpost which has exit to Stygian Veil location' & @CRLF _
 	& 'Recommended to have maxed out Lightbringer title. If not maxed out then this farm is good for raising lightbringer rank' & @CRLF _
 	& 'Can switch to normal mode in case of low success rate but hard mode has better loots' & @CRLF _
 	& 'Gemstones can be exchanged into armbrace of truth (15 of each type) or coffer of whisper (1 of each type)' & @CRLF _
-	& 'This farm bot is based on below article:' & @CRLF _
+	& 'This farm is based on below articles:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:R/N_HM_Stygian_Veil_Trapper' & @CRLF _
 	& 'For Mesmer and Assassin this bot works by exploitation of Guild Wars bug in pathing AI, which causes mobs to not attack player' & @CRLF _
-	& 'Caution, it looks like because of this bug exploitation the guild wars client crashes very soon' & @CRLF
+	& 'Caution, it looks like because of this bug exploitation the guild wars client crashes very soon' & @CRLF _
+	& 'Therefore it might be better to use ranger for this farm which uses trapper build instead of this bug exploitation' & @CRLF
 ; Average duration ~ 8 minutes
 Global Const $GEMSTONE_STYGIAN_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
@@ -111,7 +140,7 @@ Func SetupGemstoneStygianFarm()
 	EndIf
 	SwitchToHardModeIfEnabled()
 	If SetupPlayerStygianFarm() == $FAIL Then Return $FAIL
-	LeaveParty() ; solo farmer
+	If SetupTeamStygianFarm() == $FAIL Then Return $FAIL
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	Sleep(500 + GetPing())
 	$GEMSTONE_STYGIAN_FARM_SETUP = True
@@ -129,12 +158,35 @@ Func SetupPlayerStygianFarm()
 		Case $ID_Mesmer
 			$StygianPlayerProfession = $ID_Mesmer
 			LoadSkillTemplate($MeAStygianSkillBar)
+		Case $ID_Ranger
+			$StygianPlayerProfession = $ID_Ranger
+			LoadSkillTemplate($RNStygianSkillBar)
 		Case Else
-			Warn('You need to run this farm bot as Assassin or Mesmer')
+			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
 			Return $FAIL
 	EndSwitch
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamStygianFarm()
+	Info('Setting up team')
+	Sleep(500)
+	LeaveParty()
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
+		AddHero($StygianHeroPartyID)
+		Sleep(500 + GetPing())
+		LoadSkillTemplate($StygianRangerHeroSkillBar, $StygianHeroIndex)
+		Sleep(500 + GetPing())
+		DisableAllHeroSkills($StygianHeroIndex)
+		If GetPartySize() <> 2 Then
+			Warn("Could not add ranger hero to team. Team size different than 2")
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
 EndFunc
 
 
@@ -187,9 +239,12 @@ Func GemstoneStygianFarmLoop()
 	If GetQuestByID(0x2E6) == Null Then Return $FAIL
 
 	If IsPlayerDead() Then Return $FAIL
-	If $StygianPlayerProfession == $ID_Assassin Or $StygianPlayerProfession == $ID_Mesmer Then
-		StygianFarmMesmerAssassin()
-	EndIf
+	Switch $StygianPlayerProfession
+		Case $ID_Assassin, $ID_Mesmer
+			StygianFarmMesmerAssassin()
+		Case $ID_Ranger
+			StygianFarmRanger()
+	EndSwitch
 
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
@@ -206,8 +261,32 @@ Func StygianFarmMesmerAssassin()
 	If $pick_up_event Then
 		HideToLoot()
 	Else
-		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
+		If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func StygianFarmRanger()
+	If IsPlayerDead() Then Return $FAIL
+	UseHeroSkill($StygianHeroIndex, $Stygian_Hero_Succor, GetMyAgent())
+	MoveTo(10575, -8170)
+	MoveTo(10871, -7842, 0)
+	If IsPlayerAlive() Then RandomSleep(15000)
+	MoveTo(10575, -8170)
+	StygianJobRanger()
+	MoveTo(7337, -9709)
+	MoveTo(9071, -7330)
+	If IsPlayerAlive() Then RandomSleep(10000)
+	StygianJobRanger()
+	;MoveTo(7337, -9709)
+	;MoveTo(9071, -7330)
+	;If IsPlayerAlive() Then RandomSleep(10000)
+	;StygianJobRanger()
+	;MoveTo(7337, -9709)
+	;MoveTo(9071, -7330)
+	;If IsPlayerAlive() Then RandomSleep(10000)
+	;StygianJobRanger()
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
@@ -221,7 +300,7 @@ Func StygianJobMesmerAssassin()
 	RunStygianFarm(10575, -8170)
 	RunStygianFarm(12853, -9936)
 	RandomSleep(500)
-	If $SomethingToPickUp And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
+	If $SomethingToPickUp And IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 	MoveTo(13128, -10084)
 	MoveTo(13082, -9788, 0)
 	RandomSleep(500)
@@ -241,6 +320,84 @@ Func StygianJobMesmerAssassin()
 	RandomSleep(2700)
 	KillStygianMobsUsingWastrelSkills()
 	$SomethingToPickUp = True
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
+EndFunc
+
+
+Func StygianJobRanger()
+	If IsPlayerDead() Then Return $FAIL
+	MoveTo(10844, -10205)
+	MoveTo(10313, -11156)
+	MoveTo(8269, -11160, 10)
+	CommandHero($StygianHeroIndex, 9492, -11484)
+	If IsRecharged($Stygian_Ranger_Winnowing) Then UseSkillEx($Stygian_Ranger_Winnowing)
+	RandomSleep(2000)
+	MoveTo(8177, -11171, 10)
+	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_DustTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_DustTrap) Then UseSkillEx($Stygian_Ranger_DustTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
+	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_DustTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_DustTrap) Then UseSkillEx($Stygian_Ranger_DustTrap)
+	If IsRecharged($Stygian_Ranger_MuddyTerrain) Then UseSkillEx($Stygian_Ranger_MuddyTerrain)
+	RandomSleep(2000)
+	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_DustTrap) Or IsPlayerDead()
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
+	Do
+		RandomSleep(100)
+	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
+	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
+	UseHeroSkill($StygianHeroIndex, $Stygian_Hero_EdgeOfExtinction)
+	;TargetNearestEnemy()
+	Local $target = GetNearestEnemyToAgent(GetMyAgent())
+	ChangeTarget($target)
+	UseSkill($Stygian_Ranger_MarkOfPain, $target)
+	Do
+		RandomSleep(50)
+	Until GetHasHex($target) Or IsPlayerDead()
+	MoveTo(8368, -11244)
+	If IsRecharged($Stygian_Ranger_EbonStandard) Then UseSkillEx($Stygian_Ranger_EbonStandard)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
+		If TimerDiff($GemstoneStygianFarmTimer) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
+		RandomSleep(100)
+	WEnd
+	CancelAll()
+	RandomSleep(500)
+	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
@@ -280,6 +437,7 @@ EndFunc
 
 Func StygianCheckSFBuffs()
 	If IsPlayerDead() Then Return $FAIL
+	If $StygianPlayerProfession == $ID_Ranger Then Return $FAIL
 	If IsRecharged($Stygian_DeadlyParadox) And IsRecharged($Stygian_ShadowForm) And GetEnergy() >= 20 Then
 		UseSkillEx($Stygian_DeadlyParadox)
 		UseSkillEx($Stygian_ShadowForm)
@@ -290,6 +448,7 @@ EndFunc
 
 Func StygianCheckRunBuffs()
 	If IsPlayerDead() Then Return $FAIL
+	If $StygianPlayerProfession == $ID_Ranger Then Return $FAIL
 	If IsRecharged($Stygian_DwarvenStability) And GetEnergy() > 5 Then UseSkillEx($Stygian_DwarvenStability)
 	If IsRecharged($Stygian_Dash) And GetEnergy() > 5 Then UseSkillEx($Stygian_Dash)
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
