@@ -111,7 +111,7 @@ Global Const $Margonites_Range = 800
 Global $MargoniteMoveOptions = CloneDictMap($Default_MoveDefend_Options)
 $MargoniteMoveOptions.Item('defendFunction')		= MargoniteDefend
 $MargoniteMoveOptions.Item('moveTimeOut')			= 100 * 1000 ; 100 seconds max for being stuck
-$MargoniteMoveOptions.Item('randomFactor')			= 150
+$MargoniteMoveOptions.Item('randomFactor')			= 25
 $MargoniteMoveOptions.Item('hosSkillSlot')			= 0
 $MargoniteMoveOptions.Item('deathChargeSkillSlot')	= $Margonite_DeathsCharge
 $MargoniteMoveOptions.Item('openChests')			= False
@@ -258,6 +258,7 @@ EndFunc
 
 
 Func GemstoneMargoniteFarmLoop()
+	Local $me = Null, $target = Null
 	Sleep(2000)
 	$MargoniteHeroAgentID = GetHeroID($MargoniteHeroIndex)
 	If Not GetAgentExists($MargoniteHeroAgentID) Then Return $FAIL
@@ -306,7 +307,19 @@ Func GemstoneMargoniteFarmLoop()
 	WaitAggroMargonites(3000)
 	If MargoniteMoveDefending(-11484, -11034) == $FAIL Then Return $FAIL
 	If IsPlayerDead() Or GetIsDead(GetAgentByID($MargoniteHeroAgentID)) Then Return $FAIL
-	UseHeroSkill($MargoniteHeroIndex, $Margonite_Hero_EdgeOfExtinction)
+
+	; if margonites group is somehow not in the spot then try to get closer to them
+	; getting closer to nearest Anur Dabi or Kaya or Ki or Su, not nearest Vu, Ruk, Tuk
+	$me = GetMyAgent()
+	$target = GetNearestAgentToAgent($me, 0xDB, IsAnurDabiOrKayaOrKiOrSu)
+	If $MargonitePlayerProfession <> $ID_Elementalist Then
+		If IsRecharged($Margonite_DeathsCharge)  Then
+			UseSkillEx($Margonite_DeathsCharge, $target)
+			RandomSleep(GetPing())
+		EndIf
+	EndIf
+	MoveTo(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'))
+
 	If KillMargonites() == $FAIL Then Return $FAIL
 	RandomSleep(1000 + GetPing())
 	If IsPlayerAlive() Then
@@ -355,6 +368,20 @@ Func CastBondMargoniteFarm($bondSkill, $target)
 	WEnd
 	UseHeroSkill($MargoniteHeroIndex, $bondSkill, $target)
 	Sleep(3500) ; 3,5 seconds wait-out to ensure monk enchantment got casted on target
+EndFunc
+
+
+Func IsAnurDabiOrKayaOrKiOrSu($agent)
+	Local Static $AnurKaya	= 5166
+	Local Static $AnurDabi	= 5167
+	Local Static $AnurSu	= 5168
+	Local Static $AnurKi	= 5169
+
+	Return EnemyAgentFilter($agent) And _
+		(DllStructGetData($agent, 'ModelID') == $AnurKaya Or _
+		 DllStructGetData($agent, 'ModelID') == $AnurDabi Or _
+		 DllStructGetData($agent, 'ModelID') == $AnurSu Or _
+		 DllStructGetData($agent, 'ModelID') == $AnurKi)
 EndFunc
 
 
@@ -411,6 +438,7 @@ EndFunc
 
 
 Func MargoniteCheckSFBuffs()
+	Local $me = Null, $target = Null
 	If IsPlayerDead() Then Return $FAIL
 
 	; Margonites cast quickening zephyr spirit which halves skill recharge time but increases skill energy cost by 30% and
@@ -435,11 +463,15 @@ Func MargoniteCheckSFBuffs()
 	EndSwitch
 
 	If IsRecharged($Margonite_IAmUnstoppable) And GetEnergy() > 8 Then UseSkillEx($Margonite_IAmUnstoppable)
-	Local $target = GetNearestEnemyToAgent(GetMyAgent())
-	ChangeTarget($target)
-	If IsRecharged($Margonite_DeathsCharge) And Not IsRecharged($Margonite_ShadowForm) and GetDistance(GetMyAgent(), $target) < $Margonites_Range And DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.3 Then
-		UseSkillEx($Margonite_DeathsCharge, $target)
-		RandomSleep(1000)
+	If $MargonitePlayerProfession <> $ID_Elementalist Then
+		$me = GetMyAgent()
+		$target = GetNearestEnemyToAgent($me)
+		If IsRecharged($Margonite_DeathsCharge) And Not IsRecharged($Margonite_ShadowForm) And _
+				GetDistance($me, $target) < $Margonites_Range And DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.3 Then
+			ChangeTarget($target)
+			UseSkillEx($Margonite_DeathsCharge, $target)
+			RandomSleep(GetPing())
+		EndIf
 	EndIf
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
@@ -478,6 +510,7 @@ EndFunc
 Func KillMargonites()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Fighting margonites')
+	UseHeroSkill($MargoniteHeroIndex, $Margonite_Hero_EdgeOfExtinction)
 	Switch $MargonitePlayerProfession
 		Case $ID_Assassin, $ID_Mesmer, $ID_Elementalist
 			KillMargonitesUsingVisageSkills()
