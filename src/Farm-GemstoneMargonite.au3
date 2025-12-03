@@ -177,22 +177,23 @@ EndFunc
 Func SetupPlayerMargoniteFarm()
 	Info('Setting up player build skill bar')
 	Sleep(500 + GetPing())
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Assassin Then
-		$MargonitePlayerProfession = $ID_Assassin
-		LoadSkillTemplate($AMeMargoniteSkillBar)
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
-		$MargonitePlayerProfession = $ID_Mesmer
-		LoadSkillTemplate($MeAMargoniteSkillBar)
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
-		$MargonitePlayerProfession = $ID_Elementalist
-		LoadSkillTemplate($EMeMargoniteSkillBar)
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
-		$MargonitePlayerProfession = $ID_Ranger
-		LoadSkillTemplate($RAMargoniteSkillBar)
-    Else
-		Warn('You need to run this farm bot as Assassin or Mesmer or Elementalist or Ranger')
-		Return $FAIL
-    EndIf
+	Switch DllStructGetData(GetMyAgent(), 'Primary')
+		Case $ID_Assassin
+			$MargonitePlayerProfession = $ID_Assassin
+			LoadSkillTemplate($AMeMargoniteSkillBar)
+		Case $ID_Mesmer
+			$MargonitePlayerProfession = $ID_Mesmer
+			LoadSkillTemplate($MeAMargoniteSkillBar)
+		Case $ID_Elementalist
+			$MargonitePlayerProfession = $ID_Elementalist
+			LoadSkillTemplate($EMeMargoniteSkillBar)
+		Case $ID_Ranger
+			$MargonitePlayerProfession = $ID_Ranger
+			LoadSkillTemplate($RAMargoniteSkillBar)
+		Case Else
+			Warn('You need to run this farm bot as Assassin or Mesmer or Elementalist or Ranger')
+			Return $FAIL
+	EndSwitch
 	;ChangeWeaponSet(4) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
 EndFunc
@@ -371,11 +372,12 @@ EndFunc
 
 Func MargoniteMoveDefending($destinationX, $destinationY)
 	Local $result = Null
-	If $MargonitePlayerProfession == $ID_Elementalist Then
-		$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $MargoniteMoveOptionsElementalist)
-	Else
-		$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $MargoniteMoveOptions)
-	EndIf
+	Switch $MargonitePlayerProfession
+		Case $ID_Assassin, $ID_Mesmer, $ID_Ranger
+			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $MargoniteMoveOptions)
+		Case $ID_Elementalist
+			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $MargoniteMoveOptionsElementalist)
+	EndSwitch
 	If $result == $STUCK Then
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites whenever player got surrounded and stuck
 		If KillMargonites() == $FAIL Then Return $FAIL
@@ -420,15 +422,16 @@ Func MargoniteCheckSFBuffs()
 		If IsRecharged($Margonite_ShroudOfDistress) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 14 Then UseSkillEx($Margonite_ShroudOfDistress)
 	EndIf
 
-	If $MargonitePlayerProfession == $ID_Assassin Then
-		If IsRecharged($Margonite_Assasin_GreatDwarfArmor) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 8 And GetEffect($ID_Great_Dwarf_Armor) == Null Then UseSkillEx($Margonite_Assasin_GreatDwarfArmor)
-	ElseIf $MargonitePlayerProfession == $ID_Mesmer Then
-		If IsRecharged($Margonite_Mesmer_WayOfPerfection) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 8 And GetEffect($ID_Way_of_Perfection) == Null Then UseSkillEx($Margonite_Mesmer_WayOfPerfection)
-	ElseIf $MargonitePlayerProfession == $ID_Elementalist Then
-		MargoniteCheckBuffsElementalist()
-	ElseIf $MargonitePlayerProfession == $ID_Ranger Then
-		If IsRecharged($Margonite_Ranger_UnseenFury) And Not IsRecharged($Margonite_ShadowForm) And GetEffect($ID_Whirling_Defense) == Null Then UseSkillEx($Margonite_Ranger_UnseenFury)
-	EndIf
+	Switch $MargonitePlayerProfession
+		Case $ID_Assassin
+			If IsRecharged($Margonite_Assasin_GreatDwarfArmor) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 8 And GetEffect($ID_Great_Dwarf_Armor) == Null Then UseSkillEx($Margonite_Assasin_GreatDwarfArmor)
+		Case $ID_Mesmer
+			If IsRecharged($Margonite_Mesmer_WayOfPerfection) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 8 And GetEffect($ID_Way_of_Perfection) == Null Then UseSkillEx($Margonite_Mesmer_WayOfPerfection)
+		Case $ID_Elementalist
+			MargoniteCheckBuffsElementalist()
+		Case $ID_Ranger
+			If IsRecharged($Margonite_Ranger_UnseenFury) And Not IsRecharged($Margonite_ShadowForm) And GetEffect($ID_Whirling_Defense) == Null Then UseSkillEx($Margonite_Ranger_UnseenFury)
+	EndSwitch
 
 	If IsRecharged($Margonite_IAmUnstoppable) And GetEnergy() > 8 Then UseSkillEx($Margonite_IAmUnstoppable)
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
@@ -474,11 +477,12 @@ EndFunc
 Func KillMargonites()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Fighting margonites')
-	If $MargonitePlayerProfession == $ID_Assassin Or $MargonitePlayerProfession == $ID_Mesmer Or $MargonitePlayerProfession == $ID_Elementalist Then
-		KillMargonitesUsingVisageSkills()
-	ElseIf $MargonitePlayerProfession == $ID_Ranger Then
-		KillMargonitesUsingWhirlingDefense()
-	EndIf
+	Switch $MargonitePlayerProfession
+		Case $ID_Assassin, $ID_Mesmer, $ID_Elementalist
+			KillMargonitesUsingVisageSkills()
+		Case $ID_Ranger
+			KillMargonitesUsingWhirlingDefense()
+	EndSwitch
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
@@ -497,21 +501,23 @@ Func KillMargonitesUsingVisageSkills()
 			UseSkillEx($Margonite_AncestorsVisage)
 		EndIf
 
-		If $MargonitePlayerProfession == $ID_Elementalist Then
-			If IsRecharged($Margonite_Elementalist_SympatheticVisage) And GetEffect($ID_Ancestors_Visage) == Null And GetEffect($ID_Sympathetic_Visage) == Null And _
-					Not IsRecharged($Margonite_Elementalist_ObsidianFlesh) And GetEnergy() > 14 Then
-				UseSkillEx($Margonite_Elementalist_SympatheticVisage)
-			EndIf
-		ElseIf $MargonitePlayerProfession == $ID_Assassin Or $MargonitePlayerProfession == $ID_Mesmer Then
-			If IsRecharged($Margonite_LightbringersGaze) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 8 Then
-				Local $target = GetNearestEnemyToAgent(GetMyAgent())
-				If $target <> Null Then
-					ChangeTarget($target)
-					UseSkillEx($Margonite_LightbringersGaze, $target)
-					RandomSleep(100)
+		Switch $MargonitePlayerProfession
+			Case $ID_Elementalist
+				If IsRecharged($Margonite_Elementalist_SympatheticVisage) And GetEffect($ID_Ancestors_Visage) == Null And GetEffect($ID_Sympathetic_Visage) == Null And _
+						Not IsRecharged($Margonite_Elementalist_ObsidianFlesh) And GetEnergy() > 14 Then
+					UseSkillEx($Margonite_Elementalist_SympatheticVisage)
 				EndIf
-			EndIf
-		EndIf
+			Case $ID_Assassin, $ID_Mesmer
+				; Use lightbringer's gaze or other skill for optimization, because quickening zephyr makes Ancestor's Visage duration basically equal to recharge time
+				If IsRecharged($Margonite_LightbringersGaze) And Not IsRecharged($Margonite_ShadowForm) And GetEnergy() > 8 Then
+					Local $target = GetNearestEnemyToAgent(GetMyAgent())
+					If $target <> Null Then
+						ChangeTarget($target)
+						UseSkillEx($Margonite_LightbringersGaze, $target)
+						RandomSleep(100)
+					EndIf
+				EndIf
+		EndSwitch
 	WEnd
 EndFunc
 

@@ -100,7 +100,6 @@ $VaettirsMoveOptionsElementalist.Item('hosSkillSlot') = 0
 
 ;~ Main method to farm Vaettirs
 Func VaettirsFarm($STATUS)
-	If CheckPlayerVaettirsFarm() == $FAIL Then Return $PAUSE
 	While $Deadlocked Or GetMapID() <> $ID_Jaga_Moraine
 		If Not $VAETTIRS_FARM_SETUP Then SetupVaettirsFarm()
 		$Deadlocked = False
@@ -112,30 +111,11 @@ Func VaettirsFarm($STATUS)
 EndFunc
 
 
-Func CheckPlayerVaettirsFarm()
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Assassin Then
-		$VaettirsPlayerProfession = $ID_Assassin
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
-		$VaettirsPlayerProfession = $ID_Mesmer
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Monk Then
-		$VaettirsPlayerProfession = $ID_Monk
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
-		$VaettirsPlayerProfession = $ID_Elementalist
-    Else
-    	Warn('Should run this farm as assassin or mesmer or monk or elementalist')
-    	Return $FAIL
-    EndIf
-	; giving more health to monk 55hp from norn title effect would screw up farm, therefore hiding displayed title for monk
-	If $VaettirsPlayerProfession <> $ID_Monk Then SetDisplayedTitle($ID_Norn_Title)
-	If $VaettirsPlayerProfession == $ID_Monk Then SetDisplayedTitle(0)
-EndFunc
-
-
 Func SetupVaettirsFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
-	SetupPlayerVaettirsFarm()
+	If SetupPlayerVaettirsFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer
 	$VAETTIRS_FARM_SETUP = True
 	Info('Preparations complete')
@@ -145,16 +125,27 @@ EndFunc
 Func SetupPlayerVaettirsFarm()
 	Info('Setting up player build skill bar')
 	Sleep(500 + GetPing())
-	If $VaettirsPlayerProfession == $ID_Assassin Then
-		LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
-    ElseIf $VaettirsPlayerProfession == $ID_Mesmer Then
-		LoadSkillTemplate($MeAVaettirsFarmerSkillbar)
-    ElseIf $VaettirsPlayerProfession == $ID_Monk Then
-		LoadSkillTemplate($MoAVaettirsFarmerSkillbar)
-    ElseIf $VaettirsPlayerProfession == $ID_Elementalist Then
-		LoadSkillTemplate($EMeVaettirsFarmerSkillbar)
-    EndIf
+	Switch DllStructGetData(GetMyAgent(), 'Primary')
+		Case $ID_Assassin
+			$VaettirsPlayerProfession = $ID_Assassin
+			LoadSkillTemplate($AMeVaettirsFarmerSkillbar)
+		Case $ID_Mesmer
+			$VaettirsPlayerProfession = $ID_Mesmer
+			LoadSkillTemplate($MeAVaettirsFarmerSkillbar)
+		Case $ID_Monk
+			$VaettirsPlayerProfession = $ID_Monk
+			LoadSkillTemplate($MoAVaettirsFarmerSkillbar)
+		Case $ID_Elementalist
+			$VaettirsPlayerProfession = $ID_Elementalist
+			LoadSkillTemplate($EMeVaettirsFarmerSkillbar)
+		Case Else
+			Warn('You need to run this farm bot as Assassin or Mesmer or Monk or Elementalist')
+			Return $FAIL
+	EndSwitch
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	; giving more health to monk 55hp from norn title effect would screw up farm, therefore hiding displayed title for monk
+	If $VaettirsPlayerProfession <> $ID_Monk Then SetDisplayedTitle($ID_Norn_Title)
+	If $VaettirsPlayerProfession == $ID_Monk Then SetDisplayedTitle(0)
 	Sleep(500 + GetPing())
 EndFunc
 
@@ -352,11 +343,12 @@ EndFunc
 
 Func VaettirsMoveDefending($destinationX, $destinationY)
 	Local $result = Null
-	If $VaettirsPlayerProfession == $ID_Elementalist Then
-		$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptionsElementalist)
-	Else
-		$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptions)
-	EndIf
+	Switch $VaettirsPlayerProfession
+		Case $ID_Assassin, $ID_Mesmer, $ID_Monk
+			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptions)
+		Case $ID_Elementalist
+			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptionsElementalist)
+	EndSwitch
 	If $result == $STUCK Then
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs whenever player got surrounded and stuck
 		VaettirsKillSequence()
@@ -417,11 +409,12 @@ EndFunc
 
 ;~ Uses Shadow Form or other buffs like Obsidian Flesh or Protective Spirit if these are recharged
 Func VaettirsCheckBuffs()
-	If $VaettirsPlayerProfession == $ID_Elementalist Then
-		VaettirsCheckObsidianFlesh()
-	Else
-		VaettirsCheckShadowForm()
-	EndIf
+	Switch $VaettirsPlayerProfession
+		Case $ID_Assassin, $ID_Mesmer, $ID_Monk
+			VaettirsCheckShadowForm()
+		Case $ID_Elementalist
+			VaettirsCheckObsidianFlesh()
+	EndSwitch
 EndFunc
 
 
@@ -517,11 +510,12 @@ Func VaettirsKillSequence()
 	WEnd
 
 	Info('Killing Vaettirs')
-	If $VaettirsPlayerProfession == $ID_Assassin Or $VaettirsPlayerProfession == $ID_Mesmer Or $VaettirsPlayerProfession == $ID_Elementalist Then
-		KillVaettirsUsingWastrelSkills()
-	ElseIf $VaettirsPlayerProfession == $ID_Monk Then
-		KillVaettirsUsingSmitingSkills()
-	EndIf
+	Switch $VaettirsPlayerProfession
+		Case $ID_Assassin, $ID_Mesmer, $ID_Elementalist
+			KillVaettirsUsingWastrelSkills()
+		Case $ID_Monk
+			KillVaettirsUsingSmitingSkills()
+	EndSwitch
 EndFunc
 
 

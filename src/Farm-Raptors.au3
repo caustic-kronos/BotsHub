@@ -126,16 +126,17 @@ EndFunc
 Func SetupPlayerRaptorsFarm()
 	Info('Setting up player build skill bar')
 	Sleep(500 + GetPing())
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Warrior Then
-		$RaptorsPlayerProfession = $ID_Warrior
-		LoadSkillTemplate($WNRaptorsFarmerSkillbar)
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
-		$RaptorsPlayerProfession = $ID_Dervish
-		LoadSkillTemplate($DNRaptorsFarmerSkillbar)
-    Else
-    	Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
-    	Return $FAIL
-    EndIf
+	Switch DllStructGetData(GetMyAgent(), 'Primary')
+		Case $ID_Warrior
+			$RaptorsPlayerProfession = $ID_Warrior
+			LoadSkillTemplate($WNRaptorsFarmerSkillbar)
+		Case $ID_Dervish
+			$RaptorsPlayerProfession = $ID_Dervish
+			LoadSkillTemplate($DNRaptorsFarmerSkillbar)
+		Case Else
+    		Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
+			Return $FAIL
+	EndSwitch
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
 EndFunc
@@ -293,18 +294,19 @@ EndFunc
 
 ;~ Defend skills to use when looting in case some mobs are still alive
 Func RaptorsDefend()
-	If $RaptorsPlayerProfession == $ID_Warrior Then
-		If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
-		If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
-			UseSkillEx($Raptors_SoldiersDefense)
-		ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
-			UseSkillEx($Raptors_WaryStance)
-		EndIf
-	Else
-		If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
-		If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
-	EndIf
+	Switch $RaptorsPlayerProfession
+		Case $ID_Warrior
+			If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
+			If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
+			If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
+				UseSkillEx($Raptors_SoldiersDefense)
+			ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
+				UseSkillEx($Raptors_WaryStance)
+			EndIf
+		Case $ID_Dervish
+			If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
+			If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
+	EndSwitch
 EndFunc
 
 
@@ -314,21 +316,22 @@ Func KillRaptors()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Clearing Raptors')
 
-	If ($RaptorsPlayerProfession == $ID_Warrior) Then
-		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		RandomSleep(20)
-		UseSkillEx($Raptors_ProtectorsDefense)
-		RandomSleep(20)
-		UseSkillEx($Raptors_HundredBlades)
-		RandomSleep(20)
-		UseSkillEx($Raptors_WaryStance)
-		RandomSleep(20)
-	Else
-		UseSkillEx($Raptors_VowOfStrength)
-		RandomSleep(20)
-		UseSkillEx($Raptors_ArmorOfSanctity)
-		RandomSleep(20)
-	EndIf
+	Switch $RaptorsPlayerProfession
+		Case $ID_Warrior
+			If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
+			RandomSleep(20)
+			UseSkillEx($Raptors_ProtectorsDefense)
+			RandomSleep(20)
+			UseSkillEx($Raptors_HundredBlades)
+			RandomSleep(20)
+			UseSkillEx($Raptors_WaryStance)
+			RandomSleep(20)
+		Case $ID_Dervish
+			UseSkillEx($Raptors_VowOfStrength)
+			RandomSleep(20)
+			UseSkillEx($Raptors_ArmorOfSanctity)
+			RandomSleep(20)
+	EndSwitch
 
 	Local $rekoff_boss = GetBossFoe()
 	Local $me = GetMyAgent()

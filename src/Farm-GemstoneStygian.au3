@@ -122,16 +122,17 @@ EndFunc
 Func SetupPlayerStygianFarm()
 	Info('Setting up player build skill bar')
 	Sleep(500 + GetPing())
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Assassin Then
-		$StygianPlayerProfession = $ID_Assassin
-		LoadSkillTemplate($AMeStygianSkillBar)
-    ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
-		$StygianPlayerProfession = $ID_Mesmer
-		LoadSkillTemplate($MeAStygianSkillBar)
-    Else
-		Warn('You need to run this farm bot as Assassin or Mesmer')
-		Return $FAIL
-    EndIf
+	Switch DllStructGetData(GetMyAgent(), 'Primary')
+		Case $ID_Assassin
+			$StygianPlayerProfession = $ID_Assassin
+			LoadSkillTemplate($AMeStygianSkillBar)
+		Case $ID_Mesmer
+			$StygianPlayerProfession = $ID_Mesmer
+			LoadSkillTemplate($MeAStygianSkillBar)
+		Case Else
+			Warn('You need to run this farm bot as Assassin or Mesmer')
+			Return $FAIL
+	EndSwitch
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
 EndFunc
