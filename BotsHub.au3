@@ -1159,7 +1159,7 @@ Func UpdateFarmDescription($Farm)
 	GUICtrlSetData($GUI_Label_FarmInformations, '')
 	Switch $Farm
 		Case 'Boreal'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $BorealChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $BorealAssassinChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $BorealChestRunInformations)
 		Case 'Corsairs'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
