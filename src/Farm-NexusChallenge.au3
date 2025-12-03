@@ -30,10 +30,12 @@ Opt('MustDeclareVars', True)
 Global Const $NexusChallengeInformations = 'Mysterious armor farm'
 ; Average duration ~ 20m
 Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
+Global $NEXUS_CHALLENGE_SETUP = False
+
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm($STATUS)
-	NexusChallengeSetup()
+	If Not $NEXUS_CHALLENGE_SETUP Then NexusChallengeSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterNexusChallengeMission()
@@ -65,6 +67,7 @@ Func NexusChallengeSetup()
 	SwitchMode($ID_NORMAL_MODE)
 	SetupPlayerNexusChallengeFarm()
 	SetupTeamNexusChallengeFarm()
+	$NEXUS_CHALLENGE_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc

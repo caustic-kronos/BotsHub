@@ -35,13 +35,16 @@ Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
+Global $KURZICK_FARM_SETUP = False
 
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
-	KurzickFarmSetup()
+	If Not $KURZICK_FARM_SETUP Then KurzickFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	ManageFactionPointsKurzickFarm()
+	CheckGoldKurzickFarm()
 	GoToFerndale()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -55,14 +58,8 @@ Func KurzickFactionFarm($STATUS)
 EndFunc
 
 
-;~ Setup for kurzick farm
-Func KurzickFarmSetup()
-	Info('Setting up farm')
+Func ManageFactionPointsKurzickFarm()
 	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-
-	SetupPlayerKurzickFarm()
-	SetupTeamKurzickFarm()
-
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
@@ -85,15 +82,30 @@ Func KurzickFarmSetup()
 		EndIf
 		RandomSleep(500)
 	EndIf
+EndFunc
 
+
+Func CheckGoldKurzickFarm()
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
 		WithdrawGold(100)
 		RandomSleep(250)
 	EndIf
+EndFunc
 
+
+;~ Setup for kurzick farm
+Func KurzickFarmSetup()
+	Info('Setting up farm')
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+
+	SetupPlayerKurzickFarm()
+	SetupTeamKurzickFarm()
 	SwitchMode($ID_HARD_MODE)
+
+	$KURZICK_FARM_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc

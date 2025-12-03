@@ -34,13 +34,16 @@ Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
+Global $LUXON_FARM_SETUP = False
 
 
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
-	LuxonFarmSetup()
+	If Not $LUXON_FARM_SETUP Then LuxonFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	ManageFactionPointsLuxonFarm()
+	CheckGoldLuxonFarm()
 	GoToMountQinkai()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -54,14 +57,7 @@ Func LuxonFactionFarm($STATUS)
 EndFunc
 
 
-;~ Setup for the luxon points farm
-Func LuxonFarmSetup()
-	Info('Setting up farm')
-	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
-
-	SetupPlayerLuxonFarm()
-	SetupTeamLuxonFarm()
-
+Func ManageFactionPointsLuxonFarm()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
 		DistrictTravel($ID_Cavalon, $DISTRICT_NAME)
 		RandomSleep(200)
@@ -86,15 +82,30 @@ Func LuxonFarmSetup()
 		RandomSleep(500)
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	EndIf
+EndFunc
 
+
+Func CheckGoldLuxonFarm()
+	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
 		WithdrawGold(100)
 		RandomSleep(250)
 	EndIf
+EndFunc
 
+
+;~ Setup for the luxon points farm
+Func LuxonFarmSetup()
+	Info('Setting up farm')
+	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+
+	SetupPlayerLuxonFarm()
+	SetupTeamLuxonFarm()
 	SwitchMode($ID_HARD_MODE)
+
+	$LUXON_FARM_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
