@@ -26,7 +26,7 @@
 ; Possible improvements :
 ; - noticed some scenarios where map is not cleared - check whether this can be fixed by adding a few additional locations
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
@@ -35,14 +35,16 @@ Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
+Global $KURZICK_FARM_SETUP = False
 
-Global $DonatePoints = True
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
-	KurzickFarmSetup()
+	If Not $KURZICK_FARM_SETUP Then KurzickFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	ManageFactionPointsKurzickFarm()
+	CheckGoldKurzickFarm()
 	GoToFerndale()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -56,16 +58,14 @@ Func KurzickFactionFarm($STATUS)
 EndFunc
 
 
-;~ Setup for kurzick farm
-Func KurzickFarmSetup()
-	Info('Setting up farm')
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
+Func ManageFactionPointsKurzickFarm()
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
 
-		If $DonatePoints Then
+		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		If $donatePoints Then
 			Info('Donating Kurzick faction points')
 			While GetKurzickFaction() >= 5000
 				DonateFaction('kurzick')
@@ -82,16 +82,59 @@ Func KurzickFarmSetup()
 		EndIf
 		RandomSleep(500)
 	EndIf
+EndFunc
 
+
+Func CheckGoldKurzickFarm()
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
 		WithdrawGold(100)
 		RandomSleep(250)
 	EndIf
+EndFunc
 
+
+;~ Setup for kurzick farm
+Func KurzickFarmSetup()
+	Info('Setting up farm')
+	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+
+	SetupPlayerKurzickFarm()
+	SetupTeamKurzickFarm()
 	SwitchMode($ID_HARD_MODE)
+
+	$KURZICK_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerKurzickFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamKurzickFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
@@ -247,6 +290,8 @@ Func VanquishFerndale()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

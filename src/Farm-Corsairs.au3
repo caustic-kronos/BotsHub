@@ -26,10 +26,12 @@
 ; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
 ; Using third hero for more speed is a bad idea - you'd lose aggro
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $RACorsairsFarmerSkillbar = 'OgcSc5PT3lCHIQHQj1xlpZ4O'
+Global Const $MoPCorsairsHeroSkillbar = 'OwkjAlNpJP3Ya8HRmAAAAAAAA'
+Global Const $DRCorsairsHeroSkillbar = 'OgKjwOqMGPPn7LAAAAAAA+mhD'
 Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -37,7 +39,10 @@ Global Const $CorsairsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A spear +5 energy +5 armor or +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
-	& '- Dunkoro'
+	& '- Required hero for mission Dunkoro' & @CRLF _
+	& '' & @CRLF _
+	& 'This farm bot is based on below article:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
 Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
@@ -57,15 +62,22 @@ Global Const $Corsairs_Winnowing		= 1
 Global Const $Corsairs_MysticHealing	= 2
 
 Global $CORSAIRS_FARM_SETUP = False
-Global $Bohseda_Timer
+Global $Bohseda_Timer = Null
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $CORSAIRS_FARM_SETUP Then SetupCorsairsFarm()
+	If Not $CORSAIRS_FARM_SETUP And SetupCorsairsFarm() == $FAIL Then Return $PAUSE
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
+
 	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()
-	BackToModdokCreviceOutpost()
+	Info('Returning back to the outpost')
+	Sleep(1000)
+	Resign()
+	Sleep(4000)
+	ReturnToOutpost()
+	Sleep(6000)
 	Return $result
 EndFunc
 
@@ -82,29 +94,46 @@ Func SetupCorsairsFarm()
 		Sleep(6000)
 	EndIf
 	SwitchMode($ID_HARD_MODE)
-	SetupTeamCorsairsFarm()
-	LoadSkillTemplate($RACorsairsFarmerSkillbar)
+	If SetupPlayerCorsairsFarm() == $FAIL Then Return $FAIL
+	If SetupTeamCorsairsFarm() == $FAIL Then Return $FAIL
 	$CORSAIRS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerCorsairsFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
+		LoadSkillTemplate($RACorsairsFarmerSkillbar)
+    Else
+    	Warn('Should run this farm as ranger')
+ 		Return $FAIL
+   EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
 Func SetupTeamCorsairsFarm()
 	Info('Setting up team')
-	Sleep(500)
+	Sleep(500 + GetPing())
 	LeaveParty()
-	Sleep(500)
 	AddHero($ID_Dunkoro)
 	AddHero($ID_Melonni)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 3 Then
 		Warn('Could not set up party correctly. Team size different than 3')
 		Return $FAIL
 	EndIf
-	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 1)
-	;LoadSkillTemplate($RACorsairsFarmerSkillbar, 2)
+	LoadSkillTemplate($MoPCorsairsHeroSkillbar, 1)
+	LoadSkillTemplate($DRCorsairsHeroSkillbar, 2)
+	Sleep(500 + GetPing())
 	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
 	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
+	Return $SUCCESS
 EndFunc
 
 
@@ -114,23 +143,13 @@ Func EnterCorsairsModdokCreviceMission()
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
 	Local Static $StartX = -11468
 	Local Static $StartY = -7267
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		Info('Entering Moddok Crevice mission')
 		GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 		RandomSleep(250)
 		Dialog(0x84)
-		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
+		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
 	WEnd
-EndFunc
-
-
-;~ Resign and returns to Modook Crevice (city)
-Func BackToModdokCreviceOutpost()
-	Info('Porting to Moddok Crevice (city)')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Moddok_Crevice, 10000, 2000)
 EndFunc
 
 

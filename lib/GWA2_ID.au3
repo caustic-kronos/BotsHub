@@ -94,11 +94,13 @@ Global Const $ID_Great_Temple_of_Balthazar	= 248
 Global Const $ID_Embark_Beach				= 857
 ; Common
 Global Const $ID_Fissure_of_Woe				= 34
+Global Const $ID_Underworld					= 72
 ; Prophecies
 Global Const $ID_Warriors_Isle				= 4
 Global Const $ID_Hunters_Isle				= 5
 Global Const $ID_Wizards_Isle				= 6
 Global Const $ID_Burning_Isle				= 52
+Global Const $ID_Lions_Arch					= 55
 Global Const $ID_Tascas_Demise				= 92
 Global Const $ID_Temple_of_the_Ages			= 138
 Global Const $ID_The_Granite_Citadel		= 156
@@ -122,21 +124,25 @@ Global Const $ID_The_Eternal_Grove			= 222
 Global Const $ID_Sunqua_Vale				= 238
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
+Global Const $ID_Shing_Jea_Monastery		= 242
 Global Const $ID_Seitung_Harbor				= 250
 Global Const $ID_Urgoz_Warren				= 266
 Global Const $ID_Isle_Of_Weeping_Stone		= 275
 Global Const $ID_Isle_Of_Jade				= 276
 Global Const $ID_Leviathan_Pits				= 279
+Global Const $ID_Zin_Ku_Corridor			= 284
 Global Const $ID_The_Marketplace			= 303
+Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Imperial_Isle				= 359
 Global Const $ID_Isle_Of_Meditation			= 360
-Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Aspenwood_Gate_Luxon		= 389
 Global Const $ID_Kaineng_City_Events		= 817
 Global Const $ID_Kaineng_A_Chance_Encounter	= 861
 ; Nightfall
+Global Const $ID_Kamadan					= 370
 Global Const $ID_Sunward_Marches			= 373
 Global Const $ID_Sunspear_Sanctuary			= 387
+Global Const $ID_Chantry_Of_Secrets			= 393
 Global Const $ID_Kodash_Bazaar				= 414
 Global Const $ID_Mirror_of_Lyss				= 419
 Global Const $ID_Moddok_Crevice				= 427
@@ -155,6 +161,7 @@ Global Const $ID_Remains_of_Sahlahja		= 545
 Global Const $ID_Dajkah_Inlet				= 554
 Global Const $ID_Nexus						= 555
 ; EotN
+Global Const $ID_Glints_Challenge			= 37
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Arbor_Bay					= 485
 Global Const $ID_Ice_Cliff_Chasms			= 499
@@ -180,31 +187,32 @@ Global Const $ID_Dalada_Uplands				= 647
 Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
 Global Const $ID_Boreal_Station				= 675
+Global Const $ID_Central_Transfer_Chamber	= 652
 Global Const $ID_Auspicious_Beginnings		= 849
 
-Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, _
-											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
+Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, $ID_Underworld, _
+											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Lions_Arch, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
 											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
 											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
-											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, $ID_The_Marketplace, _
-											$ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, $ID_Kaineng_A_Chance_Encounter, _
-											$ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, $ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, _
-											$ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, $ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, _
-											$ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Riven_Earth, $ID_Jaga_Moraine, _
-											$ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
+											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Shing_Jea_Monastery, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, _
+											$ID_Zin_Ku_Corridor, $ID_The_Marketplace, $ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, _
+											$ID_Kaineng_A_Chance_Encounter, $ID_Kamadan, $ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Chantry_Of_Secrets, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, _
+											$ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, $ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, _
+											$ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, $ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Ice_Cliff_Chasms, $ID_Riven_Earth, _
+											$ID_Jaga_Moraine, $ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
 											$ID_Bogroot_lvl1, $ID_Bogroot_lvl2, $ID_Vloxs_Fall, $ID_Gadds_Camp, $ID_Umbral_Grotto, $ID_Rata_Sum, $ID_Eye_of_the_North, $ID_Olafstead, $ID_Hall_of_Monuments, _
-											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge]
+											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge, $ID_Boreal_Station, $ID_Central_Transfer_Chamber]
 
-Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Warriors Isle', 'Hunters Isle', _
-											'Wizards Isle', 'Burning Isle', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
-											'House Zu Heltzer', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', _
-											'Nahpui Quarter', 'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
-											'Isle Of Jade', 'Leviathan Pits', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
-											'Kaineng A Chance Encounter', 'Sunward Marches', 'Sunspear Sanctuary', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', 'Jokos Domain', _
-											'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
-											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', _
-											'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', 'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', _
-											'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', 'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge']
+Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Underworld', 'Warriors Isle', 'Hunters Isle', _
+											'Wizards Isle', 'Burning Isle', 'Lions Arch', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
+											'House Zu Heltzer', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', 'Nahpui Quarter', _
+											'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Shing Jea Monastery', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
+											'Isle Of Jade', 'Leviathan Pits', 'Zin Ku Corridor', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
+											'Kaineng A Chance Encounter', 'Kamadan', 'Sunward Marches', 'Sunspear Sanctuary', 'Chantry of Secrets', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', _
+											'Jokos Domain', 'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
+											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Ice Cliff Chasms', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', 'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', _
+											'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', 'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', _
+											'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge', 'Boreal Station', 'Central Transfer Chamber']
 
 Global Const $LocationMapNames			=	MapFromArrays($LocationIds, $LocationNames)
 #EndRegion Game Locations
@@ -223,6 +231,22 @@ Global Const $ID_Ritualist		= 8
 Global Const $ID_Paragon		= 9
 Global Const $ID_Dervish		= 10
 #EndRegion Professions
+
+
+#Region Hero combat behaviour
+Global Const $ID_Hero_fighting	= 0
+Global Const $ID_Hero_guarding	= 1
+Global Const $ID_Hero_avoiding	= 2
+#EndRegion Hero combat behaviour
+
+#Region Agents Allegiance
+Global Const $ID_Allegiance_Team	= 1 ; player and team party members
+Global Const $ID_Allegiance_Animal	= 2 ; untamed animals
+Global Const $ID_Allegiance_Foe		= 3
+Global Const $ID_Allegiance_Spirit	= 4 ; ranger's and ritualist's spirits and tamed animals/pets
+Global Const $ID_Allegiance_Minion	= 5 ; necromancer's minions
+Global Const $ID_Allegiance_Npc		= 6
+#EndRegion Agents Allegiance
 
 
 #Region Profession Attributes
@@ -433,6 +457,23 @@ Global Const $ID_Mercenary_Hero_7	= 34
 Global Const $ID_Mercenary_Hero_8	= 35
 Global Const $ID_Miku				= 36
 Global Const $ID_ZeiRi				= 37
+
+Global Const $HeroIDs				= [$ID_Norgu, $ID_Goren, $ID_Tahlkora, $ID_Master_Of_Whispers, $ID_Acolyte_Jin, _
+									   $ID_Koss, $ID_Dunkoro, $ID_Acolyte_Sousuke, $ID_Melonni, $ID_Zhed_Shadowhoof, _
+									   $ID_General_Morgahn, $ID_Margrid_The_Sly, $ID_Zenmai, $ID_Olias, $ID_Razah, _
+									   $ID_MOX, $ID_Keiran_Thackeray, $ID_Jora, $ID_Pyre_Fierceshot, $ID_Anton, _
+									   $ID_Livia, $ID_Hayda, $ID_Kahmu, $ID_Gwen, $ID_Xandra, $ID_Vekk, $ID_Ogden, _
+									   $ID_Miku, $ID_ZeiRi]
+
+Global Const $HeroNames				= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whispers', 'Acolyte Jin', _
+										'Koss', 'Dunkoro', 'Acolyte Sousuke', 'Melonni', 'Zhed Shadowhoof', _
+										'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
+										'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
+										'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
+										'Miku', 'ZeiRi']
+
+Global Const $HeroNamesFromIDs			=	MapFromArrays($HeroIDs, $HeroNames)
+Global Const $HeroIDsFromNames			=	MapFromArrays($HeroNames, $HeroIDs)
 #EndRegion Hero IDs
 
 
@@ -456,12 +497,18 @@ Global Const $ID_Whirlwind_Attack				= 2107
 ; Ranger
 Global Const $ID_Troll_Unguent					= 446
 Global Const $ID_Whirling_Defense				= 450
+Global Const $ID_Quickening_Zephyr				= 475
 ; Monk
 Global Const $ID_Unyielding_Aura				= 268
 Global Const $ID_Light_of_Dwayna				= 304
 Global Const $ID_Resurrect						= 305
 Global Const $ID_Rebirth						= 306
 Global Const $ID_Restore_Life					= 314
+Global Const $ID_Balthazars_Spirit				= 242
+Global Const $ID_Watchful_Spirit				= 255
+Global Const $ID_Life_Barrier					= 270
+Global Const $ID_Life_Bond						= 241
+Global Const $ID_Vital_Blessing					= 289
 Global Const $ID_Vengeance						= 315
 Global Const $ID_Ray_of_Judgement				= 830
 Global Const $ID_Resurrection_Chant				= 1128
@@ -471,19 +518,30 @@ Global Const $ID_Animate_Bone_Minions			= 85
 Global Const $ID_Death_Nova						= 104
 Global Const $ID_Animate_Flesh_Golem			= 832
 ; Mesmer
-Global Const $ID_Empathy						= 26
+Global Const $ID_Empathy 						= 26
+Global Const $ID_Sympathetic_Visage				= 34
 Global Const $ID_Channeling						= 38
 Global Const $ID_Arcane_Echo					= 75
+Global Const $ID_Ancestors_Visage				= 1054
 Global Const $ID_Wastrels_Demise				= 1335
 ; Elementalist
+Global Const $ID_Elemental_Attunement			= 164
+Global Const $ID_Meteor							= 187
+Global Const $ID_Rodgorts_Invocation			= 189
 Global Const $ID_Meteor_Shower					= 192
+Global Const $ID_Flare							= 194
+Global Const $ID_Searing_Heat					= 196
 Global Const $ID_Fire_Storm						= 197
+Global Const $ID_Glyph_of_Elemental_Power		= 198
 Global Const $ID_Unsteady_Ground				= 1083
 Global Const $ID_Sand_Storm						= 1372
 Global Const $ID_Savannah_Heat					= 1380
 ; Assassin
 Global Const $ID_Shadow_Refuge					= 814
+Global Const $ID_Shadow_Form					= 826
+Global Const $ID_Way_of_Perfection				= 1028
 Global Const $ID_Shroud_of_Distress				= 1031
+Global Const $ID_Dark_Escape					= 1037
 ; Ritualist
 Global Const $ID_Flesh_of_My_Flesh				= 791
 Global Const $ID_Union							= 911
@@ -511,10 +569,14 @@ Global Const $ID_Resurrection_Signet			= 2
 ; PvE
 Global Const $ID_Sunspear_Rebirth_Signet		= 1816
 Global Const $ID_Junundu_Wail					= 1865
+Global Const $ID_Intensity						= 2104
 Global Const $ID_Eternal_Aura					= 2109
 Global Const $ID_By_Urals_Hammer				= 2217
+Global Const $ID_Great_Dwarf_Armor				= 2220
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
+Global Const $ID_I_Am_Unstoppable				= 2356
 Global Const $ID_Mental_Block					= 2417
+Global Const $ID_Dwarven_Stability				= 2423
 ; Food and drink boosts
 Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
 Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny

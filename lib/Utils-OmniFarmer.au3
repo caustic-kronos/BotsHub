@@ -237,7 +237,7 @@ Func BurstHealingUnit()
 		$Quickening_Zephyr_Cast_Timer = TimerInit()
 	EndIf
 
-	Local $lifeRatio = DllStructGetData(GetMyAgent(), 'HP')
+	Local $lifeRatio = DllStructGetData(GetMyAgent(), 'HealthPercent')
 	; Heroes with Mystic Healing provide additional long range support
 	If $lifeRatio < 1 Then
 		UseHeroSkill($Hero_Speed_Paragon, $Mystic_Healing_Skill_Position)

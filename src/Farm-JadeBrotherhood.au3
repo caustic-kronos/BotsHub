@@ -23,7 +23,7 @@
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 Global Const $JB_Timeout = 120000
 
@@ -68,7 +68,7 @@ Global $JADE_BROTHERHOOD_FARM_SETUP = False
 ;~ Main method to farm Jade Brotherhood for q8
 Func JadeBrotherhoodFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $JADE_BROTHERHOOD_FARM_SETUP Then SetupJadeBrotherhoodFarm()
+	If Not $JADE_BROTHERHOOD_FARM_SETUP And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToBukdekByway()
@@ -84,8 +84,8 @@ Func SetupJadeBrotherhoodFarm()
 	TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
 	SwitchMode($ID_HARD_MODE)
 
-	SetupTeamJadeBrotherhoodFarm()
-	LoadSkillTemplate($JB_Skillbar)
+	If SetupPlayerJadeBrotherhoodFarm() == $FAIL Then Return $FAIL
+	If SetupTeamJadeBrotherhoodFarm() == $FAIL Then Return $FAIL
 
 	GoToBukdekByway()
 	RandomSleep(50)
@@ -96,20 +96,38 @@ Func SetupJadeBrotherhoodFarm()
 	WaitMapLoading($ID_The_Marketplace)
 	$JADE_BROTHERHOOD_FARM_SETUP = True
 	Info('Jade Brotherhood farm set up')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerJadeBrotherhoodFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($JB_Skillbar)
+    Else
+    	Warn('Should run this farm as dervish')
+    	Return $FAIL
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
 Func SetupTeamJadeBrotherhoodFarm()
 	Info('Setting up team')
-	Sleep(500)
+	Sleep(500 + GetPing())
 	LeaveParty()
 	AddHero($ID_General_Morgahn)
 	LoadSkillTemplate($JB_Hero_Skillbar, 1)
 	DisableAllHeroSkills(1)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
+		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 
@@ -147,8 +165,10 @@ Func JadeBrotherhoodFarmLoop()
 
 	RandomSleep(1000)
 
-	Info('Looting')
-	PickUpItems()
+	If IsPlayerAlive() Then
+		Info('Looting')
+		PickUpItems()
+	EndIf
 
 	If $Deadlocked Then Return $FAIL
 	Return $SUCCESS

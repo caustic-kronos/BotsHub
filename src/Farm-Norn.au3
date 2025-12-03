@@ -24,17 +24,18 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $NornFarmInformations = 'Norn title farm, bring solid heroes composition'
 ; Average duration ~ 45m
 Global Const $NORN_FARM_DURATION = 45 * 60 * 1000
+Global $NORN_FARM_SETUP = False
 
 
 ;~ Main loop for the norn faction farm
 Func NornTitleFarm($STATUS)
-	NornTitleFarmSetup()
+	If Not $NORN_FARM_SETUP Then NornTitleFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToVarajarFells()
@@ -50,34 +51,38 @@ EndFunc
 
 Func NornTitleFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Olafstead Then TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Norn_Title)
 	SwitchMode($ID_HARD_MODE)
-	; Assuming that team has been set up correctly manually
-	;SetupTeamNornTitleFarm()
+	SetupPlayerNornTitleFarm()
+	SetupTeamNornTitleFarm()
+	$NORN_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerNornTitleFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 
 Func SetupTeamNornTitleFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Gwen)
-	RandomSleep(500)
-	AddHero($ID_Razah)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	RandomSleep(500)
-	AddHero($ID_Livia)
-	RandomSleep(500)
-	AddHero($ID_Olias)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	Sleep(1000)
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
@@ -223,6 +228,8 @@ Func VanquishVarajarFells()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

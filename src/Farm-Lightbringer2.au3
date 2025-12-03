@@ -24,7 +24,7 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $LightbringerFarm2Informations = 'Lightbringer title farm'
@@ -51,39 +51,42 @@ EndFunc
 
 Func Lightbringer2FarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	If GetMapID() <> $ID_Kodash_Bazaar Then TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
-	; Assuming that team has been set up correctly manually
-	;SetupTeamLightbringer2Farm()
+	SetupPlayerLightbringer2Farm()
+	SetupTeamLightbringer2Farm()
+
 	GoToMirrorOfLyss()
 	MoveTo(-19350, -16900)
 	RandomSleep(5000)
 	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
 	$LIGHTBRINGER_FARM2_SETUP = True
-	Info('Setup completed')
+	Info('Preparations completed')
+EndFunc
+
+
+Func SetupPlayerLightbringer2Farm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 
 Func SetupTeamLightbringer2Farm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Gwen)
-	RandomSleep(500)
-	AddHero($ID_Razah)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	RandomSleep(500)
-	AddHero($ID_Livia)
-	RandomSleep(500)
-	AddHero($ID_Olias)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	Sleep(1000)
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf

@@ -25,7 +25,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
@@ -35,15 +35,16 @@ Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
 Global Const $ID_unknown_outpost_deposit_points = 193
-
-Global $DonatePoints = True
+Global $LUXON_FARM_SETUP = False
 
 
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
-	LuxonFarmSetup()
+	If Not $LUXON_FARM_SETUP Then LuxonFarmSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
+	ManageFactionPointsLuxonFarm()
+	CheckGoldLuxonFarm()
 	GoToMountQinkai()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -57,17 +58,14 @@ Func LuxonFactionFarm($STATUS)
 EndFunc
 
 
-;~ Setup for the luxon points farm
-Func LuxonFarmSetup()
-	Info('Setting up farm')
-	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
+Func ManageFactionPointsLuxonFarm()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
 		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
 		RandomSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
 
-		If $DonatePoints Then
+		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		If $donatePoints Then
 			Info('Donating Luxon faction points')
 			While GetLuxonFaction() >= 5000
 				DonateFaction('Luxon')
@@ -85,16 +83,59 @@ Func LuxonFarmSetup()
 		RandomSleep(500)
 		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	EndIf
+EndFunc
 
+
+Func CheckGoldLuxonFarm()
+	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
 		WithdrawGold(100)
 		RandomSleep(250)
 	EndIf
+EndFunc
 
+
+;~ Setup for the luxon points farm
+Func LuxonFarmSetup()
+	Info('Setting up farm')
+	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+
+	SetupPlayerLuxonFarm()
+	SetupTeamLuxonFarm()
 	SwitchMode($ID_HARD_MODE)
-	Info('Setup completed')
+
+	$LUXON_FARM_SETUP = True
+	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerLuxonFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamLuxonFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
@@ -172,6 +213,8 @@ Func VanquishMountQinkai()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

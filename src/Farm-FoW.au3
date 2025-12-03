@@ -23,10 +23,10 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FoWFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $FoWFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded areas' & @CRLF _
 	& 'XXmn average in NM' & @CRLF _
 	& 'YYmn average in HM with consets (automatically used if HM is on)' & @CRLF _
@@ -49,8 +49,11 @@ Func FoWFarm($STATUS)
 	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	EnterFissureOfWoe()
-	Local $result = FoWFarmLoop()
+	Local $result = EnterFissureOfWoe()
+	If $result <> $SUCCESS Then Return $result
+	$result = FoWFarmLoop()
+	If $result == $SUCCESS Then Info('Successfully cleared Fissure of Woe')
+	If $result == $FAIL Then Info('Could not clear Fissure of Woe')
 	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	Return $result
 EndFunc
@@ -59,27 +62,79 @@ EndFunc
 ;~ FoW farm setup
 Func SetupFoWFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
-	; Make party
-	; Assuming that team has been set up correctly manually
+	If GetMapID() <> $ID_Temple_of_the_Ages Then
+		If TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	EndIf
+	SetupPlayerFoWFarm()
+	SetupTeamFoWFarm()
 	SwitchToHardModeIfEnabled()
 	$FOW_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerFoWFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamFoWFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
 Func EnterFissureOfWoe()
-	Info('Making way to Balthazar statue to enter Fissure of Woe')
-	MoveTo(-2500, 18700)
-	SendChat('/kneel', '')
-	RandomSleep(3000)
-	GoToNPC(GetNearestNPCToCoords(-2500, 18700))
-	RandomSleep(GetPing() + 750)
-	Dialog(0x85)
-	RandomSleep(GetPing() + 750)
-	Dialog(0x86)
-	RandomSleep(GetPing() + 750)
-	WaitMapLoading($ID_Fissure_of_Woe)
+	If GetMapID() <> $ID_Temple_of_the_Ages Then TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Fissure of Woe')
+		Local $fowScroll = GetItemByModelID($ID_FoW_Scroll)
+		If DllStructGetData($fowScroll, 'Slot') > 0 Then ; slots are numbered from 1, if scroll is not in any bag then Slot is 0
+			UseItem($fowScroll)
+			WaitMapLoading($ID_Fissure_of_Woe)
+			If GetMapID() <> $ID_Fissure_of_Woe Then
+				Warn('Used scroll but still could not enter Fissure of Woe. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		Else
+			Warn('Could not find scroll to enter Fissure of Woe in player''s inventory')
+			Return $PAUSE
+		EndIf
+	Else ; not using scroll method to enter Fissure of Woe
+		Info('Going to Balthazar statue to enter Fissure of Woe')
+		MoveTo(-2500, 18700)
+		SendChat('/kneel', '')
+		RandomSleep(GetPing() + 3000)
+		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+		RandomSleep(GetPing() + 750)
+		Dialog(0x85) ; entering FoW dialog option
+		RandomSleep(GetPing() + 750)
+		Dialog(0x86) ; accepting dialog option
+		RandomSleep(GetPing() + 750)
+		WaitMapLoading($ID_Fissure_of_Woe)
+		If GetMapID() <> $ID_Fissure_of_Woe Then
+			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
 EndFunc
 
 
@@ -294,6 +349,7 @@ Func TheTempleOfWar()
 	RandomSleep(GetPing() + 750)
 	Dialog(0x80D301)
 	RandomSleep(GetPing() + 750)
+	Return $SUCCESS
 EndFunc
 
 
@@ -338,6 +394,7 @@ Func TheSpiderCave_and_FissureShore()
 	MoveTo(-6700, -11750)
 	MoveTo(-1600, -8750)
 	MoveTo(1000, -11200)
+	Return $SUCCESS
 EndFunc
 
 
@@ -351,6 +408,7 @@ Func LakeOfFire()
 	MoveAggroAndKillInRange(20500, -12400, '6', $RANGE_EARSHOT)
 	MoveAggroAndKillInRange(18300, -14000, '7', $RANGE_EARSHOT)
 	MoveAggroAndKillInRange(19500, -15000, '8', $RANGE_EARSHOT)
+	Return $SUCCESS
 EndFunc
 
 
@@ -387,6 +445,7 @@ Func TowerOfStrengh()
 		Sleep(1000)
 		$me = GetMyAgent()
 	WEnd
+	Return $SUCCESS
 EndFunc
 
 
@@ -432,6 +491,7 @@ Func BurningForest()
 	FlagMoveAggroAndKill(1600, 12300, '2')
 	KillShardWolf()
 	FlagMoveAggroAndKill(-10750, 6300, '3')
+	Return $SUCCESS
 EndFunc
 
 
@@ -478,6 +538,7 @@ Func ForestOfTheWailingLord()
 	RandomSleep(GetPing() + 750)
 	Dialog(0x80CD01)
 	RandomSleep(GetPing() + 750)
+	Return $SUCCESS
 EndFunc
 
 
@@ -524,6 +585,7 @@ Func GriffonRun()
 	RandomSleep(GetPing() + 750)
 	Dialog(0x80CD07)
 	RandomSleep(GetPing() + 750)
+	Return $SUCCESS
 EndFunc
 
 
@@ -566,6 +628,7 @@ Func TempleLoot()
 	RandomSleep(GetPing() + 750)
 	Dialog(0x80D307)
 	RandomSleep(GetPing() + 750)
+	Return $SUCCESS
 EndFunc
 
 
@@ -612,4 +675,5 @@ Func KillShardWolf()
 		Local $shardWolf = $foes[0]
 		MoveAggroAndKill(DllStructGetData($shardWolf, 'X'), DllStructGetData($shardWolf, 'Y'))
 	EndIf
+	Return $SUCCESS
 EndFunc

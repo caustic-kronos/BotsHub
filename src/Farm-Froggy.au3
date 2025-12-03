@@ -23,10 +23,10 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $FroggyFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '32mn average in NM' & @CRLF _
@@ -42,9 +42,8 @@ Global Const $ID_Froggy_Quest = 0x322
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $FROGGY_FARM_SETUP
-		SetupFroggyFarm()
-	WEnd
+	If Not $FROGGY_FARM_SETUP Then SetupFroggyFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return FroggyFarmLoop()
 EndFunc
 
@@ -52,19 +51,51 @@ EndFunc
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return
-	; Assuming that team has been set up correctly manually
+	If GetMapID() <> $ID_Gadds_Camp Then TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+
+	SetupPlayerFroggyFarm()
+	SetupTeamFroggyFarm()
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
-	ResetFailuresCounter()
-	RunToBogroot()
-	If IsRunFailed() Then Return
-	$FROGGY_FARM_SETUP = True
+	While Not $FROGGY_FARM_SETUP
+		If RunToBogroot() == $FAIL Then ContinueLoop
+		$FROGGY_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerFroggyFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamFroggyFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
 Func RunToBogroot()
+	If GetMapID() <> $ID_Gadds_Camp Then TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
 	Local $mapLoaded = False
@@ -91,6 +122,7 @@ Func RunToBogroot()
 		MoveAggroAndKillInRange(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
 	AdlibUnRegister('TrackPartyStatus')
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 

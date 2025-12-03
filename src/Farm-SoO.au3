@@ -23,10 +23,10 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $SoOFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '45mn average in NM' & @CRLF _
@@ -40,12 +40,12 @@ Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000 ; max time = 80 minutes
 Global $SoOFarmTimer = Null
 Global $SOO_FARM_SETUP = False
 
+
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $SOO_FARM_SETUP
-		SetupSoOFarm()
-	WEnd
+	If Not $SOO_FARM_SETUP Then SetupSoOFarm()
+	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return SoOFarmLoop()
 EndFunc
 
@@ -53,17 +53,49 @@ EndFunc
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return
-	; Assuming that team has been set up correctly manually
+	If GetMapID() <> $ID_Vloxs_Fall Then TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
+	SetupPlayerSoOFarm()
+	SetupTeamSoOFarm()
 	SwitchToHardModeIfEnabled()
-	If RunToShardsOfOrrDungeon() == $FAIL Then Return
-	$SOO_FARM_SETUP = True
+	While Not $SOO_FARM_SETUP
+		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop
+		$SOO_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerSoOFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
+EndFunc
+
+
+Func SetupTeamSoOFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+    	Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
+	If GetMapID() <> $ID_Vloxs_Fall Then TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
 	ResetFailuresCounter()
 
 	Info('Making way to portal')

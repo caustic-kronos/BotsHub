@@ -24,16 +24,18 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $NexusChallengeinformations = 'Mysterious armor farm'
+Global Const $NexusChallengeInformations = 'Mysterious armor farm'
 ; Average duration ~ 20m
 Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
+Global $NEXUS_CHALLENGE_SETUP = False
+
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm($STATUS)
-	NexusChallengeSetup()
+	If Not $NEXUS_CHALLENGE_SETUP Then NexusChallengeSetup()
 	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterNexusChallengeMission()
@@ -41,7 +43,12 @@ Func NexusChallengeFarm($STATUS)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
 	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
-	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	Info('Returning back to the outpost')
+	Sleep(1000)
+	Resign()
+	Sleep(4000)
+	ReturnToOutpost()
+	Sleep(6000)
 	Return $result
 EndFunc
 
@@ -58,24 +65,35 @@ Func NexusChallengeSetup()
 	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
-
-	; Assuming that team has been set up correctly manually
-	;SetupTeamNexusChallengeFarm()
+	SetupPlayerNexusChallengeFarm()
+	SetupTeamNexusChallengeFarm()
+	$NEXUS_CHALLENGE_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerNexusChallengeFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		Sleep(500 + GetPing())
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+    Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+    EndIf
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 
 Func SetupTeamNexusChallengeFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	Sleep(1000)
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+    Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+    EndIf
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')
 	EndIf
@@ -88,12 +106,12 @@ Func EnterNexusChallengeMission()
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
 	Local Static $StartX = -391
 	Local Static $StartY = -335
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		Info('Entering Nexus mission')
 		; Lance la quête
 		MoveTo(-2218, -5033)
 		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
-		Notice('Talking to NPC')
+		Info('Talking to NPC')
 		Sleep(1000)
 		Dialog(0x88)
 		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
@@ -129,9 +147,9 @@ Func NexusChallenge()
 	]
 
 	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
-	Notice('First loop completed')
+	Info('First loop completed')
 	If MoveAggroAndKillGroups($foes, 10, 18) == $FAIL Then Return $FAIL
-	Notice('Second loop completed, reset')
+	Info('Second loop completed, reset')
 
 	Return $SUCCESS
 EndFunc

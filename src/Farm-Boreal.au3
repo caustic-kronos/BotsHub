@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: JackLinesMatthews
-; Contributor: Kronos
+; Contributors: Kronos, Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -26,7 +26,18 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $BorealChestRunnerSkillbar = 'OwZjgwf84Q3l0kTQAAAAAAAAAAA'
+Global Const $BorealWarriorChestRunnerSkillbar = 'OQcT8ZPHHiHRn5A6ukmcCC3BBC'
+Global Const $BorealRangerChestRunnerSkillbar = 'OgcT8ZPfHiHRn5A6ukmcCC3BBC'
+Global Const $BorealMonkChestRunnerSkillbar = 'OwcT8ZPDHiHRn5A6ukmcCC3BBC'
+Global Const $BorealNecromancerChestRunnerSkillbar = 'OAdTY4P7HiHRn5A6ukmcCC3BBC'
+Global Const $BorealMesmerChestRunnerSkillbar = 'OQdT8ZPDGiHRn5A6ukmcCC3BBC'
+Global Const $BorealElementalistChestRunnerSkillbar = 'OgdT8Z/wYiHRn5A6ukmcCC3BBC'
+Global Const $BorealAssassinChestRunnerSkillbar = 'OwBj8xe84Q8I6MHQ3l0kTQ4OIQ'
+Global Const $BorealRitualistChestRunnerSkillbar = 'OAej8xeM5Q8I6MHQ3l0kTQ4OIQ'
+Global Const $BorealParagonChestRunnerSkillbar = 'OQej8xeM6Q8I6MHQ3l0kTQ4OIQ'
+Global Const $BorealDervishChestRunnerSkillbar = 'Ogej8xeDLT8I6MHQ3l0kTQ4OIQ'
+Global $BorealPlayerProfession = $ID_Assassin ; global variable to remember player's profession in setup
+
 Global Const $BorealChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- dwarves rank 5 minimum' & @CRLF _
 	& '- norn rank 5 minimum'
@@ -34,9 +45,14 @@ Global Const $BorealChestRunInformations = 'For best results, have :' & @CRLF _
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Boreal_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Boreal_DwarvenStability = 1
-Global Const $Boreal_IAmUnstoppable = 2
-Global Const $Boreal_Dash = 3
+Global Const $Boreal_DeadlyParadox		= 1
+Global Const $Boreal_ShadowForm			= 2
+Global Const $Boreal_ShroudOfDistress	= 3
+Global Const $Boreal_DwarvenStability	= 4
+Global Const $Boreal_IAmUnstoppable		= 5
+Global Const $Boreal_Dash				= 6
+Global Const $Boreal_DeathsCharge		= 7
+Global Const $Boreal_HeartOfShadow		= 8
 
 Global $BOREAL_FARM_SETUP = False
 
@@ -53,14 +69,11 @@ EndFunc
 ;~ Boreal chest farm setup
 Func SetupBorealFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Boreal_Station Then DistrictTravel($ID_Boreal_Station, $DISTRICT_NAME)
-	LeaveParty()
-	;LoadSkillTemplate($BorealChestRunnerSkillbar)
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
+	If GetMapID() <> $ID_Boreal_Station Then TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
+
+	SetupPlayerBorealChestFarm()
+	LeaveParty() ; solo farmer
+	SwitchToHardModeIfEnabled()
 
 	MoveTo(5584, -27924)
 	Move(5232, -27891)
@@ -73,22 +86,59 @@ Func SetupBorealFarm()
 	WaitMapLoading($ID_Boreal_Station, 10000, 2000)
 	$BOREAL_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerBorealChestFarm()
+	Info('Setting up player build skill bar')
+	Sleep(500 + GetPing())
+	Switch DllStructGetData(GetMyAgent(), 'Primary')
+		Case $ID_Warrior
+			$BorealPlayerProfession = $ID_Warrior
+			LoadSkillTemplate($BorealWarriorChestRunnerSkillbar)
+		Case $ID_Ranger
+			$BorealPlayerProfession = $ID_Ranger
+			LoadSkillTemplate($BorealRangerChestRunnerSkillbar)
+		Case $ID_Monk
+			$BorealPlayerProfession = $ID_Monk
+			LoadSkillTemplate($BorealMonkChestRunnerSkillbar)
+		Case $ID_Necromancer
+			$BorealPlayerProfession = $ID_Necromancer
+			LoadSkillTemplate($BorealNecromancerChestRunnerSkillbar)
+		Case $ID_Mesmer
+			$BorealPlayerProfession = $ID_Mesmer
+			LoadSkillTemplate($BorealMesmerChestRunnerSkillbar)
+		Case $ID_Elementalist
+			$BorealPlayerProfession = $ID_Elementalist
+			LoadSkillTemplate($BorealElementalistChestRunnerSkillbar)
+		Case $ID_Assassin
+			$BorealPlayerProfession = $ID_Assassin
+			LoadSkillTemplate($BorealAssassinChestRunnerSkillbar)
+		Case $ID_Ritualist
+			$BorealPlayerProfession = $ID_Ritualist
+			LoadSkillTemplate($BorealRitualistChestRunnerSkillbar)
+		Case $ID_Paragon
+			$BorealPlayerProfession = $ID_Paragon
+			LoadSkillTemplate($BorealParagonChestRunnerSkillbar)
+		Case $ID_Dervish
+			$BorealPlayerProfession = $ID_Dervish
+			LoadSkillTemplate($BorealDervishChestRunnerSkillbar)
+	EndSwitch
+	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
+	Sleep(500 + GetPing())
 EndFunc
 
 
 ;~ Boreal Chest farm loop
 Func BorealChestFarmLoop($STATUS)
+	If GetMapID() <> $ID_Boreal_Station Then TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
 		Error('No lockpicks available to open chests')
 		Return $PAUSE
 	EndIf
 
 	Info('Starting chest farm run')
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
 
 	Moveto(3986, -27642)
 	RandomSleep(1500)
@@ -97,62 +147,52 @@ Func BorealChestFarmLoop($STATUS)
 	Local $openedChests = 0
 
 	Info('Running to Spot #1')
-	BorealAssassinRun(2728, -25294)
-	BorealAssassinRun(2900, -22272)
-	BorealAssassinRun(-1000, -19801)
-	BorealAssassinRun(-2570, -17208)
+	BorealChestRun(2728, -25294)
+	BorealChestRun(2900, -22272)
+	BorealChestRun(-1000, -19801)
+	BorealChestRun(-2570, -17208)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Running to Spot #2')
-	BorealAssassinRun(-4218, -15219)
+	BorealChestRun(-4218, -15219)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Running to Spot #3')
-	BorealAssassinRun(-4218, -15219)
+	BorealChestRun(-4218, -15219)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Running to Spot #4')
-	BorealAssassinRun(-4218, -15219)
+	BorealChestRun(-4218, -15219)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
 	; Result can't be considered a failure if no chests were found
-	Local $result = IsPlayerAlive() ? $SUCCESS : $FAIL
-	BackToBorealStation()
-	Return $result
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
-;~ Returning to Boreal Station
-Func BackToBorealStation()
-	Info('Porting to Boreal Station')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($ID_Boreal_Station, 10000, 1000)
-EndFunc
-
-
-;~ Function to speed it up
+;~ Function to speed run up
 Func BorealSpeedRun()
-	Local $me = GetMyAgent()
 	If IsPlayerDead() Then Return $FAIL
-	If DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0 And IsRecharged($Boreal_IAmUnstoppable) And GetEnergy() >= 5 Then UseSkillEx($Boreal_IAmUnstoppable)
+	Local $me = GetMyAgent()
+	If IsRecharged($Boreal_IAmUnstoppable) And GetEffect($ID_Crippled) <> Null And GetEnergy() >= 5 Then
+		UseSkillEx($Boreal_IAmUnstoppable)
+	EndIf
 	If IsRecharged($Boreal_DwarvenStability) And GetEnergy() >= 5 Then
 		UseSkillEx($Boreal_DwarvenStability)
 	EndIf
 	If IsRecharged($Boreal_Dash) And GetEnergy() >= 5 Then
 		UseSkillEx($Boreal_Dash)
 	EndIf
-	Return $SUCCESS
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
-;~ Main function to run as an Assassin
-Func BorealAssassinRun($X, $Y)
+;~ Main function for chest run
+Func BorealChestRun($X, $Y)
 	Move($X, $Y, 0)
 	Local $me = GetMyAgent()
-	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100
+	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > $RANGE_ADJACENT
 		If BorealSpeedRun() == $FAIL Then Return $FAIL
 		Sleep(250)
 		$me = GetMyAgent()
 		Move($X, $Y, 0)
 	WEnd
-	Return $SUCCESS
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc

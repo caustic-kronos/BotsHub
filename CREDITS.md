@@ -39,7 +39,7 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 
 ### 'Farm-Boreal.au3'
 - Author: JackLinesMatthews
-- Contributor: Kronos
+- Contributors: Kronos, Gahais
 - License: licensed under Apache 2.0
 
 ### 'Farm-Gemstone.au3'
@@ -78,11 +78,29 @@ Enormous modifications were made, to the point this bot is probably not in any w
 	Enormous modifications were made, to the point this bot is probably not in any way, shape or form close to its original version, which was named WarSupply/Keiran.
 - License: licensed under Apache 2.0
 
-### 'Farm-GemstoneStygian.au3'
+### 'Farm-GemstoneMargonite.au3' 'Farm-GemstoneStygian.au3' 'Farm-GemstoneTorment.au3'
 - Author: TonReuf
+- Contributor: Gahais
+- Notes: Major modifications were made, to the point these bots are probably not similar to their original versions
+- License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
+
+### 'Farm-GlintChallenge.au3'
+- Author: Gahais
+- Notes: Original work by Gahais, inspired from pvx wiki article.
+- License: licensed under Apache 2.0
+
+### 'Farm-Underworld.au3'
+- Authors: Akiro, The Great Gree
 - Contributor: Gahais
 - Notes: Major modifications were made.
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
+
+### 'Farm-FoWTowerOfCourage.au3'
+- Authors: Zaishen, RiflemanX, Monk Reborn
+- Contributor: Gahais
+- Notes: Major modifications were made, to the point this bot is probably not similar to its original version
+- License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
+
 
 ### 'Farm-Corsairs.au3' 'Farm-DragonMoss.au3' 'Farm-EdenIris.au3' 'Farm-Follower.au3' 'Farm-JadeBrotherhood.au3' 'Farm-Kournans.au3' 'Farm-Mantids.au3' 'Farm-Pongmei.au3' 'Farm-SpiritSlaves.au3' 'Farm-Tasca.au3'
 - Author: Kronos
