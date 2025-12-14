@@ -163,11 +163,17 @@ Func ReturnBackToOutpost($outpostId)
 		Warn('Player is already in ' & $outpostName & ' (outpost)')
 		Return $SUCCESS
 	Endif
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($outpostId, 10000, 2500)
+	ResignAndReturnToOutpost()
+	WaitMapLoading($outpostId, 10000, 1000)
 	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
+EndFunc
+
+
+Func ResignAndReturnToOutpost()
+	Resign()
+	Sleep(3500)
+	ReturnToOutpost()
+	Sleep(5000)
 EndFunc
 #EndRegion Map and travel
 

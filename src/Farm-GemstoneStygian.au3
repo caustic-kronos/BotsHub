@@ -109,12 +109,8 @@ Func GemstoneStygianFarm($STATUS)
 	Local $result = GemstoneStygianFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared stygian mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear stygian mobs')
-	Info('Returning back to the outpost')
-	Sleep(1000)
-	Resign()
-	Sleep(4000)
-	ReturnToOutpost()
-	Sleep(6000)
+	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
 
@@ -124,10 +120,7 @@ Func SetupGemstoneStygianFarm()
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
 	If SetupPlayerStygianFarm() == $FAIL Then Return $FAIL

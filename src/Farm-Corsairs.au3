@@ -72,12 +72,8 @@ Func CorsairsFarm($STATUS)
 
 	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()
-	Info('Returning back to the outpost')
-	Sleep(1000)
-	Resign()
-	Sleep(4000)
-	ReturnToOutpost()
-	Sleep(6000)
+	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
 
@@ -88,10 +84,7 @@ Func SetupCorsairsFarm()
 	If GetMapID() <> $ID_Moddok_Crevice Then
 		TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in Moddok Crevice mission that has the same map ID as Moddok Crevice outpost (427)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerCorsairsFarm() == $FAIL Then Return $FAIL

@@ -42,14 +42,9 @@ Func SunspearArmorFarm($STATUS)
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = SunspearArmorClean()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
-	Info('Returning back to the outpost')
-	Sleep(1000)
-	Resign()
-	Sleep(4000)
-	ReturnToOutpost()
-	Sleep(6000)
+
+	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
 
@@ -59,10 +54,7 @@ Func SunspearArmorSetup()
 	If GetMapID() <> $ID_Dajkah_Inlet Then
 		TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in Dajkah Inlet Challenge that has the same map ID as Dajkah Inlet outpost (554)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
 	SetupPlayerSunspearArmorFarm()

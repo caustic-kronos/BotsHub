@@ -43,12 +43,8 @@ Func NexusChallengeFarm($STATUS)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
 	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
-	Info('Returning back to the outpost')
-	Sleep(1000)
-	Resign()
-	Sleep(4000)
-	ReturnToOutpost()
-	Sleep(6000)
+	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
 
@@ -58,10 +54,7 @@ Func NexusChallengeSetup()
 	If GetMapID() <> $ID_Nexus Then
 		TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in Nexus Challenge that has the same map ID as Nexus outpost (555)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
