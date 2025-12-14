@@ -1418,7 +1418,13 @@ EndFunc
 
 ;~ Returns true if the item is a consumable
 Func IsConsumable($itemID)
-	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID)
+	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID) Or IsConset($itemID)
+EndFunc
+
+
+;~ Returns true if the item is 1 of 3 conset items: Essence of Celerity, Armor of Salvation, Grail of Might
+Func IsConset($itemID)
+	Return $Map_Consets[$itemID] <> Null
 EndFunc
 
 
@@ -1503,6 +1509,18 @@ EndFunc
 ;~ Return true if the item is a tome
 Func IsTome($itemID)
 	Return $Map_Tomes[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a regular tome
+Func IsRegularTome($itemID)
+	Return $Map_Regular_Tomes[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is an elite tome
+Func IsEliteTome($itemID)
+	Return $Map_Elite_Tomes[$itemID] <> Null
 EndFunc
 
 
