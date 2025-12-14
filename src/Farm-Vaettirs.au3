@@ -273,47 +273,48 @@ EndFunc
 ;~ Self explanatory
 Func AggroAllMobs()
 	Local $target
-
-	Local Static $vaettirs[31][2] = [ _ ; vaettirs locations
+	Local Static $vaettirs[31][2] = [ _ ; Vaettirs locations
 		_ ; left ball
-		[12496, -22600], _
-		[11375, -22761], _
-		[10925, -23466], _
-		[10917, -24311], _
-		[9910, -24599], _
-		[8995, -23177], _
-		[8307, -23187], _
-		[8213, -22829], _
-		[8307, -23187], _
-		[8213, -22829], _
-		[8740, -22475], _
-		[8880, -21384], _
-		[8684, -20833], _
-		[8982, -20576], _
+		[12496,	-22600], _
+		[11375,	-22761], _
+		[10925,	-23466], _
+		[10917,	-24311], _
+		[9910,	-24599], _
+		[8995,	-23177], _
+		[8307,	-23187], _
+		[8213,	-22829], _
+		[8307,	-23187], _
+		[8213,	-22829], _
+		[8740,	-22475], _
+		[8880,	-21384], _
+		[8684,	-20833], _
+		[8982,	-20576], _
 		_ ; right ball
-		[10196, -20124], _
-		[9976, -18338], _
-		[11316, -18056], _
-		[10392, -17512], _
-		[10114, -16948], _
-		[10729, -16273], _
-		[10810, -15058], _
-		[11120, -15105], _
-		[11670, -15457], _
-		[12604, -15320], _
-		[12476, -16157], _
+		[10196,	-20124], _
+		[9976,	-18338], _
+		[11316,	-18056], _
+		[10392,	-17512], _
+		[10114,	-16948], _
+		[10729,	-16273], _
+		[10810,	-15058], _
+		[11120,	-15105], _
+		[11670,	-15457], _
+		[12604,	-15320], _
+		[12476,	-16157], _
 		_ ; moving to spot
-		[12920, -17032], _
-		[12847, -17136], _
-		[12720, -17222], _
-		[12617, -17273], _
-		[12518, -17305], _
-		[12445, -17327] _
+		[12920,	-17032], _
+		[12847,	-17136], _
+		[12720,	-17222], _
+		[12617,	-17273], _
+		[12518,	-17305], _
+		[12445,	-17327] _
 	]
 
 	Info('Aggroing left')
 	MoveTo(13172, -22137)
-	If DoForArrayRows($vaettirs, 1, 14, VaettirsMoveDefending) == $FAIL Then Return $FAIL
+	For $i = 0 To 13
+		If VaettirsMoveDefending($vaettirs[$i][0], $vaettirs[$i][1]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Waiting for left ball')
 	VaettirsSleepAndStayAlive(12000)
@@ -328,7 +329,9 @@ Func AggroAllMobs()
 	VaettirsSleepAndStayAlive(6000)
 
 	Info('Aggroing right')
-	If DoForArrayRows($vaettirs, 15, 25, VaettirsMoveDefending) == $FAIL Then Return $FAIL
+	For $i = 14 To 24
+		If VaettirsMoveDefending($vaettirs[$i][0], $vaettirs[$i][1]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Waiting for right ball')
 	VaettirsSleepAndStayAlive(15000)
@@ -341,7 +344,9 @@ Func AggroAllMobs()
 		EndIf
 	EndIf
 	VaettirsSleepAndStayAlive(5000)
-	If DoForArrayRows($vaettirs, 26, 31, VaettirsMoveDefending) == $FAIL Then Return $FAIL
+	For $i = 25 To 30
+		If VaettirsMoveDefending($vaettirs[$i][0], $vaettirs[$i][1]) == $FAIL Then Return $FAIL
+	Next
 	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
