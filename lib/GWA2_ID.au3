@@ -182,6 +182,7 @@ Global Const $ID_Jaga_Moraine				= 546
 Global Const $ID_Varajar_Fells				= 553
 Global Const $ID_Sparkfly_Swamp				= 558
 Global Const $ID_Verdant_Cascades			= 566
+Global Const $ID_Magus_Stones				= 569
 Global Const $ID_Slavers_Exile				= 577
 Global Const $ID_Shards_of_Orr_Floor_1		= 581
 Global Const $ID_Shards_of_Orr_Floor_2		= 582

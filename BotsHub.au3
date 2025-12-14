@@ -48,6 +48,7 @@
 #include 'lib/Utils-Debugger.au3'
 #include 'lib/Utils-OmniFarmer.au3'
 #include 'lib/Utils-Storage-Bot.au3'
+#include 'src/Farm-Asuran.au3'
 #include 'src/Farm-Boreal.au3'
 #include 'src/Farm-Corsairs.au3'
 #include 'src/Farm-DragonMoss.au3'
@@ -119,7 +120,7 @@ Global $BAGS_COUNT = 5
 Global $WEAPON_SLOT = 1
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -982,6 +983,9 @@ Func RunFarmLoop($Farm)
 			$STATUS = 'INITIALIZED'
 			GUICtrlSetData($GUI_StartButton, 'Start')
 			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTBLUE)
+		Case 'Asuran'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = AsuranTitleFarm($STATUS)
 		Case 'Boreal'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = BorealChestFarm($STATUS)
@@ -1165,6 +1169,8 @@ Func UpdateFarmDescription($Farm)
 	GUICtrlSetData($GUI_Edit_HeroBuild, '')
 	GUICtrlSetData($GUI_Label_FarmInformations, '')
 	Switch $Farm
+		Case 'Asuran'
+			GUICtrlSetData($GUI_Label_FarmInformations, $AsuranFarmInformations)
 		Case 'Boreal'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $BorealAssassinChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $BorealChestRunInformations)
@@ -1891,6 +1897,8 @@ EndFunc
 ;~ Select correct farm duration
 Func SelectFarmDuration($Farm)
 	Switch $Farm
+		Case 'Asuran'
+			Return $ASURAN_FARM_DURATION
 		Case 'Boreal'
 			Return $BOREAL_FARM_DURATION
 		Case 'Corsairs'
