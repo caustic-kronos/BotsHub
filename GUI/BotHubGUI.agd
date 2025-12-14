@@ -577,7 +577,7 @@
 						{
 							"Type": "Checkbox",
 							"Name": "HMCheckbox",
-							"Text": "HM",
+							"Text": "Hard Mode",
 							"Visible": true,
 							"OnTop": false,
 							"DropAccepted": false,

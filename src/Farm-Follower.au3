@@ -29,7 +29,7 @@
 ; - speed up the bot by all ways possible (since it casts shouts it's always lagging behind)
 ;		- using a cupcake and a pumpkin pie might be a good idea
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $FollowerInformations = 'This bot makes your character follow the first other player in party.' & @CRLF _
@@ -311,7 +311,7 @@ EndFunc
 Func GetFirstPlayerOfParty()
 	Local $party = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
-	Local $firstPlayer
+	Local $firstPlayer = Null
 	For $member In $party
 		If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
 		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))

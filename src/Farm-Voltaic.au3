@@ -23,7 +23,7 @@
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
@@ -42,7 +42,6 @@ Global $VOLTAIC_FARM_SETUP = False
 Func VoltaicFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToVerdantCascades()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -58,16 +57,50 @@ EndFunc
 Func SetupVoltaicFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
+	SetupPlayerVoltaicFarm()
+	SetupTeamVoltaicFarm()
 	SwitchToHardModeIfEnabled()
 	$VOLTAIC_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerVoltaicFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+	Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+	EndIf
+	Sleep(250 + GetPing())
+	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
+		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
+		ChangeWeaponSet($WEAPON_SLOT)
+	Else
+		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
+	EndIf
+	Sleep(250 + GetPing())
+EndFunc
+
+
+Func SetupTeamVoltaicFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+	Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+	EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+		Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
 ;~ Move out of outpost into Verdant Cascades
 Func GoToVerdantCascades()
-	If GetMapID() <> $ID_Umbral_Grotto Then TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Verdant_Cascades
 		Info('Moving to Verdant Cascades')
 		MoveTo(-23200, 7100)

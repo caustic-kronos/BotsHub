@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
-; Contributor: Gahais
+; Contributors: Gahais, JackLinesMatthews
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -24,10 +24,10 @@
 #include 'GWA2.au3'
 #include 'Utils-Debugger.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
-Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
-Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
+Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST=1085, $RANGE_LONGBOW=1250, $RANGE_SPIRIT=2500, $RANGE_COMPASS=5000
+Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 ; Mobs aggro correspond to earshot range
 Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
 
@@ -72,49 +72,34 @@ Func RunTests($STATUS)
 EndFunc
 
 
-;~ Allows the user to run functions by hand
-Func DynamicExecution($args)
-	Local $arguments = ParseFunctionArguments($args)
-	Switch $arguments[0]
-		Case 0
-			Error('Call to nothing ?!')
-			Return
-		Case 1
-			Info('Call to ' & $arguments[1])
-			Call($arguments[1])
-		Case 2
-			Info('Call to ' & $arguments[1] & ' ' & $arguments[2])
-			Call($arguments[1], $arguments[2])
-		Case 3
-			Info('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3])
-			Call($arguments[1], $arguments[2], $arguments[3])
-		Case 4
-			Info('Call to ' & $arguments[1] & ' ' & $arguments[2] & ' ' & $arguments[3] & ' ' & $arguments[4])
-			Call($arguments[1], $arguments[2], $arguments[3], $arguments[4])
-		Case Else
-			MsgBox(0, 'Error', 'Too many arguments provided to that function.')
-	EndSwitch
+;~ Allows the user to run a function by hand in a call fun(arg1, arg2, [...])
+Func DynamicExecution($functionCall)
+	Local $openParenthesisPosition = StringInStr($functionCall, '(')
+	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
+	If $functionName == '' Then
+		Info('Call to nothing ?!')
+		Return
+	EndIf
+	Info('Call to ' & $functionName)
+	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
+	Local $functionArguments = ParseFunctionArguments($argumentsString)
+	Local $arguments[1] = ["CallArgArray"] ; special flag to be able to pass unlimited array of arguments into Call() function
+	_ArrayConcatenate($arguments, $functionArguments)
+	Call($functionName, $arguments)
 EndFunc
 
 
-;~ Find out the function name and the arguments in a call fun(arg1, arg2, [...])
-Func ParseFunctionArguments($functionCall)
-	Local $openParenthesisPosition = StringInStr($functionCall, '(')
-	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
-
-	Local $arguments[2] = [1, $functionName]
-	Info($functionName)
-	Local $commaPosition = $openParenthesisPosition + 1
-	Local $temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
-	While $temp <> 0
-		_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, $temp - $commaPosition))
-		Info(StringMid($functionCall, $commaPosition, $temp - $commaPosition))
+;~ Return the array of arguments from input string in a syntax arg1, arg2, [...]
+Func ParseFunctionArguments($args)
+	Local $arguments[0]
+	Local $temp = 0, $commaPosition = 1
+	While $commaPosition < StringLen($args)
+		$temp = StringInStr($args, ',', 0, 1, $commaPosition)
+		If $temp == 0 Then $temp = StringLen($args)
+		Info(StringMid($args, $commaPosition, $temp - $commaPosition))
+		_ArrayAdd($arguments, StringMid($args, $commaPosition, $temp - $commaPosition))
 		$commaPosition = $temp + 1
-		$temp = StringInStr($functionCall, ',', 0, 1, $commaPosition)
 	WEnd
-	_ArrayAdd($arguments, StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
-	Info(StringMid($functionCall, $commaPosition, StringLen($functionCall) - $commaPosition))
-	$arguments[0] = Ubound($arguments) - 1
 	Return $arguments
 EndFunc
 
@@ -153,21 +138,21 @@ Func RandomDistrictTravel($mapID, $district = 12)
 EndFunc
 
 
-Func TravelToOutpost($outpostId, $district = 'Random')
+Func TravelToOutpost($outpostId, $district = 'Random', $maxWaitTime = 10000)
 	Local $startLocation = GetMapID()
 	Local $outpostName = $LocationMapNames[$outpostId]
-	If GetMapID() == $outpostId Then
-		Warn('Player is already in ' & $outpostName & ' (outpost)')
-		Return $SUCCESS
-	Endif
+	If GetMapID() == $outpostId Then Return $SUCCESS
 	Info('Travelling to ' & $outpostName & ' (outpost)')
 	DistrictTravel($outpostId, $district)
-	RandomSleep(2000)
-	If GetMapID() == $startLocation Then
-		Warn('Player probably does not have access to specified location')
-		Disconnected()
+	Local $travelTimer = TimerInit()
+	While GetMapID() <> $outpostId And TimerDiff($travelTimer) < $maxWaitTime
+		Sleep(1000)
+	WEnd
+	If GetMapID() <> $outpostId Then
+		Warn('Player may not have access to ' & $outpostName & ' (outpost)')
+		Return $FAIL
 	EndIf
-	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -179,11 +164,112 @@ Func ReturnBackToOutpost($outpostId)
 		Warn('Player is already in ' & $outpostName & ' (outpost)')
 		Return $SUCCESS
 	Endif
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
-	WaitMapLoading($outpostId, 10000, 2500)
+	ResignAndReturnToOutpost()
+	WaitMapLoading($outpostId, 10000, 1000)
 	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
+EndFunc
+
+
+Func ResignAndReturnToOutpost()
+	Resign()
+	Sleep(3500)
+	ReturnToOutpost()
+	Sleep(5000)
+EndFunc
+
+
+Func EnterFissureOfWoe()
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Fissure of Woe')
+		If UseScroll($ID_FoW_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_Fissure_of_Woe)
+			If GetMapID() <> $ID_Fissure_of_Woe Then
+				Warn('Used scroll but still could not enter Fissure of Woe. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	Else ; Not using scroll method to enter Fissure of Woe
+		Info('Going to Balthazar statue to enter Fissure of Woe')
+		MoveTo(-2500, 18700)
+		SendChat('/kneel', '')
+		RandomSleep(GetPing() + 3000)
+		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+		RandomSleep(GetPing() + 750)
+		Dialog(0x85) ; entering FoW dialog option
+		RandomSleep(GetPing() + 750)
+		Dialog(0x86) ; accepting dialog option
+		WaitMapLoading($ID_Fissure_of_Woe)
+		If GetMapID() <> $ID_Fissure_of_Woe Then
+			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func EnterUnderworld()
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Underworld')
+		If UseScroll($ID_UW_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_Underworld)
+			If GetMapID() <> $ID_Underworld Then
+				Warn('Used scroll but still could not enter Underworld. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	Else ; Not using scroll method to enter Underworld
+		Info('Moving to Grenth statue to enter Underworld')
+		MoveTo(-4170, 19759)
+		MoveTo(-4124, 19829)
+		SendChat('/kneel', '')
+		RandomSleep(GetPing() + 3000)
+		GoToNPC(GetNearestNPCToCoords(-4124, 19829))
+		RandomSleep(GetPing() + 750)
+		Dialog(0x85) ; entering UW dialog option
+		RandomSleep(GetPing() + 750)
+		Dialog(0x86) ; accepting dialog option
+		WaitMapLoading($ID_Underworld)
+		If GetMapID() <> $ID_Underworld Then
+			Info('Could not enter Underworld. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func EnterUrgozsWarren()
+	TravelToOutpost($ID_Embark_Beach, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Urgoz''s Warren')
+		If UseScroll($ID_Urgoz_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_Urgoz_Warren)
+			If GetMapID() <> $ID_Urgoz_Warren Then
+				Warn('Used scroll but still could not enter Urgoz''s Warren. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func EnterTheDeep()
+	TravelToOutpost($ID_Embark_Beach, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter the Deep')
+		If UseScroll($ID_Deep_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_The_Deep)
+			If GetMapID() <> $ID_The_Deep Then
+				Warn('Used scroll but still could not enter the Deep. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	EndIf
+	Return $SUCCESS
 EndFunc
 #EndRegion Map and travel
 
@@ -191,7 +277,7 @@ EndFunc
 #Region Loot items
 ;~ Loot items around character
 Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
-	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
+	If $PICKUP_NOTHING Then Return
 
 	Local $item
 	Local $agentID
@@ -226,56 +312,79 @@ EndFunc
 ;~ Return True if the item should be picked up
 ;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
 Func DefaultShouldPickItem($item)
+	If $PICKUP_NOTHING Then Return False
+	If $PICKUP_EVERYTHING Then Return True
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
 	; Only pick gold if character has less than 99k in inventory
 	If (($itemID == $ID_Money) And (GetGoldCharacter() < 99000)) Then
 		Return True
 	ElseIf IsBasicMaterial($item) Then
-		Return GUICtrlRead($GUI_Checkbox_LootBasicMaterials) == $GUI_CHECKED
+		Local $materialName = $Basic_Material_Names_From_IDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Basic Materials.' & $materialName)
 	ElseIf IsRareMaterial($item) Then
-		Return GUICtrlRead($GUI_Checkbox_LootRareMaterials) == $GUI_CHECKED
-	ElseIf IsTome($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootTomes) == $GUI_CHECKED
+		Local $materialName = $Rare_Material_Names_From_IDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Rare Materials.' & $materialName)
+	ElseIf IsRegularTome($itemID) Then
+		Local $tomeName = $RegularTomeNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Tomes.Normal.' & $tomeName)
+	ElseIf IsEliteTome($itemID) Then
+		Local $tomeName = $EliteTomeNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Tomes.Elite.' & $tomeName)
 	ElseIf IsGoldScroll($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootScrolls) == $GUI_CHECKED
+		Local $scrollName = $GoldScrollNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Scrolls.Gold.' & $scrollName)
 	ElseIf IsBlueScroll($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootScrolls) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Scrolls.Blue')
 	ElseIf IsKey($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootKeys) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Keys')
 	ElseIf ($itemID == $ID_Dyes) Then
-		Local $dyeColor = DllStructGetData($item, 'DyeColor')
-		Return (($dyeColor == $ID_Black_Dye) Or ($dyeColor == $ID_White_Dye) Or (GUICtrlRead($GUI_Checkbox_LootDyes) == $GUI_CHECKED))
+		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
+		Local $dyeColorName = $DyeNamesFromIDs[$dyeColorID]
+		Return IsLootOptionChecked('Pick up items.Dyes.' & $dyeColorName)
+	ElseIf IsTrophy($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Trophies')
 	ElseIf ($itemID == $ID_Glacial_Stone) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGlacialStones) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Trophies.Glacial Stone')
+	ElseIf ($itemID == $ID_Destroyer_Core) Then
+		Return IsLootOptionChecked('Pick up items.Trophies.Destroyer Core')
 	ElseIf ($itemID == $ID_Jade_Bracelet) Then
-		Return True
+		Return IsLootOptionChecked('Pick up items.Trophies.Jade Bracelet')
 	ElseIf ($itemID == $ID_Stolen_Goods) Then
-		Return True
+		Return IsLootOptionChecked('Pick up items.Trophies.Stolen Goods')
 	ElseIf ($itemID == $ID_Ministerial_Commendation) Then
 		Return True
 	ElseIf ($itemID == $ID_Jar_of_Invigoration) Then
 		Return False
 	ElseIf IsMapPiece($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootMapPieces) == $GUI_CHECKED
-	ElseIf IsStackable($item) Then
-		Return True
+		Return IsLootOptionChecked('Pick up items.Quest items.Map pieces')
 	ElseIf ($itemID == $ID_Lockpick) Then
+		Return True
+	ElseIf IsConsumable($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Consumables')
+	ElseIf IsAlcohol($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Alcohols')
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $festivalDropName = $SpecialDropNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Festival Items.' & $festivalDropName)
+	ElseIf IsStackable($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
 		Return True
+	ElseIf $IsWeapon($item) And CheckPickupWeapon($item) Then
+		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGoldItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other gold items')
 	ElseIf ($rarity == $RARITY_Green) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGreenItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other green items')
 	ElseIf ($rarity == $RARITY_Purple) Then
-		Return GUICtrlRead($GUI_Checkbox_LootPurpleItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other purple items')
 	ElseIf ($rarity == $RARITY_Blue) Then
-		Return GUICtrlRead($GUI_Checkbox_LootBlueItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other blue items')
 	ElseIf ($rarity == $RARITY_White) Then
-		Return GUICtrlRead($GUI_Checkbox_LootWhiteItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other white items')
 	EndIf
 	Return False
 EndFunc
@@ -351,7 +460,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 			;MoveTo(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))		;Fail half the time
 			;GoSignpost($agent)															;Seems to work but serious rubberbanding
 			;GoToSignpost($agent)															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
-			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)			;Final solution
+			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)			;Final solution, caution, chest is considered as signpost by game client
 			If IsPlayerDead() Then Return
 			RandomSleep(200)
 			OpenChest()
@@ -969,11 +1078,48 @@ Func UseCitySpeedBoost($forceUse = False)
 EndFunc
 
 
-;~ Uses a consumable from inventory, if present
-Func UseConsumable($ID_consumable, $forceUse = False)
+;~ Uses an item from inventory or chest, if present
+Func UseItemFromInventory($itemID, $forceUse = False, $checkXunlaiChest = True)
+	Local $ConsumableItemBagAndSlot
+	If $checkXunlaiChest == True Then $ConsumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
+	If $checkXunlaiChest == False Then $ConsumableItemBagAndSlot = FindInStorages(1, $BAGS_COUNT, $itemID)
+
+	Local $ConsumableBag = $ConsumableItemBagAndSlot[0]
+	Local $ConsumableSlot = $ConsumableItemBagAndSlot[1]
+	If $ConsumableBag <> 0 And $ConsumableSlot <> 0 Then
+		UseItemBySlot($ConsumableBag, $ConsumableSlot)
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
+EndFunc
+
+
+;~ Uses a consumable from inventory or chest, if present
+Func UseConsumable($consumableID, $forceUse = False, $checkXunlaiChest = True)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
-	Local $ConsumableSlot = FindInInventory($ID_consumable)
-	If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+	If Not IsConsumable($consumableID) Then
+		Warn('Provided item model ID might not correspond to consumable')
+		Return $FAIL
+	EndIf
+	Local $result = UseItemFromInventory($consumableID, $forceUse, $checkXunlaiChest)
+	If $result == $SUCCESS Then Info('Consumable used successfully')
+	If $result == $FAIL Then Warn('Could not find specified consumable in inventory')
+	Return $result
+EndFunc
+
+
+;~ Uses a scroll from inventory or chest, if present
+Func UseScroll($scrollID, $forceUse = False, $checkXunlaiChest = True)
+	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_UNCHECKED) Then Return
+	If Not IsBlueScroll($scrollID) And Not IsGoldScroll($scrollID) Then
+		Warn('Provided item model ID might not correspond to scroll')
+		Return $FAIL
+	EndIf
+	Local $result = UseItemFromInventory($scrollID, $forceUse, $checkXunlaiChest)
+	If $result == $SUCCESS Then Info('Scroll used successfully')
+	If $result == $FAIL Then Warn('Could not find specified scroll in inventory')
+	Return $result
 EndFunc
 
 
@@ -1039,30 +1185,32 @@ Func IdentifyAllItems($buyKit = True)
 EndFunc
 
 
-;~ Salvage all items from inventory
-Func SalvageAllItems($buyKit = True)
+;~ Salvage items from inventory, only items specified by configuration in GUI interface
+Func SalvageItems($buyKit = True)
 	Local $kit = GetSalvageKit($buyKit)
 	If $kit == 0 Then Return False
 	Local $uses = DllStructGetData($kit, 'Value') / 2
 
 	Local $movedItem = Null
 	If (CountSlots(1, 4) < 1) Then
-		; There is no space in inventory, we need to store something in Xunlai to start the salvage
+		; There is no space in inventory, we need to store something in Xunlai chest to start the salvage
 		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
 		$movedItem = GetItemBySlot(_Min(4, $BAGS_COUNT), 1)
 		MoveItem($movedItem, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	EndIf
 
-	Info('Salvaging all items')
+	Info('Salvaging items')
 	Local $trophiesItems[60]
 	Local $trophyIndex = 0
 	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
-		Info('Salvaging bag' & $bagIndex)
+		Debug('Salvaging bag ' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-			If IsTrophy(DllStructGetData($item, 'ModelID')) Then
+			If IsTrophy(DllStructGetData($item, 'ModelID')) And Not $SALVAGE_TROPHIES Then
+				ContinueLoop
+			ElseIf IsTrophy(DllStructGetData($item, 'ModelID')) And $SALVAGE_TROPHIES Then
 				; Trophies should be salvaged at the end, because they create a lot of materials
 				$trophiesItems[$trophyIndex] = $item
 				$trophyIndex += 1
@@ -1080,6 +1228,7 @@ Func SalvageAllItems($buyKit = True)
 		Next
 	Next
 
+	; Moving removed item back from Xunlai chest to empty slot in inventory to check it to salvage it too
 	If $movedItem <> Null Then
 		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $BAGS_COUNT))
 		MoveItem($movedItem, $bagEmptySlot[0], $bagEmptySlot[1])
@@ -1094,19 +1243,22 @@ Func SalvageAllItems($buyKit = True)
 		EndIf
 	EndIf
 
-	For $i = 0 To $trophyIndex - 1
-		If DefaultShouldSalvageItem($trophiesItems[$i]) Then
-			For $k = 0 To DllStructGetData($trophiesItems[$k], 'Quantity') - 1
-				SalvageItem($trophiesItems[$i], $kit)
-				$uses -= 1
-				If $uses < 1 Then
-					$kit = GetSalvageKit($buyKit)
-					If $kit == 0 Then Return False
-					$uses = DllStructGetData($kit, 'Value') / 2
-				EndIf
-			Next
-		EndIf
-	Next
+	; Salvaging trophy items only if corresponding GUI options are selected
+	If $SALVAGE_TROPHIES Then
+		For $i = 0 To $trophyIndex - 1
+			If DefaultShouldSalvageItem($trophiesItems[$i]) Then
+				For $k = 0 To DllStructGetData($trophiesItems[$k], 'Quantity') - 1
+					SalvageItem($trophiesItems[$i], $kit)
+					$uses -= 1
+					If $uses < 1 Then
+						$kit = GetSalvageKit($buyKit)
+						If $kit == 0 Then Return False
+						$uses = DllStructGetData($kit, 'Value') / 2
+					EndIf
+				Next
+			EndIf
+		Next
+	EndIf
 EndFunc
 
 
@@ -1189,12 +1341,12 @@ EndFunc
 ;~ FIXME: error if total price is superior to 100k, add a loop for that
 ;~ FIXME: error if amount is superior to 250, add another loop for that
 Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False)
+	TravelToOutpost($ID_Eye_of_the_North)
 	If GetGoldCharacter() < $amount * $itemPrice And GetGoldStorage() > $amount * $itemPrice - 1 Then
 		WithdrawGold($amount * $itemPrice)
 		RandomSleep(500)
 	EndIf
 
-	If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
 	Info('Moving to merchant')
 	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
 	UseCitySpeedBoost()
@@ -1301,7 +1453,13 @@ EndFunc
 
 ;~ Returns true if the item is a consumable
 Func IsConsumable($itemID)
-	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID)
+	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID) Or IsConset($itemID)
+EndFunc
+
+
+;~ Returns true if the item is 1 of 3 conset items: Essence of Celerity, Armor of Salvation, Grail of Might
+Func IsConset($itemID)
+	Return $Map_Consets[$itemID] <> Null
 EndFunc
 
 
@@ -1386,6 +1544,18 @@ EndFunc
 ;~ Return true if the item is a tome
 Func IsTome($itemID)
 	Return $Map_Tomes[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a regular tome
+Func IsRegularTome($itemID)
+	Return $Map_Regular_Tomes[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is an elite tome
+Func IsEliteTome($itemID)
+	Return $Map_Elite_Tomes[$itemID] <> Null
 EndFunc
 
 
@@ -1600,6 +1770,31 @@ Func MapFromArrays($keys, $values)
 EndFunc
 
 
+;~ Do an operation on selected rows of 2D array. Available number of columns for array are 2, 3, 4, 5
+;~ $firstIndex and $lastIndex specify start and end of range of rows of 2D array on which $function should be performed
+;~ Return $FAIL if operation failed on any row, $SUCCESS if operation succeded for all rows od 2D array
+Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
+	If Not IsArray($array) Or UBound($array, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
+	If UBound($array, $UBOUND_COLUMNS) <> 2 And UBound($array, $UBOUND_COLUMNS) <> 3 And UBound($array, $UBOUND_COLUMNS) <> 4 And UBound($array, $UBOUND_COLUMNS) <> 5 Then Return $FAIL
+	If $firstIndex < 1 Or UBound($array) < $lastIndex Then Return $FAIL
+	If $firstIndex > $lastIndex Then Return $FAIL
+	Local $result = $SUCCESS
+	For $i = $firstIndex - 1 To $lastIndex - 1 ; Caution, array rows are indexed from 1, but $array is indexed from 0
+		If UBound($array, $UBOUND_COLUMNS) == 2 Then
+			$result = $function($array[$i][0], $array[$i][1])
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2])
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 4 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3])
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 5 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3], $array[$i][4])
+		EndIf
+		If $result <> $SUCCESS Then Return $result
+	Next
+	Return $SUCCESS
+EndFunc
+
+
 ;~ Clone a map
 Func CloneMap($original)
 	Local $clone[]
@@ -1698,13 +1893,6 @@ Func IsOverLine($coefficientX, $coefficientY, $fixedCoefficient, $posX, $posY)
 EndFunc
 
 
-;~ Is agent in range of coordinates
-Func IsAgentInRange($agent, $X, $Y, $range)
-	If GetDistanceToPoint($agent, $X, $Y) < $range Then Return True
-	Return False
-EndFunc
-
-
 ;~ Alias function for DllStructCreate. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
 Func CreateStruct($structDefinition)
 	Return DllStructCreate($structDefinition)
@@ -1736,7 +1924,7 @@ Func PrintNPCInformations($npc)
 	Info('ID: ' & DllStructGetData($npc, 'ID'))
 	Info('X: ' & DllStructGetData($npc, 'X'))
 	Info('Y: ' & DllStructGetData($npc, 'Y'))
-	Info('HP: ' & DllStructGetData($npc, 'HP'))
+	Info('HealthPercent: ' & DllStructGetData($npc, 'HealthPercent'))
 	Info('TypeMap: ' & DllStructGetData($npc, 'TypeMap'))
 	Info('ModelID: ' & DllStructGetData($npc, 'ModelID'))
 	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
@@ -1773,19 +1961,19 @@ EndFunc
 #Region Counting NPCs
 ;~ Count foes in range of the given agent
 Func CountFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
-	Return CountNPCsInRangeOfAgent($agent, 3, $range, $condition)
+	Return CountNPCsInRangeOfAgent($agent, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
 ;~ Count foes in range of the given coordinates
 Func CountFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
-	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
+	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
 ;~ Count allies in range of the given coordinates
 Func CountAlliesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
-	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, 6, $range, $condition)
+	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, $ID_Allegiance_Npc, $range, $condition)
 EndFunc
 
 
@@ -1853,13 +2041,13 @@ EndFunc
 
 ;~ Get foes in range of the given agent
 Func GetFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
-	Return GetNPCsInRangeOfAgent($agent, 3, $range, $condition)
+	Return GetNPCsInRangeOfAgent($agent, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
 ;~ Get foes in range of the given coordinates
 Func GetFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
-	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, 3, $range, $condition)
+	Return GetNPCsInRangeOfCoords($xCoord, $yCoord, $ID_Allegiance_Foe, $range, $condition)
 EndFunc
 
 
@@ -1871,7 +2059,7 @@ EndFunc
 
 ;~ Get party members in range of the given agent
 Func GetPartyInRangeOfAgent($agent, $range = $RANGE_AREA)
-	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 1, $range, PartyMemberFilter)
+	Return GetNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $ID_Allegiance_Team, $range, PartyMemberFilter)
 EndFunc
 
 
@@ -1895,7 +2083,7 @@ Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = N
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -1919,7 +2107,7 @@ Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Nul
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -1948,7 +2136,7 @@ Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -1976,7 +2164,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -2005,7 +2193,7 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 	EndIf
 	For $agent In $agents
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HP') <= 0 Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
@@ -2017,6 +2205,13 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 		EndIf
 	Next
 	Return $nearestAgent
+EndFunc
+
+
+;~ Is agent in range of coordinates
+Func IsAgentInRange($agent, $X, $Y, $range)
+	If GetDistanceToPoint($agent, $X, $Y) < $range Then Return True
+	Return False
 EndFunc
 #EndRegion NPCs
 
@@ -2089,7 +2284,8 @@ EndFunc
 
 ;~ Did run fail ?
 Func IsRunFailed()
-	If ($partyFailuresCount > 5) Then
+	Local Static $MaxPartyWipesCount = 5
+	If ($partyFailuresCount > $MaxPartyWipesCount) Then
 		Notice('Party wiped ' & $partyFailuresCount & ' times, run is considered failed.')
 		Return True
 	EndIf
@@ -2168,34 +2364,135 @@ Func IsRezSkill($skill)
 	EndSwitch
 	Return False
 EndFunc
+
+
+Func SetupTeamUsingGUISettings()
+	Sleep(500 + GetPing())
+	LeaveParty()
+	Sleep(500 + GetPing())
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_1)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_2)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_3)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_4)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_5)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_6)])
+	AddHero($HeroIDsFromNames[GUICtrlRead($GUI_Combo_Hero_7)])
+	Sleep(500 + GetPing())
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
+EndFunc
 #EndRegion Quests and party status
 
 
 #Region Actions
-;~ Move to specified position while trying to avoid body block
-Func MoveAvoidingBodyBlock($coordX, $coordY, $timeOut)
-	Local $timer = TimerInit()
+;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
+Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_MoveDefend_Options)
+	If IsPlayerDead() Then Return $FAIL
+	Local $me = Null, $target = Null
+	Local $blocked = 0, $distance = 0
+	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
 	Local Const $PI = 3.141592653589793
-	Local $me = GetMyAgent()
-	While IsPlayerAlive() And GetDistanceToPoint($me, $coordX, $coordY) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
-		Move($coordX, $coordY)
-		RandomSleep(100)
-		;Local $blocked = -1
-		;Local $angle = 0
-		;While IsPlayerAlive() And Not IsPlayerMoving()
-		;	$blocked += 1
-		;	If $blocked > 0 Then
-		;		$angle = -1 ^ $blocked * Round($blocked/2) * $PI / 4
-		;	EndIf
-		;	If $blocked > 5 Then
-		;		Return False
-		;	EndIf
-		;	Move(DllStructGetData($me, 'X') + 150 * sin($angle), DllStructGetData($me, 'Y') + 150 * cos($angle))
-		;	RandomSleep(50)
-		;WEnd
-		$me = GetMyAgent()
+
+	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
+	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
+	Local $defendFunction = ($options.Item('defendFunction') <> Null) ? $options.Item('defendFunction') : Null ; defend function to use while moving
+	Local $moveTimeOut = ($options.Item('moveTimeOut') <> Null) ? $options.Item('moveTimeOut') : 2 * 60 * 1000 ; 2 minutes max timeout, otherwise bot probably got stuck
+	Local $randomFactor = ($options.Item('randomFactor') <> Null) ? $options.Item('randomFactor') : 100 ; random factor for movement
+	Local $hosSkillSlot = ($options.Item('hosSkillSlot') <> Null) ? $options.Item('hosSkillSlot') : 0 ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
+	Local $deathChargeSkillSlot = ($options.Item('$deathChargeSkillSlot') <> Null) ? $options.Item('$deathChargeSkillSlot') : 0 ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
+	$randomFactor = _Min(_Max($randomFactor, 0), 1000) ; $randomFactor in range [0;1000]
+	If $hosSkillSlot <> 1 And $hosSkillSlot <> 2 And $hosSkillSlot <> 3 And $hosSkillSlot <> 4 And $hosSkillSlot <> 5 And $hosSkillSlot <> 6 And $hosSkillSlot <> 7 And $hosSkillSlot <> 8 Then $hosSkillSlot = 0
+	If $deathChargeSkillSlot <> 1 And $deathChargeSkillSlot <> 2 And $deathChargeSkillSlot <> 3 And $deathChargeSkillSlot <> 4 And $deathChargeSkillSlot <> 5 And $deathChargeSkillSlot <> 6 And $deathChargeSkillSlot <> 7 And $deathChargeSkillSlot <> 8 Then $deathChargeSkillSlot = 0
+
+	Local $moveTimer = TimerInit()
+	Local $chatStuckTimer = TimerInit()
+	Move($destinationX, $destinationY, $randomFactor)
+
+	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
+		If $defendFunction <> Null Then $defendFunction()
+		If TimerDiff($moveTimer) > $moveTimeOut Then Return $STUCK
+
+		If IsPlayerAlive() And Not IsPlayerMoving() Then
+			$blocked += 1
+			$me = GetMyAgent()
+			If $blocked > 10 Then
+				; If Heart of Shadow skill is available then use it to avoid becoming stuck
+				If $hosSkillSlot > 0 Then
+					If IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
+						UseSkillEx($hosSkillSlot) ; use heart of shadow on self to get into random location
+						RandomSleep(GetPing())
+						Move($destinationX, $destinationY, $randomFactor)
+					EndIf
+				EndIf
+				; If Death's Charge skill is available then use it to avoid becoming stuck
+				If $deathChargeSkillSlot > 0 Then
+					If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
+						If IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
+							$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+							ChangeTarget($target)
+							UseSkillEx($deathChargeSkillSlot, $target)
+							RandomSleep(GetPing())
+							Move($destinationX, $destinationY, $randomFactor)
+						EndIf
+					EndIf
+				EndIf
+			EndIf
+			If $blocked < 6 Then
+				Move($destinationX, $destinationY, $randomFactor)
+				RandomSleep(GetPing())
+			ElseIf $blocked > 5 Then
+				$myX = DllStructGetData($me, 'X')
+				$myY = DllStructGetData($me, 'Y')
+				$randomAngle = Random(0, 2*$PI) ; range [0, 2*$PI] - full circle in radian degrees
+				$offsetX = 300 * cos($randomAngle)
+				$offsetY = 300 * sin($randomAngle)
+				Move($myX + $offsetX , $myY + $offsetY, 0) ; 0 = no random, because random offset is already calculated
+				RandomSleep(GetPing())
+			EndIf
+			CheckAndSendStuckCommand()
+		Else
+			Move($destinationX, $destinationY, $randomFactor)
+			$blocked = 0 ; reset of block count if player got unstuck
+		EndIf
+		If $openChests Then
+			$chest = FindChest($chestOpenRange)
+			If $chest <> Null Then
+				$options.Item('openChests') = False
+				MoveAvoidingBodyBlock(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), $options)
+				$options.Item('openChests') = True
+				FindAndOpenChests($chestOpenRange)
+			EndIf
+		EndIf
 	WEnd
-	Return True
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
+EndFunc
+
+
+;~ Detect if player is rubberbanding
+Func IsPlayerRubberBanding()
+EndFunc
+
+
+;~ Send /stuck - don't overuse, otherwise there can be a BAN !
+Func CheckAndSendStuckCommand()
+	Local Static $chatStuckTimer = TimerInit()
+	Local $stuckInterval = 10000 ; 10 seconds interval between stuck commands
+
+	; Use a timer to avoid spamming /stuck, because spamming stuck can result in being flagged, which can result in a ban
+	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there shouldn't be any enemies around the character then
+	If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > $stuckInterval Then
+		Warn('Sending /stuck')
+		SendChat('stuck', '/')
+		$chatStuckTimer = TimerInit()
+		RandomSleep(500 + GetPing())
+		Return True
+	EndIf
+	Return False
 EndFunc
 
 
@@ -2303,6 +2600,15 @@ $Default_MoveAggroAndKill_Options.Add('fightDuration', 60000) ; default 60 secon
 Global $Default_FlagMoveAggroAndKill_Options = CloneDictMap($Default_MoveAggroAndKill_Options)
 $Default_FlagMoveAggroAndKill_Options.Item('flagHeroesOnFight') = True
 
+Global $Default_MoveDefend_Options = ObjCreate('Scripting.Dictionary')
+$Default_MoveDefend_Options.Add('defendFunction', Null) ; defend function to use while moving
+$Default_MoveDefend_Options.Add('moveTimeOut', 5 * 60 * 1000) ; 2 minutes max timeout, otherwise bot probably got stuck
+$Default_MoveDefend_Options.Add('randomFactor', 100) ; random factor for movement
+$Default_MoveDefend_Options.Add('hosSkillSlot', 0) ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
+$Default_MoveDefend_Options.Add('deathChargeSkillSlot', 0) ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
+$Default_MoveDefend_Options.Add('openChests', False)
+$Default_MoveDefend_Options.Add('chestOpenRange', $RANGE_SPIRIT)
+
 
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
 Func WaitAndFightEnemiesInArea($options = $Default_MoveAggroAndKill_Options)
@@ -2343,20 +2649,8 @@ EndFunc
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
 Func MoveAggroAndKillGroups($foes, $firstGroup, $lastGroup)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
-	If Not IsArray($foes) Or UBound($foes, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
 	If UBound($foes, $UBOUND_COLUMNS) <> 3 And UBound($foes, $UBOUND_COLUMNS) <> 4 Then Return $FAIL
-	If $firstGroup < 1 Or UBound($foes) < $lastGroup Then Return $FAIL
-	If $firstGroup > $lastGroup Then Return $FAIL
-	Local $x, $y, $log, $range
-	For $i = $firstGroup - 1 To $lastGroup - 1 ; Caution, groups are indexed from 1, but $foes array is indexed from 0
-		If IsPlayerAndPartyWiped() Then Return $FAIL
-		$x = $foes[$i][0]
-		$y = $foes[$i][1]
-		$log = $foes[$i][2]
-		$range = (UBound($foes, $UBOUND_COLUMNS) == 4)? $foes[$i][3] : $AGGRO_RANGE
-		If MoveAggroAndKillInRange($x, $y, $log, $range) == $FAIL Then Return $FAIL
-	Next
-	Return $SUCCESS
+	Return DoForArrayRows($foes, $firstGroup, $lastGroup, MoveAggroAndKillInRange)
 EndFunc
 
 
@@ -2478,7 +2772,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 
 			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
-			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HP') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == 3
+			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_Allegiance_Foe
 				If IsPlayerDead() Then ExitLoop
 
 				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>
@@ -2490,7 +2784,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 				Local $sufficientEnergy = ($skillsCostMap <> Null) ? (GetEnergy() >= $skillsCostMap[$i]) : True ; if no skill energy cost map is provided then attempt to use skills anyway
 				If IsRecharged($i) And $sufficientEnergy Then
 					UseSkillEx($i, $target)
-					Sleep(500)
+					RandomSleep(100)
 				EndIf
 				$target = GetCurrentTarget()
 			WEnd
@@ -2516,11 +2810,13 @@ Func CreateMobsPriorityMap()
 	Local $PN_SS_Warder			= 6497
 	Local $PN_SS_Priest			= 6498
 	Local $PN_SS_Defender		= 6499
+	Local $PN_SS_Zealot			= 6506
 	Local $PN_SS_Summoner		= 6507
 	Local $PN_Modniir_Priest	= 6512
 
 	; Gemstone farm foes model IDs
 	Local $Gem_AnurKaya			= 5166
+	Local $Gem_AnurDabi			= 5167
 	Local $Gem_AnurSu			= 5168
 	Local $Gem_AnurKi			= 5169
 	Local $Gem_RageTitan		= 5196
@@ -2613,6 +2909,7 @@ Func CreateMobsPriorityMap()
 	$map[$PN_SS_Blasphemer]		= 2
 	$map[$PN_SS_Dreamer]		= 2
 	$map[$PN_SS_Contaminator]	= 2
+	$map[$PN_SS_Zealot]			= 2
 
 	$map[$Gem_Dryder]			= 0
 	$map[$Gem_RageTitan]		= 1
@@ -2828,13 +3125,16 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	Local $level
 
 	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
+	If $secondaryProfession == 0 Then
+		$secondaryProfession = DllStructGetData(GetAgentByID(GetHeroID($heroIndex)), 'Secondary')
+	EndIf
 
 	$deadlock = TimerInit()
 	; Setting up secondary profession
 	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
 		While GetHeroProfession($heroIndex, True) <> $secondaryProfession And TimerDiff($deadlock) < 8000
 			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
-			Sleep(50)
+			Sleep(GetPing() + 20)
 		WEnd
 	EndIf
 
@@ -2852,15 +3152,15 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	For $i = 1 To $attributesArray[0][1]
 		For $j = 1 To $attributesArray[$i][1]
 			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Sleep(GetPing() + 100)
+			Sleep(GetPing() + 50)
 		Next
 	Next
-	Sleep(250)
+	Sleep(GetPing() + 50)
 
 	; If there are any points left, we put them in the primary attribute
 	For $i = 0 To 11
 		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Sleep(GetPing() + 100)
+		Sleep(GetPing() + 50)
 	Next
 EndFunc
 
@@ -2870,14 +3170,14 @@ Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
 	For $attribute In $AttributesByProfessionMap[GetHeroProfession($heroIndex)]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 20)
+			Sleep(GetPing() + 10)
 		Next
 	Next
 
 	For $attribute In $AttributesByProfessionMap[$secondaryProfession]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 20)
+			Sleep(GetPing() + 10)
 		Next
 	Next
 EndFunc

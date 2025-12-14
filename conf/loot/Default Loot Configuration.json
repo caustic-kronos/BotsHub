@@ -1,0 +1,1288 @@
+{
+	"Pick up items": {
+		"Weapons and offhands": {
+			"White": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Blue": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Purple": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Gold": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			},
+			"Green": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			}
+		},
+		"Armor salvageables": {
+			"Blue": true,
+			"Purple": true,
+			"Gold": true
+		},
+		"Basic Materials": {
+			"Bone": true,
+			"Bolt of Cloth": true,
+			"Chitin Fragment": true,
+			"Feather": true,
+			"Granite Slab": true,
+			"Iron Ingot": true,
+			"Pile of Glittering Dust": true,
+			"Plant Fibers": true,
+			"Scale": true,
+			"Tanned Hide Square": true,
+			"Wood Plank": true
+		},
+		"Rare Materials": {
+			"Fur Square": true,
+			"Bolt of Linen": true,
+			"Bolt of Damask": true,
+			"Bolt of Silk": true,
+			"Glob of Ectoplasm": true,
+			"Steel Ingot": true,
+			"Deldrimor Steel Ingot": true,
+			"Monstrous Claw": true,
+			"Monstrous Eye": true,
+			"Monstrous Fang": true,
+			"Ruby": true,
+			"Sapphire": true,
+			"Diamond": true,
+			"Onyx Gemstones": true,
+			"Lumps of Charcoal": true,
+			"Obsidian Shard": true,
+			"Tempered Glass Vial": true,
+			"Leather Squares": true,
+			"Elonian Leather Square": true,
+			"Vial of Ink": true,
+			"Roll of Parchment": true,
+			"Roll of Vellum": true,
+			"Spiritwood Plank": true,
+			"Amber Chunk": true,
+			"Jadeite Shard": true
+		},
+		"Tomes": {
+			"Normal": {
+				"Warrior Tome": true,
+				"Ranger Tome": true,
+				"Monk Tome": true,
+				"Necromancer Tome": true,
+				"Mesmer Tome": true,
+				"Elementalist Tome": true,
+				"Assassin Tome": true,
+				"Ritualist Tome": true,
+				"Paragon Tome": true,
+				"Dervish Tome": true
+			},
+			"Elite": {
+				"Elite Warrior Tome": true,
+				"Elite Ranger Tome": true,
+				"Elite Monk Tome": true,
+				"Elite Necromancer Tome": true,
+				"Elite Mesmer Tome": true,
+				"Elite Elementalist Tome": true,
+				"Elite Assassin Tome": true,
+				"Elite Ritualist Tome": true,
+				"Elite Paragon Tome": true,
+				"Elite Dervish Tome": true
+			}
+		},
+		"Dyes": {
+			"Black": true,
+			"Blue": false,
+			"Brown": false,
+			"Gray": false,
+			"Green": false,
+			"Orange": false,
+			"Pink": false,
+			"Purple": false,
+			"Red": false,
+			"Silver": false,
+			"White": true,
+			"Yellow": false
+		},
+		"Lockpicks": true,
+		"Keys": true,
+		"Scrolls": {
+			"Blue": true,
+			"Gold": {
+				"Passage Scroll to the Fissure of Woe": true,
+				"Passage Scroll to the Underworld": true,
+				"Passage Scroll to the Deep": true,
+				"Passage Scroll to Urgozs Warren": true,
+				"Other gold scrolls": true
+			}
+		},
+		"Trophies": {
+			"Margonite Gemstone": true,
+			"Stygian Gemstone": true,
+			"Titan Gemstone": true,
+			"Torment Gemstone": true,
+			"Glacial Stone": true,
+			"Destroyer Core": true,
+			"Diessa Chalice": true,
+			"Golden Rin Relic": true,
+			"Chunk of Drake Flesh": true,
+			"Skale Fin": true,
+			"Jade Bracelet": true,
+			"Stolen Goods": true,
+			"Other trophies": true
+		},
+		"Festival Items": {
+			"Wintersday Gift": true,
+			"Trick-or-Treat Bag": true,
+			"Lunar Token": true,
+			"Victory Token": true,
+			"Candy Cane Shard": true,
+			"Jade Wind Orb": true,
+			"Wayfarer Mark": true
+		},
+		"Consumables": true,
+		"Alcohols": true,
+		"Quest items": {
+			"Map pieces": false
+		},
+		"Other white items": false,
+		"Other blue items": false,
+		"Other purple items": false,
+		"Other gold items": true,
+		"Other green items": true
+	},
+	"Identify items": {
+		"Blue": true,
+		"Purple": true,
+		"Gold": true
+	},
+	"Loot components": {
+		"Armor upgrades": {
+			"Common": {
+				"Insignias": {
+					"Survivor": false,
+					"Radiant": false,
+					"Stalwart": false,
+					"Brawlers": false,
+					"Blessed": true,
+					"Heralds": false,
+					"Sentrys": false
+				},
+				"Runes": {
+					"Minor Vigor": true,
+					"Vitae": false,
+					"Attunement": false,
+					"Major Vigor": true,
+					"Recovery": false,
+					"Restoration": false,
+					"Clarity": false,
+					"Purity": false,
+					"Superior Vigor": true
+				}
+			},
+			"Assassin": {
+				"Insignias": {
+					"Vanguards": false,
+					"Infiltrators": false,
+					"Saboteurs": false,
+					"Nightstalkers": true
+				},
+				"Runes": {
+					"Minor Critical Strikes": false,
+					"Minor Dagger Mastery": false,
+					"Minor Deadly Arts": false,
+					"Minor Shadow Arts": false,
+					"Major Critical Strikes": false,
+					"Major Dagger Mastery": false,
+					"Major Deadly Arts": false,
+					"Major Shadow Arts": false,
+					"Superior Critical Strikes": false,
+					"Superior Dagger Mastery": false,
+					"Superior Deadly Arts": false,
+					"Superior Shadow Arts": false
+				}
+			},
+			"Dervish": {
+				"Insignias": {
+					"Windwalker": true,
+					"Forsaken": false
+				},
+				"Runes": {
+					"Minor Earth Prayers": false,
+					"Minor Mysticism": false,
+					"Minor Scythe Mastery": true,
+					"Minor Wind Prayers": false,
+					"Major Earth Prayers": false,
+					"Major Mysticism": false,
+					"Major Scythe Mastery": false,
+					"Major Wind Prayers": false,
+					"Superior Earth Prayers": false,
+					"Superior Mysticism": false,
+					"Superior Scythe Mastery": false,
+					"Superior Wind Prayers": false
+				}
+			},
+			"Elementalist": {
+				"Insignias": {
+					"Hydromancer": false,
+					"Geomancer": false,
+					"Pyromancer": false,
+					"Aeromancer": false,
+					"Prismatic": false
+				},
+				"Runes": {
+					"Minor Air Magic": false,
+					"Minor Earth Magic": false,
+					"Minor Energy Storage": false,
+					"Minor Water Magic": false,
+					"Minor Fire Magic": false,
+					"Major Air Magic": false,
+					"Major Earth Magic": false,
+					"Major Energy Storage": false,
+					"Major Fire Magic": false,
+					"Major Water Magic": false,
+					"Superior Air Magic": false,
+					"Superior Earth Magic": false,
+					"Superior Energy Storage": false,
+					"Superior Fire Magic": false,
+					"Superior Water Magic": false
+				}
+			},
+			"Mesmer": {
+				"Insignias": {
+					"Virtuosos": false,
+					"Artificers": false,
+					"Prodigys": true
+				},
+				"Runes": {
+					"Minor Domination Magic": false,
+					"Minor Fast Casting": true,
+					"Minor Illusion Magic": false,
+					"Minor Inspiration Magic": true,
+					"Major Domination Magic": true,
+					"Major Fast Casting": true,
+					"Major Illusion Magic": false,
+					"Major Inspiration Magic": false,
+					"Superior Domination Magic": true,
+					"Superior Fast Casting": false,
+					"Superior Illusion Magic": false,
+					"Superior Inspiration Magic": false
+				}
+			},
+			"Monk": {
+				"Insignias": {
+					"Wanderers": false,
+					"Disciples": false,
+					"Anchorites": true
+				},
+				"Runes": {
+					"Minor Divine Favor": false,
+					"Minor Healing Prayers": false,
+					"Minor Protection Prayers": false,
+					"Minor Smiting Prayers": false,
+					"Major Healing Prayers": false,
+					"Major Protection Prayers": false,
+					"Major Smiting Prayers": false,
+					"Major Divine Favor": false,
+					"Superior Divine Favor": false,
+					"Superior Healing Prayers": false,
+					"Superior Protection Prayers": false,
+					"Superior Smiting Prayers": false
+				}
+			},
+			"Necromancer": {
+				"Insignias": {
+					"Bloodstained": false,
+					"Tormentors": true,
+					"Bonelace": false,
+					"Minion Masters": false,
+					"Blighters": false,
+					"Undertakers": false
+				},
+				"Runes": {
+					"Minor Blood Magic": false,
+					"Minor Curses": false,
+					"Minor Death Magic": false,
+					"Minor Soul Reaping": false,
+					"Major Blood Magic": false,
+					"Major Curses": false,
+					"Major Death Magic": false,
+					"Major Soul Reaping": true,
+					"Superior Blood Magic": false,
+					"Superior Curses": false,
+					"Superior Death Magic": false,
+					"Superior Soul Reaping": false
+				}
+			},
+			"Paragon": {
+				"Insignias": {
+					"Centurions": true
+				},
+				"Runes": {
+					"Minor Command": false,
+					"Minor Leadership": false,
+					"Minor Motivation": false,
+					"Minor Spear Mastery": true,
+					"Major Command": false,
+					"Major Leadership": false,
+					"Major Motivation": false,
+					"Major Spear Mastery": false,
+					"Superior Command": false,
+					"Superior Leadership": false,
+					"Superior Motivation": false,
+					"Superior Spear Mastery": false
+				}
+			},
+			"Ranger": {
+				"Insignias": {
+					"Frostbound": false,
+					"Pyrebound": false,
+					"Stormbound": false,
+					"Scouts": false,
+					"Earthbound": false,
+					"Beastmasters": false
+				},
+				"Runes": {
+					"Minor Beast Mastery": false,
+					"Minor Expertise": false,
+					"Minor Marksmanship": false,
+					"Minor Wilderness Survival": false,
+					"Major Beast Mastery": false,
+					"Major Expertise": false,
+					"Major Marksmanship": false,
+					"Major Wilderness Survival": false,
+					"Superior Beast Mastery": false,
+					"Superior Expertise": false,
+					"Superior Marksmanship": false,
+					"Superior Wilderness Survival": false
+				}
+			},
+			"Ritualist": {
+				"Insignias": {
+					"Shamans": true,
+					"Ghost Forge": false,
+					"Mystics": false
+				},
+				"Runes": {
+					"Minor Channeling Magic": false,
+					"Minor Communing": false,
+					"Minor Restoration Magic": true,
+					"Minor Spawning Power": false,
+					"Major Channeling Magic": false,
+					"Major Communing": false,
+					"Major Restoration Magic": false,
+					"Major Spawning Power": false,
+					"Superior Channeling Magic": false,
+					"Superior Communing": true,
+					"Superior Restoration Magic": false,
+					"Superior Spawning Power": true
+				}
+			},
+			"Warrior": {
+				"Insignias": {
+					"Knights": false,
+					"Lieutenants": false,
+					"Stonefist": false,
+					"Dreadnought": false,
+					"Sentinels": true
+				},
+				"Runes": {
+					"Minor Absorption": false,
+					"Minor Axe Mastery": false,
+					"Minor Hammer Mastery": false,
+					"Minor Strength": false,
+					"Minor Swordsmanship": false,
+					"Minor Tactics": false,
+					"Major Absorption": false,
+					"Major Axe Mastery": false,
+					"Major Hammer Mastery": false,
+					"Major Strength": false,
+					"Major Swordsmanship": false,
+					"Major Tactics": false,
+					"Superior Axe Mastery": false,
+					"Superior Hammer Mastery": false,
+					"Superior Strength": false,
+					"Superior Swordsmanship": false,
+					"Superior Tactics": false,
+					"Superior Absorption": false
+				}
+			}
+		},
+		"Inscriptions": {
+			"Common": {
+				"Measure for measure (Highly salvageable)": false,
+				"Show me the money (Improved sale value)": false
+			},
+			"Weapon": {
+				"Common": {
+					"Strength and honor (Damage +15% while Health is above 50%)": false,
+					"Guided by fate (Damage +15% while Enchanted)": false,
+					"Dance with death (Damage +15% while in a Stance)": false,
+					"Too much information (Damage +15% vs Hexed foes)": false,
+					"To the pain (Damage +15% Armor -10 while attacking)": false,
+					"Brawn over brain (Damage +15% Energy -5)": false,
+					"Vengeance is mine (Damage +20% while Health is below 50%)": false,
+					"Dont fear the reaper (Damage +20% while Hexed)": false,
+					"Dont think twice (Halves casting time of spells)": true
+				},
+				"Martial": {
+					"I have the power (Energy +5)": false,
+					"Let the memory live again (Halves skill recharge of spells)": true
+				},
+				"Spellcasting": {
+					"Hale and hearty (Energy +5 while Health is above 50%)": false,
+					"Have faith (Energy +5 while Enchanted)": false,
+					"Dont call it a come back (Energy +7 while Health is below 50%)": false,
+					"I am sorrow (Energy +7 while Hexed)": false,
+					"Seize the day (Energy +15 Energy regeneration -1)": false,
+					"Aptitude not attitude (Halves casting time of spells of item's attribute)": true
+				}
+			},
+			"Offhand": {
+				"Focus": {
+					"Forget me not (Halves skill recharge of spells of item's attribute)": true,
+					"Serenity now (Halves skill recharge of spells)": true,
+					"Hail to the king (Armor +5 while Health is above 50%)": true,
+					"Faith is my shield (Armor +5 while Enchanted)": false,
+					"Might makes right (Armor +5 while attacking)": false,
+					"Knowing is half the battle (Armor +5 while casting)": true,
+					"Man for all seasons (Armor +5 vs Elemental damage)": false,
+					"Survival of the fittest (Armor +5 vs Physical damage)": false,
+					"Ignorance is bliss (Armor +5 Energy -5)": true,
+					"Life is pain (Armor +5 Health -20)": false,
+					"Down but not out (Armor +10 while Health is below 50%)": false,
+					"Be just and fear not (Armor +10 while hexed)": false,
+					"Live for today (Energy +15 Energy regeneration -1)": true
+				},
+				"Focus and shield": {
+					"Master of my domain (Item's attribute +1)": true,
+					"Not the face (Armor +10 vs Blunt damage)": false,
+					"Leaf on the wind (Armor +10 vs Cold damage)": false,
+					"Like a rolling stone (Armor +10 vs Earth damage)": true,
+					"Sleep now in the fire (Armor +10 vs Fire damage)": false,
+					"Riders on the storm (Armor +10 vs Lightning damage)": false,
+					"Through thick and thin (Armor +10 vs Piercing damage)": true,
+					"The riddle of steel (Armor +10 vs Slashing damage)": false,
+					"Sheltered by faith (Received physical damage -2 while Enchanted)": true,
+					"Run for your life (Received physical damage -2 while in a Stance)": true,
+					"Nothing to fear (Received physical damage -3 while Hexed)": false,
+					"Luck of the draw (Received physical damage -5 - Chance 20%)": true,
+					"Fear cuts deeper (Reduces Bleeding duration on you by 20%)": false,
+					"I can see clearly now (Reduces Blind duration on you by 20%)": false,
+					"Swift as the wind (Reduces Crippled duration on you by 20%)": false,
+					"Soundness of mind (Reduces Dazed duration on you by 20%)": false,
+					"Strength of body (Reduces Deep Wound duration on you by 20%)": false,
+					"Cast out the unclean (Reduces Disease duration on you by 20%)": false,
+					"Pure of heart (Reduces Poison duration on you by 20%)": false,
+					"Only the strong survive (Reduces Weakness duration on you by 20%)": false
+				}
+			}
+		},
+		"Mods": {
+			"Axe": {
+				"Prefix - Haft": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
+					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
+					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
+					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
+
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Sundering (Armor penetration +20% - Chance 20%)": false,
+					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+				},
+				"Suffix - Grip": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Deathbane": false,
+					"Of Charrslaying": true,
+					"Of Trollslaying": true,
+					"Of Pruning": false,
+					"Of Skeleton Slaying": false,
+					"Of Giant Slaying": true,
+					"Of Dwarf Slaying": true,
+					"Of Tengu Slaying": true,
+					"Of Demon Slaying": false,
+					"Of Ogre Slaying": false,
+					"Of Dragon Slaying": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Bow": {
+				"Prefix - String": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
+					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
+					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
+					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
+
+					"Sundering (Armor penetration +20% - Chance 20%)": false,
+					"Vampiric (Life Draining 5 Health regeneration -1)": false,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+				},
+				"Suffix - Grip": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": false,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Deathbane": false,
+					"Of Charrslaying": true,
+					"Of Trollslaying": true,
+					"Of Pruning": false,
+					"Of Skeleton Slaying": false,
+					"Of Giant Slaying": true,
+					"Of Dwarf Slaying": true,
+					"Of Tengu Slaying": true,
+					"Of Demon Slaying": false,
+					"Of Ogre Slaying": false,
+					"Of Dragon Slaying": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Dagger": {
+				"Prefix - Tang": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
+					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
+					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
+					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
+
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Sundering (Armor penetration +20% - Chance 20%)": false,
+					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+				},
+				"Suffix - Handle": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": false,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Focus": {
+				"Suffix - Core": {
+					"of Fortitude (Health +30)": true,
+					"Of Devotion (Health +45 while Enchanted)": true,
+					"Of Endurance (Health +45 while in a Stance)": true,
+					"Of Valor (Health +60 while Hexed)": false,
+
+					"Of Aptitude (Halves casting time of item's attribute spells - Chance 20%)": true,
+					"Of Swiftness (Halves casting time of spells - Chance 10%)": false
+				}
+			},
+			"Hammer": {
+				"Prefix - Haft": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
+					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
+
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Sundering (Armor penetration +20% - Chance 20%)": false,
+					"Vampiric (Life Draining 5 Health regeneration -1)": false,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+				},
+				"Suffix - Grip": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": false,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Deathbane": false,
+					"Of Charrslaying": true,
+					"Of Trollslaying": true,
+					"Of Pruning": false,
+					"Of Skeleton Slaying": false,
+					"Of Giant Slaying": true,
+					"Of Dwarf Slaying": true,
+					"Of Tengu Slaying": true,
+					"Of Demon Slaying": false,
+					"Of Ogre Slaying": false,
+					"Of Dragon Slaying": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Scythe": {
+				"Prefix - Snathe": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
+					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
+					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
+					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
+
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Sundering (Armor penetration +20% - Chance 20%)": true,
+					"Vampiric (Life Draining 5 Health regeneration -1)": true,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": true
+				},
+				"Suffix - Grip": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Shield": {
+				"Suffix - Handle": {
+					"of Fortitude (Health +30)": true,
+					"Of Devotion (Health +45 while Enchanted)": true,
+					"Of Endurance (Health +45 while in a Stance)": true,
+					"Of Valor (Health +60 while Hexed)": false
+				}
+			},
+			"Spear": {
+				"Prefix - Head": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
+					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
+					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
+					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
+					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
+
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Sundering (Armor penetration +20% - Chance 20%)": false,
+					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+				},
+				"Suffix - Grip": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Staff": {
+				"Prefix - Head": {
+					"Hale (Health +30)": true,
+					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": true,
+					"Swift (Halves casting time of spells - Chance 10%)": false,
+					"Insightful (Energy +5)": false,
+					"Defensive (Armor +5)": false
+				},
+				"Suffix - Wrapping": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Deathbane": false,
+					"Of Charrslaying": true,
+					"Of Trollslaying": true,
+					"Of Pruning": false,
+					"Of Skeleton Slaying": false,
+					"Of Giant Slaying": true,
+					"Of Dwarf Slaying": true,
+					"Of Tengu Slaying": true,
+					"Of Demon Slaying": false,
+					"Of Ogre Slaying": false,
+					"Of Dragon Slaying": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": true,
+					"Of Devotion (Health +45 while Enchanted)": false,
+					"Of Endurance (Health +45 while in a Stance)": false,
+					"Of Valor (Health +60 while Hexed)": false
+				}
+			},
+			"Sword": {
+				"Prefix - Hilt": {
+					"Ebon (Earth damage)": false,
+					"Fiery (Fire damage)": false,
+					"Icy (Cold damage)": false,
+					"Shocking (Lightning damage)": false,
+
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
+					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
+					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
+
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Sundering (Armor penetration +20% - Chance 20%)": false,
+					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+				},
+				"Suffix - Pommel": {
+					"of Fortitude (Health +30)": true,
+					"Of Defense (Armor +5)": false,
+					"Of Shelter (Armor +7 vs physical damage)": false,
+					"Of Warding (Armor +7 vs elemental damage)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
+
+					"Of The Warrior": false,
+					"Of The Ranger": true,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false,
+
+					"Of Deathbane": false,
+					"Of Charrslaying": true,
+					"Of Trollslaying": true,
+					"Of Pruning": false,
+					"Of Skeleton Slaying": false,
+					"Of Giant Slaying": true,
+					"Of Dwarf Slaying": true,
+					"Of Tengu Slaying": true,
+					"Of Demon Slaying": false,
+					"Of Ogre Slaying": false,
+					"Of Dragon Slaying": false,
+
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+				}
+			},
+			"Wand": {
+				"Suffix - Wrapping": {
+					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": true,
+					"Of Quickening (Halves skill recharge of spells - Chance 10%)": false,
+
+					"Of The Warrior": false,
+					"Of The Ranger": false,
+					"Of The Necromancer": true,
+					"Of The Mesmer": true,
+					"Of The Elementalist": true,
+					"Of The Monk": true,
+					"Of The Ritualist": true,
+					"Of The Assassin": false,
+					"Of The Paragon": false,
+					"Of The Dervish": false
+				}
+			}
+		}
+	},
+	"Salvage items": {
+		"Weapons and offhands": {
+			"White": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Blue": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Purple": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Gold": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			}
+		},
+		"Armor salvageables": {
+			"Blue": false,
+			"Purple": false,
+			"Gold": false
+		},
+		"Trophies": {
+			"Glacial Stone": false,
+			"Destroyer Core": false,
+			"Stolen Goods": false,
+			"Other trophies": false
+		}
+	},
+	"Sell items": {
+		"Weapons and offhands": {
+			"White": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			},
+			"Blue": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			},
+			"Purple": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			},
+			"Gold": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			}
+		},
+		"Basic Materials": {
+			"Bone": false,
+			"Bolt of Cloth": false,
+			"Chitin Fragment": false,
+			"Feather": false,
+			"Granite Slab": false,
+			"Iron Ingot": false,
+			"Pile of Glittering Dust": false,
+			"Plant Fibers": false,
+			"Scale": false,
+			"Tanned Hide Square": false,
+			"Wood Plank": false
+		},
+		"Rare Materials": {
+			"Fur Square": false,
+			"Bolt of Linen": false,
+			"Bolt of Damask": false,
+			"Bolt of Silk": false,
+			"Glob of Ectoplasm": false,
+			"Steel Ingot": false,
+			"Deldrimor Steel Ingot": false,
+			"Monstrous Claw": false,
+			"Monstrous Eye": false,
+			"Monstrous Fang": false,
+			"Ruby": false,
+			"Sapphire": false,
+			"Diamond": false,
+			"Onyx Gemstones": false,
+			"Lumps of Charcoal": false,
+			"Obsidian Shard": false,
+			"Tempered Glass Vial": false,
+			"Leather Squares": false,
+			"Elonian Leather Square": false,
+			"Vial of Ink": false,
+			"Roll of Parchment": false,
+			"Roll of Vellum": false,
+			"Spiritwood Plank": false,
+			"Amber Chunk": false,
+			"Jadeite Shard": false
+		},
+		"Keys": true,
+		"Scrolls": {
+			"Blue": true,
+			"Gold": {
+				"Passage Scroll to the Fissure of Woe": false,
+				"Passage Scroll to the Underworld": false,
+				"Passage Scroll to the Deep": false,
+				"Passage Scroll to Urgozs Warren": false,
+				"Other gold scrolls": true
+			}
+		},
+		"Trophies": {
+			"Glacial Stone": false,
+			"Destroyer Core": false,
+			"Other trophies": false
+		}
+	},
+	"Store items": {
+		"Weapons and offhands": {
+			"White": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Blue": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Purple": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Gold": {
+				"Axe": false,
+				"Bow": false,
+				"Dagger": false,
+				"Focus": false,
+				"Hammer": false,
+				"Scythe": false,
+				"Shield": false,
+				"Spear": false,
+				"Staff": false,
+				"Sword": false,
+				"Wand": false
+			},
+			"Green": {
+				"Axe": true,
+				"Bow": true,
+				"Dagger": true,
+				"Focus": true,
+				"Hammer": true,
+				"Scythe": true,
+				"Shield": true,
+				"Spear": true,
+				"Staff": true,
+				"Sword": true,
+				"Wand": true
+			}
+		},
+		"Basic Materials": {
+			"Bone": true,
+			"Bolt of Cloth": true,
+			"Chitin Fragment": true,
+			"Feather": true,
+			"Granite Slab": true,
+			"Iron Ingot": true,
+			"Pile of Glittering Dust": true,
+			"Plant Fibers": true,
+			"Scale": true,
+			"Tanned Hide Square": true,
+			"Wood Plank": true
+		},
+		"Rare Materials": {
+			"Fur Square": true,
+			"Bolt of Linen": true,
+			"Bolt of Damask": true,
+			"Bolt of Silk": true,
+			"Glob of Ectoplasm": true,
+			"Steel Ingot": true,
+			"Deldrimor Steel Ingot": true,
+			"Monstrous Claw": true,
+			"Monstrous Eye": true,
+			"Monstrous Fang": true,
+			"Ruby": true,
+			"Sapphire": true,
+			"Diamond": true,
+			"Onyx Gemstones": true,
+			"Lumps of Charcoal": true,
+			"Obsidian Shard": true,
+			"Tempered Glass Vial": true,
+			"Leather Squares": true,
+			"Elonian Leather Square": true,
+			"Vial of Ink": true,
+			"Roll of Parchment": true,
+			"Roll of Vellum": true,
+			"Spiritwood Plank": true,
+			"Amber Chunk": true,
+			"Jadeite Shard": true
+		},
+		"Tomes": {
+			"Normal": {
+				"Warrior Tome": true,
+				"Ranger Tome": true,
+				"Monk Tome": true,
+				"Necromancer Tome": true,
+				"Mesmer Tome": true,
+				"Elementalist Tome": true,
+				"Assassin Tome": true,
+				"Ritualist Tome": true,
+				"Paragon Tome": true,
+				"Dervish Tome": true
+			},
+			"Elite": {
+				"Elite Warrior Tome": true,
+				"Elite Ranger Tome": true,
+				"Elite Monk Tome": true,
+				"Elite Necromancer Tome": true,
+				"Elite Mesmer Tome": true,
+				"Elite Elementalist Tome": true,
+				"Elite Assassin Tome": true,
+				"Elite Ritualist Tome": true,
+				"Elite Paragon Tome": true,
+				"Elite Dervish Tome": true
+			}
+		},
+		"Lockpicks": false,
+		"Keys": false,
+		"Scrolls": {
+			"Blue": false,
+			"Gold": {
+				"Passage Scroll to the Fissure of Woe": true,
+				"Passage Scroll to the Underworld": true,
+				"Passage Scroll to the Deep": true,
+				"Passage Scroll to Urgozs Warren": true,
+				"Other gold scrolls": false
+			}
+		},
+		"Trophies": {
+			"Margonite Gemstone": true,
+			"Stygian Gemstone": true,
+			"Titan Gemstone": true,
+			"Torment Gemstone": true,
+			"Glacial Stone": true,
+			"Destroyer Core": true,
+			"Diessa Chalice": true,
+			"Golden Rin Relic": true,
+			"Chunk of Drake Flesh": true,
+			"Skale Fin": true,
+			"Jade Bracelet": true,
+			"Stolen Goods": true,
+			"Other trophies": false
+		},
+		"Festival Items": {
+			"Wintersday Gift": true,
+			"Trick-or-Treat Bag": true,
+			"Lunar Token": true,
+			"Victory Token": true,
+			"Candy Cane Shard": true,
+			"Jade Wind Orb": true,
+			"Wayfarer Mark": true
+		},
+		"Consumables": true,
+		"Alcohols": true,
+		"Quest items": {
+			"Map pieces": true
+		},
+		"Other white items": true,
+		"Other blue items": true,
+		"Other purple items": true,
+		"Other gold items": true,
+		"Other green items": true
+	}
+}

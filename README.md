@@ -42,25 +42,32 @@ To use it:
 - Missing Daughter Jade Brotherhood farm (Q8, jade bracelets)
 - Fish in a Barrel kournans farm (Q8, runes)
 - Spirit Slaves farm (Q8, dust, bones)
+- Minotaurs farm (materials)
 - Auspicious Beginnings farm (War Supplies, festive items, gold, Vanguard points)
 - A Chance Encounter farm (Ministerial Commendations, faction skins)
 - Eden Iris farm (iris)
 - Nexus Challenge (Mysterious armor hero pieces)
 - Dajkah Inlet Challenge (Sunspear armor hero pieces)
+- Glint's Challenge (Cloth of Brotherhood/hero armor, Destroyer cores, gold items)
 ### Vanquishes / Titles
 - Ferndale vanquish (Kurzick faction points)
 - Mount Qinkai vanquish (Luxon faction points)
 - Sulfurous Wastes farm (Sunspear and Lightbringer points)
 - Mirror of Lyss farm (Lightbringer points)
+- Magus Stones farm (Asura points)
 - Varajar Fells farm (Norn points)
 - Dalada Uplands farm (Vanguard points)
 ### Dungeons/Elite zones
 - Bogroot dungeon farm (Froggy)
 - SoO dungeon farm (Dragon Bone Staff)
 - Slaver's Exile dungeon farm (Voltaic Spears)
-- FoW farm (Obsidian shard, Obsidian Edge, shadow weapons)
-- DoA farm (Gemstones)
+- FoW farm (Obsidian Shards, Obsidian Edge, shadow weapons)
+- FoW Tower of Courage farm (Obsidian Shards, dust)
+- DoA farm (Gemstones, gold items)
+- City of Torc'qua farm (Margonite Gemstones)
+- Ravenheart Gloom farm (Torment Gemstones)
 - Stygian Veil farm (Stygian Gemstones)
+- Underworld farm (Globs of Ectoplasm, gold items)
 ### Chest runs
 - Boreal chest run (glacial blades)
 - Pongmei chest run (faction skins, Q8)
@@ -144,7 +151,7 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Cathedral of Flames farm bot** - 2 requests
 - 🧠💭 **Kilroy bot** - 1 request
-- 🧠💭 **Asura/Dwarf title farm bot** - 1 request
+- 🧠💭 **Dwarf title farm bot** - 1 request
 - 🧠💭 **LDOA bot** - 1 request
 - 🧠💭 **Improve crash recovery**
 
@@ -159,6 +166,13 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🛠️ In progress
 - 🕓 Planned
 - 💭 Wishlist
+
+## BotsHub Version
+Current version: 2.0  
+Added GUI improvements along with new farms and general code updates.  
+Users are advised to create and save new configuration files using GUI.  
+Old configuration files may not be backward compatible
+There are 2 separate configuration files for farm options and for loot options
 
 ## Dependencies
 - [AutoIt JSON UDF](https://github.com/Sylvan86/autoit-json-udf) – For JSON parsing - WTFPL license.

@@ -24,7 +24,7 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $LightbringerFarm2Informations = 'Lightbringer title farm'
@@ -36,14 +36,12 @@ Global $LIGHTBRINGER_FARM2_SETUP = False
 Func LightbringerFarm2($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToMirrorOfLyss()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
+
 	ReturnBackToOutpost($ID_Kodash_Bazaar)
 	Return $result
 EndFunc
@@ -54,36 +52,44 @@ Func Lightbringer2FarmSetup()
 	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
-	; Assuming that team has been set up correctly manually
-	;SetupTeamLightbringer2Farm()
+	SetupPlayerLightbringer2Farm()
+	SetupTeamLightbringer2Farm()
+
 	GoToMirrorOfLyss()
 	MoveTo(-19350, -16900)
 	RandomSleep(5000)
 	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
 	$LIGHTBRINGER_FARM2_SETUP = True
-	Info('Setup completed')
+	Info('Preparations completed')
+EndFunc
+
+
+Func SetupPlayerLightbringer2Farm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+	Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+	EndIf
+	Sleep(250 + GetPing())
+	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
+		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
+		ChangeWeaponSet($WEAPON_SLOT)
+	Else
+		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
+	EndIf
+	Sleep(250 + GetPing())
 EndFunc
 
 
 Func SetupTeamLightbringer2Farm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Gwen)
-	RandomSleep(500)
-	AddHero($ID_Razah)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	RandomSleep(500)
-	AddHero($ID_Livia)
-	RandomSleep(500)
-	AddHero($ID_Olias)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	Sleep(1000)
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+	Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+	EndIf
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
@@ -92,7 +98,7 @@ EndFunc
 
 ;~ Move out of outpost into Mirror of Lyss
 Func GoToMirrorOfLyss()
-	If GetMapID() <> $ID_Kodash_Bazaar Then TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Mirror_of_Lyss
 		Info('Moving to Mirror of Lyss')
 		MoveTo(-2186, -1916)

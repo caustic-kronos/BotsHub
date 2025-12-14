@@ -25,7 +25,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
@@ -35,25 +35,74 @@ Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
 Global Const $ID_unknown_outpost_deposit_points = 193
-
-Global $DonatePoints = True
+Global $LUXON_FARM_SETUP = False
 
 
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
-	LuxonFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $LUXON_FARM_SETUP Then LuxonFarmSetup()
 
+	ManageFactionPointsLuxonFarm()
+	CheckGoldLuxonFarm()
 	GoToMountQinkai()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishMountQinkai()
 	AdlibUnRegister('TrackPartyStatus')
 
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
 	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	Return $result
+EndFunc
+
+
+Func ManageFactionPointsLuxonFarm()
+	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
+		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
+		RandomSleep(200)
+		GoNearestNPCToCoords(9076, -1111)
+
+		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
+		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
+		If $donatePoints Then
+			Info('Donating Luxon faction points')
+			While GetLuxonFaction() >= 5000
+				DonateFaction('Luxon')
+				RandomSleep(500)
+			WEnd
+		ElseIf $buyResources Then
+			Info('Converting Luxon faction points into Jadeite Shards')
+			Dialog(0x83)
+			RandomSleep(500)
+			Local $numberOfShards = Floor(GetLuxonFaction() / 5000) ; 5000 faction points for each shard
+			; number of shards = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 shard, 0x800201 = 2 shards
+			Local $dialogID = 0x800001 + (0x100 * $numberOfShards)
+			Dialog($dialogID)
+			RandomSleep(550)
+		ElseIf $buyScrolls Then
+			Info('Converting Luxon faction points into The Deep Passage Scrolls')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfScrolls = Floor(GetLuxonFaction() / 1000) ; 1000 faction points for each scroll
+			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
+			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
+			Dialog($dialogID)
+			RandomSleep(550)
+		EndIf
+		RandomSleep(500)
+		TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+	EndIf
+EndFunc
+
+
+Func CheckGoldLuxonFarm()
+	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
+		Info('Withdrawing gold for shrines benediction')
+		RandomSleep(250)
+		WithdrawGold(100)
+		RandomSleep(250)
+	EndIf
 EndFunc
 
 
@@ -61,46 +110,52 @@ EndFunc
 Func LuxonFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
-	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
-		DistrictTravel($ID_unknown_outpost_deposit_points, $DISTRICT_NAME)
-		RandomSleep(200)
-		GoNearestNPCToCoords(9076, -1111)
 
-		If $DonatePoints Then
-			Info('Donating Luxon faction points')
-			While GetLuxonFaction() >= 5000
-				DonateFaction('Luxon')
-				RandomSleep(500)
-			WEnd
-		Else
-			Info('Converting Luxon faction points into Jadeite Shards')
-			Dialog(0x83)
-			RandomSleep(500)
-			Local $temp = Floor(GetLuxonFaction() / 5000)
-			Local $dialogID = 0x800001 + ($temp * 256)
-			Dialog($dialogID)
-			RandomSleep(550)
-		EndIf
-		RandomSleep(500)
-		DistrictTravel($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
-	EndIf
-
-	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Info('Withdrawing gold for shrines benediction')
-		RandomSleep(250)
-		WithdrawGold(100)
-		RandomSleep(250)
-	EndIf
-
+	SetupPlayerLuxonFarm()
+	SetupTeamLuxonFarm()
 	SwitchMode($ID_HARD_MODE)
-	Info('Setup completed')
+
+	$LUXON_FARM_SETUP = True
+	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerLuxonFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+	Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+	EndIf
+	Sleep(250 + GetPing())
+	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
+		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
+		ChangeWeaponSet($WEAPON_SLOT)
+	Else
+		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
+	EndIf
+	Sleep(250 + GetPing())
+EndFunc
+
+
+Func SetupTeamLuxonFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+	Else
+		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
+	EndIf
+	Sleep(500 + GetPing())
+	If GetPartySize() <> 8 Then
+		Warn('Could not set up party correctly. Team size different than 8')
+	EndIf
 EndFunc
 
 
 ;~ Move out of outpost into Mount Qinkai
 Func GoToMountQinkai()
-	If GetMapID() <> $ID_Aspenwood_Gate_Luxon Then TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Mount_Qinkai
 		Info('Moving to Mount Qinkai')
 		MoveTo(-4268, 11628)
@@ -172,6 +227,8 @@ Func VanquishMountQinkai()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc
