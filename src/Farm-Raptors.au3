@@ -362,8 +362,7 @@ Func KillRaptors()
 		RandomSleep(250)
 		$count += 1
 		If $count > 10 Then
-			SendChat('stuck', '/')
-			RandomSleep(GetPing() + 20)
+			CheckAndSendStuckCommand()
 		EndIf
 	WEnd
 

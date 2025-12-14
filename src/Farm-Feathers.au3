@@ -237,8 +237,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		$stuckCount += 1
 		If $stuckCount > 25 Then
 			$stuckCount = 0
-			SendChat('stuck', '/')
-			RandomSleep(50)
+			CheckAndSendStuckCommand()
 		EndIf
 		RandomSleep(250)
 		$me = GetMyAgent()
@@ -254,14 +253,12 @@ Func Kill($waitForSettle = True)
 	Local $deadlock, $timeout = 2*60*1000
 
 	Local $stuckCount = 0
-	SendChat('stuck', '/')
-	RandomSleep(50)
+	CheckAndSendStuckCommand()
 	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
 	If $waitForSettle Then
 		If Not WaitForSettle() Then Return $FAIL
 	EndIf
-	SendChat('stuck', '/')
-	RandomSleep(50)
+	CheckAndSendStuckCommand()
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeWeaponSet(1)
 	If IsRecharged($Feathers_VowOfStrength) Then UseSkillEx($Feathers_VowOfStrength)
@@ -293,8 +290,7 @@ Func Kill($waitForSettle = True)
 		$stuckCount += 1
 		If $stuckCount > 100 Then
 			$stuckCount = 0
-			SendChat('stuck', '/')
-			RandomSleep(50)
+			CheckAndSendStuckCommand()
 		EndIf
 
 		Sleep(250)

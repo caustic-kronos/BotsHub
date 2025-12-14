@@ -2309,6 +2309,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 		If IsPlayerAlive() And Not IsPlayerMoving() Then
 			$blocked += 1
 			$me = GetMyAgent()
+			If $blocked > 8 Then CheckAndSendStuckCommand() ; checking if player got stuck on some terrain obstacle
 			If $blocked > 10 Then
 				; If Heart of Shadow skill is available then use it to avoid becoming stuck
 				If $hosSkillSlot > 0 Then
@@ -2347,13 +2348,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 			Move($destinationX, $destinationY, $randomFactor)
 			If $blocked > 0 Then
 				$blocked = 0 ; reset of block count when player started moving
-				; Checking if no foes are in range to use /stuck only when there are no foes in range like when rubberbanding or on some obstacles
-				If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then ; use a timer to avoid spamming /stuck
-					Warn('Sending /stuck')
-					SendChat('stuck', '/')
-					$chatStuckTimer = TimerInit()
-					RandomSleep(500 + GetPing())
-				EndIf
+				CheckAndSendStuckCommand() ; player started moving, after being stuck but maybe player is rubberbanding? Therefore checking it
 			EndIf
 		EndIf
 		If $openChests Then
@@ -2373,6 +2368,25 @@ EndFunc
 
 ;~ Detect if player is rubberbanding
 Func IsPlayerRubberBanding()
+EndFunc
+
+
+;~ Send /stuck - don't overuse, otherwise there can be a BAN !
+Func CheckAndSendStuckCommand()
+	; static variable is initialized only once when CheckAndSendStuckCommand is called first time
+	Local Static $chatStuckTimer = TimerInit()
+	Local $stuckInterval = 10000 ; 10 seconds interval between stuck commands
+
+	; Use a timer to avoid spamming /stuck, because spamming stuck can result in being flagged, which can result in a ban
+	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there shouldn't be any enemies around the character then
+	If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > $stuckInterval Then
+		Warn('Sending /stuck')
+		SendChat('stuck', '/')
+		$chatStuckTimer = TimerInit()
+		RandomSleep(500 + GetPing())
+		Return True
+	EndIf
+	Return False
 EndFunc
 
 
