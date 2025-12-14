@@ -2272,6 +2272,50 @@ Func ChangeWeaponSet($weaponSet)
 EndFunc
 
 
+Func GetCastTimeModifier($effects, $usedSkill)
+	Local $skillID = DllStructGetData($usedSkill, 'ID')
+	Local $effectID = 0
+	Local $castTime = 1
+	For $effect in $effects
+		$effectID = DllStructGetData($effect, 'EffectId')
+		Switch $effectID
+			; consumables effects
+			Case $ID_Essence_of_Celerity_effect
+				$castTime = 0.80 * $castTime
+			Case $ID_Pie_Induced_Ecstasy
+				$castTime = 0.85 * $castTime
+			Case $ID_Red_Rock_Candy_Rush
+				$castTime = 0.75 * $castTime
+			Case $ID_Blue_Rock_Candy_Rush
+				$castTime = 0.80 * $castTime
+			Case $ID_Green_Rock_Candy_Rush
+				$castTime = 0.85 * $castTime
+			; skills shortening cast time
+			Case $ID_Deadly_Paradox
+				If $skillID == $ID_Shadow_Form Then $castTime = 0.667 * $castTime
+			Case $ID_Glyph_of_Sacrifice, $ID_Glyph_of_Essence, $ID_Signet_of_Mystic_Speed
+				$castTime = 0
+			Case $ID_Mindbender
+				$castTime = 0.80 * $castTime
+			Case $ID_Time_Ward, $ID_Over_the_Limit
+				Local $attributeLevel = DllStructGetData($effect, 'AttributeLevel')
+				; Below equation converts attribute level of Time Ward or Over the Limit effect into shorter cast time, e.g. 80% for attribute levels 14,15,16
+				Local $castTimeReduction = 1 - ((15 + Floor(($attributeLevel + 1) / 3)) / 100)
+				$castTime = $castTimeReduction * $castTime
+			; hexes lengthening cast time
+			Case $ID_Arcane_Conundrum, $ID_Migraine, $ID_Stolen_Speed, $ID_Shared_Burden, $ID_Frustration, $ID_Confusing_Images
+				$castTime = 2 * $castTime
+			Case $ID_Sum_of_All_Fears
+				$castTime = 1.5 * $castTime
+			; other effects
+			Case $ID_Dazed
+				$castTime = 2 * $castTime
+		EndSwitch
+	Next
+	Return $castTime
+EndFunc
+
+
 ;~ Use a skill, doesn't wait for the skill to be done
 Func UseSkill($skillSlot, $target, $callTarget = False)
 	If $target == Null Or $target == 0 Or $target == -2 Then $target = GetMyAgent()
