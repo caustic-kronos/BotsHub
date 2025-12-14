@@ -45,7 +45,6 @@ Global $SOO_FARM_SETUP = False
 Func SoOFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $SOO_FARM_SETUP Then SetupSoOFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return SoOFarmLoop()
 EndFunc
 

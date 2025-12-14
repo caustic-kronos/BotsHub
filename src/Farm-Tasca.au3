@@ -67,8 +67,7 @@ Global Const $TASCA_CHEST_RANGE = 1.5 * $RANGE_SPELLCAST
 ;~ Main method to chest farm Tasca
 Func TascaChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $TASCA_FARM_SETUP And SetupTascaChestFarm() == $FAIL THen Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $TASCA_FARM_SETUP And SetupTascaChestFarm() == $FAIL Then Return $PAUSE
 
 	GoToTascasDemise()
 	Local $result = TascaChestFarmLoop($STATUS)

@@ -47,7 +47,6 @@ Global Const $ID_FoW_Unholy_Texts = 2619
 Func FoWFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = EnterFissureOfWoe()
 	If $result <> $SUCCESS Then Return $result

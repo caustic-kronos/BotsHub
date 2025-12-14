@@ -36,7 +36,6 @@ Global $NEXUS_CHALLENGE_SETUP = False
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm($STATUS)
 	If Not $NEXUS_CHALLENGE_SETUP Then NexusChallengeSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterNexusChallengeMission()
 	AdlibRegister('TrackPartyStatus', 10000)

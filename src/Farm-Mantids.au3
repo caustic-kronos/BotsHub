@@ -65,7 +65,6 @@ Global $MANTIDS_FARM_SETUP = False
 Func MantidsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $MANTIDS_FARM_SETUP And SetupMantidsFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToWajjunBazaar()
 	Local $result = MantidsFarmLoop()

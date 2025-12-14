@@ -53,7 +53,6 @@ Global Const $Junundu_Leave		= 8
 Func LightbringerFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToTheSulfurousWastes()
 	Local $result = FarmTheSulfurousWastes()

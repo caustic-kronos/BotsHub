@@ -62,7 +62,6 @@ Global Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArra
 Func SpiritSlavesFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $SPIRIT_SLAVES_FARM_SETUP And SetupSpiritSlavesFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	UseConsumable($ID_Slice_of_Pumpkin_Pie)
 

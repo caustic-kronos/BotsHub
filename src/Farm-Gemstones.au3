@@ -88,7 +88,6 @@ Global Const $ModelID_Zhellix = 5221 ; unique Model ID of Zhellix NPC, that can 
 Func GemstonesFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $GEMSTONES_FARM_SETUP Then SetupGemstonesFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = GemstonesFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared all 19 waves')

@@ -69,7 +69,6 @@ Global $JADE_BROTHERHOOD_FARM_SETUP = False
 Func JadeBrotherhoodFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $JADE_BROTHERHOOD_FARM_SETUP And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToBukdekByway()
 	Local $result = JadeBrotherhoodFarmLoop()

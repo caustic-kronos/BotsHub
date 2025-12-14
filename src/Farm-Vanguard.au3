@@ -36,14 +36,12 @@ Global $VANGUARD_FARM_SETUP = False
 ;~ Main loop for the vanguard faction farm
 Func VanguardTitleFarm($STATUS)
 	If Not $VANGUARD_FARM_SETUP Then VanguardTitleFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToDaladaUplands()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishDaladaUplands()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
+
 	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	Return $result
 EndFunc

@@ -131,7 +131,6 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 Func MinisterialCommendationsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then SetupMinisterialCommendationsFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = MinisterialCommendationsFarmLoop()
 	TravelToOutpost($ID_Current_Kaineng_City, $DISTRICT_NAME)
@@ -197,13 +196,9 @@ Func MinisterialCommendationsFarmLoop()
 	EnterAChanceEncounterQuest()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return $FAIL
 
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
-
 	Info('Preparing to fight')
 	PrepareToFight()
 	If GetMapID() <> $ID_Kaineng_A_Chance_Encounter Then Return $FAIL
-
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Info('Fighting the first group')
 	InitialFight()

@@ -56,7 +56,6 @@ Func OmniFarm($STATUS)
 	Info('Preparing the spirit setup')
 	PrepareZephyrSpirit()
 
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	HealingLoop()
 
 	Return $SUCCESS

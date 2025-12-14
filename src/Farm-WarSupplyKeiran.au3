@@ -81,7 +81,6 @@ Global Const $ModelID_Miku = 8382 ; unique Model ID of Miku NPC, that can be acc
 Func WarSupplyKeiranFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $WARSUPPLY_FARM_SETUP Then SetupWarSupplyFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = WarSupplyFarmLoop()
 	Return $result

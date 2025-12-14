@@ -40,7 +40,6 @@ Global $LUXON_FARM_SETUP = False
 ;~ Main loop for the luxon faction farm
 Func LuxonFactionFarm($STATUS)
 	If Not $LUXON_FARM_SETUP Then LuxonFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	ManageFactionPointsLuxonFarm()
 	CheckGoldLuxonFarm()
@@ -50,8 +49,6 @@ Func LuxonFactionFarm($STATUS)
 	Local $result = VanquishMountQinkai()
 	AdlibUnRegister('TrackPartyStatus')
 
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
 	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
 	Return $result
 EndFunc

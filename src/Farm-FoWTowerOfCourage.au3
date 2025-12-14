@@ -90,7 +90,6 @@ Global Const $FoWToC_ModelID_Abyssal			= 2810
 Func FoWToCFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $FOW_TOC_FARM_SETUP And SetupFoWToCFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = EnterFissureOfWoeToC()
 	If $result <> $SUCCESS Then Return $result

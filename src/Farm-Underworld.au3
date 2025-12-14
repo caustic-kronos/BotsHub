@@ -45,7 +45,6 @@ Global $UW_FARM_SETUP = False
 Func UnderworldFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $UW_FARM_SETUP Then SetupUnderworldFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	Local $result = EnterUnderworld()
 	If $result <> $SUCCESS Then Return $result

@@ -55,7 +55,6 @@ Global $DM_FARM_SETUP = False
 Func DragonMossFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $DM_FARM_SETUP And SetupDragonMossFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToDrazachThicket()
 	Local $result = DragonMossFarmLoop()

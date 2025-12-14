@@ -74,7 +74,6 @@ $GlintChallengeFightOptions.Item('openChests')			= False ; there are no chests i
 ;~ Main loop for the Mysterious armor farm
 Func GlintChallengeFarm($STATUS)
 	If Not $GLINT_CHALLENGE_SETUP Then GlintChallengeSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterGlintChallengeMission()
 	Local $result = GlintChallenge()

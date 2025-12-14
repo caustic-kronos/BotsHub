@@ -36,7 +36,6 @@ Global $SUNSPEAR_ARMOR_FARM_SETUP = False
 Func SunspearArmorFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterSunspearArmorChallenge()
 	AdlibRegister('TrackPartyStatus', 10000)

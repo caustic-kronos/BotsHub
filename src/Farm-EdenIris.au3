@@ -38,7 +38,6 @@ Global $IRIS_FARM_SETUP = False
 Func EdenIrisFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToLakesideCounty()
 	Local $result = EdenIrisFarmLoop()

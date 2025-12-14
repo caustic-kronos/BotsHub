@@ -45,7 +45,6 @@ Global $FroggyFarmTimer = Null
 Func FroggyFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $FROGGY_FARM_SETUP Then SetupFroggyFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 	Return FroggyFarmLoop()
 EndFunc
 

@@ -68,7 +68,6 @@ Global $Bohseda_Timer
 Func CorsairsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $CORSAIRS_FARM_SETUP And SetupCorsairsFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	EnterCorsairsModdokCreviceMission()
 	Local $result = CorsairsFarmLoop()

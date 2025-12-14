@@ -36,14 +36,12 @@ Global $NORN_FARM_SETUP = False
 ;~ Main loop for the norn faction farm
 Func NornTitleFarm($STATUS)
 	If Not $NORN_FARM_SETUP Then NornTitleFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToVarajarFells()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishVarajarFells()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
+
 	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	Return $result
 EndFunc

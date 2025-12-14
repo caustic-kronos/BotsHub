@@ -60,7 +60,6 @@ Global $PONGMEI_FARM_SETUP = False
 Func PongmeiChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiChestFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToPongmeiValley()
 	Local $result = PongmeiChestFarmLoop($STATUS)

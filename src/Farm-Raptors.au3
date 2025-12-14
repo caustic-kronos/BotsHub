@@ -94,7 +94,6 @@ $RaptorsMoveOptions.Item('openChests')				= False
 Func RaptorsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $RAPTORS_FARM_SETUP And SetupRaptorsFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToRivenEarth()
 	Local $result = RaptorsFarmLoop()

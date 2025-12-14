@@ -36,14 +36,12 @@ Global $LIGHTBRINGER_FARM2_SETUP = False
 Func LightbringerFarm2($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToMirrorOfLyss()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
+
 	ReturnBackToOutpost($ID_Kodash_Bazaar)
 	Return $result
 EndFunc

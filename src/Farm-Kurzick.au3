@@ -41,7 +41,6 @@ Global $KURZICK_FARM_SETUP = False
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
 	If Not $KURZICK_FARM_SETUP Then KurzickFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	ManageFactionPointsKurzickFarm()
 	CheckGoldKurzickFarm()
@@ -51,8 +50,6 @@ Func KurzickFactionFarm($STATUS)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('TrackPartyStatus')
 
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
 	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	Return $result
 EndFunc

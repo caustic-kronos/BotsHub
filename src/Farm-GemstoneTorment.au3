@@ -74,7 +74,6 @@ $TormentRunOptions.Item('openChests')			= True ; chests in Ravenheart Gloom shou
 Func GemstoneTormentFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $GEMSTONE_TORMENT_FARM_SETUP And SetupGemstoneTormentFarm() == $FAIL Then Return $PAUSE
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	If GoToRavenHeartGloom() == $FAIL Then Return $FAIL
 	Local $result = GemstoneTormentFarmLoop()
