@@ -191,7 +191,7 @@ Func GoToStygianVeil()
 		MoveTo(1315, -17924)
 		MoveTo(-785, -18969)
 		Move(-1100, -20000, 0)
-		Sleep(12000) ; wait 12 seconds to ensure that player exited outpost
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost
 	WEnd
 EndFunc
 

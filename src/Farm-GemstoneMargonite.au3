@@ -241,7 +241,7 @@ Func GoToCityOfTorcqua()
 		MoveTo(8258, -10419)
 		MoveTo(10180, -10714)
 		Move(11250, -11350, 0)
-		Sleep(12000) ; wait 12 seconds to ensure that player exited outpost
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost
 	WEnd
 EndFunc
 

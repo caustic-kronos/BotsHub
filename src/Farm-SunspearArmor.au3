@@ -100,7 +100,7 @@ Func EnterSunspearArmorChallenge()
 		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 		RandomSleep(250)
 		Dialog(0x87)
-		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered challenge
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost and entered challenge
 	WEnd
 EndFunc
 

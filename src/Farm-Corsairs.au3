@@ -140,7 +140,7 @@ Func EnterCorsairsModdokCreviceMission()
 		GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 		RandomSleep(250)
 		Dialog(0x84)
-		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost and entered mission
 	WEnd
 EndFunc
 

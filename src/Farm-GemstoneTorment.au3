@@ -136,7 +136,7 @@ Func GoToRavenHeartGloom()
 		MoveTo(5487, -17983)
 		MoveTo(6489, -20099)
 		Move(6700, -21250, 0)
-		Sleep(12000) ; wait 12 seconds to ensure that player exited outpost
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost
 	WEnd
 EndFunc
 
