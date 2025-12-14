@@ -613,9 +613,25 @@ Global Const $ID_I_Am_Unstoppable				= 2356
 Global Const $ID_Mindbender						= 2411
 Global Const $ID_Mental_Block					= 2417
 Global Const $ID_Dwarven_Stability				= 2423
-; Food and drink boosts
-Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
-Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
+; Consumables, food and drink boosts
+Global Const $ID_Drake_Skin						= 1680	; obtained using Drake Kabob
+Global Const $ID_Skale_Vigor					= 1681	; obtained using Bowl of Skalefin Soup
+Global Const $ID_Pahnai_Salad_Rush				= 1682	; obtained using Pahnai Salad
+Global Const $ID_Sugar_Jolt_2					= 1916	; obtained using Sugary Blue Drink
+Global Const $ID_Sugar_Jolt_5					= 1933	; obtained using Chocolate Bunny
+Global Const $ID_Golden_Egg_effect				= 1934
+Global Const $ID_Birthday_Cupcake_effect		= 1945
+Global Const $ID_Armor_of_Salvation_effect		= 2520
+Global Const $ID_Grail_of_Might_effect			= 2521
+Global Const $ID_Essence_of_Celerity_effect		= 2522
+Global Const $ID_Candy_Corn_effect				= 2604
+Global Const $ID_Candy_Apple_effect				= 2605
+Global Const $ID_Pie_Induced_Ecstasy			= 2649	; obtained using Slice of Pumpkin Pie
+Global Const $ID_Sugar_Infusion					= 2762
+Global Const $ID_Blue_Rock_Candy_Rush			= 2971
+Global Const $ID_Green_Rock_Candy_Rush			= 2972
+Global Const $ID_Red_Rock_Candy_Rush			= 2973
+Global Const $ID_Well_Supplied					= 3174	; obtained using War Supplies
 #EndRegion Skill IDs
 
 
