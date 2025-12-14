@@ -296,15 +296,15 @@ Func GemstoneMargoniteFarmLoop()
 		Sleep(500)
 	EndIf
 	Info('Taking Quest')
-	Local $TimerQuest
-	$TimerQuest = TimerInit()
-	Do
+	Local $TimerQuest = TimerInit()
+	While GetQuestByID(0x2EF) == Null And TimerDiff($TimerQuest) < 10000
 		GoNearestNPCToCoords(-17710, -8811)
 		Sleep(1000)
 		Dialog(0x82EF01)
 		Sleep(1000)
-	Until GetQuestByID(0x2EF) <> Null Or TimerDiff($TimerQuest) > 15000 Or IsPlayerDead()
+	WEnd
 	If GetQuestByID(0x2EF) == Null Then Return $FAIL
+
 	Info('Moving to spot and aggroing margonites')
 	MoveTo(-17541, -9431)
 	If MargoniteMoveDefending(-13935, -9850) == $FAIL Then Return $FAIL

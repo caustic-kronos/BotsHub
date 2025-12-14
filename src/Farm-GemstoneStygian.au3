@@ -213,10 +213,13 @@ Func GemstoneStygianFarmLoop()
 		Sleep(500)
 	EndIf
 	Info('Taking Quest')
-	GoNearestNPCToCoords(7188, -9108)
-	Sleep(1000)
-	Dialog(0x82E601)
-	Sleep(1000)
+	Local $TimerQuest = TimerInit()
+	While GetQuestByID(0x2E6) == Null And TimerDiff($TimerQuest) < 10000
+		GoNearestNPCToCoords(7188, -9108)
+		Sleep(1000)
+		Dialog(0x82E601)
+		Sleep(1000)
+	WEnd
 	If GetQuestByID(0x2E6) == Null Then Return $FAIL
 
 	Switch $StygianPlayerProfession
@@ -307,61 +310,62 @@ Func StygianJobRanger()
 	RandomSleep(2000)
 	MoveTo(8177, -11171, 10)
 	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
-	Do
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_DustTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_DustTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_DustTrap) Then UseSkillEx($Stygian_Ranger_DustTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_DustTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_SpikeTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
+	WEnd
+	UseSkillEx($Stygian_Ranger_FlameTrap)
 	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
-	Do
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_SpikeTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_FlameTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_DustTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_DustTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_DustTrap) Then UseSkillEx($Stygian_Ranger_DustTrap)
+	WEnd
+	UseSkillEx($Stygian_Ranger_DustTrap)
 	If IsRecharged($Stygian_Ranger_MuddyTerrain) Then UseSkillEx($Stygian_Ranger_MuddyTerrain)
 	RandomSleep(2000)
 	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
-	Do
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_SpikeTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_FlameTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_DustTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_DustTrap) Or IsPlayerDead()
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_DustTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_SpikeTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_SpikeTrap) Then UseSkillEx($Stygian_Ranger_SpikeTrap)
-	Do
+	WEnd
+	UseSkillEx($Stygian_Ranger_SpikeTrap)
+	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
 		RandomSleep(100)
-	Until IsRecharged($Stygian_Ranger_FlameTrap) Or IsPlayerDead()
-	If IsRecharged($Stygian_Ranger_FlameTrap) Then UseSkillEx($Stygian_Ranger_FlameTrap)
+	WEnd
+	UseSkillEx($Stygian_Ranger_FlameTrap)
 	UseHeroSkill($StygianHeroIndex, $Stygian_Hero_EdgeOfExtinction)
 	;TargetNearestEnemy()
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
 	UseSkill($Stygian_Ranger_MarkOfPain, $target)
-	Do
-		RandomSleep(50)
-	Until GetHasHex($target) Or IsPlayerDead()
+	While IsPlayerAlive() And Not GetHasHex($target)
+		RandomSleep(100)
+	WEnd
 	MoveTo(8368, -11244)
 	If IsRecharged($Stygian_Ranger_EbonStandard) Then UseSkillEx($Stygian_Ranger_EbonStandard)
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
