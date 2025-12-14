@@ -105,7 +105,7 @@ Func SetupTeamPongmeiChestFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
 		SetupTeamUsingGUISettings()
-    Else
+	Else
 		Info('Setting up team according to default settings')
 		LeaveParty()
 		Sleep(500 + GetPing())
@@ -205,6 +205,7 @@ Func PongmeiChestFarmLoop($STATUS)
 EndFunc
 
 
+;~ @Unused at the moment
 ;~ Method to check to which place you are the closest to
 Func SkipToPreventBackTracking($X, $Y, $nextX, $nextY)
 	Local $me = GetMyAgent()
@@ -264,7 +265,7 @@ Func DervishRun($X, $Y)
 		Sleep(250)
 		$me = GetMyAgent()
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -285,7 +286,7 @@ Func GetNPCInTheBack($X, $Y)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	Local $npcs = GetNPCsInRangeOfAgent($me, $RANGE_SPELLCAST)
+	Local $npcs = GetNPCsInRangeOfAgent($me, Null, $RANGE_SPELLCAST)
 	Local $bestNpc = Null
 	; dot product ranges from -1 (directly behind) to 1 (directly ahead)
 	Local $minDot = 1
@@ -318,7 +319,7 @@ Func GetNPCInTheBack($X, $Y)
 EndFunc
 
 
-;~ Get a foe that in front of player and close enough to point (X, Y) to use Death Charge on
+;~ Get a foe that in front of player and close enough to point (X, Y) to use Death's Charge on
 Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')

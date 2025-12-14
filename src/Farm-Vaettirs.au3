@@ -350,7 +350,7 @@ Func AggroAllMobs()
 	For $i = 25 To 30
 		If VaettirsMoveDefending($vaettirs[$i][0], $vaettirs[$i][1]) == $FAIL Then Return $FAIL
 	Next
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -363,7 +363,7 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $VaettirsMoveOptionsElementalist)
 	EndSwitch
 	If $result == $STUCK Then
-		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs whenever player got surrounded and stuck
+		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 		VaettirsKillSequence()
 		If IsPlayerAlive() Then
 			Info('Looting')

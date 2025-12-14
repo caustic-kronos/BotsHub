@@ -60,10 +60,8 @@ Func SetupUnderworldFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	SwitchToHardModeIfEnabled()
-	Sleep(500 + GetPing())
-	If SetupPlayerUnderworldFarm() == $FAIL Then Return $FAIL
-	If SetupTeamUnderworldFarm() == $FAIL Then Return $FAIL
-	Sleep(500 + GetPing())
+	SetupPlayerUnderworldFarm()
+	SetupTeamUnderworldFarm()
 	$UW_FARM_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS

@@ -291,9 +291,8 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
-				RandomSleep(50)
-				If IsPlayerDead() Then Return
+			While IsPLayerAlive() And GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
+				RandomSleep(100)
 			WEnd
 		EndIf
 	Next
@@ -432,7 +431,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 			;MoveTo(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))		;Fail half the time
 			;GoSignpost($agent)															;Seems to work but serious rubberbanding
 			;GoToSignpost($agent)															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
-			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)			;Final solution
+			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)			;Final solution, caution, chest is considered as signpost by game client
 			If IsPlayerDead() Then Return
 			RandomSleep(200)
 			OpenChest()
@@ -1020,9 +1019,9 @@ Func UseMoraleConsumableIfNeeded()
 				$usedMoraleBooster = True
 			EndIf
 		Next
-		If Not $usedMoraleBooster Then Return False
+		If Not $usedMoraleBooster Then Return $FAIL
 	WEnd
-	Return True
+	Return $SUCCESS
 EndFunc
 
 
@@ -1730,17 +1729,14 @@ Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
 	For $i = $firstIndex - 1 To $lastIndex - 1 ; Caution, array rows are indexed from 1, but $array is indexed from 0
 		If UBound($array, $UBOUND_COLUMNS) == 2 Then
 			$result = $function($array[$i][0], $array[$i][1])
-			If $result <> $SUCCESS Then Return $result
 		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
 			$result = $function($array[$i][0], $array[$i][1], $array[$i][2])
-			If $result <> $SUCCESS Then Return $result
 		ElseIf UBound($array, $UBOUND_COLUMNS) == 4 Then
 			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3])
-			If $result <> $SUCCESS Then Return $result
 		ElseIf UBound($array, $UBOUND_COLUMNS) == 5 Then
 			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3], $array[$i][4])
-			If $result <> $SUCCESS Then Return $result
 		EndIf
+		If $result <> $SUCCESS Then Return $result
 	Next
 	Return $SUCCESS
 EndFunc
@@ -1840,13 +1836,6 @@ Func IsOverLine($coefficientX, $coefficientY, $fixedCoefficient, $posX, $posY)
 	If $position > 0 Then
 		Return True
 	EndIf
-	Return False
-EndFunc
-
-
-;~ Is agent in range of coordinates
-Func IsAgentInRange($agent, $X, $Y, $range)
-	If GetDistanceToPoint($agent, $X, $Y) < $range Then Return True
 	Return False
 EndFunc
 
@@ -2226,6 +2215,13 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 	Next
 	Return $nearestAgent
 EndFunc
+
+
+;~ Is agent in range of coordinates
+Func IsAgentInRange($agent, $X, $Y, $range)
+	If GetDistanceToPoint($agent, $X, $Y) < $range Then Return True
+	Return False
+EndFunc
 #EndRegion NPCs
 
 
@@ -2307,7 +2303,8 @@ EndFunc
 
 ;~ Did run fail ?
 Func IsRunFailed()
-	If ($partyFailuresCount > 5) Then
+	Local Static $MaxPartyWipesCount = 5
+	If ($partyFailuresCount > $MaxPartyWipesCount) Then
 		Notice('Party wiped ' & $partyFailuresCount & ' times, run is considered failed.')
 		Return True
 	EndIf
@@ -2666,7 +2663,7 @@ Func WaitAndFightEnemiesInArea($options = $Default_MoveAggroAndKill_Options)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	WEnd
-	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -2763,7 +2760,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Op
 			EndIf
 		EndIf
 	WEnd
-	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -2781,8 +2778,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
-	Local $target = GetNearestEnemyToAgent($me)
-	If $target <> Null Then GetAlmostInRangeOfAgent($target) ; get as close as possible to foe to have surprise effect when attacking
+	Local $target = Null
 	If $flagHeroes Then FanFlagHeroes(260) ; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 
 	While IsPlayerOrPartyAlive() And $foesCount > 0
@@ -2795,6 +2791,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 				CallTarget($target)
 				Sleep(100)
 			EndIf
+			GetAlmostInRangeOfAgent($target) ; get as close as possible to target foe to have a surprise effect when attacking
 			Attack($target) ; Start auto-attack on new target
 			Sleep(100)
 
@@ -2824,7 +2821,7 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
 	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
-	Return IsPlayerOrPartyAlive()? $SUCCESS : $FAIL
+	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 

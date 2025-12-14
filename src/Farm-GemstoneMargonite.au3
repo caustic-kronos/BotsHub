@@ -155,8 +155,7 @@ Func SetupGemstoneMargoniteFarm()
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	Sleep(500 + GetPing())
 	If SetupPlayerMargoniteFarm() == $FAIL Then Return $FAIL
-    If SetupTeamMargoniteFarm() == $FAIL Then Return $FAIL
-    SetupHeroMargoniteFarm()
+	If SetupTeamMargoniteFarm() == $FAIL Then Return $FAIL
 	Sleep(500 + GetPing())
 	$GEMSTONE_MARGONITE_FARM_SETUP = True
 	Info('Preparations complete')
@@ -206,11 +205,6 @@ Func SetupTeamMargoniteFarm()
 		Return $FAIL
 	EndIf
 	Sleep(250 + GetPing())
-	Return $SUCCESS
-EndFunc
-
-
-Func SetupHeroMargoniteFarm()
 	Info('Setting up hero build skill bar')
 	LoadSkillTemplate($MargoniteMonkHeroSkillBar, $MargoniteHeroIndex)
 	Sleep(250 + GetPing())
@@ -218,6 +212,7 @@ Func SetupHeroMargoniteFarm()
 	Sleep(250 + GetPing())
 	DisableAllHeroSkills($MargoniteHeroIndex)
 	Sleep(250 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
@@ -377,7 +372,7 @@ Func WaitAggroMargonites($timeToWait)
 		MargoniteDefend()
 		RandomSleep(50)
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -390,7 +385,7 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $MargoniteMoveOptionsElementalist)
 	EndSwitch
 	If $result == $STUCK Then
-		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites whenever player got surrounded and stuck
+		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
 		If KillMargonites() == $FAIL Then Return $FAIL
 		RandomSleep(1000 + GetPing())
 		If IsPlayerAlive() Then
@@ -458,7 +453,7 @@ Func MargoniteCheckBuffs()
 			RandomSleep(GetPing())
 		EndIf
 	EndIf
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -501,7 +496,7 @@ Func KillMargonites()
 		Case $ID_Ranger
 			KillMargonitesUsingWhirlingDefense()
 	EndSwitch
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -537,7 +532,7 @@ Func KillMargonitesUsingVisageSkills()
 				EndIf
 		EndSwitch
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -559,5 +554,5 @@ Func KillMargonitesUsingWhirlingDefense()
 			RandomSleep(100)
 		EndIf
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc

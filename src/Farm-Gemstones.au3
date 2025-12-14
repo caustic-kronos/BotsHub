@@ -44,6 +44,8 @@ Global Const $GemstonesFarmInformations = 'Requirements:' & @CRLF _
 	& 'Ebony Citadel of Mallyx location is unlocked after defeating all 4 Lords of Anguish in Mallyx the Unyielding quest.' & @CRLF _
 	& 'Caution: do not defeat Mallyx the Unyielding, because this will finish the quest which would require to do 4 DoA parts all over again to get access to Ebony Citadel of Mallyx' & @CRLF _
 	& 'This bot doesn''t defeat Mallyx the Unyielding, only attempts to defeat all 19 waves, which doesn''t finish the quest' & @CRLF _
+	& 'This farm bot is based on below article:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm' & @CRLF
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONES_FARM_DURATION = (12 * 60 + 30) * 1000
 Global Const $MAX_GEMSTONES_FARM_DURATION = 25 * 60 * 1000
@@ -73,12 +75,12 @@ Global Const $Gem_SkillsCostsArray	= [15,						10,						0,						0,						0,						
 Global Const $GemSkillsCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
 
 Global $GemstonesFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
-$GemstonesFightOptions.Item('fightRange') 		= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-$GemstonesFightOptions.Item('flagHeroesOnFight') = False ; heroes will be flagged before fight to defend the start location
-$GemstonesFightOptions.Item('priorityMobs') 		= True
-$GemstonesFightOptions.Item('skillsCostMap') 	= $GemSkillsCostsMap
-$GemstonesFightOptions.Item('lootInFights') 		= False ; loot only when no foes are in range
-$GemstonesFightOptions.Item('openChests') 		= False ; there are no chests in Ebony Citadel of Mallyx location
+$GemstonesFightOptions.Item('fightRange')			= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
+$GemstonesFightOptions.Item('flagHeroesOnFight')	= False ; heroes will be flagged before fight to defend the start location
+$GemstonesFightOptions.Item('priorityMobs')			= True
+$GemstonesFightOptions.Item('skillsCostMap')		= $GemSkillsCostsMap
+$GemstonesFightOptions.Item('lootInFights')			= False ; loot only when no foes are in range
+$GemstonesFightOptions.Item('openChests')			= False ; there are no chests in Ebony Citadel of Mallyx location
 
 Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
 Global Const $ModelID_Zhellix = 5221 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
@@ -122,7 +124,7 @@ Func SetupPlayerGemstonesFarm()
 	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
 		Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
 		LoadSkillTemplate($GemstonesMesmerSkillBar)
-    Else
+	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
 	Sleep(250 + GetPing())
@@ -140,13 +142,13 @@ Func SetupTeamGemstonesFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
 		SetupTeamUsingGUISettings()
-    Else
+	Else
 		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-    EndIf
+	EndIf
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
-		Return $FAIL
+		Return $FAIL ; Zhellix agent ID will be lower if team size is lower than 8
 	EndIf
 	Return $SUCCESS
 EndFunc

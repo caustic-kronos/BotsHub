@@ -26,7 +26,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $FroggyFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '32mn average in NM' & @CRLF _
@@ -71,7 +71,7 @@ Func SetupPlayerFroggyFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-    Else
+	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
 	Sleep(250 + GetPing())
@@ -89,12 +89,12 @@ Func SetupTeamFroggyFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
 		SetupTeamUsingGUISettings()
-    Else
+	Else
 		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-    EndIf
+	EndIf
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
-    	Warn('Could not set up party correctly. Team size different than 8')
+		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
 EndFunc
 

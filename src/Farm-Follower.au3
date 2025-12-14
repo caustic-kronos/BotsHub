@@ -311,7 +311,7 @@ EndFunc
 Func GetFirstPlayerOfParty()
 	Local $party = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
-	Local $firstPlayer
+	Local $firstPlayer = Null
 	For $member In $party
 		If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
 		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))

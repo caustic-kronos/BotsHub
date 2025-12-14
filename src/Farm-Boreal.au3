@@ -171,7 +171,7 @@ Func BorealChestFarmLoop($STATUS)
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
 	; Result can't be considered a failure if no chests were found
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 

@@ -31,13 +31,13 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $WarSupplyKeiranInformations = 'For best results, have :' & @CRLF _
-	& ' - (Weapon Slot-3) Shortbow +15/-5 vamp +5 armor is the best weapon' & @CRLF _
-	& ' - (Weapon Slot-4) Keiran''s Bow' & @CRLF _ ; escaped character ' with '' here
-	& ' - Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
-	& ' - When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
-	& ' - Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
-	& ' - This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
-	& ' - Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
+	& '- (Weapon Slot-3) Shortbow +15/-5 vamp +5 armor is the best weapon' & @CRLF _
+	& '- (Weapon Slot-4) Keiran''s Bow' & @CRLF _ ; escaped character ' with '' here
+	& '- Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
+	& '- When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
+	& '- Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
+	& '- This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
+	& '- Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
 	& ' ' & @CRLF _
 	& 'Any character can go into Auspicious Beginnings mission if you send the right dialog ID (already in script) to Guild Wars client' & @CRLF _
 	& 'You just need the Keiran''s Bow which Gwen gives when the right dialog ID is sent to Guild Wars client' & @CRLF _
@@ -190,10 +190,10 @@ Func RunQuest()
 	If WaitAndFightEnemiesInArea($WarSupplyFightOptions) == $FAIL Then Return $FAIL
 
 	; loop to wait out in-game countdown to exit quest automatically
-	Local $deadlock = TimerInit()
+	Local $exitTimer = TimerInit()
 	While GetMapID() <> $ID_Hall_of_Monuments And IsPlayerAlive()
 		Sleep(1000)
-		If TimerDiff($deadlock) > 120000 Then Return $FAIL ; if 2 minutes elapsed after a final fight and still not left the then some stuck occurred, therefore exiting
+		If TimerDiff($exitTimer) > 120000 Then Return $FAIL ; if 2 minutes elapsed after a final fight and still not left the then some stuck occurred, therefore exiting
 	WEnd
 	Sleep(3000)
 	Return $SUCCESS
@@ -231,7 +231,7 @@ Func RunWayPoints()
 	]
 
 	Info('Running through way points')
-	Local $x, $y, $log, $range
+	Local $x, $y, $log, $range, $me, $Miku
 	For $i = 0 To UBound($wayPoints) - 1
 		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_Auspicious_Beginnings And GetMapID() <> $ID_Hall_of_Monuments) Then Disconnected()
 		$x = $wayPoints[$i][0]
@@ -243,11 +243,11 @@ Func RunWayPoints()
 		While IsPlayerAlive() ; Between waypoints ensure that everything is fine with player and Miku
 			If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 			If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
-			Local $me = GetMyAgent()
-			Local $Miku = GetAgentByID($AgentID_Miku)
+			$me = GetMyAgent()
+			$Miku = GetAgentByID($AgentID_Miku)
 			If DllStructGetData($Miku, 'X') == 0 And DllStructGetData($Miku, 'Y') == 0 Then Return $FAIL ; check against some impossible scenarios
 			; Using 6th healing skill on the way between waypoints to recover until health is full
-			If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) And IsPlayerAlive() Then UseSkillEx($KeiranNaturesBlessing)
+			If IsRecharged($KeiranNaturesBlessing) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) Then UseSkillEx($KeiranNaturesBlessing)
 			If CountFoesInRangeOfAgent($me, $WarSupplyFightOptions.Item('fightRange')) > 0 Then WarSupplyFarmFight($WarSupplyFightOptions)
 			If GetDistance($me, $Miku) > 1650 Then ; Ensuring that Miku is not too far
 				Info('Miku is too far. Trying to move to her location')
@@ -259,15 +259,14 @@ Func RunWayPoints()
 		If IsPlayerDead() Then Return $FAIL
 		If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 	Next
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
 Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
-	Info('Fighting')
-	If(IsPLayerDead()) Then Return $FAIL
-	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
 	If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
+	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
+	Info('Fighting')
 
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : 1200
 	Local $priorityMobs = ($options.Item('priorityMobs') <> Null) ? $options.Item('priorityMobs') : True
@@ -277,7 +276,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 	Local $foes = Null
 	Local $target = Null
 
-	While IsPlayerAlive()
+	While IsPlayerAlive() ; this loop ends when there are no more foes in range
 		If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
 		If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 		; refreshing/sampling all agents state at the start of every loop iteration to not operate on some old, inadequate data

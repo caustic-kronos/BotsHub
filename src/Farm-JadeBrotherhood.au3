@@ -25,7 +25,6 @@
 
 Opt('MustDeclareVars', True)
 
-Global Const $JB_Timeout = 120000
 
 ; ==== Constants ====
 Global Const $JB_Skillbar = 'OgejkirMrSqimXfXfbrXaXNX4OA'
@@ -67,7 +66,7 @@ Global Const $Brotherhood_EnduringHarmony	= 2
 Global Const $Brotherhood_MakeHaste			= 3
 
 Global $DeadlockTimer
-Global $Deadlocked = False
+Global Const $JB_Timeout = 120000 ; 2 minutes max time for cleaning Jade Brotherhood mob
 
 Global $JADE_BROTHERHOOD_FARM_SETUP = False
 
@@ -101,7 +100,7 @@ Func SetupJadeBrotherhoodFarm()
 	RandomSleep(1000)
 	WaitMapLoading($ID_The_Marketplace)
 	$JADE_BROTHERHOOD_FARM_SETUP = True
-	Info('Jade Brotherhood farm set up')
+	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
 
@@ -174,17 +173,15 @@ Func JadeBrotherhoodFarmLoop()
 	WaitForBall()
 	If IsPlayerDead() Then Return $FAIL
 	KillJadeBrotherhood()
-	If IsPlayerDead() Then Return $FAIL
-
 	RandomSleep(1000)
 
-	If IsPlayerAlive() Then
+	If IsPlayerAlive() And $DeadlockTimer < $JB_Timeout Then
 		Info('Looting')
 		PickUpItems()
+		Return $SUCCESS
+	Else
+		Return $FAIL
 	EndIf
-
-	If $Deadlocked Then Return $FAIL
-	Return $SUCCESS
 EndFunc
 
 

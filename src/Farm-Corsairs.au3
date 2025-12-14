@@ -62,7 +62,7 @@ Global Const $Corsairs_Winnowing		= 1
 Global Const $Corsairs_MysticHealing	= 2
 
 Global $CORSAIRS_FARM_SETUP = False
-Global $Bohseda_Timer
+Global $Bohseda_Timer = Null
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
@@ -98,8 +98,8 @@ Func SetupPlayerCorsairsFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
 		LoadSkillTemplate($RACorsairsFarmerSkillbar)
-    Else
-    	Warn('Should run this farm as ranger')
+	Else
+		Warn('Should run this farm as ranger')
  		Return $FAIL
    EndIf
 	Sleep(250 + GetPing())

@@ -170,16 +170,15 @@ Func DragonMossFarmLoop()
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
-	If IsPlayerDead() Then Return $FAIL
-
 	RandomSleep(1000)
 
 	If IsPlayerAlive() Then
 		Info('Looting')
 		PickUpItems()
+		Return $SUCCESS
+	Else
+		Return $FAIL
 	EndIf
-
-	Return $SUCCESS
 EndFunc
 
 

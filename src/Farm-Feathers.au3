@@ -157,7 +157,7 @@ Func FeathersFarmLoop()
 	MoveKill(-10500, 5500)
 	MoveKill(-9700, 2400)
 
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -246,7 +246,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -345,7 +345,7 @@ EndFunc
 ;~ Return True if agent is a Sensali
 Func IsSensali($agent)
 	Local $modelID = DllStructGetData($agent, 'ModelID')
-	If $modelID = $ModelID_Sensali_Claw Or $modelID = $ModelID_Sensali_Darkfeather Or $modelID = $ModelID_Sensali_Cutter Then
+	If $modelID == $ModelID_Sensali_Claw Or $modelID == $ModelID_Sensali_Darkfeather Or $modelID == $ModelID_Sensali_Cutter Then
 		Return True
 	EndIf
 	Return False

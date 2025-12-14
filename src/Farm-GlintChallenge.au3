@@ -100,7 +100,7 @@ Func SetupPlayerGlintChallengeFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-    Else
+	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
 	Sleep(250 + GetPing())

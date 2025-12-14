@@ -124,7 +124,7 @@ Func SetupPlayerKurzickFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-    Else
+	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
 	Sleep(250 + GetPing())
@@ -142,12 +142,12 @@ Func SetupTeamKurzickFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
 		SetupTeamUsingGUISettings()
-    Else
+	Else
 		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-    EndIf
+	EndIf
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
-    	Warn('Could not set up party correctly. Team size different than 8')
+		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
 EndFunc
 

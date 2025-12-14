@@ -68,6 +68,7 @@ Global Const $Mantids_BladeturnRefrain		= 8
 
 Global $MANTIDS_FARM_SETUP = False
 
+
 ;~ Main method to farm Mantids
 Func MantidsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
@@ -157,8 +158,8 @@ Func MantidsFarmLoop()
 
 	UseHeroSkill($MantidsHeroIndex, $Mantids_VocalWasSogolon)
 	RandomSleep(1500)
-	AdlibRegister('UseFallBack', 8000)
 	UseHeroSkill($MantidsHeroIndex, $Mantids_Incoming)
+	AdlibRegister('MantidsUseFallBack', 8000)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0)
@@ -216,7 +217,7 @@ Func MantidsFarmLoop()
 	MoveTo(-230, -14100)
 	Local $center = FindMiddleOfFoes(-250, -14250, $RANGE_AREA)
 	MoveTo($center[0], $center[1])
-	AdlibRegister('UseWhirlingDefense', 500)
+	AdlibRegister('MantidsUseWhirlingDefense', 500)
 	UseSkillEx($Mantids_EdgeOfExtinction)
 
 	; Wait for all mobs to be registered dead or wait 3s
@@ -242,17 +243,17 @@ EndFunc
 
 
 ;~ Paragon Hero uses Fallback
-Func UseFallBack()
-	UseHeroSkill(1, $Mantids_FallBack)
-	AdlibUnRegister('UseFallBack')
+Func MantidsUseFallBack()
+	UseHeroSkill($MantidsHeroIndex, $Mantids_FallBack)
+	AdlibUnRegister('MantidsUseFallBack')
 EndFunc
 
 
 ;~ Use Whirling Defense skill
-Func UseWhirlingDefense()
+Func MantidsUseWhirlingDefense()
 	While IsRecharged($Mantids_WhirlingDefense) And IsPlayerAlive()
 		UseSkillEx($Mantids_WhirlingDefense)
 		RandomSleep(50)
 	WEnd
-	AdlibUnRegister('UseWhirlingDefense')
+	AdlibUnRegister('MantidsUseWhirlingDefense')
 EndFunc

@@ -169,7 +169,7 @@ Func GemstoneTormentFarmLoop()
 		RandomSleep(100)
 	WEnd
 	$TimerWait = TimerInit()
-	UseSkillEx($Torment_ObsidianFlesh)
+	UseSkillTimed($Torment_ObsidianFlesh)
 	While TimerDiff($TimerWait) < 2000 And IsPlayerAlive()
 		RandomSleep(100)
 	WEnd
@@ -221,9 +221,9 @@ EndFunc
 Func CastBuffsTormentFarm()
 	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(GetPing() + 150)
-	UseSkillEx($Torment_ElementalLord)
-	UseSkillEx($Torment_GlyphOfElementalPower)
-	UseSkillEx($Torment_ObsidianFlesh)
+	UseSkillTimed($Torment_ElementalLord)
+	UseSkillTimed($Torment_GlyphOfElementalPower)
+	UseSkillTimed($Torment_ObsidianFlesh)
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
@@ -237,7 +237,7 @@ Func DefendTormentFarm()
 			IsRecharged($Torment_DeathsCharge) And GetEnergy() > 5 Then
 		$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 		ChangeTarget($target)
-		UseSkillEx($Torment_DeathsCharge, $target)
+		UseSkillTimed($Torment_DeathsCharge, $target)
 	EndIf
 EndFunc
 
@@ -248,13 +248,13 @@ Func KillTormentMobs()
 
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
-	UseSkillEx($Torment_MeteorShower, $target)
+	UseSkillTimed($Torment_MeteorShower, $target)
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
-	UseSkillEx($Torment_DeathsCharge, $target)
-	UseSkillEx($Torment_LavaFont)
-	UseSkillEx($Torment_FlameBurst)
-	UseSkillEx($Torment_RodgortsInvocation, $target)
+	UseSkillTimed($Torment_DeathsCharge, $target)
+	UseSkillTimed($Torment_LavaFont)
+	UseSkillTimed($Torment_FlameBurst)
+	UseSkillTimed($Torment_RodgortsInvocation, $target)
 	Sleep(1500 + GetPing()) ; waiting for mobs to be cleaned by meteor shower
 
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL

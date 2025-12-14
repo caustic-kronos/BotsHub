@@ -86,7 +86,7 @@ Global Const $Raptors_StandYourGround	= 6
 Global Const $Raptors_CantTouchThis		= 7
 Global Const $Raptors_BladeturnRefrain	= 8
 
-Global $RaptorsPlayerProfession = $ID_Warrior ; global variable to remember player's profession
+Global $RaptorsPlayerProfession = $ID_Warrior ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
 
 Global $RaptorsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
 $RaptorsMoveOptions.Item('defendFunction')			= Null ; not using any defense skills during movement to preserve energy
@@ -138,7 +138,7 @@ Func SetupPlayerRaptorsFarm()
 			$RaptorsPlayerProfession = $ID_Dervish
 			LoadSkillTemplate($DNRaptorsFarmerSkillbar)
 		Case Else
-    		Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
+			Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
 			Return $FAIL
 	EndSwitch
 	Sleep(250 + GetPing())
@@ -282,7 +282,7 @@ Func AggroRaptors()
 	Else
 		If MoveAggroingRaptors(-23300, -12050) == $STUCK Then Return $FAIL
 	EndIf
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -418,7 +418,7 @@ Func KillRaptors()
 			$me = GetMyAgent()
 		WEnd
 	EndIf
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 

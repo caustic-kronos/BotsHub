@@ -82,7 +82,7 @@ Func SetupTascaChestFarm()
 	If TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	UseCitySpeedBoost()
 	If SetupPlayerTascaChestFarm() == $FAIL Then Return $FAIL
-	SetupTeamTascaChestFarm()
+	If SetupTeamTascaChestFarm() == $FAIL Then Return $FAIL
 	SwitchToHardModeIfEnabled()
 
 	GoToTascasDemise()
@@ -121,7 +121,7 @@ Func SetupPlayerTascaChestFarm()
 			$TascaPlayerProfession = $ID_Ritualist
 			LoadSkillTemplate($TascaRitualistChestRunnerSkillbar)
 		Case Else
-    		Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist'
+			Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist') ; other characters have too few energy
 			Return $FAIL
 	EndSwitch
 	Sleep(250 + GetPing())
@@ -140,14 +140,16 @@ Func SetupTeamTascaChestFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
 		SetupTeamUsingGUISettings()
-    Else
+	Else
 		Info('Setting up team according to default settings')
 		OmniFarmFullSetup()
 	EndIf
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
-    	Warn('Could not set up party correctly. Team size different than 8')
+		Warn('Could not set up party correctly. Team size different than 8')
+		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 
@@ -278,7 +280,7 @@ Func TascaChestRun($X, $Y)
 		EndIf
 
 		TascaDefendFunction($X, $Y)
-		; Energy usage becomes too heavy if we start using DC as a speedup
+		; Energy usage becomes too heavy if we start using Death's Charge as a speedup
 		;If GetEnergy() >= 5 And IsRecharged($Tasca_DeathsCharge) Then
 		;	Local $target = GetTargetForDeathsCharge($X, $Y, 700)
 		;	If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
@@ -301,11 +303,11 @@ Func TascaChestRun($X, $Y)
 		Sleep(250)
 		$me = GetMyAgent()
 	WEnd
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
-;~ Get a foe close enough to use Death Charge on and as close as possible to coordinates
+;~ Get a foe close enough to use Death's Charge on and as close as possible to coordinates
 Func GetTargetToEscapeWithDeathsCharge($X, $Y)
 	Local $targetDistance = 999999
 	Local $target = Null

@@ -1244,7 +1244,6 @@ EndFunc
 
 ;~ Picks up an item.
 Func PickUpItem($item)
-	If GetIsDead(GetMyAgent()) Then Return
 	Local $agentID
 	If Not IsDllStruct($item) Then
 		$agentID = $item

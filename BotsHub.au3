@@ -18,7 +18,6 @@
 
 ; TODO :
 ; - after salvage, get material ID and write in file salvaged material
-; - change bots to have cleaner return system
 ; - add true locking mechanism to prevent trying to run several bots on the same account at the same time
 
 ; Night's tips and tricks
