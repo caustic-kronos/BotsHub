@@ -917,7 +917,7 @@ Func BotHubLoop()
 			; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
 			; So bag 5 will always fill before 4 - hence we can count items up to bag 4
 			If (CountSlots(1, _Min($BAGS_COUNT, 4)) < $INVENTORY_SPACE_NEEDED) Then
-				ActiveInventoryManagement()
+				InventoryManagementBeforeRun()
 				ResetBotsSetups()
 			EndIf
 			If (CountSlots(1, $BAGS_COUNT) < $INVENTORY_SPACE_NEEDED) Then
@@ -926,7 +926,7 @@ Func BotHubLoop()
 				$STATUS = 'WILL_PAUSE'
 			EndIf
 			If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
-				Local $resetRequired = PassiveInventoryManagement()
+				Local $resetRequired = InventoryManagementMidRun()
 				If $resetRequired Then ResetBotsSetups()
 			EndIf
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)

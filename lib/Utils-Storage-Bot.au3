@@ -63,13 +63,13 @@ Global $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hex
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory($STATUS)
 	;SellItemsToMerchant(DefaultShouldSellItem, True)
-	ActiveInventoryManagement()
+	InventoryManagementBeforeRun()
 	Return $PAUSE
 EndFunc
 
 
 ;~ Function to deal with inventory after farm
-Func ActiveInventoryManagement()
+Func InventoryManagementBeforeRun()
 	; Operations order :
 	; 1-Store unids if desired
 	; 2-Sort items
@@ -78,11 +78,11 @@ Func ActiveInventoryManagement()
 	; 5-Salvage
 	; 6-Sell materials
 	; 7-Sell items
-	; 8-Buy ectos with surplus
-	; 9-Store items
-	; 10-Balance character's gold level
+	; 8-Balance character's gold level
+	; 9-Buy ectoplasm/obsidian with surplus
+	; 10-Store items
 	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then
-		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
@@ -130,12 +130,14 @@ Func ActiveInventoryManagement()
 		BalanceCharacterGold(10000)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Glob_of_Ectoplasm, 10000, $ID_Obsidian_Shard)
+	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_Obsidian_Shard, 10000, $ID_Glob_of_Ectoplasm)
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreItemsInXunlaiStorage()
 EndFunc
 
 
-;~ Function to deal with inventory during farm
-Func PassiveInventoryManagement()
+;~ Function to deal with inventory during farm to preserve inventory space
+Func InventoryManagementMidRun()
+	If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) <> $GUI_CHECKED Then Return False
 	; Operations order :
 	; 1-Check if we have at least 1 identification kit and 1 salvage kit
 	; 2-If not, buy until we have 4 identification kits and 12 salvaged kits
@@ -146,7 +148,7 @@ Func PassiveInventoryManagement()
 		Info('Buying kits for passive inventory management')
 		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
 		; Since we are in EOTN, might as well clear inventory
-		ActiveInventoryManagement()
+		InventoryManagementBeforeRun()
 		BuyKitsForMidRun()
 		Return True
 	EndIf
