@@ -171,6 +171,101 @@ Func ResignAndReturnToOutpost()
 	ReturnToOutpost()
 	Sleep(5000)
 EndFunc
+
+
+Func EnterFissureOfWoe()
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Fissure of Woe')
+		If UseScroll($ID_FoW_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_Fissure_of_Woe)
+			If GetMapID() <> $ID_Fissure_of_Woe Then
+				Warn('Used scroll but still could not enter Fissure of Woe. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	Else ; Not using scroll method to enter Fissure of Woe
+		Info('Going to Balthazar statue to enter Fissure of Woe')
+		MoveTo(-2500, 18700)
+		SendChat('/kneel', '')
+		RandomSleep(GetPing() + 3000)
+		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+		RandomSleep(GetPing() + 750)
+		Dialog(0x85) ; entering FoW dialog option
+		RandomSleep(GetPing() + 750)
+		Dialog(0x86) ; accepting dialog option
+		WaitMapLoading($ID_Fissure_of_Woe)
+		If GetMapID() <> $ID_Fissure_of_Woe Then
+			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func EnterUnderworld()
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Underworld')
+		If UseScroll($ID_UW_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_Underworld)
+			If GetMapID() <> $ID_Underworld Then
+				Warn('Used scroll but still could not enter Underworld. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	Else ; Not using scroll method to enter Underworld
+		Info('Moving to Grenth statue to enter Underworld')
+		MoveTo(-4170, 19759)
+		MoveTo(-4124, 19829)
+		SendChat('/kneel', '')
+		RandomSleep(GetPing() + 3000)
+		GoToNPC(GetNearestNPCToCoords(-4124, 19829))
+		RandomSleep(GetPing() + 750)
+		Dialog(0x85) ; entering UW dialog option
+		RandomSleep(GetPing() + 750)
+		Dialog(0x86) ; accepting dialog option
+		WaitMapLoading($ID_Underworld)
+		If GetMapID() <> $ID_Underworld Then
+			Info('Could not enter Underworld. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Return $FAIL
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func EnterUrgozsWarren()
+	TravelToOutpost($ID_Embark_Beach, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter Urgoz''s Warren')
+		If UseScroll($ID_Urgoz_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_Urgoz_Warren)
+			If GetMapID() <> $ID_Urgoz_Warren Then
+				Warn('Used scroll but still could not enter Urgoz''s Warren. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
+Func EnterTheDeep()
+	TravelToOutpost($ID_Embark_Beach, $DISTRICT_NAME)
+	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+		Info('Using scroll to enter the Deep')
+		If UseScroll($ID_Deep_Scroll) == $SUCCESS Then
+			WaitMapLoading($ID_The_Deep)
+			If GetMapID() <> $ID_The_Deep Then
+				Warn('Used scroll but still could not enter the Deep. Ensure that player has correct scroll in inventory')
+				Return $PAUSE
+			EndIf
+		EndIf
+	EndIf
+	Return $SUCCESS
+EndFunc
 #EndRegion Map and travel
 
 

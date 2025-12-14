@@ -96,44 +96,6 @@ Func SetupTeamUnderworldFarm()
 EndFunc
 
 
-Func EnterUnderworld()
-	If GetMapID() <> $ID_Temple_of_the_Ages Then TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
-	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
-		Info('Using scroll to enter Underworld')
-		Local $uwScroll = GetItemByModelID($ID_UW_Scroll)
-		If DllStructGetData($uwScroll, 'Slot') > 0 Then ; slots are numbered from 1, if scroll is not in any bag then Slot is 0
-			UseItem($uwScroll)
-			WaitMapLoading($ID_Underworld)
-			If GetMapID() <> $ID_Underworld Then
-				Warn('Used scroll but still could not enter Underworld. Ensure that player has correct scroll in inventory')
-				Return $PAUSE
-			EndIf
-		Else
-			Warn('Could not find scroll to enter Underworld in player''s inventory')
-			Return $PAUSE
-		EndIf
-	Else ; not using scroll method to enter Underworld
-		Info('Moving to Grenth statue to enter Underworld')
-		MoveTo(-4170, 19759)
-		MoveTo(-4124, 19829)
-		SendChat('/kneel', '')
-		RandomSleep(GetPing() + 3000)
-		GoToNPC(GetNearestNPCToCoords(-4124, 19829))
-		RandomSleep(GetPing() + 750)
-		Dialog(0x85) ; entering UW dialog option
-		RandomSleep(GetPing() + 750)
-		Dialog(0x86) ; accepting dialog option
-		RandomSleep(GetPing() + 750)
-		WaitMapLoading($ID_Underworld)
-		If GetMapID() <> $ID_Underworld Then
-			Info('Could not enter Underworld. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
-			Return $FAIL
-		EndIf
-	EndIf
-	Return $SUCCESS
-EndFunc
-
-
 Func UnderworldFarmLoop()
 	Info('Starting Farm')
 	$UWFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run

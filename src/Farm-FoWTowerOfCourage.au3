@@ -91,7 +91,7 @@ Func FoWToCFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $FOW_TOC_FARM_SETUP And SetupFoWToCFarm() == $FAIL Then Return $PAUSE
 
-	Local $result = EnterFissureOfWoeToC()
+	Local $result = EnterFissureOfWoe()
 	If $result <> $SUCCESS Then Return $result
 	$result = FoWToCFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared FoW Tower of Courage mobs')
@@ -125,43 +125,6 @@ Func SetupPlayerFowToCFarm()
     EndIf
 	;ChangeWeaponSet(1) ; change to other weapon slot or comment this line if necessary
 	Sleep(500 + GetPing())
-	Return $SUCCESS
-EndFunc
-
-
-Func EnterFissureOfWoeToC()
-	If GetMapID() <> $ID_Temple_of_the_Ages Then TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
-	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
-		Info('Using scroll to enter Fissure of Woe')
-		Local $fowScroll = GetItemByModelID($ID_FoW_Scroll)
-		If DllStructGetData($fowScroll, 'Slot') > 0 Then ; slots are numbered from 1, if scroll is not in any bag then Slot is 0
-			UseItem($fowScroll)
-			WaitMapLoading($ID_Fissure_of_Woe)
-			If GetMapID() <> $ID_Fissure_of_Woe Then
-				Warn('Used scroll but still could not enter Fissure of Woe. Ensure that player has correct scroll in inventory')
-				Return $PAUSE
-			EndIf
-		Else
-			Warn('Could not find scroll to enter Fissure of Woe in player''s inventory')
-			Return $PAUSE
-		EndIf
-	Else ; not using scroll method to enter Fissure of Woe
-		Info('Going to Balthazar statue to enter Fissure of Woe')
-		MoveTo(-2500, 18700)
-		SendChat('/kneel', '')
-		RandomSleep(GetPing() + 3000)
-		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
-		RandomSleep(GetPing() + 750)
-		Dialog(0x85) ; entering FoW dialog option
-		RandomSleep(GetPing() + 750)
-		Dialog(0x86) ; accepting dialog option
-		RandomSleep(GetPing() + 750)
-		WaitMapLoading($ID_Fissure_of_Woe)
-		If GetMapID() <> $ID_Fissure_of_Woe Then
-			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
-			Return $FAIL
-		EndIf
-	EndIf
 	Return $SUCCESS
 EndFunc
 

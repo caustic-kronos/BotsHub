@@ -143,6 +143,7 @@ Global Const $ID_Isle_Of_Jade				= 276
 Global Const $ID_Leviathan_Pits				= 279
 Global Const $ID_Zin_Ku_Corridor			= 284
 Global Const $ID_The_Marketplace			= 303
+Global Const $ID_The_Deep					= 307
 Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Imperial_Isle				= 359
 Global Const $ID_Isle_Of_Meditation			= 360
@@ -207,7 +208,7 @@ Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_As
 											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Cavalon, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
 											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
 											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Shing_Jea_Monastery, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, _
-											$ID_Zin_Ku_Corridor, $ID_The_Marketplace, $ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, _
+											$ID_Zin_Ku_Corridor, $ID_The_Marketplace, $ID_The_Deep, $ID_Saint_Anjekas_Shrine, $ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, _
 											$ID_Kaineng_A_Chance_Encounter, $ID_Kamadan, $ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Chantry_Of_Secrets, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, _
 											$ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, $ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, _
 											$ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, $ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Ice_Cliff_Chasms, $ID_Riven_Earth, _
@@ -219,7 +220,7 @@ Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford A
 											'Wizards Isle', 'Burning Isle', 'Lions Arch', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
 											'House Zu Heltzer', 'Cavalon', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', 'Nahpui Quarter', _
 											'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Shing Jea Monastery', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
-											'Isle Of Jade', 'Leviathan Pits', 'Zin Ku Corridor', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
+											'Isle Of Jade', 'Leviathan Pits', 'Zin Ku Corridor', 'The Marketplace', 'The Deep', 'Saint Anjekas Shrine', 'Imperial Isle', 'Isle Of Meditation', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
 											'Kaineng A Chance Encounter', 'Kamadan', 'Sunward Marches', 'Sunspear Sanctuary', 'Chantry of Secrets', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', _
 											'Jokos Domain', 'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
 											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Ice Cliff Chasms', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', 'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', _
