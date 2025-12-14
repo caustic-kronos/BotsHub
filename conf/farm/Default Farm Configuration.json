@@ -1,0 +1,46 @@
+{
+	"main": {
+		"character": "No character selected",
+		"farm": "Choose a farm"
+	},
+	"run": {
+		"loop_mode": true,
+		"hard_mode": true,
+		"farm_materials_mid_run": false,
+		"consume_consumables": true,
+		"use_scrolls": false,
+		"store_unids": false,
+		"sort_items": false,
+		"collect_data": false,
+		"store_leftovers": false,
+		"store_gold": false,
+		"buy_ectoplasm": false,
+		"buy_obsidian": false,
+		"donate_faction_points": true,
+		"buy_faction_resources": false,
+		"buy_faction_scrolls": false,
+		"save_weapon_slot": false,
+		"weapon_slot": 1,
+		"bags_count": 5,
+		"district": "Random",
+		"disable_rendering": false
+	},
+	"team": {
+		"automatic_team_setup": false,
+		"player_build": "",
+		"hero_1": "Master of Whispers",
+		"hero_1_build": "OAljUwGopSUBHVyBoBVVbh4B1YA",
+		"hero_2": "Livia",
+		"hero_2_build": "OAhjQoGYIP3hhWVVaO5EeDzxJ",
+		"hero_3": "Gwen",
+		"hero_3_build": "OQNEAqwD2ycC0AmupXOIDQEQj",
+		"hero_4": "Olias",
+		"hero_4_build": "OAhjUwGYoSUBHVoBbhVVWbTODTA",
+		"hero_5": "Norgu",
+		"hero_5_build": "OQNEAqwD2ycCwpmupXOIDcBQj",
+		"hero_6": "Xandra",
+		"hero_6_build": "OACiAyk8gNtePuwJ00ZOPLYA",
+		"hero_7": "Razah",
+		"hero_7_build": "OQNEAqwD2ycCaCmupXOIDMEQj"
+	}
+}

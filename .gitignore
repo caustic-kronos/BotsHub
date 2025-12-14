@@ -1,7 +1,7 @@
 logs/**
 data/**
-conf/characters/*
+conf/farm/*
 conf/loot/*
-!conf/characters/Default Configuration.json
-!conf/loot/upgrade_components.json
+!conf/farm/Default Farm Configuration.json
+!conf/loot/Default Loot Configuration.json
 .idea/
