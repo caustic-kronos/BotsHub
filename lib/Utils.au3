@@ -955,11 +955,48 @@ Func UseCitySpeedBoost($forceUse = False)
 EndFunc
 
 
-;~ Uses a consumable from inventory, if present
-Func UseConsumable($ID_consumable, $forceUse = False)
+;~ Uses an item from inventory or chest, if present
+Func UseItemFromInventory($itemID, $forceUse = False, $checkXunlaiChest = True)
+	Local $ConsumableItemBagAndSlot
+	If $checkXunlaiChest == True Then $ConsumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
+	If $checkXunlaiChest == False Then $ConsumableItemBagAndSlot = FindInStorages(1, $BAGS_COUNT, $itemID)
+
+	Local $ConsumableBag = $ConsumableItemBagAndSlot[0]
+	Local $ConsumableSlot = $ConsumableItemBagAndSlot[1]
+	If $ConsumableBag <> 0 And $ConsumableSlot <> 0 Then
+		UseItemBySlot($ConsumableBag, $ConsumableSlot)
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
+EndFunc
+
+
+;~ Uses a consumable from inventory or chest, if present
+Func UseConsumable($consumableID, $forceUse = False, $checkXunlaiChest = True)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
-	Local $ConsumableSlot = FindInInventory($ID_consumable)
-	If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+	If Not IsConsumable($consumableID) Then
+		Warn('Provided item model ID might not correspond to consumable')
+		Return $FAIL
+	EndIf
+	Local $result = UseItemFromInventory($consumableID, $forceUse, $checkXunlaiChest)
+	If $result == $SUCCESS Then Info('Consumable used successfully')
+	If $result == $FAIL Then Warn('Could not find specified consumable in inventory')
+	Return $result
+EndFunc
+
+
+;~ Uses a scroll from inventory or chest, if present
+Func UseScroll($scrollID, $forceUse = False, $checkXunlaiChest = True)
+	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_UNCHECKED) Then Return
+	If Not IsBlueScroll($scrollID) And Not IsGoldScroll($scrollID) Then
+		Warn('Provided item model ID might not correspond to scroll')
+		Return $FAIL
+	EndIf
+	Local $result = UseItemFromInventory($scrollID, $forceUse, $checkXunlaiChest)
+	If $result == $SUCCESS Then Info('Scroll used successfully')
+	If $result == $FAIL Then Warn('Could not find specified scroll in inventory')
+	Return $result
 EndFunc
 
 
