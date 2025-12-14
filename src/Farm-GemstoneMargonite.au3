@@ -1,7 +1,7 @@
 #CS ===========================================================================
 ======================================
-|  	  Margonite Gemstones Farm bot   |
-|			  TonReuf   		     |
+|  	  Margonite Gemstones Farm bot	 |
+|				TonReuf				 |
 ======================================
 ;
 ; Run this farm bot as Assassin or Mesmer or Ranger or Elementalist
@@ -206,7 +206,7 @@ Func SetupTeamMargoniteFarm()
 	AddHero($MargoniteHeroPartyID)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
-    	Warn('Could not add monk hero to team. Team size different than 2')
+		Warn('Could not add monk hero to team. Team size different than 2')
 		Return $FAIL
 	EndIf
 	Return $SUCCESS
@@ -231,7 +231,7 @@ Func EnableMargoniteHeroSkills()
 EndFunc
 
 
-;~ exit gate of Anguish outpost by moving into portal that leads into farming location - City of Torc'qua
+;~ Exit gate of Anguish outpost by moving into portal that leads into farming location - City of Torc'qua
 Func GoToCityOfTorcqua()
 	Info('Moving to City of Torc''qua')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is hard to tell if player left the outpost
@@ -253,10 +253,41 @@ Func GoToCityOfTorcqua()
 EndFunc
 
 
+Func CastBondsMargoniteFarm()
+	Info('Casting hero monk bonds')
+	; Below sequence ensures that player have the effect of 5 monk enchantments from monk hero and also monk hero have 1 enchantment - balthazar's spirit
+	; Last 2 enchantments are least important so these may deactivate when hero energy drops to 0, which is unlikely
+	; Disable blessed signet hero skill so that hero doesn't mess up below sequence with using that skill in wrong moment
+	DisableHeroSkillSlot($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)
+	Sleep(25 + GetPing())
+
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit, GetMyAgent()) ; costs 10 energy
+	Sleep(10000) ; wait until energy is recovered, should recover 10 energy with 3 energy pips
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_WatchfulSpirit, GetMyAgent()) ; costs 15 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 6 hero energy
+	Sleep(12000) ; wait until Blessed signet is recharged, should recover 8 energy with 2 energy pips
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBarrier, GetMyAgent()) ; costs 15 energy, 1 energy should be recovered during casting, energy should be maxed
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 9 hero energy
+	Sleep(15000) ; wait until Blessed signet is recharged, should recover 5 energy with 1 energy pip
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBond, GetMyAgent()) ; costs 10 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy, energy should be maxed
+	Sleep(10000) ; wait until Blessed signet is recharged, 0 pips
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_VitalBLessing, GetMyAgent()) ; costs 10 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy
+	Sleep(10000) ; wait until Blessed signet is recharged, around 3 energy lost with -1 pip
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit) ; costs 10 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
+
+	; Enable blessed signet skill so that hero uses it whenever it is recharged
+	EnableHeroSkillSlot($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)
+	Sleep(25 + GetPing())
+
+	Return $SUCCESS
+EndFunc
+
+
 Func GemstoneMargoniteFarmLoop()
 	Local $me = Null, $target = Null
-	Sleep(2000)
-	If IsPlayerDead() Then Return $FAIL
 	Info('Starting Farm')
 	$GemstoneMargoniteFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
@@ -326,39 +357,6 @@ Func GemstoneMargoniteFarmLoop()
 EndFunc
 
 
-Func CastBondsMargoniteFarm()
-	Info('Casting hero monk bonds')
-	; Below sequence ensures that player have the effect of 5 monk enchantments from monk hero and also monk hero have 1 enchantment - balthazar's spirit
-	; Last 2 enchantments are least important so these may deactivate when hero energy drops to 0, which is unlikely
-	; Disable blessed signet hero skill so that hero doesn't mess up below sequence with using that skill in wrong moment
-	DisableHeroSkillSlot($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)
-	Sleep(25 + GetPing())
-
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit, GetMyAgent()) ; costs 10 energy
-	Sleep(10000) ; wait until energy is recovered, should recover 10 energy with 3 energy pips
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_WatchfulSpirit, GetMyAgent()) ; costs 15 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 6 hero energy
-	Sleep(12000) ; wait until Blessed signet is recharged, should recover 8 energy with 2 energy pips
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBarrier, GetMyAgent()) ; costs 15 energy, 1 energy should be recovered during casting, energy should be maxed
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 9 hero energy
-	Sleep(15000) ; wait until Blessed signet is recharged, should recover 5 energy with 1 energy pip
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBond, GetMyAgent()) ; costs 10 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy, energy should be maxed
-	Sleep(10000) ; wait until Blessed signet is recharged, 0 pips
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_VitalBLessing, GetMyAgent()) ; costs 10 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy
-	Sleep(10000) ; wait until Blessed signet is recharged, around 3 energy lost with -1 pip
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit) ; costs 10 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
-
-	; Enable blessed signet skill so that hero uses it whenever it is recharged
-	EnableHeroSkillSlot($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)
-	Sleep(25 + GetPing())
-
-	Return $SUCCESS
-EndFunc
-
-
 Func IsAnurDabiOrKayaOrKiOrSu($agent)
 	Local Static $AnurKaya	= 5166
 	Local Static $AnurDabi	= 5167
@@ -410,7 +408,7 @@ EndFunc
 
 
 Func MargoniteDefend()
-	MargoniteCheckSFBuffs()
+	MargoniteCheckBuffs()
 	MargoniteMonkHeroHeal()
 EndFunc
 
@@ -425,7 +423,7 @@ Func MargoniteMonkHeroHeal()
 EndFunc
 
 
-Func MargoniteCheckSFBuffs()
+Func MargoniteCheckBuffs()
 	Local $me = Null, $target = Null
 	If IsPlayerDead() Then Return $FAIL
 
