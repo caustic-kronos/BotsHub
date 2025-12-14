@@ -1699,17 +1699,6 @@ EndFunc
 Func ToggleHeroSkillSlot($heroIndex, $skillSlot)
 	Return SendPacket(0xC, $HEADER_HERO_SKILL_TOGGLE, GetHeroID($heroIndex), $skillSlot - 1)
 EndFunc
-
-
-;~ Order a hero to use a skill.
-Func UseHeroSkill($hero, $skillSlot, $target = 0)
-	Local $targetId = 0
-	If $target <> 0 Then $targetId = DllStructGetData($target, 'ID')
-	DllStructSetData($useHeroSkillStruct, 2, GetHeroID($hero))
-	DllStructSetData($useHeroSkillStruct, 3, $targetId)
-	DllStructSetData($useHeroSkillStruct, 4, $skillSlot - 1)
-	Enqueue($useHeroSkillStructPtr, 16)
-EndFunc
 #EndRegion H&H
 
 
@@ -2317,26 +2306,128 @@ EndFunc
 
 
 ;~ Use a skill, doesn't wait for the skill to be done
-Func UseSkill($skillSlot, $target, $callTarget = False)
-	If $target == Null Or $target == 0 Or $target == -2 Then $target = GetMyAgent()
+;~ If no target is provided then skill is used on self
+;~ Provided target parameter should be a struct, not numerical target ID
+Func UseSkill($skillSlot, $target = Null, $callTarget = False)
+	Local $targetId = ($target == Null) ? GetMyID() : DllStructGetData($target, 'ID')
 	DllStructSetData($useSkillStruct, 2, $skillSlot)
-	DllStructSetData($useSkillStruct, 3, DllStructGetData($target, 'ID'))
+	DllStructSetData($useSkillStruct, 3, $targetId)
 	DllStructSetData($useSkillStruct, 4, $callTarget)
 	Enqueue($useSkillStructPtr, 16)
 EndFunc
 
 
-;~ Use a skill and wait for it to be done
-Func UseSkillEx($skillSlot, $target = -2)
-	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return
-	If $target == Null Or $target == 0 Or $target == -2 Then $target = GetMyAgent()
-	Local $Skill = GetSkillByID(GetSkillbarSkillID($skillSlot, 0))
-	Local $Energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy() < $Energy Then Return
-	Local $castTime = DllStructGetData($Skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
-	Local $aftercast = DllStructGetData($Skill, 'Aftercast') * 1000
+;~ Use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
+;~ Function returns True if skill usage was successful, False otherwise
+;~ If no target is provided then skill is used on self
+;~ Provided target parameter should be a struct, not numerical target ID
+Func UseSkillEx($skillSlot, $target = Null)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	Local $approximateCastTime = $castTime + $aftercast + GetPing()
+
+	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
+	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
 	UseSkill($skillSlot, $target)
-	Sleep($castTime + $aftercast + GetPing())
+	Local $castTimer = TimerInit()
+	Do ; wait until skill starts recharging or time for skill to be activated has elapsed
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
+	Return True
+EndFunc
+
+
+;~ Use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
+;~ Function returns True if skill usage was successful, False otherwise
+;~ If no target is provided then skill is used on self
+;~ Provided target parameter should be a struct, not numerical target ID
+Func UseSkillTimed($skillSlot, $target = Null)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	; taking into account skill activation time modifiers
+	Local $effects = GetEffect(0) ; get all effects that are on player, in array
+	Local $castTimeModifier = GetCastTimeModifier($effects, $skill) ; get cast time modifier, default is 1, but effects can influence it
+	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
+
+	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
+	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
+	UseSkill($skillSlot, $target)
+	Local $castTimer = TimerInit()
+	Do ; wait until skill starts recharging or time for skill to be fully activated has elapsed
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
+	Return True
+EndFunc
+
+
+;~ Order a hero to use a skill, doesn't wait for the skill to be done
+;~ If no target is provided then skill is used on hero who uses the skill
+;~ Provided target parameter should be a struct, not numerical target ID
+Func UseHeroSkill($heroIndex, $skillSlot, $target = Null)
+	Local $targetId = ($target == Null) ? GetHeroID($heroIndex) : DllStructGetData($target, 'ID')
+	DllStructSetData($useHeroSkillStruct, 2, GetHeroID($heroIndex))
+	DllStructSetData($useHeroSkillStruct, 3, $targetId)
+	DllStructSetData($useHeroSkillStruct, 4, $skillSlot - 1)
+	Enqueue($useHeroSkillStructPtr, 16)
+EndFunc
+
+
+;~ Order a hero to use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
+;~ Function returns True if skill usage was successful, False otherwise
+;~ If no target is provided then skill is used on hero who uses the skill
+;~ Provided target parameter should be a struct, not numerical target ID
+Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
+	If IsHeroDead($heroIndex) Or Not IsRecharged($skillSlot, $heroIndex) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	Local $approximateCastTime = $castTime + $aftercast + GetPing()
+
+	UseHeroSkill($heroIndex, $skillSlot, $target)
+	Local $castTimer = TimerInit()
+	Do ; wait until skill starts recharging or time for skill to be activated has elapsed
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
+	Return True
+EndFunc
+
+
+;~ Order a hero to use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
+;~ Function returns True if skill usage was successful, False otherwise
+;~ If no target is provided then skill is used on hero who uses the skill
+;~ Provided target parameter should be a struct, not numerical target ID
+Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
+	If IsHeroDead($heroIndex) Or Not IsRecharged($skillSlot, $heroIndex) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	; taking into account skill activation time modifiers
+	Local $effects = GetEffect(0, $heroIndex) ; get all effects that are on hero, in array
+	Local $castTimeModifier = GetCastTimeModifier($effects, $skill) ; get cast time modifier, default is 1, but effects can influence it
+	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
+
+	UseHeroSkill($heroIndex, $skillSlot, $target)
+	Local $castTimer = TimerInit()
+	Do ; wait until skill starts recharging or time for skill to be fully activated has elapsed
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
+	Return True
 EndFunc
 
 
