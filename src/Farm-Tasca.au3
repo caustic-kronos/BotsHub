@@ -98,7 +98,6 @@ EndFunc
 
 Func SetupPlayerTascaChestFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_Dervish
 			$TascaPlayerProfession = $ID_Dervish

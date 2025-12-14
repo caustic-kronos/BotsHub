@@ -117,6 +117,7 @@ Func SetupVaettirsFarm()
 		If RunToJagaMoraine() == $FAIL Then ContinueLoop
 		$VAETTIRS_FARM_SETUP = True
 	WEnd
+	Sleep(1000 + GetPing())
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -124,7 +125,6 @@ EndFunc
 
 Func SetupPlayerVaettirsFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_Assassin
 			$VaettirsPlayerProfession = $ID_Assassin
@@ -236,9 +236,9 @@ EndFunc
 
 ;~ Farm loop
 Func VaettirsFarmLoop()
-	RandomSleep(1000)
 	If $VaettirsPlayerProfession == $ID_Monk Then UseSkillEx($Vaettir_Monk_BalthazarsSpirit, GetMyAgent())
 	If $VaettirsPlayerProfession == $ID_Elementalist Then UseSkillEx($Vaettir_Elementalist_ElementalLord)
+	Sleep(500 + GetPing())
 	GetVaettirsNornBlessing()
 	If AggroAllMobs() == $FAIL Then Return $FAIL
 	VaettirsKillSequence()
@@ -608,6 +608,6 @@ Func RezoneToJagaMoraine()
 	MoveTo(-19968, 5564)
 	Move(-20076, 5580, 30)
 	WaitMapLoading($ID_Jaga_Moraine)
-
+	RandomSleep(1000)
 	Return $result
 EndFunc

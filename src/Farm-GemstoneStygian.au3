@@ -134,7 +134,6 @@ EndFunc
 
 Func SetupPlayerStygianFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_Assassin
 			$StygianPlayerProfession = $ID_Assassin
@@ -157,7 +156,6 @@ EndFunc
 
 Func SetupTeamStygianFarm()
 	Info('Setting up team')
-	Sleep(500)
 	LeaveParty()
 	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
@@ -199,7 +197,6 @@ EndFunc
 
 
 Func GemstoneStygianFarmLoop()
-	Sleep(2000)
 	Info('Starting Farm')
 	$GemstoneStygianFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 

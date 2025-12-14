@@ -111,7 +111,6 @@ EndFunc
 Func SetupPlayerLuxonFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
-		Sleep(500 + GetPing())
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
     Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')

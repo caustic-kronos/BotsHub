@@ -117,7 +117,6 @@ EndFunc
 
 Func SetupPlayerFowToCFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
 		LoadSkillTemplate($RAFoWToCFarmerSkillBar)
 	Else
@@ -170,7 +169,6 @@ EndFunc
 ;~ Farm loop
 Func FoWToCFarmLoop()
 	Local $me = Null, $target = Null
-	Sleep(500 + GetPing())
 	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
 	Info('Starting Farm')
 	$FowToCFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run

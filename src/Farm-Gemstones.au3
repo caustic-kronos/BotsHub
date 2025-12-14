@@ -116,10 +116,8 @@ EndFunc
 
 
 Func SetupPlayerGemstonesFarm()
-	Sleep(500 + GetPing())
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
-		Sleep(500 + GetPing())
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
 	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
 		Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
@@ -154,6 +152,7 @@ Func GemstonesFarmLoop()
 	WalkToSpotGemstonesFarm()
 	$GemstonesFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
+	Sleep(2000)
 	If Defend() == $FAIL Then Return $FAIL
 	Return $SUCCESS
 EndFunc
@@ -183,7 +182,6 @@ EndFunc
 ;~ Defending function
 Func Defend()
 	Info('Defending...')
-	Sleep(2000)
 
 	While IsZhellixPerformingRitual()
 		;If GetMapLoading() == 2 Then Disconnected()

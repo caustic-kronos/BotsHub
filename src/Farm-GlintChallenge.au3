@@ -99,7 +99,6 @@ EndFunc
 Func SetupPlayerGlintChallengeFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
-		Sleep(500 + GetPing())
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
     Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
@@ -164,8 +163,8 @@ EndFunc
 ;~ Cleaning Glint challenge function
 Func GlintChallenge()
 	If GetMapID() <> $ID_Glints_Challenge Then Return $FAIL
-	Sleep(5000)
 	WalkToSpotGlintChallenge()
+	Sleep(5000)
 
 	; Glint challenge lasts around 20 minutes, so after this time elapses and no foes are found in range, the challenge is considered successful
 	$GlintChallengeTimer = TimerInit() ; Starting run timer

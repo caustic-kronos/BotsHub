@@ -95,6 +95,7 @@ Func SetupGemstoneTormentFarm()
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerTormentFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer
+	Sleep(500 + GetPing())
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	Sleep(500 + GetPing())
 	$GEMSTONE_TORMENT_FARM_SETUP = True
@@ -105,7 +106,6 @@ EndFunc
 
 Func SetupPlayerTormentFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
 		LoadSkillTemplate($EATormentSkillBar)
 	Else
@@ -142,7 +142,6 @@ EndFunc
 
 
 Func GemstoneTormentFarmLoop()
-	Sleep(2000)
 	Info('Starting Farm')
 	$GemstoneTormentFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 	Local $TimerWait

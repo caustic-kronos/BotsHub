@@ -107,7 +107,6 @@ EndFunc
 
 Func SetupPlayerKournansFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
 		LoadSkillTemplate($ElAKournansFarmerSkillbar)
     Else
@@ -122,13 +121,10 @@ EndFunc
 
 Func SetupTeamKournansFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
 	LeaveParty()
-	RandomSleep(50)
+	Sleep(500 + GetPing())
 	AddHero($ID_Margrid_The_Sly)
-	RandomSleep(50)
 	AddHero($ID_Xandra)
-	RandomSleep(50)
 	AddHero($ID_General_Morgahn)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 4 Then
@@ -138,8 +134,10 @@ Func SetupTeamKournansFarm()
 	LoadSkillTemplate($RKournansHeroSkillbar, 1)
 	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
 	LoadSkillTemplate($PKournansHeroSkillbar, 3)
+	Sleep(250 + GetPing())
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
+	Sleep(250 + GetPing())
 	Return $SUCCESS
 EndFunc
 

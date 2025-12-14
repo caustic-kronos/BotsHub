@@ -101,7 +101,6 @@ EndFunc
 
 Func SetupPlayerJadeBrotherhoodFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
 		LoadSkillTemplate($JB_Skillbar)
     Else
@@ -116,10 +115,12 @@ EndFunc
 
 Func SetupTeamJadeBrotherhoodFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
 	LeaveParty()
+	Sleep(500 + GetPing())
 	AddHero($ID_General_Morgahn)
+	Sleep(250 + GetPing())
 	LoadSkillTemplate($JB_Hero_Skillbar, 1)
+	Sleep(250 + GetPing())
 	DisableAllHeroSkills(1)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then

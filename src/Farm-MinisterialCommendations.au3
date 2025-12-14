@@ -154,13 +154,11 @@ EndFunc
 
 
 Func SetupPlayerMinisterialCommendationsFarm()
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
 		Info('Player''s profession is dervish. Loading up recommended dervish build automatically')
 		LoadSkillTemplate($DWCommendationsFarmerSkillbar)
 	ElseIf GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
-		Sleep(500 + GetPing())
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
 	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
@@ -172,8 +170,8 @@ EndFunc
 
 Func SetupTeamMinisterialCommendationsFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
 	LeaveParty()
+	Sleep(500 + GetPing())
 	AddHero($ID_Gwen)
 	AddHero($ID_Norgu)
 	AddHero($ID_Razah)

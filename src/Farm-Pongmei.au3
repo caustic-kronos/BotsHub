@@ -85,7 +85,6 @@ EndFunc
 
 Func SetupPlayerPongmeiChestFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
 		LoadSkillTemplate($PongmeiChestRunnerSkillbar)
     Else
@@ -102,7 +101,6 @@ Func SetupTeamPongmeiChestFarm()
 		SetupTeamUsingGUISettings()
     Else
 		Info('Setting up team according to default settings')
-		Sleep(500 + GetPing())
 		LeaveParty()
 		Sleep(500 + GetPing())
 		AddHero($ID_General_Morgahn)

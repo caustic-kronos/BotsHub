@@ -95,7 +95,6 @@ EndFunc
 
 Func SetupPlayerMantidsFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
 		LoadSkillTemplate($RAMantidsFarmerSkillbar)
     Else
@@ -110,8 +109,8 @@ EndFunc
 
 Func SetupTeamMantidsFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
 	LeaveParty()
+	Sleep(500 + GetPing())
 	AddHero($ID_General_Morgahn)
 	LoadSkillTemplate($MantidsHeroSkillbar, 1)
 	DisableAllHeroSkills(1)

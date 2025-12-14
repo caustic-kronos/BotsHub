@@ -106,7 +106,6 @@ EndFunc
 
 Func SetupPlayerSpiritSlavesFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
 		LoadSkillTemplate($SpiritSlaves_Skillbar)
     Else

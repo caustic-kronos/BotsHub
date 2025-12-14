@@ -117,16 +117,18 @@ Func GetKeiranBow()
 	Local $bowDialogID = 0x8A ; hexadecimal code of dialog id to receive keiran's bow
 	Local $Gwen = GetNearestNPCToCoords(-6583, 6672) ; coordinates of Gwen inside Hall of Monuments location
 	GoToNPC($Gwen)
-	RandomSleep(500)
+	Sleep(500 + GetPing())
 	dialog($bowDialogID) ; start a dialog with Gwen and send a packet for receiving Keiran Bow
-	RandomSleep(500)
+	Sleep(500 + GetPing())
 EndFunc
 
 
 ;~ Farm loop
 Func WarSupplyFarmLoop()
 	If EnterHallOfMonuments() == $FAIL Then Return $FAIL
+	Sleep(1000 + GetPing())
 	If EnterAuspiciousBeginningsQuest() == $FAIL Then Return $FAIL
+	Sleep(1000 + GetPing())
 	Local $result = RunQuest()
 	Sleep(1000)
 	If $result == $FAIL Then
@@ -172,7 +174,6 @@ EndFunc
 Func RunQuest()
 	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
 	Info('Running Auspicious Beginnings quest ')
-	RandomSleep(1000)
 	$WarSupplyFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	Info('Moving to start location to wait out initial dialogs')

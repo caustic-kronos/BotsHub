@@ -166,7 +166,6 @@ EndFunc
 
 Func SetupPlayerMargoniteFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_Assassin
 			$MargonitePlayerProfession = $ID_Assassin
@@ -192,7 +191,6 @@ EndFunc
 
 Func SetupTeamMargoniteFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
 	LeaveParty()
 	Sleep(500 + GetPing())
 	AddHero($MargoniteHeroPartyID)
@@ -201,17 +199,19 @@ Func SetupTeamMargoniteFarm()
 		Warn('Could not add monk hero to team. Team size different than 2')
 		Return $FAIL
 	EndIf
+	Sleep(250 + GetPing())
 	Return $SUCCESS
 EndFunc
 
 
 Func SetupHeroMargoniteFarm()
 	Info('Setting up hero build skill bar')
-	Sleep(500 + GetPing())
 	LoadSkillTemplate($MargoniteMonkHeroSkillBar, $MargoniteHeroIndex)
-	Sleep(500 + GetPing())
+	Sleep(250 + GetPing())
 	SetHeroAggression($MargoniteHeroIndex, $ID_Hero_avoiding)
+	Sleep(250 + GetPing())
 	DisableAllHeroSkills($MargoniteHeroIndex)
+	Sleep(250 + GetPing())
 EndFunc
 
 

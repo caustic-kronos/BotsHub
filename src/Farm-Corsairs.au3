@@ -96,7 +96,6 @@ EndFunc
 
 Func SetupPlayerCorsairsFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
 		LoadSkillTemplate($RACorsairsFarmerSkillbar)
     Else
@@ -111,8 +110,8 @@ EndFunc
 
 Func SetupTeamCorsairsFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
 	LeaveParty()
+	Sleep(250 + GetPing())
 	AddHero($ID_Dunkoro)
 	AddHero($ID_Melonni)
 	Sleep(500 + GetPing())
@@ -125,6 +124,7 @@ Func SetupTeamCorsairsFarm()
 	Sleep(500 + GetPing())
 	DisableHeroSkillSlot(1, $Corsairs_MakeHaste)
 	DisableHeroSkillSlot(2, $Corsairs_Winnowing)
+	Sleep(250 + GetPing())
 	Return $SUCCESS
 EndFunc
 

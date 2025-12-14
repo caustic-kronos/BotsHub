@@ -73,7 +73,6 @@ EndFunc
 Func SetupPlayerUnderworldFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
-		Sleep(500 + GetPing())
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
 	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
@@ -136,7 +135,6 @@ EndFunc
 
 
 Func UnderworldFarmLoop()
-	Sleep(2000)
 	Info('Starting Farm')
 	$UWFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 

@@ -123,7 +123,6 @@ EndFunc
 
 Func SetupPlayerRaptorsFarm()
 	Info('Setting up player build skill bar')
-	Sleep(500 + GetPing())
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_Warrior
 			$RaptorsPlayerProfession = $ID_Warrior
@@ -145,8 +144,9 @@ Func SetupTeamRaptorsFarm()
 	Info('Setting up team')
 	Sleep(500 + GetPing())
 	LeaveParty()
-	AddHero($ID_General_Morgahn)
 	Sleep(500 + GetPing())
+	AddHero($ID_General_Morgahn)
+	Sleep(250 + GetPing())
 	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
 	Sleep(250)
 	DisableAllHeroSkills(1)
