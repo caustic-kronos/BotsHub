@@ -73,7 +73,7 @@ EndFunc
 ;~ Feathers farm setup
 Func SetupFeathersFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFeathersFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer
@@ -113,7 +113,7 @@ EndFunc
 
 ;~ Move out of outpost into Jaya Bluffs
 Func GoToJayaBluffs()
-	If GetMapID() <> $ID_Seitung_Harbor Then TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
+	TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Jaya_Bluffs
 		Info('Moving to Jaya Bluffs')
 		MoveTo(17300, 17300)

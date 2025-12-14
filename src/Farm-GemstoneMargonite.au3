@@ -147,7 +147,7 @@ EndFunc
 Func SetupGemstoneMargoniteFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
-		TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+		If TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
 		ResignAndReturnToOutpost()
 	EndIf
@@ -226,6 +226,7 @@ EndFunc
 
 ;~ Exit gate of Anguish outpost by moving into portal that leads into farming location - City of Torc'qua
 Func GoToCityOfTorcqua()
+	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
 	Info('Moving to City of Torc''qua')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is hard to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in City of Torc'qua

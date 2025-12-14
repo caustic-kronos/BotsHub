@@ -92,7 +92,7 @@ EndFunc
 
 
 Func EnterSunspearArmorChallenge()
-	If GetMapID() <> $ID_Dajkah_Inlet Then TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
 	Info('Entering Dajkah Inlet challenge')
 	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is hard to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map

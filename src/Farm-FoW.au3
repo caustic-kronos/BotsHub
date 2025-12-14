@@ -62,9 +62,7 @@ EndFunc
 ;~ FoW farm setup
 Func SetupFoWFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Temple_of_the_Ages Then
-		If TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME) == $FAIL Then Return $FAIL
-	EndIf
+	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
 	SetupPlayerFoWFarm()
 	SetupTeamFoWFarm()
 	SwitchToHardModeIfEnabled()

@@ -80,7 +80,7 @@ EndFunc
 ;~ Tasca chest farm setup
 Func SetupTascaChestFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_The_Granite_Citadel Then TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
+	If TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	UseCitySpeedBoost()
 	If SetupPlayerTascaChestFarm() == $FAIL Then Return $FAIL
 	SetupTeamTascaChestFarm()
@@ -149,7 +149,7 @@ EndFunc
 
 ;~ Move out of outpost into Tasca's Demise
 Func GoToTascasDemise()
-	If GetMapID() <> $ID_The_Granite_Citadel Then TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
+	TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Tascas_Demise
 		Info('Moving to Tasca''s Demise')
 		MoveTo(-10000, 18875)

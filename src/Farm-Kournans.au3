@@ -88,7 +88,7 @@ EndFunc
 ;~ Kournans farm setup
 Func SetupKournansFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 
 	If SetupPlayerKournansFarm() == $FAIL Then Return $FAIL
@@ -147,7 +147,7 @@ EndFunc
 
 ;~ Move out of outpost into Command Post
 Func GoToCommandPost()
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
+	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	If GetQuestByID(0x23E) <> Null Then
 		Info('Abandoning quest')
 		AbandonQuest(0x23E)

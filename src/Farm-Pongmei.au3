@@ -123,7 +123,7 @@ EndFunc
 
 ;~ Move out of outpost into Pongmei Valley
 Func GoToPongmeiValley()
-	If GetMapID() <> $ID_Boreas_Seabed Then TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Pongmei_Valley
 		Info('Moving to Pongmei Valley')
 		MoveTo(-25366, 1524)

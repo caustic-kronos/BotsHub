@@ -67,7 +67,7 @@ EndFunc
 ;~ Dragon moss farm setup
 Func SetupDragonMossFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerDragonMossFarm() Then Return $FAIL
 	LeaveParty() ; solo farmer
@@ -99,7 +99,7 @@ EndFunc
 
 ;~ Move out of outpost into Drazach Thicket
 Func GoToDrazachThicket()
-	If GetMapID() <> $ID_Saint_Anjekas_Shrine Then TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
+	TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Drazach_Thicket
 		Info('Moving to Drazach Thicket')
 		MoveTo(-11400, -22650)

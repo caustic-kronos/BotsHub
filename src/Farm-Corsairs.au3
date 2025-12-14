@@ -82,7 +82,7 @@ EndFunc
 Func SetupCorsairsFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Moddok_Crevice Then
-		TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+		If TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	Else ; resigning to return to outpost in case when player is in Moddok Crevice mission that has the same map ID as Moddok Crevice outpost (427)
 		ResignAndReturnToOutpost()
 	EndIf
@@ -131,7 +131,7 @@ EndFunc
 
 
 Func EnterCorsairsModdokCreviceMission()
-	If GetMapID() <> $ID_Moddok_Crevice Then TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
+	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
 	; Unfortunately Moddok Crevice mission map has the same map ID as Moddok Crevice outpost, so it is hard to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
 	Local Static $StartX = -11468

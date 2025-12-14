@@ -96,7 +96,7 @@ EndFunc
 
 ;~ Move out of outpost into Verdant Cascades
 Func GoToVerdantCascades()
-	If GetMapID() <> $ID_Umbral_Grotto Then TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Verdant_Cascades
 		Info('Moving to Verdant Cascades')
 		MoveTo(-23200, 7100)

@@ -107,7 +107,7 @@ EndFunc
 
 ;~ Move out of outpost into the Sulfurous Wastes
 Func GoToTheSulfurousWastes()
-	If GetMapID() <> $ID_Remains_of_Sahlahja Then TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
+	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	While GetMapID() <> $ID_The_Sulfurous_Wastes
 		Info('Moving to the Sulfurous Wastes')
 		MoveTo(1527, -4114)

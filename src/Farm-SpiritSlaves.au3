@@ -88,7 +88,7 @@ EndFunc
 ;~ Farm setup : going to the Shattered Ravines
 Func SetupSpiritSlavesFarm()
 	If GetMapID() <> $ID_The_Shattered_Ravines Then
-		If GetMapID() <> $ID_Bone_Palace Then TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME)
+		If TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 		SwitchMode($ID_HARD_MODE)
 		SetDisplayedTitle($ID_Lightbringer_Title)
 
@@ -121,8 +121,8 @@ EndFunc
 
 
 Func RunToShatteredRavines()
-	If GetMapID() <> $ID_Bone_Palace Then TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME)
 	; Exiting to Jokos Domain
+	TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME)
 	MoveTo(-14520, 6009)
 	Move(-14820, 3400)
 	RandomSleep(1000)

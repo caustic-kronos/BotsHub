@@ -91,7 +91,7 @@ EndFunc
 ;~ farm setup preparation
 Func SetupWarSupplyFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Eye_of_the_North Then TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
 	If Not ItemExistsInInventory($ID_Keirans_Bow) Then
 		Info('Could not find Keiran''s bow in player''s inventory')
 		GetKeiranBow()
@@ -113,7 +113,7 @@ EndFunc
 
 Func GetKeiranBow()
 	Info('Getting Keiran''s bow to be able to enter the quest')
-	If GetMapID() <> $ID_Eye_of_the_North Then TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
 	EnterHallOfMonuments()
 	Local $bowDialogID = 0x8A ; hexadecimal code of dialog id to receive keiran's bow
 	Local $Gwen = GetNearestNPCToCoords(-6583, 6672) ; coordinates of Gwen inside Hall of Monuments location
@@ -141,7 +141,7 @@ EndFunc
 
 Func EnterHallOfMonuments()
 	If GetMapID() <> $ID_Hall_of_Monuments Then
-		If GetMapID() <> $ID_Eye_of_the_North Then TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
 		Info('Going into Hall of Monuments')
 		MoveTo(-3477, 4245)
 		MoveTo(-4060, 4675)

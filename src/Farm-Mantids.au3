@@ -77,7 +77,7 @@ EndFunc
 ;~ Mantids farm setup
 Func SetupMantidsFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 
 	If SetupPlayerMantidsFarm() == $FAIL Then Return $FAIL
@@ -127,7 +127,7 @@ EndFunc
 
 ;~ Move out of outpost into Wajjun Bazaar
 Func GoToWajjunBazaar()
-	If GetMapID() <> $ID_Nahpui_Quarter Then TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
+	TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Wajjun_Bazaar
 		Info('Moving to Wajjun Bazaar')
 		;If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)

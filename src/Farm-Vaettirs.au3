@@ -109,8 +109,7 @@ EndFunc
 
 Func SetupVaettirsFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
-	SwitchMode($ID_HARD_MODE)
+	If TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	If SetupPlayerVaettirsFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer
 	SwitchMode($ID_HARD_MODE)
@@ -155,7 +154,7 @@ EndFunc
 
 ;~ Zones to Longeye if we are not there, and travel to Jaga Moraine
 Func RunToJagaMoraine()
-	If GetMapID() <> $ID_Longeyes_Ledge Then TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
+	TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME)
 
 	Info('Exiting Outpost')
 	MoveTo(-26000, 16000)

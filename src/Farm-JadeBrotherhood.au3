@@ -81,7 +81,7 @@ EndFunc
 ;~ Setup for the jade brotherhood farm
 Func SetupJadeBrotherhoodFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
+	If TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 
 	If SetupPlayerJadeBrotherhoodFarm() == $FAIL Then Return $FAIL
@@ -133,7 +133,7 @@ EndFunc
 
 ;~ Move out of outpost into Bukdek Byway
 Func GoToBukdekByway()
-	If GetMapID() <> $ID_The_Marketplace Then TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
+	TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
 	If GetQuestByID(0x1C9) <> Null Then
 		Info('Abandoning quest')
 		AbandonQuest(0x1C9)

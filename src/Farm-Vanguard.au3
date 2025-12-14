@@ -91,8 +91,7 @@ EndFunc
 
 ;~ Move out of outpost into Dalada Uplands
 Func GoToDaladaUplands()
-	If GetMapID() <> $ID_Doomlore_Shrine Then TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
-	Info('Moving to Dalada Uplands')
+	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Dalada_Uplands
 		MoveTo(-15231, 13608)
 		RandomSleep(1000)

@@ -64,7 +64,7 @@ EndFunc
 
 ;~ Move out of outpost into Lakeside County
 Func GoToLakesideCounty()
-	If GetMapID() <> $ID_Ashford_Abbey Then TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
+	TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Lakeside_County
 		Info('Moving to Lakeside County')
 		MoveTo(-11600, -6250)

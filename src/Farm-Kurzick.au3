@@ -59,7 +59,7 @@ EndFunc
 
 
 Func ManageFactionPointsKurzickFarm()
-	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
@@ -86,7 +86,7 @@ EndFunc
 
 
 Func CheckGoldKurzickFarm()
-	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
@@ -99,7 +99,7 @@ EndFunc
 ;~ Setup for kurzick farm
 Func KurzickFarmSetup()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 
 	SetupPlayerKurzickFarm()
 	SetupTeamKurzickFarm()
@@ -140,7 +140,7 @@ EndFunc
 
 ;~ Move out of outpost into Ferndale
 Func GoToFerndale()
-	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Ferndale
 		Info('Moving to Ferndale')
 		MoveTo(7810, -726)

@@ -53,7 +53,7 @@ EndFunc
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Vloxs_Fall Then TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
+	TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
 	SetupPlayerSoOFarm()
 	SetupTeamSoOFarm()
 	SwitchToHardModeIfEnabled()
@@ -95,7 +95,7 @@ EndFunc
 
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
-	If GetMapID() <> $ID_Vloxs_Fall Then TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
+	TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
 	ResetFailuresCounter()
 
 	Info('Making way to portal')

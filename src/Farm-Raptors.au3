@@ -106,7 +106,7 @@ EndFunc
 ;~ Setup the Raptor farm for faster farm
 Func SetupRaptorsFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerRaptorsFarm() == $FAIL Then Return $FAIL
@@ -162,7 +162,7 @@ EndFunc
 
 ;~ Move out of outpost into Riven Earth
 Func GoToRivenEarth()
-	If GetMapID() <> $ID_Rata_Sum Then TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Riven_Earth
 		Info('Moving to Riven Earth')
 		MoveTo(19700, 16800)

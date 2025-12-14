@@ -95,7 +95,7 @@ EndFunc
 
 ;~ Move out of outpost into Mirror of Lyss
 Func GoToMirrorOfLyss()
-	If GetMapID() <> $ID_Kodash_Bazaar Then TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
+	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Mirror_of_Lyss
 		Info('Moving to Mirror of Lyss')
 		MoveTo(-2186, -1916)

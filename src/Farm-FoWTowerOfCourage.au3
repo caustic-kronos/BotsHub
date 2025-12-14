@@ -105,9 +105,7 @@ EndFunc
 ;~ Fissure of Woe - Tower of Courage farm setup
 Func SetupFoWToCFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Temple_of_the_Ages Then
-		If TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME) == $FAIL Then Return $FAIL
-	EndIf
+	If TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFowToCFarm() == $FAIL Then Return $FAIL
 	LeaveParty() ; solo farmer

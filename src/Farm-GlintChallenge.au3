@@ -86,7 +86,7 @@ EndFunc
 
 Func GlintChallengeSetup()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Central_Transfer_Chamber Then TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
+	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Dwarf_Title)
 	SwitchMode($ID_NORMAL_MODE)
 	SetupPlayerGlintChallengeFarm()
@@ -147,7 +147,7 @@ EndFunc
 
 
 Func EnterGlintChallengeMission()
-	If GetMapID() <> $ID_Central_Transfer_Chamber Then TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
+	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Glints_Challenge
 		Info('Entering Glint mission')
 		;MoveTo(300, 1500)

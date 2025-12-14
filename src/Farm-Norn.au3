@@ -91,7 +91,7 @@ EndFunc
 
 ;~ Move out of outpost into the Varajar Fells
 Func GoToVarajarFells()
-	If GetMapID() <> $ID_Olafstead Then TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
+	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Varajar_Fells
 		Info('Moving to the Varajar Fells')
 		MoveTo(222, 756)

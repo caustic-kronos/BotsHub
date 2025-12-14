@@ -70,7 +70,7 @@ EndFunc
 ;~ Boreal chest farm setup
 Func SetupBorealFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Boreal_Station Then TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
+	TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
 
 	SetupPlayerBorealChestFarm()
 	LeaveParty() ; solo farmer
@@ -134,7 +134,7 @@ EndFunc
 
 ;~ Boreal Chest farm loop
 Func BorealChestFarmLoop($STATUS)
-	If GetMapID() <> $ID_Boreal_Station Then TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
+	TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
 	If FindInInventory($ID_Lockpick)[0] == 0 Then
 		Error('No lockpicks available to open chests')
 		Return $PAUSE
