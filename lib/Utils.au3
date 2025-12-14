@@ -26,8 +26,8 @@
 
 Opt('MustDeclareVars', True)
 
-Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST = 1085, $RANGE_SPIRIT = 2500, $RANGE_COMPASS = 5000
-Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
+Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST=1085, $RANGE_LONGBOW=1250, $RANGE_SPIRIT=2500, $RANGE_COMPASS=5000
+Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 ; Mobs aggro correspond to earshot range
 Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
 
@@ -2835,6 +2835,7 @@ Func CreateMobsPriorityMap()
 	Local $PN_SS_Warder			= 6497
 	Local $PN_SS_Priest			= 6498
 	Local $PN_SS_Defender		= 6499
+	Local $PN_SS_Zealot			= 6506
 	Local $PN_SS_Summoner		= 6507
 	Local $PN_Modniir_Priest	= 6512
 
@@ -2933,6 +2934,7 @@ Func CreateMobsPriorityMap()
 	$map[$PN_SS_Blasphemer]		= 2
 	$map[$PN_SS_Dreamer]		= 2
 	$map[$PN_SS_Contaminator]	= 2
+	$map[$PN_SS_Zealot]			= 2
 
 	$map[$Gem_Dryder]			= 0
 	$map[$Gem_RageTitan]		= 1

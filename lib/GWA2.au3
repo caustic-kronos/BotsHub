@@ -3243,6 +3243,41 @@ Func FindKitArrayContainsHelper($itemsArray, $itemModelID)
 EndFunc
 
 
+;~ Function to calculate remaining count of uses of kits present in inventory, of modelID provided as parameter
+Func CountRemainingKitUses($kitModelID)
+	Local $allKitUses = 0
+	Local $item, $itemModelID, $kitUses
+
+	For $i = 1 To 4
+		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
+			$item = GetItemBySlot($i, $j)
+			$itemModelID = DllStructGetData($item, 'ModelID')
+			If $itemModelID <> $kitModelID Then ContinueLoop
+			$kitUses = DllStructGetData($item, 'Value') / 2
+			$allKitUses = $allKitUses + $kitUses
+		Next
+	Next
+	Return $allKitUses
+EndFunc
+
+
+;~ Function to calculate required number of kits to perform required number of kit actions
+Func KitsRequired($requiredkitUses, $kitModelID)
+	Local $usesPerKit
+	Switch $kitModelID
+		Case $ID_Perfect_Salvage_Kit, $ID_Charr_Salvage_Kit
+			$usesPerKit = 5
+		Case $ID_Salvage_Kit_2
+			$usesPerKit = 10
+		Case $ID_Identification_Kit, $ID_Salvage_Kit, $ID_Expert_Salvage_Kit
+			$usesPerKit = 25
+		Case $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit
+			$usesPerKit = 100
+	EndSwitch
+	Return Ceiling($requiredkitUses / $usesPerKit)
+EndFunc
+
+
 ;~ Returns the item ID of the quoted item.
 Func GetTraderCostID()
 	Return MemoryRead($traderCostId)

@@ -669,15 +669,13 @@ Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_Whit
 Global Const $ID_Belt_Pouch						= 34
 Global Const $ID_Bag							= 35
 Global Const $ID_Rune_of_Holding				= 2988
-Global Const $ID_Identification_Kit				= 2989
-Global Const $ID_Superior_Identification_Kit	= 5899
-; 25 uses
-Global Const $ID_Salvage_Kit					= 2992
-; 10 uses
-Global Const $ID_Salvage_Kit_2					= 2993
-Global Const $ID_Expert_Salvage_Kit				= 2991
-Global Const $ID_Superior_Salvage_Kit			= 5900
-Global Const $ID_Charr_Salvage_Kit				= 18721
+Global Const $ID_Identification_Kit				= 2989 	; 25 uses
+Global Const $ID_Superior_Identification_Kit	= 5899 	; 100 uses
+Global Const $ID_Salvage_Kit					= 2992 	; 25 uses
+Global Const $ID_Salvage_Kit_2					= 2993 	; 10 uses
+Global Const $ID_Expert_Salvage_Kit				= 2991 	; 25 uses
+Global Const $ID_Superior_Salvage_Kit			= 5900 	; 100 uses
+Global Const $ID_Charr_Salvage_Kit				= 18721 ; 5 uses
 Global Const $ID_Small_Equipment_Pack			= 31221
 Global Const $ID_Light_Equipment_Pack			= 31222
 Global Const $ID_Large_Equipment_Pack			= 31223
@@ -1891,6 +1889,8 @@ Global Const $ID_Outcast_Shield_2					= 958
 Global Const $ID_Sea_Purse_Shield					= 1589
 Global Const $ID_Stone_Summit_Shield				= 341
 Global Const $ID_Summit_Warlord_Shield				= 342
+Global Const $ID_Amethyst_Aegis_1					= 2422
+Global Const $ID_Amethyst_Aegis_2					= 2423
 
 ; Staff
 Global Const $ID_Bo_Staff							= 735
@@ -2208,7 +2208,7 @@ Global $RareWeapons_Array = [ _
 	$ID_Demonic_Aegis, $ID_Draconic_Aegis, $ID_Eternal_Shield, $ID_Emblazoned_Defender, $ID_Exalted_Aegis, _
 	$ID_Amber_Shield, $ID_Amber_Shield_2, $ID_Bladed_Shield, $ID_Bladed_Shield_2, $ID_Echovald_Shield, $ID_Echovald_Shield_2, $ID_Gothic_Defender, $ID_Gothic_Defender_2, $ID_Guardian_of_the_Hunt, $ID_Guardian_of_the_Hunt_2, _
 	$ID_Kappa_Shield, $ID_Kappa_Shield_2, $ID_Ornate_Shield, $ID_Plagueborn_Shield, $ID_Plagueborn_Shield_2, $ID_Outcast_Shield, $ID_Outcast_Shield_2, $ID_Sea_Purse_Shield, _
-	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, _
+	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, $ID_Amethyst_Aegis_1, $ID_Amethyst_Aegis_2, _
 	_ ; Staves
 	$ID_Bo_Staff, $ID_Platinum_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, $ID_Jeweled_Staff, _
 	_ ; Swords

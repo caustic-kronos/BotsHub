@@ -142,18 +142,12 @@ Func PassiveInventoryManagement()
 	; 3-Sort items
 	; 4-Identify items
 	; 5-Salvage
-	Local $superiorIdentificationKits = [$ID_Superior_Identification_Kit]
-	Local $identificationKitsCount = GetInventoryKitCount($superiorIdentificationKits)
-	Local $salvageKits = [$ID_Salvage_Kit, $ID_Salvage_Kit_2]
-	Local $salvageKitsCount = GetInventoryKitCount($salvageKits)
-
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
 		Info('Buying kits for passive inventory management')
 		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
 		; Since we are in EOTN, might as well clear inventory
 		ActiveInventoryManagement()
-		If 4 - $identificationKitsCount > 0 Then BuySuperiorIdentificationKitInEOTN(4 - $identificationKitsCount)
-		If 12 - $salvageKitsCount > 0 Then BuySalvageKitInEOTN(12 - $salvageKitsCount)
+		BuyKitsForMidRun()
 		Return True
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
@@ -816,6 +810,22 @@ Func StoreItemsInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
 EndFunc
 
 
+;~ Buy kits for mid run salvage to preserve inventory space during run
+Func BuyKitsForMidRun()
+	; constants to determine how many kits should be in player's inventory
+	Local Static $requiredSalvageKitUses = 300 ; = 12 salvage kits with 25 uses,
+	Local Static $requiredIdentificationKitUses = 400 ; = 4 superior identification kits with 100 uses
+
+	Local $salvageUses = CountRemainingKitUses($ID_Salvage_Kit)
+	Local $salvageKitsRequired = KitsRequired($requiredSalvageKitUses - $salvageUses, $ID_Salvage_Kit)
+	Local $identificationUses = CountRemainingKitUses($ID_Superior_Identification_Kit)
+	Local $identificationKitsRequired = KitsRequired($requiredIdentificationKitUses - $identificationUses, $ID_Superior_Identification_Kit)
+
+	If $salvageKitsRequired > 0 Then BuySalvageKitInEOTN($salvageKitsRequired)
+	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInEOTN($identificationKitsRequired)
+EndFunc
+
+
 ;~ Store an item in the Xunlai Storage
 Func StoreItemInXunlaiStorage($item)
 	Local $existingStacks
@@ -888,6 +898,9 @@ Func DefaultShouldStoreItem($item)
 		Return ShouldKeepWeapon($item)
 	ElseIf isArmorSalvageItem($item) Then
 		Return ContainsValuableUpgrades($item)
+	; Storing trophies only when we have a full stack of 250
+	ElseIf (IsTrophy($itemID) and $quantity == 250) Then
+		Return True
 	EndIf
 	Return False
 EndFunc
