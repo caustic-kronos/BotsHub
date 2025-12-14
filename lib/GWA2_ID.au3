@@ -403,6 +403,9 @@ Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor sa
 
 Global Const $Armor_Types_Array				= [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
 Global Const $Weapon_Types_Array			= [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+Global Const $Weapon_Names_Array			= ['Axe', 'Bow', 'Focus', 'Hammer', 'Wand', 'Shield', 'Staff', 'Sword', 'Dagger', 'Scythe', 'Spear']
+Global Const $WeaponNamesFromTypes			= MapFromArrays($Weapon_Types_Array, $Weapon_Names_Array)
+;Global Const $WeaponTypesFromNames			= MapFromArrays($Weapon_Names_Array, $Weapon_Types_Array)
 Global Const $Map_Armor_Types				= MapFromArray($Armor_Types_Array)
 Global Const $Map_Weapon_Types				= MapFromArray($Weapon_Types_Array)
 
@@ -664,6 +667,11 @@ Global Const $RARITY_Purple				= 2626
 Global Const $RARITY_Green				= 2627
 Global Const $RARITY_Red				= 33026
 Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_White, 'White'], [$RARITY_Blue, 'Blue'], [$RARITY_Purple, 'Purple'], [$RARITY_Gold, 'Gold'], [$RARITY_Green, 'Green'], [$RARITY_Red, 'Red']]
+Global Const $RarityIDs[]				= [$RARITY_White, $RARITY_Gray, $RARITY_Blue, $RARITY_Gold, $RARITY_Purple, $RARITY_Green, $RARITY_Green, $RARITY_Red]
+Global Const $RarityNames[]				= ['White', 'Gray', 'Blue', 'Gold', 'Purple', 'Green', 'Green', 'Red']
+Global Const $RarityNamesFromIDs		= MapFromArrays($RarityIDs, $RarityNames)
+;Global Const $RarityIDsFromNames		= MapFromArrays($RarityNames, $RarityIDs)
+
 
 #Region Merchant Items
 Global Const $ID_Belt_Pouch						= 34
@@ -735,8 +743,12 @@ Global Const $ID_Black_Dye	= 10
 Global Const $ID_Gray_Dye	= 11
 Global Const $ID_White_Dye	= 12
 Global Const $ID_Pink_Dye	= 13
-Global Const $Dyes_Array[]	= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
-Global Const $Map_Dyes		= MapFromArray($Dyes_Array)
+
+Global Const $Dyes_Array[]			= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
+Global Const $Dyes_Names_Array[]	= ['Blue', 'Green', 'Purple', 'Red', 'Yellow', 'Brown', 'Orange', 'Silver', 'Black', 'Gray', 'White', 'Pink']
+Global Const $DyeNamesFromIDs		= MapFromArrays($Dyes_Array, $Dyes_Names_Array)
+;Global Const $DyeIDsFromNames		= MapFromArrays($Dyes_Names_Array, $Dyes_Array)
+Global Const $Map_Dyes				= MapFromArray($Dyes_Array)
 #EndRegion Dyes
 
 
@@ -754,12 +766,29 @@ Global Const $ID_Deep_Scroll				= 22279
 Global Const $ID_FoW_Scroll					= 22280
 Global Const $Blue_Scrolls_Array[]			= [$ID_Adventurers_Insight_Scroll, $ID_Rampagers_Insight_Scroll, $ID_Hunters_Insight_Scroll]
 Global Const $Gold_Scrolls_Array[]			= [$ID_Urgoz_Scroll, $ID_UW_Scroll, $ID_Heros_Insight_Scroll, $ID_Berserkers_Insight_Scroll, $ID_Slayers_Insight_Scroll, $ID_Scroll_of_the_Lightbringer, $ID_Deep_Scroll, $ID_FoW_Scroll]
+Global Const $Gold_Scrolls_Names_Array[]	= ['Passage Scroll to Urgozs Warren', 'Passage Scroll to the Underworld', 'Scroll of Heros Insight', 'Scroll of Berserkers Insight', 'Scroll of Slayers Insight', 'Scroll of the Lightbringer', 'Passage Scroll to the Deep', 'Passage Scroll to the Fissure of Woe']
+Global Const $GoldScrollNamesFromIDs		= MapFromArrays($Gold_Scrolls_Array, $Gold_Scrolls_Names_Array)
+;Global Const $GoldScrollIDsFromNames		= MapFromArrays($Gold_Scrolls_Names_Array, $Gold_Scrolls_Array)
 Global Const $Map_Blue_Scrolls				= MapFromArray($Blue_Scrolls_Array)
 Global Const $Map_Gold_Scrolls				= MapFromArray($Gold_Scrolls_Array)
 #EndRegion Scrolls
 
 
 #Region Materials
+; Basic Materials
+Global Const $ID_Bone							= 921
+Global Const $ID_Iron_Ingot						= 948
+Global Const $ID_Tanned_Hide_Square				= 940
+Global Const $ID_Scale							= 953
+Global Const $ID_Chitin_Fragment				= 954
+Global Const $ID_Bolt_of_Cloth					= 925
+Global Const $ID_Wood_Plank						= 946
+Global Const $ID_Granite_Slab					= 955
+Global Const $ID_Pile_of_Glittering_Dust		= 929
+Global Const $ID_Plant_Fibers					= 934
+Global Const $ID_Feather						= 933
+
+; Rare Marerials
 Global Const $ID_Fur_Square						= 941
 Global Const $ID_Bolt_of_Linen					= 926
 Global Const $ID_Bolt_of_Damask					= 927
@@ -780,33 +809,33 @@ Global Const $ID_Tempered_Glass_Vial			= 939
 Global Const $ID_Leather_Square					= 942
 Global Const $ID_Elonian_Leather_Square			= 943
 Global Const $ID_Vial_of_Ink					= 944
-Global Const $ID_Rolls_of_Parchment				= 951
-Global Const $ID_Rolls_of_Vellum				= 952
-Global Const $ID_Spiritwood_Planks				= 956
+Global Const $ID_Roll_of_Parchment				= 951
+Global Const $ID_Roll_of_Vellum					= 952
+Global Const $ID_Spiritwood_Plank				= 956
 Global Const $ID_Amber_Chunk					= 6532
 Global Const $ID_Jadeite_Shard					= 6533
 
-Global Const $ID_Bone							= 921
-Global Const $ID_Iron_Ingot						= 948
-Global Const $ID_Tanned_Hide_Square				= 940
-Global Const $ID_Scale							= 953
-Global Const $ID_Chitin_Fragment				= 954
-Global Const $ID_Bolt_of_Cloth					= 925
-Global Const $ID_Wood_Plank						= 946
-Global Const $ID_Granite_Slab					= 955
-Global Const $ID_Pile_of_Glittering_Dust		= 929
-Global Const $ID_Plant_Fibers					= 934
-Global Const $ID_Feather						= 933
+
+Global Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
+Global Const $Basic_Materials_Names_Array[]			= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', 'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fibers', 'Feather']
+Global Const $Basic_Material_Names_From_IDs			= MapFromArrays($Basic_Materials_Array, $Basic_Materials_Names_Array)
+;Global Const $Basic_Material_IDs_From_Names		= MapFromArrays($Basic_Materials_Names_Array, $Basic_Materials_Array)
+
 Global Const $Rare_Materials_Double_Array[][]	= [	[$ID_Fur_Square, 'Fur Square'], [$ID_Bolt_of_Linen, 'Bolt of Linen'], [$ID_Bolt_of_Damask, 'Bolt of Damask'], [$ID_Bolt_of_Silk, 'Bolt of Silk'], [$ID_Glob_of_Ectoplasm, 'Glob of Ectoplasm'], _
 													[$ID_Steel_Ingot, 'Steel Ingot'], [$ID_Deldrimor_Steel_Ingot, 'Deldrimor Steel Ingot'], [$ID_Monstrous_Claw, 'Monstrous Claw'], [$ID_Monstrous_Eye, 'Monstrous Eye'], [$ID_Monstrous_Fang, 'Monstrous Fang'], _
 													[$ID_Ruby, 'Ruby'], [$ID_Sapphire, 'Sapphire'], [$ID_Diamond, 'Diamond'], [$ID_Onyx_Gemstone, 'Onyx Gemstones'], [$ID_Lump_of_Charcoal, 'Lumps of Charcoal'], [$ID_Obsidian_Shard, 'Obsidian Shard'], _
 													[$ID_Tempered_Glass_Vial, 'Tempered Glass Vial'], [$ID_Leather_Square, 'Leather Squares'], [$ID_Elonian_Leather_Square, 'Elonian Leather Square'], [$ID_Vial_of_Ink, 'Vial of Ink'], _
-													[$ID_Rolls_of_Parchment, 'Rolls of Parchment'], [$ID_Rolls_of_Vellum, 'Rolls of Vellum'], [$ID_Spiritwood_Planks, 'Spiritwood Planks'], [$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
+													[$ID_Roll_of_Parchment, 'Roll of Parchment'], [$ID_Roll_of_Vellum, 'Roll of Vellum'], [$ID_Spiritwood_Plank, 'Spiritwood Plank'], [$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
 Global Const $Map_Rare_Materials				= MapFromDoubleArray($Rare_Materials_Double_Array)
 Global Const $Rare_Materials_Array[]				= [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
-													$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, _
-													$ID_Rolls_of_Parchment, $ID_Rolls_of_Vellum, $ID_Spiritwood_Planks, $ID_Amber_Chunk, $ID_Jadeite_Shard]
-Global Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
+														$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, _
+														$ID_Roll_of_Parchment, $ID_Roll_of_Vellum, $ID_Spiritwood_Plank, $ID_Amber_Chunk, $ID_Jadeite_Shard]
+Global Const $Rare_Materials_Names_Array[]			= ['Fur Square', 'Bolt of Linen', 'Bolt of Damask', 'Bolt of Silk', 'Glob of Ectoplasm', 'Steel Ingot', 'Deldrimor Steel Ingot', 'Monstrous Claw', 'Monstrous Eye', 'Monstrous Fang', _
+														'Ruby', 'Sapphire', 'Diamond', 'Onyx Gemstone', 'Lump of Charcoal', 'Obsidian Shard', 'Tempered Glass Vial', 'Leather Square', 'Elonian Leather Square', 'Vial of Ink', _
+														'Roll of Parchment', 'Roll of Vellum', 'Spiritwood Plank', 'Amber Chunk', 'Jadeite Shard']
+Global Const $Rare_Material_Names_From_IDs			= MapFromArrays($Rare_Materials_Array, $Rare_Materials_Names_Array)
+;Global Const $Rare_Material_IDs_From_Names			= MapFromArrays($Rare_Materials_Names_Array, $Rare_Materials_Array)
+
 Global $All_Materials_Array						= $Rare_Materials_Array
 _ArrayConcatenate($All_Materials_Array, $Basic_Materials_Array)
 Global Const $Map_Basic_Materials				= MapFromArray($Basic_Materials_Array)
@@ -815,7 +844,7 @@ Global Const $Map_All_Materials					= MapFromArray($All_Materials_Array)
 Global Const $Materials_Double_Array[][]		= [	[$ID_Bone, 1], [$ID_Iron_Ingot, 2], [$ID_Tanned_Hide_Square, 3], [$ID_Scale, 4], [$ID_Chitin_Fragment, 5], [$ID_Bolt_of_Cloth, 6], [$ID_Wood_Plank, 7], [$ID_Granite_Slab, 9], [$ID_Pile_of_Glittering_Dust, 10], [$ID_Plant_Fibers, 11], [$ID_Feather, 12], _
 													[$ID_Fur_Square, 13], [$ID_Bolt_of_Linen, 14], [$ID_Bolt_of_Damask, 15], [$ID_Bolt_of_Silk, 16], [$ID_Glob_of_Ectoplasm, 17], [$ID_Steel_Ingot, 18], [$ID_Deldrimor_Steel_Ingot, 19], [$ID_Monstrous_Claw, 20], [$ID_Monstrous_Eye, 21], [$ID_Monstrous_Fang, 22], _
 													[$ID_Ruby, 23], [$ID_Sapphire, 24], [$ID_Diamond, 25], [$ID_Onyx_Gemstone, 26], [$ID_Lump_of_Charcoal, 27], [$ID_Obsidian_Shard, 28], [$ID_Tempered_Glass_Vial, 30], [$ID_Leather_Square, 31], [$ID_Elonian_Leather_Square, 32], [$ID_Vial_of_Ink, 33], _
-													[$ID_Rolls_of_Parchment, 34], [$ID_Rolls_of_Vellum, 35], [$ID_Spiritwood_Planks, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
+													[$ID_Roll_of_Parchment, 34], [$ID_Roll_of_Vellum, 35], [$ID_Spiritwood_Plank, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
 Global Const $Map_Material_Location				= MapFromDoubleArray($Materials_Double_Array)
 
 
@@ -954,6 +983,9 @@ Global Const $ID_Lunar_Token				= 21833
 Global Const $ID_Lunar_Tokens				= 28433
 Global Const $ID_ToT						= 28434
 Global Const $Special_Drops[]				= [$ID_CC_Shard, $ID_Victory_Token, $ID_Wintersday_Gift, $ID_Wayfarer_Mark, $ID_Lunar_Token, $ID_Lunar_Tokens, $ID_ToT]
+Global Const $Special_Drops_Names[]			= ['Candy Cane Shard', 'Victory Token', 'Wintersday Gift', 'Wayfarer Mark', 'Lunar Token', 'Lunar Tokens', 'Trick-or-Treat Bag']
+Global Const $SpecialDropNamesFromIDs		= MapFromArrays($Special_Drops, $Special_Drops_Names)
+;Global Const $SpecialDropIDsFromNames		= MapFromArrays($Special_Drops_Names, $Special_Drops)
 Global Const $Map_Special_Drops				= MapFromArray($Special_Drops)
 #EndRegion Special Drops
 
@@ -1360,8 +1392,14 @@ Global Const $Tomes_Array[]				= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, 
 ; Elite Tomes
 Global Const $Elite_Tomes_Array[]		= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, _
 	$ID_Ritualist_EliteTome, $ID_Paragon_EliteTome]
+Global Const $Elite_Tomes_Names_Array[] = ['Elite Assassin Tome', 'Elite Mesmer Tome', 'Elite Necromancer Tome', 'Elite Elementalist Tome', 'Elite Monk Tome', 'Elite Warrior Tome', 'Elite Ranger Tome', 'Elite Dervish Tome', 'Elite Ritualist Tome', 'Elite Paragon Tome']
+Global Const $EliteTomeNamesFromIDs		= MapFromArrays($Elite_Tomes_Array, $Elite_Tomes_Names_Array)
+;Global Const $EliteTomeIDsFromNames	= MapFromArrays($Elite_Tomes_Names_Array, $Elite_Tomes_Array)
 ; Normal Tomes
 Global Const $Regular_Tomes_Array[]		= [$ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
+Global Const $Regular_Tomes_Names_Array[] = ['Assassin Tome', 'Mesmer Tome', 'Necromancer Tome', 'Elementalist Tome', 'Monk Tome', 'Warrior Tome', 'Ranger Tome', 'Dervish Tome', 'Ritualist Tome', 'Paragon Tome']
+Global Const $RegularTomeNamesFromIDs	= MapFromArrays($Regular_Tomes_Array, $Regular_Tomes_Names_Array)
+;Global Const $RegularTomeIDsFromNames	= MapFromArrays($Regular_Tomes_Names_Array, $Regular_Tomes_Array)
 Global Const $Map_Tomes					= MapFromArray($Tomes_Array)
 Global Const $Map_Elite_Tomes			= MapFromArray($Elite_Tomes_Array)
 Global Const $Map_Regular_Tomes			= MapFromArray($Regular_Tomes_Array)
