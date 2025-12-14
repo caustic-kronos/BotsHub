@@ -132,7 +132,7 @@ Func _guiCreate()
 	$FarmInfosTab = GUICtrlCreateTabItem("Farm infos")
 	$CharacterBuild = GUICtrlCreateLabel("Character build:", 31, 54, 531, 26)
 	$HeroBuildLabel = GUICtrlCreateLabel("Hero build:", 31, 94, 531, 26)
-	$LootComponentsTab = GUICtrlCreateTabItem("Loot components")
+	$LootComponentsTab = GUICtrlCreateTabItem("Keep components")
 	$GUITODO = GUICtrlCreateLabel("GUI TODO : (farm specific to Secret Lair of the Snowmen)Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic (specific to Irontoe's lair) Dwarven Ale, Aged Dwarven Ale", 31, 94, 531, 26)
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>_guiCreate

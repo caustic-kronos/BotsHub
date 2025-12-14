@@ -1079,7 +1079,7 @@ EndFunc
 
 ;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
 Func CreateValuableRunesAndInsigniasArray()
-	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Loot components.Armor upgrades')
+	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Keep components.Armor upgrades')
 	Local $ValuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
 		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15) ; removing unnecessary leftmost string with dot "Armor upgrades."
@@ -1093,7 +1093,7 @@ EndFunc
 ;~ TODO: finish this function
 ;~ Creates an array of all valuable OS (Old School without inscription) weapon mods based on selected elements in treeview
 Func CreateValuableModsByOSWeaponTypeMap()
-	Local $tickedMods = GetLootOptionsTickedCheckboxes('Loot components.Mods')
+	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
 	Local $ValuableModsByOSWeaponType[UBound($tickedMods)]
 	For $tickedMod In $tickedMods
 		Info($tickedMods)
@@ -1104,7 +1104,7 @@ EndFunc
 
 ;~ Creates an array of all valuable not OS (Old School) weapon mods based on selected elements in treeview
 Func CreateValuableModsByWeaponTypeMap()
-	Local $tickedMods = GetLootOptionsTickedCheckboxes('Loot components.Mods')
+	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
 
 	Local $Shield_Mods_Array[0], $Offhand_Mods_Array[0], $Wand_Mods_Array[0], $Staff_Mods_Array[0], $Bow_Mods_Array[0], $Axe_Mods_Array[0], _
 			$Hammer_Mods_Array[0], $Sword_Mods_Array[0], $Dagger_Mods_Array[0], $Scythe_Mods_Array[0], $Spear_Mods_Array[0]
@@ -1199,7 +1199,7 @@ EndFunc
 
 ;~ Creates an array of all valuable inscriptions based on selected elements in treeview
 Func CreateValuableInscriptionsArray()
-	Local $tickedInscriptions = GetLootOptionsTickedCheckboxes('Loot components.Inscriptions')
+	Local $tickedInscriptions = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions')
 	Local $ValuableInscriptionsArray[UBound($tickedInscriptions)]
 	For $i = 0 To UBound($tickedInscriptions) - 1
 		Local $varName = $tickedInscriptions[$i]

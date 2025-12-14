@@ -1568,7 +1568,7 @@
 				{
 					"Type": "TabItem",
 					"Name": "LootComponentsTab",
-					"Text": "Loot components",
+					"Text": "Keep components",
 					"Controls": [
 					]
 				}

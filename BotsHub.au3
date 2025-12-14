@@ -639,7 +639,7 @@ Func GuiButtonHandler()
 				Info('Saved loot options configuration ' & $configFile)
 			EndIf
 		Case $GUI_ApplyLootOptionsButton
-			RefreshValuableListsFromInterface()
+			UpdateLootOptionsFromInterface()
 		Case $GUI_RenderButton
 			ToggleRenderingState()
 		Case $GUI_Button_DynamicExecution
@@ -902,6 +902,7 @@ Func main()
 	EndIf
 	FillConfigurationCombo()
 	LoadDefaultConfiguration()
+	UpdateLootOptionsFromInterface()
 	BotHubLoop()
 EndFunc
 
@@ -1449,6 +1450,27 @@ Func ReadConfigFromJson($jsonString)
 EndFunc
 
 
+Func UpdateLootOptionsFromInterface()
+	RefreshValuableListsFromInterface()
+	Opt('GUIDataSeparatorChar', '.')
+	$PICKUP_EVERYTHING = IsLootOptionChecked('Pick up items')
+	$PICKUP_NOTHING = Not IsAnyLootOptionInBranchChecked('Pick up items')
+	$PICKUP_WEAPONS = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
+	$IDENTIFY_ITEMS = IsAnyLootOptionInBranchChecked('Identify items')
+	$SALVAGE_NOTHING = Not IsAnyLootOptionInBranchChecked('Salvage items')
+	$SALVAGE_ANY_ITEM = IsAnyLootOptionInBranchChecked('Salvage items')
+	$SALVAGE_WEAPONS = IsAnyLootOptionInBranchChecked('Salvage items.Weapons and offhands')
+	$SALVAGE_GEARS = IsAnyLootOptionInBranchChecked('Salvage items.Armor salvageables')
+	$SALVAGE_ALL_TROPHIES = IsLootOptionChecked('Salvage items.Trophies')
+	$SALVAGE_TROPHIES = IsAnyLootOptionInBranchChecked('Salvage items.Trophies')
+	$SELL_NOTHING = Not IsAnyLootOptionInBranchChecked('Sell items')
+	$SELL_WEAPONS = IsAnyLootOptionInBranchChecked('Sell items.Weapons and offhands')
+	$SELL_BASIC_MATERIALS = IsAnyLootOptionInBranchChecked('Sell items.Basic Materials')
+	$SELL_RARE_MATERIALS = IsAnyLootOptionInBranchChecked('Sell items.Rare Materials')
+	$STORE_WEAPONS = IsAnyLootOptionInBranchChecked('Store items.Weapons and offhands')
+EndFunc
+
+
 ;~ Creating a treeview from a JSON node
 Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 	; Unused for now, but might become useful
@@ -1548,6 +1570,48 @@ Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, 
 			IterateOverTreeView($context, $treeViewHandle, $currentChild, $currentPath, $functionToApply)
 		Next
 	EndIf
+EndFunc
+
+
+Func IsLootOptionChecked($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions)
+	; skipped check if $startingPoint contains path separated with . characters for optimization, generally only full path is used for this function
+	Return _GUICtrlTreeView_GetChecked($treeViewHandle, _GUICtrlTreeView_FindItemEx($treeViewHandle, $startingPoint))
+EndFunc
+
+
+; Function to check if any checkbox is checked in a branch provided as path string
+Func IsAnyLootOptionInBranchChecked($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions)
+	Local $treeViewItem
+	; checking if $startingPoint contains extended path separated with . characters or is single tree element
+	If StringInStr($startingPoint, '.') > 0 Then ; $startingPoint contains extended path, not single tree element
+		Opt('GUIDataSeparatorChar', '.')
+		$treeViewItem = _GUICtrlTreeView_FindItemEx($treeViewHandle, $startingPoint)
+	Else ; $startingPoint doesn't contain extended path, single tree element
+		$treeViewItem = _GUICtrlTreeView_FindItem($treeViewHandle, $startingPoint)
+	EndIf
+	Return IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
+EndFunc
+
+
+; Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
+Func IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
+	; Check if current item is checked
+	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then Return True
+
+	Local $anyChildChecked = False
+	; Recursively check all child items of provided $treeViewItem
+	If _GUICtrlTreeView_GetChildren($treeViewHandle, $treeViewItem) Then
+		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
+		While $childHandle <> 0
+			If IsAnyChildInBranchChecked($treeViewHandle, $childHandle) == True Then
+				$anyChildChecked = True
+				ExitLoop
+			EndIf
+			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
+		WEnd
+	EndIf
+
+	Return $anyChildChecked
 EndFunc
 
 

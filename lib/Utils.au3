@@ -272,7 +272,7 @@ EndFunc
 #Region Loot items
 ;~ Loot items around character
 Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
-	If (GUICtrlRead($GUI_Checkbox_LootNothing) == $GUI_CHECKED) Then Return
+	If $PICKUP_NOTHING Then Return
 
 	Local $item
 	Local $agentID
@@ -306,56 +306,79 @@ EndFunc
 ;~ Return True if the item should be picked up
 ;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
 Func DefaultShouldPickItem($item)
+	If $PICKUP_NOTHING Then Return False
+	If $PICKUP_EVERYTHING Then Return True
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
 	; Only pick gold if character has less than 99k in inventory
 	If (($itemID == $ID_Money) And (GetGoldCharacter() < 99000)) Then
 		Return True
 	ElseIf IsBasicMaterial($item) Then
-		Return GUICtrlRead($GUI_Checkbox_LootBasicMaterials) == $GUI_CHECKED
+		Local $materialName = $Basic_Material_Names_From_IDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Basic Materials.' & $materialName)
 	ElseIf IsRareMaterial($item) Then
-		Return GUICtrlRead($GUI_Checkbox_LootRareMaterials) == $GUI_CHECKED
-	ElseIf IsTome($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootTomes) == $GUI_CHECKED
+		Local $materialName = $Rare_Material_Names_From_IDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Rare Materials.' & $materialName)
+	ElseIf IsRegularTome($itemID) Then
+		Local $tomeName = $RegularTomeNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Tomes.Normal.' & $tomeName)
+	ElseIf IsEliteTome($itemID) Then
+		Local $tomeName = $EliteTomeNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Tomes.Elite.' & $tomeName)
 	ElseIf IsGoldScroll($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootScrolls) == $GUI_CHECKED
+		Local $scrollName = $GoldScrollNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Scrolls.Gold.' & $scrollName)
 	ElseIf IsBlueScroll($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootScrolls) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Scrolls.Blue')
 	ElseIf IsKey($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootKeys) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Keys')
 	ElseIf ($itemID == $ID_Dyes) Then
-		Local $dyeColor = DllStructGetData($item, 'DyeColor')
-		Return (($dyeColor == $ID_Black_Dye) Or ($dyeColor == $ID_White_Dye) Or (GUICtrlRead($GUI_Checkbox_LootDyes) == $GUI_CHECKED))
+		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
+		Local $dyeColorName = $DyeNamesFromIDs[$dyeColorID]
+		Return IsLootOptionChecked('Pick up items.Dyes.' & $dyeColorName)
+	ElseIf IsTrophy($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Trophies')
 	ElseIf ($itemID == $ID_Glacial_Stone) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGlacialStones) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Trophies.Glacial Stone')
+	ElseIf ($itemID == $ID_Destroyer_Core) Then
+		Return IsLootOptionChecked('Pick up items.Trophies.Destroyer Core')
 	ElseIf ($itemID == $ID_Jade_Bracelet) Then
-		Return True
+		Return IsLootOptionChecked('Pick up items.Trophies.Jade Bracelet')
 	ElseIf ($itemID == $ID_Stolen_Goods) Then
-		Return True
+		Return IsLootOptionChecked('Pick up items.Trophies.Stolen Goods')
 	ElseIf ($itemID == $ID_Ministerial_Commendation) Then
 		Return True
 	ElseIf ($itemID == $ID_Jar_of_Invigoration) Then
 		Return False
 	ElseIf IsMapPiece($itemID) Then
-		Return GUICtrlRead($GUI_Checkbox_LootMapPieces) == $GUI_CHECKED
-	ElseIf IsStackable($item) Then
-		Return True
+		Return IsLootOptionChecked('Pick up items.Quest items.Map pieces')
 	ElseIf ($itemID == $ID_Lockpick) Then
+		Return True
+	ElseIf IsConsumable($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Consumables')
+	ElseIf IsAlcohol($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Alcohols')
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $festivalDropName = $SpecialDropNamesFromIDs[$itemID]
+		Return IsLootOptionChecked('Pick up items.Festival Items.' & $festivalDropName)
+	ElseIf IsStackable($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
 		Return True
+	ElseIf IsWeapon($item) And CheckPickupWeapon($item) Then
+		Return True
 	ElseIf ($rarity == $RARITY_Gold) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGoldItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other gold items')
 	ElseIf ($rarity == $RARITY_Green) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGreenItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other green items')
 	ElseIf ($rarity == $RARITY_Purple) Then
-		Return GUICtrlRead($GUI_Checkbox_LootPurpleItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other purple items')
 	ElseIf ($rarity == $RARITY_Blue) Then
-		Return GUICtrlRead($GUI_Checkbox_LootBlueItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other blue items')
 	ElseIf ($rarity == $RARITY_White) Then
-		Return GUICtrlRead($GUI_Checkbox_LootWhiteItems) == $GUI_CHECKED
+		Return IsLootOptionChecked('Pick up items.Other white items')
 	EndIf
 	Return False
 EndFunc
@@ -1156,30 +1179,32 @@ Func IdentifyAllItems($buyKit = True)
 EndFunc
 
 
-;~ Salvage all items from inventory
-Func SalvageAllItems($buyKit = True)
+;~ Salvage items from inventory, only items specified by configuration in GUI interface
+Func SalvageItems($buyKit = True)
 	Local $kit = GetSalvageKit($buyKit)
 	If $kit == 0 Then Return False
 	Local $uses = DllStructGetData($kit, 'Value') / 2
 
 	Local $movedItem = Null
 	If (CountSlots(1, 4) < 1) Then
-		; There is no space in inventory, we need to store something in Xunlai to start the salvage
+		; There is no space in inventory, we need to store something in Xunlai chest to start the salvage
 		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
 		$movedItem = GetItemBySlot(_Min(4, $BAGS_COUNT), 1)
 		MoveItem($movedItem, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	EndIf
 
-	Info('Salvaging all items')
+	Info('Salvaging items')
 	Local $trophiesItems[60]
 	Local $trophyIndex = 0
 	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
-		Info('Salvaging bag' & $bagIndex)
+		Debug('Salvaging bag ' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-			If IsTrophy(DllStructGetData($item, 'ModelID')) Then
+			If IsTrophy(DllStructGetData($item, 'ModelID')) And Not $SALVAGE_TROPHIES Then
+				ContinueLoop
+			ElseIf IsTrophy(DllStructGetData($item, 'ModelID')) And $SALVAGE_TROPHIES Then
 				; Trophies should be salvaged at the end, because they create a lot of materials
 				$trophiesItems[$trophyIndex] = $item
 				$trophyIndex += 1
@@ -1197,6 +1222,7 @@ Func SalvageAllItems($buyKit = True)
 		Next
 	Next
 
+	; Moving removed item back from Xunlai chest to empty slot in inventory to check it to salvage it too
 	If $movedItem <> Null Then
 		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $BAGS_COUNT))
 		MoveItem($movedItem, $bagEmptySlot[0], $bagEmptySlot[1])
@@ -1211,19 +1237,22 @@ Func SalvageAllItems($buyKit = True)
 		EndIf
 	EndIf
 
-	For $i = 0 To $trophyIndex - 1
-		If DefaultShouldSalvageItem($trophiesItems[$i]) Then
-			For $k = 0 To DllStructGetData($trophiesItems[$k], 'Quantity') - 1
-				SalvageItem($trophiesItems[$i], $kit)
-				$uses -= 1
-				If $uses < 1 Then
-					$kit = GetSalvageKit($buyKit)
-					If $kit == 0 Then Return False
-					$uses = DllStructGetData($kit, 'Value') / 2
-				EndIf
-			Next
-		EndIf
-	Next
+	; Salvaging trophy items only if corresponding GUI options are selected
+	If $SALVAGE_TROPHIES Then
+		For $i = 0 To $trophyIndex - 1
+			If DefaultShouldSalvageItem($trophiesItems[$i]) Then
+				For $k = 0 To DllStructGetData($trophiesItems[$k], 'Quantity') - 1
+					SalvageItem($trophiesItems[$i], $kit)
+					$uses -= 1
+					If $uses < 1 Then
+						$kit = GetSalvageKit($buyKit)
+						If $kit == 0 Then Return False
+						$uses = DllStructGetData($kit, 'Value') / 2
+					EndIf
+				Next
+			EndIf
+		Next
+	EndIf
 EndFunc
 
 
