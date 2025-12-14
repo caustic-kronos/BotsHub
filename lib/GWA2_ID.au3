@@ -506,10 +506,12 @@ Global Const $ID_To_The_Limit					= 316
 Global Const $ID_For_Great_Justice				= 343
 Global Const $ID_100_Blades						= 381
 Global Const $ID_Whirlwind_Attack				= 2107
+Global Const $ID_Seven_Weapons_Stance			= 3426
 ; Ranger
 Global Const $ID_Troll_Unguent					= 446
 Global Const $ID_Whirling_Defense				= 450
 Global Const $ID_Quickening_Zephyr				= 475
+Global Const $ID_Together_as_One				= 3427
 ; Monk
 Global Const $ID_Unyielding_Aura				= 268
 Global Const $ID_Light_of_Dwayna				= 304
@@ -525,17 +527,27 @@ Global Const $ID_Vengeance						= 315
 Global Const $ID_Ray_of_Judgement				= 830
 Global Const $ID_Resurrection_Chant				= 1128
 Global Const $ID_Renew_Life						= 1263
+Global Const $ID_Judgement_Strike				= 3425
 ; Necromancer
 Global Const $ID_Animate_Bone_Minions			= 85
 Global Const $ID_Death_Nova						= 104
 Global Const $ID_Animate_Flesh_Golem			= 832
+Global Const $ID_Soul_Taker						= 3423
 ; Mesmer
 Global Const $ID_Empathy 						= 26
 Global Const $ID_Sympathetic_Visage				= 34
+Global Const $ID_Arcane_Conundrum				= 36
 Global Const $ID_Channeling						= 38
+Global Const $ID_Migraine						= 53
 Global Const $ID_Arcane_Echo					= 75
+Global Const $ID_Stolen_Speed					= 880
+Global Const $ID_Shared_Burden					= 900
 Global Const $ID_Ancestors_Visage				= 1054
 Global Const $ID_Wastrels_Demise				= 1335
+Global Const $ID_Frustration					= 1341
+Global Const $ID_Sum_of_All_Fears				= 1996
+Global Const $ID_Confusing_Images				= 2137
+Global Const $ID_Time_Ward						= 3422
 ; Elementalist
 Global Const $ID_Elemental_Attunement			= 164
 Global Const $ID_Meteor							= 187
@@ -545,15 +557,20 @@ Global Const $ID_Flare							= 194
 Global Const $ID_Searing_Heat					= 196
 Global Const $ID_Fire_Storm						= 197
 Global Const $ID_Glyph_of_Elemental_Power		= 198
+Global Const $ID_Glyph_of_Sacrifice				= 198
 Global Const $ID_Unsteady_Ground				= 1083
+Global Const $ID_Glyph_of_Essence				= 1096
 Global Const $ID_Sand_Storm						= 1372
 Global Const $ID_Savannah_Heat					= 1380
+Global Const $ID_Over_the_Limit					= 3424
 ; Assassin
+Global Const $ID_Deadly_Paradox					= 572
 Global Const $ID_Shadow_Refuge					= 814
 Global Const $ID_Shadow_Form					= 826
 Global Const $ID_Way_of_Perfection				= 1028
 Global Const $ID_Shroud_of_Distress				= 1031
 Global Const $ID_Dark_Escape					= 1037
+Global Const $ID_Shadow_Theft					= 3428
 ; Ritualist
 Global Const $ID_Flesh_of_My_Flesh				= 791
 Global Const $ID_Union							= 911
@@ -563,10 +580,13 @@ Global Const $ID_Lively_Was_Naomei				= 1222
 Global Const $ID_Soul_Twisting					= 1240
 Global Const $ID_Displacement					= 1249
 Global Const $ID_Death_Pact_Signet				= 1481
+Global Const $ID_Weapons_of_Three_Forges		= 3429
 ; Paragon
 Global Const $ID_Burning_Refrain				= 1576
 Global Const $ID_We_Shall_Return				= 1592
 Global Const $ID_Fall_Back						= 1595
+Global Const $ID_Theyre_On_Fire					= 1597
+Global Const $ID_Aggressive_Refrain				= 1774
 Global Const $ID_Signet_of_Return				= 1778
 Global Const $ID_Heroic_Refrain					= 3431
 ; Dervish
@@ -577,6 +597,8 @@ Global Const $ID_Sand_Shards					= 1510
 Global Const $ID_Mystic_Regeneration			= 1516
 Global Const $ID_Conviction						= 1540
 Global Const $ID_Heart_of_Fury					= 1762
+Global Const $ID_Signet_of_Mystic_Speed			= 2200
+Global Const $ID_Vow_of_Revolution				= 3430
 ; Common
 Global Const $ID_Resurrection_Signet			= 2
 ; PvE
@@ -588,6 +610,7 @@ Global Const $ID_By_Urals_Hammer				= 2217
 Global Const $ID_Great_Dwarf_Armor				= 2220
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_I_Am_Unstoppable				= 2356
+Global Const $ID_Mindbender						= 2411
 Global Const $ID_Mental_Block					= 2417
 Global Const $ID_Dwarven_Stability				= 2423
 ; Food and drink boosts
