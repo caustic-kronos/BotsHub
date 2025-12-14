@@ -42,6 +42,13 @@ Global Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 3m ~ First run is 3m20s with setup
 Global Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
 
+; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
+; party hero ID that is used to add hero to the party team
+Global Const $JBHeroPartyID = $ID_General_Morgahn
+;Global Const $JBHeroPartyID = $ID_Keiran_Thackeray
+;Global Const $JBHeroPartyID = $ID_Hayda
+Global Const $JBHeroIndex = 1 ; index of first hero party member in team, player index is 0
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
 Global Const $JB_DrunkerMaster		= 1
 Global Const $JB_SandShards			= 2
@@ -88,7 +95,7 @@ Func SetupJadeBrotherhoodFarm()
 
 	GoToBukdekByway()
 	RandomSleep(50)
-	UseHeroSkill(1, $Brotherhood_Incoming)
+	UseHeroSkill($JBHeroIndex, $Brotherhood_Incoming)
 	MoveTo(-14000, -11000)
 	Move(-14000, -11700)
 	RandomSleep(1000)
@@ -117,11 +124,11 @@ Func SetupTeamJadeBrotherhoodFarm()
 	Info('Setting up team')
 	LeaveParty()
 	Sleep(500 + GetPing())
-	AddHero($ID_General_Morgahn)
+	AddHero($JBHeroPartyID)
 	Sleep(250 + GetPing())
-	LoadSkillTemplate($JB_Hero_Skillbar, 1)
+	LoadSkillTemplate($JB_Hero_Skillbar, $JBHeroIndex)
 	Sleep(250 + GetPing())
-	DisableAllHeroSkills(1)
+	DisableAllHeroSkills($JBHeroIndex)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -178,15 +185,15 @@ EndFunc
 ;~ Separate from paragon hero - you'll be missed Morgahn
 Func MoveToSeparationWithHero()
 	Info('Moving to crossing')
-	UseHeroSkill(1, $Brotherhood_Incoming)
+	UseHeroSkill($JBHeroIndex, $Brotherhood_Incoming)
 	RandomSleep(50)
 	CommandAll(-10475, -9685)
 	RandomSleep(50)
 	Move(-10475, -9685)
 	RandomSleep(7500)
-	UseHeroSkill(1, $Brotherhood_EnduringHarmony, GetMyAgent())
+	UseHeroSkill($JBHeroIndex, $Brotherhood_EnduringHarmony, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill(1, $Brotherhood_MakeHaste, GetMyAgent())
+	UseHeroSkill($JBHeroIndex, $Brotherhood_MakeHaste, GetMyAgent())
 	RandomSleep(50)
 	Move(-11983, -6261, 40)
 	RandomSleep(300)

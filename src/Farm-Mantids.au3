@@ -40,6 +40,13 @@ Global Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune'
 Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
+; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
+; party hero ID that is used to add hero to the party team
+Global Const $MantidsHeroPartyID = $ID_General_Morgahn
+;Global Const $MantidsHeroPartyID = $ID_Keiran_Thackeray
+;Global Const $MantidsHeroPartyID = $ID_Hayda
+Global Const $MantidsHeroIndex = 1 ; index of first hero party member in team, player index is 0
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
 Global Const $Mantids_DeadlyParadox			= 1
 Global Const $Mantids_ShadowForm			= 2
@@ -111,9 +118,9 @@ Func SetupTeamMantidsFarm()
 	Info('Setting up team')
 	LeaveParty()
 	Sleep(500 + GetPing())
-	AddHero($ID_General_Morgahn)
-	LoadSkillTemplate($MantidsHeroSkillbar, 1)
-	DisableAllHeroSkills(1)
+	AddHero($MantidsHeroPartyID)
+	LoadSkillTemplate($MantidsHeroSkillbar, $MantidsHeroIndex)
+	DisableAllHeroSkills($MantidsHeroIndex)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -142,21 +149,21 @@ Func MantidsFarmLoop()
 	If GetMapID() <> $ID_Wajjun_Bazaar Then Return $FAIL
 	Local $target
 
-	UseHeroSkill(1, $Mantids_VocalWasSogolon)
+	UseHeroSkill($MantidsHeroIndex, $Mantids_VocalWasSogolon)
 	RandomSleep(1500)
-	UseHeroSkill(1, $Mantids_Incoming)
 	AdlibRegister('UseFallBack', 8000)
+	UseHeroSkill($MantidsHeroIndex, $Mantids_Incoming)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0)
 	RandomSleep(1500)
-	UseHeroSkill(1, $Mantids_EnduringHarmony, GetMyAgent())
+	UseHeroSkill($MantidsHeroIndex, $Mantids_EnduringHarmony, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill(1, $Mantids_TheyreOnFire)
-	UseHeroSkill(1, $Mantids_MakeHaste, GetMyAgent())
+	UseHeroSkill($MantidsHeroIndex, $Mantids_TheyreOnFire)
+	UseHeroSkill($MantidsHeroIndex, $Mantids_MakeHaste, GetMyAgent())
 	UseSkillEx($Mantids_DeadlyParadox)
 	RandomSleep(20)
-	UseHeroSkill(1, $Mantids_BladeturnRefrain, GetMyAgent())
+	UseHeroSkill($MantidsHeroIndex, $Mantids_BladeturnRefrain, GetMyAgent())
 	UseSkillEx($Mantids_ShroudOfDistress)
 	RandomSleep(20)
 	UseSkillEx($Mantids_ShadowForm)

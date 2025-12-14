@@ -51,6 +51,13 @@ Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
 Global $RAPTORS_FARM_SETUP = False
 
+; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
+; party hero ID that is used to add hero to the party team
+Global Const $RaptorsHeroPartyID = $ID_General_Morgahn
+;Global Const $RaptorsHeroPartyID = $ID_Keiran_Thackeray
+;Global Const $RaptorsHeroPartyID = $ID_Hayda
+Global Const $RaptorsHeroIndex = 1 ; index of first hero party member in team, player index is 0
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Global Const $Raptors_MarkOfPain		= 1
 Global Const $Raptors_IAmUnstoppable	= 2
@@ -145,11 +152,11 @@ Func SetupTeamRaptorsFarm()
 	Sleep(500 + GetPing())
 	LeaveParty()
 	Sleep(500 + GetPing())
-	AddHero($ID_General_Morgahn)
+	AddHero($RaptorsHeroPartyID)
 	Sleep(250 + GetPing())
-	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
+	LoadSkillTemplate($PRunnerHeroSkillbar, $RaptorsHeroIndex)
 	Sleep(250)
-	DisableAllHeroSkills(1)
+	DisableAllHeroSkills($RaptorsHeroIndex)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -176,9 +183,9 @@ EndFunc
 Func RaptorsFarmLoop()
 	If GetMapID() <> $ID_Riven_Earth Then Return $FAIL
 
-	UseHeroSkill(1, $Raptors_VocalWasSogolon)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_VocalWasSogolon)
 	RandomSleep(1200)
-	UseHeroSkill(1, $Raptors_Incoming)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_Incoming)
 	GetRaptorsAsuraBlessing()
 	MoveToBaseOfCave()
 	Info('Moving Hero away')
@@ -217,20 +224,20 @@ Func MoveToBaseOfCave()
 	Info('Moving to Cave')
 	Move(-22015, -7502)
 	RandomSleep(7000)
-	UseHeroSkill(1, $Raptors_FallBack)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_FallBack)
 	RandomSleep(500)
 	If ($RaptorsPlayerProfession == $ID_Warrior) Then UseSkillEx($Raptors_IAmUnstoppable)
 	Moveto(-21333, -8384)
-	UseHeroSkill(1, $Raptors_EnduringHarmony, GetMyAgent())
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_EnduringHarmony, GetMyAgent())
 	If ($RaptorsPlayerProfession == $ID_Dervish) Then UseSkillEx($Raptors_SignetOfMysticSpeed, GetMyAgent())
 	RandomSleep(1800)
-	UseHeroSkill(1, $Raptors_MakeHaste, GetMyAgent())
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_MakeHaste, GetMyAgent())
 	RandomSleep(20)
-	UseHeroSkill(1, $Raptors_StandYourGround)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_StandYourGround)
 	RandomSleep(20)
-	UseHeroSkill(1, $Raptors_CantTouchThis)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_CantTouchThis)
 	RandomSleep(20)
-	UseHeroSkill(1, $Raptors_BladeturnRefrain, GetMyAgent())
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_BladeturnRefrain, GetMyAgent())
 	Move(-20930, -9480, 40)
 EndFunc
 
