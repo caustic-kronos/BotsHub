@@ -72,6 +72,7 @@
 #include 'src/Farm-Luxon.au3'
 #include 'src/Farm-Mantids.au3'
 #include 'src/Farm-MinisterialCommendations.au3'
+#include 'src/Farm-Minotaurs.au3'
 #include 'src/Farm-NexusChallenge.au3'
 #include 'src/Farm-Norn.au3'
 #include 'src/Farm-Pongmei.au3'
@@ -120,7 +121,7 @@ Global $BAGS_COUNT = 5
 Global $WEAPON_SLOT = 1
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -1055,6 +1056,9 @@ Func RunFarmLoop($Farm)
 		Case 'Ministerial Commendations'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = MinisterialCommendationsFarm($STATUS)
+		Case 'Minotaurs'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = MinotaursFarm($STATUS)
 		Case 'Nexus Challenge'
 			$INVENTORY_SPACE_NEEDED = 5
 			$result = NexusChallengeFarm($STATUS)
@@ -1236,6 +1240,8 @@ Func UpdateFarmDescription($Farm)
 		Case 'Ministerial Commendations'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $DWCommendationsFarmerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CommendationsFarmInformations)
+		Case 'Minotaurs'
+			GUICtrlSetData($GUI_Label_FarmInformations, $MinotaursFarmInformations)
 		Case 'Nexus Challenge'
 			GUICtrlSetData($GUI_Label_FarmInformations, $NexusChallengeinformations)
 		Case 'Norn'
@@ -1943,6 +1949,8 @@ Func SelectFarmDuration($Farm)
 			Return $MANTIDS_FARM_DURATION
 		Case 'Ministerial Commendations'
 			Return $COMMENDATIONS_FARM_DURATION
+		Case 'Minotaurs'
+			Return $MINOTAURS_FARM_DURATION
 		Case 'Nexus Challenge'
 			Return $NEXUS_CHALLENGE_FARM_DURATION
 		Case 'Norn'

@@ -109,9 +109,12 @@ Global Const $ID_Underworld					= 72
 Global Const $ID_Warriors_Isle				= 4
 Global Const $ID_Hunters_Isle				= 5
 Global Const $ID_Wizards_Isle				= 6
+Global Const $ID_Augury_Rock				= 38
 Global Const $ID_Burning_Isle				= 52
 Global Const $ID_Lions_Arch					= 55
 Global Const $ID_Tascas_Demise				= 92
+Global Const $ID_Prophets_Path				= 113
+Global Const $ID_Elona_Reach				= 118
 Global Const $ID_Temple_of_the_Ages			= 138
 Global Const $ID_The_Granite_Citadel		= 156
 Global Const $ID_Frozen_Isle				= 176
@@ -205,7 +208,7 @@ Global Const $ID_Central_Transfer_Chamber	= 652
 Global Const $ID_Auspicious_Beginnings		= 849
 
 Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, $ID_Underworld, _
-											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Lions_Arch, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
+											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Augury_Rock, $ID_Burning_Isle, $ID_Lions_Arch, $ID_Tascas_Demise, $ID_Elona_Reach, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
 											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Cavalon, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
 											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
 											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Shing_Jea_Monastery, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, _
@@ -218,7 +221,7 @@ Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_As
 											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge, $ID_Boreal_Station, $ID_Central_Transfer_Chamber]
 
 Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Underworld', 'Warriors Isle', 'Hunters Isle', _
-											'Wizards Isle', 'Burning Isle', 'Lions Arch', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
+											'Wizards Isle', 'Augury Rock', 'Burning Isle', 'Lions Arch', 'Tascas Demise', 'Elona Reach', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
 											'House Zu Heltzer', 'Cavalon', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', 'Nahpui Quarter', _
 											'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Shing Jea Monastery', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
 											'Isle Of Jade', 'Leviathan Pits', 'Zin Ku Corridor', 'The Marketplace', 'The Deep', 'Saint Anjekas Shrine', 'Imperial Isle', 'Isle Of Meditation', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
