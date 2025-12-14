@@ -124,9 +124,15 @@ Func SetupPlayerGemstonesFarm()
 		LoadSkillTemplate($GemstonesMesmerSkillBar)
     Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
-    EndIf
-    ;ChangeWeaponSet(2) ; change to other weapon slot or comment this line if necessary
-	Sleep(500 + GetPing())
+	EndIf
+	Sleep(250 + GetPing())
+	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
+		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
+		ChangeWeaponSet($WEAPON_SLOT)
+	Else
+		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
+	EndIf
+	Sleep(250 + GetPing())
 EndFunc
 
 
