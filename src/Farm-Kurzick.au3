@@ -62,18 +62,30 @@ Func ManageFactionPointsKurzickFarm()
 		GoNearestNPCToCoords(5390, 1524)
 
 		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
+		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
 		If $donatePoints Then
 			Info('Donating Kurzick faction points')
 			While GetKurzickFaction() >= 5000
 				DonateFaction('kurzick')
 				RandomSleep(500)
 			WEnd
-		Else
+		ElseIf $buyResources Then
 			Info('Converting Kurzick faction points into Amber Chunks')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $temp = Floor(GetKurzickFaction() / 5000)
-			Local $dialogID = 0x800001 + ($temp * 256)
+			Local $numberOfChunks = Floor(GetKurzickFaction() / 5000) ; 5000 faction points for each chunk
+			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
+			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
+			Dialog($dialogID)
+			RandomSleep(550)
+		ElseIf $buyScrolls Then
+			Info('Converting Kurzick faction points into Urgoz''s Warren Pasage Scrolls')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000) ; 1000 faction points for each scroll
+			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
+			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)
 			RandomSleep(550)
 		EndIf

@@ -61,18 +61,30 @@ Func ManageFactionPointsLuxonFarm()
 		GoNearestNPCToCoords(9076, -1111)
 
 		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
+		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
 		If $donatePoints Then
 			Info('Donating Luxon faction points')
 			While GetLuxonFaction() >= 5000
 				DonateFaction('Luxon')
 				RandomSleep(500)
 			WEnd
-		Else
+		ElseIf $buyResources Then
 			Info('Converting Luxon faction points into Jadeite Shards')
 			Dialog(0x83)
 			RandomSleep(500)
-			Local $temp = Floor(GetLuxonFaction() / 5000)
-			Local $dialogID = 0x800001 + ($temp * 256)
+			Local $numberOfShards = Floor(GetLuxonFaction() / 5000) ; 5000 faction points for each shard
+			; number of shards = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 shard, 0x800201 = 2 shards
+			Local $dialogID = 0x800001 + (0x100 * $numberOfShards)
+			Dialog($dialogID)
+			RandomSleep(550)
+		ElseIf $buyScrolls Then
+			Info('Converting Luxon faction points into The Deep Passage Scrolls')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfScrolls = Floor(GetLuxonFaction() / 1000) ; 1000 faction points for each scroll
+			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
+			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)
 			RandomSleep(550)
 		EndIf
