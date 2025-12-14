@@ -207,9 +207,13 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_Aftershock)
 	UseSkillEx($Kournans_Shockwave)
 	RandomSleep(2000)
-	Info('Looting')
-	If IsPlayerAlive() Then PickUpItems()
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	If IsPlayerAlive() Then
+		Info('Looting')
+		PickUpItems()
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
 EndFunc
 
 

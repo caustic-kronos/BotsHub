@@ -173,7 +173,6 @@ Func FoWToCFarmLoop()
 	Local $me = Null, $target = Null
 	Sleep(500 + GetPing())
 	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
-	If IsPlayerDead() Then Return $FAIL
 	Info('Starting Farm')
 	$FowToCFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 	Info('Moving to initial spot')
@@ -282,14 +281,12 @@ Func CastBuffsFowToC()
 		EndIf
 	EndIf
 
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
 Func DefendFoWToC($useHoSSkill = True) ; $useHoSSkill == False to not use heart of shadow on rangers, because they don't follow player to adjacent range
-	If IsPlayerDead() Then Return $FAIL
-
-	CastBuffsFowToC()
+	If CastBuffsFowToC() == $FAIL Then Return $FAIL
 
 	If $useHoSSkill Then ; can use heart of shadow skill
 		Local $me = GetMyAgent()
@@ -302,5 +299,5 @@ Func DefendFoWToC($useHoSSkill = True) ; $useHoSSkill == False to not use heart 
 	EndIf
 
 	RandomSleep(250)
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc

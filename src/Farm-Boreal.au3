@@ -150,23 +150,23 @@ Func BorealChestFarmLoop($STATUS)
 	Local $openedChests = 0
 
 	Info('Running to Spot #1')
-	BorealChestRun(2728, -25294)
-	BorealChestRun(2900, -22272)
-	BorealChestRun(-1000, -19801)
-	BorealChestRun(-2570, -17208)
+	If BorealChestRun(2728, -25294) == $FAIL Then Return $FAIL
+	If BorealChestRun(2900, -22272) == $FAIL Then Return $FAIL
+	If BorealChestRun(-1000, -19801) == $FAIL Then Return $FAIL
+	If BorealChestRun(-2570, -17208) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Running to Spot #2')
-	BorealChestRun(-4218, -15219)
+	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Running to Spot #3')
-	BorealChestRun(-4218, -15219)
+	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Running to Spot #4')
-	BorealChestRun(-4218, -15219)
+	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS,BorealSpeedRun) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
 	; Result can't be considered a failure if no chests were found
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -183,7 +183,7 @@ Func BorealSpeedRun()
 	If IsRecharged($Boreal_Dash) And GetEnergy() >= 5 Then
 		UseSkillEx($Boreal_Dash)
 	EndIf
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -192,7 +192,7 @@ Func BorealChestRun($X, $Y)
 	Move($X, $Y, 0)
 	Local $me = GetMyAgent()
 	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > $RANGE_ADJACENT
-		If BorealSpeedRun() == $FAIL Then Return $FAIL
+		BorealSpeedRun()
 		Sleep(250)
 		$me = GetMyAgent()
 		Move($X, $Y, 0)

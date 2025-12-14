@@ -153,7 +153,7 @@ Func FeathersFarmLoop()
 	MoveKill(-10500, 5500)
 	MoveKill(-9700, 2400)
 
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -242,7 +242,7 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		RandomSleep(250)
 		$me = GetMyAgent()
 	WEnd
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 

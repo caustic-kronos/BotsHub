@@ -210,8 +210,6 @@ EndFunc
 
 ;~ Move to X, Y. This is to be used in the run from across Bjora Marches
 Func RunAcrossBjoraMarches($X, $Y)
-	If IsPlayerDead() Then Return $FAIL
-
 	Move($X, $Y)
 
 	Local $target
@@ -364,8 +362,10 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 		If IsPlayerAlive() Then
 			Info('Looting')
 			PickUpItems(VaettirsStayAlive)
+			Return $SUCCESS
+		Else
+			Return $FAIL
 		EndIf
-		Return IsPlayerAlive()? $SUCCESS : $FAIL
 	Else
 		Return $result
 	EndIf

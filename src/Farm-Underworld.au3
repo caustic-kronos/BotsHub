@@ -138,7 +138,6 @@ EndFunc
 
 Func UnderworldFarmLoop()
 	Sleep(2000)
-	If IsPlayerDead() Then Return $FAIL
 	Info('Starting Farm')
 	$UWFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
