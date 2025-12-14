@@ -1,7 +1,7 @@
 #CS ===========================================================================
 ======================================
-|  	  Stygian Gemstones Farm bot     |
-|			  TonReuf   		     |
+|  	  Stygian Gemstones Farm bot	 |
+|			  	TonReuf   			 |
 ======================================
 ;
 ; Run this farm bot as Assassin or Mesmer or Ranger
@@ -10,6 +10,7 @@
 ; Stygian gemstone farm in the Stygian Veil based on below articles:
 https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer
 https://gwpvx.fandom.com/wiki/Build:R/N_HM_Stygian_Veil_Trapper
+; For Mesmer and Assassin this bot works by exploitation of AI pathing bug of Guild Wars
 ;
 #CE ===========================================================================
 
@@ -22,12 +23,6 @@ Opt('MustDeclareVars', True)
 #include '../lib/GWA2.au3'
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
-
-; For Mesmer and Assassin this bot works by exploitation of AI pathing bug of Guild Wars.
-; Caution, it looks like because of this bug exploitation the guild wars client crashes very soon when using this bot with below message
-; Assertion: !(manualAgentId && !ManagerFindAgent(manualAgentId))
-; P:\Code\Gw\AgentView\AvSelect.cpp(419)
-; Therefore it might be better to use ranger for this farm which uses trapper build instead of this bug exploitation
 
 #Region Configuration
 ; === Build ===
@@ -50,7 +45,7 @@ Global $StygianHeroAgentID = Null ; agent ID that is randomly assigned to hero i
 
 Global Const $Stygian_DeadlyParadox			= 1
 Global Const $Stygian_ShadowForm			= 2
-Global Const $Stygian_WastrelsDemise			= 3
+Global Const $Stygian_WastrelsDemise		= 3
 Global Const $Stygian_Mindbender			= 4
 Global Const $Stygian_Channeling			= 5
 Global Const $Stygian_DwarvenStability		= 6
@@ -69,12 +64,12 @@ Global Const $Stygian_Ranger_MuddyTerrain	= 8
 ; ranger hero
 Global Const $Stygian_Hero_EdgeOfExtinction	= 1
 Global Const $Stygian_Hero_UnyieldingAura	= 2
-Global Const $Stygian_Hero_Succor		= 3
+Global Const $Stygian_Hero_Succor			= 3
 #EndRegion Configuration
 
 ; ==== Constants ====
 Global Const $GemstoneStygianFarmInformations = 'For best results, have :' & @CRLF _
-	& '- Armor with HP runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
+	& '- Armor with Skills/HP/Energy runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
 	& '- Weapon of Enchanting (20% longer enchantments duration) to make Shadow Form permanent' & @CRLF _
 	& ' ' & @CRLF _
 	& 'You can run this farm as Assassin or Mesmer or Ranger. Bot will set up build automatically for these professions' & @CRLF _
@@ -86,9 +81,7 @@ Global Const $GemstoneStygianFarmInformations = 'For best results, have :' & @CR
 	& 'This farm is based on below articles:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/N_HM_Stygian_Veil_Trapper' & @CRLF _
-	& 'For Mesmer and Assassin this bot works by exploitation of Guild Wars bug in pathing AI, which causes mobs to not attack player' & @CRLF _
-	& 'Caution, it looks like because of this bug exploitation the guild wars client crashes very soon' & @CRLF _
-	& 'Therefore it might be better to use ranger for this farm which uses trapper build instead of this bug exploitation' & @CRLF
+	& 'For Mesmer and Assassin this bot works by exploitation of Guild Wars bug in pathing AI, which causes mobs to not attack player' & @CRLF
 ; Average duration ~ 8 minutes
 Global Const $GEMSTONE_STYGIAN_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
@@ -100,7 +93,7 @@ Global Const $Stygians_Range_Long = 1200
 Global $StygianRunOptions = CloneDictMap($Default_MoveDefend_Options)
 $StygianRunOptions.Item('defendFunction')		= StygianCheckRunBuffs
 $StygianRunOptions.Item('moveTimeOut')			= 3 * 60 * 1000
-$StygianRunOptions.Item('randomFactor')			= 50
+$StygianRunOptions.Item('randomFactor')			= 20
 $StygianRunOptions.Item('hosSkillSlot')			= 0
 $StygianRunOptions.Item('deathChargeSkillSlot')	= 0
 $StygianRunOptions.Item('openChests')			= False
@@ -219,7 +212,7 @@ Func GemstoneStygianFarmLoop()
 	$GemstoneStygianFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	RunStygianFarm(2415, -10451)
-	RandomSleep(14000)
+	RandomSleep(15000)
 	RunStygianFarm(7010, -9050)
 	RandomSleep(250)
 	If IsPlayerDead() Then Return $FAIL
@@ -238,71 +231,63 @@ Func GemstoneStygianFarmLoop()
 	Sleep(1000)
 	If GetQuestByID(0x2E6) == Null Then Return $FAIL
 
-	If IsPlayerDead() Then Return $FAIL
 	Switch $StygianPlayerProfession
 		Case $ID_Assassin, $ID_Mesmer
-			StygianFarmMesmerAssassin()
+			Return StygianFarmMesmerAssassin()
 		Case $ID_Ranger
-			StygianFarmRanger()
+			Return StygianFarmRanger()
+		Case Else
+			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
+			Return $FAIL
 	EndSwitch
-
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
 
 
 Func StygianFarmMesmerAssassin()
 	If IsPlayerDead() Then Return $FAIL
-	StygianJobMesmerAssassin()
+	If StygianJobMesmerAssassin() == $FAIL Then Return $FAIL
 	RunStygianFarm(13240, -10006)
-	StygianJobMesmerAssassin()
+	If StygianJobMesmerAssassin() == $FAIL Then Return $FAIL
 	MoveTo(13240, -10006)
-	; Too hard to aggro the 2 groups after that, so pick up loot
-	Local Static $pick_up_event = True
-	If $pick_up_event Then
-		HideToLoot()
+	; Too hard to aggro the 2 groups after that, so hide in spot then go back to pick up loot
+	GoToHidingSpot()
+	If IsPlayerAlive() Then
+		PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+		Return $SUCCESS
 	Else
-		If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+		Return $FAIL
 	EndIf
-	Return $SUCCESS
 EndFunc
 
 
 Func StygianFarmRanger()
 	If IsPlayerDead() Then Return $FAIL
 	UseHeroSkill($StygianHeroIndex, $Stygian_Hero_Succor, GetMyAgent())
-	MoveTo(10575, -8170)
-	MoveTo(10871, -7842, 0)
-	If IsPlayerAlive() Then RandomSleep(15000)
-	MoveTo(10575, -8170)
-	StygianJobRanger()
+	GoToHidingSpot()
+	If StygianJobRanger() == $FAIL Then Return $FAIL
 	MoveTo(7337, -9709)
 	MoveTo(9071, -7330)
 	If IsPlayerAlive() Then RandomSleep(10000)
-	StygianJobRanger()
+	If StygianJobRanger() == $FAIL Then Return $FAIL
 	;MoveTo(7337, -9709)
 	;MoveTo(9071, -7330)
 	;If IsPlayerAlive() Then RandomSleep(10000)
-	;StygianJobRanger()
+	;If StygianJobRanger() == $FAIL Then Return $FAIL
 	;MoveTo(7337, -9709)
 	;MoveTo(9071, -7330)
 	;If IsPlayerAlive() Then RandomSleep(10000)
-	;StygianJobRanger()
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	;If StygianJobRanger() == $FAIL Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
 Func StygianJobMesmerAssassin()
-	Local Static $SomethingToPickUp = False
+	Local Static $pickItemsAfterFirstWave = False
 	If IsPlayerDead() Then Return $FAIL
-	RunStygianFarm(10575, -8170)
-	MoveTo(10871, -7842, 0)
-	RandomSleep(15000)
-	RunStygianFarm(10575, -8170)
-	RunStygianFarm(12853, -9936)
-	RandomSleep(500)
-	If $SomethingToPickUp And IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+	GoToHidingSpot()
+	If $pickItemsAfterFirstWave And IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 	MoveTo(13128, -10084)
-	MoveTo(13082, -9788, 0)
+	MoveTo(13082, -9788, 0) ; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
 	RandomSleep(500)
 	If IsRecharged($Stygian_DwarvenStability) Then
 		UseSkillEx($Stygian_DwarvenStability)
@@ -312,15 +297,15 @@ Func StygianJobMesmerAssassin()
 	MoveTo(13240, -10006)
 	MoveTo(9437, -9283)
 	UseSkillEx($Stygian_Mindbender)
-	MoveTo(8567, -9050) ; aggro mobs
+	MoveTo(8567, -9050) ; spot to aggro mobs
 	RandomSleep(200)
 	MoveTo(12376, -9557)
 	RandomSleep(1500)
-	UseSkillEx($Stygian_Dash)
-	RandomSleep(2700)
+	UseSkillEx($Stygian_Dash) ; this ends shadow of haste and transfers player into spot
+	Sleep(12500) ; waiting for all mobs to come
 	KillStygianMobsUsingWastrelSkills()
-	$SomethingToPickUp = True
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	$pickItemsAfterFirstWave = True
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -398,14 +383,13 @@ Func StygianJobRanger()
 	CancelAll()
 	RandomSleep(500)
 	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
 Func KillStygianMobsUsingWastrelSkills()
 	If IsPlayerDead() Then Return $FAIL
 	Local $me, $target, $distance
-	Sleep(10000) ; waiting for all mobs to come
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
 		If TimerDiff($GemstoneStygianFarmTimer) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
@@ -425,8 +409,8 @@ Func KillStygianMobsUsingWastrelSkills()
 		RandomSleep(100)
 	WEnd
 	RandomSleep(500)
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
 	;If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -455,14 +439,11 @@ Func StygianCheckRunBuffs()
 EndFunc
 
 
-Func HideToLoot()
+Func GoToHidingSpot()
 	If IsPlayerDead() Then Return $FAIL
 	RunStygianFarm(10575, -8170)
-	MoveTo(10871, -7842, 0)
-	RandomSleep(15000)
+	MoveTo(10871, -7842, 0) ; 0 to get player into the exact location without randomness, spot to hide from running mobs
+	RandomSleep(15000) ; waiting for mobs to run by
 	RunStygianFarm(10575, -8170)
 	RunStygianFarm(12853, -9936)
-	RandomSleep(500)
-	If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
-	Return IsPlayerAlive()? $SUCCESS : $FAIL
 EndFunc
