@@ -416,7 +416,7 @@ Func VaettirsStayAlive()
 	Next
 
 	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()
-	If ($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HP') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0)) And GetEnergy() > 10 Then 
+	If ($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HP') < 0.6 Or ($foesSpellRange And DllStructGetData(GetEffect($ID_Shroud_of_Distress), 'SkillID') == 0)) And GetEnergy() > 10 Then
 		TryUseShroudOfDistress()
 	EndIf
 	If $foesNear And GetEnergy() > 20 Then TryUseShadowForm()
