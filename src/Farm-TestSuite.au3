@@ -1,0 +1,234 @@
+#CS ===========================================================================
+; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Copyright 2025 caustic-kronos
+;
+; Licensed under the Apache License, Version 2.0 (the 'License');
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+; http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an 'AS IS' BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+#CE ===========================================================================
+
+#include-once
+#RequireAdmin
+#NoTrayIcon
+
+#include '../lib/GWA2.au3'
+#include '../lib/GWA2_ID.au3'
+#include '../lib/Utils.au3'
+#include '../lib/Utils.au3'
+
+Opt('MustDeclareVars', 1)
+
+; ==== Constants ====
+Global Const $TestSuiteInformations = 'Just a test suite.'
+Global Const $resurrectSignetAndIAU = 'OQQBcBBAAAAAIAQTCAAAAAA'
+Global Const $resurrectSignetAndFallBack = 'OQChYyDAAAAAEA7YAAAAAA'
+Global Const $resurrectionSignetSkillSlot = 4
+Global Const $IAUSkillSlot = 5
+Global Const $fallBackSkillSlot = 5
+;Global Const $heroToAdd = $ID_General_Morgahn
+Global Const $heroToAdd = $ID_Hayda
+
+;~ Main method to run the test suite
+Func RunTestSuite($STATUS)
+	If TestMovement() == $FAIL Then Error('Movement test failed')
+
+	If TestTeleport() == $FAIL Then Error('Teleport test failed')
+
+	If TestPartyChanges() == $FAIL Then Error('Party changes test failed')
+
+	If TestLoadingBuild() == $FAIL Then Error('Loading build failed')
+
+	If TestSwitchingMode() == $FAIL Then Error('Mode switching failed')
+
+	If TestTitles() == $FAIL Then Error('Title switching failed')
+
+	If TestConsumables() == $FAIL Then Error('Using consumable failed')
+
+	GoToRivenEarth()
+	If GetMapID() <> $ID_Riven_Earth Then Error('Couldn''t go to Riven Earth')
+
+	If TestUseSkills() == $FAIL Then Error('Using skills failed')
+
+	If TestCommandHero() == $FAIL Then Error('Commanding hero failed')
+
+	If TestChat() == $FAIL Then Error('Chat test failed')
+
+	If TestDeathRIP() == $FAIL Then Error('Death test failed')
+
+	Return $PAUSE
+EndFunc
+
+
+Func TestMovement()
+	Out('Testing movement')
+	Local $me = GetMyAgent()
+
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+	MoveTo($myX + 200, $myY + 200, 0)
+	$me = GetMyAgent()
+	If DllStructGetData($me, 'X') == $myX And DllStructGetData($me, 'Y') == $myY Then Return $FAIL
+
+	$myX = DllStructGetData($me, 'X')
+	$myY = DllStructGetData($me, 'Y')
+	Move($myX + 200, $myY + 200)
+	Sleep(250)
+	$me = GetMyAgent()
+	If DllStructGetData($me, 'X') == $myX And DllStructGetData($me, 'Y') == $myY Then Return $FAIL
+
+	Return $SUCCESS
+EndFunc
+
+
+Func TestTeleport()
+	Out('Testing teleportation to outposts')
+	TravelToOutpost($ID_Gunnars_Hold, $DISTRICT_NAME)
+	Sleep(2500)
+	If GetMapID() <> $ID_Gunnars_Hold Then Return $FAIL
+
+	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	Sleep(1000)
+	If GetMapID() <> $ID_Rata_Sum Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestPartyChanges()
+	Out('Testing party changes')
+	LeaveParty()
+	Sleep(500)
+	Debug('Party size:' & GetPartySize())
+	If GetPartySize() <> 1 Then Return $FAIL
+	AddHero($heroToAdd)
+	Sleep(500)
+	Debug('Party size:' & GetPartySize())
+	If GetPartySize() <> 2 Then Return $FAIL
+	LeaveParty()
+	Sleep(500)
+	Debug('Party size:' & GetPartySize())
+	If GetPartySize() <> 1 Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestLoadingBuild()
+	Out('Testing build loading')
+
+	LoadSkillTemplate($resurrectSignetAndIAU)
+	Sleep(500)
+	If GetSkillbarSkillID($resurrectionSignetSkillSlot) <> $ID_Resurrection_Signet Then Return $FAIL
+	If GetSkillbarSkillID($IAUSkillSlot) <> $ID_I_Am_Unstoppable Then Return $FAIL
+
+	LeaveParty()
+	Sleep(500)
+	AddHero($heroToAdd)
+	Sleep(500)
+
+	LoadSkillTemplate($resurrectSignetAndFallBack, 1)
+	Sleep(500)
+	If GetSkillbarSkillID($resurrectionSignetSkillSlot, 1) <> $ID_Resurrection_Signet Then Return $FAIL
+	If GetSkillbarSkillID($fallBackSkillSlot, 1) <> $ID_Fall_Back Then Return $FAIL
+
+	If GetIsHeroSkillSlotDisabled(1, $resurrectionSignetSkillSlot) Then Return $FAIL
+	If GetIsHeroSkillSlotDisabled(1, $fallBackSkillSlot) Then Return $FAIL
+	Sleep(500)
+	DisableAllHeroSkills(1)
+	Sleep(500)
+	If Not GetIsHeroSkillSlotDisabled(1, $resurrectionSignetSkillSlot) Then Return $FAIL
+	If Not GetIsHeroSkillSlotDisabled(1, $fallBackSkillSlot) Then Return $FAIL
+
+	Return $SUCCESS
+EndFunc
+
+
+Func TestSwitchingMode()
+	Out('Testing mode switching')
+	SwitchMode($ID_NORMAL_MODE)
+	Sleep(500)
+	If GetIsHardMode() Then Return $FAIL
+	SwitchMode($ID_HARD_MODE)
+	Sleep(500)
+	If Not GetIsHardMode() Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestTitles()
+	Out('Testing titles')
+	SetDisplayedTitle($ID_Norn_Title)
+	Sleep(500)
+	Local $energy = GetEnergy(GetMyAgent())
+	SetDisplayedTitle($ID_Asura_Title)
+	Sleep(500)
+	Local $asuraTitlePoints = GetAsuraTitle()
+	If $asuraTitlePoints == 0 Then Return $FAIL
+	If GetEnergy(GetMyAgent()) == $energy Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestConsumables()
+	Out('Testing consumables')
+	If FindInInventory($ID_Chocolate_Bunny)[0] == 0 Then
+		Local $chestAndSlot = FindInXunlaiStorage($ID_Chocolate_Bunny)
+		Local $item = GetItemBySlot($chestAndSlot[0], $chestAndSlot[1])
+		Local $bagAndSlot = FindFirstEmptySlot(1, 1)
+		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
+		Sleep(250)
+	EndIf
+
+	UseConsumable($ID_Chocolate_Bunny)
+	Sleep(250)
+	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) == 0 Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestUseSkills()
+	Out('Testing using skills')
+	UseSkillEx($IAUSkillSlot)
+	Sleep(250)
+	If IsRecharged($IAUSkillSlot) Then Return $FAIL
+
+	UseHeroSkill(1, $FallBackSkillSlot, GetMyAgent())
+	Sleep(250)
+	If GetSkillbarSkillRecharge($FallBackSkillSlot, 1) == 0 Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestCommandHero()
+	Local $heroAgent = GetAgentById(GetHeroID(1))
+	Local $heroX = DllStructGetData($heroAgent, 'X')
+	Local $heroY = DllStructGetData($heroAgent, 'Y')
+	CommandAll(-25309, -4212)
+	Sleep(500)
+	$heroAgent = GetAgentById(GetHeroID(1))
+	If DllStructGetData($heroAgent, 'X') == $heroX And DllStructGetData($heroAgent, 'Y') == $heroY Then Return $FAIL
+	Return $SUCCESS
+EndFunc
+
+
+Func TestChat()
+	SendChat('Hello !')
+	Return $SUCCESS
+EndFunc
+
+
+Func TestDeathRIP()
+	Out('Testing death - RIP')
+	If Not IsPlayerAlive() Then Return $FAIL
+	; Please die
+	MoveToBaseOfCave()
+	GetRaptors()
+	Sleep(2000)
+	If Not IsPlayerDead() Then Return $FAIL
+	Return $SUCCESS
+EndFunc

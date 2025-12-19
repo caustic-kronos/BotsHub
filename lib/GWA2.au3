@@ -41,9 +41,16 @@ EndIf
 
 ; Memory interaction
 Global $baseAddress = 0x00C50000
-Global $memoryInterface
+Global $memoryInterfaceHeader = 0
 Global $asmInjectionString, $asmInjectionSize, $asmCodeOffset
 Global $packetlocation
+
+; Memory interaction constants
+Global Const $GWA2_REFORGED_HEADER_HEXA = '4757413252415049'
+Global Const $GWA2_REFORGED_HEADER_STRING = 'GWA2RAPI'
+Global Const $GWA2_REFORGED_HEADER_SIZE = 16
+Global Const $GWA2_REFORGED_OFFSET_SCAN_ADDRESS = 8
+Global Const $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS = 12
 
 ; Flags
 Global $disableRenderingAddress
@@ -103,7 +110,7 @@ Global $inviteGuildStructPtr = DllStructGetPtr($inviteGuildStruct)
 Global $useSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')																		;	useSkillCommandPtr;skillSlot,targetID,callTarget
 Global $useSkillStructPtr = DllStructGetPtr($useSkillStruct)
 
-Global $moveStruct = SafeDllStructCreate('ptr;float;float;float')																			;	commandMovePtr;X;Y;-
+Global $moveStruct = SafeDllStructCreate('ptr;float;float;dword')																			;	commandMovePtr;X;Y;-
 Global $moveStructPtr = DllStructGetPtr($moveStruct)
 
 Global $changeTargetStruct = SafeDllStructCreate('ptr;dword')																				;	commandChangeTargetPtr;targetID
@@ -179,11 +186,11 @@ Global $labelsMap[]
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
 Global Const $memoryInfoStructTemplate = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
-Global Const $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;ptr Tags;short unknown264;byte Primary;byte Secondary;byte Level;byte Team;byte unknown270[2];dword unknown272;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown292;float HPPips;dword unknown300;float HP;dword MaxHP;dword Effects;dword unknown316;byte Hex;byte unknown321[19];dword ModelState;dword TypeMap;dword unknown348[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown380;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown400[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown438;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
+Global Const $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;dword unknown260;ptr Tags;short unknown268;byte Primary;byte Secondary;byte Level;byte Team;byte unknown274[2];dword unknown276;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown296;float HPPips;dword unknown304;float HP;dword MaxHP;dword Effects;dword unknown320;byte Hex;byte unknown325[19];dword ModelState;dword TypeMap;dword unknown352[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown384;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown404[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown442;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
 Global Const $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
 Global Const $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
 Global Const $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword Id1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword Id2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword Id3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword Id4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword Id5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword Id6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword Id7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword Id8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
-Global Const $skillStructTemplate = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long Effect1;long Condition;long Effect2;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
+Global Const $skillStructTemplate = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long InflictsCondition;long Condition;long EffectFlag;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id_hd;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
 Global Const $attributeStructTemplate = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
 Global Const $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
 Global Const $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
@@ -199,6 +206,11 @@ Global $worldStruct = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;
 ; packetStruct
 ; useHeroSkillStruct
 #EndRegion
+
+
+Global Const $CONTROL_TYPE_ACTIVATE = 0x20
+Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
+
 
 #Region Memory
 ;~ Close all handles once bot stops
@@ -472,7 +484,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	$languageId = MemoryRead(GetScannedAddress('ScanMapInfo', 11)) + 0xC
 	If @error Then LogCriticalError('Failed to read language and region')
 
-	$skillBaseAddress = MemoryRead(GetScannedAddress('ScanSkillBase', 8))
+	$skillBaseAddress = MemoryRead(GetScannedAddress('ScanSkillBase', 0x9))
 	If @error Then LogCriticalError('Failed to read skill base')
 
 	$skillTimer = MemoryRead(GetScannedAddress('ScanSkillTimer', -3))
@@ -503,7 +515,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('MainStart', '0x' & Hex($tempValue, 8))
 	SetValue('MainReturn', '0x' & Hex($tempValue + 5, 8))
 
-	$tempValue = GetScannedAddress('ScanRenderFunc', -0x67)
+	$tempValue = GetScannedAddress('ScanRenderFunc', -0x68)
 	If @error Then LogCriticalError('Failed to read render function address')
 	SetValue('RenderingMod', '0x' & Hex($tempValue, 8))
 	SetValue('RenderingModReturn', '0x' & Hex($tempValue + 10, 8))
@@ -533,10 +545,10 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('ChatLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('ChatLogReturn', '0x' & Hex($tempValue + 6, 8))
 
-	$tempValue = GetScannedAddress('ScanTraderHook', -0x2F)			; was -7
+	$tempValue = GetScannedAddress('ScanTraderHook', -0x3C)
 	If @error Then LogCriticalError('Failed to read trader hook address')
-	SetValue('TraderHookStart', '0x' & Hex($tempValue, 8))
-	SetValue('TraderHookReturn', '0x' & Hex($tempValue + 5, 8))
+	SetValue('TraderStart', Ptr($tempValue))
+	SetValue('TraderReturn', Ptr($tempValue + 0x5))
 
 	$tempValue = GetScannedAddress('ScanDialogLog', -4)
 	If @error Then LogCriticalError('Failed to read dialog log address')
@@ -579,10 +591,10 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('EnterMissionFunction', '0x' & Hex(GetCallTargetAddress($tempValue), 8))
 	If @error Then LogCriticalError('Failed to read EnterMission function')
 
-	SetValue('UseSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseSkillFunction', -0x125), 8))
+	SetValue('UseSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseSkillFunction', -0x127), 8))
 	If @error Then LogCriticalError('Failed to read use skill function')
 
-	SetValue('ChangeTargetFunction', '0x' & Hex(GetScannedAddress('ScanChangeTargetFunction', -0x0086) + 1, 8))
+	SetValue('ChangeTargetFunction', '0x' & Hex(GetScannedAddress('ScanChangeTargetFunction', -0x89) + 1, 8))
 	If @error Then LogCriticalError('Failed to read change target function')
 
 	SetValue('WriteChatFunction', '0x' & Hex(GetScannedAddress('ScanWriteChatFunction', -0x3D), 8))
@@ -591,7 +603,7 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('SellItemFunction', '0x' & Hex(GetScannedAddress('ScanSellItemFunction', -85), 8))
 	If @error Then LogCriticalError('Failed to read sell item function')
 
-	SetValue('PacketSendFunction', '0x' & Hex(GetScannedAddress('ScanPacketSendFunction', -0x50), 8))
+	SetValue('PacketSendFunction', '0x' & Hex(GetScannedAddress('ScanPacketSendFunction', -0x4F), 8))
 	If @error Then LogCriticalError('Failed to read packet send function')
 
 	SetValue('ActionBase', '0x' & Hex(MemoryRead(GetScannedAddress('ScanActionBase', -3)), 8))
@@ -735,8 +747,6 @@ Func ScanGWBasePatterns()
 	$asmCodeOffset = 0
 	$asmInjectionString = ''
 
-	_('MainModPtr/4')
-
 	_('ScanBasePointer:')
 	AddPatternToInjection('506A0F6A00FF35')
 	_('ScanAgentBase:')
@@ -746,14 +756,14 @@ Func ScanGWBasePatterns()
 	_('ScanAgentArray:')
 	AddPatternToInjection('8B0C9085C97419')
 	_('ScanCurrentTarget:')
-	AddPatternToInjection('83C4085F8BE55DC3CCCCCCCCCCCCCCCCCCCCCC55')
+	AddPatternToInjection('83C4085F8BE55DC3CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC55')
 
 	_('ScanMyID:')
 	AddPatternToInjection('83EC08568BF13B15')
 	_('ScanEngine:')
 	AddPatternToInjection('568B3085F67478EB038D4900D9460C')
 	_('ScanRenderFunc:')
-	AddPatternToInjection('F6C401741C68B1010000BA')
+	AddPatternToInjection('F6C401741C68')
 	_('ScanLoadFinished:')
 	AddPatternToInjection('8B561C8BCF52E8')
 	_('ScanPostMessage:')
@@ -809,11 +819,11 @@ Func ScanGWBasePatterns()
 	_('ScanStringFilter2:')
 	AddPatternToInjection('515356578BF933D28B4F2C')
 	_('ScanActionFunction:')
-	AddPatternToInjection('8B7508578BF983FE09750C6876')
+	AddPatternToInjection('8B7508578BF983FE09750C6877')
 	_('ScanActionBase:')
 	AddPatternToInjection('8D1C87899DF4')
 	_('ScanSkillBase:')
-	AddPatternToInjection('8D04B6C1E00505')
+	AddPatternToInjection('69C6A40000005E')
 	_('ScanUseHeroSkillFunction:')
 	AddPatternToInjection('BA02000000B954080000')
 	_('ScanTransactionFunction:')
@@ -827,11 +837,11 @@ Func ScanGWBasePatterns()
 	_('ScanTraderFunction:')
 	AddPatternToInjection('83FF10761468D2210000')
 	_('ScanTraderHook:')
-	AddPatternToInjection('50516A476A06')
+	AddPatternToInjection('8D4DFC51576A5450')
 	_('ScanSleep:')
 	AddPatternToInjection('6A0057FF15D8408A006860EA0000')
 	_('ScanSalvageFunction:')
-	AddPatternToInjection('33C58945FC8B45088945F08B450C8945F48B45108945F88D45EC506A10C745EC76')
+	AddPatternToInjection('33C58945FC8B45088945F08B450C8945F48B45108945F88D45EC506A10C745EC77')
 	_('ScanSalvageGlobal:')
 	AddPatternToInjection('8B4A04538945F48B4208')
 	_('ScanIncreaseAttributeFunction:')
@@ -935,27 +945,53 @@ Func ScanGWBasePatterns()
 	_('popad')														; Pop all general-purpose registers from the stack to restore their original values
 	_('retn')														; Return from the current function (exit the scan routine)
 
-	$baseAddress = $gwBaseAddress + 0x9DF000
-	Local $scanMemory = MemoryRead($baseAddress, 'ptr')
+	Local $newHeader = False
+	Local $fixedHeader = $gwBaseAddress + 0x9E4000
+	Local $headerBytes = MemoryRead($fixedHeader, 'byte[8]')
 
 	; Check if the scan memory address is empty (no previous injection)
-	If $scanMemory = 0 Then
+	If $headerBytes == StringToBinary($GWA2_REFORGED_HEADER_STRING) Then
+	$memoryInterfaceHeader = $fixedHeader
+	ElseIf $headerBytes == 0 Then
+		$memoryInterfaceHeader = $fixedHeader
+		$newHeader = True
+	Else
+		$memoryInterfaceHeader = ScanMemoryForPattern(GetProcessHandle(), $GWA2_REFORGED_HEADER_STRING)
+		If $memoryInterfaceHeader = 0 Then
+			; Allocate a new block of memory for the scan routine
+			$memoryInterfaceHeader = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $GWA2_REFORGED_HEADER_SIZE, 'dword', 0x1000, 'dword', 0x40)
+			; Get the allocated memory address
+			$memoryInterfaceHeader = $memoryInterfaceHeader[0]
+	        If $memoryInterfaceHeader = 0 Then Return SetError(1, 0, 0)
+	        $newHeader = True
+	    EndIf
+	EndIf
+
+	If $newHeader Then
+		; Write the allocated memory address to the scan memory location
+	    WriteBinary($GWA2_REFORGED_HEADER_HEXA, $memoryInterfaceHeader)
+	    MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 0)
+	    MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 0)
+	EndIf
+
+	Local $allocationScan = False
+	Local $memoryInterface = MemoryRead($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 'ptr')
+
+	If $memoryInterface = 0 Then
 		; Allocate a new block of memory for the scan routine
 		$memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 0x40)
 		; Get the allocated memory address
 		$memoryInterface = $memoryInterface[0]
-		; Write the allocated memory address to the scan memory location
-		MemoryWrite($baseAddress, $memoryInterface)
-	Else
-		; If the scan memory address is not empty, use the existing memory address
-		$memoryInterface = $scanMemory
+		If $memoryInterface = 0 Then Return SetError(2, 0, 0)
+
+		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, $memoryInterface)
+		$allocationScan = True
 	EndIf
 
 	; Complete the assembly code for the scan routine
-	CompleteASMCode()
+	CompleteASMCode($memoryInterface)
 
-	; Check if this is the first injection (no previous scan memory address)
-	If $scanMemory = 0 Then
+	If $allocationScan Then
 		; Write the assembly code to the allocated memory address
 		WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
 
@@ -971,6 +1007,8 @@ Func ScanGWBasePatterns()
 			; Wait for up to 50ms for the thread to finish
 			$result = SafeDllCall7($kernelHandle, 'int', 'WaitForSingleObject', 'int', $thread, 'int', 50)
 		Until $result[0] <> 258
+
+		SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
 EndFunc
 
@@ -1780,49 +1818,49 @@ EndFunc
 
 ;~ Turn character to the left.
 Func TurnLeft($turn)
-	Return PerformAction(0xA2, $turn ? 0x1E : 0x20)
+	Return PerformAction(0xA2, $turn ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Turn character to the right.
 Func TurnRight($turn)
-	Return PerformAction(0xA3, $turn ? 0x1E : 0x20)
+	Return PerformAction(0xA3, $turn ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Move backwards.
 Func MoveBackward($move)
-	Return PerformAction(0xAC, $move ? 0x1E : 0x20)
+	Return PerformAction(0xAC, $move ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Run forwards.
 Func MoveForward($move)
-	Return PerformAction(0xAD, $move ? 0x1E : 0x20)
+	Return PerformAction(0xAD, $move ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Strafe to the left.
 Func StrafeLeft($strafe)
-	Return PerformAction(0x91, $strafe ? 0x1E : 0x20)
+	Return PerformAction(0x91, $strafe ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Strafe to the right.
 Func StrafeRight($strafe)
-	Return PerformAction(0x92, $strafe ? 0x1E : 0x20)
+	Return PerformAction(0x92, $strafe ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Auto-run.
 Func ToggleAutoRun()
-	Return PerformAction(0xB7, 0x1E)
+	Return PerformAction(0xB7)
 EndFunc
 
 
 ;~ Turn around.
 Func ReverseDirection()
-	Return PerformAction(0xB1, 0x1E)
+	Return PerformAction(0xB1)
 EndFunc
 #EndRegion Movement
 
@@ -1898,115 +1936,115 @@ EndFunc
 #Region Windows
 ;~ Close all in-game windows.
 Func CloseAllPanels()
-	Return PerformAction(0x85, 0x1E)
+	Return PerformAction(0x85)
 EndFunc
 
 
 ;~ Toggle hero window.
 Func ToggleHeroWindow()
-	Return PerformAction(0x8A, 0x1E)
+	Return PerformAction(0x8A)
 EndFunc
 
 
 ;~ Toggle inventory window.
 Func ToggleInventory()
-	Return PerformAction(0x8B, 0x1E)
+	Return PerformAction(0x8B)
 EndFunc
 
 
 ;~ Toggle all bags window.
 Func ToggleAllBags()
-	Return PerformAction(0xB8, 0x1E)
+	Return PerformAction(0xB8)
 EndFunc
 
 
 ;~ Toggle world map.
 Func ToggleWorldMap()
-	Return PerformAction(0x8C, 0x1E)
+	Return PerformAction(0x8C)
 EndFunc
 
 
 ;~ Toggle options window.
 Func ToggleOptions()
-	Return PerformAction(0x8D, 0x1E)
+	Return PerformAction(0x8D)
 EndFunc
 
 
 ;~ Toggle quest window.
 Func ToggleQuestWindow()
-	Return PerformAction(0x8E, 0x1E)
+	Return PerformAction(0x8E)
 EndFunc
 
 
 ;~ Toggle skills window.
 Func ToggleSkillWindow()
-	Return PerformAction(0x8F, 0x1E)
+	Return PerformAction(0x8F)
 EndFunc
 
 
 ;~ Toggle mission map.
 Func ToggleMissionMap()
-	Return PerformAction(0xB6, 0x1E)
+	Return PerformAction(0xB6)
 EndFunc
 
 
 ;~ Toggle friends list window.
 Func ToggleFriendList()
-	Return PerformAction(0xB9, 0x1E)
+	Return PerformAction(0xB9)
 EndFunc
 
 
 ;~ Toggle guild window.
 Func ToggleGuildWindow()
-	Return PerformAction(0xBA, 0x1E)
+	Return PerformAction(0xBA)
 EndFunc
 
 
 ;~ Toggle party window.
 Func TogglePartyWindow()
-	Return PerformAction(0xBF, 0x1E)
+	Return PerformAction(0xBF)
 EndFunc
 
 
 ;~ Toggle score chart.
 Func ToggleScoreChart()
-	Return PerformAction(0xBD, 0x1E)
+	Return PerformAction(0xBD)
 EndFunc
 
 
 ;~ Toggle layout window.
 Func ToggleLayoutWindow()
-	Return PerformAction(0xC1, 0x1E)
+	Return PerformAction(0xC1)
 EndFunc
 
 
 ;~ Toggle minions window.
 Func ToggleMinionList()
-	Return PerformAction(0xC2, 0x1E)
+	Return PerformAction(0xC2)
 EndFunc
 
 
 ;~ Toggle a hero panel.
 Func ToggleHeroPanel($hero)
-	Return PerformAction(($hero < 4 ? 0xDB : 0xFE) + $hero, 0x1E)
+	Return PerformAction(($hero < 4 ? 0xDB : 0xFE) + $hero)
 EndFunc
 
 
 ;~ Toggle hero's pet panel.
 Func ToggleHeroPetPanel($hero)
-	Return PerformAction(($hero < 4 ? 0xDF : 0xFA) + $hero, 0x1E)
+	Return PerformAction(($hero < 4 ? 0xDF : 0xFA) + $hero)
 EndFunc
 
 
 ;~ Toggle pet panel.
 Func TogglePetPanel()
-	Return PerformAction(0xDF, 0x1E)
+	Return PerformAction(0xDF)
 EndFunc
 
 
 ;~ Toggle help window.
 Func ToggleHelpWindow()
-	Return PerformAction(0xE4, 0x1E)
+	Return PerformAction(0xE4)
 EndFunc
 #EndRegion Windows
 
@@ -2027,79 +2065,79 @@ EndFunc
 
 ;~ Clear current target.
 Func ClearTarget()
-	Return PerformAction(0xE3, 0x1E)
+	Return PerformAction(0xE3)
 EndFunc
 
 
 ;~ Target the nearest enemy.
 Func TargetNearestEnemy()
-	Return PerformAction(0x93, 0x1E)
+	Return PerformAction(0x93)
 EndFunc
 
 
 ;~ Target the next enemy.
 Func TargetNextEnemy()
-	Return PerformAction(0x95, 0x1E)
+	Return PerformAction(0x95)
 EndFunc
 
 
 ;~ Target the next party member.
 Func TargetPartyMember($partyMemberIndex)
-	If $partyMemberIndex > 0 And $partyMemberIndex < 13 Then Return PerformAction(0x95 + $partyMemberIndex, 0x1E)
+	If $partyMemberIndex > 0 And $partyMemberIndex < 13 Then Return PerformAction(0x95 + $partyMemberIndex)
 EndFunc
 
 
 ;~ Target the previous enemy.
 Func TargetPreviousEnemy()
-	Return PerformAction(0x9E, 0x1E)
+	Return PerformAction(0x9E)
 EndFunc
 
 
 ;~ Target the called target.
 Func TargetCalledTarget()
-	Return PerformAction(0x9F, 0x1E)
+	Return PerformAction(0x9F)
 EndFunc
 
 
 ;~ Target yourself.
 Func TargetSelf()
-	Return PerformAction(0xA0, 0x1E)
+	Return PerformAction(0xA0)
 EndFunc
 
 
 ;~ Target the nearest ally.
 Func TargetNearestAlly()
-	Return PerformAction(0xBC, 0x1E)
+	Return PerformAction(0xBC)
 EndFunc
 
 
 ;~ Target the nearest item.
 Func TargetNearestItem()
-	Return PerformAction(0xC3, 0x1E)
+	Return PerformAction(0xC3)
 EndFunc
 
 
 ;~ Target the next item.
 Func TargetNextItem()
-	Return PerformAction(0xC4, 0x1E)
+	Return PerformAction(0xC4)
 EndFunc
 
 
 ;~ Target the previous item.
 Func TargetPreviousItem()
-	Return PerformAction(0xC5, 0x1E)
+	Return PerformAction(0xC5)
 EndFunc
 
 
 ;~ Target the next party member.
 Func TargetNextPartyMember()
-	Return PerformAction(0xCA, 0x1E)
+	Return PerformAction(0xCA)
 EndFunc
 
 
 ;~ Target the previous party member.
 Func TargetPreviousPartyMember()
-	Return PerformAction(0xCB, 0x1E)
+	Return PerformAction(0xCB)
 EndFunc
 #EndRegion Targeting
 
@@ -2168,13 +2206,13 @@ EndFunc
 
 ;~ Display the names of allies.
 Func DisplayAllies($display)
-	Return PerformAction(0x89, $display ? 0x1E : 0x20)
+	Return PerformAction(0x89, $display ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
 ;~ Display the names of enemies.
 Func DisplayEnemies($display)
-	Return PerformAction(0x94, $display ? 0x1E : 0x20)
+	Return PerformAction(0x94, $display ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 #EndRegion Display
 
@@ -2229,7 +2267,7 @@ EndFunc
 #Region Misc
 ;~ Change weapon sets.
 Func ChangeWeaponSet($weaponSet)
-	Return PerformAction(0x80 + $weaponSet, 0x1E)
+	Return PerformAction(0x80 + $weaponSet)
 EndFunc
 
 
@@ -2274,31 +2312,31 @@ EndFunc
 
 ;~ Same as hitting spacebar.
 Func ActionInteract()
-	Return PerformAction(0x80, 0x1E)
+	Return PerformAction(0x80)
 EndFunc
 
 
 ;~ Follow a player.
 Func ActionFollow()
-	Return PerformAction(0xCC, 0x1E)
+	Return PerformAction(0xCC)
 EndFunc
 
 
 ;~ Drop environment object.
 Func DropBundle()
-	Return PerformAction(0xCD, 0x1E)
+	Return PerformAction(0xCD)
 EndFunc
 
 
 ;~ Clear all hero flags.
 Func ClearPartyCommands()
-	Return PerformAction(0xDB, 0x1E)
+	Return PerformAction(0xDB)
 EndFunc
 
 
 ;~ Suppress action.
 Func SuppressAction($suppressAction)
-	Return PerformAction(0xD0, $suppressAction ? 0x1E : 0x20)
+	Return PerformAction(0xD0, $suppressAction ? $CONTROL_TYPE_ACTIVATE : $CONTROL_TYPE_DEACTIVATE)
 EndFunc
 
 
@@ -2340,7 +2378,7 @@ EndFunc
 
 ;~ Take a screenshot.
 Func MakeScreenshot()
-	Return PerformAction(0xAE, 0x1E)
+	Return PerformAction(0xAE)
 EndFunc
 
 
@@ -3490,10 +3528,10 @@ EndFunc
 ;~	0x40 = Guild Battle
 ;~	0x80 = Party Leader
 ;~	0x100 = Observe-Mode
-Func GetPartyState($aFlag)
-	Local $lOffset[4] = [0, 0x18, 0x4C, 0x14]
-	Local $lBitMask = MemoryReadPtr($mBasePointer,$lOffset)
-	Return BitAND($lBitMask[1], $aFlag) > 0
+Func GetPartyState($flag)
+	Local $offset[4] = [0, 0x18, 0x4C, 0x14]
+	Local $bitMask = MemoryReadPtr($baseAddressPtr, $offset)
+	Return BitAND($bitMask[1], $flag) > 0
 EndFunc
 #EndRegion Agent
 
@@ -3757,7 +3795,7 @@ EndFunc
 
 ;~ Returns skill struct.
 Func GetSkillByID($skillID)
-	Local $skillstructAddress = $skillBaseAddress + (160 * $skillID)
+	Local $skillstructAddress = $skillBaseAddress + (0xA4 * $skillID)
 	Local $skillStruct = SafeDllStructCreate($skillStructTemplate)
 	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', 0)
 	Return $skillStruct
@@ -4209,7 +4247,7 @@ Func InviteGuild($characterName)
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 		DllStructSetData($inviteGuildStruct, 2, 0x4C)
-		DllStructSetData($inviteGuildStruct, 3, 0xBC)
+		DllStructSetData($inviteGuildStruct, 3, 0xB5)
 		DllStructSetData($inviteGuildStruct, 4, 0x01)
 		DllStructSetData($inviteGuildStruct, 5, $characterName)
 		DllStructSetData($inviteGuildStruct, 6, 0x02)
@@ -4225,7 +4263,7 @@ Func InviteGuest($characterName)
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
 		DllStructSetData($inviteGuildStruct, 2, 0x4C)
-		DllStructSetData($inviteGuildStruct, 3, 0xBC)
+		DllStructSetData($inviteGuildStruct, 3, 0xB5)
 		DllStructSetData($inviteGuildStruct, 4, 0x01)
 		DllStructSetData($inviteGuildStruct, 5, $characterName)
 		DllStructSetData($inviteGuildStruct, 6, 0x01)
@@ -4256,7 +4294,7 @@ EndFunc
 
 
 ;~ Internal use only.
-Func PerformAction($action, $flag)
+Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE)
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($actionStruct, 2, $action)
 		DllStructSetData($actionStruct, 3, $flag)
@@ -4524,32 +4562,35 @@ Func ModifyMemory()
 	CreateCommands()
 	CreateUICommands()
 	CreateDialogHook()
-	$memoryInterface = MemoryRead(MemoryRead($baseAddress), 'ptr')
+	Local $allocationCommand = False
+	Local $memoryInterface = MemoryRead($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 'ptr')
+	If $memoryInterface = 0 Then
+		Local $memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', _
+			'handle', GetProcessHandle(), _
+			'ptr', 0, _
+			'ulong_ptr', $asmInjectionSize, _
+			'dword', 0x1000, _
+			'dword', 0x40)
+		$memoryInterface = $memoryInterface[0]
+		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, $memoryInterface)
+		$allocationCommand = True
+	EndIf
 
-	Switch $memoryInterface
-		Case 0
-			$memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 64)
-			$memoryInterface = $memoryInterface[0]
-			MemoryWrite(MemoryRead($baseAddress), $memoryInterface)
-			CompleteASMCode()
-			WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
-			; FIXME: This instruction fails
-			MemoryWrite(GetValue('QueuePtr'), GetValue('QueueBase'))
-		Case Else
-			CompleteASMCode()
-	EndSwitch
-	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
-	WriteDetour('MainStart', 'MainProc')
-	; FIXME: This instruction fails
-	WriteDetour('TargetLogStart', 'TargetLogProc')
-	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
-	WriteDetour('TraderHookStart', 'TraderHookProc')
-	; FIXME: This instruction fails
-	WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
-	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
-	WriteDetour('RenderingMod', 'RenderingModProc')
-	; FIXME: This instruction works, but writes on non writable memory - it's pretty bad
-	WriteDetour('DialogLogStart', 'DialogLogProc')
+	CompleteASMCode($memoryInterface)
+
+	If $allocationCommand Then
+		WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
+		MemoryWrite(GetValue('QueuePtr'), GetValue('QueueBase'))
+		If IsDeclared('g_b_Write') Then Extend_Write()
+
+		WriteDetour('MainStart', 'MainProc')
+		WriteDetour('TraderStart', 'TraderProc')
+		WriteDetour('RenderingMod', 'RenderingModProc')
+		WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
+		; FIXME: add this back
+		;WriteDetour('TradePartnerStart', 'TradePartnerProc')
+		If IsDeclared('g_b_AssemblerWriteDetour') Then Extend_AssemblerWriteDetour()
+	EndIf
 EndFunc
 
 
@@ -4863,7 +4904,7 @@ Func CreateTraderHook()
 	_('TraderSkipReset:')
 	_('mov dword[TraderQuoteID],eax')
 	_('pop eax')
-	_('ljmp TraderHookReturn')
+	_('ljmp TraderReturn')
 EndFunc
 
 
@@ -5130,7 +5171,7 @@ Func CreateCommands()
 	_('CommandAction:')
 	_('mov ecx,dword[ActionBase]')
 	_('mov ecx,dword[ecx+c]')
-	_('add ecx,A0')
+	_('add ecx,A8')
 	_('push 0')
 	_('add eax,4')
 	_('push eax')
@@ -6126,7 +6167,7 @@ EndFunc
 
 
 ;~ Internal use only.
-Func CompleteASMCode()
+Func CompleteASMCode($memoryInterface)
 	Local $inExpression = False
 	Local $expression
 	Local $tempValueASM = $asmInjectionString
@@ -6302,7 +6343,7 @@ EndFunc
 
 
 ;~ Wait for map to be loaded, True if map loaded correctly, False otherwise
-Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 5000)
+Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 	Local $deadlock = TimerInit()
 	Local $skillbarStruct

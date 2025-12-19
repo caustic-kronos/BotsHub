@@ -115,6 +115,7 @@ Func SetupTeamRaptorFarm()
 	AddHero($ID_General_Morgahn)
 	LoadSkillTemplate($WNRaptorFarmerSkillbar)
 	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
+	Sleep(250)
 	DisableAllHeroSkills(1)
 	Sleep(1000)
 	If GetPartySize() <> 2 Then

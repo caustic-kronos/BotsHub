@@ -73,6 +73,7 @@
 #include 'src/Farm-SpiritSlaves.au3'
 #include 'src/Farm-SunspearArmor.au3'
 #include 'src/Farm-Tasca.au3'
+#include 'src/Farm-TestSuite.au3'
 #include 'src/Farm-Vaettirs.au3'
 #include 'src/Farm-Vanguard.au3'
 #include 'src/Farm-Voltaic.au3'
@@ -120,7 +121,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|Dynamic'
+Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -902,6 +903,8 @@ Func RunFarmLoop($Farm)
 			Info('Dynamic execution')
 		Case 'Tests'
 			$result = RunTests($STATUS)
+		Case 'TestSuite'
+			$result = RunTestSuite($STATUS)
 		Case Else
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch

@@ -82,6 +82,9 @@ Global Const $RegionMap					=	MapFromArrays($DistrictNames, $DistrictAndRegionId
 
 
 #Region Game Locations
+; Locations varying seasonally and their default versions
+Global Const $ID_Default_Eye_of_the_North	= 642
+Global Const $ID_Christmas_Eye_of_the_North = 821
 ; Generic
 Global Const $ID_Outpost					= 0
 Global Const $ID_Explorable					= 1
@@ -173,7 +176,8 @@ Global Const $ID_Vloxs_Fall					= 624
 Global Const $ID_Gadds_Camp					= 638
 Global Const $ID_Umbral_Grotto				= 639
 Global Const $ID_Rata_Sum					= 640
-Global Const $ID_Eye_of_the_North			= 642
+Global Const $ID_Eye_of_the_North			= $ID_Christmas_Eye_of_the_North
+Global Const $ID_Gunnars_Hold				= 644
 Global Const $ID_Olafstead					= 645
 Global Const $ID_Hall_of_Monuments			= 646
 Global Const $ID_Dalada_Uplands				= 647
@@ -496,6 +500,7 @@ Global Const $ID_Death_Pact_Signet				= 1481
 ; Paragon
 Global Const $ID_Burning_Refrain				= 1576
 Global Const $ID_We_Shall_Return				= 1592
+Global Const $ID_Fall_Back						= 1595
 Global Const $ID_Signet_of_Return				= 1778
 Global Const $ID_Heroic_Refrain					= 3431
 ; Dervish
@@ -514,6 +519,7 @@ Global Const $ID_Junundu_Wail					= 1865
 Global Const $ID_Eternal_Aura					= 2109
 Global Const $ID_By_Urals_Hammer				= 2217
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
+Global Const $ID_I_Am_Unstoppable				= 2356
 Global Const $ID_Mental_Block					= 2417
 ; Food and drink boosts
 Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
