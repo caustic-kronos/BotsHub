@@ -179,7 +179,7 @@ Func ReturnBackToOutpost($outpostId)
 		Return $SUCCESS
 	Endif
 	Resign()
-	RandomSleep(2500)
+	RandomSleep(3500)
 	ReturnToOutpost()
 	WaitMapLoading($outpostId, 10000, 2500)
 	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL

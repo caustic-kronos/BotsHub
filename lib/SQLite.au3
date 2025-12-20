@@ -229,6 +229,8 @@ Func _SQLite_Startup($sDll_Filename = "", $bUTF8ErrorMsg = False, $iForceLocal =
 		$iExtended = @extended
 	EndIf
 
+	; To locate your SQLite DLL:
+	;Out("Loading SQLite DLL from: " & $sDll_Filename)
 	Local $hDll = DllOpen($sDll_Filename)
 	If $hDll = -1 Then
 		$__g_hDll_SQLite = 0
