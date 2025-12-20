@@ -81,7 +81,10 @@ Func ActiveInventoryManagement()
 	; 8-Buy ectos with surplus
 	; 9-Store items
 	; 10-Balance character's gold level
-	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then
+		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
+		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
+	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 	If GUICtrlRead($GUI_Checkbox_IdentifyAllItems) == $GUI_CHECKED And HasUnidentifiedItems() Then
 		If GetMapID() <> $ID_Eye_of_the_North Then DistrictTravel($ID_Eye_of_the_North, $DISTRICT_NAME)
