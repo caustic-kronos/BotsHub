@@ -51,9 +51,9 @@ Global Const $Feathers_DwarvenStability		= 6
 Global Const $Feathers_Conviction			= 7
 Global Const $Feathers_MysticRegeneration	= 8
 
-Global Const $ModelID_Sensali_Claw			= 3944
-Global Const $ModelID_Sensali_Darkfeather	= 3946
-Global Const $ModelID_Sensali_Cutter		= 3948
+Global Const $ModelID_Sensali_Claw			= 3995
+Global Const $ModelID_Sensali_Darkfeather	= 3997
+Global Const $ModelID_Sensali_Cutter		= 3999
 
 Global $FEATHERS_FARM_SETUP = False
 
