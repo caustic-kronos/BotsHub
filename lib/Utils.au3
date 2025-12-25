@@ -265,16 +265,85 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf $rarity <> $RARITY_White And isArmorSalvageItem($item) Then
 		Return True
-	ElseIf ($rarity == $RARITY_Gold) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGoldItems) == $GUI_CHECKED
-	ElseIf ($rarity == $RARITY_Green) Then
-		Return GUICtrlRead($GUI_Checkbox_LootGreenItems) == $GUI_CHECKED
-	ElseIf ($rarity == $RARITY_Purple) Then
-		Return GUICtrlRead($GUI_Checkbox_LootPurpleItems) == $GUI_CHECKED
-	ElseIf ($rarity == $RARITY_Blue) Then
-		Return GUICtrlRead($GUI_Checkbox_LootBlueItems) == $GUI_CHECKED
-	ElseIf ($rarity == $RARITY_White) Then
-		Return GUICtrlRead($GUI_Checkbox_LootWhiteItems) == $GUI_CHECKED
+	; --- Rarities managed by the tab in HUD ---
+	ElseIf ($rarity == $RARITY_White Or _
+			$rarity == $RARITY_Blue Or _
+			$rarity == $RARITY_Purple Or _
+			$rarity == $RARITY_Gold Or _
+			$rarity == $RARITY_Green) Then
+		Local $req = GetItemReq($item)
+		Local $pick = False
+		Switch $rarity
+			Case $RARITY_White
+				Switch $req
+					Case 8
+						$pick = (GUICtrlRead($GUI_Checkbox_LootWhiteReq8)  == $GUI_CHECKED)
+					Case 9
+						$pick = (GUICtrlRead($GUI_Checkbox_LootWhiteReq9)  == $GUI_CHECKED)
+					Case 10
+						$pick = (GUICtrlRead($GUI_Checkbox_LootWhiteReq10) == $GUI_CHECKED)
+					Case 11
+						$pick = (GUICtrlRead($GUI_Checkbox_LootWhiteReq11) == $GUI_CHECKED)
+					Case 12
+						$pick = (GUICtrlRead($GUI_Checkbox_LootWhiteReq12) == $GUI_CHECKED)
+					Case 13
+						$pick = (GUICtrlRead($GUI_Checkbox_LootWhiteReq13) == $GUI_CHECKED)
+				EndSwitch
+			Case $RARITY_Blue
+				Switch $req
+					Case 8
+						$pick = (GUICtrlRead($GUI_Checkbox_LootBlueReq8)  == $GUI_CHECKED)
+					Case 9
+						$pick = (GUICtrlRead($GUI_Checkbox_LootBlueReq9)  == $GUI_CHECKED)
+					Case 10
+						$pick = (GUICtrlRead($GUI_Checkbox_LootBlueReq10) == $GUI_CHECKED)
+					Case 11
+						$pick = (GUICtrlRead($GUI_Checkbox_LootBlueReq11) == $GUI_CHECKED)
+					Case 12
+						$pick = (GUICtrlRead($GUI_Checkbox_LootBlueReq12) == $GUI_CHECKED)
+					Case 13
+						$pick = (GUICtrlRead($GUI_Checkbox_LootBlueReq13) == $GUI_CHECKED)
+				EndSwitch
+			Case $RARITY_Purple
+				Switch $req
+					Case 8
+						$pick = (GUICtrlRead($GUI_Checkbox_LootPurpleReq8)  == $GUI_CHECKED)
+					Case 9
+						$pick = (GUICtrlRead($GUI_Checkbox_LootPurpleReq9)  == $GUI_CHECKED)
+					Case 10
+						$pick = (GUICtrlRead($GUI_Checkbox_LootPurpleReq10) == $GUI_CHECKED)
+					Case 11
+						$pick = (GUICtrlRead($GUI_Checkbox_LootPurpleReq11) == $GUI_CHECKED)
+					Case 12
+						$pick = (GUICtrlRead($GUI_Checkbox_LootPurpleReq12) == $GUI_CHECKED)
+					Case 13
+						$pick = (GUICtrlRead($GUI_Checkbox_LootPurpleReq13) == $GUI_CHECKED)
+				EndSwitch
+			Case $RARITY_Gold
+				Switch $req
+					Case 8
+						$pick = (GUICtrlRead($GUI_Checkbox_LootGoldReq8)  == $GUI_CHECKED)
+					Case 9
+						$pick = (GUICtrlRead($GUI_Checkbox_LootGoldReq9)  == $GUI_CHECKED)
+					Case 10
+						$pick = (GUICtrlRead($GUI_Checkbox_LootGoldReq10) == $GUI_CHECKED)
+					Case 11
+						$pick = (GUICtrlRead($GUI_Checkbox_LootGoldReq11) == $GUI_CHECKED)
+					Case 12
+						$pick = (GUICtrlRead($GUI_Checkbox_LootGoldReq12) == $GUI_CHECKED)
+					Case 13
+						$pick = (GUICtrlRead($GUI_Checkbox_LootGoldReq13) == $GUI_CHECKED)
+				EndSwitch
+			Case $RARITY_Green
+				; Greens are always 9
+				If $req == 9 Then
+					$pick = (GUICtrlRead($GUI_Checkbox_LootGreenReq9) == $GUI_CHECKED)
+				Else
+					$pick = False
+				EndIf
+		EndSwitch
+
+			Return $pick
 	EndIf
 	Return False
 EndFunc
