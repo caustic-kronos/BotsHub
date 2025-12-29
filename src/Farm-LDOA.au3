@@ -46,18 +46,18 @@ Global Const $LDOA_Skill7 = 7
 Global Const $LDOA_Skill8 = 8
 
 Global Const $ID_Quest_CharrAtTheGate = 0x2E
-Global Const $ID_Quest_FarmerHamnet = 0x4A1
+Global Const $ID_Quest_FarmerHamnet = 0x4A
 
 Global Const $ID_Luminescent_Scepter = 6508
 Global Const $ID_Serrated_Shield = 6514
 
 Global Const $ID_Ascalon_City_Presearing = 148
 Global Const $ID_Foibles_Fair = 165
-Global Const $ID_Wizards_Folly = 149
+Global Const $ID_Wizards_Folly = 161
 Global Const $ID_Fort_Ranik_Presearing = 166
-Global Const $ID_Barradin_Estate = 167
-Global Const $ID_Regent_Valley = 116
-Global Const $ID_Green_Hills_County = 147
+Global Const $ID_Barradin_Estate = 163
+Global Const $ID_Regent_Valley = 162
+Global Const $ID_Green_Hills_County = 160
 
 Global $LDOA_FARM_SETUP = False
 Global $LDOA_OUTPOST_CHECK = False
@@ -352,11 +352,11 @@ Func Hamnet()
 	MoveTo(-183, 9002)
 	MoveTo(356, 7834)
 	Info('Entering Wizards Folly!')
-	Move(390, 7800)
+	Move(500, 7300)
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 	UseSS($ID_Wizards_Folly)
 
-	MoveAggroAndKill(2418, 5437, '', 2000, Null)
+	MoveAggroAndKillInRange(2541, 4504, '', 2000, Null)
 
 	If GetIsDead() Then Return Hamnet()
 
