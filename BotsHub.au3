@@ -60,6 +60,7 @@
 #include 'src/Farm-JadeBrotherhood.au3'
 #include 'src/Farm-Kournans.au3'
 #include 'src/Farm-Kurzick.au3'
+#include 'src/Farm-LDOA.au3'
 #include 'src/Farm-Lightbringer.au3'
 #include 'src/Farm-Lightbringer2.au3'
 #include 'src/Farm-Luxon.au3'
@@ -121,7 +122,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $INVENTORY_SPACE_NEEDED = 5
 
-Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic'
+Global $AVAILABLE_FARMS = 'Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|Froggy|Gemstone|Gemstone Stygian|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 #EndRegion Variables
 
@@ -841,6 +842,9 @@ Func RunFarmLoop($Farm)
 		Case 'Kurzick'
 			$INVENTORY_SPACE_NEEDED = 15
 			$result = KurzickFactionFarm($STATUS)
+		Case 'LDOA'
+			$INVENTORY_SPACE_NEEDED = 5
+			$result = LDOATitleFarm($STATUS)
 		Case 'Lightbringer'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = LightbringerFarm($STATUS)
@@ -936,6 +940,7 @@ Func ResetBotsSetups()
 	$IRIS_FARM_SETUP						= False
 	$JADE_BROTHERHOOD_FARM_SETUP			= False
 	$KOURNANS_FARM_SETUP					= False
+	$LDOA_FARM_SETUP						= False
 	$LIGHTBRINGER_FARM2_SETUP				= False
 	$MANTIDS_FARM_SETUP						= False
 	$RAPTORS_FARM_SETUP						= False
@@ -996,6 +1001,9 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $KournansFarmInformations)
 		Case 'Kurzick'
 			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
+		Case 'LDOA'
+			GUICtrlSetData($GUI_Edit_CharacterBuild, $LDOASkillbar)
+			GUICtrlSetData($GUI_Label_FarmInformations, $LDOAInformations)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarmInformations)
 		Case 'Lightbringer 2'
@@ -1640,6 +1648,8 @@ Func SelectFarmDuration($Farm)
 			Return $KOURNANS_FARM_DURATION
 		Case 'Kurzick'
 			Return $KURZICKS_FARM_DURATION
+		Case 'LDOA'
+			Return $LDOA_FARM_DURATION
 		Case 'Lightbringer'
 			Return $LIGHTBRINGER_FARM_DURATION
 		Case 'Lightbringer 2'
