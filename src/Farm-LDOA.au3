@@ -30,6 +30,8 @@ Opt('MustDeclareVars', 1)
 Global Const $LDOASkillbar = 'Any build will do, providing it has a heal and damage.'
 Global Const $LDOAInformations = 'The bot will:' & @CRLF _
 	& '- Go right off the bat, on a new character after the cutscene.' & @CRLF _
+	& '- In the beginning it tries to do the elementalist quest to get some initial skill.' & @CRLF _
+	& '- If you are not an elementalist, then it is advised to get some initial skills yourself.' & @CRLF _
 	& '- If you are already level 2, it wont setup your bar or weapons, you can choose.' & @CRLF _
 	& '- It will get you LDOA, this is not a farming bot.'
 ; Average duration ~ 10m
@@ -44,6 +46,14 @@ Global Const $LDOA_Skill5 = 5
 Global Const $LDOA_Skill6 = 6
 Global Const $LDOA_Skill7 = 7
 Global Const $LDOA_Skill8 = 8
+
+Global Const $ID_Dialog_Accept_Quest_War_Preparations = 0x80DB01
+Global Const $ID_Dialog_Finish_Quest_War_Preparations = 0x80DB07
+Global Const $ID_Dialog_Accept_Quest_Elementalist_Test = 0x805301
+Global Const $ID_Dialog_Finish_Quest_Elementalist_Test = 0x805307
+Global Const $ID_Dialog_Select_Quest_A_Mesmers_Burden = 0x804703
+Global Const $ID_Dialog_Accept_Quest_A_Mesmers_Burden = 0x804701
+Global Const $ID_Dialog_Accept_Quest_Charr_At_The_Gate = 0x802E01
 
 Global Const $ID_Quest_CharrAtTheGate = 0x2E
 Global Const $ID_Quest_FarmerHamnet = 0x4A
@@ -82,7 +92,7 @@ Func LDOATitleFarm($STATUS)
 		$LDOA_FARM_SETUP = False
 	EndIf
 	If (CountSlots(1, $BAGS_COUNT) <= 5) Then
-		Notice('Inventory full, pausing.')
+		Notice('Inventory has 5 slots left, pausing.')
 		$LDOA_FARM_SETUP = False
 		Return $PAUSE
 	EndIf
@@ -147,10 +157,10 @@ Func InitialSetupLDOA()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
-	MoveTo(11691, 3435)
-	GoToNPC(GetNearestNPCToCoords(11691, 3435))
+	MoveTo(11683, 3447)
+	GoToNPC(GetNearestNPCToCoords(11683, 3447))
 	RandomSleep(GetPing() + 750)
-	Dialog(0x80DD01)
+	Dialog($ID_Dialog_Accept_Quest_War_Preparations)
 	RandomSleep(GetPing() + 750)
 
 	MoveTo(7607, 5552)
@@ -158,26 +168,26 @@ Func InitialSetupLDOA()
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	UseSS($ID_Lakeside_County)
 	MoveTo(6116, 3995)
-	GoToNPC(GetNearestNPCToCoords(6116, 3995))
+	GoToNPC(GetNearestNPCToCoords(6187, 4085))
 	RandomSleep(GetPing() + 750)
-	Dialog(0x80DD07)
+	Dialog($ID_Dialog_Finish_Quest_War_Preparations)
 	RandomSleep(250)
-	Dialog(0x805501)
+	Dialog($ID_Dialog_Accept_Quest_Elementalist_Test)
 	RandomSleep(GetPing() + 750)
 	MoveTo(4187, -948)
-	MoveAggroAndKill(4207, -2892, '', 2500, Null)
+	MoveAggroAndKillInRange(4207, -2892, '', 2500, Null)
 	MoveTo(3771, -1729)
 	MoveTo(6069, 3865)
-	GoToNPC(GetNearestNPCToCoords(6069, 3865))
+	GoToNPC(GetNearestNPCToCoords(6187, 4085))
 	RandomSleep(GetPing() + 750)
-	Dialog(0x805507)
+	Dialog($ID_Dialog_Finish_Quest_Elementalist_Test)
 	RandomSleep(GetPing() + 750)
 	MoveTo(2785, 7736)
 	GoToNPC(GetNearestNPCToCoords(2785, 7736))
 	RandomSleep(GetPing() + 750)
-	Dialog(0x804703)
+	Dialog($ID_Dialog_Select_Quest_A_Mesmers_Burden)
 	RandomSleep(250)
-	Dialog(0x804701)
+	Dialog($ID_Dialog_Accept_Quest_A_Mesmers_Burden)
 
 	Ashford()
 	KillWorms()
@@ -198,11 +208,11 @@ Func KillWorms()
 		UseSS($ID_Lakeside_County)
 
 		MoveTo(-10433, -6021)
-		MoveAggroAndKill(-9551, -5499, '', 3000, Null)
-		MoveAggroAndKill(-9545, -4205, '', 3000, Null)
-		MoveAggroAndKill(-9551, -2929, '', 3000, Null)
-		MoveAggroAndKill(-9559, -1324, '', 3000, Null)
-		MoveAggroAndKill(-9451, -301, '', 3000, Null)
+		MoveAggroAndKill(-9551, -5499)
+		MoveAggroAndKill(-9545, -4205)
+		MoveAggroAndKill(-9551, -2929)
+		MoveAggroAndKill(-9559, -1324)
+		MoveAggroAndKill(-9451, -301)
 
 		If GetIsDead() Then Return KillWorms()
 
@@ -247,7 +257,7 @@ Func SetupCharrAtTheGateQuest()
 		MoveTo(5668, 10667)
 		GoToNPC(GetNearestNPCToCoords(5668, 10667))
 		RandomSleep(GetPing() + 750)
-		Dialog(0x802E01)
+		Dialog($ID_Dialog_Accept_Quest_Charr_At_The_Gate)
 		RandomSleep(GetPing() + 750)
 	ElseIf $questStatus == 1 Then
 		Info('Good to go!')
@@ -257,8 +267,6 @@ EndFunc
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
-	Local $me = GetMyAgent()
-
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -266,14 +274,17 @@ Func LDOATitleFarmUnder10()
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	MoveTo(6220, 4470, 30)
 	Info('Going to the gate')
+	UseSS($ID_Lakeside_County)
 	MoveTo(3180, 6468, 30)
 	MoveTo(360, 6575, 30)
 	MoveTo(-3140, 9610, 30)
+	Sleep(2000)
 	MoveTo(-3640, 10930, 30)
 	MoveTo(-4165, 10655, 30)
 
 	If GetIsDead() Then BackToAscalon()
 
+	Local $me = GetMyAgent()
 	While 1
 		If CountFoesInRangeOfAgent($me, 2000) >= 2 Then
 			Sleep(100)
@@ -405,10 +416,12 @@ EndFunc
 ;~ Run to Ashford Abbey
 Func Ashford()
 	; This function is used to run to Ashford Abbey
-	Info('Starting run to Ashford Abbey..')
-	Info('Entering Lakeside County!')
-
+	Info('Starting run to Ashford Abbey from Ascalon..')
+	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 	RandomSleep(GetPing() + 750)
+
+	Info('Entering Lakeside County!')
 
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
