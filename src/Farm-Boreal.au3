@@ -92,6 +92,7 @@ Func BorealChestFarmLoop($STATUS)
 		SwitchMode($ID_NORMAL_MODE)
 	EndIf
 
+	MoveTo(5799, -27957)
 	Moveto(3986, -27642)
 	RandomSleep(1500)
 	WaitMapLoading($ID_Ice_Cliff_Chasms, 10000, 2000)
