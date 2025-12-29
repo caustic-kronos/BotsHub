@@ -62,7 +62,9 @@ Func SetupBorealFarm()
 		SwitchMode($ID_NORMAL_MODE)
 	EndIf
 
-	MoveTo(5584, -27924)
+	MoveTo(5799, -27957)
+	MoveTo(6035, -27977)
+	;~ MoveTo(5584, -27924)
 	Move(5232, -27891)
 	Moveto(3986, -27642)
 	RandomSleep(1500)
