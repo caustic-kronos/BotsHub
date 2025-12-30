@@ -73,6 +73,12 @@ Global $LDOA_FARM_SETUP = False
 Global $LDOA_OUTPOST_CHECK = False
 Global $LDOA_HAMNET_UNAVAILABLE = False
 
+;Variables used for Survivor async checking (Low Health Monitor)
+Global Const $LOW_HEALTH_THRESHOLD = 0.15
+Global Const $LOW_HEALTH_CHECK_INTERVAL = 500
+Global $LOW_HEALTH_ADLIB_ACTIVE = False
+Global $LOW_HEALTH_TRIGGERED = False
+
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
@@ -83,9 +89,9 @@ Func LDOATitleFarm($STATUS)
 	If $LDOA_HAMNET_UNAVAILABLE Then
 		Info('Quest not available, wait for rotation.')
 		$LDOA_FARM_SETUP = False
+		StopLowHealthMonitor()
 		Return $PAUSE
 	EndIf
-
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North for inventory management
 	If (CountSlots(1, _Min($BAGS_COUNT, 4)) <= 5) Then
 		PresearingInventoryManagement()
@@ -94,10 +100,19 @@ Func LDOATitleFarm($STATUS)
 	If (CountSlots(1, $BAGS_COUNT) <= 5) Then
 		Notice('Inventory has 5 slots left, pausing.')
 		$LDOA_FARM_SETUP = False
+		StopLowHealthMonitor()
+		Return $PAUSE
+	EndIf
+	If $STATUS <> 'RUNNING' Then
+		StopLowHealthMonitor()
 		Return $PAUSE
 	EndIf
 
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If GetMapID() == $ID_Ascalon_City_Presearing And $LOW_HEALTH_TRIGGERED Then
+		$LOW_HEALTH_TRIGGERED = False
+	EndIf
+
+	StartLowHealthMonitor()
 
 	Return LDOATitleFarmLoop($STATUS)
 EndFunc
@@ -267,6 +282,9 @@ EndFunc
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
+	If $questStatus == 0 Or $questStatus == 3 Then SetupCharrAtTheGateQuest()
+
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -579,6 +597,50 @@ Func BackToAscalon()
 	ReturnToOutpost()
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
 EndFunc
+
+
+;~ Start/stop background low-health monitor
+;~ Return to Ascalon if health is dangerously low
+Func StartLowHealthMonitor()
+	If Not $LOW_HEALTH_ADLIB_ACTIVE Then
+		AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)
+		$LOW_HEALTH_ADLIB_ACTIVE = True
+	EndIf
+EndFunc
+
+Func StopLowHealthMonitor()
+	If $LOW_HEALTH_ADLIB_ACTIVE Then
+		AdlibUnRegister('LowHealthMonitor')
+		$LOW_HEALTH_ADLIB_ACTIVE = False
+	EndIf
+EndFunc
+
+Func LowHealthMonitor()
+	If $LOW_HEALTH_TRIGGERED Then Return
+	CheckAndTriggerLowHealthRetreat()
+EndFunc
+
+Func CheckAndTriggerLowHealthRetreat()
+	If $LOW_HEALTH_TRIGGERED Then Return True
+	If Not IsLowHealth() Then Return False
+
+	$LOW_HEALTH_TRIGGERED = True
+	Notice('Health below threshold, returning to Ascalon.')
+	BackToAscalon()
+	Return True
+EndFunc
+
+Func IsLowHealth()
+	Local $me = GetMyAgent()
+	Local $healthRatio = DllStructGetData($me, 'HP')
+
+	If $healthRatio > 0 And $healthRatio < $LOW_HEALTH_THRESHOLD Then Return True
+	Return False
+EndFunc
+
+
+
+
 
 
 ;~ Function to deal with inventory after farm, in presearing
