@@ -3487,7 +3487,7 @@ Func EnemyAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Foe Then Return False
 	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
-	If DllStructGetData($agent, 'TypeMap') == 0x40000 Then Return False	; It's a spirit created by rangers (0x40001 for ritualist's spirits and bone minions)
+	If DllStructGetData($agent, 'TypeMap') == $ID_TypeMap_Idle_Minion Then Return False	; It's a spirit created by rangers
 	Return True
 EndFunc
 
@@ -3584,7 +3584,7 @@ Func GetParty($agents = Null)
 	Local $partySize = 0
 	For $agent In $agents
 		If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Team Then ContinueLoop
-		If Not BitAND(DllStructGetData($agent, 'TypeMap'), 0x20000) Then ContinueLoop
+		If Not BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TypeMap_Idle_Ally) Then ContinueLoop
 		$fullParty[$partySize] = $agent
 		$partySize += 1
 	Next

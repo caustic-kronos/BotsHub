@@ -297,7 +297,7 @@ EndFunc
 ;~ Returns true if the boss is aggroed, that is, if boss is in attack stance TypeMap == 0x1, not in idle stance TypeMap = 0x0
 Func IsBossAggroed()
 	Local $boss = GetBossFoe()
-	Return BitAND(DllStructGetData($boss, 'TypeMap'), 0x1) == 1
+	Return BitAND(DllStructGetData($boss, 'TypeMap'), 0x1) == $ID_TypeMap_Attack_Stance
 EndFunc
 
 

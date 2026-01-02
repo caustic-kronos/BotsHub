@@ -2185,7 +2185,7 @@ EndFunc
 
 ;~ Small helper to filter party members
 Func PartyMemberFilter($agent)
-	Return BitAND(DllStructGetData($agent, 'TypeMap'), 0x20000)
+	Return BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TypeMap_Idle_Ally)
 EndFunc
 #EndRegion Getting NPCs
 

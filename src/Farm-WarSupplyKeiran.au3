@@ -331,13 +331,13 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 		Local $isMikuAttacking = False
 		Local $isFoeInRangeOfMiku = False
 		For $foe In $foes
-			If BitAND(DllStructGetData($foe, 'TypeMap'), 0x1) == 1 Then $isFoeAttacking = True ; first bit in TypeMap corresponds to attack stance
+			If BitAND(DllStructGetData($foe, 'TypeMap'), 0x1) == $ID_TypeMap_Attack_Stance Then $isFoeAttacking = True ; first bit in TypeMap corresponds to attack stance
 			If GetDistance($Miku, $foe) < $RANGE_EARSHOT Then $isFoeInRangeOfMiku = True
 			;If GetTarget($foe) == $AgentID_Player Then $isFoeAttackingPlayer = True ; unfortunately GetTarget() always returns 0, so can't be used here
 			;If GetTarget($foe) == $AgentID_Miku Then $isFoeAttackingMiku = True ; unfortunately GetTarget() always returns 0, so can't be used here
 		Next
-		If BitAND(DllStructGetData($me, 'TypeMap'), 0x1) == 1 Then $isPlayerAttacking = True ; first bit in TypeMap corresponds to attack stance
-		If BitAND(DllStructGetData($Miku, 'TypeMap'), 0x1) == 1 Then $isMikuAttacking = True ; first bit in TypeMap corresponds to attack stance
+		If BitAND(DllStructGetData($me, 'TypeMap'), 0x1) == $ID_TypeMap_Attack_Stance Then $isPlayerAttacking = True ; first bit in TypeMap corresponds to attack stance
+		If BitAND(DllStructGetData($Miku, 'TypeMap'), 0x1) == $ID_TypeMap_Attack_Stance Then $isMikuAttacking = True ; first bit in TypeMap corresponds to attack stance
 		If ($isPlayerAttacking And $isFoeAttacking And Not $isFoeInRangeOfMiku And Not $isMikuAttacking And IsPlayerAlive() And Not GetIsDead($Miku)) Then
 			Move(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 300) ; move to Miku's position to trigger fight between Miku and mobs
 			ContinueLoop

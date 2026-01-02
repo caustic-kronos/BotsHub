@@ -269,7 +269,7 @@ Global Const $ID_Allegiance_Animal	= 2 ; untamed animals
 Global Const $ID_Allegiance_Foe		= 3
 Global Const $ID_Allegiance_Spirit	= 4 ; ranger's and ritualist's spirits and tamed animals/pets
 Global Const $ID_Allegiance_Minion	= 5 ; necromancer's minions
-Global Const $ID_Allegiance_Npc		= 6
+Global Const $ID_Allegiance_Npc		= 6 ; npcs, can be team allies
 #EndRegion Agents Allegiance
 
 #Region Agents Types
@@ -277,6 +277,32 @@ Global Const $ID_Agent_Type_NPC		= 0xDB ; player, team members, npcs, foes
 Global Const $ID_Agent_Type_Static	= 0x200 ; static objects like chests and signposts
 Global Const $ID_Agent_Type_Item	= 0x400 ; item lying on the ground
 #EndRegion Agents Types
+
+#Region Agents TypeMap Values
+Global Const $ID_TypeMap_Attack_Stance 	= 0x0001 ; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
+Global Const $ID_TypeMap_Skill_Usage 	= 0x2000 ; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
+Global Const $ID_TypeMap_Death_State 	= 0x0008 ; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
+
+Global Const $ID_TypeMap_City_NPC 		= 0x0002 ; = 2^1 = 2 = corresponds to npcs in cities. Bit on 2nd position
+Global Const $ID_TypeMap_Idle_Foe 		= 0x0000 ; = 0 = corresponds to enemies, who don't do anything, for example when far away
+Global Const $ID_TypeMap_Attacking_Foe	= 0x2001 ; = 8193 = corresponds to enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
+Global Const $ID_TypeMap_Aggroed_Foe 	= $ID_TypeMap_Attack_Stance ; = 0x1 = corresponds to enemies, when they are in attack stance, but not using skills
+Global Const $ID_TypeMap_Dead_Foe 		= $ID_TypeMap_Death_State ; = 0x8 = corresponds to enemies in dead state
+
+Global Const $ID_TypeMap_Idle_Ally 		= 0x20000 ; = 2^17 = 131072 = corresponds to party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
+Global Const $ID_TypeMap_Aggroed_Ally 	= 0x20001 ; = 131073 = corresponds to aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
+Global Const $ID_TypeMap_Attacking_Ally	= 0x22001 ; = 139265 = corresponds to attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
+Global Const $ID_TypeMap_Dead_Ally		= 0x20008 ; = 131080 = corresponds to dead party members and NPC allies. Bits on 4th and 18th positions
+
+Global Const $ID_TypeMap_Idle_Player	= 0x421004 ; = 4329476 = corresponds to idle player, when not using skills and not fighting
+Global Const $ID_TypeMap_Aggroed_Player	= 0x421005 ; = 4329477 = corresponds to aggroed player, in attack stance, but not using skills
+Global Const $ID_TypeMap_Casting_Player	= 0x423005 ; = 4337669 = corresponds to attacking player who is using a skill
+Global Const $ID_TypeMap_Dead_Player	= 0x42100C ; = 4329484 = corresponds to dead player
+
+Global Const $ID_TypeMap_Idle_Minion	= 0x40000 ; = 262144 = corresponds to idle spirits created by ranger. Bit on 19th position
+Global Const $ID_TypeMap_Aggroed_Minion	= 0x40001 ; = 262145 = corresponds to spirits created by ritualist and bone minions created by necromancers. Agents that can attack. Bits on 1st and 19th positions
+#EndRegion Agents TypeMap Values
+
 
 #Region Profession Attributes
 Global Const $ID_Fast_Casting				= 0
