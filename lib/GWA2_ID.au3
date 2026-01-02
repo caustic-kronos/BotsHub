@@ -84,7 +84,9 @@ Global Const $RegionMap					=	MapFromArrays($DistrictNames, $DistrictAndRegionId
 #Region Game Locations
 ; Locations varying seasonally and their default versions
 Global Const $ID_Default_Eye_of_the_North	= 642
-Global Const $ID_Christmas_Eye_of_the_North = 821
+Global Const $ID_Christmas_Eye_of_the_North	= 821
+Global Const $ID_Default_Kaineng_City		= 194
+Global Const $ID_Kaineng_City_Events		= 817
 ; Generic
 Global Const $ID_Outpost					= 0
 Global Const $ID_Explorable					= 1
@@ -124,7 +126,7 @@ Global Const $ID_Isle_Of_The_Dead			= 179
 ; Factions
 Global Const $ID_House_Zu_Heltzer			= 77
 Global Const $ID_Cavalon					= 193
-Global Const $ID_Kaineng_City				= 194
+Global Const $ID_Kaineng_City				= IsAnniversaryCelebration() Or IsDragonFestival() ? $ID_Kaineng_City_Events : $ID_Default_Kaineng_City
 Global Const $ID_Drazach_Thicket			= 195
 Global Const $ID_Jaya_Bluffs				= 196
 Global Const $ID_Mount_Qinkai				= 200
@@ -151,7 +153,6 @@ Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Imperial_Isle				= 359
 Global Const $ID_Isle_Of_Meditation			= 360
 Global Const $ID_Aspenwood_Gate_Luxon		= 389
-Global Const $ID_Kaineng_City_Events		= 817
 Global Const $ID_Kaineng_A_Chance_Encounter	= 861
 ; Nightfall
 Global Const $ID_Kamadan					= 370
@@ -196,7 +197,7 @@ Global Const $ID_Vloxs_Fall					= 624
 Global Const $ID_Gadds_Camp					= 638
 Global Const $ID_Umbral_Grotto				= 639
 Global Const $ID_Rata_Sum					= 640
-Global Const $ID_Eye_of_the_North			= $ID_Default_Eye_of_the_North
+Global Const $ID_Eye_of_the_North			= IsChristmasFestival() ? $ID_Christmas_Eye_of_the_North : $ID_Default_Eye_of_the_North
 Global Const $ID_Gunnars_Hold				= 644
 Global Const $ID_Olafstead					= 645
 Global Const $ID_Hall_of_Monuments			= 646
