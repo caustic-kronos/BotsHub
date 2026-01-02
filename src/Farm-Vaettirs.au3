@@ -143,13 +143,7 @@ Func SetupPlayerVaettirsFarm()
 			Return $FAIL
 	EndSwitch
 	Sleep(250 + GetPing())
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
-		ChangeWeaponSet($WEAPON_SLOT)
-	Else
-		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
-	EndIf
-	Sleep(250 + GetPing())
+	TrySetupWeaponSlotUsingGUISettings()
 	; giving more health to monk 55hp from norn title effect would screw up farm, therefore hiding displayed title for monk
 	If $VaettirsPlayerProfession <> $ID_Monk Then SetDisplayedTitle($ID_Norn_Title)
 	If $VaettirsPlayerProfession == $ID_Monk Then SetDisplayedTitle(0)

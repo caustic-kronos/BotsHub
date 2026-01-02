@@ -114,13 +114,7 @@ Func SetupPlayerKournansFarm()
 		Return $FAIL
 	EndIf
 	Sleep(250 + GetPing())
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
-		ChangeWeaponSet($WEAPON_SLOT)
-	Else
-		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
-	EndIf
-	Sleep(250 + GetPing())
+	TrySetupWeaponSlotUsingGUISettings()
 	Return $SUCCESS
 EndFunc
 
