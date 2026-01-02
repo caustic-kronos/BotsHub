@@ -1118,7 +1118,8 @@ EndFunc
 
 ;~ Uses a consumable from inventory, if present
 Func UseCitySpeedBoost($forceUse = False)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
+	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return $FAIL
+	If GetMapType() <> $ID_Outpost Then Return $FAIL
 
 	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_2)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) > 0 Then Return
 
@@ -1129,14 +1130,18 @@ Func UseCitySpeedBoost($forceUse = False)
 		$ConsumableSlot = FindInInventory($ID_Chocolate_Bunny)
 		If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Uses an item from inventory or chest, if present
 Func UseItemFromInventory($itemID, $forceUse = False, $checkXunlaiChest = True)
 	Local $ConsumableItemBagAndSlot
-	If $checkXunlaiChest == True Then $ConsumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
-	If $checkXunlaiChest == False Then $ConsumableItemBagAndSlot = FindInStorages(1, $BAGS_COUNT, $itemID)
+	If $checkXunlaiChest == True And GetMapType() == $ID_Outpost Then
+		$ConsumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
+	Else
+		$ConsumableItemBagAndSlot = FindInStorages(1, $BAGS_COUNT, $itemID)
+	EndIf
 
 	Local $ConsumableBag = $ConsumableItemBagAndSlot[0]
 	Local $ConsumableSlot = $ConsumableItemBagAndSlot[1]
@@ -1180,7 +1185,7 @@ EndFunc
 ;~ Uses the Item from $bag at position $slot (positions start at 1)
 Func UseItemBySlot($bag, $slot)
 	If $bag > 0 And $slot > 0 Then
-		If IsPlayerAlive() And GetInstanceType() <> 2 Then
+		If IsPlayerAlive() And GetMapType() <> $ID_Loading Then
 			Local $item = GetItemBySlot($bag, $slot)
 			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf

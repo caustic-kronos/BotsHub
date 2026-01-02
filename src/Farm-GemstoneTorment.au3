@@ -121,7 +121,7 @@ EndFunc
 Func GoToRavenHeartGloom()
 	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
 	Info('Moving to RavenHeart Gloom')
-	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is hard to tell if player left the outpost
+	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in RavenHeart Gloom
 	Local Static $StartX = 16034
 	Local Static $StartY = 1244

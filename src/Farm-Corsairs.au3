@@ -131,7 +131,7 @@ EndFunc
 
 Func EnterCorsairsModdokCreviceMission()
 	TravelToOutpost($ID_Moddok_Crevice, $DISTRICT_NAME)
-	; Unfortunately Moddok Crevice mission map has the same map ID as Moddok Crevice outpost, so it is hard to tell if player left the outpost
+	; Unfortunately Moddok Crevice mission map has the same map ID as Moddok Crevice outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
 	Local Static $StartX = -11468
 	Local Static $StartY = -7267
