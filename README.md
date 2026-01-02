@@ -167,6 +167,13 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🕓 Planned
 - 💭 Wishlist
 
+## BotsHub Version
+Current version: 2.0  
+Added GUI improvements along with new farms and general code updates.  
+Users are advised to create and save new configuration files using GUI.  
+Old configuration files may not be backward compatible
+There are 2 separate configuration files for farm options and for loot options
+
 ## Dependencies
 - [AutoIt JSON UDF](https://github.com/Sylvan86/autoit-json-udf) – For JSON parsing - WTFPL license.
 - [SQLite UDF](https://www.autoitscript.com/autoit3/pkgmgr/sqlite/) – For database operations.

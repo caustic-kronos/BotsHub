@@ -92,7 +92,7 @@
 #EndRegion Includes
 
 #Region Variables
-Global Const $GW_BOT_HUB_VERSION = '1.0'
+Global Const $GW_BOT_HUB_VERSION = '2.0'
 
 Global Const $LVL_DEBUG = 0
 Global Const $LVL_INFO = 1
