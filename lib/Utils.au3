@@ -2991,15 +2991,24 @@ Func CreateMobsPriorityMap()
 	Local $PN_Modniir_Priest	= 6512
 
 	; Gemstone farm foes model IDs
-	Local $Gem_AnurKaya			= 5166
-	Local $Gem_AnurDabi			= 5167
-	Local $Gem_AnurSu			= 5168
-	Local $Gem_AnurKi			= 5169
-	Local $Gem_RageTitan		= 5196
-	Local $Gem_WaterTormentor	= 5206
-	Local $Gem_HeartTormentor	= 5207
-	Local $Gem_Dryder			= 5215
-	Local $Gem_Dreamer			= 5216
+	Local $Gem_AnurKaya			= 5217
+	;Local $Gem_AnurDabi		= 5218
+	Local $Gem_AnurSu			= 5219
+	Local $Gem_AnurKi			= 5220
+	;Local $Gem_AnurTuk			= 5222
+	;Local $Gem_AnurRund		= 5224
+	;Local $Gem_MiseryTitan		= 5246
+	Local $Gem_RageTitan		= 5247
+	;Local $Gem_DementiaTitan	= 5248
+	;Local $Gem_AnguishTitan	= 5249
+	Local $Gem_FuryTitan		= 5251
+	;Local $Gem_MindTormentor	= 5255
+	;Local $Gem_SoulTormentor	= 5256
+	Local $Gem_WaterTormentor	= 5257
+	Local $Gem_HeartTormentor	= 5258
+	;Local $Gem_FleshTormentor	= 5259
+	Local $Gem_TortureWebDryder	= 5266
+	Local $Gem_GreatDreamRider	= 5267
 
 	; War Supply farm foes model IDs, why so many? (o_O)
 	;Local $WarSupply_Peacekeeper_1	= 8095
@@ -3087,12 +3096,12 @@ Func CreateMobsPriorityMap()
 	$map[$PN_SS_Contaminator]	= 2
 	$map[$PN_SS_Zealot]			= 2
 
-	$map[$Gem_Dryder]			= 0
+	$map[$Gem_TortureWebDryder]	= 0
 	$map[$Gem_RageTitan]		= 1
 	$map[$Gem_AnurKi]			= 2
 	$map[$Gem_AnurSu]			= 3
 	$map[$Gem_AnurKaya]			= 4
-	$map[$Gem_Dreamer]			= 5
+	$map[$Gem_GreatDreamRider]	= 5
 	$map[$Gem_HeartTormentor]	= 6
 	$map[$Gem_WaterTormentor]	= 7
 

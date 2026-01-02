@@ -86,7 +86,7 @@ $GemstonesFightOptions.Item('lootInFights')			= False ; loot only when no foes a
 $GemstonesFightOptions.Item('openChests')			= False ; there are no chests in Ebony Citadel of Mallyx location
 
 Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
-Global Const $ModelID_Zhellix = 5221 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
+Global Const $ModelID_Zhellix = 5272 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
 
 
 ;~ Main Gemstones farm entry function
