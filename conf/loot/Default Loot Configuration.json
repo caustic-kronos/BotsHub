@@ -2,56 +2,364 @@
 	"Pick up items": {
 		"Weapons and offhands": {
 			"White": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Blue": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Purple": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Gold": {
-				"Axe": true,
-				"Bow": true,
-				"Dagger": true,
-				"Focus": true,
-				"Hammer": true,
-				"Scythe": true,
-				"Shield": true,
-				"Spear": true,
-				"Staff": true,
-				"Sword": true,
-				"Wand": true
+				"Axe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Bow": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Dagger": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Focus": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Hammer": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Scythe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Shield": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Spear": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Staff": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Sword": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Wand": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				}
 			},
 			"Green": {
 				"Axe": true,
@@ -928,56 +1236,364 @@
 	"Salvage items": {
 		"Weapons and offhands": {
 			"White": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Blue": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Purple": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Gold": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			}
 		},
 		"Armor salvageables": {
@@ -995,56 +1611,364 @@
 	"Sell items": {
 		"Weapons and offhands": {
 			"White": {
-				"Axe": true,
-				"Bow": true,
-				"Dagger": true,
-				"Focus": true,
-				"Hammer": true,
-				"Scythe": true,
-				"Shield": true,
-				"Spear": true,
-				"Staff": true,
-				"Sword": true,
-				"Wand": true
+				"Axe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Bow": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Dagger": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Focus": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Hammer": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Scythe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Shield": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Spear": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Staff": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Sword": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Wand": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				}
 			},
 			"Blue": {
-				"Axe": true,
-				"Bow": true,
-				"Dagger": true,
-				"Focus": true,
-				"Hammer": true,
-				"Scythe": true,
-				"Shield": true,
-				"Spear": true,
-				"Staff": true,
-				"Sword": true,
-				"Wand": true
+				"Axe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Bow": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Dagger": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Focus": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Hammer": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Scythe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Shield": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Spear": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Staff": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Sword": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Wand": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				}
 			},
 			"Purple": {
-				"Axe": true,
-				"Bow": true,
-				"Dagger": true,
-				"Focus": true,
-				"Hammer": true,
-				"Scythe": true,
-				"Shield": true,
-				"Spear": true,
-				"Staff": true,
-				"Sword": true,
-				"Wand": true
+				"Axe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Bow": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Dagger": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Focus": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Hammer": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Scythe": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Shield": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Spear": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Staff": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Sword": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Wand": {
+					"Req 8": true,
+					"Req 9": true,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				}
 			},
 			"Gold": {
-				"Axe": true,
-				"Bow": true,
-				"Dagger": true,
-				"Focus": true,
-				"Hammer": true,
-				"Scythe": true,
-				"Shield": true,
-				"Spear": true,
-				"Staff": true,
-				"Sword": true,
-				"Wand": true
+				"Axe": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Bow": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Dagger": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Focus": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Hammer": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Scythe": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Shield": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Spear": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Staff": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Sword": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				},
+				"Wand": {
+					"Req 8": true,
+					"Req 9": false,
+					"Req 10": true,
+					"Req 11": true,
+					"Req 12": true,
+					"Req 13": true
+				}
 			}
 		},
 		"Basic Materials": {
@@ -1107,56 +2031,364 @@
 	"Store items": {
 		"Weapons and offhands": {
 			"White": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Blue": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Purple": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": false,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Gold": {
-				"Axe": false,
-				"Bow": false,
-				"Dagger": false,
-				"Focus": false,
-				"Hammer": false,
-				"Scythe": false,
-				"Shield": false,
-				"Spear": false,
-				"Staff": false,
-				"Sword": false,
-				"Wand": false
+				"Axe": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Bow": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Dagger": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Focus": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Hammer": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Scythe": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Shield": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Spear": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Staff": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Sword": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				},
+				"Wand": {
+					"Req 8": false,
+					"Req 9": true,
+					"Req 10": false,
+					"Req 11": false,
+					"Req 12": false,
+					"Req 13": false
+				}
 			},
 			"Green": {
 				"Axe": true,

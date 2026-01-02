@@ -410,7 +410,7 @@ Global Const $WeaponNamesFromTypes			= MapFromArrays($Weapon_Types_Array, $Weapo
 Global Const $Map_Armor_Types				= MapFromArray($Armor_Types_Array)
 Global Const $Map_Weapon_Types				= MapFromArray($Weapon_Types_Array)
 
-; Damage relative to the req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
+; Damage relative to the Req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
 Global Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Global Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Global Const $Focus_Max_Damage_Per_Level			=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]

@@ -1010,7 +1010,7 @@ Func ShouldKeepWeapon($item)
 	If ContainsValuableUpgrades($item) Then Return True
 	; Throwing items without good damage/energy/armor
 	If Not IsMaxDamageForReq($item) Then Return False
-	; Inscribable are kept only if : 1) rare skin and q9 2) low req of a good type
+	; Inscribable are kept only if : 1) rare skin and q9 2) low Req of a good type
 	If IsInscribable($item) Then
 		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
 		If GetItemReq($item) == 9 And $Map_RareWeapons[$itemID] <> Null Then Return True
@@ -1018,13 +1018,13 @@ Func ShouldKeepWeapon($item)
 	; OS - Old School weapon without inscription ... it's more complicated
 	Else
 		If GetItemReq($item) >= 9 Then
-			; OS (Old School) high req are kept only if : 1) perfect mods and good type or good skin 2) rare skin and almost perfect mods
+			; OS (Old School) high Req are kept only if : 1) perfect mods and good type or good skin 2) rare skin and almost perfect mods
 			If HasPerfectMods($item) And ($Map_RareWeapons[$itemID] <> Null Or $valuableOSWeaponTypesMap[DllStructGetData($item, 'type')] <> Null) Then Return True
 			If $Map_RareWeapons[$itemID] == Null Then Return False
 			If HasAlmostPerfectMods($item) Then Return True
 			Return False
 		Else
-			; Low req are kept if they have perfect mods, almost perfect mods, or a rare skin with somewhat okay mods
+			; Low Req are kept if they have perfect mods, almost perfect mods, or a rare skin with somewhat okay mods
 			If HasPerfectMods($item) Then Return True
 			If HasAlmostPerfectMods($item) Then Return True
 			If $Map_RareWeapons[$itemID] <> Null And HasOkayMods($item) Then Return True
@@ -1073,7 +1073,8 @@ Func CheckPickupWeapon($weaponItem)
 	If $weaponRarity == $RARITY_Green Or $weaponRarity == $RARITY_Red Then Return True
 	If $weaponRarity == $RARITY_Gray Then Return False
 	Local $weaponRarityName = $RarityNamesFromIDs[$weaponRarity]
-	Return IsLootOptionChecked('Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName)
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return IsLootOptionChecked('Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
 EndFunc
 
 
@@ -1085,7 +1086,8 @@ Func CheckSalvageWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_Green Or $weaponRarity == $RARITY_Gray Or $weaponRarity == $RARITY_Red Then Return False
 	Local $weaponRarityName = $RarityNamesFromIDs[$weaponRarity]
-	Return IsLootOptionChecked('Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName)
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return IsLootOptionChecked('Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
 EndFunc
 
 
@@ -1097,7 +1099,8 @@ Func CheckSellWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_Green Or $weaponRarity == $RARITY_Gray Or $weaponRarity == $RARITY_Red Then Return False
 	Local $weaponRarityName = $RarityNamesFromIDs[$weaponRarity]
-	Return IsLootOptionChecked('Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName)
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return IsLootOptionChecked('Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
 EndFunc
 
 
@@ -1110,6 +1113,7 @@ Func CheckStoreWeapon($weaponItem)
 	If $weaponRarity == $RARITY_Green Then Return True
 	If $weaponRarity == $RARITY_Gray Or $weaponRarity == $RARITY_Red Then Return False
 	Local $weaponRarityName = $RarityNamesFromIDs[$weaponRarity]
-	Return IsLootOptionChecked('Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName)
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return IsLootOptionChecked('Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
 EndFunc
 #EndRegion Inventory
