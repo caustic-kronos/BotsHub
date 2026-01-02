@@ -114,7 +114,7 @@ Func SetupGemstonesFarm()
 	SwitchMode($ID_NORMAL_MODE)
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SetupPlayerGemstonesFarm()
-	If SetupTeamGemstonesFarm() == $FAIL Then Return $FAIL
+	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL ; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
 	$GEMSTONES_FARM_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -139,22 +139,6 @@ Func SetupPlayerGemstonesFarm()
 		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
 	EndIf
 	Sleep(250 + GetPing())
-EndFunc
-
-
-Func SetupTeamGemstonesFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		SetupTeamUsingGUISettings()
-	Else
-		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-	EndIf
-	Sleep(500 + GetPing())
-	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
-		Return $FAIL ; Zhellix agent ID will be lower if team size is lower than 8
-	EndIf
-	Return $SUCCESS
 EndFunc
 
 

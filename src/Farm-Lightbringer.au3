@@ -67,45 +67,13 @@ Func LightbringerFarmSetup()
 	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
 	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
-	SetupPlayerLightbringerFarm()
-	SetupTeamLightbringerFarm()
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_HARD_MODE)
 	$LIGHTBRINGER_FARM_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
-EndFunc
-
-
-Func SetupPlayerLightbringerFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-	Else
-		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
-	EndIf
-	Sleep(250 + GetPing())
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
-		ChangeWeaponSet($WEAPON_SLOT)
-	Else
-		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
-	EndIf
-	Sleep(250 + GetPing())
-EndFunc
-
-
-Func SetupTeamLightbringerFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		SetupTeamUsingGUISettings()
-	Else
-		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-	EndIf
-	Sleep(500 + GetPing())
-	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
-	EndIf
 EndFunc
 
 

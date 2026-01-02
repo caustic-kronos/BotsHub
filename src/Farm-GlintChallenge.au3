@@ -73,7 +73,7 @@ $GlintChallengeFightOptions.Item('openChests')			= False ; there are no chests i
 
 ;~ Main loop for the Mysterious armor farm
 Func GlintChallengeFarm($STATUS)
-	If Not $GLINT_CHALLENGE_SETUP Then GlintChallengeSetup()
+	If Not $GLINT_CHALLENGE_SETUP And GlintChallengeSetup() == $FAIL Then Return $PAUSE
 
 	EnterGlintChallengeMission()
 	Local $result = GlintChallenge()
@@ -88,29 +88,11 @@ Func GlintChallengeSetup()
 	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Dwarf_Title)
 	SwitchMode($ID_NORMAL_MODE)
-	SetupPlayerGlintChallengeFarm()
-	SetupTeamGlintChallengeFarm()
+	TrySetupPlayerUsingGUISettings()
+	If SetupTeamGlintChallengeFarm() == $FAIL Then Return $FAIL
 	$GLINT_CHALLENGE_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
-EndFunc
-
-
-Func SetupPlayerGlintChallengeFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-	Else
-		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
-	EndIf
-	Sleep(250 + GetPing())
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
-		ChangeWeaponSet($WEAPON_SLOT)
-	Else
-		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
-	EndIf
-	Sleep(250 + GetPing())
 EndFunc
 
 
