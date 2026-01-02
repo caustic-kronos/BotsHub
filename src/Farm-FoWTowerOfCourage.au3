@@ -77,13 +77,13 @@ $FoWToCMoveOptions.Item('hosSkillSlot')			= $FoWToC_HeartOfShadow
 $FoWToCMoveOptions.Item('deathChargeSkillSlot')	= 0
 $FoWToCMoveOptions.Item('openChests')			= False
 
-Global Const $FoWToC_ModelID_ShadowMesmer		= 2804
-Global Const $FoWToC_ModelID_ShadowElemental	= 2805
-Global Const $FoWToC_ModelID_ShadowMonk			= 2806
-Global Const $FoWToC_ModelID_ShadowWarrior		= 2807
-Global Const $FoWToC_ModelID_ShadowRanger		= 2808
-Global Const $FoWToC_ModelID_ShadowBeast		= 2809
-Global Const $FoWToC_ModelID_Abyssal			= 2810
+Global Const $FoWToC_ModelID_ShadowMesmer		= 2855
+Global Const $FoWToC_ModelID_ShadowElemental	= 2856
+Global Const $FoWToC_ModelID_ShadowMonk			= 2857
+Global Const $FoWToC_ModelID_ShadowWarrior		= 2858
+Global Const $FoWToC_ModelID_ShadowRanger		= 2859
+Global Const $FoWToC_ModelID_ShadowBeast		= 2860
+Global Const $FoWToC_ModelID_Abyssal			= 2861
 
 ;~ Main method to farm Fissure of Woe - Tower of Courage
 Func FoWToCFarm($STATUS)
