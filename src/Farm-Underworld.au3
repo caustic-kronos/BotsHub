@@ -37,7 +37,6 @@ Global Const $UnderworldFarmInformations = 'For best results, don''t cheap out o
 ; Average duration ~ 5 minutes
 Global Const $UW_FARM_DURATION = 60 * 60 * 1000
 Global Const $MAX_UW_FARM_DURATION = 120 * 60 * 1000
-Global $UWFarmTimer = Null
 Global $UW_FARM_SETUP = False
 
 
@@ -70,7 +69,6 @@ EndFunc
 
 Func UnderworldFarmLoop()
 	Info('Starting Farm')
-	$UWFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	ClearTheChamberUnderworld()
 

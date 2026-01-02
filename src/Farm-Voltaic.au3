@@ -46,7 +46,6 @@ Func VoltaicFarm($STATUS)
 	GoToVerdantCascades()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VoltaicFarmLoop()
-	; Local $timer = TimerInit()
 	AdlibUnregister('TrackPartyStatus')
 	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	Return $result

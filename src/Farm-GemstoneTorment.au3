@@ -55,7 +55,6 @@ Global Const $GemstoneTormentFarmInformations = 'For best results, have :' & @CR
 ; Average duration ~ 10 minutes
 Global Const $GEMSTONE_TORMENT_FARM_DURATION = 10 * 60 * 1000
 Global Const $MAX_GEMSTONE_TORMENT_FARM_DURATION = 20 * 60 * 1000
-Global $GemstoneTormentFarmTimer = Null
 Global $GEMSTONE_TORMENT_FARM_SETUP = False
 
 Global Const $Torment_Weapon_Slot_Staff = 2 ; Staff of enchanting 20% for the run and faster energy regeneration
@@ -143,7 +142,6 @@ EndFunc
 
 Func GemstoneTormentFarmLoop()
 	Info('Starting Farm')
-	$GemstoneTormentFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 	Local $TimerWait
 
 	ChangeWeaponSet($Torment_Weapon_Slot_Staff)

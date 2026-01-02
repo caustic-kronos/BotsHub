@@ -37,7 +37,6 @@ Global Const $ID_SoO_Torch = 22342
 Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
 Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000 ; max time = 80 minutes
-Global $SoOFarmTimer = Null
 Global $SOO_FARM_SETUP = False
 
 
@@ -112,8 +111,6 @@ EndFunc
 Func SoOFarmLoop()
 	GetRewardRefreshAndTakeSoOQuest()
 	ResetFailuresCounter()
-	; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
-	$SoOFarmTimer = TimerInit()
 	AdlibRegister('TrackPartyStatus', 10000)
 	; Failure return delayed after adlib function deregistered
 	If (ClearSoOFloor1() == $FAIL Or ClearSoOFloor2() == $FAIL Or ClearSoOFloor3() == $FAIL) Then $SOO_FARM_SETUP = False
@@ -666,7 +663,7 @@ EndFunc
 
 ;~ Detect bot getting stuck
 Func SoODetectStuck($stuckLocation)
-	If TimerDiff($SoOFarmTimer) > $MAX_SOO_FARM_DURATION Then
+	If TimerDiff($RUN_TIMER) > $MAX_SOO_FARM_DURATION Then
 		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
 		Return $FAIL
 	EndIf

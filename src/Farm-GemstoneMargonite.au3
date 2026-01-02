@@ -102,7 +102,6 @@ Global Const $GemstoneMargoniteFarmInformations = 'For best results, have :' & @
 ; Average duration ~ 5 minutes
 Global Const $GEMSTONE_MARGONITE_FARM_DURATION = 5 * 60 * 1000
 Global Const $MAX_GEMSTONE_MARGONITE_FARM_DURATION = 10 * 60 * 1000
-Global $GemstoneMargoniteFarmTimer = Null
 Global $GEMSTONE_MARGONITE_FARM_SETUP = False
 Global Const $Margonites_Range = 800
 
@@ -277,7 +276,6 @@ EndFunc
 Func GemstoneMargoniteFarmLoop()
 	Local $me = Null, $target = Null
 	Info('Starting Farm')
-	$GemstoneMargoniteFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	CommandHero($MargoniteHeroIndex, -18571, -9328)
 	Sleep(2000)
@@ -365,7 +363,7 @@ EndFunc
 Func WaitAggroMargonites($timeToWait)
 	Local $TimerAggro = TimerInit()
 	While IsPlayerAlive() And TimerDiff($TimerAggro) < $timeToWait
-		If TimerDiff($GemstoneMargoniteFarmTimer) > $MAX_GEMSTONE_MARGONITE_FARM_DURATION Then Return $FAIL
+		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONE_MARGONITE_FARM_DURATION Then Return $FAIL
 		MargoniteDefend()
 		RandomSleep(50)
 	WEnd

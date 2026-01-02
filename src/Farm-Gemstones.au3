@@ -56,7 +56,6 @@ Global Const $GemstonesFarmInformations = 'Requirements:' & @CRLF _
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONES_FARM_DURATION = (12 * 60 + 30) * 1000
 Global Const $MAX_GEMSTONES_FARM_DURATION = 25 * 60 * 1000
-Global $GemstonesFarmTimer = Null
 
 ;=== Configuration / Globals ===
 Global Const $GemstonesDefendX = -3432
@@ -140,7 +139,6 @@ EndFunc
 Func GemstonesFarmLoop()
 	If TalkToZhellix() == $FAIL Then Return $FAIL
 	WalkToSpotGemstonesFarm()
-	$GemstonesFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
 	Sleep(2000)
 	If Defend() == $FAIL Then Return $FAIL
@@ -175,7 +173,7 @@ Func Defend()
 
 	While IsZhellixPerformingRitual()
 		;If GetMapLoading() == 2 Then Disconnected()
-		If TimerDiff($GemstonesFarmTimer) > $MAX_GEMSTONES_FARM_DURATION Then Return $FAIL
+		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONES_FARM_DURATION Then Return $FAIL
 		If IsDoARunFailed() Then Return $FAIL
 		Sleep(1000)
 		KillFoesInArea($GemstonesFightOptions)

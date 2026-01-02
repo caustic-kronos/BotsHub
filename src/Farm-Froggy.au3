@@ -39,7 +39,6 @@ Global Const $ID_Froggy_Quest = 0x322
 ;Global Const $ID_Froggy_Quest = 0x339
 
 Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000 ; max time = 60 minutes
-Global $FroggyFarmTimer = Null
 
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
@@ -103,7 +102,6 @@ EndFunc
 ;~ Farm loop
 Func FroggyFarmLoop()
 	ResetFailuresCounter()
-	$FroggyFarmTimer = TimerInit()
 	AdlibRegister('TrackPartyStatus', 10000)
 	GetRewardRefreshAndTakeFroggyQuest()
 	; Failure return delayed after adlib function deregistered
@@ -362,7 +360,7 @@ EndFunc
 
 ;~ Detect bot getting stuck
 Func FroggyDetectStuck($stuckLocation)
-	If TimerDiff($FroggyFarmTimer) > $MAX_FROGGY_FARM_DURATION Then
+	If TimerDiff($RUN_TIMER) > $MAX_FROGGY_FARM_DURATION Then
 		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
 		Return $FAIL
 	EndIf

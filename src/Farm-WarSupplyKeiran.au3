@@ -46,7 +46,6 @@ Global Const $WarSupplyKeiranInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 8 minutes
 Global Const $WAR_SUPPLY_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_WAR_SUPPLY_FARM_DURATION = 16 * 60 * 1000
-Global $WarSupplyFarmTimer = Null
 Global $WARSUPPLY_FARM_SETUP = False
 
 Global Const $KeiranSniperShot			= 1 ; number of Keiran's Sniper Shot skill on Keiran's skillbar
@@ -174,7 +173,6 @@ EndFunc
 Func RunQuest()
 	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
 	Info('Running Auspicious Beginnings quest ')
-	$WarSupplyFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	Info('Moving to start location to wait out initial dialogs')
 	MoveTo(11500, -5050)
@@ -241,7 +239,7 @@ Func RunWayPoints()
 		If $i == 2 Or $i == 3 Then Sleep(3000) ; wait for initial group to appear in front of player, because they appear suddenly and can't be detected in advance
 		If $i == 9 Or $i == 10 Then Sleep(3000) ; wait for pre forest group to clear it because not clearing it can result in fail by Miku pulling this group into forest (2-3 groups at once)
 		While IsPlayerAlive() ; Between waypoints ensure that everything is fine with player and Miku
-			If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
+			If TimerDiff($RUN_TIMER) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 			If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
 			$me = GetMyAgent()
 			$Miku = GetAgentByID($AgentID_Miku)
@@ -257,14 +255,12 @@ Func RunWayPoints()
 			Sleep(1000)
 		WEnd
 		If IsPlayerDead() Then Return $FAIL
-		If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 	Next
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
 Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
-	If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 	If GetMapID() <> $ID_Auspicious_Beginnings Then Return $FAIL
 	Info('Fighting')
 
@@ -278,7 +274,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 
 	While IsPlayerAlive() ; this loop ends when there are no more foes in range
 		If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
-		If TimerDiff($WarSupplyFarmTimer) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
+		If TimerDiff($RUN_TIMER) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
 		; refreshing/sampling all agents state at the start of every loop iteration to not operate on some old, inadequate data
 		$me = GetMyAgent()
 		$Miku = GetAgentByID($AgentID_Miku)

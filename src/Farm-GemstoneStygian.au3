@@ -85,7 +85,6 @@ Global Const $GemstoneStygianFarmInformations = 'For best results, have :' & @CR
 ; Average duration ~ 8 minutes
 Global Const $GEMSTONE_STYGIAN_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
-Global $GemstoneStygianFarmTimer = Null
 Global $GEMSTONE_STYGIAN_FARM_SETUP = False
 Global Const $Stygians_Range_Short = 800
 Global Const $Stygians_Range_Long = 1200
@@ -198,7 +197,6 @@ EndFunc
 
 Func GemstoneStygianFarmLoop()
 	Info('Starting Farm')
-	$GemstoneStygianFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
 
 	RunStygianFarm(2415, -10451)
 	RandomSleep(15000)
@@ -379,7 +377,7 @@ Func StygianJobRanger()
 	MoveTo(8368, -11244)
 	If IsRecharged($Stygian_Ranger_EbonStandard) Then UseSkillEx($Stygian_Ranger_EbonStandard)
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
-		If TimerDiff($GemstoneStygianFarmTimer) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
+		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
 		RandomSleep(100)
 	WEnd
 	CancelAll()
@@ -393,7 +391,7 @@ Func KillStygianMobsUsingWastrelSkills()
 	Local $me, $target, $distance
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
-		If TimerDiff($GemstoneStygianFarmTimer) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
+		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
 		StygianCheckSFBuffs()
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent(GetMyAgent())

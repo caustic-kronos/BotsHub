@@ -120,6 +120,7 @@ Global $DISTRICT_NAME = 'Random'
 Global $BAGS_COUNT = 5
 Global $WEAPON_SLOT = 1
 Global $INVENTORY_SPACE_NEEDED = 5
+Global $RUN_TIMER = Null ; global variable to measure elapsed time of farm run
 
 Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
@@ -976,8 +977,8 @@ EndFunc
 Func RunFarmLoop($Farm)
 	Local $result = $NOT_STARTED
 	Local $timePerRun = UpdateStats($NOT_STARTED)
-	Local $timer = TimerInit()
-	UpdateProgressBar(True, $timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
+	$RUN_TIMER = TimerInit()
+	UpdateProgressBar($timePerRun == 0 ? SelectFarmDuration($Farm) : $timePerRun)
 	AdlibRegister('UpdateProgressBar', 5000)
 	Switch $Farm
 		Case 'Choose a farm'
@@ -1117,7 +1118,7 @@ Func RunFarmLoop($Farm)
 	EndSwitch
 	AdlibUnRegister('UpdateProgressBar')
 	GUICtrlSetData($GUI_FarmProgress, 100)
-	Local $elapsedTime = TimerDiff($timer)
+	Local $elapsedTime = TimerDiff($RUN_TIMER)
 	If $result == $SUCCESS Then
 		Info('Run Successful after: ' & ConvertTimeToMinutesString($elapsedTime))
 	ElseIf $result == $FAIL Then
@@ -1995,17 +1996,13 @@ EndFunc
 
 
 ;~ Update the progress bar
-Func UpdateProgressBar($resetTime = False, $totalDuration = 0)
-	Local Static $timer
+Func UpdateProgressBar($totalDuration = 0)
 	Local Static $duration
 	If IsDeclared('totalDuration') And $totalDuration <> 0 Then
 		$duration = $totalDuration
 	EndIf
-	If IsDeclared('resetTime') And $resetTime Then
-		$timer = TimerInit()
-	EndIf
-	Local $progress = Floor((TimerDiff($timer) / $duration) * 100)
-	If $progress > 98 Then $progress = 98
+	Local $progress = Floor((TimerDiff($RUN_TIMER) / $duration) * 100)
+	If $progress > 98 Then $progress = 98 ; capping run progess at 98%
 	GUICtrlSetData($GUI_FarmProgress, $progress)
 EndFunc
 

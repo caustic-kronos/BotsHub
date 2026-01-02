@@ -67,7 +67,6 @@ Global Const $FoWToCFarmInformations = 'For best results, have :' & @CRLF _
 	& 'Because otherwise this farm bot can flush gold storage to 0. However income from obsidian shards, dark remains, etc. can outweigh platinum cost' & @CRLF
 Global Const $FOW_TOC_FARM_DURATION = 3 * 60 * 1000
 Global Const $MAX_FOW_TOC_FARM_DURATION = 6 * 60 * 1000
-Global $FowToCFarmTimer = Null
 Global $FOW_TOC_FARM_SETUP = False
 
 Global $FoWToCMoveOptions = CloneDictMap($Default_MoveDefend_Options)
@@ -134,7 +133,7 @@ Func FoWToCFarmLoop()
 	Local $me = Null, $target = Null
 	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
 	Info('Starting Farm')
-	$FowToCFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
+	$RUN_TIMER = TimerInit() ; resetting run timer to 0, to better adjust skill usages timing
 	Info('Moving to initial spot')
 
 	UseSkillEx($FoWToC_ShadowForm)
@@ -150,12 +149,12 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-14453, -3536) == $STUCK Then Return $FAIL
 	Info('Recharging skills and energy')
 	While Not IsRecharged($FoWToC_DwarvenStability) Or Not IsRecharged($FoWToC_WhirlingDefense) Or GetEnergy() < 20
-		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
+		If IsPlayerDead() Or TimerDiff($RUN_TIMER) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		DefendFoWToC()
 	WEnd
 	If IsRecharged($FoWToC_IAmUnstoppable) And GetEffectTimeRemaining(GetEffect($FoWToC_IAmUnstoppable)) == 0 Then UseSkillEx($FoWToC_IAmUnstoppable)
 	While GetEnergy() < 9 ; recharging energy to cast Dwarven Stability and Whirling Defense
-		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
+		If IsPlayerDead() Or TimerDiff($RUN_TIMER) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		Sleep(500)
 	WEnd
 	Info('Fighting abyssals')
@@ -167,7 +166,7 @@ Func FoWToCFarmLoop()
 	If IsRecharged($FoWToC_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 And GetEnergy() > 10 Then UseSkillEx($FoWToC_MentalBlock)
 	Sleep(1000 + GetPing())
 	While GetEffectTimeRemaining(GetEffect($ID_Whirling_Defense)) > 0
-		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
+		If IsPlayerDead() Or TimerDiff($RUN_TIMER) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		DefendFoWToC()
 	WEnd
 	Info('Abyssals cleared. Picking up loot')
@@ -182,7 +181,7 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-16002, -3031) == $STUCK Then Return $FAIL
 	Info('Recharging skills and energy')
 	While Not IsRecharged($FoWToC_DwarvenStability) Or Not IsRecharged($FoWToC_WhirlingDefense) Or GetEnergy() < 20
-		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
+		If IsPlayerDead() Or TimerDiff($RUN_TIMER) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		DefendFoWToC()
 	WEnd
 	If MoveDefendingFoWToC(-16004, -3202) == $STUCK Then Return $FAIL
@@ -196,7 +195,7 @@ Func FoWToCFarmLoop()
 	$target = GetNearestAgentToAgent($me, 0xDB, IsShadowRangerFoWToC) ; getting closer to nearest shadow ranger, not nearest abyssal
 	Attack($target) ; assuming that player is wearing sword or axe of enchanting
 	While GetEnergy() < 9 ; recharging energy to cast Dwarven Stability and Whirling Defense
-		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
+		If IsPlayerDead() Or TimerDiff($RUN_TIMER) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		Sleep(500)
 	WEnd
 	Info('Fighting rangers')
@@ -207,7 +206,7 @@ Func FoWToCFarmLoop()
 	If IsRecharged($FoWToC_IAmUnstoppable) And GetEffectTimeRemaining(GetEffect($FoWToC_IAmUnstoppable)) == 0 Then UseSkillEx($FoWToC_IAmUnstoppable)
 	Sleep(1000 + GetPing())
 	While GetEffectTimeRemaining(GetEffect($ID_Whirling_Defense)) > 0
-		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
+		If IsPlayerDead() Or TimerDiff($RUN_TIMER) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		DefendFoWToC(False)
 	WEnd
 	If IsPlayerAlive() Then
@@ -238,7 +237,7 @@ Func CastBuffsFowToC()
 
 	If IsRecharged($FoWToC_ShadowForm) Then UseSkillEx($FoWToC_ShadowForm)
 	; start using 'I Am Unstoppable', 'Shroud of Distress' and 'Mental Block' skill only after 20 seconds of farm when starting aggroing abyssals which can knock down the player
-	If TimerDiff($FowToCFarmTimer) > 20000 Then
+	If TimerDiff($RUN_TIMER) > 20000 Then
 		If IsRecharged($FoWToC_IAmUnstoppable) Then UseSkillEx($FoWToC_IAmUnstoppable)
 		If IsRecharged($FoWToC_ShroudOfDistress) Then UseSkillEx($FoWToC_ShroudOfDistress)
 		If IsRecharged($FoWToC_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 And (GetEnergy() > 20) Then

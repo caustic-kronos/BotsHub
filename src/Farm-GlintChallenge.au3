@@ -37,7 +37,6 @@ Global Const $GlintChallengeInformations = 'Brotherhood armor farm in Glint''s c
 ; Average duration ~ 20m
 Global Const $GLINT_CHALLENGE_DURATION = 20 * 60 * 1000
 Global Const $MAX_GLINT_CHALLENGE_DURATION = 40 * 60 * 1000
-Global $GlintChallengeTimer = Null
 Global $GLINT_CHALLENGE_SETUP = False
 
 Global Const $GlintMesmerSkillBarOptional = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
@@ -154,12 +153,9 @@ Func GlintChallenge()
 	WalkToSpotGlintChallenge()
 	Sleep(5000)
 
-	; Glint challenge lasts around 20 minutes, so after this time elapses and no foes are found in range, the challenge is considered successful
-	$GlintChallengeTimer = TimerInit() ; Starting run timer
-
 	Info('Defending baby dragon')
 	While IsPlayerAlive() And Not GetIsDead(GetAgentById($AgentID_BabyDragon) And _
-			(TimerDiff($GlintChallengeTimer) < $GLINT_CHALLENGE_DURATION) Or CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS) > 0)
+			(TimerDiff($RUN_TIMER) < $GLINT_CHALLENGE_DURATION) Or CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS) > 0)
 		Sleep(1000)
 		KillFoesInArea($GlintChallengeFightOptions)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
