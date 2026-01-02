@@ -1667,7 +1667,7 @@ EndFunc
 
 ;~ Change a hero's aggression level.
 ;~ 0=Fight, 1=Guard, 2=Avoid
-Func SetHeroAggression($heroIndex, $aggressionLevel)
+Func SetHeroBehaviour($heroIndex, $aggressionLevel)
 	Local $heroID = GetHeroID($heroIndex)
 	Return SendPacket(0xC, $HEADER_HERO_BEHAVIOR, $heroID, $aggressionLevel)
 EndFunc
