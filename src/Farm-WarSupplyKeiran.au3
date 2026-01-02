@@ -239,7 +239,7 @@ Func RunWayPoints()
 		If $i == 2 Or $i == 3 Then Sleep(3000) ; wait for initial group to appear in front of player, because they appear suddenly and can't be detected in advance
 		If $i == 9 Or $i == 10 Then Sleep(3000) ; wait for pre forest group to clear it because not clearing it can result in fail by Miku pulling this group into forest (2-3 groups at once)
 		While IsPlayerAlive() ; Between waypoints ensure that everything is fine with player and Miku
-			If TimerDiff($RUN_TIMER) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
+			If CheckStuck('Waypoint ' & $log, $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
 			If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
 			$me = GetMyAgent()
 			$Miku = GetAgentByID($AgentID_Miku)
@@ -274,7 +274,7 @@ Func WarSupplyFarmFight($options = $WarSupplyFightOptions)
 
 	While IsPlayerAlive() ; this loop ends when there are no more foes in range
 		If GetMapID() <> $ID_Auspicious_Beginnings Then ExitLoop
-		If TimerDiff($RUN_TIMER) > $MAX_WAR_SUPPLY_FARM_DURATION Then Return $FAIL
+		If CheckStuck('War Supply fight', $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
 		; refreshing/sampling all agents state at the start of every loop iteration to not operate on some old, inadequate data
 		$me = GetMyAgent()
 		$Miku = GetAgentByID($AgentID_Miku)

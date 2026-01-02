@@ -202,7 +202,7 @@ Func ClearSoOFloor1()
 
 	If IsHardmodeEnabled() Then UseConset()
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
-		If SoODetectStuck('SoO Floor 1 - First loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - First loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-11657, 10465))
@@ -229,7 +229,7 @@ Func ClearSoOFloor1()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
-		If SoODetectStuck('SoO Floor 1 - Second loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - Second loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		; too close to walls
 		MoveAggroAndKillInRange(7300, 12200, '', $SoOAggroRange)
@@ -250,7 +250,7 @@ Func ClearSoOFloor1()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
-		If SoODetectStuck('SoO Floor 1 - Third loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		; Poison trap between 1, 2 and 3
 		MoveAggroAndKillInRange(14000, 7400, '1', $SoOAggroRange)
@@ -261,7 +261,7 @@ Func ClearSoOFloor1()
 	Info('Going through portal')
 	Local $mapLoaded = False
 	While Not IsRunFailed() And Not $mapLoaded
-		If SoODetectStuck('SoO Floor 1 - Opening door') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - Opening door', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('Open dungeon door')
 		ClearTarget()
 		; Doubled to secure bot
@@ -294,7 +294,7 @@ Func ClearSoOFloor2()
 
 	Local $firstRoomfirstTime = True
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -11000, -6000, 1250)
-		If SoODetectStuck('SoO Floor 2 - First Room') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 2 - First Room', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
@@ -372,7 +372,7 @@ Func ClearSoOFloor2()
 	Local $secondRoomfirstTime = True
 	Local $mapLoaded = False
 	While Not IsRunFailed() And Not $mapLoaded
-		If SoODetectStuck('SoO Floor 2 - Second Room') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 2 - Second Room', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
@@ -447,7 +447,7 @@ Func ClearSoOFloor2()
 
 		$secondRoomfirstTime = False
 		Info('Going through portal')
-		If SoODetectStuck('SoO Floor 2 - Opening door') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 2 - Opening door', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('Open dungeon door')
 		ClearTarget()
 		For $i = 1 To 3 ; Tripled to secure bot
@@ -474,7 +474,7 @@ Func ClearSoOFloor3()
 	If IsHardmodeEnabled() Then UseConset()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 1100, 7100, 1250)
-		If SoODetectStuck('SoO Floor 3 - First loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 3 - First loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
@@ -498,7 +498,7 @@ Func ClearSoOFloor3()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -8650, 9200, 1250)
-		If SoODetectStuck('SoO Floor 3 - Second loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 3 - Second loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(-2300, 8000, 'Triggering beacon 2', $SoOAggroRange)
 		MoveAggroAndKillInRange(-4500, 6500, '1', $SoOAggroRange)
@@ -578,8 +578,8 @@ Func ClearSoOFloor3()
 	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 3
-		If SoODetectStuck('SoO Floor 3 - Third loop') == $FAIL Then Return $FAIL
-		
+		If CheckStuck('SoO Floor 3 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+
 		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $LargerSoOAggroRange)
 		MoveAggroAndKillInRange(-9200, 6000, 'Going back to secure door opening in case run failed 2', $LargerSoOAggroRange)
 
@@ -659,13 +659,4 @@ Func PickUpTorch()
 		EndIf
 	Next
 	Return False
-EndFunc
-
-;~ Detect bot getting stuck
-Func SoODetectStuck($stuckLocation)
-	If TimerDiff($RUN_TIMER) > $MAX_SOO_FARM_DURATION Then
-		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
-		Return $FAIL
-	EndIf
-	Return $SUCCESS
 EndFunc

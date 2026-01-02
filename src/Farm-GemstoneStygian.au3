@@ -377,7 +377,7 @@ Func StygianJobRanger()
 	MoveTo(8368, -11244)
 	If IsRecharged($Stygian_Ranger_EbonStandard) Then UseSkillEx($Stygian_Ranger_EbonStandard)
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
-		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
+		If CheckStuck('Stygian job ranger', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		RandomSleep(100)
 	WEnd
 	CancelAll()
@@ -391,7 +391,7 @@ Func KillStygianMobsUsingWastrelSkills()
 	Local $me, $target, $distance
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
-		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONE_STYGIAN_FARM_DURATION Then Return $FAIL
+		If CheckStuck('Stygian fight mesmer/assassin', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		StygianCheckSFBuffs()
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent(GetMyAgent())

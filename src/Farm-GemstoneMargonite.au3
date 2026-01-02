@@ -363,7 +363,7 @@ EndFunc
 Func WaitAggroMargonites($timeToWait)
 	Local $TimerAggro = TimerInit()
 	While IsPlayerAlive() And TimerDiff($TimerAggro) < $timeToWait
-		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONE_MARGONITE_FARM_DURATION Then Return $FAIL
+		If CheckStuck('Waiting for margonites aggro', $MAX_GEMSTONE_MARGONITE_FARM_DURATION) == $FAIL Then Return $FAIL
 		MargoniteDefend()
 		RandomSleep(50)
 	WEnd

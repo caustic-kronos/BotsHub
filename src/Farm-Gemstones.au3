@@ -173,7 +173,7 @@ Func Defend()
 
 	While IsZhellixPerformingRitual()
 		;If GetMapLoading() == 2 Then Disconnected()
-		If TimerDiff($RUN_TIMER) > $MAX_GEMSTONES_FARM_DURATION Then Return $FAIL
+		If CheckStuck('Gemstones fight', $MAX_GEMSTONES_FARM_DURATION) == $FAIL Then Return $FAIL
 		If IsDoARunFailed() Then Return $FAIL
 		Sleep(1000)
 		KillFoesInArea($GemstonesFightOptions)

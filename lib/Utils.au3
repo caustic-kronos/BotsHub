@@ -2661,6 +2661,17 @@ Func CheckAndSendStuckCommand()
 EndFunc
 
 
+;~ Check if bot got stuck by checking if max duration for bot has elapsed. Default max duration is 60 minutes = 3600000 milliseconds
+;~ If run lasts longer than max duration time then bot must have gotten stuck and fail is returned to restart run
+Func CheckStuck($stuckLocation, $maxFarmDuration = 3600000)
+	If TimerDiff($RUN_TIMER) > $maxFarmDuration Then
+		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
+		Return $FAIL
+	EndIf
+	Return $SUCCESS
+EndFunc
+
+
 ;~ Go to the NPC closest to the given coordinates
 Func GoNearestNPCToCoords($x, $y)
 	Local $npc = GetNearestNPCToCoords($x, $y)
