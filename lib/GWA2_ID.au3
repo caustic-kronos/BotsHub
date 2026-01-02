@@ -472,6 +472,7 @@ Global Const $GadgetID_Shing_Jea_Chest		= 4579
 Global Const $GadgetID_NM_Chest				= 4582
 Global Const $GadgetID_HM_Chest				= 8141
 Global Const $GadgetID_Obsidian_Chest		= 74
+Global Const $GadgetID_Brotherhood_Chest	= 9157
 Global Const $Chests_Array[]				= [$GadgetID_Istani_Chest, $GadgetID_Shing_Jea_Chest, $GadgetID_NM_Chest, $GadgetID_HM_Chest, $GadgetID_Obsidian_Chest]
 Global Const $Map_Chests_IDs				= MapFromArray($Chests_Array)
 #EndRegion MapMarkers

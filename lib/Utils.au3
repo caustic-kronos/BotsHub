@@ -1733,7 +1733,8 @@ EndFunc
 
 ;~ Scans for chests and return the first one found around the player or the given coordinates
 ;~ If flagged is set to true, it will return previously found chests
-Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
+;~ If $Chest_Gadget_ID parameter is provided then functions will scan only for chests with the same GadgetID as provided
+Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $Chest_Gadget_ID = Null)
 	If $X == Null Or $Y == Null Then
 		Local $me = GetMyAgent()
 		$X = DllStructGetData($me, 'X')
@@ -1743,7 +1744,8 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
 	Local $agents = GetAgentArray($ID_Agent_Type_Static)
 	For $agent In $agents
 		$gadgetID = DllStructGetData($agent, 'GadgetID')
-		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
+		If $Chest_Gadget_ID <> Null And $Chest_Gadget_ID <> $gadgetID Then ContinueLoop
+		If $Chest_Gadget_ID == Null And $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
 		If GetDistanceToPoint($agent, $X, $Y) > $range Then ContinueLoop
 		Local $chestID = DllStructGetData($agent, 'ID')
 		If $chestsMap[$chestID] == Null Or $chestsMap[$chestID] == 0 Or ($flagged And $chestsMap[$chestID] == 1) Then

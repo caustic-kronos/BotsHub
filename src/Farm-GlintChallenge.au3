@@ -62,6 +62,9 @@ Global Const $GlintChallengeDefendY = -75
 
 Global Const $AgentID_BabyDragon = 19 ; in Glint Challenge location, the agent ID of Baby Dragon is always assigned to 19, when party has 8 members (can be accessed in GWToolbox)
 Global Const $ModelID_BabyDragon = 1816 ; unique Model ID of Baby Dragon NPC, that can be accessed in GWToolbox
+Global Const $BrotherhoodChestX = -3184 ; X spawn coordinate of Brotherhood chest
+Global Const $BrotherhoodChestY = 908 ; Y spawn coordinate of Brotherhood chest
+Global Const $BrotherhoodChestGadgetID = 9157 ; Unique GadgetID of Brotherhood chest
 
 Global $GlintChallengeFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
 $GlintChallengeFightOptions.Item('fightRange')			= 1500
@@ -151,11 +154,12 @@ EndFunc
 Func GlintChallenge()
 	If GetMapID() <> $ID_Glints_Challenge Then Return $FAIL
 	WalkToSpotGlintChallenge()
+	Info('Defending baby dragon')
 	Sleep(5000)
 
-	Info('Defending baby dragon')
-	While IsPlayerAlive() And Not GetIsDead(GetAgentById($AgentID_BabyDragon) And _
-			(TimerDiff($RUN_TIMER) < $GLINT_CHALLENGE_DURATION) Or CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS) > 0)
+	; fight until team or baby dragon dead or until Brotherhood chest spawns
+	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AgentID_BabyDragon)) And Not IsBrotherhoodChestSpawned()
+		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
 		KillFoesInArea($GlintChallengeFightOptions)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
@@ -165,11 +169,11 @@ Func GlintChallenge()
 	If IsPlayerAndPartyWiped() Or GetIsDead(GetAgentById($AgentID_BabyDragon)) Then Return $FAIL
 	CancelAllHeroes()
 
-	; Tripled to try securing the looting of Chest of the Bortherhood
-	For $i = 1 To 3
-		MoveTo(-3220, 973) ; location of Chest of the Bortherhood
-		Info('Opening Chest of the Bortherhood')
-		TargetNearestItem()
+	Info('Looting Chest of the Brotherhood')
+	For $i = 1 To 3 ; Tripled to secure the looting of Chest of the Brotherhood
+		MoveAggroAndKill($BrotherhoodChestX, $BrotherhoodChestY)
+		Local $brotherhoodChest = ScanForChests($RANGE_COMPASS, True, $BrotherhoodChestX, $BrotherhoodChestY, $BrotherhoodChestGadgetID)
+		ChangeTarget($brotherhoodChest)
 		ActionInteract()
 		RandomSleep(2500)
 		PickUpItems()
@@ -193,4 +197,9 @@ Func WalkToSpotGlintChallenge()
 	CommandHero($Glint_Hero_Mesmer_Panic, -3960, 216)
 	CommandHero($Glint_Hero_Mesmer_Ineptitude_1, -4065, 310)
 	CommandHero($Glint_Hero_Mesmer_Ineptitude_2, -3912, -14)
+EndFunc
+
+
+Func IsBrotherhoodChestSpawned()
+	Return Null <> ScanForChests($RANGE_COMPASS, True, $BrotherhoodChestX, $BrotherhoodChestY, $BrotherhoodChestGadgetID)
 EndFunc
