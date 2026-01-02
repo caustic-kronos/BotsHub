@@ -522,14 +522,18 @@ Global Const $HeroIDs[]				= [$ID_Norgu, $ID_Goren, $ID_Tahlkora, $ID_Master_Of_
 										$ID_General_Morgahn, $ID_Margrid_The_Sly, $ID_Zenmai, $ID_Olias, $ID_Razah, _
 										$ID_MOX, $ID_Keiran_Thackeray, $ID_Jora, $ID_Pyre_Fierceshot, $ID_Anton, _
 										$ID_Livia, $ID_Hayda, $ID_Kahmu, $ID_Gwen, $ID_Xandra, $ID_Vekk, $ID_Ogden, _
-										$ID_Miku, $ID_ZeiRi]
+										$ID_Miku, $ID_ZeiRi, $ID_Mercenary_Hero_1, $ID_Mercenary_Hero_2, _
+										$ID_Mercenary_Hero_3, $ID_Mercenary_Hero_4, $ID_Mercenary_Hero_5, _
+										$ID_Mercenary_Hero_6, $ID_Mercenary_Hero_7, $ID_Mercenary_Hero_8]
 
 Global Const $HeroNames[]				= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whispers', 'Acolyte Jin', _
 											'Koss', 'Dunkoro', 'Acolyte Sousuke', 'Melonni', 'Zhed Shadowhoof', _
 											'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
 											'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
 											'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
-											'Miku', 'ZeiRi']
+											'Miku', 'ZeiRi', 'Mercenary Hero 1', 'Mercenary Hero 2', _
+											'Mercenary Hero 3', 'Mercenary Hero 4', 'Mercenary Hero 5', _
+											'Mercenary Hero 6', 'Mercenary Hero 7', 'Mercenary Hero 8']
 
 ;Global Const $HeroNamesFromIDs			=	MapFromArrays($HeroIDs, $HeroNames)
 Global Const $HeroIDsFromNames			=	MapFromArrays($HeroNames, $HeroIDs)

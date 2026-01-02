@@ -126,7 +126,7 @@ Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
-Global $AVAILABLE_HEROES = '|Norgu|Goren|Tahlkora|Master of Whispers|Acolyte Jin|Koss|Dunkoro|Acolyte Sousuke|Melonni|Zhed Shadowhoof|General Morgahn|Margrid the Sly|Zenmai|Olias|Razah|MOX|Keiran Thackeray|Jora|Pyre Fierceshot|Anton|Livia|Hayda|Kahmu|Gwen|Xandra|Vekk|Ogden|Miku|ZeiRi'
+Global $AVAILABLE_HEROES = '|Norgu|Goren|Tahlkora|Master of Whispers|Acolyte Jin|Koss|Dunkoro|Acolyte Sousuke|Melonni|Zhed Shadowhoof|General Morgahn|Margrid the Sly|Zenmai|Olias|Razah|MOX|Keiran Thackeray|Jora|Pyre Fierceshot|Anton|Livia|Hayda|Kahmu|Gwen|Xandra|Vekk|Ogden|Miku|ZeiRi|Mercenary Hero 1|Mercenary Hero 2|Mercenary Hero 3|Mercenary Hero 4|Mercenary Hero 5|Mercenary Hero 6|Mercenary Hero 7|Mercenary Hero 8'
 #EndRegion Variables
 
 
