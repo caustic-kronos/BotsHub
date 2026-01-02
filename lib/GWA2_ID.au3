@@ -251,6 +251,12 @@ Global Const $ID_Dervish		= 10
 #EndRegion Professions
 
 
+#Region Team Sizes
+Global Const $ID_Team_Size_Small	= 4
+Global Const $ID_Team_Size_Medium	= 6
+Global Const $ID_Team_Size_Large	= 8
+#EndRegion Team Sizes
+
 #Region Hero combat behaviour
 Global Const $ID_Hero_fighting	= 0
 Global Const $ID_Hero_guarding	= 1
