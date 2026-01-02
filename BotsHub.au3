@@ -1395,7 +1395,7 @@ Func ReadConfigFromJson($jsonString)
 	$BAGS_COUNT = $bagsCount
 	GUICtrlSetData($GUI_Combo_BagsCount, $bagsCount)
 	Local $district = _JSON_Get($jsonObject, 'run.district')
-	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, $district)
+	GUICtrlSetData($GUI_Combo_DistrictChoice, $district)
 	$DISTRICT_NAME = $district
 	Local $renderingDisabled = _JSON_Get($jsonObject, 'run.disable_rendering')
 	Local $renderingEnabled = Not $renderingDisabled
