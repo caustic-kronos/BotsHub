@@ -40,8 +40,7 @@ Global Const $MargoniteMonkHeroSkillBar = 'OwITAnHb5Qe/zhxLkpE6+G'
 ;Global Const $MargoniteHeroPartyID = $ID_Tahlkora
 Global Const $MargoniteHeroPartyID = $ID_Ogden
 Global Const $MargoniteHeroIndex = 1 ; index of first hero party member in team, player index is 0
-Global $MargoniteHeroAgentID = Null ; agent ID that is randomly assigned to hero in exploration areas
-Global $MargonitePlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup and avoid creating Dll structs over and over during fight
+Global $MargonitePlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
 
 Global Const $Margonite_DeadlyParadox		= 1
 Global Const $Margonite_ShadowForm			= 2
@@ -136,7 +135,7 @@ Func GemstoneMargoniteFarm($STATUS)
 		Info('Successfully cleared margonite mobs')
 	ElseIf $result == $FAIL Then
 		If IsPlayerDead() Then Warn('Player died')
-		If $MargoniteHeroAgentID <> Null And GetIsDead(GetAgentByID($MargoniteHeroAgentID)) Then Warn('monk hero died')
+		If IsHeroDead($MargoniteHeroIndex) Then Warn('monk hero died')
 		Info('Could not clear margonite mobs')
 	EndIf
 	Info('Returning back to the outpost')
@@ -260,8 +259,6 @@ EndFunc
 Func GemstoneMargoniteFarmLoop()
 	Local $me = Null, $target = Null
 	Sleep(2000)
-	$MargoniteHeroAgentID = GetHeroID($MargoniteHeroIndex)
-	If Not GetAgentExists($MargoniteHeroAgentID) Then Return $FAIL
 	If IsPlayerDead() Then Return $FAIL
 	Info('Starting Farm')
 	$GemstoneMargoniteFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
@@ -306,7 +303,7 @@ Func GemstoneMargoniteFarmLoop()
 	If MargoniteMoveDefending(-11410, -11359) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(3000)
 	If MargoniteMoveDefending(-11484, -11034) == $FAIL Then Return $FAIL
-	If IsPlayerDead() Or GetIsDead(GetAgentByID($MargoniteHeroAgentID)) Then Return $FAIL
+	If IsPlayerDead() Or IsHeroDead($MargoniteHeroIndex) Then Return $FAIL
 
 	; if margonites group is somehow not in the spot then try to get closer to them
 	; getting closer to nearest Anur Dabi or Kaya or Ki or Su, not nearest Vu, Ruk, Tuk
@@ -428,7 +425,7 @@ EndFunc
 
 
 Func MargoniteMonkHeroHeal()
-	Local $MonkHero = GetAgentByID($MargoniteHeroAgentID)
+	Local $MonkHero = GetAgentByID(GetHeroID($MargoniteHeroIndex))
 	If IsRecharged($Margonite_Hero_TrollUnguent, $MargoniteHeroIndex) And _
 			GetEnergy($MonkHero) > 10 And DllStructGetData($MonkHero, 'HealthPercent') < 1 And _
 			GetEffect($ID_Troll_Unguent, $MargoniteHeroIndex) == Null Then
@@ -526,7 +523,7 @@ Func KillMargonitesUsingVisageSkills()
 	Local $TimerKill = TimerInit()
 	Local Static $MaxFightTime = 100000 ; 100 seconds max fight time
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $Margonites_Range) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not GetIsDead(GetAgentByID($MargoniteHeroAgentID))
+	While CountFoesInRangeOfAgent(GetMyAgent(), $Margonites_Range) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not IsHeroDead($MargoniteHeroIndex)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -562,7 +559,7 @@ Func KillMargonitesUsingWhirlingDefense()
 	Local $TimerKill = TimerInit()
 	Local Static $MaxFightTime = 100000 ; 100 seconds max fight time
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $Margonites_Range) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not GetIsDead(GetAgentByID($MargoniteHeroAgentID))
+	While CountFoesInRangeOfAgent(GetMyAgent(), $Margonites_Range) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not IsHeroDead($MargoniteHeroIndex)
 		RandomSleep(100)
 		MargoniteDefend()
 
