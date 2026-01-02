@@ -73,7 +73,7 @@ $WarSupplyFightOptions.Item('skillsCostMap')	= $KeiranSkillsCostsMap
 
 Global Const $AgentID_Player = 2 ; in Auspicious Beginnings location, the agent ID of Player is always assigned to 2 (can be accessed in GWToolbox)
 Global Const $AgentID_Miku = 3 ; in Auspicious Beginnings location, the agent ID of Miku is always assigned to 3 (can be accessed in GWToolbox)
-Global Const $ModelID_Miku = 8382 ; unique Model ID of Miku NPC, that can be accessed in GWToolbox
+Global Const $ModelID_Miku = 8433 ; unique Model ID of Miku NPC, that can be accessed in GWToolbox
 
 
 ;~ Main loop function for farming war supplies
