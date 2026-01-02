@@ -89,7 +89,7 @@ EndFunc
 
 
 ;~ Function to deal with inventory after farm
-Func InventoryManagementBeforeRun()
+Func InventoryManagementBeforeRun($tradeTown = $ID_Embark_Beach)
 	; Operations order :
 	; 1-Store unids if desired
 	; 2-Sort items
@@ -102,12 +102,12 @@ Func InventoryManagementBeforeRun()
 	; 9-Buy ectoplasm/obsidian with surplus
 	; 10-Store items
 	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then
-		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($tradeTown, $DISTRICT_NAME)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 	If $IDENTIFY_ITEMS And HasUnidentifiedItems() Then
-		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($tradeTown, $DISTRICT_NAME)
 		IdentifyAllItems()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
@@ -119,7 +119,7 @@ Func InventoryManagementBeforeRun()
 		DisconnectFromDatabase()
 	EndIf
 	If $SALVAGE_ANY_ITEM Then
-		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($tradeTown, $DISTRICT_NAME)
 		SalvageItems()
 		If $BAGS_COUNT == 5 Then
 			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
@@ -129,14 +129,14 @@ Func InventoryManagementBeforeRun()
 		;SalvageMaterials()
 	EndIf
 	If ($SELL_BASIC_MATERIALS Or $SELL_RARE_MATERIALS) And HasMaterials() Then
-		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($tradeTown, $DISTRICT_NAME)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		If $SELL_BASIC_MATERIALS And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
 		If $SELL_RARE_MATERIALS And HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
 	If Not $SELL_NOTHING Then
-		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+		TravelToOutpost($tradeTown, $DISTRICT_NAME)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		SellItemsToMerchant()
@@ -166,8 +166,8 @@ Func InventoryManagementMidRun()
 	; 5-Salvage
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
 		Info('Buying kits for passive inventory management')
-		TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
-		; Since we are in EOTN, might as well clear inventory
+		TravelToOutpost($tradeTown, $DISTRICT_NAME)
+		; Since we are in trade town, might as well clear inventory
 		InventoryManagementBeforeRun()
 		BuyKitsForMidRun()
 		Return True
@@ -577,11 +577,14 @@ EndFunc
 
 
 ;~ Sell general items to trader
-Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False)
-	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
-	Info('Moving to merchant')
-	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False, $tradeTown = $ID_Embark_Beach)
+	TravelToOutpost($tradeTown, $DISTRICT_NAME)
+	Info('Moving to merchant to sell items')
 	UseCitySpeedBoost()
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
 	GoToNPC($merchant)
 	RandomSleep(500)
 
@@ -639,13 +642,66 @@ Func HasInInventory($condition)
 EndFunc
 
 
-;~ Sell basic materials to materials merchant in EOTN
-Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMaterial)
-	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+Func NPCCoordinatesInTown($town = $ID_Embark_Beach, $type = 'Merchant')
+	Local $coordinates[2] = [-1, -1]
+	Switch $type
+		Case 'Merchant'
+			Switch $town
+				Case $ID_Embark_Beach
+					$coordinates[0] = 2158
+					$coordinates[1] = -2006
+				Case $ID_Eye_of_the_North
+					$coordinates[0] = -2700
+					$coordinates[1] = 1075
+				Case Else
+					Warn('For provided town coordinates of that NPC aren''t mapped yet')
+			EndSwitch
+		Case 'Basic material trader'
+			Switch $town
+				Case $ID_Embark_Beach
+					$coordinates[0] = 2997
+					$coordinates[1] = -2271
+				Case $ID_Eye_of_the_North
+					$coordinates[0] = -1850
+					$coordinates[1] = 875
+				Case Else
+					Warn('For provided town coordinates of that NPC aren''t mapped yet')
+			EndSwitch
+		Case 'Rare material trader'
+			Switch $town
+				Case $ID_Embark_Beach
+					$coordinates[0] = 2928
+					$coordinates[1] = -2452
+				Case $ID_Eye_of_the_North
+					$coordinates[0] = -2100
+					$coordinates[1] = 1125
+				Case Else
+					Warn('For provided town coordinates of that NPC aren''t mapped yet')
+			EndSwitch
+		;Case 'Dye trader'
+		;Case 'Scroll trader'
+		;Case 'Consumables trader'
+		;Case 'Armorer'
+		;Case 'Weaponsmith'
+		;Case 'Xunlai chest'
+		;Case 'Skill trainer'
+		Case Else
+			Warn('Wrong NPC type provided')
+	EndSwitch
+	Return $coordinates
+EndFunc
+
+
+;~ Sell basic materials to materials merchant in town
+Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMaterial, $tradeTown = $ID_Embark_Beach)
+	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to materials merchant')
-	Local $materialMerchant = GetNearestNPCToCoords(-1850, 875)
 	UseCitySpeedBoost()
-	GoToNPC($materialMerchant)
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Basic material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
 	RandomSleep(500)
 
 	Local $item, $itemID
@@ -675,13 +731,16 @@ Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMa
 EndFunc
 
 
-;~ Sell rare materials to rare materials merchant in EOTN
-Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMaterial)
-	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+;~ Sell rare materials to rare materials merchant in town
+Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMaterial, $tradeTown = $ID_Embark_Beach)
+	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to rare materials merchant')
-	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
-	GoToNPC($rareMaterialMerchant)
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
 	RandomSleep(250)
 
 	Local $item, $itemID
@@ -711,13 +770,16 @@ Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMate
 EndFunc
 
 
-;~ Buy rare material from rare materials merchant in EOTN
-Func BuyRareMaterialFromMerchant($materialModelID, $amount)
-	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+;~ Buy rare material from rare materials merchant in town
+Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_Embark_Beach)
+	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to rare materials merchant')
-	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
-	GoToNPC($rareMaterialMerchant)
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
 	RandomSleep(250)
 
 	For $i = 1 To $amount
@@ -732,19 +794,22 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount)
 EndFunc
 
 
-;~ Buy rare material from rare materials merchant in EOTN until you have little or no money left
+;~ Buy rare material from rare materials merchant in town until you have little or no money left
 ;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
 ;~ So please only use with $poorThreshold > 5k
-Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null)
-	TravelToOutpost($ID_Eye_of_the_North, $DISTRICT_NAME)
+Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null, $tradeTown = $ID_Embark_Beach)
+	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	If CountSlots(1, 4) == 0 Then
 		Warn('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
 		Return
 	EndIf
 	Info('Moving to rare materials merchant')
-	Local $rareMaterialMerchant = GetNearestNPCToCoords(-2100, 1125)
 	UseCitySpeedBoost()
-	GoToNPC($rareMaterialMerchant)
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
 	RandomSleep(250)
 
 	Local $IDMaterialToBuy = $materialModelID
@@ -843,8 +908,8 @@ Func BuyKitsForMidRun()
 	Local $identificationUses = CountRemainingKitUses($ID_Superior_Identification_Kit)
 	Local $identificationKitsRequired = KitsRequired($requiredIdentificationKitUses - $identificationUses, $ID_Superior_Identification_Kit)
 
-	If $salvageKitsRequired > 0 Then BuySalvageKitInEOTN($salvageKitsRequired)
-	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInEOTN($identificationKitsRequired)
+	If $salvageKitsRequired > 0 Then BuySalvageKitInTown($salvageKitsRequired)
+	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInTown($identificationKitsRequired)
 EndFunc
 
 

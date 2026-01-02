@@ -1230,7 +1230,7 @@ Func IdentifyAllItems($buyKit = True)
 				Local $IdentificationKit = FindIdentificationKit()
 				If $IdentificationKit == 0 Then
 					If $buyKit Then
-						BuySuperiorIdentificationKitInEOTN()
+						BuySuperiorIdentificationKitInTown()
 					Else
 						Return False
 					EndIf
@@ -1326,7 +1326,7 @@ EndFunc
 Func GetSalvageKit($buyKit = True)
 	Local $kit = FindBasicSalvageKit()
 	If $kit == 0 And $buyKit Then
-		BuySalvageKitInEOTN()
+		BuySalvageKitInTown()
 		$kit = FindBasicSalvageKit()
 	EndIf
 	Return $kit
@@ -1356,59 +1356,62 @@ Func SalvageItem($item, $salvageKit)
 EndFunc
 
 
-;~ Buy salvage kits in EOTN
-Func BuySalvageKitInEOTN($amount = 1)
+;~ Buy salvage kits in town
+Func BuySalvageKitInTown($amount = 1)
 	While $amount > 10
-		BuyInEOTN($ID_Salvage_Kit, 2, 100, 10, False)
+		BuyInTown($ID_Salvage_Kit, 2, 100, 10, False)
 		$amount -= 10
 	WEnd
-	If $amount > 0 Then BuyInEOTN($ID_Salvage_Kit, 2, 100, $amount, False)
+	If $amount > 0 Then BuyInTown($ID_Salvage_Kit, 2, 100, $amount, False)
 EndFunc
 
 
-;~ Buy expert salvage kits in EOTN
-Func BuyExpertSalvageKitInEOTN($amount = 1)
+;~ Buy expert salvage kits in town
+Func BuyExpertSalvageKitInTown($amount = 1)
 	While $amount > 10
-		BuyInEOTN($ID_Expert_Salvage_Kit, 3, 400, 10, False)
+		BuyInTown($ID_Expert_Salvage_Kit, 3, 400, 10, False)
 		$amount -= 10
 	WEnd
-	If $amount > 0 Then BuyInEOTN($ID_Expert_Salvage_Kit, 3, 400, $amount, False)
+	If $amount > 0 Then BuyInTown($ID_Expert_Salvage_Kit, 3, 400, $amount, False)
 EndFunc
 
 
-;~ Buy superior salvage kits in EOTN
-Func BuySuperiorSalvageKitInEOTN($amount = 1)
+;~ Buy superior salvage kits in town
+Func BuySuperiorSalvageKitInTown($amount = 1)
 	While $amount > 10
-		BuyInEOTN($ID_Superior_Salvage_Kit, 4, 2000, 10, False)
+		BuyInTown($ID_Superior_Salvage_Kit, 4, 2000, 10, False)
 		$amount -= 10
 	WEnd
-	If $amount > 0 Then BuyInEOTN($ID_Superior_Salvage_Kit, 4, 2000, $amount, False)
+	If $amount > 0 Then BuyInTown($ID_Superior_Salvage_Kit, 4, 2000, $amount, False)
 EndFunc
 
 
-;~ Buy superior identification kits in EOTN
-Func BuySuperiorIdentificationKitInEOTN($amount = 1)
+;~ Buy superior identification kits in town
+Func BuySuperiorIdentificationKitInTown($amount = 1)
 	While $amount > 10
-		BuyInEOTN($ID_Superior_Identification_Kit, 6, 500, 10, False)
+		BuyInTown($ID_Superior_Identification_Kit, 6, 500, 10, False)
 		$amount -= 10
 	WEnd
-	If $amount > 0 Then BuyInEOTN($ID_Superior_Identification_Kit, 6, 500, $amount, False)
+	If $amount > 0 Then BuyInTown($ID_Superior_Identification_Kit, 6, 500, $amount, False)
 EndFunc
 
 
-;~ Buy merchant items in EOTN
+;~ Buy merchant items in town
 ;~ FIXME: error if total price is superior to 100k, add a loop for that
 ;~ FIXME: error if amount is superior to 250, add another loop for that
-Func BuyInEOTN($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False)
-	TravelToOutpost($ID_Eye_of_the_North)
+Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False, $tradeTown = $ID_Embark_Beach)
+	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	If GetGoldCharacter() < $amount * $itemPrice And GetGoldStorage() > $amount * $itemPrice - 1 Then
 		WithdrawGold($amount * $itemPrice)
 		RandomSleep(500)
 	EndIf
 
-	Info('Moving to merchant')
-	Local $merchant = GetNearestNPCToCoords(-2700, 1075)
+	Info('Moving to merchant to buy items')
 	UseCitySpeedBoost()
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
 	GoToNPC($merchant)
 	RandomSleep(500)
 
