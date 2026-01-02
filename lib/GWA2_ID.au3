@@ -272,6 +272,11 @@ Global Const $ID_Allegiance_Minion	= 5 ; necromancer's minions
 Global Const $ID_Allegiance_Npc		= 6
 #EndRegion Agents Allegiance
 
+#Region Agents Types
+Global Const $ID_Agent_Type_NPC		= 0xDB ; player, team members, npcs, foes
+Global Const $ID_Agent_Type_Static	= 0x200 ; static objects like chests and signposts
+Global Const $ID_Agent_Type_Item	= 0x400 ; item lying on the ground
+#EndRegion Agents Types
 
 #Region Profession Attributes
 Global Const $ID_Fast_Casting				= 0

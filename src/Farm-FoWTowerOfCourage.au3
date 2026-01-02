@@ -192,7 +192,7 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-14454, -2601) == $STUCK Then Return $FAIL ; this spot is supposed to have all shadow rangers in it
 	; if shadow rangers somehow are not in the spot then try to get closer to them
 	$me = GetMyAgent()
-	$target = GetNearestAgentToAgent($me, 0xDB, IsShadowRangerFoWToC) ; getting closer to nearest shadow ranger, not nearest abyssal
+	$target = GetNearestAgentToAgent($me, $ID_Agent_Type_NPC, IsShadowRangerFoWToC) ; getting closer to nearest shadow ranger, not nearest abyssal
 	Attack($target) ; assuming that player is wearing sword or axe of enchanting
 	While GetEnergy() < 9 ; recharging energy to cast Dwarven Stability and Whirling Defense
 		If CheckStuck('Recharging energy', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL

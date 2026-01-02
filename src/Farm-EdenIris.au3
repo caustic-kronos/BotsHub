@@ -93,7 +93,7 @@ Func PickUpIris()
 	Local $agent
 	Local $item
 	Local $deadlock
-	Local $agents = GetAgentArray(0x400)
+	Local $agents = GetAgentArray($ID_Agent_Type_Item)
 	For $agent In $agents
 		Local $agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)

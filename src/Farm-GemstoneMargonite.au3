@@ -323,7 +323,7 @@ Func GemstoneMargoniteFarmLoop()
 	; if margonites group is somehow not in the spot then try to get closer to them
 	; getting closer to nearest Anur Dabi or Kaya or Ki or Su, not nearest Vu, Ruk, Tuk
 	$me = GetMyAgent()
-	$target = GetNearestAgentToAgent($me, 0xDB, IsAnurDabiOrKayaOrKiOrSu)
+	$target = GetNearestAgentToAgent($me, $ID_Agent_Type_NPC, IsAnurDabiOrKayaOrKiOrSu)
 	If $MargonitePlayerProfession <> $ID_Elementalist Then
 		If IsRecharged($Margonite_DeathsCharge)  Then
 			UseSkillEx($Margonite_DeathsCharge, $target)

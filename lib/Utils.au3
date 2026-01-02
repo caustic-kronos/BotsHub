@@ -337,7 +337,7 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 	Local $item
 	Local $agentID
 	Local $deadlock
-	Local $agents = GetAgentArray(0x400)
+	Local $agents = GetAgentArray($ID_Agent_Type_Item)
 	For $agent In $agents
 		If IsPlayerDead() Then Return
 		If Not GetCanPickUp($agent) Then ContinueLoop
@@ -479,7 +479,7 @@ Func FindChest($range = $RANGE_EARSHOT)
 	EndIf
 
 	Local $gadgetID
-	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
+	Local $agents = GetAgentArray($ID_Agent_Type_Static)
 	Local $chest
 	Local $chestCount = 0
 	For $agent In $agents
@@ -503,7 +503,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 		Return
 	EndIf
 	Local $gadgetID
-	Local $agents = GetAgentArray(0x200)	;0x200 = type: static
+	Local $agents = GetAgentArray($ID_Agent_Type_Static)
 	Local $openedChest = False
 	For $agent In $agents
 		$gadgetID = DllStructGetData($agent, 'GadgetID')
@@ -1740,8 +1740,7 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null)
 		$Y = DllStructGetData($me, 'Y')
 	EndIf
 	Local $gadgetID
-	;0x200 = type: static
-	Local $agents = GetAgentArray(0x200)
+	Local $agents = GetAgentArray($ID_Agent_Type_Static)
 	For $agent In $agents
 		$gadgetID = DllStructGetData($agent, 'GadgetID')
 		If $Map_Chests_IDs[$gadgetID] == Null Then ContinueLoop
@@ -2194,7 +2193,7 @@ EndFunc
 ;~ Count NPCs in range of the given coordinates. If range is Null then all found NPCs are counted, as with infinite range
 Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	;Return UBound(GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition))
-	Local $agents = GetAgentArray(0xDB)
+	Local $agents = GetAgentArray($ID_Agent_Type_NPC)
 	Local $count = 0
 
 	If $coordX == Null Or $coordY == Null Then
@@ -2217,7 +2216,7 @@ EndFunc
 
 ;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
 Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
-	Local $agents = GetAgentArray(0xDB)
+	Local $agents = GetAgentArray($ID_Agent_Type_NPC)
 	Local $allAgents[GetMaxAgents()] ; 1D array of agents, indexed from 0
 	Local $npcCount = 0
 
@@ -2247,7 +2246,7 @@ EndFunc
 ;~ Get NPC closest to the player and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
 Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $me = GetMyAgent()
-	Local $agents = GetAgentArray(0xDB)
+	Local $agents = GetAgentArray($ID_Agent_Type_NPC)
 	Local $smallestDistance = 99999
 	Local $nearestAgent = Null
 
@@ -2275,7 +2274,7 @@ EndFunc
 ;~ Get NPC furthest to the player and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
 Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $me = GetMyAgent()
-	Local $agents = GetAgentArray(0xDB)
+	Local $agents = GetAgentArray($ID_Agent_Type_NPC)
 	Local $furthestDistance = 0
 	Local $furthestAgent = Null
 
@@ -2304,7 +2303,7 @@ EndFunc
 ;~ Get NPC closest to the given coordinates and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
 Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $me = GetMyAgent()
-	Local $agents = GetAgentArray(0xDB)
+	Local $agents = GetAgentArray($ID_Agent_Type_NPC)
 	Local $smallestDistance = 99999
 	Local $nearestAgent = Null
 

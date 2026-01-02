@@ -571,7 +571,7 @@ Func PickUpUnholyTexts()
 	Local $attempts = 1
 	For $i = 1 To GetMaxAgents()
 		$agent = GetAgentByID($i)
-		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
+		If Not IsItemAgentType($agent) Then ContinueLoop
 		$item = GetItemByAgentID($i)
 		If (DllStructGetData($item, 'ModelID') == $ID_FoW_Unholy_Texts) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')

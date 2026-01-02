@@ -641,7 +641,7 @@ Func PickUpTorch()
 	Local $deadlock
 	For $i = 1 To GetMaxAgents()
 		$agent = GetAgentByID($i)
-		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
+		If Not IsItemAgentType($agent) Then ContinueLoop
 		$item = GetItemByAgentID($i)
 		If (DllStructGetData(($item), 'ModelID') == $ID_SoO_Torch) Then
 			Info('Torch: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
