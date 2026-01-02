@@ -174,7 +174,7 @@ Global $GUI_Group_TeamOptions, $GUI_TeamLabel, $GUI_TeamMemberLabel, $GUI_TeamMe
 		$GUI_Label_Build_Hero_1, $GUI_Label_Build_Hero_2, $GUI_Label_Build_Hero_3, $GUI_Label_Build_Hero_4, $GUI_Label_Build_Hero_5, $GUI_Label_Build_Hero_6, $GUI_Label_Build_Hero_7, _
 		$GUI_Input_Build_Player, $GUI_Input_Build_Hero_1, $GUI_Input_Build_Hero_2, $GUI_Input_Build_Hero_3, $GUI_Input_Build_Hero_4, $GUI_Input_Build_Hero_5, $GUI_Input_Build_Hero_6, $GUI_Input_Build_Hero_7
 Global $GUI_Group_OtherOptions
-Global $GUI_Label_CharacterBuild, $GUI_Label_HeroBuild, $GUI_Edit_CharacterBuild, $GUI_Edit_HeroBuild, $GUI_Label_FarmInformations
+Global $GUI_Label_CharacterBuilds, $GUI_Label_HeroesBuilds, $GUI_Edit_CharacterBuilds, $GUI_Edit_HeroesBuilds, $GUI_Label_FarmInformations
 Global $GUI_TreeView_LootOptions, $GUI_JSON_LootOptions, $GUI_ExpandLootOptionsButton, $GUI_ReduceLootOptionsButton, $GUI_LoadLootOptionsButton, $GUI_SaveLootOptionsButton, $GUI_ApplyLootOptionsButton
 Global $GUI_Label_ToDoList
 
@@ -443,11 +443,11 @@ Func createGUI()
 
 	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm informations')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
-	$GUI_Label_CharacterBuild = GUICtrlCreateLabel('Character build:', 30, 55, 80, 21)
-	$GUI_Edit_CharacterBuild = GUICtrlCreateEdit('', 115, 55, 446, 25, $ES_READONLY, $WS_EX_TOOLWINDOW)
-	$GUI_Label_HeroBuild = GUICtrlCreateLabel('Hero build:', 30, 95, 80, 21)
-	$GUI_Edit_HeroBuild = GUICtrlCreateEdit('', 115, 95, 446, 21, $ES_READONLY, $WS_EX_TOOLWINDOW)
-	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 135, 575, 450)
+	$GUI_Label_CharacterBuilds = GUICtrlCreateLabel('Recommended character builds:', 90, 40)
+	$GUI_Edit_CharacterBuilds = GUICtrlCreateEdit('', 45, 60, 250, 105, BitOR($ES_MULTILINE, $ES_READONLY), $WS_EX_TOOLWINDOW)
+	$GUI_Label_HeroesBuilds = GUICtrlCreateLabel('Recommended Heroes builds:', 400, 40)
+	$GUI_Edit_HeroesBuilds = GUICtrlCreateEdit('', 350, 60, 250, 105, BitOR($ES_MULTILINE, $ES_READONLY), $WS_EX_TOOLWINDOW)
+	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 170, 575, 450)
 	GUICtrlCreateTabItem('')
 
 	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('Default Farm Configuration', 400, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
@@ -1170,111 +1170,157 @@ EndFunc
 
 ;~ Update the farm description written on the rightmost tab
 Func UpdateFarmDescription($Farm)
-	GUICtrlSetData($GUI_Edit_CharacterBuild, '')
-	GUICtrlSetData($GUI_Edit_HeroBuild, '')
+	GUICtrlSetData($GUI_Edit_CharacterBuilds, '')
+	GUICtrlSetData($GUI_Edit_HeroesBuilds, '')
 	GUICtrlSetData($GUI_Label_FarmInformations, '')
 	Switch $Farm
 		Case 'Asuran'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $AsuranFarmInformations)
 		Case 'Boreal'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $BorealAssassinChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $BorealRangerChestRunnerSkillbar & @CRLF & _
+				$BorealMonkChestRunnerSkillbar & @CRLF & $BorealNecromancerChestRunnerSkillbar & @CRLF & _
+				$BorealMesmerChestRunnerSkillbar & @CRLF & $BorealElementalistChestRunnerSkillbar & @CRLF & _
+				$BorealAssassinChestRunnerSkillbar & @CRLF & $BorealRitualistChestRunnerSkillbar & @CRLF & _
+				$BorealDervishChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $BorealChestRunInformations)
 		Case 'Corsairs'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RACorsairsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MoPCorsairsHeroSkillbar & @CRLF & $DRCorsairsHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CorsairsFarmInformations)
 		Case 'Dragon Moss'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $RADragonMossFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RADragonMossFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $DragonMossFarmInformations)
 		Case 'Eden Iris'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, 'No build necessary')
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $EdenIrisFarmInformations)
 		Case 'Feathers'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $DAFeathersFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $DAFeathersFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FeathersFarmInformations)
 		Case 'Follow'
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
 		Case 'FoW'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FoWFarmInformations)
 		Case 'FoW Tower of Courage'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $RAFoWToCFarmerSkillBar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RAFoWToCFarmerSkillBar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FoWToCFarmInformations)
 		Case 'Froggy'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FroggyFarmInformations)
 		Case 'Gemstones'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $GemstonesFarmSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $GemstonesHeroSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $GemstonesMesmerSkillBar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $GemstonesHero1Skillbar & @CRLF & _
+				$GemstonesHero2Skillbar & @CRLF & $GemstonesHero3Skillbar & @CRLF & _
+				$GemstonesHero4Skillbar & @CRLF & $GemstonesHero5Skillbar & @CRLF & _
+				$GemstonesHero6Skillbar & @CRLF & $GemstonesHero7Skillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstonesFarmInformations)
 		Case 'Gemstone Margonite'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeMargoniteSkillBar & '		' & $MeAMargoniteSkillBar & _
-				 						@CRLF & $EMeMargoniteSkillBar & '		' & $RAMargoniteSkillBar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $MargoniteMonkHeroSkillBar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $AMeMargoniteSkillBar & @CRLF & _
+				$MeAMargoniteSkillBar & @CRLF & $EMeMargoniteSkillBar & @CRLF & $RAMargoniteSkillBar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MargoniteMonkHeroSkillBar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneMargoniteFarmInformations)
 		Case 'Gemstone Stygian'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeStygianSkillBar & '		' & $MeAStygianSkillBar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $AMeStygianSkillBar _
+				& @CRLF & $MeAStygianSkillBar & @CRLF & $RNStygianSkillBar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $StygianRangerHeroSkillBar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneStygianFarmInformations)
 		Case 'Gemstone Torment'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $EATormentSkillBar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $EATormentSkillBar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $GemstoneTormentFarmInformations)
 		Case 'Glint Challenge'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $GlintMesmerSkillBarOptional)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $GlintRituSoulTwisterHeroSkillBar & @CRLF & _
+				$GlintNecroFleshGolemHeroSkillBar & @CRLF & $GlintNecroHexerHeroSkillBar & @CRLF & _
+				$GlintNecroBiPHeroSkillBar & @CRLF & $GlintMesmerPanicHeroSkillBar & @CRLF & _
+				$GlintMesmerIneptitudeHeroSkillBar & @CRLF & $GlintMesmerIneptitudeHeroSkillBar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $GlintChallengeInformations)
 		Case 'Jade Brotherhood'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $JB_Skillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $JB_Hero_Skillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $JB_Skillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $JB_Hero_Skillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $JB_FarmInformations)
 		Case 'Kournans'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $ElAKournansFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $ElAKournansFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $RKournansHeroSkillbar & @CRLF & _
+				$RtKournansHeroSkillbar & @CRLF & $PKournansHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $KournansFarmInformations)
 		Case 'Kurzick'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
 		Case 'LDOA'
 			GUICtrlSetData($GUI_Edit_CharacterBuild, $LDOASkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $LDOAInformations)
 		Case 'Lightbringer'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarmInformations)
 		Case 'Lightbringer 2'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $LightbringerFarm2Informations)
 		Case 'Luxon'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $LuxonFactionInformations)
 		Case 'Mantids'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $RAMantidsFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $MantidsHeroSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RAMantidsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MantidsHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $MantidsFarmInformations)
 		Case 'Ministerial Commendations'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $DWCommendationsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $DWCommendationsFarmerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CommendationsFarmInformations)
 		Case 'Minotaurs'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $MinotaursFarmInformations)
 		Case 'Nexus Challenge'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $NexusChallengeinformations)
 		Case 'Norn'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $NornFarmInformations)
 		Case 'Pongmei'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $PongmeiChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $PongmeiChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $PongmeiChestRunInformations)
 		Case 'Raptors'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $WNRaptorsFarmerSkillbar)
-			GUICtrlSetData($GUI_Edit_HeroBuild, $PRunnerHeroSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $WNRaptorsFarmerSkillbar & @CRLF & $DNRaptorsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $PRunnerHeroSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $RaptorsFarmInformations)
 		Case 'SoO'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $SoOFarmInformations)
 		Case 'SpiritSlaves'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $SpiritSlaves_Skillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $SpiritSlaves_Skillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $SpiritSlavesFarmInformations)
 		Case 'Sunspear Armor'
-			GUICtrlSetData($GUI_Label_FarmInformations, $SunspearArmorInformations)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
+			GUICtrlSetData($GUI_Label_FarmInformations, $SunspearArmorFarmInformations)
 		Case 'Tasca'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $TascaAssassinChestRunnerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $TascaDervishChestRunnerSkillbar & @CRLF & _
+				$TascaAssassinChestRunnerSkillbar & @CRLF & $TascaMesmerChestRunnerSkillbar & @CRLF & _
+				$TascaElementalistChestRunnerSkillbar & @CRLF & $TascaMonkChestRunnerSkillbar & @CRLF & _
+				$TascaNecromancerChestRunnerSkillbar & @CRLF & $TascaRitualistChestRunnerSkillbar)
 			GUICtrlSetData($GUI_Label_FarmInformations, $TascaChestRunInformations)
 		Case 'Underworld'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $UnderworldFarmInformations)
 		Case 'Vaettirs'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $AMeVaettirsFarmerSkillbar & '		' & $MeAVaettirsFarmerSkillbar & _
-				 						@CRLF & $MoAVaettirsFarmerSkillbar & '		' & $EMeVaettirsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $AMeVaettirsFarmerSkillbar & @CRLF & _
+				$MeAVaettirsFarmerSkillbar & @CRLF & $MoAVaettirsFarmerSkillbar & @CRLF & $EMeVaettirsFarmerSkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VaettirsFarmInformations)
 		Case 'Vanguard'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VanguardTitleFarmInformations)
 		Case 'Voltaic'
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $VoltaicFarmInformations)
 		Case 'War Supply Keiran'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, 'No build necessary')
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $WarSupplyKeiranInformations)
 		Case 'OmniFarm'
 			Return

@@ -25,8 +25,15 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $GemstonesFarmSkillbar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
-Global Const $GemstonesHeroSkillbar = 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm'
+;Global Const $GemstonesMesmerSkillBar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
+Global Const $GemstonesMesmerSkillBar = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
+Global Const $GemstonesHero1Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GemstonesHero2Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GemstonesHero3Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GemstonesHero4Skillbar = 'OAljUwGopSUBHVyBoBVVbh4B1YA'
+Global Const $GemstonesHero5Skillbar = 'OAhjUwGYoSUBHVoBbhVVWbTODTA'
+Global Const $GemstonesHero6Skillbar = 'OAhjQoGYIP3hhWVVaO5EeDzxJ'
+Global Const $GemstonesHero7Skillbar = 'OACiAyk8gNtePuwJ00ZOPLYA'
 Global Const $GemstonesFarmInformations = 'Requirements:' & @CRLF _
 	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
 	& '- Recommended to have maxed out Lightbringer title' & @CRLF _
@@ -56,9 +63,6 @@ Global Const $GemstonesDefendX = -3432
 Global Const $GemstonesDefendY = -5564
 
 Global $GEMSTONES_FARM_SETUP = False
-
-;Global Const $GemstonesMesmerSkillBar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
-Global Const $GemstonesMesmerSkillBar = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction) is better than UseSkill(1))
 Global Const $Gem_Symbolic_Celerity		= 1
