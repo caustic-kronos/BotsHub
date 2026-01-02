@@ -344,7 +344,10 @@ Func GemstoneMargoniteFarmLoop()
 	RandomSleep(1000 + GetPing())
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		PickUpItems(MargoniteCheckBuffs)
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(MargoniteCheckBuffs)
+			Sleep(GetPing())
+		Next
 	EndIf
 
 	Return $SUCCESS
@@ -390,7 +393,10 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 		RandomSleep(1000 + GetPing())
 		If IsPlayerAlive() Then
 			Info('Picking up loot')
-			PickUpItems(MargoniteCheckBuffs)
+			For $i = 1 To 3 ; Tripled to secure the looting of items
+				PickUpItems(MargoniteCheckBuffs)
+				Sleep(GetPing())
+			Next
 			Return $SUCCESS
 		Else
 			Return $FAIL

@@ -173,8 +173,11 @@ Func DragonMossFarmLoop()
 	RandomSleep(1000)
 
 	If IsPlayerAlive() Then
-		Info('Looting')
-		PickUpItems()
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems()
+			Sleep(GetPing())
+		Next
 		Return $SUCCESS
 	Else
 		Return $FAIL

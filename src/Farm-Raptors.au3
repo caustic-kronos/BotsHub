@@ -199,12 +199,13 @@ Func RaptorsFarmLoop()
 	If AggroRaptors() == $FAIL Then Return $FAIL
 	If KillRaptors() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
-
-	If IsPlayerDead() Then Return $FAIL
-	Info('Looting')
-	If IsPlayerAlive() Then PickUpItems(RaptorsDefend)
-	RandomSleep(1000)
-	If IsPlayerAlive() Then PickUpItems(RaptorsDefend)
+	If IsPlayerAlive() Then
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(RaptorsDefend)
+			Sleep(100 + GetPing())
+		Next
+	EndIf
 
 	Return CheckFarmResult()
 EndFunc

@@ -249,7 +249,11 @@ Func StygianFarmMesmerAssassin()
 	; Too hard to aggro the 2 groups after that, so hide in spot then go back to pick up loot
 	GoToHidingSpot()
 	If IsPlayerAlive() Then
-		PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+			Sleep(GetPing())
+		Next
 		Return $SUCCESS
 	Else
 		Return $FAIL
@@ -282,7 +286,13 @@ Func StygianJobMesmerAssassin()
 	Local Static $pickItemsAfterFirstWave = False
 	If IsPlayerDead() Then Return $FAIL
 	GoToHidingSpot()
-	If $pickItemsAfterFirstWave And IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+	If $pickItemsAfterFirstWave And IsPlayerAlive() Then
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+			Sleep(GetPing())
+		Next
+	EndIf
 	MoveTo(13128, -10084)
 	MoveTo(13082, -9788, 0) ; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
 	RandomSleep(500)

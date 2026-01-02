@@ -232,13 +232,17 @@ Func MantidsFarmLoop()
 	WEnd
 	RandomSleep(1000)
 
-	If IsPlayerDead() Then Return $FAIL
-
-	Info('Looting')
-	PickUpItems()
-	FindAndOpenChests()
-
-	Return $SUCCESS
+	If IsPlayerAlive() Then
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems()
+			Sleep(GetPing())
+		Next
+		FindAndOpenChests()
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
 EndFunc
 
 

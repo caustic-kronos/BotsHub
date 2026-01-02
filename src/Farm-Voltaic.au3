@@ -184,14 +184,15 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKillInRange(-17500, -14250, 'Final group', $VSAggroRange)
 	WEnd
 	If IsRunFailed() Then Return $FAIL
-	; Chest
-	Move(-17500, -14250)
 	Info('Opening chest')
-	Sleep(5000)
-	TargetNearestItem()
-	ActionInteract()
-	Sleep(2500)
-	PickUpItems()
+	For $i = 1 To 3 ; Tripled to secure looting of chest
+		Move(-17500, -14250)
+		Sleep(5000)
+		TargetNearestItem()
+		ActionInteract()
+		Sleep(2500)
+		PickUpItems()
+	Next
 	Info('Finished Run')
 	Return $SUCCESS
 EndFunc

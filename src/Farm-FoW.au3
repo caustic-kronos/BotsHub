@@ -562,8 +562,7 @@ Func TempleLoot()
 	MoveTo(1700, 2400)
 	MoveTo(1800, 400)
 	Info('Opening chest')
-	; Doubled to secure looting
-	For $i = 1 To 2
+	For $i = 1 To 3 ; Tripled to secure looting of chest
 		MoveTo(1800, 400)
 		RandomSleep(5000)
 		TargetNearestItem()

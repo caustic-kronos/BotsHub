@@ -216,11 +216,16 @@ Func FoWToCFarmLoop()
 		If IsPlayerDead() Or TimerDiff($FowToCFarmTimer) > $MAX_FOW_TOC_FARM_DURATION Then Return $FAIL
 		DefendFoWToC(False)
 	WEnd
-	Info('Rangers cleared. Picking up loot')
-	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC)
-	Sleep(500 + GetPing())
-
-	Return $SUCCESS
+	If IsPlayerAlive() Then
+		Info('Rangers cleared. Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(CastBuffsFowToC)
+			Sleep(GetPing())
+		Next
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
 EndFunc
 
 

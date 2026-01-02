@@ -252,8 +252,11 @@ Func VaettirsFarmLoop()
 	Sleep(1000)
 
 	If IsPlayerAlive() Then
-		Info('Looting')
-		PickUpItems(VaettirsStayAlive)
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(VaettirsStayAlive)
+			Sleep(GetPing())
+		Next
 	EndIf
 
 	Return RezoneToJagaMoraine()
@@ -366,8 +369,11 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 		VaettirsKillSequence()
 		If IsPlayerAlive() Then
-			Info('Looting')
-			PickUpItems(VaettirsStayAlive)
+			Info('Picking up loot')
+			For $i = 1 To 3 ; Tripled to secure the looting of items
+				PickUpItems(VaettirsStayAlive)
+				Sleep(GetPing())
+			Next
 			Return $SUCCESS
 		Else
 			Return $FAIL
