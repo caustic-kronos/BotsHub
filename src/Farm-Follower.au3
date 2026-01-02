@@ -61,10 +61,10 @@ Global $FOLLOWER_SETUP = False
 Global $playerIDs
 
 ;~ Main loop
-Func FollowerFarm($STATUS)
+Func FollowerFarm()
 	If Not $FOLLOWER_SETUP Then FollowerSetup()
 
-	While $STATUS == 'RUNNING' And CountSlots(1, $BAGS_COUNT) > 5
+	While $STATUS == 'RUNNING'
 		Switch $Player_Profession_ID
 			Case $ID_Warrior
 				FollowerLoop()
@@ -133,7 +133,12 @@ EndFunc
 
 ;~ Follower loop
 Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
-	Local Static $firstPlayer = GetFirstPlayerOfParty()
+	Local Static $firstPlayer = Null, $currentMap = Null
+	; Whenever player travels to a new explorable location, then current map ID is saved and first player agent is refreshed, because changing location can change agent ID of player
+	If GetMapID() <> $currentMap Then
+		$firstPlayer = GetFirstPlayerOfParty()
+		$currentMap = GetMapID()
+	EndIf
 	$RunFunction()
 	GoPlayer($firstPlayer)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
@@ -147,7 +152,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	EndIf
 	FindAndOpenChests()
 
-	PickUpItems(Null, DefaultShouldPickItem, 1500)
+	If CountSlots(1, $BAGS_COUNT) > 0 Then PickUpItems(Null, DefaultShouldPickItem, 1500)
 
 	RandomSleep(1000)
 EndFunc

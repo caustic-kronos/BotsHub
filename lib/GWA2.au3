@@ -3578,6 +3578,7 @@ EndFunc
 
 ;~ Returns array of party members
 ;~ Param: an array returned by GetAgentArray. This is totally optional, but can greatly improve script speed.
+;~ Caution in outposts all players are matched as team members even when they are not in team
 Func GetParty($agents = Null)
 	If $agents == Null Then $agents = GetAgentArray($ID_Agent_Type_NPC)
 	Local $fullParty[8] ; 1D array of full party 8 members, indexed from 0
@@ -3587,6 +3588,7 @@ Func GetParty($agents = Null)
 		If Not BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TypeMap_Idle_Ally) Then ContinueLoop
 		$fullParty[$partySize] = $agent
 		$partySize += 1
+		If $partySize == 8 Then ExitLoop ; safeguard to not exceed party size, especially in towns with many players
 	Next
 	Local $party[$partySize] ; 1D array of party members, indexed from 0, in case party is smaller than 8 members
 	For $i = 0 To $partySize - 1

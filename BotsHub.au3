@@ -122,7 +122,7 @@ Global $WEAPON_SLOT = 1
 Global $INVENTORY_SPACE_NEEDED = 5
 Global $RUN_TIMER = Null ; global variable to measure elapsed time of farm run
 
-Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follow|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -1004,9 +1004,9 @@ Func RunFarmLoop($Farm)
 		Case 'Feathers'
 			$INVENTORY_SPACE_NEEDED = 10
 			$result = FeathersFarm($STATUS)
-		Case 'Follow'
+		Case 'Follower'
 			$INVENTORY_SPACE_NEEDED = 15
-			$result = FollowerFarm($STATUS)
+			$result = FollowerFarm()
 		Case 'FoW'
 			$INVENTORY_SPACE_NEEDED = 15
 			$result = FoWFarm($STATUS)
@@ -1202,7 +1202,7 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $DAFeathersFarmerSkillbar)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo farm')
 			GUICtrlSetData($GUI_Label_FarmInformations, $FeathersFarmInformations)
-		Case 'Follow'
+		Case 'Follower'
 			GUICtrlSetData($GUI_Label_FarmInformations, $FollowerInformations)
 		Case 'FoW'
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
@@ -2022,7 +2022,7 @@ Func SelectFarmDuration($Farm)
 			Return $IRIS_FARM_DURATION
 		Case 'Feathers'
 			Return $FEATHERS_FARM_DURATION
-		Case 'Follow'
+		Case 'Follower'
 			Return 30 * 60 * 1000
 		Case 'FoW'
 			Return $FOW_FARM_DURATION
