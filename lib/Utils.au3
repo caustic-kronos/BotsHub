@@ -2979,16 +2979,16 @@ EndFunc
 ;~ Create a map containing foes and their priority level
 Func CreateMobsPriorityMap()
 	; Voltaic farm foes model IDs
-	Local $PN_SS_Dominator		= 6493
-	Local $PN_SS_Dreamer		= 6494
-	Local $PN_SS_Contaminator	= 6495
-	Local $PN_SS_Blasphemer		= 6496
-	Local $PN_SS_Warder			= 6497
-	Local $PN_SS_Priest			= 6498
-	Local $PN_SS_Defender		= 6499
-	Local $PN_SS_Zealot			= 6506
-	Local $PN_SS_Summoner		= 6507
-	Local $PN_Modniir_Priest	= 6512
+	Local $PN_SS_Dominator		= 6544
+	Local $PN_SS_Dreamer		= 6545
+	Local $PN_SS_Contaminator	= 6546
+	Local $PN_SS_Blasphemer		= 6547
+	Local $PN_SS_Warder			= 6548
+	Local $PN_SS_Priest			= 6549
+	Local $PN_SS_Defender		= 6550
+	Local $PN_SS_Zealot			= 6557
+	Local $PN_SS_Summoner		= 6558
+	Local $PN_Modniir_Priest	= 6563
 
 	; Gemstone farm foes model IDs
 	Local $Gem_AnurKaya			= 5217
