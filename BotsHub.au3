@@ -122,7 +122,7 @@ Global $WEAPON_SLOT = 1
 Global $INVENTORY_SPACE_NEEDED = 5
 Global $RUN_TIMER = Null ; global variable to measure elapsed time of farm run
 
-Global $AVAILABLE_FARMS = 'Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|LDOA|Lightbringer|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global $AVAILABLE_FARMS = '|Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|LDOA|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -899,7 +899,7 @@ Func main()
 		RefreshCharactersComboBox()
 	Else
 		GUICtrlDelete($GUI_Combo_CharacterChoice)
-		$GUI_Combo_CharacterChoice = GUICtrlCreateInput('Character Name Input', 10, 420, 136, 20)
+		$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('Character Name Input', 10, 470, 150, 20)
 	EndIf
 	FillConfigurationCombo()
 	LoadDefaultConfiguration()
@@ -1437,10 +1437,10 @@ EndFunc
 Func ReadConfigFromJson($jsonString)
 	Local $jsonObject = _JSON_Parse($jsonString)
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
-	; below line is a fix for a very weird bug that character combobox truly updates only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
+	; below line is a fix for a very weird bug that character combobox truly updates during loading farm configuration only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
 	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
-	; below line is a fix for a very weird bug that farm combobox sometimes updates only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
+	; below line is a fix for a very weird bug that farm combobox sometimes updates during loading farm configuration only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
 	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
 	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 	Local $weaponSlot = _JSON_Get($jsonObject, 'run.weapon_slot')
@@ -1499,7 +1499,6 @@ EndFunc
 
 Func UpdateLootOptionsFromInterface()
 	RefreshValuableListsFromInterface()
-	Opt('GUIDataSeparatorChar', '.')
 	$PICKUP_EVERYTHING = IsLootOptionChecked('Pick up items')
 	$PICKUP_NOTHING = Not IsAnyLootOptionInBranchChecked('Pick up items')
 	$PICKUP_WEAPONS = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
@@ -1550,14 +1549,9 @@ EndFunc
 
 
 ;~ Getting ticked loot options from checkboxes as array
-Func GetLootOptionsTickedCheckboxes($startingPoint)
-	; checking if $startingPoint contains extended path separated with . characters or is single tree element
-	If StringInStr($startingPoint, '.') > 0 Then ; $startingPoint contains extended path, not single tree element
-		Opt('GUIDataSeparatorChar', '.')
-		Return BuildArrayFromTreeView($GUI_TreeView_LootOptions, _GUICtrlTreeView_FindItemEx($GUI_TreeView_LootOptions, $startingPoint))
-	Else ; $startingPoint doesn't contain extended path, single tree element
-		Return BuildArrayFromTreeView($GUI_TreeView_LootOptions, _GUICtrlTreeView_FindItem($GUI_TreeView_LootOptions, $startingPoint))
-	EndIf
+Func GetLootOptionsTickedCheckboxes($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.')
+	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startingPoint, $pathDelimiter)
+	Return $treeViewItem == Null ? Null : BuildArrayFromTreeView($treeViewHandle, $treeViewItem)
 EndFunc
 
 
@@ -1592,73 +1586,74 @@ EndFunc
 
 ;~ Iterate over a treeview and make an operation on leaves
 Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null)
-	; If no item was passed in, then traverse whole tree recursively from root, otherwise traverse from passed item
-	If $treeViewItem == Null Then
-		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-		While $treeViewItem <> 0
-			IterateOverTreeView($context, $treeViewHandle, $treeViewItem, '', $functionToApply)
-			$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
-		WEnd
-		Return
-	EndIf
+	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+	Local $newPath, $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
 
-	$currentPath &= ($currentPath == '') ? _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem) : '.' & _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-
-	Local $childrenCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-	If $childrenCount <= 0 Then ; We are on a leaf
-		If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $currentPath)
-	ElseIf $childrenCount == 1 Then ; We are on a branch with one leaf
-		IterateOverTreeView($context, $treeViewHandle, _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem), $currentPath, $functionToApply)
-	Else ; We are on a branch with many leaves
-		Local $currentChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
-		IterateOverTreeView($context, $treeViewHandle, $currentChild, $currentPath, $functionToApply)
-		For $i = 1 To $childrenCount - 1
-			$currentChild = _GUICtrlTreeView_GetNextChild($treeViewHandle, $currentChild)
-			IterateOverTreeView($context, $treeViewHandle, $currentChild, $currentPath, $functionToApply)
-		Next
-	EndIf
+	While $treeViewItem <> 0
+		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
+		$newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
+		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
+		If $treeViewItemChildCount <= 0 Then ; We are on a leaf
+			If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
+		ElseIf $treeViewItemChildCount > 0 Then ; We are on a branch with at least one child leaf
+			$treeViewItemFirstChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
+			IterateOverTreeView($context, $treeViewHandle, $treeViewItemFirstChild, $newPath, $functionToApply)
+		EndIf
+		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+	WEnd
 EndFunc
 
 
-Func IsLootOptionChecked($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions)
-	; skipped check if $startingPoint contains path separated with . characters for optimization, generally only full path is used for this function
-	Return _GUICtrlTreeView_GetChecked($treeViewHandle, _GUICtrlTreeView_FindItemEx($treeViewHandle, $startingPoint))
+Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = '', $pathDelimiter = '.')
+	Local $pathArray = StringSplit($currentPath, $pathDelimiter)
+	Local $pathArraySize = $pathArray[0], $currentPathItem = $pathArray[1] ; Caution in AutoIT, StringSplit function returns array in which first element is count of items
+	If $pathArraySize == 0 Or $currentPath == '' Then Return Null
+	$currentPath = StringTrimLeft($currentPath, StringLen($currentPathItem) + 1) ; + 1 to trim delimiter character too
+
+	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+	Local $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
+	While $treeViewItem <> 0
+		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
+		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
+		If $pathArraySize == 1 And $currentPathItem == $treeViewItemName Then Return $treeViewItem
+		If $pathArraySize > 1 And $currentPathItem == $treeViewItemName And $treeViewItemChildCount > 0 Then
+			$treeViewItemFirstChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
+			Return FindNodeInTreeView($treeViewHandle, $treeViewItemFirstChild, $currentPath, $pathDelimiter)
+		EndIf
+		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+	WEnd
+	Return Null
 EndFunc
 
 
-; Function to check if any checkbox is checked in a branch provided as path string
-Func IsAnyLootOptionInBranchChecked($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions)
-	Local $treeViewItem
-	; checking if $startingPoint contains extended path separated with . characters or is single tree element
-	If StringInStr($startingPoint, '.') > 0 Then ; $startingPoint contains extended path, not single tree element
-		Opt('GUIDataSeparatorChar', '.')
-		$treeViewItem = _GUICtrlTreeView_FindItemEx($treeViewHandle, $startingPoint)
-	Else ; $startingPoint doesn't contain extended path, single tree element
-		$treeViewItem = _GUICtrlTreeView_FindItem($treeViewHandle, $startingPoint)
-	EndIf
-	Return IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
+Func IsLootOptionChecked($itemPath, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.')
+	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $itemPath, $pathDelimiter)
+	Return $treeViewItem == Null ? False : _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
+EndFunc
+
+
+; Function to check if any checkbox is checked in a branch starting in node provided as path string
+Func IsAnyLootOptionInBranchChecked($startNodePath, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.')
+	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startNodePath, $pathDelimiter)
+	Return $treeViewItem == Null ? False : IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
 EndFunc
 
 
 ; Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
 Func IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
-	; Check if current item is checked
+	; Check if current tree node item is checked
 	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then Return True
 
-	Local $anyChildChecked = False
 	; Recursively check all child items of provided $treeViewItem
 	If _GUICtrlTreeView_GetChildren($treeViewHandle, $treeViewItem) Then
 		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
 		While $childHandle <> 0
-			If IsAnyChildInBranchChecked($treeViewHandle, $childHandle) == True Then
-				$anyChildChecked = True
-				ExitLoop
-			EndIf
+			If IsAnyChildInBranchChecked($treeViewHandle, $childHandle) Then Return True
 			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
 		WEnd
 	EndIf
 
-	Return $anyChildChecked
+	Return False
 EndFunc
 
 
@@ -1714,6 +1709,7 @@ Func RefreshCharactersComboBox()
 	For $i = 1 To $gameClients[0][0]
 		If $gameClients[$i][0] <> -1 Then $comboList &= '|' & $gameClients[$i][3]
 	Next
+	Opt('GUIDataSeparatorChar', '|') ; '|' is the default used to separate elements inside comboboxes in GUI
 	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, $gameClients[0][0] > 0 ? $gameClients[1][3] : '')
 	If ($gameClients[0][0] > 0) Then SelectClient(1)
 EndFunc
