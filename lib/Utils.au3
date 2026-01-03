@@ -1061,7 +1061,7 @@ EndFunc
 Func CountTheseItems($itemArray)
 	Local $arraySize = UBound($itemArray)
 	Local $counts[$arraySize]
-	For $bagIndex = 1 To $BAGS_COUNT
+	For $bagIndex = 1 To 5
 		Local $bag = GetBag($bagIndex)
 		Local $slots = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $slots

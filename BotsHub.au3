@@ -1789,7 +1789,7 @@ EndFunc
 
 
 Func UpdateItemStats()
-	; All static variables are initialized only once when UpdateStats() function is called first time
+	; All static variables are initialized only once when UpdateItemStats() function is called first time
 	Local Static $itemsToCount[28] = [$ID_Glob_Of_Ectoplasm, $ID_Obsidian_Shard, $ID_Lockpick, _
 		$ID_Margonite_Gemstone, $ID_Stygian_Gemstone, $ID_Titan_Gemstone, $ID_Torment_Gemstone, _
 		$ID_Diessa_Chalice, $ID_Golden_Rin_Relic, $ID_Destroyer_Core, $ID_Glacial_Stone, _
