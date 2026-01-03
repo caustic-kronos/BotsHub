@@ -29,7 +29,7 @@
 ; - speed up the bot by all ways possible (since it casts shouts it's always lagging behind)
 ;		- using a cupcake and a pumpkin pie might be a good idea
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $FollowerInformations = 'This bot makes your character follow the first other player in party.' & @CRLF _
@@ -61,7 +61,7 @@ Global $FOLLOWER_SETUP = False
 Global $playerIDs
 
 ;~ Main loop
-Func FollowerFarm($STATUS)
+Func FollowerFarm()
 	If Not $FOLLOWER_SETUP Then FollowerSetup()
 
 	While $STATUS == 'RUNNING' And CountSlots(1, $BAGS_COUNT) > 5
@@ -133,7 +133,12 @@ EndFunc
 
 ;~ Follower loop
 Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
-	Local Static $firstPlayer = GetFirstPlayerOfParty()
+	Local Static $firstPlayer = Null, $currentMap = Null
+	; Whenever player travels to a new explorable location, then current map ID is saved and first player agent is refreshed, because changing location can change agent ID of player
+	If GetMapID() <> $currentMap Then
+		$firstPlayer = GetFirstPlayerOfParty()
+		$currentMap = GetMapID()
+	EndIf
 	$RunFunction()
 	GoPlayer($firstPlayer)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
@@ -311,7 +316,7 @@ EndFunc
 Func GetFirstPlayerOfParty()
 	Local $party = GetParty()
 	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
-	Local $firstPlayer
+	Local $firstPlayer = Null
 	For $member In $party
 		If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
 		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))

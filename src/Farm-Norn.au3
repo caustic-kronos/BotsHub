@@ -24,25 +24,24 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $NornFarmInformations = 'Norn title farm, bring solid heroes composition'
 ; Average duration ~ 45m
 Global Const $NORN_FARM_DURATION = 45 * 60 * 1000
+Global $NORN_FARM_SETUP = False
 
 
 ;~ Main loop for the norn faction farm
 Func NornTitleFarm($STATUS)
-	NornTitleFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $NORN_FARM_SETUP Then NornTitleFarmSetup()
 
 	GoToVarajarFells()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishVarajarFells()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
+
 	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	Return $result
 EndFunc
@@ -53,40 +52,17 @@ Func NornTitleFarmSetup()
 	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Norn_Title)
 	SwitchMode($ID_HARD_MODE)
-	; Assuming that team has been set up correctly manually
-	;SetupTeamNornTitleFarm()
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
+	$NORN_FARM_SETUP = True
 	Info('Preparations complete')
-EndFunc
-
-
-Func SetupTeamNornTitleFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Gwen)
-	RandomSleep(500)
-	AddHero($ID_Razah)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	RandomSleep(500)
-	AddHero($ID_Livia)
-	RandomSleep(500)
-	AddHero($ID_Olias)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	Sleep(1000)
-	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
-	EndIf
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into the Varajar Fells
 Func GoToVarajarFells()
-	If GetMapID() <> $ID_Olafstead Then TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
+	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Varajar_Fells
 		Info('Moving to the Varajar Fells')
 		MoveTo(222, 756)
@@ -102,28 +78,34 @@ Func VanquishVarajarFells()
 	If GetMapID() <> $ID_Varajar_Fells Then Return $FAIL
 
 	Local Static $foes[49][4] = [ _ ; 43 groups to vanquish + 6 movements
+		_ ; blessing
 		[-5278, -5771, 'Berserker', $AGGRO_RANGE], _
 		[-5456, -7921, 'Berserker', $AGGRO_RANGE], _
 		[-8793, -5837, 'Berserker', $AGGRO_RANGE], _
 		[-14092, -9662, 'Vaettir and Berserker', $AGGRO_RANGE], _
 		[-17260, -7906, 'Vaettir and Berserker', $AGGRO_RANGE], _
 		[-21964, -12877, 'Jotun', 2500], _
+		_ ; blessing
 		[-22275, -12462, 'Moving', $AGGRO_RANGE], _
 		[-21671, -2163, 'Berserker', $AGGRO_RANGE], _
 		[-19592, 772, 'Berserker', $AGGRO_RANGE], _
 		[-13795, -751, 'Berserker', $AGGRO_RANGE], _
 		[-17012, -5376, 'Berserker', $AGGRO_RANGE], _
+		_ ; blessing
 		[-8351, -2633, 'Berserker', $AGGRO_RANGE], _
 		[-4362, -1610, 'Moving', $AGGRO_RANGE], _
 		[-4316, 4033, 'Lake', $AGGRO_RANGE], _
 		[-8809, 5639, 'Lake', $AGGRO_RANGE], _
 		[-14916, 2475, 'Lake', $AGGRO_RANGE], _
+		_ ; blessing
 		[-16051, 6492, 'Elemental', $AGGRO_RANGE], _
 		[-16934, 11145, 'Elemental', $AGGRO_RANGE], _
 		[-19378, 14555, 'Elemental', $AGGRO_RANGE], _
+		_ ; blessing
 		[-15932, 9386, '', $AGGRO_RANGE], _
 		[-13777, 8097, 'Moving', $AGGRO_RANGE], _
 		[-4729, 15385, 'Lake', $AGGRO_RANGE], _
+		_ ; blessing
 		[-1810, 4679, 'Modniir', $AGGRO_RANGE], _
 		[-6911, 5240, 'Moving', $AGGRO_RANGE], _
 		[-15471, 6384, 'Boss', $AGGRO_RANGE], _
@@ -135,6 +117,7 @@ Func VanquishVarajarFells()
 		[7755, -11467, 'Berserker', $AGGRO_RANGE], _
 		[15403, -4243, 'Elementals and Griffins', $AGGRO_RANGE], _
 		[21597, -6798, 'Elementals and Griffins', $AGGRO_RANGE], _
+		_ ; blessing
 		[22883, -4248, '', $AGGRO_RANGE], _
 		[18606, -1894, '', $AGGRO_RANGE], _
 		[14969, -4048, '', $AGGRO_RANGE], _
@@ -142,10 +125,13 @@ Func VanquishVarajarFells()
 		[10056, -4967, 'Ice Imp', $AGGRO_RANGE], _
 		[10147, -1630, 'Ice Imp', $AGGRO_RANGE], _
 		[8963, 4043, 'Ice Imp', $AGGRO_RANGE], _
+		_ ; blessing
 		[15576, 7156, '', $AGGRO_RANGE], _
 		[22838, 7914, 'Berserker', 2500], _
+		_ ; blessing
 		[18067, 8766, 'Moving', $AGGRO_RANGE], _
 		[13311, 11917, 'Modniir and Elemental', $AGGRO_RANGE], _
+		_ ; blessing
 		[11126, 10443, 'Modniir and Elemental', $AGGRO_RANGE], _
 		[5575, 4696, 'Modniir and Elemental', 2500], _
 		[-503, 9182, 'Modniir and Elemental', $AGGRO_RANGE], _
@@ -223,6 +209,8 @@ Func VanquishVarajarFells()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

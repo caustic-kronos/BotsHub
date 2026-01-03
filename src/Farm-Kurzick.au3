@@ -26,7 +26,7 @@
 ; Possible improvements :
 ; - noticed some scenarios where map is not cleared - check whether this can be fixed by adding a few additional locations
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
@@ -35,24 +35,73 @@ Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
+Global $KURZICK_FARM_SETUP = False
 
-Global $DonatePoints = True
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarm($STATUS)
-	KurzickFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $KURZICK_FARM_SETUP Then KurzickFarmSetup()
 
+	ManageFactionPointsKurzickFarm()
+	CheckGoldKurzickFarm()
 	GoToFerndale()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('TrackPartyStatus')
 
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
 	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	Return $result
+EndFunc
+
+
+Func ManageFactionPointsKurzickFarm()
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
+		RandomSleep(200)
+		GoNearestNPCToCoords(5390, 1524)
+
+		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
+		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
+		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
+		If $donatePoints Then
+			Info('Donating Kurzick faction points')
+			While GetKurzickFaction() >= 5000
+				DonateFaction('kurzick')
+				RandomSleep(500)
+			WEnd
+		ElseIf $buyResources Then
+			Info('Converting Kurzick faction points into Amber Chunks')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfChunks = Floor(GetKurzickFaction() / 5000) ; 5000 faction points for each chunk
+			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
+			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
+			Dialog($dialogID)
+			RandomSleep(550)
+		ElseIf $buyScrolls Then
+			Info('Converting Kurzick faction points into Urgoz''s Warren Pasage Scrolls')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000) ; 1000 faction points for each scroll
+			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
+			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
+			Dialog($dialogID)
+			RandomSleep(550)
+		EndIf
+		RandomSleep(500)
+	EndIf
+EndFunc
+
+
+Func CheckGoldKurzickFarm()
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
+		Info('Withdrawing gold for shrines benediction')
+		RandomSleep(250)
+		WithdrawGold(100)
+		RandomSleep(250)
+	EndIf
 EndFunc
 
 
@@ -60,44 +109,20 @@ EndFunc
 Func KurzickFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
-	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
-		RandomSleep(200)
-		GoNearestNPCToCoords(5390, 1524)
 
-		If $DonatePoints Then
-			Info('Donating Kurzick faction points')
-			While GetKurzickFaction() >= 5000
-				DonateFaction('kurzick')
-				RandomSleep(500)
-			WEnd
-		Else
-			Info('Converting Kurzick faction points into Amber Chunks')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $temp = Floor(GetKurzickFaction() / 5000)
-			Local $dialogID = 0x800001 + ($temp * 256)
-			Dialog($dialogID)
-			RandomSleep(550)
-		EndIf
-		RandomSleep(500)
-	EndIf
-
-	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Info('Withdrawing gold for shrines benediction')
-		RandomSleep(250)
-		WithdrawGold(100)
-		RandomSleep(250)
-	EndIf
-
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
 	SwitchMode($ID_HARD_MODE)
+
+	$KURZICK_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into Ferndale
 Func GoToFerndale()
-	If GetMapID() <> $ID_House_Zu_Heltzer Then TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Ferndale
 		Info('Moving to Ferndale')
 		MoveTo(7810, -726)
@@ -247,6 +272,8 @@ Func VanquishFerndale()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

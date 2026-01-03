@@ -30,7 +30,7 @@ Global Const $HEADER_TRADE_INITIATE = 0x49		; Initiates a trade with another pla
 Global Const $HEADER_TRANSACT_ITEMS = 0x4D		; Confirms a transaction involving items
 
 ; NPC Trade
-Global Const $HEADER_BUY_MATERIALS = 0x4A       ; Buy materials
+Global Const $HEADER_BUY_MATERIALS = 0x4A		; Buy materials
 Global Const $HEADER_REQUEST_QUOTE = 0x4C		; Requests a quote or price for an item
 
 ; GAME_CMSG_ - Connection and Ping

@@ -23,10 +23,10 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FroggyFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $FroggyFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1 E-surge replaced by a ROJ, ineptitude replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '32mn average in NM' & @CRLF _
@@ -39,14 +39,11 @@ Global Const $ID_Froggy_Quest = 0x322
 ;Global Const $ID_Froggy_Quest = 0x339
 
 Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000 ; max time = 60 minutes
-Global $FroggyFarmTimer = Null
 
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $FROGGY_FARM_SETUP
-		SetupFroggyFarm()
-	WEnd
+	If Not $FROGGY_FARM_SETUP Then SetupFroggyFarm()
 	Return FroggyFarmLoop()
 EndFunc
 
@@ -54,19 +51,24 @@ EndFunc
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME) == $FAIL Then Return
-	; Assuming that team has been set up correctly manually
+	TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchToHardModeIfEnabled()
-	ResetFailuresCounter()
-	RunToBogroot()
-	If IsRunFailed() Then Return
-	$FROGGY_FARM_SETUP = True
+	While Not $FROGGY_FARM_SETUP
+		If RunToBogroot() == $FAIL Then ContinueLoop
+		$FROGGY_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
 Func RunToBogroot()
+	TravelToOutpost($ID_Gadds_Camp, $DISTRICT_NAME)
+	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
 	Local $mapLoaded = False
@@ -93,13 +95,13 @@ Func RunToBogroot()
 		MoveAggroAndKillInRange(12280, 22585, 'Guild wars 2 is actually great, you know?', $froggyAggroRange)
 	WEnd
 	AdlibUnRegister('TrackPartyStatus')
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
 ;~ Farm loop
 Func FroggyFarmLoop()
 	ResetFailuresCounter()
-	$FroggyFarmTimer = TimerInit()
 	AdlibRegister('TrackPartyStatus', 10000)
 	GetRewardRefreshAndTakeFroggyQuest()
 	; Failure return delayed after adlib function deregistered
@@ -193,7 +195,7 @@ Func ClearFroggyFloor1()
 	If IsHardmodeEnabled() Then UseConset()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 6078, 4483, 1250)
-		If FroggyDetectStuck('Froggy Floor 1 - First loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 1 - First loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(17619, 2687, 'Moving near duo', $froggyAggroRange)
 		MoveAggroAndKillInRange(18168, 4788, 'Killing one from duo', $froggyAggroRange)
@@ -212,7 +214,7 @@ Func ClearFroggyFloor1()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -1501, -8590, 1250)
-		If FroggyDetectStuck('Froggy Floor 1 - Second loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 1 - Second loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(4960, 1984, 'Triggering beacon 2', $froggyAggroRange)
 		MoveAggroAndKillInRange(3567, -278, 'Massive frog cave', $froggyAggroRange)
@@ -224,7 +226,7 @@ Func ClearFroggyFloor1()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 7171, -17934, 1250)
-		If FroggyDetectStuck('Froggy Floor 1 - Third loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 1 - Third loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(-115, -8569, 'You played two hours and died like this?!', $froggyAggroRange)
 		MoveAggroAndKillInRange(1966, -11018, 'Last cave entrance', $froggyAggroRange)
@@ -238,7 +240,7 @@ Func ClearFroggyFloor1()
 	Info('Going through portal')
 	Local $mapLoaded = False
 	While Not $mapLoaded
-		If FroggyDetectStuck('Froggy Floor 1 - Getting through portal') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 1 - Getting through portal', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		MoveTo(7171, -17934)
 		Move(7600, -19100)
 		RandomSleep(2000)
@@ -255,7 +257,7 @@ Func ClearFroggyFloor2()
 	If IsHardmodeEnabled() Then UseConset()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -719, 11140, 1250)
-		If FroggyDetectStuck('Froggy Floor 2 - First loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 2 - First loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('Getting blessing')
 		MoveTo(-11072, -5522)
 		GoToNPC(GetNearestNPCToCoords(-11055, -5533))
@@ -279,7 +281,7 @@ Func ClearFroggyFloor2()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 8398, 4358, 1250)
-		If FroggyDetectStuck('Froggy Floor 2 - Second loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 2 - Second loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(3130, 12731, 'Beetle zone', $froggyAggroRange)
 		MoveAggroAndKillInRange(3535, 13860, 'Aiur will be restored', $froggyAggroRange)
@@ -290,7 +292,7 @@ Func ClearFroggyFloor2()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 19597, -11553, 1250)
-		If FroggyDetectStuck('Froggy Floor 2 - Third loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 2 - Third loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(9829, -1175, 'The Death Fleet descends', $froggyAggroRange)
 		MoveAggroAndKillInRange(10932, -5203, 'I hear and obey', $froggyAggroRange)
@@ -323,7 +325,7 @@ Func ClearFroggyFloor2()
 	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 3
-		If FroggyDetectStuck('Froggy Floor 2 - Fourth loop') == $FAIL Then Return $FAIL
+		If CheckStuck('Froggy Floor 2 - Fourth loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('------------------------------------')
 		Info('Boss area')
 		UseMoraleConsumableIfNeeded()
@@ -352,15 +354,5 @@ Func ClearFroggyFloor2()
 		PickUpItems()
 		RandomSleep(5000)
 	Next
-	Return $SUCCESS
-EndFunc
-
-
-;~ Detect bot getting stuck
-Func FroggyDetectStuck($stuckLocation)
-	If TimerDiff($FroggyFarmTimer) > $MAX_FROGGY_FARM_DURATION Then
-		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
-		Return $FAIL
-	EndIf
 	Return $SUCCESS
 EndFunc
