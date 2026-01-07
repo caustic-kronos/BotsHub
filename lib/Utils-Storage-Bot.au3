@@ -1035,10 +1035,10 @@ Func DefaultShouldSalvageItem($item)
 		If $itemID == $ID_Destroyer_Core And IsLootOptionChecked('Salvage items.Trophies.Destroyer Core') Then Return True
 		Return False
 	ElseIf IsRareMaterial($item) Then
-    	Local $materialName = $Rare_Material_Names_From_IDs[$itemID]
-    	Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
-    ElseIf IsArmorSalvageItem($item) Then
-    	Return $SALVAGE_GEARS And GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+		Local $materialName = $Rare_Material_Names_From_IDs[$itemID]
+		Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
+	ElseIf IsArmorSalvageItem($item) Then
+		Return $SALVAGE_GEARS And GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
 	ElseIf IsWeapon($item) Then
 		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
 		; If weapon salvage options are enabled, check them too to see if we should keep the weapon

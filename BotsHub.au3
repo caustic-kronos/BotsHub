@@ -1264,7 +1264,8 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')
 			GUICtrlSetData($GUI_Label_FarmInformations, $KurzickFactionInformations)
 		Case 'LDOA'
-			GUICtrlSetData($GUI_Edit_CharacterBuild, $LDOASkillbar)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $LDOASkillbar)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solo title bot')
 			GUICtrlSetData($GUI_Label_FarmInformations, $LDOAInformations)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, 'Solid heroes setup')

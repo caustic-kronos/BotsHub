@@ -1998,63 +1998,63 @@ EndFunc
 
 ;~ Compute and print structure offsets and total size based on structure definition string
 Func ComputeStructureOffsets($structureDefinition)
-    Local $offset = 0
-    Local $fields = StringSplit($structureDefinition, ";", 2)
+	Local $offset = 0
+	Local $fields = StringSplit($structureDefinition, ";", 2)
 
-    For $field In $fields
+	For $field In $fields
 		$field = StringStripWS($field, 3)
-        If $field = "" Then ContinueLoop
+		If $field = "" Then ContinueLoop
 
-        Local $parts = StringSplit($field, " ", 2)
-        Local $type = $parts[0]
-        Local $name = $parts[1]
+		Local $parts = StringSplit($field, " ", 2)
+		Local $type = $parts[0]
+		Local $name = $parts[1]
 
-        ; Handle arrays (for example wchar name[32])
-        Local $count = 1
+		; Handle arrays (for example wchar name[32])
+		Local $count = 1
 		Local $countPosition = StringInStr($name, "[")
-        If $countPosition > 0 Then
+		If $countPosition > 0 Then
 			Local $countSize = StringInStr($name, "]") - $countPosition - 1
-            $count = Number(StringMid($name, $countPosition + 1, $countSize))
-            $name = StringLeft($name, $countPosition - 1)
-        EndIf
+			$count = Number(StringMid($name, $countPosition + 1, $countSize))
+			$name = StringLeft($name, $countPosition - 1)
+		EndIf
 
-        Local $size = TypeSize($type) * $count
-        Out(StringFormat("%-30s offset=%3d size=%3d", $name, $offset, $size))
-        $offset += $size
-    Next
+		Local $size = TypeSize($type) * $count
+		Out(StringFormat("%-30s offset=%3d size=%3d", $name, $offset, $size))
+		$offset += $size
+	Next
 
-    Out("Total size = " & $offset & " bytes")
+	Out("Total size = " & $offset & " bytes")
 EndFunc
 
 
 ;~ Returns the size in bytes of the given type
 Func TypeSize($type)
-    Switch StringLower($type)
-        Case "byte"
-            Return 1
-        Case "char"
-            Return 1
+	Switch StringLower($type)
+		Case "byte"
+			Return 1
+		Case "char"
+			Return 1
 		Case "short"
 			Return 2
-        Case "word"
-            Return 2
-        Case "wchar"
-            Return 2
-        Case "dword"
-            Return 4
-        Case "int"
-            Return 4
-        Case "float"
-            Return 4
+		Case "word"
+			Return 2
+		Case "wchar"
+			Return 2
+		Case "dword"
+			Return 4
+		Case "int"
+			Return 4
+		Case "float"
+			Return 4
 		Case "long"
-            Return 4
-        Case "double"
-            Return 8
-        Case "ptr"
-            Return @AutoItX64 ? 8 : 4
-        Case Else
-            Return -1 ; Unknown type
-    EndSwitch
+			Return 4
+		Case "double"
+			Return 8
+		Case "ptr"
+			Return @AutoItX64 ? 8 : 4
+		Case Else
+			Return -1 ; Unknown type
+	EndSwitch
 EndFunc
 
 
