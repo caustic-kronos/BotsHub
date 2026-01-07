@@ -148,7 +148,6 @@ Func SetupPlayerStygianFarm()
 			Return $FAIL
 	EndSwitch
 	Sleep(250 + GetPing())
-	TrySetupWeaponSlotUsingGUISettings()
 	Return $SUCCESS
 EndFunc
 

@@ -131,7 +131,6 @@ Func SetupPlayerGemstonesFarm()
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
 	Sleep(250 + GetPing())
-	TrySetupWeaponSlotUsingGUISettings()
 EndFunc
 
 

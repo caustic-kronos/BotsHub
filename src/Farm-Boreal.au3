@@ -127,7 +127,6 @@ Func SetupPlayerBorealChestFarm()
 			LoadSkillTemplate($BorealDervishChestRunnerSkillbar)
 	EndSwitch
 	Sleep(250 + GetPing())
-	TrySetupWeaponSlotUsingGUISettings()
 EndFunc
 
 

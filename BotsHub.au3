@@ -121,6 +121,7 @@ Global $BAGS_COUNT = 5
 Global $WEAPON_SLOT = 1
 Global $INVENTORY_SPACE_NEEDED = 5
 Global $RUN_TIMER = Null ; global variable to measure elapsed time of farm run
+Global $GLOBAL_FARM_SETUP = False
 
 Global $AVAILABLE_FARMS = '|Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|LDOA|Lightbringer 2|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
@@ -931,6 +932,7 @@ Func BotHubLoop()
 				Local $resetRequired = InventoryManagementMidRun()
 				If $resetRequired Then ResetBotsSetups()
 			EndIf
+			If Not $GLOBAL_FARM_SETUP Then GeneralFarmSetup()
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			Local $result = RunFarmLoop($Farm)
 			If ($result == $PAUSE Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
@@ -970,6 +972,12 @@ Func DisableGUIComboboxes()
 	GUICtrlSetState($GUI_Combo_DistrictChoice, $GUI_Disable)
 	GUICtrlSetState($GUI_Combo_BagsCount, $GUI_Disable)
 	DisableTeamComboboxes()
+EndFunc
+
+
+Func GeneralFarmSetup()
+	TrySetupWeaponSlotUsingGUISettings()
+	$GLOBAL_FARM_SETUP = True;
 EndFunc
 
 
@@ -1135,6 +1143,7 @@ EndFunc
 #Region Setup
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
+	$GLOBAL_FARM_SETUP						= False
 	$BOREAL_FARM_SETUP						= False
 	$DM_FARM_SETUP							= False
 	$FEATHERS_FARM_SETUP					= False

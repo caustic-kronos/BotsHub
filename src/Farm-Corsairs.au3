@@ -103,7 +103,6 @@ Func SetupPlayerCorsairsFarm()
  		Return $FAIL
    EndIf
 	Sleep(250 + GetPing())
-	TrySetupWeaponSlotUsingGUISettings()
 	Return $SUCCESS
 EndFunc
 

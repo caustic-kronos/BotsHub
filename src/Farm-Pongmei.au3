@@ -91,7 +91,6 @@ Func SetupPlayerPongmeiChestFarm()
 		Warn('Should run this farm as dervish')
 	EndIf
 	Sleep(250 + GetPing())
-	TrySetupWeaponSlotUsingGUISettings()
 EndFunc
 
 

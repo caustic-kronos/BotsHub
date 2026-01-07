@@ -143,7 +143,6 @@ Func SetupPlayerVaettirsFarm()
 			Return $FAIL
 	EndSwitch
 	Sleep(250 + GetPing())
-	TrySetupWeaponSlotUsingGUISettings()
 	; giving more health to monk 55hp from norn title effect would screw up farm, therefore hiding displayed title for monk
 	If $VaettirsPlayerProfession <> $ID_Monk Then SetDisplayedTitle($ID_Norn_Title)
 	If $VaettirsPlayerProfession == $ID_Monk Then SetDisplayedTitle(0)
