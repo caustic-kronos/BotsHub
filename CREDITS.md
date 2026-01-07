@@ -48,6 +48,11 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 - Notes: Improvements by Gahais
 - License: licensed under Apache 2.0
 
+### 'Farm-LDOA.au3'
+- Author: Coaxx
+- Contributor: Kronos, n1kn4x
+- License: licensed under Apache 2.0
+
 ### 'Farm-Froggy.au3' 'Farm-SoO.au3' 'Farm-FoW.au3'
 - Author: TDawg
 - Contributors: Kronos, Gahais

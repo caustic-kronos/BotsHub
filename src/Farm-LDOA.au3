@@ -34,8 +34,8 @@ Global Const $LDOAInformations = 'The bot will:' & @CRLF _
 	& '- If you are not an elementalist, then it is advised to get some initial skills yourself.' & @CRLF _
 	& '- If you are already level 2, it wont setup your bar or weapons, you can choose.' & @CRLF _
 	& '- It will get you LDOA, this is not a farming bot.'
-; Average duration ~ 10m
-Global Const $LDOA_FARM_DURATION = 10 * 60 * 1000
+; Average duration ~ 1m
+Global Const $LDOA_FARM_DURATION = 1 * 60 * 1000
 
 Global Const $ID_Dialog_Accept_Quest_War_Preparations = 0x80DB01
 Global Const $ID_Dialog_Finish_Quest_War_Preparations = 0x80DB07
@@ -52,12 +52,12 @@ Global Const $ID_Quest_FarmerHamnet = 0x4A1
 Global Const $ID_Luminescent_Scepter = 6508
 Global Const $ID_Serrated_Shield = 6514
 
-Global $LDOA_FARM_SETUP = False
-Global $LDOA_HAMNET_UNAVAILABLE = False
-
-;Variables used for Survivor async checking (Low Health Monitor)
+; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_HEALTH_THRESHOLD = 0.33
 Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
+
+Global $LDOA_FARM_SETUP = False
+
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
@@ -78,9 +78,9 @@ Func LDOATitleFarm($STATUS)
 	EndIf
 
 	AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)
-	LDOATitleFarmLoop()
+	Local $result = LDOATitleFarmLoop()
 	AdlibUnRegister('LowHealthMonitor')
-	Return $SUCCESS
+	Return $result
 EndFunc
 
 
@@ -99,8 +99,7 @@ Func SetupLDOATitleFarm()
 		Info('LDOA 10-20')
 		If SetupHamnetQuest() == $FAIL Then Return $FAIL
 		Info('Checking if Foibles Fair is available...')
-		TravelWithTimeout($ID_Foibles_Fair, 'RunToFoible')
-		Sleep(GetPing() + 750)
+		If TryTravel($ID_Foibles_Fair) == $FAIL Then RunToFoible()
 	EndIf
 	Info('Preparations complete')
 	$LDOA_FARM_SETUP = True
@@ -150,7 +149,7 @@ Func InitialSetupLDOA()
 	Dialog($ID_Dialog_Accept_Quest_A_Mesmers_Burden)
 
 	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	RunToAshford()
+	If TryTravel($ID_Ashford_Abbey) == $FAIL Then RunToAshford()
 EndFunc
 
 
@@ -217,17 +216,22 @@ EndFunc
 ;~ LDOA Title farm loop
 Func LDOATitleFarmLoop()
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
+	Local $result
 	Info('Current level: ' & $level)
 	If $level < 2 Then
-		LDOATitleFarmUnder2()
+		$result = LDOATitleFarmUnder2()
 	ElseIf $level < 10 Then
-		LDOATitleFarmUnder10()
+		$result = LDOATitleFarmUnder10()
+	ElseIf $level < 20 Then
+		$result = LDOATitleFarmAfter10()
 	Else
-		LDOATitleFarmAfter10()
+		Info('Reached level 20, LDOA title farm complete.')
+		Return $PAUSE
 	EndIf
 	; If we leveled to 2 or 10, we reset the setup so that the bot starts on the 2-10 or the 10-20 part
 	Local $newLevel = DllStructGetData(GetMyAgent(), 'Level')
 	If ($level == 1 Or $level == 9) And $newLevel > $level Then $LDOA_FARM_SETUP = False
+	Return $result
 EndFunc
 
 
@@ -245,11 +249,14 @@ Func LDOATitleFarmUnder2()
 	MoveAggroAndKill(-9551, -2929)
 	MoveAggroAndKill(-9559, -1324)
 	MoveAggroAndKill(-9451, -301)
+	If IsPlayerDead() Then Return $FAIL
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
+	DistrictTravel($ID_Ascalon_City_Presearing)
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -267,7 +274,7 @@ Func LDOATitleFarmUnder10()
 	Sleep(2000)
 	MoveTo(-3440, 10010, 30)
 	MoveAggroAndKillInRange(-3753, 11131, '', 3000)
-	If GetIsDead() Then BackToAscalon()
+	If IsPlayerDead() Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
@@ -275,45 +282,38 @@ EndFunc
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
 	Info('Starting Hamnet farm...')
-	Local $level = DllStructGetData(GetMyAgent(), 'Level')
-	If $level == 20 Then
-		Info('Reached level 20, stopping farm.')
-		BackToAscalon()
-	Else
-		Info('Heading to Foibles Fair!')
-		DistrictTravel($ID_Foibles_Fair)
-		MoveTo(-183, 9002)
-		MoveTo(356, 7834)
-		Info('Entering Wizards Folly!')
-		Move(500, 7300)
-		WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
-		UseConsumable($ID_Igneous_Summoning_Stone)
-		MoveAggroAndKillInRange(2541, 4504, '', 2000)
-		Info('Returning to Foibles Fair')
-		Resign()
-		RandomSleep(3500)
-		ReturnToOutpost()
-		WaitMapLoading($ID_Foibles_Fair, 10000, 1000)
-	EndIf
+	Info('Heading to Foibles Fair!')
+	DistrictTravel($ID_Foibles_Fair)
+	MoveTo(-183, 9002)
+	MoveTo(356, 7834)
+	Info('Entering Wizards Folly!')
+	Move(500, 7300)
+	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
+	UseConsumable($ID_Igneous_Summoning_Stone)
+	MoveAggroAndKillInRange(2541, 4504, '', 2000)
+	If IsPlayerDead() Then Return $FAIL
+	Info('Returning to Foibles Fair')
+	Resign()
+	RandomSleep(3500)
+	ReturnToOutpost()
+	WaitMapLoading($ID_Foibles_Fair, 10000, 1000)
 	Return $SUCCESS
 EndFunc
 
 
 ;~ Outpost checker
-Func TravelWithTimeout($mapID, $onFailFunc)
+Func TryTravel($mapID)
 	Local $startTime = TimerInit()
-
 	DistrictTravel($mapID)
-
-	While TimerDiff($startTime) < 15000
+	While TimerDiff($startTime) < 10000
 		If GetMapID() == $mapID Then
 			Info('Travel successful.')
-			Return
+			Return $SUCCESS
 		EndIf
 		Sleep(200)
 	WEnd
 	Info('Travel failed.')
-	Call($onFailFunc)
+	Return $FAIL
 EndFunc
 
 
@@ -326,47 +326,47 @@ Func RunToAshford()
 	RandomSleep(1000)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	UseConsumable($ID_Igneous_Summoning_Stone)
-	MoveTo(2560, -2331) ; 1
-	MoveTo(-1247, -6084) ; 2
-	MoveTo(-5310, -6951) ; 3
-	MoveTo(-11026, -6238) ; 4
-	Move(-11444, -6237) ; 5
-	If GetIsDead() Then Return
+	MoveTo(2560, -2331)
+	MoveTo(-1247, -6084)
+	MoveTo(-5310, -6951)
+	MoveTo(-11026, -6238)
+	Move(-11444, -6237)
+	If IsPlayerDead() Then Return $FAIL
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	Info('Made it to Ashford Abbey')
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Run to Foibles Fair
 Func RunToFoible()
 	Info('Starting run to Foibles Fair from Ashford Abbey..')
-	TravelWithTimeout($ID_Ashford_Abbey, 'RunToAshford')
+	DistrictTravel($ID_Ashford_Abbey)
 	Info('Entering Lakeside County!')
-
-	Sleep(GetPing() + 750)
-
-	MoveTo(-11455, -6238) ; 1
-	Move(-11037, -6240) ; 2
+	MoveTo(-11455, -6238)
+	Move(-11037, -6240)
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	UseConsumable($ID_Igneous_Summoning_Stone)
-	MoveTo(-11809, -12198) ; 3
-	MoveTo(-12893, -16093) ; 4
-	MoveTo(-11566, -18712) ; 5
-	MoveTo(-11246, -19376) ; 6
-	MoveTo(-13738, -20079) ; 7
+	MoveTo(-11809, -12198)
+	MoveTo(-12893, -16093)
+	MoveTo(-11566, -18712)
+	MoveTo(-11246, -19376)
+	MoveTo(-13738, -20079)
 	Info('Entering Wizards Folly!')
-	Move(-14000, -19900) ; 8
+	Move(-14000, -19900)
+	If IsPlayerDead() Then Return $FAIL
 	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
 	UseConsumable($ID_Igneous_Summoning_Stone)
-	MoveTo(8648, 17730) ; 9
-	MoveTo(7497, 15763) ; 10
-	MoveTo(2840, 10383) ; 11
-	MoveTo(1648, 7527) ; 12
-	MoveTo(536, 7315) ; 13
-	Move(320, 7950) ; 14
-
+	MoveTo(8648, 17730)
+	MoveTo(7497, 15763)
+	MoveTo(2840, 10383)
+	MoveTo(1648, 7527)
+	MoveTo(536, 7315)
+	Move(320, 7950)
+	If IsPlayerDead() Then Return $FAIL
 	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 	Info('Made it to Foibles Fair')
+	Return $SUCCESS
 EndFunc
 
 
@@ -393,7 +393,6 @@ EndFunc
 Func IsLowHealth()
 	Local $me = GetMyAgent()
 	Local $healthRatio = DllStructGetData($me, 'HP')
-
 	If $healthRatio > 0 And $healthRatio < $LOW_HEALTH_THRESHOLD Then Return True
 	Return False
 EndFunc
