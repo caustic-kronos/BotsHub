@@ -73,9 +73,6 @@ Func LDOATitleFarm($STATUS)
 		Notice('Inventory has 0 slots left, pausing.')
 		Return $PAUSE
 	EndIf
-	If GetMapID() == $ID_Ascalon_City_Presearing And $LOW_HEALTH_TRIGGERED Then
-		$LOW_HEALTH_TRIGGERED = False
-	EndIf
 
 	AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)
 	Local $result = LDOATitleFarmLoop()
