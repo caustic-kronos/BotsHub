@@ -232,3 +232,33 @@ Func TestDeathRIP()
 	If Not IsPlayerDead() Then Return $FAIL
 	Return $SUCCESS
 EndFunc
+
+
+Func TestGetTitlePoints()
+	Out('Hero title: ' & GetHeroTitle())
+	Out('Gladiator title: ' & GetGladiatorTitle())
+	Out('Codex title: ' & GetCodexTitle())
+	Out('Kurzick title: ' & GetKurzickTitle())
+	Out('Luxon title: ' & GetLuxonTitle())
+	Out('Drunkard title: ' & GetDrunkardTitle())
+	Out('Survivor title: ' & GetSurvivorTitle())
+	Out('Max titles: ' & GetMaxTitles())
+	Out('Lucky title: ' & GetLuckyTitle())
+	Out('Unlucky title: ' & GetUnluckyTitle())
+	Out('Sunspear title: ' & GetSunspearTitle())
+	Out('Lightbringer title: ' & GetLightbringerTitle())
+	Out('Commander title: ' & GetCommanderTitle())
+	Out('Gamer title: ' & GetGamerTitle())
+	Out('Legendary Guardian title: ' & GetLegendaryGuardianTitle())
+	Out('Sweet title: ' & GetSweetTitle())
+	Out('Asura title: ' & GetAsuraTitle())
+	Out('Deldrimor title: ' & GetDeldrimorTitle())
+	Out('Vanguard title: ' & GetVanguardTitle())
+	Out('Norn title: ' & GetNornTitle())
+	Out('Mastery of the North title: ' & GetNorthMasteryTitle())
+	Out('Party title: ' & GetPartyTitle())
+	Out('Zaishen title: ' & GetZaishenTitle())
+	Out('Treasure Hunter title: ' & GetTreasureTitle())
+	Out('Wisdom title: ' & GetWisdomTitle())
+	Return $SUCCESS
+EndFunc

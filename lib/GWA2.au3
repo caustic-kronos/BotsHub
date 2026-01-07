@@ -195,6 +195,7 @@ Global Const $attributeStructTemplate = 'dword profession_id;dword attribute_id;
 Global Const $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
 Global Const $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
 Global Const $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unknown1;long MapTo;ptr Description;ptr Objective'
+Global Const $titleStructTemplate = 'dword properties;long CurrentPoints;long CurrentTitleTier;long PointsNeededCurrentRank;long NextTitleTier;long PointsNeededNextRank;long MaxTitleRank;long MaxTitleTier;dword unknown36;dword unknown40'
 ; Grey area, unlikely to exist several at the same time
 Global Const $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
 ; Safe zone, can just create DllStruct globally
@@ -962,16 +963,16 @@ Func ScanGWBasePatterns()
 			$memoryInterfaceHeader = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $GWA2_REFORGED_HEADER_SIZE, 'dword', 0x1000, 'dword', 0x40)
 			; Get the allocated memory address
 			$memoryInterfaceHeader = $memoryInterfaceHeader[0]
-	        If $memoryInterfaceHeader = 0 Then Return SetError(1, 0, 0)
-	        $newHeader = True
-	    EndIf
+			If $memoryInterfaceHeader = 0 Then Return SetError(1, 0, 0)
+			$newHeader = True
+		EndIf
 	EndIf
 
 	If $newHeader Then
 		; Write the allocated memory address to the scan memory location
-	    WriteBinary($GWA2_REFORGED_HEADER_HEXA, $memoryInterfaceHeader)
-	    MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 0)
-	    MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 0)
+		WriteBinary($GWA2_REFORGED_HEADER_HEXA, $memoryInterfaceHeader)
+		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 0)
+		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 0)
 	EndIf
 
 	Local $allocationScan = False
@@ -2579,153 +2580,11 @@ Func SetTitleNorn()
 EndFunc
 
 
-;~ Returns Hero title progress.
-Func GetHeroTitle()
-	Return GetTitleProgress(0x4)
-EndFunc
-
-
-;~ Returns Gladiator title progress.
-Func GetGladiatorTitle()
-	Return GetTitleProgress(0x7C)
-EndFunc
-
-
-;~ Returns Codex title progress.
-Func GetCodexTitle()
-	Return GetTitleProgress(0x75C)
-EndFunc
-
-
-;~ Returns Kurzick title progress.
-Func GetKurzickTitle()
-	Return GetTitleProgress(0xCC)
-EndFunc
-
-
-;~ Returns Luxon title progress.
-Func GetLuxonTitle()
-	Return GetTitleProgress(0xF4)
-EndFunc
-
-
-;~ Returns drunkard title progress.
-Func GetDrunkardTitle()
-	Return GetTitleProgress(0x11C)
-EndFunc
-
-
-;~ Returns survivor title progress.
-Func GetSurvivorTitle()
-	Return GetTitleProgress(0x16C)
-EndFunc
-
-
-;~ Returns max titles
-Func GetMaxTitles()
-	Return GetTitleProgress(0x194)
-EndFunc
-
-
-;~ Returns lucky title progress.
-Func GetLuckyTitle()
-	Return GetTitleProgress(0x25C)
-EndFunc
-
-
-;~ Returns unlucky title progress.
-Func GetUnluckyTitle()
-	Return GetTitleProgress(0x284)
-EndFunc
-
-
-;~ Returns Sunspear title progress.
-Func GetSunspearTitle()
-	Return GetTitleProgress(0x2AC)
-EndFunc
-
-
-;~ Returns Lightbringer title progress.
-Func GetLightbringerTitle()
-	Return GetTitleProgress(0x324)
-EndFunc
-
-
-;~ Returns Commander title progress.
-Func GetCommanderTitle()
-	Return GetTitleProgress(0x374)
-EndFunc
-
-
-;~ Returns Gamer title progress.
-Func GetGamerTitle()
-	Return GetTitleProgress(0x39C)
-EndFunc
-
-
-;~ Returns Legendary Guardian title progress.
-Func GetLegendaryGuardianTitle()
-	Return GetTitleProgress(0x4DC)
-EndFunc
-
-
-;~ Returns sweets title progress.
-Func GetSweetTitle()
-	Return GetTitleProgress(0x554)
-EndFunc
-
-
-;~ Returns Asura title progress.
-Func GetAsuraTitle()
-	Return GetTitleProgress(0x5F4)
-EndFunc
-
-
-;~ Returns Deldrimor title progress.
-Func GetDeldrimorTitle()
-	Return GetTitleProgress(0x61C)
-EndFunc
-
-
-;~ Returns Vanguard title progress.
-Func GetVanguardTitle()
-	Return GetTitleProgress(0x644)
-EndFunc
-
-
-;~ Returns Norn title progress.
-Func GetNornTitle()
-	Return GetTitleProgress(0x66C)
-EndFunc
-
-
-;~ Returns mastery of the north title progress.
-Func GetNorthMasteryTitle()
-	Return GetTitleProgress(0x694)
-EndFunc
-
-
-;~ Returns party title progress.
-Func GetPartyTitle()
-	Return GetTitleProgress(0x6BC)
-EndFunc
-
-
-;~ Returns Zaishen title progress.
-Func GetZaishenTitle()
-	Return GetTitleProgress(0x6E4)
-EndFunc
-
-
-;~ Returns treasure hunter title progress.
-Func GetTreasureTitle()
-	Return GetTitleProgress(0x70C)
-EndFunc
-
-
-;~ Returns wisdom title progress.
-Func GetWisdomTitle()
-	Return GetTitleProgress(0x734)
+;~ Returns title progress by title index.
+Func GetTitleByIndex($titleIndex)
+	Static $TITLE_BASE_OFFSET = 0x04
+	Static $TITLE_STRUCT_SIZE = 0x2C
+	Return GetTitleProgress($TITLE_BASE_OFFSET + ($titleIndex * $TITLE_STRUCT_SIZE))
 EndFunc
 
 
@@ -2734,6 +2593,156 @@ Func GetTitleProgress($finalOffset)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, $finalOffset]
 	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
 	Return $result[1]
+EndFunc
+
+
+;~ Returns Hero title progress.
+Func GetHeroTitle()
+	Return GetTitleByIndex(0)
+EndFunc
+
+
+;~ Returns Gladiator title progress.
+Func GetGladiatorTitle()
+	Return GetTitleByIndex(3)
+EndFunc
+
+
+;~ Returns Kurzick title progress.
+Func GetKurzickTitle()
+	Return GetTitleByIndex(5)
+EndFunc
+
+
+;~ Returns Luxon title progress.
+Func GetLuxonTitle()
+	Return GetTitleByIndex(6)
+EndFunc
+
+
+;~ Returns drunkard title progress.
+Func GetDrunkardTitle()
+	Return GetTitleByIndex(7)
+EndFunc
+
+
+;~ Returns survivor title progress.
+Func GetSurvivorTitle()
+	Return GetTitleByIndex(9)
+EndFunc
+
+
+;~ Returns max titles
+Func GetMaxTitles()
+	Return GetTitleByIndex(10)
+EndFunc
+
+
+;~ Returns lucky title progress.
+Func GetLuckyTitle()
+	Return GetTitleByIndex(15)
+EndFunc
+
+
+;~ Returns unlucky title progress.
+Func GetUnluckyTitle()
+	Return GetTitleByIndex(16)
+EndFunc
+
+
+;~ Returns Sunspear title progress.
+Func GetSunspearTitle()
+	Return GetTitleByIndex(17)
+EndFunc
+
+
+;~ Returns Lightbringer title progress.
+Func GetLightbringerTitle()
+	Return GetTitleByIndex(20)
+EndFunc
+
+
+;~ Returns Commander title progress.
+Func GetCommanderTitle()
+	Return GetTitleByIndex(22)
+EndFunc
+
+
+;~ Returns Gamer title progress.
+Func GetGamerTitle()
+	Return GetTitleByIndex(23)
+EndFunc
+
+
+;~ Returns Legendary Guardian title progress.
+Func GetLegendaryGuardianTitle()
+	Return GetTitleByIndex(31)
+EndFunc
+
+
+;~ Returns sweets title progress.
+Func GetSweetTitle()
+	Return GetTitleByIndex(34)
+EndFunc
+
+
+;~ Returns Asura title progress.
+Func GetAsuraTitle()
+	Return GetTitleByIndex(38)
+EndFunc
+
+
+;~ Returns Deldrimor title progress.
+Func GetDeldrimorTitle()
+	Return GetTitleByIndex(39)
+EndFunc
+
+
+;~ Returns Vanguard title progress.
+Func GetVanguardTitle()
+	Return GetTitleByIndex(40)
+EndFunc
+
+
+;~ Returns Norn title progress.
+Func GetNornTitle()
+	Return GetTitleByIndex(41)
+EndFunc
+
+
+;~ Returns mastery of the north title progress.
+Func GetNorthMasteryTitle()
+	Return GetTitleByIndex(42)
+EndFunc
+
+
+;~ Returns party title progress.
+Func GetPartyTitle()
+	Return GetTitleByIndex(43)
+EndFunc
+
+
+;~ Returns Zaishen title progress.
+Func GetZaishenTitle()
+	Return GetTitleByIndex(44)
+EndFunc
+
+
+;~ Returns treasure hunter title progress.
+Func GetTreasureTitle()
+	Return GetTitleByIndex(45)
+EndFunc
+
+
+;~ Returns wisdom title progress.
+Func GetWisdomTitle()
+	Return GetTitleByIndex(46)
+EndFunc
+
+
+;~ Returns Codex title progress.
+Func GetCodexTitle()
+	Return GetTitleByIndex(47)
 EndFunc
 
 

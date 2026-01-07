@@ -571,6 +571,7 @@ Global Const $ID_Salvage_Kit					= 2992
 Global Const $ID_Salvage_Kit_2					= 2993
 Global Const $ID_Expert_Salvage_Kit				= 2991
 Global Const $ID_Superior_Salvage_Kit			= 5900
+Global Const $ID_Charr_Salvage_Kit				= 18721
 Global Const $ID_Small_Equipment_Pack			= 31221
 Global Const $ID_Light_Equipment_Pack			= 31222
 Global Const $ID_Large_Equipment_Pack			= 31223
