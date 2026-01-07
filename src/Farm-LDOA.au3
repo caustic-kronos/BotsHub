@@ -58,70 +58,46 @@ Global $LDOA_HAMNET_UNAVAILABLE = False
 ;Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_HEALTH_THRESHOLD = 0.33
 Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
-Global $LOW_HEALTH_ADLIB_ACTIVE = False
-Global $LOW_HEALTH_TRIGGERED = False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
-	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	If Not $LDOA_FARM_SETUP Then SetupLDOATitleFarm()
-
-	; Here we check if the quest is available, if not, we stop the farm
-	If $LDOA_HAMNET_UNAVAILABLE Then
-		Info('Hamnet quest not available, wait for rotation.')
-		$LDOA_FARM_SETUP = False
-		StopLowHealthMonitor()
+	If Not $LDOA_FARM_SETUP And SetupLDOATitleFarm() == $FAIL Then
+		Info('LDOA farm setup failed, stopping farm.')
 		Return $PAUSE
 	EndIf
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North for inventory management
 	If (CountSlots(1, _Min($BAGS_COUNT, 4)) <= 5) Then
 		PresearingInventoryManagement()
-		$LDOA_FARM_SETUP = False
 	EndIf
 	If (CountSlots(1, $BAGS_COUNT) <= 0) Then
 		Notice('Inventory has 0 slots left, pausing.')
-		$LDOA_FARM_SETUP = False
-		StopLowHealthMonitor()
 		Return $PAUSE
 	EndIf
-	If $STATUS <> 'RUNNING' Then
-		StopLowHealthMonitor()
-		Return $PAUSE
-	EndIf
-
 	If GetMapID() == $ID_Ascalon_City_Presearing And $LOW_HEALTH_TRIGGERED Then
 		$LOW_HEALTH_TRIGGERED = False
 	EndIf
 
-	StartLowHealthMonitor()
-	LDOATitleFarmLoop($STATUS)
-	StopLowHealthMonitor()
+	AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)
+	LDOATitleFarmLoop()
+	AdlibUnRegister('LowHealthMonitor')
 	Return $SUCCESS
 EndFunc
 
 
 ;~ LDOA Title farm setup
 Func SetupLDOATitleFarm()
-	Local $level = DllStructGetData(GetMyAgent(), 'Level')
-
 	Info('Setting up farm')
-	$LDOA_HAMNET_UNAVAILABLE = False
-
 	LeaveParty()
-
+	Local $level = DllStructGetData(GetMyAgent(), 'Level')
 	If $level == 1 Then
 		Info('LDOA 1-2')
-		SendChat('bonus', '/')
-		Sleep(GetPing() + 750)
-		GetWeapons()
 		InitialSetupLDOA()
 	ElseIf $level >= 2 And $level < 10 Then
 		Info('LDOA 2-10')
 		SetupCharrAtTheGateQuest()
 	Else
 		Info('LDOA 10-20')
-		SetupHamnetQuest()
+		If SetupHamnetQuest() == $FAIL Then Return $FAIL
 		Info('Checking if Foibles Fair is available...')
 		TravelWithTimeout($ID_Foibles_Fair, 'RunToFoible')
 		Sleep(GetPing() + 750)
@@ -131,23 +107,13 @@ Func SetupLDOATitleFarm()
 EndFunc
 
 
-;~ Get weapons for LDOA title farm
-Func GetWeapons()
-	Local $luminescent_Scepter = FindInInventory($ID_Luminescent_Scepter)
-	Local $serrated_Shield = FindInInventory($ID_Serrated_Shield)
-
-	If $luminescent_Scepter[0] <> 0 And $serrated_Shield[0] <> 0 Then
-		Info('Equipping Luminescent Scepter and Serrated Shield')
-		UseItemBySlot($luminescent_Scepter[0], $luminescent_Scepter[1])
-		UseItemBySlot($serrated_Shield[0], $serrated_Shield[1])
-	EndIf
-EndFunc
-
-
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
-	Local $level = DllStructGetData(GetMyAgent(), 'Level')
-	Info('Current level: ' & $level)
+	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	; Get weapons
+	SendChat('bonus', '/')
+	Sleep(GetPing() + 750)
+	GetWeapons()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
@@ -169,7 +135,7 @@ Func InitialSetupLDOA()
 	Dialog($ID_Dialog_Accept_Quest_Elementalist_Test)
 	Sleep(GetPing() + 750)
 	MoveTo(4187, -948)
-	MoveAggroAndKillInRange(4207, -2892, '', 2500, Null)
+	MoveAggroAndKillInRange(4207, -2892, '', 2500)
 	MoveTo(3771, -1729)
 	MoveTo(6069, 3865)
 	GoToNPC(GetNearestNPCToCoords(6187, 4085))
@@ -183,64 +149,30 @@ Func InitialSetupLDOA()
 	Sleep(250)
 	Dialog($ID_Dialog_Accept_Quest_A_Mesmers_Burden)
 
+	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	RunToAshford()
-	KillWorms()
 EndFunc
 
 
-;~ Kill some worms, level 2 needed for CharrAtGate
-Func KillWorms()
-	Local $level = 1
-	Info('Here wormy, wormy!')
+;~ Get weapons for LDOA title farm
+Func GetWeapons()
+	Local $luminescentScepter = FindInInventory($ID_Luminescent_Scepter)
+	Local $serratedShield = FindInInventory($ID_Serrated_Shield)
 
-	While $level < 2
-		If GetMapID() <> $ID_Ashford_Abbey Then RandomDistrictTravel($ID_Ashford_Abbey)
-
-		MoveTo(-11455, -6238)
-		Move(-11037, -6240)
-		WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-		UseConsumable($ID_Igneous_Summoning_Stone)
-		MoveTo(-10433, -6021)
-		MoveAggroAndKill(-9551, -5499)
-		MoveAggroAndKill(-9545, -4205)
-		MoveAggroAndKill(-9551, -2929)
-		MoveAggroAndKill(-9559, -1324)
-		MoveAggroAndKill(-9451, -301)
-
-		If GetIsDead() Then Return KillWorms()
-
-		Sleep(500)
-		$level = DllStructGetData(GetMyAgent(), 'Level')
-		Info('Current level: ' & $level)
-	WEnd
-EndFunc
-
-
-;~ LDOA Title farm loop
-Func LDOATitleFarmLoop($STATUS)
-	Local $level = DllStructGetData(GetMyAgent(), 'Level')
-	Info('Current level: ' & $level)
-
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
-
-	If $level < 10 Then
-		LDOATitleFarmUnder10()
-	Else
-		LDOATitleFarmAfter10()
+	If $luminescentScepter[0] <> 0 And $serratedShield[0] <> 0 Then
+		Info('Equipping Luminescent Scepter and Serrated Shield')
+		UseItemBySlot($luminescentScepter[0], $luminescentScepter[1])
+		UseItemBySlot($serratedShield[0], $serratedShield[1])
 	EndIf
-	; If we leveled to 10, we reset the setup so that the bot starts on the 10-20 part
-	Local $newLevel = DllStructGetData(GetMyAgent(), 'Level')
-	If $level == 9 And $newLevel > $level Then $LDOA_FARM_SETUP = False
 EndFunc
 
 
 ;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	Info('Setting up Charr at the gate quest...')
+	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 
 	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
-
 	If $questStatus == 0 Or $questStatus == 3 Then
 		Sleep(GetPing() + 750)
 		AbandonQuest($ID_Quest_CharrAtTheGate)
@@ -257,11 +189,67 @@ Func SetupCharrAtTheGateQuest()
 EndFunc
 
 
+;~ Setup Hamnet quest
+Func SetupHamnetQuest()
+	Info('Setting up Hamnet quest...')
+	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+	If $questStatus == 0 Then
+		Info('Quest not found, setting up...')
+		Sleep(GetPing() + 750)
+		MoveTo(9516, 7668)
+		MoveTo(9815, 7809)
+		MoveTo(10280, 7895)
+		MoveTo(10564, 7832)
+		GoToNPC(GetNearestNPCToCoords(10564, 7832))
+		Sleep(GetPing() + 750)
+		Dialog($ID_Dialog_Accept_Quest_Farmer_Hamnet)
+		Sleep(GetPing() + 750)
+		$questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+		If $questStatus == 0 Then Return $FAIL
+	EndIf
+	Info('Quest found, Good to go!')
+	Return $SUCCESS
+EndFunc
+
+
+;~ LDOA Title farm loop
+Func LDOATitleFarmLoop()
+	Local $level = DllStructGetData(GetMyAgent(), 'Level')
+	Info('Current level: ' & $level)
+	If $level < 2 Then
+		LDOATitleFarmUnder2()
+	ElseIf $level < 10 Then
+		LDOATitleFarmUnder10()
+	Else
+		LDOATitleFarmAfter10()
+	EndIf
+	; If we leveled to 2 or 10, we reset the setup so that the bot starts on the 2-10 or the 10-20 part
+	Local $newLevel = DllStructGetData(GetMyAgent(), 'Level')
+	If ($level == 1 Or $level == 9) And $newLevel > $level Then $LDOA_FARM_SETUP = False
+EndFunc
+
+
+;~ Kill some worms, level 2 needed for CharrAtGate
+Func LDOATitleFarmUnder2()
+	Info('Here wormy, wormy!')
+	DistrictTravel($ID_Ashford_Abbey)
+	MoveTo(-11455, -6238)
+	Move(-11037, -6240)
+	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	UseConsumable($ID_Igneous_Summoning_Stone)
+	MoveTo(-10433, -6021)
+	MoveAggroAndKill(-9551, -5499)
+	MoveAggroAndKill(-9545, -4205)
+	MoveAggroAndKill(-9551, -2929)
+	MoveAggroAndKill(-9559, -1324)
+	MoveAggroAndKill(-9451, -301)
+EndFunc
+
+
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
-	If $questStatus == 0 Or $questStatus == 3 Then SetupCharrAtTheGateQuest()
-
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -278,102 +266,36 @@ Func LDOATitleFarmUnder10()
 	MoveTo(-3640, 10930, 30)
 	Sleep(2000)
 	MoveTo(-3440, 10010, 30)
-	MoveAggroAndKillInRange(-3753, 11131, '', 2000, Null)
-
-
+	MoveAggroAndKillInRange(-3753, 11131, '', 3000)
 	If GetIsDead() Then BackToAscalon()
-
-	Local $me = GetMyAgent()
-	While 1
-		If CountFoesInRangeOfAgent($me, 3000) >= 2 Then
-			Sleep(100)
-		Else
-			BackToAscalon()
-			ExitLoop
-		EndIf
-	WEnd
-
 	Return $SUCCESS
-EndFunc
-
-
-;~ Setup Hamnet quest
-Func SetupHamnetQuest()
-	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	Info('Setting up Hamnet quest...')
-	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
-
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
-
-	; Get quest if not already obtained
-	If $questStatus == 0 Then
-		Info('Quest not found, setting up...')
-		Sleep(GetPing() + 750)
-		MoveTo(9516, 7668)
-		MoveTo(9815, 7809)
-		MoveTo(10280, 7895)
-		MoveTo(10564, 7832)
-		GoToNPC(GetNearestNPCToCoords(10564, 7832))
-		Sleep(GetPing() + 750)
-		Dialog($ID_Dialog_Accept_Quest_Farmer_Hamnet)
-		Sleep(GetPing() + 750)
-		$questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
-		If $questStatus == 0 Then
-			$LDOA_HAMNET_UNAVAILABLE = True
-			Return
-		EndIf
-	EndIf
-	If $questStatus == 1 Then
-		Info('Quest found, Good to go!')
-	EndIf
 EndFunc
 
 
 ;~ Farm to do to level to level 20
 Func LDOATitleFarmAfter10()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
-	If $questStatus == 0 Then SetupHamnetQuest()
-
 	Info('Starting Hamnet farm...')
-
-	While 1
-		Local $level = DllStructGetData(GetMyAgent(), 'Level')
-		If $level < 20 Then
-			RandomSleep(500)
-			Info('Current level: ' & $level)
-			Hamnet()
-		Else
-			Info('Current level: ' & $level & ', stopping farm.')
-			BackToAscalon()
-			ExitLoop
-		EndIf
-	WEnd
-
+	Local $level = DllStructGetData(GetMyAgent(), 'Level')
+	If $level == 20 Then
+		Info('Reached level 20, stopping farm.')
+		BackToAscalon()
+	Else
+		Info('Heading to Foibles Fair!')
+		DistrictTravel($ID_Foibles_Fair)
+		MoveTo(-183, 9002)
+		MoveTo(356, 7834)
+		Info('Entering Wizards Folly!')
+		Move(500, 7300)
+		WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
+		UseConsumable($ID_Igneous_Summoning_Stone)
+		MoveAggroAndKillInRange(2541, 4504, '', 2000)
+		Info('Returning to Foibles Fair')
+		Resign()
+		RandomSleep(3500)
+		ReturnToOutpost()
+		WaitMapLoading($ID_Foibles_Fair, 10000, 1000)
+	EndIf
 	Return $SUCCESS
-EndFunc
-
-
-;~ Farmer Hamnet farm
-Func Hamnet()
-	Info('Heading to Foibles Fair!')
-	TravelWithTimeout($ID_Foibles_Fair, 'RunToFoible')
-
-	Sleep(GetPing() + 750)
-
-	MoveTo(-183, 9002)
-	MoveTo(356, 7834)
-	Info('Entering Wizards Folly!')
-	Move(500, 7300)
-	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone)
-
-	MoveAggroAndKillInRange(2541, 4504, '', 2000, Null)
-
-	If GetIsDead() Then Return Hamnet()
-
-	ReturnToOutpost()
-	Info('Returning to Foibles Fair')
-	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 EndFunc
 
 
@@ -381,7 +303,7 @@ EndFunc
 Func TravelWithTimeout($mapID, $onFailFunc)
 	Local $startTime = TimerInit()
 
-	RandomDistrictTravel($mapID)
+	DistrictTravel($mapID)
 
 	While TimerDiff($startTime) < 15000
 		If GetMapID() == $mapID Then
@@ -399,12 +321,6 @@ EndFunc
 Func RunToAshford()
 	; This function is used to run to Ashford Abbey
 	Info('Starting run to Ashford Abbey from Ascalon..')
-	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
-	Sleep(GetPing() + 750)
-
-	Info('Entering Lakeside County!')
-
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RandomSleep(1000)
@@ -415,10 +331,7 @@ Func RunToAshford()
 	MoveTo(-5310, -6951) ; 3
 	MoveTo(-11026, -6238) ; 4
 	Move(-11444, -6237) ; 5
-
-	; If we are dead, we will try again
-	If GetIsDead() Then Return RunToAshford()
-
+	If GetIsDead() Then Return
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	Info('Made it to Ashford Abbey')
 EndFunc
@@ -452,12 +365,10 @@ Func RunToFoible()
 	MoveTo(536, 7315) ; 13
 	Move(320, 7950) ; 14
 
-	; If we are dead, we will try again
-	If GetIsDead() Then Return RunToFoible()
-
 	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
 	Info('Made it to Foibles Fair')
 EndFunc
+
 
 ;~ Resign and return to Ascalon
 Func BackToAscalon()
@@ -465,39 +376,19 @@ Func BackToAscalon()
 	Resign()
 	RandomSleep(3500)
 	ReturnToOutpost()
-	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 2000)
+	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 1000)
 EndFunc
+
 
 ;~ Start/stop background low-health monitor
 ;~ Return to Ascalon if health is dangerously low
-Func StartLowHealthMonitor()
-	If Not $LOW_HEALTH_ADLIB_ACTIVE Then
-		AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)
-		$LOW_HEALTH_ADLIB_ACTIVE = True
-	EndIf
-EndFunc
-
-Func StopLowHealthMonitor()
-	If $LOW_HEALTH_ADLIB_ACTIVE Then
-		AdlibUnRegister('LowHealthMonitor')
-		$LOW_HEALTH_ADLIB_ACTIVE = False
-	EndIf
-EndFunc
-
 Func LowHealthMonitor()
-	If $LOW_HEALTH_TRIGGERED Then Return
-	CheckAndTriggerLowHealthRetreat()
+	If IsLowHealth() Then
+		Notice('Health below threshold, returning to Ascalon.')
+		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	EndIf
 EndFunc
 
-Func CheckAndTriggerLowHealthRetreat()
-	If $LOW_HEALTH_TRIGGERED Then Return True
-	If Not IsLowHealth() Then Return False
-
-	$LOW_HEALTH_TRIGGERED = True
-	Notice('Health below threshold, returning to Ascalon.')
-	If GetMapID() <> $ID_Ascalon_City_Presearing Then DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	Return True
-EndFunc
 
 Func IsLowHealth()
 	Local $me = GetMyAgent()
@@ -506,10 +397,6 @@ Func IsLowHealth()
 	If $healthRatio > 0 And $healthRatio < $LOW_HEALTH_THRESHOLD Then Return True
 	Return False
 EndFunc
-
-
-
-
 
 
 ;~ Function to deal with inventory after farm, in presearing
