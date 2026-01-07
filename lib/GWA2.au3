@@ -1303,15 +1303,15 @@ Func SellItem($item, $amount = 0)
 EndFunc
 
 
-;~ Buys an item.
-Func BuyItem($item, $amount, $value)
+;~ Buys an item. ItemPosition is the position of the item in the list of items offered by merchant
+Func BuyItem($itemPosition, $amount, $value)
 	Local $merchantItemsBase = GetMerchantItemsBase()
 
 	If Not $merchantItemsBase Then Return
-	If $item < 1 Or $item > GetMerchantItemsSize() Then Return
+	If $itemPosition < 1 Or GetMerchantItemsSize() < $itemPosition Then Return
 
 	DllStructSetData($buyItemStruct, 2, $amount)
-	DllStructSetData($buyItemStruct, 3, MemoryRead($merchantItemsBase + 4 * ($item - 1)))
+	DllStructSetData($buyItemStruct, 3, MemoryRead($merchantItemsBase + 4 * ($itemPosition - 1)))
 	DllStructSetData($buyItemStruct, 4, $amount * $value)
 	DllStructSetData($buyItemStruct, 5, MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)))
 	Enqueue($buyItemStructPtr, 20)

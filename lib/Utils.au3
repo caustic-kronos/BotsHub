@@ -396,8 +396,6 @@ Func DefaultShouldPickItem($item)
 		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
 		Local $dyeColorName = $DyeNamesFromIDs[$dyeColorID]
 		Return IsLootOptionChecked('Pick up items.Dyes.' & $dyeColorName)
-	ElseIf IsTrophy($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Trophies')
 	ElseIf ($itemID == $ID_Glacial_Stone) Then
 		Return IsLootOptionChecked('Pick up items.Trophies.Glacial Stone')
 	ElseIf ($itemID == $ID_Destroyer_Core) Then
@@ -410,6 +408,8 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf ($itemID == $ID_Jar_of_Invigoration) Then
 		Return False
+	ElseIf IsTrophy($itemID) Then
+		Return IsLootOptionChecked('Pick up items.Trophies')
 	ElseIf IsMapPiece($itemID) Then
 		Return IsLootOptionChecked('Pick up items.Quest items.Map pieces')
 	ElseIf ($itemID == $ID_Lockpick) Then
@@ -1209,8 +1209,23 @@ Func HasUnidentifiedItems()
 		Local $item
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
 			If Not GetIsIdentified($item) Then Return True
+		Next
+	Next
+	Return False
+EndFunc
+
+
+;~ Returns true if there are items in inventory that user selected to salvage in the GUI interface
+Func HasChosenItemsToSalvage()
+	For $bagIndex = 1 To $BAGS_COUNT
+		Local $bag = GetBag($bagIndex)
+		Local $item
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
+			If DefaultShouldSalvageItem($item) Then Return True
 		Next
 	Next
 	Return False

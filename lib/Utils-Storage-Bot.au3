@@ -88,7 +88,7 @@ Func ManageInventory($STATUS)
 EndFunc
 
 
-;~ Function to deal with inventory after farm
+;~ Function to deal with inventory before farm run
 Func InventoryManagementBeforeRun($tradeTown = $ID_Embark_Beach)
 	; Operations order :
 	; 1-Store unids if desired
@@ -118,7 +118,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_Embark_Beach)
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If $SALVAGE_ANY_ITEM Then
+	If $SALVAGE_ANY_ITEM And HasChosenItemsToSalvage() Then
 		TravelToOutpost($tradeTown, $DISTRICT_NAME)
 		SalvageItems()
 		If $BAGS_COUNT == 5 Then
@@ -866,7 +866,7 @@ Func IsUnidentifiedGoldItem($item)
 EndFunc
 
 
-;~ helper function for StoreEverythingInXunlaiStorage() function
+;~ helper function for StoreEverythingInXunlaiStorage function
 Func StoreAllItems($item = Null)
 	Return True
 EndFunc
@@ -1034,16 +1034,15 @@ Func DefaultShouldSalvageItem($item)
 		If $itemID == $ID_Glacial_Stone And IsLootOptionChecked('Salvage items.Trophies.Glacial Stone') Then Return True
 		If $itemID == $ID_Destroyer_Core And IsLootOptionChecked('Salvage items.Trophies.Destroyer Core') Then Return True
 		Return False
-	EndIf
-	If IsArmorSalvageItem($item) Then Return $SALVAGE_GEARS And GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
-	If IsWeapon($item) Then
+	ElseIf IsRareMaterial($item) Then
+    	Local $materialName = $Rare_Material_Names_From_IDs[$itemID]
+    	Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
+    ElseIf IsArmorSalvageItem($item) Then
+    	Return $SALVAGE_GEARS And GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+	ElseIf IsWeapon($item) Then
 		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
-		; If Salvage options are enabled, check them first to see if we should keep the item
-		If $SALVAGE_WEAPONS Then
-			Return Not ShouldKeepWeapon($item) And CheckSalvageWeapon($item)
-		Else
-			Return Not ShouldKeepWeapon($item)
-		EndIf
+		; If weapon salvage options are enabled, check them too to see if we should keep the weapon
+		Return Not ShouldKeepWeapon($item) And (Not $SALVAGE_WEAPONS Or CheckSalvageWeapon($item))
 	EndIf
 	Return False
 EndFunc
