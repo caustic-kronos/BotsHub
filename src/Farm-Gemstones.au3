@@ -22,12 +22,19 @@
 #include '../lib/Utils.au3'
 #include '../lib/Utils-Debugger.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $GemstoneFarmSkillbar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
-Global Const $GemstoneHeroSkillbar = 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm'
-Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
+;Global Const $GemstonesMesmerSkillBar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
+Global Const $GemstonesMesmerSkillBar = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
+Global Const $GemstonesHero1Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GemstonesHero2Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GemstonesHero3Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GemstonesHero4Skillbar = 'OAljUwGopSUBHVyBoBVVbh4B1YA'
+Global Const $GemstonesHero5Skillbar = 'OAhjUwGYoSUBHVoBbhVVWbTODTA'
+Global Const $GemstonesHero6Skillbar = 'OAhjQoGYIP3hhWVVaO5EeDzxJ'
+Global Const $GemstonesHero7Skillbar = 'OACiAyk8gNtePuwJ00ZOPLYA'
+Global Const $GemstonesFarmInformations = 'Requirements:' & @CRLF _
 	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
 	& '- Recommended to have maxed out Lightbringer title' & @CRLF _
 	& '- Strong hero build' &@CRLF _
@@ -44,16 +51,17 @@ Global Const $GemstoneFarmInformations = 'Requirements:' & @CRLF _
 	& 'Ebony Citadel of Mallyx location is unlocked after defeating all 4 Lords of Anguish in Mallyx the Unyielding quest.' & @CRLF _
 	& 'Caution: do not defeat Mallyx the Unyielding, because this will finish the quest which would require to do 4 DoA parts all over again to get access to Ebony Citadel of Mallyx' & @CRLF _
 	& 'This bot doesn''t defeat Mallyx the Unyielding, only attempts to defeat all 19 waves, which doesn''t finish the quest' & @CRLF _
+	& 'This farm bot is based on below article:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm' & @CRLF
 ; Average duration ~ 12m30sec
-Global Const $GEMSTONE_FARM_DURATION = (12 * 60 + 30) * 1000
-Global Const $MAX_GEMSTONE_FARM_DURATION = 25 * 60 * 1000
-Global $GemstoneFarmTimer = Null
+Global Const $GEMSTONES_FARM_DURATION = (12 * 60 + 30) * 1000
+Global Const $MAX_GEMSTONES_FARM_DURATION = 25 * 60 * 1000
 
 ;=== Configuration / Globals ===
-Global Const $DefendX = -3432
-Global Const $DefendY = -5564
+Global Const $GemstonesDefendX = -3432
+Global Const $GemstonesDefendY = -5564
 
-Global $GemstoneFarmSetup = False
+Global $GEMSTONES_FARM_SETUP = False
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction) is better than UseSkill(1))
 Global Const $Gem_Symbolic_Celerity		= 1
@@ -69,25 +77,24 @@ Global Const $Gem_SkillsArray		= [$Gem_Symbolic_Celerity,	$Gem_Symbolic_Posture,
 Global Const $Gem_SkillsCostsArray	= [15,						10,						0,						0,						0,							0,							5,						10]
 Global Const $GemSkillsCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
 
-Global $GemstoneFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
-$GemstoneFightOptions.Item('fightRange')		= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-$GemstoneFightOptions.Item('flagHeroesOnFight') = False ; heroes will be flagged before fight to defend the start location
-$GemstoneFightOptions.Item('priorityMobs')		= True
-$GemstoneFightOptions.Item('skillsCostMap')		= $GemSkillsCostsMap
-$GemstoneFightOptions.Item('lootInFights')		= False ; loot only when no foes are in range
-$GemstoneFightOptions.Item('openChests')		= False ; there are no chests in Ebony Citadel of Mallyx location
+Global $GemstonesFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
+$GemstonesFightOptions.Item('fightRange')			= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
+$GemstonesFightOptions.Item('flagHeroesOnFight')	= False ; heroes will be flagged before fight to defend the start location
+$GemstonesFightOptions.Item('priorityMobs')			= True
+$GemstonesFightOptions.Item('skillsCostMap')		= $GemSkillsCostsMap
+$GemstonesFightOptions.Item('lootInFights')			= False ; loot only when no foes are in range
+$GemstonesFightOptions.Item('openChests')			= False ; there are no chests in Ebony Citadel of Mallyx location
 
-Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15 (can be accessed in GWToolbox)
-Global Const $ModelID_Zhellix = 5221 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
+Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
+Global Const $ModelID_Zhellix = 5272 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
 
 
-;~ Main Gemstone farm entry function
-Func GemstoneFarm($STATUS)
+;~ Main Gemstones farm entry function
+Func GemstonesFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $GemstoneFarmSetup Then SetupGemstoneFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $GEMSTONES_FARM_SETUP Then SetupGemstonesFarm()
 
-	Local $result = GemstoneFarmLoop()
+	Local $result = GemstonesFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared all 19 waves')
 	If $result == $FAIL Then Info('Could not clear all 19 waves')
 	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
@@ -95,52 +102,44 @@ Func GemstoneFarm($STATUS)
 EndFunc
 
 
-;~ Gemstone farm setup
-Func SetupGemstoneFarm()
+;~ Gemstones farm setup
+Func SetupGemstonesFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	SetDisplayedTitle($ID_Lightbringer_Title)
-	; Assuming that team has been set up correctly manually
-	;SetupTeamGemstoneFarm()
-	$GemstoneFarmSetup = True
+	SetupPlayerGemstonesFarm()
+	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL ; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
+	$GEMSTONES_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
-Func SetupTeamGemstoneFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	Sleep(500)
-	AddHero($ID_Gwen)
-	AddHero($ID_Norgu)
-	AddHero($ID_Razah)
-	AddHero($ID_Master_Of_Whispers)
-	AddHero($ID_Olias)
-	AddHero($ID_Livia)
-	AddHero($ID_Xandra)
-	Sleep(1000)
-	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
-		Return $FAIL
+Func SetupPlayerGemstonesFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up player build skill bar according to GUI settings')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
+		Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
+		LoadSkillTemplate($GemstonesMesmerSkillBar)
+	Else
+		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
+	Sleep(250 + GetPing())
 EndFunc
 
 
-;~ Gemstone farm loop
-Func GemstoneFarmLoop()
+;~ Gemstones farm loop
+Func GemstonesFarmLoop()
 	If TalkToZhellix() == $FAIL Then Return $FAIL
-	WalkToSpot()
-	$GemstoneFarmTimer = TimerInit() ; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
+	WalkToSpotGemstonesFarm()
 	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
+	Sleep(2000)
 	If Defend() == $FAIL Then Return $FAIL
 	Return $SUCCESS
 EndFunc
@@ -159,9 +158,10 @@ EndFunc
 
 
 ;~ Getting into positions
-Func WalkToSpot()
+Func WalkToSpotGemstonesFarm()
+	Info('Moving to defend position')
 	GoToAgent(GetAgentByID($AgentID_Zhellix), Null) ; go close to Zhellix to let him start erforming the ritual, Null for no interaction
-	MoveTo($DefendX, $DefendY) ; move to defending position
+	MoveTo($GemstonesDefendX, $GemstonesDefendY) ; move to defending position
 	FanFlagHeroes(260) ; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
 EndFunc
 
@@ -169,16 +169,15 @@ EndFunc
 ;~ Defending function
 Func Defend()
 	Info('Defending...')
-	Sleep(2000)
 
 	While IsZhellixPerformingRitual()
 		;If GetMapLoading() == 2 Then Disconnected()
-		If TimerDiff($GemstoneFarmTimer) > $MAX_GEMSTONE_FARM_DURATION Then Return $FAIL
+		If CheckStuck('Gemstones fight', $MAX_GEMSTONES_FARM_DURATION) == $FAIL Then Return $FAIL
 		If IsDoARunFailed() Then Return $FAIL
-		Sleep(500)
-		KillFoesInArea($GemstoneFightOptions)
-		PickUpItems()
-		MoveTo($DefendX, $DefendY)
+		Sleep(1000)
+		KillFoesInArea($GemstonesFightOptions)
+		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
+		MoveTo($GemstonesDefendX, $GemstonesDefendY)
 	WEnd
 	Return IsDoARunFailed()? $FAIL : $SUCCESS ; if ritual completed then successful run
 EndFunc
@@ -199,7 +198,7 @@ Func IsZhellixPerformingRitual()
 
 	Local $me = GetMyAgent()
 	Local $Zhellix = GetAgentByID($AgentID_Zhellix)
-	Local $foesCount = CountFoesInRangeOfAgent($me, $GemstoneFightOptions.Item('fightRange'))
+	Local $foesCount = CountFoesInRangeOfAgent($me, $GemstonesFightOptions.Item('fightRange'))
 	; After all waves are finished, Zhellix leaves citadel's entrance area where player is, which makes below check False
 	Return (Not GetIsDead($Zhellix) And GetDistance($me, $Zhellix) < 1500) Or $foesCount > 0
 EndFunc

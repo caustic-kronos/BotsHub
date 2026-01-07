@@ -24,71 +24,47 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $VanguardTitleFarmInformations = 'Vanguard title farm'
 ; Average duration ~ 45m
 Global Const $VANGUARD_TITLE_FARM_DURATION = 45 * 60 * 1000
+Global $VANGUARD_FARM_SETUP = False
 
 
 ;~ Main loop for the vanguard faction farm
 Func VanguardTitleFarm($STATUS)
-	VanguardFarmSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $VANGUARD_FARM_SETUP Then VanguardTitleFarmSetup()
 
 	GoToDaladaUplands()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishDaladaUplands()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
+
 	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	Return $result
 EndFunc
 
 
-Func VanguardFarmSetup()
+Func VanguardTitleFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	SetDisplayedTitle($ID_Ebon_Vanguard_Title)
 	SwitchMode($ID_HARD_MODE)
-	; Assuming that team has been set up correctly manually
-	;SetupTeamVanguardFarm()
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
+	$VANGUARD_FARM_SETUP = True
 	Info('Preparations complete')
-EndFunc
-
-
-Func SetupTeamVanguardFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Gwen)
-	RandomSleep(500)
-	AddHero($ID_Razah)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	RandomSleep(500)
-	AddHero($ID_Livia)
-	RandomSleep(500)
-	AddHero($ID_Olias)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	Sleep(1000)
-	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
-	EndIf
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into Dalada Uplands
 Func GoToDaladaUplands()
-	If GetMapID() <> $ID_Doomlore_Shrine Then TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
-	Info('Moving to Dalada Uplands')
+	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Dalada_Uplands
+		Info('Moving to Dalada Uplands')
 		MoveTo(-15231, 13608)
 		RandomSleep(1000)
 		WaitMapLoading($ID_Dalada_Uplands, 10000, 2000)
@@ -101,6 +77,7 @@ Func VanquishDaladaUplands()
 	If GetMapID() <> $ID_Dalada_Uplands Then Return $FAIL
 
 	Local Static $foes[93][3] = [ _ ; 72 groups to vanquish + 21 movements
+		_ ; blessing
 		[-12373, 12899, 'Move To Start'], _
 		[-9464, 15937, 'Charr Group'], _
 		[-9130, 13535, 'Moving'], _
@@ -111,6 +88,7 @@ Func VanquishDaladaUplands()
 		[884, 15641, 'Charr Group'], _
 		[2956, 10496, 'Mantid Group'], _
 		[5160, 11032, 'Moving'], _
+		_ ; blessing
 		[5848, 11086, 'Mantid Group'], _
 		[7639, 11839, 'Charr Patrol'], _
 		[6494, 15729, 'Charr Patrol'], _
@@ -128,6 +106,7 @@ Func VanquishDaladaUplands()
 		[5086, -2187, 'Charr on the way'], _
 		[3449, -3693, 'Charr Patrol'], _
 		[7170, -4037, 'Moving'], _
+		_ ; blessing
 		[8903, -1801, 'Second Skale'], _
 		[6790, -6124, 'Moving'], _
 		[3696, -9324, 'Charr Patrol'], _
@@ -142,12 +121,14 @@ Func VanquishDaladaUplands()
 		[15290, -13688, 'Charr Seeker'], _
 		[15932, -14104, 'Moving Back'], _
 		[14934, -17261, 'Moving'], _
+		_ ; blessing
 		[11509, -17586, 'Moving'], _
 		[6031, -17582, 'Moving'], _
 		[2846, -17340, 'Charr Group'], _
 		[-586, -16529, 'Charr Seeker'], _
 		[-4099, -14897, 'Moving'], _
 		[-4217, -12620, 'Moving'], _
+		_ ; blessing
 		[-8023, -13970, 'Charr Seeker'], _
 		[-7326, -8852, 'Charr Seeker'], _
 		[-8023, -13970, 'Charr Patrol'], _
@@ -162,6 +143,7 @@ Func VanquishDaladaUplands()
 		[-18222, -6263, 'Finish Skale'], _
 		[-17239, -1933, 'Moving'], _
 		[-17509, 202, 'Moving'], _
+		_ ; blessing
 		[-13853, -2427, 'Charr Seeker'], _
 		[-9313, -3786, 'Charr Seeker'], _
 		[-13228, 2083, 'Charr Seeker'], _
@@ -185,6 +167,7 @@ Func VanquishDaladaUplands()
 		[621, 8056, 'Looking for Mantids'], _
 		[-4039, 8928, 'Looking for Mantids'], _
 		[-3299, 606, 'Looking for Mantids'], _
+		_ ; blessing
 		[5219, -5017, 'Charr Patrol'], _
 		[7289, -9484, 'Charr Patrol'], _
 		[5219, -7017, 'Charr Patrol'], _
@@ -196,6 +179,7 @@ Func VanquishDaladaUplands()
 		[-5561, -5483, 'Molotov'] _
 	]
 
+	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-14939, 11018))
 	Sleep(1000)
 	Dialog(0x84)
@@ -242,6 +226,8 @@ Func VanquishDaladaUplands()
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
 	EndIf
-	Return $SUCCESS
 EndFunc

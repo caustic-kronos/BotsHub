@@ -4,9 +4,11 @@
 #	Raptor Bot
 #								#
 #################################
-Author: Rattiev
-Based on : Vaettir Bot by gigi
-Modified by: Night, Gahais
+; Author: Rattiev
+; Based on : Vaettir Bot by gigi
+; Modified by: Night, Gahais
+; Raptor farm in Riven Earth based on below article:
+https://gwpvx.fandom.com/wiki/Build:W/N_Raptor_Farmer
 #CE ===========================================================================
 
 #include-once
@@ -25,11 +27,11 @@ Modified by: Night, Gahais
 ; - Use pumpkin pie slices ? Reduce cast time and increase attack speed reducing chances to be interrupted during MoP or Whirlwind
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $WNRaptorFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
-Global Const $DNRaptorFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
+Global Const $WNRaptorsFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
+Global Const $DNRaptorsFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
 Global Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
 Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 12 in curses' & @CRLF _
@@ -41,9 +43,20 @@ Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune' & @CRLF _
 	& '- A superior Absorption rune' & @CRLF _
 	& '- General Morgahn with 16 in Command, 10 in restoration and the rest in Leadership' & @CRLF _
-	& '		and all of his skills locked'
+	& '		and all of his skills locked' & @CRLF _
+	& ' ' & @CRLF _
+	& 'This farm bot is based on below article:' & @CRLF _
+	& 'https://gwpvx.fandom.com/wiki/Build:W/N_Raptor_Farmer' & @CRLF
 ; Average duration ~ 1m10s ~ First run is 1m30s with setup
 Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
+Global $RAPTORS_FARM_SETUP = False
+
+; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
+; party hero ID that is used to add hero to the party team
+Global Const $RaptorsHeroPartyID = $ID_General_Morgahn
+;Global Const $RaptorsHeroPartyID = $ID_Keiran_Thackeray
+;Global Const $RaptorsHeroPartyID = $ID_Hayda
+Global Const $RaptorsHeroIndex = 1 ; index of first hero party member in team, player index is 0
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Global Const $Raptors_MarkOfPain		= 1
@@ -73,17 +86,21 @@ Global Const $Raptors_StandYourGround	= 6
 Global Const $Raptors_CantTouchThis		= 7
 Global Const $Raptors_BladeturnRefrain	= 8
 
-Global $RAPTORS_FARM_SETUP = False
-Global $RAPTORS_PROFESSION = 1
-Global $chatStuckTimer = TimerInit()
+Global $RaptorsPlayerProfession = $ID_Warrior ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
+
+Global $RaptorsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
+$RaptorsMoveOptions.Item('defendFunction')			= Null ; not using any defense skills during movement to preserve energy
+$RaptorsMoveOptions.Item('moveTimeOut')				= 3 * 60 * 1000
+$RaptorsMoveOptions.Item('randomFactor')			= 10
+$RaptorsMoveOptions.Item('hosSkillSlot')			= 0
+$RaptorsMoveOptions.Item('deathChargeSkillSlot')	= 0
+$RaptorsMoveOptions.Item('openChests')				= False
+
 
 ;~ Main method to farm Raptors
-Func RaptorFarm($STATUS)
+Func RaptorsFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	$RAPTORS_PROFESSION = GetHeroProfession(0)		;Gets our own profession
-	If $RAPTORS_PROFESSION <> 1 And $RAPTORS_PROFESSION <> 10 Then Return $PAUSE
-	If Not $RAPTORS_FARM_SETUP Then SetupRaptorFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $RAPTORS_FARM_SETUP And SetupRaptorsFarm() == $FAIL Then Return $PAUSE
 
 	GoToRivenEarth()
 	Local $result = RaptorsFarmLoop()
@@ -93,12 +110,13 @@ EndFunc
 
 
 ;~ Setup the Raptor farm for faster farm
-Func SetupRaptorFarm()
+Func SetupRaptorsFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SetDisplayedTitle($ID_Asura_Title)
 	SwitchMode($ID_HARD_MODE)
-	SetupTeamRaptorFarm()
+	If SetupPlayerRaptorsFarm() == $FAIL Then Return $FAIL
+	If SetupTeamRaptorsFarm() == $FAIL Then Return $FAIL
 	GoToRivenEarth()
 	MoveTo(-25800, -4150)
 	Move(-26309, -4112)
@@ -106,27 +124,50 @@ Func SetupRaptorFarm()
 	WaitMapLoading($ID_Rata_Sum, 10000, 2000)
 	$RAPTORS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
-Func SetupTeamRaptorFarm()
+Func SetupPlayerRaptorsFarm()
+	Info('Setting up player build skill bar')
+	Switch DllStructGetData(GetMyAgent(), 'Primary')
+		Case $ID_Warrior
+			$RaptorsPlayerProfession = $ID_Warrior
+			LoadSkillTemplate($WNRaptorsFarmerSkillbar)
+		Case $ID_Dervish
+			$RaptorsPlayerProfession = $ID_Dervish
+			LoadSkillTemplate($DNRaptorsFarmerSkillbar)
+		Case Else
+			Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
+			Return $FAIL
+	EndSwitch
+	Sleep(250 + GetPing())
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupTeamRaptorsFarm()
 	Info('Setting up team')
+	Sleep(500 + GetPing())
 	LeaveParty()
-	AddHero($ID_General_Morgahn)
-	LoadSkillTemplate($WNRaptorFarmerSkillbar)
-	LoadSkillTemplate($PRunnerHeroSkillbar, 1)
+	Sleep(500 + GetPing())
+	AddHero($RaptorsHeroPartyID)
+	Sleep(250 + GetPing())
+	LoadSkillTemplate($PRunnerHeroSkillbar, $RaptorsHeroIndex)
 	Sleep(250)
-	DisableAllHeroSkills(1)
-	Sleep(1000)
+	DisableAllHeroSkills($RaptorsHeroIndex)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
+		Return $FAIL
 	EndIf
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into Riven Earth
 Func GoToRivenEarth()
-	If GetMapID() <> $ID_Rata_Sum Then TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Riven_Earth
 		Info('Moving to Riven Earth')
 		MoveTo(19700, 16800)
@@ -141,40 +182,25 @@ EndFunc
 Func RaptorsFarmLoop()
 	If GetMapID() <> $ID_Riven_Earth Then Return $FAIL
 
-	UseHeroSkill(1, $Raptors_VocalWasSogolon)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_VocalWasSogolon)
 	RandomSleep(1200)
-	UseHeroSkill(1, $Raptors_Incoming)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_Incoming)
 	GetRaptorsAsuraBlessing()
 	MoveToBaseOfCave()
 	Info('Moving Hero away')
 	CommandAll(-25309, -4212)
-	GetRaptors()
-	KillRaptors()
+	If AggroRaptors() == $FAIL Then Return $FAIL
+	If KillRaptors() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
-
-	Info('Looting')
-	PickUpItems(DefendWhilePickingUpItems)
-	RandomSleep(1000)
-	PickUpItems(DefendWhilePickingUpItems)
+	If IsPlayerAlive() Then
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems(RaptorsDefend)
+			Sleep(100 + GetPing())
+		Next
+	EndIf
 
 	Return CheckFarmResult()
-EndFunc
-
-
-;~ Defend skills to use while looting in case some mobs are still alive
-Func DefendWhilePickingUpItems()
-	If $RAPTORS_PROFESSION == 1 Then
-		If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
-		If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
-			UseSkillEx($Raptors_SoldiersDefense)
-		ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
-			UseSkillEx($Raptors_WaryStance)
-		EndIf
-	Else
-		If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
-		If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
-	EndIf
 EndFunc
 
 
@@ -184,8 +210,9 @@ Func GetRaptorsAsuraBlessing()
 	If $Asura < 160000 Then
 		Info('Getting asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
-		RandomSleep(300)
+		Sleep(1000)
 		Dialog(0x84)
+		Sleep(1000)
 	EndIf
 	RandomSleep(350)
 EndFunc
@@ -197,33 +224,34 @@ Func MoveToBaseOfCave()
 	Info('Moving to Cave')
 	Move(-22015, -7502)
 	RandomSleep(7000)
-	UseHeroSkill(1, $Raptors_FallBack)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_FallBack)
 	RandomSleep(500)
-	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_IAmUnstoppable)
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then UseSkillEx($Raptors_IAmUnstoppable)
 	Moveto(-21333, -8384)
-	UseHeroSkill(1, $Raptors_EnduringHarmony, GetMyAgent())
-	If ($RAPTORS_PROFESSION == 10) Then UseSkill($Raptors_SignetOfMysticSpeed, GetMyAgent())
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_EnduringHarmony, GetMyAgent())
+	If ($RaptorsPlayerProfession == $ID_Dervish) Then UseSkillEx($Raptors_SignetOfMysticSpeed, GetMyAgent())
 	RandomSleep(1800)
-	UseHeroSkill(1, $Raptors_MakeHaste, GetMyAgent())
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_MakeHaste, GetMyAgent())
 	RandomSleep(20)
-	UseHeroSkill(1, $Raptors_StandYourGround)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_StandYourGround)
 	RandomSleep(20)
-	UseHeroSkill(1, $Raptors_CantTouchThis)
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_CantTouchThis)
 	RandomSleep(20)
-	UseHeroSkill(1, $Raptors_BladeturnRefrain, GetMyAgent())
+	UseHeroSkill($RaptorsHeroIndex, $Raptors_BladeturnRefrain, GetMyAgent())
 	Move(-20930, -9480, 40)
 EndFunc
 
 
 ;~ Aggro all raptors
-Func GetRaptors()
+Func AggroRaptors()
+	If IsPlayerDead() Then Return $FAIL
 	Info('Gathering Raptors')
 
 	Move(-20695, -9900, 20)
 	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 
-	If ($RAPTORS_PROFESSION == 1) Then UseSkillEx($Raptors_ShieldBash)
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then UseSkillEx($Raptors_ShieldBash)
 
 	Local $count = 0
 	While IsPlayerAlive() And IsRecharged($Raptors_MarkOfPain) And $count < 200
@@ -233,30 +261,60 @@ Func GetRaptors()
 	WEnd
 	RandomSleep(250)
 
-	IsBossAggroed()
-	If MoveAggroingRaptors(-20000, -10300) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-19500, -11500) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-20500, -12000) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-21000, -12200) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-21500, -12000) == $FAIL Then Return $FAIL
-	If MoveAggroingRaptors(-22000, -12000) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-20000, -10300) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-19500, -11500) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-20500, -12000) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-21000, -12200) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-21500, -12000) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-22000, -12000) == $STUCK Then Return $FAIL
 	$target = GetNearestEnemyToAgent(GetMyAgent())
-	If $RAPTORS_PROFESSION == 10 Then UseSkillEx($Raptors_MirageCloak)
-	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $FAIL Then Return $FAIL
-	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $FAIL Then Return $FAIL
+	If $RaptorsPlayerProfession == $ID_Dervish Then UseSkillEx($Raptors_MirageCloak)
+	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $STUCK Then Return $FAIL
+	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $STUCK Then Return $FAIL
 	If IsBossAggroed() Then
-		If MoveAggroingRaptors(-22400, -12400) == $FAIL Then Return $FAIL
+		If MoveAggroingRaptors(-22400, -12400) == $STUCK Then Return $FAIL
 	Else
-		If MoveAggroingRaptors(-23300, -12050) == $FAIL Then Return $FAIL
+		If MoveAggroingRaptors(-23300, -12050) == $STUCK Then Return $FAIL
 	EndIf
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
-;~ Returns true if the nearest boss is aggroed. Requires being called once before the boss is aggroed.
+;~ Move to (X,Y) while staying alive vs raptors
+Func MoveAggroingRaptors($destinationX, $destinationY)
+	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $RaptorsMoveOptions)
+EndFunc
+
+
+;~ Get foe that is a boss - Null if no boss
+Func GetBossFoe()
+	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
+	Return IsArray($bossFoes) And UBound($bossFoes) > 0 ? $bossFoes[0] : Null
+EndFunc
+
+
+;~ Returns true if the boss is aggroed, that is, if boss is in attack stance TypeMap == 0x1, not in idle stance TypeMap = 0x0
 Func IsBossAggroed()
-	Local $boss = GetNearestBossFoe()
-	Local Static $unaggroedState = DllStructGetData($boss, 'TypeMap')
-	Return DllStructGetData($boss, 'TypeMap') <> $unaggroedState
+	Local $boss = GetBossFoe()
+	Return BitAND(DllStructGetData($boss, 'TypeMap'), 0x1) == $ID_TypeMap_Attack_Stance
+EndFunc
+
+
+;~ Defend skills to use when looting in case some mobs are still alive
+Func RaptorsDefend()
+	Switch $RaptorsPlayerProfession
+		Case $ID_Warrior
+			If GetEnergy() > 5 And IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
+			If GetEnergy() > 5 And IsRecharged($Raptors_ShieldBash) Then UseSkillEx($Raptors_ShieldBash)
+			If GetEnergy() > 5 And IsRecharged($Raptors_SoldiersDefense) Then
+				UseSkillEx($Raptors_SoldiersDefense)
+			ElseIf GetEnergy() > 10 And IsRecharged($Raptors_WaryStance) Then
+				UseSkillEx($Raptors_WaryStance)
+			EndIf
+		Case $ID_Dervish
+			If GetEnergy() > 6 And IsRecharged($Raptors_MirageCloak) Then UseSkillEx($Raptors_MirageCloak)
+			If GetEnergy() > 3 And IsRecharged($Raptors_ArmorOfSanctity) Then UseSkillEx($Raptors_ArmorOfSanctity)
+	EndSwitch
 EndFunc
 
 
@@ -266,23 +324,24 @@ Func KillRaptors()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Clearing Raptors')
 
-	If ($RAPTORS_PROFESSION == 1) Then
-		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
-		RandomSleep(20)
-		UseSkillEx($Raptors_ProtectorsDefense)
-		RandomSleep(20)
-		UseSkillEx($Raptors_HundredBlades)
-		RandomSleep(20)
-		UseSkillEx($Raptors_WaryStance)
-		RandomSleep(20)
-	Else
-		UseSkillEx($Raptors_VowOfStrength)
-		RandomSleep(20)
-		UseSkillEx($Raptors_ArmorOfSanctity)
-		RandomSleep(20)
-	EndIf
+	Switch $RaptorsPlayerProfession
+		Case $ID_Warrior
+			If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
+			RandomSleep(20)
+			UseSkillEx($Raptors_ProtectorsDefense)
+			RandomSleep(20)
+			UseSkillEx($Raptors_HundredBlades)
+			RandomSleep(20)
+			UseSkillEx($Raptors_WaryStance)
+			RandomSleep(20)
+		Case $ID_Dervish
+			UseSkillEx($Raptors_VowOfStrength)
+			RandomSleep(20)
+			UseSkillEx($Raptors_ArmorOfSanctity)
+			RandomSleep(20)
+	EndSwitch
 
-	Local $rekoff_boss = GetNearestBossFoe()
+	Local $rekoff_boss = GetBossFoe()
 	Local $me = GetMyAgent()
 	If GetDistance($me, $rekoff_boss) > $RANGE_SPELLCAST Then
 		$MoPTarget = GetNearestEnemyToAgent($me)
@@ -295,7 +354,7 @@ Func KillRaptors()
 		$MoPTarget = GetCurrentTarget()
 	EndIf
 
-	If ($RAPTORS_PROFESSION == 10) Then
+	If ($RaptorsPlayerProfession == $ID_Dervish) Then
 		UseSkillEx($Raptors_DustCloak)
 		RandomSleep(20)
 		UseSkillEx($Raptors_PiousFury)
@@ -309,7 +368,7 @@ Func KillRaptors()
 		RandomSleep(250)
 		$count += 1
 		If $count > 10 Then
-			SendStuckCommand()
+			CheckAndSendStuckCommand()
 		EndIf
 	WEnd
 
@@ -323,7 +382,7 @@ Func KillRaptors()
 		$count += 1
 	WEnd
 
-	If ($RAPTORS_PROFESSION == 1) Then
+	If ($RaptorsPlayerProfession == $ID_Warrior) Then
 		If IsRecharged($Raptors_IAmUnstoppable) Then UseSkillEx($Raptors_IAmUnstoppable)
 		UseSkillEx($Raptors_SoldiersDefense)
 		RandomSleep(50)
@@ -353,6 +412,7 @@ Func KillRaptors()
 			$me = GetMyAgent()
 		WEnd
 	EndIf
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -376,80 +436,4 @@ Func CheckFarmResult()
 		Return $FAIL
 	EndIf
 	Return $SUCCESS
-EndFunc
-
-
-;~ Move to (X,Y) while staying alive vs raptors
-Func MoveAggroingRaptors($x, $y)
-	Move($x, $y, 0)
-
-	Local $me = GetMyAgent()
-	While IsPlayerAlive() And GetDistanceToPoint($me, $x, $y) > $RANGE_NEARBY
-		If IsBodyBlocked() Then Return $FAIL
-		RandomSleep(100)
-		Move($x, $y)
-		$me = GetMyAgent()
-	WEnd
-	Return $SUCCESS
-EndFunc
-
-
-;~ Check if bodyblock and if is move randomly until not bodyblocked anymore
-Func IsBodyBlocked()
-	Local $blocked = 0
-	Local Const $PI = 3.14159
-	Local $angle = 0
-
-	Local $me = GetMyAgent()
-	If DllStructGetData($me, 'HP') < 0.90 Then
-		SendStuckCommand()
-	EndIf
-
-	While Not IsPlayerMoving()
-		$blocked += 1
-		Debug('Blocked: ' & $blocked)
-		If $blocked > 1 Then
-			$angle += $PI / 4
-		EndIf
-
-		If ($blocked > 4 Or DllStructGetData($me, 'HP') < 0.90) Then
-			SendStuckCommand()
-		EndIf
-
-		If $blocked > 7 Then
-			Debug('Completely blocked')
-			Return True
-		EndIf
-		Move(DllStructGetData($me, 'X') + 300 * sin($angle), DllStructGetData($me, 'Y') + 300 * cos($angle), 0)
-		RandomSleep(250)
-		$me = GetMyAgent()
-	WEnd
-	Return False
-EndFunc
-
-
-;~ Send /stuck - don't overuse
-Func SendStuckCommand()
-	; use a timer to avoid spamming /stuck - /stuck is only useful when rubberbanding - there shouldn't be any enemy around the character then
-	If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > 10000 Then
-		Warn('Sending /stuck')
-		SendChat('stuck', '/')
-		$chatStuckTimer = TimerInit()
-		RandomSleep(GetPing() + 20)
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Detect if player is rubberbanding
-Func IsRubberBanding()
-
-EndFunc
-
-
-;~ Get nearest foe that is a boss - Null if no boss
-Func GetNearestBossFoe()
-	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
-	Return IsArray($bossFoes) And UBound($bossFoes) > 0 ? $bossFoes[0] : Null
 EndFunc

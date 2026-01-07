@@ -24,24 +24,26 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $NexusChallengeinformations = 'Mysterious armor farm'
+Global Const $NexusChallengeInformations = 'Mysterious armor farm'
 ; Average duration ~ 20m
 Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
+Global $NEXUS_CHALLENGE_SETUP = False
+
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm($STATUS)
-	NexusChallengeSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $NEXUS_CHALLENGE_SETUP Then NexusChallengeSetup()
 
 	EnterNexusChallengeMission()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
 	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
-	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
 
@@ -51,52 +53,33 @@ Func NexusChallengeSetup()
 	If GetMapID() <> $ID_Nexus Then
 		TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in Nexus Challenge that has the same map ID as Nexus outpost (555)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SwitchMode($ID_NORMAL_MODE)
-
-	; Assuming that team has been set up correctly manually
-	;SetupTeamNexusChallengeFarm()
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings($ID_Team_Size_Small)
+	$NEXUS_CHALLENGE_SETUP = True
 	Info('Preparations complete')
-EndFunc
-
-
-Func SetupTeamNexusChallengeFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	Sleep(1000)
-	If GetPartySize() <> 4 Then
-		Warn('Could not set up party correctly. Team size different than 4')
-	EndIf
+	Return $SUCCESS
 EndFunc
 
 
 Func EnterNexusChallengeMission()
-	If GetMapID() <> $ID_Nexus Then TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
-	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is hard to tell if player left the outpost
+	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
 	Local Static $StartX = -391
 	Local Static $StartY = -335
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		Info('Entering Nexus mission')
 		; Lance la quête
 		MoveTo(-2218, -5033)
 		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
-		Notice('Talking to NPC')
+		Info('Talking to NPC')
 		Sleep(1000)
 		Dialog(0x88)
-		Sleep(10000) ; wait 10 seconds to ensure that player exited outpost and entered mission
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost and entered mission
 	WEnd
 EndFunc
 
@@ -129,9 +112,9 @@ Func NexusChallenge()
 	]
 
 	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
-	Notice('First loop completed')
+	Info('First loop completed')
 	If MoveAggroAndKillGroups($foes, 10, 18) == $FAIL Then Return $FAIL
-	Notice('Second loop completed, reset')
+	Info('Second loop completed, reset')
 
 	Return $SUCCESS
 EndFunc

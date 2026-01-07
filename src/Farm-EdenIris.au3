@@ -25,7 +25,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
@@ -38,7 +38,6 @@ Global $IRIS_FARM_SETUP = False
 Func EdenIrisFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToLakesideCounty()
 	Local $result = EdenIrisFarmLoop()
@@ -58,12 +57,13 @@ Func SetupEdenIrisFarm()
 	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
 	$IRIS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into Lakeside County
 Func GoToLakesideCounty()
-	If GetMapID() <> $ID_Ashford_Abbey Then TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
+	TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Lakeside_County
 		Info('Moving to Lakeside County')
 		MoveTo(-11600, -6250)
@@ -93,7 +93,7 @@ Func PickUpIris()
 	Local $agent
 	Local $item
 	Local $deadlock
-	Local $agents = GetAgentArray(0x400)
+	Local $agents = GetAgentArray($ID_Agent_Type_Item)
 	For $agent In $agents
 		Local $agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)

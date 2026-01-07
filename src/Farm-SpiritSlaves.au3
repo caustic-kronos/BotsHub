@@ -21,7 +21,7 @@
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $SpiritSlaves_Skillbar = 'OgejkOrMLTmXfXfb0kkX4OcX5iA'
@@ -61,12 +61,105 @@ Global Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArra
 ;~ Main loop of the farm
 Func SpiritSlavesFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not($SPIRIT_SLAVES_FARM_SETUP)
-		SpiritSlavesFarmSetup()
+	If Not $SPIRIT_SLAVES_FARM_SETUP And SetupSpiritSlavesFarm() == $FAIL Then Return $PAUSE
+	Return SpiritSlavesFarmLoop()
+EndFunc
+
+
+;~ Farm setup : going to the Shattered Ravines
+Func SetupSpiritSlavesFarm()
+	If GetMapID() <> $ID_The_Shattered_Ravines Then
+		If TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+		SwitchMode($ID_HARD_MODE)
+		SetDisplayedTitle($ID_Lightbringer_Title)
+
+		If SetupPlayerSpiritSlavesFarm() == $FAIL Then Return $FAIL
+		LeaveParty() ; solo farmer
+
+		While Not $SPIRIT_SLAVES_FARM_SETUP
+			If RunToShatteredRavines() == $FAIL Then ContinueLoop
+			$SPIRIT_SLAVES_FARM_SETUP = True
+		WEnd
+	EndIf
+	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerSpiritSlavesFarm()
+	Info('Setting up player build skill bar')
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($SpiritSlaves_Skillbar)
+	Else
+		Warn('Should run this farm as dervish')
+		Return $FAIL
+	EndIf
+	Sleep(250 + GetPing())
+	Return $SUCCESS
+EndFunc
+
+
+Func RunToShatteredRavines()
+	TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME)
+	; Exiting to Joko's Domain
+	MoveTo(-14520, 6009)
+	Move(-14820, 3400)
+	RandomSleep(1000)
+	If Not WaitMapLoading($ID_Jokos_Domain) Then Return $FAIL
+	RandomSleep(500)
+	MoveTo(-12657, 2609)
+	ChangeWeaponSet(4)
+	MoveTo(-10938, 4254)
+	; Going to wurm's spoor
+	ChangeTarget(GetNearestSignpostToCoords(-10938, 4254))
+	RandomSleep(500)
+	Info('Taking wurm')
+	TargetNearestItem()
+	ActionInteract()
+	RandomSleep(1500)
+	UseSkillEx(5)
+	; Starting from there there might be enemies on the way
+	MoveTo(-8255, 5320)
+	Local $me = GetMyAgent()
+	If (CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
+	MoveTo(-8624, 10636)
+	$me = GetMyAgent()
+	If (CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
+	MoveTo(-8261, 12808)
+	Move(-3838, 19196)
+	$me = GetMyAgent()
+	While IsPlayerAlive() And IsPlayerMoving()
+		If (CountFoesInRangeOfAgent($me, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)
+		RandomSleep(500)
+		$me = GetMyAgent()
 	WEnd
 
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	; If dead it's not worth rezzing better just restart running
+	If IsPlayerDead() Then Return $FAIL
 
+	MoveTo(-4486, 19700)
+	RandomSleep(3000)
+	MoveTo(-4486, 19700)
+
+	; If dead it's not worth rezzing better just restart running
+	If IsPlayerDead() Then Return $FAIL
+
+	; Entering The Shattered Ravines
+	ChangeWeaponSet(1)
+	Info('Entering The Shattered Ravines : careful')
+	MoveTo(-4500, 20150)
+	Move(-4500, 21000)
+	RandomSleep(1000)
+	If Not WaitMapLoading($ID_The_Shattered_Ravines, 10000, 2000) Then Return $FAIL
+	; Hurry up before dying
+	MoveTo(-9714, -10767)
+	MoveTo(-7919, -10530)
+	Return $SUCCESS
+EndFunc
+
+
+;~ Farm loop
+Func SpiritSlavesFarmLoop()
 	UseConsumable($ID_Slice_of_Pumpkin_Pie)
 
 	Info('Killing group 1 @ North')
@@ -84,74 +177,6 @@ Func SpiritSlavesFarm($STATUS)
 	Move(-7735, -8380)
 	RezoneToTheShatteredRavines()
 
-	Return $SUCCESS
-EndFunc
-
-
-;~ Farm setup : going to the Shattered Ravines
-Func SpiritSlavesFarmSetup()
-	If GetMapID() <> $ID_The_Shattered_Ravines Then
-		If TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
-		SwitchMode($ID_HARD_MODE)
-		LeaveParty() ; solo farmer
-		LoadSkillTemplate($SpiritSlaves_Skillbar)
-		SetDisplayedTitle($ID_Lightbringer_Title)
-
-		; Exiting to Jokos Domain
-		MoveTo(-14520, 6009)
-		Move(-14820, 3400)
-		RandomSleep(1000)
-		If Not WaitMapLoading($ID_Jokos_Domain) Then Return $FAIL
-		RandomSleep(500)
-		MoveTo(-12657, 2609)
-		ChangeWeaponSet(4)
-		MoveTo(-10938, 4254)
-		; Going to wurm's spoor
-		ChangeTarget(GetNearestSignpostToCoords(-10938, 4254))
-		RandomSleep(500)
-		Info('Taking wurm')
-		TargetNearestItem()
-		ActionInteract()
-		RandomSleep(1500)
-		UseSkillEx(5)
-		; Starting from there there might be enemies on the way
-		MoveTo(-8255, 5320)
-		Local $me = GetMyAgent()
-		If (CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
-		MoveTo(-8624, 10636)
-		$me = GetMyAgent()
-		If (CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
-		MoveTo(-8261, 12808)
-		Move(-3838, 19196)
-		$me = GetMyAgent()
-		While IsPlayerAlive() And IsPlayerMoving()
-			If (CountFoesInRangeOfAgent($me, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)
-			RandomSleep(500)
-			$me = GetMyAgent()
-		WEnd
-
-		; If dead it's not worth rezzing better just restart running
-		If IsPlayerDead() Then Return $FAIL
-
-		MoveTo(-4486, 19700)
-		RandomSleep(3000)
-		MoveTo(-4486, 19700)
-
-		; If dead it's not worth rezzing better just restart running
-		If IsPlayerDead() Then Return $FAIL
-
-		; Entering The Shattered Ravines
-		ChangeWeaponSet(1)
-		Info('Entering The Shattered Ravines : careful')
-		MoveTo(-4500, 20150)
-		Move(-4500, 21000)
-		RandomSleep(1000)
-		If Not WaitMapLoading($ID_The_Shattered_Ravines, 10000, 2000) Then Return $FAIL
-		; Hurry up before dying
-		MoveTo(-9714, -10767)
-		MoveTo(-7919, -10530)
-	EndIf
-	$SPIRIT_SLAVES_FARM_SETUP = True
 	Return $SUCCESS
 EndFunc
 
@@ -184,7 +209,7 @@ Func FarmNorthGroup()
 	WaitForFoesBall()
 	WaitForEnergy()
 	WaitForDeathsCharge()
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, 3, $RANGE_EARSHOT)
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, $ID_Allegiance_Foe, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe)
 	ChangeWeaponSet(1)
 	UseSkillEx($SS_Sand_Shards)
@@ -200,7 +225,7 @@ Func FarmNorthGroup()
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
-	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
+	$targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
 
 	UseSkillEx($SS_Deaths_Charge, $targetFoe)
 	RandomSleep(20)
@@ -253,7 +278,7 @@ Func FarmSouthGroup()
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
-	Local $targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
+	Local $targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	UseSkillEx($SS_I_am_unstoppable)
 	RandomSleep(20)
 	UseSkillEx($SS_Extend_Enchantments)
@@ -307,7 +332,7 @@ Func KillSequence()
 		Local $me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 		If $foesCount > 0 Then
-			Local $casterFoe = GetFurthestNPCInRangeOfCoords(3, Null, Null, $RANGE_AREA + 88)
+			Local $casterFoe = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, Null, Null, $RANGE_AREA + 88)
 			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance($me, $casterFoe)
 			If $foesCount < 5 And GetDistance($me, $casterFoe) > $RANGE_ADJACENT Then
@@ -340,8 +365,7 @@ Func KillSequence()
 	CleanseFromCripple()
 	RandomSleep(1000)
 	PickUpItems(CleanseFromCripple)
-	If IsPlayerDead() Then Return $FAIL
-	Return $SUCCESS
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -416,7 +440,7 @@ EndFunc
 
 ;~ Cleanse if the character has a condition (cripple)
 Func CleanseFromCripple()
-	If (GetHasCondition(GetMyAgent()) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0) Then UseSkillEx($SS_I_am_unstoppable)
+	If (GetHasCondition(GetMyAgent()) And GetEffect($ID_Crippled) <> Null) Then UseSkillEx($SS_I_am_unstoppable)
 EndFunc
 
 

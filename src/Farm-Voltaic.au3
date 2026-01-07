@@ -23,7 +23,7 @@
 #include '../lib/GWA2_ID.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $VoltaicFarmInformations = 'For best results, have :' & @CRLF _
@@ -42,12 +42,10 @@ Global $VOLTAIC_FARM_SETUP = False
 Func VoltaicFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
 	GoToVerdantCascades()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VoltaicFarmLoop()
-	; Local $timer = TimerInit()
 	AdlibUnregister('TrackPartyStatus')
 	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	Return $result
@@ -58,16 +56,18 @@ EndFunc
 Func SetupVoltaicFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
-	; Assuming that team has been set up correctly manually
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
 	SwitchToHardModeIfEnabled()
 	$VOLTAIC_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into Verdant Cascades
 Func GoToVerdantCascades()
-	If GetMapID() <> $ID_Umbral_Grotto Then TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
+	TravelToOutpost($ID_Umbral_Grotto, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Verdant_Cascades
 		Info('Moving to Verdant Cascades')
 		MoveTo(-23200, 7100)
@@ -151,14 +151,15 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKillInRange(-17500, -14250, 'Final group', $VSAggroRange)
 	WEnd
 	If IsRunFailed() Then Return $FAIL
-	; Chest
-	Move(-17500, -14250)
 	Info('Opening chest')
-	Sleep(5000)
-	TargetNearestItem()
-	ActionInteract()
-	Sleep(2500)
-	PickUpItems()
+	For $i = 1 To 3 ; Tripled to secure looting of chest
+		Move(-17500, -14250)
+		Sleep(5000)
+		TargetNearestItem()
+		ActionInteract()
+		Sleep(2500)
+		PickUpItems()
+	Next
 	Info('Finished Run')
 	Return $SUCCESS
 EndFunc

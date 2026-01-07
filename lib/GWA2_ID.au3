@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
-; Contributor: Gahais
+; Contributors: Gahais, JackLinesMatthews
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -84,7 +84,9 @@ Global Const $RegionMap					=	MapFromArrays($DistrictNames, $DistrictAndRegionId
 #Region Game Locations
 ; Locations varying seasonally and their default versions
 Global Const $ID_Default_Eye_of_the_North	= 642
-Global Const $ID_Christmas_Eye_of_the_North = 821
+Global Const $ID_Christmas_Eye_of_the_North	= 821
+Global Const $ID_Default_Kaineng_City		= 194
+Global Const $ID_Kaineng_City_Events		= 817
 ; Generic
 Global Const $ID_Outpost					= 0
 Global Const $ID_Explorable					= 1
@@ -104,12 +106,17 @@ Global Const $ID_Great_Temple_of_Balthazar	= 248
 Global Const $ID_Embark_Beach				= 857
 ; Common
 Global Const $ID_Fissure_of_Woe				= 34
+Global Const $ID_Underworld					= 72
 ; Prophecies
 Global Const $ID_Warriors_Isle				= 4
 Global Const $ID_Hunters_Isle				= 5
 Global Const $ID_Wizards_Isle				= 6
+Global Const $ID_Augury_Rock				= 38
 Global Const $ID_Burning_Isle				= 52
+Global Const $ID_Lions_Arch					= 55
 Global Const $ID_Tascas_Demise				= 92
+Global Const $ID_Prophets_Path				= 113
+Global Const $ID_Elona_Reach				= 118
 Global Const $ID_Temple_of_the_Ages			= 138
 Global Const $ID_The_Granite_Citadel		= 156
 Global Const $ID_Frozen_Isle				= 176
@@ -118,7 +125,8 @@ Global Const $ID_Druids_Isle				= 178
 Global Const $ID_Isle_Of_The_Dead			= 179
 ; Factions
 Global Const $ID_House_Zu_Heltzer			= 77
-Global Const $ID_Kaineng_City				= 194
+Global Const $ID_Cavalon					= 193
+Global Const $ID_Kaineng_City				= IsAnniversaryCelebration() Or IsDragonFestival() ? $ID_Kaineng_City_Events : $ID_Default_Kaineng_City
 Global Const $ID_Drazach_Thicket			= 195
 Global Const $ID_Jaya_Bluffs				= 196
 Global Const $ID_Mount_Qinkai				= 200
@@ -132,21 +140,25 @@ Global Const $ID_The_Eternal_Grove			= 222
 Global Const $ID_Sunqua_Vale				= 238
 Global Const $ID_Wajjun_Bazaar				= 239
 Global Const $ID_Bukdek_Byway				= 240
+Global Const $ID_Shing_Jea_Monastery		= 242
 Global Const $ID_Seitung_Harbor				= 250
 Global Const $ID_Urgoz_Warren				= 266
 Global Const $ID_Isle_Of_Weeping_Stone		= 275
 Global Const $ID_Isle_Of_Jade				= 276
 Global Const $ID_Leviathan_Pits				= 279
+Global Const $ID_Zin_Ku_Corridor			= 284
 Global Const $ID_The_Marketplace			= 303
+Global Const $ID_The_Deep					= 307
+Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Imperial_Isle				= 359
 Global Const $ID_Isle_Of_Meditation			= 360
-Global Const $ID_Saint_Anjekas_Shrine		= 349
 Global Const $ID_Aspenwood_Gate_Luxon		= 389
-Global Const $ID_Kaineng_City_Events		= 817
 Global Const $ID_Kaineng_A_Chance_Encounter	= 861
 ; Nightfall
+Global Const $ID_Kamadan					= 370
 Global Const $ID_Sunward_Marches			= 373
 Global Const $ID_Sunspear_Sanctuary			= 387
+Global Const $ID_Chantry_Of_Secrets			= 393
 Global Const $ID_Kodash_Bazaar				= 414
 Global Const $ID_Mirror_of_Lyss				= 419
 Global Const $ID_Moddok_Crevice				= 427
@@ -165,6 +177,7 @@ Global Const $ID_Remains_of_Sahlahja		= 545
 Global Const $ID_Dajkah_Inlet				= 554
 Global Const $ID_Nexus						= 555
 ; EotN
+Global Const $ID_Glints_Challenge			= 37
 Global Const $ID_Bjora_Marches				= 482
 Global Const $ID_Arbor_Bay					= 485
 Global Const $ID_Ice_Cliff_Chasms			= 499
@@ -173,6 +186,7 @@ Global Const $ID_Jaga_Moraine				= 546
 Global Const $ID_Varajar_Fells				= 553
 Global Const $ID_Sparkfly_Swamp				= 558
 Global Const $ID_Verdant_Cascades			= 566
+Global Const $ID_Magus_Stones				= 569
 Global Const $ID_Slavers_Exile				= 577
 Global Const $ID_Shards_of_Orr_Floor_1		= 581
 Global Const $ID_Shards_of_Orr_Floor_2		= 582
@@ -183,7 +197,7 @@ Global Const $ID_Vloxs_Fall					= 624
 Global Const $ID_Gadds_Camp					= 638
 Global Const $ID_Umbral_Grotto				= 639
 Global Const $ID_Rata_Sum					= 640
-Global Const $ID_Eye_of_the_North			= $ID_Default_Eye_of_the_North
+Global Const $ID_Eye_of_the_North			= IsChristmasFestival() ? $ID_Christmas_Eye_of_the_North : $ID_Default_Eye_of_the_North
 Global Const $ID_Gunnars_Hold				= 644
 Global Const $ID_Olafstead					= 645
 Global Const $ID_Hall_of_Monuments			= 646
@@ -191,31 +205,32 @@ Global Const $ID_Dalada_Uplands				= 647
 Global Const $ID_Doomlore_Shrine			= 648
 Global Const $ID_Longeyes_Ledge				= 650
 Global Const $ID_Boreal_Station				= 675
+Global Const $ID_Central_Transfer_Chamber	= 652
 Global Const $ID_Auspicious_Beginnings		= 849
 
-Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, _
-											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Burning_Isle, $ID_Tascas_Demise, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
-											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
+Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, $ID_Underworld, _
+											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Augury_Rock, $ID_Burning_Isle, $ID_Lions_Arch, $ID_Tascas_Demise, $ID_Elona_Reach, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
+											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Cavalon, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
 											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
-											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, $ID_The_Marketplace, _
-											$ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Saint_Anjekas_Shrine, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, $ID_Kaineng_A_Chance_Encounter, _
-											$ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, $ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, _
-											$ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, $ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, _
-											$ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Riven_Earth, $ID_Jaga_Moraine, _
-											$ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
+											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Shing_Jea_Monastery, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, _
+											$ID_Zin_Ku_Corridor, $ID_The_Marketplace, $ID_The_Deep, $ID_Saint_Anjekas_Shrine, $ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, _
+											$ID_Kaineng_A_Chance_Encounter, $ID_Kamadan, $ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Chantry_Of_Secrets, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, _
+											$ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, $ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, _
+											$ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, $ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Ice_Cliff_Chasms, $ID_Riven_Earth, _
+											$ID_Jaga_Moraine, $ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
 											$ID_Bogroot_lvl1, $ID_Bogroot_lvl2, $ID_Vloxs_Fall, $ID_Gadds_Camp, $ID_Umbral_Grotto, $ID_Rata_Sum, $ID_Eye_of_the_North, $ID_Olafstead, $ID_Hall_of_Monuments, _
-											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge]
+											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge, $ID_Boreal_Station, $ID_Central_Transfer_Chamber]
 
-Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Warriors Isle', 'Hunters Isle', _
-											'Wizards Isle', 'Burning Isle', 'Tascas Demise', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
-											'House Zu Heltzer', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', _
-											'Nahpui Quarter', 'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
-											'Isle Of Jade', 'Leviathan Pits', 'The Marketplace', 'Imperial Isle', 'Isle Of Meditation', 'Saint Anjekas Shrine', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
-											'Kaineng A Chance Encounter', 'Sunward Marches', 'Sunspear Sanctuary', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', 'Jokos Domain', _
-											'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
-											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', _
-											'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', 'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', _
-											'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', 'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge']
+Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Underworld', 'Warriors Isle', 'Hunters Isle', _
+											'Wizards Isle', 'Augury Rock', 'Burning Isle', 'Lions Arch', 'Tascas Demise', 'Elona Reach', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
+											'House Zu Heltzer', 'Cavalon', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', 'Nahpui Quarter', _
+											'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Shing Jea Monastery', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
+											'Isle Of Jade', 'Leviathan Pits', 'Zin Ku Corridor', 'The Marketplace', 'The Deep', 'Saint Anjekas Shrine', 'Imperial Isle', 'Isle Of Meditation', 'Aspenwood Gate Luxon', 'Kaineng City Events', _
+											'Kaineng A Chance Encounter', 'Kamadan', 'Sunward Marches', 'Sunspear Sanctuary', 'Chantry of Secrets', 'Kodash Bazaar', 'Mirror of Lyss', 'Moddok Crevice', 'Command Post', _
+											'Jokos Domain', 'Bone Palace', 'The Shattered Ravines', 'The Sulfurous Wastes', 'Gate Of Anguish', 'Uncharted Isle', 'Isle Of Wurms', 'Corrupted Isle', 'Isle Of Solitude', _
+											'Remains of Sahlahja', 'Dajkah Inlet', 'Nexus', 'Bjora Marches', 'Arbor Bay', 'Ice Cliff Chasms', 'Riven Earth', 'Jaga Moraine', 'Varajar Fells', 'Sparkfly Swamp', 'Verdant Cascades', 'Slavers Exile', _
+											'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', 'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', _
+											'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge', 'Boreal Station', 'Central Transfer Chamber']
 
 Global Const $LocationMapNames			=	MapFromArrays($LocationIds, $LocationNames)
 #EndRegion Game Locations
@@ -234,6 +249,59 @@ Global Const $ID_Ritualist		= 8
 Global Const $ID_Paragon		= 9
 Global Const $ID_Dervish		= 10
 #EndRegion Professions
+
+
+#Region Team Sizes
+Global Const $ID_Team_Size_Small	= 4
+Global Const $ID_Team_Size_Medium	= 6
+Global Const $ID_Team_Size_Large	= 8
+#EndRegion Team Sizes
+
+#Region Hero combat behaviour
+Global Const $ID_Hero_fighting	= 0
+Global Const $ID_Hero_guarding	= 1
+Global Const $ID_Hero_avoiding	= 2
+#EndRegion Hero combat behaviour
+
+#Region Agents Allegiance
+Global Const $ID_Allegiance_Team	= 1 ; player and team party members
+Global Const $ID_Allegiance_Animal	= 2 ; untamed animals
+Global Const $ID_Allegiance_Foe		= 3
+Global Const $ID_Allegiance_Spirit	= 4 ; ranger's and ritualist's spirits and tamed animals/pets
+Global Const $ID_Allegiance_Minion	= 5 ; necromancer's minions
+Global Const $ID_Allegiance_Npc		= 6 ; npcs, can be team allies
+#EndRegion Agents Allegiance
+
+#Region Agents Types
+Global Const $ID_Agent_Type_NPC		= 0xDB ; player, team members, npcs, foes
+Global Const $ID_Agent_Type_Static	= 0x200 ; static objects like chests and signposts
+Global Const $ID_Agent_Type_Item	= 0x400 ; item lying on the ground
+#EndRegion Agents Types
+
+#Region Agents TypeMap Values
+Global Const $ID_TypeMap_Attack_Stance 	= 0x0001 ; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
+Global Const $ID_TypeMap_Skill_Usage 	= 0x2000 ; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
+Global Const $ID_TypeMap_Death_State 	= 0x0008 ; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
+
+Global Const $ID_TypeMap_City_NPC 		= 0x0002 ; = 2^1 = 2 = corresponds to npcs in cities. Bit on 2nd position
+Global Const $ID_TypeMap_Idle_Foe 		= 0x0000 ; = 0 = corresponds to enemies, who don't do anything, for example when far away
+Global Const $ID_TypeMap_Attacking_Foe	= 0x2001 ; = 8193 = corresponds to enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
+Global Const $ID_TypeMap_Aggroed_Foe 	= $ID_TypeMap_Attack_Stance ; = 0x1 = corresponds to enemies, when they are in attack stance, but not using skills
+Global Const $ID_TypeMap_Dead_Foe 		= $ID_TypeMap_Death_State ; = 0x8 = corresponds to enemies in dead state
+
+Global Const $ID_TypeMap_Idle_Ally 		= 0x20000 ; = 2^17 = 131072 = corresponds to party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
+Global Const $ID_TypeMap_Aggroed_Ally 	= 0x20001 ; = 131073 = corresponds to aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
+Global Const $ID_TypeMap_Attacking_Ally	= 0x22001 ; = 139265 = corresponds to attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
+Global Const $ID_TypeMap_Dead_Ally		= 0x20008 ; = 131080 = corresponds to dead party members and NPC allies. Bits on 4th and 18th positions
+
+Global Const $ID_TypeMap_Idle_Player	= 0x421004 ; = 4329476 = corresponds to idle player, when not using skills and not fighting
+Global Const $ID_TypeMap_Aggroed_Player	= 0x421005 ; = 4329477 = corresponds to aggroed player, in attack stance, but not using skills
+Global Const $ID_TypeMap_Casting_Player	= 0x423005 ; = 4337669 = corresponds to attacking player who is using a skill
+Global Const $ID_TypeMap_Dead_Player	= 0x42100C ; = 4329484 = corresponds to dead player
+
+Global Const $ID_TypeMap_Idle_Minion	= 0x40000 ; = 262144 = corresponds to idle spirits created by ranger. Bit on 19th position
+Global Const $ID_TypeMap_Aggroed_Minion	= 0x40001 ; = 262145 = corresponds to spirits created by ritualist and bone minions created by necromancers. Agents that can attack. Bits on 1st and 19th positions
+#EndRegion Agents TypeMap Values
 
 
 #Region Profession Attributes
@@ -373,10 +441,13 @@ Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor sa
 
 Global Const $Armor_Types_Array				= [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
 Global Const $Weapon_Types_Array			= [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+Global Const $Weapon_Names_Array			= ['Axe', 'Bow', 'Focus', 'Hammer', 'Wand', 'Shield', 'Staff', 'Sword', 'Dagger', 'Scythe', 'Spear']
+Global Const $WeaponNamesFromTypes			= MapFromArrays($Weapon_Types_Array, $Weapon_Names_Array)
+;Global Const $WeaponTypesFromNames			= MapFromArrays($Weapon_Names_Array, $Weapon_Types_Array)
 Global Const $Map_Armor_Types				= MapFromArray($Armor_Types_Array)
 Global Const $Map_Weapon_Types				= MapFromArray($Weapon_Types_Array)
 
-; Damage relative to the req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
+; Damage relative to the Req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
 Global Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Global Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
 Global Const $Focus_Max_Damage_Per_Level			=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
@@ -401,6 +472,7 @@ Global Const $GadgetID_Shing_Jea_Chest		= 4579
 Global Const $GadgetID_NM_Chest				= 4582
 Global Const $GadgetID_HM_Chest				= 8141
 Global Const $GadgetID_Obsidian_Chest		= 74
+Global Const $GadgetID_Brotherhood_Chest	= 9157
 Global Const $Chests_Array[]				= [$GadgetID_Istani_Chest, $GadgetID_Shing_Jea_Chest, $GadgetID_NM_Chest, $GadgetID_HM_Chest, $GadgetID_Obsidian_Chest]
 Global Const $Map_Chests_IDs				= MapFromArray($Chests_Array)
 #EndRegion MapMarkers
@@ -444,6 +516,27 @@ Global Const $ID_Mercenary_Hero_7	= 34
 Global Const $ID_Mercenary_Hero_8	= 35
 Global Const $ID_Miku				= 36
 Global Const $ID_ZeiRi				= 37
+
+Global Const $HeroIDs[]				= [$ID_Norgu, $ID_Goren, $ID_Tahlkora, $ID_Master_Of_Whispers, $ID_Acolyte_Jin, _
+										$ID_Koss, $ID_Dunkoro, $ID_Acolyte_Sousuke, $ID_Melonni, $ID_Zhed_Shadowhoof, _
+										$ID_General_Morgahn, $ID_Margrid_The_Sly, $ID_Zenmai, $ID_Olias, $ID_Razah, _
+										$ID_MOX, $ID_Keiran_Thackeray, $ID_Jora, $ID_Pyre_Fierceshot, $ID_Anton, _
+										$ID_Livia, $ID_Hayda, $ID_Kahmu, $ID_Gwen, $ID_Xandra, $ID_Vekk, $ID_Ogden, _
+										$ID_Miku, $ID_ZeiRi, $ID_Mercenary_Hero_1, $ID_Mercenary_Hero_2, _
+										$ID_Mercenary_Hero_3, $ID_Mercenary_Hero_4, $ID_Mercenary_Hero_5, _
+										$ID_Mercenary_Hero_6, $ID_Mercenary_Hero_7, $ID_Mercenary_Hero_8]
+
+Global Const $HeroNames[]				= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whispers', 'Acolyte Jin', _
+											'Koss', 'Dunkoro', 'Acolyte Sousuke', 'Melonni', 'Zhed Shadowhoof', _
+											'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
+											'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
+											'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
+											'Miku', 'ZeiRi', 'Mercenary Hero 1', 'Mercenary Hero 2', _
+											'Mercenary Hero 3', 'Mercenary Hero 4', 'Mercenary Hero 5', _
+											'Mercenary Hero 6', 'Mercenary Hero 7', 'Mercenary Hero 8']
+
+;Global Const $HeroNamesFromIDs			=	MapFromArrays($HeroIDs, $HeroNames)
+Global Const $HeroIDsFromNames			=	MapFromArrays($HeroNames, $HeroIDs)
 #EndRegion Hero IDs
 
 
@@ -464,37 +557,71 @@ Global Const $ID_To_The_Limit					= 316
 Global Const $ID_For_Great_Justice				= 343
 Global Const $ID_100_Blades						= 381
 Global Const $ID_Whirlwind_Attack				= 2107
+Global Const $ID_Seven_Weapons_Stance			= 3426
 ; Ranger
 Global Const $ID_Troll_Unguent					= 446
 Global Const $ID_Whirling_Defense				= 450
+Global Const $ID_Quickening_Zephyr				= 475
+Global Const $ID_Together_as_One				= 3427
 ; Monk
 Global Const $ID_Unyielding_Aura				= 268
 Global Const $ID_Light_of_Dwayna				= 304
 Global Const $ID_Resurrect						= 305
 Global Const $ID_Rebirth						= 306
 Global Const $ID_Restore_Life					= 314
+Global Const $ID_Balthazars_Spirit				= 242
+Global Const $ID_Watchful_Spirit				= 255
+Global Const $ID_Life_Barrier					= 270
+Global Const $ID_Life_Bond						= 241
+Global Const $ID_Vital_Blessing					= 289
 Global Const $ID_Vengeance						= 315
 Global Const $ID_Ray_of_Judgement				= 830
 Global Const $ID_Resurrection_Chant				= 1128
 Global Const $ID_Renew_Life						= 1263
+Global Const $ID_Judgement_Strike				= 3425
 ; Necromancer
 Global Const $ID_Animate_Bone_Minions			= 85
 Global Const $ID_Death_Nova						= 104
 Global Const $ID_Animate_Flesh_Golem			= 832
+Global Const $ID_Soul_Taker						= 3423
 ; Mesmer
-Global Const $ID_Empathy						= 26
+Global Const $ID_Empathy 						= 26
+Global Const $ID_Sympathetic_Visage				= 34
+Global Const $ID_Arcane_Conundrum				= 36
 Global Const $ID_Channeling						= 38
+Global Const $ID_Migraine						= 53
 Global Const $ID_Arcane_Echo					= 75
+Global Const $ID_Stolen_Speed					= 880
+Global Const $ID_Shared_Burden					= 900
+Global Const $ID_Ancestors_Visage				= 1054
 Global Const $ID_Wastrels_Demise				= 1335
+Global Const $ID_Frustration					= 1341
+Global Const $ID_Sum_of_All_Fears				= 1996
+Global Const $ID_Confusing_Images				= 2137
+Global Const $ID_Time_Ward						= 3422
 ; Elementalist
+Global Const $ID_Elemental_Attunement			= 164
+Global Const $ID_Meteor							= 187
+Global Const $ID_Rodgorts_Invocation			= 189
 Global Const $ID_Meteor_Shower					= 192
+Global Const $ID_Flare							= 194
+Global Const $ID_Searing_Heat					= 196
 Global Const $ID_Fire_Storm						= 197
+Global Const $ID_Glyph_of_Elemental_Power		= 198
+Global Const $ID_Glyph_of_Sacrifice				= 198
 Global Const $ID_Unsteady_Ground				= 1083
+Global Const $ID_Glyph_of_Essence				= 1096
 Global Const $ID_Sand_Storm						= 1372
 Global Const $ID_Savannah_Heat					= 1380
+Global Const $ID_Over_the_Limit					= 3424
 ; Assassin
+Global Const $ID_Deadly_Paradox					= 572
 Global Const $ID_Shadow_Refuge					= 814
+Global Const $ID_Shadow_Form					= 826
+Global Const $ID_Way_of_Perfection				= 1028
 Global Const $ID_Shroud_of_Distress				= 1031
+Global Const $ID_Dark_Escape					= 1037
+Global Const $ID_Shadow_Theft					= 3428
 ; Ritualist
 Global Const $ID_Flesh_of_My_Flesh				= 791
 Global Const $ID_Union							= 911
@@ -504,10 +631,13 @@ Global Const $ID_Lively_Was_Naomei				= 1222
 Global Const $ID_Soul_Twisting					= 1240
 Global Const $ID_Displacement					= 1249
 Global Const $ID_Death_Pact_Signet				= 1481
+Global Const $ID_Weapons_of_Three_Forges		= 3429
 ; Paragon
 Global Const $ID_Burning_Refrain				= 1576
 Global Const $ID_We_Shall_Return				= 1592
 Global Const $ID_Fall_Back						= 1595
+Global Const $ID_Theyre_On_Fire					= 1597
+Global Const $ID_Aggressive_Refrain				= 1774
 Global Const $ID_Signet_of_Return				= 1778
 Global Const $ID_Heroic_Refrain					= 3431
 ; Dervish
@@ -518,19 +648,41 @@ Global Const $ID_Sand_Shards					= 1510
 Global Const $ID_Mystic_Regeneration			= 1516
 Global Const $ID_Conviction						= 1540
 Global Const $ID_Heart_of_Fury					= 1762
+Global Const $ID_Signet_of_Mystic_Speed			= 2200
+Global Const $ID_Vow_of_Revolution				= 3430
 ; Common
 Global Const $ID_Resurrection_Signet			= 2
 ; PvE
 Global Const $ID_Sunspear_Rebirth_Signet		= 1816
 Global Const $ID_Junundu_Wail					= 1865
+Global Const $ID_Intensity						= 2104
 Global Const $ID_Eternal_Aura					= 2109
 Global Const $ID_By_Urals_Hammer				= 2217
+Global Const $ID_Great_Dwarf_Armor				= 2220
 Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
 Global Const $ID_I_Am_Unstoppable				= 2356
+Global Const $ID_Mindbender						= 2411
 Global Const $ID_Mental_Block					= 2417
-; Food and drink boosts
-Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
-Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
+Global Const $ID_Dwarven_Stability				= 2423
+; Consumables, food and drink boosts
+Global Const $ID_Drake_Skin						= 1680	; obtained using Drake Kabob
+Global Const $ID_Skale_Vigor					= 1681	; obtained using Bowl of Skalefin Soup
+Global Const $ID_Pahnai_Salad_Rush				= 1682	; obtained using Pahnai Salad
+Global Const $ID_Sugar_Jolt_2					= 1916	; obtained using Sugary Blue Drink
+Global Const $ID_Sugar_Jolt_5					= 1933	; obtained using Chocolate Bunny
+Global Const $ID_Golden_Egg_effect				= 1934
+Global Const $ID_Birthday_Cupcake_effect		= 1945
+Global Const $ID_Armor_of_Salvation_effect		= 2520
+Global Const $ID_Grail_of_Might_effect			= 2521
+Global Const $ID_Essence_of_Celerity_effect		= 2522
+Global Const $ID_Candy_Corn_effect				= 2604
+Global Const $ID_Candy_Apple_effect				= 2605
+Global Const $ID_Pie_Induced_Ecstasy			= 2649	; obtained using Slice of Pumpkin Pie
+Global Const $ID_Sugar_Infusion					= 2762
+Global Const $ID_Blue_Rock_Candy_Rush			= 2971
+Global Const $ID_Green_Rock_Candy_Rush			= 2972
+Global Const $ID_Red_Rock_Candy_Rush			= 2973
+Global Const $ID_Well_Supplied					= 3174	; obtained using War Supplies
 #EndRegion Skill IDs
 
 
@@ -558,20 +710,23 @@ Global Const $RARITY_Purple				= 2626
 Global Const $RARITY_Green				= 2627
 Global Const $RARITY_Red				= 33026
 Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_White, 'White'], [$RARITY_Blue, 'Blue'], [$RARITY_Purple, 'Purple'], [$RARITY_Gold, 'Gold'], [$RARITY_Green, 'Green'], [$RARITY_Red, 'Red']]
+Global Const $RarityIDs[]				= [$RARITY_White, $RARITY_Gray, $RARITY_Blue, $RARITY_Gold, $RARITY_Purple, $RARITY_Green, $RARITY_Green, $RARITY_Red]
+Global Const $RarityNames[]				= ['White', 'Gray', 'Blue', 'Gold', 'Purple', 'Green', 'Green', 'Red']
+Global Const $RarityNamesFromIDs		= MapFromArrays($RarityIDs, $RarityNames)
+;Global Const $RarityIDsFromNames		= MapFromArrays($RarityNames, $RarityIDs)
+
 
 #Region Merchant Items
 Global Const $ID_Belt_Pouch						= 34
 Global Const $ID_Bag							= 35
 Global Const $ID_Rune_of_Holding				= 2988
-Global Const $ID_Identification_Kit				= 2989
-Global Const $ID_Superior_Identification_Kit	= 5899
-; 25 uses
-Global Const $ID_Salvage_Kit					= 2992
-; 10 uses
-Global Const $ID_Salvage_Kit_2					= 2993
-Global Const $ID_Expert_Salvage_Kit				= 2991
-Global Const $ID_Superior_Salvage_Kit			= 5900
-Global Const $ID_Charr_Salvage_Kit				= 18721
+Global Const $ID_Identification_Kit				= 2989 	; 25 uses
+Global Const $ID_Superior_Identification_Kit	= 5899 	; 100 uses
+Global Const $ID_Salvage_Kit					= 2992 	; 25 uses
+Global Const $ID_Salvage_Kit_2					= 2993 	; 10 uses
+Global Const $ID_Expert_Salvage_Kit				= 2991 	; 25 uses
+Global Const $ID_Superior_Salvage_Kit			= 5900 	; 100 uses
+Global Const $ID_Charr_Salvage_Kit				= 18721 ; 5 uses
 Global Const $ID_Small_Equipment_Pack			= 31221
 Global Const $ID_Light_Equipment_Pack			= 31222
 Global Const $ID_Large_Equipment_Pack			= 31223
@@ -631,8 +786,12 @@ Global Const $ID_Black_Dye	= 10
 Global Const $ID_Gray_Dye	= 11
 Global Const $ID_White_Dye	= 12
 Global Const $ID_Pink_Dye	= 13
-Global Const $Dyes_Array[]	= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
-Global Const $Map_Dyes		= MapFromArray($Dyes_Array)
+
+Global Const $Dyes_Array[]			= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
+Global Const $Dyes_Names_Array[]	= ['Blue', 'Green', 'Purple', 'Red', 'Yellow', 'Brown', 'Orange', 'Silver', 'Black', 'Gray', 'White', 'Pink']
+Global Const $DyeNamesFromIDs		= MapFromArrays($Dyes_Array, $Dyes_Names_Array)
+;Global Const $DyeIDsFromNames		= MapFromArrays($Dyes_Names_Array, $Dyes_Array)
+Global Const $Map_Dyes				= MapFromArray($Dyes_Array)
 #EndRegion Dyes
 
 
@@ -650,12 +809,29 @@ Global Const $ID_Deep_Scroll				= 22279
 Global Const $ID_FoW_Scroll					= 22280
 Global Const $Blue_Scrolls_Array[]			= [$ID_Adventurers_Insight_Scroll, $ID_Rampagers_Insight_Scroll, $ID_Hunters_Insight_Scroll]
 Global Const $Gold_Scrolls_Array[]			= [$ID_Urgoz_Scroll, $ID_UW_Scroll, $ID_Heros_Insight_Scroll, $ID_Berserkers_Insight_Scroll, $ID_Slayers_Insight_Scroll, $ID_Scroll_of_the_Lightbringer, $ID_Deep_Scroll, $ID_FoW_Scroll]
+Global Const $Gold_Scrolls_Names_Array[]	= ['Passage Scroll to Urgozs Warren', 'Passage Scroll to the Underworld', 'Scroll of Heros Insight', 'Scroll of Berserkers Insight', 'Scroll of Slayers Insight', 'Scroll of the Lightbringer', 'Passage Scroll to the Deep', 'Passage Scroll to the Fissure of Woe']
+Global Const $GoldScrollNamesFromIDs		= MapFromArrays($Gold_Scrolls_Array, $Gold_Scrolls_Names_Array)
+;Global Const $GoldScrollIDsFromNames		= MapFromArrays($Gold_Scrolls_Names_Array, $Gold_Scrolls_Array)
 Global Const $Map_Blue_Scrolls				= MapFromArray($Blue_Scrolls_Array)
 Global Const $Map_Gold_Scrolls				= MapFromArray($Gold_Scrolls_Array)
 #EndRegion Scrolls
 
 
 #Region Materials
+; Basic Materials
+Global Const $ID_Bone							= 921
+Global Const $ID_Iron_Ingot						= 948
+Global Const $ID_Tanned_Hide_Square				= 940
+Global Const $ID_Scale							= 953
+Global Const $ID_Chitin_Fragment				= 954
+Global Const $ID_Bolt_of_Cloth					= 925
+Global Const $ID_Wood_Plank						= 946
+Global Const $ID_Granite_Slab					= 955
+Global Const $ID_Pile_of_Glittering_Dust		= 929
+Global Const $ID_Plant_Fibers					= 934
+Global Const $ID_Feather						= 933
+
+; Rare Marerials
 Global Const $ID_Fur_Square						= 941
 Global Const $ID_Bolt_of_Linen					= 926
 Global Const $ID_Bolt_of_Damask					= 927
@@ -676,33 +852,33 @@ Global Const $ID_Tempered_Glass_Vial			= 939
 Global Const $ID_Leather_Square					= 942
 Global Const $ID_Elonian_Leather_Square			= 943
 Global Const $ID_Vial_of_Ink					= 944
-Global Const $ID_Rolls_of_Parchment				= 951
-Global Const $ID_Rolls_of_Vellum				= 952
-Global Const $ID_Spiritwood_Planks				= 956
+Global Const $ID_Roll_of_Parchment				= 951
+Global Const $ID_Roll_of_Vellum					= 952
+Global Const $ID_Spiritwood_Plank				= 956
 Global Const $ID_Amber_Chunk					= 6532
 Global Const $ID_Jadeite_Shard					= 6533
 
-Global Const $ID_Bone							= 921
-Global Const $ID_Iron_Ingot						= 948
-Global Const $ID_Tanned_Hide_Square				= 940
-Global Const $ID_Scale							= 953
-Global Const $ID_Chitin_Fragment				= 954
-Global Const $ID_Bolt_of_Cloth					= 925
-Global Const $ID_Wood_Plank						= 946
-Global Const $ID_Granite_Slab					= 955
-Global Const $ID_Pile_of_Glittering_Dust		= 929
-Global Const $ID_Plant_Fibers					= 934
-Global Const $ID_Feather						= 933
+
+Global Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
+Global Const $Basic_Materials_Names_Array[]			= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', 'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fibers', 'Feather']
+Global Const $Basic_Material_Names_From_IDs			= MapFromArrays($Basic_Materials_Array, $Basic_Materials_Names_Array)
+;Global Const $Basic_Material_IDs_From_Names		= MapFromArrays($Basic_Materials_Names_Array, $Basic_Materials_Array)
+
 Global Const $Rare_Materials_Double_Array[][]	= [	[$ID_Fur_Square, 'Fur Square'], [$ID_Bolt_of_Linen, 'Bolt of Linen'], [$ID_Bolt_of_Damask, 'Bolt of Damask'], [$ID_Bolt_of_Silk, 'Bolt of Silk'], [$ID_Glob_of_Ectoplasm, 'Glob of Ectoplasm'], _
 													[$ID_Steel_Ingot, 'Steel Ingot'], [$ID_Deldrimor_Steel_Ingot, 'Deldrimor Steel Ingot'], [$ID_Monstrous_Claw, 'Monstrous Claw'], [$ID_Monstrous_Eye, 'Monstrous Eye'], [$ID_Monstrous_Fang, 'Monstrous Fang'], _
 													[$ID_Ruby, 'Ruby'], [$ID_Sapphire, 'Sapphire'], [$ID_Diamond, 'Diamond'], [$ID_Onyx_Gemstone, 'Onyx Gemstones'], [$ID_Lump_of_Charcoal, 'Lumps of Charcoal'], [$ID_Obsidian_Shard, 'Obsidian Shard'], _
 													[$ID_Tempered_Glass_Vial, 'Tempered Glass Vial'], [$ID_Leather_Square, 'Leather Squares'], [$ID_Elonian_Leather_Square, 'Elonian Leather Square'], [$ID_Vial_of_Ink, 'Vial of Ink'], _
-													[$ID_Rolls_of_Parchment, 'Rolls of Parchment'], [$ID_Rolls_of_Vellum, 'Rolls of Vellum'], [$ID_Spiritwood_Planks, 'Spiritwood Planks'], [$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
+													[$ID_Roll_of_Parchment, 'Roll of Parchment'], [$ID_Roll_of_Vellum, 'Roll of Vellum'], [$ID_Spiritwood_Plank, 'Spiritwood Plank'], [$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
 Global Const $Map_Rare_Materials				= MapFromDoubleArray($Rare_Materials_Double_Array)
 Global Const $Rare_Materials_Array[]				= [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
-													$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, _
-													$ID_Rolls_of_Parchment, $ID_Rolls_of_Vellum, $ID_Spiritwood_Planks, $ID_Amber_Chunk, $ID_Jadeite_Shard]
-Global Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
+														$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, _
+														$ID_Roll_of_Parchment, $ID_Roll_of_Vellum, $ID_Spiritwood_Plank, $ID_Amber_Chunk, $ID_Jadeite_Shard]
+Global Const $Rare_Materials_Names_Array[]			= ['Fur Square', 'Bolt of Linen', 'Bolt of Damask', 'Bolt of Silk', 'Glob of Ectoplasm', 'Steel Ingot', 'Deldrimor Steel Ingot', 'Monstrous Claw', 'Monstrous Eye', 'Monstrous Fang', _
+														'Ruby', 'Sapphire', 'Diamond', 'Onyx Gemstone', 'Lump of Charcoal', 'Obsidian Shard', 'Tempered Glass Vial', 'Leather Square', 'Elonian Leather Square', 'Vial of Ink', _
+														'Roll of Parchment', 'Roll of Vellum', 'Spiritwood Plank', 'Amber Chunk', 'Jadeite Shard']
+Global Const $Rare_Material_Names_From_IDs			= MapFromArrays($Rare_Materials_Array, $Rare_Materials_Names_Array)
+;Global Const $Rare_Material_IDs_From_Names			= MapFromArrays($Rare_Materials_Names_Array, $Rare_Materials_Array)
+
 Global $All_Materials_Array						= $Rare_Materials_Array
 _ArrayConcatenate($All_Materials_Array, $Basic_Materials_Array)
 Global Const $Map_Basic_Materials				= MapFromArray($Basic_Materials_Array)
@@ -711,7 +887,7 @@ Global Const $Map_All_Materials					= MapFromArray($All_Materials_Array)
 Global Const $Materials_Double_Array[][]		= [	[$ID_Bone, 1], [$ID_Iron_Ingot, 2], [$ID_Tanned_Hide_Square, 3], [$ID_Scale, 4], [$ID_Chitin_Fragment, 5], [$ID_Bolt_of_Cloth, 6], [$ID_Wood_Plank, 7], [$ID_Granite_Slab, 9], [$ID_Pile_of_Glittering_Dust, 10], [$ID_Plant_Fibers, 11], [$ID_Feather, 12], _
 													[$ID_Fur_Square, 13], [$ID_Bolt_of_Linen, 14], [$ID_Bolt_of_Damask, 15], [$ID_Bolt_of_Silk, 16], [$ID_Glob_of_Ectoplasm, 17], [$ID_Steel_Ingot, 18], [$ID_Deldrimor_Steel_Ingot, 19], [$ID_Monstrous_Claw, 20], [$ID_Monstrous_Eye, 21], [$ID_Monstrous_Fang, 22], _
 													[$ID_Ruby, 23], [$ID_Sapphire, 24], [$ID_Diamond, 25], [$ID_Onyx_Gemstone, 26], [$ID_Lump_of_Charcoal, 27], [$ID_Obsidian_Shard, 28], [$ID_Tempered_Glass_Vial, 30], [$ID_Leather_Square, 31], [$ID_Elonian_Leather_Square, 32], [$ID_Vial_of_Ink, 33], _
-													[$ID_Rolls_of_Parchment, 34], [$ID_Rolls_of_Vellum, 35], [$ID_Spiritwood_Planks, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
+													[$ID_Roll_of_Parchment, 34], [$ID_Roll_of_Vellum, 35], [$ID_Spiritwood_Plank, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
 Global Const $Map_Material_Location				= MapFromDoubleArray($Materials_Double_Array)
 
 
@@ -850,6 +1026,9 @@ Global Const $ID_Lunar_Token				= 21833
 Global Const $ID_Lunar_Tokens				= 28433
 Global Const $ID_ToT						= 28434
 Global Const $Special_Drops[]				= [$ID_CC_Shard, $ID_Victory_Token, $ID_Wintersday_Gift, $ID_Wayfarer_Mark, $ID_Lunar_Token, $ID_Lunar_Tokens, $ID_ToT]
+Global Const $Special_Drops_Names[]			= ['Candy Cane Shard', 'Victory Token', 'Wintersday Gift', 'Wayfarer Mark', 'Lunar Token', 'Lunar Tokens', 'Trick-or-Treat Bag']
+Global Const $SpecialDropNamesFromIDs		= MapFromArrays($Special_Drops, $Special_Drops_Names)
+;Global Const $SpecialDropIDsFromNames		= MapFromArrays($Special_Drops_Names, $Special_Drops)
 Global Const $Map_Special_Drops				= MapFromArray($Special_Drops)
 #EndRegion Special Drops
 
@@ -1256,8 +1435,14 @@ Global Const $Tomes_Array[]				= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, 
 ; Elite Tomes
 Global Const $Elite_Tomes_Array[]		= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, _
 	$ID_Ritualist_EliteTome, $ID_Paragon_EliteTome]
+Global Const $Elite_Tomes_Names_Array[] = ['Elite Assassin Tome', 'Elite Mesmer Tome', 'Elite Necromancer Tome', 'Elite Elementalist Tome', 'Elite Monk Tome', 'Elite Warrior Tome', 'Elite Ranger Tome', 'Elite Dervish Tome', 'Elite Ritualist Tome', 'Elite Paragon Tome']
+Global Const $EliteTomeNamesFromIDs		= MapFromArrays($Elite_Tomes_Array, $Elite_Tomes_Names_Array)
+;Global Const $EliteTomeIDsFromNames	= MapFromArrays($Elite_Tomes_Names_Array, $Elite_Tomes_Array)
 ; Normal Tomes
 Global Const $Regular_Tomes_Array[]		= [$ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
+Global Const $Regular_Tomes_Names_Array[] = ['Assassin Tome', 'Mesmer Tome', 'Necromancer Tome', 'Elementalist Tome', 'Monk Tome', 'Warrior Tome', 'Ranger Tome', 'Dervish Tome', 'Ritualist Tome', 'Paragon Tome']
+Global Const $RegularTomeNamesFromIDs	= MapFromArrays($Regular_Tomes_Array, $Regular_Tomes_Names_Array)
+;Global Const $RegularTomeIDsFromNames	= MapFromArrays($Regular_Tomes_Names_Array, $Regular_Tomes_Array)
 Global Const $Map_Tomes					= MapFromArray($Tomes_Array)
 Global Const $Map_Elite_Tomes			= MapFromArray($Elite_Tomes_Array)
 Global Const $Map_Regular_Tomes			= MapFromArray($Regular_Tomes_Array)
@@ -1785,6 +1970,8 @@ Global Const $ID_Outcast_Shield_2					= 958
 Global Const $ID_Sea_Purse_Shield					= 1589
 Global Const $ID_Stone_Summit_Shield				= 341
 Global Const $ID_Summit_Warlord_Shield				= 342
+Global Const $ID_Amethyst_Aegis_1					= 2422
+Global Const $ID_Amethyst_Aegis_2					= 2423
 
 ; Staff
 Global Const $ID_Bo_Staff							= 735
@@ -2102,7 +2289,7 @@ Global $RareWeapons_Array = [ _
 	$ID_Demonic_Aegis, $ID_Draconic_Aegis, $ID_Eternal_Shield, $ID_Emblazoned_Defender, $ID_Exalted_Aegis, _
 	$ID_Amber_Shield, $ID_Amber_Shield_2, $ID_Bladed_Shield, $ID_Bladed_Shield_2, $ID_Echovald_Shield, $ID_Echovald_Shield_2, $ID_Gothic_Defender, $ID_Gothic_Defender_2, $ID_Guardian_of_the_Hunt, $ID_Guardian_of_the_Hunt_2, _
 	$ID_Kappa_Shield, $ID_Kappa_Shield_2, $ID_Ornate_Shield, $ID_Plagueborn_Shield, $ID_Plagueborn_Shield_2, $ID_Outcast_Shield, $ID_Outcast_Shield_2, $ID_Sea_Purse_Shield, _
-	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, _
+	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, $ID_Amethyst_Aegis_1, $ID_Amethyst_Aegis_2, _
 	_ ; Staves
 	$ID_Bo_Staff, $ID_Platinum_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, $ID_Jeweled_Staff, _
 	_ ; Swords

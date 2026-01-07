@@ -24,7 +24,7 @@
 #include '../lib/Utils.au3'
 #include '../lib/Utils-Storage-Bot.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $LDOASkillbar = 'Any build will do, providing it has a heal and damage.'
@@ -65,7 +65,7 @@ Func LDOATitleFarm($STATUS)
 		Info('LDOA farm setup failed, stopping farm.')
 		Return $PAUSE
 	EndIf
-	; Difference between this bot and ALL the others : this bot can't go to Eye of the North for inventory management
+	; Difference between this bot and ALL the others : this bot can't go to Eye of the North or other towns for inventory management
 	If (CountSlots(1, _Min($BAGS_COUNT, 4)) <= 5) Then
 		PresearingInventoryManagement()
 	EndIf
@@ -106,8 +106,7 @@ EndFunc
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
 	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	; Get weapons
-	SendChat('bonus', '/')
+	SendChat('bonus', '/') ; Get Igneous summoning stone for low level characters
 	Sleep(GetPing() + 750)
 	GetWeapons()
 	; First Sir Tydus quest to get some skills
@@ -290,9 +289,7 @@ Func LDOATitleFarmAfter10()
 	MoveAggroAndKillInRange(2541, 4504, '', 2000)
 	If IsPlayerDead() Then Return $FAIL
 	Info('Returning to Foibles Fair')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
+	ResignAndReturnToOutpost()
 	WaitMapLoading($ID_Foibles_Fair, 10000, 1000)
 	Return $SUCCESS
 EndFunc
@@ -370,9 +367,7 @@ EndFunc
 ;~ Resign and return to Ascalon
 Func BackToAscalon()
 	Info('Porting to Ascalon')
-	Resign()
-	RandomSleep(3500)
-	ReturnToOutpost()
+	ResignAndReturnToOutpost()
 	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 1000)
 EndFunc
 
@@ -381,15 +376,16 @@ EndFunc
 ;~ Return to Ascalon if health is dangerously low
 Func LowHealthMonitor()
 	If IsLowHealth() Then
-		Notice('Health below threshold, returning to Ascalon.')
+		Notice('Health below threshold, returning to Ascalon and restarting the run.')
 		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+		Return $SUCCESS ; restarting the title farm run
 	EndIf
 EndFunc
 
 
 Func IsLowHealth()
 	Local $me = GetMyAgent()
-	Local $healthRatio = DllStructGetData($me, 'HP')
+	Local $healthRatio = DllStructGetData($me, 'HealthPercent')
 	If $healthRatio > 0 And $healthRatio < $LOW_HEALTH_THRESHOLD Then Return True
 	Return False
 EndFunc
@@ -403,8 +399,8 @@ Func PresearingInventoryManagement()
 	; 3-Salvage
 	; 4-Store items
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If GUICtrlRead($GUI_Checkbox_IdentifyAllItems) == $GUI_CHECKED And HasUnidentifiedItems() Then IdentifyAllItems(False)
-	If GUICtrlRead($GUI_Checkbox_SalvageItems) == $GUI_CHECKED Then
+	If $IDENTIFY_ITEMS And HasUnidentifiedItems() Then IdentifyAllItems(False)
+	If $SALVAGE_ANY_ITEM And HasChosenItemsToSalvage() Then
 		SalvageAllItems(False)
 		If $BAGS_COUNT == 5 Then
 			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)

@@ -24,10 +24,10 @@
 #include '../lib/Utils.au3'
 
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SunspearArmorInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'
+Global Const $SunspearArmorFarmInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'
 ; Average duration ~ 15m
 Global Const $SUNSPEAR_ARMOR_FARM_DURATION = 15 * 60 * 1000
 Global $SUNSPEAR_ARMOR_FARM_SETUP = False
@@ -36,15 +36,14 @@ Global $SUNSPEAR_ARMOR_FARM_SETUP = False
 Func SunspearArmorFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
 
-	EnterSunspearArmorMission()
+	EnterSunspearArmorChallenge()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = SunspearArmorClean()
 	AdlibUnRegister('TrackPartyStatus')
-	; Temporarily change a failure into a pause for debugging :
-	;If $result == $FAIL Then $result = $PAUSE
-	TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+
+	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
 
@@ -54,56 +53,28 @@ Func SunspearArmorSetup()
 	If GetMapID() <> $ID_Dajkah_Inlet Then
 		TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
 	Else ; resigning to return to outpost in case when player is in Dajkah Inlet Challenge that has the same map ID as Dajkah Inlet outpost (554)
-		Resign()
-		Sleep(4000)
-		ReturnToOutpost()
-		Sleep(6000)
+		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
-	; Assuming that team has been set up correctly manually
-	;SetupTeamSunspearArmorFarm()
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
 	$SUNSPEAR_ARMOR_FARM_SETUP = True
 	Info('Setup completed')
 EndFunc
 
 
-Func SetupTeamSunspearArmorFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	RandomSleep(500)
-	AddHero($ID_Norgu)
-	RandomSleep(500)
-	AddHero($ID_Gwen)
-	RandomSleep(500)
-	AddHero($ID_Razah)
-	RandomSleep(500)
-	AddHero($ID_Master_Of_Whispers)
-	RandomSleep(500)
-	AddHero($ID_Livia)
-	RandomSleep(500)
-	AddHero($ID_Olias)
-	RandomSleep(500)
-	AddHero($ID_Xandra)
-	Sleep(1000)
-	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
-	EndIf
-EndFunc
-
-
-Func EnterSunspearArmorMission()
-	If GetMapID() <> $ID_Dajkah_Inlet Then TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
-	Info('Entering Dajkah Inlet mission')
-	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is hard to tell if player left the outpost
+Func EnterSunspearArmorChallenge()
+	TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	Info('Entering Dajkah Inlet challenge')
+	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map
 	Local Static $StartX = 29886
 	Local Static $StartY = -3956
-	While GetDistanceToPoint(GetMyAgent(), $StartX, $StartY) > $RANGE_EARSHOT ; = 1000
+	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 		RandomSleep(250)
 		Dialog(0x87)
-		Sleep(5000) ; wait 5 seconds to ensure that player exited outpost and entered mission
+		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost and entered challenge
 	WEnd
 EndFunc
 

@@ -23,10 +23,10 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SoOFarmInformations = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $SoOFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '45mn average in NM' & @CRLF _
@@ -37,15 +37,13 @@ Global Const $ID_SoO_Torch = 22342
 Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
 Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000 ; max time = 80 minutes
-Global $SoOFarmTimer = Null
 Global $SOO_FARM_SETUP = False
+
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	While Not $SOO_FARM_SETUP
-		SetupSoOFarm()
-	WEnd
+	If Not $SOO_FARM_SETUP Then SetupSoOFarm()
 	Return SoOFarmLoop()
 EndFunc
 
@@ -53,17 +51,22 @@ EndFunc
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME) == $FAIL Then Return
-	; Assuming that team has been set up correctly manually
+	TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
+	TrySetupPlayerUsingGUISettings()
+	TrySetupTeamUsingGUISettings()
 	SwitchToHardModeIfEnabled()
-	If RunToShardsOfOrrDungeon() == $FAIL Then Return
-	$SOO_FARM_SETUP = True
+	While Not $SOO_FARM_SETUP
+		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop
+		$SOO_FARM_SETUP = True
+	WEnd
 	Info('Preparations complete')
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
+	TravelToOutpost($ID_Vloxs_Fall, $DISTRICT_NAME)
 	ResetFailuresCounter()
 
 	Info('Making way to portal')
@@ -108,8 +111,6 @@ EndFunc
 Func SoOFarmLoop()
 	GetRewardRefreshAndTakeSoOQuest()
 	ResetFailuresCounter()
-	; starting run timer, if run lasts longer than max time then bot must have gotten stuck and fail is returned to restart run
-	$SoOFarmTimer = TimerInit()
 	AdlibRegister('TrackPartyStatus', 10000)
 	; Failure return delayed after adlib function deregistered
 	If (ClearSoOFloor1() == $FAIL Or ClearSoOFloor2() == $FAIL Or ClearSoOFloor3() == $FAIL) Then $SOO_FARM_SETUP = False
@@ -201,7 +202,7 @@ Func ClearSoOFloor1()
 
 	If IsHardmodeEnabled() Then UseConset()
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
-		If SoODetectStuck('SoO Floor 1 - First loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - First loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-11657, 10465))
@@ -228,7 +229,7 @@ Func ClearSoOFloor1()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
-		If SoODetectStuck('SoO Floor 1 - Second loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - Second loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		; too close to walls
 		MoveAggroAndKillInRange(7300, 12200, '', $SoOAggroRange)
@@ -249,7 +250,7 @@ Func ClearSoOFloor1()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
-		If SoODetectStuck('SoO Floor 1 - Third loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		; Poison trap between 1, 2 and 3
 		MoveAggroAndKillInRange(14000, 7400, '1', $SoOAggroRange)
@@ -260,7 +261,7 @@ Func ClearSoOFloor1()
 	Info('Going through portal')
 	Local $mapLoaded = False
 	While Not IsRunFailed() And Not $mapLoaded
-		If SoODetectStuck('SoO Floor 1 - Opening door') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 1 - Opening door', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('Open dungeon door')
 		ClearTarget()
 		; Doubled to secure bot
@@ -281,7 +282,7 @@ Func ClearSoOFloor1()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_2)
 	WEnd
-	Return IsRunFailed()? $FAIL : $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -293,7 +294,7 @@ Func ClearSoOFloor2()
 
 	Local $firstRoomfirstTime = True
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -11000, -6000, 1250)
-		If SoODetectStuck('SoO Floor 2 - First Room') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 2 - First Room', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
@@ -371,7 +372,7 @@ Func ClearSoOFloor2()
 	Local $secondRoomfirstTime = True
 	Local $mapLoaded = False
 	While Not IsRunFailed() And Not $mapLoaded
-		If SoODetectStuck('SoO Floor 2 - Second Room') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 2 - Second Room', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
 		WEnd
@@ -446,7 +447,7 @@ Func ClearSoOFloor2()
 
 		$secondRoomfirstTime = False
 		Info('Going through portal')
-		If SoODetectStuck('SoO Floor 2 - Opening door') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 2 - Opening door', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('Open dungeon door')
 		ClearTarget()
 		For $i = 1 To 3 ; Tripled to secure bot
@@ -462,7 +463,7 @@ Func ClearSoOFloor2()
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_Shards_of_Orr_Floor_3)
 	WEnd
-	Return IsRunFailed()? $FAIL : $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -473,7 +474,7 @@ Func ClearSoOFloor3()
 	If IsHardmodeEnabled() Then UseConset()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 1100, 7100, 1250)
-		If SoODetectStuck('SoO Floor 3 - First loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 3 - First loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
@@ -497,7 +498,7 @@ Func ClearSoOFloor3()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -8650, 9200, 1250)
-		If SoODetectStuck('SoO Floor 3 - Second loop') == $FAIL Then Return $FAIL
+		If CheckStuck('SoO Floor 3 - Second loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(-2300, 8000, 'Triggering beacon 2', $SoOAggroRange)
 		MoveAggroAndKillInRange(-4500, 6500, '1', $SoOAggroRange)
@@ -577,8 +578,8 @@ Func ClearSoOFloor3()
 	Local $LargerSoOAggroRange = $RANGE_SPELLCAST + 300
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 3
-		If SoODetectStuck('SoO Floor 3 - Third loop') == $FAIL Then Return $FAIL
-		
+		If CheckStuck('SoO Floor 3 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+
 		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $LargerSoOAggroRange)
 		MoveAggroAndKillInRange(-9200, 6000, 'Going back to secure door opening in case run failed 2', $LargerSoOAggroRange)
 
@@ -640,7 +641,7 @@ Func PickUpTorch()
 	Local $deadlock
 	For $i = 1 To GetMaxAgents()
 		$agent = GetAgentByID($i)
-		If (DllStructGetData($agent, 'Type') <> 0x400) Then ContinueLoop
+		If Not IsItemAgentType($agent) Then ContinueLoop
 		$item = GetItemByAgentID($i)
 		If (DllStructGetData(($item), 'ModelID') == $ID_SoO_Torch) Then
 			Info('Torch: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
@@ -658,13 +659,4 @@ Func PickUpTorch()
 		EndIf
 	Next
 	Return False
-EndFunc
-
-;~ Detect bot getting stuck
-Func SoODetectStuck($stuckLocation)
-	If TimerDiff($SoOFarmTimer) > $MAX_SOO_FARM_DURATION Then
-		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
-		Return $FAIL
-	EndIf
-	Return $SUCCESS
 EndFunc

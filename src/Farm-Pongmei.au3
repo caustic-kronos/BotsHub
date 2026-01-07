@@ -26,7 +26,7 @@
 ; Possible improvements :
 ; Replacing shadow form by something to tank assassins and warriors instead might be better
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
@@ -59,8 +59,7 @@ Global $PONGMEI_FARM_SETUP = False
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiChestFarm()
 
 	GoToPongmeiValley()
 	Local $result = PongmeiChestFarmLoop($STATUS)
@@ -70,31 +69,48 @@ EndFunc
 
 
 ;~ Pongmei chest farm setup
-Func SetupPongmeiFarm()
+Func SetupPongmeiChestFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
 
+	SetupPlayerPongmeiChestFarm()
 	SetupTeamPongmeiChestFarm()
-	LoadSkillTemplate($PongmeiChestRunnerSkillbar)
 
 	SwitchToHardModeIfEnabled()
 	$PONGMEI_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerPongmeiChestFarm()
+	Info('Setting up player build skill bar')
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
+		LoadSkillTemplate($PongmeiChestRunnerSkillbar)
+	Else
+		Warn('Should run this farm as dervish')
+	EndIf
+	Sleep(250 + GetPing())
 EndFunc
 
 
 Func SetupTeamPongmeiChestFarm()
-	Info('Setting up team')
-	Sleep(500)
-	LeaveParty()
-	AddHero($ID_General_Morgahn)
-	AddHero($ID_Hayda)
-	AddHero($ID_paragon_mercenary_hero)
-	AddHero($ID_Dunkoro)
-	AddHero($ID_Tahlkora)
-	AddHero($ID_Ogden)
-	AddHero($ID_Goren)
-	Sleep(1000)
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		Info('Setting up team according to GUI settings')
+		SetupTeamUsingGUISettings()
+	Else
+		Info('Setting up team according to default settings')
+		LeaveParty()
+		Sleep(500 + GetPing())
+		AddHero($ID_General_Morgahn)
+		AddHero($ID_Hayda)
+		AddHero($ID_paragon_mercenary_hero)
+		AddHero($ID_Dunkoro)
+		AddHero($ID_Tahlkora)
+		AddHero($ID_Ogden)
+		AddHero($ID_Goren)
+	EndIf
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
@@ -103,7 +119,7 @@ EndFunc
 
 ;~ Move out of outpost into Pongmei Valley
 Func GoToPongmeiValley()
-	If GetMapID() <> $ID_Boreas_Seabed Then TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
 	While GetMapID() <> $ID_Pongmei_Valley
 		Info('Moving to Pongmei Valley')
 		MoveTo(-25366, 1524)
@@ -182,6 +198,7 @@ Func PongmeiChestFarmLoop($STATUS)
 EndFunc
 
 
+;~ @Unused at the moment
 ;~ Method to check to which place you are the closest to
 Func SkipToPreventBackTracking($X, $Y, $nextX, $nextY)
 	Local $me = GetMyAgent()
@@ -202,7 +219,7 @@ Func DervishRun($X, $Y)
 	Local $me = GetMyAgent()
 	Local $energy
 	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
-		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And DllStructGetData(GetEffect($ID_Crippled), 'SkillID') <> 0 Then UseSkillEx($Pongmei_IAmUnstoppable)
+		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetEffect($ID_Crippled) <> Null Then UseSkillEx($Pongmei_IAmUnstoppable)
 
 		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then
 			Local $target = GetTargetForDeathsCharge($X, $Y, 700)
@@ -241,6 +258,7 @@ Func DervishRun($X, $Y)
 		Sleep(250)
 		$me = GetMyAgent()
 	WEnd
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -261,7 +279,7 @@ Func GetNPCInTheBack($X, $Y)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	Local $npcs = GetNPCsInRangeOfAgent($me, $RANGE_SPELLCAST)
+	Local $npcs = GetNPCsInRangeOfAgent($me, Null, $RANGE_SPELLCAST)
 	Local $bestNpc = Null
 	; dot product ranges from -1 (directly behind) to 1 (directly ahead)
 	Local $minDot = 1
@@ -294,7 +312,7 @@ Func GetNPCInTheBack($X, $Y)
 EndFunc
 
 
-;~ Get a foe that in front of player and close enough to point (X, Y) to use Death Charge on
+;~ Get a foe that in front of player and close enough to point (X, Y) to use Death's Charge on
 Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')

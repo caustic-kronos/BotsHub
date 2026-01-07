@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
-; Contributor: Underavelvetmoon
+; Contributor: Underavelvetmoon, Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -22,31 +22,34 @@
 
 ;~ Determines whether the provided item has expensive mods
 Func ContainsValuableUpgrades($item)
-	Local $modstruct	= GetModStruct($item)
-	If Not $modstruct Then Return False
+	Local $modStruct	= GetModStruct($item)
+	If Not $modStruct Then Return False
 
 	If IsWeapon($item) Then
 		Local $itemType	= DllStructGetData($item, 'type')
 		If IsInscribable($item) Then
 			For $struct In $ValuableModsByWeaponType[$itemType]
-				If StringInStr($ModStruct, $struct) > 0 Then Return True
+				If StringInStr($modStruct, $struct) > 0 Then Return True
+			Next
+			For $struct In $ValuableInscriptionsArray
+				If StringInStr($modStruct, $struct) > 0 Then Return True
 			Next
 		Else
 			For $struct In $ValuableModsByOSWeaponType[$itemType]
-				If StringInStr($ModStruct, $struct) > 0 Then Return True
+				If StringInStr($modStruct, $struct) > 0 Then Return True
 			Next
 		EndIf
 
 	ElseIf IsArmorSalvageItem($item) Then
-		For $struct In $Valuable_Runes_And_Insignias_Structs_Array
-			If StringInStr($ModStruct, $struct) > 0 Then Return True
+		For $struct In $ValuableRunesAndInsigniasStructsArray
+			If StringInStr($modStruct, $struct) > 0 Then Return True
 		Next
 	EndIf
 	Return False
 EndFunc
 
 
-;~ Determines whether the provided OS item has perfect mods
+;~ Determines whether the provided OS (Old School) item has perfect mods
 Func HasPerfectMods($item)
 	Local $itemType	= DllStructGetData($item, 'type')
 	Local $modstruct	= GetModStruct($item)
@@ -58,10 +61,10 @@ Func HasPerfectMods($item)
 				If StringInStr($ModStruct, $struct) > 0 Then
 					; If the mod found is vampiric or zealous strength, we need to check we are not mixing it with vampiric or zealous mod
 					If $struct	== $STRUCT_INHERENT_ZEALOUS_STRENGTH Then
-						If StringInStr($ModStruct, $STRUCT_MOD_ZEALOUS_PREFIX) Then ContinueLoop
+						If StringInStr($ModStruct, $STRUCT_MOD_ZEALOUS) Then ContinueLoop
 					EndIf
 					If $struct	== $STRUCT_INHERENT_VAMPIRIC_STRENGTH Then
-						If StringInStr($ModStruct, $STRUCT_MOD_VAMPIRIC_3_PREFIX) Or StringInStr($ModStruct, $STRUCT_MOD_VAMPIRIC_5_PREFIX) Then ContinueLoop
+						If StringInStr($ModStruct, $STRUCT_MOD_VAMPIRIC_3) Or StringInStr($ModStruct, $STRUCT_MOD_VAMPIRIC_5) Then ContinueLoop
 					EndIf
 					Return True
 				EndIf
@@ -258,24 +261,24 @@ Global $STRUCT_MOD_OF_DRAGON_SLAYING					= '00098080'
 #EndRegion common mods
 
 #Region martial mods
-Global $STRUCT_MOD_BARBED_PREFIX						= 'DE016824'					;+33% bleeding
-Global $STRUCT_MOD_CRUEL_PREFIX							= 'E2016824'					;+33% deep wound
-Global $STRUCT_MOD_CRIPPLING_PREFIX						= 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
-Global $STRUCT_MOD_HEAVY_PREFIX							= 'E601824'						;+33% weakness
-Global $STRUCT_MOD_POISONOUS_PREFIX						= 'E4016824'					;+33% poison
-Global $STRUCT_MOD_SILENCING_PREFIX						= 'E5016824'					;+33% dazed
+Global $STRUCT_MOD_BARBED								= 'DE016824'					;+33% bleeding
+Global $STRUCT_MOD_CRUEL								= 'E2016824'					;+33% deep wound
+Global $STRUCT_MOD_CRIPPLING							= 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
+Global $STRUCT_MOD_HEAVY								= 'E601824'						;+33% weakness
+Global $STRUCT_MOD_POISONOUS							= 'E4016824'					;+33% poison
+Global $STRUCT_MOD_SILENCING							= 'E5016824'					;+33% dazed
 
-Global $STRUCT_MOD_EBON_PREFIX							= '000BB824'
-Global $STRUCT_MOD_FIERY_PREFIX							= '0005B824'
-Global $STRUCT_MOD_ICY_PREFIX							= '0003B824'
-Global $STRUCT_MOD_SHOCKING_PREFIX						= '0004B824'
+Global $STRUCT_MOD_EBON									= '000BB824'
+Global $STRUCT_MOD_FIERY								= '0005B824'
+Global $STRUCT_MOD_ICY									= '0003B824'
+Global $STRUCT_MOD_SHOCKING								= '0004B824'
 
-Global $STRUCT_MOD_FURIOUS_PREFIX						= '0A00B823'					;adrenaline * 2 ^ 20%
-Global $STRUCT_MOD_SUNDERING_PREFIX						= '1414F823'					;armor penetration 20^20
+Global $STRUCT_MOD_FURIOUS								= '0A00B823'					;adrenaline * 2 ^ 20%
+Global $STRUCT_MOD_SUNDERING							= '1414F823'					;armor penetration 20^20
 
-Global $STRUCT_MOD_VAMPIRIC_3_PREFIX					= '00032825'
-Global $STRUCT_MOD_VAMPIRIC_5_PREFIX					= '00052825'
-Global $STRUCT_MOD_ZEALOUS_PREFIX						= '01001825'
+Global $STRUCT_MOD_VAMPIRIC_3							= '00032825'
+Global $STRUCT_MOD_VAMPIRIC_5							= '00052825'
+Global $STRUCT_MOD_ZEALOUS								= '01001825'
 ; +1^20%
 Global $STRUCT_MOD_OF_AXE_MASTERY						= '14121824'
 Global $STRUCT_MOD_OF_MARKSMANSHIP						= '14191824'
@@ -355,7 +358,7 @@ Global $STRUCT_INHERENT_CURSES_HCT						= '07149823'
 Global $STRUCT_INHERENT_CURSES_HSR						= '07141822'
 #EndRegion caster weapons and focus
 
-#Region focus and shield OS
+#Region focus and shield OS (Old School)
 ; 10 armor VS ...
 Global $STRUCT_INHERENT_ARMOR_VS_UNDEAD					= '0A004821'		;'A0048210'
 Global $STRUCT_INHERENT_ARMOR_VS_CHARR					= '0A014821'
@@ -390,7 +393,7 @@ Global $STRUCT_INHERENT_OF_COMMUNING_MAGIC				= '2018240'
 Global $STRUCT_INHERENT_OF_RESTORATION_MAGIC			= '2118240'
 Global $STRUCT_INHERENT_OF_CHANNELING_MAGIC				= '2218240'
 Global $STRUCT_INHERENT_OF_SPAWNING_MAGIC				= '2418240'
-#EndRegion focus and shield OS
+#EndRegion focus and shield OS (Old School)
 #EndRegion inherent bonus
 
 
@@ -769,15 +772,16 @@ Global Const $Struct_All_Runes_Superior_Vigor					= 'C202EA27'
 #Region Struct Utils
 ; Insignias are present at index 0 of their armor salvageable item
 ; Runes are present at index 1 of their armor salvageable item
-Global $Valuable_Runes_And_Insignias_Structs_Array[] = DefaultCreateValuableRunesAndInsigniasArray()
+Global $ValuableRunesAndInsigniasStructsArray[] = DefaultCreateValuableRunesAndInsigniasArray()
 Global $ValuableModsByOSWeaponType = DefaultCreateValuableModsByOSWeaponTypeMap()
 Global $ValuableModsByWeaponType = DefaultCreateValuableModsByWeaponTypeMap()
 Global $PerfectModsByWeaponType = CreatePerfectModsByOSWeaponTypeMap()
+Global $ValuableInscriptionsArray[]
 
 
 ;~ Creates an array of all valuable runes and insignias
 Func DefaultCreateValuableRunesAndInsigniasArray()
-	Local $Valuable_Runes_And_Insignias_Structs_Array[]	= [ _
+	Local $ValuableRunesAndInsigniasStructsArray[]	= [ _
 		$Struct_Warrior_Insignias_Sentinels, _
 		_ ;$Struct_Ranger_Insignias_Beastmasters, _
 		_ ;$Struct_Monk_Insignias_Anchorites, _
@@ -786,6 +790,8 @@ Func DefaultCreateValuableRunesAndInsigniasArray()
 		$Struct_Necromancer_Insignias_Tormentors, _
 		_ ;$Struct_Necromancer_Runes_Minor_Soul_Reaping, _
 		$Struct_Necromancer_Runes_Major_Soul_Reaping, _
+		$Struct_Necromancer_Runes_Superior_Soul_Reaping, _
+		$Struct_Necromancer_Runes_Minor_Curses, _
 		_ ;$Struct_Necromancer_Runes_Superior_Death_Magic, _
 		$Struct_Mesmer_Insignias_Prodigys, _
 		$Struct_Mesmer_Runes_Minor_Fast_Casting, _
@@ -798,30 +804,32 @@ Func DefaultCreateValuableRunesAndInsigniasArray()
 		$Struct_Assassin_Insignias_Nightstalkers, _
 		_ ;$Struct_Assassin_Runes_Minor_Critical_Strikes, _
 		$Struct_Ritualist_Insignias_Shamans, _
+		$Struct_Ritualist_Runes_Minor_Communing, _
 		_ ;$Struct_Ritualist_Runes_Minor_Spawning_Power, _
 		$Struct_Ritualist_Runes_Minor_Restoration_Magic, _
 		$Struct_Ritualist_Runes_Superior_Communing, _
 		$Struct_Ritualist_Runes_Superior_Spawning_Power, _
 		$Struct_Dervish_Insignias_Windwalker, _
-		_ ;$Struct_Dervish_Runes_Minor_Mysticism, _
+		$Struct_Dervish_Runes_Minor_Mysticism, _
 		$Struct_Dervish_Runes_Minor_Scythe_Mastery, _
 		_ ;$Struct_Dervish_Runes_Superior_Earth_Prayers, _
 		$Struct_Paragon_Insignias_Centurions, _
 		$Struct_Paragon_Runes_Minor_Spear_Mastery, _
-		_ ;$Struct_All_Survivor_Insignia, _
-		_ ;$Struct_All_Brawlers_Insignia, _
-		_ ;$Struct_All_Blessed_Insignia, _
+		_ ;$Struct_All_Insignias_Survivor, _
+		_ ;$Struct_All_Insignias_Radiant, _
+		_ ;$Struct_All_Insignias_Brawlers, _
+		$Struct_All_Insignias_Blessed, _
 		_ ;$Struct_All_Runes_Vitae, _
 		_ ;$Struct_All_Runes_Clarity, _
 		$Struct_All_Runes_Minor_Vigor, _
 		$Struct_All_Runes_Major_Vigor, _
 		$Struct_All_Runes_Superior_Vigor _
 	]
-	Return $Valuable_Runes_And_Insignias_Structs_Array
+	Return $ValuableRunesAndInsigniasStructsArray
 EndFunc
 
 
-;~ Creates a map to use to find whether an OS weapon has a valuable mod - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this doesn't mean the weapon itself is valuable
 Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	; Nothing worth it on OS shields and focii, and there are no OS scythes and spears
 	Local $Shield_Mods_Array		= []
@@ -860,9 +868,9 @@ Func DefaultCreateValuableModsByOSWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map to use to find whether a weapon (NOT OS) has a valuable mod - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this doesn't mean the weapon itself is valuable
 Func DefaultCreateValuableModsByWeaponTypeMap()
-	; Nothing worth on shields - maybe could keep +45^ench handles ....
+	; Nothing worth on shields - maybe could keep +45^enchanted handles ....
 	Local $Shield_Mods_Array	= []
 	Local $Offhand_Mods_Array	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20]
 	Local $Wand_Mods_Array		= [ _
@@ -879,7 +887,7 @@ Func DefaultCreateValuableModsByWeaponTypeMap()
 	Local $Sword_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
 	Local $Dagger_Mods_Array	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
 	Local $Scythe_Mods_Array	= [ _
-		$STRUCT_MOD_ZEALOUS_PREFIX, $STRUCT_MOD_OF_ENCHANTING, $STRUCT_MOD_SUNDERING_PREFIX, _
+		$STRUCT_MOD_ZEALOUS, $STRUCT_MOD_OF_ENCHANTING, $STRUCT_MOD_SUNDERING, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER _
 	]
 	Local $Spear_Mods_Array		= [ _
@@ -906,7 +914,7 @@ Func DefaultCreateValuableModsByWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map to use to find whether an OS weapon ITSELF has perfect mods or not
+;~ Creates a map to use to find whether an OS (Old School) weapon ITSELF has perfect mods or not
 Func CreatePerfectModsByOSWeaponTypeMap()
 	; For martial weapons, only one of those mods is enough to say the weapon is perfect
 	; But for zealous strength and vampiric strength, we need to check that it's not the zealous/vampiric mod
@@ -1037,7 +1045,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	]
 	_ArrayAdd($shield, $shieldAndFocus)
 
-	; Empty because there are no OS scythes and spears
+	; Empty because there are no OS (Old School) scythes and spears
 	Local $scytheAndSpear			= []
 
 	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
@@ -1060,47 +1068,150 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 EndFunc
 
 
-;~ Replace valuable runes/insignias/inscriptions/mods default list by the list of elements present in interface
+;~ Replace valuable runes/insignias/inscriptions/mods default lists by the lists of elements selected in the GUI interface
 Func RefreshValuableListsFromInterface()
-	$Valuable_Runes_And_Insignias_Structs_Array = CreateValuableRunesAndInsigniasArray()
+	$ValuableRunesAndInsigniasStructsArray = CreateValuableRunesAndInsigniasArray()
 	;$ValuableModsByOSWeaponType = CreateValuableModsByOSWeaponTypeMap()
-	;$ValuableModsByWeaponType = CreateValuableModsByWeaponTypeMap()
+	$ValuableModsByWeaponType = CreateValuableModsByWeaponTypeMap()
+	$ValuableInscriptionsArray = CreateValuableInscriptionsArray()
 EndFunc
 
 
 ;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
 Func CreateValuableRunesAndInsigniasArray()
-	Local $tickedRunesAndInsignias = GetComponentsTickedCheckboxes('Armor upgrades')
-	Local $Valuable_Runes_And_Insignias_Structs_Array[UBound($tickedRunesAndInsignias)]
+	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Keep components.Armor upgrades')
+	Local $ValuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
-		Local $varName = $tickedRunesAndInsignias[$i]
-		$varName = 'Struct_' & StringReplace(StringReplace(StringTrimLeft($varName, 15), '.', '_'), ' ', '_')
-		$Valuable_Runes_And_Insignias_Structs_Array[$i] = Eval($varName)
+		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15) ; removing unnecessary leftmost string with dot "Armor upgrades."
+		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_') ; conversion of . into _ and spaces into _ and concatenation with prefix 'Struct_'
+		$ValuableRunesAndInsigniasStructsArray[$i] = Eval($varName) ; conversion of rune/insignia struct name into its ID
 	Next
-	Return $Valuable_Runes_And_Insignias_Structs_Array
+	Return $ValuableRunesAndInsigniasStructsArray
 EndFunc
 
 
 ;~ TODO: finish this function
-;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
+;~ Creates an array of all valuable OS (Old School without inscription) weapon mods based on selected elements in treeview
 Func CreateValuableModsByOSWeaponTypeMap()
-	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
-	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
-	For $tickedInscription In $tickedInscriptions
-		Info($tickedInscription)
+	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
+	Local $ValuableModsByOSWeaponType[UBound($tickedMods)]
+	For $tickedMod In $tickedMods
+		Info($tickedMods)
 	Next
 	Return Null
 EndFunc
 
 
-;~ TODO: finish this function
-;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
+;~ Creates an array of all valuable not OS (Old School) weapon mods based on selected elements in treeview
 Func CreateValuableModsByWeaponTypeMap()
-	Local $tickedInscriptions = GetComponentsTickedCheckboxes('Inscriptions')
-	Local $tickedMods = GetComponentsTickedCheckboxes('Mods')
-	For $tickedInscription In $tickedInscriptions
-		Info($tickedInscription)
+	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
+
+	Local $Shield_Mods_Array[0], $Offhand_Mods_Array[0], $Wand_Mods_Array[0], $Staff_Mods_Array[0], $Bow_Mods_Array[0], $Axe_Mods_Array[0], _
+			$Hammer_Mods_Array[0], $Sword_Mods_Array[0], $Dagger_Mods_Array[0], $Scythe_Mods_Array[0], $Spear_Mods_Array[0]
+
+	; Redefining types here remove dependency on GWA2_ID - and we execute this function rarely
+	Local $ID_Type_Axe							= 2
+	Local $ID_Type_Bow							= 5
+	Local $ID_Type_Offhand						= 12
+	Local $ID_Type_Hammer						= 15
+	Local $ID_Type_Wand							= 22
+	Local $ID_Type_Shield						= 24
+	Local $ID_Type_Staff						= 26
+	Local $ID_Type_Sword						= 27
+	Local $ID_Type_Dagger						= 32
+	Local $ID_Type_Scythe						= 35
+	Local $ID_Type_Spear						= 36
+
+	For $i = 0 To UBound($tickedMods) - 1
+		Local $varName = StringTrimLeft($tickedMods[$i], 5) ; removing unnecessary leftmost string with dot "Mods."
+		Local $weaponType = StringLeft($varName, StringInStr($varName, '.') - 1) ; extracting string before first dot
+		Switch $weaponType
+			Case 'Axe'
+				$varName = StringReplace($varName, 'Axe.Prefix - Haft.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Axe.Suffix - Grip.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Axe_Mods_Array, Eval($varName))
+			Case 'Bow'
+				$varName = StringReplace($varName, 'Bow.Prefix - String.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Bow.Suffix - Grip.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Bow_Mods_Array, Eval($varName))
+			Case 'Dagger'
+				$varName = StringReplace($varName, 'Dagger.Prefix - Tang.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Dagger.Suffix - Handle.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Dagger_Mods_Array, Eval($varName))
+			Case 'Focus'
+				$varName = StringReplace($varName, 'Focus.Suffix - Core.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Offhand_Mods_Array, Eval($varName))
+			Case 'Hammer'
+				$varName = StringReplace($varName, 'Hammer.Prefix - Haft.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Hammer.Suffix - Grip.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Hammer_Mods_Array, Eval($varName))
+			Case 'Scythe'
+				$varName = StringReplace($varName, 'Scythe.Prefix - Snathe.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Scythe.Suffix - Grip.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Scythe_Mods_Array, Eval($varName))
+			Case 'Shield'
+				$varName = StringReplace($varName, 'Shield.Suffix - Handle.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Shield_Mods_Array, Eval($varName))
+			Case 'Spear'
+				$varName = StringReplace($varName, 'Spear.Prefix - Head.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Spear.Suffix - Grip.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Spear_Mods_Array, Eval($varName))
+			Case 'Staff'
+				$varName = StringReplace($varName, 'Staff.Prefix - Head.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Staff.Suffix - Wrapping.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Staff_Mods_Array, Eval($varName))
+			Case 'Sword'
+				$varName = StringReplace($varName, 'Sword.Prefix - Hilt.', 'STRUCT_MOD_')
+				$varName = StringReplace($varName, 'Sword.Suffix - Pommel.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Sword_Mods_Array, Eval($varName))
+			Case 'Wand'
+				$varName = StringReplace($varName, 'Wand.Suffix - Wrapping.', 'STRUCT_MOD_')
+				$varName = ModNameCleanupHelper($varName)
+				_ArrayAdd($Wand_Mods_Array, Eval($varName))
+		EndSwitch
 	Next
-	Return Null
+
+	Local Const $All_Weapons_Array				= [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff, $ID_Type_Bow, $ID_Type_Axe, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
+	Local Const $All_Weapons_Mods_Array			= [$Shield_Mods_Array, $Offhand_Mods_Array, $Wand_Mods_Array, $Staff_Mods_Array, $Bow_Mods_Array, $Axe_Mods_Array, $Hammer_Mods_Array, _
+													$Sword_Mods_Array, $Dagger_Mods_Array, $Scythe_Mods_Array, $Spear_Mods_Array]
+	Local Const $Weapon_Mods_By_Type[]			= MapFromArrays($All_Weapons_Array, $All_Weapons_Mods_Array)
+	Return $Weapon_Mods_By_Type
+EndFunc
+
+
+Func ModNameCleanupHelper($modName)
+	$modName = StringRegExpReplace($modName, "\s*\(.*?\)", "") ; cleanup of all parentheses and contents in them
+	$modName = StringReplace($modName, ' ', '_') ; conversion of spaces into _
+	$modName = StringUpper($modName) ; conversion of all letters into uppercase to better match mod struct names constants
+	Return $modName
+EndFunc
+
+
+;~ Creates an array of all valuable inscriptions based on selected elements in treeview
+Func CreateValuableInscriptionsArray()
+	Local $tickedInscriptions = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions')
+	Local $ValuableInscriptionsArray[UBound($tickedInscriptions)]
+	For $i = 0 To UBound($tickedInscriptions) - 1
+		Local $varName = $tickedInscriptions[$i]
+		$varName = StringReplace($varName, 'Inscriptions.Common.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.Weapon.Common.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.Weapon.Martial.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.Weapon.Spellcasting.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus and shield.', 'STRUCT_INSCRIPTION_')
+		$varName = ModNameCleanupHelper($varName)
+		$ValuableInscriptionsArray[$i] = Eval($varName) ; conversion of inscription struct name into its ID
+	Next
+	Return $ValuableInscriptionsArray
 EndFunc
 #EndRegion Struct Utils

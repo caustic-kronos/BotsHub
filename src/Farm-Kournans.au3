@@ -25,7 +25,7 @@
 
 ; Possible improvements :
 
-Opt('MustDeclareVars', 1)
+Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $ElAKournansFarmerSkillbar = 'OgdTkYG/HCHMXctUVwHC3xVI1BA'
@@ -75,8 +75,7 @@ Global $KOURNANS_FARM_SETUP = False
 ;~ Main method to farm Kournans
 Func KournansFarm($STATUS)
 	; Need to be done here in case bot comes back from inventory management
-	If Not $KOURNANS_FARM_SETUP Then SetupKournansFarm()
-	If $STATUS <> 'RUNNING' Then Return $PAUSE
+	If Not $KOURNANS_FARM_SETUP And If SetupKournansFarm() == $FAIL Then Return $PAUSE
 
 	GoToCommandPost()
 	Local $result = KournansFarmLoop()
@@ -88,11 +87,11 @@ EndFunc
 ;~ Kournans farm setup
 Func SetupKournansFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
+	If TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 
-	SetupTeamKournansFarm()
-	LoadSkillTemplate($ElAKournansFarmerSkillbar)
+	If SetupPlayerKournansFarm() == $FAIL Then Return $FAIL
+	If SetupTeamKournansFarm() == $FAIL Then Return $FAIL
 
 	RandomSleep(50)
 	GoToCommandPost()
@@ -102,20 +101,31 @@ Func SetupKournansFarm()
 	WaitMapLoading($ID_Sunspear_Sanctuary, 10000, 2000)
 	$KOURNANS_FARM_SETUP = True
 	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+Func SetupPlayerKournansFarm()
+	Info('Setting up player build skill bar')
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
+		LoadSkillTemplate($ElAKournansFarmerSkillbar)
+	Else
+		Warn('Should run this farm as elementalist')
+		Return $FAIL
+	EndIf
+	Sleep(250 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
 Func SetupTeamKournansFarm()
 	Info('Setting up team')
-	Sleep(500)
 	LeaveParty()
-	RandomSleep(50)
+	Sleep(500 + GetPing())
 	AddHero($ID_Margrid_The_Sly)
-	RandomSleep(50)
 	AddHero($ID_Xandra)
-	RandomSleep(50)
 	AddHero($ID_General_Morgahn)
-	Sleep(1000)
+	Sleep(500 + GetPing())
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')
 		Return $FAIL
@@ -123,14 +133,17 @@ Func SetupTeamKournansFarm()
 	LoadSkillTemplate($RKournansHeroSkillbar, 1)
 	LoadSkillTemplate($RtKournansHeroSkillbar, 2)
 	LoadSkillTemplate($PKournansHeroSkillbar, 3)
+	Sleep(250 + GetPing())
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
+	Sleep(250 + GetPing())
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Move out of outpost into Command Post
 Func GoToCommandPost()
-	If GetMapID() <> $ID_Sunspear_Sanctuary Then TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
+	TravelToOutpost($ID_Sunspear_Sanctuary, $DISTRICT_NAME)
 	If GetQuestByID(0x23E) <> Null Then
 		Info('Abandoning quest')
 		AbandonQuest(0x23E)
@@ -176,7 +189,7 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_Intensity)
 	UseSkillEx($Kournans_Mindbender)				;1s
 	Local $positionToGo = FindMiddleOfFoes(9600, -650, $RANGE_EARSHOT)
-	$targetFoe = BetterGetNearestNPCToCoords(3, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
+	$targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	GetAlmostInRangeOfAgent($targetFoe)
 	RandomSleep(50)
 	UseSkillEx($Kournans_EbonBattleStandardOfHonor)	;1s
@@ -190,9 +203,16 @@ Func KournansFarmLoop()
 	UseSkillEx($Kournans_Aftershock)
 	UseSkillEx($Kournans_Shockwave)
 	RandomSleep(2000)
-	Info('Looting')
-	PickUpItems()
-	Return IsPlayerDead() ? $FAIL : $SUCCESS
+	If IsPlayerAlive() Then
+		Info('Picking up loot')
+		For $i = 1 To 3 ; Tripled to secure the looting of items
+			PickUpItems()
+			Sleep(GetPing())
+		Next
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
 EndFunc
 
 
