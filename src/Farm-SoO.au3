@@ -370,7 +370,7 @@ Func ClearSoOFloor2()
 
 	Local $secondRoomfirstTime = True
 	Local $mapLoaded = False
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -9500, 1250)
+	While Not IsRunFailed() And Not $mapLoaded
 		If SoODetectStuck('SoO Floor 2 - Second Room') == $FAIL Then Return $FAIL
 		While Not IsPartyCurrentlyAlive()
 			Sleep(2000)
@@ -389,6 +389,7 @@ Func ClearSoOFloor2()
 			Sleep(GetPing() + 500)
 			MoveTo(-11000, -6000)
 			Sleep(GetPing() + 500)
+			PickUpTorch()
 		EndIf
 
 		If Not $secondRoomfirstTime Then
@@ -409,6 +410,7 @@ Func ClearSoOFloor2()
 			Sleep(GetPing() + 500)
 			MoveTo(-11000, -6000)
 			Sleep(GetPing() + 500)
+			PickUpTorch()
 		EndIf
 
 		; Poison trap between 12 and 13
@@ -443,11 +445,7 @@ Func ClearSoOFloor2()
 		MoveAggroAndKillInRange(-17500, -9500, '23', $SoOAggroRange)
 
 		$secondRoomfirstTime = False
-	WEnd
-
-	Info('Going through portal')
-	Local $mapLoaded = False
-	While Not IsRunFailed() And Not $mapLoaded
+		Info('Going through portal')
 		If SoODetectStuck('SoO Floor 2 - Opening door') == $FAIL Then Return $FAIL
 		Info('Open dungeon door')
 		ClearTarget()
