@@ -57,6 +57,7 @@ Global Const $LOW_HEALTH_THRESHOLD = 0.33
 Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
 
 Global $LDOA_FARM_SETUP = False
+Global $LOW_HEALTH_TRIGGERED = False
 
 
 ;~ Main method to get LDOA title
@@ -385,6 +386,7 @@ EndFunc
 Func LowHealthMonitor()
 	If IsLowHealth() Then
 		Notice('Health below threshold, returning to Ascalon.')
+		$LOW_HEALTH_TRIGGERED = True
 		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	EndIf
 EndFunc
