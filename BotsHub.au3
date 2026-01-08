@@ -521,7 +521,7 @@ Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifySt
 
 				If $clickedItem <> 0 And BitAND($hitFlags, $TVHT_ONITEMSTATEICON) Then
 					ToggleCheckboxCascade($sourceHandle, $clickedItem, True)
-					VerifyParentCheckbox($sourceHandle, $clickedItem, True)
+					ToggleCheckboxCascadeUpwards($sourceHandle, $clickedItem, True)
 				EndIf
 
 			Case $TVN_KEYDOWN
@@ -530,7 +530,7 @@ Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifySt
 				; Spacebar pressed
 				If DllStructGetData($keyInfo, 'key') = 0x20 And $selectedItem Then
 					ToggleCheckboxCascade($sourceHandle, $selectedItem, True)
-					VerifyParentCheckbox($sourceHandle, $selectedItem, True)
+					ToggleCheckboxCascadeUpwards($sourceHandle, $selectedItem, True)
 				EndIf
 		EndSwitch
 	EndIf
@@ -541,57 +541,39 @@ EndFunc
 ;~ Toggles checkbox state on a TreeView item and cascades it to children
 Func ToggleCheckboxCascade($treeViewHandle, $itemHandle, $toggleFromRoot = False)
 	Local $isChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $itemHandle)
+	; Clicked item check status is only changed after WM_NOTIFY is handled, so it needs to be inverted
 	If $toggleFromRoot Then $isChecked = Not $isChecked
 
 	If _GUICtrlTreeView_GetChildren($treeViewHandle, $itemHandle) Then
 		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $itemHandle)
 		While $childHandle <> 0
 			_GUICtrlTreeView_SetChecked($treeViewHandle, $childHandle, $isChecked)
-			If _GUICtrlTreeView_GetChildren($treeViewHandle, $childHandle) Then
-				ToggleCheckboxCascade($treeViewHandle, $childHandle)
-			EndIf
+			ToggleCheckboxCascade($treeViewHandle, $childHandle)
 			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
 		WEnd
 	EndIf
 EndFunc
 
 
-;~ Verifies parent checkbox state of provided TreeView item. Checks parent if all parent's children checkboxes (including item) are checked and unchecks it when at least one child is unchecked (can be item)
-;~ $willToggle parameter is needed because AutoIT truly checks/unchecks clicked item only after WM_NOTIFY is handled, after this function finishes
-;~ And when propagating parents to root, these parents of clicked item won't be toggled after WM_NOTIFY, because they weren't clicked. Need to make difference between clicked item and its parents
-Func VerifyParentCheckbox($treeViewHandle, $itemHandle, $willToggle = False)
+;~ Toggles checkbox state on a TreeView item and cascades it to its parents
+Func ToggleCheckboxCascadeUpwards($treeViewHandle, $itemHandle, $toggleFromRoot = False)
 	Local $parentHandle = _GUICtrlTreeView_GetParentHandle($treeViewHandle, $itemHandle)
-	If $parentHandle <> 0 Then
-		If _GUICtrlTreeView_GetChildren($treeViewHandle, $parentHandle) Then
-			Local $allChildsChecked = True
-			Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $parentHandle)
-			While $childHandle <> 0
-				Local $isChildChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $childHandle)
-				; for currently clicked child item its check status need to be inversed because its status will truly be changed only after this function finishes (after WM_NOTIFY is handled)
-				If $childHandle == $itemHandle And $willToggle Then $isChildChecked = Not $isChildChecked
-				If Not $isChildChecked Then
-					$allChildsChecked = False
-					ExitLoop
-				EndIf
-				$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
-			WEnd
-			_GUICtrlTreeView_SetChecked($treeViewHandle, $parentHandle, $allChildsChecked)
-			; also verify parent's parent to cascade to root, no need to take $willToggle into account for parent, which got updated in previous instruction
-			VerifyParentCheckbox($treeViewHandle, $parentHandle, False)
+	If $parentHandle == 0 Or $parentHandle == $itemHandle Then Return
+
+	Local $allChildrenChecked = True
+	Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $parentHandle)
+	While $childHandle <> 0
+		Local $childChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $childHandle)
+		; Clicked item check status is only changed after WM_NOTIFY is handled, so it needs to be inverted
+		If $toggleFromRoot And $childHandle == $itemHandle Then $childChecked = Not $childChecked
+		If Not $childChecked Then
+			$allChildrenChecked = False
+			ExitLoop
 		EndIf
-	EndIf
-EndFunc
-
-
-;~ Cascading checks in the treeview - unused for now
-Func CascadeSetChecked($nodeHandle, $checked)
-	If Not IsInt($nodeHandle) Then Return
-	_GUICtrlTreeView_SetChecked($GUI_TreeView_LootOptions, $nodeHandle, $checked)
-	If MapExists($GUI_HandleTree, $nodeHandle) Then
-		For $child In $GUI_HandleTree[$nodeHandle]
-			CascadeSetChecked($child, $checked)
-		Next
-	EndIf
+		$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
+	WEnd
+	_GUICtrlTreeView_SetChecked($treeViewHandle, $parentHandle, $allChildrenChecked)
+	ToggleCheckboxCascadeUpwards($treeViewHandle, $parentHandle)
 EndFunc
 
 
@@ -1547,26 +1529,27 @@ EndFunc
 ;~ Creating a treeview from a JSON node
 Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 	; Unused for now, but might become useful
-	Local $GUI_HandleTree[]
 	Local $keyHandle
 	Local $valueHandle
 	If IsMap($jsonNode) Then
 		Local $keys = MapKeys($jsonNode)
+		Local $isChecked = True
 		For $key In $keys
 			$keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
 			$valueHandle = BuildTreeViewFromJSON($keyHandle, $jsonNode[$key])
 			If $valueHandle == True Then
 				_GUICtrlTreeView_SetChecked($GUI_TreeView_LootOptions, $keyHandle, True)
 			Else
-				$GUI_HandleTree[$keyHandle] = $valueHandle
+				$isChecked = False
 			EndIf
 		Next
-		; after adding all children checkboxes to tree element(checkbox), verify if it should also be checked if all its children are checked
-		VerifyParentCheckbox($GUI_TreeView_LootOptions, $keyHandle)
+		_GUICtrlTreeView_SetChecked($GUI_TreeView_LootOptions, $parentItem, $isChecked)
 	ElseIf IsArray($jsonNode) Then
 		Local $handles[UBound($jsonNode)]
+		Local $isChecked = True
 		For $i = 0 To UBound($jsonNode) - 1
 			$handles[$i] = BuildTreeViewFromJSON($parentItem, $jsonNode[$i])
+			If Not _GUICtrlTreeView_GetChecked($GUI_TreeView_LootOptions, $handles[$i]) Then $isChecked = False
 		Next
 		Return $handles
 	Else
