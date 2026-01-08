@@ -54,6 +54,7 @@ Global Const $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS = 12
 
 ; Flags
 Global $disableRenderingAddress
+Global $renderingEnabled = True
 
 ; Game-related variables
 ; Game memory - queue, targets, skills
@@ -2165,7 +2166,7 @@ EndFunc
 
 ;~ Toggles graphics rendering
 Func ToggleRendering()
-	Return GetIsRendering() ? DisableRendering() : EnableRendering()
+	Return $renderingEnabled ? EnableRendering() : DisableRendering()
 EndFunc
 
 

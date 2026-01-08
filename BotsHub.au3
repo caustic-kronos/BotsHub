@@ -655,13 +655,16 @@ Func GuiButtonHandler()
 		Case $GUI_ApplyLootOptionsButton
 			UpdateLootOptionsFromInterface()
 		Case $GUI_RenderButton
-			ToggleRenderingState()
+			$renderingEnabled = Not $renderingEnabled
+			RefreshRenderingButton()
+			ToggleRendering()
 		Case $GUI_Button_DynamicExecution
 			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
 		Case $GUI_StartButton
 			StartButtonHandler()
 		Case $GUI_EVENT_CLOSE
-			EnableRendering() ; restore rendering in case it was disabled
+			; restore rendering in case it was disabled
+			EnableRendering()
 			Exit
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
@@ -715,33 +718,14 @@ Func StartButtonHandler()
 EndFunc
 
 
-Func ToggleRenderingState()
-	If(GUICtrlRead($GUI_RenderButton) == 'Rendering enabled') Then
-		UpdateRenderingState(False)
-	ElseIf(GUICtrlRead($GUI_RenderButton) == 'Rendering disabled') Then
-		UpdateRenderingState(True)
-	EndIf
-EndFunc
-
-
-Func SetRenderingState()
-	If(GUICtrlRead($GUI_RenderButton) == 'Rendering enabled') Then
-		UpdateRenderingState(True)
-	ElseIf(GUICtrlRead($GUI_RenderButton) == 'Rendering disabled') Then
-		UpdateRenderingState(False)
-	EndIf
-EndFunc
-
-
-Func UpdateRenderingState($enableRendering = True)
-	If $enableRendering Then
+;~ Refresh rendering button according to current rendering status - should be split from real rendering logic
+Func RefreshRenderingButton()
+	If $renderingEnabled Then
 		GUICtrlSetBkColor($GUI_RenderButton, $COLOR_YELLOW)
 		GUICtrlSetData($GUI_RenderButton, 'Rendering enabled')
-		EnableRendering()
 	Else
 		GUICtrlSetBkColor($GUI_RenderButton, $COLOR_LIGHTGREEN)
 		GUICtrlSetData($GUI_RenderButton, 'Rendering disabled')
-		DisableRendering()
 	EndIf
 EndFunc
 
@@ -927,7 +911,6 @@ Func BotHubLoop()
 		Sleep(1000)
 
 		If ($STATUS == 'RUNNING') Then
-			SetRenderingState()
 			DisableGUIComboboxes()
 			; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
 			; So bag 5 will always fill before 4 - hence we can count items up to bag 4
@@ -1444,7 +1427,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.weapon_slot', Number(GUICtrlRead($GUI_Combo_WeaponSlot)))
 	_JSON_addChangeDelete($jsonObject, 'run.bags_count', Number(GUICtrlRead($GUI_Combo_BagsCount)))
 	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
-	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', GUICtrlRead($GUI_RenderButton) == 'Rendering disabled')
+	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', Not $renderingEnabled)
 
 	_JSON_addChangeDelete($jsonObject, 'team.automatic_team_setup', GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.player_build', GUICtrlRead($GUI_Input_Build_Player))
@@ -1495,8 +1478,13 @@ Func ReadConfigFromJson($jsonString)
 	$DISTRICT_NAME = $district
 
 	Local $renderingDisabled = _JSON_Get($jsonObject, 'run.disable_rendering')
-	Local $renderingEnabled = Not $renderingDisabled
-	UpdateRenderingState($renderingEnabled)
+	$renderingEnabled = Not $renderingDisabled
+	RefreshRenderingButton()
+	If $renderingEnabled Then 
+		EnableRendering()
+	Else
+		DisableRendering()
+	EndIf
 	
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, _JSON_Get($jsonObject, 'run.loop_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_HardMode, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
