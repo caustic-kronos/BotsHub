@@ -72,6 +72,7 @@ Global $SALVAGE_WEAPONS = False
 Global $SALVAGE_GEARS = False
 Global $SALVAGE_ALL_TROPHIES = False
 Global $SALVAGE_TROPHIES = False
+Global $SALVAGE_MATERIALS = False
 Global $SELL_NOTHING = False
 Global $SELL_WEAPONS = True
 Global $SELL_BASIC_MATERIALS = False

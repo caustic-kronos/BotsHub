@@ -1547,6 +1547,7 @@ Func UpdateLootOptionsFromInterface()
 	$SALVAGE_GEARS = IsAnyLootOptionInBranchChecked('Salvage items.Armor salvageables')
 	$SALVAGE_ALL_TROPHIES = IsLootOptionChecked('Salvage items.Trophies')
 	$SALVAGE_TROPHIES = IsAnyLootOptionInBranchChecked('Salvage items.Trophies')
+	$SALVAGE_MATERIALS = IsAnyLootOptionInBranchChecked('Salvage items.Rare Materials')
 	$SELL_NOTHING = Not IsAnyLootOptionInBranchChecked('Sell items')
 	$SELL_WEAPONS = IsAnyLootOptionInBranchChecked('Sell items.Weapons and offhands')
 	$SELL_BASIC_MATERIALS = IsAnyLootOptionInBranchChecked('Sell items.Basic Materials')
@@ -1642,21 +1643,29 @@ Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, 
 EndFunc
 
 
-Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = '', $pathDelimiter = '.')
-	Local $pathArray = StringSplit($currentPath, $pathDelimiter)
-	Local $pathArraySize = $pathArray[0], $currentPathItem = $pathArray[1] ; Caution in AutoIT, StringSplit function returns array in which first element is count of items
-	If $pathArraySize == 0 Or $currentPath == '' Then Return Null
-	$currentPath = StringTrimLeft($currentPath, StringLen($currentPathItem) + 1) ; + 1 to trim delimiter character too
-
+;~ Find a node in a treeview by its path as string
+Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $path = '', $pathDelimiter = '.')
+	Local $pathArray = StringSplit($path, $pathDelimiter)
+	; Caution in AutoIT, StringSplit function returns array in which first element is count of items
+	Local $pathArraySize = $pathArray[0]
+	If $pathArraySize == 0 Or $path == '' Then Return Null
 	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+	Return FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, 1)
+EndFunc
+
+
+;~ Find a node in a treeview by its path as string
+Func FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, $pathArrayIndex)
 	Local $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
 	While $treeViewItem <> 0
 		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
 		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-		If $pathArraySize == 1 And $currentPathItem == $treeViewItemName Then Return $treeViewItem
-		If $pathArraySize > 1 And $currentPathItem == $treeViewItemName And $treeViewItemChildCount > 0 Then
-			$treeViewItemFirstChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
-			Return FindNodeInTreeView($treeViewHandle, $treeViewItemFirstChild, $currentPath, $pathDelimiter)
+		If $treeViewItemName == $pathArray[$pathArrayIndex] Then
+			If $pathArrayIndex == UBound($pathArray) - 1 Then
+				Return $treeViewItem
+			Else
+				Return FindNodeInTreeViewHelper($treeViewHandle, _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem), $pathArray, $pathArrayIndex + 1)
+			EndIf
 		EndIf
 		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
 	WEnd
@@ -1664,20 +1673,21 @@ Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = ''
 EndFunc
 
 
+;~ Check if a specific loot option is checked in treeview by providing its path as string
 Func IsLootOptionChecked($itemPath, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.')
 	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $itemPath, $pathDelimiter)
 	Return $treeViewItem == Null ? False : _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
 EndFunc
 
 
-; Function to check if any checkbox is checked in a branch starting in node provided as path string
+;~ Function to check if any checkbox is checked in a branch starting in node provided as path string
 Func IsAnyLootOptionInBranchChecked($startNodePath, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.')
 	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startNodePath, $pathDelimiter)
 	Return $treeViewItem == Null ? False : IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
 EndFunc
 
 
-; Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
+;~ Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
 Func IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
 	; Check if current tree node item is checked
 	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then Return True

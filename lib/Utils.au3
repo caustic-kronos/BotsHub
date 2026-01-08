@@ -1120,9 +1120,7 @@ EndFunc
 Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return $FAIL
 	If GetMapType() <> $ID_Outpost Then Return $FAIL
-
 	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_2)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) > 0 Then Return
-
 	Local $ConsumableSlot = FindInInventory($ID_Sugary_Blue_Drink)
 	If $ConsumableSlot[0] <> 0 Then
 		UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
@@ -1274,20 +1272,26 @@ Func SalvageItems($buyKit = True)
 	EndIf
 
 	Info('Salvaging items')
-	Local $trophiesItems[60]
-	Local $trophyIndex = 0
+	Local $trophiesAndMaterialItems[60]
+	Local $trophyAndMaterialIndex = 0
 	For $bagIndex = 1 To _Min(4, $BAGS_COUNT)
 		Debug('Salvaging bag ' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-			If IsTrophy(DllStructGetData($item, 'ModelID')) And Not $SALVAGE_TROPHIES Then
-				ContinueLoop
-			ElseIf IsTrophy(DllStructGetData($item, 'ModelID')) And $SALVAGE_TROPHIES Then
+			
+			Local $itemID = DllStructGetData($item, 'ModelID')
+			If IsTrophy($itemID) Then
+				If Not $SALVAGE_TROPHIES Then ContinueLoop
 				; Trophies should be salvaged at the end, because they create a lot of materials
-				$trophiesItems[$trophyIndex] = $item
-				$trophyIndex += 1
+				$trophiesAndMaterialItems[$trophyAndMaterialIndex] = $item
+				$trophyAndMaterialIndex += 1
+			ElseIf IsRareMaterial($item) Then
+				If Not $SALVAGE_MATERIALS Then ContinueLoop
+				; Rare materials should be salvaged at the end, because they create a lot of materials
+				$trophiesAndMaterialItems[$trophyAndMaterialIndex] = $item
+				$trophyAndMaterialIndex += 1
 			Else
 				If DefaultShouldSalvageItem($item) Then
 					SalvageItem($item, $kit)
@@ -1317,12 +1321,12 @@ Func SalvageItems($buyKit = True)
 		EndIf
 	EndIf
 
-	; Salvaging trophy items only if corresponding GUI options are selected
-	If $SALVAGE_TROPHIES Then
-		For $i = 0 To $trophyIndex - 1
-			If DefaultShouldSalvageItem($trophiesItems[$i]) Then
-				For $k = 0 To DllStructGetData($trophiesItems[$k], 'Quantity') - 1
-					SalvageItem($trophiesItems[$i], $kit)
+	; Salvaging trophy and rare material items only if corresponding GUI options are selected
+	If $SALVAGE_TROPHIES Or $SALVAGE_MATERIALS Then
+		For $i = 0 To $trophyAndMaterialIndex - 1
+			If DefaultShouldSalvageItem($trophiesAndMaterialItems[$i]) Then
+				For $k = 0 To DllStructGetData($trophiesAndMaterialItems[$k], 'Quantity') - 1
+					SalvageItem($trophiesAndMaterialItems[$i], $kit)
 					$uses -= 1
 					If $uses < 1 Then
 						$kit = GetSalvageKit($buyKit)
