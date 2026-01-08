@@ -163,11 +163,10 @@ EndFunc
 
 ;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	Info('Setting up Charr at the gate quest...')
-	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-
 	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
 	If $questStatus == 0 Or $questStatus == 3 Then
+		Info('Setting up Charr at the gate quest...')
+		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 		Sleep(GetPing() + 750)
 		AbandonQuest($ID_Quest_CharrAtTheGate)
 		Sleep(GetPing() + 750)
@@ -251,6 +250,7 @@ EndFunc
 
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
+	SetupCharrAtTheGateQuest()
 	DistrictTravel($ID_Ascalon_City_Presearing)
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
