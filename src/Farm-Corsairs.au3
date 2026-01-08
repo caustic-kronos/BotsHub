@@ -66,7 +66,6 @@ Global $Bohseda_Timer = Null
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $CORSAIRS_FARM_SETUP And SetupCorsairsFarm() == $FAIL Then Return $PAUSE
 
 	EnterCorsairsModdokCreviceMission()
@@ -100,8 +99,8 @@ Func SetupPlayerCorsairsFarm()
 		LoadSkillTemplate($RACorsairsFarmerSkillbar)
 	Else
 		Warn('Should run this farm as ranger')
- 		Return $FAIL
-   EndIf
+		Return $FAIL
+	EndIf
 	Sleep(250 + GetPing())
 	Return $SUCCESS
 EndFunc

@@ -279,18 +279,18 @@ Global Const $ID_Agent_Type_Item	= 0x400 ; item lying on the ground
 #EndRegion Agents Types
 
 #Region Agents TypeMap Values
-Global Const $ID_TypeMap_Attack_Stance 	= 0x0001 ; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
-Global Const $ID_TypeMap_Skill_Usage 	= 0x2000 ; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
-Global Const $ID_TypeMap_Death_State 	= 0x0008 ; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
+Global Const $ID_TypeMap_Attack_Stance	= 0x0001 ; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
+Global Const $ID_TypeMap_Skill_Usage	= 0x2000 ; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
+Global Const $ID_TypeMap_Death_State	= 0x0008 ; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
 
-Global Const $ID_TypeMap_City_NPC 		= 0x0002 ; = 2^1 = 2 = corresponds to npcs in cities. Bit on 2nd position
-Global Const $ID_TypeMap_Idle_Foe 		= 0x0000 ; = 0 = corresponds to enemies, who don't do anything, for example when far away
+Global Const $ID_TypeMap_City_NPC		= 0x0002 ; = 2^1 = 2 = corresponds to npcs in cities. Bit on 2nd position
+Global Const $ID_TypeMap_Idle_Foe		= 0x0000 ; = 0 = corresponds to enemies, who don't do anything, for example when far away
 Global Const $ID_TypeMap_Attacking_Foe	= 0x2001 ; = 8193 = corresponds to enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
-Global Const $ID_TypeMap_Aggroed_Foe 	= $ID_TypeMap_Attack_Stance ; = 0x1 = corresponds to enemies, when they are in attack stance, but not using skills
-Global Const $ID_TypeMap_Dead_Foe 		= $ID_TypeMap_Death_State ; = 0x8 = corresponds to enemies in dead state
+Global Const $ID_TypeMap_Aggroed_Foe	= $ID_TypeMap_Attack_Stance ; = 0x1 = corresponds to enemies, when they are in attack stance, but not using skills
+Global Const $ID_TypeMap_Dead_Foe		= $ID_TypeMap_Death_State ; = 0x8 = corresponds to enemies in dead state
 
-Global Const $ID_TypeMap_Idle_Ally 		= 0x20000 ; = 2^17 = 131072 = corresponds to party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
-Global Const $ID_TypeMap_Aggroed_Ally 	= 0x20001 ; = 131073 = corresponds to aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
+Global Const $ID_TypeMap_Idle_Ally		= 0x20000 ; = 2^17 = 131072 = corresponds to party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
+Global Const $ID_TypeMap_Aggroed_Ally	= 0x20001 ; = 131073 = corresponds to aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
 Global Const $ID_TypeMap_Attacking_Ally	= 0x22001 ; = 139265 = corresponds to attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
 Global Const $ID_TypeMap_Dead_Ally		= 0x20008 ; = 131080 = corresponds to dead party members and NPC allies. Bits on 4th and 18th positions
 
@@ -585,7 +585,7 @@ Global Const $ID_Death_Nova						= 104
 Global Const $ID_Animate_Flesh_Golem			= 832
 Global Const $ID_Soul_Taker						= 3423
 ; Mesmer
-Global Const $ID_Empathy 						= 26
+Global Const $ID_Empathy						= 26
 Global Const $ID_Sympathetic_Visage				= 34
 Global Const $ID_Arcane_Conundrum				= 36
 Global Const $ID_Channeling						= 38
@@ -720,12 +720,12 @@ Global Const $RarityNamesFromIDs		= MapFromArrays($RarityIDs, $RarityNames)
 Global Const $ID_Belt_Pouch						= 34
 Global Const $ID_Bag							= 35
 Global Const $ID_Rune_of_Holding				= 2988
-Global Const $ID_Identification_Kit				= 2989 	; 25 uses
-Global Const $ID_Superior_Identification_Kit	= 5899 	; 100 uses
-Global Const $ID_Salvage_Kit					= 2992 	; 25 uses
-Global Const $ID_Salvage_Kit_2					= 2993 	; 10 uses
-Global Const $ID_Expert_Salvage_Kit				= 2991 	; 25 uses
-Global Const $ID_Superior_Salvage_Kit			= 5900 	; 100 uses
+Global Const $ID_Identification_Kit				= 2989	; 25 uses
+Global Const $ID_Superior_Identification_Kit	= 5899	; 100 uses
+Global Const $ID_Salvage_Kit					= 2992	; 25 uses
+Global Const $ID_Salvage_Kit_2					= 2993	; 10 uses
+Global Const $ID_Expert_Salvage_Kit				= 2991	; 25 uses
+Global Const $ID_Superior_Salvage_Kit			= 5900	; 100 uses
 Global Const $ID_Charr_Salvage_Kit				= 18721 ; 5 uses
 Global Const $ID_Small_Equipment_Pack			= 31221
 Global Const $ID_Light_Equipment_Pack			= 31222

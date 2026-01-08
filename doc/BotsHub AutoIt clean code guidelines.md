@@ -26,7 +26,7 @@ Use named constants instead.
 
 ## 7. Consistent keyword casing
 Standardize keywords for readability.
-**Regex:** `\b(if|then|elseif|else|endif|func|endfunc|for|next|while|wend|do|until|return|switch|case|endswitch|continueloop|exitloop|select|endselect|true|false|null)\b`
+**Regex:** `( |\n|\t)(if|then|elseif|else|endif|func|endfunc|for|next|while|wend|do|until|return|switch|case|endswitch|continueloop|exitloop|select|endselect|true|false|null)( |\n|\t|\()`
 
 ## 8. Consistent variable naming
 Stick to conventions for variable names.

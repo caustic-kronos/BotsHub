@@ -1082,7 +1082,7 @@ Func CreateValuableRunesAndInsigniasArray()
 	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Keep components.Armor upgrades')
 	Local $ValuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
-		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15) ; removing unnecessary leftmost string with dot "Armor upgrades."
+		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15) ; removing unnecessary leftmost string with dot 'Armor upgrades.'
 		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_') ; conversion of . into _ and spaces into _ and concatenation with prefix 'Struct_'
 		$ValuableRunesAndInsigniasStructsArray[$i] = Eval($varName) ; conversion of rune/insignia struct name into its ID
 	Next
@@ -1123,7 +1123,7 @@ Func CreateValuableModsByWeaponTypeMap()
 	Local $ID_Type_Spear						= 36
 
 	For $i = 0 To UBound($tickedMods) - 1
-		Local $varName = StringTrimLeft($tickedMods[$i], 5) ; removing unnecessary leftmost string with dot "Mods."
+		Local $varName = StringTrimLeft($tickedMods[$i], 5) ; removing unnecessary leftmost string with dot 'Mods.'
 		Local $weaponType = StringLeft($varName, StringInStr($varName, '.') - 1) ; extracting string before first dot
 		Switch $weaponType
 			Case 'Axe'
@@ -1190,7 +1190,7 @@ EndFunc
 
 
 Func ModNameCleanupHelper($modName)
-	$modName = StringRegExpReplace($modName, "\s*\(.*?\)", "") ; cleanup of all parentheses and contents in them
+	$modName = StringRegExpReplace($modName, '\s*\(.*?\)', '') ; cleanup of all parentheses and contents in them
 	$modName = StringReplace($modName, ' ', '_') ; conversion of spaces into _
 	$modName = StringUpper($modName) ; conversion of all letters into uppercase to better match mod struct names constants
 	Return $modName

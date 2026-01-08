@@ -59,7 +59,6 @@ Global $BOREAL_FARM_SETUP = False
 
 ;~ Main method to chest farm Boreal
 Func BorealChestFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $BOREAL_FARM_SETUP Then SetupBorealFarm()
 	Local $result = BorealChestFarmLoop($STATUS)
 	ReturnBackToOutpost($ID_Boreal_Station)

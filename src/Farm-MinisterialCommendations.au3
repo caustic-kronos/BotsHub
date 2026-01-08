@@ -85,8 +85,8 @@ Global Const $SBoon_of_creation_Skill_Position		= 6
 Global Const $Prot_Mystic_Healing_Skill_Position	= 7
 ; BiP Necro
 Global Const $Blood_bond_Skill_Position = 2
-Global Const $Spirit_Transfer 			= 4
-Global Const $Recovery_Skill_Position 	= 8
+Global Const $Spirit_Transfer			= 4
+Global Const $Recovery_Skill_Position	= 8
 
 ; Order heros are added to the team
 Global Const $Hero_Mesmer_DPS_1			= 1
@@ -130,7 +130,6 @@ DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
 
 ;~ Main loop of the Ministerial Commendations farm
 Func MinisterialCommendationsFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $MINISTERIAL_COMMENDATIONS_FARM_SETUP Then SetupMinisterialCommendationsFarm()
 
 	Local $result = MinisterialCommendationsFarmLoop()

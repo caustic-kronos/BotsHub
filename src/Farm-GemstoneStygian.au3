@@ -1,8 +1,8 @@
 #CS ===========================================================================
-======================================
-|  	  Stygian Gemstones Farm bot	 |
-|			  	TonReuf   			 |
-======================================
+=====================================
+|	Stygian Gemstones Farm bot		|
+|				TonReuf				|
+=====================================
 ;
 ; Run this farm bot as Assassin or Mesmer or Ranger
 ;
@@ -100,7 +100,6 @@ $StygianRunOptions.Item('openChests')			= False
 
 ;~ Main loop function for farming stygian gemstones
 Func GemstoneStygianFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $GEMSTONE_STYGIAN_FARM_SETUP And SetupGemstoneStygianFarm() == $FAIL Then Return $PAUSE
 
 	If GoToStygianVeil() == $FAIL Then Return $FAIL
@@ -163,7 +162,7 @@ Func SetupTeamStygianFarm()
 		Sleep(500 + GetPing())
 		DisableAllHeroSkills($StygianHeroIndex)
 		If GetPartySize() <> 2 Then
-			Warn("Could not add ranger hero to team. Team size different than 2")
+			Warn('Could not add ranger hero to team. Team size different than 2')
 			Return $FAIL
 		EndIf
 	EndIf

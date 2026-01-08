@@ -1,9 +1,9 @@
 #CS ===========================================================================
-======================================
-|  	 Underworld clearing farm bot	 |
-|	 Authors: Akiro/The Great Gree   |
-| Rewrite Author for BotsHub: Gahais |					 |
-======================================
+=========================================
+|	Underworld clearing farm bot		|
+|	Authors: Akiro/The Great Gree		|
+| Rewrite Author for BotsHub: Gahais	|
+=========================================
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -42,9 +42,7 @@ Global $UW_FARM_SETUP = False
 
 ;~ Main loop function for farming glob of ectoplasm
 Func UnderworldFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $UW_FARM_SETUP Then SetupUnderworldFarm()
-
 	Local $result = EnterUnderworld()
 	If $result <> $SUCCESS Then Return $result
 	$result = UnderworldFarmLoop()

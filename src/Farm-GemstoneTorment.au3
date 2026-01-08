@@ -1,8 +1,8 @@
 #CS ===========================================================================
-======================================
-|  	  Torment Gemstones Farm bot	 |
-|			  	TonReuf   			 |
-======================================
+=========================================
+|		Torment Gemstones Farm bot		|
+|				TonReuf					|
+=========================================
 ;
 ; Run this farm bot as Elementalist
 ;
@@ -42,7 +42,7 @@ Global Const $GemstoneTormentFarmInformations = 'For best results, have :' & @CR
 	& '- At least 100 energy to be able to cast all the spells' & @CRLF _
 	& '- Full Radiant Armor with Attunement Runes to max out energy' & @CRLF _
 	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _
-	& '- A focus with a "Live for Today" inscription (+15 energy, -1 energy degeneration) to max out energy' & @CRLF _
+	& '- A focus with a Live for Today inscription (+15 energy, -1 energy degeneration) to max out energy' & @CRLF _
 	& ' ' & @CRLF _
 	& 'You can run this farm as Elementalist. Bot will set up build automatically' & @CRLF _
 	& 'This bot farms torment gemstones (1 of 4 types) in Ravenheart Gloom location' & @CRLF _
@@ -71,7 +71,6 @@ $TormentRunOptions.Item('openChests')			= True ; chests in Ravenheart Gloom shou
 
 ;~ Main loop function for farming torment gemstones
 Func GemstoneTormentFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $GEMSTONE_TORMENT_FARM_SETUP And SetupGemstoneTormentFarm() == $FAIL Then Return $PAUSE
 
 	If GoToRavenHeartGloom() == $FAIL Then Return $FAIL

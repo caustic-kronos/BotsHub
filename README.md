@@ -27,7 +27,7 @@ It needs AutoIt version 3.3.16.0 or higher to run.
 To use it:
 1. Install AutoIt.
 2. Run `BotsHub.au3` with AutoIt.
-3. (Optional) To make the data collection functional, AutoIT needs SQLite. 
+3. (Optional) To make the data collection functional, AutoIT needs SQLite.
 	Install SQLite on your computer and make sure it works via command or with a GUI tool such as DBBrowser.
 	The required .dll file and .au3 are already present in the repository and everything should work.
 
@@ -168,9 +168,9 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💭 Wishlist
 
 ## BotsHub Version
-Current version: 2.0  
-Added GUI improvements along with new farms and general code updates.  
-Users are advised to create and save new configuration files using GUI.  
+Current version: 2.0
+Added GUI improvements along with new farms and general code updates.
+Users are advised to create and save new configuration files using GUI.
 Old configuration files may not be backward compatible
 There are 2 separate configuration files for farm options and for loot options
 

@@ -99,7 +99,6 @@ $RaptorsMoveOptions.Item('openChests')				= False
 
 ;~ Main method to farm Raptors
 Func RaptorsFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $RAPTORS_FARM_SETUP And SetupRaptorsFarm() == $FAIL Then Return $PAUSE
 
 	GoToRivenEarth()

@@ -1,8 +1,8 @@
 #CS ===========================================================================
-======================================
-|  	  Margonite Gemstones Farm bot	 |
-|				TonReuf				 |
-======================================
+=====================================
+|	Margonite Gemstones Farm bot	|
+|			TonReuf					|
+=====================================
 ;
 ; Run this farm bot as Assassin or Mesmer or Ranger or Elementalist
 ;
@@ -124,7 +124,6 @@ Global $MargoniteAuraOfRestorationTimer = TimerInit()
 
 ;~ Main loop function for farming margonite gemstones
 Func GemstoneMargoniteFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $GEMSTONE_MARGONITE_FARM_SETUP And SetupGemstoneMargoniteFarm() == $FAIL Then Return $PAUSE
 
 	If GoToCityOfTorcqua() == $FAIL Then Return $FAIL
@@ -353,9 +352,9 @@ Func IsAnurDabiOrKayaOrKiOrSu($agent)
 
 	Return EnemyAgentFilter($agent) And _
 		(DllStructGetData($agent, 'ModelID') == $AnurKaya Or _
-		 DllStructGetData($agent, 'ModelID') == $AnurDabi Or _
-		 DllStructGetData($agent, 'ModelID') == $AnurSu Or _
-		 DllStructGetData($agent, 'ModelID') == $AnurKi)
+		DllStructGetData($agent, 'ModelID') == $AnurDabi Or _
+		DllStructGetData($agent, 'ModelID') == $AnurSu Or _
+		DllStructGetData($agent, 'ModelID') == $AnurKi)
 EndFunc
 
 

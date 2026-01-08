@@ -42,7 +42,6 @@ Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000 ; max time = 60 minutes
 
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $FROGGY_FARM_SETUP Then SetupFroggyFarm()
 	Return FroggyFarmLoop()
 EndFunc

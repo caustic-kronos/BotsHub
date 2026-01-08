@@ -51,7 +51,6 @@ Global Const $Junundu_Leave		= 8
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
 Func LightbringerFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
 
 	GoToTheSulfurousWastes()

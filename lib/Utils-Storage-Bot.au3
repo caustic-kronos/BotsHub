@@ -89,7 +89,7 @@ EndFunc
 
 
 ;~ Function to deal with inventory before farm run
-Func InventoryManagementBeforeRun($tradeTown = $ID_Embark_Beach)
+Func InventoryManagementBeforeRun($tradeTown = $ID_Eye_of_the_North)
 	; Operations order :
 	; 1-Store unids if desired
 	; 2-Sort items
@@ -577,7 +577,7 @@ EndFunc
 
 
 ;~ Sell general items to trader
-Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False, $tradeTown = $ID_Embark_Beach)
+Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False, $tradeTown = $ID_Eye_of_the_North)
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to merchant to sell items')
 	UseCitySpeedBoost()
@@ -693,7 +693,7 @@ EndFunc
 
 
 ;~ Sell basic materials to materials merchant in town
-Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMaterial, $tradeTown = $ID_Embark_Beach)
+Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMaterial, $tradeTown = $ID_Eye_of_the_North)
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to materials merchant')
 	UseCitySpeedBoost()
@@ -797,7 +797,7 @@ EndFunc
 ;~ Buy rare material from rare materials merchant in town until you have little or no money left
 ;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
 ;~ So please only use with $poorThreshold > 5k
-Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null, $tradeTown = $ID_Embark_Beach)
+Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null, $tradeTown = $ID_Eye_of_the_North)
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	If CountSlots(1, 4) == 0 Then
 		Warn('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
@@ -1102,7 +1102,7 @@ EndFunc
 ;~ Return true if basic material should be sold to the material merchant
 Func DefaultShouldSellBasicMaterial($item)
 	If Not IsBasicMaterial($item) Then Return False
-	Local $materialID = DllStructGetData($item, "ModelID")
+	Local $materialID = DllStructGetData($item, 'ModelID')
 	Local $materialName = $Basic_Material_Names_From_IDs[$materialID]
 	Return IsLootOptionChecked('Sell items.Basic Materials.' & $materialName)
 EndFunc
@@ -1111,7 +1111,7 @@ EndFunc
 ;~ Return true if rare material should be sold to the rare material merchant
 Func DefaultShouldSellRareMaterial($item)
 	If Not IsRareMaterial($item) Then Return False
-	Local $materialID = DllStructGetData($item, "ModelID")
+	Local $materialID = DllStructGetData($item, 'ModelID')
 	Local $materialName = $Rare_Material_Names_From_IDs[$materialID]
 	Return IsLootOptionChecked('Sell items.Rare Materials.' & $materialName)
 EndFunc
@@ -1131,7 +1131,7 @@ EndFunc
 Func CheckPickupWeapon($weaponItem)
 	If Not $PICKUP_WEAPONS Then Return False
 
-	Local $weaponType = DllStructGetData($weaponItem, "Type")
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WeaponNamesFromTypes[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_Green Or $weaponRarity == $RARITY_Red Then Return True
@@ -1145,7 +1145,7 @@ EndFunc
 Func CheckSalvageWeapon($weaponItem)
 	If Not $SALVAGE_WEAPONS Then Return False
 
-	Local $weaponType = DllStructGetData($weaponItem, "Type")
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WeaponNamesFromTypes[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_Green Or $weaponRarity == $RARITY_Gray Or $weaponRarity == $RARITY_Red Then Return False
@@ -1158,7 +1158,7 @@ EndFunc
 Func CheckSellWeapon($weaponItem)
 	If Not $SELL_WEAPONS Then Return False
 
-	Local $weaponType = DllStructGetData($weaponItem, "Type")
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WeaponNamesFromTypes[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_Green Or $weaponRarity == $RARITY_Gray Or $weaponRarity == $RARITY_Red Then Return False
@@ -1171,7 +1171,7 @@ EndFunc
 Func CheckStoreWeapon($weaponItem)
 	If Not $STORE_WEAPONS Then Return False
 
-	Local $weaponType = DllStructGetData($weaponItem, "Type")
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WeaponNamesFromTypes[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_Green Then Return True

@@ -78,7 +78,6 @@ Global Const $ModelID_Miku = 8433 ; unique Model ID of Miku NPC, that can be acc
 
 ;~ Main loop function for farming war supplies
 Func WarSupplyKeiranFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $WARSUPPLY_FARM_SETUP Then SetupWarSupplyFarm()
 
 	Local $result = WarSupplyFarmLoop()
@@ -135,7 +134,7 @@ Func WarSupplyFarmLoop()
 		ReturnBackToOutpost($ID_Hall_of_Monuments)
 		Sleep(3000)
 	EndIf
-	return $result
+	Return $result
 EndFunc
 
 

@@ -42,7 +42,6 @@ Global $SOO_FARM_SETUP = False
 
 ;~ Main method to farm SoO
 Func SoOFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $SOO_FARM_SETUP Then SetupSoOFarm()
 	Return SoOFarmLoop()
 EndFunc

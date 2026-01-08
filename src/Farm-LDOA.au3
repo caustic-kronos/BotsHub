@@ -27,7 +27,6 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $LDOASkillbar = 'Any build will do, providing it has a heal and damage.'
 Global Const $LDOAInformations = 'The bot will:' & @CRLF _
 	& '- Go right off the bat, on a new character after the cutscene.' & @CRLF _
 	& '- In the beginning it tries to do the elementalist quest to get some initial skill.' & @CRLF _

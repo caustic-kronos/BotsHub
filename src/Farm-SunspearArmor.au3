@@ -34,7 +34,6 @@ Global $SUNSPEAR_ARMOR_FARM_SETUP = False
 
 ;~ Main loop for the Sunspear Armor farm
 Func SunspearArmorFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
 
 	EnterSunspearArmorChallenge()

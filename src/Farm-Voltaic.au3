@@ -40,7 +40,6 @@ Global $VOLTAIC_FARM_SETUP = False
 
 ;~ Main method to farm Voltaic
 Func VoltaicFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $VOLTAIC_FARM_SETUP Then SetupVoltaicFarm()
 
 	GoToVerdantCascades()

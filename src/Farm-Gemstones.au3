@@ -91,7 +91,6 @@ Global Const $ModelID_Zhellix = 5272 ; unique Model ID of Zhellix NPC, that can 
 
 ;~ Main Gemstones farm entry function
 Func GemstonesFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $GEMSTONES_FARM_SETUP Then SetupGemstonesFarm()
 
 	Local $result = GemstonesFarmLoop()

@@ -58,7 +58,6 @@ Global $PONGMEI_FARM_SETUP = False
 
 ;~ Main method to chest farm Pongmei
 Func PongmeiChestFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiChestFarm()
 
 	GoToPongmeiValley()

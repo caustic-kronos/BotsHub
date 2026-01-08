@@ -100,7 +100,6 @@ $VaettirsMoveOptionsElementalist.Item('hosSkillSlot') = 0
 
 ;~ Main method to farm Vaettirs
 Func VaettirsFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $VAETTIRS_FARM_SETUP And SetupVaettirsFarm() == $FAIL Then Return $PAUSE
 	Return VaettirsFarmLoop()
 EndFunc

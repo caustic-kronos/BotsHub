@@ -36,7 +36,6 @@ Global $IRIS_FARM_SETUP = False
 
 ;~ Main method to farm Red Iris Flowers in Eden
 Func EdenIrisFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
 
 	GoToLakesideCounty()

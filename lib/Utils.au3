@@ -82,7 +82,7 @@ Func DynamicExecution($functionCall)
 	Info('Call to ' & $functionName)
 	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
 	Local $functionArguments = ParseFunctionArguments($argumentsString)
-	Local $arguments[1] = ["CallArgArray"] ; special flag to be able to pass unlimited array of arguments into Call() function
+	Local $arguments[1] = ['CallArgArray'] ; special flag to be able to pass unlimited array of arguments into Call() function
 	_ArrayConcatenate($arguments, $functionArguments)
 	Call($functionName, $arguments)
 EndFunc
@@ -1414,7 +1414,7 @@ EndFunc
 ;~ Buy merchant items in town
 ;~ FIXME: error if total price is superior to 100k, add a loop for that
 ;~ FIXME: error if amount is superior to 250, add another loop for that
-Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False, $tradeTown = $ID_Embark_Beach)
+Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False, $tradeTown = $ID_Eye_of_the_North)
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	If GetGoldCharacter() < $amount * $itemPrice And GetGoldStorage() > $amount * $itemPrice - 1 Then
 		WithdrawGold($amount * $itemPrice)
@@ -1999,58 +1999,58 @@ EndFunc
 ;~ Compute and print structure offsets and total size based on structure definition string
 Func ComputeStructureOffsets($structureDefinition)
 	Local $offset = 0
-	Local $fields = StringSplit($structureDefinition, ";", 2)
+	Local $fields = StringSplit($structureDefinition, ';', 2)
 
 	For $field In $fields
 		$field = StringStripWS($field, 3)
-		If $field = "" Then ContinueLoop
+		If $field = '' Then ContinueLoop
 
-		Local $parts = StringSplit($field, " ", 2)
+		Local $parts = StringSplit($field, ' ', 2)
 		Local $type = $parts[0]
 		Local $name = $parts[1]
 
 		; Handle arrays (for example wchar name[32])
 		Local $count = 1
-		Local $countPosition = StringInStr($name, "[")
+		Local $countPosition = StringInStr($name, '[')
 		If $countPosition > 0 Then
-			Local $countSize = StringInStr($name, "]") - $countPosition - 1
+			Local $countSize = StringInStr($name, ']') - $countPosition - 1
 			$count = Number(StringMid($name, $countPosition + 1, $countSize))
 			$name = StringLeft($name, $countPosition - 1)
 		EndIf
 
 		Local $size = TypeSize($type) * $count
-		Out(StringFormat("%-30s offset=%3d size=%3d", $name, $offset, $size))
+		Out(StringFormat('%-30s offset=%3d size=%3d', $name, $offset, $size))
 		$offset += $size
 	Next
 
-	Out("Total size = " & $offset & " bytes")
+	Out('Total size = ' & $offset & ' bytes')
 EndFunc
 
 
 ;~ Returns the size in bytes of the given type
 Func TypeSize($type)
 	Switch StringLower($type)
-		Case "byte"
+		Case 'byte'
 			Return 1
-		Case "char"
+		Case 'char'
 			Return 1
-		Case "short"
+		Case 'short'
 			Return 2
-		Case "word"
+		Case 'word'
 			Return 2
-		Case "wchar"
+		Case 'wchar'
 			Return 2
-		Case "dword"
+		Case 'dword'
 			Return 4
-		Case "int"
+		Case 'int'
 			Return 4
-		Case "float"
+		Case 'float'
 			Return 4
-		Case "long"
+		Case 'long'
 			Return 4
-		Case "double"
+		Case 'double'
 			Return 8
-		Case "ptr"
+		Case 'ptr'
 			Return @AutoItX64 ? 8 : 4
 		Case Else
 			Return -1 ; Unknown type
@@ -2518,12 +2518,12 @@ EndFunc
 
 Func TrySetupWeaponSlotUsingGUISettings()
 	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $WEAPON_SLOT & ' according to GUI settings')
-		ChangeWeaponSet($WEAPON_SLOT)
+		Info('Setting player weapon slot to ' & $DEFAULT_WEAPON_SLOT & ' according to GUI settings')
+		ChangeWeaponSet($DEFAULT_WEAPON_SLOT)
+		Sleep(250 + GetPing())
 	Else
-		Info('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
+		Debug('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
 	EndIf
-	Sleep(250 + GetPing())
 EndFunc
 
 
@@ -2531,10 +2531,10 @@ Func TrySetupPlayerUsingGUISettings()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+		Sleep(250 + GetPing())
 	Else
-		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+		Debug('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
-	Sleep(250 + GetPing())
 EndFunc
 
 

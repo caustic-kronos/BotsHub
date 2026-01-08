@@ -73,7 +73,6 @@ Global $JADE_BROTHERHOOD_FARM_SETUP = False
 
 ;~ Main method to farm Jade Brotherhood for q8
 Func JadeBrotherhoodFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $JADE_BROTHERHOOD_FARM_SETUP And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
 
 	GoToBukdekByway()

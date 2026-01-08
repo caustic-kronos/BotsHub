@@ -34,7 +34,6 @@ Global $LIGHTBRINGER_FARM2_SETUP = False
 
 ;~ Main loop for the Lightbringer title farm
 Func LightbringerFarm2($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
 
 	GoToMirrorOfLyss()

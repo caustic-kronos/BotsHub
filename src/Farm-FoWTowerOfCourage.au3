@@ -1,8 +1,8 @@
 #CS ===========================================================================
 ==================================================
-|  	 Fissure Of Woe Tower of Courage farm Bot	 |
-|	  Authors: Zaishen/RiflemanX/Monk Reborn	 |
-|	    Rewrite Author for BotsHub: Gahais		 |
+|	Fissure Of Woe Tower of Courage farm Bot	|
+|	Authors: Zaishen/RiflemanX/Monk Reborn		|
+|	Rewrite Author for BotsHub: Gahais			|
 ==================================================
 ; Copyright 2025 caustic-kronos
 ;
@@ -47,8 +47,8 @@ Global Const $FoWToC_DwarvenStability	= 6
 Global Const $FoWToC_WhirlingDefense	= 7
 Global Const $FoWToC_MentalBlock		= 8
 
-Global Const $FoWToC_SkillsArray 		= [$FoWToC_ShadowForm, $FoWToC_ShroudOfDistress, $FoWToC_IAmUnstoppable, $FoWToC_DarkEscape, $FoWToC_HeartOfShadow, $FoWToC_DwarvenStability, $FoWToC_WhirlingDefense, $FoWToC_MentalBlock]
-Global Const $FoWToC_SkillsCostsArray 	= [5,				   10,						 5,						 5,					 5,						5,						  4,					   10]
+Global Const $FoWToC_SkillsArray		= [$FoWToC_ShadowForm, $FoWToC_ShroudOfDistress, $FoWToC_IAmUnstoppable, $FoWToC_DarkEscape, $FoWToC_HeartOfShadow, $FoWToC_DwarvenStability, $FoWToC_WhirlingDefense, $FoWToC_MentalBlock]
+Global Const $FoWToC_SkillsCostsArray	= [5,					10,							5,						5,					5,						5,						4,						10]
 Global Const $FoWToCSkillsCostsMap = MapFromArrays($FoWToC_SkillsArray, $FoWToC_SkillsCostsArray)
 #EndRegion Configuration
 
@@ -87,7 +87,6 @@ Global Const $FoWToC_ModelID_Abyssal			= 2861
 
 ;~ Main method to farm Fissure of Woe - Tower of Courage
 Func FoWToCFarm($STATUS)
-	; Need to be done here in case bot comes back from inventory management
 	If Not $FOW_TOC_FARM_SETUP And SetupFoWToCFarm() == $FAIL Then Return $PAUSE
 
 	Local $result = EnterFissureOfWoe()

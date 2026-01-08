@@ -66,7 +66,7 @@ Global Const $HEADER_MOVE_TO_COORD = 0x3E		; Moves to specified coordinates
 Global Const $HEADER_ITEM_INTERACT = 0x3F		; Interacts with an item in the environment to either pick it up or interact
 Global Const $HEADER_ROTATE_PLAYER = 0x40		; Rotates the player character
 Global Const $HEADER_TARGET_AGENT = 0xC1		; target an agent
-Global Const $I_HEADER_ATTACK_AGENT = 0x24 		; Initiates an attack on a selected agent
+Global Const $I_HEADER_ATTACK_AGENT = 0x24		; Initiates an attack on a selected agent
 
 ; GAME_CMSG_ - Inventory and Items
 Global Const $HEADER_DROP_ITEM = 0x2C				; Drops item from inventory to ground
