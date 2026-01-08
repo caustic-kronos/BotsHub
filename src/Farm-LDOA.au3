@@ -105,7 +105,7 @@ EndFunc
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
 	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	If Not IsItemEquippedInWeaponSlot($ID_Luminescent_Scepter, 1) Then GetWeapons()
+	If Not IsItemEquippedInWeaponSlot($ID_Luminescent_Scepter, 1) Or FindInInventory($ID_Igneous_Summoning_Stone)[0] == 0 Then GetWeapons()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
@@ -246,12 +246,19 @@ Func LDOATitleFarmUnder2()
 	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
 	UseConsumable($ID_Igneous_Summoning_Stone, True)
 	MoveTo(-10433, -6021)
-	MoveAggroAndKill(-9551, -5499)
-	MoveAggroAndKill(-9545, -4205)
-	MoveAggroAndKill(-9551, -2929)
-	MoveAggroAndKill(-9559, -1324)
-	MoveAggroAndKill(-9451, -301)
-	If IsPlayerDead() Then Return $FAIL
+
+	Local $wurmies[5][2] = [ _
+		[-9551,	-5499], _
+		[-9545, -4205], _
+		[-9551, -2929], _
+		[-9559, -1324], _
+		[-9451, -301] _
+	]
+	For $i = 0 To UBound($wurmies) - 1
+		MoveAggroAndKill($wurmies[$i][0], $wurmies[$i][1])
+		If DllStructGetData(GetMyAgent(), 'Level') == 2 Then Return $SUCCESS
+		If IsPlayerDead() Then Return $FAIL
+	Next
 	Return $SUCCESS
 EndFunc
 

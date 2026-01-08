@@ -248,6 +248,7 @@ Global Const $ID_Assassin		= 7
 Global Const $ID_Ritualist		= 8
 Global Const $ID_Paragon		= 9
 Global Const $ID_Dervish		= 10
+Global Const $ID_Any_Profession	= 11
 #EndRegion Professions
 
 
