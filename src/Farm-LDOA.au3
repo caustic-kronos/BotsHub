@@ -105,9 +105,7 @@ EndFunc
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
 	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	SendChat('bonus', '/') ; Get Igneous summoning stone for low level characters
-	Sleep(GetPing() + 750)
-	GetWeapons()
+	If Not IsItemEquippedInWeaponSlot($ID_Luminescent_Scepter, 1) Then GetWeapons()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
@@ -142,6 +140,7 @@ Func InitialSetupLDOA()
 	Dialog($ID_Dialog_Select_Quest_A_Mesmers_Burden)
 	Sleep(250)
 	Dialog($ID_Dialog_Accept_Quest_A_Mesmers_Burden)
+	Sleep(250)
 
 	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
 	If TryTravel($ID_Ashford_Abbey) == $FAIL Then RunToAshford()
@@ -150,13 +149,22 @@ EndFunc
 
 ;~ Get weapons for LDOA title farm
 Func GetWeapons()
+	SendChat('bonus', '/') ; Get Igneous summoning stone for low level characters
+	Sleep(GetPing() + 750)
+
 	Local $luminescentScepter = FindInInventory($ID_Luminescent_Scepter)
 	Local $serratedShield = FindInInventory($ID_Serrated_Shield)
 
 	If $luminescentScepter[0] <> 0 And $serratedShield[0] <> 0 Then
 		Info('Equipping Luminescent Scepter and Serrated Shield')
-		UseItemBySlot($luminescentScepter[0], $luminescentScepter[1])
-		UseItemBySlot($serratedShield[0], $serratedShield[1])
+		Local $item = GetItemBySlot($luminescentScepter[0], $luminescentScepter[1])
+		EquipItem($item)
+		Sleep(250)
+		$item = GetItemBySlot($serratedShield[0], $serratedShield[1])
+		EquipItem($item)
+		Sleep(250)
+	Else
+		Error('Weapons not found in inventory')
 	EndIf
 EndFunc
 

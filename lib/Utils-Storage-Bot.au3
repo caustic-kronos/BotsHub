@@ -642,7 +642,7 @@ Func HasInInventory($condition)
 EndFunc
 
 
-Func NPCCoordinatesInTown($town = $ID_Embark_Beach, $type = 'Merchant')
+Func NPCCoordinatesInTown($town = $ID_Eye_of_the_North, $type = 'Merchant')
 	Local $coordinates[2] = [-1, -1]
 	Switch $type
 		Case 'Merchant'

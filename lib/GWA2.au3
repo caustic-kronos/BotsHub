@@ -3106,8 +3106,9 @@ Func GetItemByModelID($modelID)
 		If $itemPtr[1] = 0 Then ContinueLoop
 		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
-		If DllStructGetData($itemStruct, 'ModelID') = $modelID Then Return $itemStruct
+		If DllStructGetData($itemStruct, 'ModelID') == $modelID Then Return $itemStruct
 	Next
+	Return Null
 EndFunc
 
 
@@ -4053,16 +4054,16 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 
 			If $skillID = 0 Then
 				Local $resultArray[$effectCount[1]]
-				For $i = 0 To $effectCount[1] - 1
-					$resultArray[$i] = SafeDllStructCreate($effectStructTemplate)
-					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $i
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$i]), 'int', 24, 'int', 0)
+				For $j = 0 To $effectCount[1] - 1
+					$resultArray[$j] = SafeDllStructCreate($effectStructTemplate)
+					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $j
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$j]), 'int', 24, 'int', 0)
 				Next
 				Return $resultArray
 			Else
-				For $i = 0 To $effectCount[1] - 1
+				For $j = 0 To $effectCount[1] - 1
 					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $i, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
+					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $j, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
 
 					If DllStructGetData($effectStruct, 'SkillID') == $skillID Then
 						Return $effectStruct
