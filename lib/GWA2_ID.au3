@@ -1484,7 +1484,7 @@ Global Const $ID_Ghastly_Summon					= 32557
 Global Const $ID_Celestial_Summon				= 34176
 Global Const $ID_Shining_Blade_Summon			= 35126
 Global Const $ID_Legionnaire_Summoning_Crystal	= 37810
-Global Const $Summoning_Stones_Array[]			= [$ID_Merchant_Summon, $ID_Tengu_Summon, $ID_Imperial_Guard_Summon, $ID_Automaton_Summon, $ID_Chitinous_Summon, $ID_Mystical_Summon, $ID_Amber_Summon, $ID_Artic_Summon, $ID_Demonic_Summon, _
+Global Const $Summoning_Stones_Array[]			= [$ID_Merchant_Summon, $ID_Tengu_Summon, $ID_Imperial_Guard_Summon, $ID_Automaton_Summon, $ID_Igneous_Summoning_Stone, $ID_Chitinous_Summon, $ID_Mystical_Summon, $ID_Amber_Summon, $ID_Artic_Summon, $ID_Demonic_Summon, _
 													$ID_Gelatinous_Summon, $ID_Fossilized__Summon, $ID_Jadeite_Summon, $ID_Mischievous_Summon, $ID_Frosty_Summon, $ID_Mysterious_Summon, $ID_Zaishen_Summon, $ID_Ghastly_Summon, $ID_Celestial_Summon, $ID_Shining_Blade_Summon]
 Global Const $Map_Summoning_Stones				= MapFromArray($Summoning_Stones_Array)
 #EndRegion Summoning Stones
