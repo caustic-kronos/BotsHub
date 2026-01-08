@@ -149,7 +149,8 @@ EndFunc
 
 ;~ Get weapons for LDOA title farm
 Func GetWeapons()
-	SendChat('bonus', '/') ; Get Igneous summoning stone for low level characters
+	; Get Igneous summoning stone for low level characters
+	SendChat('bonus', '/')
 	Sleep(GetPing() + 750)
 
 	Local $luminescentScepter = FindInInventory($ID_Luminescent_Scepter)
@@ -392,7 +393,7 @@ Func LowHealthMonitor()
 	If IsLowHealth() Then
 		Notice('Health below threshold, returning to Ascalon and restarting the run.')
 		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-		Return $SUCCESS ; restarting the title farm run
+		Return $SUCCESS
 	EndIf
 EndFunc
 

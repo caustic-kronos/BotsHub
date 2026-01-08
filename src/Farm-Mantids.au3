@@ -45,7 +45,7 @@ Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 Global Const $MantidsHeroPartyID = $ID_General_Morgahn
 ;Global Const $MantidsHeroPartyID = $ID_Keiran_Thackeray
 ;Global Const $MantidsHeroPartyID = $ID_Hayda
-Global Const $MantidsHeroIndex = 1 ; index of first hero party member in team, player index is 0
+Global Const $MantidsHeroIndex = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
 Global Const $Mantids_DeadlyParadox			= 1
@@ -226,7 +226,8 @@ Func MantidsFarmLoop()
 
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems()
 			Sleep(GetPing())
 		Next

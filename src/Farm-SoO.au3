@@ -36,7 +36,7 @@ Global Const $ID_SoO_Quest_Lost_Souls = 0x324
 Global Const $ID_SoO_Torch = 22342
 Global Const $SoOAggroRange = $RANGE_SPELLCAST + 100
 
-Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000 ; max time = 80 minutes
+Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000
 Global $SOO_FARM_SETUP = False
 
 
@@ -319,7 +319,8 @@ Func ClearSoOFloor2()
 		ClearTarget()
 		Sleep(GetPing() + 500)
 
-		For $i = 1 To 2 ; Doubled to secure bot
+		; Doubled to secure bot
+		For $i = 1 To 2
 			MoveTo(-14709, -16548)
 			TargetNearestItem()
 			Sleep(1500)
@@ -449,7 +450,8 @@ Func ClearSoOFloor2()
 		If CheckStuck('SoO Floor 2 - Opening door', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('Open dungeon door')
 		ClearTarget()
-		For $i = 1 To 3 ; Tripled to secure bot
+		; Tripled to secure bot
+		For $i = 1 To 3
 			MoveTo(-18725, -9171)
 			TargetNearestItem()
 			ActionInteract()
@@ -515,7 +517,8 @@ Func ClearSoOFloor3()
 
 		Info('Open torch chest')
 		ClearTarget()
-		For $i = 1 To 2 ; Doubled to secure bot
+		; Doubled to secure bot
+		For $i = 1 To 2
 			Sleep(GetPing() + 500)
 			MoveTo(16134, 17590)
 			TargetNearestItem()
@@ -560,7 +563,8 @@ Func ClearSoOFloor3()
 		Info('Open dungeon door')
 		ClearTarget()
 
-		For $i = 1 To 2 ; Doubled to secure bot
+		; Doubled to secure bot
+		For $i = 1 To 2
 			Sleep(GetPing() + 500)
 			MoveTo(-9214, 6323)
 			TargetNearestItem()

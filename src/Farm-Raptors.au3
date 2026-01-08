@@ -31,7 +31,8 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $WNRaptorsFarmerSkillbar = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
-Global Const $DNRaptorsFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'	;Doesn't work, dervish just takes too much damage
+;Doesn't work, dervish just takes too much damage
+Global Const $DNRaptorsFarmerSkillbar = 'OQQTcYqVXySgmUlJvovYUbHctAA'
 Global Const $PRunnerHeroSkillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
 Global Const $RaptorsFarmInformations = 'For best results, have :' & @CRLF _
 	& '- 12 in curses' & @CRLF _
@@ -56,7 +57,7 @@ Global $RAPTORS_FARM_SETUP = False
 Global Const $RaptorsHeroPartyID = $ID_General_Morgahn
 ;Global Const $RaptorsHeroPartyID = $ID_Keiran_Thackeray
 ;Global Const $RaptorsHeroPartyID = $ID_Hayda
-Global Const $RaptorsHeroIndex = 1 ; index of first hero party member in team, player index is 0
+Global Const $RaptorsHeroIndex = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
 Global Const $Raptors_MarkOfPain		= 1
@@ -86,10 +87,10 @@ Global Const $Raptors_StandYourGround	= 6
 Global Const $Raptors_CantTouchThis		= 7
 Global Const $Raptors_BladeturnRefrain	= 8
 
-Global $RaptorsPlayerProfession = $ID_Warrior ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
+Global $RaptorsPlayerProfession = $ID_Warrior
 
 Global $RaptorsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
-$RaptorsMoveOptions.Item('defendFunction')			= Null ; not using any defense skills during movement to preserve energy
+$RaptorsMoveOptions.Item('defendFunction')			= Null
 $RaptorsMoveOptions.Item('moveTimeOut')				= 3 * 60 * 1000
 $RaptorsMoveOptions.Item('randomFactor')			= 10
 $RaptorsMoveOptions.Item('hosSkillSlot')			= 0
@@ -193,7 +194,8 @@ Func RaptorsFarmLoop()
 	RandomSleep(1000)
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems(RaptorsDefend)
 			Sleep(100 + GetPing())
 		Next

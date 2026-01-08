@@ -73,7 +73,7 @@ Func ManageFactionPointsLuxonFarm()
 			Info('Converting Luxon faction points into Jadeite Shards')
 			Dialog(0x83)
 			RandomSleep(500)
-			Local $numberOfShards = Floor(GetLuxonFaction() / 5000) ; 5000 faction points for each shard
+			Local $numberOfShards = Floor(GetLuxonFaction() / 5000)
 			; number of shards = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 shard, 0x800201 = 2 shards
 			Local $dialogID = 0x800001 + (0x100 * $numberOfShards)
 			Dialog($dialogID)
@@ -82,7 +82,7 @@ Func ManageFactionPointsLuxonFarm()
 			Info('Converting Luxon faction points into The Deep Passage Scrolls')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfScrolls = Floor(GetLuxonFaction() / 1000) ; 1000 faction points for each scroll
+			Local $numberOfScrolls = Floor(GetLuxonFaction() / 1000)
 			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
 			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)
@@ -144,7 +144,8 @@ Func VanquishMountQinkai()
 	Dialog(0x86)
 	RandomSleep(1000)
 
-	Local Static $foes[43][4] = [ _ ; 43 groups to vanquish
+	; 43 groups to vanquish
+	Local Static $foes[43][4] = [ _
 		[-11400, -9000, 'Yetis', $AGGRO_RANGE], _
 		[-13500, -10000, 'Yeti 1', $AGGRO_RANGE], _
 		[-15000, -8000, 'Yeti 2', $AGGRO_RANGE], _

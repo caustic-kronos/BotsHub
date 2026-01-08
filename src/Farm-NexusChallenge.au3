@@ -41,8 +41,9 @@ Func NexusChallengeFarm($STATUS)
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
-	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
-	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
+	Sleep(15000)
+	Info('Returning back to the outpost')
 	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
@@ -52,7 +53,7 @@ Func NexusChallengeSetup()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Nexus Then
 		TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
-	Else ; resigning to return to outpost in case when player is in Nexus Challenge that has the same map ID as Nexus outpost (555)
+	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SetDisplayedTitle($ID_Lightbringer_Title)
@@ -73,13 +74,13 @@ Func EnterNexusChallengeMission()
 	Local Static $StartY = -335
 	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
 		Info('Entering Nexus mission')
-		; Lance la quête
 		MoveTo(-2218, -5033)
 		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
 		Info('Talking to NPC')
 		Sleep(1000)
 		Dialog(0x88)
-		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost and entered mission
+		; wait 8 seconds to ensure that player exited outpost and entered mission
+		Sleep(8000)
 	WEnd
 EndFunc
 
@@ -89,9 +90,10 @@ Func NexusChallenge()
 	If GetMapID() <> $ID_Nexus Then Return $FAIL
 	Sleep(50000)
 
-	; Sinon on fait les 5 groupes
-	Local Static $foes[18][3] = [ _ ; 9 groups to defeat in each loop
-		[-2675, 3301, 'Group 1'], _ ; First loop
+	; 9 groups to defeat in each loop
+	Local Static $foes[18][3] = [ _
+		; First loop
+		[-2675, 3301, 'Group 1'], _
 		[-55, 3297, 'Group 2'], _
 		[-1759, 993, 'Group 3'], _
 		[3834, 2759, 'Group 4'], _
@@ -100,7 +102,8 @@ Func NexusChallenge()
 		[668, -3516, 'Group 7'], _
 		[-3723, -3662, 'Group 8'], _
 		[-3809, 880, 'Group 9'], _
-		[-2675, 3301, 'Group 1'], _ ; Second loop
+		; Second loop
+		[-2675, 3301, 'Group 1'], _
 		[-55, 3297, 'Group 2'], _
 		[-1759, 993, 'Group 3'], _
 		[3834, 2759, 'Group 4'], _

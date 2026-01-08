@@ -248,29 +248,29 @@ Func PrepareToFight()
 	;StartingPositions()
 	StartingPositions()
 	RandomSleep(1500)
-	UseHeroSkill($Hero_Ritualist_SoS, $SoS_Skill_Position)						;SoS - SoS
-	UseHeroSkill($Hero_Necro_BiP, $Recovery_Skill_Position)						;BiP - Recovery
+	UseHeroSkill($Hero_Ritualist_SoS, $SoS_Skill_Position)
+	UseHeroSkill($Hero_Necro_BiP, $Recovery_Skill_Position)
 	RandomSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)					;Prot - Shelter
+	UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)
 	RandomSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)					;Prot - Union
+	UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)
 	RandomSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)			;Prot - Displacement
+	UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)
 	RandomSleep(2500)
-	UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)			;Prot - Soul Twisting
+	UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)
 	RandomSleep(2500)
-	UseHeroSkill($Hero_Ritualist_SoS, $Splinter_Weapon_Skill_Position, GetMyAgent())		;SoS - Splinter Weapon
-	UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)		;Prot - Armor of Unfeeling
+	UseHeroSkill($Hero_Ritualist_SoS, $Splinter_Weapon_Skill_Position, GetMyAgent())
+	UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)
 	RandomSleep(11000)
 	UseConsumable($ID_Birthday_Cupcake)
-	UseHeroSkill($Hero_Mesmer_DPS_1, $Energy_Surge_Skill_Position)				;ESurge1 - ESurge
-	UseHeroSkill($Hero_Mesmer_DPS_2, $Energy_Surge_Skill_Position)				;ESurge2 - ESurge
-	UseHeroSkill($Hero_Mesmer_DPS_3, $Energy_Surge_Skill_Position)				;ESurge3 - ESurge
-	UseHeroSkill($Hero_Ritualist_SoS, $Essence_Strike_Skill_Position)			;Sos - Essence Strike
-	UseHeroSkill($Hero_Necro_BiP, $Blood_bond_Skill_Position)					;BiP - Blood Bond
+	UseHeroSkill($Hero_Mesmer_DPS_1, $Energy_Surge_Skill_Position)
+	UseHeroSkill($Hero_Mesmer_DPS_2, $Energy_Surge_Skill_Position)
+	UseHeroSkill($Hero_Mesmer_DPS_3, $Energy_Surge_Skill_Position)
+	UseHeroSkill($Hero_Ritualist_SoS, $Essence_Strike_Skill_Position)
+	UseHeroSkill($Hero_Necro_BiP, $Blood_bond_Skill_Position)
 	RandomSleep(2500)
 	; Enemies turn hostile now
-	UseHeroSkill($Hero_Mesmer_Ineptitude, $Stand_your_ground_Skill_position)	;Ineptitude - Stand your ground
+	UseHeroSkill($Hero_Mesmer_Ineptitude, $Stand_your_ground_Skill_position)
 	UseSkillEx($Skill_Ebon_Battle_Standard_of_Honor)
 	RandomSleep(1000)
 EndFunc
@@ -407,19 +407,19 @@ Func RenewSpirits()
 	If GetEffectTimeRemaining(GetEffect($Shelter_Skill_Position)) == 0 _
 		Or GetEffectTimeRemaining(GetEffect($Shelter_Skill_Position)) == 0 Then
 			SoulTwistingRitualistUseSoulTwisting()
-			UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)						;Prot - Shelter
+			UseHeroSkill($Hero_Ritualist_Prot, $Shelter_Skill_Position)
 			RandomSleep(1250)
 			SoulTwistingRitualistUseSoulTwisting()
-			UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)						;Prot - Union
+			UseHeroSkill($Hero_Ritualist_Prot, $Union_Skill_Position)
 			RandomSleep(1250)
-			UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)			;Prot - Armor of Unfeeling
+			UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)
 			RandomSleep(50)
 	EndIf
 	If GetEffectTimeRemaining(GetEffect($Displacement_Skill_Position)) == 0 Then
 		SoulTwistingRitualistUseSoulTwisting()
-		UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)					;Prot - Displacement
+		UseHeroSkill($Hero_Ritualist_Prot, $Displacement_Skill_Position)
 		RandomSleep(1250)
-		UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)				;Prot - Armor of Unfeeling
+		UseHeroSkill($Hero_Ritualist_SoS, $Armor_of_Unfeeling_Skill_Position)
 		RandomSleep(50)
 	EndIf
 	SoulTwistingRitualistUseSoulTwisting()
@@ -429,7 +429,7 @@ EndFunc
 ;~ The soul twisting ritualist uses soul twisting - sic
 Func SoulTwistingRitualistUseSoulTwisting()
 	If GetEffectTimeRemaining(GetEffect($Soul_Twisting_Skill_Position, $Hero_Ritualist_Prot)) == 0 Then
-		UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)					;Prot - Soul Twisting
+		UseHeroSkill($Hero_Ritualist_Prot, $Soul_Twisting_Skill_Position)
 		RandomSleep(50)
 	EndIf
 EndFunc

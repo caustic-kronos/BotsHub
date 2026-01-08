@@ -37,7 +37,7 @@ Global Const $TascaElementalistChestRunnerSkillbar = 'OgdTw4P7HiHRn5A6ukmsBC3BBC
 Global Const $TascaMonkChestRunnerSkillbar = 'OwcTAnP7ZiHRn5A6ukmsBC3BBC'
 Global Const $TascaNecromancerChestRunnerSkillbar = 'OAdT8Z/YYiHRn5A6ukmsBC3BBC'
 Global Const $TascaRitualistChestRunnerSkillbar = 'OAej8xeM5Q8I6MHQ3l0kNQ4OIQ'
-Global $TascaPlayerProfession = $ID_Dervish ; global variable to remember player's profession in setup
+Global $TascaPlayerProfession = $ID_Dervish
 
 Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -120,7 +120,8 @@ Func SetupPlayerTascaChestFarm()
 			$TascaPlayerProfession = $ID_Ritualist
 			LoadSkillTemplate($TascaRitualistChestRunnerSkillbar)
 		Case Else
-			Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist') ; other characters have too few energy
+			; other characters have too few energy
+			Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist')
 			Return $FAIL
 	EndSwitch
 	Sleep(250 + GetPing())

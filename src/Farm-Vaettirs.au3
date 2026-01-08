@@ -76,7 +76,7 @@ Global Const $Vaettir_Elementalist_ElementalLord	= 4
 Global Const $Vaettir_Elementalist_MantraOfEarth	= 5
 
 ; ==== Global variables ====
-Global $VaettirsPlayerProfession = $ID_Assassin ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
+Global $VaettirsPlayerProfession = $ID_Assassin
 Global $Deadlocked = False
 Global $VaettirShadowFormTimer = TimerInit()
 Global $VaettirShroudOfDistressTimer = TimerInit()
@@ -89,7 +89,7 @@ Global $VaettirProtectiveSpiritTimer = TimerInit()
 
 Global $VaettirsMoveOptions = CloneDictMap($Default_MoveDefend_Options)
 $VaettirsMoveOptions.Item('defendFunction')			= VaettirsStayAlive
-$VaettirsMoveOptions.Item('moveTimeOut')			= 100 * 1000 ; 100 seconds max for being stuck
+$VaettirsMoveOptions.Item('moveTimeOut')			= 100 * 1000
 $VaettirsMoveOptions.Item('randomFactor')			= 50
 $VaettirsMoveOptions.Item('hosSkillSlot')			= $Vaettir_HeartOfShadow
 $VaettirsMoveOptions.Item('deathChargeSkillSlot')	= 0
@@ -109,7 +109,7 @@ Func SetupVaettirsFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_Longeyes_Ledge, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	If SetupPlayerVaettirsFarm() == $FAIL Then Return $FAIL
-	LeaveParty() ; solo farmer
+	LeaveParty()
 	SwitchMode($ID_HARD_MODE)
 	While $Deadlocked Or GetMapID() <> $ID_Jaga_Moraine
 		$Deadlocked = False
@@ -245,7 +245,8 @@ Func VaettirsFarmLoop()
 
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems(VaettirsStayAlive)
 			Sleep(GetPing())
 		Next
@@ -271,7 +272,8 @@ EndFunc
 ;~ Self explanatory
 Func AggroAllMobs()
 	Local $target
-	Local Static $vaettirs[31][2] = [ _ ; Vaettirs locations
+	; Vaettirs locations
+	Local Static $vaettirs[31][2] = [ _
 		_ ; left ball
 		[12496,	-22600], _
 		[11375,	-22761], _
@@ -362,7 +364,8 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 		VaettirsKillSequence()
 		If IsPlayerAlive() Then
 			Info('Picking up loot')
-			For $i = 1 To 3 ; Tripled to secure the looting of items
+			; Tripled to secure the looting of items
+			For $i = 1 To 3
 				PickUpItems(VaettirsStayAlive)
 				Sleep(GetPing())
 			Next
@@ -466,7 +469,8 @@ Func VaettirsCheckObsidianFlesh()
 		$VaettirObsidianFleshTimer = TimerInit()
 	EndIf
 	If IsRecharged($Vaettir_Elementalist_StonefleshAura) And GetEnergy() > 15 Then UseSkillEx($Vaettir_Elementalist_StonefleshAura)
-	If GetMapID() == $ID_Jaga_Moraine Then ; only cast energy accumulating skills when farming Vaettirs in jaga Moraine, not during run across Bjora Marches
+	; only cast energy accumulating skills when farming Vaettirs in jaga Moraine, not during run across Bjora Marches
+	If GetMapID() == $ID_Jaga_Moraine Then
 		If TimerDiff($VaettirChannelingTimer) > 20000 And TimerDiff($VaettirObsidianFleshTimer) < 19000 And Not IsRecharged($Vaettir_Elementalist_StonefleshAura) And GetEnergy() > 5 Then
 			UseSkillEx($Vaettir_Channeling)
 			$VaettirChannelingTimer = TimerInit()
@@ -533,7 +537,7 @@ EndFunc
 
 
 Func KillVaettirsUsingWastrelSkills()
-	Local Static $MaxKillTime = 100000 ; 100 seconds max fight time
+	Local Static $MaxKillTime = 100000
 	Local $deadlock = TimerInit()
 	Local $target
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
@@ -548,7 +552,7 @@ Func KillVaettirsUsingWastrelSkills()
 			; Use echoed wastrel if possible
 			If IsRecharged($Vaettir_ArcaneEcho) And GetSkillbarSkillID($Vaettir_ArcaneEcho) == $ID_Wastrels_Demise Then
 				$target = GetWastrelsTarget()
-				If $target <> Null Then UseSkillEx($Vaettir_ArcaneEcho, $target) ; here Arcane echo is echoed wastrel skill
+				If $target <> Null Then UseSkillEx($Vaettir_ArcaneEcho, $target)
 			EndIf
 
 			; Use wastrel's demise if possible
@@ -565,7 +569,7 @@ EndFunc
 
 
 Func KillVaettirsUsingSmitingSkills()
-	Local Static $MaxKillTime = 120000 ; 2 minutes max fight time
+	Local Static $MaxKillTime = 120000
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime

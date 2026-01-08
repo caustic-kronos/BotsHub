@@ -151,7 +151,8 @@ Func VoltaicFarmLoop()
 	WEnd
 	If IsRunFailed() Then Return $FAIL
 	Info('Opening chest')
-	For $i = 1 To 3 ; Tripled to secure looting of chest
+	; Tripled to secure looting of chest
+	For $i = 1 To 3
 		Move(-17500, -14250)
 		Sleep(5000)
 		TargetNearestItem()

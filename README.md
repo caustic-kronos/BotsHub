@@ -57,6 +57,7 @@ To use it:
 - Magus Stones farm (Asura points)
 - Varajar Fells farm (Norn points)
 - Dalada Uplands farm (Vanguard points)
+- Legendary Defender of Ascalon (LDOA)
 ### Dungeons/Elite zones
 - Bogroot dungeon farm (Froggy)
 - SoO dungeon farm (Dragon Bone Staff)
@@ -144,15 +145,12 @@ Feel free to create and add more bots; it’s pretty simple!
 
 ## 📌 Planned Features
 
-- ⚡🛠️ **User interface for mods and inscriptions**
-- ⚡🕓 **Add more detailed loot options**
 - ⚡🛠️ **FoW completion bot**
 - 💡🕓 **Fix the Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Cathedral of Flames farm bot** - 2 requests
 - 🧠💭 **Kilroy bot** - 1 request
 - 🧠💭 **Dwarf title farm bot** - 1 request
-- 🧠💭 **LDOA bot** - 1 request
 - 🧠💭 **Improve crash recovery**
 
 ### Legend

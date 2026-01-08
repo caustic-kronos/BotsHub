@@ -107,7 +107,8 @@ Func FarmTheSulfurousWastes()
 	ActionInteract()
 	RandomSleep(1500)
 
-	Local Static $foes[30][3] = [ _ ; 30 groups to vanquish
+	; 30 groups to vanquish
+	Local Static $foes[30][3] = [ _
 		[-800, 12000, 'First Undead Group 1'], _
 		[-1700, 9800, 'First Undead Group 2'], _
 		[-3000, 10900, 'Second Undead Group 1'], _
@@ -118,9 +119,9 @@ Func FarmTheSulfurousWastes()
 		_ ; Skipping this group because it can bring heroes on land and make them go out of Wurm
 		_ ;[-21200, 10750, 'Second Margonite Group 1'], _
 		_ ;[-20250, 11000, 'Second Margonite Group 2'], _
-		[-19000, 5700, 'Djinn Group Group 1'], _ ; range 2200
-		[-20800, 600, 'Djinn Group Group 2'], _ ; range 2200
-		[-22000, -1200, 'Djinn Group Group 3'], _ ; range 2200
+		[-19000, 5700, 'Djinn Group Group 1'], _
+		[-20800, 600, 'Djinn Group Group 2'], _
+		[-22000, -1200, 'Djinn Group Group 3'], _
 		[-21500, -6000, 'Undead Ritualist Boss Group 1'], _
 		[-20400, -7400, 'Undead Ritualist Boss Group 2'], _
 		[-19500, -9500, 'Undead Ritualist Boss Group 3'], _
@@ -266,7 +267,8 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	EndIf
 	RandomSleep(1000)
 
-	If CountAliveHeroes() < 2 Then Return $FAIL ; situation when most of the team is wiped
+	; situation when most of the team is wiped
+	If CountAliveHeroes() < 2 Then Return $FAIL
 	PickUpItems()
 	FindAndOpenChests($RANGE_SPIRIT)
 

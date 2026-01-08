@@ -142,7 +142,8 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_Eye_of_the_North)
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		SellItemsToMerchant()
 	EndIf
-	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then ; max gold in Xunlai chest is 1000 platinums
+	; Max gold in Xunlai chest is 1000 platinums
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
 		DepositGold(60000)
 		Info('Deposited Gold')
 	EndIf
@@ -582,7 +583,8 @@ Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = Fals
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to merchant to sell items')
 	UseCitySpeedBoost()
-	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0)
 	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
@@ -698,7 +700,8 @@ Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMa
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to materials merchant')
 	UseCitySpeedBoost()
-	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0)
 	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Basic material trader')
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
@@ -737,7 +740,8 @@ Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMate
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to rare materials merchant')
 	UseCitySpeedBoost()
-	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0)
 	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
@@ -776,7 +780,8 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_Emb
 	TravelToOutpost($tradeTown, $DISTRICT_NAME)
 	Info('Moving to rare materials merchant')
 	UseCitySpeedBoost()
-	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0)
 	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
@@ -806,7 +811,8 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	EndIf
 	Info('Moving to rare materials merchant')
 	UseCitySpeedBoost()
-	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0)
 	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
@@ -901,8 +907,8 @@ EndFunc
 ;~ Buy kits for mid run salvage to preserve inventory space during run
 Func BuyKitsForMidRun()
 	; constants to determine how many kits should be in player's inventory
-	Local Static $requiredSalvageKitUses = 300 ; = 12 salvage kits with 25 uses,
-	Local Static $requiredIdentificationKitUses = 400 ; = 4 superior identification kits with 100 uses
+	Local Static $requiredSalvageKitUses = 300				; = 12 salvage kits with 25 uses,
+	Local Static $requiredIdentificationKitUses = 400		; = 4 superior identification kits with 100 uses
 
 	Local $salvageUses = CountRemainingKitUses($ID_Salvage_Kit)
 	Local $salvageKitsRequired = KitsRequired($requiredSalvageKitUses - $salvageUses, $ID_Salvage_Kit)

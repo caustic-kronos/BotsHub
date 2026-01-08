@@ -60,17 +60,20 @@ Global Const $GlintChallengeDefendX = -4185
 ;Global Const $GlintChallengeDefendY = 5
 Global Const $GlintChallengeDefendY = -75
 
-Global Const $AgentID_BabyDragon = 19 ; in Glint Challenge location, the agent ID of Baby Dragon is always assigned to 19, when party has 8 members (can be accessed in GWToolbox)
-Global Const $ModelID_BabyDragon = 1816 ; unique Model ID of Baby Dragon NPC, that can be accessed in GWToolbox
-Global Const $BrotherhoodChestX = -3184 ; X spawn coordinate of Brotherhood chest
-Global Const $BrotherhoodChestY = 908 ; Y spawn coordinate of Brotherhood chest
-Global Const $BrotherhoodChestGadgetID = 9157 ; Unique GadgetID of Brotherhood chest
+; in Glint Challenge location, the agent ID of Baby Dragon is always assigned to 19, when party has 8 members (can be accessed in GWToolbox)
+Global Const $AgentID_BabyDragon = 19
+Global Const $ModelID_BabyDragon = 1816
+Global Const $BrotherhoodChestX = -3184
+Global Const $BrotherhoodChestY = 908
+Global Const $BrotherhoodChestGadgetID = 9157
 
 Global $GlintChallengeFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
 $GlintChallengeFightOptions.Item('fightRange')			= 1500
-$GlintChallengeFightOptions.Item('flagHeroesOnFight')	= False ; heroes will be flagged before fight to defend the start location
-$GlintChallengeFightOptions.Item('lootInFights')		= False ; loot only when no foes are in range
-$GlintChallengeFightOptions.Item('openChests')			= False ; there are no chests in Glint Challenge location
+; heroes will be flagged before fight to defend the start location
+$GlintChallengeFightOptions.Item('flagHeroesOnFight')	= False
+$GlintChallengeFightOptions.Item('lootInFights')		= False
+; there are no chests in Glint Challenge location
+$GlintChallengeFightOptions.Item('openChests')			= False
 
 
 ;~ Main loop for the Mysterious armor farm
@@ -79,7 +82,8 @@ Func GlintChallengeFarm($STATUS)
 
 	EnterGlintChallengeMission()
 	Local $result = GlintChallenge()
-	Sleep(15000) ; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
+	; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
+	Sleep(15000)
 	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
 	Return $result
 EndFunc
@@ -128,7 +132,8 @@ Func SetupTeamGlintChallengeFarm()
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
-		Return $FAIL ; Baby dragon agent ID will be lower if team size is lower than 8
+		; Baby dragon agent ID will be lower if team size is lower than 8
+		Return $FAIL
 	EndIf
 	Return $SUCCESS
 EndFunc
@@ -170,7 +175,8 @@ Func GlintChallenge()
 	CancelAllHeroes()
 
 	Info('Looting Chest of the Brotherhood')
-	For $i = 1 To 3 ; Tripled to secure the looting of Chest of the Brotherhood
+	; Tripled to secure the looting of chest
+	For $i = 1 To 3
 		MoveAggroAndKill($BrotherhoodChestX, $BrotherhoodChestY)
 		Local $brotherhoodChest = ScanForChests($RANGE_COMPASS, True, $BrotherhoodChestX, $BrotherhoodChestY, $BrotherhoodChestGadgetID)
 		ChangeTarget($brotherhoodChest)
@@ -179,7 +185,8 @@ Func GlintChallenge()
 		PickUpItems()
 	Next
 
-	Sleep(120000) ; wait 2 minutes for end mission timer to fully elapse
+	; wait 2 minutes for end mission timer to fully elapse
+	Sleep(120000)
 	WaitMapLoading($ID_Central_Transfer_Chamber)
 	Return $SUCCESS
 EndFunc
@@ -188,8 +195,9 @@ EndFunc
 ;~ Getting into positions
 Func WalkToSpotGlintChallenge()
 	Info('Moving to defend position')
-	MoveTo($GlintChallengeDefendX, $GlintChallengeDefendY) ; move to defending position
-	;FanFlagHeroes(260) ; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
+	MoveTo($GlintChallengeDefendX, $GlintChallengeDefendY)
+	; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
+	;FanFlagHeroes(260)
 	CommandHero($Glint_Hero_Ritu_SoulTwister, -4300, 125)
 	CommandHero($Glint_Hero_Necro_FleshGolem, -4278, 346)
 	CommandHero($Glint_Hero_Necro_Hexer, -3925, -200)

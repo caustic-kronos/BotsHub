@@ -714,7 +714,8 @@ EndFunc
 
 Func UpdateWeaponSlotCombobox()
 	If(GUICtrlRead($GUI_Checkbox_WeaponSLot) == $GUI_CHECKED) Then
-		If $STATUS == 'RUNNING' Then Return ; don't enable combobox when bot is running, only enable it when bot is paused, to avoid accidental mouse scroll on combobox
+		; don't enable combobox when bot is running, only enable it when bot is paused, to avoid accidental mouse scroll on combobox
+		If $STATUS == 'RUNNING' Then Return
 		GUICtrlSetState($GUI_Combo_WeaponSLot, $GUI_ENABLE)
 	ElseIf(GUICtrlRead($GUI_Checkbox_WeaponSLot) == $GUI_UNCHECKED) Then
 		GUICtrlSetState($GUI_Combo_WeaponSLot, $GUI_DISABLE)
@@ -732,7 +733,8 @@ EndFunc
 
 
 Func EnableTeamComboboxes()
-	If $STATUS == 'RUNNING' Then Return ; don't enable comboboxes when bot is running, only enable them when bot is paused, to avoid accidental mouse scroll on comboboxes
+	; don't enable comboboxes when bot is running, only enable them when bot is paused, to avoid accidental mouse scroll on comboboxes
+	If $STATUS == 'RUNNING' Then Return
 	GUICtrlSetState($GUI_Label_Player, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Combo_Hero_1, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Combo_Hero_2, $GUI_ENABLE)
@@ -822,15 +824,15 @@ Func Out($TEXT, $LOGLEVEL = 1)
 		Local $logColor
 		Switch $LOGLEVEL
 			Case $LVL_DEBUG
-				$logColor = $CLR_LIGHTGREEN ; CLR is reversed BGR color
+				$logColor = $CLR_LIGHTGREEN		; CLR is reversed BGR color
 			Case $LVL_INFO
-				$logColor = $CLR_WHITE ; CLR is reversed BGR color
+				$logColor = $CLR_WHITE			; CLR is reversed BGR color
 			Case $LVL_NOTICE
-				$logColor = $CLR_TEAL ; CLR is reversed BGR color
+				$logColor = $CLR_TEAL			; CLR is reversed BGR color
 			Case $LVL_WARNING
-				$logColor = $CLR_YELLOW ; CLR is reversed BGR color
+				$logColor = $CLR_YELLOW			; CLR is reversed BGR color
 			Case $LVL_ERROR
-				$logColor = $CLR_RED ; CLR is reversed BGR color
+				$logColor = $CLR_RED			; CLR is reversed BGR color
 		EndSwitch
 		_GUICtrlRichEdit_SetCharColor($GUI_Console, $logColor)
 		_GUICtrlRichEdit_AppendText($GUI_Console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
@@ -1462,12 +1464,12 @@ Func ReadConfigFromJson($jsonString)
 	Local $renderingDisabled = _JSON_Get($jsonObject, 'run.disable_rendering')
 	$renderingEnabled = Not $renderingDisabled
 	RefreshRenderingButton()
-	If $renderingEnabled Then 
+	If $renderingEnabled Then
 		EnableRendering()
 	Else
 		DisableRendering()
 	EndIf
-	
+
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, _JSON_Get($jsonObject, 'run.loop_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_HardMode, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_FarmMaterialsMidRun, _JSON_Get($jsonObject, 'run.farm_materials_mid_run') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -1603,9 +1605,11 @@ Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, 
 		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
 		$newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
 		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-		If $treeViewItemChildCount <= 0 Then ; We are on a leaf
+		; We are on a leaf
+		If $treeViewItemChildCount <= 0 Then
 			If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
-		ElseIf $treeViewItemChildCount > 0 Then ; We are on a branch with at least one child leaf
+		; We are on a branch with at least one child leaf
+		ElseIf $treeViewItemChildCount > 0 Then
 			$treeViewItemFirstChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
 			IterateOverTreeView($context, $treeViewHandle, $treeViewItemFirstChild, $newPath, $functionToApply)
 		EndIf
@@ -1728,7 +1732,6 @@ Func RefreshCharactersComboBox()
 	For $i = 1 To $gameClients[0][0]
 		If $gameClients[$i][0] <> -1 Then $comboList &= '|' & $gameClients[$i][3]
 	Next
-	Opt('GUIDataSeparatorChar', '|') ; '|' is the default used to separate elements inside comboboxes in GUI
 	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, $gameClients[0][0] > 0 ? $gameClients[1][3] : '')
 	If ($gameClients[0][0] > 0) Then SelectClient(1)
 EndFunc
@@ -2017,7 +2020,8 @@ Func UpdateProgressBar($totalDuration = 0)
 		$duration = $totalDuration
 	EndIf
 	Local $progress = Floor((TimerDiff($RUN_TIMER) / $duration) * 100)
-	If $progress > 98 Then $progress = 98 ; capping run progess at 98%
+	; capping run progress at 98%
+	If $progress > 98 Then $progress = 98
 	GUICtrlSetData($GUI_FarmProgress, $progress)
 EndFunc
 

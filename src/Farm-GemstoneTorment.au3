@@ -57,8 +57,10 @@ Global Const $GEMSTONE_TORMENT_FARM_DURATION = 10 * 60 * 1000
 Global Const $MAX_GEMSTONE_TORMENT_FARM_DURATION = 20 * 60 * 1000
 Global $GEMSTONE_TORMENT_FARM_SETUP = False
 
-Global Const $Torment_Weapon_Slot_Staff = 2 ; Staff of enchanting 20% for the run and faster energy regeneration
-Global Const $Torment_Weapon_Slot_Focus = 3 ; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
+; Staff of enchanting 20% for the run and faster energy regeneration
+Global Const $Torment_Weapon_Slot_Staff = 2
+; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
+Global Const $Torment_Weapon_Slot_Focus = 3
 
 Global $TormentRunOptions = CloneDictMap($Default_MoveDefend_Options)
 $TormentRunOptions.Item('defendFunction')		= DefendTormentFarm
@@ -66,7 +68,8 @@ $TormentRunOptions.Item('moveTimeOut')			= 3 * 60 * 1000
 $TormentRunOptions.Item('randomFactor')			= 200
 $TormentRunOptions.Item('hosSkillSlot')			= 0
 $TormentRunOptions.Item('deathChargeSkillSlot')	= $Torment_DeathsCharge
-$TormentRunOptions.Item('openChests')			= True ; chests in Ravenheart Gloom should have good loot
+; chests in Ravenheart Gloom should have good loot
+$TormentRunOptions.Item('openChests')			= True
 
 
 ;~ Main loop function for farming torment gemstones
@@ -77,7 +80,7 @@ Func GemstoneTormentFarm($STATUS)
 	Local $result = GemstoneTormentFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared torment mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear torment mobs')
-	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	Info('Returning back to the outpost')
 	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
@@ -87,12 +90,12 @@ Func SetupGemstoneTormentFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		If TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME) == $FAIL Then Return $FAIL
-	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
+	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerTormentFarm() == $FAIL Then Return $FAIL
-	LeaveParty() ; solo farmer
+	LeaveParty()
 	Sleep(500 + GetPing())
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	Sleep(500 + GetPing())
@@ -125,7 +128,7 @@ Func GoToRavenHeartGloom()
 	Local Static $StartY = 1244
 	Local $TimerZoning = TimerInit()
 	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
-		If TimerDiff($TimerZoning) > 120000 Then ; 120 seconds max time for leaving outpost in case of bot getting stuck
+		If TimerDiff($TimerZoning) > 120000 Then
 			Info('Could not zone to RavenHeart Gloom')
 			Return $FAIL
 		EndIf
@@ -133,7 +136,7 @@ Func GoToRavenHeartGloom()
 		MoveTo(5487, -17983)
 		MoveTo(6489, -20099)
 		Move(6700, -21250, 0)
-		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost
+		Sleep(8000)
 	WEnd
 EndFunc
 
@@ -180,7 +183,8 @@ Func GemstoneTormentFarmLoop()
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems()
 			Sleep(GetPing())
 		Next
@@ -205,7 +209,8 @@ Func GemstoneTormentFarmLoop()
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems()
 			Sleep(GetPing())
 		Next
@@ -258,7 +263,8 @@ Func KillTormentMobs()
 	UseSkillTimed($Torment_LavaFont)
 	UseSkillTimed($Torment_FlameBurst)
 	UseSkillTimed($Torment_RodgortsInvocation, $target)
-	Sleep(1500 + GetPing()) ; waiting for mobs to be cleaned by meteor shower
+	; waiting for mobs to be cleaned by meteor shower
+	Sleep(1500 + GetPing())
 
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc

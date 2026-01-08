@@ -41,7 +41,7 @@ Func SunspearArmorFarm($STATUS)
 	Local $result = SunspearArmorClean()
 	AdlibUnRegister('TrackPartyStatus')
 
-	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	Info('Returning back to the outpost')
 	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
@@ -51,7 +51,7 @@ Func SunspearArmorSetup()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Dajkah_Inlet Then
 		TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
-	Else ; resigning to return to outpost in case when player is in Dajkah Inlet Challenge that has the same map ID as Dajkah Inlet outpost (554)
+	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
@@ -73,7 +73,8 @@ Func EnterSunspearArmorChallenge()
 		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 		RandomSleep(250)
 		Dialog(0x87)
-		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost and entered challenge
+		; wait 8 seconds to ensure that player exited outpost and entered challenge
+		Sleep(8000)
 	WEnd
 EndFunc
 
@@ -84,7 +85,8 @@ Func SunspearArmorClean()
 	MoveTo(25752.28, -3139.02)
 	RandomSleep(62000)
 
-	Local Static $foes[33][3] = [ _ ; 23 groups to vanquish + 10 movements
+	; 23 groups to vanquish + 10 movements
+	Local Static $foes[33][3] = [ _
 		[22595, -484, 'Moving and aggroing'], _
 		[21032, 1357, 'Moving and aggroing'], _
 		[20006, 3631, 'Moving and aggroing'], _

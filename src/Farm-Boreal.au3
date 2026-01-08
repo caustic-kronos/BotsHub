@@ -37,7 +37,8 @@ Global Const $BorealAssassinChestRunnerSkillbar = 'OwBj8xe84Q8I6MHQ3l0kTQ4OIQ'
 Global Const $BorealRitualistChestRunnerSkillbar = 'OAej8xeM5Q8I6MHQ3l0kTQ4OIQ'
 Global Const $BorealParagonChestRunnerSkillbar = 'OQej8xeM6Q8I6MHQ3l0kTQ4OIQ'
 Global Const $BorealDervishChestRunnerSkillbar = 'Ogej8xeDLT8I6MHQ3l0kTQ4OIQ'
-Global $BorealPlayerProfession = $ID_Assassin ; global variable to remember player's profession in setup
+; global variable to remember player's profession in setup
+Global $BorealPlayerProfession = $ID_Assassin
 
 Global Const $BorealChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- dwarves rank 5 minimum' & @CRLF _
@@ -72,7 +73,7 @@ Func SetupBorealFarm()
 	TravelToOutpost($ID_Boreal_Station, $DISTRICT_NAME)
 
 	SetupPlayerBorealChestFarm()
-	LeaveParty() ; solo farmer
+	LeaveParty()
 	SwitchToHardModeIfEnabled()
 
 	MoveTo(5799, -27957)

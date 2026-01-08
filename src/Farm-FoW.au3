@@ -528,7 +528,7 @@ Func TempleLoot()
 	MoveTo(1700, 2400)
 	MoveTo(1800, 400)
 	Info('Opening chest')
-	For $i = 1 To 3 ; Tripled to secure looting of chest
+	For $i = 1 To 3
 		MoveTo(1800, 400)
 		RandomSleep(5000)
 		TargetNearestItem()
@@ -601,7 +601,7 @@ EndFunc
 ;~ Kill shardwolf if found
 Func KillShardWolf()
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, IsShardWolf)
-	If IsArray($foes) And UBound($foes) > 0 Then ; Shard Wolf found
+	If IsArray($foes) And UBound($foes) > 0 Then
 		Local $shardWolf = $foes[0]
 		MoveAggroAndKill(DllStructGetData($shardWolf, 'X'), DllStructGetData($shardWolf, 'Y'))
 	EndIf

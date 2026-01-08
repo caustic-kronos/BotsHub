@@ -105,34 +105,34 @@ Global $mapID, $mapLoading, $mapIsLoaded
 
 
 #Region CommandStructs
-Global $inviteGuildStruct = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')	;	commandPackSendPtr;-;-;-;characterName;-
+Global $inviteGuildStruct = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')
 Global $inviteGuildStructPtr = DllStructGetPtr($inviteGuildStruct)
 
-Global $useSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')																		;	useSkillCommandPtr;skillSlot,targetID,callTarget
+Global $useSkillStruct = SafeDllStructCreate('ptr useSkillCommandPtr;dword skillSlot;dword targetID;dword callTarget')
 Global $useSkillStructPtr = DllStructGetPtr($useSkillStruct)
 
-Global $moveStruct = SafeDllStructCreate('ptr;float;float;dword')																			;	commandMovePtr;X;Y;-
+Global $moveStruct = SafeDllStructCreate('ptr commandMovePtr;float X;float Y;dword')
 Global $moveStructPtr = DllStructGetPtr($moveStruct)
 
-Global $changeTargetStruct = SafeDllStructCreate('ptr;dword')																				;	commandChangeTargetPtr;targetID
+Global $changeTargetStruct = SafeDllStructCreate('ptr commandChangeTargetPtr;dword targetID')
 Global $changeTargetStructPtr = DllStructGetPtr($changeTargetStruct)
 
-Global $packetStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')					;	commandPackSendPtr;-;-;-;characterName;-
+Global $packetStruct = SafeDllStructCreate('ptr commandPackSendPtr;dword;dword;dword;dword characterName;dword;dword;dword;dword;dword;dword;dword;dword')
 Global $packetStructPtr = DllStructGetPtr($packetStruct)
 
-Global $writeChatStruct = SafeDllStructCreate('ptr')																						;	commandWriteChatPtr
+Global $writeChatStruct = SafeDllStructCreate('ptr commandWriteChatPtr')
 Global $writeChatStructPtr = DllStructGetPtr($writeChatStruct)
 
-Global $sellItemStruct = SafeDllStructCreate('ptr;dword;dword;dword')																		;	commandSellItemPtr;totalSoldValue;itemID;ScanBuyItemBase
+Global $sellItemStruct = SafeDllStructCreate('ptr commandSellItemPtr;dword totalSoldValue;dword itemID;dword ScanBuyItemBase')
 Global $sellItemStructPtr = DllStructGetPtr($sellItemStruct)
 
-Global $actionStruct = SafeDllStructCreate('ptr;dword;dword;')																				;	commandActionPtr;action;flag
+Global $actionStruct = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;')
 Global $actionStructPtr = DllStructGetPtr($actionStruct)
 
-Global $toggleLanguageStruct = SafeDllStructCreate('ptr;dword')																				;	commandToggleLanguagePtr;-
+Global $toggleLanguageStruct = SafeDllStructCreate('ptr commandToggleLanguagePtr;dword')
 Global $toggleLanguageStructPtr = DllStructGetPtr($toggleLanguageStruct)
 
-Global $useHeroSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')																	;	etc...
+Global $useHeroSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')
 Global $useHeroSkillStructPtr = DllStructGetPtr($useHeroSkillStruct)
 
 Global $buyItemStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword')
@@ -557,12 +557,12 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('DialogLogStart', '0x' & Hex($tempValue, 8))
 	SetValue('DialogLogReturn', '0x' & Hex($tempValue + 5, 8))
 
-	$tempValue = GetScannedAddress('ScanStringFilter1', -5)			; was -0x23
+	$tempValue = GetScannedAddress('ScanStringFilter1', -5)
 	If @error Then LogCriticalError('Failed to read string filter 1 address')
 	SetValue('StringFilter1Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter1Return', '0x' & Hex($tempValue + 5, 8))
 
-	$tempValue = GetScannedAddress('ScanStringFilter2', 0x16)		; was 0x61
+	$tempValue = GetScannedAddress('ScanStringFilter2', 0x16)
 	If @error Then LogCriticalError('Failed to read string filter 2 address')
 	SetValue('StringFilter2Start', '0x' & Hex($tempValue, 8))
 	SetValue('StringFilter2Return', '0x' & Hex($tempValue + 5, 8))
@@ -1208,7 +1208,8 @@ Func IsItemEquipped($itemModelID)
 	Local $item = GetItemByModelID($itemModelID)
 	If Not IsDllStruct($item) Then Return False
 	If DllStructGetData($item, 'ModelId') <> $itemModelID Then Return False
-	Return DllStructGetData($item, 'Equipped') > 0 ; Equipped value is 0 if not equipped in any slot
+	; Equipped value is 0 if not equipped in any slot
+	Return DllStructGetData($item, 'Equipped') > 0
 EndFunc
 
 
@@ -1227,11 +1228,13 @@ EndFunc
 
 
 ;~ Checks if item specified by item's model ID is located in any bag or backpack or is equipped in any weapon slot
+; FIXME: doesn't work
 Func ItemExistsInInventory($itemModelID)
 	Local $item = GetItemByModelID($itemModelID)
 	If Not IsDllStruct($item) Then Return False
 	If DllStructGetData($item, 'ModelId') <> $itemModelID Then Return False
-	Return DllStructGetData($item, 'Equipped') > 0 Or DllStructGetData($item, 'Slot') > 0 ; slots are numbered from 1, if item is not in any bag then Slot is 0
+	; slots are numbered from 1, if item is not in any bag then Slot is 0
+	Return DllStructGetData($item, 'Equipped') > 0 Or DllStructGetData($item, 'Slot') > 0
 EndFunc
 
 
@@ -2181,7 +2184,8 @@ Func RestoreWindowState($windowHandle, $previousWindowState)
 	If Not $windowHandle Or Not $previousWindowState Then Return 0
 
 	Local $currentWindowState = WinGetState($windowHandle)
-	Local $states = [1, 2, 4, 8, 16, 32] ; SW_HIDE, SW_SHOWNORMAL, SW_SHOWMINIMIZED, SW_SHOWMAXIMIZED, SW_MINIMIZE, SW_RESTORE
+	; SW_HIDE, SW_SHOWNORMAL, SW_SHOWMINIMIZED, SW_SHOWMAXIMIZED, SW_MINIMIZE, SW_RESTORE
+	Local $states = [1, 2, 4, 8, 16, 32]
 	For $state In $states
 		If BitAND($previousWindowState, $state) And Not BitAND($currentWindowState, $state) Then WinSetState($windowHandle, '', $state)
 	Next
@@ -2307,7 +2311,6 @@ EndFunc
 
 ;~ Use a skill, doesn't wait for the skill to be done
 ;~ If no target is provided then skill is used on self
-;~ Provided target parameter should be a struct, not numerical target ID
 Func UseSkill($skillSlot, $target = Null, $callTarget = False)
 	Local $targetId = ($target == Null) ? GetMyID() : DllStructGetData($target, 'ID')
 	DllStructSetData($useSkillStruct, 2, $skillSlot)
@@ -2318,16 +2321,15 @@ EndFunc
 
 
 ;~ Use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
-;~ Function returns True if skill usage was successful, False otherwise
 ;~ If no target is provided then skill is used on self
-;~ Provided target parameter should be a struct, not numerical target ID
+;~ Returns True if skill usage was successful, False otherwise
 Func UseSkillEx($skillSlot, $target = Null)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy() < $energy Then Return False
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	Local $approximateCastTime = $castTime + $aftercast + GetPing()
 
@@ -2335,7 +2337,8 @@ Func UseSkillEx($skillSlot, $target = Null)
 	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
-	Do ; wait until skill starts recharging or time for skill to be activated has elapsed
+	; wait until skill starts recharging or time for skill to be activated has elapsed
+	Do
 		Sleep(50 + GetPing())
 	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
 	Return True
@@ -2343,27 +2346,28 @@ EndFunc
 
 
 ;~ Use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
-;~ Function returns True if skill usage was successful, False otherwise
 ;~ If no target is provided then skill is used on self
-;~ Provided target parameter should be a struct, not numerical target ID
+;~ Returns True if skill usage was successful, False otherwise
 Func UseSkillTimed($skillSlot, $target = Null)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy() < $energy Then Return False
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	; taking into account skill activation time modifiers
-	Local $effects = GetEffect(0) ; get all effects that are on player, in array
-	Local $castTimeModifier = GetCastTimeModifier($effects, $skill) ; get cast time modifier, default is 1, but effects can influence it
+	Local $effects = GetEffect(0)
+	; get cast time modifier, default is 1, but effects can influence it
+	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
 	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
 
 	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
 	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
-	Do ; wait until skill starts recharging or time for skill to be fully activated has elapsed
+	; wait until skill starts recharging or time for skill to be fully activated has elapsed
+	Do
 		Sleep(50 + GetPing())
 	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
 	Return True
@@ -2372,7 +2376,6 @@ EndFunc
 
 ;~ Order a hero to use a skill, doesn't wait for the skill to be done
 ;~ If no target is provided then skill is used on hero who uses the skill
-;~ Provided target parameter should be a struct, not numerical target ID
 Func UseHeroSkill($heroIndex, $skillSlot, $target = Null)
 	Local $targetId = ($target == Null) ? GetHeroID($heroIndex) : DllStructGetData($target, 'ID')
 	DllStructSetData($useHeroSkillStruct, 2, GetHeroID($heroIndex))
@@ -2383,22 +2386,22 @@ EndFunc
 
 
 ;~ Order a hero to use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
-;~ Function returns True if skill usage was successful, False otherwise
 ;~ If no target is provided then skill is used on hero who uses the skill
-;~ Provided target parameter should be a struct, not numerical target ID
+;~ Returns True if skill usage was successful, False otherwise
 Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
 	If IsHeroDead($heroIndex) Or Not IsRecharged($skillSlot, $heroIndex) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	Local $approximateCastTime = $castTime + $aftercast + GetPing()
 
 	UseHeroSkill($heroIndex, $skillSlot, $target)
 	Local $castTimer = TimerInit()
-	Do ; wait until skill starts recharging or time for skill to be activated has elapsed
+	; Wait until skill starts recharging or time for skill to be activated has elapsed
+	Do
 		Sleep(50 + GetPing())
 	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
 	Return True
@@ -2406,25 +2409,26 @@ EndFunc
 
 
 ;~ Order a hero to use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
-;~ Function returns True if skill usage was successful, False otherwise
 ;~ If no target is provided then skill is used on hero who uses the skill
-;~ Provided target parameter should be a struct, not numerical target ID
+;~ Returns True if skill usage was successful, False otherwise
 Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 	If IsHeroDead($heroIndex) Or Not IsRecharged($skillSlot, $heroIndex) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	; taking into account skill activation time modifiers
-	Local $effects = GetEffect(0, $heroIndex) ; get all effects that are on hero, in array
-	Local $castTimeModifier = GetCastTimeModifier($effects, $skill) ; get cast time modifier, default is 1, but effects can influence it
+	Local $effects = GetEffect(0, $heroIndex)
+	; get cast time modifier, default is 1, but effects can influence it
+	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
 	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
 
 	UseHeroSkill($heroIndex, $skillSlot, $target)
 	Local $castTimer = TimerInit()
-	Do ; wait until skill starts recharging or time for skill to be fully activated has elapsed
+	; wait until skill starts recharging or time for skill to be fully activated has elapsed
+	Do
 		Sleep(50 + GetPing())
 	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
 	Return True
@@ -3489,7 +3493,7 @@ Func EnemyAgentFilter($agent)
 	If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Foe Then Return False
 	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
-	If DllStructGetData($agent, 'TypeMap') == $ID_TypeMap_Idle_Minion Then Return False	; It's a spirit created by rangers
+	If DllStructGetData($agent, 'TypeMap') == $ID_TypeMap_Idle_Minion Then Return False
 	Return True
 EndFunc
 
@@ -3583,16 +3587,19 @@ EndFunc
 ;~ Caution in outposts all players are matched as team members even when they are not in team
 Func GetParty($agents = Null)
 	If $agents == Null Then $agents = GetAgentArray($ID_Agent_Type_NPC)
-	Local $fullParty[8] ; 1D array of full party 8 members, indexed from 0
+	; array of full party 8 members, indexed from 0
+	Local $fullParty[8]
 	Local $partySize = 0
 	For $agent In $agents
 		If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Team Then ContinueLoop
 		If Not BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TypeMap_Idle_Ally) Then ContinueLoop
 		$fullParty[$partySize] = $agent
 		$partySize += 1
-		If $partySize == 8 Then ExitLoop ; safeguard to not exceed party size, especially in towns with many players
+		; safeguard to not exceed party size, especially in towns with many players
+		If $partySize == 8 Then ExitLoop
 	Next
-	Local $party[$partySize] ; 1D array of party members, indexed from 0, in case party is smaller than 8 members
+	; array of party members in case party is smaller than 8 members
+	Local $party[$partySize]
 	For $i = 0 To $partySize - 1
 		$party[$i] = $fullParty[$i]
 	Next
@@ -3602,7 +3609,7 @@ EndFunc
 
 ;~ Returns true if any party member is dead
 Func CheckIfAnyPartyMembersDead()
-	Local $party = GetParty() ; array of party members
+	Local $party = GetParty()
 	For $member In $party
 		If GetIsDead($member) Then
 			Return True
@@ -3627,10 +3634,11 @@ Func GetAgentArray($type = 0)
 	Until $count >= 0 Or TimerDiff($deadlock) > 5000
 	If $count < 0 Then $count = 0
 
-	Local $returnArray[$count] ; 1D array of agents, indexed from 0
+	Local $returnArray[$count]
 	If $count > 0 Then
 		For $i = 0 To $count - 1
-			$buffer &= 'Byte[448];' ; 448 = size of $agentStructTemplate in bytes
+			; 448 = size of $agentStructTemplate in bytes
+			$buffer &= 'Byte[448];'
 		Next
 		$buffer = SafeDllStructCreate($buffer)
 		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
@@ -3680,19 +3688,23 @@ Func GetPartyDanger($agents = Null, $party = Null)
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		Local $allegiance = DllStructGetData($agent, 'Allegiance')
-		If $allegiance > $ID_Allegiance_Foe Then ContinueLoop ; ignore spirits (4), pets (4), minions (5), NPCs (6), which have allegiance number higher than foe (3)
+		; ignore spirits (4), pets (4), minions (5), NPCs (6), which have allegiance number higher than foe (3)
+		If $allegiance > $ID_Allegiance_Foe Then ContinueLoop
 
 		Local $targetID = DllStructGetData(GetTarget($agent), 'ID')
 		Local $team = DllStructGetData($agent, 'Team')
 		For $member In $party
 			If $targetID == DllStructGetData($member, 'ID') Then
-				If GetDistance($agent, $member) < 5000 Then ; distance 5000 is equal to compass map range, beyond that can't target
+				; can't target beyond compass range
+				If GetDistance($agent, $member) < $RANGE_COMPASS Then
 					If $team <> 0 Then
+						; agent from different team targeting party member
 						If $team <> DllStructGetData($member, 'Team') Then
-							$resultLevels[$i] += 1 ; agent from different team targeting party member
+							$resultLevels[$i] += 1
 						EndIf
+					; agent from different allegiance targeting party member
 					ElseIf $allegiance <> DllStructGetData($member, 'Allegiance') Then
-						$resultLevels[$i] += 1 ; agent from different allegiance targeting party member
+						$resultLevels[$i] += 1
 					EndIf
 				EndIf
 			EndIf
@@ -3803,7 +3815,8 @@ EndFunc
 
 ;~ Tests if an agent is dead.
 Func GetIsDead($agent)
-	If $agent == Null Then Return True ; nonexisting agents are considered dead (not alive), and recently deceased agents become Null too, therefore returning True
+	; nonexisting agents are considered dead (not alive), and recently deceased agents become Null too, therefore returning True
+	If $agent == Null Then Return True
 	Return BitAND(DllStructGetData($agent, 'Effects'), 0x0010) > 0
 EndFunc
 
@@ -3977,7 +3990,7 @@ Func GetSkillbarSkillRecharge($skillSlot, $heroIndex = 0)
 	; Recharge in $skillbarStructTemplate is 0 when skill is already recharged or is the timestamp in the future when the skill will be recharged if it is recharging
 	Local $rechargeFutureTimestamp = DllStructGetData($skillbar, 'Recharge' & $skillSlot)
 	Local $skill = GetSkillByID(DllStructGetData($skillbar, 'SkillId' & $skillSlot))
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 
 	; Caution, noticed some	discrepancy between GetInstanceUpTime() and recharge timestamps, difference can be negative surprisingly
@@ -4085,10 +4098,12 @@ Func GetEffectTimeRemaining($effect, $heroIndex = 0)
 	If IsArray($effect) Then Return 0
 
 	Local $effectSkill = GetSkillByID(DllStructGetData($effect, 'SkillId'))
-	Local $castTime = DllStructGetData($effectSkill, 'Activation') * 1000 ; activation time is in seconds, $castTime in milliseconds
+	Local $castTime = DllStructGetData($effectSkill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($effectSkill, 'Aftercast') * 1000
-	Local $duration = DllStructGetData($effect, 'Duration') * 1000 ; full duration of effect in seconds, not remaining time
-	Local $castTimeStamp = DllStructGetData($effect, 'TimeStamp') ; timestamp when the effect was started
+	; full duration of effect in seconds, not remaining time
+	Local $duration = DllStructGetData($effect, 'Duration') * 1000
+	; timestamp when the effect was started
+	Local $castTimeStamp = DllStructGetData($effect, 'TimeStamp')
 
 	; Caution, noticed some	discrepancy between GetInstanceUpTime() and cast timestamps, difference can be negative surprisingly
 	; Furthermore, other problem is that reapplying the effect doesn't always refresh its start timestamp until previous effect elapses

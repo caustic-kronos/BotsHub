@@ -839,15 +839,15 @@ Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	Local $Wand_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER]
 	Local $Dagger_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
 	Local $Staff_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING] ; Personal collection
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
 	Local $Bow_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING] ; Personal collection
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
 	Local $Axe_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING] ; Personal collection
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
 	Local $Hammer_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING] ; Personal collection
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
 	Local $Sword_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING] ; Personal collection
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
 	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
 	Local $ID_Type_Axe				= 2
 	Local $ID_Type_Bow				= 5
@@ -1082,9 +1082,10 @@ Func CreateValuableRunesAndInsigniasArray()
 	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Keep components.Armor upgrades')
 	Local $ValuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
-		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15) ; removing unnecessary leftmost string with dot 'Armor upgrades.'
-		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_') ; conversion of . into _ and spaces into _ and concatenation with prefix 'Struct_'
-		$ValuableRunesAndInsigniasStructsArray[$i] = Eval($varName) ; conversion of rune/insignia struct name into its ID
+		; removing leftmost string with dot 'Armor upgrades.'
+		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15)
+		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_')
+		$ValuableRunesAndInsigniasStructsArray[$i] = Eval($varName)
 	Next
 	Return $ValuableRunesAndInsigniasStructsArray
 EndFunc
@@ -1123,8 +1124,9 @@ Func CreateValuableModsByWeaponTypeMap()
 	Local $ID_Type_Spear						= 36
 
 	For $i = 0 To UBound($tickedMods) - 1
-		Local $varName = StringTrimLeft($tickedMods[$i], 5) ; removing unnecessary leftmost string with dot 'Mods.'
-		Local $weaponType = StringLeft($varName, StringInStr($varName, '.') - 1) ; extracting string before first dot
+		; removing leftmost string with dot 'Mods.'
+		Local $varName = StringTrimLeft($tickedMods[$i], 5)
+		Local $weaponType = StringLeft($varName, StringInStr($varName, '.') - 1)
 		Switch $weaponType
 			Case 'Axe'
 				$varName = StringReplace($varName, 'Axe.Prefix - Haft.', 'STRUCT_MOD_')
@@ -1190,9 +1192,10 @@ EndFunc
 
 
 Func ModNameCleanupHelper($modName)
-	$modName = StringRegExpReplace($modName, '\s*\(.*?\)', '') ; cleanup of all parentheses and contents in them
-	$modName = StringReplace($modName, ' ', '_') ; conversion of spaces into _
-	$modName = StringUpper($modName) ; conversion of all letters into uppercase to better match mod struct names constants
+	; cleanup of all parentheses and contents in them
+	$modName = StringRegExpReplace($modName, '\s*\(.*?\)', '')
+	$modName = StringReplace($modName, ' ', '_')
+	$modName = StringUpper($modName)
 	Return $modName
 EndFunc
 
@@ -1210,7 +1213,7 @@ Func CreateValuableInscriptionsArray()
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus.', 'STRUCT_INSCRIPTION_')
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus and shield.', 'STRUCT_INSCRIPTION_')
 		$varName = ModNameCleanupHelper($varName)
-		$ValuableInscriptionsArray[$i] = Eval($varName) ; conversion of inscription struct name into its ID
+		$ValuableInscriptionsArray[$i] = Eval($varName)
 	Next
 	Return $ValuableInscriptionsArray
 EndFunc

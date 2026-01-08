@@ -39,8 +39,8 @@ Global Const $MargoniteMonkHeroSkillBar = 'OwITAnHb5Qe/zhxLkpE6+G'
 ;Global Const $MargoniteHeroPartyID = $ID_Dunkoro
 ;Global Const $MargoniteHeroPartyID = $ID_Tahlkora
 Global Const $MargoniteHeroPartyID = $ID_Ogden
-Global Const $MargoniteHeroIndex = 1 ; index of first hero party member in team, player index is 0
-Global $MargonitePlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
+Global Const $MargoniteHeroIndex = 1
+Global $MargonitePlayerProfession = $ID_Mesmer
 
 Global Const $Margonite_DeadlyParadox		= 1
 Global Const $Margonite_ShadowForm			= 2
@@ -108,7 +108,7 @@ Global Const $Margonites_Range = 800
 
 Global $MargoniteMoveOptions = CloneDictMap($Default_MoveDefend_Options)
 $MargoniteMoveOptions.Item('defendFunction')		= MargoniteDefend
-$MargoniteMoveOptions.Item('moveTimeOut')			= 100 * 1000 ; 100 seconds max for being stuck
+$MargoniteMoveOptions.Item('moveTimeOut')			= 100 * 1000
 $MargoniteMoveOptions.Item('randomFactor')			= 25
 $MargoniteMoveOptions.Item('hosSkillSlot')			= 0
 $MargoniteMoveOptions.Item('deathChargeSkillSlot')	= $Margonite_DeathsCharge
@@ -135,7 +135,7 @@ Func GemstoneMargoniteFarm($STATUS)
 		If IsHeroDead($MargoniteHeroIndex) Then Warn('monk hero died')
 		Info('Could not clear margonite mobs')
 	EndIf
-	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	Info('Returning back to the outpost')
 	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
@@ -143,9 +143,10 @@ EndFunc
 
 Func SetupGemstoneMargoniteFarm()
 	Info('Setting up farm')
+	; 4 DoA farm areas have the same map ID as Gate of Anguish outpost (474)
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		If TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME) == $FAIL Then Return $FAIL
-	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
+	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
@@ -225,7 +226,7 @@ Func GoToCityOfTorcqua()
 	Local Static $StartY = -8833
 	Local $TimerZoning = TimerInit()
 	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
-		If TimerDiff($TimerZoning) > 120000 Then ; 120 seconds max time for leaving outpost in case of bot getting stuck
+		If TimerDiff($TimerZoning) > 120000 Then
 			Info('Could not zone to City of Torc''qua')
 			Return $FAIL
 		EndIf
@@ -233,7 +234,7 @@ Func GoToCityOfTorcqua()
 		MoveTo(8258, -10419)
 		MoveTo(10180, -10714)
 		Move(11250, -11350, 0)
-		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost
+		Sleep(8000)
 	WEnd
 EndFunc
 
@@ -246,22 +247,22 @@ Func CastBondsMargoniteFarm()
 	DisableHeroSkillSlot($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)
 	Sleep(25 + GetPing())
 
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit, GetMyAgent()) ; costs 10 energy
-	Sleep(10000) ; wait until energy is recovered, should recover 10 energy with 3 energy pips
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_WatchfulSpirit, GetMyAgent()) ; costs 15 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 6 hero energy
-	Sleep(12000) ; wait until Blessed signet is recharged, should recover 8 energy with 2 energy pips
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBarrier, GetMyAgent()) ; costs 15 energy, 1 energy should be recovered during casting, energy should be maxed
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 9 hero energy
-	Sleep(15000) ; wait until Blessed signet is recharged, should recover 5 energy with 1 energy pip
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBond, GetMyAgent()) ; costs 10 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy, energy should be maxed
-	Sleep(10000) ; wait until Blessed signet is recharged, 0 pips
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_VitalBLessing, GetMyAgent()) ; costs 10 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy
-	Sleep(10000) ; wait until Blessed signet is recharged, around 3 energy lost with -1 pip
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit) ; costs 10 energy
-	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet) ; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit, GetMyAgent())	; costs 10 energy
+	Sleep(10000)																			; wait until energy is recovered, should recover 10 energy with 3 energy pips
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_WatchfulSpirit, GetMyAgent())	; costs 15 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)					; recover 6 hero energy
+	Sleep(12000)																			; wait until Blessed signet is recharged, should recover 8 energy with 2 energy pips
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBarrier, GetMyAgent())		; costs 15 energy, 1 energy should be recovered during casting, energy should be maxed
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)					; recover 9 hero energy
+	Sleep(15000)																			; wait until Blessed signet is recharged, should recover 5 energy with 1 energy pip
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_LifeBond, GetMyAgent())			; costs 10 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)					; recover 11 hero energy, energy should be maxed
+	Sleep(10000)																			; wait until Blessed signet is recharged, 0 pips
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_VitalBLessing, GetMyAgent())		; costs 10 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)					; recover 11 hero energy
+	Sleep(10000)																			; wait until Blessed signet is recharged, around 3 energy lost with -1 pip
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BalthazarSpirit)					; costs 10 energy
+	UseHeroSkillTimed($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)					; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
 
 	; Enable blessed signet skill so that hero uses it whenever it is recharged
 	EnableHeroSkillSlot($MargoniteHeroIndex, $Margonite_Hero_BlessedSignet)
@@ -307,7 +308,8 @@ Func GemstoneMargoniteFarmLoop()
 	; below is the furthest location player goes to pull front Margonite mobs but also not let rear margonite mobs leave player and kill monk hero
 	If MargoniteMoveDefending(-10277, -10778) == $FAIL Then Return $FAIL
 	CommandHero($MargoniteHeroIndex, -12861, -12620)
-	WaitAggroMargonites(50000) ; waiting for far margonite group to come into player's range
+	; waiting for far margonite group to come into player's range
+	WaitAggroMargonites(50000)
 	If MargoniteMoveDefending(-12065, -10905) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(5000)
 	If MargoniteMoveDefending(-12246, -10149) == $FAIL Then Return $FAIL
@@ -334,7 +336,8 @@ Func GemstoneMargoniteFarmLoop()
 	RandomSleep(1000 + GetPing())
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems(MargoniteCheckBuffs)
 			Sleep(GetPing())
 		Next
@@ -383,7 +386,8 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 		RandomSleep(1000 + GetPing())
 		If IsPlayerAlive() Then
 			Info('Picking up loot')
-			For $i = 1 To 3 ; Tripled to secure the looting of items
+			; Tripled to secure the looting of items
+			For $i = 1 To 3
 				PickUpItems(MargoniteCheckBuffs)
 				Sleep(GetPing())
 			Next
@@ -499,7 +503,7 @@ EndFunc
 Func KillMargonitesUsingVisageSkills()
 	If IsPlayerDead() Then Return $FAIL
 	Local $TimerKill = TimerInit()
-	Local Static $MaxFightTime = 100000 ; 100 seconds max fight time
+	Local Static $MaxFightTime = 100000
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Margonites_Range) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not IsHeroDead($MargoniteHeroIndex)
 		RandomSleep(100)
@@ -535,7 +539,7 @@ EndFunc
 Func KillMargonitesUsingWhirlingDefense()
 	If IsPlayerDead() Then Return $FAIL
 	Local $TimerKill = TimerInit()
-	Local Static $MaxFightTime = 100000 ; 100 seconds max fight time
+	Local Static $MaxFightTime = 100000
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $Margonites_Range) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not IsHeroDead($MargoniteHeroIndex)
 		RandomSleep(100)

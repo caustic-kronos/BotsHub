@@ -46,7 +46,7 @@ Global Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
 Global Const $JBHeroPartyID = $ID_General_Morgahn
 ;Global Const $JBHeroPartyID = $ID_Keiran_Thackeray
 ;Global Const $JBHeroPartyID = $ID_Hayda
-Global Const $JBHeroIndex = 1 ; index of first hero party member in team, player index is 0
+Global Const $JBHeroIndex = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
 Global Const $JB_DrunkerMaster		= 1
@@ -66,7 +66,7 @@ Global Const $Brotherhood_EnduringHarmony	= 2
 Global Const $Brotherhood_MakeHaste			= 3
 
 Global $DeadlockTimer
-Global Const $JB_Timeout = 120000 ; 2 minutes max time for cleaning Jade Brotherhood mob
+Global Const $JB_Timeout = 120000
 
 Global $JADE_BROTHERHOOD_FARM_SETUP = False
 

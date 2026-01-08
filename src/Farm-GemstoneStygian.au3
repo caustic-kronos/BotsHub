@@ -31,7 +31,7 @@ Global Const $AMeStygianSkillBar = 'OwVT8ZBPGiHRn5mat0E4uM0ZCC'
 ;Global Const $MeAStygianSkillBar = 'OQdUASBPmfS3UyArgrlmA3lhOTQA'
 Global Const $MeAStygianSkillBar = 'OQdTI4x8ZiHRn5mat0E4uM0ZCC'
 Global Const $RNStygianSkillBar = 'OgQTcybiZK5o5Y5wSIXc465o7AA'
-Global $StygianPlayerProfession = $ID_Mesmer ; global variable to remember player's profession in setup to avoid creating Dll structs over and over
+Global $StygianPlayerProfession = $ID_Mesmer
 Global Const $StygianRangerHeroSkillBar = 'OgMSY5LHQnh0EAAAAAAAA'
 
 ; You can select which ranger hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
@@ -39,8 +39,8 @@ Global Const $StygianRangerHeroSkillBar = 'OgMSY5LHQnh0EAAAAAAAA'
 Global Const $StygianHeroPartyID = $ID_Acolyte_Jin
 ;Global Const $StygianHeroPartyID = $ID_Margrid_The_Sly
 ;Global Const $StygianHeroPartyID = $ID_Pyre_Fierceshot
-Global Const $StygianHeroIndex = 1 ; index of first hero party member in team, player index is 0
-Global $StygianHeroAgentID = Null ; agent ID that is randomly assigned to hero in exploration areas
+Global Const $StygianHeroIndex = 1
+Global $StygianHeroAgentID = Null
 
 
 Global Const $Stygian_DeadlyParadox			= 1
@@ -106,7 +106,7 @@ Func GemstoneStygianFarm($STATUS)
 	Local $result = GemstoneStygianFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared stygian mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear stygian mobs')
-	Info('Returning back to the outpost') ; in this case outpost has the same map ID as farm location
+	Info('Returning back to the outpost')
 	ResignAndReturnToOutpost()
 	Return $result
 EndFunc
@@ -116,7 +116,7 @@ Func SetupGemstoneStygianFarm()
 	Info('Setting up farm')
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		If TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME) == $FAIL Then Return $FAIL
-	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
+	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
@@ -180,7 +180,7 @@ Func GoToStygianVeil()
 	Local Static $StartY = -10445
 	Local $TimerZoning = TimerInit()
 	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
-		If TimerDiff($TimerZoning) > 120000 Then ; 120 seconds max time for leaving outpost in case of bot getting stuck
+		If TimerDiff($TimerZoning) > 120000 Then
 			Info('Could not zone to Stygian Veil')
 			Return $FAIL
 		EndIf
@@ -188,7 +188,7 @@ Func GoToStygianVeil()
 		MoveTo(1315, -17924)
 		MoveTo(-785, -18969)
 		Move(-1100, -20000, 0)
-		Sleep(8000) ; wait 8 seconds to ensure that player exited outpost
+		Sleep(8000)
 	WEnd
 EndFunc
 
@@ -240,7 +240,8 @@ Func StygianFarmMesmerAssassin()
 	GoToHidingSpot()
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 			Sleep(GetPing())
 		Next
@@ -278,13 +279,15 @@ Func StygianJobMesmerAssassin()
 	GoToHidingSpot()
 	If $pickItemsAfterFirstWave And IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
 			Sleep(GetPing())
 		Next
 	EndIf
 	MoveTo(13128, -10084)
-	MoveTo(13082, -9788, 0) ; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
+	; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
+	MoveTo(13082, -9788, 0)
 	RandomSleep(500)
 	If IsRecharged($Stygian_DwarvenStability) Then
 		UseSkillEx($Stygian_DwarvenStability)
@@ -294,12 +297,15 @@ Func StygianJobMesmerAssassin()
 	MoveTo(13240, -10006)
 	MoveTo(9437, -9283)
 	UseSkillEx($Stygian_Mindbender)
-	MoveTo(8567, -9050) ; spot to aggro mobs
+	; spot to aggro mobs
+	MoveTo(8567, -9050)
 	RandomSleep(200)
 	MoveTo(12376, -9557)
 	RandomSleep(1500)
-	UseSkillEx($Stygian_Dash) ; this ends shadow of haste and transfers player into spot
-	Sleep(12500) ; waiting for all mobs to come
+	; this ends shadow of haste and transfers player into spot
+	UseSkillEx($Stygian_Dash)
+	; waiting for all mobs to come
+	Sleep(12500)
 	KillStygianMobsUsingWastrelSkills()
 	$pickItemsAfterFirstWave = True
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
@@ -439,8 +445,10 @@ EndFunc
 Func GoToHidingSpot()
 	If IsPlayerDead() Then Return $FAIL
 	RunStygianFarm(10575, -8170)
-	MoveTo(10871, -7842, 0) ; 0 to get player into the exact location without randomness, spot to hide from running mobs
-	RandomSleep(15000) ; waiting for mobs to run by
+	; 0 to get player into the exact location without randomness, spot to hide from running mobs
+	MoveTo(10871, -7842, 0)
+	; waiting for mobs to run by
+	RandomSleep(15000)
 	RunStygianFarm(10575, -8170)
 	RunStygianFarm(12853, -9936)
 EndFunc

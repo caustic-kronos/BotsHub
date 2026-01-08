@@ -74,7 +74,7 @@ Func ManageFactionPointsKurzickFarm()
 			Info('Converting Kurzick faction points into Amber Chunks')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfChunks = Floor(GetKurzickFaction() / 5000) ; 5000 faction points for each chunk
+			Local $numberOfChunks = Floor(GetKurzickFaction() / 5000)
 			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
 			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
 			Dialog($dialogID)
@@ -83,7 +83,7 @@ Func ManageFactionPointsKurzickFarm()
 			Info('Converting Kurzick faction points into Urgoz''s Warren Pasage Scrolls')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000) ; 1000 faction points for each scroll
+			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000)
 			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
 			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)
@@ -148,7 +148,8 @@ Func VanquishFerndale()
 	Dialog(0x86)
 	RandomSleep(1000)
 
-	Local Static $foes[117][4] = [ _ ; 117 groups to vanquish
+	; 117 groups to vanquish
+	Local Static $foes[117][4] = [ _
 		[-11733, 16729, 'Mantis Group 1', $AGGRO_RANGE], _
 		[-11942, 18468, 'Mantis Group 2', $AGGRO_RANGE], _
 		[-11178, 20073, 'Mantis Group 3', $AGGRO_RANGE], _

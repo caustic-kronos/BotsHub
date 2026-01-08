@@ -68,7 +68,7 @@ Func SetupDragonMossFarm()
 	If TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerDragonMossFarm() Then Return $FAIL
-	LeaveParty() ; solo farmer
+	LeaveParty()
 	GoToDrazachThicket()
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
@@ -166,7 +166,8 @@ Func DragonMossFarmLoop()
 
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems()
 			Sleep(GetPing())
 		Next

@@ -78,15 +78,19 @@ Global Const $Gem_SkillsCostsArray	= [15,						10,						0,						0,						0,						
 Global Const $GemSkillsCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
 
 Global $GemstonesFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
-$GemstonesFightOptions.Item('fightRange')			= 1500 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-$GemstonesFightOptions.Item('flagHeroesOnFight')	= False ; heroes will be flagged before fight to defend the start location
+; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
+$GemstonesFightOptions.Item('fightRange')			= 1500
+; heroes will be flagged before fight to defend the start location
+$GemstonesFightOptions.Item('flagHeroesOnFight')	= False
 $GemstonesFightOptions.Item('priorityMobs')			= True
 $GemstonesFightOptions.Item('skillsCostMap')		= $GemSkillsCostsMap
-$GemstonesFightOptions.Item('lootInFights')			= False ; loot only when no foes are in range
-$GemstonesFightOptions.Item('openChests')			= False ; there are no chests in Ebony Citadel of Mallyx location
+$GemstonesFightOptions.Item('lootInFights')			= False
+; there are no chests in Ebony Citadel of Mallyx location
+$GemstonesFightOptions.Item('openChests')			= False
 
-Global Const $AgentID_Zhellix = 15 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
-Global Const $ModelID_Zhellix = 5272 ; unique Model ID of Zhellix NPC, that can be accessed in GWToolbox
+; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
+Global Const $AgentID_Zhellix = 15
+Global Const $ModelID_Zhellix = 5272
 
 
 ;~ Main Gemstones farm entry function
@@ -104,15 +108,17 @@ EndFunc
 ;~ Gemstones farm setup
 Func SetupGemstonesFarm()
 	Info('Setting up farm')
+	; the 4 DoA farm areas have the same map ID as Gate of Anguish outpost (474)
 	If GetMapID() <> $ID_Gate_Of_Anguish Then
 		TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
-	Else ; resigning to return to outpost in case when player is in one of 4 DoA farm areas that have the same map ID as Gate of Anguish outpost (474)
+	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	SetDisplayedTitle($ID_Lightbringer_Title)
 	SetupPlayerGemstonesFarm()
-	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL ; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
+	; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
+	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL
 	$GEMSTONES_FARM_SETUP = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -159,9 +165,11 @@ EndFunc
 ;~ Getting into positions
 Func WalkToSpotGemstonesFarm()
 	Info('Moving to defend position')
-	GoToAgent(GetAgentByID($AgentID_Zhellix), Null) ; go close to Zhellix to let him start erforming the ritual, Null for no interaction
-	MoveTo($GemstonesDefendX, $GemstonesDefendY) ; move to defending position
-	FanFlagHeroes(260) ; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
+	; go close to Zhellix to let him start erforming the ritual, Null for no interaction
+	GoToAgent(GetAgentByID($AgentID_Zhellix), Null)
+	MoveTo($GemstonesDefendX, $GemstonesDefendY)
+	; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
+	FanFlagHeroes(260)
 EndFunc
 
 
@@ -178,7 +186,8 @@ Func Defend()
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
 		MoveTo($GemstonesDefendX, $GemstonesDefendY)
 	WEnd
-	Return IsDoARunFailed()? $FAIL : $SUCCESS ; if ritual completed then successful run
+	; if ritual completed then successful run
+	Return IsDoARunFailed()? $FAIL : $SUCCESS
 EndFunc
 
 

@@ -73,7 +73,7 @@ Func SetupSpiritSlavesFarm()
 		SetDisplayedTitle($ID_Lightbringer_Title)
 
 		If SetupPlayerSpiritSlavesFarm() == $FAIL Then Return $FAIL
-		LeaveParty() ; solo farmer
+		LeaveParty()
 
 		While Not $SPIRIT_SLAVES_FARM_SETUP
 			If RunToShatteredRavines() == $FAIL Then ContinueLoop

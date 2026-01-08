@@ -38,7 +38,7 @@ Global Const $ID_Froggy_Quest = 0x322
 ;Tekk's war quest
 ;Global Const $ID_Froggy_Quest = 0x339
 
-Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000 ; max time = 60 minutes
+Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000
 
 ;~ Main method to farm Froggy
 Func FroggyFarm($STATUS)
@@ -304,7 +304,8 @@ Func ClearFroggyFloor2()
 		Info('Open dungeon door')
 		ClearTarget()
 
-		For $i = 1 To 3 ; Tripled to secure bot
+		; Tripled to secure bot
+		For $i = 1 To 3
 			MoveTo(17888, -6243)
 			Sleep(GetPing() + 500)
 			TargetNearestItem()

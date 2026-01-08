@@ -186,15 +186,14 @@ Func KournansFarmLoop()
 	CommandAll(16000, -7000)
 
 	UseSkillEx($Kournans_Intensity)
-	UseSkillEx($Kournans_Mindbender)				;1s
+	UseSkillEx($Kournans_Mindbender)
 	Local $positionToGo = FindMiddleOfFoes(9600, -650, $RANGE_EARSHOT)
 	$targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	GetAlmostInRangeOfAgent($targetFoe)
 	RandomSleep(50)
-	UseSkillEx($Kournans_EbonBattleStandardOfHonor)	;1s
-	;Sleep(1000)
-	UseSkillEx($Kournans_Earthquake, $targetFoe)	;3s
-	UseSkill($Kournans_DragonsStomp, $targetFoe)	;3s
+	UseSkillEx($Kournans_EbonBattleStandardOfHonor)
+	UseSkillEx($Kournans_Earthquake, $targetFoe)
+	UseSkill($Kournans_DragonsStomp, $targetFoe)
 	Sleep(1500)
 	UseSkillEx($Kournans_Intensity)
 	Sleep(1500)
@@ -204,7 +203,8 @@ Func KournansFarmLoop()
 	RandomSleep(2000)
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems()
 			Sleep(GetPing())
 		Next

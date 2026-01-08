@@ -73,7 +73,8 @@ EndFunc
 Func VanquishMagusStones()
 	If GetMapID() <> $ID_Magus_Stones Then Return $FAIL
 
-	Local Static $foes[83][3] = [ _ ; 67 groups to vanquish + 16 movements
+	; 67 groups to vanquish + 16 movements
+	Local Static $foes[83][3] = [ _
 		_ ; blessing
 		[16722, 11774, 'Moving'], _
 		[17383, 8685, 'Moving'], _

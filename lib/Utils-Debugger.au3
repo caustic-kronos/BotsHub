@@ -25,7 +25,8 @@ Global $logHandle = -1
 Global $ContextStack[100]
 Global $ContextDepth = 0
 Global $functionNames = ['SetProcessWorkingSetSizeEx','VirtualQueryEx','VirtualFreeEx','VirtualAllocEx','ReadProcessMemory','WriteProcessMemory','CreateRemoteThread','CloseHandle','WaitForSingleObject','OpenProcess','SetProcessWorkingSetSize']
-Global $errorCodes = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0] ; VirtualQueryEx error code is 0 - but it shouldn't be caught
+; VirtualQueryEx error code is 0 - but it shouldn't be caught
+Global $errorCodes = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0]
 Global $functionErrorCodes = MapFromArrays($functionNames, $errorCodes)
 
 ;~ Opens log file

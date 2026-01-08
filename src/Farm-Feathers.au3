@@ -74,7 +74,7 @@ Func SetupFeathersFarm()
 	If TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFeathersFarm() == $FAIL Then Return $FAIL
-	LeaveParty() ; solo farmer
+	LeaveParty()
 
 	Info('Entering Jaya Bluffs')
 	Local $me = GetMyAgent()

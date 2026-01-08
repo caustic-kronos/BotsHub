@@ -105,7 +105,7 @@ Func SetupFoWToCFarm()
 	If TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFowToCFarm() == $FAIL Then Return $FAIL
-	LeaveParty() ; solo farmer
+	LeaveParty()
 	Sleep(500 + GetPing())
 	$FOW_TOC_FARM_SETUP = True
 	Info('Preparations complete')
@@ -131,13 +131,14 @@ Func FoWToCFarmLoop()
 	Local $me = Null, $target = Null
 	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
 	Info('Starting Farm')
-	$RUN_TIMER = TimerInit() ; resetting run timer to 0, to better adjust skill usages timing
+	$RUN_TIMER = TimerInit()
 	Info('Moving to initial spot')
 
 	UseSkillEx($FoWToC_ShadowForm)
 	UseSkillEx($FoWToC_DwarvenStability)
 	Sleep(500 + GetPing())
-	UseSkillEx($FoWToC_DarkEscape) ; dark escape can be replaced with other skill like great dwarf armor to increase survivability at the cost of farm speed
+	; dark escape can be replaced with other skill like great dwarf armor to increase survivability at the cost of farm speed
+	UseSkillEx($FoWToC_DarkEscape)
 	If MoveDefendingFoWToC(-21131, -2390) == $STUCK Then Return $FAIL
 	If MoveDefendingFoWToC(-16494, -3113) == $STUCK Then Return $FAIL
 
@@ -151,7 +152,8 @@ Func FoWToCFarmLoop()
 		DefendFoWToC()
 	WEnd
 	If IsRecharged($FoWToC_IAmUnstoppable) And GetEffectTimeRemaining(GetEffect($FoWToC_IAmUnstoppable)) == 0 Then UseSkillEx($FoWToC_IAmUnstoppable)
-	While GetEnergy() < 9 ; recharging energy to cast Dwarven Stability and Whirling Defense
+	; recharging energy to cast Dwarven Stability and Whirling Defense
+	While GetEnergy() < 9
 		If CheckStuck('Recharging energy', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		Sleep(500)
 	WEnd
@@ -186,13 +188,17 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-15272, -3004) == $STUCK Then Return $FAIL
 	If MoveDefendingFoWToC(-14453, -3536) == $STUCK Then Return $FAIL
 	If MoveDefendingFoWToC(-14209, -2935) == $STUCK Then Return $FAIL
-	;If MoveDefendingFoWToC(-14535, -2615) == $STUCK Then Return $FAIL ; this spot is supposed to have all shadow rangers in it
-	If MoveDefendingFoWToC(-14454, -2601) == $STUCK Then Return $FAIL ; this spot is supposed to have all shadow rangers in it
+	; this spot is supposed to have all shadow rangers in it
+	;If MoveDefendingFoWToC(-14535, -2615) == $STUCK Then Return $FAIL
+	If MoveDefendingFoWToC(-14454, -2601) == $STUCK Then Return $FAIL
 	; if shadow rangers somehow are not in the spot then try to get closer to them
 	$me = GetMyAgent()
-	$target = GetNearestAgentToAgent($me, $ID_Agent_Type_NPC, IsShadowRangerFoWToC) ; getting closer to nearest shadow ranger, not nearest abyssal
-	Attack($target) ; assuming that player is wearing sword or axe of enchanting
-	While GetEnergy() < 9 ; recharging energy to cast Dwarven Stability and Whirling Defense
+	; getting closer to nearest shadow ranger, not nearest abyssal
+	$target = GetNearestAgentToAgent($me, $ID_Agent_Type_NPC, IsShadowRangerFoWToC)
+	; assuming that player is wearing sword or axe of enchanting
+	Attack($target)
+	; recharging energy to cast Dwarven Stability and Whirling Defense
+	While GetEnergy() < 9
 		If CheckStuck('Recharging energy', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		Sleep(500)
 	WEnd
@@ -209,7 +215,8 @@ Func FoWToCFarmLoop()
 	WEnd
 	If IsPlayerAlive() Then
 		Info('Rangers cleared. Picking up loot')
-		For $i = 1 To 3 ; Tripled to secure the looting of items
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
 			PickUpItems(CastBuffsFowToC)
 			Sleep(GetPing())
 		Next
@@ -247,10 +254,11 @@ Func CastBuffsFowToC()
 EndFunc
 
 
-Func DefendFoWToC($useHoSSkill = True) ; $useHoSSkill == False to not use heart of shadow on rangers, because they don't follow player to adjacent range
+; $useHoSSkill == False to not use heart of shadow on rangers, because they don't follow player to adjacent range
+Func DefendFoWToC($useHoSSkill = True)
 	If CastBuffsFowToC() == $FAIL Then Return $FAIL
 
-	If $useHoSSkill Then ; can use heart of shadow skill
+	If $useHoSSkill Then
 		Local $me = GetMyAgent()
 
 		If DllStructGetData($me, 'HealthPercent') < 0.3 Or _

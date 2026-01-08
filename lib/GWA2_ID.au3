@@ -265,43 +265,43 @@ Global Const $ID_Hero_avoiding	= 2
 #EndRegion Hero combat behaviour
 
 #Region Agents Allegiance
-Global Const $ID_Allegiance_Team	= 1 ; player and team party members
-Global Const $ID_Allegiance_Animal	= 2 ; untamed animals
-Global Const $ID_Allegiance_Foe		= 3
-Global Const $ID_Allegiance_Spirit	= 4 ; ranger's and ritualist's spirits and tamed animals/pets
-Global Const $ID_Allegiance_Minion	= 5 ; necromancer's minions
-Global Const $ID_Allegiance_Npc		= 6 ; npcs, can be team allies
+Global Const $ID_Allegiance_Team	= 1								; player and team party members
+Global Const $ID_Allegiance_Animal	= 2								; untamed animals
+Global Const $ID_Allegiance_Foe		= 3								; enemies
+Global Const $ID_Allegiance_Spirit	= 4								; ranger and ritualist spirits and tamed animals (pets)
+Global Const $ID_Allegiance_Minion	= 5								; necromancer's minions
+Global Const $ID_Allegiance_Npc		= 6								; npcs, can be team allies
 #EndRegion Agents Allegiance
 
 #Region Agents Types
-Global Const $ID_Agent_Type_NPC		= 0xDB ; player, team members, npcs, foes
-Global Const $ID_Agent_Type_Static	= 0x200 ; static objects like chests and signposts
-Global Const $ID_Agent_Type_Item	= 0x400 ; item lying on the ground
+Global Const $ID_Agent_Type_NPC		= 0xDB							; player, team members, npcs, foes
+Global Const $ID_Agent_Type_Static	= 0x200							; static objects like chests and signposts
+Global Const $ID_Agent_Type_Item	= 0x400							; item lying on the ground
 #EndRegion Agents Types
 
 #Region Agents TypeMap Values
-Global Const $ID_TypeMap_Attack_Stance	= 0x0001 ; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
-Global Const $ID_TypeMap_Skill_Usage	= 0x2000 ; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
-Global Const $ID_TypeMap_Death_State	= 0x0008 ; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
+Global Const $ID_TypeMap_Attack_Stance	= 0x0001					; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
+Global Const $ID_TypeMap_Skill_Usage	= 0x2000					; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
+Global Const $ID_TypeMap_Death_State	= 0x0008					; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
 
-Global Const $ID_TypeMap_City_NPC		= 0x0002 ; = 2^1 = 2 = corresponds to npcs in cities. Bit on 2nd position
-Global Const $ID_TypeMap_Idle_Foe		= 0x0000 ; = 0 = corresponds to enemies, who don't do anything, for example when far away
-Global Const $ID_TypeMap_Attacking_Foe	= 0x2001 ; = 8193 = corresponds to enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
-Global Const $ID_TypeMap_Aggroed_Foe	= $ID_TypeMap_Attack_Stance ; = 0x1 = corresponds to enemies, when they are in attack stance, but not using skills
-Global Const $ID_TypeMap_Dead_Foe		= $ID_TypeMap_Death_State ; = 0x8 = corresponds to enemies in dead state
+Global Const $ID_TypeMap_City_NPC		= 0x0002					; = 2^1 = 2 = npcs in cities. Bit on 2nd position
+Global Const $ID_TypeMap_Idle_Foe		= 0x0000					; = 0 = enemies, who don't do anything, for example when far away
+Global Const $ID_TypeMap_Attacking_Foe	= 0x2001					; = 8193 = enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
+Global Const $ID_TypeMap_Aggroed_Foe	= $ID_TypeMap_Attack_Stance	; = 0x1 = enemies, when they are in attack stance, but not using skills
+Global Const $ID_TypeMap_Dead_Foe		= $ID_TypeMap_Death_State	; = 0x8 = enemies in dead state
 
-Global Const $ID_TypeMap_Idle_Ally		= 0x20000 ; = 2^17 = 131072 = corresponds to party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
-Global Const $ID_TypeMap_Aggroed_Ally	= 0x20001 ; = 131073 = corresponds to aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
-Global Const $ID_TypeMap_Attacking_Ally	= 0x22001 ; = 139265 = corresponds to attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
-Global Const $ID_TypeMap_Dead_Ally		= 0x20008 ; = 131080 = corresponds to dead party members and NPC allies. Bits on 4th and 18th positions
+Global Const $ID_TypeMap_Idle_Ally		= 0x20000					; = 2^17 = 131072 = party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
+Global Const $ID_TypeMap_Aggroed_Ally	= 0x20001					; = 131073 = aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
+Global Const $ID_TypeMap_Attacking_Ally	= 0x22001					; = 139265 = attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
+Global Const $ID_TypeMap_Dead_Ally		= 0x20008					; = 131080 = dead party members and NPC allies. Bits on 4th and 18th positions
 
-Global Const $ID_TypeMap_Idle_Player	= 0x421004 ; = 4329476 = corresponds to idle player, when not using skills and not fighting
-Global Const $ID_TypeMap_Aggroed_Player	= 0x421005 ; = 4329477 = corresponds to aggroed player, in attack stance, but not using skills
-Global Const $ID_TypeMap_Casting_Player	= 0x423005 ; = 4337669 = corresponds to attacking player who is using a skill
-Global Const $ID_TypeMap_Dead_Player	= 0x42100C ; = 4329484 = corresponds to dead player
+Global Const $ID_TypeMap_Idle_Player	= 0x421004					; = 4329476 = idle player, when not using skills and not fighting
+Global Const $ID_TypeMap_Aggroed_Player	= 0x421005					; = 4329477 = aggroed player, in attack stance, but not using skills
+Global Const $ID_TypeMap_Casting_Player	= 0x423005					; = 4337669 = attacking player who is using a skill
+Global Const $ID_TypeMap_Dead_Player	= 0x42100C					; = 4329484 = dead player
 
-Global Const $ID_TypeMap_Idle_Minion	= 0x40000 ; = 262144 = corresponds to idle spirits created by ranger. Bit on 19th position
-Global Const $ID_TypeMap_Aggroed_Minion	= 0x40001 ; = 262145 = corresponds to spirits created by ritualist and bone minions created by necromancers. Agents that can attack. Bits on 1st and 19th positions
+Global Const $ID_TypeMap_Idle_Minion	= 0x40000					; = 262144 = idle spirits created by ranger. Bit on 19th position
+Global Const $ID_TypeMap_Aggroed_Minion	= 0x40001					; = 262145 = spirits created by ritualist and bone minions created by necromancers. Agents that can attack. Bits on 1st and 19th positions
 #EndRegion Agents TypeMap Values
 
 
@@ -666,11 +666,11 @@ Global Const $ID_Mindbender						= 2411
 Global Const $ID_Mental_Block					= 2417
 Global Const $ID_Dwarven_Stability				= 2423
 ; Consumables, food and drink boosts
-Global Const $ID_Drake_Skin						= 1680	; obtained using Drake Kabob
-Global Const $ID_Skale_Vigor					= 1681	; obtained using Bowl of Skalefin Soup
-Global Const $ID_Pahnai_Salad_Rush				= 1682	; obtained using Pahnai Salad
-Global Const $ID_Sugar_Jolt_2					= 1916	; obtained using Sugary Blue Drink
-Global Const $ID_Sugar_Jolt_5					= 1933	; obtained using Chocolate Bunny
+Global Const $ID_Drake_Skin						= 1680		; obtained using Drake Kabob
+Global Const $ID_Skale_Vigor					= 1681		; obtained using Bowl of Skalefin Soup
+Global Const $ID_Pahnai_Salad_Rush				= 1682		; obtained using Pahnai Salad
+Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
+Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
 Global Const $ID_Golden_Egg_effect				= 1934
 Global Const $ID_Birthday_Cupcake_effect		= 1945
 Global Const $ID_Armor_of_Salvation_effect		= 2520
@@ -678,12 +678,12 @@ Global Const $ID_Grail_of_Might_effect			= 2521
 Global Const $ID_Essence_of_Celerity_effect		= 2522
 Global Const $ID_Candy_Corn_effect				= 2604
 Global Const $ID_Candy_Apple_effect				= 2605
-Global Const $ID_Pie_Induced_Ecstasy			= 2649	; obtained using Slice of Pumpkin Pie
+Global Const $ID_Pie_Induced_Ecstasy			= 2649		; obtained using Slice of Pumpkin Pie
 Global Const $ID_Sugar_Infusion					= 2762
 Global Const $ID_Blue_Rock_Candy_Rush			= 2971
 Global Const $ID_Green_Rock_Candy_Rush			= 2972
 Global Const $ID_Red_Rock_Candy_Rush			= 2973
-Global Const $ID_Well_Supplied					= 3174	; obtained using War Supplies
+Global Const $ID_Well_Supplied					= 3174		; obtained using War Supplies
 #EndRegion Skill IDs
 
 
@@ -721,13 +721,13 @@ Global Const $RarityNamesFromIDs		= MapFromArrays($RarityIDs, $RarityNames)
 Global Const $ID_Belt_Pouch						= 34
 Global Const $ID_Bag							= 35
 Global Const $ID_Rune_of_Holding				= 2988
-Global Const $ID_Identification_Kit				= 2989	; 25 uses
-Global Const $ID_Superior_Identification_Kit	= 5899	; 100 uses
-Global Const $ID_Salvage_Kit					= 2992	; 25 uses
-Global Const $ID_Salvage_Kit_2					= 2993	; 10 uses
-Global Const $ID_Expert_Salvage_Kit				= 2991	; 25 uses
-Global Const $ID_Superior_Salvage_Kit			= 5900	; 100 uses
-Global Const $ID_Charr_Salvage_Kit				= 18721 ; 5 uses
+Global Const $ID_Identification_Kit				= 2989		; 25 uses
+Global Const $ID_Superior_Identification_Kit	= 5899		; 100 uses
+Global Const $ID_Salvage_Kit					= 2992		; 25 uses
+Global Const $ID_Salvage_Kit_2					= 2993		; 10 uses
+Global Const $ID_Expert_Salvage_Kit				= 2991		; 25 uses
+Global Const $ID_Superior_Salvage_Kit			= 5900		; 100 uses
+Global Const $ID_Charr_Salvage_Kit				= 18721		; 5 uses
 Global Const $ID_Small_Equipment_Pack			= 31221
 Global Const $ID_Light_Equipment_Pack			= 31222
 Global Const $ID_Large_Equipment_Pack			= 31223

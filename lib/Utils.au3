@@ -82,7 +82,8 @@ Func DynamicExecution($functionCall)
 	Info('Call to ' & $functionName)
 	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
 	Local $functionArguments = ParseFunctionArguments($argumentsString)
-	Local $arguments[1] = ['CallArgArray'] ; special flag to be able to pass unlimited array of arguments into Call() function
+	; flag to be able to pass unlimited array of arguments into Call() function
+	Local $arguments[1] = ['CallArgArray']
 	_ArrayConcatenate($arguments, $functionArguments)
 	Call($functionName, $arguments)
 EndFunc
@@ -184,16 +185,16 @@ Func EnterFissureOfWoe()
 				Return $PAUSE
 			EndIf
 		EndIf
-	Else ; Not using scroll method to enter Fissure of Woe
+	Else
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		MoveTo(-2500, 18700)
 		SendChat('/kneel', '')
 		RandomSleep(GetPing() + 3000)
 		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
 		RandomSleep(GetPing() + 750)
-		Dialog(0x85) ; entering FoW dialog option
+		Dialog(0x85)
 		RandomSleep(GetPing() + 750)
-		Dialog(0x86) ; accepting dialog option
+		Dialog(0x86)
 		WaitMapLoading($ID_Fissure_of_Woe)
 		If GetMapID() <> $ID_Fissure_of_Woe Then
 			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
@@ -215,7 +216,7 @@ Func EnterUnderworld()
 				Return $PAUSE
 			EndIf
 		EndIf
-	Else ; Not using scroll method to enter Underworld
+	Else
 		Info('Moving to Grenth statue to enter Underworld')
 		MoveTo(-4170, 19759)
 		MoveTo(-4124, 19829)
@@ -223,9 +224,9 @@ Func EnterUnderworld()
 		RandomSleep(GetPing() + 3000)
 		GoToNPC(GetNearestNPCToCoords(-4124, 19829))
 		RandomSleep(GetPing() + 750)
-		Dialog(0x85) ; entering UW dialog option
+		Dialog(0x85)
 		RandomSleep(GetPing() + 750)
-		Dialog(0x86) ; accepting dialog option
+		Dialog(0x86)
 		WaitMapLoading($ID_Underworld)
 		If GetMapID() <> $ID_Underworld Then
 			Info('Could not enter Underworld. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
@@ -511,10 +512,14 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 		If GetDistance(GetMyAgent(), $agent) > $range Then ContinueLoop
 
 		If $chestsMap[DllStructGetData($agent, 'ID')] <> 2 Then
-			;MoveTo(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))		;Fail half the time
-			;GoSignpost($agent)															;Seems to work but serious rubberbanding
-			;GoToSignpost($agent)															;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
-			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)			;Final solution, caution, chest is considered as signpost by game client
+			;Fail half the time
+			;MoveTo(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+			;Seems to work but serious rubberbanding
+			;GoSignpost($agent)
+			;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
+			;GoToSignpost($agent)
+			;Final solution, caution, chest is considered as signpost by game client
+			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)
 			If IsPlayerDead() Then Return
 			RandomSleep(200)
 			OpenChest()
@@ -618,7 +623,8 @@ Func FindEmptySlot($bag)
 		$item = GetItemBySlot($bag, $slot)
 		If DllStructGetData($item, 'ID') = 0 Then Return $slot
 	Next
-	Return 0 ; slots are indexed from 1, 0 if no empty slot found
+	; slots are indexed from 1, 0 if no empty slot found
+	Return 0
 EndFunc
 
 
@@ -1280,7 +1286,7 @@ Func SalvageItems($buyKit = True)
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
-			
+
 			Local $itemID = DllStructGetData($item, 'ModelID')
 			If IsTrophy($itemID) Then
 				If Not $SALVAGE_TROPHIES Then ContinueLoop
@@ -1427,7 +1433,8 @@ Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 
 	Info('Moving to merchant to buy items')
 	UseCitySpeedBoost()
-	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0) ; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_Embark_Beach Then MoveTo(1950, 0)
 	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
@@ -1476,9 +1483,9 @@ EndFunc
 Func GetItemMaxDmg($item)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	Local $modString = GetModStruct($item)
-	Local $position = StringInStr($modString, 'A8A7')					; Weapon Damage
-	If $position = 0 Then $position = StringInStr($modString, 'C867')	; Energy (focus)
-	If $position = 0 Then $position = StringInStr($modString, 'B8A7')	; Armor (shield)
+	Local $position = StringInStr($modString, 'A8A7')						; Weapon Damage
+	If $position = 0 Then $position = StringInStr($modString, 'C867')		; Energy (focus)
+	If $position = 0 Then $position = StringInStr($modString, 'B8A7')		; Armor (shield)
 	If $position = 0 Then Return 0
 	Return Int('0x' & StringMid($modString, $position - 2, 2))
 EndFunc
@@ -1861,7 +1868,8 @@ Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
 	If $firstIndex < 1 Or UBound($array) < $lastIndex Then Return $FAIL
 	If $firstIndex > $lastIndex Then Return $FAIL
 	Local $result = $SUCCESS
-	For $i = $firstIndex - 1 To $lastIndex - 1 ; Caution, array rows are indexed from 1, but $array is indexed from 0
+	; Caution, array rows are indexed from 1, but $array is indexed from 0
+	For $i = $firstIndex - 1 To $lastIndex - 1
 		If UBound($array, $UBOUND_COLUMNS) == 2 Then
 			$result = $function($array[$i][0], $array[$i][1])
 		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
@@ -1899,15 +1907,15 @@ EndFunc
 
 ;~ Find common longest substring in two strings
 Func LongestCommonSubstringOfTwoStrings($string1, $string2)
-	Local $longestCommonSubstrings[0] ; dynamic 1D array indexed from 0
-	Local $string1characters = StringSplit($string1, '') ; splitting $string1 into array of characters
-	Local $string2characters = StringSplit($string2, '') ; splitting $string2 into array of characters
+	Local $longestCommonSubstrings[0]
+	Local $string1characters = StringSplit($string1, '')
+	Local $string2characters = StringSplit($string2, '')
 	; deleting first element of string arrays (which has the count of characters in AutoIT) to have string arrays indexed from 0
 	_ArrayDelete($string1characters, 0)
 	_ArrayDelete($string2characters, 0)
 	Local $LongestCommonSubstringSize = 0
 	Local $array[UBound($string1characters) + 1][UBound($string2characters) + 1]
-	FillArray($array, 0) ; fill array with zeroes just in case
+	FillArray($array, 0)
 
 	For $i = 1 To UBound($string1characters)
 		For $j = 1 To UBound($string2characters)
@@ -1915,7 +1923,8 @@ Func LongestCommonSubstringOfTwoStrings($string1, $string2)
 				$array[$i][$j] = $array[$i-1][$j-1] + 1
 				If $array[$i][$j] > $LongestCommonSubstringSize Then
 					$LongestCommonSubstringSize = $array[$i][$j]
-					Local $longestCommonSubstrings[0] ; resetting to empty array
+					; resetting to empty array
+					Local $longestCommonSubstrings[0]
 					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
 				ElseIf $array[$i][$j] = $LongestCommonSubstringSize Then
 					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
@@ -1926,7 +1935,8 @@ Func LongestCommonSubstringOfTwoStrings($string1, $string2)
 		Next
 	Next
 
-	Return $longestCommonSubstrings[0] ; return first string from the array of longest substrings (there might be more than 1 with the same maximal size)
+	; return first string from the array of longest substrings (there might be more than 1 with the same maximal size)
+	Return $longestCommonSubstrings[0]
 EndFunc
 
 
@@ -2057,7 +2067,7 @@ Func TypeSize($type)
 		Case 'ptr'
 			Return @AutoItX64 ? 8 : 4
 		Case Else
-			Return -1 ; Unknown type
+			Return -1
 	EndSwitch
 EndFunc
 
@@ -2162,8 +2172,8 @@ Func FindMiddleOfParty()
 			$partySize += 1
 		EndIf
 	Next
-	$position[0] = $position[0] / $partySize ; arithmetic mean calculation for X axis
-	$position[1] = $position[1] / $partySize ; arithmetic mean calculation for Y axis
+	$position[0] = $position[0] / $partySize
+	$position[1] = $position[1] / $partySize
 	Return $position
 EndFunc
 
@@ -2177,8 +2187,8 @@ Func FindMiddleOfFoes($posX, $posY, $range = $RANGE_AREA)
 		$position[0] += DllStructGetData($foe, 'X')
 		$position[1] += DllStructGetData($foe, 'Y')
 	Next
-	$position[0] = $position[0] / Ubound($foes) ; arithmetic mean calculation for X axis
-	$position[1] = $position[1] / Ubound($foes) ; arithmetic mean calculation for Y axis
+	$position[0] = $position[0] / Ubound($foes)
+	$position[1] = $position[1] / Ubound($foes)
 	Return $position
 EndFunc
 
@@ -2229,7 +2239,7 @@ Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = N
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
 		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		$count += 1
@@ -2241,7 +2251,7 @@ EndFunc
 ;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
 Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $agents = GetAgentArray($ID_Agent_Type_NPC)
-	Local $allAgents[GetMaxAgents()] ; 1D array of agents, indexed from 0
+	Local $allAgents[GetMaxAgents()]
 	Local $npcCount = 0
 
 	If $coordX == Null Or $coordY == Null Then
@@ -2253,13 +2263,13 @@ Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Nul
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
 		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		$allAgents[$npcCount] = $agent
 		$npcCount += 1
 	Next
-	Local $npcAgents[$npcCount] ; 1D array of npc agents, indexed from 0
+	Local $npcAgents[$npcCount]
 	For $i = 0 To $npcCount - 1
 		$npcAgents[$i] = $allAgents[$i]
 	Next
@@ -2282,7 +2292,7 @@ Func GetNearestNPCInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
 		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		Local $curDistance = GetDistance($me, $agent)
@@ -2310,7 +2320,7 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
 		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
 		Local $curDistance = GetDistance($me, $agent)
@@ -2339,7 +2349,7 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
-		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop ; It's a spirit
+		If $Map_SpiritTypes[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
 		If $condition <> Null And $condition($agent) == False Then ContinueLoop
 		Local $curDistance = GetDistanceToPoint($agent, $coordX, $coordY)
 		If $range < $curDistance Then ContinueLoop
@@ -2486,7 +2496,7 @@ EndFunc
 
 ;~ Return an array of heroes in the party with a resurrection skill, indexed from 0
 Func FindHeroesWithRez()
-	Local $heroes[7] ; 1D array of all heroes, indexed from 0
+	Local $heroes[7]
 	Local $count = 0
 	For $heroNumber = 1 To GetHeroCount()
 		Local $heroID = GetHeroID($heroNumber)
@@ -2498,7 +2508,7 @@ Func FindHeroesWithRez()
 			EndIf
 		Next
 	Next
-	Local $heroesWithRez[$count] ; 1D array of heroes with resurrection skill, indexed from 0
+	Local $heroesWithRez[$count]
 	For $i = 0 To $count - 1
 		$heroesWithRez[$i] = $heroes[$i]
 	Next
@@ -2586,11 +2596,11 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
-	Local $defendFunction = ($options.Item('defendFunction') <> Null) ? $options.Item('defendFunction') : Null ; defend function to use while moving
-	Local $moveTimeOut = ($options.Item('moveTimeOut') <> Null) ? $options.Item('moveTimeOut') : 2 * 60 * 1000 ; 2 minutes max timeout, otherwise bot probably got stuck
-	Local $randomFactor = ($options.Item('randomFactor') <> Null) ? $options.Item('randomFactor') : 100 ; random factor for movement
-	Local $hosSkillSlot = ($options.Item('hosSkillSlot') <> Null) ? $options.Item('hosSkillSlot') : 0 ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
-	Local $deathChargeSkillSlot = ($options.Item('$deathChargeSkillSlot') <> Null) ? $options.Item('$deathChargeSkillSlot') : 0 ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
+	Local $defendFunction = ($options.Item('defendFunction') <> Null) ? $options.Item('defendFunction') : Null
+	Local $moveTimeOut = ($options.Item('moveTimeOut') <> Null) ? $options.Item('moveTimeOut') : 2 * 60 * 1000
+	Local $randomFactor = ($options.Item('randomFactor') <> Null) ? $options.Item('randomFactor') : 100
+	Local $hosSkillSlot = ($options.Item('hosSkillSlot') <> Null) ? $options.Item('hosSkillSlot') : 0
+	Local $deathChargeSkillSlot = ($options.Item('$deathChargeSkillSlot') <> Null) ? $options.Item('$deathChargeSkillSlot') : 0
 	$randomFactor = _Min(_Max($randomFactor, 0), $RANGE_NEARBY) ; $randomFactor in range [0;$RANGE_NEARBY]
 	If $hosSkillSlot <> 1 And $hosSkillSlot <> 2 And $hosSkillSlot <> 3 And $hosSkillSlot <> 4 And $hosSkillSlot <> 5 And $hosSkillSlot <> 6 And $hosSkillSlot <> 7 And $hosSkillSlot <> 8 Then $hosSkillSlot = 0
 	If $deathChargeSkillSlot <> 1 And $deathChargeSkillSlot <> 2 And $deathChargeSkillSlot <> 3 And $deathChargeSkillSlot <> 4 And $deathChargeSkillSlot <> 5 And $deathChargeSkillSlot <> 6 And $deathChargeSkillSlot <> 7 And $deathChargeSkillSlot <> 8 Then $deathChargeSkillSlot = 0
@@ -2607,12 +2617,12 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 		If IsPlayerAlive() And Not IsPlayerMoving() Then
 			$blocked += 1
 			$me = GetMyAgent()
-			If $blocked > 8 Then CheckAndSendStuckCommand() ; checking if player got stuck on some terrain obstacle
+			If $blocked > 8 Then CheckAndSendStuckCommand()
 			If $blocked > 10 Then
 				; If Heart of Shadow skill is available then use it to avoid becoming stuck
 				If $hosSkillSlot > 0 Then
 					If IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
-						UseSkillEx($hosSkillSlot) ; use heart of shadow on self to get into random location
+						UseSkillEx($hosSkillSlot)
 						Sleep(GetPing())
 						Move($destinationX, $destinationY, $randomFactor)
 					EndIf
@@ -2636,17 +2646,20 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 			ElseIf $blocked > 5 Then
 				$myX = DllStructGetData($me, 'X')
 				$myY = DllStructGetData($me, 'Y')
-				$randomAngle = Random(0, 2*$PI) ; range [0, 2*$PI] - full circle in radian degrees
+				; range [0, 2*$PI] - full circle in radian degrees
+				$randomAngle = Random(0, 2 * $PI)
 				$offsetX = 300 * cos($randomAngle)
 				$offsetY = 300 * sin($randomAngle)
-				Move($myX + $offsetX , $myY + $offsetY, 0) ; 0 = no random, because random offset is already calculated
+				; 0 = no random, because random offset is already calculated
+				Move($myX + $offsetX , $myY + $offsetY, 0)
 				Sleep(GetPing())
 			EndIf
 		Else
 			Move($destinationX, $destinationY, $randomFactor)
 			If $blocked > 0 Then
-				$blocked = 0 ; reset of block count when player started moving
-				CheckAndSendStuckCommand() ; player started moving, after being stuck but maybe player is rubberbanding? Therefore checking it
+				$blocked = 0
+				; player started moving, after being stuck but maybe player is rubberbanding? Therefore checking it
+				CheckAndSendStuckCommand()
 			EndIf
 		EndIf
 		If $openChests Then
@@ -2673,7 +2686,8 @@ EndFunc
 Func CheckAndSendStuckCommand()
 	; static variable is initialized only once when CheckAndSendStuckCommand is called first time
 	Local Static $chatStuckTimer = TimerInit()
-	Local $stuckInterval = 10000 ; 10 seconds interval between stuck commands
+	; 10 seconds interval between stuck commands
+	Local $stuckInterval = 10000
 
 	; Use a timer to avoid spamming /stuck, because spamming stuck can result in being flagged, which can result in a ban
 	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there shouldn't be any enemies around the character then
@@ -2765,7 +2779,7 @@ Func AttackOrUseSkill($attackSleep, $skill1 = Null, $skill2 = Null, $skill3 = Nu
 	RandomSleep(20)
 
 	For $i = 1 To 8
-		Local $skillSlot = Eval('skill' & $i) ; skill index provided as parameter to this function
+		Local $skillSlot = Eval('skill' & $i)
 		If ($skillSlot <> Null And IsRecharged($skillSlot)) Then
 			UseSkillEx($skillSlot, $target)
 			RandomSleep(20)
@@ -2798,17 +2812,19 @@ $Default_MoveAggroAndKill_Options.Add('skillsCastTimeMap', Null)
 $Default_MoveAggroAndKill_Options.Add('lootInFights', False)
 $Default_MoveAggroAndKill_Options.Add('openChests', True)
 $Default_MoveAggroAndKill_Options.Add('chestOpenRange', $RANGE_SPIRIT)
-$Default_MoveAggroAndKill_Options.Add('fightDuration', 60000) ; default 60 seconds fight duration
+; default 60 seconds fight duration
+$Default_MoveAggroAndKill_Options.Add('fightDuration', 60000)
 
 Global $Default_FlagMoveAggroAndKill_Options = CloneDictMap($Default_MoveAggroAndKill_Options)
 $Default_FlagMoveAggroAndKill_Options.Item('flagHeroesOnFight') = True
 
 Global $Default_MoveDefend_Options = ObjCreate('Scripting.Dictionary')
-$Default_MoveDefend_Options.Add('defendFunction', Null) ; defend function to use while moving
-$Default_MoveDefend_Options.Add('moveTimeOut', 5 * 60 * 1000) ; 2 minutes max timeout, otherwise bot probably got stuck
-$Default_MoveDefend_Options.Add('randomFactor', 100) ; random factor for movement
-$Default_MoveDefend_Options.Add('hosSkillSlot', 0) ; skill position for Heart of Shadow skill, from 1 to 8, 0 means that this skill isn't in skillbar
-$Default_MoveDefend_Options.Add('deathChargeSkillSlot', 0) ; skill position for Death's Charge skill, from 1 to 8, 0 means that this skill isn't in skillbar
+$Default_MoveDefend_Options.Add('defendFunction', Null)
+$Default_MoveDefend_Options.Add('moveTimeOut', 5 * 60 * 1000)
+; random factor for movement
+$Default_MoveDefend_Options.Add('randomFactor', 100)
+$Default_MoveDefend_Options.Add('hosSkillSlot', 0)
+$Default_MoveDefend_Options.Add('deathChargeSkillSlot', 0)
 $Default_MoveDefend_Options.Add('openChests', False)
 $Default_MoveDefend_Options.Add('chestOpenRange', $RANGE_SPIRIT)
 
@@ -2905,7 +2921,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Op
 	While IsPlayerOrPartyAlive() And GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldMyX = $myX
 		$oldMyY = $myY
-		$me = GetMyAgent() ; updating/sampling player's agent data
+		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
@@ -2915,7 +2931,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Op
 		EndIf
 		RandomSleep(250)
 		If IsPlayerDead() Then Return $FAIL
-		$me = GetMyAgent() ; updating/sampling player's agent data
+		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
 		If $oldMyX = $myX And $oldMyY = $myY Then
@@ -2926,7 +2942,8 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Op
 				Move($x, $y)
 			EndIf
 		Else
-			$blocked = 0 ; reset of block count if player got unstuck
+			; reset of block count if player got unstuck
+			$blocked = 0
 		EndIf
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
@@ -2957,7 +2974,8 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = Null
-	If $flagHeroes Then FanFlagHeroes(260) ; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
+	; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
+	If $flagHeroes Then FanFlagHeroes(260)
 
 	While IsPlayerOrPartyAlive() And $foesCount > 0
 		If $priorityMobs Then $target = GetHighestPriorityFoe($me, $fightRange)
@@ -2969,22 +2987,25 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 				CallTarget($target)
 				Sleep(100)
 			EndIf
-			GetAlmostInRangeOfAgent($target) ; get as close as possible to target foe to have a surprise effect when attacking
-			Attack($target) ; Start auto-attack on new target
+			; get as close as possible to target foe to have a surprise effect when attacking
+			GetAlmostInRangeOfAgent($target)
+			Attack($target)
 			Sleep(100)
 
-			Local $i = 0 ; index for iterating skills in skill bar in range <1..8>
+			Local $i = 0
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
 			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_Allegiance_Foe
 				If IsPlayerDead() Then ExitLoop
-
-				$i = Mod($i, 8) + 1 ; incrementation of skill index and capping it by number of skills, range <1..8>
-				If $skillsMask <> Null And $skillsMask[$i-1] == False Then ContinueLoop ; optional skillsMask indexed from 0, tells which skills to use or skip
-
-				Attack($target) ; Always ensure auto-attack is active before using skills
+				; incrementation of skill index and capping it by number of skills, range <1..8>
+				$i = Mod($i, 8) + 1
+				; optional skillsMask indexed from 0, tells which skills to use or skip
+				If $skillsMask <> Null And $skillsMask[$i-1] == False Then ContinueLoop
+				; Always ensure auto-attack is active before using skills
+				Attack($target)
 				Sleep(100)
 
-				Local $sufficientEnergy = ($skillsCostMap <> Null) ? (GetEnergy() >= $skillsCostMap[$i]) : True ; if no skill energy cost map is provided then attempt to use skills anyway
+				; if no skill energy cost map is provided then attempt to use skills anyway
+				Local $sufficientEnergy = ($skillsCostMap <> Null) ? (GetEnergy() >= $skillsCostMap[$i]) : True
 				If IsRecharged($i) And $sufficientEnergy Then
 					UseSkillEx($i, $target)
 					RandomSleep(100)
@@ -3184,12 +3205,14 @@ Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
 	For $agent In $agents
 		If Not EnemyAgentFilter($agent) Then ContinueLoop
 		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
-		; If DllStructGetData($agent, 'TypeMap') == 0 Then ContinueLoop ; TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack
+		; TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack
+		; If DllStructGetData($agent, 'TypeMap') == 0 Then ContinueLoop
 		If DllStructGetData($agent, 'ID') == $agentID Then ContinueLoop
 		Local $distance = GetDistance($targetAgent, $agent)
 		If $distance < $range Then
 			Local $priority = $mobsPriorityMap[DllStructGetData($agent, 'ModelID')]
-			If ($priority == Null) Then ; map returns Null for all other mobs that don't exist in map
+			; map returns Null for all other mobs that don't exist in map
+			If ($priority == Null) Then
 				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agent
 				ContinueLoop
 			EndIf
@@ -3210,11 +3233,14 @@ Func FanFlagHeroes($range = $RANGE_AREA)
 	; Change your hero locations here
 	Switch $heroCount
 		Case 3
-			Local $heroFlagPositions[3] = [1, 2, 3]				; right, left, behind
+			; right, left, behind
+			Local $heroFlagPositions[3] = [1, 2, 3]
 		Case 5
-			Local $heroFlagPositions[5] = [1, 2, 3, 4, 5]		; right, left, behind, behind right, behind left
+			; right, left, behind, behind right, behind left
+			Local $heroFlagPositions[5] = [1, 2, 3, 4, 5]
 		Case 7
-			Local $heroFlagPositions[7] = [1, 2, 6, 3, 4, 5, 7]	; right, left, behind, behind right, behind left, way behind right, way behind left
+			; right, left, behind, behind right, behind left, way behind right, way behind left
+			Local $heroFlagPositions[7] = [1, 2, 6, 3, 4, 5, 7]
 		Case Else
 			Local $heroFlagPositions[0] = []
 	EndSwitch
@@ -3259,7 +3285,7 @@ EndFunc
 ;~ Loads skill template code.
 Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $heroID = GetHeroID($heroIndex)
-	Local $BuildTemplateChars = StringSplit($buildTemplate, '') ; splitting build template string into array of characters
+	Local $BuildTemplateChars = StringSplit($buildTemplate, '')
 	; deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
 	_ArrayDelete($BuildTemplateChars, 0)
 
@@ -3412,7 +3438,8 @@ Func _dlldisplay($struct, $fieldNames = Null)
 	Local $offset = 0, $dllSize = DllStructGetSize($struct)
 	Local $elementValue, $type, $typeSize, $elementSize, $arrayCount, $aligns
 
-	Local $structArray[1][6] = [['-', '-', $currentPtr, '<struct>', 0, '-']]	; #|Offset|Type|Size|Value'
+	; #|Offset|Type|Size|Value'
+	Local $structArray[1][6] = [['-', '-', $currentPtr, '<struct>', 0, '-']]
 
 	; loop through elements
 	For $i = 1 To 2 ^ 63
