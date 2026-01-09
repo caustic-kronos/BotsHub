@@ -28,19 +28,19 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $EdenIrisFarmInformations = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
+Global Const $EDEN_IRIS_FARM_INFORMATIONS = 'Only thing needed for this farm is a character in Eden and Ashford Abbey unlocked.'
 ; Average duration ~ 35s
 Global Const $IRIS_FARM_DURATION = 35 * 1000
 
-Global $IRIS_FARM_SETUP = False
+Global $iris_farm_setup = False
 
 ;~ Main method to farm Red Iris Flowers in Eden
-Func EdenIrisFarm($STATUS)
-	If Not $IRIS_FARM_SETUP Then SetupEdenIrisFarm()
+Func EdenIrisFarm()
+	If Not $iris_farm_setup Then SetupEdenIrisFarm()
 
 	GoToLakesideCounty()
 	Local $result = EdenIrisFarmLoop()
-	ReturnBackToOutpost($ID_Ashford_Abbey)
+	ReturnBackToOutpost($ID_ASHFORD_ABBEY)
 	Return $result
 EndFunc
 
@@ -48,13 +48,13 @@ EndFunc
 ;~ Iris farm short setup
 Func SetupEdenIrisFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
+	TravelToOutpost($ID_ASHFORD_ABBEY, $district_name)
 	GoToLakesideCounty()
 	MoveTo(-11000, -6250)
 	Move(-11600, -6250)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
-	$IRIS_FARM_SETUP = True
+	WaitMapLoading($ID_ASHFORD_ABBEY, 10000, 2000)
+	$iris_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -62,20 +62,20 @@ EndFunc
 
 ;~ Move out of outpost into Lakeside County
 Func GoToLakesideCounty()
-	TravelToOutpost($ID_Ashford_Abbey, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Lakeside_County
+	TravelToOutpost($ID_ASHFORD_ABBEY, $district_name)
+	While GetMapID() <> $ID_LAKESIDE_COUNTY
 		Info('Moving to Lakeside County')
 		MoveTo(-11600, -6250)
 		Move(-11000, -6250)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+		WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Farm loop
 Func EdenIrisFarmLoop()
-	If GetMapID() <> $ID_Lakeside_County Then Return $FAIL
+	If GetMapID() <> $ID_LAKESIDE_COUNTY Then Return $FAIL
 	If PickUpIris() Then Return $SUCCESS
 	Moveto(-11000, -7850)
 	If PickUpIris() Then Return $SUCCESS
@@ -92,11 +92,11 @@ Func PickUpIris()
 	Local $agent
 	Local $item
 	Local $deadlock
-	Local $agents = GetAgentArray($ID_Agent_Type_Item)
+	Local $agents = GetAgentArray($ID_AGENT_TYPE_ITEM)
 	For $agent In $agents
 		Local $agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)
-		If (DllStructGetData($item, 'ModelID') == $ID_Red_Iris_Flower) Then
+		If (DllStructGetData($item, 'ModelID') == $ID_RED_IRIS_FLOWER) Then
 			Info('Iris: (' & Round(DllStructGetData($agent, 'X')) & ',' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
 			$deadlock = TimerInit()

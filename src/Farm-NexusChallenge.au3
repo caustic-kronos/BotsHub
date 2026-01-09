@@ -27,15 +27,16 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $NexusChallengeInformations = 'Mysterious armor farm'
+Global Const $NEXUS_CHALLENGE_INFORMATIONS = 'Mysterious armor farm'
 ; Average duration ~ 20m
 Global Const $NEXUS_CHALLENGE_FARM_DURATION = 20 * 60 * 1000
-Global $NEXUS_CHALLENGE_SETUP = False
+
+Global $nexus_challenge_setup = False
 
 
 ;~ Main loop for the Mysterious armor farm
-Func NexusChallengeFarm($STATUS)
-	If Not $NEXUS_CHALLENGE_SETUP Then NexusChallengeSetup()
+Func NexusChallengeFarm()
+	If Not $nexus_challenge_setup Then NexusChallengeSetup()
 
 	EnterNexusChallengeMission()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -51,23 +52,23 @@ EndFunc
 
 Func NexusChallengeSetup()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Nexus Then
-		TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	If GetMapID() <> $ID_NEXUS Then
+		TravelToOutpost($ID_NEXUS, $district_name)
 	Else
 		ResignAndReturnToOutpost()
 	EndIf
-	SetDisplayedTitle($ID_Lightbringer_Title)
+	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_NORMAL_MODE)
 	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings($ID_Team_Size_Small)
-	$NEXUS_CHALLENGE_SETUP = True
+	TrySetupTeamUsingGUISettings($ID_TEAM_SIZE_SMALL)
+	$nexus_challenge_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
 
 
 Func EnterNexusChallengeMission()
-	TravelToOutpost($ID_Nexus, $DISTRICT_NAME)
+	TravelToOutpost($ID_NEXUS, $district_name)
 	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
 	Local Static $StartX = -391
@@ -87,7 +88,7 @@ EndFunc
 
 ;~ Cleaning Nexus challenge function
 Func NexusChallenge()
-	If GetMapID() <> $ID_Nexus Then Return $FAIL
+	If GetMapID() <> $ID_NEXUS Then Return $FAIL
 	Sleep(50000)
 
 	; 9 groups to defeat in each loop

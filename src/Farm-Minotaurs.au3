@@ -26,19 +26,20 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $MinotaursFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $MINOTAURS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& '- Solid heroes team composition, which can be loaded from GUI' & @CRLF _
 	& '' & @CRLF _
 	& 'This bot farms minotaur horns which can be salvaged for materials, or given to Nicholas the Traveler' & @CRLF
 ; Average duration ~ 8m
 Global Const $MINOTAURS_FARM_DURATION = 8 * 60 * 1000
-Global $MINOTAURS_FARM_SETUP = False
+
+Global $minotaurs_farm_setup = False
 
 
 ;~ Main loop for the minotaurs farm
-Func MinotaursFarm($STATUS)
-	If Not $MINOTAURS_FARM_SETUP Then SetupMinotaursFarm()
+Func MinotaursFarm()
+	If Not $minotaurs_farm_setup Then SetupMinotaursFarm()
 
 	GoToProphetsPath()
 	;ResetFailuresCounter()
@@ -52,11 +53,11 @@ EndFunc
 ;~ Setup for the farm
 Func SetupMinotaursFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Augury_Rock, $DISTRICT_NAME)
+	TravelToOutpost($ID_AUGURY_ROCK, $district_name)
 	SwitchToHardModeIfEnabled()
 	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings($ID_Team_Size_Medium)
-	$MINOTAURS_FARM_SETUP = True
+	TrySetupTeamUsingGUISettings($ID_TEAM_SIZE_MEDIUM)
+	$minotaurs_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -64,22 +65,22 @@ EndFunc
 
 ;~ Move out of outpost into Prophet's 'Path
 Func GoToProphetsPath()
-	TravelToOutpost($ID_Augury_Rock, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Prophets_Path
+	TravelToOutpost($ID_AUGURY_ROCK, $district_name)
+	While GetMapID() <> $ID_PROPHETS_PATH
 		Info('Moving to Prophet''s Path')
 		MoveTo(-17071, -1065)
 		MoveTo(-18069, -1026)
 		MoveTo(-18853, -444)
 		MoveTo(-20100, -400)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Prophets_Path, 10000, 2000)
+		WaitMapLoading($ID_PROPHETS_PATH, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Vanquish the minotaurs
 Func FarmMinotaurs()
-	If GetMapID() <> $ID_Prophets_Path Then Return $FAIL
+	If GetMapID() <> $ID_PROPHETS_PATH Then Return $FAIL
 
 	; 12 groups to vanquish
 	Local Static $minotaurs[12][3] = [ _

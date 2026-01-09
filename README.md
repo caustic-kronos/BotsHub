@@ -88,7 +88,7 @@ To add a new bot, drop your script into the `/src/` folder and follow these step
 4. Add two lines in BotsHub - RunFarmLoop :
 	```autoit
 	Case '<Name>'
-		$result = <Name>Farm($STATUS)
+		$result = <Name>Farm()
 	```
 And that's it !
 

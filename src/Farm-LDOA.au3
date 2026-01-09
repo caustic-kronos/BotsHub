@@ -27,7 +27,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $LDOAInformations = 'The bot will:' & @CRLF _
+Global Const $LDOA_INFORMATIONS = 'The bot will:' & @CRLF _
 	& '- Go right off the bat, on a new character after the cutscene.' & @CRLF _
 	& '- In the beginning it tries to do the elementalist quest to get some initial skill.' & @CRLF _
 	& '- If you are not an elementalist, then it is advised to get some initial skills yourself.' & @CRLF _
@@ -36,39 +36,39 @@ Global Const $LDOAInformations = 'The bot will:' & @CRLF _
 ; Average duration ~ 1m
 Global Const $LDOA_FARM_DURATION = 1 * 60 * 1000
 
-Global Const $ID_Dialog_Accept_Quest_War_Preparations = 0x80DB01
-Global Const $ID_Dialog_Finish_Quest_War_Preparations = 0x80DB07
-Global Const $ID_Dialog_Accept_Quest_Elementalist_Test = 0x805301
-Global Const $ID_Dialog_Finish_Quest_Elementalist_Test = 0x805307
-Global Const $ID_Dialog_Select_Quest_A_Mesmers_Burden = 0x804703
-Global Const $ID_Dialog_Accept_Quest_A_Mesmers_Burden = 0x804701
-Global Const $ID_Dialog_Accept_Quest_Charr_At_The_Gate = 0x802E01
-Global Const $ID_Dialog_Accept_Quest_Farmer_Hamnet = 0x84A101
+Global Const $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS = 0x80DB01
+Global Const $ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS = 0x80DB07
+Global Const $ID_DIALOG_ACCEPT_QUEST_ELEMENTALIST_TEST = 0x805301
+Global Const $ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST = 0x805307
+Global Const $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN = 0x804703
+Global Const $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN = 0x804701
+Global Const $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE = 0x802E01
+Global Const $ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET = 0x84A101
 
-Global Const $ID_Quest_CharrAtTheGate = 0x2E
-Global Const $ID_Quest_FarmerHamnet = 0x4A1
+Global Const $ID_QUEST_CHARR_AT_THE_GATE = 0x2E
+Global Const $ID_QUEST_FARMER_HAMNET = 0x4A1
 
-Global Const $ID_Luminescent_Scepter = 6508
-Global Const $ID_Serrated_Shield = 6514
+Global Const $ID_LUMINESCENT_SCEPTER = 6508
+Global Const $ID_SERRATED_SHIELD = 6514
 
 ; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_HEALTH_THRESHOLD = 0.33
 Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
 
-Global $LDOA_FARM_SETUP = False
+Global $ldoa_farm_setup = False
 
 
 ;~ Main method to get LDOA title
-Func LDOATitleFarm($STATUS)
-	If Not $LDOA_FARM_SETUP And SetupLDOATitleFarm() == $FAIL Then
+Func LDOATitleFarm()
+	If Not $ldoa_farm_setup And SetupLDOATitleFarm() == $FAIL Then
 		Info('LDOA farm setup failed, stopping farm.')
 		Return $PAUSE
 	EndIf
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North or other towns for inventory management
-	If (CountSlots(1, _Min($BAGS_COUNT, 4)) <= 5) Then
+	If (CountSlots(1, _Min($bags_count, 4)) <= 5) Then
 		PresearingInventoryManagement()
 	EndIf
-	If (CountSlots(1, $BAGS_COUNT) <= 0) Then
+	If (CountSlots(1, $bags_count) <= 0) Then
 		Notice('Inventory has 0 slots left, pausing.')
 		Return $PAUSE
 	EndIf
@@ -95,36 +95,36 @@ Func SetupLDOATitleFarm()
 		Info('LDOA 10-20')
 		If SetupHamnetQuest() == $FAIL Then Return $FAIL
 		Info('Checking if Foibles Fair is available...')
-		If TryTravel($ID_Foibles_Fair) == $FAIL Then RunToFoible()
+		If TryTravel($ID_FOIBLES_FAIR) == $FAIL Then RunToFoible()
 	EndIf
 	Info('Preparations complete')
-	$LDOA_FARM_SETUP = True
+	$ldoa_farm_setup = True
 EndFunc
 
 
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
-	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	If Not IsItemEquippedInWeaponSlot($ID_Luminescent_Scepter, 1) Or FindInInventory($ID_Igneous_Summoning_Stone)[0] == 0 Then GetWeapons()
+	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
+	If Not IsItemEquippedInWeaponSlot($ID_LUMINESCENT_SCEPTER, 1) Or FindInInventory($ID_IGNEOUS_SUMMONING_STONE)[0] == 0 Then GetWeapons()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
 	MoveTo(11683, 3447)
 	GoToNPC(GetNearestNPCToCoords(11683, 3447))
 	Sleep(GetPing() + 750)
-	Dialog($ID_Dialog_Accept_Quest_War_Preparations)
+	Dialog($ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS)
 	Sleep(GetPing() + 750)
 
 	MoveTo(7607, 5552)
 	Move(7175, 5229)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(6116, 3995)
 	GoToNPC(GetNearestNPCToCoords(6187, 4085))
 	Sleep(GetPing() + 750)
-	Dialog($ID_Dialog_Finish_Quest_War_Preparations)
+	Dialog($ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS)
 	Sleep(250)
-	Dialog($ID_Dialog_Accept_Quest_Elementalist_Test)
+	Dialog($ID_DIALOG_ACCEPT_QUEST_ELEMENTALIST_TEST)
 	Sleep(GetPing() + 750)
 	MoveTo(4187, -948)
 	MoveAggroAndKillInRange(4207, -2892, '', 2500)
@@ -132,18 +132,18 @@ Func InitialSetupLDOA()
 	MoveTo(6069, 3865)
 	GoToNPC(GetNearestNPCToCoords(6187, 4085))
 	Sleep(GetPing() + 750)
-	Dialog($ID_Dialog_Finish_Quest_Elementalist_Test)
+	Dialog($ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST)
 	Sleep(GetPing() + 750)
 	MoveTo(2785, 7736)
 	GoToNPC(GetNearestNPCToCoords(2785, 7736))
 	Sleep(GetPing() + 750)
-	Dialog($ID_Dialog_Select_Quest_A_Mesmers_Burden)
+	Dialog($ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN)
 	Sleep(250)
-	Dialog($ID_Dialog_Accept_Quest_A_Mesmers_Burden)
+	Dialog($ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN)
 	Sleep(250)
 
-	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
-	If TryTravel($ID_Ashford_Abbey) == $FAIL Then RunToAshford()
+	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
+	If TryTravel($ID_ASHFORD_ABBEY) == $FAIL Then RunToAshford()
 EndFunc
 
 
@@ -153,8 +153,8 @@ Func GetWeapons()
 	SendChat('bonus', '/')
 	Sleep(GetPing() + 750)
 
-	Local $luminescentScepter = FindInInventory($ID_Luminescent_Scepter)
-	Local $serratedShield = FindInInventory($ID_Serrated_Shield)
+	Local $luminescentScepter = FindInInventory($ID_LUMINESCENT_SCEPTER)
+	Local $serratedShield = FindInInventory($ID_SERRATED_SHIELD)
 
 	If $luminescentScepter[0] <> 0 And $serratedShield[0] <> 0 Then
 		Info('Equipping Luminescent Scepter and Serrated Shield')
@@ -172,18 +172,18 @@ EndFunc
 
 ;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_CharrAtTheGate), 'Logstate')
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_CHARR_AT_THE_GATE), 'Logstate')
 	If $questStatus == 0 Or $questStatus == 3 Then
 		Info('Setting up Charr at the gate quest...')
-		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+		DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		Sleep(GetPing() + 750)
-		AbandonQuest($ID_Quest_CharrAtTheGate)
+		AbandonQuest($ID_QUEST_CHARR_AT_THE_GATE)
 		Sleep(GetPing() + 750)
 		MoveTo(7974, 6142)
 		MoveTo(5668, 10667)
 		GoToNPC(GetNearestNPCToCoords(5668, 10667))
 		Sleep(GetPing() + 750)
-		Dialog($ID_Dialog_Accept_Quest_Charr_At_The_Gate)
+		Dialog($ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE)
 		Sleep(GetPing() + 750)
 	ElseIf $questStatus == 1 Then
 		Info('Good to go!')
@@ -194,9 +194,9 @@ EndFunc
 ;~ Setup Hamnet quest
 Func SetupHamnetQuest()
 	Info('Setting up Hamnet quest...')
-	DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_FARMER_HAMNET), 'Logstate')
 	If $questStatus == 0 Then
 		Info('Quest not found, setting up...')
 		Sleep(GetPing() + 750)
@@ -206,9 +206,9 @@ Func SetupHamnetQuest()
 		MoveTo(10564, 7832)
 		GoToNPC(GetNearestNPCToCoords(10564, 7832))
 		Sleep(GetPing() + 750)
-		Dialog($ID_Dialog_Accept_Quest_Farmer_Hamnet)
+		Dialog($ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET)
 		Sleep(GetPing() + 750)
-		$questStatus = DllStructGetData(GetQuestByID($ID_Quest_FarmerHamnet), 'Logstate')
+		$questStatus = DllStructGetData(GetQuestByID($ID_QUEST_FARMER_HAMNET), 'Logstate')
 		If $questStatus == 0 Then Return $FAIL
 	EndIf
 	Info('Quest found, Good to go!')
@@ -233,7 +233,7 @@ Func LDOATitleFarmLoop()
 	EndIf
 	; If we leveled to 2 or 10, we reset the setup so that the bot starts on the 2-10 or the 10-20 part
 	Local $newLevel = DllStructGetData(GetMyAgent(), 'Level')
-	If ($level == 1 Or $level == 9) And $newLevel > $level Then $LDOA_FARM_SETUP = False
+	If ($level == 1 Or $level == 9) And $newLevel > $level Then $ldoa_farm_setup = False
 	Return $result
 EndFunc
 
@@ -241,11 +241,11 @@ EndFunc
 ;~ Kill some worms, level 2 needed for CharrAtGate
 Func LDOATitleFarmUnder2()
 	Info('Here wormy, wormy!')
-	DistrictTravel($ID_Ashford_Abbey)
+	DistrictTravel($ID_ASHFORD_ABBEY)
 	MoveTo(-11455, -6238)
 	Move(-11037, -6240)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(-10433, -6021)
 
 	Local $wurmies[5][2] = [ _
@@ -267,16 +267,16 @@ EndFunc
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
 	SetupCharrAtTheGateQuest()
-	DistrictTravel($ID_Ascalon_City_Presearing)
+	DistrictTravel($ID_ASCALON_CITY_PRESEARING)
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
+	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
 	MoveTo(6220, 4470, 30)
 	Sleep(3000)
 	Info('Going to the gate')
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(3180, 6468, 30)
 	MoveTo(360, 6575, 30)
 	MoveTo(-3140, 9610, 30)
@@ -294,18 +294,18 @@ EndFunc
 Func LDOATitleFarmAfter10()
 	Info('Starting Hamnet farm...')
 	Info('Heading to Foibles Fair!')
-	DistrictTravel($ID_Foibles_Fair)
+	DistrictTravel($ID_FOIBLES_FAIR)
 	MoveTo(-183, 9002)
 	MoveTo(356, 7834)
 	Info('Entering Wizards Folly!')
 	Move(500, 7300)
-	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	WaitMapLoading($ID_WIZARDS_FOLLY, 10000, 2000)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveAggroAndKillInRange(2541, 4504, '', 2000)
 	If IsPlayerDead() Then Return $FAIL
 	Info('Returning to Foibles Fair')
 	ResignAndReturnToOutpost()
-	WaitMapLoading($ID_Foibles_Fair, 10000, 1000)
+	WaitMapLoading($ID_FOIBLES_FAIR, 10000, 1000)
 	Return $SUCCESS
 EndFunc
 
@@ -333,15 +333,15 @@ Func RunToAshford()
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(2560, -2331)
 	MoveTo(-1247, -6084)
 	MoveTo(-5310, -6951)
 	MoveTo(-11026, -6238)
 	Move(-11444, -6237)
 	If IsPlayerDead() Then Return $FAIL
-	WaitMapLoading($ID_Ashford_Abbey, 10000, 2000)
+	WaitMapLoading($ID_ASHFORD_ABBEY, 10000, 2000)
 	Info('Made it to Ashford Abbey')
 	Return $SUCCESS
 EndFunc
@@ -350,12 +350,12 @@ EndFunc
 ;~ Run to Foibles Fair
 Func RunToFoible()
 	Info('Starting run to Foibles Fair from Ashford Abbey..')
-	DistrictTravel($ID_Ashford_Abbey)
+	DistrictTravel($ID_ASHFORD_ABBEY)
 	Info('Entering Lakeside County!')
 	MoveTo(-11455, -6238)
 	Move(-11037, -6240)
-	WaitMapLoading($ID_Lakeside_County, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(-11809, -12198)
 	MoveTo(-12893, -16093)
 	MoveTo(-11566, -18712)
@@ -364,8 +364,8 @@ Func RunToFoible()
 	Info('Entering Wizards Folly!')
 	Move(-14000, -19900)
 	If IsPlayerDead() Then Return $FAIL
-	WaitMapLoading($ID_Wizards_Folly, 10000, 2000)
-	UseConsumable($ID_Igneous_Summoning_Stone, True)
+	WaitMapLoading($ID_WIZARDS_FOLLY, 10000, 2000)
+	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(8648, 17730)
 	MoveTo(7497, 15763)
 	MoveTo(2840, 10383)
@@ -373,7 +373,7 @@ Func RunToFoible()
 	MoveTo(536, 7315)
 	Move(320, 7950)
 	If IsPlayerDead() Then Return $FAIL
-	WaitMapLoading($ID_Foibles_Fair, 10000, 2000)
+	WaitMapLoading($ID_FOIBLES_FAIR, 10000, 2000)
 	Info('Made it to Foibles Fair')
 	Return $SUCCESS
 EndFunc
@@ -383,7 +383,7 @@ EndFunc
 Func BackToAscalon()
 	Info('Porting to Ascalon')
 	ResignAndReturnToOutpost()
-	WaitMapLoading($ID_Ascalon_City_Presearing, 10000, 1000)
+	WaitMapLoading($ID_ASCALON_CITY_PRESEARING, 10000, 1000)
 EndFunc
 
 
@@ -392,7 +392,7 @@ EndFunc
 Func LowHealthMonitor()
 	If IsLowHealth() Then
 		Notice('Health below threshold, returning to Ascalon and restarting the run.')
-		DistrictTravel($ID_Ascalon_City_Presearing, $DISTRICT_NAME)
+		DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		Return $SUCCESS
 	EndIf
 EndFunc
@@ -417,7 +417,7 @@ Func PresearingInventoryManagement()
 	If $IDENTIFY_ITEMS And HasUnidentifiedItems() Then IdentifyAllItems(False)
 	If $SALVAGE_ANY_ITEM And HasChosenItemsToSalvage() Then
 		SalvageAllItems(False)
-		If $BAGS_COUNT == 5 Then
+		If $bags_count == 5 Then
 			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)
 		EndIf
 	EndIf

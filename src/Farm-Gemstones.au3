@@ -25,16 +25,16 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-;Global Const $GemstonesMesmerSkillBar = 'OQBCAswDPVP/DMd5Zu2Nd6B'
-Global Const $GemstonesMesmerSkillBar = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
-Global Const $GemstonesHero1Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
-Global Const $GemstonesHero2Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
-Global Const $GemstonesHero3Skillbar = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
-Global Const $GemstonesHero4Skillbar = 'OAljUwGopSUBHVyBoBVVbh4B1YA'
-Global Const $GemstonesHero5Skillbar = 'OAhjUwGYoSUBHVoBbhVVWbTODTA'
-Global Const $GemstonesHero6Skillbar = 'OAhjQoGYIP3hhWVVaO5EeDzxJ'
-Global Const $GemstonesHero7Skillbar = 'OACiAyk8gNtePuwJ00ZOPLYA'
-Global Const $GemstonesFarmInformations = 'Requirements:' & @CRLF _
+;Global Const $GEMSTONES_MESMER_SKILLBAR = 'OQBCAswDPVP/DMd5Zu2Nd6B'
+Global Const $GEMSTONES_MESMER_SKILLBAR = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
+Global Const $GEMSTONES_HERO_1_SKILLBAR = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GEMSTONES_HERO_2_SKILLBAR = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GEMSTONES_HERO_3_SKILLBAR = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'
+Global Const $GEMSTONES_HERO_4_SKILLBAR = 'OAljUwGopSUBHVyBoBVVbh4B1YA'
+Global Const $GEMSTONES_HERO_5_SKILLBAR = 'OAhjUwGYoSUBHVoBbhVVWbTODTA'
+Global Const $GEMSTONES_HERO_6_SKILLBAR = 'OAhjQoGYIP3hhWVVaO5EeDzxJ'
+Global Const $GEMSTONES_HERO_7_SKILLBAR = 'OACiAyk8gNtePuwJ00ZOPLYA'
+Global Const $GEMSTONES_FARM_INFORMATIONS = 'Requirements:' & @CRLF _
 	& '- Access to mallyx (finished all 4 doa parts)' & @CRLF _
 	& '- Recommended to have maxed out Lightbringer title' & @CRLF _
 	& '- Strong hero build' &@CRLF _
@@ -58,49 +58,48 @@ Global Const $GEMSTONES_FARM_DURATION = (12 * 60 + 30) * 1000
 Global Const $MAX_GEMSTONES_FARM_DURATION = 25 * 60 * 1000
 
 ;=== Configuration / Globals ===
-Global Const $GemstonesDefendX = -3432
-Global Const $GemstonesDefendY = -5564
+Global Const $GEMSTONES_DEFEND_X = -3432
+Global Const $GEMSTONES_DEFEND_Y = -5564
 
-Global $GEMSTONES_FARM_SETUP = False
+; Skill numbers declared to make the code WAY more readable (UseSkill($SKILL_CONVICTION) is better than UseSkill(1))
+Global Const $GEM_SYMBOLIC_CELERITY		= 1
+Global Const $GEM_SYMBOLIC_POSTURE		= 2
+Global Const $GEM_KEYSTONE_SIGNET		= 3
+Global Const $GEM_UNNATURAL_SIGNET		= 4
+Global Const $GEM_SIGNET_OF_CLUMSINESS	= 5
+Global Const $GEM_SIGNET_OF_DISRUPTION	= 6
+Global Const $GEM_WASTRELS_DEMISE		= 7
+Global Const $GEM_MISTRUST				= 8
 
-; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction) is better than UseSkill(1))
-Global Const $Gem_Symbolic_Celerity		= 1
-Global Const $Gem_Symbolic_Posture		= 2
-Global Const $Gem_Keystone_Signet		= 3
-Global Const $Gem_Unnatural_Signet		= 4
-Global Const $Gem_Signet_Of_Clumsiness	= 5
-Global Const $Gem_Signet_Of_Disruption	= 6
-Global Const $Gem_Wastrels_Demise		= 7
-Global Const $Gem_Mistrust				= 8
+Global Const $GEM_SKILLS_ARRAY			= [$GEM_SYMBOLIC_CELERITY,	$GEM_SYMBOLIC_POSTURE,	$GEM_KEYSTONE_SIGNET,	$GEM_UNNATURAL_SIGNET,	$GEM_SIGNET_OF_CLUMSINESS,	$GEM_SIGNET_OF_DISRUPTION,	$GEM_WASTRELS_DEMISE,	$GEM_MISTRUST]
+Global Const $GEM_SKILLS_COSTS_ARRAY	= [15,						10,						0,						0,						0,							0,							5,						10]
+Global Const $GEM_SKILLS_COSTS_MAP		= MapFromArrays($GEM_SKILLS_ARRAY, $GEM_SKILLS_COSTS_ARRAY)
 
-Global Const $Gem_SkillsArray		= [$Gem_Symbolic_Celerity,	$Gem_Symbolic_Posture,	$Gem_Keystone_Signet,	$Gem_Unnatural_Signet,	$Gem_Signet_Of_Clumsiness,	$Gem_Signet_Of_Disruption,	$Gem_Wastrels_Demise,	$Gem_Mistrust]
-Global Const $Gem_SkillsCostsArray	= [15,						10,						0,						0,						0,							0,							5,						10]
-Global Const $GemSkillsCostsMap = MapFromArrays($Gem_SkillsArray, $Gem_SkillsCostsArray)
-
-Global $GemstonesFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $gemstones_fight_options	= CloneDictMap($Default_MoveAggroAndKill_Options)
 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-$GemstonesFightOptions.Item('fightRange')			= 1500
+$gemstones_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location
-$GemstonesFightOptions.Item('flagHeroesOnFight')	= False
-$GemstonesFightOptions.Item('priorityMobs')			= True
-$GemstonesFightOptions.Item('skillsCostMap')		= $GemSkillsCostsMap
-$GemstonesFightOptions.Item('lootInFights')			= False
+$gemstones_fight_options.Item('flagHeroesOnFight')	= False
+$gemstones_fight_options.Item('priorityMobs')			= True
+$gemstones_fight_options.Item('skillsCostMap')		= $GEM_SKILLS_COSTS_MAP
+$gemstones_fight_options.Item('lootInFights')			= False
 ; there are no chests in Ebony Citadel of Mallyx location
-$GemstonesFightOptions.Item('openChests')			= False
+$gemstones_fight_options.Item('openChests')			= False
 
 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
-Global Const $AgentID_Zhellix = 15
-Global Const $ModelID_Zhellix = 5272
+Global Const $AGENTID_ZHELLIX = 15
+Global Const $MODELID_ZHELLIX = 5272
 
+Global $gemstones_farm_setup = False
 
 ;~ Main Gemstones farm entry function
-Func GemstonesFarm($STATUS)
-	If Not $GEMSTONES_FARM_SETUP Then SetupGemstonesFarm()
+Func GemstonesFarm()
+	If Not $gemstones_farm_setup Then SetupGemstonesFarm()
 
 	Local $result = GemstonesFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared all 19 waves')
 	If $result == $FAIL Then Info('Could not clear all 19 waves')
-	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+	TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name)
 	Return $result
 EndFunc
 
@@ -109,17 +108,17 @@ EndFunc
 Func SetupGemstonesFarm()
 	Info('Setting up farm')
 	; the 4 DoA farm areas have the same map ID as Gate of Anguish outpost (474)
-	If GetMapID() <> $ID_Gate_Of_Anguish Then
-		TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
+		TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name)
 	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
-	SetDisplayedTitle($ID_Lightbringer_Title)
+	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SetupPlayerGemstonesFarm()
 	; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
 	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL
-	$GEMSTONES_FARM_SETUP = True
+	$gemstones_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -129,9 +128,9 @@ Func SetupPlayerGemstonesFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_Mesmer Then
+	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_MESMER Then
 		Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
-		LoadSkillTemplate($GemstonesMesmerSkillBar)
+		LoadSkillTemplate($GEMSTONES_MESMER_SKILLBAR)
 	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
@@ -143,7 +142,7 @@ EndFunc
 Func GemstonesFarmLoop()
 	If TalkToZhellix() == $FAIL Then Return $FAIL
 	WalkToSpotGemstonesFarm()
-	UseConsumable($ID_Legionnaire_Summoning_Crystal, False)
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL, False)
 	Sleep(2000)
 	If Defend() == $FAIL Then Return $FAIL
 	Return $SUCCESS
@@ -152,13 +151,13 @@ EndFunc
 
 ;~ Talking to Zhellix
 Func TalkToZhellix()
-	If GetMapID() <> $ID_Gate_Of_Anguish Then Return $FAIL
+	If GetMapID() <> $ID_GATE_OF_ANGUISH Then Return $FAIL
 	Local $Zhellix = GetNearestNpcToCoords(6081, -13314)
 	ChangeTarget($Zhellix)
 	GoToNPC($Zhellix)
 	Dialog(0x84)
-	WaitMapLoading($ID_Ebony_Citadel_Of_Mallyx)
-	Return GetMapID() == $ID_Ebony_Citadel_Of_Mallyx? $SUCCESS : $FAIL
+	WaitMapLoading($ID_EBONY_CITADEL_OF_MALLYX)
+	Return GetMapID() == $ID_EBONY_CITADEL_OF_MALLYX? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -166,8 +165,8 @@ EndFunc
 Func WalkToSpotGemstonesFarm()
 	Info('Moving to defend position')
 	; go close to Zhellix to let him start erforming the ritual, Null for no interaction
-	GoToAgent(GetAgentByID($AgentID_Zhellix), Null)
-	MoveTo($GemstonesDefendX, $GemstonesDefendY)
+	GoToAgent(GetAgentByID($AGENTID_ZHELLIX), Null)
+	MoveTo($GEMSTONES_DEFEND_X, $GEMSTONES_DEFEND_Y)
 	; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
 	FanFlagHeroes(260)
 EndFunc
@@ -182,9 +181,9 @@ Func Defend()
 		If CheckStuck('Gemstones fight', $MAX_GEMSTONES_FARM_DURATION) == $FAIL Then Return $FAIL
 		If IsDoARunFailed() Then Return $FAIL
 		Sleep(1000)
-		KillFoesInArea($GemstonesFightOptions)
+		KillFoesInArea($gemstones_fight_options)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
-		MoveTo($GemstonesDefendX, $GemstonesDefendY)
+		MoveTo($GEMSTONES_DEFEND_X, $GEMSTONES_DEFEND_Y)
 	WEnd
 	; if ritual completed then successful run
 	Return IsDoARunFailed()? $FAIL : $SUCCESS
@@ -193,7 +192,7 @@ EndFunc
 
 ;~ Check if run failed
 Func IsDoARunFailed()
-	Local $Zhellix = GetAgentByID($AgentID_Zhellix)
+	Local $Zhellix = GetAgentByID($AGENTID_ZHELLIX)
 	If GetIsDead($Zhellix) Then Warn('Zhellix dead')
 	If IsPlayerDead() Then Warn('Player dead')
 	Return GetIsDead($Zhellix) Or Not HasRezMemberAlive()
@@ -205,8 +204,8 @@ Func IsZhellixPerformingRitual()
 	If IsDoARunFailed() Then Return False
 
 	Local $me = GetMyAgent()
-	Local $Zhellix = GetAgentByID($AgentID_Zhellix)
-	Local $foesCount = CountFoesInRangeOfAgent($me, $GemstonesFightOptions.Item('fightRange'))
+	Local $Zhellix = GetAgentByID($AGENTID_ZHELLIX)
+	Local $foesCount = CountFoesInRangeOfAgent($me, $gemstones_fight_options.Item('fightRange'))
 	; After all waves are finished, Zhellix leaves citadel's entrance area where player is, which makes below check False
 	Return (Not GetIsDead($Zhellix) And GetDistance($me, $Zhellix) < 1500) Or $foesCount > 0
 EndFunc

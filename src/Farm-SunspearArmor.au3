@@ -27,14 +27,15 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SunspearArmorFarmInformations = 'Sunspear armor farm with 7heroes GWReborn s comp'
+Global Const $SUNSPEAR_ARMOR_FARM_INFORMATIONS = 'Sunspear armor farm with 7heroes GWReborn s comp'
 ; Average duration ~ 15m
 Global Const $SUNSPEAR_ARMOR_FARM_DURATION = 15 * 60 * 1000
-Global $SUNSPEAR_ARMOR_FARM_SETUP = False
+
+Global $sunspear_armor_farm_setup = False
 
 ;~ Main loop for the Sunspear Armor farm
-Func SunspearArmorFarm($STATUS)
-	If Not $SUNSPEAR_ARMOR_FARM_SETUP Then SunspearArmorSetup()
+Func SunspearArmorFarm()
+	If Not $sunspear_armor_farm_setup Then SunspearArmorSetup()
 
 	EnterSunspearArmorChallenge()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -49,21 +50,21 @@ EndFunc
 
 Func SunspearArmorSetup()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Dajkah_Inlet Then
-		TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	If GetMapID() <> $ID_DAJKAH_INLET Then
+		TravelToOutpost($ID_DAJKAH_INLET, $district_name)
 	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
-	$SUNSPEAR_ARMOR_FARM_SETUP = True
+	$sunspear_armor_farm_setup = True
 	Info('Setup completed')
 EndFunc
 
 
 Func EnterSunspearArmorChallenge()
-	TravelToOutpost($ID_Dajkah_Inlet, $DISTRICT_NAME)
+	TravelToOutpost($ID_DAJKAH_INLET, $district_name)
 	Info('Entering Dajkah Inlet challenge')
 	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map
@@ -81,7 +82,7 @@ EndFunc
 
 ;~ Cleaning Sunspear Armors function
 Func SunspearArmorClean()
-	If GetMapID() <> $ID_Dajkah_Inlet Then Return $FAIL
+	If GetMapID() <> $ID_DAJKAH_INLET Then Return $FAIL
 	MoveTo(25752.28, -3139.02)
 	RandomSleep(62000)
 

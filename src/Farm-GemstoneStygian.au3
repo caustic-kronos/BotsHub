@@ -26,49 +26,46 @@ Opt('MustDeclareVars', True)
 
 #Region Configuration
 ; === Build ===
-;Global Const $AMeStygianSkillBar = 'OwVTI4h9X6mSGYFct0E4uM0ZCCA'
-Global Const $AMeStygianSkillBar = 'OwVT8ZBPGiHRn5mat0E4uM0ZCC'
-;Global Const $MeAStygianSkillBar = 'OQdUASBPmfS3UyArgrlmA3lhOTQA'
-Global Const $MeAStygianSkillBar = 'OQdTI4x8ZiHRn5mat0E4uM0ZCC'
-Global Const $RNStygianSkillBar = 'OgQTcybiZK5o5Y5wSIXc465o7AA'
-Global $StygianPlayerProfession = $ID_Mesmer
-Global Const $StygianRangerHeroSkillBar = 'OgMSY5LHQnh0EAAAAAAAA'
+;Global Const $AME_STYGIAN_SKILLBAR = 'OwVTI4h9X6mSGYFct0E4uM0ZCCA'
+Global Const $AME_STYGIAN_SKILLBAR = 'OwVT8ZBPGiHRn5mat0E4uM0ZCC'
+;Global Const $MEA_STYGIAN_SKILLBAR = 'OQdUASBPmfS3UyArgrlmA3lhOTQA'
+Global Const $MEA_STYGIAN_SKILLBAR = 'OQdTI4x8ZiHRn5mat0E4uM0ZCC'
+Global Const $RN_STYGIAN_SKILLBAR = 'OgQTcybiZK5o5Y5wSIXc465o7AA'
+Global Const $STYGIAN_RANGER_HERO_SKILLBAR = 'OgMSY5LHQnh0EAAAAAAAA'
 
 ; You can select which ranger hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
 ; party hero ID that is used to add hero to the party team
-Global Const $StygianHeroPartyID = $ID_Acolyte_Jin
-;Global Const $StygianHeroPartyID = $ID_Margrid_The_Sly
-;Global Const $StygianHeroPartyID = $ID_Pyre_Fierceshot
-Global Const $StygianHeroIndex = 1
-Global $StygianHeroAgentID = Null
+Global Const $STYGIAN_HERO_PARTY_ID = $ID_ACOLYTE_JIN
+;Global Const $STYGIAN_HERO_PARTY_ID = $ID_MARGRID_THE_SLY
+;Global Const $STYGIAN_HERO_PARTY_ID = $ID_PYRE_FIERCESHOT
+Global Const $STYGIAN_HERO_INDEX = 1
 
+Global Const $STYGIAN_DEADLY_PARADOX			= 1
+Global Const $STYGIAN_SHADOWFORM				= 2
+Global Const $STYGIAN_WASTRELS_DEMISE			= 3
+Global Const $STYGIAN_MINDBENDER				= 4
+Global Const $STYGIAN_CHANNELING				= 5
+Global Const $STYGIAN_DWARVEN_STABILITY			= 6
+Global Const $STYGIAN_SHADOW_OF_HASTE			= 7
+Global Const $STYGIAN_DASH						= 8
 
-Global Const $Stygian_DeadlyParadox			= 1
-Global Const $Stygian_ShadowForm			= 2
-Global Const $Stygian_WastrelsDemise		= 3
-Global Const $Stygian_Mindbender			= 4
-Global Const $Stygian_Channeling			= 5
-Global Const $Stygian_DwarvenStability		= 6
-Global Const $Stygian_ShadowOfHaste			= 7
-Global Const $Stygian_Dash					= 8
-
-Global Const $Stygian_Ranger_DustTrap		= 1
-Global Const $Stygian_Ranger_SpikeTrap		= 2
-Global Const $Stygian_Ranger_FlameTrap		= 3
-Global Const $Stygian_Ranger_MarkOfPain		= 4
-Global Const $Stygian_Ranger_EbonStandard	= 5
-Global Const $Stygian_Ranger_TrappersSpeed	= 6
-Global Const $Stygian_Ranger_Winnowing		= 7
-Global Const $Stygian_Ranger_MuddyTerrain	= 8
+Global Const $STYGIAN_RANGER_DUST_TRAP			= 1
+Global Const $STYGIAN_RANGER_SPIKE_TRAP			= 2
+Global Const $STYGIAN_RANGER_FLAME_TRAP			= 3
+Global Const $STYGIAN_RANGER_MARK_OF_PAIN		= 4
+Global Const $STYGIAN_RANGER_EBON_STANDARD		= 5
+Global Const $STYGIAN_RANGER_TRAPPERS_SPEED		= 6
+Global Const $STYGIAN_RANGER_WINNOWING			= 7
+Global Const $STYGIAN_RANGER_MUDDY_TERRAIN		= 8
 
 ; ranger hero
-Global Const $Stygian_Hero_EdgeOfExtinction	= 1
-Global Const $Stygian_Hero_UnyieldingAura	= 2
-Global Const $Stygian_Hero_Succor			= 3
+Global Const $STYGIAN_HERO_EDGE_OF_EXTINCTION	= 1
+Global Const $STYGIAN_HERO_UNYIELDING_AURA		= 2
+Global Const $STYGIAN_HERO_SUCCOR				= 3
 #EndRegion Configuration
 
 ; ==== Constants ====
-Global Const $GemstoneStygianFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $GEMSTONE_STYGIAN_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- Armor with Skills/HP/Energy runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
 	& '- Weapon of Enchanting (20% longer enchantments duration) to make Shadow Form permanent' & @CRLF _
 	& ' ' & @CRLF _
@@ -85,22 +82,23 @@ Global Const $GemstoneStygianFarmInformations = 'For best results, have :' & @CR
 ; Average duration ~ 8 minutes
 Global Const $GEMSTONE_STYGIAN_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
-Global $GEMSTONE_STYGIAN_FARM_SETUP = False
-Global Const $Stygians_Range_Short = 800
-Global Const $Stygians_Range_Long = 1200
+Global Const $STYGIANS_RANGE_SHORT = 800
+Global Const $STYGIANS_RANGE_LONG = 1200
 
-Global $StygianRunOptions = CloneDictMap($Default_MoveDefend_Options)
-$StygianRunOptions.Item('defendFunction')		= StygianCheckRunBuffs
-$StygianRunOptions.Item('moveTimeOut')			= 3 * 60 * 1000
-$StygianRunOptions.Item('randomFactor')			= 20
-$StygianRunOptions.Item('hosSkillSlot')			= 0
-$StygianRunOptions.Item('deathChargeSkillSlot')	= 0
-$StygianRunOptions.Item('openChests')			= False
+Global $stygian_run_options = CloneDictMap($Default_MoveDefend_Options)
+$stygian_run_options.Item('defendFunction')		= StygianCheckRunBuffs
+$stygian_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
+$stygian_run_options.Item('randomFactor')			= 20
+$stygian_run_options.Item('hosSkillSlot')			= 0
+$stygian_run_options.Item('deathChargeSkillSlot')	= 0
+$stygian_run_options.Item('openChests')			= False
 
+Global $stygian_player_profession = $ID_MESMER
+Global $gemstone_stygian_farm_setup = False
 
 ;~ Main loop function for farming stygian gemstones
-Func GemstoneStygianFarm($STATUS)
-	If Not $GEMSTONE_STYGIAN_FARM_SETUP And SetupGemstoneStygianFarm() == $FAIL Then Return $PAUSE
+Func GemstoneStygianFarm()
+	If Not $gemstone_stygian_farm_setup And SetupGemstoneStygianFarm() == $FAIL Then Return $PAUSE
 
 	If GoToStygianVeil() == $FAIL Then Return $FAIL
 	Local $result = GemstoneStygianFarmLoop()
@@ -114,17 +112,17 @@ EndFunc
 
 Func SetupGemstoneStygianFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Gate_Of_Anguish Then
-		If TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
+		If TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name) == $FAIL Then Return $FAIL
 	Else
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
 	If SetupPlayerStygianFarm() == $FAIL Then Return $FAIL
 	If SetupTeamStygianFarm() == $FAIL Then Return $FAIL
-	SetDisplayedTitle($ID_Lightbringer_Title)
+	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	Sleep(500 + GetPing())
-	$GEMSTONE_STYGIAN_FARM_SETUP = True
+	$gemstone_stygian_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -133,15 +131,15 @@ EndFunc
 Func SetupPlayerStygianFarm()
 	Info('Setting up player build skill bar')
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
-		Case $ID_Assassin
-			$StygianPlayerProfession = $ID_Assassin
-			LoadSkillTemplate($AMeStygianSkillBar)
-		Case $ID_Mesmer
-			$StygianPlayerProfession = $ID_Mesmer
-			LoadSkillTemplate($MeAStygianSkillBar)
-		Case $ID_Ranger
-			$StygianPlayerProfession = $ID_Ranger
-			LoadSkillTemplate($RNStygianSkillBar)
+		Case $ID_ASSASSIN
+			$stygian_player_profession = $ID_ASSASSIN
+			LoadSkillTemplate($AME_STYGIAN_SKILLBAR)
+		Case $ID_MESMER
+			$stygian_player_profession = $ID_MESMER
+			LoadSkillTemplate($MEA_STYGIAN_SKILLBAR)
+		Case $ID_RANGER
+			$stygian_player_profession = $ID_RANGER
+			LoadSkillTemplate($RN_STYGIAN_SKILLBAR)
 		Case Else
 			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
 			Return $FAIL
@@ -155,12 +153,12 @@ Func SetupTeamStygianFarm()
 	Info('Setting up team')
 	LeaveParty()
 	Sleep(500 + GetPing())
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
-		AddHero($StygianHeroPartyID)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
+		AddHero($STYGIAN_HERO_PARTY_ID)
 		Sleep(500 + GetPing())
-		LoadSkillTemplate($StygianRangerHeroSkillBar, $StygianHeroIndex)
+		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, $STYGIAN_HERO_INDEX)
 		Sleep(500 + GetPing())
-		DisableAllHeroSkills($StygianHeroIndex)
+		DisableAllHeroSkills($STYGIAN_HERO_INDEX)
 		If GetPartySize() <> 2 Then
 			Warn('Could not add ranger hero to team. Team size different than 2')
 			Return $FAIL
@@ -172,7 +170,7 @@ EndFunc
 
 ;~ exit gate of Anguish outpost by moving into portal that leads into farming location - Stygian Veil
 Func GoToStygianVeil()
-	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+	TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name)
 	Info('Moving to Stygian Veil')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Stygian Veil
@@ -218,10 +216,10 @@ Func GemstoneStygianFarmLoop()
 	WEnd
 	If GetQuestByID(0x2E6) == Null Then Return $FAIL
 
-	Switch $StygianPlayerProfession
-		Case $ID_Assassin, $ID_Mesmer
+	Switch $stygian_player_profession
+		Case $ID_ASSASSIN, $ID_MESMER
 			Return StygianFarmMesmerAssassin()
-		Case $ID_Ranger
+		Case $ID_RANGER
 			Return StygianFarmRanger()
 		Case Else
 			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
@@ -242,7 +240,7 @@ Func StygianFarmMesmerAssassin()
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
-			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 			Sleep(GetPing())
 		Next
 		Return $SUCCESS
@@ -254,7 +252,7 @@ EndFunc
 
 Func StygianFarmRanger()
 	If IsPlayerDead() Then Return $FAIL
-	UseHeroSkill($StygianHeroIndex, $Stygian_Hero_Succor, GetMyAgent())
+	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_SUCCOR, GetMyAgent())
 	GoToHidingSpot()
 	If StygianJobRanger() == $FAIL Then Return $FAIL
 	MoveTo(7337, -9709)
@@ -281,7 +279,7 @@ Func StygianJobMesmerAssassin()
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
-			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 			Sleep(GetPing())
 		Next
 	EndIf
@@ -289,21 +287,21 @@ Func StygianJobMesmerAssassin()
 	; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
 	MoveTo(13082, -9788, 0)
 	RandomSleep(500)
-	If IsRecharged($Stygian_DwarvenStability) Then
-		UseSkillEx($Stygian_DwarvenStability)
+	If IsRecharged($STYGIAN_DWARVEN_STABILITY) Then
+		UseSkillEx($STYGIAN_DWARVEN_STABILITY)
 		RandomSleep(100)
 	EndIf
-	UseSkillEx($Stygian_ShadowOfHaste)
+	UseSkillEx($STYGIAN_SHADOW_OF_HASTE)
 	MoveTo(13240, -10006)
 	MoveTo(9437, -9283)
-	UseSkillEx($Stygian_Mindbender)
+	UseSkillEx($STYGIAN_MINDBENDER)
 	; spot to aggro mobs
 	MoveTo(8567, -9050)
 	RandomSleep(200)
 	MoveTo(12376, -9557)
 	RandomSleep(1500)
 	; this ends shadow of haste and transfers player into spot
-	UseSkillEx($Stygian_Dash)
+	UseSkillEx($STYGIAN_DASH)
 	; waiting for all mobs to come
 	Sleep(12500)
 	KillStygianMobsUsingWastrelSkills()
@@ -317,76 +315,76 @@ Func StygianJobRanger()
 	MoveTo(10844, -10205)
 	MoveTo(10313, -11156)
 	MoveTo(8269, -11160, 10)
-	CommandHero($StygianHeroIndex, 9492, -11484)
-	If IsRecharged($Stygian_Ranger_Winnowing) Then UseSkillEx($Stygian_Ranger_Winnowing)
+	CommandHero($STYGIAN_HERO_INDEX, 9492, -11484)
+	If IsRecharged($STYGIAN_RANGER_WINNOWING) Then UseSkillEx($STYGIAN_RANGER_WINNOWING)
 	RandomSleep(2000)
 	MoveTo(8177, -11171, 10)
-	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_DustTrap)
+	If IsRecharged($STYGIAN_RANGER_TRAPPERS_SPEED) Then UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_DUST_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_DustTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
+	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_SpikeTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
+	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_FlameTrap)
-	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
+	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+	If IsRecharged($STYGIAN_RANGER_TRAPPERS_SPEED) Then UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_SpikeTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
+	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_FlameTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_DustTrap)
+	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_DUST_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_DustTrap)
-	If IsRecharged($Stygian_Ranger_MuddyTerrain) Then UseSkillEx($Stygian_Ranger_MuddyTerrain)
+	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
+	If IsRecharged($STYGIAN_RANGER_MUDDY_TERRAIN) Then UseSkillEx($STYGIAN_RANGER_MUDDY_TERRAIN)
 	RandomSleep(2000)
-	If IsRecharged($Stygian_Ranger_TrappersSpeed) Then UseSkillEx($Stygian_Ranger_TrappersSpeed)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
+	If IsRecharged($STYGIAN_RANGER_TRAPPERS_SPEED) Then UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_SpikeTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
+	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_FlameTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_DustTrap)
+	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_DUST_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_DustTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_SpikeTrap)
+	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_SpikeTrap)
-	While IsPlayerAlive() And Not IsRecharged($Stygian_Ranger_FlameTrap)
+	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
+	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
 		RandomSleep(100)
 	WEnd
-	UseSkillEx($Stygian_Ranger_FlameTrap)
-	UseHeroSkill($StygianHeroIndex, $Stygian_Hero_EdgeOfExtinction)
+	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
 	;TargetNearestEnemy()
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
-	UseSkill($Stygian_Ranger_MarkOfPain, $target)
+	UseSkill($STYGIAN_RANGER_MARK_OF_PAIN, $target)
 	While IsPlayerAlive() And Not GetHasHex($target)
 		RandomSleep(100)
 	WEnd
 	MoveTo(8368, -11244)
-	If IsRecharged($Stygian_Ranger_EbonStandard) Then UseSkillEx($Stygian_Ranger_EbonStandard)
-	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
+	If IsRecharged($STYGIAN_RANGER_EBON_STANDARD) Then UseSkillEx($STYGIAN_RANGER_EBON_STANDARD)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $STYGIANS_RANGE_LONG) > 0 And IsPlayerAlive()
 		If CheckStuck('Stygian job ranger', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		RandomSleep(100)
 	WEnd
 	CancelAll()
 	RandomSleep(500)
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $Stygians_Range_Long)
+	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
@@ -394,40 +392,40 @@ EndFunc
 Func KillStygianMobsUsingWastrelSkills()
 	Local $me, $target, $distance
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $Stygians_Range_Long) > 0 And IsPlayerAlive()
+	While CountFoesInRangeOfAgent(GetMyAgent(), $STYGIANS_RANGE_LONG) > 0 And IsPlayerAlive()
 		If CheckStuck('Stygian fight mesmer/assassin', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		StygianCheckSFBuffs()
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent(GetMyAgent())
 		ChangeTarget($target)
-		If IsRecharged($Stygian_Channeling) And Not IsRecharged($Stygian_ShadowForm) And GetEnergy() > 5 Then
-			UseSkillEx($Stygian_Channeling)
+		If IsRecharged($STYGIAN_CHANNELING) And Not IsRecharged($STYGIAN_SHADOWFORM) And GetEnergy() > 5 Then
+			UseSkillEx($STYGIAN_CHANNELING)
 			RandomSleep(100)
 		EndIf
 		$distance = GetDistance($me, $target)
-		If Not GetHasHex($target) And IsRecharged($Stygian_WastrelsDemise) And Not IsRecharged($Stygian_ShadowForm) And GetEnergy() > 5 And $distance < $Stygians_Range_Short Then
-			UseSkillEx($Stygian_WastrelsDemise, $target)
+		If Not GetHasHex($target) And IsRecharged($STYGIAN_WASTRELS_DEMISE) And Not IsRecharged($STYGIAN_SHADOWFORM) And GetEnergy() > 5 And $distance < $STYGIANS_RANGE_SHORT Then
+			UseSkillEx($STYGIAN_WASTRELS_DEMISE, $target)
 			RandomSleep(100)
 		EndIf
 		RandomSleep(100)
 	WEnd
 	RandomSleep(500)
-	;If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $Stygians_Range_Long)
+	;If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
 Func RunStygianFarm($destinationX, $destinationY)
-	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $StygianRunOptions)
+	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $stygian_run_options)
 EndFunc
 
 
 Func StygianCheckSFBuffs()
 	If IsPlayerDead() Then Return $FAIL
-	If $StygianPlayerProfession == $ID_Ranger Then Return $FAIL
-	If IsRecharged($Stygian_DeadlyParadox) And IsRecharged($Stygian_ShadowForm) And GetEnergy() >= 20 Then
-		UseSkillEx($Stygian_DeadlyParadox)
-		UseSkillEx($Stygian_ShadowForm)
+	If $stygian_player_profession == $ID_RANGER Then Return $FAIL
+	If IsRecharged($STYGIAN_DEADLY_PARADOX) And IsRecharged($STYGIAN_SHADOWFORM) And GetEnergy() >= 20 Then
+		UseSkillEx($STYGIAN_DEADLY_PARADOX)
+		UseSkillEx($STYGIAN_SHADOWFORM)
 	EndIf
 	Return $SUCCESS
 EndFunc
@@ -435,9 +433,9 @@ EndFunc
 
 Func StygianCheckRunBuffs()
 	If IsPlayerDead() Then Return $FAIL
-	If $StygianPlayerProfession == $ID_Ranger Then Return $FAIL
-	If IsRecharged($Stygian_DwarvenStability) And GetEnergy() > 5 Then UseSkillEx($Stygian_DwarvenStability)
-	If IsRecharged($Stygian_Dash) And GetEnergy() > 5 Then UseSkillEx($Stygian_Dash)
+	If $stygian_player_profession == $ID_RANGER Then Return $FAIL
+	If IsRecharged($STYGIAN_DWARVEN_STABILITY) And GetEnergy() > 5 Then UseSkillEx($STYGIAN_DWARVEN_STABILITY)
+	If IsRecharged($STYGIAN_DASH) And GetEnergy() > 5 Then UseSkillEx($STYGIAN_DASH)
 	Return $SUCCESS
 EndFunc
 

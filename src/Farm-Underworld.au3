@@ -31,35 +31,36 @@ Opt('MustDeclareVars', True)
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $UnderworldFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
+Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded areas' & @CRLF _
 	& 'This bot is unfinished. Clearing remaining zones of UW and quests completion can still be added to this bot' & @CRLF
 ; Average duration ~ 5 minutes
 Global Const $UW_FARM_DURATION = 60 * 60 * 1000
 Global Const $MAX_UW_FARM_DURATION = 120 * 60 * 1000
-Global $UW_FARM_SETUP = False
+
+Global $uw_farm_setup = False
 
 
 ;~ Main loop function for farming glob of ectoplasm
-Func UnderworldFarm($STATUS)
-	If Not $UW_FARM_SETUP Then SetupUnderworldFarm()
+Func UnderworldFarm()
+	If Not $uw_farm_setup Then SetupUnderworldFarm()
 	Local $result = EnterUnderworld()
 	If $result <> $SUCCESS Then Return $result
 	$result = UnderworldFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared Underworld')
 	If $result == $FAIL Then Info('Could not clear Underworld')
-	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
 	Return $result
 EndFunc
 
 
 Func SetupUnderworldFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
 	SwitchToHardModeIfEnabled()
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
-	$UW_FARM_SETUP = True
+	$uw_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc

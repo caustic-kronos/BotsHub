@@ -24,7 +24,7 @@
 
 Opt('MustDeclareVars', True)
 
-Global Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $LIGHTBRINGER_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- the quest A Show of Force' & @CRLF _
 	& '- the quest Requiem for a Brain' & @CRLF _
 	& '- rune of doom in your inventory' & @CRLF _
@@ -34,28 +34,27 @@ Global Const $LightbringerFarmInformations = 'For best results, have :' & @CRLF 
 Global Const $LIGHTBRINGER_FARM_DURATION = 25 * 60 * 1000
 
 ; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
-Global Const $weaponAttackTime = 1700
+Global Const $WEAPON_ATTACK_TIME = 1700
 
-Global $LIGHTBRINGER_FARM_SETUP = False
-Global $loggingFile
+Global Const $JUNUNDU_STRIKE	= 1
+Global Const $JUNUNDU_SMASH		= 2
+Global Const $JUNUNDU_BITE		= 3
+Global Const $JUNUNDU_SIEGE		= 4
+Global Const $JUNUNDU_TUNNEL	= 5
+Global Const $JUNUNDU_FEAST		= 6
+Global Const $JUNUNDU_WAIL		= 7
+Global Const $JUNUNDU_LEAVE		= 8
 
-Global Const $Junundu_Strike	= 1
-Global Const $Junundu_Smash		= 2
-Global Const $Junundu_Bite		= 3
-Global Const $Junundu_Siege		= 4
-Global Const $Junundu_Tunnel	= 5
-Global Const $Junundu_Feast		= 6
-Global Const $Junundu_Wail		= 7
-Global Const $Junundu_Leave		= 8
-
+Global $lightbringer_farm_setup = False
+Global $logging_file
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
-Func LightbringerFarm($STATUS)
-	If Not $LIGHTBRINGER_FARM_SETUP Then LightbringerFarmSetup()
+Func LightbringerFarm()
+	If Not $lightbringer_farm_setup Then LightbringerFarmSetup()
 
 	GoToTheSulfurousWastes()
 	Local $result = FarmTheSulfurousWastes()
-	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
+	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
 	Return $result
 EndFunc
 
@@ -63,14 +62,14 @@ EndFunc
 ;~ Setup for the Lightbringer farm
 Func LightbringerFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
-	If $LOG_LEVEL == 0 Then $loggingFile = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
+	If $log_level == 0 Then $logging_file = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
-	SetDisplayedTitle($ID_Lightbringer_Title)
+	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_HARD_MODE)
-	$LIGHTBRINGER_FARM_SETUP = True
+	$lightbringer_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -78,20 +77,20 @@ EndFunc
 
 ;~ Move out of outpost into the Sulfurous Wastes
 Func GoToTheSulfurousWastes()
-	TravelToOutpost($ID_Remains_of_Sahlahja, $DISTRICT_NAME)
-	While GetMapID() <> $ID_The_Sulfurous_Wastes
+	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
+	While GetMapID() <> $ID_THE_SULFUROUS_WASTES
 		Info('Moving to the Sulfurous Wastes')
 		MoveTo(1527, -4114)
 		Move(1970, -4353)
 		RandomSleep(1000)
-		WaitMapLoading($ID_The_Sulfurous_Wastes, 10000, 4000)
+		WaitMapLoading($ID_THE_SULFUROUS_WASTES, 10000, 4000)
 	WEnd
 EndFunc
 
 
 ;~ Farm the Sulfurous Wastes - main function
 Func FarmTheSulfurousWastes()
-	If GetMapID() <> $ID_The_Sulfurous_Wastes Then Return $FAIL
+	If GetMapID() <> $ID_THE_SULFUROUS_WASTES Then Return $FAIL
 	Info('Taking Sunspear Undead Blessing')
 	GoToNPC(GetNearestNPCToCoords(-660, 16000))
 	Dialog(0x83)
@@ -195,9 +194,9 @@ EndFunc
 
 ;~ All team uses Junundu_Tunnel to speed party up
 Func SpeedTeam()
-	If (IsRecharged($Junundu_Tunnel)) Then
-		UseSkillEx($Junundu_Tunnel)
-		AllHeroesUseSkill($Junundu_Tunnel)
+	If (IsRecharged($JUNUNDU_TUNNEL)) Then
+		UseSkillEx($JUNUNDU_TUNNEL)
+		AllHeroesUseSkill($JUNUNDU_TUNNEL)
 	EndIf
 EndFunc
 
@@ -234,7 +233,7 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	Local $skillCastTimer
 	SpeedTeam()
 
-	Local $target = GetNearestNPCInRangeOfCoords($x, $y, $ID_Allegiance_Foe, $range)
+	Local $target = GetNearestNPCInRangeOfCoords($x, $y, $ID_ALLEGIANCE_FOE, $range)
 	If (DllStructGetData($target, 'X') == 0) Then
 		MoveTo($x, $y)
 		FindAndOpenChests($RANGE_SPIRIT)
@@ -244,8 +243,8 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	GetAlmostInRangeOfAgent($target)
 
 	$skillCastTimer = TimerInit()
-	While IsRecharged($Junundu_Siege) And TimerDiff($skillCastTimer) < 3000
-		UseSkillEx($Junundu_Siege, $target)
+	While IsRecharged($JUNUNDU_SIEGE) And TimerDiff($skillCastTimer) < 3000
+		UseSkillEx($JUNUNDU_SIEGE, $target)
 		RandomSleep(20)
 	WEnd
 
@@ -253,17 +252,17 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	Local $foes = 1
 	While $foes <> 0
 		$target = GetNearestEnemyToAgent($me)
-		If (IsRecharged($Junundu_Tunnel)) Then UseSkillEx($Junundu_Tunnel)
+		If (IsRecharged($JUNUNDU_TUNNEL)) Then UseSkillEx($JUNUNDU_TUNNEL)
 		CallTarget($target)
 		Sleep(20)
-		If (GetSkillbarSkillAdrenaline($Junundu_Smash) == 130) Then UseSkillEx($Junundu_Smash)
-		AttackOrUseSkill($weaponAttackTime, $Junundu_Bite, $Junundu_Strike)
+		If (GetSkillbarSkillAdrenaline($JUNUNDU_SMASH) == 130) Then UseSkillEx($JUNUNDU_SMASH)
+		AttackOrUseSkill($WEAPON_ATTACK_TIME, $JUNUNDU_BITE, $JUNUNDU_STRIKE)
 		$me = GetMyAgent()
 		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
 
 	If DllStructGetData($me, 'HealthPercent') < 0.75 Or CountAliveHeroes() > 0 Then
-		UseSkillEx($Junundu_Wail)
+		UseSkillEx($JUNUNDU_WAIL)
 	EndIf
 	RandomSleep(1000)
 

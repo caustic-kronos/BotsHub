@@ -27,34 +27,35 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $VanguardTitleFarmInformations = 'Vanguard title farm'
+Global Const $VANGUARD_TITLE_FARM_INFORMATIONS = 'Vanguard title farm'
 ; Average duration ~ 45m
 Global Const $VANGUARD_TITLE_FARM_DURATION = 45 * 60 * 1000
-Global $VANGUARD_FARM_SETUP = False
+
+Global $vanguard_farm_setup = False
 
 
 ;~ Main loop for the vanguard faction farm
-Func VanguardTitleFarm($STATUS)
-	If Not $VANGUARD_FARM_SETUP Then VanguardTitleFarmSetup()
+Func VanguardTitleFarm()
+	If Not $vanguard_farm_setup Then VanguardTitleFarmSetup()
 
 	GoToDaladaUplands()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishDaladaUplands()
 	AdlibUnRegister('TrackPartyStatus')
 
-	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
+	TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)
 	Return $result
 EndFunc
 
 
 Func VanguardTitleFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
-	SetDisplayedTitle($ID_Ebon_Vanguard_Title)
+	TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)
+	SetDisplayedTitle($ID_EBON_VANGUARD_TITLE)
 	SwitchMode($ID_HARD_MODE)
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
-	$VANGUARD_FARM_SETUP = True
+	$vanguard_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -62,19 +63,19 @@ EndFunc
 
 ;~ Move out of outpost into Dalada Uplands
 Func GoToDaladaUplands()
-	TravelToOutpost($ID_Doomlore_Shrine, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Dalada_Uplands
+	TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)
+	While GetMapID() <> $ID_DALADA_UPLANDS
 		Info('Moving to Dalada Uplands')
 		MoveTo(-15231, 13608)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Dalada_Uplands, 10000, 2000)
+		WaitMapLoading($ID_DALADA_UPLANDS, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Cleaning Dalada Uplands function
 Func VanquishDaladaUplands()
-	If GetMapID() <> $ID_Dalada_Uplands Then Return $FAIL
+	If GetMapID() <> $ID_DALADA_UPLANDS Then Return $FAIL
 
 	; 72 groups to vanquish + 21 movements
 	Local Static $foes[93][3] = [ _

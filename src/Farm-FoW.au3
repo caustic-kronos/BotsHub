@@ -26,32 +26,32 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FoWFarmInformations = 'For best results, don''t cheap out on heroes' & @CRLF _
+Global Const $FOW_FARM_INFORMATIONS = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded areas' & @CRLF _
 	& 'XXmn average in NM' & @CRLF _
 	& 'YYmn average in HM with consets (automatically used if HM is on)' & @CRLF _
 	& 'If you add a summon to this farm, do it so that it despawned once doing green forest'
 Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 
-Global $FOW_FARM_SETUP = False
-Global Const $ID_Quest_WailingLord = 0xCC
-Global Const $ID_Quest_TheEternalForgemaster = 0xD1
-Global Const $Shard_Wolf_ModelID = 2835
-Global Const $ID_FoW_Unholy_Texts = 2619
+Global Const $ID_QUEST_WAILING_LORD = 0xCC
+Global Const $ID_QUEST_THE_ETERNAL_FORGEMASTER = 0xD1
+Global Const $SHARD_WOLF_MODELID = 2835
+Global Const $ID_FOW_UNHOLY_TEXTS = 2619
 
+Global $fow_farm_setup = False
 
 ; TODO:
 ; - open reward chests
 
 ;~ Main method to farm FoW
-Func FoWFarm($STATUS)
-	If Not $FOW_FARM_SETUP Then SetupFoWFarm()
+Func FoWFarm()
+	If Not $fow_farm_setup Then SetupFoWFarm()
 	Local $result = EnterFissureOfWoe()
 	If $result <> $SUCCESS Then Return $result
 	$result = FoWFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared Fissure of Woe')
 	If $result == $FAIL Then Info('Could not clear Fissure of Woe')
-	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
 	Return $result
 EndFunc
 
@@ -59,11 +59,11 @@ EndFunc
 ;~ FoW farm setup
 Func SetupFoWFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
 	SwitchToHardModeIfEnabled()
-	$FOW_FARM_SETUP = True
+	$fow_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -71,7 +71,7 @@ EndFunc
 
 ;~ Farm loop
 Func FoWFarmLoop()
-	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
+	If GetMapID() <> $ID_FISSURE_OF_WOE Then Return $FAIL
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = FoWFarmProcess()
@@ -231,14 +231,14 @@ Func TheTempleOfWar()
 
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 0x13
-		$questState = DllStructGetData(GetQuestByID($ID_Quest_TheEternalForgemaster), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_QUEST_THE_ETERNAL_FORGEMASTER), 'LogState')
 		Info('The Eternal Forgemaster not finished yet : ' & $questState)
 		Sleep(1000)
 	WEnd
 
 	Info('Getting the Eternal Forgemaster quest reward')
 	Local $npc = GetNearestNPCToCoords(1850, -200)
-	TakeQuestOrReward($npc, $ID_Quest_TheEternalForgemaster, 0x80D107, 0)
+	TakeQuestOrReward($npc, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D107, 0)
 
 	Info('Getting the Defend the Temple of War quest')
 	MoveTo(1850, -150)
@@ -459,7 +459,7 @@ Func ForestOfTheWailingLord()
 		Sleep(3000)
 		MoveTo(-20500, 14200)
 		Sleep(17000)
-		$questState = DllStructGetData(GetQuestByID($ID_Quest_WailingLord), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_QUEST_WAILING_LORD), 'LogState')
 	WEnd
 	CancelAllHeroes()
 
@@ -571,7 +571,7 @@ Func PickUpUnholyTexts()
 		$agent = GetAgentByID($i)
 		If Not IsItemAgentType($agent) Then ContinueLoop
 		$item = GetItemByAgentID($i)
-		If (DllStructGetData($item, 'ModelID') == $ID_FoW_Unholy_Texts) Then
+		If (DllStructGetData($item, 'ModelID') == $ID_FOW_UNHOLY_TEXTS) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
 			While IsPlayerAlive() And Not IsRunFailed() And GetAgentExists($i)
@@ -594,7 +594,7 @@ EndFunc
 
 ;~ Return true if agent is a shardwolf
 Func IsShardWolf($agent)
-	Return DllStructGetData($agent, 'ModelID') == $Shard_Wolf_ModelID
+	Return DllStructGetData($agent, 'ModelID') == $SHARD_WOLF_MODELID
 EndFunc
 
 

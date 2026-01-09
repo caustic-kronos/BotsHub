@@ -28,9 +28,9 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $RAMantidsFarmerSkillbar = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
-Global Const $MantidsHeroSkillbar = 'OQijEqmMKODbe8OGAYi7x3YWMA'
-Global Const $MantidsFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $RA_MANTIDS_FARMER_SKILLBAR = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
+Global Const $MANTIDS_HERO_SKILLBAR = 'OQijEqmMKODbe8OGAYi7x3YWMA'
+Global Const $MANTIDS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 14 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 8 in Beast Mastery' & @CRLF _
@@ -42,40 +42,40 @@ Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
 ; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
 ; party hero ID that is used to add hero to the party team
-Global Const $MantidsHeroPartyID = $ID_General_Morgahn
-;Global Const $MantidsHeroPartyID = $ID_Keiran_Thackeray
-;Global Const $MantidsHeroPartyID = $ID_Hayda
-Global Const $MantidsHeroIndex = 1
+Global Const $MANTIDS_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
+;Global Const $MANTIDS_HERO_PARTY_ID = $ID_KEIRAN_THACKERAY
+;Global Const $MANTIDS_HERO_PARTY_ID = $ID_HAYDA
+Global Const $MANTIDS_HERO_INDEX = 1
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Mantids_DeadlyParadox) is better than UseSkillEx(1))
-Global Const $Mantids_DeadlyParadox			= 1
-Global Const $Mantids_ShadowForm			= 2
-Global Const $Mantids_ShroudOfDistress		= 3
-Global Const $Mantids_LightningReflexes		= 4
-Global Const $Mantids_WayOfPerfection		= 5
-Global Const $Mantids_DeathsCharge			= 6
-Global Const $Mantids_WhirlingDefense		= 7
-Global Const $Mantids_EdgeOfExtinction		= 8
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($MANTIDS_DEADLY_PARADOX) is better than UseSkillEx(1))
+Global Const $MANTIDS_DEADLY_PARADOX		= 1
+Global Const $MANTIDS_SHADOWFORM			= 2
+Global Const $MANTIDS_SHROUD_OF_DISTRESS	= 3
+Global Const $MANTIDS_LIGHTNING_REFLEXES	= 4
+Global Const $MANTIDS_WAY_OF_PERFECTION		= 5
+Global Const $MANTIDS_DEATHS_CHARGE			= 6
+Global Const $MANTIDS_WHIRLING_DEFENSE		= 7
+Global Const $MANTIDS_EDGE_OF_EXTINCTION	= 8
 
 ; Hero Build
-Global Const $Mantids_VocalWasSogolon		= 1
-Global Const $Mantids_Incoming				= 2
-Global Const $Mantids_FallBack				= 3
-Global Const $Mantids_EnduringHarmony		= 5
-Global Const $Mantids_TheyreOnFire			= 6
-Global Const $Mantids_MakeHaste				= 7
-Global Const $Mantids_BladeturnRefrain		= 8
+Global Const $MANTIDS_VOCAL_WAS_SOGOLON		= 1
+Global Const $MANTIDS_INCOMING				= 2
+Global Const $MANTIDS_FALLBACK				= 3
+Global Const $MANTIDS_ENDURING_HARMONY		= 5
+Global Const $MANTIDS_THEY_RE_ON_FIRE		= 6
+Global Const $MANTIDS_MAKE_HASTE			= 7
+Global Const $MANTIDS_BLADETURN_REFRAIN		= 8
 
-Global $MANTIDS_FARM_SETUP = False
+Global $mantids_farm_setup = False
 
 
 ;~ Main method to farm Mantids
-Func MantidsFarm($STATUS)
-	If Not $MANTIDS_FARM_SETUP And SetupMantidsFarm() == $FAIL Then Return $PAUSE
+Func MantidsFarm()
+	If Not $mantids_farm_setup And SetupMantidsFarm() == $FAIL Then Return $PAUSE
 
 	GoToWajjunBazaar()
 	Local $result = MantidsFarmLoop()
-	ReturnBackToOutpost($ID_Nahpui_Quarter)
+	ReturnBackToOutpost($ID_NAHPUI_QUARTER)
 	Return $result
 EndFunc
 
@@ -83,7 +83,7 @@ EndFunc
 ;~ Mantids farm setup
 Func SetupMantidsFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_NAHPUI_QUARTER, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 
 	If SetupPlayerMantidsFarm() == $FAIL Then Return $FAIL
@@ -93,8 +93,8 @@ Func SetupMantidsFarm()
 	MoveTo(9100, -19600)
 	Move(9100, -20500)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Nahpui_Quarter, 10000, 2000)
-	$MANTIDS_FARM_SETUP = True
+	WaitMapLoading($ID_NAHPUI_QUARTER, 10000, 2000)
+	$mantids_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -102,8 +102,8 @@ EndFunc
 
 Func SetupPlayerMantidsFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
-		LoadSkillTemplate($RAMantidsFarmerSkillbar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
+		LoadSkillTemplate($RA_MANTIDS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -117,9 +117,9 @@ Func SetupTeamMantidsFarm()
 	Info('Setting up team')
 	LeaveParty()
 	Sleep(500 + GetPing())
-	AddHero($MantidsHeroPartyID)
-	LoadSkillTemplate($MantidsHeroSkillbar, $MantidsHeroIndex)
-	DisableAllHeroSkills($MantidsHeroIndex)
+	AddHero($MANTIDS_HERO_PARTY_ID)
+	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, $MANTIDS_HERO_INDEX)
+	DisableAllHeroSkills($MANTIDS_HERO_INDEX)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -131,74 +131,74 @@ EndFunc
 
 ;~ Move out of outpost into Wajjun Bazaar
 Func GoToWajjunBazaar()
-	TravelToOutpost($ID_Nahpui_Quarter, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Wajjun_Bazaar
+	TravelToOutpost($ID_NAHPUI_QUARTER, $district_name)
+	While GetMapID() <> $ID_WAJJUN_BAZAAR
 		Info('Moving to Wajjun Bazaar')
 		;If (Not IsOverLine(0, 1, -12500, 0, DllStructGetData(GetMyAgent(), 'Y'))) Then MoveTo(-22000, 12500)
 		MoveTo(-22000, 12500)
 		Move(-21750, 14500)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Wajjun_Bazaar, 10000, 2000)
+		WaitMapLoading($ID_WAJJUN_BAZAAR, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Mantids farm loop
 Func MantidsFarmLoop()
-	If GetMapID() <> $ID_Wajjun_Bazaar Then Return $FAIL
+	If GetMapID() <> $ID_WAJJUN_BAZAAR Then Return $FAIL
 	Local $target
 
-	UseHeroSkill($MantidsHeroIndex, $Mantids_VocalWasSogolon)
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_VOCAL_WAS_SOGOLON)
 	RandomSleep(1500)
-	UseHeroSkill($MantidsHeroIndex, $Mantids_Incoming)
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_INCOMING)
 	AdlibRegister('MantidsUseFallBack', 8000)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0)
 	RandomSleep(1500)
-	UseHeroSkill($MantidsHeroIndex, $Mantids_EnduringHarmony, GetMyAgent())
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill($MantidsHeroIndex, $Mantids_TheyreOnFire)
-	UseHeroSkill($MantidsHeroIndex, $Mantids_MakeHaste, GetMyAgent())
-	UseSkillEx($Mantids_DeadlyParadox)
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_THEY_RE_ON_FIRE)
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_MAKE_HASTE, GetMyAgent())
+	UseSkillEx($MANTIDS_DEADLY_PARADOX)
 	RandomSleep(20)
-	UseHeroSkill($MantidsHeroIndex, $Mantids_BladeturnRefrain, GetMyAgent())
-	UseSkillEx($Mantids_ShroudOfDistress)
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
+	UseSkillEx($MANTIDS_SHROUD_OF_DISTRESS)
 	RandomSleep(20)
-	UseSkillEx($Mantids_ShadowForm)
+	UseSkillEx($MANTIDS_SHADOWFORM)
 	RandomSleep(20)
 	CommandAll(9000, -19500)
 
 	; Aggro the three groups
-	$target = GetNearestNPCInRangeOfCoords(700, -16700, $ID_Allegiance_Foe, $RANGE_EARSHOT)
+	$target = GetNearestNPCInRangeOfCoords(700, -16700, $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(-800, -15800)
 
-	$target = GetNearestNPCInRangeOfCoords(-1350, -16250, $ID_Allegiance_Foe, $RANGE_EARSHOT)
+	$target = GetNearestNPCInRangeOfCoords(-1350, -16250, $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(-700, -14800)
 
-	$target = GetNearestNPCInRangeOfCoords(-1600, -14500, $ID_Allegiance_Foe, $RANGE_EARSHOT)
+	$target = GetNearestNPCInRangeOfCoords(-1600, -14500, $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
 	AggroAgent($target)
 	MoveTo(0, -14300)
 
 	; Monk Balling spot
 	MoveTo(1050, -14950, 0)
-	While Not IsRecharged($Mantids_ShadowForm)
+	While Not IsRecharged($MANTIDS_SHADOWFORM)
 		RandomSleep(500)
 	WEnd
-	UseSkillEx($Mantids_ShadowForm)
+	UseSkillEx($MANTIDS_SHADOWFORM)
 	RandomSleep(20)
-	UseSkillEx($Mantids_LightningReflexes)
+	UseSkillEx($MANTIDS_LIGHTNING_REFLEXES)
 	RandomSleep(20)
-	UseSkillEx($Mantids_WayOfPerfection)
+	UseSkillEx($MANTIDS_WAY_OF_PERFECTION)
 	RandomSleep(2000)
 	If IsPlayerDead() Then Return $FAIL
 
 	; Balling the rest
 	$target = GetNearestEnemyToCoords(-450, -14400)
-	While IsRecharged($Mantids_DeathsCharge) And IsPlayerAlive()
-		UseSkillEx($Mantids_DeathsCharge, $target)
+	While IsRecharged($MANTIDS_DEATHS_CHARGE) And IsPlayerAlive()
+		UseSkillEx($MANTIDS_DEATHS_CHARGE, $target)
 		RandomSleep(200)
 	WEnd
 	MoveTo(-230, -14100)
@@ -210,7 +210,7 @@ Func MantidsFarmLoop()
 	Local $center = FindMiddleOfFoes(-250, -14250, $RANGE_AREA)
 	MoveTo($center[0], $center[1])
 	AdlibRegister('MantidsUseWhirlingDefense', 500)
-	UseSkillEx($Mantids_EdgeOfExtinction)
+	UseSkillEx($MANTIDS_EDGE_OF_EXTINCTION)
 
 	; Wait for all mobs to be registered dead or wait 3s
 	Local $me = GetMyAgent()
@@ -241,15 +241,15 @@ EndFunc
 
 ;~ Paragon Hero uses Fallback
 Func MantidsUseFallBack()
-	UseHeroSkill($MantidsHeroIndex, $Mantids_FallBack)
+	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_FALLBACK)
 	AdlibUnRegister('MantidsUseFallBack')
 EndFunc
 
 
 ;~ Use Whirling Defense skill
 Func MantidsUseWhirlingDefense()
-	While IsRecharged($Mantids_WhirlingDefense) And IsPlayerAlive()
-		UseSkillEx($Mantids_WhirlingDefense)
+	While IsRecharged($MANTIDS_WHIRLING_DEFENSE) And IsPlayerAlive()
+		UseSkillEx($MANTIDS_WHIRLING_DEFENSE)
 		RandomSleep(50)
 	WEnd
 	AdlibUnRegister('MantidsUseWhirlingDefense')

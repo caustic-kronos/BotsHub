@@ -25,20 +25,20 @@ Opt('MustDeclareVars', True)
 
 #Region Configuration
 ; === Build ===
-Global Const $EATormentSkillBar = 'OgdTkSFzSC3xF0YQbAYYYgXoXA'
+Global Const $EA_TORMENT_SKILLBAR = 'OgdTkSFzSC3xF0YQbAYYYgXoXA'
 
-Global Const $Torment_DeathsCharge			= 1
-Global Const $Torment_ElementalLord			= 2
-Global Const $Torment_GlyphOfElementalPower	= 3
-Global Const $Torment_ObsidianFlesh			= 4
-Global Const $Torment_MeteorShower			= 5
-Global Const $Torment_LavaFont				= 6
-Global Const $Torment_FlameBurst			= 7
-Global Const $Torment_RodgortsInvocation	= 8
+Global Const $TORMENT_DEATHS_CHARGE				= 1
+Global Const $TORMENT_ELEMENTAL_LORD			= 2
+Global Const $TORMENT_GLYPH_OF_ELEMENTAL_POWER	= 3
+Global Const $TORMENT_OBSIDIAN_FLESH				= 4
+Global Const $TORMENT_METEOR_SHOWER				= 5
+Global Const $TORMENT_LAVA_FONT					= 6
+Global Const $TORMENT_FLAME_BURST				= 7
+Global Const $TORMENT_RODGORTS_INVOCATION		= 8
 #EndRegion Configuration
 
 ; ==== Constants ====
-Global Const $GemstoneTormentFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $GEMSTONE_TORMENT_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- At least 100 energy to be able to cast all the spells' & @CRLF _
 	& '- Full Radiant Armor with Attunement Runes to max out energy' & @CRLF _
 	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _
@@ -55,26 +55,26 @@ Global Const $GemstoneTormentFarmInformations = 'For best results, have :' & @CR
 ; Average duration ~ 10 minutes
 Global Const $GEMSTONE_TORMENT_FARM_DURATION = 10 * 60 * 1000
 Global Const $MAX_GEMSTONE_TORMENT_FARM_DURATION = 20 * 60 * 1000
-Global $GEMSTONE_TORMENT_FARM_SETUP = False
 
 ; Staff of enchanting 20% for the run and faster energy regeneration
-Global Const $Torment_Weapon_Slot_Staff = 2
+Global Const $TORMENT_WEAPON_SLOT_STAFF = 2
 ; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
-Global Const $Torment_Weapon_Slot_Focus = 3
+Global Const $TORMENT_WEAPON_SLOT_FOCUS = 3
 
-Global $TormentRunOptions = CloneDictMap($Default_MoveDefend_Options)
-$TormentRunOptions.Item('defendFunction')		= DefendTormentFarm
-$TormentRunOptions.Item('moveTimeOut')			= 3 * 60 * 1000
-$TormentRunOptions.Item('randomFactor')			= 200
-$TormentRunOptions.Item('hosSkillSlot')			= 0
-$TormentRunOptions.Item('deathChargeSkillSlot')	= $Torment_DeathsCharge
+Global $torment_run_options = CloneDictMap($Default_MoveDefend_Options)
+$torment_run_options.Item('defendFunction')		= DefendTormentFarm
+$torment_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
+$torment_run_options.Item('randomFactor')			= 200
+$torment_run_options.Item('hosSkillSlot')			= 0
+$torment_run_options.Item('deathChargeSkillSlot')	= $TORMENT_DEATHS_CHARGE
 ; chests in Ravenheart Gloom should have good loot
-$TormentRunOptions.Item('openChests')			= True
+$torment_run_options.Item('openChests')			= True
 
+Global $gemstone_torment_farm_setup = False
 
 ;~ Main loop function for farming torment gemstones
-Func GemstoneTormentFarm($STATUS)
-	If Not $GEMSTONE_TORMENT_FARM_SETUP And SetupGemstoneTormentFarm() == $FAIL Then Return $PAUSE
+Func GemstoneTormentFarm()
+	If Not $gemstone_torment_farm_setup And SetupGemstoneTormentFarm() == $FAIL Then Return $PAUSE
 
 	If GoToRavenHeartGloom() == $FAIL Then Return $FAIL
 	Local $result = GemstoneTormentFarmLoop()
@@ -88,8 +88,8 @@ EndFunc
 
 Func SetupGemstoneTormentFarm()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_Gate_Of_Anguish Then
-		If TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
+		If TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name) == $FAIL Then Return $FAIL
 	Else
 		ResignAndReturnToOutpost()
 	EndIf
@@ -97,9 +97,9 @@ Func SetupGemstoneTormentFarm()
 	If SetupPlayerTormentFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
 	Sleep(500 + GetPing())
-	SetDisplayedTitle($ID_Lightbringer_Title)
+	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	Sleep(500 + GetPing())
-	$GEMSTONE_TORMENT_FARM_SETUP = True
+	$gemstone_torment_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -107,8 +107,8 @@ EndFunc
 
 Func SetupPlayerTormentFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Elementalist Then
-		LoadSkillTemplate($EATormentSkillBar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_ELEMENTALIST Then
+		LoadSkillTemplate($EA_TORMENT_SKILLBAR)
 	Else
 		Warn('You need to run this farm bot as Elementalist')
 		Return $FAIL
@@ -120,7 +120,7 @@ EndFunc
 
 ;~ exit gate of Anguish outpost by moving into portal that leads into farming location - RavenHeart Gloom
 Func GoToRavenHeartGloom()
-	TravelToOutpost($ID_Gate_Of_Anguish, $DISTRICT_NAME)
+	TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name)
 	Info('Moving to RavenHeart Gloom')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in RavenHeart Gloom
@@ -145,7 +145,7 @@ Func GemstoneTormentFarmLoop()
 	Info('Starting Farm')
 	Local $TimerWait
 
-	ChangeWeaponSet($Torment_Weapon_Slot_Staff)
+	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
 	If GetLightbringerTitle() < 50000 Then
 		Info('Taking Blessing')
@@ -162,7 +162,7 @@ Func GemstoneTormentFarmLoop()
 		RandomSleep(100)
 	WEnd
 	$TimerWait = TimerInit()
-	UseSkillTimed($Torment_ObsidianFlesh)
+	UseSkillTimed($TORMENT_OBSIDIAN_FLESH)
 	While TimerDiff($TimerWait) < 2000 And IsPlayerAlive()
 		RandomSleep(100)
 	WEnd
@@ -171,14 +171,14 @@ Func GemstoneTormentFarmLoop()
 	If RunTormentFarm(11444, 9370) == $STUCK Then Return $FAIL
 	If RunTormentFarm(10828, 10583) == $STUCK Then Return $FAIL
 	$TimerWait = TimerInit()
-	While IsPlayerAlive() And (TimerDiff($TimerWait) < 15000 Or Not IsRecharged($Torment_ObsidianFlesh) Or GetEnergy() < 80)
+	While IsPlayerAlive() And (TimerDiff($TimerWait) < 15000 Or Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd
 	If IsPlayerAlive() Then Info('First group')
 	CastBuffsTormentFarm()
 	If RunTormentFarm(10779, 9898) == $STUCK Then Return $FAIL
 	;If RunTormentFarm(11125, 9198) == $STUCK Then Return $FAIL
-	ChangeWeaponSet($Torment_Weapon_Slot_Focus)
+	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500 + GetPing())
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 	If IsPlayerAlive() Then
@@ -190,21 +190,21 @@ Func GemstoneTormentFarmLoop()
 		Next
 	EndIf
 
-	ChangeWeaponSet($Torment_Weapon_Slot_Staff)
+	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
 	If RunTormentFarm(11130, 10910) == $STUCK Then Return $FAIL
 	If RunTormentFarm(12140, 12103) == $STUCK Then Return $FAIL
 	If RunTormentFarm(13915, 13415) == $STUCK Then Return $FAIL
 	If RunTormentFarm(16250, 14073) == $STUCK Then Return $FAIL
 	$TimerWait = TimerInit()
-	While IsPlayerAlive() And (TimerDiff($TimerWait) < 42000 Or Not IsRecharged($Torment_ElementalLord) Or _
-			Not IsRecharged($Torment_ObsidianFlesh) Or Not IsRecharged($Torment_MeteorShower) Or GetEnergy() < 80)
+	While IsPlayerAlive() And (TimerDiff($TimerWait) < 42000 Or Not IsRecharged($TORMENT_ELEMENTAL_LORD) Or _
+			Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or Not IsRecharged($TORMENT_METEOR_SHOWER) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd
 	If IsPlayerAlive() Then Info('Second group')
 	CastBuffsTormentFarm()
 	RandomSleep(250)
-	ChangeWeaponSet($Torment_Weapon_Slot_Focus)
+	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500 + GetPing())
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 	If IsPlayerAlive() Then
@@ -222,16 +222,16 @@ EndFunc
 
 
 Func RunTormentFarm($destinationX, $destinationY)
-	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $TormentRunOptions)
+	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $torment_run_options)
 EndFunc
 
 
 Func CastBuffsTormentFarm()
 	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(GetPing() + 150)
-	UseSkillTimed($Torment_ElementalLord)
-	UseSkillTimed($Torment_GlyphOfElementalPower)
-	UseSkillTimed($Torment_ObsidianFlesh)
+	UseSkillTimed($TORMENT_ELEMENTAL_LORD)
+	UseSkillTimed($TORMENT_GLYPH_OF_ELEMENTAL_POWER)
+	UseSkillTimed($TORMENT_OBSIDIAN_FLESH)
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
@@ -242,10 +242,10 @@ Func DefendTormentFarm()
 	If (DllStructGetData($me, 'HealthPercent') < 0.3 Or _
 			(DllStructGetData($me, 'HealthPercent') < 0.4 And GetHasCondition($me))) And _
 			CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 And _
-			IsRecharged($Torment_DeathsCharge) And GetEnergy() > 5 Then
-		$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+			IsRecharged($TORMENT_DEATHS_CHARGE) And GetEnergy() > 5 Then
+		$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 		ChangeTarget($target)
-		UseSkillTimed($Torment_DeathsCharge, $target)
+		UseSkillTimed($TORMENT_DEATHS_CHARGE, $target)
 	EndIf
 EndFunc
 
@@ -256,13 +256,13 @@ Func KillTormentMobs()
 
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
-	UseSkillTimed($Torment_MeteorShower, $target)
+	UseSkillTimed($TORMENT_METEOR_SHOWER, $target)
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
-	UseSkillTimed($Torment_DeathsCharge, $target)
-	UseSkillTimed($Torment_LavaFont)
-	UseSkillTimed($Torment_FlameBurst)
-	UseSkillTimed($Torment_RodgortsInvocation, $target)
+	UseSkillTimed($TORMENT_DEATHS_CHARGE, $target)
+	UseSkillTimed($TORMENT_LAVA_FONT)
+	UseSkillTimed($TORMENT_FLAME_BURST)
+	UseSkillTimed($TORMENT_RODGORTS_INVOCATION, $target)
 	; waiting for mobs to be cleaned by meteor shower
 	Sleep(1500 + GetPing())
 

@@ -29,8 +29,8 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $PongmeiChestRunnerSkillbar = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
-Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
+Global Const $PONGMEI_CHESTRUNNER_SKILLBAR = 'Ogej4NfMLT3ljbHY4OIQ0k8I6MA'
+Global Const $PONGMEI_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 16 in Mysticism' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Deadly Arts' & @CRLF _
@@ -42,27 +42,27 @@ Global Const $PongmeiChestRunInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 4m20s
 Global Const $PONGMEI_FARM_DURATION = (4 * 60 + 20) * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Pongmei_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Pongmei_DwarvenStability	= 1
-Global Const $Pongmei_Zealous_Renewal	= 2
-Global Const $Pongmei_Pious_Haste		= 3
-Global Const $Pongmei_DeathsCharge		= 4
-Global Const $Pongmei_HeartOfShadow		= 5
-Global Const $Pongmei_IAmUnstoppable	= 6
-Global Const $Pongmei_DeadlyParadox		= 7
-Global Const $Pongmei_ShadowForm		= 8
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($PONGMEI_DWARVEN_STABILITY) is better than UseSkillEx(1))
+Global Const $PONGMEI_DWARVEN_STABILITY	= 1
+Global Const $PONGMEI_ZEALOUS_RENEWAL	= 2
+Global Const $PONGMEI_PIOUS_HASTE		= 3
+Global Const $PONGMEI_DEATHS_CHARGE		= 4
+Global Const $PONGMEI_HEART_OF_SHADOW	= 5
+Global Const $PONGMEI_I_AM_UNSTOPPABLE	= 6
+Global Const $PONGMEI_DEADLY_PARADOX	= 7
+Global Const $PONGMEI_SHADOWFORM		= 8
 
-Global Const $ID_paragon_mercenary_hero = $ID_Mercenary_Hero_5
+Global Const $ID_PARAGON_MERCENARY_HERO = $ID_MERCENARY_HERO_5
 
-Global $PONGMEI_FARM_SETUP = False
+Global $pongmei_farm_setup = False
 
 ;~ Main method to chest farm Pongmei
-Func PongmeiChestFarm($STATUS)
-	If Not $PONGMEI_FARM_SETUP Then SetupPongmeiChestFarm()
+Func PongmeiChestFarm()
+	If Not $pongmei_farm_setup Then SetupPongmeiChestFarm()
 
 	GoToPongmeiValley()
-	Local $result = PongmeiChestFarmLoop($STATUS)
-	ReturnBackToOutpost($ID_Boreas_Seabed)
+	Local $result = PongmeiChestFarmLoop()
+	ReturnBackToOutpost($ID_BOREAS_SEABED)
 	Return $result
 EndFunc
 
@@ -70,13 +70,13 @@ EndFunc
 ;~ Pongmei chest farm setup
 Func SetupPongmeiChestFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
+	TravelToOutpost($ID_BOREAS_SEABED, $district_name)
 
 	SetupPlayerPongmeiChestFarm()
 	SetupTeamPongmeiChestFarm()
 
 	SwitchToHardModeIfEnabled()
-	$PONGMEI_FARM_SETUP = True
+	$pongmei_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -84,8 +84,8 @@ EndFunc
 
 Func SetupPlayerPongmeiChestFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
-		LoadSkillTemplate($PongmeiChestRunnerSkillbar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
+		LoadSkillTemplate($PONGMEI_CHESTRUNNER_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 	EndIf
@@ -101,13 +101,13 @@ Func SetupTeamPongmeiChestFarm()
 		Info('Setting up team according to default settings')
 		LeaveParty()
 		Sleep(500 + GetPing())
-		AddHero($ID_General_Morgahn)
-		AddHero($ID_Hayda)
-		AddHero($ID_paragon_mercenary_hero)
-		AddHero($ID_Dunkoro)
-		AddHero($ID_Tahlkora)
-		AddHero($ID_Ogden)
-		AddHero($ID_Goren)
+		AddHero($ID_GENERAL_MORGAHN)
+		AddHero($ID_HAYDA)
+		AddHero($ID_PARAGON_MERCENARY_HERO)
+		AddHero($ID_DUNKORO)
+		AddHero($ID_TAHLKORA)
+		AddHero($ID_OGDEN)
+		AddHero($ID_GOREN)
 	EndIf
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
@@ -118,26 +118,26 @@ EndFunc
 
 ;~ Move out of outpost into Pongmei Valley
 Func GoToPongmeiValley()
-	TravelToOutpost($ID_Boreas_Seabed, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Pongmei_Valley
+	TravelToOutpost($ID_BOREAS_SEABED, $district_name)
+	While GetMapID() <> $ID_PONGMEI_VALLEY
 		Info('Moving to Pongmei Valley')
 		MoveTo(-25366, 1524)
 		MoveTo(-26000, 2400)
 		Move(-26200, 2800)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Pongmei_Valley, 10000, 2000)
+		WaitMapLoading($ID_PONGMEI_VALLEY, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Pongmei Chest farm loop
-Func PongmeiChestFarmLoop($STATUS)
-	If FindInInventory($ID_Lockpick)[0] == 0 Then
+Func PongmeiChestFarmLoop()
+	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		Error('No lockpicks available to open chests')
 		Return $PAUSE
 	EndIf
 
-	If GetMapID() <> $ID_Pongmei_Valley Then Return $FAIL
+	If GetMapID() <> $ID_PONGMEI_VALLEY Then Return $FAIL
 	Info('Starting chest farm run')
 
 	Local $openedChests = 0
@@ -218,27 +218,27 @@ Func DervishRun($X, $Y)
 	Local $me = GetMyAgent()
 	Local $energy
 	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
-		If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetEffect($ID_Crippled) <> Null Then UseSkillEx($Pongmei_IAmUnstoppable)
+		If GetEnergy() >= 5 And IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) And GetEffect($ID_CRIPPLED) <> Null Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)
 
-		If GetEnergy() >= 5 And IsRecharged($Pongmei_DeathsCharge) Then
+		If GetEnergy() >= 5 And IsRecharged($PONGMEI_DEATHS_CHARGE) Then
 			Local $target = GetTargetForDeathsCharge($X, $Y, 700)
-			If $target <> Null Then UseSkillEx($Pongmei_DeathsCharge, $target)
+			If $target <> Null Then UseSkillEx($PONGMEI_DEATHS_CHARGE, $target)
 		EndIf
 
-		If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And AreFoesInFront($X, $Y) Then
-			If IsRecharged($Pongmei_IAmUnstoppable) Then UseSkillEx($Pongmei_IAmUnstoppable)
-			UseSkillEx($Pongmei_DeadlyParadox)
+		If GetEnergy() >= 20 And IsRecharged($PONGMEI_SHADOWFORM) And AreFoesInFront($X, $Y) Then
+			If IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)
+			UseSkillEx($PONGMEI_DEADLY_PARADOX)
 			RandomSleep(20)
-			UseSkillEx($Pongmei_ShadowForm)
+			UseSkillEx($PONGMEI_SHADOWFORM)
 			;$shadowFormLastUse = TimerInit()
 		EndIf
 
 		$energy = GetEnergy()
-		If $energy >= 7 And IsRecharged($Pongmei_Pious_Haste) And (Not IsRecharged($Pongmei_DwarvenStability) Or ($energy >= 12 And IsRecharged($Pongmei_DwarvenStability))) Then
-			If IsRecharged($Pongmei_DwarvenStability) Then UseSkillEx($Pongmei_DwarvenStability)
-			UseSkillEx($Pongmei_Zealous_Renewal)
+		If $energy >= 7 And IsRecharged($PONGMEI_PIOUS_HASTE) And (Not IsRecharged($PONGMEI_DWARVEN_STABILITY) Or ($energy >= 12 And IsRecharged($PONGMEI_DWARVEN_STABILITY))) Then
+			If IsRecharged($PONGMEI_DWARVEN_STABILITY) Then UseSkillEx($PONGMEI_DWARVEN_STABILITY)
+			UseSkillEx($PONGMEI_ZEALOUS_RENEWAL)
 			RandomSleep(20)
-			UseSkillEx($Pongmei_Pious_Haste)
+			UseSkillEx($PONGMEI_PIOUS_HASTE)
 		EndIf
 
 		$me = GetMyAgent()
@@ -247,11 +247,11 @@ Func DervishRun($X, $Y)
 			Move($X, $Y, 0)
 		EndIf
 
-		If $blockedCounter > 5 And GetEnergy() >= 5 And IsRecharged($Pongmei_HeartOfShadow) Then
+		If $blockedCounter > 5 And GetEnergy() >= 5 And IsRecharged($PONGMEI_HEART_OF_SHADOW) Then
 			$blockedCounter = 0
 			Local $npc = GetNPCInTheBack($X, $Y)
 			If $npc == Null Then $npc = $me
-			UseSkillEx($Pongmei_HeartOfShadow, $npc)
+			UseSkillEx($PONGMEI_HEART_OF_SHADOW, $npc)
 		EndIf
 
 		Sleep(250)
@@ -329,10 +329,10 @@ EndFunc
 Func DefendWhileOpeningChests()
 	Local $nearestFoe = GetNearestEnemyToAgent(GetMyAgent())
 
-	If GetEnergy() >= 5 And IsRecharged($Pongmei_IAmUnstoppable) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($Pongmei_IAmUnstoppable)
-	If GetEnergy() >= 20 And IsRecharged($Pongmei_ShadowForm) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
-		UseSkillEx($Pongmei_DeadlyParadox)
+	If GetEnergy() >= 5 And IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)
+	If GetEnergy() >= 20 And IsRecharged($PONGMEI_SHADOWFORM) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
+		UseSkillEx($PONGMEI_DEADLY_PARADOX)
 		RandomSleep(20)
-		UseSkillEx($Pongmei_ShadowForm)
+		UseSkillEx($PONGMEI_SHADOWFORM)
 	EndIf
 EndFunc

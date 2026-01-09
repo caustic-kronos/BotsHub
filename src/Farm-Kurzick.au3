@@ -29,18 +29,19 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $KurzickFactionInformations = 'For best results, have :' & @CRLF _
+Global Const $KURZICK_FACTION_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
-Global $KURZICK_FARM_SETUP = False
+
+Global $kurzick_farm_setup = False
 
 
 ;~ Main loop for the kurzick faction farm
-Func KurzickFactionFarm($STATUS)
-	If Not $KURZICK_FARM_SETUP Then KurzickFarmSetup()
+Func KurzickFactionFarm()
+	If Not $kurzick_farm_setup Then KurzickFarmSetup()
 
 	ManageFactionPointsKurzickFarm()
 	CheckGoldKurzickFarm()
@@ -50,13 +51,13 @@ Func KurzickFactionFarm($STATUS)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('TrackPartyStatus')
 
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 	Return $result
 EndFunc
 
 
 Func ManageFactionPointsKurzickFarm()
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		RandomSleep(200)
 		GoNearestNPCToCoords(5390, 1524)
@@ -95,7 +96,7 @@ EndFunc
 
 
 Func CheckGoldKurzickFarm()
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
@@ -108,13 +109,13 @@ EndFunc
 ;~ Setup for kurzick farm
 Func KurzickFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
+	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
 	SwitchMode($ID_HARD_MODE)
 
-	$KURZICK_FARM_SETUP = True
+	$kurzick_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -122,21 +123,21 @@ EndFunc
 
 ;~ Move out of outpost into Ferndale
 Func GoToFerndale()
-	TravelToOutpost($ID_House_Zu_Heltzer, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Ferndale
+	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
+	While GetMapID() <> $ID_FERNDALE
 		Info('Moving to Ferndale')
 		MoveTo(7810, -726)
 		MoveTo(10042, -1173)
 		Move(10446, -1147)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Ferndale, 10000, 2000)
+		WaitMapLoading($ID_FERNDALE, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Vanquish the Ferndale map
 Func VanquishFerndale()
-	If GetMapID() <> $ID_Ferndale Then Return $FAIL
+	If GetMapID() <> $ID_FERNDALE Then Return $FAIL
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-12909, 15616)
 	Dialog(0x81)

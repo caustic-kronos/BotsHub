@@ -59,169 +59,169 @@ Global Const $ID_KOREA					= 0
 Global Const $ID_CHINA					= 0
 Global Const $ID_JAPAN					= 0
 
-Global Const $ID_English_District		=	[$ID_ENGLISH, $ID_EUROPE]
-Global Const $ID_French_District		=	[$ID_FRENCH, $ID_EUROPE]
-Global Const $ID_German_District		=	[$ID_GERMAN, $ID_EUROPE]
-Global Const $ID_Italian_District		=	[$ID_ITALIAN, $ID_EUROPE]
-Global Const $ID_Polish_District		=	[$ID_POLISH, $ID_EUROPE]
-Global Const $ID_Russian_District		=	[$ID_RUSSIAN, $ID_EUROPE]
-Global Const $ID_Spanish_District		=	[$ID_SPANISH, $ID_EUROPE]
+Global Const $ID_ENGLISH_DISTRICT		=	[$ID_ENGLISH, $ID_EUROPE]
+Global Const $ID_FRENCH_DISTRICT		=	[$ID_FRENCH, $ID_EUROPE]
+Global Const $ID_GERMAN_DISTRICT		=	[$ID_GERMAN, $ID_EUROPE]
+Global Const $ID_ITALIAN_DISTRICT		=	[$ID_ITALIAN, $ID_EUROPE]
+Global Const $ID_POLISH_DISTRICT		=	[$ID_POLISH, $ID_EUROPE]
+Global Const $ID_RUSSIAN_DISTRICT		=	[$ID_RUSSIAN, $ID_EUROPE]
+Global Const $ID_SPANISH_DISTRICT		=	[$ID_SPANISH, $ID_EUROPE]
 
-Global Const $ID_American_District		=	[$ID_ENGLISH, $ID_AMERICA]
+Global Const $ID_AMERICAN_DISTRICT		=	[$ID_ENGLISH, $ID_AMERICA]
 
-Global Const $ID_Chinese_District		=	[$ID_ENGLISH, $ID_ASIA_CHINA]
-Global Const $ID_Japanese_District		=	[$ID_ENGLISH, $ID_ASIA_JAPAN]
-Global Const $ID_Korean_District		=	[$ID_ENGLISH, $ID_ASIA_KOREA]
-Global Const $ID_International_District	=	[$ID_ENGLISH, $ID_INTERNATIONAL]
+Global Const $ID_CHINESE_DISTRICT		=	[$ID_ENGLISH, $ID_ASIA_CHINA]
+Global Const $ID_JAPANESE_DISTRICT		=	[$ID_ENGLISH, $ID_ASIA_JAPAN]
+Global Const $ID_KOREAN_DISTRICT		=	[$ID_ENGLISH, $ID_ASIA_KOREA]
+Global Const $ID_INTERNATIONAL_DISTRICT	=	[$ID_ENGLISH, $ID_INTERNATIONAL]
 
-Global Const $DistrictNames				=	['English', 'French', 'German', 'Italian', 'Polish', 'Russian', 'Spanish', 'America', 'China', 'Japan', 'Korea', 'International']
-Global Const $DistrictAndRegionIds		=	[$ID_English_District, $ID_French_District, $ID_German_District, $ID_Italian_District, $ID_Polish_District, $ID_Russian_District, _
-															$ID_Spanish_District, $ID_American_District, $ID_Chinese_District, $ID_Japanese_District, $ID_Korean_District, $ID_International_District]
-Global Const $RegionMap					=	MapFromArrays($DistrictNames, $DistrictAndRegionIds)
+Global Const $DISTRICT_NAMES			=	['English', 'French', 'German', 'Italian', 'Polish', 'Russian', 'Spanish', 'America', 'China', 'Japan', 'Korea', 'International']
+Global Const $DISTRICT_AND_REGION_IDS	=	[$ID_ENGLISH_DISTRICT, $ID_FRENCH_DISTRICT, $ID_GERMAN_DISTRICT, $ID_ITALIAN_DISTRICT, $ID_POLISH_DISTRICT, $ID_RUSSIAN_DISTRICT, _
+												$ID_SPANISH_DISTRICT, $ID_AMERICAN_DISTRICT, $ID_CHINESE_DISTRICT, $ID_JAPANESE_DISTRICT, $ID_KOREAN_DISTRICT, $ID_INTERNATIONAL_DISTRICT]
+Global Const $REGION_MAP				=	MapFromArrays($DISTRICT_NAMES, $DISTRICT_AND_REGION_IDS)
 #EndRegion Locations
 
 
 #Region Game Locations
 ; Locations varying seasonally and their default versions
-Global Const $ID_Default_Eye_of_the_North	= 642
-Global Const $ID_Christmas_Eye_of_the_North	= 821
-Global Const $ID_Default_Kaineng_City		= 194
-Global Const $ID_Kaineng_City_Events		= 817
+Global Const $ID_DEFAULT_EYE_OF_THE_NORTH	= 642
+GLOBAL CONST $ID_CHRISTMAS_EYE_OF_THE_NORTH	= 821
+GLOBAL CONST $ID_DEFAULT_KAINENG_CITY		= 194
+GLOBAL CONST $ID_KAINENG_CITY_EVENTS		= 817
 ; Generic
-Global Const $ID_Outpost					= 0
-Global Const $ID_Explorable					= 1
-Global Const $ID_Loading					= 2
+GLOBAL CONST $ID_OUTPOST					= 0
+GLOBAL CONST $ID_EXPLORABLE					= 1
+GLOBAL CONST $ID_LOADING					= 2
 ; Eden
-Global Const $ID_Lakeside_County			= 146
-Global Const $ID_Ascalon_City_Presearing	= 148
-Global Const $ID_Green_Hills_County			= 160
-Global Const $ID_Wizards_Folly				= 161
-Global Const $ID_Regent_Valley				= 162
-Global Const $ID_Barradin_Estate			= 163
-Global Const $ID_Ashford_Abbey				= 164
-Global Const $ID_Foibles_Fair				= 165
-Global Const $ID_Fort_Ranik_Presearing		= 166
+Global Const $ID_LAKESIDE_COUNTY			= 146
+Global Const $ID_ASCALON_CITY_PRESEARING	= 148
+Global Const $ID_GREEN_HILLS_COUNTY			= 160
+Global Const $ID_WIZARDS_FOLLY				= 161
+Global Const $ID_REGENT_VALLEY				= 162
+Global Const $ID_BARRADIN_ESTATE			= 163
+Global Const $ID_ASHFORD_ABBEY				= 164
+Global Const $ID_FOIBLES_FAIR				= 165
+Global Const $ID_FORT_RANIK_PRESEARING		= 166
 ; Battle Isles
-Global Const $ID_Great_Temple_of_Balthazar	= 248
-Global Const $ID_Embark_Beach				= 857
+Global Const $ID_GREAT_TEMPLE_OF_BALTHAZAR	= 248
+Global Const $ID_EMBARK_BEACH				= 857
 ; Common
-Global Const $ID_Fissure_of_Woe				= 34
-Global Const $ID_Underworld					= 72
+Global Const $ID_FISSURE_OF_WOE				= 34
+Global Const $ID_UNDERWORLD					= 72
 ; Prophecies
-Global Const $ID_Warriors_Isle				= 4
-Global Const $ID_Hunters_Isle				= 5
-Global Const $ID_Wizards_Isle				= 6
-Global Const $ID_Augury_Rock				= 38
-Global Const $ID_Burning_Isle				= 52
-Global Const $ID_Lions_Arch					= 55
-Global Const $ID_Tascas_Demise				= 92
-Global Const $ID_Prophets_Path				= 113
-Global Const $ID_Elona_Reach				= 118
-Global Const $ID_Temple_of_the_Ages			= 138
-Global Const $ID_The_Granite_Citadel		= 156
-Global Const $ID_Frozen_Isle				= 176
-Global Const $ID_Nomads_Isle				= 177
-Global Const $ID_Druids_Isle				= 178
-Global Const $ID_Isle_Of_The_Dead			= 179
+Global Const $ID_WARRIORS_ISLE				= 4
+Global Const $ID_HUNTERS_ISLE				= 5
+Global Const $ID_WIZARDS_ISLE				= 6
+Global Const $ID_AUGURY_ROCK				= 38
+Global Const $ID_BURNING_ISLE				= 52
+Global Const $ID_LIONS_ARCH					= 55
+Global Const $ID_TASCAS_DEMISE				= 92
+Global Const $ID_PROPHETS_PATH				= 113
+Global Const $ID_ELONA_REACH				= 118
+Global Const $ID_TEMPLE_OF_THE_AGES			= 138
+Global Const $ID_THE_GRANITE_CITADEL		= 156
+Global Const $ID_FROZEN_ISLE				= 176
+Global Const $ID_NOMADS_ISLE				= 177
+Global Const $ID_DRUIDS_ISLE				= 178
+Global Const $ID_ISLE_OF_THE_DEAD			= 179
 ; Factions
-Global Const $ID_House_Zu_Heltzer			= 77
-Global Const $ID_Cavalon					= 193
-Global Const $ID_Kaineng_City				= IsAnniversaryCelebration() Or IsDragonFestival() ? $ID_Kaineng_City_Events : $ID_Default_Kaineng_City
-Global Const $ID_Drazach_Thicket			= 195
-Global Const $ID_Jaya_Bluffs				= 196
-Global Const $ID_Mount_Qinkai				= 200
-Global Const $ID_Silent_Surf				= 203
-Global Const $ID_Ferndale					= 210
-Global Const $ID_Pongmei_Valley				= 211
-Global Const $ID_Minister_Chos_Estate		= 214
-Global Const $ID_Nahpui_Quarter				= 216
-Global Const $ID_Boreas_Seabed				= 219
-Global Const $ID_The_Eternal_Grove			= 222
-Global Const $ID_Sunqua_Vale				= 238
-Global Const $ID_Wajjun_Bazaar				= 239
-Global Const $ID_Bukdek_Byway				= 240
-Global Const $ID_Shing_Jea_Monastery		= 242
-Global Const $ID_Seitung_Harbor				= 250
-Global Const $ID_Urgoz_Warren				= 266
-Global Const $ID_Isle_Of_Weeping_Stone		= 275
-Global Const $ID_Isle_Of_Jade				= 276
-Global Const $ID_Leviathan_Pits				= 279
-Global Const $ID_Zin_Ku_Corridor			= 284
-Global Const $ID_The_Marketplace			= 303
-Global Const $ID_The_Deep					= 307
-Global Const $ID_Saint_Anjekas_Shrine		= 349
-Global Const $ID_Imperial_Isle				= 359
-Global Const $ID_Isle_Of_Meditation			= 360
-Global Const $ID_Aspenwood_Gate_Luxon		= 389
-Global Const $ID_Kaineng_A_Chance_Encounter	= 861
+Global Const $ID_HOUSE_ZU_HELTZER			= 77
+Global Const $ID_CAVALON					= 193
+Global Const $ID_KAINENG_CITY				= IsAnniversaryCelebration() Or IsDragonFestival() ? $ID_KAINENG_CITY_EVENTS : $ID_DEFAULT_KAINENG_CITY
+Global Const $ID_DRAZACH_THICKET			= 195
+Global Const $ID_JAYA_BLUFFS				= 196
+Global Const $ID_MOUNT_QINKAI				= 200
+Global Const $ID_SILENT_SURF				= 203
+Global Const $ID_FERNDALE					= 210
+Global Const $ID_PONGMEI_VALLEY				= 211
+Global Const $ID_MINISTER_CHOS_ESTATE		= 214
+Global Const $ID_NAHPUI_QUARTER				= 216
+Global Const $ID_BOREAS_SEABED				= 219
+Global Const $ID_THE_ETERNAL_GROVE			= 222
+Global Const $ID_SUNQUA_VALE				= 238
+Global Const $ID_WAJJUN_BAZAAR				= 239
+Global Const $ID_BUKDEK_BYWAY				= 240
+Global Const $ID_SHING_JEA_MONASTERY		= 242
+Global Const $ID_SEITUNG_HARBOR				= 250
+Global Const $ID_URGOZ_WARREN				= 266
+Global Const $ID_ISLE_OF_WEEPING_STONE		= 275
+Global Const $ID_ISLE_OF_JADE				= 276
+Global Const $ID_LEVIATHAN_PITS				= 279
+Global Const $ID_ZIN_KU_CORRIDOR			= 284
+Global Const $ID_THE_MARKETPLACE			= 303
+Global Const $ID_THE_DEEP					= 307
+Global Const $ID_SAINT_ANJEKAS_SHRINE		= 349
+Global Const $ID_IMPERIAL_ISLE				= 359
+Global Const $ID_ISLE_OF_MEDITATION			= 360
+Global Const $ID_ASPENWOOD_GATE_LUXON		= 389
+Global Const $ID_KAINENG_A_CHANCE_ENCOUNTER	= 861
 ; Nightfall
-Global Const $ID_Kamadan					= 370
-Global Const $ID_Sunward_Marches			= 373
-Global Const $ID_Sunspear_Sanctuary			= 387
-Global Const $ID_Chantry_Of_Secrets			= 393
-Global Const $ID_Kodash_Bazaar				= 414
-Global Const $ID_Mirror_of_Lyss				= 419
-Global Const $ID_Moddok_Crevice				= 427
-Global Const $ID_Command_Post				= 436
-Global Const $ID_Jokos_Domain				= 437
-Global Const $ID_Bone_Palace				= 438
-Global Const $ID_The_Shattered_Ravines		= 441
-Global Const $ID_The_Sulfurous_Wastes		= 444
-Global Const $ID_Ebony_Citadel_Of_Mallyx	= 445
-Global Const $ID_Gate_Of_Anguish			= 474
-Global Const $ID_Uncharted_Isle				= 529
-Global Const $ID_Isle_Of_Wurms				= 530
-Global Const $ID_Corrupted_Isle				= 537
-Global Const $ID_Isle_Of_Solitude			= 538
-Global Const $ID_Remains_of_Sahlahja		= 545
-Global Const $ID_Dajkah_Inlet				= 554
-Global Const $ID_Nexus						= 555
+Global Const $ID_KAMADAN					= 370
+Global Const $ID_SUNWARD_MARCHES			= 373
+Global Const $ID_SUNSPEAR_SANCTUARY			= 387
+Global Const $ID_CHANTRY_OF_SECRETS			= 393
+Global Const $ID_KODASH_BAZAAR				= 414
+Global Const $ID_MIRROR_OF_LYSS				= 419
+Global Const $ID_MODDOK_CREVICE				= 427
+Global Const $ID_COMMAND_POST				= 436
+Global Const $ID_JOKOS_DOMAIN				= 437
+Global Const $ID_BONE_PALACE				= 438
+Global Const $ID_THE_SHATTERED_RAVINES		= 441
+Global Const $ID_THE_SULFUROUS_WASTES		= 444
+Global Const $ID_EBONY_CITADEL_OF_MALLYX	= 445
+Global Const $ID_GATE_OF_ANGUISH			= 474
+Global Const $ID_UNCHARTED_ISLE				= 529
+Global Const $ID_ISLE_OF_WURMS				= 530
+Global Const $ID_CORRUPTED_ISLE				= 537
+Global Const $ID_ISLE_OF_SOLITUDE			= 538
+Global Const $ID_REMAINS_OF_SAHLAHJA		= 545
+Global Const $ID_DAJKAH_INLET				= 554
+Global Const $ID_NEXUS						= 555
 ; EotN
-Global Const $ID_Glints_Challenge			= 37
-Global Const $ID_Bjora_Marches				= 482
-Global Const $ID_Arbor_Bay					= 485
-Global Const $ID_Ice_Cliff_Chasms			= 499
-Global Const $ID_Riven_Earth				= 501
-Global Const $ID_Jaga_Moraine				= 546
-Global Const $ID_Varajar_Fells				= 553
-Global Const $ID_Sparkfly_Swamp				= 558
-Global Const $ID_Verdant_Cascades			= 566
-Global Const $ID_Magus_Stones				= 569
-Global Const $ID_Slavers_Exile				= 577
-Global Const $ID_Shards_of_Orr_Floor_1		= 581
-Global Const $ID_Shards_of_Orr_Floor_2		= 582
-Global Const $ID_Shards_of_Orr_Floor_3		= 583
-Global Const $ID_Bogroot_lvl1				= 615
-Global Const $ID_Bogroot_lvl2				= 616
-Global Const $ID_Vloxs_Fall					= 624
-Global Const $ID_Gadds_Camp					= 638
-Global Const $ID_Umbral_Grotto				= 639
-Global Const $ID_Rata_Sum					= 640
-Global Const $ID_Eye_of_the_North			= IsChristmasFestival() ? $ID_Christmas_Eye_of_the_North : $ID_Default_Eye_of_the_North
-Global Const $ID_Gunnars_Hold				= 644
-Global Const $ID_Olafstead					= 645
-Global Const $ID_Hall_of_Monuments			= 646
-Global Const $ID_Dalada_Uplands				= 647
-Global Const $ID_Doomlore_Shrine			= 648
-Global Const $ID_Longeyes_Ledge				= 650
-Global Const $ID_Boreal_Station				= 675
-Global Const $ID_Central_Transfer_Chamber	= 652
-Global Const $ID_Auspicious_Beginnings		= 849
+Global Const $ID_GLINTS_CHALLENGE			= 37
+Global Const $ID_BJORA_MARCHES				= 482
+Global Const $ID_ARBOR_BAY					= 485
+Global Const $ID_ICE_CLIFF_CHASMS			= 499
+Global Const $ID_RIVEN_EARTH				= 501
+Global Const $ID_JAGA_MORAINE				= 546
+Global Const $ID_VARAJAR_FELLS				= 553
+Global Const $ID_SPARKFLY_SWAMP				= 558
+Global Const $ID_VERDANT_CASCADES			= 566
+Global Const $ID_MAGUS_STONES				= 569
+Global Const $ID_SLAVERS_EXILE				= 577
+Global Const $ID_SHARDS_OF_ORR_FLOOR_1		= 581
+Global Const $ID_SHARDS_OF_ORR_FLOOR_2		= 582
+Global Const $ID_SHARDS_OF_ORR_FLOOR_3		= 583
+Global Const $ID_BOGROOT_LVL1				= 615
+Global Const $ID_BOGROOT_LVL2				= 616
+Global Const $ID_VLOXS_FALL					= 624
+Global Const $ID_GADDS_CAMP					= 638
+Global Const $ID_UMBRAL_GROTTO				= 639
+Global Const $ID_RATA_SUM					= 640
+Global Const $ID_EYE_OF_THE_NORTH			= IsChristmasFestival() ? $ID_CHRISTMAS_EYE_OF_THE_NORTH : $ID_DEFAULT_EYE_OF_THE_NORTH
+Global Const $ID_GUNNARS_HOLD				= 644
+Global Const $ID_OLAFSTEAD					= 645
+Global Const $ID_HALL_OF_MONUMENTS			= 646
+Global Const $ID_DALADA_UPLANDS				= 647
+Global Const $ID_DOOMLORE_SHRINE			= 648
+Global Const $ID_LONGEYES_LEDGE				= 650
+Global Const $ID_BOREAL_STATION				= 675
+Global Const $ID_CENTRAL_TRANSFER_CHAMBER	= 652
+Global Const $ID_AUSPICIOUS_BEGINNINGS		= 849
 
-Global Const $LocationIDs				= [$ID_Outpost, $ID_Explorable, $ID_Loading, $ID_Ashford_Abbey, $ID_Lakeside_County, $ID_Great_Temple_of_Balthazar, $ID_Embark_Beach, $ID_Fissure_of_Woe, $ID_Underworld, _
-											$ID_Warriors_Isle, $ID_Hunters_Isle, $ID_Wizards_Isle, $ID_Augury_Rock, $ID_Burning_Isle, $ID_Lions_Arch, $ID_Tascas_Demise, $ID_Elona_Reach, $ID_Temple_of_the_Ages, $ID_The_Granite_Citadel, $ID_Frozen_Isle, _
-											$ID_Nomads_Isle, $ID_Druids_Isle, $ID_Isle_Of_The_Dead, $ID_House_Zu_Heltzer, $ID_Cavalon, $ID_Kaineng_City, $ID_Drazach_Thicket, $ID_Jaya_Bluffs, $ID_Mount_Qinkai, _
-											$ID_Silent_Surf, $ID_Ferndale, $ID_Pongmei_Valley, $ID_Minister_Chos_Estate, $ID_Nahpui_Quarter, $ID_Boreas_Seabed, $ID_The_Eternal_Grove, $ID_Sunqua_Vale, _
-											$ID_Wajjun_Bazaar, $ID_Bukdek_Byway, $ID_Shing_Jea_Monastery, $ID_Seitung_Harbor, $ID_Urgoz_Warren, $ID_Isle_Of_Weeping_Stone, $ID_Isle_Of_Jade, $ID_Leviathan_Pits, _
-											$ID_Zin_Ku_Corridor, $ID_The_Marketplace, $ID_The_Deep, $ID_Saint_Anjekas_Shrine, $ID_Imperial_Isle, $ID_Isle_Of_Meditation, $ID_Aspenwood_Gate_Luxon, $ID_Kaineng_City_Events, _
-											$ID_Kaineng_A_Chance_Encounter, $ID_Kamadan, $ID_Sunward_Marches, $ID_Sunspear_Sanctuary, $ID_Chantry_Of_Secrets, $ID_Kodash_Bazaar, $ID_Mirror_of_Lyss, _
-											$ID_Moddok_Crevice, $ID_Command_Post, $ID_Jokos_Domain, $ID_Bone_Palace, $ID_The_Shattered_Ravines, $ID_The_Sulfurous_Wastes, $ID_Gate_Of_Anguish, $ID_Uncharted_Isle, _
-											$ID_Isle_Of_Wurms, $ID_Corrupted_Isle, $ID_Isle_Of_Solitude, $ID_Remains_of_Sahlahja, $ID_Dajkah_Inlet, $ID_Nexus, $ID_Bjora_Marches, $ID_Arbor_Bay, $ID_Ice_Cliff_Chasms, $ID_Riven_Earth, _
-											$ID_Jaga_Moraine, $ID_Varajar_Fells, $ID_Sparkfly_Swamp, $ID_Verdant_Cascades, $ID_Slavers_Exile, $ID_Shards_of_Orr_Floor_1, $ID_Shards_of_Orr_Floor_2, $ID_Shards_of_Orr_Floor_3, _
-											$ID_Bogroot_lvl1, $ID_Bogroot_lvl2, $ID_Vloxs_Fall, $ID_Gadds_Camp, $ID_Umbral_Grotto, $ID_Rata_Sum, $ID_Eye_of_the_North, $ID_Olafstead, $ID_Hall_of_Monuments, _
-											$ID_Dalada_Uplands, $ID_Doomlore_Shrine, $ID_Longeyes_Ledge, $ID_Boreal_Station, $ID_Central_Transfer_Chamber]
+Global Const $LOCATION_IDS					= [$ID_OUTPOST, $ID_Explorable, $ID_Loading, $ID_ASHFORD_ABBEY, $ID_LAKESIDE_COUNTY, $ID_GREAT_TEMPLE_OF_BALTHAZAR, $ID_EMBARK_BEACH, $ID_FISSURE_OF_WOE, $ID_UNDERWORLD, _
+											$ID_WARRIORS_ISLE, $ID_HUNTERS_ISLE, $ID_WIZARDS_ISLE, $ID_AUGURY_ROCK, $ID_BURNING_ISLE, $ID_LIONS_ARCH, $ID_TASCAS_DEMISE, $ID_ELONA_REACH, $ID_TEMPLE_OF_THE_AGES, $ID_THE_GRANITE_CITADEL, $ID_FROZEN_ISLE, _
+											$ID_NOMADS_ISLE, $ID_DRUIDS_ISLE, $ID_ISLE_OF_THE_DEAD, $ID_HOUSE_ZU_HELTZER, $ID_CAVALON, $ID_KAINENG_CITY, $ID_DRAZACH_THICKET, $ID_JAYA_BLUFFS, $ID_MOUNT_QINKAI, _
+											$ID_SILENT_SURF, $ID_FERNDALE, $ID_PONGMEI_VALLEY, $ID_MINISTER_CHOS_ESTATE, $ID_NAHPUI_QUARTER, $ID_BOREAS_SEABED, $ID_THE_ETERNAL_GROVE, $ID_SUNQUA_VALE, _
+											$ID_WAJJUN_BAZAAR, $ID_BUKDEK_BYWAY, $ID_SHING_JEA_MONASTERY, $ID_SEITUNG_HARBOR, $ID_URGOZ_WARREN, $ID_ISLE_OF_WEEPING_STONE, $ID_ISLE_OF_JADE, $ID_LEVIATHAN_PITS, _
+											$ID_ZIN_KU_CORRIDOR, $ID_THE_MARKETPLACE, $ID_THE_DEEP, $ID_SAINT_ANJEKAS_SHRINE, $ID_IMPERIAL_ISLE, $ID_ISLE_OF_MEDITATION, $ID_ASPENWOOD_GATE_LUXON, $ID_KAINENG_CITY_EVENTS, _
+											$ID_KAINENG_A_CHANCE_ENCOUNTER, $ID_KAMADAN, $ID_SUNWARD_MARCHES, $ID_SUNSPEAR_SANCTUARY, $ID_CHANTRY_OF_SECRETS, $ID_KODASH_BAZAAR, $ID_MIRROR_OF_LYSS, _
+											$ID_MODDOK_CREVICE, $ID_COMMAND_POST, $ID_JOKOS_DOMAIN, $ID_BONE_PALACE, $ID_THE_SHATTERED_RAVINES, $ID_THE_SULFUROUS_WASTES, $ID_GATE_OF_ANGUISH, $ID_UNCHARTED_ISLE, _
+											$ID_ISLE_OF_WURMS, $ID_CORRUPTED_ISLE, $ID_ISLE_OF_SOLITUDE, $ID_REMAINS_OF_SAHLAHJA, $ID_DAJKAH_INLET, $ID_NEXUS, $ID_BJORA_MARCHES, $ID_ARBOR_BAY, $ID_ICE_CLIFF_CHASMS, $ID_RIVEN_EARTH, _
+											$ID_JAGA_MORAINE, $ID_VARAJAR_FELLS, $ID_SPARKFLY_SWAMP, $ID_VERDANT_CASCADES, $ID_SLAVERS_EXILE, $ID_SHARDS_OF_ORR_FLOOR_1, $ID_SHARDS_OF_ORR_FLOOR_2, $ID_SHARDS_OF_ORR_FLOOR_3, _
+											$ID_BOGROOT_LVL1, $ID_BOGROOT_LVL2, $ID_VLOXS_FALL, $ID_GADDS_CAMP, $ID_UMBRAL_GROTTO, $ID_RATA_SUM, $ID_EYE_OF_THE_NORTH, $ID_OLAFSTEAD, $ID_HALL_OF_MONUMENTS, _
+											$ID_DALADA_UPLANDS, $ID_DOOMLORE_SHRINE, $ID_LONGEYES_LEDGE, $ID_BOREAL_STATION, $ID_CENTRAL_TRANSFER_CHAMBER]
 
-Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Underworld', 'Warriors Isle', 'Hunters Isle', _
+Global Const $LOCATION_NAMES				= ['Outpost', 'Explorable', 'Loading', 'Ashford Abbey', 'Lakeside County', 'Great Temple of Balthazar', 'Embark Beach', 'Fissure of Woe', 'Underworld', 'Warriors Isle', 'Hunters Isle', _
 											'Wizards Isle', 'Augury Rock', 'Burning Isle', 'Lions Arch', 'Tascas Demise', 'Elona Reach', 'Temple of the Ages', 'The Granite Citadel', 'Frozen Isle', 'Nomads Isle', 'Druids Isle', 'Isle Of The Dead', _
 											'House Zu Heltzer', 'Cavalon', 'Kaineng Center', 'Drazach Thicket', 'Jaya Bluffs', 'Mount Qinkai', 'Silent Surf', 'Ferndale', 'Pongmei Valley', 'Minister Chos Estate', 'Nahpui Quarter', _
 											'Boreas Seabed', 'The Eternal Grove', 'Sunqua Vale', 'Wajjun Bazaar', 'Bukdek Byway', 'Shing Jea Monastery', 'Seitung Harbor', 'Urgoz Warren', 'Isle Of Weeping Stone', _
@@ -232,1649 +232,1651 @@ Global Const $LocationNames				= ['Outpost', 'Explorable', 'Loading', 'Ashford A
 											'Shards of Orr Floor 1', 'Shards of Orr Floor 2', 'Shards of Orr Floor 3', 'Bogroot lvl1', 'Bogroot lvl2', 'Vloxs Fall', 'Gadds Camp', 'Umbral Grotto', 'Rata Sum', 'Eye of the North', _
 											'Olafstead', 'Hall of Monuments', 'Dalada Uplands', 'Doomlore Shrine', 'Longeyes Ledge', 'Boreal Station', 'Central Transfer Chamber']
 
-Global Const $LocationMapNames			=	MapFromArrays($LocationIds, $LocationNames)
+Global Const $LOCATIONMAPNAMES				=	MapFromArrays($LOCATION_IDS, $LOCATION_NAMES)
 #EndRegion Game Locations
 
 
 #Region Professions
-Global Const $ID_Unknown		= 0
-Global Const $ID_Warrior		= 1
-Global Const $ID_Ranger			= 2
-Global Const $ID_Monk			= 3
-Global Const $ID_Necromancer	= 4
-Global Const $ID_Mesmer			= 5
-Global Const $ID_Elementalist	= 6
-Global Const $ID_Assassin		= 7
-Global Const $ID_Ritualist		= 8
-Global Const $ID_Paragon		= 9
-Global Const $ID_Dervish		= 10
-Global Const $ID_Any_Profession	= 11
+Global Const $ID_UNKNOWN				= 0
+Global Const $ID_WARRIOR				= 1
+Global Const $ID_RANGER					= 2
+Global Const $ID_MONK					= 3
+Global Const $ID_NECROMANCER			= 4
+Global Const $ID_MESMER					= 5
+Global Const $ID_ELEMENTALIST			= 6
+Global Const $ID_ASSASSIN				= 7
+Global Const $ID_RITUALIST				= 8
+Global Const $ID_PARAGON				= 9
+Global Const $ID_DERVISH				= 10
+Global Const $ID_ANY_PROFESSION			= 11
 #EndRegion Professions
 
 
 #Region Team Sizes
-Global Const $ID_Team_Size_Small	= 4
-Global Const $ID_Team_Size_Medium	= 6
-Global Const $ID_Team_Size_Large	= 8
+Global Const $ID_TEAM_SIZE_SMALL		= 4
+Global Const $ID_TEAM_SIZE_MEDIUM		= 6
+Global Const $ID_TEAM_SIZE_LARGE		= 8
 #EndRegion Team Sizes
 
 #Region Hero combat behaviour
-Global Const $ID_Hero_fighting	= 0
-Global Const $ID_Hero_guarding	= 1
-Global Const $ID_Hero_avoiding	= 2
+Global Const $ID_HERO_FIGHTING			= 0
+Global Const $ID_HERO_GUARDING			= 1
+Global Const $ID_HERO_AVOIDING			= 2
 #EndRegion Hero combat behaviour
 
 #Region Agents Allegiance
-Global Const $ID_Allegiance_Team	= 1								; player and team party members
-Global Const $ID_Allegiance_Animal	= 2								; untamed animals
-Global Const $ID_Allegiance_Foe		= 3								; enemies
-Global Const $ID_Allegiance_Spirit	= 4								; ranger and ritualist spirits and tamed animals (pets)
-Global Const $ID_Allegiance_Minion	= 5								; necromancer's minions
-Global Const $ID_Allegiance_Npc		= 6								; npcs, can be team allies
+Global Const $ID_ALLEGIANCE_TEAM		= 1								; player and team party members
+Global Const $ID_ALLEGIANCE_ANIMAL		= 2								; untamed animals
+Global Const $ID_ALLEGIANCE_FOE			= 3								; enemies
+Global Const $ID_ALLEGIANCE_SPIRIT		= 4								; ranger and ritualist spirits and tamed animals (pets)
+Global Const $ID_ALLEGIANCE_MINION		= 5								; necromancer's minions
+Global Const $ID_ALLEGIANCE_NPC			= 6								; npcs, can be team allies
 #EndRegion Agents Allegiance
 
 #Region Agents Types
-Global Const $ID_Agent_Type_NPC		= 0xDB							; player, team members, npcs, foes
-Global Const $ID_Agent_Type_Static	= 0x200							; static objects like chests and signposts
-Global Const $ID_Agent_Type_Item	= 0x400							; item lying on the ground
+Global Const $ID_AGENT_TYPE_NPC			= 0xDB							; player, team members, npcs, foes
+Global Const $ID_AGENT_TYPE_STATIC		= 0x200							; static objects like chests and signposts
+Global Const $ID_AGENT_TYPE_ITEM		= 0x400							; item lying on the ground
 #EndRegion Agents Types
 
 #Region Agents TypeMap Values
-Global Const $ID_TypeMap_Attack_Stance	= 0x0001					; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
-Global Const $ID_TypeMap_Skill_Usage	= 0x2000					; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
-Global Const $ID_TypeMap_Death_State	= 0x0008					; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
+Global Const $ID_TYPEMAP_ATTACK_STANCE	= 0x0001					; = 2^0 = 1 = attacking or attack stance of an agent. Bit on 1st position
+Global Const $ID_TYPEMAP_SKILL_USAGE	= 0x2000					; = 2^13 = 8192 = usage of skill by agent. Bit on 14th position
+Global Const $ID_TYPEMAP_DEATH_STATE	= 0x0008					; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
 
-Global Const $ID_TypeMap_City_NPC		= 0x0002					; = 2^1 = 2 = npcs in cities. Bit on 2nd position
-Global Const $ID_TypeMap_Idle_Foe		= 0x0000					; = 0 = enemies, who don't do anything, for example when far away
-Global Const $ID_TypeMap_Attacking_Foe	= 0x2001					; = 8193 = enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
-Global Const $ID_TypeMap_Aggroed_Foe	= $ID_TypeMap_Attack_Stance	; = 0x1 = enemies, when they are in attack stance, but not using skills
-Global Const $ID_TypeMap_Dead_Foe		= $ID_TypeMap_Death_State	; = 0x8 = enemies in dead state
+Global Const $ID_TYPEMAP_CITY_NPC		= 0x0002					; = 2^1 = 2 = npcs in cities. Bit on 2nd position
+Global Const $ID_TYPEMAP_IDLE_FOE		= 0x0000					; = 0 = enemies, who don't do anything, for example when far away
+Global Const $ID_TYPEMAP_ATTACKING_FOE	= 0x2001					; = 8193 = enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
+Global Const $ID_TYPEMAP_AGGROED_FOE	= $ID_TYPEMAP_ATTACK_STANCE	; = 0x1 = enemies, when they are in attack stance, but not using skills
+Global Const $ID_TYPEMAP_DEAD_FOE		= $ID_TYPEMAP_DEATH_STATE	; = 0x8 = enemies in dead state
 
-Global Const $ID_TypeMap_Idle_Ally		= 0x20000					; = 2^17 = 131072 = party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
-Global Const $ID_TypeMap_Aggroed_Ally	= 0x20001					; = 131073 = aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
-Global Const $ID_TypeMap_Attacking_Ally	= 0x22001					; = 139265 = attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
-Global Const $ID_TypeMap_Dead_Ally		= 0x20008					; = 131080 = dead party members and NPC allies. Bits on 4th and 18th positions
+Global Const $ID_TYPEMAP_IDLE_ALLY		= 0x20000					; = 2^17 = 131072 = party members, NPC allies and other players. Allies that are idle and not using any skills. Bit on 18th position
+Global Const $ID_TYPEMAP_AGGROED_ALLY	= 0x20001					; = 131073 = aggroed party members and NPC allies but not using any skills. Bits on 1st and 18th positions
+Global Const $ID_TYPEMAP_ATTACKING_ALLY	= 0x22001					; = 139265 = attacking party members and NPC allies, that are using skills. Bits on 1st and 14th and 18th positions
+Global Const $ID_TYPEMAP_DEAD_ALLY		= 0x20008					; = 131080 = dead party members and NPC allies. Bits on 4th and 18th positions
 
-Global Const $ID_TypeMap_Idle_Player	= 0x421004					; = 4329476 = idle player, when not using skills and not fighting
-Global Const $ID_TypeMap_Aggroed_Player	= 0x421005					; = 4329477 = aggroed player, in attack stance, but not using skills
-Global Const $ID_TypeMap_Casting_Player	= 0x423005					; = 4337669 = attacking player who is using a skill
-Global Const $ID_TypeMap_Dead_Player	= 0x42100C					; = 4329484 = dead player
+Global Const $ID_TYPEMAP_IDLE_PLAYER	= 0x421004					; = 4329476 = idle player, when not using skills and not fighting
+Global Const $ID_TYPEMAP_AGGROED_PLAYER	= 0x421005					; = 4329477 = aggroed player, in attack stance, but not using skills
+Global Const $ID_TYPEMAP_CASTING_PLAYER	= 0x423005					; = 4337669 = attacking player who is using a skill
+Global Const $ID_TYPEMAP_DEAD_PLAYER	= 0x42100C					; = 4329484 = dead player
 
-Global Const $ID_TypeMap_Idle_Minion	= 0x40000					; = 262144 = idle spirits created by ranger. Bit on 19th position
-Global Const $ID_TypeMap_Aggroed_Minion	= 0x40001					; = 262145 = spirits created by ritualist and bone minions created by necromancers. Agents that can attack. Bits on 1st and 19th positions
+Global Const $ID_TYPEMAP_IDLE_MINION	= 0x40000					; = 262144 = idle spirits created by ranger. Bit on 19th position
+Global Const $ID_TYPEMAP_AGGROED_MINION	= 0x40001					; = 262145 = spirits created by ritualist and bone minions created by necromancers. Agents that can attack. Bits on 1st and 19th positions
 #EndRegion Agents TypeMap Values
 
 
 #Region Profession Attributes
-Global Const $ID_Fast_Casting				= 0
-Global Const $ID_Illusion_Magic				= 1
-Global Const $ID_Domination_Magic			= 2
-Global Const $ID_Inspiration_Magic			= 3
-Global Const $ID_Blood_Magic				= 4
-Global Const $ID_Death_Magic				= 5
-Global Const $ID_Soul_Reaping				= 6
-Global Const $ID_Curses						= 7
-Global Const $ID_Air_Magic					= 8
-Global Const $ID_Earth_Magic				= 9
-Global Const $ID_Fire_Magic					= 10
-Global Const $ID_Water_Magic				= 11
-Global Const $ID_Energy_Storage				= 12
-Global Const $ID_Healing_Prayers			= 13
-Global Const $ID_Smiting_Prayers			= 14
-Global Const $ID_Protection_Prayers			= 15
-Global Const $ID_Divine_Favor				= 16
-Global Const $ID_Strength					= 17
-Global Const $ID_Axe_Mastery				= 18
-Global Const $ID_Hammer_Mastery				= 19
-Global Const $ID_Swordsmanship				= 20
-Global Const $ID_Tactics					= 21
-Global Const $ID_BeastMastery				= 22
-Global Const $ID_Expertise					= 23
-Global Const $ID_Wilderness_Survival		= 24
-Global Const $ID_Marksmanship				= 25
-;Global Const $ID_Empty_Attribute_1			= 26
-;Global Const $ID_Empty_Attribute_2			= 27
-;Global Const $ID_Empty_Attribute_3			= 28
-Global Const $ID_Dagger_Mastery				= 29
-Global Const $ID_Deadly_Arts				= 30
-Global Const $ID_Shadow_Arts				= 31
-Global Const $ID_Communing					= 32
-Global Const $ID_Restoration_Magic			= 33
-Global Const $ID_Channeling_Magic			= 34
-Global Const $ID_Critical_Strikes			= 35
-Global Const $ID_Spawning_Power				= 36
-Global Const $ID_Spear_Mastery				= 37
-Global Const $ID_Command					= 38
-Global Const $ID_Motivation					= 39
-Global Const $ID_Leadership					= 40
-Global Const $ID_Scythe_Mastery				= 41
-Global Const $ID_Wind_Prayers				= 42
-Global Const $ID_Earth_Prayers				= 43
-Global Const $ID_Mysticism					= 44
-Global Const $ID_All_Caster_Primaries		= 45
-Global Const $Attributes_Array[]	= [	$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic, _
-										$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses, _
-										$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage, _
-										$ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor, _
-										$ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics, _
-										$ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship, _
-										_ ;$ID_Empty_Attribute_1, $ID_Empty_Attribute_2, $ID_Empty_Attribute_3, _
-										$ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes, _
-										$ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power, _
-										$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership, _
-										$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism ]
-Global Const $Attributes_Double_Array[][]	= [	[$ID_Fast_Casting, 'Fast Casting'], [$ID_Illusion_Magic, 'Illusion Magic'], [$ID_Domination_Magic, 'Domination Magic'], [$ID_Inspiration_Magic, 'Inspiration Magic'], _
-												[$ID_Blood_Magic, 'Blood Magic'], [$ID_Death_Magic, 'Death Magic'], [$ID_Soul_Reaping, 'Soul Reaping'], [$ID_Curses, 'Curses'], _
-												[$ID_Air_Magic, 'Air Magic'], [$ID_Earth_Magic, 'Earth Magic'], [$ID_Fire_Magic, 'Fire Magic'], [$ID_Water_Magic, 'Water Magic'], [$ID_Energy_Storage, 'Energy Storage'], _
-												[$ID_Healing_Prayers, 'Healing Prayers'], [$ID_Smiting_Prayers, 'Smiting Prayers'], [$ID_Protection_Prayers, 'Protection Prayers'], [$ID_Divine_Favor, 'Divine Favor'], _
-												[$ID_Strength, 'Strength'], [$ID_Axe_Mastery, 'Axe Mastery'], [$ID_Hammer_Mastery, 'Hammer Mastery'], [$ID_Swordsmanship, 'Swordsmanship'], [$ID_Tactics, 'Tactics'], _
-												[$ID_BeastMastery, 'Beast Mastery'], [$ID_Expertise, 'Expertise'], [$ID_Wilderness_Survival, 'Wilderness Survival'], [$ID_Marksmanship, 'Marksmanship'], _
-												[$ID_Dagger_Mastery, 'Dagger Mastery'], [$ID_Deadly_Arts, 'Deadly Arts'], [$ID_Shadow_Arts, 'Shadow Arts'], [$ID_Critical_Strikes, 'Critical Strikes'], _
-												[$ID_Restoration_Magic, 'Restoration Magic'], [$ID_Channeling_Magic, 'Channeling Magic'], [$ID_Spawning_Power, 'Spawning Power'], [$ID_Communing, 'Communing'], _
-												[$ID_Command, 'Command'], [$ID_Motivation, 'Motivation'], [$ID_Leadership, 'Leadership'], [$ID_Spear_Mastery, 'Spear Mastery'], _
-												[$ID_Scythe_Mastery, 'Scythe Mastery'], [$ID_Wind_Prayers, 'Wind Prayers'], [$ID_Earth_Prayers, 'Earth Prayers'], [$ID_Mysticism, 'Mysticism']]
-Global Const $Unknown_Attributes			= []
-Global Const $Mesmer_Attributes				= [$ID_Fast_Casting, $ID_Illusion_Magic, $ID_Domination_Magic, $ID_Inspiration_Magic]
-Global Const $Necromancer_Attributes		= [$ID_Blood_Magic, $ID_Death_Magic, $ID_Soul_Reaping, $ID_Curses]
-Global Const $Elementalist_Attributes		= [$ID_Air_Magic, $ID_Earth_Magic, $ID_Fire_Magic, $ID_Water_Magic, $ID_Energy_Storage]
-Global Const $Monk_Attributes				= [$ID_Healing_Prayers, $ID_Smiting_Prayers, $ID_Protection_Prayers, $ID_Divine_Favor]
-Global Const $Warrior_Attributes			= [$ID_Strength, $ID_Axe_Mastery, $ID_Hammer_Mastery, $ID_Swordsmanship, $ID_Tactics]
-Global Const $Ranger_Attributes				= [$ID_BeastMastery, $ID_Expertise, $ID_Wilderness_Survival, $ID_Marksmanship]
-Global Const $Assassin_Attributes			= [$ID_Dagger_Mastery, $ID_Deadly_Arts, $ID_Shadow_Arts, $ID_Critical_Strikes]
-Global Const $Ritualist_Attributes			= [$ID_Communing, $ID_Restoration_Magic, $ID_Channeling_Magic, $ID_Spawning_Power]
-Global Const $Paragon_Attributes			= [$ID_Spear_Mastery, $ID_Command, $ID_Motivation, $ID_Leadership]
-Global Const $Dervish_Attributes			= [$ID_Scythe_Mastery, $ID_Wind_Prayers, $ID_Earth_Prayers, $ID_Mysticism]
+Global Const $ID_FAST_CASTING					= 0
+Global Const $ID_ILLUSION_MAGIC					= 1
+Global Const $ID_DOMINATION_MAGIC				= 2
+Global Const $ID_INSPIRATION_MAGIC				= 3
+Global Const $ID_BLOOD_MAGIC					= 4
+Global Const $ID_DEATH_MAGIC					= 5
+Global Const $ID_SOUL_REAPING					= 6
+Global Const $ID_CURSES							= 7
+Global Const $ID_AIR_MAGIC						= 8
+Global Const $ID_EARTH_MAGIC					= 9
+Global Const $ID_FIRE_MAGIC						= 10
+Global Const $ID_WATER_MAGIC					= 11
+Global Const $ID_ENERGY_STORAGE					= 12
+Global Const $ID_HEALING_PRAYERS				= 13
+Global Const $ID_SMITING_PRAYERS				= 14
+Global Const $ID_PROTECTION_PRAYERS				= 15
+Global Const $ID_DIVINE_FAVOR					= 16
+Global Const $ID_STRENGTH						= 17
+Global Const $ID_AXE_MASTERY					= 18
+Global Const $ID_HAMMER_MASTERY					= 19
+Global Const $ID_SWORDSMANSHIP					= 20
+Global Const $ID_TACTICS						= 21
+Global Const $ID_BEASTMASTERY					= 22
+Global Const $ID_EXPERTISE						= 23
+Global Const $ID_WILDERNESS_SURVIVAL			= 24
+Global Const $ID_MARKSMANSHIP					= 25
+;Global Const $ID_EMPTY_ATTRIBUTE_1				= 26
+;Global Const $ID_EMPTY_ATTRIBUTE_2				= 27
+;Global Const $ID_EMPTY_ATTRIBUTE_3				= 28
+Global Const $ID_DAGGER_MASTERY					= 29
+Global Const $ID_DEADLY_ARTS					= 30
+Global Const $ID_SHADOW_ARTS					= 31
+Global Const $ID_COMMUNING						= 32
+Global Const $ID_RESTORATION_MAGIC				= 33
+Global Const $ID_CHANNELING_MAGIC				= 34
+Global Const $ID_CRITICAL_STRIKES				= 35
+Global Const $ID_SPAWNING_POWER					= 36
+Global Const $ID_SPEAR_MASTERY					= 37
+Global Const $ID_COMMAND						= 38
+Global Const $ID_MOTIVATION						= 39
+Global Const $ID_LEADERSHIP						= 40
+Global Const $ID_SCYTHE_MASTERY					= 41
+Global Const $ID_WIND_PRAYERS					= 42
+Global Const $ID_EARTH_PRAYERS					= 43
+Global Const $ID_MYSTICISM						= 44
+Global Const $ID_ALL_CASTER_PRIMARIES			= 45
+Global Const $ATTRIBUTES_ARRAY[]				= [	$ID_FAST_CASTING, $ID_ILLUSION_MAGIC, $ID_DOMINATION_MAGIC, $ID_INSPIRATION_MAGIC, _
+													$ID_BLOOD_MAGIC, $ID_DEATH_MAGIC, $ID_SOUL_REAPING, $ID_CURSES, _
+													$ID_AIR_MAGIC, $ID_EARTH_MAGIC, $ID_FIRE_MAGIC, $ID_WATER_MAGIC, $ID_ENERGY_STORAGE, _
+													$ID_HEALING_PRAYERS, $ID_SMITING_PRAYERS, $ID_PROTECTION_PRAYERS, $ID_DIVINE_FAVOR, _
+													$ID_STRENGTH, $ID_AXE_MASTERY, $ID_HAMMER_MASTERY, $ID_SWORDSMANSHIP, $ID_TACTICS, _
+													$ID_BEASTMASTERY, $ID_EXPERTISE, $ID_WILDERNESS_SURVIVAL, $ID_MARKSMANSHIP, _
+													_ ;$ID_EMPTY_ATTRIBUTE_1, $ID_EMPTY_ATTRIBUTE_2, $ID_EMPTY_ATTRIBUTE_3, _
+													$ID_DAGGER_MASTERY, $ID_DEADLY_ARTS, $ID_SHADOW_ARTS, $ID_CRITICAL_STRIKES, _
+													$ID_COMMUNING, $ID_RESTORATION_MAGIC, $ID_CHANNELING_MAGIC, $ID_SPAWNING_POWER, _
+													$ID_SPEAR_MASTERY, $ID_COMMAND, $ID_MOTIVATION, $ID_LEADERSHIP, _
+													$ID_SCYTHE_MASTERY, $ID_WIND_PRAYERS, $ID_EARTH_PRAYERS, $ID_MYSTICISM ]
+Global Const $ATTRIBUTES_DOUBLE_ARRAY[][]		= [	[$ID_FAST_CASTING, 'Fast Casting'], [$ID_ILLUSION_MAGIC, 'Illusion Magic'], [$ID_DOMINATION_MAGIC, 'Domination Magic'], [$ID_INSPIRATION_MAGIC, 'Inspiration Magic'], _
+													[$ID_BLOOD_MAGIC, 'Blood Magic'], [$ID_DEATH_MAGIC, 'Death Magic'], [$ID_SOUL_REAPING, 'Soul Reaping'], [$ID_CURSES, 'Curses'], _
+													[$ID_AIR_MAGIC, 'Air Magic'], [$ID_EARTH_MAGIC, 'Earth Magic'], [$ID_FIRE_MAGIC, 'Fire Magic'], [$ID_WATER_MAGIC, 'Water Magic'], [$ID_ENERGY_STORAGE, 'Energy Storage'], _
+													[$ID_HEALING_PRAYERS, 'Healing Prayers'], [$ID_SMITING_PRAYERS, 'Smiting Prayers'], [$ID_PROTECTION_PRAYERS, 'Protection Prayers'], [$ID_DIVINE_FAVOR, 'Divine Favor'], _
+													[$ID_STRENGTH, 'Strength'], [$ID_AXE_MASTERY, 'Axe Mastery'], [$ID_HAMMER_MASTERY, 'Hammer Mastery'], [$ID_SWORDSMANSHIP, 'Swordsmanship'], [$ID_TACTICS, 'Tactics'], _
+													[$ID_BEASTMASTERY, 'Beast Mastery'], [$ID_EXPERTISE, 'Expertise'], [$ID_WILDERNESS_SURVIVAL, 'Wilderness Survival'], [$ID_MARKSMANSHIP, 'Marksmanship'], _
+													[$ID_DAGGER_MASTERY, 'Dagger Mastery'], [$ID_DEADLY_ARTS, 'Deadly Arts'], [$ID_SHADOW_ARTS, 'Shadow Arts'], [$ID_CRITICAL_STRIKES, 'Critical Strikes'], _
+													[$ID_RESTORATION_MAGIC, 'Restoration Magic'], [$ID_CHANNELING_MAGIC, 'Channeling Magic'], [$ID_SPAWNING_POWER, 'Spawning Power'], [$ID_COMMUNING, 'Communing'], _
+													[$ID_COMMAND, 'Command'], [$ID_MOTIVATION, 'Motivation'], [$ID_LEADERSHIP, 'Leadership'], [$ID_SPEAR_MASTERY, 'Spear Mastery'], _
+													[$ID_SCYTHE_MASTERY, 'Scythe Mastery'], [$ID_WIND_PRAYERS, 'Wind Prayers'], [$ID_EARTH_PRAYERS, 'Earth Prayers'], [$ID_MYSTICISM, 'Mysticism']]
+Global Const $UNKNOWN_ATTRIBUTES				= []
+Global Const $MESMER_ATTRIBUTES					= [$ID_FAST_CASTING, $ID_ILLUSION_MAGIC, $ID_DOMINATION_MAGIC, $ID_INSPIRATION_MAGIC]
+Global Const $NECROMANCER_ATTRIBUTES			= [$ID_BLOOD_MAGIC, $ID_DEATH_MAGIC, $ID_SOUL_REAPING, $ID_CURSES]
+Global Const $ELEMENTALIST_ATTRIBUTES			= [$ID_AIR_MAGIC, $ID_EARTH_MAGIC, $ID_FIRE_MAGIC, $ID_WATER_MAGIC, $ID_ENERGY_STORAGE]
+Global Const $MONK_ATTRIBUTES					= [$ID_HEALING_PRAYERS, $ID_SMITING_PRAYERS, $ID_PROTECTION_PRAYERS, $ID_DIVINE_FAVOR]
+Global Const $WARRIOR_ATTRIBUTES				= [$ID_STRENGTH, $ID_AXE_MASTERY, $ID_HAMMER_MASTERY, $ID_SWORDSMANSHIP, $ID_TACTICS]
+Global Const $RANGER_ATTRIBUTES					= [$ID_BEASTMASTERY, $ID_EXPERTISE, $ID_WILDERNESS_SURVIVAL, $ID_MARKSMANSHIP]
+Global Const $ASSASSIN_ATTRIBUTES				= [$ID_DAGGER_MASTERY, $ID_DEADLY_ARTS, $ID_SHADOW_ARTS, $ID_CRITICAL_STRIKES]
+Global Const $RITUALIST_ATTRIBUTES				= [$ID_COMMUNING, $ID_RESTORATION_MAGIC, $ID_CHANNELING_MAGIC, $ID_SPAWNING_POWER]
+Global Const $PARAGON_ATTRIBUTES				= [$ID_SPEAR_MASTERY, $ID_COMMAND, $ID_MOTIVATION, $ID_LEADERSHIP]
+Global Const $DERVISH_ATTRIBUTES				= [$ID_SCYTHE_MASTERY, $ID_WIND_PRAYERS, $ID_EARTH_PRAYERS, $ID_MYSTICISM]
 
-Global Const $All_Profession_IDs			=	[$ID_Unknown, $ID_Mesmer, $ID_Necromancer, $ID_Elementalist, $ID_Monk, $ID_Warrior, $ID_Ranger, $ID_Assassin, $ID_Ritualist, $ID_Paragon, $ID_Dervish]
-Global Const $All_Profession_Attributes		=	[$Unknown_Attributes, $Mesmer_Attributes, $Necromancer_Attributes, $Elementalist_Attributes, $Monk_Attributes, $Warrior_Attributes, $Ranger_Attributes, _
-															$Assassin_Attributes, $Ritualist_Attributes, $Paragon_Attributes, $Dervish_Attributes]
-Global Const $AttributesByProfessionMap[]	=	MapFromArrays($All_Profession_IDs, $All_Profession_Attributes)
+Global Const $ALL_PROFESSION_IDS				=	[$ID_UNKNOWN, $ID_MESMER, $ID_NECROMANCER, $ID_ELEMENTALIST, $ID_MONK, $ID_WARRIOR, $ID_RANGER, $ID_ASSASSIN, $ID_RITUALIST, $ID_PARAGON, $ID_DERVISH]
+Global Const $ALL_PROFESSION_ATTRIBUTES			=	[$UNKNOWN_ATTRIBUTES, $MESMER_ATTRIBUTES, $NECROMANCER_ATTRIBUTES, $ELEMENTALIST_ATTRIBUTES, $MONK_ATTRIBUTES, $WARRIOR_ATTRIBUTES, $RANGER_ATTRIBUTES, _
+														$ASSASSIN_ATTRIBUTES, $RITUALIST_ATTRIBUTES, $PARAGON_ATTRIBUTES, $DERVISH_ATTRIBUTES]
+Global Const $ATTRIBUTES_BY_PROFESSION_MAP[]	=	MapFromArrays($ALL_PROFESSION_IDS, $ALL_PROFESSION_ATTRIBUTES)
 #EndRegion Weapon Attributes
 
 
 #Region Type IDs
-Global Const $ID_Type_Armor_Salvage			= 0
+Global Const $ID_TYPE_ARMOR_SALVAGE			= 0
 Global Const $TYPE_LEADHAND					= 1		;?
-Global Const $ID_Type_Axe					= 2
-Global Const $ID_Type_Bag					= 3
-Global Const $ID_Type_Foot_Armor			= 4
-Global Const $ID_Type_Bow					= 5
-Global Const $ID_Type_Bundle				= 6
-Global Const $ID_Type_Chest_Armor			= 7
-Global Const $ID_Type_Upgrade				= 8
-Global Const $ID_Type_Usable				= 9
-Global Const $ID_Type_Dye					= 10
-Global Const $ID_Type_Material				= 11	;Also includes Zcoins
-Global Const $ID_Type_Offhand				= 12
-Global Const $ID_Type_Hand_Armor			= 13
-Global Const $ID_Type_Celestial_Sigil		= 14
-Global Const $ID_Type_Hammer				= 15
-Global Const $ID_Type_Headgear_Armor		= 16
-Global Const $ID_Type_Trophy_2				= 17
-Global Const $ID_Type_Key					= 18
-Global Const $ID_Type_Leg_Armor				= 19
-Global Const $ID_Type_Money					= 20
-Global Const $ID_Type_Quest_Item			= 21
-Global Const $ID_Type_Wand					= 22
-Global Const $ID_Type_Shield				= 24
-Global Const $ID_Type_Staff					= 26
-Global Const $ID_Type_Sword					= 27
-Global Const $ID_Type_Kit					= 29	;? + Keg Ale
-Global Const $ID_Type_Trophy				= 30
-Global Const $ID_Type_Scroll				= 31
-Global Const $ID_Type_Dagger				= 32
-Global Const $ID_Type_Present				= 33	;?
-Global Const $ID_Type_Minipet				= 34
-Global Const $ID_Type_Scythe				= 35
-Global Const $ID_Type_Spear					= 36
-Global Const $ID_Type_Book					= 43
-Global Const $ID_Type_Costume_Body			= 44
-Global Const $ID_Type_Costume_Headpiece		= 45
-Global Const $ID_Type_Unequipped			= 46	;?
-Global Const $Item_Types_Double_Array[][]	= [	[$ID_Type_Armor_Salvage, 'Armor salvage'], [$TYPE_LEADHAND, 'TYPE_LEADHAND ?'], [$ID_Type_Axe, 'Axe'], [$ID_Type_Bag, 'Bag'], [$ID_Type_Foot_Armor, 'Foot armor'], _
-													[$ID_Type_Bow, 'Bow'], [$ID_Type_Bundle, 'Bundle'], [$ID_Type_Chest_Armor, 'Chest armor'], [$ID_Type_Upgrade, 'Upgrade'], [$ID_Type_Usable, 'Usables'], _
-													[$ID_Type_Dye, 'Dye'], [$ID_Type_Material, 'Material'], [$ID_Type_Offhand, 'Offhand'], [$ID_Type_Hand_Armor, 'Hand armor'], [$ID_Type_Celestial_Sigil, 'Celestial Sigil'], [$ID_Type_Hammer, 'Hammer'], _
-													[$ID_Type_Headgear_Armor, 'Headgear armor'], [$ID_Type_Trophy_2, 'Trophy2'], [$ID_Type_Key, 'Key'], [$ID_Type_Leg_Armor, 'Leg armor'], _
-													[$ID_Type_Money, 'Money'], [$ID_Type_Quest_Item, 'Quest item'], [$ID_Type_Wand, 'Wand'], [$ID_Type_Shield, 'Shield'], [$ID_Type_Staff, 'Staff'], _
-													[$ID_Type_Sword, 'Sword'], [$ID_Type_Kit, 'Kit'], [$ID_Type_Trophy, 'Trophy'], [$ID_Type_Scroll, 'Scroll'], _
-													[$ID_Type_Dagger, 'Dagger'], [$ID_Type_Present, 'PRESENT ?'], [$ID_Type_Minipet, 'Minipet'], [$ID_Type_Scythe, 'Scythe'], _
-													[$ID_Type_Spear, 'Spear'], [$ID_Type_Book, 'Book'], [$ID_Type_Costume_Body, 'Costume body'], [$ID_Type_Costume_Headpiece, 'Costume headpiece'], [$ID_Type_Unequipped, 'TYPE UNEQUIPED ?']]
+Global Const $ID_TYPE_AXE					= 2
+Global Const $ID_TYPE_BAG					= 3
+Global Const $ID_TYPE_FOOT_ARMOR			= 4
+Global Const $ID_TYPE_BOW					= 5
+Global Const $ID_TYPE_BUNDLE				= 6
+Global Const $ID_TYPE_CHEST_ARMOR			= 7
+Global Const $ID_TYPE_UPGRADE				= 8
+Global Const $ID_TYPE_USABLE				= 9
+Global Const $ID_TYPE_DYE					= 10
+Global Const $ID_TYPE_MATERIAL				= 11	;Also includes Zcoins
+Global Const $ID_TYPE_OFFHAND				= 12
+Global Const $ID_TYPE_HAND_ARMOR			= 13
+Global Const $ID_TYPE_CELESTIAL_SIGIL		= 14
+Global Const $ID_TYPE_HAMMER				= 15
+Global Const $ID_TYPE_HEADGEAR_ARMOR		= 16
+Global Const $ID_TYPE_TROPHY_2				= 17
+Global Const $ID_TYPE_KEY					= 18
+Global Const $ID_TYPE_LEG_ARMOR				= 19
+Global Const $ID_TYPE_MONEY					= 20
+Global Const $ID_TYPE_QUEST_ITEM			= 21
+Global Const $ID_TYPE_WAND					= 22
+Global Const $ID_TYPE_SHIELD				= 24
+Global Const $ID_TYPE_STAFF					= 26
+Global Const $ID_TYPE_SWORD					= 27
+Global Const $ID_TYPE_KIT					= 29	;? + Keg Ale
+Global Const $ID_TYPE_TROPHY				= 30
+Global Const $ID_TYPE_SCROLL				= 31
+Global Const $ID_TYPE_DAGGER				= 32
+Global Const $ID_TYPE_PRESENT				= 33	;?
+Global Const $ID_TYPE_MINIPET				= 34
+Global Const $ID_TYPE_SCYTHE				= 35
+Global Const $ID_TYPE_SPEAR					= 36
+Global Const $ID_TYPE_BOOK					= 43
+Global Const $ID_TYPE_COSTUME_BODY			= 44
+Global Const $ID_TYPE_COSTUME_HEADPIECE		= 45
+Global Const $ID_TYPE_UNEQUIPPED			= 46	;?
+Global Const $ITEM_TYPES_DOUBLE_ARRAY[][]	= [	[$ID_TYPE_ARMOR_SALVAGE, 'Armor salvage'], [$TYPE_LEADHAND, 'TYPE_LEADHAND ?'], [$ID_TYPE_AXE, 'Axe'], [$ID_TYPE_BAG, 'Bag'], [$ID_TYPE_FOOT_ARMOR, 'Foot armor'], _
+													[$ID_TYPE_BOW, 'Bow'], [$ID_TYPE_BUNDLE, 'Bundle'], [$ID_TYPE_CHEST_ARMOR, 'Chest armor'], [$ID_TYPE_UPGRADE, 'Upgrade'], [$ID_TYPE_USABLE, 'Usables'], _
+													[$ID_TYPE_DYE, 'Dye'], [$ID_TYPE_MATERIAL, 'Material'], [$ID_TYPE_OFFHAND, 'Offhand'], [$ID_TYPE_HAND_ARMOR, 'Hand armor'], [$ID_TYPE_CELESTIAL_SIGIL, 'Celestial Sigil'], [$ID_TYPE_HAMMER, 'Hammer'], _
+													[$ID_TYPE_HEADGEAR_ARMOR, 'Headgear armor'], [$ID_TYPE_TROPHY_2, 'Trophy2'], [$ID_TYPE_KEY, 'Key'], [$ID_TYPE_LEG_ARMOR, 'Leg armor'], _
+													[$ID_TYPE_MONEY, 'Money'], [$ID_TYPE_QUEST_ITEM, 'Quest item'], [$ID_TYPE_WAND, 'Wand'], [$ID_TYPE_SHIELD, 'Shield'], [$ID_TYPE_STAFF, 'Staff'], _
+													[$ID_TYPE_SWORD, 'Sword'], [$ID_TYPE_KIT, 'Kit'], [$ID_TYPE_TROPHY, 'Trophy'], [$ID_TYPE_SCROLL, 'Scroll'], _
+													[$ID_TYPE_DAGGER, 'Dagger'], [$ID_TYPE_PRESENT, 'PRESENT ?'], [$ID_TYPE_MINIPET, 'Minipet'], [$ID_TYPE_SCYTHE, 'Scythe'], _
+													[$ID_TYPE_SPEAR, 'Spear'], [$ID_TYPE_BOOK, 'Book'], [$ID_TYPE_COSTUME_BODY, 'Costume body'], [$ID_TYPE_COSTUME_HEADPIECE, 'Costume headpiece'], [$ID_TYPE_UNEQUIPPED, 'TYPE UNEQUIPED ?']]
 
-Global Const $Armor_Types_Array				= [$ID_Type_Foot_Armor, $ID_Type_Chest_Armor, $ID_Type_Hand_Armor, $ID_Type_Headgear_Armor, $ID_Type_Leg_Armor]
-Global Const $Weapon_Types_Array			= [$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-Global Const $Weapon_Names_Array			= ['Axe', 'Bow', 'Focus', 'Hammer', 'Wand', 'Shield', 'Staff', 'Sword', 'Dagger', 'Scythe', 'Spear']
-Global Const $WeaponNamesFromTypes			= MapFromArrays($Weapon_Types_Array, $Weapon_Names_Array)
-;Global Const $WeaponTypesFromNames			= MapFromArrays($Weapon_Names_Array, $Weapon_Types_Array)
-Global Const $Map_Armor_Types				= MapFromArray($Armor_Types_Array)
-Global Const $Map_Weapon_Types				= MapFromArray($Weapon_Types_Array)
+Global Const $ARMOR_TYPES_ARRAY				= [$ID_TYPE_FOOT_ARMOR, $ID_TYPE_CHEST_ARMOR, $ID_TYPE_HAND_ARMOR, $ID_TYPE_HEADGEAR_ARMOR, $ID_TYPE_LEG_ARMOR]
+Global Const $WEAPON_TYPES_ARRAY			= [$ID_TYPE_AXE, $ID_TYPE_BOW, $ID_TYPE_OFFHAND, $ID_TYPE_HAMMER, $ID_TYPE_WAND, $ID_TYPE_SHIELD, $ID_TYPE_STAFF, $ID_TYPE_SWORD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
+Global Const $WEAPON_NAMES_ARRAY			= ['Axe', 'Bow', 'Focus', 'Hammer', 'Wand', 'Shield', 'Staff', 'Sword', 'Dagger', 'Scythe', 'Spear']
+Global Const $WEAPON_NAMES_FROM_TYPES		= MapFromArrays($WEAPON_TYPES_ARRAY, $WEAPON_NAMES_ARRAY)
+;Global Const $WEAPON_TYPES_FROM_NAMES		= MapFromArrays($WEAPON_NAMES_ARRAY, $WEAPON_TYPES_ARRAY)
+Global Const $MAP_ARMOR_TYPES				= MapFromArray($ARMOR_TYPES_ARRAY)
+Global Const $MAP_WEAPON_TYPES				= MapFromArray($WEAPON_TYPES_ARRAY)
 
 ; Damage relative to the Req							0		1		2		3		4		5		6		7		8		9		10		11		12		13
-Global Const $Axe_Max_Damage_Per_Level				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Global Const $Bow_Max_Damage_Per_Level				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
-Global Const $Focus_Max_Damage_Per_Level			=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
-Global Const $Hammer_Max_Damage_Per_Level			=	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
-Global Const $Wand_Max_Damage_Per_Level				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Global Const $Shield_Max_Damage_Per_Level			=	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
-Global Const $Staff_Max_Damage_Per_Level			=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
-Global Const $Sword_Max_Damage_Per_Level			=	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
-Global Const $Dagger_Max_Damage_Per_Level			=	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
-Global Const $Scythe_Max_Damage_Per_Level			=	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
-Global Const $Spear_Max_Damage_Per_Level			=	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
-Global Const $Weapons_Max_Damage_Per_Level_Keys		=	[$ID_Type_Axe, $ID_Type_Bow, $ID_Type_Offhand, $ID_Type_Hammer, $ID_Type_Wand, $ID_Type_Shield, $ID_Type_Staff, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-Global Const $Weapons_Max_Damage_Per_Level_Values	=	[$Axe_Max_Damage_Per_Level, $Bow_Max_Damage_Per_Level, $Focus_Max_Damage_Per_Level, $Hammer_Max_Damage_Per_Level, $Wand_Max_Damage_Per_Level, $Shield_Max_Damage_Per_Level, _
-															$Staff_Max_Damage_Per_Level, $Sword_Max_Damage_Per_Level, $Dagger_Max_Damage_Per_Level, $Scythe_Max_Damage_Per_Level, $Spear_Max_Damage_Per_Level]
-Global Const $Weapons_Max_Damage_Per_Level[]		=	MapFromArrays($Weapons_Max_Damage_Per_Level_Keys, $Weapons_Max_Damage_Per_Level_Values)
+Global Const $AXE_MAX_DAMAGE_PER_LEVEL				=	[12,	12,		14,		17,		19,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Global Const $BOW_MAX_DAMAGE_PER_LEVEL				=	[13,	14,		16,		18,		20,		22,		24,		25,		27,		28,		28,		28,		28,		28]
+Global Const $FOCUS_MAX_DAMAGE_PER_LEVEL			=	[6,		6,		7,		8,		9,		10,		11,		11,		12,		12,		12,		12,		12,		12]
+Global Const $HAMMER_MAX_DAMAGE_PER_LEVEL			=	[15,	16,		19,		22,		24,		28,		30,		32,		34,		35,		35,		35,		35,		35]
+Global Const $WAND_MAX_DAMAGE_PER_LEVEL				=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Global Const $SHIELD_MAX_DAMAGE_PER_LEVEL			=	[8,		9,		10,		11,		12,		13,		14,		15,		16,		16,		16,		16,		16,		16]
+Global Const $STAFF_MAX_DAMAGE_PER_LEVEL			=	[11,	11,		13,		14,		16,		18,		19,		20,		21,		22,		22,		22,		22,		22]
+Global Const $SWORD_MAX_DAMAGE_PER_LEVEL			=	[10,	11,		12,		14,		16,		18,		19,		20,		22,		22,		22,		22,		22,		22]
+Global Const $DAGGER_MAX_DAMAGE_PER_LEVEL			=	[8,		8,		9,		11,		12,		13,		14,		15,		16,		17,		17,		17,		17,		17]
+Global Const $SCYTHE_MAX_DAMAGE_PER_LEVEL			=	[17,	17,		21,		24,		27,		32,		35,		37,		40,		41,		41,		41,		41,		41]
+Global Const $SPEAR_MAX_DAMAGE_PER_LEVEL			=	[12,	13,		15,		17,		19,		21,		23,		25,		26,		27,		27,		27,		27,		27]
+Global Const $WEAPONS_MAX_DAMAGE_PER_LEVEL_KEYS		=	[$ID_TYPE_AXE, $ID_TYPE_BOW, $ID_TYPE_OFFHAND, $ID_TYPE_HAMMER, $ID_TYPE_WAND, $ID_TYPE_SHIELD, $ID_TYPE_STAFF, $ID_TYPE_SWORD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
+Global Const $WEAPONS_MAX_DAMAGE_PER_LEVEL_VALUES	=	[$AXE_MAX_DAMAGE_PER_LEVEL, $BOW_MAX_DAMAGE_PER_LEVEL, $FOCUS_MAX_DAMAGE_PER_LEVEL, $HAMMER_MAX_DAMAGE_PER_LEVEL, $WAND_MAX_DAMAGE_PER_LEVEL, $SHIELD_MAX_DAMAGE_PER_LEVEL, _
+															$STAFF_MAX_DAMAGE_PER_LEVEL, $SWORD_MAX_DAMAGE_PER_LEVEL, $DAGGER_MAX_DAMAGE_PER_LEVEL, $SCYTHE_MAX_DAMAGE_PER_LEVEL, $SPEAR_MAX_DAMAGE_PER_LEVEL]
+Global Const $WEAPONS_MAX_DAMAGE_PER_LEVEL[]		=	MapFromArrays($WEAPONS_MAX_DAMAGE_PER_LEVEL_KEYS, $WEAPONS_MAX_DAMAGE_PER_LEVEL_VALUES)
 #EndRegion Type IDs
 
 
 #Region MapMarkers
-Global Const $GadgetID_Istani_Chest			= 6062
-Global Const $GadgetID_Shing_Jea_Chest		= 4579
-Global Const $GadgetID_NM_Chest				= 4582
-Global Const $GadgetID_HM_Chest				= 8141
-Global Const $GadgetID_Obsidian_Chest		= 74
-Global Const $GadgetID_Brotherhood_Chest	= 9157
-Global Const $Chests_Array[]				= [$GadgetID_Istani_Chest, $GadgetID_Shing_Jea_Chest, $GadgetID_NM_Chest, $GadgetID_HM_Chest, $GadgetID_Obsidian_Chest]
-Global Const $Map_Chests_IDs				= MapFromArray($Chests_Array)
+Global Const $GADGETID_ISTANI_CHEST			= 6062
+Global Const $GADGETID_SHING_JEA_CHEST		= 4579
+Global Const $GADGETID_NM_CHEST				= 4582
+Global Const $GADGETID_HM_CHEST				= 8141
+Global Const $GADGETID_OBSIDIAN_CHEST		= 74
+Global Const $GADGETID_BROTHERHOOD_CHEST	= 9157
+Global Const $CHESTS_ARRAY[]				= [$GADGETID_ISTANI_CHEST, $GADGETID_SHING_JEA_CHEST, $GADGETID_NM_CHEST, $GADGETID_HM_CHEST, $GADGETID_OBSIDIAN_CHEST]
+Global Const $MAP_CHESTS_IDS				= MapFromArray($CHESTS_ARRAY)
 #EndRegion MapMarkers
 
 
 #Region Hero IDs
-Global Const $ID_Norgu				= 1
-Global Const $ID_Goren				= 2
-Global Const $ID_Tahlkora			= 3
-Global Const $ID_Master_Of_Whispers	= 4
-Global Const $ID_Acolyte_Jin		= 5
-Global Const $ID_Koss				= 6
-Global Const $ID_Dunkoro			= 7
-Global Const $ID_Acolyte_Sousuke	= 8
-Global Const $ID_Melonni			= 9
-Global Const $ID_Zhed_Shadowhoof	= 10
-Global Const $ID_General_Morgahn	= 11
-Global Const $ID_Margrid_The_Sly	= 12
-Global Const $ID_Zenmai				= 13
-Global Const $ID_Olias				= 14
-Global Const $ID_Razah				= 15
+Global Const $ID_NORGU				= 1
+Global Const $ID_GOREN				= 2
+Global Const $ID_TAHLKORA			= 3
+Global Const $ID_MASTER_OF_WHISPERS	= 4
+Global Const $ID_ACOLYTE_JIN		= 5
+Global Const $ID_KOSS				= 6
+Global Const $ID_DUNKORO			= 7
+Global Const $ID_ACOLYTE_SOUSUKE	= 8
+Global Const $ID_MELONNI			= 9
+Global Const $ID_ZHED_SHADOWHOOF	= 10
+Global Const $ID_GENERAL_MORGAHN	= 11
+Global Const $ID_MARGRID_THE_SLY	= 12
+Global Const $ID_ZENMAI				= 13
+Global Const $ID_OLIAS				= 14
+Global Const $ID_RAZAH				= 15
 Global Const $ID_MOX				= 16
-Global Const $ID_Keiran_Thackeray	= 17
-Global Const $ID_Jora				= 18
-Global Const $ID_Pyre_Fierceshot	= 19
-Global Const $ID_Anton				= 20
-Global Const $ID_Livia				= 21
-Global Const $ID_Hayda				= 22
-Global Const $ID_Kahmu				= 23
-Global Const $ID_Gwen				= 24
-Global Const $ID_Xandra				= 25
-Global Const $ID_Vekk				= 26
-Global Const $ID_Ogden				= 27
-Global Const $ID_Mercenary_Hero_1	= 28
-Global Const $ID_Mercenary_Hero_2	= 29
-Global Const $ID_Mercenary_Hero_3	= 30
-Global Const $ID_Mercenary_Hero_4	= 31
-Global Const $ID_Mercenary_Hero_5	= 32
-Global Const $ID_Mercenary_Hero_6	= 33
-Global Const $ID_Mercenary_Hero_7	= 34
-Global Const $ID_Mercenary_Hero_8	= 35
-Global Const $ID_Miku				= 36
-Global Const $ID_ZeiRi				= 37
+Global Const $ID_KEIRAN_THACKERAY	= 17
+Global Const $ID_JORA				= 18
+Global Const $ID_PYRE_FIERCESHOT	= 19
+Global Const $ID_ANTON				= 20
+Global Const $ID_LIVIA				= 21
+Global Const $ID_HAYDA				= 22
+Global Const $ID_KAHMU				= 23
+Global Const $ID_GWEN				= 24
+Global Const $ID_XANDRA				= 25
+Global Const $ID_VEKK				= 26
+Global Const $ID_OGDEN				= 27
+Global Const $ID_MERCENARY_HERO_1	= 28
+Global Const $ID_MERCENARY_HERO_2	= 29
+Global Const $ID_MERCENARY_HERO_3	= 30
+Global Const $ID_MERCENARY_HERO_4	= 31
+Global Const $ID_MERCENARY_HERO_5	= 32
+Global Const $ID_MERCENARY_HERO_6	= 33
+Global Const $ID_MERCENARY_HERO_7	= 34
+Global Const $ID_MERCENARY_HERO_8	= 35
+Global Const $ID_MIKU				= 36
+Global Const $ID_ZEIRI				= 37
 
-Global Const $HeroIDs[]				= [$ID_Norgu, $ID_Goren, $ID_Tahlkora, $ID_Master_Of_Whispers, $ID_Acolyte_Jin, _
-										$ID_Koss, $ID_Dunkoro, $ID_Acolyte_Sousuke, $ID_Melonni, $ID_Zhed_Shadowhoof, _
-										$ID_General_Morgahn, $ID_Margrid_The_Sly, $ID_Zenmai, $ID_Olias, $ID_Razah, _
-										$ID_MOX, $ID_Keiran_Thackeray, $ID_Jora, $ID_Pyre_Fierceshot, $ID_Anton, _
-										$ID_Livia, $ID_Hayda, $ID_Kahmu, $ID_Gwen, $ID_Xandra, $ID_Vekk, $ID_Ogden, _
-										$ID_Miku, $ID_ZeiRi, $ID_Mercenary_Hero_1, $ID_Mercenary_Hero_2, _
-										$ID_Mercenary_Hero_3, $ID_Mercenary_Hero_4, $ID_Mercenary_Hero_5, _
-										$ID_Mercenary_Hero_6, $ID_Mercenary_Hero_7, $ID_Mercenary_Hero_8]
+Global Const $HERO_IDS[]						= [$ID_NORGU, $ID_GOREN, $ID_TAHLKORA, $ID_MASTER_OF_WHISPERS, $ID_ACOLYTE_JIN, _
+													$ID_KOSS, $ID_DUNKORO, $ID_ACOLYTE_SOUSUKE, $ID_MELONNI, $ID_ZHED_SHADOWHOOF, _
+													$ID_GENERAL_MORGAHN, $ID_MARGRID_THE_SLY, $ID_ZENMAI, $ID_OLIAS, $ID_RAZAH, _
+													$ID_MOX, $ID_KEIRAN_THACKERAY, $ID_JORA, $ID_PYRE_FIERCESHOT, $ID_ANTON, _
+													$ID_LIVIA, $ID_HAYDA, $ID_KAHMU, $ID_GWEN, $ID_XANDRA, $ID_VEKK, $ID_OGDEN, _
+													$ID_MIKU, $ID_ZEIRI, $ID_MERCENARY_HERO_1, $ID_MERCENARY_HERO_2, _
+													$ID_MERCENARY_HERO_3, $ID_MERCENARY_HERO_4, $ID_MERCENARY_HERO_5, _
+													$ID_MERCENARY_HERO_6, $ID_MERCENARY_HERO_7, $ID_MERCENARY_HERO_8]
 
-Global Const $HeroNames[]				= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whispers', 'Acolyte Jin', _
-											'Koss', 'Dunkoro', 'Acolyte Sousuke', 'Melonni', 'Zhed Shadowhoof', _
-											'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
-											'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
-											'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
-											'Miku', 'ZeiRi', 'Mercenary Hero 1', 'Mercenary Hero 2', _
-											'Mercenary Hero 3', 'Mercenary Hero 4', 'Mercenary Hero 5', _
-											'Mercenary Hero 6', 'Mercenary Hero 7', 'Mercenary Hero 8']
+Global Const $HERO_NAMES[]						= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whispers', 'Acolyte Jin', _
+													'Koss', 'Dunkoro', 'Acolyte Sousuke', 'Melonni', 'Zhed Shadowhoof', _
+													'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
+													'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
+													'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
+													'Miku', 'ZeiRi', 'Mercenary Hero 1', 'Mercenary Hero 2', _
+													'Mercenary Hero 3', 'Mercenary Hero 4', 'Mercenary Hero 5', _
+													'Mercenary Hero 6', 'Mercenary Hero 7', 'Mercenary Hero 8']
 
-;Global Const $HeroNamesFromIDs			=	MapFromArrays($HeroIDs, $HeroNames)
-Global Const $HeroIDsFromNames			=	MapFromArrays($HeroNames, $HeroIDs)
+;Global Const $HERO_NAMES_FROM_IDS				=	MapFromArrays($HERO_IDS, $HERO_NAMES)
+Global Const $HERO_IDS_FROM_NAMES				=	MapFromArrays($HERO_NAMES, $HERO_IDS)
 #EndRegion Hero IDs
 
 
 #Region Titles
-Global Const $ID_Sunspear_Title			= 0x11
-Global Const $ID_Lightbringer_Title		= 0x14
-Global Const $ID_Asura_Title			= 0x26
-Global Const $ID_Dwarf_Title			= 0x27
-Global Const $ID_Ebon_Vanguard_Title	= 0x28
-Global Const $ID_Norn_Title				= 0x29
+Global Const $ID_SUNSPEAR_TITLE					= 0x11
+Global Const $ID_LIGHTBRINGER_TITLE				= 0x14
+Global Const $ID_ASURA_TITLE					= 0x26
+Global Const $ID_DWARF_TITLE					= 0x27
+Global Const $ID_EBON_VANGUARD_TITLE			= 0x28
+Global Const $ID_NORN_TITLE						= 0x29
 #EndRegion Titles
 
 
 #Region Skill IDs
 ; Warrior
-Global Const $ID_Healing_Signet					= 1
-Global Const $ID_To_The_Limit					= 316
-Global Const $ID_For_Great_Justice				= 343
-Global Const $ID_100_Blades						= 381
-Global Const $ID_Whirlwind_Attack				= 2107
-Global Const $ID_Seven_Weapons_Stance			= 3426
+Global Const $ID_HEALING_SIGNET					= 1
+Global Const $ID_TO_THE_LIMIT					= 316
+Global Const $ID_FOR_GREAT_JUSTICE				= 343
+Global Const $ID_100_BLADES						= 381
+Global Const $ID_WHIRLWIND_ATTACK				= 2107
+Global Const $ID_SEVEN_WEAPONS_STANCE			= 3426
 ; Ranger
-Global Const $ID_Troll_Unguent					= 446
-Global Const $ID_Whirling_Defense				= 450
-Global Const $ID_Quickening_Zephyr				= 475
-Global Const $ID_Together_as_One				= 3427
+Global Const $ID_TROLL_UNGUENT					= 446
+Global Const $ID_WHIRLING_DEFENSE				= 450
+Global Const $ID_QUICKENING_ZEPHYR				= 475
+Global Const $ID_TOGETHER_AS_ONE				= 3427
 ; Monk
-Global Const $ID_Unyielding_Aura				= 268
-Global Const $ID_Light_of_Dwayna				= 304
-Global Const $ID_Resurrect						= 305
-Global Const $ID_Rebirth						= 306
-Global Const $ID_Restore_Life					= 314
-Global Const $ID_Balthazars_Spirit				= 242
-Global Const $ID_Watchful_Spirit				= 255
-Global Const $ID_Life_Barrier					= 270
-Global Const $ID_Life_Bond						= 241
-Global Const $ID_Vital_Blessing					= 289
-Global Const $ID_Vengeance						= 315
-Global Const $ID_Ray_of_Judgement				= 830
-Global Const $ID_Resurrection_Chant				= 1128
-Global Const $ID_Renew_Life						= 1263
-Global Const $ID_Judgement_Strike				= 3425
+Global Const $ID_UNYIELDING_AURA				= 268
+Global Const $ID_LIGHT_OF_DWAYNA				= 304
+Global Const $ID_RESURRECT						= 305
+Global Const $ID_REBIRTH						= 306
+Global Const $ID_RESTORE_LIFE					= 314
+Global Const $ID_BALTHAZARS_SPIRIT				= 242
+Global Const $ID_WATCHFUL_SPIRIT				= 255
+Global Const $ID_LIFE_BARRIER					= 270
+Global Const $ID_LIFE_BOND						= 241
+Global Const $ID_VITAL_BLESSING					= 289
+Global Const $ID_VENGEANCE						= 315
+Global Const $ID_RAY_OF_JUDGEMENT				= 830
+Global Const $ID_RESURRECTION_CHANT				= 1128
+Global Const $ID_RENEW_LIFE						= 1263
+Global Const $ID_JUDGEMENT_STRIKE				= 3425
 ; Necromancer
-Global Const $ID_Animate_Bone_Minions			= 85
-Global Const $ID_Death_Nova						= 104
-Global Const $ID_Animate_Flesh_Golem			= 832
-Global Const $ID_Soul_Taker						= 3423
+Global Const $ID_ANIMATE_BONE_MINIONS			= 85
+Global Const $ID_DEATH_NOVA						= 104
+Global Const $ID_ANIMATE_FLESH_GOLEM			= 832
+Global Const $ID_SOUL_TAKER						= 3423
 ; Mesmer
-Global Const $ID_Empathy						= 26
-Global Const $ID_Sympathetic_Visage				= 34
-Global Const $ID_Arcane_Conundrum				= 36
-Global Const $ID_Channeling						= 38
-Global Const $ID_Migraine						= 53
-Global Const $ID_Arcane_Echo					= 75
-Global Const $ID_Stolen_Speed					= 880
-Global Const $ID_Shared_Burden					= 900
-Global Const $ID_Ancestors_Visage				= 1054
-Global Const $ID_Wastrels_Demise				= 1335
-Global Const $ID_Frustration					= 1341
-Global Const $ID_Sum_of_All_Fears				= 1996
-Global Const $ID_Confusing_Images				= 2137
-Global Const $ID_Time_Ward						= 3422
+Global Const $ID_EMPATHY						= 26
+Global Const $ID_SYMPATHETIC_VISAGE				= 34
+Global Const $ID_ARCANE_CONUNDRUM				= 36
+Global Const $ID_CHANNELING						= 38
+Global Const $ID_MIGRAINE						= 53
+Global Const $ID_ARCANE_ECHO					= 75
+Global Const $ID_STOLEN_SPEED					= 880
+Global Const $ID_SHARED_BURDEN					= 900
+Global Const $ID_ANCESTORS_VISAGE				= 1054
+Global Const $ID_WASTRELS_DEMISE				= 1335
+Global Const $ID_FRUSTRATION					= 1341
+Global Const $ID_SUM_OF_ALL_FEARS				= 1996
+Global Const $ID_CONFUSING_IMAGES				= 2137
+Global Const $ID_TIME_WARD						= 3422
 ; Elementalist
-Global Const $ID_Elemental_Attunement			= 164
-Global Const $ID_Meteor							= 187
-Global Const $ID_Rodgorts_Invocation			= 189
-Global Const $ID_Meteor_Shower					= 192
-Global Const $ID_Flare							= 194
-Global Const $ID_Searing_Heat					= 196
-Global Const $ID_Fire_Storm						= 197
-Global Const $ID_Glyph_of_Elemental_Power		= 198
-Global Const $ID_Glyph_of_Sacrifice				= 198
-Global Const $ID_Unsteady_Ground				= 1083
-Global Const $ID_Glyph_of_Essence				= 1096
-Global Const $ID_Sand_Storm						= 1372
-Global Const $ID_Savannah_Heat					= 1380
-Global Const $ID_Over_the_Limit					= 3424
+Global Const $ID_ELEMENTAL_ATTUNEMENT			= 164
+Global Const $ID_METEOR							= 187
+Global Const $ID_RODGORTS_INVOCATION			= 189
+Global Const $ID_METEOR_SHOWER					= 192
+Global Const $ID_FLARE							= 194
+Global Const $ID_SEARING_HEAT					= 196
+Global Const $ID_FIRE_STORM						= 197
+Global Const $ID_GLYPH_OF_ELEMENTAL_POWER		= 198
+Global Const $ID_GLYPH_OF_SACRIFICE				= 198
+Global Const $ID_UNSTEADY_GROUND				= 1083
+Global Const $ID_GLYPH_OF_ESSENCE				= 1096
+Global Const $ID_SAND_STORM						= 1372
+Global Const $ID_SAVANNAH_HEAT					= 1380
+Global Const $ID_OVER_THE_LIMIT					= 3424
 ; Assassin
-Global Const $ID_Deadly_Paradox					= 572
-Global Const $ID_Shadow_Refuge					= 814
-Global Const $ID_Shadow_Form					= 826
-Global Const $ID_Way_of_Perfection				= 1028
-Global Const $ID_Shroud_of_Distress				= 1031
-Global Const $ID_Dark_Escape					= 1037
-Global Const $ID_Shadow_Theft					= 3428
+Global Const $ID_DEADLY_PARADOX					= 572
+Global Const $ID_SHADOW_REFUGE					= 814
+Global Const $ID_SHADOW_FORM					= 826
+Global Const $ID_WAY_OF_PERFECTION				= 1028
+Global Const $ID_SHROUD_OF_DISTRESS				= 1031
+Global Const $ID_DARK_ESCAPE					= 1037
+Global Const $ID_SHADOW_THEFT					= 3428
 ; Ritualist
-Global Const $ID_Flesh_of_My_Flesh				= 791
-Global Const $ID_Union							= 911
-Global Const $ID_Restoration					= 963
-Global Const $ID_Shelter						= 982
-Global Const $ID_Lively_Was_Naomei				= 1222
-Global Const $ID_Soul_Twisting					= 1240
-Global Const $ID_Displacement					= 1249
-Global Const $ID_Death_Pact_Signet				= 1481
-Global Const $ID_Weapons_of_Three_Forges		= 3429
+Global Const $ID_FLESH_OF_MY_FLESH				= 791
+Global Const $ID_UNION							= 911
+Global Const $ID_RESTORATION					= 963
+Global Const $ID_SHELTER						= 982
+Global Const $ID_LIVELY_WAS_NAOMEI				= 1222
+Global Const $ID_SOUL_TWISTING					= 1240
+Global Const $ID_DISPLACEMENT					= 1249
+Global Const $ID_DEATH_PACT_SIGNET				= 1481
+Global Const $ID_WEAPONS_OF_THREE_FORGES		= 3429
 ; Paragon
-Global Const $ID_Burning_Refrain				= 1576
-Global Const $ID_We_Shall_Return				= 1592
-Global Const $ID_Fall_Back						= 1595
-Global Const $ID_Theyre_On_Fire					= 1597
-Global Const $ID_Aggressive_Refrain				= 1774
-Global Const $ID_Signet_of_Return				= 1778
-Global Const $ID_Heroic_Refrain					= 3431
+Global Const $ID_BURNING_REFRAIN				= 1576
+Global Const $ID_WE_SHALL_RETURN				= 1592
+Global Const $ID_FALL_BACK						= 1595
+Global Const $ID_THEYRE_ON_FIRE					= 1597
+Global Const $ID_AGGRESSIVE_REFRAIN				= 1774
+Global Const $ID_SIGNET_OF_RETURN				= 1778
+Global Const $ID_HEROIC_REFRAIN					= 3431
 ; Dervish
-Global Const $ID_Mirage_Cloak					= 1500
-Global Const $ID_Mystic_Vigor					= 1503
-Global Const $ID_Vital_Boon						= 1506
-Global Const $ID_Sand_Shards					= 1510
-Global Const $ID_Mystic_Regeneration			= 1516
-Global Const $ID_Conviction						= 1540
-Global Const $ID_Heart_of_Fury					= 1762
-Global Const $ID_Signet_of_Mystic_Speed			= 2200
-Global Const $ID_Vow_of_Revolution				= 3430
+Global Const $ID_MIRAGE_CLOAK					= 1500
+Global Const $ID_MYSTIC_VIGOR					= 1503
+Global Const $ID_VITAL_BOON						= 1506
+Global Const $ID_SAND_SHARDS					= 1510
+Global Const $ID_MYSTIC_REGENERATION			= 1516
+Global Const $ID_CONVICTION						= 1540
+Global Const $ID_HEART_OF_FURY					= 1762
+Global Const $ID_SIGNET_OF_MYSTIC_SPEED			= 2200
+Global Const $ID_VOW_OF_REVOLUTION				= 3430
 ; Common
-Global Const $ID_Resurrection_Signet			= 2
+Global Const $ID_RESURRECTION_SIGNET			= 2
 ; PvE
-Global Const $ID_Sunspear_Rebirth_Signet		= 1816
-Global Const $ID_Junundu_Wail					= 1865
-Global Const $ID_Intensity						= 2104
-Global Const $ID_Eternal_Aura					= 2109
-Global Const $ID_By_Urals_Hammer				= 2217
-Global Const $ID_Great_Dwarf_Armor				= 2220
-Global Const $ID_Ebon_Battle_Standard_of_Honor	= 2233
-Global Const $ID_I_Am_Unstoppable				= 2356
-Global Const $ID_Mindbender						= 2411
-Global Const $ID_Mental_Block					= 2417
-Global Const $ID_Dwarven_Stability				= 2423
+Global Const $ID_SUNSPEAR_REBIRTH_SIGNET		= 1816
+Global Const $ID_JUNUNDU_WAIL					= 1865
+Global Const $ID_INTENSITY						= 2104
+Global Const $ID_ETERNAL_AURA					= 2109
+Global Const $ID_BY_URALS_HAMMER				= 2217
+Global Const $ID_GREAT_DWARF_ARMOR				= 2220
+Global Const $ID_EBON_BATTLE_STANDARD_OF_HONOR	= 2233
+Global Const $ID_I_AM_UNSTOPPABLE				= 2356
+Global Const $ID_MINDBENDER						= 2411
+Global Const $ID_MENTAL_BLOCK					= 2417
+Global Const $ID_DWARVEN_STABILITY				= 2423
 ; Consumables, food and drink boosts
-Global Const $ID_Drake_Skin						= 1680		; obtained using Drake Kabob
-Global Const $ID_Skale_Vigor					= 1681		; obtained using Bowl of Skalefin Soup
-Global Const $ID_Pahnai_Salad_Rush				= 1682		; obtained using Pahnai Salad
-Global Const $ID_Sugar_Jolt_2					= 1916		; obtained using Sugary Blue Drink
-Global Const $ID_Sugar_Jolt_5					= 1933		; obtained using Chocolate Bunny
-Global Const $ID_Golden_Egg_effect				= 1934
-Global Const $ID_Birthday_Cupcake_effect		= 1945
-Global Const $ID_Armor_of_Salvation_effect		= 2520
-Global Const $ID_Grail_of_Might_effect			= 2521
-Global Const $ID_Essence_of_Celerity_effect		= 2522
-Global Const $ID_Candy_Corn_effect				= 2604
-Global Const $ID_Candy_Apple_effect				= 2605
-Global Const $ID_Pie_Induced_Ecstasy			= 2649		; obtained using Slice of Pumpkin Pie
-Global Const $ID_Sugar_Infusion					= 2762
-Global Const $ID_Blue_Rock_Candy_Rush			= 2971
-Global Const $ID_Green_Rock_Candy_Rush			= 2972
-Global Const $ID_Red_Rock_Candy_Rush			= 2973
-Global Const $ID_Well_Supplied					= 3174		; obtained using War Supplies
+Global Const $ID_DRAKE_SKIN						= 1680		; obtained using Drake Kabob
+Global Const $ID_SKALE_VIGOR					= 1681		; obtained using Bowl of Skalefin Soup
+Global Const $ID_PAHNAI_SALAD_RUSH				= 1682		; obtained using Pahnai Salad
+Global Const $ID_SUGAR_JOLT_2					= 1916		; obtained using Sugary Blue Drink
+Global Const $ID_SUGAR_JOLT_5					= 1933		; obtained using Chocolate Bunny
+Global Const $ID_GOLDEN_EGG_EFFECT				= 1934
+Global Const $ID_BIRTHDAY_CUPCAKE_EFFECT		= 1945
+Global Const $ID_ARMOR_OF_SALVATION_EFFECT		= 2520
+Global Const $ID_GRAIL_OF_MIGHT_EFFECT			= 2521
+Global Const $ID_ESSENCE_OF_CELERITY_EFFECT		= 2522
+Global Const $ID_CANDY_CORN_EFFECT				= 2604
+Global Const $ID_CANDY_APPLE_EFFECT				= 2605
+Global Const $ID_PIE_INDUCED_ECSTASY			= 2649		; obtained using Slice of Pumpkin Pie
+Global Const $ID_SUGAR_INFUSION					= 2762
+Global Const $ID_BLUE_ROCK_CANDY_RUSH			= 2971
+Global Const $ID_GREEN_ROCK_CANDY_RUSH			= 2972
+Global Const $ID_RED_ROCK_CANDY_RUSH			= 2973
+Global Const $ID_WELL_SUPPLIED					= 3174		; obtained using War Supplies
 #EndRegion Skill IDs
 
 
 #Region Conditions
-Global Const $ID_Bleeding	= 478
-Global Const $ID_Blind		= 479
-Global Const $ID_Burning	= 480
-Global Const $ID_Crippled	= 481
-Global Const $ID_Deep_wound	= 482
-Global Const $ID_Disease	= 483
-Global Const $ID_Poison		= 484
-Global Const $ID_Dazed		= 485
-Global Const $ID_Weakness	= 486
+Global Const $ID_BLEEDING	= 478
+Global Const $ID_BLIND		= 479
+Global Const $ID_BURNING	= 480
+Global Const $ID_CRIPPLED	= 481
+Global Const $ID_DEEP_WOUND	= 482
+Global Const $ID_DISEASE	= 483
+Global Const $ID_POISON		= 484
+Global Const $ID_DAZED		= 485
+Global Const $ID_WEAKNESS	= 486
 #EndRegionConditions
 
 
 #Region Items
-Global Const $ID_Money					= 2511
+Global Const $ID_MONEY					= 2511
 
-Global Const $RARITY_White				= 2621
-Global Const $RARITY_Gray				= 2622
-Global Const $RARITY_Blue				= 2623
-Global Const $RARITY_Gold				= 2624
-Global Const $RARITY_Purple				= 2626
-Global Const $RARITY_Green				= 2627
-Global Const $RARITY_Red				= 33026
-Global Const $Rarities_Double_Array[][]	= [[$RARITY_Gray, 'Gray'], [$RARITY_White, 'White'], [$RARITY_Blue, 'Blue'], [$RARITY_Purple, 'Purple'], [$RARITY_Gold, 'Gold'], [$RARITY_Green, 'Green'], [$RARITY_Red, 'Red']]
-Global Const $RarityIDs[]				= [$RARITY_White, $RARITY_Gray, $RARITY_Blue, $RARITY_Gold, $RARITY_Purple, $RARITY_Green, $RARITY_Green, $RARITY_Red]
-Global Const $RarityNames[]				= ['White', 'Gray', 'Blue', 'Gold', 'Purple', 'Green', 'Green', 'Red']
-Global Const $RarityNamesFromIDs		= MapFromArrays($RarityIDs, $RarityNames)
-;Global Const $RarityIDsFromNames		= MapFromArrays($RarityNames, $RarityIDs)
+Global Const $RARITY_WHITE				= 2621
+Global Const $RARITY_GRAY				= 2622
+Global Const $RARITY_BLUE				= 2623
+Global Const $RARITY_GOLD				= 2624
+Global Const $RARITY_PURPLE				= 2626
+Global Const $RARITY_GREEN				= 2627
+Global Const $RARITY_RED				= 33026
+Global Const $RARITIES_DOUBLE_ARRAY[][]	= [[$RARITY_GRAY, 'Gray'], [$RARITY_WHITE, 'White'], [$RARITY_BLUE, 'Blue'], [$RARITY_PURPLE, 'Purple'], [$RARITY_GOLD, 'Gold'], [$RARITY_GREEN, 'Green'], [$RARITY_RED, 'Red']]
+Global Const $RARITY_IDS[]				= [$RARITY_WHITE, $RARITY_GRAY, $RARITY_BLUE, $RARITY_GOLD, $RARITY_PURPLE, $RARITY_GREEN, $RARITY_GREEN, $RARITY_RED]
+Global Const $RARITY_NAMES[]				= ['White', 'Gray', 'Blue', 'Gold', 'Purple', 'Green', 'Green', 'Red']
+Global Const $RARITY_NAMES_FROM_IDS		= MapFromArrays($RARITY_IDS, $RARITY_NAMES)
+;Global Const $RARITY_IDS_FROM_NAMES		= MapFromArrays($RARITY_NAMES, $RARITY_IDS)
 
 
 #Region Merchant Items
-Global Const $ID_Belt_Pouch						= 34
-Global Const $ID_Bag							= 35
-Global Const $ID_Rune_of_Holding				= 2988
-Global Const $ID_Identification_Kit				= 2989		; 25 uses
-Global Const $ID_Superior_Identification_Kit	= 5899		; 100 uses
-Global Const $ID_Salvage_Kit					= 2992		; 25 uses
-Global Const $ID_Salvage_Kit_2					= 2993		; 10 uses
-Global Const $ID_Expert_Salvage_Kit				= 2991		; 25 uses
-Global Const $ID_Superior_Salvage_Kit			= 5900		; 100 uses
-Global Const $ID_Charr_Salvage_Kit				= 18721		; 5 uses
-Global Const $ID_Small_Equipment_Pack			= 31221
-Global Const $ID_Light_Equipment_Pack			= 31222
-Global Const $ID_Large_Equipment_Pack			= 31223
-Global Const $ID_Heavy_Equipment_Pack			= 31224
+Global Const $ID_BELT_POUCH						= 34
+Global Const $ID_BAG							= 35
+Global Const $ID_RUNE_OF_HOLDING				= 2988
+Global Const $ID_IDENTIFICATION_KIT				= 2989		; 25 uses
+Global Const $ID_SUPERIOR_IDENTIFICATION_KIT	= 5899		; 100 uses
+Global Const $ID_SALVAGE_KIT					= 2992		; 25 uses
+Global Const $ID_SALVAGE_KIT_2					= 2993		; 10 uses
+Global Const $ID_EXPERT_SALVAGE_KIT				= 2991		; 25 uses
+Global Const $ID_SUPERIOR_SALVAGE_KIT			= 5900		; 100 uses
+Global Const $ID_CHARR_SALVAGE_KIT				= 18721		; 5 uses
+Global Const $ID_SMALL_EQUIPMENT_PACK			= 31221
+Global Const $ID_LIGHT_EQUIPMENT_PACK			= 31222
+Global Const $ID_LARGE_EQUIPMENT_PACK			= 31223
+Global Const $ID_HEAVY_EQUIPMENT_PACK			= 31224
 #EndRegion Merchant Items
 
 
 #Region Keys
-Global Const $ID_Ascalonian_Key			= 5966
-Global Const $ID_Steel_Key				= 5967
-Global Const $ID_Krytan_Key				= 5964
-Global Const $ID_Maguuma_Key			= 5965
-Global Const $ID_Elonian_Key			= 5960
-Global Const $ID_Shiverpeak_Key			= 5962
-Global Const $ID_Darkstone_Key			= 5963
-Global Const $ID_Miners_Key				= 5961
-Global Const $ID_Shing_Jea_Key			= 6537
-Global Const $ID_Canthan_Key			= 6540
-Global Const $ID_Kurzick_Key			= 6535
-Global Const $ID_Stoneroot_Key			= 6536
-Global Const $ID_Luxon_Key				= 6538
-Global Const $ID_Deep_Jade_Key			= 6539
-Global Const $ID_Forbidden_Key			= 6534
-Global Const $ID_Istani_Key				= 15557
-Global Const $ID_Kournan_Key			= 15559
-Global Const $ID_Vabbian_Key			= 15558
-Global Const $ID_Ancient_Elonian_Key	= 15556
-Global Const $ID_Margonite_Key			= 15560
-Global Const $ID_Demonic_Key			= 19174
-Global Const $ID_Phantom_Key			= 5882
-Global Const $ID_Obsidian_Key			= 5971
-Global Const $ID_Lockpick				= 22751
-Global Const $ID_Zaishen_Key			= 28571
-Global Const $ID_Bogroots_Boss_Key		= 2593
-Global Const $Keys_Array[]				= [$ID_Ascalonian_Key, $ID_Steel_Key, $ID_Krytan_Key, $ID_Maguuma_Key, $ID_Elonian_Key, $ID_Shiverpeak_Key, $ID_Darkstone_Key, $ID_Miners_Key, $ID_Shing_Jea_Key, $ID_Canthan_Key, $ID_Kurzick_Key, _
-											$ID_Stoneroot_Key, $ID_Luxon_Key, $ID_Deep_Jade_Key, $ID_Forbidden_Key, $ID_Istani_Key, $ID_Kournan_Key, $ID_Vabbian_Key, $ID_Ancient_Elonian_Key, $ID_Margonite_Key, $ID_Demonic_Key, $ID_Phantom_Key, _
-											$ID_Obsidian_Key, $ID_Bogroots_Boss_Key, $ID_Zaishen_Key]
-Global Const $Map_Keys					= MapFromArray($Keys_Array)
+Global Const $ID_ASCALONIAN_KEY			= 5966
+Global Const $ID_STEEL_KEY				= 5967
+Global Const $ID_KRYTAN_KEY				= 5964
+Global Const $ID_MAGUUMA_KEY			= 5965
+Global Const $ID_ELONIAN_KEY			= 5960
+Global Const $ID_SHIVERPEAK_KEY			= 5962
+Global Const $ID_DARKSTONE_KEY			= 5963
+Global Const $ID_MINERS_KEY				= 5961
+Global Const $ID_SHING_JEA_KEY			= 6537
+Global Const $ID_CANTHAN_KEY			= 6540
+Global Const $ID_KURZICK_KEY			= 6535
+Global Const $ID_STONEROOT_KEY			= 6536
+Global Const $ID_LUXON_KEY				= 6538
+Global Const $ID_DEEP_JADE_KEY			= 6539
+Global Const $ID_FORBIDDEN_KEY			= 6534
+Global Const $ID_ISTANI_KEY				= 15557
+Global Const $ID_KOURNAN_KEY			= 15559
+Global Const $ID_VABBIAN_KEY			= 15558
+Global Const $ID_ANCIENT_ELONIAN_KEY	= 15556
+Global Const $ID_MARGONITE_KEY			= 15560
+Global Const $ID_DEMONIC_KEY			= 19174
+Global Const $ID_PHANTOM_KEY			= 5882
+Global Const $ID_OBSIDIAN_KEY			= 5971
+Global Const $ID_LOCKPICK				= 22751
+Global Const $ID_ZAISHEN_KEY			= 28571
+Global Const $ID_BOGROOTS_BOSS_KEY		= 2593
+Global Const $KEYS_ARRAY[]				= [$ID_ASCALONIAN_KEY, $ID_STEEL_KEY, $ID_KRYTAN_KEY, $ID_MAGUUMA_KEY, $ID_ELONIAN_KEY, $ID_SHIVERPEAK_KEY, $ID_DARKSTONE_KEY, $ID_MINERS_KEY, $ID_SHING_JEA_KEY, $ID_CANTHAN_KEY, $ID_KURZICK_KEY, _
+											$ID_STONEROOT_KEY, $ID_LUXON_KEY, $ID_DEEP_JADE_KEY, $ID_FORBIDDEN_KEY, $ID_ISTANI_KEY, $ID_KOURNAN_KEY, $ID_VABBIAN_KEY, $ID_ANCIENT_ELONIAN_KEY, $ID_MARGONITE_KEY, $ID_DEMONIC_KEY, $ID_PHANTOM_KEY, _
+											$ID_OBSIDIAN_KEY, $ID_BOGROOTS_BOSS_KEY, $ID_ZAISHEN_KEY]
+Global Const $MAP_KEYS					= MapFromArray($KEYS_ARRAY)
 #EndRegion Keys
 
 
-Global Const $General_Items_Array[]	= [$ID_Identification_Kit, $ID_Expert_Salvage_Kit, $ID_Salvage_Kit, $ID_Salvage_Kit_2, $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit, $ID_Lockpick]
-Global Const $Map_General_Items		= MapFromArray($General_Items_Array)
+Global Const $GENERAL_ITEMS_ARRAY[]	= [$ID_IDENTIFICATION_KIT, $ID_EXPERT_SALVAGE_KIT, $ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2, $ID_SUPERIOR_IDENTIFICATION_KIT, $ID_SUPERIOR_SALVAGE_KIT, $ID_LOCKPICK]
+Global Const $MAP_GENERAL_ITEMS		= MapFromArray($GENERAL_ITEMS_ARRAY)
 
 
 #Region Dyes
-Global Const $ID_Dyes		= 146
-Global Const $ID_Blue_Dye	= 2
-Global Const $ID_Green_Dye	= 3
-Global Const $ID_Purple_Dye	= 4
-Global Const $ID_Red_Dye	= 5
-Global Const $ID_Yellow_Dye	= 6
-Global Const $ID_Brown_Dye	= 7
-Global Const $ID_Orange_Dye	= 8
-Global Const $ID_Silver_Dye	= 9
-Global Const $ID_Black_Dye	= 10
-Global Const $ID_Gray_Dye	= 11
-Global Const $ID_White_Dye	= 12
-Global Const $ID_Pink_Dye	= 13
+Global Const $ID_DYES				= 146
+Global Const $ID_BLUE_DYE			= 2
+Global Const $ID_GREEN_DYE			= 3
+Global Const $ID_PURPLE_DYE			= 4
+Global Const $ID_RED_DYE			= 5
+Global Const $ID_YELLOW_DYE			= 6
+Global Const $ID_BROWN_DYE			= 7
+Global Const $ID_ORANGE_DYE			= 8
+Global Const $ID_SILVER_DYE			= 9
+Global Const $ID_BLACK_DYE			= 10
+Global Const $ID_GRAY_DYE			= 11
+Global Const $ID_WHITE_DYE			= 12
+Global Const $ID_PINK_DYE			= 13
 
-Global Const $Dyes_Array[]			= [$ID_Blue_Dye, $ID_Green_Dye, $ID_Purple_Dye, $ID_Red_Dye, $ID_Yellow_Dye, $ID_Brown_Dye, $ID_Orange_Dye, $ID_Silver_Dye, $ID_Black_Dye, $ID_Gray_Dye, $ID_White_Dye, $ID_Pink_Dye]
-Global Const $Dyes_Names_Array[]	= ['Blue', 'Green', 'Purple', 'Red', 'Yellow', 'Brown', 'Orange', 'Silver', 'Black', 'Gray', 'White', 'Pink']
-Global Const $DyeNamesFromIDs		= MapFromArrays($Dyes_Array, $Dyes_Names_Array)
-;Global Const $DyeIDsFromNames		= MapFromArrays($Dyes_Names_Array, $Dyes_Array)
-Global Const $Map_Dyes				= MapFromArray($Dyes_Array)
+Global Const $DYES_ARRAY[]			= [$ID_BLUE_DYE, $ID_GREEN_DYE, $ID_PURPLE_DYE, $ID_RED_DYE, $ID_YELLOW_DYE, $ID_BROWN_DYE, $ID_ORANGE_DYE, $ID_SILVER_DYE, $ID_BLACK_DYE, $ID_GRAY_DYE, $ID_WHITE_DYE, $ID_PINK_DYE]
+Global Const $DYES_NAMES_ARRAY[]	= ['Blue', 'Green', 'Purple', 'Red', 'Yellow', 'Brown', 'Orange', 'Silver', 'Black', 'Gray', 'White', 'Pink']
+Global Const $DYE_NAMES_FROM_IDS	= MapFromArrays($DYES_ARRAY, $DYES_NAMES_ARRAY)
+;Global Const $DYE_IDS_FROM_NAMES	= MapFromArrays($DYES_NAMES_ARRAY, $DYES_ARRAY)
+Global Const $MAP_DYES				= MapFromArray($DYES_ARRAY)
 #EndRegion Dyes
 
 
 #Region Scrolls
-Global Const $ID_Urgoz_Scroll				= 3256
-Global Const $ID_UW_Scroll					= 3746
-Global Const $ID_Heros_Insight_Scroll		= 5594
-Global Const $ID_Berserkers_Insight_Scroll	= 5595
-Global Const $ID_Slayers_Insight_Scroll		= 5611
-Global Const $ID_Adventurers_Insight_Scroll	= 5853
-Global Const $ID_Rampagers_Insight_Scroll	= 5975
-Global Const $ID_Hunters_Insight_Scroll		= 5976
-Global Const $ID_Scroll_of_the_Lightbringer	= 21233
-Global Const $ID_Deep_Scroll				= 22279
-Global Const $ID_FoW_Scroll					= 22280
-Global Const $Blue_Scrolls_Array[]			= [$ID_Adventurers_Insight_Scroll, $ID_Rampagers_Insight_Scroll, $ID_Hunters_Insight_Scroll]
-Global Const $Gold_Scrolls_Array[]			= [$ID_Urgoz_Scroll, $ID_UW_Scroll, $ID_Heros_Insight_Scroll, $ID_Berserkers_Insight_Scroll, $ID_Slayers_Insight_Scroll, $ID_Scroll_of_the_Lightbringer, $ID_Deep_Scroll, $ID_FoW_Scroll]
-Global Const $Gold_Scrolls_Names_Array[]	= ['Passage Scroll to Urgozs Warren', 'Passage Scroll to the Underworld', 'Scroll of Heros Insight', 'Scroll of Berserkers Insight', 'Scroll of Slayers Insight', 'Scroll of the Lightbringer', 'Passage Scroll to the Deep', 'Passage Scroll to the Fissure of Woe']
-Global Const $GoldScrollNamesFromIDs		= MapFromArrays($Gold_Scrolls_Array, $Gold_Scrolls_Names_Array)
-;Global Const $GoldScrollIDsFromNames		= MapFromArrays($Gold_Scrolls_Names_Array, $Gold_Scrolls_Array)
-Global Const $Map_Blue_Scrolls				= MapFromArray($Blue_Scrolls_Array)
-Global Const $Map_Gold_Scrolls				= MapFromArray($Gold_Scrolls_Array)
+Global Const $ID_URGOZ_SCROLL				= 3256
+Global Const $ID_UW_SCROLL					= 3746
+Global Const $ID_HEROS_INSIGHT_SCROLL		= 5594
+Global Const $ID_BERSERKERS_INSIGHT_SCROLL	= 5595
+Global Const $ID_SLAYERS_INSIGHT_SCROLL		= 5611
+Global Const $ID_ADVENTURERS_INSIGHT_SCROLL	= 5853
+Global Const $ID_RAMPAGERS_INSIGHT_SCROLL	= 5975
+Global Const $ID_HUNTERS_INSIGHT_SCROLL		= 5976
+Global Const $ID_SCROLL_OF_THE_LIGHTBRINGER	= 21233
+Global Const $ID_DEEP_SCROLL				= 22279
+Global Const $ID_FOW_SCROLL					= 22280
+Global Const $BLUE_SCROLLS_ARRAY[]			= [$ID_ADVENTURERS_INSIGHT_SCROLL, $ID_RAMPAGERS_INSIGHT_SCROLL, $ID_HUNTERS_INSIGHT_SCROLL]
+Global Const $GOLD_SCROLLS_ARRAY[]			= [$ID_URGOZ_SCROLL, $ID_UW_SCROLL, $ID_HEROS_INSIGHT_SCROLL, $ID_BERSERKERS_INSIGHT_SCROLL, $ID_SLAYERS_INSIGHT_SCROLL, $ID_SCROLL_OF_THE_LIGHTBRINGER, $ID_DEEP_SCROLL, $ID_FOW_SCROLL]
+Global Const $GOLD_SCROLLS_NAMES_ARRAY[]	= ['Passage Scroll to Urgozs Warren', 'Passage Scroll to the Underworld', 'Scroll of Heros Insight', 'Scroll of Berserkers Insight', 'Scroll of Slayers Insight', 'Scroll of the Lightbringer', 'Passage Scroll to the Deep', 'Passage Scroll to the Fissure of Woe']
+Global Const $GOLD_SCROLL_NAMES_FROM_IDS	= MapFromArrays($GOLD_SCROLLS_ARRAY, $GOLD_SCROLLS_NAMES_ARRAY)
+;Global Const $GOLD_SCROLL_IDS_FROM_NAMES	= MapFromArrays($GOLD_SCROLLS_NAMES_ARRAY, $GOLD_SCROLLS_ARRAY)
+Global Const $MAP_BLUE_SCROLLS				= MapFromArray($BLUE_SCROLLS_ARRAY)
+Global Const $MAP_GOLD_SCROLLS				= MapFromArray($GOLD_SCROLLS_ARRAY)
 #EndRegion Scrolls
 
 
 #Region Materials
 ; Basic Materials
-Global Const $ID_Bone							= 921
-Global Const $ID_Iron_Ingot						= 948
-Global Const $ID_Tanned_Hide_Square				= 940
-Global Const $ID_Scale							= 953
-Global Const $ID_Chitin_Fragment				= 954
-Global Const $ID_Bolt_of_Cloth					= 925
-Global Const $ID_Wood_Plank						= 946
-Global Const $ID_Granite_Slab					= 955
-Global Const $ID_Pile_of_Glittering_Dust		= 929
-Global Const $ID_Plant_Fibers					= 934
-Global Const $ID_Feather						= 933
+Global Const $ID_BONE							= 921
+Global Const $ID_IRON_INGOT						= 948
+Global Const $ID_TANNED_HIDE_SQUARE				= 940
+Global Const $ID_SCALE							= 953
+Global Const $ID_CHITIN_FRAGMENT				= 954
+Global Const $ID_BOLT_OF_CLOTH					= 925
+Global Const $ID_WOOD_PLANK						= 946
+Global Const $ID_GRANITE_SLAB					= 955
+Global Const $ID_PILE_OF_GLITTERING_DUST		= 929
+Global Const $ID_PLANT_FIBERS					= 934
+Global Const $ID_FEATHER						= 933
 
 ; Rare Marerials
-Global Const $ID_Fur_Square						= 941
-Global Const $ID_Bolt_of_Linen					= 926
-Global Const $ID_Bolt_of_Damask					= 927
-Global Const $ID_Bolt_of_Silk					= 928
-Global Const $ID_Glob_of_Ectoplasm				= 930
-Global Const $ID_Steel_Ingot					= 949
-Global Const $ID_Deldrimor_Steel_Ingot			= 950
-Global Const $ID_Monstrous_Claw					= 923
-Global Const $ID_Monstrous_Eye					= 931
-Global Const $ID_Monstrous_Fang					= 932
-Global Const $ID_Ruby							= 937
-Global Const $ID_Sapphire						= 938
-Global Const $ID_Diamond						= 935
-Global Const $ID_Onyx_Gemstone					= 936
-Global Const $ID_Lump_of_Charcoal				= 922
-Global Const $ID_Obsidian_Shard					= 945
-Global Const $ID_Tempered_Glass_Vial			= 939
-Global Const $ID_Leather_Square					= 942
-Global Const $ID_Elonian_Leather_Square			= 943
-Global Const $ID_Vial_of_Ink					= 944
-Global Const $ID_Roll_of_Parchment				= 951
-Global Const $ID_Roll_of_Vellum					= 952
-Global Const $ID_Spiritwood_Plank				= 956
-Global Const $ID_Amber_Chunk					= 6532
-Global Const $ID_Jadeite_Shard					= 6533
+Global Const $ID_FUR_SQUARE						= 941
+Global Const $ID_BOLT_OF_LINEN					= 926
+Global Const $ID_BOLT_OF_DAMASK					= 927
+Global Const $ID_BOLT_OF_SILK					= 928
+Global Const $ID_GLOB_OF_ECTOPLASM				= 930
+Global Const $ID_STEEL_INGOT					= 949
+Global Const $ID_DELDRIMOR_STEEL_INGOT			= 950
+Global Const $ID_MONSTROUS_CLAW					= 923
+Global Const $ID_MONSTROUS_EYE					= 931
+Global Const $ID_MONSTROUS_FANG					= 932
+Global Const $ID_RUBY							= 937
+Global Const $ID_SAPPHIRE						= 938
+Global Const $ID_DIAMOND						= 935
+Global Const $ID_ONYX_GEMSTONE					= 936
+Global Const $ID_LUMP_OF_CHARCOAL				= 922
+Global Const $ID_OBSIDIAN_SHARD					= 945
+Global Const $ID_TEMPERED_GLASS_VIAL			= 939
+Global Const $ID_LEATHER_SQUARE					= 942
+Global Const $ID_ELONIAN_LEATHER_SQUARE			= 943
+Global Const $ID_VIAL_OF_INK					= 944
+Global Const $ID_ROLL_OF_PARCHMENT				= 951
+Global Const $ID_ROLL_OF_VELLUM					= 952
+Global Const $ID_SPIRITWOOD_PLANK				= 956
+Global Const $ID_AMBER_CHUNK					= 6532
+Global Const $ID_JADEITE_SHARD					= 6533
 
 
-Global Const $Basic_Materials_Array[]			= [$ID_Bone, $ID_Iron_Ingot, $ID_Tanned_Hide_Square, $ID_Scale, $ID_Chitin_Fragment, $ID_Bolt_of_Cloth, $ID_Wood_Plank, $ID_Granite_Slab, $ID_Pile_of_Glittering_Dust, $ID_Plant_Fibers, $ID_Feather]
-Global Const $Basic_Materials_Names_Array[]			= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', 'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fibers', 'Feather']
-Global Const $Basic_Material_Names_From_IDs			= MapFromArrays($Basic_Materials_Array, $Basic_Materials_Names_Array)
-;Global Const $Basic_Material_IDs_From_Names		= MapFromArrays($Basic_Materials_Names_Array, $Basic_Materials_Array)
+Global Const $BASIC_MATERIALS_ARRAY[]			= [$ID_BONE, $ID_IRON_INGOT, $ID_TANNED_HIDE_SQUARE, $ID_SCALE, $ID_CHITIN_FRAGMENT, $ID_BOLT_OF_CLOTH, $ID_WOOD_PLANK, $ID_GRANITE_SLAB, $ID_PILE_OF_GLITTERING_DUST, $ID_PLANT_FIBERS, $ID_FEATHER]
+Global Const $BASIC_MATERIALS_NAMES_ARRAY[]		= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', 'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fibers', 'Feather']
+Global Const $BASIC_MATERIAL_NAMES_FROM_IDS		= MapFromArrays($BASIC_MATERIALS_ARRAY, $BASIC_MATERIALS_NAMES_ARRAY)
+;Global Const $BASIC_MATERIAL_IDS_FROM_NAMES	= MapFromArrays($BASIC_MATERIALS_NAMES_ARRAY, $BASIC_MATERIALS_ARRAY)
 
-Global Const $Rare_Materials_Double_Array[][]	= [	[$ID_Fur_Square, 'Fur Square'], [$ID_Bolt_of_Linen, 'Bolt of Linen'], [$ID_Bolt_of_Damask, 'Bolt of Damask'], [$ID_Bolt_of_Silk, 'Bolt of Silk'], [$ID_Glob_of_Ectoplasm, 'Glob of Ectoplasm'], _
-													[$ID_Steel_Ingot, 'Steel Ingot'], [$ID_Deldrimor_Steel_Ingot, 'Deldrimor Steel Ingot'], [$ID_Monstrous_Claw, 'Monstrous Claw'], [$ID_Monstrous_Eye, 'Monstrous Eye'], [$ID_Monstrous_Fang, 'Monstrous Fang'], _
-													[$ID_Ruby, 'Ruby'], [$ID_Sapphire, 'Sapphire'], [$ID_Diamond, 'Diamond'], [$ID_Onyx_Gemstone, 'Onyx Gemstones'], [$ID_Lump_of_Charcoal, 'Lumps of Charcoal'], [$ID_Obsidian_Shard, 'Obsidian Shard'], _
-													[$ID_Tempered_Glass_Vial, 'Tempered Glass Vial'], [$ID_Leather_Square, 'Leather Squares'], [$ID_Elonian_Leather_Square, 'Elonian Leather Square'], [$ID_Vial_of_Ink, 'Vial of Ink'], _
-													[$ID_Roll_of_Parchment, 'Roll of Parchment'], [$ID_Roll_of_Vellum, 'Roll of Vellum'], [$ID_Spiritwood_Plank, 'Spiritwood Plank'], [$ID_Amber_Chunk, 'Amber Chunk'], [$ID_Jadeite_Shard, 'Jadeite Shard']]
-Global Const $Map_Rare_Materials				= MapFromDoubleArray($Rare_Materials_Double_Array)
-Global Const $Rare_Materials_Array[]				= [$ID_Fur_Square, $ID_Bolt_of_Linen, $ID_Bolt_of_Damask, $ID_Bolt_of_Silk, $ID_Glob_of_Ectoplasm, $ID_Steel_Ingot, $ID_Deldrimor_Steel_Ingot, $ID_Monstrous_Claw, $ID_Monstrous_Eye, $ID_Monstrous_Fang, _
-														$ID_Ruby, $ID_Sapphire, $ID_Diamond, $ID_Onyx_Gemstone, $ID_Lump_of_Charcoal, $ID_Obsidian_Shard, $ID_Tempered_Glass_Vial, $ID_Leather_Square, $ID_Elonian_Leather_Square, $ID_Vial_of_Ink, _
-														$ID_Roll_of_Parchment, $ID_Roll_of_Vellum, $ID_Spiritwood_Plank, $ID_Amber_Chunk, $ID_Jadeite_Shard]
-Global Const $Rare_Materials_Names_Array[]			= ['Fur Square', 'Bolt of Linen', 'Bolt of Damask', 'Bolt of Silk', 'Glob of Ectoplasm', 'Steel Ingot', 'Deldrimor Steel Ingot', 'Monstrous Claw', 'Monstrous Eye', 'Monstrous Fang', _
-														'Ruby', 'Sapphire', 'Diamond', 'Onyx Gemstone', 'Lump of Charcoal', 'Obsidian Shard', 'Tempered Glass Vial', 'Leather Square', 'Elonian Leather Square', 'Vial of Ink', _
-														'Roll of Parchment', 'Roll of Vellum', 'Spiritwood Plank', 'Amber Chunk', 'Jadeite Shard']
-Global Const $Rare_Material_Names_From_IDs			= MapFromArrays($Rare_Materials_Array, $Rare_Materials_Names_Array)
-;Global Const $Rare_Material_IDs_From_Names			= MapFromArrays($Rare_Materials_Names_Array, $Rare_Materials_Array)
+Global Const $RARE_MATERIALS_DOUBLE_ARRAY[][]	= [	[$ID_FUR_SQUARE, 'Fur Square'], [$ID_BOLT_OF_LINEN, 'Bolt of Linen'], [$ID_BOLT_OF_DAMASK, 'Bolt of Damask'], [$ID_BOLT_OF_SILK, 'Bolt of Silk'], [$ID_GLOB_OF_ECTOPLASM, 'Glob of Ectoplasm'], _
+													[$ID_STEEL_INGOT, 'Steel Ingot'], [$ID_DELDRIMOR_STEEL_INGOT, 'Deldrimor Steel Ingot'], [$ID_MONSTROUS_CLAW, 'Monstrous Claw'], [$ID_MONSTROUS_EYE, 'Monstrous Eye'], [$ID_MONSTROUS_FANG, 'Monstrous Fang'], _
+													[$ID_RUBY, 'Ruby'], [$ID_SAPPHIRE, 'Sapphire'], [$ID_DIAMOND, 'Diamond'], [$ID_ONYX_GEMSTONE, 'Onyx Gemstones'], [$ID_LUMP_OF_CHARCOAL, 'Lumps of Charcoal'], [$ID_OBSIDIAN_SHARD, 'Obsidian Shard'], _
+													[$ID_TEMPERED_GLASS_VIAL, 'Tempered Glass Vial'], [$ID_LEATHER_SQUARE, 'Leather Squares'], [$ID_ELONIAN_LEATHER_SQUARE, 'Elonian Leather Square'], [$ID_VIAL_OF_INK, 'Vial of Ink'], _
+													[$ID_ROLL_OF_PARCHMENT, 'Roll of Parchment'], [$ID_ROLL_OF_VELLUM, 'Roll of Vellum'], [$ID_SPIRITWOOD_PLANK, 'Spiritwood Plank'], [$ID_AMBER_CHUNK, 'Amber Chunk'], [$ID_JADEITE_SHARD, 'Jadeite Shard']]
+Global Const $MAP_RARE_MATERIALS				= MapFromDoubleArray($RARE_MATERIALS_DOUBLE_ARRAY)
+Global Const $RARE_MATERIALS_ARRAY[]			= [$ID_FUR_SQUARE, $ID_BOLT_OF_LINEN, $ID_BOLT_OF_DAMASK, $ID_BOLT_OF_SILK, $ID_GLOB_OF_ECTOPLASM, $ID_STEEL_INGOT, $ID_DELDRIMOR_STEEL_INGOT, $ID_MONSTROUS_CLAW, $ID_MONSTROUS_EYE, $ID_MONSTROUS_FANG, _
+													$ID_RUBY, $ID_SAPPHIRE, $ID_DIAMOND, $ID_ONYX_GEMSTONE, $ID_LUMP_OF_CHARCOAL, $ID_OBSIDIAN_SHARD, $ID_TEMPERED_GLASS_VIAL, $ID_LEATHER_SQUARE, $ID_ELONIAN_LEATHER_SQUARE, $ID_VIAL_OF_INK, _
+													$ID_ROLL_OF_PARCHMENT, $ID_ROLL_OF_VELLUM, $ID_SPIRITWOOD_PLANK, $ID_AMBER_CHUNK, $ID_JADEITE_SHARD]
+Global Const $RARE_MATERIALS_NAMES_ARRAY[]		= ['Fur Square', 'Bolt of Linen', 'Bolt of Damask', 'Bolt of Silk', 'Glob of Ectoplasm', 'Steel Ingot', 'Deldrimor Steel Ingot', 'Monstrous Claw', 'Monstrous Eye', 'Monstrous Fang', _
+													'Ruby', 'Sapphire', 'Diamond', 'Onyx Gemstone', 'Lump of Charcoal', 'Obsidian Shard', 'Tempered Glass Vial', 'Leather Square', 'Elonian Leather Square', 'Vial of Ink', _
+													'Roll of Parchment', 'Roll of Vellum', 'Spiritwood Plank', 'Amber Chunk', 'Jadeite Shard']
+Global Const $RARE_MATERIAL_NAMES_FROM_IDS		= MapFromArrays($RARE_MATERIALS_ARRAY, $RARE_MATERIALS_NAMES_ARRAY)
+;Global Const $RARE_MATERIAL_IDS_FROM_NAMES		= MapFromArrays($RARE_MATERIALS_NAMES_ARRAY, $RARE_MATERIALS_ARRAY)
 
-Global $All_Materials_Array						= $Rare_Materials_Array
-_ArrayConcatenate($All_Materials_Array, $Basic_Materials_Array)
-Global Const $Map_Basic_Materials				= MapFromArray($Basic_Materials_Array)
-Global Const $Map_All_Materials					= MapFromArray($All_Materials_Array)
+Global $all_materials_array						= $RARE_MATERIALS_ARRAY
+_ArrayConcatenate($all_materials_array, $BASIC_MATERIALS_ARRAY)
+Global Const $MAP_BASIC_MATERIALS				= MapFromArray($BASIC_MATERIALS_ARRAY)
+Global Const $MAP_ALL_MATERIALS					= MapFromArray($all_materials_array)
 
-Global Const $Materials_Double_Array[][]		= [	[$ID_Bone, 1], [$ID_Iron_Ingot, 2], [$ID_Tanned_Hide_Square, 3], [$ID_Scale, 4], [$ID_Chitin_Fragment, 5], [$ID_Bolt_of_Cloth, 6], [$ID_Wood_Plank, 7], [$ID_Granite_Slab, 9], [$ID_Pile_of_Glittering_Dust, 10], [$ID_Plant_Fibers, 11], [$ID_Feather, 12], _
-													[$ID_Fur_Square, 13], [$ID_Bolt_of_Linen, 14], [$ID_Bolt_of_Damask, 15], [$ID_Bolt_of_Silk, 16], [$ID_Glob_of_Ectoplasm, 17], [$ID_Steel_Ingot, 18], [$ID_Deldrimor_Steel_Ingot, 19], [$ID_Monstrous_Claw, 20], [$ID_Monstrous_Eye, 21], [$ID_Monstrous_Fang, 22], _
-													[$ID_Ruby, 23], [$ID_Sapphire, 24], [$ID_Diamond, 25], [$ID_Onyx_Gemstone, 26], [$ID_Lump_of_Charcoal, 27], [$ID_Obsidian_Shard, 28], [$ID_Tempered_Glass_Vial, 30], [$ID_Leather_Square, 31], [$ID_Elonian_Leather_Square, 32], [$ID_Vial_of_Ink, 33], _
-													[$ID_Roll_of_Parchment, 34], [$ID_Roll_of_Vellum, 35], [$ID_Spiritwood_Plank, 36], [$ID_Amber_Chunk, 37], [$ID_Jadeite_Shard, 38]]
-Global Const $Map_Material_Location				= MapFromDoubleArray($Materials_Double_Array)
+Global Const $MATERIALS_DOUBLE_ARRAY[][]		= [	[$ID_BONE, 1], [$ID_IRON_INGOT, 2], [$ID_TANNED_HIDE_SQUARE, 3], [$ID_SCALE, 4], [$ID_CHITIN_FRAGMENT, 5], [$ID_BOLT_OF_CLOTH, 6], [$ID_WOOD_PLANK, 7], [$ID_GRANITE_SLAB, 9], [$ID_PILE_OF_GLITTERING_DUST, 10], [$ID_PLANT_FIBERS, 11], [$ID_FEATHER, 12], _
+													[$ID_FUR_SQUARE, 13], [$ID_BOLT_OF_LINEN, 14], [$ID_BOLT_OF_DAMASK, 15], [$ID_BOLT_OF_SILK, 16], [$ID_GLOB_OF_ECTOPLASM, 17], [$ID_STEEL_INGOT, 18], [$ID_DELDRIMOR_STEEL_INGOT, 19], [$ID_MONSTROUS_CLAW, 20], [$ID_MONSTROUS_EYE, 21], [$ID_MONSTROUS_FANG, 22], _
+													[$ID_RUBY, 23], [$ID_SAPPHIRE, 24], [$ID_DIAMOND, 25], [$ID_ONYX_GEMSTONE, 26], [$ID_LUMP_OF_CHARCOAL, 27], [$ID_OBSIDIAN_SHARD, 28], [$ID_TEMPERED_GLASS_VIAL, 30], [$ID_LEATHER_SQUARE, 31], [$ID_ELONIAN_LEATHER_SQUARE, 32], [$ID_VIAL_OF_INK, 33], _
+													[$ID_ROLL_OF_PARCHMENT, 34], [$ID_ROLL_OF_VELLUM, 35], [$ID_SPIRITWOOD_PLANK, 36], [$ID_AMBER_CHUNK, 37], [$ID_JADEITE_SHARD, 38]]
+Global Const $MAP_MATERIAL_LOCATION				= MapFromDoubleArray($MATERIALS_DOUBLE_ARRAY)
 
 
 #EndRegion Materials
 
 
 #Region Endgame Rewards
-Global Const $ID_Amulet_of_the_Mists		= 6069
-Global Const $ID_Book_of_Secrets			= 19197
-Global Const $ID_Droknars_Key				= 26724
-Global Const $ID_Imperial_Dragons_Tear		= 30205		; Not tradeable
-Global Const $ID_Deldrimor_Talisman			= 30693
-Global Const $ID_Medal_of_Honor				= 35122		; Not tradeable
+Global Const $ID_AMULET_OF_THE_MISTS		= 6069
+Global Const $ID_BOOK_OF_SECRETS			= 19197
+Global Const $ID_DROKNARS_KEY				= 26724
+Global Const $ID_IMPERIAL_DRAGONS_TEAR		= 30205		; Not tradeable
+Global Const $ID_DELDRIMOR_TALISMAN			= 30693
+Global Const $ID_MEDAL_OF_HONOR				= 35122		; Not tradeable
 #EndRegion Endgame Rewards
 
 
 #Region Alcohol
-Global Const $ID_Hunters_Ale				= 910
-Global Const $ID_Flask_of_Firewater			= 2513
-Global Const $ID_Dwarven_Ale				= 5585
-Global Const $ID_Witchs_Brew				= 6049
-Global Const $ID_Spiked_Eggnog				= 6366
-Global Const $ID_Vial_of_Absinthe			= 6367
-Global Const $ID_Eggnog						= 6375
-Global Const $ID_Bottle_of_Rice_Wine		= 15477
-Global Const $ID_Zehtukas_Jug				= 19171
-Global Const $ID_Bottle_of_Juniberry_Gin	= 19172
-Global Const $ID_Bottle_of_Vabbian_Wine		= 19173
-Global Const $ID_Shamrock_Ale				= 22190
-Global Const $ID_Aged_Dwarven_Ale			= 24593
-Global Const $ID_Hard_Apple_Cider			= 28435
-Global Const $ID_Bottle_of_Grog				= 30855
-Global Const $ID_Aged_Hunters_Ale			= 31145
-Global Const $ID_Keg_of_Aged_Hunters_Ale	= 31146
-Global Const $ID_Krytan_Brandy				= 35124
-Global Const $ID_Battle_Isle_Iced_Tea		= 36682
+Global Const $ID_HUNTERS_ALE				= 910
+Global Const $ID_FLASK_OF_FIREWATER			= 2513
+Global Const $ID_DWARVEN_ALE				= 5585
+Global Const $ID_WITCHS_BREW				= 6049
+Global Const $ID_SPIKED_EGGNOG				= 6366
+Global Const $ID_VIAL_OF_ABSINTHE			= 6367
+Global Const $ID_EGGNOG						= 6375
+Global Const $ID_BOTTLE_OF_RICE_WINE		= 15477
+Global Const $ID_ZEHTUKAS_JUG				= 19171
+Global Const $ID_BOTTLE_OF_JUNIBERRY_GIN	= 19172
+Global Const $ID_BOTTLE_OF_VABBIAN_WINE		= 19173
+Global Const $ID_SHAMROCK_ALE				= 22190
+Global Const $ID_AGED_DWARVEN_ALE			= 24593
+Global Const $ID_HARD_APPLE_CIDER			= 28435
+Global Const $ID_BOTTLE_OF_GROG				= 30855
+Global Const $ID_AGED_HUNTERS_ALE			= 31145
+Global Const $ID_KEG_OF_AGED_HUNTERS_ALE	= 31146
+Global Const $ID_KRYTAN_BRANDY				= 35124
+Global Const $ID_BATTLE_ISLE_ICED_TEA		= 36682
 ; For pickup use
-Global Const $Alcohols_Array[]				= [$ID_Hunters_Ale, $ID_Flask_of_Firewater, $ID_Dwarven_Ale, $ID_Witchs_Brew, $ID_Spiked_Eggnog, $ID_Vial_of_Absinthe, $ID_Eggnog, $ID_Bottle_of_Rice_Wine, $ID_Zehtukas_Jug, $ID_Bottle_of_Juniberry_Gin, _
-												$ID_Bottle_of_Vabbian_Wine, $ID_Shamrock_Ale, $ID_Aged_Dwarven_Ale, $ID_Hard_Apple_Cider, $ID_Bottle_of_Grog, $ID_Aged_Hunters_Ale, $ID_Keg_of_Aged_Hunters_Ale, $ID_Krytan_Brandy, $ID_Battle_Isle_Iced_Tea]
+Global Const $ALCOHOLS_ARRAY[]				= [$ID_HUNTERS_ALE, $ID_FLASK_OF_FIREWATER, $ID_DWARVEN_ALE, $ID_WITCHS_BREW, $ID_SPIKED_EGGNOG, $ID_VIAL_OF_ABSINTHE, $ID_EGGNOG, $ID_BOTTLE_OF_RICE_WINE, $ID_ZEHTUKAS_JUG, $ID_BOTTLE_OF_JUNIBERRY_GIN, _
+												$ID_BOTTLE_OF_VABBIAN_WINE, $ID_SHAMROCK_ALE, $ID_AGED_DWARVEN_ALE, $ID_HARD_APPLE_CIDER, $ID_BOTTLE_OF_GROG, $ID_AGED_HUNTERS_ALE, $ID_KEG_OF_AGED_HUNTERS_ALE, $ID_KRYTAN_BRANDY, $ID_BATTLE_ISLE_ICED_TEA]
 ; For using them
-Global Const $OnePoint_Alcohols_Array[]		= [$ID_Hunters_Ale, $ID_Dwarven_Ale, $ID_Witchs_Brew, $ID_Vial_of_Absinthe, $ID_Eggnog, $ID_Bottle_of_Rice_Wine, $ID_Zehtukas_Jug, $ID_Bottle_of_Juniberry_Gin, $ID_Bottle_of_Vabbian_Wine, _
-												$ID_Shamrock_Ale, $ID_Hard_Apple_Cider]
-Global Const $ThreePoint_Alcohols_Array[]	= [$ID_Flask_of_Firewater, $ID_Spiked_Eggnog, $ID_Aged_Dwarven_Ale, $ID_Bottle_of_Grog, $ID_Aged_Hunters_Ale, $ID_Keg_of_Aged_Hunters_Ale, $ID_Krytan_Brandy]
-Global Const $FiftyPoint_Alcohols_Array[]	= [$ID_Battle_Isle_Iced_Tea]
-Global Const $Map_Alcohols					= MapFromArray($Alcohols_Array)
-Global Const $Map_OnePoint_Alcohols			= MapFromArray($OnePoint_Alcohols_Array)
-Global Const $Map_ThreePoint_Alcohols		= MapFromArray($ThreePoint_Alcohols_Array)
-Global Const $Map_FiftyPoint_Alcohols		= MapFromArray($FiftyPoint_Alcohols_Array)
+Global Const $ONEPOINT_ALCOHOLS_ARRAY[]		= [$ID_HUNTERS_ALE, $ID_DWARVEN_ALE, $ID_WITCHS_BREW, $ID_VIAL_OF_ABSINTHE, $ID_EGGNOG, $ID_BOTTLE_OF_RICE_WINE, $ID_ZEHTUKAS_JUG, $ID_BOTTLE_OF_JUNIBERRY_GIN, $ID_BOTTLE_OF_VABBIAN_WINE, _
+												$ID_SHAMROCK_ALE, $ID_HARD_APPLE_CIDER]
+Global Const $THREEPOINT_ALCOHOLS_ARRAY[]	= [$ID_FLASK_OF_FIREWATER, $ID_SPIKED_EGGNOG, $ID_AGED_DWARVEN_ALE, $ID_BOTTLE_OF_GROG, $ID_AGED_HUNTERS_ALE, $ID_KEG_OF_AGED_HUNTERS_ALE, $ID_KRYTAN_BRANDY]
+Global Const $FIFTYPOINT_ALCOHOLS_ARRAY[]	= [$ID_BATTLE_ISLE_ICED_TEA]
+Global Const $MAP_ALCOHOLS					= MapFromArray($ALCOHOLS_ARRAY)
+Global Const $MAP_ONEPOINT_ALCOHOLS			= MapFromArray($ONEPOINT_ALCOHOLS_ARRAY)
+Global Const $MAP_THREEPOINT_ALCOHOLS		= MapFromArray($THREEPOINT_ALCOHOLS_ARRAY)
+Global Const $MAP_FIFTYPOINT_ALCOHOLS		= MapFromArray($FIFTYPOINT_ALCOHOLS_ARRAY)
 #EndRegion Alcohol
 
 
 #Region Party
-Global Const $ID_Ghost_in_the_Box		= 6368
-Global Const $ID_Squash_Serum			= 6369
-Global Const $ID_Snowman_Summoner		= 6376
-Global Const $ID_Bottle_Rocket			= 21809
-Global Const $ID_Champagne_Popper		= 21810
-Global Const $ID_Sparkler				= 21813
-Global Const $ID_Crate_of_Fireworks		= 29436		; Not spammable
-Global Const $ID_Disco_Ball				= 29543		; Not Spammable
-Global Const $ID_Party_Beacon			= 36683
-Global Const $Spammable_Party_Array[]	= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon]
-Global Const $All_Festive_Array[]		= [$ID_Ghost_in_the_Box, $ID_Squash_Serum, $ID_Snowman_Summoner, $ID_Bottle_Rocket, $ID_Champagne_Popper, $ID_Sparkler, $ID_Party_Beacon, $ID_Crate_of_Fireworks, $ID_Disco_Ball]
-Global Const $Map_Spammable_Party		= MapFromArray($Spammable_Party_Array)
-Global Const $Map_Festive				= MapFromArray($All_Festive_Array)
+Global Const $ID_GHOST_IN_THE_BOX		= 6368
+Global Const $ID_SQUASH_SERUM			= 6369
+Global Const $ID_SNOWMAN_SUMMONER		= 6376
+Global Const $ID_BOTTLE_ROCKET			= 21809
+Global Const $ID_CHAMPAGNE_POPPER		= 21810
+Global Const $ID_SPARKLER				= 21813
+Global Const $ID_CRATE_OF_FIREWORKS		= 29436		; Not spammable
+Global Const $ID_DISCO_BALL				= 29543		; Not Spammable
+Global Const $ID_PARTY_BEACON			= 36683
+Global Const $SPAMMABLE_PARTY_ARRAY[]	= [$ID_GHOST_IN_THE_BOX, $ID_SQUASH_SERUM, $ID_SNOWMAN_SUMMONER, $ID_BOTTLE_ROCKET, $ID_CHAMPAGNE_POPPER, $ID_SPARKLER, $ID_PARTY_BEACON]
+Global Const $ALL_FESTIVE_ARRAY[]		= [$ID_GHOST_IN_THE_BOX, $ID_SQUASH_SERUM, $ID_SNOWMAN_SUMMONER, $ID_BOTTLE_ROCKET, $ID_CHAMPAGNE_POPPER, $ID_SPARKLER, $ID_PARTY_BEACON, $ID_CRATE_OF_FIREWORKS, $ID_DISCO_BALL]
+Global Const $MAP_SPAMMABLE_PARTY		= MapFromArray($SPAMMABLE_PARTY_ARRAY)
+Global Const $MAP_FESTIVE				= MapFromArray($ALL_FESTIVE_ARRAY)
 #EndRegion Party
 
 
 #Region Sweets
-Global Const $ID_Creme_Brulee			= 15528
-Global Const $ID_Red_Bean_Cake			= 15479
-Global Const $ID_Mandragor_Root_Cake	= 19170
-Global Const $ID_Fruitcake				= 21492
-Global Const $ID_Sugary_Blue_Drink		= 21812
-Global Const $ID_Chocolate_Bunny		= 22644
-Global Const $ID_MiniTreats_of_Purity	= 30208
-Global Const $ID_Jar_of_Honey			= 31150
-Global Const $ID_Krytan_Lokum			= 35125
-Global Const $ID_Delicious_Cake			= 36681
-Global Const $Town_Sweets_Array[]		= [$ID_Creme_Brulee, $ID_Red_Bean_Cake, $ID_Mandragor_Root_Cake, $ID_Fruitcake, $ID_Sugary_Blue_Drink, $ID_Chocolate_Bunny, $ID_MiniTreats_of_Purity, $ID_Jar_of_Honey, $ID_Krytan_Lokum, $ID_Delicious_Cake]
-Global Const $Map_Town_Sweets			= MapFromArray($Town_Sweets_Array)
+Global Const $ID_CREME_BRULEE			= 15528
+Global Const $ID_RED_BEAN_CAKE			= 15479
+Global Const $ID_MANDRAGOR_ROOT_CAKE	= 19170
+Global Const $ID_FRUITCAKE				= 21492
+Global Const $ID_SUGARY_BLUE_DRINK		= 21812
+Global Const $ID_CHOCOLATE_BUNNY		= 22644
+Global Const $ID_MINITREATS_OF_PURITY	= 30208
+Global Const $ID_JAR_OF_HONEY			= 31150
+Global Const $ID_KRYTAN_LOKUM			= 35125
+Global Const $ID_DELICIOUS_CAKE			= 36681
+Global Const $TOWN_SWEETS_ARRAY[]		= [$ID_CREME_BRULEE, $ID_RED_BEAN_CAKE, $ID_MANDRAGOR_ROOT_CAKE, $ID_FRUITCAKE, $ID_SUGARY_BLUE_DRINK, $ID_CHOCOLATE_BUNNY, $ID_MINITREATS_OF_PURITY, $ID_JAR_OF_HONEY, $ID_KRYTAN_LOKUM, $ID_DELICIOUS_CAKE]
+Global Const $MAP_TOWN_SWEETS			= MapFromArray($TOWN_SWEETS_ARRAY)
 
 #Region Sweet Pcon
-Global Const $ID_Drake_Kabob			= 17060
-Global Const $ID_Bowl_of_Skalefin_Soup	= 17061
-Global Const $ID_Pahnai_Salad			= 17062
-Global Const $ID_Birthday_Cupcake		= 22269
-Global Const $ID_Golden_Egg				= 22752
-Global Const $ID_Candy_Apple			= 28431
-Global Const $ID_Candy_Corn				= 28432
-Global Const $ID_Slice_of_Pumpkin_Pie	= 28436
-Global Const $ID_Lunar_Fortune_2008		= 29425		; Rat
-Global Const $ID_Lunar_Fortune_2009		= 29426		; Ox
-Global Const $ID_Lunar_Fortune_2010		= 29427		; Tiger
-Global Const $ID_Lunar_Fortune_2011		= 29428		; Rabbit
-Global Const $ID_Lunar_Fortune_2012		= 29429		; Dragon
-Global Const $ID_Lunar_Fortune_2013		= 29430		; Snake
-Global Const $ID_Lunar_Fortune_2014		= 29431		; Horse
-Global Const $ID_Blue_Rock_Candy		= 31151
-Global Const $ID_Green_Rock_Candy		= 31152
-Global Const $ID_Red_Rock_Candy			= 31153
-Global Const $ID_War_Supplies			= 35121
-Global Const $Sweet_Pcons_Array			= [$ID_Drake_Kabob, $ID_Bowl_of_Skalefin_Soup, $ID_Pahnai_Salad, $ID_Birthday_Cupcake, $ID_Golden_Egg, $ID_Candy_Apple, $ID_Candy_Corn, $ID_Slice_of_Pumpkin_Pie, _
-											$ID_Lunar_Fortune_2014, $ID_Blue_Rock_Candy, $ID_Green_Rock_Candy, $ID_Red_Rock_Candy, $ID_War_Supplies]
-Global Const $Map_Sweet_Pcons			= MapFromArray($Sweet_Pcons_Array)
+Global Const $ID_DRAKE_KABOB			= 17060
+Global Const $ID_BOWL_OF_SKALEFIN_SOUP	= 17061
+Global Const $ID_PAHNAI_SALAD			= 17062
+Global Const $ID_BIRTHDAY_CUPCAKE		= 22269
+Global Const $ID_GOLDEN_EGG				= 22752
+Global Const $ID_CANDY_APPLE			= 28431
+Global Const $ID_CANDY_CORN				= 28432
+Global Const $ID_SLICE_OF_PUMPKIN_PIE	= 28436
+Global Const $ID_LUNAR_FORTUNE_2008		= 29425		; Rat
+Global Const $ID_LUNAR_FORTUNE_2009		= 29426		; Ox
+Global Const $ID_LUNAR_FORTUNE_2010		= 29427		; Tiger
+Global Const $ID_LUNAR_FORTUNE_2011		= 29428		; Rabbit
+Global Const $ID_LUNAR_FORTUNE_2012		= 29429		; Dragon
+Global Const $ID_LUNAR_FORTUNE_2013		= 29430		; Snake
+Global Const $ID_LUNAR_FORTUNE_2014		= 29431		; Horse
+Global Const $ID_BLUE_ROCK_CANDY		= 31151
+Global Const $ID_GREEN_ROCK_CANDY		= 31152
+Global Const $ID_RED_ROCK_CANDY			= 31153
+Global Const $ID_WAR_SUPPLIES			= 35121
+Global Const $SWEET_PCONS_ARRAY			= [$ID_DRAKE_KABOB, $ID_BOWL_OF_SKALEFIN_SOUP, $ID_PAHNAI_SALAD, $ID_BIRTHDAY_CUPCAKE, $ID_GOLDEN_EGG, $ID_CANDY_APPLE, $ID_CANDY_CORN, $ID_SLICE_OF_PUMPKIN_PIE, _
+											$ID_LUNAR_FORTUNE_2014, $ID_BLUE_ROCK_CANDY, $ID_GREEN_ROCK_CANDY, $ID_RED_ROCK_CANDY, $ID_WAR_SUPPLIES]
+Global Const $MAP_SWEET_PCONS			= MapFromArray($SWEET_PCONS_ARRAY)
 #EndRegion Sweet Pcon
 #EndRegion Sweets
 
 
 #Region DP Removal
-Global Const $ID_Peppermint_CC				= 6370
-Global Const $ID_Refined_Jelly				= 19039
-Global Const $ID_Elixir_of_Valor			= 21227
-Global Const $ID_Wintergreen_CC				= 21488
-Global Const $ID_Rainbow_CC					= 21489
-Global Const $ID_Four_Leaf_Clover			= 22191
-Global Const $ID_Honeycomb					= 26784
-Global Const $ID_Pumpkin_Cookie				= 28433
-Global Const $ID_Oath_of_Purity				= 30206
-Global Const $ID_Seal_of_the_Dragon_Empire	= 30211
-Global Const $ID_Shining_Blade_Ration		= 35127
-Global Const $DPRemoval_Sweets[]			= [$ID_Peppermint_CC, $ID_Refined_Jelly, $ID_Wintergreen_CC, $ID_Rainbow_CC, $ID_Four_Leaf_Clover, $ID_Honeycomb, $ID_Pumpkin_Cookie, $ID_Shining_Blade_Ration]
-Global Const $Map_DPRemoval_Sweets			= MapFromArray($DPRemoval_Sweets)
+Global Const $ID_PEPPERMINT_CC				= 6370
+Global Const $ID_REFINED_JELLY				= 19039
+Global Const $ID_ELIXIR_OF_VALOR			= 21227
+Global Const $ID_WINTERGREEN_CC				= 21488
+Global Const $ID_RAINBOW_CC					= 21489
+Global Const $ID_FOUR_LEAF_CLOVER			= 22191
+Global Const $ID_HONEYCOMB					= 26784
+Global Const $ID_PUMPKIN_COOKIE				= 28433
+Global Const $ID_OATH_OF_PURITY				= 30206
+Global Const $ID_SEAL_OF_THE_DRAGON_EMPIRE	= 30211
+Global Const $ID_SHINING_BLADE_RATION		= 35127
+Global Const $DP_REMOVAL_SWEETS[]			= [$ID_PEPPERMINT_CC, $ID_REFINED_JELLY, $ID_WINTERGREEN_CC, $ID_RAINBOW_CC, $ID_FOUR_LEAF_CLOVER, $ID_HONEYCOMB, $ID_PUMPKIN_COOKIE, $ID_SHINING_BLADE_RATION]
+Global Const $MAP_DP_REMOVAL_SWEETS			= MapFromArray($DP_REMOVAL_SWEETS)
 #EndRegion DP Removal
 
 
 #Region Special Drops
-Global Const $ID_CC_Shard					= 556
-Global Const $ID_Flame_of_Balthazar			= 2514		; Not really a drop
-Global Const $ID_Golden_Flame_of_Balthazar	= 22188		; Not really a drop
-Global Const $ID_Celestial_Sigil			= 2571		; Not really a drop
-Global Const $ID_Victory_Token				= 18345
-Global Const $ID_Wintersday_Gift			= 21491		; Not really a drop
-Global Const $ID_Wayfarer_Mark				= 37765
-Global Const $ID_Lunar_Token				= 21833
-Global Const $ID_Lunar_Tokens				= 28433
-Global Const $ID_ToT						= 28434
-Global Const $Special_Drops[]				= [$ID_CC_Shard, $ID_Victory_Token, $ID_Wintersday_Gift, $ID_Wayfarer_Mark, $ID_Lunar_Token, $ID_Lunar_Tokens, $ID_ToT]
-Global Const $Special_Drops_Names[]			= ['Candy Cane Shard', 'Victory Token', 'Wintersday Gift', 'Wayfarer Mark', 'Lunar Token', 'Lunar Tokens', 'Trick-or-Treat Bag']
-Global Const $SpecialDropNamesFromIDs		= MapFromArrays($Special_Drops, $Special_Drops_Names)
-;Global Const $SpecialDropIDsFromNames		= MapFromArrays($Special_Drops_Names, $Special_Drops)
-Global Const $Map_Special_Drops				= MapFromArray($Special_Drops)
+Global Const $ID_CC_SHARD					= 556
+Global Const $ID_FLAME_OF_BALTHAZAR			= 2514		; Not really a drop
+Global Const $ID_GOLDEN_FLAME_OF_BALTHAZAR	= 22188		; Not really a drop
+Global Const $ID_CELESTIAL_SIGIL			= 2571		; Not really a drop
+Global Const $ID_VICTORY_TOKEN				= 18345
+Global Const $ID_WINTERSDAY_GIFT			= 21491		; Not really a drop
+Global Const $ID_WAYFARER_MARK				= 37765
+Global Const $ID_LUNAR_TOKEN				= 21833
+Global Const $ID_LUNAR_TOKENS				= 28433
+Global Const $ID_TOT						= 28434
+Global Const $SPECIAL_DROPS[]				= [$ID_CC_SHARD, $ID_VICTORY_TOKEN, $ID_WINTERSDAY_GIFT, $ID_WAYFARER_MARK, $ID_LUNAR_TOKEN, $ID_LUNAR_TOKENS, $ID_TOT]
+Global Const $SPECIAL_DROPS_NAMES[]			= ['Candy Cane Shard', 'Victory Token', 'Wintersday Gift', 'Wayfarer Mark', 'Lunar Token', 'Lunar Tokens', 'Trick-or-Treat Bag']
+Global Const $SPECIAL_DROP_NAMES_FROM_IDS		= MapFromArrays($SPECIAL_DROPS, $SPECIAL_DROPS_NAMES)
+;Global Const $SPECIAL_DROP_IDS_FROM_NAMES	= MapFromArrays($SPECIAL_DROPS_NAMES, $SPECIAL_DROPS)
+Global Const $MAP_SPECIAL_DROPS				= MapFromArray($SPECIAL_DROPS)
 #EndRegion Special Drops
 
 
 #Region Stupid Drops
-Global Const $ID_Kilhn_Testibries_Cuisse		= 2113
-Global Const $ID_Kilhn_Testibries_Greaves		= 2114
-Global Const $ID_Kilhn_Testibries_Crest			= 2115
-Global Const $ID_Kilhn_Testibries_Pauldron		= 2116
-Global Const $ID_Map_Piece_TL					= 24629
-Global Const $ID_Map_Piece_TR					= 24630
-Global Const $ID_Map_Piece_BL					= 24631
-Global Const $ID_Map_Piece_BR					= 24632
-Global Const $ID_Golden_Lantern					= 4195		; Mount Qinkai Quest Item
-Global Const $ID_Hunk_of_Fresh_Meat				= 15583		; NF Quest Item for Drakes on a Plain
-Global Const $ID_Zehtukas_Great_Horn			= 15845
-Global Const $ID_Jade_Orb						= 15940
-Global Const $ID_Herring						= 26502		; Mini Black Moa Chick incubator item
-Global Const $ID_Encrypted_Charr_Battle_Plans	= 27976
-Global Const $ID_Ministerial_Decree				= 29109		; WoC quest item
-Global Const $ID_Keirans_Bow					= 35829		; Not really a drop
-Global Const $ID_Jar_of_Invigoration			= 27133
-Global Const $Map_Pieces_Array[]				= [$ID_Map_Piece_TL, $ID_Map_Piece_TR, $ID_Map_Piece_BL, $ID_Map_Piece_BR]
-Global Const $Map_Map_Pieces					= MapFromArray($Map_Pieces_Array)
+Global Const $ID_KILHN_TESTIBRIES_CUISSE		= 2113
+Global Const $ID_KILHN_TESTIBRIES_GREAVES		= 2114
+Global Const $ID_KILHN_TESTIBRIES_CREST			= 2115
+Global Const $ID_KILHN_TESTIBRIES_PAULDRON		= 2116
+Global Const $ID_MAP_PIECE_TL					= 24629
+Global Const $ID_MAP_PIECE_TR					= 24630
+Global Const $ID_MAP_PIECE_BL					= 24631
+Global Const $ID_MAP_PIECE_BR					= 24632
+Global Const $ID_GOLDEN_LANTERN					= 4195		; Mount Qinkai Quest Item
+Global Const $ID_HUNK_OF_FRESH_MEAT				= 15583		; NF Quest Item for Drakes on a Plain
+Global Const $ID_ZEHTUKAS_GREAT_HORN			= 15845
+Global Const $ID_JADE_ORB						= 15940
+Global Const $ID_HERRING						= 26502		; Mini Black Moa Chick incubator item
+Global Const $ID_ENCRYPTED_CHARR_BATTLE_PLANS	= 27976
+Global Const $ID_MINISTERIAL_DECREE				= 29109		; WoC quest item
+Global Const $ID_KEIRANS_BOW					= 35829		; Not really a drop
+Global Const $ID_JAR_OF_INVIGORATION			= 27133
+Global Const $MAP_PIECES_ARRAY[]				= [$ID_MAP_PIECE_TL, $ID_MAP_PIECE_TR, $ID_MAP_PIECE_BL, $ID_MAP_PIECE_BR]
+Global Const $MAP_MAP_PIECES					= MapFromArray($MAP_PIECES_ARRAY)
 #EndRegion Stupid Drops
 
 
 #Region Hero Armor Upgrades
-Global Const $ID_Ancient_Armor_Remnant		= 19190
-Global Const $ID_Stolen_Sunspear_Armor		= 19191
-Global Const $ID_Mysterious_Armor_Piece		= 19192
-Global Const $ID_Primeval_Armor_Remnant		= 19193
-Global Const $ID_Deldrimor_Armor_Remnant	= 27321
-Global Const $ID_Cloth_of_the_Brotherhood	= 27322
+Global Const $ID_ANCIENT_ARMOR_REMNANT		= 19190
+Global Const $ID_STOLEN_SUNSPEAR_ARMOR		= 19191
+Global Const $ID_MYSTERIOUS_ARMOR_PIECE		= 19192
+Global Const $ID_PRIMEVAL_ARMOR_REMNANT		= 19193
+Global Const $ID_DELDRIMOR_ARMOR_REMNANT	= 27321
+Global Const $ID_CLOTH_OF_THE_BROTHERHOOD	= 27322
 #EndRegion Hero Armor Upgrades
 
 
 #Region Polymock
-Global Const $ID_Polymock_Wind_Rider			= 24356		; Gold
-Global Const $ID_Polymock_Gargoyle				= 24361		; White
-Global Const $ID_Polymock_Mergoyle				= 24369		; White
-Global Const $ID_Polymock_Skale					= 24373		; White
-Global Const $ID_Polymock_Fire_Imp				= 24359		; White
-Global Const $ID_Polymock_Kappa					= 24367		; Purple
-Global Const $ID_Polymock_Ice_Imp				= 24366		; White
-Global Const $ID_Polymock_Earth_Elemental		= 24357		; Purple
-Global Const $ID_Polymock_Ice_Elemental			= 24365		; Purple
-Global Const $ID_Polymock_Fire_Elemental		= 24358		; Purple
-Global Const $ID_Polymock_Aloe_Seed				= 24355		; Purple
-Global Const $ID_Polymock_Mirage_Iboga			= 24363		; Gold
-Global Const $ID_Polymock_Gaki					= 24360		; Gold
-;Global Const $ID_Polymock_Mantis_Dreamweaver	=			; Gold
-Global Const $ID_Polymock_Mursaat_Elementalist	= 24370		; Gold
-Global Const $ID_Polymock_Ruby_Djinn			= 24371		; Gold
-Global Const $ID_Polymock_Naga_Shaman			= 24372		; Gold
-Global Const $ID_Polymock_Stone_Rain			= 24374		; Gold
+Global Const $ID_POLYMOCK_WIND_RIDER			= 24356		; Gold
+Global Const $ID_POLYMOCK_GARGOYLE				= 24361		; White
+Global Const $ID_POLYMOCK_MERGOYLE				= 24369		; White
+Global Const $ID_POLYMOCK_SKALE					= 24373		; White
+Global Const $ID_POLYMOCK_FIRE_IMP				= 24359		; White
+Global Const $ID_POLYMOCK_KAPPA					= 24367		; Purple
+Global Const $ID_POLYMOCK_ICE_IMP				= 24366		; White
+Global Const $ID_POLYMOCK_EARTH_ELEMENTAL		= 24357		; Purple
+Global Const $ID_POLYMOCK_ICE_ELEMENTAL			= 24365		; Purple
+Global Const $ID_POLYMOCK_FIRE_ELEMENTAL		= 24358		; Purple
+Global Const $ID_POLYMOCK_ALOE_SEED				= 24355		; Purple
+Global Const $ID_POLYMOCK_MIRAGE_IBOGA			= 24363		; Gold
+Global Const $ID_POLYMOCK_GAKI					= 24360		; Gold
+;Global Const $ID_POLYMOCK_MANTIS_DREAMWEAVER	=			; Gold
+Global Const $ID_POLYMOCK_MURSAAT_ELEMENTALIST	= 24370		; Gold
+Global Const $ID_POLYMOCK_RUBY_DJINN			= 24371		; Gold
+Global Const $ID_POLYMOCK_NAGA_SHAMAN			= 24372		; Gold
+Global Const $ID_POLYMOCK_STONE_RAIN			= 24374		; Gold
 #EndRegion Polymock
 
 
 #Region Reward Trophy
-Global Const $ID_Copper_Zaishen_Coin				= 31202
-Global Const $ID_Gold_Zaishen_Coin					= 31203
-Global Const $ID_Silver_Zaishen_Coin				= 31204
-Global Const $ID_Monastery_Credit					= 5819
-Global Const $ID_Imperial_Commendation				= 6068
-Global Const $ID_Luxon_Totem						= 6048
-Global Const $ID_Equipment_Requisition				= 5817
-Global Const $ID_Battle_Commendation				= 17081
-Global Const $ID_Kournan_Coin						= 19195
-Global Const $ID_Trade_Contract						= 17082
-Global Const $ID_Ancient_Artifact					= 19182
-Global Const $ID_Inscribed_Secret					= 19196
-Global Const $ID_Burol_Ironfists_Commendation		= 29018
-Global Const $ID_Bison_Championship_Token			= 27563
-Global Const $ID_Monumental_Tapestry				= 27583
-Global Const $ID_Royal_Gift							= 35120
-Global Const $ID_Confessors_Orders					= 35123
-Global Const $ID_Paper_Wrapped_Parcel				= 34212
-Global Const $ID_Sack_of_Random_Junk				= 34213
-;Global Const $ID_Legion_Loot_Bag					=
-;Global Const $ID_Reverie_Gift						=
-Global Const $ID_Ministerial_Commendation			= 36985
-Global Const $ID_Imperial_Guard_Requisition_Order	= 29108
-Global Const $ID_Imperial_Guard_Lockbox				= 30212		; Not tradeable
-;Global Const $ID_Proof_of_Flames					=
-;Global Const $ID_Proof_of_Mountains				=
-;Global Const $ID_Proof_of_Waves					=
-;Global Const $ID_Proof_of_Winds					=
-;Global Const $ID_Racing_Medal						=
-Global Const $ID_Glob_of_Frozen_Ectoplasm			= 21509
-;Global Const $ID_Celestial_Miniature_Token			=
-;Global Const $ID_Dragon_Festival_Grab_Bag			=
-Global Const $ID_Red_Gift_Bag						= 21811
-;Global Const $ID_Lunar_Festival_Grab_Bag			=
-Global Const $ID_Festival_Prize						= 15478
-;Global Const $ID_Imperial_Mask_Token				=
-;Global Const $ID_Ghoulish_Grab_Bag					=
-;Global Const $ID_Ghoulish_Accessory_Token			=
-;Global Const $ID_Frozen_Accessory_Token			=
-;Global Const $ID_Wintersday_Grab_Bag				=
-Global Const $ID_Armbrace_of_Truth					= 21127
-Global Const $ID_Margonite_Gemstone					= 21128
-Global Const $ID_Stygian_Gemstone					= 21129
-Global Const $ID_Titan_Gemstone						= 21130
-Global Const $ID_Torment_Gemstone					= 21131
-Global Const $ID_Coffer_of_Whispers					= 21228
-Global Const $ID_Gift_of_the_Traveller				= 31148
-Global Const $ID_Gift_of_the_Huntsman				= 31149
-Global Const $ID_Champions_Zaishen_Strongbox		= 36665
-Global Const $ID_Heros_Zaishen_Strongbox			= 36666
-Global Const $ID_Gladiators_Zaishen_Strongbox		= 36667
-Global Const $ID_Strategists_Zaishen_Strongbox		= 36668
-Global Const $ID_Zhos_Journal						= 25866
-Global Const $Reward_Trophies_Array	= [$ID_Copper_Zaishen_Coin, $ID_Gold_Zaishen_Coin, $ID_Silver_Zaishen_Coin, $ID_Monastery_Credit, $ID_Imperial_Commendation, $ID_Luxon_Totem, $ID_Equipment_Requisition, $ID_Battle_Commendation, $ID_Kournan_Coin, $ID_Trade_Contract, _
-	$ID_Ancient_Artifact, $ID_Inscribed_Secret, $ID_Burol_Ironfists_Commendation, $ID_Bison_Championship_Token, $ID_Monumental_Tapestry, $ID_Royal_Gift, $ID_War_Supplies, $ID_Confessors_Orders, $ID_Paper_Wrapped_Parcel, $ID_Sack_of_Random_Junk, $ID_Ministerial_Commendation, _
-	$ID_Imperial_Guard_Requisition_Order, $ID_Imperial_Guard_Lockbox, $ID_Glob_of_Frozen_Ectoplasm, $ID_Red_Gift_Bag, $ID_Festival_Prize, $ID_Armbrace_of_Truth, $ID_Margonite_Gemstone, $ID_Stygian_Gemstone, $ID_Titan_Gemstone, $ID_Torment_Gemstone, $ID_Coffer_of_Whispers, _
-	$ID_Gift_of_the_Traveller, $ID_Gift_of_the_Huntsman, $ID_Champions_Zaishen_Strongbox, $ID_Heros_Zaishen_Strongbox, $ID_Gladiators_Zaishen_Strongbox, $ID_Strategists_Zaishen_Strongbox, $ID_Zhos_Journal]
-Global Const $Map_Reward_Trophies					= MapFromArray($Reward_Trophies_Array)
+Global Const $ID_COPPER_ZAISHEN_COIN				= 31202
+Global Const $ID_GOLD_ZAISHEN_COIN					= 31203
+Global Const $ID_SILVER_ZAISHEN_COIN				= 31204
+Global Const $ID_MONASTERY_CREDIT					= 5819
+Global Const $ID_IMPERIAL_COMMENDATION				= 6068
+Global Const $ID_LUXON_TOTEM						= 6048
+Global Const $ID_EQUIPMENT_REQUISITION				= 5817
+Global Const $ID_BATTLE_COMMENDATION				= 17081
+Global Const $ID_KOURNAN_COIN						= 19195
+Global Const $ID_TRADE_CONTRACT						= 17082
+Global Const $ID_ANCIENT_ARTIFACT					= 19182
+Global Const $ID_INSCRIBED_SECRET					= 19196
+Global Const $ID_BUROL_IRONFISTS_COMMENDATION		= 29018
+Global Const $ID_BISON_CHAMPIONSHIP_TOKEN			= 27563
+Global Const $ID_MONUMENTAL_TAPESTRY				= 27583
+Global Const $ID_ROYAL_GIFT							= 35120
+Global Const $ID_CONFESSORS_ORDERS					= 35123
+Global Const $ID_PAPER_WRAPPED_PARCEL				= 34212
+Global Const $ID_SACK_OF_RANDOM_JUNK				= 34213
+;Global Const $ID_LEGION_LOOT_BAG					=
+;Global Const $ID_REVERIE_GIFT						=
+Global Const $ID_MINISTERIAL_COMMENDATION			= 36985
+Global Const $ID_IMPERIAL_GUARD_REQUISITION_ORDER	= 29108
+Global Const $ID_IMPERIAL_GUARD_LOCKBOX				= 30212		; Not tradeable
+;Global Const $ID_PROOF_OF_FLAMES					=
+;Global Const $ID_PROOF_OF_MOUNTAINS				=
+;Global Const $ID_PROOF_OF_WAVES					=
+;Global Const $ID_PROOF_OF_WINDS					=
+;Global Const $ID_RACING_MEDAL						=
+Global Const $ID_GLOB_OF_FROZEN_ECTOPLASM			= 21509
+;Global Const $ID_CELESTIAL_MINIATURE_TOKEN			=
+;Global Const $ID_DRAGON_FESTIVAL_GRAB_BAG			=
+Global Const $ID_RED_GIFT_BAG						= 21811
+;Global Const $ID_LUNAR_FESTIVAL_GRAB_BAG			=
+Global Const $ID_FESTIVAL_PRIZE						= 15478
+;Global Const $ID_IMPERIAL_MASK_TOKEN				=
+;Global Const $ID_GHOULISH_GRAB_BAG					=
+;Global Const $ID_GHOULISH_ACCESSORY_TOKEN			=
+;Global Const $ID_FROZEN_ACCESSORY_TOKEN			=
+;Global Const $ID_WINTERSDAY_GRAB_BAG				=
+Global Const $ID_ARMBRACE_OF_TRUTH					= 21127
+Global Const $ID_MARGONITE_GEMSTONE					= 21128
+Global Const $ID_STYGIAN_GEMSTONE					= 21129
+Global Const $ID_TITAN_GEMSTONE						= 21130
+Global Const $ID_TORMENT_GEMSTONE					= 21131
+Global Const $ID_COFFER_OF_WHISPERS					= 21228
+Global Const $ID_GIFT_OF_THE_TRAVELLER				= 31148
+Global Const $ID_GIFT_OF_THE_HUNTSMAN				= 31149
+Global Const $ID_CHAMPIONS_ZAISHEN_STRONGBOX		= 36665
+Global Const $ID_HEROS_ZAISHEN_STRONGBOX			= 36666
+Global Const $ID_GLADIATORS_ZAISHEN_STRONGBOX		= 36667
+Global Const $ID_STRATEGISTS_ZAISHEN_STRONGBOX		= 36668
+Global Const $ID_ZHOS_JOURNAL						= 25866
+Global Const $REWARD_TROPHIES_ARRAY	= [$ID_COPPER_ZAISHEN_COIN, $ID_GOLD_ZAISHEN_COIN, $ID_SILVER_ZAISHEN_COIN, $ID_MONASTERY_CREDIT, $ID_IMPERIAL_COMMENDATION, $ID_LUXON_TOTEM, $ID_EQUIPMENT_REQUISITION, $ID_BATTLE_COMMENDATION, $ID_KOURNAN_COIN, $ID_TRADE_CONTRACT, _
+	$ID_ANCIENT_ARTIFACT, $ID_INSCRIBED_SECRET, $ID_BUROL_IRONFISTS_COMMENDATION, $ID_BISON_CHAMPIONSHIP_TOKEN, $ID_MONUMENTAL_TAPESTRY, $ID_ROYAL_GIFT, $ID_WAR_SUPPLIES, $ID_CONFESSORS_ORDERS, $ID_PAPER_WRAPPED_PARCEL, $ID_SACK_OF_RANDOM_JUNK, $ID_MINISTERIAL_COMMENDATION, _
+	$ID_IMPERIAL_GUARD_REQUISITION_ORDER, $ID_IMPERIAL_GUARD_LOCKBOX, $ID_GLOB_OF_FROZEN_ECTOPLASM, $ID_RED_GIFT_BAG, $ID_FESTIVAL_PRIZE, $ID_ARMBRACE_OF_TRUTH, $ID_MARGONITE_GEMSTONE, $ID_STYGIAN_GEMSTONE, $ID_TITAN_GEMSTONE, $ID_TORMENT_GEMSTONE, $ID_COFFER_OF_WHISPERS, _
+	$ID_GIFT_OF_THE_TRAVELLER, $ID_GIFT_OF_THE_HUNTSMAN, $ID_CHAMPIONS_ZAISHEN_STRONGBOX, $ID_HEROS_ZAISHEN_STRONGBOX, $ID_GLADIATORS_ZAISHEN_STRONGBOX, $ID_STRATEGISTS_ZAISHEN_STRONGBOX, $ID_ZHOS_JOURNAL]
+Global Const $MAP_REWARD_TROPHIES					= MapFromArray($REWARD_TROPHIES_ARRAY)
 #EndRegion Reward Trophy
 
 
 #Region Stackable Trophies
-Global Const $ID_Charr_Carving				= 423
-Global Const $ID_Icy_Lodestone				= 424
-Global Const $ID_Spiked_Crest				= 434
-Global Const $ID_Hardened_Hump				= 435
-Global Const $ID_Mergoyle_Skull				= 436
-Global Const $ID_Glowing_Heart				= 439
-Global Const $ID_Forest_Minotaur_Horn		= 440
-Global Const $ID_Shadowy_Remnant			= 441
-Global Const $ID_Abnormal_Seed				= 442
-Global Const $ID_Bog_Skale_Fin				= 443
-Global Const $ID_Feathered_Caromi_Scalp		= 444
-Global Const $ID_Shriveled_Eye				= 446
-Global Const $ID_Dune_Burrower_Jaw			= 447
-Global Const $ID_Losaru_Mane				= 448
-Global Const $ID_Bleached_Carapace			= 449
-Global Const $ID_Topaz_Crest				= 450
-Global Const $ID_Encrusted_Lodestone		= 451
-Global Const $ID_Massive_Jawbone			= 452
-Global Const $ID_Iridescent_Griffon_Wing	= 453
-Global Const $ID_Dessicated_Hydra_Claw		= 454
-Global Const $ID_Minotaur_Horn				= 455
-Global Const $ID_Jade_Mandible				= 457
-Global Const $ID_Forgotten_Seal				= 459
-Global Const $ID_White_Mantle_Emblem		= 460
-Global Const $ID_White_Mantle_Badge			= 461
-Global Const $ID_Mursaat_Token				= 462
-Global Const $ID_Ebon_Spider_Leg			= 463
-Global Const $ID_Ancient_Eye				= 464
-Global Const $ID_Behemoth_Jaw				= 465
-Global Const $ID_Maguuma_Mane				= 466
-Global Const $ID_Thorny_Carapace			= 467
-Global Const $ID_Tangled_Seed				= 468
-Global Const $ID_Mossy_Mandible				= 469
-Global Const $ID_Jungle_Skale_Fin			= 70
-Global Const $ID_Jungle_Troll_Tusk			= 471
-Global Const $ID_Obsidian_Burrower_Jaw		= 472
-Global Const $ID_Demonic_Fang				= 473
-Global Const $ID_Phantom_Residue			= 474
-Global Const $ID_Gruesome_Sternum			= 475
-Global Const $ID_Demonic_Remains			= 476
-;Global Const $ID_Ghostly_Remains			= XXX
-Global Const $ID_Stormy_Eye					= 477
-Global Const $ID_Scar_Behemoth_Jaw			= 478
-Global Const $ID_Fetid_Carapace				= 479
-;Global Const $ID_Gargoyle_Skull			= XXX
-Global Const $ID_Singed_Gargoyle_Skull		= 480
-;Global Const $ID_Seared_Ribcage			= XXX
-Global Const $ID_Gruesome_Ribcage			= 482
-Global Const $ID_Rawhide_Belt				= 483
-Global Const $ID_Leathery_Claw				= 484
-Global Const $ID_Scorched_Seed				= 485
-Global Const $ID_Scorched_Lodestone			= 486
-;Global Const $ID_Grawl_Necklace			= XXX
-Global Const $ID_Ornate_Grawl_Necklace		= 487
-Global Const $ID_Shiverpeak_Mane			= 488
-Global Const $ID_Frostfire_Fang				= 489
-;Global Const $ID_Dark_Flame_Fang			= XXX
-Global Const $ID_Icy_Hump					= 490
-Global Const $ID_Huge_Jawbone				= 492
-;Global Const $ID_Gargantuan_Jawbone		= XXX
-Global Const $ID_Frosted_Griffon_Wing		= 493
-Global Const $ID_Frigid_Heart				= 494
-Global Const $ID_Curved_Mintaur_Horn		= 495
-Global Const $ID_Azure_Remains				= 496
-Global Const $ID_Alpine_Seed				= 497
-Global Const $ID_Feathered_Avicara_Scalp	= 498
-Global Const $ID_Intricate_Grawl_Necklace	= 499
-Global Const $ID_Mountain_Troll_Tusk		= 500
-Global Const $ID_Stone_Summit_Badge			= 502
-Global Const $ID_Molten_Claw				= 503
-Global Const $ID_Decayed_Orr_Emblem			= 504
-Global Const $ID_Igneous_Spider_Leg			= 505
-Global Const $ID_Molten_Eye					= 506
-Global Const $ID_Fiery_Crest				= 508
-Global Const $ID_Igneous_Hump				= 510
-Global Const $ID_Unctuous_Remains			= 511
-Global Const $ID_Mahgo_Claw					= 513
-;Global Const $ID_Dark_Claw					= XXX
-Global Const $ID_Molten_Heart				= 514
-Global Const $ID_Corrosive_Spider_Leg		= 518
-Global Const $ID_Umbral_Eye					= 519
-Global Const $ID_Shadowy_Crest				= 520
-Global Const $ID_Dark_Remains				= 522
-Global Const $ID_Gloom_Seed					= 523
-;Global Const $ID_Spiny_Seed				= XXX
-;Global Const $ID_Unnatural_Seed			= XXX
-;Global Const $ID_Skeletal_Limb				= XXX
-Global Const $ID_Umbral_Skeletal_Limb		= 525
-Global Const $ID_Shadowy_Husk				= 526
-Global Const $ID_Enslavement_Stone			= 532
-Global Const $ID_Kurzick_Bauble				= 604
-Global Const $ID_Jade_Bracelet				= 809
-Global Const $ID_Luxon_Pendant				= 810
-Global Const $ID_Bone_Charm					= 811
-Global Const $ID_Truffle					= 813
-Global Const $ID_Skull_Juju					= 814
-Global Const $ID_Mantid_Pincer				= 815
-Global Const $ID_Stone_Horn					= 816
-;Global Const $ID_Oni_Talon					= XXX
-;Global Const $ID_Oni_Claw					= XXX
-Global Const $ID_Keen_Oni_Claw				= 817
-Global Const $ID_Dredge_Incisor				= 818
-;Global Const $ID_Dredge_Charm				= XXX
-Global Const $ID_Dragon_Root				= 819
-Global Const $ID_Stone_Carving				= 820
-Global Const $ID_Warden_Horn				= 822
-Global Const $ID_Pulsating_Growth			= 824
-Global Const $ID_Forgotten_Trinket_Box		= 825
-Global Const $ID_Augmented_Flesh			= 826
-Global Const $ID_Putrid_Cyst				= 827
-Global Const $ID_Mantis_Pincer				= 829
-Global Const $ID_Naga_Pelt					= 833
-Global Const $ID_Feathered_Crest			= 835
-Global Const $ID_Feathered_Scalp			= 836
-Global Const $ID_Kappa_Hatchling_Shell		= 838
-Global Const $ID_Stolen_Supplies			= 840
-Global Const $ID_Black_Pearl				= 841
-Global Const $ID_Rot_Wallow_Tusk			= 842
-Global Const $ID_Kraken_Eye					= 843
-Global Const $ID_Azure_Crest				= 844
-Global Const $ID_Kirin_Horn					= 846
-Global Const $ID_Keen_Oni_Talon				= 847
-Global Const $ID_Naga_Skin					= 848
-Global Const $ID_Guardian_Moss				= 849
-Global Const $ID_Archaic_Kappa_Shell		= 850
-Global Const $ID_Stolen_Provisions			= 851
-Global Const $ID_Soul_Stone					= 852
-Global Const $ID_Vermin_Hide				= 853
-Global Const $ID_Venerable_Mantid_Pincer	= 854
-Global Const $ID_Celestial_Essence			= 855
-Global Const $ID_Moon_Shell					= 1009
-Global Const $ID_Stolen_Goods				= 1423
-Global Const $ID_Copper_Shilling			= 1577
-Global Const $ID_Gold_Doubloon				= 1578
-Global Const $ID_Silver_Bullion_Coin		= 1579
-Global Const $ID_Demonic_Relic				= 1580
-Global Const $ID_Margonite_Mask				= 1581
-Global Const $ID_Kournan_Pendant			= 1582
-Global Const $ID_Mummy_Wrapping				= 1583
-Global Const $ID_Sandblasted_Lodestone		= 1584
-Global Const $ID_Inscribed_Shard			= 1587
-Global Const $ID_Dusty_Insect_Carapace		= 1588
-Global Const $ID_Giant_Tusk					= 1590
-Global Const $ID_Insect_Appendage			= 1597
-Global Const $ID_Juvenile_Termite_Leg		= 1598
-Global Const $ID_Sentient_Root				= 1600
-Global Const $ID_Sentient_Seed				= 1601
-Global Const $ID_Skale_Tooth				= 1603
-Global Const $ID_Skale_Claw					= 1604
-Global Const $ID_Skeleton_Bone				= 1605
-Global Const $ID_Cobalt_Talon				= 1609
-;Global Const $ID_Rinkhal_Talon				= XXX
-;Global Const $ID_Bull_Trainer_Giant_Jawbone = XXXX
-;Global Const $ID_Fledgling_Skree_Wing		= XXXX
-Global Const $ID_Skree_Wing					= 1610
-Global Const $ID_Insect_Carapace			= 1617
-Global Const $ID_Sentient_Lodestone			= 1619
-Global Const $ID_Immolated_Djinn_Essence	= 1620
-Global Const $ID_Roaring_Ether_Claw			= 1629
-Global Const $ID_Mandragor_Husk				= 1668
-;Global Const $ID_Mandragor_Carapace		= XXX
-Global Const $ID_Mandragor_Swamproot		= 1671
-Global Const $ID_Behemoth_Hide				= 1675
-Global Const $ID_Geode						= 1681
-Global Const $ID_Hunting_Minotaur_Horn		= 1682
-Global Const $ID_Mandragor_Root				= 1686
-Global Const $ID_Red_Iris_Flower			= 2994
-Global Const $ID_Iboga_Petal				= 19183
-Global Const $ID_Skale_Fin					= 19184
-Global Const $ID_Chunk_of_Drake_Flesh		= 19185
-Global Const $ID_Ruby_Djinn_Essence			= 19187
-Global Const $ID_Sapphire_Djinn_Essence		= 19188
-Global Const $ID_Sentient_Spore				= 19198
-Global Const $ID_Heket_Tongue				= 19199
-Global Const $ID_Diessa_Chalice				= 24353
-Global Const $ID_Golden_Rin_Relic			= 24354
-Global Const $ID_Destroyer_Core				= 27033
-Global Const $ID_Incubus_Wing				= 27034
-Global Const $ID_Saurian_Bone				= 27035
-Global Const $ID_Amphibian_Tongue			= 27036
-Global Const $ID_Weaver_Leg					= 27037
-Global Const $ID_Patch_of_Simian_Fur		= 27038
-Global Const $ID_Quetzal_Crest				= 27039
-Global Const $ID_Skelk_Claw					= 27040
-Global Const $ID_Sentient_Vine				= 27041
-Global Const $ID_Frigid_Mandragor_Husk		= 27042
-Global Const $ID_Modnir_Mane				= 27043
-Global Const $ID_Stone_Summit_Emblem		= 27044
-Global Const $ID_Jotun_Pelt					= 27045
-Global Const $ID_Berserker_Horn				= 27046
-Global Const $ID_Glacial_Stone				= 27047
-Global Const $ID_Frozen_Wurm_Husk			= 27048
-Global Const $ID_Mountain_Root				= 27049
-Global Const $ID_Pile_of_Elemental_Dust		= 27050
-Global Const $ID_Fibrous_Mandragor_Root		= 27051
-Global Const $ID_Superb_Charr_Carving		= 27052
-Global Const $ID_Stone_Grawl_Necklace		= 27053
-Global Const $ID_Mantid_Ungula				= 27054
-;Global Const $ID_Vampiric_Fang				= XXX
-Global Const $ID_Skale_Fang					= 27055
-Global Const $ID_Stone_Claw					= 27057
-Global Const $ID_Skelk_Fang					= 27060
-Global Const $ID_Fungal_Root				= 27061
-Global Const $ID_Flesh_Reaver_Morsel		= 27062
-Global Const $ID_Golem_Runestone			= 27065
-Global Const $ID_Beetle_Egg					= 27066
-Global Const $ID_Blob_of_Ooze				= 27067
-Global Const $ID_Chromatic_Scale			= 27069
-Global Const $ID_Dryder_Web					= 27070
-;Global Const $ID_Ebon_Dryder_Web			= XXX
-;Global Const $ID_Spider_Web				= XXX
-;Global Const $ID_Spider_Web_2				= XXX
-;Global Const $ID_Maguuma_Spider_Web		= XXX
-;Global Const $ID_Silken_Spider_Web			= XXX
-;Global Const $ID_Ethereal_Garment			= XXX
-;Global Const $ID_Frozen_Remnant			= XXX
-;Global Const $ID_Smoking_Remains			= XXX
-Global Const $ID_Vaettir_Essence			= 27071
-Global Const $ID_Krait_Skin					= 27729
-Global Const $ID_Undead_Bone				= 27974
-Global Const $Trophies_Array[]	= [$ID_Charr_Carving, $ID_Icy_Lodestone, $ID_Spiked_Crest, $ID_Hardened_Hump, $ID_Mergoyle_Skull, $ID_Glowing_Heart, $ID_Forest_Minotaur_Horn, $ID_Shadowy_Remnant, $ID_Abnormal_Seed, $ID_Bog_Skale_Fin, _
-	$ID_Feathered_Caromi_Scalp, $ID_Shriveled_Eye, $ID_Dune_Burrower_Jaw, $ID_Losaru_Mane, $ID_Bleached_Carapace, $ID_Topaz_Crest, $ID_Encrusted_Lodestone, $ID_Massive_Jawbone, $ID_Iridescent_Griffon_Wing, $ID_Dessicated_Hydra_Claw, _
-	$ID_Minotaur_Horn, $ID_Jade_Mandible, $ID_Forgotten_Seal, $ID_White_Mantle_Emblem, $ID_White_Mantle_Badge, $ID_Mursaat_Token, $ID_Ebon_Spider_Leg, $ID_Ancient_Eye, $ID_Behemoth_Jaw, $ID_Maguuma_Mane, $ID_Thorny_Carapace, $ID_Tangled_Seed, _
-	$ID_Mossy_Mandible, $ID_Jungle_Skale_Fin, $ID_Jungle_Troll_Tusk, $ID_Obsidian_Burrower_Jaw, $ID_Demonic_Fang, $ID_Phantom_Residue, $ID_Gruesome_Sternum, $ID_Demonic_Remains, $ID_Stormy_Eye, $ID_Scar_Behemoth_Jaw, $ID_Fetid_Carapace, _
-	$ID_Singed_Gargoyle_Skull, $ID_Gruesome_Ribcage, $ID_Rawhide_Belt, $ID_Leathery_Claw, $ID_Scorched_Seed, $ID_Scorched_Lodestone, $ID_Ornate_Grawl_Necklace, $ID_Shiverpeak_Mane, $ID_Frostfire_Fang, $ID_Icy_Hump, $ID_Huge_Jawbone, _
-	$ID_Frosted_Griffon_Wing, $ID_Frigid_Heart, $ID_Curved_Mintaur_Horn, $ID_Azure_Remains, $ID_Alpine_Seed, $ID_Feathered_Avicara_Scalp, $ID_Intricate_Grawl_Necklace, $ID_Mountain_Troll_Tusk, $ID_Stone_Summit_Badge, $ID_Molten_Claw, _
-	$ID_Decayed_Orr_Emblem, $ID_Igneous_Spider_Leg, $ID_Molten_Eye, $ID_Fiery_Crest, $ID_Igneous_Hump, $ID_Unctuous_Remains, $ID_Mahgo_Claw, $ID_Molten_Heart, $ID_Corrosive_Spider_Leg, $ID_Umbral_Eye, $ID_Shadowy_Crest, $ID_Dark_Remains, _
-	$ID_Gloom_Seed, $ID_Umbral_Skeletal_Limb, $ID_Shadowy_Husk, $ID_Enslavement_Stone, $ID_Kurzick_Bauble, $ID_Jade_Bracelet, $ID_Luxon_Pendant, $ID_Bone_Charm, $ID_Truffle, $ID_Skull_Juju, $ID_Mantid_Pincer, $ID_Stone_Horn, $ID_Keen_Oni_Claw, _
-	$ID_Dredge_Incisor, $ID_Dragon_Root, $ID_Stone_Carving, $ID_Warden_Horn, $ID_Pulsating_Growth, $ID_Forgotten_Trinket_Box, $ID_Augmented_Flesh, $ID_Putrid_Cyst, $ID_Mantis_Pincer, $ID_Naga_Pelt, $ID_Feathered_Crest, $ID_Feathered_Scalp, _
-	$ID_Kappa_Hatchling_Shell, $ID_Stolen_Supplies, $ID_Black_Pearl, $ID_Rot_Wallow_Tusk, $ID_Kraken_Eye, $ID_Azure_Crest, $ID_Kirin_Horn, $ID_Keen_Oni_Talon, $ID_Naga_Skin, $ID_Guardian_Moss, $ID_Archaic_Kappa_Shell, $ID_Stolen_Provisions, $ID_Soul_Stone, _
-	$ID_Vermin_Hide, $ID_Venerable_Mantid_Pincer, $ID_Celestial_Essence, $ID_Moon_Shell, $ID_Copper_Shilling, $ID_Gold_Doubloon, $ID_Silver_Bullion_Coin, $ID_Demonic_Relic, $ID_Margonite_Mask, $ID_Kournan_Pendant, $ID_Mummy_Wrapping, _
-	$ID_Sandblasted_Lodestone, $ID_Inscribed_Shard, $ID_Dusty_Insect_Carapace, $ID_Giant_Tusk, $ID_Insect_Appendage, $ID_Juvenile_Termite_Leg, $ID_Sentient_Root, $ID_Sentient_Seed, $ID_Skale_Tooth, $ID_Skale_Claw, $ID_Skeleton_Bone, $ID_Cobalt_Talon, _
-	$ID_Skree_Wing, $ID_Insect_Carapace, $ID_Sentient_Lodestone, $ID_Immolated_Djinn_Essence, $ID_Roaring_Ether_Claw, $ID_Mandragor_Husk, $ID_Mandragor_Swamproot, $ID_Behemoth_Hide, $ID_Geode, $ID_Hunting_Minotaur_Horn, $ID_Mandragor_Root, _
-	$ID_Red_Iris_Flower, $ID_Iboga_Petal, $ID_Skale_Fin, $ID_Chunk_of_Drake_Flesh, $ID_Ruby_Djinn_Essence, $ID_Sapphire_Djinn_Essence, $ID_Sentient_Spore, $ID_Heket_Tongue, $ID_Diessa_Chalice, $ID_Golden_Rin_Relic, $ID_Destroyer_Core, _
-	$ID_Incubus_Wing, $ID_Saurian_Bone, $ID_Amphibian_Tongue, $ID_Weaver_Leg, $ID_Patch_of_Simian_Fur, $ID_Quetzal_Crest, $ID_Skelk_Claw, $ID_Sentient_Vine, $ID_Frigid_Mandragor_Husk, $ID_Modnir_Mane, $ID_Stone_Summit_Emblem, $ID_Jotun_Pelt, _
-	$ID_Berserker_Horn, $ID_Glacial_Stone, $ID_Frozen_Wurm_Husk, $ID_Mountain_Root, $ID_Pile_of_Elemental_Dust, $ID_Fibrous_Mandragor_Root, $ID_Superb_Charr_Carving, $ID_Stone_Grawl_Necklace, $ID_Mantid_Ungula, $ID_Skale_Fang, $ID_Stone_Claw, $ID_Skelk_Fang, _
-	$ID_Fungal_Root, $ID_Flesh_Reaver_Morsel, $ID_Golem_Runestone, $ID_Beetle_Egg, $ID_Blob_of_Ooze, $ID_Chromatic_Scale, $ID_Dryder_Web, $ID_Vaettir_Essence, $ID_Krait_Skin, $ID_Undead_Bone]
-Global Const $Map_Trophies	= MapFromArray($Trophies_Array)
+Global Const $ID_CHARR_CARVING				= 423
+Global Const $ID_ICY_LODESTONE				= 424
+Global Const $ID_SPIKED_CREST				= 434
+Global Const $ID_HARDENED_HUMP				= 435
+Global Const $ID_MERGOYLE_SKULL				= 436
+Global Const $ID_GLOWING_HEART				= 439
+Global Const $ID_FOREST_MINOTAUR_HORN		= 440
+Global Const $ID_SHADOWY_REMNANT			= 441
+Global Const $ID_ABNORMAL_SEED				= 442
+Global Const $ID_BOG_SKALE_FIN				= 443
+Global Const $ID_FEATHERED_CAROMI_SCALP		= 444
+Global Const $ID_SHRIVELED_EYE				= 446
+Global Const $ID_DUNE_BURROWER_JAW			= 447
+Global Const $ID_LOSARU_MANE				= 448
+Global Const $ID_BLEACHED_CARAPACE			= 449
+Global Const $ID_TOPAZ_CREST				= 450
+Global Const $ID_ENCRUSTED_LODESTONE		= 451
+Global Const $ID_MASSIVE_JAWBONE			= 452
+Global Const $ID_IRIDESCENT_GRIFFON_WING	= 453
+Global Const $ID_DESSICATED_HYDRA_CLAW		= 454
+Global Const $ID_MINOTAUR_HORN				= 455
+Global Const $ID_JADE_MANDIBLE				= 457
+Global Const $ID_FORGOTTEN_SEAL				= 459
+Global Const $ID_WHITE_MANTLE_EMBLEM		= 460
+Global Const $ID_WHITE_MANTLE_BADGE			= 461
+Global Const $ID_MURSAAT_TOKEN				= 462
+Global Const $ID_EBON_SPIDER_LEG			= 463
+Global Const $ID_ANCIENT_EYE				= 464
+Global Const $ID_BEHEMOTH_JAW				= 465
+Global Const $ID_MAGUUMA_MANE				= 466
+Global Const $ID_THORNY_CARAPACE			= 467
+Global Const $ID_TANGLED_SEED				= 468
+Global Const $ID_MOSSY_MANDIBLE				= 469
+Global Const $ID_JUNGLE_SKALE_FIN			= 70
+Global Const $ID_JUNGLE_TROLL_TUSK			= 471
+Global Const $ID_OBSIDIAN_BURROWER_JAW		= 472
+Global Const $ID_DEMONIC_FANG				= 473
+Global Const $ID_PHANTOM_RESIDUE			= 474
+Global Const $ID_GRUESOME_STERNUM			= 475
+Global Const $ID_DEMONIC_REMAINS			= 476
+;Global Const $ID_GHOSTLY_REMAINS			= XXX
+Global Const $ID_STORMY_EYE					= 477
+Global Const $ID_SCAR_BEHEMOTH_JAW			= 478
+Global Const $ID_FETID_CARAPACE				= 479
+;Global Const $ID_GARGOYLE_SKULL			= XXX
+Global Const $ID_SINGED_GARGOYLE_SKULL		= 480
+;Global Const $ID_SEARED_RIBCAGE			= XXX
+Global Const $ID_GRUESOME_RIBCAGE			= 482
+Global Const $ID_RAWHIDE_BELT				= 483
+Global Const $ID_LEATHERY_CLAW				= 484
+Global Const $ID_SCORCHED_SEED				= 485
+Global Const $ID_SCORCHED_LODESTONE			= 486
+;Global Const $ID_GRAWL_NECKLACE			= XXX
+Global Const $ID_ORNATE_GRAWL_NECKLACE		= 487
+Global Const $ID_SHIVERPEAK_MANE			= 488
+Global Const $ID_FROSTFIRE_FANG				= 489
+;Global Const $ID_DARK_FLAME_FANG			= XXX
+Global Const $ID_ICY_HUMP					= 490
+Global Const $ID_HUGE_JAWBONE				= 492
+;Global Const $ID_GARGANTUAN_JAWBONE		= XXX
+Global Const $ID_FROSTED_GRIFFON_WING		= 493
+Global Const $ID_FRIGID_HEART				= 494
+Global Const $ID_CURVED_MINTAUR_HORN		= 495
+Global Const $ID_AZURE_REMAINS				= 496
+Global Const $ID_ALPINE_SEED				= 497
+Global Const $ID_FEATHERED_AVICARA_SCALP	= 498
+Global Const $ID_INTRICATE_GRAWL_NECKLACE	= 499
+Global Const $ID_MOUNTAIN_TROLL_TUSK		= 500
+Global Const $ID_STONE_SUMMIT_BADGE			= 502
+Global Const $ID_MOLTEN_CLAW				= 503
+Global Const $ID_DECAYED_ORR_EMBLEM			= 504
+Global Const $ID_IGNEOUS_SPIDER_LEG			= 505
+Global Const $ID_MOLTEN_EYE					= 506
+Global Const $ID_FIERY_CREST				= 508
+Global Const $ID_IGNEOUS_HUMP				= 510
+Global Const $ID_UNCTUOUS_REMAINS			= 511
+Global Const $ID_MAHGO_CLAW					= 513
+;Global Const $ID_DARK_CLAW					= XXX
+Global Const $ID_MOLTEN_HEART				= 514
+Global Const $ID_CORROSIVE_SPIDER_LEG		= 518
+Global Const $ID_UMBRAL_EYE					= 519
+Global Const $ID_SHADOWY_CREST				= 520
+Global Const $ID_DARK_REMAINS				= 522
+Global Const $ID_GLOOM_SEED					= 523
+;Global Const $ID_SPINY_SEED				= XXX
+;Global Const $ID_UNNATURAL_SEED			= XXX
+;Global Const $ID_SKELETAL_LIMB				= XXX
+Global Const $ID_UMBRAL_SKELETAL_LIMB		= 525
+Global Const $ID_SHADOWY_HUSK				= 526
+Global Const $ID_ENSLAVEMENT_STONE			= 532
+Global Const $ID_KURZICK_BAUBLE				= 604
+Global Const $ID_JADE_BRACELET				= 809
+Global Const $ID_LUXON_PENDANT				= 810
+Global Const $ID_BONE_CHARM					= 811
+Global Const $ID_TRUFFLE					= 813
+Global Const $ID_SKULL_JUJU					= 814
+Global Const $ID_MANTID_PINCER				= 815
+Global Const $ID_STONE_HORN					= 816
+;Global Const $ID_ONI_TALON					= XXX
+;Global Const $ID_ONI_CLAW					= XXX
+Global Const $ID_KEEN_ONI_CLAW				= 817
+Global Const $ID_DREDGE_INCISOR				= 818
+;Global Const $ID_DREDGE_CHARM				= XXX
+Global Const $ID_DRAGON_ROOT				= 819
+Global Const $ID_STONE_CARVING				= 820
+Global Const $ID_WARDEN_HORN				= 822
+Global Const $ID_PULSATING_GROWTH			= 824
+Global Const $ID_FORGOTTEN_TRINKET_BOX		= 825
+Global Const $ID_AUGMENTED_FLESH			= 826
+Global Const $ID_PUTRID_CYST				= 827
+Global Const $ID_MANTIS_PINCER				= 829
+Global Const $ID_NAGA_PELT					= 833
+Global Const $ID_FEATHERED_CREST			= 835
+Global Const $ID_FEATHERED_SCALP			= 836
+Global Const $ID_KAPPA_HATCHLING_SHELL		= 838
+Global Const $ID_STOLEN_SUPPLIES			= 840
+Global Const $ID_BLACK_PEARL				= 841
+Global Const $ID_ROT_WALLOW_TUSK			= 842
+Global Const $ID_KRAKEN_EYE					= 843
+Global Const $ID_AZURE_CREST				= 844
+Global Const $ID_KIRIN_HORN					= 846
+Global Const $ID_KEEN_ONI_TALON				= 847
+Global Const $ID_NAGA_SKIN					= 848
+Global Const $ID_GUARDIAN_MOSS				= 849
+Global Const $ID_ARCHAIC_KAPPA_SHELL		= 850
+Global Const $ID_STOLEN_PROVISIONS			= 851
+Global Const $ID_SOUL_STONE					= 852
+Global Const $ID_VERMIN_HIDE				= 853
+Global Const $ID_VENERABLE_MANTID_PINCER	= 854
+Global Const $ID_CELESTIAL_ESSENCE			= 855
+Global Const $ID_MOON_SHELL					= 1009
+Global Const $ID_STOLEN_GOODS				= 1423
+Global Const $ID_COPPER_SHILLING			= 1577
+Global Const $ID_GOLD_DOUBLOON				= 1578
+Global Const $ID_SILVER_BULLION_COIN		= 1579
+Global Const $ID_DEMONIC_RELIC				= 1580
+Global Const $ID_MARGONITE_MASK				= 1581
+Global Const $ID_KOURNAN_PENDANT			= 1582
+Global Const $ID_MUMMY_WRAPPING				= 1583
+Global Const $ID_SANDBLASTED_LODESTONE		= 1584
+Global Const $ID_INSCRIBED_SHARD			= 1587
+Global Const $ID_DUSTY_INSECT_CARAPACE		= 1588
+Global Const $ID_GIANT_TUSK					= 1590
+Global Const $ID_INSECT_APPENDAGE			= 1597
+Global Const $ID_JUVENILE_TERMITE_LEG		= 1598
+Global Const $ID_SENTIENT_ROOT				= 1600
+Global Const $ID_SENTIENT_SEED				= 1601
+Global Const $ID_SKALE_TOOTH				= 1603
+Global Const $ID_SKALE_CLAW					= 1604
+Global Const $ID_SKELETON_BONE				= 1605
+Global Const $ID_COBALT_TALON				= 1609
+;Global Const $ID_RINKHAL_TALON				= XXX
+;Global Const $ID_BULL_TRAINER_GIANT_JAWBONE = XXXX
+;Global Const $ID_FLEDGLING_SKREE_WING		= XXXX
+Global Const $ID_SKREE_WING					= 1610
+Global Const $ID_INSECT_CARAPACE			= 1617
+Global Const $ID_SENTIENT_LODESTONE			= 1619
+Global Const $ID_IMMOLATED_DJINN_ESSENCE	= 1620
+Global Const $ID_ROARING_ETHER_CLAW			= 1629
+Global Const $ID_MANDRAGOR_HUSK				= 1668
+;Global Const $ID_MANDRAGOR_CARAPACE		= XXX
+Global Const $ID_MANDRAGOR_SWAMPROOT		= 1671
+Global Const $ID_BEHEMOTH_HIDE				= 1675
+Global Const $ID_GEODE						= 1681
+Global Const $ID_HUNTING_MINOTAUR_HORN		= 1682
+Global Const $ID_MANDRAGOR_ROOT				= 1686
+Global Const $ID_RED_IRIS_FLOWER			= 2994
+Global Const $ID_IBOGA_PETAL				= 19183
+Global Const $ID_SKALE_FIN					= 19184
+Global Const $ID_CHUNK_OF_DRAKE_FLESH		= 19185
+Global Const $ID_RUBY_DJINN_ESSENCE			= 19187
+Global Const $ID_SAPPHIRE_DJINN_ESSENCE		= 19188
+Global Const $ID_SENTIENT_SPORE				= 19198
+Global Const $ID_HEKET_TONGUE				= 19199
+Global Const $ID_DIESSA_CHALICE				= 24353
+Global Const $ID_GOLDEN_RIN_RELIC			= 24354
+Global Const $ID_DESTROYER_CORE				= 27033
+Global Const $ID_INCUBUS_WING				= 27034
+Global Const $ID_SAURIAN_BONE				= 27035
+Global Const $ID_AMPHIBIAN_TONGUE			= 27036
+Global Const $ID_WEAVER_LEG					= 27037
+Global Const $ID_PATCH_OF_SIMIAN_FUR		= 27038
+Global Const $ID_QUETZAL_CREST				= 27039
+Global Const $ID_SKELK_CLAW					= 27040
+Global Const $ID_SENTIENT_VINE				= 27041
+Global Const $ID_FRIGID_MANDRAGOR_HUSK		= 27042
+Global Const $ID_MODNIR_MANE				= 27043
+Global Const $ID_STONE_SUMMIT_EMBLEM		= 27044
+Global Const $ID_JOTUN_PELT					= 27045
+Global Const $ID_BERSERKER_HORN				= 27046
+Global Const $ID_GLACIAL_STONE				= 27047
+Global Const $ID_FROZEN_WURM_HUSK			= 27048
+Global Const $ID_MOUNTAIN_ROOT				= 27049
+Global Const $ID_PILE_OF_ELEMENTAL_DUST		= 27050
+Global Const $ID_FIBROUS_MANDRAGOR_ROOT		= 27051
+Global Const $ID_SUPERB_CHARR_CARVING		= 27052
+Global Const $ID_STONE_GRAWL_NECKLACE		= 27053
+Global Const $ID_MANTID_UNGULA				= 27054
+;Global Const $ID_VAMPIRIC_FANG				= XXX
+Global Const $ID_SKALE_FANG					= 27055
+Global Const $ID_STONE_CLAW					= 27057
+Global Const $ID_SKELK_FANG					= 27060
+Global Const $ID_FUNGAL_ROOT				= 27061
+Global Const $ID_FLESH_REAVER_MORSEL		= 27062
+Global Const $ID_GOLEM_RUNESTONE			= 27065
+Global Const $ID_BEETLE_EGG					= 27066
+Global Const $ID_BLOB_OF_OOZE				= 27067
+Global Const $ID_CHROMATIC_SCALE			= 27069
+Global Const $ID_DRYDER_WEB					= 27070
+;Global Const $ID_EBON_DRYDER_WEB			= XXX
+;Global Const $ID_SPIDER_WEB				= XXX
+;Global Const $ID_SPIDER_WEB_2				= XXX
+;Global Const $ID_MAGUUMA_SPIDER_WEB		= XXX
+;Global Const $ID_SILKEN_SPIDER_WEB			= XXX
+;Global Const $ID_ETHEREAL_GARMENT			= XXX
+;Global Const $ID_FROZEN_REMNANT			= XXX
+;Global Const $ID_SMOKING_REMAINS			= XXX
+Global Const $ID_VAETTIR_ESSENCE			= 27071
+Global Const $ID_KRAIT_SKIN					= 27729
+Global Const $ID_UNDEAD_BONE				= 27974
+Global Const $TROPHIES_ARRAY[]	= [$ID_CHARR_CARVING, $ID_ICY_LODESTONE, $ID_SPIKED_CREST, $ID_HARDENED_HUMP, $ID_MERGOYLE_SKULL, $ID_GLOWING_HEART, $ID_FOREST_MINOTAUR_HORN, $ID_SHADOWY_REMNANT, $ID_ABNORMAL_SEED, $ID_BOG_SKALE_FIN, _
+	$ID_FEATHERED_CAROMI_SCALP, $ID_SHRIVELED_EYE, $ID_DUNE_BURROWER_JAW, $ID_LOSARU_MANE, $ID_BLEACHED_CARAPACE, $ID_TOPAZ_CREST, $ID_ENCRUSTED_LODESTONE, $ID_MASSIVE_JAWBONE, $ID_IRIDESCENT_GRIFFON_WING, $ID_DESSICATED_HYDRA_CLAW, _
+	$ID_MINOTAUR_HORN, $ID_JADE_MANDIBLE, $ID_FORGOTTEN_SEAL, $ID_WHITE_MANTLE_EMBLEM, $ID_WHITE_MANTLE_BADGE, $ID_MURSAAT_TOKEN, $ID_EBON_SPIDER_LEG, $ID_ANCIENT_EYE, $ID_BEHEMOTH_JAW, $ID_MAGUUMA_MANE, $ID_THORNY_CARAPACE, $ID_TANGLED_SEED, _
+	$ID_MOSSY_MANDIBLE, $ID_JUNGLE_SKALE_FIN, $ID_JUNGLE_TROLL_TUSK, $ID_OBSIDIAN_BURROWER_JAW, $ID_DEMONIC_FANG, $ID_PHANTOM_RESIDUE, $ID_GRUESOME_STERNUM, $ID_DEMONIC_REMAINS, $ID_STORMY_EYE, $ID_SCAR_BEHEMOTH_JAW, $ID_FETID_CARAPACE, _
+	$ID_SINGED_GARGOYLE_SKULL, $ID_GRUESOME_RIBCAGE, $ID_RAWHIDE_BELT, $ID_LEATHERY_CLAW, $ID_SCORCHED_SEED, $ID_SCORCHED_LODESTONE, $ID_ORNATE_GRAWL_NECKLACE, $ID_SHIVERPEAK_MANE, $ID_FROSTFIRE_FANG, $ID_ICY_HUMP, $ID_HUGE_JAWBONE, _
+	$ID_FROSTED_GRIFFON_WING, $ID_FRIGID_HEART, $ID_CURVED_MINTAUR_HORN, $ID_AZURE_REMAINS, $ID_ALPINE_SEED, $ID_FEATHERED_AVICARA_SCALP, $ID_INTRICATE_GRAWL_NECKLACE, $ID_MOUNTAIN_TROLL_TUSK, $ID_STONE_SUMMIT_BADGE, $ID_MOLTEN_CLAW, _
+	$ID_DECAYED_ORR_EMBLEM, $ID_IGNEOUS_SPIDER_LEG, $ID_MOLTEN_EYE, $ID_FIERY_CREST, $ID_IGNEOUS_HUMP, $ID_UNCTUOUS_REMAINS, $ID_MAHGO_CLAW, $ID_MOLTEN_HEART, $ID_CORROSIVE_SPIDER_LEG, $ID_UMBRAL_EYE, $ID_SHADOWY_CREST, $ID_DARK_REMAINS, _
+	$ID_GLOOM_SEED, $ID_UMBRAL_SKELETAL_LIMB, $ID_SHADOWY_HUSK, $ID_ENSLAVEMENT_STONE, $ID_KURZICK_BAUBLE, $ID_JADE_BRACELET, $ID_LUXON_PENDANT, $ID_BONE_CHARM, $ID_TRUFFLE, $ID_SKULL_JUJU, $ID_MANTID_PINCER, $ID_STONE_HORN, $ID_KEEN_ONI_CLAW, _
+	$ID_DREDGE_INCISOR, $ID_DRAGON_ROOT, $ID_STONE_CARVING, $ID_WARDEN_HORN, $ID_PULSATING_GROWTH, $ID_FORGOTTEN_TRINKET_BOX, $ID_AUGMENTED_FLESH, $ID_PUTRID_CYST, $ID_MANTIS_PINCER, $ID_NAGA_PELT, $ID_FEATHERED_CREST, $ID_FEATHERED_SCALP, _
+	$ID_KAPPA_HATCHLING_SHELL, $ID_STOLEN_SUPPLIES, $ID_BLACK_PEARL, $ID_ROT_WALLOW_TUSK, $ID_KRAKEN_EYE, $ID_AZURE_CREST, $ID_KIRIN_HORN, $ID_KEEN_ONI_TALON, $ID_NAGA_SKIN, $ID_GUARDIAN_MOSS, $ID_ARCHAIC_KAPPA_SHELL, $ID_STOLEN_PROVISIONS, $ID_SOUL_STONE, _
+	$ID_VERMIN_HIDE, $ID_VENERABLE_MANTID_PINCER, $ID_CELESTIAL_ESSENCE, $ID_MOON_SHELL, $ID_COPPER_SHILLING, $ID_GOLD_DOUBLOON, $ID_SILVER_BULLION_COIN, $ID_DEMONIC_RELIC, $ID_MARGONITE_MASK, $ID_KOURNAN_PENDANT, $ID_MUMMY_WRAPPING, _
+	$ID_SANDBLASTED_LODESTONE, $ID_INSCRIBED_SHARD, $ID_DUSTY_INSECT_CARAPACE, $ID_GIANT_TUSK, $ID_INSECT_APPENDAGE, $ID_JUVENILE_TERMITE_LEG, $ID_SENTIENT_ROOT, $ID_SENTIENT_SEED, $ID_SKALE_TOOTH, $ID_SKALE_CLAW, $ID_SKELETON_BONE, $ID_COBALT_TALON, _
+	$ID_SKREE_WING, $ID_INSECT_CARAPACE, $ID_SENTIENT_LODESTONE, $ID_IMMOLATED_DJINN_ESSENCE, $ID_ROARING_ETHER_CLAW, $ID_MANDRAGOR_HUSK, $ID_MANDRAGOR_SWAMPROOT, $ID_BEHEMOTH_HIDE, $ID_GEODE, $ID_HUNTING_MINOTAUR_HORN, $ID_MANDRAGOR_ROOT, _
+	$ID_RED_IRIS_FLOWER, $ID_IBOGA_PETAL, $ID_SKALE_FIN, $ID_CHUNK_OF_DRAKE_FLESH, $ID_RUBY_DJINN_ESSENCE, $ID_SAPPHIRE_DJINN_ESSENCE, $ID_SENTIENT_SPORE, $ID_HEKET_TONGUE, $ID_DIESSA_CHALICE, $ID_GOLDEN_RIN_RELIC, $ID_DESTROYER_CORE, _
+	$ID_INCUBUS_WING, $ID_SAURIAN_BONE, $ID_AMPHIBIAN_TONGUE, $ID_WEAVER_LEG, $ID_PATCH_OF_SIMIAN_FUR, $ID_QUETZAL_CREST, $ID_SKELK_CLAW, $ID_SENTIENT_VINE, $ID_FRIGID_MANDRAGOR_HUSK, $ID_MODNIR_MANE, $ID_STONE_SUMMIT_EMBLEM, $ID_JOTUN_PELT, _
+	$ID_BERSERKER_HORN, $ID_GLACIAL_STONE, $ID_FROZEN_WURM_HUSK, $ID_MOUNTAIN_ROOT, $ID_PILE_OF_ELEMENTAL_DUST, $ID_FIBROUS_MANDRAGOR_ROOT, $ID_SUPERB_CHARR_CARVING, $ID_STONE_GRAWL_NECKLACE, $ID_MANTID_UNGULA, $ID_SKALE_FANG, $ID_STONE_CLAW, $ID_SKELK_FANG, _
+	$ID_FUNGAL_ROOT, $ID_FLESH_REAVER_MORSEL, $ID_GOLEM_RUNESTONE, $ID_BEETLE_EGG, $ID_BLOB_OF_OOZE, $ID_CHROMATIC_SCALE, $ID_DRYDER_WEB, $ID_VAETTIR_ESSENCE, $ID_KRAIT_SKIN, $ID_UNDEAD_BONE]
+Global Const $MAP_TROPHIES	= MapFromArray($TROPHIES_ARRAY)
 
-Global Const $Feather_Trophies_Array[]		= [$ID_Feathered_Caromi_Scalp, $ID_Feathered_Avicara_Scalp, $ID_Feathered_Crest, $ID_Feathered_Scalp, $ID_Skree_Wing, $ID_Frosted_Griffon_Wing, $ID_Iridescent_Griffon_Wing, $ID_Quetzal_Crest]
-Global Const $Map_Feather_Trophies			= MapFromArray($Feather_Trophies_Array)
-Global Const $Dust_Trophies_Array[]			= [$ID_Amphibian_Tongue, $ID_Ancient_Eye, $ID_Augmented_Flesh, $ID_Azure_Remains, $ID_Beetle_Egg, $ID_Black_Pearl, $ID_Blob_of_Ooze, $ID_Dark_Remains, $ID_Demonic_Fang, $ID_Demonic_Remains, $ID_Dryder_Web, _
-												$ID_Enslavement_Stone, $ID_Frostfire_Fang, $ID_Frozen_Wurm_Husk, $ID_Glacial_Stone, $ID_Heket_Tongue, $ID_Iboga_Petal, $ID_Immolated_Djinn_Essence, $ID_Jade_Bracelet, $ID_Kirin_Horn, $ID_Losaru_Mane, _
-												$ID_Maguuma_Mane, $ID_Molten_Eye, $ID_Moon_Shell, $ID_Mursaat_Token, $ID_Phantom_Residue, $ID_Pile_of_Elemental_Dust, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Sentient_Root, $ID_Sentient_Seed, _
-												$ID_Sentient_Spore, $ID_Shadowy_Remnant, $ID_Shiverpeak_Mane, $ID_Shriveled_Eye, $ID_Stormy_Eye, $ID_Umbral_Eye, $ID_Unctuous_Remains, $ID_Vaettir_Essence]
-Global Const $Map_Dust_Trophies				= MapFromArray($Dust_Trophies_Array)
-Global Const $Bones_Trophies_Array[]		= [$ID_Augmented_Flesh, $ID_Berserker_Horn, $ID_Bone_Charm, $ID_Curved_Mintaur_Horn, $ID_Dredge_Incisor, $ID_Flesh_Reaver_Morsel, $ID_Giant_Tusk, $ID_Gruesome_Ribcage, $ID_Gruesome_Sternum, $ID_Huge_Jawbone, _
-												$ID_Hunting_Minotaur_Horn, $ID_Jungle_Troll_Tusk, $ID_Keen_Oni_Claw, $ID_Massive_Jawbone, $ID_Mergoyle_Skull, $ID_Minotaur_Horn, $ID_Mountain_Troll_Tusk, $ID_Pulsating_Growth, $ID_Putrid_Cyst, $ID_Saurian_Bone, _
-												$ID_Singed_Gargoyle_Skull, $ID_Skale_Claw, $ID_Skale_Fang, $ID_Skale_Tooth, $ID_Skeleton_Bone, $ID_Skelk_Claw, $ID_Skelk_Fang, $ID_Skree_Wing, $ID_Umbral_Skeletal_Limb, $ID_Undead_Bone, $ID_Warden_Horn]
-Global Const $Map_Bones_Trophies			= MapFromArray($Bones_Trophies_Array)
-Global Const $Fiber_Trophies_Array[]		= [$ID_Abnormal_Seed, $ID_Tangled_Seed, $ID_Scorched_Seed, $ID_Ornate_Grawl_Necklace, $ID_Alpine_Seed, $ID_Intricate_Grawl_Necklace, $ID_Gloom_Seed, $ID_Dragon_Root, $ID_Guardian_Moss, $ID_Sentient_Root, _
-												$ID_Sentient_Seed, $ID_Mandragor_Root, $ID_Iboga_Petal, $ID_Sentient_Spore, $ID_Sentient_Vine, $ID_Mountain_Root, $ID_Fibrous_Mandragor_Root, $ID_Fungal_Root]
-Global Const $Map_Fiber_Trophies			= MapFromArray($Fiber_Trophies_Array)
+Global Const $FEATHER_TROPHIES_ARRAY[]		= [$ID_FEATHERED_CAROMI_SCALP, $ID_FEATHERED_AVICARA_SCALP, $ID_FEATHERED_CREST, $ID_FEATHERED_SCALP, $ID_SKREE_WING, $ID_FROSTED_GRIFFON_WING, $ID_IRIDESCENT_GRIFFON_WING, $ID_QUETZAL_CREST]
+Global Const $MAP_FEATHER_TROPHIES			= MapFromArray($FEATHER_TROPHIES_ARRAY)
+Global Const $DUST_TROPHIES_ARRAY[]			= [$ID_AMPHIBIAN_TONGUE, $ID_ANCIENT_EYE, $ID_AUGMENTED_FLESH, $ID_AZURE_REMAINS, $ID_BEETLE_EGG, $ID_BLACK_PEARL, $ID_BLOB_OF_OOZE, $ID_DARK_REMAINS, $ID_DEMONIC_FANG, $ID_DEMONIC_REMAINS, $ID_DRYDER_WEB, _
+												$ID_ENSLAVEMENT_STONE, $ID_FROSTFIRE_FANG, $ID_FROZEN_WURM_HUSK, $ID_GLACIAL_STONE, $ID_HEKET_TONGUE, $ID_IBOGA_PETAL, $ID_IMMOLATED_DJINN_ESSENCE, $ID_JADE_BRACELET, $ID_KIRIN_HORN, $ID_LOSARU_MANE, _
+												$ID_MAGUUMA_MANE, $ID_MOLTEN_EYE, $ID_MOON_SHELL, $ID_MURSAAT_TOKEN, $ID_PHANTOM_RESIDUE, $ID_PILE_OF_ELEMENTAL_DUST, $ID_PULSATING_GROWTH, $ID_PUTRID_CYST, $ID_SENTIENT_ROOT, $ID_SENTIENT_SEED, _
+												$ID_SENTIENT_SPORE, $ID_SHADOWY_REMNANT, $ID_SHIVERPEAK_MANE, $ID_SHRIVELED_EYE, $ID_STORMY_EYE, $ID_UMBRAL_EYE, $ID_UNCTUOUS_REMAINS, $ID_VAETTIR_ESSENCE]
+Global Const $MAP_DUST_TROPHIES				= MapFromArray($DUST_TROPHIES_ARRAY)
+Global Const $BONES_TROPHIES_ARRAY[]		= [$ID_AUGMENTED_FLESH, $ID_BERSERKER_HORN, $ID_BONE_CHARM, $ID_CURVED_MINTAUR_HORN, $ID_DREDGE_INCISOR, $ID_FLESH_REAVER_MORSEL, $ID_GIANT_TUSK, $ID_GRUESOME_RIBCAGE, $ID_GRUESOME_STERNUM, $ID_HUGE_JAWBONE, _
+												$ID_HUNTING_MINOTAUR_HORN, $ID_JUNGLE_TROLL_TUSK, $ID_KEEN_ONI_CLAW, $ID_MASSIVE_JAWBONE, $ID_MERGOYLE_SKULL, $ID_MINOTAUR_HORN, $ID_MOUNTAIN_TROLL_TUSK, $ID_PULSATING_GROWTH, $ID_PUTRID_CYST, $ID_SAURIAN_BONE, _
+												$ID_SINGED_GARGOYLE_SKULL, $ID_SKALE_CLAW, $ID_SKALE_FANG, $ID_SKALE_TOOTH, $ID_SKELETON_BONE, $ID_SKELK_CLAW, $ID_SKELK_FANG, $ID_SKREE_WING, $ID_UMBRAL_SKELETAL_LIMB, $ID_UNDEAD_BONE, $ID_WARDEN_HORN]
+Global Const $MAP_BONES_TROPHIES			= MapFromArray($BONES_TROPHIES_ARRAY)
+Global Const $FIBER_TROPHIES_ARRAY[]		= [$ID_ABNORMAL_SEED, $ID_TANGLED_SEED, $ID_SCORCHED_SEED, $ID_ORNATE_GRAWL_NECKLACE, $ID_ALPINE_SEED, $ID_INTRICATE_GRAWL_NECKLACE, $ID_GLOOM_SEED, $ID_DRAGON_ROOT, $ID_GUARDIAN_MOSS, $ID_SENTIENT_ROOT, _
+												$ID_SENTIENT_SEED, $ID_MANDRAGOR_ROOT, $ID_IBOGA_PETAL, $ID_SENTIENT_SPORE, $ID_SENTIENT_VINE, $ID_MOUNTAIN_ROOT, $ID_FIBROUS_MANDRAGOR_ROOT, $ID_FUNGAL_ROOT]
+Global Const $MAP_FIBER_TROPHIES			= MapFromArray($FIBER_TROPHIES_ARRAY)
 #EndRegion Stackable Trophies
 
 
 #Region Tomes
-Global Const $ID_Assassin_EliteTome		= 21786
-Global Const $ID_Mesmer_EliteTome		= 21787
-Global Const $ID_Necromancer_EliteTome	= 21788
-Global Const $ID_Elementalist_EliteTome	= 21789
-Global Const $ID_Monk_EliteTome			= 21790
-Global Const $ID_Warrior_EliteTome		= 21791
-Global Const $ID_Ranger_EliteTome		= 21792
-Global Const $ID_Dervish_EliteTome		= 21793
-Global Const $ID_Ritualist_EliteTome	= 21794
-Global Const $ID_Paragon_EliteTome		= 21795
+Global Const $ID_ASSASSIN_ELITETOME		= 21786
+Global Const $ID_MESMER_ELITETOME		= 21787
+Global Const $ID_NECROMANCER_ELITETOME	= 21788
+Global Const $ID_ELEMENTALIST_ELITETOME	= 21789
+Global Const $ID_MONK_ELITETOME			= 21790
+Global Const $ID_WARRIOR_ELITETOME		= 21791
+Global Const $ID_RANGER_ELITETOME		= 21792
+Global Const $ID_DERVISH_ELITETOME		= 21793
+Global Const $ID_RITUALIST_ELITETOME	= 21794
+Global Const $ID_PARAGON_ELITETOME		= 21795
 
-Global Const $ID_Assassin_Tome			= 21796
-Global Const $ID_Mesmer_Tome			= 21797
-Global Const $ID_Necromancer_Tome		= 21798
-Global Const $ID_Elementalist_Tome		= 21799
-Global Const $ID_Monk_Tome				= 21800
-Global Const $ID_Warrior_Tome			= 21801
-Global Const $ID_Ranger_Tome			= 21802
-Global Const $ID_Dervish_Tome			= 21803
-Global Const $ID_Ritualist_Tome			= 21804
-Global Const $ID_Paragon_Tome			= 21805
+Global Const $ID_ASSASSIN_TOME			= 21796
+Global Const $ID_MESMER_TOME			= 21797
+Global Const $ID_NECROMANCER_TOME		= 21798
+Global Const $ID_ELEMENTALIST_TOME		= 21799
+Global Const $ID_MONK_TOME				= 21800
+Global Const $ID_WARRIOR_TOME			= 21801
+Global Const $ID_RANGER_TOME			= 21802
+Global Const $ID_DERVISH_TOME			= 21803
+Global Const $ID_RITUALIST_TOME			= 21804
+Global Const $ID_PARAGON_TOME			= 21805
 ; All Tomes
-Global Const $Tomes_Array[]				= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, $ID_Ritualist_EliteTome, _
-	$ID_Paragon_EliteTome, $ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
+Global Const $TOMES_ARRAY[]					= [$ID_ASSASSIN_ELITETOME, $ID_MESMER_ELITETOME, $ID_NECROMANCER_ELITETOME, $ID_ELEMENTALIST_ELITETOME, $ID_MONK_ELITETOME, $ID_WARRIOR_ELITETOME, $ID_RANGER_ELITETOME, $ID_DERVISH_ELITETOME, _
+												$ID_RITUALIST_ELITETOME, $ID_PARAGON_ELITETOME, $ID_ASSASSIN_TOME, $ID_MESMER_TOME, $ID_NECROMANCER_TOME, $ID_ELEMENTALIST_TOME, $ID_MONK_TOME, $ID_WARRIOR_TOME, $ID_RANGER_TOME, _
+												$ID_DERVISH_TOME, $ID_RITUALIST_TOME, $ID_PARAGON_TOME]
 ; Elite Tomes
-Global Const $Elite_Tomes_Array[]		= [$ID_Assassin_EliteTome, $ID_Mesmer_EliteTome, $ID_Necromancer_EliteTome, $ID_Elementalist_EliteTome, $ID_Monk_EliteTome, $ID_Warrior_EliteTome, $ID_Ranger_EliteTome, $ID_Dervish_EliteTome, _
-	$ID_Ritualist_EliteTome, $ID_Paragon_EliteTome]
-Global Const $Elite_Tomes_Names_Array[] = ['Elite Assassin Tome', 'Elite Mesmer Tome', 'Elite Necromancer Tome', 'Elite Elementalist Tome', 'Elite Monk Tome', 'Elite Warrior Tome', 'Elite Ranger Tome', 'Elite Dervish Tome', 'Elite Ritualist Tome', 'Elite Paragon Tome']
-Global Const $EliteTomeNamesFromIDs		= MapFromArrays($Elite_Tomes_Array, $Elite_Tomes_Names_Array)
-;Global Const $EliteTomeIDsFromNames	= MapFromArrays($Elite_Tomes_Names_Array, $Elite_Tomes_Array)
+Global Const $ELITE_TOMES_ARRAY[]			= [$ID_ASSASSIN_ELITETOME, $ID_MESMER_ELITETOME, $ID_NECROMANCER_ELITETOME, $ID_ELEMENTALIST_ELITETOME, $ID_MONK_ELITETOME, $ID_WARRIOR_ELITETOME, $ID_RANGER_ELITETOME, $ID_DERVISH_ELITETOME, _
+												$ID_RITUALIST_ELITETOME, $ID_PARAGON_ELITETOME]
+Global Const $ELITE_TOMES_NAMES_ARRAY[]		= ['Elite Assassin Tome', 'Elite Mesmer Tome', 'Elite Necromancer Tome', 'Elite Elementalist Tome', 'Elite Monk Tome', 'Elite Warrior Tome', 'Elite Ranger Tome', 'Elite Dervish Tome', _
+												'Elite Ritualist Tome', 'Elite Paragon Tome']
+Global Const $ELITE_TOME_NAMES_FROM_IDS		= MapFromArrays($ELITE_TOMES_ARRAY, $ELITE_TOMES_NAMES_ARRAY)
+;Global Const $ELITE_TOME_IDS_FROM_NAMES	= MapFromArrays($ELITE_TOMES_NAMES_ARRAY, $ELITE_TOMES_ARRAY)
 ; Normal Tomes
-Global Const $Regular_Tomes_Array[]		= [$ID_Assassin_Tome, $ID_Mesmer_Tome, $ID_Necromancer_Tome, $ID_Elementalist_Tome, $ID_Monk_Tome, $ID_Warrior_Tome, $ID_Ranger_Tome, $ID_Dervish_Tome, $ID_Ritualist_Tome, $ID_Paragon_Tome]
-Global Const $Regular_Tomes_Names_Array[] = ['Assassin Tome', 'Mesmer Tome', 'Necromancer Tome', 'Elementalist Tome', 'Monk Tome', 'Warrior Tome', 'Ranger Tome', 'Dervish Tome', 'Ritualist Tome', 'Paragon Tome']
-Global Const $RegularTomeNamesFromIDs	= MapFromArrays($Regular_Tomes_Array, $Regular_Tomes_Names_Array)
-;Global Const $RegularTomeIDsFromNames	= MapFromArrays($Regular_Tomes_Names_Array, $Regular_Tomes_Array)
-Global Const $Map_Tomes					= MapFromArray($Tomes_Array)
-Global Const $Map_Elite_Tomes			= MapFromArray($Elite_Tomes_Array)
-Global Const $Map_Regular_Tomes			= MapFromArray($Regular_Tomes_Array)
+Global Const $REGULAR_TOMES_ARRAY[]			= [$ID_ASSASSIN_TOME, $ID_MESMER_TOME, $ID_NECROMANCER_TOME, $ID_ELEMENTALIST_TOME, $ID_MONK_TOME, $ID_WARRIOR_TOME, $ID_RANGER_TOME, $ID_DERVISH_TOME, $ID_RITUALIST_TOME, $ID_PARAGON_TOME]
+Global Const $REGULAR_TOMES_NAMES_ARRAY[]	= ['Assassin Tome', 'Mesmer Tome', 'Necromancer Tome', 'Elementalist Tome', 'Monk Tome', 'Warrior Tome', 'Ranger Tome', 'Dervish Tome', 'Ritualist Tome', 'Paragon Tome']
+Global Const $REGULAR_TOME_NAMES_FROM_IDS	= MapFromArrays($REGULAR_TOMES_ARRAY, $REGULAR_TOMES_NAMES_ARRAY)
+;Global Const $REGULAR_TOME_IDS_FROM_NAMES	= MapFromArrays($REGULAR_TOMES_NAMES_ARRAY, $REGULAR_TOMES_ARRAY)
+Global Const $MAP_TOMES						= MapFromArray($TOMES_ARRAY)
+Global Const $MAP_ELITE_TOMES				= MapFromArray($ELITE_TOMES_ARRAY)
+Global Const $MAP_REGULAR_TOMES				= MapFromArray($REGULAR_TOMES_ARRAY)
 #EndRegion Tomes
 
 
 #Region Consumable Crafter Items
-Global Const $ID_Armor_of_Salvation		= 24860
-Global Const $ID_Essence_of_Celerity	= 24859
-Global Const $ID_Grail_of_Might			= 24861
-Global Const $ID_Powerstone_of_Courage	= 24862
-Global Const $ID_Scroll_of_Resurrection	= 26501
-Global Const $ID_Star_of_Transference	= 25896
-Global Const $ID_Perfect_Salvage_Kit	= 25881
-Global Const $Consets_Array[]			= [$ID_Essence_of_Celerity, $ID_Armor_of_Salvation, $ID_Grail_of_Might]
-Global Const $Map_Consets				= MapFromArray($Consets_Array)
+Global Const $ID_ARMOR_OF_SALVATION		= 24860
+Global Const $ID_ESSENCE_OF_CELERITY	= 24859
+Global Const $ID_GRAIL_OF_MIGHT			= 24861
+Global Const $ID_POWERSTONE_OF_COURAGE	= 24862
+Global Const $ID_SCROLL_OF_RESURRECTION	= 26501
+Global Const $ID_STAR_OF_TRANSFERENCE	= 25896
+Global Const $ID_PERFECT_SALVAGE_KIT	= 25881
+Global Const $CONSETS_ARRAY[]			= [$ID_ESSENCE_OF_CELERITY, $ID_ARMOR_OF_SALVATION, $ID_GRAIL_OF_MIGHT]
+Global Const $MAP_CONSETS				= MapFromArray($CONSETS_ARRAY)
 #EndRegion Consumable Crafter Items
 
 
 #Region Summoning Stones
-Global Const $ID_Merchant_Summon				= 21154
-Global Const $ID_Tengu_Summon					= 30209
-Global Const $ID_Imperial_Guard_Summon			= 30210
-Global Const $ID_Automaton_Summon				= 30846
-Global Const $ID_Igneous_Summoning_Stone		= 30847
-Global Const $ID_Chitinous_Summon				= 30959
-Global Const $ID_Mystical_Summon				= 30960
-Global Const $ID_Amber_Summon					= 30961
-Global Const $ID_Artic_Summon					= 30962
-Global Const $ID_Demonic_Summon					= 30963
-Global Const $ID_Gelatinous_Summon				= 30964
-Global Const $ID_Fossilized__Summon				= 30965
-Global Const $ID_Jadeite_Summon					= 30966
-Global Const $ID_Mischievous_Summon				= 31022
-Global Const $ID_Frosty_Summon					= 31023
-Global Const $ID_Mysterious_Summon				= 31155
-Global Const $ID_Zaishen_Summon					= 31156
-Global Const $ID_Ghastly_Summon					= 32557
-Global Const $ID_Celestial_Summon				= 34176
-Global Const $ID_Shining_Blade_Summon			= 35126
-Global Const $ID_Legionnaire_Summoning_Crystal	= 37810
-Global Const $Summoning_Stones_Array[]			= [$ID_Merchant_Summon, $ID_Tengu_Summon, $ID_Imperial_Guard_Summon, $ID_Automaton_Summon, $ID_Igneous_Summoning_Stone, $ID_Chitinous_Summon, $ID_Mystical_Summon, $ID_Amber_Summon, $ID_Artic_Summon, $ID_Demonic_Summon, _
-													$ID_Gelatinous_Summon, $ID_Fossilized__Summon, $ID_Jadeite_Summon, $ID_Mischievous_Summon, $ID_Frosty_Summon, $ID_Mysterious_Summon, $ID_Zaishen_Summon, $ID_Ghastly_Summon, $ID_Celestial_Summon, $ID_Shining_Blade_Summon]
-Global Const $Map_Summoning_Stones				= MapFromArray($Summoning_Stones_Array)
+Global Const $ID_MERCHANT_SUMMON				= 21154
+Global Const $ID_TENGU_SUMMON					= 30209
+Global Const $ID_IMPERIAL_GUARD_SUMMON			= 30210
+Global Const $ID_AUTOMATON_SUMMON				= 30846
+Global Const $ID_IGNEOUS_SUMMONING_STONE		= 30847
+Global Const $ID_CHITINOUS_SUMMON				= 30959
+Global Const $ID_MYSTICAL_SUMMON				= 30960
+Global Const $ID_AMBER_SUMMON					= 30961
+Global Const $ID_ARTIC_SUMMON					= 30962
+Global Const $ID_DEMONIC_SUMMON					= 30963
+Global Const $ID_GELATINOUS_SUMMON				= 30964
+Global Const $ID_FOSSILIZED__SUMMON				= 30965
+Global Const $ID_JADEITE_SUMMON					= 30966
+Global Const $ID_MISCHIEVOUS_SUMMON				= 31022
+Global Const $ID_FROSTY_SUMMON					= 31023
+Global Const $ID_MYSTERIOUS_SUMMON				= 31155
+Global Const $ID_ZAISHEN_SUMMON					= 31156
+Global Const $ID_GHASTLY_SUMMON					= 32557
+Global Const $ID_CELESTIAL_SUMMON				= 34176
+Global Const $ID_SHINING_BLADE_SUMMON			= 35126
+Global Const $ID_LEGIONNAIRE_SUMMONING_CRYSTAL	= 37810
+Global Const $SUMMONING_STONES_ARRAY[]			= [$ID_MERCHANT_SUMMON, $ID_TENGU_SUMMON, $ID_IMPERIAL_GUARD_SUMMON, $ID_AUTOMATON_SUMMON, $ID_IGNEOUS_SUMMONING_STONE, $ID_CHITINOUS_SUMMON, $ID_MYSTICAL_SUMMON, $ID_AMBER_SUMMON, $ID_ARTIC_SUMMON, $ID_DEMONIC_SUMMON, _
+													$ID_GELATINOUS_SUMMON, $ID_FOSSILIZED__SUMMON, $ID_JADEITE_SUMMON, $ID_MISCHIEVOUS_SUMMON, $ID_FROSTY_SUMMON, $ID_MYSTERIOUS_SUMMON, $ID_ZAISHEN_SUMMON, $ID_GHASTLY_SUMMON, $ID_CELESTIAL_SUMMON, $ID_SHINING_BLADE_SUMMON]
+Global Const $MAP_SUMMONING_STONES				= MapFromArray($SUMMONING_STONES_ARRAY)
 #EndRegion Summoning Stones
 
 
 #Region Tonics
-Global Const $ID_Sinister_Automatonic_Tonic	= 4730
-Global Const $ID_Transmogrifier_Tonic		= 15837
-Global Const $ID_Yuletide_Tonic				= 21490
-Global Const $ID_Beetle_Juice_Tonic			= 22192
-Global Const $ID_Abyssal_Tonic				= 30624
-Global Const $ID_Cerebral_Tonic				= 30626
-Global Const $ID_Macabre_Tonic				= 30628
-Global Const $ID_Trapdoor_Tonic				= 30630
-Global Const $ID_Searing_Tonic				= 30632
-Global Const $ID_Automatonic_Tonic			= 30634
-Global Const $ID_Skeletonic_Tonic			= 30636
-Global Const $ID_Boreal_Tonic				= 30638
-Global Const $ID_Gelatinous_Tonic			= 30640
-Global Const $ID_Phantasmal_Tonic			= 30642
-Global Const $ID_Abominable_Tonic			= 30646
-Global Const $ID_Frosty_Tonic				= 30648
-Global Const $ID_Mischievious_Tonic			= 31020
-Global Const $ID_Mysterious_Tonic			= 31141
-Global Const $ID_Cottontail_Tonic			= 31142
-Global Const $ID_Zaishen_Tonic				= 31144
-Global Const $ID_Unseen_Tonic				= 31172
-Global Const $ID_Spooky_Tonic				= 37771
-Global Const $ID_Minutely_Mad_King_Tonic	= 37772
-Global Const $Party_Tonics_Array[]			= [$ID_Sinister_Automatonic_Tonic, $ID_Transmogrifier_Tonic, $ID_Yuletide_Tonic, $ID_Beetle_Juice_Tonic, $ID_Abyssal_Tonic, $ID_Cerebral_Tonic, $ID_Macabre_Tonic, $ID_Trapdoor_Tonic, $ID_Searing_Tonic, _
-												$ID_Automatonic_Tonic, $ID_Skeletonic_Tonic, $ID_Boreal_Tonic, $ID_Gelatinous_Tonic, $ID_Phantasmal_Tonic, $ID_Abominable_Tonic, $ID_Frosty_Tonic, $ID_Mischievious_Tonic, $ID_Mysterious_Tonic, _
-												$ID_Cottontail_Tonic, $ID_Zaishen_Tonic, $ID_Unseen_Tonic, $ID_Spooky_Tonic, $ID_Minutely_Mad_King_Tonic]
-Global Const $Map_Party_Tonics				= MapFromArray($Party_Tonics_Array)
+Global Const $ID_SINISTER_AUTOMATONIC_TONIC	= 4730
+Global Const $ID_TRANSMOGRIFIER_TONIC		= 15837
+Global Const $ID_YULETIDE_TONIC				= 21490
+Global Const $ID_BEETLE_JUICE_TONIC			= 22192
+Global Const $ID_ABYSSAL_TONIC				= 30624
+Global Const $ID_CEREBRAL_TONIC				= 30626
+Global Const $ID_MACABRE_TONIC				= 30628
+Global Const $ID_TRAPDOOR_TONIC				= 30630
+Global Const $ID_SEARING_TONIC				= 30632
+Global Const $ID_AUTOMATONIC_TONIC			= 30634
+Global Const $ID_SKELETONIC_TONIC			= 30636
+Global Const $ID_BOREAL_TONIC				= 30638
+Global Const $ID_GELATINOUS_TONIC			= 30640
+Global Const $ID_PHANTASMAL_TONIC			= 30642
+Global Const $ID_ABOMINABLE_TONIC			= 30646
+Global Const $ID_FROSTY_TONIC				= 30648
+Global Const $ID_MISCHIEVIOUS_TONIC			= 31020
+Global Const $ID_MYSTERIOUS_TONIC			= 31141
+Global Const $ID_COTTONTAIL_TONIC			= 31142
+Global Const $ID_ZAISHEN_TONIC				= 31144
+Global Const $ID_UNSEEN_TONIC				= 31172
+Global Const $ID_SPOOKY_TONIC				= 37771
+Global Const $ID_MINUTELY_MAD_KING_TONIC	= 37772
+Global Const $PARTY_TONICS_ARRAY[]			= [$ID_SINISTER_AUTOMATONIC_TONIC, $ID_TRANSMOGRIFIER_TONIC, $ID_YULETIDE_TONIC, $ID_BEETLE_JUICE_TONIC, $ID_ABYSSAL_TONIC, $ID_CEREBRAL_TONIC, $ID_MACABRE_TONIC, $ID_TRAPDOOR_TONIC, $ID_SEARING_TONIC, _
+												$ID_AUTOMATONIC_TONIC, $ID_SKELETONIC_TONIC, $ID_BOREAL_TONIC, $ID_GELATINOUS_TONIC, $ID_PHANTASMAL_TONIC, $ID_ABOMINABLE_TONIC, $ID_FROSTY_TONIC, $ID_MISCHIEVIOUS_TONIC, $ID_MYSTERIOUS_TONIC, _
+												$ID_COTTONTAIL_TONIC, $ID_ZAISHEN_TONIC, $ID_UNSEEN_TONIC, $ID_SPOOKY_TONIC, $ID_MINUTELY_MAD_KING_TONIC]
+Global Const $MAP_PARTY_TONICS				= MapFromArray($PARTY_TONICS_ARRAY)
 
 #Region EL Tonics
-;Global Const $ID_EL_Beetle_Juice_Tonic	=
-Global Const $ID_EL_Cottontail_Tonic			= 31143
-;Global Const $ID_EL_Frosty_Tonic	=
-Global Const $ID_EL_Mischievious_Tonic			= 31021
-Global Const $ID_EL_Sinister_Automatonic_Tonic	= 30827
-Global Const $ID_EL_Transmogrifier_Tonic		= 23242
-Global Const $ID_EL_Yuletide_Tonic				= 29241
-Global Const $ID_EL_Avatar_of_Balthazar_Tonic	= 36658
-Global Const $ID_EL_Balthazars_Champion_Tonic	= 36661
-Global Const $ID_EL_Henchman_Tonic				= 32850
-Global Const $ID_EL_Flame_Sentinel_Tonic		= 36664
-Global Const $ID_EL_Ghostly_Hero_Tonic			= 36660
-Global Const $ID_EL_Ghostly_Priest_Tonic		= 36663
-Global Const $ID_EL_Guild_Lord_Tonic			= 36652
-;Global Const $ID_EL_Knight_Tonic	=
-;Global Const $ID_EL_Legionaire_Tonic	=
-Global Const $ID_EL_Priest_of_Balthazar_Tonic	= 36659
-Global Const $ID_EL_Reindeer_Tonic				= 34156
-Global Const $ID_EL_Cerebral_Tonic				= 30627
-Global Const $ID_EL_Searing_Tonic				= 30633
-Global Const $ID_EL_Abyssal_Tonic				= 30625
-Global Const $ID_EL_Unseen_Tonic				= 31173
-Global Const $ID_EL_Phantasmal_Tonic			= 30643
-Global Const $ID_EL_Automatonic_Tonic			= 30635
-Global Const $ID_EL_Boreal_Tonic				= 30639
-Global Const $ID_EL_Trapdoor_Tonic				= 30631
-Global Const $ID_EL_Macabre_Tonic				= 30629
-Global Const $ID_EL_Skeletonic_Tonic			= 30637
-Global Const $ID_EL_Gelatinous_Tonic			= 30641
-Global Const $ID_EL_Abominable_Tonic			= 30647
-Global Const $ID_EL_Destroyer_Tonic				= 36457
-Global Const $ID_EL_Kuunavang_Tonic				= 36461
-Global Const $ID_EL_Margonite_Tonic				= 36456
-Global Const $ID_EL_Slightly_Mad_King_Tonic		= 36460
-Global Const $ID_EL_Gwen_Tonic					= 36442
-Global Const $ID_EL_Keiran_Thackeray_Tonic		= 36450
-Global Const $ID_EL_Miku_Tonic					= 36451
-Global Const $ID_EL_Shiro_Tonic					= 36453
-Global Const $ID_EL_Prince_Rurik_Tonic			= 36455
-Global Const $ID_EL_Anton_Tonic					= 36447
-Global Const $ID_EL_Jora_Tonic					= 36455
-Global Const $ID_EL_Koss_Tonic					= 36425
-Global Const $ID_EL_MOX_Tonic					= 36452
-Global Const $ID_EL_Master_of_Whispers_Tonic	= 36433
-Global Const $ID_EL_Ogden_Stonehealer_Tonic		= 36440
-Global Const $ID_EL_Queen_Salma_Tonic			= 36458
-Global Const $ID_EL_Pyre_Fiercehot_Tonic		= 36446
-Global Const $ID_EL_Razah_Tonic					= 36437
-Global Const $ID_EL_Zhed_Shadowhoof_Tonic		= 36431
-Global Const $ID_EL_Acolyte_Jin_Tonic			= 36428
-Global Const $ID_EL_Acolyte_Sousuke_Tonic		= 36429
-Global Const $ID_EL_Dunkoro_Tonic				= 36426
-Global Const $ID_EL_Goren_Tonic					= 36434
-Global Const $ID_EL_Hayda_Tonic					= 36448
-Global Const $ID_EL_Kahmu_Tonic					= 36444
-Global Const $ID_EL_Livia_Tonic					= 36449
-Global Const $ID_EL_Magrid_the_Sly_Tonic		= 36432
-Global Const $ID_EL_Melonni_Tonic				= 36427
-Global Const $ID_EL_Tahlkora_Tonic				= 36430
-Global Const $ID_EL_Norgu_Tonic					= 36435
-Global Const $ID_EL_Morgahn_Tonic				= 36436
-Global Const $ID_EL_Olias_Tonic					= 36438
-Global Const $ID_EL_Zenmai_Tonic				= 36439
-Global Const $ID_EL_Vekk_Tonic					= 36441
-Global Const $ID_EL_Xandra_Tonic				= 36443
-Global Const $ID_EL_Crate_of_Fireworks			= 31147
-Global Const $EL_Tonic_Array[]					= []
-Global Const $Map_EL_Tonics						= MapFromArray($EL_Tonic_Array)
+;Global Const $ID_EL_BEETLE_JUICE_TONIC	=
+Global Const $ID_EL_COTTONTAIL_TONIC			= 31143
+;Global Const $ID_EL_FROSTY_TONIC	=
+Global Const $ID_EL_MISCHIEVIOUS_TONIC			= 31021
+Global Const $ID_EL_SINISTER_AUTOMATONIC_TONIC	= 30827
+Global Const $ID_EL_TRANSMOGRIFIER_TONIC		= 23242
+Global Const $ID_EL_YULETIDE_TONIC				= 29241
+Global Const $ID_EL_AVATAR_OF_BALTHAZAR_TONIC	= 36658
+Global Const $ID_EL_BALTHAZARS_CHAMPION_TONIC	= 36661
+Global Const $ID_EL_HENCHMAN_TONIC				= 32850
+Global Const $ID_EL_FLAME_SENTINEL_TONIC		= 36664
+Global Const $ID_EL_GHOSTLY_HERO_TONIC			= 36660
+Global Const $ID_EL_GHOSTLY_PRIEST_TONIC		= 36663
+Global Const $ID_EL_GUILD_LORD_TONIC			= 36652
+;Global Const $ID_EL_KNIGHT_TONIC	=
+;Global Const $ID_EL_LEGIONAIRE_TONIC	=
+Global Const $ID_EL_PRIEST_OF_BALTHAZAR_TONIC	= 36659
+Global Const $ID_EL_REINDEER_TONIC				= 34156
+Global Const $ID_EL_CEREBRAL_TONIC				= 30627
+Global Const $ID_EL_SEARING_TONIC				= 30633
+Global Const $ID_EL_ABYSSAL_TONIC				= 30625
+Global Const $ID_EL_UNSEEN_TONIC				= 31173
+Global Const $ID_EL_PHANTASMAL_TONIC			= 30643
+Global Const $ID_EL_AUTOMATONIC_TONIC			= 30635
+Global Const $ID_EL_BOREAL_TONIC				= 30639
+Global Const $ID_EL_TRAPDOOR_TONIC				= 30631
+Global Const $ID_EL_MACABRE_TONIC				= 30629
+Global Const $ID_EL_SKELETONIC_TONIC			= 30637
+Global Const $ID_EL_GELATINOUS_TONIC			= 30641
+Global Const $ID_EL_ABOMINABLE_TONIC			= 30647
+Global Const $ID_EL_DESTROYER_TONIC				= 36457
+Global Const $ID_EL_KUUNAVANG_TONIC				= 36461
+Global Const $ID_EL_MARGONITE_TONIC				= 36456
+Global Const $ID_EL_SLIGHTLY_MAD_KING_TONIC		= 36460
+Global Const $ID_EL_GWEN_TONIC					= 36442
+Global Const $ID_EL_KEIRAN_THACKERAY_TONIC		= 36450
+Global Const $ID_EL_MIKU_TONIC					= 36451
+Global Const $ID_EL_SHIRO_TONIC					= 36453
+Global Const $ID_EL_PRINCE_RURIK_TONIC			= 36455
+Global Const $ID_EL_ANTON_TONIC					= 36447
+Global Const $ID_EL_JORA_TONIC					= 36455
+Global Const $ID_EL_KOSS_TONIC					= 36425
+Global Const $ID_EL_MOX_TONIC					= 36452
+Global Const $ID_EL_MASTER_OF_WHISPERS_TONIC	= 36433
+Global Const $ID_EL_OGDEN_STONEHEALER_TONIC		= 36440
+Global Const $ID_EL_QUEEN_SALMA_TONIC			= 36458
+Global Const $ID_EL_PYRE_FIERCEHOT_TONIC		= 36446
+Global Const $ID_EL_RAZAH_TONIC					= 36437
+Global Const $ID_EL_ZHED_SHADOWHOOF_TONIC		= 36431
+Global Const $ID_EL_ACOLYTE_JIN_TONIC			= 36428
+Global Const $ID_EL_ACOLYTE_SOUSUKE_TONIC		= 36429
+Global Const $ID_EL_DUNKORO_TONIC				= 36426
+Global Const $ID_EL_GOREN_TONIC					= 36434
+Global Const $ID_EL_HAYDA_TONIC					= 36448
+Global Const $ID_EL_KAHMU_TONIC					= 36444
+Global Const $ID_EL_LIVIA_TONIC					= 36449
+Global Const $ID_EL_MAGRID_THE_SLY_TONIC		= 36432
+Global Const $ID_EL_MELONNI_TONIC				= 36427
+Global Const $ID_EL_TAHLKORA_TONIC				= 36430
+Global Const $ID_EL_NORGU_TONIC					= 36435
+Global Const $ID_EL_MORGAHN_TONIC				= 36436
+Global Const $ID_EL_OLIAS_TONIC					= 36438
+Global Const $ID_EL_ZENMAI_TONIC				= 36439
+Global Const $ID_EL_VEKK_TONIC					= 36441
+Global Const $ID_EL_XANDRA_TONIC				= 36443
+Global Const $ID_EL_CRATE_OF_FIREWORKS			= 31147
+Global Const $EL_TONIC_ARRAY[]					= []
+Global Const $MAP_EL_TONICS						= MapFromArray($EL_TONIC_ARRAY)
 #EndRegion EL Tonics
 #EndRegion Tonics
 
 
 #Region Minis
 ; First year
-Global Const $ID_Prince_Rurik_Mini						= 13790
-Global Const $ID_Shiro_Mini								= 13791
-Global Const $ID_Charr_Shaman_Mini						= 13784
-Global Const $ID_Fungal_Wallow_Mini						= 13782
-Global Const $ID_Bone_Dragon_Mini						= 13783
-Global Const $ID_Hydra_Mini								= 13787
-Global Const $ID_Jade_Armor_Mini						= 13788
-Global Const $ID_Kirin_Mini								= 13789
-Global Const $ID_Jungle_Troll_Mini						= 13794
-Global Const $ID_Necrid_Horseman_Mini					= 13786
-Global Const $ID_Temple_Guardian_Mini					= 13792
-Global Const $ID_Burning_Titan_Mini						= 13793
-Global Const $ID_Siege_Turtle_Mini						= 13795
-Global Const $ID_Whiptail_Devourer_Mini					= 13785
+Global Const $ID_PRINCE_RURIK_MINI						= 13790
+Global Const $ID_SHIRO_MINI								= 13791
+Global Const $ID_CHARR_SHAMAN_MINI						= 13784
+Global Const $ID_FUNGAL_WALLOW_MINI						= 13782
+Global Const $ID_BONE_DRAGON_MINI						= 13783
+Global Const $ID_HYDRA_MINI								= 13787
+Global Const $ID_JADE_ARMOR_MINI						= 13788
+Global Const $ID_KIRIN_MINI								= 13789
+Global Const $ID_JUNGLE_TROLL_MINI						= 13794
+Global Const $ID_NECRID_HORSEMAN_MINI					= 13786
+Global Const $ID_TEMPLE_GUARDIAN_MINI					= 13792
+Global Const $ID_BURNING_TITAN_MINI						= 13793
+Global Const $ID_SIEGE_TURTLE_MINI						= 13795
+Global Const $ID_WHIPTAIL_DEVOURER_MINI					= 13785
 ; Second year
-Global Const $ID_Gwen_Mini								= 22753
-Global Const $ID_Water_Djinn_Mini						= 22754
-Global Const $ID_Lich_Mini								= 22755
-Global Const $ID_Elf_Mini								= 22756
-Global Const $ID_Palawa_Joko_Mini						= 22757
-Global Const $ID_Koss_Mini								= 22758
-Global Const $ID_Aatxe_Mini								= 22765
-Global Const $ID_Harpy_Ranger_Mini						= 22761
-Global Const $ID_Heket_Warrior_Mini						= 22760
-Global Const $ID_Juggernaut_Mini						= 22762
-Global Const $ID_Mandragor_Imp_Mini						= 22759
-Global Const $ID_Thorn_Wolf_Mini						= 22766
-Global Const $ID_Wind_Rider_Mini						= 22763
-Global Const $ID_Fire_Imp_Mini							= 22764
+Global Const $ID_GWEN_MINI								= 22753
+Global Const $ID_WATER_DJINN_MINI						= 22754
+Global Const $ID_LICH_MINI								= 22755
+Global Const $ID_ELF_MINI								= 22756
+Global Const $ID_PALAWA_JOKO_MINI						= 22757
+Global Const $ID_KOSS_MINI								= 22758
+Global Const $ID_AATXE_MINI								= 22765
+Global Const $ID_HARPY_RANGER_MINI						= 22761
+Global Const $ID_HEKET_WARRIOR_MINI						= 22760
+Global Const $ID_JUGGERNAUT_MINI						= 22762
+Global Const $ID_MANDRAGOR_IMP_MINI						= 22759
+Global Const $ID_THORN_WOLF_MINI						= 22766
+Global Const $ID_WIND_RIDER_MINI						= 22763
+Global Const $ID_FIRE_IMP_MINI							= 22764
 ; Third year
-Global Const $ID_Black_Beast_of_Aaaaarrrrrrggghhh_Mini	= 30611
-Global Const $ID_Irukandji_Mini							= 30613
-Global Const $ID_Mad_King_Thorn_Mini					= 30614
-Global Const $ID_Raptor_Mini							= 30619
-Global Const $ID_Cloudtouched_Simian_Mini				= 30621
-Global Const $ID_White_Rabbit_Mini						= 30623
-Global Const $ID_Freezie_Mini							= 30612
-Global Const $ID_Nornbear_Mini							= 32519
-Global Const $ID_Ooze_Mini								= 30618
-Global Const $ID_Abyssal_Mini							= 30610
-Global Const $ID_Cave_Spider_Mini						= 30622
-Global Const $ID_Forest_Minotaur_Mini					= 30615
-Global Const $ID_Mursaat_Mini							= 30616
-Global Const $ID_Roaring_Ether_Mini						= 30620
+Global Const $ID_BLACK_BEAST_OF_AAAAARRRRRRGGGHHH_MINI	= 30611
+Global Const $ID_IRUKANDJI_MINI							= 30613
+Global Const $ID_MAD_KING_THORN_MINI					= 30614
+Global Const $ID_RAPTOR_MINI							= 30619
+Global Const $ID_CLOUDTOUCHED_SIMIAN_MINI				= 30621
+Global Const $ID_WHITE_RABBIT_MINI						= 30623
+Global Const $ID_FREEZIE_MINI							= 30612
+Global Const $ID_NORNBEAR_MINI							= 32519
+Global Const $ID_OOZE_MINI								= 30618
+Global Const $ID_ABYSSAL_MINI							= 30610
+Global Const $ID_CAVE_SPIDER_MINI						= 30622
+Global Const $ID_FOREST_MINOTAUR_MINI					= 30615
+Global Const $ID_MURSAAT_MINI							= 30616
+Global Const $ID_ROARING_ETHER_MINI						= 30620
 ; Fourth year
-Global Const $ID_Eye_of_Janthir_Mini					= 32529
-Global Const $ID_Dredge_Brute_Mini						= 32517
-Global Const $ID_Terrorweb_Dryder_Mini					= 32518
-Global Const $ID_Abomination_Mini						= 32519
-Global Const $ID_Flame_Djinn_Mini						= 32528
-Global Const $ID_Flowstone_Elemental_Mini				= 32525
-Global Const $ID_Nian_Mini								= 32526
-Global Const $ID_Dagnar_Stonepate_Mini					= 32527
-Global Const $ID_Jora_Mini								= 32524
-Global Const $ID_Desert_Griffon_Mini					= 32521
-Global Const $ID_Krait_Neoss_Mini						= 32520
-Global Const $ID_Kveldulf_Mini							= 32522
-Global Const $ID_Quetzal_Sly_Mini						= 32523
-Global Const $ID_Word_of_Madness_Mini					= 32516
+Global Const $ID_EYE_OF_JANTHIR_MINI					= 32529
+Global Const $ID_DREDGE_BRUTE_MINI						= 32517
+Global Const $ID_TERRORWEB_DRYDER_MINI					= 32518
+Global Const $ID_ABOMINATION_MINI						= 32519
+Global Const $ID_FLAME_DJINN_MINI						= 32528
+Global Const $ID_FLOWSTONE_ELEMENTAL_MINI				= 32525
+Global Const $ID_NIAN_MINI								= 32526
+Global Const $ID_DAGNAR_STONEPATE_MINI					= 32527
+Global Const $ID_JORA_MINI								= 32524
+Global Const $ID_DESERT_GRIFFON_MINI					= 32521
+Global Const $ID_KRAIT_NEOSS_MINI						= 32520
+Global Const $ID_KVELDULF_MINI							= 32522
+Global Const $ID_QUETZAL_SLY_MINI						= 32523
+Global Const $ID_WORD_OF_MADNESS_MINI					= 32516
 ; Fifth year
-Global Const $ID_MOX_Mini								= 34400
-Global Const $ID_Ventari_Mini							= 34395
-Global Const $ID_Oola_Mini								= 34396
-Global Const $ID_Candysmith_Marley_Mini					= 34397
-Global Const $ID_Zhu_Hanuku_Mini						= 34398
-Global Const $ID_King_Adelbern_Mini						= 34399
-Global Const $ID_Cobalt_Scabara_Mini					= 34393
-Global Const $ID_Fire_Drake_Mini						= 34390
-Global Const $ID_Ophil_Nahualli_Mini					= 34392
-Global Const $ID_Scourge_Manta_Mini						= 34394
-Global Const $ID_Seer_Mini								= 34386
-Global Const $ID_Shard_Wolf_Mini						= 34389
-Global Const $ID_Siege_Devourer							= 34387
-Global Const $ID_Summit_Giant_Herder					= 34391
+Global Const $ID_MOX_MINI								= 34400
+Global Const $ID_VENTARI_MINI							= 34395
+Global Const $ID_OOLA_MINI								= 34396
+Global Const $ID_CANDYSMITH_MARLEY_MINI					= 34397
+Global Const $ID_ZHU_HANUKU_MINI						= 34398
+Global Const $ID_KING_ADELBERN_MINI						= 34399
+Global Const $ID_COBALT_SCABARA_MINI					= 34393
+Global Const $ID_FIRE_DRAKE_MINI						= 34390
+Global Const $ID_OPHIL_NAHUALLI_MINI					= 34392
+Global Const $ID_SCOURGE_MANTA_MINI						= 34394
+Global Const $ID_SEER_MINI								= 34386
+Global Const $ID_SHARD_WOLF_MINI						= 34389
+Global Const $ID_SIEGE_DEVOURER							= 34387
+Global Const $ID_SUMMIT_GIANT_HERDER					= 34391
 ; Seventh
-Global Const $ID_Vizu_Mini								= 22196
-Global Const $ID_Shiroken_Assassin_Mini					= 22195
-Global Const $ID_Zhed_Shadowhoof_Mini					= 22197
-Global Const $ID_Naga_Raincaller_Mini					= 15515
-Global Const $ID_Oni_Mini								= 15516
+Global Const $ID_VIZU_MINI								= 22196
+Global Const $ID_SHIROKEN_ASSASSIN_MINI					= 22195
+Global Const $ID_ZHED_SHADOWHOOF_MINI					= 22197
+Global Const $ID_NAGA_RAINCALLER_MINI					= 15515
+Global Const $ID_ONI_MINI								= 15516
 ; Collector Edition
-Global Const $ID_Kuunavang_Mini							= 12389
-Global Const $ID_Varesh_Ossa_Mini						= 21069
+Global Const $ID_KUUNAVANG_MINI							= 12389
+Global Const $ID_VARESH_OSSA_MINI						= 21069
 ; In-Game Reward
-Global Const $ID_Mallyx_Mini							= 21229
-Global Const $ID_Black_Moa_Chick_Mini					= 25499
-Global Const $ID_Gwen_Doll_Mini							= 31157
-Global Const $ID_Yakkington_Mini						= 32515
-Global Const $ID_Brown_Rabbit_Mini						= 31158
-;Global Const $ID_Ghostly_Hero_Mini	=
-Global Const $ID_Minister_Reiko_Mini					= 30224
-Global Const $ID_Ecclesiate_Xun_Rao_Mini				= 30225
-;Global Const $ID_Peacekeeper_Enforcer_Mini	=
-Global Const $ID_Evennia_Mini							= 35128
-Global Const $ID_Livia_Mini								= 35129
-Global Const $ID_Princess_Salma_Mini					= 35130
-Global Const $ID_Confessor_Dorian_Mini					= 35132
-Global Const $ID_Confessor_Isaiah_Mini					= 35131
-Global Const $ID_Guild_Lord_Mini						= 36648
-Global Const $ID_Ghostly_Priest_Mini					= 36650
-Global Const $ID_Rift_Warden_Mini						= 36651
-Global Const $ID_High_Priest_Zhang_Mini					= 36649
-Global Const $ID_Dhuum_Mini								= 32822
-Global Const $ID_Smite_Crawler_Mini						= 32556
+Global Const $ID_MALLYX_MINI							= 21229
+Global Const $ID_BLACK_MOA_CHICK_MINI					= 25499
+Global Const $ID_GWEN_DOLL_MINI							= 31157
+Global Const $ID_YAKKINGTON_MINI						= 32515
+Global Const $ID_BROWN_RABBIT_MINI						= 31158
+;Global Const $ID_GHOSTLY_HERO_MINI	=
+Global Const $ID_MINISTER_REIKO_MINI					= 30224
+Global Const $ID_ECCLESIATE_XUN_RAO_MINI				= 30225
+;Global Const $ID_PEACEKEEPER_ENFORCER_MINI	=
+Global Const $ID_EVENNIA_MINI							= 35128
+Global Const $ID_LIVIA_MINI								= 35129
+Global Const $ID_PRINCESS_SALMA_MINI					= 35130
+Global Const $ID_CONFESSOR_DORIAN_MINI					= 35132
+Global Const $ID_CONFESSOR_ISAIAH_MINI					= 35131
+Global Const $ID_GUILD_LORD_MINI						= 36648
+Global Const $ID_GHOSTLY_PRIEST_MINI					= 36650
+Global Const $ID_RIFT_WARDEN_MINI						= 36651
+Global Const $ID_HIGH_PRIEST_ZHANG_MINI					= 36649
+Global Const $ID_DHUUM_MINI								= 32822
+Global Const $ID_SMITE_CRAWLER_MINI						= 32556
 ; Special Event Minis
-;Global Const $ID_Greased_Lightning_Mini	=
-Global Const $ID_Pig_Mini								= 21806
-Global Const $ID_Celestial_Pig_Mini						= 29412
-Global Const $ID_Celestial_Rat_Mini						= 29413
-Global Const $ID_Celestial_Ox_Mini						= 29414
-Global Const $ID_Celestial_Tiger_Mini					= 29415
-Global Const $ID_Celestial_Rabbit_Mini					= 29416
-Global Const $ID_Celestial_Dragon_Mini					= 29417
-Global Const $ID_Celestial_Snake_Mini					= 29418
-Global Const $ID_Celestial_Horse_Mini					= 29419
-Global Const $ID_Celestial_Sheep_Mini					= 29420
-Global Const $ID_Celestial_Monkey_Mini					= 29421
-Global Const $ID_Celestial_Rooster_Mini					= 29422
-Global Const $ID_Celestial_Dog_Mini						= 29423
-Global Const $ID_World_Famous_Racing_Beetle_Mini		= 37792
-;Global Const $ID_Legionnaire_Mini						=
+;Global Const $ID_GREASED_LIGHTNING_MINI	=
+Global Const $ID_PIG_MINI								= 21806
+Global Const $ID_CELESTIAL_PIG_MINI						= 29412
+Global Const $ID_CELESTIAL_RAT_MINI						= 29413
+Global Const $ID_CELESTIAL_OX_MINI						= 29414
+Global Const $ID_CELESTIAL_TIGER_MINI					= 29415
+Global Const $ID_CELESTIAL_RABBIT_MINI					= 29416
+Global Const $ID_CELESTIAL_DRAGON_MINI					= 29417
+Global Const $ID_CELESTIAL_SNAKE_MINI					= 29418
+Global Const $ID_CELESTIAL_HORSE_MINI					= 29419
+Global Const $ID_CELESTIAL_SHEEP_MINI					= 29420
+Global Const $ID_CELESTIAL_MONKEY_MINI					= 29421
+Global Const $ID_CELESTIAL_ROOSTER_MINI					= 29422
+Global Const $ID_CELESTIAL_DOG_MINI						= 29423
+Global Const $ID_WORLD_FAMOUS_RACING_BEETLE_MINI		= 37792
+;Global Const $ID_LEGIONNAIRE_MINI						=
 ; Promotional
-Global Const $ID_Asura_Mini								= 22189
-Global Const $ID_Destroyer_of_Flesh_Mini				= 22250
-Global Const $ID_Gray_Giant_Mini						= 17053
-Global Const $ID_Grawl_Mini								= 22822
-Global Const $ID_Ceratadon_Mini							= 28416
+Global Const $ID_ASURA_MINI								= 22189
+Global Const $ID_DESTROYER_OF_FLESH_MINI				= 22250
+Global Const $ID_GRAY_GIANT_MINI						= 17053
+Global Const $ID_GRAWL_MINI								= 22822
+Global Const $ID_CERATADON_MINI							= 28416
 ; Miscellaneous
-;Global Const $ID_Kanaxai_Mini							=
-Global Const $ID_Polar_Bear_Mini						= 21439
-Global Const $ID_Mad_Kings_Guard_Mini					= 32555
-Global Const $ID_Panda_Mini								= 15517
-;Global Const $ID_Longhair_Yeti_Mini					=
+;Global Const $ID_KANAXAI_MINI							=
+Global Const $ID_POLAR_BEAR_MINI						= 21439
+Global Const $ID_MAD_KINGS_GUARD_MINI					= 32555
+Global Const $ID_PANDA_MINI								= 15517
+;Global Const $ID_LONGHAIR_YETI_MINI					=
 #EndRegion Minis
 
 
 #Region Ultra rare skins
 ; Missing IDs
-;Global Const $ID_Astral_Staff
-;Global Const $ID_Dryad_Bow
-;Global Const $ID_Goldhorn_Staff
-;Global Const $ID_Notched_Blade
-;Global Const $ID_Cerulean_Edge
-;Global Const $ID_Chrysocola_Staff
-;Global Const $ID_Cobalt_Staff
-;Global Const $ID_Violet_Edge
-;Global Const $ID_Bonecage_Scythe
-;Global Const $ID_Demon_Fangs
-;Global Const $ID_Icicle_Staff
-;Global Const $ID_Turquoise_Staff
-;Global Const $ID_Emerald_Edge
-;Global Const $ID_Topaz_Scepter
-;Global Const $ID_Golden_Hammer
-;Global Const $ID_Clockwork_Scythe
-;Global Const $ID_Signet_Shield
-;Global Const $ID_Steelhead_Scythe
-;Global Const $ID_Insectoid_Scythe
-;Global Const $ID_Insectoid_Staff
-;Global Const $ID_Embercrest_Staff
-;Global Const $ID_Singing_Blade
+;Global Const $ID_ASTRAL_STAFF
+;Global Const $ID_DRYAD_BOW
+;Global Const $ID_GOLDHORN_STAFF
+;Global Const $ID_NOTCHED_BLADE
+;Global Const $ID_CERULEAN_EDGE
+;Global Const $ID_CHRYSOCOLA_STAFF
+;Global Const $ID_COBALT_STAFF
+;Global Const $ID_VIOLET_EDGE
+;Global Const $ID_BONECAGE_SCYTHE
+;Global Const $ID_DEMON_FANGS
+;Global Const $ID_ICICLE_STAFF
+;Global Const $ID_TURQUOISE_STAFF
+;Global Const $ID_EMERALD_EDGE
+;Global Const $ID_TOPAZ_SCEPTER
+;Global Const $ID_GOLDEN_HAMMER
+;Global Const $ID_CLOCKWORK_SCYTHE
+;Global Const $ID_SIGNET_SHIELD
+;Global Const $ID_STEELHEAD_SCYTHE
+;Global Const $ID_INSECTOID_SCYTHE
+;Global Const $ID_INSECTOID_STAFF
+;Global Const $ID_EMBERCREST_STAFF
+;Global Const $ID_SINGING_BLADE
 
-;Global Const $ID_Chaotic_Envoy_Staff				=
-;Global Const $ID_Dark_Envoy_Staff					=
-;Global Const $ID_Elemental_Envoy_Staff				=
-;Global Const $ID_Spiritual_Envoy_Staff				=
+;Global Const $ID_CHAOTIC_ENVOY_STAFF				=
+;Global Const $ID_DARK_ENVOY_STAFF					=
+;Global Const $ID_ELEMENTAL_ENVOY_STAFF				=
+;Global Const $ID_SPIRITUAL_ENVOY_STAFF				=
 
-Global Const $ID_Eternal_Blade						= 1045
-Global Const $ID_Obsidian_Edge						= 1900
-Global Const $ID_Emerald_Blade						= 1976
-Global Const $ID_Storm_Daggers						= 1986
-Global Const $ID_Voltaic_Spear						= 2071
-Global Const $ID_Dhuums_Soul_Reaper					= 32823
-Global Const $ID_Aureate_Blade						= 2124
-Global Const $ID_Eaglecrest_Axe						= 1985
-Global Const $ID_Wingcrest_Maul						= 2048
-Global Const $ID_Demoncrest_Spear					= 2079
-Global Const $ID_Silverwing_Recurve_Bow				= 2039
-Global Const $ID_Onyx_Scepter						= 2394
-Global Const $ID_Tentacle_Scythe					= 2063
-Global Const $ID_Moldavite_Staff					= 2328
-Global Const $ID_Ancient_Moss_Staff					= 2376
-Global Const $ID_Suntouched_Staff					= 2381
-Global Const $ID_Crystal_Flame_Staff				= 2366
+Global Const $ID_ETERNAL_BLADE						= 1045
+Global Const $ID_OBSIDIAN_EDGE						= 1900
+Global Const $ID_EMERALD_BLADE						= 1976
+Global Const $ID_STORM_DAGGERS						= 1986
+Global Const $ID_VOLTAIC_SPEAR						= 2071
+Global Const $ID_DHUUMS_SOUL_REAPER					= 32823
+Global Const $ID_AUREATE_BLADE						= 2124
+Global Const $ID_EAGLECREST_AXE						= 1985
+Global Const $ID_WINGCREST_MAUL						= 2048
+Global Const $ID_DEMONCREST_SPEAR					= 2079
+Global Const $ID_SILVERWING_RECURVE_BOW				= 2039
+Global Const $ID_ONYX_SCEPTER						= 2394
+Global Const $ID_TENTACLE_SCYTHE					= 2063
+Global Const $ID_MOLDAVITE_STAFF					= 2328
+Global Const $ID_ANCIENT_MOSS_STAFF					= 2376
+Global Const $ID_SUNTOUCHED_STAFF					= 2381
+Global Const $ID_CRYSTAL_FLAME_STAFF				= 2366
 
 #Region Envoy Weapons
 ; Green Envoys
-Global Const $ID_Demrikovs_Judgement				= 36670
-Global Const $ID_Vetauras_Harbinger					= 36678
-Global Const $ID_Torivos_Rage						= 36680
-Global Const $ID_Heleynes_Insight					= 36676
+Global Const $ID_DEMRIKOVS_JUDGEMENT				= 36670
+Global Const $ID_VETAURAS_HARBINGER					= 36678
+Global Const $ID_TORIVOS_RAGE						= 36680
+Global Const $ID_HELEYNES_INSIGHT					= 36676
 ; Gold Envoys
-Global Const $ID_Envoy_Sword						= 36669
-Global Const $ID_Envoy_Axe							= 36679
-Global Const $ID_Divine_Envoy_Staff					= 36674
-Global Const $ID_Envoy_Scythe						= 36677
+Global Const $ID_ENVOY_SWORD						= 36669
+Global Const $ID_ENVOY_AXE							= 36679
+Global Const $ID_DIVINE_ENVOY_STAFF					= 36674
+Global Const $ID_ENVOY_SCYTHE						= 36677
 #EndRegion Envoy Weapons
 
 #Region Froggy
-Global Const $ID_Froggy_Domination					= 1953
-Global Const $ID_Froggy_Fast_Casting				= 1956
-Global Const $ID_Froggy_Illusion					= 1957
-Global Const $ID_Froggy_Inspiration					= 1958
-Global Const $ID_Froggy_Soul_Reaping				= 1959
-Global Const $ID_Froggy_Blood						= 1960
-Global Const $ID_Froggy_Curses						= 1961
-Global Const $ID_Froggy_Death						= 1962
-Global Const $ID_Froggy_Air							= 1963
-Global Const $ID_Froggy_Earth						= 1964
-Global Const $ID_Froggy_Energy_Storage				= 1965
-Global Const $ID_Froggy_Fire						= 1966
-Global Const $ID_Froggy_Water						= 1967
-Global Const $ID_Froggy_Divine						= 1968
-Global Const $ID_Froggy_Healing						= 1969
-Global Const $ID_Froggy_Protection					= 1970
-Global Const $ID_Froggy_Smiting						= 1971
-Global Const $ID_Froggy_Communing					= 1972
-Global Const $ID_Froggy_Spawning					= 1973
-Global Const $ID_Froggy_Restoration					= 1974
-Global Const $ID_Froggy_Channeling					= 1975
+Global Const $ID_FROGGY_DOMINATION					= 1953
+Global Const $ID_FROGGY_FAST_CASTING				= 1956
+Global Const $ID_FROGGY_ILLUSION					= 1957
+Global Const $ID_FROGGY_INSPIRATION					= 1958
+Global Const $ID_FROGGY_SOUL_REAPING				= 1959
+Global Const $ID_FROGGY_BLOOD						= 1960
+Global Const $ID_FROGGY_CURSES						= 1961
+Global Const $ID_FROGGY_DEATH						= 1962
+Global Const $ID_FROGGY_AIR							= 1963
+Global Const $ID_FROGGY_EARTH						= 1964
+Global Const $ID_FROGGY_ENERGY_STORAGE				= 1965
+Global Const $ID_FROGGY_FIRE						= 1966
+Global Const $ID_FROGGY_WATER						= 1967
+Global Const $ID_FROGGY_DIVINE						= 1968
+Global Const $ID_FROGGY_HEALING						= 1969
+Global Const $ID_FROGGY_PROTECTION					= 1970
+Global Const $ID_FROGGY_SMITING						= 1971
+Global Const $ID_FROGGY_COMMUNING					= 1972
+Global Const $ID_FROGGY_SPAWNING					= 1973
+Global Const $ID_FROGGY_RESTORATION					= 1974
+Global Const $ID_FROGGY_CHANNELING					= 1975
 #EndRegion Froggy
 
 #Region Bone Dragon Staff
-Global Const $ID_Bone_Dragon_Staff_Domination		= 1987
-Global Const $ID_Bone_Dragon_Staff_Fast_Casting		= 1988
-Global Const $ID_Bone_Dragon_Staff_Illusion			= 1989
-Global Const $ID_Bone_Dragon_Staff_Inspiration		= 1990
-Global Const $ID_Bone_Dragon_Staff_Soul_Reaping		= 1991
-Global Const $ID_Bone_Dragon_Staff_Blood			= 1992
-Global Const $ID_Bone_Dragon_Staff_Curses			= 1993
-Global Const $ID_Bone_Dragon_Staff_Death			= 1994
-Global Const $ID_Bone_Dragon_Staff_Air				= 1995
-Global Const $ID_Bone_Dragon_Staff_Earth			= 1996
-Global Const $ID_Bone_Dragon_Staff_Energy_Storage	= 1997
-Global Const $ID_Bone_Dragon_Staff_Fire				= 1998
-Global Const $ID_Bone_Dragon_Staff_Water			= 1999
-Global Const $ID_Bone_Dragon_Staff_Divine			= 2000
-Global Const $ID_Bone_Dragon_Staff_Healing			= 2001
-Global Const $ID_Bone_Dragon_Staff_Protection		= 2002
-Global Const $ID_Bone_Dragon_Staff_Smiting			= 2003
-Global Const $ID_Bone_Dragon_Staff_Communing		= 2004
-Global Const $ID_Bone_Dragon_Staff_Spawning			= 2005
-Global Const $ID_Bone_Dragon_Staff_Restoration		= 2006
-Global Const $ID_Bone_Dragon_Staff_Channeling		= 2007
+Global Const $ID_BONE_DRAGON_STAFF_DOMINATION		= 1987
+Global Const $ID_BONE_DRAGON_STAFF_FAST_CASTING		= 1988
+Global Const $ID_BONE_DRAGON_STAFF_ILLUSION			= 1989
+Global Const $ID_BONE_DRAGON_STAFF_INSPIRATION		= 1990
+Global Const $ID_BONE_DRAGON_STAFF_SOUL_REAPING		= 1991
+Global Const $ID_BONE_DRAGON_STAFF_BLOOD			= 1992
+Global Const $ID_BONE_DRAGON_STAFF_CURSES			= 1993
+Global Const $ID_BONE_DRAGON_STAFF_DEATH			= 1994
+Global Const $ID_BONE_DRAGON_STAFF_AIR				= 1995
+Global Const $ID_BONE_DRAGON_STAFF_EARTH			= 1996
+Global Const $ID_BONE_DRAGON_STAFF_ENERGY_STORAGE	= 1997
+Global Const $ID_BONE_DRAGON_STAFF_FIRE				= 1998
+Global Const $ID_BONE_DRAGON_STAFF_WATER			= 1999
+Global Const $ID_BONE_DRAGON_STAFF_DIVINE			= 2000
+Global Const $ID_BONE_DRAGON_STAFF_HEALING			= 2001
+Global Const $ID_BONE_DRAGON_STAFF_PROTECTION		= 2002
+Global Const $ID_BONE_DRAGON_STAFF_SMITING			= 2003
+Global Const $ID_BONE_DRAGON_STAFF_COMMUNING		= 2004
+Global Const $ID_BONE_DRAGON_STAFF_SPAWNING			= 2005
+Global Const $ID_BONE_DRAGON_STAFF_RESTORATION		= 2006
+Global Const $ID_BONE_DRAGON_STAFF_CHANNELING		= 2007
 #EndRegion Bone Dragon Staff
 
 #Region Wintergreen Weapons
-Global Const $ID_Wintergreen_Axe					= 15835
-Global Const $ID_Wintergreen_Bow					= 15836
-Global Const $ID_Wintergreen_Sword					= 16130
-Global Const $ID_Wintergreen_Daggers				= 15838
-Global Const $ID_Wintergreen_Hammer					= 15839
-Global Const $ID_Wintergreen_Wand					= 15840
-Global Const $ID_Wintergreen_Scythe					= 15877
-Global Const $ID_Wintergreen_Shield					= 15878
-Global Const $ID_Wintergreen_Spear					= 15971
-Global Const $ID_Wintergreen_Staff					= 16128
+Global Const $ID_WINTERGREEN_AXE					= 15835
+Global Const $ID_WINTERGREEN_BOW					= 15836
+Global Const $ID_WINTERGREEN_SWORD					= 16130
+Global Const $ID_WINTERGREEN_DAGGERS				= 15838
+Global Const $ID_WINTERGREEN_HAMMER					= 15839
+Global Const $ID_WINTERGREEN_WAND					= 15840
+Global Const $ID_WINTERGREEN_SCYTHE					= 15877
+Global Const $ID_WINTERGREEN_SHIELD					= 15878
+Global Const $ID_WINTERGREEN_SPEAR					= 15971
+Global Const $ID_WINTERGREEN_STAFF					= 16128
 #EndRegion Wintergreen Weapons
 
 #Region Celestial Compass
-Global Const $ID_Celestial_Compass_Domination		= 1055
-Global Const $ID_Celestial_Compass_Fast_Casting		= 1058
-Global Const $ID_Celestial_Compass_Illusion			= 1060
-Global Const $ID_Celestial_Compass_Inspiration		= 1064
-Global Const $ID_Celestial_Compass_Soul_Reaping		= 1752
-Global Const $ID_Celestial_Compass_Blood			= 1065
-Global Const $ID_Celestial_Compass_Curses			= 1066
-Global Const $ID_Celestial_Compass_Death			= 1067
-Global Const $ID_Celestial_Compass_Air				= 1768
-Global Const $ID_Celestial_Compass_Earth			= 1769
-Global Const $ID_Celestial_Compass_Energy_Storage	= 1770
-Global Const $ID_Celestial_Compass_Fire				= 1771
-Global Const $ID_Celestial_Compass_Water			= 1772
-Global Const $ID_Celestial_Compass_Divine			= 1773
-Global Const $ID_Celestial_Compass_Healing			= 1870
-Global Const $ID_Celestial_Compass_Protection		= 1879
-Global Const $ID_Celestial_Compass_Smiting			= 1880
-Global Const $ID_Celestial_Compass_Communing		= 1881
-Global Const $ID_Celestial_Compass_Spawning			= 1883
-Global Const $ID_Celestial_Compass_Restoration		= 1884
-Global Const $ID_Celestial_Compass_Channeling		= 1885
+Global Const $ID_CELESTIAL_COMPASS_DOMINATION		= 1055
+Global Const $ID_CELESTIAL_COMPASS_FAST_CASTING		= 1058
+Global Const $ID_CELESTIAL_COMPASS_ILLUSION			= 1060
+Global Const $ID_CELESTIAL_COMPASS_INSPIRATION		= 1064
+Global Const $ID_CELESTIAL_COMPASS_SOUL_REAPING		= 1752
+Global Const $ID_CELESTIAL_COMPASS_BLOOD			= 1065
+Global Const $ID_CELESTIAL_COMPASS_CURSES			= 1066
+Global Const $ID_CELESTIAL_COMPASS_DEATH			= 1067
+Global Const $ID_CELESTIAL_COMPASS_AIR				= 1768
+Global Const $ID_CELESTIAL_COMPASS_EARTH			= 1769
+Global Const $ID_CELESTIAL_COMPASS_ENERGY_STORAGE	= 1770
+Global Const $ID_CELESTIAL_COMPASS_FIRE				= 1771
+Global Const $ID_CELESTIAL_COMPASS_WATER			= 1772
+Global Const $ID_CELESTIAL_COMPASS_DIVINE			= 1773
+Global Const $ID_CELESTIAL_COMPASS_HEALING			= 1870
+Global Const $ID_CELESTIAL_COMPASS_PROTECTION		= 1879
+Global Const $ID_CELESTIAL_COMPASS_SMITING			= 1880
+Global Const $ID_CELESTIAL_COMPASS_COMMUNING		= 1881
+Global Const $ID_CELESTIAL_COMPASS_SPAWNING			= 1883
+Global Const $ID_CELESTIAL_COMPASS_RESTORATION		= 1884
+Global Const $ID_CELESTIAL_COMPASS_CHANNELING		= 1885
 #EndRegion Celestial Compass
 #EndRegion Ultra rare skins
 
@@ -1882,318 +1884,318 @@ Global Const $ID_Celestial_Compass_Channeling		= 1885
 #Region Rare skins
 ; Which skin is that ID ? Only obsidian one is worth it
 ; Called orr staff but there are no orr staves
-Global Const $ID_Earth_Staff						= 603
+Global Const $ID_EARTH_STAFF						= 603
 ; Are those two the 'good' versions ?
-Global Const $ID_Sephis_Axe							= 120
-Global Const $ID_Serpent_Axe						= 118
+Global Const $ID_SEPHIS_AXE							= 120
+Global Const $ID_SERPENT_AXE						= 118
 
 ; Missing IDs
-;Global Const $ID_Naga_Shortbow						=
-;Global Const $ID_Naga_Longbow						=
-;Global Const $ID_Amethyst_Aegis					=
-;Global Const $ID_Straw_Effigy						=
-;Global Const $ID_Colossal_Pick						=
-;Global Const $ID_Desolation_Maul					=
-;Global Const $ID_Cockatrice_Staff					=
-;Global Const $ID_Dead_Staff						=
-;Global Const $ID_Forbidden_Staff					=
-;Global Const $ID_Ghostly_Staff						=
-;Global Const $ID_Outcast_Staff						=
-;Global Const $ID_Shadow_Staff						=
-;Global Const $ID_Dragons_Breath_Wand				=
-;Global Const $ID_Golden_Pillar						=
-;Global Const $ID_Jellyfish_Wand					=
-;Global Const $ID_Koi_Scepter						=
-;Global Const $ID_Water_Spirit_Rod					=
+;Global Const $ID_NAGA_SHORTBOW						=
+;Global Const $ID_NAGA_LONGBOW						=
+;Global Const $ID_AMETHYST_AEGIS					=
+;Global Const $ID_STRAW_EFFIGY						=
+;Global Const $ID_COLOSSAL_PICK						=
+;Global Const $ID_DESOLATION_MAUL					=
+;Global Const $ID_COCKATRICE_STAFF					=
+;Global Const $ID_DEAD_STAFF						=
+;Global Const $ID_FORBIDDEN_STAFF					=
+;Global Const $ID_GHOSTLY_STAFF						=
+;Global Const $ID_OUTCAST_STAFF						=
+;Global Const $ID_SHADOW_STAFF						=
+;Global Const $ID_DRAGONS_BREATH_WAND				=
+;Global Const $ID_GOLDEN_PILLAR						=
+;Global Const $ID_JELLYFISH_WAND					=
+;Global Const $ID_KOI_SCEPTER						=
+;Global Const $ID_WATER_SPIRIT_ROD					=
 
-;Global Const $ID_Zodiac_Staff						=
+;Global Const $ID_ZODIAC_STAFF						=
 ;Global Const $ID_ALL_ZODIAC_WEAPONS				=
 
 ; This one needs to be the eye version
-;Global Const $ID_Flame_Artifact					=
+;Global Const $ID_FLAME_ARTIFACT					=
 
 ; Unknown IDs
-;3270, 869, 946, 949		;Echovald Shield, Gothic Defender ???
+;3270, 869, 946, 949		; Echovald Shield, Gothic Defender ???
 ;3270						; magma shield/summit shield ???
 ;870, 869, 1101				; more canthan rare skins
 ;1439, 1557					; Elonian Swords (Colossal, Tattooed, Dead, etc)
 
-Global Const $ID_Chaos_Axe							= 111
+Global Const $ID_CHAOS_AXE							= 111
 
 ; Bow
-Global Const $ID_Eternal_Bow						= 133
-Global Const $ID_Storm_Bow							= 145
+Global Const $ID_ETERNAL_BOW						= 133
+Global Const $ID_STORM_BOW							= 145
 
 ; Focii
-Global Const $ID_Paper_Fan							= 775
-Global Const $ID_Paper_Fan_2						= 776
-Global Const $ID_Paper_Fan_3						= 789
-Global Const $ID_Paper_Fan_4						= 858
-Global Const $ID_Paper_Fan_5						= 866
-Global Const $ID_Paper_Lantern						= 896
-Global Const $ID_Jug								= 874
-Global Const $ID_Jug_2								= 875
-Global Const $ID_Jug_3								= 1022
-;Global Const $ID_Jug_?								=
-Global Const $ID_Plagueborn_Focus					= 1026
-Global Const $ID_Plagueborn_Focus_2					= 1027
-;Global Const $ID_Plagueborn_Focus_?					=
-Global Const $ID_Pronged_Fan						= 1728
-;Global Const $ID_Pronged_Fan_?						=
+Global Const $ID_PAPER_FAN							= 775
+Global Const $ID_PAPER_FAN_2						= 776
+Global Const $ID_PAPER_FAN_3						= 789
+Global Const $ID_PAPER_FAN_4						= 858
+Global Const $ID_PAPER_FAN_5						= 866
+Global Const $ID_PAPER_LANTERN						= 896
+Global Const $ID_JUG								= 874
+Global Const $ID_JUG_2								= 875
+Global Const $ID_JUG_3								= 1022
+;Global Const $ID_JUG_?								=
+Global Const $ID_PLAGUEBORN_FOCUS					= 1026
+Global Const $ID_PLAGUEBORN_FOCUS_2					= 1027
+;Global Const $ID_PLAGUEBORN_FOCUS_?				=
+Global Const $ID_PRONGED_FAN						= 1728
+;Global Const $ID_PRONGED_FAN_?						=
 
 ; Scythe
-Global Const $ID_Draconic_Scythe					= 1978
+Global Const $ID_DRACONIC_SCYTHE					= 1978
 
 ; Shield
-Global Const $ID_Demonic_Aegis						= 1893
-Global Const $ID_Draconic_Aegis						= 1896
-Global Const $ID_Eternal_Shield						= 332
-Global Const $ID_Amber_Shield						= 940
-Global Const $ID_Amber_Shield_2						= 941
-Global Const $ID_Bladed_Shield						= 777
-Global Const $ID_Bladed_Shield_2					= 778
-Global Const $ID_Echovald_Shield					= 944
-Global Const $ID_Echovald_Shield_2					= 945
-Global Const $ID_Emblazoned_Defender				= 947
-Global Const $ID_Exalted_Aegis						= 1037
-Global Const $ID_Gothic_Defender					= 950
-Global Const $ID_Gothic_Defender_2					= 951
-Global Const $ID_Guardian_of_the_Hunt				= 1320
-Global Const $ID_Guardian_of_the_Hunt_2				= 1321
-Global Const $ID_Kappa_Shield						= 952
-Global Const $ID_Kappa_Shield_2						= 953
-Global Const $ID_Magma_Shield						= 344
-Global Const $ID_Ornate_Shield						= 955
-Global Const $ID_Plagueborn_Shield					= 959
-Global Const $ID_Plagueborn_Shield_2				= 960
-Global Const $ID_Outcast_Shield						= 956
-Global Const $ID_Outcast_Shield_2					= 958
-Global Const $ID_Sea_Purse_Shield					= 1589
-Global Const $ID_Stone_Summit_Shield				= 341
-Global Const $ID_Summit_Warlord_Shield				= 342
-Global Const $ID_Amethyst_Aegis_1					= 2422
-Global Const $ID_Amethyst_Aegis_2					= 2423
+Global Const $ID_DEMONIC_AEGIS						= 1893
+Global Const $ID_DRACONIC_AEGIS						= 1896
+Global Const $ID_ETERNAL_SHIELD						= 332
+Global Const $ID_AMBER_SHIELD						= 940
+Global Const $ID_AMBER_SHIELD_2						= 941
+Global Const $ID_BLADED_SHIELD						= 777
+Global Const $ID_BLADED_SHIELD_2					= 778
+Global Const $ID_ECHOVALD_SHIELD					= 944
+Global Const $ID_ECHOVALD_SHIELD_2					= 945
+Global Const $ID_EMBLAZONED_DEFENDER				= 947
+Global Const $ID_EXALTED_AEGIS						= 1037
+Global Const $ID_GOTHIC_DEFENDER					= 950
+Global Const $ID_GOTHIC_DEFENDER_2					= 951
+Global Const $ID_GUARDIAN_OF_THE_HUNT				= 1320
+Global Const $ID_GUARDIAN_OF_THE_HUNT_2				= 1321
+Global Const $ID_KAPPA_SHIELD						= 952
+Global Const $ID_KAPPA_SHIELD_2						= 953
+Global Const $ID_MAGMA_SHIELD						= 344
+Global Const $ID_ORNATE_SHIELD						= 955
+Global Const $ID_PLAGUEBORN_SHIELD					= 959
+Global Const $ID_PLAGUEBORN_SHIELD_2				= 960
+Global Const $ID_OUTCAST_SHIELD						= 956
+Global Const $ID_OUTCAST_SHIELD_2					= 958
+Global Const $ID_SEA_PURSE_SHIELD					= 1589
+Global Const $ID_STONE_SUMMIT_SHIELD				= 341
+Global Const $ID_SUMMIT_WARLORD_SHIELD				= 342
+Global Const $ID_AMETHYST_AEGIS_1					= 2422
+Global Const $ID_AMETHYST_AEGIS_2					= 2423
 
 ; Staff
-Global Const $ID_Bo_Staff							= 735
-Global Const $ID_Platinum_Staff						= 873
-Global Const $ID_Dragon_Staff						= 736
-Global Const $ID_Raven_Staff						= 391
-Global Const $ID_Jeweled_Staff						= 352
-;Global Const $ID_Jeweled_Staff_?						=
+Global Const $ID_BO_STAFF							= 735
+Global Const $ID_PLATINUM_STAFF						= 873
+Global Const $ID_DRAGON_STAFF						= 736
+Global Const $ID_RAVEN_STAFF						= 391
+Global Const $ID_JEWELED_STAFF						= 352
+;Global Const $ID_JEWELED_STAFF_?					=
 
 ; Sword
-Global Const $ID_Crystalline_Sword					= 399
-Global Const $ID_Broadsword							= 737
-Global Const $ID_Dadao_Sword						= 739
-Global Const $ID_Jitte								= 741
-Global Const $ID_Katana								= 742
-Global Const $ID_Shinobi_Blade						= 744
-Global Const $ID_Oni_Blade							= 794
-Global Const $ID_Golden_Phoenix_Blade				= 795
-Global Const $ID_Colossal_Scimitar					= 1556
-Global Const $ID_Tatooed_Scimitar					= 1197
-Global Const $ID_Adamantine_Falchion				= 1563
-Global Const $ID_Ornate_Scimitar					= 1569
+Global Const $ID_CRYSTALLINE_SWORD					= 399
+Global Const $ID_BROADSWORD							= 737
+Global Const $ID_DADAO_SWORD						= 739
+Global Const $ID_JITTE								= 741
+Global Const $ID_KATANA								= 742
+Global Const $ID_SHINOBI_BLADE						= 744
+Global Const $ID_ONI_BLADE							= 794
+Global Const $ID_GOLDEN_PHOENIX_BLADE				= 795
+Global Const $ID_COLOSSAL_SCIMITAR					= 1556
+Global Const $ID_TATOOED_SCIMITAR					= 1197
+Global Const $ID_ADAMANTINE_FALCHION				= 1563
+Global Const $ID_ORNATE_SCIMITAR					= 1569
 
 ; Wand
-Global Const $ID_Platinum_Wand						= 1011
-Global Const $ID_Voltaic_Wand						= 1018
-Global Const $ID_Wayward_Wand						= 977
+Global Const $ID_PLATINUM_WAND						= 1011
+Global Const $ID_VOLTAIC_WAND						= 1018
+Global Const $ID_WAYWARD_WAND						= 977
 
 #Region Celestial
-Global Const $ID_Celestial_Shield					= 942
-Global Const $ID_Celestial_Shield_2					= 943
-Global Const $ID_Celestial_Scepter					= 926
-Global Const $ID_Celestial_Sword					= 790
-Global Const $ID_Celestial_Daggers					= 761
-Global Const $ID_Celestial_Hammer					= 769
-Global Const $ID_Celestial_Axe						= 747
-Global Const $ID_Celestial_Staff					= 785
-Global Const $ID_Celestial_Longbow					= 1068
+Global Const $ID_CELESTIAL_SHIELD					= 942
+Global Const $ID_CELESTIAL_SHIELD_2					= 943
+Global Const $ID_CELESTIAL_SCEPTER					= 926
+Global Const $ID_CELESTIAL_SWORD					= 790
+Global Const $ID_CELESTIAL_DAGGERS					= 761
+Global Const $ID_CELESTIAL_HAMMER					= 769
+Global Const $ID_CELESTIAL_AXE						= 747
+Global Const $ID_CELESTIAL_STAFF					= 785
+Global Const $ID_CELESTIAL_LONGBOW					= 1068
 #EndRegion Celestial
 
 #Region Zodiac
-Global Const $ID_Zodiac_Shield						= 1039
-Global Const $ID_Zodiac_Longbow						= 966
+Global Const $ID_ZODIAC_SHIELD						= 1039
+Global Const $ID_ZODIAC_LONGBOW						= 966
 #EndRegion Zodiac
 #EndRegion Rare skins
 
 
 #Region Anniversary Weapon skins
 #Region Tyria
-Global Const $ID_Ithas_Bow								= 2011
-Global Const $ID_Chimeric_Prism_Fast_Casting			= 2012
-Global Const $ID_Chimeric_Prism_Soul_Reaping			= 2013
-Global Const $ID_Chimeric_Prism_Energy_Storage			= 2014
-Global Const $ID_Chimeric_Prism_Divine_Favor			= 2015
-Global Const $ID_Chimeric_Prism_Spawning_Power			= 2016
-Global Const $ID_Bone_Idol_Soul_Reaping					= 2017
-Global Const $ID_Bone_Idol_Blood_Magic					= 2018
-Global Const $ID_Bone_Idol_Curses						= 2019
-Global Const $ID_Bone_Idol_Death_Magic					= 2020
-Global Const $ID_Canthan_Targe_Tactic					= 2444
-Global Const $ID_Canthan_Targe_Strength					= 2445
-Global Const $ID_Canthan_Targe_Leadership				= 2446
-Global Const $ID_Censors_Icon_Divine_Favor				= 2100
-Global Const $ID_Censors_Icon_Healing_Prayers			= 2101
-Global Const $ID_Censors_Icon_Protection_Prayers		= 999999
-Global Const $ID_Censors_Icon_Smiting_Prayers			= 999999
+Global Const $ID_ITHAS_BOW								= 2011
+Global Const $ID_CHIMERIC_PRISM_FAST_CASTING			= 2012
+Global Const $ID_CHIMERIC_PRISM_SOUL_REAPING			= 2013
+Global Const $ID_CHIMERIC_PRISM_ENERGY_STORAGE			= 2014
+Global Const $ID_CHIMERIC_PRISM_DIVINE_FAVOR			= 2015
+Global Const $ID_CHIMERIC_PRISM_SPAWNING_POWER			= 2016
+Global Const $ID_BONE_IDOL_SOUL_REAPING					= 2017
+Global Const $ID_BONE_IDOL_BLOOD_MAGIC					= 2018
+Global Const $ID_BONE_IDOL_CURSES						= 2019
+Global Const $ID_BONE_IDOL_DEATH_MAGIC					= 2020
+Global Const $ID_CANTHAN_TARGE_TACTIC					= 2444
+Global Const $ID_CANTHAN_TARGE_STRENGTH					= 2445
+Global Const $ID_CANTHAN_TARGE_LEADERSHIP				= 2446
+Global Const $ID_CENSORS_ICON_DIVINE_FAVOR				= 2100
+Global Const $ID_CENSORS_ICON_HEALING_PRAYERS			= 2101
+Global Const $ID_CENSORS_ICON_PROTECTION_PRAYERS		= 999999
+Global Const $ID_CENSORS_ICON_SMITING_PRAYERS			= 999999
 
-Global Const $ID_War_Pick								= 999999
+Global Const $ID_WAR_PICK								= 999999
 #EndRegion Tyria
 
 #Region Cantha
-Global Const $ID_Dragon_Fangs							= 2460
-Global Const $ID_SpiritBinder_Communing					= 2464
-Global Const $ID_SpiritBinder_Spawning_Power			= 2465
-Global Const $ID_SpiritBinder_Restoration				= 2466
-Global Const $ID_SpiritBinder_Channeling				= 2467
-Global Const $ID_Japan_1st_Anniversary_Shield_Strength	= 2469
-Global Const $ID_Japan_1st_Anniversary_Shield_Tactic	= 2470
-Global Const $ID_Japan_1st_Anniversary_Shield_Leadership= 2470
+Global Const $ID_DRAGON_FANGS							= 2460
+Global Const $ID_SPIRITBINDER_COMMUNING					= 2464
+Global Const $ID_SPIRITBINDER_SPAWNING_POWER			= 2465
+Global Const $ID_SPIRITBINDER_RESTORATION				= 2466
+Global Const $ID_SPIRITBINDER_CHANNELING				= 2467
+Global Const $ID_JAPAN_1ST_ANNIVERSARY_SHIELD_STRENGTH	= 2469
+Global Const $ID_JAPAN_1ST_ANNIVERSARY_SHIELD_TACTIC	= 2470
+Global Const $ID_JAPAN_1ST_ANNIVERSARY_SHIELD_LEADERSHIP= 2470
 #EndRegion Cantha
 
 #Region Elona
-Global Const $ID_Soulbreaker							= 2468
-Global Const $ID_Sunspear								= 2471
+Global Const $ID_SOULBREAKER							= 2468
+Global Const $ID_SUNSPEAR								= 2471
 #EndRegion Elona
 
 #Region EotN
-Global Const $ID_Darksteel_Longbow						= 2472
-Global Const $ID_Glacial_Blade							= 2473
-Global Const $ID_Glacial_Blades							= 2474
-Global Const $ID_Hourglass_Staff_Domination_Magic		= 2475
-Global Const $ID_Hourglass_Staff_Fast_Casting			= 2476
-Global Const $ID_Hourglass_Staff_Illusion_Magic			= 2477
-Global Const $ID_Hourglass_Staff_Inspiration_Magic		= 2478
-Global Const $ID_Hourglass_Staff_Soul_Reaping			= 2479
-Global Const $ID_Hourglass_Staff_Blood_Magic			= 2480
-Global Const $ID_Hourglass_Staff_Curses					= 2481
-Global Const $ID_Hourglass_Staff_Death_Magic			= 2482
-Global Const $ID_Hourglass_Staff_Air_Magic				= 2483
-Global Const $ID_Hourglass_Staff_Earth_Magic			= 2484
-Global Const $ID_Hourglass_Staff_Energy_Storage			= 2485
-Global Const $ID_Hourglass_Staff_Fire_Magic				= 2486
-Global Const $ID_Hourglass_Staff_Water_Magic			= 2487
-Global Const $ID_Hourglass_Staff_Divine_Favor			= 2488
-Global Const $ID_Hourglass_Staff_Healing_Prayers		= 2489
-Global Const $ID_Hourglass_Staff_Protection_Prayers		= 2490
-Global Const $ID_Hourglass_Staff_Smiting_Prayers		= 2491
-Global Const $ID_Hourglass_Staff_Communing				= 2492
-Global Const $ID_Hourglass_Staff_Spawning_Power			= 2493
-Global Const $ID_Hourglass_Staff_Restoration			= 2494
-Global Const $ID_Hourglass_Staff_Channeling				= 2495
-Global Const $ID_Lesser_Etched_Sword					= 2102
-Global Const $ID_Etched_Sword							= 2134
-Global Const $ID_Greater_Etched_Sword					= 2103
-Global Const $ID_Arced_Blade							= 999999
-Global Const $ID_Greater_Arced_Blade					= 999999
-Global Const $ID_Lesser_Granite_Edge					= 2116
-Global Const $ID_Granite_Edge							= 999999
-Global Const $ID_Greater_Granite_Edge					= 2117
-Global Const $ID_Lesser_Stoneblade						= 1955
-Global Const $ID_Stoneblade								= 2125
-Global Const $ID_Greater_Stoneblade						= 1956
+Global Const $ID_DARKSTEEL_LONGBOW						= 2472
+Global Const $ID_GLACIAL_BLADE							= 2473
+Global Const $ID_GLACIAL_BLADES							= 2474
+Global Const $ID_HOURGLASS_STAFF_DOMINATION_MAGIC		= 2475
+Global Const $ID_HOURGLASS_STAFF_FAST_CASTING			= 2476
+Global Const $ID_HOURGLASS_STAFF_ILLUSION_MAGIC			= 2477
+Global Const $ID_HOURGLASS_STAFF_INSPIRATION_MAGIC		= 2478
+Global Const $ID_HOURGLASS_STAFF_SOUL_REAPING			= 2479
+Global Const $ID_HOURGLASS_STAFF_BLOOD_MAGIC			= 2480
+Global Const $ID_HOURGLASS_STAFF_CURSES					= 2481
+Global Const $ID_HOURGLASS_STAFF_DEATH_MAGIC			= 2482
+Global Const $ID_HOURGLASS_STAFF_AIR_MAGIC				= 2483
+Global Const $ID_HOURGLASS_STAFF_EARTH_MAGIC			= 2484
+Global Const $ID_HOURGLASS_STAFF_ENERGY_STORAGE			= 2485
+Global Const $ID_HOURGLASS_STAFF_FIRE_MAGIC				= 2486
+Global Const $ID_HOURGLASS_STAFF_WATER_MAGIC			= 2487
+Global Const $ID_HOURGLASS_STAFF_DIVINE_FAVOR			= 2488
+Global Const $ID_HOURGLASS_STAFF_HEALING_PRAYERS		= 2489
+Global Const $ID_HOURGLASS_STAFF_PROTECTION_PRAYERS		= 2490
+Global Const $ID_HOURGLASS_STAFF_SMITING_PRAYERS		= 2491
+Global Const $ID_HOURGLASS_STAFF_COMMUNING				= 2492
+Global Const $ID_HOURGLASS_STAFF_SPAWNING_POWER			= 2493
+Global Const $ID_HOURGLASS_STAFF_RESTORATION			= 2494
+Global Const $ID_HOURGLASS_STAFF_CHANNELING				= 2495
+Global Const $ID_LESSER_ETCHED_SWORD					= 2102
+Global Const $ID_ETCHED_SWORD							= 2134
+Global Const $ID_GREATER_ETCHED_SWORD					= 2103
+Global Const $ID_ARCED_BLADE							= 999999
+Global Const $ID_GREATER_ARCED_BLADE					= 999999
+Global Const $ID_LESSER_GRANITE_EDGE					= 2116
+Global Const $ID_GRANITE_EDGE							= 999999
+Global Const $ID_GREATER_GRANITE_EDGE					= 2117
+Global Const $ID_LESSER_STONEBLADE						= 1955
+Global Const $ID_STONEBLADE								= 2125
+Global Const $ID_GREATER_STONEBLADE						= 1956
 #EndRegion EotN
 
 #Region Any
-Global Const $ID_Scorpion_Bow							= 2008
-Global Const $ID_Scorpions_Lust							= 2009
-Global Const $ID_Black_Hawks_Lust						= 2010
-Global Const $ID_Storm_Ember_Air_Magic					= 2021
-Global Const $ID_Storm_Ember_Earth_Magic				= 2022
-Global Const $ID_Storm_Ember_Energy_Storage				= 2023
-Global Const $ID_Storm_Ember_Fire_Magic					= 2024
-Global Const $ID_Storm_Ember_Water_Magic				= 2025
-Global Const $ID_Lions_Pride_Air_Magic					= 2026
-Global Const $ID_Lions_Pride_Earth_Magic				= 2027
-Global Const $ID_Lions_Pride_Energy_Storage				= 2028
-Global Const $ID_Lions_Pride_Fire_Magic					= 2029
-Global Const $ID_Lions_Pride_Water_Magic				= 2030
+Global Const $ID_SCORPION_BOW							= 2008
+Global Const $ID_SCORPIONS_LUST							= 2009
+Global Const $ID_BLACK_HAWKS_LUST						= 2010
+Global Const $ID_STORM_EMBER_AIR_MAGIC					= 2021
+Global Const $ID_STORM_EMBER_EARTH_MAGIC				= 2022
+Global Const $ID_STORM_EMBER_ENERGY_STORAGE				= 2023
+Global Const $ID_STORM_EMBER_FIRE_MAGIC					= 2024
+Global Const $ID_STORM_EMBER_WATER_MAGIC				= 2025
+Global Const $ID_LIONS_PRIDE_AIR_MAGIC					= 2026
+Global Const $ID_LIONS_PRIDE_EARTH_MAGIC				= 2027
+Global Const $ID_LIONS_PRIDE_ENERGY_STORAGE				= 2028
+Global Const $ID_LIONS_PRIDE_FIRE_MAGIC					= 2029
+Global Const $ID_LIONS_PRIDE_WATER_MAGIC				= 2030
 
-Global Const $ID_Tigers_Pride_Fast_Casting				= 2031
-Global Const $ID_Tigers_Pride_Soul_Reaping				= 2045
-Global Const $ID_Tigers_Pride_Energy_Storage			= 2047
-Global Const $ID_Tigers_Pride_Divine_Favor				= 2054
-Global Const $ID_Tigers_Pride_Communing					= 2055
+Global Const $ID_TIGERS_PRIDE_FAST_CASTING				= 2031
+Global Const $ID_TIGERS_PRIDE_SOUL_REAPING				= 2045
+Global Const $ID_TIGERS_PRIDE_ENERGY_STORAGE			= 2047
+Global Const $ID_TIGERS_PRIDE_DIVINE_FAVOR				= 2054
+Global Const $ID_TIGERS_PRIDE_COMMUNING					= 2055
 
-Global Const $ID_Heavens_Arch_Divine_Favor				= 2056
-Global Const $ID_Heavens_Arch_Healing_Prayers			= 2057
-Global Const $ID_Heavens_Arch_Protection_Prayers		= 2066
-Global Const $ID_Heavens_Arch_Smiting_Prayers			= 2067
+Global Const $ID_HEAVENS_ARCH_DIVINE_FAVOR				= 2056
+Global Const $ID_HEAVENS_ARCH_HEALING_PRAYERS			= 2057
+Global Const $ID_HEAVENS_ARCH_PROTECTION_PRAYERS		= 2066
+Global Const $ID_HEAVENS_ARCH_SMITING_PRAYERS			= 2067
 
-Global Const $ID_Foxs_Greed_Divine_Favor				= 2068
-Global Const $ID_Foxs_Greed_Healing_Prayers				= 2069
-Global Const $ID_Foxs_Greed_Protection_Prayers			= 2070
-Global Const $ID_Foxs_Greed_Smiting_Prayers				= 2080
-Global Const $ID_Foxs_Greed_Communing					= 2081
-Global Const $ID_Foxs_Greed_Spawning_Power				= 2082
-Global Const $ID_Foxs_Greed_Restoration					= 2083
-Global Const $ID_Foxs_Greed_Channeling					= 2084
+Global Const $ID_FOXS_GREED_DIVINE_FAVOR				= 2068
+Global Const $ID_FOXS_GREED_HEALING_PRAYERS				= 2069
+Global Const $ID_FOXS_GREED_PROTECTION_PRAYERS			= 2070
+Global Const $ID_FOXS_GREED_SMITING_PRAYERS				= 2080
+Global Const $ID_FOXS_GREED_COMMUNING					= 2081
+Global Const $ID_FOXS_GREED_SPAWNING_POWER				= 2082
+Global Const $ID_FOXS_GREED_RESTORATION					= 2083
+Global Const $ID_FOXS_GREED_CHANNELING					= 2084
 
-Global Const $ID_Wolfs_Greed_Divine_Favor				= 2085
-Global Const $ID_Wolfs_Greed_Healing_Prayers			= 2087
-Global Const $ID_Wolfs_Greed_Protection_Prayers			= 2088
-Global Const $ID_Wolfs_Greed_Smiting_Prayers			= 2090
-Global Const $ID_Wolfs_Greed_Communing					= 2091
-Global Const $ID_Wolfs_Greed_Spawning_Power				= 2092
-Global Const $ID_Wolfs_Greed_Restoration				= 2094
-Global Const $ID_Wolfs_Greed_Channeling					= 2095
+Global Const $ID_WOLFS_GREED_DIVINE_FAVOR				= 2085
+Global Const $ID_WOLFS_GREED_HEALING_PRAYERS			= 2087
+Global Const $ID_WOLFS_GREED_PROTECTION_PRAYERS			= 2088
+Global Const $ID_WOLFS_GREED_SMITING_PRAYERS			= 2090
+Global Const $ID_WOLFS_GREED_COMMUNING					= 2091
+Global Const $ID_WOLFS_GREED_SPAWNING_POWER				= 2092
+Global Const $ID_WOLFS_GREED_RESTORATION				= 2094
+Global Const $ID_WOLFS_GREED_CHANNELING					= 2095
 
-Global Const $ID_Bears_Sloth							= 2239
+Global Const $ID_BEARS_SLOTH							= 2239
 
-Global Const $ID_Hogs_Gluttony_Tactics					= 2438
-Global Const $ID_Hogs_Gluttony_Strength					= 2339
-Global Const $ID_Hogs_Gluttony_Leadership				= 2440
+Global Const $ID_HOGS_GLUTTONY_TACTICS					= 2438
+Global Const $ID_HOGS_GLUTTONY_STRENGTH					= 2339
+Global Const $ID_HOGS_GLUTTONY_LEADERSHIP				= 2440
 
-Global Const $ID_Snakes_Envy_Soul_Reaping				= 2451
-Global Const $ID_Snakes_Envy_Blood_Magic				= 2452
-Global Const $ID_Snakes_Envy_Curses						= 2453
-Global Const $ID_Snakes_Envy_Death_Magic				= 2454
-Global Const $ID_Unicorns_Wrath_Domination_Magic		= 2246
-Global Const $ID_Unicorns_Wrath_Fast_Casting			= 2424
-Global Const $ID_Unicorns_Wrath_Illusion_Magic			= 2425
-Global Const $ID_Unicorns_Wrath_Inspiration_Magic		= 2426
-Global Const $ID_Unicorns_Wrath_Soul_Reaping			= 2427
-Global Const $ID_Unicorns_Wrath_Energy_Storage			= 2428
-Global Const $ID_Unicorns_Wrath_Divine_Favor			= 2429
-Global Const $ID_Unicorns_Wrath_Communing				= 2430
-Global Const $ID_Dragons_Envy_Fast_Casting				= 2455
-Global Const $ID_Dragons_Envy_Soul_Reaping				= 2456
-Global Const $ID_Dragons_Envy_Energy_Storage			= 2457
-Global Const $ID_Dragons_Envy_Divine_Favor				= 2458
-Global Const $ID_Dragons_Envy_Communing					= 2459
-Global Const $ID_Peacocks_Wrath_Domination_Magic		= 2431
-Global Const $ID_Peacocks_Wrath_Fast_Casting			= 2432
-Global Const $ID_Peacocks_Wrath_Illusion_Magic			= 2433
-Global Const $ID_Peacocks_Wrath_Inspiration_Magic		= 2434
-Global Const $ID_Rhinos_Sloth							= 2240
-Global Const $ID_Spiders_Gluttony_Tactics				= 2441
-Global Const $ID_Spiders_Gluttony_Strength				= 2442
-Global Const $ID_Spiders_Gluttony_Leadership			= 2443
+Global Const $ID_SNAKES_ENVY_SOUL_REAPING				= 2451
+Global Const $ID_SNAKES_ENVY_BLOOD_MAGIC				= 2452
+Global Const $ID_SNAKES_ENVY_CURSES						= 2453
+Global Const $ID_SNAKES_ENVY_DEATH_MAGIC				= 2454
+Global Const $ID_UNICORNS_WRATH_DOMINATION_MAGIC		= 2246
+Global Const $ID_UNICORNS_WRATH_FAST_CASTING			= 2424
+Global Const $ID_UNICORNS_WRATH_ILLUSION_MAGIC			= 2425
+Global Const $ID_UNICORNS_WRATH_INSPIRATION_MAGIC		= 2426
+Global Const $ID_UNICORNS_WRATH_SOUL_REAPING			= 2427
+Global Const $ID_UNICORNS_WRATH_ENERGY_STORAGE			= 2428
+Global Const $ID_UNICORNS_WRATH_DIVINE_FAVOR			= 2429
+Global Const $ID_UNICORNS_WRATH_COMMUNING				= 2430
+Global Const $ID_DRAGONS_ENVY_FAST_CASTING				= 2455
+Global Const $ID_DRAGONS_ENVY_SOUL_REAPING				= 2456
+Global Const $ID_DRAGONS_ENVY_ENERGY_STORAGE			= 2457
+Global Const $ID_DRAGONS_ENVY_DIVINE_FAVOR				= 2458
+Global Const $ID_DRAGONS_ENVY_COMMUNING					= 2459
+Global Const $ID_PEACOCKS_WRATH_DOMINATION_MAGIC		= 2431
+Global Const $ID_PEACOCKS_WRATH_FAST_CASTING			= 2432
+Global Const $ID_PEACOCKS_WRATH_ILLUSION_MAGIC			= 2433
+Global Const $ID_PEACOCKS_WRATH_INSPIRATION_MAGIC		= 2434
+Global Const $ID_RHINOS_SLOTH							= 2240
+Global Const $ID_SPIDERS_GLUTTONY_TACTICS				= 2441
+Global Const $ID_SPIDERS_GLUTTONY_STRENGTH				= 2442
+Global Const $ID_SPIDERS_GLUTTONY_LEADERSHIP			= 2443
 
-Global Const $ID_Furious_Bonecrusher					= 2133
-Global Const $ID_Bronze_Guardian_Tactics				= 2435
-Global Const $ID_Bronze_Guardian_Strength				= 2436
-Global Const $ID_Bronze_Guardian_Leadership				= 2437
-Global Const $ID_Deaths_Head_Soul_Reaping				= 2447
-Global Const $ID_Deaths_Head_Blood_Magic				= 2448
-Global Const $ID_Deaths_Head_Curses						= 2449
-Global Const $ID_Deaths_Head_Death_Magic				= 2450
-Global Const $ID_Quicksilver_Domination_Magic			= 2242
-Global Const $ID_Quicksilver_Fast_Casting				= 2243
-Global Const $ID_Quicksilver_Illusion_Magic				= 2244
-Global Const $ID_Quicksilver_Inspiration_Magic			= 2445
-Global Const $ID_Ominous_Aegis_Tactics					= 2461
-Global Const $ID_Ominous_Aegis_Strength					= 2462
-Global Const $ID_Ominous_Aegis_Leadership				= 2463
+Global Const $ID_FURIOUS_BONECRUSHER					= 2133
+Global Const $ID_BRONZE_GUARDIAN_TACTICS				= 2435
+Global Const $ID_BRONZE_GUARDIAN_STRENGTH				= 2436
+Global Const $ID_BRONZE_GUARDIAN_LEADERSHIP				= 2437
+Global Const $ID_DEATHS_HEAD_SOUL_REAPING				= 2447
+Global Const $ID_DEATHS_HEAD_BLOOD_MAGIC				= 2448
+Global Const $ID_DEATHS_HEAD_CURSES						= 2449
+Global Const $ID_DEATHS_HEAD_DEATH_MAGIC				= 2450
+Global Const $ID_QUICKSILVER_DOMINATION_MAGIC			= 2242
+Global Const $ID_QUICKSILVER_FAST_CASTING				= 2243
+Global Const $ID_QUICKSILVER_ILLUSION_MAGIC				= 2244
+Global Const $ID_QUICKSILVER_INSPIRATION_MAGIC			= 2445
+Global Const $ID_OMINOUS_AEGIS_TACTICS					= 2461
+Global Const $ID_OMINOUS_AEGIS_STRENGTH					= 2462
+Global Const $ID_OMINOUS_AEGIS_LEADERSHIP				= 2463
 
 ; No Command shields :(
-Global Const $ID_Hogs_Gluttony_Command					= 999999
-Global Const $ID_Bronze_Guardian_Command				= 999999
-Global Const $ID_Spiders_Gluttony_Command				= 999999
-Global Const $ID_Ominous_Aegis_Command					= 999999
+Global Const $ID_HOGS_GLUTTONY_COMMAND					= 999999
+Global Const $ID_BRONZE_GUARDIAN_COMMAND				= 999999
+Global Const $ID_SPIDERS_GLUTTONY_COMMAND				= 999999
+Global Const $ID_OMINOUS_AEGIS_COMMAND					= 999999
 
 #EndRegion Any
 #EndRegion Anniversary Weapon skins
@@ -2201,148 +2203,148 @@ Global Const $ID_Ominous_Aegis_Command					= 999999
 
 #Region Other skins
 ; Missing IDs
-;Global Const $ID_Jeweled_Daggers					=
-;Global Const $ID_Ruby_Daggers						=
+;Global Const $ID_JEWELED_DAGGERS					=
+;Global Const $ID_RUBY_DAGGERS						=
 
-Global Const $ID_Great_Conch						= 2415
-Global Const $ID_Ruby_Maul							= 2274
-Global Const $ID_Elemental_Sword					= 2267
-Global Const $ID_Illusory_Staff						= 1916
-Global Const $ID_Quicksilver						= 2242
-Global Const $ID_Fire_Staff							= 887		; Canthan version
-Global Const $ID_Divine_Scroll						= 905		; Canthan version
-Global Const $ID_Earth_Scroll						= 177
-Global Const $ID_Earth_Scroll_2						= 178
-Global Const $ID_Earth_Scroll_3						= 568
-Global Const $ID_Fellblade							= 400
-Global Const $ID_Fiery_Dragon_Sword					= 1612
-Global Const $ID_Butterfly_Sword					= 397
-Global Const $ID_Crenellated_scimitar				= 791
-Global Const $ID_Falchion							= 405
-Global Const $ID_Flamberge							= 2250
-Global Const $ID_Gemstone_Axe						= 701
-Global Const $ID_Iridescent_Aegis					= 2299
-Global Const $ID_Peacocks_Wrath						= 2433
-Global Const $ID_Ornate_Buckler						= 326
-Global Const $ID_Reinforced_Buckler					= 327
-Global Const $ID_Shield_of_the_Wing					= 334
-Global Const $ID_Skeleton_Shield					= 337
-Global Const $ID_Skull_Shield						= 338
-Global Const $ID_Spiked_Targe						= 871
-Global Const $ID_Spiked_Targe_2						= 872
-Global Const $ID_Tall_Shield						= 343
+Global Const $ID_GREAT_CONCH						= 2415
+Global Const $ID_RUBY_MAUL							= 2274
+Global Const $ID_ELEMENTAL_SWORD					= 2267
+Global Const $ID_ILLUSORY_STAFF						= 1916
+Global Const $ID_QUICKSILVER						= 2242
+Global Const $ID_FIRE_STAFF							= 887		; Canthan version
+Global Const $ID_DIVINE_SCROLL						= 905		; Canthan version
+Global Const $ID_EARTH_SCROLL						= 177
+Global Const $ID_EARTH_SCROLL_2						= 178
+Global Const $ID_EARTH_SCROLL_3						= 568
+Global Const $ID_FELLBLADE							= 400
+Global Const $ID_FIERY_DRAGON_SWORD					= 1612
+Global Const $ID_BUTTERFLY_SWORD					= 397
+Global Const $ID_CRENELLATED_SCIMITAR				= 791
+Global Const $ID_FALCHION							= 405
+Global Const $ID_FLAMBERGE							= 2250
+Global Const $ID_GEMSTONE_AXE						= 701
+Global Const $ID_IRIDESCENT_AEGIS					= 2299
+Global Const $ID_PEACOCKS_WRATH						= 2433
+Global Const $ID_ORNATE_BUCKLER						= 326
+Global Const $ID_REINFORCED_BUCKLER					= 327
+Global Const $ID_SHIELD_OF_THE_WING					= 334
+Global Const $ID_SKELETON_SHIELD					= 337
+Global Const $ID_SKULL_SHIELD						= 338
+Global Const $ID_SPIKED_TARGE						= 871
+Global Const $ID_SPIKED_TARGE_2						= 872
+Global Const $ID_TALL_SHIELD						= 343
 
-Global Const $ID_Adamantine_Shield					= 1892
-Global Const $ID_Aegis								= 323
-Global Const $ID_Darkwing_Defender					= 1052
-Global Const $ID_Defender							= 331
-Global Const $ID_Diamond_Aegis						= 783
-Global Const $ID_Diamond_Aegis_2					= 1469
-Global Const $ID_Diamond_Aegis_3					= 2294
-Global Const $ID_Enameled_Shield					= 2236
-Global Const $ID_Gloom_Shield						= 1315
-Global Const $ID_Shadow_Shield						= 336
-Global Const $ID_Tower_Shield						= 345
-Global Const $ID_Dwarven_Axe						= 114
-Global Const $ID_Oni_Daggers						= 766
+Global Const $ID_ADAMANTINE_SHIELD					= 1892
+Global Const $ID_AEGIS								= 323
+Global Const $ID_DARKWING_DEFENDER					= 1052
+Global Const $ID_DEFENDER							= 331
+Global Const $ID_DIAMOND_AEGIS						= 783
+Global Const $ID_DIAMOND_AEGIS_2					= 1469
+Global Const $ID_DIAMOND_AEGIS_3					= 2294
+Global Const $ID_ENAMELED_SHIELD					= 2236
+Global Const $ID_GLOOM_SHIELD						= 1315
+Global Const $ID_SHADOW_SHIELD						= 336
+Global Const $ID_TOWER_SHIELD						= 345
+Global Const $ID_DWARVEN_AXE						= 114
+Global Const $ID_ONI_DAGGERS						= 766
 #EndRegion Other skins
 
-Global $UltraRareWeapons_Array = [ _
-	$ID_Glacial_Blade, $ID_Glacial_Blades, $ID_Crystalline_Sword, _
-	$ID_Eternal_Blade, $ID_Obsidian_Edge, $ID_Emerald_Blade, $ID_Storm_Daggers, $ID_Voltaic_Spear, $ID_Dhuums_Soul_Reaper, _
-	$ID_Aureate_Blade, $ID_Eaglecrest_Axe, $ID_Wingcrest_Maul, $ID_Demoncrest_Spear, $ID_Silverwing_Recurve_Bow, $ID_Onyx_Scepter, _
-	$ID_Tentacle_Scythe, $ID_Moldavite_Staff, $ID_Ancient_Moss_Staff, $ID_Suntouched_Staff, $ID_Crystal_Flame_Staff, _
+Global $ultra_rare_weapons_array = [ _
+	$ID_GLACIAL_BLADE, $ID_GLACIAL_BLADES, $ID_CRYSTALLINE_SWORD, _
+	$ID_ETERNAL_BLADE, $ID_OBSIDIAN_EDGE, $ID_EMERALD_BLADE, $ID_STORM_DAGGERS, $ID_VOLTAIC_SPEAR, $ID_DHUUMS_SOUL_REAPER, _
+	$ID_AUREATE_BLADE, $ID_EAGLECREST_AXE, $ID_WINGCREST_MAUL, $ID_DEMONCREST_SPEAR, $ID_SILVERWING_RECURVE_BOW, $ID_ONYX_SCEPTER, _
+	$ID_TENTACLE_SCYTHE, $ID_MOLDAVITE_STAFF, $ID_ANCIENT_MOSS_STAFF, $ID_SUNTOUCHED_STAFF, $ID_CRYSTAL_FLAME_STAFF, _
 	_
-	$ID_Demrikovs_Judgement, $ID_Vetauras_Harbinger, $ID_Torivos_Rage, $ID_Heleynes_Insight, _
-	$ID_Envoy_Sword, $ID_Envoy_Axe, $ID_Divine_Envoy_Staff, $ID_Envoy_Scythe, _
+	$ID_DEMRIKOVS_JUDGEMENT, $ID_VETAURAS_HARBINGER, $ID_TORIVOS_RAGE, $ID_HELEYNES_INSIGHT, _
+	$ID_ENVOY_SWORD, $ID_ENVOY_AXE, $ID_DIVINE_ENVOY_STAFF, $ID_ENVOY_SCYTHE, _
 	_
-	$ID_Froggy_Domination, $ID_Froggy_Fast_Casting, $ID_Froggy_Illusion, $ID_Froggy_Inspiration, _
-	$ID_Froggy_Soul_Reaping, $ID_Froggy_Blood, $ID_Froggy_Curses, $ID_Froggy_Death, _
-	$ID_Froggy_Air, $ID_Froggy_Earth, $ID_Froggy_Energy_Storage, $ID_Froggy_Fire, $ID_Froggy_Water, _
-	$ID_Froggy_Divine, $ID_Froggy_Healing, $ID_Froggy_Protection, $ID_Froggy_Smiting, _
-	$ID_Froggy_Communing, $ID_Froggy_Spawning, $ID_Froggy_Restoration, $ID_Froggy_Channeling, _
+	$ID_FROGGY_DOMINATION, $ID_FROGGY_FAST_CASTING, $ID_FROGGY_ILLUSION, $ID_FROGGY_INSPIRATION, _
+	$ID_FROGGY_SOUL_REAPING, $ID_FROGGY_BLOOD, $ID_FROGGY_CURSES, $ID_FROGGY_DEATH, _
+	$ID_FROGGY_AIR, $ID_FROGGY_EARTH, $ID_FROGGY_ENERGY_STORAGE, $ID_FROGGY_FIRE, $ID_FROGGY_WATER, _
+	$ID_FROGGY_DIVINE, $ID_FROGGY_HEALING, $ID_FROGGY_PROTECTION, $ID_FROGGY_SMITING, _
+	$ID_FROGGY_COMMUNING, $ID_FROGGY_SPAWNING, $ID_FROGGY_RESTORATION, $ID_FROGGY_CHANNELING, _
 	_
-	$ID_Bone_Dragon_Staff_Domination, $ID_Bone_Dragon_Staff_Fast_Casting, $ID_Bone_Dragon_Staff_Illusion, $ID_Bone_Dragon_Staff_Inspiration, _
-	$ID_Bone_Dragon_Staff_Soul_Reaping, $ID_Bone_Dragon_Staff_Blood, $ID_Bone_Dragon_Staff_Curses, $ID_Bone_Dragon_Staff_Death, _
-	$ID_Bone_Dragon_Staff_Air, $ID_Bone_Dragon_Staff_Earth, $ID_Bone_Dragon_Staff_Energy_Storage, $ID_Bone_Dragon_Staff_Fire, $ID_Bone_Dragon_Staff_Water, _
-	$ID_Bone_Dragon_Staff_Divine, $ID_Bone_Dragon_Staff_Healing, $ID_Bone_Dragon_Staff_Protection, $ID_Bone_Dragon_Staff_Smiting, _
-	$ID_Bone_Dragon_Staff_Communing, $ID_Bone_Dragon_Staff_Spawning, $ID_Bone_Dragon_Staff_Restoration, $ID_Bone_Dragon_Staff_Channeling, _
+	$ID_BONE_DRAGON_STAFF_DOMINATION, $ID_BONE_DRAGON_STAFF_FAST_CASTING, $ID_BONE_DRAGON_STAFF_ILLUSION, $ID_BONE_DRAGON_STAFF_INSPIRATION, _
+	$ID_BONE_DRAGON_STAFF_SOUL_REAPING, $ID_BONE_DRAGON_STAFF_BLOOD, $ID_BONE_DRAGON_STAFF_CURSES, $ID_BONE_DRAGON_STAFF_DEATH, _
+	$ID_BONE_DRAGON_STAFF_AIR, $ID_BONE_DRAGON_STAFF_EARTH, $ID_BONE_DRAGON_STAFF_ENERGY_STORAGE, $ID_BONE_DRAGON_STAFF_FIRE, $ID_BONE_DRAGON_STAFF_WATER, _
+	$ID_BONE_DRAGON_STAFF_DIVINE, $ID_BONE_DRAGON_STAFF_HEALING, $ID_BONE_DRAGON_STAFF_PROTECTION, $ID_BONE_DRAGON_STAFF_SMITING, _
+	$ID_BONE_DRAGON_STAFF_COMMUNING, $ID_BONE_DRAGON_STAFF_SPAWNING, $ID_BONE_DRAGON_STAFF_RESTORATION, $ID_BONE_DRAGON_STAFF_CHANNELING, _
 	_
-	$ID_Celestial_Compass_Domination, $ID_Celestial_Compass_Fast_Casting, $ID_Celestial_Compass_Illusion, $ID_Celestial_Compass_Inspiration, _
-	$ID_Celestial_Compass_Soul_Reaping, $ID_Celestial_Compass_Blood, $ID_Celestial_Compass_Curses, $ID_Celestial_Compass_Death, _
-	$ID_Celestial_Compass_Air, $ID_Celestial_Compass_Earth, $ID_Celestial_Compass_Energy_Storage, $ID_Celestial_Compass_Fire, $ID_Celestial_Compass_Water, _
-	$ID_Celestial_Compass_Divine, $ID_Celestial_Compass_Healing, $ID_Celestial_Compass_Protection, $ID_Celestial_Compass_Smiting, _
-	$ID_Celestial_Compass_Communing, $ID_Celestial_Compass_Spawning, $ID_Celestial_Compass_Restoration, $ID_Celestial_Compass_Channeling _
+	$ID_CELESTIAL_COMPASS_DOMINATION, $ID_CELESTIAL_COMPASS_FAST_CASTING, $ID_CELESTIAL_COMPASS_ILLUSION, $ID_CELESTIAL_COMPASS_INSPIRATION, _
+	$ID_CELESTIAL_COMPASS_SOUL_REAPING, $ID_CELESTIAL_COMPASS_BLOOD, $ID_CELESTIAL_COMPASS_CURSES, $ID_CELESTIAL_COMPASS_DEATH, _
+	$ID_CELESTIAL_COMPASS_AIR, $ID_CELESTIAL_COMPASS_EARTH, $ID_CELESTIAL_COMPASS_ENERGY_STORAGE, $ID_CELESTIAL_COMPASS_FIRE, $ID_CELESTIAL_COMPASS_WATER, _
+	$ID_CELESTIAL_COMPASS_DIVINE, $ID_CELESTIAL_COMPASS_HEALING, $ID_CELESTIAL_COMPASS_PROTECTION, $ID_CELESTIAL_COMPASS_SMITING, _
+	$ID_CELESTIAL_COMPASS_COMMUNING, $ID_CELESTIAL_COMPASS_SPAWNING, $ID_CELESTIAL_COMPASS_RESTORATION, $ID_CELESTIAL_COMPASS_CHANNELING _
 ]
-Global Const $Map_UltraRareWeapons = MapFromArray($UltraRareWeapons_Array)
+Global Const $MAP_ULTRA_RARE_WEAPONS = MapFromArray($ultra_rare_weapons_array)
 
-Global $RareWeapons_Array = [ _
-	$ID_Earth_Staff, _
+Global $rare_weapons_array = [ _
+	$ID_EARTH_STAFF, _
 	_ ; Axes
-	$ID_Sephis_Axe, $ID_Serpent_Axe, $ID_Chaos_Axe, _
+	$ID_SEPHIS_AXE, $ID_SERPENT_AXE, $ID_CHAOS_AXE, _
 	_ ; Bows
-	$ID_Eternal_Bow, $ID_Storm_Bow, _
+	$ID_ETERNAL_BOW, $ID_STORM_BOW, _
 	_ ; Focii
-	$ID_Paper_Fan, $ID_Paper_Fan_2, $ID_Paper_Fan_3, $ID_Paper_Fan_4, $ID_Paper_Fan_5, $ID_Paper_Lantern, $ID_Jug, $ID_Jug_2, $ID_Jug_3, $ID_Plagueborn_Focus, $ID_Plagueborn_Focus_2, $ID_Pronged_Fan, _
+	$ID_PAPER_FAN, $ID_PAPER_FAN_2, $ID_PAPER_FAN_3, $ID_PAPER_FAN_4, $ID_PAPER_FAN_5, $ID_PAPER_LANTERN, $ID_JUG, $ID_JUG_2, $ID_JUG_3, $ID_PLAGUEBORN_FOCUS, $ID_PLAGUEBORN_FOCUS_2, $ID_PRONGED_FAN, _
 	_ ; Scythes
-	$ID_Draconic_Scythe, _
+	$ID_DRACONIC_SCYTHE, _
 	_ ; Shields
-	$ID_Demonic_Aegis, $ID_Draconic_Aegis, $ID_Eternal_Shield, $ID_Emblazoned_Defender, $ID_Exalted_Aegis, _
-	$ID_Amber_Shield, $ID_Amber_Shield_2, $ID_Bladed_Shield, $ID_Bladed_Shield_2, $ID_Echovald_Shield, $ID_Echovald_Shield_2, $ID_Gothic_Defender, $ID_Gothic_Defender_2, $ID_Guardian_of_the_Hunt, $ID_Guardian_of_the_Hunt_2, _
-	$ID_Kappa_Shield, $ID_Kappa_Shield_2, $ID_Ornate_Shield, $ID_Plagueborn_Shield, $ID_Plagueborn_Shield_2, $ID_Outcast_Shield, $ID_Outcast_Shield_2, $ID_Sea_Purse_Shield, _
-	$ID_Magma_Shield, $ID_Stone_Summit_Shield, $ID_Summit_Warlord_Shield, $ID_Amethyst_Aegis_1, $ID_Amethyst_Aegis_2, _
+	$ID_DEMONIC_AEGIS, $ID_DRACONIC_AEGIS, $ID_ETERNAL_SHIELD, $ID_EMBLAZONED_DEFENDER, $ID_EXALTED_AEGIS, _
+	$ID_AMBER_SHIELD, $ID_AMBER_SHIELD_2, $ID_BLADED_SHIELD, $ID_BLADED_SHIELD_2, $ID_ECHOVALD_SHIELD, $ID_ECHOVALD_SHIELD_2, $ID_GOTHIC_DEFENDER, $ID_GOTHIC_DEFENDER_2, $ID_GUARDIAN_OF_THE_HUNT, $ID_GUARDIAN_OF_THE_HUNT_2, _
+	$ID_KAPPA_SHIELD, $ID_KAPPA_SHIELD_2, $ID_ORNATE_SHIELD, $ID_PLAGUEBORN_SHIELD, $ID_PLAGUEBORN_SHIELD_2, $ID_OUTCAST_SHIELD, $ID_OUTCAST_SHIELD_2, $ID_SEA_PURSE_SHIELD, _
+	$ID_MAGMA_SHIELD, $ID_STONE_SUMMIT_SHIELD, $ID_SUMMIT_WARLORD_SHIELD, $ID_AMETHYST_AEGIS_1, $ID_AMETHYST_AEGIS_2, _
 	_ ; Staves
-	$ID_Bo_Staff, $ID_Platinum_Staff, $ID_Dragon_Staff, $ID_Raven_Staff, $ID_Jeweled_Staff, _
+	$ID_BO_STAFF, $ID_PLATINUM_STAFF, $ID_DRAGON_STAFF, $ID_RAVEN_STAFF, $ID_JEWELED_STAFF, _
 	_ ; Swords
-	$ID_Jitte, $ID_Katana, $ID_Oni_Blade, $ID_Shinobi_Blade, $ID_Dadao_Sword, $ID_Golden_Phoenix_Blade, $ID_Broadsword, $ID_Colossal_Scimitar, $ID_Tatooed_Scimitar, $ID_Adamantine_Falchion, $ID_Ornate_Scimitar, _
+	$ID_JITTE, $ID_KATANA, $ID_ONI_BLADE, $ID_SHINOBI_BLADE, $ID_DADAO_SWORD, $ID_GOLDEN_PHOENIX_BLADE, $ID_BROADSWORD, $ID_COLOSSAL_SCIMITAR, $ID_TATOOED_SCIMITAR, $ID_ADAMANTINE_FALCHION, $ID_ORNATE_SCIMITAR, _
 	_ ; Wands
-	$ID_Platinum_Wand, $ID_Voltaic_Wand, $ID_Wayward_Wand, _
+	$ID_PLATINUM_WAND, $ID_VOLTAIC_WAND, $ID_WAYWARD_WAND, _
 	_ ; Celestial weapons
-	$ID_Celestial_Shield, $ID_Celestial_Shield_2, $ID_Celestial_Scepter, $ID_Celestial_Sword, $ID_Celestial_Daggers, $ID_Celestial_Hammer, $ID_Celestial_Axe, $ID_Celestial_Staff, $ID_Celestial_Longbow, _
+	$ID_CELESTIAL_SHIELD, $ID_CELESTIAL_SHIELD_2, $ID_CELESTIAL_SCEPTER, $ID_CELESTIAL_SWORD, $ID_CELESTIAL_DAGGERS, $ID_CELESTIAL_HAMMER, $ID_CELESTIAL_AXE, $ID_CELESTIAL_STAFF, $ID_CELESTIAL_LONGBOW, _
 	_ ; Zodiac weapons
-	$ID_Zodiac_Shield, _
+	$ID_ZODIAC_SHIELD, _
 	_ ; Anniversary weapons
 	_ ; Tyria
-	$ID_Bone_Idol_Soul_Reaping, $ID_Bone_Idol_Blood_Magic, $ID_Bone_Idol_Curses, $ID_Bone_Idol_Death_Magic, $ID_Canthan_Targe_Strength, $ID_Canthan_Targe_Tactic, $ID_Canthan_Targe_Leadership, _
-	$ID_Censors_Icon_Divine_Favor, $ID_Censors_Icon_Healing_Prayers, $ID_Censors_Icon_Protection_Prayers, $ID_Censors_Icon_Smiting_Prayers, $ID_Chimeric_Prism_Fast_Casting, _
-	$ID_Chimeric_Prism_Soul_Reaping, $ID_Chimeric_Prism_Energy_Storage, $ID_Chimeric_Prism_Divine_Favor, $ID_Chimeric_Prism_Spawning_Power, $ID_Ithas_Bow, $ID_War_Pick, _
+	$ID_BONE_IDOL_SOUL_REAPING, $ID_BONE_IDOL_BLOOD_MAGIC, $ID_BONE_IDOL_CURSES, $ID_BONE_IDOL_DEATH_MAGIC, $ID_CANTHAN_TARGE_STRENGTH, $ID_CANTHAN_TARGE_TACTIC, $ID_CANTHAN_TARGE_LEADERSHIP, _
+	$ID_CENSORS_ICON_DIVINE_FAVOR, $ID_CENSORS_ICON_HEALING_PRAYERS, $ID_CENSORS_ICON_PROTECTION_PRAYERS, $ID_CENSORS_ICON_SMITING_PRAYERS, $ID_CHIMERIC_PRISM_FAST_CASTING, _
+	$ID_CHIMERIC_PRISM_SOUL_REAPING, $ID_CHIMERIC_PRISM_ENERGY_STORAGE, $ID_CHIMERIC_PRISM_DIVINE_FAVOR, $ID_CHIMERIC_PRISM_SPAWNING_POWER, $ID_ITHAS_BOW, $ID_WAR_PICK, _
 	_ ; Cantha
-	$ID_Dragon_Fangs, $ID_SpiritBinder_Communing, $ID_SpiritBinder_Spawning_Power, $ID_SpiritBinder_Restoration, $ID_SpiritBinder_Channeling, _
-	$ID_Japan_1st_Anniversary_Shield_Strength, $ID_Japan_1st_Anniversary_Shield_Tactic, $ID_Japan_1st_Anniversary_Shield_Leadership, _
+	$ID_DRAGON_FANGS, $ID_SPIRITBINDER_COMMUNING, $ID_SPIRITBINDER_SPAWNING_POWER, $ID_SPIRITBINDER_RESTORATION, $ID_SPIRITBINDER_CHANNELING, _
+	$ID_JAPAN_1ST_ANNIVERSARY_SHIELD_STRENGTH, $ID_JAPAN_1ST_ANNIVERSARY_SHIELD_TACTIC, $ID_JAPAN_1ST_ANNIVERSARY_SHIELD_LEADERSHIP, _
 	_ ; Nightfall
-	$ID_Soulbreaker, $ID_Sunspear, _
+	$ID_SOULBREAKER, $ID_SUNSPEAR, _
 	_ ; EotN
-	$ID_Darksteel_Longbow, $ID_Glacial_Blade, $ID_Glacial_Blades, $ID_Hourglass_Staff_Domination_Magic, $ID_Hourglass_Staff_Fast_Casting, $ID_Hourglass_Staff_Illusion_Magic, _
-	$ID_Hourglass_Staff_Inspiration_Magic, $ID_Hourglass_Staff_Soul_Reaping, $ID_Hourglass_Staff_Blood_Magic, $ID_Hourglass_Staff_Curses, $ID_Hourglass_Staff_Death_Magic, _
-	$ID_Hourglass_Staff_Air_Magic, $ID_Hourglass_Staff_Earth_Magic, $ID_Hourglass_Staff_Energy_Storage, $ID_Hourglass_Staff_Fire_Magic, $ID_Hourglass_Staff_Water_Magic, _
-	$ID_Hourglass_Staff_Divine_Favor, $ID_Hourglass_Staff_Healing_Prayers, $ID_Hourglass_Staff_Protection_Prayers, $ID_Hourglass_Staff_Smiting_Prayers, $ID_Hourglass_Staff_Communing, _
-	$ID_Hourglass_Staff_Spawning_Power, $ID_Hourglass_Staff_Restoration, $ID_Hourglass_Staff_Channeling, $ID_Arced_Blade, $ID_Greater_Arced_Blade, _
+	$ID_DARKSTEEL_LONGBOW, $ID_GLACIAL_BLADE, $ID_GLACIAL_BLADES, $ID_HOURGLASS_STAFF_DOMINATION_MAGIC, $ID_HOURGLASS_STAFF_FAST_CASTING, $ID_HOURGLASS_STAFF_ILLUSION_MAGIC, _
+	$ID_HOURGLASS_STAFF_INSPIRATION_MAGIC, $ID_HOURGLASS_STAFF_SOUL_REAPING, $ID_HOURGLASS_STAFF_BLOOD_MAGIC, $ID_HOURGLASS_STAFF_CURSES, $ID_HOURGLASS_STAFF_DEATH_MAGIC, _
+	$ID_HOURGLASS_STAFF_AIR_MAGIC, $ID_HOURGLASS_STAFF_EARTH_MAGIC, $ID_HOURGLASS_STAFF_ENERGY_STORAGE, $ID_HOURGLASS_STAFF_FIRE_MAGIC, $ID_HOURGLASS_STAFF_WATER_MAGIC, _
+	$ID_HOURGLASS_STAFF_DIVINE_FAVOR, $ID_HOURGLASS_STAFF_HEALING_PRAYERS, $ID_HOURGLASS_STAFF_PROTECTION_PRAYERS, $ID_HOURGLASS_STAFF_SMITING_PRAYERS, $ID_HOURGLASS_STAFF_COMMUNING, _
+	$ID_HOURGLASS_STAFF_SPAWNING_POWER, $ID_HOURGLASS_STAFF_RESTORATION, $ID_HOURGLASS_STAFF_CHANNELING, $ID_ARCED_BLADE, $ID_GREATER_ARCED_BLADE, _
 	_ ; Common
-	$ID_Bears_Sloth, $ID_Rhinos_Sloth, $ID_Furious_Bonecrusher, $ID_Black_Hawks_Lust, $ID_Scorpions_Lust, $ID_Scorpion_Bow, _
+	$ID_BEARS_SLOTH, $ID_RHINOS_SLOTH, $ID_FURIOUS_BONECRUSHER, $ID_BLACK_HAWKS_LUST, $ID_SCORPIONS_LUST, $ID_SCORPION_BOW, _
 	_ ; shields
-	$ID_Bronze_Guardian_Command, $ID_Bronze_Guardian_Leadership, $ID_Bronze_Guardian_Strength, $ID_Bronze_Guardian_Tactics, _
-	$ID_Hogs_Gluttony_Command, $ID_Hogs_Gluttony_Leadership, $ID_Hogs_Gluttony_Strength, $ID_Hogs_Gluttony_Tactics, _
-	$ID_Spiders_Gluttony_Command, $ID_Spiders_Gluttony_Leadership, $ID_Spiders_Gluttony_Strength, $ID_Spiders_Gluttony_Tactics, _
-	$ID_Ominous_Aegis_Command, $ID_Ominous_Aegis_Leadership, $ID_Ominous_Aegis_Strength, $ID_Ominous_Aegis_Tactics, _
+	$ID_BRONZE_GUARDIAN_COMMAND, $ID_BRONZE_GUARDIAN_LEADERSHIP, $ID_BRONZE_GUARDIAN_STRENGTH, $ID_BRONZE_GUARDIAN_TACTICS, _
+	$ID_HOGS_GLUTTONY_COMMAND, $ID_HOGS_GLUTTONY_LEADERSHIP, $ID_HOGS_GLUTTONY_STRENGTH, $ID_HOGS_GLUTTONY_TACTICS, _
+	$ID_SPIDERS_GLUTTONY_COMMAND, $ID_SPIDERS_GLUTTONY_LEADERSHIP, $ID_SPIDERS_GLUTTONY_STRENGTH, $ID_SPIDERS_GLUTTONY_TACTICS, _
+	$ID_OMINOUS_AEGIS_COMMAND, $ID_OMINOUS_AEGIS_LEADERSHIP, $ID_OMINOUS_AEGIS_STRENGTH, $ID_OMINOUS_AEGIS_TACTICS, _
 	_ ; Fox's Greed
-	$ID_Foxs_Greed_Divine_Favor, $ID_Foxs_Greed_Healing_Prayers, $ID_Foxs_Greed_Protection_Prayers, $ID_Foxs_Greed_Smiting_Prayers, _
-	$ID_Foxs_Greed_Communing, $ID_Foxs_Greed_Spawning_Power, $ID_Foxs_Greed_Restoration, $ID_Foxs_Greed_Channeling, _
+	$ID_FOXS_GREED_DIVINE_FAVOR, $ID_FOXS_GREED_HEALING_PRAYERS, $ID_FOXS_GREED_PROTECTION_PRAYERS, $ID_FOXS_GREED_SMITING_PRAYERS, _
+	$ID_FOXS_GREED_COMMUNING, $ID_FOXS_GREED_SPAWNING_POWER, $ID_FOXS_GREED_RESTORATION, $ID_FOXS_GREED_CHANNELING, _
 	_ ; Unicorn's Wrath
-	$ID_Unicorns_Wrath_Domination_Magic, $ID_Unicorns_Wrath_Fast_Casting, $ID_Unicorns_Wrath_Illusion_Magic, $ID_Unicorns_Wrath_Inspiration_Magic, _
-	$ID_Unicorns_Wrath_Soul_Reaping, $ID_Unicorns_Wrath_Energy_Storage, $ID_Unicorns_Wrath_Divine_Favor, $ID_Unicorns_Wrath_Communing, _
+	$ID_UNICORNS_WRATH_DOMINATION_MAGIC, $ID_UNICORNS_WRATH_FAST_CASTING, $ID_UNICORNS_WRATH_ILLUSION_MAGIC, $ID_UNICORNS_WRATH_INSPIRATION_MAGIC, _
+	$ID_UNICORNS_WRATH_SOUL_REAPING, $ID_UNICORNS_WRATH_ENERGY_STORAGE, $ID_UNICORNS_WRATH_DIVINE_FAVOR, $ID_UNICORNS_WRATH_COMMUNING, _
 	_ ; Wolf's Greed
-	$ID_Wolfs_Greed_Divine_Favor, $ID_Wolfs_Greed_Healing_Prayers, $ID_Wolfs_Greed_Protection_Prayers, $ID_Wolfs_Greed_Smiting_Prayers, _
-	$ID_Wolfs_Greed_Communing, $ID_Wolfs_Greed_Spawning_Power, $ID_Wolfs_Greed_Restoration, $ID_Wolfs_Greed_Channeling, _
+	$ID_WOLFS_GREED_DIVINE_FAVOR, $ID_WOLFS_GREED_HEALING_PRAYERS, $ID_WOLFS_GREED_PROTECTION_PRAYERS, $ID_WOLFS_GREED_SMITING_PRAYERS, _
+	$ID_WOLFS_GREED_COMMUNING, $ID_WOLFS_GREED_SPAWNING_POWER, $ID_WOLFS_GREED_RESTORATION, $ID_WOLFS_GREED_CHANNELING, _
 	_ ; Others
-	$ID_Heavens_Arch_Divine_Favor, $ID_Heavens_Arch_Healing_Prayers, $ID_Heavens_Arch_Protection_Prayers, $ID_Heavens_Arch_Smiting_Prayers, _
-	$ID_Storm_Ember_Air_Magic, $ID_Storm_Ember_Earth_Magic, $ID_Storm_Ember_Energy_Storage, $ID_Storm_Ember_Fire_Magic, $ID_Storm_Ember_Water_Magic, _
-	$ID_Lions_Pride_Air_Magic, $ID_Lions_Pride_Earth_Magic, $ID_Lions_Pride_Energy_Storage, $ID_Lions_Pride_Fire_Magic, $ID_Lions_Pride_Water_Magic, _
-	$ID_Peacocks_Wrath_Domination_Magic, $ID_Peacocks_Wrath_Fast_Casting, $ID_Peacocks_Wrath_Illusion_Magic, $ID_Peacocks_Wrath_Inspiration_Magic, _
-	$ID_Quicksilver_Domination_Magic, $ID_Quicksilver_Fast_Casting, $ID_Quicksilver_Illusion_Magic, $ID_Quicksilver_Inspiration_Magic, _
-	$ID_Deaths_Head_Soul_Reaping, $ID_Deaths_Head_Blood_Magic, $ID_Deaths_Head_Curses, $ID_Deaths_Head_Death_Magic, _
-	$ID_Snakes_Envy_Soul_Reaping, $ID_Snakes_Envy_Blood_Magic, $ID_Snakes_Envy_Curses, $ID_Snakes_Envy_Death_Magic, _
-	$ID_Dragons_Envy_Fast_Casting, $ID_Dragons_Envy_Soul_Reaping, $ID_Dragons_Envy_Energy_Storage, $ID_Dragons_Envy_Divine_Favor, $ID_Dragons_Envy_Communing, _
-	$ID_Tigers_Pride_Fast_Casting, $ID_Tigers_Pride_Soul_Reaping, $ID_Tigers_Pride_Energy_Storage, $ID_Tigers_Pride_Divine_Favor, $ID_Tigers_Pride_Communing _
+	$ID_HEAVENS_ARCH_DIVINE_FAVOR, $ID_HEAVENS_ARCH_HEALING_PRAYERS, $ID_HEAVENS_ARCH_PROTECTION_PRAYERS, $ID_HEAVENS_ARCH_SMITING_PRAYERS, _
+	$ID_STORM_EMBER_AIR_MAGIC, $ID_STORM_EMBER_EARTH_MAGIC, $ID_STORM_EMBER_ENERGY_STORAGE, $ID_STORM_EMBER_FIRE_MAGIC, $ID_STORM_EMBER_WATER_MAGIC, _
+	$ID_LIONS_PRIDE_AIR_MAGIC, $ID_LIONS_PRIDE_EARTH_MAGIC, $ID_LIONS_PRIDE_ENERGY_STORAGE, $ID_LIONS_PRIDE_FIRE_MAGIC, $ID_LIONS_PRIDE_WATER_MAGIC, _
+	$ID_PEACOCKS_WRATH_DOMINATION_MAGIC, $ID_PEACOCKS_WRATH_FAST_CASTING, $ID_PEACOCKS_WRATH_ILLUSION_MAGIC, $ID_PEACOCKS_WRATH_INSPIRATION_MAGIC, _
+	$ID_QUICKSILVER_DOMINATION_MAGIC, $ID_QUICKSILVER_FAST_CASTING, $ID_QUICKSILVER_ILLUSION_MAGIC, $ID_QUICKSILVER_INSPIRATION_MAGIC, _
+	$ID_DEATHS_HEAD_SOUL_REAPING, $ID_DEATHS_HEAD_BLOOD_MAGIC, $ID_DEATHS_HEAD_CURSES, $ID_DEATHS_HEAD_DEATH_MAGIC, _
+	$ID_SNAKES_ENVY_SOUL_REAPING, $ID_SNAKES_ENVY_BLOOD_MAGIC, $ID_SNAKES_ENVY_CURSES, $ID_SNAKES_ENVY_DEATH_MAGIC, _
+	$ID_DRAGONS_ENVY_FAST_CASTING, $ID_DRAGONS_ENVY_SOUL_REAPING, $ID_DRAGONS_ENVY_ENERGY_STORAGE, $ID_DRAGONS_ENVY_DIVINE_FAVOR, $ID_DRAGONS_ENVY_COMMUNING, _
+	$ID_TIGERS_PRIDE_FAST_CASTING, $ID_TIGERS_PRIDE_SOUL_REAPING, $ID_TIGERS_PRIDE_ENERGY_STORAGE, $ID_TIGERS_PRIDE_DIVINE_FAVOR, $ID_TIGERS_PRIDE_COMMUNING _
 ]
-Global Const $Map_RareWeapons = MapFromArray($RareWeapons_Array)
+Global Const $MAP_RARE_WEAPONS = MapFromArray($rare_weapons_array)
 #EndRegion Items

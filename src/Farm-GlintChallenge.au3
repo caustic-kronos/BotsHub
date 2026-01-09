@@ -30,73 +30,73 @@ https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Glint%27s_Challenge_Farm
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $GlintChallengeInformations = 'Brotherhood armor farm in Glint''s challenge with 7 hero team' & @CRLF _
+Global Const $GLINT_CHALLENGE_INFORMATIONS = 'Brotherhood armor farm in Glint''s challenge with 7 hero team' & @CRLF _
 	& 'It is advisable to unequip staves, wands and focuses from player and heroes so that foes won''t cast chaos storm on them:' & @CRLF _
 	& 'This farm bot is based on below article:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Glint%27s_Challenge_Farm'
 ; Average duration ~ 20m
 Global Const $GLINT_CHALLENGE_DURATION = 20 * 60 * 1000
 Global Const $MAX_GLINT_CHALLENGE_DURATION = 40 * 60 * 1000
-Global $GLINT_CHALLENGE_SETUP = False
 
-Global Const $GlintMesmerSkillBarOptional = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
-Global Const $GlintRituSoulTwisterHeroSkillBar = 'OACjAyhDJPYTnp17xFOtmFsLG'
-Global Const $GlintNecroFleshGolemHeroSkillBar = 'OAhjUsGWIPAtFBxTaO5EeDzxJ'
-Global Const $GlintNecroHexerHeroSkillBar = 'OAVSIYDT1MJgVVmO4UyA5AXAA'
-Global Const $GlintNecroBiPHeroSkillBar = 'OAVTIYCa05OMHqqmOc6NNHcBA'
-Global Const $GlintMesmerPanicHeroSkillBar = 'OQBTAWBPshGM9yBmOcaGIudBA'
-Global Const $GlintMesmerIneptitudeHeroSkillBar = 'OQNEAbwj1C9CgAmnRCwBlBE3gGB'
+Global Const $GLINT_MESMER_SKILLBAR_OPTIONAL = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
+Global Const $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR = 'OACjAyhDJPYTnp17xFOtmFsLG'
+Global Const $GLINT_NECRO_FLESH_GOLEM_HERO_SKILLBAR = 'OAhjUsGWIPAtFBxTaO5EeDzxJ'
+Global Const $GLINT_NECRO_HEXER_HERO_SKILLBAR = 'OAVSIYDT1MJgVVmO4UyA5AXAA'
+Global Const $GLINT_NECRO_BIP_HERO_SKILLBAR = 'OAVTIYCa05OMHqqmOc6NNHcBA'
+Global Const $GLINT_MESMER_PANIC_HERO_SKILLBAR = 'OQBTAWBPshGM9yBmOcaGIudBA'
+Global Const $GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR = 'OQNEAbwj1C9CgAmnRCwBlBE3gGB'
 
-Global Const $Glint_Hero_Ritu_SoulTwister		= 1
-Global Const $Glint_Hero_Necro_FleshGolem		= 2
-Global Const $Glint_Hero_Necro_Hexer			= 3
-Global Const $Glint_Hero_Necro_BiP				= 4
-Global Const $Glint_Hero_Mesmer_Panic			= 5
-Global Const $Glint_Hero_Mesmer_Ineptitude_1	= 6
-Global Const $Glint_Hero_Mesmer_Ineptitude_2	= 7
+Global Const $GLINT_HERO_RITU_SOULTWISTER		= 1
+Global Const $GLINT_HERO_NECRO_FLESHGOLEM		= 2
+Global Const $GLINT_HERO_NECRO_HEXER			= 3
+Global Const $GLINT_HERO_NECRO_BIP				= 4
+Global Const $GLINT_HERO_MESMER_PANIC			= 5
+Global Const $GLINT_HERO_MESMER_INEPTITUDE_1	= 6
+Global Const $GLINT_HERO_MESMER_INEPTITUDE_2	= 7
 
-;Global Const $GlintChallengeDefendX = -4700
-Global Const $GlintChallengeDefendX = -4185
-;Global Const $GlintChallengeDefendY = 5
-Global Const $GlintChallengeDefendY = -75
+;Global Const $GLINT_CHALLENGE_DEFEND_X = -4700
+Global Const $GLINT_CHALLENGE_DEFEND_X = -4185
+;Global Const $GLINT_CHALLENGE_DEFEND_Y = 5
+Global Const $GLINT_CHALLENGE_DEFEND_Y = -75
 
 ; in Glint Challenge location, the agent ID of Baby Dragon is always assigned to 19, when party has 8 members (can be accessed in GWToolbox)
-Global Const $AgentID_BabyDragon = 19
-Global Const $ModelID_BabyDragon = 1816
-Global Const $BrotherhoodChestX = -3184
-Global Const $BrotherhoodChestY = 908
-Global Const $BrotherhoodChestGadgetID = 9157
+Global Const $AGENTID_BABY_DRAGON = 19
+Global Const $MODELID_BABY_DRAGON = 1816
+Global Const $BROTHERHOOD_CHEST_X = -3184
+Global Const $BROTHERHOOD_CHEST_Y = 908
+Global Const $BROTHERHOOD_CHEST_GADGETID = 9157
 
-Global $GlintChallengeFightOptions = CloneDictMap($Default_MoveAggroAndKill_Options)
-$GlintChallengeFightOptions.Item('fightRange')			= 1500
+Global $glint_challenge_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
+$glint_challenge_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location
-$GlintChallengeFightOptions.Item('flagHeroesOnFight')	= False
-$GlintChallengeFightOptions.Item('lootInFights')		= False
+$glint_challenge_fight_options.Item('flagHeroesOnFight')	= False
+$glint_challenge_fight_options.Item('lootInFights')		= False
 ; there are no chests in Glint Challenge location
-$GlintChallengeFightOptions.Item('openChests')			= False
+$glint_challenge_fight_options.Item('openChests')			= False
 
+Global $glint_challenge_setup = False
 
 ;~ Main loop for the Mysterious armor farm
-Func GlintChallengeFarm($STATUS)
-	If Not $GLINT_CHALLENGE_SETUP And GlintChallengeSetup() == $FAIL Then Return $PAUSE
+Func GlintChallengeFarm()
+	If Not $glint_challenge_setup And GlintChallengeSetup() == $FAIL Then Return $PAUSE
 
 	EnterGlintChallengeMission()
 	Local $result = GlintChallenge()
 	; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
 	Sleep(15000)
-	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
+	TravelToOutpost($ID_CENTRAL_TRANSFER_CHAMBER, $district_name)
 	Return $result
 EndFunc
 
 
 Func GlintChallengeSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
-	SetDisplayedTitle($ID_Dwarf_Title)
+	TravelToOutpost($ID_CENTRAL_TRANSFER_CHAMBER, $district_name)
+	SetDisplayedTitle($ID_DWARF_TITLE)
 	SwitchMode($ID_NORMAL_MODE)
 	TrySetupPlayerUsingGUISettings()
 	If SetupTeamGlintChallengeFarm() == $FAIL Then Return $FAIL
-	$GLINT_CHALLENGE_SETUP = True
+	$glint_challenge_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -106,29 +106,29 @@ Func SetupTeamGlintChallengeFarm()
 	Info('Setting up recommended team build skill bars automatically ignoring GUI settings')
 	LeaveParty()
 	Sleep(500 + GetPing())
-	AddHero($ID_Xandra)
-	AddHero($ID_Master_Of_Whispers)
-	AddHero($ID_Olias)
-	AddHero($ID_Livia)
-	AddHero($ID_Gwen)
-	AddHero($ID_Norgu)
-	AddHero($ID_Razah)
+	AddHero($ID_XANDRA)
+	AddHero($ID_MASTER_OF_WHISPERS)
+	AddHero($ID_OLIAS)
+	AddHero($ID_LIVIA)
+	AddHero($ID_GWEN)
+	AddHero($ID_NORGU)
+	AddHero($ID_RAZAH)
 	Sleep(500 + GetPing())
-	LoadSkillTemplate($GlintRituSoulTwisterHeroSkillBar, $Glint_Hero_Ritu_SoulTwister)
-	LoadSkillTemplate($GlintNecroFleshGolemHeroSkillBar, $Glint_Hero_Necro_FleshGolem)
-	LoadSkillTemplate($GlintNecroHexerHeroSkillBar, $Glint_Hero_Necro_Hexer)
-	LoadSkillTemplate($GlintNecroBiPHeroSkillBar, $Glint_Hero_Necro_BiP)
-	LoadSkillTemplate($GlintMesmerPanicHeroSkillBar, $Glint_Hero_Mesmer_Panic)
-	LoadSkillTemplate($GlintMesmerIneptitudeHeroSkillBar, $Glint_Hero_Mesmer_Ineptitude_1)
-	LoadSkillTemplate($GlintMesmerIneptitudeHeroSkillBar, $Glint_Hero_Mesmer_Ineptitude_2)
+	LoadSkillTemplate($GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR, $GLINT_HERO_RITU_SOULTWISTER)
+	LoadSkillTemplate($GLINT_NECRO_FLESH_GOLEM_HERO_SKILLBAR, $GLINT_HERO_NECRO_FLESHGOLEM)
+	LoadSkillTemplate($GLINT_NECRO_HEXER_HERO_SKILLBAR, $GLINT_HERO_NECRO_HEXER)
+	LoadSkillTemplate($GLINT_NECRO_BIP_HERO_SKILLBAR, $GLINT_HERO_NECRO_BIP)
+	LoadSkillTemplate($GLINT_MESMER_PANIC_HERO_SKILLBAR, $GLINT_HERO_MESMER_PANIC)
+	LoadSkillTemplate($GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR, $GLINT_HERO_MESMER_INEPTITUDE_1)
+	LoadSkillTemplate($GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR, $GLINT_HERO_MESMER_INEPTITUDE_2)
 	Sleep(500 + GetPing())
-	SetHeroBehaviour($Glint_Hero_Ritu_SoulTwister, $ID_Hero_fighting)
-	SetHeroBehaviour($Glint_Hero_Necro_FleshGolem, $ID_Hero_fighting)
-	SetHeroBehaviour($Glint_Hero_Necro_Hexer, $ID_Hero_fighting)
-	SetHeroBehaviour($Glint_Hero_Necro_BiP, $ID_Hero_fighting)
-	SetHeroBehaviour($Glint_Hero_Mesmer_Panic, $ID_Hero_fighting)
-	SetHeroBehaviour($Glint_Hero_Mesmer_Ineptitude_1, $ID_Hero_fighting)
-	SetHeroBehaviour($Glint_Hero_Mesmer_Ineptitude_2, $ID_Hero_fighting)
+	SetHeroBehaviour($GLINT_HERO_RITU_SOULTWISTER, $ID_HERO_FIGHTING)
+	SetHeroBehaviour($GLINT_HERO_NECRO_FLESHGOLEM, $ID_HERO_FIGHTING)
+	SetHeroBehaviour($GLINT_HERO_NECRO_HEXER, $ID_HERO_FIGHTING)
+	SetHeroBehaviour($GLINT_HERO_NECRO_BIP, $ID_HERO_FIGHTING)
+	SetHeroBehaviour($GLINT_HERO_MESMER_PANIC, $ID_HERO_FIGHTING)
+	SetHeroBehaviour($GLINT_HERO_MESMER_INEPTITUDE_1, $ID_HERO_FIGHTING)
+	SetHeroBehaviour($GLINT_HERO_MESMER_INEPTITUDE_2, $ID_HERO_FIGHTING)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
@@ -140,8 +140,8 @@ EndFunc
 
 
 Func EnterGlintChallengeMission()
-	TravelToOutpost($ID_Central_Transfer_Chamber, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Glints_Challenge
+	TravelToOutpost($ID_CENTRAL_TRANSFER_CHAMBER, $district_name)
+	While GetMapID() <> $ID_GLINTS_CHALLENGE
 		Info('Entering Glint mission')
 		;MoveTo(300, 1500)
 		MoveTo(2408, 3560)
@@ -150,35 +150,35 @@ Func EnterGlintChallengeMission()
 		Sleep(1000)
 		Dialog(0x86)
 		Sleep(1000)
-		WaitMapLoading($ID_Glints_Challenge, 10000, 10000)
+		WaitMapLoading($ID_GLINTS_CHALLENGE, 10000, 10000)
 	WEnd
 EndFunc
 
 
 ;~ Cleaning Glint challenge function
 Func GlintChallenge()
-	If GetMapID() <> $ID_Glints_Challenge Then Return $FAIL
+	If GetMapID() <> $ID_GLINTS_CHALLENGE Then Return $FAIL
 	WalkToSpotGlintChallenge()
 	Info('Defending baby dragon')
 	Sleep(5000)
 
 	; fight until team or baby dragon dead or until Brotherhood chest spawns
-	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AgentID_BabyDragon)) And Not IsBrotherhoodChestSpawned()
+	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) And Not IsBrotherhoodChestSpawned()
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
-		KillFoesInArea($GlintChallengeFightOptions)
+		KillFoesInArea($glint_challenge_fight_options)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
-		MoveTo($GlintChallengeDefendX, $GlintChallengeDefendY)
+		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 	WEnd
 
-	If IsPlayerAndPartyWiped() Or GetIsDead(GetAgentById($AgentID_BabyDragon)) Then Return $FAIL
+	If IsPlayerAndPartyWiped() Or GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 	CancelAllHeroes()
 
 	Info('Looting Chest of the Brotherhood')
 	; Tripled to secure the looting of chest
 	For $i = 1 To 3
-		MoveAggroAndKill($BrotherhoodChestX, $BrotherhoodChestY)
-		Local $brotherhoodChest = ScanForChests($RANGE_COMPASS, True, $BrotherhoodChestX, $BrotherhoodChestY, $BrotherhoodChestGadgetID)
+		MoveAggroAndKill($BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y)
+		Local $brotherhoodChest = ScanForChests($RANGE_COMPASS, True, $BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y, $BROTHERHOOD_CHEST_GADGETID)
 		ChangeTarget($brotherhoodChest)
 		ActionInteract()
 		RandomSleep(2500)
@@ -187,7 +187,7 @@ Func GlintChallenge()
 
 	; wait 2 minutes for end mission timer to fully elapse
 	Sleep(120000)
-	WaitMapLoading($ID_Central_Transfer_Chamber)
+	WaitMapLoading($ID_CENTRAL_TRANSFER_CHAMBER)
 	Return $SUCCESS
 EndFunc
 
@@ -195,19 +195,19 @@ EndFunc
 ;~ Getting into positions
 Func WalkToSpotGlintChallenge()
 	Info('Moving to defend position')
-	MoveTo($GlintChallengeDefendX, $GlintChallengeDefendY)
+	MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 	; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
 	;FanFlagHeroes(260)
-	CommandHero($Glint_Hero_Ritu_SoulTwister, -4300, 125)
-	CommandHero($Glint_Hero_Necro_FleshGolem, -4278, 346)
-	CommandHero($Glint_Hero_Necro_Hexer, -3925, -200)
-	CommandHero($Glint_Hero_Necro_BiP, -4120, 75)
-	CommandHero($Glint_Hero_Mesmer_Panic, -3960, 216)
-	CommandHero($Glint_Hero_Mesmer_Ineptitude_1, -4065, 310)
-	CommandHero($Glint_Hero_Mesmer_Ineptitude_2, -3912, -14)
+	CommandHero($GLINT_HERO_RITU_SOULTWISTER, -4300, 125)
+	CommandHero($GLINT_HERO_NECRO_FLESHGOLEM, -4278, 346)
+	CommandHero($GLINT_HERO_NECRO_HEXER, -3925, -200)
+	CommandHero($GLINT_HERO_NECRO_BIP, -4120, 75)
+	CommandHero($GLINT_HERO_MESMER_PANIC, -3960, 216)
+	CommandHero($GLINT_HERO_MESMER_INEPTITUDE_1, -4065, 310)
+	CommandHero($GLINT_HERO_MESMER_INEPTITUDE_2, -3912, -14)
 EndFunc
 
 
 Func IsBrotherhoodChestSpawned()
-	Return Null <> ScanForChests($RANGE_COMPASS, True, $BrotherhoodChestX, $BrotherhoodChestY, $BrotherhoodChestGadgetID)
+	Return Null <> ScanForChests($RANGE_COMPASS, True, $BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y, $BROTHERHOOD_CHEST_GADGETID)
 EndFunc

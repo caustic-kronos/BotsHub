@@ -25,14 +25,14 @@
 
 #Region Declarations
 ; Windows and process handles
-Global $kernelHandle = DllOpen('kernel32.dll')
-Global const $MAX_CLIENTS = 30
+Global $kernel_handle = DllOpen('kernel32.dll')
+Global Const $MAX_CLIENTS = 30
 ; Each gameClient will be a 4-elements array: [0] = PID, [1] = process handle (or 0 if invalidated), [2] = window handle, [3] = character name
-; Caution, first element of this 2D array $gameClients[0][0] is considered a count of currently inserted elements (like in AutoIT ProcessList() function), hence $MAX_CLIENTS+1
-Global $gameClients[$MAX_CLIENTS+1][4]
-Global $selectedClientIndex = -1
+; Caution, first element of this 2D array $game_clients[0][0] is considered a count of currently inserted elements (like in AutoIT ProcessList() function), hence $MAX_CLIENTS+1
+Global $game_clients[$MAX_CLIENTS+1][4]
+Global $selected_client_index = -1
 
-If Not $kernelHandle Then
+If Not $kernel_handle Then
 	MsgBox(16, 'Error', 'Failed to open kernel32.dll')
 	Exit
 Else
@@ -40,10 +40,9 @@ Else
 EndIf
 
 ; Memory interaction
-Global $baseAddress = 0x00C50000
-Global $memoryInterfaceHeader = 0
-Global $asmInjectionString, $asmInjectionSize, $asmCodeOffset
-Global $packetlocation
+;Global $base_address = 0x00C50000
+Global $memory_interface_header = 0
+Global $asm_injection_string, $asm_injection_size, $asm_code_offset
 
 ; Memory interaction constants
 Global Const $GWA2_REFORGED_HEADER_HEXA = '4757413252415049'
@@ -53,160 +52,150 @@ Global Const $GWA2_REFORGED_OFFSET_SCAN_ADDRESS = 8
 Global Const $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS = 12
 
 ; Flags
-Global $disableRenderingAddress
-Global $renderingEnabled = True
+Global $disable_rendering_address
+Global $rendering_enabled = True
 
 ; Game-related variables
 ; Game memory - queue, targets, skills
-Global $queueCounter, $queueSize, $queueBaseAddress
-Global $stringLogBaseAddress, $skillBaseAddress
-Global $myID
+Global $queue_counter, $queue_size, $queue_base_address
+Global $string_log_base_address, $skill_base_address
+Global $my_ID
 
 ; Language flag
-Global $forceEnglishLanguageFlag
+Global $force_english_language_flag
 
 ; Agent state
-Global $currentTargetAgentId
+Global $current_target_agent_ID
 
 ; Agent structures
-Global $agentBaseAddress, $baseAddressPtr, $agentArrayAddress
+Global $agent_base_address, $base_address_ptr
 
 ; Regional and account info
-Global $regionId, $languageId
-Global $scanPingAddress, $characterSlots, $characterName
+Global $region_ID, $language_ID
+Global $scan_ping_address
 
 ; Map status
-Global $maxAgents, $isLoggedIn, $agentCopyCount, $agentCopyBase
+Global $max_agents, $is_logged_in, $agent_copy_count, $agent_copy_base
 
 ; Trader system
-Global $traderQuoteId, $traderCostId, $traderCostValue
+Global $trader_quote_ID, $trader_cost_ID, $trader_cost_value
 
 ; Skill state
-Global $skillTimer, $buildNumber
-
-; Temporary values
-Global $tempValue
+Global $skill_timer, $build_number
 
 ; Zoom levels
-Global $zoomWhenStill, $zoomWhenMoving
+Global $zoom_when_still, $zoom_when_moving
 
 ; Event state
-Global $currentStatus, $lastDialogId
-Global $skillActivateEvent, $skillCancelEvent, $skillCompleteEvent, $loadFinishedEvent
+Global $current_status, $last_dialog_ID
 
 ; Optional systems
-Global $useStringLogging, $useEventSystem
+Global $use_string_logging, $use_event_system
 
 ; Character info
-Global $instanceInfoPtr, $areaInfoPtr
-Global $attributeInfoPtr
-Global $mapID, $mapLoading, $mapIsLoaded
+Global $instance_info_ptr, $area_info_ptr
+Global $attribute_info_ptr
+Global $map_ID, $map_loading
 #EndRegion Declarations
 
 
 #Region CommandStructs
-Global $inviteGuildStruct = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')
-Global $inviteGuildStructPtr = DllStructGetPtr($inviteGuildStruct)
+Global Const $INVITE_GUILD_STRUCT = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')
+Global Const $INVITE_GUILD_STRUCT_PTR = DllStructGetPtr($INVITE_GUILD_STRUCT)
 
-Global $useSkillStruct = SafeDllStructCreate('ptr useSkillCommandPtr;dword skillSlot;dword targetID;dword callTarget')
-Global $useSkillStructPtr = DllStructGetPtr($useSkillStruct)
+Global Const $USE_SKILL_STRUCT = SafeDllStructCreate('ptr useSkillCommandPtr;dword skillSlot;dword targetID;dword callTarget')
+Global Const $USE_SKILL_STRUCT_PTR = DllStructGetPtr($USE_SKILL_STRUCT)
 
-Global $moveStruct = SafeDllStructCreate('ptr commandMovePtr;float X;float Y;dword')
-Global $moveStructPtr = DllStructGetPtr($moveStruct)
+Global Const $MOVE_STRUCT = SafeDllStructCreate('ptr commandMovePtr;float X;float Y;dword')
+Global Const $MOVE_STRUCT_PTR = DllStructGetPtr($MOVE_STRUCT)
 
-Global $changeTargetStruct = SafeDllStructCreate('ptr commandChangeTargetPtr;dword targetID')
-Global $changeTargetStructPtr = DllStructGetPtr($changeTargetStruct)
+Global Const $CHANGE_TARGET_STRUCT = SafeDllStructCreate('ptr commandChangeTargetPtr;dword targetID')
+Global Const $CHANGE_TARGET_STRUCT_PTR = DllStructGetPtr($CHANGE_TARGET_STRUCT)
 
-Global $packetStruct = SafeDllStructCreate('ptr commandPackSendPtr;dword;dword;dword;dword characterName;dword;dword;dword;dword;dword;dword;dword;dword')
-Global $packetStructPtr = DllStructGetPtr($packetStruct)
+Global Const $PACKET_STRUCT = SafeDllStructCreate('ptr commandPackSendPtr;dword;dword;dword;dword characterName;dword;dword;dword;dword;dword;dword;dword;dword')
+Global Const $PACKET_STRUCT_PTR = DllStructGetPtr($PACKET_STRUCT)
 
-Global $writeChatStruct = SafeDllStructCreate('ptr commandWriteChatPtr')
-Global $writeChatStructPtr = DllStructGetPtr($writeChatStruct)
+Global Const $WRITE_CHAT_STRUCT = SafeDllStructCreate('ptr commandWriteChatPtr')
+Global Const $WRITE_CHAT_STRUCT_PTR = DllStructGetPtr($WRITE_CHAT_STRUCT)
 
-Global $sellItemStruct = SafeDllStructCreate('ptr commandSellItemPtr;dword totalSoldValue;dword itemID;dword ScanBuyItemBase')
-Global $sellItemStructPtr = DllStructGetPtr($sellItemStruct)
+Global Const $SELL_ITEM_STRUCT = SafeDllStructCreate('ptr commandSellItemPtr;dword totalSoldValue;dword itemID;dword ScanBuyItemBase')
+Global Const $SELL_ITEM_STRUCT_PTR = DllStructGetPtr($SELL_ITEM_STRUCT)
 
-Global $actionStruct = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;')
-Global $actionStructPtr = DllStructGetPtr($actionStruct)
+Global Const $ACTION_STRUCT = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;')
+Global Const $ACTION_STRUCT_PTR = DllStructGetPtr($ACTION_STRUCT)
 
-Global $toggleLanguageStruct = SafeDllStructCreate('ptr commandToggleLanguagePtr;dword')
-Global $toggleLanguageStructPtr = DllStructGetPtr($toggleLanguageStruct)
+Global Const $TOGGLE_LANGUAGE_STRUCT = SafeDllStructCreate('ptr commandToggleLanguagePtr;dword')
+Global Const $TOGGLE_LANGUAGE_STRUCT_PTR = DllStructGetPtr($TOGGLE_LANGUAGE_STRUCT)
 
-Global $useHeroSkillStruct = SafeDllStructCreate('ptr;dword;dword;dword')
-Global $useHeroSkillStructPtr = DllStructGetPtr($useHeroSkillStruct)
+Global Const $USE_HERO_SKILL_STRUCT = SafeDllStructCreate('ptr;dword;dword;dword')
+Global Const $USE_HERO_SKILL_STRUCT_PTR = DllStructGetPtr($USE_HERO_SKILL_STRUCT)
 
-Global $buyItemStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword')
-Global $buyItemStructPtr = DllStructGetPtr($buyItemStruct)
+Global Const $BUY_ITEM_STRUCT = SafeDllStructCreate('ptr;dword;dword;dword;dword')
+Global Const $BUY_ITEM_STRUCT_PTR = DllStructGetPtr($BUY_ITEM_STRUCT)
 
-Global $craftItemStruct = SafeDllStructCreate('ptr;dword;dword;ptr;dword;dword')
-Global $craftItemStructPtr = DllStructGetPtr($craftItemStruct)
+Global Const $CRAFT_ITEM_STRUCT = SafeDllStructCreate('ptr;dword;dword;ptr;dword;dword')
+Global Const $CRAFT_ITEM_STRUCT_PTR = DllStructGetPtr($CRAFT_ITEM_STRUCT)
 
-Global $sendChatStruct = SafeDllStructCreate('ptr;dword')
-Global $sendChatStructPtr = DllStructGetPtr($sendChatStruct)
+Global Const $SEND_CHAT_STRUCT = SafeDllStructCreate('ptr;dword')
+Global Const $SEND_CHAT_STRUCT_PTR = DllStructGetPtr($SEND_CHAT_STRUCT)
 
-Global $requestQuoteStruct = SafeDllStructCreate('ptr;dword')
-Global $requestQuoteStructPtr = DllStructGetPtr($requestQuoteStruct)
+Global Const $REQUEST_QUOTE_STRUCT = SafeDllStructCreate('ptr;dword')
+Global Const $REQUEST_QUOTE_STRUCT_PTR = DllStructGetPtr($REQUEST_QUOTE_STRUCT)
 
-Global $requestQuoteStructSell = SafeDllStructCreate('ptr;dword')
-Global $requestQuoteStructSellPtr = DllStructGetPtr($requestQuoteStructSell)
+Global Const $REQUEST_QUOTE_STRUCT_SELL = SafeDllStructCreate('ptr;dword')
+Global Const $REQUEST_QUOTE_STRUCT_SELL_PTR = DllStructGetPtr($REQUEST_QUOTE_STRUCT_SELL)
 
-Global $traderBuyStruct = SafeDllStructCreate('ptr')
-Global $traderBuyStructPtr = DllStructGetPtr($traderBuyStruct)
+Global Const $TRADER_BUY_STRUCT = SafeDllStructCreate('ptr')
+Global Const $TRADER_BUY_STRUCT_PTR = DllStructGetPtr($TRADER_BUY_STRUCT)
 
-Global $traderSellStruct = SafeDllStructCreate('ptr')
-Global $traderSellStructPtr = DllStructGetPtr($traderSellStruct)
+Global Const $TRADER_SELL_STRUCT = SafeDllStructCreate('ptr')
+Global Const $TRADER_SELL_STRUCT_PTR = DllStructGetPtr($TRADER_SELL_STRUCT)
 
-Global $salvageStruct = SafeDllStructCreate('ptr;dword;dword;dword')
-Global $salvageStructPtr = DllStructGetPtr($salvageStruct)
+Global Const $SALVAGE_STRUCT = SafeDllStructCreate('ptr;dword;dword;dword')
+Global Const $SALVAGE_STRUCT_PTR = DllStructGetPtr($SALVAGE_STRUCT)
 
-Global $increaseAttributeStruct = SafeDllStructCreate('ptr;dword;dword')
-Global $increaseAttributeStructPtr = DllStructGetPtr($increaseAttributeStruct)
+Global Const $INCREASE_ATTRIBUTE_STRUCT = SafeDllStructCreate('ptr;dword;dword')
+Global Const $INCREASE_ATTRIBUTE_STRUCT_PTR = DllStructGetPtr($INCREASE_ATTRIBUTE_STRUCT)
 
-Global $decreaseAttributeStruct = SafeDllStructCreate('ptr;dword;dword')
-Global $decreaseAttributeStructPtr = DllStructGetPtr($decreaseAttributeStruct)
+Global Const $DECREASE_ATTRIBUTE_STRUCT = SafeDllStructCreate('ptr;dword;dword')
+Global Const $DECREASE_ATTRIBUTE_STRUCT_PTR = DllStructGetPtr($DECREASE_ATTRIBUTE_STRUCT)
 
-Global $maxAttributesStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
-Global $maxAttributesStructPtr = DllStructGetPtr($maxAttributesStruct)
+Global Const $MAX_ATTRIBUTES_STRUCT = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
+Global Const $MAX_ATTRIBUTES_STRUCT_PTR = DllStructGetPtr($MAX_ATTRIBUTES_STRUCT)
 
-Global $setAttributesStruct = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
-Global $setAttributesStructPtr = DllStructGetPtr($setAttributesStruct)
+Global Const $SET_ATTRIBUTES_STRUCT = SafeDllStructCreate('ptr;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword;dword')
+Global Const $SET_ATTRIBUTES_STRUCT_PTR = DllStructGetPtr($SET_ATTRIBUTES_STRUCT)
 
-Global $makeAgentArrayStruct = SafeDllStructCreate('ptr;dword')
-Global $makeAgentArrayStructPtr = DllStructGetPtr($makeAgentArrayStruct)
+Global Const $MAKE_AGENT_ARRAY_STRUCT = SafeDllStructCreate('ptr;dword')
+Global Const $MAKE_AGENT_ARRAY_STRUCT_PTR = DllStructGetPtr($MAKE_AGENT_ARRAY_STRUCT)
 
-Global $changeStatusStruct = SafeDllStructCreate('ptr;dword')
-Global $changeStatusStructPtr = DllStructGetPtr($changeStatusStruct)
+Global Const $CHANGE_STATUS_STRUCT = SafeDllStructCreate('ptr;dword')
+Global Const $CHANGE_STATUS_STRUCT_PTR = DllStructGetPtr($CHANGE_STATUS_STRUCT)
 
-Global $enterMissionStruct = SafeDllStructCreate('ptr')
-Global $enterMissionStructPtr = DllStructGetPtr($enterMissionStruct)
+Global Const $ENTER_MISSION_STRUCT = SafeDllStructCreate('ptr')
+Global Const $ENTER_MISSION_STRUCT_PTR = DllStructGetPtr($ENTER_MISSION_STRUCT)
 
-Global $tradeHackAddress
-Global $labelsMap[]
+Global $trade_hack_address
+Global $labels_map[]
 #EndRegion CommandStructs
 
 #Region GWA2 Structs
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
-Global Const $memoryInfoStructTemplate = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
-Global Const $agentStructTemplate = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;dword unknown260;ptr Tags;short unknown268;byte Primary;byte Secondary;byte Level;byte Team;byte unknown274[2];dword unknown276;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown296;float HPPips;dword unknown304;float HealthPercent;dword MaxHealth;dword Effects;dword unknown320;byte Hex;byte unknown325[19];dword ModelState;dword TypeMap;dword unknown352[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown384;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown404[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown442;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
-Global Const $buffStructTemplate = 'long SkillId;long unknown1;long BuffId;long TargetId'
-Global Const $effectStructTemplate = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
-Global Const $skillbarStructTemplate = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword SkillId1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword SkillId2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword SkillId3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword SkillId4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword SkillId5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword SkillId6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword SkillId7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword SkillId8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
-Global Const $skillStructTemplate = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long InflictsCondition;long Condition;long EffectFlag;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id_hd;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
-Global Const $attributeStructTemplate = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
-Global Const $bagStructTemplate = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
-Global Const $itemStructTemplate = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
-Global Const $questStructTemplate = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unknown1;long MapTo;ptr Description;ptr Objective'
-Global Const $titleStructTemplate = 'dword properties;long CurrentPoints;long CurrentTitleTier;long PointsNeededCurrentRank;long NextTitleTier;long PointsNeededNextRank;long MaxTitleRank;long MaxTitleTier;dword unknown36;dword unknown40'
+Global Const $MEMORY_INFO_STRUCT_TEMPLATE = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
+Global Const $AGENT_STRUCT_TEMPLATE = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;dword unknown260;ptr Tags;short unknown268;byte Primary;byte Secondary;byte Level;byte Team;byte unknown274[2];dword unknown276;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown296;float HPPips;dword unknown304;float HealthPercent;dword MaxHealth;dword Effects;dword unknown320;byte Hex;byte unknown325[19];dword ModelState;dword TypeMap;dword unknown352[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown384;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown404[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown442;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemId'
+Global Const $BUFF_STRUCT_TEMPLATE = 'long SkillId;long unknown1;long BuffId;long TargetId'
+Global Const $EFFECT_STRUCT_TEMPLATE = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
+Global Const $SKILLBAR_STRUCT_TEMPLATE = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword SkillId1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword SkillId2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword SkillId3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword SkillId4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword SkillId5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword SkillId6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword SkillId7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword SkillId8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
+Global Const $SKILL_STRUCT_TEMPLATE = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long InflictsCondition;long Condition;long EffectFlag;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id_hd;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
+Global Const $ATTRIBUTE_STRUCT_TEMPLATE = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
+Global Const $BAG_STRUCT_TEMPLATE = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
+Global Const $ITEM_STRUCT_TEMPLATE = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
+Global Const $QUEST_STRUCT_TEMPLATE = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unknown1;long MapTo;ptr Description;ptr Objective'
+Global Const $TITLE_STRUCT_TEMPLATE = 'dword properties;long CurrentPoints;long CurrentTitleTier;long PointsNeededCurrentRank;long NextTitleTier;long PointsNeededNextRank;long MaxTitleRank;long MaxTitleTier;dword unknown36;dword unknown40'
 ; Grey area, unlikely to exist several at the same time
-Global Const $areaInfoStructTemplate = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
+Global Const $AREA_INFO_STRUCT_TEMPLATE = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
 ; Safe zone, can just create DllStruct globally
-Global $worldStruct = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
-; Considered to be added in non-global - but since code is synchronous those shouldn't really get overwritten
-; useSkillStruct
-; moveStruct
-; changeTargetStruct
-; packetStruct
-; useHeroSkillStruct
+Global Const $WORLD_STRUCT = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
 #EndRegion
 
 
@@ -217,10 +206,10 @@ Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 #Region Memory
 ;~ Close all handles once bot stops
 Func CloseAllHandles()
-	For $index = 1 To $gameClients[0][0]
-		If $gameClients[$index][0] <> -1 Then SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $gameClients[$index][1])
+	For $index = 1 To $game_clients[0][0]
+		If $game_clients[$index][0] <> -1 Then SafeDllCall5($kernel_handle, 'int', 'CloseHandle', 'int', $game_clients[$index][1])
 	Next
-	If $kernelHandle Then DllClose($kernelHandle)
+	If $kernel_handle Then DllClose($kernel_handle)
 EndFunc
 
 
@@ -230,7 +219,7 @@ Func WriteBinary($binaryString, $address)
 	For $i = 1 To DllStructGetSize($data)
 		DllStructSetData($data, 1, Dec(StringMid($binaryString, 2 * $i - 1, 2)), $i)
 	Next
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
 EndFunc
 
 
@@ -238,7 +227,7 @@ EndFunc
 Func MemoryWrite($address, $data, $type = 'dword')
 	Local $buffer = SafeDllStructCreate($type)
 	DllStructSetData($buffer, 1, $data)
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 EndFunc
 
 
@@ -246,7 +235,7 @@ EndFunc
 Func MemoryRead($address, $type = 'dword', $handleOverride = -1)
 	Local $buffer = SafeDllStructCreate($type)
 	Local $processHandle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Return DllStructGetData($buffer, 1)
 EndFunc
 
@@ -256,7 +245,7 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 	Local $ptrCount = UBound($offset) - 2
 	Local $buffer = SafeDllStructCreate('dword')
 	Local $processHandle = GetProcessHandle()
-	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
+	Local $memoryInfo = DllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
 	Local $data[2] = [0, 0]
 
 	; This loops serves as a control - if ExitLoop is reached in the inner loop, we can skip the rest of the outer loop
@@ -264,19 +253,19 @@ Func MemoryReadPtr($address, $offset, $type = 'dword')
 		For $i = 0 To $ptrCount
 			$address += $offset[$i]
 
-			SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+			SafeDllCall11($kernel_handle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
 			If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then ExitLoop 2
 
-			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+			SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 			$address = DllStructGetData($buffer, 1)
 			If $address == 0 Then ExitLoop 2
 		Next
 		$address += $offset[$ptrCount + 1]
-		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+		SafeDllCall11($kernel_handle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
 		If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then ExitLoop
 
 		$buffer = SafeDllStructCreate($type)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		$data[0] = $address
 		$data[1] = DllStructGetData($buffer, 1)
 		Return $data
@@ -297,8 +286,8 @@ EndFunc
 #Region Initialisation
 ;~ Return currently chosen process ID
 Func GetPID()
-	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
-		Return $gameClients[$selectedClientIndex][0]
+	If $selected_client_index > 0 And $selected_client_index <= $game_clients[0][0] Then
+		Return $game_clients[$selected_client_index][0]
 	EndIf
 	Return
 EndFunc
@@ -306,8 +295,8 @@ EndFunc
 
 ;~ Return currently chosen process handle
 Func GetProcessHandle()
-	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
-		Return $gameClients[$selectedClientIndex][1]
+	If $selected_client_index > 0 And $selected_client_index <= $game_clients[0][0] Then
+		Return $game_clients[$selected_client_index][1]
 	EndIf
 	Return
 EndFunc
@@ -315,8 +304,8 @@ EndFunc
 
 ;~ Return currently chosen window handle
 Func GetWindowHandle()
-	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
-		Return $gameClients[$selectedClientIndex][2]
+	If $selected_client_index > 0 And $selected_client_index <= $game_clients[0][0] Then
+		Return $game_clients[$selected_client_index][2]
 	EndIf
 	Return
 EndFunc
@@ -324,8 +313,8 @@ EndFunc
 
 ;~ Return currently chosen character name
 Func GetCharacterName()
-	If $selectedClientIndex > 0 And $selectedClientIndex <= $gameClients[0][0] Then
-		Return $gameClients[$selectedClientIndex][3]
+	If $selected_client_index > 0 And $selected_client_index <= $game_clients[0][0] Then
+		Return $game_clients[$selected_client_index][3]
 	EndIf
 	Return
 EndFunc
@@ -333,8 +322,8 @@ EndFunc
 
 ;~ Select the client -PID, process handle, window handle and character- to use for the bot
 Func SelectClient($index)
-	If $index > 0 And $index <= $gameClients[0][0] Then
-		$selectedClientIndex = $index
+	If $index > 0 And $index <= $game_clients[0][0] Then
+		$selected_client_index = $index
 		Return True
 	EndIf
 	Return False
@@ -347,7 +336,7 @@ Func ScanAndUpdateGameClients()
 	If @error Or $processList[0][0] = 0 Then Return
 
 	; Step 1: Mark all existing entries as 'unseen'
-	Local $initialClientCount = $GameClients[0][0]
+	Local $initialClientCount = $game_clients[0][0]
 	Local $seen[$initialClientCount + 1]
 	FillArray($seen, False)
 
@@ -361,7 +350,7 @@ Func ScanAndUpdateGameClients()
 			$seen[$index] = True
 		Else
 			; New client, add to array
-			Local $openProcess = SafeDllCall9($kernelHandle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $pid)
+			Local $openProcess = SafeDllCall9($kernel_handle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $pid)
 			Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
 			If $processHandle <> 0 Then
 				Local $windowHandle = GetWindowHandleForProcess($pid)
@@ -376,44 +365,44 @@ Func ScanAndUpdateGameClients()
 	; Step 3: Invalidate unseen (terminated) processes
 	For $i = 1 To $initialClientCount
 		If Not $seen[$i] Then
-			$GameClients[$i][0] = -1
-			$GameClients[$i][1] = -1
-			$GameClients[$i][2] = -1
-			$GameClients[$i][3] = ''
+			$game_clients[$i][0] = -1
+			$game_clients[$i][1] = -1
+			$game_clients[$i][2] = -1
+			$game_clients[$i][3] = ''
 		EndIf
 	Next
 EndFunc
 
 
-;~ Finds index in $gameClients by PID
+;~ Finds index in $game_clients by PID
 Func FindClientIndexByPID($pid)
-	For $i = 1 To $gameClients[0][0]
-		If $gameClients[$i][0] = $pid Then Return $i
+	For $i = 1 To $game_clients[0][0]
+		If $game_clients[$i][0] = $pid Then Return $i
 	Next
 	Return -1
 EndFunc
 
 
-;~ Finds index in $gameClients by character name
+;~ Finds index in $game_clients by character name
 Func FindClientIndexByCharacterName($characterName)
-	For $i = 1 To $gameClients[0][0]
-		If $gameClients[$i][3] = $characterName Then Return $i
+	For $i = 1 To $game_clients[0][0]
+		If $game_clients[$i][3] = $characterName Then Return $i
 	Next
 	Return -1
 EndFunc
 
 
-;~ Adds a new client entry to $gameClients
+;~ Adds a new client entry to $game_clients
 Func AddClient($pid, $processHandle, $windowHandle, $characterName)
-	$gameClients[0][0] += 1
-	Local $newIndex = $gameClients[0][0]
-	If $newIndex > UBound($gameClients) - 1 Then
+	$game_clients[0][0] += 1
+	Local $newIndex = $game_clients[0][0]
+	If $newIndex > UBound($game_clients) - 1 Then
 		Error('GameClients array is full. Cannot add new client. Restart the bot.')
 	EndIf
-	$GameClients[$newIndex][0] = $pid
-	$GameClients[$newIndex][1] = $processHandle
-	$GameClients[$newIndex][2] = $windowHandle
-	$GameClients[$newIndex][3] = $characterName
+	$game_clients[$newIndex][0] = $pid
+	$game_clients[$newIndex][1] = $processHandle
+	$game_clients[$newIndex][2] = $windowHandle
+	$game_clients[$newIndex][3] = $characterName
 EndFunc
 
 
@@ -427,89 +416,89 @@ EndFunc
 
 
 ;~ Injects GWA2 into the game client.
-Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $initUseEventSystem = True)
-	$useStringLogging = $initUseStringLog
-	$useEventSystem = $initUseEventSystem
+Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $inituse_event_system = True)
+	$use_string_logging = $initUseStringLog
+	$use_event_system = $inituse_event_system
 
 	ScanGWBasePatterns()
 
 	; Read memory values for game data
-	$baseAddressPtr = MemoryRead(GetScannedAddress('ScanBasePointer', 8))
+	$base_address_ptr = MemoryRead(GetScannedAddress('ScanBasePointer', 8))
 	If @error Then LogCriticalError('Failed to read base pointer')
 
-	SetValue('BasePointer', '0x' & Hex($baseAddressPtr, 8))
-	$regionId = MemoryRead(GetScannedAddress('ScanRegion', -0x3))
+	SetValue('BasePointer', '0x' & Hex($base_address_ptr, 8))
+	$region_ID = MemoryRead(GetScannedAddress('ScanRegion', -0x3))
 
-	$tempValue = GetScannedAddress('ScanInstanceInfo', -0x04)
-	$instanceInfoPtr = MemoryRead($tempValue + MemoryRead($tempValue + 0x01) + 0x05 + 0x01, 'dword')
+	Local $tempValue = GetScannedAddress('ScanInstanceInfo', -0x04)
+	$instance_info_ptr = MemoryRead($tempValue + MemoryRead($tempValue + 0x01) + 0x05 + 0x01, 'dword')
 
-	$areaInfoPtr = MemoryRead(GetScannedAddress('ScanAreaInfo', 0x6))
-	$attributeInfoPtr = MemoryRead(GetScannedAddress('ScanAttributeInfo', -0x3))
+	$area_info_ptr = MemoryRead(GetScannedAddress('ScanAreaInfo', 0x6))
+	$attribute_info_ptr = MemoryRead(GetScannedAddress('ScanAttributeInfo', -0x3))
 	SetValue('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
 	SetValue('LoadFinishedStart', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 1), 8))
 	SetValue('LoadFinishedReturn', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 6), 8))
 
-	$agentBaseAddress = MemoryRead(GetScannedAddress('ScanAgentBasePointer', 8) + 0xC - 7)
+	$agent_base_address = MemoryRead(GetScannedAddress('ScanAgentBasePointer', 8) + 0xC - 7)
 	If @error Then LogCriticalError('Failed to read agent base')
-	SetValue('AgentBase', '0x' & Hex($agentBaseAddress, 8))
-	$maxAgents = $agentBaseAddress + 8
-	SetValue('MaxAgents', '0x' & Hex($maxAgents, 8))
+	SetValue('AgentBase', '0x' & Hex($agent_base_address, 8))
+	$max_agents = $agent_base_address + 8
+	SetValue('MaxAgents', '0x' & Hex($max_agents, 8))
 
-	$agentArrayAddress = MemoryRead(GetScannedAddress('ScanAgentArray', -0x3))
+	Local $agentArrayAddress = MemoryRead(GetScannedAddress('ScanAgentArray', -0x3))
 	If @error Then LogCriticalError('Failed to read agent array')
 
-	$myID = MemoryRead(GetScannedAddress('ScanMyID', -3))
+	$my_ID = MemoryRead(GetScannedAddress('ScanMyID', -3))
 	If @error Then LogCriticalError('Failed to read my ID')
-	SetValue('MyID', '0x' & Hex($myID, 8))
+	SetValue('MyID', '0x' & Hex($my_ID, 8))
 
-	$currentTargetAgentId = MemoryRead(GetScannedAddress('ScanCurrentTarget', -14))
+	$current_target_agent_ID = MemoryRead(GetScannedAddress('ScanCurrentTarget', -14))
 	If @error Then LogCriticalError('Failed to read current target')
 
-	$packetlocation = Hex(MemoryRead(GetScannedAddress('ScanBaseOffset', 11)), 8)
+	Local $packetLocation = Hex(MemoryRead(GetScannedAddress('ScanBaseOffset', 11)), 8)
 	If @error Then LogCriticalError('Failed to read packet location')
-	SetValue('PacketLocation', '0x' & $packetlocation)
+	SetValue('PacketLocation', '0x' & $packetLocation)
 
-	$scanPingAddress = MemoryRead(GetScannedAddress('ScanPing', -0x3))
+	$scan_ping_address = MemoryRead(GetScannedAddress('ScanPing', -0x3))
 	If @error Then LogCriticalError('Failed to read ping')
 
-	$mapID = MemoryRead(GetScannedAddress('ScanMapID', 28))
+	$map_ID = MemoryRead(GetScannedAddress('ScanMapID', 28))
 	If @error Then LogCriticalError('Failed to read map ID')
 
 	; FIXME: this call fails
-	;$mapLoading = MemoryRead(GetScannedAddress('ScanMapLoading', 0xB))
+	;$map_loading = MemoryRead(GetScannedAddress('ScanMapLoading', 0xB))
 	;If @error Then LogCriticalError('Failed to read loading status')
 
 	; FIXME: this call fails
-	;$isLoggedIn = MemoryRead(GetScannedAddress('ScanLoggedIn', 0x3))
+	;$is_logged_in = MemoryRead(GetScannedAddress('ScanLoggedIn', 0x3))
 	;If @error Then LogCriticalError('Failed to read login status')
 
-	$languageId = MemoryRead(GetScannedAddress('ScanMapInfo', 11)) + 0xC
+	$language_ID = MemoryRead(GetScannedAddress('ScanMapInfo', 11)) + 0xC
 	If @error Then LogCriticalError('Failed to read language and region')
 
-	$skillBaseAddress = MemoryRead(GetScannedAddress('ScanSkillBase', 0x9))
+	$skill_base_address = MemoryRead(GetScannedAddress('ScanSkillBase', 0x9))
 	If @error Then LogCriticalError('Failed to read skill base')
 
-	$skillTimer = MemoryRead(GetScannedAddress('ScanSkillTimer', -3))
+	$skill_timer = MemoryRead(GetScannedAddress('ScanSkillTimer', -3))
 	If @error Then LogCriticalError('Failed to read skill timer')
 
 	$tempValue = GetScannedAddress('ScanBuildNumber', 0x2C)
 	If @error Then LogCriticalError('Failed to read build number address')
 
 	; FIXME: these calls fail
-	;$buildNumber = MemoryRead($tempValue + MemoryRead($tempValue) + 5)
+	;$build_number = MemoryRead($tempValue + MemoryRead($tempValue) + 5)
 	;If @error Then LogCriticalError('Failed to read build number')
 
-	$zoomWhenStill = GetScannedAddress('ScanZoomStill', 0x33)
+	$zoom_when_still = GetScannedAddress('ScanZoomStill', 0x33)
 	If @error Then LogCriticalError('Failed to read zoom still address')
 
-	$zoomWhenMoving = GetScannedAddress('ScanZoomMoving', 0x21)
+	$zoom_when_moving = GetScannedAddress('ScanZoomMoving', 0x21)
 	If @error Then LogCriticalError('Failed to read zoom moving address')
 
-	$currentStatus = MemoryRead(GetScannedAddress('ScanChangeStatusFunction', 35))
+	$current_status = MemoryRead(GetScannedAddress('ScanChangeStatusFunction', 35))
 	If @error Then LogCriticalError('Failed to read current status')
 
 	; FIXME: this call fails
-	;$characterSlots = MemoryRead(GetScannedAddress('ScanCharslots', 22))
+	;Local $characterSlots = MemoryRead(GetScannedAddress('ScanCharslots', 22))
 	;If @error Then LogCriticalError('Failed to read character slots')
 
 	$tempValue = GetScannedAddress('ScanEngine', -0x22)
@@ -641,76 +630,76 @@ Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $i
 	SetValue('StringLogSize', '0x00000200')
 	SetValue('CallbackEvent', '0x00000501')
 
-	$tradeHackAddress = GetScannedAddress('ScanTradeHack', 0)
+	$trade_hack_address = GetScannedAddress('ScanTradeHack', 0)
 	If @error Then LogCriticalError('Failed to read trade hack address')
 
 	ModifyMemory()
 
-	$queueCounter = MemoryRead(GetValue('QueueCounter'))
+	$queue_counter = MemoryRead(GetValue('QueueCounter'))
 	If @error Then LogCriticalError('Failed to read queue counter')
 
-	$queueSize = GetValue('QueueSize') - 1
-	$queueBaseAddress = GetValue('QueueBase')
+	$queue_size = GetValue('QueueSize') - 1
+	$queue_base_address = GetValue('QueueBase')
 	;$targetLogBase = GetValue('TargetLogBase')
-	$stringLogBaseAddress = GetValue('StringLogBase')
-	$mapIsLoaded = GetValue('MapIsLoaded')
-	$forceEnglishLanguageFlag = GetValue('EnsureEnglish')
-	$traderQuoteId = GetValue('TraderQuoteID')
-	$traderCostId = GetValue('TraderCostID')
-	$traderCostValue = GetValue('TraderCostValue')
-	$disableRenderingAddress = GetValue('DisableRendering')
-	$agentCopyCount = GetValue('AgentCopyCount')
-	$agentCopyBase = GetValue('AgentCopyBase')
-	$lastDialogId = GetValue('LastDialogID')
+	$string_log_base_address = GetValue('StringLogBase')
+	Local $mapIsLoaded = GetValue('MapIsLoaded')
+	$force_english_language_flag = GetValue('EnsureEnglish')
+	$trader_quote_ID = GetValue('TraderQuoteID')
+	$trader_cost_ID = GetValue('TraderCostID')
+	$trader_cost_value = GetValue('TraderCostValue')
+	$disable_rendering_address = GetValue('DisableRendering')
+	$agent_copy_count = GetValue('AgentCopyCount')
+	$agent_copy_base = GetValue('AgentCopyBase')
+	$last_dialog_ID = GetValue('LastDialogID')
 
 	; EventSystem
-	DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
+	DllStructSetData($INVITE_GUILD_STRUCT, 1, GetValue('CommandPacketSend'))
 	If @error Then LogCriticalError('Failed to set invite guild command')
-	DllStructSetData($inviteGuildStruct, 2, 0x4C)
+	DllStructSetData($INVITE_GUILD_STRUCT, 2, 0x4C)
 	If @error Then LogCriticalError('Failed to set invite guild subcommand')
-	DllStructSetData($useSkillStruct, 1, GetValue('CommandUseSkill'))
+	DllStructSetData($USE_SKILL_STRUCT, 1, GetValue('CommandUseSkill'))
 	If @error Then LogCriticalError('Failed to set CommandUseSkill command')
-	DllStructSetData($moveStruct, 1, GetValue('CommandMove'))
+	DllStructSetData($MOVE_STRUCT, 1, GetValue('CommandMove'))
 	If @error Then LogCriticalError('Failed to set CommandMove command')
-	DllStructSetData($changeTargetStruct, 1, GetValue('CommandChangeTarget'))
+	DllStructSetData($CHANGE_TARGET_STRUCT, 1, GetValue('CommandChangeTarget'))
 	If @error Then LogCriticalError('Failed to set CommandChangeTarget command')
-	DllStructSetData($packetStruct, 1, GetValue('CommandPacketSend'))
+	DllStructSetData($PACKET_STRUCT, 1, GetValue('CommandPacketSend'))
 	If @error Then LogCriticalError('Failed to set CommandPacketSend command')
-	DllStructSetData($sellItemStruct, 1, GetValue('CommandSellItem'))
+	DllStructSetData($SELL_ITEM_STRUCT, 1, GetValue('CommandSellItem'))
 	If @error Then LogCriticalError('Failed to set CommandSellItem command')
-	DllStructSetData($actionStruct, 1, GetValue('CommandAction'))
+	DllStructSetData($ACTION_STRUCT, 1, GetValue('CommandAction'))
 	If @error Then LogCriticalError('Failed to set CommandAction command')
-	DllStructSetData($toggleLanguageStruct, 1, GetValue('CommandToggleLanguage'))
+	DllStructSetData($TOGGLE_LANGUAGE_STRUCT, 1, GetValue('CommandToggleLanguage'))
 	If @error Then LogCriticalError('Failed to set CommandToggleLanguage command')
-	DllStructSetData($useHeroSkillStruct, 1, GetValue('CommandUseHeroSkill'))
+	DllStructSetData($USE_HERO_SKILL_STRUCT, 1, GetValue('CommandUseHeroSkill'))
 	If @error Then LogCriticalError('Failed to set CommandUseHeroSkill command')
-	DllStructSetData($buyItemStruct, 1, GetValue('CommandBuyItem'))
+	DllStructSetData($BUY_ITEM_STRUCT, 1, GetValue('CommandBuyItem'))
 	If @error Then LogCriticalError('Failed to set CommandBuyItem command')
-	DllStructSetData($sendChatStruct, 1, GetValue('CommandSendChat'))
+	DllStructSetData($SEND_CHAT_STRUCT, 1, GetValue('CommandSendChat'))
 	If @error Then LogCriticalError('Failed to set CommandSendChat command')
-	DllStructSetData($sendChatStruct, 2, $HEADER_SEND_CHAT)
+	DllStructSetData($SEND_CHAT_STRUCT, 2, $HEADER_SEND_CHAT)
 	If @error Then LogCriticalError('Failed to set send chat subcommand')
-	DllStructSetData($writeChatStruct, 1, GetValue('CommandWriteChat'))
+	DllStructSetData($WRITE_CHAT_STRUCT, 1, GetValue('CommandWriteChat'))
 	If @error Then LogCriticalError('Failed to set CommandWriteChat command')
-	DllStructSetData($requestQuoteStruct, 1, GetValue('CommandRequestQuote'))
+	DllStructSetData($REQUEST_QUOTE_STRUCT, 1, GetValue('CommandRequestQuote'))
 	If @error Then LogCriticalError('Failed to set CommandRequestQuote command')
-	DllStructSetData($requestQuoteStructSell, 1, GetValue('CommandRequestQuoteSell'))
+	DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 1, GetValue('CommandRequestQuoteSell'))
 	If @error Then LogCriticalError('Failed to set CommandRequestQuoteSell command')
-	DllStructSetData($traderBuyStruct, 1, GetValue('CommandTraderBuy'))
+	DllStructSetData($TRADER_BUY_STRUCT, 1, GetValue('CommandTraderBuy'))
 	If @error Then LogCriticalError('Failed to set CommandTraderBuy command')
-	DllStructSetData($traderSellStruct, 1, GetValue('CommandTraderSell'))
+	DllStructSetData($TRADER_SELL_STRUCT, 1, GetValue('CommandTraderSell'))
 	If @error Then LogCriticalError('Failed to set CommandTraderSell command')
-	DllStructSetData($salvageStruct, 1, GetValue('CommandSalvage'))
+	DllStructSetData($SALVAGE_STRUCT, 1, GetValue('CommandSalvage'))
 	If @error Then LogCriticalError('Failed to set CommandSalvage command')
-	DllStructSetData($increaseAttributeStruct, 1, GetValue('CommandIncreaseAttribute'))
+	DllStructSetData($INCREASE_ATTRIBUTE_STRUCT, 1, GetValue('CommandIncreaseAttribute'))
 	If @error Then LogCriticalError('Failed to set CommandIncreaseAttribute command')
-	DllStructSetData($decreaseAttributeStruct, 1, GetValue('CommandDecreaseAttribute'))
+	DllStructSetData($DECREASE_ATTRIBUTE_STRUCT, 1, GetValue('CommandDecreaseAttribute'))
 	If @error Then LogCriticalError('Failed to set CommandDecreaseAttribute command')
-	DllStructSetData($makeAgentArrayStruct, 1, GetValue('CommandMakeAgentArray'))
+	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 1, GetValue('CommandMakeAgentArray'))
 	If @error Then LogCriticalError('Failed to set CommandMakeAgentArray command')
-	DllStructSetData($changeStatusStruct, 1, GetValue('CommandChangeStatus'))
+	DllStructSetData($CHANGE_STATUS_STRUCT, 1, GetValue('CommandChangeStatus'))
 	If @error Then LogCriticalError('Failed to set CommandChangeStatus command')
-	DllStructSetData($enterMissionStruct, 1, GetValue('CommandEnterMission'))
+	DllStructSetData($ENTER_MISSION_STRUCT, 1, GetValue('CommandEnterMission'))
 	If @error Then LogCriticalError('Failed to set CommandEnterMission command')
 	If $changeTitle Then WinSetTitle(GetWindowHandle(), '', 'Guild Wars - ' & GetCharacterName())
 	If @error Then LogCriticalError('Failed to change window title')
@@ -734,20 +723,20 @@ EndFunc
 
 ;~ Retrieves the value associated with the specified key (internal use only)
 Func GetValue($key)
-	Return $labelsMap[$key] <> Null ? $labelsMap[$key] : -1
+	Return $labels_map[$key] <> Null ? $labels_map[$key] : -1
 EndFunc
 
 ;~ Sets the value for the specified key (internal use only)
 Func SetValue($key, $value)
-	$labelsMap[$key] = $value
+	$labels_map[$key] = $value
 EndFunc
 
 ;~ Scan patterns for Guild Wars game client.
 Func ScanGWBasePatterns()
 	Local $gwBaseAddress = ScanForProcess()
-	$asmInjectionSize = 0
-	$asmCodeOffset = 0
-	$asmInjectionString = ''
+	$asm_injection_size = 0
+	$asm_code_offset = 0
+	$asm_injection_string = ''
 
 	_('ScanBasePointer:')
 	AddPatternToInjection('506A0F6A00FF35')
@@ -953,40 +942,40 @@ Func ScanGWBasePatterns()
 
 	; Check if the scan memory address is empty (no previous injection)
 	If $headerBytes == StringToBinary($GWA2_REFORGED_HEADER_STRING) Then
-	$memoryInterfaceHeader = $fixedHeader
+	$memory_interface_header = $fixedHeader
 	ElseIf $headerBytes == 0 Then
-		$memoryInterfaceHeader = $fixedHeader
+		$memory_interface_header = $fixedHeader
 		$newHeader = True
 	Else
-		$memoryInterfaceHeader = ScanMemoryForPattern(GetProcessHandle(), $GWA2_REFORGED_HEADER_STRING)
-		If $memoryInterfaceHeader = 0 Then
+		$memory_interface_header = ScanMemoryForPattern(GetProcessHandle(), $GWA2_REFORGED_HEADER_STRING)
+		If $memory_interface_header = 0 Then
 			; Allocate a new block of memory for the scan routine
-			$memoryInterfaceHeader = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $GWA2_REFORGED_HEADER_SIZE, 'dword', 0x1000, 'dword', 0x40)
+			$memory_interface_header = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $GWA2_REFORGED_HEADER_SIZE, 'dword', 0x1000, 'dword', 0x40)
 			; Get the allocated memory address
-			$memoryInterfaceHeader = $memoryInterfaceHeader[0]
-			If $memoryInterfaceHeader = 0 Then Return SetError(1, 0, 0)
+			$memory_interface_header = $memory_interface_header[0]
+			If $memory_interface_header = 0 Then Return SetError(1, 0, 0)
 			$newHeader = True
 		EndIf
 	EndIf
 
 	If $newHeader Then
 		; Write the allocated memory address to the scan memory location
-		WriteBinary($GWA2_REFORGED_HEADER_HEXA, $memoryInterfaceHeader)
-		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 0)
-		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 0)
+		WriteBinary($GWA2_REFORGED_HEADER_HEXA, $memory_interface_header)
+		MemoryWrite($memory_interface_header + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 0)
+		MemoryWrite($memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 0)
 	EndIf
 
 	Local $allocationScan = False
-	Local $memoryInterface = MemoryRead($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 'ptr')
+	Local $memoryInterface = MemoryRead($memory_interface_header + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 'ptr')
 
 	If $memoryInterface = 0 Then
 		; Allocate a new block of memory for the scan routine
-		$memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $asmInjectionSize, 'dword', 0x1000, 'dword', 0x40)
+		$memoryInterface = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', 'handle', GetProcessHandle(), 'ptr', 0, 'ulong_ptr', $asm_injection_size, 'dword', 0x1000, 'dword', 0x40)
 		; Get the allocated memory address
 		$memoryInterface = $memoryInterface[0]
 		If $memoryInterface = 0 Then Return SetError(2, 0, 0)
 
-		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, $memoryInterface)
+		MemoryWrite($memory_interface_header + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, $memoryInterface)
 		$allocationScan = True
 	EndIf
 
@@ -995,10 +984,10 @@ Func ScanGWBasePatterns()
 
 	If $allocationScan Then
 		; Write the assembly code to the allocated memory address
-		WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
+		WriteBinary($asm_injection_string, $memoryInterface + $asm_code_offset)
 
 		; Create a new thread in the target process to execute the scan routine
-		Local $thread = SafeDllCall17($kernelHandle, 'int', 'CreateRemoteThread', 'int', GetProcessHandle(), 'ptr', 0, 'int', 0, 'int', GetLabelInfo('ScanProc'), 'ptr', 0, 'int', 0, 'int', 0)
+		Local $thread = SafeDllCall17($kernel_handle, 'int', 'CreateRemoteThread', 'int', GetProcessHandle(), 'ptr', 0, 'int', 0, 'int', GetLabelInfo('ScanProc'), 'ptr', 0, 'int', 0, 'int', 0)
 		; Get the thread ID
 		$thread = $thread[0]
 
@@ -1007,10 +996,10 @@ Func ScanGWBasePatterns()
 		; Wait until the thread is no longer waiting (258 is the WAIT_TIMEOUT constant)
 		Do
 			; Wait for up to 50ms for the thread to finish
-			$result = SafeDllCall7($kernelHandle, 'int', 'WaitForSingleObject', 'int', $thread, 'int', 50)
+			$result = SafeDllCall7($kernel_handle, 'int', 'WaitForSingleObject', 'int', $thread, 'int', 50)
 		Until $result[0] <> 258
 
-		SafeDllCall5($kernelHandle, 'int', 'CloseHandle', 'int', $thread)
+		SafeDllCall5($kernel_handle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
 EndFunc
 
@@ -1028,11 +1017,11 @@ Func ScanForCharname($processHandle)
 	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A14FF751868'))
 	; If you have issues finding your character name, tries this line instead of the previous one :
 	;Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x00E20878'))
-	Local $baseAddress = $scannedMemory[1]
+	Local $base_address = $scannedMemory[1]
 	Local $matchOffset = $scannedMemory[2]
-	Local $tmpAddress = $baseAddress + $matchOffset - 1
+	Local $tmpAddress = $base_address + $matchOffset - 1
 	Local $buffer = SafeDllStructCreate('ptr')
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Local $characterName = DllStructGetData($buffer, 1)
 	Return MemoryRead($characterName, 'wchar[30]', $processHandle)
 EndFunc
@@ -1041,11 +1030,11 @@ EndFunc
 ;~ Scan memory for a pattern - used to find process and to find character names
 Func ScanMemoryForPattern($processHandle, $patternBinary)
 	Local $currentSearchAddress = 0x00000000
-	Local $memoryInfos = SafeDllStructCreate($memoryInfoStructTemplate)
+	Local $memoryInfos = SafeDllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
 
 	; Iterating over regions
 	While $currentSearchAddress < 0x01F00000
-		SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($memoryInfos), 'int', DllStructGetSize($memoryInfos))
+		SafeDllCall11($kernel_handle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($memoryInfos), 'int', DllStructGetSize($memoryInfos))
 		Local $memoryBaseAddress = DllStructGetData($memoryInfos, 'BaseAddress')
 		Local $regionSize = DllStructGetData($memoryInfos, 'RegionSize')
 		Local $state = DllStructGetData($memoryInfos, 'State')
@@ -1058,7 +1047,7 @@ Func ScanMemoryForPattern($processHandle, $patternBinary)
 			Switch $protect
 				Case 0x02, 0x04, 0x08, 0x20, 0x40, 0x80
 					Local $buffer = SafeDllStructCreate('byte[' & $regionSize & ']')
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+					SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 					Local $tmpMemoryData = DllStructGetData($buffer, 1)
 					$tmpMemoryData = BinaryToString($tmpMemoryData)
 					Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
@@ -1077,11 +1066,11 @@ EndFunc
 ;~ Adds a new pattern to the ASM injection string
 Func AddPatternToInjection($pattern)
 	Local $size = Int(0.5 * StringLen($pattern))
-	$asmInjectionString &= '00000000' & SwapEndian(Hex($size, 8)) & '00000000' & $pattern
-	$asmInjectionSize += $size + 12
+	$asm_injection_string &= '00000000' & SwapEndian(Hex($size, 8)) & '00000000' & $pattern
+	$asm_injection_size += $size + 12
 	For $i = 1 To 68 - $size
-		$asmInjectionSize += 1
-		$asmInjectionString &= '00'
+		$asm_injection_size += 1
+		$asm_injection_string &= '00'
 	Next
 EndFunc
 
@@ -1098,15 +1087,15 @@ EndFunc
 ;~ Starts a salvaging session of an item.
 Func StartSalvageWithKit($item, $salvageKit)
 	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
-	Local $salvageSessionID = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $salvageSessionID = MemoryReadPtr($base_address_ptr, $offset)
 	Local $itemID = $item
 	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
 
-	DllStructSetData($salvageStruct, 2, $itemID)
-	DllStructSetData($salvageStruct, 3, DllStructGetData($salvageKit, 'ID'))
-	DllStructSetData($salvageStruct, 4, $salvageSessionID[1])
+	DllStructSetData($SALVAGE_STRUCT, 2, $itemID)
+	DllStructSetData($SALVAGE_STRUCT, 3, DllStructGetData($salvageKit, 'ID'))
+	DllStructSetData($SALVAGE_STRUCT, 4, $salvageSessionID[1])
 
-	Enqueue($salvageStructPtr, 16)
+	Enqueue($SALVAGE_STRUCT_PTR, 16)
 EndFunc
 
 
@@ -1179,8 +1168,8 @@ Func IdentifyBag($bag, $identifyWhiteItems = False, $identifyGoldItems = True)
 	For $i = 1 To DllStructGetData($bag, 'Slots')
 		$item = GetItemBySlot($bag, $i)
 		If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
-		If GetRarity($item) == $RARITY_White And $identifyWhiteItems == False Then ContinueLoop
-		If GetRarity($item) == $RARITY_Gold And $identifyGoldItems == False Then ContinueLoop
+		If GetRarity($item) == $RARITY_WHITE And $identifyWhiteItems == False Then ContinueLoop
+		If GetRarity($item) == $RARITY_GOLD And $identifyGoldItems == False Then ContinueLoop
 		IdentifyItem($item)
 	Next
 EndFunc
@@ -1300,10 +1289,10 @@ Func SellItem($item, $amount = 0)
 	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
 	If $amount = 0 Or $amount > DllStructGetData($item, 'Quantity') Then $amount = DllStructGetData($item, 'Quantity')
 
-	DllStructSetData($sellItemStruct, 2, $amount * DllStructGetData($item, 'Value'))
-	DllStructSetData($sellItemStruct, 3, DllStructGetData($item, 'ID'))
-	DllStructSetData($sellItemStruct, 4, MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)))
-	Enqueue($sellItemStructPtr, 16)
+	DllStructSetData($SELL_ITEM_STRUCT, 2, $amount * DllStructGetData($item, 'Value'))
+	DllStructSetData($SELL_ITEM_STRUCT, 3, DllStructGetData($item, 'ID'))
+	DllStructSetData($SELL_ITEM_STRUCT, 4, MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)))
+	Enqueue($SELL_ITEM_STRUCT_PTR, 16)
 EndFunc
 
 
@@ -1314,11 +1303,11 @@ Func BuyItem($itemPosition, $amount, $value)
 	If Not $merchantItemsBase Then Return
 	If $itemPosition < 1 Or GetMerchantItemsSize() < $itemPosition Then Return
 
-	DllStructSetData($buyItemStruct, 2, $amount)
-	DllStructSetData($buyItemStruct, 3, MemoryRead($merchantItemsBase + 4 * ($itemPosition - 1)))
-	DllStructSetData($buyItemStruct, 4, $amount * $value)
-	DllStructSetData($buyItemStruct, 5, MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)))
-	Enqueue($buyItemStructPtr, 20)
+	DllStructSetData($BUY_ITEM_STRUCT, 2, $amount)
+	DllStructSetData($BUY_ITEM_STRUCT, 3, MemoryRead($merchantItemsBase + 4 * ($itemPosition - 1)))
+	DllStructSetData($BUY_ITEM_STRUCT, 4, $amount * $value)
+	DllStructSetData($BUY_ITEM_STRUCT, 5, MemoryRead(GetScannedAddress('ScanBuyItemBase', 15)))
+	Enqueue($BUY_ITEM_STRUCT_PTR, 20)
 EndFunc
 
 
@@ -1394,28 +1383,28 @@ Func CraftItem($modelID, $amount, $gold, ByRef $materialsArray)
 	Next
 	Local $memorySize = $materialCount * 4
 	Local $processHandle = GetProcessHandle()
-	Local $memoryBuffer = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $memorySize, 'dword', 0x1000, 'dword', 0x40)
+	Local $memoryBuffer = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $memorySize, 'dword', 0x1000, 'dword', 0x40)
 	; Couldnt allocate enough memory
 	If $memoryBuffer = 0 Then Return 0
-	Local $buffer = SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', 0)
+	Local $buffer = SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $memoryBuffer[0], 'ptr', $craftingMaterialStructPtr, 'int', $memorySize, 'int', 0)
 	If $buffer = 0 Then Return
-	DllStructSetData($craftItemStruct, 1, GetValue('CommandCraftItemEx'))
-	DllStructSetData($craftItemStruct, 2, $amount)
-	DllStructSetData($craftItemStruct, 3, $destinationItemPtr)
-	DllStructSetData($craftItemStruct, 4, $memoryBuffer[0])
+	DllStructSetData($CRAFT_ITEM_STRUCT, 1, GetValue('CommandCraftItemEx'))
+	DllStructSetData($CRAFT_ITEM_STRUCT, 2, $amount)
+	DllStructSetData($CRAFT_ITEM_STRUCT, 3, $destinationItemPtr)
+	DllStructSetData($CRAFT_ITEM_STRUCT, 4, $memoryBuffer[0])
 	Debug($memoryBuffer[0])
-	DllStructSetData($craftItemStruct, 5, $materialCount)
+	DllStructSetData($CRAFT_ITEM_STRUCT, 5, $materialCount)
 	Debug($materialCount)
-	DllStructSetData($craftItemStruct, 6, $amount * $gold)
+	DllStructSetData($CRAFT_ITEM_STRUCT, 6, $amount * $gold)
 	Debug($amount * $gold)
-	Enqueue($craftItemStructPtr, 24)
+	Enqueue($CRAFT_ITEM_STRUCT_PTR, 24)
 	$deadlock = TimerInit()
 	Local $currentAmount
 	Do
 		Sleep(250)
 		$currentAmount = CountItemInBagsByModelID($materialsArray[0][0])
 	Until $currentAmount <> $checkQuantity Or $gold <> GetGoldCharacter() Or TimerDiff($deadlock) > 5000
-	SafeDllCall11($kernelHandle, 'ptr', 'VirtualFreeEx', 'handle', $processHandle, 'ptr', $memoryBuffer[0], 'int', 0, 'dword', 0x8000)
+	SafeDllCall11($kernel_handle, 'ptr', 'VirtualFreeEx', 'handle', $processHandle, 'ptr', $memoryBuffer[0], 'int', 0, 'dword', 0x8000)
 	; should be zero if items were successfully crafted
 	Return SetExtended($checkQuantity - $currentAmount - $materialsArray[0][1] * $amount, True)
 EndFunc
@@ -1423,7 +1412,7 @@ EndFunc
 
 ;~ Find an item with the provided modelId in your inventory and return its itemID
 Func GetItemIDFromModelID($modelID)
-	For $i = 1 To $BAGS_COUNT
+	For $i = 1 To $bags_count
 		For $j = 1 To DllStructGetData(GetBag($i), 'slots')
 			Local $item = GetItemBySlot($i, $j)
 			If DllStructGetData($item, 'ModelId') == $modelID Then Return DllStructGetData($item, 'Id')
@@ -1442,7 +1431,7 @@ Func GetMerchantItemPtrByModelId($modelID)
 		$itemID = MemoryRead($merchantBaseAddress + 4 * $i)
 		If ($itemID) Then
 			$offsets[4] = 4 * $itemID
-			$itemPtr = MemoryReadPtr($baseAddressPtr, $offsets)[1]
+			$itemPtr = MemoryReadPtr($base_address_ptr, $offsets)[1]
 			If (MemoryRead($itemPtr + 0x2C) = $modelID) Then
 				Return Ptr($itemPtr)
 			EndIf
@@ -1454,19 +1443,19 @@ EndFunc
 ;~ Request a quote to buy an item from a trader. Returns True if successful.
 Func TraderRequest($modelID, $dyeColor = -1)
 	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
-	Local $itemArraySize = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $itemArraySize = MemoryReadPtr($base_address_ptr, $offset)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
 	Local $found = False
-	Local $quoteID = MemoryRead($traderQuoteId)
-	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
+	Local $quoteID = MemoryRead($trader_quote_ID)
+	Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
 	Local $processHandle = GetProcessHandle()
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
-		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
+		$itemPtr = MemoryReadPtr($base_address_ptr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
 
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'ModelID') = $modelID And DllStructGetData($itemStruct, 'bag') = 0 And DllStructGetData($itemStruct, 'AgentID') == 0 Then
 			If $dyeColor = -1 Or DllStructGetData($itemStruct, 'DyeColor') = $dyeColor Then
 				$found = True
@@ -1476,14 +1465,14 @@ Func TraderRequest($modelID, $dyeColor = -1)
 	Next
 	If Not $found Then Return False
 
-	DllStructSetData($requestQuoteStruct, 2, DllStructGetData($itemStruct, 'ID'))
-	Enqueue($requestQuoteStructPtr, 8)
+	DllStructSetData($REQUEST_QUOTE_STRUCT, 2, DllStructGetData($itemStruct, 'ID'))
+	Enqueue($REQUEST_QUOTE_STRUCT_PTR, 8)
 
 	Local $deadlock = TimerInit()
 	$found = False
 	Do
 		Sleep(20)
-		$found = MemoryRead($traderQuoteId) <> $quoteID
+		$found = MemoryRead($trader_quote_ID) <> $quoteID
 	Until $found Or TimerDiff($deadlock) > GetPing() + 5000
 	Return $found
 EndFunc
@@ -1492,7 +1481,7 @@ EndFunc
 ;~ Buy the requested item.
 Func TraderBuy()
 	If Not GetTraderCostID() Or Not GetTraderCostValue() Then Return False
-	Enqueue($traderBuyStructPtr, 4)
+	Enqueue($TRADER_BUY_STRUCT_PTR, 4)
 	Return True
 EndFunc
 
@@ -1500,20 +1489,20 @@ EndFunc
 ;~ Request to buy an item to a trader, returns the quote value
 Func TraderRequestBuy($item)
 	Local $found = False
-	Local $quoteID = MemoryRead($traderQuoteId)
+	Local $quoteID = MemoryRead($trader_quote_ID)
 	Local $itemID = $item
 
 	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
 
-	DllStructSetData($requestQuoteStruct, 1, $HEADER_REQUEST_QUOTE)
-	DllStructSetData($requestQuoteStruct, 2, $itemID)
-	Enqueue($requestQuoteStructPtr, 8)
+	DllStructSetData($REQUEST_QUOTE_STRUCT, 1, $HEADER_REQUEST_QUOTE)
+	DllStructSetData($REQUEST_QUOTE_STRUCT, 2, $itemID)
+	Enqueue($REQUEST_QUOTE_STRUCT_PTR, 8)
 
 	Local $deadlock = TimerInit()
 	$found = False
 	Do
 		Sleep(20)
-		$found = MemoryRead($traderQuoteId) <> $quoteID
+		$found = MemoryRead($trader_quote_ID) <> $quoteID
 	Until $found Or TimerDiff($deadlock) > GetPing() + 5000
 
 	Return $found
@@ -1523,18 +1512,18 @@ EndFunc
 ;~ Request a quote to sell an item to the trader.
 Func TraderRequestSell($item)
 	Local $found = False
-	Local $quoteID = MemoryRead($traderQuoteId)
+	Local $quoteID = MemoryRead($trader_quote_ID)
 
 	Local $itemID = $item
 	If IsDllStruct($item) Then $itemID = DllStructGetData($item, 'ID')
-	;DllStructSetData($requestQuoteStructSell, 1, $HEADER_REQUEST_QUOTE)
-	DllStructSetData($requestQuoteStructSell, 2, $itemID)
-	Enqueue($requestQuoteStructSellPtr, 8)
+	;DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 1, $HEADER_REQUEST_QUOTE)
+	DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 2, $itemID)
+	Enqueue($REQUEST_QUOTE_STRUCT_SELL_PTR, 8)
 
 	Local $deadlock = TimerInit()
 	Do
 		Sleep(20)
-		$found = MemoryRead($traderQuoteId) <> $quoteID
+		$found = MemoryRead($trader_quote_ID) <> $quoteID
 	Until $found Or TimerDiff($deadlock) > GetPing() + 5000
 	Return $found
 EndFunc
@@ -1543,7 +1532,7 @@ EndFunc
 ;~ ID of the item item being sold.
 Func TraderSell()
 	If Not GetTraderCostID() Or Not GetTraderCostValue() Then Return False
-	Enqueue($traderSellStructPtr, 4)
+	Enqueue($TRADER_SELL_STRUCT_PTR, 4)
 	Return True
 EndFunc
 
@@ -1709,9 +1698,9 @@ EndFunc
 ;~ Move to a location. Returns True if successful
 Func Move($X, $Y, $random = 50)
 	If GetAgentExists(GetMyID()) Then
-		DllStructSetData($moveStruct, 2, $X + Random(-$random, $random))
-		DllStructSetData($moveStruct, 3, $Y + Random(-$random, $random))
-		Enqueue($moveStructPtr, 16)
+		DllStructSetData($MOVE_STRUCT, 2, $X + Random(-$random, $random))
+		DllStructSetData($MOVE_STRUCT, 3, $Y + Random(-$random, $random))
+		Enqueue($MOVE_STRUCT_PTR, 16)
 		Return True
 	Else
 		Return False
@@ -1879,7 +1868,7 @@ EndFunc
 
 ;~ Enter a challenge mission/pvp.
 Func EnterChallenge()
-	Enqueue($enterMissionStructPtr, 4)
+	Enqueue($ENTER_MISSION_STRUCT_PTR, 4)
 EndFunc
 
 
@@ -1892,7 +1881,7 @@ EndFunc
 ;~ Travel to your guild hall.
 Func TravelGuildHall()
 	Local $offset[3] = [0, 0x18, 0x3C]
-	Local $guildHall = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $guildHall = MemoryReadPtr($base_address_ptr, $offset)
 	SendPacket(0x18, $HEADER_GUILDHALL_TRAVEL, MemoryRead($guildHall[1] + 0x64), MemoryRead($guildHall[1] + 0x68), MemoryRead($guildHall[1] + 0x6C), MemoryRead($guildHall[1] + 0x70), 1)
 	Return WaitMapLoading()
 EndFunc
@@ -2045,8 +2034,8 @@ EndFunc
 #Region Targeting
 ;~ Target an agent.
 Func ChangeTarget($agent)
-	DllStructSetData($changeTargetStruct, 2, DllStructGetData($agent, 'ID'))
-	Enqueue($changeTargetStructPtr, 8)
+	DllStructSetData($CHANGE_TARGET_STRUCT, 2, DllStructGetData($agent, 'ID'))
+	Enqueue($CHANGE_TARGET_STRUCT_PTR, 8)
 EndFunc
 
 
@@ -2148,7 +2137,7 @@ Func EnableRendering($showWindow = True)
 		If $windowHandle <> $previousWindow And $previousWindow Then RestoreWindowState($previousWindow, $previousWindowState)
 	EndIf
 	If Not GetIsRendering() Then
-		If Not MemoryWrite($disableRenderingAddress, 0) Then Return SetError(@error, False)
+		If Not MemoryWrite($disable_rendering_address, 0) Then Return SetError(@error, False)
 		Sleep(250)
 	EndIf
 	Return 1
@@ -2160,7 +2149,7 @@ Func DisableRendering($hideWindow = True)
 	Local $windowHandle = GetWindowHandle()
 	If $hideWindow And WinGetState($windowHandle) Then WinSetState($windowHandle, '', @SW_HIDE)
 	If GetIsRendering() Then
-		If Not MemoryWrite($disableRenderingAddress, 1) Then Return SetError(@error, False)
+		If Not MemoryWrite($disable_rendering_address, 1) Then Return SetError(@error, False)
 		Sleep(250)
 	EndIf
 	Return 1
@@ -2169,13 +2158,13 @@ EndFunc
 
 ;~ Toggles graphics rendering
 Func ToggleRendering()
-	Return $renderingEnabled ? EnableRendering() : DisableRendering()
+	Return $rendering_enabled ? EnableRendering() : DisableRendering()
 EndFunc
 
 
 ;~ Returns True if the game is being rendered
 Func GetIsRendering()
-	Return MemoryRead($disableRenderingAddress) <> 1
+	Return MemoryRead($disable_rendering_address) <> 1
 EndFunc
 
 
@@ -2214,9 +2203,9 @@ EndFunc
 #Region Chat
 ;~ Write a message in chat (can only be seen by user).
 Func WriteChat($message, $sender = 'GWA2')
-	Local $address = 256 * $queueCounter + $queueBaseAddress
+	Local $address = 256 * $queue_counter + $queue_base_address
 	; FIXME: rewrite with modulo
-	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
+	$queue_counter = $queue_counter = $queue_size ? 0 : $queue_counter + 1
 	If StringLen($sender) > 19 Then $sender = StringLeft($sender, 19)
 
 	MemoryWrite($address + 4, $sender, 'wchar[20]')
@@ -2224,7 +2213,7 @@ Func WriteChat($message, $sender = 'GWA2')
 	If StringLen($message) > 100 Then $message = StringLeft($message, 100)
 
 	MemoryWrite($address + 44, $message, 'wchar[101]')
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $writeChatStructPtr, 'int', 4, 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $WRITE_CHAT_STRUCT_PTR, 'int', 4, 'int', 0)
 
 	If StringLen($message) > 100 Then WriteChat(StringTrimLeft($message, 100), $sender)
 EndFunc
@@ -2245,13 +2234,13 @@ EndFunc
 
 ;~ Send a message to chat.
 Func SendChat($message, $channel = '!')
-	Local $address = 256 * $queueCounter + $queueBaseAddress
+	Local $address = 256 * $queue_counter + $queue_base_address
 	; FIXME: rewrite with modulo
-	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
+	$queue_counter = $queue_counter = $queue_size ? 0 : $queue_counter + 1
 	If StringLen($message) > 120 Then $message = StringLeft($message, 120)
 
 	MemoryWrite($address + 12, $channel & $message, 'wchar[122]')
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $sendChatStructPtr, 'int', 8, 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', $SEND_CHAT_STRUCT_PTR, 'int', 8, 'int', 0)
 
 	If StringLen($message) > 120 Then SendChat(StringTrimLeft($message, 120), $channel)
 EndFunc
@@ -2273,35 +2262,35 @@ Func GetCastTimeModifier($effects, $usedSkill)
 		$effectID = DllStructGetData($effect, 'EffectId')
 		Switch $effectID
 			; consumables effects
-			Case $ID_Essence_of_Celerity_effect
+			Case $ID_ESSENCE_OF_CELERITY_EFFECT
 				$castTime = 0.80 * $castTime
-			Case $ID_Pie_Induced_Ecstasy
+			Case $ID_PIE_INDUCED_ECSTASY
 				$castTime = 0.85 * $castTime
-			Case $ID_Red_Rock_Candy_Rush
+			Case $ID_RED_ROCK_CANDY_RUSH
 				$castTime = 0.75 * $castTime
-			Case $ID_Blue_Rock_Candy_Rush
+			Case $ID_BLUE_ROCK_CANDY_RUSH
 				$castTime = 0.80 * $castTime
-			Case $ID_Green_Rock_Candy_Rush
+			Case $ID_GREEN_ROCK_CANDY_RUSH
 				$castTime = 0.85 * $castTime
 			; skills shortening cast time
-			Case $ID_Deadly_Paradox
-				If $skillID == $ID_Shadow_Form Then $castTime = 0.667 * $castTime
-			Case $ID_Glyph_of_Sacrifice, $ID_Glyph_of_Essence, $ID_Signet_of_Mystic_Speed
+			Case $ID_DEADLY_PARADOX
+				If $skillID == $ID_SHADOW_FORM Then $castTime = 0.667 * $castTime
+			Case $ID_GLYPH_OF_SACRIFICE, $ID_GLYPH_OF_ESSENCE, $ID_SIGNET_OF_MYSTIC_SPEED
 				$castTime = 0
-			Case $ID_Mindbender
+			Case $ID_MINDBENDER
 				$castTime = 0.80 * $castTime
-			Case $ID_Time_Ward, $ID_Over_the_Limit
+			Case $ID_TIME_WARD, $ID_OVER_THE_LIMIT
 				Local $attributeLevel = DllStructGetData($effect, 'AttributeLevel')
 				; Below equation converts attribute level of Time Ward or Over the Limit effect into shorter cast time, e.g. 80% for attribute levels 14,15,16
 				Local $castTimeReduction = 1 - ((15 + Floor(($attributeLevel + 1) / 3)) / 100)
 				$castTime = $castTimeReduction * $castTime
 			; hexes lengthening cast time
-			Case $ID_Arcane_Conundrum, $ID_Migraine, $ID_Stolen_Speed, $ID_Shared_Burden, $ID_Frustration, $ID_Confusing_Images
+			Case $ID_ARCANE_CONUNDRUM, $ID_MIGRAINE, $ID_STOLEN_SPEED, $ID_SHARED_BURDEN, $ID_FRUSTRATION, $ID_CONFUSING_IMAGES
 				$castTime = 2 * $castTime
-			Case $ID_Sum_of_All_Fears
+			Case $ID_SUM_OF_ALL_FEARS
 				$castTime = 1.5 * $castTime
 			; other effects
-			Case $ID_Dazed
+			Case $ID_DAZED
 				$castTime = 2 * $castTime
 		EndSwitch
 	Next
@@ -2313,10 +2302,10 @@ EndFunc
 ;~ If no target is provided then skill is used on self
 Func UseSkill($skillSlot, $target = Null, $callTarget = False)
 	Local $targetId = ($target == Null) ? GetMyID() : DllStructGetData($target, 'ID')
-	DllStructSetData($useSkillStruct, 2, $skillSlot)
-	DllStructSetData($useSkillStruct, 3, $targetId)
-	DllStructSetData($useSkillStruct, 4, $callTarget)
-	Enqueue($useSkillStructPtr, 16)
+	DllStructSetData($USE_SKILL_STRUCT, 2, $skillSlot)
+	DllStructSetData($USE_SKILL_STRUCT, 3, $targetId)
+	DllStructSetData($USE_SKILL_STRUCT, 4, $callTarget)
+	Enqueue($USE_SKILL_STRUCT_PTR, 16)
 EndFunc
 
 
@@ -2378,10 +2367,10 @@ EndFunc
 ;~ If no target is provided then skill is used on hero who uses the skill
 Func UseHeroSkill($heroIndex, $skillSlot, $target = Null)
 	Local $targetId = ($target == Null) ? GetHeroID($heroIndex) : DllStructGetData($target, 'ID')
-	DllStructSetData($useHeroSkillStruct, 2, GetHeroID($heroIndex))
-	DllStructSetData($useHeroSkillStruct, 3, $targetId)
-	DllStructSetData($useHeroSkillStruct, 4, $skillSlot - 1)
-	Enqueue($useHeroSkillStructPtr, 16)
+	DllStructSetData($USE_HERO_SKILL_STRUCT, 2, GetHeroID($heroIndex))
+	DllStructSetData($USE_HERO_SKILL_STRUCT, 3, $targetId)
+	DllStructSetData($USE_HERO_SKILL_STRUCT, 4, $skillSlot - 1)
+	Enqueue($USE_HERO_SKILL_STRUCT_PTR, 16)
 EndFunc
 
 
@@ -2488,21 +2477,21 @@ Func DropBuff($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $count = MemoryReadPtr($base_address_ptr, $offset1)
 
 	Local $buffer
 	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
-	Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
+	Local $buffStruct = SafeDllStructCreate($BUFF_STRUCT_TEMPLATE)
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
 			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
 			For $j = 0 To $buffCount - 1
 				$offset3[5] = 0 + 0x10 * $j
-				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset3)
-				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
+				$buffStructAddress = MemoryReadPtr($base_address_ptr, $offset3)
+				SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID')) Then
 					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffId'))
 					ExitLoop 2
@@ -2577,26 +2566,26 @@ EndFunc
 
 ;~ Increase attribute by 1
 Func IncreaseAttribute($attributeID, $heroIndex = 0)
-	DllStructSetData($increaseAttributeStruct, 2, $attributeID)
-	DllStructSetData($increaseAttributeStruct, 3, GetHeroID($heroIndex))
-	Enqueue($increaseAttributeStructPtr, 12)
+	DllStructSetData($INCREASE_ATTRIBUTE_STRUCT, 2, $attributeID)
+	DllStructSetData($INCREASE_ATTRIBUTE_STRUCT, 3, GetHeroID($heroIndex))
+	Enqueue($INCREASE_ATTRIBUTE_STRUCT_PTR, 12)
 EndFunc
 
 
 ;~ Decrease attribute by 1
 Func DecreaseAttribute($attributeID, $heroIndex = 0)
-	DllStructSetData($decreaseAttributeStruct, 2, $attributeID)
-	DllStructSetData($decreaseAttributeStruct, 3, GetHeroID($heroIndex))
-	Enqueue($decreaseAttributeStructPtr, 12)
+	DllStructSetData($DECREASE_ATTRIBUTE_STRUCT, 2, $attributeID)
+	DllStructSetData($DECREASE_ATTRIBUTE_STRUCT, 3, GetHeroID($heroIndex))
+	Enqueue($DECREASE_ATTRIBUTE_STRUCT_PTR, 12)
 EndFunc
 
 
 ;~ Set all attributes to 0
 Func ClearAttributes($heroIndex = 0)
 	Local $level
-	If GetMapType() <> $ID_Outpost Then Return False
-	For $i = 0 To UBound($Attributes_Array) - 1
-		Local $attributeID = $Attributes_Array[$i]
+	If GetMapType() <> $ID_OUTPOST Then Return False
+	For $i = 0 To UBound($ATTRIBUTES_ARRAY) - 1
+		Local $attributeID = $ATTRIBUTES_ARRAY[$i]
 		If GetAttributeByID($attributeID, False, $heroIndex) > 0 Then
 			Do
 				$level = GetAttributeByID($attributeID, False, $heroIndex)
@@ -2621,41 +2610,41 @@ EndFunc
 
 ;~ Changes game language to english.
 Func EnsureEnglish($ensureEnglish)
-	MemoryWrite($forceEnglishLanguageFlag, $ensureEnglish ? 1 : 0)
+	MemoryWrite($force_english_language_flag, $ensureEnglish ? 1 : 0)
 EndFunc
 
 
 ;~ Change game language.
 Func ToggleLanguage()
-	DllStructSetData($toggleLanguageStruct, 2, 0x18)
-	Enqueue($toggleLanguageStructPtr, 8)
+	DllStructSetData($TOGGLE_LANGUAGE_STRUCT, 2, 0x18)
+	Enqueue($TOGGLE_LANGUAGE_STRUCT_PTR, 8)
 EndFunc
 
 
 ;~ Changes the maximum distance you can zoom out.
 Func ChangeMaxZoom($zoom = 750)
-	MemoryWrite($zoomWhenStill, $zoom, 'float')
-	MemoryWrite($zoomWhenMoving, $zoom, 'float')
+	MemoryWrite($zoom_when_still, $zoom, 'float')
+	MemoryWrite($zoom_when_moving, $zoom, 'float')
 EndFunc
 
 
 ;~ Empties Guild Wars client memory
 Func ClearMemory()
-	SafeDllCall9($kernelHandle, 'int', 'SetProcessWorkingSetSize', 'int', GetProcessHandle(), 'int', -1, 'int', -1)
+	SafeDllCall9($kernel_handle, 'int', 'SetProcessWorkingSetSize', 'int', GetProcessHandle(), 'int', -1, 'int', -1)
 EndFunc
 
 
 ;~ Changes the maximum memory Guild Wars can use.
 Func SetMaxMemory()
-	SafeDllCall11($kernelHandle, 'int', 'SetProcessWorkingSetSizeEx', 'int', GetProcessHandle(), 'int', 1024 * 1024, 'int', 256 * 1024 * 1024, 'dword', 0)
+	SafeDllCall11($kernel_handle, 'int', 'SetProcessWorkingSetSizeEx', 'int', GetProcessHandle(), 'int', 1024 * 1024, 'int', 256 * 1024 * 1024, 'dword', 0)
 EndFunc
 #EndRegion Misc
 
 
 ;~ Internal use only.
 Func Enqueue($ptr, $size)
-	SafeDllCall13($kernelHandle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queueCounter + $queueBaseAddress, 'ptr', $ptr, 'int', $size, 'int', 0)
-	$queueCounter = $queueCounter = $queueSize ? 0 : $queueCounter + 1
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queue_counter + $queue_base_address, 'ptr', $ptr, 'int', $size, 'int', 0)
+	$queue_counter = $queue_counter = $queue_size ? 0 : $queue_counter + 1
 EndFunc
 
 
@@ -2683,37 +2672,37 @@ EndFunc
 
 ;~ Set the title to Spearmarshall
 Func SetTitleSpearmarshall()
-	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Sunspear_Title)
+	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_SUNSPEAR_TITLE)
 EndFunc
 
 
 ;~ Set the title to Lightbringer
 Func SetTitleLightbringer()
-	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Lightbringer_Title)
+	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_LIGHTBRINGER_TITLE)
 EndFunc
 
 
 ;~ Set the title to Asuran
 Func SetTitleAsuran()
-	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Asura_Title)
+	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_ASURA_TITLE)
 EndFunc
 
 
 ;~ Set the title to Dwarven
 Func SetTitleDwarven()
-	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Dwarf_Title)
+	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_DWARF_TITLE)
 EndFunc
 
 
 ;~ Set the title to Ebon Vanguard
 Func SetTitleEbonVanguard()
-	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Ebon_Vanguard_Title)
+	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_EBON_VANGUARD_TITLE)
 EndFunc
 
 
 ;~ Set the title to Norn
 Func SetTitleNorn()
-	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_Norn_Title)
+	SendPacket(0x8, $HEADER_TITLE_DISPLAY, $ID_NORN_TITLE)
 EndFunc
 
 
@@ -2728,7 +2717,7 @@ EndFunc
 ;~ Return title progression - common part for most titles
 Func GetTitleProgress($finalOffset)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, $finalOffset]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
@@ -2886,7 +2875,7 @@ EndFunc
 ;~ Returns current Tournament points.
 Func GetTournamentPoints()
 	Local $offset[5] = [0, 0x18, 0x2C, 0, 0x18]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 #EndRegion Titles
@@ -2943,7 +2932,7 @@ EndFunc
 ;~ Returns the faction points depending on the offset provided
 Func GetFaction($finalOffset)
 	Local $offset[4] = [0, 0x18, 0x2C, $finalOffset]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 #EndRegion Faction
@@ -3041,10 +3030,10 @@ EndFunc
 ;~ Returns struct of an inventory bag.
 Func GetBag($bag)
 	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x4 * $bag]
-	Local $bagPtr = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $bagPtr = MemoryReadPtr($base_address_ptr, $offset)
 	If $bagPtr[1] = 0 Then Return
-	Local $bagStruct = SafeDllStructCreate($bagStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $bagPtr[1], 'ptr', DllStructGetPtr($bagStruct), 'int', DllStructGetSize($bagStruct), 'int', 0)
+	Local $bagStruct = SafeDllStructCreate($BAG_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $bagPtr[1], 'ptr', DllStructGetPtr($bagStruct), 'int', DllStructGetSize($bagStruct), 'int', 0)
 	Return $bagStruct
 EndFunc
 
@@ -3055,14 +3044,14 @@ Func GetItemBySlot($bag, $slot)
 
 	Local $itemPtr = DllStructGetData($bag, 'ItemArray')
 	Local $buffer = SafeDllStructCreate('ptr')
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr + 4 * ($slot - 1), 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 
-	Local $memoryInfo = DllStructCreate($memoryInfoStructTemplate)
-	SafeDllCall11($kernelHandle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+	Local $memoryInfo = DllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
+	SafeDllCall11($kernel_handle, 'int', 'VirtualQueryEx', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
 	If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then Return 0
 
-	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
+	Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', DllStructGetData($buffer, 1), 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 	Return $itemStruct
 EndFunc
 
@@ -3070,9 +3059,9 @@ EndFunc
 ;~ Returns item struct.
 Func GetItemByItemID($itemID)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0x4 * $itemID]
-	Local $itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
-	Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
+	Local $itemPtr = MemoryReadPtr($base_address_ptr, $offset)
+	Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 	Return $itemStruct
 EndFunc
 
@@ -3080,17 +3069,17 @@ EndFunc
 ;~ Returns item by agent ID.
 Func GetItemByAgentID($agentID)
 	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
-	Local $itemArraySize = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $itemArraySize = MemoryReadPtr($base_address_ptr, $offset)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
 	Local $processHandle = GetProcessHandle()
 
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
-		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
+		$itemPtr = MemoryReadPtr($base_address_ptr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
-		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
+		Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'AgentID') = $agentID Then
 			Return $itemStruct
 		EndIf
@@ -3101,16 +3090,16 @@ EndFunc
 ;~ Returns item by model ID.
 Func GetItemByModelID($modelID)
 	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
-	Local $itemArraySize = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $itemArraySize = MemoryReadPtr($base_address_ptr, $offset)
 	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
 
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
-		$itemPtr = MemoryReadPtr($baseAddressPtr, $offset)
+		$itemPtr = MemoryReadPtr($base_address_ptr, $offset)
 		If $itemPtr[1] = 0 Then ContinueLoop
-		Local $itemStruct = SafeDllStructCreate($itemStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
+		Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
 		If DllStructGetData($itemStruct, 'ModelID') == $modelID Then Return $itemStruct
 	Next
 	Return Null
@@ -3141,7 +3130,7 @@ EndFunc
 ;~ Returns amount of gold in storage.
 Func GetGoldStorage()
 	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x94]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
@@ -3149,28 +3138,28 @@ EndFunc
 ;~ Returns amount of gold being carried.
 Func GetGoldCharacter()
 	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x90]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
 
 ;~ Returns item ID of basic salvage kit in inventory.
 Func FindBasicSalvageKit()
-	Local $kits = [$ID_Salvage_Kit, $ID_Salvage_Kit_2]
+	Local $kits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
 	Return FindKit($kits)
 EndFunc
 
 
 ;~ Returns item ID of salvage kit in inventory (except basic)
 Func FindSalvageKit()
-	Local $kits = [$ID_Expert_Salvage_Kit, $ID_Superior_Salvage_Kit]
+	Local $kits = [$ID_EXPERT_SALVAGE_KIT, $ID_SUPERIOR_SALVAGE_KIT]
 	Return FindKit($kits)
 EndFunc
 
 
 ;~ Returns item ID of identification kit in inventory.
 Func FindIdentificationKit()
-	Local $kits = [$ID_Identification_Kit, $ID_Superior_Identification_Kit]
+	Local $kits = [$ID_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
 	Return FindKit($kits)
 EndFunc
 
@@ -3209,27 +3198,27 @@ Func FindKit($enabledModelIDs)
 			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
 			$value = DllStructGetData($item, 'Value')
 			Switch $modelID
-				Case $ID_Salvage_Kit, $ID_Salvage_Kit_2
+				Case $ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2
 					If $value / 2 < $uses Then
 						$uses = $value / 2
 						$kit = $item
 					EndIf
-				Case $ID_Expert_Salvage_Kit
+				Case $ID_EXPERT_SALVAGE_KIT
 					If $value / 8 < $uses Then
 						$uses = $value / 8
 						$kit = $item
 					EndIf
-				Case $ID_Superior_Salvage_Kit
+				Case $ID_SUPERIOR_SALVAGE_KIT
 					If $value / 10 < $uses Then
 						$uses = $value / 10
 						$kit = $item
 					EndIf
-				Case $ID_Identification_Kit
+				Case $ID_IDENTIFICATION_KIT
 					If $value / 2 < $uses Then
 						$uses = $value / 2
 						$kit = $item
 					EndIf
-				Case $ID_Superior_Identification_Kit
+				Case $ID_SUPERIOR_IDENTIFICATION_KIT
 					If $value / 2.5 < $uses Then
 						$uses = $value / 2.5
 						$kit = $item
@@ -3272,13 +3261,13 @@ EndFunc
 Func KitsRequired($requiredkitUses, $kitModelID)
 	Local $usesPerKit
 	Switch $kitModelID
-		Case $ID_Perfect_Salvage_Kit, $ID_Charr_Salvage_Kit
+		Case $ID_PERFECT_SALVAGE_KIT, $ID_CHARR_SALVAGE_KIT
 			$usesPerKit = 5
-		Case $ID_Salvage_Kit_2
+		Case $ID_SALVAGE_KIT_2
 			$usesPerKit = 10
-		Case $ID_Identification_Kit, $ID_Salvage_Kit, $ID_Expert_Salvage_Kit
+		Case $ID_IDENTIFICATION_KIT, $ID_SALVAGE_KIT, $ID_EXPERT_SALVAGE_KIT
 			$usesPerKit = 25
-		Case $ID_Superior_Identification_Kit, $ID_Superior_Salvage_Kit
+		Case $ID_SUPERIOR_IDENTIFICATION_KIT, $ID_SUPERIOR_SALVAGE_KIT
 			$usesPerKit = 100
 	EndSwitch
 	Return Ceiling($requiredkitUses / $usesPerKit)
@@ -3287,20 +3276,20 @@ EndFunc
 
 ;~ Returns the item ID of the quoted item.
 Func GetTraderCostID()
-	Return MemoryRead($traderCostId)
+	Return MemoryRead($trader_cost_ID)
 EndFunc
 
 
 ;~ Returns the cost of the requested item.
 Func GetTraderCostValue()
-	Return MemoryRead($traderCostValue)
+	Return MemoryRead($trader_cost_value)
 EndFunc
 
 
 ;~ Internal use for BuyItem()
 Func GetMerchantItemsBase()
 	Local $offset[4] = [0, 0x18, 0x2C, 0x24]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
@@ -3308,7 +3297,7 @@ EndFunc
 ;~ Internal use for BuyItem()
 Func GetMerchantItemsSize()
 	Local $offset[4] = [0, 0x18, 0x2C, 0x28]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 #EndRegion Item
@@ -3318,7 +3307,7 @@ EndFunc
 ;~ Returns number of heroes you control.
 Func GetHeroCount()
 	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x2C]
-	Local $heroCount = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $heroCount = MemoryReadPtr($base_address_ptr, $offset)
 	Return $heroCount[1]
 EndFunc
 
@@ -3327,7 +3316,7 @@ EndFunc
 Func GetHeroID($heroIndex)
 	If $heroIndex == 0 Then Return GetMyID()
 	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0x18 * ($heroIndex - 1)]
-	Local $agentID = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $agentID = MemoryReadPtr($base_address_ptr, $offset)
 	Return $agentID[1]
 EndFunc
 
@@ -3338,7 +3327,7 @@ Func GetHeroNumberByAgentID($agentID)
 	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 0x18 * ($i - 1)
-		$heroID = MemoryReadPtr($baseAddressPtr, $offset)
+		$heroID = MemoryReadPtr($base_address_ptr, $offset)
 		If $heroID[1] == $agentID Then Return $i
 	Next
 	Return Null
@@ -3351,7 +3340,7 @@ Func GetHeroNumberByHeroID($heroID)
 	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 8 + 0x18 * ($i - 1)
-		$agentID = MemoryReadPtr($baseAddressPtr, $offset)
+		$agentID = MemoryReadPtr($base_address_ptr, $offset)
 		If $agentID[1] == $heroID Then Return $i
 	Next
 	Return 0
@@ -3364,11 +3353,11 @@ Func GetHeroProfession($heroIndex, $secondary = False)
 	Local $buffer
 	$heroIndex = GetHeroID($heroIndex)
 	For $i = 0 To GetHeroCount()
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset)
 		If $buffer[1] = $heroIndex Then
 			$offset[4] += 4
 			If $secondary Then $offset[4] += 4
-			$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+			$buffer = MemoryReadPtr($base_address_ptr, $offset)
 			Return $buffer[1]
 		EndIf
 		$offset[4] += 0x14
@@ -3394,8 +3383,8 @@ EndFunc
 Func GetAgentByID($agentID)
 	If $agentID = -2 Then $agentID = GetMyID()
 	Local $agentPtr = GetAgentPtr($agentID)
-	Local $agentStruct = SafeDllStructCreate($agentStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', 0)
+	Local $agentStruct = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', 0)
 	Return $agentStruct
 EndFunc
 
@@ -3403,7 +3392,7 @@ EndFunc
 ;~ Internal use for GetAgentByID()
 Func GetAgentPtr($agentID)
 	Local $offset[3] = [0, 4 * $agentID, 0]
-	Local $agentStructAddress = MemoryReadPtr($agentBaseAddress, $offset)
+	Local $agentStructAddress = MemoryReadPtr($agent_base_address, $offset)
 	Return $agentStructAddress[0]
 EndFunc
 
@@ -3434,12 +3423,12 @@ EndFunc
 
 ;~ Returns agent by name.
 Func GetAgentByName($agentName)
-	If $useStringLogging = False Then Return
+	If $use_string_logging = False Then Return
 
 	Local $name, $address
 
 	For $i = 1 To GetMaxAgents()
-		$address = $stringLogBaseAddress + 256 * $i
+		$address = $string_log_base_address + 256 * $i
 		$name = MemoryRead($address, 'wchar [128]')
 		$name = StringRegExpReplace($name, '[<]{1}([^>]+)[>]{1}', '')
 		If StringInStr($name, $agentName) > 0 Then Return GetAgentByID($i)
@@ -3453,7 +3442,7 @@ Func GetAgentByName($agentName)
 	DisplayAll(False)
 
 	For $i = 1 To GetMaxAgents()
-		$address = $stringLogBaseAddress + 256 * $i
+		$address = $string_log_base_address + 256 * $i
 		$name = MemoryRead($address, 'wchar [128]')
 		$name = StringRegExpReplace($name, '[<]{1}([^>]+)[>]{1}', '')
 		If StringInStr($name, $agentName) > 0 Then Return GetAgentByID($i)
@@ -3463,19 +3452,19 @@ EndFunc
 
 ;~ Returns the nearest signpost to an agent. Caution, chest can also be matched as static object agent
 Func GetNearestSignpostToAgent($agent)
-	Return GetNearestAgentToAgent($agent, $ID_Agent_Type_Static)
+	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_STATIC)
 EndFunc
 
 
 ;~ Returns the nearest NPC to an agent.
 Func GetNearestNPCToAgent($agent)
-	Return GetNearestAgentToAgent($agent, $ID_Agent_Type_NPC, NPCAgentFilter)
+	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_NPC, NPCAgentFilter)
 EndFunc
 
 
 ;~ Return True if an agent is an NPC, False otherwise
 Func NPCAgentFilter($agent)
-	If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Npc Then Return False
+	If DllStructGetData($agent, 'Allegiance') <> $ID_ALLEGIANCE_NPC Then Return False
 	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
 	Return True
@@ -3484,16 +3473,16 @@ EndFunc
 
 ;~ Returns the nearest enemy to an agent.
 Func GetNearestEnemyToAgent($agent)
-	Return GetNearestAgentToAgent($agent, $ID_Agent_Type_NPC, EnemyAgentFilter)
+	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_NPC, EnemyAgentFilter)
 EndFunc
 
 
 ;~ Return True if an agent is an enemy, False otherwise
 Func EnemyAgentFilter($agent)
-	If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Foe Then Return False
+	If DllStructGetData($agent, 'Allegiance') <> $ID_ALLEGIANCE_FOE Then Return False
 	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
 	If GetIsDead($agent) Then Return False
-	If DllStructGetData($agent, 'TypeMap') == $ID_TypeMap_Idle_Minion Then Return False
+	If DllStructGetData($agent, 'TypeMap') == $ID_TYPEMAP_IDLE_MINION Then Return False
 	Return True
 EndFunc
 
@@ -3524,28 +3513,28 @@ EndFunc
 ;~ Returns the nearest item to an agent.
 Func GetNearestItemToAgent($agent, $canPickUp = True)
 	If $canPickUp Then
-		Return GetNearestAgentToAgent($agent, $ID_Agent_Type_Item, GetCanPickUp)
+		Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_ITEM, GetCanPickUp)
 	Else
-		Return GetNearestAgentToAgent($agent, $ID_Agent_Type_Item)
+		Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_ITEM)
 	EndIf
 EndFunc
 
 
 ;~ Returns the nearest signpost to a set of coordinates. Caution, chest can also be matched as static object agent
 Func GetNearestSignpostToCoords($X, $Y)
-	Return GetNearestAgentToCoords($X, $Y, $ID_Agent_Type_Static)
+	Return GetNearestAgentToCoords($X, $Y, $ID_AGENT_TYPE_STATIC)
 EndFunc
 
 
 ;~ Returns the nearest NPC to a set of coordinates.
 Func GetNearestNPCToCoords($X, $Y)
-	Return GetNearestAgentToCoords($X, $Y, $ID_Agent_Type_NPC, NPCAgentFilter)
+	Return GetNearestAgentToCoords($X, $Y, $ID_AGENT_TYPE_NPC, NPCAgentFilter)
 EndFunc
 
 
 ;~ Returns the nearest enemy to coordinates
 Func GetNearestEnemyToCoords($X, $Y)
-	Return GetNearestAgentToCoords($X, $Y, $ID_Agent_Type_NPC, EnemyAgentFilter)
+	Return GetNearestAgentToCoords($X, $Y, $ID_AGENT_TYPE_NPC, EnemyAgentFilter)
 EndFunc
 
 
@@ -3586,13 +3575,13 @@ EndFunc
 ;~ Param: an array returned by GetAgentArray. This is totally optional, but can greatly improve script speed.
 ;~ Caution in outposts all players are matched as team members even when they are not in team
 Func GetParty($agents = Null)
-	If $agents == Null Then $agents = GetAgentArray($ID_Agent_Type_NPC)
+	If $agents == Null Then $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
 	; array of full party 8 members, indexed from 0
 	Local $fullParty[8]
 	Local $partySize = 0
 	For $agent In $agents
-		If DllStructGetData($agent, 'Allegiance') <> $ID_Allegiance_Team Then ContinueLoop
-		If Not BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TypeMap_Idle_Ally) Then ContinueLoop
+		If DllStructGetData($agent, 'Allegiance') <> $ID_ALLEGIANCE_TEAM Then ContinueLoop
+		If Not BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TYPEMAP_IDLE_ALLY) Then ContinueLoop
 		$fullParty[$partySize] = $agent
 		$partySize += 1
 		; safeguard to not exceed party size, especially in towns with many players
@@ -3624,26 +3613,26 @@ Func GetAgentArray($type = 0)
 	Local $struct
 	Local $count
 	Local $buffer = ''
-	DllStructSetData($makeAgentArrayStruct, 2, $type)
-	MemoryWrite($agentCopyCount, -1, 'long')
-	Enqueue($makeAgentArrayStructPtr, 8)
+	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 2, $type)
+	MemoryWrite($agent_copy_count, -1, 'long')
+	Enqueue($MAKE_AGENT_ARRAY_STRUCT_PTR, 8)
 	Local $deadlock = TimerInit()
 	Do
 		Sleep(1)
-		$count = MemoryRead($agentCopyCount, 'long')
+		$count = MemoryRead($agent_copy_count, 'long')
 	Until $count >= 0 Or TimerDiff($deadlock) > 5000
 	If $count < 0 Then $count = 0
 
 	Local $returnArray[$count]
 	If $count > 0 Then
 		For $i = 0 To $count - 1
-			; 448 = size of $agentStructTemplate in bytes
+			; 448 = size of $AGENT_STRUCT_TEMPLATE in bytes
 			$buffer &= 'Byte[448];'
 		Next
 		$buffer = SafeDllStructCreate($buffer)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentCopyBase, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agent_copy_base, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		For $i = 0 To $count - 1
-			$returnArray[$i] = SafeDllStructCreate($agentStructTemplate)
+			$returnArray[$i] = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
 			$struct = SafeDllStructCreate('byte[448]', DllStructGetPtr($returnArray[$i]))
 			DllStructSetData($struct, 1, DllStructGetData($buffer, $i + 1))
 		Next
@@ -3660,7 +3649,7 @@ EndFunc
 
 ;~ Return the number of enemy agents targeting the given party member.
 Func GetPartyMemberDanger($agent, $agents = Null)
-	If $agents == Null Then $agents = GetAgentArray($ID_Agent_Type_NPC)
+	If $agents == Null Then $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
 	$party = GetParty($agents)
 	$partyMemberDangers = GetPartyDanger($agents)
 
@@ -3676,7 +3665,7 @@ EndFunc
 ;~ Param1: an array returned by GetAgentArray(). This is totally optional, but can greatly improve script speed.
 ;~ Param2: an array returned by GetParty() This is totally optional, but can greatly improve script speed.
 Func GetPartyDanger($agents = Null, $party = Null)
-	If $agents == Null Then $agents = GetAgentArray($ID_Agent_Type_NPC)
+	If $agents == Null Then $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
 	If $party == Null Then $party = GetParty($agents)
 
 	Local $resultLevels[UBound($party)]
@@ -3689,7 +3678,7 @@ Func GetPartyDanger($agents = Null, $party = Null)
 		If GetIsDead($agent) Then ContinueLoop
 		Local $allegiance = DllStructGetData($agent, 'Allegiance')
 		; ignore spirits (4), pets (4), minions (5), NPCs (6), which have allegiance number higher than foe (3)
-		If $allegiance > $ID_Allegiance_Foe Then ContinueLoop
+		If $allegiance > $ID_ALLEGIANCE_FOE Then ContinueLoop
 
 		Local $targetID = DllStructGetData(GetTarget($agent), 'ID')
 		Local $team = DllStructGetData($agent, 'Team')
@@ -3723,7 +3712,7 @@ EndFunc
 ;~	0x100 = Observe-Mode
 Func GetPartyState($flag)
 	Local $offset[4] = [0, 0x18, 0x4C, 0x14]
-	Local $bitMask = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $bitMask = MemoryReadPtr($base_address_ptr, $offset)
 	Return BitAND($bitMask[1], $flag) > 0
 EndFunc
 #EndRegion Agent
@@ -3732,19 +3721,19 @@ EndFunc
 #Region AgentInfo
 ;~ Tests if an agent is alive NPC, like player, party members, allies, foes.
 Func IsNPCAgentType($agent)
-	Return DllStructGetData($agent, 'Type') = $ID_Agent_Type_NPC
+	Return DllStructGetData($agent, 'Type') = $ID_AGENT_TYPE_NPC
 EndFunc
 
 
 ;~ Tests if an agent is a signpost/chest/etc.
 Func IsStaticAgentType($agent)
-	Return DllStructGetData($agent, 'Type') = $ID_Agent_Type_Static
+	Return DllStructGetData($agent, 'Type') = $ID_AGENT_TYPE_STATIC
 EndFunc
 
 
 ;~ Tests if an agent is an item.
 Func IsItemAgentType($agent)
-	Return DllStructGetData($agent, 'Type') = $ID_Agent_Type_Item
+	Return DllStructGetData($agent, 'Type') = $ID_AGENT_TYPE_ITEM
 EndFunc
 
 
@@ -3866,14 +3855,14 @@ EndFunc
 Func GetPlayerName($agent)
 	Local $loginNumber = DllStructGetData($agent, 'LoginNumber')
 	Local $offset[6] = [0, 0x18, 0x2C, 0x80C, 76 * $loginNumber + 0x28, 0]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset, 'wchar[30]')
+	Local $result = MemoryReadPtr($base_address_ptr, $offset, 'wchar[30]')
 	Return $result[1]
 EndFunc
 
 
 ;~ Returns the name of an agent.
 Func GetAgentName($agent)
-	Local $address = $stringLogBaseAddress + 256 * DllStructGetData($agent, 'ID')
+	Local $address = $string_log_base_address + 256 * DllStructGetData($agent, 'ID')
 	Local $agentName = MemoryRead($address, 'wchar [128]')
 
 	If $agentName = '' Then
@@ -3892,12 +3881,12 @@ EndFunc
 ;~ Returns current number of buffs being maintained.
 Func GetBuffCount($heroIndex = 0)
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $count = MemoryReadPtr($base_address_ptr, $offset1)
 	Local $buffer
 	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
 			Return MemoryRead($buffer[0] + 0xC)
 		EndIf
@@ -3911,19 +3900,19 @@ Func GetIsTargetBuffed($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $count = MemoryReadPtr($base_address_ptr, $offset1)
 	Local $buffer
 	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
 			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
 			For $j = 0 To $buffCount - 1
 				$offset3[5] = 0 + 0x10 * $j
-				$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset3)
-				Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
-				SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
+				$buffStructAddress = MemoryReadPtr($base_address_ptr, $offset3)
+				Local $buffStruct = SafeDllStructCreate($BUFF_STRUCT_TEMPLATE)
+				SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And DllStructGetData($buffStruct, 'TargetId') == DllStructGetData($agent, 'ID') Then
 					Return $j + 1
 				EndIf
@@ -3937,17 +3926,17 @@ EndFunc
 ;~ Returns buff struct.
 Func GetBuffByIndex($buffIndex, $heroIndex = 0)
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $count = MemoryReadPtr($base_address_ptr, $offset1)
 	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
 	Local $buffer
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
 			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0x10 * ($buffIndex - 1)]
-			$buffStructAddress = MemoryReadPtr($baseAddressPtr, $offset3)
-			Local $buffStruct = SafeDllStructCreate($buffStructTemplate)
-			SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
+			$buffStructAddress = MemoryReadPtr($base_address_ptr, $offset3)
+			Local $buffStruct = SafeDllStructCreate($BUFF_STRUCT_TEMPLATE)
+			SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 			Return $buffStruct
 		EndIf
 	Next
@@ -3962,9 +3951,9 @@ Func GetSkillbar($heroIndex = 0)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
 	For $i = 0 To GetHeroCount()
 		$offset[4] = $i * 0xBC
-		Local $skillbarStructAddress = MemoryReadPtr($baseAddressPtr, $offset)
-		Local $skillbarStruct = SafeDllStructCreate($skillbarStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
+		Local $skillbarStructAddress = MemoryReadPtr($base_address_ptr, $offset)
+		Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
 		If DllStructGetData($skillbarStruct, 'AgentId') == GetHeroID($heroIndex) Then
 			Return $skillbarStruct
 		EndIf
@@ -3987,7 +3976,7 @@ EndFunc
 ;~ Returns the recharge time remaining of an equipped skill in milliseconds.
 Func GetSkillbarSkillRecharge($skillSlot, $heroIndex = 0)
 	Local $skillbar = GetSkillbar($heroIndex)
-	; Recharge in $skillbarStructTemplate is 0 when skill is already recharged or is the timestamp in the future when the skill will be recharged if it is recharging
+	; Recharge in $SKILLBAR_STRUCT_TEMPLATE is 0 when skill is already recharged or is the timestamp in the future when the skill will be recharged if it is recharging
 	Local $rechargeFutureTimestamp = DllStructGetData($skillbar, 'Recharge' & $skillSlot)
 	Local $skill = GetSkillByID(DllStructGetData($skillbar, 'SkillId' & $skillSlot))
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
@@ -4001,9 +3990,9 @@ EndFunc
 
 ;~ Returns skill struct.
 Func GetSkillByID($skillID)
-	Local $skillstructAddress = $skillBaseAddress + (0xA4 * $skillID)
-	Local $skillStruct = SafeDllStructCreate($skillStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', 0)
+	Local $skillstructAddress = $skill_base_address + (0xA4 * $skillID)
+	Local $skillStruct = SafeDllStructCreate($SKILL_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', 0)
 	Return $skillStruct
 EndFunc
 
@@ -4012,18 +4001,18 @@ EndFunc
 Func GetMorale($heroIndex = 0)
 	Local $agentID = GetHeroID($heroIndex)
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x638]
-	Local $index = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $index = MemoryReadPtr($base_address_ptr, $offset1)
 	Local $offset2[6] = [0, 0x18, 0x2C, 0x62C, 8 + 0xC * BitAND($agentID, $index[1]), 0x18]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset2)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset2)
 	Return $result[1] - 100
 EndFunc
 
 
 ;~ Returns attribute struct.
 Func GetAttributeInfoByID($attributeID)
-	Local $attributeStructAddress = $attributeInfoPtr + (0x14 * $attributeID)
-	Local $attributeStruct = SafeDllStructCreate($attributeStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $attributeStructAddress, 'ptr', DllStructGetPtr($attributeStruct), 'int', DllStructGetSize($attributeStruct), 'int', 0)
+	Local $attributeStructAddress = $attribute_info_ptr + (0x14 * $attributeID)
+	Local $attributeStruct = SafeDllStructCreate($ATTRIBUTE_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $attributeStructAddress, 'ptr', DllStructGetPtr($attributeStruct), 'int', DllStructGetSize($attributeStruct), 'int', 0)
 	Return $attributeStruct
 EndFunc
 
@@ -4054,30 +4043,30 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 	Local $effectCount, $effectStructAddress
 	; Offsets have to be kept separate - else we risk cross-call contamination - Avoid ReDim !
 	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
-	Local $count = MemoryReadPtr($baseAddressPtr, $offset1)
+	Local $count = MemoryReadPtr($base_address_ptr, $offset1)
 	Local $buffer
 	For $i = 0 To $count[1] - 1
 		Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0x24 * $i]
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset2)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
 			Local $offset3[5] = [0, 0x18, 0x2C, 0x508, 0x1C + 0x24 * $i]
-			$effectCount = MemoryReadPtr($baseAddressPtr, $offset3)
+			$effectCount = MemoryReadPtr($base_address_ptr, $offset3)
 
 			Local $offset4[6] = [0, 0x18, 0x2C, 0x508, 0x14 + 0x24 * $i, 0]
-			$effectStructAddress = MemoryReadPtr($baseAddressPtr, $offset4)
+			$effectStructAddress = MemoryReadPtr($base_address_ptr, $offset4)
 
 			If $skillID = 0 Then
 				Local $resultArray[$effectCount[1]]
 				For $j = 0 To $effectCount[1] - 1
-					$resultArray[$j] = SafeDllStructCreate($effectStructTemplate)
+					$resultArray[$j] = SafeDllStructCreate($EFFECT_STRUCT_TEMPLATE)
 					$effectStructAddress[1] = $effectStructAddress[0] + 24 * $j
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$j]), 'int', 24, 'int', 0)
+					SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[1], 'ptr', DllStructGetPtr($resultArray[$j]), 'int', 24, 'int', 0)
 				Next
 				Return $resultArray
 			Else
 				For $j = 0 To $effectCount[1] - 1
-					Local $effectStruct = SafeDllStructCreate($effectStructTemplate)
-					SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $j, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
+					Local $effectStruct = SafeDllStructCreate($EFFECT_STRUCT_TEMPLATE)
+					SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $effectStructAddress[0] + 24 * $j, 'ptr', DllStructGetPtr($effectStruct), 'int', 24, 'int', 0)
 
 					If DllStructGetData($effectStruct, 'SkillID') == $skillID Then
 						Return $effectStruct
@@ -4115,7 +4104,7 @@ EndFunc
 ;~ FIXME: this function might not be working correctly
 ;~ Returns the timestamp used for effects and skills (milliseconds).
 Func GetSkillTimer()
-	Return MemoryRead($skillTimer, 'long')
+	Return MemoryRead($skill_timer, 'long')
 EndFunc
 
 
@@ -4130,10 +4119,10 @@ Func GetAttributeByID($attributeID, $withRunes = False, $heroIndex = 0)
 	$offset[3] = 0xAC
 	For $i = 0 To GetHeroCount()
 		$offset[4] = 0x3D8 * $i
-		$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+		$buffer = MemoryReadPtr($base_address_ptr, $offset)
 		If $buffer[1] == $agentID Then
 			$offset[4] = 0x3D8 * $i + 0x14 * $attributeID + $withRunes ? 0xC : 0x8
-			$buffer = MemoryReadPtr($baseAddressPtr, $offset)
+			$buffer = MemoryReadPtr($base_address_ptr, $offset)
 			Return $buffer[1]
 		EndIf
 	Next
@@ -4143,7 +4132,7 @@ EndFunc
 ;~ Returns amount of experience.
 Func GetExperience()
 	Local $offset[4] = [0, 0x18, 0x2C, 0x740]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
@@ -4157,7 +4146,7 @@ EndFunc
 ;~ Returns number of foes that have been killed so far.
 Func GetFoesKilled()
 	Local $offset[4] = [0, 0x18, 0x2C, 0x84C]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
@@ -4165,20 +4154,20 @@ EndFunc
 ;~ Returns number of enemies left to kill for vanquish.
 Func GetFoesToKill()
 	Local $offset[4] = [0, 0x18, 0x2C, 0x850]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
 
 ;~ Returns number of agents currently loaded.
 Func GetMaxAgents()
-	Return MemoryRead($maxAgents)
+	Return MemoryRead($max_agents)
 EndFunc
 
 
 ;~ Returns your agent ID.
 Func GetMyID()
-	Return MemoryRead($myID)
+	Return MemoryRead($my_ID)
 EndFunc
 
 
@@ -4191,37 +4180,37 @@ EndFunc
 
 ;~ Returns current target ID.
 Func GetCurrentTargetID()
-	Return MemoryRead($currentTargetAgentId)
+	Return MemoryRead($current_target_agent_ID)
 EndFunc
 
 
 ;~ Returns current ping.
 Func GetPing()
-	Local $ping = MemoryRead($scanPingAddress)
+	Local $ping = MemoryRead($scan_ping_address)
 	Return $ping < 10 ? 10 : $ping
 EndFunc
 
 
 ;~ Alternate way to get anything, reads directly from game memory without call to Scan something - but is not robust and will break anytime the game changes
 Func GetDataFromRelativeAddress($relativeCheatEngineAddress, $size)
-	Local $baseAddress = ScanForProcess()
-	Local $fullAddress = $baseAddress + $relativeCheatEngineAddress - 0x1000
+	Local $base_address = ScanForProcess()
+	Local $fullAddress = $base_address + $relativeCheatEngineAddress - 0x1000
 	Local $buffer = DllStructCreate('byte[' & $size & ']')
-	Local $result = SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Return $buffer
 EndFunc
 
 
 ;~ Returns current map ID
 Func GetMapID()
-	Return MemoryRead($mapID)
+	Return MemoryRead($map_ID)
 EndFunc
 
 
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetMapType()
 	Local $offset[1] = [0x00]
-	Local $result = MemoryReadPtr($instanceInfoPtr, $offset, 'dword')
+	Local $result = MemoryReadPtr($instance_info_ptr, $offset, 'dword')
 	Return $result[1]
 EndFunc
 
@@ -4230,9 +4219,9 @@ EndFunc
 Func GetAreaInfoByID($mapID = 0)
 	If $mapID = 0 Then $mapID = GetMapID()
 
-	Local $areaInfoAddress = $areaInfoPtr + (0x7C * $mapID)
-	Local $areaInfoStruct = SafeDllStructCreate($areaInfoStructTemplate)
-	SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $areaInfoAddress, 'ptr', DllStructGetPtr($areaInfoStruct), 'int', DllStructGetSize($areaInfoStruct), 'int', 0)
+	Local $areaInfoAddress = $area_info_ptr + (0x7C * $mapID)
+	Local $areaInfoStruct = SafeDllStructCreate($AREA_INFO_STRUCT_TEMPLATE)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $areaInfoAddress, 'ptr', DllStructGetPtr($areaInfoStruct), 'int', DllStructGetSize($areaInfoStruct), 'int', 0)
 
 	Return $areaInfoStruct
 EndFunc
@@ -4262,7 +4251,7 @@ EndFunc
 ;~ FIXME: this function might not be working correctly
 ;~ Returns current load-state.
 Func GetMapLoading()
-	Return MemoryRead($mapLoading)
+	Return MemoryRead($map_loading)
 EndFunc
 
 
@@ -4275,20 +4264,20 @@ EndFunc
 ;~ Returns current district
 Func GetDistrict()
 	Local $offset[4] = [0, 0x18, 0x44, 0x220]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
 
 ;~ Internal use for travel functions.
 Func GetRegion()
-	Return MemoryRead($regionId)
+	Return MemoryRead($region_ID)
 EndFunc
 
 
 ;~ Internal use for travel functions.
 Func GetLanguage()
-	Return MemoryRead($languageId)
+	Return MemoryRead($language_ID)
 EndFunc
 
 
@@ -4298,22 +4287,22 @@ Func GetQuestByID($questID = 0)
 	Local $questPtr, $questLogSize, $quest
 	Local $offset[4] = [0, 0x18, 0x2C, 0x534]
 
-	$questLogSize = MemoryReadPtr($baseAddressPtr, $offset)
+	$questLogSize = MemoryReadPtr($base_address_ptr, $offset)
 
 	If $questID = 0 Then
 		$offset[1] = 0x18
 		$offset[2] = 0x2C
 		$offset[3] = 0x528
-		$quest = MemoryReadPtr($baseAddressPtr, $offset)
+		$quest = MemoryReadPtr($base_address_ptr, $offset)
 		$questID = $quest[1]
 	EndIf
 
 	Local $offset[5] = [0, 0x18, 0x2C, 0x52C, 0]
 	For $i = 0 To $questLogSize[1]
 		$offset[4] = 0x34 * $i
-		$questPtr = MemoryReadPtr($baseAddressPtr, $offset)
-		$quest = SafeDllStructCreate($questStructTemplate)
-		SafeDllCall13($kernelHandle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($quest), 'int', DllStructGetSize($quest), 'int', 0)
+		$questPtr = MemoryReadPtr($base_address_ptr, $offset)
+		$quest = SafeDllStructCreate($QUEST_STRUCT_TEMPLATE)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $questPtr[0], 'ptr', DllStructGetPtr($quest), 'int', DllStructGetSize($quest), 'int', 0)
 		If DllStructGetData($quest, 'ID') = $questID Then Return $quest
 	Next
 	Return Null
@@ -4322,14 +4311,14 @@ EndFunc
 
 ;~ Returns if you're logged in.
 Func GetLoggedIn()
-	Return MemoryRead($isLoggedIn)
+	Return MemoryRead($is_logged_in)
 EndFunc
 
 
 ;~ Returns language currently being used.
 Func GetDisplayLanguage()
 	Local $offset[6] = [0, 0x18, 0x18, 0x194, 0x4C, 0x40]
-	Local $result = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $result = MemoryReadPtr($base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
 
@@ -4341,40 +4330,40 @@ Func GetInstanceUpTime()
 	$offset[1] = 0x18
 	$offset[2] = 0x8
 	$offset[3] = 0x1AC
-	Local $timer = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $timer = MemoryReadPtr($base_address_ptr, $offset)
 	Return $timer[1]
 EndFunc
 
 
 ;~ Returns the game client's build number
 Func GetBuildNumber()
-	Return $buildNumber
+	Return $build_number
 EndFunc
 
 
 ;~ Returns primary attribute from the provided profession
 Func GetProfPrimaryAttribute($profession)
 	Switch $profession
-		Case $ID_Warrior
-			Return $ID_Strength
-		Case $ID_Ranger
-			Return $ID_Expertise
-		Case $ID_Monk
-			Return $ID_Divine_Favor
-		Case $ID_Necromancer
-			Return $ID_Soul_Reaping
-		Case $ID_Mesmer
-			Return $ID_Fast_Casting
-		Case $ID_Elementalist
-			Return $ID_Energy_Storage
-		Case $ID_Assassin
-			Return $ID_Critical_Strikes
-		Case $ID_Ritualist
-			Return $ID_Spawning_Power
-		Case $ID_Paragon
-			Return $ID_Leadership
-		Case $ID_Dervish
-			Return $ID_Mysticism
+		Case $ID_WARRIOR
+			Return $ID_STRENGTH
+		Case $ID_RANGER
+			Return $ID_EXPERTISE
+		Case $ID_MONK
+			Return $ID_DIVINE_FAVOR
+		Case $ID_NECROMANCER
+			Return $ID_SOUL_REAPING
+		Case $ID_MESMER
+			Return $ID_FAST_CASTING
+		Case $ID_ELEMENTALIST
+			Return $ID_ENERGY_STORAGE
+		Case $ID_ASSASSIN
+			Return $ID_CRITICAL_STRIKES
+		Case $ID_RITUALIST
+			Return $ID_SPAWNING_POWER
+		Case $ID_PARAGON
+			Return $ID_LEADERSHIP
+		Case $ID_DERVISH
+			Return $ID_MYSTICISM
 	EndSwitch
 EndFunc
 #EndRegion Misc
@@ -4463,13 +4452,13 @@ EndFunc
 ;~ Invites a player into the guild using his character name
 Func InviteGuild($characterName)
 	If GetAgentExists(GetMyID()) Then
-		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
-		DllStructSetData($inviteGuildStruct, 2, 0x4C)
-		DllStructSetData($inviteGuildStruct, 3, 0xB5)
-		DllStructSetData($inviteGuildStruct, 4, 0x01)
-		DllStructSetData($inviteGuildStruct, 5, $characterName)
-		DllStructSetData($inviteGuildStruct, 6, 0x02)
-		Enqueue(DllStructGetPtr($inviteGuildStruct), DllStructGetSize($inviteGuildStruct))
+		DllStructSetData($INVITE_GUILD_STRUCT, 1, GetValue('CommandPacketSend'))
+		DllStructSetData($INVITE_GUILD_STRUCT, 2, 0x4C)
+		DllStructSetData($INVITE_GUILD_STRUCT, 3, 0xB5)
+		DllStructSetData($INVITE_GUILD_STRUCT, 4, 0x01)
+		DllStructSetData($INVITE_GUILD_STRUCT, 5, $characterName)
+		DllStructSetData($INVITE_GUILD_STRUCT, 6, 0x02)
+		Enqueue(DllStructGetPtr($INVITE_GUILD_STRUCT), DllStructGetSize($INVITE_GUILD_STRUCT))
 		Return True
 	EndIf
 	Return False
@@ -4479,13 +4468,13 @@ EndFunc
 ;~ Invites a player as a guest into the guild using his character name
 Func InviteGuest($characterName)
 	If GetAgentExists(GetMyID()) Then
-		DllStructSetData($inviteGuildStruct, 1, GetValue('CommandPacketSend'))
-		DllStructSetData($inviteGuildStruct, 2, 0x4C)
-		DllStructSetData($inviteGuildStruct, 3, 0xB5)
-		DllStructSetData($inviteGuildStruct, 4, 0x01)
-		DllStructSetData($inviteGuildStruct, 5, $characterName)
-		DllStructSetData($inviteGuildStruct, 6, 0x01)
-		Enqueue(DllStructGetPtr($inviteGuildStruct), DllStructGetSize($inviteGuildStruct))
+		DllStructSetData($INVITE_GUILD_STRUCT, 1, GetValue('CommandPacketSend'))
+		DllStructSetData($INVITE_GUILD_STRUCT, 2, 0x4C)
+		DllStructSetData($INVITE_GUILD_STRUCT, 3, 0xB5)
+		DllStructSetData($INVITE_GUILD_STRUCT, 4, 0x01)
+		DllStructSetData($INVITE_GUILD_STRUCT, 5, $characterName)
+		DllStructSetData($INVITE_GUILD_STRUCT, 6, 0x01)
+		Enqueue(DllStructGetPtr($INVITE_GUILD_STRUCT), DllStructGetSize($INVITE_GUILD_STRUCT))
 		Return True
 	EndIf
 	Return False
@@ -4494,19 +4483,19 @@ EndFunc
 
 ;~ Internal use only.
 Func SendPacket($size, $header, $param1 = 0, $param2 = 0, $param3 = 0, $param4 = 0, $param5 = 0, $param6 = 0, $param7 = 0, $param8 = 0, $param9 = 0, $param10 = 0)
-	DllStructSetData($packetStruct, 2, $size)
-	DllStructSetData($packetStruct, 3, $header)
-	DllStructSetData($packetStruct, 4, $param1)
-	DllStructSetData($packetStruct, 5, $param2)
-	DllStructSetData($packetStruct, 6, $param3)
-	DllStructSetData($packetStruct, 7, $param4)
-	DllStructSetData($packetStruct, 8, $param5)
-	DllStructSetData($packetStruct, 9, $param6)
-	DllStructSetData($packetStruct, 10, $param7)
-	DllStructSetData($packetStruct, 11, $param8)
-	DllStructSetData($packetStruct, 12, $param9)
-	DllStructSetData($packetStruct, 13, $param10)
-	Enqueue($packetStructPtr, 52)
+	DllStructSetData($PACKET_STRUCT, 2, $size)
+	DllStructSetData($PACKET_STRUCT, 3, $header)
+	DllStructSetData($PACKET_STRUCT, 4, $param1)
+	DllStructSetData($PACKET_STRUCT, 5, $param2)
+	DllStructSetData($PACKET_STRUCT, 6, $param3)
+	DllStructSetData($PACKET_STRUCT, 7, $param4)
+	DllStructSetData($PACKET_STRUCT, 8, $param5)
+	DllStructSetData($PACKET_STRUCT, 9, $param6)
+	DllStructSetData($PACKET_STRUCT, 10, $param7)
+	DllStructSetData($PACKET_STRUCT, 11, $param8)
+	DllStructSetData($PACKET_STRUCT, 12, $param9)
+	DllStructSetData($PACKET_STRUCT, 13, $param10)
+	Enqueue($PACKET_STRUCT_PTR, 52)
 	Return True
 EndFunc
 
@@ -4514,9 +4503,9 @@ EndFunc
 ;~ Internal use only.
 Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE)
 	If GetAgentExists(GetMyID()) Then
-		DllStructSetData($actionStruct, 2, $action)
-		DllStructSetData($actionStruct, 3, $flag)
-		Enqueue($actionStructPtr, 12)
+		DllStructSetData($ACTION_STRUCT, 2, $action)
+		DllStructSetData($ACTION_STRUCT, 3, $flag)
+		Enqueue($ACTION_STRUCT_PTR, 12)
 		Return True
 	EndIf
 	Return False
@@ -4672,49 +4661,44 @@ EndFunc
 #Region Callback
 ;~ Controls Event System.
 Func SetEvent($skillActivate = '', $skillCancel = '', $skillComplete = '', $chatReceive = '', $loadFinished = '')
-	If Not $useEventSystem Then Return
+	If Not $use_event_system Then Return
 	If $skillActivate <> '' Then
 		WriteDetour('SkillLogStart', 'SkillLogProc')
 	Else
-		$asmInjectionString = ''
+		$asm_injection_string = ''
 		_('inc eax')
 		_('mov dword[esi+10],eax')
 		_('pop esi')
-		WriteBinary($asmInjectionString, GetValue('SkillLogStart'))
+		WriteBinary($asm_injection_string, GetValue('SkillLogStart'))
 	EndIf
 
 	If $skillCancel <> '' Then
 		WriteDetour('SkillCancelLogStart', 'SkillCancelLogProc')
 	Else
-		$asmInjectionString = ''
+		$asm_injection_string = ''
 		_('push 0')
 		_('push 42')
 		_('mov ecx,esi')
-		WriteBinary($asmInjectionString, GetValue('SkillCancelLogStart'))
+		WriteBinary($asm_injection_string, GetValue('SkillCancelLogStart'))
 	EndIf
 
 	If $skillComplete <> '' Then
 		WriteDetour('SkillCompleteLogStart', 'SkillCompleteLogProc')
 	Else
-		$asmInjectionString = ''
+		$asm_injection_string = ''
 		_('mov eax,dword[edi+4]')
 		_('test eax,eax')
-		WriteBinary($asmInjectionString, GetValue('SkillCompleteLogStart'))
+		WriteBinary($asm_injection_string, GetValue('SkillCompleteLogStart'))
 	EndIf
 
 	If $chatReceive <> '' Then
 		WriteDetour('ChatLogStart', 'ChatLogProc')
 	Else
-		$asmInjectionString = ''
+		$asm_injection_string = ''
 		_('add edi,E')
 		_('cmp eax,B')
-		WriteBinary($asmInjectionString, GetValue('ChatLogStart'))
+		WriteBinary($asm_injection_string, GetValue('ChatLogStart'))
 	EndIf
-
-	$skillActivateEvent = $skillActivate
-	$skillCancelEvent = $skillCancel
-	$skillCompleteEvent = $skillComplete
-	$loadFinishedEvent = $loadFinished
 EndFunc
 
 
@@ -4769,9 +4753,9 @@ EndFunc
 #Region Modification
 ;~ Internal use only.
 Func ModifyMemory()
-	$asmInjectionSize = 0
-	$asmCodeOffset = 0
-	$asmInjectionString = ''
+	$asm_injection_size = 0
+	$asm_code_offset = 0
+	$asm_injection_string = ''
 	CreateData()
 	CreateMain()
 	CreateTraderHook()
@@ -4781,23 +4765,23 @@ Func ModifyMemory()
 	CreateUICommands()
 	CreateDialogHook()
 	Local $allocationCommand = False
-	Local $memoryInterface = MemoryRead($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 'ptr')
+	Local $memoryInterface = MemoryRead($memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 'ptr')
 	If $memoryInterface = 0 Then
-		Local $memoryInterface = SafeDllCall13($kernelHandle, 'ptr', 'VirtualAllocEx', _
+		Local $memoryInterface = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', _
 			'handle', GetProcessHandle(), _
 			'ptr', 0, _
-			'ulong_ptr', $asmInjectionSize, _
+			'ulong_ptr', $asm_injection_size, _
 			'dword', 0x1000, _
 			'dword', 0x40)
 		$memoryInterface = $memoryInterface[0]
-		MemoryWrite($memoryInterfaceHeader + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, $memoryInterface)
+		MemoryWrite($memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, $memoryInterface)
 		$allocationCommand = True
 	EndIf
 
 	CompleteASMCode($memoryInterface)
 
 	If $allocationCommand Then
-		WriteBinary($asmInjectionString, $memoryInterface + $asmCodeOffset)
+		WriteBinary($asm_injection_string, $memoryInterface + $asm_code_offset)
 		MemoryWrite(GetValue('QueuePtr'), GetValue('QueueBase'))
 		If IsDeclared('g_b_Write') Then Extend_Write()
 
@@ -5637,15 +5621,15 @@ Func SetPlayerStatus($status)
 		Return False
 	EndIf
 
-	DllStructSetData($changeStatusStruct, 2, $status)
-	Enqueue($changeStatusStructPtr, 8)
+	DllStructSetData($CHANGE_STATUS_STRUCT, 2, $status)
+	Enqueue($CHANGE_STATUS_STRUCT_PTR, 8)
 	Return True
 EndFunc
 
 
 ;~ Returns player status : 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
 Func GetPlayerStatus()
-	Return MemoryRead($currentStatus)
+	Return MemoryRead($current_status)
 EndFunc
 #EndRegion Online Status
 
@@ -5662,267 +5646,267 @@ Func _($asm)
 		Case StringInStr($asm, ' -> ')
 			Local $split = StringSplit($asm, ' -> ', 1)
 			$opCode = StringReplace($split[2], ' ', '')
-			$asmInjectionSize += 0.5 * StringLen($opCode)
-			$asmInjectionString &= $opCode
+			$asm_injection_size += 0.5 * StringLen($opCode)
+			$asm_injection_string &= $opCode
 		Case StringLeft($asm, 3) = 'jb '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '72(' & StringRight($asm, StringLen($asm) - 3) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '72(' & StringRight($asm, StringLen($asm) - 3) & ')'
 		Case StringLeft($asm, 3) = 'je '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '74(' & StringRight($asm, StringLen($asm) - 3) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '74(' & StringRight($asm, StringLen($asm) - 3) & ')'
 		Case StringRegExp($asm, 'cmp ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 6
-			$asmInjectionString &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'cmp edx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 6
-			$asmInjectionString &= '81FA[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '81FA[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRight($asm, 1) = ':'
-			SetValue('Label_' & StringLeft($asm, StringLen($asm) - 1), $asmInjectionSize)
+			SetValue('Label_' & StringLeft($asm, StringLen($asm) - 1), $asm_injection_size)
 		Case StringInStr($asm, '/') > 0
-			SetValue('Label_' & StringLeft($asm, StringInStr($asm, '/') - 1), $asmInjectionSize)
+			SetValue('Label_' & StringLeft($asm, StringInStr($asm, '/') - 1), $asm_injection_size)
 			Local $offset = StringRight($asm, StringLen($asm) - StringInStr($asm, '/'))
-			$asmInjectionSize += $offset
-			$asmCodeOffset += $offset
+			$asm_injection_size += $offset
+			$asm_code_offset += $offset
 		Case StringLeft($asm, 5) = 'nop x'
 			$buffer = Int(Number(StringTrimLeft($asm, 5)))
-			$asmInjectionSize += $buffer
+			$asm_injection_size += $buffer
 			For $i = 1 To $buffer
-				$asmInjectionString &= '90'
+				$asm_injection_string &= '90'
 			Next
 		Case StringLeft($asm, 5) = 'ljmp '
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'E9{' & StringRight($asm, StringLen($asm) - 5) & '}'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'E9{' & StringRight($asm, StringLen($asm) - 5) & '}'
 		Case StringLeft($asm, 5) = 'ljne '
-			$asmInjectionSize += 6
-			$asmInjectionString &= '0F85{' & StringRight($asm, StringLen($asm) - 5) & '}'
+			$asm_injection_size += 6
+			$asm_injection_string &= '0F85{' & StringRight($asm, StringLen($asm) - 5) & '}'
 		Case StringLeft($asm, 4) = 'jmp ' And StringLen($asm) > 7
-			$asmInjectionSize += 2
-			$asmInjectionString &= 'EB(' & StringRight($asm, StringLen($asm) - 4) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= 'EB(' & StringRight($asm, StringLen($asm) - 4) & ')'
 		Case StringLeft($asm, 4) = 'jae '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '73(' & StringRight($asm, StringLen($asm) - 4) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '73(' & StringRight($asm, StringLen($asm) - 4) & ')'
 		Case StringLeft($asm, 3) = 'jz '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '74(' & StringRight($asm, StringLen($asm) - 3) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '74(' & StringRight($asm, StringLen($asm) - 3) & ')'
 		Case StringLeft($asm, 4) = 'jnz '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '75(' & StringRight($asm, StringLen($asm) - 4) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '75(' & StringRight($asm, StringLen($asm) - 4) & ')'
 		Case StringLeft($asm, 4) = 'jbe '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '76(' & StringRight($asm, StringLen($asm) - 4) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '76(' & StringRight($asm, StringLen($asm) - 4) & ')'
 		Case StringLeft($asm, 3) = 'ja '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '77(' & StringRight($asm, StringLen($asm) - 3) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '77(' & StringRight($asm, StringLen($asm) - 3) & ')'
 		Case StringLeft($asm, 3) = 'jl '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '7C(' & StringRight($asm, StringLen($asm) - 3) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '7C(' & StringRight($asm, StringLen($asm) - 3) & ')'
 		Case StringLeft($asm, 4) = 'jge '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '7D(' & StringRight($asm, StringLen($asm) - 4) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '7D(' & StringRight($asm, StringLen($asm) - 4) & ')'
 		Case StringLeft($asm, 4) = 'jle '
-			$asmInjectionSize += 2
-			$asmInjectionString &= '7E(' & StringRight($asm, StringLen($asm) - 4) & ')'
+			$asm_injection_size += 2
+			$asm_injection_string &= '7E(' & StringRight($asm, StringLen($asm) - 4) & ')'
 		Case StringRegExp($asm, 'mov eax,dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'A1[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'A1[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'mov ebx,dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '8B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'mov ecx,dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '8B0D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B0D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'mov edx,dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '8B15[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B15[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'mov esi,dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '8B35[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B35[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'mov edi,dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '8B3D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B3D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'cmp ebx,dword\[[a-z,A-Z]{4,}\]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '3B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '3B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'lea eax,dword[[]ecx[*]8[+][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 7
-			$asmInjectionString &= '8D04CD[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+			$asm_injection_size += 7
+			$asm_injection_string &= '8D04CD[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
 		Case StringRegExp($asm, 'lea edi,dword\[edx\+[a-z,A-Z]{4,}\]')
-			$asmInjectionSize += 7
-			$asmInjectionString &= '8D3C15[' & StringMid($asm, 19, StringLen($asm) - 19) & ']'
+			$asm_injection_size += 7
+			$asm_injection_string &= '8D3C15[' & StringMid($asm, 19, StringLen($asm) - 19) & ']'
 		Case StringRegExp($asm, 'cmp dword[[][a-z,A-Z]{4,}[]],[-[:xdigit:]]')
 			$buffer = StringInStr($asm, ',')
 			$buffer = ASMNumber(StringMid($asm, $buffer + 1), True)
 			If @extended Then
-				$asmInjectionSize += 7
-				$asmInjectionString &= '833D[' & StringMid($asm, 11, StringInStr($asm, ',') - 12) & ']' & $buffer
+				$asm_injection_size += 7
+				$asm_injection_string &= '833D[' & StringMid($asm, 11, StringInStr($asm, ',') - 12) & ']' & $buffer
 			Else
-				$asmInjectionSize += 10
-				$asmInjectionString &= '813D[' & StringMid($asm, 11, StringInStr($asm, ',') - 12) & ']' & $buffer
+				$asm_injection_size += 10
+				$asm_injection_string &= '813D[' & StringMid($asm, 11, StringInStr($asm, ',') - 12) & ']' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'cmp ecx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 6
-			$asmInjectionString &= '81F9[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '81F9[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'cmp ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 6
-			$asmInjectionString &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'cmp eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= '3D[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= '3D[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'add eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= '05[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= '05[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'B8[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B8[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'BB[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BB[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov ecx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'B9[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B9[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov esi,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'BE[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BE[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov edi,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'BF[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BF[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov edx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'BA[' & StringRight($asm, StringLen($asm) - 8) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BA[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],ecx')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '890D[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '890D[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'fstp dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= 'D91D[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= 'D91D[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
 		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],edx')
-			$asmInjectionSize += 6
-			$asmInjectionString &= '8915[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= '8915[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],eax')
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'A3[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'A3[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
 		Case StringRegExp($asm, 'lea eax,dword[[]edx[*]4[+][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 7
-			$asmInjectionString &= '8D0495[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+			$asm_injection_size += 7
+			$asm_injection_string &= '8D0495[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
 		Case StringRegExp($asm, 'mov eax,dword[[]ecx[*]4[+][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 7
-			$asmInjectionString &= '8B048D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+			$asm_injection_size += 7
+			$asm_injection_string &= '8B048D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
 		Case StringRegExp($asm, 'mov ecx,dword[[]ecx[*]4[+][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 7
-			$asmInjectionString &= '8B0C8D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+			$asm_injection_size += 7
+			$asm_injection_string &= '8B0C8D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
 		Case StringRegExp($asm, 'push dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= 'FF35[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= 'FF35[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
 		Case StringRegExp($asm, 'push [a-z,A-Z]{4,}\z')
-			$asmInjectionSize += 5
-			$asmInjectionString &= '68[' & StringMid($asm, 6, StringLen($asm) - 5) & ']'
+			$asm_injection_size += 5
+			$asm_injection_string &= '68[' & StringMid($asm, 6, StringLen($asm) - 5) & ']'
 		Case StringRegExp($asm, 'call dword[[][a-z,A-Z]{4,}[]]')
-			$asmInjectionSize += 6
-			$asmInjectionString &= 'FF15[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
+			$asm_injection_size += 6
+			$asm_injection_string &= 'FF15[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
 		Case StringLeft($asm, 5) = 'call ' And StringLen($asm) > 8
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'E8{' & StringMid($asm, 6, StringLen($asm) - 5) & '}'
+			$asm_injection_size += 5
+			$asm_injection_string &= 'E8{' & StringMid($asm, 6, StringLen($asm) - 5) & '}'
 		Case StringRegExp($asm, 'mov dword\[[a-z,A-Z]{4,}\],[-[:xdigit:]]{1,8}\z')
 			$buffer = StringInStr($asm, ',')
-			$asmInjectionSize += 10
-			$asmInjectionString &= 'C705[' & StringMid($asm, 11, $buffer - 12) & ']' & ASMNumber(StringMid($asm, $buffer + 1))
+			$asm_injection_size += 10
+			$asm_injection_string &= 'C705[' & StringMid($asm, 11, $buffer - 12) & ']' & ASMNumber(StringMid($asm, $buffer + 1))
 		Case StringRegExp($asm, 'push [-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 6), True)
 			If @extended Then
-				$asmInjectionSize += 2
-				$asmInjectionString &= '6A' & $buffer
+				$asm_injection_size += 2
+				$asm_injection_string &= '6A' & $buffer
 			Else
-				$asmInjectionSize += 5
-				$asmInjectionString &= '68' & $buffer
+				$asm_injection_size += 5
+				$asm_injection_string &= '68' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'mov eax,[-[:xdigit:]]{1,8}\z')
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'B8' & ASMNumber(StringMid($asm, 9))
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B8' & ASMNumber(StringMid($asm, 9))
 		Case StringRegExp($asm, 'mov ebx,[-[:xdigit:]]{1,8}\z')
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'BB' & ASMNumber(StringMid($asm, 9))
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BB' & ASMNumber(StringMid($asm, 9))
 		Case StringRegExp($asm, 'mov ecx,[-[:xdigit:]]{1,8}\z')
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'B9' & ASMNumber(StringMid($asm, 9))
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B9' & ASMNumber(StringMid($asm, 9))
 		Case StringRegExp($asm, 'mov edx,[-[:xdigit:]]{1,8}\z')
-			$asmInjectionSize += 5
-			$asmInjectionString &= 'BA' & ASMNumber(StringMid($asm, 9))
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BA' & ASMNumber(StringMid($asm, 9))
 		Case StringRegExp($asm, 'add eax,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C0' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C0' & $buffer
 			Else
-				$asmInjectionSize += 5
-				$asmInjectionString &= '05' & $buffer
+				$asm_injection_size += 5
+				$asm_injection_string &= '05' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'add ebx,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C3' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C3' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81C3' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C3' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'add ecx,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C1' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C1' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81C1' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C1' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'add edx,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C2' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C2' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81C2' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C2' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'add edi,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C7' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C7' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81C7' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C7' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'add esi,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C6' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C6' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81C6' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C6' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'add esp,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83C4' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C4' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81C4' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C4' & $buffer
 			EndIf
 		Case StringRegExp($asm, 'cmp ebx,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asmInjectionSize += 3
-				$asmInjectionString &= '83FB' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83FB' & $buffer
 			Else
-				$asmInjectionSize += 6
-				$asmInjectionString &= '81FB' & $buffer
+				$asm_injection_size += 6
+				$asm_injection_string &= '81FB' & $buffer
 			EndIf
 		Case StringLeft($asm, 8) = 'cmp ecx,' And StringLen($asm) > 10
 			Local $opCode = '81F9' & StringMid($asm, 9)
-			$asmInjectionSize += 0.5 * StringLen($opCode)
-			$asmInjectionString &= $opCode
+			$asm_injection_size += 0.5 * StringLen($opCode)
+			$asm_injection_string &= $opCode
 		Case Else
 			Local $opCode
 			Switch $asm
@@ -6378,8 +6362,8 @@ Func _($asm)
 					MsgBox(0x0, 'ASM', 'Could not assemble: ' & $asm)
 					Exit
 			EndSwitch
-			$asmInjectionSize += 0.5 * StringLen($opCode)
-			$asmInjectionString &= $opCode
+			$asm_injection_size += 0.5 * StringLen($opCode)
+			$asm_injection_string &= $opCode
 	EndSelect
 EndFunc
 
@@ -6388,38 +6372,38 @@ EndFunc
 Func CompleteASMCode($memoryInterface)
 	Local $inExpression = False
 	Local $expression
-	Local $tempValueASM = $asmInjectionString
-	Local $currentOffset = Dec(Hex($memoryInterface)) + $asmCodeOffset
+	Local $tempValueASM = $asm_injection_string
+	Local $currentOffset = Dec(Hex($memoryInterface)) + $asm_code_offset
 	Local $token
 
-	Local $labelsKeys = MapKeys($labelsMap)
+	Local $labelsKeys = MapKeys($labels_map)
 	For $key In $labelsKeys
 		If StringLeft($key, 6) = 'Label_' Then
-			Local $value = $labelsMap[$key]
+			Local $value = $labels_map[$key]
 			Local $newKey = StringTrimLeft($key, 6)
-			$labelsMap[$newKey] = $memoryInterface + $value
-			MapRemove($labelsMap, $key)
+			$labels_map[$newKey] = $memoryInterface + $value
+			MapRemove($labels_map, $key)
 		EndIf
 	Next
 
-	$asmInjectionString = ''
+	$asm_injection_string = ''
 	For $i = 1 To StringLen($tempValueASM)
 		$token = StringMid($tempValueASM, $i, 1)
 		Switch $token
 			Case '(', '[', '{'
 				$inExpression = True
 			Case ')'
-				$asmInjectionString &= Hex(GetLabelInfo($expression) - Int($currentOffset) - 1, 2)
+				$asm_injection_string &= Hex(GetLabelInfo($expression) - Int($currentOffset) - 1, 2)
 				$currentOffset += 1
 				$inExpression = False
 				$expression = ''
 			Case ']'
-				$asmInjectionString &= SwapEndian(Hex(GetLabelInfo($expression), 8))
+				$asm_injection_string &= SwapEndian(Hex(GetLabelInfo($expression), 8))
 				$currentOffset += 4
 				$inExpression = False
 				$expression = ''
 			Case '}'
-				$asmInjectionString &= SwapEndian(Hex(GetLabelInfo($expression) - Int($currentOffset) - 4, 8))
+				$asm_injection_string &= SwapEndian(Hex(GetLabelInfo($expression) - Int($currentOffset) - 4, 8))
 				$currentOffset += 4
 				$inExpression = False
 				$expression = ''
@@ -6427,7 +6411,7 @@ Func CompleteASMCode($memoryInterface)
 				If $inExpression Then
 					$expression &= $token
 				Else
-					$asmInjectionString &= $token
+					$asm_injection_string &= $token
 					$currentOffset += 0.5
 				EndIf
 		EndSwitch
@@ -6532,13 +6516,13 @@ EndFunc
 
 Func GetPartySize()
 	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0xC]
-	Local $playersPtr = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $playersPtr = MemoryReadPtr($base_address_ptr, $offset)
 
 	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x1C]
-	Local $henchmenPtr = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $henchmenPtr = MemoryReadPtr($base_address_ptr, $offset)
 
 	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x2C]
-	Local $heroesPtr = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $heroesPtr = MemoryReadPtr($base_address_ptr, $offset)
 
 	Local $players = MemoryRead($playersPtr[0], 'long')
 	Local $henchmen = MemoryRead($henchmenPtr[0], 'long')
@@ -6550,7 +6534,7 @@ EndFunc
 
 Func GetPartyAlliesSize()
 	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x3C]
-	Local $alliesPtr = MemoryReadPtr($baseAddressPtr, $offset)
+	Local $alliesPtr = MemoryReadPtr($base_address_ptr, $offset)
 	Return MemoryRead($alliesPtr[0], 'long')
 EndFunc
 
@@ -6567,7 +6551,7 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
 	Local $skillbarStruct
 	Do
 		Sleep(200)
-		$skillbarStruct = MemoryReadPtr($baseAddressPtr, $offset, 'ptr')
+		$skillbarStruct = MemoryReadPtr($base_address_ptr, $offset, 'ptr')
 		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
 	Until GetMyID() <> 0 And $skillbarStruct[0] <> 0 And (GetMapID() = $mapID Or $mapID = -1)
@@ -6615,29 +6599,29 @@ EndFunc
 ;~ Returns: 1 - Trade windows exist 3 - Offer 7 - Accepted Trade
 Func TradeWinExist()
 	Local $offset = [0, 0x18, 0x58, 0]
-	Return MemoryReadPtr($baseAddressPtr, $offset)[1]
+	Return MemoryReadPtr($base_address_ptr, $offset)[1]
 EndFunc
 
 
 Func TradeOfferItemExist()
 	Local $offset = [0, 0x18, 0x58, 0x28, 0]
-	Return MemoryReadPtr($baseAddressPtr, $offset)[1]
+	Return MemoryReadPtr($base_address_ptr, $offset)[1]
 EndFunc
 
 
 Func TradeOfferMoneyExist()
 	Local $offset = [0, 0x18, 0x58, 0x24]
-	Return MemoryReadPtr($baseAddressPtr, $offset)[1]
+	Return MemoryReadPtr($base_address_ptr, $offset)[1]
 EndFunc
 
 
 Func ToggleTradePatch($enableTradePatch = True)
-	MemoryWrite($tradeHackAddress, $enableTradePatch ? 0xC3 : 0x55, 'BYTE')
+	MemoryWrite($trade_hack_address, $enableTradePatch ? 0xC3 : 0x55, 'BYTE')
 EndFunc
 
 
 Func GetLastDialogID()
-	Return MemoryRead($lastDialogId)
+	Return MemoryRead($last_dialog_ID)
 EndFunc
 
 
@@ -6649,7 +6633,7 @@ EndFunc
 ;~ Returns pointer to the bag at the bag index provided
 Func GetBagPtr($bagIndex)
 	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x4 * $bagIndex]
-	Local $itemStructAddress = MemoryReadPtr($baseAddressPtr, $offset, 'ptr')
+	Local $itemStructAddress = MemoryReadPtr($base_address_ptr, $offset, 'ptr')
 	Return $itemStructAddress[1]
 EndFunc
 

@@ -26,15 +26,15 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $AsuranFarmInformations = 'Asuran title farm, bring solid heroes composition'
+Global Const $ASURAN_FARM_INFORMATIONS = 'Asuran title farm, bring solid heroes composition'
 ; Average duration ~ 45m
 Global Const $ASURAN_FARM_DURATION = 45 * 60 * 1000
-Global $ASURAN_FARM_SETUP = False
+Global $asuran_farm_setup = False
 
 
 ;~ Main loop for the asuran faction farm
-Func AsuranTitleFarm($STATUS)
-	If Not $ASURAN_FARM_SETUP Then AsuranTitleFarmSetup()
+Func AsuranTitleFarm()
+	If Not $asuran_farm_setup Then AsuranTitleFarmSetup()
 
 	GoToMagusStones()
 	AdlibRegister('TrackGroupStatus', 10000)
@@ -46,12 +46,12 @@ EndFunc
 
 Func AsuranTitleFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
-	SetDisplayedTitle($ID_Asura_Title)
+	TravelToOutpost($ID_RATA_SUM, $district_name)
+	SetDisplayedTitle($ID_ASURA_TITLE)
 	SwitchMode($ID_HARD_MODE)
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
-	$ASURAN_FARM_SETUP = True
+	$asuran_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -59,19 +59,19 @@ EndFunc
 
 ;~ Move out of outpost into Magus Stones
 Func GoToMagusStones()
-	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Magus_Stones
+	TravelToOutpost($ID_RATA_SUM, $district_name)
+	While GetMapID() <> $ID_MAGUS_STONES
 		Info('Moving to Magus Stones')
 		MoveTo(16342, 13855)
 		Move(16450, 13300)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Magus_Stones, 10000, 2000)
+		WaitMapLoading($ID_MAGUS_STONES, 10000, 2000)
 	WEnd
 EndFunc
 
 
 Func VanquishMagusStones()
-	If GetMapID() <> $ID_Magus_Stones Then Return $FAIL
+	If GetMapID() <> $ID_MAGUS_STONES Then Return $FAIL
 
 	; 67 groups to vanquish + 16 movements
 	Local Static $foes[83][3] = [ _

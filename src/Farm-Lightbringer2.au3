@@ -27,29 +27,30 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $LightbringerFarm2Informations = 'Lightbringer title farm'
+Global Const $LIGHTBRINGER_FARM2_INFORMATIONS = 'Lightbringer title farm'
 ; Average duration ~ 45m
 Global Const $LIGHTBRINGER_FARM2_DURATION = 45 * 60 * 1000
-Global $LIGHTBRINGER_FARM2_SETUP = False
+
+Global $lightbringer_farm2_setup = False
 
 ;~ Main loop for the Lightbringer title farm
-Func LightbringerFarm2($STATUS)
-	If Not $LIGHTBRINGER_FARM2_SETUP Then Lightbringer2FarmSetup()
+Func LightbringerFarm2()
+	If Not $lightbringer_farm2_setup Then Lightbringer2FarmSetup()
 
 	GoToMirrorOfLyss()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
 
-	ReturnBackToOutpost($ID_Kodash_Bazaar)
+	ReturnBackToOutpost($ID_KODASH_BAZAAR)
 	Return $result
 EndFunc
 
 
 Func Lightbringer2FarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
-	SetDisplayedTitle($ID_Lightbringer_Title)
+	TravelToOutpost($ID_KODASH_BAZAAR, $district_name)
+	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_HARD_MODE)
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
@@ -57,30 +58,30 @@ Func Lightbringer2FarmSetup()
 	GoToMirrorOfLyss()
 	MoveTo(-19350, -16900)
 	RandomSleep(5000)
-	WaitMapLoading($ID_Kodash_Bazaar, 10000, 2000)
-	$LIGHTBRINGER_FARM2_SETUP = True
+	WaitMapLoading($ID_KODASH_BAZAAR, 10000, 2000)
+	$lightbringer_farm2_setup = True
 	Info('Preparations completed')
 EndFunc
 
 
 ;~ Move out of outpost into Mirror of Lyss
 Func GoToMirrorOfLyss()
-	TravelToOutpost($ID_Kodash_Bazaar, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Mirror_of_Lyss
+	TravelToOutpost($ID_KODASH_BAZAAR, $district_name)
+	While GetMapID() <> $ID_MIRROR_OF_LYSS
 		Info('Moving to Mirror of Lyss')
 		MoveTo(-2186, -1916)
 		MoveTo(-3811, 1177)
 		MoveTo(-953, 4199)
 		MoveTo(-850, 4700)
 		RandomSleep(5000)
-		WaitMapLoading($ID_Mirror_of_Lyss, 10000, 2000)
+		WaitMapLoading($ID_MIRROR_OF_LYSS, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Cleaning Lightbringers function
 Func FarmMirrorOfLyss()
-	If GetMapID() <> $ID_Mirror_of_Lyss Then Return $FAIL
+	If GetMapID() <> $ID_MIRROR_OF_LYSS Then Return $FAIL
 
 	MoveTo(-19296, -14111)
 	Info('Taking Blessing')

@@ -28,18 +28,19 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $LuxonFactionInformations = 'For best results, have :' & @CRLF _
+Global Const $LUXON_FACTION_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild'
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
-Global $LUXON_FARM_SETUP = False
+
+Global $luxon_farm_setup = False
 
 
 ;~ Main loop for the luxon faction farm
-Func LuxonFactionFarm($STATUS)
-	If Not $LUXON_FARM_SETUP Then LuxonFarmSetup()
+Func LuxonFactionFarm()
+	If Not $luxon_farm_setup Then LuxonFarmSetup()
 
 	ManageFactionPointsLuxonFarm()
 	CheckGoldLuxonFarm()
@@ -49,14 +50,14 @@ Func LuxonFactionFarm($STATUS)
 	Local $result = VanquishMountQinkai()
 	AdlibUnRegister('TrackPartyStatus')
 
-	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
 	Return $result
 EndFunc
 
 
 Func ManageFactionPointsLuxonFarm()
 	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
-		TravelToOutpost($ID_Cavalon, $DISTRICT_NAME)
+		TravelToOutpost($ID_CAVALON, $district_name)
 		RandomSleep(200)
 		GoNearestNPCToCoords(9076, -1111)
 
@@ -89,13 +90,13 @@ Func ManageFactionPointsLuxonFarm()
 			RandomSleep(550)
 		EndIf
 		RandomSleep(500)
-		TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+		TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
 	EndIf
 EndFunc
 
 
 Func CheckGoldLuxonFarm()
-	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
 	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
 		Info('Withdrawing gold for shrines benediction')
 		RandomSleep(250)
@@ -108,13 +109,13 @@ EndFunc
 ;~ Setup for the luxon points farm
 Func LuxonFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
+	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
 
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
 	SwitchMode($ID_HARD_MODE)
 
-	$LUXON_FARM_SETUP = True
+	$luxon_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -122,21 +123,21 @@ EndFunc
 
 ;~ Move out of outpost into Mount Qinkai
 Func GoToMountQinkai()
-	TravelToOutpost($ID_Aspenwood_Gate_Luxon, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Mount_Qinkai
+	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
+	While GetMapID() <> $ID_MOUNT_QINKAI
 		Info('Moving to Mount Qinkai')
 		MoveTo(-4268, 11628)
 		MoveTo(-5300, 13300)
 		Move(-5493, 13712)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Mount_Qinkai, 10000, 2000)
+		WaitMapLoading($ID_MOUNT_QINKAI, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Vanquish the Mount Qinkai map
 Func VanquishMountQinkai()
-	If GetMapID() <> $ID_Mount_Qinkai Then Return $FAIL
+	If GetMapID() <> $ID_MOUNT_QINKAI Then Return $FAIL
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-8394, -9801)
 	Dialog(0x85)

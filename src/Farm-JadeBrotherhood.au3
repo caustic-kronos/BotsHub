@@ -27,9 +27,9 @@ Opt('MustDeclareVars', True)
 
 
 ; ==== Constants ====
-Global Const $JB_Skillbar = 'OgejkirMrSqimXfXfbrXaXNX4OA'
-Global Const $JB_Hero_Skillbar = 'OQijEqmMKODbe8O2Efjrx0bWMA'
-Global Const $JB_FarmInformations = 'For best results, have :' & @CRLF _
+Global Const $JB_SKILLBAR = 'OgejkirMrSqimXfXfbrXaXNX4OA'
+Global Const $JB_HERO_SKILLBAR = 'OQijEqmMKODbe8O2Efjrx0bWMA'
+Global Const $JB_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 16 in earth prayers' & @CRLF _
 	& '- 11+ in mysticism' & @CRLF _
 	& '- 9+ in scythe mastery (enough to use your scythe)'& @CRLF _
@@ -43,41 +43,41 @@ Global Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
 
 ; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
 ; party hero ID that is used to add hero to the party team
-Global Const $JBHeroPartyID = $ID_General_Morgahn
-;Global Const $JBHeroPartyID = $ID_Keiran_Thackeray
-;Global Const $JBHeroPartyID = $ID_Hayda
-Global Const $JBHeroIndex = 1
+Global Const $JB_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
+;Global Const $JB_HERO_PARTY_ID = $ID_KEIRAN_THACKERAY
+;Global Const $JB_HERO_PARTY_ID = $ID_HAYDA
+Global Const $JB_HERO_INDEX = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
-Global Const $JB_DrunkerMaster		= 1
-Global Const $JB_SandShards			= 2
-Global Const $JB_MysticVigor		= 3
-Global Const $JB_VowOfStrength		= 4
-Global Const $JB_ArmorOfSanctity	= 5
-Global Const $JB_StaggeringForce	= 6
-Global Const $JB_EremitesAttack		= 7
-Global Const $JB_DeathsCharge		= 8
+Global Const $JB_DRUNKENMASTER				= 1
+Global Const $JB_SAND_SHARDS				= 2
+Global Const $JB_MYSTIC_VIGOR				= 3
+Global Const $JB_VOW_OF_STRENGTH			= 4
+Global Const $JB_ARMOR_OF_SANCTITY			= 5
+Global Const $JB_STAGGERING_FORCE			= 6
+Global Const $JB_EREMITES_ATTACK			= 7
+Global Const $JB_DEATHS_CHARGE				= 8
 
 ; Hero Build
-Global Const $Brotherhood_Mystic_Healing	= 1
-Global Const $Brotherhood_Incoming			= 7
-Global Const $Brotherhood_FallBack			= 6
-Global Const $Brotherhood_EnduringHarmony	= 2
-Global Const $Brotherhood_MakeHaste			= 3
+Global Const $BROTHERHOOD_MYSTIC_HEALING	= 1
+Global Const $BROTHERHOOD_INCOMING			= 7
+Global Const $BROTHERHOOD_FALLBACK			= 6
+Global Const $BROTHERHOOD_ENDURING_HARMONY	= 2
+Global Const $BROTHERHOOD_MAKE_HASTE		= 3
 
-Global $DeadlockTimer
-Global Const $JB_Timeout = 120000
+Global Const $JB_TIMEOUT = 120000
 
-Global $JADE_BROTHERHOOD_FARM_SETUP = False
+Global $jade_brotherhood_farm_setup = False
+Global $deadlock_timer
 
 
 ;~ Main method to farm Jade Brotherhood for q8
-Func JadeBrotherhoodFarm($STATUS)
-	If Not $JADE_BROTHERHOOD_FARM_SETUP And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
+Func JadeBrotherhoodFarm()
+	If Not $jade_brotherhood_farm_setup And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
 
 	GoToBukdekByway()
 	Local $result = JadeBrotherhoodFarmLoop()
-	ReturnBackToOutpost($ID_The_Marketplace)
+	ReturnBackToOutpost($ID_THE_MARKETPLACE)
 	Return $result
 EndFunc
 
@@ -85,7 +85,7 @@ EndFunc
 ;~ Setup for the jade brotherhood farm
 Func SetupJadeBrotherhoodFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_THE_MARKETPLACE, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 
 	If SetupPlayerJadeBrotherhoodFarm() == $FAIL Then Return $FAIL
@@ -93,12 +93,12 @@ Func SetupJadeBrotherhoodFarm()
 
 	GoToBukdekByway()
 	RandomSleep(50)
-	UseHeroSkill($JBHeroIndex, $Brotherhood_Incoming)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
 	MoveTo(-14000, -11000)
 	Move(-14000, -11700)
 	RandomSleep(1000)
-	WaitMapLoading($ID_The_Marketplace)
-	$JADE_BROTHERHOOD_FARM_SETUP = True
+	WaitMapLoading($ID_THE_MARKETPLACE)
+	$jade_brotherhood_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -106,8 +106,8 @@ EndFunc
 
 Func SetupPlayerJadeBrotherhoodFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
-		LoadSkillTemplate($JB_Skillbar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
+		LoadSkillTemplate($JB_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL
@@ -121,11 +121,11 @@ Func SetupTeamJadeBrotherhoodFarm()
 	Info('Setting up team')
 	LeaveParty()
 	Sleep(500 + GetPing())
-	AddHero($JBHeroPartyID)
+	AddHero($JB_HERO_PARTY_ID)
 	Sleep(250 + GetPing())
-	LoadSkillTemplate($JB_Hero_Skillbar, $JBHeroIndex)
+	LoadSkillTemplate($JB_HERO_SKILLBAR, $JB_HERO_INDEX)
 	Sleep(250 + GetPing())
-	DisableAllHeroSkills($JBHeroIndex)
+	DisableAllHeroSkills($JB_HERO_INDEX)
 	Sleep(500 + GetPing())
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -137,29 +137,29 @@ EndFunc
 
 ;~ Move out of outpost into Bukdek Byway
 Func GoToBukdekByway()
-	TravelToOutpost($ID_The_Marketplace, $DISTRICT_NAME)
+	TravelToOutpost($ID_THE_MARKETPLACE, $district_name)
 	If GetQuestByID(0x1C9) <> Null Then
 		Info('Abandoning quest')
 		AbandonQuest(0x1C9)
 	EndIf
-	While GetMapID() <> $ID_Bukdek_Byway
+	While GetMapID() <> $ID_BUKDEK_BYWAY
 		Info('Moving to Bukdek Byway')
 		MoveTo(16106, 18497)
 		MoveTo(16500, 19400)
 		Move(16551, 19860)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Bukdek_Byway)
+		WaitMapLoading($ID_BUKDEK_BYWAY)
 	WEnd
 EndFunc
 
 
 ;~ Jade Brotherhood farm loop
 Func JadeBrotherhoodFarmLoop()
-	If GetMapID() <> $ID_Bukdek_Byway Then Return $FAIL
+	If GetMapID() <> $ID_BUKDEK_BYWAY Then Return $FAIL
 
 	RandomSleep(50)
 	MoveToSeparationWithHero()
-	$DeadlockTimer = TimerInit()
+	$deadlock_timer = TimerInit()
 	TalkToAiko()
 	If IsPlayerDead() Then Return $FAIL
 	WaitForBall()
@@ -167,7 +167,7 @@ Func JadeBrotherhoodFarmLoop()
 	KillJadeBrotherhood()
 	RandomSleep(1000)
 
-	If IsPlayerAlive() And $DeadlockTimer < $JB_Timeout Then
+	If IsPlayerAlive() And $deadlock_timer < $JB_TIMEOUT Then
 		Info('Looting')
 		PickUpItems()
 		Return $SUCCESS
@@ -180,15 +180,15 @@ EndFunc
 ;~ Separate from paragon hero - you'll be missed Morgahn
 Func MoveToSeparationWithHero()
 	Info('Moving to crossing')
-	UseHeroSkill($JBHeroIndex, $Brotherhood_Incoming)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
 	RandomSleep(50)
 	CommandAll(-10475, -9685)
 	RandomSleep(50)
 	Move(-10475, -9685)
 	RandomSleep(7500)
-	UseHeroSkill($JBHeroIndex, $Brotherhood_EnduringHarmony, GetMyAgent())
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill($JBHeroIndex, $Brotherhood_MakeHaste, GetMyAgent())
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
 	RandomSleep(50)
 	Move(-11983, -6261, 40)
 	RandomSleep(300)
@@ -220,7 +220,7 @@ Func WaitForBall()
 	Local $prevFoesBalled = 0, $prevPeasantsAlive = 100
 	; Aiko counts
 	While ($foesBalled <> 8 Or $peasantsAlive > 1)
-		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
+		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
 		Debug('Foes balled : ' & $foesBalled)
 		Debug('Peasants alive : ' & $peasantsAlive)
 		RandomSleep(4500)
@@ -246,51 +246,51 @@ Func KillJadeBrotherhood()
 	If IsPlayerDead() Then Return
 
 	Info('Clearing Jade Brotherhood')
-	UseSkillEx($JB_DrunkerMaster)
+	UseSkillEx($JB_DRUNKENMASTER)
 	RandomSleep(50)
-	UseSkillEx($JB_SandShards)
+	UseSkillEx($JB_SAND_SHARDS)
 	RandomSleep(50)
 
 	$target = GetNearestEnemyToCoords(-13262, -5486)
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
 	GetAlmostInRangeOfAgent($target)
-	UseSkillEx($JB_MysticVigor)
+	UseSkillEx($JB_MYSTIC_VIGOR)
 	RandomSleep(300)
-	UseSkillEx($JB_ArmorOfSanctity)
+	UseSkillEx($JB_ARMOR_OF_SANCTITY)
 	RandomSleep(300)
-	UseSkillEx($JB_VowOfStrength)
+	UseSkillEx($JB_VOW_OF_STRENGTH)
 	RandomSleep(500)
 	$EnchantmentsTimer = TimerInit()
-	While IsRecharged($JB_DeathsCharge)
-		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		UseSkillEx($JB_DeathsCharge, $target)
+	While IsRecharged($JB_DEATHS_CHARGE)
+		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
+		UseSkillEx($JB_DEATHS_CHARGE, $target)
 		RandomSleep(50)
 	WEnd
-	UseSkillEx($JB_StaggeringForce)
+	UseSkillEx($JB_STAGGERING_FORCE)
 	RandomSleep(50)
-	UseSkillEx($JB_EremitesAttack, $target)
-	While IsRecharged($JB_EremitesAttack)
-		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		UseSkillEx($JB_EremitesAttack, $target)
+	UseSkillEx($JB_EREMITES_ATTACK, $target)
+	While IsRecharged($JB_EREMITES_ATTACK)
+		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
+		UseSkillEx($JB_EREMITES_ATTACK, $target)
 		RandomSleep(50)
 	WEnd
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), 1250) > 0
-		If IsPlayerDead() Or TimerDiff($DeadlockTimer) > $JB_Timeout Then Return
-		If GetEnergy() >= 6 And IsRecharged($JB_SandShards) Then
-			UseSkillEx($JB_SandShards)
+		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
+		If GetEnergy() >= 6 And IsRecharged($JB_SAND_SHARDS) Then
+			UseSkillEx($JB_SAND_SHARDS)
 			RandomSleep(50)
 		EndIf
 		If GetEnergy() >= 6 And TimerDiff($EnchantmentsTimer) > 18000 Then
-			UseSkillEx($JB_VowOfStrength)
+			UseSkillEx($JB_VOW_OF_STRENGTH)
 			RandomSleep(300)
-			UseSkillEx($JB_MysticVigor)
+			UseSkillEx($JB_MYSTIC_VIGOR)
 			RandomSleep(300)
 			$EnchantmentsTimer = TimerInit()
 		EndIf
-		If GetEnergy() >= 3 And IsRecharged($JB_ArmorOfSanctity) Then
-			UseSkillEx($JB_ArmorOfSanctity)
+		If GetEnergy() >= 3 And IsRecharged($JB_ARMOR_OF_SANCTITY) Then
+			UseSkillEx($JB_ARMOR_OF_SANCTITY)
 			RandomSleep(300)
 		EndIf
 		$target = GetNearestEnemyToAgent(GetMyAgent())

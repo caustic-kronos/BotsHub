@@ -32,102 +32,101 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FollowerInformations = 'This bot makes your character follow the first other player in party.' & @CRLF _
+Global Const $FOLLOWER_INFORMATIONS = 'This bot makes your character follow the first other player in party.' & @CRLF _
 	& 'It will attack everything that gets in range.' & @CRLF _
 	& 'It will loot all items it can loot.' & @CRLF _
 	& 'It will also loot all chests in range.'
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Raptors_MarkOfPain) is better than UseSkillEx(1))
-Global $Player_Profession_ID
-Global $Follower_AttackSkill1 = Null
-Global $Follower_AttackSkill2 = Null
-Global $Follower_AttackSkill3 = Null
-Global $Follower_AttackSkill4 = Null
-Global $Follower_AttackSkill5 = Null
-Global $Follower_AttackSkill6 = Null
-Global $Follower_AttackSkill7 = Null
-Global $Follower_AttackSkill8 = Null
-Global $Follower_MaintainSkill1 = Null
-Global $Follower_MaintainSkill2 = Null
-Global $Follower_MaintainSkill3 = Null
-Global $Follower_MaintainSkill4 = Null
-Global $Follower_MaintainSkill5 = Null
-Global $Follower_MaintainSkill6 = Null
-Global $Follower_MaintainSkill7 = Null
-Global $Follower_MaintainSkill8 = Null
-Global $Follower_RunningSkill = Null
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
+Global $player_profession_ID
+Global $follower_attack_skill_1 = Null
+Global $follower_attack_skill_2 = Null
+Global $follower_attack_skill_3 = Null
+Global $follower_attack_skill_4 = Null
+Global $follower_attack_skill_5 = Null
+Global $follower_attack_skill_6 = Null
+Global $follower_attack_skill_7 = Null
+Global $follower_attack_skill_8 = Null
+Global $follower_maintain_skill_1 = Null
+Global $follower_maintain_skill_2 = Null
+Global $follower_maintain_skill_3 = Null
+Global $follower_maintain_skill_4 = Null
+Global $follower_maintain_skill_5 = Null
+Global $follower_maintain_skill_6 = Null
+Global $follower_maintain_skill_7 = Null
+Global $follower_maintain_skill_8 = Null
+Global $follower_running_skill = Null
 
-Global $FOLLOWER_SETUP = False
-Global $playerIDs
+Global $follower_setup = False
 
 ;~ Main loop
 Func FollowerFarm()
-	If Not $FOLLOWER_SETUP Then FollowerSetup()
+	If Not $follower_setup Then FollowerSetup()
 
-	While $STATUS == 'RUNNING'
-		Switch $Player_Profession_ID
-			Case $ID_Warrior
+	While $runtime_status == 'RUNNING'
+		Switch $player_profession_ID
+			Case $ID_WARRIOR
 				FollowerLoop()
-			Case $ID_Ranger
+			Case $ID_RANGER
 				FollowerLoop()
-			Case $ID_Monk
+			Case $ID_MONK
 				FollowerLoop()
-			Case $ID_Mesmer
+			Case $ID_MESMER
 				FollowerLoop()
-			Case $ID_Necromancer
+			Case $ID_NECROMANCER
 				FollowerLoop()
-			Case $ID_Elementalist
+			Case $ID_ELEMENTALIST
 				FollowerLoop()
-			Case $ID_Ritualist
+			Case $ID_RITUALIST
 				FollowerLoop()
-			Case $ID_Assassin
+			Case $ID_ASSASSIN
 				FollowerLoop()
-			Case $ID_Paragon
+			Case $ID_PARAGON
 				FollowerLoop()
 				;FollowerLoop(DefaultRun, ParagonFight)
-			Case $ID_Dervish
+			Case $ID_DERVISH
 				FollowerLoop()
 			Case Else
 				FollowerLoop()
 		EndSwitch
 	WEnd
 
-	$FOLLOWER_SETUP = False
+	$follower_setup = False
 	AdlibUnRegister()
-	Return $STATUS <> 'RUNNING' ? $PAUSE : $SUCCESS
+	Return $runtime_status <> 'RUNNING' ? $PAUSE : $SUCCESS
 EndFunc
 
 
 ;~ Follower setup
 Func FollowerSetup()
-	$Player_Profession_ID = GetHeroProfession(0, False)
+	$player_profession_ID = GetHeroProfession(0, False)
 	Info('Setting up follower bot')
-	Switch $Player_Profession_ID
-		Case $ID_Warrior
+	Switch $player_profession_ID
+		Case $ID_WARRIOR
 			DefaultSetup()
-		Case $ID_Ranger
+		Case $ID_RANGER
 			RangerSetup()
-		Case $ID_Monk
+		Case $ID_MONK
 			DefaultSetup()
-		Case $ID_Mesmer
+		Case $ID_MESMER
 			DefaultSetup()
-		Case $ID_Necromancer
+		Case $ID_NECROMANCER
 			DefaultSetup()
-		Case $ID_Elementalist
+		Case $ID_ELEMENTALIST
 			DefaultSetup()
-		Case $ID_Ritualist
+		Case $ID_RITUALIST
 			DefaultSetup()
-		Case $ID_Assassin
+		Case $ID_ASSASSIN
 			DefaultSetup()
-		Case $ID_Paragon
+		Case $ID_PARAGON
 			DefaultSetup()
 			;ParagonSetup()
-		Case $ID_Dervish
+		Case $ID_DERVISH
 			DefaultSetup()
 		Case Else
 			DefaultSetup()
 	EndSwitch
-	$FOLLOWER_SETUP = True
+	$follower_setup = True
 EndFunc
 
 
@@ -152,7 +151,7 @@ Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
 	EndIf
 	FindAndOpenChests()
 
-	If CountSlots(1, $BAGS_COUNT) > 0 Then PickUpItems(Null, DefaultShouldPickItem, 1500)
+	If CountSlots(1, $bags_count) > 0 Then PickUpItems(Null, DefaultShouldPickItem, 1500)
 
 	RandomSleep(1000)
 EndFunc
@@ -160,27 +159,27 @@ EndFunc
 
 ;~ Default class setup
 Func DefaultSetup()
-	$Follower_AttackSkill1 = 1
-	$Follower_AttackSkill2 = 2
-	$Follower_AttackSkill3 = 3
-	$Follower_AttackSkill4 = 4
-	$Follower_AttackSkill5 = 5
-	$Follower_AttackSkill6 = 6
-	$Follower_AttackSkill7 = 7
-	$Follower_AttackSkill8 = 8
+	$follower_attack_skill_1 = 1
+	$follower_attack_skill_2 = 2
+	$follower_attack_skill_3 = 3
+	$follower_attack_skill_4 = 4
+	$follower_attack_skill_5 = 5
+	$follower_attack_skill_6 = 6
+	$follower_attack_skill_7 = 7
+	$follower_attack_skill_8 = 8
 EndFunc
 
 
 ;~ Default class run method
 Func DefaultRun()
-	If $Follower_RunningSkill <> Null And IsRecharged($Follower_RunningSkill) Then UseSkillEx($Follower_RunningSkill)
+	If $follower_running_skill <> Null And IsRecharged($follower_running_skill) Then UseSkillEx($follower_running_skill)
 EndFunc
 
 
 ;~ Default class fight method
 Func DefaultFight()
-	AttackOrUseSkill(1000, $Follower_MaintainSkill1, $Follower_MaintainSkill2, $Follower_MaintainSkill3, $Follower_MaintainSkill4, $Follower_MaintainSkill5, $Follower_MaintainSkill6, $Follower_MaintainSkill7, $Follower_MaintainSkill8)
-	AttackOrUseSkill(1000, $Follower_AttackSkill1, $Follower_AttackSkill2, $Follower_AttackSkill3, $Follower_AttackSkill4, $Follower_AttackSkill5, $Follower_AttackSkill6, $Follower_AttackSkill7, $Follower_AttackSkill8)
+	AttackOrUseSkill(1000, $follower_maintain_skill_1, $follower_maintain_skill_2, $follower_maintain_skill_3, $follower_maintain_skill_4, $follower_maintain_skill_5, $follower_maintain_skill_6, $follower_maintain_skill_7, $follower_maintain_skill_8)
+	AttackOrUseSkill(1000, $follower_attack_skill_1, $follower_attack_skill_2, $follower_attack_skill_3, $follower_attack_skill_4, $follower_attack_skill_5, $follower_attack_skill_6, $follower_attack_skill_7, $follower_attack_skill_8)
 EndFunc
 
 
@@ -195,14 +194,14 @@ Func RangerSetup()
 	Local $Ebon_Battle_Standard_Of_Honor = 7
 	Local $Comfort_Animal = 8
 
-	$Follower_MaintainSkill1 = $Together_As_One
-	$Follower_MaintainSkill2 = $Ebon_Battle_Standard_Of_Honor
-	$Follower_MaintainSkill3 = $Run_As_One
-	$Follower_MaintainSkill4 = $Never_Rampage_Alone
-	$Follower_AttackSkill1 = $Wild_Blow
-	$Follower_AttackSkill2 = $Soldiers_Strike
-	$Follower_AttackSkill3 = $Desperation_Blow
-	$Follower_RunningSkill = $Run_As_One
+	$follower_maintain_skill_1 = $Together_As_One
+	$follower_maintain_skill_2 = $Ebon_Battle_Standard_Of_Honor
+	$follower_maintain_skill_3 = $Run_As_One
+	$follower_maintain_skill_4 = $Never_Rampage_Alone
+	$follower_attack_skill_1 = $Wild_Blow
+	$follower_attack_skill_2 = $Soldiers_Strike
+	$follower_attack_skill_3 = $Desperation_Blow
+	$follower_running_skill = $Run_As_One
 EndFunc
 
 
@@ -220,14 +219,14 @@ Func ParagonSetup()
 	Local $Stand_Your_Ground = 2
 	Local $Theyre_On_Fire = 1
 
-	$Follower_MaintainSkill1 = $Heroic_Refrain
-	$Follower_MaintainSkill2 = $Burning_Refrain
-	$Follower_MaintainSkill3 = $For_Great_Justice
-	$Follower_MaintainSkill4 = $To_The_Limit
-	$Follower_MaintainSkill5 = $Save_Yourselves
-	$Follower_MaintainSkill6 = $Theres_Nothing_To_Fear
-	$Follower_MaintainSkill7 = $Stand_Your_Ground
-	$Follower_MaintainSkill8 = $Theyre_On_Fire
+	$follower_maintain_skill_1 = $Heroic_Refrain
+	$follower_maintain_skill_2 = $Burning_Refrain
+	$follower_maintain_skill_3 = $For_Great_Justice
+	$follower_maintain_skill_4 = $To_The_Limit
+	$follower_maintain_skill_5 = $Save_Yourselves
+	$follower_maintain_skill_6 = $Theres_Nothing_To_Fear
+	$follower_maintain_skill_7 = $Stand_Your_Ground
+	$follower_maintain_skill_8 = $Theyre_On_Fire
 
 	AdlibRegister('ParagonRefreshShouts', 12000)
 	;AdlibUnRegister()
@@ -243,13 +242,13 @@ Func ParagonRefreshShouts()
 	Local $partyMembers = GetPartyInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	If UBound($partyMembers) < 4 Then Return
 
-	UseSkillEx($Follower_MaintainSkill8)
+	UseSkillEx($follower_maintain_skill_8)
 	RandomSleep(20)
-	If ($selfRecast Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain)) == 0) And GetEnergy() > 15 Then
-		UseSkillEx($Follower_MaintainSkill1, GetMyAgent())
+	If ($selfRecast Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN)) == 0) And GetEnergy() > 15 Then
+		UseSkillEx($follower_maintain_skill_1, GetMyAgent())
 		RandomSleep(20)
 		If $selfRecast Then
-			UseSkillEx($Follower_MaintainSkill2, GetMyAgent())
+			UseSkillEx($follower_maintain_skill_2, GetMyAgent())
 			RandomSleep(20)
 			$selfRecast = False
 		Else
@@ -265,11 +264,11 @@ Func ParagonRefreshShouts()
 		If UBound($party) > 1 Then
 			If DllStructGetData($party[$i], 'ID') == $ownID Or $i > UBound($party) Then $i = Mod($i, UBound($party)) + 1
 			If GetEnergy() > 15 Then
-				UseSkillEx($Follower_MaintainSkill1, $party[$i])
+				UseSkillEx($follower_maintain_skill_1, $party[$i])
 				RandomSleep(20)
 			EndIf
 			If GetEnergy() > 20 Then
-				UseSkillEx($Follower_MaintainSkill2, $party[$i])
+				UseSkillEx($follower_maintain_skill_2, $party[$i])
 				RandomSleep(20)
 			EndIf
 			$i = Mod($i, UBound($party)) + 1
@@ -280,13 +279,13 @@ Func ParagonRefreshShouts()
 		;For $member In $party
 		;	If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
 		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
-		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_Heroic_Refrain), $HeroNumber) == 0) And GetEnergy() > 15 Then
-		;		UseSkillEx($Follower_MaintainSkill1, $member)
+		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN), $HeroNumber) == 0) And GetEnergy() > 15 Then
+		;		UseSkillEx($follower_maintain_skill_1, $member)
 		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
-		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_Burning_Refrain), $HeroNumber) == 0) And GetEnergy() > 20 Then
-		;		UseSkillEx($Follower_MaintainSkill2, $member)
+		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_BURNING_REFRAIN), $HeroNumber) == 0) And GetEnergy() > 20 Then
+		;		UseSkillEx($follower_maintain_skill_2, $member)
 		;		RandomSleep(GetPing() + 20)
 		;		ExitLoop
 		;	EndIf
@@ -297,15 +296,15 @@ EndFunc
 
 ;~ Paragon fight function
 Func ParagonFight()
-	If IsRecharged($Follower_MaintainSkill7) Then UseSkillEx($Follower_MaintainSkill7)
+	If IsRecharged($follower_maintain_skill_7) Then UseSkillEx($follower_maintain_skill_7)
 	RandomSleep(GetPing() + 20)
-	If IsRecharged($Follower_MaintainSkill6) Then UseSkillEx($Follower_MaintainSkill6)
+	If IsRecharged($follower_maintain_skill_6) Then UseSkillEx($follower_maintain_skill_6)
 	RandomSleep(GetPing() + 20)
-	If IsRecharged($Follower_MaintainSkill3) Then UseSkillEx($Follower_MaintainSkill3)
+	If IsRecharged($follower_maintain_skill_3) Then UseSkillEx($follower_maintain_skill_3)
 	RandomSleep(GetPing() + 20)
-	If GetSkillbarSkillAdrenaline($Follower_MaintainSkill5) < 200 And IsRecharged($Follower_MaintainSkill4) Then UseSkillEx($Follower_MaintainSkill4)
+	If GetSkillbarSkillAdrenaline($follower_maintain_skill_5) < 200 And IsRecharged($follower_maintain_skill_4) Then UseSkillEx($follower_maintain_skill_4)
 	RandomSleep(GetPing() + 20)
-	If GetSkillbarSkillAdrenaline($Follower_MaintainSkill5) == 200 Then UseSkillEx($Follower_MaintainSkill5)
+	If GetSkillbarSkillAdrenaline($follower_maintain_skill_5) == 200 Then UseSkillEx($follower_maintain_skill_5)
 	RandomSleep(GetPing() + 20)
 	Attack(GetNearestEnemyToAgent(GetMyAgent()))
 	RandomSleep(1000)

@@ -36,24 +36,24 @@ Opt('MustDeclareVars', True)
 
 #Region Configuration
 ; === Build ===
-Global Const $RAFoWToCFarmerSkillBar = 'OgcTc5+8ZSn5AimsBCB6uU4IuE'
+Global Const $RA_FOW_TOC_FARMER_SKILLBAR = 'OgcTc5+8ZSn5AimsBCB6uU4IuE'
 
-Global Const $FoWToC_ShadowForm			= 1
-Global Const $FoWToC_ShroudOfDistress	= 2
-Global Const $FoWToC_IAmUnstoppable		= 3
-Global Const $FoWToC_DarkEscape			= 4
-Global Const $FoWToC_HeartOfShadow		= 5
-Global Const $FoWToC_DwarvenStability	= 6
-Global Const $FoWToC_WhirlingDefense	= 7
-Global Const $FoWToC_MentalBlock		= 8
+Global Const $FOW_TOC_SHADOWFORM			= 1
+Global Const $FOW_TOC_SHROUD_OF_DISTRESS	= 2
+Global Const $FOW_TOC_I_AM_UNSTOPPABLE		= 3
+Global Const $FOW_TOC_DARK_ESCAPE			= 4
+Global Const $FOW_TOC_HEART_OF_SHADOW		= 5
+Global Const $FOW_TOC_DWARVEN_STABILITY		= 6
+Global Const $FOW_TOC_WHIRLING_DEFENSE		= 7
+Global Const $FOW_TOC_MENTAL_BLOCK			= 8
 
-Global Const $FoWToC_SkillsArray		= [$FoWToC_ShadowForm, $FoWToC_ShroudOfDistress, $FoWToC_IAmUnstoppable, $FoWToC_DarkEscape, $FoWToC_HeartOfShadow, $FoWToC_DwarvenStability, $FoWToC_WhirlingDefense, $FoWToC_MentalBlock]
-Global Const $FoWToC_SkillsCostsArray	= [5,					10,							5,						5,					5,						5,						4,						10]
-Global Const $FoWToCSkillsCostsMap = MapFromArrays($FoWToC_SkillsArray, $FoWToC_SkillsCostsArray)
+Global Const $FOW_TOC_SKILLS_ARRAY			= [$FOW_TOC_SHADOWFORM, $FOW_TOC_SHROUD_OF_DISTRESS, $FOW_TOC_I_AM_UNSTOPPABLE, $FOW_TOC_DARK_ESCAPE, $FOW_TOC_HEART_OF_SHADOW, $FOW_TOC_DWARVEN_STABILITY, $FOW_TOC_WHIRLING_DEFENSE, $FOW_TOC_MENTAL_BLOCK]
+Global Const $FOW_TOC_SKILLS_COSTS_ARRAY	= [5,					10,							5,						5,					5,						5,						4,						10]
+Global Const $FOW_TOC_SKILLS_COSTS_MAP		= MapFromArrays($FOW_TOC_SKILLS_ARRAY, $FOW_TOC_SKILLS_COSTS_ARRAY)
 #EndRegion Configuration
 
 ; ==== Constants ====
-Global Const $FoWToCFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $FOW_TOC_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- Armor with HP/Energy runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
 	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _
 	& '- A shield with the inscription ''Through Thick and Thin'' (+10 armor against piercing damage) and +45 health while enchanted or in stance' & @CRLF _
@@ -67,34 +67,35 @@ Global Const $FoWToCFarmInformations = 'For best results, have :' & @CRLF _
 	& 'Because otherwise this farm bot can flush gold storage to 0. However income from obsidian shards, dark remains, etc. can outweigh platinum cost' & @CRLF
 Global Const $FOW_TOC_FARM_DURATION = 3 * 60 * 1000
 Global Const $MAX_FOW_TOC_FARM_DURATION = 6 * 60 * 1000
-Global $FOW_TOC_FARM_SETUP = False
 
-Global $FoWToCMoveOptions = CloneDictMap($Default_MoveDefend_Options)
-$FoWToCMoveOptions.Item('defendFunction')		= DefendFoWToC
-$FoWToCMoveOptions.Item('moveTimeOut')			= 5 * 60 * 1000
-$FoWToCMoveOptions.Item('randomFactor')			= 25
-$FoWToCMoveOptions.Item('hosSkillSlot')			= $FoWToC_HeartOfShadow
-$FoWToCMoveOptions.Item('deathChargeSkillSlot')	= 0
-$FoWToCMoveOptions.Item('openChests')			= False
+Global $fow_toc_move_options = CloneDictMap($Default_MoveDefend_Options)
+$fow_toc_move_options.Item('defendFunction')		= DefendFoWToC
+$fow_toc_move_options.Item('moveTimeOut')			= 5 * 60 * 1000
+$fow_toc_move_options.Item('randomFactor')			= 25
+$fow_toc_move_options.Item('hosSkillSlot')			= $FOW_TOC_HEART_OF_SHADOW
+$fow_toc_move_options.Item('deathChargeSkillSlot')	= 0
+$fow_toc_move_options.Item('openChests')			= False
 
-Global Const $FoWToC_ModelID_ShadowMesmer		= 2855
-Global Const $FoWToC_ModelID_ShadowElemental	= 2856
-Global Const $FoWToC_ModelID_ShadowMonk			= 2857
-Global Const $FoWToC_ModelID_ShadowWarrior		= 2858
-Global Const $FoWToC_ModelID_ShadowRanger		= 2859
-Global Const $FoWToC_ModelID_ShadowBeast		= 2860
-Global Const $FoWToC_ModelID_Abyssal			= 2861
+Global Const $FOW_TOC_MODELID_SHADOW_MESMER		= 2855
+Global Const $FOW_TOC_MODELID_SHADOW_ELEMENTAL	= 2856
+Global Const $FOW_TOC_MODELID_SHADOW_MONK			= 2857
+Global Const $FOW_TOC_MODELID_SHADOW_WARRIOR		= 2858
+Global Const $FOW_TOC_MODELID_SHADOW_RANGER		= 2859
+Global Const $FOW_TOC_MODELID_SHADOW_BEAST		= 2860
+Global Const $FOW_TOC_MODELID_ABYSSAL			= 2861
+
+Global $fow_toc_farm_setup = False
 
 ;~ Main method to farm Fissure of Woe - Tower of Courage
-Func FoWToCFarm($STATUS)
-	If Not $FOW_TOC_FARM_SETUP And SetupFoWToCFarm() == $FAIL Then Return $PAUSE
+Func FoWToCFarm()
+	If Not $fow_toc_farm_setup And SetupFoWToCFarm() == $FAIL Then Return $PAUSE
 
 	Local $result = EnterFissureOfWoe()
 	If $result <> $SUCCESS Then Return $result
 	$result = FoWToCFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared FoW Tower of Courage mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear FoW Tower of Courage mobs')
-	TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME)
+	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
 	Return $result
 EndFunc
 
@@ -102,12 +103,12 @@ EndFunc
 ;~ Fissure of Woe - Tower of Courage farm setup
 Func SetupFoWToCFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Temple_of_the_Ages, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFowToCFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
 	Sleep(500 + GetPing())
-	$FOW_TOC_FARM_SETUP = True
+	$fow_toc_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -115,8 +116,8 @@ EndFunc
 
 Func SetupPlayerFowToCFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
-		LoadSkillTemplate($RAFoWToCFarmerSkillBar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
+		LoadSkillTemplate($RA_FOW_TOC_FARMER_SKILLBAR)
 	Else
 		Warn('You need to run this farm bot as Ranger')
 		Return $FAIL
@@ -129,16 +130,16 @@ EndFunc
 ;~ Farm loop
 Func FoWToCFarmLoop()
 	Local $me = Null, $target = Null
-	If GetMapID() <> $ID_Fissure_of_Woe Then Return $FAIL
+	If GetMapID() <> $ID_FISSURE_OF_WOE Then Return $FAIL
 	Info('Starting Farm')
-	$RUN_TIMER = TimerInit()
+	$run_timer = TimerInit()
 	Info('Moving to initial spot')
 
-	UseSkillEx($FoWToC_ShadowForm)
-	UseSkillEx($FoWToC_DwarvenStability)
+	UseSkillEx($FOW_TOC_SHADOWFORM)
+	UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 	Sleep(500 + GetPing())
 	; dark escape can be replaced with other skill like great dwarf armor to increase survivability at the cost of farm speed
-	UseSkillEx($FoWToC_DarkEscape)
+	UseSkillEx($FOW_TOC_DARK_ESCAPE)
 	If MoveDefendingFoWToC(-21131, -2390) == $STUCK Then Return $FAIL
 	If MoveDefendingFoWToC(-16494, -3113) == $STUCK Then Return $FAIL
 
@@ -147,25 +148,25 @@ Func FoWToCFarmLoop()
 	Sleep(500 + GetPing())
 	If MoveDefendingFoWToC(-14453, -3536) == $STUCK Then Return $FAIL
 	Info('Recharging skills and energy')
-	While Not IsRecharged($FoWToC_DwarvenStability) Or Not IsRecharged($FoWToC_WhirlingDefense) Or GetEnergy() < 20
+	While Not IsRecharged($FOW_TOC_DWARVEN_STABILITY) Or Not IsRecharged($FOW_TOC_WHIRLING_DEFENSE) Or GetEnergy() < 20
 		If CheckStuck('Recharging skills', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		DefendFoWToC()
 	WEnd
-	If IsRecharged($FoWToC_IAmUnstoppable) And GetEffectTimeRemaining(GetEffect($FoWToC_IAmUnstoppable)) == 0 Then UseSkillEx($FoWToC_IAmUnstoppable)
+	If IsRecharged($FOW_TOC_I_AM_UNSTOPPABLE) And GetEffectTimeRemaining(GetEffect($FOW_TOC_I_AM_UNSTOPPABLE)) == 0 Then UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
 	; recharging energy to cast Dwarven Stability and Whirling Defense
 	While GetEnergy() < 9
 		If CheckStuck('Recharging energy', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		Sleep(500)
 	WEnd
 	Info('Fighting abyssals')
-	UseSkillEx($FoWToC_DwarvenStability)
+	UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 	Sleep(1000 + GetPing())
-	UseSkillEx($FoWToC_WhirlingDefense)
+	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	If MoveDefendingFoWToC(-13684, -2077) == $STUCK Then Return $FAIL
 	If MoveDefendingFoWToC(-14113, -418) == $STUCK Then Return $FAIL
-	If IsRecharged($FoWToC_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 And GetEnergy() > 10 Then UseSkillEx($FoWToC_MentalBlock)
+	If IsRecharged($FOW_TOC_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And GetEnergy() > 10 Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	Sleep(1000 + GetPing())
-	While GetEffectTimeRemaining(GetEffect($ID_Whirling_Defense)) > 0
+	While GetEffectTimeRemaining(GetEffect($ID_WHIRLING_DEFENSE)) > 0
 		If CheckStuck('Fighting Abyssals', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		DefendFoWToC()
 	WEnd
@@ -180,7 +181,7 @@ Func FoWToCFarmLoop()
 	RandomSleep(1500)
 	If MoveDefendingFoWToC(-16002, -3031) == $STUCK Then Return $FAIL
 	Info('Recharging skills and energy')
-	While Not IsRecharged($FoWToC_DwarvenStability) Or Not IsRecharged($FoWToC_WhirlingDefense) Or GetEnergy() < 20
+	While Not IsRecharged($FOW_TOC_DWARVEN_STABILITY) Or Not IsRecharged($FOW_TOC_WHIRLING_DEFENSE) Or GetEnergy() < 20
 		If CheckStuck('Recharging skills', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		DefendFoWToC()
 	WEnd
@@ -194,7 +195,7 @@ Func FoWToCFarmLoop()
 	; if shadow rangers somehow are not in the spot then try to get closer to them
 	$me = GetMyAgent()
 	; getting closer to nearest shadow ranger, not nearest abyssal
-	$target = GetNearestAgentToAgent($me, $ID_Agent_Type_NPC, IsShadowRangerFoWToC)
+	$target = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, IsShadowRangerFoWToC)
 	; assuming that player is wearing sword or axe of enchanting
 	Attack($target)
 	; recharging energy to cast Dwarven Stability and Whirling Defense
@@ -203,13 +204,13 @@ Func FoWToCFarmLoop()
 		Sleep(500)
 	WEnd
 	Info('Fighting rangers')
-	UseSkillEx($FoWToC_DwarvenStability)
+	UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 	Sleep(1000 + GetPing())
-	UseSkillEx($FoWToC_WhirlingDefense)
-	If IsRecharged($FoWToC_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 And GetEnergy() > 10 Then UseSkillEx($FoWToC_MentalBlock)
-	If IsRecharged($FoWToC_IAmUnstoppable) And GetEffectTimeRemaining(GetEffect($FoWToC_IAmUnstoppable)) == 0 Then UseSkillEx($FoWToC_IAmUnstoppable)
+	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
+	If IsRecharged($FOW_TOC_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And GetEnergy() > 10 Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
+	If IsRecharged($FOW_TOC_I_AM_UNSTOPPABLE) And GetEffectTimeRemaining(GetEffect($FOW_TOC_I_AM_UNSTOPPABLE)) == 0 Then UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
 	Sleep(1000 + GetPing())
-	While GetEffectTimeRemaining(GetEffect($ID_Whirling_Defense)) > 0
+	While GetEffectTimeRemaining(GetEffect($ID_WHIRLING_DEFENSE)) > 0
 		If CheckStuck('Fighting Rangers', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		DefendFoWToC(False)
 	WEnd
@@ -228,25 +229,25 @@ EndFunc
 
 
 Func IsShadowRangerFoWToC($agent)
-	Return EnemyAgentFilter($agent) And (DllStructGetData($agent, 'ModelID') == $FoWToC_ModelID_ShadowRanger)
+	Return EnemyAgentFilter($agent) And (DllStructGetData($agent, 'ModelID') == $FOW_TOC_MODELID_SHADOW_RANGER)
 EndFunc
 
 
 Func MoveDefendingFoWToC($destinationX, $destinationY)
-	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $FoWToCMoveOptions)
+	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $fow_toc_move_options)
 EndFunc
 
 
 Func CastBuffsFowToC()
 	If IsPlayerDead() Then Return $FAIL
 
-	If IsRecharged($FoWToC_ShadowForm) Then UseSkillEx($FoWToC_ShadowForm)
+	If IsRecharged($FOW_TOC_SHADOWFORM) Then UseSkillEx($FOW_TOC_SHADOWFORM)
 	; start using 'I Am Unstoppable', 'Shroud of Distress' and 'Mental Block' skill only after 20 seconds of farm when starting aggroing abyssals which can knock down the player
-	If TimerDiff($RUN_TIMER) > 20000 Then
-		If IsRecharged($FoWToC_IAmUnstoppable) Then UseSkillEx($FoWToC_IAmUnstoppable)
-		If IsRecharged($FoWToC_ShroudOfDistress) Then UseSkillEx($FoWToC_ShroudOfDistress)
-		If IsRecharged($FoWToC_MentalBlock) And GetEffectTimeRemaining(GetEffect($ID_Mental_Block)) == 0 And (GetEnergy() > 20) Then
-			UseSkillEx($FoWToC_MentalBlock)
+	If TimerDiff($run_timer) > 20000 Then
+		If IsRecharged($FOW_TOC_I_AM_UNSTOPPABLE) Then UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
+		If IsRecharged($FOW_TOC_SHROUD_OF_DISTRESS) Then UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
+		If IsRecharged($FOW_TOC_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And (GetEnergy() > 20) Then
+			UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 		EndIf
 	EndIf
 
@@ -263,7 +264,7 @@ Func DefendFoWToC($useHoSSkill = True)
 
 		If DllStructGetData($me, 'HealthPercent') < 0.3 Or _
 				(DllStructGetData($me, 'HealthPercent') < 0.4 And GetHasCondition($me)) Then
-			UseSkillEx($FoWToC_HeartOfShadow)
+			UseSkillEx($FOW_TOC_HEART_OF_SHADOW)
 			Sleep(500 + GetPing())
 		EndIf
 	EndIf

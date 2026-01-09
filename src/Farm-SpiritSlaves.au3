@@ -24,8 +24,8 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SpiritSlaves_Skillbar = 'OgejkOrMLTmXfXfb0kkX4OcX5iA'
-Global Const $SpiritSlavesFarmInformations = '[CURRENTLY BROKEN]' & @CRLF _
+Global Const $SPIRIT_SLAVES_SKILLBAR = 'OgejkOrMLTmXfXfb0kkX4OcX5iA'
+Global Const $SPIRIT_SLAVES_FARM_INFORMATIONS = '[CURRENTLY BROKEN]' & @CRLF _
 	& 'For best results, have :' & @CRLF _
 	& '- 16 Earth Prayers' &@CRLF _
 	& '- 13 Mysticism' & @CRLF _
@@ -39,45 +39,44 @@ Global Const $SpiritSlavesFarmInformations = '[CURRENTLY BROKEN]' & @CRLF _
 	& 'Note: the farm works less efficiently during events because of the amount of loot'
 Global Const $SPIRIT_SLAVES_FARM_DURATION = 10 * 60 * 1000
 
-Global $SPIRIT_SLAVES_FARM_SETUP = False
-
-; Skill numbers declared to make the code WAY more readable (UseSkill($Skill_Conviction is better than UseSkill(1))
-Global Const $SS_Sand_Shards					= 1
-Global Const $SS_I_am_unstoppable				= 2
-Global Const $SS_Mystic_Vigor					= 3
-Global Const $SS_Vow_of_Strength				= 4
-Global Const $SS_Extend_Enchantments			= 5
-Global Const $SS_Deaths_Charge					= 6
-Global Const $SS_Mirage_Cloak					= 7
-Global Const $SS_Ebon_Battle_Standard_of_Honor	= 8
-;Global Const $SS_Heart_of_Fury					= 8
+; Skill numbers declared to make the code WAY more readable (UseSkill($SKILL_CONVICTION is better than UseSkill(1))
+Global Const $SS_SAND_SHARDS					= 1
+Global Const $SS_I_AM_UNSTOPPABLE				= 2
+Global Const $SS_MYSTIC_VIGOR					= 3
+Global Const $SS_VOW_OF_STRENGTH				= 4
+Global Const $SS_EXTEND_ENCHANTMENTS			= 5
+Global Const $SS_DEATHS_CHARGE					= 6
+Global Const $SS_MIRAGE_CLOAK					= 7
+Global Const $SS_EBON_BATTLE_STANDARD_OF_HONOR	= 8
+;Global Const $SS_HEART_OF_FURY					= 8
 
 ; Reduction from mysticism (50%) and increase from spirit (30%) are included
-Global Const $SS_SkillsArray =		[$SS_Sand_Shards,	$SS_I_am_unstoppable,	$SS_Mystic_Vigor,	$SS_Vow_of_Strength,	$SS_Extend_Enchantments,	$SS_Deaths_Charge,	$SS_Mirage_Cloak,	$SS_Ebon_Battle_Standard_of_Honor]
-Global Const $SS_SkillsCostsArray =	[7,					7,						4,					4,						7,							7,					7,					13]
-Global Const $skillCostsMap = MapFromArrays($SS_SkillsArray, $SS_SkillsCostsArray)
+Global Const $SS_SKILLS_ARRAY =		[$SS_SAND_SHARDS,	$SS_I_AM_UNSTOPPABLE,	$SS_MYSTIC_VIGOR,	$SS_VOW_OF_STRENGTH,	$SS_EXTEND_ENCHANTMENTS,	$SS_DEATHS_CHARGE,	$SS_MIRAGE_CLOAK,	$SS_EBON_BATTLE_STANDARD_OF_HONOR]
+Global Const $SS_SKILLS_COSTS_ARRAY =	[7,					7,						4,					4,						7,							7,					7,					13]
+Global Const $SKILL_COSTS_MAP = MapFromArrays($SS_SKILLS_ARRAY, $SS_SKILLS_COSTS_ARRAY)
 
+Global $spirit_slaves_farm_setup = False
 
 ;~ Main loop of the farm
-Func SpiritSlavesFarm($STATUS)
-	If Not $SPIRIT_SLAVES_FARM_SETUP And SetupSpiritSlavesFarm() == $FAIL Then Return $PAUSE
+Func SpiritSlavesFarm()
+	If Not $spirit_slaves_farm_setup And SetupSpiritSlavesFarm() == $FAIL Then Return $PAUSE
 	Return SpiritSlavesFarmLoop()
 EndFunc
 
 
 ;~ Farm setup : going to the Shattered Ravines
 Func SetupSpiritSlavesFarm()
-	If GetMapID() <> $ID_The_Shattered_Ravines Then
-		If TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If GetMapID() <> $ID_THE_SHATTERED_RAVINES Then
+		If TravelToOutpost($ID_BONE_PALACE, $district_name) == $FAIL Then Return $FAIL
 		SwitchMode($ID_HARD_MODE)
-		SetDisplayedTitle($ID_Lightbringer_Title)
+		SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 
 		If SetupPlayerSpiritSlavesFarm() == $FAIL Then Return $FAIL
 		LeaveParty()
 
-		While Not $SPIRIT_SLAVES_FARM_SETUP
+		While Not $spirit_slaves_farm_setup
 			If RunToShatteredRavines() == $FAIL Then ContinueLoop
-			$SPIRIT_SLAVES_FARM_SETUP = True
+			$spirit_slaves_farm_setup = True
 		WEnd
 	EndIf
 	Info('Preparations complete')
@@ -87,8 +86,8 @@ EndFunc
 
 Func SetupPlayerSpiritSlavesFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
-		LoadSkillTemplate($SpiritSlaves_Skillbar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
+		LoadSkillTemplate($SPIRIT_SLAVES_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL
@@ -99,12 +98,12 @@ EndFunc
 
 
 Func RunToShatteredRavines()
-	TravelToOutpost($ID_Bone_Palace, $DISTRICT_NAME)
+	TravelToOutpost($ID_BONE_PALACE, $district_name)
 	; Exiting to Joko's Domain
 	MoveTo(-14520, 6009)
 	Move(-14820, 3400)
 	RandomSleep(1000)
-	If Not WaitMapLoading($ID_Jokos_Domain) Then Return $FAIL
+	If Not WaitMapLoading($ID_JOKOS_DOMAIN) Then Return $FAIL
 	RandomSleep(500)
 	MoveTo(-12657, 2609)
 	ChangeWeaponSet(4)
@@ -149,7 +148,7 @@ Func RunToShatteredRavines()
 	MoveTo(-4500, 20150)
 	Move(-4500, 21000)
 	RandomSleep(1000)
-	If Not WaitMapLoading($ID_The_Shattered_Ravines, 10000, 2000) Then Return $FAIL
+	If Not WaitMapLoading($ID_THE_SHATTERED_RAVINES, 10000, 2000) Then Return $FAIL
 	; Hurry up before dying
 	MoveTo(-9714, -10767)
 	MoveTo(-7919, -10530)
@@ -159,7 +158,7 @@ EndFunc
 
 ;~ Farm loop
 Func SpiritSlavesFarmLoop()
-	UseConsumable($ID_Slice_of_Pumpkin_Pie)
+	UseConsumable($ID_SLICE_OF_PUMPKIN_PIE)
 
 	Info('Killing group 1 @ North')
 	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
@@ -189,13 +188,13 @@ Func RezoneToTheShatteredRavines()
 	MoveTo(-10500, -11000)
 	Move(-10656, -11293)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Jokos_Domain)
+	WaitMapLoading($ID_JOKOS_DOMAIN)
 	RandomSleep(500)
 	; Reentering The Shattered Ravines
 	MoveTo(-4500, 20150)
 	Move(-4500, 21000)
 	RandomSleep(1000)
-	WaitMapLoading($ID_The_Shattered_Ravines, 10000, 2000)
+	WaitMapLoading($ID_THE_SHATTERED_RAVINES, 10000, 2000)
 	; Hurry up before dying
 	MoveTo(-9714, -10767)
 	MoveTo(-7919, -10530)
@@ -208,29 +207,29 @@ Func FarmNorthGroup()
 	WaitForFoesBall()
 	WaitForEnergy()
 	WaitForDeathsCharge()
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, $ID_Allegiance_Foe, $RANGE_EARSHOT)
+	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe)
 	ChangeWeaponSet(1)
-	UseSkillEx($SS_Sand_Shards)
+	UseSkillEx($SS_SAND_SHARDS)
 	RandomSleep(3500)
-	UseSkillEx($SS_I_am_unstoppable)
+	UseSkillEx($SS_I_AM_UNSTOPPABLE)
 	RandomSleep(3500)
-	UseSkillEx($SS_Mystic_Vigor)
+	UseSkillEx($SS_MYSTIC_VIGOR)
 	RandomSleep(300)
-	UseSkillEx($SS_Vow_of_Strength)
+	UseSkillEx($SS_VOW_OF_STRENGTH)
 	RandomSleep(20)
-	UseSkillEx($SS_Extend_Enchantments)
+	UseSkillEx($SS_EXTEND_ENCHANTMENTS)
 	RandomSleep(20)
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
-	$targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
+	$targetFoe = BetterGetNearestNPCToCoords($ID_ALLEGIANCE_FOE, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
 
-	UseSkillEx($SS_Deaths_Charge, $targetFoe)
+	UseSkillEx($SS_DEATHS_CHARGE, $targetFoe)
 	RandomSleep(20)
-	If GetEnergy() > $skillCostsMap[$SS_Mirage_Cloak] Then UseSkillEx($SS_Mirage_Cloak)
+	If GetEnergy() > $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK] Then UseSkillEx($SS_MIRAGE_CLOAK)
 	RandomSleep(20)
-	If GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
+	If GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
 	RandomSleep(20)
 
 	If IsPlayerDead() Then Return $FAIL
@@ -267,26 +266,26 @@ Func FarmSouthGroup()
 	ChangeWeaponSet(1)
 	MoveTo(-7800, -7680, 0)
 
-	UseSkillEx($SS_Sand_Shards)
+	UseSkillEx($SS_SAND_SHARDS)
 	RandomSleep(2000)
-	UseSkillEx($SS_Mystic_Vigor)
+	UseSkillEx($SS_MYSTIC_VIGOR)
 	RandomSleep(750)
-	UseSkillEx($SS_Vow_of_Strength)
+	UseSkillEx($SS_VOW_OF_STRENGTH)
 	RandomSleep(200)
 
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
-	Local $targetFoe = BetterGetNearestNPCToCoords($ID_Allegiance_Foe, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
-	UseSkillEx($SS_I_am_unstoppable)
+	Local $targetFoe = BetterGetNearestNPCToCoords($ID_ALLEGIANCE_FOE, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
+	UseSkillEx($SS_I_AM_UNSTOPPABLE)
 	RandomSleep(20)
-	UseSkillEx($SS_Extend_Enchantments)
+	UseSkillEx($SS_EXTEND_ENCHANTMENTS)
 	RandomSleep(20)
-	UseSkillEx($SS_Deaths_Charge, $targetFoe)
+	UseSkillEx($SS_DEATHS_CHARGE, $targetFoe)
 	RandomSleep(20)
-	If GetEnergy() > $skillCostsMap[$SS_Mirage_Cloak] Then UseSkillEx($SS_Mirage_Cloak)
+	If GetEnergy() > $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK] Then UseSkillEx($SS_MIRAGE_CLOAK)
 	RandomSleep(20)
-	If GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
+	If GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
 	RandomSleep(20)
 
 	If IsPlayerDead() Then Return $FAIL
@@ -302,36 +301,36 @@ Func KillSequence()
 	Local $casterFoesMap[]
 	ChangeWeaponSet(2)
 	While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 100000
-		If IsRecharged($SS_Mystic_Vigor) And GetEffectTimeRemaining(GetEffect($ID_Mystic_Vigor)) == 0 And GetEnergy() > $skillCostsMap[$SS_Mystic_Vigor] Then
-			UseSkillEx($SS_Mystic_Vigor)
+		If IsRecharged($SS_MYSTIC_VIGOR) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_VIGOR)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_MYSTIC_VIGOR] Then
+			UseSkillEx($SS_MYSTIC_VIGOR)
 			RandomSleep(20)
 		EndIf
-		If $foesCount > 1 And IsRecharged($SS_Mirage_Cloak) And GetEffectTimeRemaining(GetEffect($ID_Mirage_Cloak)) == 0 And GetEnergy() > ($skillCostsMap[$SS_Extend_Enchantments] + $skillCostsMap[$SS_Mirage_Cloak]) Then
-			UseSkillEx($SS_Extend_Enchantments)
+		If $foesCount > 1 And IsRecharged($SS_MIRAGE_CLOAK) And GetEffectTimeRemaining(GetEffect($ID_MIRAGE_CLOAK)) == 0 And GetEnergy() > ($SKILL_COSTS_MAP[$SS_EXTEND_ENCHANTMENTS] + $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK]) Then
+			UseSkillEx($SS_EXTEND_ENCHANTMENTS)
 			RandomSleep(20)
-			UseSkillEx($SS_Mirage_Cloak)
-			RandomSleep(20)
-		EndIf
-		If IsRecharged($SS_I_am_unstoppable) And GetEnergy() > $skillCostsMap[$SS_I_am_unstoppable] Then
-			UseSkillEx($SS_I_am_unstoppable)
+			UseSkillEx($SS_MIRAGE_CLOAK)
 			RandomSleep(20)
 		EndIf
-		If $foesCount > 3 And IsRecharged($SS_Sand_Shards) And GetEffectTimeRemaining(GetEffect($ID_Sand_Shards)) == 0 And GetEnergy() > $skillCostsMap[$SS_Sand_Shards] Then
-			UseSkillEx($SS_Sand_Shards)
+		If IsRecharged($SS_I_AM_UNSTOPPABLE) And GetEnergy() > $SKILL_COSTS_MAP[$SS_I_AM_UNSTOPPABLE] Then
+			UseSkillEx($SS_I_AM_UNSTOPPABLE)
 			RandomSleep(20)
 		EndIf
-		If IsRecharged($SS_Ebon_Battle_Standard_of_Honor) And GetEffectTimeRemaining(GetEffect($ID_Ebon_Battle_Standard_of_Honor)) == 0 And GetEnergy() > $skillCostsMap[$SS_Ebon_Battle_Standard_of_Honor] Then
-			UseSkillEx($SS_Ebon_Battle_Standard_of_Honor)
+		If $foesCount > 3 And IsRecharged($SS_SAND_SHARDS) And GetEffectTimeRemaining(GetEffect($ID_SAND_SHARDS)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_SAND_SHARDS] Then
+			UseSkillEx($SS_SAND_SHARDS)
 			RandomSleep(20)
 		EndIf
-		If IsRecharged($SS_Vow_of_Strength) And GetEnergy() > $skillCostsMap[$SS_Vow_of_Strength] Then
-			UseSkillEx($SS_Vow_of_Strength)
+		If IsRecharged($SS_EBON_BATTLE_STANDARD_OF_HONOR) And GetEffectTimeRemaining(GetEffect($ID_EBON_BATTLE_STANDARD_OF_HONOR)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then
+			UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
+			RandomSleep(20)
+		EndIf
+		If IsRecharged($SS_VOW_OF_STRENGTH) And GetEnergy() > $SKILL_COSTS_MAP[$SS_VOW_OF_STRENGTH] Then
+			UseSkillEx($SS_VOW_OF_STRENGTH)
 			RandomSleep(20)
 		EndIf
 		Local $me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 		If $foesCount > 0 Then
-			Local $casterFoe = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, Null, Null, $RANGE_AREA + 88)
+			Local $casterFoe = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_AREA + 88)
 			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance($me, $casterFoe)
 			If $foesCount < 5 And GetDistance($me, $casterFoe) > $RANGE_ADJACENT Then
@@ -405,14 +404,14 @@ EndFunc
 
 ;~ Respawn and rezone if we die
 Func RestartAfterDeath()
-	Local $deadlockTimer = TimerInit()
+	Local $deadlock_timer = TimerInit()
 	Info('Waiting for resurrection')
 	While IsPlayerDead()
 		RandomSleep(1000)
-		If TimerDiff($deadlockTimer) > 60000 Then
-			$SPIRIT_SLAVES_FARM_SETUP = True
+		If TimerDiff($deadlock_timer) > 60000 Then
+			$spirit_slaves_farm_setup = True
 			Info('Travelling to Bone Palace')
-			DistrictTravel($ID_Bone_Palace, $DISTRICT_NAME)
+			DistrictTravel($ID_BONE_PALACE, $district_name)
 			Return $FAIL
 		EndIf
 	WEnd
@@ -431,7 +430,7 @@ EndFunc
 
 ;~ Wait to have death's charge recharged
 Func WaitForDeathsCharge()
-	While Not IsRecharged($SS_Deaths_Charge) And IsPlayerAlive()
+	While Not IsRecharged($SS_DEATHS_CHARGE) And IsPlayerAlive()
 		RandomSleep(1000)
 	WEnd
 EndFunc
@@ -439,7 +438,7 @@ EndFunc
 
 ;~ Cleanse if the character has a condition (cripple)
 Func CleanseFromCripple()
-	If (GetHasCondition(GetMyAgent()) And GetEffect($ID_Crippled) <> Null) Then UseSkillEx($SS_I_am_unstoppable)
+	If (GetHasCondition(GetMyAgent()) And GetEffect($ID_CRIPPLED) <> Null) Then UseSkillEx($SS_I_AM_UNSTOPPABLE)
 EndFunc
 
 

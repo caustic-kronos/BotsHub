@@ -12,7 +12,7 @@
 		"store_unids": false,
 		"sort_items": false,
 		"collect_data": false,
-		"store_leftovers": true,
+		"store_leftovers": false,
 		"store_gold": true,
 		"buy_ectoplasm": false,
 		"buy_obsidian": false,

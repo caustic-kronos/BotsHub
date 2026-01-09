@@ -28,8 +28,8 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $DAFeathersFarmerSkillbar = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
-Global Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $DA_FEATHERS_FARMER_SKILLBAR = 'OgejkmrMbSmXfbaXNXTQ3lEYsXA'
+Global Const $FEATHERS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 16 in Earth Prayers' & @CRLF _
 	& '- 10 in Scythe Mastery' & @CRLF _
 	& '- 10 in Mysticism' & @CRLF _
@@ -41,29 +41,29 @@ Global Const $FeathersFarmInformations = 'For best results, have :' & @CRLF _
 ; Average duration ~ 8m20
 Global Const $FEATHERS_FARM_DURATION = (8 * 60 + 20) * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Feathers_SandShards) is better than UseSkillEx(1))
-Global Const $Feathers_SandShards			= 1
-Global Const $Feathers_VowOfStrength		= 2
-Global Const $Feathers_StaggeringForce		= 3
-Global Const $Feathers_EremitesAttack		= 4
-Global Const $Feathers_Dash					= 5
-Global Const $Feathers_DwarvenStability		= 6
-Global Const $Feathers_Conviction			= 7
-Global Const $Feathers_MysticRegeneration	= 8
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($FEATHERS_SAND_SHARDS) is better than UseSkillEx(1))
+Global Const $FEATHERS_SAND_SHARDS			= 1
+Global Const $FEATHERS_VOW_OF_STRENGTH		= 2
+Global Const $FEATHERS_STAGGERING_FORCE		= 3
+Global Const $FEATHERS_EREMITES_ATTACK		= 4
+Global Const $FEATHERS_DASH					= 5
+Global Const $FEATHERS_DWARVEN_STABILITY	= 6
+Global Const $FEATHERS_CONVICTION			= 7
+Global Const $FEATHERS_MYSTIC_REGENERATION	= 8
 
-Global Const $ModelID_Sensali_Claw			= 3995
-Global Const $ModelID_Sensali_Darkfeather	= 3997
-Global Const $ModelID_Sensali_Cutter		= 3999
+Global Const $MODELID_SENSALI_CLAW			= 3995
+Global Const $MODELID_SENSALI_DARKFEATHER	= 3997
+Global Const $MODELID_SENSALI_CUTTER		= 3999
 
-Global $FEATHERS_FARM_SETUP = False
+Global $feathers_farm_setup = False
 
 ;~ Main method to farm feathers
-Func FeathersFarm($STATUS)
-	If Not $FEATHERS_FARM_SETUP And SetupFeathersFarm() == $FAIL Then Return $PAUSE
+Func FeathersFarm()
+	If Not $feathers_farm_setup And SetupFeathersFarm() == $FAIL Then Return $PAUSE
 
 	GoToJayaBluffs()
 	Local $result = FeathersFarmLoop()
-	ReturnBackToOutpost($ID_Seitung_Harbor)
+	ReturnBackToOutpost($ID_SEITUNG_HARBOR)
 	Return $result
 EndFunc
 
@@ -71,7 +71,7 @@ EndFunc
 ;~ Feathers farm setup
 Func SetupFeathersFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_SEITUNG_HARBOR, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFeathersFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
@@ -87,8 +87,8 @@ Func SetupFeathersFarm()
 	Move(10500, -13100)
 	Move(10970, -13360)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Seitung_Harbor, 10000, 2000)
-	$FEATHERS_FARM_SETUP = True
+	WaitMapLoading($ID_SEITUNG_HARBOR, 10000, 2000)
+	$feathers_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -96,8 +96,8 @@ EndFunc
 
 Func SetupPlayerFeathersFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Dervish Then
-		LoadSkillTemplate($DAFeathersFarmerSkillbar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
+		LoadSkillTemplate($DA_FEATHERS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL
@@ -109,23 +109,23 @@ EndFunc
 
 ;~ Move out of outpost into Jaya Bluffs
 Func GoToJayaBluffs()
-	TravelToOutpost($ID_Seitung_Harbor, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Jaya_Bluffs
+	TravelToOutpost($ID_SEITUNG_HARBOR, $district_name)
+	While GetMapID() <> $ID_JAYA_BLUFFS
 		Info('Moving to Jaya Bluffs')
 		MoveTo(17300, 17300)
 		Move(16800, 17550)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Jaya_Bluffs, 10000, 2000)
+		WaitMapLoading($ID_JAYA_BLUFFS, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Farm loop
 Func FeathersFarmLoop()
-	If GetMapID() <> $ID_Jaya_Bluffs Then Return $FAIL
+	If GetMapID() <> $ID_JAYA_BLUFFS Then Return $FAIL
 
 	Info('Running to Sensali.')
-	UseConsumable($ID_Birthday_Cupcake)
+	UseConsumable($ID_BIRTHDAY_CUPCAKE)
 	MoveTo(9000, -12680)
 	MoveTo(7588, -10609)
 	MoveTo(2900, -9700)
@@ -170,10 +170,10 @@ Func MoveRun($x, $y, $timeOut = 2*60*1000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
 		EndIf
-		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
-		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
+		If IsRecharged($FEATHERS_DWARVEN_STABILITY) Then UseSkillEx($FEATHERS_DWARVEN_STABILITY)
+		If IsRecharged($FEATHERS_DASH) Then UseSkillEx($FEATHERS_DASH)
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HealthPercent') < 0.95 And GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
+		If DllStructGetData($me, 'HealthPercent') < 0.95 And GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
 		If Not IsPlayerMoving() Then Move($x, $y)
 		RandomSleep(250)
 		$me = GetMyAgent()
@@ -205,12 +205,12 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 			If IsPlayerDead() Then Return $FAIL
 		EndIf
 		If IsPlayerDead() Then Return $FAIL
-		If IsRecharged($Feathers_DwarvenStability) Then UseSkillEx($Feathers_DwarvenStability)
-		If IsRecharged($Feathers_Dash) Then UseSkillEx($Feathers_Dash)
+		If IsRecharged($FEATHERS_DWARVEN_STABILITY) Then UseSkillEx($FEATHERS_DWARVEN_STABILITY)
+		If IsRecharged($FEATHERS_DASH) Then UseSkillEx($FEATHERS_DASH)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HealthPercent') < 0.9 Then
-			If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
-			If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
+			If GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
+			If GetEffectTimeRemaining($ID_CONVICTION) <= 0 Then UseSkillEx($FEATHERS_CONVICTION)
 		EndIf
 		$me = GetMyAgent()
 		If CountFoesInRangeOfAgent($me, 1200, IsSensali) > 1 Then
@@ -250,17 +250,17 @@ Func Kill($waitForSettle = True)
 
 	Local $stuckCount = 0
 	CheckAndSendStuckCommand()
-	If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
+	If GetEffectTimeRemaining($ID_SAND_SHARDS) <= 0 Then UseSkillEx($FEATHERS_SAND_SHARDS)
 	If $waitForSettle Then
 		If Not WaitForSettle() Then Return $FAIL
 	EndIf
 	CheckAndSendStuckCommand()
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeWeaponSet(1)
-	If IsRecharged($Feathers_VowOfStrength) Then UseSkillEx($Feathers_VowOfStrength)
+	If IsRecharged($FEATHERS_VOW_OF_STRENGTH) Then UseSkillEx($FEATHERS_VOW_OF_STRENGTH)
 	If GetEnergy() >= 10 Then
-		UseSkillEx($Feathers_StaggeringForce)
-		UseSkillEx($Feathers_EremitesAttack, $target)
+		UseSkillEx($FEATHERS_STAGGERING_FORCE)
+		UseSkillEx($FEATHERS_EREMITES_ATTACK, $target)
 	EndIf
 	ChangeWeaponSet(1)
 
@@ -279,10 +279,10 @@ Func Kill($waitForSettle = True)
 		EndIf
 		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent(GetMyAgent())
-		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
-		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
-		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 And CountFoesInRangeOfAgent(GetMyAgent(), 300, IsSensali) > 1 Then UseSkillEx($Feathers_SandShards)
-		If IsRecharged($Feathers_VowOfStrength) <= 0 Then UseSkillEx($Feathers_VowOfStrength)
+		If GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
+		If GetEffectTimeRemaining($ID_CONVICTION) <= 0 Then UseSkillEx($FEATHERS_CONVICTION)
+		If GetEffectTimeRemaining($ID_SAND_SHARDS) <= 0 And CountFoesInRangeOfAgent(GetMyAgent(), 300, IsSensali) > 1 Then UseSkillEx($FEATHERS_SAND_SHARDS)
+		If IsRecharged($FEATHERS_VOW_OF_STRENGTH) <= 0 Then UseSkillEx($FEATHERS_VOW_OF_STRENGTH)
 		$stuckCount += 1
 		If $stuckCount > 100 Then
 			$stuckCount = 0
@@ -309,12 +309,12 @@ Func WaitForSettle($Timeout = 10000)
 	While IsPlayerAlive() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
 		If IsPlayerDead() Then Return False
 		If DllStructGetData($me, 'HealthPercent') < 0.7 Then Return True
-		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
-		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
-		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
+		If GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
+		If GetEffectTimeRemaining($ID_CONVICTION) <= 0 Then UseSkillEx($FEATHERS_CONVICTION)
+		If GetEffectTimeRemaining($ID_SAND_SHARDS) <= 0 Then UseSkillEx($FEATHERS_SAND_SHARDS)
 		Sleep(250)
 		$me = GetMyAgent()
-		$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+		$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 	WEnd
 
 	If CountFoesInRangeOfAgent($me, 900) == 0 Then Return False
@@ -323,12 +323,12 @@ Func WaitForSettle($Timeout = 10000)
 	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($deadlock) < $Timeout)
 		If IsPlayerDead() Then Return False
 		If DllStructGetData($me, 'HealthPercent') < 0.7 Then Return True
-		If GetEffectTimeRemaining($ID_Mystic_Regeneration) <= 0 Then UseSkillEx($Feathers_MysticRegeneration)
-		If GetEffectTimeRemaining($ID_Conviction) <= 0 Then UseSkillEx($Feathers_Conviction)
-		If GetEffectTimeRemaining($ID_Sand_Shards) <= 0 Then UseSkillEx($Feathers_SandShards)
+		If GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
+		If GetEffectTimeRemaining($ID_CONVICTION) <= 0 Then UseSkillEx($FEATHERS_CONVICTION)
+		If GetEffectTimeRemaining($ID_SAND_SHARDS) <= 0 Then UseSkillEx($FEATHERS_SAND_SHARDS)
 		Sleep(250)
 		$me = GetMyAgent()
-		$target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+		$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 	WEnd
 	Return True
 EndFunc
@@ -337,7 +337,7 @@ EndFunc
 ;~ Return True if agent is a Sensali
 Func IsSensali($agent)
 	Local $modelID = DllStructGetData($agent, 'ModelID')
-	If $modelID == $ModelID_Sensali_Claw Or $modelID == $ModelID_Sensali_Darkfeather Or $modelID == $ModelID_Sensali_Cutter Then
+	If $modelID == $MODELID_SENSALI_CLAW Or $modelID == $MODELID_SENSALI_DARKFEATHER Or $modelID == $MODELID_SENSALI_CUTTER Then
 		Return True
 	EndIf
 	Return False

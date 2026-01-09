@@ -28,8 +28,8 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $RADragonMossFarmerSkillbar = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
-Global Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
+Global Const $RA_DRAGON_MOSS_FARMER_SKILLBAR = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
+Global Const $DRAGON_MOSS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Wilderness Survival' & @CRLF _
@@ -39,25 +39,25 @@ Global Const $DragonMossFarmInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune'
 Global Const $DRAGONMOSS_FARM_DURATION = 2 * 60 * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DwarvenStability) is better than UseSkillEx(1))
-Global Const $DM_DwarvenStability	= 1
-Global Const $DM_StormChaser		= 2
-Global Const $DM_ShroudOfDistress	= 3
-Global Const $DM_DeadlyParadox		= 4
-Global Const $DM_ShadowForm			= 5
-Global Const $DM_MentalBlock		= 6
-Global Const $DM_DeathsCharge		= 7
-Global Const $DM_WhirlingDefense	= 8
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($DM_DWARVEN_STABILITY) is better than UseSkillEx(1))
+Global Const $DM_DWARVEN_STABILITY	= 1
+Global Const $DM_STORM_CHASER		= 2
+Global Const $DM_SHROUD_OF_DISTRESS	= 3
+Global Const $DM_DEADLY_PARADOX		= 4
+Global Const $DM_SHADOWFORM			= 5
+Global Const $DM_MENTAL_BLOCK		= 6
+Global Const $DM_DEATHS_CHARGE		= 7
+Global Const $DM_WHIRLING_DEFENSE	= 8
 
-Global $DM_FARM_SETUP = False
+Global $dm_farm_setup = False
 
 ;~ Main method to farm Dragon Moss
-Func DragonMossFarm($STATUS)
-	If Not $DM_FARM_SETUP And SetupDragonMossFarm() == $FAIL Then Return $PAUSE
+Func DragonMossFarm()
+	If Not $dm_farm_setup And SetupDragonMossFarm() == $FAIL Then Return $PAUSE
 
 	GoToDrazachThicket()
 	Local $result = DragonMossFarmLoop()
-	ReturnBackToOutpost($ID_Saint_Anjekas_Shrine)
+	ReturnBackToOutpost($ID_SAINT_ANJEKAS_SHRINE)
 	Return $result
 EndFunc
 
@@ -65,7 +65,7 @@ EndFunc
 ;~ Dragon moss farm setup
 Func SetupDragonMossFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_SAINT_ANJEKAS_SHRINE, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerDragonMossFarm() Then Return $FAIL
 	LeaveParty()
@@ -73,8 +73,8 @@ Func SetupDragonMossFarm()
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
 	RandomSleep(1000)
-	WaitMapLoading($ID_Saint_Anjekas_Shrine, 10000, 1000)
-	$DM_FARM_SETUP = True
+	WaitMapLoading($ID_SAINT_ANJEKAS_SHRINE, 10000, 1000)
+	$dm_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -82,8 +82,8 @@ EndFunc
 
 Func SetupPlayerDragonMossFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_Ranger Then
-		LoadSkillTemplate($RADragonMossFarmerSkillbar)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
+		LoadSkillTemplate($RA_DRAGON_MOSS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -95,35 +95,35 @@ EndFunc
 
 ;~ Move out of outpost into Drazach Thicket
 Func GoToDrazachThicket()
-	TravelToOutpost($ID_Saint_Anjekas_Shrine, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Drazach_Thicket
+	TravelToOutpost($ID_SAINT_ANJEKAS_SHRINE, $district_name)
+	While GetMapID() <> $ID_DRAZACH_THICKET
 		Info('Moving to Drazach Thicket')
 		MoveTo(-11400, -22650)
 		Move(-11000, -24000)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Drazach_Thicket, 10000, 1000)
+		WaitMapLoading($ID_DRAZACH_THICKET, 10000, 1000)
 	WEnd
 EndFunc
 
 
 ;~ Farm loop
 Func DragonMossFarmLoop()
-	If GetMapID() <> $ID_Drazach_Thicket Then Return $FAIL
+	If GetMapID() <> $ID_DRAZACH_THICKET Then Return $FAIL
 
-	UseSkillEx($DM_DwarvenStability)
+	UseSkillEx($DM_DWARVEN_STABILITY)
 	RandomSleep(50)
-	UseSkillEx($DM_StormChaser)
+	UseSkillEx($DM_STORM_CHASER)
 	RandomSleep(50)
 	MoveTo(-8400, 18450)
 	; Can talk to get benediction here
 
 	; Move to spot before aggro
 	MoveTo(-6350, 16750)
-	UseSkillEx($DM_ShroudOfDistress)
+	UseSkillEx($DM_SHROUD_OF_DISTRESS)
 	RandomSleep(50)
-	UseSkillEx($DM_DeadlyParadox)
+	UseSkillEx($DM_DEADLY_PARADOX)
 	RandomSleep(50)
-	UseSkillEx($DM_ShadowForm)
+	UseSkillEx($DM_SHADOWFORM)
 	RandomSleep(50)
 	; Aggro
 	MoveTo(-5400, 15675, UseIMSWhenAvailable)
@@ -131,13 +131,13 @@ Func DragonMossFarmLoop()
 	RandomSleep(2000)
 	; Safety
 	MoveTo(-6575, 18575, 0)
-	UseSkillEx($DM_DwarvenStability)
-	While IsPlayerAlive() And Not IsRecharged($DM_ShadowForm)
+	UseSkillEx($DM_DWARVEN_STABILITY)
+	While IsPlayerAlive() And Not IsRecharged($DM_SHADOWFORM)
 		RandomSleep(500)
 	WEnd
-	UseSkillEx($DM_DeadlyParadox)
+	UseSkillEx($DM_DEADLY_PARADOX)
 	RandomSleep(50)
-	UseSkillEx($DM_ShadowForm)
+	UseSkillEx($DM_SHADOWFORM)
 	RandomSleep(50)
 	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(1000)
@@ -145,19 +145,19 @@ Func DragonMossFarmLoop()
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
-	While IsRecharged($DM_DeathsCharge) And IsPlayerAlive()
-		UseSkillEx($DM_DeathsCharge, $target)
+	While IsRecharged($DM_DEATHS_CHARGE) And IsPlayerAlive()
+		UseSkillEx($DM_DEATHS_CHARGE, $target)
 		RandomSleep(200)
 	WEnd
-	While IsRecharged($DM_WhirlingDefense) And IsPlayerAlive()
-		UseSkillEx($DM_WhirlingDefense)
+	While IsRecharged($DM_WHIRLING_DEFENSE) And IsPlayerAlive()
+		UseSkillEx($DM_WHIRLING_DEFENSE)
 		RandomSleep(200)
 	WEnd
 
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	Local $counter = 0
 	While IsPlayerAlive() And $foesCount > 0 And $counter < 16
-		If IsRecharged($DM_ShadowForm) Then UseSkillEx($DM_ShadowForm)
+		If IsRecharged($DM_SHADOWFORM) Then UseSkillEx($DM_SHADOWFORM)
 		RandomSleep(1000)
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
@@ -180,5 +180,5 @@ EndFunc
 
 ;~ If storm chaser is available, use it
 Func UseIMSWhenAvailable()
-	If IsRecharged($DM_StormChaser) Then UseSkillEx($DM_StormChaser)
+	If IsRecharged($DM_STORM_CHASER) Then UseSkillEx($DM_STORM_CHASER)
 EndFunc

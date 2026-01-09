@@ -28,20 +28,20 @@ Func ContainsValuableUpgrades($item)
 	If IsWeapon($item) Then
 		Local $itemType	= DllStructGetData($item, 'type')
 		If IsInscribable($item) Then
-			For $struct In $ValuableModsByWeaponType[$itemType]
+			For $struct In $valuable_mods_by_weapon_type[$itemType]
 				If StringInStr($modStruct, $struct) > 0 Then Return True
 			Next
-			For $struct In $ValuableInscriptionsArray
+			For $struct In $valuable_inscriptions_array
 				If StringInStr($modStruct, $struct) > 0 Then Return True
 			Next
 		Else
-			For $struct In $ValuableModsByOSWeaponType[$itemType]
+			For $struct In $valuable_mods_by_os_weapon_type[$itemType]
 				If StringInStr($modStruct, $struct) > 0 Then Return True
 			Next
 		EndIf
 
 	ElseIf IsArmorSalvageItem($item) Then
-		For $struct In $ValuableRunesAndInsigniasStructsArray
+		For $struct In $valuable_runes_and_insignias_structs_array
 			If StringInStr($modStruct, $struct) > 0 Then Return True
 		Next
 	EndIf
@@ -53,10 +53,10 @@ EndFunc
 Func HasPerfectMods($item)
 	Local $itemType	= DllStructGetData($item, 'type')
 	Local $modstruct	= GetModStruct($item)
-	Local $typeMods	= $PerfectModsByWeaponType[$itemType]
+	Local $typeMods	= $perfect_mods_by_weapon_type[$itemType]
 	Switch $itemType
 		; For martial weapons, only 1 inherent mod and the weapon is perfect
-		Case $ID_Type_Axe, $ID_Type_Bow, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger
+		Case $ID_TYPE_AXE, $ID_TYPE_BOW, $ID_TYPE_HAMMER, $ID_TYPE_SWORD, $ID_TYPE_DAGGER
 			For $struct In $typeMods
 				If StringInStr($ModStruct, $struct) > 0 Then
 					; If the mod found is vampiric or zealous strength, we need to check we are not mixing it with vampiric or zealous mod
@@ -71,20 +71,20 @@ Func HasPerfectMods($item)
 			Next
 			Return False
 		; For staff, only 1 inherent mod as well, but no risk of zealous/vampiric
-		Case $ID_Type_Staff
+		Case $ID_TYPE_STAFF
 			For $struct In $typeMods
 				If StringInStr($ModStruct, $struct) > 0 Then Return True
 			Next
 			Return False
 		; For wand, offhand and shield, there are 2 inherent mods, we need to check twice
-		Case $ID_Type_Wand, $ID_Type_Offhand, $ID_Type_Shield
+		Case $ID_TYPE_WAND, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD
 			Local $count	= 0
 			For $struct In $typeMods
 				If StringInStr($ModStruct, $struct) > 0 Then $count += 1
 			Next
 			Return $count > 1
 		; For scythe and spear, if you are checking this, something is wrong, there are no OS scythe or spear. Congratulations.
-		Case $ID_Type_Scythe, $ID_Type_Spear
+		Case $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR
 			Return True
 	EndSwitch
 	Return False
@@ -103,43 +103,43 @@ Func HasOkayMods($item)
 EndFunc
 
 
-Global $STRUCT_MINUS_5_ENERGY	= '0500B820'
-Global $STRUCT_15_ENERGY	= '0F00D822'
-Global $STRUCT_ENERGY_REGENERATION	= '0100C820'
+Global Const $STRUCT_MINUS_5_ENERGY	= '0500B820'
+Global Const $STRUCT_15_ENERGY	= '0F00D822'
+Global Const $STRUCT_ENERGY_REGENERATION	= '0100C820'
 
 
 #Region Weapon Mods
-Global Const $ID_Staff_Head								= 896
-Global Const $ID_Staff_Wrapping							= 908
-Global Const $ID_Shield_Handle							= 15554
-Global Const $ID_Focus_Core								= 15551
-Global Const $ID_Wand									= 15552
-Global Const $ID_Bow_String								= 894
-Global Const $ID_Bow_Grip								= 906
-Global Const $ID_Sword_Hilt								= 897
-Global Const $ID_Sword_Pommel							= 909
-Global Const $ID_Axe_Haft								= 893
-Global Const $ID_Axe_Grip								= 905
-Global Const $ID_Dagger_Tang							= 6323
-Global Const $ID_Dagger_Handle							= 6331
-Global Const $ID_Hammer_Haft							= 895
-Global Const $ID_Hammer_Grip							= 907
-Global Const $ID_Scythe_Snathe							= 15543
-Global Const $ID_Scythe_Grip							= 15553
-Global Const $ID_Spearhead								= 15544
-Global Const $ID_Spear_Grip								= 15555
-Global Const $ID_Inscriptions_Martial					= 15540
-Global Const $ID_Inscriptions_Offhand					= 15541
-Global Const $ID_Inscriptions_All						= 15542
-Global Const $ID_Inscriptions_General					= 17059
-Global Const $ID_Inscriptions_Spellcasting				= 19122
-Global Const $ID_Inscriptions_Focus						= 19123
-Global Const $Weapon_Mods_Array[]						= [$ID_Axe_Haft, $ID_Bow_String, $ID_Hammer_Haft, $ID_Staff_Head, $ID_Sword_Hilt, $ID_Axe_Grip, $ID_Bow_Grip, $ID_Hammer_Grip, _
-															$ID_Staff_Wrapping, $ID_Sword_Pommel, $ID_Dagger_Tang, $ID_Dagger_Handle, $ID_Inscriptions_Martial, _
-															$ID_Inscriptions_Offhand, $ID_Inscriptions_All, $ID_Scythe_Snathe, $ID_Spearhead, $ID_Focus_Core, $ID_Wand, _
-															$ID_Scythe_Grip, $ID_Shield_Handle, $ID_Spear_Grip, $ID_Inscriptions_General, $ID_Inscriptions_Spellcasting, _
-															$ID_Inscriptions_Focus]
-Global Const $Map_Weapon_Mods							= MapFromArray($Weapon_Mods_Array)
+Global Const $ID_STAFF_HEAD								= 896
+Global Const $ID_STAFF_WRAPPING							= 908
+Global Const $ID_SHIELD_HANDLE							= 15554
+Global Const $ID_FOCUS_CORE								= 15551
+Global Const $ID_WAND									= 15552
+Global Const $ID_BOW_STRING								= 894
+Global Const $ID_BOW_GRIP								= 906
+Global Const $ID_SWORD_HILT								= 897
+Global Const $ID_SWORD_POMMEL							= 909
+Global Const $ID_AXE_HAFT								= 893
+Global Const $ID_AXE_GRIP								= 905
+Global Const $ID_DAGGER_TANG							= 6323
+Global Const $ID_DAGGER_HANDLE							= 6331
+Global Const $ID_HAMMER_HAFT							= 895
+Global Const $ID_HAMMER_GRIP							= 907
+Global Const $ID_SCYTHE_SNATHE							= 15543
+Global Const $ID_SCYTHE_GRIP							= 15553
+Global Const $ID_SPEARHEAD								= 15544
+Global Const $ID_SPEAR_GRIP								= 15555
+Global Const $ID_INSCRIPTIONS_MARTIAL					= 15540
+Global Const $ID_INSCRIPTIONS_OFFHAND					= 15541
+Global Const $ID_INSCRIPTIONS_ALL						= 15542
+Global Const $ID_INSCRIPTIONS_GENERAL					= 17059
+Global Const $ID_INSCRIPTIONS_SPELLCASTING				= 19122
+Global Const $ID_INSCRIPTIONS_FOCUS						= 19123
+Global Const $WEAPON_MODS_ARRAY[]						= [$ID_AXE_HAFT, $ID_BOW_STRING, $ID_HAMMER_HAFT, $ID_STAFF_HEAD, $ID_SWORD_HILT, $ID_AXE_GRIP, $ID_BOW_GRIP, $ID_HAMMER_GRIP, _
+															$ID_STAFF_WRAPPING, $ID_SWORD_POMMEL, $ID_DAGGER_TANG, $ID_DAGGER_HANDLE, $ID_INSCRIPTIONS_MARTIAL, _
+															$ID_INSCRIPTIONS_OFFHAND, $ID_INSCRIPTIONS_ALL, $ID_SCYTHE_SNATHE, $ID_SPEARHEAD, $ID_FOCUS_CORE, $ID_WAND, _
+															$ID_SCYTHE_GRIP, $ID_SHIELD_HANDLE, $ID_SPEAR_GRIP, $ID_INSCRIPTIONS_GENERAL, $ID_INSCRIPTIONS_SPELLCASTING, _
+															$ID_INSCRIPTIONS_FOCUS]
+Global Const $MAP_WEAPON_MODS							= MapFromArray($WEAPON_MODS_ARRAY)
 #EndRegion Weapon Mods
 
 
@@ -398,519 +398,522 @@ Global $STRUCT_INHERENT_OF_SPAWNING_MAGIC				= '2418240'
 
 
 #Region Runes
-Global Const $ID_Warrior_Insignias_Knights					= '19152'
-Global Const $ID_Warrior_Insignias_Lieutenants				= '19153'
-Global Const $ID_Warrior_Insignias_Stonefist				= '19154'
-Global Const $ID_Warrior_Insignias_Dreadnought				= '19155'
-Global Const $ID_Warrior_Insignias_Sentinels				= '19156'
-Global Const $ID_Warrior_Runes_Minor_Absorption				= '903'
-Global Const $ID_Warrior_Runes_Minor_Axe_Mastery			= '903'
-Global Const $ID_Warrior_Runes_Minor_Hammer_Mastery			= '903'
-Global Const $ID_Warrior_Runes_Minor_Strength				= '903'
-Global Const $ID_Warrior_Runes_Minor_Swordsmanship			= '903'
-Global Const $ID_Warrior_Runes_Minor_Tactics				= '903'
-Global Const $ID_Warrior_Runes_Major_Absorption				= '5558'
-Global Const $ID_Warrior_Runes_Major_Axe_Mastery			= '5558'
-Global Const $ID_Warrior_Runes_Major_Hammer_Mastery			= '5558'
-Global Const $ID_Warrior_Runes_Major_Strength				= '5558'
-Global Const $ID_Warrior_Runes_Major_Swordsmanship			= '5558'
-Global Const $ID_Warrior_Runes_Major_Tactics				= '5558'
-Global Const $ID_Warrior_Runes_Superior_Axe_Mastery			= '5559'
-Global Const $ID_Warrior_Runes_Superior_Hammer_Mastery		= '5559'
-Global Const $ID_Warrior_Runes_Superior_Strength			= '5559'
-Global Const $ID_Warrior_Runes_Superior_Swordsmanship		= '5559'
-Global Const $ID_Warrior_Runes_Superior_Tactics				= '5559'
-Global Const $ID_Warrior_Runes_Superior_Absorption			= '5559'
-Global Const $ID_Ranger_Insignias_Frostbound				= '19157'
-Global Const $ID_Ranger_Insignias_Pyrebound					= '19159'
-Global Const $ID_Ranger_Insignias_Stormbound				= '19160'
-Global Const $ID_Ranger_Insignias_Scouts					= '19162'
-Global Const $ID_Ranger_Insignias_Earthbound				= '19158'
-Global Const $ID_Ranger_Insignias_Beastmasters				= '19161'
-Global Const $ID_Ranger_Runes_Minor_Beast_Mastery			= '904'
-Global Const $ID_Ranger_Runes_Minor_Expertise				= '904'
-Global Const $ID_Ranger_Runes_Minor_Marksmanship			= '904'
-Global Const $ID_Ranger_Runes_Minor_Wilderness_Survival		= '904'
-Global Const $ID_Ranger_Runes_Major_Beast_Mastery			= '5560'
-Global Const $ID_Ranger_Runes_Major_Expertise				= '5560'
-Global Const $ID_Ranger_Runes_Major_Marksmanship			= '5560'
-Global Const $ID_Ranger_Runes_Major_Wilderness_Survival		= '5560'
-Global Const $ID_Ranger_Runes_Superior_Beast_Mastery		= '5561'
-Global Const $ID_Ranger_Runes_Superior_Expertise			= '5561'
-Global Const $ID_Ranger_Runes_Superior_Marksmanship			= '5561'
-Global Const $ID_Ranger_Runes_Superior_Wilderness_Survival	= '5561'
-Global Const $ID_Monk_Insignias_Wanderers					= '19149'
-Global Const $ID_Monk_Insignias_Disciples					= '19150'
-Global Const $ID_Monk_Insignias_Anchorites					= '19151'
-Global Const $ID_Monk_Runes_Minor_Divine_Favor				= '902'
-Global Const $ID_Monk_Runes_Minor_Healing_Prayers			= '902'
-Global Const $ID_Monk_Runes_Minor_Protection_Prayers		= '902'
-Global Const $ID_Monk_Runes_Minor_Smiting_Prayers			= '902'
-Global Const $ID_Monk_Runes_Major_Healing_Prayers			= '5556'
-Global Const $ID_Monk_Runes_Major_Protection_Prayers		= '5556'
-Global Const $ID_Monk_Runes_Major_Smiting_Prayers			= '5556'
-Global Const $ID_Monk_Runes_Major_Divine_Favor				= '5556'
-Global Const $ID_Monk_Runes_Superior_Divine_Favor			= '5557'
-Global Const $ID_Monk_Runes_Superior_Healing_Prayers		= '5557'
-Global Const $ID_Monk_Runes_Superior_Protection_Prayers		= '5557'
-Global Const $ID_Monk_Runes_Superior_Smiting_Prayers		= '5557'
-Global Const $ID_Necromancer_Insignias_Bloodstained			= '19138'
-Global Const $ID_Necromancer_Insignias_Tormentors			= '19139'
-Global Const $ID_Necromancer_Insignias_Bonelace				= '19141'
-Global Const $ID_Necromancer_Insignias_Minion_Masters		= '19142'
-Global Const $ID_Necromancer_Insignias_Blighters			= '19143'
-Global Const $ID_Necromancer_Insignias_Undertakers			= '19140'
-Global Const $ID_Necromancer_Runes_Minor_Blood_Magic		= '900'
-Global Const $ID_Necromancer_Runes_Minor_Curses				= '900'
-Global Const $ID_Necromancer_Runes_Minor_Death_Magic		= '900'
-Global Const $ID_Necromancer_Runes_Minor_Soul_Reaping		= '900'
-Global Const $ID_Necromancer_Runes_Major_Blood_Magic		= '5552'
-Global Const $ID_Necromancer_Runes_Major_Curses				= '5552'
-Global Const $ID_Necromancer_Runes_Major_Death_Magic		= '5552'
-Global Const $ID_Necromancer_Runes_Major_Soul_Reaping		= '5552'
-Global Const $ID_Necromancer_Runes_Superior_Blood_Magic		= '5553'
-Global Const $ID_Necromancer_Runes_Superior_Curses			= '5553'
-Global Const $ID_Necromancer_Runes_Superior_Death_Magic		= '5553'
-Global Const $ID_Necromancer_Runes_Superior_Soul_Reaping	= '5553'
-Global Const $ID_Mesmer_Insignias_Virtuosos					= '19130'
-Global Const $ID_Mesmer_Insignias_Artificers				= '19128'
-Global Const $ID_Mesmer_Insignias_Prodigys					= '19129'
-Global Const $ID_Mesmer_Runes_Minor_Domination_Magic		= '899'
-Global Const $ID_Mesmer_Runes_Minor_Fast_Casting			= '899'
-Global Const $ID_Mesmer_Runes_Minor_Illusion_Magic			= '899'
-Global Const $ID_Mesmer_Runes_Minor_Inspiration_Magic		= '899'
-Global Const $ID_Mesmer_Runes_Major_Domination_Magic		= '3612'
-Global Const $ID_Mesmer_Runes_Major_Fast_Casting			= '3612'
-Global Const $ID_Mesmer_Runes_Major_Illusion_Magic			= '3612'
-Global Const $ID_Mesmer_Runes_Major_Inspiration_Magic		= '3612'
-Global Const $ID_Mesmer_Runes_Superior_Domination_Magic		= '5549'
-Global Const $ID_Mesmer_Runes_Superior_Fast_Casting			= '5549'
-Global Const $ID_Mesmer_Runes_Superior_Illusion_Magic		= '5549'
-Global Const $ID_Mesmer_Runes_Superior_Inspiration_Magic	= '5549'
-Global Const $ID_Elementalist_Insignias_Hydromancer			= '19145'
-Global Const $ID_Elementalist_Insignias_Geomancer			= '19146'
-Global Const $ID_Elementalist_Insignias_Pyromancer			= '19147'
-Global Const $ID_Elementalist_Insignias_Aeromancer			= '19148'
-Global Const $ID_Elementalist_Insignias_Prismatic			= '19144'
-Global Const $ID_Elementalist_Runes_Minor_Air_Magic			= '901'
-Global Const $ID_Elementalist_Runes_Minor_Earth_Magic		= '901'
-Global Const $ID_Elementalist_Runes_Minor_Energy_Storage	= '901'
-Global Const $ID_Elementalist_Runes_Minor_Water_Magic		= '901'
-Global Const $ID_Elementalist_Runes_Minor_Fire_Magic		= '901'
-Global Const $ID_Elementalist_Runes_Major_Air_Magic			= '5554'
-Global Const $ID_Elementalist_Runes_Major_Earth_Magic		= '5554'
-Global Const $ID_Elementalist_Runes_Major_Energy_Storage	= '5554'
-Global Const $ID_Elementalist_Runes_Major_Fire_Magic		= '5554'
-Global Const $ID_Elementalist_Runes_Major_Water_Magic		= '5554'
-Global Const $ID_Elementalist_Runes_Superior_Air_Magic		= '5555'
-Global Const $ID_Elementalist_Runes_Superior_Earth_Magic	= '5555'
-Global Const $ID_Elementalist_Runes_Superior_Energy_Storage	= '5555'
-Global Const $ID_Elementalist_Runes_Superior_Fire_Magic		= '5555'
-Global Const $ID_Elementalist_Runes_Superior_Water_Magic	= '5555'
-Global Const $ID_Assassin_Insignias_Vanguards				= '19124'
-Global Const $ID_Assassin_Insignias_Infiltrators			= '19125'
-Global Const $ID_Assassin_Insignias_Saboteurs				= '19126'
-Global Const $ID_Assassin_Insignias_Nightstalkers			= '19127'
-Global Const $ID_Assassin_Runes_Minor_Critical_Strikes		= '6324'
-Global Const $ID_Assassin_Runes_Minor_Dagger_Mastery		= '6324'
-Global Const $ID_Assassin_Runes_Minor_Deadly_Arts			= '6324'
-Global Const $ID_Assassin_Runes_Minor_Shadow_Arts			= '6324'
-Global Const $ID_Assassin_Runes_Major_Critical_Strikes		= '6325'
-Global Const $ID_Assassin_Runes_Major_Dagger_Mastery		= '6325'
-Global Const $ID_Assassin_Runes_Major_Deadly_Arts			= '6325'
-Global Const $ID_Assassin_Runes_Major_Shadow_Arts			= '6325'
-Global Const $ID_Assassin_Runes_Superior_Critical_Strikes	= '6326'
-Global Const $ID_Assassin_Runes_Superior_Dagger_Mastery		= '6326'
-Global Const $ID_Assassin_Runes_Superior_Deadly_Arts		= '6326'
-Global Const $ID_Assassin_Runes_Superior_Shadow_Arts		= '6326'
-Global Const $ID_Ritualist_Insignias_Shamans				= '19165'
-Global Const $ID_Ritualist_Insignias_Ghost_Forge			= '19166'
-Global Const $ID_Ritualist_Insignias_Mystics				= '19167'
-Global Const $ID_Ritualist_Runes_Minor_Channeling_Magic		= '6327'
-Global Const $ID_Ritualist_Runes_Minor_Communing			= '6327'
-Global Const $ID_Ritualist_Runes_Minor_Restoration_Magic	= '6327'
-Global Const $ID_Ritualist_Runes_Minor_Spawning_Power		= '6327'
-Global Const $ID_Ritualist_Runes_Major_Channeling_Magic		= '6328'
-Global Const $ID_Ritualist_Runes_Major_Communing			= '6328'
-Global Const $ID_Ritualist_Runes_Major_Restoration_Magic	= '6328'
-Global Const $ID_Ritualist_Runes_Major_Spawning_Power		= '6328'
-Global Const $ID_Ritualist_Runes_Superior_Channeling_Magic	= '6329'
-Global Const $ID_Ritualist_Runes_Superior_Communing			= '6329'
-Global Const $ID_Ritualist_Runes_Superior_Restoration_Magic	= '6329'
-Global Const $ID_Ritualist_Runes_Superior_Spawning_Power	= '6329'
-Global Const $ID_Dervish_Insignias_Windwalker				= '19163'
-Global Const $ID_Dervish_Insignias_Forsaken					= '19164'
-Global Const $ID_Dervish_Runes_Minor_Earth_Prayers			= '15545'
-Global Const $ID_Dervish_Runes_Minor_Mysticism				= '15545'
-Global Const $ID_Dervish_Runes_Minor_Scythe_Mastery			= '15545'
-Global Const $ID_Dervish_Runes_Minor_Wind_Prayers			= '15545'
-Global Const $ID_Dervish_Runes_Major_Earth_Prayers			= '15546'
-Global Const $ID_Dervish_Runes_Major_Mysticism				= '15546'
-Global Const $ID_Dervish_Runes_Major_Scythe_Mastery			= '15546'
-Global Const $ID_Dervish_Runes_Major_Wind_Prayers			= '15546'
-Global Const $ID_Dervish_Runes_Superior_Earth_Prayers		= '15547'
-Global Const $ID_Dervish_Runes_Superior_Mysticism			= '15547'
-Global Const $ID_Dervish_Runes_Superior_Scythe_Mastery		= '15547'
-Global Const $ID_Dervish_Runes_Superior_Wind_Prayers		= '15547'
-Global Const $ID_Paragon_Insignias_Centurions				= '19168'
-Global Const $ID_Paragon_Runes_Minor_Command				= '15548'
-Global Const $ID_Paragon_Runes_Minor_Leadership				= '15548'
-Global Const $ID_Paragon_Runes_Minor_Motivation				= '15548'
-Global Const $ID_Paragon_Runes_Minor_Spear_Mastery			= '15548'
-Global Const $ID_Paragon_Runes_Major_Command				= '15549'
-Global Const $ID_Paragon_Runes_Major_Leadership				= '15549'
-Global Const $ID_Paragon_Runes_Major_Motivation				= '15549'
-Global Const $ID_Paragon_Runes_Major_Spear_Mastery			= '15549'
-Global Const $ID_Paragon_Runes_Superior_Command				= '15550'
-Global Const $ID_Paragon_Runes_Superior_Leadership			= '15550'
-Global Const $ID_Paragon_Runes_Superior_Motivation			= '15550'
-Global Const $ID_Paragon_Runes_Superior_Spear_Mastery		= '15550'
-Global Const $ID_Insignias_Survivor							= '19132'
-Global Const $ID_Insignias_Radiant							= '19131'
-Global Const $ID_Insignias_Stalwart							= '19133'
-Global Const $ID_Insignias_Brawlers							= '19134'
-Global Const $ID_Insignias_Blessed							= '19135'
-Global Const $ID_Insignias_Heralds							= '19136'
-Global Const $ID_Insignias_Sentrys							= '19137'
-Global Const $ID_Runes_Minor_Vigor							= '898'
-Global Const $ID_Runes_Vitae								= '898'
-Global Const $ID_Runes_Attunement							= '898'
-Global Const $ID_Runes_Major_Vigor							= '5550'
-Global Const $ID_Runes_Recovery								= '5550'
-Global Const $ID_Runes_Restoration							= '5550'
-Global Const $ID_Runes_Clarity								= '5550'
-Global Const $ID_Runes_Purity								= '5550'
-Global Const $ID_Runes_Superior_Vigor						= '5551'
+Global Const $ID_WARRIOR_INSIGNIAS_KNIGHTS					= '19152'
+Global Const $ID_WARRIOR_INSIGNIAS_LIEUTENANTS				= '19153'
+Global Const $ID_WARRIOR_INSIGNIAS_STONEFIST				= '19154'
+Global Const $ID_WARRIOR_INSIGNIAS_DREADNOUGHT				= '19155'
+Global Const $ID_WARRIOR_INSIGNIAS_SENTINELS				= '19156'
+Global Const $ID_WARRIOR_RUNES_MINOR_ABSORPTION				= '903'
+Global Const $ID_WARRIOR_RUNES_MINOR_AXE_MASTERY			= '903'
+Global Const $ID_WARRIOR_RUNES_MINOR_HAMMER_MASTERY			= '903'
+Global Const $ID_WARRIOR_RUNES_MINOR_STRENGTH				= '903'
+Global Const $ID_WARRIOR_RUNES_MINOR_SWORDSMANSHIP			= '903'
+Global Const $ID_WARRIOR_RUNES_MINOR_TACTICS				= '903'
+Global Const $ID_WARRIOR_RUNES_MAJOR_ABSORPTION				= '5558'
+Global Const $ID_WARRIOR_RUNES_MAJOR_AXE_MASTERY			= '5558'
+Global Const $ID_WARRIOR_RUNES_MAJOR_HAMMER_MASTERY			= '5558'
+Global Const $ID_WARRIOR_RUNES_MAJOR_STRENGTH				= '5558'
+Global Const $ID_WARRIOR_RUNES_MAJOR_SWORDSMANSHIP			= '5558'
+Global Const $ID_WARRIOR_RUNES_MAJOR_TACTICS				= '5558'
+Global Const $ID_WARRIOR_RUNES_SUPERIOR_AXE_MASTERY			= '5559'
+Global Const $ID_WARRIOR_RUNES_SUPERIOR_HAMMER_MASTERY		= '5559'
+Global Const $ID_WARRIOR_RUNES_SUPERIOR_STRENGTH			= '5559'
+Global Const $ID_WARRIOR_RUNES_SUPERIOR_SWORDSMANSHIP		= '5559'
+Global Const $ID_WARRIOR_RUNES_SUPERIOR_TACTICS				= '5559'
+Global Const $ID_WARRIOR_RUNES_SUPERIOR_ABSORPTION			= '5559'
+Global Const $ID_RANGER_INSIGNIAS_FROSTBOUND				= '19157'
+Global Const $ID_RANGER_INSIGNIAS_PYREBOUND					= '19159'
+Global Const $ID_RANGER_INSIGNIAS_STORMBOUND				= '19160'
+Global Const $ID_RANGER_INSIGNIAS_SCOUTS					= '19162'
+Global Const $ID_RANGER_INSIGNIAS_EARTHBOUND				= '19158'
+Global Const $ID_RANGER_INSIGNIAS_BEASTMASTERS				= '19161'
+Global Const $ID_RANGER_RUNES_MINOR_BEAST_MASTERY			= '904'
+Global Const $ID_RANGER_RUNES_MINOR_EXPERTISE				= '904'
+Global Const $ID_RANGER_RUNES_MINOR_MARKSMANSHIP			= '904'
+Global Const $ID_RANGER_RUNES_MINOR_WILDERNESS_SURVIVAL		= '904'
+Global Const $ID_RANGER_RUNES_MAJOR_BEAST_MASTERY			= '5560'
+Global Const $ID_RANGER_RUNES_MAJOR_EXPERTISE				= '5560'
+Global Const $ID_RANGER_RUNES_MAJOR_MARKSMANSHIP			= '5560'
+Global Const $ID_RANGER_RUNES_MAJOR_WILDERNESS_SURVIVAL		= '5560'
+Global Const $ID_RANGER_RUNES_SUPERIOR_BEAST_MASTERY		= '5561'
+Global Const $ID_RANGER_RUNES_SUPERIOR_EXPERTISE			= '5561'
+Global Const $ID_RANGER_RUNES_SUPERIOR_MARKSMANSHIP			= '5561'
+Global Const $ID_RANGER_RUNES_SUPERIOR_WILDERNESS_SURVIVAL	= '5561'
+Global Const $ID_MONK_INSIGNIAS_WANDERERS					= '19149'
+Global Const $ID_MONK_INSIGNIAS_DISCIPLES					= '19150'
+Global Const $ID_MONK_INSIGNIAS_ANCHORITES					= '19151'
+Global Const $ID_MONK_RUNES_MINOR_DIVINE_FAVOR				= '902'
+Global Const $ID_MONK_RUNES_MINOR_HEALING_PRAYERS			= '902'
+Global Const $ID_MONK_RUNES_MINOR_PROTECTION_PRAYERS		= '902'
+Global Const $ID_MONK_RUNES_MINOR_SMITING_PRAYERS			= '902'
+Global Const $ID_MONK_RUNES_MAJOR_HEALING_PRAYERS			= '5556'
+Global Const $ID_MONK_RUNES_MAJOR_PROTECTION_PRAYERS		= '5556'
+Global Const $ID_MONK_RUNES_MAJOR_SMITING_PRAYERS			= '5556'
+Global Const $ID_MONK_RUNES_MAJOR_DIVINE_FAVOR				= '5556'
+Global Const $ID_MONK_RUNES_SUPERIOR_DIVINE_FAVOR			= '5557'
+Global Const $ID_MONK_RUNES_SUPERIOR_HEALING_PRAYERS		= '5557'
+Global Const $ID_MONK_RUNES_SUPERIOR_PROTECTION_PRAYERS		= '5557'
+Global Const $ID_MONK_RUNES_SUPERIOR_SMITING_PRAYERS		= '5557'
+Global Const $ID_NECROMANCER_INSIGNIAS_BLOODSTAINED			= '19138'
+Global Const $ID_NECROMANCER_INSIGNIAS_TORMENTORS			= '19139'
+Global Const $ID_NECROMANCER_INSIGNIAS_BONELACE				= '19141'
+Global Const $ID_NECROMANCER_INSIGNIAS_MINION_MASTERS		= '19142'
+Global Const $ID_NECROMANCER_INSIGNIAS_BLIGHTERS			= '19143'
+Global Const $ID_NECROMANCER_INSIGNIAS_UNDERTAKERS			= '19140'
+Global Const $ID_NECROMANCER_RUNES_MINOR_BLOOD_MAGIC		= '900'
+Global Const $ID_NECROMANCER_RUNES_MINOR_CURSES				= '900'
+Global Const $ID_NECROMANCER_RUNES_MINOR_DEATH_MAGIC		= '900'
+Global Const $ID_NECROMANCER_RUNES_MINOR_SOUL_REAPING		= '900'
+Global Const $ID_NECROMANCER_RUNES_MAJOR_BLOOD_MAGIC		= '5552'
+Global Const $ID_NECROMANCER_RUNES_MAJOR_CURSES				= '5552'
+Global Const $ID_NECROMANCER_RUNES_MAJOR_DEATH_MAGIC		= '5552'
+Global Const $ID_NECROMANCER_RUNES_MAJOR_SOUL_REAPING		= '5552'
+Global Const $ID_NECROMANCER_RUNES_SUPERIOR_BLOOD_MAGIC		= '5553'
+Global Const $ID_NECROMANCER_RUNES_SUPERIOR_CURSES			= '5553'
+Global Const $ID_NECROMANCER_RUNES_SUPERIOR_DEATH_MAGIC		= '5553'
+Global Const $ID_NECROMANCER_RUNES_SUPERIOR_SOUL_REAPING	= '5553'
+Global Const $ID_MESMER_INSIGNIAS_VIRTUOSOS					= '19130'
+Global Const $ID_MESMER_INSIGNIAS_ARTIFICERS				= '19128'
+Global Const $ID_MESMER_INSIGNIAS_PRODIGYS					= '19129'
+Global Const $ID_MESMER_RUNES_MINOR_DOMINATION_MAGIC		= '899'
+Global Const $ID_MESMER_RUNES_MINOR_FAST_CASTING			= '899'
+Global Const $ID_MESMER_RUNES_MINOR_ILLUSION_MAGIC			= '899'
+Global Const $ID_MESMER_RUNES_MINOR_INSPIRATION_MAGIC		= '899'
+Global Const $ID_MESMER_RUNES_MAJOR_DOMINATION_MAGIC		= '3612'
+Global Const $ID_MESMER_RUNES_MAJOR_FAST_CASTING			= '3612'
+Global Const $ID_MESMER_RUNES_MAJOR_ILLUSION_MAGIC			= '3612'
+Global Const $ID_MESMER_RUNES_MAJOR_INSPIRATION_MAGIC		= '3612'
+Global Const $ID_MESMER_RUNES_SUPERIOR_DOMINATION_MAGIC		= '5549'
+Global Const $ID_MESMER_RUNES_SUPERIOR_FAST_CASTING			= '5549'
+Global Const $ID_MESMER_RUNES_SUPERIOR_ILLUSION_MAGIC		= '5549'
+Global Const $ID_MESMER_RUNES_SUPERIOR_INSPIRATION_MAGIC	= '5549'
+Global Const $ID_ELEMENTALIST_INSIGNIAS_HYDROMANCER			= '19145'
+Global Const $ID_ELEMENTALIST_INSIGNIAS_GEOMANCER			= '19146'
+Global Const $ID_ELEMENTALIST_INSIGNIAS_PYROMANCER			= '19147'
+Global Const $ID_ELEMENTALIST_INSIGNIAS_AEROMANCER			= '19148'
+Global Const $ID_ELEMENTALIST_INSIGNIAS_PRISMATIC			= '19144'
+Global Const $ID_ELEMENTALIST_RUNES_MINOR_AIR_MAGIC			= '901'
+Global Const $ID_ELEMENTALIST_RUNES_MINOR_EARTH_MAGIC		= '901'
+Global Const $ID_ELEMENTALIST_RUNES_MINOR_ENERGY_STORAGE	= '901'
+Global Const $ID_ELEMENTALIST_RUNES_MINOR_WATER_MAGIC		= '901'
+Global Const $ID_ELEMENTALIST_RUNES_MINOR_FIRE_MAGIC		= '901'
+Global Const $ID_ELEMENTALIST_RUNES_MAJOR_AIR_MAGIC			= '5554'
+Global Const $ID_ELEMENTALIST_RUNES_MAJOR_EARTH_MAGIC		= '5554'
+Global Const $ID_ELEMENTALIST_RUNES_MAJOR_ENERGY_STORAGE	= '5554'
+Global Const $ID_ELEMENTALIST_RUNES_MAJOR_FIRE_MAGIC		= '5554'
+Global Const $ID_ELEMENTALIST_RUNES_MAJOR_WATER_MAGIC		= '5554'
+Global Const $ID_ELEMENTALIST_RUNES_SUPERIOR_AIR_MAGIC		= '5555'
+Global Const $ID_ELEMENTALIST_RUNES_SUPERIOR_EARTH_MAGIC	= '5555'
+Global Const $ID_ELEMENTALIST_RUNES_SUPERIOR_ENERGY_STORAGE	= '5555'
+Global Const $ID_ELEMENTALIST_RUNES_SUPERIOR_FIRE_MAGIC		= '5555'
+Global Const $ID_ELEMENTALIST_RUNES_SUPERIOR_WATER_MAGIC	= '5555'
+Global Const $ID_ASSASSIN_INSIGNIAS_VANGUARDS				= '19124'
+Global Const $ID_ASSASSIN_INSIGNIAS_INFILTRATORS			= '19125'
+Global Const $ID_ASSASSIN_INSIGNIAS_SABOTEURS				= '19126'
+Global Const $ID_ASSASSIN_INSIGNIAS_NIGHTSTALKERS			= '19127'
+Global Const $ID_ASSASSIN_RUNES_MINOR_CRITICAL_STRIKES		= '6324'
+Global Const $ID_ASSASSIN_RUNES_MINOR_DAGGER_MASTERY		= '6324'
+Global Const $ID_ASSASSIN_RUNES_MINOR_DEADLY_ARTS			= '6324'
+Global Const $ID_ASSASSIN_RUNES_MINOR_SHADOW_ARTS			= '6324'
+Global Const $ID_ASSASSIN_RUNES_MAJOR_CRITICAL_STRIKES		= '6325'
+Global Const $ID_ASSASSIN_RUNES_MAJOR_DAGGER_MASTERY		= '6325'
+Global Const $ID_ASSASSIN_RUNES_MAJOR_DEADLY_ARTS			= '6325'
+Global Const $ID_ASSASSIN_RUNES_MAJOR_SHADOW_ARTS			= '6325'
+Global Const $ID_ASSASSIN_RUNES_SUPERIOR_CRITICAL_STRIKES	= '6326'
+Global Const $ID_ASSASSIN_RUNES_SUPERIOR_DAGGER_MASTERY		= '6326'
+Global Const $ID_ASSASSIN_RUNES_SUPERIOR_DEADLY_ARTS		= '6326'
+Global Const $ID_ASSASSIN_RUNES_SUPERIOR_SHADOW_ARTS		= '6326'
+Global Const $ID_RITUALIST_INSIGNIAS_SHAMANS				= '19165'
+Global Const $ID_RITUALIST_INSIGNIAS_GHOST_FORGE			= '19166'
+Global Const $ID_RITUALIST_INSIGNIAS_MYSTICS				= '19167'
+Global Const $ID_RITUALIST_RUNES_MINOR_CHANNELING_MAGIC		= '6327'
+Global Const $ID_RITUALIST_RUNES_MINOR_COMMUNING			= '6327'
+Global Const $ID_RITUALIST_RUNES_MINOR_RESTORATION_MAGIC	= '6327'
+Global Const $ID_RITUALIST_RUNES_MINOR_SPAWNING_POWER		= '6327'
+Global Const $ID_RITUALIST_RUNES_MAJOR_CHANNELING_MAGIC		= '6328'
+Global Const $ID_RITUALIST_RUNES_MAJOR_COMMUNING			= '6328'
+Global Const $ID_RITUALIST_RUNES_MAJOR_RESTORATION_MAGIC	= '6328'
+Global Const $ID_RITUALIST_RUNES_MAJOR_SPAWNING_POWER		= '6328'
+Global Const $ID_RITUALIST_RUNES_SUPERIOR_CHANNELING_MAGIC	= '6329'
+Global Const $ID_RITUALIST_RUNES_SUPERIOR_COMMUNING			= '6329'
+Global Const $ID_RITUALIST_RUNES_SUPERIOR_RESTORATION_MAGIC	= '6329'
+Global Const $ID_RITUALIST_RUNES_SUPERIOR_SPAWNING_POWER	= '6329'
+Global Const $ID_DERVISH_INSIGNIAS_WINDWALKER				= '19163'
+Global Const $ID_DERVISH_INSIGNIAS_FORSAKEN					= '19164'
+Global Const $ID_DERVISH_RUNES_MINOR_EARTH_PRAYERS			= '15545'
+Global Const $ID_DERVISH_RUNES_MINOR_MYSTICISM				= '15545'
+Global Const $ID_DERVISH_RUNES_MINOR_SCYTHE_MASTERY			= '15545'
+Global Const $ID_DERVISH_RUNES_MINOR_WIND_PRAYERS			= '15545'
+Global Const $ID_DERVISH_RUNES_MAJOR_EARTH_PRAYERS			= '15546'
+Global Const $ID_DERVISH_RUNES_MAJOR_MYSTICISM				= '15546'
+Global Const $ID_DERVISH_RUNES_MAJOR_SCYTHE_MASTERY			= '15546'
+Global Const $ID_DERVISH_RUNES_MAJOR_WIND_PRAYERS			= '15546'
+Global Const $ID_DERVISH_RUNES_SUPERIOR_EARTH_PRAYERS		= '15547'
+Global Const $ID_DERVISH_RUNES_SUPERIOR_MYSTICISM			= '15547'
+Global Const $ID_DERVISH_RUNES_SUPERIOR_SCYTHE_MASTERY		= '15547'
+Global Const $ID_DERVISH_RUNES_SUPERIOR_WIND_PRAYERS		= '15547'
+Global Const $ID_PARAGON_INSIGNIAS_CENTURIONS				= '19168'
+Global Const $ID_PARAGON_RUNES_MINOR_COMMAND				= '15548'
+Global Const $ID_PARAGON_RUNES_MINOR_LEADERSHIP				= '15548'
+Global Const $ID_PARAGON_RUNES_MINOR_MOTIVATION				= '15548'
+Global Const $ID_PARAGON_RUNES_MINOR_SPEAR_MASTERY			= '15548'
+Global Const $ID_PARAGON_RUNES_MAJOR_COMMAND				= '15549'
+Global Const $ID_PARAGON_RUNES_MAJOR_LEADERSHIP				= '15549'
+Global Const $ID_PARAGON_RUNES_MAJOR_MOTIVATION				= '15549'
+Global Const $ID_PARAGON_RUNES_MAJOR_SPEAR_MASTERY			= '15549'
+Global Const $ID_PARAGON_RUNES_SUPERIOR_COMMAND				= '15550'
+Global Const $ID_PARAGON_RUNES_SUPERIOR_LEADERSHIP			= '15550'
+Global Const $ID_PARAGON_RUNES_SUPERIOR_MOTIVATION			= '15550'
+Global Const $ID_PARAGON_RUNES_SUPERIOR_SPEAR_MASTERY		= '15550'
+Global Const $ID_INSIGNIAS_SURVIVOR							= '19132'
+Global Const $ID_INSIGNIAS_RADIANT							= '19131'
+Global Const $ID_INSIGNIAS_STALWART							= '19133'
+Global Const $ID_INSIGNIAS_BRAWLERS							= '19134'
+Global Const $ID_INSIGNIAS_BLESSED							= '19135'
+Global Const $ID_INSIGNIAS_HERALDS							= '19136'
+Global Const $ID_INSIGNIAS_SENTRYS							= '19137'
+Global Const $ID_RUNES_MINOR_VIGOR							= '898'
+Global Const $ID_RUNES_VITAE								= '898'
+Global Const $ID_RUNES_ATTUNEMENT							= '898'
+Global Const $ID_RUNES_MAJOR_VIGOR							= '5550'
+Global Const $ID_RUNES_RECOVERY								= '5550'
+Global Const $ID_RUNES_RESTORATION							= '5550'
+Global Const $ID_RUNES_CLARITY								= '5550'
+Global Const $ID_RUNES_PURITY								= '5550'
+Global Const $ID_RUNES_SUPERIOR_VIGOR						= '5551'
 
 
-Global Const $Struct_Warrior_Insignias_Knights					= 'F9010824'
-Global Const $Struct_Warrior_Insignias_Lieutenants				= '08020824'
-Global Const $Struct_Warrior_Insignias_Stonefist				= '09020824'
-Global Const $Struct_Warrior_Insignias_Dreadnought				= 'FA010824'
-Global Const $Struct_Warrior_Insignias_Sentinels				= 'FB010824'
-Global Const $Struct_Warrior_Runes_Minor_Absorption				= 'EA02E827'
-Global Const $Struct_Warrior_Runes_Minor_Axe_Mastery			= '0112E821'
-Global Const $Struct_Warrior_Runes_Minor_Hammer_Mastery			= '0113E821'
-Global Const $Struct_Warrior_Runes_Minor_Strength				= '0111E821'
-Global Const $Struct_Warrior_Runes_Minor_Swordsmanship			= '0114E821'
-Global Const $Struct_Warrior_Runes_Minor_Tactics				= '0115E821'
-Global Const $Struct_Warrior_Runes_Major_Absorption				= 'EA02E927'
-Global Const $Struct_Warrior_Runes_Major_Axe_Mastery			= '0212E8217301'
-Global Const $Struct_Warrior_Runes_Major_Hammer_Mastery			= '0213E8217301'
-Global Const $Struct_Warrior_Runes_Major_Strength				= '0211E8217301'
-Global Const $Struct_Warrior_Runes_Major_Swordsmanship			= '0214E8217301'
-Global Const $Struct_Warrior_Runes_Major_Tactics				= '0215E8217301'
-Global Const $Struct_Warrior_Runes_Superior_Axe_Mastery			= '0312E8217F01'
-Global Const $Struct_Warrior_Runes_Superior_Hammer_Mastery		= '0313E8217F01'
-Global Const $Struct_Warrior_Runes_Superior_Strength			= '0311E8217F01'
-Global Const $Struct_Warrior_Runes_Superior_Swordsmanship		= '0314E8217F01'
-Global Const $Struct_Warrior_Runes_Superior_Tactics				= '0315E8217F01'
-Global Const $Struct_Warrior_Runes_Superior_Absorption			= 'EA02EA27'
-Global Const $Struct_Ranger_Insignias_Frostbound				= 'FC010824'
-Global Const $Struct_Ranger_Insignias_Pyrebound					= 'FE010824'
-Global Const $Struct_Ranger_Insignias_Stormbound				= 'FF010824'
-Global Const $Struct_Ranger_Insignias_Scouts					= '01020824'
-Global Const $Struct_Ranger_Insignias_Earthbound				= 'FD010824'
-Global Const $Struct_Ranger_Insignias_Beastmasters				= '00020824'
-Global Const $Struct_Ranger_Runes_Minor_Beast_Mastery			= '0116E821'
-Global Const $Struct_Ranger_Runes_Minor_Expertise				= '0117E821'
-Global Const $Struct_Ranger_Runes_Minor_Marksmanship			= '0119E821'
-Global Const $Struct_Ranger_Runes_Minor_Wilderness_Survival		= '0118E821'
-Global Const $Struct_Ranger_Runes_Major_Beast_Mastery			= '0216E8217501'
-Global Const $Struct_Ranger_Runes_Major_Expertise				= '0217E8217501'
-Global Const $Struct_Ranger_Runes_Major_Marksmanship			= '0219E8217501'
-Global Const $Struct_Ranger_Runes_Major_Wilderness_Survival		= '0218E8217501'
-Global Const $Struct_Ranger_Runes_Superior_Beast_Mastery		= '0316E8218101'
-Global Const $Struct_Ranger_Runes_Superior_Expertise			= '0317E8218101'
-Global Const $Struct_Ranger_Runes_Superior_Marksmanship			= '0319E8218101'
-Global Const $Struct_Ranger_Runes_Superior_Wilderness_Survival	= '0318E8218101'
-Global Const $Struct_Monk_Insignias_Wanderers					= 'F6010824'
-Global Const $Struct_Monk_Insignias_Disciples					= 'F7010824'
-Global Const $Struct_Monk_Insignias_Anchorites					= 'F8010824'
-Global Const $Struct_Monk_Runes_Minor_Divine_Favor				= '0110E821'
-Global Const $Struct_Monk_Runes_Minor_Healing_Prayers			= '010DE821'
-Global Const $Struct_Monk_Runes_Minor_Protection_Prayers		= '010FE821'
-Global Const $Struct_Monk_Runes_Minor_Smiting_Prayers			= '010EE821'
-Global Const $Struct_Monk_Runes_Major_Healing_Prayers			= '020DE8217101'
-Global Const $Struct_Monk_Runes_Major_Protection_Prayers		= '020FE8217101'
-Global Const $Struct_Monk_Runes_Major_Smiting_Prayers			= '020EE8217101'
-Global Const $Struct_Monk_Runes_Major_Divine_Favor				= '0210E8217101'
-Global Const $Struct_Monk_Runes_Superior_Divine_Favor			= '0310E8217D01'
-Global Const $Struct_Monk_Runes_Superior_Healing_Prayers		= '030DE8217D01'
-Global Const $Struct_Monk_Runes_Superior_Protection_Prayers		= '030FE8217D01'
-Global Const $Struct_Monk_Runes_Superior_Smiting_Prayers		= '030EE8217D01'
-Global Const $Struct_Necromancer_Insignias_Bloodstained			= '0A020824'
-Global Const $Struct_Necromancer_Insignias_Tormentors			= 'EC010824'
-Global Const $Struct_Necromancer_Insignias_Bonelace				= 'EE010824'
-Global Const $Struct_Necromancer_Minion_Masters_Insignia		= 'EF010824'
-Global Const $Struct_Necromancer_Insignias_Blighters			= 'F0010824'
-Global Const $Struct_Necromancer_Insignias_Undertakers			= 'ED010824'
-Global Const $Struct_Necromancer_Runes_Minor_Blood_Magic		= '0104E821'
-Global Const $Struct_Necromancer_Runes_Minor_Curses				= '0107E821'
-Global Const $Struct_Necromancer_Runes_Minor_Death_Magic		= '0105E821'
-Global Const $Struct_Necromancer_Runes_Minor_Soul_Reaping		= '0106E821'
-Global Const $Struct_Necromancer_Runes_Major_Blood_Magic		= '0204E8216D01'
-Global Const $Struct_Necromancer_Runes_Major_Curses				= '0207E8216D01'
-Global Const $Struct_Necromancer_Runes_Major_Death_Magic		= '0205E8216D01'
-Global Const $Struct_Necromancer_Runes_Major_Soul_Reaping		= '0206E8216D01'
-Global Const $Struct_Necromancer_Runes_Superior_Blood_Magic		= '0304E8217901'
-Global Const $Struct_Necromancer_Runes_Superior_Curses			= '0307E8217901'
-Global Const $Struct_Necromancer_Runes_Superior_Death_Magic		= '0305E8217901'
-Global Const $Struct_Necromancer_Runes_Superior_Soul_Reaping	= '0306E8217901'
-Global Const $Struct_Mesmer_Insignias_Virtuosos					= 'E4010824'
-Global Const $Struct_Mesmer_Insignias_Artificers				= 'E2010824'
-Global Const $Struct_Mesmer_Insignias_Prodigys					= 'E3010824'
-Global Const $Struct_Mesmer_Runes_Minor_Domination_Magic		= '0102E821'
-Global Const $Struct_Mesmer_Runes_Minor_Fast_Casting			= '0100E821'
-Global Const $Struct_Mesmer_Runes_Minor_Illusion_Magic			= '0101E821'
-Global Const $Struct_Mesmer_Runes_Minor_Inspiration_Magic		= '0103E821'
-Global Const $Struct_Mesmer_Runes_Major_Domination_Magic		= '0202E8216B01'
-Global Const $Struct_Mesmer_Runes_Major_Fast_Casting			= '0200E8216B01'
-Global Const $Struct_Mesmer_Runes_Major_Illusion_Magic			= '0201E8216B01'
-Global Const $Struct_Mesmer_Runes_Major_Inspiration_Magic		= '0203E8216B01'
-Global Const $Struct_Mesmer_Runes_Superior_Domination_Magic		= '0302E8217701'
-Global Const $Struct_Mesmer_Runes_Superior_Fast_Casting			= '0300E8217701'
-Global Const $Struct_Mesmer_Runes_Superior_Illusion_Magic		= '0301E8217701'
-Global Const $Struct_Mesmer_Runes_Superior_Inspiration_Magic	= '0303E8217701'
-Global Const $Struct_Elementalist_Insignias_Hydromancer			= 'F2010824'
-Global Const $Struct_Elementalist_Insignias_Geomancer			= 'F3010824'
-Global Const $Struct_Elementalist_Insignias_Pyromancer			= 'F4010824'
-Global Const $Struct_Elementalist_Insignias_Aeromancer			= 'F5010824'
-Global Const $Struct_Elementalist_Insignias_Prismatic			= 'F1010824'
-Global Const $Struct_Elementalist_Runes_Minor_Air_Magic			= '0108E821'
-Global Const $Struct_Elementalist_Runes_Minor_Earth_Magic		= '0109E821'
-Global Const $Struct_Elementalist_Runes_Minor_Energy_Storage	= '010CE821'
-Global Const $Struct_Elementalist_Runes_Minor_Water_Magic		= '010BE821'
-Global Const $Struct_Elementalist_Runes_Minor_Fire_Magic		= '010AE821'
-Global Const $Struct_Elementalist_Runes_Major_Air_Magic			= '0208E8216F01'
-Global Const $Struct_Elementalist_Runes_Major_Earth_Magic		= '0209E8216F01'
-Global Const $Struct_Elementalist_Runes_Major_Energy_Storage	= '020CE8216F01'
-Global Const $Struct_Elementalist_Runes_Major_Fire_Magic		= '020AE8216F01'
-Global Const $Struct_Elementalist_Runes_Major_Water_Magic		= '020BE8216F01'
-Global Const $Struct_Elementalist_Runes_Superior_Air_Magic		= '0308E8217B01'
-Global Const $Struct_Elementalist_Runes_Superior_Earth_Magic	= '0309E8217B01'
-Global Const $Struct_Elementalist_Runes_Superior_Energy_Storage	= '030CE8217B01'
-Global Const $Struct_Elementalist_Runes_Superior_Fire_Magic		= '030AE8217B01'
-Global Const $Struct_Elementalist_Runes_Superior_Water_Magic	= '030BE8217B01'
-Global Const $Struct_Assassin_Insignias_Vanguards				= 'DE010824'
-Global Const $Struct_Assassin_Insignias_Infiltrators			= 'DF010824'
-Global Const $Struct_Assassin_Insignias_Saboteurs				= 'E0010824'
-Global Const $Struct_Assassin_Insignias_Nightstalkers			= 'E1010824'
-Global Const $Struct_Assassin_Runes_Minor_Critical_Strikes		= '0123E821'
-Global Const $Struct_Assassin_Runes_Minor_Dagger_Mastery		= '011DE821'
-Global Const $Struct_Assassin_Runes_Minor_Deadly_Arts			= '011EE821'
-Global Const $Struct_Assassin_Runes_Minor_Shadow_Arts			= '011FE821'
-Global Const $Struct_Assassin_Runes_Major_Critical_Strikes		= '0223E8217902'
-Global Const $Struct_Assassin_Runes_Major_Dagger_Mastery		= '021DE8217902'
-Global Const $Struct_Assassin_Runes_Major_Deadly_Arts			= '021EE8217902'
-Global Const $Struct_Assassin_Runes_Major_Shadow_Arts			= '021FE8217902'
-Global Const $Struct_Assassin_Runes_Superior_Critical_Strikes	= '0323E8217B02'
-Global Const $Struct_Assassin_Runes_Superior_Dagger_Mastery		= '031DE8217B02'
-Global Const $Struct_Assassin_Runes_Superior_Deadly_Arts		= '031EE8217B02'
-Global Const $Struct_Assassin_Runes_Superior_Shadow_Arts		= '031FE8217B02'
-Global Const $Struct_Ritualist_Insignias_Shamans				= '04020824'
-Global Const $Struct_Ritualist_Ghost_Forge_Insignia				= '05020824'
-Global Const $Struct_Ritualist_Insignias_Mystics				= '06020824'
-Global Const $Struct_Ritualist_Runes_Minor_Channeling_Magic		= '0122E821'
-Global Const $Struct_Ritualist_Runes_Minor_Communing			= '0120E821'
-Global Const $Struct_Ritualist_Runes_Minor_Restoration_Magic	= '0121E821'
-Global Const $Struct_Ritualist_Runes_Minor_Spawning_Power		= '0124E821'
-Global Const $Struct_Ritualist_Runes_Major_Channeling_Magic		= '0222E8217F02'
-Global Const $Struct_Ritualist_Runes_Major_Communing			= '0220E8217F02'
-Global Const $Struct_Ritualist_Runes_Major_Restoration_Magic	= '0221E8217F02'
-Global Const $Struct_Ritualist_Runes_Major_Spawning_Power		= '0224E8217F02'
-Global Const $Struct_Ritualist_Runes_Superior_Channeling_Magic	= '0322E8218102'
-Global Const $Struct_Ritualist_Runes_Superior_Communing			= '0320E8218102'
-Global Const $Struct_Ritualist_Runes_Superior_Restoration_Magic	= '0321E8218102'
-Global Const $Struct_Ritualist_Runes_Superior_Spawning_Power	= '0324E8218102'
-Global Const $Struct_Dervish_Insignias_Windwalker				= '02020824'
-Global Const $Struct_Dervish_Insignias_Forsaken					= '03020824'
-Global Const $Struct_Dervish_Runes_Minor_Earth_Prayers			= '012BE821'
-Global Const $Struct_Dervish_Runes_Minor_Mysticism				= '012CE821'
-Global Const $Struct_Dervish_Runes_Minor_Scythe_Mastery			= '0129E821'
-Global Const $Struct_Dervish_Runes_Minor_Wind_Prayers			= '012AE821'
-Global Const $Struct_Dervish_Runes_Major_Earth_Prayers			= '022BE8210703'
-Global Const $Struct_Dervish_Runes_Major_Mysticism				= '022CE8210703'
-Global Const $Struct_Dervish_Runes_Major_Scythe_Mastery			= '0229E8210703'
-Global Const $Struct_Dervish_Runes_Major_Wind_Prayers			= '022AE8210703'
-Global Const $Struct_Dervish_Runes_Superior_Earth_Prayers		= '032BE8210903'
-Global Const $Struct_Dervish_Runes_Superior_Mysticism			= '032CE8210903'
-Global Const $Struct_Dervish_Runes_Superior_Scythe_Mastery		= '0329E8210903'
-Global Const $Struct_Dervish_Runes_Superior_Wind_Prayers		= '032AE8210903'
-Global Const $Struct_Paragon_Insignias_Centurions				= '07020824'
-Global Const $Struct_Paragon_Runes_Minor_Command				= '0126E821'
-Global Const $Struct_Paragon_Runes_Minor_Leadership				= '0128E821'
-Global Const $Struct_Paragon_Runes_Minor_Motivation				= '0127E821'
-Global Const $Struct_Paragon_Runes_Minor_Spear_Mastery			= '0125E821'
-Global Const $Struct_Paragon_Runes_Major_Command				= '0226E8210D03'
-Global Const $Struct_Paragon_Runes_Major_Leadership				= '0228E8210D03'
-Global Const $Struct_Paragon_Runes_Major_Motivation				= '0227E8210D03'
-Global Const $Struct_Paragon_Runes_Major_Spear_Mastery			= '0225E8210D03'
-Global Const $Struct_Paragon_Runes_Superior_Command				= '0326E8210F03'
-Global Const $Struct_Paragon_Runes_Superior_Leadership			= '0328E8210F03'
-Global Const $Struct_Paragon_Runes_Superior_Motivation			= '0327E8210F03'
-Global Const $Struct_Paragon_Runes_Superior_Spear_Mastery		= '0325E8210F03'
-Global Const $Struct_All_Insignias_Survivor						= 'E6010824'
-Global Const $Struct_All_Insignias_Radiant						= 'E5010824'
-Global Const $Struct_All_Insignias_Stalwart						= 'E7010824'
-Global Const $Struct_All_Insignias_Brawlers						= 'E8010824'
-Global Const $Struct_All_Insignias_Blessed						= 'E9010824'
-Global Const $Struct_All_Insignias_Heralds						= 'EA010824'
-Global Const $Struct_All_Insignias_Sentrys						= 'EB010824'
-Global Const $Struct_All_Runes_Minor_Vigor						= 'C202E827'
-Global Const $Struct_All_Runes_Vitae							= '000A4823'
-Global Const $Struct_All_Runes_Attunement						= '0200D822'
-Global Const $Struct_All_Runes_Major_Vigor						= 'C202E927'
-Global Const $Struct_All_Runes_Recovery							= '07047827'
-Global Const $Struct_All_Runes_Restoration						= '00037827'
-Global Const $Struct_All_Runes_Clarity							= '01087827'
-Global Const $Struct_All_Runes_Purity							= '05067827'
-Global Const $Struct_All_Runes_Superior_Vigor					= 'C202EA27'
+Global Const $STRUCT_WARRIOR_INSIGNIAS_KNIGHTS					= 'F9010824'
+Global Const $STRUCT_WARRIOR_INSIGNIAS_LIEUTENANTS				= '08020824'
+Global Const $STRUCT_WARRIOR_INSIGNIAS_STONEFIST				= '09020824'
+Global Const $STRUCT_WARRIOR_INSIGNIAS_DREADNOUGHT				= 'FA010824'
+Global Const $STRUCT_WARRIOR_INSIGNIAS_SENTINELS				= 'FB010824'
+Global Const $STRUCT_WARRIOR_RUNES_MINOR_ABSORPTION				= 'EA02E827'
+Global Const $STRUCT_WARRIOR_RUNES_MINOR_AXE_MASTERY			= '0112E821'
+Global Const $STRUCT_WARRIOR_RUNES_MINOR_HAMMER_MASTERY			= '0113E821'
+Global Const $STRUCT_WARRIOR_RUNES_MINOR_STRENGTH				= '0111E821'
+Global Const $STRUCT_WARRIOR_RUNES_MINOR_SWORDSMANSHIP			= '0114E821'
+Global Const $STRUCT_WARRIOR_RUNES_MINOR_TACTICS				= '0115E821'
+Global Const $STRUCT_WARRIOR_RUNES_MAJOR_ABSORPTION				= 'EA02E927'
+Global Const $STRUCT_WARRIOR_RUNES_MAJOR_AXE_MASTERY			= '0212E8217301'
+Global Const $STRUCT_WARRIOR_RUNES_MAJOR_HAMMER_MASTERY			= '0213E8217301'
+Global Const $STRUCT_WARRIOR_RUNES_MAJOR_STRENGTH				= '0211E8217301'
+Global Const $STRUCT_WARRIOR_RUNES_MAJOR_SWORDSMANSHIP			= '0214E8217301'
+Global Const $STRUCT_WARRIOR_RUNES_MAJOR_TACTICS				= '0215E8217301'
+Global Const $STRUCT_WARRIOR_RUNES_SUPERIOR_AXE_MASTERY			= '0312E8217F01'
+Global Const $STRUCT_WARRIOR_RUNES_SUPERIOR_HAMMER_MASTERY		= '0313E8217F01'
+Global Const $STRUCT_WARRIOR_RUNES_SUPERIOR_STRENGTH			= '0311E8217F01'
+Global Const $STRUCT_WARRIOR_RUNES_SUPERIOR_SWORDSMANSHIP		= '0314E8217F01'
+Global Const $STRUCT_WARRIOR_RUNES_SUPERIOR_TACTICS				= '0315E8217F01'
+Global Const $STRUCT_WARRIOR_RUNES_SUPERIOR_ABSORPTION			= 'EA02EA27'
+Global Const $STRUCT_RANGER_INSIGNIAS_FROSTBOUND				= 'FC010824'
+Global Const $STRUCT_RANGER_INSIGNIAS_PYREBOUND					= 'FE010824'
+Global Const $STRUCT_RANGER_INSIGNIAS_STORMBOUND				= 'FF010824'
+Global Const $STRUCT_RANGER_INSIGNIAS_SCOUTS					= '01020824'
+Global Const $STRUCT_RANGER_INSIGNIAS_EARTHBOUND				= 'FD010824'
+Global Const $STRUCT_RANGER_INSIGNIAS_BEASTMASTERS				= '00020824'
+Global Const $STRUCT_RANGER_RUNES_MINOR_BEAST_MASTERY			= '0116E821'
+Global Const $STRUCT_RANGER_RUNES_MINOR_EXPERTISE				= '0117E821'
+Global Const $STRUCT_RANGER_RUNES_MINOR_MARKSMANSHIP			= '0119E821'
+Global Const $STRUCT_RANGER_RUNES_MINOR_WILDERNESS_SURVIVAL		= '0118E821'
+Global Const $STRUCT_RANGER_RUNES_MAJOR_BEAST_MASTERY			= '0216E8217501'
+Global Const $STRUCT_RANGER_RUNES_MAJOR_EXPERTISE				= '0217E8217501'
+Global Const $STRUCT_RANGER_RUNES_MAJOR_MARKSMANSHIP			= '0219E8217501'
+Global Const $STRUCT_RANGER_RUNES_MAJOR_WILDERNESS_SURVIVAL		= '0218E8217501'
+Global Const $STRUCT_RANGER_RUNES_SUPERIOR_BEAST_MASTERY		= '0316E8218101'
+Global Const $STRUCT_RANGER_RUNES_SUPERIOR_EXPERTISE			= '0317E8218101'
+Global Const $STRUCT_RANGER_RUNES_SUPERIOR_MARKSMANSHIP			= '0319E8218101'
+Global Const $STRUCT_RANGER_RUNES_SUPERIOR_WILDERNESS_SURVIVAL	= '0318E8218101'
+Global Const $STRUCT_MONK_INSIGNIAS_WANDERERS					= 'F6010824'
+Global Const $STRUCT_MONK_INSIGNIAS_DISCIPLES					= 'F7010824'
+Global Const $STRUCT_MONK_INSIGNIAS_ANCHORITES					= 'F8010824'
+Global Const $STRUCT_MONK_RUNES_MINOR_DIVINE_FAVOR				= '0110E821'
+Global Const $STRUCT_MONK_RUNES_MINOR_HEALING_PRAYERS			= '010DE821'
+Global Const $STRUCT_MONK_RUNES_MINOR_PROTECTION_PRAYERS		= '010FE821'
+Global Const $STRUCT_MONK_RUNES_MINOR_SMITING_PRAYERS			= '010EE821'
+Global Const $STRUCT_MONK_RUNES_MAJOR_HEALING_PRAYERS			= '020DE8217101'
+Global Const $STRUCT_MONK_RUNES_MAJOR_PROTECTION_PRAYERS		= '020FE8217101'
+Global Const $STRUCT_MONK_RUNES_MAJOR_SMITING_PRAYERS			= '020EE8217101'
+Global Const $STRUCT_MONK_RUNES_MAJOR_DIVINE_FAVOR				= '0210E8217101'
+Global Const $STRUCT_MONK_RUNES_SUPERIOR_DIVINE_FAVOR			= '0310E8217D01'
+Global Const $STRUCT_MONK_RUNES_SUPERIOR_HEALING_PRAYERS		= '030DE8217D01'
+Global Const $STRUCT_MONK_RUNES_SUPERIOR_PROTECTION_PRAYERS		= '030FE8217D01'
+Global Const $STRUCT_MONK_RUNES_SUPERIOR_SMITING_PRAYERS		= '030EE8217D01'
+Global Const $STRUCT_NECROMANCER_INSIGNIAS_BLOODSTAINED			= '0A020824'
+Global Const $STRUCT_NECROMANCER_INSIGNIAS_TORMENTORS			= 'EC010824'
+Global Const $STRUCT_NECROMANCER_INSIGNIAS_BONELACE				= 'EE010824'
+Global Const $STRUCT_NECROMANCER_MINION_MASTERS_INSIGNIA		= 'EF010824'
+Global Const $STRUCT_NECROMANCER_INSIGNIAS_BLIGHTERS			= 'F0010824'
+Global Const $STRUCT_NECROMANCER_INSIGNIAS_UNDERTAKERS			= 'ED010824'
+Global Const $STRUCT_NECROMANCER_RUNES_MINOR_BLOOD_MAGIC		= '0104E821'
+Global Const $STRUCT_NECROMANCER_RUNES_MINOR_CURSES				= '0107E821'
+Global Const $STRUCT_NECROMANCER_RUNES_MINOR_DEATH_MAGIC		= '0105E821'
+Global Const $STRUCT_NECROMANCER_RUNES_MINOR_SOUL_REAPING		= '0106E821'
+Global Const $STRUCT_NECROMANCER_RUNES_MAJOR_BLOOD_MAGIC		= '0204E8216D01'
+Global Const $STRUCT_NECROMANCER_RUNES_MAJOR_CURSES				= '0207E8216D01'
+Global Const $STRUCT_NECROMANCER_RUNES_MAJOR_DEATH_MAGIC		= '0205E8216D01'
+Global Const $STRUCT_NECROMANCER_RUNES_MAJOR_SOUL_REAPING		= '0206E8216D01'
+Global Const $STRUCT_NECROMANCER_RUNES_SUPERIOR_BLOOD_MAGIC		= '0304E8217901'
+Global Const $STRUCT_NECROMANCER_RUNES_SUPERIOR_CURSES			= '0307E8217901'
+Global Const $STRUCT_NECROMANCER_RUNES_SUPERIOR_DEATH_MAGIC		= '0305E8217901'
+Global Const $STRUCT_NECROMANCER_RUNES_SUPERIOR_SOUL_REAPING	= '0306E8217901'
+Global Const $STRUCT_MESMER_INSIGNIAS_VIRTUOSOS					= 'E4010824'
+Global Const $STRUCT_MESMER_INSIGNIAS_ARTIFICERS				= 'E2010824'
+Global Const $STRUCT_MESMER_INSIGNIAS_PRODIGYS					= 'E3010824'
+Global Const $STRUCT_MESMER_RUNES_MINOR_DOMINATION_MAGIC		= '0102E821'
+Global Const $STRUCT_MESMER_RUNES_MINOR_FAST_CASTING			= '0100E821'
+Global Const $STRUCT_MESMER_RUNES_MINOR_ILLUSION_MAGIC			= '0101E821'
+Global Const $STRUCT_MESMER_RUNES_MINOR_INSPIRATION_MAGIC		= '0103E821'
+Global Const $STRUCT_MESMER_RUNES_MAJOR_DOMINATION_MAGIC		= '0202E8216B01'
+Global Const $STRUCT_MESMER_RUNES_MAJOR_FAST_CASTING			= '0200E8216B01'
+Global Const $STRUCT_MESMER_RUNES_MAJOR_ILLUSION_MAGIC			= '0201E8216B01'
+Global Const $STRUCT_MESMER_RUNES_MAJOR_INSPIRATION_MAGIC		= '0203E8216B01'
+Global Const $STRUCT_MESMER_RUNES_SUPERIOR_DOMINATION_MAGIC		= '0302E8217701'
+Global Const $STRUCT_MESMER_RUNES_SUPERIOR_FAST_CASTING			= '0300E8217701'
+Global Const $STRUCT_MESMER_RUNES_SUPERIOR_ILLUSION_MAGIC		= '0301E8217701'
+Global Const $STRUCT_MESMER_RUNES_SUPERIOR_INSPIRATION_MAGIC	= '0303E8217701'
+Global Const $STRUCT_ELEMENTALIST_INSIGNIAS_HYDROMANCER			= 'F2010824'
+Global Const $STRUCT_ELEMENTALIST_INSIGNIAS_GEOMANCER			= 'F3010824'
+Global Const $STRUCT_ELEMENTALIST_INSIGNIAS_PYROMANCER			= 'F4010824'
+Global Const $STRUCT_ELEMENTALIST_INSIGNIAS_AEROMANCER			= 'F5010824'
+Global Const $STRUCT_ELEMENTALIST_INSIGNIAS_PRISMATIC			= 'F1010824'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MINOR_AIR_MAGIC			= '0108E821'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MINOR_EARTH_MAGIC		= '0109E821'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MINOR_ENERGY_STORAGE	= '010CE821'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MINOR_WATER_MAGIC		= '010BE821'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MINOR_FIRE_MAGIC		= '010AE821'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MAJOR_AIR_MAGIC			= '0208E8216F01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MAJOR_EARTH_MAGIC		= '0209E8216F01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MAJOR_ENERGY_STORAGE	= '020CE8216F01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MAJOR_FIRE_MAGIC		= '020AE8216F01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_MAJOR_WATER_MAGIC		= '020BE8216F01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_SUPERIOR_AIR_MAGIC		= '0308E8217B01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_SUPERIOR_EARTH_MAGIC	= '0309E8217B01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_SUPERIOR_ENERGY_STORAGE	= '030CE8217B01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_SUPERIOR_FIRE_MAGIC		= '030AE8217B01'
+Global Const $STRUCT_ELEMENTALIST_RUNES_SUPERIOR_WATER_MAGIC	= '030BE8217B01'
+Global Const $STRUCT_ASSASSIN_INSIGNIAS_VANGUARDS				= 'DE010824'
+Global Const $STRUCT_ASSASSIN_INSIGNIAS_INFILTRATORS			= 'DF010824'
+Global Const $STRUCT_ASSASSIN_INSIGNIAS_SABOTEURS				= 'E0010824'
+Global Const $STRUCT_ASSASSIN_INSIGNIAS_NIGHTSTALKERS			= 'E1010824'
+Global Const $STRUCT_ASSASSIN_RUNES_MINOR_CRITICAL_STRIKES		= '0123E821'
+Global Const $STRUCT_ASSASSIN_RUNES_MINOR_DAGGER_MASTERY		= '011DE821'
+Global Const $STRUCT_ASSASSIN_RUNES_MINOR_DEADLY_ARTS			= '011EE821'
+Global Const $STRUCT_ASSASSIN_RUNES_MINOR_SHADOW_ARTS			= '011FE821'
+Global Const $STRUCT_ASSASSIN_RUNES_MAJOR_CRITICAL_STRIKES		= '0223E8217902'
+Global Const $STRUCT_ASSASSIN_RUNES_MAJOR_DAGGER_MASTERY		= '021DE8217902'
+Global Const $STRUCT_ASSASSIN_RUNES_MAJOR_DEADLY_ARTS			= '021EE8217902'
+Global Const $STRUCT_ASSASSIN_RUNES_MAJOR_SHADOW_ARTS			= '021FE8217902'
+Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_CRITICAL_STRIKES	= '0323E8217B02'
+Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_DAGGER_MASTERY		= '031DE8217B02'
+Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_DEADLY_ARTS		= '031EE8217B02'
+Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_SHADOW_ARTS		= '031FE8217B02'
+Global Const $STRUCT_RITUALIST_INSIGNIAS_SHAMANS				= '04020824'
+Global Const $STRUCT_RITUALIST_GHOST_FORGE_INSIGNIA				= '05020824'
+Global Const $STRUCT_RITUALIST_INSIGNIAS_MYSTICS				= '06020824'
+Global Const $STRUCT_RITUALIST_RUNES_MINOR_CHANNELING_MAGIC		= '0122E821'
+Global Const $STRUCT_RITUALIST_RUNES_MINOR_COMMUNING			= '0120E821'
+Global Const $STRUCT_RITUALIST_RUNES_MINOR_RESTORATION_MAGIC	= '0121E821'
+Global Const $STRUCT_RITUALIST_RUNES_MINOR_SPAWNING_POWER		= '0124E821'
+Global Const $STRUCT_RITUALIST_RUNES_MAJOR_CHANNELING_MAGIC		= '0222E8217F02'
+Global Const $STRUCT_RITUALIST_RUNES_MAJOR_COMMUNING			= '0220E8217F02'
+Global Const $STRUCT_RITUALIST_RUNES_MAJOR_RESTORATION_MAGIC	= '0221E8217F02'
+Global Const $STRUCT_RITUALIST_RUNES_MAJOR_SPAWNING_POWER		= '0224E8217F02'
+Global Const $STRUCT_RITUALIST_RUNES_SUPERIOR_CHANNELING_MAGIC	= '0322E8218102'
+Global Const $STRUCT_RITUALIST_RUNES_SUPERIOR_COMMUNING			= '0320E8218102'
+Global Const $STRUCT_RITUALIST_RUNES_SUPERIOR_RESTORATION_MAGIC	= '0321E8218102'
+Global Const $STRUCT_RITUALIST_RUNES_SUPERIOR_SPAWNING_POWER	= '0324E8218102'
+Global Const $STRUCT_DERVISH_INSIGNIAS_WINDWALKER				= '02020824'
+Global Const $STRUCT_DERVISH_INSIGNIAS_FORSAKEN					= '03020824'
+Global Const $STRUCT_DERVISH_RUNES_MINOR_EARTH_PRAYERS			= '012BE821'
+Global Const $STRUCT_DERVISH_RUNES_MINOR_MYSTICISM				= '012CE821'
+Global Const $STRUCT_DERVISH_RUNES_MINOR_SCYTHE_MASTERY			= '0129E821'
+Global Const $STRUCT_DERVISH_RUNES_MINOR_WIND_PRAYERS			= '012AE821'
+Global Const $STRUCT_DERVISH_RUNES_MAJOR_EARTH_PRAYERS			= '022BE8210703'
+Global Const $STRUCT_DERVISH_RUNES_MAJOR_MYSTICISM				= '022CE8210703'
+Global Const $STRUCT_DERVISH_RUNES_MAJOR_SCYTHE_MASTERY			= '0229E8210703'
+Global Const $STRUCT_DERVISH_RUNES_MAJOR_WIND_PRAYERS			= '022AE8210703'
+Global Const $STRUCT_DERVISH_RUNES_SUPERIOR_EARTH_PRAYERS		= '032BE8210903'
+Global Const $STRUCT_DERVISH_RUNES_SUPERIOR_MYSTICISM			= '032CE8210903'
+Global Const $STRUCT_DERVISH_RUNES_SUPERIOR_SCYTHE_MASTERY		= '0329E8210903'
+Global Const $STRUCT_DERVISH_RUNES_SUPERIOR_WIND_PRAYERS		= '032AE8210903'
+Global Const $STRUCT_PARAGON_INSIGNIAS_CENTURIONS				= '07020824'
+Global Const $STRUCT_PARAGON_RUNES_MINOR_COMMAND				= '0126E821'
+Global Const $STRUCT_PARAGON_RUNES_MINOR_LEADERSHIP				= '0128E821'
+Global Const $STRUCT_PARAGON_RUNES_MINOR_MOTIVATION				= '0127E821'
+Global Const $STRUCT_PARAGON_RUNES_MINOR_SPEAR_MASTERY			= '0125E821'
+Global Const $STRUCT_PARAGON_RUNES_MAJOR_COMMAND				= '0226E8210D03'
+Global Const $STRUCT_PARAGON_RUNES_MAJOR_LEADERSHIP				= '0228E8210D03'
+Global Const $STRUCT_PARAGON_RUNES_MAJOR_MOTIVATION				= '0227E8210D03'
+Global Const $STRUCT_PARAGON_RUNES_MAJOR_SPEAR_MASTERY			= '0225E8210D03'
+Global Const $STRUCT_PARAGON_RUNES_SUPERIOR_COMMAND				= '0326E8210F03'
+Global Const $STRUCT_PARAGON_RUNES_SUPERIOR_LEADERSHIP			= '0328E8210F03'
+Global Const $STRUCT_PARAGON_RUNES_SUPERIOR_MOTIVATION			= '0327E8210F03'
+Global Const $STRUCT_PARAGON_RUNES_SUPERIOR_SPEAR_MASTERY		= '0325E8210F03'
+Global Const $STRUCT_ALL_INSIGNIAS_SURVIVOR						= 'E6010824'
+Global Const $STRUCT_ALL_INSIGNIAS_RADIANT						= 'E5010824'
+Global Const $STRUCT_ALL_INSIGNIAS_STALWART						= 'E7010824'
+Global Const $STRUCT_ALL_INSIGNIAS_BRAWLERS						= 'E8010824'
+Global Const $STRUCT_ALL_INSIGNIAS_BLESSED						= 'E9010824'
+Global Const $STRUCT_ALL_INSIGNIAS_HERALDS						= 'EA010824'
+Global Const $STRUCT_ALL_INSIGNIAS_SENTRYS						= 'EB010824'
+Global Const $STRUCT_ALL_RUNES_MINOR_VIGOR						= 'C202E827'
+Global Const $STRUCT_ALL_RUNES_VITAE							= '000A4823'
+Global Const $STRUCT_ALL_RUNES_ATTUNEMENT						= '0200D822'
+Global Const $STRUCT_ALL_RUNES_MAJOR_VIGOR						= 'C202E927'
+Global Const $STRUCT_ALL_RUNES_RECOVERY							= '07047827'
+Global Const $STRUCT_ALL_RUNES_RESTORATION						= '00037827'
+Global Const $STRUCT_ALL_RUNES_CLARITY							= '01087827'
+Global Const $STRUCT_ALL_RUNES_PURITY							= '05067827'
+Global Const $STRUCT_ALL_RUNES_SUPERIOR_VIGOR					= 'C202EA27'
 #EndRegion Runes
 
 
 #Region Struct Utils
 ; Insignias are present at index 0 of their armor salvageable item
 ; Runes are present at index 1 of their armor salvageable item
-Global $ValuableRunesAndInsigniasStructsArray[] = DefaultCreateValuableRunesAndInsigniasArray()
-Global $ValuableModsByOSWeaponType = DefaultCreateValuableModsByOSWeaponTypeMap()
-Global $ValuableModsByWeaponType = DefaultCreateValuableModsByWeaponTypeMap()
-Global $PerfectModsByWeaponType = CreatePerfectModsByOSWeaponTypeMap()
-Global $ValuableInscriptionsArray[]
+Global $valuable_runes_and_insignias_structs_array[]	= DefaultCreateValuableRunesAndInsigniasArray()
+Global $valuable_mods_by_os_weapon_type					= DefaultCreateValuableModsByOSWeaponTypeMap()
+Global $valuable_mods_by_weapon_type					= DefaultCreateValuableModsByOSWeaponTypeMap()
+Global $perfect_mods_by_weapon_type						= CreatePerfectModsByOSWeaponTypeMap()
+Global $valuable_inscriptions_array[]
 
 
 ;~ Creates an array of all valuable runes and insignias
 Func DefaultCreateValuableRunesAndInsigniasArray()
-	Local $ValuableRunesAndInsigniasStructsArray[]	= [ _
-		$Struct_Warrior_Insignias_Sentinels, _
-		_ ;$Struct_Ranger_Insignias_Beastmasters, _
-		_ ;$Struct_Monk_Insignias_Anchorites, _
-		_ ;$Struct_Monk_Runes_Minor_Divine_Favor, _
-		_ ;$Struct_Necromancer_Insignias_Bloodstained, _
-		$Struct_Necromancer_Insignias_Tormentors, _
-		_ ;$Struct_Necromancer_Runes_Minor_Soul_Reaping, _
-		$Struct_Necromancer_Runes_Major_Soul_Reaping, _
-		$Struct_Necromancer_Runes_Superior_Soul_Reaping, _
-		$Struct_Necromancer_Runes_Minor_Curses, _
-		_ ;$Struct_Necromancer_Runes_Superior_Death_Magic, _
-		$Struct_Mesmer_Insignias_Prodigys, _
-		$Struct_Mesmer_Runes_Minor_Fast_Casting, _
-		$Struct_Mesmer_Runes_Minor_Inspiration_Magic, _
-		$Struct_Mesmer_Runes_Major_Fast_Casting, _
-		$Struct_Mesmer_Runes_Major_Domination_Magic, _
-		$Struct_Mesmer_Runes_Superior_Domination_Magic, _
-		_ ;$Struct_Mesmer_Runes_Superior_Illusion_Magic, _
-		_ ;$Struct_Elementalist_Runes_Minor_Energy_Storage, _
-		$Struct_Assassin_Insignias_Nightstalkers, _
-		_ ;$Struct_Assassin_Runes_Minor_Critical_Strikes, _
-		$Struct_Ritualist_Insignias_Shamans, _
-		$Struct_Ritualist_Runes_Minor_Communing, _
-		_ ;$Struct_Ritualist_Runes_Minor_Spawning_Power, _
-		$Struct_Ritualist_Runes_Minor_Restoration_Magic, _
-		$Struct_Ritualist_Runes_Superior_Communing, _
-		$Struct_Ritualist_Runes_Superior_Spawning_Power, _
-		$Struct_Dervish_Insignias_Windwalker, _
-		$Struct_Dervish_Runes_Minor_Mysticism, _
-		$Struct_Dervish_Runes_Minor_Scythe_Mastery, _
-		_ ;$Struct_Dervish_Runes_Superior_Earth_Prayers, _
-		$Struct_Paragon_Insignias_Centurions, _
-		$Struct_Paragon_Runes_Minor_Spear_Mastery, _
-		_ ;$Struct_All_Insignias_Survivor, _
-		_ ;$Struct_All_Insignias_Radiant, _
-		_ ;$Struct_All_Insignias_Brawlers, _
-		$Struct_All_Insignias_Blessed, _
-		_ ;$Struct_All_Runes_Vitae, _
-		_ ;$Struct_All_Runes_Clarity, _
-		$Struct_All_Runes_Minor_Vigor, _
-		$Struct_All_Runes_Major_Vigor, _
-		$Struct_All_Runes_Superior_Vigor _
+	Local $valuableRunesAndInsigniasStructsArray[]	= [ _
+		$STRUCT_WARRIOR_INSIGNIAS_SENTINELS, _
+		_ ;$STRUCT_RANGER_INSIGNIAS_BEASTMASTERS, _
+		_ ;$STRUCT_MONK_INSIGNIAS_ANCHORITES, _
+		_ ;$STRUCT_MONK_RUNES_MINOR_DIVINE_FAVOR, _
+		_ ;$STRUCT_NECROMANCER_INSIGNIAS_BLOODSTAINED, _
+		$STRUCT_NECROMANCER_INSIGNIAS_TORMENTORS, _
+		_ ;$STRUCT_NECROMANCER_RUNES_MINOR_SOUL_REAPING, _
+		$STRUCT_NECROMANCER_RUNES_MAJOR_SOUL_REAPING, _
+		$STRUCT_NECROMANCER_RUNES_SUPERIOR_SOUL_REAPING, _
+		$STRUCT_NECROMANCER_RUNES_MINOR_CURSES, _
+		_ ;$STRUCT_NECROMANCER_RUNES_SUPERIOR_DEATH_MAGIC, _
+		$STRUCT_MESMER_INSIGNIAS_PRODIGYS, _
+		$STRUCT_MESMER_RUNES_MINOR_FAST_CASTING, _
+		$STRUCT_MESMER_RUNES_MINOR_INSPIRATION_MAGIC, _
+		$STRUCT_MESMER_RUNES_MAJOR_FAST_CASTING, _
+		$STRUCT_MESMER_RUNES_MAJOR_DOMINATION_MAGIC, _
+		$STRUCT_MESMER_RUNES_SUPERIOR_DOMINATION_MAGIC, _
+		_ ;$STRUCT_MESMER_RUNES_SUPERIOR_ILLUSION_MAGIC, _
+		_ ;$STRUCT_ELEMENTALIST_RUNES_MINOR_ENERGY_STORAGE, _
+		$STRUCT_ASSASSIN_INSIGNIAS_NIGHTSTALKERS, _
+		_ ;$STRUCT_ASSASSIN_RUNES_MINOR_CRITICAL_STRIKES, _
+		$STRUCT_RITUALIST_INSIGNIAS_SHAMANS, _
+		$STRUCT_RITUALIST_RUNES_MINOR_COMMUNING, _
+		_ ;$STRUCT_RITUALIST_RUNES_MINOR_SPAWNING_POWER, _
+		$STRUCT_RITUALIST_RUNES_MINOR_RESTORATION_MAGIC, _
+		$STRUCT_RITUALIST_RUNES_SUPERIOR_COMMUNING, _
+		$STRUCT_RITUALIST_RUNES_SUPERIOR_SPAWNING_POWER, _
+		$STRUCT_DERVISH_INSIGNIAS_WINDWALKER, _
+		$STRUCT_DERVISH_RUNES_MINOR_MYSTICISM, _
+		$STRUCT_DERVISH_RUNES_MINOR_SCYTHE_MASTERY, _
+		_ ;$STRUCT_DERVISH_RUNES_SUPERIOR_EARTH_PRAYERS, _
+		$STRUCT_PARAGON_INSIGNIAS_CENTURIONS, _
+		$STRUCT_PARAGON_RUNES_MINOR_SPEAR_MASTERY, _
+		_ ;$STRUCT_ALL_INSIGNIAS_SURVIVOR, _
+		_ ;$STRUCT_ALL_INSIGNIAS_RADIANT, _
+		_ ;$STRUCT_ALL_INSIGNIAS_BRAWLERS, _
+		$STRUCT_ALL_INSIGNIAS_BLESSED, _
+		_ ;$STRUCT_ALL_RUNES_VITAE, _
+		_ ;$STRUCT_ALL_RUNES_CLARITY, _
+		$STRUCT_ALL_RUNES_MINOR_VIGOR, _
+		$STRUCT_ALL_RUNES_MAJOR_VIGOR, _
+		$STRUCT_ALL_RUNES_SUPERIOR_VIGOR _
 	]
-	Return $ValuableRunesAndInsigniasStructsArray
+	Return $valuableRunesAndInsigniasStructsArray
 EndFunc
 
 
 ;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this doesn't mean the weapon itself is valuable
 Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	; Nothing worth it on OS shields and focii, and there are no OS scythes and spears
-	Local $Shield_Mods_Array		= []
-	Local $Offhand_Mods_Array		= []
-	Local $Scythe_Mods_Array		= []
-	Local $Spear_Mods_Array			= []
-	Local $Wand_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER]
-	Local $Dagger_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local $Staff_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
-	Local $Bow_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
-	Local $Axe_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
-	Local $Hammer_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
-	Local $Sword_Mods_Array			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
-		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING]
+	Local Const $ShieldModsArray			= []
+	Local Const $OffhandModsArray			= []
+	Local Const $ScytheModsArray			= []
+	Local Const $SpearModsArray				= []
+	Local Const $WandModsArray				= [$STRUCT_MOD_OF_THE_NECROMANCER]
+	Local Const $DaggerModsArray			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $StaffModsArray				= [ _
+		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
+	]
+	Local Const $BowModsArray				= [ _
+		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
+	]
+	Local Const $AxeModsArray				= [ _
+		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
+	]
+	Local Const $HammerModsArray			= [ _
+		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
+	]
+	Local Const $SwordModsArray			= [ _
+		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
+		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
+	]
 	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
-	Local $ID_Type_Axe				= 2
-	Local $ID_Type_Bow				= 5
-	Local $ID_Type_Offhand			= 12
-	Local $ID_Type_Hammer			= 15
-	Local $ID_Type_Wand				= 22
-	Local $ID_Type_Shield			= 24
-	Local $ID_Type_Staff			= 26
-	Local $ID_Type_Sword			= 27
-	Local $ID_Type_Dagger			= 32
-	Local $ID_Type_Scythe			= 35
-	Local $ID_Type_Spear			= 36
-	Local Const $All_Weapons_Array			= [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff, $ID_Type_Bow, $ID_Type_Axe, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-	Local Const $All_Weapons_Mods_Array		= [$Shield_Mods_Array, $Offhand_Mods_Array, $Wand_Mods_Array, $Staff_Mods_Array, $Bow_Mods_Array, $Axe_Mods_Array, $Hammer_Mods_Array, _
-													$Sword_Mods_Array, $Dagger_Mods_Array, $Scythe_Mods_Array, $Spear_Mods_Array]
-	Local $ValuableModsByOSWeaponType[]		= MapFromArrays($All_Weapons_Array, $All_Weapons_Mods_Array)
-	Return $ValuableModsByOSWeaponType
+	Local Const $IDTypeAxe					= 2
+	Local Const $IDTypeBow					= 5
+	Local Const $IDTypeOffhand				= 12
+	Local Const $IDTypeHammer				= 15
+	Local Const $IDTypeWand					= 22
+	Local Const $IDTypeShield				= 24
+	Local Const $IDTypeStaff				= 26
+	Local Const $IDTypeSword				= 27
+	Local Const $IDTypeDagger				= 32
+	Local Const $IDTypeScythe				= 35
+	Local Const $IDTypeSpear				= 36
+	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $AllWeaponsModsArray		= [$ShieldModsArray, $OffhandModsArray, $WandModsArray, $StaffModsArray, $BowModsArray, $AxeModsArray, $HammerModsArray, _
+													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
+	Local $valuableModsByOSWeaponType[]		= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Return $valuableModsByOSWeaponType
 EndFunc
 
 
 ;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this doesn't mean the weapon itself is valuable
 Func DefaultCreateValuableModsByWeaponTypeMap()
 	; Nothing worth on shields - maybe could keep +45^enchanted handles ....
-	Local $Shield_Mods_Array	= []
-	Local $Offhand_Mods_Array	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20]
-	Local $Wand_Mods_Array		= [ _
-		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, _
-		$STRUCT_MOD_OF_THE_NECROMANCER _
-	]
-	Local $Staff_Mods_Array		= [ _
-		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, _
-		$STRUCT_MOD_OF_THE_NECROMANCER _
-	]
-	Local $Bow_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local $Axe_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local $Hammer_Mods_Array	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local $Sword_Mods_Array		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local $Dagger_Mods_Array	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local $Scythe_Mods_Array	= [ _
+	Local Const $ShieldModsArray	= []
+	Local Const $OffhandModsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20]
+	Local Const $WandModsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_THE_NECROMANCER]
+	Local Const $StaffModsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_THE_NECROMANCER]
+	Local Const $BowModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $AxeModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $HammerModsArray	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $SwordModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $DaggerModsArray	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $ScytheModsArray	= [ _
 		$STRUCT_MOD_ZEALOUS, $STRUCT_MOD_OF_ENCHANTING, $STRUCT_MOD_SUNDERING, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER _
 	]
-	Local $Spear_Mods_Array		= [ _
+	Local Const $SpearModsArray		= [ _
 		$STRUCT_MOD_OF_ENCHANTING, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER _
 	]
 	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
-	Local $ID_Type_Axe							= 2
-	Local $ID_Type_Bow							= 5
-	Local $ID_Type_Offhand						= 12
-	Local $ID_Type_Hammer						= 15
-	Local $ID_Type_Wand							= 22
-	Local $ID_Type_Shield						= 24
-	Local $ID_Type_Staff						= 26
-	Local $ID_Type_Sword						= 27
-	Local $ID_Type_Dagger						= 32
-	Local $ID_Type_Scythe						= 35
-	Local $ID_Type_Spear						= 36
-	Local Const $All_Weapons_Array				= [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff, $ID_Type_Bow, $ID_Type_Axe, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-	Local Const $All_Weapons_Mods_Array			= [$Shield_Mods_Array, $Offhand_Mods_Array, $Wand_Mods_Array, $Staff_Mods_Array, $Bow_Mods_Array, $Axe_Mods_Array, $Hammer_Mods_Array, _
-													$Sword_Mods_Array, $Dagger_Mods_Array, $Scythe_Mods_Array, $Spear_Mods_Array]
-	Local Const $Weapon_Mods_By_Type[]			= MapFromArrays($All_Weapons_Array, $All_Weapons_Mods_Array)
-	Return $Weapon_Mods_By_Type
+	Local Const $IDTypeAxe					= 2
+	Local Const $IDTypeBow					= 5
+	Local Const $IDTypeOffhand				= 12
+	Local Const $IDTypeHammer				= 15
+	Local Const $IDTypeWand					= 22
+	Local Const $IDTypeShield				= 24
+	Local Const $IDTypeStaff				= 26
+	Local Const $IDTypeSword				= 27
+	Local Const $IDTypeDagger				= 32
+	Local Const $IDTypeScythe				= 35
+	Local Const $IDTypeSpear				= 36
+	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $AllWeaponsModsArray		= [$ShieldModsArray, $OffhandModsArray, $WandModsArray, $StaffModsArray, $BowModsArray, $AxeModsArray, $HammerModsArray, _
+													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
+	Local Const $weaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Return $weaponModsByType
 EndFunc
 
 
@@ -918,7 +921,7 @@ EndFunc
 Func CreatePerfectModsByOSWeaponTypeMap()
 	; For martial weapons, only one of those mods is enough to say the weapon is perfect
 	; But for zealous strength and vampiric strength, we need to check that it's not the zealous/vampiric mod
-	Local $martialWeapons	= [ _
+	Local $martialWeapons = [ _
 		$STRUCT_INSCRIPTION_STRENGTH_AND_HONOR, _
 		$STRUCT_INSCRIPTION_GUIDED_BY_FATE, _
 		$STRUCT_INSCRIPTION_DANCE_WITH_DEATH, _
@@ -928,7 +931,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	]
 
 	; Those are common to caster weapons and focii
-	Local $casterAndFocus	= [ _
+	Local $casterAndFocus = [ _
 		$STRUCT_INHERENT_FIRE_MAGIC_HCT, _
 		$STRUCT_INHERENT_FIRE_MAGIC_HSR, _
 		$STRUCT_INHERENT_WATER_MAGIC_HCT, _
@@ -1018,7 +1021,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 		$STRUCT_MOD_30_HEALTH _
 	]
 
-	Local $casterWeapons	= [ _
+	Local $casterWeapons = [ _
 		$STRUCT_INSCRIPTION_HALE_AND_HEARTY, _
 		$STRUCT_INSCRIPTION_HAVE_FAITH, _
 		$STRUCT_INSCRIPTION_SEIZE_THE_DAY_1, _
@@ -1027,7 +1030,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	]
 	_ArrayAdd($casterWeapons, $casterAndFocus)
 
-	Local $focus	= [ _
+	Local $focus = [ _
 		$STRUCT_INSCRIPTION_FORGET_ME_NOT, _
 		$STRUCT_INSCRIPTION_HAIL_TO_THE_KING, _
 		$STRUCT_INSCRIPTION_FAITH_IS_MY_SHIELD, _
@@ -1038,7 +1041,7 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	_ArrayAdd($focus, $casterAndFocus)
 	_ArrayAdd($focus, $shieldAndFocus)
 
-	Local $shield	= [ _
+	Local $shield = [ _
 		$STRUCT_INSCRIPTION_I_CAN_SEE_CLEARLY_NOW, _
 		$STRUCT_INSCRIPTION_SWIFT_AS_THE_WIND, _
 		$STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE _
@@ -1049,45 +1052,45 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	Local $scytheAndSpear			= []
 
 	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
-	Local $ID_Type_Axe				= 2
-	Local $ID_Type_Bow				= 5
-	Local $ID_Type_Offhand			= 12
-	Local $ID_Type_Hammer			= 15
-	Local $ID_Type_Wand				= 22
-	Local $ID_Type_Shield			= 24
-	Local $ID_Type_Staff			= 26
-	Local $ID_Type_Sword			= 27
-	Local $ID_Type_Dagger			= 32
-	Local $ID_Type_Scythe			= 35
-	Local $ID_Type_Spear			= 36
-	Local Const $All_Weapons_Array				= [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff, $ID_Type_Bow, $ID_Type_Axe, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-	Local Const $All_Weapons_Mods_Array			= [$shield, $focus, $casterWeapons, $casterWeapons, $martialWeapons, $martialWeapons, $martialWeapons, _
+	Local Const $IDTypeAxe					= 2
+	Local Const $IDTypeBow					= 5
+	Local Const $IDTypeOffhand				= 12
+	Local Const $IDTypeHammer				= 15
+	Local Const $IDTypeWand					= 22
+	Local Const $IDTypeShield				= 24
+	Local Const $IDTypeStaff				= 26
+	Local Const $IDTypeSword				= 27
+	Local Const $IDTypeDagger				= 32
+	Local Const $IDTypeScythe				= 35
+	Local Const $IDTypeSpear				= 36
+	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $AllWeaponsModsArray			= [$shield, $focus, $casterWeapons, $casterWeapons, $martialWeapons, $martialWeapons, $martialWeapons, _
 													$martialWeapons, $martialWeapons, $scytheAndSpear, $scytheAndSpear]
-	Local Const $Weapon_Mods_By_Type[]			= MapFromArrays($All_Weapons_Array, $All_Weapons_Mods_Array)
-	Return $Weapon_Mods_By_Type
+	Local Const $weaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Return $weaponModsByType
 EndFunc
 
 
 ;~ Replace valuable runes/insignias/inscriptions/mods default lists by the lists of elements selected in the GUI interface
 Func RefreshValuableListsFromInterface()
-	$ValuableRunesAndInsigniasStructsArray = CreateValuableRunesAndInsigniasArray()
-	;$ValuableModsByOSWeaponType = CreateValuableModsByOSWeaponTypeMap()
-	$ValuableModsByWeaponType = CreateValuableModsByWeaponTypeMap()
-	$ValuableInscriptionsArray = CreateValuableInscriptionsArray()
+	$valuable_runes_and_insignias_structs_array = CreateValuableRunesAndInsigniasArray()
+	;$valuable_mods_by_os_weapon_type = Createvaluable_mods_by_os_weapon_typeMap()
+	$valuable_mods_by_weapon_type = CreateValuableModsByWeaponTypeMap()
+	$valuable_inscriptions_array = CreateValuableInscriptionsArray()
 EndFunc
 
 
 ;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
 Func CreateValuableRunesAndInsigniasArray()
 	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Keep components.Armor upgrades')
-	Local $ValuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
+	Local $valuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
 		; removing leftmost string with dot 'Armor upgrades.'
 		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15)
 		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_')
-		$ValuableRunesAndInsigniasStructsArray[$i] = Eval($varName)
+		$valuableRunesAndInsigniasStructsArray[$i] = Eval($varName)
 	Next
-	Return $ValuableRunesAndInsigniasStructsArray
+	Return $valuableRunesAndInsigniasStructsArray
 EndFunc
 
 
@@ -1095,7 +1098,7 @@ EndFunc
 ;~ Creates an array of all valuable OS (Old School without inscription) weapon mods based on selected elements in treeview
 Func CreateValuableModsByOSWeaponTypeMap()
 	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
-	Local $ValuableModsByOSWeaponType[UBound($tickedMods)]
+	Local $valuableModsByOSWeaponTypeMap[UBound($tickedMods)]
 	For $tickedMod In $tickedMods
 		Info($tickedMods)
 	Next
@@ -1107,21 +1110,21 @@ EndFunc
 Func CreateValuableModsByWeaponTypeMap()
 	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
 
-	Local $Shield_Mods_Array[0], $Offhand_Mods_Array[0], $Wand_Mods_Array[0], $Staff_Mods_Array[0], $Bow_Mods_Array[0], $Axe_Mods_Array[0], _
-			$Hammer_Mods_Array[0], $Sword_Mods_Array[0], $Dagger_Mods_Array[0], $Scythe_Mods_Array[0], $Spear_Mods_Array[0]
+	Local $ShieldModsArray[0], $OffhandModsArray[0], $WandModsArray[0], $StaffModsArray[0], $BowModsArray[0], $AxeModsArray[0], _
+			$HammerModsArray[0], $SwordModsArray[0], $DaggerModsArray[0], $ScytheModsArray[0], $SpearModsArray[0]
 
 	; Redefining types here remove dependency on GWA2_ID - and we execute this function rarely
-	Local $ID_Type_Axe							= 2
-	Local $ID_Type_Bow							= 5
-	Local $ID_Type_Offhand						= 12
-	Local $ID_Type_Hammer						= 15
-	Local $ID_Type_Wand							= 22
-	Local $ID_Type_Shield						= 24
-	Local $ID_Type_Staff						= 26
-	Local $ID_Type_Sword						= 27
-	Local $ID_Type_Dagger						= 32
-	Local $ID_Type_Scythe						= 35
-	Local $ID_Type_Spear						= 36
+	Local Const $IDTypeAxe					= 2
+	Local Const $IDTypeBow					= 5
+	Local Const $IDTypeOffhand				= 12
+	Local Const $IDTypeHammer				= 15
+	Local Const $IDTypeWand					= 22
+	Local Const $IDTypeShield				= 24
+	Local Const $IDTypeStaff				= 26
+	Local Const $IDTypeSword				= 27
+	Local Const $IDTypeDagger				= 32
+	Local Const $IDTypeScythe				= 35
+	Local Const $IDTypeSpear				= 36
 
 	For $i = 0 To UBound($tickedMods) - 1
 		; removing leftmost string with dot 'Mods.'
@@ -1132,62 +1135,62 @@ Func CreateValuableModsByWeaponTypeMap()
 				$varName = StringReplace($varName, 'Axe.Prefix - Haft.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Axe.Suffix - Grip.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Axe_Mods_Array, Eval($varName))
+				_ArrayAdd($AxeModsArray, Eval($varName))
 			Case 'Bow'
 				$varName = StringReplace($varName, 'Bow.Prefix - String.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Bow.Suffix - Grip.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Bow_Mods_Array, Eval($varName))
+				_ArrayAdd($BowModsArray, Eval($varName))
 			Case 'Dagger'
 				$varName = StringReplace($varName, 'Dagger.Prefix - Tang.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Dagger.Suffix - Handle.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Dagger_Mods_Array, Eval($varName))
+				_ArrayAdd($DaggerModsArray, Eval($varName))
 			Case 'Focus'
 				$varName = StringReplace($varName, 'Focus.Suffix - Core.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Offhand_Mods_Array, Eval($varName))
+				_ArrayAdd($OffhandModsArray, Eval($varName))
 			Case 'Hammer'
 				$varName = StringReplace($varName, 'Hammer.Prefix - Haft.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Hammer.Suffix - Grip.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Hammer_Mods_Array, Eval($varName))
+				_ArrayAdd($HammerModsArray, Eval($varName))
 			Case 'Scythe'
 				$varName = StringReplace($varName, 'Scythe.Prefix - Snathe.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Scythe.Suffix - Grip.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Scythe_Mods_Array, Eval($varName))
+				_ArrayAdd($ScytheModsArray, Eval($varName))
 			Case 'Shield'
 				$varName = StringReplace($varName, 'Shield.Suffix - Handle.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Shield_Mods_Array, Eval($varName))
+				_ArrayAdd($ShieldModsArray, Eval($varName))
 			Case 'Spear'
 				$varName = StringReplace($varName, 'Spear.Prefix - Head.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Spear.Suffix - Grip.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Spear_Mods_Array, Eval($varName))
+				_ArrayAdd($SpearModsArray, Eval($varName))
 			Case 'Staff'
 				$varName = StringReplace($varName, 'Staff.Prefix - Head.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Staff.Suffix - Wrapping.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Staff_Mods_Array, Eval($varName))
+				_ArrayAdd($StaffModsArray, Eval($varName))
 			Case 'Sword'
 				$varName = StringReplace($varName, 'Sword.Prefix - Hilt.', 'STRUCT_MOD_')
 				$varName = StringReplace($varName, 'Sword.Suffix - Pommel.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Sword_Mods_Array, Eval($varName))
+				_ArrayAdd($SwordModsArray, Eval($varName))
 			Case 'Wand'
 				$varName = StringReplace($varName, 'Wand.Suffix - Wrapping.', 'STRUCT_MOD_')
 				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($Wand_Mods_Array, Eval($varName))
+				_ArrayAdd($WandModsArray, Eval($varName))
 		EndSwitch
 	Next
 
-	Local Const $All_Weapons_Array				= [$ID_Type_Shield, $ID_Type_Offhand, $ID_Type_Wand, $ID_Type_Staff, $ID_Type_Bow, $ID_Type_Axe, $ID_Type_Hammer, $ID_Type_Sword, $ID_Type_Dagger, $ID_Type_Scythe, $ID_Type_Spear]
-	Local Const $All_Weapons_Mods_Array			= [$Shield_Mods_Array, $Offhand_Mods_Array, $Wand_Mods_Array, $Staff_Mods_Array, $Bow_Mods_Array, $Axe_Mods_Array, $Hammer_Mods_Array, _
-													$Sword_Mods_Array, $Dagger_Mods_Array, $Scythe_Mods_Array, $Spear_Mods_Array]
-	Local Const $Weapon_Mods_By_Type[]			= MapFromArrays($All_Weapons_Array, $All_Weapons_Mods_Array)
-	Return $Weapon_Mods_By_Type
+	Local Const $AllWeaponsArray				= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $AllWeaponsModsArray			= [$ShieldModsArray, $OffhandModsArray, $WandModsArray, $StaffModsArray, $BowModsArray, $AxeModsArray, $HammerModsArray, _
+													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
+	Local Const $WeaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Return $WeaponModsByType
 EndFunc
 
 
@@ -1203,7 +1206,7 @@ EndFunc
 ;~ Creates an array of all valuable inscriptions based on selected elements in treeview
 Func CreateValuableInscriptionsArray()
 	Local $tickedInscriptions = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions')
-	Local $ValuableInscriptionsArray[UBound($tickedInscriptions)]
+	Local $valuableInscriptionsArray[UBound($tickedInscriptions)]
 	For $i = 0 To UBound($tickedInscriptions) - 1
 		Local $varName = $tickedInscriptions[$i]
 		$varName = StringReplace($varName, 'Inscriptions.Common.', 'STRUCT_INSCRIPTION_')
@@ -1213,8 +1216,8 @@ Func CreateValuableInscriptionsArray()
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus.', 'STRUCT_INSCRIPTION_')
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus and shield.', 'STRUCT_INSCRIPTION_')
 		$varName = ModNameCleanupHelper($varName)
-		$ValuableInscriptionsArray[$i] = Eval($varName)
+		$valuableInscriptionsArray[$i] = Eval($varName)
 	Next
-	Return $ValuableInscriptionsArray
+	Return $valuableInscriptionsArray
 EndFunc
 #EndRegion Struct Utils

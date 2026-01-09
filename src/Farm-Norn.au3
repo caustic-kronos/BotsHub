@@ -27,34 +27,35 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $NornFarmInformations = 'Norn title farm, bring solid heroes composition'
+Global Const $NORN_FARM_INFORMATIONS = 'Norn title farm, bring solid heroes composition'
 ; Average duration ~ 45m
 Global Const $NORN_FARM_DURATION = 45 * 60 * 1000
-Global $NORN_FARM_SETUP = False
+
+Global $norn_farm_setup = False
 
 
 ;~ Main loop for the norn faction farm
-Func NornTitleFarm($STATUS)
-	If Not $NORN_FARM_SETUP Then NornTitleFarmSetup()
+Func NornTitleFarm()
+	If Not $norn_farm_setup Then NornTitleFarmSetup()
 
 	GoToVarajarFells()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishVarajarFells()
 	AdlibUnRegister('TrackPartyStatus')
 
-	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
+	TravelToOutpost($ID_OLAFSTEAD, $district_name)
 	Return $result
 EndFunc
 
 
 Func NornTitleFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
-	SetDisplayedTitle($ID_Norn_Title)
+	TravelToOutpost($ID_OLAFSTEAD, $district_name)
+	SetDisplayedTitle($ID_NORN_TITLE)
 	SwitchMode($ID_HARD_MODE)
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
-	$NORN_FARM_SETUP = True
+	$norn_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -62,20 +63,20 @@ EndFunc
 
 ;~ Move out of outpost into the Varajar Fells
 Func GoToVarajarFells()
-	TravelToOutpost($ID_Olafstead, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Varajar_Fells
+	TravelToOutpost($ID_OLAFSTEAD, $district_name)
+	While GetMapID() <> $ID_VARAJAR_FELLS
 		Info('Moving to the Varajar Fells')
 		MoveTo(222, 756)
 		MoveTo(-1435, 1217)
 		RandomSleep(5000)
-		WaitMapLoading($ID_Varajar_Fells, 10000, 2000)
+		WaitMapLoading($ID_VARAJAR_FELLS, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Cleaning Varajar Fells function
 Func VanquishVarajarFells()
-	If GetMapID() <> $ID_Varajar_Fells Then Return $FAIL
+	If GetMapID() <> $ID_VARAJAR_FELLS Then Return $FAIL
 
 	; 43 groups to vanquish + 6 movements
 	Local Static $foes[49][4] = [ _

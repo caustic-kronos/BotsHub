@@ -25,7 +25,10 @@ Standardize keywords for readability.
 **Regex:** `( |\n|\t)(if|then|elseif|else|endif|func|endfunc|for|next|while|wend|do|until|return|switch|case|endswitch|continueloop|exitloop|select|endselect|true|false|null)( |\n|\t|\()`
 
 ## 7. Consistent variable naming
-Stick to conventions for variable names.
+Stick to conventions for variable names:
+Global Const $GLOBAL_CONSTANT_VALUE
+Global $global_value
+Local $localValue
 **Regex:** `((Local|Global|Const)\s+)+\$[a-zA-Z_][a-zA-Z0-9_]*`
 
 ## 8. Consistent function naming

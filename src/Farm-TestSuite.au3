@@ -26,17 +26,17 @@
 Opt('MustDeclareVars', 1)
 
 ; ==== Constants ====
-Global Const $TestSuiteInformations = 'Just a test suite.'
-Global Const $resurrectSignetAndIAU = 'OQQBcBBAAAAAIAQTCAAAAAA'
-Global Const $resurrectSignetAndFallBack = 'OQChYyDAAAAAEA7YAAAAAA'
-Global Const $resurrectionSignetSkillSlot = 4
-Global Const $IAUSkillSlot = 5
-Global Const $fallBackSkillSlot = 5
-;Global Const $heroToAdd = $ID_General_Morgahn
-Global Const $heroToAdd = $ID_Hayda
+Global Const $TEST_SUITE_INFORMATIONS = 'Just a test suite.'
+Global Const $RESURRECT_SIGNET_AND_IAU = 'OQQBcBBAAAAAIAQTCAAAAAA'
+Global Const $RESURRECT_SIGNET_AND_FALLBACK = 'OQChYyDAAAAAEA7YAAAAAA'
+Global Const $RESURRECTION_SIGNET_SKILLSLOT = 4
+Global Const $IAU_SKILLSLOT = 5
+Global Const $FALLBACK_SKILLSLOT = 5
+;Global Const $HERO_TO_ADD = $ID_GENERAL_MORGAHN
+Global Const $HERO_TO_ADD = $ID_HAYDA
 
 ;~ Main method to run the test suite
-Func RunTestSuite($STATUS)
+Func RunTestSuite()
 	If TestMovement() == $FAIL Then Error('Movement test failed')
 
 	If TestTeleport() == $FAIL Then Error('Teleport test failed')
@@ -52,7 +52,7 @@ Func RunTestSuite($STATUS)
 	If TestConsumables() == $FAIL Then Error('Using consumable failed')
 
 	GoToRivenEarth()
-	If GetMapID() <> $ID_Riven_Earth Then Error('Couldn''t go to Riven Earth')
+	If GetMapID() <> $ID_RIVEN_EARTH Then Error('Couldn''t go to Riven Earth')
 
 	If TestUseSkills() == $FAIL Then Error('Using skills failed')
 
@@ -89,13 +89,13 @@ EndFunc
 
 Func TestTeleport()
 	Out('Testing teleportation to outposts')
-	TravelToOutpost($ID_Gunnars_Hold, $DISTRICT_NAME)
+	TravelToOutpost($ID_GUNNARS_HOLD, $district_name)
 	Sleep(2500)
-	If GetMapID() <> $ID_Gunnars_Hold Then Return $FAIL
+	If GetMapID() <> $ID_GUNNARS_HOLD Then Return $FAIL
 
-	TravelToOutpost($ID_Rata_Sum, $DISTRICT_NAME)
+	TravelToOutpost($ID_RATA_SUM, $district_name)
 	Sleep(1000)
-	If GetMapID() <> $ID_Rata_Sum Then Return $FAIL
+	If GetMapID() <> $ID_RATA_SUM Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
@@ -106,7 +106,7 @@ Func TestPartyChanges()
 	Sleep(500)
 	Debug('Party size:' & GetPartySize())
 	If GetPartySize() <> 1 Then Return $FAIL
-	AddHero($heroToAdd)
+	AddHero($HERO_TO_ADD)
 	Sleep(500)
 	Debug('Party size:' & GetPartySize())
 	If GetPartySize() <> 2 Then Return $FAIL
@@ -121,28 +121,28 @@ EndFunc
 Func TestLoadingBuild()
 	Out('Testing build loading')
 
-	LoadSkillTemplate($resurrectSignetAndIAU)
+	LoadSkillTemplate($RESURRECT_SIGNET_AND_IAU)
 	Sleep(500)
-	If GetSkillbarSkillID($resurrectionSignetSkillSlot) <> $ID_Resurrection_Signet Then Return $FAIL
-	If GetSkillbarSkillID($IAUSkillSlot) <> $ID_I_Am_Unstoppable Then Return $FAIL
+	If GetSkillbarSkillID($RESURRECTION_SIGNET_SKILLSLOT) <> $ID_RESURRECTION_SIGNET Then Return $FAIL
+	If GetSkillbarSkillID($IAU_SKILLSLOT) <> $ID_I_AM_UNSTOPPABLE Then Return $FAIL
 
 	LeaveParty()
 	Sleep(500)
-	AddHero($heroToAdd)
+	AddHero($HERO_TO_ADD)
 	Sleep(500)
 
-	LoadSkillTemplate($resurrectSignetAndFallBack, 1)
+	LoadSkillTemplate($RESURRECT_SIGNET_AND_FALLBACK, 1)
 	Sleep(500)
-	If GetSkillbarSkillID($resurrectionSignetSkillSlot, 1) <> $ID_Resurrection_Signet Then Return $FAIL
-	If GetSkillbarSkillID($fallBackSkillSlot, 1) <> $ID_Fall_Back Then Return $FAIL
+	If GetSkillbarSkillID($RESURRECTION_SIGNET_SKILLSLOT, 1) <> $ID_RESURRECTION_SIGNET Then Return $FAIL
+	If GetSkillbarSkillID($FALLBACK_SKILLSLOT, 1) <> $ID_FALL_BACK Then Return $FAIL
 
-	If GetIsHeroSkillSlotDisabled(1, $resurrectionSignetSkillSlot) Then Return $FAIL
-	If GetIsHeroSkillSlotDisabled(1, $fallBackSkillSlot) Then Return $FAIL
+	If GetIsHeroSkillSlotDisabled(1, $RESURRECTION_SIGNET_SKILLSLOT) Then Return $FAIL
+	If GetIsHeroSkillSlotDisabled(1, $FALLBACK_SKILLSLOT) Then Return $FAIL
 	Sleep(500)
 	DisableAllHeroSkills(1)
 	Sleep(500)
-	If Not GetIsHeroSkillSlotDisabled(1, $resurrectionSignetSkillSlot) Then Return $FAIL
-	If Not GetIsHeroSkillSlotDisabled(1, $fallBackSkillSlot) Then Return $FAIL
+	If Not GetIsHeroSkillSlotDisabled(1, $RESURRECTION_SIGNET_SKILLSLOT) Then Return $FAIL
+	If Not GetIsHeroSkillSlotDisabled(1, $FALLBACK_SKILLSLOT) Then Return $FAIL
 
 	Return $SUCCESS
 EndFunc
@@ -162,10 +162,10 @@ EndFunc
 
 Func TestTitles()
 	Out('Testing titles')
-	SetDisplayedTitle($ID_Norn_Title)
+	SetDisplayedTitle($ID_NORN_TITLE)
 	Sleep(500)
 	Local $energy = GetEnergy(GetMyAgent())
-	SetDisplayedTitle($ID_Asura_Title)
+	SetDisplayedTitle($ID_ASURA_TITLE)
 	Sleep(500)
 	Local $asuraTitlePoints = GetAsuraTitle()
 	If $asuraTitlePoints == 0 Then Return $FAIL
@@ -176,30 +176,30 @@ EndFunc
 
 Func TestConsumables()
 	Out('Testing consumables')
-	If FindInInventory($ID_Chocolate_Bunny)[0] == 0 Then
-		Local $chestAndSlot = FindInXunlaiStorage($ID_Chocolate_Bunny)
+	If FindInInventory($ID_CHOCOLATE_BUNNY)[0] == 0 Then
+		Local $chestAndSlot = FindInXunlaiStorage($ID_CHOCOLATE_BUNNY)
 		Local $item = GetItemBySlot($chestAndSlot[0], $chestAndSlot[1])
 		Local $bagAndSlot = FindFirstEmptySlot(1, 1)
 		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
 		Sleep(250)
 	EndIf
 
-	UseConsumable($ID_Chocolate_Bunny)
+	UseConsumable($ID_CHOCOLATE_BUNNY)
 	Sleep(250)
-	If GetEffectTimeRemaining(GetEffect($ID_Sugar_Jolt_5)) == 0 Then Return $FAIL
+	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_5)) == 0 Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
 
 Func TestUseSkills()
 	Out('Testing using skills')
-	UseSkillEx($IAUSkillSlot)
+	UseSkillEx($IAU_SKILLSLOT)
 	Sleep(250)
-	If IsRecharged($IAUSkillSlot) Then Return $FAIL
+	If IsRecharged($IAU_SKILLSLOT) Then Return $FAIL
 
-	UseHeroSkill(1, $FallBackSkillSlot, GetMyAgent())
+	UseHeroSkill(1, $FALLBACK_SKILLSLOT, GetMyAgent())
 	Sleep(250)
-	If GetSkillbarSkillRecharge($FallBackSkillSlot, 1) == 0 Then Return $FAIL
+	If GetSkillbarSkillRecharge($FALLBACK_SKILLSLOT, 1) == 0 Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 

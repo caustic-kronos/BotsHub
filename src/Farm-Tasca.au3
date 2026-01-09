@@ -30,16 +30,15 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $TascaDervishChestRunnerSkillbar = 'OgejwyezHT8I6MHQ3l0kNQ4OIQ'
-Global Const $TascaAssassinChestRunnerSkillbar = 'OwBj4xf84Q8I6MHQ3l0kNQ4OIQ'
-Global Const $TascaMesmerChestRunnerSkillbar = 'OQdTAmP7ZiHRn5A6ukmsBC3BBC'
-Global Const $TascaElementalistChestRunnerSkillbar = 'OgdTw4P7HiHRn5A6ukmsBC3BBC'
-Global Const $TascaMonkChestRunnerSkillbar = 'OwcTAnP7ZiHRn5A6ukmsBC3BBC'
-Global Const $TascaNecromancerChestRunnerSkillbar = 'OAdT8Z/YYiHRn5A6ukmsBC3BBC'
-Global Const $TascaRitualistChestRunnerSkillbar = 'OAej8xeM5Q8I6MHQ3l0kNQ4OIQ'
-Global $TascaPlayerProfession = $ID_Dervish
+Global Const $TASCA_DERVISH_CHESTRUNNER_SKILLBAR = 'OgejwyezHT8I6MHQ3l0kNQ4OIQ'
+Global Const $TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR = 'OwBj4xf84Q8I6MHQ3l0kNQ4OIQ'
+Global Const $TASCA_MESMER_CHESTRUNNER_SKILLBAR = 'OQdTAmP7ZiHRn5A6ukmsBC3BBC'
+Global Const $TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR = 'OgdTw4P7HiHRn5A6ukmsBC3BBC'
+Global Const $TASCA_MONK_CHESTRUNNER_SKILLBAR = 'OwcTAnP7ZiHRn5A6ukmsBC3BBC'
+Global Const $TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR = 'OAdT8Z/YYiHRn5A6ukmsBC3BBC'
+Global Const $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR = 'OAej8xeM5Q8I6MHQ3l0kNQ4OIQ'
 
-Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
+Global Const $TASCA_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 16 in Mysticism if playing Dervish' & @CRLF _
 	& '- 3 in Deadly Arts' & @CRLF _
@@ -49,28 +48,29 @@ Global Const $TascaChestRunInformations = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune'
 ; Average duration ~ 3m
 Global Const $TASCA_FARM_DURATION = (3 * 60) * 1000
-Global $TASCA_FARM_SETUP = False
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($Tasca_DwarvenStability) is better than UseSkillEx(1))
-Global Const $Tasca_DeadlyParadox		= 1
-Global Const $Tasca_ShadowForm			= 2
-Global Const $Tasca_ShroudOfDistress	= 3
-Global Const $Tasca_DwarvenStability	= 4
-Global Const $Tasca_IAmUnstoppable		= 5
-Global Const $Tasca_DarkEscape			= 6
-Global Const $Tasca_DeathsCharge		= 7
-Global Const $Tasca_HeartOfShadow		= 8
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($TASCA_DWARVEN_STABILITY) is better than UseSkillEx(1))
+Global Const $TASCA_DEADLY_PARADOX		= 1
+Global Const $TASCA_SHADOWFORM			= 2
+Global Const $TASCA_SHROUD_OF_DISTRESS	= 3
+Global Const $TASCA_DWARVEN_STABILITY	= 4
+Global Const $TASCA_I_AM_UNSTOPPABLE	= 5
+Global Const $TASCA_DARK_ESCAPE			= 6
+Global Const $TASCA_DEATHS_CHARGE		= 7
+Global Const $TASCA_HEART_OF_SHADOW		= 8
 
 Global Const $TASCA_CHEST_RANGE = 1.5 * $RANGE_SPELLCAST
 
+Global $tasca_farm_setup = False
+Global $tasca_player_profession = $ID_DERVISH
 
 ;~ Main method to chest farm Tasca
-Func TascaChestFarm($STATUS)
-	If Not $TASCA_FARM_SETUP And SetupTascaChestFarm() == $FAIL Then Return $PAUSE
+Func TascaChestFarm()
+	If Not $tasca_farm_setup And SetupTascaChestFarm() == $FAIL Then Return $PAUSE
 
 	GoToTascasDemise()
-	Local $result = TascaChestFarmLoop($STATUS)
-	ReturnBackToOutpost($ID_The_Granite_Citadel)
+	Local $result = TascaChestFarmLoop()
+	ReturnBackToOutpost($ID_THE_GRANITE_CITADEL)
 	Return $result
 EndFunc
 
@@ -78,7 +78,7 @@ EndFunc
 ;~ Tasca chest farm setup
 Func SetupTascaChestFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME) == $FAIL Then Return $FAIL
+	If TravelToOutpost($ID_THE_GRANITE_CITADEL, $district_name) == $FAIL Then Return $FAIL
 	UseCitySpeedBoost()
 	If SetupPlayerTascaChestFarm() == $FAIL Then Return $FAIL
 	If SetupTeamTascaChestFarm() == $FAIL Then Return $FAIL
@@ -88,8 +88,8 @@ Func SetupTascaChestFarm()
 	MoveTo(-9250, 19850)
 	Move(-10000, 18875)
 	RandomSleep(1000)
-	WaitMapLoading($ID_The_Granite_Citadel, 10000, 1000)
-	$TASCA_FARM_SETUP = True
+	WaitMapLoading($ID_THE_GRANITE_CITADEL, 10000, 1000)
+	$tasca_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -98,27 +98,27 @@ EndFunc
 Func SetupPlayerTascaChestFarm()
 	Info('Setting up player build skill bar')
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
-		Case $ID_Dervish
-			$TascaPlayerProfession = $ID_Dervish
-			LoadSkillTemplate($TascaDervishChestRunnerSkillbar)
-		Case $ID_Assassin
-			$TascaPlayerProfession = $ID_Assassin
-			LoadSkillTemplate($TascaAssassinChestRunnerSkillbar)
-		Case $ID_Mesmer
-			$TascaPlayerProfession = $ID_Mesmer
-			LoadSkillTemplate($TascaMesmerChestRunnerSkillbar)
-		Case $ID_Monk
-			$TascaPlayerProfession = $ID_Monk
-			LoadSkillTemplate($TascaMonkChestRunnerSkillbar)
-		Case $ID_Elementalist
-			$TascaPlayerProfession = $ID_Elementalist
-			LoadSkillTemplate($TascaElementalistChestRunnerSkillbar)
-		Case $ID_Necromancer
-			$TascaPlayerProfession = $ID_Necromancer
-			LoadSkillTemplate($TascaNecromancerChestRunnerSkillbar)
-		Case $ID_Ritualist
-			$TascaPlayerProfession = $ID_Ritualist
-			LoadSkillTemplate($TascaRitualistChestRunnerSkillbar)
+		Case $ID_DERVISH
+			$tasca_player_profession = $ID_DERVISH
+			LoadSkillTemplate($TASCA_DERVISH_CHESTRUNNER_SKILLBAR)
+		Case $ID_ASSASSIN
+			$tasca_player_profession = $ID_ASSASSIN
+			LoadSkillTemplate($TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR)
+		Case $ID_MESMER
+			$tasca_player_profession = $ID_MESMER
+			LoadSkillTemplate($TASCA_MESMER_CHESTRUNNER_SKILLBAR)
+		Case $ID_MONK
+			$tasca_player_profession = $ID_MONK
+			LoadSkillTemplate($TASCA_MONK_CHESTRUNNER_SKILLBAR)
+		Case $ID_ELEMENTALIST
+			$tasca_player_profession = $ID_ELEMENTALIST
+			LoadSkillTemplate($TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR)
+		Case $ID_NECROMANCER
+			$tasca_player_profession = $ID_NECROMANCER
+			LoadSkillTemplate($TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR)
+		Case $ID_RITUALIST
+			$tasca_player_profession = $ID_RITUALIST
+			LoadSkillTemplate($TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
 		Case Else
 			; other characters have too few energy
 			Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist')
@@ -148,28 +148,28 @@ EndFunc
 
 ;~ Move out of outpost into Tasca's Demise
 Func GoToTascasDemise()
-	TravelToOutpost($ID_The_Granite_Citadel, $DISTRICT_NAME)
-	While GetMapID() <> $ID_Tascas_Demise
+	TravelToOutpost($ID_THE_GRANITE_CITADEL, $district_name)
+	While GetMapID() <> $ID_TASCAS_DEMISE
 		Info('Moving to Tasca''s Demise')
 		MoveTo(-10000, 18875)
 		Move(-9250, 19850)
 		RandomSleep(1000)
-		WaitMapLoading($ID_Tascas_Demise, 10000, 2000)
+		WaitMapLoading($ID_TASCAS_DEMISE, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Tasca Chest farm loop
-Func TascaChestFarmLoop($STATUS)
-	If FindInInventory($ID_Lockpick)[0] == 0 Then
+Func TascaChestFarmLoop()
+	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		Error('No lockpicks available to open chests')
 		Return $PAUSE
 	EndIf
 
-	If GetMapID() <> $ID_Tascas_Demise Then Return $FAIL
+	If GetMapID() <> $ID_TASCAS_DEMISE Then Return $FAIL
 
 	Info('Starting chest run')
-	UseConsumable($ID_Birthday_Cupcake, True)
+	UseConsumable($ID_BIRTHDAY_CUPCAKE, True)
 	; Calling it here to already use shroud of distress and dwarven stability and have enough mana later on
 	CommandAll(-11300, 21389)
 	TascaDefendFunction(0, 0)
@@ -246,7 +246,7 @@ Func TascaChestFarmLoop($STATUS)
 		Info('#Bonus chest')
 		$annoyingChest = ScanForChests(2000, True, 5500, 18000)
 		Local $target = GetTargetToEscapeWithDeathsCharge(DllStructGetData($annoyingChest, 'X'), DllStructGetData($annoyingChest, 'Y'))
-		If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
+		If $target <> Null Then UseSkillEx($TASCA_DEATHS_CHARGE, $target)
 		$openedChests += FindAndOpenChests($TASCA_CHEST_RANGE, TascaDefendFunctionForChests, UnblockWhenOpeningChests) ? 1 : 0
 		RandomSleep(1000)
 	EndIf
@@ -274,21 +274,21 @@ Func TascaChestRun($X, $Y)
 
 		TascaDefendFunction($X, $Y)
 		; Energy usage becomes too heavy if we start using Death's Charge as a speedup
-		;If GetEnergy() >= 5 And IsRecharged($Tasca_DeathsCharge) Then
+		;If GetEnergy() >= 5 And IsRecharged($TASCA_DEATHS_CHARGE) Then
 		;	Local $target = GetTargetForDeathsCharge($X, $Y, 700)
-		;	If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
+		;	If $target <> Null Then UseSkillEx($TASCA_DEATHS_CHARGE, $target)
 		;EndIf
 
 		; We only start unblocking after 10 times 250 ms which is 2.5 s -> that's because knockdown lasts 2s
 		If $blockedCounter > 10 And GetEnergy() >= 10 Then
 			Local $target = GetTargetToEscapeWithDeathsCharge($X, $Y)
-			If $target <> Null And IsRecharged($Tasca_DeathsCharge) Then
-				UseSkillEx($Tasca_DeathsCharge, $target)
+			If $target <> Null And IsRecharged($TASCA_DEATHS_CHARGE) Then
+				UseSkillEx($TASCA_DEATHS_CHARGE, $target)
 				$blockedCounter = 0
-			ElseIf IsRecharged($Tasca_HeartOfShadow) Then
+			ElseIf IsRecharged($TASCA_HEART_OF_SHADOW) Then
 				Local $npc = GetNPCInTheBack($X, $Y)
 				If $npc == Null Then $npc = $me
-				UseSkillEx($Tasca_HeartOfShadow, $npc)
+				UseSkillEx($TASCA_HEART_OF_SHADOW, $npc)
 				$blockedCounter = 0
 			EndIf
 		EndIf
@@ -319,13 +319,13 @@ EndFunc
 
 ;~ Function to unblocked when opening chests
 Func UnblockWhenOpeningChests()
-	If IsRecharged($Tasca_HeartOfShadow) Then
+	If IsRecharged($TASCA_HEART_OF_SHADOW) Then
 		Local $target = GetNearestEnemyToAgent(GetMyAgent())
 		If $target == Null Then $target = GetMyAgent()
-		UseSkillEx($Tasca_HeartOfShadow, $target)
-	ElseIf IsRecharged($Tasca_DeathsCharge) Then
-		Local $target = GetFurthestNPCInRangeOfCoords($ID_Allegiance_Foe, Null, Null, $RANGE_SPELLCAST)
-		If $target <> Null Then UseSkillEx($Tasca_DeathsCharge, $target)
+		UseSkillEx($TASCA_HEART_OF_SHADOW, $target)
+	ElseIf IsRecharged($TASCA_DEATHS_CHARGE) Then
+		Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST)
+		If $target <> Null Then UseSkillEx($TASCA_DEATHS_CHARGE, $target)
 	EndIf
 EndFunc
 
@@ -348,30 +348,30 @@ Func TascaDefendFunction($X, $Y)
 	If ($Timer_Shadowform == Null Or TimerDiff($Timer_Shadowform) > 19500) Then
 		Local $enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 		If $enemiesAreNear Or ($X <> 0 And AreFoesInFront($X, $Y)) Then
-			If $enemiesAreNear And IsRecharged($Tasca_IAmUnstoppable) Then UseSkillEx($Tasca_IAmUnstoppable)
+			If $enemiesAreNear And IsRecharged($TASCA_I_AM_UNSTOPPABLE) Then UseSkillEx($TASCA_I_AM_UNSTOPPABLE)
 			While IsPlayerAlive() And GetEnergy() < 20 And $enemiesAreNear
 				Sleep(250)
 				$target = GetNearestEnemyToAgent($me)
 				$enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 			WEnd
 			AdlibRegister('UseDeadlyParadox', 750)
-			While IsPlayerAlive() And IsRecharged($Tasca_ShadowForm)
-				UseSkillEx($Tasca_ShadowForm, $me)
+			While IsPlayerAlive() And IsRecharged($TASCA_SHADOWFORM)
+				UseSkillEx($TASCA_SHADOWFORM, $me)
 				Sleep(GetPing() + 20)
 			WEnd
 			$Timer_Shadowform = TimerInit()
 			Sleep(GetPing() + 20)
 			If ($Timer_DwarvenStability == Null Or TimerDiff($Timer_DwarvenStability) > 34000) And GetEnergy() >= 5 Then
-				UseSkillEx($Tasca_DwarvenStability)
+				UseSkillEx($TASCA_DWARVEN_STABILITY)
 				$Timer_DwarvenStability = TimerInit()
 				Sleep(GetPing() + 20)
 			EndIf
-			If (GetEnergy() >= 5) Then UseSkillEx($Tasca_DarkEscape)
+			If (GetEnergy() >= 5) Then UseSkillEx($TASCA_DARK_ESCAPE)
 		EndIf
 	EndIf
 	If ($Timer_ShroudOfDistress == Null Or TimerDiff($Timer_ShroudOfDistress) > 62000) And GetEnergy() >= 10 Then
 		If (GetEnergy() >= 10) Then
-			UseSkillEx($Tasca_ShroudOfDistress)
+			UseSkillEx($TASCA_SHROUD_OF_DISTRESS)
 			$Timer_ShroudOfDistress = TimerInit()
 		EndIf
 	EndIf
@@ -380,8 +380,8 @@ EndFunc
 
 ;~ Use Whirling Defense skill
 Func UseDeadlyParadox()
-	While IsPlayerAlive() And IsRecharged($Tasca_DeadlyParadox)
-		UseSkillEx($Tasca_DeadlyParadox)
+	While IsPlayerAlive() And IsRecharged($TASCA_DEADLY_PARADOX)
+		UseSkillEx($TASCA_DEADLY_PARADOX)
 		Sleep(GetPing() + 20)
 	WEnd
 	AdlibUnRegister('UseDeadlyParadox')
