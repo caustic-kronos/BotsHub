@@ -128,6 +128,7 @@ Global $default_weapon_slot = 1
 Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
+Global $inventory_management_cache[]
 #EndRegion Variables
 
 
@@ -191,6 +192,7 @@ Func CreateGUI()
 	$GUI_GWBotHub = GUICreate('GW Bot Hub', 650, 500, -1, -1)
 	GUISetBkColor($COLOR_SILVER, $GUI_GWBotHub)
 
+	; === Buttons common to all tabs ===
 	$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('No character selected', 10, 470, 150, 20)
 	$GUI_Combo_FarmChoice = GUICtrlCreateCombo('Choose a farm', 170, 470, 150, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, 'Choose a farm')
@@ -201,6 +203,13 @@ Func CreateGUI()
 	GUISetOnEvent($GUI_EVENT_CLOSE, 'GuiButtonHandler')
 	$GUI_FarmProgress = GUICtrlCreateProgress(490, 470, 150, 21)
 
+	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('Default Farm Configuration', 400, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetOnEvent($GUI_Combo_ConfigChoice, 'GuiButtonHandler')
+
+	$GUI_Icon_SaveConfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 615, 12, 20, 20)
+	GUICtrlSetOnEvent($GUI_Icon_SaveConfig, 'GuiButtonHandler')
+
+	; === Main tab ===
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 630, 450)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
 	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
@@ -318,7 +327,8 @@ Func CreateGUI()
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
-	$GUI_Tab_RunOptions = GUICtrlCreateTabItem('Run options')
+	; === Options tab ===
+	$GUI_Tab_RunOptions = GUICtrlCreateTabItem('Options')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 
 	$GUI_Group_RunOptions = GUICtrlCreateGroup('Run options', 21, 39, 295, 155)
@@ -393,7 +403,8 @@ Func CreateGUI()
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
-	$GUI_Tab_TeamOptions = GUICtrlCreateTabItem('Team options')
+	; === Team tab ===
+	$GUI_Tab_TeamOptions = GUICtrlCreateTabItem('Team')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 	$GUI_Group_TeamOptions = GUICtrlCreateGroup('Team options', 21, 39, 604, 401)
 	$GUI_Checkbox_AutomaticTeamSetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 65)
@@ -444,10 +455,14 @@ Func CreateGUI()
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
-	$GUI_Tab_LootOptions = GUICtrlCreateTabItem('Loot options')
+	; === Inventory tab ===
+	$GUI_Tab_LootOptions = GUICtrlCreateTabItem('Inventory')
 	$GUI_TreeView_LootOptions = GUICtrlCreateTreeView(80, 45, 545, 400, BitOR($TVS_HASLINES, $TVS_LINESATROOT, $TVS_HASBUTTONS, $TVS_CHECKBOXES, $TVS_FULLROWSELECT))
 	Local $GuiJsonLootOptions = LoadLootOptions(@ScriptDir & '/conf/loot/Default Loot Configuration.json')
 	BuildTreeViewFromJSON($GUI_TreeView_LootOptions, $GuiJsonLootOptions)
+	; It's better to fill cache after tree is built rather than mix intents and do it all in one go
+	FillInventoryCache($GUI_TreeView_LootOptions)
+
 	$GUI_ExpandLootOptionsButton = GUICtrlCreateButton('Expand all', 21, 154, 55, 21)
 	GUICtrlSetOnEvent($GUI_ExpandLootOptionsButton, 'GuiButtonHandler')
 	$GUI_ReduceLootOptionsButton = GUICtrlCreateButton('Reduce all', 21, 184, 55, 21)
@@ -460,7 +475,8 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($GUI_ApplyLootOptionsButton, 'GuiButtonHandler')
 	GUICtrlCreateTabItem('')
 
-	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm informations')
+	; === Infos tab ===
+	$GUI_Tab_FarmInfos = GUICtrlCreateTabItem('Farm infos')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 	$GUI_Label_CharacterBuilds = GUICtrlCreateLabel('Recommended character builds:', 90, 40)
 	$GUI_Edit_CharacterBuilds = GUICtrlCreateEdit('', 45, 60, 250, 105, BitOR($ES_MULTILINE, $ES_READONLY), $WS_EX_TOOLWINDOW)
@@ -468,12 +484,6 @@ Func CreateGUI()
 	$GUI_Edit_HeroesBuilds = GUICtrlCreateEdit('', 350, 60, 250, 105, BitOR($ES_MULTILINE, $ES_READONLY), $WS_EX_TOOLWINDOW)
 	$GUI_Label_FarmInformations = GUICtrlCreateLabel('Farm informations:', 30, 170, 575, 450)
 	GUICtrlCreateTabItem('')
-
-	$GUI_Combo_ConfigChoice = GUICtrlCreateCombo('Default Farm Configuration', 400, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	GUICtrlSetOnEvent($GUI_Combo_ConfigChoice, 'GuiButtonHandler')
-
-	$GUI_Icon_SaveConfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 615, 12, 20, 20)
-	GUICtrlSetOnEvent($GUI_Icon_SaveConfig, 'GuiButtonHandler')
 
 	GUIRegisterMsg($WM_COMMAND, 'WM_COMMAND_Handler')
 	GUIRegisterMsg($WM_NOTIFY, 'WM_NOTIFY_Handler')
@@ -622,6 +632,7 @@ Func GuiButtonHandler()
 				Local $GuiJsonLootOptions = LoadLootOptions($filePath)
 				_GUICtrlTreeView_DeleteAll($GUI_TreeView_LootOptions)
 				BuildTreeViewFromJSON($GUI_TreeView_LootOptions, $GuiJsonLootOptions)
+				FillInventoryCache($GUI_TreeView_LootOptions)
 			EndIf
 		Case $GUI_SaveLootOptionsButton
 			Local $jsonObject = BuildJSONFromTreeView($GUI_TreeView_LootOptions)
@@ -636,7 +647,8 @@ Func GuiButtonHandler()
 				Info('Saved loot options configuration ' & $configFile)
 			EndIf
 		Case $GUI_ApplyLootOptionsButton
-			UpdateLootOptionsFromInterface()
+			FillInventoryCache($GUI_TreeView_LootOptions)
+			Out('Refreshed inventory management options')
 		Case $GUI_RenderButton
 			$rendering_enabled = Not $rendering_enabled
 			RefreshRenderingButton()
@@ -885,7 +897,6 @@ Func Main()
 	EndIf
 	FillConfigurationCombo()
 	LoadDefaultConfiguration()
-	UpdateLootOptionsFromInterface()
 	BotHubLoop()
 EndFunc
 
@@ -897,22 +908,27 @@ Func BotHubLoop()
 
 		If ($runtime_status == 'RUNNING') Then
 			DisableGUIComboboxes()
-			; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
-			; So bag 5 will always fill before 4 - hence we can count items up to bag 4
-			If (CountSlots(1, _Min($bags_count, 4)) < $inventory_space_needed) Then
-				InventoryManagementBeforeRun()
-				ResetBotsSetups()
+
+			; Skip inventory management and setups when running without authentication
+			If GUICtrlRead($GUI_Combo_CharacterChoice) <> '' Then
+				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
+				; So bag 5 will always fill before 4 - hence we can count items up to bag 4
+				If (CountSlots(1, _Min($bags_count, 4)) < $inventory_space_needed) Then
+					InventoryManagementBeforeRun()
+					ResetBotsSetups()
+				EndIf
+				If (CountSlots(1, $bags_count) < $inventory_space_needed) Then
+					Notice('Inventory full, pausing.')
+					ResetBotsSetups()
+					$runtime_status = 'WILL_PAUSE'
+				EndIf
+				If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
+					Local $resetRequired = InventoryManagementMidRun()
+					If $resetRequired Then ResetBotsSetups()
+				EndIf
+				If Not $global_farm_setup Then GeneralFarmSetup()
 			EndIf
-			If (CountSlots(1, $bags_count) < $inventory_space_needed) Then
-				Notice('Inventory full, pausing.')
-				ResetBotsSetups()
-				$runtime_status = 'WILL_PAUSE'
-			EndIf
-			If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
-				Local $resetRequired = InventoryManagementMidRun()
-				If $resetRequired Then ResetBotsSetups()
-			EndIf
-			If Not $global_farm_setup Then GeneralFarmSetup()
+
 			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
 			Local $result = RunFarmLoop($Farm)
 			If ($result == $PAUSE Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
@@ -1508,30 +1524,8 @@ Func ReadConfigFromJson($jsonString)
 EndFunc
 
 
-Func UpdateLootOptionsFromInterface()
-	RefreshValuableListsFromInterface()
-	$PICKUP_EVERYTHING = IsLootOptionChecked('Pick up items')
-	$PICKUP_NOTHING = Not IsAnyLootOptionInBranchChecked('Pick up items')
-	$PICKUP_WEAPONS = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
-	$IDENTIFY_ITEMS = IsAnyLootOptionInBranchChecked('Identify items')
-	$SALVAGE_NOTHING = Not IsAnyLootOptionInBranchChecked('Salvage items')
-	$SALVAGE_ANY_ITEM = IsAnyLootOptionInBranchChecked('Salvage items')
-	$SALVAGE_WEAPONS = IsAnyLootOptionInBranchChecked('Salvage items.Weapons and offhands')
-	$SALVAGE_GEARS = IsAnyLootOptionInBranchChecked('Salvage items.Armor salvageables')
-	$SALVAGE_ALL_TROPHIES = IsLootOptionChecked('Salvage items.Trophies')
-	$SALVAGE_TROPHIES = IsAnyLootOptionInBranchChecked('Salvage items.Trophies')
-	$SALVAGE_MATERIALS = IsAnyLootOptionInBranchChecked('Salvage items.Rare Materials')
-	$SELL_NOTHING = Not IsAnyLootOptionInBranchChecked('Sell items')
-	$SELL_WEAPONS = IsAnyLootOptionInBranchChecked('Sell items.Weapons and offhands')
-	$SELL_BASIC_MATERIALS = IsAnyLootOptionInBranchChecked('Sell items.Basic Materials')
-	$SELL_RARE_MATERIALS = IsAnyLootOptionInBranchChecked('Sell items.Rare Materials')
-	$STORE_WEAPONS = IsAnyLootOptionInBranchChecked('Store items.Weapons and offhands')
-EndFunc
-
-
 ;~ Creating a treeview from a JSON node
 Func BuildTreeViewFromJSON($parentItem, $jsonNode)
-	; Unused for now, but might become useful
 	Local $keyHandle
 	Local $valueHandle
 	If IsMap($jsonNode) Then
@@ -1558,6 +1552,79 @@ Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 	Else
 		Return $jsonNode
 	EndIf
+EndFunc
+
+
+;~ Fill the inventory cache with the treeview data
+Func FillInventoryCache($treeViewHandle)
+	IterateOverTreeView(Null, $treeViewHandle, Null, '', AddToInventoryCache)
+	BuildInventoryDerivedFlags()
+	RefreshValuableListsFromInterface()
+EndFunc
+
+
+;~ Utility function to add treeview elements to the inventory cache
+Func AddToInventoryCache(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
+	Debug($currentPath)
+	$inventory_management_cache[$currentPath] = _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
+EndFunc
+
+
+;~ Fill the inventory cache with additional derived data
+Func BuildInventoryDerivedFlags()
+	; -------- Pickup --------
+	Local $pickupSomething = IsAnyLootOptionInBranchChecked('Pick up items')
+	$inventory_management_cache['@pickup.something'] = $pickupSomething
+	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
+	$inventory_management_cache['@pickup.weapons'] = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
+
+	; -------- Identify --------
+	Local $identifySomething = IsAnyLootOptionInBranchChecked('Identify items')
+	$inventory_management_cache['@identify.something'] = $identifySomething
+	$inventory_management_cache['@identify.nothing'] = Not $identifySomething
+
+	; -------- Salvage --------
+	Local $salvageSomething = IsAnyLootOptionInBranchChecked('Salvage items')
+	$inventory_management_cache['@salvage.something'] = $salvageSomething
+	$inventory_management_cache['@salvage.nothing'] = Not $salvageSomething
+	Local $salvageSomeWeapons = IsAnyLootOptionInBranchChecked('Salvage items.Weapons and offhands')
+	$inventory_management_cache['@salvage.weapons.something'] = $salvageSomeWeapons
+	$inventory_management_cache['@salvage.weapons.nothing'] = Not $salvageSomeWeapons
+	Local $salvageSomeSalvageables = IsAnyLootOptionInBranchChecked('Salvage items.Armor salvageables')
+	$inventory_management_cache['@salvage.salvageables.something'] = $salvageSomeSalvageables
+	$inventory_management_cache['@salvage.salvageables.nothing'] = Not $salvageSomeSalvageables
+	Local $salvageSomeTrophies = IsAnyLootOptionInBranchChecked('Salvage items.Trophies')
+	$inventory_management_cache['@salvage.trophies.something'] = $salvageSomeTrophies
+	$inventory_management_cache['@salvage.trophies.nothing'] = Not $salvageSomeTrophies
+	Local $salvageSomeMaterials = IsAnyLootOptionInBranchChecked('Salvage items.Rare Materials')
+	$inventory_management_cache['@salvage.materials.something'] = $salvageSomeMaterials
+	$inventory_management_cache['@salvage.materials.nothing'] = Not $salvageSomeMaterials
+
+	; -------- Sell --------
+	Local $sellSomething = IsAnyLootOptionInBranchChecked('Sell items')
+	$inventory_management_cache['@sell.something'] = $sellSomething
+	$inventory_management_cache['@sell.nothing'] = Not $sellSomething
+	Local $sellSomeWeapons = IsAnyLootOptionInBranchChecked('Sell items.Weapons and offhands')
+	$inventory_management_cache['@sell.weapons.something'] = $sellSomeWeapons
+	$inventory_management_cache['@sell.weapons.nothing'] = Not $sellSomeWeapons
+
+	Local $sellSomeBasicMaterials = IsAnyLootOptionInBranchChecked('Sell items.Basic Materials')
+	$inventory_management_cache['@sell.materials.basic.something'] = $sellSomeBasicMaterials
+	$inventory_management_cache['@sell.materials.basic.nothing'] = Not $sellSomeBasicMaterials
+	Local $sellSomeRareMaterials = IsAnyLootOptionInBranchChecked('Sell items.Rare Materials')
+	$inventory_management_cache['@sell.materials.rare.something'] = $sellSomeRareMaterials
+	$inventory_management_cache['@sell.materials.rare.nothing'] = Not $sellSomeRareMaterials
+	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
+	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
+	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
+
+
+
+	; -------- Store --------
+	Local $storeSomething = IsAnyLootOptionInBranchChecked('Store items')
+	$inventory_management_cache['@store.something'] = $storeSomething
+	$inventory_management_cache['@store.nothing'] = Not $storeSomething
+	$inventory_management_cache['@store.weapons'] = IsAnyLootOptionInBranchChecked('Store items.Weapons and offhands')
 EndFunc
 
 

@@ -48,6 +48,8 @@ Func RunTests()
 	;	GetOwnPosition()
 	;	Sleep(2000)
 	;WEnd
+	Local $toto = (2 < 1) Or (2 < 3)
+	Out($toto)
 
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
 	;ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
@@ -373,73 +375,63 @@ Func DefaultShouldPickItem($item)
 	Local $rarity = GetRarity($item)
 	; Only pick gold if character has less than 99k in inventory
 	If (($itemID == $ID_MONEY) And (GetGoldCharacter() < 99000)) Then
-		Return True
+		Return $inventory_management_cache['Pick up items.Gold']
 	ElseIf IsBasicMaterial($item) Then
 		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Pick up items.Basic Materials.' & $materialName)
+		Return $inventory_management_cache['Pick up items.Basic Materials.' & $materialName]
 	ElseIf IsRareMaterial($item) Then
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Pick up items.Rare Materials.' & $materialName)
+		Return $inventory_management_cache['Pick up items.Rare Materials.' & $materialName]
 	ElseIf IsRegularTome($itemID) Then
 		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Pick up items.Tomes.Normal.' & $tomeName)
+		Return $inventory_management_cache['Pick up items.Tomes.Normal.' & $tomeName]
 	ElseIf IsEliteTome($itemID) Then
 		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Pick up items.Tomes.Elite.' & $tomeName)
+		Return $inventory_management_cache['Pick up items.Tomes.Elite.' & $tomeName]
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Pick up items.Scrolls.Gold.' & $scrollName)
+		Return $inventory_management_cache['Pick up items.Scrolls.Gold.' & $scrollName]
 	ElseIf IsBlueScroll($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Scrolls.Blue')
+		Return $inventory_management_cache['Pick up items.Scrolls.Blue']
 	ElseIf IsKey($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Keys')
+		Return $inventory_management_cache['Pick up items.Keys']
 	ElseIf ($itemID == $ID_DYES) Then
 		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
 		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
-		Return IsLootOptionChecked('Pick up items.Dyes.' & $dyeColorName)
+		Return $inventory_management_cache['Pick up items.Dyes.' & $dyeColorName]
 	ElseIf ($itemID == $ID_GLACIAL_STONE) Then
-		Return IsLootOptionChecked('Pick up items.Trophies.Glacial Stone')
+		Return $inventory_management_cache['Pick up items.Trophies.Glacial Stone']
 	ElseIf ($itemID == $ID_DESTROYER_CORE) Then
-		Return IsLootOptionChecked('Pick up items.Trophies.Destroyer Core')
+		Return $inventory_management_cache['Pick up items.Trophies.Destroyer Core']
 	ElseIf ($itemID == $ID_JADE_BRACELET) Then
-		Return IsLootOptionChecked('Pick up items.Trophies.Jade Bracelet')
+		Return $inventory_management_cache['Pick up items.Trophies.Jade Bracelet']
 	ElseIf ($itemID == $ID_STOLEN_GOODS) Then
-		Return IsLootOptionChecked('Pick up items.Trophies.Stolen Goods')
+		Return $inventory_management_cache['Pick up items.Trophies.Stolen Goods']
 	ElseIf ($itemID == $ID_MINISTERIAL_COMMENDATION) Then
 		Return True
 	ElseIf ($itemID == $ID_JAR_OF_INVIGORATION) Then
 		Return False
 	ElseIf IsTrophy($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Trophies')
+		Return $inventory_management_cache['Pick up items.Trophies']
 	ElseIf IsMapPiece($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Quest items.Map pieces')
+		Return $inventory_management_cache['Pick up items.Quest items.Map pieces']
 	ElseIf ($itemID == $ID_LOCKPICK) Then
 		Return True
 	ElseIf IsConsumable($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Consumables')
+		Return $inventory_management_cache['Pick up items.Consumables']
 	ElseIf IsAlcohol($itemID) Then
-		Return IsLootOptionChecked('Pick up items.Alcohols')
+		Return $inventory_management_cache['Pick up items.Alcohols']
 	ElseIf IsSpecialDrop($itemID) Then
 		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Pick up items.Festival Items.' & $festivalDropName)
+		Return $inventory_management_cache['Pick up items.Festival Items.' & $festivalDropName]
 	ElseIf IsStackable($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	ElseIf $rarity <> $RARITY_WHITE And isArmorSalvageItem($item) Then
 		Return True
-	ElseIf IsWeapon($item) And CheckPickupWeapon($item) Then
-		Return True
-	ElseIf ($rarity == $RARITY_GOLD) Then
-		Return IsLootOptionChecked('Pick up items.Other gold items')
-	ElseIf ($rarity == $RARITY_GREEN) Then
-		Return IsLootOptionChecked('Pick up items.Other green items')
-	ElseIf ($rarity == $RARITY_PURPLE) Then
-		Return IsLootOptionChecked('Pick up items.Other purple items')
-	ElseIf ($rarity == $RARITY_BLUE) Then
-		Return IsLootOptionChecked('Pick up items.Other blue items')
-	ElseIf ($rarity == $RARITY_WHITE) Then
-		Return IsLootOptionChecked('Pick up items.Other white items')
+	ElseIf IsWeapon($item) Then
+		Return CheckPickupWeapon($item)
 	EndIf
 	Return False
 EndFunc
@@ -1236,8 +1228,8 @@ Func HasChosenItemsToSalvage()
 EndFunc
 
 
-;~ Identify all items from inventory
-Func IdentifyAllItems($buyKit = True)
+;~ Identify items from inventory
+Func IdentifyItems($buyKit = True)
 	Info('Identifying all items')
 	For $bagIndex = 1 To $bags_count
 		Local $bag = GetBag($bagIndex)
@@ -1246,6 +1238,10 @@ Func IdentifyAllItems($buyKit = True)
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
 			If Not GetIsIdentified($item) Then
+				Local $rarity = GetRarity($item)
+				Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+				If Not $inventory_management_cache['Identify items.' & $rarityName] Then ContinueLoop
+					
 				Local $IdentificationKit = FindIdentificationKit()
 				If $IdentificationKit == 0 Then
 					If $buyKit Then
@@ -1289,12 +1285,12 @@ Func SalvageItems($buyKit = True)
 
 			Local $itemID = DllStructGetData($item, 'ModelID')
 			If IsTrophy($itemID) Then
-				If Not $SALVAGE_TROPHIES Then ContinueLoop
+				If $inventory_management_cache['@salvage.trophies.nothing'] Then ContinueLoop
 				; Trophies should be salvaged at the end, because they create a lot of materials
 				$trophiesAndMaterialItems[$trophyAndMaterialIndex] = $item
 				$trophyAndMaterialIndex += 1
 			ElseIf IsRareMaterial($item) Then
-				If Not $SALVAGE_MATERIALS Then ContinueLoop
+				If $inventory_management_cache['@salvage.materials.nothing'] Then ContinueLoop
 				; Rare materials should be salvaged at the end, because they create a lot of materials
 				$trophiesAndMaterialItems[$trophyAndMaterialIndex] = $item
 				$trophyAndMaterialIndex += 1

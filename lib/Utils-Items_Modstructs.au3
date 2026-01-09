@@ -22,7 +22,7 @@
 
 ;~ Determines whether the provided item has expensive mods
 Func ContainsValuableUpgrades($item)
-	Local $modStruct	= GetModStruct($item)
+	Local $modStruct = GetModStruct($item)
 	If Not $modStruct Then Return False
 
 	If IsWeapon($item) Then

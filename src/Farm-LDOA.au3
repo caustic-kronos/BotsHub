@@ -414,12 +414,10 @@ Func PresearingInventoryManagement()
 	; 3-Salvage
 	; 4-Store items
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If $IDENTIFY_ITEMS And HasUnidentifiedItems() Then IdentifyAllItems(False)
-	If $SALVAGE_ANY_ITEM And HasChosenItemsToSalvage() Then
-		SalvageAllItems(False)
-		If $bags_count == 5 Then
-			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageAllItems(False)
-		EndIf
+	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
+	If $inventory_management_cache['@salvage.something'] Then
+		SalvageItems(False)
+		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc

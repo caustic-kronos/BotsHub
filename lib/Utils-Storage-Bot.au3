@@ -108,9 +108,9 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If $IDENTIFY_ITEMS And HasUnidentifiedItems() Then
+	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then
 		TravelToOutpost($tradeTown, $district_name)
-		IdentifyAllItems()
+		IdentifyItems()
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
 		ConnectToDatabase()
@@ -120,24 +120,22 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If $SALVAGE_ANY_ITEM And HasChosenItemsToSalvage() Then
+	If $inventory_management_cache['@salvage.something'] Then
 		TravelToOutpost($tradeTown, $district_name)
 		SalvageItems()
-		If $bags_count == 5 Then
-			If MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
-		EndIf
+		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
 		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
 		;SalvageMaterials()
 	EndIf
-	If ($SELL_BASIC_MATERIALS Or $SELL_RARE_MATERIALS) And HasMaterials() Then
+	If $inventory_management_cache['@sell.materials.something'] And HasMaterials() Then
 		TravelToOutpost($tradeTown, $district_name)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
-		If $SELL_BASIC_MATERIALS And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
-		If $SELL_RARE_MATERIALS And HasRareMaterials() Then SellRareMaterialsToMerchant()
+		If $inventory_management_cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
+		If $inventory_management_cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
-	If Not $SELL_NOTHING Then
+	If $inventory_management_cache['@sell.something'] Then
 		TravelToOutpost($tradeTown, $district_name)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
@@ -176,10 +174,10 @@ Func InventoryManagementMidRun()
 		Return True
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	IdentifyAllItems(False)
-	SalvageItems(False)
-	If $bags_count == 5 Then
-		If MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
+	IdentifyItems(False)
+	If $inventory_management_cache['@salvage.something'] Then
+		SalvageItems(False)
+		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
 	EndIf
 	Return False
 EndFunc
@@ -881,7 +879,7 @@ EndFunc
 
 
 ;~ Store all items in the Xunlai Storage
-Func StoreEverythingInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
+Func StoreEverythingInXunlaiStorage()
 	StoreItemsInXunlaiStorage(StoreAllItems)
 EndFunc
 
@@ -970,30 +968,45 @@ Func DefaultShouldStoreItem($item)
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
 	Local $quantity = DllStructGetData($item, 'Quantity')
+	; Only store full stacks of consumables and materials
 	If IsConsumable($itemID) Then
-		Return True
+		Return $quantity == 250 And $inventory_management_cache['Store items.Consumables']
 	ElseIf IsBasicMaterial($item) Then
-		Return True
+		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return $quantity == 250 And $inventory_management_cache['Store items.Basic Materials.' & $materialName]
 	ElseIf IsRareMaterial($item) Then
-		Return True
+		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return $inventory_management_cache['Store items.Rare Materials.' & $materialName]
 	ElseIf ($itemID == $ID_IDENTIFICATION_KIT Or $itemID == $ID_SUPERIOR_IDENTIFICATION_KIT) Then
 		Return False
 	ElseIf ($itemID == $ID_SALVAGE_KIT Or $itemID == $ID_SALVAGE_KIT_2 Or $itemID == $ID_EXPERT_SALVAGE_KIT Or $itemID == $ID_SUPERIOR_SALVAGE_KIT) Then
 		Return False
-	ElseIf IsTome($itemID) Then
-		Return True
+	ElseIf IsRegularTome($itemID) Then
+		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
+		Return $inventory_management_cache['Store items.Tomes.Normal.' & $tomeName]
+	ElseIf IsEliteTome($itemID) Then
+		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
+		Return $inventory_management_cache['Store items.Tomes.Elite.' & $tomeName]
 	ElseIf IsGoldScroll($itemID) Then
-		Return True
+		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
+		Return $inventory_management_cache['Store items.Scrolls.Gold.' & $scrollName]
+	ElseIf IsBlueScroll($itemID) Then
+		Return $inventory_management_cache['Store items.Scrolls.Blue']
+	ElseIf IsKey($itemID) Then
+		Return $inventory_management_cache['Store items.Keys']
 	ElseIf ($itemID == $ID_DYES) Then
-		Return True
+		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
+		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
+		Return $inventory_management_cache['Store items.Dyes.' & $dyeColorName]
 	ElseIf ($itemID == $ID_MINISTERIAL_COMMENDATION) Then
 		Return True
 	ElseIf ($itemID == $ID_LOCKPICK) Then
 		Return False
 	ElseIf IsWeapon($item) Then
-		Return ShouldKeepWeapon($item) Or CheckStoreWeapon($item)
+		Return CheckStoreWeapon($item)		;ShouldKeepWeapon($item)
 	ElseIf isArmorSalvageItem($item) Then
-		Return ContainsValuableUpgrades($item)
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		Return $inventory_management_cache['Store items.Armor salvageables.' & $rarityName]		;ContainsValuableUpgrades($item)
 	; Storing trophies only when we have a full stack of 250
 	ElseIf (IsTrophy($itemID) And $quantity == 250) Then
 		Return True
@@ -1004,19 +1017,23 @@ EndFunc
 
 ;~ Return True if the item should be sold to the merchant
 Func DefaultShouldSellItem($item)
-	If $SELL_NOTHING Then Return False
+	If $inventory_management_cache['@sell.nothing'] Then Return False
+
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
 	If $rarity == $RARITY_GREEN Then Return False
-
 	If IsKey($itemID) Then
-		Return IsLootOptionChecked('Sell items.Keys')
+		Return $inventory_management_cache['Sell items.Keys']
 	ElseIf IsBlueScroll($itemID) Then
-		Return IsLootOptionChecked('Sell items.Scrolls.Blue')
+		Return $inventory_management_cache['Sell items.Scrolls.Blue']
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Sell items.Scrolls.Gold.' & $scrollName)
+		Return $inventory_management_cache['Sell items.Scrolls.Gold.' & $scrollName]
 	ElseIf isArmorSalvageItem($item) Then
+		If $inventory_management_cache['Sell items.Armor salvageables'] Then Return True
+		If $inventory_management_cache['@sell.salvageables.nothing'] Then Return False
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		If Not $inventory_management_cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
 		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
 	ElseIf IsWeapon($item) And CheckSellWeapon($item) Then
 		Return Not ShouldKeepWeapon($item)
@@ -1027,30 +1044,40 @@ EndFunc
 
 ;~ Return True if the item should be salvaged
 Func DefaultShouldSalvageItem($item)
-	If $SALVAGE_NOTHING Then Return False
+	If $inventory_management_cache['@salvage.nothing'] Then Return False
+
 	Local $itemID = DllStructGetData($item, 'ModelID')
 	Local $rarity = GetRarity($item)
 
 	If $rarity == $RARITY_GREEN Then Return False
-	If IsTrophy($itemID) And $SALVAGE_ALL_TROPHIES Then
-		Return True
-	ElseIf IsTrophy($itemID) And Not $SALVAGE_ALL_TROPHIES And $SALVAGE_TROPHIES Then
+	If IsTrophy($itemID) Then
+		If $inventory_management_cache['Salvage items.Trophies'] Then Return True
+		If $inventory_management_cache['@salvage.trophies.nothing'] Then Return False
+		If $itemID == $ID_GLACIAL_STONE Then Return $inventory_management_cache['Salvage items.Trophies.Glacial Stone']
+		If $itemID == $ID_DESTROYER_CORE Then Return $inventory_management_cache['Salvage items.Trophies.Destroyer Core']
+		If $itemID == $ID_STOLEN_GOODS Then Return $inventory_management_cache['Salvage items.Trophies.Stolen Goods']
+		;Return $inventory_management_cache['Salvage items.Trophies.Other trophies']
+
 		If $MAP_FEATHER_TROPHIES[$itemID] <> Null Then Return True
 		If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return True
 		If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return True
 		If $MAP_FIBER_TROPHIES[$itemID] <> Null Then Return True
-		If $itemID == $ID_GLACIAL_STONE And IsLootOptionChecked('Salvage items.Trophies.Glacial Stone') Then Return True
-		If $itemID == $ID_DESTROYER_CORE And IsLootOptionChecked('Salvage items.Trophies.Destroyer Core') Then Return True
 		Return False
 	ElseIf IsRareMaterial($item) Then
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
 		Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
 	ElseIf IsArmorSalvageItem($item) Then
-		Return $SALVAGE_GEARS And GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+		If $inventory_management_cache['Salvage items.Armor salvageables'] Then Return True
+		If $inventory_management_cache['@salvage.salvageables.nothing'] Then Return False
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		If Not $inventory_management_cache['Salvage items.Armor salvageables.' & $rarityName] Then Return False
+		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
 	ElseIf IsWeapon($item) Then
 		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
-		; If weapon salvage options are enabled, check them too to see if we should keep the weapon
-		Return Not ShouldKeepWeapon($item) And (Not $SALVAGE_WEAPONS Or CheckSalvageWeapon($item))
+		If $inventory_management_cache['Salvage items.Weapons and offhands'] Then Return True
+		If $inventory_management_cache['@salvage.weapons.nothing'] Then Return False
+		If Not CheckSalvageWeapon($item) Then Return False
+		Return Not ShouldKeepWeapon($item)
 	EndIf
 	Return False
 EndFunc
@@ -1112,7 +1139,7 @@ Func DefaultShouldSellBasicMaterial($item)
 	If Not IsBasicMaterial($item) Then Return False
 	Local $materialID = DllStructGetData($item, 'ModelID')
 	Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$materialID]
-	Return IsLootOptionChecked('Sell items.Basic Materials.' & $materialName)
+	Return $inventory_management_cache['Sell items.Basic Materials.' & $materialName]
 EndFunc
 
 
@@ -1121,7 +1148,7 @@ Func DefaultShouldSellRareMaterial($item)
 	If Not IsRareMaterial($item) Then Return False
 	Local $materialID = DllStructGetData($item, 'ModelID')
 	Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$materialID]
-	Return IsLootOptionChecked('Sell items.Rare Materials.' & $materialName)
+	Return $inventory_management_cache['Sell items.Rare Materials.' & $materialName]
 EndFunc
 
 
@@ -1146,20 +1173,18 @@ Func CheckPickupWeapon($weaponItem)
 	If $weaponRarity == $RARITY_GRAY Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponReq = GetItemReq($weaponItem)
-	Return IsLootOptionChecked('Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
+	Return $inventory_management_cache['Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 
 
 Func CheckSalvageWeapon($weaponItem)
-	If Not $SALVAGE_WEAPONS Then Return False
-
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponReq = GetItemReq($weaponItem)
-	Return IsLootOptionChecked('Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
+	Return $inventory_management_cache['Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 
 
@@ -1172,7 +1197,7 @@ Func CheckSellWeapon($weaponItem)
 	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponReq = GetItemReq($weaponItem)
-	Return IsLootOptionChecked('Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
+	Return $inventory_management_cache['Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 
 
@@ -1186,6 +1211,6 @@ Func CheckStoreWeapon($weaponItem)
 	If $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponReq = GetItemReq($weaponItem)
-	Return IsLootOptionChecked('Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq)
+	Return $inventory_management_cache['Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 #EndRegion Inventory

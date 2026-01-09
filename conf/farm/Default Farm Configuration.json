@@ -13,7 +13,7 @@
 		"sort_items": false,
 		"collect_data": false,
 		"store_leftovers": false,
-		"store_gold": true,
+		"store_gold": false,
 		"buy_ectoplasm": false,
 		"buy_obsidian": false,
 		"donate_faction_points": true,
