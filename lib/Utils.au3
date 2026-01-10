@@ -48,9 +48,6 @@ Func RunTests()
 	;	GetOwnPosition()
 	;	Sleep(2000)
 	;WEnd
-	Local $toto = (2 < 1) Or (2 < 3)
-	Out($toto)
-
 	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
 	;ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
 

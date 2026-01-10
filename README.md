@@ -152,6 +152,8 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🧠💭 **Kilroy bot** - 1 request
 - 🧠💭 **Dwarf title farm bot** - 1 request
 - 🧠💭 **Improve crash recovery**
+- 🧠💭 **Secret Lair of the Snowmen (Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic)**
+- 🧠💭 **Irontoe's lair (Dwarven Ale, Aged Dwarven Ale)**
 
 ### Legend
 

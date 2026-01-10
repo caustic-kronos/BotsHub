@@ -180,7 +180,6 @@ Global $GUI_Group_TeamOptions, $GUI_TeamLabel, $GUI_TeamMemberLabel, $GUI_TeamMe
 Global $GUI_Group_OtherOptions
 Global $GUI_Label_CharacterBuilds, $GUI_Label_HeroesBuilds, $GUI_Edit_CharacterBuilds, $GUI_Edit_HeroesBuilds, $GUI_Label_FarmInformations
 Global $GUI_TreeView_LootOptions, $GUI_ExpandLootOptionsButton, $GUI_ReduceLootOptionsButton, $GUI_LoadLootOptionsButton, $GUI_SaveLootOptionsButton, $GUI_ApplyLootOptionsButton
-Global $GUI_Label_ToDoList
 
 
 ;------------------------------------------------------
@@ -1624,7 +1623,9 @@ Func BuildInventoryDerivedFlags()
 	Local $storeSomething = IsAnyLootOptionInBranchChecked('Store items')
 	$inventory_management_cache['@store.something'] = $storeSomething
 	$inventory_management_cache['@store.nothing'] = Not $storeSomething
-	$inventory_management_cache['@store.weapons'] = IsAnyLootOptionInBranchChecked('Store items.Weapons and offhands')
+	Local $storeSomeWeapons = IsAnyLootOptionInBranchChecked('Store items.Weapons and offhands')
+	$inventory_management_cache['@store.weapons.something'] = $storeSomeWeapons
+	$inventory_management_cache['@store.weapons.something'] = Not $storeSomeWeapons
 EndFunc
 
 
@@ -1646,7 +1647,10 @@ EndFunc
 ;~ Utility function to add treeview elements to a JSON object
 Func AddLeavesToJSONObject(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
 	Debug($currentPath)
-	_JSON_addChangeDelete($context, $currentPath, _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem))
+	; We are on a leaf
+	If _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem) <= 0 Then
+		_JSON_addChangeDelete($context, $currentPath, _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem))
+	EndIf
 EndFunc
 
 
@@ -1660,11 +1664,14 @@ EndFunc
 
 ;~ Utility function to add treeview elements to an array
 Func AddLeafToArray(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then _ArrayAdd($context, $currentPath)
+	; We are on a leaf
+	If _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem) <= 0 Then
+		If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then _ArrayAdd($context, $currentPath)
+	EndIf
 EndFunc
 
 
-;~ Iterate over a treeview and make an operation on leaves
+;~ Iterate over a treeview and make an operation on every node
 Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null)
 	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
 	Local $newPath, $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
@@ -1672,12 +1679,11 @@ Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, 
 	While $treeViewItem <> 0
 		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
 		$newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
+		If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
+
 		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-		; We are on a leaf
-		If $treeViewItemChildCount <= 0 Then
-			If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
 		; We are on a branch with at least one child leaf
-		ElseIf $treeViewItemChildCount > 0 Then
+		If $treeViewItemChildCount > 0 Then
 			$treeViewItemFirstChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
 			IterateOverTreeView($context, $treeViewHandle, $treeViewItemFirstChild, $newPath, $functionToApply)
 		EndIf
