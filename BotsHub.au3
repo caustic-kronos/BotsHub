@@ -33,6 +33,7 @@
 
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
+#include <ButtonConstants.au3>
 #include <WindowsConstants.au3>
 #include <ColorConstants.au3>
 #include <ComboConstants.au3>
@@ -179,7 +180,7 @@ Global $GUI_Group_TeamOptions, $GUI_TeamLabel, $GUI_TeamMemberLabel, $GUI_TeamMe
 		$GUI_Input_Build_Player, $GUI_Input_Build_Hero_1, $GUI_Input_Build_Hero_2, $GUI_Input_Build_Hero_3, $GUI_Input_Build_Hero_4, $GUI_Input_Build_Hero_5, $GUI_Input_Build_Hero_6, $GUI_Input_Build_Hero_7
 Global $GUI_Group_OtherOptions
 Global $GUI_Label_CharacterBuilds, $GUI_Label_HeroesBuilds, $GUI_Edit_CharacterBuilds, $GUI_Edit_HeroesBuilds, $GUI_Label_FarmInformations
-Global $GUI_TreeView_LootOptions, $GUI_ExpandLootOptionsButton, $GUI_ReduceLootOptionsButton, $GUI_LoadLootOptionsButton, $GUI_SaveLootOptionsButton, $GUI_ApplyLootOptionsButton
+Global $GUI_TreeView_LootOptions, $GUI_Label_LootOptionsWarning, $GUI_ExpandLootOptionsButton, $GUI_ReduceLootOptionsButton, $GUI_LoadLootOptionsButton, $GUI_SaveLootOptionsButton, $GUI_ApplyLootOptionsButton
 
 
 ;------------------------------------------------------
@@ -462,16 +463,18 @@ Func CreateGUI()
 	; It's better to fill cache after tree is built rather than mix intents and do it all in one go
 	FillInventoryCache($GUI_TreeView_LootOptions)
 
-	$GUI_ExpandLootOptionsButton = GUICtrlCreateButton('Expand all', 21, 154, 55, 21)
+	$GUI_ExpandLootOptionsButton = GUICtrlCreateButton('Expand all', 21, 124, 55, 21)
 	GUICtrlSetOnEvent($GUI_ExpandLootOptionsButton, 'GuiButtonHandler')
-	$GUI_ReduceLootOptionsButton = GUICtrlCreateButton('Reduce all', 21, 184, 55, 21)
+	$GUI_ReduceLootOptionsButton = GUICtrlCreateButton('Reduce all', 21, 154, 55, 21)
 	GUICtrlSetOnEvent($GUI_ReduceLootOptionsButton, 'GuiButtonHandler')
-	$GUI_LoadLootOptionsButton = GUICtrlCreateButton('Load', 21, 214, 55, 21)
+	$GUI_LoadLootOptionsButton = GUICtrlCreateButton('Load', 21, 184, 55, 21)
 	GUICtrlSetOnEvent($GUI_LoadLootOptionsButton, 'GuiButtonHandler')
-	$GUI_SaveLootOptionsButton = GUICtrlCreateButton('Save', 21, 244, 55, 21)
+	$GUI_SaveLootOptionsButton = GUICtrlCreateButton('Save', 21, 214, 55, 21)
 	GUICtrlSetOnEvent($GUI_SaveLootOptionsButton, 'GuiButtonHandler')
-	$GUI_ApplyLootOptionsButton = GUICtrlCreateButton('Apply', 21, 274, 55, 21)
+	$GUI_Label_LootOptionsWarning = GUICtrlCreateLabel('Click apply to confirm your changes', 21, 244, 55, 84, $SS_CENTER)
+	$GUI_ApplyLootOptionsButton = GUICtrlCreateButton(@LF & 'Apply' & @LF & 'changes', 21, 304, 55, 63, $BS_MULTILINE)
 	GUICtrlSetOnEvent($GUI_ApplyLootOptionsButton, 'GuiButtonHandler')
+	GUICtrlSetBkColor($GUI_ApplyLootOptionsButton, $COLOR_YELLOW)
 	GUICtrlCreateTabItem('')
 
 	; === Infos tab ===
