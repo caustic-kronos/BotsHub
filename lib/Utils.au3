@@ -434,8 +434,9 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
-	ElseIf $rarity <> $RARITY_WHITE And isArmorSalvageItem($item) Then
-		Return True
+	ElseIf isArmorSalvageItem($item) Then
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		Return $inventory_management_cache['Pick up items.Armor salvageables.' & $rarityName]
 	ElseIf IsWeapon($item) And $inventory_management_cache['@pickup.weapons.something'] Then
 		Return CheckPickupWeapon($item)
 	EndIf
