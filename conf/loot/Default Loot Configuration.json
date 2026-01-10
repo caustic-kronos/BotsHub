@@ -862,7 +862,7 @@
 	},
 	"Keep components": {
 		"Armor upgrades": {
-			"Common": {
+			"All": {
 				"Insignias": {
 					"Survivor": false,
 					"Radiant": false,
@@ -1113,7 +1113,7 @@
 			}
 		},
 		"Inscriptions": {
-			"Common": {
+			"All": {
 				"Measure for measure (Highly salvageable)": false,
 				"Show me the money (Improved sale value)": false
 			},

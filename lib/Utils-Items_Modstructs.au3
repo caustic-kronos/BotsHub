@@ -1209,8 +1209,8 @@ Func CreateValuableInscriptionsArray()
 	Local $valuableInscriptionsArray[UBound($tickedInscriptions)]
 	For $i = 0 To UBound($tickedInscriptions) - 1
 		Local $varName = $tickedInscriptions[$i]
-		$varName = StringReplace($varName, 'Inscriptions.Common.', 'STRUCT_INSCRIPTION_')
-		$varName = StringReplace($varName, 'Inscriptions.Weapon.Common.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.All.', 'STRUCT_INSCRIPTION_')
+		$varName = StringReplace($varName, 'Inscriptions.Weapon.All.', 'STRUCT_INSCRIPTION_')
 		$varName = StringReplace($varName, 'Inscriptions.Weapon.Martial.', 'STRUCT_INSCRIPTION_')
 		$varName = StringReplace($varName, 'Inscriptions.Weapon.Spellcasting.', 'STRUCT_INSCRIPTION_')
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus.', 'STRUCT_INSCRIPTION_')
