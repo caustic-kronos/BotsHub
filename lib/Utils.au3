@@ -185,6 +185,8 @@ Func EnterFissureOfWoe()
 			EndIf
 		EndIf
 	Else
+		Info('Balancing character''s gold level to have enough to enter the Fissure of Woe')
+		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		MoveTo(-2500, 18700)
 		SendChat('/kneel', '')
@@ -216,6 +218,8 @@ Func EnterUnderworld()
 			EndIf
 		EndIf
 	Else
+		Info('Balancing character''s gold level to have enough to enter the Underworld')
+		BalanceCharacterGold(10000)
 		Info('Moving to Grenth statue to enter Underworld')
 		MoveTo(-4170, 19759)
 		MoveTo(-4124, 19829)
@@ -247,6 +251,8 @@ Func EnterUrgozsWarren()
 				Return $PAUSE
 			EndIf
 		EndIf
+	Else
+		Return $FAIL
 	EndIf
 	Return $SUCCESS
 EndFunc
@@ -263,6 +269,8 @@ Func EnterTheDeep()
 				Return $PAUSE
 			EndIf
 		EndIf
+	Else
+		Return $FAIL
 	EndIf
 	Return $SUCCESS
 EndFunc
