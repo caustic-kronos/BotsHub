@@ -1661,21 +1661,27 @@ EndFunc
 
 ;~ Iterate over a treeview and make an operation on every node
 Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null)
-	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-	Local $newPath, $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
+	If $treeViewItem == Null Then
+		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+		While $treeViewItem <> 0
+			IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
+			$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+		WEnd
+		Return
+	EndIf
+	IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
+EndFunc
 
-	While $treeViewItem <> 0
-		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-		$newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
-		If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
 
-		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-		; We are on a branch with at least one child leaf
-		If $treeViewItemChildCount > 0 Then
-			$treeViewItemFirstChild = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
-			IterateOverTreeView($context, $treeViewHandle, $treeViewItemFirstChild, $newPath, $functionToApply)
-		EndIf
-		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+Func IterateOverTreeItem(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
+	Local $treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
+	Local $newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
+	If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
+
+	Local $child = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
+	While $child <> 0
+		IterateOverTreeItem($context, $treeViewHandle, $child, $newPath, $functionToApply)
+		$child = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $child)
 	WEnd
 EndFunc
 
