@@ -59,11 +59,13 @@ Global Const $JB_EREMITES_ATTACK			= 7
 Global Const $JB_DEATHS_CHARGE				= 8
 
 ; Hero Build
-Global Const $BROTHERHOOD_MYSTIC_HEALING	= 1
-Global Const $BROTHERHOOD_INCOMING			= 7
-Global Const $BROTHERHOOD_FALLBACK			= 6
-Global Const $BROTHERHOOD_ENDURING_HARMONY	= 2
-Global Const $BROTHERHOOD_MAKE_HASTE		= 3
+Global Const $BROTHERHOOD_VOCAL_WAS_SOGOLON	= 1
+Global Const $BROTHERHOOD_INCOMING			= 2
+Global Const $BROTHERHOOD_FALLBACK			= 3
+Global Const $BROTHERHOOD_ENDURING_HARMONY	= 4
+Global Const $BROTHERHOOD_MAKE_HASTE		= 5
+Global Const $BROTHERHOOD_STAND_YOUR_GROUND	= 6
+Global Const $BROTHERHOOD_BLADETURN_REFRAIN	= 8
 
 Global Const $JB_TIMEOUT = 120000
 
@@ -75,7 +77,6 @@ Global $deadlock_timer
 Func JadeBrotherhoodFarm()
 	If Not $jade_brotherhood_farm_setup And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
 
-	GoToBukdekByway()
 	Local $result = JadeBrotherhoodFarmLoop()
 	ReturnBackToOutpost($ID_THE_MARKETPLACE)
 	Return $result
@@ -135,6 +136,28 @@ Func SetupTeamJadeBrotherhoodFarm()
 EndFunc
 
 
+;~ Jade Brotherhood farm loop
+Func JadeBrotherhoodFarmLoop()
+	GoToBukdekByway()
+	MoveToSeparationWithHero()
+	$deadlock_timer = TimerInit()
+	TalkToAiko()
+	If IsPlayerDead() Then Return $FAIL
+	WaitForBall()
+	If IsPlayerDead() Then Return $FAIL
+	KillJadeBrotherhood()
+	RandomSleep(1000)
+
+	If IsPlayerAlive() Then
+		Info('Looting')
+		PickUpItems()
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
+EndFunc
+
+
 ;~ Move out of outpost into Bukdek Byway
 Func GoToBukdekByway()
 	TravelToOutpost($ID_THE_MARKETPLACE, $district_name)
@@ -153,50 +176,31 @@ Func GoToBukdekByway()
 EndFunc
 
 
-;~ Jade Brotherhood farm loop
-Func JadeBrotherhoodFarmLoop()
-	If GetMapID() <> $ID_BUKDEK_BYWAY Then Return $FAIL
-
-	RandomSleep(50)
-	MoveToSeparationWithHero()
-	$deadlock_timer = TimerInit()
-	TalkToAiko()
-	If IsPlayerDead() Then Return $FAIL
-	WaitForBall()
-	If IsPlayerDead() Then Return $FAIL
-	KillJadeBrotherhood()
-	RandomSleep(1000)
-
-	If IsPlayerAlive() And $deadlock_timer < $JB_TIMEOUT Then
-		Info('Looting')
-		PickUpItems()
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
-EndFunc
-
-
 ;~ Separate from paragon hero - you'll be missed Morgahn
 Func MoveToSeparationWithHero()
 	Info('Moving to crossing')
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_VOCAL_WAS_SOGOLON)
+	RandomSleep(1250)
 	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
 	RandomSleep(50)
+	MoveTo(-10475, -9685)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_FALLBACK)
+	MoveTo(-11303, -6545)
+	CommandAll(-11303, -6545)
+	MoveTo(-11983, -6261)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
+EndFunc
+
+#CS
 	CommandAll(-10475, -9685)
-	RandomSleep(50)
-	Move(-10475, -9685)
 	RandomSleep(7500)
 	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
 	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
 	RandomSleep(50)
-	Move(-11983, -6261, 40)
-	RandomSleep(300)
 	Info('Moving Hero away')
 	CommandAll(-8447, -10099)
-	RandomSleep(7000)
-EndFunc
-
+#CE
 
 ;~ Talk to Aiko and take her quest
 Func TalkToAiko()
@@ -214,7 +218,6 @@ EndFunc
 ;~ Wait for mobs to be properly balled
 Func WaitForBall()
 	Info('Waiting for ball')
-	If IsPlayerDead() Then Return
 	RandomSleep(4500)
 	Local $foesBalled = 0, $peasantsAlive = 100, $countsDidNotChange = 0
 	Local $prevFoesBalled = 0, $prevPeasantsAlive = 100
@@ -226,8 +229,8 @@ Func WaitForBall()
 		RandomSleep(4500)
 		$prevFoesBalled = $foesBalled
 		$prevPeasantsAlive = $peasantsAlive
-		$foesBalled = CountFoesInRangeOfCoords(-13262, -5486, 450)
-		$peasantsAlive = CountAlliesInRangeOfCoords(-13262, -5486, 1600)
+		$foesBalled = CountFoesInRangeOfCoords(-13262, -5486, 500)
+		$peasantsAlive = CountAlliesInRangeOfCoords(-13262, -5486, 1200)
 		If ($foesBalled = $prevFoesBalled And $peasantsAlive = $prevPeasantsAlive) Then
 			$countsDidNotChange += 1
 			If $countsDidNotChange > 2 Then Return
@@ -240,35 +243,44 @@ EndFunc
 
 ;~ Kill the jade brotherhood group
 Func KillJadeBrotherhood()
-	Local $EnchantmentsTimer
+	Local $enchantmentsTimer
 	Local $target
 
-	If IsPlayerDead() Then Return
-
 	Info('Clearing Jade Brotherhood')
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
 	UseSkillEx($JB_DRUNKENMASTER)
 	RandomSleep(50)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_STAND_YOUR_GROUND)
+	RandomSleep(50)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
 	UseSkillEx($JB_SAND_SHARDS)
 	RandomSleep(50)
+	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_BLADETURN_REFRAIN, GetMyAgent())
 
 	$target = GetNearestEnemyToCoords(-13262, -5486)
-	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
+	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
 	GetAlmostInRangeOfAgent($target)
+	Info('Moving Hero away')
+	CommandAll(-8447, -10099)
 	UseSkillEx($JB_MYSTIC_VIGOR)
 	RandomSleep(300)
 	UseSkillEx($JB_ARMOR_OF_SANCTITY)
 	RandomSleep(300)
 	UseSkillEx($JB_VOW_OF_STRENGTH)
-	RandomSleep(500)
-	$EnchantmentsTimer = TimerInit()
+	$enchantmentsTimer = TimerInit()
+	; Waiting for mana to be completely back
+	RandomSleep(3500)
 	While IsRecharged($JB_DEATHS_CHARGE)
 		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
 		UseSkillEx($JB_DEATHS_CHARGE, $target)
 		RandomSleep(50)
 	WEnd
-	UseSkillEx($JB_STAGGERING_FORCE)
-	RandomSleep(50)
+	While IsRecharged($JB_STAGGERING_FORCE)
+		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
+		UseSkillEx($JB_STAGGERING_FORCE)
+		RandomSleep(50)
+	WEnd
 	UseSkillEx($JB_EREMITES_ATTACK, $target)
 	While IsRecharged($JB_EREMITES_ATTACK)
 		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
@@ -276,20 +288,25 @@ Func KillJadeBrotherhood()
 		RandomSleep(50)
 	WEnd
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), 1250) > 0
+	Local $foesCount = 8
+	Local $energy = 0
+	While $foesCount > 0
 		If IsPlayerDead() Or TimerDiff($deadlock_timer) > $JB_TIMEOUT Then Return
-		If GetEnergy() >= 6 And IsRecharged($JB_SAND_SHARDS) Then
+		$energy = GetEnergy()
+		If $foesCount > 1 And $energy >= 6 And IsRecharged($JB_SAND_SHARDS) Then
 			UseSkillEx($JB_SAND_SHARDS)
 			RandomSleep(50)
+			$energy -= 5
 		EndIf
-		If GetEnergy() >= 6 And TimerDiff($EnchantmentsTimer) > 18000 Then
+		If $energy >= 6 And TimerDiff($enchantmentsTimer) > 20500 Then
 			UseSkillEx($JB_VOW_OF_STRENGTH)
 			RandomSleep(300)
 			UseSkillEx($JB_MYSTIC_VIGOR)
 			RandomSleep(300)
-			$EnchantmentsTimer = TimerInit()
+			$enchantmentsTimer = TimerInit()
+			$energy -= 10
 		EndIf
-		If GetEnergy() >= 3 And IsRecharged($JB_ARMOR_OF_SANCTITY) Then
+		If $energy >= 3 And IsRecharged($JB_ARMOR_OF_SANCTITY) Then
 			UseSkillEx($JB_ARMOR_OF_SANCTITY)
 			RandomSleep(300)
 		EndIf
@@ -298,5 +315,6 @@ Func KillJadeBrotherhood()
 		ChangeTarget($target)
 		Attack($target)
 		RandomSleep(250)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 1250)
 	WEnd
 EndFunc

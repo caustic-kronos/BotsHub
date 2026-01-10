@@ -2320,16 +2320,14 @@ Func UseSkillEx($skillSlot, $target = Null)
 	If GetEnergy() < $energy Then Return False
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
-	Local $approximateCastTime = $castTime + $aftercast + GetPing()
-
-	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
-	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
+	; Random delay make us wait at least 2 loops before checking for recharge, to avoid issues with very low cast times
+	Local $approximateCastTime = $castTime + $aftercast + Random(75, 125)
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
 	; wait until skill starts recharging or time for skill to be activated has elapsed
 	Do
-		Sleep(50 + GetPing())
-	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
+		Sleep(50)
+	Until Not IsRecharged($skillSlot) Or ($approximateCastTime > 0 And TimerDiff($castTimer) > $approximateCastTime)
 	Return True
 EndFunc
 

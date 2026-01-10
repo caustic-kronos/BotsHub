@@ -1525,32 +1525,18 @@ EndFunc
 
 ;~ Creating a treeview from a JSON node
 Func BuildTreeViewFromJSON($parentItem, $jsonNode)
-	Local $keyHandle
-	Local $valueHandle
 	If IsMap($jsonNode) Then
-		Local $keys = MapKeys($jsonNode)
 		Local $isChecked = True
-		For $key In $keys
-			$keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
-			$valueHandle = BuildTreeViewFromJSON($keyHandle, $jsonNode[$key])
-			If $valueHandle == True Then
-				_GUICtrlTreeView_SetChecked($GUI_TreeView_LootOptions, $keyHandle, True)
-			Else
-				$isChecked = False
-			EndIf
+		For $key In MapKeys($jsonNode)
+			Local $keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
+			If Not BuildTreeViewFromJSON($keyHandle, $jsonNode[$key]) Then $isChecked = False
 		Next
 		_GUICtrlTreeView_SetChecked($GUI_TreeView_LootOptions, $parentItem, $isChecked)
-	ElseIf IsArray($jsonNode) Then
-		Local $handles[UBound($jsonNode)]
-		Local $isChecked = True
-		For $i = 0 To UBound($jsonNode) - 1
-			$handles[$i] = BuildTreeViewFromJSON($parentItem, $jsonNode[$i])
-			If Not _GUICtrlTreeView_GetChecked($GUI_TreeView_LootOptions, $handles[$i]) Then $isChecked = False
-		Next
-		Return $handles
-	Else
-		Return $jsonNode
+		Return $isChecked
 	EndIf
+	; Leaf node: this node is true or false
+	_GUICtrlTreeView_SetChecked($GUI_TreeView_LootOptions, $parentItem, $jsonNode)
+	Return $jsonNode == True
 EndFunc
 
 
