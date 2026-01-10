@@ -1108,12 +1108,6 @@ EndFunc
 
 ;~ Creates an array of all valuable not OS (Old School) weapon mods based on selected elements in treeview
 Func CreateValuableModsByWeaponTypeMap()
-	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
-
-	Local $ShieldModsArray[0], $OffhandModsArray[0], $WandModsArray[0], $StaffModsArray[0], $BowModsArray[0], $AxeModsArray[0], _
-			$HammerModsArray[0], $SwordModsArray[0], $DaggerModsArray[0], $ScytheModsArray[0], $SpearModsArray[0]
-
-	; Redefining types here remove dependency on GWA2_ID - and we execute this function rarely
 	Local Const $IDTypeAxe					= 2
 	Local Const $IDTypeBow					= 5
 	Local Const $IDTypeOffhand				= 12
@@ -1125,72 +1119,56 @@ Func CreateValuableModsByWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
+	Local Const $AllWeaponsArray = [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
 
-	For $i = 0 To UBound($tickedMods) - 1
-		; removing leftmost string with dot 'Mods.'
-		Local $varName = StringTrimLeft($tickedMods[$i], 5)
-		Local $weaponType = StringLeft($varName, StringInStr($varName, '.') - 1)
-		Switch $weaponType
-			Case 'Axe'
-				$varName = StringReplace($varName, 'Axe.Prefix - Haft.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Axe.Suffix - Grip.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($AxeModsArray, Eval($varName))
-			Case 'Bow'
-				$varName = StringReplace($varName, 'Bow.Prefix - String.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Bow.Suffix - Grip.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($BowModsArray, Eval($varName))
-			Case 'Dagger'
-				$varName = StringReplace($varName, 'Dagger.Prefix - Tang.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Dagger.Suffix - Handle.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($DaggerModsArray, Eval($varName))
-			Case 'Focus'
-				$varName = StringReplace($varName, 'Focus.Suffix - Core.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($OffhandModsArray, Eval($varName))
-			Case 'Hammer'
-				$varName = StringReplace($varName, 'Hammer.Prefix - Haft.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Hammer.Suffix - Grip.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($HammerModsArray, Eval($varName))
-			Case 'Scythe'
-				$varName = StringReplace($varName, 'Scythe.Prefix - Snathe.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Scythe.Suffix - Grip.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($ScytheModsArray, Eval($varName))
-			Case 'Shield'
-				$varName = StringReplace($varName, 'Shield.Suffix - Handle.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($ShieldModsArray, Eval($varName))
-			Case 'Spear'
-				$varName = StringReplace($varName, 'Spear.Prefix - Head.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Spear.Suffix - Grip.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($SpearModsArray, Eval($varName))
-			Case 'Staff'
-				$varName = StringReplace($varName, 'Staff.Prefix - Head.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Staff.Suffix - Wrapping.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($StaffModsArray, Eval($varName))
-			Case 'Sword'
-				$varName = StringReplace($varName, 'Sword.Prefix - Hilt.', 'STRUCT_MOD_')
-				$varName = StringReplace($varName, 'Sword.Suffix - Pommel.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($SwordModsArray, Eval($varName))
-			Case 'Wand'
-				$varName = StringReplace($varName, 'Wand.Suffix - Wrapping.', 'STRUCT_MOD_')
-				$varName = ModNameCleanupHelper($varName)
-				_ArrayAdd($WandModsArray, Eval($varName))
-		EndSwitch
+	Local $prefixWeaponModRules[]
+	Local $suffixWeaponModRules[]
+	$prefixWeaponModRules['Axe']	= 'Axe.Prefix - Haft.'
+	$prefixWeaponModRules['Bow']	= 'Bow.Prefix - String.'
+	$prefixWeaponModRules['Dagger']	= 'Dagger.Prefix - Tang.'
+	$prefixWeaponModRules['Hammer']	= 'Hammer.Prefix - Haft.'
+	$prefixWeaponModRules['Scythe']	= 'Scythe.Prefix - Snathe.'
+	$prefixWeaponModRules['Spear']	= 'Spear.Prefix - Head.'
+	$prefixWeaponModRules['Staff']	= 'Staff.Prefix - Head.'
+	$prefixWeaponModRules['Sword']	= 'Sword.Prefix - Hilt.'
+	$suffixWeaponModRules['Axe']	= 'Axe.Suffix - Grip.'
+	$suffixWeaponModRules['Bow']	= 'Bow.Suffix - Grip.'
+	$suffixWeaponModRules['Dagger']	= 'Dagger.Suffix - Handle.'
+	$suffixWeaponModRules['Focus']	= 'Focus.Suffix - Core.'
+	$suffixWeaponModRules['Hammer']	= 'Hammer.Suffix - Grip.'
+	$suffixWeaponModRules['Scythe']	= 'Scythe.Suffix - Grip.'
+	$suffixWeaponModRules['Shield']	= 'Shield.Suffix - Handle.'
+	$suffixWeaponModRules['Spear']	= 'Spear.Suffix - Grip.'
+	$suffixWeaponModRules['Staff']	= 'Staff.Suffix - Wrapping.'
+	$suffixWeaponModRules['Sword']	= 'Sword.Suffix - Pommel.'
+	$suffixWeaponModRules['Wand']	= 'Wand.Suffix - Wrapping.'
+
+	Local $weaponModsByType[]
+	For $i = 0 To UBound($AllWeaponsArray) - 1
+		Local $weaponType = $AllWeaponsArray[$i]
+		Local $weaponName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
+		Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods.' & $weaponName)
+		Local $count = UBound($tickedMods)
+		Local $mods[$count]
+
+		If $count = 0 Then
+			$weaponModsByType[$weaponType] = $mods
+			ContinueLoop
+		EndIf
+
+		Local $prefixRule = $prefixWeaponModRules[$weaponName]
+		Local $suffixRule = $suffixWeaponModRules[$weaponName]
+		For $j = 0 To $count - 1
+			Local $varName = $tickedMods[$j]
+			If $prefixRule <> Null Then $varName = StringReplace($varName, $prefixRule, 'STRUCT_MOD_')
+			If $suffixRule <> Null Then $varName = StringReplace($varName, $suffixRule, 'STRUCT_MOD_')
+			$varName = ModNameCleanupHelper($varName)
+			$mods[$j] = Eval($varName)
+		Next
+		$weaponModsByType[$weaponType] = $mods
 	Next
 
-	Local Const $AllWeaponsArray				= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
-	Local Const $AllWeaponsModsArray			= [$ShieldModsArray, $OffhandModsArray, $WandModsArray, $StaffModsArray, $BowModsArray, $AxeModsArray, $HammerModsArray, _
-													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
-	Local Const $WeaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
-	Return $WeaponModsByType
+	Return $weaponModsByType
 EndFunc
 
 
