@@ -371,74 +371,88 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 EndFunc
 
 
-;~ Return True if the item should be picked up
-;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
+;~ Return True if the item should be picked up - default to False
 Func DefaultShouldPickItem($item)
-	If $inventory_management_cache['@pickup.nothing'] Then Return False
-	If $inventory_management_cache['@pickup.everything'] Then Return True
+	; Clarity rename
+	Local $cache = $inventory_management_cache
+	If $cache['@pickup.nothing'] Then Return False
+	If $cache['@pickup.everything'] Then Return True
 	
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
-	; Only pick gold if character has less than 99k in inventory
+	
+	; ---------------------------------------- Money ----------------------------------------
 	If (($itemID == $ID_MONEY) And (GetGoldCharacter() < 99000)) Then
-		Return $inventory_management_cache['Pick up items.Gold']
+		Return $cache['Pick up items.Gold']
+	; --------------------------------------- Weapons ---------------------------------------
+	ElseIf IsWeapon($item) Then
+		If $rarity <> $RARITY_WHITE And IsLowReqMaxDamage($item) Then Return True
+		Return CheckPickupWeapon($item)
+	; --------------------------------- Armor salvageables ---------------------------------
+	ElseIf isArmorSalvageItem($item) Then
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		Return $cache['Pick up items.Armor salvageables.' & $rarityName]
+	; --------------------------- Consumables, Alcohols & Festives ---------------------------
+	ElseIf IsConsumable($itemID) Then
+		Return $cache['Pick up items.Consumables']
+	ElseIf IsAlcohol($itemID) Then
+		Return $cache['Pick up items.Alcohols']
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Festival Items.' & $festivalDropName]
+	; --------------------------------------- Trophies ---------------------------------------
+	ElseIf IsTrophy($itemID) Then
+		Switch $itemID
+			Case $ID_MINISTERIAL_COMMENDATION
+				Return True
+			Case $ID_GLACIAL_STONE
+				Return $cache['Pick up items.Trophies.Glacial Stone']
+			Case $ID_DESTROYER_CORE
+				Return $cache['Pick up items.Trophies.Destroyer Core']
+			Case $ID_JADE_BRACELET
+				Return $cache['Pick up items.Trophies.Jade Bracelet']
+			Case $ID_STOLEN_GOODS
+				Return $cache['Pick up items.Trophies.Stolen Goods']
+		EndSwitch
+		Return $cache['Pick up items.Trophies']
+	; -------------------------------------- Materials --------------------------------------
 	ElseIf IsBasicMaterial($item) Then
 		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $inventory_management_cache['Pick up items.Basic Materials.' & $materialName]
+		Return $cache['Pick up items.Basic Materials.' & $materialName]
 	ElseIf IsRareMaterial($item) Then
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $inventory_management_cache['Pick up items.Rare Materials.' & $materialName]
+		Return $cache['Pick up items.Rare Materials.' & $materialName]
+	; ---------------------------------------- Tomes ----------------------------------------
 	ElseIf IsRegularTome($itemID) Then
 		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
-		Return $inventory_management_cache['Pick up items.Tomes.Normal.' & $tomeName]
+		Return $cache['Pick up items.Tomes.Normal.' & $tomeName]
 	ElseIf IsEliteTome($itemID) Then
 		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
-		Return $inventory_management_cache['Pick up items.Tomes.Elite.' & $tomeName]
+		Return $cache['Pick up items.Tomes.Elite.' & $tomeName]
+	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $inventory_management_cache['Pick up items.Scrolls.Gold.' & $scrollName]
+		Return $cache['Pick up items.Scrolls.Gold.' & $scrollName]
 	ElseIf IsBlueScroll($itemID) Then
-		Return $inventory_management_cache['Pick up items.Scrolls.Blue']
+		Return $cache['Pick up items.Scrolls.Blue']
+	; ----------------------------------------- Keys -----------------------------------------
 	ElseIf IsKey($itemID) Then
-		Return $inventory_management_cache['Pick up items.Keys']
+		Return $cache['Pick up items.Keys']
+	ElseIf ($itemID == $ID_LOCKPICK) Then
+		Return True
+	; ----------------------------------------- Dyes -----------------------------------------
 	ElseIf ($itemID == $ID_DYES) Then
 		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
 		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
-		Return $inventory_management_cache['Pick up items.Dyes.' & $dyeColorName]
-	ElseIf ($itemID == $ID_GLACIAL_STONE) Then
-		Return $inventory_management_cache['Pick up items.Trophies.Glacial Stone']
-	ElseIf ($itemID == $ID_DESTROYER_CORE) Then
-		Return $inventory_management_cache['Pick up items.Trophies.Destroyer Core']
-	ElseIf ($itemID == $ID_JADE_BRACELET) Then
-		Return $inventory_management_cache['Pick up items.Trophies.Jade Bracelet']
-	ElseIf ($itemID == $ID_STOLEN_GOODS) Then
-		Return $inventory_management_cache['Pick up items.Trophies.Stolen Goods']
-	ElseIf ($itemID == $ID_MINISTERIAL_COMMENDATION) Then
-		Return True
+		Return $cache['Pick up items.Dyes.' & $dyeColorName]
+	; --------------------------------- Gizmos & Quest items ---------------------------------
 	ElseIf ($itemID == $ID_JAR_OF_INVIGORATION) Then
 		Return False
-	ElseIf IsTrophy($itemID) Then
-		Return $inventory_management_cache['Pick up items.Trophies']
 	ElseIf IsMapPiece($itemID) Then
-		Return $inventory_management_cache['Pick up items.Quest items.Map pieces']
-	ElseIf ($itemID == $ID_LOCKPICK) Then
-		Return True
-	ElseIf IsConsumable($itemID) Then
-		Return $inventory_management_cache['Pick up items.Consumables']
-	ElseIf IsAlcohol($itemID) Then
-		Return $inventory_management_cache['Pick up items.Alcohols']
-	ElseIf IsSpecialDrop($itemID) Then
-		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
-		Return $inventory_management_cache['Pick up items.Festival Items.' & $festivalDropName]
+		Return $cache['Pick up items.Quest items.Map pieces']
+	; ----------------------------------- Other stackables -----------------------------------
 	ElseIf IsStackable($item) Then
 		Return True
-	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
-		Return True
-	ElseIf isArmorSalvageItem($item) Then
-		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-		Return $inventory_management_cache['Pick up items.Armor salvageables.' & $rarityName]
-	ElseIf IsWeapon($item) And $inventory_management_cache['@pickup.weapons.something'] Then
-		Return CheckPickupWeapon($item)
 	EndIf
 	Return False
 EndFunc
