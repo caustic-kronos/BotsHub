@@ -1561,7 +1561,9 @@ Func BuildInventoryDerivedFlags()
 	Local $pickupSomething = IsAnyLootOptionInBranchChecked('Pick up items')
 	$inventory_management_cache['@pickup.something'] = $pickupSomething
 	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
-	$inventory_management_cache['@pickup.weapons'] = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
+	Local $pickupSomeWeapons = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
+	$inventory_management_cache['@pickup.weapons.something'] = $pickupSomeWeapons
+	$inventory_management_cache['@pickup.weapons.nothing'] = Not $pickupSomeWeapons
 
 	; -------- Identify --------
 	Local $identifySomething = IsAnyLootOptionInBranchChecked('Identify items')

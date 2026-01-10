@@ -332,7 +332,7 @@ EndFunc
 #Region Loot items
 ;~ Loot items around character
 Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
-	If $PICKUP_NOTHING Then Return
+	If $inventory_management_cache['@pickup.nothing'] Then Return
 
 	Local $item
 	Local $agentID
@@ -366,8 +366,9 @@ EndFunc
 ;~ Return True if the item should be picked up
 ;~ Most general implementation, pick most of the important stuff and is heavily configurable from GUI
 Func DefaultShouldPickItem($item)
-	If $PICKUP_NOTHING Then Return False
-	If $PICKUP_EVERYTHING Then Return True
+	If $inventory_management_cache['@pickup.nothing'] Then Return False
+	If $inventory_management_cache['@pickup.everything'] Then Return True
+	
 	Local $itemID = DllStructGetData(($item), 'ModelID')
 	Local $rarity = GetRarity($item)
 	; Only pick gold if character has less than 99k in inventory
@@ -427,7 +428,7 @@ Func DefaultShouldPickItem($item)
 		Return True
 	ElseIf $rarity <> $RARITY_WHITE And isArmorSalvageItem($item) Then
 		Return True
-	ElseIf IsWeapon($item) Then
+	ElseIf IsWeapon($item) And $inventory_management_cache['@pickup.weapons.something'] Then
 		Return CheckPickupWeapon($item)
 	EndIf
 	Return False
@@ -1320,22 +1321,19 @@ Func SalvageItems($buyKit = True)
 		EndIf
 	EndIf
 
-	; Salvaging trophy and rare material items only if corresponding GUI options are selected
-	If $SALVAGE_TROPHIES Or $SALVAGE_MATERIALS Then
-		For $i = 0 To $trophyAndMaterialIndex - 1
-			If DefaultShouldSalvageItem($trophiesAndMaterialItems[$i]) Then
-				For $k = 0 To DllStructGetData($trophiesAndMaterialItems[$k], 'Quantity') - 1
-					SalvageItem($trophiesAndMaterialItems[$i], $kit)
-					$uses -= 1
-					If $uses < 1 Then
-						$kit = GetSalvageKit($buyKit)
-						If $kit == 0 Then Return False
-						$uses = DllStructGetData($kit, 'Value') / 2
-					EndIf
-				Next
-			EndIf
-		Next
-	EndIf
+	For $i = 0 To $trophyAndMaterialIndex - 1
+		If DefaultShouldSalvageItem($trophiesAndMaterialItems[$i]) Then
+			For $k = 0 To DllStructGetData($trophiesAndMaterialItems[$k], 'Quantity') - 1
+				SalvageItem($trophiesAndMaterialItems[$i], $kit)
+				$uses -= 1
+				If $uses < 1 Then
+					$kit = GetSalvageKit($buyKit)
+					If $kit == 0 Then Return False
+					$uses = DllStructGetData($kit, 'Value') / 2
+				EndIf
+			Next
+		EndIf
+	Next
 EndFunc
 
 

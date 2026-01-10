@@ -61,27 +61,6 @@ Global Const $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect'
 #EndRegion Tables
 
 
-#Region Loot Options Flags
-; Those options are not renamed because they will be present inside cache once created
-Global $PICKUP_NOTHING = False
-Global $PICKUP_WEAPONS = True
-Global $PICKUP_EVERYTHING = False
-Global $IDENTIFY_ITEMS = True
-Global $SALVAGE_ANY_ITEM = False
-Global $SALVAGE_NOTHING = True
-Global $SALVAGE_WEAPONS = False
-Global $SALVAGE_GEARS = False
-Global $SALVAGE_ALL_TROPHIES = False
-Global $SALVAGE_TROPHIES = False
-Global $SALVAGE_MATERIALS = False
-Global $SELL_NOTHING = False
-Global $SELL_WEAPONS = True
-Global $SELL_BASIC_MATERIALS = False
-Global $SELL_RARE_MATERIALS = False
-Global $STORE_WEAPONS = True
-#EndRegion Loot Options Flags
-
-
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory()
 	;SellItemsToMerchant(DefaultShouldSellItem, True)
@@ -1034,7 +1013,9 @@ Func DefaultShouldSellItem($item)
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		If Not $inventory_management_cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
 		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
-	ElseIf IsWeapon($item) And CheckSellWeapon($item) Then
+	ElseIf IsWeapon($item) Then
+		If $inventory_management_cache['@sell.weapons.nothing'] Then Return False
+		If Not CheckSellWeapon($item) Then Return False
 		Return Not ShouldKeepWeapon($item)
 	EndIf
 	Return False
@@ -1161,8 +1142,6 @@ EndFunc
 
 
 Func CheckPickupWeapon($weaponItem)
-	If Not $PICKUP_WEAPONS Then Return False
-
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
@@ -1186,8 +1165,6 @@ EndFunc
 
 
 Func CheckSellWeapon($weaponItem)
-	If Not $SELL_WEAPONS Then Return False
-
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
@@ -1199,8 +1176,6 @@ EndFunc
 
 
 Func CheckStoreWeapon($weaponItem)
-	If Not $STORE_WEAPONS Then Return False
-
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
