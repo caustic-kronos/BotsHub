@@ -3013,6 +3013,11 @@
 				}
 			}
 		},
+		"Armor salvageables": {
+			"Blue": true,
+			"Purple": true,
+			"Gold": true
+		},
 		"Basic Materials": {
 			"Bone": false,
 			"Bolt of Cloth": false,

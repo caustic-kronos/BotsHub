@@ -1030,7 +1030,6 @@ Func DefaultShouldSellItem($item)
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
 		Return $inventory_management_cache['Sell items.Scrolls.Gold.' & $scrollName]
 	ElseIf isArmorSalvageItem($item) Then
-		If $inventory_management_cache['Sell items.Armor salvageables'] Then Return True
 		If $inventory_management_cache['@sell.salvageables.nothing'] Then Return False
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		If Not $inventory_management_cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
@@ -1067,14 +1066,12 @@ Func DefaultShouldSalvageItem($item)
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
 		Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
 	ElseIf IsArmorSalvageItem($item) Then
-		If $inventory_management_cache['Salvage items.Armor salvageables'] Then Return True
 		If $inventory_management_cache['@salvage.salvageables.nothing'] Then Return False
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		If Not $inventory_management_cache['Salvage items.Armor salvageables.' & $rarityName] Then Return False
 		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
 	ElseIf IsWeapon($item) Then
 		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
-		If $inventory_management_cache['Salvage items.Weapons and offhands'] Then Return True
 		If $inventory_management_cache['@salvage.weapons.nothing'] Then Return False
 		If Not CheckSalvageWeapon($item) Then Return False
 		Return Not ShouldKeepWeapon($item)
