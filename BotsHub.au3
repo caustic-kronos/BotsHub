@@ -1044,7 +1044,7 @@ Func RunFarmLoop($Farm)
 			$inventory_space_needed = 15
 			$result = KurzickFactionFarm()
 		Case 'LDOA'
-			$inventory_space_needed = 5
+			$inventory_space_needed = 0
 			$result = LDOATitleFarm()
 		Case 'Lightbringer'
 			$inventory_space_needed = 10

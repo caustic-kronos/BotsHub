@@ -65,13 +65,7 @@ Func LDOATitleFarm()
 		Return $PAUSE
 	EndIf
 	; Difference between this bot and ALL the others : this bot can't go to Eye of the North or other towns for inventory management
-	If (CountSlots(1, _Min($bags_count, 4)) <= 5) Then
-		PresearingInventoryManagement()
-	EndIf
-	If (CountSlots(1, $bags_count) <= 0) Then
-		Notice('Inventory has 0 slots left, pausing.')
-		Return $PAUSE
-	EndIf
+	PresearingInventoryManagement()
 
 	AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)
 	Local $result = LDOATitleFarmLoop()
@@ -408,16 +402,19 @@ EndFunc
 
 ;~ Function to deal with inventory after farm, in presearing
 Func PresearingInventoryManagement()
-	; Operations order :
-	; 1-Sort items
-	; 2-Identify items
-	; 3-Salvage
-	; 4-Store items
-	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
-	If $inventory_management_cache['@salvage.something'] Then
-		SalvageItems(False)
-		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
+	If (CountSlots(1, $bags_count) < 5) Then
+		; Operations order :
+		; 1-Sort items
+		; 2-Identify items
+		; 3-Salvage -> skipped, charr salvage kits are kind of rare
+		; 4-Sell items
+		If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+		If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
+		;~ If $inventory_management_cache['@salvage.something'] Then
+		;~ 	SalvageItems(False)
+		;~ 	If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
+		;~ EndIf
+
+		; FIXME: add selling
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreEverythingInXunlaiStorage()
 EndFunc
