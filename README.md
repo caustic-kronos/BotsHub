@@ -18,7 +18,7 @@ It needs AutoIt version 3.3.16.0 or higher to run.
 ## Repository Structure
 - `BotsHub.au3`: Main launcher script that acts as a hub for all bots.
 - `/lib/`: Common shared utility files and GWA2 interfacing logic.
-- `/src/`: Plug-and-play bots. Each one is modular and can be independently added or removed.
+- `/bots/`: Plug-and-play bots. Each one is modular and can be independently added or removed.
 - `CREDITS.md`: Acknowledgments and attributions for external code.
 - `LICENSE`: Apache 2.0 License for original work.
 - `README.md`: This file.
@@ -78,11 +78,11 @@ To use it:
 - Inventory management
 
 ## Adding Your Own Bots
-To add a new bot, drop your script into the `/src/` folder and follow these steps:
-1. Name the script like `Farm-<Name>.au3`.
+To add a new bot, drop your script into the `/bots/` folder and follow these steps:
+1. Name the script like `<Name>.au3`.
 2. Add an include line in `BotsHub.au3`:
 	```autoit
-	#include 'src/Farm-<Name>.au3'
+	#include 'bots/<Name>.au3'
 	```
 3. Add the farm to the `$AVAILABLE_FARMS` list with its name <Name> (use | as a separator).
 4. Add two lines in BotsHub - RunFarmLoop :

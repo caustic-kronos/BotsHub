@@ -35,6 +35,36 @@ Global Const $FALLBACK_SKILLSLOT = 5
 ;Global Const $HERO_TO_ADD = $ID_GENERAL_MORGAHN
 Global Const $HERO_TO_ADD = $ID_HAYDA
 
+
+;~ Main method from utils, used only to run tests
+Func RunTests()
+	;SellItemsToMerchant(DefaultShouldSellItem, True)
+	;While($runtime_status == 'RUNNING')
+	;	GetOwnPosition()
+	;	Sleep(2000)
+	;WEnd
+	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
+	;ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
+
+	;Local $itemPtr = GetItemPtrBySlot(1, 1)
+	;Local $itemID = DllStructGetData($item, 'ID')
+
+	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
+	;Local $target = GetCurrentTarget()
+	;PrintNPCInformations($target)
+	;_dlldisplay($target)
+	;Info(GetEnergy())
+	;Info(GetSkillTimer())
+	;Info(DllStructGetData(GetEffect($ID_SHROUD_OF_DISTRESS), 'TimeStamp'))
+	;Info(GetEffectTimeRemaining(GetEffect($ID_SHROUD_OF_DISTRESS)))
+	;Info(_dlldisplay(GetEffect($ID_SHROUD_OF_DISTRESS)))
+	;RandomSleep(1000)
+
+	;Return $SUCCESS
+	Return $PAUSE
+EndFunc
+
+
 ;~ Main method to run the test suite
 Func RunTestSuite()
 	If TestMovement() == $FAIL Then Error('Movement test failed')
@@ -186,7 +216,7 @@ Func TestConsumables()
 
 	UseConsumable($ID_CHOCOLATE_BUNNY)
 	Sleep(250)
-	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_5)) == 0 Then Return $FAIL
+	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) == 0 Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
