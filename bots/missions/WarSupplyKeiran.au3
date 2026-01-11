@@ -329,7 +329,7 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 				If GetIsCasting($foe) And Not GetIsDead($foe) And DllStructGetData($foe, 'ID') <> 0 Then
 					Switch DllStructGetData($foe, 'Skill')
 						; if foe is casting dangerous AoE skill on player then try to interrupt it and evade AoE location
-						Case $ID_METEOR_SHOWER, $ID_FIRE_STORM, $ID_RAY_OF_JUDGEMENT, $ID_UNSTEADY_GROUND, $ID_SAND_STORM, $ID_SAVANNAH_HEAT
+						Case $ID_METEOR_SHOWER, $ID_FIRE_STORM, $ID_RAY_OF_JUDGMENT, $ID_UNSTEADY_GROUND, $ID_SANDSTORM, $ID_SAVANNAH_HEAT
 							; attempt to interrupt dangerous AoE skill
 							UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $foe)
 							; attempt to evade dangerous AoE skill effect just in case interrupt was too late or unsuccessful
