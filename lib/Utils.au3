@@ -1251,7 +1251,7 @@ EndFunc
 
 ;~ Identify items from inventory
 Func IdentifyItems($buyKit = True)
-	Info('Identifying all items')
+	Info('Identifying items')
 	For $bagIndex = 1 To $bags_count
 		Local $bag = GetBag($bagIndex)
 		Local $item
@@ -2540,6 +2540,13 @@ Func IsRezSkill($skill)
 			$ID_LIGHT_OF_DWAYNA, $ID_REBIRTH, $ID_RENEW_LIFE, $ID_RESTORE_LIFE, $ID_RESURRECT, $ID_RESURRECTION_CHANT, $ID_UNYIELDING_AURA, $ID_VENGEANCE
 			Return True
 	EndSwitch
+	Return False
+EndFunc
+
+
+;~ Return True if malus is -60 on player
+Func IsPlayerAtMaxMalus()
+	If GetMorale() == -60 Then Return True
 	Return False
 EndFunc
 

@@ -126,7 +126,6 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		Info('Deposited Gold')
 	EndIf
 	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_UNCHECKED Then
-		Info('Balancing character''s gold level')
 		BalanceCharacterGold(10000)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)

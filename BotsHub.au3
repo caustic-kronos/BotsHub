@@ -686,18 +686,14 @@ EndFunc
 Func StartButtonHandler()
 	Switch $runtime_status
 		Case 'UNINITIALIZED'
-			Info('Initializing...')
 			If (Authentification() <> $SUCCESS) Then Return
 			$runtime_status = 'INITIALIZED'
-			Info('Starting...')
-			$runtime_status = 'RUNNING'
 			GUICtrlSetData($GUI_StartButton, 'Pause')
 			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTCORAL)
+			$runtime_status = 'RUNNING'
 		Case 'INITIALIZED'
-			Info('Starting...')
 			$runtime_status = 'RUNNING'
 		Case 'RUNNING'
-			Info('Pausing...')
 			GUICtrlSetData($GUI_StartButton, 'Will pause after this run')
 			GUICtrlSetState($GUI_StartButton, $GUI_Disable)
 			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTYELLOW)
@@ -705,7 +701,6 @@ Func StartButtonHandler()
 		Case 'WILL_PAUSE'
 			MsgBox(0, 'Error', 'You should not be able to press Pause when bot is already pausing.')
 		Case 'PAUSED'
-			Info('Restarting...')
 			GUICtrlSetData($GUI_StartButton, 'Pause')
 			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTCORAL)
 			$runtime_status = 'RUNNING'
@@ -913,6 +908,11 @@ Func BotHubLoop()
 
 			; Skip inventory management and setups when running without authentication
 			If GUICtrlRead($GUI_Combo_CharacterChoice) <> '' Then
+				; Must do mid-run inventory management before normal one else we will go back to town
+				If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
+					Local $resetRequired = InventoryManagementMidRun()
+					If $resetRequired Then ResetBotsSetups()
+				EndIf
 				; During pickup, items will be moved to equipment bag (if used) when first 3 bags are full
 				; So bag 5 will always fill before 4 - hence we can count items up to bag 4
 				If (CountSlots(1, _Min($bags_count, 4)) < $inventory_space_needed) Then
@@ -923,10 +923,6 @@ Func BotHubLoop()
 					Notice('Inventory full, pausing.')
 					ResetBotsSetups()
 					$runtime_status = 'WILL_PAUSE'
-				EndIf
-				If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
-					Local $resetRequired = InventoryManagementMidRun()
-					If $resetRequired Then ResetBotsSetups()
 				EndIf
 				If Not $global_farm_setup Then GeneralFarmSetup()
 			EndIf
