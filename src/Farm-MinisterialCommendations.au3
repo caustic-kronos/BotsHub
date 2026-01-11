@@ -491,8 +491,10 @@ Func WaitForPurityBall()
 		EndIf
 
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.45 And IsRecharged($SKILL_GRENTHS_AURA) Then
-			UseSkillEx($SKILL_GRENTHS_AURA)
-			RandomSleep(250)
+			While IsPlayerAlive() And IsRecharged($SKILL_GRENTHS_AURA)
+				UseSkillEx($SKILL_GRENTHS_AURA)
+				RandomSleep(50)
+			WEnd
 		EndIf
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
 			; Heroes with Mystic Healing provide additional long range support
@@ -530,8 +532,10 @@ Func KillMinistryOfPurity()
 	Local $foesCount
 
 	If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($SKILL_GRENTHS_AURA) Then
-		UseSkillEx($SKILL_GRENTHS_AURA)
-		RandomSleep(50)
+		While IsPlayerAlive() And IsRecharged($SKILL_GRENTHS_AURA)
+			UseSkillEx($SKILL_GRENTHS_AURA)
+			RandomSleep(50)
+		WEnd
 	EndIf
 
 	While IsRecharged($SKILL_EBON_BATTLE_STANDARD_OF_HONOR)
@@ -555,8 +559,10 @@ Func KillMinistryOfPurity()
 
 	If IsRecharged($SKILL_GRENTHS_AURA) Then
 		If IsPlayerDead() Then Return
-		UseSkillEx($SKILL_GRENTHS_AURA)
-		RandomSleep(50)
+		While IsPlayerAlive() And IsRecharged($SKILL_GRENTHS_AURA)
+			UseSkillEx($SKILL_GRENTHS_AURA)
+			RandomSleep(50)
+		WEnd
 	EndIf
 
 	Local $initialFoeCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
