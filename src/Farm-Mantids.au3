@@ -29,7 +29,7 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $RA_MANTIDS_FARMER_SKILLBAR = 'OgcTYxr+5B5ozOgFHCIuT4AdAA'
-Global Const $MANTIDS_HERO_SKILLBAR = 'OQijEqmMKODbe8OGAYi7x3YWMA'
+Global Const $MANTIDS_HERO_SKILLBAR = 'OQijEqmMKODbe8OmEbi7x3YWMA'
 Global Const $MANTIDS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- 14 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
@@ -47,8 +47,8 @@ Global Const $MANTIDS_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
 ;Global Const $MANTIDS_HERO_PARTY_ID = $ID_HAYDA
 Global Const $MANTIDS_HERO_INDEX = 1
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($MANTIDS_DEADLY_PARADOX) is better than UseSkillEx(1))
-Global Const $MANTIDS_DEADLY_PARADOX		= 1
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($MANTIDS_SERPENTS_QUICKNESS) is better than UseSkillEx(1))
+Global Const $MANTIDS_SERPENTS_QUICKNESS	= 1
 Global Const $MANTIDS_SHADOWFORM			= 2
 Global Const $MANTIDS_SHROUD_OF_DISTRESS	= 3
 Global Const $MANTIDS_LIGHTNING_REFLEXES	= 4
@@ -61,6 +61,7 @@ Global Const $MANTIDS_EDGE_OF_EXTINCTION	= 8
 Global Const $MANTIDS_VOCAL_WAS_SOGOLON		= 1
 Global Const $MANTIDS_INCOMING				= 2
 Global Const $MANTIDS_FALLBACK				= 3
+Global Const $MANTIDS_BRACEYOURSELF			= 4
 Global Const $MANTIDS_ENDURING_HARMONY		= 5
 Global Const $MANTIDS_THEY_RE_ON_FIRE		= 6
 Global Const $MANTIDS_MAKE_HASTE			= 7
@@ -160,12 +161,13 @@ Func MantidsFarmLoop()
 	RandomSleep(1500)
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_THEY_RE_ON_FIRE)
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_MAKE_HASTE, GetMyAgent())
-	UseSkillEx($MANTIDS_DEADLY_PARADOX)
+	UseSkillEx($MANTIDS_SERPENTS_QUICKNESS)
 	RandomSleep(20)
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
 	UseSkillEx($MANTIDS_SHROUD_OF_DISTRESS)
 	RandomSleep(20)
 	UseSkillEx($MANTIDS_SHADOWFORM)
+	UseHeroSkill(1, $MANTIDS_BRACEYOURSELF, GetMyAgent())
 	RandomSleep(20)
 	CommandAll(9000, -19500)
 
