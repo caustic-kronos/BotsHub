@@ -156,8 +156,8 @@ Func TalkToZhellix()
 	ChangeTarget($Zhellix)
 	GoToNPC($Zhellix)
 	Dialog(0x84)
-	WaitMapLoading($ID_EBONY_CITADEL_OF_MALLYX)
-	Return GetMapID() == $ID_EBONY_CITADEL_OF_MALLYX? $SUCCESS : $FAIL
+	WaitMapLoading($ID_THE_EBONY_CITADEL_OF_MALLYX)
+	Return GetMapID() == $ID_THE_EBONY_CITADEL_OF_MALLYX? $SUCCESS : $FAIL
 EndFunc
 
 

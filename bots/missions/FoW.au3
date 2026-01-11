@@ -71,7 +71,7 @@ EndFunc
 
 ;~ Farm loop
 Func FoWFarmLoop()
-	If GetMapID() <> $ID_FISSURE_OF_WOE Then Return $FAIL
+	If GetMapID() <> $ID_THE_FISSURE_OF_WOE Then Return $FAIL
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = FoWFarmProcess()

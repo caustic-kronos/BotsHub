@@ -148,7 +148,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 		MoveTo(9519, -19968)
 		Move(9250, -20200)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_FLOOR_1)
+		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_LVL_1)
 	WEnd
 
 	Info('Get out of dungeon to reset quest')
@@ -190,7 +190,7 @@ Func GetRewardRefreshAndTakeSoOQuest()
 		MoveTo(9519, -19968)
 		Move(9250, -20200)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_FLOOR_1)
+		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_LVL_1)
 	WEnd
 EndFunc
 
@@ -280,7 +280,7 @@ Func ClearSoOFloor1()
 		MoveTo(20000, 900)
 		Move(20400, 1300)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_FLOOR_2)
+		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_LVL_2)
 	WEnd
 	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
@@ -463,7 +463,7 @@ Func ClearSoOFloor2()
 		MoveTo(-18725, -9171)
 		Move(-19300, -8200)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_FLOOR_3)
+		$mapLoaded = WaitMapLoading($ID_SHARDS_OF_ORR_LVL_3)
 	WEnd
 	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc

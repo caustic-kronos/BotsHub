@@ -52,8 +52,8 @@ EndFunc
 
 Func NexusChallengeSetup()
 	Info('Setting up farm')
-	If GetMapID() <> $ID_NEXUS Then
-		TravelToOutpost($ID_NEXUS, $district_name)
+	If GetMapID() <> $ID_THE_SHADOW_NEXUS Then
+		TravelToOutpost($ID_THE_SHADOW_NEXUS, $district_name)
 	Else
 		ResignAndReturnToOutpost()
 	EndIf
@@ -68,7 +68,7 @@ EndFunc
 
 
 Func EnterNexusChallengeMission()
-	TravelToOutpost($ID_NEXUS, $district_name)
+	TravelToOutpost($ID_THE_SHADOW_NEXUS, $district_name)
 	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
 	Local Static $StartX = -391
@@ -88,7 +88,7 @@ EndFunc
 
 ;~ Cleaning Nexus challenge function
 Func NexusChallenge()
-	If GetMapID() <> $ID_NEXUS Then Return $FAIL
+	If GetMapID() <> $ID_THE_SHADOW_NEXUS Then Return $FAIL
 	Sleep(50000)
 
 	; 9 groups to defeat in each loop

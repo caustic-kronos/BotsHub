@@ -42,14 +42,14 @@ Func LightbringerFarm2()
 	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
 
-	ReturnBackToOutpost($ID_KODASH_BAZAAR)
+	ReturnBackToOutpost($ID_THE_KODASH_BAZAAR)
 	Return $result
 EndFunc
 
 
 Func Lightbringer2FarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_KODASH_BAZAAR, $district_name)
+	TravelToOutpost($ID_THE_KODASH_BAZAAR, $district_name)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_HARD_MODE)
 	TrySetupPlayerUsingGUISettings()
@@ -58,7 +58,7 @@ Func Lightbringer2FarmSetup()
 	GoToMirrorOfLyss()
 	MoveTo(-19350, -16900)
 	RandomSleep(5000)
-	WaitMapLoading($ID_KODASH_BAZAAR, 10000, 2000)
+	WaitMapLoading($ID_THE_KODASH_BAZAAR, 10000, 2000)
 	$lightbringer_farm2_setup = True
 	Info('Preparations completed')
 EndFunc
@@ -66,7 +66,7 @@ EndFunc
 
 ;~ Move out of outpost into Mirror of Lyss
 Func GoToMirrorOfLyss()
-	TravelToOutpost($ID_KODASH_BAZAAR, $district_name)
+	TravelToOutpost($ID_THE_KODASH_BAZAAR, $district_name)
 	While GetMapID() <> $ID_MIRROR_OF_LYSS
 		Info('Moving to Mirror of Lyss')
 		MoveTo(-2186, -1916)

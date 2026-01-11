@@ -51,7 +51,7 @@ EndFunc
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_GADDS_CAMP, $district_name)
+	TravelToOutpost(ID_GADDS_ENCAMPMENT, $district_name)
 
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
@@ -67,7 +67,7 @@ EndFunc
 
 
 Func RunToBogroot()
-	TravelToOutpost($ID_GADDS_CAMP, $district_name)
+	TravelToOutpost(ID_GADDS_ENCAMPMENT, $district_name)
 	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
@@ -145,7 +145,7 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 		MoveTo(12968, 26219)
 		Move(13097, 26393)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_BOGROOT_LVL1)
+		$mapLoaded = WaitMapLoading($ID_BOGROOT_GROWTHS_LVL_1)
 	WEnd
 
 	Info('Get out of dungeon to reset quest')
@@ -183,7 +183,7 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 		MoveTo(12968, 26219)
 		Move(13097, 26393)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_BOGROOT_LVL1)
+		$mapLoaded = WaitMapLoading($ID_BOGROOT_GROWTHS_LVL_1)
 	WEnd
 EndFunc
 
@@ -244,7 +244,7 @@ Func ClearFroggyFloor1()
 		MoveTo(7171, -17934)
 		Move(7600, -19100)
 		RandomSleep(2000)
-		$mapLoaded = WaitMapLoading($ID_BOGROOT_LVL2)
+		$mapLoaded = WaitMapLoading($ID_BOGROOT_GROWTHS_LVL_2)
 	WEnd
 	Return $SUCCESS
 EndFunc

@@ -289,13 +289,13 @@ Func GemstoneMargoniteFarmLoop()
 	EndIf
 	Info('Taking Quest')
 	Local $TimerQuest = TimerInit()
-	While GetQuestByID(0x2EF) == Null And TimerDiff($TimerQuest) < 10000
+	While GetQuestByID($ID_THE_CITY_OF_TORC_QA) == Null And TimerDiff($TimerQuest) < 10000
 		GoNearestNPCToCoords(-17710, -8811)
 		Sleep(1000)
 		Dialog(0x82EF01)
 		Sleep(1000)
 	WEnd
-	If GetQuestByID(0x2EF) == Null Then Return $FAIL
+	If GetQuestByID($ID_THE_CITY_OF_TORC_QA) == Null Then Return $FAIL
 
 	Info('Moving to spot and aggroing margonites')
 	MoveTo(-17541, -9431)

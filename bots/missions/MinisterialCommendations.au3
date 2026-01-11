@@ -41,9 +41,6 @@ Global Const $COMMENDATIONS_FARM_INFORMATIONS = 'For best results, have :' & @CR
 ; Average duration ~ 3m20
 Global Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
 
-; Dirty hack for Kaineng City changing ID during events - but the alternate solutions are dirtier
-Global Const $ID_CURRENT_KAINENG_CITY = $ID_KAINENG_CITY
-;Local Const $ID_CURRENT_KAINENG_CITY = $ID_KAINENG_CITY_EVENTS
 Global Const $ID_MIKU_AGENT = 58
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($SKILL_CONVICTION) is better than UseSkillEx(1))
@@ -132,7 +129,7 @@ Func MinisterialCommendationsFarm()
 	If Not $ministerial_commendations_farm_setup Then SetupMinisterialCommendationsFarm()
 
 	Local $result = MinisterialCommendationsFarmLoop()
-	TravelToOutpost($ID_CURRENT_KAINENG_CITY, $district_name)
+	TravelToOutpost($ID_Kaineng_Center, $district_name)
 	Return $result
 EndFunc
 
@@ -140,7 +137,7 @@ EndFunc
 ;~ Setup for the farm - load build and heroes, move in the correct zone
 Func SetupMinisterialCommendationsFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_CURRENT_KAINENG_CITY, $district_name)
+	TravelToOutpost($ID_Kaineng_Center, $district_name)
 
 	SetupPlayerMinisterialCommendationsFarm()
 	SetupTeamMinisterialCommendationsFarm()
@@ -185,7 +182,7 @@ EndFunc
 
 
 Func MinisterialCommendationsFarmLoop()
-	If GetMapID() <> $ID_CURRENT_KAINENG_CITY Then Return $FAIL
+	If GetMapID() <> $ID_Kaineng_Center Then Return $FAIL
 	If $log_level == 0 Then $logging_file = FileOpen(@ScriptDir & '/logs/commendation_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 
 	Info('Entering quest')

@@ -37,7 +37,7 @@ To use it:
 - Vaettirs farm (festive items, golds, materials, Norn points)
 - Jaya Bluffs Sensali farm (feathers, bones)
 - Drazach Thicket DragonMoss farm (Fibers, Gothic Defender, Echovald shield, Ornate shield)
-- Waijun Bazaar mantids farm (celestial weapons, chitin, dust)
+- Wajjun Bazaar mantids farm (celestial weapons, chitin, dust)
 - Moddok Crevice corsairs farm (Runes, Colossal scimitar, Q8)
 - Missing Daughter Jade Brotherhood farm (Q8, jade bracelets)
 - Fish in a Barrel kournans farm (Q8, runes)

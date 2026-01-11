@@ -130,7 +130,7 @@ EndFunc
 ;~ Farm loop
 Func FoWToCFarmLoop()
 	Local $me = Null, $target = Null
-	If GetMapID() <> $ID_FISSURE_OF_WOE Then Return $FAIL
+	If GetMapID() <> $ID_THE_FISSURE_OF_WOE Then Return $FAIL
 	Info('Starting Farm')
 	$run_timer = TimerInit()
 	Info('Moving to initial spot')
