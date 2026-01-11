@@ -15,9 +15,9 @@ https://gwpvx.fandom.com/wiki/Build:W/N_Raptor_Farmer
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
 
 ; Possible improvements :
 ; - Update movements to be depending on raptors positions to make sure almost all raptors are aggroed (especially boss group)

@@ -19,9 +19,9 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
 
 ; Possible improvements :
 ; - noticed some scenarios where map is not cleared - check whether this can be fixed by adding a few additional locations

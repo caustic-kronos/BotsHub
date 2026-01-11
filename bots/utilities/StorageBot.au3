@@ -16,10 +16,13 @@
 #CE ===========================================================================
 
 #include-once
+#NoTrayIcon
 
-#include 'GWA2.au3'
-#include 'GWA2_ID.au3'
-#include 'Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
+
+Opt('MustDeclareVars', True)
 
 ;~ Main method from storage bot, does all the things : identify, deal with data, store, salvage
 Func ManageInventory()

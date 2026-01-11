@@ -17,9 +17,9 @@ https://gwpvx.fandom.com/wiki/Build:Team_-_1_Hero_Whirling_Defense_City_Farmer
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
 
 Opt('MustDeclareVars', True)
 

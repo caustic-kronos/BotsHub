@@ -19,9 +19,9 @@
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
 
 ; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
 ; Using third hero for more speed is a bad idea - you'd lose aggro

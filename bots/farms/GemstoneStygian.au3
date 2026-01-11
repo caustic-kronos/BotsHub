@@ -20,9 +20,9 @@ https://gwpvx.fandom.com/wiki/Build:R/N_HM_Stygian_Veil_Trapper
 
 Opt('MustDeclareVars', True)
 
-#include '../lib/GWA2.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
 
 #Region Configuration
 ; === Build ===

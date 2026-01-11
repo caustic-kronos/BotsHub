@@ -27,9 +27,9 @@ https://gwpvx.fandom.com/wiki/Build:R/A_Whirling_Defense_Farmer
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2_Headers.au3'
-#include '../lib/GWA2.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2_Headers.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils.au3'
 
 Opt('MustDeclareVars', True)
 

@@ -22,9 +22,9 @@ https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Glint%27s_Challenge_Farm
 #RequireAdmin
 #NoTrayIcon
 
-#include '../lib/GWA2.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/Utils.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
 
 
 Opt('MustDeclareVars', True)
