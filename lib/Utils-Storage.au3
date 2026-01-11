@@ -1,0 +1,2419 @@
+#CS ===========================================================================
+; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributors: Gahais, JackLinesMatthews
+; Copyright 2025 caustic-kronos
+;
+; Licensed under the Apache License, Version 2.0 (the 'License');
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+; http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an 'AS IS' BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+#CE ===========================================================================
+
+#include-once
+
+#include 'SQLite.au3'
+#include 'SQLite.dll.au3'
+#include 'GWA2_Headers.au3'
+#include 'GWA2_ID.au3'
+#include 'GWA2.au3'
+#include 'Utils.au3'
+#include 'Utils-Items_Modstructs.au3'
+#include 'Utils-Debugger.au3'
+
+Opt('MustDeclareVars', True)
+
+
+#Region Inventory Management
+;~ Function to deal with inventory before farm run
+Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
+	; Operations order :
+	; 1-Store unids if desired
+	; 2-Sort items
+	; 3-Identify items
+	; 4-Collect data
+	; 5-Salvage
+	; 6-Sell materials
+	; 7-Sell items
+	; 8-Balance character's gold level
+	; 9-Buy ectoplasm/obsidian with surplus
+	; 10-Store items
+	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then
+		TravelToOutpost($tradeTown, $district_name)
+		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then
+		TravelToOutpost($tradeTown, $district_name)
+		IdentifyItems()
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
+		ConnectToDatabase()
+		InitializeDatabase()
+		CompleteModelLookupTable()
+		CompleteUpgradeLookupTable()
+		StoreAllItemsData()
+		DisconnectFromDatabase()
+	EndIf
+	If $inventory_management_cache['@salvage.something'] Then
+		TravelToOutpost($tradeTown, $district_name)
+		SalvageItems()
+		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
+		;SalvageInscriptions()
+		;UpgradeWithSalvageInscriptions()
+		;SalvageMaterials()
+	EndIf
+	If $inventory_management_cache['@sell.materials.something'] And HasMaterials() Then
+		TravelToOutpost($tradeTown, $district_name)
+		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
+		If $inventory_management_cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
+		If $inventory_management_cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
+	EndIf
+	If $inventory_management_cache['@sell.something'] Then
+		TravelToOutpost($tradeTown, $district_name)
+		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
+		SellItemsToMerchant()
+	EndIf
+	; Max gold in Xunlai chest is 1000 platinums
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
+		DepositGold(60000)
+		Info('Deposited Gold')
+	EndIf
+	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_UNCHECKED Then
+		BalanceCharacterGold(10000)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
+	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
+	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreItemsInXunlaiStorage()
+EndFunc
+
+
+;~ Function to deal with inventory during farm to preserve inventory space
+Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
+	If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) <> $GUI_CHECKED Then Return False
+	; Operations order :
+	; 1-Check if we have at least 1 identification kit and 1 salvage kit
+	; 2-If not, buy until we have 4 identification kits and 12 salvaged kits
+	; 3-Sort items
+	; 4-Identify items
+	; 5-Salvage
+	Local Static $superiorIdentificationKits = [$ID_SUPERIOR_IDENTIFICATION_KIT]
+	Local Static $salvageKits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
+	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
+		Info('Buying kits for passive inventory management')
+		TravelToOutpost($tradeTown, $district_name)
+		; Since we are in trade town, might as well clear inventory
+		InventoryManagementBeforeRun()
+		BuyKitsForMidRun()
+		Return True
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	IdentifyItems(False)
+	If $inventory_management_cache['@salvage.something'] Then
+		SalvageItems(False)
+		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Sort the inventory in this order :
+Func SortInventory()
+	Info('Sorting inventory')
+	;						0-Lockpicks 1-Books	2-Consumables	3-Trophies	4-Tomes	5-Materials	6-Others	7-Armor Salvageables[Gold,	8-Purple,	9-Blue	10-White]	11-Weapons [White,	12-Blue,	13-Purple,	14-Gold,	15-Green]	16-Armor (Armor salvageables, weapons and armor start from the end)
+	Local $itemsCounts = [	0,			0,		0,				0,			0,		0,			0,			0,							0,			0,		0,			0,					0,			0,			0,			0,			0]
+	Local $bagsSizes[6]
+	Local $bagsSize = 0
+	Local $bag, $item, $itemID, $rarity
+	Local $items[80]
+	Local $k = 0
+	For $bagIndex = 1 To $bags_count
+		$bag = GetBag($bagIndex)
+		$bagsSizes[$bagIndex] = DllStructGetData($bag, 'slots')
+		$bagsSize += $bagsSizes[$bagIndex]
+		For $slot = 1 To $bagsSizes[$bagIndex]
+			$item = GetItemBySlot($bagIndex, $slot)
+			$itemID = DllStructGetData(($item), 'ModelID')
+
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
+			$items[$k] = $item
+			$k += 1
+			; Weapon
+			If IsWeapon($item) Then
+				$rarity = GetRarity($item)
+				If ($rarity == $RARITY_GOLD) Then
+					$itemsCounts[14] += 1
+				ElseIf ($rarity == $RARITY_PURPLE) Then
+					$itemsCounts[13] += 1
+				ElseIf ($rarity == $RARITY_BLUE) Then
+					$itemsCounts[12] += 1
+				ElseIf ($rarity == $RARITY_GREEN) Then
+					$itemsCounts[15] += 1
+				ElseIf ($rarity == $RARITY_WHITE) Then
+					$itemsCounts[11] += 1
+				EndIf
+			; ArmorSalvage
+			ElseIf IsArmorSalvageItem($item) Then
+				$rarity = GetRarity($item)
+				If ($rarity == $RARITY_GOLD) Then
+					$itemsCounts[7] += 1
+				ElseIf ($rarity == $RARITY_PURPLE) Then
+					$itemsCounts[8] += 1
+				ElseIf ($rarity == $RARITY_BLUE) Then
+					$itemsCounts[9] += 1
+				ElseIf ($rarity == $RARITY_WHITE) Then
+					$itemsCounts[10] += 1
+				EndIf
+			; Trophies
+			ElseIf IsTrophy($itemID) Then
+				$itemsCounts[3] += 1
+			; Consumables
+			ElseIf IsConsumable($itemID) Then
+				$itemsCounts[2] += 1
+			; Materials
+			ElseIf IsMaterial($item) Then
+				$itemsCounts[5] += 1
+			; Lockpick
+			ElseIf ($itemID == $ID_LOCKPICK) Then
+				$itemsCounts[0] += 1
+			; Tomes
+			ElseIf IsTome($itemID) Then
+				$itemsCounts[4] += 1
+			; Armor
+			ElseIf IsArmor($item) Then
+				$itemsCounts[16] += 1
+			; Books
+			ElseIf IsBook($item) Then
+				$itemsCounts[1] += 1
+			; Others
+			Else
+				$itemsCounts[6] += 1
+			EndIf
+		Next
+	Next
+
+
+	Local $itemsPositions[17]
+	$itemsPositions[0] = 1
+	$itemsPositions[16] = $bagsSize + 1 - $itemsCounts[16]
+	For $i = 1 To 6
+		$itemsPositions[$i] = $itemsPositions[$i - 1] + $itemsCounts[$i - 1]
+	Next
+	For $i = 15 To 7 Step -1
+		$itemsPositions[$i] = $itemsPositions[$i + 1] - $itemsCounts[$i]
+	Next
+
+
+	Local $bagAndSlot
+	Local $category
+	For $item In $items
+		$itemID = DllStructGetData($item, 'ModelID')
+		If $itemID == 0 Then ExitLoop
+		RandomSleep(10)
+
+		; Weapon
+		If IsWeapon($item) Then
+			$rarity = GetRarity($item)
+			If ($rarity == $RARITY_GOLD) Then
+				$category = 14
+			ElseIf ($rarity == $RARITY_PURPLE) Then
+				$category = 13
+			ElseIf ($rarity == $RARITY_BLUE) Then
+				$category = 12
+			ElseIf ($rarity == $RARITY_GREEN) Then
+				$category = 15
+			ElseIf ($rarity == $RARITY_WHITE) Then
+				$category = 11
+			EndIf
+		; ArmorSalvage
+		ElseIf isArmorSalvageItem($item) Then
+			$rarity = GetRarity($item)
+			If ($rarity == $RARITY_GOLD) Then
+				$category = 7
+			ElseIf ($rarity == $RARITY_PURPLE) Then
+				$category = 8
+			ElseIf ($rarity == $RARITY_BLUE) Then
+				$category = 9
+			ElseIf ($rarity == $RARITY_WHITE) Then
+				$category = 10
+			EndIf
+		; Trophies
+		ElseIf IsTrophy($itemID) Then
+			$category = 3
+		; Consumables
+		ElseIf IsConsumable($itemID) Then
+			$category = 2
+		; Materials
+		ElseIf IsMaterial($item) Then
+			$category = 5
+		; Lockpick
+		ElseIf ($itemID == $ID_LOCKPICK) Then
+			$category = 0
+		; Tomes
+		ElseIf IsTome($itemID) Then
+			$category = 4
+		; Armor
+		ElseIf IsArmor($item) Then
+			$category = 16
+		; Books
+		ElseIf IsBook($item) Then
+			$category = 1
+		; Others
+		Else
+			$category = 6
+		EndIf
+
+		$bagAndSlot = GetBagAndSlotFromGeneralSlot($bagsSizes, $itemsPositions[$category])
+		Debug('Moving item ' & DllStructGetData($item, 'ModelID') & ' to bag ' & $bagAndSlot[0] & ', position ' & $bagAndSlot[1])
+		MoveItem($item, $bagAndSlot[0], $bagAndSlot[1])
+		$itemsPositions[$category] += 1
+		RandomSleep(50)
+	Next
+EndFunc
+
+
+;~ Return True if the item should be picked up
+;~ Only pick rare materials, black and white dyes, lockpicks, gold items and green items
+Func PickOnlyImportantItem($item)
+	Local $itemID = DllStructGetData(($item), 'ModelID')
+	Local $dyeColor = DllStructGetData($item, 'DyeColor')
+	Local $rarity = GetRarity($item)
+	; Only pick gold if character has less than 99k in inventory
+	If IsRareMaterial($item) Then
+		Return True
+	ElseIf ($itemID == $ID_DYES) Then
+		Return (($dyeColor == $ID_BLACK_DYE) Or ($dyeColor == $ID_WHITE_DYE))
+	ElseIf ($itemID == $ID_LOCKPICK) Then
+		Return True
+	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
+		Return True
+	ElseIf ($rarity == $RARITY_GOLD) Then
+		Return True
+	ElseIf ($rarity == $RARITY_GREEN) Then
+		Return True
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if the item should be picked up - default to False
+Func DefaultShouldPickItem($item)
+	; Clarity rename
+	Local $cache = $inventory_management_cache
+	If $cache['@pickup.nothing'] Then Return False
+	If $cache['@pickup.everything'] Then Return True
+
+	Local $itemID = DllStructGetData(($item), 'ModelID')
+	Local $rarity = GetRarity($item)
+
+	; ---------------------------------------- Money ----------------------------------------
+	If (($itemID == $ID_MONEY) And (GetGoldCharacter() < 99000)) Then
+		Return $cache['Pick up items.Gold']
+	; --------------------------------------- Weapons ---------------------------------------
+	ElseIf IsWeapon($item) Then
+		If $rarity <> $RARITY_WHITE And IsLowReqMaxDamage($item) Then Return True
+		Return CheckPickupWeapon($item)
+	; --------------------------------- Armor salvageables ---------------------------------
+	ElseIf isArmorSalvageItem($item) Then
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		Return $cache['Pick up items.Armor salvageables.' & $rarityName]
+	; --------------------------- Consumables, Alcohols & Festives ---------------------------
+	ElseIf IsConsumable($itemID) Then
+		Return $cache['Pick up items.Consumables']
+	ElseIf IsAlcohol($itemID) Then
+		Return $cache['Pick up items.Alcohols']
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Festival Items.' & $festivalDropName]
+	; --------------------------------------- Trophies ---------------------------------------
+	ElseIf IsTrophy($itemID) Then
+		Switch $itemID
+			Case $ID_MINISTERIAL_COMMENDATION
+				Return True
+			Case $ID_GLACIAL_STONE
+				Return $cache['Pick up items.Trophies.Glacial Stone']
+			Case $ID_DESTROYER_CORE
+				Return $cache['Pick up items.Trophies.Destroyer Core']
+			Case $ID_JADE_BRACELET
+				Return $cache['Pick up items.Trophies.Jade Bracelet']
+			Case $ID_STOLEN_GOODS
+				Return $cache['Pick up items.Trophies.Stolen Goods']
+		EndSwitch
+		Return $cache['Pick up items.Trophies']
+	; -------------------------------------- Materials --------------------------------------
+	ElseIf IsBasicMaterial($item) Then
+		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Basic Materials.' & $materialName]
+	ElseIf IsRareMaterial($item) Then
+		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Rare Materials.' & $materialName]
+	; ---------------------------------------- Tomes ----------------------------------------
+	ElseIf IsRegularTome($itemID) Then
+		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Tomes.Normal.' & $tomeName]
+	ElseIf IsEliteTome($itemID) Then
+		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Tomes.Elite.' & $tomeName]
+	; --------------------------------------- Scrolls ---------------------------------------
+	ElseIf IsGoldScroll($itemID) Then
+		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Scrolls.Gold.' & $scrollName]
+	ElseIf IsBlueScroll($itemID) Then
+		Return $cache['Pick up items.Scrolls.Blue']
+	; ----------------------------------------- Keys -----------------------------------------
+	ElseIf IsKey($itemID) Then
+		Return $cache['Pick up items.Keys']
+	ElseIf ($itemID == $ID_LOCKPICK) Then
+		Return True
+	; ----------------------------------------- Dyes -----------------------------------------
+	ElseIf ($itemID == $ID_DYES) Then
+		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
+		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
+		Return $cache['Pick up items.Dyes.' & $dyeColorName]
+	; --------------------------------- Gizmos & Quest items ---------------------------------
+	ElseIf ($itemID == $ID_JAR_OF_INVIGORATION) Then
+		Return False
+	ElseIf IsMapPiece($itemID) Then
+		Return $cache['Pick up items.Quest items.Map pieces']
+	; ----------------------------------- Other stackables -----------------------------------
+	ElseIf IsStackable($item) Then
+		Return True
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if the item should be salvaged - default to false
+Func DefaultShouldSalvageItem($item)
+	; Clarity rename
+	Local $cache = $inventory_management_cache
+	If $cache['@salvage.nothing'] Then Return False
+
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $rarity = GetRarity($item)
+
+	If $rarity == $RARITY_GREEN Then
+		Return False
+	; --------------------------------------- Weapons ---------------------------------------
+	ElseIf IsWeapon($item) Then
+		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
+		If $cache['@salvage.weapons.nothing'] Then Return False
+		If Not CheckSalvageWeapon($item) Then Return False
+		Return Not ShouldKeepWeapon($item)
+	; --------------------------------- Armor salvageables ---------------------------------
+	ElseIf IsArmorSalvageItem($item) Then
+		If $cache['@salvage.salvageables.nothing'] Then Return False
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		If Not $cache['Salvage items.Armor salvageables.' & $rarityName] Then Return False
+		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+	; --------------------------------------- Trophies ---------------------------------------
+	ElseIf IsTrophy($itemID) Then
+		If $cache['Salvage items.Trophies'] Then Return True
+		If $cache['@salvage.trophies.nothing'] Then Return False
+		Switch $itemID
+			Case $ID_GLACIAL_STONE
+				Return $cache['Salvage items.Trophies.Glacial Stone']
+			Case $ID_DESTROYER_CORE
+				Return $cache['Salvage items.Trophies.Destroyer Core']
+			Case $ID_JADE_BRACELET
+				Return $cache['Salvage items.Trophies.Jade Bracelet']
+			Case $ID_STOLEN_GOODS
+				Return $cache['Salvage items.Trophies.Stolen Goods']
+		EndSwitch
+		;Return $cache['Salvage items.Trophies.Other trophies']
+
+		If $MAP_FEATHER_TROPHIES[$itemID] <> Null Then Return True
+		If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return True
+		If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return True
+		If $MAP_FIBER_TROPHIES[$itemID] <> Null Then Return True
+		Return False
+	; -------------------------------------- Materials --------------------------------------
+	ElseIf IsRareMaterial($item) Then
+		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if the item should be sold to the merchant - default to false
+Func DefaultShouldSellItem($item)
+	; Clarity rename
+	Local $cache = $inventory_management_cache
+	If $cache['@sell.nothing'] Then Return False
+
+	Local $itemID = DllStructGetData(($item), 'ModelID')
+	Local $rarity = GetRarity($item)
+
+	If $rarity == $RARITY_GREEN Then
+		Return False
+	; --------------------------------------- Weapons ---------------------------------------
+	ElseIf IsWeapon($item) Then
+		If $cache['@sell.weapons.nothing'] Then Return False
+		If Not CheckSellWeapon($item) Then Return False
+		Return Not ShouldKeepWeapon($item)
+	; --------------------------------- Armor salvageables ---------------------------------
+	ElseIf isArmorSalvageItem($item) Then
+		If $cache['@sell.salvageables.nothing'] Then Return False
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		If Not $cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
+		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+	; --------------------------------------- Scrolls ---------------------------------------
+	ElseIf IsBlueScroll($itemID) Then
+		Return $cache['Sell items.Scrolls.Blue']
+	ElseIf IsGoldScroll($itemID) Then
+		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Sell items.Scrolls.Gold.' & $scrollName]
+	; ----------------------------------------- Keys -----------------------------------------
+	ElseIf IsKey($itemID) Then
+		Return $cache['Sell items.Keys']
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if the item should be stored in Xunlai Storage - default to false
+Func DefaultShouldStoreItem($item)
+	; Clarity rename
+	Local $cache = $inventory_management_cache
+	If $cache['@store.nothing'] Then Return False
+
+	Local $itemID = DllStructGetData(($item), 'ModelID')
+	Local $rarity = GetRarity($item)
+	Local $quantity = DllStructGetData($item, 'Quantity')
+
+	; --------------------------------------- Weapons ---------------------------------------
+	If IsWeapon($item) Then
+		;Return ShouldKeepWeapon($item)
+		Return CheckStoreWeapon($item)
+	; --------------------------------- Armor salvageables ---------------------------------
+	ElseIf isArmorSalvageItem($item) Then
+		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+		;Return ContainsValuableUpgrades($item)
+		Return $cache['Store items.Armor salvageables.' & $rarityName]
+	; ------------------------------------- Consumables -------------------------------------
+	ElseIf IsConsumable($itemID) Then
+		If $quantity <> 250 Then Return False
+		Return $cache['Store items.Consumables']
+	; --------------------------------------- Trophies ---------------------------------------
+	ElseIf IsTrophy($itemID) Then
+		If $quantity <> 250 Then Return False
+		Return True
+	; -------------------------------------- Materials --------------------------------------
+	ElseIf IsBasicMaterial($item) Then
+		If $quantity <> 250 Then Return False
+		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Basic Materials.' & $materialName]
+	ElseIf IsRareMaterial($item) Then
+		If $quantity <> 250 Then Return False
+		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Rare Materials.' & $materialName]
+	; ----------------------------------------- Tomes -----------------------------------------
+	ElseIf IsRegularTome($itemID) Then
+		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Tomes.Normal.' & $tomeName]
+	ElseIf IsEliteTome($itemID) Then
+		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Tomes.Elite.' & $tomeName]
+	; --------------------------------------- Scrolls ---------------------------------------
+	ElseIf IsGoldScroll($itemID) Then
+		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Scrolls.Gold.' & $scrollName]
+	ElseIf IsBlueScroll($itemID) Then
+		Return $cache['Store items.Scrolls.Blue']
+	; ----------------------------------------- Keys -----------------------------------------
+	ElseIf IsKey($itemID) Then
+		Return $cache['Store items.Keys']
+	; ----------------------------------------- Dyes -----------------------------------------
+	ElseIf ($itemID == $ID_DYES) Then
+		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
+		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
+		Return $cache['Store items.Dyes.' & $dyeColorName]
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return True if weapon item should not be sold or salvaged
+Func ShouldKeepWeapon($item)
+	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
+	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
+	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND, $ID_TYPE_STAFF]
+	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)
+
+	Local $rarity = GetRarity($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $type = DllStructGetData($item, 'Type')
+	; Keeping equipped items
+	If DllStructGetData($item, 'Equipped') Then Return True
+	; Keeping customized items
+	If DllStructGetData($item, 'Customized') <> 0 Then Return True
+	; Throwing white items
+	If $rarity == $RARITY_WHITE Then Return False
+	; Keeping green items
+	If $rarity == $RARITY_GREEN Then Return True
+	; Keeping unidentified items
+	If Not GetIsIdentified($item) Then Return True
+	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
+	If $MAP_ULTRA_RARE_WEAPONS[$itemID] <> Null Then Return True
+	; Keeping items that contain good upgrades
+	If ContainsValuableUpgrades($item) Then Return True
+	; Throwing items without good damage/energy/armor
+	If Not IsMaxDamageForReq($item) Then Return False
+	; Inscribable are kept only if : 1) rare skin and q9 2) low Req of a good type
+	If IsInscribable($item) Then
+		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
+		If GetItemReq($item) == 9 And $MAP_RARE_WEAPONS[$itemID] <> Null Then Return True
+		Return False
+	; OS - Old School weapon without inscription ... it's more complicated
+	Else
+		If GetItemReq($item) >= 9 Then
+			; OS (Old School) high Req are kept only if : 1) perfect mods and good type or good skin 2) rare skin and almost perfect mods
+			If HasPerfectMods($item) And ($MAP_RARE_WEAPONS[$itemID] <> Null Or $valuableOSWeaponTypesMap[DllStructGetData($item, 'type')] <> Null) Then Return True
+			If $MAP_RARE_WEAPONS[$itemID] == Null Then Return False
+			If HasAlmostPerfectMods($item) Then Return True
+			Return False
+		Else
+			; Low Req are kept if they have perfect mods, almost perfect mods, or a rare skin with somewhat okay mods
+			If HasPerfectMods($item) Then Return True
+			If HasAlmostPerfectMods($item) Then Return True
+			If $MAP_RARE_WEAPONS[$itemID] <> Null And HasOkayMods($item) Then Return True
+			Return False
+		EndIf
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Return true if basic material should be sold to the material merchant
+Func DefaultShouldSellBasicMaterial($item)
+	If Not IsBasicMaterial($item) Then Return False
+	Local $materialID = DllStructGetData($item, 'ModelID')
+	Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$materialID]
+	Return $inventory_management_cache['Sell items.Basic Materials.' & $materialName]
+EndFunc
+
+
+;~ Return true if rare material should be sold to the rare material merchant
+Func DefaultShouldSellRareMaterial($item)
+	If Not IsRareMaterial($item) Then Return False
+	Local $materialID = DllStructGetData($item, 'ModelID')
+	Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$materialID]
+	Return $inventory_management_cache['Sell items.Rare Materials.' & $materialName]
+EndFunc
+
+
+Func CheckPickupWeapon($weaponItem)
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
+	Local $weaponRarity = GetRarity($weaponItem)
+	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_RED Then Return True
+	If $weaponRarity == $RARITY_GRAY Then Return False
+	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return $inventory_management_cache['Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+EndFunc
+
+
+Func CheckSalvageWeapon($weaponItem)
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
+	Local $weaponRarity = GetRarity($weaponItem)
+	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
+	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return $inventory_management_cache['Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+EndFunc
+
+
+Func CheckSellWeapon($weaponItem)
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
+	Local $weaponRarity = GetRarity($weaponItem)
+	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
+	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return $inventory_management_cache['Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+EndFunc
+
+
+Func CheckStoreWeapon($weaponItem)
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
+	Local $weaponRarity = GetRarity($weaponItem)
+	If $weaponRarity == $RARITY_GREEN Then Return True
+	If $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
+	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponReq = GetItemReq($weaponItem)
+	Return $inventory_management_cache['Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+EndFunc
+#EndRegion Inventory Management
+
+
+#Region Buying/selling items from/to merchant
+;~ Sell general items to trader
+Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	TravelToOutpost($tradeTown, $district_name)
+	Info('Moving to merchant to sell items')
+	UseCitySpeedBoost()
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($merchant)
+	RandomSleep(500)
+
+	Info('Selling items')
+	Local $item, $itemID
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			$itemID = DllStructGetData($item, 'ModelID')
+			If $itemID <> 0 Then
+				If $shouldSellItem($item) Then
+					If Not $dryRun Then
+						SellItem($item, DllStructGetData($item, 'Quantity'))
+						RandomSleep(GetPing() + 200)
+					EndIf
+				Else
+					If $dryRun Then Info('Will not sell item at ' & $bagIndex & ':' & $i)
+				EndIf
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+;~ Sell basic materials to materials merchant in town
+Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMaterial, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	TravelToOutpost($tradeTown, $district_name)
+	Info('Moving to materials merchant')
+	UseCitySpeedBoost()
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Basic material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
+	RandomSleep(500)
+
+	Local $item, $itemID
+	For $bagIndex = 1 To _Min(4, $bags_count)
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If $shouldSellMaterial($item) Then
+				$itemID = DllStructGetData($item, 'ID')
+				Local $totalAmount = DllStructGetData($item, 'Quantity')
+				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
+				While $totalAmount > 9
+					TraderRequestSell($itemID)
+					Sleep(GetPing() + 200)
+					TraderSell()
+					Sleep(GetPing() + 200)
+					$totalAmount -= 10
+					; Safety net incase some sell orders didn't go through
+					If ($totalAmount < 10) Then
+						$item = GetItemBySlot($bagIndex, $i)
+						$totalAmount = DllStructGetData($item, 'Quantity')
+					EndIf
+				WEnd
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+;~ Sell rare materials to rare materials merchant in town
+Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMaterial, $tradeTown = $ID_EMBARK_BEACH)
+	TravelToOutpost($tradeTown, $district_name)
+	Info('Moving to rare materials merchant')
+	UseCitySpeedBoost()
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
+	RandomSleep(250)
+
+	Local $item, $itemID
+	For $bagIndex = 1 To _Min(4, $bags_count)
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If $shouldSellMaterial($item) Then
+				$itemID = DllStructGetData($item, 'ID')
+				Local $totalAmount = DllStructGetData($item, 'Quantity')
+				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
+				While $totalAmount > 0
+					TraderRequestSell($itemID)
+					Sleep(GetPing() + 200)
+					TraderSell()
+					Sleep(GetPing() + 200)
+					$totalAmount -= 1
+					; Safety net incase some sell orders didn't go through
+					If ($totalAmount < 1) Then
+						$item = GetItemBySlot($bagIndex, $i)
+						$totalAmount = DllStructGetData($item, 'Quantity')
+					EndIf
+				WEnd
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+;~ Buy rare material from rare materials merchant in town
+Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_EMBARK_BEACH)
+	TravelToOutpost($tradeTown, $district_name)
+	Info('Moving to rare materials merchant')
+	UseCitySpeedBoost()
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
+	RandomSleep(250)
+
+	For $i = 1 To $amount
+		TraderRequest($materialModelID)
+		Sleep(GetPing() + 200)
+		Local $traderPrice = GetTraderCostValue()
+		Debug('Buying for ' & $traderPrice)
+		TraderBuy()
+		Sleep(GetPing() + 200)
+	Next
+	; TODO: add safety net to check amount of items bought and buy some more if needed
+EndFunc
+
+
+;~ Buy rare material from rare materials merchant in town until you have little or no money left
+;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
+;~ So please only use with $poorThreshold > 5k
+Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	TravelToOutpost($tradeTown, $district_name)
+	If CountSlots(1, 4) == 0 Then
+		Warn('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
+		Return
+	EndIf
+	Info('Moving to rare materials merchant')
+	UseCitySpeedBoost()
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($materialTrader)
+	RandomSleep(250)
+
+	Local $IDMaterialToBuy = $materialModelID
+	TraderRequest($IDMaterialToBuy)
+	Sleep(GetPing() + 200)
+	Local $traderPrice = GetTraderCostValue()
+	If $traderPrice <= 0 Then
+		Error('Couldn''t get trader price for the original material')
+		If ($backupMaterialModelID <> Null) Then
+			TraderRequest($backupMaterialModelID)
+			Sleep(GetPing() + 200)
+			Local $traderPrice = GetTraderCostValue()
+			If $traderPrice <= 0 Then Return
+			$IDMaterialToBuy = $backupMaterialModelID
+			Notice('Falling back to backup material')
+		Else
+			Return
+		EndIf
+	EndIf
+	Local $amount = Floor((GetGoldCharacter() - $poorThreshold) / $traderPrice)
+	Info('Buying ' & $amount & ' items for ' & $traderPrice)
+	While $amount > 0
+		TraderBuy()
+		Sleep(GetPing() + 200)
+		TraderRequest($IDMaterialToBuy)
+		Sleep(GetPing() + 200)
+		$traderPrice = GetTraderCostValue()
+		$amount -= 1
+	WEnd
+EndFunc
+
+
+;~ Buy merchant items in town
+;~ FIXME: error if total price is superior to 100k, add a loop for that
+;~ FIXME: error if amount is superior to 250, add another loop for that
+Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = False, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	TravelToOutpost($tradeTown, $district_name)
+	If GetGoldCharacter() < $amount * $itemPrice And GetGoldStorage() > $amount * $itemPrice - 1 Then
+		WithdrawGold($amount * $itemPrice)
+		RandomSleep(500)
+	EndIf
+
+	Info('Moving to merchant to buy items')
+	UseCitySpeedBoost()
+	; in Embark Beach, move to spot to avoid getting stuck on obstacles
+	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
+	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
+	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	GoToNPC($merchant)
+	RandomSleep(500)
+
+	Local $xunlaiTemporarySlot = Null
+	Local $spaceNeeded = $stackable ? 1 : $amount
+	; There is no space in inventory, we need to store things in Xunlai to buy items
+	If (CountSlots(1, 4) < $spaceNeeded) Then
+		$xunlaiTemporarySlot = FindChestEmptySlots()
+		If UBound($xunlaiTemporarySlot) < $spaceNeeded Then
+			Error('Not enough space in inventory and storage to buy anything')
+			Return False
+		EndIf
+
+		For $i = 0 To $spaceNeeded - 1
+			MoveItem(GetItemBySlot(1, $i + 1), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
+		Next
+	EndIf
+
+	Local $itemCount = GetInventoryItemCount($itemID)
+	Local $targetItemCount = $itemCount + $amount
+	Local $tryCount = 0
+	While $itemCount < $targetItemCount
+		If $tryCount == 10 Then Return False
+		BuyItem($itemPosition, $amount, $itemPrice)
+		RandomSleep(1000)
+		$tryCount += 1
+		$itemCount = GetInventoryItemCount($itemID)
+	WEnd
+
+	RandomSleep(500)
+	If $xunlaiTemporarySlot <> Null Then
+		Local $freeSpace = $stackable ? 1 : $amount
+		For $i = 0 To $freeSpace - 1
+			MoveItem(GetItemByModelID($itemID), $xunlaiTemporarySlot[2 * $i], $xunlaiTemporarySlot[2 * $i + 1])
+		Next
+	EndIf
+EndFunc
+
+
+;~ Buy kits for mid run salvage to preserve inventory space during run
+Func BuyKitsForMidRun()
+	; constants to determine how many kits should be in player's inventory
+	Local Static $requiredSalvageKitUses = 300				; = 12 salvage kits with 25 uses,
+	Local Static $requiredIdentificationKitUses = 400		; = 4 superior identification kits with 100 uses
+
+	Local $salvageUses = CountRemainingKitUses($ID_SALVAGE_KIT)
+	Local $salvageKitsRequired = KitsRequired($requiredSalvageKitUses - $salvageUses, $ID_SALVAGE_KIT)
+	Local $identificationUses = CountRemainingKitUses($ID_SUPERIOR_IDENTIFICATION_KIT)
+	Local $identificationKitsRequired = KitsRequired($requiredIdentificationKitUses - $identificationUses, $ID_SUPERIOR_IDENTIFICATION_KIT)
+
+	If $salvageKitsRequired > 0 Then BuySalvageKitInTown($salvageKitsRequired)
+	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInTown($identificationKitsRequired)
+EndFunc
+
+
+;~ Buy salvage kits in town
+Func BuySalvageKitInTown($amount = 1)
+	While $amount > 10
+		BuyInTown($ID_SALVAGE_KIT, 2, 100, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInTown($ID_SALVAGE_KIT, 2, 100, $amount, False)
+EndFunc
+
+
+;~ Buy expert salvage kits in town
+Func BuyExpertSalvageKitInTown($amount = 1)
+	While $amount > 10
+		BuyInTown($ID_EXPERT_SALVAGE_KIT, 3, 400, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInTown($ID_EXPERT_SALVAGE_KIT, 3, 400, $amount, False)
+EndFunc
+
+
+;~ Buy superior salvage kits in town
+Func BuySuperiorSalvageKitInTown($amount = 1)
+	While $amount > 10
+		BuyInTown($ID_SUPERIOR_SALVAGE_KIT, 4, 2000, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInTown($ID_SUPERIOR_SALVAGE_KIT, 4, 2000, $amount, False)
+EndFunc
+
+
+;~ Buy superior identification kits in town
+Func BuySuperiorIdentificationKitInTown($amount = 1)
+	While $amount > 10
+		BuyInTown($ID_SUPERIOR_IDENTIFICATION_KIT, 6, 500, 10, False)
+		$amount -= 10
+	WEnd
+	If $amount > 0 Then BuyInTown($ID_SUPERIOR_IDENTIFICATION_KIT, 6, 500, $amount, False)
+EndFunc
+#EndRegion Buying/selling items from/to merchant
+
+
+#Region Identification and Salvage
+;~ Returns true if there are unidentified items in inventory
+Func HasUnidentifiedItems()
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		Local $item
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
+			If Not GetIsIdentified($item) Then Return True
+		Next
+	Next
+	Return False
+EndFunc
+
+
+;~ Returns true if there are items in inventory that user selected to salvage in the GUI interface
+Func HasChosenItemsToSalvage()
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		Local $item
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
+			If DefaultShouldSalvageItem($item) Then Return True
+		Next
+	Next
+	Return False
+EndFunc
+
+
+;~ Identify items from inventory
+Func IdentifyItems($buyKit = True)
+	Info('Identifying items')
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		Local $item
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
+			If Not GetIsIdentified($item) Then
+				Local $rarity = GetRarity($item)
+				Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+				If Not $inventory_management_cache['Identify items.' & $rarityName] Then ContinueLoop
+
+				Local $IdentificationKit = FindIdentificationKit()
+				If $IdentificationKit == 0 Then
+					If $buyKit Then
+						BuySuperiorIdentificationKitInTown()
+					Else
+						Return False
+					EndIf
+				EndIf
+				IdentifyItem($item)
+				RandomSleep(100)
+			EndIf
+		Next
+	Next
+	Return True
+EndFunc
+
+
+;~ Salvage items from inventory, only items specified by configuration in GUI interface
+Func SalvageItems($buyKit = True)
+	Local $kit = GetSalvageKit($buyKit)
+	If $kit == 0 Then Return False
+	Local $uses = DllStructGetData($kit, 'Value') / 2
+
+	Local $movedItem = Null
+	If (CountSlots(1, 4) < 1) Then
+		; There is no space in inventory, we need to store something in Xunlai chest to start the salvage
+		Local $xunlaiTemporarySlot = FindChestFirstEmptySlot()
+		$movedItem = GetItemBySlot(_Min(4, $bags_count), 1)
+		MoveItem($movedItem, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
+	EndIf
+
+	Info('Salvaging items')
+	Local $trophiesAndMaterialItems[60]
+	Local $trophyAndMaterialIndex = 0
+	For $bagIndex = 1 To _Min(4, $bags_count)
+		Debug('Salvaging bag ' & $bagIndex)
+		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
+		For $slot = 1 To $bagSize
+			Local $item = GetItemBySlot($bagIndex, $slot)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+
+			Local $itemID = DllStructGetData($item, 'ModelID')
+			If IsTrophy($itemID) Then
+				If $inventory_management_cache['@salvage.trophies.nothing'] Then ContinueLoop
+				; Trophies should be salvaged at the end, because they create a lot of materials
+				$trophiesAndMaterialItems[$trophyAndMaterialIndex] = $item
+				$trophyAndMaterialIndex += 1
+			ElseIf IsRareMaterial($item) Then
+				If $inventory_management_cache['@salvage.materials.nothing'] Then ContinueLoop
+				; Rare materials should be salvaged at the end, because they create a lot of materials
+				$trophiesAndMaterialItems[$trophyAndMaterialIndex] = $item
+				$trophyAndMaterialIndex += 1
+			Else
+				If DefaultShouldSalvageItem($item) Then
+					SalvageItem($item, $kit)
+					$uses -= 1
+					If $uses < 1 Then
+						$kit = GetSalvageKit($buyKit)
+						If $kit == 0 Then Return False
+						$uses = DllStructGetData($kit, 'Value') / 2
+					EndIf
+				EndIf
+			EndIf
+		Next
+	Next
+
+	; Moving removed item back from Xunlai chest to empty slot in inventory to check it to salvage it too
+	If $movedItem <> Null Then
+		Local $bagEmptySlot = FindFirstEmptySlot(1, _Min(4, $bags_count))
+		MoveItem($movedItem, $bagEmptySlot[0], $bagEmptySlot[1])
+		If DefaultShouldSalvageItem($movedItem) Then
+			SalvageItem($movedItem, $kit)
+			$uses -= 1
+			If $uses < 1 Then
+				$kit = GetSalvageKit($buyKit)
+				If $kit == 0 Then Return False
+				$uses = DllStructGetData($kit, 'Value') / 2
+			EndIf
+		EndIf
+	EndIf
+
+	For $i = 0 To $trophyAndMaterialIndex - 1
+		If DefaultShouldSalvageItem($trophiesAndMaterialItems[$i]) Then
+			For $k = 0 To DllStructGetData($trophiesAndMaterialItems[$k], 'Quantity') - 1
+				SalvageItem($trophiesAndMaterialItems[$i], $kit)
+				$uses -= 1
+				If $uses < 1 Then
+					$kit = GetSalvageKit($buyKit)
+					If $kit == 0 Then Return False
+					$uses = DllStructGetData($kit, 'Value') / 2
+				EndIf
+			Next
+		EndIf
+	Next
+EndFunc
+
+
+;~ Get a salvage kit from inventory, or buy one if not present
+;~ Returns the kit or 0 if it was not found and not bought
+Func GetSalvageKit($buyKit = True)
+	Local $kit = FindBasicSalvageKit()
+	If $kit == 0 And $buyKit Then
+		BuySalvageKitInTown()
+		$kit = FindBasicSalvageKit()
+	EndIf
+	Return $kit
+EndFunc
+
+
+;~ Salvage an item based on its position in the inventory
+Func SalvageItemAt($bag, $slot)
+	Local $item = GetItemBySlot($bag, $slot)
+	If DllStructGetData($item, 'ID') = 0 Then Return
+	If DefaultShouldSalvageItem($item) Then
+		SalvageItem($item, $salvageKit)
+	EndIf
+EndFunc
+
+
+;~ Salvage the given item - FIXME: fails for weapons/armorsalvageable when using expert kits and better because they open a window
+Func SalvageItem($item, $salvageKit)
+	Local $rarity = GetRarity($item)
+	StartSalvageWithKit($item, $salvageKit)
+	Sleep(GetPing() + 400)
+	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
+		ValidateSalvage()
+		Sleep(GetPing() + 400)
+	EndIf
+	Return True
+EndFunc
+
+
+;~ Get the number of uses of a kit
+Func GetKitUsesLeft($kitID)
+	Local $kitStruct = GetModStruct($kitID)
+	Return Int('0x' & StringMid($kitStruct, 11, 2))
+EndFunc
+
+
+;~ Returns item ID of basic salvage kit in inventory.
+Func FindBasicSalvageKit()
+	Local $kits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
+	Return FindKit($kits)
+EndFunc
+
+
+;~ Returns item ID of salvage kit in inventory (except basic)
+Func FindSalvageKit()
+	Local $kits = [$ID_EXPERT_SALVAGE_KIT, $ID_SUPERIOR_SALVAGE_KIT]
+	Return FindKit($kits)
+EndFunc
+
+
+;~ Returns item ID of identification kit in inventory.
+Func FindIdentificationKit()
+	Local $kits = [$ID_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
+	Return FindKit($kits)
+EndFunc
+
+
+;~ Returns kits
+Func GetInventoryKitCount($enabledModelIDs)
+	Local $kitCount = 0
+	Local $item, $modelID
+
+	For $i = 1 To 4
+		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
+			$item = GetItemBySlot($i, $j)
+			$modelID = DllStructGetData($item, 'ModelID')
+
+			; Skip this item if model is not in our list
+			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
+			$kitCount += 1
+		Next
+	Next
+	Return $kitCount
+EndFunc
+
+
+;~ Returns kit
+Func FindKit($enabledModelIDs)
+	Local $kit = 0
+	Local $uses = 101
+	Local $item, $modelID, $value
+
+	For $i = 1 To 16
+		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
+			$item = GetItemBySlot($i, $j)
+			$modelID = DllStructGetData($item, 'ModelID')
+
+			; Skip this item if model is not in our list
+			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
+			$value = DllStructGetData($item, 'Value')
+			Switch $modelID
+				Case $ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2
+					If $value / 2 < $uses Then
+						$uses = $value / 2
+						$kit = $item
+					EndIf
+				Case $ID_EXPERT_SALVAGE_KIT
+					If $value / 8 < $uses Then
+						$uses = $value / 8
+						$kit = $item
+					EndIf
+				Case $ID_SUPERIOR_SALVAGE_KIT
+					If $value / 10 < $uses Then
+						$uses = $value / 10
+						$kit = $item
+					EndIf
+				Case $ID_IDENTIFICATION_KIT
+					If $value / 2 < $uses Then
+						$uses = $value / 2
+						$kit = $item
+					EndIf
+				Case $ID_SUPERIOR_IDENTIFICATION_KIT
+					If $value / 2.5 < $uses Then
+						$uses = $value / 2.5
+						$kit = $item
+					EndIf
+			EndSwitch
+		Next
+	Next
+	Return $kit
+EndFunc
+
+
+;~ Return True if item is present in array of items, else False - duplicate in Utils
+Func FindKitArrayContainsHelper($itemsArray, $itemModelID)
+	For $itemArrayModelID In $itemsArray
+		If $itemArrayModelID == $itemModelID Then Return True
+	Next
+	Return False
+EndFunc
+
+
+;~ Function to calculate remaining count of uses of kits present in inventory, of modelID provided as parameter
+Func CountRemainingKitUses($kitModelID)
+	Local $allKitUses = 0
+	Local $item, $itemModelID, $kitUses
+
+	For $i = 1 To 4
+		For $j = 1 To DllStructGetData(GetBag($i), 'Slots')
+			$item = GetItemBySlot($i, $j)
+			$itemModelID = DllStructGetData($item, 'ModelID')
+			If $itemModelID <> $kitModelID Then ContinueLoop
+			$kitUses = DllStructGetData($item, 'Value') / 2
+			$allKitUses = $allKitUses + $kitUses
+		Next
+	Next
+	Return $allKitUses
+EndFunc
+
+
+;~ Function to calculate required number of kits to perform required number of kit actions
+Func KitsRequired($requiredkitUses, $kitModelID)
+	Local $usesPerKit
+	Switch $kitModelID
+		Case $ID_PERFECT_SALVAGE_KIT, $ID_CHARR_SALVAGE_KIT
+			$usesPerKit = 5
+		Case $ID_SALVAGE_KIT_2
+			$usesPerKit = 10
+		Case $ID_IDENTIFICATION_KIT, $ID_SALVAGE_KIT, $ID_EXPERT_SALVAGE_KIT
+			$usesPerKit = 25
+		Case $ID_SUPERIOR_IDENTIFICATION_KIT, $ID_SUPERIOR_SALVAGE_KIT
+			$usesPerKit = 100
+	EndSwitch
+	Return Ceiling($requiredkitUses / $usesPerKit)
+EndFunc
+#EndRegion Identification and Salvage
+
+
+#Region Inventory and Chest Storage
+;~ Move items to the equipment bag
+Func MoveItemsToEquipmentBag()
+	If $bags_count < 5 Then Return
+	Local $equipmentBagEmptySlots = FindEmptySlots(5)
+	Local $countEmptySlots = UBound($equipmentBagEmptySlots) / 2
+	If $countEmptySlots < 1 Then
+		Debug('No space in equipment bag to move the items to')
+		Return
+	EndIf
+
+	Local $cursor = 1
+	For $bagId = 4 To 1 Step -1
+		For $slot = 1 To DllStructGetData(GetBag($bagId), 'slots')
+			Local $item = GetItemBySlot($bagId, $slot)
+			If DllStructGetData($item, 'ID') <> 0 And (isArmor($item) Or IsWeapon($item)) Then
+				If $countEmptySlots < 1 Then
+					Debug('No space in equipment bag to move the items to')
+					Return
+				EndIf
+				MoveItem($item, 5, $equipmentBagEmptySlots[$cursor])
+				$cursor += 2
+				$countEmptySlots -= 1
+				RandomSleep(50)
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+;~ Move all items out of the equipment bag so they can be salvaged
+Func MoveItemsOutOfEquipmentBag()
+	Local $equipmentBag = GetBag(5)
+	Local $inventoryEmptySlots = FindAllEmptySlots(1, 4)
+	Local $countEmptySlots = UBound($inventoryEmptySlots) / 2
+	Local $cursor = 0
+	If $countEmptySlots <= $cursor Then
+		Warn('No space in inventory to move the items out of the equipment bag')
+		Return 0
+	EndIf
+
+	For $slot = 1 To DllStructGetData($equipmentBag, 'slots')
+		If $countEmptySlots <= $cursor Then
+			Warn('No space in inventory to move the items out of the equipment bag')
+			Return 0
+		EndIf
+		Local $item = GetItemBySlot(5, $slot)
+		If DllStructGetData($item, 'ModelID') <> 0 Then
+			If IsArmor($item) Then ContinueLoop
+			If Not DefaultShouldSalvageItem($item) Then ContinueLoop
+			MoveItem($item, $inventoryEmptySlots[2 * $cursor], $inventoryEmptySlots[2 * $cursor + 1])
+			$cursor += 1
+			RandomSleep(50)
+		EndIf
+	Next
+	Return $cursor
+EndFunc
+
+
+;~ helper function for StoreEverythingInXunlaiStorage function
+Func StoreAllItems($item = Null)
+	Return True
+EndFunc
+
+
+;~ Store all items in the Xunlai Storage
+Func StoreEverythingInXunlaiStorage()
+	StoreItemsInXunlaiStorage(StoreAllItems)
+EndFunc
+
+
+;~ Store selected items in the Xunlai Storage
+Func StoreItemsInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
+	Info('Storing items')
+	Local $item, $itemID
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			$itemID = DllStructGetData($item, 'ModelID')
+			If $itemID <> 0 And $shouldStoreItem($item) Then
+				Debug('Moving ' & $bagIndex & ':' & $i)
+				If Not StoreItemInXunlaiStorage($item) Then Return False
+				RandomSleep(50)
+			EndIf
+		Next
+	Next
+EndFunc
+
+
+;~ Store an item in the Xunlai Storage
+Func StoreItemInXunlaiStorage($item)
+	Local $existingStacks
+	Local $itemID, $storageSlot, $amount
+	$itemID = DllStructGetData($item, 'ModelID')
+	$amount = DllStructGetData($item, 'Quantity')
+
+	If IsMaterial($item) Then
+		Local $materialStorageLocation = $MAP_MATERIAL_LOCATION[$itemID]
+		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
+		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
+		MoveItem($item, 6, $materialStorageLocation)
+		RandomSleep(GetPing() + 20)
+		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
+		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
+		If $newCountMaterial - $countMaterial == $amount Then Return True
+		$amount = DllStructGetData($item, 'Quantity')
+	EndIf
+	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
+		$existingStacks = FindAllInXunlaiStorage($item)
+		For $bagIndex = 0 To UBound($existingStacks) - 1 Step 2
+			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
+			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
+			If $existingAmount < 250 Then
+				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
+				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
+				RandomSleep(GetPing() + 20)
+				$amount = $amount + $existingAmount - 250
+				If $amount <= 0 Then Return True
+			EndIf
+		Next
+	EndIf
+	$storageSlot = FindChestFirstEmptySlot()
+	If $storageSlot[0] == 0 Then
+		Warn('Storage is full')
+		Return False
+	EndIf
+	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
+	MoveItem($item, $storageSlot[0], $storageSlot[1])
+	RandomSleep(GetPing() + 20)
+	Return True
+EndFunc
+
+
+;~ Turns the bag index and the slot index into a general index
+Func GetGeneralSlot($bagsSizes, $bag, $slot)
+	Local $generalSlot = $slot
+	For $i = 1 To $bag - 1
+		$generalSlot += $bagsSizes[$i]
+	Next
+	Return $generalSlot
+EndFunc
+
+
+;~ Turns a general index into the bag index and the slot index
+Func GetBagAndSlotFromGeneralSlot($bagsSizes, $generalSlot)
+	Local $bagAndSlot[2]
+	Local $i = 1
+	For $i = 1 To 4
+		If $generalSlot <= $bagsSizes[$i] Then
+			$bagAndSlot[0] = $i
+			$bagAndSlot[1] = $generalSlot
+			Return $bagAndSlot
+		Else
+			$generalSlot -= $bagsSizes[$i]
+		EndIf
+	Next
+	$bagAndSlot[0] = $i
+	$bagAndSlot[1] = $generalSlot
+	Return $bagAndSlot
+EndFunc
+
+
+;~ Helper function for sorting function - allows moving an item via a generic position instead of with both bag and position
+Func GenericMoveItem($bagsSizes, $item, $genericSlot)
+	Local $i = 1
+	For $i = 1 To 4
+		If $genericSlot <= $bagsSizes[$i] Then
+			Debug('to bag ' & $i & ' position ' & $genericSlot)
+			;MoveItem($item, $i, $genericSlot)
+			Return
+		Else
+			$genericSlot -= $bagsSizes[$i]
+		EndIf
+	Next
+	Debug('to bag ' & $i & ' position ' & $genericSlot)
+	;MoveItem($item, $i, $genericSlot)
+EndFunc
+
+
+;~ Balance character gold to the amount given - mode 0 = full balance, mode 1 = only withdraw, mode 2 = only deposit
+Func BalanceCharacterGold($goldAmount, $mode = 0)
+	Info('Balancing character''s gold')
+	Local $GCharacter = GetGoldCharacter()
+	Local $GStorage = GetGoldStorage()
+	If $GStorage > 950000 Then
+		Warn('Too much gold in chest, use some.')
+	ElseIf $GStorage < 50000 Then
+		Warn('Not enough gold in chest, get some.')
+	ElseIf $GCharacter > $goldAmount And $mode <> 1 Then
+		DepositGold($GCharacter - $goldAmount)
+	ElseIf $GCharacter < $goldAmount And $mode <> 2 Then
+		WithdrawGold($goldAmount - $GCharacter)
+	EndIf
+	Return True
+EndFunc
+#EndRegion Inventory and Chest storage
+
+
+#Region Count and find items
+;~ Find all empty slots in the given bag
+Func FindEmptySlots($bagId)
+	Local $bag = GetBag($bagId)
+	Local $emptySlots[0] = []
+	Local $item
+	For $slot = 1 To DllStructGetData($bag, 'Slots')
+		$item = GetItemBySlot($bagId, $slot)
+		If DllStructGetData($item, 'ID') == 0 Then
+			_ArrayAdd($emptySlots, $bagId)
+			_ArrayAdd($emptySlots, $slot)
+		EndIf
+	Next
+	Return $emptySlots
+EndFunc
+
+
+;~ Find first empty slot in chest
+Func FindChestFirstEmptySlot()
+	Return FindFirstEmptySlot(8, 21)
+EndFunc
+
+
+;~ Find first empty slot in bags from firstBag to lastBag
+Func FindFirstEmptySlot($firstBag, $lastBag)
+	Local $bagEmptySlot[2] = [0, 0]
+	For $i = $firstBag To $lastBag
+		$bagEmptySlot[1] = FindEmptySlot($i)
+		If $bagEmptySlot[1] <> 0 Then
+			$bagEmptySlot[0] = $i
+			Return $bagEmptySlot
+		EndIf
+	Next
+	Return $bagEmptySlot
+EndFunc
+
+
+;~ Find the first empty slot in the given bag
+Func FindEmptySlot($bag)
+	Local $item
+	For $slot = 1 To DllStructGetData(GetBag($bag), 'Slots')
+		$item = GetItemBySlot($bag, $slot)
+		If DllStructGetData($item, 'ID') = 0 Then Return $slot
+	Next
+	; slots are indexed from 1, 0 if no empty slot found
+	Return 0
+EndFunc
+
+
+;~ Find all empty slots in inventory
+Func FindInventoryEmptySlots()
+	Return FindAllEmptySlots(1, $bags_count)
+EndFunc
+
+
+;~ Find all empty slots in chest
+Func FindChestEmptySlots()
+	Return FindAllEmptySlots(8, 21)
+EndFunc
+
+
+;~ Find all empty slots in the given bags
+Func FindAllEmptySlots($firstBag, $lastBag)
+	Local $emptySlots[0] = []
+	For $i = $firstBag To $lastBag
+		Local $bagEmptySlots[] = FindEmptySlots($i)
+		If UBound($bagEmptySlots) > 0 Then _ArrayAdd($emptySlots, $bagEmptySlots)
+	Next
+	Return $emptySlots
+EndFunc
+
+
+;~ Count available slots in the inventory
+Func CountSlots($fromBag = 1, $toBag = $bags_count)
+	Local $bag
+	Local $availableSlots = 0
+	; If bag is missing it just won't count (Slots = 0, ItemsCount = 0)
+	For $i = $fromBag To $toBag
+		$bag = GetBag($i)
+		$availableSlots += DllStructGetData($bag, 'Slots') - DllStructGetData($bag, 'ItemsCount')
+	Next
+	Return $availableSlots
+EndFunc
+
+
+;~ Counts open slots in the Xunlai storage chest
+Func CountSlotsChest()
+	Local $chestTab
+	Local $availableSlots = 0
+	For $i = 8 To 21
+		$chestTab = GetBag($i)
+		$availableSlots += 25 - DllStructGetData($chestTab, 'ItemsCount')
+	Next
+	Return $availableSlots
+EndFunc
+
+
+;~ Returns true if there are materials in inventory
+Func HasMaterials()
+	Return HasInInventory(IsMaterial)
+EndFunc
+
+
+;~ Returns true if there are basic materials in inventory
+Func HasBasicMaterials()
+	Return HasInInventory(IsBasicMaterial)
+EndFunc
+
+
+;~ Returns true if there are rare materials in inventory
+Func HasRareMaterials()
+	Return HasInInventory(IsRareMaterial)
+EndFunc
+
+
+;~ Returns true if there are items in inventory satisfying condition
+Func HasInInventory($condition)
+	Local $item, $itemID
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If $condition($item) Then Return True
+		Next
+	Next
+	Return False
+EndFunc
+
+
+;~ Counts black dyes in inventory
+Func GetBlackDyeCount()
+	Return GetInventoryItemCount($ID_BLACK_DYE)
+EndFunc
+
+
+;~ Counts birthday cupcakes in inventory
+Func GetBirthdayCupcakeCount()
+	Return GetInventoryItemCount($ID_BIRTHDAY_CUPCAKE)
+EndFunc
+
+
+;~ Counts gold items in inventory
+Func CountGoldItems()
+	Local $goldItemsCount = 0
+	Local $item
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			If ((IsWeapon($item) Or IsArmorSalvageItem($item)) And GetRarity($item) == $RARITY_GOLD) Then $goldItemsCount += 1
+		Next
+	Next
+	Return $goldItemsCount
+EndFunc
+
+
+;~ Look for any of the given items in bags and return bag and slot of an item, [0, 0] if none are present (positions start at 1)
+Func FindAnyInInventory(ByRef $itemIDs)
+	Local $item
+	Local $itemBagAndSlot[2]
+	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
+
+	For $bag = 1 To $bags_count
+		Local $bagSize = GetMaxSlots($bag)
+		For $slot = 1 To $bagSize
+			$item = GetItemBySlot($bag, $slot)
+			For $itemId in $itemIDs
+				If(DllStructGetData($item, 'ModelID') == $itemID) Then
+					$itemBagAndSlot[0] = $bag
+					$itemBagAndSlot[1] = $slot
+				EndIf
+			Next
+		Next
+	Next
+	Return $itemBagAndSlot
+EndFunc
+
+
+;~ Look for an item in inventory
+Func FindInInventory($itemID)
+	Return FindInStorages(1, $bags_count, $itemID)
+EndFunc
+
+
+;~ Look for an item in xunlai storage
+Func FindInXunlaiStorage($itemID)
+	Return FindInStorages(8, 21, $itemID)
+EndFunc
+
+
+;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else (bags and slots are indexed from 1 as in GWToolbox)
+Func FindInStorages($firstBag, $lastBag, $itemID)
+	Local $item
+	Local $itemBagAndSlot[2] = [0, 0]
+
+	For $bag = $firstBag To $lastBag
+		Local $bagSize = GetMaxSlots($bag)
+		For $slot = 1 To $bagSize
+			$item = GetItemBySlot($bag, $slot)
+			If(DllStructGetData($item, 'ModelID') == $itemID) Then
+				$itemBagAndSlot[0] = $bag
+				$itemBagAndSlot[1] = $slot
+			EndIf
+		Next
+	Next
+	Return $itemBagAndSlot
+EndFunc
+
+
+;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else
+Func FindAllInStorages($firstBag, $lastBag, $item)
+	Local $itemBagsAndSlots[0] = []
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $dyeColor = ($itemID == $ID_DYES) ? DllStructGetData($item, 'DyeColor') : -1
+	Local $storageItem
+
+	For $bag = $firstBag To $lastBag
+		Local $bagSize = GetMaxSlots($bag)
+		For $slot = 1 To $bagSize
+			$storageItem = GetItemBySlot($bag, $slot)
+			If (DllStructGetData($storageItem, 'ModelID') == $itemID) And ($dyeColor == -1 Or DllStructGetData($storageItem, 'DyeColor') == $dyeColor) Then
+				_ArrayAdd($itemBagsAndSlots, $bag)
+				_ArrayAdd($itemBagsAndSlots, $slot)
+			EndIf
+		Next
+	Next
+	Return $itemBagsAndSlots
+EndFunc
+
+
+;~ Look for an item in inventory
+Func FindAllInInventory($item)
+	Return FindAllInStorages(1, $bags_count, $item)
+EndFunc
+
+
+;~ Look for an item in xunlai storage
+Func FindAllInXunlaiStorage($item)
+	Return FindAllInStorages(8, 21, $item)
+EndFunc
+
+
+;~ Counts anything in inventory
+Func GetInventoryItemCount($itemID)
+	Local $amountItem = 0
+	Local $bag
+	Local $item
+	For $i = 1 To $bags_count
+		$bag = GetBag($i)
+		Local $bagSize = DllStructGetData($bag, 'Slots')
+		For $j = 1 To $bagSize
+			$item = GetItemBySlot($bag, $j)
+
+			If $MAP_DYES[$itemID] <> Null Then
+				If (DllStructGetData($item, 'ModelID') == $ID_DYES) And (DllStructGetData($item, 'DyeColor') == $itemID) Then $amountItem += DllStructGetData($item, 'Quantity')
+			Else
+				If DllStructGetData($item, 'ModelID') == $itemID Then $amountItem += DllStructGetData($item, 'Quantity')
+			EndIf
+		Next
+	Next
+	Return $amountItem
+EndFunc
+
+
+;~ Count quantity of each item in inventory, specified in provided array of items
+;~ Returns a corresponding array of counters, of the same size as provided array
+Func CountTheseItems($itemArray)
+	Local $arraySize = UBound($itemArray)
+	Local $counts[$arraySize]
+	For $bagIndex = 1 To 5
+		Local $bag = GetBag($bagIndex)
+		Local $slots = DllStructGetData($bag, 'Slots')
+		For $slot = 1 To $slots
+			Local $item = GetItemBySlot($bag, $slot)
+			Local $itemID = DllStructGetData($item, 'ModelID')
+			For $i = 0 To $arraySize - 1
+				If $itemID == $itemArray[$i] Then
+					$counts[$i] += DllStructGetData($item, 'Quantity')
+					ExitLoop
+				EndIf
+			Next
+		Next
+	Next
+	Return $counts
+EndFunc
+#EndRegion Count and find items
+
+
+#Region Items tests
+;~ Get the item damage (maximum, not minimum)
+Func GetItemMaxDmg($item)
+	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
+	Local $modString = GetModStruct($item)
+	Local $position = StringInStr($modString, 'A8A7')						; Weapon Damage
+	If $position = 0 Then $position = StringInStr($modString, 'C867')		; Energy (focus)
+	If $position = 0 Then $position = StringInStr($modString, 'B8A7')		; Armor (shield)
+	If $position = 0 Then Return 0
+	Return Int('0x' & StringMid($modString, $position - 2, 2))
+EndFunc
+
+
+;~ Return True if the item is a kit or a lockpick - used in Storage Bot to not sell those
+Func IsGeneralItem($itemID)
+	Return $MAP_GENERAL_ITEMS[$itemID] <> Null
+EndFunc
+
+
+;~ Returns true if the item is an armor salvage
+Func IsArmorSalvageItem($item)
+	Return DllStructGetData($item, 'type') == $ID_TYPE_ARMOR_SALVAGE
+EndFunc
+
+
+;~ Returns true if the item is a book
+Func IsBook($item)
+	Return DllStructGetData($item, 'type') == $ID_TYPE_BOOK
+EndFunc
+
+
+;~ Returns true if the item is stackable
+Func IsStackable($item)
+	Return BitAND(DllStructGetData($item, 'Interaction'), 0x80000) <> 0
+EndFunc
+
+
+;~ Returns true if the item is inscribable
+Func IsInscribable($item)
+	Return BitAND(DllStructGetData($item, 'Interaction'), 0x08000000) <> 0
+EndFunc
+
+
+;~ Returns true if the item is a material, basic or rare
+Func IsMaterial($item)
+	Return DllStructGetData($item, 'Type') == 11 And $MAP_ALL_MATERIALS[DllStructGetData($item, 'ModelID')] <> Null
+EndFunc
+
+
+;~ Returns true if the item is a basic material
+Func IsBasicMaterial($item)
+	Return DllStructGetData($item, 'Type') == 11 And $MAP_BASIC_MATERIALS[DllStructGetData($item, 'ModelID')] <> Null
+EndFunc
+
+
+;~ Returns true if the item is a rare material
+Func IsRareMaterial($item)
+	Return DllStructGetData($item, 'Type') == 11 And $MAP_RARE_MATERIALS[DllStructGetData($item, 'ModelID')] <> Null
+EndFunc
+
+
+;~ Returns true if the item is a consumable
+Func IsConsumable($itemID)
+	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID) Or IsConset($itemID)
+EndFunc
+
+
+;~ Returns true if the item is 1 of 3 conset items: Essence of Celerity, Armor of Salvation, Grail of Might
+Func IsConset($itemID)
+	Return $MAP_CONSETS[$itemID] <> Null
+EndFunc
+
+
+;~ Returns true if the item is an alcohol
+Func IsAlcohol($itemID)
+	Return $MAP_ALCOHOLS[$itemID] <> Null
+EndFunc
+
+
+;~ Returns true if the item is a festive item
+Func IsFestive($itemID)
+	Return $MAP_FESTIVE[$itemID] <> Null
+EndFunc
+
+
+;~ Returns true if the item is a sweet
+Func IsTownSweet($itemID)
+	Return $MAP_TOWN_SWEETS[$itemID] <> Null
+EndFunc
+
+
+;~ Returns true if the item is a PCon
+Func IsPCon($itemID)
+	Return $MAP_SWEET_PCONS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a sweet removing doubl... death penalty
+Func IsDPRemovalSweet($itemID)
+	Return $MAP_DP_REMOVAL_SWEETS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a special drop
+Func IsSpecialDrop($itemID)
+	Return $MAP_SPECIAL_DROPS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a summoning stone
+Func IsSummoningStone($itemID)
+	Return $MAP_SUMMONING_STONES[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a party tonic
+Func IsPartyTonic($itemID)
+	Return $MAP_PARTY_TONICS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is an everlasting tonic
+Func IsEverlastingTonic($itemID)
+	Return $MAP_EL_TONICS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a trophy
+Func IsTrophy($itemID)
+	Return $MAP_TROPHIES[$itemID] <> Null Or $MAP_REWARD_TROPHIES[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is an armor
+Func IsArmor($item)
+	Return $MAP_ARMOR_TYPES[DllStructGetData($item, 'type')] <> Null
+EndFunc
+
+
+;~ Return true if the item is a weapon
+Func IsWeapon($item)
+	Return $MAP_WEAPON_TYPES[DllStructGetData($item, 'type')] <> Null
+EndFunc
+
+
+;~ Return true if the item is a weapon mod
+Func IsWeaponMod($itemID)
+	Return $MAP_WEAPON_MODS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a tome
+Func IsTome($itemID)
+	Return $MAP_TOMES[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a regular tome
+Func IsRegularTome($itemID)
+	Return $MAP_REGULAR_TOMES[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is an elite tome
+Func IsEliteTome($itemID)
+	Return $MAP_ELITE_TOMES[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a gold scroll
+Func IsGoldScroll($itemID)
+	Return $MAP_GOLD_SCROLLS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a blue scroll
+Func IsBlueScroll($itemID)
+	Return $MAP_BLUE_SCROLLS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a key
+Func IsKey($itemID)
+	Return $MAP_KEYS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a map piece
+Func IsMapPiece($itemID)
+	Return $MAP_MAP_PIECES[$itemID] <> Null
+EndFunc
+
+
+;~ Identify is an item is q7-q8 with max damage
+Func IsLowReqMaxDamage($item)
+	If Not IsWeapon($item) Then Return False
+	Local $requirement = GetItemReq($item)
+	Return $requirement < 9 And IsMaxDamageForReq($item)
+EndFunc
+
+
+;~ Identify if an item is q0 with max damage
+Func IsNoReqMaxDamage($item)
+	If Not IsWeapon($item) Then Return False
+	Local $requirement = GetItemReq($item)
+	Return $requirement == 0 And IsMaxDamageForReq($item)
+EndFunc
+
+
+;~ Identify if an item has max damage for its requirement
+Func IsMaxDamageForReq($item)
+	If Not IsWeapon($item) Then Return False
+	Local $type = DllStructGetData($item, 'Type')
+	Local $requirement = GetItemReq($item)
+	Local $damage = GetItemMaxDmg($item)
+	Local $weaponMaxDamages = $WEAPONS_MAX_DAMAGE_PER_LEVEL[$type]
+	Local $maxDamage = $weaponMaxDamages[$requirement]
+	If $damage == $maxDamage Then Return True
+	Return False
+EndFunc
+
+
+;~ Returns true if an item has a 'Salvageable' inscription
+Func HasSalvageInscription($item)
+	Local $salvageableInscription[] = ['1F0208243E0432251', '0008260711A8A7000000C', '0008261323A8A7000000C', '00082600011826900098260F1CA8A7000000C']
+	Local $modstruct = GetModStruct($item)
+	For $salvageableModStruct in $salvageableInscription
+		If StringInStr($modstruct, $salvageableModStruct) Then Return True
+	Next
+	Return False
+EndFunc
+
+
+;~ Tests if an item is an identified gold item
+Func IsIdentifiedGoldItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_GOLD)
+EndFunc
+
+
+;~ Tests if an item is an identified blue item
+Func IsIdentifiedBlueItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_BLUE)
+EndFunc
+
+
+;~ Tests if an item is an identified purple item
+Func IsIdentifiedPurpleItem($item)
+	Return GetIsIdentified($item) And (GetRarity($item) == $RARITY_PURPLE)
+EndFunc
+
+
+;~ Tests if an item is an unidentified gold item
+Func IsUnidentifiedGoldItem($item)
+	Return Not GetIsIdentified($item) And (GetRarity($item) == $RARITY_GOLD)
+EndFunc
+#EndRegion Items tests
+
+
+#Region Reading items data
+;~ Read data from item at bagIndex and slot and print it in the console
+Func ReadOneItemData($bagIndex, $slot)
+	Info('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
+	Local $output = GetOneItemData($bagIndex, $slot)
+	If $output == '' Then Return
+	Info($output)
+EndFunc
+
+
+;~ Read data from all items in inventory and print it in the console
+Func ReadAllItemsData()
+	Info('bag;slot;rarity;modelID;ID;type;attribute;requirement;stats;nameString;mods;quantity;value')
+	Local $item, $output
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		For $slot = 1 To DllStructGetData($bag, 'slots')
+			$output = GetOneItemData($bagIndex, $slot)
+			If $output == '' Then ContinueLoop
+			Info($output)
+			RandomSleep(50)
+		Next
+	Next
+EndFunc
+
+
+;~ Get data from an item into a string
+Func GetOneItemData($bagIndex, $slot)
+	Local $item = GetItemBySlot($bagIndex, $slot)
+	Local $output = ''
+	If DllStructGetData($item, 'ID') <> 0 Then
+		$output &= $bagIndex & ';'
+		$output &= $slot & ';'
+		$output &= DllStructGetData($item, 'rarity') & ';'
+		$output &= DllStructGetData($item, 'ModelID') & ';'
+		$output &= DllStructGetData($item, 'ID') & ';'
+		$output &= DllStructGetData($item, 'Type') & ';'
+		$output &= GetOrDefault(GetItemAttribute($item) & ';', '')
+		$output &= GetOrDefault(GetItemReq($item) & ';', '')
+		$output &= GetOrDefault(GetItemMaxDmg($item) & ';', '')
+		$output &= DllStructGetData($item, 'NameString') & ';'
+		$output &= GetModStruct($item) & ';'
+		$output &= DllStructGetData($item, 'quantity') & ';'
+		$output &= GetOrDefault(DllStructGetData($item, 'Value') & ';', 0)
+	EndIf
+	Return $output
+EndFunc
+#EndRegion Reading items data
+
+
+#Region Database
+Global $sqlite_db
+
+#Region Tables
+; Those tables are built automatically and one is completed by the user
+Global Const $TABLE_DATA_RAW = 'DATA_RAW'
+Global Const $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
+							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
+
+Global Const $TABLE_DATA_USER = 'DATA_USER'
+Global Const $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
+
+Global Const $TABLE_DATA_SALVAGE = 'DATA_SALVAGE'
+Global Const $SCHEMA_DATA_SALVAGE = ['batch', 'model_ID', 'material', 'amount']
+
+; Those 3 lookups are filled directly when database is created
+Global Const $TABLE_LOOKUP_ATTRIBUTE = 'LOOKUP_ATTRIBUTE'
+Global Const $SCHEMA_LOOKUP_ATTRIBUTE = ['attribute_ID', 'attribute']
+
+Global Const $TABLE_LOOKUP_RARITY = 'LOOKUP_RARITY'
+Global Const $SCHEMA_LOOKUP_RARITY = ['rarity_ID', 'rarity']
+
+Global Const $TABLE_LOOKUP_TYPE = 'LOOKUP_TYPE'
+Global Const $SCHEMA_LOOKUP_TYPE = ['type_ID', 'type']
+
+; Those lookups are built from the data table filled by the user
+Global Const $TABLE_LOOKUP_MODEL = 'LOOKUP_MODEL'
+Global Const $SCHEMA_LOOKUP_MODEL = ['type_ID', 'model_ID', 'model_name', 'OS']
+
+Global Const $TABLE_LOOKUP_UPGRADES = 'LOOKUP_UPGRADES'
+Global Const $SCHEMA_LOOKUP_UPGRADES = ['OS', 'upgrade_type', 'weapon', 'effect', 'hexa', 'name', 'propagate']
+#EndRegion Tables
+
+
+;~ Connect to the database storing information about items
+Func ConnectToDatabase()
+	_SQLite_Startup()
+	If @error Then Exit MsgBox(16, 'SQLite Error', 'Failed to start SQLite')
+	FileChangeDir(@ScriptDir)
+	$sqlite_db = _SQLite_Open('data\items_database.db3')
+	If @error Then Exit MsgBox(16, 'SQLite Error', 'Failed to open database: ' & _SQLite_ErrMsg())
+	;_SQLite_SetSafeMode(False)
+	Info('Opened database at ' & @ScriptDir & '\data\items_database.db3')
+EndFunc
+
+
+;~ Disconnect from the database
+Func DisconnectFromDatabase()
+	_SQLite_Close()
+	_SQLite_Shutdown()
+EndFunc
+
+
+;~ Create tables and views and fill the ones that need it
+Func InitializeDatabase()
+	CreateTable($TABLE_LOOKUP_ATTRIBUTE, $SCHEMA_LOOKUP_ATTRIBUTE)
+	CreateTable($TABLE_LOOKUP_RARITY, $SCHEMA_LOOKUP_RARITY)
+	CreateTable($TABLE_LOOKUP_TYPE, $SCHEMA_LOOKUP_TYPE)
+
+	CreateTable($TABLE_LOOKUP_MODEL, $SCHEMA_LOOKUP_MODEL)
+	CreateTable($TABLE_LOOKUP_UPGRADES, $SCHEMA_LOOKUP_UPGRADES)
+
+	CreateTable($TABLE_DATA_RAW, $SCHEMA_DATA_RAW)
+	CreateTable($TABLE_DATA_USER, $SCHEMA_DATA_USER)
+
+	Local $columnsTypeIsNumber[] = [True, False]
+	If TableIsEmpty($TABLE_LOOKUP_TYPE) Then FillTable($TABLE_LOOKUP_TYPE, $columnsTypeIsNumber, $ITEM_TYPES_DOUBLE_ARRAY)
+	If TableIsEmpty($TABLE_LOOKUP_ATTRIBUTE) Then FillTable($TABLE_LOOKUP_ATTRIBUTE, $columnsTypeIsNumber, $ATTRIBUTES_DOUBLE_ARRAY)
+	If TableIsEmpty($TABLE_LOOKUP_RARITY) Then FillTable($TABLE_LOOKUP_RARITY, $columnsTypeIsNumber, $RARITIES_DOUBLE_ARRAY)
+EndFunc
+
+
+;~ Create a table
+Func CreateTable($tableName, $tableColumns, $ifNotExists = True)
+	Local $query = 'CREATE TABLE '
+	If $ifNotExists Then $query &= 'IF NOT EXISTS '
+	$query &= $tableName & ' ('
+	For $column in $tableColumns
+		$query &= $column & ', '
+	Next
+	$query = StringLeft($query, StringLen($query) - 2)
+	$query &= ');'
+	SQLExecute($query)
+EndFunc
+
+
+;~ Drop a table
+Func DropTable($tableName)
+	Local $query = 'DROP TABLE IF EXISTS ' & $tableName & ';'
+	SQLExecute($query)
+EndFunc
+
+
+;~ Fill a table with the given values (bidimensional array)
+Func FillTable($table, Const ByRef $isNumber, Const ByRef $values)
+	Local $query = 'INSERT INTO ' & $table & ' VALUES '
+	For $i = 0 To UBound($values) - 1
+		$query &= '('
+		For $j = 0 To UBound($values,2) - 1
+			If $isNumber[$j] Then
+				$query &= $values[$i][$j] & ', '
+			Else
+				$query &= "'" & $values[$i][$j] & "', "
+			EndIf
+		Next
+		$query = StringLeft($query, StringLen($query) - 2)
+		$query &= '), '
+	Next
+
+	$query = StringLeft($query, StringLen($query) - 2)
+	$query &= ';'
+	SQLExecute($query)
+EndFunc
+
+
+#Region Database Utils
+;~ Returns true if a table exists
+Func TableExists($table)
+	Local $query, $queryResult, $row
+	SQLQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" & $table & "';", $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$lastBatchID = $row[0]
+	WEnd
+	Return $lastBatchID
+EndFunc
+
+
+;~ Returns true if a table is empty
+Func TableIsEmpty($table)
+	Local $query, $queryResult, $row, $rowCount
+	SQLQuery('SELECT COUNT(*) FROM ' & $table & ';', $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$rowCount = $row[0]
+	WEnd
+	Return $rowCount == 0
+EndFunc
+
+
+;~ Query database
+Func SQLQuery($query, ByRef $queryResult)
+	Debug($query)
+	Local $result = _SQLite_Query($sqlite_db, $query, $queryResult)
+	If $result <> 0 Then Error('Query failed ! Failure on : ' & @CRLF & $query)
+EndFunc
+
+
+;~ Execute a request on the database
+Func SQLExecute($query)
+	Debug($query)
+	Local $result = _SQLite_Exec($sqlite_db, $query)
+	If $result <> 0 Then Error('Query failed ! Failure on : ' & @CRLF & $query & @CRLF & @error)
+EndFunc
+#EndRegion Database Utils
+
+
+;~ Store in database all data that can be found in items in inventory
+Func StoreAllItemsData()
+	Local $InsertQuery, $item
+	Local $batchID = GetPreviousBatchID() + 1
+
+	Info('Scanning and storing all items data')
+	SQLExecute('BEGIN;')
+	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		For $i = 1 To DllStructGetData($bag, 'slots')
+			$item = GetItemBySlot($bagIndex, $i)
+			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
+			GetItemReq($item)
+			$InsertQuery &= '	('
+			$InsertQuery &= $batchID & ', '
+			$InsertQuery &= $bagIndex & ', '
+			$InsertQuery &= $i & ', '
+			$InsertQuery &= DllStructGetData($item, 'modelID') & ', '
+			$InsertQuery &= DllStructGetData($item, 'type') & ', '
+			$InsertQuery &= 'NULL, '
+			$InsertQuery &= (IsWeapon($item) ? GetItemMaxDmg($item) : 'NULL') & ', '
+			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
+			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
+			$InsertQuery &= DllStructGetData($item, 'nameString') & "', '"
+			$InsertQuery &= (IsInscribable($item) ? 0 : 1) & "', '"
+			$InsertQuery &= GetModStruct($item) & "', "
+			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
+			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
+			$InsertQuery &= GetRarity($item) & ', '
+			$InsertQuery &= DllStructGetData($item, 'DyeColor') & ', '
+			$InsertQuery &= DllStructGetData($item, 'ID')
+			$InsertQuery &= '),' & @CRLF
+			Sleep(20)
+		Next
+	Next
+
+	$InsertQuery = StringLeft($InsertQuery, StringLen($InsertQuery) - 3) & @CRLF & ';'
+	SQLExecute($InsertQuery)
+	SQLExecute('COMMIT;')
+
+	AddToFilledData($batchID)
+	CompleteItemsMods($batchID)
+EndFunc
+
+
+;~ Insert data into the RAW data table
+Func AddToFilledData($batchID)
+	Local $InsertQuery = 'WITH raw AS (' & @CRLF _
+		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, OS, modstruct, dye_color, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
+		& ')' & @CRLF _
+		& 'INSERT INTO ' & $TABLE_DATA_USER & @CRLF _
+		& 'SELECT raw.batch, raw.bag, raw.slot, rarities.rarity, types.type, requirement, attributes.attribute, raw.value, names.model_name, raw.OS, NULL, NULL, NULL, raw.type_ID, raw.model_ID, raw.name_string, raw.modstruct, raw.dye_color, raw.ID' & @CRLF _
+		& 'FROM raw' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_RARITY & ' rarities ON raw.rarity_ID = rarities.rarity_ID' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_TYPE & ' types ON raw.type_ID = types.type_ID' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_ATTRIBUTE & ' attributes ON raw.attribute_ID = attributes.attribute_ID' & @CRLF _
+		& 'LEFT JOIN ' & $TABLE_LOOKUP_MODEL & ' names ON raw.type_ID = names.type_ID AND raw.model_ID = names.model_ID;'
+	SQLExecute($InsertQuery)
+EndFunc
+
+
+;~ Auto fill the items mods based on the known modstructs
+Func CompleteItemsMods($batchID)
+	Info('Completing items mods')
+	Local $upgradeTypes[3] = ['prefix', 'suffix', 'inscription']
+	Local $query
+	For $upgradeType In $upgradeTypes
+		$query = 'UPDATE ' & $TABLE_DATA_USER & @CRLF _
+			& 'SET ' & $upgradeType & ' = (' & @CRLF _
+			& '	SELECT upgrades.effect' & @CRLF _
+			& '	FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
+			& '	WHERE upgrades.propagate = 1' & @CRLF _
+			& '		AND upgrades.weapon = type_ID' & @CRLF _
+			& '		AND upgrades.hexa IS NOT NULL' & @CRLF _
+			& "		AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _
+			& "		AND modstruct LIKE ('%' || upgrades.hexa || '%')" & @CRLF _
+			& ')' & @CRLF _
+			& 'WHERE ' & $upgradeType & ' IS NULL' & @CRLF _
+			& '	AND batch = ' & $batchID & @CRLF _
+			& '	AND EXISTS (' & @CRLF _
+			& '		SELECT upgrades.effect' & @CRLF _
+			& '		FROM ' & $TABLE_LOOKUP_UPGRADES & ' upgrades' & @CRLF _
+			& '		WHERE upgrades.propagate = 1' & @CRLF _
+			& '			AND upgrades.weapon = type_ID' & @CRLF _
+			& '			AND upgrades.hexa IS NOT NULL' & @CRLF _
+			& "			AND upgrades.upgrade_type = '" & $upgradeType & "'" & @CRLF _
+			& "			AND modstruct LIKE ('%' || upgrades.hexa || '%')" & @CRLF _
+			& ');'
+		SQLExecute($query)
+	Next
+EndFunc
+
+
+;~ Get the previous batchID or -1 if no batch has been added into database
+Func GetPreviousBatchID()
+	Local $queryResult, $row, $lastBatchID, $query
+	$query = 'SELECT COALESCE(MAX(batch), -1) FROM ' & $TABLE_DATA_RAW & ';'
+	SQLQuery($query, $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$lastBatchID = $row[0]
+	WEnd
+	Return $lastBatchID
+EndFunc
+
+
+;~ Complete model name lookup table
+Func CompleteModelLookupTable()
+	Local $query
+	Info('Completing model lookup ')
+	$query = 'INSERT INTO ' & $TABLE_LOOKUP_MODEL & @CRLF _
+		& 'SELECT DISTINCT type_id, model_id, name, OS' & @CRLF _
+		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
+		& 'WHERE name IS NOT NULL' & @CRLF _
+		& '	AND (type_ID, model_ID) NOT IN (SELECT type_ID, model_ID FROM ' & $TABLE_LOOKUP_MODEL & ');'
+	SQLExecute($query)
+EndFunc
+
+
+;~ Complete mods data by cross-comparing all modstructs from items that have the same mods and deduce the mod hexa from it
+Func CompleteUpgradeLookupTable()
+	Info('Completing upgrade lookup')
+	Local $modTypes[3] = ['prefix', 'suffix', 'inscription']
+	For $upgradeType In $modTypes
+		InsertNewUpgrades($upgradeType)
+		UpdateNewUpgrades($upgradeType)
+		ValidateNewUpgrades($upgradeType)
+	Next
+EndFunc
+
+
+;~ Insert upgrades not already present in database
+Func InsertNewUpgrades($upgradeType)
+	Local $query = 'INSERT INTO ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
+		& "SELECT DISTINCT OS, '" & $upgradeType & "', type_ID, " & $upgradeType & ', NULL, NULL, 0' & @CRLF _
+		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
+		& 'WHERE ' & $upgradeType & ' IS NOT NULL' & @CRLF _
+		& "AND (OS, '" & $upgradeType & "', type_ID, " & $upgradeType & ') NOT IN (SELECT OS, upgrade_type, weapon, effect FROM ' & $TABLE_LOOKUP_UPGRADES & ');'
+	SQLExecute($query)
+EndFunc
+
+
+;~ Update upgrades with their hexa struct if we manage to find enough similarities
+Func UpdateNewUpgrades($upgradeType)
+	Local $queryResult, $row
+	Local $mapItemStruct[]
+	Local $query = 'WITH valid_groups AS (' & @CRLF _
+		& '	SELECT OS, type_ID AS weapon, ' & $upgradeType & ' FROM ' & $TABLE_DATA_USER & ' WHERE ' & $upgradeType & ' IS NOT NULL GROUP BY OS, weapon, ' & $upgradeType & ' HAVING COUNT(*) > 3' & @CRLF _
+		& ')' & @CRLF _
+		& 'SELECT valid_groups.OS, weapon, valid_groups.' & $upgradeType & ', data.modstruct' & @CRLF _
+		& 'FROM ' & $TABLE_DATA_USER & ' data' & @CRLF _
+		& 'INNER JOIN valid_groups' & @CRLF _
+		& '	ON valid_groups.OS = data.OS AND valid_groups.weapon = data.type_ID AND valid_groups.' & $upgradeType & ' = data.' & $upgradeType & @CRLF _
+		& 'ORDER BY valid_groups.' & $upgradeType & ';'
+	SQLQuery($query, $queryResult)
+	While _SQLite_FetchData($queryResult, $row) = $SQLITE_OK
+		$mapItemStruct = AppendArrayMap($mapItemStruct, $row[0] & '|' & $row[1] & '|' & $row[2], $row[3])
+	WEnd
+
+	Local $OSWeaponUpgradeTypes = MapKeys($mapItemStruct)
+	For $OSWeaponUpgradeType In $OSWeaponUpgradeTypes
+		Local $modStruct = LongestCommonSubstring($mapItemStruct[$OSWeaponUpgradeType])
+		Local $bananaSplit = StringSplit($OSWeaponUpgradeType, '|')
+
+		$query = 'UPDATE ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
+			& "	SET hexa = '" & $modStruct & "' WHERE OS = " & $bananaSplit[1] & " AND upgrade_type = '" & $upgradeType & "' AND weapon = " & $bananaSplit[2] & " AND effect = '" & $bananaSplit[3] & "';"
+		SQLExecute($query)
+	Next
+EndFunc
+
+
+;~ Validate that the upgrades hexa structs we found are correct
+Func ValidateNewUpgrades($upgradeType)
+	Local $query
+	$query = 'UPDATE ' & $TABLE_LOOKUP_UPGRADES & @CRLF _
+		& 'SET propagate = 2' & @CRLF _
+		& 'WHERE hexa IS NOT NULL' & @CRLF _
+		& 'AND EXISTS (' & @CRLF _
+		& "	SELECT data.OS, type_ID, '" & $upgradeType & "', " & $upgradeType & @CRLF _
+		& '	FROM ' & $TABLE_DATA_USER & ' data' & @CRLF _
+		& '	WHERE data.OS = ' & $TABLE_LOOKUP_UPGRADES & '.OS' & @CRLF _
+		& "		AND upgrade_type = '" & $upgradeType & "'" & @CRLF _
+		& "		AND data.rarity = 'Gold'" & @CRLF _
+		& '		AND data.type_ID = weapon' & @CRLF _
+		& "		AND data.modstruct LIKE ('%' || hexa || '%')" & @CRLF _
+		& '		AND data.' & $upgradeType & ' <> effect' & @CRLF _
+		& ');'
+	SQLExecute($query)
+EndFunc
+#EndRegion Database
