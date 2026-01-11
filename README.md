@@ -145,15 +145,18 @@ Feel free to create and add more bots; it’s pretty simple!
 
 ## 📌 Planned Features
 
-- ⚡🛠️ **FoW completion bot**
-- 💡🕓 **Fix the Spirit Slaves farm**
+- 💡🛠️ **FoW completion bot**
+- 💡🛠️ **Fix Spirit Slaves farm**
+- 💡🛠️ **Fix R trapper Stygian farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 🧠💭 **Cathedral of Flames farm bot** - 2 requests
-- 🧠💭 **Kilroy bot** - 1 request
-- 🧠💭 **Dwarf title farm bot** - 1 request
-- 🧠💭 **Improve crash recovery**
+- 🧠💭 **Cathedral of Flames farm bot (bones, Diessa Chalices, Rin Relics)** - 2 requests
+- 🧠💭 **Kilroy bot (q8, survivor title)** - 1 request
+- 🧠💭 **Deldrimor title bot** - 1 request
+- 🧠💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
 - 🧠💭 **Secret Lair of the Snowmen (Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic)**
 - 🧠💭 **Irontoe's lair (Dwarven Ale, Aged Dwarven Ale)**
+- 🧠💭 **Nicholas the traveler items (gifties)**
+- 🧠💭 **Improve crash recovery**
 
 ### Legend
 
@@ -163,7 +166,8 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🧠 No priority
 
 - ✅ Completed
-- 🛠️ In progress
+- 🔄 In progress
+- 🛠️ Out of order
 - 🕓 Planned
 - 💭 Wishlist
 
