@@ -33,8 +33,6 @@ Global Const $FOW_FARM_INFORMATIONS = 'For best results, don''t cheap out on her
 	& 'If you add a summon to this farm, do it so that it despawned once doing green forest'
 Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 
-Global Const $ID_QUEST_WAILING_LORD = 0xCC
-Global Const $ID_QUEST_THE_ETERNAL_FORGEMASTER = 0xD1
 Global Const $SHARD_WOLF_MODELID = 2835
 Global Const $ID_FOW_UNHOLY_TEXTS = 2619
 
@@ -231,14 +229,14 @@ Func TheTempleOfWar()
 
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 0x13
-		$questState = DllStructGetData(GetQuestByID($ID_QUEST_THE_ETERNAL_FORGEMASTER), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_THE_ETERNAL_FORGEMASTER), 'LogState')
 		Info('The Eternal Forgemaster not finished yet : ' & $questState)
 		Sleep(1000)
 	WEnd
 
 	Info('Getting the Eternal Forgemaster quest reward')
 	Local $npc = GetNearestNPCToCoords(1850, -200)
-	TakeQuestOrReward($npc, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D107, 0)
+	TakeQuestOrReward($npc, $ID_THE_ETERNAL_FORGEMASTER, 0x80D107, 0)
 
 	Info('Getting the Defend the Temple of War quest')
 	MoveTo(1850, -150)
@@ -459,7 +457,7 @@ Func ForestOfTheWailingLord()
 		Sleep(3000)
 		MoveTo(-20500, 14200)
 		Sleep(17000)
-		$questState = DllStructGetData(GetQuestByID($ID_QUEST_WAILING_LORD), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_THE_WAILING_LORD), 'LogState')
 	WEnd
 	CancelAllHeroes()
 

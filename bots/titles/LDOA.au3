@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: Coaxx
-; Contributor: caustic-kronos, n1kn4x
+; Contributor: caustic-kronos, n1kn4x, Gahais
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -32,7 +32,7 @@ Global Const $LDOA_INFORMATIONS = 'The bot will:' & @CRLF _
 	& '- In the beginning it tries to do the elementalist quest to get some initial skill.' & @CRLF _
 	& '- If you are not an elementalist, then it is advised to get some initial skills yourself.' & @CRLF _
 	& '- If you are already level 2, it wont setup your bar or weapons, you can choose.' & @CRLF _
-	& '- It will get you LDOA, this is not a farming bot.'
+	& '- It will get you Legendary Defender of Ascalon title, this is not a farming bot.'
 ; Average duration ~ 1m
 Global Const $LDOA_FARM_DURATION = 1 * 60 * 1000
 
@@ -44,9 +44,6 @@ Global Const $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN = 0x804703
 Global Const $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN = 0x804701
 Global Const $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE = 0x802E01
 Global Const $ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET = 0x84A101
-
-Global Const $ID_QUEST_CHARR_AT_THE_GATE = 0x2E
-Global Const $ID_QUEST_FARMER_HAMNET = 0x4A1
 
 Global Const $ID_LUMINESCENT_SCEPTER = 6508
 Global Const $ID_SERRATED_SHIELD = 6514
@@ -166,12 +163,12 @@ EndFunc
 
 ;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_CHARR_AT_THE_GATE), 'Logstate')
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_CHARR_AT_THE_GATE), 'Logstate')
 	If $questStatus == 0 Or $questStatus == 3 Then
 		Info('Setting up Charr at the gate quest...')
 		DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		Sleep(GetPing() + 750)
-		AbandonQuest($ID_QUEST_CHARR_AT_THE_GATE)
+		AbandonQuest($ID_CHARR_AT_THE_GATE)
 		Sleep(GetPing() + 750)
 		MoveTo(7974, 6142)
 		MoveTo(5668, 10667)
@@ -190,7 +187,7 @@ Func SetupHamnetQuest()
 	Info('Setting up Hamnet quest...')
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_FARMER_HAMNET), 'Logstate')
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
 	If $questStatus == 0 Then
 		Info('Quest not found, setting up...')
 		Sleep(GetPing() + 750)
@@ -202,7 +199,7 @@ Func SetupHamnetQuest()
 		Sleep(GetPing() + 750)
 		Dialog($ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET)
 		Sleep(GetPing() + 750)
-		$questStatus = DllStructGetData(GetQuestByID($ID_QUEST_FARMER_HAMNET), 'Logstate')
+		$questStatus = DllStructGetData(GetQuestByID($ID_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
 		If $questStatus == 0 Then Return $FAIL
 	EndIf
 	Info('Quest found, Good to go!')

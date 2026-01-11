@@ -50,7 +50,7 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 
 ### 'LDOA.au3'
 - Author: Coaxx
-- Contributor: Kronos, n1kn4x
+- Contributors: Kronos, n1kn4x, Gahais
 - License: licensed under Apache 2.0
 
 ### 'Froggy.au3' 'SoO.au3' 'FoW.au3'

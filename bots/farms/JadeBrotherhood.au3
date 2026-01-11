@@ -161,9 +161,9 @@ EndFunc
 ;~ Move out of outpost into Bukdek Byway
 Func GoToBukdekByway()
 	TravelToOutpost($ID_THE_MARKETPLACE, $district_name)
-	If GetQuestByID(0x1C9) <> Null Then
+	If GetQuestByID($ID_MISSING_DAUGHTER) <> Null Then
 		Info('Abandoning quest')
-		AbandonQuest(0x1C9)
+		AbandonQuest($ID_MISSING_DAUGHTER)
 	EndIf
 	While GetMapID() <> $ID_BUKDEK_BYWAY
 		Info('Moving to Bukdek Byway')
@@ -208,8 +208,7 @@ Func TalkToAiko()
 	GoNearestNPCToCoords(-13923, -5098)
 	RandomSleep(1000)
 	Info('Taking quest')
-	; QuestID 0x1C9 = 457
-	AcceptQuest(0x1C9)
+	AcceptQuest($ID_MISSING_DAUGHTER)
 	Move(-11303, -6545, 40)
 	RandomSleep(4500)
 EndFunc

@@ -32,7 +32,6 @@ Global Const $SOO_FARM_INFORMATIONS = 'For best results, don''t cheap out on her
 	& '45mn average in NM' & @CRLF _
 	& '60mn average in HM with cons (automatically used if HM is on)'
 
-Global Const $ID_SOO_QUEST_LOST_SOULS = 0x324
 Global Const $ID_SOO_TORCH = 22342
 Global Const $SOO_AGGRO_RANGE = $RANGE_SPELLCAST + 100
 
@@ -603,7 +602,7 @@ Func ClearSoOFloor3()
 		FlagMoveAggroAndKillInRange(-16300, 16600, '7', $LargerSOO_AGGRO_RANGE)
 		FlagMoveAggroAndKillInRange(-15850, 17500, '8', $LargerSOO_AGGRO_RANGE)
 
-		$questState = DllStructGetData(GetQuestByID($ID_SOO_QUEST_LOST_SOULS), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_LOST_SOULS), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
 		Sleep(1000)
 	WEnd

@@ -208,13 +208,13 @@ Func GemstoneStygianFarmLoop()
 	EndIf
 	Info('Taking Quest')
 	Local $TimerQuest = TimerInit()
-	While GetQuestByID(0x2E6) == Null And TimerDiff($TimerQuest) < 10000
+	While GetQuestByID($ID_BREACHING_THE_STYGIAN_VEIL) == Null And TimerDiff($TimerQuest) < 10000
 		GoNearestNPCToCoords(7188, -9108)
 		Sleep(1000)
 		Dialog(0x82E601)
 		Sleep(1000)
 	WEnd
-	If GetQuestByID(0x2E6) == Null Then Return $FAIL
+	If GetQuestByID($ID_BREACHING_THE_STYGIAN_VEIL) == Null Then Return $FAIL
 
 	Switch $stygian_player_profession
 		Case $ID_ASSASSIN, $ID_MESMER

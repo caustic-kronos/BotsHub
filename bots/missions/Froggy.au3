@@ -33,9 +33,8 @@ Global Const $FROGGY_FARM_INFORMATIONS = 'For best results, don''t cheap out on 
 	& '41mn average in HM with consets (automatically used if HM is on)'
 
 Global Const $FROGGY_AGGRO_RANGE = $RANGE_SPELLCAST + 100
-Global Const $ID_FROGGY_QUEST = 0x322
-;Tekk's war quest
-;Global Const $ID_FROGGY_QUEST = 0x339
+Global Const $ID_FROGGY_QUEST = $ID_GIRIFFS_WAR
+;Global Const $ID_FROGGY_QUEST = $ID_TEKKS_WAR
 
 Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000
 

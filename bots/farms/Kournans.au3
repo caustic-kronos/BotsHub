@@ -143,9 +143,9 @@ EndFunc
 ;~ Move out of outpost into Command Post
 Func GoToCommandPost()
 	TravelToOutpost($ID_SUNSPEAR_SANCTUARY, $district_name)
-	If GetQuestByID(0x23E) <> Null Then
+	If GetQuestByID($ID_FISH_IN_A_BARREL) <> Null Then
 		Info('Abandoning quest')
-		AbandonQuest(0x23E)
+		AbandonQuest($ID_FISH_IN_A_BARREL)
 	EndIf
 	While GetMapID() <> $ID_COMMAND_POST
 		Info('Moving to Command Post')
@@ -269,7 +269,6 @@ Func TalkToMargrid()
 	GoNearestNPCToCoords(1250, 7300)
 	RandomSleep(1000)
 	Info('Taking quest')
-	; QuestID 0x23E = 574
-	AcceptQuest(0x23E)
+	AcceptQuest($ID_FISH_IN_A_BARREL)
 	RandomSleep(500)
 EndFunc
