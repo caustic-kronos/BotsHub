@@ -37,7 +37,7 @@ To use it:
 - Vaettirs farm (festive items, golds, materials, Norn points)
 - Jaya Bluffs Sensali farm (feathers, bones)
 - Drazach Thicket DragonMoss farm (Fibers, Gothic Defender, Echovald shield, Ornate shield)
-- Waijun Bazaar mantids farm (celestial weapons, chitin, dust)
+- Wajjun Bazaar mantids farm (celestial weapons, chitin, dust)
 - Moddok Crevice corsairs farm (Runes, Colossal scimitar, Q8)
 - Missing Daughter Jade Brotherhood farm (Q8, jade bracelets)
 - Fish in a Barrel kournans farm (Q8, runes)
@@ -79,10 +79,10 @@ To use it:
 
 ## Adding Your Own Bots
 To add a new bot, drop your script into the `/src/` folder and follow these steps:
-1. Name the script like `Farm-<Name>.au3`.
+1. Name the script like `<Name>.au3`.
 2. Add an include line in `BotsHub.au3`:
 	```autoit
-	#include 'src/Farm-<Name>.au3'
+	#include 'src/<Name>.au3'
 	```
 3. Add the farm to the `$AVAILABLE_FARMS` list with its name <Name> (use | as a separator).
 4. Add two lines in BotsHub - RunFarmLoop :
