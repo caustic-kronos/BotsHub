@@ -3869,6 +3869,20 @@
 				"Elite Dervish Tome": true
 			}
 		},
+		"Dyes": {
+			"Black": true,
+			"Blue": false,
+			"Brown": false,
+			"Gray": false,
+			"Green": false,
+			"Orange": false,
+			"Pink": false,
+			"Purple": false,
+			"Red": false,
+			"Silver": false,
+			"White": true,
+			"Yellow": false
+		},
 		"Lockpicks": false,
 		"Keys": false,
 		"Scrolls": {
