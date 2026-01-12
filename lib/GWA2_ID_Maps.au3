@@ -20,6 +20,90 @@
 #include 'Utils.au3'
 
 
+#Region MapTypes
+Global Const $ID_Outpost	= 0
+Global Const $ID_Explorable	= 1
+Global Const $ID_Loading	= 2
+#EndRegion MapTypes
+
+
+#Region Map Campaign
+Global Const $ID_CAMPAIGN_CORE = 0
+Global Const $ID_CAMPAIGN_PROPHECIES = 1
+Global Const $ID_CAMPAIGN_FACTIONS = 2
+Global Const $ID_CAMPAIGN_NIGHTFALL = 3
+Global Const $ID_CAMPAIGN_EOTN = 4
+Global Const $ID_CAMPAIGN_BONUSPACK = 5
+#EndRegion Map Campaign
+
+
+#Region Map Continent
+Global Const $ID_Continent_Kryta = 0
+Global Const $ID_Continent_DevContinent = 1
+Global Const $ID_Continent_Cantha = 2
+Global Const $ID_Continent_BattleIsles = 3
+Global Const $ID_Continent_Elona = 4
+Global Const $ID_Continent_RealmOfTorment = 5
+#EndRegion Map Continent
+
+#Region Region Type
+Global Const $ID_REGIONTYPE_ALLIANCEBATTLE = 0
+Global Const $ID_REGIONTYPE_ARENA = 1
+Global Const $ID_REGIONTYPE_EXPLORABLEZONE = 2
+Global Const $ID_REGIONTYPE_GUILDBATTLEAREA = 3
+Global Const $ID_REGIONTYPE_GUILDHALL = 4
+Global Const $ID_REGIONTYPE_MISSIONOUTPOST = 5
+Global Const $ID_REGIONTYPE_COOPERATIVEMISSION = 6
+Global Const $ID_REGIONTYPE_COMPETITIVEMISSION = 7
+Global Const $ID_REGIONTYPE_ELITEMISSION = 8
+Global Const $ID_REGIONTYPE_CHALLENGE = 9
+Global Const $ID_REGIONTYPE_OUTPOST = 10
+Global Const $ID_REGIONTYPE_ZAISHENBATTLE = 11
+Global Const $ID_REGIONTYPE_HEROESASCENT = 12
+Global Const $ID_REGIONTYPE_CITY = 13
+Global Const $ID_REGIONTYPE_MISSIONAREA = 14
+Global Const $ID_REGIONTYPE_HEROBATTLEOUTPOST = 15
+Global Const $ID_REGIONTYPE_HEROBATTLEAREA = 16
+Global Const $ID_REGIONTYPE_EOTNMISSION = 17
+Global Const $ID_REGIONTYPE_DUNGEON = 18
+Global Const $ID_REGIONTYPE_MARKETPLACE = 19
+Global Const $ID_REGIONTYPE_UNKNOWN = 20
+Global Const $ID_REGIONTYPE_DEVREGION = 21
+#EndRegion Region Type
+
+
+#Region Region
+Global Const $ID_REGION_KRYTA = 0
+Global Const $ID_REGION_MAGUUMA = 1
+Global Const $ID_REGION_ASCALON = 2
+Global Const $ID_REGION_NORTHERNSHIVERPEAKS = 2
+Global Const $ID_REGION_HEROESASCENT = 3
+Global Const $ID_REGION_CRYSTALDESERT = 4
+Global Const $ID_REGION_FISSUREOFWOE = 5
+Global Const $ID_REGION_PRESEARING = 6
+Global Const $ID_REGION_KAINENG = 7
+Global Const $ID_REGION_KURZICK = 8
+Global Const $ID_REGION_LUXON = 9
+Global Const $ID_REGION_SHINGJEA = 10
+Global Const $ID_REGION_KOURNA = 11
+Global Const $ID_REGION_VAABI = 12
+Global Const $ID_REGION_DESOLATION = 13
+Global Const $ID_REGION_ISTAN = 14
+Global Const $ID_REGION_DOMAINOFANGUISH = 15
+Global Const $ID_REGION_TARNISHEDCOAST = 16
+Global Const $ID_REGION_DEPTHSOFTYRIA = 17
+Global Const $ID_REGION_FARSHIVERPEAKS = 18
+Global Const $ID_REGION_CHARRHOMELANDS = 19
+Global Const $ID_REGION_BATTLEISLANDS = 20
+Global Const $ID_REGION_THEBATTLEOFJAHAI = 21
+Global Const $ID_REGION_THEFLIGHTNORTH = 22
+Global Const $ID_REGION_THETENGUACCORDS = 23
+Global Const $ID_REGION_THERISEOFTHEWHITEMANTLE = 24
+Global Const $ID_REGION_SWAT = 25
+Global Const $ID_REGION_DEVREGION = 26
+#EndRegion Region
+
+
 #Region Map Location IDs
 Global Const $ID_GLADIATORS_ARENA = 1
 Global Const $ID_DEV_TEST_ARENA_1V1 = 2
