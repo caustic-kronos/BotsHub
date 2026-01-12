@@ -611,46 +611,45 @@ EndFunc
 
 
 Func CheckPickupWeapon($weaponItem)
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_RED Then Return True
 	If $weaponRarity == $RARITY_GRAY Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponReq = GetItemReq($weaponItem)
 	Return $inventory_management_cache['Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 
 
 Func CheckSalvageWeapon($weaponItem)
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponReq = GetItemReq($weaponItem)
 	Return $inventory_management_cache['Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 
 
 Func CheckSellWeapon($weaponItem)
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponReq = GetItemReq($weaponItem)
 	Return $inventory_management_cache['Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc
 
 
 Func CheckStoreWeapon($weaponItem)
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
-	If $weaponRarity == $RARITY_GREEN Then Return True
 	If $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
+	Local $weaponType = DllStructGetData($weaponItem, 'Type')
+	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponReq = GetItemReq($weaponItem)
 	Return $inventory_management_cache['Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
 EndFunc

@@ -191,7 +191,6 @@ Func MinisterialCommendationsFarmLoop()
 
 	Info('Preparing to fight')
 	PrepareToFight()
-	If GetMapID() <> $ID_KAINENG_A_CHANCE_ENCOUNTER Then Return $FAIL
 
 	Info('Fighting the first group')
 	InitialFight()
@@ -241,7 +240,6 @@ EndFunc
 
 ;~ Prepare the party for the initial fight
 Func PrepareToFight()
-	;StartingPositions()
 	StartingPositions()
 	RandomSleep(1500)
 	UseHeroSkill($HERO_RITUALIST_SOS, $SOS_SKILL_POSITION)
@@ -288,6 +286,19 @@ EndFunc
 
 
 ;~ Move party into a good starting position
+Func AlternateStartingPositions()
+	CommandHero($HERO_MESMER_DPS_1, -6175, -6013)
+	CommandHero($HERO_MESMER_DPS_2, -6151, -5622)
+	CommandHero($HERO_MESMER_DPS_3, -6201, -5239)
+	CommandHero($HERO_MESMER_INEPTITUDE, -5770, -5577)
+	CommandHero($HERO_RITUALIST_SOS, -5898, -5836)
+	CommandHero($HERO_RITUALIST_PROT, -5911, -5319)
+	CommandHero($HERO_NECRO_BIP, -5687, -5155)
+	MoveTo(-6322, -5266)
+EndFunc
+
+
+;~ Move party into a good starting position
 Func AlternateStartingPositions2()
 	CommandHero($HERO_MESMER_DPS_1, -6488, -5084)
 	CommandHero($HERO_MESMER_DPS_2, -6052, -5522)
@@ -298,19 +309,6 @@ Func AlternateStartingPositions2()
 	CommandHero($HERO_NECRO_BIP, -6244, -4860)
 	MoveTo(-6322, -5266)
 	CommandHero($HERO_RITUALIST_SOS, -6307, -5273)
-EndFunc
-
-
-;~ Move party into a good starting position
-Func AlternateStartingPositions()
-	CommandHero($HERO_MESMER_DPS_1, -6175, -6013)
-	CommandHero($HERO_MESMER_DPS_2, -6151, -5622)
-	CommandHero($HERO_MESMER_DPS_3, -6201, -5239)
-	CommandHero($HERO_MESMER_INEPTITUDE, -5770, -5577)
-	CommandHero($HERO_RITUALIST_SOS, -5898, -5836)
-	CommandHero($HERO_RITUALIST_PROT, -5911, -5319)
-	CommandHero($HERO_NECRO_BIP, -5687, -5155)
-	MoveTo(-6322, -5266)
 EndFunc
 
 
@@ -332,7 +330,6 @@ Func InitialFight()
 	; Now there are enemies let's fight until one mob is left
 	While $foesInRange > 1 And TimerDiff($deadlock) < 80000
 		HelpMikuAndCharacter()
-		;RenewSpirits()
 		AttackOrUseSkill(1300, $SKILL_I_AM_UNSTOPPABLE, $SKILL_HUNDRED_BLADES, $SKILL_TO_THE_LIMIT)
 		If IsFail() Then
 			If $deathTimer = Null Then
@@ -362,12 +359,14 @@ Func InitialFight()
 	; Run to first stairs
 	Move(-4693, -3137)
 
+	$deadlock = TimerInit()
 	; Wait for all foes in range of Miku to be dead
-	While (CountFoesInRangeOfAgent($ID_MIKU_AGENT, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 80000 And Not IsFail())
+	While (CountFoesInRangeOfAgent($ID_MIKU_AGENT, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 40000 And Not IsFail())
 		Move(-4693, -3137)
 		RandomSleep(750)
 	WEnd
-	If (TimerDiff($deadlock) > 80000) Then Info('Timed out waiting for all mobs to be dead')
+	RandomSleep(500)
+	If (TimerDiff($deadlock) > 40000) Then Info('Timed out waiting for all mobs to be dead')
 
 	UseHeroSkill($HERO_RITUALIST_SOS, $MEND_BODY_AND_SOUL_SKILL_POSITION, GetMikuAgentOrMine())
 	UseHeroSkill($HERO_NECRO_BIP, $MEND_BODY_AND_SOUL_SKILL_POSITION, GetMikuAgentOrMine())
@@ -448,12 +447,12 @@ EndFunc
 ;~ Wait for all enemies to be balled
 Func WaitForPurityBall()
 	Local $deadlock = TimerInit()
-	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 
-	; Wait until an enemy is in melee range
+	; Wait until an enemy is in range
 	While IsPlayerAlive() And $foesCount == 0 And TimerDiff($deadlock) < 55000
 		RandomSleep(1000)
-		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	WEnd
 
 	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
@@ -535,24 +534,20 @@ Func KillMinistryOfPurity()
 		WEnd
 	EndIf
 
-	While IsRecharged($SKILL_EBON_BATTLE_STANDARD_OF_HONOR)
-		If IsPlayerDead() Then Return
-		UseSkillEx($SKILL_EBON_BATTLE_STANDARD_OF_HONOR)
-		RandomSleep(50)
+	If IsPlayerDead() Then Return
+	UseSkillEx($SKILL_EBON_BATTLE_STANDARD_OF_HONOR)
+	RandomSleep(50)
 
-		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
-			; Heroes with Mystic Healing provide additional long range support
-			UseHeroSkill($HERO_MESMER_DPS_2, $ESURGE2_MYSTIC_HEALING_SKILL_POSITION)
-			UseHeroSkill($HERO_RITUALIST_SOS, $SOS_MYSTIC_HEALING_SKILL_POSITION)
-			UseHeroSkill($HERO_RITUALIST_PROT, $PROT_MYSTIC_HEALING_SKILL_POSITION)
-		EndIf
-	WEnd
+	If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.70 Then
+		; Heroes with Mystic Healing provide additional long range support
+		UseHeroSkill($HERO_MESMER_DPS_2, $ESURGE2_MYSTIC_HEALING_SKILL_POSITION)
+		UseHeroSkill($HERO_RITUALIST_SOS, $SOS_MYSTIC_HEALING_SKILL_POSITION)
+		UseHeroSkill($HERO_RITUALIST_PROT, $PROT_MYSTIC_HEALING_SKILL_POSITION)
+	EndIf
 
-	While IsRecharged($SKILL_HUNDRED_BLADES)
-		If IsPlayerDead() Then Return
-		UseSkillEx($SKILL_HUNDRED_BLADES)
-		RandomSleep(50)
-	WEnd
+	If IsPlayerDead() Then Return
+	UseSkillEx($SKILL_HUNDRED_BLADES)
+	RandomSleep(50)
 
 	If IsRecharged($SKILL_GRENTHS_AURA) Then
 		If IsPlayerDead() Then Return
@@ -563,9 +558,10 @@ Func KillMinistryOfPurity()
 	EndIf
 
 	Local $initialFoeCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
-
+	Local $initialAdrenaline = GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK)
+	Local $adrenaline = $initialAdrenaline
 	; Whirlwind attack needs specific care to be used
-	While IsRecharged($SKILL_WHIRLWIND_ATTACK)
+	While IsRecharged($SKILL_WHIRLWIND_ATTACK) And $adrenaline >= $initialAdrenaline
 		If IsPlayerDead() Then Return
 		RandomSleep(200)
 
@@ -577,7 +573,8 @@ Func KillMinistryOfPurity()
 			UseHeroSkill($HERO_RITUALIST_PROT, $PROT_MYSTIC_HEALING_SKILL_POSITION)
 		EndIf
 
-		If (IsRecharged($SKILL_TO_THE_LIMIT) And GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK) < 130) Then
+		$adrenaline = GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK)
+		If (IsRecharged($SKILL_TO_THE_LIMIT) And $adrenaline < 130) Then
 			UseSkillEx($SKILL_TO_THE_LIMIT)
 			RandomSleep(50)
 		EndIf
@@ -585,10 +582,12 @@ Func KillMinistryOfPurity()
 		UseSkillEx($SKILL_WHIRLWIND_ATTACK, GetNearestEnemyToAgent(GetMyAgent()))
 		RandomSleep(50)
 	WEnd
+
+	CancelAction()
+	RandomSleep(250)
 	CancelAction()
 
-	RandomSleep(250)
-	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_ADJACENT)
+	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 
 	; If some foes are still alive, we have 10s to finish them else we just pick up and leave
 	$deadlock = TimerInit()
@@ -621,8 +620,10 @@ Func KillMinistryOfPurity()
 		Else
 			AttackOrUseSkill(1300, $SKILL_CONVICTION)
 		EndIf
-		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_ADJACENT)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	WEnd
+	CancelAction()
+
 	If (TimerDiff($deadlock) > 10000) Then Info('Left ' & $foesCount & ' mobs alive out of ' & $initialFoeCount & ' foes')
 	LogIntoFile('Mobs killed - ' & ($initialFoeCount - $foesCount))
 	LogIntoFile('Mobs left alive - ' & $foesCount)
