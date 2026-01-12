@@ -480,6 +480,8 @@ Global Const $ID_A_LAND_OF_HEROES = 447
 Global Const $ID_CRYSTAL_OVERLOOK = 448
 Global Const $ID_KAMADAN_JEWEL_OF_ISTAN_DEFAULT = 449
 Global Const $ID_GATE_OF_TORMENT = 450
+; Below map ID doesn't seem to work, 474 works instead as below
+;Global Const $ID_GATE_OF_ANGUISH = 451
 Global Const $ID_SECURE_THE_REFUGE_MISSION = 452
 Global Const $ID_EVACUATION = 453
 Global Const $ID_TEST_MAP_2 = 454
@@ -502,9 +504,9 @@ Global Const $ID_DOMAIN_OF_PAIN = 470
 Global Const $ID_BLOODSTONE_FEN_EXPLORABLE = 471
 Global Const $ID_DOMAIN_OF_SECRETS = 472
 Global Const $ID_GATE_OF_SECRETS = 473
-; surprisingly map ID of Gate of Anguish is the same as Domain of Anguish
+; Surprisingly map ID of Gate of Anguish is the same as Domain of Anguish
+;Global Const $ID_DOMAIN_OF_ANGUISH = 474
 Global Const $ID_GATE_OF_ANGUISH = 474
-Global Const $ID_DOMAIN_OF_ANGUISH = 474
 Global Const $ID_OOZE_PIT_ALT = 475
 Global Const $ID_JENNURS_HORDE = 476
 Global Const $ID_NUNDU_BAY = 477
@@ -1377,7 +1379,7 @@ Global Const $MAP_IDS[] = [ _
 	$ID_CRYSTAL_OVERLOOK, _
 	$ID_KAMADAN_JEWEL_OF_ISTAN_DEFAULT, _
 	$ID_GATE_OF_TORMENT, _
-	$ID_GATE_OF_ANGUISH, _
+	_ ;$ID_GATE_OF_ANGUISH, _
 	$ID_SECURE_THE_REFUGE_MISSION, _
 	$ID_EVACUATION, _
 	$ID_TEST_MAP_2, _
@@ -1400,7 +1402,8 @@ Global Const $MAP_IDS[] = [ _
 	$ID_BLOODSTONE_FEN_EXPLORABLE, _
 	$ID_DOMAIN_OF_SECRETS, _
 	$ID_GATE_OF_SECRETS, _
-	$ID_DOMAIN_OF_ANGUISH, _
+	_ ; $ID_DOMAIN_OF_ANGUISH, _ ; Gate of Anguish instead of Domain of Anguish
+	$ID_GATE_OF_ANGUISH, _
 	$ID_OOZE_PIT_ALT, _
 	$ID_JENNURS_HORDE, _
 	$ID_NUNDU_BAY, _
@@ -2257,7 +2260,7 @@ Global Const $MAP_NAMES[] = [ _
 	'Crystal Overlook', _
 	'Kamadan Jewel of Istan Default', _
 	'Gate of Torment', _
-	'Gate of Anguish', _
+	_ ; 'Gate of Anguish', _
 	'Secure The Refuge Mission', _
 	'Evacuation', _
 	'Test Map 2', _
@@ -2280,7 +2283,8 @@ Global Const $MAP_NAMES[] = [ _
 	'Bloodstone Fen Explorable', _
 	'Domain of Secrets', _
 	'Gate of Secrets', _
-	'Domain of Anguish', _
+	_ ; 'Domain of Anguish', _ ; Gate of Anguish instead of Domain of Anguish
+	'Gate of Anguish', _
 	'Ooze Pit Alt', _
 	'Jennurs Horde', _
 	'Nundu Bay', _

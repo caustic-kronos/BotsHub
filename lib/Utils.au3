@@ -79,7 +79,7 @@ EndFunc
 Func TravelToOutpost($outpostId, $district = 'Random')
 	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostId]
 	If GetMapID() == $outpostId Then Return $SUCCESS
-	Info('Travelling to ' & $outpostName & ' (outpost)')
+	Info('Travelling to ' & $outpostName & ' (Outpost)')
 	DistrictTravel($outpostId, $district)
 	RandomSleep(1000)
 	If GetMapID() <> $outpostId Then
