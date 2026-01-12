@@ -165,7 +165,7 @@ Func GlintChallenge()
 	; fight until team or baby dragon dead or until Brotherhood chest spawns
 	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) And Not IsBrotherhoodChestSpawned()
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
-		Sleep(1000)
+		Sleep(10000)
 		KillFoesInArea($glint_challenge_fight_options)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
 		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
