@@ -29,7 +29,6 @@
 
 #Region Includes
 #include <Math.au3>
-#include 'gui/GUI.au3'
 #include 'lib/GWA2_Headers.au3'
 #include 'lib/GWA2_ID.au3'
 #include 'lib/GWA2.au3'
@@ -38,7 +37,7 @@
 #include 'lib/Utils-Agents.au3'
 #include 'lib/Utils-Storage.au3'
 #include 'lib/Utils-Debugger.au3'
-#include 'lib/Utils-Logging.au3'
+#include 'lib/BotsHub-GUI.au3'
 
 #include 'src/farms/Corsairs.au3'
 #include 'src/farms/DragonMoss.au3'
@@ -98,6 +97,12 @@ Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
 Global Const $AVAILABLE_HEROES = '|Norgu|Goren|Tahlkora|Master of Whispers|Acolyte Jin|Koss|Dunkoro|Acolyte Sousuke|Melonni|Zhed Shadowhoof|General Morgahn|Margrid the Sly|Zenmai|Olias|Razah|MOX|Keiran Thackeray|Jora|Pyre Fierceshot|Anton|Livia|Hayda|Kahmu|Gwen|Xandra|Vekk|Ogden|Miku|ZeiRi|Mercenary Hero 1|Mercenary Hero 2|Mercenary Hero 3|Mercenary Hero 4|Mercenary Hero 5|Mercenary Hero 6|Mercenary Hero 7|Mercenary Hero 8'
 
+Global Const $LVL_DEBUG = 0
+Global Const $LVL_INFO = 1
+Global Const $LVL_NOTICE = 2
+Global Const $LVL_WARNING = 3
+Global Const $LVL_ERROR = 4
+
 ; UNINITIALIZED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $runtime_status = 'UNINITIALIZED'
 Global $run_mode = 'AUTOLOAD'
@@ -110,6 +115,7 @@ Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
 Global $inventory_management_cache[]
+Global $log_level = $LVL_INFO
 #EndRegion Variables
 
 
