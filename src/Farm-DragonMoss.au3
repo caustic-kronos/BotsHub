@@ -30,6 +30,7 @@ Opt('MustDeclareVars', True)
 ; ==== Constants ====
 Global Const $RA_DRAGON_MOSS_FARMER_SKILLBAR = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
 Global Const $DRAGON_MOSS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
+	& '- the quest A New Escort that makes the dragon moss show up (without it you cant farm)' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Wilderness Survival' & @CRLF _
