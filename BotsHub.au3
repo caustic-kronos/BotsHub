@@ -74,7 +74,6 @@
 #include 'bots/titles/LDOA.au3'
 #include 'bots/utilities/Follower.au3'
 #include 'bots/utilities/OmniFarmer.au3'
-#include 'bots/utilities/StorageBot.au3'
 #include 'bots/utilities/TestSuite.au3'
 #include 'bots/vanquishes/Asuran.au3'
 #include 'bots/vanquishes/Kurzick.au3'
@@ -347,7 +346,8 @@ Func RunFarmLoop($Farm)
 		Case 'Storage'
 			$inventory_space_needed = 5
 			ResetBotsSetups()
-			$result = ManageInventory()
+			InventoryManagementBeforeRun()
+			$result = $PAUSE
 		Case 'Dynamic execution'
 			Info('Dynamic execution')
 		Case 'Tests'
