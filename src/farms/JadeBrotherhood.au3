@@ -161,9 +161,9 @@ EndFunc
 ;~ Move out of outpost into Bukdek Byway
 Func GoToBukdekByway()
 	TravelToOutpost($ID_THE_MARKETPLACE, $district_name)
-	If GetQuestByID($ID_MISSING_DAUGHTER) <> Null Then
+	If GetQuestByID($ID_QUEST_MISSING_DAUGHTER) <> Null Then
 		Info('Abandoning quest')
-		AbandonQuest($ID_MISSING_DAUGHTER)
+		AbandonQuest($ID_QUEST_MISSING_DAUGHTER)
 	EndIf
 	While GetMapID() <> $ID_BUKDEK_BYWAY
 		Info('Moving to Bukdek Byway')

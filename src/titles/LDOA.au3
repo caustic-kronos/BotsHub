@@ -163,12 +163,12 @@ EndFunc
 
 ;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_CHARR_AT_THE_GATE), 'Logstate')
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_CHARR_AT_THE_GATE), 'Logstate')
 	If $questStatus == 0 Or $questStatus == 3 Then
 		Info('Setting up Charr at the gate quest...')
 		DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		Sleep(GetPing() + 750)
-		AbandonQuest($ID_CHARR_AT_THE_GATE)
+		AbandonQuest($ID_QUEST_CHARR_AT_THE_GATE)
 		Sleep(GetPing() + 750)
 		MoveTo(7974, 6142)
 		MoveTo(5668, 10667)
@@ -187,7 +187,7 @@ Func SetupHamnetQuest()
 	Info('Setting up Hamnet quest...')
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
+	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
 	If $questStatus == 0 Then
 		Info('Quest not found, setting up...')
 		Sleep(GetPing() + 750)
@@ -199,7 +199,7 @@ Func SetupHamnetQuest()
 		Sleep(GetPing() + 750)
 		Dialog($ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET)
 		Sleep(GetPing() + 750)
-		$questStatus = DllStructGetData(GetQuestByID($ID_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
+		$questStatus = DllStructGetData(GetQuestByID($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
 		If $questStatus == 0 Then Return $FAIL
 	EndIf
 	Info('Quest found, Good to go!')

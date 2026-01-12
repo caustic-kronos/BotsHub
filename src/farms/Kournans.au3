@@ -143,9 +143,9 @@ EndFunc
 ;~ Move out of outpost into Command Post
 Func GoToCommandPost()
 	TravelToOutpost($ID_SUNSPEAR_SANCTUARY, $district_name)
-	If GetQuestByID($ID_FISH_IN_A_BARREL) <> Null Then
+	If GetQuestByID($ID_QUEST_FISH_IN_A_BARREL) <> Null Then
 		Info('Abandoning quest')
-		AbandonQuest($ID_FISH_IN_A_BARREL)
+		AbandonQuest($ID_QUEST_FISH_IN_A_BARREL)
 	EndIf
 	While GetMapID() <> $ID_COMMAND_POST
 		Info('Moving to Command Post')

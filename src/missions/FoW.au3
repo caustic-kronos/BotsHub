@@ -229,14 +229,14 @@ Func TheTempleOfWar()
 
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 0x13
-		$questState = DllStructGetData(GetQuestByID($ID_THE_ETERNAL_FORGEMASTER), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_QUEST_THE_ETERNAL_FORGEMASTER), 'LogState')
 		Info('The Eternal Forgemaster not finished yet : ' & $questState)
 		Sleep(1000)
 	WEnd
 
 	Info('Getting the Eternal Forgemaster quest reward')
 	Local $npc = GetNearestNPCToCoords(1850, -200)
-	TakeQuestOrReward($npc, $ID_THE_ETERNAL_FORGEMASTER, 0x80D107, 0)
+	TakeQuestOrReward($npc, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D107, 0)
 
 	Info('Getting the Defend the Temple of War quest')
 	MoveTo(1850, -150)
@@ -457,7 +457,7 @@ Func ForestOfTheWailingLord()
 		Sleep(3000)
 		MoveTo(-20500, 14200)
 		Sleep(17000)
-		$questState = DllStructGetData(GetQuestByID($ID_THE_WAILING_LORD), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_QUEST_THE_WAILING_LORD), 'LogState')
 	WEnd
 	CancelAllHeroes()
 

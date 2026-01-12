@@ -602,7 +602,7 @@ Func ClearSoOFloor3()
 		FlagMoveAggroAndKillInRange(-16300, 16600, '7', $LargerSOO_AGGRO_RANGE)
 		FlagMoveAggroAndKillInRange(-15850, 17500, '8', $LargerSOO_AGGRO_RANGE)
 
-		$questState = DllStructGetData(GetQuestByID($ID_LOST_SOULS), 'LogState')
+		$questState = DllStructGetData(GetQuestByID($ID_QUEST_LOST_SOULS), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
 		Sleep(1000)
 	WEnd
