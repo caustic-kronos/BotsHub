@@ -1,5 +1,8 @@
 ﻿{
 	"Pick up items": {
+		"Gold": true,
+		"Consumables": true,
+		"Alcohols": true,
 		"Weapons and offhands": {
 			"White": {
 				"Axe": {
@@ -938,6 +941,21 @@
 			"Amber Chunk": true,
 			"Jadeite Shard": true
 		},
+		"Trophies": {
+			"Margonite Gemstone": true,
+			"Stygian Gemstone": true,
+			"Titan Gemstone": true,
+			"Torment Gemstone": true,
+			"Glacial Stone": true,
+			"Destroyer Core": true,
+			"Diessa Chalice": true,
+			"Golden Rin Relic": true,
+			"Chunk of Drake Flesh": true,
+			"Skale Fin": true,
+			"Jade Bracelet": true,
+			"Stolen Goods": true,
+			"Other trophies": true
+		},
 		"Tomes": {
 			"Normal": {
 				"Warrior Tome": true,
@@ -964,6 +982,16 @@
 				"Elite Dervish Tome": true
 			}
 		},
+		"Scrolls": {
+			"Blue": true,
+			"Gold": {
+				"Passage Scroll to the Fissure of Woe": true,
+				"Passage Scroll to the Underworld": true,
+				"Passage Scroll to the Deep": true,
+				"Passage Scroll to Urgozs Warren": true,
+				"Other gold scrolls": true
+			}
+		},
 		"Dyes": {
 			"Black": true,
 			"Blue": false,
@@ -978,33 +1006,6 @@
 			"White": true,
 			"Yellow": false
 		},
-		"Lockpicks": true,
-		"Keys": true,
-		"Scrolls": {
-			"Blue": true,
-			"Gold": {
-				"Passage Scroll to the Fissure of Woe": true,
-				"Passage Scroll to the Underworld": true,
-				"Passage Scroll to the Deep": true,
-				"Passage Scroll to Urgozs Warren": true,
-				"Other gold scrolls": true
-			}
-		},
-		"Trophies": {
-			"Margonite Gemstone": true,
-			"Stygian Gemstone": true,
-			"Titan Gemstone": true,
-			"Torment Gemstone": true,
-			"Glacial Stone": true,
-			"Destroyer Core": true,
-			"Diessa Chalice": true,
-			"Golden Rin Relic": true,
-			"Chunk of Drake Flesh": true,
-			"Skale Fin": true,
-			"Jade Bracelet": true,
-			"Stolen Goods": true,
-			"Other trophies": true
-		},
 		"Festival Items": {
 			"Wintersday Gift": true,
 			"Trick-or-Treat Bag": true,
@@ -1014,12 +1015,11 @@
 			"Jade Wind Orb": true,
 			"Wayfarer Mark": true
 		},
-		"Consumables": true,
-		"Alcohols": true,
 		"Quest items": {
 			"Map pieces": false
 		},
-		"Gold": true
+		"Lockpicks": true,
+		"Keys": true
 	},
 	"Identify items": {
 		"Blue": true,
@@ -3224,7 +3224,11 @@
 			"Amber Chunk": false,
 			"Jadeite Shard": false
 		},
-		"Keys": true,
+		"Trophies": {
+			"Glacial Stone": false,
+			"Destroyer Core": false,
+			"Other trophies": false
+		},
 		"Scrolls": {
 			"Blue": true,
 			"Gold": {
@@ -3235,13 +3239,11 @@
 				"Other gold scrolls": true
 			}
 		},
-		"Trophies": {
-			"Glacial Stone": false,
-			"Destroyer Core": false,
-			"Other trophies": false
-		}
+		"Keys": true
 	},
 	"Store items": {
+		"Consumables": true,
+		"Alcohols": true,
 		"Weapons and offhands": {
 			"White": {
 				"Axe": {
@@ -4135,6 +4137,11 @@
 				}
 			}
 		},
+		"Armor salvageables": {
+			"Blue": true,
+			"Purple": true,
+			"Gold": true
+		},
 		"Basic Materials": {
 			"Bone": true,
 			"Bolt of Cloth": true,
@@ -4175,6 +4182,21 @@
 			"Amber Chunk": true,
 			"Jadeite Shard": true
 		},
+		"Trophies": {
+			"Margonite Gemstone": false,
+			"Stygian Gemstone": false,
+			"Titan Gemstone": false,
+			"Torment Gemstone": false,
+			"Glacial Stone": false,
+			"Destroyer Core": false,
+			"Diessa Chalice": false,
+			"Golden Rin Relic": false,
+			"Chunk of Drake Flesh": false,
+			"Skale Fin": false,
+			"Jade Bracelet": false,
+			"Stolen Goods": false,
+			"Other trophies": false
+		},
 		"Tomes": {
 			"Normal": {
 				"Warrior Tome": true,
@@ -4201,6 +4223,16 @@
 				"Elite Dervish Tome": true
 			}
 		},
+		"Scrolls": {
+			"Blue": false,
+			"Gold": {
+				"Passage Scroll to the Fissure of Woe": true,
+				"Passage Scroll to the Underworld": true,
+				"Passage Scroll to the Deep": true,
+				"Passage Scroll to Urgozs Warren": true,
+				"Other gold scrolls": false
+			}
+		},
 		"Dyes": {
 			"Black": true,
 			"Blue": false,
@@ -4215,33 +4247,6 @@
 			"White": true,
 			"Yellow": false
 		},
-		"Lockpicks": false,
-		"Keys": false,
-		"Scrolls": {
-			"Blue": false,
-			"Gold": {
-				"Passage Scroll to the Fissure of Woe": true,
-				"Passage Scroll to the Underworld": true,
-				"Passage Scroll to the Deep": true,
-				"Passage Scroll to Urgozs Warren": true,
-				"Other gold scrolls": false
-			}
-		},
-		"Trophies": {
-			"Margonite Gemstone": false,
-			"Stygian Gemstone": false,
-			"Titan Gemstone": false,
-			"Torment Gemstone": false,
-			"Glacial Stone": false,
-			"Destroyer Core": false,
-			"Diessa Chalice": false,
-			"Golden Rin Relic": false,
-			"Chunk of Drake Flesh": false,
-			"Skale Fin": false,
-			"Jade Bracelet": false,
-			"Stolen Goods": false,
-			"Other trophies": false
-		},
 		"Festival Items": {
 			"Wintersday Gift": true,
 			"Trick-or-Treat Bag": true,
@@ -4251,10 +4256,10 @@
 			"Jade Wind Orb": true,
 			"Wayfarer Mark": true
 		},
-		"Consumables": true,
-		"Alcohols": true,
 		"Quest items": {
 			"Map pieces": false
-		}
+		},
+		"Lockpicks": false,
+		"Keys": false
 	}
 }
