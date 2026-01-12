@@ -135,7 +135,7 @@ EndFunc
 
 
 ;~ Function to deal with inventory during farm to preserve inventory space
-Func InventoryManagementMidRun()
+Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) <> $GUI_CHECKED Then Return False
 	; Operations order :
 	; 1-Check if we have at least 1 identification kit and 1 salvage kit
@@ -143,6 +143,8 @@ Func InventoryManagementMidRun()
 	; 3-Sort items
 	; 4-Identify items
 	; 5-Salvage
+	Local Static $superiorIdentificationKits = [$ID_SUPERIOR_IDENTIFICATION_KIT]
+	Local Static $salvageKits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
 		Info('Buying kits for passive inventory management')
 		TravelToOutpost($tradeTown, $district_name)

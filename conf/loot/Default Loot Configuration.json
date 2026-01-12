@@ -1118,7 +1118,7 @@
 				"Show me the money (Improved sale value)": false
 			},
 			"Weapon": {
-				"Common": {
+				"All": {
 					"Strength and honor (Damage +15% while Health is above 50%)": false,
 					"Guided by fate (Damage +15% while Enchanted)": false,
 					"Dance with death (Damage +15% while in a Stance)": false,
