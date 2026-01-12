@@ -614,7 +614,7 @@ Func CheckPickupWeapon($weaponItem)
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponRarity = GetRarity($weaponItem)
-	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_RED Then Return True
+	If $weaponRarity == $RARITY_RED Then Return True
 	If $weaponRarity == $RARITY_GRAY Then Return False
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponReq = GetItemReq($weaponItem)
