@@ -230,9 +230,9 @@ EndFunc
 
 Func StygianFarmMesmerAssassin()
 	If IsPlayerDead() Then Return $FAIL
-	If StygianJobMesmerAssassin() == $FAIL Then Return $FAIL
+	If StygianJobMesmerAssassin(1) == $FAIL Then Return $FAIL
 	RunStygianFarm(13240, -10006)
-	If StygianJobMesmerAssassin() == $FAIL Then Return $FAIL
+	If StygianJobMesmerAssassin(2) == $FAIL Then Return $FAIL
 	MoveTo(13240, -10006)
 	; Too hard to aggro the 2 groups after that, so hide in spot then go back to pick up loot
 	GoToHidingSpot()
@@ -271,11 +271,10 @@ Func StygianFarmRanger()
 EndFunc
 
 
-Func StygianJobMesmerAssassin()
-	Local Static $pickItemsAfterFirstWave = False
+Func StygianJobMesmerAssassin($waveNumber = 1)
 	If IsPlayerDead() Then Return $FAIL
 	GoToHidingSpot()
-	If $pickItemsAfterFirstWave And IsPlayerAlive() Then
+	If $waveNumber == 2 And IsPlayerAlive() Then
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
@@ -305,7 +304,6 @@ Func StygianJobMesmerAssassin()
 	; waiting for all mobs to come
 	Sleep(12500)
 	KillStygianMobsUsingWastrelSkills()
-	$pickItemsAfterFirstWave = True
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
