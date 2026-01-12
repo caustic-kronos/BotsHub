@@ -18,6 +18,10 @@
 #include-once
 #include <Array.au3>
 #include 'Utils.au3'
+#include 'GWA2_ID_Skills.au3'
+#include 'GWA2_ID_Quests.au3'
+#include 'GWA2_ID_Items.au3'
+#include 'GWA2_ID_Maps.au3'
 
 ; TO ADD :
 #Region Unknown IDs
