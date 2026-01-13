@@ -174,7 +174,7 @@ Func GemstoneTormentFarmLoop()
 	While IsPlayerAlive() And (TimerDiff($TimerWait) < 15000 Or Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd
-	If IsPlayerAlive() Then Info('First group')
+	Info('First group')
 	CastBuffsTormentFarm()
 	If RunTormentFarm(10779, 9898) == $STUCK Then Return $FAIL
 	;If RunTormentFarm(11125, 9198) == $STUCK Then Return $FAIL
@@ -201,23 +201,20 @@ Func GemstoneTormentFarmLoop()
 			Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or Not IsRecharged($TORMENT_METEOR_SHOWER) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd
-	If IsPlayerAlive() Then Info('Second group')
+	Info('Second group')
 	CastBuffsTormentFarm()
 	RandomSleep(250)
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500 + GetPing())
 	If KillTormentMobs() == $FAIL Then Return $FAIL
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems()
-			Sleep(GetPing())
-		Next
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
+
+	Info('Picking up loot')
+	; Tripled to secure the looting of items
+	For $i = 1 To 3
+		PickUpItems()
+		Sleep(GetPing())
+	Next
+	Return $SUCCESS
 EndFunc
 
 

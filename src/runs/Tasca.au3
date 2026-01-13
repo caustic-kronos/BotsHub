@@ -254,7 +254,7 @@ Func TascaChestFarmLoop()
 	;ToggleMapping()
 	UnregisterBurstHealingUnit()
 	Info('Opened ' & $openedChests & ' chests.')
-	Return (($openedChests > 0) Or IsPlayerAlive()) ? $SUCCESS : $FAIL
+	Return ($openedChests > 0) Or IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -266,7 +266,7 @@ Func TascaChestRun($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 150 And $blockedCounter < 20
+	While GetDistanceToPoint($me, $X, $Y) > 150 And $blockedCounter < 20
 		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
 			Move($X, $Y, 0)
@@ -295,8 +295,9 @@ Func TascaChestRun($X, $Y)
 
 		Sleep(250)
 		$me = GetMyAgent()
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 

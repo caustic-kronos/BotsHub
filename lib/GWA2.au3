@@ -712,14 +712,14 @@ EndFunc
 Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 	Local $deadlock = TimerInit()
-	Local $skillbarStruct
 	Local $processHandle = GetProcessHandle()
-	Do
+	Local $skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
+	While GetMyID() == 0 Or $skillbarStruct[0] == 0 Or ($mapID <> -1 And GetMapID() <> $mapID)
 		Sleep(200)
 		$skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
 		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
-	Until GetMyID() <> 0 And $skillbarStruct[0] <> 0 And (GetMapID() = $mapID Or $mapID = -1)
+	WEnd
 	RandomSleep($waitingTime)
 	Return True
 EndFunc
@@ -884,9 +884,7 @@ EndFunc
 
 ;~ Returns agent by player name or Null if player with provided name not found.
 Func GetAgentByPlayerName($playerName)
-	For $i = 1 To GetMaxAgents()
-		If Not GetAgentExists($i) Then ContinueLoop
-		Local $agent = GetAgentByID($i)
+	For $agent In GetAgentArray($ID_AGENT_TYPE_NPC)
 		If GetPlayerName($agent) == $playerName Then Return $agent
 	Next
 	Return Null
@@ -1655,10 +1653,10 @@ Func TraderRequest($modelID, $dyeColor = -1)
 
 	Local $deadlock = TimerInit()
 	$found = False
-	Do
+	While Not $found And TimerDiff($deadlock) < GetPing() + 5000
 		Sleep(20)
 		$found = MemoryRead($processHandle, $trader_quote_ID) <> $quoteID
-	Until $found Or TimerDiff($deadlock) > GetPing() + 5000
+	WEnd
 	Return $found
 EndFunc
 
@@ -1677,7 +1675,6 @@ Func TraderRequestBuy($item)
 	Local $processHandle = GetProcessHandle()
 	Local $quoteID = MemoryRead($processHandle, $trader_quote_ID)
 	Local $itemID = DllStructGetData($item, 'ID')
-
 	DllStructSetData($REQUEST_QUOTE_STRUCT, 1, $HEADER_REQUEST_QUOTE)
 	DllStructSetData($REQUEST_QUOTE_STRUCT, 2, $itemID)
 	Enqueue($REQUEST_QUOTE_STRUCT_PTR, 8)
@@ -1696,7 +1693,6 @@ Func TraderRequestSell($item)
 	Local $found = False
 	Local $processHandle = GetProcessHandle()
 	Local $quoteID = MemoryRead($processHandle, $trader_quote_ID)
-
 	Local $itemID = DllStructGetData($item, 'ID')
 	;DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 1, $HEADER_REQUEST_QUOTE)
 	DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 2, $itemID)

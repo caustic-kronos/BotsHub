@@ -217,7 +217,7 @@ Func DervishRun($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
-	While IsPlayerAlive() And GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
+	While GetDistanceToPoint($me, $X, $Y) > 100 And $blockedCounter < 15
 		If GetEnergy() >= 5 And IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) And GetEffect($ID_CRIPPLED) <> Null Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)
 
 		If GetEnergy() >= 5 And IsRecharged($PONGMEI_DEATHS_CHARGE) Then
@@ -256,8 +256,9 @@ Func DervishRun($X, $Y)
 
 		Sleep(250)
 		$me = GetMyAgent()
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 

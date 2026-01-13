@@ -273,7 +273,7 @@ Func RunWayPoints()
 		WEnd
 		If IsPlayerDead() Then Return $FAIL
 	Next
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -411,12 +411,9 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 			ContinueLoop
 		EndIf
 	WEnd
-	If IsPlayerAlive() Then
-		PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
+	PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
+	Return $SUCCESS
 EndFunc
 
 

@@ -363,12 +363,12 @@ EndFunc
 
 Func WaitAggroMargonites($timeToWait)
 	Local $TimerAggro = TimerInit()
-	While IsPlayerAlive() And TimerDiff($TimerAggro) < $timeToWait
-		If CheckStuck('Waiting for margonites aggro', $MAX_GEMSTONE_MARGONITE_FARM_DURATION) == $FAIL Then Return $FAIL
+	While TimerDiff($TimerAggro) < $timeToWait
+		If IsPlayerDead() Or CheckStuck('Waiting for margonites aggro', $MAX_GEMSTONE_MARGONITE_FARM_DURATION) == $FAIL Then Return $FAIL
 		MargoniteDefend()
 		RandomSleep(50)
 	WEnd
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -505,7 +505,7 @@ Func KillMargonitesUsingVisageSkills()
 	Local $TimerKill = TimerInit()
 	Local Static $MaxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($TimerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -531,8 +531,9 @@ Func KillMargonitesUsingVisageSkills()
 					EndIf
 				EndIf
 		EndSwitch
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -541,7 +542,7 @@ Func KillMargonitesUsingWhirlingDefense()
 	Local $TimerKill = TimerInit()
 	Local Static $MaxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($TimerKill) < $MaxFightTime And IsPlayerAlive() And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($TimerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -553,6 +554,7 @@ Func KillMargonitesUsingWhirlingDefense()
 			UseSkillEx($MARGONITE_RANGER_WHIRLING_DEFENSE)
 			RandomSleep(100)
 		EndIf
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc

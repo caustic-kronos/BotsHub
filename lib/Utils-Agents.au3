@@ -243,7 +243,6 @@ Func GetPartyDanger($agents = Null, $party = Null)
 
 	For $i = 0 To UBound($agents) - 1
 		Local $agent = $agents[$i]
-		If GetIsDead($agent) Then ContinueLoop
 		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
 		If GetIsDead($agent) Then ContinueLoop
 		Local $allegiance = DllStructGetData($agent, 'Allegiance')
@@ -448,7 +447,7 @@ EndFunc
 ;~ Get NPCs in range of the given coordinates. If range is Null then all found NPCs are retuned, as with infinite range
 Func GetNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
-	Local $allAgents[GetMaxAgents()]
+	Local $allAgents[UBound($agents)]
 	Local $npcCount = 0
 
 	If $coordX == Null Or $coordY == Null Then

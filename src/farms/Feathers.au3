@@ -153,38 +153,8 @@ Func FeathersFarmLoop()
 EndFunc
 
 
-;~ Move and ... run ? Who the fuck wrote this ?
-Func MoveRun($x, $y, $timeOut = 2*60*1000)
-	If IsPlayerDead() Then Return False
-	Local $me = GetMyAgent()
-	Local $deadlock = TimerInit()
-
-	Move($x, $y)
-	While IsPlayerAlive() And GetDistanceToPoint($me, $x, $y) > 250
-		If TimerDiff($deadlock) > $timeOut Then
-			Resign()
-			Sleep(3000)
-			$deadlock = TimerInit()
-			While IsPlayerAlive() And TimerDiff($deadlock) < 30000
-				Sleep(3000)
-				If TimerDiff($deadlock) > 15000 Then Resign()
-			WEnd
-		EndIf
-		If IsRecharged($FEATHERS_DWARVEN_STABILITY) Then UseSkillEx($FEATHERS_DWARVEN_STABILITY)
-		If IsRecharged($FEATHERS_DASH) Then UseSkillEx($FEATHERS_DASH)
-		$me = GetMyAgent()
-		If DllStructGetData($me, 'HealthPercent') < 0.95 And GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
-		If Not IsPlayerMoving() Then Move($x, $y)
-		RandomSleep(250)
-		$me = GetMyAgent()
-	WEnd
-	Return True
-EndFunc
-
-
 ;~ Move and kill I suppose
 Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
-	If IsPlayerDead() Then Return $FAIL
 	Local $Angle = 0
 	Local $stuckCount = 0
 	Local $Blocked = 0
@@ -202,7 +172,6 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
-			If IsPlayerDead() Then Return $FAIL
 		EndIf
 		If IsPlayerDead() Then Return $FAIL
 		If IsRecharged($FEATHERS_DWARVEN_STABILITY) Then UseSkillEx($FEATHERS_DWARVEN_STABILITY)
@@ -244,8 +213,6 @@ EndFunc
 
 ;~ Kill foes
 Func Kill($waitForSettle = True)
-	If IsPlayerDead() Then Return $FAIL
-
 	Local $deadlock, $timeout = 2*60*1000
 
 	Local $stuckCount = 0
@@ -275,7 +242,6 @@ Func Kill($waitForSettle = True)
 				Sleep(3000)
 				If TimerDiff($deadlock) > 15000 Then Resign()
 			WEnd
-			If IsPlayerDead() Then Return $FAIL
 		EndIf
 		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent(GetMyAgent())
@@ -306,7 +272,7 @@ Func WaitForSettle($Timeout = 10000)
 	Local $me = GetMyAgent()
 	Local $target
 	Local $deadlock = TimerInit()
-	While IsPlayerAlive() And CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
+	While CountFoesInRangeOfAgent(-2,900) == 0 And (TimerDiff($deadlock) < 5000)
 		If IsPlayerDead() Then Return False
 		If DllStructGetData($me, 'HealthPercent') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)

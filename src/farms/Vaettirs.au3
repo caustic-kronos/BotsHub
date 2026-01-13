@@ -368,17 +368,14 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 	If $result == $STUCK Then
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 		VaettirsKillSequence()
-		If IsPlayerAlive() Then
-			Info('Picking up loot')
-			; Tripled to secure the looting of items
-			For $i = 1 To 3
-				PickUpItems(VaettirsStayAlive)
-				Sleep(GetPing())
-			Next
-			Return $SUCCESS
-		Else
-			Return $FAIL
-		EndIf
+		If IsPlayerDead() Then Return $FAIL
+		Info('Picking up loot')
+		; Tripled to secure the looting of items
+		For $i = 1 To 3
+			PickUpItems(VaettirsStayAlive)
+			Sleep(GetPing())
+		Next
+		Return $SUCCESS
 	Else
 		Return $result
 	EndIf
@@ -524,11 +521,11 @@ Func VaettirsKillSequence()
 	; Wait for shadow form or other buffs to have been casted very recently
 	While (($vaettirs_player_profession <> $ID_ELEMENTALIST And TimerDiff($vaettir_shadowform_timer) > 5000) Or _
 			($vaettirs_player_profession == $ID_ELEMENTALIST And TimerDiff($vaettir_obsidian_flesh_timer) > 5000)) And _
-		IsPlayerAlive() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA) > 0
+		CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA) > 0
 			Sleep(100)
 			VaettirsStayAlive()
+			If IsPlayerDead() Then Return
 	WEnd
-	If IsPlayerDead() Then Return
 
 	Info('Killing Vaettirs')
 	Switch $vaettirs_player_profession

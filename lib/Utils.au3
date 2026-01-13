@@ -60,7 +60,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 
 	Move($destinationX, $destinationY, 0)
 
-	Do
+	While GetDistanceToPoint($me, $destinationX, $destinationY) > 25 And $blockedCount < 14
 		Sleep(100)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
@@ -74,7 +74,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 			$destinationY = $Y + Random(-$random, $random)
 			Move($destinationX, $destinationY, 0)
 		EndIf
-	Until GetDistanceToPoint($me, $destinationX, $destinationY) < 25 Or $blockedCount > 14
+	WEnd
 EndFunc
 
 
@@ -98,7 +98,7 @@ Func GoToAgent($agent, $GoFunction = Null)
 	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
 	Sleep(100)
 	If $GoFunction <> Null Then $GoFunction($agent)
-	Do
+	While GetDistance($me, $agent) > 250 And $blockedCount < 14
 		Sleep(100)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
@@ -111,7 +111,7 @@ Func GoToAgent($agent, $GoFunction = Null)
 			Sleep(100)
 			If $GoFunction <> Null Then $GoFunction($agent)
 		EndIf
-	Until GetDistance($me, $agent) < 250 Or $blockedCount > 14
+	WEnd
 	Sleep(GetPing() + 1000)
 EndFunc
 
@@ -361,7 +361,6 @@ EndFunc
 
 ;~ Find chests in the given range (earshot by default)
 Func FindChest($range = $RANGE_EARSHOT)
-	If IsPlayerDead() Then Return Null
 	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		WarnOnce('No lockpicks available to open chests')
 		Return Null
@@ -386,7 +385,6 @@ EndFunc
 
 ;~ Find and open chests in the given range (earshot by default)
 Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
-	If IsPlayerDead() Then Return
 	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		WarnOnce('No lockpicks available to open chests')
 		Return
@@ -411,7 +409,6 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 			If IsPlayerDead() Then Return
 			RandomSleep(200)
 			OpenChest()
-			If IsPlayerDead() Then Return
 			RandomSleep(GetPing() + 1000)
 			If IsPlayerDead() Then Return
 			$chests_map[DllStructGetData($agent, 'ID')] = 2
@@ -559,7 +556,6 @@ EndFunc
 
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
 Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_MoveDefend_Options)
-	If IsPlayerDead() Then Return $FAIL
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
@@ -744,7 +740,7 @@ Func UseSkillEx($skillSlot, $target = Null)
 	; wait until skill starts recharging or time for skill to be activated has elapsed
 	Do
 		Sleep(50)
-	Until Not IsRecharged($skillSlot) Or ($approximateCastTime > 0 And TimerDiff($castTimer) > $approximateCastTime)
+	Until ($approximateCastTime > 0 And TimerDiff($castTimer) > $approximateCastTime) Or Not IsRecharged($skillSlot)
 	Return True
 EndFunc
 
@@ -773,7 +769,7 @@ Func UseSkillTimed($skillSlot, $target = Null)
 	; wait until skill starts recharging or time for skill to be fully activated has elapsed
 	Do
 		Sleep(50 + GetPing())
-	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
+	Until ($fullCastTime < TimerDiff($castTimer)) Or (Not IsRecharged($skillSlot))
 	Return True
 EndFunc
 
@@ -796,7 +792,7 @@ Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
 	; Wait until skill starts recharging or time for skill to be activated has elapsed
 	Do
 		Sleep(50 + GetPing())
-	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
+	Until ($approximateCastTime < TimerDiff($castTimer)) Or (Not IsRecharged($skillSlot))
 	Return True
 EndFunc
 
@@ -823,7 +819,7 @@ Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 	; wait until skill starts recharging or time for skill to be fully activated has elapsed
 	Do
 		Sleep(50 + GetPing())
-	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
+	Until ($fullCastTime < TimerDiff($castTimer)) Or (Not IsRecharged($skillSlot))
 	Return True
 EndFunc
 
@@ -959,7 +955,6 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Op
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
 		RandomSleep(250)
-		If IsPlayerDead() Then Return $FAIL
 		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
@@ -1203,23 +1198,23 @@ EndFunc
 
 ;~ Returns the nearest item by model ID to an agent.
 Func GetNearestItemByModelIDToAgent($modelID, $agent)
-	Local $nearestItemAgent, $nearestDistance = 100000000
+	Local $nearestItemAgent = Null
+	Local $nearestDistance = 100000000
 	Local $distance
-	If GetMaxAgents() > 0 Then
-		For $i = 1 To GetMaxAgents()
-			Local $itemAgent = GetAgentByID($i)
-			If Not IsItemAgentType($itemAgent) Then ContinueLoop
-			Local $agentModelID = DllStructGetData(GetItemByAgentID($i), 'ModelID')
-			If $agentModelID = $modelID Then
-				$distance = GetDistance($itemAgent, $agent)
-				If $distance < $nearestDistance Then
-					$nearestItemAgent = $itemAgent
-					$nearestDistance = $distance
-				EndIf
+
+	For $itemAgent In GetAgentArray($ID_AGENT_TYPE_ITEM)
+		Local $itemAgentID = DllStructGetData($itemAgent, 'ID')
+		Local $item = GetItemByAgentID($itemAgentID)
+		Local $agentModelID = DllStructGetData($item, 'ModelID')
+		If $agentModelID = $modelID Then
+			$distance = GetDistance($itemAgent, $agent)
+			If $distance < $nearestDistance Then
+				$nearestItemAgent = $itemAgent
+				$nearestDistance = $distance
 			EndIf
-		Next
-		Return $nearestItemAgent
-	EndIf
+		EndIf
+	Next
+	Return $nearestItemAgent
 EndFunc
 
 

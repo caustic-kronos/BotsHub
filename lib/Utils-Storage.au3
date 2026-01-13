@@ -544,7 +544,7 @@ EndFunc
 Func ShouldKeepWeapon($item)
 	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
 	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
-	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND, $ID_TYPE_STAFF]
+	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND]
 	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)
 
 	Local $rarity = GetRarity($item)
@@ -574,10 +574,12 @@ Func ShouldKeepWeapon($item)
 	; OS - Old School weapon without inscription ... it's more complicated
 	Else
 		If GetItemReq($item) >= 9 Then
-			; OS (Old School) high Req are kept only if : 1) perfect mods and good type or good skin 2) rare skin and almost perfect mods
-			If HasPerfectMods($item) And ($MAP_RARE_WEAPONS[$itemID] <> Null Or $valuableOSWeaponTypesMap[DllStructGetData($item, 'type')] <> Null) Then Return True
-			If $MAP_RARE_WEAPONS[$itemID] == Null Then Return False
-			If HasAlmostPerfectMods($item) Then Return True
+			; OS (Old School) high Req are kept only if : 1) rare skin and perfect/almost perfect mods 2) good type and perfect mods (shield, offhand, wand)
+			If $MAP_RARE_WEAPONS[$itemID] <> Null Then
+				Return HasPerfectMods($item) Or HasAlmostPerfectMods($item)
+			ElseIf $valuableOSWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then
+				Return HasPerfectMods($item)
+			EndIf
 			Return False
 		Else
 			; Low Req are kept if they have perfect mods, almost perfect mods, or a rare skin with somewhat okay mods

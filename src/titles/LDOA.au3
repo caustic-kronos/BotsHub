@@ -45,9 +45,6 @@ Global Const $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN = 0x804701
 Global Const $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE = 0x802E01
 Global Const $ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET = 0x84A101
 
-Global Const $ID_LUMINESCENT_SCEPTER = 6508
-Global Const $ID_SERRATED_SHIELD = 6514
-
 ; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_HEALTH_THRESHOLD = 0.33
 Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
@@ -96,7 +93,7 @@ EndFunc
 ;~ Initial setup for LDOA title farm if new char, this is done only once
 Func InitialSetupLDOA()
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
-	If Not IsItemEquippedInWeaponSlot($ID_LUMINESCENT_SCEPTER, 1) Or FindInInventory($ID_IGNEOUS_SUMMONING_STONE)[0] == 0 Then GetWeapons()
+	If Not IsItemEquippedInWeaponSlot($ID_LUMINESCENT_SCEPTER, 1) Or FindInInventory($ID_IGNEOUS_SUMMONING_STONE)[0] == 0 Then GetBonusWeapons()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
@@ -139,14 +136,14 @@ EndFunc
 
 
 ;~ Get weapons for LDOA title farm
-Func GetWeapons()
+Func GetBonusWeapons()
 	; Get Igneous summoning stone for low level characters
 	SendChat('bonus', '/')
 	Sleep(GetPing() + 750)
 
 	Local $luminescentScepter = FindInInventory($ID_LUMINESCENT_SCEPTER)
 	Local $serratedShield = FindInInventory($ID_SERRATED_SHIELD)
-
+	; TODO: add trashing the other bonus weapons
 	If $luminescentScepter[0] <> 0 And $serratedShield[0] <> 0 Then
 		Info('Equipping Luminescent Scepter and Serrated Shield')
 		Local $item = GetItemBySlot($luminescentScepter[0], $luminescentScepter[1])

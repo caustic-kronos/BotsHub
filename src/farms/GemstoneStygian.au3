@@ -303,8 +303,7 @@ Func StygianJobMesmerAssassin($waveNumber = 1)
 	UseSkillEx($STYGIAN_DASH)
 	; waiting for all mobs to come
 	Sleep(12500)
-	KillStygianMobsUsingWastrelSkills()
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return KillStygianMobsUsingWastrelSkills()
 EndFunc
 
 
@@ -382,15 +381,16 @@ Func StygianJobRanger()
 	WEnd
 	CancelAll()
 	RandomSleep(500)
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	If IsPlayerDead() Then Return $FAIL
+	PickUpItems(Null, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
+	Return $SUCCESS
 EndFunc
 
 
 Func KillStygianMobsUsingWastrelSkills()
 	Local $me, $target, $distance
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $STYGIANS_RANGE_LONG) > 0 And IsPlayerAlive()
+	While CountFoesInRangeOfAgent(GetMyAgent(), $STYGIANS_RANGE_LONG) > 0
 		If CheckStuck('Stygian fight mesmer/assassin', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		StygianCheckSFBuffs()
 		$me = GetMyAgent()
@@ -406,10 +406,11 @@ Func KillStygianMobsUsingWastrelSkills()
 			RandomSleep(100)
 		EndIf
 		RandomSleep(100)
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	RandomSleep(500)
+	;RandomSleep(500)
 	;If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 

@@ -550,10 +550,10 @@ Func KillMinistryOfPurity()
 	RandomSleep(50)
 
 	If IsRecharged($SKILL_GRENTHS_AURA) Then
-		If IsPlayerDead() Then Return
-		While IsPlayerAlive() And IsRecharged($SKILL_GRENTHS_AURA)
+		While IsRecharged($SKILL_GRENTHS_AURA)
 			UseSkillEx($SKILL_GRENTHS_AURA)
 			RandomSleep(50)
+			If IsPlayerDead() Then Return
 		WEnd
 	EndIf
 

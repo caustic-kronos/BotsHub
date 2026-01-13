@@ -70,7 +70,7 @@ Global $glint_challenge_fight_options = CloneDictMap($Default_MoveAggroAndKill_O
 $glint_challenge_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location
 $glint_challenge_fight_options.Item('flagHeroesOnFight')	= False
-$glint_challenge_fight_options.Item('lootInFights')		= False
+$glint_challenge_fight_options.Item('lootInFights')			= False
 ; there are no chests in Glint Challenge location
 $glint_challenge_fight_options.Item('openChests')			= False
 

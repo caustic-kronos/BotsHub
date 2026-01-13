@@ -639,13 +639,11 @@ EndFunc
 
 ;~ Pick up the torch
 Func PickUpTorch()
-	Local $agent
-	Local $item
+	Local $agents = GetAgentArray($ID_AGENT_TYPE_ITEM)
 	Local $deadlock
-	For $i = 1 To GetMaxAgents()
-		$agent = GetAgentByID($i)
-		If Not IsItemAgentType($agent) Then ContinueLoop
-		$item = GetItemByAgentID($i)
+	For $agent In $agents
+		Local $agentID = DllStructGetData($agent, 'ID')
+		Local $item = GetItemByAgentID($agentID)
 		If (DllStructGetData(($item), 'ModelID') == $ID_SOO_TORCH) Then
 			Info('Torch: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)

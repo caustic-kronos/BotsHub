@@ -399,17 +399,19 @@ Func KillRaptors()
 		UseSkillEx($RAPTORS_SHIELD_BASH)
 		RandomSleep(20)
 		Debug('Using Whirlwind attack a second time')
-		While IsPlayerAlive() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($RAPTORS_WHIRLWIND_ATTACK) == 130
+		While CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($RAPTORS_WHIRLWIND_ATTACK) == 130
 			UseSkillEx($RAPTORS_WHIRLWIND_ATTACK, GetNearestEnemyToAgent($me))
 			RandomSleep(250)
 			$me = GetMyAgent()
+			If IsPlayerDead() Then Return $FAIL
 		WEnd
 	Else
 		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
-		While IsPlayerAlive() And CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10
+		While CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10
 			UseSkillEx($RAPTORS_EREMITES_ATTACK, GetNearestEnemyToAgent($me))
 			RandomSleep(250)
 			$me = GetMyAgent()
+			If IsPlayerDead() Then Return $FAIL
 		WEnd
 	EndIf
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
