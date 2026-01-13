@@ -50,7 +50,7 @@ EndFunc
 ;~ SoO farm setup
 Func SetupSoOFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_VLOXS_FALL, $district_name)
+	TravelToOutpost($ID_VLOXS_FALLS, $district_name)
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
 	SwitchToHardModeIfEnabled()
@@ -65,7 +65,7 @@ EndFunc
 
 ;~ Run to Shards of Orr through Arbor Bay
 Func RunToShardsOfOrrDungeon()
-	TravelToOutpost($ID_VLOXS_FALL, $district_name)
+	TravelToOutpost($ID_VLOXS_FALLS, $district_name)
 	ResetFailuresCounter()
 
 	Info('Making way to portal')
