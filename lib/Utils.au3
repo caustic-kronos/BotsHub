@@ -50,6 +50,72 @@ Func GetOwnPosition()
 EndFunc
 
 
+;~ Move to a location and wait until you reach it.
+Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
+	Local $blockedCount = 0
+	Local $me
+	Local $mapID = GetMapID(), $oldMapID
+	Local $destinationX = $X + Random(-$random, $random)
+	Local $destinationY = $Y + Random(-$random, $random)
+
+	Move($destinationX, $destinationY, 0)
+
+	Do
+		Sleep(100)
+		$me = GetMyAgent()
+		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
+		$oldMapID = $mapID
+		$mapID = GetMapID()
+		If $mapID <> $oldMapID Then ExitLoop
+		If $doWhileRunning <> Null Then $doWhileRunning()
+		If Not IsPlayerMoving() Then
+			$blockedCount += 1
+			$destinationX = $X + Random(-$random, $random)
+			$destinationY = $Y + Random(-$random, $random)
+			Move($destinationX, $destinationY, 0)
+		EndIf
+	Until GetDistanceToPoint($me, $destinationX, $destinationY) < 25 Or $blockedCount > 14
+EndFunc
+
+
+;~ Talks to NPC and waits until you reach them.
+Func GoToNPC($agent)
+	GoToAgent($agent, GoNPC)
+EndFunc
+
+
+;~ Go to signpost and waits until you reach it.
+Func GoToSignpost($agent)
+	GoToAgent($agent, GoSignpost)
+EndFunc
+
+
+;~ Talks to an agent and waits until you reach it.
+Func GoToAgent($agent, $GoFunction = Null)
+	Local $me
+	Local $blockedCount = 0
+	Local $mapLoading = GetMapType(), $mapLoadingOld
+	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
+	Sleep(100)
+	If $GoFunction <> Null Then $GoFunction($agent)
+	Do
+		Sleep(100)
+		$me = GetMyAgent()
+		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
+		$mapLoadingOld = $mapLoading
+		$mapLoading = GetMapType()
+		If $mapLoading <> $mapLoadingOld Then ExitLoop
+		If Not IsPlayerMoving() Then
+			$blockedCount += 1
+			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
+			Sleep(100)
+			If $GoFunction <> Null Then $GoFunction($agent)
+		EndIf
+	Until GetDistance($me, $agent) < 250 Or $blockedCount > 14
+	Sleep(GetPing() + 1000)
+EndFunc
+
+
 ;~ Travel to specified map and specified district
 Func DistrictTravel($mapID, $district = 'Random')
 	If GetMapID() == $mapID Then Return
@@ -266,54 +332,7 @@ EndFunc
 #EndRegion Map and travel
 
 
-#Region Loot items
-;~ Loot items around character
-Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
-	If $inventory_management_cache['@pickup.nothing'] Then Return
-
-	Local $item
-	Local $agentID
-	Local $deadlock
-	Local $agents = GetAgentArray($ID_AGENT_TYPE_ITEM)
-	For $agent In $agents
-		If IsPlayerDead() Then Return
-		If Not GetCanPickUp($agent) Then ContinueLoop
-		If GetDistance(GetMyAgent(), $agent) > $range Then ContinueLoop
-
-		$agentID = DllStructGetData($agent, 'ID')
-		$item = GetItemByAgentID($agentID)
-
-		If ($shouldPickItem($item)) Then
-			If $defendFunction <> Null Then $defendFunction()
-			If Not GetAgentExists($agentID) Then ContinueLoop
-			PickUpItem($item)
-			$deadlock = TimerInit()
-			While IsPLayerAlive() And GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
-				RandomSleep(100)
-			WEnd
-		EndIf
-	Next
-
-	If $bags_count == 5 And CountSlots(1, 3) == 0 Then
-		MoveItemsToEquipmentBag()
-	EndIf
-EndFunc
-
-
-;~ Tests if an item is assigned to you.
-Func GetAssignedToMe($agent)
-	Return DllStructGetData($agent, 'Owner') == GetMyID()
-EndFunc
-
-
-;~ Tests if you can pick up an item.
-Func GetCanPickUp($agent)
-	Return GetAssignedToMe($agent) Or DllStructGetData($agent, 'Owner') = 0
-EndFunc
-#EndRegion Loot items
-
-
-#Region Loot Chests
+#Region Find and open Chests
 ;~ Scans for chests and return the first one found around the player or the given coordinates
 ;~ If flagged is set to true, it will return previously found chests
 ;~ If $Chest_Gadget_ID parameter is provided then functions will scan only for chests with the same GadgetID as provided
@@ -445,621 +464,99 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 	GoSignpost($signpost)
 	RandomSleep(GetPing() + 100)
 EndFunc
-#EndRegion Loot Chests
+#EndRegion Find and open Chests
 
 
-#Region Use Items
-;~ Use morale booster on team
-Func UseMoraleConsumableIfNeeded()
-	While TeamHasTooMuchMalus()
-		Local $usedMoraleBooster = False
-		For $DPRemoval_Sweet In $DP_REMOVAL_SWEETS
-			Local $ConsumableSlot = FindInInventory($DPRemoval_Sweet)
-			If $ConsumableSlot[0] <> 0 Then
-				UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
-				$usedMoraleBooster = True
-			EndIf
-		Next
-		If Not $usedMoraleBooster Then Return $FAIL
-	WEnd
-	Return $SUCCESS
+#Region Advanced actions
+;~ Detect if player is rubberbanding
+Func IsPlayerRubberBanding()
 EndFunc
 
 
-;~ Use Armor of Salvation, Essence of Celerity and Grail of Might
-Func UseConset()
-	UseConsumable($ID_ARMOR_OF_SALVATION)
-	UseConsumable($ID_ESSENCE_OF_CELERITY)
-	UseConsumable($ID_GRAIL_OF_MIGHT)
-EndFunc
-
-
-;~ Uses a consumable from inventory, if present
-Func UseCitySpeedBoost($forceUse = False)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return $FAIL
-	If GetMapType() <> $ID_OUTPOST Then Return $FAIL
-	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return
-	Local $ConsumableSlot = FindInInventory($ID_SUGARY_BLUE_DRINK)
-	If $ConsumableSlot[0] <> 0 Then
-		UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
-	Else
-		$ConsumableSlot = FindInInventory($ID_CHOCOLATE_BUNNY)
-		If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+;~ Check if bot got stuck by checking if max duration for bot has elapsed. Default max duration is 60 minutes = 3600000 milliseconds
+;~ If run lasts longer than max duration time then bot must have gotten stuck and fail is returned to restart run
+Func CheckStuck($stuckLocation, $maxFarmDuration = 3600000)
+	If TimerDiff($run_timer) > $maxFarmDuration Then
+		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
+		Return $FAIL
 	EndIf
 	Return $SUCCESS
 EndFunc
 
 
-;~ Uses an item from inventory or chest, if present
-Func UseItemFromInventory($itemID, $forceUse = False, $checkXunlaiChest = True)
-	Local $ConsumableItemBagAndSlot
-	If $checkXunlaiChest == True And GetMapType() == $ID_OUTPOST Then
-		$ConsumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
-	Else
-		$ConsumableItemBagAndSlot = FindInStorages(1, $bags_count, $itemID)
-	EndIf
+;~ Send /stuck - don't overuse, otherwise there can be a BAN !
+Func CheckAndSendStuckCommand()
+	; static variable is initialized only once when CheckAndSendStuckCommand is called first time
+	Local Static $chatStuckTimer = TimerInit()
+	; 10 seconds interval between stuck commands
+	Local $stuckInterval = 10000
 
-	Local $ConsumableBag = $ConsumableItemBagAndSlot[0]
-	Local $ConsumableSlot = $ConsumableItemBagAndSlot[1]
-	If $ConsumableBag <> 0 And $ConsumableSlot <> 0 Then
-		UseItemBySlot($ConsumableBag, $ConsumableSlot)
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
-EndFunc
-
-
-;~ Uses a consumable from inventory or chest, if present
-Func UseConsumable($consumableID, $forceUse = False, $checkXunlaiChest = True)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
-	If Not IsConsumable($consumableID) Then
-		Warn('Provided item model ID might not correspond to consumable')
-		Return $FAIL
-	EndIf
-	Local $result = UseItemFromInventory($consumableID, $forceUse, $checkXunlaiChest)
-	If $result == $SUCCESS Then Info('Consumable used successfully')
-	If $result == $FAIL Then Warn('Could not find specified consumable in inventory')
-	Return $result
-EndFunc
-
-
-;~ Uses a scroll from inventory or chest, if present
-Func UseScroll($scrollID, $forceUse = False, $checkXunlaiChest = True)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_UNCHECKED) Then Return
-	If Not IsBlueScroll($scrollID) And Not IsGoldScroll($scrollID) Then
-		Warn('Provided item model ID might not correspond to scroll')
-		Return $FAIL
-	EndIf
-	Local $result = UseItemFromInventory($scrollID, $forceUse, $checkXunlaiChest)
-	If $result == $SUCCESS Then Info('Scroll used successfully')
-	If $result == $FAIL Then Warn('Could not find specified scroll in inventory')
-	Return $result
-EndFunc
-
-
-;~ Uses the Item from $bag at position $slot (positions start at 1)
-Func UseItemBySlot($bag, $slot)
-	If $bag > 0 And $slot > 0 Then
-		If IsPlayerAlive() And GetMapType() <> $ID_Loading Then
-			Local $item = GetItemBySlot($bag, $slot)
-			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
-		EndIf
-	EndIf
-EndFunc
-#EndRegion Use Items
-
-
-#Region Utils
-;~ Mapping function
-;~ Mapping mode corresponds to : 0 - everything, 1 - only location, 2 - only chests
-Func ToggleMapping($mappingMode = 0, $mappingPath = @ScriptDir & '/logs/mapping.log', $chestPath = @ScriptDir & '/logs/chests.log')
-	; Toggle variable
-	Local Static $isMapping = False
-	Local Static $mappingFile
-	Local Static $chestFile
-	If $isMapping Then
-		AdlibUnregister('MappingWrite')
-		FileClose($mappingFile)
-		FileClose($chestFile)
-		$isMapping = False
-	Else
-		Info('Logging mapping to : ' & $mappingPath)
-		Info('Logging chests to : ' & $chestPath)
-		$mappingFile = FileOpen($mappingPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-		$chestFile = FileOpen($chestPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-		MappingWrite($mappingFile, $chestFile, $mappingMode)
-		AdlibRegister('MappingWrite', 1000)
-		$isMapping = True
-	EndIf
-EndFunc
-
-
-;~ Write mapping log in file
-Func MappingWrite($mapfile = Null, $chestingFile = Null, $mode = Null)
-	Local Static $mappingFile = 0
-	Local Static $chestFile = 0
-	Local Static $mappingMode = 0
-	Local $mustReturn = False
-	; Initialisation the first time when called outside of AdlibRegister
-	If (IsDeclared('mapfile') And $mapfile <> Null) Then
-		$mappingFile = $mapfile
-		$mustReturn = True
-	EndIf
-	If (IsDeclared('chestingFile') And $chestingFile <> Null) Then
-		$chestFile = $chestingFile
-		$mustReturn = True
-	EndIf
-	If (IsDeclared('mode') And $mode <> Null) Then
-		$mappingMode = $mode
-		$mustReturn = True
-	EndIf
-	If $mustReturn Then Return
-	If $mappingMode <> 2 Then
-		Local $me = GetMyAgent()
-		_FileWriteLog($mappingFile, '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
-	EndIf
-	If $mappingMode <> 1 Then
-		Local $chest = ScanForChests($RANGE_COMPASS)
-		If $chest <> Null Then
-			Local $chestString = 'Chest ' & DllStructGetData($chest, 'ID') & ' - (' & DllStructGetData($chest, 'X') & ',' & DllStructGetData($chest, 'Y') & ')'
-			_FileWriteLog($chestFile, $chestString)
-		EndIf
-	EndIf
-EndFunc
-
-
-;~ Return the value if it's not Null else the defaultValue
-Func GetOrDefault($value, $defaultValue)
-	Return ($value == Null) ? $defaultValue : $value
-EndFunc
-
-
-;~ Returns True if item is present in array, else False, assuming that array is indexed from 0
-Func ArrayContains($array, $item)
-	For $arrayItem In $array
-		If $arrayItem == $item Then Return True
-	Next
-	Return False
-EndFunc
-
-
-;~ Fill 1D or 2D array by reference with a specified value, assuming that array is indexed from 0
-Func FillArray(ByRef $array, $value)
-	If UBound($array, $UBOUND_DIMENSIONS) == 1 Then
-		For $i = 0 To UBound($array) - 1
-			$array[$i] = $value
-		Next
-	ElseIf UBound($array, $UBOUND_DIMENSIONS) == 2 Then
-		For $i = 0 To UBound($array, $UBOUND_ROWS) - 1
-			For $j = 0 To UBound($array, $UBOUND_COLUMNS) - 1
-				$array[$i][$j] = $value
-			Next
-		Next
-	EndIf
-EndFunc
-
-
-;~ Add to a Map of arrays (create key and new array if unexisting, add to existent array if existing)
-Func AppendArrayMap($map, $key, $element)
-	If ($map[$key] == Null) Then
-		Local $newArray[1] = [$element]
-		$map[$key] = $newArray
-	Else
-		_ArrayAdd($map[$key], $element)
-	EndIf
-	Return $map
-EndFunc
-
-
-;~ Create a map from an array to have a one liner map instantiation
-Func MapFromArray($keys)
-	Local $map[]
-	For $key In $keys
-		$map[$key] = 1
-	Next
-	Return $map
-EndFunc
-
-
-;~ Create a map from a double array of dimensions [N, 2] to have a one liner map instantiation with values
-Func MapFromDoubleArray($keysAndValues)
-	Local $map[]
-	For $i = 0 To UBound($keysAndValues) - 1
-		$map[$keysAndValues[$i][0]] = $keysAndValues[$i][1]
-	Next
-	Return $map
-EndFunc
-
-
-;~ Create a map from two arrays to have a one liner map instantiation with values
-Func MapFromArrays($keys, $values)
-	Local $map[]
-	For $i = 0 To UBound($keys) - 1
-		$map[$keys[$i]] = $values[$i]
-	Next
-	Return $map
-EndFunc
-
-
-;~ Do an operation on selected rows of 2D array. Available number of columns for array are 2, 3, 4, 5
-;~ $firstIndex and $lastIndex specify start and end of range of rows of 2D array on which $function should be performed
-;~ Return $FAIL if operation failed on any row, $SUCCESS if operation succeded for all rows od 2D array
-Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
-	If Not IsArray($array) Or UBound($array, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
-	If UBound($array, $UBOUND_COLUMNS) <> 2 And UBound($array, $UBOUND_COLUMNS) <> 3 And UBound($array, $UBOUND_COLUMNS) <> 4 And UBound($array, $UBOUND_COLUMNS) <> 5 Then Return $FAIL
-	If $firstIndex < 1 Or UBound($array) < $lastIndex Then Return $FAIL
-	If $firstIndex > $lastIndex Then Return $FAIL
-	Local $result = $SUCCESS
-	; Caution, array rows are indexed from 1, but $array is indexed from 0
-	For $i = $firstIndex - 1 To $lastIndex - 1
-		If UBound($array, $UBOUND_COLUMNS) == 2 Then
-			$result = $function($array[$i][0], $array[$i][1])
-		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
-			$result = $function($array[$i][0], $array[$i][1], $array[$i][2])
-		ElseIf UBound($array, $UBOUND_COLUMNS) == 4 Then
-			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3])
-		ElseIf UBound($array, $UBOUND_COLUMNS) == 5 Then
-			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3], $array[$i][4])
-		EndIf
-		If $result <> $SUCCESS Then Return $result
-	Next
-	Return $SUCCESS
-EndFunc
-
-
-;~ Clone a map
-Func CloneMap($original)
-	Local $clone[]
-	For $key In MapKeys($original)
-		$clone[$key] = $original[$key]
-	Next
-	Return $clone
-EndFunc
-
-
-;~ Clone a dictiomary map. Dictionary map has an advantage that it is inherently passed by reference to functions as the same object without the need of copying
-Func CloneDictMap($original)
-	Local $clone = ObjCreate('Scripting.Dictionary')
-	For $key In $original.Keys
-		$clone.Add($key, $original.Item($key))
-	Next
-	Return $clone
-EndFunc
-
-
-;~ Find common longest substring in two strings
-Func LongestCommonSubstringOfTwoStrings($string1, $string2)
-	Local $longestCommonSubstrings[0]
-	Local $string1characters = StringSplit($string1, '')
-	Local $string2characters = StringSplit($string2, '')
-	; deleting first element of string arrays (which has the count of characters in AutoIT) to have string arrays indexed from 0
-	_ArrayDelete($string1characters, 0)
-	_ArrayDelete($string2characters, 0)
-	Local $LongestCommonSubstringSize = 0
-	Local $array[UBound($string1characters) + 1][UBound($string2characters) + 1]
-	FillArray($array, 0)
-
-	For $i = 1 To UBound($string1characters)
-		For $j = 1 To UBound($string2characters)
-			If ($string1characters[$i-1] == $string2characters[$j-1]) Then
-				$array[$i][$j] = $array[$i-1][$j-1] + 1
-				If $array[$i][$j] > $LongestCommonSubstringSize Then
-					$LongestCommonSubstringSize = $array[$i][$j]
-					; resetting to empty array
-					Local $longestCommonSubstrings[0]
-					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
-				ElseIf $array[$i][$j] = $LongestCommonSubstringSize Then
-					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
-				EndIf
-			Else
-				$array[$i][$j] = 0
-			EndIf
-		Next
-	Next
-
-	; return first string from the array of longest substrings (there might be more than 1 with the same maximal size)
-	Return $longestCommonSubstrings[0]
-EndFunc
-
-
-;~ Find common longest substring in array of strings, indexed from 0
-Func LongestCommonSubstring($strings)
-	Local $longestCommonSubstring = ''
-	If UBound($strings) = 0 Then Return ''
-	If UBound($strings) = 1 Then Return $strings[0]
-	Local $firstStringLength = StringLen($strings[0])
-	If $firstStringLength = 0 Then
-		Return ''
-	Else
-		For $i = 0 To $firstStringLength - 1
-			For $j = 0 To $firstStringLength - $i
-				If $j > StringLen($longestCommonSubstring) And IsSubstring(StringMid($strings[0], $i, $j), $strings) Then
-					$longestCommonSubstring = StringMid($strings[0], $i, $j)
-				EndIf
-			Next
-		Next
-	EndIf
-	Return $LongestCommonSubstring
-EndFunc
-
-
-;~ Returns True if find substring is in every string in the array of strings
-Func IsSubstring($find, $strings)
-	If UBound($strings) < 1 And StringLen($find) < 1 Then
-		Return False
-	EndIf
-	For $string In $strings
-		If Not StringInStr($string, $find) Then
-			Return False
-		EndIf
-	Next
-	Return True
-EndFunc
-
-
-;~ Returns the distance between two coordinate pairs.
-Func ComputeDistance($X1, $Y1, $X2, $Y2)
-	Return Sqrt(($X1 - $X2) ^ 2 + ($Y1 - $Y2) ^ 2)
-EndFunc
-
-
-;~ Returns the distance between two agents.
-Func GetDistance($agent1, $agent2)
-	Return Sqrt((DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2)
-EndFunc
-
-
-;~ Returns the distance between agent and point specified by a coordinate pair.
-Func GetDistanceToPoint($agent, $X, $Y)
-	Return Sqrt(($X - DllStructGetData($agent, 'X')) ^ 2 + ($Y - DllStructGetData($agent, 'Y')) ^ 2)
-EndFunc
-
-
-;~ Returns the square of the distance between two agents.
-Func GetPseudoDistance($agent1, $agent2)
-	Return (DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2
-EndFunc
-
-
-;~ Return True if the point X, Y is over the line defined by aX + bY + c = 0
-Func IsOverLine($coefficientX, $coefficientY, $fixedCoefficient, $posX, $posY)
-	Local $position = $posX * $coefficientX + $posY * $coefficientY + $fixedCoefficient
-	If $position > 0 Then
+	; Use a timer to avoid spamming /stuck, because spamming stuck can result in being flagged, which can result in a ban
+	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there shouldn't be any enemies around the character then
+	If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > $stuckInterval Then
+		Warn('Sending /stuck')
+		SendChat('stuck', '/')
+		$chatStuckTimer = TimerInit()
+		RandomSleep(500 + GetPing())
 		Return True
 	EndIf
 	Return False
 EndFunc
 
 
-;~ Checks if a point is within a polygon defined by an array
-;~ Point-in-Polygon algorithm — Ray Casting Method - pretty cool stuff !
-Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
-	Local $edges = UBound($areaCoordinates)
-	Local $oddNodes = False
-	If $edges < 3 Then Return False
-	If $X = 0 Then
-		Local $me = GetMyAgent()
-		$X = DllStructGetData($me, 'X')
-		$Y = DllStructGetData($me, 'Y')
-	EndIf
-	Local $j = $edges - 1
-	For $i = 0 To $edges - 1
-		If (($areaCoordinates[$i][1] < $Y And $areaCoordinates[$j][1] >= $Y) _
-				Or ($areaCoordinates[$j][1] < $Y And $areaCoordinates[$i][1] >= $Y)) _
-				And ($areaCoordinates[$i][0] <= $X Or $areaCoordinates[$j][0] <= $X) Then
-			If ($areaCoordinates[$i][0] + ($Y - $areaCoordinates[$i][1]) / ($areaCoordinates[$j][1] - $areaCoordinates[$i][1]) * ($areaCoordinates[$j][0] - $areaCoordinates[$i][0]) < $X) Then
-				$oddNodes = Not $oddNodes
-			EndIf
-		EndIf
-		$j = $i
-	Next
-	Return $oddNodes
-EndFunc
-
-
-;~ Sleep a random amount of time.
-Func RandomSleep($baseAmount, $randomFactor = Null)
-	Local $randomAmount
-	Select
-		Case $randomFactor <> Null
-			$randomAmount = $baseAmount * $randomFactor
-		Case $baseAmount >= 15000
-			$randomAmount = $baseAmount * 0.025
-		Case $baseAmount >= 6000
-			$randomAmount = $baseAmount * 0.05
-		Case $baseAmount >= 3000
-			$randomAmount = $baseAmount * 0.1
-		Case $baseAmount >= 10
-			$randomAmount = $baseAmount * 0.2
-		Case Else
-			$randomAmount = 1
-	EndSelect
-	Sleep(Random($baseAmount - $randomAmount, $baseAmount + $randomAmount))
-EndFunc
-
-
-;~ Sleep a period of time, plus or minus a tolerance
-Func TolSleep($amount = 150, $randomAmount = 50)
-	Sleep(Random($amount - $randomAmount, $amount + $randomAmount))
-EndFunc
-
-
-;~ Alias function for DllStructCreate. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
-Func CreateStruct($structDefinition)
-	Return DllStructCreate($structDefinition)
-EndFunc
-
-
-;~ Alias function for DllStructSetData. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
-Func SetStructData($object, $dataString, $value)
-	DllStructSetData($object, $dataString, $value)
-EndFunc
-
-
-;~ Alias function for DllStructGetData. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
-Func GetStructData($object, $dataString)
-	Return DllStructGetData($object, $dataString)
-EndFunc
-
-
-;~ Alias function for DllStructGetSize. Can be used optionally. It can improve readability at the cost of performance, 1 additional layer in function call stack
-Func GetStructSize($object)
-	Return DllStructGetSize($object)
-EndFunc
-
-
-;~ Allows the user to run a function by hand in a call fun(arg1, arg2, [...])
-Func DynamicExecution($functionCall)
-	Local $openParenthesisPosition = StringInStr($functionCall, '(')
-	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
-	If $functionName == '' Then
-		Info('Call to nothing ?!')
-		Return
-	EndIf
-	Info('Call to ' & $functionName)
-	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
-	Local $functionArguments = ParseFunctionArguments($argumentsString)
-	; flag to be able to pass unlimited array of arguments into Call() function
-	Local $arguments[1] = ['CallArgArray']
-	_ArrayConcatenate($arguments, $functionArguments)
-	Call($functionName, $arguments)
-EndFunc
-
-
-;~ Return the array of arguments from input string in a syntax arg1, arg2, [...]
-Func ParseFunctionArguments($args)
-	Local $arguments[0]
-	Local $temp = 0, $commaPosition = 1
-	While $commaPosition < StringLen($args)
-		$temp = StringInStr($args, ',', 0, 1, $commaPosition)
-		If $temp == 0 Then $temp = StringLen($args)
-		Info(StringMid($args, $commaPosition, $temp - $commaPosition))
-		_ArrayAdd($arguments, StringMid($args, $commaPosition, $temp - $commaPosition))
-		$commaPosition = $temp + 1
-	WEnd
-	Return $arguments
-EndFunc
-
-
-;~ Function to print a structure in a table - pretty brutal tbh
-Func _dlldisplay($struct, $fieldNames = Null)
-	Local $nextPtr, $currentPtr = DllStructGetPtr($struct, 1)
-	Local $offset = 0, $dllSize = DllStructGetSize($struct)
-	Local $elementValue, $type, $typeSize, $elementSize, $arrayCount, $aligns
-
-	; #|Offset|Type|Size|Value'
-	Local $structArray[1][6] = [['-', '-', $currentPtr, '<struct>', 0, '-']]
-
-	; loop through elements
-	For $i = 1 To 2 ^ 63
-		; backup first index value, establish type and typesize of element, restore first index value
-		$elementValue = DllStructGetData($struct, $i, 1)
-		Switch VarGetType($elementValue)
-			Case 'Int32', 'Int64'
-				DllStructSetData($struct, $i, 0x7777666655554433, 1)
-				Switch DllStructGetData($struct, $i, 1)
-					Case 0x7777666655554433
-						$type = 'int64'
-						$typeSize = 8
-					Case 0x55554433
-						DllStructSetData($struct, $i, 0x88887777, 1)
-						$type = (DllStructGetData($struct, $i, 1) > 0 ? 'uint' : 'int')
-						$typeSize = 4
-					Case 0x4433
-						DllStructSetData($struct, $i, 0x8888, 1)
-						$type = (DllStructGetData($struct, $i, 1) > 0 ? 'ushort' : 'short')
-						$typeSize = 2
-					Case 0x33
-						$type = 'byte'
-						$typeSize = 1
-				EndSwitch
-			Case 'Ptr'
-				$type = 'ptr'
-				$typeSize = @AutoItX64 ? 8 : 4
-			Case 'String'
-				DllStructSetData($struct, $i, ChrW(0x2573), 1)
-				$type = (DllStructGetData($struct, $i, 1) = ChrW(0x2573) ? 'wchar' : 'char')
-				$typeSize = ($type = 'wchar') ? 2 : 1
-			Case 'Double'
-				DllStructSetData($struct, $i, 10 ^ - 15, 1)
-				$type = (DllStructGetData($struct, $i, 1) = 10 ^ - 15 ? 'double' : 'float')
-				$typeSize = ($type = 'double') ? 8 : 4
-		EndSwitch
-		DllStructSetData($struct, $i, $elementValue, 1)
-
-		; calculate element total size based on distance to next element
-		$nextPtr = DllStructGetPtr($struct, $i + 1)
-		$elementSize = $nextPtr ? Int($nextPtr - $currentPtr) : $dllSize
-
-		; calculate true array count. Walk index backwards till there is NOT an error
-		$arrayCount = Int($elementSize / $typeSize)
-		While $arrayCount > 1
-			DllStructGetData($struct, $i, $arrayCount)
-			If Not @error Then ExitLoop
-			$arrayCount -= 1
-		WEnd
-
-		; alignment is whatever space is left
-		$aligns = $elementSize - ($arrayCount * $typeSize)
-		$elementSize -= $aligns
-
-		; Add/print values and alignment
-		Switch $type
-			Case 'wchar', 'char', 'byte'
-				_ArrayAdd($structArray, $i & '|' & ($fieldNames <> Null ? $fieldNames[$i] : '-') & '|' & $offset & '|' & $type & '[' & $arrayCount & ']|' & $elementSize & '|' & DllStructGetData($struct, $i))
-			; 'uint', 'int', 'ushort', 'short', 'double', 'float', 'ptr'
-			Case Else
-				If $arrayCount > 1 Then
-					_ArrayAdd($structArray, $i & '|' & ($fieldNames <> Null ? $fieldNames[$i] : '-') & '|' & $offset & '|' & $type & '[' & $arrayCount & ']' & '|' & $elementSize & ' (' & $typeSize & ')|' & (DllStructGetData($struct, $i) ? '[1] ' & $elementValue : '-'))
-					; skip empty arrays
-					If DllStructGetData($struct, $i) Then
-						For $j = 2 To $arrayCount
-							_ArrayAdd($structArray, '-|' & '-' & '|' & $offset + ($typeSize * ($j - 1)) & '|-|-|[' & $j & '] ' & DllStructGetData($struct, $i, $j))
-						Next
-					EndIf
-				Else
-					_ArrayAdd($structArray, $i & '|' & ($fieldNames <> Null ? $fieldNames[$i] : '-') & '|' & $offset & '|' & $type & '|' & $elementSize & '|' & $elementValue)
-				EndIf
-		EndSwitch
-		If $aligns Then _ArrayAdd($structArray, '-|-|-|<alignment>|' & ($aligns) & '|-')
-
-		; if no next ptr then this was the last/only element
-		If Not $nextPtr Then ExitLoop
-
-		; update offset, size and next ptr
-		$offset += $elementSize + $aligns
-		$dllSize -= $elementSize + $aligns
-		$currentPtr = $nextPtr
-
-	Next
-
-	_ArrayAdd($structArray, '-|-|' & DllStructGetPtr($struct) + DllStructGetSize($struct) & '|<endstruct>|' & DllStructGetSize($struct) & '|-')
-	_ArrayToClip($structArray)
-	_ArrayDisplay($structArray, '', '', 64, Default, '#|Name|Offset|Type|Size|Value')
-
-	Return $structArray
-EndFunc
-#EndRegion Utils
-
-
-#Region Quests status
-;~ Take a quest or a reward - for reward, expectedState should be 0 once reward taken
-Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
-	Local $questState = 999
-	While $questState <> $expectedState
-		Info('Current quest state : ' & $questState)
-		GoToNPC($npc)
-		RandomSleep(GetPing() + 750)
-		Dialog($dialogID)
-		RandomSleep(GetPing() + 750)
-		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+;~ Aggro a foe
+Func AggroAgent($targetAgent)
+	While IsPlayerAlive() And GetDistance(GetMyAgent(), $targetAgent) > $RANGE_EARSHOT - 100
+		Move(DllStructGetData($targetAgent, 'X'), DllStructGetData($targetAgent, 'Y'))
+		RandomSleep(200)
 	WEnd
 EndFunc
-#EndRegion Quests status
 
 
-#Region Actions
+;~ Go to the NPC closest to the given coordinates
+Func GoNearestNPCToCoords($x, $y)
+	Local $npc = GetNearestNPCToCoords($x, $y)
+	Local $me = GetMyAgent()
+	While DllStructGetData($npc, 'ID') == 0
+		RandomSleep(100)
+		$npc = GetNearestNPCToCoords($x, $y)
+	WEnd
+	ChangeTarget($npc)
+	RandomSleep(250)
+	GoNPC($npc)
+	RandomSleep(250)
+	$me = GetMyAgent()
+	While GetDistance($me, $npc) > 250
+		RandomSleep(250)
+		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'), 40)
+		RandomSleep(250)
+		GoNPC($npc)
+		RandomSleep(250)
+		$me = GetMyAgent()
+	WEnd
+	RandomSleep(250)
+EndFunc
+
+
+;~ Get close to a mob without aggroing it
+Func GetAlmostInRangeOfAgent($targetAgent, $proximity = ($RANGE_SPELLCAST + 100))
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+	Local $targetX = DllStructGetData($targetAgent, 'X')
+	Local $targetY = DllStructGetData($targetAgent, 'Y')
+	Local $distance = GetDistance($me, $targetAgent)
+
+	If ($distance <= $proximity) Then Return
+
+	Local $ratio = $proximity / $distance
+
+	Local $goX = $myX + ($targetX - $myX) * (1 - $ratio)
+	Local $goY = $myY + ($targetY - $myY) * (1 - $ratio)
+	MoveTo($goX, $goY, 0)
+EndFunc
+
+
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
 Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_MoveDefend_Options)
 	If IsPlayerDead() Then Return $FAIL
@@ -1151,95 +648,6 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_Mov
 EndFunc
 
 
-;~ Detect if player is rubberbanding
-Func IsPlayerRubberBanding()
-EndFunc
-
-
-;~ Send /stuck - don't overuse, otherwise there can be a BAN !
-Func CheckAndSendStuckCommand()
-	; static variable is initialized only once when CheckAndSendStuckCommand is called first time
-	Local Static $chatStuckTimer = TimerInit()
-	; 10 seconds interval between stuck commands
-	Local $stuckInterval = 10000
-
-	; Use a timer to avoid spamming /stuck, because spamming stuck can result in being flagged, which can result in a ban
-	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there shouldn't be any enemies around the character then
-	If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > $stuckInterval Then
-		Warn('Sending /stuck')
-		SendChat('stuck', '/')
-		$chatStuckTimer = TimerInit()
-		RandomSleep(500 + GetPing())
-		Return True
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Check if bot got stuck by checking if max duration for bot has elapsed. Default max duration is 60 minutes = 3600000 milliseconds
-;~ If run lasts longer than max duration time then bot must have gotten stuck and fail is returned to restart run
-Func CheckStuck($stuckLocation, $maxFarmDuration = 3600000)
-	If TimerDiff($run_timer) > $maxFarmDuration Then
-		Error('Bot appears to be stuck at: ' & $stuckLocation & '. Restarting run.')
-		Return $FAIL
-	EndIf
-	Return $SUCCESS
-EndFunc
-
-
-;~ Go to the NPC closest to the given coordinates
-Func GoNearestNPCToCoords($x, $y)
-	Local $npc = GetNearestNPCToCoords($x, $y)
-	Local $me = GetMyAgent()
-	While DllStructGetData($npc, 'ID') == 0
-		RandomSleep(100)
-		$npc = GetNearestNPCToCoords($x, $y)
-	WEnd
-	ChangeTarget($npc)
-	RandomSleep(250)
-	GoNPC($npc)
-	RandomSleep(250)
-	$me = GetMyAgent()
-	While GetDistance($me, $npc) > 250
-		RandomSleep(250)
-		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'), 40)
-		RandomSleep(250)
-		GoNPC($npc)
-		RandomSleep(250)
-		$me = GetMyAgent()
-	WEnd
-	RandomSleep(250)
-EndFunc
-
-
-;~ Aggro a foe
-Func AggroAgent($targetAgent)
-	While IsPlayerAlive() And GetDistance(GetMyAgent(), $targetAgent) > $RANGE_EARSHOT - 100
-		Move(DllStructGetData($targetAgent, 'X'), DllStructGetData($targetAgent, 'Y'))
-		RandomSleep(200)
-	WEnd
-EndFunc
-
-
-;~ Get close to a mob without aggroing it
-Func GetAlmostInRangeOfAgent($targetAgent, $proximity = ($RANGE_SPELLCAST + 100))
-	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
-	Local $targetX = DllStructGetData($targetAgent, 'X')
-	Local $targetY = DllStructGetData($targetAgent, 'Y')
-	Local $distance = GetDistance($me, $targetAgent)
-
-	If ($distance <= $proximity) Then Return
-
-	Local $ratio = $proximity / $distance
-
-	Local $goX = $myX + ($targetX - $myX) * (1 - $ratio)
-	Local $goY = $myY + ($targetY - $myY) * (1 - $ratio)
-	MoveTo($goX, $goY, 0)
-EndFunc
-
-
 ;~ Attack and use one of the skill provided if available, else wait for specified duration
 ;~ Credits to Shiva for auto-attack improvement
 Func AttackOrUseSkill($attackSleep, $skill1 = Null, $skill2 = Null, $skill3 = Null, $skill4 = Null, $skill5 = Null, $skill6 = Null, $skill7 = Null, $skill8 = Null)
@@ -1270,6 +678,153 @@ Func AllHeroesUseSkill($skillSlot, $target = 0)
 		Local $heroID = GetHeroID($i)
 		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
 	Next
+EndFunc
+
+
+;~ Returns the cast time modifier based on current effects and used skill
+Func GetCastTimeModifier($effects, $usedSkill)
+	Local $skillID = DllStructGetData($usedSkill, 'ID')
+	Local $effectID = 0
+	Local $castTime = 1
+	For $effect in $effects
+		$effectID = DllStructGetData($effect, 'EffectID')
+		Switch $effectID
+			; consumables effects
+			Case $ID_ESSENCE_OF_CELERITY_EFFECT
+				$castTime = 0.80 * $castTime
+			Case $ID_PIE_INDUCED_ECSTASY
+				$castTime = 0.85 * $castTime
+			Case $ID_RED_ROCK_CANDY_RUSH
+				$castTime = 0.75 * $castTime
+			Case $ID_BLUE_ROCK_CANDY_RUSH
+				$castTime = 0.80 * $castTime
+			Case $ID_GREEN_ROCK_CANDY_RUSH
+				$castTime = 0.85 * $castTime
+			; skills shortening cast time
+			Case $ID_DEADLY_PARADOX
+				If $skillID == $ID_SHADOW_FORM Then $castTime = 0.667 * $castTime
+			Case $ID_GLYPH_OF_SACRIFICE, $ID_GLYPH_OF_ESSENCE, $ID_SIGNET_OF_MYSTIC_SPEED
+				$castTime = 0
+			Case $ID_MINDBENDER
+				$castTime = 0.80 * $castTime
+			Case $ID_TIME_WARD, $ID_OVER_THE_LIMIT
+				Local $attributeLevel = DllStructGetData($effect, 'AttributeLevel')
+				; Below equation converts attribute level of Time Ward or Over the Limit effect into shorter cast time, e.g. 80% for attribute levels 14,15,16
+				Local $castTimeReduction = 1 - ((15 + Floor(($attributeLevel + 1) / 3)) / 100)
+				$castTime = $castTimeReduction * $castTime
+			; hexes lengthening cast time
+			Case $ID_ARCANE_CONUNDRUM, $ID_MIGRAINE, $ID_STOLEN_SPEED, $ID_SHARED_BURDEN, $ID_FRUSTRATION, $ID_CONFUSING_IMAGES
+				$castTime = 2 * $castTime
+			Case $ID_SUM_OF_ALL_FEARS
+				$castTime = 1.5 * $castTime
+			; other effects
+			Case $ID_DAZED
+				$castTime = 2 * $castTime
+		EndSwitch
+	Next
+	Return $castTime
+EndFunc
+
+
+;~ Use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
+;~ If no target is provided then skill is used on self
+;~ Returns True if skill usage was successful, False otherwise
+Func UseSkillEx($skillSlot, $target = Null)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	; Random delay make us wait at least 2 loops before checking for recharge, to avoid issues with very low cast times
+	Local $approximateCastTime = $castTime + $aftercast + Random(75, 125)
+	UseSkill($skillSlot, $target)
+	Local $castTimer = TimerInit()
+	; wait until skill starts recharging or time for skill to be activated has elapsed
+	Do
+		Sleep(50)
+	Until Not IsRecharged($skillSlot) Or ($approximateCastTime > 0 And TimerDiff($castTimer) > $approximateCastTime)
+	Return True
+EndFunc
+
+
+;~ Use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
+;~ If no target is provided then skill is used on self
+;~ Returns True if skill usage was successful, False otherwise
+Func UseSkillTimed($skillSlot, $target = Null)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	; taking into account skill activation time modifiers
+	Local $effects = GetEffect(0)
+	; get cast time modifier, default is 1, but effects can influence it
+	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
+	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
+
+	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
+	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
+	UseSkill($skillSlot, $target)
+	Local $castTimer = TimerInit()
+	; wait until skill starts recharging or time for skill to be fully activated has elapsed
+	Do
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
+	Return True
+EndFunc
+
+
+;~ Order a hero to use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
+;~ If no target is provided then skill is used on hero who uses the skill
+;~ Returns True if skill usage was successful, False otherwise
+Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
+	If IsHeroDead($heroIndex) Or Not IsRecharged($skillSlot, $heroIndex) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	Local $approximateCastTime = $castTime + $aftercast + GetPing()
+
+	UseHeroSkill($heroIndex, $skillSlot, $target)
+	Local $castTimer = TimerInit()
+	; Wait until skill starts recharging or time for skill to be activated has elapsed
+	Do
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($approximateCastTime < TimerDiff($castTimer))
+	Return True
+EndFunc
+
+
+;~ Order a hero to use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
+;~ If no target is provided then skill is used on hero who uses the skill
+;~ Returns True if skill usage was successful, False otherwise
+Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
+	If IsHeroDead($heroIndex) Or Not IsRecharged($skillSlot, $heroIndex) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	; taking into account skill activation time modifiers
+	Local $effects = GetEffect(0, $heroIndex)
+	; get cast time modifier, default is 1, but effects can influence it
+	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
+	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
+
+	UseHeroSkill($heroIndex, $skillSlot, $target)
+	Local $castTimer = TimerInit()
+	; wait until skill starts recharging or time for skill to be fully activated has elapsed
+	Do
+		Sleep(50 + GetPing())
+	Until (Not IsRecharged($skillSlot)) Or ($fullCastTime < TimerDiff($castTimer))
+	Return True
 EndFunc
 
 
@@ -1498,209 +1053,6 @@ Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
 EndFunc
 
 
-;~ Create a map containing foes and their priority level
-Func CreateMobsPriorityMap()
-	; Voltaic farm foes model IDs
-	Local $PN_SS_Dominator		= 6544
-	Local $PN_SS_Dreamer		= 6545
-	Local $PN_SS_Contaminator	= 6546
-	Local $PN_SS_Blasphemer		= 6547
-	Local $PN_SS_Warder			= 6548
-	Local $PN_SS_Priest			= 6549
-	Local $PN_SS_Defender		= 6550
-	Local $PN_SS_Zealot			= 6557
-	Local $PN_SS_Summoner		= 6558
-	Local $PN_Modniir_Priest	= 6563
-
-	; Gemstone farm foes model IDs
-	Local $Gem_AnurKaya			= 5217
-	;Local $Gem_AnurDabi		= 5218
-	Local $Gem_AnurSu			= 5219
-	Local $Gem_AnurKi			= 5220
-	;Local $Gem_AnurTuk			= 5222
-	;Local $Gem_AnurRund		= 5224
-	;Local $Gem_MiseryTitan		= 5246
-	Local $Gem_RageTitan		= 5247
-	;Local $Gem_DementiaTitan	= 5248
-	;Local $Gem_AnguishTitan	= 5249
-	Local $Gem_FuryTitan		= 5251
-	;Local $Gem_MindTormentor	= 5255
-	;Local $Gem_SoulTormentor	= 5256
-	Local $Gem_WaterTormentor	= 5257
-	Local $Gem_HeartTormentor	= 5258
-	;Local $Gem_FleshTormentor	= 5259
-	Local $Gem_TortureWebDryder	= 5266
-	Local $Gem_GreatDreamRider	= 5267
-
-	; War Supply farm foes model IDs, why so many? (o_O)
-	;Local $WarSupply_Peacekeeper_1	= 8146
-	;Local $WarSupply_Peacekeeper_2	= 8147
-	;Local $WarSupply_Peacekeeper_3	= 8148
-	;Local $WarSupply_Peacekeeper_4	= 8170
-	;Local $WarSupply_Peacekeeper_5	= 8171
-	;Local $WarSupply_Marksman_1	= 8187
-	;Local $WarSupply_Marksman_2	= 8188
-	;Local $WarSupply_Marksman_3	= 8189
-	;Local $WarSupply_Enforcer_1	= 8232
-	;Local $WarSupply_Enforcer_2	= 8233
-	;Local $WarSupply_Enforcer_3	= 8234
-	;Local $WarSupply_Enforcer_4	= 8235
-	;Local $WarSupply_Enforcer_5	= 8236
-	Local $WarSupply_Sycophant_1	= 8237
-	Local $WarSupply_Sycophant_2	= 8238
-	Local $WarSupply_Sycophant_3	= 8239
-	Local $WarSupply_Sycophant_4	= 8240
-	Local $WarSupply_Sycophant_5	= 8241
-	Local $WarSupply_Sycophant_6	= 8242
-	Local $WarSupply_Ritualist_1	= 8243
-	Local $WarSupply_Ritualist_2	= 8244
-	Local $WarSupply_Ritualist_3	= 8245
-	Local $WarSupply_Ritualist_4	= 8246
-	Local $WarSupply_Fanatic_1		= 8247
-	Local $WarSupply_Fanatic_2		= 8248
-	Local $WarSupply_Fanatic_3		= 8249
-	Local $WarSupply_Fanatic_4		= 8250
-	Local $WarSupply_Savant_1		= 8251
-	Local $WarSupply_Savant_2		= 8252
-	Local $WarSupply_Savant_3		= 8253
-	Local $WarSupply_Adherent_1		= 8254
-	Local $WarSupply_Adherent_2		= 8255
-	Local $WarSupply_Adherent_3		= 8256
-	Local $WarSupply_Adherent_4		= 8257
-	Local $WarSupply_Adherent_5		= 8258
-	Local $WarSupply_Priest_1		= 8259
-	Local $WarSupply_Priest_2		= 8260
-	Local $WarSupply_Priest_3		= 8261
-	Local $WarSupply_Priest_4		= 8262
-	Local $WarSupply_Abbot_1		= 8263
-	Local $WarSupply_Abbot_2		= 8264
-	Local $WarSupply_Abbot_3		= 8265
-	;Local $WarSupply_Zealot_1		= 8267
-	;Local $WarSupply_Zealot_2		= 8268
-	;Local $WarSupply_Zealot_3		= 8269
-	;Local $WarSupply_Zealot_4		= 8270
-	;Local $WarSupply_Knight_1		= 8273
-	;Local $WarSupply_Knight_2		= 8274
-	;Local $WarSupply_Scout_1		= 8275
-	;Local $WarSupply_Scout_2		= 8276
-	;Local $WarSupply_Scout_3		= 8277
-	;Local $WarSupply_Scout_4		= 8278
-	;Local $WarSupply_Seeker_1		= 8279
-	;Local $WarSupply_Seeker_2		= 8280
-	;Local $WarSupply_Seeker_3		= 8281
-	;Local $WarSupply_Seeker_4		= 8282
-	;Local $WarSupply_Seeker_5		= 8283
-	;Local $WarSupply_Seeker_6		= 8284
-	;Local $WarSupply_Seeker_7		= 8285
-	;Local $WarSupply_Seeker_8		= 8286
-	Local $WarSupply_Ritualist_5	= 8287
-	Local $WarSupply_Ritualist_6	= 8288
-	Local $WarSupply_Ritualist_7	= 8289
-	Local $WarSupply_Ritualist_8	= 8290
-	Local $WarSupply_Ritualist_9	= 8291
-	Local $WarSupply_Ritualist_10	= 8292
-	Local $WarSupply_Ritualist_11	= 8293
-	;Local $WarSupply_Champion_1	= 8295
-	;Local $WarSupply_Champion_2	= 8296
-	;Local $WarSupply_Champion_3	= 8297
-	;Local $WarSupply_Zealot_5		= 8392
-
-	; Priority map : 0 highest kill priority, bigger numbers mean lesser priority
-	Local $map[]
-	$map[$PN_SS_Defender]		= 0
-	$map[$PN_SS_Priest]			= 0
-	$map[$PN_Modniir_Priest]	= 0
-	$map[$PN_SS_Summoner]		= 1
-	$map[$PN_SS_Warder]			= 2
-	$map[$PN_SS_Dominator]		= 2
-	$map[$PN_SS_Blasphemer]		= 2
-	$map[$PN_SS_Dreamer]		= 2
-	$map[$PN_SS_Contaminator]	= 2
-	$map[$PN_SS_Zealot]			= 2
-
-	$map[$Gem_TortureWebDryder]	= 0
-	$map[$Gem_RageTitan]		= 1
-	$map[$Gem_AnurKi]			= 2
-	$map[$Gem_AnurSu]			= 3
-	$map[$Gem_AnurKaya]			= 4
-	$map[$Gem_GreatDreamRider]	= 5
-	$map[$Gem_HeartTormentor]	= 6
-	$map[$Gem_WaterTormentor]	= 7
-
-	$map[$WarSupply_Savant_1]		= 0
-	$map[$WarSupply_Savant_2]		= 0
-	$map[$WarSupply_Savant_3]		= 0
-	$map[$WarSupply_Adherent_1]		= 0
-	$map[$WarSupply_Adherent_2]		= 0
-	$map[$WarSupply_Adherent_3]		= 0
-	$map[$WarSupply_Adherent_4]		= 0
-	$map[$WarSupply_Adherent_5]		= 0
-	$map[$WarSupply_Priest_1]		= 1
-	$map[$WarSupply_Priest_2]		= 1
-	$map[$WarSupply_Priest_3]		= 1
-	$map[$WarSupply_Priest_4]		= 1
-	$map[$WarSupply_Ritualist_1]	= 2
-	$map[$WarSupply_Ritualist_2]	= 2
-	$map[$WarSupply_Ritualist_3]	= 2
-	$map[$WarSupply_Ritualist_4]	= 2
-	$map[$WarSupply_Ritualist_5]	= 2
-	$map[$WarSupply_Ritualist_6]	= 2
-	$map[$WarSupply_Ritualist_7]	= 2
-	$map[$WarSupply_Ritualist_8]	= 2
-	$map[$WarSupply_Ritualist_9]	= 2
-	$map[$WarSupply_Ritualist_10]	= 2
-	$map[$WarSupply_Ritualist_11]	= 2
-	$map[$WarSupply_Abbot_1]		= 3
-	$map[$WarSupply_Abbot_2]		= 3
-	$map[$WarSupply_Abbot_3]		= 3
-	$map[$WarSupply_Sycophant_1]	= 4
-	$map[$WarSupply_Sycophant_2]	= 4
-	$map[$WarSupply_Sycophant_3]	= 4
-	$map[$WarSupply_Sycophant_4]	= 4
-	$map[$WarSupply_Sycophant_5]	= 4
-	$map[$WarSupply_Sycophant_6]	= 4
-	$map[$WarSupply_Fanatic_1]		= 5
-	$map[$WarSupply_Fanatic_2]		= 5
-	$map[$WarSupply_Fanatic_3]		= 5
-	$map[$WarSupply_Fanatic_4]		= 5
-
-	Return $map
-EndFunc
-
-
-;~ Returns the highest priority foe around a target agent
-Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
-	Local Static $mobsPriorityMap = CreateMobsPriorityMap()
-	Local $agents = GetFoesInRangeOfAgent(GetMyAgent(), $range)
-	Local $highestPriorityTarget = Null
-	Local $priorityLevel = 99999
-	Local $agentID = DllStructGetData($targetAgent, 'ID')
-
-	For $agent In $agents
-		If Not EnemyAgentFilter($agent) Then ContinueLoop
-		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
-		; TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack
-		; If DllStructGetData($agent, 'TypeMap') == 0 Then ContinueLoop
-		If DllStructGetData($agent, 'ID') == $agentID Then ContinueLoop
-		Local $distance = GetDistance($targetAgent, $agent)
-		If $distance < $range Then
-			Local $priority = $mobsPriorityMap[DllStructGetData($agent, 'ModelID')]
-			; map returns Null for all other mobs that don't exist in map
-			If ($priority == Null) Then
-				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agent
-				ContinueLoop
-			EndIf
-			If ($priority == 0) Then Return $agent
-			If ($priority < $priorityLevel) Then
-				$highestPriorityTarget = $agent
-				$priorityLevel = $priority
-			EndIf
-		EndIf
-	Next
-	Return $highestPriorityTarget
-EndFunc
-
-
 ;~ Take current character's position (AND orientation) to flag heroes in a fan position
 Func FanFlagHeroes($range = $RANGE_AREA)
 	Local $heroCount = GetHeroCount()
@@ -1752,158 +1104,7 @@ Func FanFlagHeroes($range = $RANGE_AREA)
 
 EndFunc
 #EndRegion Map Clearing Utilities
-#EndRegion Actions
-
-
-#Region Skill and Templates
-;~ Loads skill template code.
-Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
-	Local $heroID = GetHeroID($heroIndex)
-	Local $BuildTemplateChars = StringSplit($buildTemplate, '')
-	; deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
-	_ArrayDelete($BuildTemplateChars, 0)
-
-	Local $tempValuelateType	; 4 Bits
-	Local $versionNumber		; 4 Bits
-	Local $professionBits		; 2 Bits -> P
-	Local $primaryProfession	; P Bits
-	Local $secondaryProfession	; P Bits
-	Local $attributesCount		; 4 Bits
-	Local $attributesBits		; 4 Bits -> A
-	Local $attributes[10][2]	; A Bits + 4 Bits (for each Attribute)
-	Local $skillsBits			; 4 Bits -> S
-	Local $skills[8]			; S Bits * 8
-	Local $opTail				; 1 Bit
-
-	$buildTemplate = ''
-	For $character in $BuildTemplateChars
-		$buildTemplate &= Base64ToBin64($character)
-	Next
-
-	$tempValuelateType = Bin64ToDec(StringLeft($buildTemplate, 4))
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-	If $tempValuelateType <> 14 Then Return False
-
-	$versionNumber = Bin64ToDec(StringLeft($buildTemplate, 4))
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	$professionBits = Bin64ToDec(StringLeft($buildTemplate, 2)) * 2 + 4
-	$buildTemplate = StringTrimLeft($buildTemplate, 2)
-
-	$primaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
-	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
-	If $primaryProfession <> GetHeroProfession($heroIndex) Then Return False
-
-	$secondaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
-	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
-
-	$attributesCount = Bin64ToDec(StringLeft($buildTemplate, 4))
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	$attributesBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 4
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	$attributes[0][0] = $secondaryProfession
-	$attributes[0][1] = $attributesCount
-	For $i = 1 To $attributesCount
-		$attributes[$i][0] = Bin64ToDec(StringLeft($buildTemplate, $attributesBits))
-		$buildTemplate = StringTrimLeft($buildTemplate, $attributesBits)
-		$attributes[$i][1] = Bin64ToDec(StringLeft($buildTemplate, 4))
-		$buildTemplate = StringTrimLeft($buildTemplate, 4)
-	Next
-
-	$skillsBits = Bin64ToDec(StringLeft($buildTemplate, 4)) + 8
-	$buildTemplate = StringTrimLeft($buildTemplate, 4)
-
-	For $i = 0 To 7
-		$skills[$i] = Bin64ToDec(StringLeft($buildTemplate, $skillsBits))
-		$buildTemplate = StringTrimLeft($buildTemplate, $skillsBits)
-	Next
-
-	$opTail = Bin64ToDec($buildTemplate)
-
-
-	LoadAttributes($attributes, $secondaryProfession, $heroIndex)
-
-	LoadSkillBar($skills[0], $skills[1], $skills[2], $skills[3], $skills[4], $skills[5], $skills[6], $skills[7], $heroIndex)
-EndFunc
-
-
-;~ Load attributes from a two dimensional array.
-Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
-	Local $heroID = GetHeroID($heroIndex)
-	Local $primaryAttribute
-	Local $deadlock
-	Local $level
-
-	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
-
-	; fix for problem when build template doesn't have second profession, but attribute points of current player/hero profession still need to be cleared
-	; in case of player it's possible to extract secondary profession property from agent struct because player exists in outposts contrary to heroes
-	; in case of heroes it isn't possible to extract secondary profession from agent struct of hero in outpost because hero agents don't exist in outposts, only in explorables
-	; therefore doing a workaround for heroes that when build template doesn't have second profession then hero second profession is changed to Monk, which clears attribute points of second profession, regardless if it was Monk or not
-	If $secondaryProfession == 0 Or $secondaryProfession == Null Then
-		If $heroIndex == 0 Then
-			$secondaryProfession = DllStructGetData(GetMyAgent(), 'Secondary')
-		Else
-			ChangeSecondProfession($ID_MONK, $heroIndex)
-			$secondaryProfession = $ID_MONK
-		EndIf
-	EndIf
-
-	$deadlock = TimerInit()
-	; Setting up secondary profession
-	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
-		While GetHeroProfession($heroIndex, True) <> $secondaryProfession And TimerDiff($deadlock) < 8000
-			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
-			Sleep(GetPing() + 20)
-		WEnd
-	EndIf
-
-	; Cleaning the attributes array to have only values between 0 and 12
-	For $i = 1 To $attributesArray[0][1]
-		If $attributesArray[$i][1] > 12 Then $attributesArray[$i][1] = 12
-		If $attributesArray[$i][1] < 0 Then $attributesArray[$i][1] = 0
-	Next
-
-	; Only way to do this is to set all attributes to 0 and then increasing them as many times as needed
-	EmptyAttributes($secondaryProfession, $heroIndex)
-
-	; Now that all attributes are at 0, we increase them by the times needed
-	; Using GetAttributeByID during the increase is a bad idea because it counts points from runes too
-	For $i = 1 To $attributesArray[0][1]
-		For $j = 1 To $attributesArray[$i][1]
-			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Sleep(GetPing() + 50)
-		Next
-	Next
-	Sleep(GetPing() + 50)
-
-	; If there are any points left, we put them in the primary attribute
-	For $i = 0 To 11
-		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Sleep(GetPing() + 50)
-	Next
-EndFunc
-
-
-;~ Set all attributes of the character/hero to 0
-Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
-	For $attribute In $ATTRIBUTES_BY_PROFESSION_MAP[GetHeroProfession($heroIndex)]
-		For $i = 0 To 11
-			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 10)
-		Next
-	Next
-
-	For $attribute In $ATTRIBUTES_BY_PROFESSION_MAP[$secondaryProfession]
-		For $i = 0 To 11
-			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 10)
-		Next
-	Next
-EndFunc
-#EndRegion Skill and Templates
+#EndRegion Advanced actions
 
 
 #Region DateTime
@@ -1978,118 +1179,170 @@ EndFunc
 #EndRegion DateTime
 
 
-#Region GUI Settings
-Func IsHardmodeEnabled()
-	Return GUICtrlRead($GUI_Checkbox_HardMode) == $GUI_CHECKED
-EndFunc
-
-
-Func SwitchToHardModeIfEnabled()
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
-EndFunc
-
-
-Func TrySetupWeaponSlotUsingGUISettings()
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $default_weapon_slot & ' according to GUI settings')
-		ChangeWeaponSet($default_weapon_slot)
-		Sleep(250 + GetPing())
-	Else
-		Debug('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
-	EndIf
-EndFunc
-
-
-Func TrySetupPlayerUsingGUISettings()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-		Sleep(250 + GetPing())
-	Else
-		Debug('Automatic player build setup is disabled. Assuming that player build is set up manually')
-	EndIf
-EndFunc
-
-
-Func TrySetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		LeaveParty()
-		Sleep(500 + GetPing())
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_1)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_2)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_3)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_4)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_5)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_6)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_7)])
-		Sleep(500 + GetPing())
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
-	Else
-		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-	EndIf
-	Sleep(500 + GetPing())
-	If GetPartySize() <> $teamSize Then
-		Warn('Could not set up party correctly. Team size different than ' & $teamSize)
-		Return $FAIL
-	EndIf
-	Return $SUCCESS
-EndFunc
-#EndRegion GUI Settings
-
-
-#Region Memory
-;~ Close all handles once bot stops
-Func CloseAllHandles()
-	For $index = 1 To $game_clients[0][0]
-		If $game_clients[$index][0] <> -1 Then SafeDllCall5($kernel_handle, 'int', 'CloseHandle', 'int', $game_clients[$index][1])
+#Region GW Utils
+;~ Disable all skills on a hero's skill bar.
+Func DisableAllHeroSkills($heroIndex)
+	For $i = 1 to 8
+		DisableHeroSkillSlot($heroIndex, $i)
+		Sleep(GetPing() + 20)
 	Next
-	If $kernel_handle Then DllClose($kernel_handle)
 EndFunc
 
 
+;~ Disable a skill on a hero's skill bar.
+Func DisableHeroSkillSlot($heroIndex, $skillSlot)
+	If Not GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ToggleHeroSkillSlot($heroIndex, $skillSlot)
+EndFunc
+
+
+;~ Enable a skill on a hero's skill bar.
+Func EnableHeroSkillSlot($heroIndex, $skillSlot)
+	If GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ToggleHeroSkillSlot($heroIndex, $skillSlot)
+EndFunc
+
+
+;~ Returns the nearest item by model ID to an agent.
+Func GetNearestItemByModelIDToAgent($modelID, $agent)
+	Local $nearestItemAgent, $nearestDistance = 100000000
+	Local $distance
+	If GetMaxAgents() > 0 Then
+		For $i = 1 To GetMaxAgents()
+			Local $itemAgent = GetAgentByID($i)
+			If Not IsItemAgentType($itemAgent) Then ContinueLoop
+			Local $agentModelID = DllStructGetData(GetItemByAgentID($i), 'ModelID')
+			If $agentModelID = $modelID Then
+				$distance = GetDistance($itemAgent, $agent)
+				If $distance < $nearestDistance Then
+					$nearestItemAgent = $itemAgent
+					$nearestDistance = $distance
+				EndIf
+			EndIf
+		Next
+		Return $nearestItemAgent
+	EndIf
+EndFunc
+
+
+;~ Take a quest or a reward - for reward, expectedState should be 0 once reward taken
+Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
+	Local $questState = 999
+	While $questState <> $expectedState
+		Info('Current quest state : ' & $questState)
+		GoToNPC($npc)
+		RandomSleep(GetPing() + 750)
+		Dialog($dialogID)
+		RandomSleep(GetPing() + 750)
+		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	WEnd
+EndFunc
+
+
+;~ Mapping function
+;~ Mapping mode corresponds to : 0 - everything, 1 - only location, 2 - only chests
+Func ToggleMapping($mappingMode = 0, $mappingPath = @ScriptDir & '/logs/mapping.log', $chestPath = @ScriptDir & '/logs/chests.log')
+	; Toggle variable
+	Local Static $isMapping = False
+	Local Static $mappingFile
+	Local Static $chestFile
+	If $isMapping Then
+		AdlibUnregister('MappingWrite')
+		FileClose($mappingFile)
+		FileClose($chestFile)
+		$isMapping = False
+	Else
+		Info('Logging mapping to : ' & $mappingPath)
+		Info('Logging chests to : ' & $chestPath)
+		$mappingFile = FileOpen($mappingPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		$chestFile = FileOpen($chestPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		MappingWrite($mappingFile, $chestFile, $mappingMode)
+		AdlibRegister('MappingWrite', 1000)
+		$isMapping = True
+	EndIf
+EndFunc
+
+
+;~ Write mapping log in file
+Func MappingWrite($mapfile = Null, $chestingFile = Null, $mode = Null)
+	Local Static $mappingFile = 0
+	Local Static $chestFile = 0
+	Local Static $mappingMode = 0
+	Local $mustReturn = False
+	; Initialisation the first time when called outside of AdlibRegister
+	If (IsDeclared('mapfile') And $mapfile <> Null) Then
+		$mappingFile = $mapfile
+		$mustReturn = True
+	EndIf
+	If (IsDeclared('chestingFile') And $chestingFile <> Null) Then
+		$chestFile = $chestingFile
+		$mustReturn = True
+	EndIf
+	If (IsDeclared('mode') And $mode <> Null) Then
+		$mappingMode = $mode
+		$mustReturn = True
+	EndIf
+	If $mustReturn Then Return
+	If $mappingMode <> 2 Then
+		Local $me = GetMyAgent()
+		_FileWriteLog($mappingFile, '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
+	EndIf
+	If $mappingMode <> 1 Then
+		Local $chest = ScanForChests($RANGE_COMPASS)
+		If $chest <> Null Then
+			Local $chestString = 'Chest ' & DllStructGetData($chest, 'ID') & ' - (' & DllStructGetData($chest, 'X') & ',' & DllStructGetData($chest, 'Y') & ')'
+			_FileWriteLog($chestFile, $chestString)
+		EndIf
+	EndIf
+EndFunc
+
+
+;~ Invite a player to the party.
+Func InvitePlayer($playerName)
+	SendChat('invite ' & $playerName, '/')
+EndFunc
+
+
+;~ Resign.
+Func Resign()
+	SendChat('resign', '/')
+EndFunc
+#EndRegion GW Utils
+
+
+#Region Memory Utils
+Global Const $MEMORY_INFO_STRUCT_TEMPLATE = 'dword BaseAddress;dword AllocationBase;dword AllocationProtect;dword RegionSize;dword State;dword Protect;dword Type'
+
+
+#Region Memory GWA2
 ;~ Writes a binary string to a specified memory address in the process.
-Func WriteBinary($binaryString, $address)
+Func WriteBinary($processHandle, $binaryString, $address)
 	Local $data = SafeDllStructCreate('byte[' & 0.5 * StringLen($binaryString) & ']')
 	For $i = 1 To DllStructGetSize($data)
 		DllStructSetData($data, 1, Dec(StringMid($binaryString, 2 * $i - 1, 2)), $i)
 	Next
-	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
 EndFunc
 
 
 ;~ Writes the specified data to a memory address of a given type (default is 'dword').
-Func MemoryWrite($address, $data, $type = 'dword')
+Func MemoryWrite($processHandle, $address, $data, $type = 'dword')
 	Local $buffer = SafeDllStructCreate($type)
 	DllStructSetData($buffer, 1, $data)
-	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 EndFunc
 
 
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
-Func MemoryRead($address, $type = 'dword', $handleOverride = -1)
+Func MemoryRead($processHandle, $address, $type = 'dword')
 	Local $buffer = SafeDllStructCreate($type)
-	Local $processHandle = $handleOverride = -1 ? GetProcessHandle() : $handleOverride
 	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Return DllStructGetData($buffer, 1)
 EndFunc
 
 
 ;~ Reads data from a memory address, following pointer chains based on the provided offsets.
-Func MemoryReadPtr($address, $offset, $type = 'dword')
+Func MemoryReadPtr($processHandle, $address, $offset, $type = 'dword')
 	Local $ptrCount = UBound($offset) - 2
 	Local $buffer = SafeDllStructCreate('dword')
-	Local $processHandle = GetProcessHandle()
 	Local $memoryInfo = DllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
 	Local $data[2] = [0, 0]
 
@@ -2128,13 +1381,723 @@ EndFunc
 
 
 ;~ Empties Guild Wars client memory
-Func ClearMemory()
-	SafeDllCall9($kernel_handle, 'int', 'SetProcessWorkingSetSize', 'int', GetProcessHandle(), 'int', -1, 'int', -1)
+Func ClearMemory($processHandle)
+	SafeDllCall9($kernel_handle, 'int', 'SetProcessWorkingSetSize', 'int', $processHandle, 'int', -1, 'int', -1)
 EndFunc
 
 
 ;~ Changes the maximum memory Guild Wars can use.
-Func SetMaxMemory()
-	SafeDllCall11($kernel_handle, 'int', 'SetProcessWorkingSetSizeEx', 'int', GetProcessHandle(), 'int', 1024 * 1024, 'int', 256 * 1024 * 1024, 'dword', 0)
+Func SetMaxMemory($processHandle)
+	SafeDllCall11($kernel_handle, 'int', 'SetProcessWorkingSetSizeEx', 'int', $processHandle, 'int', 1024 * 1024, 'int', 256 * 1024 * 1024, 'dword', 0)
 EndFunc
-#EndRegion Memory
+
+
+;~ Scan memory for a pattern - used to find process and to find character names
+Func ScanMemoryForPattern($processHandle, $patternBinary)
+	Local $currentSearchAddress = 0x00000000
+	Local $memoryInfos = SafeDllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
+
+	; Iterating over regions
+	While $currentSearchAddress < 0x01F00000
+		SafeDllCall11($kernel_handle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($memoryInfos), 'int', DllStructGetSize($memoryInfos))
+		Local $memoryBaseAddress = DllStructGetData($memoryInfos, 'BaseAddress')
+		Local $regionSize = DllStructGetData($memoryInfos, 'RegionSize')
+		Local $state = DllStructGetData($memoryInfos, 'State')
+		Local $protect = DllStructGetData($memoryInfos, 'Protect')
+
+		; If memory is committed and not guarded
+		If $state = 0x1000 And BitAND($protect, 0x100) = 0 Then
+			$protect = BitAND($protect, 0xFF)
+			; If memory is allowed to be read
+			Switch $protect
+				Case 0x02, 0x04, 0x08, 0x20, 0x40, 0x80
+					Local $buffer = SafeDllStructCreate('byte[' & $regionSize & ']')
+					SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $currentSearchAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+					Local $tmpMemoryData = DllStructGetData($buffer, 1)
+					$tmpMemoryData = BinaryToString($tmpMemoryData)
+					Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
+					If $matchOffset > 0 Then
+						Local $match[3] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
+						Return $match
+					EndIf
+			EndSwitch
+		EndIf
+		$currentSearchAddress += $regionSize
+	WEnd
+	Return Null
+EndFunc
+
+
+;~ Retrieves the window handle for the specified game process
+Func GetWindowHandleForProcess($process)
+	Local $wins = WinList()
+	For $i = 1 To UBound($wins) - 1
+		If (WinGetProcess($wins[$i][1]) == $process) And (BitAND(WinGetState($wins[$i][1]), 2)) Then Return $wins[$i][1]
+	Next
+EndFunc
+
+
+;~ Get the address provided to a call (ie: strips the E8 instruction, and sums current call address with the obtained offset)
+Func GetCallTargetAddress($processHandle, $address)
+	Local $offset = MemoryRead($processHandle, $address + 0x01, 'dword')
+	If $offset > 0x7FFFFFFF Then
+		Warn('Offset is larger than 0x7FFFFFFF, adjusting for 64-bit address space.')
+		$offset -= 0x100000000
+	EndIf
+	Local $targetAddress = $address + 5 + $offset
+	Return $targetAddress
+EndFunc
+
+
+;~ Internal use only.
+Func Bin64ToDec($binary)
+	Local $result = 0
+	For $i = 1 To StringLen($binary)
+		If StringMid($binary, $i, 1) == 1 Then $result += BitShift(1, -($i - 1))
+	Next
+	Return $result
+EndFunc
+
+
+;~ Converts float to integer.
+Func FloatToInt($float)
+	Local $floatStruct = SafeDllStructCreate('float')
+	Local $int = SafeDllStructCreate('int', DllStructGetPtr($floatStruct))
+	DllStructSetData($floatStruct, 1, $float)
+	Return DllStructGetData($int, 1)
+EndFunc
+
+
+;~ Internal use only.
+Func Base64ToBin64($character)
+	Select
+		Case $character == 'A'
+			Return '000000'
+		Case $character == 'B'
+			Return '100000'
+		Case $character == 'C'
+			Return '010000'
+		Case $character == 'D'
+			Return '110000'
+		Case $character == 'E'
+			Return '001000'
+		Case $character == 'F'
+			Return '101000'
+		Case $character == 'G'
+			Return '011000'
+		Case $character == 'H'
+			Return '111000'
+		Case $character == 'I'
+			Return '000100'
+		Case $character == 'J'
+			Return '100100'
+		Case $character == 'K'
+			Return '010100'
+		Case $character == 'L'
+			Return '110100'
+		Case $character == 'M'
+			Return '001100'
+		Case $character == 'N'
+			Return '101100'
+		Case $character == 'O'
+			Return '011100'
+		Case $character == 'P'
+			Return '111100'
+		Case $character == 'Q'
+			Return '000010'
+		Case $character == 'R'
+			Return '100010'
+		Case $character == 'S'
+			Return '010010'
+		Case $character == 'T'
+			Return '110010'
+		Case $character == 'U'
+			Return '001010'
+		Case $character == 'V'
+			Return '101010'
+		Case $character == 'W'
+			Return '011010'
+		Case $character == 'X'
+			Return '111010'
+		Case $character == 'Y'
+			Return '000110'
+		Case $character == 'Z'
+			Return '100110'
+		Case $character == 'a'
+			Return '010110'
+		Case $character == 'b'
+			Return '110110'
+		Case $character == 'c'
+			Return '001110'
+		Case $character == 'd'
+			Return '101110'
+		Case $character == 'e'
+			Return '011110'
+		Case $character == 'f'
+			Return '111110'
+		Case $character == 'g'
+			Return '000001'
+		Case $character == 'h'
+			Return '100001'
+		Case $character == 'i'
+			Return '010001'
+		Case $character == 'j'
+			Return '110001'
+		Case $character == 'k'
+			Return '001001'
+		Case $character == 'l'
+			Return '101001'
+		Case $character == 'm'
+			Return '011001'
+		Case $character == 'n'
+			Return '111001'
+		Case $character == 'o'
+			Return '000101'
+		Case $character == 'p'
+			Return '100101'
+		Case $character == 'q'
+			Return '010101'
+		Case $character == 'r'
+			Return '110101'
+		Case $character == 's'
+			Return '001101'
+		Case $character == 't'
+			Return '101101'
+		Case $character == 'u'
+			Return '011101'
+		Case $character == 'v'
+			Return '111101'
+		Case $character == 'w'
+			Return '000011'
+		Case $character == 'x'
+			Return '100011'
+		Case $character == 'y'
+			Return '010011'
+		Case $character == 'z'
+			Return '110011'
+		Case $character == '0'
+			Return '001011'
+		Case $character == '1'
+			Return '101011'
+		Case $character == '2'
+			Return '011011'
+		Case $character == '3'
+			Return '111011'
+		Case $character == '4'
+			Return '000111'
+		Case $character == '5'
+			Return '100111'
+		Case $character == '6'
+			Return '010111'
+		Case $character == '7'
+			Return '110111'
+		Case $character == '8'
+			Return '001111'
+		Case $character == '9'
+			Return '101111'
+		Case $character == '+'
+			Return '011111'
+		Case $character == '/'
+			Return '111111'
+	EndSelect
+EndFunc
+
+
+;~ Internal use only.
+Func ASMNumber($number, $small = False)
+	If $number >= 0 Then
+		$number = Dec($number)
+	EndIf
+	If $small And $number <= 127 And $number >= -128 Then
+		Return SetExtended(1, Hex($number, 2))
+	Else
+		Return SetExtended(0, SwapEndian(Hex($number, 8)))
+	EndIf
+EndFunc
+#EndRegion Memory GWA2
+
+
+#Region Memory unused / debugging functions
+;~ Alternate way to get anything, reads directly from game memory without call to Scan something - but is not robust and will break anytime the game changes
+Func GetDataFromRelativeAddress($processHandle, $relativeCheatEngineAddress, $size)
+	Local $base_address = ScanForProcess()
+	Local $fullAddress = $base_address + $relativeCheatEngineAddress - 0x1000
+	Local $buffer = DllStructCreate('byte[' & $size & ']')
+	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	Return $buffer
+EndFunc
+
+
+;~ Compute and print structure offsets and total size based on structure definition string
+Func ComputeStructureOffsets($structureDefinition)
+	Local $offset = 0
+	Local $fields = StringSplit($structureDefinition, ';', 2)
+
+	For $field In $fields
+		$field = StringStripWS($field, 3)
+		If $field = '' Then ContinueLoop
+
+		Local $parts = StringSplit($field, ' ', 2)
+		Local $type = $parts[0]
+		Local $name = $parts[1]
+
+		; Handle arrays (for example wchar name[32])
+		Local $count = 1
+		Local $countPosition = StringInStr($name, '[')
+		If $countPosition > 0 Then
+			Local $countSize = StringInStr($name, ']') - $countPosition - 1
+			$count = Number(StringMid($name, $countPosition + 1, $countSize))
+			$name = StringLeft($name, $countPosition - 1)
+		EndIf
+
+		Local $size = TypeSize($type) * $count
+		Out(StringFormat('%-30s offset=%3d size=%3d', $name, $offset, $size))
+		$offset += $size
+	Next
+
+	Out('Total size = ' & $offset & ' bytes')
+EndFunc
+
+
+;~ Returns the size in bytes of the given type
+Func TypeSize($type)
+	Switch StringLower($type)
+		Case 'byte'
+			Return 1
+		Case 'char'
+			Return 1
+		Case 'short'
+			Return 2
+		Case 'word'
+			Return 2
+		Case 'wchar'
+			Return 2
+		Case 'dword'
+			Return 4
+		Case 'int'
+			Return 4
+		Case 'float'
+			Return 4
+		Case 'long'
+			Return 4
+		Case 'double'
+			Return 8
+		Case 'ptr'
+			Return @AutoItX64 ? 8 : 4
+		Case Else
+			Return -1
+	EndSwitch
+EndFunc
+
+
+; #FUNCTION# ====================================================================================================================
+; Name...........:	_ProcessGetName
+; Description ...:	Returns a string containing the process name that belongs to a given PID.
+; Syntax.........:	_ProcessGetName( $pid )
+; Parameters ....:	$pid - The PID of a currently running process
+; Return values .:	Success		- The name of the process
+;					Failure		- Blank string and sets @error
+;						1 - Process doesn't exist
+;						2 - Error getting process list
+;						3 - No processes found
+; Author ........: Erifash <erifash [at] gmail [dot] com>, Wouter van Kesteren.
+; Remarks .......: Supplementary to ProcessExists().
+; ===============================================================================================================================
+Func __ProcessGetName($pid)
+	If Not ProcessExists($pid) Then Return SetError(1, 0, '')
+	If Not @error Then
+		Local $processes = ProcessList()
+		For $i = 1 To $processes[0][0]
+			If $processes[$i][1] = $pid Then Return $processes[$i][0]
+		Next
+	EndIf
+	Return SetError(1, 0, '')
+EndFunc
+#EndRegion Memory unused / debugging functions
+#EndRegion Memory Utils
+
+
+#Region AutoIt Utils
+;~ Return the value if it's not Null else the defaultValue
+Func GetOrDefault($value, $defaultValue)
+	Return ($value == Null) ? $defaultValue : $value
+EndFunc
+
+
+;~ Returns True if item is present in array, else False, assuming that array is indexed from 0
+Func ArrayContains($array, $item)
+	For $arrayItem In $array
+		If $arrayItem == $item Then Return True
+	Next
+	Return False
+EndFunc
+
+
+;~ Fill 1D or 2D array by reference with a specified value, assuming that array is indexed from 0
+Func FillArray(ByRef $array, $value)
+	If UBound($array, $UBOUND_DIMENSIONS) == 1 Then
+		For $i = 0 To UBound($array) - 1
+			$array[$i] = $value
+		Next
+	ElseIf UBound($array, $UBOUND_DIMENSIONS) == 2 Then
+		For $i = 0 To UBound($array, $UBOUND_ROWS) - 1
+			For $j = 0 To UBound($array, $UBOUND_COLUMNS) - 1
+				$array[$i][$j] = $value
+			Next
+		Next
+	EndIf
+EndFunc
+
+
+;~ Add to a Map of arrays (create key and new array if unexisting, add to existent array if existing)
+Func AppendArrayMap($map, $key, $element)
+	If ($map[$key] == Null) Then
+		Local $newArray[1] = [$element]
+		$map[$key] = $newArray
+	Else
+		_ArrayAdd($map[$key], $element)
+	EndIf
+	Return $map
+EndFunc
+
+
+;~ Create a map from an array to have a one liner map instantiation
+Func MapFromArray($keys)
+	Local $map[]
+	For $key In $keys
+		$map[$key] = 1
+	Next
+	Return $map
+EndFunc
+
+
+;~ Create a map from a double array of dimensions [N, 2] to have a one liner map instantiation with values
+Func MapFromDoubleArray($keysAndValues)
+	Local $map[]
+	For $i = 0 To UBound($keysAndValues) - 1
+		$map[$keysAndValues[$i][0]] = $keysAndValues[$i][1]
+	Next
+	Return $map
+EndFunc
+
+
+;~ Create a map from two arrays to have a one liner map instantiation with values
+Func MapFromArrays($keys, $values)
+	Local $map[]
+	For $i = 0 To UBound($keys) - 1
+		$map[$keys[$i]] = $values[$i]
+	Next
+	Return $map
+EndFunc
+
+
+;~ Do an operation on selected rows of 2D array. Available number of columns for array are 2, 3, 4, 5
+;~ $firstIndex and $lastIndex specify start and end of range of rows of 2D array on which $function should be performed
+;~ Return $FAIL if operation failed on any row, $SUCCESS if operation succeded for all rows od 2D array
+Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
+	If Not IsArray($array) Or UBound($array, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
+	If UBound($array, $UBOUND_COLUMNS) <> 2 And UBound($array, $UBOUND_COLUMNS) <> 3 And UBound($array, $UBOUND_COLUMNS) <> 4 And UBound($array, $UBOUND_COLUMNS) <> 5 Then Return $FAIL
+	If $firstIndex < 1 Or UBound($array) < $lastIndex Then Return $FAIL
+	If $firstIndex > $lastIndex Then Return $FAIL
+	Local $result = $SUCCESS
+	; Caution, array rows are indexed from 1, but $array is indexed from 0
+	For $i = $firstIndex - 1 To $lastIndex - 1
+		If UBound($array, $UBOUND_COLUMNS) == 2 Then
+			$result = $function($array[$i][0], $array[$i][1])
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2])
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 4 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3])
+		ElseIf UBound($array, $UBOUND_COLUMNS) == 5 Then
+			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3], $array[$i][4])
+		EndIf
+		If $result <> $SUCCESS Then Return $result
+	Next
+	Return $SUCCESS
+EndFunc
+
+
+;~ Clone a map
+Func CloneMap($original)
+	Local $clone[]
+	For $key In MapKeys($original)
+		$clone[$key] = $original[$key]
+	Next
+	Return $clone
+EndFunc
+
+
+;~ Clone a dictiomary map. Dictionary map has an advantage that it is inherently passed by reference to functions as the same object without the need of copying
+Func CloneDictMap($original)
+	Local $clone = ObjCreate('Scripting.Dictionary')
+	For $key In $original.Keys
+		$clone.Add($key, $original.Item($key))
+	Next
+	Return $clone
+EndFunc
+
+
+;~ Find common longest substring in two strings
+Func LongestCommonSubstringOfTwoStrings($string1, $string2)
+	Local $longestCommonSubstrings[0]
+	Local $string1characters = StringSplit($string1, '')
+	Local $string2characters = StringSplit($string2, '')
+	; deleting first element of string arrays (which has the count of characters in AutoIT) to have string arrays indexed from 0
+	_ArrayDelete($string1characters, 0)
+	_ArrayDelete($string2characters, 0)
+	Local $LongestCommonSubstringSize = 0
+	Local $array[UBound($string1characters) + 1][UBound($string2characters) + 1]
+	FillArray($array, 0)
+
+	For $i = 1 To UBound($string1characters)
+		For $j = 1 To UBound($string2characters)
+			If ($string1characters[$i-1] == $string2characters[$j-1]) Then
+				$array[$i][$j] = $array[$i-1][$j-1] + 1
+				If $array[$i][$j] > $LongestCommonSubstringSize Then
+					$LongestCommonSubstringSize = $array[$i][$j]
+					; resetting to empty array
+					Local $longestCommonSubstrings[0]
+					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
+				ElseIf $array[$i][$j] = $LongestCommonSubstringSize Then
+					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
+				EndIf
+			Else
+				$array[$i][$j] = 0
+			EndIf
+		Next
+	Next
+
+	; return first string from the array of longest substrings (there might be more than 1 with the same maximal size)
+	Return $longestCommonSubstrings[0]
+EndFunc
+
+
+;~ Find common longest substring in array of strings, indexed from 0
+Func LongestCommonSubstring($strings)
+	Local $longestCommonSubstring = ''
+	If UBound($strings) = 0 Then Return ''
+	If UBound($strings) = 1 Then Return $strings[0]
+	Local $firstStringLength = StringLen($strings[0])
+	If $firstStringLength = 0 Then
+		Return ''
+	Else
+		For $i = 0 To $firstStringLength - 1
+			For $j = 0 To $firstStringLength - $i
+				If $j > StringLen($longestCommonSubstring) And IsSubstring(StringMid($strings[0], $i, $j), $strings) Then
+					$longestCommonSubstring = StringMid($strings[0], $i, $j)
+				EndIf
+			Next
+		Next
+	EndIf
+	Return $LongestCommonSubstring
+EndFunc
+
+
+;~ Returns True if find substring is in every string in the array of strings
+Func IsSubstring($find, $strings)
+	If UBound($strings) < 1 And StringLen($find) < 1 Then
+		Return False
+	EndIf
+	For $string In $strings
+		If Not StringInStr($string, $find) Then
+			Return False
+		EndIf
+	Next
+	Return True
+EndFunc
+
+
+;~ Returns the distance between two coordinate pairs.
+Func ComputeDistance($X1, $Y1, $X2, $Y2)
+	Return Sqrt(($X1 - $X2) ^ 2 + ($Y1 - $Y2) ^ 2)
+EndFunc
+
+
+;~ Return True if the point X, Y is over the line defined by aX + bY + c = 0
+Func IsOverLine($coefficientX, $coefficientY, $fixedCoefficient, $posX, $posY)
+	Local $position = $posX * $coefficientX + $posY * $coefficientY + $fixedCoefficient
+	If $position > 0 Then
+		Return True
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Checks if a point is within a polygon defined by an array
+;~ Point-in-Polygon algorithm — Ray Casting Method - pretty cool stuff !
+Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
+	Local $edges = UBound($areaCoordinates)
+	Local $oddNodes = False
+	If $edges < 3 Then Return False
+	If $X = 0 Then
+		Local $me = GetMyAgent()
+		$X = DllStructGetData($me, 'X')
+		$Y = DllStructGetData($me, 'Y')
+	EndIf
+	Local $j = $edges - 1
+	For $i = 0 To $edges - 1
+		If (($areaCoordinates[$i][1] < $Y And $areaCoordinates[$j][1] >= $Y) _
+				Or ($areaCoordinates[$j][1] < $Y And $areaCoordinates[$i][1] >= $Y)) _
+				And ($areaCoordinates[$i][0] <= $X Or $areaCoordinates[$j][0] <= $X) Then
+			If ($areaCoordinates[$i][0] + ($Y - $areaCoordinates[$i][1]) / ($areaCoordinates[$j][1] - $areaCoordinates[$i][1]) * ($areaCoordinates[$j][0] - $areaCoordinates[$i][0]) < $X) Then
+				$oddNodes = Not $oddNodes
+			EndIf
+		EndIf
+		$j = $i
+	Next
+	Return $oddNodes
+EndFunc
+
+
+;~ Sleep a random amount of time.
+Func RandomSleep($baseAmount, $randomFactor = Null)
+	Local $randomAmount
+	Select
+		Case $randomFactor <> Null
+			$randomAmount = $baseAmount * $randomFactor
+		Case $baseAmount >= 15000
+			$randomAmount = $baseAmount * 0.025
+		Case $baseAmount >= 6000
+			$randomAmount = $baseAmount * 0.05
+		Case $baseAmount >= 3000
+			$randomAmount = $baseAmount * 0.1
+		Case $baseAmount >= 10
+			$randomAmount = $baseAmount * 0.2
+		Case Else
+			$randomAmount = 1
+	EndSelect
+	Sleep(Random($baseAmount - $randomAmount, $baseAmount + $randomAmount))
+EndFunc
+
+
+;~ Allows the user to run a function by hand in a call fun(arg1, arg2, [...])
+Func DynamicExecution($functionCall)
+	Local $openParenthesisPosition = StringInStr($functionCall, '(')
+	Local $functionName = StringLeft($functionCall, $openParenthesisPosition - 1)
+	If $functionName == '' Then
+		Info('Call to nothing ?!')
+		Return
+	EndIf
+	Info('Call to ' & $functionName)
+	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
+	Local $functionArguments = ParseFunctionArguments($argumentsString)
+	; flag to be able to pass unlimited array of arguments into Call() function
+	Local $arguments[1] = ['CallArgArray']
+	_ArrayConcatenate($arguments, $functionArguments)
+	Call($functionName, $arguments)
+EndFunc
+
+
+;~ Return the array of arguments from input string in a syntax arg1, arg2, [...]
+Func ParseFunctionArguments($args)
+	Local $arguments[0]
+	Local $temp = 0, $commaPosition = 1
+	While $commaPosition < StringLen($args)
+		$temp = StringInStr($args, ',', 0, 1, $commaPosition)
+		If $temp == 0 Then $temp = StringLen($args)
+		Info(StringMid($args, $commaPosition, $temp - $commaPosition))
+		_ArrayAdd($arguments, StringMid($args, $commaPosition, $temp - $commaPosition))
+		$commaPosition = $temp + 1
+	WEnd
+	Return $arguments
+EndFunc
+
+
+;~ Function to print a structure in a table - pretty brutal tbh
+Func _dlldisplay($struct, $fieldNames = Null)
+	Local $nextPtr, $currentPtr = DllStructGetPtr($struct, 1)
+	Local $offset = 0, $dllSize = DllStructGetSize($struct)
+	Local $elementValue, $type, $typeSize, $elementSize, $arrayCount, $aligns
+
+	; #|Offset|Type|Size|Value'
+	Local $structArray[1][6] = [['-', '-', $currentPtr, '<struct>', 0, '-']]
+
+	; loop through elements
+	For $i = 1 To 2 ^ 63
+		; backup first index value, establish type and typesize of element, restore first index value
+		$elementValue = DllStructGetData($struct, $i, 1)
+		Switch VarGetType($elementValue)
+			Case 'Int32', 'Int64'
+				DllStructSetData($struct, $i, 0x7777666655554433, 1)
+				Switch DllStructGetData($struct, $i, 1)
+					Case 0x7777666655554433
+						$type = 'int64'
+						$typeSize = 8
+					Case 0x55554433
+						DllStructSetData($struct, $i, 0x88887777, 1)
+						$type = (DllStructGetData($struct, $i, 1) > 0 ? 'uint' : 'int')
+						$typeSize = 4
+					Case 0x4433
+						DllStructSetData($struct, $i, 0x8888, 1)
+						$type = (DllStructGetData($struct, $i, 1) > 0 ? 'ushort' : 'short')
+						$typeSize = 2
+					Case 0x33
+						$type = 'byte'
+						$typeSize = 1
+				EndSwitch
+			Case 'Ptr'
+				$type = 'ptr'
+				$typeSize = @AutoItX64 ? 8 : 4
+			Case 'String'
+				DllStructSetData($struct, $i, ChrW(0x2573), 1)
+				$type = (DllStructGetData($struct, $i, 1) = ChrW(0x2573) ? 'wchar' : 'char')
+				$typeSize = ($type = 'wchar') ? 2 : 1
+			Case 'Double'
+				DllStructSetData($struct, $i, 10 ^ - 15, 1)
+				$type = (DllStructGetData($struct, $i, 1) = 10 ^ - 15 ? 'double' : 'float')
+				$typeSize = ($type = 'double') ? 8 : 4
+		EndSwitch
+		DllStructSetData($struct, $i, $elementValue, 1)
+
+		; calculate element total size based on distance to next element
+		$nextPtr = DllStructGetPtr($struct, $i + 1)
+		$elementSize = $nextPtr ? Int($nextPtr - $currentPtr) : $dllSize
+
+		; calculate true array count. Walk index backwards till there is NOT an error
+		$arrayCount = Int($elementSize / $typeSize)
+		While $arrayCount > 1
+			DllStructGetData($struct, $i, $arrayCount)
+			If Not @error Then ExitLoop
+			$arrayCount -= 1
+		WEnd
+
+		; alignment is whatever space is left
+		$aligns = $elementSize - ($arrayCount * $typeSize)
+		$elementSize -= $aligns
+
+		; Add/print values and alignment
+		Switch $type
+			Case 'wchar', 'char', 'byte'
+				_ArrayAdd($structArray, $i & '|' & ($fieldNames <> Null ? $fieldNames[$i] : '-') & '|' & $offset & '|' & $type & '[' & $arrayCount & ']|' & $elementSize & '|' & DllStructGetData($struct, $i))
+			; 'uint', 'int', 'ushort', 'short', 'double', 'float', 'ptr'
+			Case Else
+				If $arrayCount > 1 Then
+					_ArrayAdd($structArray, $i & '|' & ($fieldNames <> Null ? $fieldNames[$i] : '-') & '|' & $offset & '|' & $type & '[' & $arrayCount & ']' & '|' & $elementSize & ' (' & $typeSize & ')|' & (DllStructGetData($struct, $i) ? '[1] ' & $elementValue : '-'))
+					; skip empty arrays
+					If DllStructGetData($struct, $i) Then
+						For $j = 2 To $arrayCount
+							_ArrayAdd($structArray, '-|' & '-' & '|' & $offset + ($typeSize * ($j - 1)) & '|-|-|[' & $j & '] ' & DllStructGetData($struct, $i, $j))
+						Next
+					EndIf
+				Else
+					_ArrayAdd($structArray, $i & '|' & ($fieldNames <> Null ? $fieldNames[$i] : '-') & '|' & $offset & '|' & $type & '|' & $elementSize & '|' & $elementValue)
+				EndIf
+		EndSwitch
+		If $aligns Then _ArrayAdd($structArray, '-|-|-|<alignment>|' & ($aligns) & '|-')
+
+		; if no next ptr then this was the last/only element
+		If Not $nextPtr Then ExitLoop
+
+		; update offset, size and next ptr
+		$offset += $elementSize + $aligns
+		$dllSize -= $elementSize + $aligns
+		$currentPtr = $nextPtr
+	Next
+
+	_ArrayAdd($structArray, '-|-|' & DllStructGetPtr($struct) + DllStructGetSize($struct) & '|<endstruct>|' & DllStructGetSize($struct) & '|-')
+	_ArrayToClip($structArray)
+	_ArrayDisplay($structArray, '', '', 64, Default, '#|Name|Offset|Type|Size|Value')
+
+	Return $structArray
+EndFunc
+#EndRegion AutoIt Utils

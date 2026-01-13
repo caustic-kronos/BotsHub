@@ -23,6 +23,26 @@
 Opt('MustDeclareVars', True)
 
 
+#Region Agents distances
+;~ Returns the distance between two agents.
+Func GetDistance($agent1, $agent2)
+	Return Sqrt((DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2)
+EndFunc
+
+
+;~ Returns the distance between agent and point specified by a coordinate pair.
+Func GetDistanceToPoint($agent, $X, $Y)
+	Return Sqrt(($X - DllStructGetData($agent, 'X')) ^ 2 + ($Y - DllStructGetData($agent, 'Y')) ^ 2)
+EndFunc
+
+
+;~ Returns the square of the distance between two agents.
+Func GetPseudoDistance($agent1, $agent2)
+	Return (DllStructGetData($agent1, 'X') - DllStructGetData($agent2, 'X')) ^ 2 + (DllStructGetData($agent1, 'Y') - DllStructGetData($agent2, 'Y')) ^ 2
+EndFunc
+#Region Agents distances
+
+
 #Region Party
 Global $partyFailuresCount = 0
 Global $partyIsAlive = True
@@ -290,27 +310,6 @@ Func PrintNPCInformations($npc)
 EndFunc
 
 
-;~ Print Item informations
-Func PrintItemInformations($item)
-	Info('ID: ' & DllStructGetData($item, 'ID'))
-	Info('ModStruct: ' & GetModStruct($item))
-	Info('ModStructSize: ' & DllStructGetData($item, 'ModStructSize'))
-	Info('ModelFileID: ' & DllStructGetData($item, 'ModelFileID'))
-	Info('Type: ' & DllStructGetData($item, 'Type'))
-	Info('DyeColor: ' & DllStructGetData($item, 'DyeColor'))
-	Info('Value: ' & DllStructGetData($item, 'Value'))
-	Info('Interaction: ' & DllStructGetData($item, 'Interaction'))
-	Info('ModelId: ' & DllStructGetData($item, 'ModelID'))
-	Info('ItemFormula: ' & DllStructGetData($item, 'ItemFormula'))
-	Info('IsMaterialSalvageable: ' & DllStructGetData($item, 'IsMaterialSalvageable'))
-	Info('Quantity: ' & DllStructGetData($item, 'Quantity'))
-	Info('Equipped: ' & DllStructGetData($item, 'Equipped'))
-	Info('Profession: ' & DllStructGetData($item, 'Profession'))
-	Info('Type2: ' & DllStructGetData($item, 'Type2'))
-	Info('Slot: ' & DllStructGetData($item, 'Slot'))
-EndFunc
-
-
 #Region Counting NPCs
 ;~ Count foes in range of the given agent
 Func CountFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
@@ -333,6 +332,30 @@ EndFunc
 ;~ Count NPCs in range of the given agent
 Func CountNPCsInRangeOfAgent($agent, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
 	Return CountNPCsInRangeOfCoords(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), $npcAllegiance, $range, $condition)
+EndFunc
+
+
+;~ Count NPCs in range of the given coordinates. If range is Null then all found NPCs are counted, as with infinite range
+Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
+	;Return UBound(GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition))
+	Local $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
+	Local $count = 0
+
+	If $coordX == Null Or $coordY == Null Then
+		Local $me = GetMyAgent()
+		$coordX = DllStructGetData($me, 'X')
+		$coordY = DllStructGetData($me, 'Y')
+	EndIf
+	For $agent In $agents
+		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
+		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
+		If GetIsDead($agent) Then ContinueLoop
+		If $MAP_SPIRIT_TYPES[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
+		If $condition <> Null And $condition($agent) == False Then ContinueLoop
+		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
+		$count += 1
+	Next
+	Return $count
 EndFunc
 #EndRegion Counting NPCs
 
@@ -419,31 +442,6 @@ EndFunc
 ;~ Small helper to filter party members
 Func PartyMemberFilter($agent)
 	Return BitAND(DllStructGetData($agent, 'TypeMap'), $ID_TYPEMAP_IDLE_ALLY)
-EndFunc
-#EndRegion Getting NPCs
-
-
-;~ Count NPCs in range of the given coordinates. If range is Null then all found NPCs are counted, as with infinite range
-Func CountNPCsInRangeOfCoords($coordX = Null, $coordY = Null, $npcAllegiance = Null, $range = $RANGE_AREA, $condition = Null)
-	;Return UBound(GetNPCsInRangeOfCoords($coordX, $coordY, $npcAllegiance, $range, $condition))
-	Local $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
-	Local $count = 0
-
-	If $coordX == Null Or $coordY == Null Then
-		Local $me = GetMyAgent()
-		$coordX = DllStructGetData($me, 'X')
-		$coordY = DllStructGetData($me, 'Y')
-	EndIf
-	For $agent In $agents
-		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
-		If GetIsDead($agent) Then ContinueLoop
-		If $MAP_SPIRIT_TYPES[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
-		If $condition <> Null And $condition($agent) == False Then ContinueLoop
-		If $range < GetDistanceToPoint($agent, $coordX, $coordY) Then ContinueLoop
-		$count += 1
-	Next
-	Return $count
 EndFunc
 
 
@@ -559,6 +557,40 @@ Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY 
 	Next
 	Return $nearestAgent
 EndFunc
+
+
+;~ Returns the highest priority foe around a target agent
+Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
+	Local Static $mobsPriorityMap = CreateMobsPriorityMap()
+	Local $agents = GetFoesInRangeOfAgent(GetMyAgent(), $range)
+	Local $highestPriorityTarget = Null
+	Local $priorityLevel = 99999
+	Local $agentID = DllStructGetData($targetAgent, 'ID')
+
+	For $agent In $agents
+		If Not EnemyAgentFilter($agent) Then ContinueLoop
+		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
+		; TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack
+		; If DllStructGetData($agent, 'TypeMap') == 0 Then ContinueLoop
+		If DllStructGetData($agent, 'ID') == $agentID Then ContinueLoop
+		Local $distance = GetDistance($targetAgent, $agent)
+		If $distance < $range Then
+			Local $priority = $mobsPriorityMap[DllStructGetData($agent, 'ModelID')]
+			; map returns Null for all other mobs that don't exist in map
+			If ($priority == Null) Then
+				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agent
+				ContinueLoop
+			EndIf
+			If ($priority == 0) Then Return $agent
+			If ($priority < $priorityLevel) Then
+				$highestPriorityTarget = $agent
+				$priorityLevel = $priority
+			EndIf
+		EndIf
+	Next
+	Return $highestPriorityTarget
+EndFunc
+#EndRegion Getting NPCs
 #EndRegion NPCs
 
 
@@ -824,3 +856,175 @@ Func GetIsBoss($agent)
 	Return BitAND(DllStructGetData($agent, 'TypeMap'), 0x400) > 0
 EndFunc
 #EndRegion AgentInfo
+
+
+
+; FIXME: change format of this function to build it with MapFromArrays or MapFromDoubleArray
+;~ Create a map containing foes and their priority level
+Func CreateMobsPriorityMap()
+	; Voltaic farm foes model IDs
+	Local $PN_SS_Dominator		= 6544
+	Local $PN_SS_Dreamer		= 6545
+	Local $PN_SS_Contaminator	= 6546
+	Local $PN_SS_Blasphemer		= 6547
+	Local $PN_SS_Warder			= 6548
+	Local $PN_SS_Priest			= 6549
+	Local $PN_SS_Defender		= 6550
+	Local $PN_SS_Zealot			= 6557
+	Local $PN_SS_Summoner		= 6558
+	Local $PN_Modniir_Priest	= 6563
+
+	; Gemstone farm foes model IDs
+	Local $Gem_AnurKaya			= 5217
+	;Local $Gem_AnurDabi		= 5218
+	Local $Gem_AnurSu			= 5219
+	Local $Gem_AnurKi			= 5220
+	;Local $Gem_AnurTuk			= 5222
+	;Local $Gem_AnurRund		= 5224
+	;Local $Gem_MiseryTitan		= 5246
+	Local $Gem_RageTitan		= 5247
+	;Local $Gem_DementiaTitan	= 5248
+	;Local $Gem_AnguishTitan	= 5249
+	Local $Gem_FuryTitan		= 5251
+	;Local $Gem_MindTormentor	= 5255
+	;Local $Gem_SoulTormentor	= 5256
+	Local $Gem_WaterTormentor	= 5257
+	Local $Gem_HeartTormentor	= 5258
+	;Local $Gem_FleshTormentor	= 5259
+	Local $Gem_TortureWebDryder	= 5266
+	Local $Gem_GreatDreamRider	= 5267
+
+	; War Supply farm foes model IDs, why so many? (o_O)
+	;Local $WarSupply_Peacekeeper_1	= 8146
+	;Local $WarSupply_Peacekeeper_2	= 8147
+	;Local $WarSupply_Peacekeeper_3	= 8148
+	;Local $WarSupply_Peacekeeper_4	= 8170
+	;Local $WarSupply_Peacekeeper_5	= 8171
+	;Local $WarSupply_Marksman_1	= 8187
+	;Local $WarSupply_Marksman_2	= 8188
+	;Local $WarSupply_Marksman_3	= 8189
+	;Local $WarSupply_Enforcer_1	= 8232
+	;Local $WarSupply_Enforcer_2	= 8233
+	;Local $WarSupply_Enforcer_3	= 8234
+	;Local $WarSupply_Enforcer_4	= 8235
+	;Local $WarSupply_Enforcer_5	= 8236
+	Local $WarSupply_Sycophant_1	= 8237
+	Local $WarSupply_Sycophant_2	= 8238
+	Local $WarSupply_Sycophant_3	= 8239
+	Local $WarSupply_Sycophant_4	= 8240
+	Local $WarSupply_Sycophant_5	= 8241
+	Local $WarSupply_Sycophant_6	= 8242
+	Local $WarSupply_Ritualist_1	= 8243
+	Local $WarSupply_Ritualist_2	= 8244
+	Local $WarSupply_Ritualist_3	= 8245
+	Local $WarSupply_Ritualist_4	= 8246
+	Local $WarSupply_Fanatic_1		= 8247
+	Local $WarSupply_Fanatic_2		= 8248
+	Local $WarSupply_Fanatic_3		= 8249
+	Local $WarSupply_Fanatic_4		= 8250
+	Local $WarSupply_Savant_1		= 8251
+	Local $WarSupply_Savant_2		= 8252
+	Local $WarSupply_Savant_3		= 8253
+	Local $WarSupply_Adherent_1		= 8254
+	Local $WarSupply_Adherent_2		= 8255
+	Local $WarSupply_Adherent_3		= 8256
+	Local $WarSupply_Adherent_4		= 8257
+	Local $WarSupply_Adherent_5		= 8258
+	Local $WarSupply_Priest_1		= 8259
+	Local $WarSupply_Priest_2		= 8260
+	Local $WarSupply_Priest_3		= 8261
+	Local $WarSupply_Priest_4		= 8262
+	Local $WarSupply_Abbot_1		= 8263
+	Local $WarSupply_Abbot_2		= 8264
+	Local $WarSupply_Abbot_3		= 8265
+	;Local $WarSupply_Zealot_1		= 8267
+	;Local $WarSupply_Zealot_2		= 8268
+	;Local $WarSupply_Zealot_3		= 8269
+	;Local $WarSupply_Zealot_4		= 8270
+	;Local $WarSupply_Knight_1		= 8273
+	;Local $WarSupply_Knight_2		= 8274
+	;Local $WarSupply_Scout_1		= 8275
+	;Local $WarSupply_Scout_2		= 8276
+	;Local $WarSupply_Scout_3		= 8277
+	;Local $WarSupply_Scout_4		= 8278
+	;Local $WarSupply_Seeker_1		= 8279
+	;Local $WarSupply_Seeker_2		= 8280
+	;Local $WarSupply_Seeker_3		= 8281
+	;Local $WarSupply_Seeker_4		= 8282
+	;Local $WarSupply_Seeker_5		= 8283
+	;Local $WarSupply_Seeker_6		= 8284
+	;Local $WarSupply_Seeker_7		= 8285
+	;Local $WarSupply_Seeker_8		= 8286
+	Local $WarSupply_Ritualist_5	= 8287
+	Local $WarSupply_Ritualist_6	= 8288
+	Local $WarSupply_Ritualist_7	= 8289
+	Local $WarSupply_Ritualist_8	= 8290
+	Local $WarSupply_Ritualist_9	= 8291
+	Local $WarSupply_Ritualist_10	= 8292
+	Local $WarSupply_Ritualist_11	= 8293
+	;Local $WarSupply_Champion_1	= 8295
+	;Local $WarSupply_Champion_2	= 8296
+	;Local $WarSupply_Champion_3	= 8297
+	;Local $WarSupply_Zealot_5		= 8392
+
+	; Priority map : 0 highest kill priority, bigger numbers mean lesser priority
+	Local $map[]
+	$map[$PN_SS_Defender]		= 0
+	$map[$PN_SS_Priest]			= 0
+	$map[$PN_Modniir_Priest]	= 0
+	$map[$PN_SS_Summoner]		= 1
+	$map[$PN_SS_Warder]			= 2
+	$map[$PN_SS_Dominator]		= 2
+	$map[$PN_SS_Blasphemer]		= 2
+	$map[$PN_SS_Dreamer]		= 2
+	$map[$PN_SS_Contaminator]	= 2
+	$map[$PN_SS_Zealot]			= 2
+
+	$map[$Gem_TortureWebDryder]	= 0
+	$map[$Gem_RageTitan]		= 1
+	$map[$Gem_AnurKi]			= 2
+	$map[$Gem_AnurSu]			= 3
+	$map[$Gem_AnurKaya]			= 4
+	$map[$Gem_GreatDreamRider]	= 5
+	$map[$Gem_HeartTormentor]	= 6
+	$map[$Gem_WaterTormentor]	= 7
+
+	$map[$WarSupply_Savant_1]		= 0
+	$map[$WarSupply_Savant_2]		= 0
+	$map[$WarSupply_Savant_3]		= 0
+	$map[$WarSupply_Adherent_1]		= 0
+	$map[$WarSupply_Adherent_2]		= 0
+	$map[$WarSupply_Adherent_3]		= 0
+	$map[$WarSupply_Adherent_4]		= 0
+	$map[$WarSupply_Adherent_5]		= 0
+	$map[$WarSupply_Priest_1]		= 1
+	$map[$WarSupply_Priest_2]		= 1
+	$map[$WarSupply_Priest_3]		= 1
+	$map[$WarSupply_Priest_4]		= 1
+	$map[$WarSupply_Ritualist_1]	= 2
+	$map[$WarSupply_Ritualist_2]	= 2
+	$map[$WarSupply_Ritualist_3]	= 2
+	$map[$WarSupply_Ritualist_4]	= 2
+	$map[$WarSupply_Ritualist_5]	= 2
+	$map[$WarSupply_Ritualist_6]	= 2
+	$map[$WarSupply_Ritualist_7]	= 2
+	$map[$WarSupply_Ritualist_8]	= 2
+	$map[$WarSupply_Ritualist_9]	= 2
+	$map[$WarSupply_Ritualist_10]	= 2
+	$map[$WarSupply_Ritualist_11]	= 2
+	$map[$WarSupply_Abbot_1]		= 3
+	$map[$WarSupply_Abbot_2]		= 3
+	$map[$WarSupply_Abbot_3]		= 3
+	$map[$WarSupply_Sycophant_1]	= 4
+	$map[$WarSupply_Sycophant_2]	= 4
+	$map[$WarSupply_Sycophant_3]	= 4
+	$map[$WarSupply_Sycophant_4]	= 4
+	$map[$WarSupply_Sycophant_5]	= 4
+	$map[$WarSupply_Sycophant_6]	= 4
+	$map[$WarSupply_Fanatic_1]		= 5
+	$map[$WarSupply_Fanatic_2]		= 5
+	$map[$WarSupply_Fanatic_3]		= 5
+	$map[$WarSupply_Fanatic_4]		= 5
+
+	Return $map
+EndFunc

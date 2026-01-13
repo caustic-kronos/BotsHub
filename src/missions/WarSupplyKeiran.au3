@@ -94,7 +94,7 @@ EndFunc
 Func SetupWarSupplyFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_EYE_OF_THE_NORTH, $district_name)
-	If FindInInventory($ID_KEIRANS_BOW)[0] == 0 Then
+	If Not IsItemEquippedInWeaponSlot($ID_KEIRANS_BOW) And FindInInventory($ID_KEIRANS_BOW)[0] == 0 Then
 		Info('Could not find Keiran''s bow in player''s inventory')
 		GetKeiranBow()
 	Else

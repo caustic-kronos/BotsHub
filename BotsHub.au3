@@ -374,7 +374,7 @@ Func RunFarmLoop($Farm)
 		Info('Run failed after: ' & ConvertTimeToMinutesString($elapsedTime))
 	EndIf
 	UpdateStats($result, $elapsedTime)
-	ClearMemory()
+	ClearMemory(GetProcessHandle())
 	; _PurgeHook()
 	Return $result
 EndFunc
