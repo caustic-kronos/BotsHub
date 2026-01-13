@@ -216,8 +216,8 @@ Func EnterUnderworld()
 	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
 		Info('Using scroll to enter Underworld')
 		If UseScroll($ID_UW_SCROLL) == $SUCCESS Then
-			WaitMapLoading($ID_UNDERWORLD)
-			If GetMapID() <> $ID_UNDERWORLD Then
+			WaitMapLoading($ID_THE_UNDERWORLD)
+			If GetMapID() <> $ID_THE_UNDERWORLD Then
 				Warn('Used scroll but still could not enter Underworld. Ensure that player has correct scroll in inventory')
 				Return $PAUSE
 			EndIf
@@ -235,8 +235,8 @@ Func EnterUnderworld()
 		Dialog(0x85)
 		RandomSleep(GetPing() + 750)
 		Dialog(0x86)
-		WaitMapLoading($ID_UNDERWORLD)
-		If GetMapID() <> $ID_UNDERWORLD Then
+		WaitMapLoading($ID_THE_UNDERWORLD)
+		If GetMapID() <> $ID_THE_UNDERWORLD Then
 			Info('Could not enter Underworld. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
 			Return $FAIL
 		EndIf
