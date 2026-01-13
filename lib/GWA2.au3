@@ -1524,7 +1524,7 @@ EndFunc
 Func MoveItem($item, $bagIndex, $slotIndex)
 	Local $itemID = DllStructGetData($item, 'ID')
 
-	Local $bagID = DllStructGetData(GetBag($bag), 'ID')
+	Local $bagID = DllStructGetData(GetBag($bagIndex), 'ID')
 	Return SendPacket(0x10, $HEADER_ITEM_MOVE, $itemID, $bagID, $slotIndex - 1)
 EndFunc
 
