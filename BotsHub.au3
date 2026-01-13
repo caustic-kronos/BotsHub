@@ -213,6 +213,8 @@ Func BotHubLoop()
 EndFunc
 
 
+; TODO: add team setup here
+;~ Setup executed for all farms - setup weapon slots
 Func GeneralFarmSetup()
 	TrySetupWeaponSlotUsingGUISettings()
 	$global_farm_setup = True
@@ -386,10 +388,10 @@ Func Authentification()
 	If ($characterName == '') Then
 		Warn('Running without authentification.')
 	ElseIf $process_id And $run_mode == 'CMD' Then
-		Local $proc_id_int = Number($process_id, 2)
-		Info('Running via pid ' & $proc_id_int)
+		Local $processID = Number($process_id, 2)
+		Info('Running via pid ' & $processID)
 		If InitializeGameClientData(True, True, False) = 0 Then
-			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $proc_id_int & '>> ' & VarGetType($proc_id_int) & '')
+			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $processID & '>> ' & VarGetType($processID) & '')
 			Return $FAIL
 		EndIf
 	Else
@@ -409,17 +411,6 @@ Func Authentification()
 	EnsureEnglish(True)
 	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & $characterName)
 	Return $SUCCESS
-EndFunc
-
-
-;~ Fill characters combobox
-Func RefreshCharactersComboBox()
-	Local $comboList = ''
-	For $i = 1 To $game_clients[0][0]
-		If $game_clients[$i][0] <> -1 Then $comboList &= '|' & $game_clients[$i][3]
-	Next
-	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, $game_clients[0][0] > 0 ? $game_clients[1][3] : '')
-	If ($game_clients[0][0] > 0) Then SelectClient(1)
 EndFunc
 #EndRegion Authentification and Login
 

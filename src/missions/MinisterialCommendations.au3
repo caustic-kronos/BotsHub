@@ -361,12 +361,12 @@ Func InitialFight()
 
 	$deadlock = TimerInit()
 	; Wait for all foes in range of Miku to be dead
-	While (CountFoesInRangeOfAgent($ID_MIKU_AGENT, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 40000 And Not IsFail())
+	While (CountFoesInRangeOfAgent($ID_MIKU_AGENT, $RANGE_SPELLCAST) > 0 And TimerDiff($deadlock) < 45000 And Not IsFail())
 		Move(-4693, -3137)
 		RandomSleep(750)
 	WEnd
 	RandomSleep(500)
-	If (TimerDiff($deadlock) > 40000) Then Info('Timed out waiting for all mobs to be dead')
+	If (TimerDiff($deadlock) > 45000) Then Info('Timed out waiting for all mobs to be dead')
 
 	UseHeroSkill($HERO_RITUALIST_SOS, $MEND_BODY_AND_SOUL_SKILL_POSITION, GetMikuAgentOrMine())
 	UseHeroSkill($HERO_NECRO_BIP, $MEND_BODY_AND_SOUL_SKILL_POSITION, GetMikuAgentOrMine())

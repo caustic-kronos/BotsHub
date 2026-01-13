@@ -156,6 +156,7 @@ Feel free to create and add more bots; it’s pretty simple!
 - 🧠💭 **Secret Lair of the Snowmen (Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic)**
 - 🧠💭 **Irontoe's lair (Dwarven Ale, Aged Dwarven Ale)**
 - 🧠💭 **Nicholas the traveler items (gifties)**
+- 🧠💭 **Bandit raid**
 - 🧠💭 **Improve crash recovery**
 
 ### Legend

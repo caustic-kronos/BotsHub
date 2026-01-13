@@ -38,28 +38,30 @@ Global Const $HERO_TO_ADD = $ID_HAYDA
 ;~ Main method from utils, used only to run tests
 Func RunTests()
 	;SellItemsToMerchant(DefaultShouldSellItem, True)
+
+	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
+	;ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
+
 	;While($runtime_status == 'RUNNING')
 	;	GetOwnPosition()
 	;	Sleep(2000)
 	;WEnd
-	; To run some mapping, uncomment the following line, and set the path to the file that will contain the mapping
-	;ToggleMapping(1, @ScriptDir & '/logs/fow_mapping.log')
 
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
-	;Local $itemID = DllStructGetData($item, 'ID')
+	;Local $item = GetItemBySlot(1, 1)
+	;PrintItemInformations($item)
+	;_dlldisplay($item)
 
 	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	;Local $target = GetCurrentTarget()
 	;PrintNPCInformations($target)
 	;_dlldisplay($target)
+
 	;Info(GetEnergy())
 	;Info(GetSkillTimer())
 	;Info(DllStructGetData(GetEffect($ID_SHROUD_OF_DISTRESS), 'TimeStamp'))
 	;Info(GetEffectTimeRemaining(GetEffect($ID_SHROUD_OF_DISTRESS)))
-	;Info(_dlldisplay(GetEffect($ID_SHROUD_OF_DISTRESS)))
-	;RandomSleep(1000)
 
-	;Return $SUCCESS
 	Return $PAUSE
 EndFunc
 

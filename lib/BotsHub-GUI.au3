@@ -631,6 +631,18 @@ Func RefreshRenderingButton()
 EndFunc
 
 
+;~ Fill characters combobox
+Func RefreshCharactersComboBox()
+	Local $comboList = ''
+	For $i = 1 To $game_clients[0][0]
+		If $game_clients[$i][0] <> -1 Then $comboList &= '|' & $game_clients[$i][3]
+	Next
+	GUICtrlSetData($GUI_Combo_CharacterChoice, $comboList, $game_clients[0][0] > 0 ? $game_clients[1][3] : '')
+	If ($game_clients[0][0] > 0) Then SelectClient(1)
+EndFunc
+
+
+;~ Update weapon slot combobox
 Func UpdateWeaponSlotCombobox()
 	If(GUICtrlRead($GUI_Checkbox_WeaponSLot) == $GUI_CHECKED) Then
 		; don't enable combobox when bot is running, only enable it when bot is paused, to avoid accidental mouse scroll on combobox
@@ -642,6 +654,7 @@ Func UpdateWeaponSlotCombobox()
 EndFunc
 
 
+;~ Update team comboboxes
 Func UpdateTeamComboboxes()
 	If(GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED) Then
 		EnableTeamComboboxes()
@@ -651,6 +664,7 @@ Func UpdateTeamComboboxes()
 EndFunc
 
 
+;~ Enable team comboboxes
 Func EnableTeamComboboxes()
 	; don't enable comboboxes when bot is running, only enable them when bot is paused, to avoid accidental mouse scroll on comboboxes
 	If $runtime_status == 'RUNNING' Then Return
@@ -673,6 +687,7 @@ Func EnableTeamComboboxes()
 EndFunc
 
 
+;~ Disable team comboboxes
 Func DisableTeamComboboxes()
 	GUICtrlSetState($GUI_Label_Player, $GUI_DISABLE)
 	GUICtrlSetState($GUI_Combo_Hero_1, $GUI_DISABLE)
@@ -693,6 +708,7 @@ Func DisableTeamComboboxes()
 EndFunc
 
 
+;~ Enable most comboboxes
 Func EnableGUIComboboxes()
 	; Enabling changing account is non trivial
 	;GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Enable)
@@ -705,6 +721,7 @@ Func EnableGUIComboboxes()
 EndFunc
 
 
+;~ Disable most comboboxes
 Func DisableGUIComboboxes()
 	GUICtrlSetState($GUI_Combo_CharacterChoice, $GUI_Disable)
 	GUICtrlSetState($GUI_Combo_FarmChoice, $GUI_Disable)
@@ -1065,8 +1082,6 @@ Func BuildInventoryDerivedFlags()
 	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
 	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
 
-
-
 	; -------- Store --------
 	Local $storeSomething = IsAnyLootOptionInBranchChecked('Store items')
 	$inventory_management_cache['@store.something'] = $storeSomething
@@ -1119,7 +1134,7 @@ Func AddLeafToArray(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath
 EndFunc
 
 
-;~ Iterate over a treeview and make an operation on every node
+;~ Iterate over a treeview and make an operation on every node - can be called on root node (Null) or any other node
 Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null)
 	If $treeViewItem == Null Then
 		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
@@ -1133,6 +1148,7 @@ Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, 
 EndFunc
 
 
+;~ Iterate over a treeview item and make an operation on every node - cannot be called on root node (Null)
 Func IterateOverTreeItem(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
 	Local $treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
 	Local $newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName

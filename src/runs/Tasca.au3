@@ -132,7 +132,7 @@ EndFunc
 Func SetupTeamTascaChestFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
-		SetupTeamUsingGUISettings()
+		TrySetupTeamUsingGUISettings()
 	Else
 		Info('Setting up team according to default settings')
 		OmniFarmFullSetup()
