@@ -50,7 +50,7 @@ EndFunc
 ;~ Froggy farm setup
 Func SetupFroggyFarm()
 	Info('Setting up farm')
-	TravelToOutpost(ID_GADDS_ENCAMPMENT, $district_name)
+	TravelToOutpost($ID_GADDS_ENCAMPMENT, $district_name)
 
 	TrySetupPlayerUsingGUISettings()
 	TrySetupTeamUsingGUISettings()
@@ -66,7 +66,7 @@ EndFunc
 
 
 Func RunToBogroot()
-	TravelToOutpost(ID_GADDS_ENCAMPMENT, $district_name)
+	TravelToOutpost($ID_GADDS_ENCAMPMENT, $district_name)
 	ResetFailuresCounter()
 	Info('Making way to portal')
 	MoveTo(-10018, -21892)
