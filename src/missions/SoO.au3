@@ -648,7 +648,7 @@ Func PickUpTorch()
 			Info('Torch: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
 			$deadlock = TimerInit()
-			While GetAgentExists($i)
+			While GetAgentExists($agentID)
 				RandomSleep(500)
 				If IsPlayerDead() Then Return False
 				If TimerDiff($deadlock) > 20000 Then
