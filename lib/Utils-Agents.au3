@@ -135,7 +135,8 @@ EndFunc
 
 ;~ Returns True if the party is alive, that is if there is still an alive hero with resurrection skill
 Func HasRezMemberAlive()
-	Local Static $heroesWithRez = FindHeroesWithRez()
+	Local Static $heroesWithRez
+	If Not IsArray($heroesWithRez) Then $heroesWithRez = FindHeroesWithRez()
 	For $i In $heroesWithRez
 		Local $heroID = GetHeroID($i)
 		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then Return True
@@ -149,7 +150,6 @@ Func FindHeroesWithRez()
 	Local $heroes[7]
 	Local $count = 0
 	For $heroNumber = 1 To GetHeroCount()
-		Local $heroID = GetHeroID($heroNumber)
 		For $skillSlot = 1 To 8
 			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
 			If IsRezSkill($skill) Then
