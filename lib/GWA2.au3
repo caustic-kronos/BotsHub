@@ -1402,7 +1402,7 @@ EndFunc
 ;~ Doesn't work - Should validate salvage
 Func ValidateSalvage()
 	ControlSend(GetWindowHandle(), '', '', '{Enter}')
-	Sleep(GetPing() + 1000)
+	Sleep(1000 + GetPing())
 EndFunc
 
 
@@ -1653,7 +1653,7 @@ Func TraderRequest($modelID, $dyeColor = -1)
 
 	Local $deadlock = TimerInit()
 	$found = False
-	While Not $found And TimerDiff($deadlock) < GetPing() + 5000
+	While Not $found And TimerDiff($deadlock) < 5000
 		Sleep(20)
 		$found = MemoryRead($processHandle, $trader_quote_ID) <> $quoteID
 	WEnd
@@ -2506,11 +2506,12 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	EndIf
 
 	$deadlock = TimerInit()
+	Local $ping = GetPing()
 	; Setting up secondary profession
 	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
 		While GetHeroProfession($heroIndex, True) <> $secondaryProfession And TimerDiff($deadlock) < 8000
 			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
-			Sleep(GetPing() + 20)
+			Sleep(20 + $ping)
 		WEnd
 	EndIf
 
@@ -2528,15 +2529,15 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	For $i = 1 To $attributesArray[0][1]
 		For $j = 1 To $attributesArray[$i][1]
 			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Sleep(GetPing() + 50)
+			Sleep(50 + $ping)
 		Next
 	Next
-	Sleep(GetPing() + 50)
+	Sleep(50 + $ping)
 
 	; If there are any points left, we put them in the primary attribute
 	For $i = 0 To 11
 		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Sleep(GetPing() + 50)
+		Sleep(50 + $ping)
 	Next
 EndFunc
 
@@ -2570,17 +2571,18 @@ EndFunc
 
 ;~ Set all attributes of the character/hero to 0
 Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
+	Local $ping = GetPing()
 	For $attribute In $ATTRIBUTES_BY_PROFESSION_MAP[GetHeroProfession($heroIndex)]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 10)
+			Sleep(10 + $ping)
 		Next
 	Next
 
 	For $attribute In $ATTRIBUTES_BY_PROFESSION_MAP[$secondaryProfession]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(GetPing() + 10)
+			Sleep(10 + $ping)
 		Next
 	Next
 EndFunc
@@ -2629,7 +2631,7 @@ Func GetExperience()
 EndFunc
 
 
-;~ Returns current ping.
+;~ Returns current ping. Don't overruse, is valuable for sensitive things (salvage for instance) and small sleeps
 Func GetPing()
 	Local $ping = MemoryRead(GetProcessHandle(), $scan_ping_address)
 	Return $ping < 10 ? 10 : $ping

@@ -113,7 +113,7 @@ Func SetupPlayerJadeBrotherhoodFarm()
 		Warn('Should run this farm as dervish')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -121,13 +121,13 @@ EndFunc
 Func SetupTeamJadeBrotherhoodFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	AddHero($JB_HERO_PARTY_ID)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	LoadSkillTemplate($JB_HERO_SKILLBAR, $JB_HERO_INDEX)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	DisableAllHeroSkills($JB_HERO_INDEX)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
 		Return $FAIL

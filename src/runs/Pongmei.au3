@@ -89,7 +89,7 @@ Func SetupPlayerPongmeiChestFarm()
 	Else
 		Warn('Should run this farm as dervish')
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 EndFunc
 
 
@@ -100,7 +100,7 @@ Func SetupTeamPongmeiChestFarm()
 	Else
 		Info('Setting up team according to default settings')
 		LeaveParty()
-		Sleep(500 + GetPing())
+		RandomSleep(500)
 		AddHero($ID_GENERAL_MORGAHN)
 		AddHero($ID_HAYDA)
 		AddHero($ID_PARAGON_MERCENARY_HERO)
@@ -109,7 +109,7 @@ Func SetupTeamPongmeiChestFarm()
 		AddHero($ID_OGDEN)
 		AddHero($ID_GOREN)
 	EndIf
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
@@ -228,7 +228,7 @@ Func DervishRun($X, $Y)
 		If GetEnergy() >= 20 And IsRecharged($PONGMEI_SHADOWFORM) And AreFoesInFront($X, $Y) Then
 			If IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)
 			UseSkillEx($PONGMEI_DEADLY_PARADOX)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($PONGMEI_SHADOWFORM)
 			;$shadowFormLastUse = TimerInit()
 		EndIf
@@ -237,7 +237,7 @@ Func DervishRun($X, $Y)
 		If $energy >= 7 And IsRecharged($PONGMEI_PIOUS_HASTE) And (Not IsRecharged($PONGMEI_DWARVEN_STABILITY) Or ($energy >= 12 And IsRecharged($PONGMEI_DWARVEN_STABILITY))) Then
 			If IsRecharged($PONGMEI_DWARVEN_STABILITY) Then UseSkillEx($PONGMEI_DWARVEN_STABILITY)
 			UseSkillEx($PONGMEI_ZEALOUS_RENEWAL)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($PONGMEI_PIOUS_HASTE)
 		EndIf
 
@@ -254,7 +254,7 @@ Func DervishRun($X, $Y)
 			UseSkillEx($PONGMEI_HEART_OF_SHADOW, $npc)
 		EndIf
 
-		Sleep(250)
+		RandomSleep(250)
 		$me = GetMyAgent()
 		If IsPlayerDead() Then Return $FAIL
 	WEnd

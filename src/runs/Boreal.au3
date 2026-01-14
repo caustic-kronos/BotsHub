@@ -127,7 +127,7 @@ Func SetupPlayerBorealChestFarm()
 			$boreal_player_profession = $ID_DERVISH
 			LoadSkillTemplate($BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
 	EndSwitch
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 EndFunc
 
 

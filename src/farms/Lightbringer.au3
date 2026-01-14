@@ -245,7 +245,7 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	$skillCastTimer = TimerInit()
 	While IsRecharged($JUNUNDU_SIEGE) And TimerDiff($skillCastTimer) < 3000
 		UseSkillEx($JUNUNDU_SIEGE, $target)
-		RandomSleep(20)
+		RandomSleep(50)
 	WEnd
 
 	Local $me = GetMyAgent()
@@ -254,7 +254,7 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 		$target = GetNearestEnemyToAgent($me)
 		If (IsRecharged($JUNUNDU_TUNNEL)) Then UseSkillEx($JUNUNDU_TUNNEL)
 		CallTarget($target)
-		Sleep(20)
+		RandomSleep(50)
 		If (GetSkillbarSkillAdrenaline($JUNUNDU_SMASH) == 130) Then UseSkillEx($JUNUNDU_SMASH)
 		AttackOrUseSkill($WEAPON_ATTACK_TIME, $JUNUNDU_BITE, $JUNUNDU_STRIKE)
 		$me = GetMyAgent()

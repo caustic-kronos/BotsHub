@@ -102,7 +102,7 @@ Func SetupPlayerFeathersFarm()
 		Warn('Should run this farm as dervish')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 

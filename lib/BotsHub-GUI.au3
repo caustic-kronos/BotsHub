@@ -1244,7 +1244,7 @@ Func TrySetupWeaponSlotUsingGUISettings()
 	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
 		Info('Setting player weapon slot to ' & $default_weapon_slot & ' according to GUI settings')
 		ChangeWeaponSet($default_weapon_slot)
-		Sleep(250 + GetPing())
+		RandomSleep(250)
 	Else
 		Debug('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
 	EndIf
@@ -1255,7 +1255,7 @@ Func TrySetupPlayerUsingGUISettings()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up player build skill bar according to GUI settings')
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-		Sleep(250 + GetPing())
+		RandomSleep(250)
 	Else
 		Debug('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
@@ -1266,7 +1266,7 @@ Func TrySetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
 		Info('Setting up team according to GUI settings')
 		LeaveParty()
-		Sleep(500 + GetPing())
+		RandomSleep(500)
 		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_1)])
 		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_2)])
 		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_3)])
@@ -1274,7 +1274,7 @@ Func TrySetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
 		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_5)])
 		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_6)])
 		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_7)])
-		Sleep(500 + GetPing())
+		RandomSleep(500)
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
 		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
@@ -1285,7 +1285,7 @@ Func TrySetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
 	Else
 		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
 	EndIf
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> $teamSize Then
 		Warn('Could not set up party correctly. Team size different than ' & $teamSize)
 		Return $FAIL

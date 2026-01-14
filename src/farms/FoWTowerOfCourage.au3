@@ -107,7 +107,7 @@ Func SetupFoWToCFarm()
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerFowToCFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	$fow_toc_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -122,7 +122,7 @@ Func SetupPlayerFowToCFarm()
 		Warn('You need to run this farm bot as Ranger')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -137,7 +137,7 @@ Func FoWToCFarmLoop()
 
 	UseSkillEx($FOW_TOC_SHADOWFORM)
 	UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	; dark escape can be replaced with other skill like great dwarf armor to increase survivability at the cost of farm speed
 	UseSkillEx($FOW_TOC_DARK_ESCAPE)
 	If MoveDefendingFoWToC(-21131, -2390) == $STUCK Then Return $FAIL
@@ -145,7 +145,7 @@ Func FoWToCFarmLoop()
 
 	If IsPlayerDead() Then Return $FAIL
 	Info('Balling abyssals')
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If MoveDefendingFoWToC(-14453, -3536) == $STUCK Then Return $FAIL
 	Info('Recharging skills and energy')
 	While Not IsRecharged($FOW_TOC_DWARVEN_STABILITY) Or Not IsRecharged($FOW_TOC_WHIRLING_DEFENSE) Or GetEnergy() < 20
@@ -156,23 +156,23 @@ Func FoWToCFarmLoop()
 	; recharging energy to cast Dwarven Stability and Whirling Defense
 	While GetEnergy() < 9
 		If CheckStuck('Recharging energy', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
-		Sleep(500)
+		RandomSleep(500)
 	WEnd
 	Info('Fighting abyssals')
 	UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	If MoveDefendingFoWToC(-13684, -2077) == $STUCK Then Return $FAIL
 	If MoveDefendingFoWToC(-14113, -418) == $STUCK Then Return $FAIL
 	If IsRecharged($FOW_TOC_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And GetEnergy() > 10 Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	While GetEffectTimeRemaining(GetEffect($ID_WHIRLING_DEFENSE)) > 0
 		If CheckStuck('Fighting Abyssals', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		DefendFoWToC()
 	WEnd
 	Info('Abyssals cleared. Picking up loot')
 	If IsPlayerAlive() Then PickUpItems(CastBuffsFowToC)
-	Sleep(500)
+	RandomSleep(500)
 	If MoveDefendingFoWToC(-13684, -2077) == $STUCK Then Return $FAIL
 
 	If IsPlayerDead() Then Return $FAIL
@@ -201,15 +201,15 @@ Func FoWToCFarmLoop()
 	; recharging energy to cast Dwarven Stability and Whirling Defense
 	While GetEnergy() < 9
 		If CheckStuck('Recharging energy', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
-		Sleep(500)
+		RandomSleep(500)
 	WEnd
 	Info('Fighting rangers')
 	UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	If IsRecharged($FOW_TOC_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And GetEnergy() > 10 Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	If IsRecharged($FOW_TOC_I_AM_UNSTOPPABLE) And GetEffectTimeRemaining(GetEffect($FOW_TOC_I_AM_UNSTOPPABLE)) == 0 Then UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	While GetEffectTimeRemaining(GetEffect($ID_WHIRLING_DEFENSE)) > 0
 		If CheckStuck('Fighting Rangers', $MAX_FOW_TOC_FARM_DURATION) == $FAIL Then Return $FAIL
 		DefendFoWToC(False)
@@ -219,7 +219,7 @@ Func FoWToCFarmLoop()
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(CastBuffsFowToC)
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 		Return $SUCCESS
 	Else
@@ -265,7 +265,7 @@ Func DefendFoWToC($useHoSSkill = True)
 		If DllStructGetData($me, 'HealthPercent') < 0.3 Or _
 				(DllStructGetData($me, 'HealthPercent') < 0.4 And GetHasCondition($me)) Then
 			UseSkillEx($FOW_TOC_HEART_OF_SHADOW)
-			Sleep(500 + GetPing())
+			RandomSleep(500)
 		EndIf
 	EndIf
 

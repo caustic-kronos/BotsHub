@@ -124,7 +124,7 @@ Func SetupPlayerTascaChestFarm()
 			Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist')
 			Return $FAIL
 	EndSwitch
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -137,7 +137,7 @@ Func SetupTeamTascaChestFarm()
 		Info('Setting up team according to default settings')
 		OmniFarmFullSetup()
 	EndIf
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 		Return $FAIL
@@ -293,7 +293,7 @@ Func TascaChestRun($X, $Y)
 			EndIf
 		EndIf
 
-		Sleep(250)
+		RandomSleep(250)
 		$me = GetMyAgent()
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
@@ -346,6 +346,7 @@ Func TascaDefendFunction($X, $Y)
 
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
+	Local $ping = GetPing()
 	If ($Timer_Shadowform == Null Or TimerDiff($Timer_Shadowform) > 19500) Then
 		Local $enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 		If $enemiesAreNear Or ($X <> 0 And AreFoesInFront($X, $Y)) Then
@@ -358,14 +359,14 @@ Func TascaDefendFunction($X, $Y)
 			AdlibRegister('UseDeadlyParadox', 750)
 			While IsPlayerAlive() And IsRecharged($TASCA_SHADOWFORM)
 				UseSkillEx($TASCA_SHADOWFORM, $me)
-				Sleep(GetPing() + 20)
+				Sleep(20 + $ping)
 			WEnd
 			$Timer_Shadowform = TimerInit()
-			Sleep(GetPing() + 20)
+			Sleep(20 + $ping)
 			If ($Timer_DwarvenStability == Null Or TimerDiff($Timer_DwarvenStability) > 34000) And GetEnergy() >= 5 Then
 				UseSkillEx($TASCA_DWARVEN_STABILITY)
 				$Timer_DwarvenStability = TimerInit()
-				Sleep(GetPing() + 20)
+				Sleep(20 + $ping)
 			EndIf
 			If (GetEnergy() >= 5) Then UseSkillEx($TASCA_DARK_ESCAPE)
 		EndIf
@@ -383,7 +384,7 @@ EndFunc
 Func UseDeadlyParadox()
 	While IsPlayerAlive() And IsRecharged($TASCA_DEADLY_PARADOX)
 		UseSkillEx($TASCA_DEADLY_PARADOX)
-		Sleep(GetPing() + 20)
+		Sleep(50)
 	WEnd
 	AdlibUnRegister('UseDeadlyParadox')
 EndFunc

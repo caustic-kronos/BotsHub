@@ -121,7 +121,7 @@ Func SetupGemstoneStygianFarm()
 	If SetupPlayerStygianFarm() == $FAIL Then Return $FAIL
 	If SetupTeamStygianFarm() == $FAIL Then Return $FAIL
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	$gemstone_stygian_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -144,7 +144,7 @@ Func SetupPlayerStygianFarm()
 			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
 			Return $FAIL
 	EndSwitch
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -152,12 +152,14 @@ EndFunc
 Func SetupTeamStygianFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
 		AddHero($STYGIAN_HERO_PARTY_ID)
-		Sleep(500 + GetPing())
+		RandomSleep(500)
 		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, $STYGIAN_HERO_INDEX)
-		Sleep(500 + GetPing())
+		RandomSleep(500)
+		SetHeroBehaviour($GLINT_HERO_RITU_SOULTWISTER, $ID_HERO_AVOIDING)
+		RandomSleep(500)
 		DisableAllHeroSkills($STYGIAN_HERO_INDEX)
 		If GetPartySize() <> 2 Then
 			Warn('Could not add ranger hero to team. Team size different than 2')
@@ -241,7 +243,7 @@ Func StygianFarmMesmerAssassin()
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 		Return $SUCCESS
 	Else
@@ -279,7 +281,7 @@ Func StygianJobMesmerAssassin($waveNumber = 1)
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 	EndIf
 	MoveTo(13128, -10084)

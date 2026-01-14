@@ -112,7 +112,7 @@ Func SetupPlayerKournansFarm()
 		Warn('Should run this farm as elementalist')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -120,11 +120,11 @@ EndFunc
 Func SetupTeamKournansFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	AddHero($ID_MARGRID_THE_SLY)
 	AddHero($ID_XANDRA)
 	AddHero($ID_GENERAL_MORGAHN)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')
 		Return $FAIL
@@ -132,10 +132,10 @@ Func SetupTeamKournansFarm()
 	LoadSkillTemplate($R_KOURNANS_HERO_SKILLBAR, 1)
 	LoadSkillTemplate($RT_KOURNANS_HERO_SKILLBAR, 2)
 	LoadSkillTemplate($P_KOURNANS_HERO_SKILLBAR, 3)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -206,7 +206,7 @@ Func KournansFarmLoop()
 	; Tripled to secure the looting of items
 	For $i = 1 To 3
 		PickUpItems()
-		Sleep(GetPing())
+		RandomSleep(50)
 	Next
 	Return $SUCCESS
 EndFunc

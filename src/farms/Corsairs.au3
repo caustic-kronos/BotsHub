@@ -102,7 +102,7 @@ Func SetupPlayerCorsairsFarm()
 		Warn('Should run this farm as ranger')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -110,20 +110,20 @@ EndFunc
 Func SetupTeamCorsairsFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	AddHero($ID_DUNKORO)
 	AddHero($ID_MELONNI)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 3 Then
 		Warn('Could not set up party correctly. Team size different than 3')
 		Return $FAIL
 	EndIf
 	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, 1)
 	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, 2)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	DisableHeroSkillSlot(1, $CORSAIRS_MAKE_HASTE)
 	DisableHeroSkillSlot(2, $CORSAIRS_WINNOWING)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -183,7 +183,7 @@ Func CorsairsFarmLoop()
 	WaitForBohseda()
 	CommandHero(2, -13778, -10156)
 	UseSkillEx($CORSAIRS_DWARVEN_STABILITY)
-	RandomSleep(20)
+	RandomSleep(50)
 	CastAllDefensiveSkills()
 	If IsPlayerDead() Then Return $FAIL
 
@@ -237,13 +237,13 @@ EndFunc
 ;~ Function to use all defensive skills
 Func CastAllDefensiveSkills()
 	UseSkillEx($CORSAIRS_SHROUD_OF_DISTRESS)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($CORSAIRS_TOGETHER_AS_ONE)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($CORSAIRS_MENTAL_BLOCK)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($CORSAIRS_FEIGNED_NEUTRALITY)
-	RandomSleep(20)
+	RandomSleep(50)
 EndFunc
 
 
@@ -251,7 +251,7 @@ EndFunc
 Func OnlyCastTogetherAsOne()
 	If IsRecharged($CORSAIRS_TOGETHER_AS_ONE) Then
 		UseSkillEx($CORSAIRS_TOGETHER_AS_ONE)
-		RandomSleep(GetPing() + 20)
+		RandomSleep(50)
 	EndIf
 EndFunc
 
@@ -260,19 +260,19 @@ EndFunc
 Func DefendAgainstCorsairs($Hidden = False)
 	If IsRecharged($CORSAIRS_TOGETHER_AS_ONE) Then
 		UseSkillEx($CORSAIRS_TOGETHER_AS_ONE)
-		RandomSleep(GetPing() + 20)
+		RandomSleep(50)
 	EndIf
 	If Not $Hidden And IsRecharged($CORSAIRS_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 Then
 		UseSkillEx($CORSAIRS_MENTAL_BLOCK)
-		RandomSleep(GetPing() + 20)
+		RandomSleep(50)
 	EndIf
 	If Not $Hidden And IsRecharged($CORSAIRS_SHROUD_OF_DISTRESS) Then
 		UseSkillEx($CORSAIRS_SHROUD_OF_DISTRESS)
-		RandomSleep(GetPing() + 20)
+		RandomSleep(50)
 	EndIf
 	If Not $Hidden And IsRecharged($CORSAIRS_FEIGNED_NEUTRALITY) Then
 		UseSkillEx($CORSAIRS_FEIGNED_NEUTRALITY)
-		RandomSleep(GetPing() + 20)
+		RandomSleep(50)
 	EndIf
 EndFunc
 

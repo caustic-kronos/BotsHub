@@ -92,7 +92,7 @@ Func SetupPlayerSpiritSlavesFarm()
 		Warn('Should run this farm as dervish')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -217,20 +217,20 @@ Func FarmNorthGroup()
 	UseSkillEx($SS_MYSTIC_VIGOR)
 	RandomSleep(300)
 	UseSkillEx($SS_VOW_OF_STRENGTH)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($SS_EXTEND_ENCHANTMENTS)
-	RandomSleep(20)
+	RandomSleep(50)
 	If IsPlayerDead() Then Return $FAIL
 
 	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
 	$targetFoe = BetterGetNearestNPCToCoords($ID_ALLEGIANCE_FOE, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
 
 	UseSkillEx($SS_DEATHS_CHARGE, $targetFoe)
-	RandomSleep(20)
+	RandomSleep(50)
 	If GetEnergy() > $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK] Then UseSkillEx($SS_MIRAGE_CLOAK)
-	RandomSleep(20)
+	RandomSleep(50)
 	If GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
-	RandomSleep(20)
+	RandomSleep(50)
 
 	If IsPlayerDead() Then Return $FAIL
 	If KillSequence() == $FAIL Then Return $FAIL
@@ -278,15 +278,15 @@ Func FarmSouthGroup()
 	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
 	Local $targetFoe = BetterGetNearestNPCToCoords($ID_ALLEGIANCE_FOE, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
 	UseSkillEx($SS_I_AM_UNSTOPPABLE)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($SS_EXTEND_ENCHANTMENTS)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($SS_DEATHS_CHARGE, $targetFoe)
-	RandomSleep(20)
+	RandomSleep(50)
 	If GetEnergy() > $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK] Then UseSkillEx($SS_MIRAGE_CLOAK)
-	RandomSleep(20)
+	RandomSleep(50)
 	If GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
-	RandomSleep(20)
+	RandomSleep(50)
 
 	If IsPlayerDead() Then Return $FAIL
 	If KillSequence() == $FAIL Then Return $FAIL
@@ -303,29 +303,29 @@ Func KillSequence()
 	While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 100000
 		If IsRecharged($SS_MYSTIC_VIGOR) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_VIGOR)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_MYSTIC_VIGOR] Then
 			UseSkillEx($SS_MYSTIC_VIGOR)
-			RandomSleep(20)
+			RandomSleep(50)
 		EndIf
 		If $foesCount > 1 And IsRecharged($SS_MIRAGE_CLOAK) And GetEffectTimeRemaining(GetEffect($ID_MIRAGE_CLOAK)) == 0 And GetEnergy() > ($SKILL_COSTS_MAP[$SS_EXTEND_ENCHANTMENTS] + $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK]) Then
 			UseSkillEx($SS_EXTEND_ENCHANTMENTS)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($SS_MIRAGE_CLOAK)
-			RandomSleep(20)
+			RandomSleep(50)
 		EndIf
 		If IsRecharged($SS_I_AM_UNSTOPPABLE) And GetEnergy() > $SKILL_COSTS_MAP[$SS_I_AM_UNSTOPPABLE] Then
 			UseSkillEx($SS_I_AM_UNSTOPPABLE)
-			RandomSleep(20)
+			RandomSleep(50)
 		EndIf
 		If $foesCount > 3 And IsRecharged($SS_SAND_SHARDS) And GetEffectTimeRemaining(GetEffect($ID_SAND_SHARDS)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_SAND_SHARDS] Then
 			UseSkillEx($SS_SAND_SHARDS)
-			RandomSleep(20)
+			RandomSleep(50)
 		EndIf
 		If IsRecharged($SS_EBON_BATTLE_STANDARD_OF_HONOR) And GetEffectTimeRemaining(GetEffect($ID_EBON_BATTLE_STANDARD_OF_HONOR)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then
 			UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
-			RandomSleep(20)
+			RandomSleep(50)
 		EndIf
 		If IsRecharged($SS_VOW_OF_STRENGTH) And GetEnergy() > $SKILL_COSTS_MAP[$SS_VOW_OF_STRENGTH] Then
 			UseSkillEx($SS_VOW_OF_STRENGTH)
-			RandomSleep(20)
+			RandomSleep(50)
 		EndIf
 		Local $me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)

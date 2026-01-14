@@ -89,7 +89,7 @@ Func SetupPlayerDragonMossFarm()
 		Warn('Should run this farm as ranger')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -170,7 +170,7 @@ Func DragonMossFarmLoop()
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems()
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 		Return $SUCCESS
 	Else

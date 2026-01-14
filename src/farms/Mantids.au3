@@ -109,7 +109,7 @@ Func SetupPlayerMantidsFarm()
 		Warn('Should run this farm as ranger')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -117,11 +117,11 @@ EndFunc
 Func SetupTeamMantidsFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	AddHero($MANTIDS_HERO_PARTY_ID)
 	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, $MANTIDS_HERO_INDEX)
 	DisableAllHeroSkills($MANTIDS_HERO_INDEX)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
 		Return $FAIL
@@ -162,13 +162,13 @@ Func MantidsFarmLoop()
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_THEY_RE_ON_FIRE)
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_MAKE_HASTE, GetMyAgent())
 	UseSkillEx($MANTIDS_SERPENTS_QUICKNESS)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
 	UseSkillEx($MANTIDS_SHROUD_OF_DISTRESS)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($MANTIDS_SHADOWFORM)
 	UseHeroSkill(1, $MANTIDS_BRACEYOURSELF, GetMyAgent())
-	RandomSleep(20)
+	RandomSleep(50)
 	CommandAll(9000, -19500)
 
 	; Aggro the three groups
@@ -190,9 +190,9 @@ Func MantidsFarmLoop()
 		RandomSleep(500)
 	WEnd
 	UseSkillEx($MANTIDS_SHADOWFORM)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($MANTIDS_LIGHTNING_REFLEXES)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseSkillEx($MANTIDS_WAY_OF_PERFECTION)
 	RandomSleep(2000)
 	If IsPlayerDead() Then Return $FAIL
@@ -231,7 +231,7 @@ Func MantidsFarmLoop()
 	; Tripled to secure the looting of items
 	For $i = 1 To 3
 		PickUpItems()
-		Sleep(GetPing())
+		RandomSleep(50)
 	Next
 	FindAndOpenChests()
 	Return $SUCCESS

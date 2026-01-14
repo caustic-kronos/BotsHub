@@ -216,7 +216,6 @@ Func SortInventory()
 	For $item In $items
 		$itemID = DllStructGetData($item, 'ModelID')
 		If $itemID == 0 Then ExitLoop
-		RandomSleep(10)
 
 		; Weapon
 		If IsWeapon($item) Then
@@ -743,7 +742,7 @@ Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = Fals
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
 	GoToNPC($merchant)
-	RandomSleep(500)
+	RandomSleep(250)
 
 	Info('Selling items')
 	Local $item, $itemID
@@ -756,7 +755,7 @@ Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = Fals
 				If $shouldSellItem($item) Then
 					If Not $dryRun Then
 						SellItem($item, DllStructGetData($item, 'Quantity'))
-						RandomSleep(GetPing() + 200)
+						RandomSleep(250)
 					EndIf
 				Else
 					If $dryRun Then Info('Will not sell item at ' & $bagIndex & ':' & $i)
@@ -778,7 +777,7 @@ Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMa
 	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
 	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
 	GoToNPC($materialTrader)
-	RandomSleep(500)
+	RandomSleep(250)
 
 	Local $item, $itemID
 	For $bagIndex = 1 To _Min(4, $bags_count)
@@ -791,9 +790,9 @@ Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMa
 				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
 				While $totalAmount > 9
 					TraderRequestSell($itemID)
-					Sleep(GetPing() + 200)
+					RandomSleep(250)
 					TraderSell()
-					Sleep(GetPing() + 200)
+					RandomSleep(250)
 					$totalAmount -= 10
 					; Safety net incase some sell orders didn't go through
 					If ($totalAmount < 10) Then
@@ -831,9 +830,9 @@ Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMate
 				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
 				While $totalAmount > 0
 					TraderRequestSell($itemID)
-					Sleep(GetPing() + 200)
+					RandomSleep(250)
 					TraderSell()
-					Sleep(GetPing() + 200)
+					RandomSleep(250)
 					$totalAmount -= 1
 					; Safety net incase some sell orders didn't go through
 					If ($totalAmount < 1) Then
@@ -862,11 +861,11 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_EMB
 
 	For $i = 1 To $amount
 		TraderRequest($materialModelID)
-		Sleep(GetPing() + 200)
+		RandomSleep(250)
 		Local $traderPrice = GetTraderCostValue()
 		Debug('Buying for ' & $traderPrice)
 		TraderBuy()
-		Sleep(GetPing() + 200)
+		RandomSleep(250)
 	Next
 	; TODO: add safety net to check amount of items bought and buy some more if needed
 EndFunc
@@ -893,13 +892,13 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 
 	Local $IDMaterialToBuy = $materialModelID
 	TraderRequest($IDMaterialToBuy)
-	Sleep(GetPing() + 200)
+	RandomSleep(250)
 	Local $traderPrice = GetTraderCostValue()
 	If $traderPrice <= 0 Then
 		Error('Couldn''t get trader price for the original material')
 		If ($backupMaterialModelID <> Null) Then
 			TraderRequest($backupMaterialModelID)
-			Sleep(GetPing() + 200)
+			RandomSleep(250)
 			Local $traderPrice = GetTraderCostValue()
 			If $traderPrice <= 0 Then Return
 			$IDMaterialToBuy = $backupMaterialModelID
@@ -912,9 +911,9 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	Info('Buying ' & $amount & ' items for ' & $traderPrice)
 	While $amount > 0
 		TraderBuy()
-		Sleep(GetPing() + 200)
+		RandomSleep(250)
 		TraderRequest($IDMaterialToBuy)
-		Sleep(GetPing() + 200)
+		RandomSleep(250)
 		$traderPrice = GetTraderCostValue()
 		$amount -= 1
 	WEnd
@@ -1316,10 +1315,11 @@ EndFunc
 Func SalvageItem($item, $salvageKit)
 	Local $rarity = GetRarity($item)
 	StartSalvageWithKit($item, $salvageKit)
-	Sleep(GetPing() + 400)
+	Local $ping = GetPing()
+	Sleep(400 + $ping)
 	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 		ValidateSalvage()
-		Sleep(GetPing() + 400)
+		Sleep(400 + $ping)
 	EndIf
 	Return True
 EndFunc
@@ -1429,7 +1429,7 @@ Func StoreItemInXunlaiStorage($item)
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		MoveItem($item, 6, $materialStorageLocation)
-		RandomSleep(GetPing() + 20)
+		Sleep(20 + GetPing())
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return True
@@ -1437,13 +1437,14 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
 		$existingStacks = FindAllInXunlaiStorage($item)
+		Local $ping = GetPing()
 		For $bagIndex = 0 To UBound($existingStacks) - 1 Step 2
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then
 				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
-				RandomSleep(GetPing() + 20)
+				Sleep(20 + $ping)
 				$amount = $amount + $existingAmount - 250
 				If $amount <= 0 Then Return True
 			EndIf
@@ -1456,7 +1457,7 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
-	RandomSleep(GetPing() + 20)
+	Sleep(20)
 	Return True
 EndFunc
 

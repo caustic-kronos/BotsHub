@@ -140,22 +140,22 @@ Func SetupPlayerRaptorsFarm()
 			Warn('Should run this farm as warrior or dervish (though dervish build doesn''t seem to work)')
 			Return $FAIL
 	EndSwitch
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
 
 Func SetupTeamRaptorsFarm()
 	Info('Setting up team')
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	AddHero($RAPTORS_HERO_PARTY_ID)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	LoadSkillTemplate($P_RUNNER_HERO_SKILLBAR, $RAPTORS_HERO_INDEX)
-	Sleep(250)
+	RandomSleep(250)
 	DisableAllHeroSkills($RAPTORS_HERO_INDEX)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
 		Return $FAIL
@@ -196,7 +196,7 @@ Func RaptorsFarmLoop()
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(RaptorsDefend)
-			Sleep(100 + GetPing())
+			RandomSleep(100)
 		Next
 	EndIf
 
@@ -232,11 +232,11 @@ Func MoveToBaseOfCave()
 	If ($raptors_player_profession == $ID_DERVISH) Then UseSkillEx($RAPTORS_SIGNET_OF_MYSTIC_SPEED, GetMyAgent())
 	RandomSleep(1800)
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_MAKE_HASTE, GetMyAgent())
-	RandomSleep(20)
+	RandomSleep(50)
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_STAND_YOUR_GROUND)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_CANT_TOUCH_THIS)
-	RandomSleep(20)
+	RandomSleep(50)
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
 	Move(-20930, -9480, 40)
 EndFunc
@@ -327,18 +327,18 @@ Func KillRaptors()
 	Switch $raptors_player_profession
 		Case $ID_WARRIOR
 			If IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($RAPTORS_PROTECTORS_DEFENSE)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($RAPTORS_HUNDRED_BLADES)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($RAPTORS_WARY_STANCE)
-			RandomSleep(20)
+			RandomSleep(50)
 		Case $ID_DERVISH
 			UseSkillEx($RAPTORS_VOW_OF_STRENGTH)
-			RandomSleep(20)
+			RandomSleep(50)
 			UseSkillEx($RAPTORS_ARMOR_OF_SANCTITY)
-			RandomSleep(20)
+			RandomSleep(50)
 	EndSwitch
 
 	Local $rekoff_boss = GetBossFoe()
@@ -356,9 +356,9 @@ Func KillRaptors()
 
 	If ($raptors_player_profession == $ID_DERVISH) Then
 		UseSkillEx($RAPTORS_DUST_CLOAK)
-		RandomSleep(20)
+		RandomSleep(50)
 		UseSkillEx($RAPTORS_PIOUS_FURY)
-		RandomSleep(20)
+		RandomSleep(50)
 	EndIf
 
 	Debug('Waiting on MoP to be recharged and foes to be in range')
@@ -397,7 +397,7 @@ Func KillRaptors()
 		Local $me = GetMyAgent()
 		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
 		UseSkillEx($RAPTORS_SHIELD_BASH)
-		RandomSleep(20)
+		RandomSleep(50)
 		Debug('Using Whirlwind attack a second time')
 		While CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($RAPTORS_WHIRLWIND_ATTACK) == 130
 			UseSkillEx($RAPTORS_WHIRLWIND_ATTACK, GetNearestEnemyToAgent($me))

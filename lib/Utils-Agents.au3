@@ -373,7 +373,7 @@ Func MoveToMiddleOfPartyWithTimeout($timeOut)
 		$mapID = GetMapID()
 		If $mapID <> $oldMapID Then ExitLoop
 		$position = FindMiddleOfParty()
-		Sleep(200)
+		RandomSleep(200)
 		$me = GetMyAgent()
 	WEnd
 EndFunc

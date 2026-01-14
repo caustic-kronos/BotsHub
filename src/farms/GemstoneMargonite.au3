@@ -150,12 +150,12 @@ Func SetupGemstoneMargoniteFarm()
 		ResignAndReturnToOutpost()
 	EndIf
 	SwitchToHardModeIfEnabled()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If SetupPlayerMargoniteFarm() == $FAIL Then Return $FAIL
 	If SetupTeamMargoniteFarm() == $FAIL Then Return $FAIL
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	$gemstone_margonite_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -181,7 +181,7 @@ Func SetupPlayerMargoniteFarm()
 			Warn('You need to run this farm bot as Assassin or Mesmer or Elementalist or Ranger')
 			Return $FAIL
 	EndSwitch
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -189,21 +189,21 @@ EndFunc
 Func SetupTeamMargoniteFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	AddHero($MARGONITE_HERO_PARTY_ID)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not add monk hero to team. Team size different than 2')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Info('Setting up hero build skill bar')
 	LoadSkillTemplate($MARGONITE_MONK_HERO_SKILLBAR, $MARGONITE_HERO_INDEX)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	SetHeroBehaviour($MARGONITE_HERO_INDEX, $ID_HERO_AVOIDING)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	DisableAllHeroSkills($MARGONITE_HERO_INDEX)
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -277,23 +277,23 @@ Func GemstoneMargoniteFarmLoop()
 	Info('Starting Farm')
 
 	CommandHero($MARGONITE_HERO_INDEX, -18571, -9328)
-	Sleep(2000)
+	RandomSleep(2000)
 	CastBondsMargoniteFarm()
 	EnableMargoniteHeroSkills()
 	If GetLightbringerTitle() < 50000 Then
 		Info('Taking Blessing')
 		GoNearestNPCToCoords(-17623, -9670)
-		Sleep(1000)
+		RandomSleep(1000)
 		Dialog(0x85)
-		Sleep(500)
+		RandomSleep(500)
 	EndIf
 	Info('Taking Quest')
 	Local $TimerQuest = TimerInit()
 	While GetQuestByID($ID_QUEST_THE_CITY_OF_TORC_QA) == Null And TimerDiff($TimerQuest) < 10000
 		GoNearestNPCToCoords(-17710, -8811)
-		Sleep(1000)
+		RandomSleep(1000)
 		Dialog(0x82EF01)
-		Sleep(1000)
+		RandomSleep(1000)
 	WEnd
 	If GetQuestByID($ID_QUEST_THE_CITY_OF_TORC_QA) == Null Then Return $FAIL
 
@@ -327,19 +327,19 @@ Func GemstoneMargoniteFarmLoop()
 	If $margonite_player_profession <> $ID_ELEMENTALIST Then
 		If IsRecharged($MARGONITE_DEATHS_CHARGE)  Then
 			UseSkillEx($MARGONITE_DEATHS_CHARGE, $target)
-			RandomSleep(GetPing())
+			RandomSleep(50)
 		EndIf
 	EndIf
 	MoveTo(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'))
 
 	If KillMargonites() == $FAIL Then Return $FAIL
-	RandomSleep(1000 + GetPing())
+	RandomSleep(1000)
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(MargoniteCheckBuffs)
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 	EndIf
 
@@ -383,13 +383,13 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 	If $result == $STUCK Then
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
 		If KillMargonites() == $FAIL Then Return $FAIL
-		RandomSleep(1000 + GetPing())
+		RandomSleep(1000)
 		If IsPlayerAlive() Then
 			Info('Picking up loot')
 			; Tripled to secure the looting of items
 			For $i = 1 To 3
 				PickUpItems(MargoniteCheckBuffs)
-				Sleep(GetPing())
+				RandomSleep(50)
 			Next
 			Return $SUCCESS
 		Else
@@ -450,7 +450,7 @@ Func MargoniteCheckBuffs()
 				GetDistance($me, $target) < $MARGONITES_RANGE And DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.3 Then
 			ChangeTarget($target)
 			UseSkillEx($MARGONITE_DEATHS_CHARGE, $target)
-			RandomSleep(GetPing())
+			Sleep(20 + GetPing())
 		EndIf
 	EndIf
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL

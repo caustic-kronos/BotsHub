@@ -159,14 +159,14 @@ Func SetupPlayerMinisterialCommendationsFarm()
 	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 EndFunc
 
 
 Func SetupTeamMinisterialCommendationsFarm()
 	Info('Setting up team')
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	AddHero($ID_GWEN)
 	AddHero($ID_NORGU)
 	AddHero($ID_RAZAH)
@@ -174,7 +174,7 @@ Func SetupTeamMinisterialCommendationsFarm()
 	AddHero($ID_RITUALIST_MERCENARY_HERO)
 	AddHero($ID_XANDRA)
 	AddHero($ID_OLIAS)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')
 	EndIf
@@ -457,6 +457,7 @@ Func WaitForPurityBall()
 
 	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
+	Local $ping = GetPing()
 	While IsPlayerAlive() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK) < 130)
 		If ($foesCount > 3 And IsRecharged($SKILL_TO_THE_LIMIT) And GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK) < 130) Then
 			UseSkillEx($SKILL_TO_THE_LIMIT)
@@ -470,20 +471,20 @@ Func WaitForPurityBall()
 		EndIf
 		If IsRecharged($SKILL_CONVICTION) And GetEffectTimeRemaining(GetEffect($ID_CONVICTION)) == 0 Then
 			UseSkillEx($SKILL_CONVICTION)
-			RandomSleep(GetPing() + 100)
+			Sleep(100 + $ping)
 
 			If IsRecharged($SKILL_VITAL_BOON) Then
 				UseSkillEx($SKILL_VITAL_BOON)
-				RandomSleep(GetPing() + 20)
+				Sleep(20 + $ping)
 			EndIf
 		EndIf
 		;If IsRecharged($SKILL_MYSTIC_REGENERATION) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_REGENERATION)) == 0 Then
 		;	UseSkillEx($SKILL_MYSTIC_REGENERATION)
-		;	RandomSleep(GetPing() + 20)
+		;	Sleep(20 + $ping)
 		;EndIf
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($SKILL_VITAL_BOON) And GetEffectTimeRemaining(GetEffect($ID_VITAL_BOON)) == 0 Then
 			UseSkillEx($SKILL_VITAL_BOON)
-			RandomSleep(GetPing() + 20)
+			Sleep(20 + $ping)
 		EndIf
 
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.45 And IsRecharged($SKILL_GRENTHS_AURA) Then
@@ -628,7 +629,7 @@ Func KillMinistryOfPurity()
 	LogIntoFile('Mobs killed - ' & ($initialFoeCount - $foesCount))
 	LogIntoFile('Mobs left alive - ' & $foesCount)
 
-	RandomSleep(250)
+	Sleep(250)
 EndFunc
 
 
@@ -641,10 +642,10 @@ Func HealWhilePickingItems()
 		EndIf
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($SKILL_VITAL_BOON) And GetEffectTimeRemaining(GetEffect($ID_VITAL_BOON)) == 0 Then
 			UseSkillEx($SKILL_VITAL_BOON)
-			RandomSleep(GetPing() + 20)
+			Sleep(20 + GetPing())
 		;If IsRecharged($SKILL_MYSTIC_REGENERATION) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_REGENERATION)) == 0 Then
 		;	UseSkillEx($SKILL_MYSTIC_REGENERATION)
-		;	RandomSleep(GetPing() + 20)
+		;	Sleep(20 + GetPing())
 		EndIf
 		; Heroes with Mystic Healing provide additional long range support
 		UseHeroSkill($HERO_MESMER_DPS_2, $ESURGE2_MYSTIC_HEALING_SKILL_POSITION)

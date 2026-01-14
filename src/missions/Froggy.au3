@@ -307,13 +307,13 @@ Func ClearFroggyFloor2()
 		; Tripled to secure bot
 		For $i = 1 To 3
 			MoveTo(17888, -6243)
-			Sleep(GetPing() + 500)
+			RandomSleep(500)
 			TargetNearestItem()
 			ActionInteract()
-			Sleep(GetPing() + 500)
+			RandomSleep(500)
 			TargetNearestItem()
 			ActionInteract()
-			Sleep(GetPing() + 500)
+			RandomSleep(500)
 		Next
 
 		MoveAggroAndKillInRange(18363, -8696, 'Going to boss area', $FROGGY_AGGRO_RANGE)

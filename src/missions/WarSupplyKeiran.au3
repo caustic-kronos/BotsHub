@@ -122,21 +122,21 @@ Func GetKeiranBow()
 	; coordinates of Gwen inside Hall of Monuments location
 	Local $Gwen = GetNearestNPCToCoords(-6583, 6672)
 	GoToNPC($Gwen)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	; start a dialog with Gwen and send a packet for receiving Keiran Bow
 	dialog($bowDialogID)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 EndFunc
 
 
 ;~ Farm loop
 Func WarSupplyFarmLoop()
 	If EnterHallOfMonuments() == $FAIL Then Return $FAIL
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	If EnterAuspiciousBeginningsQuest() == $FAIL Then Return $FAIL
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	Local $result = RunQuest()
-	Sleep(1000)
+	RandomSleep(1000)
 	If $result == $FAIL Then
 		If IsPlayerDead() Then Warn('Player died')
 		ReturnBackToOutpost($ID_HALL_OF_MONUMENTS)

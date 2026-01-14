@@ -115,7 +115,7 @@ Func SetupVaettirsFarm()
 		If RunToJagaMoraine() == $FAIL Then ContinueLoop
 		$vaettirs_farm_setup = True
 	WEnd
-	Sleep(1000 + GetPing())
+	RandomSleep(1000)
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
@@ -140,14 +140,14 @@ Func SetupPlayerVaettirsFarm()
 			Warn('You need to run this farm bot as Assassin or Mesmer or Monk or Elementalist')
 			Return $FAIL
 	EndSwitch
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	; giving more health to monk 55hp from norn title effect would screw up farm, therefore hiding displayed title for monk
 	If $vaettirs_player_profession == $ID_MONK Then
 		SetDisplayedTitle(0)
 	Else
 		SetDisplayedTitle($ID_NORN_TITLE)
 	EndIf
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	Return $SUCCESS
 EndFunc
 
@@ -239,7 +239,7 @@ EndFunc
 Func VaettirsFarmLoop()
 	If $vaettirs_player_profession == $ID_MONK Then UseSkillEx($VAETTIR_MONK_BALTHAZARS_SPIRIT, GetMyAgent())
 	If $vaettirs_player_profession == $ID_ELEMENTALIST Then UseSkillEx($VAETTIR_ELEMENTALIST_ELEMENTAL_LORD)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	GetVaettirsNornBlessing()
 	If AggroAllMobs() == $FAIL Then Return $FAIL
 	VaettirsKillSequence()
@@ -250,7 +250,7 @@ Func VaettirsFarmLoop()
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(VaettirsStayAlive)
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 	EndIf
 
@@ -373,7 +373,7 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems(VaettirsStayAlive)
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 		Return $SUCCESS
 	Else

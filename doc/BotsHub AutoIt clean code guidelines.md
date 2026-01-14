@@ -62,3 +62,8 @@ Avoid randomly indented comments.
 
 ## 16. Separate code from inline comments with tabs
 Avoid inline comments. If it does make sense, then separate with tabs.
+
+## 17. Correctly set sleeps
+- Use Sleep(<time>) when you must wait precisely that amount of time
+- Use Sleep(<time> + GetPing()) when you run something very often (small <time>) or that you are on a sensitive operation (salvaging)
+- Use RandomSleep(<time>) the rest of the time

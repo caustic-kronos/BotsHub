@@ -96,9 +96,9 @@ Func SetupGemstoneTormentFarm()
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerTormentFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
-	Sleep(500 + GetPing())
+	RandomSleep(500)
 	$gemstone_torment_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -113,7 +113,7 @@ Func SetupPlayerTormentFarm()
 		Warn('You need to run this farm bot as Elementalist')
 		Return $FAIL
 	EndIf
-	Sleep(250 + GetPing())
+	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -179,14 +179,14 @@ Func GemstoneTormentFarmLoop()
 	If RunTormentFarm(10779, 9898) == $STUCK Then Return $FAIL
 	;If RunTormentFarm(11125, 9198) == $STUCK Then Return $FAIL
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
-	RandomSleep(500 + GetPing())
+	RandomSleep(500)
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
 		For $i = 1 To 3
 			PickUpItems()
-			Sleep(GetPing())
+			RandomSleep(50)
 		Next
 	EndIf
 
@@ -205,14 +205,14 @@ Func GemstoneTormentFarmLoop()
 	CastBuffsTormentFarm()
 	RandomSleep(250)
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
-	RandomSleep(500 + GetPing())
+	RandomSleep(500)
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 
 	Info('Picking up loot')
 	; Tripled to secure the looting of items
 	For $i = 1 To 3
 		PickUpItems()
-		Sleep(GetPing())
+		RandomSleep(50)
 	Next
 	Return $SUCCESS
 EndFunc
@@ -225,7 +225,7 @@ EndFunc
 
 Func CastBuffsTormentFarm()
 	If IsPlayerDead() Then Return $FAIL
-	RandomSleep(GetPing() + 150)
+	RandomSleep(150)
 	UseSkillTimed($TORMENT_ELEMENTAL_LORD)
 	UseSkillTimed($TORMENT_GLYPH_OF_ELEMENTAL_POWER)
 	UseSkillTimed($TORMENT_OBSIDIAN_FLESH)
@@ -261,7 +261,7 @@ Func KillTormentMobs()
 	UseSkillTimed($TORMENT_FLAME_BURST)
 	UseSkillTimed($TORMENT_RODGORTS_INVOCATION, $target)
 	; waiting for mobs to be cleaned by meteor shower
-	Sleep(1500 + GetPing())
+	RandomSleep(1500)
 
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
