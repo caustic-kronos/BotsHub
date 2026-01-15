@@ -150,8 +150,8 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💡🛠️ **Fix R trapper Stygian farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Cathedral of Flames farm bot (bones, Diessa Chalices, Rin Relics)** - 2 requests
+- 🧠💭 **Deldrimor title bot** - 2 requests
 - 🧠💭 **Kilroy bot (q8, survivor title)** - 1 request
-- 🧠💭 **Deldrimor title bot** - 1 request
 - 🧠💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
 - 🧠💭 **Secret Lair of the Snowmen (Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic)**
 - 🧠💭 **Irontoe's lair (Dwarven Ale, Aged Dwarven Ale)**

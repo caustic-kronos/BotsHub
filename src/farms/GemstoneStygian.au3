@@ -31,7 +31,7 @@ Global Const $AME_STYGIAN_SKILLBAR = 'OwVT8ZBPGiHRn5mat0E4uM0ZCC'
 ;Global Const $MEA_STYGIAN_SKILLBAR = 'OQdUASBPmfS3UyArgrlmA3lhOTQA'
 Global Const $MEA_STYGIAN_SKILLBAR = 'OQdTI4x8ZiHRn5mat0E4uM0ZCC'
 Global Const $RN_STYGIAN_SKILLBAR = 'OgQTcybiZK5o5Y5wSIXc465o7AA'
-Global Const $STYGIAN_RANGER_HERO_SKILLBAR = 'OgMSY5LHQnh0EAAAAAAAA'
+Global Const $STYGIAN_RANGER_HERO_SKILLBAR = 'OgMTY5LjHhmgugf2BAAAAkJA'
 
 ; You can select which ranger hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
 ; party hero ID that is used to add hero to the party team
@@ -60,9 +60,11 @@ Global Const $STYGIAN_RANGER_MUDDY_TERRAIN		= 8
 
 ; ranger hero
 ; TODO: consider taking Brambles, Lacerate, Earthbind, and maybe move some more spirits at AoE range to block foes better
-Global Const $STYGIAN_HERO_EDGE_OF_EXTINCTION	= 1
-Global Const $STYGIAN_HERO_UNYIELDING_AURA		= 2
-Global Const $STYGIAN_HERO_SUCCOR				= 3
+Global Const $STYGIAN_HERO_SUCCOR				= 1
+Global Const $STYGIAN_HERO_EDGE_OF_EXTINCTION	= 2
+Global Const $STYGIAN_HERO_LACERATE				= 3
+Global Const $STYGIAN_HERO_BRAMBLES				= 4
+Global Const $STYGIAN_HERO_REBIRTH				= 8
 #EndRegion Configuration
 
 ; ==== Constants ====
@@ -239,6 +241,7 @@ Func StygianFarmMesmerAssassin()
 	MoveTo(13240, -10006)
 	; Too hard to aggro the 2 groups after that, so hide in spot then go back to pick up loot
 	GoToHidingSpot()
+	RunStygianFarm(12853, -9936)
 	If IsPlayerAlive() Then
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
@@ -255,12 +258,14 @@ EndFunc
 
 Func StygianFarmRanger()
 	If IsPlayerDead() Then Return $FAIL
-	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_SUCCOR, GetMyAgent())
 	GoToHidingSpot()
 	If StygianJobRanger() == $FAIL Then Return $FAIL
-	MoveTo(7337, -9709)
-	MoveTo(9071, -7330)
-	If IsPlayerAlive() Then RandomSleep(10000)
+	MoveTo(9900, -5200)
+	If IsPlayerDead() Then Return $FAIL
+	RandomSleep(7500)
+	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_SUCCOR, GetMyAgent())
+	RandomSleep(7500)
+	CancelAll()
 	If StygianJobRanger() == $FAIL Then Return $FAIL
 	;MoveTo(7337, -9709)
 	;MoveTo(9071, -7330)
@@ -277,6 +282,7 @@ EndFunc
 Func StygianJobMesmerAssassin($waveNumber = 1)
 	If IsPlayerDead() Then Return $FAIL
 	GoToHidingSpot()
+	RunStygianFarm(12853, -9936)
 	If $waveNumber == 2 And IsPlayerAlive() Then
 		Info('Picking up loot')
 		; Tripled to secure the looting of items
@@ -312,10 +318,11 @@ EndFunc
 
 Func StygianJobRanger()
 	If IsPlayerDead() Then Return $FAIL
+
+	CommandAll(9300, -9350)
 	MoveTo(10844, -10205)
 	MoveTo(10313, -11156)
 	MoveTo(8269, -11160, 10)
-	CommandAll(9492, -11484)
 	MoveTo(8177, -11171, 10)
 
 	; Always use Spike with Flame - same cooldown
@@ -342,7 +349,9 @@ Func StygianJobRanger()
 	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
 	; 36	-	Speed at 3.5	Dust at 10.5	Spike at 13.5
+	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_LACERATE)
 	Sleep(10500)
+	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
 	; 46.5	-	Speed up		Dust up			Spike at 3
 	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
 	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
@@ -353,10 +362,9 @@ Func StygianJobRanger()
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
 	; 52.5	-	Speed at 14		Dust at 18		Spike at 13.5
 	;Sleep(14000)
-	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
+	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_BRAMBLES)
 	UseSkillEx($STYGIAN_RANGER_WINNOWING)
-	; FIXME: need a different spot for Jin to not steal the loot, here he just gets mega rekt
-	CommandAll(13110, -12625)
+	CommandAll(9900, -5200)
 	UseSkillEx($STYGIAN_RANGER_MUDDY_TERRAIN)
 	Sleep(4000)
 	; 66.5	-	Speed up		Dust at 4		Spike up
@@ -378,7 +386,9 @@ Func StygianJobRanger()
 		If CheckStuck('Stygian job ranger', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		RandomSleep(250)
 	WEnd
-	CancelAll()
+	RandomSleep(250)
+	;UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_REBIRTH, GetMyAgent())
+
 	If IsPlayerDead() Then Return $FAIL
 	PickUpItems(Null, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 	Return $SUCCESS
@@ -443,7 +453,10 @@ Func GoToHidingSpot()
 	; 0 to get player into the exact location without randomness, spot to hide from running mobs
 	MoveTo(10871, -7842, 0)
 	; waiting for mobs to run by
-	RandomSleep(15000)
+	RandomSleep(7500)
+	If $stygian_player_profession == $ID_RANGER Then
+		UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_SUCCOR, GetMyAgent())
+	EndIf
+	RandomSleep(7500)
 	RunStygianFarm(10575, -8170)
-	RunStygianFarm(12853, -9936)
 EndFunc
