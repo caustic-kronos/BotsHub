@@ -321,9 +321,8 @@ Func ClearTheChamberUnderworld()
 	MoveTo(378, 7209)
 
 	Info('Taking ''Clear the Chamber'' Quest')
-	Local $Lost_Soul
-	$Lost_Soul = GetNearestNPCToCoords(246, 7177)
-	GoToNPC($Lost_Soul)
+	Local $lostSoul = GetNearestNPCToCoords(246, 7177)
+	GoToNPC($lostSoul)
 	Dialog(0x0806501)
 
 	; bottem left stairs

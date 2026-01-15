@@ -86,7 +86,7 @@ Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
 Global Const $STYGIANS_RANGE_SHORT = 800
 Global Const $STYGIANS_RANGE_LONG = 1300
 
-Global $stygian_run_options = CloneDictMap($Default_MoveDefend_Options)
+Global $stygian_run_options = CloneDictMap($default_movedefend_options)
 $stygian_run_options.Item('defendFunction')		= StygianCheckRunBuffs
 $stygian_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
 $stygian_run_options.Item('randomFactor')			= 20
@@ -179,9 +179,9 @@ Func GoToStygianVeil()
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Stygian Veil
 	Local Static $StartX = -364
 	Local Static $StartY = -10445
-	Local $TimerZoning = TimerInit()
+	Local $timerZoning = TimerInit()
 	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
-		If TimerDiff($TimerZoning) > 120000 Then
+		If TimerDiff($timerZoning) > 120000 Then
 			Info('Could not zone to Stygian Veil')
 			Return $FAIL
 		EndIf
@@ -210,8 +210,8 @@ Func GemstoneStygianFarmLoop()
 		Sleep(500)
 	EndIf
 	Info('Taking Quest')
-	Local $TimerQuest = TimerInit()
-	While GetQuestByID($ID_QUEST_BREACHING_THE_STYGIAN_VEIL) == Null And TimerDiff($TimerQuest) < 10000
+	Local $timerQuest = TimerInit()
+	While GetQuestByID($ID_QUEST_BREACHING_THE_STYGIAN_VEIL) == Null And TimerDiff($timerQuest) < 10000
 		GoNearestNPCToCoords(7188, -9108)
 		Sleep(1000)
 		Dialog(0x82E601)

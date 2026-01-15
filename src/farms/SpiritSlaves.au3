@@ -404,11 +404,11 @@ EndFunc
 
 ;~ Respawn and rezone if we die
 Func RestartAfterDeath()
-	Local $deadlock_timer = TimerInit()
+	Local $deadlockTimer = TimerInit()
 	Info('Waiting for resurrection')
 	While IsPlayerDead()
 		RandomSleep(1000)
-		If TimerDiff($deadlock_timer) > 60000 Then
+		If TimerDiff($deadlockTimer) > 60000 Then
 			$spirit_slaves_farm_setup = True
 			Info('Travelling to Bone Palace')
 			DistrictTravel($ID_BONE_PALACE, $district_name)

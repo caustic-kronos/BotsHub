@@ -103,7 +103,7 @@ Global Const $GEMSTONE_MARGONITE_FARM_DURATION = 5 * 60 * 1000
 Global Const $MAX_GEMSTONE_MARGONITE_FARM_DURATION = 10 * 60 * 1000
 Global Const $MARGONITES_RANGE = 800
 
-Global $margonite_move_options = CloneDictMap($Default_MoveDefend_Options)
+Global $margonite_move_options = CloneDictMap($default_movedefend_options)
 $margonite_move_options.Item('defendFunction')		= MargoniteDefend
 $margonite_move_options.Item('moveTimeOut')			= 100 * 1000
 $margonite_move_options.Item('randomFactor')			= 25
@@ -222,11 +222,11 @@ Func GoToCityOfTorcqua()
 	Info('Moving to City of Torc''qua')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in City of Torc'qua
-	Local Static $StartX = -18575
-	Local Static $StartY = -8833
-	Local $TimerZoning = TimerInit()
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
-		If TimerDiff($TimerZoning) > 120000 Then
+	Local Static $startX = -18575
+	Local Static $startY = -8833
+	Local $timerZoning = TimerInit()
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
+		If TimerDiff($timerZoning) > 120000 Then
 			Info('Could not zone to City of Torc''qua')
 			Return $FAIL
 		EndIf
@@ -288,8 +288,8 @@ Func GemstoneMargoniteFarmLoop()
 		RandomSleep(500)
 	EndIf
 	Info('Taking Quest')
-	Local $TimerQuest = TimerInit()
-	While GetQuestByID($ID_QUEST_THE_CITY_OF_TORC_QA) == Null And TimerDiff($TimerQuest) < 10000
+	Local $timerQuest = TimerInit()
+	While GetQuestByID($ID_QUEST_THE_CITY_OF_TORC_QA) == Null And TimerDiff($timerQuest) < 10000
 		GoNearestNPCToCoords(-17710, -8811)
 		RandomSleep(1000)
 		Dialog(0x82EF01)
@@ -362,8 +362,8 @@ EndFunc
 
 
 Func WaitAggroMargonites($timeToWait)
-	Local $TimerAggro = TimerInit()
-	While TimerDiff($TimerAggro) < $timeToWait
+	Local $timerAggro = TimerInit()
+	While TimerDiff($timerAggro) < $timeToWait
 		If IsPlayerDead() Or CheckStuck('Waiting for margonites aggro', $MAX_GEMSTONE_MARGONITE_FARM_DURATION) == $FAIL Then Return $FAIL
 		MargoniteDefend()
 		RandomSleep(50)
@@ -408,9 +408,9 @@ EndFunc
 
 
 Func MargoniteMonkHeroHeal()
-	Local $MonkHero = GetAgentByID(GetHeroID($MARGONITE_HERO_INDEX))
+	Local $monkHero = GetAgentByID(GetHeroID($MARGONITE_HERO_INDEX))
 	If IsRecharged($MARGONITE_HERO_TROLL_UNGUENT, $MARGONITE_HERO_INDEX) And _
-			GetEnergy($MonkHero) > 10 And DllStructGetData($MonkHero, 'HealthPercent') < 1 And _
+			GetEnergy($monkHero) > 10 And DllStructGetData($monkHero, 'HealthPercent') < 1 And _
 			GetEffect($ID_TROLL_UNGUENT, $MARGONITE_HERO_INDEX) == Null Then
 		UseHeroSkill($MARGONITE_HERO_INDEX, $MARGONITE_HERO_TROLL_UNGUENT)
 	EndIf
@@ -502,10 +502,10 @@ EndFunc
 
 Func KillMargonitesUsingVisageSkills()
 	If IsPlayerDead() Then Return $FAIL
-	Local $TimerKill = TimerInit()
+	Local $timerKill = TimerInit()
 	Local Static $MaxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($TimerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -539,10 +539,10 @@ EndFunc
 
 Func KillMargonitesUsingWhirlingDefense()
 	If IsPlayerDead() Then Return $FAIL
-	Local $TimerKill = TimerInit()
+	Local $timerKill = TimerInit()
 	Local Static $MaxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($TimerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 

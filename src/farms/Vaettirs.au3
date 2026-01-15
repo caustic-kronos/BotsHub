@@ -74,7 +74,7 @@ Global Const $VAETTIR_ELEMENTALIST_ELEMENTAL_LORD		= 4
 Global Const $VAETTIR_ELEMENTALIST_MANTRA_OF_EARTH		= 5
 
 ; ==== Global variables ====
-Global $vaettirs_move_options = CloneDictMap($Default_MoveDefend_Options)
+Global $vaettirs_move_options = CloneDictMap($default_movedefend_options)
 $vaettirs_move_options.Item('defendFunction')				= VaettirsStayAlive
 $vaettirs_move_options.Item('moveTimeOut')					= 100 * 1000
 $vaettirs_move_options.Item('randomFactor')					= 50
@@ -602,11 +602,11 @@ Func RezoneToJagaMoraine()
 	VaettirsMoveDefending(12289, -17700)
 	VaettirsMoveDefending(15318, -20351)
 
-	Local $deadlock_timer = TimerInit()
+	Local $deadlockTimer = TimerInit()
 	While IsPlayerDead()
 		Info('Waiting for resurrection')
 		RandomSleep(1000)
-		If TimerDiff($deadlock_timer) > 60000 Then
+		If TimerDiff($deadlockTimer) > 60000 Then
 			$vaettirs_deadlocked = True
 			Return $FAIL
 		EndIf

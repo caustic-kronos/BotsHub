@@ -194,8 +194,8 @@ Func BotHubLoop()
 				If Not $global_farm_setup Then GeneralFarmSetup()
 			EndIf
 
-			Local $Farm = GUICtrlRead($GUI_Combo_FarmChoice)
-			Local $result = RunFarmLoop($Farm)
+			Local $farm = GUICtrlRead($GUI_Combo_FarmChoice)
+			Local $result = RunFarmLoop($farm)
 			If ($result == $PAUSE Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
 				$runtime_status = 'WILL_PAUSE'
 			EndIf
@@ -776,68 +776,68 @@ Func UpdateItemStats()
 
 	; Items stats, including inventory management situations when some items got sold or stored in chest, to update counters accordingly
 	; Counting income surplus of every item group after each finished run
-	Local $RunIncomeGold = GetGoldCharacter() - $PreRunGold
-	Local $RunIncomeGoldItems = $goldItemsCount - $PreRunGoldItems
-	Local $RunIncomeEctos = $itemCounts[0] - $PreRunEctos
-	Local $RunIncomeObsidianShards = $itemCounts[1] - $PreRunObsidianShards
-	Local $RunIncomeLockpicks = $itemCounts[2] - $PreRunLockpicks
-	Local $RunIncomeMargoniteGemstones = $itemCounts[3] - $PreRunMargoniteGemstones
-	Local $RunIncomeStygianGemstones = $itemCounts[4] - $PreRunStygianGemstones
-	Local $RunIncomeTitanGemstones = $itemCounts[5] - $PreRunTitanGemstones
-	Local $RunIncomeTormentGemstones = $itemCounts[6] - $PreRunTormentGemstones
-	Local $RunIncomeDiessaChalices = $itemCounts[7] - $PreRunDiessaChalices
-	Local $RunIncomeRinRelics = $itemCounts[8] - $PreRunRinRelics
-	Local $RunIncomeDestroyerCores = $itemCounts[9] - $PreRunDestroyerCores
-	Local $RunIncomeGlacialStones = $itemCounts[10] - $PreRunGlacialStones
-	Local $RunIncomeWarSupplies = $itemCounts[11] - $PreRunWarSupplies
-	Local $RunIncomeMinisterialCommendations = $itemCounts[12] - $PreRunMinisterialCommendations
-	Local $RunIncomeJadeBracelets = $itemCounts[13] - $PreRunJadeBracelets
-	Local $RunIncomeChunksOfDrakeFlesh = $itemCounts[14] - $PreRunChunksOfDrakeFlesh
-	Local $RunIncomeSkaleFins = $itemCounts[15] - $PreRunSkaleFins
-	Local $RunIncomeWintersdayGifts = $itemCounts[16] - $PreRunWintersdayGifts
-	Local $RunIncomeTrickOrTreats = $itemCounts[17] - $PreRunTrickOrTreats
-	Local $RunIncomeBirthdayCupcakes = $itemCounts[18] - $PreRunBirthdayCupcakes
-	Local $RunIncomeGoldenEggs = $itemCounts[19] - $PreRunGoldenEggs
-	Local $RunIncomePumpkinPieSlices = $itemCounts[20] - $PreRunPumpkinPieSlices
-	Local $RunIncomeHoneyCombs = $itemCounts[21] - $PreRunHoneyCombs
-	Local $RunIncomeFruitCakes = $itemCounts[22] - $PreRunFruitCakes
-	Local $RunIncomeSugaryBlueDrinks = $itemCounts[23] - $PreRunSugaryBlueDrinks
-	Local $RunIncomeChocolateBunnies = $itemCounts[24] - $PreRunChocolateBunnies
-	Local $RunIncomeDeliciousCakes = $itemCounts[25] - $PreRunDeliciousCakes
-	Local $RunIncomeAmberChunks = $itemCounts[26] - $PreRunAmberChunks
-	Local $RunIncomeJadeiteShards = $itemCounts[27] - $PreRunJadeiteShards
+	Local $runIncomeGold = GetGoldCharacter() - $PreRunGold
+	Local $runIncomeGoldItems = $goldItemsCount - $PreRunGoldItems
+	Local $runIncomeEctos = $itemCounts[0] - $PreRunEctos
+	Local $runIncomeObsidianShards = $itemCounts[1] - $PreRunObsidianShards
+	Local $runIncomeLockpicks = $itemCounts[2] - $PreRunLockpicks
+	Local $runIncomeMargoniteGemstones = $itemCounts[3] - $PreRunMargoniteGemstones
+	Local $runIncomeStygianGemstones = $itemCounts[4] - $PreRunStygianGemstones
+	Local $runIncomeTitanGemstones = $itemCounts[5] - $PreRunTitanGemstones
+	Local $runIncomeTormentGemstones = $itemCounts[6] - $PreRunTormentGemstones
+	Local $runIncomeDiessaChalices = $itemCounts[7] - $PreRunDiessaChalices
+	Local $runIncomeRinRelics = $itemCounts[8] - $PreRunRinRelics
+	Local $runIncomeDestroyerCores = $itemCounts[9] - $PreRunDestroyerCores
+	Local $runIncomeGlacialStones = $itemCounts[10] - $PreRunGlacialStones
+	Local $runIncomeWarSupplies = $itemCounts[11] - $PreRunWarSupplies
+	Local $runIncomeMinisterialCommendations = $itemCounts[12] - $PreRunMinisterialCommendations
+	Local $runIncomeJadeBracelets = $itemCounts[13] - $PreRunJadeBracelets
+	Local $runIncomeChunksOfDrakeFlesh = $itemCounts[14] - $PreRunChunksOfDrakeFlesh
+	Local $runIncomeSkaleFins = $itemCounts[15] - $PreRunSkaleFins
+	Local $runIncomeWintersdayGifts = $itemCounts[16] - $PreRunWintersdayGifts
+	Local $runIncomeTrickOrTreats = $itemCounts[17] - $PreRunTrickOrTreats
+	Local $runIncomeBirthdayCupcakes = $itemCounts[18] - $PreRunBirthdayCupcakes
+	Local $runIncomeGoldenEggs = $itemCounts[19] - $PreRunGoldenEggs
+	Local $runIncomePumpkinPieSlices = $itemCounts[20] - $PreRunPumpkinPieSlices
+	Local $runIncomeHoneyCombs = $itemCounts[21] - $PreRunHoneyCombs
+	Local $runIncomeFruitCakes = $itemCounts[22] - $PreRunFruitCakes
+	Local $runIncomeSugaryBlueDrinks = $itemCounts[23] - $PreRunSugaryBlueDrinks
+	Local $runIncomeChocolateBunnies = $itemCounts[24] - $PreRunChocolateBunnies
+	Local $runIncomeDeliciousCakes = $itemCounts[25] - $PreRunDeliciousCakes
+	Local $runIncomeAmberChunks = $itemCounts[26] - $PreRunAmberChunks
+	Local $runIncomeJadeiteShards = $itemCounts[27] - $PreRunJadeiteShards
 
 	; If income is positive then updating cumulative item stats. Income is negative when selling or storing items in chest
-	If $RunIncomeGold > 0 Then $TotalGold += $RunIncomeGold
-	If $RunIncomeGoldItems > 0 Then $TotalGoldItems += $RunIncomeGoldItems
-	If $RunIncomeEctos > 0 Then $TotalEctos += $RunIncomeEctos
-	If $RunIncomeObsidianShards > 0 Then $TotalObsidianShards += $RunIncomeObsidianShards
-	If $RunIncomeLockpicks > 0 Then $TotalLockpicks += $RunIncomeLockpicks
-	If $RunIncomeMargoniteGemstones > 0 Then $TotalMargoniteGemstones += $RunIncomeMargoniteGemstones
-	If $RunIncomeStygianGemstones > 0 Then $TotalStygianGemstones += $RunIncomeStygianGemstones
-	If $RunIncomeTitanGemstones > 0 Then $TotalTitanGemstones += $RunIncomeTitanGemstones
-	If $RunIncomeTormentGemstones > 0 Then $TotalTormentGemstones += $RunIncomeTormentGemstones
-	If $RunIncomeDiessaChalices > 0 Then $TotalDiessaChalices += $RunIncomeDiessaChalices
-	If $RunIncomeRinRelics > 0 Then $TotalRinRelics += $RunIncomeRinRelics
-	If $RunIncomeDestroyerCores > 0 Then $TotalDestroyerCores += $RunIncomeDestroyerCores
-	If $RunIncomeGlacialStones > 0 Then $TotalGlacialStones += $RunIncomeGlacialStones
-	If $RunIncomeWarSupplies > 0 Then $TotalWarSupplies += $RunIncomeWarSupplies
-	If $RunIncomeMinisterialCommendations > 0 Then $TotalMinisterialCommendations += $RunIncomeMinisterialCommendations
-	If $RunIncomeJadeBracelets > 0 Then $TotalJadeBracelets += $RunIncomeJadeBracelets
-	If $RunIncomeChunksOfDrakeFlesh > 0 Then $TotalChunksOfDrakeFlesh += $RunIncomeChunksOfDrakeFlesh
-	If $RunIncomeSkaleFins > 0 Then $TotalSkaleFins += $RunIncomeSkaleFins
-	If $RunIncomeWintersdayGifts > 0 Then $TotalWintersdayGifts += $RunIncomeWintersdayGifts
-	If $RunIncomeTrickOrTreats > 0 Then $TotalTrickOrTreats += $RunIncomeTrickOrTreats
-	If $RunIncomeBirthdayCupcakes > 0 Then $TotalBirthdayCupcakes += $RunIncomeBirthdayCupcakes
-	If $RunIncomeGoldenEggs > 0 Then $TotalGoldenEggs += $RunIncomeGoldenEggs
-	If $RunIncomePumpkinPieSlices > 0 Then $TotalPumpkinPieSlices += $RunIncomePumpkinPieSlices
-	If $RunIncomeHoneyCombs > 0 Then $TotalHoneyCombs += $RunIncomeHoneyCombs
-	If $RunIncomeFruitCakes > 0 Then $TotalFruitCakes += $RunIncomeFruitCakes
-	If $RunIncomeSugaryBlueDrinks > 0 Then $TotalSugaryBlueDrinks += $RunIncomeSugaryBlueDrinks
-	If $RunIncomeChocolateBunnies > 0 Then $TotalChocolateBunnies += $RunIncomeChocolateBunnies
-	If $RunIncomeDeliciousCakes > 0 Then $TotalDeliciousCakes += $RunIncomeDeliciousCakes
-	If $RunIncomeAmberChunks > 0 Then $TotalAmberChunks += $RunIncomeAmberChunks
-	If $RunIncomeJadeiteShards > 0 Then $TotalJadeiteShards += $RunIncomeJadeiteShards
+	If $runIncomeGold > 0 Then $TotalGold += $runIncomeGold
+	If $runIncomeGoldItems > 0 Then $TotalGoldItems += $runIncomeGoldItems
+	If $runIncomeEctos > 0 Then $TotalEctos += $runIncomeEctos
+	If $runIncomeObsidianShards > 0 Then $TotalObsidianShards += $runIncomeObsidianShards
+	If $runIncomeLockpicks > 0 Then $TotalLockpicks += $runIncomeLockpicks
+	If $runIncomeMargoniteGemstones > 0 Then $TotalMargoniteGemstones += $runIncomeMargoniteGemstones
+	If $runIncomeStygianGemstones > 0 Then $TotalStygianGemstones += $runIncomeStygianGemstones
+	If $runIncomeTitanGemstones > 0 Then $TotalTitanGemstones += $runIncomeTitanGemstones
+	If $runIncomeTormentGemstones > 0 Then $TotalTormentGemstones += $runIncomeTormentGemstones
+	If $runIncomeDiessaChalices > 0 Then $TotalDiessaChalices += $runIncomeDiessaChalices
+	If $runIncomeRinRelics > 0 Then $TotalRinRelics += $runIncomeRinRelics
+	If $runIncomeDestroyerCores > 0 Then $TotalDestroyerCores += $runIncomeDestroyerCores
+	If $runIncomeGlacialStones > 0 Then $TotalGlacialStones += $runIncomeGlacialStones
+	If $runIncomeWarSupplies > 0 Then $TotalWarSupplies += $runIncomeWarSupplies
+	If $runIncomeMinisterialCommendations > 0 Then $TotalMinisterialCommendations += $runIncomeMinisterialCommendations
+	If $runIncomeJadeBracelets > 0 Then $TotalJadeBracelets += $runIncomeJadeBracelets
+	If $runIncomeChunksOfDrakeFlesh > 0 Then $TotalChunksOfDrakeFlesh += $runIncomeChunksOfDrakeFlesh
+	If $runIncomeSkaleFins > 0 Then $TotalSkaleFins += $runIncomeSkaleFins
+	If $runIncomeWintersdayGifts > 0 Then $TotalWintersdayGifts += $runIncomeWintersdayGifts
+	If $runIncomeTrickOrTreats > 0 Then $TotalTrickOrTreats += $runIncomeTrickOrTreats
+	If $runIncomeBirthdayCupcakes > 0 Then $TotalBirthdayCupcakes += $runIncomeBirthdayCupcakes
+	If $runIncomeGoldenEggs > 0 Then $TotalGoldenEggs += $runIncomeGoldenEggs
+	If $runIncomePumpkinPieSlices > 0 Then $TotalPumpkinPieSlices += $runIncomePumpkinPieSlices
+	If $runIncomeHoneyCombs > 0 Then $TotalHoneyCombs += $runIncomeHoneyCombs
+	If $runIncomeFruitCakes > 0 Then $TotalFruitCakes += $runIncomeFruitCakes
+	If $runIncomeSugaryBlueDrinks > 0 Then $TotalSugaryBlueDrinks += $runIncomeSugaryBlueDrinks
+	If $runIncomeChocolateBunnies > 0 Then $TotalChocolateBunnies += $runIncomeChocolateBunnies
+	If $runIncomeDeliciousCakes > 0 Then $TotalDeliciousCakes += $runIncomeDeliciousCakes
+	If $runIncomeAmberChunks > 0 Then $TotalAmberChunks += $runIncomeAmberChunks
+	If $runIncomeJadeiteShards > 0 Then $TotalJadeiteShards += $runIncomeJadeiteShards
 
 	; updating GUI labels with cumulative items counters
 	GUICtrlSetData($GUI_Label_Gold_Value, Floor($TotalGold/1000) & 'k' & Mod($TotalGold, 1000) & 'g')

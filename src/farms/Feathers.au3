@@ -155,9 +155,9 @@ EndFunc
 
 ;~ Move and kill I suppose
 Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
-	Local $Angle = 0
+	Local $angle = 0
 	Local $stuckCount = 0
-	Local $Blocked = 0
+	Local $blocked = 0
 	Local $deadlock = TimerInit()
 
 	Move($x, $y)
@@ -188,13 +188,13 @@ Func MoveKill($x, $y, $waitForSettle = True, $timeout = 5*60*1000)
 		EndIf
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then
-			$Blocked += 1
-			If $Blocked <= 5 Then
+			$blocked += 1
+			If $blocked <= 5 Then
 				Move($x, $y)
 			Else
 				$me = GetMyAgent()
-				$Angle += 40
-				Move(DllStructGetData($me, 'X')+300*sin($Angle), DllStructGetData($me, 'Y') + 300*cos($Angle))
+				$angle += 40
+				Move(DllStructGetData($me, 'X')+300*sin($angle), DllStructGetData($me, 'Y') + 300*cos($angle))
 				Sleep(2000)
 				Move($x, $y)
 			EndIf

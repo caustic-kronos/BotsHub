@@ -61,7 +61,7 @@ Global Const $TORMENT_WEAPON_SLOT_STAFF = 2
 ; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
 Global Const $TORMENT_WEAPON_SLOT_FOCUS = 3
 
-Global $torment_run_options = CloneDictMap($Default_MoveDefend_Options)
+Global $torment_run_options = CloneDictMap($default_movedefend_options)
 $torment_run_options.Item('defendFunction')		= DefendTormentFarm
 $torment_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
 $torment_run_options.Item('randomFactor')			= 200
@@ -126,9 +126,9 @@ Func GoToRavenHeartGloom()
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in RavenHeart Gloom
 	Local Static $StartX = 16034
 	Local Static $StartY = 1244
-	Local $TimerZoning = TimerInit()
+	Local $timerZoning = TimerInit()
 	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
-		If TimerDiff($TimerZoning) > 120000 Then
+		If TimerDiff($timerZoning) > 120000 Then
 			Info('Could not zone to RavenHeart Gloom')
 			Return $FAIL
 		EndIf
@@ -143,7 +143,7 @@ EndFunc
 
 Func GemstoneTormentFarmLoop()
 	Info('Starting Farm')
-	Local $TimerWait
+	Local $timerWait
 
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
@@ -157,21 +157,21 @@ Func GemstoneTormentFarmLoop()
 
 	If RunTormentFarm(15125, 2794) == $STUCK Then Return $FAIL
 	If RunTormentFarm(15561, 5241) == $STUCK Then Return $FAIL
-	$TimerWait = TimerInit()
-	While TimerDiff($TimerWait) < 5000 And IsPlayerAlive()
+	$timerWait = TimerInit()
+	While TimerDiff($timerWait) < 5000 And IsPlayerAlive()
 		RandomSleep(100)
 	WEnd
-	$TimerWait = TimerInit()
+	$timerWait = TimerInit()
 	UseSkillTimed($TORMENT_OBSIDIAN_FLESH)
-	While TimerDiff($TimerWait) < 2000 And IsPlayerAlive()
+	While TimerDiff($timerWait) < 2000 And IsPlayerAlive()
 		RandomSleep(100)
 	WEnd
 
 	If RunTormentFarm(12304, 9022) == $STUCK Then Return $FAIL
 	If RunTormentFarm(11444, 9370) == $STUCK Then Return $FAIL
 	If RunTormentFarm(10828, 10583) == $STUCK Then Return $FAIL
-	$TimerWait = TimerInit()
-	While IsPlayerAlive() And (TimerDiff($TimerWait) < 15000 Or Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or GetEnergy() < 80)
+	$timerWait = TimerInit()
+	While IsPlayerAlive() And (TimerDiff($timerWait) < 15000 Or Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd
 	Info('First group')
@@ -196,8 +196,8 @@ Func GemstoneTormentFarmLoop()
 	If RunTormentFarm(12140, 12103) == $STUCK Then Return $FAIL
 	If RunTormentFarm(13915, 13415) == $STUCK Then Return $FAIL
 	If RunTormentFarm(16250, 14073) == $STUCK Then Return $FAIL
-	$TimerWait = TimerInit()
-	While IsPlayerAlive() And (TimerDiff($TimerWait) < 42000 Or Not IsRecharged($TORMENT_ELEMENTAL_LORD) Or _
+	$timerWait = TimerInit()
+	While IsPlayerAlive() And (TimerDiff($timerWait) < 42000 Or Not IsRecharged($TORMENT_ELEMENTAL_LORD) Or _
 			Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or Not IsRecharged($TORMENT_METEOR_SHOWER) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd

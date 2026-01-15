@@ -2413,9 +2413,9 @@ EndFunc
 ;~ Loads skill template code.
 Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $heroID = GetHeroID($heroIndex)
-	Local $BuildTemplateChars = StringSplit($buildTemplate, '')
+	Local $buildTemplateChars = StringSplit($buildTemplate, '')
 	; deleting first element of string array (which has the count of characters in AutoIT) to have string array indexed from 0
-	_ArrayDelete($BuildTemplateChars, 0)
+	_ArrayDelete($buildTemplateChars, 0)
 
 	Local $tempValuelateType	; 4 Bits
 	Local $versionNumber		; 4 Bits
@@ -2430,7 +2430,7 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 	Local $opTail				; 1 Bit
 
 	$buildTemplate = ''
-	For $character in $BuildTemplateChars
+	For $character in $buildTemplateChars
 		$buildTemplate &= Base64ToBin64($character)
 	Next
 

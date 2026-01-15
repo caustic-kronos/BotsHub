@@ -75,7 +75,7 @@ Global Const $GEM_SKILLS_ARRAY			= [$GEM_SYMBOLIC_CELERITY,	$GEM_SYMBOLIC_POSTUR
 Global Const $GEM_SKILLS_COSTS_ARRAY	= [15,						10,						0,						0,						0,							0,							5,						10]
 Global Const $GEM_SKILLS_COSTS_MAP		= MapFromArrays($GEM_SKILLS_ARRAY, $GEM_SKILLS_COSTS_ARRAY)
 
-Global $gemstones_fight_options	= CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $gemstones_fight_options	= CloneDictMap($default_moveaggroandkill_options)
 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
 $gemstones_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location
@@ -152,9 +152,9 @@ EndFunc
 ;~ Talking to Zhellix
 Func TalkToZhellix()
 	If GetMapID() <> $ID_GATE_OF_ANGUISH Then Return $FAIL
-	Local $Zhellix = GetNearestNpcToCoords(6081, -13314)
-	ChangeTarget($Zhellix)
-	GoToNPC($Zhellix)
+	Local $zhellix = GetNearestNpcToCoords(6081, -13314)
+	ChangeTarget($zhellix)
+	GoToNPC($zhellix)
 	Dialog(0x84)
 	WaitMapLoading($ID_THE_EBONY_CITADEL_OF_MALLYX)
 	Return GetMapID() == $ID_THE_EBONY_CITADEL_OF_MALLYX? $SUCCESS : $FAIL
@@ -192,10 +192,10 @@ EndFunc
 
 ;~ Check if run failed
 Func IsDoARunFailed()
-	Local $Zhellix = GetAgentByID($AGENTID_ZHELLIX)
-	If GetIsDead($Zhellix) Then Warn('Zhellix dead')
+	Local $zhellix = GetAgentByID($AGENTID_ZHELLIX)
+	If GetIsDead($zhellix) Then Warn('Zhellix dead')
 	If IsPlayerDead() Then Warn('Player dead')
-	Return GetIsDead($Zhellix) Or Not HasRezMemberAlive()
+	Return GetIsDead($zhellix) Or Not HasRezMemberAlive()
 EndFunc
 
 
@@ -204,8 +204,8 @@ Func IsZhellixPerformingRitual()
 	If IsDoARunFailed() Then Return False
 
 	Local $me = GetMyAgent()
-	Local $Zhellix = GetAgentByID($AGENTID_ZHELLIX)
+	Local $zhellix = GetAgentByID($AGENTID_ZHELLIX)
 	Local $foesCount = CountFoesInRangeOfAgent($me, $gemstones_fight_options.Item('fightRange'))
 	; After all waves are finished, Zhellix leaves citadel's entrance area where player is, which makes below check False
-	Return (Not GetIsDead($Zhellix) And GetDistance($me, $Zhellix) < 1500) Or $foesCount > 0
+	Return (Not GetIsDead($zhellix) And GetDistance($me, $zhellix) < 1500) Or $foesCount > 0
 EndFunc

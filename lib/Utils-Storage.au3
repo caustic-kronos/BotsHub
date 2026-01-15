@@ -738,9 +738,9 @@ Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = Fals
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
-	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
-	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
-	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $npcCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
+	MoveTo($npcCoordinates[0], $npcCoordinates[1])
+	Local $merchant = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
 	GoToNPC($merchant)
 	RandomSleep(250)
 
@@ -773,9 +773,9 @@ Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMa
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
-	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Basic material trader')
-	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
-	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $npcCoordinates = NPCCoordinatesInTown($tradeTown, 'Basic material trader')
+	MoveTo($npcCoordinates[0], $npcCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
 	GoToNPC($materialTrader)
 	RandomSleep(250)
 
@@ -813,9 +813,9 @@ Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMate
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
-	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
-	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
-	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $npcCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($npcCoordinates[0], $npcCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
 	GoToNPC($materialTrader)
 	RandomSleep(250)
 
@@ -853,9 +853,9 @@ Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_EMB
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
-	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
-	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
-	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $npcCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($npcCoordinates[0], $npcCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
 	GoToNPC($materialTrader)
 	RandomSleep(250)
 
@@ -884,9 +884,9 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
-	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
-	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
-	Local $materialTrader = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $npcCoordinates = NPCCoordinatesInTown($tradeTown, 'Rare material trader')
+	MoveTo($npcCoordinates[0], $npcCoordinates[1])
+	Local $materialTrader = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
 	GoToNPC($materialTrader)
 	RandomSleep(250)
 
@@ -934,9 +934,9 @@ Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
-	Local $NPCCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
-	MoveTo($NPCCoordinates[0], $NPCCoordinates[1])
-	Local $merchant = GetNearestNPCToCoords($NPCCoordinates[0], $NPCCoordinates[1])
+	Local $npcCoordinates = NPCCoordinatesInTown($tradeTown, 'Merchant')
+	MoveTo($npcCoordinates[0], $npcCoordinates[1])
+	Local $merchant = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
 	GoToNPC($merchant)
 	RandomSleep(500)
 
@@ -1177,8 +1177,8 @@ Func IdentifyItems($buyKit = True)
 				Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 				If Not $inventory_management_cache['Identify items.' & $rarityName] Then ContinueLoop
 
-				Local $IdentificationKit = FindIdentificationKit()
-				If $IdentificationKit == Null Then
+				Local $identificationKit = FindIdentificationKit()
+				If $identificationKit == Null Then
 					If $buyKit Then
 						BuySuperiorIdentificationKitInTown()
 					Else
@@ -1511,16 +1511,16 @@ EndFunc
 ;~ Balance character gold to the amount given - mode 0 = full balance, mode 1 = only withdraw, mode 2 = only deposit
 Func BalanceCharacterGold($goldAmount, $mode = 0)
 	Info('Balancing character''s gold')
-	Local $GCharacter = GetGoldCharacter()
-	Local $GStorage = GetGoldStorage()
-	If $GStorage > 950000 Then
+	Local $goldCharacter = GetGoldCharacter()
+	Local $goldStorage = GetGoldStorage()
+	If $goldStorage > 950000 Then
 		Warn('Too much gold in chest, use some.')
-	ElseIf $GStorage < 50000 Then
+	ElseIf $goldStorage < 50000 Then
 		Warn('Not enough gold in chest, get some.')
-	ElseIf $GCharacter > $goldAmount And $mode <> 1 Then
-		DepositGold($GCharacter - $goldAmount)
-	ElseIf $GCharacter < $goldAmount And $mode <> 2 Then
-		WithdrawGold($goldAmount - $GCharacter)
+	ElseIf $goldCharacter > $goldAmount And $mode <> 1 Then
+		DepositGold($goldCharacter - $goldAmount)
+	ElseIf $goldCharacter < $goldAmount And $mode <> 2 Then
+		WithdrawGold($goldAmount - $goldCharacter)
 	EndIf
 	Return True
 EndFunc
@@ -1902,9 +1902,9 @@ Func UseMoraleConsumableIfNeeded()
 	While TeamHasTooMuchMalus()
 		Local $usedMoraleBooster = False
 		For $DPRemoval_Sweet In $DP_REMOVAL_SWEETS
-			Local $ConsumableSlot = FindInInventory($DPRemoval_Sweet)
-			If $ConsumableSlot[0] <> 0 Then
-				UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+			Local $consumableSlot = FindInInventory($DPRemoval_Sweet)
+			If $consumableSlot[0] <> 0 Then
+				UseItemBySlot($consumableSlot[0], $consumableSlot[1])
 				$usedMoraleBooster = True
 			EndIf
 		Next
@@ -1927,12 +1927,12 @@ Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return $FAIL
 	If GetMapType() <> $ID_OUTPOST Then Return $FAIL
 	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return
-	Local $ConsumableSlot = FindInInventory($ID_SUGARY_BLUE_DRINK)
-	If $ConsumableSlot[0] <> 0 Then
-		UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+	Local $consumableSlot = FindInInventory($ID_SUGARY_BLUE_DRINK)
+	If $consumableSlot[0] <> 0 Then
+		UseItemBySlot($consumableSlot[0], $consumableSlot[1])
 	Else
-		$ConsumableSlot = FindInInventory($ID_CHOCOLATE_BUNNY)
-		If $ConsumableSlot[0] <> 0 Then UseItemBySlot($ConsumableSlot[0], $ConsumableSlot[1])
+		$consumableSlot = FindInInventory($ID_CHOCOLATE_BUNNY)
+		If $consumableSlot[0] <> 0 Then UseItemBySlot($consumableSlot[0], $consumableSlot[1])
 	EndIf
 	Return $SUCCESS
 EndFunc
@@ -1940,17 +1940,17 @@ EndFunc
 
 ;~ Uses an item from inventory or chest, if present
 Func UseItemFromInventory($itemID, $forceUse = False, $checkXunlaiChest = True)
-	Local $ConsumableItemBagAndSlot
+	Local $consumableItemBagAndSlot
 	If $checkXunlaiChest == True And GetMapType() == $ID_OUTPOST Then
-		$ConsumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
+		$consumableItemBagAndSlot = FindInStorages(1, 21, $itemID)
 	Else
-		$ConsumableItemBagAndSlot = FindInStorages(1, $bags_count, $itemID)
+		$consumableItemBagAndSlot = FindInStorages(1, $bags_count, $itemID)
 	EndIf
 
-	Local $ConsumableBag = $ConsumableItemBagAndSlot[0]
-	Local $ConsumableSlot = $ConsumableItemBagAndSlot[1]
-	If $ConsumableBag <> 0 And $ConsumableSlot <> 0 Then
-		UseItemBySlot($ConsumableBag, $ConsumableSlot)
+	Local $consumableBag = $consumableItemBagAndSlot[0]
+	Local $consumableSlot = $consumableItemBagAndSlot[1]
+	If $consumableBag <> 0 And $consumableSlot <> 0 Then
+		UseItemBySlot($consumableBag, $consumableSlot)
 		Return $SUCCESS
 	Else
 		Return $FAIL
@@ -2469,43 +2469,43 @@ EndFunc
 
 ;~ Store in database all data that can be found in items in inventory
 Func StoreAllItemsData()
-	Local $InsertQuery, $item
+	Local $insertQuery, $item
 	Local $batchID = GetPreviousBatchID() + 1
 
 	Info('Scanning and storing all items data')
 	SQLExecute('BEGIN;')
-	$InsertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
+	$insertQuery = 'INSERT INTO ' & $TABLE_DATA_RAW & ' VALUES' & @CRLF
 	For $bagIndex = 1 To $bags_count
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') = 0 Then ContinueLoop
 			GetItemReq($item)
-			$InsertQuery &= '	('
-			$InsertQuery &= $batchID & ', '
-			$InsertQuery &= $bagIndex & ', '
-			$InsertQuery &= $i & ', '
-			$InsertQuery &= DllStructGetData($item, 'modelID') & ', '
-			$InsertQuery &= DllStructGetData($item, 'type') & ', '
-			$InsertQuery &= 'NULL, '
-			$InsertQuery &= (IsWeapon($item) ? GetItemMaxDmg($item) : 'NULL') & ', '
-			$InsertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
-			$InsertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
-			$InsertQuery &= DllStructGetData($item, 'nameString') & "', '"
-			$InsertQuery &= (IsInscribable($item) ? 0 : 1) & "', '"
-			$InsertQuery &= GetModStruct($item) & "', "
-			$InsertQuery &= DllStructGetData($item, 'quantity') & ', '
-			$InsertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
-			$InsertQuery &= GetRarity($item) & ', '
-			$InsertQuery &= DllStructGetData($item, 'DyeColor') & ', '
-			$InsertQuery &= DllStructGetData($item, 'ID')
-			$InsertQuery &= '),' & @CRLF
+			$insertQuery &= '	('
+			$insertQuery &= $batchID & ', '
+			$insertQuery &= $bagIndex & ', '
+			$insertQuery &= $i & ', '
+			$insertQuery &= DllStructGetData($item, 'modelID') & ', '
+			$insertQuery &= DllStructGetData($item, 'type') & ', '
+			$insertQuery &= 'NULL, '
+			$insertQuery &= (IsWeapon($item) ? GetItemMaxDmg($item) : 'NULL') & ', '
+			$insertQuery &= (IsWeapon($item) ? GetItemReq($item) : 'NULL') & ', '
+			$insertQuery &= (IsWeapon($item) ? GetItemAttribute($item) : 'NULL') & ", '"
+			$insertQuery &= DllStructGetData($item, 'nameString') & "', '"
+			$insertQuery &= (IsInscribable($item) ? 0 : 1) & "', '"
+			$insertQuery &= GetModStruct($item) & "', "
+			$insertQuery &= DllStructGetData($item, 'quantity') & ', '
+			$insertQuery &= GetOrDefault(DllStructGetData($item, 'value'), 0) & ', '
+			$insertQuery &= GetRarity($item) & ', '
+			$insertQuery &= DllStructGetData($item, 'DyeColor') & ', '
+			$insertQuery &= DllStructGetData($item, 'ID')
+			$insertQuery &= '),' & @CRLF
 			Sleep(20)
 		Next
 	Next
 
-	$InsertQuery = StringLeft($InsertQuery, StringLen($InsertQuery) - 3) & @CRLF & ';'
-	SQLExecute($InsertQuery)
+	$insertQuery = StringLeft($insertQuery, StringLen($insertQuery) - 3) & @CRLF & ';'
+	SQLExecute($insertQuery)
 	SQLExecute('COMMIT;')
 
 	AddToFilledData($batchID)
@@ -2515,7 +2515,7 @@ EndFunc
 
 ;~ Insert data into the RAW data table
 Func AddToFilledData($batchID)
-	Local $InsertQuery = 'WITH raw AS (' & @CRLF _
+	Local $insertQuery = 'WITH raw AS (' & @CRLF _
 		& '	SELECT batch, bag, slot, value, requirement, rarity_ID, type_ID, attribute_ID, model_ID, type_ID, model_ID, name_string, OS, modstruct, dye_color, ID FROM ' & $TABLE_DATA_RAW & ' WHERE batch = ' & $batchID & @CRLF _
 		& ')' & @CRLF _
 		& 'INSERT INTO ' & $TABLE_DATA_USER & @CRLF _
@@ -2525,7 +2525,7 @@ Func AddToFilledData($batchID)
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_TYPE & ' types ON raw.type_ID = types.type_ID' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_ATTRIBUTE & ' attributes ON raw.attribute_ID = attributes.attribute_ID' & @CRLF _
 		& 'LEFT JOIN ' & $TABLE_LOOKUP_MODEL & ' names ON raw.type_ID = names.type_ID AND raw.model_ID = names.model_ID;'
-	SQLExecute($InsertQuery)
+	SQLExecute($insertQuery)
 EndFunc
 
 
@@ -2626,8 +2626,8 @@ Func UpdateNewUpgrades($upgradeType)
 		$mapItemStruct = AppendArrayMap($mapItemStruct, $row[0] & '|' & $row[1] & '|' & $row[2], $row[3])
 	WEnd
 
-	Local $OSWeaponUpgradeTypes = MapKeys($mapItemStruct)
-	For $OSWeaponUpgradeType In $OSWeaponUpgradeTypes
+	Local $osWeaponUpgradeTypes = MapKeys($mapItemStruct)
+	For $OSWeaponUpgradeType In $osWeaponUpgradeTypes
 		Local $modStruct = LongestCommonSubstring($mapItemStruct[$OSWeaponUpgradeType])
 		Local $bananaSplit = StringSplit($OSWeaponUpgradeType, '|')
 

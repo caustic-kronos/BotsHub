@@ -44,8 +44,8 @@ EndFunc
 
 
 #Region Party
-Global $partyFailuresCount = 0
-Global $partyIsAlive = True
+Global $party_failures_count = 0
+Global $party_is_alive = True
 
 ;~ Count number of alive heroes of the player's party
 Func CountAliveHeroes()
@@ -99,8 +99,8 @@ EndFunc
 ;~ Did run fail ?
 Func IsRunFailed()
 	Local Static $MaxPartyWipesCount = 5
-	If ($partyFailuresCount > $MaxPartyWipesCount) Then
-		Notice('Party wiped ' & $partyFailuresCount & ' times, run is considered failed.')
+	If ($party_failures_count > $MaxPartyWipesCount) Then
+		Notice('Party wiped ' & $party_failures_count & ' times, run is considered failed.')
 		Return True
 	EndIf
 	Return False
@@ -109,26 +109,26 @@ EndFunc
 
 ;~ Is party alive right now
 Func IsPartyCurrentlyAlive()
-	Return $partyIsAlive
+	Return $party_is_alive
 EndFunc
 
 
 ;~ Reset the failures counter
 Func ResetFailuresCounter()
-	$partyFailuresCount = 0
-	$partyIsAlive = True
+	$party_failures_count = 0
+	$party_is_alive = True
 EndFunc
 
 
-;~ Updates the partyIsAlive variable, this function is run on a fixed timer (10s)
+;~ Updates the party_is_alive variable, this function is run on a fixed timer (10s)
 Func TrackPartyStatus()
 	; If GetAgentExists(GetMyID()) is False, player is disconnected or between instances, do not track party status
 	If GetAgentExists(GetMyID()) And IsPlayerAndPartyWiped() Then
-		$partyFailuresCount += 1
-		Notice('Party wiped for the ' & $partyFailuresCount & ' time')
-		$partyIsAlive = False
+		$party_failures_count += 1
+		Notice('Party wiped for the ' & $party_failures_count & ' time')
+		$party_is_alive = False
 	Else
-		$partyIsAlive = True
+		$party_is_alive = True
 	EndIf
 EndFunc
 

@@ -185,23 +185,23 @@ EndFunc
 
 ;~ Ranger follower setup
 Func RangerSetup()
-	Local $Wild_Blow = 1
-	Local $Soldiers_Strike = 2
-	Local $Desperation_Blow = 3
-	Local $Run_As_One = 4
-	Local $Together_As_One = 5
-	Local $Never_Rampage_Alone = 6
-	Local $Ebon_Battle_Standard_Of_Honor = 7
-	Local $Comfort_Animal = 8
+	Local $wildBlow = 1
+	Local $soldiersStrike = 2
+	Local $desperationBlow = 3
+	Local $runAsOne = 4
+	Local $togetherAsOne = 5
+	Local $neverRampageAlone = 6
+	Local $ebonBattleStandardOfHonor = 7
+	Local $comfortAnimal = 8
 
-	$follower_maintain_skill_1 = $Together_As_One
-	$follower_maintain_skill_2 = $Ebon_Battle_Standard_Of_Honor
-	$follower_maintain_skill_3 = $Run_As_One
-	$follower_maintain_skill_4 = $Never_Rampage_Alone
-	$follower_attack_skill_1 = $Wild_Blow
-	$follower_attack_skill_2 = $Soldiers_Strike
-	$follower_attack_skill_3 = $Desperation_Blow
-	$follower_running_skill = $Run_As_One
+	$follower_maintain_skill_1 = $togetherAsOne
+	$follower_maintain_skill_2 = $ebonBattleStandardOfHonor
+	$follower_maintain_skill_3 = $runAsOne
+	$follower_maintain_skill_4 = $neverRampageAlone
+	$follower_attack_skill_1 = $wildBlow
+	$follower_attack_skill_2 = $soldiersStrike
+	$follower_attack_skill_3 = $desperationBlow
+	$follower_running_skill = $runAsOne
 EndFunc
 
 
@@ -209,24 +209,24 @@ EndFunc
 Func ParagonSetup()
 	Info('Paragon setup - Heroic Refrain')
 
-	Local $Heroic_Refrain = 8
-	;Local $Aggressive_Refrain = 7
-	Local $Burning_Refrain = 7
-	Local $For_Great_Justice = 6
-	Local $To_The_Limit = 5
-	Local $Save_Yourselves = 4
-	Local $Theres_Nothing_To_Fear = 3
-	Local $Stand_Your_Ground = 2
-	Local $Theyre_On_Fire = 1
+	Local $heroicRefrain = 8
+	;Local $aggressiveRefrain = 7
+	Local $burningRefrain = 7
+	Local $forGreatJustice = 6
+	Local $toTheLimit = 5
+	Local $saveYourselves = 4
+	Local $theresNothingToFear = 3
+	Local $standYourGround = 2
+	Local $theyreOnFire = 1
 
-	$follower_maintain_skill_1 = $Heroic_Refrain
-	$follower_maintain_skill_2 = $Burning_Refrain
-	$follower_maintain_skill_3 = $For_Great_Justice
-	$follower_maintain_skill_4 = $To_The_Limit
-	$follower_maintain_skill_5 = $Save_Yourselves
-	$follower_maintain_skill_6 = $Theres_Nothing_To_Fear
-	$follower_maintain_skill_7 = $Stand_Your_Ground
-	$follower_maintain_skill_8 = $Theyre_On_Fire
+	$follower_maintain_skill_1 = $heroicRefrain
+	$follower_maintain_skill_2 = $burningRefrain
+	$follower_maintain_skill_3 = $forGreatJustice
+	$follower_maintain_skill_4 = $toTheLimit
+	$follower_maintain_skill_5 = $saveYourselves
+	$follower_maintain_skill_6 = $theresNothingToFear
+	$follower_maintain_skill_7 = $standYourGround
+	$follower_maintain_skill_8 = $theyreOnFire
 
 	AdlibRegister('ParagonRefreshShouts', 12000)
 	;AdlibUnRegister()
@@ -275,17 +275,17 @@ Func ParagonRefreshShouts()
 		EndIf
 
 		; This solution would be better - but effects can't be accessed on other heroes/characters
-		;Local $HeroNumber
+		;Local $heroNumber
 		;Local $ping = GetPing()
 		;For $member In $party
 		;	If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
-		;	$HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
-		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN), $HeroNumber) == 0) And GetEnergy() > 15 Then
+		;	$heroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
+		;	If ($heroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN), $heroNumber) == 0) And GetEnergy() > 15 Then
 		;		UseSkillEx($follower_maintain_skill_1, $member)
 		;		Sleep(20 + $ping)
 		;		ExitLoop
 		;	EndIf
-		;	If ($HeroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_BURNING_REFRAIN), $HeroNumber) == 0) And GetEnergy() > 20 Then
+		;	If ($heroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_BURNING_REFRAIN), $heroNumber) == 0) And GetEnergy() > 20 Then
 		;		UseSkillEx($follower_maintain_skill_2, $member)
 		;		Sleep(20 + $ping)
 		;		ExitLoop
@@ -320,8 +320,8 @@ Func GetFirstPlayerOfParty()
 	Local $firstPlayer = Null
 	For $member In $party
 		If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
-		Local $HeroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
-		If $HeroNumber == Null Then
+		Local $heroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
+		If $heroNumber == Null Then
 			$firstPlayer = $member
 			Return $firstPlayer
 		EndIf

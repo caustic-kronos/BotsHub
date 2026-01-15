@@ -86,7 +86,7 @@ Global Const $RAPTORS_STAND_YOUR_GROUND	= 6
 Global Const $RAPTORS_CANT_TOUCH_THIS	= 7
 Global Const $RAPTORS_BLADETURN_REFRAIN	= 8
 
-Global $raptors_move_options = CloneDictMap($Default_MoveDefend_Options)
+Global $raptors_move_options = CloneDictMap($default_movedefend_options)
 $raptors_move_options.Item('defendFunction')			= Null
 $raptors_move_options.Item('moveTimeOut')				= 3 * 60 * 1000
 $raptors_move_options.Item('randomFactor')			= 10
@@ -206,9 +206,9 @@ EndFunc
 
 ;~ Get Asura blessing only if title is not maxed yet
 Func GetRaptorsAsuraBlessing()
-	Local $Asura = GetAsuraTitle()
-	If $Asura < 160000 Then
-		Info('Getting asura title blessing')
+	Local $asura = GetAsuraTitle()
+	If $asura < 160000 Then
+		Info('Getting Asura title blessing')
 		GoNearestNPCToCoords(-20000, 3000)
 		Sleep(1000)
 		Dialog(0x84)
@@ -341,12 +341,12 @@ Func KillRaptors()
 			RandomSleep(50)
 	EndSwitch
 
-	Local $rekoff_boss = GetBossFoe()
+	Local $rekoffBoss = GetBossFoe()
 	Local $me = GetMyAgent()
-	If GetDistance($me, $rekoff_boss) > $RANGE_SPELLCAST Then
+	If GetDistance($me, $rekoffBoss) > $RANGE_SPELLCAST Then
 		$MoPTarget = GetNearestEnemyToAgent($me)
 	Else
-		$MoPTarget = GetNearestEnemyToAgent($rekoff_boss)
+		$MoPTarget = GetNearestEnemyToAgent($rekoffBoss)
 	EndIf
 
 	If GetHasHex($MoPTarget) Then

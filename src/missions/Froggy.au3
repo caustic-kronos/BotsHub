@@ -322,19 +322,19 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKillInRange(19597, -11553, 'Triggering boss beacon', $FROGGY_AGGRO_RANGE)
 	WEnd
 
-	Local $largeFROGGY_AGGRO_RANGE = $RANGE_SPELLCAST + 300
+	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 3
 		If CheckStuck('Froggy Floor 2 - Fourth loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('------------------------------------')
 		Info('Boss area')
 		UseMoraleConsumableIfNeeded()
-		MoveAggroAndKillInRange(17494, -14149, 'Our enemies will be undone', $largeFROGGY_AGGRO_RANGE)
-		MoveAggroAndKillInRange(14641, -15081, 'I live to serve.', $largeFROGGY_AGGRO_RANGE)
-		MoveAggroAndKillInRange(13934, -17384, 'The mission is in peril!', $largeFROGGY_AGGRO_RANGE)
-		MoveAggroAndKillInRange(14365, -17681, 'Boss fight', $largeFROGGY_AGGRO_RANGE)
-		FlagMoveAggroAndKillInRange(15286, -17662, 'All hail! King of the losers!', $largeFROGGY_AGGRO_RANGE)
-		FlagMoveAggroAndKillInRange(15804, -19107, 'Oh fuck its huge', $largeFROGGY_AGGRO_RANGE)
+		MoveAggroAndKillInRange(17494, -14149, 'Our enemies will be undone', $largeFroggyAggroRange)
+		MoveAggroAndKillInRange(14641, -15081, 'I live to serve.', $largeFroggyAggroRange)
+		MoveAggroAndKillInRange(13934, -17384, 'The mission is in peril!', $largeFroggyAggroRange)
+		MoveAggroAndKillInRange(14365, -17681, 'Boss fight', $largeFroggyAggroRange)
+		FlagMoveAggroAndKillInRange(15286, -17662, 'All hail! King of the losers!', $largeFroggyAggroRange)
+		FlagMoveAggroAndKillInRange(15804, -19107, 'Oh fuck its huge', $largeFroggyAggroRange)
 
 		$questState = DllStructGetData(GetQuestByID($ID_FROGGY_QUEST), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)

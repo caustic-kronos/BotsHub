@@ -133,10 +133,10 @@ EndFunc
 ;~ Travel to specified map to a random district
 ;~ 7=eu, 8=eu+int, 11=all(incl. asia)
 Func RandomDistrictTravel($mapID, $district = 12)
-	Local $Region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA, $ID_INTERNATIONAL]
-	Local $Language[12] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
-	Local $Random = Random(0, $district - 1, 1)
-	MoveMap($mapID, $Region[$Random], 0, $Language[$Random])
+	Local $region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA, $ID_INTERNATIONAL]
+	Local $language[12] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
+	Local $random = Random(0, $district - 1, 1)
+	MoveMap($mapID, $region[$random], 0, $language[$random])
 	WaitMapLoading($mapID, 20000)
 	RandomSleep(2000)
 EndFunc
@@ -442,11 +442,11 @@ EndFunc
 ;~ Go to signpost and wait until you reach it.
 Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunction = Null)
 	Local $me = GetMyAgent()
-	Local $X = DllStructGetData($signpost, 'X')
-	Local $Y = DllStructGetData($signpost, 'Y')
+	Local $x = DllStructGetData($signpost, 'X')
+	Local $y = DllStructGetData($signpost, 'Y')
 	Local $blocked = 0
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
-		Move($X, $Y, 100)
+		Move($x, $y, 100)
 		RandomSleep(100)
 		If $defendFunction <> Null Then $defendFunction()
 		$me = GetMyAgent()
@@ -455,7 +455,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 				$blockedFunction()
 			EndIf
 			$blocked += 1
-			Move($X, $Y, 100)
+			Move($x, $y, 100)
 		EndIf
 		RandomSleep(100)
 		$me = GetMyAgent()
@@ -557,7 +557,7 @@ EndFunc
 
 
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
-Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $Default_MoveDefend_Options)
+Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_movedefend_options)
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
@@ -830,37 +830,37 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-Global $Default_MoveAggroAndKill_Options = ObjCreate('Scripting.Dictionary')
-$Default_MoveAggroAndKill_Options.Add('fightFunction', KillFoesInArea)
-$Default_MoveAggroAndKill_Options.Add('fightRange', $RANGE_EARSHOT * 1.5)
-$Default_MoveAggroAndKill_Options.Add('flagHeroesOnFight', False)
-$Default_MoveAggroAndKill_Options.Add('callTarget', True)
-$Default_MoveAggroAndKill_Options.Add('priorityMobs', False)
-$Default_MoveAggroAndKill_Options.Add('skillsMask', Null)
-$Default_MoveAggroAndKill_Options.Add('skillsCostMap', Null)
-$Default_MoveAggroAndKill_Options.Add('skillsCastTimeMap', Null)
-$Default_MoveAggroAndKill_Options.Add('lootInFights', False)
-$Default_MoveAggroAndKill_Options.Add('openChests', True)
-$Default_MoveAggroAndKill_Options.Add('chestOpenRange', $RANGE_SPIRIT)
+Global $default_moveaggroandkill_options = ObjCreate('Scripting.Dictionary')
+$default_moveaggroandkill_options.Add('fightFunction', KillFoesInArea)
+$default_moveaggroandkill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
+$default_moveaggroandkill_options.Add('flagHeroesOnFight', False)
+$default_moveaggroandkill_options.Add('callTarget', True)
+$default_moveaggroandkill_options.Add('priorityMobs', False)
+$default_moveaggroandkill_options.Add('skillsMask', Null)
+$default_moveaggroandkill_options.Add('skillsCostMap', Null)
+$default_moveaggroandkill_options.Add('skillsCastTimeMap', Null)
+$default_moveaggroandkill_options.Add('lootInFights', False)
+$default_moveaggroandkill_options.Add('openChests', True)
+$default_moveaggroandkill_options.Add('chestOpenRange', $RANGE_SPIRIT)
 ; default 60 seconds fight duration
-$Default_MoveAggroAndKill_Options.Add('fightDuration', 60000)
+$default_moveaggroandkill_options.Add('fightDuration', 60000)
 
-Global $Default_FlagMoveAggroAndKill_Options = CloneDictMap($Default_MoveAggroAndKill_Options)
-$Default_FlagMoveAggroAndKill_Options.Item('flagHeroesOnFight') = True
+Global $default_flagmoveaggroandkill_options = CloneDictMap($default_moveaggroandkill_options)
+$default_flagmoveaggroandkill_options.Item('flagHeroesOnFight') = True
 
-Global $Default_MoveDefend_Options = ObjCreate('Scripting.Dictionary')
-$Default_MoveDefend_Options.Add('defendFunction', Null)
-$Default_MoveDefend_Options.Add('moveTimeOut', 5 * 60 * 1000)
+Global $default_movedefend_options = ObjCreate('Scripting.Dictionary')
+$default_movedefend_options.Add('defendFunction', Null)
+$default_movedefend_options.Add('moveTimeOut', 5 * 60 * 1000)
 ; random factor for movement
-$Default_MoveDefend_Options.Add('randomFactor', 100)
-$Default_MoveDefend_Options.Add('hosSkillSlot', 0)
-$Default_MoveDefend_Options.Add('deathChargeSkillSlot', 0)
-$Default_MoveDefend_Options.Add('openChests', False)
-$Default_MoveDefend_Options.Add('chestOpenRange', $RANGE_SPIRIT)
+$default_movedefend_options.Add('randomFactor', 100)
+$default_movedefend_options.Add('hosSkillSlot', 0)
+$default_movedefend_options.Add('deathChargeSkillSlot', 0)
+$default_movedefend_options.Add('openChests', False)
+$default_movedefend_options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
-Func WaitAndFightEnemiesInArea($options = $Default_MoveAggroAndKill_Options)
+Func WaitAndFightEnemiesInArea($options = $default_moveaggroandkill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
@@ -905,14 +905,14 @@ EndFunc
 
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
-Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $Default_FlagMoveAggroAndKill_Options)
+Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $default_flagmoveaggroandkill_options)
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map
 Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
+	If $options = Null Then $options = CloneDictMap($default_moveaggroandkill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -920,7 +920,7 @@ EndFunc
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
 Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($Default_FlagMoveAggroAndKill_Options)
+	If $options = Null Then $options = CloneDictMap($default_flagmoveaggroandkill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -928,7 +928,7 @@ EndFunc
 
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
-Func MoveAggroAndKill($x, $y, $log = '', $options = $Default_MoveAggroAndKill_Options)
+Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
@@ -989,7 +989,7 @@ EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
-Func KillFoesInArea($options = $Default_MoveAggroAndKill_Options)
+Func KillFoesInArea($options = $default_moveaggroandkill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
@@ -1072,35 +1072,35 @@ Func FanFlagHeroes($range = $RANGE_AREA)
 	EndSwitch
 
 	Local $me = GetMyAgent()
-	Local $X = DllStructGetData($me, 'X')
-	Local $Y = DllStructGetData($me, 'Y')
+	Local $x = DllStructGetData($me, 'X')
+	Local $y = DllStructGetData($me, 'Y')
 	Local $rotationX = DllStructGetData($me, 'RotationCos')
 	Local $rotationY = DllStructGetData($me, 'RotationSin')
 	Local $distance = $range + 10
 
 	Local $agent = GetNearestEnemyToAgent($me)
 	If $agent <> Null Then
-		$rotationX = DllStructGetData($agent, 'X') - $X
-		$rotationY = DllStructGetData($agent, 'Y') - $Y
+		$rotationX = DllStructGetData($agent, 'X') - $x
+		$rotationY = DllStructGetData($agent, 'Y') - $y
 		Local $distanceToFoe = Sqrt($rotationX ^ 2 + $rotationY ^ 2)
 		$rotationX = $rotationX / $distanceToFoe
 		$rotationY = $rotationY / $distanceToFoe
 	EndIf
 
 	; To the right
-	If $heroCount > 0 Then CommandHero($heroFlagPositions[0], $X + $rotationY * $distance, $Y - $rotationX * $distance)
+	If $heroCount > 0 Then CommandHero($heroFlagPositions[0], $x + $rotationY * $distance, $y - $rotationX * $distance)
 	; To the left
-	If $heroCount > 1 Then CommandHero($heroFlagPositions[1], $X - $rotationY * $distance, $Y + $rotationX * $distance)
+	If $heroCount > 1 Then CommandHero($heroFlagPositions[1], $x - $rotationY * $distance, $y + $rotationX * $distance)
 	; Straight behind
-	If $heroCount > 2 Then CommandHero($heroFlagPositions[2], $X - $rotationX * $distance, $Y - $rotationY * $distance)
+	If $heroCount > 2 Then CommandHero($heroFlagPositions[2], $x - $rotationX * $distance, $y - $rotationY * $distance)
 	; To the right, behind
-	If $heroCount > 3 Then CommandHero($heroFlagPositions[3], $X + ($rotationY - $rotationX) * $distance, $Y - ($rotationX + $rotationY) * $distance)
+	If $heroCount > 3 Then CommandHero($heroFlagPositions[3], $x + ($rotationY - $rotationX) * $distance, $y - ($rotationX + $rotationY) * $distance)
 	; To the left, behind
-	If $heroCount > 4 Then CommandHero($heroFlagPositions[4], $X - ($rotationY + $rotationX) * $distance, $Y + ($rotationX - $rotationY) * $distance)
+	If $heroCount > 4 Then CommandHero($heroFlagPositions[4], $x - ($rotationY + $rotationX) * $distance, $y + ($rotationX - $rotationY) * $distance)
 	; To the right, way behind
-	If $heroCount > 5 Then CommandHero($heroFlagPositions[5], $X + ($rotationY / 2 - 2 * $rotationX) * $distance, $Y - (2 * $rotationY + $rotationX / 2) * $distance)
+	If $heroCount > 5 Then CommandHero($heroFlagPositions[5], $x + ($rotationY / 2 - 2 * $rotationX) * $distance, $y - (2 * $rotationY + $rotationX / 2) * $distance)
 	; To the left, way behind
-	If $heroCount > 6 Then CommandHero($heroFlagPositions[6], $X - ($rotationY / 2 + 2 * $rotationX) * $distance, $Y + ($rotationX / 2 - 2 * $rotationY) * $distance)
+	If $heroCount > 6 Then CommandHero($heroFlagPositions[6], $x - ($rotationY / 2 + 2 * $rotationX) * $distance, $y + ($rotationX / 2 - 2 * $rotationY) * $distance)
 
 EndFunc
 #EndRegion Map Clearing Utilities
@@ -1621,8 +1621,8 @@ EndFunc
 #Region Memory unused / debugging functions
 ;~ Alternate way to get anything, reads directly from game memory without call to Scan something - but is not robust and will break anytime the game changes
 Func GetDataFromRelativeAddress($processHandle, $relativeCheatEngineAddress, $size)
-	Local $base_address = ScanForProcess()
-	Local $fullAddress = $base_address + $relativeCheatEngineAddress - 0x1000
+	Local $baseAddress = ScanForProcess()
+	Local $fullAddress = $baseAddress + $relativeCheatEngineAddress - 0x1000
 	Local $buffer = DllStructCreate('byte[' & $size & ']')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Return $buffer
@@ -1846,7 +1846,7 @@ Func LongestCommonSubstringOfTwoStrings($string1, $string2)
 	; deleting first element of string arrays (which has the count of characters in AutoIT) to have string arrays indexed from 0
 	_ArrayDelete($string1characters, 0)
 	_ArrayDelete($string2characters, 0)
-	Local $LongestCommonSubstringSize = 0
+	Local $longestCommonSubstringSize = 0
 	Local $array[UBound($string1characters) + 1][UBound($string2characters) + 1]
 	FillArray($array, 0)
 
@@ -1854,13 +1854,13 @@ Func LongestCommonSubstringOfTwoStrings($string1, $string2)
 		For $j = 1 To UBound($string2characters)
 			If ($string1characters[$i-1] == $string2characters[$j-1]) Then
 				$array[$i][$j] = $array[$i-1][$j-1] + 1
-				If $array[$i][$j] > $LongestCommonSubstringSize Then
-					$LongestCommonSubstringSize = $array[$i][$j]
+				If $array[$i][$j] > $longestCommonSubstringSize Then
+					$longestCommonSubstringSize = $array[$i][$j]
 					; resetting to empty array
 					Local $longestCommonSubstrings[0]
-					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
-				ElseIf $array[$i][$j] = $LongestCommonSubstringSize Then
-					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $LongestCommonSubstringSize + 1, $LongestCommonSubstringSize))
+					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $longestCommonSubstringSize + 1, $longestCommonSubstringSize))
+				ElseIf $array[$i][$j] = $longestCommonSubstringSize Then
+					_ArrayAdd($longestCommonSubstrings, StringMid($string1, $i - $longestCommonSubstringSize + 1, $longestCommonSubstringSize))
 				EndIf
 			Else
 				$array[$i][$j] = 0

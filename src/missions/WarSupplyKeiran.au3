@@ -61,7 +61,7 @@ Global Const $KEIRAN_SKILLS_ARRAY			= [$KEIRAN_SNIPER_SHOT,	$KEIRAN_GRAVESTONE_M
 Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,							2,						0,						0]
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
-Global $warsupply_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $warsupply_fight_options = CloneDictMap($default_moveaggroandkill_options)
 $warsupply_fight_options.Item('fightFunction')	= WarSupplyFarmFight
 $warsupply_fight_options.Item('fightRange')		= 1250
 ; approximate 20 seconds max duration of initial and final fight
@@ -120,8 +120,8 @@ Func GetKeiranBow()
 	; hexadecimal code of dialog id to receive keiran's bow
 	Local $bowDialogID = 0x8A
 	; coordinates of Gwen inside Hall of Monuments location
-	Local $Gwen = GetNearestNPCToCoords(-6583, 6672)
-	GoToNPC($Gwen)
+	Local $gwen = GetNearestNPCToCoords(-6583, 6672)
+	GoToNPC($gwen)
 	RandomSleep(500)
 	; start a dialog with Gwen and send a packet for receiving Keiran Bow
 	dialog($bowDialogID)
@@ -285,7 +285,7 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 	Local $priorityMobs = ($options.Item('priorityMobs') <> Null) ? $options.Item('priorityMobs') : True
 
 	Local $me = Null
-	Local $Miku = Null
+	Local $miku = Null
 	Local $foes = Null
 	Local $target = Null
 
@@ -295,18 +295,18 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 		If CheckStuck('War Supply fight', $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
 		; refreshing/sampling all agents state at the start of every loop iteration to not operate on some old, inadequate data
 		$me = GetMyAgent()
-		$Miku = GetAgentByID($AGENTID_MIKU)
+		$miku = GetAgentByID($AGENTID_MIKU)
 		$foes = GetFoesInRangeOfAgent($me, $fightRange)
 		If Not IsArray($foes) Or UBound($foes) < 0 Then ExitLoop
 		; check to prevent data races when exited quest after doing above map check
-		If $Miku == Null Then Return $FAIL
-		If GetIsDead($Miku) Then Warn('Miku dead')
+		If $miku == Null Then Return $FAIL
+		If GetIsDead($miku) Then Warn('Miku dead')
 		; no more foes detected in range
 		If UBound($foes) == 0 Then ExitLoop
 
 		; use skills 1, 3, 6 in special circumstances, not specifically on current target
 		; only use Nature's Blessing skill when it is recharged and player's or Miku's HP is below 90%
-		If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) And IsPlayerAlive() Then
+		If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($miku, 'HealthPercent') < 0.9) And IsPlayerAlive() Then
 			UseSkillEx($KEIRAN_NATURES_BLESSING)
 		EndIf
 
@@ -355,16 +355,16 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 		Local $isFoeInRangeOfMiku = False
 		For $foe In $foes
 			If BitAND(DllStructGetData($foe, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isFoeAttacking = True
-			If GetDistance($Miku, $foe) < $RANGE_EARSHOT Then $isFoeInRangeOfMiku = True
+			If GetDistance($miku, $foe) < $RANGE_EARSHOT Then $isFoeInRangeOfMiku = True
 			; unfortunately GetTarget() always returns 0, so can't be used here
 			;If GetTarget($foe) == $AGENTID_PLAYER Then $isFoeAttackingPlayer = True
 			;If GetTarget($foe) == $AGENTID_MIKU Then $isFoeAttackingMiku = True
 		Next
 		If BitAND(DllStructGetData($me, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isPlayerAttacking = True
-		If BitAND(DllStructGetData($Miku, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isMikuAttacking = True
-		If ($isPlayerAttacking And $isFoeAttacking And Not $isFoeInRangeOfMiku And Not $isMikuAttacking And IsPlayerAlive() And Not GetIsDead($Miku)) Then
+		If BitAND(DllStructGetData($miku, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isMikuAttacking = True
+		If ($isPlayerAttacking And $isFoeAttacking And Not $isFoeInRangeOfMiku And Not $isMikuAttacking And IsPlayerAlive() And Not GetIsDead($miku)) Then
 			; move to Miku's position to trigger fight between Miku and mobs
-			Move(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 300)
+			Move(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'), 300)
 			ContinueLoop
 		EndIf
 

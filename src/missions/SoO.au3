@@ -578,29 +578,29 @@ Func ClearSoOFloor3()
 		MoveAggroAndKillInRange(-8650, 9200, 'Added extra move to force going past door before endloop 2', $SOO_AGGRO_RANGE)
 	WEnd
 
-	Local $LargerSOO_AGGRO_RANGE = $RANGE_SPELLCAST + 300
+	Local $largerSoOAggroRange = $RANGE_SPELLCAST + 300
 	Local $questState = 999
 	While Not IsRunFailed() And $questState <> 3
 		If CheckStuck('SoO Floor 3 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 
-		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $LargerSOO_AGGRO_RANGE)
-		MoveAggroAndKillInRange(-9200, 6000, 'Going back to secure door opening in case run failed 2', $LargerSOO_AGGRO_RANGE)
+		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $largerSoOAggroRange)
+		MoveAggroAndKillInRange(-9200, 6000, 'Going back to secure door opening in case run failed 2', $largerSoOAggroRange)
 
 		Info('Boss room')
 		UseMoraleConsumableIfNeeded()
 		; Poison trap between 1 2 and 3
-		MoveAggroAndKillInRange(-9850, 7600, '1', $LargerSOO_AGGRO_RANGE)
-		MoveAggroAndKillInRange(-8650, 9200, '2', $LargerSOO_AGGRO_RANGE)
-		MoveAggroAndKillInRange(-9150, 10250, '3', $LargerSOO_AGGRO_RANGE)
-		MoveAggroAndKillInRange(-9450, 10550, '4', $LargerSOO_AGGRO_RANGE)
+		MoveAggroAndKillInRange(-9850, 7600, '1', $largerSoOAggroRange)
+		MoveAggroAndKillInRange(-8650, 9200, '2', $largerSoOAggroRange)
+		MoveAggroAndKillInRange(-9150, 10250, '3', $largerSoOAggroRange)
+		MoveAggroAndKillInRange(-9450, 10550, '4', $largerSoOAggroRange)
 		MoveTo(-10000, 11150)
-		MoveAggroAndKillInRange(-13300, 13550, '5', $LargerSOO_AGGRO_RANGE)
+		MoveAggroAndKillInRange(-13300, 13550, '5', $largerSoOAggroRange)
 		MoveTo(13900, 13500)
 		; Fire traps between 5 6 and 7
-		FlagMoveAggroAndKillInRange(-15250, 15900, '6', $LargerSOO_AGGRO_RANGE)
+		FlagMoveAggroAndKillInRange(-15250, 15900, '6', $largerSoOAggroRange)
 		Info('Boss fight, go in and move around to make sure its aggroed')
-		FlagMoveAggroAndKillInRange(-16300, 16600, '7', $LargerSOO_AGGRO_RANGE)
-		FlagMoveAggroAndKillInRange(-15850, 17500, '8', $LargerSOO_AGGRO_RANGE)
+		FlagMoveAggroAndKillInRange(-16300, 16600, '7', $largerSoOAggroRange)
+		FlagMoveAggroAndKillInRange(-15850, 17500, '8', $largerSoOAggroRange)
 
 		$questState = DllStructGetData(GetQuestByID($ID_QUEST_LOST_SOULS), 'LogState')
 		Info('Quest state end of boss loop : ' & $questState)
