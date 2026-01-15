@@ -111,7 +111,7 @@ Func SetupGemstonesFarm()
 	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
 		TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name)
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)

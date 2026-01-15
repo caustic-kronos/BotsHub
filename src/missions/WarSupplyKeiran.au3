@@ -139,7 +139,7 @@ Func WarSupplyFarmLoop()
 	RandomSleep(1000)
 	If $result == $FAIL Then
 		If IsPlayerDead() Then Warn('Player died')
-		ReturnBackToOutpost($ID_HALL_OF_MONUMENTS)
+		ResignAndReturnToOutpost($ID_HALL_OF_MONUMENTS)
 		Sleep(3000)
 	EndIf
 	Return $result

@@ -108,7 +108,7 @@ Func GemstoneStygianFarm()
 	If $result == $SUCCESS Then Info('Successfully cleared stygian mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear stygian mobs')
 	Info('Returning back to the outpost')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	Return $result
 EndFunc
 
@@ -118,7 +118,7 @@ Func SetupGemstoneStygianFarm()
 	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
 		If TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name) == $FAIL Then Return $FAIL
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	EndIf
 	SwitchToHardModeIfEnabled()
 	If SetupPlayerStygianFarm() == $FAIL Then Return $FAIL

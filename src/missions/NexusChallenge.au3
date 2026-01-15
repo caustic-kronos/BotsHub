@@ -45,7 +45,7 @@ Func NexusChallengeFarm()
 	; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
 	Sleep(15000)
 	Info('Returning back to the outpost')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_THE_SHADOW_NEXUS, true)
 	Return $result
 EndFunc
 
@@ -55,7 +55,7 @@ Func NexusChallengeSetup()
 	If GetMapID() <> $ID_THE_SHADOW_NEXUS Then
 		TravelToOutpost($ID_THE_SHADOW_NEXUS, $district_name)
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_THE_SHADOW_NEXUS, true)
 	EndIf
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_NORMAL_MODE)

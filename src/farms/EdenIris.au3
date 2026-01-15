@@ -40,7 +40,7 @@ Func EdenIrisFarm()
 
 	GoToLakesideCounty()
 	Local $result = EdenIrisFarmLoop()
-	ReturnBackToOutpost($ID_ASHFORD_ABBEY)
+	ResignAndReturnToOutpost($ID_ASHFORD_ABBEY)
 	Return $result
 EndFunc
 

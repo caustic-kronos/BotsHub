@@ -70,7 +70,7 @@ Func TascaChestFarm()
 
 	GoToTascasDemise()
 	Local $result = TascaChestFarmLoop()
-	ReturnBackToOutpost($ID_THE_GRANITE_CITADEL)
+	ResignAndReturnToOutpost($ID_THE_GRANITE_CITADEL)
 	Return $result
 EndFunc
 

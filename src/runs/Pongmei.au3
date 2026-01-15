@@ -62,7 +62,7 @@ Func PongmeiChestFarm()
 
 	GoToPongmeiValley()
 	Local $result = PongmeiChestFarmLoop()
-	ReturnBackToOutpost($ID_BOREAS_SEABED)
+	ResignAndReturnToOutpost($ID_BOREAS_SEABED)
 	Return $result
 EndFunc
 

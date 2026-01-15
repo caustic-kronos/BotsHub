@@ -42,7 +42,7 @@ Func LightbringerFarm2()
 	Local $result = FarmMirrorOfLyss()
 	AdlibUnRegister('TrackPartyStatus')
 
-	ReturnBackToOutpost($ID_THE_KODASH_BAZAAR)
+	ResignAndReturnToOutpost($ID_THE_KODASH_BAZAAR)
 	Return $result
 EndFunc
 

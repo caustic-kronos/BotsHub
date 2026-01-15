@@ -157,24 +157,20 @@ EndFunc
 
 
 ;~ Return back to outpost from exploration/mission map using resign functionality. This can put player closer to exit portal in outpost
-Func ReturnBackToOutpost($outpostId)
+;~ Don't use for maps that share the same ID as the outpost 
+Func ResignAndReturnToOutpost($outpostId, $ignoreMapId = False)
 	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostId]
 	Info('Returning to ' & $outpostName & ' (outpost)')
-	If GetMapID() == $outpostId Then
+	If Not $ignoreMapId And GetMapID() == $outpostId Then
 		Warn('Player is already in ' & $outpostName & ' (outpost)')
 		Return $SUCCESS
 	Endif
-	ResignAndReturnToOutpost()
-	WaitMapLoading($outpostId, 10000, 1000)
-	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
-EndFunc
-
-
-Func ResignAndReturnToOutpost()
 	Resign()
 	Sleep(3500)
 	ReturnToOutpost()
-	Sleep(5000)
+	If $ignoreMapId Then Sleep(5000)
+	WaitMapLoading($outpostId, 10000, 1000)
+	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
 EndFunc
 
 

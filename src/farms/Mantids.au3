@@ -76,7 +76,7 @@ Func MantidsFarm()
 
 	GoToWajjunBazaar()
 	Local $result = MantidsFarmLoop()
-	ReturnBackToOutpost($ID_NAHPUI_QUARTER)
+	ResignAndReturnToOutpost($ID_NAHPUI_QUARTER)
 	Return $result
 EndFunc
 

@@ -72,7 +72,7 @@ Func CorsairsFarm()
 	Local $result = CorsairsFarmLoop()
 	; in this case outpost has the same map ID as farm location
 	Info('Returning back to the outpost')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_MODDOK_CREVICE, true)
 	Return $result
 EndFunc
 
@@ -83,7 +83,7 @@ Func SetupCorsairsFarm()
 	If GetMapID() <> $ID_MODDOK_CREVICE Then
 		If TravelToOutpost($ID_MODDOK_CREVICE, $district_name) == $FAIL Then Return $FAIL
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_MODDOK_CREVICE, true)
 	EndIf
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerCorsairsFarm() == $FAIL Then Return $FAIL

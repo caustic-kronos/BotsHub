@@ -43,7 +43,7 @@ Func SunspearArmorFarm()
 	AdlibUnRegister('TrackPartyStatus')
 
 	Info('Returning back to the outpost')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_DAJKAH_INLET, true)
 	Return $result
 EndFunc
 
@@ -53,7 +53,7 @@ Func SunspearArmorSetup()
 	If GetMapID() <> $ID_DAJKAH_INLET Then
 		TravelToOutpost($ID_DAJKAH_INLET, $district_name)
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_DAJKAH_INLET, true)
 	EndIf
 	SwitchToHardModeIfEnabled()
 	TrySetupPlayerUsingGUISettings()

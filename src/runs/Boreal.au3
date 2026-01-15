@@ -63,7 +63,7 @@ Global $boreal_farm_setup = False
 Func BorealChestFarm()
 	If Not $boreal_farm_setup Then SetupBorealFarm()
 	Local $result = BorealChestFarmLoop()
-	ReturnBackToOutpost($ID_BOREAL_STATION)
+	ResignAndReturnToOutpost($ID_BOREAL_STATION)
 	Return $result
 EndFunc
 

@@ -78,7 +78,7 @@ Func KournansFarm()
 
 	GoToCommandPost()
 	Local $result = KournansFarmLoop()
-	ReturnBackToOutpost($ID_SUNSPEAR_SANCTUARY)
+	ResignAndReturnToOutpost($ID_SUNSPEAR_SANCTUARY)
 	Return $result
 EndFunc
 

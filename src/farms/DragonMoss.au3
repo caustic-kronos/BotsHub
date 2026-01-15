@@ -58,7 +58,7 @@ Func DragonMossFarm()
 
 	GoToDrazachThicket()
 	Local $result = DragonMossFarmLoop()
-	ReturnBackToOutpost($ID_SAINT_ANJEKAS_SHRINE)
+	ResignAndReturnToOutpost($ID_SAINT_ANJEKAS_SHRINE)
 	Return $result
 EndFunc
 

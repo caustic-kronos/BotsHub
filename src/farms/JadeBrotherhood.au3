@@ -78,7 +78,7 @@ Func JadeBrotherhoodFarm()
 	If Not $jade_brotherhood_farm_setup And SetupJadeBrotherhoodFarm() == $FAIL Then Return $PAUSE
 
 	Local $result = JadeBrotherhoodFarmLoop()
-	ReturnBackToOutpost($ID_THE_MARKETPLACE)
+	ResignAndReturnToOutpost($ID_THE_MARKETPLACE)
 	Return $result
 EndFunc
 

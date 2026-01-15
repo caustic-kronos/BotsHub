@@ -81,7 +81,7 @@ Func GemstoneTormentFarm()
 	If $result == $SUCCESS Then Info('Successfully cleared torment mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear torment mobs')
 	Info('Returning back to the outpost')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	Return $result
 EndFunc
 
@@ -91,7 +91,7 @@ Func SetupGemstoneTormentFarm()
 	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
 		If TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name) == $FAIL Then Return $FAIL
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerTormentFarm() == $FAIL Then Return $FAIL

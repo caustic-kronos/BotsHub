@@ -136,7 +136,7 @@ Func GemstoneMargoniteFarm()
 		Info('Could not clear margonite mobs')
 	EndIf
 	Info('Returning back to the outpost')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	Return $result
 EndFunc
 
@@ -147,7 +147,7 @@ Func SetupGemstoneMargoniteFarm()
 	If GetMapID() <> $ID_GATE_OF_ANGUISH Then
 		If TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name) == $FAIL Then Return $FAIL
 	Else
-		ResignAndReturnToOutpost()
+		ResignAndReturnToOutpost($ID_GATE_OF_ANGUISH, true)
 	EndIf
 	SwitchToHardModeIfEnabled()
 	RandomSleep(500)

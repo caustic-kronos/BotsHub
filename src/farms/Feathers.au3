@@ -63,7 +63,7 @@ Func FeathersFarm()
 
 	GoToJayaBluffs()
 	Local $result = FeathersFarmLoop()
-	ReturnBackToOutpost($ID_SEITUNG_HARBOR)
+	ResignAndReturnToOutpost($ID_SEITUNG_HARBOR)
 	Return $result
 EndFunc
 

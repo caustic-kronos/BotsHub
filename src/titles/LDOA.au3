@@ -292,8 +292,7 @@ Func LDOATitleFarmAfter10()
 	MoveAggroAndKillInRange(2541, 4504, '', 2000)
 	If IsPlayerDead() Then Return $FAIL
 	Info('Returning to Foibles Fair')
-	ResignAndReturnToOutpost()
-	WaitMapLoading($ID_FOIBLES_FAIR, 10000, 1000)
+	ResignAndReturnToOutpost($ID_FOIBLES_FAIR)
 	Return $SUCCESS
 EndFunc
 
@@ -370,7 +369,7 @@ EndFunc
 ;~ Resign and return to Ascalon
 Func BackToAscalon()
 	Info('Porting to Ascalon')
-	ResignAndReturnToOutpost()
+	ResignAndReturnToOutpost($ID_FOIBLES_FAIR)
 	WaitMapLoading($ID_ASCALON_CITY_PRESEARING, 10000, 1000)
 EndFunc
 

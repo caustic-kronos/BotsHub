@@ -103,7 +103,7 @@ Func RaptorsFarm()
 
 	GoToRivenEarth()
 	Local $result = RaptorsFarmLoop()
-	ReturnBackToOutpost($ID_RATA_SUM)
+	ResignAndReturnToOutpost($ID_RATA_SUM)
 	Return $result
 EndFunc
 
