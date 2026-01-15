@@ -276,7 +276,7 @@ Func GemstoneMargoniteFarmLoop()
 	Local $me = Null, $target = Null
 	Info('Starting Farm')
 
-	CommandHero($MARGONITE_HERO_INDEX, -18571, -9328)
+	CommandAll(-18571, -9328)
 	RandomSleep(2000)
 	CastBondsMargoniteFarm()
 	EnableMargoniteHeroSkills()
@@ -300,14 +300,14 @@ Func GemstoneMargoniteFarmLoop()
 	Info('Moving to spot and aggroing margonites')
 	MoveTo(-17541, -9431)
 	If MargoniteMoveDefending(-13935, -9850) == $FAIL Then Return $FAIL
-	CommandHero($MARGONITE_HERO_INDEX, -16878, -9571)
+	CommandAll(-16878, -9571)
 	If MargoniteMoveDefending(-14321, -11803) == $FAIL Then Return $FAIL
 	If MargoniteMoveDefending(-12115, -11057) == $FAIL Then Return $FAIL
-	CommandHero($MARGONITE_HERO_INDEX, -14879, -11729)
+	CommandAll(-14879, -11729)
 	WaitAggroMargonites(7000)
 	; below is the furthest location player goes to pull front Margonite mobs but also not let rear margonite mobs leave player and kill monk hero
 	If MargoniteMoveDefending(-10277, -10778) == $FAIL Then Return $FAIL
-	CommandHero($MARGONITE_HERO_INDEX, -12861, -12620)
+	CommandAll(-12861, -12620)
 	; waiting for far margonite group to come into player's range
 	WaitAggroMargonites(50000)
 	If MargoniteMoveDefending(-12065, -10905) == $FAIL Then Return $FAIL

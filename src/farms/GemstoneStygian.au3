@@ -59,6 +59,7 @@ Global Const $STYGIAN_RANGER_WINNOWING			= 7
 Global Const $STYGIAN_RANGER_MUDDY_TERRAIN		= 8
 
 ; ranger hero
+; TODO: consider taking Brambles, Lacerate, Earthbind, and maybe move some more spirits at AoE range to block foes better
 Global Const $STYGIAN_HERO_EDGE_OF_EXTINCTION	= 1
 Global Const $STYGIAN_HERO_UNYIELDING_AURA		= 2
 Global Const $STYGIAN_HERO_SUCCOR				= 3
@@ -83,7 +84,7 @@ Global Const $GEMSTONE_STYGIAN_FARM_INFORMATIONS = 'For best results, have :' & 
 Global Const $GEMSTONE_STYGIAN_FARM_DURATION = 8 * 60 * 1000
 Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
 Global Const $STYGIANS_RANGE_SHORT = 800
-Global Const $STYGIANS_RANGE_LONG = 1200
+Global Const $STYGIANS_RANGE_LONG = 1300
 
 Global $stygian_run_options = CloneDictMap($Default_MoveDefend_Options)
 $stygian_run_options.Item('defendFunction')		= StygianCheckRunBuffs
@@ -158,7 +159,7 @@ Func SetupTeamStygianFarm()
 		RandomSleep(500)
 		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, $STYGIAN_HERO_INDEX)
 		RandomSleep(500)
-		SetHeroBehaviour($GLINT_HERO_RITU_SOULTWISTER, $ID_HERO_AVOIDING)
+		SetHeroBehaviour($STYGIAN_HERO_INDEX, $ID_HERO_AVOIDING)
 		RandomSleep(500)
 		DisableAllHeroSkills($STYGIAN_HERO_INDEX)
 		If GetPartySize() <> 2 Then
@@ -314,75 +315,70 @@ Func StygianJobRanger()
 	MoveTo(10844, -10205)
 	MoveTo(10313, -11156)
 	MoveTo(8269, -11160, 10)
-	CommandHero($STYGIAN_HERO_INDEX, 9492, -11484)
-	If IsRecharged($STYGIAN_RANGER_WINNOWING) Then UseSkillEx($STYGIAN_RANGER_WINNOWING)
-	RandomSleep(2000)
+	CommandAll(9492, -11484)
 	MoveTo(8177, -11171, 10)
-	If IsRecharged($STYGIAN_RANGER_TRAPPERS_SPEED) Then UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_DUST_TRAP)
-		RandomSleep(100)
-	WEnd
+
+	; Always use Spike with Flame - same cooldown
+	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+	; -1.5	-	Speed at 20
 	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
-		RandomSleep(100)
-	WEnd
+	; 0		-	Speed at 18.5	Dust at 22.5
 	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
-		RandomSleep(100)
-	WEnd
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	If IsRecharged($STYGIAN_RANGER_TRAPPERS_SPEED) Then UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
-		RandomSleep(100)
-	WEnd
+	; 3		-	Speed at 15.5	Dust at 19.5	Spike at 13.5
+	Sleep(13500)
+	; 16.5	-	Speed at 2		Dust at 6		Spike up
 	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
-		RandomSleep(100)
-	WEnd
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_DUST_TRAP)
-		RandomSleep(100)
-	WEnd
+	; 19.5	-	Speed up		Dust at 3		Spike at 13.5
+	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+	; 19.5	-	Speed at 20		Dust at 3		Spike at 13.5
+	Sleep(3000)
+	; 22.5	-	Speed at 17		Dust up			Spike at 10.5
 	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	If IsRecharged($STYGIAN_RANGER_MUDDY_TERRAIN) Then UseSkillEx($STYGIAN_RANGER_MUDDY_TERRAIN)
-	RandomSleep(2000)
-	If IsRecharged($STYGIAN_RANGER_TRAPPERS_SPEED) Then UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
-		RandomSleep(100)
-	WEnd
+	; 24	-	Speed at 15.5	Dust at 22.5	Spike at 9
+	Sleep(9000)
+	; 33	-	Speed at 6.5	Dust at 13.5	Spike up
 	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
-		RandomSleep(100)
-	WEnd
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_DUST_TRAP)
-		RandomSleep(100)
-	WEnd
+	; 36	-	Speed at 3.5	Dust at 10.5	Spike at 13.5
+	Sleep(10500)
+	; 46.5	-	Speed up		Dust up			Spike at 3
+	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
 	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_SPIKE_TRAP)
-		RandomSleep(100)
-	WEnd
+	; 48	-	Speed at 18.5	Dust at 22.5	Spike at 1.5
+	Sleep(1500)
+	; 49.5	-	Speed at 17		Dust at 21		Spike up
 	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	While IsPlayerAlive() And Not IsRecharged($STYGIAN_RANGER_FLAME_TRAP)
-		RandomSleep(100)
-	WEnd
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+	; 52.5	-	Speed at 14		Dust at 18		Spike at 13.5
+	;Sleep(14000)
 	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
-	;TargetNearestEnemy()
+	UseSkillEx($STYGIAN_RANGER_WINNOWING)
+	; FIXME: need a different spot for Jin to not steal the loot, here he just gets mega rekt
+	CommandAll(13110, -12625)
+	UseSkillEx($STYGIAN_RANGER_MUDDY_TERRAIN)
+	Sleep(4000)
+	; 66.5	-	Speed up		Dust at 4		Spike up
+	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
+	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+	; 66.5	-	Speed at 17		Dust at 1		Spike at 13.5
+	Sleep(1000)
+	; 67.5	-	Speed at 16		Dust up			Spike at 12.5
+	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
+	; 69	-	Speed at 14.5	Dust at 22.5	Spike at 11
+
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
-	ChangeTarget($target)
-	UseSkill($STYGIAN_RANGER_MARK_OF_PAIN, $target)
-	While IsPlayerAlive() And Not GetHasHex($target)
-		RandomSleep(100)
-	WEnd
+	GetAlmostInRangeOfAgent($target)
+	UseSkillEx($STYGIAN_RANGER_MARK_OF_PAIN, $target)
 	MoveTo(8368, -11244)
-	If IsRecharged($STYGIAN_RANGER_EBON_STANDARD) Then UseSkillEx($STYGIAN_RANGER_EBON_STANDARD)
-	While CountFoesInRangeOfAgent(GetMyAgent(), $STYGIANS_RANGE_LONG) > 0 And IsPlayerAlive()
+	UseSkillEx($STYGIAN_RANGER_EBON_STANDARD)
+	While IsPlayerAlive() And CountFoesInRangeOfAgent(GetMyAgent(), $STYGIANS_RANGE_LONG) > 0
 		If CheckStuck('Stygian job ranger', $MAX_GEMSTONE_STYGIAN_FARM_DURATION) == $FAIL Then Return $FAIL
-		RandomSleep(100)
+		RandomSleep(250)
 	WEnd
 	CancelAll()
-	RandomSleep(500)
 	If IsPlayerDead() Then Return $FAIL
 	PickUpItems(Null, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 	Return $SUCCESS
