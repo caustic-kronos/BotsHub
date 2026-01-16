@@ -720,7 +720,7 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
 		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
 	WEnd
-	RandomSleep($waitingTime)
+	RandomSleep($waitingTime + GetPing())
 	Return True
 EndFunc
 #EndRegion Travel

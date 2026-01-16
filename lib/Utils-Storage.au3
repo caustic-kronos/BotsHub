@@ -43,7 +43,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	; 8-Balance character's gold level
 	; 9-Buy ectoplasm/obsidian with surplus
 	; 10-Store items
-	If GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED Then
+	If $inventory_management_cache['Store items.Unidentified gold items'] Then
 		TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
@@ -82,16 +82,14 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		SellItemsToMerchant()
 	EndIf
 	; Max gold in Xunlai chest is 1000 platinums
-	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_CHECKED AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
+	If $inventory_management_cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
 		DepositGold(60000)
 		Info('Deposited Gold')
 	EndIf
-	If GUICtrlRead($GUI_CheckBox_StoreGold) == $GUI_UNCHECKED Then
-		BalanceCharacterGold(10000)
-	EndIf
+	If $inventory_management_cache['Store items.Gold'] Then BalanceCharacterGold(10000)
 	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
 	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
-	If GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED Then StoreItemsInXunlaiStorage()
+	If $inventory_management_cache['@store.something'] Then StoreItemsInXunlaiStorage()
 EndFunc
 
 

@@ -78,8 +78,7 @@ Global $GUI_Group_Titles, _
 		$GUI_Label_LightbringerTitle_Text, $GUI_Label_LightbringerTitle_Value, $GUI_Label_SunspearTitle_Text, $GUI_Label_SunspearTitle_Value
 Global $GUI_Group_RunOptions, _
 		$GUI_Checkbox_LoopRuns, $GUI_Checkbox_HardMode, $GUI_Checkbox_AutomaticTeamSetup, $GUI_Checkbox_UseConsumables, $GUI_Checkbox_UseScrolls
-Global $GUI_Group_ItemOptions, _
-		$GUI_Checkbox_StoreUnidentifiedGoldItems, $GUI_Checkbox_SortItems, $GUI_Checkbox_StoreTheRest, $GUI_Checkbox_StoreGold, _
+Global $GUI_Group_ItemOptions, $GUI_Checkbox_SortItems, _
 		$GUI_Checkbox_BuyEctoplasm, $GUI_Checkbox_BuyObsidian, $GUI_Checkbox_CollectData, $GUI_Checkbox_FarmMaterialsMidRun
 Global $GUI_Group_FactionOptions, $GUI_Label_Faction, $GUI_RadioButton_DonatePoints, $GUI_RadioButton_BuyFactionResources, $GUI_RadioButton_BuyFactionScrolls
 Global $GUI_Group_TeamOptions, $GUI_TeamLabel, $GUI_TeamMemberLabel, $GUI_TeamMemberBuildLabel, _
@@ -252,19 +251,13 @@ Func CreateGUI()
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$GUI_Group_ItemOptions = GUICtrlCreateGroup('Loot management options', 21, 205, 295, 235)
-	$GUI_Checkbox_StoreUnidentifiedGoldItems = GUICtrlCreateCheckbox('Store unidentified gold items', 31, 225)
-	GUICtrlSetTip($GUI_Checkbox_StoreUnidentifiedGoldItems, 'Stores unidentified gold items inside Xunlai chest.')
-	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort items', 31, 255)
+	$GUI_Checkbox_SortItems = GUICtrlCreateCheckbox('Sort items', 31, 225)
 	GUICtrlSetTip($GUI_Checkbox_SortItems, 'Sorts items in inventory to optimize space before loot management.')
-	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data into database', 31, 285)
+	$GUI_Checkbox_CollectData = GUICtrlCreateCheckbox('Collect data into database', 31, 255)
 	GUICtrlSetTip($GUI_Checkbox_CollectData, 'Collects data into SQLite database. Requires SQLite to be installed and configured. Keep unticked if unsure.')
-	$GUI_Checkbox_StoreTheRest = GUICtrlCreateCheckbox('Store remaining items', 31, 315)
-	GUICtrlSetTip($GUI_Checkbox_StoreTheRest, 'Stores remaining items inside Xunlai storage after loot management.')
-	$GUI_Checkbox_StoreGold = GUICtrlCreateCheckbox('Store gold after loot management', 31, 345)
-	GUICtrlSetTip($GUI_Checkbox_StoreGold, 'Stores extra gold inside Xunlai storage after loot management.')
-	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy globs of ectoplasm with surplus gold', 31, 375)
+	$GUI_Checkbox_BuyEctoplasm = GUICtrlCreateCheckbox('Buy globs of ectoplasm with surplus gold', 31, 285)
 	GUICtrlSetTip($GUI_Checkbox_BuyEctoplasm, 'Buys globs of ectoplasm if there is more gold than can be stored in Xunlai storage.')
-	$GUI_Checkbox_BuyObsidian = GUICtrlCreateCheckbox('Buy obsidian shards with surplus gold', 31, 405)
+	$GUI_Checkbox_BuyObsidian = GUICtrlCreateCheckbox('Buy obsidian shards with surplus gold', 31, 315)
 	GUICtrlSetTip($GUI_Checkbox_BuyObsidian, 'Buys obsidian shards if there is more gold than can be stored in Xunlai storage.')
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
@@ -876,11 +869,8 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED)
-	_JSON_addChangeDelete($jsonObject, 'run.store_unids', GUICtrlRead($GUI_Checkbox_StoreUnidentifiedGoldItems) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED)
-	_JSON_addChangeDelete($jsonObject, 'run.store_leftovers', GUICtrlRead($GUI_Checkbox_StoreTheRest) == $GUI_CHECKED)
-	_JSON_addChangeDelete($jsonObject, 'run.store_gold', GUICtrlRead($GUI_Checkbox_StoreGold) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.buy_ectoplasm', GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.buy_obsidian', GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
@@ -954,11 +944,8 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_FarmMaterialsMidRun, _JSON_Get($jsonObject, 'run.farm_materials_mid_run') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_UseConsumables, _JSON_Get($jsonObject, 'run.consume_consumables') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_UseScrolls, _JSON_Get($jsonObject, 'run.use_scrolls') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetState($GUI_Checkbox_StoreUnidentifiedGoldItems, _JSON_Get($jsonObject, 'run.store_unids') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_SortItems, _JSON_Get($jsonObject, 'run.sort_items') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_CollectData, _JSON_Get($jsonObject, 'run.collect_data') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetState($GUI_Checkbox_StoreTheRest, _JSON_Get($jsonObject, 'run.store_leftovers') ? $GUI_CHECKED : $GUI_UNCHECKED)
-	GUICtrlSetState($GUI_Checkbox_StoreGold, _JSON_Get($jsonObject, 'run.store_gold') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_BuyEctoplasm, _JSON_Get($jsonObject, 'run.buy_ectoplasm') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_BuyObsidian, _JSON_Get($jsonObject, 'run.buy_obsidian') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_RadioButton_DonatePoints, _JSON_Get($jsonObject, 'run.donate_faction_points') ? $GUI_CHECKED : $GUI_UNCHECKED)

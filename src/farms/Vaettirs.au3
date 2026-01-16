@@ -237,12 +237,16 @@ EndFunc
 
 ;~ Farm loop
 Func VaettirsFarmLoop()
+	; In case character died at previous loop
+	While IsPlayerDead()
+		Sleep(2500)
+	WEnd
 	If $vaettirs_player_profession == $ID_MONK Then UseSkillEx($VAETTIR_MONK_BALTHAZARS_SPIRIT, GetMyAgent())
 	If $vaettirs_player_profession == $ID_ELEMENTALIST Then UseSkillEx($VAETTIR_ELEMENTALIST_ELEMENTAL_LORD)
 	RandomSleep(500)
 	GetVaettirsNornBlessing()
 	If AggroAllMobs() == $FAIL Then Return $FAIL
-	VaettirsKillSequence()
+	If VaettirsKillSequence() == $FAIL Then Return $FAIL
 	Sleep(1000)
 
 	If IsPlayerAlive() Then
@@ -524,7 +528,7 @@ Func VaettirsKillSequence()
 		CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA) > 0
 			Sleep(100)
 			VaettirsStayAlive()
-			If IsPlayerDead() Then Return
+			If IsPlayerDead() Then Return $FAIL
 	WEnd
 
 	Info('Killing Vaettirs')
@@ -534,6 +538,7 @@ Func VaettirsKillSequence()
 		Case $ID_MONK
 			KillVaettirsUsingSmitingSkills()
 	EndSwitch
+	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
