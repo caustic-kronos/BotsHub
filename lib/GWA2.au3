@@ -929,10 +929,10 @@ Func GetAgentArray($type = 0)
 
 	Local $count = -1
 	Local $deadlock = TimerInit()
-	 ; fast spin (~5 ms tight spin)
+	; fast spin (~5 ms tight spin)
 	While TimerDiff($deadlock) < 5
-	    $count = MemoryRead($processHandle, $agent_copy_count, 'long')
-	    If $count >= 0 Then ExitLoop
+		$count = MemoryRead($processHandle, $agent_copy_count, 'long')
+		If $count >= 0 Then ExitLoop
 	WEnd
 	; Slow spin, if needed
 	If $count < 0 Then
@@ -952,11 +952,11 @@ Func GetAgentArray($type = 0)
 	Local Static $AGENT_SIZE = 448
 	Local $buffer = SafeDllStructCreate('byte[' & ($count * $AGENT_SIZE) & ']')
 	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $agent_copy_base, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
-	
+
 	Local $returnArray[$count]
 	Local $ptrBase = DllStructGetPtr($buffer)
 	For $i = 0 To $count - 1
-    	$returnArray[$i] = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
+		$returnArray[$i] = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
 		_WinAPI_MoveMemory(DllStructGetPtr($returnArray[$i]), $ptrBase + ($i * $AGENT_SIZE), $AGENT_SIZE)
 	Next
 	Return $returnArray

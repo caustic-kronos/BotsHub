@@ -97,7 +97,6 @@ EndFunc
 
 ;~ Function to deal with inventory during farm to preserve inventory space
 Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
-	If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) <> $GUI_CHECKED Then Return False
 	; Operations order :
 	; 1-Check if we have at least 1 identification kit and 1 salvage kit
 	; 2-If not, buy until we have 4 identification kits and 12 salvaged kits

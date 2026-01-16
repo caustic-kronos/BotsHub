@@ -404,8 +404,8 @@ Func PresearingInventoryManagement()
 		If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
 		If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
 		;~ If $inventory_management_cache['@salvage.something'] Then
-		;~ 	SalvageItems(False)
-		;~ 	If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
+		;~	SalvageItems(False)
+		;~	If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
 		;~ EndIf
 
 		; FIXME: add selling

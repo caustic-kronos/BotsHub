@@ -111,6 +111,7 @@ Global $character_name = ''
 Global $district_name = 'Random'
 Global $bags_count = 5
 Global $default_weapon_slot = 1
+; If set to 0, disables inventory management
 Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
@@ -176,7 +177,7 @@ Func BotHubLoop()
 			; Skip inventory management and setups when running without authentication
 			If GUICtrlRead($GUI_Combo_CharacterChoice) <> '' Then
 				; Must do mid-run inventory management before normal one else we will go back to town
-				If GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
+				If $inventory_space_needed <> 0 And GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
 					Local $resetRequired = InventoryManagementMidRun()
 					If $resetRequired Then ResetBotsSetups()
 				EndIf
