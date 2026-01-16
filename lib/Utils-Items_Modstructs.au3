@@ -20,127 +20,8 @@
 #include <Array.au3>
 #include 'Utils.au3'
 
-;~ Determines whether the provided item has expensive mods
-Func ContainsValuableUpgrades($item)
-	Local $modStruct = GetModStruct($item)
-	If Not $modStruct Then Return False
-	If IsWeapon($item) Then
-		Local $itemType	= DllStructGetData($item, 'type')
-		If IsInscribable($item) Then
-			; Check weapon upgrades
-			For $struct In $valuable_mods_by_weapon_type[$itemType]
-				Local $upgradePosition = StringInStr($modStruct, $struct)
-				While $upgradePosition > 0
-					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
-						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
-					EndIf
-					Out('Found this struct:' & $struct)
-					Return True
-					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
-				WEnd
-			Next
-			; Check inscriptions
-			For $struct In $valuable_inscriptions_by_weapon_type[$itemType]
-				Local $upgradePosition = StringInStr($modStruct, $struct)
-				While $upgradePosition > 0
-					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
-						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
-					EndIf
-					Out('Found this struct:' & $struct)
-					Return True
-					If IsInscriptionStruct($modStruct, $upgradePosition) Then Return True
-					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
-				WEnd
-			Next
-		Else
-			; Check weapon upgrades
-			For $struct In $valuable_mods_by_os_weapon_type[$itemType]
-				If StringInStr($modStruct, $struct) > 0 Then Return True
-			Next
-		EndIf
-	; Check runes and insignias
-	ElseIf IsArmorSalvageItem($item) Then
-		For $struct In $valuable_runes_and_insignias_structs_array
-			If StringInStr($modStruct, $struct) > 0 Then Return True
-		Next
-	EndIf
-	Return False
-EndFunc
-
-
-
-
 Global Const $STRUCT_WEAPON_UPGRADE		= '30'
 Global Const $STRUCT_INSCRIPTION		= '32'
-
-
-Func IsWeaponUpgradeStruct($modStruct, $upgradePosition)
-	If $upgradePosition < 5 Then Return False
-	If StringMid($modStruct, $upgradePosition - 4, 2) == $STRUCT_WEAPON_UPGRADE Then Return True
-	Return False
-EndFunc
-
-
-Func IsInscriptionStruct($modStruct, $upgradePosition)
-	If $upgradePosition < 5 Then Return False
-	If StringMid($modStruct, $upgradePosition - 4, 2) == $STRUCT_INSCRIPTION Then Return True
-	Return False
-EndFunc
-
-
-;~ Determines whether the provided OS (Old School) item has perfect mods
-Func HasPerfectMods($item)
-	Local $itemType	= DllStructGetData($item, 'type')
-	Local $modstruct = GetModStruct($item)
-	Local $typeMods	= $perfect_mods_by_weapon_type[$itemType]
-	Switch $itemType
-		; For martial weapons, only 1 inherent mod and the weapon is perfect
-		Case $ID_TYPE_AXE, $ID_TYPE_BOW, $ID_TYPE_HAMMER, $ID_TYPE_SWORD, $ID_TYPE_DAGGER
-			For $struct In $typeMods
-				If StringInStr($modstruct, $struct) > 0 Then
-					; If the mod found is vampiric or zealous strength, we need to check we are not mixing it with vampiric or zealous mod
-					If $struct	== $STRUCT_INHERENT_ZEALOUS_STRENGTH Then
-						If StringInStr($modstruct, $STRUCT_MOD_ZEALOUS) Then ContinueLoop
-					EndIf
-					If $struct	== $STRUCT_INHERENT_VAMPIRIC_STRENGTH Then
-						If StringInStr($modstruct, $STRUCT_MOD_VAMPIRIC_3) Or StringInStr($modstruct, $STRUCT_MOD_VAMPIRIC_5) Then ContinueLoop
-					EndIf
-					Return True
-				EndIf
-			Next
-			Return False
-		; For staff, only 1 inherent mod as well, but no risk of zealous/vampiric
-		Case $ID_TYPE_STAFF
-			For $struct In $typeMods
-				If StringInStr($modstruct, $struct) > 0 Then Return True
-			Next
-			Return False
-		; For wand, offhand and shield, there are 2 inherent mods, we need to check twice
-		Case $ID_TYPE_WAND, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD
-			Local $count	= 0
-			For $struct In $typeMods
-				If StringInStr($modstruct, $struct) > 0 Then $count += 1
-			Next
-			Return $count > 1
-		; For scythe and spear, if you are checking this, something is wrong, there are no OS scythe or spear. Congratulations.
-		Case $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR
-			Return True
-	EndSwitch
-	Return False
-EndFunc
-
-
-;~ Too lazy to implement this today
-Func HasAlmostPerfectMods($item)
-	Return HasPerfectMods($item)
-EndFunc
-
-
-;~ Too lazy to implement this today
-Func HasOkayMods($item)
-	Return HasPerfectMods($item)
-EndFunc
-
 
 Global Const $STRUCT_MINUS_5_ENERGY						= '0500B820'
 Global Const $STRUCT_15_ENERGY							= '0F00D822'
@@ -808,17 +689,7 @@ Global Const $STRUCT_ALL_RUNES_SUPERIOR_VIGOR					= 'C202EA27'
 #EndRegion Runes
 
 
-#Region Struct Utils
-; Insignias are present at index 0 of their armor salvageable item
-; Runes are present at index 1 of their armor salvageable item
-Global $valuable_runes_and_insignias_structs_array[]	= DefaultCreateValuableRunesAndInsigniasArray()
-Global $valuable_mods_by_os_weapon_type					= DefaultCreateValuableModsByOSWeaponTypeMap()
-Global $valuable_mods_by_weapon_type					= DefaultCreateValuableModsByOSWeaponTypeMap()
-Global $perfect_mods_by_weapon_type						= CreatePerfectModsByOSWeaponTypeMap()
-Global $valuable_inscriptions_array[]
-Global $valuable_inscriptions_by_weapon_type			= DefaultCreateValuableInscriptionsByWeaponTypeMap()
-
-
+#Region Default structure creation
 ;~ Creates an array of all valuable runes and insignias
 Func DefaultCreateValuableRunesAndInsigniasArray()
 	Local $valuableRunesAndInsigniasStructsArray[]	= [ _
@@ -991,7 +862,7 @@ EndFunc
 
 
 ;~ Creates a map to use to find whether an OS (Old School) weapon ITSELF has perfect mods or not
-Func CreatePerfectModsByOSWeaponTypeMap()
+Func DefaultCreatePerfectModsByOSWeaponTypeMap()
 	; For martial weapons, only one of those mods is enough to say the weapon is perfect
 	; But for zealous strength and vampiric strength, we need to check that it's not the zealous/vampiric mod
 	Local $martialWeapons = [ _
@@ -1142,12 +1013,116 @@ Func CreatePerfectModsByOSWeaponTypeMap()
 	Local Const $weaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
 	Return $weaponModsByType
 EndFunc
+#EndRegion Default structure creation
+
+
+#Region Items tests
+;~ Determines whether the provided item has expensive mods
+Func ContainsValuableUpgrades($item)
+	Local $modStruct = GetModStruct($item)
+	If Not $modStruct Then Return False
+	If IsWeapon($item) Then
+		Local $itemType	= DllStructGetData($item, 'type')
+		If IsInscribable($item) Then
+			; Check weapon upgrades
+			For $struct In $valuable_mods_by_weapon_type[$itemType]
+				Local $upgradePosition = StringInStr($modStruct, $struct)
+				While $upgradePosition > 0
+					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
+						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
+					EndIf
+					Out('Found this struct:' & $struct)
+					Return True
+					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
+				WEnd
+			Next
+			; Check inscriptions
+			For $struct In $valuable_inscriptions_by_weapon_type[$itemType]
+				Local $upgradePosition = StringInStr($modStruct, $struct)
+				While $upgradePosition > 0
+					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
+						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
+					EndIf
+					Out('Found this struct:' & $struct)
+					Return True
+					If IsInscriptionStruct($modStruct, $upgradePosition) Then Return True
+					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
+				WEnd
+			Next
+		Else
+			; Check weapon upgrades
+			For $struct In $valuable_mods_by_os_weapon_type[$itemType]
+				If StringInStr($modStruct, $struct) > 0 Then Return True
+			Next
+		EndIf
+	; Check runes and insignias
+	ElseIf IsArmorSalvageItem($item) Then
+		For $struct In $valuable_runes_and_insignias_structs_array
+			If StringInStr($modStruct, $struct) > 0 Then Return True
+		Next
+	EndIf
+	Return False
+EndFunc
+
+
+;~ Determines whether the provided OS (Old School) item has perfect mods
+Func HasPerfectMods($item)
+	Local $itemType	= DllStructGetData($item, 'type')
+	Local $modstruct = GetModStruct($item)
+	Local $typeMods	= $perfect_mods_by_weapon_type[$itemType]
+	Switch $itemType
+		; For martial weapons, only 1 inherent mod and the weapon is perfect
+		Case $ID_TYPE_AXE, $ID_TYPE_BOW, $ID_TYPE_HAMMER, $ID_TYPE_SWORD, $ID_TYPE_DAGGER
+			For $struct In $typeMods
+				If StringInStr($modstruct, $struct) > 0 Then
+					; If the mod found is vampiric or zealous strength, we need to check we are not mixing it with vampiric or zealous mod
+					If $struct	== $STRUCT_INHERENT_ZEALOUS_STRENGTH Then
+						If StringInStr($modstruct, $STRUCT_MOD_ZEALOUS) Then ContinueLoop
+					EndIf
+					If $struct	== $STRUCT_INHERENT_VAMPIRIC_STRENGTH Then
+						If StringInStr($modstruct, $STRUCT_MOD_VAMPIRIC_3) Or StringInStr($modstruct, $STRUCT_MOD_VAMPIRIC_5) Then ContinueLoop
+					EndIf
+					Return True
+				EndIf
+			Next
+			Return False
+		; For staff, only 1 inherent mod as well, but no risk of zealous/vampiric
+		Case $ID_TYPE_STAFF
+			For $struct In $typeMods
+				If StringInStr($modstruct, $struct) > 0 Then Return True
+			Next
+			Return False
+		; For wand, offhand and shield, there are 2 inherent mods, we need to check twice
+		Case $ID_TYPE_WAND, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD
+			Local $count	= 0
+			For $struct In $typeMods
+				If StringInStr($modstruct, $struct) > 0 Then $count += 1
+			Next
+			Return $count > 1
+		; For scythe and spear, if you are checking this, something is wrong, there are no OS scythe or spear. Congratulations.
+		Case $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR
+			Return True
+	EndSwitch
+	Return False
+EndFunc
+#EndRegion Items tests
+
+
+#Region Structure creation from UI
+; Insignias are present at index 0 of their armor salvageable item
+; Runes are present at index 1 of their armor salvageable item
+Global $valuable_runes_and_insignias_structs_array[]	= DefaultCreateValuableRunesAndInsigniasArray()
+Global $valuable_mods_by_os_weapon_type					= DefaultCreateValuableModsByOSWeaponTypeMap()
+Global $valuable_mods_by_weapon_type					= DefaultCreateValuableModsByWeaponTypeMap()
+Global $perfect_mods_by_weapon_type						= DefaultCreatePerfectModsByOSWeaponTypeMap()
+Global $valuable_inscriptions_array[]
+Global $valuable_inscriptions_by_weapon_type			= DefaultCreateValuableInscriptionsByWeaponTypeMap()
 
 
 ;~ Replace valuable runes/insignias/inscriptions/mods default lists by the lists of elements selected in the GUI interface
 Func RefreshValuableListsFromInterface()
 	$valuable_runes_and_insignias_structs_array = CreateValuableRunesAndInsigniasArray()
-	;$valuable_mods_by_os_weapon_type = Createvaluable_mods_by_os_weapon_typeMap()
+	;$valuable_mods_by_os_weapon_type = CreateValuableModsByOSWeaponTypeMap()
 	$valuable_mods_by_weapon_type = CreateValuableModsByWeaponTypeMap()
 	$valuable_inscriptions_by_weapon_type = CreateValuableInscriptionsByWeaponTypeMap()
 EndFunc
@@ -1244,34 +1219,6 @@ Func CreateValuableModsByWeaponTypeMap()
 EndFunc
 
 
-Func ModNameCleanupHelper($modName)
-	; cleanup of all parentheses and contents in them
-	$modName = StringRegExpReplace($modName, '\s*\(.*?\)', '')
-	$modName = StringReplace($modName, ' ', '_')
-	$modName = StringUpper($modName)
-	Return $modName
-EndFunc
-
-
-;~ Creates an array of all valuable inscriptions based on selected elements in treeview
-Func CreateValuableInscriptionsArray()
-	Local $tickedInscriptions = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions')
-	Local $valuableInscriptionsArray[UBound($tickedInscriptions)]
-	For $i = 0 To UBound($tickedInscriptions) - 1
-		Local $varName = $tickedInscriptions[$i]
-		$varName = StringReplace($varName, 'Inscriptions.All.', 'STRUCT_INSCRIPTION_')
-		$varName = StringReplace($varName, 'Inscriptions.Weapon.All.', 'STRUCT_INSCRIPTION_')
-		$varName = StringReplace($varName, 'Inscriptions.Weapon.Martial.', 'STRUCT_INSCRIPTION_')
-		$varName = StringReplace($varName, 'Inscriptions.Weapon.Spellcasting.', 'STRUCT_INSCRIPTION_')
-		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus.', 'STRUCT_INSCRIPTION_')
-		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus and shield.', 'STRUCT_INSCRIPTION_')
-		$varName = ModNameCleanupHelper($varName)
-		$valuableInscriptionsArray[$i] = SafeEval($varName)
-	Next
-	Return $valuableInscriptionsArray
-EndFunc
-
-
 ;~ Creates a map of all valuable inscriptions based on selected elements in treeview
 Func CreateValuableInscriptionsByWeaponTypeMap()
 	Local $tickedInscriptionAll = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions', $GUI_TreeView_LootOptions, '.', False)
@@ -1350,6 +1297,34 @@ Func CreateValuableInscriptionsByWeaponTypeMap()
 	Next
 	Return $inscriptionsByWeaponType
 EndFunc
+#EndRegion Structure creation from UI
+
+
+#Region Utils
+Func IsWeaponUpgradeStruct($modStruct, $upgradePosition)
+	If $upgradePosition < 5 Then Return False
+	If StringMid($modStruct, $upgradePosition - 4, 2) == $STRUCT_WEAPON_UPGRADE Then Return True
+	Return False
+EndFunc
+
+
+Func IsInscriptionStruct($modStruct, $upgradePosition)
+	If $upgradePosition < 5 Then Return False
+	If StringMid($modStruct, $upgradePosition - 4, 2) == $STRUCT_INSCRIPTION Then Return True
+	Return False
+EndFunc
+
+
+;~ Too lazy to implement this today
+Func HasAlmostPerfectMods($item)
+	Return HasPerfectMods($item)
+EndFunc
+
+
+;~ Too lazy to implement this today
+Func HasOkayMods($item)
+	Return HasPerfectMods($item)
+EndFunc
 
 
 ;~ Small helper
@@ -1358,4 +1333,13 @@ Func TrimCleanupAndEval($tickedInscription, $prefixLength)
 	$tickedInscription = ModNameCleanupHelper($tickedInscription)
 	Return SafeEval('STRUCT_INSCRIPTION_' & $tickedInscription)
 EndFunc
-#EndRegion Struct Utils
+
+
+Func ModNameCleanupHelper($modName)
+	; cleanup of all parentheses and contents in them
+	$modName = StringRegExpReplace($modName, '\s*\(.*?\)', '')
+	$modName = StringReplace($modName, ' ', '_')
+	$modName = StringUpper($modName)
+	Return $modName
+EndFunc
+#EndRegion Utils
