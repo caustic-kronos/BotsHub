@@ -14,7 +14,7 @@ A concise cheat sheet of powerful functions, techniques, and utilities in AutoIt
 
 * `Call('FuncName', ...)` → Run user-defined functions dynamically.
 * `Execute('code')` → Run strings as code (dangerous, but powerful).
-* `Eval('varName')` → Get value of a variable by name.
+* `SafeEval('varName')` → Get value of a variable by name.
 * `Assign('varName', $value)` → Set variable dynamically.
 
 ## 🛠️ Process, File & Resource Handling

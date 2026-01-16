@@ -655,7 +655,7 @@ Func AttackOrUseSkill($attackSleep, $skill1 = Null, $skill2 = Null, $skill3 = Nu
 	RandomSleep(50)
 
 	For $i = 1 To 8
-		Local $skillSlot = Eval('skill' & $i)
+		Local $skillSlot = SafeEval('skill' & $i)
 		If ($skillSlot <> Null And IsRecharged($skillSlot)) Then
 			UseSkillEx($skillSlot, $target)
 			RandomSleep(50)
@@ -1901,6 +1901,17 @@ Func IsSubstring($find, $strings)
 		EndIf
 	Next
 	Return True
+EndFunc
+
+
+;~ Wrapper around Eval to add validation and error handling
+Func SafeEval($variableName, $logging = True)
+	Local $value = Eval($variableName)
+	If @error Then
+		If $logging Then Error('Couldnt evaluate ' & $variableName)
+		Return Null
+	EndIf
+	Return $value
 EndFunc
 
 

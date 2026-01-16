@@ -24,22 +24,41 @@
 Func ContainsValuableUpgrades($item)
 	Local $modStruct = GetModStruct($item)
 	If Not $modStruct Then Return False
-
 	If IsWeapon($item) Then
 		Local $itemType	= DllStructGetData($item, 'type')
 		If IsInscribable($item) Then
+			; Check weapon upgrades
 			For $struct In $valuable_mods_by_weapon_type[$itemType]
-				If StringInStr($modStruct, $struct) > 0 Then Return True
+				Local $upgradePosition = StringInStr($modStruct, $struct)
+				While $upgradePosition > 0
+					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
+						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
+					EndIf
+					Out('Found this struct:' & $struct)
+					Return True
+					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
+				WEnd
 			Next
-			For $struct In $valuable_inscriptions_array
-				If StringInStr($modStruct, $struct) > 0 Then Return True
+			; Check inscriptions
+			For $struct In $valuable_inscriptions_by_weapon_type[$itemType]
+				Local $upgradePosition = StringInStr($modStruct, $struct)
+				While $upgradePosition > 0
+					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
+						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
+					EndIf
+					Out('Found this struct:' & $struct)
+					Return True
+					If IsInscriptionStruct($modStruct, $upgradePosition) Then Return True
+					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
+				WEnd
 			Next
 		Else
+			; Check weapon upgrades
 			For $struct In $valuable_mods_by_os_weapon_type[$itemType]
 				If StringInStr($modStruct, $struct) > 0 Then Return True
 			Next
 		EndIf
-
+	; Check runes and insignias
 	ElseIf IsArmorSalvageItem($item) Then
 		For $struct In $valuable_runes_and_insignias_structs_array
 			If StringInStr($modStruct, $struct) > 0 Then Return True
@@ -49,22 +68,42 @@ Func ContainsValuableUpgrades($item)
 EndFunc
 
 
+
+
+Global Const $STRUCT_WEAPON_UPGRADE		= '30'
+Global Const $STRUCT_INSCRIPTION		= '32'
+
+
+Func IsWeaponUpgradeStruct($modStruct, $upgradePosition)
+	If $upgradePosition < 5 Then Return False
+	If StringMid($modStruct, $upgradePosition - 4, 2) == $STRUCT_WEAPON_UPGRADE Then Return True
+	Return False
+EndFunc
+
+
+Func IsInscriptionStruct($modStruct, $upgradePosition)
+	If $upgradePosition < 5 Then Return False
+	If StringMid($modStruct, $upgradePosition - 4, 2) == $STRUCT_INSCRIPTION Then Return True
+	Return False
+EndFunc
+
+
 ;~ Determines whether the provided OS (Old School) item has perfect mods
 Func HasPerfectMods($item)
 	Local $itemType	= DllStructGetData($item, 'type')
-	Local $modstruct	= GetModStruct($item)
+	Local $modstruct = GetModStruct($item)
 	Local $typeMods	= $perfect_mods_by_weapon_type[$itemType]
 	Switch $itemType
 		; For martial weapons, only 1 inherent mod and the weapon is perfect
 		Case $ID_TYPE_AXE, $ID_TYPE_BOW, $ID_TYPE_HAMMER, $ID_TYPE_SWORD, $ID_TYPE_DAGGER
 			For $struct In $typeMods
-				If StringInStr($ModStruct, $struct) > 0 Then
+				If StringInStr($modstruct, $struct) > 0 Then
 					; If the mod found is vampiric or zealous strength, we need to check we are not mixing it with vampiric or zealous mod
 					If $struct	== $STRUCT_INHERENT_ZEALOUS_STRENGTH Then
-						If StringInStr($ModStruct, $STRUCT_MOD_ZEALOUS) Then ContinueLoop
+						If StringInStr($modstruct, $STRUCT_MOD_ZEALOUS) Then ContinueLoop
 					EndIf
 					If $struct	== $STRUCT_INHERENT_VAMPIRIC_STRENGTH Then
-						If StringInStr($ModStruct, $STRUCT_MOD_VAMPIRIC_3) Or StringInStr($ModStruct, $STRUCT_MOD_VAMPIRIC_5) Then ContinueLoop
+						If StringInStr($modstruct, $STRUCT_MOD_VAMPIRIC_3) Or StringInStr($modstruct, $STRUCT_MOD_VAMPIRIC_5) Then ContinueLoop
 					EndIf
 					Return True
 				EndIf
@@ -73,14 +112,14 @@ Func HasPerfectMods($item)
 		; For staff, only 1 inherent mod as well, but no risk of zealous/vampiric
 		Case $ID_TYPE_STAFF
 			For $struct In $typeMods
-				If StringInStr($ModStruct, $struct) > 0 Then Return True
+				If StringInStr($modstruct, $struct) > 0 Then Return True
 			Next
 			Return False
 		; For wand, offhand and shield, there are 2 inherent mods, we need to check twice
 		Case $ID_TYPE_WAND, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD
 			Local $count	= 0
 			For $struct In $typeMods
-				If StringInStr($ModStruct, $struct) > 0 Then $count += 1
+				If StringInStr($modstruct, $struct) > 0 Then $count += 1
 			Next
 			Return $count > 1
 		; For scythe and spear, if you are checking this, something is wrong, there are no OS scythe or spear. Congratulations.
@@ -777,6 +816,7 @@ Global $valuable_mods_by_os_weapon_type					= DefaultCreateValuableModsByOSWeapo
 Global $valuable_mods_by_weapon_type					= DefaultCreateValuableModsByOSWeaponTypeMap()
 Global $perfect_mods_by_weapon_type						= CreatePerfectModsByOSWeaponTypeMap()
 Global $valuable_inscriptions_array[]
+Global $valuable_inscriptions_by_weapon_type			= DefaultCreateValuableInscriptionsByWeaponTypeMap()
 
 
 ;~ Creates an array of all valuable runes and insignias
@@ -914,6 +954,39 @@ Func DefaultCreateValuableModsByWeaponTypeMap()
 													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
 	Local Const $weaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
 	Return $weaponModsByType
+EndFunc
+
+
+;~ Creates a map to use to find whether a weapon (not Old School) has a valuable inscription - this doesn't mean the weapon itself is valuable
+Func DefaultCreateValuableInscriptionsByWeaponTypeMap()
+	Local Const $ShieldInscriptionsArray	= []
+	Local Const $OffhandInscriptionsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT]
+	Local Const $WandInscriptionsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE]
+	Local Const $StaffInscriptionsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE]
+	Local Const $BowInscriptionsArray		= []
+	Local Const $AxeInscriptionsArray		= []
+	Local Const $HammerInscriptionsArray	= []
+	Local Const $SwordInscriptionsArray		= []
+	Local Const $DaggerInscriptionsArray	= []
+	Local Const $ScytheInscriptionsArray	= []
+	Local Const $SpearInscriptionsArray		= []
+	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
+	Local Const $IDTypeAxe					= 2
+	Local Const $IDTypeBow					= 5
+	Local Const $IDTypeOffhand				= 12
+	Local Const $IDTypeHammer				= 15
+	Local Const $IDTypeWand					= 22
+	Local Const $IDTypeShield				= 24
+	Local Const $IDTypeStaff				= 26
+	Local Const $IDTypeSword				= 27
+	Local Const $IDTypeDagger				= 32
+	Local Const $IDTypeScythe				= 35
+	Local Const $IDTypeSpear				= 36
+	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $AllWeaponsInscriptionsArray		= [$ShieldInscriptionsArray, $OffhandInscriptionsArray, $WandInscriptionsArray, $StaffInscriptionsArray, $BowInscriptionsArray, $AxeInscriptionsArray, _
+													$HammerInscriptionsArray, $SwordInscriptionsArray, $DaggerInscriptionsArray, $ScytheInscriptionsArray, $SpearInscriptionsArray]
+	Local Const $weaponInscriptionsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsInscriptionsArray)
+	Return $weaponInscriptionsByType
 EndFunc
 
 
@@ -1076,7 +1149,7 @@ Func RefreshValuableListsFromInterface()
 	$valuable_runes_and_insignias_structs_array = CreateValuableRunesAndInsigniasArray()
 	;$valuable_mods_by_os_weapon_type = Createvaluable_mods_by_os_weapon_typeMap()
 	$valuable_mods_by_weapon_type = CreateValuableModsByWeaponTypeMap()
-	$valuable_inscriptions_array = CreateValuableInscriptionsArray()
+	$valuable_inscriptions_by_weapon_type = CreateValuableInscriptionsByWeaponTypeMap()
 EndFunc
 
 
@@ -1088,7 +1161,7 @@ Func CreateValuableRunesAndInsigniasArray()
 		; removing leftmost string with dot 'Armor upgrades.'
 		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15)
 		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_')
-		$valuableRunesAndInsigniasStructsArray[$i] = Eval($varName)
+		$valuableRunesAndInsigniasStructsArray[$i] = SafeEval($varName)
 	Next
 	Return $valuableRunesAndInsigniasStructsArray
 EndFunc
@@ -1144,8 +1217,7 @@ Func CreateValuableModsByWeaponTypeMap()
 	$suffixWeaponModRules['Wand']	= 'Wand.Suffix - Wrapping.'
 
 	Local $weaponModsByType[]
-	For $i = 0 To UBound($AllWeaponsArray) - 1
-		Local $weaponType = $AllWeaponsArray[$i]
+	For $weaponType In $AllWeaponsArray
 		Local $weaponName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 		Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods.' & $weaponName)
 		Local $count = UBound($tickedMods)
@@ -1163,7 +1235,7 @@ Func CreateValuableModsByWeaponTypeMap()
 			If $prefixRule <> Null Then $varName = StringReplace($varName, $prefixRule, 'STRUCT_MOD_')
 			If $suffixRule <> Null Then $varName = StringReplace($varName, $suffixRule, 'STRUCT_MOD_')
 			$varName = ModNameCleanupHelper($varName)
-			$mods[$j] = Eval($varName)
+			$mods[$j] = SafeEval($varName)
 		Next
 		$weaponModsByType[$weaponType] = $mods
 	Next
@@ -1194,8 +1266,96 @@ Func CreateValuableInscriptionsArray()
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus.', 'STRUCT_INSCRIPTION_')
 		$varName = StringReplace($varName, 'Inscriptions.Offhand.Focus and shield.', 'STRUCT_INSCRIPTION_')
 		$varName = ModNameCleanupHelper($varName)
-		$valuableInscriptionsArray[$i] = Eval($varName)
+		$valuableInscriptionsArray[$i] = SafeEval($varName)
 	Next
 	Return $valuableInscriptionsArray
+EndFunc
+
+
+;~ Creates a map of all valuable inscriptions based on selected elements in treeview
+Func CreateValuableInscriptionsByWeaponTypeMap()
+	Local $tickedInscriptionAll = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionWeapons = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionWeaponsMartial = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Martial', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionWeaponsSpellcasting = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Spellcasting', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionOffhand = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionOffhandFocus = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand.Focus', $GUI_TreeView_LootOptions, '.', False)
+
+	Local $inscriptionsWeaponsMartial[UBound($tickedInscriptionAll) + UBound($tickedInscriptionWeapons) + UBound($tickedInscriptionWeaponsMartial)]
+	Local $inscriptionsWeaponsSpellcasting[UBound($tickedInscriptionAll) + UBound($tickedInscriptionWeapons) + UBound($tickedInscriptionWeaponsSpellcasting)]
+	Local $inscriptionsFocus[UBound($tickedInscriptionAll) + UBound($tickedInscriptionOffhand) + UBound($tickedInscriptionOffhandFocus)]
+	Local $inscriptionsShield[UBound($tickedInscriptionAll) + UBound($tickedInscriptionOffhand)]
+
+	Local $prefixLength = StringLen('Inscriptions.')
+	For $i = 0 To UBound($tickedInscriptionAll) - 1
+		Local $inscription = TrimCleanupAndEval($tickedInscriptionAll[$i], $prefixLength)
+		$inscriptionsWeaponsMartial[$i] = $inscription
+		$inscriptionsWeaponsSpellcasting[$i] = $inscription
+		$inscriptionsFocus[$i] = $inscription
+		$inscriptionsShield[$i] = $inscription
+	Next
+	Local $generalIndex = UBound($tickedInscriptionAll)
+	$prefixLength = StringLen('Weapon.')
+	For $i = 0 To UBound($tickedInscriptionWeapons) - 1
+		Local $inscription = TrimCleanupAndEval($tickedInscriptionWeapons[$i], $prefixLength)
+		$inscriptionsWeaponsMartial[$generalIndex + $i] = $inscription
+		$inscriptionsWeaponsSpellcasting[$generalIndex + $i] = $inscription
+	Next
+	Local $weaponIndex = $generalIndex + UBound($tickedInscriptionWeapons)
+	$prefixLength = StringLen('Martial.')
+	For $i = 0 To UBound($tickedInscriptionWeaponsMartial) - 1
+		$inscriptionsWeaponsMartial[$weaponIndex + $i] = TrimCleanupAndEval($tickedInscriptionWeaponsMartial[$i], $prefixLength)
+	Next
+	$prefixLength = StringLen('Spellcasting.')
+	For $i = 0 To UBound($tickedInscriptionWeaponsSpellcasting) - 1
+		$inscriptionsWeaponsSpellcasting[$weaponIndex + $i] = TrimCleanupAndEval($tickedInscriptionWeaponsSpellcasting[$i], $prefixLength)
+	Next
+	$prefixLength = StringLen('Offhand.')
+	For $i = 0 To UBound($tickedInscriptionOffhand) - 1
+		Local $inscription = TrimCleanupAndEval($tickedInscriptionOffhand[$i], $prefixLength)
+		$inscriptionsFocus[$generalIndex + $i] = $inscription
+		$inscriptionsShield[$generalIndex + $i] = $inscription
+	Next
+	Local $offhandIndex = $generalIndex + UBound($tickedInscriptionOffhand)
+	$prefixLength = StringLen('Focus.')
+	For $i = 0 To $i + UBound($tickedInscriptionOffhandFocus) - 1
+		$inscriptionsFocus[$offhandIndex + $i] = TrimCleanupAndEval($tickedInscriptionOffhandFocus[$i], $prefixLength)
+	Next
+
+	Local Const $IDTypeAxe					= 2
+	Local Const $IDTypeBow					= 5
+	Local Const $IDTypeFocus				= 12
+	Local Const $IDTypeHammer				= 15
+	Local Const $IDTypeWand					= 22
+	Local Const $IDTypeShield				= 24
+	Local Const $IDTypeStaff				= 26
+	Local Const $IDTypeSword				= 27
+	Local Const $IDTypeDagger				= 32
+	Local Const $IDTypeScythe				= 35
+	Local Const $IDTypeSpear				= 36
+	Local Const $AllWeaponsArray = [$IDTypeShield, $IDTypeFocus, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+
+	Local $inscriptionsByWeaponType[]
+	For $weaponType In $AllWeaponsArray
+		Switch $weaponType
+			Case $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear
+				$inscriptionsByWeaponType[$weaponType] = $inscriptionsWeaponsMartial
+			Case $IDTypeWand, $IDTypeStaff
+				$inscriptionsByWeaponType[$weaponType] = $inscriptionsWeaponsSpellcasting
+			Case $IDTypeFocus
+				$inscriptionsByWeaponType[$weaponType] = $inscriptionsFocus
+			Case $IDTypeShield
+				$inscriptionsByWeaponType[$weaponType] = $inscriptionsShield
+		EndSwitch
+	Next
+	Return $inscriptionsByWeaponType
+EndFunc
+
+
+;~ Small helper
+Func TrimCleanupAndEval($tickedInscription, $prefixLength)
+	$tickedInscription = StringTrimLeft($tickedInscription, $prefixLength)
+	$tickedInscription = ModNameCleanupHelper($tickedInscription)
+	Return SafeEval('STRUCT_INSCRIPTION_' & $tickedInscription)
 EndFunc
 #EndRegion Struct Utils

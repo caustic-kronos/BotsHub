@@ -201,17 +201,6 @@ Func SpeedTeam()
 EndFunc
 
 
-;~ Optional function to move and aggro a group of mob at maximally 5 locations
-;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func MultipleMoveToAndAggro($foesGroup, $location0x = 0, $location0y = 0, $location1x = Null, $location1y = Null, $location2x = Null, $location2y = Null, $location3x = Null, $location3y = Null, $location4x = Null, $location4y = Null)
-	For $i = 0 To 4
-		If (Eval('location' & $i & 'x') == Null) Then ExitLoop
-		If MoveToAndAggroWithJunundu(Eval('location' & $i & 'x'), Eval('location' & $i & 'y'), $foesGroup) == $FAIL Then Return $FAIL
-	Next
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
-EndFunc
-
-
 ;~ Main method for moving around and aggroing/killing mobs
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
 Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)

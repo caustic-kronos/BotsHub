@@ -1080,9 +1080,9 @@ EndFunc
 
 
 ;~ Getting ticked loot options from checkboxes as array
-Func GetLootOptionsTickedCheckboxes($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.')
+Func GetLootOptionsTickedCheckboxes($startingPoint, $treeViewHandle = $GUI_TreeView_LootOptions, $pathDelimiter = '.', $recursive = True)
 	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startingPoint, $pathDelimiter)
-	Return $treeViewItem == Null ? Null : BuildArrayFromTreeView($treeViewHandle, $treeViewItem)
+	Return $treeViewItem == Null ? Null : BuildArrayFromTreeView($treeViewHandle, $treeViewItem, '', $recursive)
 EndFunc
 
 
@@ -1105,9 +1105,9 @@ EndFunc
 
 
 ;~ Creating an array from a treeview
-Func BuildArrayFromTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = '')
+Func BuildArrayFromTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = '', $recursive = True)
 	Local $array[0]
-	IterateOverTreeView($array, $treeViewHandle, $treeViewItem, $currentPath, AddLeafToArray)
+	IterateOverTreeView($array, $treeViewHandle, $treeViewItem, $currentPath, AddLeafToArray, $recursive ? -1 : 2)
 	Return $array
 EndFunc
 
@@ -1122,28 +1122,29 @@ EndFunc
 
 
 ;~ Iterate over a treeview and make an operation on every node - can be called on root node (Null) or any other node
-Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null)
+Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null, $maxDepth = -1)
 	If $treeViewItem == Null Then
 		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
 		While $treeViewItem <> 0
-			IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
+			IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply, 1, $maxDepth)
 			$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
 		WEnd
 		Return
 	EndIf
-	IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
+	IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply, 1, $maxDepth)
 EndFunc
 
 
 ;~ Iterate over a treeview item and make an operation on every node - cannot be called on root node (Null)
-Func IterateOverTreeItem(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply)
+Func IterateOverTreeItem(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply, $currentDepth, $maxDepth)
+	If $maxDepth <> -1 And $currentDepth > $maxDepth Then Return
 	Local $treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
 	Local $newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
 	If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
 
 	Local $child = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
 	While $child <> 0
-		IterateOverTreeItem($context, $treeViewHandle, $child, $newPath, $functionToApply)
+		IterateOverTreeItem($context, $treeViewHandle, $child, $newPath, $functionToApply, $currentDepth + 1, $maxDepth)
 		$child = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $child)
 	WEnd
 EndFunc

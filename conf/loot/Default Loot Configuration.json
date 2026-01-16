@@ -1278,22 +1278,18 @@
 			}
 		},
 		"Inscriptions": {
-			"All": {
-				"Measure for measure (Highly salvageable)": false,
-				"Show me the money (Improved sale value)": false
-			},
+			"Measure for measure (Highly salvageable)": false,
+			"Show me the money (Improved sale value)": false,
 			"Weapon": {
-				"All": {
-					"Strength and honor (Damage +15% while Health is above 50%)": false,
-					"Guided by fate (Damage +15% while Enchanted)": false,
-					"Dance with death (Damage +15% while in a Stance)": false,
-					"Too much information (Damage +15% vs Hexed foes)": false,
-					"To the pain (Damage +15% Armor -10 while attacking)": false,
-					"Brawn over brain (Damage +15% Energy -5)": false,
-					"Vengeance is mine (Damage +20% while Health is below 50%)": false,
-					"Dont fear the reaper (Damage +20% while Hexed)": false,
-					"Dont think twice (Halves casting time of spells)": false
-				},
+				"Strength and honor (Damage +15% while Health is above 50%)": false,
+				"Guided by fate (Damage +15% while Enchanted)": false,
+				"Dance with death (Damage +15% while in a Stance)": false,
+				"Too much information (Damage +15% vs Hexed foes)": false,
+				"To the pain (Damage +15% Armor -10 while attacking)": false,
+				"Brawn over brain (Damage +15% Energy -5)": false,
+				"Vengeance is mine (Damage +20% while Health is below 50%)": false,
+				"Dont fear the reaper (Damage +20% while Hexed)": false,
+				"Dont think twice (Halves casting time of spells)": false,
 				"Martial": {
 					"I have the power (Energy +5)": false,
 					"Let the memory live again (Halves skill recharge of spells)": false
@@ -1323,28 +1319,26 @@
 					"Be just and fear not (Armor +10 while hexed)": false,
 					"Live for today (Energy +15 Energy regeneration -1)": false
 				},
-				"Focus and shield": {
-					"Master of my domain (Item's attribute +1)": false,
-					"Not the face (Armor +10 vs Blunt damage)": false,
-					"Leaf on the wind (Armor +10 vs Cold damage)": false,
-					"Like a rolling stone (Armor +10 vs Earth damage)": false,
-					"Sleep now in the fire (Armor +10 vs Fire damage)": false,
-					"Riders on the storm (Armor +10 vs Lightning damage)": false,
-					"Through thick and thin (Armor +10 vs Piercing damage)": false,
-					"The riddle of steel (Armor +10 vs Slashing damage)": false,
-					"Sheltered by faith (Received physical damage -2 while Enchanted)": false,
-					"Run for your life (Received physical damage -2 while in a Stance)": false,
-					"Nothing to fear (Received physical damage -3 while Hexed)": false,
-					"Luck of the draw (Received physical damage -5 - Chance 20%)": false,
-					"Fear cuts deeper (Reduces Bleeding duration on you by 20%)": false,
-					"I can see clearly now (Reduces Blind duration on you by 20%)": false,
-					"Swift as the wind (Reduces Crippled duration on you by 20%)": false,
-					"Soundness of mind (Reduces Dazed duration on you by 20%)": false,
-					"Strength of body (Reduces Deep Wound duration on you by 20%)": false,
-					"Cast out the unclean (Reduces Disease duration on you by 20%)": false,
-					"Pure of heart (Reduces Poison duration on you by 20%)": false,
-					"Only the strong survive (Reduces Weakness duration on you by 20%)": false
-				}
+				"Master of my domain (Item's attribute +1)": false,
+				"Not the face (Armor +10 vs Blunt damage)": false,
+				"Leaf on the wind (Armor +10 vs Cold damage)": false,
+				"Like a rolling stone (Armor +10 vs Earth damage)": false,
+				"Sleep now in the fire (Armor +10 vs Fire damage)": false,
+				"Riders on the storm (Armor +10 vs Lightning damage)": false,
+				"Through thick and thin (Armor +10 vs Piercing damage)": false,
+				"The riddle of steel (Armor +10 vs Slashing damage)": false,
+				"Sheltered by faith (Received physical damage -2 while Enchanted)": false,
+				"Run for your life (Received physical damage -2 while in a Stance)": false,
+				"Nothing to fear (Received physical damage -3 while Hexed)": false,
+				"Luck of the draw (Received physical damage -5 - Chance 20%)": false,
+				"Fear cuts deeper (Reduces Bleeding duration on you by 20%)": false,
+				"I can see clearly now (Reduces Blind duration on you by 20%)": false,
+				"Swift as the wind (Reduces Crippled duration on you by 20%)": false,
+				"Soundness of mind (Reduces Dazed duration on you by 20%)": false,
+				"Strength of body (Reduces Deep Wound duration on you by 20%)": false,
+				"Cast out the unclean (Reduces Disease duration on you by 20%)": false,
+				"Pure of heart (Reduces Poison duration on you by 20%)": false,
+				"Only the strong survive (Reduces Weakness duration on you by 20%)": false
 			}
 		},
 		"Mods": {
