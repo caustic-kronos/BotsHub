@@ -67,21 +67,21 @@ EndFunc
 ;~ Move out of outpost into Mirror of Lyss
 Func GoToMirrorOfLyss()
 	TravelToOutpost($ID_THE_KODASH_BAZAAR, $district_name)
-	While GetMapID() <> $ID_MIRROR_OF_LYSS
+	While GetMapID() <> $ID_THE_MIRROR_OF_LYSS
 		Info('Moving to Mirror of Lyss')
 		MoveTo(-2186, -1916)
 		MoveTo(-3811, 1177)
 		MoveTo(-953, 4199)
 		MoveTo(-850, 4700)
 		RandomSleep(5000)
-		WaitMapLoading($ID_MIRROR_OF_LYSS, 10000, 2000)
+		WaitMapLoading($ID_THE_MIRROR_OF_LYSS, 10000, 2000)
 	WEnd
 EndFunc
 
 
 ;~ Cleaning Lightbringers function
 Func FarmMirrorOfLyss()
-	If GetMapID() <> $ID_MIRROR_OF_LYSS Then Return $FAIL
+	If GetMapID() <> $ID_THE_MIRROR_OF_LYSS Then Return $FAIL
 
 	MoveTo(-19296, -14111)
 	Info('Taking Blessing')
