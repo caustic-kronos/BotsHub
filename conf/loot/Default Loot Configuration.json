@@ -1355,7 +1355,7 @@
 					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Grip": {
@@ -1385,7 +1385,7 @@
 					"Of Demon Slaying": true,
 					"Of Ogre Slaying": true,
 					"Of Dragon Slaying": true,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Axe Mastery (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Bow": {
@@ -1399,7 +1399,7 @@
 					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
 					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 5 Health regeneration -1)": false,
+					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Grip": {
@@ -1429,7 +1429,7 @@
 					"Of Demon Slaying": true,
 					"Of Ogre Slaying": true,
 					"Of Dragon Slaying": true,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Marksmanship (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Dagger": {
@@ -1445,7 +1445,7 @@
 					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Handle": {
@@ -1464,7 +1464,7 @@
 					"Of The Assassin": false,
 					"Of The Paragon": false,
 					"Of The Dervish": false,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Dagger Mastery (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Focus": {
@@ -1487,7 +1487,7 @@
 					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 5 Health regeneration -1)": false,
+					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Grip": {
@@ -1517,7 +1517,7 @@
 					"Of Demon Slaying": true,
 					"Of Ogre Slaying": true,
 					"Of Dragon Slaying": false,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Hammer Mastery (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Scythe": {
@@ -1533,7 +1533,7 @@
 					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 5 Health regeneration -1)": false,
+					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Grip": {
@@ -1552,7 +1552,7 @@
 					"Of The Assassin": false,
 					"Of The Paragon": false,
 					"Of The Dervish": false,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Scythe Mastery (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Shield": {
@@ -1577,7 +1577,7 @@
 					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Grip": {
@@ -1596,7 +1596,7 @@
 					"Of The Assassin": false,
 					"Of The Paragon": false,
 					"Of The Dervish": false,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Spear Mastery (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Staff": {
@@ -1652,7 +1652,7 @@
 					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric (Life Draining 3 Health regeneration -1)": false,
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Pommel": {
@@ -1682,7 +1682,7 @@
 					"Of Demon Slaying": true,
 					"Of Ogre Slaying": true,
 					"Of Dragon Slaying": true,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"Of Swordmanship (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},
 			"Wand": {

@@ -23,12 +23,8 @@
 Global Const $STRUCT_WEAPON_UPGRADE		= '30'
 Global Const $STRUCT_INSCRIPTION		= '32'
 
-Global Const $STRUCT_MINUS_5_ENERGY						= '0500B820'
-Global Const $STRUCT_15_ENERGY							= '0F00D822'
-Global Const $STRUCT_ENERGY_REGENERATION				= '0100C820'
 
-
-#Region Weapon Mods
+#Region Weapon mod IDs
 Global Const $ID_STAFF_HEAD								= 896
 Global Const $ID_STAFF_WRAPPING							= 908
 Global Const $ID_SHIELD_HANDLE							= 15554
@@ -60,30 +56,44 @@ Global Const $WEAPON_MODS_ARRAY[]						= [$ID_AXE_HAFT, $ID_BOW_STRING, $ID_HAMM
 															$ID_SCYTHE_GRIP, $ID_SHIELD_HANDLE, $ID_SPEAR_GRIP, $ID_INSCRIPTIONS_GENERAL, $ID_INSCRIPTIONS_SPELLCASTING, _
 															$ID_INSCRIPTIONS_FOCUS]
 Global Const $MAP_WEAPON_MODS							= MapFromArray($WEAPON_MODS_ARRAY)
-#EndRegion Weapon Mods
+#EndRegion Weapon mod IDs
 
 
-#Region Weapon Inscriptions
-#Region Common Inscriptions
+Global Const $STRUCT_30_HEALTH								= '001E4823'
+Global Const $STRUCT_MINUS_5_ENERGY							= '0500B820'
+Global Const $STRUCT_15_ENERGY								= '0F00D822'
+Global Const $STRUCT_ENERGY_REGENERATION					= '0100C820'
+Global Const $STRUCT_15_DAMAGE								= '0F003822'
+Global Const $STRUCT_5_ENERGY								= '0500D822'
+Global Const $STRUCT_5_ARMOR								= '05000821'
+Global Const $STRUCT_1_20_ATTRIBUTE							= '00143828'
+Global Const $STRUCT_MOD_HCT_20								= '00140828'
+Global Const $STRUCT_MOD_HCT_10								= '000A0822'
+Global Const $STRUCT_MOD_HSR_20								= '00142828'
+Global Const $STRUCT_MOD_HSR_10								= '000AA823'
+
+
+#Region Inscriptions
 Global Const $STRUCT_INSCRIPTION_MEASURE_FOR_MEASURE		= '1F0208243E0432251'			;salvageable
 Global Const $STRUCT_INSCRIPTION_SHOW_ME_THE_MONEY			= '1E0208243C043225'			;rare/money
 
+#Region Weapon Inscriptions
 Global Const $STRUCT_INSCRIPTION_STRENGTH_AND_HONOR			= '0F327822'					;+15% while health > 50%
 Global Const $STRUCT_INSCRIPTION_GUIDED_BY_FATE				= '0F006822'					;+15% while enchanted
 Global Const $STRUCT_INSCRIPTION_DANCE_WITH_DEATH			= '0F00A822'					;+15% while in a stance
 Global Const $STRUCT_INSCRIPTION_TOO_MUCH_INFORMATION		= '0F005822'					;+15% against hexed foes
 Global Const $STRUCT_INSCRIPTION_TO_THE_PAIN				= '0A001820'					;+15% damage -10 armor while attacking - -10 armor part
-;Global Const $STRUCT_INSCRIPTION_TO_THE_PAIN_2				= '0F003822'					;+15% damage -10 armor while attacking - +15% damage part
+;Global Const $STRUCT_INSCRIPTION_TO_THE_PAIN_2				= $STRUCT_15_DAMAGE				;+15% damage -10 armor while attacking - +15% damage part
 Global Const $STRUCT_INSCRIPTION_BRAWN_OVER_BRAIN			= $STRUCT_MINUS_5_ENERGY		;+15% damage -5 energy - -5 energy part
-;Global Const $STRUCT_INSCRIPTION_BRAWN_OVER_BRAIN_2		= '0F003822'					;+15% damage -5 energy - +15% damage part
+;Global Const $STRUCT_INSCRIPTION_BRAWN_OVER_BRAIN_2		= $STRUCT_15_DAMAGE				;+15% damage -5 energy - +15% damage part
 Global Const $STRUCT_INSCRIPTION_VENGEANCE_IS_MINE			= '14328822'					;+20% while health < 50%
 Global Const $STRUCT_INSCRIPTION_DONT_FEAR_THE_REAPER		= '14009822'					;+20% while hexed
-Global Const $STRUCT_INSCRIPTION_DONT_THINK_TWICE			= '000A0822'					;hct 10
+Global Const $STRUCT_INSCRIPTION_DONT_THINK_TWICE			= $STRUCT_MOD_HCT_10			;hct 10
 #EndRegion Common Inscriptions
 
 #Region Martial Inscriptions
-Global Const $STRUCT_INSCRIPTION_I_HAVE_THE_POWER			= '0500D822'					;+5e
-Global Const $STRUCT_INSCRIPTION_LET_THE_MEMORY_LIVE_AGAIN	= '000AA823'					;hsr 10
+Global Const $STRUCT_INSCRIPTION_I_HAVE_THE_POWER			= $STRUCT_5_ENERGY				;+5e
+Global Const $STRUCT_INSCRIPTION_LET_THE_MEMORY_LIVE_AGAIN	= $STRUCT_MOD_HSR_10			;hsr 10
 #EndRegion Martial Inscriptions
 
 #Region Caster Weapon Inscriptions
@@ -91,16 +101,16 @@ Global Const $STRUCT_INSCRIPTION_HALE_AND_HEARTY			= '05320823'					;+5e while h
 Global Const $STRUCT_INSCRIPTION_HAVE_FAITH					= '0500F822'					;+5e while enchanted
 Global Const $STRUCT_INSCRIPTION_DONT_CALL_IT_A_COME_BACK	= '07321823'					;+7e while health < 50%
 Global Const $STRUCT_INSCRIPTION_I_AM_SORROW				= '07002823'					;+7e while hexed
-Global Const $STRUCT_INSCRIPTION_SEIZE_THE_DAY_1			= $STRUCT_15_ENERGY				;+15e energy regeneration -1 - +15e part
-Global Const $STRUCT_INSCRIPTION_SEIZE_THE_DAY_2			= $STRUCT_ENERGY_REGENERATION	;+15e energy regeneration -1 - energy regeneration -1 part
-Global Const $STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE		= '00140828'					;hct 20
+Global Const $STRUCT_INSCRIPTION_SEIZE_THE_DAY				= $STRUCT_15_ENERGY				;+15e energy regeneration -1 - +15e part
+;Global Const $STRUCT_INSCRIPTION_SEIZE_THE_DAY_2			= $STRUCT_ENERGY_REGENERATION	;+15e energy regeneration -1 - energy regeneration -1 part
+Global Const $STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE		= $STRUCT_MOD_HCT_20			;hct 20
 #EndRegion Caster Weapon Inscriptions
-#EndRegion Weapon Inscriptions
+#EndRegion Inscriptions
 
 #Region Offhand Inscriptions
 #Region Focus Inscriptions
-Global Const $STRUCT_INSCRIPTION_FORGET_ME_NOT				= '00142828'					;hsr 20
-Global Const $STRUCT_INSCRIPTION_SERENITY_NOW				= '000AA823'					;hsr 10
+Global Const $STRUCT_INSCRIPTION_FORGET_ME_NOT				= $STRUCT_MOD_HSR_20			;hsr 20
+Global Const $STRUCT_INSCRIPTION_SERENITY_NOW				= $STRUCT_MOD_HSR_10			;hsr 10
 
 Global Const $STRUCT_INSCRIPTION_HAIL_TO_THE_KING			= '0532A821'					;+5 armor while health > 50%
 Global Const $STRUCT_INSCRIPTION_FAITH_IS_MY_SHIELD			= '05009821'					;+5 armor while enchanted
@@ -108,18 +118,18 @@ Global Const $STRUCT_INSCRIPTION_MIGHT_MAKES_RIGHT			= '05007821'					;+5 armor 
 Global Const $STRUCT_INSCRIPTION_KNOWING_IS_HALF_THE_BATTLE	= '05008821'					;+5 armor while casting
 Global Const $STRUCT_INSCRIPTION_MAN_FOR_ALL_SEASONS		= '05002821'					;+5 armor vs elemental damage
 Global Const $STRUCT_INSCRIPTION_SURVIVAL_OF_THE_FITTEST	= '05005821'					;+5 armor vs physical damage
-Global Const $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS_1		= '05000821'					;+5 armor ^ -5 energy - +5 armor part
-Global Const $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS_2		= $STRUCT_MINUS_5_ENERGY		;+5 armor ^ -5 energy - -5 energy part
+Global Const $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS			= $STRUCT_MINUS_5_ENERGY		;+5 armor ^ -5 energy - -5 energy part
+Global Const $STRUCT_INSCRIPTION_IGNORANCE_IS_BLISS_2		= $STRUCT_5_ARMOR				;+5 armor ^ -5 energy - +5 armor part
 Global Const $STRUCT_INSCRIPTION_LIFE_IS_PAIN				= '1400D820'					;+5 armor ^ -20 health - -20 health part
-;Global Const $STRUCT_INSCRIPTION_LIFE_IS_PAIN_2			= '05000821'					;+5 armor ^ -20 health - +5 armor part
+;Global Const $STRUCT_INSCRIPTION_LIFE_IS_PAIN_2			= $STRUCT_5_ARMOR				;+5 armor ^ -20 health - +5 armor part
 Global Const $STRUCT_INSCRIPTION_DOWN_BUT_NOT_OUT			= '0A32B821'					;+10 armor while health < 50%
 Global Const $STRUCT_INSCRIPTION_BE_JUST_AND_FEAR_NOT		= '0A00C821'					;+10 armor while hexed
-Global Const $STRUCT_INSCRIPTION_LIVE_FOR_TODAY_1			= $STRUCT_15_ENERGY				;+15 energy ^ -1 energy regeneration - +15 energy part
-Global Const $STRUCT_INSCRIPTION_LIVE_FOR_TODAY_2			= $STRUCT_ENERGY_REGENERATION	;+15 energy ^ -1 energy regeneration - energy regeneration -1 part
+Global Const $STRUCT_INSCRIPTION_LIVE_FOR_TODAY				= $STRUCT_15_ENERGY				;+15 energy ^ -1 energy regeneration - +15 energy part
+;Global Const $STRUCT_INSCRIPTION_LIVE_FOR_TODAY_2			= $STRUCT_ENERGY_REGENERATION	;+15 energy ^ -1 energy regeneration - energy regeneration -1 part
 #EndRegion Focus Inscriptions
 
 #Region Focus and Shield Inscriptions
-Global Const $STRUCT_INSCRIPTION_MASTER_OF_MY_DOMAIN		= '00143828'					;+1^20% item attribute
+Global Const $STRUCT_INSCRIPTION_MASTER_OF_MY_DOMAIN		= $STRUCT_1_20_ATTRIBUTE		;+1^20% item attribute
 
 Global Const $STRUCT_INSCRIPTION_NOT_THE_FACE				= '0A0018A1'					;+10 armor vs blunt
 Global Const $STRUCT_INSCRIPTION_LEAF_ON_THE_WIND			= '0A0318A1'					;+10 armor vs cold
@@ -142,45 +152,15 @@ Global Const $STRUCT_INSCRIPTION_STRENGTH_OF_BODY			= '00045828'					;-20 deep w
 Global Const $STRUCT_INSCRIPTION_CAST_OUT_THE_UNCLEAN		= '00055828'					;-20 disease duration
 Global Const $STRUCT_INSCRIPTION_CAST_OUT_THE_UNCLEAN_OS	= 'E3017824'					;-20 disease duration
 Global Const $STRUCT_INSCRIPTION_PURE_OF_HEART				= '00065828'					;-20 poison duration
-Global Const $STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE	= '00085828'					;-20 weakness duration								; incorrect
+Global Const $STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE	= '00085828'					;-20 weakness duration					; incorrect
 #EndRegion Focus and Shield Inscriptions
 #EndRegion Offhand Inscriptions
 
 
 
 #Region Mods
-#Region common mods
-Global Const $STRUCT_MOD_30_HEALTH							= '001E4823'					;+30 health
-Global Const $STRUCT_MOD_5_ARMOR							= '05000821'					;+5 armor
-Global Const $STRUCT_MOD_OF_SHELTER							= '07005821'					;+7 armor vs physical
-Global Const $STRUCT_MOD_OF_WARDING							= '07002821'					;+7 armor vs elemental
-Global Const $STRUCT_MOD_OF_ENCHANTING						= '1400B822'					;+20% enchantment duration
-
-Global Const $STRUCT_MOD_OF_THE_WARRIOR						= '0511A828'
-Global Const $STRUCT_MOD_OF_THE_RANGER						= '0517A828'
-Global Const $STRUCT_MOD_OF_THE_NECROMANCER					= '0506A828'
-Global Const $STRUCT_MOD_OF_THE_MESMER						= '0500A828'
-Global Const $STRUCT_MOD_OF_THE_ELEMENTALIST				= '050CA828'
-Global Const $STRUCT_MOD_OF_THE_MONK						= '0510A828'
-Global Const $STRUCT_MOD_OF_THE_RITUALIST					= '0524A828'
-Global Const $STRUCT_MOD_OF_THE_ASSASSIN					= '0523A828'
-Global Const $STRUCT_MOD_OF_THE_PARAGON						= '0528A828'
-Global Const $STRUCT_MOD_OF_THE_DERVISH						= '052CA828'
-
-Global Const $STRUCT_MOD_OF_DEATHBANE						= '00008080'
-Global Const $STRUCT_MOD_OF_CHARRSLAYING					= '00018080'
-Global Const $STRUCT_MOD_OF_TROLLSLAYING					= '00028080'
-Global Const $STRUCT_MOD_OF_PRUNING							= '00038080'
-Global Const $STRUCT_MOD_OF_SKELETON_SLAYING				= '00048080'
-Global Const $STRUCT_MOD_OF_GIANT_SLAYING					= '00058080'
-Global Const $STRUCT_MOD_OF_DWARF_SLAYING					= '00068080'
-Global Const $STRUCT_MOD_OF_TENGU_SLAYING					= '00078080'
-Global Const $STRUCT_MOD_OF_DEMON_SLAYING					= '00088080'
-Global Const $STRUCT_MOD_OF_OGRE_SLAYING					= '000A8080'
-Global Const $STRUCT_MOD_OF_DRAGON_SLAYING					= '00098080'
-#EndRegion common mods
-
-#Region martial mods
+#Region Prefixes
+#Region Martial prefix mods
 Global Const $STRUCT_MOD_BARBED								= 'DE016824'					;+33% bleeding
 Global Const $STRUCT_MOD_CRUEL								= 'E2016824'					;+33% deep wound
 Global Const $STRUCT_MOD_CRIPPLING							= 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
@@ -199,6 +179,38 @@ Global Const $STRUCT_MOD_SUNDERING							= '1414F823'					;armor penetration 20^
 Global Const $STRUCT_MOD_VAMPIRIC_3							= '00032825'
 Global Const $STRUCT_MOD_VAMPIRIC_5							= '00052825'
 Global Const $STRUCT_MOD_ZEALOUS							= '01001825'
+#EndRegion Martial prefix mods
+
+#Region Staff prefix mods
+Global Const $STRUCT_MOD_HALE								= $STRUCT_30_HEALTH				;+30 health
+Global Const $STRUCT_MOD_ADEPT								= $STRUCT_MOD_HCT_20			;hct 20
+Global Const $STRUCT_MOD_SWIFT								= $STRUCT_MOD_HCT_10			;hct 10
+Global Const $STRUCT_MOD_INSIGHTFUL							= $STRUCT_5_ENERGY				;+5 energy
+Global Const $STRUCT_MOD_DEFENSIVE							= $STRUCT_5_ARMOR				;+5 armor
+#EndRegion Staff prefix mods
+#EndRegion Prefixes
+
+#Region Suffixes
+Global Const $STRUCT_MOD_OF_FORTITUDE						= $STRUCT_30_HEALTH				;+30 health
+
+#Region Martial and staff suffix mods
+Global Const $STRUCT_MOD_OF_DEFENSE							= $STRUCT_5_ARMOR				;+5 armor
+Global Const $STRUCT_MOD_OF_SHELTER							= '07005821'					;+7 armor vs physical
+Global Const $STRUCT_MOD_OF_WARDING							= '07002821'					;+7 armor vs elemental
+Global Const $STRUCT_MOD_OF_ENCHANTING						= '1400B822'					;+20% enchantment duration
+
+Global Const $STRUCT_MOD_OF_THE_WARRIOR						= '0511A828'
+Global Const $STRUCT_MOD_OF_THE_RANGER						= '0517A828'
+Global Const $STRUCT_MOD_OF_THE_NECROMANCER					= '0506A828'
+Global Const $STRUCT_MOD_OF_THE_MESMER						= '0500A828'
+Global Const $STRUCT_MOD_OF_THE_ELEMENTALIST				= '050CA828'
+Global Const $STRUCT_MOD_OF_THE_MONK						= '0510A828'
+Global Const $STRUCT_MOD_OF_THE_RITUALIST					= '0524A828'
+Global Const $STRUCT_MOD_OF_THE_ASSASSIN					= '0523A828'
+Global Const $STRUCT_MOD_OF_THE_PARAGON						= '0528A828'
+Global Const $STRUCT_MOD_OF_THE_DERVISH						= '052CA828'
+
+; This is not available for staff
 ; +1^20%
 Global Const $STRUCT_MOD_OF_AXE_MASTERY						= '14121824'
 Global Const $STRUCT_MOD_OF_MARKSMANSHIP					= '14191824'
@@ -207,33 +219,57 @@ Global Const $STRUCT_MOD_OF_HAMMER_MASTERY					= '14131824'
 Global Const $STRUCT_MOD_OF_SCYTHE_MASTERY					= '14291824'
 Global Const $STRUCT_MOD_OF_SPEAR_MASTERY					= '14251824'
 Global Const $STRUCT_MOD_OF_SWORDMANSHIP					= '14141824'
-#EndRegion of Mastery
 
-#Region caster weapons mods
-Global Const $STRUCT_MOD_HCT_20								= '00140828'
-Global Const $STRUCT_MOD_HCT_10								= '000A0822'
-Global Const $STRUCT_MOD_HSR_20								= '00142828'
-Global Const $STRUCT_MOD_HSR_10								= '000AA823'
-#EndRegion caster weapons mods
+; Those are not available for staves, daggers, spears and scythes
+Global Const $STRUCT_MOD_OF_DEATHBANE						= '00008080'
+Global Const $STRUCT_MOD_OF_CHARRSLAYING					= '00018080'
+Global Const $STRUCT_MOD_OF_TROLLSLAYING					= '00028080'
+Global Const $STRUCT_MOD_OF_PRUNING							= '00038080'
+Global Const $STRUCT_MOD_OF_SKELETON_SLAYING				= '00048080'
+Global Const $STRUCT_MOD_OF_GIANT_SLAYING					= '00058080'
+Global Const $STRUCT_MOD_OF_DWARF_SLAYING					= '00068080'
+Global Const $STRUCT_MOD_OF_TENGU_SLAYING					= '00078080'
+Global Const $STRUCT_MOD_OF_DEMON_SLAYING					= '00088080'
+Global Const $STRUCT_MOD_OF_OGRE_SLAYING					= '000A8080'
+Global Const $STRUCT_MOD_OF_DRAGON_SLAYING					= '00098080'
+#EndRegion Martial and staff suffix mods
 
-#Region staff mods
+
+#Region Staff suffix mods
+Global Const $STRUCT_MOD_OF_MASTERY							= $STRUCT_1_20_ATTRIBUTE		;+1^20%
+#EndRegion Staff suffix mods
+
+
+#Region Wand suffix mods
+Global Const $STRUCT_MOD_OF_MEMORY							= $STRUCT_MOD_HSR_20
+Global Const $STRUCT_MOD_OF_QUICKENING						= $STRUCT_MOD_HSR_10
+#EndRegion Wand suffix mods
+
+
+#Region Staff, focus and shield suffix mods
 Global Const $STRUCT_MOD_OF_DEVOTION						= '002D6823'					;+45 health while enchanted
 Global Const $STRUCT_MOD_OF_ENDURANCE						= '002D8823'					;+45 health while in a stance
 Global Const $STRUCT_MOD_OF_VALOR							= '003C7823'					;+60 health while hexed
+#EndRegion Staff, focus and shield suffix mods
 
-Global Const $STRUCT_MOD_STAFF_MASTERY						= '00143828'					;+1^20%
-#EndRegion staff mods
+
+#Region Focus suffix mods
+Global Const $STRUCT_MOD_OF_APTITUDE						= $STRUCT_MOD_HCT_20
+Global Const $STRUCT_MOD_OF_SWIFTNESS						= $STRUCT_MOD_HCT_10
+#EndRegion Focus suffix mods
+#EndRegion Suffixes
 #EndRegion Mods
 
 
 #Region inherent bonus
 #Region martial weapons
 Global Const $STRUCT_INHERENT_ZEALOUS_STRENGTH				= $STRUCT_ENERGY_REGENERATION	;+15% damage energy regeneration -1 - energy regeneration -1 part
-;Global Const $STRUCT_INHERENT_ZEALOUS_STRENGTH_2			= '0F003822'					;+15% damage -1 energy regeneration - +15% damage part
+;Global Const $STRUCT_INHERENT_ZEALOUS_STRENGTH_2			= $STRUCT_15_DAMAGE				;+15% damage -1 energy regeneration - +15% damage part
 
 Global Const $STRUCT_INHERENT_VAMPIRIC_STRENGTH				= '0100E820'					;+15% damage health regeneration -1 - health regeneration -1 part
-;Global Const $STRUCT_INHERENT_VAMPIRIC_STRENGTH_2			= '0F003822'					;+15% damage -1 health regeneration - +15% damage part
+;Global Const $STRUCT_INHERENT_VAMPIRIC_STRENGTH_2			= $STRUCT_15_DAMAGE				;+15% damage -1 health regeneration - +15% damage part
 #EndRegion martial weapons
+
 
 #Region caster weapons and focus
 Global Const $STRUCT_INHERENT_FIRE_MAGIC_HCT				= '0A141822'
@@ -562,7 +598,7 @@ Global Const $STRUCT_MONK_RUNES_SUPERIOR_SMITING_PRAYERS		= '030EE8217D01'
 Global Const $STRUCT_NECROMANCER_INSIGNIAS_BLOODSTAINED			= '0A020824'
 Global Const $STRUCT_NECROMANCER_INSIGNIAS_TORMENTORS			= 'EC010824'
 Global Const $STRUCT_NECROMANCER_INSIGNIAS_BONELACE				= 'EE010824'
-Global Const $STRUCT_NECROMANCER_MINION_MASTERS_INSIGNIA		= 'EF010824'
+Global Const $STRUCT_NECROMANCER_INSIGNIAS_MINION_MASTERS		= 'EF010824'
 Global Const $STRUCT_NECROMANCER_INSIGNIAS_BLIGHTERS			= 'F0010824'
 Global Const $STRUCT_NECROMANCER_INSIGNIAS_UNDERTAKERS			= 'ED010824'
 Global Const $STRUCT_NECROMANCER_RUNES_MINOR_BLOOD_MAGIC		= '0104E821'
@@ -629,7 +665,7 @@ Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_DAGGER_MASTERY		= '031DE8217B02'
 Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_DEADLY_ARTS		= '031EE8217B02'
 Global Const $STRUCT_ASSASSIN_RUNES_SUPERIOR_SHADOW_ARTS		= '031FE8217B02'
 Global Const $STRUCT_RITUALIST_INSIGNIAS_SHAMANS				= '04020824'
-Global Const $STRUCT_RITUALIST_GHOST_FORGE_INSIGNIA				= '05020824'
+Global Const $STRUCT_RITUALIST_INSIGNIAS_GHOST_FORGE			= '05020824'
 Global Const $STRUCT_RITUALIST_INSIGNIAS_MYSTICS				= '06020824'
 Global Const $STRUCT_RITUALIST_RUNES_MINOR_CHANNELING_MAGIC		= '0122E821'
 Global Const $STRUCT_RITUALIST_RUNES_MINOR_COMMUNING			= '0120E821'
@@ -962,14 +998,13 @@ Func DefaultCreatePerfectModsByOSWeaponTypeMap()
 		$STRUCT_INHERENT_ARMOR_VS_OGRES, _
 		$STRUCT_MOD_OF_DEVOTION, _
 		$STRUCT_MOD_OF_ENDURANCE, _
-		$STRUCT_MOD_30_HEALTH _
+		$STRUCT_MOD_OF_FORTITUDE _
 	]
 
 	Local $casterWeapons = [ _
 		$STRUCT_INSCRIPTION_HALE_AND_HEARTY, _
 		$STRUCT_INSCRIPTION_HAVE_FAITH, _
-		$STRUCT_INSCRIPTION_SEIZE_THE_DAY_1, _
-		$STRUCT_INSCRIPTION_SEIZE_THE_DAY_2, _
+		$STRUCT_INSCRIPTION_SEIZE_THE_DAY, _
 		$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE _
 	]
 	_ArrayAdd($casterWeapons, $casterAndFocus)
@@ -979,8 +1014,7 @@ Func DefaultCreatePerfectModsByOSWeaponTypeMap()
 		$STRUCT_INSCRIPTION_HAIL_TO_THE_KING, _
 		$STRUCT_INSCRIPTION_FAITH_IS_MY_SHIELD, _
 		$STRUCT_INSCRIPTION_LIFE_IS_PAIN, _
-		$STRUCT_INSCRIPTION_LIVE_FOR_TODAY_1, _
-		$STRUCT_INSCRIPTION_LIVE_FOR_TODAY_2 _
+		$STRUCT_INSCRIPTION_LIVE_FOR_TODAY _
 	]
 	_ArrayAdd($focus, $casterAndFocus)
 	_ArrayAdd($focus, $shieldAndFocus)
@@ -1031,7 +1065,6 @@ Func ContainsValuableUpgrades($item)
 					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
 						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
 					EndIf
-					Out('Found this struct:' & $struct)
 					Return True
 					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
 				WEnd
@@ -1043,7 +1076,6 @@ Func ContainsValuableUpgrades($item)
 					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
 						Warn('Valuable mod "' & $struct & '" in "' & $modStruct & '" does not match expected upgrade/inscription format')
 					EndIf
-					Out('Found this struct:' & $struct)
 					Return True
 					If IsInscriptionStruct($modStruct, $upgradePosition) Then Return True
 					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
