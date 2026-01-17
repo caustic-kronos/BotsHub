@@ -1312,11 +1312,10 @@ EndFunc
 Func SalvageItem($item, $salvageKit)
 	Local $rarity = GetRarity($item)
 	StartSalvageWithKit($item, $salvageKit)
-	Local $ping = GetPing()
-	Sleep(400 + $ping)
+	Sleep(400 + GetPing())
 	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 		ValidateSalvage()
-		Sleep(400 + $ping)
+		Sleep(400 + GetPing())
 	EndIf
 	Return True
 EndFunc
