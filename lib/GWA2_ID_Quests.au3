@@ -19,6 +19,19 @@
 #include <Array.au3>
 #include 'Utils.au3'
 
+#Region Quest States
+Global Const $ID_QUEST_NOT_FOUND	= 0x00 ; quest not existing in the logbook
+Global Const $ID_QUEST_ACTIVE		= 0x01 ; quest existing in the logbook
+Global Const $ID_QUEST_REWARD		= 0x02 ; quest finished but still in the logbook until taking the reward
+Global Const $ID_QUEST_PARTIAL_1	= 0x04 ; partial completion of the quest
+Global Const $ID_QUEST_PARTIAL_2	= 0x08 ; partial completion of the quest
+Global Const $ID_QUEST_COMPLETED	= $ID_QUEST_NOT_FOUND ; after completing the quest and taking its reward, it vanishes from the logbook
+Global Const $ID_QUEST_CURRENT		= 0x10 ; For current mission subquests like in Fissure of Woe
+Global Const $ID_QUEST_PRIMARY		= 0x20 ; Primary quests like 'Against the Destroyers'
+Global Const $ID_QUEST_AREA_PRIMARY	= 0x40 ; EoTN Primary quests like The 'Knowledgeable Asura'
+#EndRegion
+
+
 #Region Quest IDs
 Global Const $ID_QUEST_THE_ASCALON_SETTLEMENT = 0
 Global Const $ID_QUEST_THE_VILLAINY_OF_GALRATH = 1
