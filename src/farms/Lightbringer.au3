@@ -107,11 +107,12 @@ Func FarmTheSulfurousWastes()
 	RandomSleep(1500)
 
 	; 30 groups to vanquish
-	Local Static $foes[30][3] = [ _
+	Local Static $foes[31][3] = [ _
 		[-800, 12000, 'First Undead Group 1'], _
 		[-1700, 9800, 'First Undead Group 2'], _
 		[-3000, 10900, 'Second Undead Group 1'], _
 		[-4500, 11500, 'Second Undead Group 2'], _
+		[-5500, 11250, 'Second Undead Group 3'], _
 		[-13250, 6750, 'Third Undead Group'], _
 		[-22000, 9000, 'First Margonite Group 1'], _
 		[-22350, 11100, 'First Margonite Group 2'], _
@@ -143,16 +144,19 @@ Func FarmTheSulfurousWastes()
 		[-18000, -13100, 'Margonite Boss Group'] _
 	]
 
-	For $i = 0 To 3
+	For $i = 0 To 4
 		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
+
 	SpeedTeam()
 	MoveTo(-7500, 11925)
 	SpeedTeam()
-	MoveTo(-9800, 12400)
+	MoveTo(-9300, 12500)
 	SpeedTeam()
-	MoveTo(-13000, 9500)
-	If MoveToAndAggroWithJunundu($foes[4][0], $foes[4][1], $foes[4][2]) == $FAIL Then Return $FAIL
+	MoveTo(-11000, 11250)
+	SpeedTeam()
+	MoveTo(-13200, 9000)
+	If MoveToAndAggroWithJunundu($foes[5][0], $foes[5][1], $foes[5][2]) == $FAIL Then Return $FAIL
 
 	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
@@ -162,7 +166,7 @@ Func FarmTheSulfurousWastes()
 	Dialog(0x85)
 	RandomSleep(1000)
 
-	For $i = 5 To 18
+	For $i = 6 To 19
 		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -176,7 +180,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	For $i = 19 To 28
+	For $i = 20 To 29
 		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) <> $SUCCESS Then Return $FAIL
 	Next
 
@@ -193,7 +197,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If MoveToAndAggroWithJunundu($foes[29][0], $foes[29][1], $foes[29][2]) <> $SUCCESS Then Return $FAIL
+	If MoveToAndAggroWithJunundu($foes[30][0], $foes[30][1], $foes[30][2]) <> $SUCCESS Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
@@ -256,14 +260,17 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	WEnd
 
-	If DllStructGetData($me, 'HealthPercent') < 0.75 Or CountAliveHeroes() > 0 Then
+	If DllStructGetData($me, 'HealthPercent') < 0.75 Or CountAliveHeroes() < 7 Then
 		UseSkillEx($JUNUNDU_WAIL)
 	EndIf
 	RandomSleep(1000)
 
 	; situation when most of the team is wiped
 	If CountAliveHeroes() < 2 Then Return $FAIL
-	PickUpItems()
+	For $i = 1 To 3
+		PickUpItems()
+		RandomSleep(50)
+	Next
 	FindAndOpenChests($RANGE_SPIRIT)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
