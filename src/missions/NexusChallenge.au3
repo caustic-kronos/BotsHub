@@ -114,10 +114,14 @@ Func NexusChallenge()
 		[-3723, -3662, 'Group 8'], _
 		[-3809, 880, 'Group 9'] _
 	]
-
-	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
+	For $i = 0 To 8
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 	Info('First loop completed')
-	If MoveAggroAndKillGroups($foes, 10, 18) == $FAIL Then Return $FAIL
+
+	For $i = 9 To 17
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 	Info('Second loop completed, reset')
 
 	Return $SUCCESS

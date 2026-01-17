@@ -97,7 +97,8 @@ Func FarmMinotaurs()
 		[5155, 8838, 'Minotaurs group 11'], _
 		[2616, 7615, 'Minotaurs group 12'] _
 	]
-
-	If MoveAggroAndKillGroups($minotaurs, 1, 12) == $FAIL Then Return $FAIL
+	For $i = 0 To UBound($minotaurs) - 1
+		If MoveAggroAndKillInRange($minotaurs[$i][0], $minotaurs[$i][1], $minotaurs[$i][2]) == $FAIL Then Return $FAIL
+	Next
 	Return $SUCCESS
 EndFunc

@@ -270,7 +270,9 @@ Func VanquishFerndale()
 		[5427, 10834, 'Dredge Patrol 56', 2 * $RANGE_COMPASS] _
 	]
 
-	If MoveAggroAndKillGroups($foes, 1, UBound($foes)) == $FAIL Then Return $FAIL
+	For $i = 0 To UBound($foes) - 1
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
 		Return $FAIL

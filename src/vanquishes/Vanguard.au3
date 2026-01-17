@@ -187,43 +187,57 @@ Func VanquishDaladaUplands()
 	Dialog(0x84)
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 1, 10) == $FAIL Then Return $FAIL
+	For $i = 0 To 9
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(5816, 11687))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 11, 27) == $FAIL Then Return $FAIL
+	For $i = 10 To 26
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(8565, -3974))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 28, 41) == $FAIL Then Return $FAIL
+	For $i = 27 To 40
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(14891, -18146))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 42, 47) == $FAIL Then Return $FAIL
+	For $i = 41 To 46
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-4014, -11504))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 48, 61) == $FAIL Then Return $FAIL
+	For $i = 47 To 60
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-17546, 341))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 62, 84) == $FAIL Then Return $FAIL
+	For $i = 61 To 83
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-2659, 464))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 85, 93) == $FAIL Then Return $FAIL
+	For $i = 84 To 92
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')

@@ -31,7 +31,7 @@ Global Const $LIGHTBRINGER_FARM_INFORMATIONS = 'For best results, have :' & @CRL
 	& '- use low level heroes to level them up' & @CRLF _
 	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
 	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
-Global Const $LIGHTBRINGER_FARM_DURATION = 25 * 60 * 1000
+Global Const $LIGHTBRINGER_FARM_DURATION = 18 * 60 * 1000
 
 ; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
 Global Const $WEAPON_ATTACK_TIME = 1700
@@ -81,8 +81,8 @@ Func GoToTheSulfurousWastes()
 	While GetMapID() <> $ID_THE_SULFUROUS_WASTES
 		Info('Moving to the Sulfurous Wastes')
 		MoveTo(1527, -4114)
-		Move(1970, -4353)
-		RandomSleep(1000)
+		Move(2200, -4900)
+		RandomSleep(1500)
 		WaitMapLoading($ID_THE_SULFUROUS_WASTES, 10000, 4000)
 	WEnd
 EndFunc
@@ -143,14 +143,16 @@ Func FarmTheSulfurousWastes()
 		[-18000, -13100, 'Margonite Boss Group'] _
 	]
 
-	If DoForArrayRows($foes, 1, 4, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
+	For $i = 0 To 3
+		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 	SpeedTeam()
 	MoveTo(-7500, 11925)
 	SpeedTeam()
 	MoveTo(-9800, 12400)
 	SpeedTeam()
 	MoveTo(-13000, 9500)
-	If DoForArrayRows($foes, 5, 5, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
+	If MoveToAndAggroWithJunundu($foes[4][0], $foes[4][1], $foes[4][2]) == $FAIL Then Return $FAIL
 
 	Info('Taking Lightbringer Margonite Blessing')
 	SpeedTeam()
@@ -160,7 +162,9 @@ Func FarmTheSulfurousWastes()
 	Dialog(0x85)
 	RandomSleep(1000)
 
-	If DoForArrayRows($foes, 6, 19, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
+	For $i = 5 To 18
+		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Picking Up Tome')
 	SpeedTeam()
@@ -172,7 +176,9 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If DoForArrayRows($foes, 20, 29, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
+	For $i = 19 To 28
+		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) <> $SUCCESS Then Return $FAIL
+	Next
 
 	Info('Spawning Margonite bosses')
 	SpeedTeam()
@@ -187,7 +193,7 @@ Func FarmTheSulfurousWastes()
 	DropBundle()
 	RandomSleep(1000)
 
-	If DoForArrayRows($foes, 30, 30, MoveToAndAggroWithJunundu) == $FAIL Then Return $FAIL
+	If MoveToAndAggroWithJunundu($foes[29][0], $foes[29][1], $foes[29][2]) <> $SUCCESS Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 

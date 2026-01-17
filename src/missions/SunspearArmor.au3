@@ -123,13 +123,19 @@ Func SunspearArmorClean()
 		[-19880, 4086, 'Lord 5'] _
 	]
 
-	If MoveAggroAndKillGroups($foes, 1, 7) == $FAIL Then Return $FAIL
+	For $i = 0 To 6
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 	Info('Bridge 1')
-	If MoveAggroAndKillGroups($foes, 8, 8) == $FAIL Then Return $FAIL
+	If MoveAggroAndKillInRange($foes[7][0], $foes[7][1], $foes[7][2]) == $FAIL Then Return $FAIL
 	Info('Bridge 2')
-	If MoveAggroAndKillGroups($foes, 9, 25) == $FAIL Then Return $FAIL
+	For $i = 8 To 24
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 	Info('2nd portal')
-	If MoveAggroAndKillGroups($foes, 26, 33) == $FAIL Then Return $FAIL
+	For $i = 25 To 32
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	RandomSleep(500)
 	Return $SUCCESS

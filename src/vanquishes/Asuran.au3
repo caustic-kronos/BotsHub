@@ -175,43 +175,57 @@ Func VanquishMagusStones()
 	Dialog(0x84)
 	RandomSleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 1, 9) == $FAIL Then Return $FAIL
+	For $i = 0 To 8
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoNearestNPCToCoords(18409, -8474)
 	RandomSleep(2000)
 
-	If MoveAggroAndKillGroups($foes, 10, 26) == $FAIL Then Return $FAIL
+	For $i = 9 To 25
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoNearestNPCToCoords(-10109, -17520)
 	RandomSleep(2000)
 
-	If MoveAggroAndKillGroups($foes, 27, 41) == $FAIL Then Return $FAIL
+	For $i = 26 To 40
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoNearestNPCToCoords(-19292, 8994)
 	RandomSleep(2000)
 
-	If MoveAggroAndKillGroups($foes, 42, 56) == $FAIL Then Return $FAIL
+	For $i = 41 To 55
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoNearestNPCToCoords(-2037, 10758)
 	RandomSleep(2000)
 
-	If MoveAggroAndKillGroups($foes, 57, 68) == $FAIL Then Return $FAIL
+	For $i = 56 To 67
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoNearestNPCToCoords(4893, 445)
 	RandomSleep(2000)
 
-	If MoveAggroAndKillGroups($foes, 69, 80) == $FAIL Then Return $FAIL
+	For $i = 68 To 79
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoNearestNPCToCoords(-9231, -2629)
 	RandomSleep(3000)
 
-	If MoveAggroAndKillGroups($foes, 81, 83) == $FAIL Then Return $FAIL
+	For $i = 80 To 82
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')

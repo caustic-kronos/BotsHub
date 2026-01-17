@@ -887,18 +887,6 @@ Func WaitAndFightEnemiesInArea($options = $default_moveaggroandkill_options)
 EndFunc
 
 
-;~ Move, aggro and vanquish groups of mobs specified in 2D $foes array
-;~ 2D $foes array should have 3 elements/columns in each row: x coordinate, y coordinate and group name.
-;~ Optionally 2D $foes array can have 4th element/column for each row: range in which group should be aggroed
-;~ $firstGroup and $lastGroup specify start and end of range of groups within provided array to vanquish
-;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func MoveAggroAndKillGroups($foes, $firstGroup, $lastGroup)
-	If IsPlayerAndPartyWiped() Then Return $FAIL
-	If UBound($foes, $UBOUND_COLUMNS) <> 3 And UBound($foes, $UBOUND_COLUMNS) <> 4 Then Return $FAIL
-	Return DoForArrayRows($foes, $firstGroup, $lastGroup, MoveAggroAndKillInRange)
-EndFunc
-
-
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
 Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $default_flagmoveaggroandkill_options)
@@ -1785,32 +1773,6 @@ Func MapFromArrays($keys, $values)
 		$map[$keys[$i]] = $values[$i]
 	Next
 	Return $map
-EndFunc
-
-
-;~ Do an operation on selected rows of 2D array. Available number of columns for array are 2, 3, 4, 5
-;~ $firstIndex and $lastIndex specify start and end of range of rows of 2D array on which $function should be performed
-;~ Return $FAIL if operation failed on any row, $SUCCESS if operation succeded for all rows od 2D array
-Func DoForArrayRows($array, $firstIndex, $lastIndex, $function)
-	If Not IsArray($array) Or UBound($array, $UBOUND_DIMENSIONS) <> 2 Then Return $FAIL
-	If UBound($array, $UBOUND_COLUMNS) <> 2 And UBound($array, $UBOUND_COLUMNS) <> 3 And UBound($array, $UBOUND_COLUMNS) <> 4 And UBound($array, $UBOUND_COLUMNS) <> 5 Then Return $FAIL
-	If $firstIndex < 1 Or UBound($array) < $lastIndex Then Return $FAIL
-	If $firstIndex > $lastIndex Then Return $FAIL
-	Local $result = $SUCCESS
-	; Caution, array rows are indexed from 1, but $array is indexed from 0
-	For $i = $firstIndex - 1 To $lastIndex - 1
-		If UBound($array, $UBOUND_COLUMNS) == 2 Then
-			$result = $function($array[$i][0], $array[$i][1])
-		ElseIf UBound($array, $UBOUND_COLUMNS) == 3 Then
-			$result = $function($array[$i][0], $array[$i][1], $array[$i][2])
-		ElseIf UBound($array, $UBOUND_COLUMNS) == 4 Then
-			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3])
-		ElseIf UBound($array, $UBOUND_COLUMNS) == 5 Then
-			$result = $function($array[$i][0], $array[$i][1], $array[$i][2], $array[$i][3], $array[$i][4])
-		EndIf
-		If $result <> $SUCCESS Then Return $result
-	Next
-	Return $SUCCESS
 EndFunc
 
 

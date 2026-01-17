@@ -111,8 +111,10 @@ Func FarmMirrorOfLyss()
 		[12932, 6907, 'Group 9/10'], _
 		[12956, 2637, 'Group 10/10'] _
 	]
+	For $i = 0 To UBound($foes) - 1
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	Next
 
-	If MoveAggroAndKillGroups($foes, 1, UBound($foes)) == $FAIL Then Return $FAIL
 	Info('Groups are destroyed, resigning and doing it again')
 	Return $SUCCESS
 EndFunc

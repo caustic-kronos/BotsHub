@@ -152,61 +152,81 @@ Func VanquishVarajarFells()
 	Dialog(0x84)
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 1, 6) == $FAIL Then Return $FAIL
+	For $i = 0 To 5
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-25274, -11970))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 7, 11) == $FAIL Then Return $FAIL
+	For $i = 6 To 10
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-12071, -4274))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 12, 16) == $FAIL Then Return $FAIL
+	For $i = 11 To 15
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-11282, 5466))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 17, 19) == $FAIL Then Return $FAIL
+	For $i = 16 To 18
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-22751, 14163))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 20, 22) == $FAIL Then Return $FAIL
+	For $i = 19 To 21
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(-2290, 14879))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 23, 33) == $FAIL Then Return $FAIL
+	For $i = 22 To 32
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(24522, -6532))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 34, 40) == $FAIL Then Return $FAIL
+	For $i = 33 To 39
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(8963, 4043))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 41, 42) == $FAIL Then Return $FAIL
+	For $i = 40 To 41
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(22961, 12757))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 43, 44) == $FAIL Then Return $FAIL
+	For $i = 42 To 43
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	Info('Taking Blessing')
 	GoToNPC(GetNearestNPCToCoords(13714, 14520))
 	Sleep(1000)
 
-	If MoveAggroAndKillGroups($foes, 45, 49) == $FAIL Then Return $FAIL
+	For $i = 44 To 48
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
 
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
