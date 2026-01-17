@@ -655,7 +655,7 @@ Func AttackOrUseSkill($attackSleep, $skill1 = Null, $skill2 = Null, $skill3 = Nu
 	RandomSleep(50)
 
 	For $i = 1 To 8
-		Local $skillSlot = SafeEval('skill' & $i)
+		Local $skillSlot = Eval('skill' & $i)
 		If ($skillSlot <> Null And IsRecharged($skillSlot)) Then
 			UseSkillEx($skillSlot, $target)
 			RandomSleep(50)
