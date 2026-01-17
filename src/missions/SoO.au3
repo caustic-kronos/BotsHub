@@ -129,15 +129,9 @@ EndFunc
 
 ;~ Take quest rewards, refresh quest by entering dungeon and exiting it, then take quest again and reenter dungeon
 Func GetRewardRefreshAndTakeSoOQuest()
-	Info('Get quest reward')
 	MoveTo(11996, -17846)
-	; Doubled to secure bot
-	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12056, -17882))
-		RandomSleep(250)
-		Dialog(0x832407)
-		RandomSleep(500)
-	Next
+	Local $questNPC = GetNearestNPCToCoords(12056, -17882)
+	TakeQuestReward($questNPC, $ID_QUEST_LOST_SOULS, 0x832407)
 
 	Info('Get in dungeon to reset quest')
 	MoveTo(11177, -17683)
@@ -163,23 +157,11 @@ Func GetRewardRefreshAndTakeSoOQuest()
 	MoveTo(10218, -18864)
 	MoveTo(11177, -17683)
 	MoveTo(11996, -17846)
-
-	; Doubled to secure bot
-	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12056, -17882))
-		RandomSleep(250)
-		Dialog(0x832401)
-		RandomSleep(500)
-	Next
-
+	; after rezoning quest npc agent could have changed so getting quest npc again
+	$questNPC = GetNearestNPCToCoords(12056, -17882)
+	TakeQuest($questNPC, $ID_QUEST_LOST_SOULS, 0x832401)
 	Info('Talk to Shandra again if already had quest')
-	; Doubled to secure bot
-	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12056, -17882))
-		RandomSleep(250)
-		Dialog(0x832405)
-		RandomSleep(500)
-	Next
+	TakeQuest($questNPC, $ID_QUEST_LOST_SOULS, 0x832405)
 
 	Info('Get back in')
 	MoveTo(11177, -17683)
@@ -579,8 +561,7 @@ Func ClearSoOFloor3()
 	WEnd
 
 	Local $largerSoOAggroRange = $RANGE_SPELLCAST + 300
-	Local $questState = 999
-	While Not IsRunFailed() And $questState <> 3
+	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_LOST_SOULS)
 		If CheckStuck('SoO Floor 3 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
 
 		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $largerSoOAggroRange)
@@ -601,9 +582,6 @@ Func ClearSoOFloor3()
 		Info('Boss fight, go in and move around to make sure its aggroed')
 		FlagMoveAggroAndKillInRange(-16300, 16600, '7', $largerSoOAggroRange)
 		FlagMoveAggroAndKillInRange(-15850, 17500, '8', $largerSoOAggroRange)
-
-		$questState = DllStructGetData(GetQuestByID($ID_QUEST_LOST_SOULS), 'LogState')
-		Info('Quest state end of boss loop : ' & $questState)
 		Sleep(1000)
 	WEnd
 	If IsRunFailed() Then Return $FAIL

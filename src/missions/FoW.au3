@@ -138,23 +138,13 @@ Func TowerOfCourage()
 	WEnd
 	MoveAggroAndKill(-15500, -2000)
 
-	Info('Getting Tower of Courage quest and reward')
 	MoveTo(-15700, -1700)
-	Local $npc = GetNearestNPCToCoords(-15750, -1700)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80D401)
-	RandomSleep(750)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80D407)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
+	TakeQuest($questNPC, $ID_QUEST_TOWER_OF_COURAGE, 0x80D401)
+	TakeQuestReward($questNPC, $ID_QUEST_TOWER_OF_COURAGE, 0x80D407)
 
-	Info('Getting The Wailing Lord quest')
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CC01)
-	RandomSleep(750)
+	$questNPC = GetNearestNPCToCoords(-7400, 11950)
+	TakeQuest($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC01)
 EndFunc
 
 
@@ -166,13 +156,9 @@ Func TheGreatBattleField()
 	FlagMoveAggroAndKill(-5000, 10000, '4')
 	FlagMoveAggroAndKill(-7000, 11400, '5')
 
-	Info('Getting the Army of Darkness quest')
 	MoveTo(-7326, 11892)
-	Local $npc = GetNearestNPCToCoords(-7400, 11950)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CB01)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(-7400, 11950)
+	TakeQuest($questNPC, $ID_QUEST_ARMY_OF_DARKNESS, 0x80CB01)
 
 	Info('Getting Unholy Texts')
 	FlagMoveAggroAndKill(-1800, 14400, '1')
@@ -185,19 +171,11 @@ Func TheGreatBattleField()
 	FlagMoveAggroAndKill(-3700, 13400, '5')
 	FlagMoveAggroAndKill(-6700, 11200, '6')
 
-	Info('Getting the Army of Darkness reward')
 	MoveTo(-7300, 11900)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CB07)
-	RandomSleep(750)
+	TakeQuestReward($questNPC, $ID_QUEST_ARMY_OF_DARKNESS, 0x80CB07)
 
-	Info('Getting the Eternal Forgemaster quest')
-	MoveTo(-7400, 11700)
-	GoToNPC(GetNearestNPCToCoords(-7450, 11700))
-	RandomSleep(750)
-	Dialog(0x80D101)
-	RandomSleep(750)
+	$questNPC = GetNearestNPCToCoords(-7450, 11700)
+	TakeQuest($questNPC, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D101)
 
 	Info('Heading to Forge')
 	FlagMoveAggroAndKill(-4400, 10900, '1')
@@ -227,58 +205,25 @@ Func TheTempleOfWar()
 	MoveAggroAndKill(2500, -300, '3')
 	MoveAggroAndKill(1850, -150, '4')
 
-	Local $questState = 999
-	While Not IsRunFailed() And $questState <> 0x13
-		$questState = DllStructGetData(GetQuestByID($ID_QUEST_THE_ETERNAL_FORGEMASTER), 'LogState')
-		Info('The Eternal Forgemaster not finished yet : ' & $questState)
+	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_ETERNAL_FORGEMASTER)
+		Info('The Eternal Forgemaster quest is not finished yet')
 		Sleep(1000)
 	WEnd
 
-	Info('Getting the Eternal Forgemaster quest reward')
-	Local $npc = GetNearestNPCToCoords(1850, -200)
-	TakeQuestOrReward($npc, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D107, 0)
-
-	Info('Getting the Defend the Temple of War quest')
-	MoveTo(1850, -150)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CA01)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(1850, -200)
+	TakeQuestReward($questNPC, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D107)
+	TakeQuest($questNPC, $ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR, 0x80CA01)
 
 	Info('Waiting the defense, feeling cute, might optimise later')
 	Info('Sleeping for 480s')
 	Sleep(480000)
 
-	Info('Getting the Defend the Temple of War quest reward')
-	MoveTo(1850, -150)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CA07)
-	RandomSleep(750)
-
-	Info('Getting the Restore the Temple of War quest')
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CF03)
-	RandomSleep(750)
-	Dialog(0x80CF01)
-	RandomSleep(750)
-
-	Info('Getting the Khobay the Betrayer quest')
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80E003)
-	RandomSleep(750)
-	Dialog(0x80E001)
-	RandomSleep(750)
-
-	Info('Getting the Tower of Strength quest')
-	MoveTo(200, -1900)
-	GoToNPC(GetNearestNPCToCoords(150, -1950))
-	RandomSleep(750)
-	Dialog(0x80D301)
-	RandomSleep(750)
-	Return $SUCCESS
+	$questNPC = GetNearestNPCToCoords(1850, -150)
+	TakeQuestReward($questNPC, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80CA07)
+	TakeQuest($questNPC, $ID_QUEST_RESTORE_THE_TEMPLE_OF_WAR, 0x80CF01, 0x80CF03)
+	TakeQuest($questNPC, $ID_QUEST_KHOBAY_THE_BETRAYER, 0x80E001, 0x80E003)
+	$questNPC = GetNearestNPCToCoords(150, -1950)
+	TakeQuest($questNPC, $ID_QUEST_TOWER_OF_STRENGTH, 0x80D301)
 EndFunc
 
 
@@ -292,12 +237,8 @@ Func TheSpiderCave_and_FissureShore()
 	MoveAggroAndKill(1800, -12000, '4')
 	MoveAggroAndKill(1100, -13500, '5')
 
-	Info('Getting The Hunt quest')
-	MoveTo(3000, -14800)
-	GoToNPC(GetNearestNPCToCoords(3000, -14850))
-	RandomSleep(750)
-	Dialog(0x80D001)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(3000, -14850)
+	TakeQuest($questNPC, $ID_QUEST_THE_HUNT, 0x80D001)
 
 	KillShardWolf()
 
@@ -367,7 +308,7 @@ Func TowerOfStrengh()
 	MoveAggroAndKill(6500, -12000, '1')
 	MoveAggroAndKill(10300, -5900, '2')
 	MoveAggroAndKill(15400, -1400, '3')
-	; Entering the tower garantees the npc arrived
+	; Entering the tower guarantees that the npc arrived
 	Local $me = GetMyAgent()
 	While Not IsRunFailed() And GetDistanceToPoint($me, 16700, -1700) > $RANGE_NEARBY
 		MoveTo(16700, -1700)
@@ -385,13 +326,9 @@ Func BurningForest()
 	MoveAggroAndKill(14100, 4000, '3')
 	MoveAggroAndKill(12100, 6750, '4')
 
-	Info('Getting the Slaves of Menzies quest')
 	MoveTo(12000, 6600)
-	Local $npc = GetNearestNPCToCoords(12050, 6500)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CE01)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(12050, 6500)
+	TakeQuest($questNPC, $ID_QUEST_SLAVES_OF_MENZIES, 0x80CE01)
 
 	Info('Clearing Burning Forest')
 	FlagMoveAggroAndKill(12800, 7900, '1')
@@ -408,12 +345,8 @@ Func BurningForest()
 	FlagMoveAggroAndKill(15000, 92000, '11')
 	FlagMoveAggroAndKill(13000, 7700, '12')
 
-	Info('Getting the Slaves of Menzies quest reward')
 	MoveTo(12000, 6600)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CE07)
-	RandomSleep(750)
+	TakeQuestReward($questNPC, $ID_QUEST_SLAVES_OF_MENZIES, 0x80CE07)
 
 	Info('Heading to Forest of the Wailing Lords')
 	MoveAggroAndKill(9200, 12500, '1')
@@ -451,22 +384,18 @@ Func ForestOfTheWailingLord()
 	CommandHero(6, -19750, 13800)
 	CommandHero(7, -19900, 13600)
 
-	Local $questState = 1
-	While Not IsRunFailed() And $questState <> 19
+	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_WAILING_LORD)
 		MoveTo(-21000, 14600)
 		Sleep(3000)
 		MoveTo(-20500, 14200)
 		Sleep(17000)
-		$questState = DllStructGetData(GetQuestByID($ID_QUEST_THE_WAILING_LORD), 'LogState')
 	WEnd
 	CancelAllHeroes()
 
-	Info('Getting the Gift of Griffons quest')
 	MoveTo(-21500, 15000)
-	GoToNPC(GetNearestNPCToCoords(-21600, 15050))
-	RandomSleep(750)
-	Dialog(0x80CD01)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(-21600, 15050)
+	TakeQuest($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD01)
+
 	Return $SUCCESS
 EndFunc
 
@@ -502,18 +431,10 @@ Func GriffonRun()
 	MoveAggroAndKill(-12500, -3250, '8')
 	MoveAggroAndKill(-15750, -1750, '9')
 
-	Info('Getting the Wailing Lord and the Gift of Griffons quests rewards')
-	Local $npc = GetNearestNPCToCoords(-15750, -1700)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CC06)
-	RandomSleep(750)
-	Dialog(0x80CC07)
-	RandomSleep(750)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CD07)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
+	TakeQuestReward($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC07, 0x80CC06)
+	TakeQuestReward($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD07)
+
 	Return $SUCCESS
 EndFunc
 
@@ -535,27 +456,13 @@ Func TempleLoot()
 		PickUpItems()
 	Next
 
-	Info('Getting Restore the Temple of War and Khobay the Betrayer quests rewards')
-	Local $npc = GetNearestNPCToCoords(1850, -200)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80CF06)
-	RandomSleep(750)
-	Dialog(0x80CF07)
-	RandomSleep(750)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80E006)
-	RandomSleep(750)
-	Dialog(0x80E007)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(1850, -200)
+	TakeQuestReward($questNPC, $ID_QUEST_RESTORE_THE_TEMPLE_OF_WAR, 0x80CF07, 0x80CF06)
+	TakeQuestReward($questNPC, $ID_QUEST_KHOBAY_THE_BETRAYER, 0x80E007, 0x80E006)
 
-	Info('Getting the Tower of Strength quest reward')
-	Local $npc = GetNearestNPCToCoords(200, -1900)
-	GoToNPC($npc)
-	RandomSleep(750)
-	Dialog(0x80D307)
-	RandomSleep(750)
+	$questNPC = GetNearestNPCToCoords(200, -1900)
+	TakeQuestReward($questNPC, $ID_QUEST_TOWER_OF_STRENGTH, 0x80D307)
+
 	Return $SUCCESS
 EndFunc
 

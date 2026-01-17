@@ -320,10 +320,8 @@ Func ClearTheChamberUnderworld()
 	MoveAggroAndKill(910, 7115)
 	MoveTo(378, 7209)
 
-	Info('Taking ''Clear the Chamber'' Quest')
 	Local $lostSoul = GetNearestNPCToCoords(246, 7177)
-	GoToNPC($lostSoul)
-	Dialog(0x0806501)
+	TakeQuest($lostSoul, $ID_QUEST_CLEAR_THE_CHAMBER, 0x0806501)
 
 	; bottem left stairs
 	MoveAggroAndKill(187, 6606)
