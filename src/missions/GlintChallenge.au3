@@ -36,7 +36,7 @@ Global Const $GLINT_CHALLENGE_INFORMATIONS = 'Brotherhood armor farm in Glint''s
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Glint%27s_Challenge_Farm'
 ; Average duration ~ 20m
 Global Const $GLINT_CHALLENGE_DURATION = 20 * 60 * 1000
-Global Const $MAX_GLINT_CHALLENGE_DURATION = 40 * 60 * 1000
+Global Const $MAX_GLINT_CHALLENGE_DURATION = 30 * 60 * 1000
 
 Global Const $GLINT_MESMER_SKILLBAR_OPTIONAL = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
 Global Const $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR = 'OACjAyhDJPYTnp17xFOtmFsLG'
@@ -162,12 +162,27 @@ Func GlintChallenge()
 	Info('Defending baby dragon')
 	Sleep(5000)
 
+	; Variables used to detect pathological situation in which single foes might be stuck in eternal combat loop with dwarcen npcs far from baby dragon and the team
+	Local $glitchTimer, $glitchTimerStarted = False
 	; fight until team or baby dragon dead or until Brotherhood chest spawns
 	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) And Not IsBrotherhoodChestSpawned()
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
-		Sleep(10000)
+		Sleep(5000)
 		KillFoesInArea($glint_challenge_fight_options)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
+		If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS) <= 3 Then
+			If Not $glitchTimerStarted Then
+				$glitchTimer = TimerInit()
+				$glitchTimerStarted = True
+			EndIf
+			If TimerDiff($glitchTimer) > 120000 Then ; 2 minutes max for detection of pathological situation
+				; in case pathological situation happened, make a full sweep with team around baby dragon's location
+				SweepAroundBabyDragonLocation()
+				$glitchTimerStarted = False
+			EndIf
+		Else
+			$glitchTimerStarted = False
+		EndIf
 		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 	WEnd
 
@@ -205,6 +220,16 @@ Func WalkToSpotGlintChallenge()
 	CommandHero($GLINT_HERO_MESMER_PANIC, -3960, 216)
 	CommandHero($GLINT_HERO_MESMER_INEPTITUDE_1, -4065, 310)
 	CommandHero($GLINT_HERO_MESMER_INEPTITUDE_2, -3912, -14)
+EndFunc
+
+
+Func SweepAroundBabyDragonLocation()
+	CancelAllHeroes()
+	MoveAggroAndKill(-3710, -637)
+	MoveAggroAndKill(-3020, 20)
+	MoveAggroAndKill(-3650, 775)
+	MoveAggroAndKill(-4680, 775)
+	WalkToSpotGlintChallenge()
 EndFunc
 
 
