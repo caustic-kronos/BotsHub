@@ -34,7 +34,8 @@ To use it:
 ## Existing Bots
 ### Farms
 - Raptors farm (festive items, golds, materials, Asura points)
-- Vaettirs farm (festive items, golds, materials, Norn points)
+- Vaettirs farm (festive items, golds, materials, Norn points, mesmer tomes)
+- Cathedral of Flames Cryptos farm (Rin Relics, Diessa Chalices, bones)
 - Jaya Bluffs Sensali farm (feathers, bones)
 - Drazach Thicket DragonMoss farm (Fibers, Gothic Defender, Echovald shield, Ornate shield)
 - Wajjun Bazaar mantids farm (celestial weapons, chitin, dust)
@@ -67,7 +68,7 @@ To use it:
 - DoA farm (Gemstones, gold items)
 - City of Torc'qua farm (Margonite Gemstones)
 - Ravenheart Gloom farm (Torment Gemstones)
-- Stygian Veil farm (Stygian Gemstones)
+- Stygian Veil farm (Stygian Gemstones, gold items, warrior/necro tomes)
 - Underworld farm (Globs of Ectoplasm, gold items)
 ### Chest runs
 - Boreal chest run (glacial blades)
@@ -149,7 +150,6 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💡🛠️ **Fix Spirit Slaves farm**
 - 💡🛠️ **Fix R trapper Stygian farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 🧠💭 **Cathedral of Flames farm bot (bones, Diessa Chalices, Rin Relics)** - 2 requests
 - 🧠💭 **Deldrimor title bot** - 2 requests
 - 🧠💭 **Kilroy bot (q8, survivor title)** - 1 request
 - 🧠💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request

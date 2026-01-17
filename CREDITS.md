@@ -32,6 +32,12 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 - Notes: Major modifications were made.
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
 
+### 'CoF.au3'
+- Author: DeeperBlue, unknown
+- Contributor: Gahais
+- Notes: Major modifications were made.
+- License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
+
 ### 'Feathers.au3'
 - Author: Blake777
 - Contributors: Kronos, Gahais
