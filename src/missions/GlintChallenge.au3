@@ -104,7 +104,7 @@ EndFunc
 Func SetupTeamGlintChallengeFarm()
 	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
 
-	Info('Setting up recommended team build skill bars automatically ignoring GUI settings')
+	Info('Setting up using recommended team build')
 	LeaveParty()
 	RandomSleep(500)
 	AddHero($ID_XANDRA)

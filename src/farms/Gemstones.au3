@@ -128,14 +128,13 @@ EndFunc
 
 
 Func SetupPlayerGemstonesFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_MESMER Then
-		Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
-		LoadSkillTemplate($GEMSTONES_MESMER_SKILLBAR)
-	Else
-		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) <> $GUI_CHECKED Then
+		If DllStructGetData(GetMyAgent(), 'Primary') == $ID_MESMER Then
+			Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
+			LoadSkillTemplate($GEMSTONES_MESMER_SKILLBAR)
+		Else
+			Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+		EndIf
 	EndIf
 	RandomSleep(250)
 EndFunc
