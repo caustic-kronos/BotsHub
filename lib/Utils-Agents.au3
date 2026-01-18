@@ -639,7 +639,7 @@ EndFunc
 
 
 ;~ Returns the nearest agent to specified target agent. $agentFilter is a function which returns True for the agents that should be considered, False for those to skip
-Func GetNearestAgentToAgent($targetAgent, $agentType = 0, $agentFilter = Null)
+Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $agentFilter = Null)
 	Local $nearestAgent = Null, $distance = Null, $nearestDistance = 100000000
 	Local $agents = GetAgentArray($agentType)
 	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')

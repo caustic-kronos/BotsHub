@@ -36,7 +36,7 @@ Global Const $GLINT_CHALLENGE_INFORMATIONS = 'Brotherhood armor farm in Glint''s
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Glint%27s_Challenge_Farm'
 ; Average duration ~ 20m
 Global Const $GLINT_CHALLENGE_DURATION = 20 * 60 * 1000
-Global Const $MAX_GLINT_CHALLENGE_DURATION = 40 * 60 * 1000
+Global Const $MAX_GLINT_CHALLENGE_DURATION = 30 * 60 * 1000
 
 Global Const $GLINT_MESMER_SKILLBAR_OPTIONAL = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
 Global Const $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR = 'OACjAyhDJPYTnp17xFOtmFsLG'
@@ -94,7 +94,6 @@ Func GlintChallengeSetup()
 	TravelToOutpost($ID_CENTRAL_TRANSFER_CHAMBER, $district_name)
 	SetDisplayedTitle($ID_DWARF_TITLE)
 	SwitchMode($ID_NORMAL_MODE)
-	TrySetupPlayerUsingGUISettings()
 	If SetupTeamGlintChallengeFarm() == $FAIL Then Return $FAIL
 	$glint_challenge_setup = True
 	Info('Preparations complete')
@@ -103,7 +102,9 @@ EndFunc
 
 
 Func SetupTeamGlintChallengeFarm()
-	Info('Setting up recommended team build skill bars automatically ignoring GUI settings')
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+
+	Info('Setting up using recommended team build')
 	LeaveParty()
 	RandomSleep(500)
 	AddHero($ID_XANDRA)
@@ -162,16 +163,31 @@ Func GlintChallenge()
 	Info('Defending baby dragon')
 	Sleep(5000)
 
-	; fight until team or baby dragon dead or until Brotherhood chest spawns
-	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) And Not IsBrotherhoodChestSpawned()
+	; Variables used to detect pathological situation in which single foes might be stuck in eternal combat loop with dwarven npcs far from baby dragon and the team
+	Local $glitchTimer, $glitchTimerStarted = False
+	; fight until Brotherhood chest spawns or until team or baby dragon is dead
+	While Not IsBrotherhoodChestSpawned()
+		If IsPlayerAndPartyWiped() Then Return $FAIL
+		If GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
-		Sleep(10000)
+		Sleep(5000)
 		KillFoesInArea($glint_challenge_fight_options)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
+		If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS) <= 3 Then
+			If Not $glitchTimerStarted Then
+				$glitchTimer = TimerInit()
+				$glitchTimerStarted = True
+			ElseIf TimerDiff($glitchTimer) > 150000 Then ; 2,5 minutes max time for detection of pathological situation
+				; in case pathological situation happened, make a full sweep with team around baby dragon's location
+				SweepAroundBabyDragonLocation()
+				$glitchTimerStarted = False
+			EndIf
+		Else
+			$glitchTimerStarted = False
+		EndIf
 		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 	WEnd
 
-	If IsPlayerAndPartyWiped() Or GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 	CancelAllHeroes()
 
 	Info('Looting Chest of the Brotherhood')
@@ -205,6 +221,16 @@ Func WalkToSpotGlintChallenge()
 	CommandHero($GLINT_HERO_MESMER_PANIC, -3960, 216)
 	CommandHero($GLINT_HERO_MESMER_INEPTITUDE_1, -4065, 310)
 	CommandHero($GLINT_HERO_MESMER_INEPTITUDE_2, -3912, -14)
+EndFunc
+
+
+Func SweepAroundBabyDragonLocation()
+	CancelAllHeroes()
+	MoveAggroAndKill(-3710, -635)
+	MoveAggroAndKill(-3020, 20)
+	MoveAggroAndKill(-3650, 775)
+	MoveAggroAndKill(-4680, 775)
+	WalkToSpotGlintChallenge()
 EndFunc
 
 

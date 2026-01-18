@@ -21,9 +21,9 @@
 
 
 #Region MapTypes
-Global Const $ID_Outpost	= 0
-Global Const $ID_Explorable	= 1
-Global Const $ID_Loading	= 2
+Global Const $ID_OUTPOST	= 0
+Global Const $ID_EXPLORABLE	= 1
+Global Const $ID_LOADING	= 2
 #EndRegion MapTypes
 
 

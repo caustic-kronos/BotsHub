@@ -119,6 +119,8 @@ EndFunc
 
 
 Func SetupTeamJadeBrotherhoodFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+
 	Info('Setting up team')
 	LeaveParty()
 	RandomSleep(500)

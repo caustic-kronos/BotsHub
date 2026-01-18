@@ -39,6 +39,7 @@
 #include 'lib/Utils-Debugger.au3'
 #include 'lib/BotsHub-GUI.au3'
 
+#include 'src/farms/CoF.au3'
 #include 'src/farms/Corsairs.au3'
 #include 'src/farms/DragonMoss.au3'
 #include 'src/farms/EdenIris.au3'
@@ -91,7 +92,7 @@ Global Const $FAIL = 1
 Global Const $PAUSE = 2
 Global Const $STUCK = 3
 
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global Const $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -214,10 +215,19 @@ Func BotHubLoop()
 EndFunc
 
 
-; TODO: add team setup here
-;~ Setup executed for all farms - setup weapon slots
+;~ Setup executed for all farms - setup weapon slots, player and team builds if provided
 Func GeneralFarmSetup()
-	TrySetupWeaponSlotUsingGUISettings()
+	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
+		Info('Setting player weapon slot to ' & $default_weapon_slot & ' according to GUI settings')
+		ChangeWeaponSet($default_weapon_slot)
+		RandomSleep(250)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		; Need to be in an outpost to change team and builds
+		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
+		SetupPlayerUsingGUISettings()
+		SetupTeamUsingGUISettings()
+	EndIf
 	$global_farm_setup = True
 EndFunc
 
@@ -241,6 +251,9 @@ Func RunFarmLoop($Farm)
 		Case 'Boreal'
 			$inventory_space_needed = 5
 			$result = BorealChestFarm()
+		Case 'CoF'
+			$inventory_space_needed = 5
+			$result = CoFFarm()
 		Case 'Corsairs'
 			$inventory_space_needed = 5
 			$result = CorsairsFarm()
@@ -438,6 +451,7 @@ Func ResetBotsSetups()
 	$vaettirs_farm_setup					= False
 	; Those don't need to be reset - party didn't change, build didn't change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
+	;$cof_farm_setup						= False
 	;$corsairs_farm_setup					= False
 	;$follower_setup						= False
 	;$fow_farm_setup						= False
@@ -481,6 +495,9 @@ Func UpdateFarmDescription($Farm)
 				$BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $BOREAL_CHESTRUN_INFORMATIONS)
+		Case 'CoF'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $D_COF_SKILLBAR)
+			GUICtrlSetData($GUI_Label_FarmInformations, $COF_FARM_INFORMATIONS)
 		Case 'Corsairs'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
@@ -913,6 +930,8 @@ Func SelectFarmDuration($Farm)
 			Return $ASURAN_FARM_DURATION
 		Case 'Boreal'
 			Return $BOREAL_FARM_DURATION
+		Case 'CoF'
+			Return $COF_FARM_DURATION
 		Case 'Corsairs'
 			Return $CORSAIRS_FARM_DURATION
 		Case 'Dragon Moss'

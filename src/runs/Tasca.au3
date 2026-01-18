@@ -130,13 +130,10 @@ EndFunc
 
 
 Func SetupTeamTascaChestFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		TrySetupTeamUsingGUISettings()
-	Else
-		Info('Setting up team according to default settings')
-		OmniFarmFullSetup()
-	EndIf
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return True
+
+	Info('Setting up team according to default settings')
+	OmniFarmFullSetup()
 	RandomSleep(500)
 	If GetPartySize() <> 8 Then
 		Warn('Could not set up party correctly. Team size different than 8')

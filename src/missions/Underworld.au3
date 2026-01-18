@@ -74,8 +74,6 @@ Func SetupUnderworldFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
 	SwitchToHardModeIfEnabled()
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	$uw_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

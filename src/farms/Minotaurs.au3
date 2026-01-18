@@ -55,8 +55,10 @@ Func SetupMinotaursFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_AUGURY_ROCK, $district_name)
 	SwitchToHardModeIfEnabled()
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings($ID_TEAM_SIZE_MEDIUM)
+	If GetPartySize() <> $ID_TEAM_SIZE_MEDIUM Then
+		Error('Party not set up correctly. Team size different than ' & $ID_TEAM_SIZE_MEDIUM)
+		Return $FAIL
+	EndIf
 	$minotaurs_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

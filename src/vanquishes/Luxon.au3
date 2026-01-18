@@ -110,11 +110,7 @@ EndFunc
 Func LuxonFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
-
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	SwitchMode($ID_HARD_MODE)
-
 	$luxon_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

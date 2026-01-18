@@ -309,51 +309,56 @@ Func CreateGUI()
 	$GUI_Tab_TeamOptions = GUICtrlCreateTabItem('Team')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 	$GUI_Group_TeamOptions = GUICtrlCreateGroup('Team options', 21, 39, 604, 401)
-	$GUI_Checkbox_AutomaticTeamSetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 65)
+	$GUI_TeamLabel = GUICtrlCreateLabel( _
+		'Warning: enabling team setup overrides all bots team setup. Make sure your heroes have:' & @CRLF & _
+		'- correct build' & @CRLF & _
+		'- correct order' & @CRLF & _
+		'- correct behaviour (passive/aggressive)' & @CRLF & _
+		'If party size is 4 or 6, last heroes just won''t be added to party.', 40, 70)
+	$GUI_Checkbox_AutomaticTeamSetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 140)
 	GUICtrlSetOnEvent($GUI_Checkbox_AutomaticTeamSetup, 'GuiButtonHandler')
-	$GUI_TeamLabel = GUICtrlCreateLabel('Below settings can be applied to some farms like vanquish that don''t have restrictions on used build templates' & @CRLF _
-		& 'If party size is 4 or 6 then last heroes just won''t be added to party', 31, 100)
-	$GUI_TeamMemberLabel = GUICtrlCreateLabel('Team member', 147, 140, 100, 20)
-	$GUI_TeamMemberBuildLabel = GUICtrlCreateLabel('Team member build', 445, 140, 100, 20)
 
-	$GUI_Label_Player = GUICtrlCreateLabel('Player', 125, 167, 114, 20, BitOR($SS_CENTER, $SS_CENTERIMAGE))
-	$GUI_Input_Build_Player = GUICtrlCreateInput('', 375, 167, 236, 20)
+	$GUI_TeamMemberLabel = GUICtrlCreateLabel('Team member', 147, 170, 100, 20)
+	$GUI_TeamMemberBuildLabel = GUICtrlCreateLabel('Team member build', 445, 170, 100, 20)
+
+	$GUI_Label_Player = GUICtrlCreateLabel('Player', 125, 197, 114, 20, BitOR($SS_CENTER, $SS_CENTERIMAGE))
+	$GUI_Input_Build_Player = GUICtrlCreateInput('', 375, 197, 236, 20)
 	GUICtrlSetBkColor($GUI_Label_Player, 0xFFFFFF)
-	$GUI_Label_Hero_1 = GUICtrlCreateLabel('Selected Hero 1:', 31, 200, 100, 20)
-	$GUI_Combo_Hero_1 = GUICtrlCreateCombo('Master of Whispers', 125, 197, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Hero_1 = GUICtrlCreateLabel('Selected Hero 1:', 31, 230, 100, 20)
+	$GUI_Combo_Hero_1 = GUICtrlCreateCombo('Master of Whispers', 125, 227, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_1, $AVAILABLE_HEROES, 'Master of Whispers')
-	$GUI_Label_Build_Hero_1 = GUICtrlCreateLabel('Hero 1 Build Template:', 254, 200, 120, 20)
-	$GUI_Input_Build_Hero_1 = GUICtrlCreateInput('OAljUwGopSUBHVyBoBVVbh4B1YA', 375, 197, 236, 20)
-	$GUI_Label_Hero_2 = GUICtrlCreateLabel('Selected Hero 2:', 31, 230, 100, 20)
-	$GUI_Combo_Hero_2 = GUICtrlCreateCombo('Livia', 125, 227, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Build_Hero_1 = GUICtrlCreateLabel('Hero 1 Build Template:', 254, 230, 120, 20)
+	$GUI_Input_Build_Hero_1 = GUICtrlCreateInput('OAljUwGopSUBHVyBoBVVbh4B1YA', 375, 227, 236, 20)
+	$GUI_Label_Hero_2 = GUICtrlCreateLabel('Selected Hero 2:', 31, 260, 100, 20)
+	$GUI_Combo_Hero_2 = GUICtrlCreateCombo('Livia', 125, 257, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_2, $AVAILABLE_HEROES, 'Livia')
-	$GUI_Label_Build_Hero_2 = GUICtrlCreateLabel('Hero 2 Build Template:', 254, 230, 120, 20)
-	$GUI_Input_Build_Hero_2 = GUICtrlCreateInput('OAhjQoGYIP3hhWVVaO5EeDzxJ', 375, 227, 236, 20)
-	$GUI_Label_Hero_3 = GUICtrlCreateLabel('Selected Hero 3:', 31, 260, 100, 20)
-	$GUI_Combo_Hero_3 = GUICtrlCreateCombo('Gwen', 125, 257, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Build_Hero_2 = GUICtrlCreateLabel('Hero 2 Build Template:', 254, 260, 120, 20)
+	$GUI_Input_Build_Hero_2 = GUICtrlCreateInput('OAhjQoGYIP3hhWVVaO5EeDzxJ', 375, 257, 236, 20)
+	$GUI_Label_Hero_3 = GUICtrlCreateLabel('Selected Hero 3:', 31, 290, 100, 20)
+	$GUI_Combo_Hero_3 = GUICtrlCreateCombo('Gwen', 125, 287, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_3, $AVAILABLE_HEROES, 'Gwen')
-	$GUI_Label_Build_Hero_3 = GUICtrlCreateLabel('Hero 3 Build Template:', 254, 260, 120, 20)
-	$GUI_Input_Build_Hero_3 = GUICtrlCreateInput('OQNEAqwD2ycC0AmupXOIDQEQj', 375, 257, 236, 20)
-	$GUI_Label_Hero_4 = GUICtrlCreateLabel('Selected Hero 4:', 31, 290, 100, 20)
-	$GUI_Combo_Hero_4 = GUICtrlCreateCombo('Olias', 125, 287, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Build_Hero_3 = GUICtrlCreateLabel('Hero 3 Build Template:', 254, 290, 120, 20)
+	$GUI_Input_Build_Hero_3 = GUICtrlCreateInput('OQNEAqwD2ycC0AmupXOIDQEQj', 375, 287, 236, 20)
+	$GUI_Label_Hero_4 = GUICtrlCreateLabel('Selected Hero 4:', 31, 320, 100, 20)
+	$GUI_Combo_Hero_4 = GUICtrlCreateCombo('Olias', 125, 317, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_4, $AVAILABLE_HEROES, 'Olias')
-	$GUI_Label_Build_Hero_4 = GUICtrlCreateLabel('Hero 4 Build Template:', 254, 290, 120, 20)
-	$GUI_Input_Build_Hero_4 = GUICtrlCreateInput('OAhjUwGYoSUBHVoBbhVVWbTODTA', 375, 287, 236, 20)
-	$GUI_Label_Hero_5 = GUICtrlCreateLabel('Selected Hero 5:', 31, 320, 100, 20)
-	$GUI_Combo_Hero_5 = GUICtrlCreateCombo('Norgu', 125, 317, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Build_Hero_4 = GUICtrlCreateLabel('Hero 4 Build Template:', 254, 320, 120, 20)
+	$GUI_Input_Build_Hero_4 = GUICtrlCreateInput('OAhjUwGYoSUBHVoBbhVVWbTODTA', 375, 317, 236, 20)
+	$GUI_Label_Hero_5 = GUICtrlCreateLabel('Selected Hero 5:', 31, 350, 100, 20)
+	$GUI_Combo_Hero_5 = GUICtrlCreateCombo('Norgu', 125, 347, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_5, $AVAILABLE_HEROES, 'Norgu')
-	$GUI_Label_Build_Hero_5 = GUICtrlCreateLabel('Hero 5 Build Template:', 254, 320, 120, 20)
-	$GUI_Input_Build_Hero_5 = GUICtrlCreateInput('OQNEAqwD2ycCwpmupXOIDcBQj', 375, 317, 236, 20)
-	$GUI_Label_Hero_6 = GUICtrlCreateLabel('Selected Hero 6:', 31, 350, 100, 20)
-	$GUI_Combo_Hero_6 = GUICtrlCreateCombo('Xandra', 125, 347, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Build_Hero_5 = GUICtrlCreateLabel('Hero 5 Build Template:', 254, 350, 120, 20)
+	$GUI_Input_Build_Hero_5 = GUICtrlCreateInput('OQNEAqwD2ycCwpmupXOIDcBQj', 375, 347, 236, 20)
+	$GUI_Label_Hero_6 = GUICtrlCreateLabel('Selected Hero 6:', 31, 380, 100, 20)
+	$GUI_Combo_Hero_6 = GUICtrlCreateCombo('Xandra', 125, 377, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_6, $AVAILABLE_HEROES, 'Xandra')
-	$GUI_Label_Build_Hero_6 = GUICtrlCreateLabel('Hero 6 Build Template:', 254, 350, 120, 20)
-	$GUI_Input_Build_Hero_6 = GUICtrlCreateInput('OACiAyk8gNtePuwJ00ZOPLYA', 375, 347, 236, 20)
-	$GUI_Label_Hero_7 = GUICtrlCreateLabel('Selected Hero 7:', 31, 380, 100, 20)
-	$GUI_Combo_Hero_7 = GUICtrlCreateCombo('Razah', 125, 377, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Label_Build_Hero_6 = GUICtrlCreateLabel('Hero 6 Build Template:', 254, 380, 120, 20)
+	$GUI_Input_Build_Hero_6 = GUICtrlCreateInput('OACiAyk8gNtePuwJ00ZOPLYA', 375, 377, 236, 20)
+	$GUI_Label_Hero_7 = GUICtrlCreateLabel('Selected Hero 7:', 31, 410, 100, 20)
+	$GUI_Combo_Hero_7 = GUICtrlCreateCombo('Razah', 125, 407, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_7, $AVAILABLE_HEROES, 'Razah')
-	$GUI_Label_Build_Hero_7 = GUICtrlCreateLabel('Hero 7 Build Template:', 254, 380, 120, 20)
-	$GUI_Input_Build_Hero_7 = GUICtrlCreateInput('OQNEAqwD2ycCaCmupXOIDMEQj', 375, 377, 236, 20)
+	$GUI_Label_Build_Hero_7 = GUICtrlCreateLabel('Hero 7 Build Template:', 254, 410, 120, 20)
+	$GUI_Input_Build_Hero_7 = GUICtrlCreateInput('OQNEAqwD2ycCaCmupXOIDMEQj', 375, 407, 236, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
@@ -1228,56 +1233,32 @@ Func SwitchToHardModeIfEnabled()
 EndFunc
 
 
-Func TrySetupWeaponSlotUsingGUISettings()
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $default_weapon_slot & ' according to GUI settings')
-		ChangeWeaponSet($default_weapon_slot)
-		RandomSleep(250)
-	Else
-		Debug('Automatic player weapon slot setting is disabled. Assuming that player sets weapon slot manually')
-	EndIf
+;~ Setup player build from GUI settings
+Func SetupPlayerUsingGUISettings()
+	Info('Setting up player build skill bar according to GUI settings')
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+	RandomSleep(250)
 EndFunc
 
 
-Func TrySetupPlayerUsingGUISettings()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-		RandomSleep(250)
-	Else
-		Debug('Automatic player build setup is disabled. Assuming that player build is set up manually')
-	EndIf
-EndFunc
-
-
-Func TrySetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		LeaveParty()
-		RandomSleep(500)
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_1)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_2)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_3)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_4)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_5)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_6)])
-		AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_7)])
-		RandomSleep(500)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
-	Else
-		Info('Automatic team builds setup is disabled. Assuming that team builds are set up manually')
-	EndIf
+Func SetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
+	Info('Setting up team according to GUI settings')
+	LeaveParty()
 	RandomSleep(500)
-	If GetPartySize() <> $teamSize Then
-		Warn('Could not set up party correctly. Team size different than ' & $teamSize)
-		Return $FAIL
-	EndIf
-	Return $SUCCESS
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_1)])
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_2)])
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_3)])
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_4)])
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_5)])
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_6)])
+	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_7)])
+	RandomSleep(500)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
+	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
 EndFunc
 #EndRegion GUI Settings

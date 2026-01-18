@@ -56,8 +56,6 @@ Func SunspearArmorSetup()
 		ResignAndReturnToOutpost($ID_DAJKAH_INLET, true)
 	EndIf
 	SwitchToHardModeIfEnabled()
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	$sunspear_armor_farm_setup = True
 	Info('Setup completed')
 EndFunc

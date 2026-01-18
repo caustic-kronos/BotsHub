@@ -2591,7 +2591,6 @@ EndFunc
 ;~ Set all attributes to 0
 Func ClearAttributes($heroIndex = 0)
 	Local $level
-	If GetMapType() <> $ID_OUTPOST Then Return False
 	For $i = 0 To UBound($ATTRIBUTES_ARRAY) - 1
 		Local $attributeID = $ATTRIBUTES_ARRAY[$i]
 		Local $attribute = GetAttributeByID($attributeID, False, $heroIndex)
@@ -2777,7 +2776,7 @@ Func Disconnected($maxRetries = 3, $retryDelay = 60000)
 			Exit 1
 		EndIf
 		Sleep(20)
-		$check = GetMapType() <> $ID_Loading And GetAgentExists(GetMyID())
+		$check = GetMapType() <> $ID_LOADING And GetAgentExists(GetMyID())
 	WEnd
 	Notice('Reconnected!')
 	Sleep(5000)

@@ -49,8 +49,6 @@ Func AsuranTitleFarmSetup()
 	TravelToOutpost($ID_RATA_SUM, $district_name)
 	SetDisplayedTitle($ID_ASURA_TITLE)
 	SwitchMode($ID_HARD_MODE)
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	$asuran_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

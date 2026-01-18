@@ -117,7 +117,10 @@ Func SetupGemstonesFarm()
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SetupPlayerGemstonesFarm()
 	; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
-	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL
+	If GetPartySize() <> $ID_TEAM_SIZE_LARGE Then
+		Error('Party not set up correctly. Team size different than ' & $ID_TEAM_SIZE_LARGE)
+		Return $FAIL
+	EndIf
 	$gemstones_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -125,14 +128,13 @@ EndFunc
 
 
 Func SetupPlayerGemstonesFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up player build skill bar according to GUI settings')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-	ElseIf DllStructGetData(GetMyAgent(), 'Primary') == $ID_MESMER Then
-		Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
-		LoadSkillTemplate($GEMSTONES_MESMER_SKILLBAR)
-	Else
-		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) <> $GUI_CHECKED Then
+		If DllStructGetData(GetMyAgent(), 'Primary') == $ID_MESMER Then
+			Info('Player''s profession is mesmer. Loading up recommended mesmer build automatically')
+			LoadSkillTemplate($GEMSTONES_MESMER_SKILLBAR)
+		Else
+			Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
+		EndIf
 	EndIf
 	RandomSleep(250)
 EndFunc

@@ -187,6 +187,8 @@ EndFunc
 
 
 Func SetupTeamMargoniteFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+
 	Info('Setting up team')
 	LeaveParty()
 	RandomSleep(500)
@@ -287,15 +289,9 @@ Func GemstoneMargoniteFarmLoop()
 		Dialog(0x85)
 		RandomSleep(500)
 	EndIf
-	Info('Taking Quest')
-	Local $timerQuest = TimerInit()
-	While GetQuestByID($ID_QUEST_THE_CITY_OF_TORC_QA) == Null And TimerDiff($timerQuest) < 10000
-		GoNearestNPCToCoords(-17710, -8811)
-		RandomSleep(1000)
-		Dialog(0x82EF01)
-		RandomSleep(1000)
-	WEnd
-	If GetQuestByID($ID_QUEST_THE_CITY_OF_TORC_QA) == Null Then Return $FAIL
+
+	Local $questNPC = GetNearestNPCToCoords(-17710, -8811)
+	If TakeQuest($questNPC, $ID_QUEST_THE_CITY_OF_TORC_QA, 0x82EF01) == $FAIL Then Return $FAIL
 
 	Info('Moving to spot and aggroing margonites')
 	MoveTo(-17541, -9431)
