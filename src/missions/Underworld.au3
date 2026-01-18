@@ -140,44 +140,41 @@ EndFunc
 ;~ Send user back to Chaos Plains
 Func TeleportBackToChaosPlains($Reaper)
 	Info('Teleporting back to Chaos Plains')
-	Local $ping = GetPing()
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	GoToNPC($Reaper)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x7F)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x84)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x8B)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 EndFunc
 
 ;~ Send user back to Labyrinth if skipping quest
 Func TeleportBackToLabyrinthQuestSkip($Reaper)
 	Info('Teleporting back to Labyrinth')
-	Local $ping = GetPing()
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	GoToNPC($Reaper)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x7F)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x86)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x8D)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 EndFunc
 
 ;~ Send user back to Labyrinth after completing quest
 Func TeleportBackToLabyrinthQuestComplete($Reaper)
 	Info('Teleporting back to Labyrinth')
-	Local $ping = GetPing()
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	GoToNPC($Reaper)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x86)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 	Dialog(0x8D)
-	Sleep($ping + 250)
+	RandomSleep(1000)
 EndFunc
 
 
