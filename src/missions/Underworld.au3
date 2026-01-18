@@ -224,7 +224,7 @@ Func ClearTheChamberUnderworld()
 EndFunc
 
 Func ClearTheForgottenVale()
-	Local $optionsForgottenVale = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsForgottenVale = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT * 1.2
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('doNotLoot') = False
@@ -297,7 +297,7 @@ Func WrathfulSpirits($Reaper)
 		RandomSleep(1000)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsForgottenVale = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsForgottenVale = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('doNotLoot') = False
@@ -373,7 +373,7 @@ Func WrathfulSpirits($Reaper)
 EndFunc
 
 Func ClearTheFrozenWastes()
-	Local $optionsFrozenWastes = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsFrozenWastes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsFrozenWastes.Item('fightRange') = $RANGE_EARSHOT
 	$optionsFrozenWastes.Item('flagHeroesOnFight') = True
 	$optionsFrozenWastes.Item('doNotLoot') = False
@@ -475,7 +475,7 @@ Func ServantsOfGrenth($Reaper)
 		RandomSleep(1000)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsFrozenWastes = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsFrozenWastes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsFrozenWastes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsFrozenWastes.Item('flagHeroesOnFight') = False
 	$optionsFrozenWastes.Item('doNotLoot') = True
@@ -547,7 +547,7 @@ Func ServantsOfGrenth($Reaper)
 EndFunc
 
 Func ClearTheChaosPlanes()
-	Local $optionsChaosPlanes = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsChaosPlanes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsChaosPlanes.Item('flagHeroesOnFight') = False
 	$optionsChaosPlanes.Item('doNotLoot') = False
@@ -800,7 +800,7 @@ Func TheFourHorsemen($Reaper)
 		RandomSleep(1000) 
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	;Local $optionsChaosPlanes = $UNDERWORLD_FIGHT_OPTIONS
+	;Local $optionsChaosPlanes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	;$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	;$optionsChaosPlanes.Item('flagHeroesOnFight') = False
 	;$optionsChaosPlanes.Item('doNotLoot') = False
@@ -820,7 +820,7 @@ Func TheFourHorsemen($Reaper)
 EndFunc
 
 Func ClearSpawningPools($Reaper)
-	Local $optionsSpawningPools = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsSpawningPools = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('doNotLoot') = False
@@ -915,7 +915,7 @@ Func TerrorwebQueen($Reaper)
 		RandomSleep(1000) 
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsSpawningPools = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsSpawningPools = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('doNotLoot') = False
@@ -966,7 +966,7 @@ Func TerrorwebQueen($Reaper)
 EndFunc
 
 Func ClearBonePits($Reaper)
-	Local $optionsBonePits = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsBonePits = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('doNotLoot') = False
@@ -1057,7 +1057,7 @@ Func ImprisonedSpirits($Reaper)
 		RandomSleep(1000) 
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsBonePits = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsBonePits = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('doNotLoot') = True
@@ -1144,7 +1144,7 @@ Func ClearTwinSerpentMountains()
 		Info('Skipping ''Twin Serpent Mounts'' Area as per settings')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsTwinSerpentMountains = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsTwinSerpentMountains = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 0.9
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
 	$optionsTwinSerpentMountains.Item('doNotLoot') = False
@@ -1273,7 +1273,7 @@ Func DemonAssassin($Reaper)
 		RandomSleep(1000) 
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsTwinSerpentMountains = $UNDERWORLD_FIGHT_OPTIONS
+	Local $optionsTwinSerpentMountains = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
 	$optionsTwinSerpentMountains.Item('doNotLoot') = True
