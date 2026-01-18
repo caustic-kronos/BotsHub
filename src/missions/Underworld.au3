@@ -285,7 +285,7 @@ Func ClearTheForgottenVale()
 EndFunc
 
 Func WrathfulSpirits($Reaper)
-	If $ATTEMPT_REAPER_QUESTS == False Or $ENABLE_WRATHFULSPIRITS == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_WRATHFULSPIRITS Then
 		Info('Skipping ''Wrathful Spirits'' Quest as per settings')
 		GoToNPC($Reaper)
 		RandomSleep(1000)
