@@ -89,7 +89,7 @@ Func UnderworldFarmLoop()
 
 	; Accept reward & take quest Restoring Grenth's Monuments
 	Local $Reaper_Labyrinth
-	$Reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
+	Local $Reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
 	GoToNPC($Reaper_Labyrinth)
 	RandomSleep(250)
 	Dialog(0x806507)
