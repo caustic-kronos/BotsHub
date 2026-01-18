@@ -137,10 +137,8 @@ Func UnderworldFarmLoop()
 		Local $Reaper_TwinSerpentMountains
 		$Reaper_TwinSerpentMountains = GetNearestNPCToCoords(-8220, -5202)
 		DemonAssassin($Reaper_TwinSerpentMountains)
-		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	Else
 		Info('Skipping ''Twin Serpent Mounts'' Area as per settings')
-		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
