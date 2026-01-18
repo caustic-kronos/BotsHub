@@ -1339,18 +1339,3 @@ Func DemonAssassin($Reaper)
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
 EndFunc
-
-Func GoBackToLabyrinthFromChaosPlanes($Reaper)
-	Info('Going back to Labyrinth')
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Dialog(0x7F)
-	RandomSleep(1000)
-	Dialog(0x86)
-	RandomSleep(1000)
-	Dialog(0x8D)
-	RandomSleep(1000) 
-
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
-
-EndFunc
