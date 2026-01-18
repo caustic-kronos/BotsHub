@@ -86,17 +86,11 @@ Func UnderworldFarmLoop()
 	ClearTheChamberUnderworld()
 
 	; Accept reward & take quest Restoring Grenth's Monuments
-	Local $Reaper_Labyrinth
 	Local $Reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
-	GoToNPC($Reaper_Labyrinth)
-	RandomSleep(250)
-	Dialog(0x806507)
-	RandomSleep(1000)
-	GoToNPC($Reaper_Labyrinth)
-	Dialog(0x806D03)
-	RandomSleep(250)
+	TakeQuestReward($Reaper_Labyrinth, $ID_QUEST_CLEAR_THE_CHAMBER, 0x806507)
+	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D03)
 	Info('Taking ''Restoring Grenths Monuments'' Quest')
-	Dialog(0x806D01)
+	;Dialog(0x806D01)
 
 	ClearTheForgottenVale()
 	; Take Quest Wrathful spirits from the Reaper and complete
@@ -133,7 +127,7 @@ Func UnderworldFarmLoop()
 		ClearTwinSerpentMountains()
 		; Take Quest Demon Assassin from the Reaper of the Twin Serpent Mountains & defend
 		Local $Reaper_TwinSerpentMountains
-		$Reaper_TwinSerpentMountains = GetNearestNPCToCoords(-8220, -5202)
+		$Reaper_TwinSerpentMountains = GetNearestNPCToCoords(8220, 5202)
 		DemonAssassin($Reaper_TwinSerpentMountains)
 	Else
 		Info('Skipping ''Twin Serpent Mounts'' Area as per settings')
@@ -141,6 +135,49 @@ Func UnderworldFarmLoop()
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
+EndFunc
+
+;~ Send user back to Chaos Plains
+Func TeleportBackToChaosPlains($Reaper)
+	Info('Teleporting back to Chaos Plains')
+	Local $ping = GetPing()
+	Sleep($ping + 250)
+	GoToNPC($Reaper)
+	Sleep($ping + 250)
+	Dialog(0x7F)
+	Sleep($ping + 250)
+	Dialog(0x84)
+	Sleep($ping + 250)
+	Dialog(0x8B)
+	Sleep($ping + 250)
+EndFunc
+
+;~ Send user back to Labyrinth if skipping quest
+Func TeleportBackToLabyrinthQuestSkip($Reaper)
+	Info('Teleporting back to Labyrinth')
+	Local $ping = GetPing()
+	Sleep($ping + 250)
+	GoToNPC($Reaper)
+	Sleep($ping + 250)
+	Dialog(0x7F)
+	Sleep($ping + 250)
+	Dialog(0x86)
+	Sleep($ping + 250)
+	Dialog(0x8D)
+	Sleep($ping + 250)
+EndFunc
+
+;~ Send user back to Labyrinth after completing quest
+Func TeleportBackToLabyrinthQuestComplete($Reaper)
+	Info('Teleporting back to Labyrinth')
+	Local $ping = GetPing()
+	Sleep($ping + 250)
+	GoToNPC($Reaper)
+	Sleep($ping + 250)
+	Dialog(0x86)
+	Sleep($ping + 250)
+	Dialog(0x8D)
+	Sleep($ping + 250)
 EndFunc
 
 
@@ -185,10 +222,7 @@ Func ClearTheChamberUnderworld()
 
 	Info('Taking ''Clear the Chamber'' Quest')
 	Local $lostSoul = GetNearestNPCToCoords(246, 7177)
-	GoToNPC($lostSoul)
-	Sleep(1000)
-	Dialog(0x0806501)
-
+	TakeQuest($lostSoul, $ID_QUEST_CLEAR_THE_CHAMBER, 0x0806501)
 	; bottem left stairs
 	MoveAggroAndKill(187, 6606)
 	; check top left side
@@ -285,26 +319,15 @@ EndFunc
 Func WrathfulSpirits($Reaper)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_WRATHFULSPIRITS Then
 		Info('Skipping ''Wrathful Spirits'' Quest as per settings')
-		GoToNPC($Reaper)
-		RandomSleep(1000)
-		Dialog(0x7F)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-		Dialog(0x8D)
-		RandomSleep(1000)
+		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsForgottenVale = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('doNotLoot') = False
-	Info('Taking ''Wrathful Spirits'' Quest')
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Dialog(0x806E03)
-	RandomSleep(1000)
-	Dialog(0x806E01)
+	TakeQuest($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E03)
+	;Dialog(0x806E01)
 	Info('1st Group')
 	MoveTo(-13290, 3629)
 	MoveTo(-13200, 2657)
@@ -345,10 +368,7 @@ Func WrathfulSpirits($Reaper)
 	MoveAggroAndKill(-12530, 6322)
 	MoveAggroAndKill(-13665, 4673)
 	MoveAggroAndKill(-13211, 5322)
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Dialog(0x806E07)
-	RandomSleep(1000)
+	TakeQuestReward($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E07)
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(-8233, 45)
 	RandomSleep(30000)
@@ -362,9 +382,7 @@ Func WrathfulSpirits($Reaper)
 	Sleep(250)
 	CancelAll()
 	MoveAggroAndKill(-13211, 5322)
-	GoToNPC($Reaper)
-	Dialog(0x86)
-	Dialog(0x8D)
+	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
@@ -463,14 +481,7 @@ EndFunc
 Func ServantsOfGrenth($Reaper)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_SERVANTSOFGRENTH Then
 		Info('Skipping ''Servants of Grenth'' Quest as per settings')
-		GoToNPC($Reaper)
-		RandomSleep(1000)
-		Dialog(0x7F)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-		Dialog(0x8D)
-		RandomSleep(1000)
+		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsFrozenWastes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
@@ -486,12 +497,8 @@ Func ServantsOfGrenth($Reaper)
 	CommandHero(6, 2362, 19090)
 	CommandHero(7, 2373, 19447)
 	RandomSleep(16000)
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Dialog(0x806603)
-	RandomSleep(1000)
-	Info('Taking ''Servants of Grenth'' Quest')
-	Dialog(0x806601)
+	TakeQuest($Reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806603)
+	;Dialog(0x806601)
 	RandomSleep(1000)
 	MoveTo(2200, 19668)
 	MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
@@ -532,14 +539,8 @@ Func ServantsOfGrenth($Reaper)
 	PickUpItems()
 	CancelAll()
 	MoveTo(560, 18377)
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Info("Turning in ''Servants of Grenth'' Quest")
-	Dialog(0x806607)
-	RandomSleep(250)
-	GoToNPC($Reaper)
-	Dialog(0x86)
-	Dialog(0x8D)
+	TakeQuestReward($Reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806607)
+	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -549,7 +550,7 @@ Func ClearTheChaosPlanes()
 	$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsChaosPlanes.Item('flagHeroesOnFight') = False
 	$optionsChaosPlanes.Item('doNotLoot') = False
-	Info('Moving to Chaos Planes')
+	Info('Moving to Chaos Plains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
 	MoveAggroAndKill(1077, 12548)
@@ -779,7 +780,6 @@ Func ClearTheChaosPlanes()
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
 	MoveAggroAndKill(11306, -17893)
 
-
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
 EndFunc
@@ -788,14 +788,7 @@ EndFunc
 Func TheFourHorsemen($Reaper)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THEFOURHORSEMEN Then
 		Info('Skipping ''The Four Horsemen'' Quest as per settings')
-		GoToNPC($Reaper)
-		RandomSleep(1000)
-		Dialog(0x7F)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-		Dialog(0x8D)
-		RandomSleep(1000) 
+		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	;Local $optionsChaosPlanes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
@@ -811,7 +804,7 @@ Func TheFourHorsemen($Reaper)
 	;RandomSleep(1000)
 	;Dialog(0x8D) ; Remove when quest is implemented
 	;RandomSleep(1000) ; Remove when quest is implemented
-
+	;TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
@@ -822,16 +815,7 @@ Func ClearSpawningPools($Reaper)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('doNotLoot') = False
-	Info('Teleporting back to Chaos Planes')
-	RandomSleep(1000)
-	GoToNPC($Reaper)
-	RandomSleep(2500)
-	Dialog(0x7F)
-	RandomSleep(1000)
-	Dialog(0x84)
-	RandomSleep(1000)
-	Dialog(0x8B)
-	RandomSleep(1000)
+	TeleportBackToChaosPlains($Reaper)
 	Info('Moving to Spawning Pools')
 	MoveAggroAndKill(10235, -19396)
 	MoveAggroAndKill(8730, -20479)
@@ -903,27 +887,15 @@ EndFunc
 Func TerrorwebQueen($Reaper)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_TERRORWEBQUEEN Then
 		Info('Skipping ''Terrorweb Queen'' Quest as per settings')
-		GoToNPC($Reaper)
-		RandomSleep(250)
-		Dialog(0x7F)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-		Dialog(0x8D)
-		RandomSleep(1000) 
+		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsSpawningPools = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('doNotLoot') = False
-	GoToNPC($Reaper)
-	RandomSleep(250)
-	Dialog(0x806B03) ; Terrorweb Queen = 0x806B03
-	RandomSleep(1000)
-	Info('Taking ''Terrorweb Queen'' Quest')
-	Dialog(0x806B01) ; Accept Terrorweb Queen Quest = 0x806B01
-	RandomSleep(1000)
+	TakeQuest($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B03)
+	;Dialog(0x806B01)
 	Info('Clearing Exterior')
 	MoveAggroAndKill(-8585, -19681)
 	MoveAggroAndKill(-9400, -17320)
@@ -940,7 +912,7 @@ Func TerrorwebQueen($Reaper)
 	CommandAll(-14324, -17073)
 	MoveAggroAndKill(-9400, -17320)
 	MoveAggroAndKill(-8585, -19681)
-	GoToNPC($Reaper)
+	MoveAggroAndKill(-6962, -19505)
 	MoveTo(-6736, -19084)
 	; Loot Chest
 	Sleep(1000)
@@ -950,14 +922,8 @@ Func TerrorwebQueen($Reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-	GoToNPC($Reaper)
-	RandomSleep(250)
-	Info("Turning in ''Terrorweb Queen'' Quest")
-	Dialog(0x806B07)
-	RandomSleep(250)
-	GoToNPC($Reaper)
-	Dialog(0x86)
-	Dialog(0x8D)
+	TakeQuestReward($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B07)
+	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
@@ -968,16 +934,7 @@ Func ClearBonePits($Reaper)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('doNotLoot') = False
-	Info('Teleporting back to Chaos Planes')
-	RandomSleep(1000)
-	GoToNPC($Reaper)
-	RandomSleep(2500)
-	Dialog(0x7F)
-	RandomSleep(1000)
-	Dialog(0x84)
-	RandomSleep(1000)
-	Dialog(0x8B)
-	RandomSleep(1000)
+	TeleportBackToChaosPlains($Reaper)
 	MoveAggroAndKill(13653, -16965)
 	Info('Let us make sure Reaper is ok before proceeding.')
 	MoveAggroAndKill(12564, -17553)
@@ -1045,14 +1002,7 @@ EndFunc
 Func ImprisonedSpirits($Reaper)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_IMPRISONEDSPIRITS Then
 		Info('Skipping ''Imprisoned Spirits'' Quest as per settings')
-		GoToNPC($Reaper)
-		RandomSleep(1000)
-		Dialog(0x7F)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-		Dialog(0x8D)
-		RandomSleep(1000) 
+		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsBonePits = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
@@ -1068,13 +1018,8 @@ Func ImprisonedSpirits($Reaper)
 	CommandHero(6, 12787, 3645)  
 	CommandHero(7, 12526, 4567)
 	RandomSleep(30000)
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Dialog(0x806903) ; Imprisoned Spirits = 0x806903
-	RandomSleep(1000)
-	Info('Taking ''Imprisoned Spirits'' Quest')
-	Dialog(0x806901) ; Accept Imprisoned Spirits Quest = 0x806901
-	RandomSleep(250)
+	TakeQuest($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806903)
+	;Dialog(0x806901)
 	MoveTo(12714, 4288)
 	MoveAggroAndKill(12832, 4436, '', $optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
@@ -1114,8 +1059,7 @@ Func ImprisonedSpirits($Reaper)
 	MoveTo(11228, 7159)
 	MoveTo(10058, 8105)
 	MoveTo(9233, 7416)
-	MoveTo(8712, 6313)
-	GoToNPC($Reaper)
+	MoveTo(8759, 6314)
 	; Loot Chest
 	Sleep(1000)
 	Info('Looting chest')
@@ -1124,14 +1068,8 @@ Func ImprisonedSpirits($Reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-	GoToNPC($Reaper)
-	RandomSleep(250)
-	Info("Turning in ''Imprisoned Spirits'' Quest")
-	Dialog(0x806907)
-	RandomSleep(250)
-	GoToNPC($Reaper)
-	Dialog(0x86)
-	Dialog(0x8D)
+	TakeQuestReward($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806907)
+	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
@@ -1261,14 +1199,7 @@ EndFunc
 Func DemonAssassin($Reaper)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMONASSASSIN Then
 		Info('Skipping ''Demon Assassin'' Quest as per settings')
-		GoToNPC($Reaper)
-		RandomSleep(1000)
-		Dialog(0x7F)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-		Dialog(0x8D)
-		RandomSleep(1000) 
+		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsTwinSerpentMountains = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
@@ -1284,13 +1215,8 @@ Func DemonAssassin($Reaper)
 	CommandHero(6, -5288, -5621)  
 	CommandHero(7, -5165, -6047)
 	RandomSleep(16000)
-	GoToNPC($Reaper)
-	RandomSleep(1000)
-	Dialog(0x806803) ; Demon Assassin = 0x806803
-	RandomSleep(1000)
-	Info('Taking ''Demon Assassin'' Quest')
-	Dialog(0x806801) ; Accept Demon Assassin Quest = 0x806801
-	RandomSleep(1000)
+	TakeQuest($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806803)
+	;Dialog(0x806801)
 	MoveTo(-4742, -5531)
 	Info('Killing the Slayer')
 	For $i = 1 To 6
@@ -1315,7 +1241,7 @@ Func DemonAssassin($Reaper)
 	RandomSleep(250)
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(-2141, -7958)
-	GoToNPC($Reaper)
+	MoveTo(8220, 5202)
 	MoveTo(8305, 5515)
 	; Loot Chest
 	Sleep(1000)
@@ -1325,14 +1251,8 @@ Func DemonAssassin($Reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-	GoToNPC($Reaper)
-	RandomSleep(250)
-	Info("Turning in ''Demon Assassin'' Quest")
-	Dialog(0x806807)
-	RandomSleep(250)
-	GoToNPC($Reaper)
-	Dialog(0x86)
-	Dialog(0x8D)
+	TakeQuestReward($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806807)
+	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 
