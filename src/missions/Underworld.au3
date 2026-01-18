@@ -326,48 +326,57 @@ Func WrathfulSpirits($Reaper)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('doNotLoot') = False
-	TakeQuest($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E03)
-	;Dialog(0x806E01)
-	Info('1st Group')
-	MoveTo(-13290, 3629)
-	MoveTo(-13200, 2657)
-	MoveAggroAndKill(-13881, 1866)
-	Info('Protect Mayor Alegheri')
-	MoveTo(-13409, 1059)
-	MoveAggroAndKill(-12908, 822)
-	MoveAggroAndKill(-13194, 75)
-	MoveAggroAndKill(-12908, 822)
-	MoveAggroAndKill(-12250, 944)
-	Info('2nd Group')
-	MoveAggroAndKill(-11631, 839)
-	MoveAggroAndKill(-10395, 286)
-	Info('3rd Group')
-	MoveAggroAndKill(-11631, 839)
-	MoveAggroAndKill(-10972, 1709)
-	MoveAggroAndKill(-10215, 1825)
-	Info('4th Group')
-	MoveAggroAndKill(-11631, 839)
-	MoveAggroAndKill(-12250, 944)
-	MoveAggroAndKill(-13296, 278)
-	Info('Moving to Final Group')
-	MoveAggroAndKill(-13229, 720)
-	MoveAggroAndKill(-13849, 1291)
-	MoveAggroAndKill(-13200, 2657, '', $optionsForgottenVale)
-	MoveAggroAndKill(-13290, 3629, '', $optionsForgottenVale)
-	MoveAggroAndKill(-12530, 6322)
-	MoveAggroAndKill(-13588, 7149)
-	MoveAggroAndKill(-14825, 6855)
-	MoveAggroAndKill(-15210, 5363)
-	Info('Final Group')
-	MoveAggroAndKill(-15283, 3394)
-	If IsPlayerOrPartyAlive() == False Then Return $FAIL
-	Info('Returning to Reaper')
-	MoveAggroAndKill(-15210, 5363)
-	MoveAggroAndKill(-14825, 6855)
-	MoveAggroAndKill(-13588, 7149)
-	MoveAggroAndKill(-12530, 6322)
-	MoveAggroAndKill(-13665, 4673)
-	MoveAggroAndKill(-13211, 5322)
+	TakeQuest($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
+	While IsPlayerOrPartyAlive()
+		If IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS) Then
+			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
+			ExitLoop
+		Else
+			Info('1st Group')
+			MoveTo(-13290, 3629)
+			MoveTo(-13200, 2657)
+			MoveAggroAndKill(-13881, 1866)
+			Info('Protect Mayor Alegheri')
+			MoveTo(-13409, 1059)
+			MoveAggroAndKill(-12908, 822)
+			MoveAggroAndKill(-13194, 75)
+			MoveAggroAndKill(-12908, 822)
+			MoveAggroAndKill(-12250, 944)
+			Info('2nd Group')
+			MoveAggroAndKill(-11631, 839)
+			MoveAggroAndKill(-10395, 286)
+			Info('3rd Group')
+			MoveAggroAndKill(-11631, 839)
+			MoveAggroAndKill(-10972, 1709)
+			MoveAggroAndKill(-10215, 1825)
+			Info('4th Group')
+			MoveAggroAndKill(-11631, 839)
+			MoveAggroAndKill(-12250, 944)
+			MoveAggroAndKill(-13296, 278)
+			Info('Moving to Final Group')
+			MoveAggroAndKill(-13229, 720)
+			MoveAggroAndKill(-13849, 1291)
+			MoveAggroAndKill(-13200, 2657, '', $optionsForgottenVale)
+			MoveAggroAndKill(-13290, 3629, '', $optionsForgottenVale)
+			MoveAggroAndKill(-12530, 6322)
+			MoveAggroAndKill(-13588, 7149)
+			MoveAggroAndKill(-14825, 6855)
+			MoveAggroAndKill(-15210, 5363)
+			Info('Final Group')
+			MoveAggroAndKill(-15283, 3394)
+			Info('Returning to Reaper')
+			MoveAggroAndKill(-15210, 5363)
+			MoveAggroAndKill(-14825, 6855)
+			MoveAggroAndKill(-13588, 7149)
+			MoveAggroAndKill(-12530, 6322)
+			MoveAggroAndKill(-13665, 4673)
+			MoveAggroAndKill(-13211, 5322)
+		EndIf
+	WEnd
+	If Not IsPlayerOrPartyAlive() Then
+		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
+		Return $FAIL
+	EndIf
 	TakeQuestReward($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E07)
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(-8233, 45)
@@ -497,23 +506,32 @@ Func ServantsOfGrenth($Reaper)
 	CommandHero(6, 2362, 19090)
 	CommandHero(7, 2373, 19447)
 	RandomSleep(16000)
-	TakeQuest($Reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806603)
-	;Dialog(0x806601)
+	TakeQuest($Reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806601, 0x806603)
 	RandomSleep(1000)
 	MoveTo(2200, 19668)
 	MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
-	For $i = 1 To 3
-		MoveAggroAndKill(2807, 19907, '', $optionsFrozenWastes)
-		RandomSleep(250)
-		MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
-		If $i < 3 Then RandomSleep(5000)
-	Next
+	Info('Killing waves of Dryders and Skeletons')
+	While IsPlayerOrPartyAlive()
+		If IsQuestReward($ID_QUEST_SERVANTS_OF_GRENTH) Then
+			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
+			ExitLoop
+		Else
+			MoveAggroAndKill(2807, 19907, '', $optionsFrozenWastes)
+			RandomSleep(250)
+			MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
+			RandomSleep(250)
+		EndIf
+	WEnd
+	If Not IsPlayerOrPartyAlive() Then
+		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
+		Return $FAIL
+	EndIf
 	MoveAggroAndKill(2514, 17133, '', $optionsFrozenWastes)
 	CancelAllHeroes()
 	MoveAggroAndKill(3693, 16071, '', $optionsFrozenWastes)
 	MoveAggroAndKill(4718, 16549, '', $optionsFrozenWastes)
 	MoveAggroAndKill(6093, 19040, '', $optionsFrozenWastes)
-	If IsPlayerOrPartyAlive() == False Then Return $FAIL
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(7656, 18838)
 	MoveTo(6093, 19040)
@@ -894,8 +912,7 @@ Func TerrorwebQueen($Reaper)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('doNotLoot') = False
-	TakeQuest($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B03)
-	;Dialog(0x806B01)
+	TakeQuest($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
 	Info('Clearing Exterior')
 	MoveAggroAndKill(-8585, -19681)
 	MoveAggroAndKill(-9400, -17320)
@@ -906,7 +923,7 @@ Func TerrorwebQueen($Reaper)
 	Info('Moving to Queen')
 	MoveAggroAndKill(-12526, -16388, '', $optionsSpawningPools)
 	MoveAggroAndKill(-12422, -15861, '', $optionsSpawningPools)
-	If IsPlayerOrPartyAlive() == False Then Return $FAIL
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	Info('Moving back to Reaper & parking heroes')
 	MoveAggroAndKill(-11447, -17260)
 	CommandAll(-14324, -17073)
@@ -1018,30 +1035,25 @@ Func ImprisonedSpirits($Reaper)
 	CommandHero(6, 12787, 3645)  
 	CommandHero(7, 12526, 4567)
 	RandomSleep(30000)
-	TakeQuest($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806903)
-	;Dialog(0x806901)
+	TakeQuest($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806901, 0x806903)
 	MoveTo(12714, 4288)
 	MoveAggroAndKill(12832, 4436, '', $optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
-	For $i = 1 To 3
-		MoveAggroAndKill(12711, 3339, '', $optionsBonePits)
-		RandomSleep(250)
-		MoveAggroAndKill(12832, 4436, '', $optionsBonePits)
-		If $i < 3 Then RandomSleep(5000)
-	Next
-	Info('Waiting for spirits to reach Reaper')
-	If IsPlayerOrPartyAlive() Then
-		For $i = 1 To 24 ; Wait for  2 minutes
+	While IsPlayerOrPartyAlive()
+		If IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS) Then
+			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
+			ExitLoop
+		Else
+			MoveAggroAndKill(12711, 3339, '', $optionsBonePits)
+			RandomSleep(250)
 			MoveAggroAndKill(12579, 2997, '', $optionsBonePits)
 			RandomSleep(250)
 			MoveAggroAndKill(12832, 3339, '', $optionsBonePits)
-			If $i < 24 Then RandomSleep(5000)
-		Next
-	EndIf
-	If IsPlayerOrPartyAlive() Then
-		Info('Success!')
-	Else
-		Info('Quest Failed')
+			RandomSleep(250)
+		EndIf
+	WEnd
+	If Not IsPlayerOrPartyAlive() Then
+		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
 		Return $FAIL
 	EndIf
 	; Loot here
@@ -1215,8 +1227,7 @@ Func DemonAssassin($Reaper)
 	CommandHero(6, -5288, -5621)  
 	CommandHero(7, -5165, -6047)
 	RandomSleep(16000)
-	TakeQuest($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806803)
-	;Dialog(0x806801)
+	TakeQuest($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806801, 0x806803)
 	MoveTo(-4742, -5531)
 	Info('Killing the Slayer')
 	For $i = 1 To 6
