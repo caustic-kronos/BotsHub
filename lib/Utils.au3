@@ -1058,7 +1058,7 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
-	If $doNotLoot <> True Then
+	If Not $doNotLoot Then
 		If IsPlayerAlive() and $defendTraps Then
 			PickUpItems(defendAgainstTrapsLoot($myX, $myY, $fightRange), DefaultShouldPickItem, $fightRange)
 		Else
