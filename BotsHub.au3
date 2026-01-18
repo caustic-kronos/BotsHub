@@ -214,10 +214,19 @@ Func BotHubLoop()
 EndFunc
 
 
-; TODO: add team setup here
-;~ Setup executed for all farms - setup weapon slots
+;~ Setup executed for all farms - setup weapon slots, player and team builds if provided
 Func GeneralFarmSetup()
-	TrySetupWeaponSlotUsingGUISettings()
+	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
+		Info('Setting player weapon slot to ' & $default_weapon_slot & ' according to GUI settings')
+		ChangeWeaponSet($default_weapon_slot)
+		RandomSleep(250)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+		; Need to be in an outpost to change team and builds
+		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
+		SetupPlayerUsingGUISettings()
+		SetupTeamUsingGUISettings()
+	EndIf
 	$global_farm_setup = True
 EndFunc
 

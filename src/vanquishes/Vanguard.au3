@@ -53,8 +53,6 @@ Func VanguardTitleFarmSetup()
 	TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)
 	SetDisplayedTitle($ID_EBON_VANGUARD_TITLE)
 	SwitchMode($ID_HARD_MODE)
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	$vanguard_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

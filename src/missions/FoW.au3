@@ -58,8 +58,6 @@ EndFunc
 Func SetupFoWFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	SwitchToHardModeIfEnabled()
 	$fow_farm_setup = True
 	Info('Preparations complete')

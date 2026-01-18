@@ -1985,7 +1985,7 @@ EndFunc
 ;~ Uses the Item from $bag at position $slot (positions start at 1)
 Func UseItemBySlot($bagIndex, $slot)
 	If $bagIndex > 0 And $slot > 0 Then
-		If IsPlayerAlive() And GetMapType() <> $ID_Loading Then
+		If IsPlayerAlive() And GetMapType() <> $ID_LOADING Then
 			Local $item = GetItemBySlot($bagIndex, $slot)
 			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
 		EndIf

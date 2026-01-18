@@ -117,7 +117,10 @@ Func SetupGemstonesFarm()
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SetupPlayerGemstonesFarm()
 	; Zhellix agent ID will be lower if team size is lower than 8, therefore checking for fail
-	If TrySetupTeamUsingGUISettings() == $FAIL Then Return $FAIL
+	If GetPartySize() <> $ID_TEAM_SIZE_LARGE Then
+		Error('Party not set up correctly. Team size different than ' & $ID_TEAM_SIZE_LARGE)
+		Return $FAIL
+	EndIf
 	$gemstones_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

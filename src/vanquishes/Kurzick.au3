@@ -110,9 +110,6 @@ EndFunc
 Func KurzickFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
-
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	SwitchMode($ID_HARD_MODE)
 
 	$kurzick_farm_setup = True

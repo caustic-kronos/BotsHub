@@ -94,7 +94,6 @@ Func GlintChallengeSetup()
 	TravelToOutpost($ID_CENTRAL_TRANSFER_CHAMBER, $district_name)
 	SetDisplayedTitle($ID_DWARF_TITLE)
 	SwitchMode($ID_NORMAL_MODE)
-	TrySetupPlayerUsingGUISettings()
 	If SetupTeamGlintChallengeFarm() == $FAIL Then Return $FAIL
 	$glint_challenge_setup = True
 	Info('Preparations complete')
@@ -103,6 +102,8 @@ EndFunc
 
 
 Func SetupTeamGlintChallengeFarm()
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+
 	Info('Setting up recommended team build skill bars automatically ignoring GUI settings')
 	LeaveParty()
 	RandomSleep(500)

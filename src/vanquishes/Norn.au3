@@ -53,8 +53,6 @@ Func NornTitleFarmSetup()
 	TravelToOutpost($ID_OLAFSTEAD, $district_name)
 	SetDisplayedTitle($ID_NORN_TITLE)
 	SwitchMode($ID_HARD_MODE)
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	$norn_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

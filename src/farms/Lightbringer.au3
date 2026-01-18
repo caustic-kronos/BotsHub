@@ -64,9 +64,6 @@ Func LightbringerFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
 	If $log_level == 0 Then $logging_file = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_HARD_MODE)
 	$lightbringer_farm_setup = True

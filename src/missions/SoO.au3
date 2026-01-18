@@ -51,8 +51,6 @@ EndFunc
 Func SetupSoOFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_VLOXS_FALLS, $district_name)
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	SwitchToHardModeIfEnabled()
 	While Not $soo_farm_setup
 		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop

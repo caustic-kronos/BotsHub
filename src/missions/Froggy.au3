@@ -51,9 +51,6 @@ EndFunc
 Func SetupFroggyFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_GADDS_ENCAMPMENT, $district_name)
-
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings()
 	SetDisplayedTitle($ID_ASURA_TITLE)
 	SwitchToHardModeIfEnabled()
 	While Not $froggy_farm_setup

@@ -94,24 +94,21 @@ EndFunc
 
 
 Func SetupTeamPongmeiChestFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
-		Info('Setting up team according to GUI settings')
-		TrySetupTeamUsingGUISettings()
-	Else
-		Info('Setting up team according to default settings')
-		LeaveParty()
-		RandomSleep(500)
-		AddHero($ID_GENERAL_MORGAHN)
-		AddHero($ID_HAYDA)
-		AddHero($ID_PARAGON_MERCENARY_HERO)
-		AddHero($ID_DUNKORO)
-		AddHero($ID_TAHLKORA)
-		AddHero($ID_OGDEN)
-		AddHero($ID_GOREN)
-	EndIf
+	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+
+	Info('Setting up team according to default settings')
+	LeaveParty()
+	RandomSleep(500)
+	AddHero($ID_GENERAL_MORGAHN)
+	AddHero($ID_HAYDA)
+	AddHero($ID_PARAGON_MERCENARY_HERO)
+	AddHero($ID_DUNKORO)
+	AddHero($ID_TAHLKORA)
+	AddHero($ID_OGDEN)
+	AddHero($ID_GOREN)
 	RandomSleep(500)
 	If GetPartySize() <> 8 Then
-		Warn('Could not set up party correctly. Team size different than 8')
+		Warn('Party not set up correctly. Team size different than 8')
 	EndIf
 EndFunc
 

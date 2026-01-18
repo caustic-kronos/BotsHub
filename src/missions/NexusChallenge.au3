@@ -59,8 +59,10 @@ Func NexusChallengeSetup()
 	EndIf
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_NORMAL_MODE)
-	TrySetupPlayerUsingGUISettings()
-	TrySetupTeamUsingGUISettings($ID_TEAM_SIZE_SMALL)
+	If GetPartySize() <> $ID_TEAM_SIZE_SMALL Then
+		Error('Party not set up correctly. Team size different than ' & $ID_TEAM_SIZE_SMALL)
+		Return $FAIL
+	EndIf
 	$nexus_challenge_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
