@@ -962,7 +962,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
 			RandomSleep(500)
-			If IsPlayerAlive() And $doNotLoot <> True Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+			If IsPlayerAlive() And Not $doNotLoot Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
 		RandomSleep(250)
