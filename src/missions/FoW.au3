@@ -475,7 +475,7 @@ Func PickUpUnholyTexts()
 		If (DllStructGetData($item, 'ModelID') == $ID_FOW_UNHOLY_TEXTS) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
-			While IsPlayerAlive() And Not IsRunFailed() And GetAgentExists($i)
+			While IsPlayerAlive() And Not IsRunFailed() And GetAgentExists($agentID)
 				If Mod($attempts, 20) == 0 Then
 					Local $attempt = Floor($attempts / 20)
 					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
