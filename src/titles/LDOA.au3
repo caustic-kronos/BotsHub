@@ -97,38 +97,25 @@ Func InitialSetupLDOA()
 	; First Sir Tydus quest to get some skills
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
-	MoveTo(11683, 3447)
-	GoToNPC(GetNearestNPCToCoords(11683, 3447))
-	RandomSleep(750)
-	Dialog($ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS)
-	RandomSleep(750)
+	Local $questNPC = GetNearestNPCToCoords(11683, 3447)
+	TakeQuest($questNPC, $ID_QUEST_WAR_PREPARATIONS, $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS)
 
 	MoveTo(7607, 5552)
 	Move(7175, 5229)
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	MoveTo(6116, 3995)
-	GoToNPC(GetNearestNPCToCoords(6187, 4085))
-	RandomSleep(750)
-	Dialog($ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS)
-	Sleep(250)
-	Dialog($ID_DIALOG_ACCEPT_QUEST_ELEMENTALIST_TEST)
-	RandomSleep(750)
+	$questNPC = GetNearestNPCToCoords(6187, 4085)
+	TakeQuestReward($questNPC, $ID_QUEST_WAR_PREPARATIONS, $ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS)
+	TakeQuest($questNPC, $ID_QUEST_ELEMENTALIST_TEST, $ID_DIALOG_ACCEPT_QUEST_ELEMENTALIST_TEST)
 	MoveTo(4187, -948)
 	MoveAggroAndKillInRange(4207, -2892, '', 2500)
 	MoveTo(3771, -1729)
 	MoveTo(6069, 3865)
-	GoToNPC(GetNearestNPCToCoords(6187, 4085))
-	RandomSleep(750)
-	Dialog($ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST)
-	RandomSleep(750)
-	MoveTo(2785, 7736)
-	GoToNPC(GetNearestNPCToCoords(2785, 7736))
-	RandomSleep(750)
-	Dialog($ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN)
-	Sleep(250)
-	Dialog($ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN)
-	Sleep(250)
+	TakeQuestReward($questNPC, $ID_QUEST_ELEMENTALIST_TEST, $ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST)
+
+	$questNPC = GetNearestNPCToCoords(2785, 7736))
+	TakeQuest($questNPC, $ID_QUEST_A_MESMER_S_BURDEN, $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN, $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN)
 
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 	If TryTravel($ID_ASHFORD_ABBEY) == $FAIL Then RunToAshford()
@@ -160,8 +147,7 @@ EndFunc
 
 ;~ Setup Charr at the gate quest
 Func SetupCharrAtTheGateQuest()
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_CHARR_AT_THE_GATE), 'Logstate')
-	If $questStatus == 0 Or $questStatus == 3 Then
+	If IsQuestNotFound($ID_QUEST_CHARR_AT_THE_GATE) Or IsQuestReward($ID_QUEST_CHARR_AT_THE_GATE) Then
 		Info('Setting up Charr at the gate quest...')
 		DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		RandomSleep(750)
@@ -169,12 +155,14 @@ Func SetupCharrAtTheGateQuest()
 		RandomSleep(750)
 		MoveTo(7974, 6142)
 		MoveTo(5668, 10667)
-		GoToNPC(GetNearestNPCToCoords(5668, 10667))
-		RandomSleep(750)
-		Dialog($ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE)
-		RandomSleep(750)
-	ElseIf $questStatus == 1 Then
-		Info('Good to go!')
+		Local $questNPC = GetNearestNPCToCoords(5668, 10667)
+		TakeQuest($questNPC, $ID_QUEST_CHARR_AT_THE_GATE, $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE)
+	EndIf
+	If IsQuestActive($ID_QUEST_CHARR_AT_THE_GATE) Then
+		Info('Quest in the logbook. Good to go!')
+		Return $SUCCESS
+	Else
+		Return $FAIL
 	EndIf
 EndFunc
 
@@ -184,23 +172,22 @@ Func SetupHamnetQuest()
 	Info('Setting up Hamnet quest...')
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 
-	Local $questStatus = DllStructGetData(GetQuestByID($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
-	If $questStatus == 0 Then
+	If IsQuestNotFound($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET) Then
 		Info('Quest not found, setting up...')
 		RandomSleep(750)
 		MoveTo(9516, 7668)
 		MoveTo(9815, 7809)
 		MoveTo(10280, 7895)
 		MoveTo(10564, 7832)
-		GoToNPC(GetNearestNPCToCoords(10564, 7832))
-		RandomSleep(750)
-		Dialog($ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET)
-		RandomSleep(750)
-		$questStatus = DllStructGetData(GetQuestByID($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET), 'Logstate')
-		If $questStatus == 0 Then Return $FAIL
+		Local $questNPC = GetNearestNPCToCoords(10564, 7832)
+		TakeQuest($questNPC, $ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET, $ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET)
 	EndIf
-	Info('Quest found, Good to go!')
-	Return $SUCCESS
+	If IsQuestActive($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET) Then
+		Info('Quest in the logbook. Good to go!')
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
 EndFunc
 
 

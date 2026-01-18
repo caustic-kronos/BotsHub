@@ -78,7 +78,7 @@ Global Const $GEMSTONE_STYGIAN_FARM_INFORMATIONS = 'For best results, have :' & 
 	& 'Recommended to have maxed out Lightbringer title. If not maxed out then this farm is good for raising lightbringer rank' & @CRLF _
 	& 'Can switch to normal mode in case of low success rate but hard mode has better loots' & @CRLF _
 	& 'Gemstones can be exchanged into armbrace of truth (15 of each type) or coffer of whisper (1 of each type)' & @CRLF _
-	& 'This farm is based on below articles:' & @CRLF _
+	& 'This farm bot is based on below articles:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Me/A_Stygian_Farmer' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/N_HM_Stygian_Veil_Trapper' & @CRLF _
 	& 'For Mesmer and Assassin this bot works by exploitation of Guild Wars bug in pathing AI, which causes mobs to not attack player' & @CRLF
@@ -213,15 +213,9 @@ Func GemstoneStygianFarmLoop()
 		Dialog(0x85)
 		Sleep(500)
 	EndIf
-	Info('Taking Quest')
-	Local $timerQuest = TimerInit()
-	While GetQuestByID($ID_QUEST_BREACHING_THE_STYGIAN_VEIL) == Null And TimerDiff($timerQuest) < 10000
-		GoNearestNPCToCoords(7188, -9108)
-		Sleep(1000)
-		Dialog(0x82E601)
-		Sleep(1000)
-	WEnd
-	If GetQuestByID($ID_QUEST_BREACHING_THE_STYGIAN_VEIL) == Null Then Return $FAIL
+
+	Local $questNPC = GetNearestNPCToCoords(7188, -9108)
+	If TakeQuest($questNPC, $ID_QUEST_BREACHING_THE_STYGIAN_VEIL, 0x82E601) == $FAIL Then Return $FAIL
 
 	Switch $stygian_player_profession
 		Case $ID_ASSASSIN, $ID_MESMER

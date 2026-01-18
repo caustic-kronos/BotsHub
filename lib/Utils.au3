@@ -1163,6 +1163,110 @@ EndFunc
 #EndRegion DateTime
 
 
+#Region Quests
+;~ Take a quest or a reward - for reward, expectedState should be $ID_QUEST_NOT_FOUND once reward taken
+Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUEST_NOT_FOUND)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Local $timerQuest = TimerInit()
+	; 0x01 bitmask only checks for active or not found states
+	While BitAND($questState, 0x01) <> $expectedState
+		Debug('Current quest state : ' & $questState)
+		GoToNPC($questNPC)
+		RandomSleep(750)
+		Dialog($dialogID)
+		RandomSleep(750)
+		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+		If TimerDiff($timerQuest) > 60000 Then
+			Warn('Could not handle quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
+			Return $FAIL
+		EndIf
+	WEnd
+	Return $SUCCESS
+EndFunc
+
+
+;~ Take a quest. Prints quest name to be taken
+;~ Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest accepting dialog ID
+Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
+	If IsQuestActive($questID) Then
+		Warn('Quest named ' & $QUEST_NAMES_FROM_IDS[$questID] & ' is already in the logbook')
+		Return $FAIL
+	EndIf
+	Info('Taking quest ' & $QUEST_NAMES_FROM_IDS[$questID])
+	If $initialDialogID <> Null Then
+		GoToNPC($questNPC)
+		RandomSleep(750)
+		Dialog($initialDialogID)
+		RandomSleep(750)
+	EndIf
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_ACTIVE)
+EndFunc
+
+
+;~ Take a quest reward. Prints quest name for which reward is to be taken
+;~ Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest reward dialog ID
+Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
+	If Not IsQuestReward($questID) Then
+		Warn('No reward available for quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
+		Return $FAIL
+	EndIf
+	Info('Taking reward for quest ' & $QUEST_NAMES_FROM_IDS[$questID])
+	If $initialDialogID <> Null Then
+		GoToNPC($questNPC)
+		RandomSleep(750)
+		Dialog($initialDialogID)
+		RandomSleep(750)
+	EndIf
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_COMPLETED)
+EndFunc
+
+
+Func IsQuestNotFound($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0xFF) == $ID_QUEST_NOT_FOUND
+EndFunc
+
+
+Func IsQuestActive($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0x01) == $ID_QUEST_ACTIVE
+EndFunc
+
+
+Func IsQuestReward($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0x02) == $ID_QUEST_REWARD
+EndFunc
+
+
+Func IsQuestPartiallyCompleted($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0x04) == $ID_QUEST_PARTIAL_1 _
+		Or BitAND($questState, 0x08) == $ID_QUEST_PARTIAL_2
+EndFunc
+
+
+Func IsQuestCompleted($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0xFF) == $ID_QUEST_COMPLETED
+EndFunc
+
+
+Func isQuestPrimary($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0xF0) == $ID_QUEST_PRIMARY _
+		Or BitAND($questState, 0xF0) == $ID_QUEST_AREA_PRIMARY
+EndFunc
+
+
+Func isQuestSecondary($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0xF0) <> $ID_QUEST_PRIMARY _
+		And BitAND($questState, 0xF0) <> $ID_QUEST_AREA_PRIMARY
+EndFunc
+#EndRegion Quests
+
+
 #Region GW Utils
 ;~ Disable all skills on a hero's skill bar.
 Func DisableAllHeroSkills($heroIndex)
@@ -1205,20 +1309,6 @@ Func GetNearestItemByModelIDToAgent($modelID, $agent)
 		EndIf
 	Next
 	Return $nearestItemAgent
-EndFunc
-
-
-;~ Take a quest or a reward - for reward, expectedState should be 0 once reward taken
-Func TakeQuestOrReward($npc, $questID, $dialogID, $expectedState = 0)
-	Local $questState = 999
-	While $questState <> $expectedState
-		Info('Current quest state : ' & $questState)
-		GoToNPC($npc)
-		RandomSleep(750)
-		Dialog($dialogID)
-		RandomSleep(750)
-		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	WEnd
 EndFunc
 
 

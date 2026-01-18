@@ -122,16 +122,9 @@ EndFunc
 ;~ Dialog(0x832201) -> Dialog(0x833901)
 ;~ Dialog(0x832205) -> Dialog(0x833905)
 Func GetRewardRefreshAndTakeFroggyQuest()
-	Info('Get quest reward')
 	MoveTo(12061, 22485)
-
-	; Quest validation doubled to secure bot
-	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12308, 22836))
-		RandomSleep(250)
-		Dialog(0x832207)
-		RandomSleep(500)
-	Next
+	Local $questNPC = GetNearestNPCToCoords(12308, 22836)
+	TakeQuestReward($questNPC, $ID_FROGGY_QUEST, 0x832207)
 
 	Info('Get in dungeon to reset quest')
 	MoveTo(12228, 22677)
@@ -153,23 +146,12 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 		$mapLoaded = WaitMapLoading($ID_SPARKFLY_SWAMP)
 	WEnd
 
-	Info('Get quest')
 	MoveTo(12061, 22485)
-	; Quest validation doubled to secure bot
-	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12308, 22836))
-		RandomSleep(250)
-		Dialog(0x832201)
-		RandomSleep(500)
-	Next
-	Info('Talk to Tekk if already had quest')
-	; Quest pickup doubled to secure bot
-	For $i = 1 To 2
-		GoToNPC(GetNearestNPCToCoords(12308, 22836))
-		RandomSleep(250)
-		Dialog(0x832205)
-		RandomSleep(500)
-	Next
+	; after rezoning quest npc agent could have changed so getting quest npc again
+	$questNPC = GetNearestNPCToCoords(12308, 22836)
+	TakeQuest($questNPC, $ID_FROGGY_QUEST, 0x832201)
+	Info('Talk to Tekk/Giriff if already had quest')
+	TakeQuest($questNPC, $ID_FROGGY_QUEST, 0x832205)
 
 	Info('Get back in')
 	MoveTo(12228, 22677)
@@ -320,8 +302,7 @@ Func ClearFroggyFloor2()
 	WEnd
 
 	Local $largeFroggyAggroRange = $RANGE_SPELLCAST + 300
-	Local $questState = 999
-	While Not IsRunFailed() And $questState <> 3
+	While Not IsRunFailed() And Not IsQuestReward($ID_FROGGY_QUEST)
 		If CheckStuck('Froggy Floor 2 - Fourth loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('------------------------------------')
 		Info('Boss area')
@@ -332,9 +313,6 @@ Func ClearFroggyFloor2()
 		MoveAggroAndKillInRange(14365, -17681, 'Boss fight', $largeFroggyAggroRange)
 		FlagMoveAggroAndKillInRange(15286, -17662, 'All hail! King of the losers!', $largeFroggyAggroRange)
 		FlagMoveAggroAndKillInRange(15804, -19107, 'Oh fuck its huge', $largeFroggyAggroRange)
-
-		$questState = DllStructGetData(GetQuestByID($ID_FROGGY_QUEST), 'LogState')
-		Info('Quest state end of boss loop : ' & $questState)
 	WEnd
 	If IsRunFailed() Then Return $FAIL
 
