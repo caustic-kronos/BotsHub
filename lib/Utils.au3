@@ -922,7 +922,7 @@ EndFunc
 
 
 ;~ defendAgainstTrapsLoot function for PickupItems()
-Func defendAgainstTrapsLoot($x,$y, $fightRange)
+Func LootTrappedAreaSafely($x, $y, $fightRange)
 	CommandAll($x, $y)
 	;Add your prot spells in here if you want to
 	PickUpItems(Null, DefaultShouldPickItem, $fightRange)
