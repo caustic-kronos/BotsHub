@@ -84,6 +84,8 @@ Global $GUI_Group_FactionOptions, $GUI_Label_Faction, $GUI_RadioButton_DonatePoi
 Global $GUI_Group_TeamOptions, $GUI_TeamLabel, $GUI_TeamMemberLabel, $GUI_TeamMemberBuildLabel, _
 		$GUI_Label_Hero_1, $GUI_Label_Hero_2, $GUI_Label_Hero_3, $GUI_Label_Hero_4, $GUI_Label_Hero_5, $GUI_Label_Hero_6, $GUI_Label_Hero_7, _
 		$GUI_Label_Player, $GUI_Combo_Hero_1, $GUI_Combo_Hero_2, $GUI_Combo_Hero_3, $GUI_Combo_Hero_4, $GUI_Combo_Hero_5, $GUI_Combo_Hero_6, $GUI_Combo_Hero_7, _
+		$GUI_Checkbox_Load_Build_All, $GUI_Checkbox_Load_Build_Player, $GUI_Checkbox_Load_Build_Hero_1, $GUI_Checkbox_Load_Build_Hero_2, $GUI_Checkbox_Load_Build_Hero_3, _
+		$GUI_Checkbox_Load_Build_Hero_4, $GUI_Checkbox_Load_Build_Hero_5, $GUI_Checkbox_Load_Build_Hero_6, $GUI_Checkbox_Load_Build_Hero_7, _
 		$GUI_Label_Build_Hero_1, $GUI_Label_Build_Hero_2, $GUI_Label_Build_Hero_3, $GUI_Label_Build_Hero_4, $GUI_Label_Build_Hero_5, $GUI_Label_Build_Hero_6, $GUI_Label_Build_Hero_7, _
 		$GUI_Input_Build_Player, $GUI_Input_Build_Hero_1, $GUI_Input_Build_Hero_2, $GUI_Input_Build_Hero_3, $GUI_Input_Build_Hero_4, $GUI_Input_Build_Hero_5, $GUI_Input_Build_Hero_6, $GUI_Input_Build_Hero_7
 Global $GUI_Group_OtherOptions
@@ -120,7 +122,7 @@ Func CreateGUI()
 	; === Main tab ===
 	$GUI_Tabs_Parent = GUICtrlCreateTab(10, 10, 630, 450)
 	$GUI_Tab_Main = GUICtrlCreateTabItem('Main')
-	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_Tabs_Parent, 'TabHandler')
 	_GUICtrlTab_SetBkColor($GUI_GWBotHub, $GUI_Tabs_Parent, $COLOR_SILVER)
 
 	$GUI_Console = _GUICtrlRichEdit_Create($GUI_GWBotHub, '', 20, 190, 300, 255, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
@@ -316,48 +318,67 @@ Func CreateGUI()
 		'- correct behaviour (passive/aggressive)' & @CRLF & _
 		'If party size is 4 or 6, last heroes just won''t be added to party.', 40, 70)
 	$GUI_Checkbox_AutomaticTeamSetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 140)
-	GUICtrlSetOnEvent($GUI_Checkbox_AutomaticTeamSetup, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_Checkbox_AutomaticTeamSetup, 'TeamTabButtonHandler')
 
 	$GUI_TeamMemberLabel = GUICtrlCreateLabel('Team member', 147, 170, 100, 20)
 	$GUI_TeamMemberBuildLabel = GUICtrlCreateLabel('Team member build', 445, 170, 100, 20)
+	$GUI_Checkbox_Load_Build_All = GUICtrlCreateCheckbox('Load all builds:', 254, 167)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_All, 'TeamTabButtonHandler')
 
+	; Player build setup
 	$GUI_Label_Player = GUICtrlCreateLabel('Player', 125, 197, 114, 20, BitOR($SS_CENTER, $SS_CENTERIMAGE))
+	$GUI_Checkbox_Load_Build_Player = GUICtrlCreateCheckbox('Load Player Build:', 254, 197)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Player, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Player = GUICtrlCreateInput('', 375, 197, 236, 20)
 	GUICtrlSetBkColor($GUI_Label_Player, 0xFFFFFF)
+	; Hero 1 setup
 	$GUI_Label_Hero_1 = GUICtrlCreateLabel('Selected Hero 1:', 31, 230, 100, 20)
 	$GUI_Combo_Hero_1 = GUICtrlCreateCombo('Master of Whispers', 125, 227, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_1, $AVAILABLE_HEROES, 'Master of Whispers')
-	$GUI_Label_Build_Hero_1 = GUICtrlCreateLabel('Hero 1 Build Template:', 254, 230, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_1 = GUICtrlCreateCheckbox('Load Hero 1 Build:', 254, 227)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_1, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_1 = GUICtrlCreateInput('OAljUwGopSUBHVyBoBVVbh4B1YA', 375, 227, 236, 20)
+	; Hero 2 setup
 	$GUI_Label_Hero_2 = GUICtrlCreateLabel('Selected Hero 2:', 31, 260, 100, 20)
 	$GUI_Combo_Hero_2 = GUICtrlCreateCombo('Livia', 125, 257, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_2, $AVAILABLE_HEROES, 'Livia')
-	$GUI_Label_Build_Hero_2 = GUICtrlCreateLabel('Hero 2 Build Template:', 254, 260, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_2 = GUICtrlCreateCheckbox('Load Hero 2 Build:', 254, 257)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_2, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_2 = GUICtrlCreateInput('OAhjQoGYIP3hhWVVaO5EeDzxJ', 375, 257, 236, 20)
+	; Hero 3 setup
 	$GUI_Label_Hero_3 = GUICtrlCreateLabel('Selected Hero 3:', 31, 290, 100, 20)
 	$GUI_Combo_Hero_3 = GUICtrlCreateCombo('Gwen', 125, 287, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_3, $AVAILABLE_HEROES, 'Gwen')
-	$GUI_Label_Build_Hero_3 = GUICtrlCreateLabel('Hero 3 Build Template:', 254, 290, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_3 = GUICtrlCreateCheckbox('Load Hero 3 Build:', 254, 287)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_3, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_3 = GUICtrlCreateInput('OQNEAqwD2ycC0AmupXOIDQEQj', 375, 287, 236, 20)
+	; Hero 4 setup
 	$GUI_Label_Hero_4 = GUICtrlCreateLabel('Selected Hero 4:', 31, 320, 100, 20)
 	$GUI_Combo_Hero_4 = GUICtrlCreateCombo('Olias', 125, 317, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_4, $AVAILABLE_HEROES, 'Olias')
-	$GUI_Label_Build_Hero_4 = GUICtrlCreateLabel('Hero 4 Build Template:', 254, 320, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_4 = GUICtrlCreateCheckbox('Load Hero 4 Build:', 254, 317)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_4, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_4 = GUICtrlCreateInput('OAhjUwGYoSUBHVoBbhVVWbTODTA', 375, 317, 236, 20)
+	; Hero 5 setup
 	$GUI_Label_Hero_5 = GUICtrlCreateLabel('Selected Hero 5:', 31, 350, 100, 20)
 	$GUI_Combo_Hero_5 = GUICtrlCreateCombo('Norgu', 125, 347, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_5, $AVAILABLE_HEROES, 'Norgu')
-	$GUI_Label_Build_Hero_5 = GUICtrlCreateLabel('Hero 5 Build Template:', 254, 350, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_5 = GUICtrlCreateCheckbox('Load Hero 5 Build:', 254, 347)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_5, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_5 = GUICtrlCreateInput('OQNEAqwD2ycCwpmupXOIDcBQj', 375, 347, 236, 20)
+	; Hero 6 setup
 	$GUI_Label_Hero_6 = GUICtrlCreateLabel('Selected Hero 6:', 31, 380, 100, 20)
 	$GUI_Combo_Hero_6 = GUICtrlCreateCombo('Xandra', 125, 377, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_6, $AVAILABLE_HEROES, 'Xandra')
-	$GUI_Label_Build_Hero_6 = GUICtrlCreateLabel('Hero 6 Build Template:', 254, 380, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_6 = GUICtrlCreateCheckbox('Load Hero 6 Build:', 254, 377)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_6, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_6 = GUICtrlCreateInput('OACiAyk8gNtePuwJ00ZOPLYA', 375, 377, 236, 20)
+	; Hero 7 setup
 	$GUI_Label_Hero_7 = GUICtrlCreateLabel('Selected Hero 7:', 31, 410, 100, 20)
 	$GUI_Combo_Hero_7 = GUICtrlCreateCombo('Razah', 125, 407, 114, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_Hero_7, $AVAILABLE_HEROES, 'Razah')
-	$GUI_Label_Build_Hero_7 = GUICtrlCreateLabel('Hero 7 Build Template:', 254, 410, 120, 20)
+	$GUI_Checkbox_Load_Build_Hero_7 = GUICtrlCreateCheckbox('Load Hero 7 Build:', 254, 407)
+	GUICtrlSetOnEvent($GUI_Checkbox_Load_Build_Hero_7, 'TeamTabButtonHandler')
 	$GUI_Input_Build_Hero_7 = GUICtrlCreateInput('OQNEAqwD2ycCaCmupXOIDMEQj', 375, 407, 236, 20)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
@@ -371,16 +392,16 @@ Func CreateGUI()
 	FillInventoryCache($GUI_TreeView_LootOptions)
 
 	$GUI_ExpandLootOptionsButton = GUICtrlCreateButton('Expand all', 21, 124, 55, 21)
-	GUICtrlSetOnEvent($GUI_ExpandLootOptionsButton, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_ExpandLootOptionsButton, 'LootTabButtonHandler')
 	$GUI_ReduceLootOptionsButton = GUICtrlCreateButton('Reduce all', 21, 154, 55, 21)
-	GUICtrlSetOnEvent($GUI_ReduceLootOptionsButton, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_ReduceLootOptionsButton, 'LootTabButtonHandler')
 	$GUI_LoadLootOptionsButton = GUICtrlCreateButton('Load', 21, 184, 55, 21)
-	GUICtrlSetOnEvent($GUI_LoadLootOptionsButton, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_LoadLootOptionsButton, 'LootTabButtonHandler')
 	$GUI_SaveLootOptionsButton = GUICtrlCreateButton('Save', 21, 214, 55, 21)
-	GUICtrlSetOnEvent($GUI_SaveLootOptionsButton, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_SaveLootOptionsButton, 'LootTabButtonHandler')
 	$GUI_Label_LootOptionsWarning = GUICtrlCreateLabel('Click apply to confirm your changes', 21, 244, 55, 84, $SS_CENTER)
 	$GUI_ApplyLootOptionsButton = GUICtrlCreateButton(@LF & 'Apply' & @LF & 'changes', 21, 304, 55, 63, $BS_MULTILINE)
-	GUICtrlSetOnEvent($GUI_ApplyLootOptionsButton, 'GuiButtonHandler')
+	GUICtrlSetOnEvent($GUI_ApplyLootOptionsButton, 'LootTabButtonHandler')
 	GUICtrlSetBkColor($GUI_ApplyLootOptionsButton, $COLOR_YELLOW)
 	GUICtrlCreateTabItem('')
 
@@ -497,7 +518,7 @@ Func ToggleCheckboxCascadeUpwards($treeViewHandle, $itemHandle, $toggleFromRoot 
 EndFunc
 
 
-;~ Handle GUI buttons usage
+;~ Handle main GUI buttons usage
 Func GuiButtonHandler()
 	Switch @GUI_CtrlId
 		Case $GUI_Tabs_Parent
@@ -518,8 +539,6 @@ Func GuiButtonHandler()
 			$default_weapon_slot = Number(GUICtrlRead($GUI_Combo_WeaponSlot))
 			$default_weapon_slot = _Max($default_weapon_slot, 1)
 			$default_weapon_slot = _Min($default_weapon_slot, 4)
-		Case $GUI_Checkbox_AutomaticTeamSetup
-			UpdateTeamComboboxes()
 		Case $GUI_Icon_SaveConfig
 			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_DISABLE)
 			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf\farm', '(*.json)')
@@ -529,6 +548,91 @@ Func GuiButtonHandler()
 				SaveConfiguration($filePath)
 			EndIf
 			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_ENABLE)
+		Case $GUI_RenderButton
+			$rendering_enabled = Not $rendering_enabled
+			RefreshRenderingButton()
+			ToggleRendering()
+		Case $GUI_Button_DynamicExecution
+			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
+		Case $GUI_StartButton
+			StartButtonHandler()
+		Case $GUI_EVENT_CLOSE
+			; restore rendering in case it was disabled
+			EnableRendering()
+			Exit
+		Case Else
+			MsgBox(0, 'Error', 'This button is not coded yet.')
+	EndSwitch
+EndFunc
+
+
+;~ Function handling tab changes
+Func TabHandler()
+	Switch @GUI_CtrlId
+		Case $GUI_Tabs_Parent
+			Switch GUICtrlRead($GUI_Tabs_Parent)
+				Case 0
+					ControlEnable($GUI_GWBotHub, '', $GUI_Console)
+					ControlShow($GUI_GWBotHub, '', $GUI_Console)
+				Case Else
+					ControlDisable($GUI_GWBotHub, '', $GUI_Console)
+					ControlHide($GUI_GWBotHub, '', $GUI_Console)
+			EndSwitch
+		Case Else
+			MsgBox(0, 'Error', 'This button is not coded yet.')
+	EndSwitch
+EndFunc
+
+
+;~ Handle buttons in team tab
+Func TeamTabButtonHandler()
+	Switch @GUI_CtrlId
+		Case $GUI_Checkbox_AutomaticTeamSetup
+			UpdateTeamComboboxes()
+		Case $GUI_Checkbox_Load_Build_All
+			Local $checked = GUICtrlRead($GUI_Checkbox_Load_Build_All) == $GUI_CHECKED
+			GUICtrlSetState($GUI_Input_Build_Player, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_1, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_2, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_3, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_4, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_5, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_6, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+			GUICtrlSetState($GUI_Input_Build_Hero_7, $checked ? $GUI_ENABLE : $GUI_DISABLE)
+
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Player, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_1, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_2, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_3, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_4, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_5, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_6, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_7, $checked ? $GUI_CHECKED : $GUI_UNCHECKED)
+		Case $GUI_Checkbox_Load_Build_Player
+			GUICtrlSetState($GUI_Input_Build_Player, GUICtrlRead($GUI_Checkbox_Load_Build_Player) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_1
+			GUICtrlSetState($GUI_Input_Build_Hero_1, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_1) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_2
+			GUICtrlSetState($GUI_Input_Build_Hero_2, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_2) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_3
+			GUICtrlSetState($GUI_Input_Build_Hero_3, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_3) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_4
+			GUICtrlSetState($GUI_Input_Build_Hero_4, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_4) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_5
+			GUICtrlSetState($GUI_Input_Build_Hero_5, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_5) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_6
+			GUICtrlSetState($GUI_Input_Build_Hero_6, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_6) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $GUI_Checkbox_Load_Build_Hero_7
+			GUICtrlSetState($GUI_Input_Build_Hero_7, GUICtrlRead($GUI_Checkbox_Load_Build_Hero_7) == $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+		Case Else
+			MsgBox(0, 'Error', 'This button is not coded yet.')
+	EndSwitch
+EndFunc
+
+
+;~ Handle loot tab buttons
+Func LootTabButtonHandler()
+	Switch @GUI_CtrlId
 		Case $GUI_ExpandLootOptionsButton
 			_GUICtrlTreeView_Expand(GUICtrlGetHandle($GUI_TreeView_LootOptions), 0, True)
 		Case $GUI_ReduceLootOptionsButton
@@ -558,33 +662,8 @@ Func GuiButtonHandler()
 		Case $GUI_ApplyLootOptionsButton
 			FillInventoryCache($GUI_TreeView_LootOptions)
 			Out('Refreshed inventory management options')
-		Case $GUI_RenderButton
-			$rendering_enabled = Not $rendering_enabled
-			RefreshRenderingButton()
-			ToggleRendering()
-		Case $GUI_Button_DynamicExecution
-			DynamicExecution(GUICtrlRead($GUI_Input_DynamicExecution))
-		Case $GUI_StartButton
-			StartButtonHandler()
-		Case $GUI_EVENT_CLOSE
-			; restore rendering in case it was disabled
-			EnableRendering()
-			Exit
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
-	EndSwitch
-EndFunc
-
-
-;~ Function handling tab changes
-Func TabHandler()
-	Switch GUICtrlRead($GUI_Tabs_Parent)
-		Case 0
-			ControlEnable($GUI_GWBotHub, '', $GUI_Console)
-			ControlShow($GUI_GWBotHub, '', $GUI_Console)
-		Case Else
-			ControlDisable($GUI_GWBotHub, '', $GUI_Console)
-			ControlHide($GUI_GWBotHub, '', $GUI_Console)
 	EndSwitch
 EndFunc
 
@@ -666,6 +745,7 @@ EndFunc
 Func EnableTeamComboboxes()
 	; don't enable comboboxes when bot is running, only enable them when bot is paused, to avoid accidental mouse scroll on comboboxes
 	If $runtime_status == 'RUNNING' Then Return
+	GUICtrlSetState($GUI_Checkbox_Load_Build_All, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Label_Player, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Combo_Hero_1, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Combo_Hero_2, $GUI_ENABLE)
@@ -674,14 +754,16 @@ Func EnableTeamComboboxes()
 	GUICtrlSetState($GUI_Combo_Hero_5, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Combo_Hero_6, $GUI_ENABLE)
 	GUICtrlSetState($GUI_Combo_Hero_7, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Player, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_1, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_2, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_3, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_4, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_5, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_6, $GUI_ENABLE)
-	GUICtrlSetState($GUI_Input_Build_Hero_7, $GUI_ENABLE)
+
+	GUICtrlSetState($GUI_Checkbox_Load_Build_All, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Player, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_1, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_2, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_3, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_4, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_5, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_6, $GUI_ENABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_7, $GUI_ENABLE)
 EndFunc
 
 
@@ -695,6 +777,18 @@ Func DisableTeamComboboxes()
 	GUICtrlSetState($GUI_Combo_Hero_5, $GUI_DISABLE)
 	GUICtrlSetState($GUI_Combo_Hero_6, $GUI_DISABLE)
 	GUICtrlSetState($GUI_Combo_Hero_7, $GUI_DISABLE)
+
+	GUICtrlSetState($GUI_Checkbox_Load_Build_All, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Player, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_1, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_2, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_3, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_4, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_5, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_6, $GUI_DISABLE)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_7, $GUI_DISABLE)
+
+	GUICtrlSetState($GUI_Checkbox_Load_Build_All, $GUI_DISABLE)
 	GUICtrlSetState($GUI_Input_Build_Player, $GUI_DISABLE)
 	GUICtrlSetState($GUI_Input_Build_Hero_1, $GUI_DISABLE)
 	GUICtrlSetState($GUI_Input_Build_Hero_2, $GUI_DISABLE)
@@ -888,20 +982,28 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', Not $rendering_enabled)
 
 	_JSON_addChangeDelete($jsonObject, 'team.automatic_team_setup', GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED)
+	_JSON_addChangeDelete($jsonObject, 'team.load_player_build', GUICtrlRead($GUI_Checkbox_Load_Build_Player) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.player_build', GUICtrlRead($GUI_Input_Build_Player))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_1', GUICtrlRead($GUI_Combo_Hero_1))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_1_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_1) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_1_build', GUICtrlRead($GUI_Input_Build_Hero_1))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_2', GUICtrlRead($GUI_Combo_Hero_2))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_2_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_2) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_2_build', GUICtrlRead($GUI_Input_Build_Hero_2))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_3', GUICtrlRead($GUI_Combo_Hero_3))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_3_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_3) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_3_build', GUICtrlRead($GUI_Input_Build_Hero_3))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_4', GUICtrlRead($GUI_Combo_Hero_4))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_4_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_4) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_4_build', GUICtrlRead($GUI_Input_Build_Hero_4))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_5', GUICtrlRead($GUI_Combo_Hero_5))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_5_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_5) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_5_build', GUICtrlRead($GUI_Input_Build_Hero_5))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_6', GUICtrlRead($GUI_Combo_Hero_6))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_6_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_6) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_6_build', GUICtrlRead($GUI_Input_Build_Hero_6))
 	_JSON_addChangeDelete($jsonObject, 'team.hero_7', GUICtrlRead($GUI_Combo_Hero_7))
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_7_build', GUICtrlRead($GUI_Checkbox_Load_Build_Hero_7) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'team.hero_7_build', GUICtrlRead($GUI_Input_Build_Hero_7))
 
 	Return _JSON_Generate($jsonObject)
@@ -959,6 +1061,14 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_Checkbox_WeaponSlot, _JSON_Get($jsonObject, 'run.save_weapon_slot') ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 	GUICtrlSetState($GUI_Checkbox_AutomaticTeamSetup, _JSON_Get($jsonObject, 'team.automatic_team_setup') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Player, _JSON_Get($jsonObject, 'team.load_player_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_1, _JSON_Get($jsonObject, 'team.load_hero_1_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_2, _JSON_Get($jsonObject, 'team.load_hero_2_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_3, _JSON_Get($jsonObject, 'team.load_hero_3_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_4, _JSON_Get($jsonObject, 'team.load_hero_4_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_5, _JSON_Get($jsonObject, 'team.load_hero_5_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_6, _JSON_Get($jsonObject, 'team.load_hero_6_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Load_Build_Hero_7, _JSON_Get($jsonObject, 'team.load_hero_7_build') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetData($GUI_Input_Build_Player, _JSON_Get($jsonObject, 'team.player_build'))
 	GUICtrlSetData($GUI_Combo_Hero_1, _JSON_Get($jsonObject, 'team.hero_1'))
 	GUICtrlSetData($GUI_Input_Build_Hero_1, _JSON_Get($jsonObject, 'team.hero_1_build'))
@@ -1235,9 +1345,11 @@ EndFunc
 
 ;~ Setup player build from GUI settings
 Func SetupPlayerUsingGUISettings()
-	Info('Setting up player build skill bar according to GUI settings')
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
-	RandomSleep(250)
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Player) == $GUI_CHECKED Then
+		Info('Loading player build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Player))
+		RandomSleep(250)
+	EndIf
 EndFunc
 
 
@@ -1253,12 +1365,33 @@ Func SetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
 	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_6)])
 	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_7)])
 	RandomSleep(500)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
-	LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_1) == $GUI_CHECKED Then
+		Info('Loading hero 1 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_2) == $GUI_CHECKED Then
+		Info('Loading hero 2 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_3) == $GUI_CHECKED Then
+		Info('Loading hero 3 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_4) == $GUI_CHECKED Then
+		Info('Loading hero 4 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_5) == $GUI_CHECKED Then
+		Info('Loading hero 5 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_6) == $GUI_CHECKED Then
+		Info('Loading hero 6 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_7) == $GUI_CHECKED Then
+		Info('Loading hero 7 build from GUI')
+		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
+	EndIf
 EndFunc
 #EndRegion GUI Settings

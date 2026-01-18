@@ -926,7 +926,7 @@ Func ModifyMemory()
 		WriteDetour('RenderingMod', 'RenderingModProc')
 		WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
 		; FIXME: add this back
-		;WriteDetour('TradePartnerStart', 'TradePartnerProc')
+		WriteDetour('TradePartnerStart', 'TradePartnerProc')
 		If IsDeclared('g_b_AssemblerWriteDetour') Then Extend_AssemblerWriteDetour()
 	EndIf
 EndFunc

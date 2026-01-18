@@ -167,8 +167,6 @@ Func GlintChallenge()
 	Local $glitchTimer, $glitchTimerStarted = False
 	; fight until Brotherhood chest spawns or until team or baby dragon is dead
 	While Not IsBrotherhoodChestSpawned()
-		If IsPlayerAndPartyWiped() Then Return $FAIL
-		If GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
 		Sleep(5000)
 		KillFoesInArea($glint_challenge_fight_options)
@@ -186,6 +184,8 @@ Func GlintChallenge()
 			$glitchTimerStarted = False
 		EndIf
 		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
+		If IsPlayerAndPartyWiped() Then Return $FAIL
+		If GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 	WEnd
 
 	CancelAllHeroes()
