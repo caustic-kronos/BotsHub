@@ -908,7 +908,7 @@
 			"Granite Slab": true,
 			"Iron Ingot": true,
 			"Pile of Glittering Dust": true,
-			"Plant Fibers": true,
+			"Plant Fiber": true,
 			"Scale": true,
 			"Tanned Hide Square": true,
 			"Wood Plank": true
@@ -3185,7 +3185,7 @@
 			"Granite Slab": false,
 			"Iron Ingot": false,
 			"Pile of Glittering Dust": false,
-			"Plant Fibers": false,
+			"Plant Fiber": false,
 			"Scale": false,
 			"Tanned Hide Square": false,
 			"Wood Plank": false
@@ -4144,7 +4144,7 @@
 			"Granite Slab": true,
 			"Iron Ingot": true,
 			"Pile of Glittering Dust": true,
-			"Plant Fibers": true,
+			"Plant Fiber": true,
 			"Scale": true,
 			"Tanned Hide Square": true,
 			"Wood Plank": true

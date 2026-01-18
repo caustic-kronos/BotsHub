@@ -256,7 +256,7 @@ Global Const $ID_JADEITE_SHARD					= 6533
 
 
 Global Const $BASIC_MATERIALS_ARRAY[]			= [$ID_BONE, $ID_IRON_INGOT, $ID_TANNED_HIDE_SQUARE, $ID_SCALE, $ID_CHITIN_FRAGMENT, $ID_BOLT_OF_CLOTH, $ID_WOOD_PLANK, $ID_GRANITE_SLAB, $ID_PILE_OF_GLITTERING_DUST, $ID_PLANT_FIBERS, $ID_FEATHER]
-Global Const $BASIC_MATERIALS_NAMES_ARRAY[]		= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', 'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fibers', 'Feather']
+Global Const $BASIC_MATERIALS_NAMES_ARRAY[]		= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', 'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fiber', 'Feather']
 Global Const $BASIC_MATERIAL_NAMES_FROM_IDS		= MapFromArrays($BASIC_MATERIALS_ARRAY, $BASIC_MATERIALS_NAMES_ARRAY)
 ;Global Const $BASIC_MATERIAL_IDS_FROM_NAMES	= MapFromArrays($BASIC_MATERIALS_NAMES_ARRAY, $BASIC_MATERIALS_ARRAY)
 
