@@ -1061,7 +1061,7 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 	If Not $doNotLoot Then
 		If IsPlayerAlive() and $defendTraps Then
 			PickUpItems(defendAgainstTrapsLoot($myX, $myY, $fightRange), DefaultShouldPickItem, $fightRange)
-		Else
+		ElseIf IsPlayerAlive() Then
 			PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		EndIf
 	EndIf
