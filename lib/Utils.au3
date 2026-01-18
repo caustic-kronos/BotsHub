@@ -1250,6 +1250,20 @@ Func IsQuestCompleted($questID)
 	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 	Return BitAND($questState, 0xFF) == $ID_QUEST_COMPLETED
 EndFunc
+
+
+Func isQuestPrimary($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0xF0) == $ID_QUEST_PRIMARY _
+		Or BitAND($questState, 0xF0) == $ID_QUEST_AREA_PRIMARY
+EndFunc
+
+
+Func isQuestSecondary($questID)
+	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Return BitAND($questState, 0xF0) <> $ID_QUEST_PRIMARY _
+		And BitAND($questState, 0xF0) <> $ID_QUEST_AREA_PRIMARY
+EndFunc
 #EndRegion Quests
 
 

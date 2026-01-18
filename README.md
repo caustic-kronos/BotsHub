@@ -34,7 +34,7 @@ To use it:
 ## Existing Bots
 ### Farms
 - Raptors farm (festive items, golds, materials, Asura points)
-- Vaettirs farm (festive items, golds, materials, Norn points, mesmer tomes)
+- Vaettirs farm (festive items, golds, materials, Norn points)
 - Cathedral of Flames Cryptos farm (Rin Relics, Diessa Chalices, bones)
 - Jaya Bluffs Sensali farm (feathers, bones)
 - Drazach Thicket DragonMoss farm (Fibers, Gothic Defender, Echovald shield, Ornate shield)
@@ -49,7 +49,7 @@ To use it:
 - Eden Iris farm (iris)
 - Nexus Challenge (Mysterious armor hero pieces)
 - Dajkah Inlet Challenge (Sunspear armor hero pieces)
-- Glint's Challenge (Cloth of Brotherhood/hero armor, Destroyer cores, gold items)
+- Glint's Challenge (Cloth of Brotherhood/hero armor, Destroyer cores)
 ### Vanquishes / Titles
 - Ferndale vanquish (Kurzick faction points)
 - Mount Qinkai vanquish (Luxon faction points)
@@ -65,11 +65,11 @@ To use it:
 - Slaver's Exile dungeon farm (Voltaic Spears)
 - FoW farm (Obsidian Shards, Obsidian Edge, shadow weapons)
 - FoW Tower of Courage farm (Obsidian Shards, dust)
-- DoA farm (Gemstones, gold items)
+- DoA farm (Gemstones)
 - City of Torc'qua farm (Margonite Gemstones)
 - Ravenheart Gloom farm (Torment Gemstones)
-- Stygian Veil farm (Stygian Gemstones, gold items, warrior/necro tomes)
-- Underworld farm (Globs of Ectoplasm, gold items)
+- Stygian Veil farm (Stygian Gemstones)
+- Underworld farm (Globs of Ectoplasm)
 ### Chest runs
 - Boreal chest run (glacial blades)
 - Pongmei chest run (faction skins, Q8)
@@ -148,7 +148,6 @@ Feel free to create and add more bots; it’s pretty simple!
 
 - 💡🛠️ **FoW completion bot**
 - 💡🛠️ **Fix Spirit Slaves farm**
-- 💡🛠️ **Fix R trapper Stygian farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Deldrimor title bot** - 2 requests
 - 🧠💭 **Kilroy bot (q8, survivor title)** - 1 request

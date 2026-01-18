@@ -162,10 +162,12 @@ Func GlintChallenge()
 	Info('Defending baby dragon')
 	Sleep(5000)
 
-	; Variables used to detect pathological situation in which single foes might be stuck in eternal combat loop with dwarcen npcs far from baby dragon and the team
+	; Variables used to detect pathological situation in which single foes might be stuck in eternal combat loop with dwarven npcs far from baby dragon and the team
 	Local $glitchTimer, $glitchTimerStarted = False
-	; fight until team or baby dragon dead or until Brotherhood chest spawns
-	While IsPlayerOrPartyAlive() And Not GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) And Not IsBrotherhoodChestSpawned()
+	; fight until Brotherhood chest spawns or until team or baby dragon is dead
+	While Not IsBrotherhoodChestSpawned()
+		If IsPlayerAndPartyWiped() Then Return $FAIL
+		If GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
 		Sleep(5000)
 		KillFoesInArea($glint_challenge_fight_options)
@@ -174,8 +176,7 @@ Func GlintChallenge()
 			If Not $glitchTimerStarted Then
 				$glitchTimer = TimerInit()
 				$glitchTimerStarted = True
-			EndIf
-			If TimerDiff($glitchTimer) > 120000 Then ; 2 minutes max for detection of pathological situation
+			ElseIf TimerDiff($glitchTimer) > 150000 Then ; 2,5 minutes max time for detection of pathological situation
 				; in case pathological situation happened, make a full sweep with team around baby dragon's location
 				SweepAroundBabyDragonLocation()
 				$glitchTimerStarted = False
@@ -186,7 +187,6 @@ Func GlintChallenge()
 		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 	WEnd
 
-	If IsPlayerAndPartyWiped() Or GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
 	CancelAllHeroes()
 
 	Info('Looting Chest of the Brotherhood')
@@ -225,7 +225,7 @@ EndFunc
 
 Func SweepAroundBabyDragonLocation()
 	CancelAllHeroes()
-	MoveAggroAndKill(-3710, -637)
+	MoveAggroAndKill(-3710, -635)
 	MoveAggroAndKill(-3020, 20)
 	MoveAggroAndKill(-3650, 775)
 	MoveAggroAndKill(-4680, 775)

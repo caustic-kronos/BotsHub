@@ -27,8 +27,8 @@ Global Const $ID_QUEST_PARTIAL_1	= 0x04 ; partial completion of the quest
 Global Const $ID_QUEST_PARTIAL_2	= 0x08 ; partial completion of the quest
 Global Const $ID_QUEST_COMPLETED	= $ID_QUEST_NOT_FOUND ; after completing the quest and taking its reward, it vanishes from the logbook
 Global Const $ID_QUEST_CURRENT		= 0x10 ; For current mission subquests like in Fissure of Woe
-Global Const $ID_QUEST_PRIMARY		= 0x20 ; Primary quests like 'Against the Destroyers'
-Global Const $ID_QUEST_AREA_PRIMARY	= 0x40 ; EoTN Primary quests like The 'Knowledgeable Asura'
+Global Const $ID_QUEST_PRIMARY		= 0x20 ; Primary quests like 'Passage Through The Dark River'
+Global Const $ID_QUEST_AREA_PRIMARY	= 0x40 ; EoTN Primary quests for 4 areas like The 'Knowledgeable Asura'
 #EndRegion
 
 

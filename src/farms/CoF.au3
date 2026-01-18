@@ -68,6 +68,7 @@ Global Const $COF_VOW_OF_PIETY				= 7
 Global Const $COF_I_AM_UNSTOPPABLE			= 8
 
 Global $cof_farm_setup = False
+Global $cof_vos_timer = TimerInit()
 
 ;~ Main loop of the Cathedral of Flames farm
 Func CoFFarm()
@@ -120,11 +121,11 @@ Func GoToCathedralOfFlames()
 		GoToNPC($Gron)
 		If IsQuestNotFound($ID_QUEST_TEMPLE_OF_THE_DAMNED) Then
 			TakeQuest($Gron, $ID_QUEST_TEMPLE_OF_THE_DAMNED, $QUEST_ACCEPT_DIALOG, $QUEST_INIT_DIALOG)
-		Else
-			Dialog($ENTER_INIT_DIALOG)
-			RandomSleep(500)
-			Dialog($ENTER_ACCEPT_DIALOG)
+			Sleep(750)
 		EndIf
+		Dialog($ENTER_INIT_DIALOG)
+		Sleep(750)
+		Dialog($ENTER_ACCEPT_DIALOG)
 		WaitMapLoading($ID_CATHEDRAL_OF_FLAMES)
 	WEnd
 EndFunc
@@ -169,35 +170,33 @@ EndFunc
 
 ;~ Ensure that Vow of Silence enchantment is active
 Func CheckVoS()
-	If IsRecharged($COF_VOW_OF_SILENCE) Then
+	If TimerDiff($cof_vos_timer) >= 10000 Then
 		UseSkillEx($COF_PIOUS_FURY)
 		UseSkillEx($COF_GRENTHS_AURA)
 		UseSkillEx($COF_VOW_OF_SILENCE)
+		$cof_vos_timer = TimerInit()
 	EndIf
 EndFunc
 
 
 Func CleanCoFMobs()
-	Local $target = Null
 	CheckVoS()
-	While IsPlayerAlive() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT, IsUndead) > 0
-		CheckVoS()
+	Local $target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, IsUndead)
+	While IsPlayerAlive() And $target <> Null And GetDistance(GetMyAgent(), $target) < $RANGE_EARSHOT
+		ChangeTarget($target)
 		If GetSkillbarSkillAdrenaline($COF_CRIPPLING_VICTORY) >= 150 Then
-			$target = GetNearestEnemyToAgent(GetMyAgent())
-			ChangeTarget($target)
 			UseSkillEx($COF_CRIPPLING_VICTORY)
 			RandomSleep(800)
-			CheckVoS()
-		EndIf
-		If GetSkillbarSkillAdrenaline($COF_REAP_IMPURITIES) >= 120 Then
-			$target = GetNearestEnemyToAgent(GetMyAgent())
+		ElseIf GetSkillbarSkillAdrenaline($COF_REAP_IMPURITIES) >= 120 Then
 			UseSkillEx($COF_REAP_IMPURITIES)
 			RandomSleep(800)
-			CheckVoS()
+		Else
+			Attack($target)
+			Sleep(200)
 		EndIf
+		CheckVoS()
 		Sleep(100)
-		$target = GetNearestEnemyToAgent(GetMyAgent())
-		Attack($target)
+		$target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, IsUndead)
 	WEnd
 	RandomSleep(200)
 EndFunc
