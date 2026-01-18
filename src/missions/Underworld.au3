@@ -88,9 +88,8 @@ Func UnderworldFarmLoop()
 	; Accept reward & take quest Restoring Grenth's Monuments
 	Local $Reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
 	TakeQuestReward($Reaper_Labyrinth, $ID_QUEST_CLEAR_THE_CHAMBER, 0x806507)
-	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D03)
+	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)
 	Info('Taking ''Restoring Grenths Monuments'' Quest')
-	;Dialog(0x806D01)
 
 	ClearTheForgottenVale()
 	; Take Quest Wrathful spirits from the Reaper and complete
