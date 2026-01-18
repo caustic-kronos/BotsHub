@@ -139,41 +139,41 @@ EndFunc
 ;~ Send user back to Chaos Plains
 Func TeleportBackToChaosPlains($Reaper)
 	Info('Teleporting back to Chaos Plains')
-	RandomSleep(1000)
+	Sleep(1000)
 	GoToNPC($Reaper)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x7F)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x84)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x8B)
-	RandomSleep(1000)
+	Sleep(1000)
 EndFunc
 
 ;~ Send user back to Labyrinth if skipping quest
 Func TeleportBackToLabyrinthQuestSkip($Reaper)
 	Info('Teleporting back to Labyrinth')
-	RandomSleep(1000)
+	Sleep(1000)
 	GoToNPC($Reaper)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x7F)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x86)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x8D)
-	RandomSleep(1000)
+	Sleep(1000)
 EndFunc
 
 ;~ Send user back to Labyrinth after completing quest
 Func TeleportBackToLabyrinthQuestComplete($Reaper)
 	Info('Teleporting back to Labyrinth')
-	RandomSleep(1000)
+	Sleep(1000)
 	GoToNPC($Reaper)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x86)
-	RandomSleep(1000)
+	Sleep(1000)
 	Dialog(0x8D)
-	RandomSleep(1000)
+	Sleep(1000)
 EndFunc
 
 
