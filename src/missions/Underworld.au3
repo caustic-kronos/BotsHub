@@ -463,7 +463,7 @@ Func ClearTheFrozenWastes()
 EndFunc
 
 Func ServantsOfGrenth($Reaper)
-	If $ATTEMPT_REAPER_QUESTS == False Or $ENABLE_SERVANTSOFGRENTH == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_SERVANTSOFGRENTH Then
 		Info('Skipping ''Servants of Grenth'' Quest as per settings')
 		GoToNPC($Reaper)
 		RandomSleep(1000)
@@ -788,7 +788,7 @@ EndFunc
 
 
 Func TheFourHorsemen($Reaper)
-	If $ATTEMPT_REAPER_QUESTS == False Or $ENABLE_THEFOURHORSEMEN == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THEFOURHORSEMEN Then
 		Info('Skipping ''The Four Horsemen'' Quest as per settings')
 		GoToNPC($Reaper)
 		RandomSleep(1000)
@@ -903,7 +903,7 @@ Func ClearSpawningPools($Reaper)
 EndFunc
 
 Func TerrorwebQueen($Reaper)
-	If $ATTEMPT_REAPER_QUESTS == False or $ENABLE_TERRORWEBQUEEN == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_TERRORWEBQUEEN Then
 		Info('Skipping ''Terrorweb Queen'' Quest as per settings')
 		GoToNPC($Reaper)
 		RandomSleep(250)
@@ -1045,7 +1045,7 @@ Func ClearBonePits($Reaper)
 EndFunc
 
 Func ImprisonedSpirits($Reaper)
-	If $ATTEMPT_REAPER_QUESTS == False or $ENABLE_IMPRISONEDSPIRITS == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_IMPRISONEDSPIRITS Then
 		Info('Skipping ''Imprisoned Spirits'' Quest as per settings')
 		GoToNPC($Reaper)
 		RandomSleep(1000)
@@ -1140,7 +1140,7 @@ Func ImprisonedSpirits($Reaper)
 EndFunc
 
 Func ClearTwinSerpentMountains()
-	If $ATTEMPT_REAPER_QUESTS == False or $ENABLE_DEMONASSASSIN == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMONASSASSIN Then
 		Info('Skipping ''Twin Serpent Mounts'' Area as per settings')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
@@ -1261,7 +1261,7 @@ EndFunc
 
 
 Func DemonAssassin($Reaper)
-	If $ATTEMPT_REAPER_QUESTS == False or $ENABLE_DEMONASSASSIN == False Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMONASSASSIN Then
 		Info('Skipping ''Demon Assassin'' Quest as per settings')
 		GoToNPC($Reaper)
 		RandomSleep(1000)
