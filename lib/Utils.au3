@@ -838,6 +838,8 @@ $default_moveaggroandkill_options.Add('skillsCastTimeMap', Null)
 $default_moveaggroandkill_options.Add('lootInFights', False)
 $default_moveaggroandkill_options.Add('openChests', True)
 $default_moveaggroandkill_options.Add('chestOpenRange', $RANGE_SPIRIT)
+$Default_MoveAggroAndKill_Options.Add('defendAgainstTraps', False)
+$Default_MoveAggroAndKill_Options.Add('doNotLoot', False)
 ; default 60 seconds fight duration
 $default_moveaggroandkill_options.Add('fightDuration', 60000)
 
@@ -910,6 +912,25 @@ Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.
 EndFunc
 
 
+;~ Trap Safe Wrapper for MoveAggroAndKill
+Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
+	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
+	$options.Item('defendAgainstTraps') = True
+	$options.Item('fightRange') = $RANGE_EARSHOT
+    MoveAggroAndKill($x, $y, $log, $options)
+EndFunc
+
+
+;~ defendAgainstTrapsLoot function for PickupItems()
+Func defendAgainstTrapsLoot($x,$y, $fightRange)
+	CommandAll($x, $y)
+	;Add your prot spells in here if you want to
+	PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+	RandomSleep(5000)
+	CancelAll()
+EndFunc
+
+
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
@@ -919,6 +940,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
+	Local $doNotLoot = ($options.Item('doNotLoot') <> Null) ? $options.Item('doNotLoot') : False
 
 	If $log <> '' Then Info($log)
 	Local $me = GetMyAgent()
@@ -940,7 +962,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
 			RandomSleep(500)
-			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+			If IsPlayerAlive() And $doNotLoot <> True Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
 		RandomSleep(250)
@@ -983,8 +1005,12 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 	Local $lootInFights = ($options.Item('lootInFights') <> Null) ? $options.Item('lootInFights') : False
 	Local $skillsMask = ($options.Item('skillsMask') <> Null And IsArray($options.Item('skillsMask')) And UBound($options.Item('skillsMask')) == 8) ? $options.Item('skillsMask') : Null
 	Local $skillsCostMap = ($options.Item('skillsCostMap') <> Null And UBound($options.Item('skillsCostMap')) == 8) ? $options.Item('skillsCostMap') : Null
+	Local $defendTraps = ($options.Item('defendAgainstTraps') <> Null) ? $options.Item('defendAgainstTraps') : False
+	Local $doNotLoot = ($options.Item('doNotLoot') <> Null) ? $options.Item('doNotLoot') : False
 
 	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = Null
 	; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
@@ -1032,7 +1058,13 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
-	If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+	If $doNotLoot <> True Then
+		If IsPlayerAlive() and $defendTraps Then
+			PickUpItems(defendAgainstTrapsLoot($myX, $myY, $fightRange), DefaultShouldPickItem, $fightRange)
+		Else
+			PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+		EndIf
+	EndIf
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
