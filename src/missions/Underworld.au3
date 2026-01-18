@@ -43,19 +43,19 @@ Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, don''t cheap out
 Global Const $UW_FARM_DURATION = 90 * 60 * 1000 ; Runs take about 90 minutes if quests set to False
 Global Const $MAX_UW_FARM_DURATION = 135 * 60 * 1000 ; Runs take about 135 minutes if all quests set to True
 
+Global Const $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
+
+; Specific Quest Knobs
+Global Const $ENABLE_WRATHFULSPIRITS = False ; Quest takes too long and mobs don't drop loot.
+Global Const $ENABLE_SERVANTSOFGRENTH = True
+Global Const $ENABLE_THEFOURHORSEMEN = False ; Quest not implemented yet.
+Global Const $ENABLE_TERRORWEBQUEEN = True
+Global Const $ENABLE_IMPRISONEDSPIRITS = True
+Global Const $ENABLE_DEMONASSASSIN = False ; Behemoths don't drop ecto. Skips Mountain area too.
+
 Global $UNDERWORLD_FIGHT_OPTIONS = CloneDictMap($Default_MoveAggroAndKill_Options)
 
 Global $uw_farm_setup = False
-
-Global $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
-
-; Specific Quest Knobs
-Global $ENABLE_WRATHFULSPIRITS = False ; Quest takes too long and mobs don't drop loot.
-Global $ENABLE_SERVANTSOFGRENTH = True
-Global $ENABLE_THEFOURHORSEMEN = False ; Quest not implemented yet.
-Global $ENABLE_TERRORWEBQUEEN = True
-Global $ENABLE_IMPRISONEDSPIRITS = True
-Global $ENABLE_DEMONASSASSIN = False ; Behemoths don't drop ecto. Skips Mountain area too.
 
 ;~ Main loop function
 Func UnderworldFarm()
