@@ -1571,7 +1571,7 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 		$item = GetItemByAgentID($agentID)
 
 		If ($shouldPickItem($item)) Then
-			If $defendFunction <> Null Then $defendFunction()
+			If $defendFunction <> Null Then Call($defendFunction())
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()
