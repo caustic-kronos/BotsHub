@@ -1060,7 +1060,7 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 	If $flagHeroes Then CancelAllHeroes()
 	If Not $doNotLoot Then
 		If IsPlayerAlive() and $defendTraps Then
-			PickUpItems(defendAgainstTrapsLoot($myX, $myY, $fightRange), DefaultShouldPickItem, $fightRange)
+			PickUpItems(LootTrappedAreaSafely($myX, $myY, $fightRange), DefaultShouldPickItem, $fightRange)
 		ElseIf IsPlayerAlive() Then
 			PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		EndIf
