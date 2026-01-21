@@ -98,7 +98,7 @@ EndFunc
 
 
 Func TestMovement()
-	Out('Testing movement')
+	Info('Testing movement')
 	Local $me = GetMyAgent()
 
 	Local $myX = DllStructGetData($me, 'X')
@@ -119,7 +119,7 @@ EndFunc
 
 
 Func TestTeleport()
-	Out('Testing teleportation to outposts')
+	Info('Testing teleportation to outposts')
 	TravelToOutpost($ID_GUNNARS_HOLD, $district_name)
 	Sleep(2500)
 	If GetMapID() <> $ID_GUNNARS_HOLD Then Return $FAIL
@@ -132,7 +132,7 @@ EndFunc
 
 
 Func TestPartyChanges()
-	Out('Testing party changes')
+	Info('Testing party changes')
 	LeaveParty()
 	Sleep(500)
 	Debug('Party size:' & GetPartySize())
@@ -150,7 +150,7 @@ EndFunc
 
 
 Func TestLoadingBuild()
-	Out('Testing build loading')
+	Info('Testing build loading')
 
 	LoadSkillTemplate($RESURRECT_SIGNET_AND_IAU)
 	Sleep(500)
@@ -180,7 +180,7 @@ EndFunc
 
 
 Func TestSwitchingMode()
-	Out('Testing mode switching')
+	Info('Testing mode switching')
 	SwitchMode($ID_NORMAL_MODE)
 	Sleep(500)
 	If GetIsHardMode() Then Return $FAIL
@@ -192,7 +192,7 @@ EndFunc
 
 
 Func TestTitles()
-	Out('Testing titles')
+	Info('Testing titles')
 	SetDisplayedTitle($ID_NORN_TITLE)
 	Sleep(500)
 	Local $energy = GetEnergy(GetMyAgent())
@@ -206,7 +206,7 @@ EndFunc
 
 
 Func TestConsumables()
-	Out('Testing consumables')
+	Info('Testing consumables')
 	If FindInInventory($ID_CHOCOLATE_BUNNY)[0] == 0 Then
 		Local $chestAndSlot = FindInXunlaiStorage($ID_CHOCOLATE_BUNNY)
 		Local $item = GetItemBySlot($chestAndSlot[0], $chestAndSlot[1])
@@ -223,7 +223,7 @@ EndFunc
 
 
 Func TestUseSkills()
-	Out('Testing using skills')
+	Info('Testing using skills')
 	UseSkillEx($IAU_SKILLSLOT)
 	Sleep(250)
 	If IsRecharged($IAU_SKILLSLOT) Then Return $FAIL
@@ -254,7 +254,7 @@ EndFunc
 
 
 Func TestDeathRIP()
-	Out('Testing death - RIP')
+	Info('Testing death - RIP')
 	If Not IsPlayerAlive() Then Return $FAIL
 	; Please die
 	MoveToBaseOfCave()
@@ -266,30 +266,30 @@ EndFunc
 
 
 Func TestGetTitlePoints()
-	Out('Hero title: ' & GetHeroTitle())
-	Out('Gladiator title: ' & GetGladiatorTitle())
-	Out('Codex title: ' & GetCodexTitle())
-	Out('Kurzick title: ' & GetKurzickTitle())
-	Out('Luxon title: ' & GetLuxonTitle())
-	Out('Drunkard title: ' & GetDrunkardTitle())
-	Out('Survivor title: ' & GetSurvivorTitle())
-	Out('Max titles: ' & GetMaxTitles())
-	Out('Lucky title: ' & GetLuckyTitle())
-	Out('Unlucky title: ' & GetUnluckyTitle())
-	Out('Sunspear title: ' & GetSunspearTitle())
-	Out('Lightbringer title: ' & GetLightbringerTitle())
-	Out('Commander title: ' & GetCommanderTitle())
-	Out('Gamer title: ' & GetGamerTitle())
-	Out('Legendary Guardian title: ' & GetLegendaryGuardianTitle())
-	Out('Sweet title: ' & GetSweetTitle())
-	Out('Asura title: ' & GetAsuraTitle())
-	Out('Deldrimor title: ' & GetDeldrimorTitle())
-	Out('Vanguard title: ' & GetVanguardTitle())
-	Out('Norn title: ' & GetNornTitle())
-	Out('Mastery of the North title: ' & GetNorthMasteryTitle())
-	Out('Party title: ' & GetPartyTitle())
-	Out('Zaishen title: ' & GetZaishenTitle())
-	Out('Treasure Hunter title: ' & GetTreasureTitle())
-	Out('Wisdom title: ' & GetWisdomTitle())
+	Info('Hero title: ' & GetHeroTitle())
+	Info('Gladiator title: ' & GetGladiatorTitle())
+	Info('Codex title: ' & GetCodexTitle())
+	Info('Kurzick title: ' & GetKurzickTitle())
+	Info('Luxon title: ' & GetLuxonTitle())
+	Info('Drunkard title: ' & GetDrunkardTitle())
+	Info('Survivor title: ' & GetSurvivorTitle())
+	Info('Max titles: ' & GetMaxTitles())
+	Info('Lucky title: ' & GetLuckyTitle())
+	Info('Unlucky title: ' & GetUnluckyTitle())
+	Info('Sunspear title: ' & GetSunspearTitle())
+	Info('Lightbringer title: ' & GetLightbringerTitle())
+	Info('Commander title: ' & GetCommanderTitle())
+	Info('Gamer title: ' & GetGamerTitle())
+	Info('Legendary Guardian title: ' & GetLegendaryGuardianTitle())
+	Info('Sweet title: ' & GetSweetTitle())
+	Info('Asura title: ' & GetAsuraTitle())
+	Info('Deldrimor title: ' & GetDeldrimorTitle())
+	Info('Vanguard title: ' & GetVanguardTitle())
+	Info('Norn title: ' & GetNornTitle())
+	Info('Mastery of the North title: ' & GetNorthMasteryTitle())
+	Info('Party title: ' & GetPartyTitle())
+	Info('Zaishen title: ' & GetZaishenTitle())
+	Info('Treasure Hunter title: ' & GetTreasureTitle())
+	Info('Wisdom title: ' & GetWisdomTitle())
 	Return $SUCCESS
 EndFunc

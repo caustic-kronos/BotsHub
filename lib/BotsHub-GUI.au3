@@ -661,7 +661,7 @@ Func LootTabButtonHandler()
 			EndIf
 		Case $GUI_ApplyLootOptionsButton
 			FillInventoryCache($GUI_TreeView_LootOptions)
-			Out('Refreshed inventory management options')
+			Info('Refreshed inventory management options')
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
 	EndSwitch
