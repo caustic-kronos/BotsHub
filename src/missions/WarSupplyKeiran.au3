@@ -36,12 +36,12 @@ Global Const $WAR_SUPPLY_KEIRAN_INFORMATIONS = 'For best results, have :' & @CRL
 	& '- Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
 	& '- When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
 	& '- Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
-	& '- This bot doesn''t need any specific builds for main character or heroes' & @CRLF _
+	& '- This bot does not need any specific builds for main character or heroes' & @CRLF _
 	& '- Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
 	& ' ' & @CRLF _
 	& 'Any character can go into Auspicious Beginnings mission if you send the right dialog ID (already in script) to Guild Wars client' & @CRLF _
 	& 'You just need the Keiran''s Bow which Gwen gives when the right dialog ID is sent to Guild Wars client' & @CRLF _
-	& 'You don''t need to have progress in Guild Wars Beyond campaign to be able enter this mission (even when these dialog options aren''t visible)' & @CRLF _
+	& 'You do not need to have progress in Guild Wars Beyond campaign to be able enter this mission (even when these dialog options are not visible)' & @CRLF _
 	& 'This bot is useful for farming War Supplies, festival items, platinum and Ebon Vanguard reputation' & @CRLF
 ; Average duration ~ 8 minutes
 Global Const $WAR_SUPPLY_FARM_DURATION		= 8 * 60 * 1000

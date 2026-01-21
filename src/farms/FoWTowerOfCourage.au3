@@ -56,7 +56,7 @@ Global Const $FOW_TOC_SKILLS_COSTS_MAP		= MapFromArrays($FOW_TOC_SKILLS_ARRAY, $
 Global Const $FOW_TOC_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- Armor with HP/Energy runes and 5 blessed insignias (+50 armor when enchanted)' & @CRLF _
 	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _
-	& '- A shield with the inscription ''Through Thick and Thin'' (+10 armor against piercing damage) and +45 health while enchanted or in stance' & @CRLF _
+	& '- A shield with the inscription Through Thick and Thin (+10 armor against piercing damage) and +45 health while enchanted or in stance' & @CRLF _
 	& '- At least 5th level in Deldrimor, Asura and Norn reputation ranks' & @CRLF _
 	& ' ' & @CRLF _
 	& 'This bot farms obsidian shards in Tower of Courage in Fissure of Woe location in normal mode. Hard mode might be too hard for this bot' & @CRLF _

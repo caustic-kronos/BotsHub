@@ -37,7 +37,7 @@ Global Const $COMMENDATIONS_FARM_INFORMATIONS = 'For best results, have :' & @CR
 	& '- A tactics shield q9 or less with the inscription Sleep now in the fire (+10 armor against fire damage)' & @CRLF _
 	& '- A main hand with +20% enchantments duration and +5 armor' & @CRLF _
 	& '- any PCons you wish to use' & @CRLF _
-	& 'This bot doesn''t load hero builds - please use your own teambuild'
+	& 'This bot does not load hero builds - please use your own teambuild'
 ; Average duration ~ 3m20
 Global Const $COMMENDATIONS_FARM_DURATION = (3 * 60 + 20) * 1000
 

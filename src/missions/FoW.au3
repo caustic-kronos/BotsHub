@@ -26,7 +26,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $FOW_FARM_INFORMATIONS = 'For best results, don''t cheap out on heroes' & @CRLF _
+Global Const $FOW_FARM_INFORMATIONS = 'For best results, do not cheap out on heroes' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded areas' & @CRLF _
 	& 'XXmn average in NM' & @CRLF _
 	& 'YYmn average in HM with consets (automatically used if HM is on)' & @CRLF _

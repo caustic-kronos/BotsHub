@@ -186,7 +186,7 @@ Func EnterFissureOfWoe()
 			EndIf
 		EndIf
 	Else
-		Info('Balancing character''s gold level to have enough to enter the Fissure of Woe')
+		Info('Balancing characters gold level to have enough to enter the Fissure of Woe')
 		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		MoveTo(-2500, 18700)
@@ -200,7 +200,7 @@ Func EnterFissureOfWoe()
 		Dialog(0x86)
 		WaitMapLoading($ID_THE_FISSURE_OF_WOE)
 		If GetMapID() <> $ID_THE_FISSURE_OF_WOE Then
-			Info('Could not enter Fissure of Woe. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Info('Could not enter Fissure of Woe. Ensure that it is Pantheon bonus week or that player has enough gold in inventory')
 			Return $FAIL
 		EndIf
 	EndIf
@@ -220,7 +220,7 @@ Func EnterUnderworld()
 			EndIf
 		EndIf
 	Else
-		Info('Balancing character''s gold level to have enough to enter the Underworld')
+		Info('Balancing characters gold level to have enough to enter the Underworld')
 		BalanceCharacterGold(10000)
 		Info('Moving to Grenth statue to enter Underworld')
 		MoveTo(-4170, 19759)
@@ -235,7 +235,7 @@ Func EnterUnderworld()
 		Dialog(0x86)
 		WaitMapLoading($ID_THE_UNDERWORLD)
 		If GetMapID() <> $ID_THE_UNDERWORLD Then
-			Info('Could not enter Underworld. Ensure that it''s Pantheon bonus week or that player has enough gold in inventory')
+			Info('Could not enter Underworld. Ensure that it is Pantheon bonus week or that player has enough gold in inventory')
 			Return $FAIL
 		EndIf
 	EndIf
@@ -246,11 +246,11 @@ EndFunc
 Func EnterUrgozsWarren()
 	TravelToOutpost($ID_EMBARK_BEACH, $district_name)
 	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
-		Info('Using scroll to enter Urgoz''s Warren')
+		Info('Using scroll to enter Urgoz Warren')
 		If UseScroll($ID_URGOZ_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_URGOZS_WARREN)
 			If GetMapID() <> $ID_URGOZS_WARREN Then
-				Warn('Used scroll but still could not enter Urgoz''s Warren. Ensure that player has correct scroll in inventory')
+				Warn('Used scroll but still could not enter Urgoz Warren. Ensure that player has correct scroll in inventory')
 				Return $PAUSE
 			EndIf
 		EndIf
@@ -291,7 +291,7 @@ Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
 					$coordinates[0] = -2700
 					$coordinates[1] = 1075
 				Case Else
-					Warn('For provided town coordinates of that NPC aren''t mapped yet')
+					Warn('For provided town coordinates of that NPC are not mapped yet')
 			EndSwitch
 		Case 'Basic material trader'
 			Switch $town
@@ -302,7 +302,7 @@ Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
 					$coordinates[0] = -1850
 					$coordinates[1] = 875
 				Case Else
-					Warn('For provided town coordinates of that NPC aren''t mapped yet')
+					Warn('For provided town coordinates of that NPC are not mapped yet')
 			EndSwitch
 		Case 'Rare material trader'
 			Switch $town
@@ -313,7 +313,7 @@ Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
 					$coordinates[0] = -2100
 					$coordinates[1] = 1125
 				Case Else
-					Warn('For provided town coordinates of that NPC aren''t mapped yet')
+					Warn('For provided town coordinates of that NPC are not mapped yet')
 			EndSwitch
 		;Case 'Dye trader'
 		;Case 'Scroll trader'
@@ -917,7 +917,7 @@ Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
 	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
 	$options.Item('defendAgainstTraps') = True
 	$options.Item('fightRange') = $RANGE_EARSHOT
-    MoveAggroAndKill($x, $y, $log, $options)
+	MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 

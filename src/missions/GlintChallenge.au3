@@ -31,7 +31,7 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $GLINT_CHALLENGE_INFORMATIONS = 'Brotherhood armor farm in Glint''s challenge with 7 hero team' & @CRLF _
-	& 'It is advisable to unequip staves, wands and focuses from player and heroes so that foes won''t cast chaos storm on them:' & @CRLF _
+	& 'It is advisable to unequip staves, wands and focuses from player and heroes so that foes will not cast chaos storm on them:' & @CRLF _
 	& 'This farm bot is based on below article:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Glint%27s_Challenge_Farm'
 ; Average duration ~ 20m

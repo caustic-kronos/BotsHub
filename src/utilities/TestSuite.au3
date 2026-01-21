@@ -83,7 +83,7 @@ Func RunTestSuite()
 	If TestConsumables() == $FAIL Then Error('Using consumable failed')
 
 	GoToRivenEarth()
-	If GetMapID() <> $ID_RIVEN_EARTH Then Error('Couldn''t go to Riven Earth')
+	If GetMapID() <> $ID_RIVEN_EARTH Then Error('Could not go to Riven Earth')
 
 	If TestUseSkills() == $FAIL Then Error('Using skills failed')
 

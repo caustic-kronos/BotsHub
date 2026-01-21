@@ -35,7 +35,7 @@ Global Const $EME_VAETTIRS_FARMER_SKILLBAR = 'OgVFwDKJL7Uk0n2wXlLoBgJwSwNF'
 Global Const $VAETTIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- +4 Shadow Arts (+3 +1 headgear)' & @CRLF _
 	& '- Armor with HP runes and 5 blessed/prodigy insignias (+50 armor when enchanted)' & @CRLF _
-	& '- A shield with the inscription ''Like a rolling stone'' (+10 armor against earth damage) and +45 health while enchanted' & @CRLF _
+	& '- A shield with the inscription Like a rolling stone (+10 armor against earth damage) and +45 health while enchanted' & @CRLF _
 	& '- In case of Monk 55hp, use grim cesta -50hp and armor with 5*-75hp runes' & @CRLF _
 	& '- In case of Obsidian Flesh Elementalist, recommended to have armor full with geomancer runes' & @CRLF _
 	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _

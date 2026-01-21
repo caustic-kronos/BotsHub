@@ -50,7 +50,7 @@ Global Const $GEMSTONES_FARM_INFORMATIONS = 'Requirements:' & @CRLF _
 	& ' ' & @CRLF _
 	& 'Ebony Citadel of Mallyx location is unlocked after defeating all 4 Lords of Anguish in Mallyx the Unyielding quest.' & @CRLF _
 	& 'Caution: do not defeat Mallyx the Unyielding, because this will finish the quest which would require to do 4 DoA parts all over again to get access to Ebony Citadel of Mallyx' & @CRLF _
-	& 'This bot doesn''t defeat Mallyx the Unyielding, only attempts to defeat all 19 waves, which doesn''t finish the quest' & @CRLF _
+	& 'This bot does not defeat Mallyx the Unyielding, only attempts to defeat all 19 waves, which does not finish the quest' & @CRLF _
 	& 'This farm bot is based on below article:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm' & @CRLF
 ; Average duration ~ 12m30sec

@@ -81,7 +81,7 @@ Func ManageFactionPointsKurzickFarm()
 			Dialog($dialogID)
 			RandomSleep(550)
 		ElseIf $buyScrolls Then
-			Info('Converting Kurzick faction points into Urgoz''s Warren Pasage Scrolls')
+			Info('Converting Kurzick faction points into Urgoz Warren Passage Scrolls')
 			Dialog(0x83)
 			RandomSleep(550)
 			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000)

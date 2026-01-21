@@ -35,9 +35,9 @@ Global Const $COF_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- +2 Energy Rune' & @CRLF _
 	& '- Windwalker or blessed insignias'& @CRLF _
 	& '- Zealous Scythe of Enchanting (20% longer enchantments duration) with a random inscription' & @CRLF _
-	& '- This bot enters the Quest ''Temple of the Damned'', but bot doesn''t finish it' & @CRLF _
+	& '- This bot enters the Quest Temple of the Damned, but bot does not finish it' & @CRLF _
 	& '- This bot farms Golden Rin Relics and Diessa Chalices and bones in the Cathedral of Flames' & @CRLF _
-	& '- If you don''t have ''I Am Unstoppable'' skill then it is no problem, bot will still work, but the fail rate will increase slightly' & @CRLF _
+	& '- If you do not have I Am Unstoppable skill then it is no problem, bot will still work, but the fail rate will increase slightly' & @CRLF _
 	& 'This farm bot is based on below article:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:D/any_General_Vow_of_Silence_Farmer' & @CRLF
 Global Const $COF_FARM_DURATION = 5 * 60 * 1000

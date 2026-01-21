@@ -892,7 +892,7 @@ Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 200
 	RandomSleep(250)
 	Local $traderPrice = GetTraderCostValue()
 	If $traderPrice <= 0 Then
-		Error('Couldn''t get trader price for the original material')
+		Error('Could not get trader price for the original material')
 		If ($backupMaterialModelID <> Null) Then
 			TraderRequest($backupMaterialModelID)
 			RandomSleep(250)
@@ -1506,7 +1506,7 @@ EndFunc
 
 ;~ Balance character gold to the amount given - mode 0 = full balance, mode 1 = only withdraw, mode 2 = only deposit
 Func BalanceCharacterGold($goldAmount, $mode = 0)
-	Info('Balancing character''s gold')
+	Info('Balancing characters gold')
 	Local $goldCharacter = GetGoldCharacter()
 	Local $goldStorage = GetGoldStorage()
 	If $goldStorage > 950000 Then
