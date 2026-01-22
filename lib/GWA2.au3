@@ -1391,6 +1391,7 @@ EndFunc
 Func StartSalvageWithKit($item, $salvageKit)
 	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
 	Local $salvageSessionID = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
+	Sleep(40 + GetPing())
 	Local $itemID = DllStructGetData($item, 'ID')
 	DllStructSetData($SALVAGE_STRUCT, 2, $itemID)
 	DllStructSetData($SALVAGE_STRUCT, 3, DllStructGetData($salvageKit, 'ID'))
