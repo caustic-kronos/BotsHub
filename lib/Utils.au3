@@ -597,7 +597,6 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 					If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
 						If IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
 							$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
-							ChangeTarget($target)
 							UseSkillEx($deathChargeSkillSlot, $target)
 							Sleep(GetPing())
 							Move($destinationX, $destinationY, $randomFactor)

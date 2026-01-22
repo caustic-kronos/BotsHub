@@ -444,7 +444,6 @@ Func MargoniteCheckBuffs()
 		$target = GetNearestEnemyToAgent($me)
 		If IsRecharged($MARGONITE_DEATHS_CHARGE) And Not IsRecharged($MARGONITE_SHADOWFORM) And _
 				GetDistance($me, $target) < $MARGONITES_RANGE And DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.3 Then
-			ChangeTarget($target)
 			UseSkillEx($MARGONITE_DEATHS_CHARGE, $target)
 			Sleep(20 + GetPing())
 		EndIf

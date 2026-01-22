@@ -68,7 +68,7 @@ Global Const $COF_VOW_OF_PIETY				= 7
 Global Const $COF_I_AM_UNSTOPPABLE			= 8
 
 Global $cof_farm_setup = False
-Global $cof_vos_timer = TimerInit()
+Global $cof_vos_timer = Null
 
 ;~ Main loop of the Cathedral of Flames farm
 Func CoFFarm()
@@ -85,7 +85,7 @@ EndFunc
 Func SetupCoFFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name) == $FAIL Then Return $FAIL
-	SwitchToHardModeIfEnabled()
+	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerCoFFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
 	GoToCathedralOfFlames()
@@ -121,10 +121,10 @@ Func GoToCathedralOfFlames()
 		GoToNPC($Gron)
 		If IsQuestNotFound($ID_QUEST_TEMPLE_OF_THE_DAMNED) Then
 			TakeQuest($Gron, $ID_QUEST_TEMPLE_OF_THE_DAMNED, $QUEST_ACCEPT_DIALOG, $QUEST_INIT_DIALOG)
-			Sleep(750)
+			Sleep(1000)
 		EndIf
 		Dialog($ENTER_INIT_DIALOG)
-		Sleep(750)
+		Sleep(1000)
 		Dialog($ENTER_ACCEPT_DIALOG)
 		WaitMapLoading($ID_CATHEDRAL_OF_FLAMES)
 	WEnd
@@ -159,8 +159,12 @@ EndFunc
 Func AggroAndPrepare()
 	MoveTo(-16850, -8930)
 	UseSkillEx($COF_VOW_OF_PIETY)
-	UseSkillEx($COF_GRENTHS_AURA)
+	While IsPlayerAlive() And IsRecharged($COF_GRENTHS_AURA)
+		UseSkillEx($COF_GRENTHS_AURA)
+		RandomSleep(50)
+	WEnd
 	UseSkillEx($COF_VOW_OF_SILENCE)
+	$cof_vos_timer = TimerInit()
 	UseSkillEx($COF_SIGNET_OF_MYSTIC_SPEED)
 	MoveTo(-15220, -8950)
 	UseSkillEx($COF_I_AM_UNSTOPPABLE)
@@ -170,9 +174,12 @@ EndFunc
 
 ;~ Ensure that Vow of Silence enchantment is active
 Func CheckVoS()
-	If TimerDiff($cof_vos_timer) >= 10000 Then
+	If $cof_vos_timer == Null Or TimerDiff($cof_vos_timer) >= 10000 Then
 		UseSkillEx($COF_PIOUS_FURY)
-		UseSkillEx($COF_GRENTHS_AURA)
+		While IsPlayerAlive() And IsRecharged($COF_GRENTHS_AURA)
+			UseSkillEx($COF_GRENTHS_AURA)
+			RandomSleep(50)
+		WEnd
 		UseSkillEx($COF_VOW_OF_SILENCE)
 		$cof_vos_timer = TimerInit()
 	EndIf
@@ -182,13 +189,12 @@ EndFunc
 Func CleanCoFMobs()
 	CheckVoS()
 	Local $target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, IsUndead)
-	While IsPlayerAlive() And $target <> Null And GetDistance(GetMyAgent(), $target) < $RANGE_EARSHOT
-		ChangeTarget($target)
+	While $target <> Null And GetDistance(GetMyAgent(), $target) < $RANGE_EARSHOT
 		If GetSkillbarSkillAdrenaline($COF_CRIPPLING_VICTORY) >= 150 Then
-			UseSkillEx($COF_CRIPPLING_VICTORY)
+			UseSkillEx($COF_CRIPPLING_VICTORY, $target)
 			RandomSleep(800)
 		ElseIf GetSkillbarSkillAdrenaline($COF_REAP_IMPURITIES) >= 120 Then
-			UseSkillEx($COF_REAP_IMPURITIES)
+			UseSkillEx($COF_REAP_IMPURITIES, $target)
 			RandomSleep(800)
 		Else
 			Attack($target)
@@ -196,6 +202,7 @@ Func CleanCoFMobs()
 		EndIf
 		CheckVoS()
 		Sleep(100)
+		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, IsUndead)
 	WEnd
 	RandomSleep(200)
@@ -204,8 +211,9 @@ EndFunc
 
 Func IsUndead($agent)
 	Local $modelID = DllStructGetData($agent, 'ModelID')
-	Return $modelID == $MODELID_MURAKAI_SERVANT Or $modelID == $MODELID_CRYPT_GHOUL _
+	Return Not GetIsDead($agent) And DllStructGetData($agent, 'HealthPercent') > 0 And _
+		($modelID == $MODELID_MURAKAI_SERVANT Or $modelID == $MODELID_CRYPT_GHOUL _
 		Or $modelID == $MODELID_CRYPT_SLASHER Or $modelID == $MODELID_CRYPT_WRAITH _
 		Or $modelID == $MODELID_CRYPT_BANSHEE Or $modelID == $MODELID_SHOCK_PHANTOM _
-		Or $modelID == $MODELID_ASH_PHANTOM
+		Or $modelID == $MODELID_ASH_PHANTOM)
 EndFunc

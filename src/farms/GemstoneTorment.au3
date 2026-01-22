@@ -241,7 +241,6 @@ Func DefendTormentFarm()
 			CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 And _
 			IsRecharged($TORMENT_DEATHS_CHARGE) And GetEnergy() > 5 Then
 		$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
-		ChangeTarget($target)
 		UseSkillTimed($TORMENT_DEATHS_CHARGE, $target)
 	EndIf
 EndFunc
@@ -252,7 +251,6 @@ Func KillTormentMobs()
 	Local $target = Null
 
 	$target = GetNearestEnemyToAgent(GetMyAgent())
-	ChangeTarget($target)
 	UseSkillTimed($TORMENT_METEOR_SHOWER, $target)
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	ChangeTarget($target)
