@@ -838,8 +838,8 @@ $default_moveaggroandkill_options.Add('skillsCastTimeMap', Null)
 $default_moveaggroandkill_options.Add('lootInFights', False)
 $default_moveaggroandkill_options.Add('openChests', True)
 $default_moveaggroandkill_options.Add('chestOpenRange', $RANGE_SPIRIT)
-$Default_MoveAggroAndKill_Options.Add('defendAgainstTraps', False)
-$Default_MoveAggroAndKill_Options.Add('doNotLoot', False)
+$Default_MoveAggroAndKill_Options.Add('lootTrappedArea', False)
+$Default_MoveAggroAndKill_Options.Add('ignoreDroppedLoot', False)
 ; default 60 seconds fight duration
 $default_moveaggroandkill_options.Add('fightDuration', 60000)
 
@@ -915,17 +915,20 @@ EndFunc
 ;~ Trap Safe Wrapper for MoveAggroAndKill
 Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
 	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
-	$options.Item('defendAgainstTraps') = True
+	$options.Item('lootTrappedArea') = True
 	$options.Item('fightRange') = $RANGE_EARSHOT
     MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
-;~ defendAgainstTrapsLoot function for PickupItems()
-Func LootTrappedAreaSafely($x, $y, $fightRange)
+;~ LootTrappedAreaSafely function for PickupItems()
+Func LootTrappedAreaSafely()
+	Local $me = GetMyAgent()
+	Local $x = DllStructGetData($me, 'X')
+	Local $y = DllStructGetData($me, 'Y')
 	CommandAll($x, $y)
 	;Add your prot spells in here if you want to
-	PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+	PickUpItems()
 	RandomSleep(5000)
 	CancelAll()
 EndFunc
@@ -940,7 +943,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
-	Local $doNotLoot = ($options.Item('doNotLoot') <> Null) ? $options.Item('doNotLoot') : False
+	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 
 	If $log <> '' Then Info($log)
 	Local $me = GetMyAgent()
@@ -962,7 +965,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
 			RandomSleep(500)
-			If IsPlayerAlive() And Not $doNotLoot Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+			If IsPlayerAlive() And Not $ignoreDroppedLoot Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; If one member of party is dead, go to rez him before proceeding
 		EndIf
 		RandomSleep(250)
@@ -1005,8 +1008,8 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 	Local $lootInFights = ($options.Item('lootInFights') <> Null) ? $options.Item('lootInFights') : False
 	Local $skillsMask = ($options.Item('skillsMask') <> Null And IsArray($options.Item('skillsMask')) And UBound($options.Item('skillsMask')) == 8) ? $options.Item('skillsMask') : Null
 	Local $skillsCostMap = ($options.Item('skillsCostMap') <> Null And UBound($options.Item('skillsCostMap')) == 8) ? $options.Item('skillsCostMap') : Null
-	Local $defendTraps = ($options.Item('defendAgainstTraps') <> Null) ? $options.Item('defendAgainstTraps') : False
-	Local $doNotLoot = ($options.Item('doNotLoot') <> Null) ? $options.Item('doNotLoot') : False
+	Local $lootTrappedArea = ($options.Item('lootTrappedArea') <> Null) ? $options.Item('lootTrappedArea') : False
+	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
@@ -1058,9 +1061,9 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
-	If Not $doNotLoot Then
-		If IsPlayerAlive() and $defendTraps Then
-			PickUpItems(LootTrappedAreaSafely($myX, $myY, $fightRange), DefaultShouldPickItem, $fightRange)
+	If Not $ignoreDroppedLoot Then
+		If IsPlayerAlive() and $lootTrappedArea Then
+			PickUpItems(LootTrappedAreaSafely, DefaultShouldPickItem, $fightRange)
 		ElseIf IsPlayerAlive() Then
 			PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		EndIf
