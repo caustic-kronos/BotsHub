@@ -150,8 +150,14 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	; after rezoning quest npc agent could have changed so getting quest npc again
 	$questNPC = GetNearestNPCToCoords(12308, 22836)
 	TakeQuest($questNPC, $ID_FROGGY_QUEST, 0x832201)
+	; This is not taking the quest, this is validating the first step of it
 	Info('Talk to Tekk/Giriff if already had quest')
-	TakeQuest($questNPC, $ID_FROGGY_QUEST, 0x832205)
+	For $i = 1 To 2
+		GoToNPC($questNPC)
+		Sleep(1000 + GetPing())
+		Dialog(0x832205)
+		Sleep(1000 + GetPing())
+	Next
 
 	Info('Get back in')
 	MoveTo(12228, 22677)
