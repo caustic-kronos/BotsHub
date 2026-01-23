@@ -203,13 +203,13 @@ Func BorealSpeedRun()
 	EndIf
 	;~ If Crippled or Mountain Aloe near, cast I am unstoppable
 	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
-		If GetEffect($ID_CRIPPLED) <> Null Or IsNPCInCastingRange($BOREAL_MOUNTAIN_ALOE_MODEL_ID) Then
+		If GetEffect($ID_CRIPPLED) <> Null Or IsEnemyNPCInCastingRange($BOREAL_MOUNTAIN_ALOE_MODEL_ID) Then
 			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
 		EndIf
 	EndIf
 	;~ If Mountain Pinesouls are near, cast Shadow Form
 	If IsRecharged($BOREAL_SHADOWFORM) And GetEnergy() >= 5 Then
-		If GetEffect($ID_CRIPPLED) <> Null Or IsNPCInCastingRange($BOREAL_MOUNTAIN_PINESOUL_MODEL_ID) Then
+		If GetEffect($ID_CRIPPLED) <> Null Or IsEnemyNPCInCastingRange($BOREAL_MOUNTAIN_PINESOUL_MODEL_ID) Then
 			UseSkillEx($BOREAL_SHADOWFORM)
 		EndIf
 	EndIf
@@ -224,10 +224,10 @@ Func BorealSpeedRun()
 EndFunc
 
 
-Func IsNPCInCastingRange($model_id)
+Func IsEnemyNPCInCastingRange($model_id)
 	Local $me = GetMyAgent()
-	For $agent In GetAgentArray($ID_AGENT_TYPE_NPC)
-		If DllStructGetData($agent, 'ModelID') == $model_id And GetDistance($me, $agent) <= $RANGE_SPELLCAST Then
+	For $agent In GetNPCsInRangeOfAgent($me, $ID_ALLEGIANCE_FOE, $RANGE_SPELLCAST)
+		If DllStructGetData($agent, 'ModelID') == $model_id Then
 			Return True
 		EndIf
 	Next
