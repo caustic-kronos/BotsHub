@@ -2447,7 +2447,10 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 
 	$primaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
 	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
-	If $primaryProfession <> GetHeroProfession($heroIndex) Then Return False
+	If $primaryProfession <> GetHeroProfession($heroIndex) Then
+		Error('Build profession does not correspond to hero profession')
+		Return False
+	EndIf
 
 	$secondaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
 	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)

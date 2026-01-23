@@ -1357,41 +1357,53 @@ Func SetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
 	Info('Setting up team according to GUI settings')
 	LeaveParty()
 	RandomSleep(500)
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_1)])
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_2)])
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_3)])
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_4)])
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_5)])
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_6)])
-	AddHero($HERO_IDS_FROM_NAMES[GUICtrlRead($GUI_Combo_Hero_7)])
-	RandomSleep(500)
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_1) == $GUI_CHECKED Then
-		Info('Loading hero 1 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_1), 1)
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_2) == $GUI_CHECKED Then
-		Info('Loading hero 2 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_2), 2)
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_3) == $GUI_CHECKED Then
-		Info('Loading hero 3 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_3), 3)
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_4) == $GUI_CHECKED Then
-		Info('Loading hero 4 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_4), 4)
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_5) == $GUI_CHECKED Then
-		Info('Loading hero 5 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_5), 5)
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_6) == $GUI_CHECKED Then
-		Info('Loading hero 6 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_6), 6)
-	EndIf
-	If GUICtrlRead($GUI_Checkbox_Load_Build_Hero_7) == $GUI_CHECKED Then
-		Info('Loading hero 7 build from GUI')
-		LoadSkillTemplate(GUICtrlRead($GUI_Input_Build_Hero_7), 7)
-	EndIf
+	; Could use Eval(), it's shorter but it's kind of dirty
+	For $i = 1 To 7
+		Local $combo
+		Local $checkbox
+		Local $input
+		Switch $i
+			Case 1
+				$combo = $GUI_Combo_Hero_1
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_1
+				$input = $GUI_Input_Build_Hero_1
+			Case 2
+				$combo = $GUI_Combo_Hero_2
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_2
+				$input = $GUI_Input_Build_Hero_2
+			Case 3
+				$combo = $GUI_Combo_Hero_3
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_3
+				$input = $GUI_Input_Build_Hero_3
+			Case 4
+				$combo = $GUI_Combo_Hero_4
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_4
+				$input = $GUI_Input_Build_Hero_4
+			Case 5
+				$combo = $GUI_Combo_Hero_5
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_5
+				$input = $GUI_Input_Build_Hero_5
+			Case 6
+				$combo = $GUI_Combo_Hero_6
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_6
+				$input = $GUI_Input_Build_Hero_6
+			Case 7
+				$combo = $GUI_Combo_Hero_7
+				$checkbox = $GUI_Checkbox_Load_Build_Hero_7
+				$input = $GUI_Input_Build_Hero_7
+			Case Else
+				Error('There are only 7 heroes at most.')
+		EndSwitch
+
+		Local $hero = GUICtrlRead($combo)
+		If $hero <> '' Then
+			AddHero($HERO_IDS_FROM_NAMES[$hero])
+			If GUICtrlRead($checkbox) == $GUI_CHECKED Then
+				RandomSleep(500 + GetPing())
+				Info('Loading hero ' & $i & ' build from GUI')
+				LoadSkillTemplate(GUICtrlRead($input), $i)
+			EndIf
+		EndIf
+	Next
 EndFunc
 #EndRegion GUI Settings
