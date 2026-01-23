@@ -172,6 +172,10 @@ EndFunc
 ;~ Function to speed run up
 Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
+	Local $me = GetMyAgent()
+	If DllStructGetData($me, 'HealthPercent') < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
+		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
+	EndIf
 	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
 		If GetEffect($ID_CRIPPLED) <> Null Or IsSignetOfJudgmentTargetingMe() Then
 			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
