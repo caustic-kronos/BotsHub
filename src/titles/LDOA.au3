@@ -371,7 +371,7 @@ Func LowHealthMonitor()
 			Notice('Health below threshold, returning to Ascalon and restarting the run.')
 			DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		Else $level < 20 Then
-			Notice('Health below threshold, returning to Ascalon and restarting the run.')
+			Notice('Health below threshold, returning to Foibles and restarting the run.')
 			DistrictTravel($ID_FOIBLES_FAIR, $district_name)
 		Return $SUCCESS
 	EndIf
