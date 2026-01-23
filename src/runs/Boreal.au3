@@ -153,6 +153,7 @@ Func BorealChestFarmLoop()
 	Local $openedChests = 0
 	Local $totalChestsCount = 0
 
+	; Run to the first spot and open chests there
 	Info('Running to Spot #1')
 	If BorealChestRun(2728, -25294) == $FAIL Then Return $FAIL
 	If BorealChestRun(2900, -22272) == $FAIL Then Return $FAIL
@@ -160,36 +161,25 @@ Func BorealChestFarmLoop()
 	If BorealChestRun(-2570, -17208) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 
-	Info('Running to Spot #2')
+	; Run to the second spot and count all chests in compass range
+	Info('Running to Spot #2 and counting chests')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
 	$totalChestsCount = CountChestsInCompassRange()
 	Info('Total amount of chests here: ' & $totalChestsCount)
 
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
-	If $openedChests == $totalChestsCount Then
-		Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
-		Return $SUCCESS
-	EndIf
+	; For all remaining chests, run to them, and return to the original spot inbetween
+	For $i=1 To $totalChestsCount - $openedChests
+		Info('Running to Spot #' & (2+$i))
+		$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
+		If $openedChests == $totalChestsCount Then ExitLoop
+		If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
+	Next
 
-	Info('Running to Spot #3')
-	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
-	If $openedChests == $totalChestsCount Then
-		Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
-		Return $SUCCESS
-	EndIf
-
-	Info('Running to Spot #4')
-	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
-	If $openedChests == $totalChestsCount Then
-		Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
-		Return $SUCCESS
-	EndIf
-
+	Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
 	; Result can't be considered a failure if no chests were found
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
+
 
 ;~ Count the amount of Chests in compass range
 Func CountChestsInCompassRange()
