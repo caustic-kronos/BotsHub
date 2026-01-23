@@ -216,7 +216,7 @@ EndFunc
 ;~ Kill some worms, level 2 needed for CharrAtGate
 Func LDOATitleFarmUnder2()
 	Info('Here wormy, wormy!')
-	DistrictTravel($ID_ASHFORD_ABBEY)
+	DistrictTravel($ID_ASHFORD_ABBEY, $district_name)
 	MoveTo(-11455, -6238)
 	Move(-11037, -6240)
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
@@ -242,7 +242,7 @@ EndFunc
 ;~ Farm to do to level to level 10
 Func LDOATitleFarmUnder10()
 	SetupCharrAtTheGateQuest()
-	DistrictTravel($ID_ASCALON_CITY_PRESEARING)
+	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 	Info('Entering explorable')
 	MoveTo(7500, 5500)
 	Move(7000, 5000)
@@ -269,7 +269,7 @@ EndFunc
 Func LDOATitleFarmAfter10()
 	Info('Starting Hamnet farm...')
 	Info('Heading to Foibles Fair!')
-	DistrictTravel($ID_FOIBLES_FAIR)
+	DistrictTravel($ID_FOIBLES_FAIR, $district_name)
 	MoveTo(-183, 9002)
 	MoveTo(356, 7834)
 	Info('Entering Wizards Folly!')
@@ -287,7 +287,7 @@ EndFunc
 ;~ Outpost checker
 Func TryTravel($mapID)
 	Local $startTime = TimerInit()
-	DistrictTravel($mapID)
+	DistrictTravel($mapID, $district_name)
 	While TimerDiff($startTime) < 10000
 		If GetMapID() == $mapID Then
 			Info('Travel successful.')
@@ -324,7 +324,7 @@ EndFunc
 ;~ Run to Foibles Fair
 Func RunToFoible()
 	Info('Starting run to Foibles Fair from Ashford Abbey..')
-	DistrictTravel($ID_ASHFORD_ABBEY)
+	DistrictTravel($ID_ASHFORD_ABBEY, $district_name)
 	Info('Entering Lakeside County!')
 	MoveTo(-11455, -6238)
 	Move(-11037, -6240)
