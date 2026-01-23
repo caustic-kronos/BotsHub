@@ -1,9 +1,9 @@
 #CS ===========================================================================
-=====================================================
-|	Underworld clearing farm bot					|
-|	Authors: Akiro/The Great Gree					|
-| Rewrite Authors for BotsHub: Gahais, BuddyLeeX	|
-=====================================================
+==================================================
+|	Underworld clearing farm bot		         |
+|	Authors: Akiro/The Great Gree		         |
+| Rewrite Authors for BotsHub: Gahais, BuddyLeeX |
+==================================================
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -29,7 +29,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, dont cheap out on heroes' & @CRLF _
+Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, don''t cheap out on heroes' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded areas' & @CRLF _
 	& 'Due to Hero Flag mechanics place healers in slots 6-8' & @CRLF _
 	& 'In NM with quests disabled bot takes about 1 hour 30 minutes to clear/farm on average.' & @CRLF _
@@ -46,17 +46,16 @@ Global Const $MAX_UW_FARM_DURATION = 135 * 60 * 1000 ; Runs take about 135 minut
 Global Const $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
 
 ; Specific Quest Knobs
-Global Const $ENABLE_WRATHFUL_SPIRITS = False ; Quest takes too long and mobs don't drop loot.
-Global Const $ENABLE_SERVANTS_OF_GRENTH = True
-Global Const $ENABLE_THE_FOUR_HORSEMEN = False ; Quest not implemented yet.
-Global Const $ENABLE_TERRORWEB_QUEEN = True
-Global Const $ENABLE_IMPRISONED_SPIRITS = True
-Global Const $ENABLE_DEMON_ASSASSIN = False ; Behemoths don't drop ecto. Skips Mountain area too.
+Global Const $ENABLE_WRATHFULSPIRITS = False ; Quest takes too long and mobs don't drop loot.
+Global Const $ENABLE_SERVANTSOFGRENTH = True
+Global Const $ENABLE_THEFOURHORSEMEN = False ; Quest not implemented yet.
+Global Const $ENABLE_TERRORWEBQUEEN = True
+Global Const $ENABLE_IMPRISONEDSPIRITS = True
+Global Const $ENABLE_DEMONASSASSIN = False ; Behemoths don't drop ecto. Skips Mountain area too.
 
-Global $underworld_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $UNDERWORLD_FIGHT_OPTIONS = CloneDictMap($Default_MoveAggroAndKill_Options)
 
 Global $uw_farm_setup = False
-
 
 ;~ Main loop function
 Func UnderworldFarm()
@@ -83,58 +82,53 @@ EndFunc
 
 Func UnderworldFarmLoop()
 	Info('Starting Farm')
+
 	ClearTheChamberUnderworld()
 
 	; Accept reward & take quest Restoring Grenth's Monuments
 	Local $Reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
 	TakeQuestReward($Reaper_Labyrinth, $ID_QUEST_CLEAR_THE_CHAMBER, 0x806507)
 	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)
-	Info('Taking Restoring Grenths Monuments Quest')
+	Info('Taking ''Restoring Grenths Monuments'' Quest')
 
 	ClearTheForgottenVale()
-	; Take Quest Wrathful spirits from the Reaper and complete
 	Local $Reaper_ForgottenVale
 	$Reaper_ForgottenVale = GetNearestNPCToCoords(-13211, 5322)
 	WrathfulSpirits($Reaper_ForgottenVale)
 
 	ClearTheFrozenWastes()
-	; Take Quest Servants of Grenth from Reaper of the Ice Wastes
 	Local $Reaper_IceWastes
 	$Reaper_IceWastes = GetNearestNPCToCoords(526, 18407)
 	ServantsOfGrenth($Reaper_IceWastes)
 
 	ClearTheChaosPlanes()
-	; Take Quest The Four Horsemen from Reaper of the Chaos Planes
 	Local $Reaper_ChaosPlanes
 	$Reaper_ChaosPlanes = GetNearestNPCToCoords(11306, -17893)
 	; TODO: Currently this function simply takes player back to Labyrinth Reaper
 	TheFourHorsemen($Reaper_ChaosPlanes)
 
 	ClearSpawningPools($Reaper_Labyrinth)
-	; Take Quest Terrorweb Queen from the Reaper of the Spawning Pools
 	Local $Reaper_SpawningPools
 	$Reaper_SpawningPools = GetNearestNPCToCoords(-6962, -19505)
 	TerrorwebQueen($Reaper_SpawningPools)
 
 	ClearBonePits($Reaper_Labyrinth)
-	; Take Quest Imprisoned Spirits from the Reaper of the Bone Pits
 	Local $Reaper_BonePits
 	$Reaper_BonePits = GetNearestNPCToCoords(8759, 6314)
 	ImprisonedSpirits($Reaper_BonePits)
 
 	If $ATTEMPT_REAPER_QUESTS == True Then
 		ClearTwinSerpentMountains()
-		; Take Quest Demon Assassin from the Reaper of the Twin Serpent Mountains & defend
 		Local $Reaper_TwinSerpentMountains
 		$Reaper_TwinSerpentMountains = GetNearestNPCToCoords(8220, 5202)
 		DemonAssassin($Reaper_TwinSerpentMountains)
 	Else
-		Info('Skipping Twin Serpent Mounts Area as per settings')
+		Info('Skipping ''Twin Serpent Mounts'' Area as per settings')
 	EndIf
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
-EndFunc
 
+EndFunc
 
 ;~ Send user back to Chaos Plains
 Func TeleportBackToChaosPlains($Reaper)
@@ -150,7 +144,6 @@ Func TeleportBackToChaosPlains($Reaper)
 	Sleep(1000)
 EndFunc
 
-
 ;~ Send user back to Labyrinth if skipping quest
 Func TeleportBackToLabyrinthQuestSkip($Reaper)
 	Info('Teleporting back to Labyrinth')
@@ -164,7 +157,6 @@ Func TeleportBackToLabyrinthQuestSkip($Reaper)
 	Dialog(0x8D)
 	Sleep(1000)
 EndFunc
-
 
 ;~ Send user back to Labyrinth after completing quest
 Func TeleportBackToLabyrinthQuestComplete($Reaper)
@@ -218,7 +210,7 @@ Func ClearTheChamberUnderworld()
 	MoveAggroAndKill(910, 7115)
 	MoveTo(378, 7209)
 
-	Info('Taking Clear the Chamber Quest')
+	Info('Taking ''Clear the Chamber'' Quest')
 	Local $lostSoul = GetNearestNPCToCoords(246, 7177)
 	TakeQuest($lostSoul, $ID_QUEST_CLEAR_THE_CHAMBER, 0x0806501)
 	; bottem left stairs
@@ -228,6 +220,7 @@ Func ClearTheChamberUnderworld()
 	; going to right side
 	MoveAggroAndKill(-1207, 6524)
 	MoveAggroAndKill(-1361, 7832)
+
 	MoveAggroAndKill(-805, 8886)
 	MoveAggroAndKill(553, 9338)
 	; wait at top right stairs for grasping darkness
@@ -235,6 +228,7 @@ Func ClearTheChamberUnderworld()
 	; top middle chamber stairs
 	MoveAggroAndKill(-1495, 10562)
 	MoveAggroAndKill(-2824, 10222)
+
 	; doing 'Clear the Chamber' quest
 	MoveAggroAndKill(-4210, 11372)
 	MoveAggroAndKill(-4675, 11733)
@@ -251,10 +245,9 @@ Func ClearTheChamberUnderworld()
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
-
 Func ClearTheForgottenVale()
-	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
-	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT * 1.2
+	Local $optionsForgottenVale = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
+	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('ignoreDroppedLoot') = False
 	Info('Moving to Forgotten Vale')
@@ -266,7 +259,7 @@ Func ClearTheForgottenVale()
 	MoveAggroAndKill(-8009, 6331)
 	RandomSleep(3000)
 	MoveAggroAndKill(-8641, 5709)
-	MoveAggroAndKill(-7264, 3390, '', $optionsForgottenVale)
+	MoveAggroAndKill(-7264, 3390, '', $optionsForgottenVale) 
 	MoveAggroAndKill(-7714, 2222, '', $optionsForgottenVale)
 	MoveAggroAndKill(-8694, 2213, '', $optionsForgottenVale)
 	Info('Kill Popups')
@@ -285,6 +278,7 @@ Func ClearTheForgottenVale()
 	MoveAggroAndKill(-13491, 4605)
 	Info('Kill Some Coldfire Patrols')
 	$optionsForgottenVale.Item('flagHeroesOnFight') = True
+	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	MoveAggroAndKill(-13505, 6040, '', $optionsForgottenVale)
 	Info('Waiting for Coldfire Patrols 1')
 	RandomSleep(5000)
@@ -310,15 +304,16 @@ Func ClearTheForgottenVale()
 	MoveAggroAndKill(-13230, 5246)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
 Func WrathfulSpirits($Reaper)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_WRATHFUL_SPIRITS Then
-		Info('Skipping Wrathful Spirits Quest as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_WRATHFULSPIRITS Then
+		Info('Skipping ''Wrathful Spirits'' Quest as per settings')
 		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
+	Local $optionsForgottenVale = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('ignoreDroppedLoot') = False
@@ -327,46 +322,47 @@ Func WrathfulSpirits($Reaper)
 		If IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS) Then
 			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
 			ExitLoop
+		Else
+			Info('1st Group')
+			MoveTo(-13290, 3629)
+			MoveTo(-13200, 2657)
+			MoveAggroAndKill(-13881, 1866)
+			Info('Protect Mayor Alegheri')
+			MoveTo(-13409, 1059)
+			MoveAggroAndKill(-12908, 822)
+			MoveAggroAndKill(-13194, 75)
+			MoveAggroAndKill(-12908, 822)
+			MoveAggroAndKill(-12250, 944)
+			Info('2nd Group')
+			MoveAggroAndKill(-11631, 839)
+			MoveAggroAndKill(-10395, 286)
+			Info('3rd Group')
+			MoveAggroAndKill(-11631, 839)
+			MoveAggroAndKill(-10972, 1709)
+			MoveAggroAndKill(-10215, 1825)
+			Info('4th Group')
+			MoveAggroAndKill(-11631, 839)
+			MoveAggroAndKill(-12250, 944)
+			MoveAggroAndKill(-13296, 278)
+			Info('Moving to Final Group')
+			MoveAggroAndKill(-13229, 720)
+			MoveAggroAndKill(-13849, 1291)
+			MoveAggroAndKill(-13200, 2657, '', $optionsForgottenVale)
+			MoveAggroAndKill(-13290, 3629, '', $optionsForgottenVale)
+			MoveAggroAndKill(-12530, 6322)
+			MoveAggroAndKill(-13588, 7149)
+			MoveAggroAndKill(-14825, 6855)
+			MoveAggroAndKill(-15210, 5363)
+			Info('Final Group')
+			MoveAggroAndKill(-15283, 3394)
+			Info('Returning to Reaper')
+			MoveAggroAndKill(-15210, 5363)
+			MoveAggroAndKill(-14825, 6855)
+			MoveAggroAndKill(-13588, 7149)
+			MoveAggroAndKill(-12530, 6322)
+			MoveAggroAndKill(-13665, 4673)
+			MoveAggroAndKill(-13211, 5322)
 		EndIf
-		Info('1st Group')
-		MoveTo(-13290, 3629)
-		MoveTo(-13200, 2657)
-		MoveAggroAndKill(-13881, 1866)
-		Info('Protect Mayor Alegheri')
-		MoveTo(-13409, 1059)
-		MoveAggroAndKill(-12908, 822)
-		MoveAggroAndKill(-13194, 75)
-		MoveAggroAndKill(-12908, 822)
-		MoveAggroAndKill(-12250, 944)
-		Info('2nd Group')
-		MoveAggroAndKill(-11631, 839)
-		MoveAggroAndKill(-10395, 286)
-		Info('3rd Group')
-		MoveAggroAndKill(-11631, 839)
-		MoveAggroAndKill(-10972, 1709)
-		MoveAggroAndKill(-10215, 1825)
-		Info('4th Group')
-		MoveAggroAndKill(-11631, 839)
-		MoveAggroAndKill(-12250, 944)
-		MoveAggroAndKill(-13296, 278)
-		Info('Moving to Final Group')
-		MoveAggroAndKill(-13229, 720)
-		MoveAggroAndKill(-13849, 1291)
-		MoveAggroAndKill(-13200, 2657, '', $optionsForgottenVale)
-		MoveAggroAndKill(-13290, 3629, '', $optionsForgottenVale)
-		MoveAggroAndKill(-12530, 6322)
-		MoveAggroAndKill(-13588, 7149)
-		MoveAggroAndKill(-14825, 6855)
-		MoveAggroAndKill(-15210, 5363)
-		Info('Final Group')
-		MoveAggroAndKill(-15283, 3394)
-		Info('Returning to Reaper')
-		MoveAggroAndKill(-15210, 5363)
-		MoveAggroAndKill(-14825, 6855)
-		MoveAggroAndKill(-13588, 7149)
-		MoveAggroAndKill(-12530, 6322)
-		MoveAggroAndKill(-13665, 4673)
-		MoveAggroAndKill(-13211, 5322)
 	WEnd
 	If Not IsPlayerOrPartyAlive() Then
 		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
@@ -389,11 +385,11 @@ Func WrathfulSpirits($Reaper)
 	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
-
 Func ClearTheFrozenWastes()
-	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
+	Local $optionsFrozenWastes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsFrozenWastes.Item('fightRange') = $RANGE_EARSHOT
 	$optionsFrozenWastes.Item('flagHeroesOnFight') = True
 	$optionsFrozenWastes.Item('ignoreDroppedLoot') = False
@@ -482,14 +478,13 @@ Func ClearTheFrozenWastes()
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
-
 Func ServantsOfGrenth($Reaper)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_SERVANTS_OF_GRENTH Then
-		Info('Skipping Servants of Grenth Quest as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_SERVANTSOFGRENTH Then
+		Info('Skipping ''Servants of Grenth'' Quest as per settings')
 		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
+	Local $optionsFrozenWastes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsFrozenWastes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsFrozenWastes.Item('flagHeroesOnFight') = False
 	$optionsFrozenWastes.Item('ignoreDroppedLoot') = True
@@ -559,10 +554,9 @@ Func ServantsOfGrenth($Reaper)
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
-
 Func ClearTheChaosPlanes()
-	Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
-	$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
+	Local $optionsChaosPlanes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
+	$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT
 	$optionsChaosPlanes.Item('flagHeroesOnFight') = False
 	$optionsChaosPlanes.Item('ignoreDroppedLoot') = False
 	Info('Moving to Chaos Plains')
@@ -587,23 +581,23 @@ Func ClearTheChaosPlanes()
 	MoveAggroAndKill(-3432, 945)
 	MoveAggroAndKill(-3063, 4219)
 	Info('Extra mobs on the ledge above forgotten vale')
-	MoveAggroAndKill(-3447, 4719)
-	MoveAggroAndKill(-4559, 4954)
-	MoveAggroAndKill(-5223, 4703)
-	MoveAggroAndKill(-6031, 3642)
-	MoveAggroAndKill(-6098, 2699)
-	MoveAggroAndKill(-5639, 1794)
-	MoveAggroAndKill(-6147, 745)
-	MoveAggroAndKill(-5639, 1794)
-	MoveAggroAndKill(-6098, 2699)
-	MoveAggroAndKill(-6031, 3642)
-	MoveAggroAndKill(-5223, 4703)
-	MoveAggroAndKill(-4559, 4954)
-	MoveAggroAndKill(-3447, 4719)
-	MoveAggroAndKill(-3063, 4219)
-	MoveAggroAndKill(-3432, 945)
-	MoveAggroAndKill(-2711, -90)
-	MoveAggroAndKill(-663, -535)
+	MoveAggroAndKill(-3447, 4719, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-4559, 4954, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-5223, 4703, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-6031, 3642, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-6098, 2699, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-5639, 1794, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-6147, 745, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-5639, 1794, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-6098, 2699, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-6031, 3642, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-5223, 4703, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-4559, 4954, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-3447, 4719, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-3063, 4219, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-3432, 945, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-2711, -90, '', $optionsChaosPlanes)
+	MoveAggroAndKill(-663, -535, '', $optionsChaosPlanes)
 	Info('Moving to worms')
 	MoveAggroAndKillSafeTraps(412, 1324)
 	Info('Clear Traps for Heroes')
@@ -612,63 +606,67 @@ Func ClearTheChaosPlanes()
 	RandomSleep(5000)
 	CancelAll()
 	MoveAggroAndKillSafeTraps(1835, 2562)
-	MoveAggroAndKillSafeTraps(2522, 2801)
-	Info('Clear Traps for Heroes')
-	CommandAll(2522, 2801)
-	MoveTo(3640, 2353)
+	;Let's Just avoid Behemoths if possible
+	Info('Avoiding Worm 1')
+	CommandAll(2968, 2616)
+	MoveTo(2968, 2616)
+	CommandAll(3030, 2259)
+	MoveTo(3030, 2259)
+	CommandAll(2684, 1457)
+	MoveTo(2684, 1457)
 	RandomSleep(5000)
+	CommandAll(3820, 1178)
+	MoveTo(3820, 1178)
+	Info('Avoiding Worm 2')
+	CommandAll(4608, 1467)
+	MoveTo(4608, 1467)
+	Info('Avoiding Worm 3')
+	CommandAll(5453, 602)
+	MoveTo(5453, 602)
+	CommandAll(6290, 1341)
+	MoveTo(6290, 1341)
 	CancelAll()
-	MoveAggroAndKillSafeTraps(3640, 2353)
-	Info('Killing Worm Mob 1')
-	MoveAggroAndKillSafeTraps(3295, 1343)
-	MoveAggroAndKillSafeTraps(4075, 1205)
-	MoveAggroAndKillSafeTraps(4792, 1990)
-	Info('Killing Worm Mob 2')
-	MoveAggroAndKillSafeTraps(4840, 1220)
+	RandomSleep(2500)
+	Info('Killing Charged Blackness')
+	MoveAggroAndKillSafeTraps(6826, 1806)
+	MoveAggroAndKillSafeTraps(7710, 1685)
+	Info('Killing Worm 4')
+	MoveAggroAndKillSafeTraps(7905, 265)
 	Info('Clear Traps for Heroes')
-	CommandAll(4840, 1220)
-	MoveTo(4808, 550)
-	RandomSleep(5000)
-	CancelAll()
-	Info('Killing Worm Mob 3')
-	MoveAggroAndKillSafeTraps(5643, 618)
-	MoveAggroAndKillSafeTraps(6585, 1508)
-	Info('kill charged blackness')
-	MoveAggroAndKillSafeTraps(7277, 2079)
-	MoveAggroAndKillSafeTraps(7919, 578)
-	Info('Clear Traps for Heroes')
-	CommandAll(7919, 578)
+	CommandAll(7905, 265)
 	MoveTo(8021, -275)
 	RandomSleep(5000)
 	CancelAll()
-	Info('Killing Worm Mob 4')
-	MoveAggroAndKillSafeTraps(8477, -626)
-	MoveAggroAndKillSafeTraps(8706, -1135)
-	; popup
-	MoveAggroAndKillSafeTraps(8456, -1396)
-	MoveAggroAndKillSafeTraps(8210, -2189)
-	MoveAggroAndKillSafeTraps(8114, -3608)
-	MoveAggroAndKillSafeTraps(7934, -4267)
-	MoveAggroAndKillSafeTraps(8781, -4834)
-	MoveAggroAndKillSafeTraps(8186, -6531)
-	MoveAggroAndKillSafeTraps(8040, -7296)
-	; kill mobs
-	MoveAggroAndKillSafeTraps(7966, -7743)
-	MoveAggroAndKillSafeTraps(8484, -8004)
-	; kill mobs
-	Info('Clear Traps for Heroes')
+	RandomSleep(2500)
+	Info('Avoiding Worm Mob 5 & 6')
+	CommandAll(8824, -1125)
+	MoveTo(8824, -1125)
+	CommandAll(8385, -2335)
+	MoveTo(8385, -2335)
+	CommandAll(8274, -4431)
+	MoveTo(8274, -4431)
+	CancelAll()
+	Info('Kill Charged Blackness')
+	MoveAggroAndKillSafeTraps(8705, -4770)
+	MoveAggroAndKillSafeTraps(8730, -5244)
+	MoveAggroAndKillSafeTraps(8422, -6149)
+	Info('Kill Worm Mob 7')
+	MoveAggroAndKillSafeTraps(7870, -7200)
+	Info('Kill Worm Mob 8')
+	MoveAggroAndKillSafeTraps(7923, -7720)
+	Info('Clear Final Traps for Heroes')
 	CommandAll(7798, -7798)
 	MoveTo(8873, -8096)
 	RandomSleep(5000)
 	CancelAll()
 	MoveAggroAndKill(9747, -8488)
 	MoveAggroAndKill(9621, -9465)
+	Sleep(5000)
 	Info('At planes')
 	Info('Collecting Lords')
 	MoveAggroAndKill(9153, -10780)
 	MoveAggroAndKill(10020, -11292)
 	MoveAggroAndKill(10533, -10474)
-	; kill mobs
 	Info('Killing Mindblade Mob 1')
 	MoveAggroAndKill(10753, -11413)
 	Info('Killing Mindblade Mob 2')
@@ -703,6 +701,21 @@ Func ClearTheChaosPlanes()
 	Info('Killing Mindblade Mob 3')
 	MoveAggroAndKill(11164, -13191)
 	Info('Moving to spot 4')
+	MoveAggroAndKill(13646, -12643)
+	MoveAggroAndKill(13938, -14000)
+	MoveAggroAndKill(13736, -15558)
+	Info('Killing Mindblade Mob 1')
+	MoveAggroAndKill(13938, -14000)
+	Info('Killing Mindblade Mob 2')
+	MoveAggroAndKill(13575, -16756)
+	MoveAggroAndKill(13736, -15558)
+	RandomSleep(7000)
+	Info('Killing Mindblade Mob 3')
+	MoveAggroAndKill(13575, -16756)
+	Info('Moving to spot 5')
+	MoveAggroAndKill(13736, -15558)
+	MoveAggroAndKill(13938, -14000)
+	MoveAggroAndKill(13646, -12643)
 	MoveAggroAndKill(10641, -11650)
 	MoveAggroAndKill(8618, -11218)
 	MoveAggroAndKill(7515, -12059)
@@ -717,7 +730,7 @@ Func ClearTheChaosPlanes()
 	MoveAggroAndKill(8268, -13928)
 	MoveAggroAndKill(7807, -12111)
 	MoveAggroAndKill(9218, -11620)
-	Info('Moving to spot 5')
+	Info('Moving to spot 6')
 	MoveAggroAndKill(7322, -12220)
 	MoveAggroAndKill(6825, -13247)
 	MoveAggroAndKill(7392, -14467)
@@ -727,16 +740,16 @@ Func ClearTheChaosPlanes()
 	MoveAggroAndKill(6971, -16245)
 	MoveAggroAndKill(6519, -17280)
 	MoveAggroAndKill(5980, -17888)
-	Info('Moving to spot 6')
+	Info('Moving to spot 7')
 	MoveAggroAndKill(4806, -17454)
 	MoveAggroAndKill(5980, -17888)
 	MoveAggroAndKill(3839, -18881)
 	MoveAggroAndKill(3074, -19617)
-	Info('Moving to spot 7')
+	Info('Moving to spot 8')
 	MoveAggroAndKill(2421, -17792)
 	MoveAggroAndKill(2268, -15530)
 	MoveAggroAndKill(2168, -14641)
-	Info('Moving to spot 8')
+	Info('Moving to spot 9')
 	MoveAggroAndKill(2268, -15530)
 	MoveAggroAndKill(2421, -17792)
 	MoveAggroAndKill(3074, -19617)
@@ -751,61 +764,53 @@ Func ClearTheChaosPlanes()
 	MoveAggroAndKill(8711, -20500)
 	RandomSleep(10000)
 	MoveAggroAndKill(8711, -20500)
+	Info('Moving to Spot 10')
+	MoveAggroAndKill(10264, -18524)
 	Info('Moving to Monument to clear Terrorweb Dryders')
-	MoveAggroAndKill(10373, -18882)
-	MoveAggroAndKill(10662, -18028)
-	RandomSleep(10000)
-	Info('Kill Mindblade Spawns')
+	MoveAggroAndKill(11160, -17710)
+	RandomSleep(5000)
+	Info('Killing Mindblade Mob 1')
 	$optionsChaosPlanes.Item('ignoreDroppedLoot') = True
-	MoveAggroAndKill(10373, -18882, '', $optionsChaosPlanes)
-	RandomSleep(10000)
-	MoveAggroAndKill(11440, -17168, '', $optionsChaosPlanes)
-	MoveAggroAndKill(12564, -17553, '', $optionsChaosPlanes)
-	Info('Moving to Reaper to protect')
-	MoveAggroAndKill(11306, -17893, '', $optionsChaosPlanes)
+	$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
+	MoveAggroAndKill(12211, -17522, '', $optionsChaosPlanes) ; Right Short
+	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
+	Info('Killing Mindblade Mob 2')
+	MoveAggroAndKill(10550, -18575, '', $optionsChaosPlanes) ; Left
+	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
+	RandomSleep(7000)
+	Info('Killing Mindblade Mob 3')
+	MoveAggroAndKill(12211, -17522, '', $optionsChaosPlanes) ; Right Short
+	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
 	RandomSleep(5000)
-	Info('Kill Dream Final Rider')
-	MoveAggroAndKill(12564, -17553, '', $optionsChaosPlanes)
+	Info('Sweeping for Safety')
+	MoveAggroAndKill(12211, -17522, '', $optionsChaosPlanes) ; Right Short
+	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
+	MoveAggroAndKill(10550, -18575, '', $optionsChaosPlanes) ; Left
 	RandomSleep(5000)
-	MoveAggroAndKill(13766, -16605, '', $optionsChaosPlanes)
-	Info('Moving to Reaper to protect')
-	MoveAggroAndKill(12564, -17553, '', $optionsChaosPlanes) ; issue spot
-	MoveAggroAndKill(11306, -17893, '', $optionsChaosPlanes)
-	RandomSleep(10000)
-	Info('Kill Mindblade Spawns')
-	MoveAggroAndKill(12564, -17553, '', $optionsChaosPlanes)
-	MoveAggroAndKill(13766, -16605, '', $optionsChaosPlanes)
-	Info('Moving to Reaper to protect')
-	MoveAggroAndKill(12564, -17553, '', $optionsChaosPlanes)
-	MoveAggroAndKill(11306, -17893, '', $optionsChaosPlanes)
+	MoveAggroAndKill(12211, -17522, '', $optionsChaosPlanes) ; Right Short
+	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
+	MoveAggroAndKill(10550, -18575, '', $optionsChaosPlanes) ; Left
 	RandomSleep(5000)
-	Info('Kill Mindblade Spawns')
-	MoveAggroAndKill(10373, -18882, '', $optionsChaosPlanes)
-	RandomSleep(5000)
-	Info('Moving to Reaper to protect')
-	MoveAggroAndKill(11306, -17893, '', $optionsChaosPlanes)
-	Info('Waiting 30s as final safety measure')
-	RandomSleep(30000)
-	Info('Picking up Loot')
-	MoveAggroAndKill(12564, -17553)
+	MoveAggroAndKill(12211, -17522, 'Picking Up Loot on Right Side')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
-	MoveAggroAndKill(11306, -17893)
+	MoveAggroAndKill(11160, -17710, 'Picking Up Loot at Reaper')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
-	MoveAggroAndKill(10373, -18882)
+	MoveAggroAndKill(10550, -18575, 'Picking Up Loot on Left Side')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
-	MoveAggroAndKill(11306, -17893)
+	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
 
 Func TheFourHorsemen($Reaper)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THE_FOUR_HORSEMEN Then
-		Info('Skipping The Four Horsemen Quest as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THEFOURHORSEMEN Then
+		Info('Skipping ''The Four Horsemen'' Quest as per settings')
 		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	;Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
+	;Local $optionsChaosPlanes = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	;$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	;$optionsChaosPlanes.Item('flagHeroesOnFight') = False
 	;$optionsChaosPlanes.Item('ignoreDroppedLoot') = False
@@ -813,7 +818,7 @@ Func TheFourHorsemen($Reaper)
 	;RandomSleep(1000)
 	;Dialog(0x7F) ; The Four Horsemen = 0x806A03
 	;RandomSleep(1000)
-	;Info('Taking The Four Horsemen Quest')
+	;Info('Taking ''The Four Horsemen'' Quest')
 	;Dialog(0x86) ; Accept The Four Horsemen Quest = 0x806A01
 	;RandomSleep(1000)
 	;Dialog(0x8D) ; Remove when quest is implemented
@@ -821,11 +826,11 @@ Func TheFourHorsemen($Reaper)
 	;TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
-
 Func ClearSpawningPools($Reaper)
-	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
+	Local $optionsSpawningPools = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('ignoreDroppedLoot') = False
@@ -895,16 +900,16 @@ Func ClearSpawningPools($Reaper)
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
-
 Func TerrorwebQueen($Reaper)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_TERRORWEB_QUEEN Then
-		Info('Skipping Terrorweb Queen Quest as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_TERRORWEBQUEEN Then
+		Info('Skipping ''Terrorweb Queen'' Quest as per settings')
 		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
+	Local $optionsSpawningPools = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('ignoreDroppedLoot') = False
@@ -939,11 +944,11 @@ Func TerrorwebQueen($Reaper)
 	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
-
 Func ClearBonePits($Reaper)
-	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
+	Local $optionsBonePits = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('ignoreDroppedLoot') = False
@@ -1009,16 +1014,16 @@ Func ClearBonePits($Reaper)
 	MoveAggroAndKill(8759, 6314)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
-
 Func ImprisonedSpirits($Reaper)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_IMPRISONED_SPIRITS Then
-		Info('Skipping Imprisoned Spirits Quest as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_IMPRISONEDSPIRITS Then
+		Info('Skipping ''Imprisoned Spirits'' Quest as per settings')
 		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
+	Local $optionsBonePits = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('ignoreDroppedLoot') = True
@@ -1028,7 +1033,7 @@ Func ImprisonedSpirits($Reaper)
 	CommandHero(3, 12519, 3393)
 	CommandHero(4, 12876, 4124)
 	CommandHero(5, 12537, 4009)
-	CommandHero(6, 12787, 3645)
+	CommandHero(6, 12787, 3645)  
 	CommandHero(7, 12526, 4567)
 	RandomSleep(30000)
 	TakeQuest($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806901, 0x806903)
@@ -1080,15 +1085,15 @@ Func ImprisonedSpirits($Reaper)
 	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
-
 Func ClearTwinSerpentMountains()
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMON_ASSASSIN Then
-		Info('Skipping Twin Serpent Mounts Area as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMONASSASSIN Then
+		Info('Skipping ''Twin Serpent Mounts'' Area as per settings')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
+	Local $optionsTwinSerpentMountains = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 0.9
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
 	$optionsTwinSerpentMountains.Item('ignoreDroppedLoot') = False
@@ -1169,9 +1174,9 @@ Func ClearTwinSerpentMountains()
 	MoveAggroAndKillSafeTraps(-4530, -5823)
 	MoveAggroAndKillSafeTraps(-3901, -5809)
 	MoveAggroAndKillSafeTraps(-4281, -5058)
-	Info('Clear Traps for Heroes')
+	Info('Clear Traps for Heroes') 
 	CommandAll(-4281, -5058)
-	MoveTo(-5032, -4363)
+	MoveTo(-5032, -4363) 
 	RandomSleep(5000)
 	CancelAll()
 	Info('Moving to Spot 6')
@@ -1198,18 +1203,19 @@ Func ClearTwinSerpentMountains()
 	MoveAggroAndKillSafeTraps(-7401, -4192)
 	MoveAggroAndKillSafeTraps(-7941, -4463)
 	MoveAggroAndKillSafeTraps(-8220, -5202)
-
+	
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
 
 
 Func DemonAssassin($Reaper)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMON_ASSASSIN Then
-		Info('Skipping Demon Assassin Quest as per settings')
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMONASSASSIN Then
+		Info('Skipping ''Demon Assassin'' Quest as per settings')
 		TeleportBackToLabyrinthQuestSkip($Reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
+	Local $optionsTwinSerpentMountains = CloneDictMap($UNDERWORLD_FIGHT_OPTIONS)
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
 	$optionsTwinSerpentMountains.Item('ignoreDroppedLoot') = True
@@ -1219,7 +1225,7 @@ Func DemonAssassin($Reaper)
 	CommandHero(3, -4731, -5816)
 	CommandHero(4, -4792, -6052)
 	CommandHero(5, -4898, -5730)
-	CommandHero(6, -5288, -5621)
+	CommandHero(6, -5288, -5621)  
 	CommandHero(7, -5165, -6047)
 	RandomSleep(16000)
 	TakeQuest($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806801, 0x806803)
@@ -1261,4 +1267,5 @@ Func DemonAssassin($Reaper)
 	TeleportBackToLabyrinthQuestComplete($Reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+
 EndFunc
