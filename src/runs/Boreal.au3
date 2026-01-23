@@ -160,7 +160,6 @@ Func BorealChestFarmLoop()
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 	Info('Running to Spot #2')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	; todo: check here how many chests are in compass range and when are reached return success
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 	Info('Running to Spot #3')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
