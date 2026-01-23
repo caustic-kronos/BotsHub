@@ -170,10 +170,10 @@ EndFunc
 ;~ Setup Hamnet quest
 Func SetupHamnetQuest()
 	Info('Setting up Hamnet quest...')
-	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 
 	If IsQuestNotFound($ID_QUEST_VANGUARD_RESCUE_FARMER_HAMNET) Then
 		Info('Quest not found, setting up...')
+		DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
 		RandomSleep(750)
 		MoveTo(9516, 7668)
 		MoveTo(9815, 7809)
