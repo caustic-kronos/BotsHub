@@ -1206,9 +1206,9 @@ Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUES
 	While BitAND($questState, 0x01) <> $expectedState
 		Debug('Current quest state : ' & $questState)
 		GoToNPC($questNPC)
-		Sleep(1000 + GetPing()
+		Sleep(1000 + GetPing())
 		Dialog($dialogID)
-		Sleep(1000 + GetPing()
+		Sleep(1000 + GetPing())
 		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 		If TimerDiff($timerQuest) > 60000 Then
 			Warn('Could not handle quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
@@ -1229,9 +1229,9 @@ Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	Info('Taking quest ' & $QUEST_NAMES_FROM_IDS[$questID])
 	If $initialDialogID <> Null Then
 		GoToNPC($questNPC)
-		Sleep(1000 + GetPing()
+		Sleep(1000 + GetPing())
 		Dialog($initialDialogID)
-		Sleep(1000 + GetPing()
+		Sleep(1000 + GetPing())
 	EndIf
 	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_ACTIVE)
 EndFunc
@@ -1249,7 +1249,7 @@ Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
 		GoToNPC($questNPC)
 		Sleep(1000 + GetPing())
 		Dialog($initialDialogID)
-		Sleep(1000 + GetPing()
+		Sleep(1000 + GetPing())
 	EndIf
 	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_COMPLETED)
 EndFunc
