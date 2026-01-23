@@ -54,6 +54,7 @@ Global Const $BOREAL_IAMUNSTOPPABLE		= 5
 Global Const $BOREAL_DASH				= 6
 Global Const $BOREAL_DEATHSCHARGE		= 7
 Global Const $BOREAL_HEARTOFSHADOW		= 8
+Global Const $BOREAL_MOUNTAIN_ALOE_MODEL_ID = 6540
 
 ; global variable to remember player's profession in setup
 Global $boreal_player_profession = $ID_ASSASSIN
@@ -172,8 +173,12 @@ EndFunc
 ;~ Function to speed run up
 Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
+	Local $me = GetMyAgent()
+	If DllStructGetData($me, 'HealthPercent') < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
+		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
+	EndIf
 	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
-		If GetEffect($ID_CRIPPLED) <> Null Or IsSignetOfJudgmentTargetingMe() Then
+		If GetEffect($ID_CRIPPLED) <> Null Or IsMountainAloeInCastingRange() Then
 			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
 		EndIf
 	EndIf
@@ -187,13 +192,11 @@ Func BorealSpeedRun()
 EndFunc
 
 
-Func IsSignetOfJudgmentTargetingMe()
+Func IsMountainAloeInCastingRange()
 	Local $me = GetMyAgent()
-	Local $myId = DllStructGetData($me, 'ID')
 	For $agent In GetAgentArray($ID_AGENT_TYPE_NPC)
-		If DllStructGetData($agent, 'ID') == $myId Then ContinueLoop
-		If GetIsCasting($agent) And DllStructGetData($agent, 'Skill') == $ID_SIGNET_OF_JUDGMENT Then
-			If GetTarget($agent) == $myId Then Return True
+		If DllStructGetData($agent, 'ModelID') == $BOREAL_MOUNTAIN_ALOE_MODEL_ID And GetDistance($me, $agent) <= $RANGE_SPELLCAST Then
+			Return True
 		EndIf
 	Next
 	Return False
