@@ -362,11 +362,10 @@ EndFunc
 
 
 ;~ Start/stop background low-health monitor
-;~ Return to Ascalon if health is dangerously low
+;~ Return to Ascalon/Foibles if health is dangerously low
 Func LowHealthMonitor()
-	Local $level = DllStructGetData(GetMyAgent(), 'Level')
-
 	If IsLowHealth() Then
+		Local $level = DllStructGetData(GetMyAgent(), 'Level')
 		If $level < 10 Then
 			Notice('Health below threshold, returning to Ascalon and restarting the run.')
 			DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
