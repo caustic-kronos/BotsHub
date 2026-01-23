@@ -151,6 +151,7 @@ Func BorealChestFarmLoop()
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)
 
 	Local $openedChests = 0
+	Local $totalChestsCount = 0
 
 	Info('Running to Spot #1')
 	If BorealChestRun(2728, -25294) == $FAIL Then Return $FAIL
@@ -158,18 +159,52 @@ Func BorealChestFarmLoop()
 	If BorealChestRun(-1000, -19801) == $FAIL Then Return $FAIL
 	If BorealChestRun(-2570, -17208) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
+
 	Info('Running to Spot #2')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
+	$totalChestsCount = CountChestsInCompassRange()
+	Info('Total amount of chests here: ' & $totalChestsCount)
+
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
+	If $openedChests == $totalChestsCount Then
+		Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
+		Return $SUCCESS
+	EndIf
+
 	Info('Running to Spot #3')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
+	If $openedChests == $totalChestsCount Then
+		Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
+		Return $SUCCESS
+	EndIf
+
 	Info('Running to Spot #4')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
 	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
-	Info('Opened ' & $openedChests & ' chests.')
+	If $openedChests == $totalChestsCount Then
+		Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
+		Return $SUCCESS
+	EndIf
+
 	; Result can't be considered a failure if no chests were found
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+EndFunc
+
+;~ Count the amount of Chests in compass range
+Func CountChestsInCompassRange()
+	Local $me = GetMyAgent()
+	Local $X = DllStructGetData($me, 'X')
+	Local $Y = DllStructGetData($me, 'Y')
+	Local $count = 0
+	Local $agents = GetAgentArray($ID_AGENT_TYPE_STATIC)
+	For $agent In $agents
+		Local $gadgetID = DllStructGetData($agent, 'GadgetID')
+		If $MAP_CHESTS_IDS[$gadgetID] == Null Then ContinueLoop
+		If GetDistanceToPoint($agent, $X, $Y) > $RANGE_COMPASS Then ContinueLoop
+		$count += 1
+	Next
+	Return $count
 EndFunc
 
 
