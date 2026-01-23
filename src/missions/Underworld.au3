@@ -256,7 +256,7 @@ Func ClearTheForgottenVale()
 	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT * 1.2
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
-	$optionsForgottenVale.Item('doNotLoot') = False
+	$optionsForgottenVale.Item('ignoreDroppedLoot') = False
 	Info('Moving to Forgotten Vale')
 	MoveAggroAndKill(-5973, 12410)
 	MoveAggroAndKill(-6330, 10177)
@@ -321,7 +321,7 @@ Func WrathfulSpirits($Reaper)
 	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
-	$optionsForgottenVale.Item('doNotLoot') = False
+	$optionsForgottenVale.Item('ignoreDroppedLoot') = False
 	TakeQuest($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
 	While IsPlayerOrPartyAlive()
 		If IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS) Then
@@ -396,7 +396,7 @@ Func ClearTheFrozenWastes()
 	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
 	$optionsFrozenWastes.Item('fightRange') = $RANGE_EARSHOT
 	$optionsFrozenWastes.Item('flagHeroesOnFight') = True
-	$optionsFrozenWastes.Item('doNotLoot') = False
+	$optionsFrozenWastes.Item('ignoreDroppedLoot') = False
 	Info('Moving to Frozen Wastes')
 	MoveAggroAndKill(-5129, 13248)
 	MoveAggroAndKill(-4, 13337)
@@ -492,7 +492,7 @@ Func ServantsOfGrenth($Reaper)
 	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
 	$optionsFrozenWastes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsFrozenWastes.Item('flagHeroesOnFight') = False
-	$optionsFrozenWastes.Item('doNotLoot') = True
+	$optionsFrozenWastes.Item('ignoreDroppedLoot') = True
 	Info('Setting heroes up for quest')
 	CommandHero(1, 2010, 19451)
 	CommandHero(2, 2426, 19814)
@@ -564,7 +564,7 @@ Func ClearTheChaosPlanes()
 	Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
 	$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsChaosPlanes.Item('flagHeroesOnFight') = False
-	$optionsChaosPlanes.Item('doNotLoot') = False
+	$optionsChaosPlanes.Item('ignoreDroppedLoot') = False
 	Info('Moving to Chaos Plains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
@@ -756,7 +756,7 @@ Func ClearTheChaosPlanes()
 	MoveAggroAndKill(10662, -18028)
 	RandomSleep(10000)
 	Info('Kill Mindblade Spawns')
-	$optionsChaosPlanes.Item('doNotLoot') = True
+	$optionsChaosPlanes.Item('ignoreDroppedLoot') = True
 	MoveAggroAndKill(10373, -18882, '', $optionsChaosPlanes)
 	RandomSleep(10000)
 	MoveAggroAndKill(11440, -17168, '', $optionsChaosPlanes)
@@ -808,7 +808,7 @@ Func TheFourHorsemen($Reaper)
 	;Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
 	;$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	;$optionsChaosPlanes.Item('flagHeroesOnFight') = False
-	;$optionsChaosPlanes.Item('doNotLoot') = False
+	;$optionsChaosPlanes.Item('ignoreDroppedLoot') = False
 	;GoToNPC($Reaper)
 	;RandomSleep(1000)
 	;Dialog(0x7F) ; The Four Horsemen = 0x806A03
@@ -828,7 +828,7 @@ Func ClearSpawningPools($Reaper)
 	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
-	$optionsSpawningPools.Item('doNotLoot') = False
+	$optionsSpawningPools.Item('ignoreDroppedLoot') = False
 	TeleportBackToChaosPlains($Reaper)
 	Info('Moving to Spawning Pools')
 	MoveAggroAndKill(10235, -19396)
@@ -876,7 +876,7 @@ Func ClearSpawningPools($Reaper)
 	MoveAggroAndKill(-9931, -17845, '', $optionsSpawningPools)
 	MoveAggroAndKill(-9739, -19466, '', $optionsSpawningPools)
 	Info('Moving to Monument to clear Terrorweb Dryders')
-	$optionsSpawningPools.Item('doNotLoot') = True
+	$optionsSpawningPools.Item('ignoreDroppedLoot') = True
 	MoveAggroAndKill(-8466, -19867, '', $optionsSpawningPools)
 	Info('Move to protect Reaper')
 	MoveAggroAndKill(-7102, -19484, '', $optionsSpawningPools)
@@ -907,7 +907,7 @@ Func TerrorwebQueen($Reaper)
 	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
-	$optionsSpawningPools.Item('doNotLoot') = False
+	$optionsSpawningPools.Item('ignoreDroppedLoot') = False
 	TakeQuest($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
 	Info('Clearing Exterior')
 	MoveAggroAndKill(-8585, -19681)
@@ -946,7 +946,7 @@ Func ClearBonePits($Reaper)
 	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	$optionsBonePits.Item('flagHeroesOnFight') = False
-	$optionsBonePits.Item('doNotLoot') = False
+	$optionsBonePits.Item('ignoreDroppedLoot') = False
 	TeleportBackToChaosPlains($Reaper)
 	MoveAggroAndKill(13653, -16965)
 	Info('Let us make sure Reaper is ok before proceeding.')
@@ -1021,7 +1021,7 @@ Func ImprisonedSpirits($Reaper)
 	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT
 	$optionsBonePits.Item('flagHeroesOnFight') = False
-	$optionsBonePits.Item('doNotLoot') = True
+	$optionsBonePits.Item('ignoreDroppedLoot') = True
 	Info('Setting heroes up for quest')
 	CommandHero(1, 12182, 3976)
 	CommandHero(2, 12183, 3656)
@@ -1091,7 +1091,7 @@ Func ClearTwinSerpentMountains()
 	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 0.9
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
-	$optionsTwinSerpentMountains.Item('doNotLoot') = False
+	$optionsTwinSerpentMountains.Item('ignoreDroppedLoot') = False
 	Info('Moving to Twin Serpent Mountains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
@@ -1212,7 +1212,7 @@ Func DemonAssassin($Reaper)
 	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
-	$optionsTwinSerpentMountains.Item('doNotLoot') = True
+	$optionsTwinSerpentMountains.Item('ignoreDroppedLoot') = True
 	Info('Setting heroes up for quest')
 	CommandHero(1, -4629, -5282)
 	CommandHero(2, -4928, -5373)
