@@ -172,9 +172,10 @@ EndFunc
 ;~ Function to speed run up
 Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
-	Local $me = GetMyAgent()
-	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEffect($ID_CRIPPLED) <> Null And GetEnergy() >= 5 Then
-		UseSkillEx($BOREAL_IAMUNSTOPPABLE)
+	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
+		If GetEffect($ID_CRIPPLED) <> Null Or IsSignetOfJudgmentTargetingMe() Then
+			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
+		EndIf
 	EndIf
 	If IsRecharged($BOREAL_DWARVENSTABILITY) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DWARVENSTABILITY)
@@ -183,6 +184,19 @@ Func BorealSpeedRun()
 		UseSkillEx($BOREAL_DASH)
 	EndIf
 	Return $SUCCESS
+EndFunc
+
+
+Func IsSignetOfJudgmentTargetingMe()
+	Local $me = GetMyAgent()
+	Local $myId = DllStructGetData($me, 'ID')
+	For $agent In GetAgentArray($ID_AGENT_TYPE_NPC)
+		If DllStructGetData($agent, 'ID') == $myId Then ContinueLoop
+		If GetIsCasting($agent) And DllStructGetData($agent, 'Skill') == $ID_SIGNET_OF_JUDGMENT Then
+			If GetTarget($agent) == $myId Then Return True
+		EndIf
+	Next
+	Return False
 EndFunc
 
 
