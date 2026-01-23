@@ -54,6 +54,9 @@ Global Const $BOREAL_IAMUNSTOPPABLE		= 5
 Global Const $BOREAL_DASH				= 6
 Global Const $BOREAL_DEATHSCHARGE		= 7
 Global Const $BOREAL_HEARTOFSHADOW		= 8
+
+; Model IDs of enemy NPCs that we might encounter
+Global Const $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID = 6539
 Global Const $BOREAL_MOUNTAIN_ALOE_MODEL_ID = 6540
 
 ; global variable to remember player's profession in setup
@@ -154,19 +157,33 @@ Func BorealChestFarmLoop()
 	If BorealChestRun(2900, -22272) == $FAIL Then Return $FAIL
 	If BorealChestRun(-1000, -19801) == $FAIL Then Return $FAIL
 	If BorealChestRun(-2570, -17208) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 	Info('Running to Spot #2')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
+	; todo: check here how many chests are in compass range and when are reached return success
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 	Info('Running to Spot #3')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 	Info('Running to Spot #4')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
 	; Result can't be considered a failure if no chests were found
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+EndFunc
+
+
+;~ Function to unblocked when opening chests
+Func BorealUnblock()
+	If IsRecharged($BOREAL_HEARTOFSHADOW) And GetEnergy() >= 5 Then
+		Local $target = GetNearestEnemyToAgent(GetMyAgent())
+		If $target == Null Then $target = GetMyAgent()
+		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
+	ElseIf IsRecharged($BOREAL_DEATHSCHARGE) And GetEnergy() >= 5 Then
+		Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST)
+		If $target <> Null Then UseSkillEx($BOREAL_DEATHSCHARGE, $target)
+	EndIf
 EndFunc
 
 
@@ -174,14 +191,30 @@ EndFunc
 Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
 	Local $me = GetMyAgent()
-	If DllStructGetData($me, 'HealthPercent') < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
+	Local $my_health_percent = DllStructGetData($me, 'HealthPercent')
+	;~ If health is low, cast Shroud of Distress
+	If $my_health_percent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
 		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
 	EndIf
+	;~ If health is very low, attempt to shadow step away from nearest target
+	If $my_health_percent < 0.2 And GetEnergy() >= 5 And IsRecharged($BOREAL_HEARTOFSHADOW) Then
+		Local $target = GetNearestEnemyToAgent($me)
+		If $target == Null Then $target = $me
+		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
+	EndIf
+	;~ If Crippled or Mountain Aloe near, cast I am unstoppable
 	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
-		If GetEffect($ID_CRIPPLED) <> Null Or IsMountainAloeInCastingRange() Then
+		If GetEffect($ID_CRIPPLED) <> Null Or IsNPCInCastingRange($BOREAL_MOUNTAIN_ALOE_MODEL_ID) Then
 			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
 		EndIf
 	EndIf
+	;~ If Mountain Pinesouls are near, cast Shadow Form
+	If IsRecharged($BOREAL_SHADOWFORM) And GetEnergy() >= 5 Then
+		If GetEffect($ID_CRIPPLED) <> Null Or IsNPCInCastingRange($BOREAL_MOUNTAIN_PINESOUL_MODEL_ID) Then
+			UseSkillEx($BOREAL_SHADOWFORM)
+		EndIf
+	EndIf
+	;~ Cast Dwarven Stability and Dash when ready
 	If IsRecharged($BOREAL_DWARVENSTABILITY) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DWARVENSTABILITY)
 	EndIf
@@ -192,10 +225,10 @@ Func BorealSpeedRun()
 EndFunc
 
 
-Func IsMountainAloeInCastingRange()
+Func IsNPCInCastingRange($model_id)
 	Local $me = GetMyAgent()
 	For $agent In GetAgentArray($ID_AGENT_TYPE_NPC)
-		If DllStructGetData($agent, 'ModelID') == $BOREAL_MOUNTAIN_ALOE_MODEL_ID And GetDistance($me, $agent) <= $RANGE_SPELLCAST Then
+		If DllStructGetData($agent, 'ModelID') == $model_id And GetDistance($me, $agent) <= $RANGE_SPELLCAST Then
 			Return True
 		EndIf
 	Next
