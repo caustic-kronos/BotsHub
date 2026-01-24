@@ -1015,9 +1015,6 @@ Func ReadConfigFromJson($jsonString)
 	Local $jsonObject = _JSON_Parse($jsonString)
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
 	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
-	; below 2 lines are a fix for a very weird bug that farm combobox sometimes updates during loading farm configuration only after being set second time. _JSON_Get() function seems to be fine, maybe this is AutoIT bug
-	;GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
-	;GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
 	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 
 	Local $weaponSlot = _JSON_Get($jsonObject, 'run.weapon_slot')
@@ -1040,11 +1037,6 @@ Func ReadConfigFromJson($jsonString)
 	Local $renderingDisabled = _JSON_Get($jsonObject, 'run.disable_rendering')
 	$rendering_enabled = Not $renderingDisabled
 	RefreshRenderingButton()
-	If $rendering_enabled Then
-		EnableRendering()
-	Else
-		DisableRendering()
-	EndIf
 
 	GUICtrlSetState($GUI_Checkbox_LoopRuns, _JSON_Get($jsonObject, 'run.loop_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_HardMode, _JSON_Get($jsonObject, 'run.hard_mode') ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -1129,7 +1121,6 @@ EndFunc
 
 ;~ Utility function to add treeview elements to the inventory cache
 Func AddToInventoryCache(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	Debug($currentPath)
 	$inventory_management_cache[$currentPath] = _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
 EndFunc
 
@@ -1211,7 +1202,6 @@ EndFunc
 
 ;~ Utility function to add treeview elements to a JSON object
 Func AddLeavesToJSONObject(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	Debug($currentPath)
 	; We are on a leaf
 	If _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem) <= 0 Then
 		_JSON_addChangeDelete($context, $currentPath, _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem))

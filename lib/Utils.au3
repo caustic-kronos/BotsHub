@@ -1550,7 +1550,7 @@ EndFunc
 Func GetCallTargetAddress($processHandle, $address)
 	Local $offset = MemoryRead($processHandle, $address + 0x01, 'dword')
 	If $offset > 0x7FFFFFFF Then
-		Warn('Offset is larger than 0x7FFFFFFF, adjusting for 64-bit address space.')
+		Debug('Offset is larger than 0x7FFFFFFF, adjusting for 64-bit address space.')
 		$offset -= 0x100000000
 	EndIf
 	Local $targetAddress = $address + 5 + $offset

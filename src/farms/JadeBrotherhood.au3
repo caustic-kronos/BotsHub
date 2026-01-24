@@ -207,7 +207,7 @@ Func TalkToAiko()
 	GoNearestNPCToCoords(-13923, -5098)
 	RandomSleep(1000)
 	Info('Taking quest')
-	AcceptQuest($ID_MISSING_DAUGHTER)
+	AcceptQuest($ID_QUEST_MISSING_DAUGHTER)
 	Move(-11303, -6545, 40)
 	RandomSleep(4500)
 EndFunc

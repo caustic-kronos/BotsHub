@@ -1224,7 +1224,6 @@ Func SalvageItems($buyKit = True)
 	Local $trophiesAndMaterialItems[60]
 	Local $trophyAndMaterialIndex = 0
 	For $bagIndex = 1 To _Min(4, $bags_count)
-		Debug('Salvaging bag ' & $bagIndex)
 		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)

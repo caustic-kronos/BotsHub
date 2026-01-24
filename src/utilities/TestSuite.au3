@@ -255,12 +255,19 @@ EndFunc
 
 Func TestDeathRIP()
 	Info('Testing death - RIP')
-	If Not IsPlayerAlive() Then Return $FAIL
+	If IsPlayerDead() Then Return $FAIL
 	; Please die
-	MoveToBaseOfCave()
-	GetRaptors()
+	MoveTo(-22015, -7502)
+	MoveTo(-21333, -8384)
+	MoveTo(-20930, -9480)
+	MoveTo(-20000, -10300)
+	MoveTo(-19500, -11500)
+	MoveTo(-20500, -12000)
+	MoveTo(-21000, -12200)
+	MoveTo(-21500, -12000)
+	MoveTo(-22000, -12000)
 	Sleep(2000)
-	If Not IsPlayerDead() Then Return $FAIL
+	If IsPlayerAlive() Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 

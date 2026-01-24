@@ -422,7 +422,6 @@ Func Authentification()
 			EndIf
 		EndIf
 	EndIf
-	EnsureEnglish(True)
 	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & $characterName)
 	Return $SUCCESS
 EndFunc
