@@ -915,7 +915,7 @@ EndFunc
 Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
 	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
 	$options.Item('lootTrappedArea') = True
-	$options.Item('fightRange') = $RANGE_EARSHOT
+	$options.Item('fightRange') = $RANGE_SPELLCAST
 	MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
@@ -927,7 +927,7 @@ Func LootTrappedAreaSafely()
 	Local $y = DllStructGetData($me, 'Y')
 	CommandAll($x, $y)
 	;Add your prot spells in here if you want to
-	PickUpItems()
+	PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPELLCAST)
 	RandomSleep(5000)
 	CancelAll()
 EndFunc
