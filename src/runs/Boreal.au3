@@ -41,7 +41,9 @@ Global Const $BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR = 'Ogej8xeDLT8I6MHQ3l0kTQ4OIQ
 
 Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- dwarves rank 5 minimum' & @CRLF _
-	& '- norn rank 5 minimum'
+	& '- norn rank 5 minimum' & @CRLF _
+	& 'Must have skills: Dash, Dwarven Stability, "I am Unstoppable"' & @CRLF _
+	& 'Optional skills (for more survivability and unblocking): Shroud of Distress, Heart of Shadow, Deaths Charge'
 ; Average duration ~ 1m30s
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
 
@@ -64,6 +66,11 @@ Global Const $BOREAL_IS_ALOE_OR_PINESOUL_IN_CASTINGRANGE = 1
 ; global variable to remember player's profession in setup
 Global $boreal_player_profession = $ID_ASSASSIN
 Global $boreal_farm_setup = False
+
+; variables whether certain optional skills are equipped
+Global $boreal_has_shroud_of_distress = False
+Global $boreal_has_heart_of_shadow = False
+Global $boreal_has_deaths_charge = False
 
 ;~ Main method to chest farm Boreal
 Func BorealChestFarm()
@@ -134,6 +141,9 @@ Func SetupPlayerBorealChestFarm()
 			LoadSkillTemplate($BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
 	EndSwitch
 	RandomSleep(250)
+	$boreal_has_shroud_of_distress = GetSkillbarSkillID($BOREAL_SHROUDOFDISTRESS) == $ID_SHROUD_OF_DISTRESS
+	$boreal_has_heart_of_shadow = GetSkillbarSkillID($BOREAL_HEARTOFSHADOW) == $ID_HEART_OF_SHADOW
+	$boreal_has_deaths_charge = GetSkillbarSkillID($BOREAL_DEATHSCHARGE) == $ID_DEATHS_CHARGE
 EndFunc
 
 
@@ -202,11 +212,11 @@ EndFunc
 
 ;~ Function to unblocked when opening chests
 Func BorealUnblock()
-	If IsRecharged($BOREAL_HEARTOFSHADOW) And GetEnergy() >= 5 Then
+	If $boreal_has_heart_of_shadow And IsRecharged($BOREAL_HEARTOFSHADOW) And GetEnergy() >= 5 Then
 		Local $target = GetNearestEnemyToAgent(GetMyAgent())
 		If $target == Null Then $target = GetMyAgent()
 		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
-	ElseIf IsRecharged($BOREAL_DEATHSCHARGE) And GetEnergy() >= 5 Then
+	ElseIf $boreal_has_deaths_charge And IsRecharged($BOREAL_DEATHSCHARGE) And GetEnergy() >= 5 Then
 		Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST)
 		If $target <> Null Then UseSkillEx($BOREAL_DEATHSCHARGE, $target)
 	EndIf
@@ -221,13 +231,13 @@ Func BorealSpeedRun()
 	Local $are_enemies_in_castingrange = GetAreBorealEnemiesInCastingRange()
 	Local $am_crippled = GetEffect($ID_CRIPPLED) <> Null
 	;~ If health is very low, attempt to shadow step away from nearest target
-	If $my_health_percent < 0.2 And GetEnergy() >= 5 And IsRecharged($BOREAL_HEARTOFSHADOW) Then
+	If $boreal_has_heart_of_shadow And $my_health_percent < 0.2 And GetEnergy() >= 5 And IsRecharged($BOREAL_HEARTOFSHADOW) Then
 		Local $target = GetNearestEnemyToAgent($me)
 		If $target == Null Then $target = $me
 		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
 	EndIf
 	;~ If health is low, cast Shroud of Distress
-	If $my_health_percent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
+	If $boreal_has_shroud_of_distress And $my_health_percent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
 		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
 	EndIf
 	;~ If Crippled or Mountain Aloe/Pinesoul near, cast I am unstoppable
