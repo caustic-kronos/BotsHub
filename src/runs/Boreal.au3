@@ -58,6 +58,9 @@ Global Const $BOREAL_HEARTOFSHADOW		= 8
 ; Model IDs of enemy NPCs that we might encounter
 Global Const $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID = 6539
 Global Const $BOREAL_MOUNTAIN_ALOE_MODEL_ID = 6540
+; Flags used to mark which enemy types are within casting range.
+Global Const $BOREAL_IS_ALOE_IN_CASTINGRANGE = 1
+Global Const $BOREAL_IS_PINESOUL_IN_CASTINGRANGE = 2
 
 ; global variable to remember player's profession in setup
 Global $boreal_player_profession = $ID_ASSASSIN
@@ -216,6 +219,8 @@ Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
 	Local $me = GetMyAgent()
 	Local $my_health_percent = DllStructGetData($me, 'HealthPercent')
+	Local $enemies_in_castingrange_flags = GetBorealEnemiesInCastingRangeFlags()
+	Local $am_crippled = GetEffect($ID_CRIPPLED) <> Null
 	;~ If health is low, cast Shroud of Distress
 	If $my_health_percent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
 		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
@@ -227,14 +232,14 @@ Func BorealSpeedRun()
 		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
 	EndIf
 	;~ If Crippled or Mountain Aloe near, cast I am unstoppable
-	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
-		If GetEffect($ID_CRIPPLED) <> Null Or IsEnemyNPCInCastingRange($BOREAL_MOUNTAIN_ALOE_MODEL_ID) Then
+	If BitAND($enemies_in_castingrange_flags, $BOREAL_IS_ALOE_IN_CASTINGRANGE) Or $am_crippled Then
+		If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
 			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
 		EndIf
 	EndIf
 	;~ If Mountain Pinesouls are near, cast Shadow Form
-	If IsRecharged($BOREAL_SHADOWFORM) And GetEnergy() >= 5 Then
-		If GetEffect($ID_CRIPPLED) <> Null Or IsEnemyNPCInCastingRange($BOREAL_MOUNTAIN_PINESOUL_MODEL_ID) Then
+	If BitAND($enemies_in_castingrange_flags, $BOREAL_IS_PINESOUL_IN_CASTINGRANGE) Then
+		If IsRecharged($BOREAL_SHADOWFORM) And GetEnergy() >= 5 Then
 			UseSkillEx($BOREAL_SHADOWFORM)
 		EndIf
 	EndIf
@@ -249,14 +254,19 @@ Func BorealSpeedRun()
 EndFunc
 
 
-Func IsEnemyNPCInCastingRange($model_id)
+Func GetBorealEnemiesInCastingRangeFlags()
 	Local $me = GetMyAgent()
+	Local $flags = 0
 	For $agent In GetNPCsInRangeOfAgent($me, $ID_ALLEGIANCE_FOE, $RANGE_SPELLCAST)
-		If DllStructGetData($agent, 'ModelID') == $model_id Then
-			Return True
-		EndIf
+		Switch DllStructGetData($agent, 'ModelID')
+			Case $BOREAL_MOUNTAIN_ALOE_MODEL_ID
+				$flags = BitOR($flags, $BOREAL_IS_ALOE_IN_CASTINGRANGE)
+			Case $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID
+				$flags = BitOR($flags, $BOREAL_IS_PINESOUL_IN_CASTINGRANGE)
+		EndSwitch
+		If $flags == BitOR($BOREAL_IS_ALOE_IN_CASTINGRANGE, $BOREAL_IS_PINESOUL_IN_CASTINGRANGE) Then ExitLoop
 	Next
-	Return False
+	Return $flags
 EndFunc
 
 
