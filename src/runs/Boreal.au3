@@ -41,9 +41,12 @@ Global Const $BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR = 'Ogej8xeDLT8I6MHQ3l0kTQ4OIQ
 
 Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- dwarves rank 5 minimum' & @CRLF _
-	& '- norn rank 5 minimum'
+	& '- norn rank 5 minimum' & @CRLF _
+	& 'Must have skills: Dash, Dwarven Stability, "I am Unstoppable"' & @CRLF _
+	& 'Optional skills (for more survivability and unblocking): Shroud of Distress, Heart of Shadow, Deaths Charge'
 ; Average duration ~ 1m30s
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
+Global Const $BOREAL_CHEST_RUN_TIMEOUT_MS = 5 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($BOREAL_DWARVENSTABILITY) is better than UseSkillEx(1))
 Global Const $BOREAL_DEADLYPARADOX		= 1
@@ -55,9 +58,20 @@ Global Const $BOREAL_DASH				= 6
 Global Const $BOREAL_DEATHSCHARGE		= 7
 Global Const $BOREAL_HEARTOFSHADOW		= 8
 
+; Model IDs of enemy NPCs that we might encounter
+Global Const $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID = 6539
+Global Const $BOREAL_MOUNTAIN_ALOE_MODEL_ID = 6540
+; Flags used to mark if any relevant enemy types are within casting range.
+Global Const $BOREAL_IS_ALOE_OR_PINESOUL_IN_CASTINGRANGE = 1
+
 ; global variable to remember player's profession in setup
 Global $boreal_player_profession = $ID_ASSASSIN
 Global $boreal_farm_setup = False
+
+; variables whether certain optional skills are equipped
+Global $boreal_has_shroud_of_distress = False
+Global $boreal_has_heart_of_shadow = False
+Global $boreal_has_deaths_charge = False
 
 ;~ Main method to chest farm Boreal
 Func BorealChestFarm()
@@ -128,6 +142,9 @@ Func SetupPlayerBorealChestFarm()
 			LoadSkillTemplate($BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
 	EndSwitch
 	RandomSleep(250)
+	$boreal_has_shroud_of_distress = GetSkillbarSkillID($BOREAL_SHROUDOFDISTRESS) == $ID_SHROUD_OF_DISTRESS
+	$boreal_has_heart_of_shadow = GetSkillbarSkillID($BOREAL_HEARTOFSHADOW) == $ID_HEART_OF_SHADOW
+	$boreal_has_deaths_charge = GetSkillbarSkillID($BOREAL_DEATHSCHARGE) == $ID_DEATHS_CHARGE
 EndFunc
 
 
@@ -147,25 +164,63 @@ Func BorealChestFarmLoop()
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)
 
 	Local $openedChests = 0
+	Local $totalChestsCount = 0
 
+	; Run to the first spot and open chests there
 	Info('Running to Spot #1')
 	If BorealChestRun(2728, -25294) == $FAIL Then Return $FAIL
 	If BorealChestRun(2900, -22272) == $FAIL Then Return $FAIL
 	If BorealChestRun(-1000, -19801) == $FAIL Then Return $FAIL
 	If BorealChestRun(-2570, -17208) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
-	Info('Running to Spot #2')
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
+
+	; Run to the second spot and count all chests in compass range
+	Info('Running to Spot #2 and counting chests')
 	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
-	Info('Running to Spot #3')
-	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
-	Info('Running to Spot #4')
-	If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun) ? 1 : 0
-	Info('Opened ' & $openedChests & ' chests.')
+	$totalChestsCount = CountChestsInCompassRange()
+	Info('Total amount of chests here: ' & $totalChestsCount)
+
+	; For all remaining chests, run to them, and return to the original spot inbetween
+	For $i=1 To $totalChestsCount - $openedChests
+		Info('Running to Spot #' & (2+$i))
+		$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
+		If $openedChests == $totalChestsCount Then ExitLoop
+		If BorealChestRun(-4218, -15219) == $FAIL Then Return $FAIL
+	Next
+
+	Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
 	; Result can't be considered a failure if no chests were found
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+EndFunc
+
+
+;~ Count the amount of Chests in compass range
+Func CountChestsInCompassRange()
+	Local $me = GetMyAgent()
+	Local $X = DllStructGetData($me, 'X')
+	Local $Y = DllStructGetData($me, 'Y')
+	Local $count = 0
+	Local $agents = GetAgentArray($ID_AGENT_TYPE_STATIC)
+	For $agent In $agents
+		Local $gadgetID = DllStructGetData($agent, 'GadgetID')
+		If $MAP_CHESTS_IDS[$gadgetID] == Null Then ContinueLoop
+		If GetDistanceToPoint($agent, $X, $Y) > $RANGE_COMPASS Then ContinueLoop
+		$count += 1
+	Next
+	Return $count
+EndFunc
+
+
+;~ Function to unblocked when opening chests
+Func BorealUnblock()
+	If $boreal_has_heart_of_shadow And IsRecharged($BOREAL_HEARTOFSHADOW) And GetEnergy() >= 5 Then
+		Local $target = GetNearestEnemyToAgent(GetMyAgent())
+		If $target == Null Then $target = GetMyAgent()
+		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
+	ElseIf $boreal_has_deaths_charge And IsRecharged($BOREAL_DEATHSCHARGE) And GetEnergy() >= 5 Then
+		Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST)
+		If $target <> Null Then UseSkillEx($BOREAL_DEATHSCHARGE, $target)
+	EndIf
 EndFunc
 
 
@@ -173,9 +228,26 @@ EndFunc
 Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
 	Local $me = GetMyAgent()
-	If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEffect($ID_CRIPPLED) <> Null And GetEnergy() >= 5 Then
-		UseSkillEx($BOREAL_IAMUNSTOPPABLE)
+	Local $my_health_percent = DllStructGetData($me, 'HealthPercent')
+	Local $are_enemies_in_castingrange = GetAreBorealEnemiesInCastingRange()
+	Local $am_crippled = GetEffect($ID_CRIPPLED) <> Null
+	;~ If health is very low, attempt to shadow step away from nearest target
+	If $boreal_has_heart_of_shadow And $my_health_percent < 0.2 And GetEnergy() >= 5 And IsRecharged($BOREAL_HEARTOFSHADOW) Then
+		Local $target = GetNearestEnemyToAgent($me)
+		If $target == Null Then $target = $me
+		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
 	EndIf
+	;~ If health is low, cast Shroud of Distress
+	If $boreal_has_shroud_of_distress And $my_health_percent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
+		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
+	EndIf
+	;~ If Crippled or Mountain Aloe/Pinesoul near, cast I am unstoppable
+	If $are_enemies_in_castingrange Or $am_crippled Then
+		If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
+			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
+		EndIf
+	EndIf
+	;~ Cast Dwarven Stability and Dash when ready
 	If IsRecharged($BOREAL_DWARVENSTABILITY) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DWARVENSTABILITY)
 	EndIf
@@ -186,11 +258,26 @@ Func BorealSpeedRun()
 EndFunc
 
 
+Func GetAreBorealEnemiesInCastingRange()
+	Local $me = GetMyAgent()
+	Local $flags = 0
+	For $agent In GetNPCsInRangeOfAgent($me, $ID_ALLEGIANCE_FOE, $RANGE_SPELLCAST)
+		Switch DllStructGetData($agent, 'ModelID')
+			Case $BOREAL_MOUNTAIN_ALOE_MODEL_ID, $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID
+				return True
+		EndSwitch
+	Next
+	Return False
+EndFunc
+
+
 ;~ Main function for chest run
 Func BorealChestRun($X, $Y)
+	Local $runTimer = TimerInit()
 	Move($X, $Y, 0)
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, $X, $Y) > $RANGE_ADJACENT
+		If TimerDiff($runTimer) > $BOREAL_CHEST_RUN_TIMEOUT_MS Then Return $FAIL
 		BorealSpeedRun()
 		Sleep(250)
 		$me = GetMyAgent()
