@@ -46,6 +46,7 @@ Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF 
 	& 'Optional skills (for more survivability and unblocking): Shroud of Distress, Heart of Shadow, Deaths Charge'
 ; Average duration ~ 1m30s
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
+Global Const $BOREAL_CHEST_RUN_TIMEOUT_MS = 5 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($BOREAL_DWARVENSTABILITY) is better than UseSkillEx(1))
 Global Const $BOREAL_DEADLYPARADOX		= 1
@@ -272,9 +273,11 @@ EndFunc
 
 ;~ Main function for chest run
 Func BorealChestRun($X, $Y)
+	Local $runTimer = TimerInit()
 	Move($X, $Y, 0)
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, $X, $Y) > $RANGE_ADJACENT
+		If TimerDiff($runTimer) > $BOREAL_CHEST_RUN_TIMEOUT_MS Then Return $FAIL
 		BorealSpeedRun()
 		Sleep(250)
 		$me = GetMyAgent()
