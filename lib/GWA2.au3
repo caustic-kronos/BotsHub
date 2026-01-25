@@ -26,50 +26,38 @@
 
 #Region Declarations
 ; Flags
-Global $disable_rendering_address
 Global $rendering_enabled = True
 
-; Game-related variables
-; Game memory - queue, targets, skills
-Global $queue_counter, $queue_size, $queue_base_address
-Global $string_log_base_address, $skill_base_address
+; Game memory - base address and queue
+Global $base_address_ptr, $queue_counter, $queue_size, $queue_base_address
+
+; Global game variables
+Global $pre_game_address
+Global $disable_rendering_address
+Global $ping_address
+Global $status_code_address
+
+; Agents
 Global $my_ID
-
-; Language flag
-Global $force_english_language_flag
-
-; Agent state
 Global $current_target_agent_ID
+Global $agent_base_address
+Global $max_agents, $agent_copy_count, $agent_copy_base
 
-; Agent structures
-Global $agent_base_address, $base_address_ptr
+; Skills
+Global $attribute_info_ptr
+Global $skill_base_address
+Global $skill_timer_address
 
-; Regional and account info
-Global $region_ID, $language_ID
-Global $scan_ping_address
-
-; Map status
-Global $max_agents, $is_logged_in, $agent_copy_count, $agent_copy_base
+; Map
+Global $region_ID, $instance_info_ptr, $area_info_ptr
+Global $map_is_loaded_ptr
 
 ; Trader system
 Global $trader_quote_ID, $trader_cost_ID, $trader_cost_value
+Global $trade_partner_ptr
 
-; Skill state
-Global $skill_timer, $build_number
-
-; Zoom levels
-Global $zoom_when_still, $zoom_when_moving
-
-; Event state
-Global $current_status, $last_dialog_ID
-
-; Optional systems
-Global $use_string_logging, $use_event_system
-
-; Character info
-Global $instance_info_ptr, $area_info_ptr
-Global $attribute_info_ptr
-Global $map_ID, $map_loading
+; Other
+Global $friend_list_address
 #EndRegion Declarations
 
 
@@ -194,11 +182,13 @@ EndFunc
 ;~ Use a skill, doesn't wait for the skill to be done
 ;~ If no target is provided then skill is used on self
 Func UseSkill($skillSlot, $target = Null, $callTarget = False)
-	Local $targetId = ($target == Null) ? GetMyID() : DllStructGetData($target, 'ID')
-	DllStructSetData($USE_SKILL_STRUCT, 2, $skillSlot)
-	DllStructSetData($USE_SKILL_STRUCT, 3, $targetId)
-	DllStructSetData($USE_SKILL_STRUCT, 4, $callTarget)
-	Enqueue($USE_SKILL_STRUCT_PTR, 16)
+	Local $myID = GetMyID()
+	Local $targetId = ($target == Null) ? $myID : DllStructGetData($target, 'ID')
+	DllStructSetData($USE_SKILL_STRUCT, 2, $myID)
+	DllStructSetData($USE_SKILL_STRUCT, 3, $skillSlot - 1)
+	DllStructSetData($USE_SKILL_STRUCT, 4, $targetId)
+	DllStructSetData($USE_SKILL_STRUCT, 5, $callTarget)
+	Enqueue($USE_SKILL_STRUCT_PTR, 20)
 EndFunc
 
 
@@ -538,7 +528,7 @@ EndFunc
 ;~ FIXME: this function might not be working correctly
 ;~ Returns the timestamp used for effects and skills (milliseconds).
 Func GetSkillTimer()
-	Return MemoryRead(GetProcessHandle(), $skill_timer, 'long')
+	Return MemoryRead(GetProcessHandle(), $skill_timer_address, 'long')
 EndFunc
 
 
@@ -588,17 +578,20 @@ Func GetAreaVanquished()
 EndFunc
 
 
-;~ Returns current map ID
-Func GetMapID()
-	Return MemoryRead(GetProcessHandle(), $map_ID)
-EndFunc
-
-
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetMapType()
 	Local $offset[1] = [0x00]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $instance_info_ptr, $offset, 'dword')
 	Return $result[1]
+EndFunc
+
+
+;~ Returns current map ID
+Func GetMapID()
+	Local $offset[3] = [0, 0x18, 0x44]
+	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset, 'ptr')
+	$result = MemoryRead(GetProcessHandle(), $result[1] + 0x198, 'long')
+	Return $result
 EndFunc
 
 
@@ -634,13 +627,6 @@ Func GetMapRegionType($mapID = 0)
 EndFunc
 
 
-;~ FIXME: this function might not be working correctly
-;~ Returns current load-state.
-Func GetMapLoading()
-	Return MemoryRead(GetProcessHandle(), $map_loading)
-EndFunc
-
-
 ;~ Returns if map has been loaded.
 Func GetMapIsLoaded()
 	Return GetAgentExists(GetMyID())
@@ -658,12 +644,6 @@ EndFunc
 ;~ Internal use for travel functions.
 Func GetRegion()
 	Return MemoryRead(GetProcessHandle(), $region_ID)
-EndFunc
-
-
-;~ Internal use for travel functions.
-Func GetLanguage()
-	Return MemoryRead(GetProcessHandle(), $language_ID)
 EndFunc
 
 
@@ -709,18 +689,32 @@ EndFunc
 
 
 ;~ Wait for map to be loaded, True if map loaded correctly, False otherwise
+;Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
+;	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
+;	Local $deadlock = TimerInit()
+;	Local $processHandle = GetProcessHandle()
+;	Local $skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
+;	While GetMyID() == 0 Or $skillbarStruct[0] == 0 Or ($mapID <> -1 And GetMapID() <> $mapID)
+;		Sleep(200)
+;		$skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
+;		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
+;		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
+;	WEnd
+;	RandomSleep($waitingTime + GetPing())
+;	Return True
+;EndFunc
+
+
+;~ Wait for map to be loaded, True if map loaded correctly, False otherwise
 Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
-	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 	Local $deadlock = TimerInit()
 	Local $processHandle = GetProcessHandle()
-	Local $skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
-	While GetMyID() == 0 Or $skillbarStruct[0] == 0 Or ($mapID <> -1 And GetMapID() <> $mapID)
-		Sleep(200)
-		$skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
-		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
+	; All variables are not updated at the same time
+	While GetMyID() == 0 Or GetMaxAgents() == 0 Or ($mapID <> -1 And GetMapID() <> $mapID)
+		Sleep(250 + GetPing())
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
 	WEnd
-	RandomSleep($waitingTime + GetPing())
+	RandomSleep($waitingTime + 250 + GetPing())
 	Return True
 EndFunc
 #EndRegion Travel
@@ -875,48 +869,12 @@ Func GetAgentExists($agentID)
 EndFunc
 
 
-;~ FIXME: this function might not be working correctly
-;~ Returns the target of an agent.
-Func GetTarget($agent)
-	Return MemoryRead(GetProcessHandle(), GetLabel('TargetLogBase') + 4 * DllStructGetData($agent, 'ID'))
-EndFunc
-
-
 ;~ Returns agent by player name or Null if player with provided name not found.
 Func GetAgentByPlayerName($playerName)
 	For $agent In GetAgentArray($ID_AGENT_TYPE_NPC)
 		If GetPlayerName($agent) == $playerName Then Return $agent
 	Next
 	Return Null
-EndFunc
-
-
-;~ Returns agent by name.
-Func GetAgentByName($agentName)
-	If $use_string_logging = False Then Return
-
-	Local $processHandle = GetProcessHandle()
-	Local $name, $address
-	For $i = 1 To GetMaxAgents()
-		$address = $string_log_base_address + 256 * $i
-		$name = MemoryRead($processHandle, $address, 'wchar [128]')
-		$name = StringRegExpReplace($name, '[<]{1}([^>]+)[>]{1}', '')
-		If StringInStr($name, $agentName) > 0 Then Return GetAgentByID($i)
-	Next
-
-	DisplayAll(True)
-	Sleep(100)
-	DisplayAll(False)
-	DisplayAll(True)
-	Sleep(100)
-	DisplayAll(False)
-
-	For $i = 1 To GetMaxAgents()
-		$address = $string_log_base_address + 256 * $i
-		$name = MemoryRead($processHandle, $address, 'wchar [128]')
-		$name = StringRegExpReplace($name, '[<]{1}([^>]+)[>]{1}', '')
-		If StringInStr($name, $agentName) > 0 Then Return GetAgentByID($i)
-	Next
 EndFunc
 
 
@@ -969,23 +927,6 @@ Func GetPlayerName($agent)
 	Local $offset[6] = [0, 0x18, 0x2C, 0x80C, 76 * $loginNumber + 0x28, 0]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset, 'wchar[30]')
 	Return $result[1]
-EndFunc
-
-
-;~ Returns the name of an agent.
-Func GetAgentName($agent)
-	Local $address = $string_log_base_address + 256 * DllStructGetData($agent, 'ID')
-	Local $processHandle = GetProcessHandle()
-	Local $agentName = MemoryRead($processHandle, $address, 'wchar [128]')
-
-	If $agentName = '' Then
-		DisplayAll(True)
-		Sleep(100)
-		DisplayAll(False)
-	EndIf
-
-	Local $agentName = MemoryRead($processHandle, $address, 'wchar [128]')
-	Return StringRegExpReplace($agentName, '[<]{1}([^>]+)[>]{1}', '')
 EndFunc
 #EndRegion Agent
 
@@ -1224,8 +1165,20 @@ EndFunc
 
 
 ;~ Tests if an item is identified.
-Func GetIsIdentified($item)
+Func IsIdentified($item)
 	Return BitAND(DllStructGetData($item, 'Interaction'), 0x1) > 0
+EndFunc
+
+
+;~ Tests if an item is unidentified
+Func IsUnidentified($item)
+	Return Not IsIdentified($item)
+EndFunc
+
+
+;~ Tests if an item is unidentified and gold rarity
+Func IsUnidentifiedGoldItem($item)
+	Return GetRarity($item) == $RARITY_GOLD And Not IsIdentified($item)
 EndFunc
 
 
@@ -1391,12 +1344,17 @@ EndFunc
 Func StartSalvageWithKit($item, $salvageKit)
 	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
 	Local $salvageSessionID = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
+	If $salvageSessionID[0] == 0 Then Return False
 	Sleep(40 + GetPing())
 	Local $itemID = DllStructGetData($item, 'ID')
 	DllStructSetData($SALVAGE_STRUCT, 2, $itemID)
 	DllStructSetData($SALVAGE_STRUCT, 3, DllStructGetData($salvageKit, 'ID'))
 	DllStructSetData($SALVAGE_STRUCT, 4, $salvageSessionID[1])
-	Enqueue($SALVAGE_STRUCT_PTR, 16)
+	;Enqueue($SALVAGE_STRUCT_PTR, 16)
+	While Not SafeEnqueue($SALVAGE_STRUCT_PTR, 16)
+		Sleep(250 + GetPing())
+	WEnd
+	Return True
 EndFunc
 
 
@@ -1433,7 +1391,7 @@ EndFunc
 
 ;~ Identifies an item.
 Func IdentifyItem($item)
-	If GetIsIdentified($item) Then Return
+	If IsIdentified($item) Then Return
 
 	Local $itemID = DllStructGetData($item, 'ID')
 	Local $identificationKit = FindIdentificationKit()
@@ -1444,7 +1402,7 @@ Func IdentifyItem($item)
 	While TimerDiff($deadlock) < 5000
 		Sleep(20)
 		; Refetch item by ID to get updated identified status
-		If GetIsIdentified(GetItemByItemID($itemID)) Then Return True
+		If IsIdentified(GetItemByItemID($itemID)) Then Return True
 	WEnd
 	Return False
 EndFunc
@@ -1555,9 +1513,9 @@ EndFunc
 ;~ Sells an item.
 Func SellItem($item, $amount = 0)
 	If $amount = 0 Or $amount > DllStructGetData($item, 'Quantity') Then $amount = DllStructGetData($item, 'Quantity')
-	DllStructSetData($SELL_ITEM_STRUCT, 2, $amount * DllStructGetData($item, 'Value'))
+	DllStructSetData($SELL_ITEM_STRUCT, 2, $amount)
 	DllStructSetData($SELL_ITEM_STRUCT, 3, DllStructGetData($item, 'ID'))
-	DllStructSetData($SELL_ITEM_STRUCT, 4, MemoryRead(GetProcessHandle(), GetScannedAddress('ScanBuyItemBase', 15)))
+	DllStructSetData($SELL_ITEM_STRUCT, 4, $amount * DllStructGetData($item, 'Value'))
 	Enqueue($SELL_ITEM_STRUCT_PTR, 16)
 EndFunc
 
@@ -1571,7 +1529,7 @@ Func BuyItem($itemPosition, $amount, $value)
 	DllStructSetData($BUY_ITEM_STRUCT, 2, $amount)
 	DllStructSetData($BUY_ITEM_STRUCT, 3, MemoryRead($processHandle, $merchantItemsBase + 4 * ($itemPosition - 1)))
 	DllStructSetData($BUY_ITEM_STRUCT, 4, $amount * $value)
-	DllStructSetData($BUY_ITEM_STRUCT, 5, MemoryRead($processHandle, GetScannedAddress('ScanBuyItemBase', 15)))
+	DllStructSetData($BUY_ITEM_STRUCT, 5, MemoryRead($processHandle, GetLabel('BuyItemBase'), 15))
 	Enqueue($BUY_ITEM_STRUCT_PTR, 20)
 EndFunc
 
@@ -1670,50 +1628,43 @@ Func TraderBuy()
 EndFunc
 
 
-;~ Request to buy an item to a trader, returns the quote value
-Func TraderRequestBuy($item)
-	Local $found = False
-	Local $processHandle = GetProcessHandle()
-	Local $quoteID = MemoryRead($processHandle, $trader_quote_ID)
+;~ Sell items to traders
+Func SellItemToTrader($item, $quantity = 0)
 	Local $itemID = DllStructGetData($item, 'ID')
-	DllStructSetData($REQUEST_QUOTE_STRUCT, 1, $HEADER_REQUEST_QUOTE)
-	DllStructSetData($REQUEST_QUOTE_STRUCT, 2, $itemID)
-	Enqueue($REQUEST_QUOTE_STRUCT_PTR, 8)
-
-	Local $deadlock = TimerInit()
-	While Not $found And TimerDiff($deadlock) < 5000
-		Sleep(20)
-		$found = MemoryRead($processHandle, $trader_quote_ID) <> $quoteID
-	WEnd
-	Return $found
-EndFunc
-
-
-;~ Request a quote to sell an item to the trader.
-Func TraderRequestSell($item)
-	Local $found = False
+	Local $itemQuantity = DllStructGetData($item, 'Quantity')
+	Local $itemType	= DllStructGetData($item, 'type')
 	Local $processHandle = GetProcessHandle()
-	Local $quoteID = MemoryRead($processHandle, $trader_quote_ID)
-	Local $itemID = DllStructGetData($item, 'ID')
-	;DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 1, $HEADER_REQUEST_QUOTE)
-	DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 2, $itemID)
-	Enqueue($REQUEST_QUOTE_STRUCT_SELL_PTR, 8)
+	Local $batchSize = 1
 
-	Local $deadlock = TimerInit()
-	While Not $found And TimerDiff($deadlock) < 5000
-		Sleep(20)
-		$found = MemoryRead($processHandle, $trader_quote_ID) <> $quoteID
-	WEnd
-	Return $found
+    If $itemQuantity < 0 Then Return False
+	; Sell all
+    If $quantity == 0 Or $quantity > $itemQuantity Then $quantity = $itemQuantity
+
+    If IsBasicMaterial($item) Then $batchSize = 10
+    For $i = 0 To $itemQuantity - $batchSize Step $batchSize
+        ; Request quote
+        DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 2, $itemID)
+        Enqueue($REQUEST_QUOTE_STRUCT_SELL_PTR, 8)
+        ; Wait for quote response
+		Local $costID = -1
+        Local $timer = TimerInit()
+        While $costID <> $itemID
+            $costID = MemoryRead($processHandle, $trader_cost_ID)
+			Sleep(20 + GetPing())
+			If TimerDiff($timer) > 2000 Then
+				Warn("Trader quote timeout for item " & DllStructGetData($item, 'ModelID'))
+				Return False
+			EndIf
+		WEnd
+        ; Execute trader sell
+        Local $costValue = MemoryRead($processHandle, $trader_cost_value)
+        Enqueue($TRADER_SELL_STRUCT_PTR, 4)
+        ; Wait a bit for transaction to complete
+        Sleep(20 + GetPing())
+    Next
+    Return True
 EndFunc
 
-
-;~ ID of the item item being sold.
-Func TraderSell()
-	If Not GetTraderCostID() Or Not GetTraderCostValue() Then Return False
-	Enqueue($TRADER_SELL_STRUCT_PTR, 4)
-	Return True
-EndFunc
 #Region NPC Trade
 
 
@@ -2636,14 +2587,8 @@ EndFunc
 
 ;~ Returns current ping. Don't overruse, is valuable for sensitive things (salvage for instance) and small sleeps
 Func GetPing()
-	Local $ping = MemoryRead(GetProcessHandle(), $scan_ping_address)
+	Local $ping = MemoryRead(GetProcessHandle(), $ping_address)
 	Return $ping < 10 ? 10 : $ping
-EndFunc
-
-
-;~ Returns if you're logged in.
-Func GetLoggedIn()
-	Return MemoryRead(GetProcessHandle(), $is_logged_in)
 EndFunc
 
 
@@ -2667,12 +2612,6 @@ Func GetInstanceUpTime()
 EndFunc
 
 
-;~ Returns the game client's build number
-Func GetBuildNumber()
-	Return $build_number
-EndFunc
-
-
 ;~ Switches to/from Hard Mode.
 Func SwitchMode($mode)
 	Return SendPacket(0x8, $HEADER_SET_DIFFICULTY, $mode)
@@ -2685,24 +2624,10 @@ Func SkipCinematic()
 EndFunc
 
 
-;~ Changes game language to english.
-Func EnsureEnglish($ensureEnglish)
-	MemoryWrite(GetProcessHandle(), $force_english_language_flag, $ensureEnglish ? 1 : 0)
-EndFunc
-
-
 ;~ Change game language.
 Func ToggleLanguage()
 	DllStructSetData($TOGGLE_LANGUAGE_STRUCT, 2, 0x18)
 	Enqueue($TOGGLE_LANGUAGE_STRUCT_PTR, 8)
-EndFunc
-
-
-;~ Changes the maximum distance you can zoom out.
-Func ChangeMaxZoom($zoom = 750)
-	Local $processHandle = GetProcessHandle()
-	MemoryWrite($processHandle, $zoom_when_still, $zoom, 'float')
-	MemoryWrite($processHandle, $zoom_when_moving, $zoom, 'float')
 EndFunc
 
 
@@ -2715,12 +2640,6 @@ Func SetPlayerStatus($status)
 	DllStructSetData($CHANGE_STATUS_STRUCT, 2, $status)
 	Enqueue($CHANGE_STATUS_STRUCT_PTR, 8)
 	Return True
-EndFunc
-
-
-;~ Returns player status : 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
-Func GetPlayerStatus()
-	Return MemoryRead(GetProcessHandle(), $current_status)
 EndFunc
 
 
@@ -2784,17 +2703,5 @@ Func Disconnected($maxRetries = 3, $retryDelay = 60000)
 	WEnd
 	Notice('Reconnected!')
 	Sleep(5000)
-EndFunc
-
-
-;~ Returns the last dialog ID.
-Func GetLastDialogID()
-	Return MemoryRead(GetProcessHandle(), $last_dialog_ID)
-EndFunc
-
-
-;~ Returns the last dialog ID in hexadecimal format.
-Func GetLastDialogIDHex(Const ByRef $ID)
-	If $ID Then Return '0x' & StringReplace(Hex($ID, 8), StringRegExpReplace(Hex($ID, 8), '[^0].*', ''), '')
 EndFunc
 #EndRegion Miscellaneous

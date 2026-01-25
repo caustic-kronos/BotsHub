@@ -1443,8 +1443,22 @@ EndFunc
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
 Func MemoryRead($processHandle, $address, $type = 'dword')
 	Local $buffer = SafeDllStructCreate($type)
-	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
-	Return DllStructGetData($buffer, 1)
+	Local $bytesRead =  DllStructCreate('ulong_ptr')
+	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', DllStructGetSize($buffer), 'ptr', DllStructGetPtr($bytesRead))
+	Return SetExtended(DllStructGetData($bytesRead, 1), DllStructGetData($buffer, 1))
+EndFunc
+
+
+;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
+Func StructMemoryRead($processHandle, $address, $type = 'dword')
+	PushContext('StructMemoryRead')
+	Local $buffer = SafeDllStructCreate($type)
+	Local $bytesRead = DllStructCreate('ulong_ptr')
+	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', DllStructGetSize($buffer), 'ptr', DllStructGetPtr($bytesRead))
+	If @error Or $result[0] = 0 Or DllStructGetData($bytesRead, 1) == 0 Then
+		Return SetError(1, DllStructGetData($bytesRead, 1), Null)
+	EndIf
+	Return SetExtended(DllStructGetData($bytesRead, 1), $buffer)
 EndFunc
 
 
@@ -1480,6 +1494,171 @@ Func MemoryReadPtr($processHandle, $address, $offset, $type = 'dword')
 	; This can be valid when trying to access an agent out of range for instance
 	DebuggerLog('Tried to access an invalid address')
 	Return $data
+EndFunc
+
+
+Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
+	Local $patternBytes = StringToByteArray($pattern)
+	Local $patternLength = UBound($patternBytes)
+
+	$startPtr = BitAND($startPtr, 0xFFFFFFFF)
+	$endPtr = BitAND($endPtr, 0xFFFFFFFF)
+
+	Local $scanForward
+	Local $totalSize
+	; forward scan
+	If $startPtr < $endPtr Then
+		$scanForward = True
+		$totalSize = $endPtr - $startPtr
+	; backward scan
+	ElseIf $endPtr < $startPtr Then
+		$scanForward = False
+		$totalSize = $startPtr - $endPtr
+	; Nothing to scan
+	Else
+		Return 0
+	EndIf
+	If $totalSize < $patternLength Then Return 0
+
+	Local $bufferMaxSize = 4 * 1024
+	Local $buffer = Null
+	Local $bufferSize = 0
+	Local $bufferBaseAddr = 0
+	; Try to read entire range if small enough
+	If $totalSize < 64 * 1024 Then
+		Local $readAddr = $scanForward ? $startPtr : $endPtr
+		If IsMemoryReadable($processHandle, $readAddr, 'byte[' & $totalSize & ']') Then
+			$buffer = StructMemoryRead($processHandle, $readAddr, 'byte[' & $totalSize & ']')
+			If @extended == $totalSize Then
+				$bufferMaxSize = $totalSize
+				$bufferSize = $totalSize
+				$bufferBaseAddr = $readAddr
+			Else
+				$buffer = Null
+			EndIf
+		EndIf
+	EndIf
+
+	; Matched bytes buffer for partial pattern matching
+	Local $matchedBuffer[$patternLength]
+	Local $matchedCount = 0
+
+	; Scan through the range
+	For $i = 0 To $totalSize - 1
+		; Actual memory address for current position
+		Local $currentAddr = $scanForward ? ($startPtr + $i) : ($startPtr - $i)
+
+		; Determine if we need to refill buffer
+		Local $offsetInBuffer = $currentAddr - $bufferBaseAddr
+		If $buffer == Null Or $offsetInBuffer < 0 Or $offsetInBuffer >= $bufferSize Then
+			If $scanForward Then
+				$bufferBaseAddr = $currentAddr
+			Else
+				; Position buffer to extend backward from current position
+				$bufferBaseAddr = $currentAddr - $bufferMaxSize + 1
+				If $bufferBaseAddr < $endPtr Then $bufferBaseAddr = $endPtr
+			EndIf
+			$buffer = StructMemoryRead($processHandle, $bufferBaseAddr, 'byte[' & $bufferMaxSize & ']')
+			$bufferSize = @extended
+			; Failed to read memory
+			If $bufferSize == 0 Then Return 0
+			$offsetInBuffer = $currentAddr - $bufferBaseAddr
+		EndIf
+
+		Local $currentByte = DllStructGetData($buffer, 1, $offsetInBuffer)
+		; Pattern matching logic
+		Local $patternIndex = $scanForward ? $matchedCount : ($patternLength - 1 - $matchedCount)
+		Local $maskChar = StringMid($mask, $scanForward ? $matchedCount + 1 : ($patternLength - $matchedCount), 1)
+		$matchedBuffer[$matchedCount] = $currentByte
+		$matchedCount += 1
+		If $maskChar == '?' Or $currentByte == $patternBytes[$patternIndex] Then
+			; Check if we've matched the entire pattern
+			If $matchedCount == $patternLength Then Return $scanForward ? $currentAddr - $patternLength + $offset : $currentAddr + $offset - 1
+		Else
+			; Mismatch - salvage partial matches
+			Local $newMatchCount = 0
+			; Check if any suffix of matchedBuffer matches a prefix of pattern
+			For $j = 1 To $matchedCount - 1
+				Local $matches = True
+				For $k = 0 To $matchedCount - $j - 1
+					Local $checkIdx = $scanForward ? $k : ($patternLength - 1 - $k)
+					$maskChar = StringMid($mask, $checkIdx + 1, 1)
+					If $maskChar <> '?' And $matchedBuffer[$j + $k] <> $patternBytes[$checkIdx] Then
+						$matches = False
+						ExitLoop
+					EndIf
+				Next
+
+				If $matches Then
+					; Found a partial overlap - shift the matched buffer
+					For $k = 0 To $matchedCount - $j - 1
+						$matchedBuffer[$k] = $matchedBuffer[$j + $k]
+					Next
+					$newMatchCount = $matchedCount - $j
+					ExitLoop
+				EndIf
+			Next
+			$matchedCount = $newMatchCount
+		EndIf
+	Next
+	Return 0
+EndFunc
+
+
+;~ Resolves the final destination address of a direct relative CALL or JMP instruction by following rel8/rel32 stubs until a non-branch instruction is reached.
+Func ResolveDirectBranchTarget($processHandle, $address)
+	Local $maxDepth = 8
+	For $i = 1 To $maxDepth
+		Local $opcode = MemoryRead($processHandle, $address, 'byte')
+		If @error Then Return 0
+
+		Switch $opcode
+			; near call / near jmp (rel32)
+			Case 0xE8, 0xE9
+				Local $relativeOffset = MemoryRead($processHandle, $address + 1, 'dword')
+				If @error Then Return 0
+				; force signed
+				If $relativeOffset > 0x7FFFFFFF Then $relativeOffset -= 0x100000000
+				$address = $address + 5 + $relativeOffset
+			; short jmp (rel8)
+			Case 0xEB
+				Local $relativeOffset = MemoryRead($processHandle, $address + 1, 'byte')
+				If @error Then Return 0
+				; signed byte
+				If BitAND($relativeOffset, 0x80) Then $relativeOffset = -((BitNOT($relativeOffset) + 1) And 0xFF)
+				$address = $address + 2 + $relativeOffset
+			Case Else
+				Return $address
+		EndSwitch
+	Next
+	; too many indirections
+	Return 0
+EndFunc
+
+
+;~ Returns an array of bytes from the provided string
+Func StringToByteArray($hexString)
+	Local $length = StringLen($hexString) / 2
+	Local $bytes[$length]
+	For $index = 0 To $length - 1
+		Local $hexByte = StringMid($hexString, ($index * 2) + 1, 2)
+		$bytes[$index] = Dec($hexByte)
+	Next
+	Return $bytes
+EndFunc
+
+
+;~ Returns a null terminated binary string from the provided string
+;~ Deprecated: does exactly what Binary($string & Chr(0)) do, but in worse
+Func StringToAsciiBinary($string)
+	Local $length = StringLen($string) + 1
+	Local $struct = DllStructCreate('byte[' & $length & ']')
+	For $index = 1 To StringLen($string)
+		DllStructSetData($struct, 1, Asc(StringMid($string, $index, 1)), $index)
+	Next
+	DllStructSetData($struct, 1, 0, $length)
+	Local $binary = DllStructGetData($struct, 1)
+	Return $binary
 EndFunc
 
 
@@ -1713,15 +1892,48 @@ EndFunc
 
 
 ;~ Internal use only.
-Func ASMNumber($number, $small = False)
-	If $number >= 0 Then
-		$number = Dec($number)
+Func ASMNumber($value, $small = False)
+	Local $number
+	If IsNumber($value) Then
+		$number = $value
+	Else
+		$number = ParseValue($value)
 	EndIf
 	If $small And $number <= 127 And $number >= -128 Then
-		Return SetExtended(1, Hex($number, 2))
+		If $number < 0 Then
+			Return SetExtended(1, Hex(256 + $number, 2))
+		Else
+			Return SetExtended(1, Hex($number, 2))
+		EndIf
 	Else
-		Return SetExtended(0, SwapEndian(Hex($number, 8)))
+		If $number < 0 Then
+			Return SetExtended(0, SwapEndian(Hex(0x100000000 + $number, 8)))
+		Else
+			Return SetExtended(0, SwapEndian(Hex($number, 8)))
+		EndIf
 	EndIf
+EndFunc
+
+
+Func ParseValue($string)
+	Local $isNegative = False
+	If StringLeft($string, 1) = '-' Then
+		$isNegative = True
+		$string = StringMid($string, 2)
+	EndIf
+	$string = NormalizeHexValue($string)
+	Local $number = Dec($string)
+	If $isNegative Then
+		$number = -$number
+	EndIf
+	Return $number
+EndFunc
+
+
+Func NormalizeHexValue($string)
+	$string = StringRegExpReplace($string, '^0x', '')
+	$string = StringRegExpReplace($string, 'h$', '')
+	Return $string
 EndFunc
 #EndRegion Memory GWA2
 
@@ -1729,7 +1941,7 @@ EndFunc
 #Region Memory unused / debugging functions
 ;~ Alternate way to get anything, reads directly from game memory without call to Scan something - but is not robust and will break anytime the game changes
 Func GetDataFromRelativeAddress($processHandle, $relativeCheatEngineAddress, $size)
-	Local $baseAddress = ScanForProcess()
+	Local $baseAddress = GetGameProcessBaseAddress()
 	Local $fullAddress = $baseAddress + $relativeCheatEngineAddress - 0x1000
 	Local $buffer = DllStructCreate('byte[' & $size & ']')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)

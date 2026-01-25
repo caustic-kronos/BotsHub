@@ -43,8 +43,8 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	; 8-Balance character's gold level
 	; 9-Buy ectoplasm/obsidian with surplus
 	; 10-Store items
-	If $inventory_management_cache['Store items.Unidentified gold items'] Then
-		TravelToOutpost($tradeTown, $district_name)
+	If $inventory_management_cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
+		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
 	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
@@ -60,7 +60,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If $inventory_management_cache['@salvage.something'] Then
+	If $inventory_management_cache['@salvage.something'] And HasItemsToSalvage() Then
 		TravelToOutpost($tradeTown, $district_name)
 		SalvageItems()
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
@@ -68,14 +68,14 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		;UpgradeWithSalvageInscriptions()
 		;SalvageMaterials()
 	EndIf
-	If $inventory_management_cache['@sell.materials.something'] And HasMaterials() Then
+	If $inventory_management_cache['@sell.materials.something'] And (HasBasicMaterialsToTrade() Or HasRareMaterialsToTrade()) Then
 		TravelToOutpost($tradeTown, $district_name)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		If $inventory_management_cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
 		If $inventory_management_cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
-	If $inventory_management_cache['@sell.something'] Then
+	If $inventory_management_cache['@sell.something'] And HasItemsToSell() Then
 		TravelToOutpost($tradeTown, $district_name)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
@@ -83,13 +83,26 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	EndIf
 	; Max gold in Xunlai chest is 1000 platinums
 	If $inventory_management_cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
+		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		DepositGold(60000)
 		Info('Deposited Gold')
 	EndIf
-	If $inventory_management_cache['Store items.Gold'] Then BalanceCharacterGold(10000)
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
-	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
-	If $inventory_management_cache['@store.something'] Then StoreItemsInXunlaiStorage()
+	If $inventory_management_cache['Store items.Gold'] Then
+		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
+		BalanceCharacterGold(10000)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then
+		TravelToOutpost($tradeTown, $district_name)
+		BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
+	EndIf
+	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then
+		TravelToOutpost($tradeTown, $district_name)
+		BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
+	EndIf
+	If $inventory_management_cache['@store.something'] Then
+		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
+		StoreItemsInXunlaiStorage()
+	EndIf
 EndFunc
 
 
@@ -407,7 +420,7 @@ Func DefaultShouldSalvageItem($item)
 		If $cache['@salvage.salvageables.nothing'] Then Return False
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		If Not $cache['Salvage items.Armor salvageables.' & $rarityName] Then Return False
-		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+		Return IsIdentified($item) And Not ContainsValuableUpgrades($item)
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
 		If $cache['Salvage items.Trophies'] Then Return True
@@ -459,7 +472,7 @@ Func DefaultShouldSellItem($item)
 		If $cache['@sell.salvageables.nothing'] Then Return False
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		If Not $cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
-		Return GetIsIdentified($item) And Not ContainsValuableUpgrades($item)
+		Return IsIdentified($item) And Not ContainsValuableUpgrades($item)
 	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsBlueScroll($itemID) Then
 		Return $cache['Sell items.Scrolls.Blue']
@@ -555,7 +568,7 @@ Func ShouldKeepWeapon($item)
 	; Keeping green items
 	If $rarity == $RARITY_GREEN Then Return True
 	; Keeping unidentified items
-	If Not GetIsIdentified($item) Then Return True
+	If Not IsIdentified($item) Then Return True
 	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
 	If $MAP_ULTRA_RARE_WEAPONS[$itemID] <> Null Then Return True
 	; Keeping items that contain good upgrades
@@ -776,27 +789,13 @@ Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMa
 	GoToNPC($materialTrader)
 	RandomSleep(250)
 
-	Local $item, $itemID
+	Local $item
 	For $bagIndex = 1 To _Min(4, $bags_count)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			If $shouldSellMaterial($item) Then
-				$itemID = DllStructGetData($item, 'ID')
-				Local $totalAmount = DllStructGetData($item, 'Quantity')
-				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
-				While $totalAmount > 9
-					TraderRequestSell($itemID)
-					RandomSleep(250)
-					TraderSell()
-					RandomSleep(250)
-					$totalAmount -= 10
-					; Safety net incase some sell orders didn't go through
-					If ($totalAmount < 10) Then
-						$item = GetItemBySlot($bagIndex, $i)
-						$totalAmount = DllStructGetData($item, 'Quantity')
-					EndIf
-				WEnd
+				SellItemToTrader($item)
 			EndIf
 		Next
 	Next
@@ -804,7 +803,7 @@ EndFunc
 
 
 ;~ Sell rare materials to rare materials merchant in town
-Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMaterial, $tradeTown = $ID_EMBARK_BEACH)
+Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMaterial, $tradeTown = $ID_EYE_OF_THE_NORTH)
 	TravelToOutpost($tradeTown, $district_name)
 	Info('Moving to rare materials merchant')
 	UseCitySpeedBoost()
@@ -816,27 +815,13 @@ Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMate
 	GoToNPC($materialTrader)
 	RandomSleep(250)
 
-	Local $item, $itemID
+	Local $item
 	For $bagIndex = 1 To _Min(4, $bags_count)
 		Local $bag = GetBag($bagIndex)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			If $shouldSellMaterial($item) Then
-				$itemID = DllStructGetData($item, 'ID')
-				Local $totalAmount = DllStructGetData($item, 'Quantity')
-				Debug('Selling ' & $totalAmount & ' material ' & $bagIndex & '-' & $i)
-				While $totalAmount > 0
-					TraderRequestSell($itemID)
-					RandomSleep(250)
-					TraderSell()
-					RandomSleep(250)
-					$totalAmount -= 1
-					; Safety net incase some sell orders didn't go through
-					If ($totalAmount < 1) Then
-						$item = GetItemBySlot($bagIndex, $i)
-						$totalAmount = DllStructGetData($item, 'Quantity')
-					EndIf
-				WEnd
+				SellItemToTrader($item)
 			EndIf
 		Next
 	Next
@@ -844,7 +829,7 @@ EndFunc
 
 
 ;~ Buy rare material from rare materials merchant in town
-Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_EMBARK_BEACH)
+Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_EYE_OF_THE_NORTH)
 	TravelToOutpost($tradeTown, $district_name)
 	Info('Moving to rare materials merchant')
 	UseCitySpeedBoost()
@@ -1130,36 +1115,6 @@ EndFunc
 
 
 #Region Identification
-;~ Returns true if there are unidentified items in inventory
-Func HasUnidentifiedItems()
-	For $bagIndex = 1 To $bags_count
-		Local $bag = GetBag($bagIndex)
-		Local $item
-		For $i = 1 To DllStructGetData($bag, 'slots')
-			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
-			If Not GetIsIdentified($item) Then Return True
-		Next
-	Next
-	Return False
-EndFunc
-
-
-;~ Returns true if there are items in inventory that user selected to salvage in the GUI interface
-Func HasChosenItemsToSalvage()
-	For $bagIndex = 1 To $bags_count
-		Local $bag = GetBag($bagIndex)
-		Local $item
-		For $i = 1 To DllStructGetData($bag, 'slots')
-			$item = GetItemBySlot($bagIndex, $i)
-			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
-			If DefaultShouldSalvageItem($item) Then Return True
-		Next
-	Next
-	Return False
-EndFunc
-
-
 ;~ Identify items from inventory
 Func IdentifyItems($buyKit = True)
 	Info('Identifying items')
@@ -1169,7 +1124,7 @@ Func IdentifyItems($buyKit = True)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
-			If Not GetIsIdentified($item) Then
+			If Not IsIdentified($item) Then
 				Local $rarity = GetRarity($item)
 				Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 				If Not $inventory_management_cache['Identify items.' & $rarityName] Then ContinueLoop
@@ -1310,7 +1265,9 @@ EndFunc
 ;~ Salvage the given item - FIXME: fails for weapons/armorsalvageable when using expert kits and better because they open a window
 Func SalvageItem($item, $salvageKit)
 	Local $rarity = GetRarity($item)
-	StartSalvageWithKit($item, $salvageKit)
+	While Not StartSalvageWithKit($item, $salvageKit)
+		Sleep(GetPing())
+	WEnd
 	Sleep(600 + GetPing())
 	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 		ValidateSalvage()
@@ -1711,6 +1668,42 @@ EndFunc
 ;~ Returns true if there are rare materials in inventory
 Func HasRareMaterials()
 	Return HasInInventory(IsRareMaterial)
+EndFunc
+
+
+;~ Returns true if there are unidentified items in inventory
+Func HasUnidentifiedItems()
+	Return HasInInventory(IsUnidentified)
+EndFunc
+
+
+;~ Returns true if there are unidentified items in inventory
+Func HasGoldUnidentifiedItems()
+	Return HasInInventory(IsUnidentifiedGoldItem)
+EndFunc
+
+
+;~ Returns true if there are items in inventory that user selected to salvage in the GUI interface
+Func HasItemsToSalvage($shouldSalvageItem = DefaultShouldSalvageItem)
+	Return HasInInventory($shouldSalvageItem)
+EndFunc
+
+
+;~ Returns true if there are items in inventory that user selected to sell (merchant)
+Func HasItemsToSell($shouldSellItem = DefaultShouldSellItem)
+	Return HasInInventory($shouldSellItem)
+EndFunc
+
+
+;~ Returns true if there are basic materials in inventory that user selected to sell (trader)
+Func HasBasicMaterialsToTrade($shouldSellMaterial = DefaultShouldSellBasicMaterial)
+	Return HasInInventory($shouldSellMaterial)
+EndFunc
+
+
+;~ Returns true if there are basic materials in inventory that user selected to sell (trader)
+Func HasRareMaterialsToTrade($shouldSellMaterial = DefaultShouldSellRareMaterial)
+	Return HasInInventory($shouldSellMaterial)
 EndFunc
 
 
@@ -2247,12 +2240,6 @@ Func HasSalvageInscription($item)
 		If StringInStr($modstruct, $salvageableModStruct) Then Return True
 	Next
 	Return False
-EndFunc
-
-
-;~ Tests if an item is an unidentified gold item
-Func IsUnidentifiedGoldItem($item)
-	Return Not GetIsIdentified($item) And (GetRarity($item) == $RARITY_GOLD)
 EndFunc
 #EndRegion Items tests
 
