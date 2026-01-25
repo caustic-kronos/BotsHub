@@ -231,7 +231,12 @@ Func EnterAChanceEncounterQuest()
 
 	RandomSleep(1000)
 	UseCitySpeedBoost()
-	GoToNPC(GetNearestNPCToCoords(2240, -1264))
+	Local $npc = GetNearestNPCToCoords(2240, -1264)
+	GoToNPC($npc)
+	If GetDistance(GetMyAgent(), $npc) > $RANGE_ADJACENT Then 
+		MoveTo(1474, -1197, 0)
+		GoToNPC($npc)
+	EndIf
 	RandomSleep(250)
 	Dialog(0x84)
 	RandomSleep(500)
