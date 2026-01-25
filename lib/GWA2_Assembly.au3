@@ -140,6 +140,8 @@ Global Const $SET_HERO_BEHAVIOUR_STRUCT = DllStructCreate('ptr;dword;dword')
 Global Const $DROP_HERO_BUNDLE_STRUCT = DllStructCreate('ptr;dword')
 Global Const $LOCK_HERO_TARGET_STRUCT = DllStructCreate('ptr;dword;dword')
 Global Const $TOGGLE_HERO_SKILL_STATE = DllStructCreate('ptr;dword;dword')
+Global Const $EQUIP_ITEM_STRUCT = DllStructCreate('ptr;dword;dword;dword')
+Global Const $EQUIP_ITEM_STRUCT_PTR = DllStructGetPtr($EQUIP_ITEM_STRUCT)
 
 ; Party
 Global Const $ADD_PLAYER_STRUCT = DllStructCreate('ptr;dword')
@@ -787,8 +789,9 @@ Func InitializeCommandStructures()
 	DllStructSetData($LOCK_HERO_TARGET_STRUCT, 1, GetLabel('CommandLockHeroTarget'))
 	DllStructSetData($TOGGLE_HERO_SKILL_STATE, 1, GetLabel('CommandToggleHeroSkillState'))
 	DllStructSetData($ACTIVE_QUEST_STRUCT, 1, GetLabel('CommandActiveQuest'))
-	;Ui-Msg
-	DllStructSetData($MOVE_MAP_STRUCT, 1, GetLabel('CommandMoveMap'))
+	;UIMsg
+	DllStructSetData($MOVE_MAP_STRUCT, 1, GetLabel('CommandUIMsg'))
+	DllStructSetData($EQUIP_ITEM_STRUCT, 1, GetLabel('CommandUIMsg'))
 	;Party
 	DllStructSetData($ADD_PLAYER_STRUCT, 1, GetLabel('CommandAddPlayer'))
 	DllStructSetData($KICK_PLAYER_STRUCT, 1, GetLabel('CommandKickPlayer'))
@@ -1806,9 +1809,6 @@ EndFunc
 
 Func AssemblerCreateSalvageCommand()
 	_('CommandSalvage:')
-	_('push eax')
-	_('push ecx')
-	_('push ebx')
 	_('mov ebx,SalvageGlobal')
 	_('mov ecx,dword[eax+4]')
 	_('mov dword[ebx],ecx')
@@ -1823,9 +1823,6 @@ Func AssemblerCreateSalvageCommand()
 	_('push ebx')
 	_('call Salvage')
 	_('add esp,C')
-	_('pop ebx')
-	_('pop ecx')
-	_('pop eax')
 	_('ljmp CommandReturn')
 EndFunc
 
@@ -1908,7 +1905,7 @@ Func AssemblerCreateTradeCommands()
 EndFunc
 
 Func AssemblerCreateUICommands()
-	_('CommandMoveMap:')
+	_('CommandUIMsg:')
 	_('push 0')
 	_('mov edx,eax')
 	_('add edx,8')
