@@ -61,8 +61,6 @@ Global Const $BOREAL_HEARTOFSHADOW		= 8
 ; Model IDs of enemy NPCs that we might encounter
 Global Const $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID = 6539
 Global Const $BOREAL_MOUNTAIN_ALOE_MODEL_ID = 6540
-; Flags used to mark if any relevant enemy types are within casting range.
-Global Const $BOREAL_IS_ALOE_OR_PINESOUL_IN_CASTINGRANGE = 1
 
 ; global variable to remember player's profession in setup
 Global $boreal_player_profession = $ID_ASSASSIN

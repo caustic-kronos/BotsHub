@@ -217,61 +217,6 @@ Func CheckIfAnyPartyMembersDead()
 EndFunc
 
 
-;~ Return the number of enemy agents targeting the given party member.
-Func GetPartyMemberDanger($agent, $agents = Null)
-	If $agents == Null Then $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
-	$party = GetParty($agents)
-	$partyMemberDangers = GetPartyDanger($agents)
-
-	For $member In $party
-		;If $member == $agent Then Return $partyMemberDangers[$i]
-		If DllStructGetData($member, 'ID') == DllStructGetData($agent, 'ID') Then Return partyMemberDangers[$i]
-	Next
-	Return Null
-EndFunc
-
-
-;~ Returns the 'danger level' of each party member
-;~ Param1: an array returned by GetAgentArray(). This is totally optional, but can greatly improve script speed.
-;~ Param2: an array returned by GetParty() This is totally optional, but can greatly improve script speed.
-Func GetPartyDanger($agents = Null, $party = Null)
-	If $agents == Null Then $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
-	If $party == Null Then $party = GetParty($agents)
-
-	Local $resultLevels[UBound($party)]
-	FillArray($resultLevels, 0)
-
-	For $i = 0 To UBound($agents) - 1
-		Local $agent = $agents[$i]
-		If DllStructGetData($agent, 'HealthPercent') <= 0 Then ContinueLoop
-		If GetIsDead($agent) Then ContinueLoop
-		Local $allegiance = DllStructGetData($agent, 'Allegiance')
-		; ignore spirits (4), pets (4), minions (5), NPCs (6), which have allegiance number higher than foe (3)
-		If $allegiance > $ID_ALLEGIANCE_FOE Then ContinueLoop
-
-		Local $targetID = DllStructGetData(GetTarget($agent), 'ID')
-		Local $team = DllStructGetData($agent, 'Team')
-		For $member In $party
-			If $targetID == DllStructGetData($member, 'ID') Then
-				; can't target beyond compass range
-				If GetDistance($agent, $member) < $RANGE_COMPASS Then
-					If $team <> 0 Then
-						; agent from different team targeting party member
-						If $team <> DllStructGetData($member, 'Team') Then
-							$resultLevels[$i] += 1
-						EndIf
-					; agent from different allegiance targeting party member
-					ElseIf $allegiance <> DllStructGetData($member, 'Allegiance') Then
-						$resultLevels[$i] += 1
-					EndIf
-				EndIf
-			EndIf
-		Next
-	Next
-	Return $resultLevels
-EndFunc
-
-
 ;~ Return True if malus is -60 on player
 Func IsPlayerAtMaxMalus()
 	If GetMorale() == -60 Then Return True

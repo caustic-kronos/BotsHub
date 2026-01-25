@@ -1,5 +1,6 @@
 logs/**
 data/**
+tests/**
 conf/farm/*
 conf/loot/*
 !conf/farm/Default Farm Configuration.json

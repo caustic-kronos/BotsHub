@@ -426,19 +426,19 @@ Func ForestOfTheWailingLord()
 	Local $questLoopCount = 0
 	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_WAILING_LORD)
 		; Pull Skeletal Mobs
-    	If $questLoopCount < 2 Then
-        	MoveTo(-21000, 14600)
-        	Sleep(3000)
-        	MoveTo(-20500, 14200)
-        	Sleep(17000)
+		If $questLoopCount < 2 Then
+			MoveTo(-21000, 14600)
+			Sleep(3000)
+			MoveTo(-20500, 14200)
+			Sleep(17000)
 		; Go Deeper to pull the Banshees
-    	Else
-        	MoveTo(-21500, 15000)
-        	Sleep(3000)
-        	MoveTo(-20500, 14200)
-        	Sleep(12000)
-    	EndIf
-    	$questLoopCount += 1
+		Else
+			MoveTo(-21500, 15000)
+			Sleep(3000)
+			MoveTo(-20500, 14200)
+			Sleep(12000)
+		EndIf
+		$questLoopCount += 1
 	WEnd
 	CancelAllHeroes()
 
