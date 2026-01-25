@@ -1065,7 +1065,7 @@ Func ContainsValuableUpgrades($item)
 					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
 						Warn('Valuable mod ' & $struct & ' in ' & $modStruct & ' does not match expected upgrade/inscription format')
 					EndIf
-					Return True
+					If IsWeaponUpgradeStruct($modStruct, $upgradePosition) Then Return True
 					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
 				WEnd
 			Next
@@ -1076,7 +1076,6 @@ Func ContainsValuableUpgrades($item)
 					If Not IsWeaponUpgradeStruct($modStruct, $upgradePosition) And Not IsInscriptionStruct($modStruct, $upgradePosition) Then
 						Warn('Valuable mod ' & $struct & ' in ' & $modStruct & ' does not match expected upgrade/inscription format')
 					EndIf
-					Return True
 					If IsInscriptionStruct($modStruct, $upgradePosition) Then Return True
 					$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
 				WEnd
