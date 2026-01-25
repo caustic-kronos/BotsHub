@@ -404,7 +404,7 @@ Func Authentification()
 	ElseIf $process_id And $run_mode == 'CMD' Then
 		Local $processID = Number($process_id, 2)
 		Info('Running via pid ' & $processID)
-		If InitializeGameClientData(True, True, False) = 0 Then
+		If InitializeGameClientForGWA2(True) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $processID & '>> ' & VarGetType($processID) & '')
 			Return $FAIL
 		EndIf
@@ -416,7 +416,7 @@ Func Authentification()
 		Else
 			SelectClient($clientIndex)
 			OpenDebugLogFile()
-			If InitializeGameClientData(True, True, False) = 0 Then
+			If InitializeGameClientForGWA2(True) = 0 Then
 				MsgBox(0, 'Error', 'Failed game initialisation')
 				Return $FAIL
 			EndIf

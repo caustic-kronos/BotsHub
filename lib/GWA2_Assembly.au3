@@ -47,7 +47,7 @@ Global Const $WORLD_STRUCT = SafeDllStructCreate('long MinGridWidth;long MinGrid
 Global Const $INVITE_GUILD_STRUCT = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')
 Global Const $INVITE_GUILD_STRUCT_PTR = DllStructGetPtr($INVITE_GUILD_STRUCT)
 
-Global Const $USE_SKILL_STRUCT = SafeDllStructCreate('ptr useSkillCommandPtr;dword skillSlot;dword targetID;dword callTarget')
+Global Const $USE_SKILL_STRUCT = SafeDllStructCreate('ptr useSkillCommandPtr;dword skillSlot;dword targetID;dword callTarget;bool')
 Global Const $USE_SKILL_STRUCT_PTR = DllStructGetPtr($USE_SKILL_STRUCT)
 
 Global Const $MOVE_STRUCT = SafeDllStructCreate('ptr commandMovePtr;float X;float Y;dword')
@@ -116,19 +116,48 @@ Global Const $MAKE_AGENT_ARRAY_STRUCT_PTR = DllStructGetPtr($MAKE_AGENT_ARRAY_ST
 Global Const $CHANGE_STATUS_STRUCT = SafeDllStructCreate('ptr;dword')
 Global Const $CHANGE_STATUS_STRUCT_PTR = DllStructGetPtr($CHANGE_STATUS_STRUCT)
 
-Global Const $ENTER_MISSION_STRUCT = SafeDllStructCreate('ptr')
+Global Const $CANCEL_HERO_SKILL_STRUCT = DllStructCreate('ptr;dword;dword')
+Global Const $CANCEL_HERO_SKILL_STRUCT_PTR = DllStructGetPtr($CANCEL_HERO_SKILL_STRUCT)
+
+Global Const $TRADE_INITIATE_STRUCT = DllStructCreate('ptr;dword;dword')
+Global Const $TRADE_CANCEL_STRUCT = DllStructCreate('ptr')
+Global Const $TRADE_ACCEPT_STRUCT = DllStructCreate('ptr')
+Global Const $TRADE_SUBMIT_STRUCT = DllStructCreate('ptr;dword')
+Global Const $TRADE_OFFER_ITEM_STRUCT = DllStructCreate('ptr;dword;dword')
+
+; UI
+Global Const $DIALOG_STRUCT = DllStructCreate('ptr;dword')
+Global Const $OPEN_CHEST_STRUCT = DllStructCreate('ptr;dword')
+Global Const $MOVE_MAP_STRUCT = DllStructCreate('ptr;dword;dword;dword;dword;dword')
+Global Const $SET_DIFFICULTY_STRUCT = DllStructCreate('ptr;dword')
+Global Const $ENTER_MISSION_STRUCT = DllStructCreate('ptr;dword')
 Global Const $ENTER_MISSION_STRUCT_PTR = DllStructGetPtr($ENTER_MISSION_STRUCT)
+Global Const $ACTIVE_QUEST_STRUCT = DllStructCreate('ptr;dword')
+
+Global Const $FLAG_HERO_STRUCT = DllStructCreate('ptr;dword;dword;dword;dword')
+Global Const $FLAG_ALL_STRUCT = DllStructCreate('ptr;dword;dword;dword')
+Global Const $SET_HERO_BEHAVIOUR_STRUCT = DllStructCreate('ptr;dword;dword')
+Global Const $DROP_HERO_BUNDLE_STRUCT = DllStructCreate('ptr;dword')
+Global Const $LOCK_HERO_TARGET_STRUCT = DllStructCreate('ptr;dword;dword')
+Global Const $TOGGLE_HERO_SKILL_STATE = DllStructCreate('ptr;dword;dword')
+
+; Party
+Global Const $ADD_PLAYER_STRUCT = DllStructCreate('ptr;dword')
+Global Const $KICK_PLAYER_STRUCT = DllStructCreate('ptr;dword')
+Global Const $KICK_INVITED_PLAYER_STRUCT = DllStructCreate('ptr;dword')
+Global Const $REJECT_INVITATION_STRUCT = DllStructCreate('ptr;dword')
+Global Const $ACCEPT_INVITATION_STRUCT = DllStructCreate('ptr;dword')
+Global Const $LEAVE_GROUP_STRUCT = DllStructCreate('ptr;dword')
+Global Const $ADD_HERO_STRUCT = DllStructCreate('ptr;dword')
+Global Const $KICK_HERO_STRUCT = DllStructCreate('ptr;dword')
+Global Const $ADD_NPC_STRUCT = DllStructCreate('ptr;dword')
+Global Const $KICK_NPC_STRUCT = DllStructCreate('ptr;dword')
 #EndRegion GWA2 Structures
 #EndRegion Constants
 
 
 ; Windows and process handles
 Global $kernel_handle = DllOpen('kernel32.dll')
-; Each gameClient will be a 4-elements array: [0] = PID, [1] = process handle (or 0 if invalidated), [2] = window handle, [3] = character name
-; Caution, first element of this 2D array $game_clients[0][0] is considered a count of currently inserted elements (like in AutoIT ProcessList() function), hence $MAX_CLIENTS+1
-Global $game_clients[$MAX_CLIENTS+1][4]
-Global $selected_client_index = -1
-
 If Not $kernel_handle Then
 	MsgBox(16, 'Error', 'Failed to open kernel32.dll')
 	Exit
@@ -136,12 +165,34 @@ Else
 	OnAutoItExitRegister('CloseAllHandles')
 EndIf
 
+; Each gameClient will be a 4-elements array: [0] = PID, [1] = process handle (or 0 if invalidated), [2] = window handle, [3] = character name
+; Caution, first element of this 2D array $game_clients[0][0] is considered a count of currently inserted elements (like in AutoIT ProcessList() function), hence $MAX_CLIENTS+1
+Global $game_clients[$MAX_CLIENTS+1][4]
+Global $selected_client_index = -1
+
 ; Memory interaction
 ;Global $base_address = 0x00C50000
 Global $memory_interface_header = 0
 Global $asm_injection_string, $asm_injection_size, $asm_code_offset
 Global $trade_hack_address
 Global $labels_map[]
+
+; [labelName, bytePattern, resultOffset, patternType, assertSourceFile, assertMessage]
+Global $scan_patterns[57][6]
+Global $scan_patterns_count = 0
+; [file, message]
+Global $assertions_patterns_cache[]
+Global $scan_results[]
+
+; PE Sections
+Global Const $PE_TEXT_SECTION = 0
+Global Const $PE_RDATA_SECTION = 1
+Global Const $PE_DATA_SECTION = 2
+Global Const $PE_RSRC_SECTION = 3
+Global Const $PE_RELOC_SECTION = 4
+
+; [section][0=start, 1=end]
+Global $pe_sections_ranges[5][2]
 
 
 #Region Initialisation
@@ -204,527 +255,226 @@ Func ScanForCharname($processHandle)
 EndFunc
 
 
-;~ Injects GWA2 into the game client.
-Func InitializeGameClientData($changeTitle = True, $initUseStringLog = False, $inituse_event_system = True)
-	$use_string_logging = $initUseStringLog
-	$use_event_system = $inituse_event_system
-
-	ScanGWBasePatterns()
-
-	Local $processHandle = GetProcessHandle()
-	; Read memory values for game data
-	$base_address_ptr = MemoryRead($processHandle, GetScannedAddress('ScanBasePointer', 8))
-	If @error Then LogCriticalError('Failed to read base pointer')
-
-	SetLabel('BasePointer', '0x' & Hex($base_address_ptr, 8))
-	$region_ID = MemoryRead($processHandle, GetScannedAddress('ScanRegion', -0x3))
-	Local $tempValue = GetScannedAddress('ScanInstanceInfo', -0x04)
-	$instance_info_ptr = MemoryRead($processHandle, $tempValue + MemoryRead($processHandle, $tempValue + 0x01) + 0x05 + 0x01, 'dword')
-
-	$area_info_ptr = MemoryRead($processHandle, GetScannedAddress('ScanAreaInfo', 0x6))
-	$attribute_info_ptr = MemoryRead($processHandle, GetScannedAddress('ScanAttributeInfo', -0x3))
-	SetLabel('StringLogStart', '0x' & Hex(GetScannedAddress('ScanStringLog', 0x16), 8))
-	SetLabel('LoadFinishedStart', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 1), 8))
-	SetLabel('LoadFinishedReturn', '0x' & Hex(GetScannedAddress('ScanLoadFinished', 6), 8))
-
-	$agent_base_address = MemoryRead($processHandle, GetScannedAddress('ScanAgentBasePointer', 8) + 0xC - 7)
-	If @error Then LogCriticalError('Failed to read agent base')
-	SetLabel('AgentBase', '0x' & Hex($agent_base_address, 8))
-	$max_agents = $agent_base_address + 8
-	SetLabel('MaxAgents', '0x' & Hex($max_agents, 8))
-
-	Local $agentArrayAddress = MemoryRead($processHandle, GetScannedAddress('ScanAgentArray', -0x3))
-	If @error Then LogCriticalError('Failed to read agent array')
-
-	$my_ID = MemoryRead($processHandle, GetScannedAddress('ScanMyID', -3))
-	If @error Then LogCriticalError('Failed to read my ID')
-	SetLabel('MyID', '0x' & Hex($my_ID, 8))
-
-	$current_target_agent_ID = MemoryRead($processHandle, GetScannedAddress('ScanCurrentTarget', -14))
-	If @error Then LogCriticalError('Failed to read current target')
-
-	Local $packetLocation = Hex(MemoryRead($processHandle, GetScannedAddress('ScanBaseOffset', 11)), 8)
-	If @error Then LogCriticalError('Failed to read packet location')
-	SetLabel('PacketLocation', '0x' & $packetLocation)
-
-	$scan_ping_address = MemoryRead($processHandle, GetScannedAddress('ScanPing', -0x3))
-	If @error Then LogCriticalError('Failed to read ping')
-
-	$map_ID = MemoryRead($processHandle, GetScannedAddress('ScanMapID', 28))
-	If @error Then LogCriticalError('Failed to read map ID')
-
-	; FIXME: this call fails
-	;$map_loading = MemoryRead($processHandle, GetScannedAddress('ScanMapLoading', 0xB))
-	;If @error Then LogCriticalError('Failed to read loading status')
-
-	; FIXME: this call fails
-	;$is_logged_in = MemoryRead($processHandle, GetScannedAddress('ScanLoggedIn', 0x3))
-	;If @error Then LogCriticalError('Failed to read login status')
-
-	$language_ID = MemoryRead($processHandle, GetScannedAddress('ScanMapInfo', 11)) + 0xC
-	If @error Then LogCriticalError('Failed to read language and region')
-
-	$skill_base_address = MemoryRead($processHandle, GetScannedAddress('ScanSkillBase', 0x9))
-	If @error Then LogCriticalError('Failed to read skill base')
-
-	$skill_timer = MemoryRead($processHandle, GetScannedAddress('ScanSkillTimer', -3))
-	If @error Then LogCriticalError('Failed to read skill timer')
-
-	$tempValue = GetScannedAddress('ScanBuildNumber', 0x2C)
-	If @error Then LogCriticalError('Failed to read build number address')
-
-	; FIXME: these calls fail
-	;$build_number = MemoryRead($processHandle, $tempValue + MemoryRead($processHandle, $tempValue) + 5)
-	;If @error Then LogCriticalError('Failed to read build number')
-
-	$zoom_when_still = GetScannedAddress('ScanZoomStill', 0x33)
-	If @error Then LogCriticalError('Failed to read zoom still address')
-
-	$zoom_when_moving = GetScannedAddress('ScanZoomMoving', 0x21)
-	If @error Then LogCriticalError('Failed to read zoom moving address')
-
-	$current_status = MemoryRead($processHandle, GetScannedAddress('ScanChangeStatusFunction', 35))
-	If @error Then LogCriticalError('Failed to read current status')
-
-	; FIXME: this call fails
-	;Local $characterSlots = MemoryRead($processHandle, GetScannedAddress('ScanCharslots', 22))
-	;If @error Then LogCriticalError('Failed to read character slots')
-
-	$tempValue = GetScannedAddress('ScanEngine', -0x22)
-	If @error Then LogCriticalError('Failed to read engine address')
-	SetLabel('MainStart', '0x' & Hex($tempValue, 8))
-	SetLabel('MainReturn', '0x' & Hex($tempValue + 5, 8))
-
-	$tempValue = GetScannedAddress('ScanRenderFunc', -0x68)
-	If @error Then LogCriticalError('Failed to read render function address')
-	SetLabel('RenderingMod', '0x' & Hex($tempValue, 8))
-	SetLabel('RenderingModReturn', '0x' & Hex($tempValue + 10, 8))
-
-	$tempValue = GetScannedAddress('ScanTargetLog', 1)
-	If @error Then LogCriticalError('Failed to read target log address')
-	SetLabel('TargetLogStart', '0x' & Hex($tempValue, 8))
-	SetLabel('TargetLogReturn', '0x' & Hex($tempValue + 5, 8))
-
-	$tempValue = GetScannedAddress('ScanSkillLog', 1)
-	If @error Then LogCriticalError('Failed to read skill log address')
-	SetLabel('SkillLogStart', '0x' & Hex($tempValue, 8))
-	SetLabel('SkillLogReturn', '0x' & Hex($tempValue + 5, 8))
-
-	$tempValue = GetScannedAddress('ScanSkillCompleteLog', -4)
-	If @error Then LogCriticalError('Failed to read skill complete log address')
-	SetLabel('SkillCompleteLogStart', '0x' & Hex($tempValue, 8))
-	SetLabel('SkillCompleteLogReturn', '0x' & Hex($tempValue + 5, 8))
-
-	$tempValue = GetScannedAddress('ScanSkillCancelLog', 5)
-	If @error Then LogCriticalError('Failed to read skill cancel log address')
-	SetLabel('SkillCancelLogStart', '0x' & Hex($tempValue, 8))
-	SetLabel('SkillCancelLogReturn', '0x' & Hex($tempValue + 6, 8))
-
-	$tempValue = GetScannedAddress('ScanChatLog', 18)
-	If @error Then LogCriticalError('Failed to read chat log address')
-	SetLabel('ChatLogStart', '0x' & Hex($tempValue, 8))
-	SetLabel('ChatLogReturn', '0x' & Hex($tempValue + 6, 8))
-
-	$tempValue = GetScannedAddress('ScanTraderHook', -0x3C)
-	If @error Then LogCriticalError('Failed to read trader hook address')
-	SetLabel('TraderStart', Ptr($tempValue))
-	SetLabel('TraderReturn', Ptr($tempValue + 0x5))
-
-	$tempValue = GetScannedAddress('ScanDialogLog', -4)
-	If @error Then LogCriticalError('Failed to read dialog log address')
-	SetLabel('DialogLogStart', '0x' & Hex($tempValue, 8))
-	SetLabel('DialogLogReturn', '0x' & Hex($tempValue + 5, 8))
-
-	$tempValue = GetScannedAddress('ScanStringFilter1', -5)
-	If @error Then LogCriticalError('Failed to read string filter 1 address')
-	SetLabel('StringFilter1Start', '0x' & Hex($tempValue, 8))
-	SetLabel('StringFilter1Return', '0x' & Hex($tempValue + 5, 8))
-
-	$tempValue = GetScannedAddress('ScanStringFilter2', 0x16)
-	If @error Then LogCriticalError('Failed to read string filter 2 address')
-	SetLabel('StringFilter2Start', '0x' & Hex($tempValue, 8))
-	SetLabel('StringFilter2Return', '0x' & Hex($tempValue + 5, 8))
-
-	; FIXME: this call fails
-	;SetLabel('PostMessage', '0x' & Hex(MemoryRead($processHandle, GetScannedAddress('ScanPostMessage', 11)), 8))
-	;If @error Then LogCriticalError('Failed to read post message')
-
-	; FIXME: this call fails
-	;SetLabel('Sleep', MemoryRead($processHandle, MemoryRead($processHandle, GetLabel('ScanSleep') + 8) + 3))
-	;If @error Then LogCriticalError('Failed to read sleep')
-
-	SetLabel('SalvageFunction', '0x' & Hex(GetScannedAddress('ScanSalvageFunction', -10), 8))
-	If @error Then LogCriticalError('Failed to read salvage function')
-
-	SetLabel('SalvageGlobal', '0x' & Hex(MemoryRead($processHandle, GetScannedAddress('ScanSalvageGlobal', 1) - 0x4), 8))
-	If @error Then LogCriticalError('Failed to read salvage global')
-
-	SetLabel('IncreaseAttributeFunction', '0x' & Hex(GetScannedAddress('ScanIncreaseAttributeFunction', -0x5A), 8))
-	If @error Then LogCriticalError('Failed to read increase attribute function')
-
-	SetLabel('DecreaseAttributeFunction', '0x' & Hex(GetScannedAddress('ScanDecreaseAttributeFunction', 25), 8))
-	If @error Then LogCriticalError('Failed to read decrease attribute function')
-
-	SetLabel('MoveFunction', '0x' & Hex(GetScannedAddress('ScanMoveFunction', 1), 8))
-	If @error Then LogCriticalError('Failed to read move function')
-	$tempValue = GetScannedAddress('ScanEnterMissionFunction', 0x52)
-	SetLabel('EnterMissionFunction', '0x' & Hex(GetCallTargetAddress($processHandle, $tempValue), 8))
-	If @error Then LogCriticalError('Failed to read EnterMission function')
-
-	SetLabel('UseSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseSkillFunction', -0x127), 8))
-	If @error Then LogCriticalError('Failed to read use skill function')
-
-	SetLabel('ChangeTargetFunction', '0x' & Hex(GetScannedAddress('ScanChangeTargetFunction', -0x89) + 1, 8))
-	If @error Then LogCriticalError('Failed to read change target function')
-
-	SetLabel('WriteChatFunction', '0x' & Hex(GetScannedAddress('ScanWriteChatFunction', -0x3D), 8))
-	If @error Then LogCriticalError('Failed to read write chat function')
-
-	SetLabel('SellItemFunction', '0x' & Hex(GetScannedAddress('ScanSellItemFunction', -85), 8))
-	If @error Then LogCriticalError('Failed to read sell item function')
-
-	SetLabel('PacketSendFunction', '0x' & Hex(GetScannedAddress('ScanPacketSendFunction', -0x4F), 8))
-	If @error Then LogCriticalError('Failed to read packet send function')
-
-	SetLabel('ActionBase', '0x' & Hex(MemoryRead($processHandle, GetScannedAddress('ScanActionBase', -3)), 8))
-	If @error Then LogCriticalError('Failed to read action base')
-
-	SetLabel('ActionFunction', '0x' & Hex(GetScannedAddress('ScanActionFunction', -3), 8))
-	If @error Then LogCriticalError('Failed to read action function')
-
-	SetLabel('UseHeroSkillFunction', '0x' & Hex(GetScannedAddress('ScanUseHeroSkillFunction', -0x59), 8))
-	If @error Then LogCriticalError('Failed to read use hero skill function')
-
-	SetLabel('BuyItemBase', '0x' & Hex(MemoryRead($processHandle, GetScannedAddress('ScanBuyItemBase', 15)), 8))
-	If @error Then LogCriticalError('Failed to read buy item base')
-
-	SetLabel('TransactionFunction', '0x' & Hex(GetScannedAddress('ScanTransactionFunction', -0x7E), 8))
-	If @error Then LogCriticalError('Failed to read transaction function')
-
-	SetLabel('RequestQuoteFunction', '0x' & Hex(GetScannedAddress('ScanRequestQuoteFunction', -0x34), 8))
-	If @error Then LogCriticalError('Failed to read request quote function')
-
-	SetLabel('TraderFunction', '0x' & Hex(GetScannedAddress('ScanTraderFunction', -0x1E), 8))
-	If @error Then LogCriticalError('Failed to read trader function')
-
-	SetLabel('ClickToMoveFix', '0x' & Hex(GetScannedAddress('ScanClickToMoveFix', 1), 8))
-	If @error Then LogCriticalError('Failed to read click to move fix')
-
-	SetLabel('ChangeStatusFunction', '0x' & Hex(GetScannedAddress('ScanChangeStatusFunction', 1), 8))
-	If @error Then LogCriticalError('Failed to read change status function')
-	SetLabel('QueueSize', '0x00000010')
-	SetLabel('SkillLogSize', '0x00000010')
-	SetLabel('ChatLogSize', '0x00000010')
-	SetLabel('TargetLogSize', '0x00000200')
-	SetLabel('StringLogSize', '0x00000200')
-	SetLabel('CallbackEvent', '0x00000501')
-
-	$trade_hack_address = GetScannedAddress('ScanTradeHack', 0)
-	If @error Then LogCriticalError('Failed to read trade hack address')
-
+;~ Scan, inject and initialize GWA2
+Func InitializeGameClientForGWA2($changeTitle = True)
+	; Populate scanner with patterns
+	RegisterScanPatterns()
+	; Resolve assertion scan patterns
+	ResolveAssertionsPatterns()
+	; Inject and scan for all patterns
+	ExecutePatternScan()
+	; Publish labels and global values
+	MapScanResultsToLabels()
+	; Modify memory
 	ModifyMemory()
-
-	$queue_counter = MemoryRead($processHandle, GetLabel('QueueCounter'))
-	If @error Then LogCriticalError('Failed to read queue counter')
-
-	$queue_size = GetLabel('QueueSize')
-	$queue_base_address = GetLabel('QueueBase')
-	;$targetLogBase = GetLabel('TargetLogBase')
-	$string_log_base_address = GetLabel('StringLogBase')
-	Local $mapIsLoaded = GetLabel('MapIsLoaded')
-	$force_english_language_flag = GetLabel('EnsureEnglish')
-	$trader_quote_ID = GetLabel('TraderQuoteID')
-	$trader_cost_ID = GetLabel('TraderCostID')
-	$trader_cost_value = GetLabel('TraderCostValue')
-	$disable_rendering_address = GetLabel('DisableRendering')
-	$agent_copy_count = GetLabel('AgentCopyCount')
-	$agent_copy_base = GetLabel('AgentCopyBase')
-	$last_dialog_ID = GetLabel('LastDialogID')
-
-	; EventSystem
-	DllStructSetData($INVITE_GUILD_STRUCT, 1, GetLabel('CommandPacketSend'))
-	If @error Then LogCriticalError('Failed to set invite guild command')
-	DllStructSetData($INVITE_GUILD_STRUCT, 2, 0x4C)
-	If @error Then LogCriticalError('Failed to set invite guild subcommand')
-	DllStructSetData($USE_SKILL_STRUCT, 1, GetLabel('CommandUseSkill'))
-	If @error Then LogCriticalError('Failed to set CommandUseSkill command')
-	DllStructSetData($MOVE_STRUCT, 1, GetLabel('CommandMove'))
-	If @error Then LogCriticalError('Failed to set CommandMove command')
-	DllStructSetData($CHANGE_TARGET_STRUCT, 1, GetLabel('CommandChangeTarget'))
-	If @error Then LogCriticalError('Failed to set CommandChangeTarget command')
-	DllStructSetData($PACKET_STRUCT, 1, GetLabel('CommandPacketSend'))
-	If @error Then LogCriticalError('Failed to set CommandPacketSend command')
-	DllStructSetData($SELL_ITEM_STRUCT, 1, GetLabel('CommandSellItem'))
-	If @error Then LogCriticalError('Failed to set CommandSellItem command')
-	DllStructSetData($ACTION_STRUCT, 1, GetLabel('CommandAction'))
-	If @error Then LogCriticalError('Failed to set CommandAction command')
-	DllStructSetData($TOGGLE_LANGUAGE_STRUCT, 1, GetLabel('CommandToggleLanguage'))
-	If @error Then LogCriticalError('Failed to set CommandToggleLanguage command')
-	DllStructSetData($USE_HERO_SKILL_STRUCT, 1, GetLabel('CommandUseHeroSkill'))
-	If @error Then LogCriticalError('Failed to set CommandUseHeroSkill command')
-	DllStructSetData($BUY_ITEM_STRUCT, 1, GetLabel('CommandBuyItem'))
-	If @error Then LogCriticalError('Failed to set CommandBuyItem command')
-	DllStructSetData($SEND_CHAT_STRUCT, 1, GetLabel('CommandSendChat'))
-	If @error Then LogCriticalError('Failed to set CommandSendChat command')
-	DllStructSetData($SEND_CHAT_STRUCT, 2, $HEADER_SEND_CHAT)
-	If @error Then LogCriticalError('Failed to set send chat subcommand')
-	DllStructSetData($WRITE_CHAT_STRUCT, 1, GetLabel('CommandWriteChat'))
-	If @error Then LogCriticalError('Failed to set CommandWriteChat command')
-	DllStructSetData($REQUEST_QUOTE_STRUCT, 1, GetLabel('CommandRequestQuote'))
-	If @error Then LogCriticalError('Failed to set CommandRequestQuote command')
-	DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 1, GetLabel('CommandRequestQuoteSell'))
-	If @error Then LogCriticalError('Failed to set CommandRequestQuoteSell command')
-	DllStructSetData($TRADER_BUY_STRUCT, 1, GetLabel('CommandTraderBuy'))
-	If @error Then LogCriticalError('Failed to set CommandTraderBuy command')
-	DllStructSetData($TRADER_SELL_STRUCT, 1, GetLabel('CommandTraderSell'))
-	If @error Then LogCriticalError('Failed to set CommandTraderSell command')
-	DllStructSetData($SALVAGE_STRUCT, 1, GetLabel('CommandSalvage'))
-	If @error Then LogCriticalError('Failed to set CommandSalvage command')
-	DllStructSetData($INCREASE_ATTRIBUTE_STRUCT, 1, GetLabel('CommandIncreaseAttribute'))
-	If @error Then LogCriticalError('Failed to set CommandIncreaseAttribute command')
-	DllStructSetData($DECREASE_ATTRIBUTE_STRUCT, 1, GetLabel('CommandDecreaseAttribute'))
-	If @error Then LogCriticalError('Failed to set CommandDecreaseAttribute command')
-	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 1, GetLabel('CommandMakeAgentArray'))
-	If @error Then LogCriticalError('Failed to set CommandMakeAgentArray command')
-	DllStructSetData($CHANGE_STATUS_STRUCT, 1, GetLabel('CommandChangeStatus'))
-	If @error Then LogCriticalError('Failed to set CommandChangeStatus command')
-	DllStructSetData($ENTER_MISSION_STRUCT, 1, GetLabel('CommandEnterMission'))
-	If @error Then LogCriticalError('Failed to set CommandEnterMission command')
+	; Initialize command structures
+	InitializeCommandStructures()
 	If $changeTitle Then WinSetTitle(GetWindowHandle(), '', 'Guild Wars - ' & GetCharacterName())
 	If @error Then LogCriticalError('Failed to change window title')
-	SetMaxMemory($processHandle)
+	SetMaxMemory(GetProcessHandle())
 	Return GetWindowHandle()
 EndFunc
 
 
-;~ Scan patterns for Guild Wars game client.
-Func ScanGWBasePatterns()
-	Local $gwBaseAddress = ScanForProcess()
+;~ Register all patterns that the scanner must find
+Func RegisterScanPatterns()
+	Debug('Registering scan patterns')
+	$scan_patterns_count = 0
+	; Core patterns
+	AddScanPattern('BasePointer',				'506A0F6A00FF35',														0x8,	'ptr')
+	AddScanPattern('Ping',						'568B750889165E',														-0x3,	'ptr')
+	AddScanPattern('StatusCode',				'8945088D45086A04',														-0x10,	'ptr')
+	AddScanPattern('PacketSend',				'C747540000000081E6',													-0x4F,	'func')
+	AddScanPattern('PacketLocation',			'83C40433C08BE55DC3A1',													0xB,	'ptr')
+	AddScanPattern('Action',					'8B7508578BF983FE09750C6877',											-0x3,	'func')
+	AddScanPattern('ActionBase',				'8D1C87899DF4',															-0x3,	'ptr')
+	AddScanPattern('Environment',				'6BC67C5E05',															0x6,	'ptr')
+	AddScanPattern('PreGame',					'',																		'',		'ptr',	'P:\Code\Gw\Ui\UiPregame.cpp',			'!s_scene')
+	AddScanPattern('FrameArray',				'',																		'',		'ptr',	'P:\Code\Engine\Frame\FrMsg.cpp',		'frame')
+	; Skill patterns
+	AddScanPattern('SkillBase',					'69C6A40000005E',														0x9,	'ptr')
+	AddScanPattern('SkillTimer',				'FFD68B4DF08BD88B4708',													-0x3,	'ptr')
+	AddScanPattern('UseSkill',					'85F6745B83FE1174',														-0x127,	'func')
+	AddScanPattern('UseHeroSkill',				'BA02000000B954080000',													-0x59,	'func')
+	; Friend patterns
+	AddScanPattern('FriendList',				'',																		'',		'ptr',	'P:\Code\Gw\Friend\FriendApi.cpp',		'friendName && *friendName')
+	AddScanPattern('PlayerStatus',				'83FE037740FF24B50000000033C0',											-0x25,	'func')
+	AddScanPattern('AddFriend',					'8B751083FE037465',														-0x47,	'func')
+	AddScanPattern('RemoveFriend',				'83F803741D83F8047418',													0x0,	'func')
+	; Attribute patterns
+	AddScanPattern('AttributeInfo',				'BA3300000089088d4004',													-0x3,	'ptr')
+	AddScanPattern('IncreaseAttribute',			'8B7D088B702C8B1F3B9E00050000',											-0x5A,	'func')
+	AddScanPattern('DecreaseAttribute',			'8B8AA800000089480C5DC3CC',												0x19,	'func')
+	; Trade patterns
+	AddScanPattern('Transaction',				'85FF741D8B4D14EB08',													-0x7E,	'func')
+	AddScanPattern('BuyItemBase',				'D9EED9580CC74004',														0xF,	'ptr')
+	AddScanPattern('RequestQuote',				'8B752083FE107614',														-0x34,	'func')
+	AddScanPattern('Salvage',					'33C58945FC8B45088945F08B450C8945F48B45108945F88D45EC506A10C745EC77',	-0xA,	'func')
+	AddScanPattern('SalvageGlobal',				'8B4A04538945F48B4208',													0x1,	'ptr')
+	; Agent patterns
+	AddScanPattern('AgentBase',					'8B0C9085C97419',														-0x3,	'ptr')
+	AddScanPattern('ChangeTarget',				'3BDF0F95',																-0x89,	'func')
+	AddScanPattern('CurrentTarget',				'83C4085F8BE55DC3CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC55',						-0xE,	'ptr')
+	AddScanPattern('MyID',						'83EC08568BF13B15',														-0x3,	'ptr')
+	; Map patterns
+	AddScanPattern('Move',						'558BEC83EC208D45F0',													0x1,	'func')
+	AddScanPattern('ClickCoords',				'8B451C85C0741CD945F8',													0xD,	'ptr')
+	AddScanPattern('InstanceInfo',				'6A2C50E80000000083C408C7',												0xE,	'ptr')
+	AddScanPattern('WorldConst',				'8D0476C1E00405',														0x8,	'ptr')
+	AddScanPattern('Region',					'6A548D46248908',														-0x3,	'ptr')
+	AddScanPattern('AreaInfo',					'6BC67C5E05',															0x6,	'ptr')
+	; Trade patterns
+	AddScanPattern('TradeCancel',				'C745FC01000000506A04',													-0x6,	'func')
+	; Ui patterns
+	AddScanPattern('UIMessage',					'B900000000E8000000005DC3894508',										-0x14,	'func')
+	AddScanPattern('CompassFlag',				'8D451050566A5B57',														0x1,	'func')
+	AddScanPattern('PartySearchButtonCallback',	'8B450883EC08568BF18B480483F90E',										-0x2,	'func')
+	AddScanPattern('PartyWindowButtonCallback',	'837d0800578bf97411',													-0x2,	'func')
+	AddScanPattern('EnterMission',				'A900001000743A',														0x52,	'func')
+	AddScanPattern('SetDifficulty',				'83C41C682A010010',														0x8C,	'func')
+	AddScanPattern('OpenChest',					'83C901894B24',															0x29,	'func')
+	AddScanPattern('Dialog',					'894B248B4B2883E900',													0x16,	'func')
+	AddScanPattern('AiMode',					'683A000010FF36',														0x1,	'ptr')
+	AddScanPattern('HeroCommand',				'33D268E0010000',														0x1,	'ptr')
+	AddScanPattern('HeroSkills',				'8B4E04505185FF',														0x1,	'ptr')
+	AddScanPattern('PlayerAdd',					'',																		'',		'ptr',	'P:\Code\Gw\Ui\Game\Party\PtInvite.cpp',	'm_invitePlayerId')
+	AddScanPattern('PlayerKick',				'',																		'',		'ptr',	'P:\Code\Gw\Ui\Game\Party\PtUtil.cpp',		'playerId == MissionCliGetPlayerId()')
+	AddScanPattern('PartyInvitations',			'8B7D0C8BF083C4048B4704',												0x1,	'ptr')
+	AddScanPattern('ActiveQuest',				'8B45083B46040F842D010000',												0x1,	'Ptr')
+	; Hook patterns
+	AddScanPattern('Engine',					'568B3085F67478EB038D4900D9460C',										-0x22,	'hook')
+	AddScanPattern('Render',					'F6C401741C68',															-0x68,	'hook')
+	AddScanPattern('LoadFinished',				'2BD9C1E303',															0xA0,	'hook')
+	AddScanPattern('HookedTrader',				'8D4DFC51576A5450',														-0x3C,	'hook')
+	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
+	If IsDeclared('g_b_AddPattern') Then Extend_AddPattern()
+EndFunc
+
+
+;~ Adds a new pattern to be located
+Func AddScanPattern($name, $pattern, $offset = 0, $type = 'ptr', $sourceFile = '', $message = '')
+	;Local $fullName = 'Scan' & $name & $type
+	Local $fullName = $name
+	$scan_patterns[$scan_patterns_count][0] = $fullName
+	$scan_patterns[$scan_patterns_count][1] = $pattern
+	$scan_patterns[$scan_patterns_count][2] = $offset
+	$scan_patterns[$scan_patterns_count][3] = $type
+	$scan_patterns[$scan_patterns_count][4] = $sourceFile
+	$scan_patterns[$scan_patterns_count][5] = $message
+	$scan_patterns_count += 1
+EndFunc
+
+
+;~ Find process by scanning memory
+;~ This process is located at 0x00401000, i.e.: shifted of 0x1000 from real start of the process. Why do we start here ? PE Headers ?
+Func GetGameProcessBaseAddress()
+	Debug('Getting game base address (PE excluded)')
+	Local $scannedMemory = ScanMemoryForPattern(GetProcessHandle(), BinaryToString('0x558BEC83EC105356578B7D0833F63BFE'))
+	Return $scannedMemory[0]
+EndFunc
+
+
+;~ Converts assertion based patterns into real instruction patterns
+Func ResolveAssertionsPatterns()
+	Debug('Resolving file-message assertions patterns')
+	; Indexes of unresolved pattern in $scan_patterns
+	Local $unresolvedIndexes[0]
+	Local $allStrings[0]
+
+	; Phase 1: collect unresolved assertions
+	For $i = 0 To $scan_patterns_count - 1
+		; Unresolved assertion
+		If $scan_patterns[$i][4] <> '' And $scan_patterns[$i][5] <> '' Then
+			Local $cacheKey = $scan_patterns[$i][4] & '|' & $scan_patterns[$i][5]
+
+			If $assertions_patterns_cache[$cacheKey] <> Null Then
+				$scan_patterns[$i][1] = $assertions_patterns_cache[$cacheKey]
+			Else
+				_ArrayAdd($unresolvedIndexes, $i)
+				_ArrayAdd($allStrings, $scan_patterns[$i][4])
+				_ArrayAdd($allStrings, $scan_patterns[$i][5])
+			EndIf
+		EndIf
+	Next
+	If UBound($unresolvedIndexes) == 0 Then Return
+
+	; Ensure scanner sections are initialized - single equality operator is required here
+	If $pe_sections_ranges[$PE_RDATA_SECTION][0] = 0 Then ReadExecutableSections(GetGameProcessBaseAddressWithPE())
+
+	; Phase 2: locate strings in memory
+	Local $addresses = FindStringsInMemorySection($allStrings)
+	Local $stringToAddress[]
+	For $i = 0 To UBound($allStrings) - 1
+		If $addresses[$i] > 0 Then
+			$stringToAddress[$allStrings[$i]] = $addresses[$i]
+		EndIf
+	Next
+
+	; Phase 3: build patterns and populate cache
+	For $i = 0 To UBound($unresolvedIndexes) - 1
+		Local $patternIndex = $unresolvedIndexes[$i]
+		Local $file = $scan_patterns[$patternIndex][4]
+		Local $message = $scan_patterns[$patternIndex][5]
+
+		Local $fileAddr = $stringToAddress[$file]
+		Local $messageAddr = $stringToAddress[$message]
+		If $fileAddr <> Null And $messageAddr <> Null Then
+			Local $pattern = 'BA' & SwapEndian(Hex($fileAddr, 8)) & 'B9' & SwapEndian(Hex($messageAddr, 8))
+			$scan_patterns[$patternIndex][1] = $pattern
+			Local $cacheKey = $file & '|' & $message
+			$assertions_patterns_cache[$cacheKey] = $pattern
+		EndIf
+	Next
+EndFunc
+
+
+;~ Build, inject, execute and harvest the scan results
+Func ExecutePatternScan()
+	; Locate game process
+	Local $gwBaseAddress = GetGameProcessBaseAddress()
+	Debug('Executing pattern scan')
+	Local $results[]
 	$asm_injection_size = 0
 	$asm_code_offset = 0
 	$asm_injection_string = ''
 
-	_('ScanBasePointer:')
-	AddPatternToInjection('506A0F6A00FF35')
-	_('ScanAgentBase:')
-	AddPatternToInjection('FF501083C6043BF775E2')
-	_('ScanAgentBasePointer:')
-	AddPatternToInjection('FF501083C6043BF775E28B35')
-	_('ScanAgentArray:')
-	AddPatternToInjection('8B0C9085C97419')
-	_('ScanCurrentTarget:')
-	AddPatternToInjection('83C4085F8BE55DC3CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC55')
-
-	_('ScanMyID:')
-	AddPatternToInjection('83EC08568BF13B15')
-	_('ScanEngine:')
-	AddPatternToInjection('568B3085F67478EB038D4900D9460C')
-	_('ScanRenderFunc:')
-	AddPatternToInjection('F6C401741C68')
-	_('ScanLoadFinished:')
-	AddPatternToInjection('8B561C8BCF52E8')
-	_('ScanPostMessage:')
-	AddPatternToInjection('6A00680080000051FF15')
-	_('ScanTargetLog:')
-	AddPatternToInjection('5356578BFA894DF4E8')
-	_('ScanChangeTargetFunction:')
-	AddPatternToInjection('3BDF0F95')
-	_('ScanMoveFunction:')
-	AddPatternToInjection('558BEC83EC208D45F0')
-	_('ScanPing:')
-	AddPatternToInjection('568B750889165E')
-	_('ScanMapID:')
-	AddPatternToInjection('558BEC8B450885C074078B')
-
-	_('ScanMapLoading:')
-	AddPatternToInjection('2480ED0000000000')
-
-	_('ScanLoggedIn:')
-	AddPatternToInjection('C705ACDE740000000000C3CCCCCCCC')
-
-	_('ScanRegion:')
-	AddPatternToInjection('8BF0EB038B750C3B')
-
-	_('ScanMapInfo:')
-	AddPatternToInjection('8BF0EB038B750C3B')
-
-	_('ScanLanguage:')
-	AddPatternToInjection('C38B75FC8B04B5')
-
-	_('ScanUseSkillFunction:')
-	AddPatternToInjection('85F6745B83FE1174')
-	_('ScanPacketSendFunction:')
-	AddPatternToInjection('C747540000000081E6')
-	_('ScanBaseOffset:')
-	AddPatternToInjection('83C40433C08BE55DC3A1')
-	_('ScanWriteChatFunction:')
-	AddPatternToInjection('8D85E0FEFFFF50681C01')
-	_('ScanSkillLog:')
-	AddPatternToInjection('408946105E5B5D')
-	_('ScanSkillCompleteLog:')
-	AddPatternToInjection('741D6A006A40')
-	_('ScanSkillCancelLog:')
-	AddPatternToInjection('741D6A006A48')
-	_('ScanChatLog:')
-	AddPatternToInjection('8B45F48B138B4DEC50')
-	_('ScanSellItemFunction:')
-	AddPatternToInjection('8B4D2085C90F858E')
-	_('ScanStringLog:')
-	AddPatternToInjection('893E8B7D10895E04397E08')
-	_('ScanStringFilter1:')
-	AddPatternToInjection('8B368B4F2C6A006A008B06')
-	_('ScanStringFilter2:')
-	AddPatternToInjection('515356578BF933D28B4F2C')
-	_('ScanActionFunction:')
-	AddPatternToInjection('8B7508578BF983FE09750C6877')
-	_('ScanActionBase:')
-	AddPatternToInjection('8D1C87899DF4')
-	_('ScanSkillBase:')
-	AddPatternToInjection('69C6A40000005E')
-	_('ScanUseHeroSkillFunction:')
-	AddPatternToInjection('BA02000000B954080000')
-	_('ScanTransactionFunction:')
-	AddPatternToInjection('85FF741D8B4D14EB08')
-	_('ScanBuyItemFunction:')
-	AddPatternToInjection('D9EED9580CC74004')
-	_('ScanBuyItemBase:')
-	AddPatternToInjection('D9EED9580CC74004')
-	_('ScanRequestQuoteFunction:')
-	AddPatternToInjection('8B752083FE107614')
-	_('ScanTraderFunction:')
-	AddPatternToInjection('83FF10761468D2210000')
-	_('ScanTraderHook:')
-	AddPatternToInjection('8D4DFC51576A5450')
-	_('ScanSleep:')
-	AddPatternToInjection('6A0057FF15D8408A006860EA0000')
-	_('ScanSalvageFunction:')
-	AddPatternToInjection('33C58945FC8B45088945F08B450C8945F48B45108945F88D45EC506A10C745EC77')
-	_('ScanSalvageGlobal:')
-	AddPatternToInjection('8B4A04538945F48B4208')
-	_('ScanIncreaseAttributeFunction:')
-	AddPatternToInjection('8B7D088B702C8B1F3B9E00050000')
-	_('ScanDecreaseAttributeFunction:')
-	AddPatternToInjection('8B8AA800000089480C5DC3CC')
-	_('ScanSkillTimer:')
-	AddPatternToInjection('FFD68B4DF08BD88B4708')
-	_('ScanClickToMoveFix:')
-	AddPatternToInjection('3DD301000074')
-	_('ScanZoomStill:')
-	AddPatternToInjection('558BEC8B41085685C0')
-	_('ScanZoomMoving:')
-	AddPatternToInjection('EB358B4304')
-	_('ScanBuildNumber:')
-	AddPatternToInjection('558BEC83EC4053568BD9')
-	_('ScanChangeStatusFunction:')
-	AddPatternToInjection('558BEC568B750883FE047C14')
-	_('ScanCharslots:')
-	AddPatternToInjection('8B551041897E38897E3C897E34897E48897E4C890D')
-	_('ScanReadChatFunction:')
-	AddPatternToInjection('A128B6EB00')
-	_('ScanDialogLog:')
-	AddPatternToInjection('8B45088945FC8D45F8506A08C745F841')
-	_('ScanTradeHack:')
-	AddPatternToInjection('8BEC8B450883F846')
-	_('ScanClickCoords:')
-	AddPatternToInjection('8B451C85C0741CD945F8')
-	_('ScanInstanceInfo:')
-	AddPatternToInjection('85c07417ff7508e8')
-	_('ScanAreaInfo:')
-	AddPatternToInjection('6BC67C5E05')
-	_('ScanAttributeInfo:')
-	AddPatternToInjection('BA3300000089088d4004')
-	_('ScanWorldConst:')
-	AddPatternToInjection('8D0476C1E00405')
-	_('ScanEnterMissionFunction:')
-	AddPatternToInjection('A900001000743A')
-
-
-	_('ScanProc:')													; Label for the scan procedure
-	_('pushad')														; Push all general-purpose registers onto the stack to save their values
-	_('mov ecx,' & Hex($gwBaseAddress, 8))							; Move the base address of the Guild Wars process into the ECX register
-	_('mov esi,ScanProc')											; Move the address of the ScanProc label into the ESI register
-	_('ScanLoop:')													; Label for the scan loop
-	_('inc ecx')													; Increment the value in the ECX register by 1
-	_('mov al,byte[ecx]')											; Move the byte value at the address stored in ECX into the AL register
-	_('mov edx,ScanBasePointer')									; Move the address of the ScanBasePointer into the EDX register
-
-	_('ScanInnerLoop:')												; Label for the inner scan loop
-	_('mov ebx,dword[edx]')											; Move the 4-byte value at the address stored in EDX into the EBX register
-	_('cmp ebx,-1')													; Compare the value in EBX to -1
-	_('jnz ScanContinue')											; Jump to the ScanContinue label if the comparison is not zero
-	_('add edx,50')													; Add 50 to the value in the EDX register
-	_('cmp edx,esi')												; Compare the value in EDX to the value in ESI
-	_('jnz ScanInnerLoop')											; Jump to the ScanInnerLoop label if the comparison is not zero
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))	; Compare the value in ECX to a specific address (+4FF000)
-	_('jnz ScanLoop')												; Jump to the ScanLoop label if the comparison is not zero
-	_('jmp ScanExit')												; Jump to the ScanExit label
-
-	_('ScanContinue:')												; Label for the scan continue section
-	_('lea edi,dword[edx+ebx]')										; Load the effective address of the value at EDX + EBX into the EDI register
-	_('add edi,C')													; Add the value of C to the address in EDI
-	_('mov ah,byte[edi]')											; Move the byte value at the address stored in EDI into the AH register
-	_('cmp al,ah')													; Compare the value in AL to the value in AH
-	_('jz ScanMatched')												; Jump to the ScanMatched label if the comparison is zero (i.e., the values match)
-	;_('cmp ah,00')													; Added by Greg76 for scan wildcards
-	;_('jz ScanMatched')											; Added by Greg76 for scan wildcards
-	_('mov dword[edx],0')											; Move the value 0 into the 4-byte location at the address stored in EDX
-	_('add edx,50')													; Add 50 to the value in the EDX register
-	_('cmp edx,esi')												; Compare the value in EDX to the value in ESI
-	_('jnz ScanInnerLoop')											; Jump to the ScanInnerLoop label if the comparison is not zero
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))	; Compare the value in ECX to a specific address (+4FF000)
-	_('jnz ScanLoop')												; Jump to the ScanLoop label if the comparison is not zero
-	_('jmp ScanExit')												; Jump to the ScanExit label
-
-	_('ScanMatched:')												; Label for the scan matched section
-	_('inc ebx')													; Increment the value in the EBX register by 1
-	_('mov edi,dword[edx+4]')										; Move the 4-byte value at the address EDX + 4 into the EDI register
-	_('cmp ebx,edi')												; Compare the value in EBX to the value in EDI
-	_('jz ScanFound')												; Jump to the ScanFound label if the comparison is zero (i.e., the values match)
-	_('mov dword[edx],ebx')											; Move the value in EBX into the 4-byte location at the address stored in EDX
-	_('add edx,50')													; Add 50 to the value in the EDX register
-	_('cmp edx,esi')												; Compare the value in EDX to the value in ESI
-	_('jnz ScanInnerLoop')											; Jump to the ScanInnerLoop label if the comparison is not zero
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))	; Compare the value in ECX to a specific address (+4FF000)
-	_('jnz ScanLoop')												; Jump to the ScanLoop label if the comparison is not zero
-	_('jmp ScanExit')												; Jump to the ScanExit label
-
-	_('ScanFound:')													; Label for the scan found section
-	_('lea edi,dword[edx+8]')										; Load the effective address of the value at EDX + 8 into the EDI register
-	_('mov dword[edi],ecx')											; Move the value in ECX into the 4-byte location at the address stored in EDI
-	_('mov dword[edx],-1')											; Move the value -1 into the 4-byte location at the address stored in EDX (mark as found)
-	_('add edx,50')													; Add 50 to the value in the EDX register
-	_('cmp edx,esi')												; Compare the value in EDX to the value in ESI
-	_('jnz ScanInnerLoop')											; Jump to the ScanInnerLoop label if the comparison is not zero
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))	; Compare the value in ECX to a specific address (+4FF000)
-	_('jnz ScanLoop')												; Jump to the ScanLoop label if the comparison is not zero
-
-	_('ScanExit:')													; Label for the scan exit section
-	_('popad')														; Pop all general-purpose registers from the stack to restore their original values
-	_('retn')														; Return from the current function (exit the scan routine)
+	Debug('Appending patterns to ASM injection string')
+	; Building the ASM payload
+	For $i = 0 To UBound($scan_patterns) - 1
+		_($scan_patterns[$i][0] & ':')
+		AppendPatternToASMInjection($scan_patterns[$i][1])
+	Next
+	Debug('Creating scan procedure')
+	AssemblerCreateScanProcedure($gwBaseAddress)
 
 	Local $newHeader = False
 	Local $fixedHeader = $gwBaseAddress + 0x9E4000
 	Local $processHandle = GetProcessHandle()
 	Local $headerBytes = MemoryRead($processHandle, $fixedHeader, 'byte[8]')
 
+	Debug('Checking for no previous injection')
 	; Check if the scan memory address is empty (no previous injection)
 	If $headerBytes == StringToBinary($GWA2_REFORGED_HEADER_STRING) Then
-	$memory_interface_header = $fixedHeader
+		$memory_interface_header = $fixedHeader
 	ElseIf $headerBytes == 0 Then
 		$memory_interface_header = $fixedHeader
 		$newHeader = True
 	Else
 		$memory_interface_header = ScanMemoryForPattern($processHandle, $GWA2_REFORGED_HEADER_STRING)
-		If $memory_interface_header = 0 Then
+		If $memory_interface_header == Null Then
 			; Allocate a new block of memory for the scan routine
 			$memory_interface_header = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $GWA2_REFORGED_HEADER_SIZE, 'dword', 0x1000, 'dword', 0x40)
 			; Get the allocated memory address
 			$memory_interface_header = $memory_interface_header[0]
-			If $memory_interface_header = 0 Then Return SetError(1, 0, 0)
+			If $memory_interface_header == 0 Then Return SetError(1, 0, 0)
 			$newHeader = True
+		Else
+			; Found base address, adding position of the match and -1 to get the start of the header
+			$memory_interface_header = $memory_interface_header[1] + $memory_interface_header[2] - 1
 		EndIf
 	EndIf
 
+	Debug('Writing header to external process')
 	If $newHeader Then
 		; Write the allocated memory address to the scan memory location
 		WriteBinary($processHandle, $GWA2_REFORGED_HEADER_HEXA, $memory_interface_header)
@@ -746,13 +496,16 @@ Func ScanGWBasePatterns()
 		$allocationScan = True
 	EndIf
 
+	Debug('Completing ASM code')
 	; Complete the assembly code for the scan routine
 	CompleteASMCode($memoryInterface)
 
+	Debug('Writing ASM code')
 	If $allocationScan Then
 		; Write the assembly code to the allocated memory address
 		WriteBinary($processHandle, $asm_injection_string, $memoryInterface + $asm_code_offset)
 
+		Debug('Executing scan routine')
 		; Create a new thread in the target process to execute the scan routine
 		Local $thread = SafeDllCall17($kernel_handle, 'int', 'CreateRemoteThread', 'int', $processHandle, 'ptr', 0, 'int', 0, 'int', GetLabel('ScanProc'), 'ptr', 0, 'int', 0, 'int', 0)
 		; Get the thread ID
@@ -768,22 +521,18 @@ Func ScanGWBasePatterns()
 
 		SafeDllCall5($kernel_handle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
-EndFunc
-
-
-;~ Find process by scanning memory
-;~ This process is located at 0x00401000, i.e.: shifted of 0x1000 from real start of the process. Why do we start here ? PE Headers ?
-Func ScanForProcess()
-	Local $scannedMemory = ScanMemoryForPattern(GetProcessHandle(), BinaryToString('0x558BEC83EC105356578B7D0833F63BFE'))
-	Return $scannedMemory[0]
+	FillScanResults()
 EndFunc
 
 
 ;~ Adds a new pattern to the ASM injection string
-Func AddPatternToInjection($pattern)
+Func AppendPatternToASMInjection($pattern)
+	$pattern = StringReplace($pattern, '??', '00')
+
 	Local $size = Int(0.5 * StringLen($pattern))
 	$asm_injection_string &= '00000000' & SwapEndian(Hex($size, 8)) & '00000000' & $pattern
 	$asm_injection_size += $size + 12
+	; Padding each pattern to 68 bytes
 	For $i = 1 To 68 - $size
 		$asm_injection_size += 1
 		$asm_injection_string &= '00'
@@ -791,19 +540,647 @@ Func AddPatternToInjection($pattern)
 EndFunc
 
 
-;~ Retrieves the scanned memory address for a specific label and offset (internal use)
-Func GetScannedAddress($label, $offset)
+;~ Compute final resolved addresses for each scan entry
+Func FillScanResults()
+	Debug('Retrieving scan results')
 	Local $processHandle = GetProcessHandle()
+	For $i = 0 To UBound($scan_patterns) - 1
+		Local $label = $scan_patterns[$i][0]
+		$scan_results[$label] = GetScannedAddress($processHandle, $label, $scan_patterns[$i][2])
+	Next
+EndFunc
+
+
+;~ Get resulting scanned address
+Func GetScannedAddress($processHandle, $label, $offset = 0)
 	Return MemoryRead($processHandle, GetLabel($label) + 8) - MemoryRead($processHandle, GetLabel($label) + 4) + $offset
 EndFunc
-#EndRegion Initialisation
+
+
+;~ Translate raw scan results into usable runtime elements
+Func MapScanResultsToLabels()
+	Debug('Mapping scan results to labels')
+	Local $processHandle = GetProcessHandle()
+	Local $tempValue
+
+	; Core
+	$base_address_ptr = MemoryRead($processHandle, $scan_results['BasePointer'])
+	$ping_address = MemoryRead($processHandle, $scan_results['Ping'])
+	$status_code_address = MemoryRead($processHandle, $scan_results['StatusCode'])
+	Local $packetLocationAddress = MemoryRead($processHandle, $scan_results['PacketLocation'])
+	$pre_game_address = MemoryRead($processHandle, $scan_results['PreGame'] + 0x35)
+	Local $frameArray = MemoryRead($processHandle, $scan_results['FrameArray'] - 0x13)
+	SetLabel('BasePointer', Ptr($base_address_ptr))
+	SetLabel('PacketLocation', Ptr($packetLocationAddress))
+	SetLabel('Ping', Ptr($ping_address))
+	SetLabel('StatusCode', Ptr($status_code_address))
+	SetLabel('PreGame', Ptr($pre_game_address))
+	SetLabel('FrameArray', Ptr($frameArray))
+	SetLabel('PacketSend', Ptr($scan_results['PacketSend']))
+	SetLabel('ActionBase', Ptr(MemoryRead($processHandle, $scan_results['ActionBase'])))
+	SetLabel('Action', Ptr($scan_results['Action']))
+	SetLabel('Environment', Ptr($scan_results['Environment']))
+
+	; Skill
+	$skill_base_address = MemoryRead($processHandle, $scan_results['SkillBase'])
+	$skill_timer_address = MemoryRead($processHandle, $scan_results['SkillTimer'])
+	SetLabel('SkillBase', Ptr($skill_base_address))
+	SetLabel('SkillTimer', Ptr($skill_timer_address))
+	SetLabel('UseSkill', Ptr($scan_results['UseSkill']))
+	SetLabel('UseHeroSkill', Ptr($scan_results['UseHeroSkill']))
+
+	; Friend
+	$friend_list_address = $scan_results['FriendList']
+	$friend_list_address = MemoryRead($processHandle, FindInRange($processHandle, '57B9', 'xx', 2, $friend_list_address, $friend_list_address + 0xFF))
+	$tempValue = $scan_results['RemoveFriend']
+	$tempValue = FindInRange($processHandle, '50E8', 'xx', 1, $tempValue, $tempValue + 0x32)
+	$tempValue = ResolveDirectBranchTarget($processHandle, $tempValue)
+	SetLabel('FriendList', Ptr($friend_list_address))
+	SetLabel('PlayerStatus', Ptr($scan_results['PlayerStatus']))
+	SetLabel('AddFriend', Ptr($scan_results['AddFriend']))
+	SetLabel('RemoveFriend', Ptr($tempValue))
+
+	; Attributes
+	$attribute_info_ptr = MemoryRead($processHandle, $scan_results['AttributeInfo'])
+	SetLabel('AttributeInfo', Ptr($attribute_info_ptr))
+	SetLabel('IncreaseAttribute', Ptr($scan_results['IncreaseAttribute']))
+	SetLabel('DecreaseAttribute', Ptr($scan_results['DecreaseAttribute']))
+
+	; Trader
+	Local $buyItemBase = MemoryRead($processHandle, $scan_results['BuyItemBase'])
+	Local $salvageGlobal = MemoryRead($processHandle, $scan_results['SalvageGlobal'] - 0x4)
+	SetLabel('BuyItemBase', Ptr($buyItemBase))
+	SetLabel('SalvageGlobal', Ptr($salvageGlobal))
+	SetLabel('Transaction', Ptr($scan_results['Transaction']))
+	SetLabel('RequestQuote', Ptr($scan_results['RequestQuote']))
+	SetLabel('Salvage', Ptr($scan_results['Salvage']))
+
+	; Agent
+	$agent_base_address = MemoryRead($processHandle, $scan_results['AgentBase'])
+	$max_agents = $agent_base_address + 0x8
+	$my_ID = MemoryRead($processHandle, $scan_results['MyID'])
+	$current_target_agent_ID = MemoryRead($processHandle, $scan_results['CurrentTarget'])
+	SetLabel('AgentBase', Ptr($agent_base_address))
+	SetLabel('MaxAgents', Ptr($max_agents))
+	SetLabel('MyID', Ptr($my_ID))
+	SetLabel('CurrentTarget', Ptr($current_target_agent_ID))
+	SetLabel('ChangeTarget', Ptr($scan_results['ChangeTarget'] + 1))
+
+	; Map
+	$instance_info_ptr = MemoryRead($processHandle, $scan_results['InstanceInfo'])
+	Local $worldConst = MemoryRead($processHandle, $scan_results['WorldConst'])
+	Local $clickCoordsX = MemoryRead($processHandle, $scan_results['ClickCoords'])
+	Local $clickCoordsY = MemoryRead($processHandle, $scan_results['ClickCoords'] + 9)
+	$region_ID = MemoryRead($processHandle, $scan_results['Region'])
+	$area_info_ptr = MemoryRead($processHandle, $scan_results['AreaInfo'])
+	SetLabel('InstanceInfo', Ptr($instance_info_ptr))
+	SetLabel('WorldConst', Ptr($worldConst))
+	SetLabel('ClickCoords', Ptr($clickCoordsX))
+	SetLabel('ClickCoords', Ptr($clickCoordsY))
+	SetLabel('Region', Ptr($region_ID))
+	SetLabel('Move', Ptr($scan_results['Move']))
+	SetLabel('AreaInfo', Ptr($area_info_ptr))
+
+	; Trade
+	SetLabel('TradeCancel', Ptr($scan_results['TradeCancel']))
+	$tempValue = $scan_results['TradeCancel']
+	SetLabel('TradeAccept', Ptr($tempValue + 0x60))
+	SetLabel('TradeOfferItem', Ptr($tempValue + 0x90))
+	SetLabel('TradeSubmitOffer', Ptr($tempValue + 0x190))
+
+	; UI
+	SetLabel('UIMessage', Ptr($scan_results['UIMessage']))
+	$tempValue = $scan_results['Dialog']
+	SetLabel('Dialog', Ptr(GetCallTargetAddress($processHandle, $tempValue)))
+	$tempValue = $scan_results['OpenChest']
+	SetLabel('OpenChest', Ptr(GetCallTargetAddress($processHandle, $tempValue)))
+	$tempValue = $scan_results['PartySearchButtonCallback']
+	SetLabel('AddNPC', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0xB0)))
+	SetLabel('AddHero', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x100)))
+	SetLabel('KickNPC', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x229)))
+	SetLabel('KickHero', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x23A)))
+	$tempValue = $scan_results['PartyWindowButtonCallback']
+	SetLabel('LeaveGroup', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x58)))
+	$tempValue = $scan_results['SetDifficulty']
+	SetLabel('SetDifficulty', Ptr(GetCallTargetAddress($processHandle, $tempValue)))
+	$tempValue = $scan_results['EnterMission']
+	SetLabel('EnterMission', Ptr(GetCallTargetAddress($processHandle, $tempValue)))
+	$tempValue = $scan_results['CompassFlag']
+	SetLabel('FlagHero', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x4B)))
+	SetLabel('FlagAll', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x83)))
+	$tempValue = $scan_results['AiMode']
+	SetLabel('SetHeroBehavior', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x83)))
+	$tempValue = $scan_results['HeroCommand']
+	SetLabel('DropHeroBundle', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0xF6)))
+	SetLabel('LockHeroTarget', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x13E)))
+	$tempValue = $scan_results['HeroSkills']
+	SetLabel('ToggleHeroSkillState', Ptr(GetCallTargetAddress($processHandle, $tempValue - 0xB5)))
+	SetLabel('CancelHeroSkill', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x1B)))
+	$tempValue = $scan_results['PlayerAdd']
+	SetLabel('AddPlayer', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x13)))
+	$tempValue = $scan_results['PlayerKick']
+	SetLabel('KickPlayer', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x63)))
+	SetLabel('KickInvitedPlayer', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x90)))
+	$tempValue = $scan_results['PartyInvitations']
+	SetLabel('RejectInvitation', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x34)))
+	SetLabel('AcceptInvitation', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x4D)))
+	$tempValue = $scan_results['ActiveQuest']
+	SetLabel('ActiveQuest', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0xF)))
+
+	; Hook
+	$tempValue = $scan_results['Engine']
+	SetLabel('MainStart', Ptr($tempValue))
+	SetLabel('MainReturn', Ptr($tempValue + 0x5))
+	$tempValue = $scan_results['Render']
+	SetLabel('RenderingMod', Ptr($tempValue))
+	SetLabel('RenderingModReturn', Ptr($tempValue + 0xA))
+	$tempValue = $scan_results['LoadFinished']
+	SetLabel('LoadFinishedStart', Ptr($tempValue))
+	SetLabel('LoadFinishedReturn', Ptr($tempValue + 0x5))
+	$tempValue = $scan_results['HookedTrader']
+	SetLabel('TraderStart', Ptr($tempValue))
+	SetLabel('TraderReturn', Ptr($tempValue + 0x5))
+	$tempValue = $scan_results['TradePartner']
+	SetLabel('TradePartnerStart', Ptr($tempValue))
+	SetLabel('TradePartnerReturn', Ptr($tempValue + 0x5))
+	; Hook log
+	If IsDeclared('g_b_Scanner') Then Extend_Scanner()
+	SetLabel('QueueSize', '0x00000040')
+
+	; Logging all labels
+	For $key In MapKeys($labels_map)
+		Debug($key & ': ' & $labels_map[$key])
+	Next
+EndFunc
+
+
+;~ Bind command entry points to usable DllStruct
+Func InitializeCommandStructures()
+	Debug('Initializing command structures')
+	Local $processHandle = GetProcessHandle()
+	$agent_copy_count = GetLabel('AgentCopyCount')
+	$agent_copy_base = GetLabel('AgentCopyBase')
+	$trader_quote_ID = GetLabel('TraderQuoteID')
+	$trader_cost_ID = GetLabel('TraderCostID')
+	$trader_cost_value = GetLabel('TraderCostValue')
+	Local $savedIndex = GetLabel('SavedIndex')
+	$queue_counter = MemoryRead($processHandle, GetLabel('QueueCounter'))
+	$queue_size = GetLabel('QueueSize')
+	$queue_base_address = GetLabel('QueueBase')
+	$disable_rendering_address = GetLabel('DisableRendering')
+	$map_is_loaded_ptr = GetLabel('MapIsLoaded')
+	$trade_partner_ptr = GetLabel('TradePartner')
+	If IsDeclared('g_b_InitializeResult') Then Extend_InitializeResult()
+
+	; Setup command structures
+	DllStructSetData($INVITE_GUILD_STRUCT, 1, GetLabel('CommandPacketSend'))
+	DllStructSetData($PACKET_STRUCT, 1, GetLabel('CommandPacketSend'))
+	DllStructSetData($ACTION_STRUCT, 1, GetLabel('CommandAction'))
+	DllStructSetData($SEND_CHAT_STRUCT, 1, GetLabel('CommandSendChat'))
+	DllStructSetData($SEND_CHAT_STRUCT, 2, $HEADER_SEND_CHAT)
+	;Skill
+	DllStructSetData($USE_SKILL_STRUCT, 1, GetLabel('CommandUseSkill'))
+	DllStructSetData($USE_HERO_SKILL_STRUCT, 1, GetLabel('CommandUseHeroSkill'))
+	DllStructSetData($CANCEL_HERO_SKILL_STRUCT, 1, GetLabel('CommandCancelHeroSkill'))
+	;Friend
+	DllStructSetData($CHANGE_STATUS_STRUCT, 1, GetLabel('CommandPlayerStatus'))
+	Local $addFriend = DllStructCreate('ptr;ptr;ptr;dword')
+	DllStructSetData($addFriend, 1, GetLabel('CommandAddFriend'))
+	Local $removeFriend = DllStructCreate('ptr;byte[16];ptr;dword')
+	DllStructSetData($removeFriend, 1, GetLabel('CommandRemoveFriend'))
+	;Attribute
+	DllStructSetData($INCREASE_ATTRIBUTE_STRUCT, 1, GetLabel('CommandIncreaseAttribute'))
+	DllStructSetData($DECREASE_ATTRIBUTE_STRUCT, 1, GetLabel('CommandDecreaseAttribute'))
+	;Trade
+	DllStructSetData($SELL_ITEM_STRUCT, 1, GetLabel('CommandSellItem'))
+	DllStructSetData($BUY_ITEM_STRUCT, 1, GetLabel('CommandBuyItem'))
+	DllStructSetData($REQUEST_QUOTE_STRUCT, 1, GetLabel('CommandRequestQuote'))
+	DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 1, GetLabel('CommandRequestQuoteSell'))
+	DllStructSetData($TRADER_BUY_STRUCT, 1, GetLabel('CommandTraderBuy'))
+	DllStructSetData($TRADER_SELL_STRUCT, 1, GetLabel('CommandTraderSell'))
+	DllStructSetData($SALVAGE_STRUCT, 1, GetLabel('CommandSalvage'))
+	;Agent
+	DllStructSetData($CHANGE_TARGET_STRUCT, 1, GetLabel('CommandChangeTarget'))
+	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 1, GetLabel('CommandMakeAgentArray'))
+	;Map
+	DllStructSetData($MOVE_STRUCT, 1, GetLabel('CommandMove'))
+	;Trade
+	DllStructSetData($TRADE_INITIATE_STRUCT, 1, GetLabel('CommandTradeInitiate'))
+	DllStructSetData($TRADE_CANCEL_STRUCT, 1, GetLabel('CommandTradeCancel'))
+	DllStructSetData($TRADE_ACCEPT_STRUCT, 1, GetLabel('CommandTradeAccept'))
+	DllStructSetData($TRADE_SUBMIT_STRUCT, 1, GetLabel('CommandTradeSubmitOffer'))
+	DllStructSetData($TRADE_OFFER_ITEM_STRUCT, 1, GetLabel('CommandTradeOfferItem'))
+	;Ui
+	DllStructSetData($DIALOG_STRUCT, 1, GetLabel('CommandDialog'))
+	DllStructSetData($OPEN_CHEST_STRUCT, 1, GetLabel('CommandOpenChest'))
+	DllStructSetData($ADD_NPC_STRUCT, 1, GetLabel('CommandAddNPC'))
+	DllStructSetData($ADD_HERO_STRUCT, 1, GetLabel('CommandAddHero'))
+	DllStructSetData($KICK_NPC_STRUCT, 1, GetLabel('CommandKickNPC'))
+	DllStructSetData($KICK_HERO_STRUCT, 1, GetLabel('CommandKickHero'))
+	DllStructSetData($LEAVE_GROUP_STRUCT, 1, GetLabel('CommandLeaveGroup'))
+	DllStructSetData($SET_DIFFICULTY_STRUCT, 1, GetLabel('CommandSetDifficulty'))
+	DllStructSetData($ENTER_MISSION_STRUCT, 1, GetLabel('CommandEnterMission'))
+	DllStructSetData($FLAG_HERO_STRUCT, 1, GetLabel('CommandFlagHero'))
+	DllStructSetData($FLAG_ALL_STRUCT, 1, GetLabel('CommandFlagAll'))
+	DllStructSetData($SET_HERO_BEHAVIOUR_STRUCT, 1, GetLabel('CommandSetHeroBehavior'))
+	DllStructSetData($DROP_HERO_BUNDLE_STRUCT, 1, GetLabel('CommandDropHeroBundle'))
+	DllStructSetData($LOCK_HERO_TARGET_STRUCT, 1, GetLabel('CommandLockHeroTarget'))
+	DllStructSetData($TOGGLE_HERO_SKILL_STATE, 1, GetLabel('CommandToggleHeroSkillState'))
+	DllStructSetData($ACTIVE_QUEST_STRUCT, 1, GetLabel('CommandActiveQuest'))
+	;Ui-Msg
+	DllStructSetData($MOVE_MAP_STRUCT, 1, GetLabel('CommandMoveMap'))
+	;Party
+	DllStructSetData($ADD_PLAYER_STRUCT, 1, GetLabel('CommandAddPlayer'))
+	DllStructSetData($KICK_PLAYER_STRUCT, 1, GetLabel('CommandKickPlayer'))
+	DllStructSetData($KICK_INVITED_PLAYER_STRUCT, 1, GetLabel('CommandKickInvitedPlayer'))
+	DllStructSetData($REJECT_INVITATION_STRUCT, 1, GetLabel('CommandRejectInvitation'))
+	DllStructSetData($ACCEPT_INVITATION_STRUCT, 1, GetLabel('CommandAcceptInvitation'))
+EndFunc
+
+
+;~ Find multiple strings within a PE section
+Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
+	Local $gwBaseAddress = GetGameProcessBaseAddressWithPE()
+	Local $stringsCount = UBound($strings)
+	Local $results[$stringsCount]
+
+	; Checking if section initialization is required - single equality operator is required here
+	If $pe_sections_ranges[$section][0] = 0 Or $pe_sections_ranges[$section][1] = 0 Then
+		If $gwBaseAddress == 0 Then
+			Error('Failed to get GW base address')
+			Return $results
+		EndIf
+
+		If Not ReadExecutableSections($gwBaseAddress) Then
+			Error('Failed to initialize memory sections')
+			Return $results
+		EndIf
+	EndIf
+
+	Local $sectionStart = $pe_sections_ranges[$section][0]
+	Local $sectionEnd = $pe_sections_ranges[$section][1]
+
+	If $sectionStart = 0 Or $sectionEnd = 0 Or $sectionStart >= $sectionEnd Then
+		Debug('Invalid section bounds. Start: ' & Hex($sectionStart) & ', End: ' & Hex($sectionEnd))
+		Debug('Falling back to bruteforce scanner due to invalid section bounds')
+		Return FallbackMemoryStringSearch($strings, $section)
+	EndIf
+
+	Local $sectionSize = Number($sectionEnd - $sectionStart)
+	Local $maxReadSize = 8 * 1024 * 1024
+
+	If $sectionSize > $maxReadSize Then
+		Debug('Falling back to bruteforce scanner due to too large sectionSize')
+		Return FallbackMemoryStringSearch($strings, $section)
+	EndIf
+
+	Local $sectionBuffer = DllStructCreate('byte[' & $sectionSize & ']')
+	If @error Then
+		Debug('Falling back to bruteforce scanner; could not create section buffer')
+		Return FallbackMemoryStringSearch($strings, $section)
+	EndIf
+
+	Local $bytesRead = 0
+	Local $success = SafeDllCall13($kernel_handle, 'bool', 'ReadProcessMemory', 'handle', GetProcessHandle(), 'ptr', $sectionStart, 'ptr', DllStructGetPtr($sectionBuffer), 'ulong_ptr', $sectionSize, 'ulong_ptr*', $bytesRead)
+
+	If @error Or Not $success[0] Or $success[5] < $sectionSize Then
+		Debug('Falling back to bruteforce scanner; failed to read section')
+		Return FallbackMemoryStringSearch($strings, $section)
+	EndIf
+
+	; Preprocess patterns (Boyer–Moore–Horspool) + preconvert patterns to byte arrays
+	Local $patternBytes[$stringsCount]
+	Local $patternLengths[$stringsCount]
+	Local $skipTables[$stringsCount][256]
+	Local $found[$stringsCount]
+
+	For $i = 0 To $stringsCount - 1
+		$found[$i] = False
+
+		Local $patternBinary = Binary($strings[$i] & Chr(0))
+		$patternLengths[$i] = BinaryLen($patternBinary)
+
+		Local $byteArray[$patternLengths[$i]]
+		For $j = 0 To $patternLengths[$i] - 1
+			$byteArray[$j] = Number(BinaryMid($patternBinary, $j + 1, 1))
+		Next
+		$patternBytes[$i] = $byteArray
+
+		For $b = 0 To 255
+			$skipTables[$i][$b] = $patternLengths[$i]
+		Next
+
+		For $j = 0 To $patternLengths[$i] - 2
+			$skipTables[$i][$byteArray[$j]] = $patternLengths[$i] - $j - 1
+		Next
+	Next
+
+	Local $totalFound = 0
+
+	; Search each pattern independently with BMH
+	For $patternIndex = 0 To $stringsCount - 1
+		If $totalFound >= $stringsCount Then ExitLoop
+		If $found[$patternIndex] Then ContinueLoop
+
+		Local $patternLength = $patternLengths[$patternIndex]
+		Local $pos = $patternLength - 1
+		Local $patternByteArray = $patternBytes[$patternIndex]
+
+		While $pos < $sectionSize
+			Local $match = True
+			Local $checkIndex = $patternLength - 1
+
+			While $checkIndex >= 0
+				Local $memByte = DllStructGetData($sectionBuffer, 1, $pos - ($patternLength - 1 - $checkIndex) + 1)
+				Local $patternByte = $patternByteArray[$checkIndex]
+
+				If $memByte <> $patternByte Then
+					$match = False
+					$pos += $skipTables[$patternIndex][$memByte]
+					ExitLoop
+				EndIf
+				$checkIndex -= 1
+			WEnd
+
+			If $match Then
+				$results[$patternIndex] = $sectionStart + $pos - ($patternLength - 1)
+				$found[$patternIndex] = True
+				$totalFound += 1
+				ExitLoop
+			EndIf
+		WEnd
+	Next
+	Return $results
+EndFunc
+
+
+;~ Locate the base address of GW.exe via module enumeration - pattern scanning is not enough to identify PE layout reliably
+Func GetGameProcessBaseAddressWithPE()
+	Debug('Getting game base address (PE included)')
+	Local $processHandle = GetProcessHandle()
+	If $processHandle = 0 Then
+		Error('Invalid process handle')
+		Return 0
+	EndIf
+
+	Local $modules = DllStructCreate('ptr[1024]')
+	Local $bytesNeeded = DllStructCreate('dword')
+	Local $psapiHandle = DllOpen('psapi.dll')
+	If @error Then
+		Error('Failed to open psapi.dll')
+		Return 0
+	EndIf
+
+	Local $result = SafeDllCall11($psapiHandle, 'bool', 'EnumProcessModules', 'handle', $processHandle, 'ptr', DllStructGetPtr($modules), 'dword', DllStructGetSize($modules), 'ptr', DllStructGetPtr($bytesNeeded))
+	If @error Or Not $result[0] Then
+		Error('EnumProcessModules failed')
+		DllClose($psapiHandle)
+		Return 0
+	EndIf
+
+	Local $moduleCount = DllStructGetData($bytesNeeded, 1) / 4
+	For $i = 1 To $moduleCount
+		Local $moduleBase = DllStructGetData($modules, 1, $i)
+		Local $modulePath = _WinAPI_GetModuleFileNameEx($processHandle, $moduleBase)
+		If StringInStr($modulePath, 'Gw.exe', 1) Then
+			DllClose($psapiHandle)
+			Return $moduleBase
+		EndIf
+	Next
+	Error('Gw.exe module not found')
+	DllClose($psapiHandle)
+	Return 0
+EndFunc
+
+
+;~ Slower string scanner but more robust
+Func FallbackMemoryStringSearch($strings, $section = $PE_RDATA_SECTION)
+	Local $stringCount = UBound($strings)
+	Local $results[$stringCount]
+	Local $found[$stringCount]
+	Local $patterns[$stringCount]
+	Local $lengths[$stringCount]
+	Local $firstBytes[$stringCount]
+	Local $hashTable[256]
+	Local $minLength = 999999
+	Local $maxLength = 0
+	Local $processHandle = GetProcessHandle()
+
+	For $i = 0 To 255
+		$hashTable[$i] = ''
+	Next
+
+	For $i = 0 To $stringCount - 1
+		$found[$i] = False
+		$patterns[$i] = Binary($strings[$i] & Chr(0))
+		$lengths[$i] = BinaryLen($patterns[$i])
+		$firstBytes[$i] = Number(BinaryMid($patterns[$i], 1, 1))
+
+		If $lengths[$i] < $minLength Then $minLength = $lengths[$i]
+		If $lengths[$i] > $maxLength Then $maxLength = $lengths[$i]
+
+		If $hashTable[$firstBytes[$i]] = '' Then
+			$hashTable[$firstBytes[$i]] = String($i)
+		Else
+			$hashTable[$firstBytes[$i]] &= ',' & $i
+		EndIf
+	Next
+
+	Local $sectionStart = $pe_sections_ranges[$section][0]
+	Local $sectionEnd = $pe_sections_ranges[$section][1]
+	; 2 Mb
+	Local $bufferSize = 2 * 1024 * 1024
+	Local $buffer = DllStructCreate('byte[' & $bufferSize & ']')
+	Local $totalFound = 0
+	Local $startTime = TimerInit()
+	Local $overlap = $maxLength - 1
+
+	Local $patternData[$stringCount][$maxLength]
+	For $i = 0 To $stringCount - 1
+		For $b = 0 To $lengths[$i] - 1
+			$patternData[$i][$b] = Number(BinaryMid($patterns[$i], $b + 1, 1))
+		Next
+	Next
+
+	For $currentAddr = $sectionStart To $sectionEnd Step $bufferSize - $overlap
+		If $totalFound = $stringCount Then ExitLoop
+
+		Local $readSize = $bufferSize
+		If $currentAddr + $readSize > $sectionEnd Then $readSize = $sectionEnd - $currentAddr
+
+		Local $bytesRead = 0
+		Local $success = SafeDllCall13($kernel_handle, 'bool', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $currentAddr, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', $readSize, 'ulong_ptr*', $bytesRead)
+
+		If @error Or Not $success[0] Or $success[5] = 0 Then ContinueLoop
+		$readSize = $success[5]
+
+		Local $searchEnd = $readSize - $minLength + 1
+		For $searchIdx = 0 To $searchEnd - 1
+			Local $byte = DllStructGetData($buffer, 1, $searchIdx + 1)
+			If $hashTable[$byte] = '' Then ContinueLoop
+
+			Local $indices = StringSplit($hashTable[$byte], ',', 2)
+			For $idx = 0 To UBound($indices) - 1
+				Local $patternIdx = Number($indices[$idx])
+				If $found[$patternIdx] Then ContinueLoop
+
+				Local $patternLen = $lengths[$patternIdx]
+				If $searchIdx + $patternLen > $readSize Then ContinueLoop
+
+				Local $mid = Int($patternLen / 2)
+				If DllStructGetData($buffer, 1, $searchIdx + $mid + 1) <> $patternData[$patternIdx][$mid] Then ContinueLoop
+				If DllStructGetData($buffer, 1, $searchIdx + $patternLen) <> $patternData[$patternIdx][$patternLen - 1] Then ContinueLoop
+
+				Local $match = True
+				For $c = 1 To $patternLen - 2
+					If $c = $mid Then ContinueLoop
+					If DllStructGetData($buffer, 1, $searchIdx + $c + 1) <> $patternData[$patternIdx][$c] Then
+						$match = False
+						ExitLoop
+					EndIf
+				Next
+
+				If $match Then
+					$results[$patternIdx] = $currentAddr + $searchIdx
+					$found[$patternIdx] = True
+					$totalFound += 1
+
+					Local $newIndices = ''
+					For $r = 0 To UBound($indices) - 1
+						If Number($indices[$r]) <> $patternIdx Then
+							If $newIndices = '' Then
+								$newIndices = $indices[$r]
+							Else
+								$newIndices &= ',' & $indices[$r]
+							EndIf
+						EndIf
+					Next
+					$hashTable[$byte] = $newIndices
+
+					If $totalFound = $stringCount Then ExitLoop 3
+				EndIf
+			Next
+		Next
+	Next
+
+	Return $results
+EndFunc
+
+
+;~ Parse PE headers and populate pe_sections_ranges with their start and end
+Func ReadExecutableSections($baseAddress)
+	Debug('Reading PE sections to map their start/end')
+	Local $bytesRead
+	Local $dosHeader = DllStructCreate('struct;word e_magic;byte[58];dword e_lfanew;endstruct')
+	Local $processHandle = GetProcessHandle()
+	Local $success = _WinAPI_ReadProcessMemory($processHandle, $baseAddress, DllStructGetPtr($dosHeader), DllStructGetSize($dosHeader), $bytesRead)
+	If Not $success Then
+		Error('Failed to read DOS header')
+		Return False
+	ElseIf DllStructGetData($dosHeader, 'e_magic') <> 0x5A4D Then
+		Error('Invalid DOS signature ' & DllStructGetData($dosHeader, 'e_magic'))
+		Return False
+	EndIf
+
+	Local $peHeaderOffset = DllStructGetData($dosHeader, 'e_lfanew')
+
+	Local $ntHeaders = DllStructCreate('struct;dword Signature;word Machine;word NumberOfSections;dword TimeDateStamp;dword PointerToSymbolTable;dword NumberOfSymbols;word SizeOfOptionalHeader;word Characteristics;endstruct')
+	$success = _WinAPI_ReadProcessMemory($processHandle, $baseAddress + $peHeaderOffset, DllStructGetPtr($ntHeaders), DllStructGetSize($ntHeaders), $bytesRead)
+	If Not $success Then
+		Error('Failed to read NT headers')
+		Return False
+	ElseIf DllStructGetData($ntHeaders, 'Signature') <> 0x4550 Then
+		Error('Invalid PE signature')
+		Return False
+	EndIf
+
+	Local $sectionCount = DllStructGetData($ntHeaders, 'NumberOfSections')
+	Local $optionalHeaderSize = DllStructGetData($ntHeaders, 'SizeOfOptionalHeader')
+	Local $sectionHeaderOffset = $peHeaderOffset + 24 + $optionalHeaderSize
+
+	For $i = 0 To 4
+		$pe_sections_ranges[$i][0] = 0
+		$pe_sections_ranges[$i][1] = 0
+	Next
+
+	Local $sectionHeader = DllStructCreate('struct;' & _
+		'char Name[8];' & _
+		'dword VirtualSize;' & _
+		'dword VirtualAddress;' & _
+		'dword SizeOfRawData;' & _
+		'dword PointerToRawData;' & _
+		'dword PointerToRelocations;' & _
+		'dword PointerToLinenumbers;' & _
+		'word NumberOfRelocations;' & _
+		'word NumberOfLinenumbers;' & _
+		'dword Characteristics;' & _
+		'endstruct')
+
+	For $i = 0 To $sectionCount - 1
+		$success = _WinAPI_ReadProcessMemory($processHandle, $baseAddress + $sectionHeaderOffset + ($i * 40), DllStructGetPtr($sectionHeader), DllStructGetSize($sectionHeader), $bytesRead)
+
+		If Not $success Then
+			Warn('Failed to read section header ' & $i)
+			ContinueLoop
+		EndIf
+
+		Local $sectionName = StringStripWS(DllStructGetData($sectionHeader, 'Name'), 8)
+		Local $virtualAddress = DllStructGetData($sectionHeader, 'VirtualAddress')
+		Local $virtualSize = DllStructGetData($sectionHeader, 'VirtualSize')
+		Local $rawSize = DllStructGetData($sectionHeader, 'SizeOfRawData')
+
+		Local $actualSize = $virtualSize > $rawSize ? $virtualSize : $rawSize
+
+		Switch $sectionName
+			Case '.text'
+				$pe_sections_ranges[$PE_TEXT_SECTION][0] = $baseAddress + $virtualAddress
+				$pe_sections_ranges[$PE_TEXT_SECTION][1] = $pe_sections_ranges[$PE_TEXT_SECTION][0] + $actualSize
+
+			Case '.rdata'
+				$pe_sections_ranges[$PE_RDATA_SECTION][0] = $baseAddress + $virtualAddress
+				$pe_sections_ranges[$PE_RDATA_SECTION][1] = $pe_sections_ranges[$PE_RDATA_SECTION][0] + $actualSize
+
+			Case '.data'
+				$pe_sections_ranges[$PE_DATA_SECTION][0] = $baseAddress + $virtualAddress
+				$pe_sections_ranges[$PE_DATA_SECTION][1] = $pe_sections_ranges[$PE_DATA_SECTION][0] + $actualSize
+
+			Case '.rsrc'
+				$pe_sections_ranges[$PE_RSRC_SECTION][0] = $baseAddress + $virtualAddress
+				$pe_sections_ranges[$PE_RSRC_SECTION][1] = $pe_sections_ranges[$PE_RSRC_SECTION][0] + $actualSize
+
+			Case '.reloc'
+				$pe_sections_ranges[$PE_RELOC_SECTION][0] = $baseAddress + $virtualAddress
+				$pe_sections_ranges[$PE_RELOC_SECTION][1] = $pe_sections_ranges[$PE_RELOC_SECTION][0] + $actualSize
+		EndSwitch
+	Next
+
+	If $pe_sections_ranges[$PE_TEXT_SECTION][0] = 0 Then
+		Error('Failed to find .text section')
+		Return False
+	EndIf
+
+	Return True
+EndFunc
+
 
 
 #Region Other Functions
 ;~ Internal use only.
+Func SafeEnqueue($ptr, $size)
+	If Not IsMemoryWritable(GetProcessHandle(), 256 * $queue_counter + $queue_base_address, $size) Then
+		Return False
+	EndIf
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queue_counter + $queue_base_address, 'ptr', $ptr, 'int', $size, 'int', 0)
+	$queue_counter = Mod($queue_counter + 1, $queue_size)
+	Return True
+EndFunc
+
+
+;~ Internal use only.
 Func Enqueue($ptr, $size)
 	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queue_counter + $queue_base_address, 'ptr', $ptr, 'int', $size, 'int', 0)
 	$queue_counter = Mod($queue_counter + 1, $queue_size)
+	Return True
 EndFunc
 
 
@@ -839,66 +1216,39 @@ EndFunc
 #EndRegion Other Functions
 
 
-#Region Callback
-;~ Controls Event System.
-Func SetEvent($skillActivate = '', $skillCancel = '', $skillComplete = '', $chatReceive = '', $loadFinished = '')
-	Local $processHandle = GetProcessHandle()
-	If Not $use_event_system Then Return
-	If $skillActivate <> '' Then
-		WriteDetour('SkillLogStart', 'SkillLogProc')
-	Else
-		$asm_injection_string = ''
-		_('inc eax')
-		_('mov dword[esi+10],eax')
-		_('pop esi')
-		WriteBinary($processHandle, $asm_injection_string, GetLabel('SkillLogStart'))
-	EndIf
-
-	If $skillCancel <> '' Then
-		WriteDetour('SkillCancelLogStart', 'SkillCancelLogProc')
-	Else
-		$asm_injection_string = ''
-		_('push 0')
-		_('push 42')
-		_('mov ecx,esi')
-		WriteBinary($processHandle, $asm_injection_string, GetLabel('SkillCancelLogStart'))
-	EndIf
-
-	If $skillComplete <> '' Then
-		WriteDetour('SkillCompleteLogStart', 'SkillCompleteLogProc')
-	Else
-		$asm_injection_string = ''
-		_('mov eax,dword[edi+4]')
-		_('test eax,eax')
-		WriteBinary($processHandle, $asm_injection_string, GetLabel('SkillCompleteLogStart'))
-	EndIf
-
-	If $chatReceive <> '' Then
-		WriteDetour('ChatLogStart', 'ChatLogProc')
-	Else
-		$asm_injection_string = ''
-		_('add edi,E')
-		_('cmp eax,B')
-		WriteBinary($processHandle, $asm_injection_string, GetLabel('ChatLogStart'))
-	EndIf
-EndFunc
-#EndRegion Callback
-
-
 #Region Modification
 ;~ Internal use only.
 Func ModifyMemory()
 	$asm_injection_size = 0
 	$asm_code_offset = 0
 	$asm_injection_string = ''
-	CreateData()
-	CreateMain()
-	CreateTraderHook()
-	CreateStringLog()
-	CreateRenderingMod()
-	CreateCommands()
-	CreateUICommands()
-	CreateDialogHook()
+
+	AssemblerCreateData()
+	AssemblerCreateMain()
+	AssemblerCreateRenderingMod()
+	AssemblerCreateLoadFinished()
+	AssemblerCreateTradePartner()
+	AssemblerCreateCommands()
+	AssemblerCreateSkillCommands()
+	AssemblerCreateFriendCommands()
+	AssemblerCreateAttributeCommands()
+	AssemblerCreateTrader()
+	AssemblerCreateSellItemCommand()
+	AssemblerCreateBuyItemCommand()
+	AssemblerCreateRequestQuoteCommand()
+	AssemblerCreateRequestQuoteSellCommand()
+	AssemblerCreateTraderBuyCommand()
+	AssemblerCreateTraderSellCommand()
+	AssemblerCreateCraftItemCommand()
+	AssemblerCreateCollectorExchangeCommand()
+	AssemblerCreateSalvageCommand()
+	AssemblerCreateAgentCommands()
+	AssemblerCreateMapCommands()
+	AssemblerCreateTradeCommands()
+	AssemblerCreateUICommands()
+	AssemblerCreatePartyCommands()
+	If IsDeclared('g_b_Assembler') Then Extend_Assembler()
+
 	Local $allocationCommand = False
 	Local $processHandle = GetProcessHandle()
 	Local $memoryInterface = MemoryRead($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 'ptr')
@@ -918,6 +1268,7 @@ Func ModifyMemory()
 
 	If $allocationCommand Then
 		WriteBinary($processHandle, $asm_injection_string, $memoryInterface + $asm_code_offset)
+		; FIXME: failures happening here - expected, QueuePtr label does not exist
 		MemoryWrite($processHandle, GetLabel('QueuePtr'), GetLabel('QueueBase'))
 		If IsDeclared('g_b_Write') Then Extend_Write()
 
@@ -925,7 +1276,6 @@ Func ModifyMemory()
 		WriteDetour('TraderStart', 'TraderProc')
 		WriteDetour('RenderingMod', 'RenderingModProc')
 		WriteDetour('LoadFinishedStart', 'LoadFinishedProc')
-		; FIXME: add this back
 		WriteDetour('TradePartnerStart', 'TradePartnerProc')
 		If IsDeclared('g_b_AssemblerWriteDetour') Then Extend_AssemblerWriteDetour()
 	EndIf
@@ -936,293 +1286,178 @@ EndFunc
 Func WriteDetour($from, $to)
 	WriteBinary(GetProcessHandle(),'E9' & SwapEndian(Hex(GetLabel($to) - GetLabel($from) - 5)), GetLabel($from))
 EndFunc
+#EndRegion Modification
 
 
-;~ Internal use only.
-Func CreateData()
-	_('CallbackHandle/4')
+Func AssemblerCreateScanProcedure($gwBaseAddress)
+	_('ScanProc:')
+	_('pushad')
+	_('mov ecx,' & Hex($gwBaseAddress, 8))
+	_('mov esi,ScanProc')
+	_('ScanLoop:')
+	_('inc ecx')
+	_('mov al,byte[ecx]')
+	; First pattern - BasePointer
+	_('mov edx,' & $scan_patterns[0][0])
+
+	_('ScanInnerLoop:')
+	_('mov ebx,dword[edx]')
+	_('cmp ebx,-1')
+	_('jnz ScanContinue')
+	_('add edx,50')
+	_('cmp edx,esi')
+	_('jnz ScanInnerLoop')
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))
+	_('jnz ScanLoop')
+	_('jmp ScanExit')
+
+	_('ScanContinue:')
+	_('lea edi,dword[edx+ebx]')
+	_('add edi,C')
+	_('mov ah,byte[edi]')
+	_('cmp al,ah')
+	_('jz ScanMatched')
+	_('cmp ah,00')
+	_('jz ScanMatched')
+	_('mov dword[edx],0')
+	_('add edx,50')
+	_('cmp edx,esi')
+	_('jnz ScanInnerLoop')
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))
+	_('jnz ScanLoop')
+	_('jmp ScanExit')
+
+	_('ScanMatched:')
+	_('inc ebx')
+	_('mov edi,dword[edx+4]')
+	_('cmp ebx,edi')
+	_('jz ScanFound')
+	_('mov dword[edx],ebx')
+	_('add edx,50')
+	_('cmp edx,esi')
+	_('jnz ScanInnerLoop')
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))
+	_('jnz ScanLoop')
+	_('jmp ScanExit')
+
+	_('ScanFound:')
+	_('lea edi,dword[edx+8]')
+	_('mov dword[edi],ecx')
+	_('mov dword[edx],-1')
+	_('add edx,50')
+	_('cmp edx,esi')
+	_('jnz ScanInnerLoop')
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 5238784, 8)))
+	_('jnz ScanLoop')
+
+	_('ScanExit:')
+	_('popad')
+	_('retn')
+EndFunc
+
+
+Func AssemblerCreateData()
+	_('SavedIndex/4')
 	_('QueueCounter/4')
-	_('SkillLogCounter/4')
-	_('ChatLogCounter/4')
-	_('ChatLogLastMsg/4')
-	_('MapIsLoaded/4')
-	_('NextStringType/4')
-	_('EnsureEnglish/4')
 	_('TraderQuoteID/4')
 	_('TraderCostID/4')
 	_('TraderCostValue/4')
 	_('DisableRendering/4')
+	_('MapIsLoaded/4')
+	_('TradePartner/4')
+	_('AgentCopyCount/4')
+
+	If IsDeclared('g_b_AssemblerData') Then Extend_AssemblerData()
 
 	_('QueueBase/' & 256 * GetLabel('QueueSize'))
-	_('TargetLogBase/' & 4 * GetLabel('TargetLogSize'))
-	_('SkillLogBase/' & 16 * GetLabel('SkillLogSize'))
-	_('StringLogBase/' & 256 * GetLabel('StringLogSize'))
-	_('ChatLogBase/' & 512 * GetLabel('ChatLogSize'))
-
-	_('LastDialogID/4')
-
-	_('AgentCopyCount/4')
 	_('AgentCopyBase/' & 0x1C0 * 256)
 EndFunc
 
-
-;~ Internal use only.
-Func CreateMain()
+Func AssemblerCreateMain()
 	_('MainProc:')
-	_('nop x')
 	_('pushad')
-	_('mov eax,dword[EnsureEnglish]')
-	_('test eax,eax')
-	_('jz MainMain')
-	_('mov ecx,dword[BasePointer]')
-	_('mov ecx,dword[ecx+18]')
-	_('mov ecx,dword[ecx+18]')
-	_('mov ecx,dword[ecx+194]')
-	_('mov al,byte[ecx+4f]')
-	_('cmp al,f')
-	_('ja MainMain')
-	_('mov ecx,dword[ecx+4c]')
-	_('mov al,byte[ecx+3f]')
-	_('cmp al,f')
-	_('ja MainMain')
-	_('mov eax,dword[ecx+40]')
-	_('test eax,eax')
-	_('jz MainMain')
+	_('pushfd')
 
-	_('MainMain:')
+	_('mov eax,dword[BasePointer]')
+	_('test eax,eax')
+	_('jz RegularFlow')
+	_('mov eax,dword[eax]')
+	_('test eax,eax')
+	_('jz RegularFlow')
+	_('mov eax,dword[eax+18]')
+	_('test eax,eax')
+	_('jz RegularFlow')
+	_('mov eax,dword[eax+44]')
+	_('test eax,eax')
+	_('jz RegularFlow')
+	_('mov ebx,dword[eax+19C]')
+	_('test ebx,ebx')
+	_('jz RegularFlow')
+	_('mov eax,dword[eax+198]')
+	_('cmp eax,0')
+	_('je HandleCase')
+	_('mov ebx,eax')
+	_('imul ebx,ebx,7C')
+	_('add ebx,dword[Environment]')
+	_('test ebx,ebx')
+	_('jz RegularFlow')
+	_('mov ebx,dword[ebx+10]')
+	_('test ebx,40001')
+	_('jz RegularFlow')
+
+	_('HandleCase:')
 	_('mov eax,dword[QueueCounter]')
 	_('mov ecx,eax')
 	_('shl eax,8')
 	_('add eax,QueueBase')
 	_('mov ebx,dword[eax]')
 	_('test ebx,ebx')
-
 	_('jz MainExit')
-	_('push ecx')
+	_('mov dword[eax],0')
+	_('mov eax,ecx')
+	_('inc eax')
+	_('cmp eax,QueueSize')
+	_('jnz SubSkipReset')
+	_('xor eax,eax')
+	_('SubSkipReset:')
+	_('mov dword[QueueCounter],eax')
+	_('jmp MainExit')
+
+	_('RegularFlow:')
+	_('mov eax,dword[QueueCounter]')
+	_('mov ecx,eax')
+	_('shl eax,8')
+	_('add eax,QueueBase')
+	_('mov ebx,dword[eax]')
+	_('test ebx,ebx')
+	_('jz MainExit')
+	_('mov dword[SavedIndex],ecx')
 	_('mov dword[eax],0')
 	_('jmp ebx')
+
 	_('CommandReturn:')
-	_('pop eax')
+	_('mov ecx,dword[SavedIndex]')
+	_('mov edx,dword[QueueCounter]')
+	_('cmp edx,ecx')
+	_('jnz MainExit')
+	_('mov eax,ecx')
 	_('inc eax')
 	_('cmp eax,QueueSize')
 	_('jnz MainSkipReset')
 	_('xor eax,eax')
 	_('MainSkipReset:')
 	_('mov dword[QueueCounter],eax')
-	_('MainExit:')
-	_('popad')
 
+	_('MainExit:')
+	_('popfd')
+	_('popad')
 	_('mov ebp,esp')
 	_('fld st(0),dword[ebp+8]')
-
 	_('ljmp MainReturn')
 EndFunc
 
-
-;~ Internal use only.
-Func CreateTargetLog()
-	_('TargetLogProc:')
-	_('cmp ecx,4')
-	_('jz TargetLogMain')
-	_('cmp ecx,32')
-	_('jz TargetLogMain')
-	_('cmp ecx,3C')
-	_('jz TargetLogMain')
-	_('jmp TargetLogExit')
-
-	_('TargetLogMain:')
-	_('pushad')
-	_('mov ecx,dword[ebp+8]')
-	_('test ecx,ecx')
-	_('jnz TargetLogStore')
-	_('mov ecx,edx')
-
-	_('TargetLogStore:')
-	_('lea eax,dword[edx*4+TargetLogBase]')
-	_('mov dword[eax],ecx')
-	_('popad')
-
-	_('TargetLogExit:')
-	_('push ebx')
-	_('push esi')
-	_('push edi')
-	_('mov edi,edx')
-	_('ljmp TargetLogReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateSkillLog()
-	_('SkillLogProc:')
-	_('pushad')
-
-	_('mov eax,dword[SkillLogCounter]')
-	_('push eax')
-	_('shl eax,4')
-	_('add eax,SkillLogBase')
-
-	_('mov ecx,dword[edi]')
-	_('mov dword[eax],ecx')
-	_('mov ecx,dword[ecx*4+TargetLogBase]')
-	_('mov dword[eax+4],ecx')
-	_('mov ecx,dword[edi+4]')
-	_('mov dword[eax+8],ecx')
-	_('mov ecx,dword[edi+8]')
-	_('mov dword[eax+c],ecx')
-
-	_('push 1')
-	_('push eax')
-	_('push CallbackEvent')
-	_('push dword[CallbackHandle]')
-	_('call dword[PostMessage]')
-
-	_('pop eax')
-	_('inc eax')
-	_('cmp eax,SkillLogSize')
-	_('jnz SkillLogSkipReset')
-	_('xor eax,eax')
-	_('SkillLogSkipReset:')
-	_('mov dword[SkillLogCounter],eax')
-
-	_('popad')
-	_('inc eax')
-	_('mov dword[esi+10],eax')
-	_('pop esi')
-	_('ljmp SkillLogReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateSkillCancelLog()
-	_('SkillCancelLogProc:')
-	_('pushad')
-
-	_('mov eax,dword[SkillLogCounter]')
-	_('push eax')
-	_('shl eax,4')
-	_('add eax,SkillLogBase')
-
-	_('mov ecx,dword[edi]')
-	_('mov dword[eax],ecx')
-	_('mov ecx,dword[ecx*4+TargetLogBase]')
-	_('mov dword[eax+4],ecx')
-	_('mov ecx,dword[edi+4]')
-	_('mov dword[eax+8],ecx')
-
-	_('push 2')
-	_('push eax')
-	_('push CallbackEvent')
-	_('push dword[CallbackHandle]')
-	_('call dword[PostMessage]')
-
-	_('pop eax')
-	_('inc eax')
-	_('cmp eax,SkillLogSize')
-	_('jnz SkillCancelLogSkipReset')
-	_('xor eax,eax')
-	_('SkillCancelLogSkipReset:')
-	_('mov dword[SkillLogCounter],eax')
-
-	_('popad')
-	_('push 0')
-	_('push 48')
-	_('mov ecx,esi')
-	_('ljmp SkillCancelLogReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateSkillCompleteLog()
-	_('SkillCompleteLogProc:')
-	_('pushad')
-
-	_('mov eax,dword[SkillLogCounter]')
-	_('push eax')
-	_('shl eax,4')
-	_('add eax,SkillLogBase')
-
-	_('mov ecx,dword[edi]')
-	_('mov dword[eax],ecx')
-	_('mov ecx,dword[ecx*4+TargetLogBase]')
-	_('mov dword[eax+4],ecx')
-	_('mov ecx,dword[edi+4]')
-	_('mov dword[eax+8],ecx')
-
-	_('push 3')
-	_('push eax')
-	_('push CallbackEvent')
-	_('push dword[CallbackHandle]')
-	_('call dword[PostMessage]')
-
-	_('pop eax')
-	_('inc eax')
-	_('cmp eax,SkillLogSize')
-	_('jnz SkillCompleteLogSkipReset')
-	_('xor eax,eax')
-	_('SkillCompleteLogSkipReset:')
-	_('mov dword[SkillLogCounter],eax')
-
-	_('popad')
-	_('mov eax,dword[edi+4]')
-	_('test eax,eax')
-	_('ljmp SkillCompleteLogReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateChatLog()
-	_('ChatLogProc:')
-
-	_('pushad')
-	_('mov ecx,dword[esp+1F4]')
-	_('mov ebx,eax')
-	_('mov eax,dword[ChatLogCounter]')
-	_('push eax')
-	_('shl eax,9')
-	_('add eax,ChatLogBase')
-	_('mov dword[eax],ebx')
-
-	_('mov edi,eax')
-	_('add eax,4')
-	_('xor ebx,ebx')
-
-	_('ChatLogCopyLoop:')
-	_('mov dx,word[ecx]')
-	_('mov word[eax],dx')
-	_('add ecx,2')
-	_('add eax,2')
-	_('inc ebx')
-	_('cmp ebx,FF')
-	_('jz ChatLogCopyExit')
-	_('test dx,dx')
-	_('jnz ChatLogCopyLoop')
-
-	_('ChatLogCopyExit:')
-	_('push 4')
-	_('push edi')
-	_('push CallbackEvent')
-	_('push dword[CallbackHandle]')
-	_('call dword[PostMessage]')
-
-	_('pop eax')
-	_('inc eax')
-	_('cmp eax,ChatLogSize')
-	_('jnz ChatLogSkipReset')
-	_('xor eax,eax')
-	_('ChatLogSkipReset:')
-	_('mov dword[ChatLogCounter],eax')
-	_('popad')
-
-	_('ChatLogExit:')
-	_('add edi,E')
-	_('cmp eax,B')
-	_('ljmp ChatLogReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateTraderHook()
-	_('TraderHookProc:')
+Func AssemblerCreateTrader()
+	_('TraderProc:')
 	_('push eax')
 	_('mov eax,dword[ebx+28] -> 8b 43 28')
 	_('mov eax,[eax] -> 8b 00')
@@ -1245,180 +1480,31 @@ Func CreateTraderHook()
 	_('ljmp TraderReturn')
 EndFunc
 
-
-;~ Internal use only.
-Func CreateDialogHook()
-	_('DialogLogProc:')
-	_('push ecx')
-	_('mov ecx,esp')
-	_('add ecx,C')
-	_('mov ecx,dword[ecx]')
-	_('mov dword[LastDialogID],ecx')
-	_('pop ecx')
-	_('mov ebp,esp')
-	_('sub esp,8')
-	_('ljmp DialogLogReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateLoadFinished()
-	_('LoadFinishedProc:')
-	_('pushad')
-
-	_('mov eax,1')
-	_('mov dword[MapIsLoaded],eax')
-
-	_('xor ebx,ebx')
-	_('mov eax,StringLogBase')
-	_('LoadClearStringsLoop:')
-	_('mov dword[eax],0')
-	_('inc ebx')
-	_('add eax,100')
-	_('cmp ebx,StringLogSize')
-	_('jnz LoadClearStringsLoop')
-
-	_('xor ebx,ebx')
-	_('mov eax,TargetLogBase')
-	_('LoadClearTargetsLoop:')
-	_('mov dword[eax],0')
-	_('inc ebx')
-	_('add eax,4')
-	_('cmp ebx,TargetLogSize')
-	_('jnz LoadClearTargetsLoop')
-
-	_('push 5')
-	_('push 0')
-	_('push CallbackEvent')
-	_('push dword[CallbackHandle]')
-	_('call dword[PostMessage]')
-
-	_('popad')
-	_('mov edx,dword[esi+1C]')
-	_('mov ecx,edi')
-	_('ljmp LoadFinishedReturn')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateStringLog()
-	_('StringLogProc:')
-	_('pushad')
-	_('mov eax,dword[NextStringType]')
-	_('test eax,eax')
-	_('jz StringLogExit')
-
-	_('cmp eax,1')
-	_('jnz StringLogFilter2')
-	_('mov eax,dword[ebp+37c]')
-	_('jmp StringLogRangeCheck')
-
-	_('StringLogFilter2:')
-	_('cmp eax,2')
-	_('jnz StringLogExit')
-	_('mov eax,dword[ebp+338]')
-
-	_('StringLogRangeCheck:')
-	_('mov dword[NextStringType],0')
-	_('cmp eax,0')
-	_('jbe StringLogExit')
-	_('cmp eax,StringLogSize')
-	_('jae StringLogExit')
-
-	_('shl eax,8')
-	_('add eax,StringLogBase')
-
-	_('xor ebx,ebx')
-	_('StringLogCopyLoop:')
-	_('mov dx,word[ecx]')
-	_('mov word[eax],dx')
-	_('add ecx,2')
-	_('add eax,2')
-	_('inc ebx')
-	_('cmp ebx,80')
-	_('jz StringLogExit')
-	_('test dx,dx')
-	_('jnz StringLogCopyLoop')
-
-	_('StringLogExit:')
-	_('popad')
-	_('mov esp,ebp')
-	_('pop ebp')
-	_('retn 10')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateStringFilter1()
-	_('StringFilter1Proc:')
-	_('mov dword[NextStringType],1')
-
-	_('push ebp')
-	_('mov ebp,esp')
-	_('push ecx')
-	_('push esi')
-	_('ljmp StringFilter1Return')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateStringFilter2()
-	_('StringFilter2Proc:')
-	_('mov dword[NextStringType],2')
-
-	_('push ebp')
-	_('mov ebp,esp')
-	_('push ecx')
-	_('push esi')
-	_('ljmp StringFilter2Return')
-EndFunc
-
-
-;~ Internal use only.
-Func CreateRenderingMod()
+Func AssemblerCreateRenderingMod()
 	_('RenderingModProc:')
 	_('add esp,4')
 	_('cmp dword[DisableRendering],1')
 	_('ljmp RenderingModReturn')
 EndFunc
 
+Func AssemblerCreateLoadFinished()
+	_('LoadFinishedProc:')
+	_('mov dword[MapIsLoaded],1')
+	_('push dword[edi+1C]')
+	_('mov ecx,esi')
+	_('ljmp LoadFinishedReturn')
+EndFunc
 
-;~ Internal use only.
-Func CreateCommands()
-	_('CommandUseSkill:')
-	_('mov ecx,dword[eax+C]')
-	_('push ecx')
-	_('mov ebx,dword[eax+8]')
-	_('push ebx')
-	_('mov edx,dword[eax+4]')
-	_('dec edx')
-	_('push edx')
-	_('mov eax,dword[MyID]')
-	_('push eax')
-	_('call UseSkillFunction')
-	_('pop eax')
-	_('pop edx')
-	_('pop ebx')
-	_('pop ecx')
-	_('ljmp CommandReturn')
+Func AssemblerCreateTradePartner()
+	_('TradePartnerProc:')
+	_('push esi')
+	_('mov esi,dword[ebp+C]')
+	_('push esi')
+	_('mov dword[TradePartner],esi')
+	_('ljmp TradePartnerReturn')
+EndFunc
 
-	_('CommandMove:')
-	_('lea eax,dword[eax+4]')
-	_('push eax')
-	_('call MoveFunction')
-	_('pop eax')
-	_('ljmp CommandReturn')
-
-	_('CommandChangeTarget:')
-	_('xor edx,edx')
-	_('push edx')
-	_('mov eax,dword[eax+4]')
-	_('push eax')
-	_('call ChangeTargetFunction')
-	_('pop eax')
-	_('pop edx')
-	_('ljmp CommandReturn')
-
+Func AssemblerCreateCommands()
 	_('CommandPacketSend:')
 	_('lea edx,dword[eax+8]')
 	_('push edx')
@@ -1426,44 +1512,155 @@ Func CreateCommands()
 	_('push ebx')
 	_('mov eax,dword[PacketLocation]')
 	_('push eax')
-	_('call PacketSendFunction')
+	_('call PacketSend')
 	_('pop eax')
 	_('pop ebx')
 	_('pop edx')
 	_('ljmp CommandReturn')
 
-	_('CommandChangeStatus:')
-	_('mov eax,dword[eax+4]')
-	_('push eax')
-	_('call ChangeStatusFunction')
-	_('pop eax')
-	_('ljmp CommandReturn')
-
-	_('CommandWriteChat:')
+	_('CommandAction:')
+	_('mov ecx,dword[ActionBase]')
+	_('cmp dword[eax+C],0')
+	_('jnz ActionType2')
+	_('ActionType1:')
+	_('mov ecx,dword[ecx+C]')
+	_('jmp ActionCommon')
+	_('ActionType2:')
+	_('mov ecx,dword[ecx+4]')
+	_('ActionCommon:')
+	_('add ecx,A8')
 	_('push 0')
 	_('add eax,4')
 	_('push eax')
-	_('call WriteChatFunction')
+	_('push dword[eax+4]')
+	_('mov edx,0')
+	_('call Action')
+	_('ljmp CommandReturn')
+
+	_('CommandSendChat:')
+	_('lea edx,dword[eax+4]')
+	_('push edx')
+	_('mov ebx,11c')
+	_('push ebx')
+	_('mov eax,dword[PacketLocation]')
+	_('push eax')
+	_('call PacketSend')
+	_('pop eax')
+	_('pop ebx')
+	_('pop edx')
+	_('ljmp CommandReturn')
+EndFunc
+
+Func AssemblerCreateSkillCommands()
+	_('CommandUseSkill:')
+	_('mov ecx,dword[eax+10]')
+	_('push ecx')
+	_('mov ebx,dword[eax+C]')
+	_('push ebx')
+	_('mov edx,dword[eax+8]')
+	_('push edx')
+	_('mov ecx,dword[eax+4]')
+	_('push ecx')
+	_('call UseSkill')
+	_('add esp,10')
+	_('ljmp CommandReturn')
+
+	_('CommandUseHeroSkill:')
+	_('mov ecx,dword[eax+8]')
+	_('push ecx')
+	_('mov ecx,dword[eax+c]')
+	_('push ecx')
+	_('mov ecx,dword[eax+4]')
+	_('push ecx')
+	_('call UseHeroSkill')
+	_('add esp,C')
+	_('ljmp CommandReturn')
+
+	_('CommandCancelHeroSkill:')
+	_('push dword[eax+8]')
+	_('push dword[eax+4]')
+	_('call CancelHeroSkill')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+EndFunc
+
+Func AssemblerCreateFriendCommands()
+	_('CommandPlayerStatus:')
+	_('mov eax,dword[eax+4]')
+	_('push eax')
+	_('call PlayerStatus')
+	_('pop eax')
+	_('ljmp CommandReturn')
+
+	_('CommandAddFriend:')
+	_('mov ecx,dword[eax+C]')
+	_('push ecx')
+	_('mov edx,dword[eax+8]')
+	_('push edx')
+	_('mov ecx,dword[eax+4]')
+	_('push ecx')
+	_('call AddFriend')
+	_('add esp,C')
+	_('ljmp CommandReturn')
+
+	_('CommandRemoveFriend:')
+	_('mov ecx,dword[eax+18]')
+	_('push ecx')
+	_('mov edx,dword[eax+14]')
+	_('push edx')
+	_('lea ecx,dword[eax+4]')
+	_('push ecx')
+	_('call RemoveFriend')
+	_('add esp,C')
+	_('ljmp CommandReturn')
+EndFunc
+
+Func AssemblerCreateAttributeCommands()
+	_('CommandIncreaseAttribute:')
+	_('mov edx,dword[eax+4]')
+	_('push edx')
+	_('mov ecx,dword[eax+8]')
+	_('push ecx')
+	_('call IncreaseAttribute')
 	_('add esp,8')
 	_('ljmp CommandReturn')
 
+	_('CommandDecreaseAttribute:')
+	_('mov edx,dword[eax+4]')
+	_('push edx')
+	_('mov ecx,dword[eax+8]')
+	_('push ecx')
+	_('call DecreaseAttribute')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+EndFunc
+
+Func AssemblerCreateSellItemCommand()
 	_('CommandSellItem:')
-	_('mov esi,eax')
-	_('add esi,C')
 	_('push 0')
 	_('push 0')
 	_('push 0')
-	_('push dword[eax+4]')
+	_('push dword[eax+C]')
+	_('add eax,4')
+	_('mov ecx,[eax]')
+	_('test ecx,ecx')
+	_('jz SellItemAll')
+	_('push eax')
+	_('jmp SellItemContinue')
+	_('SellItemAll:')
 	_('push 0')
-	_('add eax,8')
+	_('SellItemContinue:')
+	_('add eax,4')
 	_('push eax')
 	_('push 1')
 	_('push 0')
 	_('push B')
-	_('call TransactionFunction')
+	_('call Transaction')
 	_('add esp,24')
 	_('ljmp CommandReturn')
+EndFunc
 
+Func AssemblerCreateBuyItemCommand()
 	_('CommandBuyItem:')
 	_('mov esi,eax')
 	_('add esi,10')
@@ -1481,11 +1678,13 @@ Func CreateCommands()
 	_('mov eax,dword[eax+C]')
 	_('push eax')
 	_('push 1')
-	_('call TransactionFunction')
+	_('call Transaction')
 	_('add esp,24')
 	_('ljmp CommandReturn')
+EndFunc
 
-	_('CommandCraftItemEx:')
+Func AssemblerCreateCraftItemCommand()
+	_('CommandCraftItem:')
 	_('add eax,4')
 	_('push eax')
 	_('add eax,4')
@@ -1493,57 +1692,39 @@ Func CreateCommands()
 	_('push 1')
 	_('push 0')
 	_('push 0')
-	_('mov ecx,dword[TradeID]')
-	_('mov ecx,dword[ecx]')
-	_('mov edx,dword[eax+4]')
-	_('lea ecx,dword[ebx+ecx*4]')
-	_('push ecx')
-	_('push 1')
+	_('lea edi,[eax+C]')
+	_('push edi')
 	_('push dword[eax+8]')
-	_('push dword[eax+C]')
-	_('call TraderFunction')
+	_('push dword[eax+4]')
+	_('push 3')
+	_('call Transaction')
 	_('add esp,24')
 	_('mov dword[TraderCostID],0')
 	_('ljmp CommandReturn')
+EndFunc
 
-	_('CommandAction:')
-	_('mov ecx,dword[ActionBase]')
-	_('mov ecx,dword[ecx+c]')
-	_('add ecx,A8')
+Func AssemblerCreateCollectorExchangeCommand()
+	_('CommandCollectorExchange:')
+	_('mov edx,eax')
 	_('push 0')
-	_('add eax,4')
+	_('lea ecx,[edx+4]')
+	_('push ecx')
+	_('push 1')
+	_('push 0')
+	_('lea eax,[edx+C]')
 	_('push eax')
-	_('push dword[eax+4]')
-	_('mov edx,0')
-	_('call ActionFunction')
-	_('ljmp CommandReturn')
-
-	_('CommandUseHeroSkill:')
-	_('mov ecx,dword[eax+8]')
+	_('mov ebx,[edx+8]')
+	_('lea ecx,[edx+ebx*4+C]')
 	_('push ecx')
-	_('mov ecx,dword[eax+c]')
-	_('push ecx')
-	_('mov ecx,dword[eax+4]')
-	_('push ecx')
-	_('call UseHeroSkillFunction')
-	_('add esp,C')
-	_('ljmp CommandReturn')
-
-;~	_('CommandToggleLanguage:')
-
-	_('CommandSendChat:')
-	_('lea edx,dword[eax+4]')
-	_('push edx')
-	_('mov ebx,11c')
 	_('push ebx')
-	_('mov eax,dword[PacketLocation]')
-	_('push eax')
-	_('call PacketSendFunction')
-	_('pop eax')
-	_('pop ebx')
-	_('pop edx')
+	_('push 0')
+	_('push 2')
+	_('call Transaction')
+	_('add esp,24')
 	_('ljmp CommandReturn')
+EndFunc
 
+Func AssemblerCreateRequestQuoteCommand()
 	_('CommandRequestQuote:')
 	_('mov dword[TraderCostID],0')
 	_('mov dword[TraderCostValue],0')
@@ -1559,10 +1740,12 @@ Func CreateCommands()
 	_('push C')
 	_('mov ecx,0')
 	_('mov edx,2')
-	_('call RequestQuoteFunction')
+	_('call RequestQuote')
 	_('add esp,20')
 	_('ljmp CommandReturn')
+EndFunc
 
+Func AssemblerCreateRequestQuoteSellCommand()
 	_('CommandRequestQuoteSell:')
 	_('mov dword[TraderCostID],0')
 	_('mov dword[TraderCostValue],0')
@@ -1576,10 +1759,12 @@ Func CreateCommands()
 	_('push 0')
 	_('push D')
 	_('xor edx,edx')
-	_('call RequestQuoteFunction')
+	_('call RequestQuote')
 	_('add esp,20')
 	_('ljmp CommandReturn')
+EndFunc
 
+Func AssemblerCreateTraderBuyCommand()
 	_('CommandTraderBuy:')
 	_('push 0')
 	_('push TraderCostID')
@@ -1592,12 +1777,14 @@ Func CreateCommands()
 	_('push edx')
 	_('push C')
 	_('mov ecx,C')
-	_('call TraderFunction')
+	_('call Transaction')
 	_('add esp,24')
 	_('mov dword[TraderCostID],0')
 	_('mov dword[TraderCostValue],0')
 	_('ljmp CommandReturn')
+EndFunc
 
+Func AssemblerCreateTraderSellCommand()
 	_('CommandTraderSell:')
 	_('push 0')
 	_('push 0')
@@ -1610,12 +1797,14 @@ Func CreateCommands()
 	_('push D')
 	_('mov ecx,d')
 	_('xor edx,edx')
-	_('call TransactionFunction')
+	_('call Transaction')
 	_('add esp,24')
 	_('mov dword[TraderCostID],0')
 	_('mov dword[TraderCostValue],0')
 	_('ljmp CommandReturn')
+EndFunc
 
+Func AssemblerCreateSalvageCommand()
 	_('CommandSalvage:')
 	_('push eax')
 	_('push ecx')
@@ -1632,62 +1821,22 @@ Func CreateCommands()
 	_('push ebx')
 	_('mov ebx,dword[eax+c]')
 	_('push ebx')
-	_('call SalvageFunction')
+	_('call Salvage')
 	_('add esp,C')
 	_('pop ebx')
 	_('pop ecx')
 	_('pop eax')
 	_('ljmp CommandReturn')
+EndFunc
 
-	_('CommandCraftItemEx2:')
-	_('add eax,4')
-	_('push eax')
-	_('add eax,4')
-	_('push eax')
-	_('push 1')
-	_('push 0')
-	_('push 0')
-	_('mov ecx,dword[TradeID]')
-	_('mov ecx,dword[ecx]')
-	_('mov edx,dword[eax+8]')
-	_('lea ecx,dword[ebx+ecx*4]')
-	_('mov ecx,dword[ecx]')
-	_('mov [eax+8],ecx')
-	_('mov ecx,dword[TradeID]')
-	_('mov ecx,dword[ecx]')
-	_('mov ecx,dword[ecx+0xF4]')
-	_('lea ecx,dword[ecx+ecx*2]')
-	_('lea ecx,dword[ebx+ecx*4]')
-	_('mov ecx,dword[ecx]')
-	_('mov [eax+C],ecx')
-	_('mov ecx,eax')
-	_('add ecx,8')
-	_('push ecx')
-	_('push 2')
-	_('push dword[eax+4]')
-	_('push 3')
-	_('call TransactionFunction')
-	_('add esp,24')
-	_('mov dword[TraderCostID],0')
-	_('ljmp CommandReturn')
-	_('CommandIncreaseAttribute:')
-	_('mov edx,dword[eax+4]')
+Func AssemblerCreateAgentCommands()
+	_('CommandChangeTarget:')
+	_('xor edx,edx')
 	_('push edx')
-	_('mov ecx,dword[eax+8]')
-	_('push ecx')
-	_('call IncreaseAttributeFunction')
-	_('pop ecx')
-	_('pop edx')
-	_('ljmp CommandReturn')
-
-	_('CommandDecreaseAttribute:')
-	_('mov edx,dword[eax+4]')
-	_('push edx')
-	_('mov ecx,dword[eax+8]')
-	_('push ecx')
-	_('call DecreaseAttributeFunction')
-	_('pop ecx')
-	_('pop edx')
+	_('mov eax,dword[eax+4]')
+	_('push eax')
+	_('call ChangeTarget')
+	_('add esp,8')
 	_('ljmp CommandReturn')
 
 	_('CommandMakeAgentArray:')
@@ -1695,86 +1844,232 @@ Func CreateCommands()
 	_('xor ebx,ebx')
 	_('xor edx,edx')
 	_('mov edi,AgentCopyBase')
-
 	_('AgentCopyLoopStart:')
 	_('inc ebx')
 	_('cmp ebx,dword[MaxAgents]')
 	_('jge AgentCopyLoopExit')
-
 	_('mov esi,dword[AgentBase]')
 	_('lea esi,dword[esi+ebx*4]')
 	_('mov esi,dword[esi]')
 	_('test esi,esi')
 	_('jz AgentCopyLoopStart')
-
 	_('cmp eax,0')
 	_('jz CopyAgent')
 	_('cmp eax,dword[esi+9C]')
 	_('jnz AgentCopyLoopStart')
-
 	_('CopyAgent:')
 	_('mov ecx,1C0')
 	_('clc')
 	_('repe movsb')
 	_('inc edx')
 	_('jmp AgentCopyLoopStart')
-
 	_('AgentCopyLoopExit:')
 	_('mov dword[AgentCopyCount],edx')
 	_('ljmp CommandReturn')
+EndFunc
 
-	_('CommandSendChatPartySearch:')
-	_('lea edx,dword[eax+4]')
-	_('push edx')
-	_('mov ebx,4C')
-	_('push ebx')
-	_('mov eax,dword[PacketLocation]')
+Func AssemblerCreateMapCommands()
+	_('CommandMove:')
+	_('lea eax,dword[eax+4]')
 	_('push eax')
-	_('call PacketSendFunction')
+	_('call Move')
 	_('pop eax')
-	_('pop ebx')
-	_('pop edx')
 	_('ljmp CommandReturn')
 EndFunc
 
+Func AssemblerCreateTradeCommands()
+	_('CommandTradeInitiate:')
+	_('push dword[eax+8]')
+	_('push dword[eax+4]')
+	_('call UIMessage')
+	_('add esp,8')
+	_('ljmp CommandReturn')
 
-;~ Create UI commands like EnterMission
-Func CreateUICommands()
+	_('CommandTradeCancel:')
+	_('call TradeCancel')
+	_('ljmp CommandReturn')
+
+	_('CommandTradeAccept:')
+	_('call TradeAccept')
+	_('ljmp CommandReturn')
+
+	_('CommandTradeSubmitOffer:')
+	_('push dword[eax+4]')
+	_('call TradeSubmitOffer')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandTradeOfferItem:')
+	_('push dword[eax+8]')
+	_('push dword[eax+4]')
+	_('call TradeOfferItem')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+EndFunc
+
+Func AssemblerCreateUICommands()
+	_('CommandMoveMap:')
+	_('push 0')
+	_('mov edx,eax')
+	_('add edx,8')
+	_('push edx')
+	_('push dword[eax+4]')
+	_('call UIMessage')
+	_('add esp,C')
+	_('ljmp CommandReturn')
+
+	_('CommandDialog:')
+	_('push dword[eax+4]')
+	_('call Dialog')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandOpenChest:')
+	_('push dword[eax+4]')
+	_('call OpenChest')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandAddNPC:')
+	_('push dword[eax+4]')
+	_('call AddNPC')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandAddHero:')
+	_('push dword[eax+4]')
+	_('call AddHero')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandKickNPC:')
+	_('push dword[eax+4]')
+	_('call KickNPC')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandKickHero:')
+	_('push dword[eax+4]')
+	_('call KickHero')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandLeaveGroup:')
+	_('push dword[eax+4]')
+	_('call LeaveGroup')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandSetDifficulty:')
+	_('push dword[eax+4]')
+	_('call SetDifficulty')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
 	_('CommandEnterMission:')
-	_('push 1')
-	_('call EnterMissionFunction')
+	_('push dword[eax+4]')
+	_('call EnterMission')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandFlagHero:')
+	_('mov ecx,eax')
+	_('add ecx,8')
+	_('push ecx')
+	_('mov eax,dword[eax+4]')
+	_('push eax')
+	_('call FlagHero')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+
+	_('CommandFlagAll:')
+	_('mov ecx,eax')
+	_('add ecx,4')
+	_('push ecx')
+	_('call FlagAll')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandSetHeroBehavior:')
+	_('push dword[eax+8]')
+	_('push dword[eax+4]')
+	_('call SetHeroBehavior')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+
+	_('CommandDropHeroBundle:')
+	_('push dword[eax+4]')
+	_('call DropHeroBundle')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandLockHeroTarget:')
+	_('push dword[eax+8]')
+	_('push dword[eax+4]')
+	_('call LockHeroTarget')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+
+	_('CommandToggleHeroSkillState:')
+	_('push dword[eax+8]')
+	_('push dword[eax+4]')
+	_('call ToggleHeroSkillState')
+	_('add esp,8')
+	_('ljmp CommandReturn')
+
+	_('CommandActiveQuest:')
+	_('push dword[eax+4]')
+	_('call ActiveQuest')
 	_('add esp,4')
 	_('ljmp CommandReturn')
 EndFunc
-#EndRegion Modification
+
+Func AssemblerCreatePartyCommands()
+	_('CommandAddPlayer:')
+	_('push dword[eax+4]')
+	_('call AddPlayer')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandKickPlayer:')
+	_('push dword[eax+4]')
+	_('call KickPlayer')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandKickInvitedPlayer:')
+	_('push dword[eax+4]')
+	_('call KickInvitedPlayer')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandRejectInvitation:')
+	_('push dword[eax+4]')
+	_('call RejectInvitation')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+
+	_('CommandAcceptInvitation:')
+	_('push dword[eax+4]')
+	_('call AcceptInvitation')
+	_('add esp,4')
+	_('ljmp CommandReturn')
+EndFunc
 
 
 #Region Assembler
-;~ Internal use only.
+;~ Quick and dirty x86assembler unit
 Func _($asm)
-	; quick and dirty x86assembler unit:
-	; relative values stringregexp
-	; static values hardcoded
 	Local $buffer
 	Local $opCode
 	Select
+		Case StringLeft($asm, 1) = ';'
+			Return
 		Case StringInStr($asm, ' -> ')
 			Local $split = StringSplit($asm, ' -> ', 1)
 			$opCode = StringReplace($split[2], ' ', '')
 			$asm_injection_size += 0.5 * StringLen($opCode)
 			$asm_injection_string &= $opCode
-		Case StringLeft($asm, 3) = 'jb '
-			$asm_injection_size += 2
-			$asm_injection_string &= '72(' & StringRight($asm, StringLen($asm) - 3) & ')'
-		Case StringLeft($asm, 3) = 'je '
-			$asm_injection_size += 2
-			$asm_injection_string &= '74(' & StringRight($asm, StringLen($asm) - 3) & ')'
-		Case StringRegExp($asm, 'cmp ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 6
-			$asm_injection_string &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'cmp edx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 6
-			$asm_injection_string &= '81FA[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRight($asm, 1) = ':'
 			SetLabel('Label_' & StringLeft($asm, StringLen($asm) - 1), $asm_injection_size)
 		Case StringInStr($asm, '/') > 0
@@ -1788,6 +2083,12 @@ Func _($asm)
 			For $i = 1 To $buffer
 				$asm_injection_string &= '90'
 			Next
+		Case StringLeft($asm, 3) = 'jb '
+			$asm_injection_size += 2
+			$asm_injection_string &= '72(' & StringRight($asm, StringLen($asm) - 3) & ')'
+		Case StringLeft($asm, 3) = 'je '
+			$asm_injection_size += 2
+			$asm_injection_string &= '74(' & StringRight($asm, StringLen($asm) - 3) & ')'
 		Case StringLeft($asm, 5) = 'ljmp '
 			$asm_injection_size += 5
 			$asm_injection_string &= 'E9{' & StringRight($asm, StringLen($asm) - 5) & '}'
@@ -1821,33 +2122,69 @@ Func _($asm)
 		Case StringLeft($asm, 4) = 'jle '
 			$asm_injection_size += 2
 			$asm_injection_string &= '7E(' & StringRight($asm, StringLen($asm) - 4) & ')'
-		Case StringRegExp($asm, 'mov eax,dword[[][a-z,A-Z]{4,}[]]')
+
+		Case StringRegExp($asm, 'call dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= 'FF15[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
+		Case StringLeft($asm, 5) = 'call ' And StringLen($asm) > 8
 			$asm_injection_size += 5
-			$asm_injection_string &= 'A1[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'mov ebx,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_string &= 'E8{' & StringMid($asm, 6, StringLen($asm) - 5) & '}'
+		Case StringRegExp($asm, 'fstp dword[[][a-z,A-Z]{4,}[]]')
 			$asm_injection_size += 6
-			$asm_injection_string &= '8B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'mov ecx,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_string &= 'D91D[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
+		Case StringRegExp($asm, 'retn [0-9A-Fa-f]+h')
+			Local $value = StringRegExpReplace($asm, 'retn ([0-9A-Fa-f]+)h', '$1')
+			$value = Dec($value)
+			$asm_injection_size += 3
+			$asm_injection_string &= 'C2' & SwapEndian(Hex($value, 4))
+		Case StringRegExp($asm, 'retn 0x[0-9A-Fa-f]+')
+			Local $value = StringRegExpReplace($asm, 'retn 0x([0-9A-Fa-f]+)', '$1')
+			$value = Dec($value)
+			$asm_injection_size += 3
+			$asm_injection_string &= 'C2' & SwapEndian(Hex($value, 4))
+		Case StringRegExp($asm, 'retn [-[:xdigit:]]{1,4}\z')
+			Local $value = StringMid($asm, 6)
+			$asm_injection_size += 3
+			$asm_injection_string &= 'C2' & SwapEndian(Hex(Number($value), 4))
+		Case StringRegExp($asm, 'cmp ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 6
-			$asm_injection_string &= '8B0D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'mov edx,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_string &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'cmp edx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 6
-			$asm_injection_string &= '8B15[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'mov esi,dword[[][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 6
-			$asm_injection_string &= '8B35[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'mov edi,dword[[][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 6
-			$asm_injection_string &= '8B3D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+			$asm_injection_string &= '81FA[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'cmp eax,[0-9A-Fa-f]+\z')
+			Local $value = Dec(StringMid($asm, 9))
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83F8' & Hex($value, 2)
+			Else
+				$asm_injection_size += 5
+				$asm_injection_string &= '3D' & SwapEndian(Hex($value, 8))
+			EndIf
+		Case StringRegExp($asm, 'cmp eax,[-[:xdigit:]]{1,2}\z')
+			Local $value = StringMid($asm, 9)
+			If StringLen($value) <= 2 Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83F8' & Hex(Number($value), 2)
+			Else
+				$asm_injection_size += 5
+				$asm_injection_string &= '3D' & ASMNumber($value)
+			EndIf
+		Case StringRegExp($asm, 'cmp ebx,[-[:xdigit:]]{1,2}\z')
+			Local $value = StringMid($asm, 9)
+			$asm_injection_size += 3
+			$asm_injection_string &= '83FB' & Hex(Number($value), 2)
+		Case StringRegExp($asm, 'cmp ecx,[-[:xdigit:]]{1,2}\z')
+			Local $value = StringMid($asm, 9)
+			$asm_injection_size += 3
+			$asm_injection_string &= '83F9' & Hex(Number($value), 2)
+		Case StringRegExp($asm, 'cmp edx,[-[:xdigit:]]{1,2}\z')
+			Local $value = StringMid($asm, 9)
+			$asm_injection_size += 3
+			$asm_injection_string &= '83FA' & Hex(Number($value), 2)
 		Case StringRegExp($asm, 'cmp ebx,dword\[[a-z,A-Z]{4,}\]')
 			$asm_injection_size += 6
 			$asm_injection_string &= '3B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'lea eax,dword[[]ecx[*]8[+][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 7
-			$asm_injection_string &= '8D04CD[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
-		Case StringRegExp($asm, 'lea edi,dword\[edx\+[a-z,A-Z]{4,}\]')
-			$asm_injection_size += 7
-			$asm_injection_string &= '8D3C15[' & StringMid($asm, 19, StringLen($asm) - 19) & ']'
 		Case StringRegExp($asm, 'cmp dword[[][a-z,A-Z]{4,}[]],[-[:xdigit:]]')
 			$buffer = StringInStr($asm, ',')
 			$buffer = ASMNumber(StringMid($asm, $buffer + 1), True)
@@ -1861,91 +2198,80 @@ Func _($asm)
 		Case StringRegExp($asm, 'cmp ecx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 6
 			$asm_injection_string &= '81F9[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'cmp ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 6
-			$asm_injection_string &= '81FB[' & StringRight($asm, StringLen($asm) - 8) & ']'
 		Case StringRegExp($asm, 'cmp eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 5
 			$asm_injection_string &= '3D[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'add eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= '05[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= 'B8[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= 'BB[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov ecx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= 'B9[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov esi,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= 'BE[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov edi,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= 'BF[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov edx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
-			$asm_injection_size += 5
-			$asm_injection_string &= 'BA[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],ecx')
-			$asm_injection_size += 6
-			$asm_injection_string &= '890D[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'fstp dword[[][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 6
-			$asm_injection_string &= 'D91D[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
-		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],edx')
-			$asm_injection_size += 6
-			$asm_injection_string &= '8915[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],eax')
-			$asm_injection_size += 5
-			$asm_injection_string &= 'A3[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
-		Case StringRegExp($asm, 'lea eax,dword[[]edx[*]4[+][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 7
-			$asm_injection_string &= '8D0495[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
-		Case StringRegExp($asm, 'mov eax,dword[[]ecx[*]4[+][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 7
-			$asm_injection_string &= '8B048D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
-		Case StringRegExp($asm, 'mov ecx,dword[[]ecx[*]4[+][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 7
-			$asm_injection_string &= '8B0C8D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
-		Case StringRegExp($asm, 'push dword[[][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 6
-			$asm_injection_string &= 'FF35[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
-		Case StringRegExp($asm, 'push [a-z,A-Z]{4,}\z')
-			$asm_injection_size += 5
-			$asm_injection_string &= '68[' & StringMid($asm, 6, StringLen($asm) - 5) & ']'
-		Case StringRegExp($asm, 'call dword[[][a-z,A-Z]{4,}[]]')
-			$asm_injection_size += 6
-			$asm_injection_string &= 'FF15[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
-		Case StringLeft($asm, 5) = 'call ' And StringLen($asm) > 8
-			$asm_injection_size += 5
-			$asm_injection_string &= 'E8{' & StringMid($asm, 6, StringLen($asm) - 5) & '}'
-		Case StringRegExp($asm, 'mov dword\[[a-z,A-Z]{4,}\],[-[:xdigit:]]{1,8}\z')
-			$buffer = StringInStr($asm, ',')
-			$asm_injection_size += 10
-			$asm_injection_string &= 'C705[' & StringMid($asm, 11, $buffer - 12) & ']' & ASMNumber(StringMid($asm, $buffer + 1))
-		Case StringRegExp($asm, 'push [-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 6), True)
+		Case StringRegExp($asm, 'cmp ebx,[-[:xdigit:]]{1,8}\z')
+			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
-				$asm_injection_size += 2
-				$asm_injection_string &= '6A' & $buffer
+				$asm_injection_size += 3
+				$asm_injection_string &= '83FB' & $buffer
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81FB' & $buffer
+			EndIf
+		Case StringLeft($asm, 8) = 'cmp ecx,' And StringLen($asm) > 10
+			Local $opCode = '81F9' & StringMid($asm, 9)
+			$asm_injection_size += 0.5 * StringLen($opCode)
+			$asm_injection_string &= $opCode
+		Case StringRegExp($asm, 'add esp,0x[0-9A-Fa-f]+')
+			Local $value = StringRegExpReplace($asm, 'add esp,0x([0-9A-Fa-f]+)', '$1')
+			$value = Dec($value)
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C4' & Hex($value, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C4' & SwapEndian(Hex($value, 8))
+			EndIf
+		Case StringRegExp($asm, 'add eax,[0-9A-Fa-f]+h')
+			Local $value = StringRegExpReplace($asm, 'add eax,([0-9A-Fa-f]+)h', '$1')
+			$value = Dec($value)
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C0' & Hex($value, 2)
 			Else
 				$asm_injection_size += 5
-				$asm_injection_string &= '68' & $buffer
+				$asm_injection_string &= '05' & SwapEndian(Hex($value, 8))
 			EndIf
-		Case StringRegExp($asm, 'mov eax,[-[:xdigit:]]{1,8}\z')
+		Case StringRegExp($asm, 'add ebx,[0-9A-Fa-f]+h')
+			Local $value = StringRegExpReplace($asm, 'add ebx,([0-9A-Fa-f]+)h', '$1')
+			$value = Dec($value)
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C3' & Hex($value, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C3' & SwapEndian(Hex($value, 8))
+			EndIf
+		Case StringRegExp($asm, 'add ebx,dword\[[a-zA-Z_][a-zA-Z0-9_]*\]')
+			Local $label = StringRegExpReplace($asm, 'add ebx,dword\[([a-zA-Z_][a-zA-Z0-9_]*)\]', '$1')
+			$asm_injection_size += 6
+			$asm_injection_string &= '031D[' & $label & ']'
+		Case StringRegExp($asm, 'add eax,dword\[[a-zA-Z_][a-zA-Z0-9_]*\]')
+			Local $label = StringRegExpReplace($asm, 'add eax,dword\[([a-zA-Z_][a-zA-Z0-9_]*)\]', '$1')
 			$asm_injection_size += 5
-			$asm_injection_string &= 'B8' & ASMNumber(StringMid($asm, 9))
-		Case StringRegExp($asm, 'mov ebx,[-[:xdigit:]]{1,8}\z')
-			$asm_injection_size += 5
-			$asm_injection_string &= 'BB' & ASMNumber(StringMid($asm, 9))
-		Case StringRegExp($asm, 'mov ecx,[-[:xdigit:]]{1,8}\z')
-			$asm_injection_size += 5
-			$asm_injection_string &= 'B9' & ASMNumber(StringMid($asm, 9))
-		Case StringRegExp($asm, 'mov edx,[-[:xdigit:]]{1,8}\z')
-			$asm_injection_size += 5
-			$asm_injection_string &= 'BA' & ASMNumber(StringMid($asm, 9))
+			$asm_injection_string &= '0305[' & $label & ']'
+		Case StringRegExp($asm, 'add ecx,[0-9A-Fa-f]+h')
+			Local $value = StringRegExpReplace($asm, 'add ecx,([0-9A-Fa-f]+)h', '$1')
+			$value = Dec($value)
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C1' & Hex($value, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C1' & SwapEndian(Hex($value, 8))
+			EndIf
+		Case StringRegExp($asm, 'add edx,[0-9A-Fa-f]+h')
+			Local $value = StringRegExpReplace($asm, 'add edx,([0-9A-Fa-f]+)h', '$1')
+			$value = Dec($value)
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83C2' & Hex($value, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81C2' & SwapEndian(Hex($value, 8))
+			EndIf
 		Case StringRegExp($asm, 'add eax,[-[:xdigit:]]{1,8}\z')
 			$buffer = ASMNumber(StringMid($asm, 9), True)
 			If @extended Then
@@ -2009,44 +2335,601 @@ Func _($asm)
 				$asm_injection_size += 6
 				$asm_injection_string &= '81C4' & $buffer
 			EndIf
-		Case StringRegExp($asm, 'cmp ebx,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
+		Case StringRegExp($asm, 'add eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= '05[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'inc dword\[eax\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[eax\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
 				$asm_injection_size += 3
-				$asm_injection_string &= '83FB' & $buffer
+				$asm_injection_string &= 'FF40' & Hex($offset, 2)
 			Else
 				$asm_injection_size += 6
-				$asm_injection_string &= '81FB' & $buffer
+				$asm_injection_string &= 'FF80' & SwapEndian(Hex($offset, 8))
 			EndIf
-		Case StringLeft($asm, 8) = 'cmp ecx,' And StringLen($asm) > 10
-			Local $opCode = '81F9' & StringMid($asm, 9)
-			$asm_injection_size += 0.5 * StringLen($opCode)
-			$asm_injection_string &= $opCode
+		Case StringRegExp($asm, 'inc dword\[esi\+0x[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[esi\+0x([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF46' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF86' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[ebx\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[ebx\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF43' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF83' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[ecx\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[ecx\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF41' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF81' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[edx\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[edx\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF42' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF82' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[esi\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[esi\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF46' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF86' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[edi\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[edi\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF47' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF87' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[ebp\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[ebp\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF45' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF85' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[esp\+[0-9A-Fa-f]+h\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[esp\+([0-9A-Fa-f]+)h\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= 'FF4424' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= 'FF8424' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[esi\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'inc dword\[esi\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF46' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FF86' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'inc dword\[[a-zA-Z_][a-zA-Z0-9_]*\]')
+			Local $label = StringRegExpReplace($asm, 'inc dword\[([a-zA-Z_][a-zA-Z0-9_]*)\]', '$1')
+			$asm_injection_size += 6
+			$asm_injection_string &= 'FF05[' & $label & ']'
+		Case StringRegExp($asm, 'dec dword\[[a-zA-Z_][a-zA-Z0-9_]*\]')
+			Local $label = StringRegExpReplace($asm, 'dec dword\[([a-zA-Z_][a-zA-Z0-9_]*)\]', '$1')
+			$asm_injection_size += 6
+			$asm_injection_string &= 'FF0D[' & $label & ']'
+		Case StringRegExp($asm, 'and ebx,[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 9)
+			If StringLen($value) <= 2 And Dec($value) <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83E3' & Hex(Dec($value), 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81E3' & ASMNumber($value)
+			EndIf
+		Case StringRegExp($asm, 'and edx,[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 9)
+			If StringLen($value) <= 2 And Dec($value) <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83E2' & Hex(Dec($value), 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81E2' & ASMNumber($value)
+			EndIf
+		Case StringRegExp($asm, 'and ecx,[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 9)
+			$asm_injection_size += 6
+			$asm_injection_string &= '81E1' & ASMNumber($value)
+		Case StringRegExp($asm, 'and eax,[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 9)
+			$asm_injection_size += 5
+			$asm_injection_string &= '25' & ASMNumber($value)
+		Case StringRegExp($asm, 'or eax,[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 8)
+			$asm_injection_size += 5
+			$asm_injection_string &= '0D' & ASMNumber($value)
+		Case StringRegExp($asm, 'push dword\[eax\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'push dword\[eax\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= 'FF70' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'FFB0' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'push dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= 'FF35[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
+		Case StringRegExp($asm, 'push [a-z,A-Z]{4,}\z')
+			$asm_injection_size += 5
+			$asm_injection_string &= '68[' & StringMid($asm, 6, StringLen($asm) - 5) & ']'
+		Case StringRegExp($asm, 'push [-[:xdigit:]]{1,8}\z')
+			$buffer = ASMNumber(StringMid($asm, 6), True)
+			If @extended Then
+				$asm_injection_size += 2
+				$asm_injection_string &= '6A' & $buffer
+			Else
+				$asm_injection_size += 5
+				$asm_injection_string &= '68' & $buffer
+			EndIf
+		Case StringRegExp($asm, 'lea eax,dword[[]ecx[*]8[+][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 7
+			$asm_injection_string &= '8D04CD[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+		Case StringRegExp($asm, 'lea edi,dword\[edx\+[a-z,A-Z]{4,}\]')
+			$asm_injection_size += 7
+			$asm_injection_string &= '8D3C15[' & StringMid($asm, 19, StringLen($asm) - 19) & ']'
+		Case StringRegExp($asm, 'lea eax,dword[[]edx[*]4[+][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 7
+			$asm_injection_string &= '8D0495[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+		Case StringRegExp($asm, 'mov eax,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov eax,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B4424' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8B8424' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov ebx,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov ebx,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B5C24' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8B9C24' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov ecx,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov ecx,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B4C24' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8B8C24' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov edx,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov edx,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B5424' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8B9424' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov esi,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov esi,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B7424' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8BB424' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov edi,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov edi,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B7C24' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8BBC24' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov ebp,dword\[esp\+[0-9A-Fa-f]+h?\]')
+			Local $offset = StringRegExpReplace($asm, 'mov ebp,dword\[esp\+([0-9A-Fa-f]+)h?\]', '$1')
+			$offset = StringReplace($offset, 'h', '')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 4
+				$asm_injection_string &= '8B6C24' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 7
+				$asm_injection_string &= '8BAC24' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\],0x[0-9A-Fa-f]+\z')
+			Local $value = StringMid($asm, 15)
+			$value = StringReplace($value, '0x', '')
+			$asm_injection_size += 6
+			$asm_injection_string &= 'C700' & SwapEndian(Hex(Dec('0x' & $value), 8))
+		Case StringLeft($asm, 17) = 'mov edx,dword[esi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B16'
+		Case StringLeft($asm, 17) = 'mov edx,dword[edi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B17'
+		Case StringLeft($asm, 17) = 'mov eax,dword[esi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B06'
+		Case StringLeft($asm, 17) = 'mov eax,dword[edi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B07'
+		Case StringLeft($asm, 17) = 'mov ecx,dword[esi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B0E'
+		Case StringLeft($asm, 17) = 'mov ecx,dword[edi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B0F'
+		Case StringLeft($asm, 17) = 'mov ebx,dword[esi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B1E'
+		Case StringLeft($asm, 17) = 'mov ebx,dword[edi]'
+			$asm_injection_size += 2
+			$asm_injection_string &= '8B1F'
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],esi')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],esi', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8970' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '89B0' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov eax,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 5
+			$asm_injection_string &= 'A1[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov ebx,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B1D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov ecx,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B0D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov edx,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B15[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov esi,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B35[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov edi,dword[[][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8B3D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B8[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'mov ebx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BB[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'mov ecx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B9[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'mov esi,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BE[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'mov edi,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BF[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'mov edx,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BA[' & StringRight($asm, StringLen($asm) - 8) & ']'
+		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],ecx')
+			$asm_injection_size += 6
+			$asm_injection_string &= '890D[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],edx')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8915[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],eax')
+			$asm_injection_size += 5
+			$asm_injection_string &= 'A3[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov dword[[][a-z,A-Z]{4,}[]],esi')
+			$asm_injection_size += 6
+			$asm_injection_string &= '8935[' & StringMid($asm, 11, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov eax,dword[[]ecx[*]4[+][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 7
+			$asm_injection_string &= '8B048D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+		Case StringRegExp($asm, 'mov ecx,dword[[]ecx[*]4[+][a-z,A-Z]{4,}[]]')
+			$asm_injection_size += 7
+			$asm_injection_string &= '8B0C8D[' & StringMid($asm, 21, StringLen($asm) - 21) & ']'
+		Case StringRegExp($asm, 'mov dword\[[a-z,A-Z]{4,}\],[-[:xdigit:]]{1,8}\z')
+			$buffer = StringInStr($asm, ',')
+			$asm_injection_size += 10
+			$asm_injection_string &= 'C705[' & StringMid($asm, 11, $buffer - 12) & ']' & ASMNumber(StringMid($asm, $buffer + 1))
+		Case StringRegExp($asm, 'mov eax,[-[:xdigit:]]{1,8}\z')
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B8' & ASMNumber(StringMid($asm, 9))
+		Case StringRegExp($asm, 'mov ebx,[-[:xdigit:]]{1,8}\z')
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BB' & ASMNumber(StringMid($asm, 9))
+		Case StringRegExp($asm, 'mov ecx,[-[:xdigit:]]{1,8}\z')
+			$asm_injection_size += 5
+			$asm_injection_string &= 'B9' & ASMNumber(StringMid($asm, 9))
+		Case StringRegExp($asm, 'mov edx,[-[:xdigit:]]{1,8}\z')
+			$asm_injection_size += 5
+			$asm_injection_string &= 'BA' & ASMNumber(StringMid($asm, 9))
+		Case StringRegExp($asm, 'mov ecx,dword\[eax\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov ecx,dword\[eax\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B48' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8B88' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov edx,dword\[eax\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov edx,dword\[eax\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B50' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8B90' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov esi,dword\[ebp\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov esi,dword\[ebp\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B75' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8BB5' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov edi,dword\[ebp\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov edi,dword\[ebp\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B7D' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8BBD' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov ebx,dword\[ebp\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov ebx,dword\[ebp\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B5D' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8B9D' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov edx,dword\[ebp\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov edx,dword\[ebp\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B55' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8B95' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],0')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],0', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 7
+				$asm_injection_string &= 'C740' & Hex($offset, 2) & '00000000'
+			Else
+				$asm_injection_size += 10
+				$asm_injection_string &= 'C780' & SwapEndian(Hex($offset, 8)) & '00000000'
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[ebx\+[0-9A-Fa-f]+\],0')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[ebx\+([0-9A-Fa-f]+)\],0', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 7
+				$asm_injection_string &= 'C743' & Hex($offset, 2) & '00000000'
+			Else
+				$asm_injection_size += 10
+				$asm_injection_string &= 'C783' & SwapEndian(Hex($offset, 8)) & '00000000'
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[ecx\+[0-9A-Fa-f]+\],0')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[ecx\+([0-9A-Fa-f]+)\],0', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 7
+				$asm_injection_string &= 'C741' & Hex($offset, 2) & '00000000'
+			Else
+				$asm_injection_size += 10
+				$asm_injection_string &= 'C781' & SwapEndian(Hex($offset, 8)) & '00000000'
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[edx\+[0-9A-Fa-f]+\],0')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[edx\+([0-9A-Fa-f]+)\],0', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 7
+				$asm_injection_string &= 'C742' & Hex($offset, 2) & '00000000'
+			Else
+				$asm_injection_size += 10
+				$asm_injection_string &= 'C782' & SwapEndian(Hex($offset, 8)) & '00000000'
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\],[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 15)
+			$asm_injection_size += 6
+			$asm_injection_string &= 'C700' & ASMNumber($value)
+		Case StringRegExp($asm, 'mov dword\[ebx\],[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 15)
+			$asm_injection_size += 6
+			$asm_injection_string &= 'C703' & ASMNumber($value)
+		Case StringRegExp($asm, 'mov dword\[ecx\],[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 15)
+			$asm_injection_size += 6
+			$asm_injection_string &= 'C701' & ASMNumber($value)
+		Case StringRegExp($asm, 'mov dword\[edx\],[-[:xdigit:]]{1,8}\z')
+			Local $value = StringMid($asm, 15)
+			$asm_injection_size += 6
+			$asm_injection_string &= 'C702' & ASMNumber($value)
+		Case StringRegExp($asm, 'mov dword\[eax\],[0-9]\z')
+			Local $value = StringMid($asm, 15)
+			$asm_injection_size += 6
+			$asm_injection_string &= 'C700' & SwapEndian(Hex(Number($value), 8))
+		Case StringRegExp($asm, 'mov dword\[eax\],\d+\z')
+			Local $value = Number(StringMid($asm, 15))
+			If $value <= 127 Then
+				$asm_injection_size += 6
+				$asm_injection_string &= 'C700' & SwapEndian(Hex($value, 8))
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= 'C700' & ASMNumber($value)
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],eax')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],eax', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8940' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8980' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],ebx')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],ebx', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8958' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8998' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],ecx')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],ecx', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8948' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8988' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],edx')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],edx', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8950' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8990' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],esi')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],esi', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8970' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '89B0' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],edi')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],edi', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8978' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '89B8' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],ebp')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],ebp', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8968' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '89A8' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov dword\[eax\+[0-9A-Fa-f]+\],esp')
+			Local $offset = StringRegExpReplace($asm, 'mov dword\[eax\+([0-9A-Fa-f]+)\],esp', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8960' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '89A0' & SwapEndian(Hex($offset, 8))
+			EndIf
 		Case Else
 			Local $opCode
 			Switch $asm
 				Case 'Flag_'
 					$opCode = '9090903434'
+				Case 'clc'
+					$opCode = 'F8'
+				Case 'retn'
+					$opCode = 'C3'
+				Case 'retn 10'
+					$opCode = 'C21000'
 				Case 'nop'
 					$opCode = '90'
 				Case 'pushad'
 					$opCode = '60'
 				Case 'popad'
 					$opCode = '61'
-				Case 'mov ebx,dword[eax]'
-					$opCode = '8B18'
-				Case 'mov ebx,dword[ecx]'
-					$opCode = '8B19'
-				Case 'mov ecx,dword[ebx+ecx]'
-					$opCode = '8B0C0B'
-				Case 'test eax,eax'
-					$opCode = '85C0'
-				Case 'test ebx,ebx'
-					$opCode = '85DB'
-				Case 'test ecx,ecx'
-					$opCode = '85C9'
-				Case 'mov dword[eax],0'
-					$opCode = 'C70000000000'
+				Case 'pushfd'
+					$opCode = '9C'
+				Case 'popfd'
+					$opCode = '9D'
+				Case 'pushf'
+					$opCode = '9C'
+				Case 'popf'
+					$opCode = '9D'
 				Case 'push eax'
 					$opCode = '50'
 				Case 'push ebx'
@@ -2061,6 +2944,12 @@ Func _($asm)
 					$opCode = '56'
 				Case 'push edi'
 					$opCode = '57'
+				Case 'push dword[ebp+8]'
+					$opCode = 'FF7508'
+				Case 'fld st(0),dword[ebp+8]'
+					$opCode = 'D94508'
+				Case 'repe movsb'
+					$opCode = 'F3A4'
 				Case 'jmp ebx'
 					$opCode = 'FFE3'
 				Case 'pop eax'
@@ -2073,22 +2962,50 @@ Func _($asm)
 					$opCode = '59'
 				Case 'pop esi'
 					$opCode = '5E'
+				Case 'pop ebp'
+					$opCode = '5D'
+				Case 'pop edi'
+					$opCode = '5F'
 				Case 'inc eax'
 					$opCode = '40'
 				Case 'inc ecx'
 					$opCode = '41'
 				Case 'inc ebx'
 					$opCode = '43'
+				Case 'inc edx'
+					$opCode = '42'
 				Case 'dec edx'
 					$opCode = '4A'
-				Case 'mov edi,edx'
-					$opCode = '8BFA'
-				Case 'mov ecx,esi'
-					$opCode = '8BCE'
-				Case 'mov ecx,edi'
-					$opCode = '8BCF'
-				Case 'mov ecx,esp'
-					$opCode = '8BCC'
+				Case 'dec ecx'
+					$opCode = '49'
+				Case 'test eax,eax'
+					$opCode = '85C0'
+				Case 'test ax,ax'
+					$opCode = '6685C0'
+				Case 'test ebx,ebx'
+					$opCode = '85DB'
+				Case 'test ecx,ecx'
+					$opCode = '85C9'
+				Case 'test dx,dx'
+					$opCode = '6685D2'
+				Case 'test al,al'
+					$opCode = '84C0'
+				Case 'test esi,esi'
+					$opCode = '85F6'
+				Case 'test al,1'
+					$opCode = 'A801'
+				Case 'test edx,edx'
+					$opCode = '85D2'
+				Case 'test ebx,40001'
+					$opCode = 'F7C301000400'
+				Case 'test ebx,1'
+					$opCode = 'F7C301000000'
+				Case 'test ebx,40000'
+					$opCode = 'F7C300000400'
+				Case 'test ebx,40001'
+					$opCode = 'F7C301000400'
+				Case 'test eax,1DA'
+					$opCode = 'A9DA010000'
 				Case 'xor eax,eax'
 					$opCode = '33C0'
 				Case 'xor ecx,ecx'
@@ -2097,12 +3014,8 @@ Func _($asm)
 					$opCode = '33D2'
 				Case 'xor ebx,ebx'
 					$opCode = '33DB'
-				Case 'mov edx,eax'
-					$opCode = '8BD0'
-				Case 'mov edx,ecx'
-					$opCode = '8BD1'
-				Case 'mov ebp,esp'
-					$opCode = '8BEC'
+				Case 'sub eax,4'
+					$opCode = '83E804'
 				Case 'sub esp,8'
 					$opCode = '83EC08'
 				Case 'sub esi,4'
@@ -2111,16 +3024,202 @@ Func _($asm)
 					$opCode = '83EC14'
 				Case 'sub eax,C'
 					$opCode = '83E80C'
+				Case 'sub esp,16'
+					$opCode = '83EC10'
+				Case 'sub esp,12'
+					$opCode = '83EC0C'
+				Case 'lea eax,dword[eax+18]'
+					$opCode = '8D4018'
+				Case 'lea ecx,dword[eax+4]'
+					$opCode = '8D4804'
+				Case 'lea ecx,dword[eax+C]'
+					$opCode = '8D480C'
+				Case 'lea eax,dword[eax+4]'
+					$opCode = '8D4004'
+				Case 'lea edx,dword[eax]'
+					$opCode = '8D10'
+				Case 'lea edx,dword[eax+4]'
+					$opCode = '8D5004'
+				Case 'lea edx,dword[eax+8]'
+					$opCode = '8D5008'
+				Case 'lea ecx,dword[eax+180]'
+					$opCode = '8D8880010000'
+				Case 'lea edi,dword[edx+ebx]'
+					$opCode = '8D3C1A'
+				Case 'lea edi,dword[edx+8]'
+					$opCode = '8D7A08'
+				Case 'lea esi,dword[esi+ebx*4]'
+					$opCode = '8D349E'
+				Case 'lea ecx,dword[ecx+ecx*2]'
+					$opCode = '8D0C49'
+				Case 'lea ecx,dword[ebx+ecx*4]'
+					$opCode = '8D0C8B'
+				Case 'lea ecx,dword[ecx+18]'
+					$opCode = '8D4918'
+				Case 'lea ecx,dword[ebx+18]'
+					$opCode = '8D4B18'
+				Case 'shl eax,4'
+					$opCode = 'C1E004'
+				Case 'shl eax,8'
+					$opCode = 'C1E008'
+				Case 'shl eax,6'
+					$opCode = 'C1E006'
+				Case 'shl eax,7'
+					$opCode = 'C1E007'
+				Case 'shl eax,9'
+					$opCode = 'C1E009'
+				Case 'shl ebx,8'
+					$opCode = 'C1E308'
+				Case 'shl edx,16'
+					$opCode = 'C1E210'
+				Case 'shl ebx,16'
+					$opCode = 'C1E310'
+				Case 'shl esi,8'
+					$opCode = 'C1E608'
+				Case 'add ebx,ecx'
+					$opCode = '03D9'
+				Case 'add esi,D'
+					$opCode = '83C60D'
+				Case 'add esi,12'
+					$opCode = '83C612'
+				Case 'add edi,8'
+					$opCode = '83C708'
+				Case 'add eax,ebx'
+					$opCode = '03C3'
+				Case 'add ecx,edx'
+					$opCode = '03CA'
+				Case 'add eax,esi'
+					$opCode = '03C6'
+				Case 'add esp,16'
+					$opCode = '83C410'
+				Case 'add esp,12'
+					$opCode = '83C40C'
+				Case 'or eax,esi'
+					$opCode = '0BC6'
+				Case 'or eax,edi'
+					$opCode = '0BC7'
+				Case 'or ecx,ebx'
+					$opCode = '0BCB'
+				Case 'or eax,ebx'
+					$opCode = '0BC3'
+				Case 'and ecx,0xFFFF'
+					$opCode = '81E1FFFF0000'
+				Case 'and eax,0xFFFF'
+					$opCode = '25FFFF0000'
+				Case 'and eax,0xF'
+					$opCode = '83E00F'
+				Case 'and eax,0xFF'
+					$opCode = '25FF000000'
+				Case 'and eax,0xFFFF'
+					$opCode = '25FFFF0000'
+				Case 'and ebx,0xF'
+					$opCode = '83E30F'
+				Case 'and ecx,0xF'
+					$opCode = '83E10F'
+				Case 'and edx,0xF'
+					$opCode = '83E20F'
+				Case 'imul ebx,ebx,7C'
+					$opCode = '6BDB7C'
+				Case 'imul eax,eax,7C'
+					$opCode = '6BC07C'
 				Case 'cmp ecx,4'
 					$opCode = '83F904'
 				Case 'cmp ecx,32'
 					$opCode = '83F932'
 				Case 'cmp ecx,3C'
 					$opCode = '83F93C'
+				Case 'cmp eax,2'
+					$opCode = '83F802'
+				Case 'cmp eax,0'
+					$opCode = '83F800'
+				Case 'cmp eax,B'
+					$opCode = '83F80B'
+				Case 'cmp eax,200'
+					$opCode = '3D00020000'
+				Case 'cmp word[edx],0'
+					$opCode = '66833A00'
+				Case 'cmp eax,ebx'
+					$opCode = '3BC3'
+				Case 'cmp eax,ecx'
+					$opCode = '3BC1'
+				Case 'cmp edx,esi'
+					$opCode = '3BD6'
+				Case 'cmp ecx,1050000'
+					$opCode = '81F900000501'
+				Case 'cmp eax,-1'
+					$opCode = '83F8FF'
+				Case 'cmp al,ah'
+					$opCode = '3AC4'
+				Case 'cmp eax,1'
+					$opCode = '83F801'
+				Case 'cmp ebx,edi'
+					$opCode = '3BDF'
+				Case 'cmp edx,ecx'
+					$opCode = '39CA'
+				Case 'cmp eax,dword[esi+9C]'
+					$opCode = '3B869C000000'
+				Case 'cmp al,f'
+					$opCode = '3C0F'
+				Case 'cmp ah,00'
+					$opCode = '80FC00'
+				Case 'cmp bl,AA'
+					$opCode = '80FBAA'
+				Case 'cmp bl,B9'
+					$opCode = '80FBB9'
+				Case 'cmp al,BA'
+					$opCode = '3CBA'
+				Case 'cmp ebx,esi'
+					$opCode = '3BDE'
+				Case 'cmp eax,1DA'
+					$opCode = '3DDA010000'
+				Case 'mov ebx,dword[eax]'
+					$opCode = '8B18'
+				Case 'mov ebx,dword[ecx]'
+					$opCode = '8B19'
+				Case 'mov ecx,dword[ebx+ecx]'
+					$opCode = '8B0C0B'
+				Case 'mov ecx,[ecx]'
+					$opCode = '8B09'
+				Case 'mov ax,word[esi]'
+					$opCode = '668B06'
+					Case 'mov word[edi],ax'
+					$opCode = '668907'
+				Case 'mov word[esi],ax'
+					$opCode = '668906'
+				Case 'mov dword[eax],0'
+					$opCode = 'C70000000000'
+				Case 'mov edi,edx'
+					$opCode = '8BFA'
+				Case 'mov ecx,esi'
+					$opCode = '8BCE'
+				Case 'mov ecx,edi'
+					$opCode = '8BCF'
+				Case 'mov ecx,esp'
+					$opCode = '8BCC'
+				Case 'mov edx,eax'
+					$opCode = '8BD0'
+				Case 'mov edx,ecx'
+					$opCode = '8BD1'
+				Case 'mov ebp,esp'
+					$opCode = '8BEC'
 				Case 'mov ecx,edx'
 					$opCode = '8BCA'
 				Case 'mov eax,ecx'
 					$opCode = '8BC1'
+				Case 'mov eax,esp'
+					$opCode = '8BC4'
+				Case 'mov eax,[ebp+10]'
+					$opCode = '8B4510'
+				Case 'mov eax,dword[ebp+10]'
+					$opCode = '8B4510'
+				Case 'mov esi,[ebp+C]'
+					$opCode = '8B750C'
+				Case 'mov esi,[ebp+0C]'
+					$opCode = '8B750C'
+				Case 'mov esi,dword[ebp+C]'
+					$opCode = '8B750C'
+				Case 'mov esi,dword[ebp+0C]'
+					$opCode = '8B750C'
 				Case 'mov ecx,dword[ebp+8]'
 					$opCode = '8B4D08'
 				Case 'mov ecx,dword[esp+1F4]'
@@ -2147,6 +3246,8 @@ Func _($asm)
 					$opCode = '8908'
 				Case 'mov dword[eax],ebx'
 					$opCode = '8918'
+				Case 'mov dword[edi],eax'
+					$opCode = '8907'
 				Case 'mov edx,dword[eax+4]'
 					$opCode = '8B5004'
 				Case 'mov edx,dword[eax+8]'
@@ -2155,22 +3256,6 @@ Func _($asm)
 					$opCode = '8B500C'
 				Case 'mov edx,dword[esi+1c]'
 					$opCode = '8B561C'
-				Case 'push dword[eax+8]'
-					$opCode = 'FF7008'
-				Case 'lea eax,dword[eax+18]'
-					$opCode = '8D4018'
-				Case 'lea ecx,dword[eax+4]'
-					$opCode = '8D4804'
-				Case 'lea ecx,dword[eax+C]'
-					$opCode = '8D480C'
-				Case 'lea eax,dword[eax+4]'
-					$opCode = '8D4004'
-				Case 'lea edx,dword[eax]'
-					$opCode = '8D10'
-				Case 'lea edx,dword[eax+4]'
-					$opCode = '8D5004'
-				Case 'lea edx,dword[eax+8]'
-					$opCode = '8D5008'
 				Case 'mov ecx,dword[eax+4]'
 					$opCode = '8B4804'
 				Case 'mov esi,dword[eax+4]'
@@ -2185,8 +3270,6 @@ Func _($asm)
 					$opCode = '8B400C'
 				Case 'mov ebx,dword[eax+4]'
 					$opCode = '8B5804'
-				Case 'mov ebx,dword[eax]'
-					$opCode = '8B10'
 				Case 'mov ebx,dword[eax+8]'
 					$opCode = '8B5808'
 				Case 'mov ebx,dword[eax+C]'
@@ -2203,38 +3286,8 @@ Func _($asm)
 					$opCode = '8B4810'
 				Case 'mov eax,dword[eax+4]'
 					$opCode = '8B4004'
-				Case 'push dword[eax+4]'
-					$opCode = 'FF7004'
-				Case 'push dword[eax+c]'
-					$opCode = 'FF700C'
 				Case 'mov esp,ebp'
 					$opCode = '8BE5'
-				Case 'mov esp,ebp'
-					$opCode = '8BE5'
-				Case 'pop ebp'
-					$opCode = '5D'
-				Case 'retn 10'
-					$opCode = 'C21000'
-				Case 'cmp eax,2'
-					$opCode = '83F802'
-				Case 'cmp eax,0'
-					$opCode = '83F800'
-				Case 'cmp eax,B'
-					$opCode = '83F80B'
-				Case 'cmp eax,200'
-					$opCode = '3D00020000'
-				Case 'shl eax,4'
-					$opCode = 'C1E004'
-				Case 'shl eax,8'
-					$opCode = 'C1E008'
-				Case 'shl eax,6'
-					$opCode = 'C1E006'
-				Case 'shl eax,7'
-					$opCode = 'C1E007'
-				Case 'shl eax,8'
-					$opCode = 'C1E008'
-				Case 'shl eax,9'
-					$opCode = 'C1E009'
 				Case 'mov edi,eax'
 					$opCode = '8BF8'
 				Case 'mov dx,word[ecx]'
@@ -2243,14 +3296,6 @@ Func _($asm)
 					$opCode = '668B12'
 				Case 'mov word[eax],dx'
 					$opCode = '668910'
-				Case 'test dx,dx'
-					$opCode = '6685D2'
-				Case 'cmp word[edx],0'
-					$opCode = '66833A00'
-				Case 'cmp eax,ebx'
-					$opCode = '3BC3'
-				Case 'cmp eax,ecx'
-					$opCode = '3BC1'
 				Case 'mov eax,dword[esi+8]'
 					$opCode = '8B4608'
 				Case 'mov ecx,dword[eax]'
@@ -2263,68 +3308,46 @@ Func _($asm)
 					$opCode = '8BC7'
 				Case 'mov al,byte[ebx]'
 					$opCode = '8A03'
-				Case 'test al,al'
-					$opCode = '84C0'
 				Case 'mov eax,dword[ecx]'
 					$opCode = '8B01'
-				Case 'lea ecx,dword[eax+180]'
-					$opCode = '8D8880010000'
 				Case 'mov ebx,dword[ecx+14]'
 					$opCode = '8B5914'
 				Case 'mov eax,dword[ebx+c]'
 					$opCode = '8B430C'
 				Case 'mov ecx,eax'
 					$opCode = '8BC8'
-				Case 'cmp eax,-1'
-					$opCode = '83F8FF'
 				Case 'mov al,byte[ecx]'
 					$opCode = '8A01'
 				Case 'mov ebx,dword[edx]'
 					$opCode = '8B1A'
-				Case 'lea edi,dword[edx+ebx]'
-					$opCode = '8D3C1A'
 				Case 'mov ah,byte[edi]'
 					$opCode = '8A27'
-				Case 'cmp al,ah'
-					$opCode = '3AC4'
 				Case 'mov dword[edx],0'
 					$opCode = 'C70200000000'
 				Case 'mov dword[ebx],ecx'
 					$opCode = '890B'
-				Case 'cmp edx,esi'
-					$opCode = '3BD6'
-				Case 'cmp ecx,1050000'
-					$opCode = '81F900000501'
 				Case 'mov edi,dword[edx+4]'
 					$opCode = '8B7A04'
 				Case 'mov edi,dword[eax+4]'
 					$opCode = '8B7804'
-				Case $asm = 'mov ecx,dword[E1D684]'
+				Case 'mov ecx,dword[E1D684]'
 					$opCode = '8B0D84D6E100'
-				Case $asm = 'mov dword[edx-0x70],ecx'
+				Case 'mov dword[edx-0x70],ecx'
 					$opCode = '894A90'
-				Case $asm = 'mov ecx,dword[edx+0x1C]'
+				Case 'mov ecx,dword[edx+0x1C]'
 					$opCode = '8B4A1C'
-				Case $asm = 'mov dword[edx+0x54],ecx'
+				Case 'mov dword[edx+0x54],ecx'
 					$opCode = '894A54'
-				Case $asm = 'mov ecx,dword[edx+4]'
+				Case 'mov ecx,dword[edx+4]'
 					$opCode = '8B4A04'
-				Case $asm = 'mov dword[edx-0x14],ecx'
+				Case 'mov dword[edx-0x14],ecx'
 					$opCode = '894AEC'
-				Case 'cmp ebx,edi'
-					$opCode = '3BDF'
 				Case 'mov dword[edx],ebx'
 					$opCode = '891A'
-				Case 'lea edi,dword[edx+8]'
-					$opCode = '8D7A08'
 				Case 'mov dword[edi],ecx'
 					$opCode = '890F'
-				Case 'retn'
-					$opCode = 'C3'
 				Case 'mov dword[edx],-1'
 					$opCode = 'C702FFFFFFFF'
-				Case 'cmp eax,1'
-					$opCode = '83F801'
 				Case 'mov eax,dword[ebp+37c]'
 					$opCode = '8B857C030000'
 				Case 'mov eax,dword[ebp+338]'
@@ -2349,8 +3372,6 @@ Func _($asm)
 					$opCode = '8BD4'
 				Case 'mov ecx,dword[ebx+170]'
 					$opCode = '8B8B70010000'
-				Case 'cmp eax,dword[esi+9C]'
-					$opCode = '3B869C000000'
 				Case 'mov ebx,dword[ecx+20]'
 					$opCode = '8B5920'
 				Case 'mov ecx,dword[ecx]'
@@ -2391,40 +3412,22 @@ Func _($asm)
 					$opCode = '8A414F'
 				Case 'mov al,byte[ecx+3f]'
 					$opCode = '8A413F'
-				Case 'cmp al,f'
-					$opCode = '3C0F'
-				Case 'lea esi,dword[esi+ebx*4]'
-					$opCode = '8D349E'
 				Case 'mov esi,dword[esi]'
 					$opCode = '8B36'
-				Case 'test esi,esi'
-					$opCode = '85F6'
-				Case 'clc'
-					$opCode = 'F8'
-				Case 'repe movsb'
-					$opCode = 'F3A4'
-				Case 'inc edx'
-					$opCode = '42'
 				Case 'mov eax,dword[ebp+8]'
 					$opCode = '8B4508'
 				Case 'mov eax,dword[ecx+8]'
 					$opCode = '8B4108'
-				Case 'test al,1'
-					$opCode = 'A801'
-				Case $asm = 'mov eax,[eax+2C]'
+				Case 'mov eax,[eax+2C]'
 					$opCode = '8B402C'
-				Case $asm = 'mov eax,[eax+680]'
+				Case 'mov eax,[eax+680]'
 					$opCode = '8B8080060000'
-				Case $asm = 'fld st(0),dword[ebp+8]'
-					$opCode = 'D94508'
 				Case 'mov esi,eax'
 					$opCode = '8BF0'
 				Case 'mov edx,dword[ecx]'
 					$opCode = '8B11'
 				Case 'mov dword[eax],edx'
 					$opCode = '8910'
-				Case 'test edx,edx'
-					$opCode = '85D2'
 				Case 'mov dword[eax],F'
 					$opCode = 'C7000F000000'
 				Case 'mov ebx,[ebx+0]'
@@ -2441,18 +3444,8 @@ Func _($asm)
 					$opCode = '8B4004'
 				Case 'mov ebx,dword[ebp+C]'
 					$opCode = '8B5D0C'
-				Case 'add ebx,ecx'
-					$opCode = '03D9'
-				Case 'lea ecx,dword[ecx+ecx*2]'
-					$opCode = '8D0C49'
-				Case 'lea ecx,dword[ebx+ecx*4]'
-					$opCode = '8D0C8B'
-				Case 'lea ecx,dword[ecx+18]'
-					$opCode = '8D4918'
 				Case 'mov ecx,dword[ecx+edx]'
 					$opCode = '8B0C11'
-				Case 'push dword[ebp+8]'
-					$opCode = 'FF7508'
 				Case 'mov dword[eax],edi'
 					$opCode = '8938'
 				Case 'mov [eax+8],ecx'
@@ -2461,19 +3454,183 @@ Func _($asm)
 					$opCode = '89480C'
 				Case 'mov ebx,dword[ecx-C]'
 					$opCode = '8B59F4'
-				Case 'mov [eax+!],ebx'
+				Case 'mov [eax+C],ebx'
 					$opCode = '89580C'
 				Case 'mov ecx,[eax+8]'
 					$opCode = '8B4808'
-				Case 'lea ecx,dword[ebx+18]'
-					$opCode = '8D4B18'
 				Case 'mov ebx,dword[ebx+18]'
 					$opCode = '8B5B18'
 				Case 'mov ecx,dword[ecx+0xF4]'
 					$opCode = '8B89F4000000'
-				Case 'cmp ah,00'
-					$opCode = '80FC00'
+				Case 'mov eax,edx'
+					$opCode = '8BC2'
+				Case 'mov esi,edx'
+					$opCode = '8BF2'
+				Case 'mov bl,byte[eax]'
+					$opCode = '8A18'
+				Case 'mov bl,byte[ecx+5]'
+					$opCode = '8A5905'
+				Case 'mov ebx,dword[ecx+1]'
+					$opCode = '8B5901'
+				Case 'mov ebx,dword[ecx+6]'
+					$opCode = '8B5906'
+				Case 'mov edi,dword[esi]'
+					$opCode = '8B3E'
+				Case 'mov ecx,dword[eax+14]'
+					$opCode = '8B4814'
+				Case 'mov edx,dword[eax+14]'
+					$opCode = '8B5014'
+				Case 'mov edx,dword[eax+18]'
+					$opCode = '8B5018'
+				Case 'mov edi,ecx'
+					$opCode = '8BF9'
+				Case 'mov edi,ebx'
+					$opCode = '8BFB'
+				Case 'mov esi,ecx'
+					$opCode = '8BF1'
+				Case 'mov esi,ebx'
+					$opCode = '8BF3'
+				Case 'mov edi,esi'
+					$opCode = '8BFE'
+				Case 'mov ebx,ecx'
+					$opCode = '8BD9'
+				Case 'mov eax,ebx'
+					$opCode = '8BC3'
+				Case 'mov eax,esi'
+					$opCode = '8BC6'
+				Case 'mov ecx,ebx'
+					$opCode = '8BCB'
+				Case 'mov ebx,edx'
+					$opCode = '8BDA'
+				Case 'mov esi,edx'
+					$opCode = '8BF2'
+				Case 'mov ebx,esi'
+					$opCode = '8BDE'
+				Case 'mov edx,ebx'
+					$opCode = '8BD3'
+				Case 'mov edx,esi'
+					$opCode = '8BD6'
+				Case 'mov edx,edi'
+					$opCode = '8BD7'
+				Case 'mov ecx,edx'
+					$opCode = '8BCA'
+				Case 'mov esi,edi'
+					$opCode = '8BF7'
+				Case 'mov ebp,eax'
+					$opCode = '8BE8'
+				Case 'mov ebp,ebx'
+					$opCode = '8BEB'
+				Case 'mov ebp,ecx'
+					$opCode = '8BE9'
+				Case 'mov ebp,edx'
+					$opCode = '8BEA'
+				Case 'mov esp,eax'
+					$opCode = '8BE0'
+				Case 'mov esp,ecx'
+					$opCode = '8BE1'
+				Case 'mov esp,edx'
+					$opCode = '8BE2'
+				Case 'mov esp,ebx'
+					$opCode = '8BE3'
+				Case 'mov esi,dword[ebp+8]'
+					$opCode = '8B7508'
+				Case 'mov esi,dword[ebp+C]'
+					$opCode = '8B750C'
+				Case 'mov esi,dword[ebp+10]'
+					$opCode = '8B7510'
+				Case 'mov edi,dword[ebp+8]'
+					$opCode = '8B7D08'
+				Case 'mov edi,dword[ebp+C]'
+					$opCode = '8B7D0C'
+				Case 'mov ebx,dword[ebp+8]'
+					$opCode = '8B5D08'
+				Case 'mov edx,dword[ebp+8]'
+					$opCode = '8B5508'
+				Case 'mov edx,dword[ebp+C]'
+					$opCode = '8B550C'
+				Case 'mov dword[eax+C],0'
+					$opCode = 'C7400C00000000'
+				Case 'mov dword[eax+4],edx'
+					$opCode = '895004'
+				Case 'mov dword[eax+4],ebx'
+					$opCode = '895804'
+				Case 'mov dword[eax+8],edx'
+					$opCode = '895008'
+				Case 'mov dword[eax+C],edx'
+					$opCode = '89500C'
+				Case 'mov dword[eax+C],0'
+					$opCode = 'C7400C00000000'
+				Case 'mov dword[eax+C],1'
+					$opCode = 'C7400C01000000'
+				Case 'mov edx,dword[ebp+C]'
+					$opCode = '8B550C'
+				Case 'mov ebx,dword[ebp+10]'
+					$opCode = '8B5D10'
+				Case 'mov edx,dword[ebp+10]'
+					$opCode = '8B5510'
+				Case 'mov esi,ebp'
+					$opCode = '8BF5'
+				Case 'mov ecx,dword[esi]'
+					$opCode = '8B0E'
+				Case 'mov ecx,dword[ebp+C]'
+					$opCode = '8B4D0C'
+				Case 'mov ecx,dword[ebp+10]'
+					$opCode = '8B4D10'
+				Case 'mov edx,dword[esi]'
+					$opCode = '8B16'
+				Case 'mov edx,dword[edi]'
+					$opCode = '8B17'
+				Case 'mov eax,dword[esi]'
+					$opCode = '8B06'
+				Case 'mov eax,dword[edi]'
+					$opCode = '8B07'
+				Case 'mov ebx,dword[esi]'
+					$opCode = '8B1E'
+				Case 'mov ebx,dword[edi]'
+					$opCode = '8B1F'
+				Case 'mov eax,dword[eax]'
+					$opCode = '8B00'
+				Case 'mov eax,dword[eax+18]'
+					$opCode = '8B4018'
+				Case 'mov eax,dword[eax+44]'
+					$opCode = '8B4044'
+				Case 'mov eax,dword[eax+198]'
+					$opCode = '8B8098010000'
+				Case 'mov ebx,dword[ebx+10]'
+					$opCode = '8B5B10'
+				Case 'mov ebx,dword[eax+10]'
+					$opCode = '8B5810'
+				Case 'mov ebx,dword[eax+19C]'
+					$opCode = '8B989C010000'
+				Case 'movzx ecx,di'
+					$opCode = '0FB7CF'
+				Case 'movzx eax,di'
+					$opCode = '0FB7C7'
+				Case 'movzx ecx,cx'
+					$opCode = '0FB7C9'
+				; SellItem
+				Case 'mov ecx,[eax]'
+					$opCode = '8B08'
+				; Crafting
+				Case 'lea edi,[eax+C]'
+					$opCode = '8D780C'
+				; Collector Exchange
+				Case 'lea ecx,[edx+4]'
+					$opCode = '8D4A04'
+				Case 'lea eax,[edx+C]'
+					$opCode = '8D420C'
+				Case 'mov ebx,[edx+8]'
+					$opCode = '8B5A08'
+				Case 'lea ecx,[edx+ebx*4+C]'
+					$opCode = '8D4C9A0C'
+				; LoadFinished
+				Case 'push dword[edi+1C]'
+					$opCode = 'FF771C'
+				; Action
+				Case 'cmp dword[eax+C],0'
+					$opCode = '83780C00'
 				Case Else
+					Error('Could not assemble: ' & $asm)
 					MsgBox(0x0, 'ASM', 'Could not assemble: ' & $asm)
 					Exit
 			EndSwitch
