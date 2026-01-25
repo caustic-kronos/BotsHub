@@ -190,6 +190,10 @@ Func EnterFissureOfWoe()
 		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		MoveTo(-2500, 18700)
+		If GetDistanceToPoint(GetMyAgent(), -2500, 18700) > $RANGE_ADJACENT Then
+			MoveTo(-4200, 18750)
+			MoveTo(-2500, 18700)
+		EndIf
 		SendChat('/kneel', '')
 		Local $ping = GetPing()
 		Sleep(3000 + $ping)
