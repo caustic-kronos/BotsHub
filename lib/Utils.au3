@@ -1534,27 +1534,33 @@ Global Const $MEMORY_INFO_STRUCT_TEMPLATE = 'dword BaseAddress;dword AllocationB
 #Region Memory GWA2
 ;~ Writes a binary string to a specified memory address in the process.
 Func WriteBinary($processHandle, $binaryString, $address)
+	PushContext('WriteBinary')
 	Local $data = SafeDllStructCreate('byte[' & 0.5 * StringLen($binaryString) & ']')
 	For $i = 1 To DllStructGetSize($data)
 		DllStructSetData($data, 1, Dec(StringMid($binaryString, 2 * $i - 1, 2)), $i)
 	Next
 	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($data), 'int', DllStructGetSize($data), 'int', 0)
+	PopContext('WriteBinary')
 EndFunc
 
 
 ;~ Writes the specified data to a memory address of a given type (default is 'dword').
 Func MemoryWrite($processHandle, $address, $data, $type = 'dword')
+	PushContext('MemoryWrite')
 	Local $buffer = SafeDllStructCreate($type)
 	DllStructSetData($buffer, 1, $data)
 	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	PopContext('MemoryWrite')
 EndFunc
 
 
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
 Func MemoryRead($processHandle, $address, $type = 'dword')
+	PushContext('MemoryRead')
 	Local $buffer = SafeDllStructCreate($type)
 	Local $bytesRead =  DllStructCreate('ulong_ptr')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', DllStructGetSize($buffer), 'ptr', DllStructGetPtr($bytesRead))
+	PopContext('MemoryRead')
 	Return SetExtended(DllStructGetData($bytesRead, 1), DllStructGetData($buffer, 1))
 EndFunc
 
@@ -1566,14 +1572,17 @@ Func StructMemoryRead($processHandle, $address, $type = 'dword')
 	Local $bytesRead = DllStructCreate('ulong_ptr')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', DllStructGetSize($buffer), 'ptr', DllStructGetPtr($bytesRead))
 	If @error Or $result[0] = 0 Or DllStructGetData($bytesRead, 1) == 0 Then
+		PopContext('StructMemoryRead')
 		Return SetError(1, DllStructGetData($bytesRead, 1), Null)
 	EndIf
+	PopContext('StructMemoryRead')
 	Return SetExtended(DllStructGetData($bytesRead, 1), $buffer)
 EndFunc
 
 
 ;~ Reads data from a memory address, following pointer chains based on the provided offsets.
 Func MemoryReadPtr($processHandle, $address, $offset, $type = 'dword')
+	PushContext('MemoryReadPtr')
 	Local $ptrCount = UBound($offset) - 2
 	Local $buffer = SafeDllStructCreate('dword')
 	Local $memoryInfo = DllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
@@ -1599,10 +1608,12 @@ Func MemoryReadPtr($processHandle, $address, $offset, $type = 'dword')
 		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 		$data[0] = $address
 		$data[1] = DllStructGetData($buffer, 1)
+		PopContext('MemoryReadPtr')
 		Return $data
 	Next
 	; This can be valid when trying to access an agent out of range for instance
 	DebuggerLog('Tried to access an invalid address')
+	PopContext('MemoryReadPtr')
 	Return $data
 EndFunc
 
@@ -1618,6 +1629,7 @@ EndFunc
 
 
 Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
+	PushContext('FindInRange')
 	Local $patternBytes = StringToByteArray($pattern)
 	Local $patternLength = UBound($patternBytes)
 
@@ -1636,9 +1648,13 @@ Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
 		$totalSize = $startPtr - $endPtr
 	; Nothing to scan
 	Else
+		PopContext('FindInRange')
 		Return 0
 	EndIf
-	If $totalSize < $patternLength Then Return 0
+	If $totalSize < $patternLength Then
+		PopContext('FindInRange')
+		Return 0
+	EndIf
 
 	Local $bufferMaxSize = 4 * 1024
 	Local $buffer = Null
@@ -1681,7 +1697,10 @@ Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
 			$buffer = StructMemoryRead($processHandle, $bufferBaseAddr, 'byte[' & $bufferMaxSize & ']')
 			$bufferSize = @extended
 			; Failed to read memory
-			If $bufferSize == 0 Then Return 0
+			If $bufferSize == 0 Then
+				PopContext('FindInRange')
+				Return 0
+			EndIf
 			$offsetInBuffer = $currentAddr - $bufferBaseAddr
 		EndIf
 
@@ -1693,7 +1712,10 @@ Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
 		$matchedCount += 1
 		If $maskChar == '?' Or $currentByte == $patternBytes[$patternIndex] Then
 			; Check if we've matched the entire pattern
-			If $matchedCount == $patternLength Then Return $scanForward ? $currentAddr - $patternLength + $offset : $currentAddr + $offset - 1
+			If $matchedCount == $patternLength Then 
+				PopContext('FindInRange')
+				Return $scanForward ? $currentAddr - $patternLength + $offset : $currentAddr + $offset - 1
+			EndIf
 		Else
 			; Mismatch - salvage partial matches
 			Local $newMatchCount = 0
@@ -1721,12 +1743,14 @@ Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
 			$matchedCount = $newMatchCount
 		EndIf
 	Next
+	PopContext('FindInRange')
 	Return 0
 EndFunc
 
 
 ;~ Resolves the final destination address of a direct relative CALL or JMP instruction by following rel8/rel32 stubs until a non-branch instruction is reached.
 Func ResolveDirectBranchTarget($processHandle, $address)
+	PushContext('ResolveDirectBranchTarget')
 	Local $maxDepth = 8
 	For $i = 1 To $maxDepth
 		Local $opcode = MemoryRead($processHandle, $address, 'byte')
@@ -1748,10 +1772,12 @@ Func ResolveDirectBranchTarget($processHandle, $address)
 				If BitAND($relativeOffset, 0x80) Then $relativeOffset = -((BitNOT($relativeOffset) + 1) And 0xFF)
 				$address = $address + 2 + $relativeOffset
 			Case Else
+				PopContext('ResolveDirectBranchTarget')
 				Return $address
 		EndSwitch
 	Next
 	; too many indirections
+	PopContext('ResolveDirectBranchTarget')
 	Return 0
 EndFunc
 
@@ -1802,6 +1828,7 @@ EndFunc
 
 ;~ Scan memory for a pattern - used to find process and to find character names
 Func ScanMemoryForPattern($processHandle, $patternBinary)
+	PushContext('ScanMemoryForPattern')
 	Local $currentSearchAddress = 0x00000000
 	Local $memoryInfos = SafeDllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
 
@@ -1826,12 +1853,14 @@ Func ScanMemoryForPattern($processHandle, $patternBinary)
 					Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
 					If $matchOffset > 0 Then
 						Local $match[] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
+						PopContext('ScanMemoryForPattern')
 						Return $match
 					EndIf
 			EndSwitch
 		EndIf
 		$currentSearchAddress += $regionSize
 	WEnd
+	PopContext('ScanMemoryForPattern')
 	Return Null
 EndFunc
 
@@ -1847,12 +1876,14 @@ EndFunc
 
 ;~ Get the address provided to a call (ie: strips the E8 instruction, and sums current call address with the obtained offset)
 Func GetCallTargetAddress($processHandle, $address)
+	PushContext('GetCallTargetAddress')
 	Local $offset = MemoryRead($processHandle, $address + 0x01, 'dword')
 	If $offset > 0x7FFFFFFF Then
 		Debug('Offset is larger than 0x7FFFFFFF, adjusting for 64-bit address space.')
 		$offset -= 0x100000000
 	EndIf
 	Local $targetAddress = $address + 5 + $offset
+	PopContext('GetCallTargetAddress')
 	Return $targetAddress
 EndFunc
 
@@ -2061,10 +2092,12 @@ EndFunc
 #Region Memory unused / debugging functions
 ;~ Alternate way to get anything, reads directly from game memory without call to Scan something - but is not robust and will break anytime the game changes
 Func GetDataFromRelativeAddress($processHandle, $relativeCheatEngineAddress, $size)
+	PushContext('GetDataFromRelativeAddress')
 	Local $baseAddress = GetGameProcessBaseAddress()
 	Local $fullAddress = $baseAddress + $relativeCheatEngineAddress - 0x1000
 	Local $buffer = DllStructCreate('byte[' & $size & ']')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'ptr', $fullAddress, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	PopContext('GetDataFromRelativeAddress')
 	Return $buffer
 EndFunc
 

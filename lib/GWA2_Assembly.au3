@@ -291,8 +291,12 @@ Global $pe_sections_ranges[5][2]
 #Region Initialisation
 ;~ Scan all existing GW game clients
 Func ScanAndUpdateGameClients()
+	PushContext('ScanAndUpdateGameClients')
 	Local $processList = ProcessList('gw.exe')
-	If @error Or $processList[0][0] = 0 Then Return
+	If @error Or $processList[0][0] = 0 Then
+		PopContext('ScanAndUpdateGameClients')
+		Return
+	EndIf
 
 	; Step 1: Mark all existing entries as 'unseen'
 	Local $initialClientCount = $game_clients[0][0]
@@ -330,11 +334,13 @@ Func ScanAndUpdateGameClients()
 			$game_clients[$i][3] = ''
 		EndIf
 	Next
+	PopContext('ScanAndUpdateGameClients')
 EndFunc
 
 
 ;~ Find character names by scanning memory
 Func ScanForCharname($processHandle)
+	PushContext('ScanForCharname')
 	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A14FF751868'))
 	; If you have issues finding your character name, tries this line instead of the previous one :
 	;Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x00E20878'))
@@ -344,7 +350,9 @@ Func ScanForCharname($processHandle)
 	Local $buffer = SafeDllStructCreate('ptr')
 	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Local $characterName = DllStructGetData($buffer, 1)
-	Return MemoryRead($processHandle, $characterName, 'wchar[30]')
+	Local $result = MemoryRead($processHandle, $characterName, 'wchar[30]')
+	PopContext('ScanForCharname')
+	Return $result
 EndFunc
 
 
@@ -526,6 +534,7 @@ EndFunc
 
 ;~ Build, inject, execute and harvest the scan results
 Func ExecutePatternScan()
+	PushContext('ExecutePatternScan')
 	; Locate game process
 	Local $gwBaseAddress = GetGameProcessBaseAddress()
 	Debug('Executing pattern scan')
@@ -543,6 +552,7 @@ Func ExecutePatternScan()
 	Debug('Creating scan procedure')
 	AssemblerCreateScanProcedure($gwBaseAddress)
 
+	PushContext('ExecutePatternScan - Checking for injections')
 	Local $newHeader = False
 	Local $fixedHeader = $gwBaseAddress + 0x9E4000
 	Local $processHandle = GetProcessHandle()
@@ -562,41 +572,53 @@ Func ExecutePatternScan()
 			$memory_interface_header = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $GWA2_REFORGED_HEADER_SIZE, 'dword', 0x1000, 'dword', 0x40)
 			; Get the allocated memory address
 			$memory_interface_header = $memory_interface_header[0]
-			If $memory_interface_header == 0 Then Return SetError(1, 0, 0)
+			If $memory_interface_header == 0 Then
+				PopContext('ExecutePatternScan - Checking for injections')
+				PopContext('ExecutePatternScan')
+				Return SetError(1, 0, 0)
+			EndIf
 			$newHeader = True
 		Else
 			; Found base address, adding position of the match and -1 to get the start of the header
 			$memory_interface_header = $memory_interface_header[1] + $memory_interface_header[2] - 1
 		EndIf
 	EndIf
+	PopContext('ExecutePatternScan - Checking for injections')
 
 	Debug('Writing header to external process')
+	PushContext('ExecutePatternScan - Writing new header to external process')
 	If $newHeader Then
 		; Write the allocated memory address to the scan memory location
 		WriteBinary($processHandle, $GWA2_REFORGED_HEADER_HEXA, $memory_interface_header)
 		MemoryWrite($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 0)
 		MemoryWrite($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 0)
 	EndIf
+	PopContext('ExecutePatternScan - Writing new header to external process')
 
+	PushContext('ExecutePatternScan - Writing header to external process')
 	Local $allocationScan = False
 	Local $memoryInterface = MemoryRead($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, 'ptr')
-
 	If $memoryInterface = 0 Then
 		; Allocate a new block of memory for the scan routine
 		$memoryInterface = SafeDllCall13($kernel_handle, 'ptr', 'VirtualAllocEx', 'handle', $processHandle, 'ptr', 0, 'ulong_ptr', $asm_injection_size, 'dword', 0x1000, 'dword', 0x40)
 		; Get the allocated memory address
 		$memoryInterface = $memoryInterface[0]
-		If $memoryInterface = 0 Then Return SetError(2, 0, 0)
-
+		If $memoryInterface = 0 Then
+			PopContext('ExecutePatternScan - Writing header to external process')
+			PopContext('ExecutePatternScan')
+			Return SetError(2, 0, 0)
+		EndIf
 		MemoryWrite($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_SCAN_ADDRESS, $memoryInterface)
 		$allocationScan = True
 	EndIf
+	PopContext('ExecutePatternScan - Writing header to external process')
 
 	Debug('Completing ASM code')
 	; Complete the assembly code for the scan routine
 	CompleteASMCode($memoryInterface)
 
 	Debug('Writing ASM code')
+	PushContext('ExecutePatternScan - Writing ASM')
 	If $allocationScan Then
 		; Write the assembly code to the allocated memory address
 		WriteBinary($processHandle, $asm_injection_string, $memoryInterface + $asm_code_offset)
@@ -617,7 +639,9 @@ Func ExecutePatternScan()
 
 		SafeDllCall5($kernel_handle, 'int', 'CloseHandle', 'int', $thread)
 	EndIf
+	PopContext('ExecutePatternScan - Writing ASM')
 	FillScanResults()
+	PopContext('ExecutePatternScan')
 EndFunc
 
 
@@ -638,12 +662,14 @@ EndFunc
 
 ;~ Compute final resolved addresses for each scan entry
 Func FillScanResults()
+	PushContext('FillScanResults')
 	Debug('Retrieving scan results')
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To UBound($scan_patterns) - 1
 		Local $label = $scan_patterns[$i][0]
 		$scan_results[$label] = GetScannedAddress($processHandle, $label, $scan_patterns[$i][2])
 	Next
+	PopContext('FillScanResults')
 EndFunc
 
 
@@ -655,11 +681,13 @@ EndFunc
 
 ;~ Translate raw scan results into usable runtime elements
 Func MapScanResultsToLabels()
+	PushContext('MapScanResultsToLabels')
 	Debug('Mapping scan results to labels')
 	Local $processHandle = GetProcessHandle()
 	Local $tempValue
 
 	; Core
+	PushContext('MapScanResultsToLabels - Core')
 	$base_address_ptr = MemoryRead($processHandle, $scan_results['BasePointer'])
 	$ping_address = MemoryRead($processHandle, $scan_results['Ping'])
 	$status_code_address = MemoryRead($processHandle, $scan_results['StatusCode'])
@@ -680,16 +708,20 @@ Func MapScanResultsToLabels()
 	SetLabel('Environment', Ptr($scan_results['Environment']))
 	SetLabel('SceneContext ', Ptr($scene_context_ptr))
 	SetLabel('TimeOnMap ', Ptr($time_on_map_ptr))
+	PopContext('MapScanResultsToLabels - Core')
 
 	; Skill
+	PushContext('MapScanResultsToLabels - Skill')
 	$skill_base_address = MemoryRead($processHandle, $scan_results['SkillBase'])
 	$skill_timer_address = MemoryRead($processHandle, $scan_results['SkillTimer'])
 	SetLabel('SkillBase', Ptr($skill_base_address))
 	SetLabel('SkillTimer', Ptr($skill_timer_address))
 	SetLabel('UseSkill', Ptr($scan_results['UseSkill']))
 	SetLabel('UseHeroSkill', Ptr($scan_results['UseHeroSkill']))
+	PopContext('MapScanResultsToLabels - Skill')
 
 	; Friend
+	PushContext('MapScanResultsToLabels - Friends')
 	$friend_list_address = $scan_results['FriendList']
 	$friend_list_address = MemoryRead($processHandle, FindInRange($processHandle, '57B9', 'xx', 2, $friend_list_address, $friend_list_address + 0xFF))
 	$tempValue = $scan_results['RemoveFriend']
@@ -699,14 +731,18 @@ Func MapScanResultsToLabels()
 	SetLabel('PlayerStatus', Ptr($scan_results['PlayerStatus']))
 	SetLabel('AddFriend', Ptr($scan_results['AddFriend']))
 	SetLabel('RemoveFriend', Ptr($tempValue))
+	PopContext('MapScanResultsToLabels - Friends')
 
 	; Attributes
+	PushContext('MapScanResultsToLabels - Attributes')
 	$attribute_info_ptr = MemoryRead($processHandle, $scan_results['AttributeInfo'])
 	SetLabel('AttributeInfo', Ptr($attribute_info_ptr))
 	SetLabel('IncreaseAttribute', Ptr($scan_results['IncreaseAttribute']))
 	SetLabel('DecreaseAttribute', Ptr($scan_results['DecreaseAttribute']))
+	PopContext('MapScanResultsToLabels - Attributes')
 
 	; Trader
+	PushContext('MapScanResultsToLabels - Trader')
 	Local $buyItemBase = MemoryRead($processHandle, $scan_results['BuyItemBase'])
 	Local $salvageGlobal = MemoryRead($processHandle, $scan_results['SalvageGlobal'] - 0x4)
 	SetLabel('BuyItemBase', Ptr($buyItemBase))
@@ -714,8 +750,10 @@ Func MapScanResultsToLabels()
 	SetLabel('Transaction', Ptr($scan_results['Transaction']))
 	SetLabel('RequestQuote', Ptr($scan_results['RequestQuote']))
 	SetLabel('Salvage', Ptr($scan_results['Salvage']))
+	PopContext('MapScanResultsToLabels - Trader')
 
 	; Agent
+	PushContext('MapScanResultsToLabels - Agent')
 	$agent_base_address = MemoryRead($processHandle, $scan_results['AgentBase'])
 	$max_agents = $agent_base_address + 0x8
 	$my_ID = MemoryRead($processHandle, $scan_results['MyID'])
@@ -725,8 +763,10 @@ Func MapScanResultsToLabels()
 	SetLabel('MyID', Ptr($my_ID))
 	SetLabel('CurrentTarget', Ptr($current_target_agent_ID))
 	SetLabel('ChangeTarget', Ptr($scan_results['ChangeTarget'] + 1))
+	PopContext('MapScanResultsToLabels - Agent')
 
 	; Map
+	PushContext('MapScanResultsToLabels - Map')
 	$instance_info_ptr = MemoryRead($processHandle, $scan_results['InstanceInfo'])
 	Local $worldConst = MemoryRead($processHandle, $scan_results['WorldConst'])
 	Local $clickCoordsX = MemoryRead($processHandle, $scan_results['ClickCoords'])
@@ -740,15 +780,19 @@ Func MapScanResultsToLabels()
 	SetLabel('Region', Ptr($region_ID))
 	SetLabel('Move', Ptr($scan_results['Move']))
 	SetLabel('AreaInfo', Ptr($area_info_ptr))
+	PopContext('MapScanResultsToLabels - Map')
 
 	; Trade
+	PushContext('MapScanResultsToLabels - Trade')
 	SetLabel('TradeCancel', Ptr($scan_results['TradeCancel']))
 	$tempValue = $scan_results['TradeCancel']
 	SetLabel('TradeAccept', Ptr($tempValue + 0x60))
 	SetLabel('TradeOfferItem', Ptr($tempValue + 0x90))
 	SetLabel('TradeSubmitOffer', Ptr($tempValue + 0x190))
+	PopContext('MapScanResultsToLabels - Trade')
 
 	; UI
+	PushContext('MapScanResultsToLabels - UI')
 	SetLabel('UIMessage', Ptr($scan_results['UIMessage']))
 	$tempValue = $scan_results['Dialog']
 	SetLabel('Dialog', Ptr(GetCallTargetAddress($processHandle, $tempValue)))
@@ -786,13 +830,17 @@ Func MapScanResultsToLabels()
 	SetLabel('AcceptInvitation', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x4D)))
 	$tempValue = $scan_results['ActiveQuest']
 	SetLabel('ActiveQuest', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0xF)))
+	PopContext('MapScanResultsToLabels - UI')
 
 	;EncString Decoding
+	PushContext('MapScanResultsToLabels - String Decoding')
 	$tempValue = $scan_results['ValidateAsyncDecodeStr']
 	$tempValue = ScanToFunctionStart($tempValue)
 	SetLabel('ValidateAsyncDecodeStr', Ptr($tempValue))
+	PopContext('MapScanResultsToLabels - String Decoding')
 
 	; Hook
+	PushContext('MapScanResultsToLabels - Hook')
 	$tempValue = $scan_results['Engine']
 	SetLabel('MainStart', Ptr($tempValue))
 	SetLabel('MainReturn', Ptr($tempValue + 0x5))
@@ -808,6 +856,7 @@ Func MapScanResultsToLabels()
 	$tempValue = $scan_results['TradePartner']
 	SetLabel('TradePartnerStart', Ptr($tempValue))
 	SetLabel('TradePartnerReturn', Ptr($tempValue + 0x5))
+	PopContext('MapScanResultsToLabels - Hook')
 	; Hook log
 	If IsDeclared('g_b_Scanner') Then Extend_Scanner()
 	SetLabel('QueueSize', '0x00000040')
@@ -816,11 +865,13 @@ Func MapScanResultsToLabels()
 	For $key In MapKeys($labels_map)
 		Debug($key & ': ' & $labels_map[$key])
 	Next
+	PopContext('MapScanResultsToLabels')
 EndFunc
 
 
 ;~ Bind command entry points to usable DllStruct
 Func InitializeCommandStructures()
+	PushContext('InitializeCommandStructures')
 	Debug('Initializing command structures')
 	Local $processHandle = GetProcessHandle()
 	$agent_copy_count = GetLabel('AgentCopyCount')
@@ -904,6 +955,7 @@ Func InitializeCommandStructures()
 	DllStructSetData($REJECT_INVITATION_STRUCT, 1, GetLabel('CommandRejectInvitation'))
 	DllStructSetData($ACCEPT_INVITATION_STRUCT, 1, GetLabel('CommandAcceptInvitation'))
 	;EncString
+	PopContext('InitializeCommandStructures')
 	DllStructSetData($decode_enc_string, 1, GetLabel('CommandDecodeEncString'))
 	$decode_input_ptr = GetLabel('DecodeInputPtr')
 	$decode_output_ptr = GetLabel('DecodeOutputPtr')
@@ -913,6 +965,7 @@ EndFunc
 
 ;~ Find multiple strings within a PE section
 Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
+	PushContext('FindStringsInMemorySection')
 	Local $gwBaseAddress = GetGameProcessBaseAddressWithPE()
 	Local $stringsCount = UBound($strings)
 	Local $results[$stringsCount]
@@ -921,11 +974,13 @@ Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
 	If $pe_sections_ranges[$section][0] = 0 Or $pe_sections_ranges[$section][1] = 0 Then
 		If $gwBaseAddress == 0 Then
 			Error('Failed to get GW base address')
+			PopContext('FindStringsInMemorySection')
 			Return $results
 		EndIf
 
 		If Not ReadExecutableSections($gwBaseAddress) Then
 			Error('Failed to initialize memory sections')
+			PopContext('FindStringsInMemorySection')
 			Return $results
 		EndIf
 	EndIf
@@ -936,7 +991,9 @@ Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
 	If $sectionStart = 0 Or $sectionEnd = 0 Or $sectionStart >= $sectionEnd Then
 		Debug('Invalid section bounds. Start: ' & Hex($sectionStart) & ', End: ' & Hex($sectionEnd))
 		Debug('Falling back to bruteforce scanner due to invalid section bounds')
-		Return FallbackMemoryStringSearch($strings, $section)
+		Local $result = FallbackMemoryStringSearch($strings, $section)
+		PopContext('FindStringsInMemorySection')
+		Return $result
 	EndIf
 
 	Local $sectionSize = Number($sectionEnd - $sectionStart)
@@ -944,13 +1001,17 @@ Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
 
 	If $sectionSize > $maxReadSize Then
 		Debug('Falling back to bruteforce scanner due to too large sectionSize')
-		Return FallbackMemoryStringSearch($strings, $section)
+		Local $result = FallbackMemoryStringSearch($strings, $section)
+		PopContext('FindStringsInMemorySection')
+		Return $result
 	EndIf
 
 	Local $sectionBuffer = DllStructCreate('byte[' & $sectionSize & ']')
 	If @error Then
 		Debug('Falling back to bruteforce scanner; could not create section buffer')
-		Return FallbackMemoryStringSearch($strings, $section)
+		Local $result = FallbackMemoryStringSearch($strings, $section)
+		PopContext('FindStringsInMemorySection')
+		Return $result
 	EndIf
 
 	Local $bytesRead = 0
@@ -958,7 +1019,9 @@ Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
 
 	If @error Or Not $success[0] Or $success[5] < $sectionSize Then
 		Debug('Falling back to bruteforce scanner; failed to read section')
-		Return FallbackMemoryStringSearch($strings, $section)
+		Local $result = FallbackMemoryStringSearch($strings, $section)
+		PopContext('FindStringsInMemorySection')
+		Return $result
 	EndIf
 
 	; Preprocess patterns (Boyer–Moore–Horspool) + preconvert patterns to byte arrays
@@ -1023,15 +1086,18 @@ Func FindStringsInMemorySection($strings, $section = $PE_RDATA_SECTION)
 			EndIf
 		WEnd
 	Next
+	PopContext('FindStringsInMemorySection')
 	Return $results
 EndFunc
 
 
 ;~ Locate the base address of GW.exe via module enumeration - pattern scanning is not enough to identify PE layout reliably
 Func GetGameProcessBaseAddressWithPE()
+	PushContext('GetGameProcessBaseAddressWithPE')
 	Debug('Getting game base address (PE included)')
 	Local $processHandle = GetProcessHandle()
 	If $processHandle = 0 Then
+		PopContext('GetGameProcessBaseAddressWithPE')
 		Error('Invalid process handle')
 		Return 0
 	EndIf
@@ -1041,12 +1107,14 @@ Func GetGameProcessBaseAddressWithPE()
 	Local $psapiHandle = DllOpen('psapi.dll')
 	If @error Then
 		Error('Failed to open psapi.dll')
+		PopContext('GetGameProcessBaseAddressWithPE')
 		Return 0
 	EndIf
 
 	Local $result = SafeDllCall11($psapiHandle, 'bool', 'EnumProcessModules', 'handle', $processHandle, 'ptr', DllStructGetPtr($modules), 'dword', DllStructGetSize($modules), 'ptr', DllStructGetPtr($bytesNeeded))
 	If @error Or Not $result[0] Then
 		Error('EnumProcessModules failed')
+		PopContext('GetGameProcessBaseAddressWithPE')
 		DllClose($psapiHandle)
 		Return 0
 	EndIf
@@ -1057,17 +1125,20 @@ Func GetGameProcessBaseAddressWithPE()
 		Local $modulePath = _WinAPI_GetModuleFileNameEx($processHandle, $moduleBase)
 		If StringInStr($modulePath, 'Gw.exe', 1) Then
 			DllClose($psapiHandle)
+			PopContext('GetGameProcessBaseAddressWithPE')
 			Return $moduleBase
 		EndIf
 	Next
 	Error('Gw.exe module not found')
 	DllClose($psapiHandle)
+	PopContext('GetGameProcessBaseAddressWithPE')
 	Return 0
 EndFunc
 
 
 ;~ Slower string scanner but more robust
 Func FallbackMemoryStringSearch($strings, $section = $PE_RDATA_SECTION)
+	PushContext('FallbackMemoryStringSearch')
 	Local $stringCount = UBound($strings)
 	Local $results[$stringCount]
 	Local $found[$stringCount]
@@ -1175,13 +1246,14 @@ Func FallbackMemoryStringSearch($strings, $section = $PE_RDATA_SECTION)
 			Next
 		Next
 	Next
-
+	PopContext('FallbackMemoryStringSearch')
 	Return $results
 EndFunc
 
 
 ;~ Parse PE headers and populate pe_sections_ranges with their start and end
 Func ReadExecutableSections($baseAddress)
+	PushContext('ReadExecutableSections')
 	Debug('Reading PE sections to map their start/end')
 	Local $bytesRead
 	Local $dosHeader = DllStructCreate('struct;word e_magic;byte[58];dword e_lfanew;endstruct')
@@ -1189,9 +1261,11 @@ Func ReadExecutableSections($baseAddress)
 	Local $success = _WinAPI_ReadProcessMemory($processHandle, $baseAddress, DllStructGetPtr($dosHeader), DllStructGetSize($dosHeader), $bytesRead)
 	If Not $success Then
 		Error('Failed to read DOS header')
+		PopContext('ReadExecutableSections')
 		Return False
 	ElseIf DllStructGetData($dosHeader, 'e_magic') <> 0x5A4D Then
 		Error('Invalid DOS signature ' & DllStructGetData($dosHeader, 'e_magic'))
+		PopContext('ReadExecutableSections')
 		Return False
 	EndIf
 
@@ -1201,9 +1275,11 @@ Func ReadExecutableSections($baseAddress)
 	$success = _WinAPI_ReadProcessMemory($processHandle, $baseAddress + $peHeaderOffset, DllStructGetPtr($ntHeaders), DllStructGetSize($ntHeaders), $bytesRead)
 	If Not $success Then
 		Error('Failed to read NT headers')
+		PopContext('ReadExecutableSections')
 		Return False
 	ElseIf DllStructGetData($ntHeaders, 'Signature') <> 0x4550 Then
 		Error('Invalid PE signature')
+		PopContext('ReadExecutableSections')
 		Return False
 	EndIf
 
@@ -1269,9 +1345,10 @@ Func ReadExecutableSections($baseAddress)
 
 	If $pe_sections_ranges[$PE_TEXT_SECTION][0] = 0 Then
 		Error('Failed to find .text section')
+		PopContext('ReadExecutableSections')
 		Return False
 	EndIf
-
+	PopContext('ReadExecutableSections')
 	Return True
 EndFunc
 
@@ -1291,14 +1368,17 @@ EndFunc
 
 ;~ Internal use only.
 Func Enqueue($ptr, $size)
+	PushContext('Enqueue')
 	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', GetProcessHandle(), 'int', 256 * $queue_counter + $queue_base_address, 'ptr', $ptr, 'int', $size, 'int', 0)
 	$queue_counter = Mod($queue_counter + 1, $queue_size)
+	PopContext('Enqueue')
 	Return True
 EndFunc
 
 
 ;~ Internal use only.
 Func SendPacket($size, $header, $param1 = 0, $param2 = 0, $param3 = 0, $param4 = 0, $param5 = 0, $param6 = 0, $param7 = 0, $param8 = 0, $param9 = 0, $param10 = 0)
+	PushContext('SendPacket')
 	DllStructSetData($PACKET_STRUCT, 2, $size)
 	DllStructSetData($PACKET_STRUCT, 3, $header)
 	DllStructSetData($PACKET_STRUCT, 4, $param1)
@@ -1312,19 +1392,23 @@ Func SendPacket($size, $header, $param1 = 0, $param2 = 0, $param3 = 0, $param4 =
 	DllStructSetData($PACKET_STRUCT, 12, $param9)
 	DllStructSetData($PACKET_STRUCT, 13, $param10)
 	Enqueue($PACKET_STRUCT_PTR, 52)
+	PopContext('SendPacket')
 	Return True
 EndFunc
 
 
 ;~ Internal use only.
 Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE, $type = 0)
+	PushContext('PerformAction')
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($ACTION_STRUCT, 2, $action)
 		DllStructSetData($ACTION_STRUCT, 3, $flag)
 		DllStructSetData($ACTION_STRUCT, 4, $type)
 		Enqueue($ACTION_STRUCT_PTR, 16)
+		PopContext('PerformAction')
 		Return True
 	EndIf
+	PopContext('PerformAction')
 	Return False
 EndFunc
 #EndRegion Other Functions
@@ -1333,6 +1417,7 @@ EndFunc
 #Region Modification
 ;~ Internal use only.
 Func ModifyMemory()
+	PushContext('ModifyMemory')
 	$asm_injection_size = 0
 	$asm_code_offset = 0
 	$asm_injection_string = ''
@@ -1364,6 +1449,7 @@ Func ModifyMemory()
 	AssemblerCreateEncStringCommands()
 	If IsDeclared('g_b_Assembler') Then Extend_Assembler()
 
+	PushContext('ModifyMemory - Header')
 	Local $allocationCommand = False
 	Local $processHandle = GetProcessHandle()
 	Local $memoryInterface = MemoryRead($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, 'ptr')
@@ -1378,9 +1464,11 @@ Func ModifyMemory()
 		MemoryWrite($processHandle, $memory_interface_header + $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS, $memoryInterface)
 		$allocationCommand = True
 	EndIf
+	PopContext('ModifyMemory - Header')
 
 	CompleteASMCode($memoryInterface)
 
+	PushContext('ModifyMemory - injection string')
 	If $allocationCommand Then
 		WriteBinary($processHandle, $asm_injection_string, $memoryInterface + $asm_code_offset)
 		; FIXME: failures happening here - expected, QueuePtr label does not exist
@@ -1394,12 +1482,16 @@ Func ModifyMemory()
 		WriteDetour('TradePartnerStart', 'TradePartnerProc')
 		If IsDeclared('g_b_AssemblerWriteDetour') Then Extend_AssemblerWriteDetour()
 	EndIf
+	PopContext('ModifyMemory - injection string')
+	PopContext('ModifyMemory')
 EndFunc
 
 
 ;~ Internal use only.
 Func WriteDetour($from, $to)
+	PushContext('WriteDetour')
 	WriteBinary(GetProcessHandle(),'E9' & SwapEndian(Hex(GetLabel($to) - GetLabel($from) - 5)), GetLabel($from))
+	PopContext('WriteDetour')
 EndFunc
 #EndRegion Modification
 
@@ -3900,10 +3992,12 @@ EndFunc
 #Region Client Management Functions
 ;~ Close all handles once bot stops
 Func CloseAllHandles()
+	PushContext('ModifyMemory')
 	For $index = 1 To $game_clients[0][0]
 		If $game_clients[$index][0] <> -1 Then SafeDllCall5($kernel_handle, 'int', 'CloseHandle', 'int', $game_clients[$index][1])
 	Next
 	If $kernel_handle Then DllClose($kernel_handle)
+	PopContext('ModifyMemory')
 EndFunc
 
 

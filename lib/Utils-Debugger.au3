@@ -18,8 +18,8 @@
 
 #include 'Utils.au3'
 
-Global Const $DEBUG_MODE = False
-Global Const $ADD_CONTEXT = False
+Global Const $DEBUG_MODE = True
+Global Const $ADD_CONTEXT = True
 Global Const $FUNCTION_NAMES = ['SetProcessWorkingSetSizeEx','VirtualQueryEx','VirtualFreeEx','VirtualAllocEx','ReadProcessMemory','WriteProcessMemory','CreateRemoteThread','CloseHandle','WaitForSingleObject','OpenProcess','SetProcessWorkingSetSize']
 ; VirtualQueryEx error code is 0 - but it should not be caught
 Global Const $ERROR_CODES = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0]
@@ -60,10 +60,10 @@ EndFunc
 
 ;~ Write log in log file
 Func DebuggerLog($msg)
-	Local $log = '[' & @YEAR & '-' & @MON & '-' & @MDAY & ' ' & @HOUR & ':' & @MIN & ':' & @SEC & ':' & @MSEC & ']-'
-	If $ADD_CONTEXT Then $log &= '[' & GetCurrentContext() & ']-'
-	FileWriteLine($log_handle, $log & $msg)
-	Debug($msg)
+	Local $timeTag = '[' & @YEAR & '-' & @MON & '-' & @MDAY & ' ' & @HOUR & ':' & @MIN & ':' & @SEC & ':' & @MSEC & ']-'
+	Local $contextTag = $ADD_CONTEXT ? '[' & GetCurrentContext() & ']-' : ''
+	FileWriteLine($log_handle, $timeTag & $contextTag & $msg)
+	Debug($contextTag & $msg)
 EndFunc
 
 ;~ Add context to create a simili stack trace
@@ -254,39 +254,31 @@ Func SafeDllCall17($p1, $p2, $p3, $p4, $p5, $p6, $p7, $p8, $p9, $p10, $p11, $p12
 	Return SafeDllCall($p1, $p2, $p3, $p4, $p5, $p6, $p7, $p8, $p9, $p10, $p11, $p12, $p13, $p14, $p15, $p16, $p17)
 EndFunc
 
-
 ;~ Actively check types before running any DllCalls
 Func IsValidType($type, $value)
 	Local $typeLower = StringLower($type)
 	Switch $typeLower
-		Case 'ptr'
-			; Accept both decimal and hex
-			If IsDllStruct($value) Then
-				If @error Or DllStructGetPtr($value) = 0 Then Return False
-			EndIf
+		Case 'ptr', 'ulong_ptr*'
+			If IsDllStruct($value) Then Return DllStructGetPtr($value) <> 0
 			If StringRegExp($value, '^(0x)?[0-9A-Fa-f]+$') Then Return True
-			If IsNumber($value) Then Return True
-			Return False
+			Return IsNumber($value) And $value <> 0
 		Case 'int', 'uint', 'dword', 'long', 'ulong', 'ulong_ptr'
 			If StringRegExp($value, '^(0x)?[0-9A-Fa-f]+$') Then Return True
-			If IsNumber($value) Then Return True
-			Return False
+			Return IsNumber($value)
 		Case 'str', 'wstr'
 			Return IsString($value)
 		Case 'byte'
-			If IsNumber($value) And $value >= 0 And $value <= 255 Then Return True
-			Return False
+			Return IsNumber($value) And $value >= 0 And $value <= 255
 		Case 'float', 'double'
 			Return IsFloat($value) Or IsNumber($value)
 		Case 'bool'
 			Return ($value = True Or $value = False Or $value = 0 Or $value = 1)
 		Case 'handle'
-			If Not IsInt($value) Or $value <= 0 Then Return False
+			Return IsNumber($value) And $value <> 0
 		Case Else
 			Return False
 	EndSwitch
 EndFunc
-
 
 ;~ Determine if the provided address is readable by the given process
 Func IsMemoryReadable($processHandle, $address, $size)

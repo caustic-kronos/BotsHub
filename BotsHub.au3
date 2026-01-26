@@ -115,7 +115,7 @@ Global $loot_configuration = 'Default Loot Configuration'
 Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
-Global $log_level = $LVL_INFO
+Global $log_level = $LVL_DEBUG
 
 ; Farm Name;Farm function;Inventory space;Farm duration
 Global $farm_map[]

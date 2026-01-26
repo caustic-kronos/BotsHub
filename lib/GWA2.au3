@@ -265,6 +265,7 @@ EndFunc
 
 ;~ Stop maintaining enchantment on target.
 Func DropBuff($skillID, $agent, $heroIndex = 0)
+	PushContext('DropBuff')
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
 	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
@@ -284,12 +285,14 @@ Func DropBuff($skillID, $agent, $heroIndex = 0)
 				$buffStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset3)
 				SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
 				If (DllStructGetData($buffStruct, 'SkillID') == $skillID) And (DllStructGetData($buffStruct, 'TargetID') == DllStructGetData($agent, 'ID')) Then
-					Return SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffID'))
-					ExitLoop 2
+					Local $result = SendPacket(0x8, $HEADER_BUFF_DROP, DllStructGetData($buffStruct, 'BuffID'))
+					PopContext('DropBuff')
+					Return $result
 				EndIf
 			Next
 		EndIf
 	Next
+	PopContext('DropBuff')
 EndFunc
 
 
@@ -337,6 +340,7 @@ EndFunc
 
 ;~ Returns skillbar struct.
 Func GetSkillbar($heroIndex = 0)
+	PushContext('GetSkillbar')
 	Local $offset[] = [0, 0x18, 0x2C, 0x6F0, 0]
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To GetHeroCount()
@@ -344,8 +348,12 @@ Func GetSkillbar($heroIndex = 0)
 		Local $skillbarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 		Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
 		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
-		If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then Return $skillbarStruct
+		If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then
+			PopContext('GetSkillbar')
+			Return $skillbarStruct
+		EndIf
 	Next
+	PopContext('GetSkillbar')
 EndFunc
 
 
@@ -404,9 +412,11 @@ EndFunc
 
 ;~ Returns skill struct.
 Func GetSkillByID($skillID)
+	PushContext('GetSkillByID')
 	Local $skillstructAddress = $skill_base_address + (0xA4 * $skillID)
 	Local $skillStruct = SafeDllStructCreate($SKILL_STRUCT_TEMPLATE)
 	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $skillstructAddress, 'ptr', DllStructGetPtr($skillStruct), 'int', DllStructGetSize($skillStruct), 'int', 0)
+	PopContext('GetSkillByID')
 	Return $skillStruct
 EndFunc
 
@@ -870,13 +880,19 @@ EndFunc
 #Region Agent
 ;~ Returns your agent ID.
 Func GetMyID()
-	Return MemoryRead(GetProcessHandle(), $my_ID)
+	PushContext('GetMyID')
+	Local $result = MemoryRead(GetProcessHandle(), $my_ID)
+	PopContext('GetMyID')
+	Return $result
 EndFunc
 
 
 ;~ Return agent of the player
 Func GetMyAgent()
-	Return GetAgentByID(GetMyID())
+	PushContext('GetMyAgent')
+	Local $result = GetAgentByID(GetMyID())
+	PopContext('GetMyAgent')
+	Return $result
 EndFunc
 
 
@@ -888,18 +904,22 @@ EndFunc
 
 ;~ Returns an agent struct.
 Func GetAgentByID($agentID)
+	PushContext('GetAgentByID')
 	If $agentID = -2 Then $agentID = GetMyID()
 	Local $agentPtr = GetAgentPtr($agentID)
 	Local $agentStruct = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
 	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', GetProcessHandle(), 'int', $agentPtr, 'ptr', DllStructGetPtr($agentStruct), 'int', DllStructGetSize($agentStruct), 'int', 0)
+	PopContext('GetAgentByID')
 	Return $agentStruct
 EndFunc
 
 
 ;~ Internal use for GetAgentByID()
 Func GetAgentPtr($agentID)
+	PushContext('GetAgentPtr')
 	Local $offset[] = [0, 4 * $agentID, 0]
 	Local $agentStructAddress = MemoryReadPtr(GetProcessHandle(), $agent_base_address, $offset)
+	PopContext('GetAgentPtr')
 	Return $agentStructAddress[0]
 EndFunc
 
@@ -921,6 +941,7 @@ EndFunc
 
 ;~ Quickly creates an array of agents of a given type
 Func GetAgentArray($type = 0)
+	PushContext('GetAgentArray')
 	Local $processHandle = GetProcessHandle()
 	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 2, $type)
 	MemoryWrite($processHandle, $agent_copy_count, -1, 'long')
@@ -944,6 +965,7 @@ Func GetAgentArray($type = 0)
 	EndIf
 	If $count <= 0 Then
 		Local $empty[0]
+		PopContext('GetAgentArray')
 		Return $empty
 	EndIf
 
@@ -958,6 +980,7 @@ Func GetAgentArray($type = 0)
 		$returnArray[$i] = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
 		_WinAPI_MoveMemory(DllStructGetPtr($returnArray[$i]), $ptrBase + ($i * $AGENT_SIZE), $AGENT_SIZE)
 	Next
+	PopContext('GetAgentArray')
 	Return $returnArray
 EndFunc
 
@@ -1346,6 +1369,7 @@ EndFunc
 
 ;~ Returns item corresponding to the filter function provided with the parameter given
 Func GetItemByFilter($filterFunction, $filterParameter = Null)
+	PushContext('GetItemByFilter')
 	Local $processHandle = GetProcessHandle()
 	Local $offset[] = [0, 0x18, 0x40, 0xC0]
 	Local $itemArraySize = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
@@ -1357,8 +1381,12 @@ Func GetItemByFilter($filterFunction, $filterParameter = Null)
 		If $itemPtr[1] = 0 Then ContinueLoop
 		Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
 		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
-		If $filterFunction($itemStruct, $filterParameter) Then Return $itemStruct
+		If $filterFunction($itemStruct, $filterParameter) Then 
+			PopContext('GetItemByFilter')
+			Return $itemStruct
+		EndIf
 	Next
+	PopContext('GetItemByFilter')
 	Return Null
 EndFunc
 
@@ -2122,6 +2150,7 @@ EndFunc
 
 ;~ Enable graphics rendering.
 Func EnableRendering($showWindow = True)
+	PushContext('EnableRendering')
 	Local $windowHandle = GetWindowHandle()
 	Local $prevGwState = WinGetState($windowHandle)
 	Local $previousWindow = WinGetHandle('[ACTIVE]', '')
@@ -2135,21 +2164,30 @@ Func EnableRendering($showWindow = True)
 		If $windowHandle <> $previousWindow And $previousWindow Then RestoreWindowState($previousWindow, $previousWindowState)
 	EndIf
 	If Not GetIsRendering() Then
-		If Not MemoryWrite(GetProcessHandle(), $disable_rendering_address, 0) Then Return SetError(@error, False)
+		If Not MemoryWrite(GetProcessHandle(), $disable_rendering_address, 0) Then
+			PopContext('EnableRendering')
+			Return SetError(@error, False)
+		EndIf
 		Sleep(250)
 	EndIf
+	PopContext('EnableRendering')
 	Return 1
 EndFunc
 
 
 ;~ Disable graphics rendering.
 Func DisableRendering($hideWindow = True)
+	PushContext('DisableRendering')
 	Local $windowHandle = GetWindowHandle()
 	If $hideWindow And WinGetState($windowHandle) Then WinSetState($windowHandle, '', @SW_HIDE)
 	If GetIsRendering() Then
-		If Not MemoryWrite(GetProcessHandle(), $disable_rendering_address, 1) Then Return SetError(@error, False)
+		If Not MemoryWrite(GetProcessHandle(), $disable_rendering_address, 1) Then
+			PopContext('DisableRendering')
+			Return SetError(@error, False)
+		EndIf
 		Sleep(250)
 	EndIf
+	PopContext('DisableRendering')
 	Return 1
 EndFunc
 

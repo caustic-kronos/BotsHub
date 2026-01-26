@@ -1522,6 +1522,7 @@ EndFunc
 
 ;~ Read given config from JSON
 Func ApplyConfigToGUI()
+	PushContext('ReadConfigFromJson')
 	GUICtrlSetData($gui_combo_characterchoice, $character_name)
 	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, $farm_name)
 	UpdateFarmDescription($farm_name)
@@ -1567,6 +1568,7 @@ Func ApplyConfigToGUI()
 	GUICtrlSetData($gui_input_build_hero_6, $run_options_cache['team.hero_6_build'])
 	GUICtrlSetData($gui_input_build_hero_7, $run_options_cache['team.hero_7_build'])
 	UpdateTeamComboboxes($run_options_cache['team.automatic_team_setup'])
+	PopContext('ReadConfigFromJson')
 EndFunc
 #EndRegion Configuration
 
