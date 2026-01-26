@@ -1203,17 +1203,13 @@ EndFunc
 
 #Region Quests
 ;~ Take a quest or a reward - for reward, expectedState should be $ID_QUEST_NOT_FOUND once reward taken
-Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUEST_NOT_FOUND)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+Func TakeQuestOrReward($questNPC, $questID, $dialogID, $statePredicate = IsQuestNotFound)
 	Local $timerQuest = TimerInit()
-	; 0x01 bitmask only checks for active or not found states
-	While BitAND($questState, 0x01) <> $expectedState
-		Debug('Current quest state : ' & $questState)
+	While Not $statePredicate($questID)
 		GoToNPC($questNPC)
 		Sleep(1000 + GetPing())
 		Dialog($dialogID)
 		Sleep(1000 + GetPing())
-		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 		If TimerDiff($timerQuest) > 60000 Then
 			Warn('Could not handle quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
 			Return $FAIL
@@ -1223,8 +1219,7 @@ Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUES
 EndFunc
 
 
-;~ Take a quest. Prints quest name to be taken
-;~ Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest accepting dialog ID
+;~ Take a quest. Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest accepting dialog ID
 Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	If IsQuestActive($questID) Then
 		Warn('Quest named ' & $QUEST_NAMES_FROM_IDS[$questID] & ' is already in the logbook')
@@ -1237,12 +1232,11 @@ Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 		Dialog($initialDialogID)
 		Sleep(1000 + GetPing())
 	EndIf
-	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_ACTIVE)
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, IsQuestActive)
 EndFunc
 
 
-;~ Take a quest reward. Prints quest name for which reward is to be taken
-;~ Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest reward dialog ID
+;~ Take a quest reward. Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest reward dialog ID
 Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	If Not IsQuestReward($questID) Then
 		Warn('No reward available for quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
@@ -1255,52 +1249,46 @@ Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
 		Dialog($initialDialogID)
 		Sleep(1000 + GetPing())
 	EndIf
-	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_COMPLETED)
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, IsQuestCompleted)
 EndFunc
-
 
 Func IsQuestNotFound($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xFF) == $ID_QUEST_NOT_FOUND
+	Return QuestStateMatches($questID, $ID_QUEST_NOT_FOUND)
 EndFunc
-
-
-Func IsQuestActive($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0x01) == $ID_QUEST_ACTIVE
-EndFunc
-
-
-Func IsQuestReward($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0x02) == $ID_QUEST_REWARD
-EndFunc
-
-
-Func IsQuestPartiallyCompleted($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0x04) == $ID_QUEST_PARTIAL_1 _
-		Or BitAND($questState, 0x08) == $ID_QUEST_PARTIAL_2
-EndFunc
-
 
 Func IsQuestCompleted($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xFF) == $ID_QUEST_COMPLETED
+	Return IsQuestNotFound($questID)
 EndFunc
 
-
-Func isQuestPrimary($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xF0) == $ID_QUEST_PRIMARY _
-		Or BitAND($questState, 0xF0) == $ID_QUEST_AREA_PRIMARY
+Func IsQuestActive($questID)
+	Return QuestStateMatches($questID, BitOR($ID_QUEST_ACTIVE, $ID_QUEST_CURRENT))
 EndFunc
 
+Func IsQuestPartiallyCompleted($questID)
+	Return QuestStateMatches($questID, BitOR($ID_QUEST_PARTIAL_1, $ID_QUEST_PARTIAL_2))
+EndFunc
 
-Func isQuestSecondary($questID)
+Func IsQuestReward($questID)
+	Return QuestStateMatches($questID, $ID_QUEST_REWARD)
+EndFunc
+
+Func IsQuestPrimary($questID)
+	Return QuestStateMatches($questID, BitOR($ID_QUEST_PRIMARY, $ID_QUEST_AREA_PRIMARY))
+EndFunc
+
+Func IsQuestSecondary($questID)
+	Return Not IsQuestNotFound($questID) And Not IsQuestPrimary($questID)
+EndFunc
+
+;~ Return whether or not the given quest matches the given mask
+Func QuestStateMatches($questID, $expectedMask)
 	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xF0) <> $ID_QUEST_PRIMARY _
-		And BitAND($questState, 0xF0) <> $ID_QUEST_AREA_PRIMARY
+	; Cannot use a bitmask on a 0x00 mask
+	If $expectedMask == $ID_QUEST_NOT_FOUND Then
+		Return $questState = $ID_QUEST_NOT_FOUND
+	EndIf
+
+	Return BitAND($questState, $expectedMask) <> 0
 EndFunc
 #EndRegion Quests
 
