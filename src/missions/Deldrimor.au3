@@ -1,6 +1,6 @@
 #CS ===========================================================================
-; Author: caustic-kronos (aka Kronos, Night, Svarog)
-; Contributor: Gahais
+; Author: Ian
+; Contributor: ----
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -118,7 +118,7 @@ Func FarmLairSnowman()
 	MoveAggroAndKillInRange(-12802.18, -4446.38, 'Remainder of Snowmen')
 	
 	Info('Wait to Heal after Ice Spouts')
-	RandomSleep(5000)
+	RandomSleep(10000)
 	Info('Beware of Avalanches')
 	
 	FlagMoveAggroAndKillInRange(-13176.58, -6779.26, 'Third Snowmen Block')
@@ -137,6 +137,7 @@ Func FarmLairSnowman()
 	MoveAggroAndKillInRange(-15641.55, -11961.42, 'Door of Snowmen')
 	Info('Open dungeon door')
 	ClearTarget()
+	Sleep(2000)
 	; Doubled to secure bot
 	For $i = 1 To 2
 		MoveTo(-15483.29, -12236.64)
@@ -157,6 +158,7 @@ Func FarmLairSnowman()
 	PickUpItems()
 	Info('Opening Boss door')
 	MoveTo(-11274.85, -17984.23)
+	Sleep(2000)
 	; Doubled to secure bot
 	For $i = 1 To 2
 		MoveTo(-11274.85, -17984.23)
@@ -170,7 +172,7 @@ Func FarmLairSnowman()
 	Info('Having a cry about beer')
 	MoveTo(-7767.71, -18739.19)
 	Info('Waiting to finish tears')
-	Sleep(50000)
+	Sleep(70000)
 	; Doubled to try securing the looting
 	For $i = 1 To 2
 		MoveTo(-15800, 16950)
