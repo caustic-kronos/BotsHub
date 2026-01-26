@@ -49,13 +49,13 @@ Func DeldrimorFarm()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result =FarmLairSnowman()
 	AdlibUnRegister('TrackPartyStatus')
-	;DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
+	DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
 	Return $result
 EndFunc
 
 Func SetupDeldrimorTitleFarm()
 	DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
-	;SwitchMode($ID_HARD_MODE)
+	SwitchToHardModeIfEnabled()
 	If IsQuestNotFound($SNOWMAN_QUEST_ID) Or IsQuestReward($SNOWMAN_QUEST_ID) Then
 		Info('Setting up Snowman Lair')
 		RandomSleep(750)
@@ -93,8 +93,8 @@ Func FarmLairSnowman()
 	
 	FlagMoveAggroAndKillInRange(-14610.22, 12352.80, 'First Snowmen Block')
 	FlagMoveAggroAndKillInRange(-16585.22, 8741.05, 'Second Snowmen Block')
+	MoveAggroAndKillInRange(-17949.62, 6797.99, 'Mopping up any snowmen')
 	Info('Time to avoid Snowballs')
-	MoveTo(-17949.62, 6797.99)
 	RandomSleep(10000)
 	
 	MoveAggroAndKillInRange(-19169.78, 5355.52, 'Lonely Snowmen 1')
@@ -127,6 +127,9 @@ Func FarmLairSnowman()
 	
 	MoveAggroAndKillInRange(-9646.23, -10924.95, 'Key of Snowmen')
 	PickUpItems()
+	
+	Info('Get New Blessing')
+	GoToNPC(GetNearestNPCToCoords(-16005.98, -10679.64))
 	
 	Info('Time to open the door')
 	MoveAggroAndKillInRange(-15641.55, -11961.42, 'Door of Snowmen')
@@ -163,7 +166,8 @@ Func FarmLairSnowman()
 	
 	Info('Having a cry about beer')
 	MoveTo(-7767.71, -18739.19)
-	
+	Info('Waiting to finish tears')
+	Sleep(50000)
 	; Doubled to try securing the looting
 	For $i = 1 To 2
 		MoveTo(-15800, 16950)
