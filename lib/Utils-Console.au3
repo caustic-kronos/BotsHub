@@ -24,7 +24,7 @@ Global Const $LVL_WARNING = 3
 Global Const $LVL_ERROR = 4
 
 Global $log_console
-Global $log_level = $LVL_INFO
+Global $log_level = $LVL_DEBUG
 
 Func SetConsole($consoleHandle)
 	$log_console = $consoleHandle
