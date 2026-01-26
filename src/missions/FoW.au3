@@ -143,7 +143,6 @@ Func TowerOfCourage()
 	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
 	TakeQuest($questNPC, $ID_QUEST_TOWER_OF_COURAGE, 0x80D401)
 	TakeQuestReward($questNPC, $ID_QUEST_TOWER_OF_COURAGE, 0x80D407)
-
 	TakeQuest($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC01)
 	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
