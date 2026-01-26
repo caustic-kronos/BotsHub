@@ -58,6 +58,7 @@
 #include 'src/farms/Raptors.au3'
 #include 'src/farms/SpiritSlaves.au3'
 #include 'src/farms/Vaettirs.au3'
+#include 'src/missions/Deldrimor.au3'
 #include 'src/missions/FoW.au3'
 #include 'src/missions/Froggy.au3'
 #include 'src/missions/GlintChallenge.au3'
@@ -92,7 +93,7 @@ Global Const $FAIL = 1
 Global Const $PAUSE = 2
 Global Const $STUCK = 3
 
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global Const $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -257,6 +258,9 @@ Func RunFarmLoop($Farm)
 		Case 'Corsairs'
 			$inventory_space_needed = 5
 			$result = CorsairsFarm()
+		Case 'Deldrimor'
+			$inventory_space_needed = 5
+			$result = DeldrimorFarm()
 		Case 'Dragon Moss'
 			$inventory_space_needed = 5
 			$result = DragonMossFarm()
@@ -501,6 +505,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CORSAIRS_FARM_INFORMATIONS)
+		Case 'Deldrimor'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
+			GUICtrlSetData($GUI_Label_FarmInformations, $DELDRIMOR_FARM_INFORMATIONS)
 		Case 'Dragon Moss'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_DRAGON_MOSS_FARMER_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $DRAGON_MOSS_FARM_INFORMATIONS)
