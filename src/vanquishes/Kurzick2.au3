@@ -34,8 +34,8 @@ Global Const $KURZICK_FACTION2_INFORMATIONS = 'For best results, have :' & @CRLF
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild' & @CRLF _
 	& 'An Alternative Farm to Ferndale. This Bot will farm Drazach Thicket'
-; Average duration ~ 40m
-Global Const $KURZICKS_FARM2_DURATION = 41 * 60 * 1000
+; Average duration ~ 25m
+Global Const $KURZICKS_FARM2_DURATION = 25 * 60 * 1000
 
 Global $kurzick_farm_setup = False
 
@@ -65,7 +65,6 @@ EndFunc
 Func ManageFactionPointsKurzickFarm2()
 	Local $cur = GetKurzickFaction()
 	Local $max = GetMaxKurzickFaction()
-	Info("KurzickFaction cur=" & $cur & " max=" & $max & " threshold=" & ($max - 25000))
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 		RandomSleep(200)
