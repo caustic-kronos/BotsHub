@@ -104,6 +104,7 @@ Func FarmLairSnowman()
 	MoveAggroAndKillInRange(-14392.77, 3759.07, 'Over The Bridge of Snowmen')
 	
 	Info('Get New Blessing')
+	MoveAggroAndKillInRange(-12482.00, 3924.00, 'Over The Bridge of Snowmen')
 	GoToNPC(GetNearestNPCToCoords(-12482.00, 3924.00))
 	Info('Moving to Snowman Channel')
 	MoveTo(-14413.26, 2483.14)
@@ -129,6 +130,7 @@ Func FarmLairSnowman()
 	PickUpItems()
 	
 	Info('Get New Blessing')
+	MoveTo(-16005.98, -10679.64)
 	GoToNPC(GetNearestNPCToCoords(-16005.98, -10679.64))
 	
 	Info('Time to open the door')
@@ -148,12 +150,13 @@ Func FarmLairSnowman()
 	MoveAggroAndKillInRange(-17345.07, -13797.14, 'Circle of Snowmen')
 	
 	Info('Time for Freezie')
-	
-	FlagMoveAggroAndKillInRange(-14303.93, -17111.98, 'Fourth Snowmen Block')
+	MoveTo(-14303.93, -17111.98)
+	FlagMoveAggroAndKillInRange(-13843.53, -17345.66, 'Freezie Snowmen Block')
 	
 	Info('Pickup Key')
 	PickUpItems()
-	
+	Info('Opening Boss door')
+	MoveTo(-11274.85, -17984.23)
 	; Doubled to secure bot
 	For $i = 1 To 2
 		MoveTo(-11274.85, -17984.23)
