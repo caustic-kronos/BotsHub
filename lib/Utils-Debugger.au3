@@ -18,8 +18,8 @@
 
 #include 'Utils.au3'
 
-Global Const $DEBUG_MODE = False
-Global Const $ADD_CONTEXT = False
+Global Const $DEBUG_MODE = True
+Global Const $ADD_CONTEXT = True
 Global Const $FUNCTION_NAMES = ['SetProcessWorkingSetSizeEx','VirtualQueryEx','VirtualFreeEx','VirtualAllocEx','ReadProcessMemory','WriteProcessMemory','CreateRemoteThread','CloseHandle','WaitForSingleObject','OpenProcess','SetProcessWorkingSetSize']
 ; VirtualQueryEx error code is 0 - but it should not be caught
 Global Const $ERROR_CODES = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0]
