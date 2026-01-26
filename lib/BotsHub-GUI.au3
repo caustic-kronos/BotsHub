@@ -1014,7 +1014,8 @@ EndFunc
 Func ReadConfigFromJson($jsonString)
 	Local $jsonObject = _JSON_Parse($jsonString)
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
-	GUICtrlSetData($GUI_Combo_FarmChoice, _JSON_Get($jsonObject, 'main.farm'))
+	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, _JSON_Get($jsonObject, 'main.farm'))
+
 	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
 
 	Local $weaponSlot = _JSON_Get($jsonObject, 'run.weapon_slot')
