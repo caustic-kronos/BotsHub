@@ -63,8 +63,6 @@ Func KurzickFarmSetup2()
 EndFunc
 
 Func ManageFactionPointsKurzickFarm2()
-	Local $cur = GetKurzickFaction()
-	Local $max = GetMaxKurzickFaction()
 	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
 		TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 		RandomSleep(200)
