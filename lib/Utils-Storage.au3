@@ -1226,7 +1226,7 @@ Func SalvageItems($buyKit = True)
 
 	For $i = 0 To $trophyAndMaterialIndex - 1
 		If DefaultShouldSalvageItem($trophiesAndMaterialItems[$i]) Then
-			For $k = 0 To DllStructGetData($trophiesAndMaterialItems[$k], 'Quantity') - 1
+			For $k = 0 To DllStructGetData($trophiesAndMaterialItems[$i], 'Quantity') - 1
 				SalvageItem($trophiesAndMaterialItems[$i], $kit)
 				$uses -= 1
 				If $uses < 1 Then
@@ -1273,6 +1273,8 @@ Func SalvageItem($item, $salvageKit)
 		ValidateSalvage()
 		Sleep(600 + GetPing())
 	EndIf
+	SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
+	Sleep(40 + GetPing())
 	Return True
 EndFunc
 #EndRegion Salvage
