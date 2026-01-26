@@ -1583,6 +1583,7 @@ EndFunc
 ;~ Loot items around character
 Func PickUpItems($survivalFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If $inventory_management_cache['@pickup.nothing'] Then Return
+	PushContext('PickUpItems')
 
 	Local $item
 	Local $agentID
@@ -1590,7 +1591,10 @@ Func PickUpItems($survivalFunction = Null, $shouldPickItem = DefaultShouldPickIt
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_ITEM)
 	Local $me = GetMyAgent()
 	For $agent In $agents
-		If IsPlayerDead() Then Return
+		If IsPlayerDead() Then
+			PopContext('PickUpItems')
+			Return
+		EndIf
 		If Not GetCanPickUp($agent) Then ContinueLoop
 		If GetDistance($me, $agent) > $range Then ContinueLoop
 
@@ -1611,6 +1615,7 @@ Func PickUpItems($survivalFunction = Null, $shouldPickItem = DefaultShouldPickIt
 	If $bags_count == 5 And CountSlots(1, 3) == 0 Then
 		MoveItemsToEquipmentBag()
 	EndIf
+	PopContext('PickUpItems')
 EndFunc
 
 
