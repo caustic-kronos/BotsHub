@@ -1012,6 +1012,7 @@ EndFunc
 
 ;~ Read given config from JSON
 Func ReadConfigFromJson($jsonString)
+	PushContext('ReadConfigFromJson')
 	Local $jsonObject = _JSON_Parse($jsonString)
 	GUICtrlSetData($GUI_Combo_CharacterChoice, _JSON_Get($jsonObject, 'main.character'))
 	GUICtrlSetData($GUI_Combo_FarmChoice, $AVAILABLE_FARMS, _JSON_Get($jsonObject, 'main.farm'))
@@ -1078,6 +1079,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetData($GUI_Combo_Hero_7, _JSON_Get($jsonObject, 'team.hero_7'))
 	GUICtrlSetData($GUI_Input_Build_Hero_7, _JSON_Get($jsonObject, 'team.hero_7_build'))
 	UpdateTeamComboboxes()
+	PopContext('ReadConfigFromJson')
 EndFunc
 
 

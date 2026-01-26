@@ -118,7 +118,7 @@ Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
 Global $inventory_management_cache[]
-Global $log_level = $LVL_INFO
+Global $log_level = $LVL_DEBUG
 #EndRegion Variables
 
 
@@ -142,7 +142,6 @@ Func Main()
 	CreateGUI()
 	GUISetState(@SW_SHOWNORMAL)
 	Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
-
 	If $CmdLine[0] <> 0 Then
 		$run_mode = 'CMD'
 		If 1 > UBound($CmdLine)-1 Then
