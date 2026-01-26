@@ -1207,7 +1207,7 @@ Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUES
 	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 	Local $timerQuest = TimerInit()
 	; 0x01 bitmask only checks for active or not found states
-	While BitAND($questState, 0x01) <> $expectedState
+	While BitAND($questState, $expectedState) == 0
 		Debug('Current quest state : ' & $questState)
 		GoToNPC($questNPC)
 		Sleep(1000 + GetPing())
@@ -1237,7 +1237,7 @@ Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 		Dialog($initialDialogID)
 		Sleep(1000 + GetPing())
 	EndIf
-	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_ACTIVE)
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, BitOR($ID_QUEST_ACTIVE, $ID_QUEST_CURRENT))
 EndFunc
 
 
