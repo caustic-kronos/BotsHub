@@ -376,7 +376,9 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 		Case $ID_ELEMENTALIST
 			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $margonite_move_options_elementalist)
 	EndSwitch
-	If $result == $STUCK Then
+	If $result == $SUCCESS Then Return $SUCCESS
+	; If no success when moving, either we died (the end) or we were bodyblocked
+	If IsPlayerAlive() Then
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
 		If KillMargonites() == $FAIL Then Return $FAIL
 		RandomSleep(1000)
@@ -388,12 +390,9 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 				RandomSleep(50)
 			Next
 			Return $SUCCESS
-		Else
-			Return $FAIL
 		EndIf
-	Else
-		Return $result
 	EndIf
+	Return $FAIL
 EndFunc
 
 
