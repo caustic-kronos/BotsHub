@@ -1955,7 +1955,7 @@ Func ComputeStructureOffsets($structureDefinition)
 		EndIf
 
 		Local $size = TypeSize($type) * $count
-		Info(StringFormat('%-30s offset=%3d size=%3d', $name, $offset, $size))
+		Info(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
 		$offset += $size
 	Next
 

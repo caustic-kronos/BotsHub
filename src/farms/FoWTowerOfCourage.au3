@@ -138,9 +138,10 @@ Func FoWToCFarmLoop()
 	; Dark escape can be replaced by other skills like great dwarf armor to increase survivability at the cost of farm speed
 	UseSkillEx($FOW_TOC_DARK_ESCAPE)
 	If MoveDefendingFoWToC(-21100, -2400) == $FAIL Then Return $FAIL
+	If MoveDefendingFoWToC(-17500, -2800) == $FAIL Then Return $FAIL
+	UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	If MoveDefendingFoWToC(-16500, -3100) == $FAIL Then Return $FAIL
 	; Waiting for Dark Escape to finish anf for buffs to be all fresh
-	UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	While TimerDiff($fow_toc_30s_timer) < 27000
 		Sleep(500)
 	WEnd
@@ -159,9 +160,12 @@ Func FoWToCFarmLoop()
 	Local $foesCount = 999
 	While $foesCount > 0
 		CastFowToCBuffs()
-		Sleep(1000)
+		Sleep(500)
 		; If only 2 abyssal left we can finish them by hand
-		If $foesCount > 0 And $foesCount < 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
+		If $foesCount > 0 And $foesCount < 3 Then 
+			Local $foe = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
+			If DllStructGetData($foe, 'HealthPercent') < 0.3 Then Attack($foe)
+		EndIf
 		If IsPlayerDead() Then Return $FAIL
 		If TimerDiff($killTimer) > 30000 Then ExitLoop
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT, IsAbyssal)
@@ -185,7 +189,9 @@ Func FoWToCFarmLoop()
 	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
 	;$target = GetNearestEnemyToCoords($center[0], $center[1])
+	CastFowToCBuffs()
 	GetAlmostInRangeOfAgent($target)
+	CastFowToCBuffs()
 	While IsRecharged($FOW_TOC_DEATH_CHARGE)
 		UseSkillEx($FOW_TOC_DEATH_CHARGE, $target)
 		RandomSleep(100)
@@ -204,9 +210,12 @@ Func FoWToCFarmLoop()
 	$foesCount = 999
 	While $foesCount > 0
 		CastFowToCBuffs()
-		Sleep(1000)
-		; If only 3 rangers left we can finish them by hand
-		If $foesCount > 0 And $foesCount < 4 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
+		Sleep(500)
+		; If only 2 rangers left we can finish them by hand
+		If $foesCount > 0 And $foesCount < 3 Then 
+			Local $foe = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
+			If DllStructGetData($foe, 'HealthPercent') < 0.3 Then Attack($foe)
+		EndIf
 		If IsPlayerDead() Then Return $FAIL
 		If TimerDiff($killTimer) > 30000 Then ExitLoop
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
@@ -228,21 +237,21 @@ EndFunc
 
 Func CastFowToCBuffs()
 	Local Static $tikTokClock = False
-	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 27000 Then
+	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 27500 Then
 		; Since everything is casted together, no risk of interrupts
 		$fow_toc_30s_timer = TimerInit()
 		UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
 		Sleep(250)
 		UseSkillEx($FOW_TOC_SHADOWFORM)
 		Sleep(250)
-		UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 		; One time out of two, we also cast the shroud
 		$tikTokClock = Not $tikTokClock
 		If $tikTokClock Then
-			Sleep(250)
 			UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
+			Sleep(250)
 		EndIf
-		If TimerDiff($run_timer) > 20000 And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And IsRecharged($FOW_TOC_MENTAL_BLOCK) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
+		UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
+		If (TimerDiff($run_timer) > 20000) And (GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0) And (IsRecharged($FOW_TOC_MENTAL_BLOCK)) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 		$fow_toc_30s_timer = TimerInit()
 	EndIf
 EndFunc
