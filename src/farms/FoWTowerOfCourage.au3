@@ -47,10 +47,6 @@ Global Const $FOW_TOC_DEATH_CHARGE			= 5
 Global Const $FOW_TOC_DWARVEN_STABILITY		= 6
 Global Const $FOW_TOC_WHIRLING_DEFENSE		= 7
 Global Const $FOW_TOC_MENTAL_BLOCK			= 8
-
-Global Const $FOW_TOC_SKILLS_ARRAY			= [$FOW_TOC_SHADOWFORM, $FOW_TOC_SHROUD_OF_DISTRESS, $FOW_TOC_I_AM_UNSTOPPABLE, $FOW_TOC_DARK_ESCAPE, $FOW_TOC_DEATH_CHARGE, $FOW_TOC_DWARVEN_STABILITY, $FOW_TOC_WHIRLING_DEFENSE, $FOW_TOC_MENTAL_BLOCK]
-Global Const $FOW_TOC_SKILLS_COSTS_ARRAY	= [5,					10,							5,						5,					5,						5,						4,						10]
-Global Const $FOW_TOC_SKILLS_COSTS_MAP		= MapFromArrays($FOW_TOC_SKILLS_ARRAY, $FOW_TOC_SKILLS_COSTS_ARRAY)
 #EndRegion Configuration
 
 ; ==== Constants ====
@@ -236,23 +232,20 @@ EndFunc
 
 
 Func CastFowToCBuffs()
-	Local Static $tikTokClock = False
-	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 27500 Then
+	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 28000 Then
 		; Since everything is casted together, no risk of interrupts
 		$fow_toc_30s_timer = TimerInit()
 		UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
 		Sleep(250)
 		UseSkillEx($FOW_TOC_SHADOWFORM)
 		Sleep(250)
-		; One time out of two, we also cast the shroud
-		$tikTokClock = Not $tikTokClock
-		If $tikTokClock Then
-			UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
-			Sleep(250)
-		EndIf
 		UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 		If (TimerDiff($run_timer) > 20000) And (GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0) And (IsRecharged($FOW_TOC_MENTAL_BLOCK)) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 		$fow_toc_30s_timer = TimerInit()
+	EndIf
+	If IsRecharged($FOW_TOC_SHROUD_OF_DISTRESS) Then
+		Sleep(250)
+		UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
 	EndIf
 EndFunc
 

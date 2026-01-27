@@ -320,49 +320,49 @@ EndFunc
 
 
 ;~ Returns skillbar struct.
-;Func GetSkillbar($heroIndex = 0)
-;	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
-;	Local $processHandle = GetProcessHandle()
-;	For $i = 0 To GetHeroCount()
-;		$offset[4] = $i * 0xBC
-;		Local $skillbarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
-;		Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
-;		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
-;		If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then Return $skillbarStruct
-;	Next
-;EndFunc
+Func GetSkillbar($heroIndex = 0)
+	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
+	Local $processHandle = GetProcessHandle()
+	For $i = 0 To GetHeroCount()
+		$offset[4] = $i * 0xBC
+		Local $skillbarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
+		Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
+		SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillbarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
+		If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then Return $skillbarStruct
+	Next
+EndFunc
 
 
 ;~ Returns skillbar struct with built-in address caching.
-Func GetSkillbar($heroIndex = 0, $cacheLifetimeMs = 10000)
-	Static $cachedHero = -1
-	Static $cachedSkillbarAddress = -1
-	Static $cacheTimestamp = 0
-
-	Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
-	Local $processHandle = GetProcessHandle()
-	; Check if we can use cached address
-	If $heroIndex <> $cachedHero Or TimerDiff($cacheTimestamp) > $cacheLifetimeMs Then
-		; Follow the pointer chain to find the address
-		Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
-		For $i = 0 To GetHeroCount()
-			$offset[4] = $i * 0xBC
-			Local $skillBarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
-			SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillBarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
-			
-			If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then
-				$cachedSkillbarAddress = $skillBarStructAddress[0]
-				$cachedHero = $heroIndex
-				$cacheTimestamp = TimerInit()
-				Return $skillbarStruct
-			EndIf
-		Next
-		If $cachedSkillbarAddress == 0 Then Return SetError(1, 0, 0)
-	EndIf
-	; Read the actual skillbar data
-	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $cachedSkillbarAddress, 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
-	Return $skillbarStruct
-EndFunc
+;Func GetSkillbar($heroIndex = 0, $cacheLifetimeMs = 10000)
+;	Static $cachedHero = -1
+;	Static $cachedSkillbarAddress = -1
+;	Static $cacheTimestamp = 0
+;
+;	Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
+;	Local $processHandle = GetProcessHandle()
+;	; Check if we can use cached address
+;	If $heroIndex <> $cachedHero Or TimerDiff($cacheTimestamp) > $cacheLifetimeMs Then
+;		; Follow the pointer chain to find the address
+;		Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
+;		For $i = 0 To GetHeroCount()
+;			$offset[4] = $i * 0xBC
+;			Local $skillBarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
+;			SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillBarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
+;			
+;			If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then
+;				$cachedSkillbarAddress = $skillBarStructAddress[0]
+;				$cachedHero = $heroIndex
+;				$cacheTimestamp = TimerInit()
+;				Return $skillbarStruct
+;			EndIf
+;		Next
+;		If $cachedSkillbarAddress == 0 Then Return SetError(1, 0, 0)
+;	EndIf
+;	; Read the actual skillbar data
+;	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $cachedSkillbarAddress, 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
+;	Return $skillbarStruct
+;EndFunc
 
 
 ;~ Returns the skill ID of an equipped skill.
