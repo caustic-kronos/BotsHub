@@ -152,15 +152,21 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-13600, -1800) == $FAIL Then Return $FAIL
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	If MoveDefendingFoWToC(-14200, -700) == $FAIL Then Return $FAIL
-	If MoveDefendingFoWToC(-15000, 0) == $FAIL Then Return $FAIL
+	If MoveDefendingFoWToC(-14650, -200) == $FAIL Then Return $FAIL
 
 	Info('Killing abyssals')
-	While CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT, IsAbyssal) > 1
+	Local $killTimer = TimerInit()
+	Local $foesCount = 999
+	While $foesCount > 0
 		CastFowToCBuffs()
 		Sleep(1000)
+		; If only 2 abyssal left we can finish them by hand
+		If $foesCount > 0 And $foesCount < 3 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		If IsPlayerDead() Then Return $FAIL
+		If TimerDiff($killTimer) > 30000 Then ExitLoop
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT, IsAbyssal)
 	WEnd
-	RandomSleep(500)
+	Sleep(500 + GetPing())
 	Info('Abyssals cleared. Picking up loot')
 	If IsPlayerAlive() Then PickUpItems(CastFowToCBuffs)
 	RandomSleep(500)
@@ -194,23 +200,21 @@ Func FoWToCFarmLoop()
 	WEnd
 
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
-	Local $killTimer = TimerInit()
-	Local $foesCount = 999
-	While $foesCount > 1
+	$killTimer = TimerInit()
+	$foesCount = 999
+	While $foesCount > 0
 		CastFowToCBuffs()
 		Sleep(1000)
+		; If only 3 rangers left we can finish them by hand
 		If $foesCount > 0 And $foesCount < 4 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		If IsPlayerDead() Then Return $FAIL
 		If TimerDiff($killTimer) > 30000 Then ExitLoop
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	WEnd
-
 	Info('Rangers cleared. Picking up loot')
+	Sleep(500 + GetPing())
 	; Tripled to secure the looting of items
-	For $i = 1 To 3
-		PickUpItems(CastFowToCBuffs)
-		RandomSleep(50)
-	Next
+	PickUpItems(CastFowToCBuffs)
 	Return $SUCCESS
 EndFunc
 
@@ -228,11 +232,14 @@ Func CastFowToCBuffs()
 		; Since everything is casted together, no risk of interrupts
 		$fow_toc_30s_timer = TimerInit()
 		UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
+		Sleep(250)
 		UseSkillEx($FOW_TOC_SHADOWFORM)
+		Sleep(250)
 		UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 		; One time out of two, we also cast the shroud
 		$tikTokClock = Not $tikTokClock
 		If $tikTokClock Then
+			Sleep(250)
 			UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
 		EndIf
 		If TimerDiff($run_timer) > 20000 And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And IsRecharged($FOW_TOC_MENTAL_BLOCK) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)

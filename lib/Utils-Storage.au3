@@ -1520,10 +1520,11 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 	Local $agentID
 	Local $deadlock
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_ITEM)
+	Local $me = GetMyAgent()
 	For $agent In $agents
 		If IsPlayerDead() Then Return
 		If Not GetCanPickUp($agent) Then ContinueLoop
-		If GetDistance(GetMyAgent(), $agent) > $range Then ContinueLoop
+		If GetDistance($me, $agent) > $range Then ContinueLoop
 
 		$agentID = DllStructGetData($agent, 'ID')
 		$item = GetItemByAgentID($agentID)
