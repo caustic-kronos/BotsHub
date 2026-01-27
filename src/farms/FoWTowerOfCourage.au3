@@ -140,21 +140,21 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-21100, -2400) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-16500, -3100) == $FAIL Then Return $FAIL
 	; Waiting for Dark Escape to finish anf for buffs to be all fresh
+	UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	While TimerDiff($fow_toc_30s_timer) < 27000
 		Sleep(500)
 	WEnd
-	CastFowToCBuffs()
 
 	Info('Balling abyssals')
 	If MoveDefendingFoWToC(-15250, -3600) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-14450, -3500) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-14150, -2950) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-13600, -1800) == $FAIL Then Return $FAIL
+	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	If MoveDefendingFoWToC(-14200, -700) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-15000, 0) == $FAIL Then Return $FAIL
 
 	Info('Killing abyssals')
-	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	While CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT, IsAbyssal) > 1
 		CastFowToCBuffs()
 		Sleep(1000)
@@ -177,7 +177,7 @@ Func FoWToCFarmLoop()
 	; Longest bow range is around 1500
 	Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST + 500)
 	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
-	;Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
+	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
 	;$target = GetNearestEnemyToCoords($center[0], $center[1])
 	GetAlmostInRangeOfAgent($target)
 	While IsRecharged($FOW_TOC_DEATH_CHARGE)
@@ -188,17 +188,21 @@ Func FoWToCFarmLoop()
 
 	While Not IsRecharged($FOW_TOC_WHIRLING_DEFENSE)
 		CastFowToCBuffs()
+		Move($center[0], $center[1])
 		RandomSleep(500)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	Local $killTimer = TimerInit()
-	While CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 1
+	Local $foesCount = 999
+	While $foesCount > 1
 		CastFowToCBuffs()
 		Sleep(1000)
+		If $foesCount > 0 And $foesCount < 4 Then Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		If IsPlayerDead() Then Return $FAIL
 		If TimerDiff($killTimer) > 30000 Then ExitLoop
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	WEnd
 
 	Info('Rangers cleared. Picking up loot')
@@ -231,9 +235,9 @@ Func CastFowToCBuffs()
 		If $tikTokClock Then
 			UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
 		EndIf
+		If TimerDiff($run_timer) > 20000 And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And IsRecharged($FOW_TOC_MENTAL_BLOCK) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 		$fow_toc_30s_timer = TimerInit()
 	EndIf
-	If TimerDiff($run_timer) > 22000 And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 And GetEffectTimeRemaining(GetEffect($ID_I_AM_UNSTOPPABLE)) == 1 And IsRecharged($FOW_TOC_MENTAL_BLOCK) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 EndFunc
 
 
