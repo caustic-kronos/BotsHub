@@ -580,8 +580,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 
 	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
 		If $defendFunction <> Null Then $defendFunction()
-		Sleep(GetPing())
-		If TimerDiff($moveTimer) > $moveTimeOut Then Return $STUCK
+		If TimerDiff($moveTimer) > $moveTimeOut Then Return $FAIL
 
 		If IsPlayerAlive() And Not IsPlayerMoving() Then
 			$blocked += 1
@@ -723,25 +722,20 @@ Func GetCastTimeModifier($effects, $usedSkill)
 EndFunc
 
 
-;~ Use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
-;~ If no target is provided then skill is used on self
-;~ Returns True if skill usage was successful, False otherwise
-Func UseSkillEx($skillSlot, $target = Null)
+;~ Use a skill and wait for it to be done
+Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
-	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy() < $energy Then Return False
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
-	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
-	; Random delay make us wait at least 2 loops before checking for recharge, to avoid issues with very low cast times
-	Local $approximateCastTime = $castTime + $aftercast + Random(75, 125)
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $Energy Then Return False
+
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
-	; wait until skill starts recharging or time for skill to be activated has elapsed
-	Do
+	While IsCasting(GetMyAgent()) Or IsRecharged($skillSlot) Or DllStructGetData(GetSkillbar(), 'Casting') == 1
 		Sleep(50)
-	Until ($approximateCastTime > 0 And TimerDiff($castTimer) > $approximateCastTime) Or Not IsRecharged($skillSlot)
+		If TimerDiff($castTimer) > $timeout Then Return False
+	WEnd
 	Return True
 EndFunc
 
@@ -1284,10 +1278,7 @@ EndFunc
 Func QuestStateMatches($questID, $expectedMask)
 	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 	; Cannot use a bitmask on a 0x00 mask
-	If $expectedMask == $ID_QUEST_NOT_FOUND Then
-		Return $questState = $ID_QUEST_NOT_FOUND
-	EndIf
-
+	If $expectedMask == $ID_QUEST_NOT_FOUND Then Return $questState = $ID_QUEST_NOT_FOUND
 	Return BitAND($questState, $expectedMask) <> 0
 EndFunc
 #EndRegion Quests
@@ -1964,7 +1955,7 @@ Func ComputeStructureOffsets($structureDefinition)
 		EndIf
 
 		Local $size = TypeSize($type) * $count
-		Info(StringFormat('%-30s offset=%3d size=%3d', $name, $offset, $size))
+		Info(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
 		$offset += $size
 	Next
 

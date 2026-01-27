@@ -263,20 +263,20 @@ Func AggroRaptors()
 	WEnd
 	RandomSleep(250)
 
-	If MoveAggroingRaptors(-20000, -10300) == $STUCK Then Return $FAIL
-	If MoveAggroingRaptors(-19500, -11500) == $STUCK Then Return $FAIL
-	If MoveAggroingRaptors(-20500, -12000) == $STUCK Then Return $FAIL
-	If MoveAggroingRaptors(-21000, -12200) == $STUCK Then Return $FAIL
-	If MoveAggroingRaptors(-21500, -12000) == $STUCK Then Return $FAIL
-	If MoveAggroingRaptors(-22000, -12000) == $STUCK Then Return $FAIL
+	If MoveAggroingRaptors(-20000, -10300) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-19500, -11500) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-20500, -12000) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-21000, -12200) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-21500, -12000) == $FAIL Then Return $FAIL
+	If MoveAggroingRaptors(-22000, -12000) == $FAIL Then Return $FAIL
 	$target = GetNearestEnemyToAgent(GetMyAgent())
 	If $raptors_player_profession == $ID_DERVISH Then UseSkillEx($RAPTORS_MIRAGE_CLOAK)
-	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $STUCK Then Return $FAIL
-	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $STUCK Then Return $FAIL
+	If Not IsBossAggroed() And MoveAggroingRaptors(-22300, -12000) == $FAIL Then Return $FAIL
+	If Not IsBossAggroed() And MoveAggroingRaptors(-22600, -12000) == $FAIL Then Return $FAIL
 	If IsBossAggroed() Then
-		If MoveAggroingRaptors(-22400, -12400) == $STUCK Then Return $FAIL
+		If MoveAggroingRaptors(-22400, -12400) == $FAIL Then Return $FAIL
 	Else
-		If MoveAggroingRaptors(-23300, -12050) == $STUCK Then Return $FAIL
+		If MoveAggroingRaptors(-23300, -12050) == $FAIL Then Return $FAIL
 	EndIf
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc

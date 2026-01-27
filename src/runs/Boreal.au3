@@ -42,7 +42,7 @@ Global Const $BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR = 'Ogej8xeDLT8I6MHQ3l0kTQ4OIQ
 Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- dwarves rank 5 minimum' & @CRLF _
 	& '- norn rank 5 minimum' & @CRLF _
-	& 'Must have skills: Dash, Dwarven Stability, "I am Unstoppable"' & @CRLF _
+	& 'Must have skills: Dash, Dwarven Stability, I am Unstoppable' & @CRLF _
 	& 'Optional skills (for more survivability and unblocking): Shroud of Distress, Heart of Shadow, Deaths Charge'
 ; Average duration ~ 1m30s
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
