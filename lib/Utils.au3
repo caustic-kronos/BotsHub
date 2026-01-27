@@ -723,7 +723,7 @@ EndFunc
 
 
 ;~ Use a skill and wait for it to be done
-Func UseSkillEx($skillSlot, $target = Null, $timeout = 3000)
+Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
@@ -734,6 +734,7 @@ Func UseSkillEx($skillSlot, $target = Null, $timeout = 3000)
 	Local $castTimer = TimerInit()
 	While IsCasting(GetMyAgent()) Or IsRecharged($skillSlot) Or DllStructGetData(GetSkillbar(), 'Casting') == 1
 		Sleep(50)
+		If TimerDiff($castTimer) > $timeout Then Return False
 	WEnd
 	Return True
 EndFunc

@@ -65,7 +65,7 @@ Global Const $WRITE_CHAT_STRUCT_PTR = DllStructGetPtr($WRITE_CHAT_STRUCT)
 Global Const $SELL_ITEM_STRUCT = SafeDllStructCreate('ptr commandSellItemPtr;dword totalSoldValue;dword itemID;dword ScanBuyItemBase')
 Global Const $SELL_ITEM_STRUCT_PTR = DllStructGetPtr($SELL_ITEM_STRUCT)
 
-Global Const $ACTION_STRUCT = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;')
+Global Const $ACTION_STRUCT = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;dword type')
 Global Const $ACTION_STRUCT_PTR = DllStructGetPtr($ACTION_STRUCT)
 
 Global Const $TOGGLE_LANGUAGE_STRUCT = SafeDllStructCreate('ptr commandToggleLanguagePtr;dword')
@@ -1207,11 +1207,12 @@ EndFunc
 
 
 ;~ Internal use only.
-Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE)
+Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE, $type = 0)
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($ACTION_STRUCT, 2, $action)
 		DllStructSetData($ACTION_STRUCT, 3, $flag)
-		Enqueue($ACTION_STRUCT_PTR, 12)
+		DllStructSetData($ACTION_STRUCT, 4, $type)
+		Enqueue($ACTION_STRUCT_PTR, 16)
 		Return True
 	EndIf
 	Return False
