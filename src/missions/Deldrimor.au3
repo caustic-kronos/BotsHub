@@ -197,7 +197,7 @@ Func FarmLairSnowman()
 		RandomSleep(2500)
 		PickUpItems()
 	Next
-	
+	$snowman_farm_setup = False
 	Return $SUCCESS
 
 EndFunc
