@@ -329,7 +329,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('TradeCancel',				'C745FC01000000506A04',													-0x6,	'func')
 	; Ui patterns
 	AddScanPattern('UIMessage',					'B900000000E8000000005DC3894508',										-0x14,	'func')
-	AddScanPattern('CompassFlag',				'8D451050566A5B57',														0x1,	'func')
+	AddScanPattern('CompassFlag',				'8D451050566A5C57',														0x1,	'func')
 	AddScanPattern('PartySearchButtonCallback',	'8B450883EC08568BF18B480483F90E',										-0x2,	'func')
 	AddScanPattern('PartyWindowButtonCallback',	'837d0800578bf97411',													-0x2,	'func')
 	AddScanPattern('EnterMission',				'A900001000743A',														0x52,	'func')
@@ -347,7 +347,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('Engine',					'568B3085F67478EB038D4900D9460C',										-0x22,	'hook')
 	AddScanPattern('Render',					'F6C401741C68',															-0x68,	'hook')
 	AddScanPattern('LoadFinished',				'2BD9C1E303',															0xA0,	'hook')
-	AddScanPattern('HookedTrader',				'8D4DFC51576A5450',														-0x3C,	'hook')
+	AddScanPattern('Trader',					'8D4DFC51576A5550',														-0x3C,	'hook')
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
 	If IsDeclared('g_b_AddPattern') Then Extend_AddPattern()
 EndFunc
@@ -699,7 +699,7 @@ Func MapScanResultsToLabels()
 	$tempValue = $scan_results['LoadFinished']
 	SetLabel('LoadFinishedStart', Ptr($tempValue))
 	SetLabel('LoadFinishedReturn', Ptr($tempValue + 0x5))
-	$tempValue = $scan_results['HookedTrader']
+	$tempValue = $scan_results['Trader']
 	SetLabel('TraderStart', Ptr($tempValue))
 	SetLabel('TraderReturn', Ptr($tempValue + 0x5))
 	$tempValue = $scan_results['TradePartner']
