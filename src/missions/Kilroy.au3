@@ -33,7 +33,7 @@ Global Const $KILROY_FARM_INFORMATIONS = 'This bot loops the Kilroy Stonekins' &
 	& 'Ensure your Brass Knuckcles are in Weapon Slot 1 and you have 9 in Dagger Mastery' & @CRLF _
 	& 'Complete all of Kilroys other quests first to get the best Daggers.'
 Global Const $KILROY_FARM_DURATION = 10000 ;sample time for now
-Global Const $KILROY_ACCEPT_REWARD = 000
+Global Const $KILROY_ACCEPT_REWARD = 0x835807
 Global Const $KILROY_START_QUEST = 0x835803 
 Global Const $KILRAY_ACCEPT_QUEST = 0x835801
 
@@ -58,12 +58,12 @@ Func SetupKilroyFarm()
 	Info('Setting Up Farm')
 	Info('Traveling to Gunnars')
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
-	SwitchToHardModeIfEnabled()
+	;SwitchToHardModeIfEnabled()
 	
 	If IsQuestReward($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
 		Info('Quest Reward Found! Gathering Quest Reward')
 		MoveTo(17281.19, -4850.08)
-		Local $questNPC = GetNearestNPCToCoords((17281.19, -4850.08))
+		Local $questNPC = GetNearestNPCToCoords(17281.19, -4850.08)
 		RandomSleep(750)
 		TakeQuestReward($questNPC, $ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA, $KILROY_ACCEPT_REWARD)
 		RandomSleep(750)
@@ -102,6 +102,44 @@ Func MoveToPunchOut()
 EndFunc
 
 Func FarmPunchOut()
+	Info('Moving to Group 1')
+	MoveAggroAndKillInRange(-15161.00, -15209.14)
+	Info('Moving to Group 2')
+	MoveAggroAndKillInRange(-11940.47, -16210.85)
+	Info('Moving to Group 3')
+	MoveAggroAndKillInRange(-7430.37, -16290.83)
+	Info('Moving to Group 4')
+	MoveAggroAndKillInRange(-4460.11, -16184.76)
+	Info('Moving to Group 5')
+	MoveAggroAndKillInRange(-2047.64, -14724.66)
+	Info('Moving to Group 6')
+	MoveAggroAndKillInRange(531.69, -13925.98)
+	Info('Moving to Group 7')
+	MoveAggroAndKillInRange(3334.65, -16213.76)
+	Info('Moving to Group 8')
+	MoveAggroAndKillInRange(6933.14, -15406.12)
+	Info('Moving to Boss and Sleeping for Kilroy')
+	MoveTo(10500.60, -16134.18)
+	Sleep(10000)
+	Info('Moving to Boss')
+	MoveAggroAndKillInRange(12575.02,-15934.02)
+	
+	Info('Moving to Chest')
+	MoveTo(13270.85,-15948.80)
+	
+	ClearTarget()
+	Sleep(2000)
+	; Doubled to secure bot
+	For $i = 1 To 2
+		MoveTo(13270.85,-15948.80)
+		TargetNearestItem()
+		RandomSleep(500)
+		ActionInteract()
+		ActionInteract()
+		RandomSleep(500)
+	Next
+	
+	$kilroy_farm_setup = false
 EndFunc
 
 ;TODO - Health Monitor for Standup
