@@ -103,7 +103,7 @@ Func FarmLairSnowman()
 	MoveAggroAndKillInRange(-14392.77, 3759.07, 'Over The Bridge of Snowmen')
 	
 	Info('Get New Blessing')
-	MoveAggroAndKillInRange(-12482.00, 3924.00, 'Over The Bridge of Snowmen')
+	MoveAggroAndKillInRange(-12482.00, 3924.00, 'Murder Over The Bridge of Snowmen')
 	GoToNPC(GetNearestNPCToCoords(-12482.00, 3924.00))
 	Info('Moving to Snowman Channel')
 	MoveTo(-14413.26, 2483.14)
@@ -174,7 +174,7 @@ Func FarmLairSnowman()
 	Sleep(70000)
 	; Doubled to try securing the looting
 	For $i = 1 To 2
-		MoveTo(-15800, 16950)
+		MoveTo(-7767.71, -18739.19)
 		Info('Opening Wintersday chest')
 		TargetNearestItem()
 		ActionInteract()
