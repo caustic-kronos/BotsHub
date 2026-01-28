@@ -143,8 +143,8 @@ Func TowerOfCourage()
 	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
 	TakeQuest($questNPC, $ID_QUEST_TOWER_OF_COURAGE, 0x80D401)
 	TakeQuestReward($questNPC, $ID_QUEST_TOWER_OF_COURAGE, 0x80D407)
-
 	TakeQuest($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC01)
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -192,6 +192,7 @@ Func TheGreatBattleField()
 	FlagMoveAggroAndKill(2800, 7900, '3')
 	FlagMoveAggroAndKill(700, 7600, '4')
 	MoveAggroAndKill(1400, 6100, '5')
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -231,6 +232,7 @@ Func TheTempleOfWar()
 	TakeQuest($questNPC, $ID_QUEST_KHOBAY_THE_BETRAYER, 0x80E001, 0x80E003)
 	$questNPC = GetNearestNPCToCoords(150, -1950)
 	TakeQuest($questNPC, $ID_QUEST_TOWER_OF_STRENGTH, 0x80D301)
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -279,7 +281,7 @@ Func TheSpiderCave_and_FissureShore()
 	MoveTo(-6700, -11750)
 	MoveTo(-1600, -8750)
 	MoveTo(1000, -11200)
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -293,7 +295,7 @@ Func LakeOfFire()
 	MoveAggroAndKillInRange(20500, -12400, '6', $RANGE_EARSHOT)
 	MoveAggroAndKillInRange(18300, -14000, '7', $RANGE_EARSHOT)
 	MoveAggroAndKillInRange(19500, -15000, '8', $RANGE_EARSHOT)
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -334,7 +336,7 @@ Func TowerOfStrengh()
 		Sleep(1000)
 		$me = GetMyAgent()
 	WEnd
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -383,7 +385,7 @@ Func BurningForest()
 		If $i < 3 Then RandomSleep(5000)
 	Next
 	FlagMoveAggroAndKill(-10750, 6300, '3', $optionsBurningForest)
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -460,7 +462,7 @@ Func ForestOfTheWailingLord()
 	Local $questNPC = GetNearestNPCToCoords(-21600, 15050)
 	TakeQuest($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD01)
 
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -513,7 +515,7 @@ Func GriffonRun()
 	PickUpItems()
 	CancelAll()
 
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 
@@ -550,7 +552,7 @@ Func TempleLoot()
 	$questNPC = GetNearestNPCToCoords(200, -1900)
 	TakeQuestReward($questNPC, $ID_QUEST_TOWER_OF_STRENGTH, 0x80D307)
 
-	Return $SUCCESS
+	Return IsRunFailed() ? $FAIL : $SUCCESS
 EndFunc
 
 

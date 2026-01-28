@@ -188,7 +188,7 @@ EndFunc
 
 Func CleanCoFMobs()
 	CheckVoS()
-	Local $target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, IsUndead)
+	Local $target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsUndead)
 	While $target <> Null And GetDistance(GetMyAgent(), $target) < $RANGE_EARSHOT
 		If GetSkillbarSkillAdrenaline($COF_CRIPPLING_VICTORY) >= 150 Then
 			UseSkillEx($COF_CRIPPLING_VICTORY, $target)
@@ -203,7 +203,7 @@ Func CleanCoFMobs()
 		CheckVoS()
 		Sleep(100)
 		If IsPlayerDead() Then Return $FAIL
-		$target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, IsUndead)
+		$target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsUndead)
 	WEnd
 	RandomSleep(200)
 EndFunc

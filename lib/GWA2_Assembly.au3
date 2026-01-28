@@ -27,7 +27,7 @@ Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 
 #Region GWA2 Structure templates
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
-Global Const $AGENT_STRUCT_TEMPLATE = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equip;dword unknown256;dword unknown260;ptr Tags;short unknown268;byte Primary;byte Secondary;byte Level;byte Team;byte unknown274[2];dword unknown276;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown296;float HPPips;dword unknown304;float HealthPercent;dword MaxHealth;dword Effects;dword unknown320;byte Hex;byte unknown325[19];dword ModelState;dword TypeMap;dword unknown352[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown384;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown404[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown442;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemID'
+Global Const $AGENT_STRUCT_TEMPLATE = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equipment;dword unknown256;dword unknown260;ptr Tags;short unknown268;byte Primary;byte Secondary;byte Level;byte Team;byte unknown274[2];dword unknown276;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown296;float HPPips;dword unknown304;float HealthPercent;dword MaxHealth;dword Effects;dword unknown320;byte Hex;byte unknown325[19];dword ModelState;dword TypeMap;dword unknown352[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown384;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown404[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown442;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemID'
 Global Const $BUFF_STRUCT_TEMPLATE = 'long SkillId;long unknown1;long BuffId;long TargetID'
 Global Const $EFFECT_STRUCT_TEMPLATE = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
 Global Const $SKILLBAR_STRUCT_TEMPLATE = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword SkillId1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword SkillId2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword SkillId3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword SkillId4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword SkillId5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword SkillId6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword SkillId7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword SkillId8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
@@ -65,7 +65,7 @@ Global Const $WRITE_CHAT_STRUCT_PTR = DllStructGetPtr($WRITE_CHAT_STRUCT)
 Global Const $SELL_ITEM_STRUCT = SafeDllStructCreate('ptr commandSellItemPtr;dword totalSoldValue;dword itemID;dword ScanBuyItemBase')
 Global Const $SELL_ITEM_STRUCT_PTR = DllStructGetPtr($SELL_ITEM_STRUCT)
 
-Global Const $ACTION_STRUCT = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;')
+Global Const $ACTION_STRUCT = SafeDllStructCreate('ptr commandActionPtr;dword action;dword flag;dword type')
 Global Const $ACTION_STRUCT_PTR = DllStructGetPtr($ACTION_STRUCT)
 
 Global Const $TOGGLE_LANGUAGE_STRUCT = SafeDllStructCreate('ptr commandToggleLanguagePtr;dword')
@@ -1207,11 +1207,12 @@ EndFunc
 
 
 ;~ Internal use only.
-Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE)
+Func PerformAction($action, $flag = $CONTROL_TYPE_ACTIVATE, $type = 0)
 	If GetAgentExists(GetMyID()) Then
 		DllStructSetData($ACTION_STRUCT, 2, $action)
 		DllStructSetData($ACTION_STRUCT, 3, $flag)
-		Enqueue($ACTION_STRUCT_PTR, 12)
+		DllStructSetData($ACTION_STRUCT, 4, $type)
+		Enqueue($ACTION_STRUCT_PTR, 16)
 		Return True
 	EndIf
 	Return False

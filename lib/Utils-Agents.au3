@@ -247,6 +247,7 @@ Func PrintNPCInformations($npc)
 	Info('Allegiance: ' & DllStructGetData($npc, 'Allegiance'))
 	Info('Effects: ' & DllStructGetData($npc, 'Effects'))
 	Info('ModelState: ' & DllStructGetData($npc, 'ModelState'))
+	Info('Skill: ' & DllStructGetData($npc, 'Skill'))
 	Info('NameProperties: ' & DllStructGetData($npc, 'NameProperties'))
 	Info('Type: ' & DllStructGetData($npc, 'Type'))
 	Info('ExtraType: ' & DllStructGetData($npc, 'ExtraType'))
@@ -547,14 +548,14 @@ EndFunc
 
 
 ;~ Returns the nearest signpost to an agent. Caution, chest can also be matched as static object agent
-Func GetNearestSignpostToAgent($agent)
-	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_STATIC)
+Func GetNearestSignpostToAgent($agent, $range = $RANGE_COMPASS)
+	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_STATIC, $range)
 EndFunc
 
 
 ;~ Returns the nearest NPC to an agent.
-Func GetNearestNPCToAgent($agent)
-	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_NPC, NPCAgentFilter)
+Func GetNearestNPCToAgent($agent, $range = $RANGE_COMPASS)
+	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_NPC, $range, NPCAgentFilter)
 EndFunc
 
 
@@ -568,8 +569,8 @@ EndFunc
 
 
 ;~ Returns the nearest enemy to an agent.
-Func GetNearestEnemyToAgent($agent)
-	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_NPC, EnemyAgentFilter)
+Func GetNearestEnemyToAgent($agent, $range = $RANGE_COMPASS)
+	Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_NPC, $range, EnemyAgentFilter)
 EndFunc
 
 
@@ -584,7 +585,7 @@ EndFunc
 
 
 ;~ Returns the nearest agent to specified target agent. $agentFilter is a function which returns True for the agents that should be considered, False for those to skip
-Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $agentFilter = Null)
+Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $range = $RANGE_COMPASS, $agentFilter = Null)
 	Local $nearestAgent = Null, $distance = Null, $nearestDistance = 100000000
 	Local $agents = GetAgentArray($agentType)
 	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
@@ -595,6 +596,7 @@ Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $agen
 		If DllStructGetData($agent, 'ID') == $ownID Then ContinueLoop
 		If $agentFilter <> Null And Not $agentFilter($agent) Then ContinueLoop
 		$distance = GetDistance($targetAgent, $agent)
+		If $distance > $range Then ContinueLoop
 		If $distance < $nearestDistance Then
 			$nearestAgent = $agent
 			$nearestDistance = $distance
@@ -609,7 +611,7 @@ EndFunc
 ;~ Returns the nearest item to an agent.
 Func GetNearestItemToAgent($agent, $canPickUp = True)
 	If $canPickUp Then
-		Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_ITEM, GetCanPickUp)
+		Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_ITEM, $RANGE_COMPASS, GetCanPickUp)
 	Else
 		Return GetNearestAgentToAgent($agent, $ID_AGENT_TYPE_ITEM)
 	EndIf
