@@ -369,7 +369,9 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 		Case $ID_ELEMENTALIST
 			$result = MoveAvoidingBodyBlock($destinationX, $destinationY, $vaettirs_move_options_elementalist)
 	EndSwitch
-	If $result == $STUCK Then
+	If $result == $SUCCESS Then Return $SUCCESS
+	; If no success when moving, either we died (the end) or we were bodyblocked
+	If IsPlayerAlive() Then
 		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 		VaettirsKillSequence()
 		If IsPlayerDead() Then Return $FAIL
@@ -380,9 +382,8 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 			RandomSleep(50)
 		Next
 		Return $SUCCESS
-	Else
-		Return $result
 	EndIf
+	Return $FAIL
 EndFunc
 
 
@@ -441,8 +442,8 @@ EndFunc
 
 ;~ Uses Shadow Form if its recharged
 Func VaettirsCheckShadowForm()
-	; Caution, if playing monk 55hp then protective spirit has to be already on player when casting shadow form, otherwise damage reduction to 0 won't be applied due to specific guild wars mechanics
-	; Furthermore, due to specific guild wars mechanics casting protective spirit multiple times can remove damage reduction to 0 so protective spirit has to casted only once just before Shadow Form, otherwise player will die very fast
+	; Caution, monk 55hp needs protective spirit before casting shadow form, otherwise damage reduction won't be applied
+	; Casting protective spirit multiple times may remove damage reduction so protective spirit has to casted only once just before Shadow Form
 	If ($vaettirs_player_profession <> $ID_MONK And TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20) Or _
 		($vaettirs_player_profession == $ID_MONK And TimerDiff($vaettir_shadowform_timer) > 19500 And GetEnergy() > 30) Then
 		If $vaettirs_player_profession == $ID_MONK Then UseSkillEx($VAETTIR_MONK_PROTECTIVE_SPIRIT)

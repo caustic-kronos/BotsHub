@@ -155,8 +155,8 @@ Func GemstoneTormentFarmLoop()
 		Sleep(500)
 	EndIf
 
-	If RunTormentFarm(15125, 2794) == $STUCK Then Return $FAIL
-	If RunTormentFarm(15561, 5241) == $STUCK Then Return $FAIL
+	If RunTormentFarm(15125, 2794) == $FAIL Then Return $FAIL
+	If RunTormentFarm(15561, 5241) == $FAIL Then Return $FAIL
 	$timerWait = TimerInit()
 	While TimerDiff($timerWait) < 5000 And IsPlayerAlive()
 		RandomSleep(100)
@@ -167,17 +167,17 @@ Func GemstoneTormentFarmLoop()
 		RandomSleep(100)
 	WEnd
 
-	If RunTormentFarm(12304, 9022) == $STUCK Then Return $FAIL
-	If RunTormentFarm(11444, 9370) == $STUCK Then Return $FAIL
-	If RunTormentFarm(10828, 10583) == $STUCK Then Return $FAIL
+	If RunTormentFarm(12304, 9022) == $FAIL Then Return $FAIL
+	If RunTormentFarm(11444, 9370) == $FAIL Then Return $FAIL
+	If RunTormentFarm(10828, 10583) == $FAIL Then Return $FAIL
 	$timerWait = TimerInit()
 	While IsPlayerAlive() And (TimerDiff($timerWait) < 15000 Or Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or GetEnergy() < 80)
 		RandomSleep(100)
 	WEnd
 	Info('First group')
 	CastBuffsTormentFarm()
-	If RunTormentFarm(10779, 9898) == $STUCK Then Return $FAIL
-	;If RunTormentFarm(11125, 9198) == $STUCK Then Return $FAIL
+	If RunTormentFarm(10779, 9898) == $FAIL Then Return $FAIL
+	;If RunTormentFarm(11125, 9198) == $FAIL Then Return $FAIL
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500)
 	If KillTormentMobs() == $FAIL Then Return $FAIL
@@ -192,10 +192,10 @@ Func GemstoneTormentFarmLoop()
 
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
-	If RunTormentFarm(11130, 10910) == $STUCK Then Return $FAIL
-	If RunTormentFarm(12140, 12103) == $STUCK Then Return $FAIL
-	If RunTormentFarm(13915, 13415) == $STUCK Then Return $FAIL
-	If RunTormentFarm(16250, 14073) == $STUCK Then Return $FAIL
+	If RunTormentFarm(11130, 10910) == $FAIL Then Return $FAIL
+	If RunTormentFarm(12140, 12103) == $FAIL Then Return $FAIL
+	If RunTormentFarm(13915, 13415) == $FAIL Then Return $FAIL
+	If RunTormentFarm(16250, 14073) == $FAIL Then Return $FAIL
 	$timerWait = TimerInit()
 	While IsPlayerAlive() And (TimerDiff($timerWait) < 42000 Or Not IsRecharged($TORMENT_ELEMENTAL_LORD) Or _
 			Not IsRecharged($TORMENT_OBSIDIAN_FLESH) Or Not IsRecharged($TORMENT_METEOR_SHOWER) Or GetEnergy() < 80)

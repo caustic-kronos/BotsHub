@@ -6,19 +6,30 @@ This project includes or is based on work by other developers. Full credit to th
 
 ## Original Scripts / Bots Used
 
-### 'GWA2.au3'
-- Authors: MrZambix, tjubutsi, Greg-76
+### 'BotsHub.au3', 'BotsHub-GUI.au3'
+- Authors: Kronos
+- Contributors: Gahais
+- License: licensed under Apache 2.0
+
+### 'GWA2.au3', 'GWA2_Assembly.au3', 'GWA2_Headers.au3', 'GWA2_ID.au3', 'GWA2_ID_Items.au3', 'GWA2_ID_Maps.au3', 'GWA2_ID_Quests.au3', 'GWA2_ID_Skills.au3'
+- Authors: MrZambix, tjubutsi, Greg-76, KleuTSchi
 - Contributors: Kronos, Gahais
 - Source: https://github.com/JAG-GW/GWA2
-- Notes: Major modifications were made by Kronos (variable renaming and refactoring). Main, original structure and addresses were kept. Improvements by Gahais
+- Notes: Major modifications were made by Kronos (variable renaming and refactoring). Main, original structure and addresses were kept. Improvements by Gahais.
 - License: GNU LESSER GENERAL PUBLIC LICENSE
 
-### 'Utils-Items_Modstructs.au3'
+### 'Utils.au3', 'Utils-Storage.au3', 'Utils-Agents.au3', 'Utils-Debugger.au3', 'Utils-Items_Modstructs.au3', 'TestSuite.au3'
 - Authors: Kronos
-- Contributors: Underavelvetmoon, Gahais
+- Contributors: Gahais, Underavelvetmoon
 - Notes: modstructs were obtained from many sources.
 But special thanks to Underavelvetmoon for sharing his work on the modstructs used in this part of the code.
 - License: licensed under Apache 2.0
+
+### 'CoF.au3'
+- Author: DeeperBlue, unknown
+- Contributor: Gahais
+- Notes: Major modifications were made.
+- License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
 
 ### 'Vaettirs.au3'
 - Author: gigi
@@ -29,12 +40,6 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 ### 'Raptors.au3'
 - Author: Rattiev
 - Contributors: gigi, Kronos, Gahais
-- Notes: Major modifications were made.
-- License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
-
-### 'CoF.au3'
-- Author: DeeperBlue, unknown
-- Contributor: Gahais
 - Notes: Major modifications were made.
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
 
@@ -61,7 +66,7 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 
 ### 'Froggy.au3' 'SoO.au3' 'FoW.au3'
 - Author: TDawg
-- Contributors: Kronos, Gahais
+- Contributors: Kronos, Gahais, BuddyLeeX
 - License: licensed under Apache 2.0
 
 ### 'Norn.au3' 'NexusChallenge.au3' 'SunspearArmor.au3' 'Lightbringer2.au3' 'Vanguard.au3'
@@ -102,7 +107,7 @@ Enormous modifications were made, to the point this bot is probably not in any w
 
 ### 'Underworld.au3'
 - Authors: Akiro, The Great Gree
-- Contributor: Gahais
+- Contributor: Gahais, BuddyLeeX
 - Notes: Major modifications were made.
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
 
@@ -117,7 +122,7 @@ Enormous modifications were made, to the point this bot is probably not in any w
 - Contributor: Gahais
 - License: licensed under Apache 2.0
 
-### 'Corsairs.au3' 'DragonMoss.au3' 'EdenIris.au3' 'Follower.au3' 'JadeBrotherhood.au3' 'Kournans.au3' 'Mantids.au3' 'Pongmei.au3' 'SpiritSlaves.au3' 'Tasca.au3'
+### 'Corsairs.au3' 'DragonMoss.au3' 'EdenIris.au3' 'Follower.au3' 'JadeBrotherhood.au3' 'Kournans.au3' 'Mantids.au3' 'Omnifarmer.au3' 'Pongmei.au3' 'SpiritSlaves.au3' 'Tasca.au3' 'Voltaic.au3'
 - Author: Kronos
 - Contributor: Gahais
 - Notes: Original work by Kronos, improvements by Gahais

@@ -580,8 +580,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 
 	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
 		If $defendFunction <> Null Then $defendFunction()
-		Sleep(GetPing())
-		If TimerDiff($moveTimer) > $moveTimeOut Then Return $STUCK
+		If TimerDiff($moveTimer) > $moveTimeOut Then Return $FAIL
 
 		If IsPlayerAlive() And Not IsPlayerMoving() Then
 			$blocked += 1
@@ -723,25 +722,20 @@ Func GetCastTimeModifier($effects, $usedSkill)
 EndFunc
 
 
-;~ Use a skill and wait for it to be done, but skipping calculation of precise cast time, without effects modifiers for optimization
-;~ If no target is provided then skill is used on self
-;~ Returns True if skill usage was successful, False otherwise
-Func UseSkillEx($skillSlot, $target = Null)
+;~ Use a skill and wait for it to be done
+Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
-	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy() < $energy Then Return False
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
-	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
-	; Random delay make us wait at least 2 loops before checking for recharge, to avoid issues with very low cast times
-	Local $approximateCastTime = $castTime + $aftercast + Random(75, 125)
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $Energy Then Return False
+
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
-	; wait until skill starts recharging or time for skill to be activated has elapsed
-	Do
+	While IsCasting(GetMyAgent()) Or IsRecharged($skillSlot) Or DllStructGetData(GetSkillbar(), 'Casting') == 1
 		Sleep(50)
-	Until ($approximateCastTime > 0 And TimerDiff($castTimer) > $approximateCastTime) Or Not IsRecharged($skillSlot)
+		If TimerDiff($castTimer) > $timeout Then Return False
+	WEnd
 	Return True
 EndFunc
 
@@ -1203,17 +1197,13 @@ EndFunc
 
 #Region Quests
 ;~ Take a quest or a reward - for reward, expectedState should be $ID_QUEST_NOT_FOUND once reward taken
-Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUEST_NOT_FOUND)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+Func TakeQuestOrReward($questNPC, $questID, $dialogID, $statePredicate = IsQuestNotFound)
 	Local $timerQuest = TimerInit()
-	; 0x01 bitmask only checks for active or not found states
-	While BitAND($questState, 0x01) <> $expectedState
-		Debug('Current quest state : ' & $questState)
+	While Not $statePredicate($questID)
 		GoToNPC($questNPC)
 		Sleep(1000 + GetPing())
 		Dialog($dialogID)
 		Sleep(1000 + GetPing())
-		$questState = DllStructGetData(GetQuestByID($questID), 'LogState')
 		If TimerDiff($timerQuest) > 60000 Then
 			Warn('Could not handle quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
 			Return $FAIL
@@ -1223,8 +1213,7 @@ Func TakeQuestOrReward($questNPC, $questID, $dialogID, $expectedState = $ID_QUES
 EndFunc
 
 
-;~ Take a quest. Prints quest name to be taken
-;~ Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest accepting dialog ID
+;~ Take a quest. Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest accepting dialog ID
 Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	If IsQuestActive($questID) Then
 		Warn('Quest named ' & $QUEST_NAMES_FROM_IDS[$questID] & ' is already in the logbook')
@@ -1237,12 +1226,11 @@ Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 		Dialog($initialDialogID)
 		Sleep(1000 + GetPing())
 	EndIf
-	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_ACTIVE)
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, IsQuestActive)
 EndFunc
 
 
-;~ Take a quest reward. Prints quest name for which reward is to be taken
-;~ Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest reward dialog ID
+;~ Take a quest reward. Initial dialog ID can be provided if there has to be some other dialog ID sent first before being able to send quest reward dialog ID
 Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	If Not IsQuestReward($questID) Then
 		Warn('No reward available for quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
@@ -1255,52 +1243,43 @@ Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
 		Dialog($initialDialogID)
 		Sleep(1000 + GetPing())
 	EndIf
-	Return TakeQuestOrReward($questNPC, $questID, $dialogID, $ID_QUEST_COMPLETED)
+	Return TakeQuestOrReward($questNPC, $questID, $dialogID, IsQuestCompleted)
 EndFunc
-
 
 Func IsQuestNotFound($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xFF) == $ID_QUEST_NOT_FOUND
+	Return QuestStateMatches($questID, $ID_QUEST_NOT_FOUND)
 EndFunc
-
-
-Func IsQuestActive($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0x01) == $ID_QUEST_ACTIVE
-EndFunc
-
-
-Func IsQuestReward($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0x02) == $ID_QUEST_REWARD
-EndFunc
-
-
-Func IsQuestPartiallyCompleted($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0x04) == $ID_QUEST_PARTIAL_1 _
-		Or BitAND($questState, 0x08) == $ID_QUEST_PARTIAL_2
-EndFunc
-
 
 Func IsQuestCompleted($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xFF) == $ID_QUEST_COMPLETED
+	Return IsQuestNotFound($questID)
 EndFunc
 
-
-Func isQuestPrimary($questID)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xF0) == $ID_QUEST_PRIMARY _
-		Or BitAND($questState, 0xF0) == $ID_QUEST_AREA_PRIMARY
+Func IsQuestActive($questID)
+	Return QuestStateMatches($questID, BitOR($ID_QUEST_ACTIVE, $ID_QUEST_CURRENT))
 EndFunc
 
+Func IsQuestPartiallyCompleted($questID)
+	Return QuestStateMatches($questID, BitOR($ID_QUEST_PARTIAL_1, $ID_QUEST_PARTIAL_2))
+EndFunc
 
-Func isQuestSecondary($questID)
+Func IsQuestReward($questID)
+	Return QuestStateMatches($questID, $ID_QUEST_REWARD)
+EndFunc
+
+Func IsQuestPrimary($questID)
+	Return QuestStateMatches($questID, BitOR($ID_QUEST_PRIMARY, $ID_QUEST_AREA_PRIMARY))
+EndFunc
+
+Func IsQuestSecondary($questID)
+	Return Not IsQuestNotFound($questID) And Not IsQuestPrimary($questID)
+EndFunc
+
+;~ Return whether or not the given quest matches the given mask
+Func QuestStateMatches($questID, $expectedMask)
 	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
-	Return BitAND($questState, 0xF0) <> $ID_QUEST_PRIMARY _
-		And BitAND($questState, 0xF0) <> $ID_QUEST_AREA_PRIMARY
+	; Cannot use a bitmask on a 0x00 mask
+	If $expectedMask == $ID_QUEST_NOT_FOUND Then Return $questState = $ID_QUEST_NOT_FOUND
+	Return BitAND($questState, $expectedMask) <> 0
 EndFunc
 #EndRegion Quests
 
@@ -1976,7 +1955,7 @@ Func ComputeStructureOffsets($structureDefinition)
 		EndIf
 
 		Local $size = TypeSize($type) * $count
-		Info(StringFormat('%-30s offset=%3d size=%3d', $name, $offset, $size))
+		Info(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
 		$offset += $size
 	Next
 
