@@ -27,15 +27,15 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $LIGHTBRINGER_FARM2_INFORMATIONS = 'Lightbringer title farm'
+Global Const $LIGHTBRINGER_FARM_INFORMATIONS = 'Lightbringer title farm'
 ; Average duration ~ 45m
-Global Const $LIGHTBRINGER_FARM2_DURATION = 45 * 60 * 1000
+Global Const $LIGHTBRINGER_FARM_DURATION = 45 * 60 * 1000
 
-Global $lightbringer_farm2_setup = False
+Global $lightbringer_farm_setup = False
 
 ;~ Main loop for the Lightbringer title farm
-Func LightbringerFarm2()
-	If Not $lightbringer_farm2_setup Then Lightbringer2FarmSetup()
+Func LightbringerFarm()
+	If Not $lightbringer_farm_setup Then LightbringerFarmSetup()
 
 	GoToMirrorOfLyss()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -47,7 +47,7 @@ Func LightbringerFarm2()
 EndFunc
 
 
-Func Lightbringer2FarmSetup()
+Func LightbringerFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_THE_KODASH_BAZAAR, $district_name)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
@@ -56,7 +56,7 @@ Func Lightbringer2FarmSetup()
 	MoveTo(-19350, -16900)
 	RandomSleep(5000)
 	WaitMapLoading($ID_THE_KODASH_BAZAAR, 10000, 2000)
-	$lightbringer_farm2_setup = True
+	$lightbringer_farm_setup = True
 	Info('Preparations completed')
 EndFunc
 
