@@ -286,7 +286,6 @@ Func CreateGUI()
 	GUICtrlSetData($GUI_Combo_BagsCount, $AVAILABLE_BAG_COUNTS, '5')
 	GUICtrlSetOnEvent($GUI_Combo_BagsCount, 'GuiButtonHandler')
 	
-	
 	$GUI_Checkbox_Survivor = GUICtrlCreateCheckbox('Maintain Survivor', 355, 268)
 	GUICtrlSetOnEvent($GUI_Checkbox_Survivor, 'GuiButtonHandler')
 	
