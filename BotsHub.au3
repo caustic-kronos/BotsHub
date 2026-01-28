@@ -91,7 +91,7 @@ Global Const $SUCCESS = 0
 Global Const $FAIL = 1
 Global Const $PAUSE = 2
 
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer|Lightbringer 2|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global Const $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -304,10 +304,10 @@ Func RunFarmLoop($Farm)
 		Case 'LDOA'
 			$inventory_space_needed = 0
 			$result = LDOATitleFarm()
-		Case 'Lightbringer'
+		Case 'Lightbringer & Sunspear'
 			$inventory_space_needed = 10
 			$result = LightbringerFarm()
-		Case 'Lightbringer 2'
+		Case 'Lightbringer'
 			$inventory_space_needed = 5
 			$result = LightbringerFarm2()
 		Case 'Luxon'
@@ -563,11 +563,11 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_INFORMATIONS)
 		Case 'LDOA'
 			GUICtrlSetData($GUI_Label_FarmInformations, $LDOA_INFORMATIONS)
-		Case 'Lightbringer'
+		Case 'Lightbringer & Sunspear'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM_INFORMATIONS)
-		Case 'Lightbringer 2'
+			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS)
+		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
 			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM2_INFORMATIONS)
@@ -962,9 +962,9 @@ Func SelectFarmDuration($Farm)
 			Return $KURZICKS_FARM_DURATION
 		Case 'LDOA'
 			Return $LDOA_FARM_DURATION
+		Case 'Lightbringer & Sunspear'
+			Return $LIGHTBRINGER_SUNSPEAR_FARM_DURATION
 		Case 'Lightbringer'
-			Return $LIGHTBRINGER_FARM_DURATION
-		Case 'Lightbringer 2'
 			Return $LIGHTBRINGER_FARM2_DURATION
 		Case 'Luxon'
 			Return $LUXONS_FARM_DURATION

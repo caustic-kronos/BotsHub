@@ -24,14 +24,14 @@
 
 Opt('MustDeclareVars', True)
 
-Global Const $LIGHTBRINGER_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
+Global Const $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- the quest A Show of Force' & @CRLF _
 	& '- the quest Requiem for a Brain' & @CRLF _
 	& '- rune of doom in your inventory' & @CRLF _
 	& '- use low level heroes to level them up' & @CRLF _
 	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
 	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
-Global Const $LIGHTBRINGER_FARM_DURATION = 18 * 60 * 1000
+Global Const $LIGHTBRINGER_SUNSPEAR_FARM_DURATION = 18 * 60 * 1000
 
 ; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
 Global Const $WEAPON_ATTACK_TIME = 1700
