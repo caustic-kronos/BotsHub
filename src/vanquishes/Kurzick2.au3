@@ -29,7 +29,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $KURZICK_FACTION2_INFORMATIONS = 'For best results, have :' & @CRLF _
+Global Const $KURZICK_FACTION_INFORMATIONS_DRAZACH = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild' & @CRLF _
@@ -40,7 +40,7 @@ Global Const $KURZICKS_FARM2_DURATION = 25 * 60 * 1000
 Global $kurzick_farm_setup = False
 
 ;~ Main loop for the kurzick faction farm
-Func KurzickFactionFarm2()
+Func KurzickFactionFarmDrazach()
 	ManageFactionPointsKurzickFarm2()
 	If Not $kurzick_farm_setup Then KurzickFarmSetup2()
 	CheckGoldKurzickFarm2()

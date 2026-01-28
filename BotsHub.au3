@@ -77,7 +77,7 @@
 #include 'src/utilities/TestSuite.au3'
 #include 'src/vanquishes/Asuran.au3'
 #include 'src/vanquishes/Kurzick.au3'
-#include 'src/vanquishes/Kurzick2.au3'
+#include 'src/vanquishes/Kurzick.au3'
 #include 'src/vanquishes/Luxon.au3'
 #include 'src/vanquishes/Norn.au3'
 #include 'src/vanquishes/Vanguard.au3'
@@ -302,9 +302,9 @@ Func RunFarmLoop($Farm)
 		Case 'Kurzick'
 			$inventory_space_needed = 15
 			$result = KurzickFactionFarm()
-		Case 'Kurzick 2'
-			$inventory_space_needed = 15
-			$result = KurzickFactionFarm2()
+		Case 'Kurzick Drazach'
+			$inventory_space_needed = 10
+			$result = KurzickFactionFarmDrazach()
 		Case 'LDOA'
 			$inventory_space_needed = 0
 			$result = LDOATitleFarm()
@@ -565,10 +565,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
 			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_INFORMATIONS)
-		Case 'Kurzick 2'
+		Case 'Kurzick Drazach'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION2_INFORMATIONS)
+			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_INFORMATIONS_DRAZACH)
 		Case 'LDOA'
 			GUICtrlSetData($GUI_Label_FarmInformations, $LDOA_INFORMATIONS)
 		Case 'Lightbringer'
@@ -969,7 +969,7 @@ Func SelectFarmDuration($Farm)
 		Case 'Kurzick'
 			Return $KURZICKS_FARM_DURATION
 		Case 'Kurzick'
-			Return $KURZICKS_FARM2_DURATION
+			Return $KURZICKS_FARM_DURATION_DRAZACH
 		Case 'LDOA'
 			Return $LDOA_FARM_DURATION
 		Case 'Lightbringer'
