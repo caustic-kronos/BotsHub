@@ -36,6 +36,7 @@ Global Const $DELDRIMOR_FARM_INFORMATIONS = 'For best results, do not cheap out 
 	
 Global Const $SNOWMAN_QUEST_ACCEPT_ID = 0x838201
 Global Const $SNOWMAN_READY_ID = 0x84
+Global Const $SNOWMAN_ACCEPT_REWARD = 0x838207
 
 Global $snowman_farm_setup = False
 
@@ -55,10 +56,24 @@ EndFunc
 Func SetupDeldrimorTitleFarm()
 	DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
 	SwitchToHardModeIfEnabled()
-	If IsQuestNotFound($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Or IsQuestReward($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
-		Info('Setting up Snowman Lair')
+	
+	If IsQuestReward($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
+		Info('Quest Reward Found! Gathering Quest Reward')
+		MoveTo(-23886.06, 13881.35)
+		Local $questNPC = GetNearestNPCToCoords(-23886.06, 13881.35)
 		RandomSleep(750)
-		AbandonQuest($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR)
+		TakeQuestReward($questNPC, $ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR, $SNOWMAN_ACCEPT_REWARD)
+		RandomSleep(750)
+		Info('Zoning to Olafsted to Refresh Quest')
+		DistrictTravel($ID_OLAFSTEAD, $district_name)
+		Sleep(750)
+		Info('Zoning back to Umbral')
+		DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
+		RandomSleep(1000)
+	EndIf
+	
+	If IsQuestNotFound($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
+		Info('Setting up Snowman Lair')
 		RandomSleep(750)
 		MoveTo(-23886.06, 13881.35)
 		Local $questNPC = GetNearestNPCToCoords(-23886.06, 13881.35)
@@ -171,6 +186,7 @@ Func FarmLairSnowman()
 	Info('Having a cry about beer')
 	MoveTo(-7767.71, -18739.19)
 	Info('Waiting to finish tears')
+	ClearTarget()
 	Sleep(70000)
 	; Doubled to try securing the looting
 	For $i = 1 To 2
