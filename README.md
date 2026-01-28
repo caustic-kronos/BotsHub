@@ -58,6 +58,7 @@ To use it:
 - Magus Stones farm (Asura points)
 - Varajar Fells farm (Norn points)
 - Dalada Uplands farm (Vanguard points)
+- Secret Lair of the Snowmen (Deldrimor points)
 - Legendary Defender of Ascalon (LDOA)
 ### Dungeons/Elite zones
 - Bogroot dungeon farm (Froggy)
@@ -149,10 +150,8 @@ Feel free to create and add more bots; it’s pretty simple!
 - 💡🛠️ **FoW completion bot**
 - 💡🛠️ **Fix Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 🧠💭 **Deldrimor title bot** - 2 requests
 - 🧠💭 **Kilroy bot (q8, survivor title)** - 1 request
 - 🧠💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
-- 🧠💭 **Secret Lair of the Snowmen (Peppermint Candy Cane, Rainbow Candy Cane, Spiked Eggnog, Wintergreen Candy Cane, Yuletide Tonic)**
 - 🧠💭 **Irontoe's lair (Dwarven Ale, Aged Dwarven Ale)**
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Bandit raid**
