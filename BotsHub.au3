@@ -306,7 +306,7 @@ Func RunFarmLoop($Farm)
 			$result = LDOATitleFarm()
 		Case 'Lightbringer & Sunspear'
 			$inventory_space_needed = 10
-			$result = LightbringerFarm()
+			$result = LightbringerSunspearFarm()
 		Case 'Lightbringer'
 			$inventory_space_needed = 5
 			$result = LightbringerFarm2()

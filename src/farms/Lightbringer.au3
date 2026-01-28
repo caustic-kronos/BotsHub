@@ -45,12 +45,12 @@ Global Const $JUNUNDU_FEAST		= 6
 Global Const $JUNUNDU_WAIL		= 7
 Global Const $JUNUNDU_LEAVE		= 8
 
-Global $lightbringer_farm_setup = False
+Global $lightbringer_sunspear_farm_setup = False
 Global $logging_file
 
 ;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
-Func LightbringerFarm()
-	If Not $lightbringer_farm_setup Then LightbringerFarmSetup()
+Func LightbringerSunspearFarm()
+	If Not $lightbringer_sunspear_farm_setup Then LightbringerSunspearFarmSetup()
 
 	GoToTheSulfurousWastes()
 	Local $result = FarmTheSulfurousWastes()
@@ -60,13 +60,13 @@ EndFunc
 
 
 ;~ Setup for the Lightbringer farm
-Func LightbringerFarmSetup()
+Func LightbringerSunspearFarmSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
 	If $log_level == 0 Then $logging_file = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_HARD_MODE)
-	$lightbringer_farm_setup = True
+	$lightbringer_sunspear_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
