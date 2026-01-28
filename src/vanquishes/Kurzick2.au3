@@ -95,91 +95,91 @@ Func VanquishDrazach()
 		RandomSleep(1000)
 	EndIf
 	
-	Local Static $foes[81][4] = [ _
-		[-6506, -16099, 'Start', $AGGRO_RANGE], _
-		[-8581, -15354, 'Approach', $AGGRO_RANGE], _
-		[-8627, -13151, 'Clear first big batch', $AGGRO_RANGE], _
-		[-6128.70, -11242.96, 'Path', $AGGRO_RANGE], _
-		[-5173.57, -10858.66, 'Path', $AGGRO_RANGE], _
-		[-6368.70, -9313.60, 'Kill Mesmer Boss', $AGGRO_RANGE], _
-		[-7827.89, -9681.69, 'Kill Mesmer Boss', $AGGRO_RANGE], _
-		[-6021, -8358, 'Clear smaller groups', $AGGRO_RANGE], _
-		[-5184, -6307, 'Clear smaller groups', $AGGRO_RANGE], _
-		[-4643, -5336, 'Clear smaller groups', $AGGRO_RANGE], _
-		[-7368, -6043, 'Clear smaller groups', $AGGRO_RANGE], _
-		[-9514, -6539, 'Clear smaller groups', $AGGRO_RANGE], _
-		[-10988, -8177, 'Kill Necro Boss', $AGGRO_RANGE], _
-		[-11388, -7827, 'Kill Necro Boss', $AGGRO_RANGE], _
-		[-11291, -5987, 'Small groups north', $AGGRO_RANGE], _
-		[-11380, -3787, 'Small groups north', $AGGRO_RANGE], _
-		[-10641, -1714, 'Small groups north', $AGGRO_RANGE], _
-		[-8659.20, -2268.30, 'Oni spawn point', $AGGRO_RANGE], _
-		[-7019.81, -976.18, 'Undergrowth group', $AGGRO_RANGE], _
-		[-4464.77, 780.87, 'Undergrowth group', $AGGRO_RANGE], _
-		[-4464.77, 780.87, 'Back NW', $AGGRO_RANGE], _
-		[-7019.81, -976.18, 'Back NW', $AGGRO_RANGE], _
-		[-10575, 489, 'Back NW', $AGGRO_RANGE], _
-		[-11266, 2581, 'Back NW', $AGGRO_RANGE], _
-		[-10444, 4234, 'Back NW', $AGGRO_RANGE], _
-		[-12820, 4153, 'Back NW', $AGGRO_RANGE], _
-		[-12804, 6357, 'Oni spawn point', $AGGRO_RANGE], _
-		[-12074, 8448, 'Kill Mantis', $AGGRO_RANGE], _
-		[-10212.96, 10309.16, 'Kill Mantis', $AGGRO_RANGE], _
-		[-8211.33, 11407.54, 'Kill Mantis', $AGGRO_RANGE], _
-		[-7754.69, 9436.11, 'Oni spawn point', $AGGRO_RANGE], _
-		[-6167.01, 9447.13, 'Kill Wardens', $AGGRO_RANGE], _
-		[-4815.21, 10528.07, 'Kill Wardens', $AGGRO_RANGE], _
-		[-5479.61, 7343.60, 'Kill Wardens', $AGGRO_RANGE], _
-		[-5289.82, 4998.54, 'Kill Wardens', $AGGRO_RANGE], _
-		[-2484.76, 7233.19, 'Kill Wardens', $AGGRO_RANGE], _
-		[-3367.10, 9928.76, 'Kill Wardens', $AGGRO_RANGE], _
-		[-3394.30, 11746.05, 'Kill Ranger Boss', $AGGRO_RANGE], _
-		[-4869.57, 12948.64, 'Kill Ranger Boss', $AGGRO_RANGE], _
-		[-5932.44, 13806.47, 'Kill Ranger Boss', $AGGRO_RANGE], _
-		[-4848.12, 15585.97, 'Wardens + Dragon Moss', $AGGRO_RANGE], _
-		[-5701.15, 16202.36, 'Back', $AGGRO_RANGE], _
-		[-3141.18, 16025.75, 'Back', $AGGRO_RANGE], _
-		[-787.45, 15014.48, 'Back', $AGGRO_RANGE], _
-		[1462.83, 15520.20, 'Back', $AGGRO_RANGE], _
-		[4282.75, 14447.79, 'Oni spawn point', $AGGRO_RANGE], _
-		[4605.17, 12623.42, 'Kill Wardens', $AGGRO_RANGE], _
-		[2966.67, 11883.08, 'Kill Wardens', $AGGRO_RANGE], _
-		[1147.05, 9904.27, 'Kill Wardens', $AGGRO_RANGE], _
-		[-1241.19, 8426.36, 'Kill Wardens', $AGGRO_RANGE], _
-		[1612.73, 10091.67, 'Kill Wardens', $AGGRO_RANGE], _
-		[3292.36, 10628.14, 'Kill Wardens', $AGGRO_RANGE], _
-		[4957.04, 8302.28, 'Kill Wardens', $AGGRO_RANGE], _
-		[7123.86, 5813.80, 'Kill Wardens', $AGGRO_RANGE], _
-		[8363.76, 9446.83, 'Kill Wardens', $AGGRO_RANGE], _
-		[8723.25, 11237.47, 'Kill Wardens', $AGGRO_RANGE], _
-		[7363.71, 13697.35, 'Kill Wardens', $AGGRO_RANGE], _
-		[10668.76, 11515.62, 'Kill Wardens', $AGGRO_RANGE], _
-		[13930.39, 10779.55, 'Kill Wardens', $AGGRO_RANGE], _
-		[14685.91, 7077.44, 'To Wardens', $AGGRO_RANGE], _
-		[11869.74, 5679.88, 'To Wardens', $AGGRO_RANGE], _
-		[8744.54, 4192.64, 'To Wardens', $AGGRO_RANGE], _
-		[6187.57, 6313.87, 'To Wardens', $AGGRO_RANGE], _
-		[9159.87, 3654.00, 'To Wardens', $AGGRO_RANGE], _
-		[11257.36, 338.60, 'To Wardens', $AGGRO_RANGE], _
-		[8844.41, 303.82, 'Undergrowth groups', $AGGRO_RANGE], _
-		[5613.70, 296.42, 'Undergrowth groups', $AGGRO_RANGE], _
-		[2832.80, 3850.74, 'Undergrowth groups', $AGGRO_RANGE], _
-		[4588.24, 5461.12, 'More Wardens', $AGGRO_RANGE], _
-		[-599.41, 3401.40, 'More Wardens', $AGGRO_RANGE], _
-		[-1528.55, 5116.05, 'Path', $AGGRO_RANGE], _
-		[-1292.70, 2307.54, 'Path', $AGGRO_RANGE], _
-		[-2693.82, -4748.93, 'Last enemies', $AGGRO_RANGE], _
-		[-454.99, -4876.88, 'Last enemies', $AGGRO_RANGE], _
-		[1888.65, -4833.90, 'Last enemies', $AGGRO_RANGE], _
-		[4022.13, -5717.67, 'Last enemies', $AGGRO_RANGE], _
-		[3528.05, -7154.28, 'Last enemies', $AGGRO_RANGE], _
-		[1103.53, -6744.78, 'Last enemies', $AGGRO_RANGE], _
-		[455.56, -9067.87, 'Last enemies', $AGGRO_RANGE], _
-		[2772.91, -9397.36, 'Ritualist bosses', $AGGRO_RANGE] _
+	Local Static $foes[81][3] = [ _
+		[-6506, -16099, 'Start'], _
+		[-8581, -15354, 'Approach'], _
+		[-8627, -13151, 'Clear first big batch'], _
+		[-6128.70, -11242.96, 'Path'], _
+		[-5173.57, -10858.66, 'Path'], _
+		[-6368.70, -9313.60, 'Kill Mesmer Boss'], _
+		[-7827.89, -9681.69, 'Kill Mesmer Boss'], _
+		[-6021, -8358, 'Clear smaller groups'], _
+		[-5184, -6307, 'Clear smaller groups'], _
+		[-4643, -5336, 'Clear smaller groups'], _
+		[-7368, -6043, 'Clear smaller groups'], _
+		[-9514, -6539, 'Clear smaller groups'], _
+		[-10988, -8177, 'Kill Necro Boss'], _
+		[-11388, -7827, 'Kill Necro Boss'], _
+		[-11291, -5987, 'Small groups north'], _
+		[-11380, -3787, 'Small groups north'], _
+		[-10641, -1714, 'Small groups north'], _
+		[-8659.20, -2268.30, 'Oni spawn point'], _
+		[-7019.81, -976.18, 'Undergrowth group'], _
+		[-4464.77, 780.87, 'Undergrowth group'], _
+		[-4464.77, 780.87, 'Back NW'], _
+		[-7019.81, -976.18, 'Back NW'], _
+		[-10575, 489, 'Back NW'], _
+		[-11266, 2581, 'Back NW'], _
+		[-10444, 4234, 'Back NW'], _
+		[-12820, 4153, 'Back NW'], _
+		[-12804, 6357, 'Oni spawn point'], _
+		[-12074, 8448, 'Kill Mantis'], _
+		[-10212.96, 10309.16, 'Kill Mantis'], _
+		[-8211.33, 11407.54, 'Kill Mantis'], _
+		[-7754.69, 9436.11, 'Oni spawn point'], _
+		[-6167.01, 9447.13, 'Kill Wardens'], _
+		[-4815.21, 10528.07, 'Kill Wardens'], _
+		[-5479.61, 7343.60, 'Kill Wardens'], _
+		[-5289.82, 4998.54, 'Kill Wardens'], _
+		[-2484.76, 7233.19, 'Kill Wardens'], _
+		[-3367.10, 9928.76, 'Kill Wardens'], _
+		[-3394.30, 11746.05, 'Kill Ranger Boss'], _
+		[-4869.57, 12948.64, 'Kill Ranger Boss'], _
+		[-5932.44, 13806.47, 'Kill Ranger Boss'], _
+		[-4848.12, 15585.97, 'Wardens + Dragon Moss'], _
+		[-5701.15, 16202.36, 'Back'], _
+		[-3141.18, 16025.75, 'Back'], _
+		[-787.45, 15014.48, 'Back'], _
+		[1462.83, 15520.20, 'Back'], _
+		[4282.75, 14447.79, 'Oni spawn point'], _
+		[4605.17, 12623.42, 'Kill Wardens'], _
+		[2966.67, 11883.08, 'Kill Wardens'], _
+		[1147.05, 9904.27, 'Kill Wardens'], _
+		[-1241.19, 8426.36, 'Kill Wardens'], _
+		[1612.73, 10091.67, 'Kill Wardens'], _
+		[3292.36, 10628.14, 'Kill Wardens'], _
+		[4957.04, 8302.28, 'Kill Wardens'], _
+		[7123.86, 5813.80, 'Kill Wardens'], _
+		[8363.76, 9446.83, 'Kill Wardens'], _
+		[8723.25, 11237.47, 'Kill Wardens'], _
+		[7363.71, 13697.35, 'Kill Wardens'], _
+		[10668.76, 11515.62, 'Kill Wardens'], _
+		[13930.39, 10779.55, 'Kill Wardens'], _
+		[14685.91, 7077.44, 'To Wardens'], _
+		[11869.74, 5679.88, 'To Wardens'], _
+		[8744.54, 4192.64, 'To Wardens'], _
+		[6187.57, 6313.87, 'To Wardens'], _
+		[9159.87, 3654.00, 'To Wardens'], _
+		[11257.36, 338.60, 'To Wardens'], _
+		[8844.41, 303.82, 'Undergrowth groups'], _
+		[5613.70, 296.42, 'Undergrowth groups'], _
+		[2832.80, 3850.74, 'Undergrowth groups'], _
+		[4588.24, 5461.12, 'More Wardens'], _
+		[-599.41, 3401.40, 'More Wardens'], _
+		[-1528.55, 5116.05, 'Path'], _
+		[-1292.70, 2307.54, 'Path'], _
+		[-2693.82, -4748.93, 'Last enemies'], _
+		[-454.99, -4876.88, 'Last enemies'], _
+		[1888.65, -4833.90, 'Last enemies'], _
+		[4022.13, -5717.67, 'Last enemies'], _
+		[3528.05, -7154.28, 'Last enemies'], _
+		[1103.53, -6744.78, 'Last enemies'], _
+		[455.56, -9067.87, 'Last enemies'], _
+		[2772.91, -9397.36, 'Ritualist bosses'] _
 	]
 	
 	For $i = 0 To UBound($foes) - 1
-		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 	If Not GetAreaVanquished() Then
 		Error('The map has not been completely vanquished.')
