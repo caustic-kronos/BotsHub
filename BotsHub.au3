@@ -309,7 +309,7 @@ Func RunFarmLoop($Farm)
 			$result = LightbringerSunspearFarm()
 		Case 'Lightbringer'
 			$inventory_space_needed = 5
-			$result = LightbringerFarm2()
+			$result = LightbringerFarm()
 		Case 'Luxon'
 			$inventory_space_needed = 10
 			$result = LuxonFactionFarm()
@@ -439,7 +439,7 @@ Func ResetBotsSetups()
 	$jade_brotherhood_farm_setup			= False
 	$kournans_farm_setup					= False
 	$ldoa_farm_setup						= False
-	$lightbringer_farm2_setup				= False
+	$lightbringer_farm_setup				= False
 	$mantids_farm_setup						= False
 	$pongmei_farm_setup						= False
 	$raptors_farm_setup						= False
@@ -570,7 +570,7 @@ Func UpdateFarmDescription($Farm)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM2_INFORMATIONS)
+			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM_INFORMATIONS)
 		Case 'Luxon'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
@@ -965,7 +965,7 @@ Func SelectFarmDuration($Farm)
 		Case 'Lightbringer & Sunspear'
 			Return $LIGHTBRINGER_SUNSPEAR_FARM_DURATION
 		Case 'Lightbringer'
-			Return $LIGHTBRINGER_FARM2_DURATION
+			Return $LIGHTBRINGER_FARM_DURATION
 		Case 'Luxon'
 			Return $LUXONS_FARM_DURATION
 		Case 'Mantids'
