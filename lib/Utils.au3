@@ -865,24 +865,24 @@ Func WaitAndFightEnemiesInArea($options = $default_moveaggroandkill_options)
 	Local $me = GetMyAgent()
 	Local $target = Null
 	Local $distance = 99999
-	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
+	Local $foesCount = 999
 	Local $timer = TimerInit()
 
 	While $foesCount > 0 Or TimerDiff($timer) < $fightDuration
-		If IsPlayerAndPartyWiped() Then Return $FAIL
-		RandomSleep(250)
 		$target = GetNearestEnemyToAgent($me)
-		If $target == Null Or (DllStructGetData($target, 'ID') == 0) Then ContinueLoop
-		$distance = GetDistance($me, $target)
-		If $distance < $fightRange And $fightFunction <> Null Then
-			If $fightFunction($options) == $FAIL Then ExitLoop
+		If $target <> Null And DllStructGetData($target, 'ID') <> 0 Then
+			$distance = GetDistance($me, $target)
+			If $distance < $fightRange And $fightFunction <> Null Then
+				If $fightFunction($options) == $FAIL Then ExitLoop
+			EndIf
+			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		EndIf
-		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		RandomSleep(250)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
+		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -934,8 +934,6 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
-	If IsPlayerAndPartyWiped() Then Return $FAIL
-
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
@@ -954,16 +952,16 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $oldMyY
 	Local $target
 	Local $chest
-	While IsPlayerOrPartyAlive() And GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
+	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
 		$oldMyX = $myX
 		$oldMyY = $myY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
-		If GetDistance($me, $target) < $fightRange And DllStructGetData($target, 'ID') <> 0 Then
+		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
 			RandomSleep(500)
-			If IsPlayerAlive() And Not $ignoreDroppedLoot Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
-			; If one member of party is dead, go to rez him before proceeding
+			If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+			; FIXME: add rezzing dead party members here
 		EndIf
 		RandomSleep(250)
 		$me = GetMyAgent()
@@ -989,15 +987,15 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
+		$me = GetMyAgent()
+		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
 Func KillFoesInArea($options = $default_moveaggroandkill_options)
-	If IsPlayerAndPartyWiped() Then Return $FAIL
-
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $flagHeroes = ($options.Item('flagHeroesOnFight') <> Null) ? $options.Item('flagHeroesOnFight') : False
 	Local $callTarget = ($options.Item('callTarget') <> Null) ? $options.Item('callTarget') : True
@@ -1009,14 +1007,12 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = Null
 	; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 	If $flagHeroes Then FanFlagHeroes(260)
 
-	While IsPlayerOrPartyAlive() And $foesCount > 0
+	While $foesCount > 0
 		If $priorityMobs Then $target = GetHighestPriorityFoe($me, $fightRange)
 		If Not $priorityMobs Or $target == Null Then $target = GetNearestEnemyToAgent($me)
 		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
@@ -1034,38 +1030,33 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 			Local $i = 0
 			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
 			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
-				If IsPlayerDead() Then ExitLoop
 				; incrementation of skill index and capping it by number of skills, range <1..8>
 				$i = Mod($i, 8) + 1
 				; optional skillsMask indexed from 0, tells which skills to use or skip
-				If $skillsMask <> Null And $skillsMask[$i-1] == False Then ContinueLoop
+				If $skillsMask <> Null And $skillsMask[$i - 1] == False Then ContinueLoop
 				; Always ensure auto-attack is active before using skills
 				Attack($target)
 				Sleep(100)
 
 				; if no skill energy cost map is provided then attempt to use skills anyway
-				Local $sufficientEnergy = ($skillsCostMap <> Null) ? (GetEnergy() >= $skillsCostMap[$i]) : True
-				If IsRecharged($i) And $sufficientEnergy Then
+				Local $sufficientEnergy = $skillsCostMap == Null ? True : (GetEnergy() >= $skillsCostMap[$i])
+				If $sufficientEnergy And IsRecharged($i) Then
 					UseSkillEx($i, $target)
 					RandomSleep(100)
 				EndIf
 				$target = GetCurrentTarget()
+				If IsPlayerDead() Then ExitLoop
 			WEnd
 		EndIf
 
 		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
+		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
-	If Not $ignoreDroppedLoot Then
-		If IsPlayerAlive() and $lootTrappedArea Then
-			PickUpItems(LootTrappedAreaSafely, DefaultShouldPickItem, $fightRange)
-		ElseIf IsPlayerAlive() Then
-			PickUpItems(Null, DefaultShouldPickItem, $fightRange)
-		EndIf
-	EndIf
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+	If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems($lootTrappedArea ? LootTrappedAreaSafely : Null, DefaultShouldPickItem, $fightRange)
+	Return $SUCCESS
 EndFunc
 
 
