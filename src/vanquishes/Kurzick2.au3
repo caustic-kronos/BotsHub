@@ -29,21 +29,21 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $KURZICK_FACTION_INFORMATIONS_DRAZACH = 'For best results, have :' & @CRLF _
+Global Const $KURZICK_FACTION_DRAZACH_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot doesnt load hero builds - please use your own teambuild' & @CRLF _
 	& 'An Alternative Farm to Ferndale. This Bot will farm Drazach Thicket'
 ; Average duration ~ 25m
-Global Const $KURZICKS_FARM2_DURATION = 25 * 60 * 1000
+Global Const $KURZICKS_FARM_DRAZACH_DURATION = 25 * 60 * 1000
 
-Global $kurzick_farm_setup = False
+Global $kurzick_farm_drazach_setup = False
 
 ;~ Main loop for the kurzick faction farm
 Func KurzickFactionFarmDrazach()
-	ManageFactionPointsKurzickFarm2()
-	If Not $kurzick_farm_setup Then KurzickFarmSetup2()
-	CheckGoldKurzickFarm2()
+	ManageFactionPointsKurzickFarm()
+	If Not $kurzick_farm_drazach_setup Then KurzickFarmDrazachSetup()
+	CheckGoldKurzickFarm()
 	GoToDrazach()
 	Local $result = VanquishDrazach()
 	AdlibUnRegister('TrackPartyStatus')
@@ -52,62 +52,14 @@ Func KurzickFactionFarmDrazach()
 EndFunc
 
 ;~ Setup for kurzick farm
-Func KurzickFarmSetup2()
+Func KurzickFarmDrazachSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_THE_ETERNAL_GROVE, $district_name)
 	SwitchMode($ID_HARD_MODE)
 
-	$kurzick_farm_setup = True
+	$kurzick_farm_drazach_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
-EndFunc
-
-Func ManageFactionPointsKurzickFarm2()
-	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
-		TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
-		RandomSleep(200)
-		GoNearestNPCToCoords(5390, 1524)
-
-		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
-		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
-		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
-		If $donatePoints Then
-			Info('Donating Kurzick faction points')
-			While GetKurzickFaction() >= 5000
-				DonateFaction('kurzick')
-				RandomSleep(500)
-			WEnd
-		ElseIf $buyResources Then
-			Info('Converting Kurzick faction points into Amber Chunks')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfChunks = Floor(GetKurzickFaction() / 5000)
-			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
-			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
-			Dialog($dialogID)
-			RandomSleep(550)
-		ElseIf $buyScrolls Then
-			Info('Converting Kurzick faction points into Urgoz Warren Passage Scrolls')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000)
-			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
-			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
-			Dialog($dialogID)
-			RandomSleep(550)
-		EndIf
-		RandomSleep(500)
-	EndIf
-EndFunc
-
-Func CheckGoldKurzickFarm2()
-	TravelToOutpost($ID_THE_ETERNAL_GROVE, $district_name)
-	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Info('Withdrawing gold for shrines benediction')
-		RandomSleep(250)
-		WithdrawGold(100)
-		RandomSleep(250)
-	EndIf
 EndFunc
 
 ;~ Move out of outpost into Drazach
@@ -120,11 +72,10 @@ Func GoToDrazach()
 		RandomSleep(1000)
 		WaitMapLoading($ID_DRAZACH_THICKET, 10000, 2000)
 	WEnd
+	If GetMapID() <> $ID_DRAZACH_THICKET Then Return $FAIL
 EndFunc
 
 Func VanquishDrazach()
-	
-	If GetMapID() <> $ID_DRAZACH_THICKET Then Return $FAIL
 	Info('Taking blessing')
 	MoveTo(-4927.36, -16385.35)
 	GoNearestNPCToCoords(-5621.25, -16367.59)
