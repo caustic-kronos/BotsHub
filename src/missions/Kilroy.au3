@@ -38,12 +38,22 @@ Global Const $KILROY_START_QUEST = 0x835803
 Global Const $KILRAY_ACCEPT_QUEST = 0x835801
 
 ;Skill Bar Variables
-Global Const $SKILLBAR_BRAWLING_BLOCK = 1
-Global Const $SKILLBAR_STAND_UP = 8
+Global Const $SKILL_BRAWLING_BLOCK    = 1
+Global Const $SKILL_BRAWLING_JAB      = 2
+Global Const $SKILL_STRAIGHT_RIGHT    = 3
+Global Const $SKILL_BRAWLING_HOOK     = 4
+Global Const $SKILL_BRAWLING_UPPERCUT = 5
+Global Const $SKILL_BRAWLING_HEADBUTT = 6
+Global Const $SKILL_COMBO_PUNCH       = 7
+Global Const $SKILL_STAND_UP          = 8
 
 ; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_ENERGY_THRESHOLD_KILROY = 0
 Global Const $LOW_ENERGY_CHECK_INTERVAL_KILROY = 100
+
+Global $g_StandMode = False
+Global $g_StandStart = 0
+Global Const $STAND_TIMEOUT_MS = 10000
 
 Global $kilroy_farm_setup = False
 
@@ -54,8 +64,10 @@ Func KilroyFarm()
 	EndIf
 	MoveToPunchOut()
 	AdlibRegister('LowEnergyMonitor', $LOW_ENERGY_CHECK_INTERVAL_KILROY)
+	AdlibRegister("KilroyCombatRotation", 150)
 	Local $result =FarmPunchOut()
 	AdlibUnRegister('LowEnergyMonitor')
+	AdlibUnRegister("KilroyCombatRotation")
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 	Return $result
 EndFunc
@@ -107,6 +119,9 @@ Func MoveToPunchOut()
 EndFunc
 
 Func FarmPunchOut()
+	Info('Move and wait for Kilroy')
+	MoveTo(-16161.00, -15209.14)
+	Sleep(1000)
 	Info('Moving to Group 1')
 	MoveAggroAndKillInRange(-15161.00, -15209.14)
 	Info('Moving to Group 2')
@@ -144,55 +159,54 @@ Func FarmPunchOut()
 		RandomSleep(500)
 	Next
 	$kilroy_farm_setup = false
+	$SUCCESS
 EndFunc
 
 ; Stand up when energy is 0, keep using skill 8 until energy == max energy,
 Func LowEnergyMonitor()
-    ; Prevent re-entrancy: Adlib can fire again while we're still inside this function
-    Static $busy = False
-	
-	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $SUCCESS
-	
-    If $busy Then Return $SUCCESS
+    If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $SUCCESS
 
-    If Not isLowEnergy() Then Return $SUCCESS
+    Local $me = GetMyAgent()
+    Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
+    Local $energy = GetEnergy()
 
-    $busy = True
-    Out("Energy is 0 - standing up...")
+    ; Detect knocked down (your current rule)
+    Local $low = (DllStructGetData($me, 'EnergyPercent') = 0)
 
-    Local $deadline = TimerInit() ; counts from now
-    Local $timeoutMs = 10000      ; 10 seconds
+    ; Enter stand mode
+    If $low And Not $g_StandMode Then
+        $g_StandMode = True
+        $g_StandStart = TimerInit()
+        Out("Energy is 0 - entering stand-up mode...")
+    EndIf
 
-    Do
-        ; Refresh agent each loop to avoid stale data
-        Local $me = GetMyAgent()
-        Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
-        Local $energy = GetEnergy()
+    ; If not in stand mode, do nothing
+    If Not $g_StandMode Then Return $SUCCESS
 
-        ; Success condition
-        If $energy = $maxEnergy Then
-            Out("Standing complete: energy restored.")
-            $busy = False
-            Return $SUCCESS
-        EndIf
+    ; Timeout safety
+    If TimerDiff($g_StandStart) > $STAND_TIMEOUT_MS Then
+        Out("Stand-up timeout: aborting stand mode.")
+        $g_StandMode = False
+        Return $FAIL
+    EndIf
 
-        ; Timeout condition
-        If TimerDiff($deadline) >= $timeoutMs Then
-            Out("Stand-up failed: 10s limit reached.")
-            $busy = False
-            Return $FAIL
-        EndIf
+    ; Exit condition: energy restored
+    If $energy = $maxEnergy Then
+        Out("Standing complete: energy restored.")
+        $g_StandMode = False
+        Return $SUCCESS
+    EndIf
 
-        ; Respect skill 8 recharge
-        Local $skillbar = GetSkillbar()
-        Local $recharge8 = DllStructGetData($skillbar, "Recharge8")
+    ; Try to stand up again when skill 8 is ready
+    Local $skillbar = GetSkillbar()
+    Local $recharge8 = DllStructGetData($skillbar, "Recharge8")
 
-        If $recharge8 = 0 And $energy < $maxEnergy Then
-            UseSkill($SKILLBAR_STAND_UP, $me)
-        EndIf
+    If $recharge8 = 0 Then
+        UseSkill($SKILL_STAND_UP, $me)
+        ; no sleeping/looping here—just one use per tick
+    EndIf
 
-        RandomSleep(50)
-    Until False
+    Return $SUCCESS
 EndFunc
 
 Func isLowEnergy()
@@ -202,4 +216,84 @@ Func isLowEnergy()
 	Return False
 EndFunc
 
+Func KilroyCombatRotation()
+    ; Never run outside the instance
+    If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return
+
+    ; If you implemented stand-mode, don't fight while standing up
+    If IsDeclared("g_StandMode") And $g_StandMode Then Return
+
+    ; Prevent re-entrancy (Adlib can re-fire)
+    Static $busy = False
+    If $busy Then Return
+    $busy = True
+
+    ; Throttle (important): don't spam packets every 150ms
+    Static $tLast = 0
+    If TimerDiff($tLast) < 220 Then
+        $busy = False
+        Return
+    EndIf
+    $tLast = TimerInit()
+
+    Local $me = GetMyAgent()
+    Local $target = GetNearestEnemyToAgent($me)
+    If $target = 0 Then
+        $busy = False
+        Return
+    EndIf
+
+    ; Keep auto-attack going (no sleeps!)
+    Attack($target)
 	
+	    ; Optional: block if nothing else is up (or remove if it slows DPS)
+    If IsRecharged($SKILL_BRAWLING_BLOCK) Then
+        UseSkillEx($SKILL_BRAWLING_BLOCK, $target)
+    EndIf
+
+    ; Decide priority (same logic you had, but without Nulls)
+    Local $hook = 0, $upper = 0, $headbutt = 0
+    If GetSkillbarSkillAdrenaline($SKILL_BRAWLING_HOOK) >= 100 Then $hook = $SKILL_BRAWLING_HOOK
+    If GetSkillbarSkillAdrenaline($SKILL_BRAWLING_UPPERCUT) >= 250 Then $upper = $SKILL_BRAWLING_UPPERCUT
+    If GetSkillbarSkillAdrenaline($SKILL_BRAWLING_HEADBUTT) >= 175 Then $headbutt = $SKILL_BRAWLING_HEADBUTT
+
+    ; Use ONE skill per tick, in priority order (no sleeps!)
+    If $upper <> 0 And IsRecharged($upper) Then
+        UseSkillEx($upper, $target)
+        $busy = False
+        Return
+    EndIf
+
+    If $headbutt <> 0 And IsRecharged($headbutt) Then
+        UseSkillEx($headbutt, $target)
+        $busy = False
+        Return
+    EndIf
+
+    If $hook <> 0 And IsRecharged($hook) Then
+        UseSkillEx($hook, $target)
+        $busy = False
+        Return
+    EndIf
+
+    ; Fallback chain (tune order how you like)
+    If IsRecharged($SKILL_COMBO_PUNCH) Then
+        UseSkillEx($SKILL_COMBO_PUNCH, $target)
+        $busy = False
+        Return
+    EndIf
+
+    If IsRecharged($SKILL_STRAIGHT_RIGHT) Then
+        UseSkillEx($SKILL_STRAIGHT_RIGHT, $target)
+        $busy = False
+        Return
+    EndIf
+
+    If IsRecharged($SKILL_BRAWLING_JAB) Then
+        UseSkillEx($SKILL_BRAWLING_JAB, $target)
+        $busy = False
+        Return
+    EndIf
+
+    $busy = False
+EndFunc
