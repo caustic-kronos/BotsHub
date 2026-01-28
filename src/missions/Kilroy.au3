@@ -38,6 +38,7 @@ Global Const $KILROY_START_QUEST = 0x835803
 Global Const $KILRAY_ACCEPT_QUEST = 0x835801
 
 ;Skill Bar Variables
+Global Const $SKILLBAR_BRAWLING_BLOCK = 1
 Global Const $SKILLBAR_STAND_UP = 8
 
 ; Variables used for Survivor async checking (Low Health Monitor)
@@ -63,8 +64,7 @@ Func SetupKilroyFarm()
 	Info('Setting Up Farm')
 	Info('Traveling to Gunnars')
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
-	;SwitchToHardModeIfEnabled()
-	
+	SwitchToHardModeIfEnabled()
 	If IsQuestReward($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
 		Info('Quest Reward Found! Gathering Quest Reward')
 		MoveTo(17281.19, -4850.08)
