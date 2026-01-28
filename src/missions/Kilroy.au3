@@ -37,9 +37,12 @@ Global Const $KILROY_ACCEPT_REWARD = 0x835807
 Global Const $KILROY_START_QUEST = 0x835803 
 Global Const $KILRAY_ACCEPT_QUEST = 0x835801
 
+;Skill Bar Variables
+Global Const $SKILLBAR_STAND_UP = 8
+
 ; Variables used for Survivor async checking (Low Health Monitor)
-Global Const $LOW_HEALTH_THRESHOLD_KILROY = 0
-Global Const $LOW_HEALTH_CHECK_INTERVAL_KILROY = 100
+Global Const $LOW_ENERGY_THRESHOLD_KILROY = 0
+Global Const $LOW_ENERGY_CHECK_INTERVAL_KILROY = 100
 
 Global $kilroy_farm_setup = False
 
@@ -49,7 +52,9 @@ Func KilroyFarm()
 		Return $PAUSE
 	EndIf
 	MoveToPunchOut()
+	AdlibRegister('LowEnergyMonitor', $LOW_ENERGY_CHECK_INTERVAL_KILROY)
 	Local $result =FarmPunchOut()
+	AdlibUnRegister('LowEnergyMonitor')
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 	Return $result
 EndFunc
@@ -138,22 +143,63 @@ Func FarmPunchOut()
 		ActionInteract()
 		RandomSleep(500)
 	Next
-	
 	$kilroy_farm_setup = false
 EndFunc
 
-;TODO - Health Monitor for Standup
-;Func LowHealthMonitor()
-;	If IsLowHealth() Then
-;		
-;		Return $SUCCESS
-;	EndIf
-;EndFunc
-;
-;
-;Func IsLowHealth()
-;	Local $me = GetMyAgent()
-;	Local $healthRatio = DllStructGetData($me, 'HealthPercent')
-;	If $healthRatio = 0 Then Return True
-;	Return False
-;EndFunc
+; Stand up when energy is 0, keep using skill 8 until energy == max energy,
+Func LowEnergyMonitor()
+    ; Prevent re-entrancy: Adlib can fire again while we're still inside this function
+    Static $busy = False
+	
+	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $SUCCESS
+	
+    If $busy Then Return $SUCCESS
+
+    If Not isLowEnergy() Then Return $SUCCESS
+
+    $busy = True
+    Out("Energy is 0 - standing up...")
+
+    Local $deadline = TimerInit() ; counts from now
+    Local $timeoutMs = 10000      ; 10 seconds
+
+    Do
+        ; Refresh agent each loop to avoid stale data
+        Local $me = GetMyAgent()
+        Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
+        Local $energy = GetEnergy()
+
+        ; Success condition
+        If $energy = $maxEnergy Then
+            Out("Standing complete: energy restored.")
+            $busy = False
+            Return $SUCCESS
+        EndIf
+
+        ; Timeout condition
+        If TimerDiff($deadline) >= $timeoutMs Then
+            Out("Stand-up failed: 10s limit reached.")
+            $busy = False
+            Return $FAIL
+        EndIf
+
+        ; Respect skill 8 recharge
+        Local $skillbar = GetSkillbar()
+        Local $recharge8 = DllStructGetData($skillbar, "Recharge8")
+
+        If $recharge8 = 0 And $energy < $maxEnergy Then
+            UseSkill($SKILLBAR_STAND_UP, $me)
+        EndIf
+
+        RandomSleep(50)
+    Until False
+EndFunc
+
+Func isLowEnergy()
+	Local $me = GetMyAgent()
+	Local $energyPercent = DllStructGetData($me, 'EnergyPercent')
+	If $energyPercent = 0 Then Return True
+	Return False
+EndFunc
+
+	
