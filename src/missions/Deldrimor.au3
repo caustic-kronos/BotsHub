@@ -34,7 +34,6 @@ Global Const $DELDRIMOR_FARM_INFORMATIONS = 'For best results, do not cheap out 
 	& 'You must have already completed the 4 map pieces and at least one' & @CRLF _
 	& 'Manual run of the Dungeon Prior to running this script'
 	
-Global Const $SNOWMAN_QUEST_ID = 0x382
 Global Const $SNOWMAN_QUEST_ACCEPT_ID = 0x838201
 Global Const $SNOWMAN_READY_ID = 0x84
 
@@ -56,17 +55,17 @@ EndFunc
 Func SetupDeldrimorTitleFarm()
 	DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
 	SwitchToHardModeIfEnabled()
-	If IsQuestNotFound($SNOWMAN_QUEST_ID) Or IsQuestReward($SNOWMAN_QUEST_ID) Then
+	If IsQuestNotFound($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Or IsQuestReward($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
 		Info('Setting up Snowman Lair')
 		RandomSleep(750)
-		AbandonQuest($SNOWMAN_QUEST_ID)
+		AbandonQuest($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR)
 		RandomSleep(750)
 		MoveTo(-23886.06, 13881.35)
 		Local $questNPC = GetNearestNPCToCoords(-23886.06, 13881.35)
-		TakeQuest($questNPC, $SNOWMAN_QUEST_ID, $SNOWMAN_QUEST_ACCEPT_ID)
+		TakeQuest($questNPC, $ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR, $SNOWMAN_QUEST_ACCEPT_ID)
 	EndIf
 	
-	If IsQuestActive($SNOWMAN_QUEST_ID) Then
+	If IsQuestActive($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
 		$snowman_farm_setup = True
 		Info('Quest in the logbook. Good to go!')
 		Return $SUCCESS
