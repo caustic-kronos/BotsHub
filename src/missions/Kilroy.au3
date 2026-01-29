@@ -64,10 +64,8 @@ Func KilroyFarm()
 	EndIf
 	MoveToPunchOut()
 	AdlibRegister('LowEnergyMonitor', $LOW_ENERGY_CHECK_INTERVAL_KILROY)
-	AdlibRegister("KilroyCombatRotation", 150)
-	Local $result =FarmPunchOut()
+	Local $result = FarmPunchOut()
 	AdlibUnRegister('LowEnergyMonitor')
-	AdlibUnRegister("KilroyCombatRotation")
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 	Return $result
 EndFunc
@@ -158,8 +156,8 @@ Func FarmPunchOut()
 		ActionInteract()
 		RandomSleep(500)
 	Next
-	$kilroy_farm_setup = false
-	$SUCCESS
+	$kilroy_farm_setup = False
+	Return $SUCCESS
 EndFunc
 
 ; Stand up when energy is 0, keep using skill 8 until energy == max energy,
@@ -217,83 +215,6 @@ Func isLowEnergy()
 EndFunc
 
 Func KilroyCombatRotation()
-    ; Never run outside the instance
-    If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return
-
-    ; If you implemented stand-mode, don't fight while standing up
-    If IsDeclared("g_StandMode") And $g_StandMode Then Return
-
-    ; Prevent re-entrancy (Adlib can re-fire)
-    Static $busy = False
-    If $busy Then Return
-    $busy = True
-
-    ; Throttle (important): don't spam packets every 150ms
-    Static $tLast = 0
-    If TimerDiff($tLast) < 220 Then
-        $busy = False
-        Return
-    EndIf
-    $tLast = TimerInit()
-
-    Local $me = GetMyAgent()
-    Local $target = GetNearestEnemyToAgent($me)
-    If $target = 0 Then
-        $busy = False
-        Return
-    EndIf
-
-    ; Keep auto-attack going (no sleeps!)
-    Attack($target)
-	
-	    ; Optional: block if nothing else is up (or remove if it slows DPS)
-    If IsRecharged($SKILL_BRAWLING_BLOCK) Then
-        UseSkillEx($SKILL_BRAWLING_BLOCK, $target)
-    EndIf
-
-    ; Decide priority (same logic you had, but without Nulls)
-    Local $hook = 0, $upper = 0, $headbutt = 0
-    If GetSkillbarSkillAdrenaline($SKILL_BRAWLING_HOOK) >= 100 Then $hook = $SKILL_BRAWLING_HOOK
-    If GetSkillbarSkillAdrenaline($SKILL_BRAWLING_UPPERCUT) >= 250 Then $upper = $SKILL_BRAWLING_UPPERCUT
-    If GetSkillbarSkillAdrenaline($SKILL_BRAWLING_HEADBUTT) >= 175 Then $headbutt = $SKILL_BRAWLING_HEADBUTT
-
-    ; Use ONE skill per tick, in priority order (no sleeps!)
-    If $upper <> 0 And IsRecharged($upper) Then
-        UseSkillEx($upper, $target)
-        $busy = False
-        Return
-    EndIf
-
-    If $headbutt <> 0 And IsRecharged($headbutt) Then
-        UseSkillEx($headbutt, $target)
-        $busy = False
-        Return
-    EndIf
-
-    If $hook <> 0 And IsRecharged($hook) Then
-        UseSkillEx($hook, $target)
-        $busy = False
-        Return
-    EndIf
-
-    ; Fallback chain (tune order how you like)
-    If IsRecharged($SKILL_COMBO_PUNCH) Then
-        UseSkillEx($SKILL_COMBO_PUNCH, $target)
-        $busy = False
-        Return
-    EndIf
-
-    If IsRecharged($SKILL_STRAIGHT_RIGHT) Then
-        UseSkillEx($SKILL_STRAIGHT_RIGHT, $target)
-        $busy = False
-        Return
-    EndIf
-
-    If IsRecharged($SKILL_BRAWLING_JAB) Then
-        UseSkillEx($SKILL_BRAWLING_JAB, $target)
-        $busy = False
-        Return
-    EndIf
-
-    $busy = False
+	; Combat/energy automation disabled (reset for rework)
+	Return
 EndFunc
