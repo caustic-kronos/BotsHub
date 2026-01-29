@@ -58,6 +58,7 @@
 #include 'src/farms/Raptors.au3'
 #include 'src/farms/SpiritSlaves.au3'
 #include 'src/farms/Vaettirs.au3'
+#include 'src/missions/Deldrimor.au3'
 #include 'src/missions/FoW.au3'
 #include 'src/missions/Froggy.au3'
 #include 'src/missions/GlintChallenge.au3'
@@ -78,6 +79,7 @@
 #include 'src/utilities/TestSuite.au3'
 #include 'src/vanquishes/Asuran.au3'
 #include 'src/vanquishes/Kurzick.au3'
+#include 'src/vanquishes/Kurzick2.au3'
 #include 'src/vanquishes/Luxon.au3'
 #include 'src/vanquishes/Norn.au3'
 #include 'src/vanquishes/Vanguard.au3'
@@ -92,7 +94,7 @@ Global Const $SUCCESS = 0
 Global Const $FAIL = 1
 Global Const $PAUSE = 2
 
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick|Lightbringer|Lightbringer 2|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global Const $AVAILABLE_DISTRICTS = '|Random|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -257,6 +259,9 @@ Func RunFarmLoop($Farm)
 		Case 'Corsairs'
 			$inventory_space_needed = 5
 			$result = CorsairsFarm()
+		Case 'Deldrimor'
+			$inventory_space_needed = 5
+			$result = DeldrimorFarm()
 		Case 'Dragon Moss'
 			$inventory_space_needed = 5
 			$result = DragonMossFarm()
@@ -305,15 +310,18 @@ Func RunFarmLoop($Farm)
 		Case 'Kurzick'
 			$inventory_space_needed = 15
 			$result = KurzickFactionFarm()
+		Case 'Kurzick Drazach'
+			$inventory_space_needed = 10
+			$result = KurzickFactionFarmDrazach()
 		Case 'LDOA'
 			$inventory_space_needed = 0
 			$result = LDOATitleFarm()
-		Case 'Lightbringer'
+		Case 'Lightbringer & Sunspear'
 			$inventory_space_needed = 10
-			$result = LightbringerFarm()
-		Case 'Lightbringer 2'
+			$result = LightbringerSunspearFarm()
+		Case 'Lightbringer'
 			$inventory_space_needed = 5
-			$result = LightbringerFarm2()
+			$result = LightbringerFarm()
 		Case 'Luxon'
 			$inventory_space_needed = 10
 			$result = LuxonFactionFarm()
@@ -443,7 +451,7 @@ Func ResetBotsSetups()
 	$jade_brotherhood_farm_setup			= False
 	$kournans_farm_setup					= False
 	$ldoa_farm_setup						= False
-	$lightbringer_farm2_setup				= False
+	$lightbringer_farm_setup				= False
 	$mantids_farm_setup						= False
 	$pongmei_farm_setup						= False
 	$raptors_farm_setup						= False
@@ -504,6 +512,10 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $CORSAIRS_FARM_INFORMATIONS)
+		Case 'Deldrimor'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
+			GUICtrlSetData($GUI_Label_FarmInformations, $DELDRIMOR_FARM_INFORMATIONS)
 		Case 'Dragon Moss'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_DRAGON_MOSS_FARMER_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $DRAGON_MOSS_FARM_INFORMATIONS)
@@ -567,16 +579,20 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
 			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_INFORMATIONS)
+		Case 'Kurzick Drazach'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
+			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_DRAZACH_INFORMATIONS)
 		Case 'LDOA'
 			GUICtrlSetData($GUI_Label_FarmInformations, $LDOA_INFORMATIONS)
+		Case 'Lightbringer & Sunspear'
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
+			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
+			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS)
 		Case 'Lightbringer'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
 			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM_INFORMATIONS)
-		Case 'Lightbringer 2'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM2_INFORMATIONS)
 		Case 'Luxon'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
@@ -968,12 +984,14 @@ Func SelectFarmDuration($Farm)
 			Return $KOURNANS_FARM_DURATION
 		Case 'Kurzick'
 			Return $KURZICKS_FARM_DURATION
+		Case 'Kurzick Drazach'
+			Return $KURZICKS_FARM_DRAZACH_DURATION
 		Case 'LDOA'
 			Return $LDOA_FARM_DURATION
+		Case 'Lightbringer & Sunspear'
+			Return $LIGHTBRINGER_SUNSPEAR_FARM_DURATION
 		Case 'Lightbringer'
 			Return $LIGHTBRINGER_FARM_DURATION
-		Case 'Lightbringer 2'
-			Return $LIGHTBRINGER_FARM2_DURATION
 		Case 'Luxon'
 			Return $LUXONS_FARM_DURATION
 		Case 'Mantids'
