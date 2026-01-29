@@ -191,7 +191,9 @@ Func EnterFissureOfWoe()
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		MoveTo(-2500, 18700)
 		If GetDistanceToPoint(GetMyAgent(), -2500, 18700) > $RANGE_ADJACENT Then
-			MoveTo(-4200, 18750)
+			MoveTo(-4650, 18700)
+			MoveTo(-3600, 18700)
+			MoveTo(-3100, 18000)
 			MoveTo(-2500, 18700)
 		EndIf
 		SendChat('/kneel', '')

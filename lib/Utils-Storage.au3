@@ -372,7 +372,9 @@ Func DefaultShouldPickItem($item)
 	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Scrolls.Gold.' & $scrollName]
+		Local $pickup = $cache['Pick up items.Scrolls.Gold.' & $scrollName]
+		If $pickup <> Null Then Return $pickup
+		Return $cache['Pick up items.Scrolls.Gold.Other gold scrolls']
 	ElseIf IsBlueScroll($itemID) Then
 		Return $cache['Pick up items.Scrolls.Blue']
 	; ----------------------------------------- Keys -----------------------------------------
@@ -478,7 +480,9 @@ Func DefaultShouldSellItem($item)
 		Return $cache['Sell items.Scrolls.Blue']
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Sell items.Scrolls.Gold.' & $scrollName]
+		Local $shouldSell = $cache['Sell items.Scrolls.Gold.' & $scrollName]
+		If $shouldSell <> Null Then Return $shouldSell
+		Return $cache['Sell items.Scrolls.Gold.Other gold scrolls']
 	; ----------------------------------------- Keys -----------------------------------------
 	ElseIf IsKey($itemID) Then
 		Return $cache['Sell items.Keys']
@@ -533,7 +537,9 @@ Func DefaultShouldStoreItem($item)
 	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Scrolls.Gold.' & $scrollName]
+		Local $shouldStore = $cache['Store items.Scrolls.Gold.' & $scrollName]
+		If $shouldStore <> Null Then Return $shouldStore
+		Return $cache['Store items.Scrolls.Gold.Other gold scrolls']
 	ElseIf IsBlueScroll($itemID) Then
 		Return $cache['Store items.Scrolls.Blue']
 	; ----------------------------------------- Keys -----------------------------------------

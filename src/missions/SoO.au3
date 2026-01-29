@@ -343,7 +343,9 @@ Func ClearSoOFloor2()
 		PickUpTorch()
 
 		MoveAggroAndKillInRange(-10500, -9600, '9', $SOO_AGGRO_RANGE)
+		PickUpTorch()
 		MoveAggroAndKillInRange(-11000, -7800, '10', $SOO_AGGRO_RANGE)
+		PickUpTorch()
 		MoveAggroAndKillInRange(-11000, -6000, '11', $SOO_AGGRO_RANGE)
 		; Pick up again in case of death
 		PickUpTorch()
@@ -375,6 +377,7 @@ Func ClearSoOFloor2()
 
 		If Not $secondRoomfirstTime Then
 			MoveAggroAndKillInRange(-17500, -9500, 'If not first loop, run back from end of floor to torch room 1', $SOO_AGGRO_RANGE)
+			PickUpTorch()
 			MoveTo(-16000, -8700)
 			RandomSleep(500)
 			MoveTo(-11500, -8400)
