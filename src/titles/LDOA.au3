@@ -114,7 +114,7 @@ Func InitialSetupLDOA()
 	MoveTo(6069, 3865)
 	TakeQuestReward($questNPC, $ID_QUEST_ELEMENTALIST_TEST, $ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST)
 
-	$questNPC = GetNearestNPCToCoords(2785, 7736))
+	$questNPC = GetNearestNPCToCoords(2785, 7736)
 	TakeQuest($questNPC, $ID_QUEST_A_MESMER_S_BURDEN, $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN, $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN)
 
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
@@ -373,7 +373,6 @@ Func LowHealthMonitor()
 			Notice('Health below threshold, returning to Foibles and restarting the run.')
 			DistrictTravel($ID_FOIBLES_FAIR, $district_name)
 		EndIf
-		Return $SUCCESS
 	EndIf
 EndFunc
 
