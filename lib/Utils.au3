@@ -2097,6 +2097,13 @@ Func MapFromArrays($keys, $values)
 EndFunc
 
 
+;~ Add additional key-value mappings to the given map, keys and values taken from the given arrays
+Func AddToMapFromArrays($map, $keys, $values)
+	For $i = 0 To UBound($keys) - 1
+		$map[$keys[$i]] = $values[$i]
+	Next
+EndFunc
+
 ;~ Clone a map
 Func CloneMap($original)
 	Local $clone[]
