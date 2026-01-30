@@ -30,6 +30,8 @@ Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EAR
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 ; Mobs aggro correspond to earshot range
 Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
+; Speed of a character without boosts ~290/s
+Global Const $PLAYER_DEFAULT_SPEED = 290
 
 Global Const $SPIRIT_TYPES_ARRAY[2] = [0x44000, 0x4C000]
 Global Const $MAP_SPIRIT_TYPES = MapFromArray($SPIRIT_TYPES_ARRAY)
@@ -75,6 +77,13 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 			Move($destinationX, $destinationY, 0)
 		EndIf
 	WEnd
+EndFunc
+
+
+;~ Differs from previous function by going randomly in a direction, but the distance from the given point is fixed
+Func MoveRandom($x, $y, $distance)
+    Local $angle = Random(0, 2 * 3.14)
+    MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 0)
 EndFunc
 
 
@@ -391,7 +400,7 @@ EndFunc
 Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
 	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		WarnOnce('No lockpicks available to open chests')
-		Return
+		Return Null
 	EndIf
 	Local $gadgetID
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_STATIC)

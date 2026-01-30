@@ -1517,6 +1517,12 @@ Func DropItem($item, $amount = 0)
 EndFunc
 
 
+;~ Destroy an item
+Func DestroyItem($item)
+	Return SendPacket(0x8, $HEADER_ITEM_DESTROY, DllStructGetData($item, 'ID'))
+EndFunc
+
+
 ;~ Moves an item.
 Func MoveItem($item, $bagIndex, $slotIndex)
 	Local $itemID = DllStructGetData($item, 'ID')

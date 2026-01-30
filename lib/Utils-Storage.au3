@@ -1758,9 +1758,24 @@ Func CountGoldItems()
 EndFunc
 
 
+;~ Destroy all items that fit the provided modelIDs
+Func DestroyFromInventory($mapItemIDs)
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		Local $bagSize = DllStructGetData($bag, 'Slots')
+		For $slot = 1 To $bagSize
+			Local $item = GetItemBySlot($bagIndex, $slot)
+			If $mapItemIDs[DllStructGetData($item, 'ModelID')] <> Null Then
+				DestroyItem($item)
+				RandomSleep(1000)
+			EndIf
+		Next
+	Next
+EndFunc
+
+
 ;~ Look for any of the given items in bags and return bag and slot of an item, [0, 0] if none are present (positions start at 1)
 Func FindAnyInInventory(ByRef $itemIDs)
-	Local $item
 	Local $itemBagAndSlot[2]
 	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
 
@@ -1768,7 +1783,7 @@ Func FindAnyInInventory(ByRef $itemIDs)
 		Local $bag = GetBag($bagIndex)
 		Local $bagSize = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $bagSize
-			$item = GetItemBySlot($bagIndex, $slot)
+			Local $item = GetItemBySlot($bagIndex, $slot)
 			For $itemId in $itemIDs
 				If(DllStructGetData($item, 'ModelID') == $itemID) Then
 					$itemBagAndSlot[0] = $bag

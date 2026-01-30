@@ -47,9 +47,6 @@ Func RunTests()
 	;	Sleep(2000)
 	;WEnd
 
-	UseSkillEx(5)
-	UseHeroSkill(1, 5)
-
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $item = GetItemBySlot(1, 1)
 	;PrintItemInformations($item)
