@@ -181,14 +181,8 @@ Func GemstoneTormentFarmLoop()
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500)
 	If KillTormentMobs() == $FAIL Then Return $FAIL
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems()
-			RandomSleep(50)
-		Next
-	EndIf
+	Info('Picking up loot')
+	PickUpItems()
 
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
@@ -209,11 +203,7 @@ Func GemstoneTormentFarmLoop()
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 
 	Info('Picking up loot')
-	; Tripled to secure the looting of items
-	For $i = 1 To 3
-		PickUpItems()
-		RandomSleep(50)
-	Next
+	PickUpItems()
 	Return $SUCCESS
 EndFunc
 

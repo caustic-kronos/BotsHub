@@ -264,10 +264,7 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 
 	; situation when most of the team is wiped
 	If CountAliveHeroes() < 2 Then Return $FAIL
-	For $i = 1 To 3
-		PickUpItems()
-		RandomSleep(50)
-	Next
+	PickUpItems()
 	FindAndOpenChests($RANGE_SPIRIT)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL

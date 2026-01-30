@@ -238,17 +238,11 @@ Func StygianFarmMesmerAssassin()
 	; Too hard to aggro the 2 groups after that, so hide in spot then go back to pick up loot
 	GoToHidingSpot()
 	RunStygianFarm(12853, -9936)
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
-			RandomSleep(50)
-		Next
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
+
+	Info('Picking up loot')
+	PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
+	Return $SUCCESS
 EndFunc
 
 
@@ -276,16 +270,12 @@ EndFunc
 
 
 Func StygianJobMesmerAssassin($waveNumber = 1)
-	If IsPlayerDead() Then Return $FAIL
 	GoToHidingSpot()
 	RunStygianFarm(12853, -9936)
-	If $waveNumber == 2 And IsPlayerAlive() Then
+	If IsPlayerDead() Then Return $FAIL
+	If $waveNumber == 2 Then
 		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
-			RandomSleep(50)
-		Next
+		PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 	EndIf
 	MoveTo(13128, -10084)
 	; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
@@ -412,8 +402,6 @@ Func KillStygianMobsUsingWastrelSkills()
 		RandomSleep(100)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	;RandomSleep(500)
-	;If IsPlayerAlive() Then PickUpItems(StygianCheckSFBuffs, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
 	Return $SUCCESS
 EndFunc
 

@@ -157,25 +157,17 @@ Func DragonMossFarmLoop()
 
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 	Local $counter = 0
-	While IsPlayerAlive() And $foesCount > 0 And $counter < 16
+	While $foesCount > 0 And $counter < 16
 		If IsRecharged($DM_SHADOWFORM) Then UseSkillEx($DM_SHADOWFORM)
 		RandomSleep(1000)
 		$counter = $counter + 1
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
 	RandomSleep(1000)
-
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems()
-			RandomSleep(50)
-		Next
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
+	Info('Picking up loot')
+	PickUpItems()
+	Return $SUCCESS
 EndFunc
 
 

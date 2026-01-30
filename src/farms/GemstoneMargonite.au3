@@ -330,15 +330,8 @@ Func GemstoneMargoniteFarmLoop()
 
 	If KillMargonites() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems(MargoniteCheckBuffs)
-			RandomSleep(50)
-		Next
-	EndIf
-
+	Info('Picking up loot')
+	PickUpItems(MargoniteCheckBuffs)
 	Return $SUCCESS
 EndFunc
 
@@ -378,21 +371,14 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 	EndSwitch
 	If $result == $SUCCESS Then Return $SUCCESS
 	; If no success when moving, either we died (the end) or we were bodyblocked
-	If IsPlayerAlive() Then
-		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
-		If KillMargonites() == $FAIL Then Return $FAIL
-		RandomSleep(1000)
-		If IsPlayerAlive() Then
-			Info('Picking up loot')
-			; Tripled to secure the looting of items
-			For $i = 1 To 3
-				PickUpItems(MargoniteCheckBuffs)
-				RandomSleep(50)
-			Next
-			Return $SUCCESS
-		EndIf
-	EndIf
-	Return $FAIL
+	If IsPlayerDead() Then Return $FAIL
+	; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
+	If KillMargonites() == $FAIL Then Return $FAIL
+	RandomSleep(1000)
+	If IsPlayerDead() Then Return $FAIL
+	Info('Picking up loot')
+	PickUpItems(MargoniteCheckBuffs)
+	Return $SUCCESS
 EndFunc
 
 

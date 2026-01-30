@@ -205,11 +205,7 @@ Func KournansFarmLoop()
 	RandomSleep(2000)
 	If IsPlayerDead() Then Return $FAIL
 	Info('Picking up loot')
-	; Tripled to secure the looting of items
-	For $i = 1 To 3
-		PickUpItems()
-		RandomSleep(50)
-	Next
+	PickUpItems()
 	Return $SUCCESS
 EndFunc
 

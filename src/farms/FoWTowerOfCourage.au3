@@ -218,7 +218,6 @@ Func FoWToCFarmLoop()
 	WEnd
 	Info('Rangers cleared. Picking up loot')
 	Sleep(500 + GetPing())
-	; Tripled to secure the looting of items
 	PickUpItems(CastFowToCBuffs)
 	Return $SUCCESS
 EndFunc

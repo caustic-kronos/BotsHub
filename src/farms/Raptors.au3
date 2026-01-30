@@ -193,15 +193,9 @@ Func RaptorsFarmLoop()
 	If AggroRaptors() == $FAIL Then Return $FAIL
 	If KillRaptors() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems(RaptorsDefend)
-			RandomSleep(100)
-		Next
-	EndIf
-
+	Info('Picking up loot')
+	PickUpItems(RaptorsDefend)
+	RandomSleep(250)
 	Return CheckFarmResult()
 EndFunc
 
@@ -304,19 +298,35 @@ EndFunc
 
 ;~ Defend skills to use when looting in case some mobs are still alive
 Func RaptorsDefend()
+	Local $energy = GetEnergy()
 	Switch $raptors_player_profession
 		Case $ID_WARRIOR
-			If GetEnergy() > 5 And IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
-			If GetEnergy() > 5 And IsRecharged($RAPTORS_SHIELD_BASH) Then UseSkillEx($RAPTORS_SHIELD_BASH)
-			If GetEnergy() > 5 And IsRecharged($RAPTORS_SOLDIERS_DEFENSE) Then
+			If $energy > 5 And IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then 
+				UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
+				$energy -= 5
+			EndIf
+			If $energy > 5 And IsRecharged($RAPTORS_SHIELD_BASH) Then
+				UseSkillEx($RAPTORS_SHIELD_BASH)
+				$energy -= 5
+			EndIf
+			If $energy > 5 And IsRecharged($RAPTORS_SOLDIERS_DEFENSE) Then
 				UseSkillEx($RAPTORS_SOLDIERS_DEFENSE)
-			ElseIf GetEnergy() > 10 And IsRecharged($RAPTORS_WARY_STANCE) Then
+				$energy -= 5
+			ElseIf $energy > 10 And IsRecharged($RAPTORS_WARY_STANCE) Then
 				UseSkillEx($RAPTORS_WARY_STANCE)
+				$energy -= 10
 			EndIf
 		Case $ID_DERVISH
-			If GetEnergy() > 6 And IsRecharged($RAPTORS_MIRAGE_CLOAK) Then UseSkillEx($RAPTORS_MIRAGE_CLOAK)
-			If GetEnergy() > 3 And IsRecharged($RAPTORS_ARMOR_OF_SANCTITY) Then UseSkillEx($RAPTORS_ARMOR_OF_SANCTITY)
+			If $energy > 6 And IsRecharged($RAPTORS_MIRAGE_CLOAK) Then
+				UseSkillEx($RAPTORS_MIRAGE_CLOAK)
+				$energy -= 6
+			EndIf
+			If $energy > 3 And IsRecharged($RAPTORS_ARMOR_OF_SANCTITY) Then
+				UseSkillEx($RAPTORS_ARMOR_OF_SANCTITY)
+				$energy -= 3
+			EndIf
 	EndSwitch
+	RandomSleep(250)
 EndFunc
 
 
