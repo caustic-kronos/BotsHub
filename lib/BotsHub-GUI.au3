@@ -646,6 +646,7 @@ Func LootTabButtonHandler()
 				_GUICtrlTreeView_DeleteAll($GUI_TreeView_LootOptions)
 				BuildTreeViewFromJSON($GUI_TreeView_LootOptions, $GuiJsonLootOptions)
 				FillInventoryCache($GUI_TreeView_LootOptions)
+				Info('Loaded loot options configuration ' & $filePath)
 			EndIf
 		Case $GUI_SaveLootOptionsButton
 			Local $jsonObject = BuildJSONFromTreeView($GUI_TreeView_LootOptions)
