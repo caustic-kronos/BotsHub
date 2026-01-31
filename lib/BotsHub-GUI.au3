@@ -448,7 +448,7 @@ EndFunc
 
 ;~ Handles WM_NOTIFY elements, like treeview clicks
 Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifyStruct)
-	Local $notificationHeader = DllStructCreate('hwnd sourceHandle;int controlId;int notificationCode', $paramNotifyStruct)
+	Local $notificationHeader = DllStructCreate('hwnd sourceHandle;int controlID;int notificationCode', $paramNotifyStruct)
 	Local $sourceHandle = DllStructGetData($notificationHeader, 'sourceHandle')
 	Local $notificationCode = DllStructGetData($notificationHeader, 'notificationCode')
 

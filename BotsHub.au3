@@ -403,14 +403,14 @@ EndFunc
 
 
 #Region Authentification and Login
-;~ Initialize connection to GW with the character name or process id given
+;~ Initialize connection to GW with the character name or process ID given
 Func Authentification()
 	Local $characterName = GUICtrlRead($GUI_Combo_CharacterChoice)
 	If ($characterName == '') Then
 		Warn('Running without authentification.')
 	ElseIf $process_id And $run_mode == 'CMD' Then
 		Local $processID = Number($process_id, 2)
-		Info('Running via pid ' & $processID)
+		Info('Running via PID ' & $processID)
 		If InitializeGameClientForGWA2(True) = 0 Then
 			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $processID & '>> ' & VarGetType($processID) & '')
 			Return $FAIL

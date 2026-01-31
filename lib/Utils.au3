@@ -151,13 +151,13 @@ Func RandomDistrictTravel($mapID, $district = 12)
 EndFunc
 
 
-Func TravelToOutpost($outpostId, $district = 'Random')
-	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostId]
-	If GetMapID() == $outpostId Then Return $SUCCESS
+Func TravelToOutpost($outpostID, $district = 'Random')
+	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostID]
+	If GetMapID() == $outpostID Then Return $SUCCESS
 	Info('Travelling to ' & $outpostName & ' (Outpost)')
-	DistrictTravel($outpostId, $district)
+	DistrictTravel($outpostID, $district)
 	RandomSleep(1000)
-	If GetMapID() <> $outpostId Then
+	If GetMapID() <> $outpostID Then
 		Warn('Player may not have access to ' & $outpostName & ' (outpost)')
 		Return $FAIL
 	EndIf
@@ -167,19 +167,19 @@ EndFunc
 
 ;~ Return back to outpost from exploration/mission map using resign functionality. This can put player closer to exit portal in outpost
 ;~ Don't use for maps that share the same ID as the outpost
-Func ResignAndReturnToOutpost($outpostId, $ignoreMapId = False)
-	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostId]
+Func ResignAndReturnToOutpost($outpostID, $ignoreMapID = False)
+	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostID]
 	Info('Returning to ' & $outpostName & ' (outpost)')
-	If Not $ignoreMapId And GetMapID() == $outpostId Then
+	If Not $ignoreMapID And GetMapID() == $outpostID Then
 		Warn('Player is already in ' & $outpostName & ' (outpost)')
 		Return $SUCCESS
 	Endif
 	Resign()
 	Sleep(3500)
 	ReturnToOutpost()
-	If $ignoreMapId Then Sleep(5000)
-	WaitMapLoading($outpostId, 10000, 1000)
-	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
+	If $ignoreMapID Then Sleep(5000)
+	WaitMapLoading($outpostID, 10000, 1000)
+	Return GetMapID() == $outpostID ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -683,7 +683,7 @@ EndFunc
 Func AllHeroesUseSkill($skillSlot, $target = 0)
 	For $i = 1 to 7
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentByID($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
 	Next
 EndFunc
 
@@ -789,7 +789,7 @@ Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	If GetEnergy(GetAgentByID(GetHeroID($heroIndex))) < $energy Then Return False
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	Local $ping = GetPing()
@@ -813,7 +813,7 @@ Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	If GetEnergy(GetAgentByID(GetHeroID($heroIndex))) < $energy Then Return False
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	; taking into account skill activation time modifiers
@@ -1566,9 +1566,9 @@ Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
 			For $j = 1 To $matchedCount - 1
 				Local $matches = True
 				For $k = 0 To $matchedCount - $j - 1
-					Local $checkIdx = $scanForward ? $k : ($patternLength - 1 - $k)
-					$maskChar = StringMid($mask, $checkIdx + 1, 1)
-					If $maskChar <> '?' And $matchedBuffer[$j + $k] <> $patternBytes[$checkIdx] Then
+					Local $checkIndex = $scanForward ? $k : ($patternLength - 1 - $k)
+					$maskChar = StringMid($mask, $checkIndex + 1, 1)
+					If $maskChar <> '?' And $matchedBuffer[$j + $k] <> $patternBytes[$checkIndex] Then
 						$matches = False
 						ExitLoop
 					EndIf

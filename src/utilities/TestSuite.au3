@@ -230,18 +230,18 @@ Func TestUseSkills()
 
 	UseHeroSkill(1, $FALLBACK_SKILLSLOT, GetMyAgent())
 	Sleep(250)
-	If GetSkillbarSkillRecharge($FALLBACK_SKILLSLOT, 1) == 0 Then Return $FAIL
+	If IsRecharged($FALLBACK_SKILLSLOT, 1) Then Return $FAIL
 	Return $SUCCESS
 EndFunc
 
 
 Func TestCommandHero()
-	Local $heroAgent = GetAgentById(GetHeroID(1))
+	Local $heroAgent = GetAgentByID(GetHeroID(1))
 	Local $heroX = DllStructGetData($heroAgent, 'X')
 	Local $heroY = DllStructGetData($heroAgent, 'Y')
 	CommandAll(-25309, -4212)
 	Sleep(500)
-	$heroAgent = GetAgentById(GetHeroID(1))
+	$heroAgent = GetAgentByID(GetHeroID(1))
 	If DllStructGetData($heroAgent, 'X') == $heroX And DllStructGetData($heroAgent, 'Y') == $heroY Then Return $FAIL
 	Return $SUCCESS
 EndFunc

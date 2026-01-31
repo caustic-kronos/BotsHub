@@ -117,7 +117,7 @@ Func GetKeiranBow()
 	Info('Getting Keiran''s bow to be able to enter the quest')
 	TravelToOutpost($ID_EYE_OF_THE_NORTH, $district_name)
 	EnterHallOfMonuments()
-	; hexadecimal code of dialog id to receive keiran's bow
+	; hexadecimal code of dialog ID to receive keiran's bow
 	Local $bowDialogID = 0x8A
 	; coordinates of Gwen inside Hall of Monuments location
 	Local $gwen = GetNearestNPCToCoords(-6583, 6672)

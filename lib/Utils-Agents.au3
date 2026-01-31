@@ -52,7 +52,7 @@ Func CountAliveHeroes()
 	Local $aliveHeroes = 0
 	For $i = 1 to 7
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then $aliveHeroes += 1
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentByID($heroID)) Then $aliveHeroes += 1
 	Next
 	Return $aliveHeroes
 EndFunc
@@ -77,12 +77,12 @@ EndFunc
 
 
 Func IsHeroAlive($heroIndex)
-	Return BitAND(DllStructGetData(GetAgentById(GetHeroID($heroIndex)), 'Effects'), 0x0010) == 0
+	Return BitAND(DllStructGetData(GetAgentByID(GetHeroID($heroIndex)), 'Effects'), 0x0010) == 0
 EndFunc
 
 
 Func IsHeroDead($heroIndex)
-	Return BitAND(DllStructGetData(GetAgentById(GetHeroID($heroIndex)), 'Effects'), 0x0010) > 0
+	Return BitAND(DllStructGetData(GetAgentByID(GetHeroID($heroIndex)), 'Effects'), 0x0010) > 0
 EndFunc
 
 
@@ -139,7 +139,7 @@ Func HasRezMemberAlive()
 	If Not IsArray($heroesWithRez) Then $heroesWithRez = FindHeroesWithRez()
 	For $i In $heroesWithRez
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then Return True
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentByID($heroID)) Then Return True
 	Next
 	Return False
 EndFunc

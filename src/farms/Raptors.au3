@@ -119,7 +119,7 @@ Func SetupRaptorsFarm()
 	GoToRivenEarth()
 	MoveTo(-25800, -4150)
 	Move(-26309, -4112)
-	RandomSleep(1000)
+	RandomSleep(2000)
 	WaitMapLoading($ID_RATA_SUM, 10000, 2000)
 	$raptors_farm_setup = True
 	Info('Preparations complete')
@@ -173,7 +173,7 @@ Func GoToRivenEarth()
 		Info('Moving to Riven Earth')
 		MoveTo(19700, 16800)
 		Move(20084, 16854)
-		RandomSleep(1000)
+		RandomSleep(2000)
 		WaitMapLoading($ID_RIVEN_EARTH, 10000, 2000)
 	WEnd
 EndFunc

@@ -1784,7 +1784,7 @@ Func FindAnyInInventory(ByRef $itemIDs)
 		Local $bagSize = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $bagSize
 			Local $item = GetItemBySlot($bagIndex, $slot)
-			For $itemId in $itemIDs
+			For $itemID in $itemIDs
 				If(DllStructGetData($item, 'ModelID') == $itemID) Then
 					$itemBagAndSlot[0] = $bag
 					$itemBagAndSlot[1] = $slot
@@ -2021,7 +2021,7 @@ Func PrintItemInformations($item)
 	Info('DyeColor: ' & DllStructGetData($item, 'DyeColor'))
 	Info('Value: ' & DllStructGetData($item, 'Value'))
 	Info('Interaction: ' & DllStructGetData($item, 'Interaction'))
-	Info('ModelId: ' & DllStructGetData($item, 'ModelID'))
+	Info('ModelID: ' & DllStructGetData($item, 'ModelID'))
 	Info('ItemFormula: ' & DllStructGetData($item, 'ItemFormula'))
 	Info('IsMaterialSalvageable: ' & DllStructGetData($item, 'IsMaterialSalvageable'))
 	Info('Quantity: ' & DllStructGetData($item, 'Quantity'))
@@ -2325,7 +2325,7 @@ Global $sqlite_db
 ; Those tables are built automatically and one is completed by the user
 Global Const $TABLE_DATA_RAW = 'DATA_RAW'
 Global Const $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
-							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
+							;address ? interaction ? model_file_ID ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
 
 Global Const $TABLE_DATA_USER = 'DATA_USER'
 Global Const $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
@@ -2584,7 +2584,7 @@ Func CompleteModelLookupTable()
 	Local $query
 	Info('Completing model lookup ')
 	$query = 'INSERT INTO ' & $TABLE_LOOKUP_MODEL & @CRLF _
-		& 'SELECT DISTINCT type_id, model_id, name, OS' & @CRLF _
+		& 'SELECT DISTINCT type_ID, model_ID, name, OS' & @CRLF _
 		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
 		& 'WHERE name IS NOT NULL' & @CRLF _
 		& '	AND (type_ID, model_ID) NOT IN (SELECT type_ID, model_ID FROM ' & $TABLE_LOOKUP_MODEL & ');'
