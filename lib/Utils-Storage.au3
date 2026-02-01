@@ -514,6 +514,9 @@ Func DefaultShouldStoreItem($item)
 	ElseIf IsConsumable($itemID) Then
 		If $quantity <> 250 Then Return False
 		Return $cache['Store items.Consumables']
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Festival Items.' & $festivalDropName]
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
 		If $quantity <> 250 Then Return False
