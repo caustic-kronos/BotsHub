@@ -557,7 +557,7 @@ EndFunc
 
 ;~ Return True if weapon item should not be sold or salvaged
 Func ShouldKeepWeapon($item)
-	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
+	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SWORD, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
 	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
 	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND]
 	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)

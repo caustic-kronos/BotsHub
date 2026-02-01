@@ -1,5 +1,5 @@
 #CS ===========================================================================
-; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Author: An anonymous fan of Dhuum
 ; Contributor: Gahais
 ; Copyright 2025 caustic-kronos
 ;
@@ -15,6 +15,7 @@
 ; limitations under the License.
 #CE ===========================================================================
 
+#include-once
 #RequireAdmin
 #NoTrayIcon
 
@@ -22,250 +23,93 @@
 #include '../../lib/GWA2_ID.au3'
 #include '../../lib/Utils.au3'
 
+
 Opt('MustDeclareVars', True)
 
-Global Const $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
-	& '- the quest A Show of Force' & @CRLF _
-	& '- the quest Requiem for a Brain' & @CRLF _
-	& '- rune of doom in your inventory' & @CRLF _
-	& '- use low level heroes to level them up' & @CRLF _
-	& '- equip holy damage weapons (monk staves/wands, Verdict (monk hammer) and Unveil (dervish staff)) and on your heroes too if possible' & @CRLF _
-	& '- use weapons in this order : holy/daggers-scythes/axe-sword/spear/hammer/wand-staff/bow'
-Global Const $LIGHTBRINGER_SUNSPEAR_FARM_DURATION = 18 * 60 * 1000
+; ==== Constants ====
+Global Const $LIGHTBRINGER_FARM_INFORMATIONS = 'Lightbringer title farm'
+; Average duration ~ 45m
+Global Const $LIGHTBRINGER_FARM_DURATION = 45 * 60 * 1000
 
-; Set to 1300 for axe, dagger and sword, 1500 for scythe and spear, 1700 for hammer, wand and staff
-Global Const $WEAPON_ATTACK_TIME = 1700
+Global $lightbringer_farm_setup = False
 
-Global Const $JUNUNDU_STRIKE	= 1
-Global Const $JUNUNDU_SMASH		= 2
-Global Const $JUNUNDU_BITE		= 3
-Global Const $JUNUNDU_SIEGE		= 4
-Global Const $JUNUNDU_TUNNEL	= 5
-Global Const $JUNUNDU_FEAST		= 6
-Global Const $JUNUNDU_WAIL		= 7
-Global Const $JUNUNDU_LEAVE		= 8
+;~ Main loop for the Lightbringer title farm
+Func LightbringerFarm()
+	If Not $lightbringer_farm_setup Then LightbringerFarmSetup()
 
-Global $lightbringer_sunspear_farm_setup = False
-Global $logging_file
+	GoToMirrorOfLyss()
+	AdlibRegister('TrackPartyStatus', 10000)
+	Local $result = FarmMirrorOfLyss()
+	AdlibUnRegister('TrackPartyStatus')
 
-;~ Main entry point to the farm - calls the setup if needed, the loop else, and the going in and out of the map
-Func LightbringerSunspearFarm()
-	If Not $lightbringer_sunspear_farm_setup Then LightbringerSunspearFarmSetup()
-
-	GoToTheSulfurousWastes()
-	Local $result = FarmTheSulfurousWastes()
-	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
+	ResignAndReturnToOutpost($ID_THE_KODASH_BAZAAR)
 	Return $result
 EndFunc
 
 
-;~ Setup for the Lightbringer farm
-Func LightbringerSunspearFarmSetup()
+Func LightbringerFarmSetup()
 	Info('Setting up farm')
-	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
-	If $log_level == 0 Then $logging_file = FileOpen(@ScriptDir & '/logs/lightbringer_farm-' & GetCharacterName() & '.log', $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+	TravelToOutpost($ID_THE_KODASH_BAZAAR, $district_name)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	SwitchMode($ID_HARD_MODE)
-	$lightbringer_sunspear_farm_setup = True
-	Info('Preparations complete')
-	Return $SUCCESS
-EndFunc
-
-
-;~ Move out of outpost into the Sulfurous Wastes
-Func GoToTheSulfurousWastes()
-	TravelToOutpost($ID_REMAINS_OF_SAHLAHJA, $district_name)
-	While GetMapID() <> $ID_THE_SULFUROUS_WASTES
-		Info('Moving to the Sulfurous Wastes')
-		MoveTo(1527, -4114)
-		Move(2200, -4900)
-		RandomSleep(1500)
-		WaitMapLoading($ID_THE_SULFUROUS_WASTES, 10000, 4000)
-	WEnd
-EndFunc
-
-
-;~ Farm the Sulfurous Wastes - main function
-Func FarmTheSulfurousWastes()
-	If GetMapID() <> $ID_THE_SULFUROUS_WASTES Then Return $FAIL
-	Info('Taking Sunspear Undead Blessing')
-	GoToNPC(GetNearestNPCToCoords(-660, 16000))
-	Dialog(0x83)
-	RandomSleep(1000)
-	Dialog(0x85)
-	RandomSleep(1000)
-
-	Info('Entering Junundu')
-	MoveTo(-615, 13450)
+	GoToMirrorOfLyss()
+	Move(-19350, -16900)
 	RandomSleep(5000)
-	TargetNearestItem()
-	RandomSleep(1500)
-	ActionInteract()
-	RandomSleep(1500)
+	WaitMapLoading($ID_THE_KODASH_BAZAAR, 10000, 2000)
+	$lightbringer_farm_setup = True
+	Info('Preparations completed')
+EndFunc
 
-	; 30 groups to vanquish
-	Local Static $foes[31][3] = [ _
-		[-800, 12000, 'First Undead Group 1'], _
-		[-1700, 9800, 'First Undead Group 2'], _
-		[-3000, 10900, 'Second Undead Group 1'], _
-		[-4500, 11500, 'Second Undead Group 2'], _
-		[-5500, 11250, 'Second Undead Group 3'], _
-		[-13250, 6750, 'Third Undead Group'], _
-		[-22000, 9000, 'First Margonite Group 1'], _
-		[-22350, 11100, 'First Margonite Group 2'], _
-		_ ; Skipping this group because it can bring heroes on land and make them go out of Wurm
-		_ ;[-21200, 10750, 'Second Margonite Group 1'], _
-		_ ;[-20250, 11000, 'Second Margonite Group 2'], _
-		[-19000, 5700, 'Djinn Group Group 1'], _
-		[-20800, 600, 'Djinn Group Group 2'], _
-		[-22000, -1200, 'Djinn Group Group 3'], _
-		[-21500, -6000, 'Undead Ritualist Boss Group 1'], _
-		[-20400, -7400, 'Undead Ritualist Boss Group 2'], _
-		[-19500, -9500, 'Undead Ritualist Boss Group 3'], _
-		[-22000, -9400, 'Third Margonite Group 1'], _
-		[-22800, -9800, 'Third Margonite Group 2'], _
-		[-23000, -10600, 'Fourth Margonite Group 1'], _
-		[-23150, -12250, 'Fourth Margonite Group 2'], _
-		[-22800, -13500, 'Fifth Margonite Group 1'], _
-		[-21300, -14000, 'Fifth Margonite Group 2'], _
-		[-22800, -13500, 'Sixth Margonite Group 1'], _
-		[-23000, -10600, 'Sixth Margonite Group 2'], _
-		[-21500, -9500, 'Sixth Margonite Group 3'], _
-		[-21000, -9500, 'Seventh Margonite Group 1'], _
-		[-19500, -8500, 'Seventh Margonite Group 2'], _
-		[-22000, -9400, 'Temple Monolith Group 1'], _
-		[-23000, -10600, 'Temple Monolith Group 2'], _
-		[-22800, -13500, 'Temple Monolith Group 3'], _
-		[-19500, -13100, 'Temple Monolith Group 4'], _
-		[-18000, -13100, 'Temple Monolith Group 5'], _
-		[-18000, -13100, 'Margonite Boss Group'] _
-	]
 
-	For $i = 0 To 4
-		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
-	Next
+;~ Move out of outpost into Mirror of Lyss
+Func GoToMirrorOfLyss()
+	TravelToOutpost($ID_THE_KODASH_BAZAAR, $district_name)
+	While GetMapID() <> $ID_THE_MIRROR_OF_LYSS
+		Info('Moving to Mirror of Lyss')
+		MoveTo(-953, 4199)
+		Move(-850, 4700)
+		RandomSleep(5000)
+		WaitMapLoading($ID_THE_MIRROR_OF_LYSS, 10000, 2000)
+	WEnd
+EndFunc
 
-	SpeedTeam()
-	MoveTo(-7500, 11925)
-	SpeedTeam()
-	MoveTo(-9300, 12500)
-	SpeedTeam()
-	MoveTo(-11000, 11250)
-	SpeedTeam()
-	MoveTo(-13200, 9000)
-	If MoveToAndAggroWithJunundu($foes[5][0], $foes[5][1], $foes[5][2]) == $FAIL Then Return $FAIL
 
-	Info('Taking Lightbringer Margonite Blessing')
-	SpeedTeam()
-	MoveTo(-20600, 7270)
-	GoToNPC(GetNearestNPCToCoords(-20600, 7270))
+;~ Cleaning Lightbringers function
+Func FarmMirrorOfLyss()
+	If GetMapID() <> $ID_THE_MIRROR_OF_LYSS Then Return $FAIL
+
+	MoveTo(-19296, -14111)
+	Info('Taking Blessing')
+	GoToNPC(GetNearestNPCToCoords(-20867, -13147))
 	RandomSleep(1000)
 	Dialog(0x85)
 	RandomSleep(1000)
+	MoveAggroAndKill(-13760, -13924, 'Path 1')
+	MoveAggroAndKill(-10600, -12671, 'Path 2')
+	MoveAggroAndKill(-4785, -14912, 'Path 3')
 
-	For $i = 6 To 19
-		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
+	; 14 groups to clear + 1 position change
+	Local Static $foes[15][3] = [ _
+		[-2451, -15086, 'Group 1/10'], _
+		[1174, -13787, 'Plants'], _
+		[6728, -12014, 'Plants'], _
+		[9554, -14517, 'Kournans + boss'], _
+		[16856, -14068, 'Plants'], _
+		[19428, -13168, 'Group 2/10'], _
+		[16961, -7251, 'Group 3/10'], _
+		[20212, -5510, 'Group 4/10'], _
+		[20373, -580, 'Group 5/10'], _
+		[19778, 2882, 'Group 6/10'], _
+		[19561, 6432, 'Group 7/10'], _
+		[15914, 10322, 'Group 8/10'], _
+		[12116, 7908, 'Moving to position'], _
+		[12932, 6907, 'Group 9/10'], _
+		[12956, 2637, 'Group 10/10'] _
+	]
+	For $i = 0 To UBound($foes) - 1
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
-	Info('Picking Up Tome')
-	SpeedTeam()
-	MoveTo(-21300, -14000)
-	TargetNearestItem()
-	RandomSleep(50)
-	ActionInteract()
-	RandomSleep(2000)
-	DropBundle()
-	RandomSleep(1000)
-
-	For $i = 20 To 29
-		If MoveToAndAggroWithJunundu($foes[$i][0], $foes[$i][1], $foes[$i][2]) <> $SUCCESS Then Return $FAIL
-	Next
-
-	Info('Spawning Margonite bosses')
-	SpeedTeam()
-	MoveTo(-16000, -13100)
-	SpeedTeam()
-	MoveTo(-18180, -13540)
-	RandomSleep(1000)
-	TargetNearestItem()
-	RandomSleep(250)
-	ActionInteract()
-	RandomSleep(3000)
-	DropBundle()
-	RandomSleep(1000)
-
-	If MoveToAndAggroWithJunundu($foes[30][0], $foes[30][1], $foes[30][2]) <> $SUCCESS Then Return $FAIL
+	Info('Groups are destroyed, resigning and doing it again')
 	Return $SUCCESS
-EndFunc
-
-
-;~ All team uses Junundu_Tunnel to speed party up
-Func SpeedTeam()
-	If (IsRecharged($JUNUNDU_TUNNEL)) Then
-		UseSkillEx($JUNUNDU_TUNNEL)
-		AllHeroesUseSkill($JUNUNDU_TUNNEL)
-	EndIf
-EndFunc
-
-
-;~ Main method for moving around and aggroing/killing mobs
-;~ Return $FAIL if the party is dead, $SUCCESS if not
-Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
-	Info('Killing ' & $foesGroup)
-	Local $range = 1650
-
-	; Speed up team using Junundu Tunnel
-	; Get close enough to cast spells but not Aggro
-	; Use Junundu Siege (4) until it's in cooldown
-	; While there are enemies
-	;	Use Junundu Tunnel (5) unless it's on cooldown
-	;	Use Junundu Bite (3) off cooldown
-	;	Use Junundu Smash (2) if available
-	;		Don't use Junundu Feast (6) if an enemy died (would need to check what skill we get afterward ...)
-	;	Use Junundu Strike (1) in between
-	;	Else just attack
-	; Use Junundu Wail (7) after fight only and if life is < 2400/3000 or if a team member is dead
-
-	Local $skillCastTimer
-	SpeedTeam()
-
-	Local $target = GetNearestNPCInRangeOfCoords($x, $y, $ID_ALLEGIANCE_FOE, $range)
-	If (DllStructGetData($target, 'X') == 0) Then
-		MoveTo($x, $y)
-		FindAndOpenChests($RANGE_SPIRIT)
-		Return $SUCCESS
-	EndIf
-
-	GetAlmostInRangeOfAgent($target)
-
-	$skillCastTimer = TimerInit()
-	While IsRecharged($JUNUNDU_SIEGE) And TimerDiff($skillCastTimer) < 3000
-		UseSkillEx($JUNUNDU_SIEGE, $target)
-		RandomSleep(50)
-	WEnd
-
-	Local $me = GetMyAgent()
-	Local $foes = 1
-	While $foes <> 0
-		$target = GetNearestEnemyToAgent($me)
-		If (IsRecharged($JUNUNDU_TUNNEL)) Then UseSkillEx($JUNUNDU_TUNNEL)
-		CallTarget($target)
-		RandomSleep(50)
-		If (GetSkillbarSkillAdrenaline($JUNUNDU_SMASH) == 130) Then UseSkillEx($JUNUNDU_SMASH)
-		AttackOrUseSkill($WEAPON_ATTACK_TIME, $JUNUNDU_BITE, $JUNUNDU_STRIKE)
-		$me = GetMyAgent()
-		$foes = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
-	WEnd
-
-	If DllStructGetData($me, 'HealthPercent') < 0.75 Or CountAliveHeroes() < 7 Then
-		UseSkillEx($JUNUNDU_WAIL)
-	EndIf
-	RandomSleep(1000)
-
-	; situation when most of the team is wiped
-	If CountAliveHeroes() < 2 Then Return $FAIL
-	PickUpItems()
-	FindAndOpenChests($RANGE_SPIRIT)
-
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
