@@ -399,7 +399,6 @@ Func KillRaptors()
 		UseSkillEx($RAPTORS_SOLDIERS_DEFENSE)
 		RandomSleep(50)
 
-		Debug('Using Whirlwind attack')
 		$count = 0
 		While IsPlayerAlive() And GetSkillbarSkillAdrenaline($RAPTORS_WHIRLWIND_ATTACK) <> 130 And $count < 200
 			RandomSleep(50)
@@ -407,14 +406,21 @@ Func KillRaptors()
 		WEnd
 
 		Local $me = GetMyAgent()
-		Info('Spiking ' & CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) & ' raptors')
+		Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
+		Info('Spiking ' & $foesCount & ' raptors')
 		UseSkillEx($RAPTORS_SHIELD_BASH)
 		RandomSleep(50)
-		Debug('Using Whirlwind attack a second time')
-		While CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 10 And GetSkillbarSkillAdrenaline($RAPTORS_WHIRLWIND_ATTACK) == 130
-			UseSkillEx($RAPTORS_WHIRLWIND_ATTACK, GetNearestEnemyToAgent($me))
+		; Double loop is necessary here in case whirlwind attack is interrupted
+		While $foesCount > 10
+			While $foesCount > 10 And GetSkillbarSkillAdrenaline($RAPTORS_WHIRLWIND_ATTACK) == 130
+				UseSkillEx($RAPTORS_WHIRLWIND_ATTACK, GetNearestEnemyToAgent($me))
+				RandomSleep(250)
+				$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
+				$me = GetMyAgent()
+				If IsPlayerDead() Then Return $FAIL
+			WEnd
 			RandomSleep(250)
-			$me = GetMyAgent()
+			$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 			If IsPlayerDead() Then Return $FAIL
 		WEnd
 	Else

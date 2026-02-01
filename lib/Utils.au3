@@ -733,13 +733,13 @@ Func GetCastTimeModifier($effects, $usedSkill)
 EndFunc
 
 
-;~ Use a skill and wait for it to be done
-Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
+;~ UseSkillEx version without requiring informations about the skill - but with more RPM calls
+Func UseSkillExNew($skillSlot, $target = Null, $timeout = 5000)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
-	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy() < $Energy Then Return False
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
 
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
@@ -750,6 +750,64 @@ Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
 	Return True
 EndFunc
 
+
+;~ UseSkillEx version more risky for weird skills with no recast or such - but with less RPM calls
+Func UseSkillEx($skillSlot, $target = Null)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
+
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	If $castTime == 0 Then
+		Local $weaponReq = DllStructGetData($skill, 'WeaponReq')
+		$castTime = GetWeaponAttackTime($weaponReq)
+	EndIf
+	Local $approximateCastTime = $castTime + $aftercast + 2 * GetPing()
+	UseSkill($skillSlot, $target)
+	Local $castTimer = TimerInit()
+	While IsCasting(GetMyAgent()) Or IsRecharged($skillSlot)
+		Sleep(50)
+		If TimerDiff($castTimer) > $approximateCastTime Then Return False
+	WEnd
+	Return True
+EndFunc
+
+
+Func GetWeaponAttackTime($weapon)
+	Switch $weapon
+		Case $ID_SKILL_AXE
+			Return 1330
+		; Vary depending on bow :
+		; 2025 (flatbow and shortbow) 2475 (longbow and recurve bow) 2700 (hornbow)
+		Case $ID_SKILL_BOW
+			Return 2025
+		Case $ID_SKILL_DAGGER
+			Return 1330
+		Case $ID_SKILL_HAMMER
+			Return 1750
+		Case $ID_SKILL_SCYTHE
+			Return 1500
+		Case $ID_SKILL_SPEAR
+			Return 1500
+		; If bow is used then higher
+		Case $ID_SKILL_RANGED_WEAPON
+			Return 1750
+		Case $ID_SKILL_SWORD
+			Return 1330
+		; Depend on weapon used
+		Case $ID_SKILL_MELEE_WEAPON
+			Return 1330
+		; Not a weapon skill
+		Case 0
+			Return 0
+		Case Else
+			Out('No weapon req on this skill - ' & $weapon)
+			Return 0
+	EndSwitch
+EndFunc
 
 ;~ Use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
 ;~ If no target is provided then skill is used on self
