@@ -609,7 +609,7 @@ EndFunc
 
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetMapType()
-	Local $offset[1] = [0x00]
+	Local $offset[1] = [0x4]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $instance_info_ptr, $offset, 'dword')
 	Return $result[1]
 EndFunc

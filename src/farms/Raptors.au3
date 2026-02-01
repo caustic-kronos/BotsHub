@@ -451,7 +451,7 @@ Func CheckFarmResult()
 	EndIf
 
 	Local $survivors = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
-	If $survivors > 1 Then
+	If $survivors > 4 Then
 		Info($survivors & ' raptors survived')
 		Return $FAIL
 	EndIf
