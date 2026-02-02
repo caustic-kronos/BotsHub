@@ -622,7 +622,7 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
 			GUICtrlSetData($GUI_Label_FarmInformations, $SOO_FARM_INFORMATIONS)
 		Case 'SpiritSlaves'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $SPIRIT_SLAVES_SKILLBAR)
+			GUICtrlSetData($GUI_Edit_CharacterBuilds, $SPIRIT_SLAVES_DERVISH_SKILLBAR & @CRLF & $SPIRIT_SLAVES_RITUALIST_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $SPIRIT_SLAVES_FARM_INFORMATIONS)
 		Case 'Sunspear Armor'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
