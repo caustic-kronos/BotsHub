@@ -126,25 +126,32 @@ EndFunc
 
 
 ;~ Travel to specified map and specified district
-Func DistrictTravel($mapID, $district = 'Random')
+Func DistrictTravel($mapID, $district = 'Random EU')
 	If GetMapID() == $mapID Then Return
-	If $district == 'Random' Then
-		RandomDistrictTravel($mapID)
-	Else
-		Local $districtAndRegion = $REGION_MAP[$district]
-		MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
-		WaitMapLoading($mapID, 20000)
-		RandomSleep(2000)
-	EndIf
+	Switch $district
+		Case 'Random'
+			RandomDistrictTravel($mapID, 0, 11)
+		Case 'Random EU'
+			RandomDistrictTravel($mapID, 0, 6)
+		Case 'Random US'
+			RandomDistrictTravel($mapID, 7, 8)
+		Case 'Random Asia'
+			RandomDistrictTravel($mapID, 9, 11)
+		Case Else
+			Local $districtAndRegion = $REGION_MAP[$district]
+			MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
+			WaitMapLoading($mapID, 20000)
+			RandomSleep(2000)
+	EndSwitch
 EndFunc
 
 
 ;~ Travel to specified map to a random district
 ;~ 7=eu, 8=eu+int, 11=all(incl. asia)
-Func RandomDistrictTravel($mapID, $district = 7)
-	Local $region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA, $ID_INTERNATIONAL]
+Func RandomDistrictTravel($mapID, $fromDistrict = 0, $toDistrict = 6)
+	Local $region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_INTERNATIONAL, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA]
 	Local $language[12] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
-	Local $random = Random(0, $district - 1, 1)
+	Local $random = Random($fromDistrict, $toDistrict, 1)
 	MoveMap($mapID, $region[$random], 0, $language[$random])
 	WaitMapLoading($mapID, 20000)
 	RandomSleep(2000)
