@@ -47,12 +47,12 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	If $run_options_cache['run.sort_items'] Then SortInventory()
 	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then
 		TravelToOutpost($tradeTown, $district_name)
 		IdentifyItems()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
+	If $run_options_cache['run.collect_data'] Then
 		ConnectToDatabase()
 		InitializeDatabase()
 		CompleteModelLookupTable()
@@ -91,11 +91,13 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		BalanceCharacterGold(10000)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then
+	; TODO: generalize this to buy any material
+	Local $materialsToBuy = $run_options_cache['run.buy_materials']
+	If $materialsToBuy['Glob of Ectoplasm'] <> Null And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then
+	If $materialsToBuy['Obsidian Shard'] <> Null And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
 	EndIf
@@ -124,7 +126,7 @@ Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		BuyKitsForMidRun()
 		Return True
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	If $run_options_cache['run.sort_items'] Then SortInventory()
 	IdentifyItems(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
@@ -1939,9 +1941,9 @@ EndFunc
 
 ;~ Uses a consumable from inventory, if present
 Func UseCitySpeedBoost($forceUse = False)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return $FAIL
+	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return $FAIL
 	If GetMapType() <> $ID_OUTPOST Then Return $FAIL
-	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return
+	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return $SUCCESS
 	Local $consumableSlot = FindInInventory($ID_SUGARY_BLUE_DRINK)
 	If $consumableSlot[0] <> 0 Then
 		UseItemBySlot($consumableSlot[0], $consumableSlot[1])
@@ -1975,7 +1977,7 @@ EndFunc
 
 ;~ Uses a consumable from inventory or chest, if present
 Func UseConsumable($consumableID, $forceUse = False, $checkXunlaiChest = True)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
+	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return
 	If Not IsConsumable($consumableID) Then
 		Warn('Provided item model ID might not correspond to consumable')
 		Return $FAIL
@@ -1989,7 +1991,6 @@ EndFunc
 
 ;~ Uses a scroll from inventory or chest, if present
 Func UseScroll($scrollID, $forceUse = False, $checkXunlaiChest = True)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_UNCHECKED) Then Return
 	If Not IsBlueScroll($scrollID) And Not IsGoldScroll($scrollID) Then
 		Warn('Provided item model ID might not correspond to scroll')
 		Return $FAIL

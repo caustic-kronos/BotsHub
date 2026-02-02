@@ -43,7 +43,7 @@ Global $kurzick_farm_drazach_setup = False
 Func KurzickFactionFarmDrazach()
 	ManageFactionPointsKurzickFarm()
 	If Not $kurzick_farm_drazach_setup Then KurzickFarmDrazachSetup()
-	CheckGoldKurzickFarm()
+	GetGoldForShrineBenediction()
 	GoToDrazach()
 	Local $result = VanquishDrazach()
 	AdlibUnRegister('TrackPartyStatus')

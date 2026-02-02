@@ -95,8 +95,6 @@ Global Const $PAUSE = 2
 
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global Const $AVAILABLE_DISTRICTS = '|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
-Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
-Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
 Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Dunkoro|General Morgahn|Goren|Gwen|Hayda|Jora|Kahmu|Keiran Thackeray|Koss|Livia|Margrid the Sly|Master of Whispers|Melonni|Miku|MOX|Norgu|Ogden|Olias|Pyre Fierceshot|Razah|Tahlkora|Vekk|Xandra|ZeiRi|Zenmai|Zhed Shadowhoof|Mercenary Hero 1|Mercenary Hero 2|Mercenary Hero 3|Mercenary Hero 4|Mercenary Hero 5|Mercenary Hero 6|Mercenary Hero 7|Mercenary Hero 8||'
 
 Global Const $LVL_DEBUG = 0
@@ -110,15 +108,29 @@ Global $runtime_status = 'UNINITIALIZED'
 Global $run_mode = 'AUTOLOAD'
 Global $process_id = ''
 Global $character_name = ''
-Global $district_name = 'Random EU'
-Global $bags_count = 5
-Global $default_weapon_slot = 1
 ; If set to 0, disables inventory management
 Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
-Global $inventory_management_cache[]
 Global $log_level = $LVL_INFO
+
+Global $inventory_management_cache[]
+Global $run_options_cache[]
+$run_options_cache['run.district'] = 'Random EU'
+$run_options_cache['run.consume_consumables'] = True
+$run_options_cache['run.use_scrolls'] = False
+$run_options_cache['run.sort_items'] = False
+$run_options_cache['run.farm_materials_mid_run'] = False
+$run_options_cache['run.bags_count'] = 5
+$run_options_cache['run.buy_materials'] = Null
+$run_options_cache['run.donate_faction_points'] = True
+$run_options_cache['run.buy_faction_scrolls'] = False
+$run_options_cache['run.buy_faction_resources'] = False
+$run_options_cache['run.collect_data'] = False
+$run_options_cache['team.automatic_team_setup'] = False
+; Overrides on $run_options_cache for frequent usage
+Global $district_name = 'Random EU'
+Global $bags_count = 5
 #EndRegion Variables
 
 
@@ -159,8 +171,7 @@ Func Main()
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()
 	Else
-		GUICtrlDelete($GUI_Combo_CharacterChoice)
-		$GUI_Combo_CharacterChoice = GUICtrlCreateCombo('Character Name Input', 10, 470, 150, 20)
+		ChangeCharacterNameBoxWithInput()
 	EndIf
 	FillConfigurationCombo()
 	LoadDefaultConfiguration()
@@ -177,9 +188,9 @@ Func BotHubLoop()
 			DisableGUIComboboxes()
 
 			; Skip inventory management and setups when running without authentication
-			If GUICtrlRead($GUI_Combo_CharacterChoice) <> '' Then
+			If GUICtrlRead($gui_combo_characterchoice) <> '' Then
 				; Must do mid-run inventory management before normal one else we will go back to town
-				If $inventory_space_needed <> 0 And GUICtrlRead($GUI_Checkbox_FarmMaterialsMidRun) = $GUI_CHECKED Then
+				If $inventory_space_needed <> 0 And $run_options_cache['run.farm_materials_mid_run'] Then
 					Local $resetRequired = InventoryManagementMidRun()
 					If $resetRequired Then ResetBotsSetups()
 				EndIf
@@ -197,9 +208,9 @@ Func BotHubLoop()
 				If Not $global_farm_setup Then GeneralFarmSetup()
 			EndIf
 
-			Local $farm = GUICtrlRead($GUI_Combo_FarmChoice)
+			Local $farm = GUICtrlRead($gui_combo_farmchoice)
 			Local $result = RunFarmLoop($farm)
-			If ($result == $PAUSE Or GUICtrlRead($GUI_Checkbox_LoopRuns) == $GUI_UNCHECKED) Then
+			If ($result == $PAUSE Or $run_options_cache['run.loop_mode'] == False) Then
 				$runtime_status = 'WILL_PAUSE'
 			EndIf
 		EndIf
@@ -207,9 +218,7 @@ Func BotHubLoop()
 		If ($runtime_status == 'WILL_PAUSE') Then
 			Warn('Paused.')
 			$runtime_status = 'PAUSED'
-			GUICtrlSetData($GUI_StartButton, 'Start')
-			GUICtrlSetState($GUI_StartButton, $GUI_Enable)
-			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTBLUE)
+			EnableStartButton()
 			EnableGUIComboboxes()
 		EndIf
 	WEnd
@@ -218,12 +227,13 @@ EndFunc
 
 ;~ Setup executed for all farms - setup weapon slots, player and team builds if provided
 Func GeneralFarmSetup()
-	If GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED Then
-		Info('Setting player weapon slot to ' & $default_weapon_slot & ' according to GUI settings')
-		ChangeWeaponSet($default_weapon_slot)
+	Local $weaponSlot = $run_options_cache['run.weapon_slot']
+	If $weaponSlot <> 0 Then
+		Info('Setting player weapon slot to ' & $weaponSlot & ' according to GUI settings')
+		ChangeWeaponSet($weaponSlot)
 		RandomSleep(250)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then
+	If $run_options_cache['team.automatic_team_setup'] Then
 		; Need to be in an outpost to change team and builds
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
 		SetupPlayerUsingGUISettings()
@@ -244,8 +254,7 @@ Func RunFarmLoop($Farm)
 		Case 'Choose a farm'
 			MsgBox(0, 'Error', 'No farm chosen.')
 			$runtime_status = 'INITIALIZED'
-			GUICtrlSetData($GUI_StartButton, 'Start')
-			GUICtrlSetBkColor($GUI_StartButton, $COLOR_LIGHTBLUE)
+			EnableStartButton()
 		Case 'Asuran'
 			$inventory_space_needed = 5
 			$result = AsuranTitleFarm()
@@ -387,7 +396,7 @@ Func RunFarmLoop($Farm)
 			MsgBox(0, 'Error', 'This farm does not exist.')
 	EndSwitch
 	AdlibUnRegister('UpdateProgressBar')
-	GUICtrlSetData($GUI_FarmProgress, 100)
+	GUICtrlSetData($gui_farmprogress, 100)
 	Local $elapsedTime = TimerDiff($run_timer)
 	If $result == $SUCCESS Then
 		Info('Run Successful after: ' & ConvertTimeToMinutesString($elapsedTime))
@@ -405,7 +414,7 @@ EndFunc
 #Region Authentification and Login
 ;~ Initialize connection to GW with the character name or process ID given
 Func Authentification()
-	Local $characterName = GUICtrlRead($GUI_Combo_CharacterChoice)
+	Local $characterName = GUICtrlRead($gui_combo_characterchoice)
 	If ($characterName == '') Then
 		Warn('Running without authentification.')
 	ElseIf $process_id And $run_mode == 'CMD' Then
@@ -429,13 +438,19 @@ Func Authentification()
 			EndIf
 		EndIf
 	EndIf
-	WinSetTitle($GUI_GWBotHub, '', 'GW Bot Hub - ' & $characterName)
+	RenameGUI('GW Bot Hub - ' & $characterName)
 	Return $SUCCESS
 EndFunc
 #EndRegion Authentification and Login
 
 
 #Region Setup
+;~ Return if team automatic setup is enabled
+Func IsTeamAutoSetup()
+	Return $run_options_cache['team.automatic_team_setup']
+EndFunc
+
+
 ;~ Reset the setups of the bots when porting to a city for instance
 Func ResetBotsSetups()
 	$global_farm_setup						= False
@@ -476,9 +491,9 @@ EndFunc
 
 ;~ Update the farm description written on the rightmost tab
 Func UpdateFarmDescription($Farm)
-	GUICtrlSetData($GUI_Edit_CharacterBuilds, '')
-	GUICtrlSetData($GUI_Edit_HeroesBuilds, '')
-	GUICtrlSetData($GUI_Label_FarmInformations, '')
+	GUICtrlSetData($gui_edit_characterbuilds, '')
+	GUICtrlSetData($gui_edit_heroesbuilds, '')
+	GUICtrlSetData($gui_label_farminformations, '')
 
 	Local $generalCharacterSetup = 'Simple build to play from skill 1 to skill 8, such as:' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:N/A_Assassin%27s_Promise_Death_Magic' & @CRLF & _
@@ -491,167 +506,167 @@ Func UpdateFarmDescription($Farm)
 		'https://gwpvx.fandom.com/wiki/Build:Team_-_3_Hero_Balanced'
 	Switch $Farm
 		Case 'Asuran'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $ASURAN_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $ASURAN_FARM_INFORMATIONS)
 		Case 'Boreal'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $BOREAL_RANGER_CHESTRUNNER_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $BOREAL_RANGER_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$BOREAL_MONK_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$BOREAL_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $BOREAL_CHESTRUN_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $BOREAL_CHESTRUN_INFORMATIONS)
 		Case 'CoF'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $D_COF_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $COF_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $D_COF_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $COF_FARM_INFORMATIONS)
 		Case 'Corsairs'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $CORSAIRS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $CORSAIRS_FARM_INFORMATIONS)
 		Case 'Deldrimor'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $DELDRIMOR_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $DELDRIMOR_FARM_INFORMATIONS)
 		Case 'Dragon Moss'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_DRAGON_MOSS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $DRAGON_MOSS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_DRAGON_MOSS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $DRAGON_MOSS_FARM_INFORMATIONS)
 		Case 'Eden Iris'
-			GUICtrlSetData($GUI_Label_FarmInformations, $EDEN_IRIS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $EDEN_IRIS_FARM_INFORMATIONS)
 		Case 'Feathers'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $DA_FEATHERS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $FEATHERS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $DA_FEATHERS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $FEATHERS_FARM_INFORMATIONS)
 		Case 'Follower'
-			GUICtrlSetData($GUI_Label_FarmInformations, $FOLLOWER_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $FOLLOWER_INFORMATIONS)
 		Case 'FoW'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $FOW_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $FOW_FARM_INFORMATIONS)
 		Case 'FoW Tower of Courage'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_FOW_TOC_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $FOW_TOC_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_FOW_TOC_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $FOW_TOC_FARM_INFORMATIONS)
 		Case 'Froggy'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $FROGGY_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $FROGGY_FARM_INFORMATIONS)
 		Case 'Gemstones'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $GEMSTONES_MESMER_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $GEMSTONES_HERO_1_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $GEMSTONES_MESMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $GEMSTONES_HERO_1_SKILLBAR & @CRLF & _
 				$GEMSTONES_HERO_2_SKILLBAR & @CRLF & $GEMSTONES_HERO_3_SKILLBAR & @CRLF & _
 				$GEMSTONES_HERO_4_SKILLBAR & @CRLF & $GEMSTONES_HERO_5_SKILLBAR & @CRLF & _
 				$GEMSTONES_HERO_6_SKILLBAR & @CRLF & $GEMSTONES_HERO_7_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GEMSTONES_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONES_FARM_INFORMATIONS)
 		Case 'Gemstone Margonite'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $AME_MARGONITE_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $AME_MARGONITE_SKILLBAR & @CRLF & _
 				$MEA_MARGONITE_SKILLBAR & @CRLF & $EME_MARGONITE_SKILLBAR & @CRLF & $RA_MARGONITE_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MARGONITE_MONK_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GEMSTONE_MARGONITE_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_heroesbuilds, $MARGONITE_MONK_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_MARGONITE_FARM_INFORMATIONS)
 		Case 'Gemstone Stygian'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $AME_STYGIAN_SKILLBAR _
+			GUICtrlSetData($gui_edit_characterbuilds, $AME_STYGIAN_SKILLBAR _
 				& @CRLF & $MEA_STYGIAN_SKILLBAR & @CRLF & $RN_STYGIAN_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $STYGIAN_RANGER_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GEMSTONE_STYGIAN_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_heroesbuilds, $STYGIAN_RANGER_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_STYGIAN_FARM_INFORMATIONS)
 		Case 'Gemstone Torment'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $EA_TORMENT_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GEMSTONE_TORMENT_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $EA_TORMENT_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_TORMENT_FARM_INFORMATIONS)
 		Case 'Glint Challenge'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $GLINT_MESMER_SKILLBAR_OPTIONAL)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $GLINT_MESMER_SKILLBAR_OPTIONAL)
+			GUICtrlSetData($gui_edit_heroesbuilds, $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR & @CRLF & _
 				$GLINT_NECRO_FLESH_GOLEM_HERO_SKILLBAR & @CRLF & $GLINT_NECRO_HEXER_HERO_SKILLBAR & @CRLF & _
 				$GLINT_NECRO_BIP_HERO_SKILLBAR & @CRLF & $GLINT_MESMER_PANIC_HERO_SKILLBAR & @CRLF & _
 				$GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $GLINT_CHALLENGE_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $GLINT_CHALLENGE_INFORMATIONS)
 		Case 'Jade Brotherhood'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $JB_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $JB_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $JB_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $JB_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $JB_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $JB_FARM_INFORMATIONS)
 		Case 'Kournans'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $ELA_KOURNANS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $ELA_KOURNANS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _
 				$RT_KOURNANS_HERO_SKILLBAR & @CRLF & $P_KOURNANS_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $KOURNANS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $KOURNANS_FARM_INFORMATIONS)
 		Case 'Kurzick'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $KURZICK_FACTION_INFORMATIONS)
 		Case 'Kurzick Drazach'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $KURZICK_FACTION_DRAZACH_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $KURZICK_FACTION_DRAZACH_INFORMATIONS)
 		Case 'LDOA'
-			GUICtrlSetData($GUI_Label_FarmInformations, $LDOA_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $LDOA_INFORMATIONS)
 		Case 'Lightbringer & Sunspear'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS)
 		Case 'Lightbringer'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $LIGHTBRINGER_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LIGHTBRINGER_FARM_INFORMATIONS)
 		Case 'Luxon'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $LUXON_FACTION_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LUXON_FACTION_INFORMATIONS)
 		Case 'Mantids'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $RA_MANTIDS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $MANTIDS_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $MANTIDS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_MANTIDS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $MANTIDS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $MANTIDS_FARM_INFORMATIONS)
 		Case 'Ministerial Commendations'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $DW_COMMENDATIONS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $COMMENDATIONS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $DW_COMMENDATIONS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $COMMENDATIONS_FARM_INFORMATIONS)
 		Case 'Minotaurs'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $MINOTAURS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $MINOTAURS_FARM_INFORMATIONS)
 		Case 'Nexus Challenge'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $NEXUS_CHALLENGE_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $NEXUS_CHALLENGE_INFORMATIONS)
 		Case 'Norn'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $NORN_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $NORN_FARM_INFORMATIONS)
 		Case 'Pongmei'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $PONGMEI_CHESTRUNNER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $PONGMEI_CHESTRUN_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $PONGMEI_CHESTRUNNER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $PONGMEI_CHESTRUN_INFORMATIONS)
 		Case 'Raptors'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $WN_RAPTORS_FARMER_SKILLBAR & @CRLF & $DN_RAPTORS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $P_RUNNER_HERO_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $RAPTORS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $WN_RAPTORS_FARMER_SKILLBAR & @CRLF & $DN_RAPTORS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $P_RUNNER_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $RAPTORS_FARM_INFORMATIONS)
 		Case 'SoO'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $SOO_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $SOO_FARM_INFORMATIONS)
 		Case 'SpiritSlaves'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $SPIRIT_SLAVES_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $SPIRIT_SLAVES_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $SPIRIT_SLAVES_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $SPIRIT_SLAVES_FARM_INFORMATIONS)
 		Case 'Sunspear Armor'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $SUNSPEAR_ARMOR_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $SUNSPEAR_ARMOR_FARM_INFORMATIONS)
 		Case 'Tasca'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $TASCA_DERVISH_CHESTRUNNER_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $TASCA_DERVISH_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MONK_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $TASCA_CHESTRUN_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $TASCA_CHESTRUN_INFORMATIONS)
 		Case 'Underworld'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $UNDERWORLD_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_INFORMATIONS)
 		Case 'Vaettirs'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $AME_VAETTIRS_FARMER_SKILLBAR & @CRLF & _
+			GUICtrlSetData($gui_edit_characterbuilds, $AME_VAETTIRS_FARMER_SKILLBAR & @CRLF & _
 				$MEA_VAETTIRS_FARMER_SKILLBAR & @CRLF & $MOA_VAETTIRS_FARMER_SKILLBAR & @CRLF & $EME_VAETTIRS_FARMER_SKILLBAR)
-			GUICtrlSetData($GUI_Label_FarmInformations, $VAETTIRS_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $VAETTIRS_FARM_INFORMATIONS)
 		Case 'Vanguard'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $VANGUARD_TITLE_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $VANGUARD_TITLE_FARM_INFORMATIONS)
 		Case 'Voltaic'
-			GUICtrlSetData($GUI_Edit_CharacterBuilds, $generalCharacterSetup)
-			GUICtrlSetData($GUI_Edit_HeroesBuilds, $generalHeroesSetup)
-			GUICtrlSetData($GUI_Label_FarmInformations, $VOLTAIC_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $VOLTAIC_FARM_INFORMATIONS)
 		Case 'War Supply Keiran'
-			GUICtrlSetData($GUI_Label_FarmInformations, $WAR_SUPPLY_KEIRAN_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $WAR_SUPPLY_KEIRAN_INFORMATIONS)
 		Case 'OmniFarm'
 			Return
 		Case 'Storage'
@@ -703,27 +718,27 @@ Func UpdateStats($result, $elapsedTime = 0)
 	; $PAUSE = 2 : Paused run or will pause
 
 	; Global stats
-	GUICtrlSetData($GUI_Label_Runs_Value, $runs)
-	GUICtrlSetData($GUI_Label_Successes_Value, $successes)
-	GUICtrlSetData($GUI_Label_Failures_Value, $failures)
-	GUICtrlSetData($GUI_Label_SuccessRatio_Value, $successRatio & ' %')
-	GUICtrlSetData($GUI_Label_Time_Value, ConvertTimeToHourString($totalTime))
+	GUICtrlSetData($gui_label_runs_value, $runs)
+	GUICtrlSetData($gui_label_successes_value, $successes)
+	GUICtrlSetData($gui_label_failures_value, $failures)
+	GUICtrlSetData($gui_label_successratio_value, $successRatio & ' %')
+	GUICtrlSetData($gui_label_time_value, ConvertTimeToHourString($totalTime))
 	Local $timePerRun = $runs == 0 ? 0 : $totalTime / $runs
-	GUICtrlSetData($GUI_Label_TimePerRun_Value, ConvertTimeToMinutesString($timePerRun))
+	GUICtrlSetData($gui_label_timeperrun_value, ConvertTimeToMinutesString($timePerRun))
 	$TotalChests += CountOpenedChests()
 	ClearChestsMap()
-	GUICtrlSetData($GUI_Label_Chests_Value, $TotalChests)
-	GUICtrlSetData($GUI_Label_Experience_Value, (GetExperience() - $InitialExperience))
+	GUICtrlSetData($gui_label_chests_value, $TotalChests)
+	GUICtrlSetData($gui_label_experience_value, (GetExperience() - $InitialExperience))
 
 	; Title stats
-	GUICtrlSetData($GUI_Label_AsuraTitle_Value, GetAsuraTitle() - $AsuraTitlePoints)
-	GUICtrlSetData($GUI_Label_DeldrimorTitle_Value, GetDeldrimorTitle() - $DeldrimorTitlePoints)
-	GUICtrlSetData($GUI_Label_NornTitle_Value, GetNornTitle() - $NornTitlePoints)
-	GUICtrlSetData($GUI_Label_VanguardTitle_Value, GetVanguardTitle() - $VanguardTitlePoints)
-	GUICtrlSetData($GUI_Label_KurzickTitle_Value, GetKurzickTitle() - $KurzickTitlePoints)
-	GUICtrlSetData($GUI_Label_LuxonTitle_Value, GetLuxonTitle() - $LuxonTitlePoints)
-	GUICtrlSetData($GUI_Label_LightbringerTitle_Value, GetLightbringerTitle() - $LightbringerTitlePoints)
-	GUICtrlSetData($GUI_Label_SunspearTitle_Value, GetSunspearTitle() - $SunspearTitlePoints)
+	GUICtrlSetData($gui_label_asuratitle_value, GetAsuraTitle() - $AsuraTitlePoints)
+	GUICtrlSetData($gui_label_deldrimortitle_value, GetDeldrimorTitle() - $DeldrimorTitlePoints)
+	GUICtrlSetData($gui_label_norntitle_value, GetNornTitle() - $NornTitlePoints)
+	GUICtrlSetData($gui_label_vanguardtitle_value, GetVanguardTitle() - $VanguardTitlePoints)
+	GUICtrlSetData($gui_label_kurzicktitle_value, GetKurzickTitle() - $KurzickTitlePoints)
+	GUICtrlSetData($gui_label_luxontitle_value, GetLuxonTitle() - $LuxonTitlePoints)
+	GUICtrlSetData($gui_label_lightbringertitle_value, GetLightbringerTitle() - $LightbringerTitlePoints)
+	GUICtrlSetData($gui_label_sunspeartitle_value, GetSunspearTitle() - $SunspearTitlePoints)
 
 	UpdateItemStats()
 	Return $timePerRun
@@ -872,36 +887,36 @@ Func UpdateItemStats()
 	If $runIncomeJadeiteShards > 0 Then $TotalJadeiteShards += $runIncomeJadeiteShards
 
 	; updating GUI labels with cumulative items counters
-	GUICtrlSetData($GUI_Label_Gold_Value, Floor($TotalGold/1000) & 'k' & Mod($TotalGold, 1000) & 'g')
-	GUICtrlSetData($GUI_Label_GoldItems_Value, $TotalGoldItems)
-	GUICtrlSetData($GUI_Label_Ectos_Value, $TotalEctos)
-	GUICtrlSetData($GUI_Label_ObsidianShards_Value, $TotalObsidianShards)
-	GUICtrlSetData($GUI_Label_Lockpicks_Value, $TotalLockpicks)
-	GUICtrlSetData($GUI_Label_MargoniteGemstone_Value, $TotalMargoniteGemstones)
-	GUICtrlSetData($GUI_Label_StygianGemstone_Value, $TotalStygianGemstones)
-	GUICtrlSetData($GUI_Label_TitanGemstone_Value, $TotalTitanGemstones)
-	GUICtrlSetData($GUI_Label_TormentGemstone_Value, $TotalTormentGemstones)
-	GUICtrlSetData($GUI_Label_DiessaChalices_Value, $TotalDiessaChalices)
-	GUICtrlSetData($GUI_Label_RinRelics_Value, $TotalRinRelics)
-	GUICtrlSetData($GUI_Label_DestroyerCores_Value, $TotalDestroyerCores)
-	GUICtrlSetData($GUI_Label_GlacialStones_Value, $TotalGlacialStones)
-	GUICtrlSetData($GUI_Label_WarSupplies_Value, $TotalWarSupplies)
-	GUICtrlSetData($GUI_Label_MinisterialCommendations_Value, $TotalMinisterialCommendations)
-	GUICtrlSetData($GUI_Label_JadeBracelets_Value, $TotalJadeBracelets)
-	GUICtrlSetData($GUI_Label_ChunksOfDrakeFlesh_Value, $TotalChunksOfDrakeFlesh)
-	GUICtrlSetData($GUI_Label_SkaleFins_Value, $TotalSkaleFins)
-	GUICtrlSetData($GUI_Label_WintersdayGifts_Value, $TotalWintersdayGifts)
-	GUICtrlSetData($GUI_Label_TrickOrTreats_Value, $TotalTrickOrTreats)
-	GUICtrlSetData($GUI_Label_BirthdayCupcakes_Value, $TotalBirthdayCupcakes)
-	GUICtrlSetData($GUI_Label_GoldenEggs_Value, $TotalGoldenEggs)
-	GUICtrlSetData($GUI_Label_PumpkinPieSlices_Value, $TotalPumpkinPieSlices)
-	GUICtrlSetData($GUI_Label_HoneyCombs_Value, $TotalHoneyCombs)
-	GUICtrlSetData($GUI_Label_FruitCakes_Value, $TotalFruitCakes)
-	GUICtrlSetData($GUI_Label_SugaryBlueDrinks_Value, $TotalSugaryBlueDrinks)
-	GUICtrlSetData($GUI_Label_ChocolateBunnies_Value, $TotalChocolateBunnies)
-	GUICtrlSetData($GUI_Label_DeliciousCakes_Value, $TotalDeliciousCakes)
-	GUICtrlSetData($GUI_Label_AmberChunks_Value, $TotalAmberChunks)
-	GUICtrlSetData($GUI_Label_JadeiteShards_Value, $TotalJadeiteShards)
+	GUICtrlSetData($gui_label_gold_value, Floor($TotalGold/1000) & 'k' & Mod($TotalGold, 1000) & 'g')
+	GUICtrlSetData($gui_label_golditems_value, $TotalGoldItems)
+	GUICtrlSetData($gui_label_ectos_value, $TotalEctos)
+	GUICtrlSetData($gui_label_obsidianshards_value, $TotalObsidianShards)
+	GUICtrlSetData($gui_label_lockpicks_value, $TotalLockpicks)
+	GUICtrlSetData($gui_label_margonitegemstone_value, $TotalMargoniteGemstones)
+	GUICtrlSetData($gui_label_stygiangemstone_value, $TotalStygianGemstones)
+	GUICtrlSetData($gui_label_titangemstone_value, $TotalTitanGemstones)
+	GUICtrlSetData($gui_label_tormentgemstone_value, $TotalTormentGemstones)
+	GUICtrlSetData($gui_label_diessachalices_value, $TotalDiessaChalices)
+	GUICtrlSetData($gui_label_rinrelics_value, $TotalRinRelics)
+	GUICtrlSetData($gui_label_destroyercores_value, $TotalDestroyerCores)
+	GUICtrlSetData($gui_label_glacialstones_value, $TotalGlacialStones)
+	GUICtrlSetData($gui_label_warsupplies_value, $TotalWarSupplies)
+	GUICtrlSetData($gui_label_ministerialcommendations_value, $TotalMinisterialCommendations)
+	GUICtrlSetData($gui_label_jadebracelets_value, $TotalJadeBracelets)
+	GUICtrlSetData($gui_label_chunksofdrakeflesh_value, $TotalChunksOfDrakeFlesh)
+	GUICtrlSetData($gui_label_skalefins_value, $TotalSkaleFins)
+	GUICtrlSetData($gui_label_wintersdaygifts_value, $TotalWintersdayGifts)
+	GUICtrlSetData($gui_label_trickortreats_value, $TotalTrickOrTreats)
+	GUICtrlSetData($gui_label_birthdaycupcakes_value, $TotalBirthdayCupcakes)
+	GUICtrlSetData($gui_label_goldeneggs_value, $TotalGoldenEggs)
+	GUICtrlSetData($gui_label_pumpkinpieslices_value, $TotalPumpkinPieSlices)
+	GUICtrlSetData($gui_label_honeycombs_value, $TotalHoneyCombs)
+	GUICtrlSetData($gui_label_fruitcakes_value, $TotalFruitCakes)
+	GUICtrlSetData($gui_label_sugarybluedrinks_value, $TotalSugaryBlueDrinks)
+	GUICtrlSetData($gui_label_chocolatebunnies_value, $TotalChocolateBunnies)
+	GUICtrlSetData($gui_label_deliciouscakes_value, $TotalDeliciousCakes)
+	GUICtrlSetData($gui_label_amberchunks_value, $TotalAmberChunks)
+	GUICtrlSetData($gui_label_jadeiteshards_value, $TotalJadeiteShards)
 
 	; resetting items counters to count income surplus for the next run
 	$PreRunGold = GetGoldCharacter()

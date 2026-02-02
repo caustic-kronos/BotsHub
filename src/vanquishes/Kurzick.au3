@@ -44,7 +44,7 @@ Func KurzickFactionFarm()
 	If Not $kurzick_farm_setup Then KurzickFarmSetup()
 
 	ManageFactionPointsKurzickFarm()
-	CheckGoldKurzickFarm()
+	GetGoldForShrineBenediction()
 	GoToFerndale()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)

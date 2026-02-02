@@ -1252,12 +1252,12 @@ EndFunc
 
 ;~ Creates a map of all valuable inscriptions based on selected elements in treeview
 Func CreateValuableInscriptionsByWeaponTypeMap()
-	Local $tickedInscriptionAll = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionWeapons = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionWeaponsMartial = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Martial', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionWeaponsSpellcasting = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Spellcasting', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionOffhand = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionOffhandFocus = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand.Focus', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionAll = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions', $gui_treeview_lootoptions, '.', False)
+	Local $tickedInscriptionWeapons = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon', $gui_treeview_lootoptions, '.', False)
+	Local $tickedInscriptionWeaponsMartial = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Martial', $gui_treeview_lootoptions, '.', False)
+	Local $tickedInscriptionWeaponsSpellcasting = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Spellcasting', $gui_treeview_lootoptions, '.', False)
+	Local $tickedInscriptionOffhand = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand', $gui_treeview_lootoptions, '.', False)
+	Local $tickedInscriptionOffhandFocus = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand.Focus', $gui_treeview_lootoptions, '.', False)
 
 	Local $inscriptionsWeaponsMartial[UBound($tickedInscriptionAll) + UBound($tickedInscriptionWeapons) + UBound($tickedInscriptionWeaponsMartial)]
 	Local $inscriptionsWeaponsSpellcasting[UBound($tickedInscriptionAll) + UBound($tickedInscriptionWeapons) + UBound($tickedInscriptionWeaponsSpellcasting)]

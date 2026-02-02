@@ -192,7 +192,7 @@ EndFunc
 
 Func EnterFissureOfWoe()
 	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
-	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+	If $run_options_cache['run.use_scrolls'] Then
 		Info('Using scroll to enter Fissure of Woe')
 		If UseScroll($ID_FOW_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_THE_FISSURE_OF_WOE)
@@ -232,7 +232,7 @@ EndFunc
 
 Func EnterUnderworld()
 	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
-	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+	If $run_options_cache['run.use_scrolls'] Then
 		Info('Using scroll to enter Underworld')
 		If UseScroll($ID_UW_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_THE_UNDERWORLD)
@@ -267,7 +267,7 @@ EndFunc
 
 Func EnterUrgozsWarren()
 	TravelToOutpost($ID_EMBARK_BEACH, $district_name)
-	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+	If $run_options_cache['run.use_scrolls'] Then
 		Info('Using scroll to enter Urgoz Warren')
 		If UseScroll($ID_URGOZ_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_URGOZS_WARREN)
@@ -285,7 +285,7 @@ EndFunc
 
 Func EnterTheDeep()
 	TravelToOutpost($ID_EMBARK_BEACH, $district_name)
-	If GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_CHECKED Then
+	If $run_options_cache['run.use_scrolls'] Then
 		Info('Using scroll to enter the Deep')
 		If UseScroll($ID_DEEP_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_THE_DEEP)
@@ -1349,6 +1349,66 @@ Func QuestStateMatches($questID, $expectedMask)
 	Return BitAND($questState, $expectedMask) <> 0
 EndFunc
 #EndRegion Quests
+
+
+#Region Faction
+;~ Get enough gold to buy shrine benediction (100g + 50g for bribe if needed)
+Func GetGoldForShrineBenediction()
+	If GetGoldCharacter() < 150 AND GetGoldStorage() > 150 Then
+		Info('Withdrawing gold for shrines benediction')
+		RandomSleep(250)
+		WithdrawGold(100)
+		RandomSleep(250)
+	EndIf
+EndFunc
+
+
+;~ Manage excess Kurzick faction points by either donating them, buying amber chunks or Urgoz scrolls
+Func ManageFactionPointsKurzickFarm()
+	ManageFactionPointsFarm('kurzick', GetKurzickFaction, GetMaxKurzickFaction, $ID_HOUSE_ZU_HELTZER, 5390, 1524)
+EndFunc
+
+
+;~ Manage excess Luxon faction points by either donating them, buying jadeite shards or The Deep scrolls
+Func ManageFactionPointsLuxonFarm()
+	ManageFactionPointsFarm('luxon', GetLuxonFaction, GetMaxLuxonFaction, $ID_CAVALON, 9076, -1111)
+EndFunc
+
+
+;~ Manage excess faction points by either donating them, buying materials or elite zone scrolls
+Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
+	If GetFactionFunction() > (GetMaxFactionFunction() - 25000) Then
+		TravelToOutpost($mapForFactionExchange, $district_name)
+		RandomSleep(200)
+		GoNearestNPCToCoords($npcX, $npcY)
+		If $run_options_cache['run.donate_faction_points'] Then
+			Info('Donating ' & $factionName & ' faction points')
+			While GetFactionFunction() >= 5000
+				DonateFaction($factionName)
+				RandomSleep(500)
+			WEnd
+		ElseIf $run_options_cache['run.buy_faction_resources'] Then
+			Info('Converting ' & $factionName & ' faction points into materials')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfChunks = Floor(GetFactionFunction() / 5000)
+			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
+			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
+			Dialog($dialogID)
+			RandomSleep(550)
+		ElseIf $run_options_cache['run.buy_faction_scrolls'] Then
+			Info('Converting ' & $factionName & ' faction points into Passage Scrolls')
+			Dialog(0x83)
+			RandomSleep(550)
+			Local $numberOfScrolls = Floor(GetFactionFunction() / 1000)
+			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
+			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
+			Dialog($dialogID)
+			RandomSleep(550)
+		EndIf
+	EndIf
+EndFunc
+#EndRegion Faction
 
 
 #Region GW Utils
@@ -2463,52 +2523,4 @@ Func _dlldisplay($struct, $fieldNames = Null)
 
 	Return $structArray
 EndFunc
-
-Func ManageFactionPointsKurzickFarm()
-	If GetKurzickFaction() > (GetMaxKurzickFaction() - 25000) Then
-		TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
-		RandomSleep(200)
-		GoNearestNPCToCoords(5390, 1524)
-
-		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
-		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
-		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
-		If $donatePoints Then
-			Info('Donating Kurzick faction points')
-			While GetKurzickFaction() >= 5000
-				DonateFaction('kurzick')
-				RandomSleep(500)
-			WEnd
-		ElseIf $buyResources Then
-			Info('Converting Kurzick faction points into Amber Chunks')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfChunks = Floor(GetKurzickFaction() / 5000)
-			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
-			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
-			Dialog($dialogID)
-			RandomSleep(550)
-		ElseIf $buyScrolls Then
-			Info('Converting Kurzick faction points into Urgoz Warren Passage Scrolls')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfScrolls = Floor(GetKurzickFaction() / 1000)
-			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
-			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
-			Dialog($dialogID)
-			RandomSleep(550)
-		EndIf
-		RandomSleep(500)
-	EndIf
-EndFunc
-
-Func CheckGoldKurzickFarm()
-	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Info('Withdrawing gold for shrines benediction')
-		RandomSleep(250)
-		WithdrawGold(100)
-		RandomSleep(250)
-	EndIf
-EndFunc
-
 #EndRegion AutoIt Utils
