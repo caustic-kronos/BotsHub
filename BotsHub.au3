@@ -62,6 +62,7 @@
 #include 'src/missions/FoW.au3'
 #include 'src/missions/Froggy.au3'
 #include 'src/missions/GlintChallenge.au3'
+#include 'src/missions/Kilroy.au3'
 #include 'src/missions/MinisterialCommendations.au3'
 #include 'src/missions/NexusChallenge.au3'
 #include 'src/missions/SoO.au3'
@@ -93,7 +94,7 @@ Global Const $SUCCESS = 0
 Global Const $FAIL = 1
 Global Const $PAUSE = 2
 
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 Global Const $AVAILABLE_DISTRICTS = '|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|1|2|3|4'
@@ -300,6 +301,9 @@ Func RunFarmLoop($Farm)
 		Case 'Jade Brotherhood'
 			$inventory_space_needed = 5
 			$result = JadeBrotherhoodFarm()
+		Case 'Kilroy'
+			$inventory_space_needed = 5
+			$result = KilroyFarm()
 		Case 'Kournans'
 			$inventory_space_needed = 5
 			$result = KournansFarm()
@@ -564,6 +568,8 @@ Func UpdateFarmDescription($Farm)
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $JB_SKILLBAR)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $JB_HERO_SKILLBAR)
 			GUICtrlSetData($GUI_Label_FarmInformations, $JB_FARM_INFORMATIONS)
+		Case 'Kilroy'
+			GUICtrlSetData($GUI_Label_FarmInformations, $KILROY_FARM_INFORMATIONS)
 		Case 'Kournans'
 			GUICtrlSetData($GUI_Edit_CharacterBuilds, $ELA_KOURNANS_FARMER_SKILLBAR)
 			GUICtrlSetData($GUI_Edit_HeroesBuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _
@@ -972,6 +978,8 @@ Func SelectFarmDuration($Farm)
 			Return $GLINT_CHALLENGE_DURATION
 		Case 'Jade Brotherhood'
 			Return $JADEBROTHERHOOD_FARM_DURATION
+		Case 'Kilroy'
+			Return $KILROY_FARM_DURATION
 		Case 'Kournans'
 			Return $KOURNANS_FARM_DURATION
 		Case 'Kurzick'

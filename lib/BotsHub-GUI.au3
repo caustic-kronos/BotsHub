@@ -52,7 +52,7 @@ Global $GUI_GWBotHub, $GUI_Tabs_Parent, $GUI_Tab_Main, $GUI_Tab_RunOptions, $GUI
 Global $GUI_Console, $GUI_Combo_CharacterChoice, $GUI_Combo_FarmChoice, $GUI_StartButton, $GUI_FarmProgress
 Global $GUI_Label_DynamicExecution, $GUI_Input_DynamicExecution, $GUI_Button_DynamicExecution, $GUI_RenderButton, $GUI_RenderLabel, _
 		$GUI_Label_BagsCount, $GUI_Combo_BagsCount, $GUI_Label_TravelDistrict, $GUI_Combo_DistrictChoice, _
-		$GUI_Checkbox_WeaponSlot, $GUI_Combo_WeaponSlot, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice
+		$GUI_Checkbox_WeaponSlot, $GUI_Combo_WeaponSlot, $GUI_Icon_SaveConfig, $GUI_Combo_ConfigChoice, $GUI_Checkbox_Survivor
 
 Global $GUI_Group_RunInfos, _
 		$GUI_Label_Runs_Text, $GUI_Label_Runs_Value, $GUI_Label_Successes_Text, $GUI_Label_Successes_Value, $GUI_Label_Failures_Text, $GUI_Label_Failures_Value, $GUI_Label_SuccessRatio_Text, $GUI_Label_SuccessRatio_Value, _
@@ -282,7 +282,7 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($GUI_Combo_WeaponSlot, 'GuiButtonHandler')
 
 	$GUI_Label_BagsCount = GUICtrlCreateLabel('Use bags:', 355, 253)
-	$GUI_Combo_BagsCount = GUICtrlCreateCombo('5', 505, 250, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$GUI_Combo_BagsCount = GUICtrlCreateCombo('5', 505, 253, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_BagsCount, $AVAILABLE_BAG_COUNTS, '5')
 	GUICtrlSetOnEvent($GUI_Combo_BagsCount, 'GuiButtonHandler')
 	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 355, 278)
@@ -290,7 +290,7 @@ Func CreateGUI()
 	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'Random EU')
 	GUICtrlSetOnEvent($GUI_Combo_DistrictChoice, 'GuiButtonHandler')
 
-	$GUI_RenderButton = GUICtrlCreateButton('Rendering enabled', 351, 325, 252, 25)
+	$GUI_RenderButton = GUICtrlCreateButton('Rendering enabled', 351, 355, 252, 25)
 	GUICtrlSetTip($GUI_RenderButton, 'Disabling rendering can reduce power consumption')
 	GUICtrlSetBkColor($GUI_RenderButton, $COLOR_YELLOW)
 	GUICtrlSetOnEvent($GUI_RenderButton, 'GuiButtonHandler')
@@ -539,6 +539,8 @@ Func GuiButtonHandler()
 			$default_weapon_slot = Number(GUICtrlRead($GUI_Combo_WeaponSlot))
 			$default_weapon_slot = _Max($default_weapon_slot, 1)
 			$default_weapon_slot = _Min($default_weapon_slot, 4)
+		Case $GUI_Checkbox_Survivor
+			UpdateSurvivorCheck()
 		Case $GUI_Icon_SaveConfig
 			GUICtrlSetState($GUI_Icon_SaveConfig, $GUI_DISABLE)
 			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf\farm', '(*.json)')
@@ -729,6 +731,11 @@ Func UpdateWeaponSlotCombobox()
 	ElseIf(GUICtrlRead($GUI_Checkbox_WeaponSLot) == $GUI_UNCHECKED) Then
 		GUICtrlSetState($GUI_Combo_WeaponSLot, $GUI_DISABLE)
 	EndIf
+EndFunc
+
+;~ Update weapon slot combobox
+Func UpdateSurvivorCheck()
+	;Initially empty to populate.
 EndFunc
 
 
@@ -978,6 +985,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.save_weapon_slot', GUICtrlRead($GUI_Checkbox_WeaponSlot) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.weapon_slot', Number(GUICtrlRead($GUI_Combo_WeaponSlot)))
+	_JSON_addChangeDelete($jsonObject, 'run.save_survivor_slot', GUICtrlRead($GUI_Checkbox_Survivor) == $GUI_CHECKED)
 	_JSON_addChangeDelete($jsonObject, 'run.bags_count', Number(GUICtrlRead($GUI_Combo_BagsCount)))
 	_JSON_addChangeDelete($jsonObject, 'run.district', GUICtrlRead($GUI_Combo_DistrictChoice))
 	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', Not $rendering_enabled)
@@ -1053,6 +1061,7 @@ Func ReadConfigFromJson($jsonString)
 	GUICtrlSetState($GUI_RadioButton_BuyFactionResources, _JSON_Get($jsonObject, 'run.buy_faction_resources') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_RadioButton_BuyFactionScrolls, _JSON_Get($jsonObject, 'run.buy_faction_scrolls') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_WeaponSlot, _JSON_Get($jsonObject, 'run.save_weapon_slot') ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($GUI_Checkbox_Survivor, _JSON_Get($jsonObject, 'run.save_survivor_slot') ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 	GUICtrlSetState($GUI_Checkbox_AutomaticTeamSetup, _JSON_Get($jsonObject, 'team.automatic_team_setup') ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($GUI_Checkbox_Load_Build_Player, _JSON_Get($jsonObject, 'team.load_player_build') ? $GUI_CHECKED : $GUI_UNCHECKED)

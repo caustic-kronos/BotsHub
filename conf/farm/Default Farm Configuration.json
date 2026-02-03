@@ -17,6 +17,7 @@
 		"buy_faction_resources": false,
 		"buy_faction_scrolls": false,
 		"save_weapon_slot": false,
+		"save_survivor_slot": false,
 		"weapon_slot": 1,
 		"bags_count": 5,
 		"district": "Random EU",

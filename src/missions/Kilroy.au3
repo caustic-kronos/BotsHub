@@ -1,0 +1,216 @@
+#CS ===========================================================================
+; Author: Ian
+; Contributor: ----
+; Copyright 2025 caustic-kronos
+;
+; Licensed under the Apache License, Version 2.0 (the 'License');
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+; http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an 'AS IS' BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+#CE ===========================================================================
+
+#include-once
+#RequireAdmin
+#NoTrayIcon
+
+#include '../../lib/GWA2_Headers.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils.au3'
+#include '../../lib/Utils-Agents.au3'
+
+Opt('MustDeclareVars', True)
+
+; ==== Constants ====
+Global Const $KILROY_FARM_INFORMATIONS = 'This bot loops the Kilroy Stonekins' & @CRLF _
+	& 'Punch Out Extravanganza Quest' & @CRLF _
+	& 'Check the Maintain Survivor under Options to keep Survivor going.' & @CRLF _
+	& 'Ensure your Brass Knuckcles are in Weapon Slot 1 and you have 9 in Dagger Mastery' & @CRLF _
+	& 'Complete all of Kilroys other quests first to get the best Daggers.'
+Global Const $KILROY_FARM_DURATION = 10000 ;sample time for now
+Global Const $KILROY_ACCEPT_REWARD = 0x835807
+Global Const $KILROY_START_QUEST = 0x835803 
+Global Const $KILRAY_ACCEPT_QUEST = 0x835801
+
+;Skill Bar Variables
+Global Const $SKILLBAR_BRAWLING_BLOCK = 1
+Global Const $SKILLBAR_STAND_UP = 8
+
+; Variables used for Survivor async checking (Low Health Monitor)
+Global Const $LOW_ENERGY_THRESHOLD_KILROY = 0
+Global Const $LOW_ENERGY_CHECK_INTERVAL_KILROY = 100
+
+Global $kilroy_farm_setup = False
+
+Func KilroyFarm()
+	If Not $kilroy_farm_setup And SetupKilroyFarm() == $FAIL Then
+		Info('Kilroy farm setup failed, stopping farm.')
+		Return $PAUSE
+	EndIf
+	MoveToPunchOut()
+	AdlibRegister('LowEnergyMonitor', $LOW_ENERGY_CHECK_INTERVAL_KILROY)
+	Local $result =FarmPunchOut()
+	AdlibUnRegister('LowEnergyMonitor')
+	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
+	Return $result
+EndFunc
+
+Func SetupKilroyFarm()
+	Info('Setting Up Farm')
+	Info('Traveling to Gunnars')
+	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
+	SwitchToHardModeIfEnabled()
+
+	If IsQuestReward($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
+		Info('Quest Reward Found! Gathering Quest Reward')
+		MoveTo(17281.19, -4850.08)
+		Local $questNPC = GetNearestNPCToCoords(17281.19, -4850.08)
+		RandomSleep(750)
+		TakeQuestReward($questNPC, $ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA, $KILROY_ACCEPT_REWARD)
+		RandomSleep(750)
+		Info('Zoning to Olafsted to Refresh Quest')
+		DistrictTravel($ID_OLAFSTEAD, $district_name)
+		Sleep(750)
+		Info('Zoning back to Gunnars')
+		DistrictTravel($ID_GUNNARS_HOLD, $district_name)
+		RandomSleep(1000)
+	EndIf
+
+	If IsQuestNotFound($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
+		Info('Setting up Kilroy Quest')
+		RandomSleep(750)
+		MoveTo(17281.19, -4850.08)
+		Local $questNPC = GetNearestNPCToCoords(17281.19, -4850.08)
+		TakeQuest($questNPC, $ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA, $KILRAY_ACCEPT_QUEST, $KILROY_START_QUEST)
+	EndIf
+
+	If IsQuestActive($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
+		$kilroy_farm_setup = True
+		Info('Quest in the logbook. Good to go!')
+		Return $SUCCESS
+	Else
+		Return $FAIL
+	EndIf
+EndFunc
+
+Func MoveToPunchOut()
+	Info('Moving to Punchout')
+	GoToNPC(GetNearestNPCToCoords(17281.19, -4850.08))
+	RandomSleep(250)
+	Dialog(0x85)
+	WaitMapLoading($ID_FRONIS_IRONTOES_LAIR, 10000, 2000)
+	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $FAIL
+EndFunc
+
+Func FarmPunchOut()
+	Info('Move and wait for Kilroy') 
+	MoveTo(-15823.84, -14241.04) 
+	Sleep(8000)
+	Info('Moving to Group 1')
+	MoveAggroAndKillInRange(-15161.00, -15209.14)
+	Info('Moving to Group 2')
+	MoveAggroAndKillInRange(-11940.47, -16210.85)
+	Info('Moving to Group 3')
+	MoveAggroAndKillInRange(-7430.37, -16290.83)
+	Info('Moving to Group 4')
+	MoveAggroAndKillInRange(-4460.11, -16184.76)
+	Info('Move and wait for Kilroy') 
+	MoveTo(-2500.64, -15724.66) 
+	Sleep(2000)
+	Info('Moving to Group 5')
+	MoveAggroAndKillInRange(-2047.64, -14724.66)
+	Info('Moving to Group 6')
+	MoveAggroAndKillInRange(531.69, -13925.98)
+	Info('Moving to Group 7')
+	MoveAggroAndKillInRange(3334.65, -16213.76)
+	Info('Moving to Group 8')
+	MoveAggroAndKillInRange(6933.14, -15406.12)
+	Info('Moving to Boss and Sleeping for Kilroy')
+	MoveTo(10500.60, -16134.18)
+	Sleep(10000)
+	Info('Moving to Boss')
+	MoveAggroAndKillInRange(12575.02,-15934.02)
+
+	Info('Moving to Chest')
+	MoveTo(13270.85,-15948.80)
+
+	ClearTarget()
+	Sleep(2000)
+	; Doubled to secure bot
+	For $i = 1 To 2
+		MoveTo(13270.85,-15948.80)
+		TargetNearestItem()
+		RandomSleep(500)
+		ActionInteract()
+		ActionInteract()
+		RandomSleep(500)
+	Next
+	$kilroy_farm_setup = false
+EndFunc
+
+; Stand up when energy is 0, keep using skill 8 until energy == max energy,
+Func LowEnergyMonitor()
+    ; Prevent re-entrancy: Adlib can fire again while we're still inside this function
+    Static $busy = False
+
+	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $SUCCESS
+
+    If $busy Then Return $SUCCESS
+
+    If Not isLowEnergy() Then Return $SUCCESS
+
+    $busy = True
+    Out("Energy is 0 - standing up...")
+
+    Local $deadline = TimerInit() ; counts from now
+    Local $timeoutMs = 10000      ; 10 seconds
+
+    Do
+        ; Refresh agent each loop to avoid stale data
+        Local $me = GetMyAgent()
+        Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
+        Local $energy = GetEnergy()
+		
+		If $maxEnergy > 120 Then
+			Info("Energy too High. Run Failed")
+			DistrictTravel($ID_GUNNARS_HOLD, $district_name)
+			Return $FAIL
+		EndIf
+
+        ; Success condition
+        If $energy = $maxEnergy Then
+            Out("Standing complete: energy restored.")
+            $busy = False
+            Return $SUCCESS
+        EndIf
+
+        ; Timeout condition
+        If TimerDiff($deadline) >= $timeoutMs Then
+            Out("Stand-up failed: 10s limit reached.")
+            $busy = False
+            Return $FAIL
+        EndIf
+
+        ; Respect skill 8 recharge
+        Local $skillbar = GetSkillbar()
+        Local $recharge8 = DllStructGetData($skillbar, "Recharge8")
+
+        If $recharge8 = 0 And $energy < $maxEnergy Then
+            UseSkill($SKILLBAR_STAND_UP, $me)
+        EndIf
+
+        RandomSleep(50)
+    Until False
+EndFunc
+
+Func isLowEnergy()
+	Local $me = GetMyAgent()
+	Local $energyPercent = DllStructGetData($me, 'EnergyPercent')
+	If $energyPercent = 0 Then Return True
+	Return False
+EndFunc
