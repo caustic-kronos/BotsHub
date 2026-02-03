@@ -20,6 +20,18 @@
 #include 'Utils.au3'
 
 
+#Region Skill Weapon Type
+Global Const $ID_SKILL_AXE = 1
+Global Const $ID_SKILL_BOW = 2
+Global Const $ID_SKILL_DAGGER = 8
+Global Const $ID_SKILL_HAMMER = 16
+Global Const $ID_SKILL_SCYTHE = 32
+Global Const $ID_SKILL_SPEAR = 64
+Global Const $ID_SKILL_RANGED_WEAPON = 70
+Global Const $ID_SKILL_SWORD = 128
+Global Const $ID_SKILL_MELEE_WEAPON = 185
+#EndRegion Skill Weapon Type
+
 #Region Skill IDs
 ; Common skills
 Global Const $ID_NO_SKILL = 0

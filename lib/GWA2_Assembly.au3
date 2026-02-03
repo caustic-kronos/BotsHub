@@ -27,24 +27,110 @@ Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 
 #Region GWA2 Structure templates
 ; Don't create global DllStruct for those (can exist simultaneously in several instances)
-Global Const $AGENT_STRUCT_TEMPLATE = 'ptr vtable;dword unknown008[4];dword Timer;dword Timer2;ptr NextAgent;dword unknown032[3];long ID;float Z;float Width1;float Height1;float Width2;float Height2;float Width3;float Height3;float Rotation;float RotationCos;float RotationSin;dword NameProperties;dword Ground;dword unknown096;float TerrainNormalX;float TerrainNormalY;dword TerrainNormalZ;byte unknown112[4];float X;float Y;dword Plane;byte unknown128[4];float NameTagX;float NameTagY;float NameTagZ;short VisualEffects;short unknown146;dword unknown148[2];long Type;float MoveX;float MoveY;dword unknown168;float RotationCos2;float RotationSin2;dword unknown180[4];long Owner;dword ItemID;dword ExtraType;dword GadgetID;dword unknown212[3];float AnimationType;dword unknown228[2];float AttackSpeed;float AttackSpeedModifier;short ModelID;short AgentModelType;dword TransmogNpcID;ptr Equipment;dword unknown256;dword unknown260;ptr Tags;short unknown268;byte Primary;byte Secondary;byte Level;byte Team;byte unknown274[2];dword unknown276;float EnergyRegen;float Overcast;float EnergyPercent;dword MaxEnergy;dword unknown296;float HPPips;dword unknown304;float HealthPercent;dword MaxHealth;dword Effects;dword unknown320;byte Hex;byte unknown325[19];dword ModelState;dword TypeMap;dword unknown352[4];dword InSpiritRange;dword VisibleEffects;dword VisibleEffectsID;dword VisibleEffectsHasEnded;dword unknown384;dword LoginNumber;float AnimationSpeed;dword AnimationCode;dword AnimationID;byte unknown404[32];byte LastStrike;byte Allegiance;short WeaponType;short Skill;short unknown442;byte WeaponItemType;byte OffhandItemType;short WeaponItemId;short OffhandItemID'
-Global Const $BUFF_STRUCT_TEMPLATE = 'long SkillId;long unknown1;long BuffId;long TargetID'
-Global Const $EFFECT_STRUCT_TEMPLATE = 'long SkillId;long AttributeLevel;long EffectId;long AgentId;float Duration;long TimeStamp'
-Global Const $SKILLBAR_STRUCT_TEMPLATE = 'long AgentId;long AdrenalineA1;long AdrenalineB1;dword Recharge1;dword SkillId1;dword Event1;long AdrenalineA2;long AdrenalineB2;dword Recharge2;dword SkillId2;dword Event2;long AdrenalineA3;long AdrenalineB3;dword Recharge3;dword SkillId3;dword Event3;long AdrenalineA4;long AdrenalineB4;dword Recharge4;dword SkillId4;dword Event4;long AdrenalineA5;long AdrenalineB5;dword Recharge5;dword SkillId5;dword Event5;long AdrenalineA6;long AdrenalineB6;dword Recharge6;dword SkillId6;dword Event6;long AdrenalineA7;long AdrenalineB7;dword Recharge7;dword SkillId7;dword Event7;long AdrenalineA8;long AdrenalineB8;dword Recharge8;dword SkillId8;dword Event8;dword disabled;long unknown1[2];dword Casting;long unknown2[2]'
-Global Const $SKILL_STRUCT_TEMPLATE = 'long ID;long Unknown1;long campaign;long Type;long Special;long ComboReq;long InflictsCondition;long Condition;long EffectFlag;long WeaponReq;byte Profession;byte Attribute;short Title;long PvPID;byte Combo;byte Target;byte unknown3;byte EquipType;byte Overcast;byte EnergyCost;byte HealthCost;byte unknown4;dword Adrenaline;float Activation;float Aftercast;long Duration0;long Duration15;long Recharge;long Unknown5[4];dword SkillArguments;long Scale0;long Scale15;long BonusScale0;long BonusScale15;float AoERange;float ConstEffect;dword caster_overhead_animation_id;dword caster_body_animation_id;dword target_body_animation_id;dword target_overhead_animation_id;dword projectile_animation_1_id;dword projectile_animation_2_id;dword icon_file_id_hd;dword icon_file_id;dword icon_file_id_2;dword name;dword concise;dword description'
-Global Const $ATTRIBUTE_STRUCT_TEMPLATE = 'dword profession_id;dword attribute_id;dword name_id;dword desc_id;dword is_pve'
-Global Const $BAG_STRUCT_TEMPLATE = 'long TypeBag;long index;long id;ptr containerItem;long ItemsCount;ptr bagArray;ptr itemArray;long fakeSlots;long slots'
-Global Const $ITEM_STRUCT_TEMPLATE = 'long Id;long AgentId;ptr BagEquiped;ptr Bag;ptr ModStruct;long ModStructSize;ptr Customized;long ModelFileID;byte Type;byte DyeTint;short DyeColor;short Value;byte unknown38[2];long Interaction;long ModelId;ptr ModString;ptr NameEnc;ptr NameString;ptr SingleItemName;byte unknown64[8];short ItemFormula;byte IsMaterialSalvageable;byte unknown75;short Quantity;byte Equipped;byte Profession;byte Slot'
-Global Const $QUEST_STRUCT_TEMPLATE = 'long id;long LogState;ptr Location;ptr Name;ptr NPC;long MapFrom;float X;float Y;long Z;long unknown1;long MapTo;ptr Description;ptr Objective'
-Global Const $TITLE_STRUCT_TEMPLATE = 'dword properties;long CurrentPoints;long CurrentTitleTier;long PointsNeededCurrentRank;long NextTitleTier;long PointsNeededNextRank;long MaxTitleRank;long MaxTitleTier;dword unknown36;dword unknown40'
+Global Const $AGENT_STRUCT_TEMPLATE = _
+	'ptr vtable;					dword unknown008[4];		dword Timer;				dword Timer2;'				& _
+	'ptr NextAgent;					dword unknown032[3];		long ID;					float Z;'					& _
+	'float Width1;					float Height1;				float Width2;				float Height2;'				& _
+	'float Width3;					float Height3;				float Rotation;				float RotationCos;'			& _
+	'float RotationSin;				dword NameProperties;		dword Ground;				dword unknown096;'			& _
+	'float TerrainNormalX;			float TerrainNormalY;		dword TerrainNormalZ;		byte unknown112[4];'		& _
+	'float X;						float Y;					dword Plane;				byte unknown128[4];'		& _
+	'float NameTagX;				float NameTagY;				float NameTagZ;'										& _
+	'short VisualEffects;			short unknown146;			dword unknown148[2];		long Type;'					& _
+	'float MoveX;					float MoveY;				dword unknown168;			float RotationCos2;'		& _
+	'float RotationSin2;			dword unknown180[4];		long Owner;'											& _
+	'dword ItemID;					dword ExtraType;			dword GadgetID;				dword unknown212[3];'		& _
+	'float AnimationType;			dword unknown228[2];		float AttackSpeed;			float AttackSpeedModifier;'	& _
+	'short ModelID;					short AgentModelType;		dword TransmogNpcID;		ptr Equipment;'				& _
+	'dword unknown256;				dword unknown260;			ptr Tags;					short unknown268;'			& _
+	'byte Primary;					byte Secondary;				byte Level;					byte Team;'					& _
+	'byte unknown274[2];			dword unknown276;'																	& _
+	'float EnergyRegen;				float Overcast;				float EnergyPercent;		dword MaxEnergy;'			& _
+	'dword unknown296;				float HPPips;				dword unknown304;			float HealthPercent;'		& _
+	'dword MaxHealth;				dword Effects;				dword unknown320;'										& _
+	'byte Hex;						byte unknown325[19];		dword ModelState;			dword TypeMap;'				& _
+	'dword unknown352[4];			dword InSpiritRange;		dword VisibleEffects;		dword VisibleEffectsID;'	& _
+	'dword VisibleEffectsHasEnded;	dword unknown384;			dword LoginNumber;			float AnimationSpeed;'		& _
+	'dword AnimationCode;			dword AnimationID;			byte unknown404[32];		byte LastStrike;'			& _
+	'byte Allegiance;				short WeaponType;			short Skill;				short unknown442;'			& _
+	'byte WeaponItemType;			byte OffhandItemType;		short WeaponItemID;			short OffhandItemID;'		
+Global Const $BUFF_STRUCT_TEMPLATE = _
+	'long SkillID;				long unknown1;				long BuffID;				long TargetID;'
+Global Const $EFFECT_STRUCT_TEMPLATE = _
+	'long SkillID;				long AttributeLevel;		long EffectID;				long AgentID;'	& _
+	'float Duration;			long TimeStamp;'
+Global Const $SKILLBAR_STRUCT_TEMPLATE = _
+	'long AgentID;' & _
+	'long AdrenalineA1;			long AdrenalineB1;			dword Recharge1;			dword SkillID1;			dword Event1;' & _
+	'long AdrenalineA2;			long AdrenalineB2;			dword Recharge2;			dword SkillID2;			dword Event2;' & _
+	'long AdrenalineA3;			long AdrenalineB3;			dword Recharge3;			dword SkillID3;			dword Event3;' & _
+	'long AdrenalineA4;			long AdrenalineB4;			dword Recharge4;			dword SkillID4;			dword Event4;' & _
+	'long AdrenalineA5;			long AdrenalineB5;			dword Recharge5;			dword SkillID5;			dword Event5;' & _
+	'long AdrenalineA6;			long AdrenalineB6;			dword Recharge6;			dword SkillID6;			dword Event6;' & _
+	'long AdrenalineA7;			long AdrenalineB7;			dword Recharge7;			dword SkillID7;			dword Event7;' & _
+	'long AdrenalineA8;			long AdrenalineB8;			dword Recharge8;			dword SkillID8;			dword Event8;' & _
+	'dword disabled;			long unknown1[2];			dword Casting;				long unknown2[2];'
+Global Const $SKILL_STRUCT_TEMPLATE = _
+	'long ID;								long Unknown1;				long campaign;				long Type;'			& _
+	'long Special;							long ComboReq;				long InflictsCondition;		long Condition;'	& _
+	'long EffectFlag;						long WeaponReq;				byte Profession;			byte Attribute;'	& _
+	'short Title;							long PvPID;'																& _
+	'byte Combo;							byte Target;				byte unknown3;				byte EquipType;'	& _
+	'byte Overcast;							byte EnergyCost;			byte HealthCost;			byte unknown4;'		& _
+	'dword Adrenaline;						float Activation;			float Aftercast;'								& _
+	'long Duration0;						long Duration15;			long Recharge;'									& _
+	'long Unknown5[4];						dword SkillArguments;'														& _
+	'long Scale0;							long Scale15;				long BonusScale0;			long BonusScale15;'	& _
+	'float AoERange;						float ConstEffect;'															& _
+	'dword caster_overhead_animation_ID;	dword caster_body_animation_ID;'											& _
+	'dword target_body_animation_ID;		dword target_overhead_animation_ID;'										& _
+	'dword projectile_animation_1_ID;		dword projectile_animation_2_ID;'											& _
+	'dword icon_file_ID_HD;					dword icon_file_ID;			dword icon_file_ID_2;'							& _
+	'dword name;							dword concise;				dword description;'
+Global Const $ATTRIBUTE_STRUCT_TEMPLATE = _
+	'dword profession_ID;		dword attribute_ID;		dword name_ID;				dword desc_ID;				dword is_pve;'
+Global Const $BAG_STRUCT_TEMPLATE = _
+	'long TypeBag;				long index;				long ID;'				& _
+	'ptr containerItem;			long ItemsCount;		ptr bagArray;'			& _
+	'ptr itemArray;				long fakeSlots;			long slots;'
+Global Const $ITEM_STRUCT_TEMPLATE = _
+	'long ID;					long AgentID;'																			& _
+	'ptr BagEquiped;			ptr Bag;'																				& _
+	'ptr ModStruct;				long ModStructSize;'																	& _
+	'ptr Customized;			long ModelFileID;			byte Type;'													& _
+	'byte DyeTint;				short DyeColor;'																		& _
+	'short Value;				byte unknown38[2];			long Interaction;			long ModelID;'					& _
+	'ptr ModString;				ptr NameEnc;				ptr NameString;				ptr SingleItemName;'			& _
+	'byte unknown64[8];			short ItemFormula;			byte IsMaterialSalvageable;	byte unknown75;'				& _
+	'short Quantity;			byte Equipped;				byte Profession;			byte Slot;'
+Global Const $QUEST_STRUCT_TEMPLATE = _
+	'long ID;					long LogState;				ptr Location;				ptr Name;					ptr NPC;'		& _
+	'long MapFrom;				float X;					float Y;					long Z;						long unknown1;'	& _
+	'long MapTo;				ptr Description;			ptr Objective;'
+Global Const $TITLE_STRUCT_TEMPLATE = _
+	'dword properties;				long CurrentPoints;			long CurrentTitleTier;'							& _
+	'long PointsNeededCurrentRank;	long NextTitleTier;			long PointsNeededNextRank;'						& _
+	'long MaxTitleRank;				long MaxTitleTier;			dword unknown36;			dword unknown40;'
 ; Grey area, unlikely to exist several at the same time
-Global Const $AREA_INFO_STRUCT_TEMPLATE = 'dword campaign;dword continent;dword region;dword regiontype;dword flags;dword thumbnail_id;dword min_party_size;dword max_party_size;dword min_player_size;dword max_player_size;dword controlled_outpost_id;dword fraction_mission;dword min_level;dword max_level;dword needed_pq;dword mission_maps_to;dword x;dword y;dword icon_start_x;dword icon_start_y;dword icon_end_x;dword icon_end_y;dword icon_start_x_dupe;dword icon_start_y_dupe;dword icon_end_x_dupe;dword icon_end_y_dupe;dword file_id;dword mission_chronology;dword ha_map_chronology;dword name_id;dword description_id'
+Global Const $AREA_INFO_STRUCT_TEMPLATE = _
+	'dword campaign;				dword continent;			dword region;				dword regiontype;			dword flags;'			& _
+	'dword thumbnail_ID;			dword min_party_size;		dword max_party_size;		dword min_player_size;		dword max_player_size;'	& _
+	'dword controlled_outpost_ID;	dword fraction_mission;		dword min_level;			dword max_level;			dword needed_pq;'		& _
+	'dword mission_maps_to;			dword x;					dword y;'																		& _
+	'dword icon_start_x;			dword icon_start_y;			dword icon_end_x;			dword icon_end_y;'									& _
+	'dword icon_start_x_dupe;		dword icon_start_y_dupe;	dword icon_end_x_dupe;		dword icon_end_y_dupe;'								& _
+	'dword file_ID;					dword mission_chronology;	dword ha_map_chronology;'														& _
+	'dword name_ID;					dword description_ID;'
 ; Safe zone, can just create DllStruct globally
-Global Const $WORLD_STRUCT = SafeDllStructCreate('long MinGridWidth;long MinGridHeight;long MaxGridWidth;long MaxGridHeight;long Flags;long Type;long SubGridWidth;long SubGridHeight;long StartPosX;long StartPosY;long MapWidth;long MapHeight')
+Global Const $WORLD_STRUCT = SafeDllStructCreate( _
+	'long MinGridWidth;		long MinGridHeight;		long MaxGridWidth;		long MaxGridHeight;'	& _
+	'long Flags;			long Type;				long SubGridWidth;		long SubGridHeight;'	& _
+	'long StartPosX;		long StartPosY;			long MapWidth;			long MapHeight;'		_
+)
 #EndRegion GWA2 Structure templates
 
 #Region GWA2 Structures
-Global Const $INVITE_GUILD_STRUCT = SafeDllStructCreate('ptr commandPacketSendPtr;dword id;dword header;dword counter;wchar name[32];dword type')
+Global Const $INVITE_GUILD_STRUCT = SafeDllStructCreate('ptr commandPacketSendPtr;dword ID;dword header;dword counter;wchar name[32];dword type')
 Global Const $INVITE_GUILD_STRUCT_PTR = DllStructGetPtr($INVITE_GUILD_STRUCT)
 
 Global Const $USE_SKILL_STRUCT = SafeDllStructCreate('ptr useSkillCommandPtr;dword skillSlot;dword targetID;dword callTarget;bool')
@@ -1018,39 +1104,39 @@ Func FallbackMemoryStringSearch($strings, $section = $PE_RDATA_SECTION)
 		$readSize = $success[5]
 
 		Local $searchEnd = $readSize - $minLength + 1
-		For $searchIdx = 0 To $searchEnd - 1
-			Local $byte = DllStructGetData($buffer, 1, $searchIdx + 1)
+		For $searchIndex = 0 To $searchEnd - 1
+			Local $byte = DllStructGetData($buffer, 1, $searchIndex + 1)
 			If $hashTable[$byte] = '' Then ContinueLoop
 
 			Local $indices = StringSplit($hashTable[$byte], ',', 2)
-			For $idx = 0 To UBound($indices) - 1
-				Local $patternIdx = Number($indices[$idx])
-				If $found[$patternIdx] Then ContinueLoop
+			For $index = 0 To UBound($indices) - 1
+				Local $patternIndex = Number($indices[$index])
+				If $found[$patternIndex] Then ContinueLoop
 
-				Local $patternLen = $lengths[$patternIdx]
-				If $searchIdx + $patternLen > $readSize Then ContinueLoop
+				Local $patternLen = $lengths[$patternIndex]
+				If $searchIndex + $patternLen > $readSize Then ContinueLoop
 
 				Local $mid = Int($patternLen / 2)
-				If DllStructGetData($buffer, 1, $searchIdx + $mid + 1) <> $patternData[$patternIdx][$mid] Then ContinueLoop
-				If DllStructGetData($buffer, 1, $searchIdx + $patternLen) <> $patternData[$patternIdx][$patternLen - 1] Then ContinueLoop
+				If DllStructGetData($buffer, 1, $searchIndex + $mid + 1) <> $patternData[$patternIndex][$mid] Then ContinueLoop
+				If DllStructGetData($buffer, 1, $searchIndex + $patternLen) <> $patternData[$patternIndex][$patternLen - 1] Then ContinueLoop
 
 				Local $match = True
 				For $c = 1 To $patternLen - 2
 					If $c = $mid Then ContinueLoop
-					If DllStructGetData($buffer, 1, $searchIdx + $c + 1) <> $patternData[$patternIdx][$c] Then
+					If DllStructGetData($buffer, 1, $searchIndex + $c + 1) <> $patternData[$patternIndex][$c] Then
 						$match = False
 						ExitLoop
 					EndIf
 				Next
 
 				If $match Then
-					$results[$patternIdx] = $currentAddr + $searchIdx
-					$found[$patternIdx] = True
+					$results[$patternIndex] = $currentAddr + $searchIndex
+					$found[$patternIndex] = True
 					$totalFound += 1
 
 					Local $newIndices = ''
 					For $r = 0 To UBound($indices) - 1
-						If Number($indices[$r]) <> $patternIdx Then
+						If Number($indices[$r]) <> $patternIndex Then
 							If $newIndices = '' Then
 								$newIndices = $indices[$r]
 							Else

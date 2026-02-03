@@ -114,7 +114,7 @@ Func InitialSetupLDOA()
 	MoveTo(6069, 3865)
 	TakeQuestReward($questNPC, $ID_QUEST_ELEMENTALIST_TEST, $ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST)
 
-	$questNPC = GetNearestNPCToCoords(2785, 7736))
+	$questNPC = GetNearestNPCToCoords(2785, 7736)
 	TakeQuest($questNPC, $ID_QUEST_A_MESMER_S_BURDEN, $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN, $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN)
 
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
@@ -128,6 +128,10 @@ Func GetBonusWeapons()
 	SendChat('bonus', '/')
 	RandomSleep(750)
 
+	Local $bonusItemsArray = [$ID_BONUS_DRAGON_FANGS, $ID_SPIRIT_BINDER, $ID_NEVERMORE, $ID_TIGER_ROAR, $ID_WOLF_FAVOR, $ID_RHINOS_CHARGE, _
+		$ID_SOUL_SHRIEKER, $ID_BONUS_DARKSTEEL_LONGBOW, $ID_BONUS_HOURGLASS_STAFF, $ID_BONUS_GLACIAL_BLADE]
+	Local $bonusItemsMap = MapFromArray($bonusItemsArray)
+	DestroyFromInventory($bonusItemsMap)
 	Local $luminescentScepter = FindInInventory($ID_LUMINESCENT_SCEPTER)
 	Local $serratedShield = FindInInventory($ID_SERRATED_SHIELD)
 	; TODO: add trashing the other bonus weapons
@@ -373,7 +377,6 @@ Func LowHealthMonitor()
 			Notice('Health below threshold, returning to Foibles and restarting the run.')
 			DistrictTravel($ID_FOIBLES_FAIR, $district_name)
 		EndIf
-		Return $SUCCESS
 	EndIf
 EndFunc
 

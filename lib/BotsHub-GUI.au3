@@ -285,13 +285,9 @@ Func CreateGUI()
 	$GUI_Combo_BagsCount = GUICtrlCreateCombo('5', 505, 253, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($GUI_Combo_BagsCount, $AVAILABLE_BAG_COUNTS, '5')
 	GUICtrlSetOnEvent($GUI_Combo_BagsCount, 'GuiButtonHandler')
-	
-	$GUI_Checkbox_Survivor = GUICtrlCreateCheckbox('Maintain Survivor', 355, 268)
-	GUICtrlSetOnEvent($GUI_Checkbox_Survivor, 'GuiButtonHandler')
-	
-	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 355, 290)
-	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('Random', 455, 290, 80, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'Random')
+	$GUI_Label_TravelDistrict = GUICtrlCreateLabel('Travel district:', 355, 278)
+	$GUI_Combo_DistrictChoice = GUICtrlCreateCombo('Random EU', 440, 275, 95, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetData($GUI_Combo_DistrictChoice, $AVAILABLE_DISTRICTS, 'Random EU')
 	GUICtrlSetOnEvent($GUI_Combo_DistrictChoice, 'GuiButtonHandler')
 
 	$GUI_RenderButton = GUICtrlCreateButton('Rendering enabled', 351, 355, 252, 25)
@@ -452,7 +448,7 @@ EndFunc
 
 ;~ Handles WM_NOTIFY elements, like treeview clicks
 Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifyStruct)
-	Local $notificationHeader = DllStructCreate('hwnd sourceHandle;int controlId;int notificationCode', $paramNotifyStruct)
+	Local $notificationHeader = DllStructCreate('hwnd sourceHandle;int controlID;int notificationCode', $paramNotifyStruct)
 	Local $sourceHandle = DllStructGetData($notificationHeader, 'sourceHandle')
 	Local $notificationCode = DllStructGetData($notificationHeader, 'notificationCode')
 
@@ -652,6 +648,7 @@ Func LootTabButtonHandler()
 				_GUICtrlTreeView_DeleteAll($GUI_TreeView_LootOptions)
 				BuildTreeViewFromJSON($GUI_TreeView_LootOptions, $GuiJsonLootOptions)
 				FillInventoryCache($GUI_TreeView_LootOptions)
+				Info('Loaded loot options configuration ' & $filePath)
 			EndIf
 		Case $GUI_SaveLootOptionsButton
 			Local $jsonObject = BuildJSONFromTreeView($GUI_TreeView_LootOptions)

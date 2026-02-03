@@ -249,15 +249,10 @@ Func VaettirsFarmLoop()
 	If VaettirsKillSequence() == $FAIL Then Return $FAIL
 	Sleep(1000)
 
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems(VaettirsStayAlive)
-			RandomSleep(50)
-		Next
-	EndIf
-
+	If IsPlayerDead() Then Return RezoneToJagaMoraine()
+	
+	Info('Picking up loot')
+	PickUpItems(VaettirsStayAlive)
 	Return RezoneToJagaMoraine()
 EndFunc
 
@@ -371,19 +366,14 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 	EndSwitch
 	If $result == $SUCCESS Then Return $SUCCESS
 	; If no success when moving, either we died (the end) or we were bodyblocked
-	If IsPlayerAlive() Then
-		; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
-		VaettirsKillSequence()
-		If IsPlayerDead() Then Return $FAIL
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems(VaettirsStayAlive)
-			RandomSleep(50)
-		Next
-		Return $SUCCESS
-	EndIf
-	Return $FAIL
+	If IsPlayerDead() Then Return $FAIL
+	
+	; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
+	VaettirsKillSequence()
+	If IsPlayerDead() Then Return $FAIL
+	Info('Picking up loot')
+	PickUpItems(VaettirsStayAlive)
+	Return $SUCCESS
 EndFunc
 
 

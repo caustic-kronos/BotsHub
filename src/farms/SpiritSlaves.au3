@@ -331,13 +331,13 @@ Func KillSequence()
 		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 		If $foesCount > 0 Then
 			Local $casterFoe = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_AREA + 88)
-			Local $casterFoeId = DllStructGetData($casterFoe, 'ID')
+			Local $casterFoeID = DllStructGetData($casterFoe, 'ID')
 			Local $distance = GetDistance($me, $casterFoe)
 			If $foesCount < 5 And GetDistance($me, $casterFoe) > $RANGE_ADJACENT Then
 				Debug('One foe is distant')
-				If $casterFoesMap[$casterFoeId] == Null Then
-					$casterFoesMap[$casterFoeId] = 0
-				ElseIf $casterFoesMap[$casterFoeId] == 2 Then
+				If $casterFoesMap[$casterFoeID] == Null Then
+					$casterFoesMap[$casterFoeID] = 0
+				ElseIf $casterFoesMap[$casterFoeID] == 2 Then
 					Debug('Moving to fight that foe')
 					Local $timer = TimerInit()
 					;MoveAvoidingBodyBlock(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'X'), 1000)
@@ -346,7 +346,7 @@ Func KillSequence()
 						RandomSleep(100)
 					WEnd
 				EndIf
-				$casterFoesMap[$casterFoeId] += 1
+				$casterFoesMap[$casterFoeID] += 1
 			EndIf
 			$me = GetMyAgent()
 			Local $nearestFoe = GetNearestEnemyToAgent($me)
@@ -363,7 +363,7 @@ Func KillSequence()
 	CleanseFromCripple()
 	RandomSleep(1000)
 	PickUpItems(CleanseFromCripple)
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 

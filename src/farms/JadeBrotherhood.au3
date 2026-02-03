@@ -149,7 +149,6 @@ Func JadeBrotherhoodFarmLoop()
 	If IsPlayerDead() Then Return $FAIL
 	KillJadeBrotherhood()
 	RandomSleep(1000)
-
 	If IsPlayerDead() Then Return $FAIL
 	Info('Looting')
 	PickUpItems()

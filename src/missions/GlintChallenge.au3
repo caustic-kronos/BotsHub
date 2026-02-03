@@ -185,7 +185,7 @@ Func GlintChallenge()
 		EndIf
 		MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 		If IsPlayerAndPartyWiped() Then Return $FAIL
-		If GetIsDead(GetAgentById($AGENTID_BABY_DRAGON)) Then Return $FAIL
+		If GetIsDead(GetAgentByID($AGENTID_BABY_DRAGON)) Then Return $FAIL
 	WEnd
 
 	CancelAllHeroes()

@@ -1717,6 +1717,9 @@ Local $rareWeaponsArray = [ _
 Global Const $MAP_RARE_WEAPONS = MapFromArray($rareWeaponsArray)
 
 
+Global Const $ID_BONUS_DARKSTEEL_LONGBOW = 25406
+Global Const $ID_BONUS_HOURGLASS_STAFF = 25407
+Global Const $ID_BONUS_GLACIAL_BLADE = 25408
 Global Const $ID_LUMINESCENT_SCEPTER = 6508
 Global Const $ID_SERRATED_SHIELD = 6514
 Global Const $ID_BONUS_DRAGON_FANGS = 6377

@@ -372,7 +372,9 @@ Func DefaultShouldPickItem($item)
 	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Scrolls.Gold.' & $scrollName]
+		Local $pickup = $cache['Pick up items.Scrolls.Gold.' & $scrollName]
+		If $pickup <> Null Then Return $pickup
+		Return $cache['Pick up items.Scrolls.Gold.Other gold scrolls']
 	ElseIf IsBlueScroll($itemID) Then
 		Return $cache['Pick up items.Scrolls.Blue']
 	; ----------------------------------------- Keys -----------------------------------------
@@ -478,7 +480,9 @@ Func DefaultShouldSellItem($item)
 		Return $cache['Sell items.Scrolls.Blue']
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Sell items.Scrolls.Gold.' & $scrollName]
+		Local $shouldSell = $cache['Sell items.Scrolls.Gold.' & $scrollName]
+		If $shouldSell <> Null Then Return $shouldSell
+		Return $cache['Sell items.Scrolls.Gold.Other gold scrolls']
 	; ----------------------------------------- Keys -----------------------------------------
 	ElseIf IsKey($itemID) Then
 		Return $cache['Sell items.Keys']
@@ -510,6 +514,9 @@ Func DefaultShouldStoreItem($item)
 	ElseIf IsConsumable($itemID) Then
 		If $quantity <> 250 Then Return False
 		Return $cache['Store items.Consumables']
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Festival Items.' & $festivalDropName]
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
 		If $quantity <> 250 Then Return False
@@ -533,7 +540,9 @@ Func DefaultShouldStoreItem($item)
 	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsGoldScroll($itemID) Then
 		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Scrolls.Gold.' & $scrollName]
+		Local $shouldStore = $cache['Store items.Scrolls.Gold.' & $scrollName]
+		If $shouldStore <> Null Then Return $shouldStore
+		Return $cache['Store items.Scrolls.Gold.Other gold scrolls']
 	ElseIf IsBlueScroll($itemID) Then
 		Return $cache['Store items.Scrolls.Blue']
 	; ----------------------------------------- Keys -----------------------------------------
@@ -551,7 +560,7 @@ EndFunc
 
 ;~ Return True if weapon item should not be sold or salvaged
 Func ShouldKeepWeapon($item)
-	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
+	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SWORD, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
 	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
 	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND]
 	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)
@@ -1752,9 +1761,24 @@ Func CountGoldItems()
 EndFunc
 
 
+;~ Destroy all items that fit the provided modelIDs
+Func DestroyFromInventory($mapItemIDs)
+	For $bagIndex = 1 To $bags_count
+		Local $bag = GetBag($bagIndex)
+		Local $bagSize = DllStructGetData($bag, 'Slots')
+		For $slot = 1 To $bagSize
+			Local $item = GetItemBySlot($bagIndex, $slot)
+			If $mapItemIDs[DllStructGetData($item, 'ModelID')] <> Null Then
+				DestroyItem($item)
+				RandomSleep(1000)
+			EndIf
+		Next
+	Next
+EndFunc
+
+
 ;~ Look for any of the given items in bags and return bag and slot of an item, [0, 0] if none are present (positions start at 1)
 Func FindAnyInInventory(ByRef $itemIDs)
-	Local $item
 	Local $itemBagAndSlot[2]
 	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
 
@@ -1762,8 +1786,8 @@ Func FindAnyInInventory(ByRef $itemIDs)
 		Local $bag = GetBag($bagIndex)
 		Local $bagSize = DllStructGetData($bag, 'Slots')
 		For $slot = 1 To $bagSize
-			$item = GetItemBySlot($bagIndex, $slot)
-			For $itemId in $itemIDs
+			Local $item = GetItemBySlot($bagIndex, $slot)
+			For $itemID in $itemIDs
 				If(DllStructGetData($item, 'ModelID') == $itemID) Then
 					$itemBagAndSlot[0] = $bag
 					$itemBagAndSlot[1] = $slot
@@ -2000,7 +2024,7 @@ Func PrintItemInformations($item)
 	Info('DyeColor: ' & DllStructGetData($item, 'DyeColor'))
 	Info('Value: ' & DllStructGetData($item, 'Value'))
 	Info('Interaction: ' & DllStructGetData($item, 'Interaction'))
-	Info('ModelId: ' & DllStructGetData($item, 'ModelID'))
+	Info('ModelID: ' & DllStructGetData($item, 'ModelID'))
 	Info('ItemFormula: ' & DllStructGetData($item, 'ItemFormula'))
 	Info('IsMaterialSalvageable: ' & DllStructGetData($item, 'IsMaterialSalvageable'))
 	Info('Quantity: ' & DllStructGetData($item, 'Quantity'))
@@ -2076,7 +2100,7 @@ EndFunc
 ;~ Returns true if the item is a consumable
 Func IsConsumable($itemID)
 	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or _
-		IsSpecialDrop($itemID) Or IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID) Or IsConset($itemID)
+		IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID) Or IsConset($itemID)
 EndFunc
 
 
@@ -2304,7 +2328,7 @@ Global $sqlite_db
 ; Those tables are built automatically and one is completed by the user
 Global Const $TABLE_DATA_RAW = 'DATA_RAW'
 Global Const $SCHEMA_DATA_RAW = ['batch', 'bag', 'slot', 'model_ID', 'type_ID', 'min_stat', 'max_stat', 'requirement', 'attribute_ID', 'name_string', 'OS', 'modstruct', 'quantity', 'value', 'rarity_ID', 'dye_color', 'ID']
-							;address ? interaction ? model_file_id ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
+							;address ? interaction ? model_file_ID ? name enc ? desc enc ? several modstruct (4, 8 ?) - identifier, arg1, arg2
 
 Global Const $TABLE_DATA_USER = 'DATA_USER'
 Global Const $SCHEMA_DATA_USER = ['batch', 'bag', 'slot', 'rarity', 'type', 'requirement', 'attribute', 'value', 'name', 'OS', 'prefix', 'suffix', 'inscription', 'type_ID', 'model_ID', 'name_string', 'modstruct', 'dye_color', 'ID']
@@ -2563,7 +2587,7 @@ Func CompleteModelLookupTable()
 	Local $query
 	Info('Completing model lookup ')
 	$query = 'INSERT INTO ' & $TABLE_LOOKUP_MODEL & @CRLF _
-		& 'SELECT DISTINCT type_id, model_id, name, OS' & @CRLF _
+		& 'SELECT DISTINCT type_ID, model_ID, name, OS' & @CRLF _
 		& 'FROM ' & $TABLE_DATA_USER & @CRLF _
 		& 'WHERE name IS NOT NULL' & @CRLF _
 		& '	AND (type_ID, model_ID) NOT IN (SELECT type_ID, model_ID FROM ' & $TABLE_LOOKUP_MODEL & ');'

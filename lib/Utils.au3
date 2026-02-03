@@ -30,6 +30,8 @@ Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EAR
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 ; Mobs aggro correspond to earshot range
 Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
+; Speed of a character without boosts ~290/s
+Global Const $PLAYER_DEFAULT_SPEED = 290
 
 Global Const $SPIRIT_TYPES_ARRAY[2] = [0x44000, 0x4C000]
 Global Const $MAP_SPIRIT_TYPES = MapFromArray($SPIRIT_TYPES_ARRAY)
@@ -78,6 +80,13 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 EndFunc
 
 
+;~ Differs from previous function by going randomly in a direction, but the distance from the given point is fixed
+Func MoveRandom($x, $y, $distance)
+    Local $angle = Random(0, 2 * 3.14)
+    MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 0)
+EndFunc
+
+
 ;~ Talks to NPC and waits until you reach them.
 Func GoToNPC($agent)
 	GoToAgent($agent, GoNPC)
@@ -117,38 +126,45 @@ EndFunc
 
 
 ;~ Travel to specified map and specified district
-Func DistrictTravel($mapID, $district = 'Random')
+Func DistrictTravel($mapID, $district = 'Random EU')
 	If GetMapID() == $mapID Then Return
-	If $district == 'Random' Then
-		RandomDistrictTravel($mapID)
-	Else
-		Local $districtAndRegion = $REGION_MAP[$district]
-		MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
-		WaitMapLoading($mapID, 20000)
-		RandomSleep(2000)
-	EndIf
+	Switch $district
+		Case 'Random'
+			RandomDistrictTravel($mapID, 0, 11)
+		Case 'Random EU'
+			RandomDistrictTravel($mapID, 0, 6)
+		Case 'Random US'
+			RandomDistrictTravel($mapID, 7, 8)
+		Case 'Random Asia'
+			RandomDistrictTravel($mapID, 9, 11)
+		Case Else
+			Local $districtAndRegion = $REGION_MAP[$district]
+			MoveMap($mapID, $districtAndRegion[1], 0, $districtAndRegion[0])
+			WaitMapLoading($mapID, 20000)
+			RandomSleep(2000)
+	EndSwitch
 EndFunc
 
 
 ;~ Travel to specified map to a random district
 ;~ 7=eu, 8=eu+int, 11=all(incl. asia)
-Func RandomDistrictTravel($mapID, $district = 12)
-	Local $region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA, $ID_INTERNATIONAL]
+Func RandomDistrictTravel($mapID, $fromDistrict = 0, $toDistrict = 6)
+	Local $region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_INTERNATIONAL, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA]
 	Local $language[12] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
-	Local $random = Random(0, $district - 1, 1)
+	Local $random = Random($fromDistrict, $toDistrict, 1)
 	MoveMap($mapID, $region[$random], 0, $language[$random])
 	WaitMapLoading($mapID, 20000)
 	RandomSleep(2000)
 EndFunc
 
 
-Func TravelToOutpost($outpostId, $district = 'Random')
-	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostId]
-	If GetMapID() == $outpostId Then Return $SUCCESS
+Func TravelToOutpost($outpostID, $district = 'Random')
+	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostID]
+	If GetMapID() == $outpostID Then Return $SUCCESS
 	Info('Travelling to ' & $outpostName & ' (Outpost)')
-	DistrictTravel($outpostId, $district)
+	DistrictTravel($outpostID, $district)
 	RandomSleep(1000)
-	If GetMapID() <> $outpostId Then
+	If GetMapID() <> $outpostID Then
 		Warn('Player may not have access to ' & $outpostName & ' (outpost)')
 		Return $FAIL
 	EndIf
@@ -158,19 +174,19 @@ EndFunc
 
 ;~ Return back to outpost from exploration/mission map using resign functionality. This can put player closer to exit portal in outpost
 ;~ Don't use for maps that share the same ID as the outpost
-Func ResignAndReturnToOutpost($outpostId, $ignoreMapId = False)
-	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostId]
+Func ResignAndReturnToOutpost($outpostID, $ignoreMapID = False)
+	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostID]
 	Info('Returning to ' & $outpostName & ' (outpost)')
-	If Not $ignoreMapId And GetMapID() == $outpostId Then
+	If Not $ignoreMapID And GetMapID() == $outpostID Then
 		Warn('Player is already in ' & $outpostName & ' (outpost)')
 		Return $SUCCESS
 	Endif
 	Resign()
 	Sleep(3500)
 	ReturnToOutpost()
-	If $ignoreMapId Then Sleep(5000)
-	WaitMapLoading($outpostId, 10000, 1000)
-	Return GetMapID() == $outpostId ? $SUCCESS : $FAIL
+	If $ignoreMapID Then Sleep(5000)
+	WaitMapLoading($outpostID, 10000, 1000)
+	Return GetMapID() == $outpostID ? $SUCCESS : $FAIL
 EndFunc
 
 
@@ -191,7 +207,9 @@ Func EnterFissureOfWoe()
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		MoveTo(-2500, 18700)
 		If GetDistanceToPoint(GetMyAgent(), -2500, 18700) > $RANGE_ADJACENT Then
-			MoveTo(-4200, 18750)
+			MoveTo(-4650, 18700)
+			MoveTo(-3600, 18700)
+			MoveTo(-3100, 18000)
 			MoveTo(-2500, 18700)
 		EndIf
 		SendChat('/kneel', '')
@@ -389,7 +407,7 @@ EndFunc
 Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
 	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		WarnOnce('No lockpicks available to open chests')
-		Return
+		Return Null
 	EndIf
 	Local $gadgetID
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_STATIC)
@@ -672,7 +690,7 @@ EndFunc
 Func AllHeroesUseSkill($skillSlot, $target = 0)
 	For $i = 1 to 7
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentById($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
+		If GetAgentExists($heroID) And Not GetIsDead(GetAgentByID($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
 	Next
 EndFunc
 
@@ -722,13 +740,13 @@ Func GetCastTimeModifier($effects, $usedSkill)
 EndFunc
 
 
-;~ Use a skill and wait for it to be done
-Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
+;~ UseSkillEx version without requiring informations about the skill - but with more RPM calls
+Func UseSkillExNew($skillSlot, $target = Null, $timeout = 5000)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
-	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($Skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy() < $Energy Then Return False
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
 
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
@@ -739,6 +757,64 @@ Func UseSkillEx($skillSlot, $target = Null, $timeout = 5000)
 	Return True
 EndFunc
 
+
+;~ UseSkillEx version more risky for weird skills with no recast or such - but with less RPM calls
+Func UseSkillEx($skillSlot, $target = Null)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
+	If GetEnergy() < $energy Then Return False
+
+	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
+	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
+	If $castTime == 0 Then
+		Local $weaponReq = DllStructGetData($skill, 'WeaponReq')
+		$castTime = GetWeaponAttackTime($weaponReq)
+	EndIf
+	Local $approximateCastTime = $castTime + $aftercast + 2 * GetPing()
+	UseSkill($skillSlot, $target)
+	Local $castTimer = TimerInit()
+	While IsCasting(GetMyAgent()) Or IsRecharged($skillSlot)
+		Sleep(50)
+		If TimerDiff($castTimer) > $approximateCastTime Then Return False
+	WEnd
+	Return True
+EndFunc
+
+
+Func GetWeaponAttackTime($weapon)
+	Switch $weapon
+		Case $ID_SKILL_AXE
+			Return 1330
+		; Vary depending on bow :
+		; 2025 (flatbow and shortbow) 2475 (longbow and recurve bow) 2700 (hornbow)
+		Case $ID_SKILL_BOW
+			Return 2025
+		Case $ID_SKILL_DAGGER
+			Return 1330
+		Case $ID_SKILL_HAMMER
+			Return 1750
+		Case $ID_SKILL_SCYTHE
+			Return 1500
+		Case $ID_SKILL_SPEAR
+			Return 1500
+		; If bow is used then higher
+		Case $ID_SKILL_RANGED_WEAPON
+			Return 1750
+		Case $ID_SKILL_SWORD
+			Return 1330
+		; Depend on weapon used
+		Case $ID_SKILL_MELEE_WEAPON
+			Return 1330
+		; Not a weapon skill
+		Case 0
+			Return 0
+		Case Else
+			Out('No weapon req on this skill - ' & $weapon)
+			Return 0
+	EndSwitch
+EndFunc
 
 ;~ Use a skill and wait for it to be done, with calculation of all effects modifiers to wait exact cast time
 ;~ If no target is provided then skill is used on self
@@ -778,7 +854,7 @@ Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	If GetEnergy(GetAgentByID(GetHeroID($heroIndex))) < $energy Then Return False
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	Local $ping = GetPing()
@@ -802,7 +878,7 @@ Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 
 	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot, $heroIndex))
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
-	If GetEnergy(GetAgentById(GetHeroID($heroIndex))) < $energy Then Return False
+	If GetEnergy(GetAgentByID(GetHeroID($heroIndex))) < $energy Then Return False
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	; taking into account skill activation time modifiers
@@ -1555,9 +1631,9 @@ Func FindInRange($processHandle, $pattern, $mask, $offset, $startPtr, $endPtr)
 			For $j = 1 To $matchedCount - 1
 				Local $matches = True
 				For $k = 0 To $matchedCount - $j - 1
-					Local $checkIdx = $scanForward ? $k : ($patternLength - 1 - $k)
-					$maskChar = StringMid($mask, $checkIdx + 1, 1)
-					If $maskChar <> '?' And $matchedBuffer[$j + $k] <> $patternBytes[$checkIdx] Then
+					Local $checkIndex = $scanForward ? $k : ($patternLength - 1 - $k)
+					$maskChar = StringMid($mask, $checkIndex + 1, 1)
+					If $maskChar <> '?' And $matchedBuffer[$j + $k] <> $patternBytes[$checkIndex] Then
 						$matches = False
 						ExitLoop
 					EndIf
@@ -2085,6 +2161,13 @@ Func MapFromArrays($keys, $values)
 	Return $map
 EndFunc
 
+
+;~ Add additional key-value mappings to the given map, keys and values taken from the given arrays
+Func AddToMapFromArrays($map, $keys, $values)
+	For $i = 0 To UBound($keys) - 1
+		$map[$keys[$i]] = $values[$i]
+	Next
+EndFunc
 
 ;~ Clone a map
 Func CloneMap($original)

@@ -291,16 +291,24 @@ EndFunc
 ;~ Determine if the provided address is readable by the given process
 Func IsMemoryReadable($processHandle, $address, $size)
 	Local $memoryInfo = DllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
-	DllCall($kernel_handle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
-	If @error Then
+	Local $result = DllCall($kernel_handle, 'int', 'VirtualQueryEx', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($memoryInfo), 'int', DllStructGetSize($memoryInfo))
+	If @error Or $result[0] == 0 Then
 		DebuggerLog('Read - VirtualQueryEx call failed')
 		Return False
 	EndIf
 
-	; Check that the memory is committed (MEM_COMMIT = 0x1000)
 	Local $state = DllStructGetData($memoryInfo, 'State')
-	If DllStructGetData($memoryInfo, 'State') <> 0x1000 Then
+	Local $protect = DllStructGetData($memoryInfo, 'Protect')
+
+	; Check that the memory is committed (MEM_COMMIT = 0x1000)
+	If $state <> 0x1000 Then
 		DebuggerLog('Read - Memory is not committed - ' & $state)
+		Return False
+	EndIf
+	; Retrieve the protection flags and filter out the guard bit if present.
+	If BitAND($protect, 0x100) <> 0 Then
+		; The PAGE_GUARD attribute is set – treat the region as non-accessible
+		DebuggerLog('Read - Region page is guarded - ' & $protect)
 		Return False
 	EndIf
 
@@ -312,27 +320,15 @@ Func IsMemoryReadable($processHandle, $address, $size)
 		Return False
 	EndIf
 
-	; Retrieve the protection flags and filter out the guard bit if present.
-	Local $protect = DllStructGetData($memoryInfo, 'Protect')
-	If BitAND($protect, 0x100) <> 0 Then
-		; The PAGE_GUARD attribute is set – treat the region as non-accessible
-		DebuggerLog('Read - Region page is guarded - ' & $protect)
-		Return False
-	EndIf
-
-	; Remove any extra bits (like PAGE_GUARD) by masking with 0xFF.
-	$protect = BitAND($protect, 0xFF)
-
 	; Allowed readable protection values:
 	; PAGE_READONLY (0x02), PAGE_READWRITE (0x04), PAGE_WRITECOPY (0x08),
 	; PAGE_EXECUTE_READ (0x20), PAGE_EXECUTE_READWRITE (0x40), PAGE_EXECUTE_WRITECOPY (0x80)
-	Switch $protect
-		Case 0x02, 0x04, 0x08, 0x20, 0x40, 0x80
-			Return True
-		Case Else
-			DebuggerLog('Read - Address is not readable - ' & $protect)
-			Return False
-	EndSwitch
+	; Remove any extra bits (like PAGE_GUARD) by masking with 0xFF.
+	; Readable protection bitmask: 0x02|0x04|0x08|0x20|0x40|0x80 = 0xEE
+	If BitAND(BitAND($protect, 0xFF), 0xEE) <> 0 Then Return True
+
+	DebuggerLog('Read - Address is not readable - ' & $protect)
+	Return False
 EndFunc
 
 

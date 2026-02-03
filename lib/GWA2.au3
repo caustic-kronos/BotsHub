@@ -183,10 +183,10 @@ EndFunc
 ;~ If no target is provided then skill is used on self
 Func UseSkill($skillSlot, $target = Null, $callTarget = False)
 	Local $myID = GetMyID()
-	Local $targetId = ($target == Null) ? $myID : DllStructGetData($target, 'ID')
+	Local $targetID = ($target == Null) ? $myID : DllStructGetData($target, 'ID')
 	DllStructSetData($USE_SKILL_STRUCT, 2, $myID)
 	DllStructSetData($USE_SKILL_STRUCT, 3, $skillSlot - 1)
-	DllStructSetData($USE_SKILL_STRUCT, 4, $targetId)
+	DllStructSetData($USE_SKILL_STRUCT, 4, $targetID)
 	DllStructSetData($USE_SKILL_STRUCT, 5, $callTarget)
 	Enqueue($USE_SKILL_STRUCT_PTR, 20)
 EndFunc
@@ -195,9 +195,9 @@ EndFunc
 ;~ Order a hero to use a skill, doesn't wait for the skill to be done
 ;~ If no target is provided then skill is used on hero who uses the skill
 Func UseHeroSkill($heroIndex, $skillSlot, $target = Null)
-	Local $targetId = ($target == Null) ? GetHeroID($heroIndex) : DllStructGetData($target, 'ID')
+	Local $targetID = ($target == Null) ? GetHeroID($heroIndex) : DllStructGetData($target, 'ID')
 	DllStructSetData($USE_HERO_SKILL_STRUCT, 2, GetHeroID($heroIndex))
-	DllStructSetData($USE_HERO_SKILL_STRUCT, 3, $targetId)
+	DllStructSetData($USE_HERO_SKILL_STRUCT, 3, $targetID)
 	DllStructSetData($USE_HERO_SKILL_STRUCT, 4, $skillSlot - 1)
 	Enqueue($USE_HERO_SKILL_STRUCT_PTR, 16)
 EndFunc
@@ -379,22 +379,10 @@ EndFunc
 
 ;~ Returns True if the skill at the skillslot given is recharged
 Func IsRecharged($skillSlot, $heroIndex = 0)
-	Return GetSkillbarSkillRecharge($skillSlot, $heroIndex) == 0
-EndFunc
-
-
-;~ Returns the recharge time remaining of an equipped skill in milliseconds.
-Func GetSkillbarSkillRecharge($skillSlot, $heroIndex = 0)
 	Local $skillbar = GetSkillbar($heroIndex)
-	; Recharge in $SKILLBAR_STRUCT_TEMPLATE is 0 when skill is already recharged or is the timestamp in the future when the skill will be recharged if it is recharging
-	Local $rechargeFutureTimestamp = DllStructGetData($skillbar, 'Recharge' & $skillSlot)
-	Local $skill = GetSkillByID(DllStructGetData($skillbar, 'SkillID' & $skillSlot))
-	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
-	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
-
-	; Caution, noticed some	discrepancy between GetInstanceUpTime() and recharge timestamps, difference can be negative surprisingly
-	; Therefore capping recharge time to be always bigger or equal to 1 with _Max() if Recharge is non-zero
-	Return $rechargeFutureTimestamp == 0 ? 0 : _Max(1, ($rechargeFutureTimestamp + $castTime + $aftercast + GetPing()) - GetInstanceUpTime())
+	Local $recharge = DllStructGetData($skillbar, 'Recharge' & $skillSlot)
+	If $recharge == 0 Then Return True
+	Return ($recharge - GetSkillTimer()) == 0
 EndFunc
 
 
@@ -486,14 +474,14 @@ EndFunc
 ;~ Returns profession associated with an attribute
 Func GetAttributeProfession($attributeID)
 	Local $attributeInfo = GetAttributeInfoByID($attributeID)
-	Return DllStructGetData($attributeInfo, 'profession_id')
+	Return DllStructGetData($attributeInfo, 'profession_ID')
 EndFunc
 
 
 ;~ TODO: try this
 Func GetAttributeNameID($attributeID)
 	Local $attributeInfo = GetAttributeInfoByID($attributeID)
-	Return DllStructGetData($attributeInfo, 'name_id')
+	Return DllStructGetData($attributeInfo, 'name_ID')
 EndFunc
 
 
@@ -565,10 +553,11 @@ Func GetEffectTimeRemaining($effect, $heroIndex = 0)
 EndFunc
 
 
-;~ FIXME: this function might not be working correctly
-;~ Returns the timestamp used for effects and skills (milliseconds).
+;~ Return the skill timer - shared timer for all skills
 Func GetSkillTimer()
-	Return MemoryRead(GetProcessHandle(), $skill_timer_address, 'long')
+    Static $skillTimer = MemoryRead(GetProcessHandle(), $skill_timer_address, 'dword')
+    Local $tickCount = DllCall($kernel_handle, 'dword', 'GetTickCount')[0]
+    Return BitAND($tickCount + $skillTimer, 0xFFFFFFFF)
 EndFunc
 
 
@@ -620,7 +609,7 @@ EndFunc
 
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetMapType()
-	Local $offset[1] = [0x00]
+	Local $offset[1] = [0x4]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $instance_info_ptr, $offset, 'dword')
 	Return $result[1]
 EndFunc
@@ -763,8 +752,8 @@ EndFunc
 #Region Targeting
 ;~ Returns current target.
 Func GetCurrentTarget()
-	Local $currentTargetId = GetCurrentTargetID()
-	Return $currentTargetId == 0 ? Null : GetAgentByID(GetCurrentTargetID())
+	Local $currentTargetID = GetCurrentTargetID()
+	Return $currentTargetID == 0 ? Null : GetAgentByID(GetCurrentTargetID())
 EndFunc
 
 
@@ -1517,6 +1506,12 @@ Func DropItem($item, $amount = 0)
 EndFunc
 
 
+;~ Destroy an item
+Func DestroyItem($item)
+	Return SendPacket(0x8, $HEADER_ITEM_DESTROY, DllStructGetData($item, 'ID'))
+EndFunc
+
+
 ;~ Moves an item.
 Func MoveItem($item, $bagIndex, $slotIndex)
 	Local $itemID = DllStructGetData($item, 'ID')
@@ -1603,7 +1598,7 @@ EndFunc
 
 
 ;~ Get item from merchant corresponding to given modelID
-Func GetMerchantItemPtrByModelId($modelID)
+Func GetMerchantItemPtrByModelID($modelID)
 	Local $offsets[5] = [0, 0x18, 0x40, 0xB8]
 	Local $merchantBaseAddress = GetMerchantItemsBase()
 	Local $itemID = 0

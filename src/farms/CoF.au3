@@ -142,17 +142,11 @@ Func CoFFarmLoop()
 	AggroAndPrepare()
 	Info('Farming Cryptos')
 	CleanCoFMobs()
-	If IsPlayerAlive() Then
-		Info('Picking up loot')
-		; Tripled to secure the looting of items
-		For $i = 1 To 3
-			PickUpItems()
-			RandomSleep(50)
-		Next
-		Return $SUCCESS
-	Else
-		Return $FAIL
-	EndIf
+	If IsPlayerDead() Then Return $FAIL
+
+	Info('Picking up loot')
+	PickUpItems()
+	Return $SUCCESS
 EndFunc
 
 

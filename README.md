@@ -10,7 +10,7 @@ It needs AutoIt version 3.3.16.0 or higher to run.
 - Shared interface for all bots
 - Shared farm, loot and title tracking
 - Shared inventory management
-- Many options : items sorting, identification, salvage, materials selling, items selling, buying ectoplasms, storing gold and items, using equipment bag, town location, detailed - looting ...
+- Options : items identification, sorting, selling, salvaging and storing, materials buying and selling, equipment bag, town location ...
 - Interface with farm informations (build, equipment, etc)
 - Simple plug-and-play support for new bots
 - (optional) Loot database
@@ -46,7 +46,7 @@ To use it:
 - Minotaurs farm (materials)
 - Auspicious Beginnings farm (War Supplies, festive items, gold, Vanguard points)
 - A Chance Encounter farm (Ministerial Commendations, faction skins)
-- Eden Iris farm (iris)
+- Presearing Iris farm (iris)
 - Nexus Challenge (Mysterious armor hero pieces)
 - Dajkah Inlet Challenge (Sunspear armor hero pieces)
 - Glint's Challenge (Cloth of Brotherhood/hero armor, Destroyer cores)
@@ -87,7 +87,7 @@ To add a new bot, drop your script into the `/src/` folder and follow these step
 	#include 'src/<Name>.au3'
 	```
 3. Add the farm to the `$AVAILABLE_FARMS` list with its name <Name> (use | as a separator).
-4. Add two lines in BotsHub - RunFarmLoop :
+4. Add two lines in BotsHub.au3 `RunFarmLoop` function, with your farm function name :
 	```autoit
 	Case '<Name>'
 		$result = <Name>Farm()
@@ -106,16 +106,12 @@ There are several possible causes for this issue. To help diagnose it, please pr
 </details>
 
 <details> <summary><strong>Q: How can I change what items the bot sells?</strong></summary>
-Some loot options are directly configurable through the interface.
-For more advanced customization, you will need to edit the files manually:
-- For mods : in GWA2-Items_Modstructs.au3, at the end of the file, there is a function: Func CreateValuableModsByTypeMap(). Adding mods to the lists inside this function will make the bot keep items with those mods.
-- For weapons : in Utils-Storage-Bot.au3, near the end of the file, you will find an array called Local Static $shouldKeepWeaponsArray. Adding item ModelIDs to this array will tell the bot not to sell those items.
-Note: A more practical looting configuration system is planned for a future update.
+Most loot options are directly configurable through the interface.
+For more advanced customization, you will need to edit the files manually.
 </details>
 
 <details> <summary><strong>Q: Why is the bot not adding heroes or setting their skill bars for farm 'XXX'?</strong></summary>
-Not all farms automatically load heroes and their builds.
-When builds vary a lot, it is up to the player to add the necessary heroes and set their skill bars manually.
+Not all farms automatically load heroes and their builds. For some, it is up to the player to add the configure the bot in the Team tab or to set team manually.
 </details>
 
 <details> <summary><strong>Q: The bot fails with 'Variable subscript badly formatted' on `Local $map[]`. What’s wrong?</strong></summary>
@@ -137,17 +133,16 @@ The developers are not responsible for any unintended consequences resulting fro
 <details> <summary><strong>Q: Why isn't the data tracking option working? I get a 'Failed to load sqlite' error.</strong></summary>
 You need SQLite installed on your computer.
 You also need AutoIt to access SQLite properly via the SQLite.dll.au3, SQLite.au3 and SQLite.dll files, all present in repository.
-You might need to copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder, but this shouldn't even be necessary.
+You might need to copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder, but this shouldn't be necessary.
 </details>
 
 <details> <summary><strong>Q: Do you have a 'YYY' bot?</strong></summary>
-No — if a bot isn’t included, I don’t have it.
+No — if a bot isn’t included, I don’t have it. I do not plan on ever adding any kind of PvP bot.
 Feel free to create and add more bots; it’s pretty simple!
 </details>
 
 ## 📌 Planned Features
 
-- 💡🛠️ **FoW completion bot**
 - 💡🛠️ **Fix Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 🧠💭 **Kilroy bot (q8, survivor title)** - 1 request
