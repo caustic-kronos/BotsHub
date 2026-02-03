@@ -38,22 +38,12 @@ Global Const $KILROY_START_QUEST = 0x835803
 Global Const $KILRAY_ACCEPT_QUEST = 0x835801
 
 ;Skill Bar Variables
-Global Const $SKILL_BRAWLING_BLOCK    = 1
-Global Const $SKILL_BRAWLING_JAB      = 2
-Global Const $SKILL_STRAIGHT_RIGHT    = 3
-Global Const $SKILL_BRAWLING_HOOK     = 4
-Global Const $SKILL_BRAWLING_UPPERCUT = 5
-Global Const $SKILL_BRAWLING_HEADBUTT = 6
-Global Const $SKILL_COMBO_PUNCH       = 7
-Global Const $SKILL_STAND_UP          = 8
+Global Const $SKILLBAR_BRAWLING_BLOCK = 1
+Global Const $SKILLBAR_STAND_UP = 8
 
 ; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_ENERGY_THRESHOLD_KILROY = 0
 Global Const $LOW_ENERGY_CHECK_INTERVAL_KILROY = 100
-
-Global $g_StandMode = False
-Global $g_StandStart = 0
-Global Const $STAND_TIMEOUT_MS = 10000
 
 Global $kilroy_farm_setup = False
 
@@ -64,7 +54,7 @@ Func KilroyFarm()
 	EndIf
 	MoveToPunchOut()
 	AdlibRegister('LowEnergyMonitor', $LOW_ENERGY_CHECK_INTERVAL_KILROY)
-	Local $result = FarmPunchOut()
+	Local $result =FarmPunchOut()
 	AdlibUnRegister('LowEnergyMonitor')
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 	Return $result
@@ -75,6 +65,7 @@ Func SetupKilroyFarm()
 	Info('Traveling to Gunnars')
 	DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 	SwitchToHardModeIfEnabled()
+
 	If IsQuestReward($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
 		Info('Quest Reward Found! Gathering Quest Reward')
 		MoveTo(17281.19, -4850.08)
@@ -89,7 +80,7 @@ Func SetupKilroyFarm()
 		DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 		RandomSleep(1000)
 	EndIf
-	
+
 	If IsQuestNotFound($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
 		Info('Setting up Kilroy Quest')
 		RandomSleep(750)
@@ -97,7 +88,7 @@ Func SetupKilroyFarm()
 		Local $questNPC = GetNearestNPCToCoords(17281.19, -4850.08)
 		TakeQuest($questNPC, $ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA, $KILRAY_ACCEPT_QUEST, $KILROY_START_QUEST)
 	EndIf
-	
+
 	If IsQuestActive($ID_QUEST_KILROYS_PUNCH_OUT_EXTRAVAGANZA) Then
 		$kilroy_farm_setup = True
 		Info('Quest in the logbook. Good to go!')
@@ -117,9 +108,9 @@ Func MoveToPunchOut()
 EndFunc
 
 Func FarmPunchOut()
-	Info('Move and wait for Kilroy')
-	MoveTo(-16161.00, -15209.14)
-	Sleep(1000)
+	Info('Move and wait for Kilroy') 
+	MoveTo(-15823.84, -14241.04) 
+	Sleep(8000)
 	Info('Moving to Group 1')
 	MoveAggroAndKillInRange(-15161.00, -15209.14)
 	Info('Moving to Group 2')
@@ -128,6 +119,9 @@ Func FarmPunchOut()
 	MoveAggroAndKillInRange(-7430.37, -16290.83)
 	Info('Moving to Group 4')
 	MoveAggroAndKillInRange(-4460.11, -16184.76)
+	Info('Move and wait for Kilroy') 
+	MoveTo(-2500.64, -15724.66) 
+	Sleep(2000)
 	Info('Moving to Group 5')
 	MoveAggroAndKillInRange(-2047.64, -14724.66)
 	Info('Moving to Group 6')
@@ -141,10 +135,10 @@ Func FarmPunchOut()
 	Sleep(10000)
 	Info('Moving to Boss')
 	MoveAggroAndKillInRange(12575.02,-15934.02)
-	
+
 	Info('Moving to Chest')
 	MoveTo(13270.85,-15948.80)
-	
+
 	ClearTarget()
 	Sleep(2000)
 	; Doubled to secure bot
@@ -156,55 +150,61 @@ Func FarmPunchOut()
 		ActionInteract()
 		RandomSleep(500)
 	Next
-	$kilroy_farm_setup = False
-	Return $SUCCESS
+	$kilroy_farm_setup = false
 EndFunc
 
 ; Stand up when energy is 0, keep using skill 8 until energy == max energy,
 Func LowEnergyMonitor()
-    If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $SUCCESS
+    ; Prevent re-entrancy: Adlib can fire again while we're still inside this function
+    Static $busy = False
 
-    Local $me = GetMyAgent()
-    Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
-    Local $energy = GetEnergy()
+	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $SUCCESS
 
-    ; Detect knocked down (your current rule)
-    Local $low = (DllStructGetData($me, 'EnergyPercent') = 0)
+    If $busy Then Return $SUCCESS
 
-    ; Enter stand mode
-    If $low And Not $g_StandMode Then
-        $g_StandMode = True
-        $g_StandStart = TimerInit()
-        Out("Energy is 0 - entering stand-up mode...")
-    EndIf
+    If Not isLowEnergy() Then Return $SUCCESS
 
-    ; If not in stand mode, do nothing
-    If Not $g_StandMode Then Return $SUCCESS
+    $busy = True
+    Out("Energy is 0 - standing up...")
 
-    ; Timeout safety
-    If TimerDiff($g_StandStart) > $STAND_TIMEOUT_MS Then
-        Out("Stand-up timeout: aborting stand mode.")
-        $g_StandMode = False
-        Return $FAIL
-    EndIf
+    Local $deadline = TimerInit() ; counts from now
+    Local $timeoutMs = 10000      ; 10 seconds
 
-    ; Exit condition: energy restored
-    If $energy = $maxEnergy Then
-        Out("Standing complete: energy restored.")
-        $g_StandMode = False
-        Return $SUCCESS
-    EndIf
+    Do
+        ; Refresh agent each loop to avoid stale data
+        Local $me = GetMyAgent()
+        Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
+        Local $energy = GetEnergy()
+		
+		if $maxEnergy > 120 Then
+			Info("Energy too High. Run Failed")
+			DistrictTravel($ID_GUNNARS_HOLD, $district_name)
+			Return $FAIL
 
-    ; Try to stand up again when skill 8 is ready
-    Local $skillbar = GetSkillbar()
-    Local $recharge8 = DllStructGetData($skillbar, "Recharge8")
+        ; Success condition
+        If $energy = $maxEnergy Then
+            Out("Standing complete: energy restored.")
+            $busy = False
+            Return $SUCCESS
+        EndIf
 
-    If $recharge8 = 0 Then
-        UseSkill($SKILL_STAND_UP, $me)
-        ; no sleeping/looping here—just one use per tick
-    EndIf
+        ; Timeout condition
+        If TimerDiff($deadline) >= $timeoutMs Then
+            Out("Stand-up failed: 10s limit reached.")
+            $busy = False
+            Return $FAIL
+        EndIf
 
-    Return $SUCCESS
+        ; Respect skill 8 recharge
+        Local $skillbar = GetSkillbar()
+        Local $recharge8 = DllStructGetData($skillbar, "Recharge8")
+
+        If $recharge8 = 0 And $energy < $maxEnergy Then
+            UseSkill($SKILLBAR_STAND_UP, $me)
+        EndIf
+
+        RandomSleep(50)
+    Until False
 EndFunc
 
 Func isLowEnergy()
@@ -212,9 +212,4 @@ Func isLowEnergy()
 	Local $energyPercent = DllStructGetData($me, 'EnergyPercent')
 	If $energyPercent = 0 Then Return True
 	Return False
-EndFunc
-
-Func KilroyCombatRotation()
-	; Combat/energy automation disabled (reset for rework)
-	Return
 EndFunc
