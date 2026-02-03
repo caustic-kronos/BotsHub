@@ -176,10 +176,11 @@ Func LowEnergyMonitor()
         Local $maxEnergy = DllStructGetData($me, "MaxEnergy")
         Local $energy = GetEnergy()
 		
-		if $maxEnergy > 120 Then
+		If $maxEnergy > 120 Then
 			Info("Energy too High. Run Failed")
 			DistrictTravel($ID_GUNNARS_HOLD, $district_name)
 			Return $FAIL
+		EndIf
 
         ; Success condition
         If $energy = $maxEnergy Then
