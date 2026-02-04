@@ -91,13 +91,12 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		BalanceCharacterGold(10000)
 	EndIf
-	; TODO: generalize this to buy any material
-	Local $materialsToBuy = $run_options_cache['run.buy_materials']
-	If $materialsToBuy['Glob of Ectoplasm'] <> Null And GetGoldCharacter() > 10000 Then
+	; TODO: generalize this for all materials
+	If $inventory_management_cache['Buy items.Rare Materials.Glob of Ectoplasm'] And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
 	EndIf
-	If $materialsToBuy['Obsidian Shard'] <> Null And GetGoldCharacter() > 10000 Then
+	If $inventory_management_cache['Buy items.Rare Materials.Obsidian Shard'] And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
 	EndIf

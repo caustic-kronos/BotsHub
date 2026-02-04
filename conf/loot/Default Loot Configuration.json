@@ -3234,6 +3234,48 @@
 		},
 		"Keys": true
 	},
+	"Buy items": {
+		"Basic Materials": {
+			"Bone": false,
+			"Bolt of Cloth": false,
+			"Chitin Fragment": false,
+			"Feather": false,
+			"Granite Slab": false,
+			"Iron Ingot": false,
+			"Pile of Glittering Dust": false,
+			"Plant Fiber": false,
+			"Scale": false,
+			"Tanned Hide Square": false,
+			"Wood Plank": false
+		},
+		"Rare Materials": {
+			"Fur Square": false,
+			"Bolt of Linen": false,
+			"Bolt of Damask": false,
+			"Bolt of Silk": false,
+			"Glob of Ectoplasm": false,
+			"Steel Ingot": false,
+			"Deldrimor Steel Ingot": false,
+			"Monstrous Claw": false,
+			"Monstrous Eye": false,
+			"Monstrous Fang": false,
+			"Ruby": false,
+			"Sapphire": false,
+			"Diamond": false,
+			"Onyx Gemstones": false,
+			"Lumps of Charcoal": false,
+			"Obsidian Shard": false,
+			"Tempered Glass Vial": false,
+			"Leather Squares": false,
+			"Elonian Leather Square": false,
+			"Vial of Ink": false,
+			"Roll of Parchment": false,
+			"Roll of Vellum": false,
+			"Spiritwood Plank": false,
+			"Amber Chunk": false,
+			"Jadeite Shard": false
+		}
+	},
 	"Store items": {
 		"Gold": true,
 		"Consumables": true,

@@ -122,7 +122,6 @@ $run_options_cache['run.use_scrolls'] = False
 $run_options_cache['run.sort_items'] = False
 $run_options_cache['run.farm_materials_mid_run'] = False
 $run_options_cache['run.bags_count'] = 5
-$run_options_cache['run.buy_materials'] = Null
 $run_options_cache['run.donate_faction_points'] = True
 $run_options_cache['run.buy_faction_scrolls'] = False
 $run_options_cache['run.buy_faction_resources'] = False

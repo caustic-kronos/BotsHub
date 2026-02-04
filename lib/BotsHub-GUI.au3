@@ -87,8 +87,7 @@ Global $gui_group_titles, _
 		$gui_label_lightbringertitle_text, $gui_label_lightbringertitle_value, $gui_label_sunspeartitle_text, $gui_label_sunspeartitle_value
 Global $gui_group_runoptions, _
 		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_usescrolls
-Global $gui_group_itemoptions, $gui_checkbox_sortitems, _
-		$gui_button_buymaterial, $gui_buy_material, $gui_buy_material_opened, $gui_checkbox_collectdata, $gui_checkbox_farmmaterialsmidrun
+Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_farmmaterialsmidrun
 Global $gui_group_factionoptions, $gui_label_faction, $gui_radiobutton_donatepoints, $gui_radiobutton_buyfactionresources, $gui_radiobutton_buyfactionscrolls
 Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teammemberbuildlabel, _
 		$gui_label_hero_1, $gui_label_hero_2, $gui_label_hero_3, $gui_label_hero_4, $gui_label_hero_5, $gui_label_hero_6, $gui_label_hero_7, _
@@ -260,7 +259,6 @@ Func CreateGUI()
 	$gui_group_itemoptions = GUICtrlCreateGroup('Loot management options', 21, 205, 295, 235)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
 	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 255)
-	$gui_button_buymaterial = GUICtrlCreateButton("Buy materials with surplus gold ▼", 31, 285, 200, 24)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$gui_group_factionoptions = GUICtrlCreateGroup('Faction options', 330, 39, 295, 155)
@@ -289,7 +287,6 @@ Func CreateGUI()
 	GUICtrlSetTip($gui_checkbox_usescrolls, 'Automatically uses scrolls required to enter elite zones (UW, FoW, Urgoz, Deep)')
 	GUICtrlSetTip($gui_checkbox_sortitems, 'Sorts items in inventory to optimize space before loot management.')
 	GUICtrlSetTip($gui_checkbox_collectdata, 'Collects data into SQLite database. Requires SQLite to be installed and configured. Keep unticked if unsure.')
-	GUICtrlSetTip($gui_button_buymaterial, 'Buys materials if there is more gold than can be stored in Xunlai storage.')
 	Local $factionPointsUsageTooltip = 'Option on how to spend faction points earned in Kurzick/Luxon farms'
 	GUICtrlSetTip($gui_radiobutton_donatepoints, $factionPointsUsageTooltip)
 	GUICtrlSetTip($gui_radiobutton_buyfactionresources, $factionPointsUsageTooltip)
@@ -313,7 +310,6 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($gui_combo_bagscount, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_combo_districtchoice, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_renderbutton, 'GuiOptionsHandler')
-	GUICtrlSetOnEvent($gui_button_buymaterial, "OpenBuyMaterialWindow")
 
 	Local $dynamicExecutionTooltip = 'Dynamic execution. It allows to run a command with' & @CRLF _
 							& 'any arguments on the fly by writing it in below field.' & @CRLF _
@@ -680,66 +676,6 @@ Func GuiOptionsHandler()
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
 	EndSwitch
-EndFunc
-
-
-;~ Create and destroy a temporary GUI hosting a list of materials to buy
-Func OpenBuyMaterialWindow()
-	Local $windowWidth = 200
-	Local $windowHeight = 500
-	Local $mainPos = WinGetPos($gui_botshub)
-	Local $windowXPos = $mainPos[0] + $mainPos[2] - $windowWidth - 75
-	Local $windowYPos = $mainPos[1] + 25
-
-	$gui_buy_material = GUICreate("Buy materials", $windowWidth, $windowHeight, $windowXPos, $windowYPos, BitOR($WS_POPUP, $WS_BORDER), $WS_EX_TOOLWINDOW)
-	Local $list = GUICtrlCreateList("", 8, 8, $windowWidth - 16, $windowHeight - 16, BitOR($LBS_EXTENDEDSEL, $WS_VSCROLL, $LBS_NOINTEGRALHEIGHT))
-
-	; Fill list
-	Local $existingMaterials = $run_options_cache['run.buy_materials']
-	If $existingMaterials == Null Then
-		Local $existingMaterials[]
-		$run_options_cache['run.buy_materials'] = $existingMaterials
-	EndIf
-	Local $countBasicMaterials = UBound($BASIC_MATERIALS_NAMES_ARRAY)
-	For $i = 0 To $countBasicMaterials - 1
-		GUICtrlSetData($list, $BASIC_MATERIALS_NAMES_ARRAY[$i])
-		If $existingMaterials[$BASIC_MATERIALS_NAMES_ARRAY[$i]] <> Null Then _GUICtrlListBox_SetSel($list, $i, 1)
-	Next
-	For $i = 0 To UBound($RARE_MATERIALS_NAMES_ARRAY) - 1
-		GUICtrlSetData($list, $RARE_MATERIALS_NAMES_ARRAY[$i])
-		If $existingMaterials[$RARE_MATERIALS_NAMES_ARRAY[$i]] <> Null Then _GUICtrlListBox_SetSel($list, $countBasicMaterials + $i, 1)
-	Next
-
-	$gui_buy_material_opened = True
-	GUIRegisterMsg($GUI_WM_ACTIVATE, "WMActivateHandler")
-	GUISetState(@SW_SHOW, $gui_buy_material)
-
-	While $gui_buy_material_opened
-		Switch GUIGetMsg()
-			Case $GUI_EVENT_CLOSE
-				$gui_buy_material_opened = False
-		EndSwitch
-	WEnd
-	
-	; harvest while GUI still exists
-	Local $selectedMaterials[]
-	Local $selectedIndices = _GUICtrlListBox_GetSelItems($list)
-	For $i = 1 To $selectedIndices[0]
-		$selectedMaterials[_GUICtrlListBox_GetText($list, $selectedIndices[$i])] = 1
-	Next
-	$run_options_cache['run.buy_materials'] = $selectedMaterials
-	GUIDelete($gui_buy_material)
-EndFunc
-
-
-;~ Handler to catch 
-Func WMActivateHandler($handle, $message, $param)
-	If $handle = $gui_buy_material Then
-		If BitAND($param, 0xFFFF) = $GUI_WA_INACTIVE Then
-			$gui_buy_material_opened = False
-		EndIf
-	EndIf
-	Return $GUI_RUNDEFMSG
 EndFunc
 
 
@@ -1157,7 +1093,6 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', $run_options_cache['run.sort_items'])
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
-	_JSON_addChangeDelete($jsonObject, 'run.buy_materials', $run_options_cache['run.buy_materials'])
 	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
@@ -1232,8 +1167,6 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
 	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
 	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
-
-	$run_options_cache['run.buy_materials'] = _JSON_Get($jsonObject, 'run.buy_materials')
 
 	$run_options_cache['team.automatic_team_setup'] = _JSON_Get($jsonObject, 'team.automatic_team_setup')
 	$run_options_cache['team.hero_1'] = _JSON_Get($jsonObject, 'team.hero_1')
@@ -1408,6 +1341,21 @@ Func BuildInventoryDerivedFlags()
 	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
 	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
 	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
+
+	; -------- Buy --------
+	Local $buySomething = IsAnyLootOptionInBranchChecked('Buy items')
+	$inventory_management_cache['@buy.something'] = $buySomething
+	$inventory_management_cache['@buy.nothing'] = Not $buySomething
+
+	Local $buySomeBasicMaterials = IsAnyLootOptionInBranchChecked('Buy items.Basic Materials')
+	$inventory_management_cache['@buy.materials.basic.something'] = $buySomeBasicMaterials
+	$inventory_management_cache['@buy.materials.basic.nothing'] = Not $buySomeBasicMaterials
+	Local $buySomeRareMaterials = IsAnyLootOptionInBranchChecked('Buy items.Rare Materials')
+	$inventory_management_cache['@buy.materials.rare.something'] = $buySomeRareMaterials
+	$inventory_management_cache['@buy.materials.rare.nothing'] = Not $buySomeRareMaterials
+	Local $buySomeMaterials = $buySomeBasicMaterials Or $buySomeRareMaterials
+	$inventory_management_cache['@buy.materials.something'] = $buySomeMaterials
+	$inventory_management_cache['@buy.materials.nothing'] = Not $buySomeMaterials
 
 	; -------- Store --------
 	Local $storeSomething = IsAnyLootOptionInBranchChecked('Store items')
@@ -1613,3 +1561,62 @@ Func EnableStartButton()
 	GUICtrlSetState($gui_startbutton, $GUI_ENABLE)
 	GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTBLUE)
 EndFunc
+
+
+#Region Dead GUI code but keep because it could come handy
+;~ Create and destroy a temporary GUI hosting a list of things to pick from
+Func OpenPickWindow()
+	Local $windowWidth = 200
+	Local $windowHeight = 500
+	Local $mainPos = WinGetPos($gui_botshub)
+	Local $windowXPos = $mainPos[0] + $mainPos[2] - $windowWidth - 75
+	Local $windowYPos = $mainPos[1] + 25
+
+	; need to be global
+	$temporary_gui = GUICreate("List of stuff", $windowWidth, $windowHeight, $windowXPos, $windowYPos, BitOR($WS_POPUP, $WS_BORDER), $WS_EX_TOOLWINDOW)
+	Local $list = GUICtrlCreateList("", 8, 8, $windowWidth - 16, $windowHeight - 16, BitOR($LBS_EXTENDEDSEL, $WS_VSCROLL, $LBS_NOINTEGRALHEIGHT))
+
+	; Fill list
+	Local $alreadyPickedStuff = $map['pickedStuff']
+	If $alreadyPickedStuff == Null Then
+		Local $alreadyPickedStuff[]
+		$map['pickedStuff'] = $alreadyPickedStuff
+	EndIf
+	For $i = 0 To UBound($ARRAY_STUFF) - 1
+		GUICtrlSetData($list, $ARRAY_STUFF[$i])
+		If $alreadyPickedStuff[$ARRAY_STUFF[$i]] <> Null Then _GUICtrlListBox_SetSel($list, $i, 1)
+	Next
+
+	; need to be global
+	$temporary_gui_opened = True
+	GUIRegisterMsg($GUI_WM_ACTIVATE, "TemporaryGUIWMActivateHandler")
+	GUISetState(@SW_SHOW, $temporary_gui)
+
+	While $temporary_gui_opened
+		Switch GUIGetMsg()
+			Case $GUI_EVENT_CLOSE
+				$temporary_gui_opened = False
+		EndSwitch
+	WEnd
+	
+	; harvest while GUI still exists
+	Local $selectedStuff[]
+	Local $selectedIndices = _GUICtrlListBox_GetSelItems($list)
+	For $i = 1 To $selectedIndices[0]
+		$selectedStuff[_GUICtrlListBox_GetText($list, $selectedIndices[$i])] = 1
+	Next
+	$map['pickedStuff'] = $selectedStuff
+	GUIDelete($temporary_gui)
+EndFunc
+
+
+;~ Handler to catch clicks outside of temporary GUI
+Func TemporaryGUIWMActivateHandler($handle, $message, $param)
+	If $handle = $temporary_gui Then
+		If BitAND($param, 0xFFFF) = $GUI_WA_INACTIVE Then
+			$temporary_gui_opened = False
+		EndIf
+	EndIf
+	Return $GUI_RUNDEFMSG
+EndFunc
+#EndRegion Dead GUI code but keep because it could come handy
