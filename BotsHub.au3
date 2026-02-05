@@ -103,17 +103,12 @@ Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Dunkoro|Ge
 	'Margrid the Sly|Master of Whispers|Melonni|Miku|MOX|Norgu|Ogden|Olias|Pyre Fierceshot|Razah|Tahlkora|Vekk|Xandra|ZeiRi|Zenmai|Zhed Shadowhoof|' & _
 	'Mercenary Hero 1|Mercenary Hero 2|Mercenary Hero 3|Mercenary Hero 4|Mercenary Hero 5|Mercenary Hero 6|Mercenary Hero 7|Mercenary Hero 8||'
 
-Global Const $LVL_DEBUG = 0
-Global Const $LVL_INFO = 1
-Global Const $LVL_NOTICE = 2
-Global Const $LVL_WARNING = 3
-Global Const $LVL_ERROR = 4
-
 ; UNINITIALIZED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $runtime_status = 'UNINITIALIZED'
 Global $run_mode = 'AUTOLOAD'
 Global $process_id = ''
 Global $character_name = ''
+Global $farm_name = ''
 ; If set to 0, disables inventory management
 Global $inventory_space_needed = 5
 Global $run_timer = Null
@@ -150,6 +145,7 @@ Main()
 ; Description.....:	run the main program
 ;------------------------------------------------------
 Func Main()
+	; Verify validity
 	If @AutoItVersion < '3.3.16.0' Then
 		MsgBox(16, 'Error', 'This bot requires AutoIt version 3.3.16.0 or higher. You are using ' & @AutoItVersion & '.')
 		Exit 1
@@ -159,10 +155,22 @@ Func Main()
 		Exit 1
 	EndIf
 
+	; Steps GUI free
+	FillFarmMap()
+	LoadDefaultConfiguration()
+	Local $jsonLootOptions = LoadLootOptions(@ScriptDir & '/conf/loot/Default Loot Configuration.json')
+	FillInventoryCacheFromJSON($jsonLootOptions, '')
+	BuildInventoryDerivedFlags()
+	RefreshValuableListsFromCache()
+
+	; GUI part
 	CreateGUI()
+	ApplyConfigToGUI()
+	FillConfigurationCombo()
 	GUISetState(@SW_SHOWNORMAL)
 	Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
 
+	; Authentication
 	If $CmdLine[0] <> 0 Then
 		$run_mode = 'CMD'
 		If 1 > UBound($CmdLine)-1 Then
@@ -181,9 +189,8 @@ Func Main()
 	Else
 		ChangeCharacterNameBoxWithInput()
 	EndIf
-	FillConfigurationCombo()
-	LoadDefaultConfiguration()
-	FillFarmMap()
+
+	; Infinite loop
 	BotHubLoop()
 EndFunc
 
@@ -223,7 +230,7 @@ Func RunFarmLoop()
 	Local $inventorySpaceNeeded = $farm[2]
 
 	; No authentication: skip global farm setup and inventory management
-	If GUICtrlRead($gui_combo_characterchoice) <> '' Then
+	If $character_name <> '' Then
 		; Must do mid-run inventory management before normal one else we will go back to town
 		If $inventorySpaceNeeded <> 0 And $run_options_cache['run.farm_materials_mid_run'] Then
 			Local $resetRequired = InventoryManagementMidRun()
@@ -273,6 +280,169 @@ Func RunFarmLoop()
 	Return $result
 EndFunc
 #EndRegion Main loops
+
+
+#Region Load/Save configuration
+;~ Change to a different configuration
+Func LoadConfiguration($configuration)
+	Local $configFile = FileOpen(@ScriptDir & '/conf/farm/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
+	Local $jsonString = FileRead($configFile)
+	ReadConfigFromJson($jsonString)
+	FileClose($configFile)
+	Info('Loaded configuration <' & $configuration & '>')
+EndFunc
+
+
+;~ Load default farm configuration if it exists
+Func LoadDefaultConfiguration()
+	If FileExists(@ScriptDir & '/conf/farm/Default Farm Configuration.json') Then
+		Local $configFile = FileOpen(@ScriptDir & '/conf/farm/Default Farm Configuration.json' , $FO_READ + $FO_UTF8)
+		Local $jsonString = FileRead($configFile)
+		ReadConfigFromJson($jsonString)
+		FileClose($configFile)
+		Info('Loaded default farm configuration')
+	EndIf
+EndFunc
+
+
+;~ Save a new configuration
+Func SaveConfiguration($configurationPath)
+	Local $configFile = FileOpen($configurationPath, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)
+	Local $jsonString = WriteConfigToJson()
+	FileWrite($configFile, $jsonString)
+	FileClose($configFile)
+	Local $configurationName = StringTrimRight(StringMid($configurationPath, StringInStr($configurationPath, '\', 0, -1) + 1), 5)
+	Info('Saved configuration ' & $configurationPath)
+	Return $configurationName
+EndFunc
+
+
+;~ Load loot configuration file if it exists
+Func LoadLootOptions($filePath)
+	If FileExists($filePath) Then
+		Local $lootOptionsFile = FileOpen($filePath, $FO_READ + $FO_UTF8)
+		Local $jsonString = FileRead($lootOptionsFile)
+		FileClose($lootOptionsFile)
+		Return _JSON_Parse($jsonString)
+	EndIf
+	Return Null
+EndFunc
+
+
+;~ Read given config from JSON
+Func ReadConfigFromJson($jsonString)
+	Local $jsonObject = _JSON_Parse($jsonString)
+
+	$character_name = _JSON_Get($jsonObject, 'main.character')
+	$farm_name = _JSON_Get($jsonObject, 'main.farm')
+
+	Local $weaponSlot = _JSON_Get($jsonObject, 'run.weapon_slot')
+	$weaponSlot = _Max($weaponSlot, 0)
+	$weaponSlot = _Min($weaponSlot, 4)
+	$run_options_cache['run.weapon_slot'] = $weaponSlot
+
+	$bags_count = _JSON_Get($jsonObject, 'run.bags_count')
+	$bags_count = _Max($bags_count, 1)
+	$bags_count = _Min($bags_count, 5)
+	$run_options_cache['run.bags_count'] = $bags_count
+
+	$district_name = _JSON_Get($jsonObject, 'run.district')
+	$run_options_cache['run.district'] = $district_name
+
+	Local $renderingDisabled = _JSON_Get($jsonObject, 'run.disable_rendering')
+	$rendering_enabled = Not $renderingDisabled
+
+	; TODO/FIXME: simplify by iterating over JSON leaves
+	$run_options_cache['run.loop_mode'] = _JSON_Get($jsonObject, 'run.loop_mode')
+	$run_options_cache['run.hard_mode'] = _JSON_Get($jsonObject, 'run.hard_mode')
+	$run_options_cache['run.farm_materials_mid_run'] = _JSON_Get($jsonObject, 'run.farm_materials_mid_run')
+	$run_options_cache['run.consume_consumables'] = _JSON_Get($jsonObject, 'run.consume_consumables')
+	$run_options_cache['run.use_scrolls'] = _JSON_Get($jsonObject, 'run.use_scrolls')
+	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
+	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
+	$run_options_cache['run.collect_data'] = _JSON_Get($jsonObject, 'run.collect_data')
+	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
+	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
+	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
+
+	$run_options_cache['team.automatic_team_setup'] = _JSON_Get($jsonObject, 'team.automatic_team_setup')
+	$run_options_cache['team.hero_1'] = _JSON_Get($jsonObject, 'team.hero_1')
+	$run_options_cache['team.hero_2'] = _JSON_Get($jsonObject, 'team.hero_2')
+	$run_options_cache['team.hero_3'] = _JSON_Get($jsonObject, 'team.hero_3')
+	$run_options_cache['team.hero_4'] = _JSON_Get($jsonObject, 'team.hero_4')
+	$run_options_cache['team.hero_5'] = _JSON_Get($jsonObject, 'team.hero_5')
+	$run_options_cache['team.hero_6'] = _JSON_Get($jsonObject, 'team.hero_6')
+	$run_options_cache['team.hero_7'] = _JSON_Get($jsonObject, 'team.hero_7')
+	$run_options_cache['team.load_all_builds'] = _JSON_Get($jsonObject, 'team.load_all_builds')
+	$run_options_cache['team.load_player_build'] = _JSON_Get($jsonObject, 'team.load_player_build')
+	$run_options_cache['team.load_hero_1_build'] = _JSON_Get($jsonObject, 'team.load_hero_1_build')
+	$run_options_cache['team.load_hero_2_build'] = _JSON_Get($jsonObject, 'team.load_hero_2_build')
+	$run_options_cache['team.load_hero_3_build'] = _JSON_Get($jsonObject, 'team.load_hero_3_build')
+	$run_options_cache['team.load_hero_4_build'] = _JSON_Get($jsonObject, 'team.load_hero_4_build')
+	$run_options_cache['team.load_hero_5_build'] = _JSON_Get($jsonObject, 'team.load_hero_5_build')
+	$run_options_cache['team.load_hero_6_build'] = _JSON_Get($jsonObject, 'team.load_hero_6_build')
+	$run_options_cache['team.load_hero_7_build'] = _JSON_Get($jsonObject, 'team.load_hero_7_build')
+	$run_options_cache['team.player_build'] = _JSON_Get($jsonObject, 'team.player_build')
+	$run_options_cache['team.hero_1_build'] = _JSON_Get($jsonObject, 'team.hero_1_build')
+	$run_options_cache['team.hero_2_build'] = _JSON_Get($jsonObject, 'team.hero_2_build')
+	$run_options_cache['team.hero_3_build'] = _JSON_Get($jsonObject, 'team.hero_3_build')
+	$run_options_cache['team.hero_4_build'] = _JSON_Get($jsonObject, 'team.hero_4_build')
+	$run_options_cache['team.hero_5_build'] = _JSON_Get($jsonObject, 'team.hero_5_build')
+	$run_options_cache['team.hero_6_build'] = _JSON_Get($jsonObject, 'team.hero_6_build')
+	$run_options_cache['team.hero_7_build'] = _JSON_Get($jsonObject, 'team.hero_7_build')
+EndFunc
+
+
+;~ Writes current config to a json string
+Func WriteConfigToJson()
+	Local $jsonObject
+	; TODO/FIXME: simplify by iterating over map keys
+	_JSON_addChangeDelete($jsonObject, 'main.character', $character_name)
+	_JSON_addChangeDelete($jsonObject, 'main.farm', $farm_name)
+	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', $run_options_cache['run.loop_mode'])
+	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
+	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
+	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', $run_options_cache['run.consume_consumables'])
+	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])
+	_JSON_addChangeDelete($jsonObject, 'run.sort_items', $run_options_cache['run.sort_items'])
+	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
+	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
+	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
+	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
+	_JSON_addChangeDelete($jsonObject, 'run.weapon_slot', $run_options_cache['run.weapon_slot'])
+	_JSON_addChangeDelete($jsonObject, 'run.bags_count', $run_options_cache['run.bags_count'])
+	_JSON_addChangeDelete($jsonObject, 'run.district', $run_options_cache['run.district'])
+	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', Not $rendering_enabled)
+
+	_JSON_addChangeDelete($jsonObject, 'team.automatic_team_setup', $run_options_cache['team.automatic_team_setup'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_1', $run_options_cache['team.hero_1'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_2', $run_options_cache['team.hero_2'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_3', $run_options_cache['team.hero_3'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_4', $run_options_cache['team.hero_4'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_5', $run_options_cache['team.hero_5'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_6', $run_options_cache['team.hero_6'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_7', $run_options_cache['team.hero_7'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_all_builds', $run_options_cache['team.load_all_builds'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_player_build', $run_options_cache['team.load_player_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_1_build', $run_options_cache['team.load_hero_1_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_2_build', $run_options_cache['team.load_hero_2_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_3_build', $run_options_cache['team.load_hero_3_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_4_build', $run_options_cache['team.load_hero_4_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_5_build', $run_options_cache['team.load_hero_5_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_6_build', $run_options_cache['team.load_hero_6_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.load_hero_7_build', $run_options_cache['team.load_hero_7_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.player_build', $run_options_cache['team.player_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_1_build', $run_options_cache['team.hero_1_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_2_build', $run_options_cache['team.hero_2_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_3_build', $run_options_cache['team.hero_3_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_4_build', $run_options_cache['team.hero_4_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_5_build', $run_options_cache['team.hero_5_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_6_build', $run_options_cache['team.hero_6_build'])
+	_JSON_addChangeDelete($jsonObject, 'team.hero_7_build', $run_options_cache['team.hero_7_build'])
+
+	Return _JSON_Generate($jsonObject)
+EndFunc
+#EndRegion Load/Save configuration
 
 
 #Region Setup
@@ -378,8 +548,8 @@ Func GeneralFarmSetup()
 	If $run_options_cache['team.automatic_team_setup'] Then
 		; Need to be in an outpost to change team and builds
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
-		SetupPlayerUsingGUISettings()
-		SetupTeamUsingGUISettings()
+		SetupPlayerUsingGlobalSettings()
+		SetupTeamUsingGlobalSettings()
 	EndIf
 	$global_farm_setup = True
 EndFunc
@@ -395,6 +565,125 @@ EndFunc
 ;~ Return if team automatic setup is enabled
 Func IsTeamAutoSetup()
 	Return $run_options_cache['team.automatic_team_setup']
+EndFunc
+
+
+;~ Setup player build from global settings (from GUI or JSON)
+Func SetupPlayerUsingGlobalSettings()
+	If $run_options_cache['team.load_player_build'] Then
+		Info('Loading player build from GUI')
+		LoadSkillTemplate($run_options_cache['team.player_build'])
+		RandomSleep(250)
+	EndIf
+EndFunc
+
+
+;~ Setup team build from global settings (from GUI or JSON)
+Func SetupTeamUsingGlobalSettings($teamSize = $ID_TEAM_SIZE_LARGE)
+	Info('Setting up team according to GUI settings')
+	LeaveParty()
+	RandomSleep(500)
+	; Could use Eval(), it's shorter but it's kind of dirty
+	For $i = 1 To $ID_TEAM_SIZE_LARGE - 1
+		Local $hero = $run_options_cache['team.hero_' & $i]
+		If $hero <> '' Then
+			AddHero($HERO_IDS_FROM_NAMES[$hero])
+			If $run_options_cache['team.load_hero_' & $i & '_build'] Then
+				RandomSleep(500 + GetPing())
+				Info('Loading hero ' & $i & ' build from GUI')
+				LoadSkillTemplate($run_options_cache['team.hero_' & $i & '_build'], $i)
+			EndIf
+		EndIf
+	Next
+EndFunc
+
+
+Func IsHardmodeEnabled()
+	Return $run_options_cache['run.hard_mode']
+EndFunc
+
+
+Func SwitchToHardModeIfEnabled()
+	If IsHardmodeEnabled() Then
+		SwitchMode($ID_HARD_MODE)
+	Else
+		SwitchMode($ID_NORMAL_MODE)
+	EndIf
+EndFunc
+
+
+;~ Fill the inventory cache with additional derived data
+Func BuildInventoryDerivedFlags()
+	; -------- Pickup --------
+	Local $pickupSomething = IsAnyChecked('Pick up items')
+	$inventory_management_cache['@pickup.something'] = $pickupSomething
+	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
+	Local $pickupSomeWeapons = IsAnyChecked('Pick up items.Weapons and offhands')
+	$inventory_management_cache['@pickup.weapons.something'] = $pickupSomeWeapons
+	$inventory_management_cache['@pickup.weapons.nothing'] = Not $pickupSomeWeapons
+
+	; -------- Identify --------
+	Local $identifySomething = IsAnyChecked('Identify items')
+	$inventory_management_cache['@identify.something'] = $identifySomething
+	$inventory_management_cache['@identify.nothing'] = Not $identifySomething
+
+	; -------- Salvage --------
+	Local $salvageSomething = IsAnyChecked('Salvage items')
+	$inventory_management_cache['@salvage.something'] = $salvageSomething
+	$inventory_management_cache['@salvage.nothing'] = Not $salvageSomething
+	Local $salvageSomeWeapons = IsAnyChecked('Salvage items.Weapons and offhands')
+	$inventory_management_cache['@salvage.weapons.something'] = $salvageSomeWeapons
+	$inventory_management_cache['@salvage.weapons.nothing'] = Not $salvageSomeWeapons
+	Local $salvageSomeSalvageables = IsAnyChecked('Salvage items.Armor salvageables')
+	$inventory_management_cache['@salvage.salvageables.something'] = $salvageSomeSalvageables
+	$inventory_management_cache['@salvage.salvageables.nothing'] = Not $salvageSomeSalvageables
+	Local $salvageSomeTrophies = IsAnyChecked('Salvage items.Trophies')
+	$inventory_management_cache['@salvage.trophies.something'] = $salvageSomeTrophies
+	$inventory_management_cache['@salvage.trophies.nothing'] = Not $salvageSomeTrophies
+	Local $salvageSomeMaterials = IsAnyChecked('Salvage items.Rare Materials')
+	$inventory_management_cache['@salvage.materials.something'] = $salvageSomeMaterials
+	$inventory_management_cache['@salvage.materials.nothing'] = Not $salvageSomeMaterials
+
+	; -------- Sell --------
+	Local $sellSomething = IsAnyChecked('Sell items')
+	$inventory_management_cache['@sell.something'] = $sellSomething
+	$inventory_management_cache['@sell.nothing'] = Not $sellSomething
+	Local $sellSomeWeapons = IsAnyChecked('Sell items.Weapons and offhands')
+	$inventory_management_cache['@sell.weapons.something'] = $sellSomeWeapons
+	$inventory_management_cache['@sell.weapons.nothing'] = Not $sellSomeWeapons
+
+	Local $sellSomeBasicMaterials = IsAnyChecked('Sell items.Basic Materials')
+	$inventory_management_cache['@sell.materials.basic.something'] = $sellSomeBasicMaterials
+	$inventory_management_cache['@sell.materials.basic.nothing'] = Not $sellSomeBasicMaterials
+	Local $sellSomeRareMaterials = IsAnyChecked('Sell items.Rare Materials')
+	$inventory_management_cache['@sell.materials.rare.something'] = $sellSomeRareMaterials
+	$inventory_management_cache['@sell.materials.rare.nothing'] = Not $sellSomeRareMaterials
+	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
+	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
+	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
+
+	; -------- Buy --------
+	Local $buySomething = IsAnyChecked('Buy items')
+	$inventory_management_cache['@buy.something'] = $buySomething
+	$inventory_management_cache['@buy.nothing'] = Not $buySomething
+
+	Local $buySomeBasicMaterials = IsAnyChecked('Buy items.Basic Materials')
+	$inventory_management_cache['@buy.materials.basic.something'] = $buySomeBasicMaterials
+	$inventory_management_cache['@buy.materials.basic.nothing'] = Not $buySomeBasicMaterials
+	Local $buySomeRareMaterials = IsAnyChecked('Buy items.Rare Materials')
+	$inventory_management_cache['@buy.materials.rare.something'] = $buySomeRareMaterials
+	$inventory_management_cache['@buy.materials.rare.nothing'] = Not $buySomeRareMaterials
+	Local $buySomeMaterials = $buySomeBasicMaterials Or $buySomeRareMaterials
+	$inventory_management_cache['@buy.materials.something'] = $buySomeMaterials
+	$inventory_management_cache['@buy.materials.nothing'] = Not $buySomeMaterials
+
+	; -------- Store --------
+	Local $storeSomething = IsAnyChecked('Store items')
+	$inventory_management_cache['@store.something'] = $storeSomething
+	$inventory_management_cache['@store.nothing'] = Not $storeSomething
+	Local $storeSomeWeapons = IsAnyChecked('Store items.Weapons and offhands')
+	$inventory_management_cache['@store.weapons.something'] = $storeSomeWeapons
+	$inventory_management_cache['@store.weapons.nothing'] = Not $storeSomeWeapons
 EndFunc
 
 
@@ -470,8 +759,8 @@ EndFunc
 #Region Authentification and Login
 ;~ Initialize connection to GW with the character name or process ID given
 Func Authentification()
-	Local $characterName = GUICtrlRead($gui_combo_characterchoice)
-	If ($characterName == '') Then
+	$character_name = GUICtrlRead($gui_combo_characterchoice)
+	If ($character_name == '') Then
 		Warn('Running without authentification.')
 	ElseIf $process_id And $run_mode == 'CMD' Then
 		Local $processID = Number($process_id, 2)
@@ -481,9 +770,9 @@ Func Authentification()
 			Return $FAIL
 		EndIf
 	Else
-		Local $clientIndex = FindClientIndexByCharacterName($characterName)
+		Local $clientIndex = FindClientIndexByCharacterName($character_name)
 		If $clientIndex == -1 Then
-			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $characterName & '>>')
+			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $character_name & '>>')
 			Return $FAIL
 		Else
 			SelectClient($clientIndex)
@@ -494,7 +783,7 @@ Func Authentification()
 			EndIf
 		EndIf
 	EndIf
-	RenameGUI('GW Bot Hub - ' & $characterName)
+	RenameGUI('GW Bot Hub - ' & $character_name)
 	Return $SUCCESS
 EndFunc
 #EndRegion Authentification and Login

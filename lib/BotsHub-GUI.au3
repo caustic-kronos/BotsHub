@@ -44,10 +44,14 @@ Global Const $GUI_WM_ACTIVATE  = 0x0006
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 
+Global Const $LVL_DEBUG = 0
+Global Const $LVL_INFO = 1
+Global Const $LVL_NOTICE = 2
+Global Const $LVL_WARNING = 3
+Global Const $LVL_ERROR = 4
 
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
-
 
 #Region GUI
 Opt('GUIOnEventMode', True)
@@ -419,10 +423,6 @@ Func CreateGUI()
 	; === Inventory tab ===
 	$gui_tab_lootoptions = GUICtrlCreateTabItem('Inventory')
 	$gui_treeview_lootoptions = GUICtrlCreateTreeView(80, 45, 545, 400, BitOR($TVS_HASLINES, $TVS_LINESATROOT, $TVS_HASBUTTONS, $TVS_CHECKBOXES, $TVS_FULLROWSELECT))
-	Local $jsonLootOptions = LoadLootOptions(@ScriptDir & '/conf/loot/Default Loot Configuration.json')
-	FillInventoryCacheFromJSON($jsonLootOptions, '')
-	BuildInventoryDerivedFlags()
-	RefreshValuableListsFromCache()
 	BuildTreeViewFromCache($gui_treeview_lootoptions)
 
 	$gui_expandlootoptionsbutton = GUICtrlCreateButton('Expand all', 21, 124, 55, 21)
@@ -578,13 +578,15 @@ Func GuiMainButtonHandler()
 			UpdateFarmDescription(GUICtrlRead($gui_combo_farmchoice))
 		Case $gui_combo_configchoice
 			LoadConfiguration(GUICtrlRead($gui_combo_configchoice))
+			ApplyConfigToGUI()
 		Case $gui_icon_saveconfig
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_DISABLE)
 			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf\farm', '(*.json)')
 			If @error <> 0 Then
 				Warn('Failed to write JSON configuration.')
 			Else
-				SaveConfiguration($filePath)
+				Local $configurationName = SaveConfiguration($filePath)
+				FillConfigurationCombo($configurationName)
 			EndIf
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_ENABLE)
 		Case $gui_event_close
@@ -1517,164 +1519,11 @@ Func FillConfigurationCombo($configuration = 'Default Farm Configuration')
 EndFunc
 
 
-;~ Load default farm configuration if it exists
-Func LoadDefaultConfiguration()
-	If FileExists(@ScriptDir & '/conf/farm/Default Farm Configuration.json') Then
-		Local $configFile = FileOpen(@ScriptDir & '/conf/farm/Default Farm Configuration.json' , $FO_READ + $FO_UTF8)
-		Local $jsonString = FileRead($configFile)
-		ReadConfigFromJson($jsonString)
-		ApplyConfigToGUI()
-		FileClose($configFile)
-		Info('Loaded default farm configuration')
-	EndIf
-EndFunc
-
-
-;~ Change to a different configuration
-Func LoadConfiguration($configuration)
-	Local $configFile = FileOpen(@ScriptDir & '/conf/farm/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
-	Local $jsonString = FileRead($configFile)
-	ReadConfigFromJson($jsonString)
-	ApplyConfigToGUI()
-	FileClose($configFile)
-	Info('Loaded configuration <' & $configuration & '>')
-EndFunc
-
-
-;~ Save a new configuration
-Func SaveConfiguration($configurationPath)
-	Local $configFile = FileOpen($configurationPath, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)
-	Local $jsonString = WriteConfigToJson()
-	FileWrite($configFile, $jsonString)
-	FileClose($configFile)
-	Local $configurationName = StringTrimRight(StringMid($configurationPath, StringInStr($configurationPath, '\', 0, -1) + 1), 5)
-	FillConfigurationCombo($configurationName)
-	Info('Saved configuration ' & $configurationPath)
-EndFunc
-
-
-;~ Writes current config to a json string
-Func WriteConfigToJson()
-	Local $jsonObject
-	; TODO/FIXME: simplify by iterating over map keys
-	_JSON_addChangeDelete($jsonObject, 'main.character', GUICtrlRead($gui_combo_characterchoice))
-	_JSON_addChangeDelete($jsonObject, 'main.farm', GUICtrlRead($gui_combo_farmchoice))
-	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', $run_options_cache['run.loop_mode'])
-	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
-	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
-	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', $run_options_cache['run.consume_consumables'])
-	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])
-	_JSON_addChangeDelete($jsonObject, 'run.sort_items', $run_options_cache['run.sort_items'])
-	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
-	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
-	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
-	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
-	_JSON_addChangeDelete($jsonObject, 'run.weapon_slot', $run_options_cache['run.weapon_slot'])
-	_JSON_addChangeDelete($jsonObject, 'run.bags_count', $run_options_cache['run.bags_count'])
-	_JSON_addChangeDelete($jsonObject, 'run.district', $run_options_cache['run.district'])
-	_JSON_addChangeDelete($jsonObject, 'run.disable_rendering', Not $rendering_enabled)
-
-	_JSON_addChangeDelete($jsonObject, 'team.automatic_team_setup', $run_options_cache['team.automatic_team_setup'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_1', $run_options_cache['team.hero_1'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_2', $run_options_cache['team.hero_2'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_3', $run_options_cache['team.hero_3'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_4', $run_options_cache['team.hero_4'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_5', $run_options_cache['team.hero_5'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_6', $run_options_cache['team.hero_6'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_7', $run_options_cache['team.hero_7'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_all_builds', $run_options_cache['team.load_all_builds'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_player_build', $run_options_cache['team.load_player_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_1_build', $run_options_cache['team.load_hero_1_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_2_build', $run_options_cache['team.load_hero_2_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_3_build', $run_options_cache['team.load_hero_3_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_4_build', $run_options_cache['team.load_hero_4_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_5_build', $run_options_cache['team.load_hero_5_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_6_build', $run_options_cache['team.load_hero_6_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.load_hero_7_build', $run_options_cache['team.load_hero_7_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.player_build', $run_options_cache['team.player_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_1_build', $run_options_cache['team.hero_1_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_2_build', $run_options_cache['team.hero_2_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_3_build', $run_options_cache['team.hero_3_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_4_build', $run_options_cache['team.hero_4_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_5_build', $run_options_cache['team.hero_5_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_6_build', $run_options_cache['team.hero_6_build'])
-	_JSON_addChangeDelete($jsonObject, 'team.hero_7_build', $run_options_cache['team.hero_7_build'])
-
-	Return _JSON_Generate($jsonObject)
-EndFunc
-
-
-;~ Read given config from JSON
-Func ReadConfigFromJson($jsonString)
-	Local $jsonObject = _JSON_Parse($jsonString)
-
-	GUICtrlSetData($gui_combo_characterchoice, _JSON_Get($jsonObject, 'main.character'))
-	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, _JSON_Get($jsonObject, 'main.farm'))
-	UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
-
-	Local $weaponSlot = _JSON_Get($jsonObject, 'run.weapon_slot')
-	$weaponSlot = _Max($weaponSlot, 0)
-	$weaponSlot = _Min($weaponSlot, 4)
-	$run_options_cache['run.weapon_slot'] = $weaponSlot
-
-	$bags_count = _JSON_Get($jsonObject, 'run.bags_count')
-	$bags_count = _Max($bags_count, 1)
-	$bags_count = _Min($bags_count, 5)
-	$run_options_cache['run.bags_count'] = $bags_count
-
-	$district_name = _JSON_Get($jsonObject, 'run.district')
-	$run_options_cache['run.district'] = $district_name
-
-	Local $renderingDisabled = _JSON_Get($jsonObject, 'run.disable_rendering')
-	$rendering_enabled = Not $renderingDisabled
-
-	; TODO/FIXME: simplify by iterating over JSON leaves
-	$run_options_cache['run.loop_mode'] = _JSON_Get($jsonObject, 'run.loop_mode')
-	$run_options_cache['run.hard_mode'] = _JSON_Get($jsonObject, 'run.hard_mode')
-	$run_options_cache['run.farm_materials_mid_run'] = _JSON_Get($jsonObject, 'run.farm_materials_mid_run')
-	$run_options_cache['run.consume_consumables'] = _JSON_Get($jsonObject, 'run.consume_consumables')
-	$run_options_cache['run.use_scrolls'] = _JSON_Get($jsonObject, 'run.use_scrolls')
-	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
-	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
-	$run_options_cache['run.collect_data'] = _JSON_Get($jsonObject, 'run.collect_data')
-	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
-	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
-	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
-
-	$run_options_cache['team.automatic_team_setup'] = _JSON_Get($jsonObject, 'team.automatic_team_setup')
-	$run_options_cache['team.hero_1'] = _JSON_Get($jsonObject, 'team.hero_1')
-	$run_options_cache['team.hero_2'] = _JSON_Get($jsonObject, 'team.hero_2')
-	$run_options_cache['team.hero_3'] = _JSON_Get($jsonObject, 'team.hero_3')
-	$run_options_cache['team.hero_4'] = _JSON_Get($jsonObject, 'team.hero_4')
-	$run_options_cache['team.hero_5'] = _JSON_Get($jsonObject, 'team.hero_5')
-	$run_options_cache['team.hero_6'] = _JSON_Get($jsonObject, 'team.hero_6')
-	$run_options_cache['team.hero_7'] = _JSON_Get($jsonObject, 'team.hero_7')
-	$run_options_cache['team.load_all_builds'] = _JSON_Get($jsonObject, 'team.load_all_builds')
-	$run_options_cache['team.load_player_build'] = _JSON_Get($jsonObject, 'team.load_player_build')
-	$run_options_cache['team.load_hero_1_build'] = _JSON_Get($jsonObject, 'team.load_hero_1_build')
-	$run_options_cache['team.load_hero_2_build'] = _JSON_Get($jsonObject, 'team.load_hero_2_build')
-	$run_options_cache['team.load_hero_3_build'] = _JSON_Get($jsonObject, 'team.load_hero_3_build')
-	$run_options_cache['team.load_hero_4_build'] = _JSON_Get($jsonObject, 'team.load_hero_4_build')
-	$run_options_cache['team.load_hero_5_build'] = _JSON_Get($jsonObject, 'team.load_hero_5_build')
-	$run_options_cache['team.load_hero_6_build'] = _JSON_Get($jsonObject, 'team.load_hero_6_build')
-	$run_options_cache['team.load_hero_7_build'] = _JSON_Get($jsonObject, 'team.load_hero_7_build')
-	$run_options_cache['team.player_build'] = _JSON_Get($jsonObject, 'team.player_build')
-	$run_options_cache['team.hero_1_build'] = _JSON_Get($jsonObject, 'team.hero_1_build')
-	$run_options_cache['team.hero_2_build'] = _JSON_Get($jsonObject, 'team.hero_2_build')
-	$run_options_cache['team.hero_3_build'] = _JSON_Get($jsonObject, 'team.hero_3_build')
-	$run_options_cache['team.hero_4_build'] = _JSON_Get($jsonObject, 'team.hero_4_build')
-	$run_options_cache['team.hero_5_build'] = _JSON_Get($jsonObject, 'team.hero_5_build')
-	$run_options_cache['team.hero_6_build'] = _JSON_Get($jsonObject, 'team.hero_6_build')
-	$run_options_cache['team.hero_7_build'] = _JSON_Get($jsonObject, 'team.hero_7_build')
-EndFunc
-
-
 ;~ Read given config from JSON
 Func ApplyConfigToGUI()
-	;~ GUICtrlSetData($gui_combo_characterchoice, _JSON_Get($jsonObject, 'main.character'))
-	;~ GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, _JSON_Get($jsonObject, 'main.farm'))
-	;~ UpdateFarmDescription(_JSON_Get($jsonObject, 'main.farm'))
-
+	GUICtrlSetData($gui_combo_characterchoice, $character_name)
+	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, $farm_name)
+	UpdateFarmDescription($farm_name)
 
 	GUICtrlSetData($gui_combo_weaponslot, $run_options_cache['run.weapon_slot'])
 	GUICtrlSetData($gui_combo_bagscount, $bags_count)
@@ -1717,18 +1566,6 @@ Func ApplyConfigToGUI()
 	GUICtrlSetData($gui_input_build_hero_6, $run_options_cache['team.hero_6_build'])
 	GUICtrlSetData($gui_input_build_hero_7, $run_options_cache['team.hero_7_build'])
 	UpdateTeamComboboxes($run_options_cache['team.automatic_team_setup'])
-EndFunc
-
-
-;~ Load loot configuration file if it exists
-Func LoadLootOptions($filePath)
-	If FileExists($filePath) Then
-		Local $lootOptionsFile = FileOpen($filePath, $FO_READ + $FO_UTF8)
-		Local $jsonString = FileRead($lootOptionsFile)
-		FileClose($lootOptionsFile)
-		Return _JSON_Parse($jsonString)
-	EndIf
-	Return Null
 EndFunc
 #EndRegion Configuration
 
@@ -1780,98 +1617,6 @@ Func BuildTreeViewFromCache($guiTreeviewHandle)
 EndFunc
 
 
-;~ Creating a treeview from a JSON node
-Func BuildTreeViewFromJSON($parentItem, $jsonNode)
-	If IsMap($jsonNode) Then
-		Local $isChecked = True
-		For $key In MapKeys($jsonNode)
-			Local $keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
-			If Not BuildTreeViewFromJSON($keyHandle, $jsonNode[$key]) Then $isChecked = False
-		Next
-		_GUICtrlTreeView_SetChecked($gui_treeview_lootoptions, $parentItem, $isChecked)
-		Return $isChecked
-	EndIf
-	; Leaf node: this node is true or false
-	_GUICtrlTreeView_SetChecked($gui_treeview_lootoptions, $parentItem, $jsonNode)
-	Return $jsonNode == True
-EndFunc
-
-
-;~ Fill the inventory cache with additional derived data
-Func BuildInventoryDerivedFlags()
-	; -------- Pickup --------
-	Local $pickupSomething = IsAnyChecked('Pick up items')
-	$inventory_management_cache['@pickup.something'] = $pickupSomething
-	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
-	Local $pickupSomeWeapons = IsAnyChecked('Pick up items.Weapons and offhands')
-	$inventory_management_cache['@pickup.weapons.something'] = $pickupSomeWeapons
-	$inventory_management_cache['@pickup.weapons.nothing'] = Not $pickupSomeWeapons
-
-	; -------- Identify --------
-	Local $identifySomething = IsAnyChecked('Identify items')
-	$inventory_management_cache['@identify.something'] = $identifySomething
-	$inventory_management_cache['@identify.nothing'] = Not $identifySomething
-
-	; -------- Salvage --------
-	Local $salvageSomething = IsAnyChecked('Salvage items')
-	$inventory_management_cache['@salvage.something'] = $salvageSomething
-	$inventory_management_cache['@salvage.nothing'] = Not $salvageSomething
-	Local $salvageSomeWeapons = IsAnyChecked('Salvage items.Weapons and offhands')
-	$inventory_management_cache['@salvage.weapons.something'] = $salvageSomeWeapons
-	$inventory_management_cache['@salvage.weapons.nothing'] = Not $salvageSomeWeapons
-	Local $salvageSomeSalvageables = IsAnyChecked('Salvage items.Armor salvageables')
-	$inventory_management_cache['@salvage.salvageables.something'] = $salvageSomeSalvageables
-	$inventory_management_cache['@salvage.salvageables.nothing'] = Not $salvageSomeSalvageables
-	Local $salvageSomeTrophies = IsAnyChecked('Salvage items.Trophies')
-	$inventory_management_cache['@salvage.trophies.something'] = $salvageSomeTrophies
-	$inventory_management_cache['@salvage.trophies.nothing'] = Not $salvageSomeTrophies
-	Local $salvageSomeMaterials = IsAnyChecked('Salvage items.Rare Materials')
-	$inventory_management_cache['@salvage.materials.something'] = $salvageSomeMaterials
-	$inventory_management_cache['@salvage.materials.nothing'] = Not $salvageSomeMaterials
-
-	; -------- Sell --------
-	Local $sellSomething = IsAnyChecked('Sell items')
-	$inventory_management_cache['@sell.something'] = $sellSomething
-	$inventory_management_cache['@sell.nothing'] = Not $sellSomething
-	Local $sellSomeWeapons = IsAnyChecked('Sell items.Weapons and offhands')
-	$inventory_management_cache['@sell.weapons.something'] = $sellSomeWeapons
-	$inventory_management_cache['@sell.weapons.nothing'] = Not $sellSomeWeapons
-
-	Local $sellSomeBasicMaterials = IsAnyChecked('Sell items.Basic Materials')
-	$inventory_management_cache['@sell.materials.basic.something'] = $sellSomeBasicMaterials
-	$inventory_management_cache['@sell.materials.basic.nothing'] = Not $sellSomeBasicMaterials
-	Local $sellSomeRareMaterials = IsAnyChecked('Sell items.Rare Materials')
-	$inventory_management_cache['@sell.materials.rare.something'] = $sellSomeRareMaterials
-	$inventory_management_cache['@sell.materials.rare.nothing'] = Not $sellSomeRareMaterials
-	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
-	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
-	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
-
-	; -------- Buy --------
-	Local $buySomething = IsAnyChecked('Buy items')
-	$inventory_management_cache['@buy.something'] = $buySomething
-	$inventory_management_cache['@buy.nothing'] = Not $buySomething
-
-	Local $buySomeBasicMaterials = IsAnyChecked('Buy items.Basic Materials')
-	$inventory_management_cache['@buy.materials.basic.something'] = $buySomeBasicMaterials
-	$inventory_management_cache['@buy.materials.basic.nothing'] = Not $buySomeBasicMaterials
-	Local $buySomeRareMaterials = IsAnyChecked('Buy items.Rare Materials')
-	$inventory_management_cache['@buy.materials.rare.something'] = $buySomeRareMaterials
-	$inventory_management_cache['@buy.materials.rare.nothing'] = Not $buySomeRareMaterials
-	Local $buySomeMaterials = $buySomeBasicMaterials Or $buySomeRareMaterials
-	$inventory_management_cache['@buy.materials.something'] = $buySomeMaterials
-	$inventory_management_cache['@buy.materials.nothing'] = Not $buySomeMaterials
-
-	; -------- Store --------
-	Local $storeSomething = IsAnyChecked('Store items')
-	$inventory_management_cache['@store.something'] = $storeSomething
-	$inventory_management_cache['@store.nothing'] = Not $storeSomething
-	Local $storeSomeWeapons = IsAnyChecked('Store items.Weapons and offhands')
-	$inventory_management_cache['@store.weapons.something'] = $storeSomeWeapons
-	$inventory_management_cache['@store.weapons.nothing'] = Not $storeSomeWeapons
-EndFunc
-
-
 ;~ Fill the inventory cache with the treeview data
 Func FillInventoryCacheFromTreeView($treeViewHandle)
 	IterateOverTreeView(Null, $treeViewHandle, Null, '', AddToInventoryCache)
@@ -1881,13 +1626,6 @@ EndFunc
 ;~ Utility function to add treeview elements to the inventory cache
 Func AddToInventoryCache(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
 	$inventory_management_cache[$currentPath] = _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
-EndFunc
-
-
-;~ Getting ticked loot options from checkboxes as array
-Func GetLootOptionsTickedCheckboxes($startingPoint, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.', $recursive = True)
-	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startingPoint, $pathDelimiter)
-	Return $treeViewItem == Null ? Null : BuildArrayFromTreeView($treeViewHandle, $treeViewItem, '', $recursive)
 EndFunc
 
 
@@ -1952,126 +1690,7 @@ Func IterateOverTreeItem(ByRef $context, $treeViewHandle, $treeViewItem, $curren
 		$child = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $child)
 	WEnd
 EndFunc
-
-
-;~ Find a node in a treeview by its path as string
-Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $path = '', $pathDelimiter = '.')
-	Local $pathArray = StringSplit($path, $pathDelimiter)
-	; Caution in AutoIT, StringSplit function returns array in which first element is count of items
-	Local $pathArraySize = $pathArray[0]
-	If $pathArraySize == 0 Or $path == '' Then Return Null
-	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-	Return FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, 1)
-EndFunc
-
-
-;~ Find a node in a treeview by its path as string
-Func FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, $pathArrayIndex)
-	Local $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
-	While $treeViewItem <> 0
-		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-		If $treeViewItemName == $pathArray[$pathArrayIndex] Then
-			If $pathArrayIndex == UBound($pathArray) - 1 Then
-				Return $treeViewItem
-			Else
-				Return FindNodeInTreeViewHelper($treeViewHandle, _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem), $pathArray, $pathArrayIndex + 1)
-			EndIf
-		EndIf
-		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
-	WEnd
-	Return Null
-EndFunc
-
-
-;~ Find the child from the given treeview by its name
-Func FindDirectChildTreeViewItem($treeViewHandle, $treeViewItem, $name)
-	If $treeViewItem == Null Then
-		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-		;Out('parent not mentioned, taking ' & $treeViewItem)
-	EndIf
-	Return FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
-EndFunc
-
-
-;~ Find a node in a treeview by its path as string
-Func FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
-	Local $treeViewItemName
-	While $treeViewItem <> 0
-		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-		If $treeViewItemName == $name Then
-			Out('found: ' & $name)
-			Return $treeViewItem
-		EndIf
-		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
-	WEnd
-	Out('Not found: ' & $name)
-	Return Null
-EndFunc
-
-
-;~ Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
-Func IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
-	; Check if current tree node item is checked
-	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then Return True
-
-	; Recursively check all child items of provided $treeViewItem
-	If _GUICtrlTreeView_GetChildren($treeViewHandle, $treeViewItem) Then
-		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
-		While $childHandle <> 0
-			If IsAnyChildInBranchChecked($treeViewHandle, $childHandle) Then Return True
-			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
-		WEnd
-	EndIf
-
-	Return False
-EndFunc
 #EndRegion Loot Tree View Management
-
-
-#Region GUI Settings
-Func IsHardmodeEnabled()
-	Return $run_options_cache['run.hard_mode']
-EndFunc
-
-
-Func SwitchToHardModeIfEnabled()
-	If IsHardmodeEnabled() Then
-		SwitchMode($ID_HARD_MODE)
-	Else
-		SwitchMode($ID_NORMAL_MODE)
-	EndIf
-EndFunc
-
-
-;~ Setup player build from GUI settings
-Func SetupPlayerUsingGUISettings()
-	If $run_options_cache['team.load_player_build'] Then
-		Info('Loading player build from GUI')
-		LoadSkillTemplate($run_options_cache['team.player_build'])
-		RandomSleep(250)
-	EndIf
-EndFunc
-
-
-Func SetupTeamUsingGUISettings($teamSize = $ID_TEAM_SIZE_LARGE)
-	Info('Setting up team according to GUI settings')
-	LeaveParty()
-	RandomSleep(500)
-	; Could use Eval(), it's shorter but it's kind of dirty
-	For $i = 1 To $ID_TEAM_SIZE_LARGE - 1
-		Local $hero = $run_options_cache['team.hero_' & $i]
-		If $hero <> '' Then
-			AddHero($HERO_IDS_FROM_NAMES[$hero])
-			If $run_options_cache['team.load_hero_' & $i & '_build'] Then
-				RandomSleep(500 + GetPing())
-				Info('Loading hero ' & $i & ' build from GUI')
-				LoadSkillTemplate($run_options_cache['team.hero_' & $i & '_build'], $i)
-			EndIf
-		EndIf
-	Next
-EndFunc
-#EndRegion GUI Settings
 
 
 Func RenameGUI($gui_title)
@@ -2147,6 +1766,104 @@ Func TemporaryGUIWMActivateHandler($handle, $message, $param)
 		EndIf
 	EndIf
 	Return $GUI_RUNDEFMSG
+EndFunc
+
+
+;~ Getting ticked loot options from checkboxes as array
+Func GetLootOptionsTickedCheckboxes($startingPoint, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.', $recursive = True)
+	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startingPoint, $pathDelimiter)
+	Return $treeViewItem == Null ? Null : BuildArrayFromTreeView($treeViewHandle, $treeViewItem, '', $recursive)
+EndFunc
+
+
+;~ Find a node in a treeview by its path as string
+Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $path = '', $pathDelimiter = '.')
+	Local $pathArray = StringSplit($path, $pathDelimiter)
+	; Caution in AutoIT, StringSplit function returns array in which first element is count of items
+	Local $pathArraySize = $pathArray[0]
+	If $pathArraySize == 0 Or $path == '' Then Return Null
+	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+	Return FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, 1)
+EndFunc
+
+
+;~ Find a node in a treeview by its path as string
+Func FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, $pathArrayIndex)
+	Local $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
+	While $treeViewItem <> 0
+		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
+		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
+		If $treeViewItemName == $pathArray[$pathArrayIndex] Then
+			If $pathArrayIndex == UBound($pathArray) - 1 Then
+				Return $treeViewItem
+			Else
+				Return FindNodeInTreeViewHelper($treeViewHandle, _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem), $pathArray, $pathArrayIndex + 1)
+			EndIf
+		EndIf
+		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+	WEnd
+	Return Null
+EndFunc
+
+
+;~ Find the child from the given treeview by its name
+Func FindDirectChildTreeViewItem($treeViewHandle, $treeViewItem, $name)
+	If $treeViewItem == Null Then
+		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+		;Out('parent not mentioned, taking ' & $treeViewItem)
+	EndIf
+	Return FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
+EndFunc
+
+
+;~ Find a node in a treeview by its path as string
+Func FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
+	Local $treeViewItemName
+	While $treeViewItem <> 0
+		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
+		If $treeViewItemName == $name Then
+			Out('found: ' & $name)
+			Return $treeViewItem
+		EndIf
+		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+	WEnd
+	Out('Not found: ' & $name)
+	Return Null
+EndFunc
+
+
+;~ Creating a treeview from a JSON node
+Func BuildTreeViewFromJSON($parentItem, $jsonNode)
+	If IsMap($jsonNode) Then
+		Local $isChecked = True
+		For $key In MapKeys($jsonNode)
+			Local $keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
+			If Not BuildTreeViewFromJSON($keyHandle, $jsonNode[$key]) Then $isChecked = False
+		Next
+		_GUICtrlTreeView_SetChecked($gui_treeview_lootoptions, $parentItem, $isChecked)
+		Return $isChecked
+	EndIf
+	; Leaf node: this node is true or false
+	_GUICtrlTreeView_SetChecked($gui_treeview_lootoptions, $parentItem, $jsonNode)
+	Return $jsonNode == True
+EndFunc
+
+
+;~ Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
+Func IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
+	; Check if current tree node item is checked
+	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then Return True
+
+	; Recursively check all child items of provided $treeViewItem
+	If _GUICtrlTreeView_GetChildren($treeViewHandle, $treeViewItem) Then
+		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
+		While $childHandle <> 0
+			If IsAnyChildInBranchChecked($treeViewHandle, $childHandle) Then Return True
+			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
+		WEnd
+	EndIf
+
+	Return False
 EndFunc
 
 

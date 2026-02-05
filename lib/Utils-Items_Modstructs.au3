@@ -1176,7 +1176,7 @@ EndFunc
 ;~ TODO: finish this function
 ;~ Creates an array of all valuable OS (Old School without inscription) weapon mods based on selected elements in treeview
 Func CreateValuableModsByOSWeaponTypeMap()
-	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
+	Local $tickedMods = GetAllChecked($inventory_management_cache, 'Keep components.Mods')
 	Local $valuableModsByOSWeaponTypeMap[UBound($tickedMods)]
 	For $tickedMod In $tickedMods
 		Info($tickedMods)
