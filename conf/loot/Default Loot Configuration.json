@@ -953,6 +953,8 @@
 			"Skale Fin": true,
 			"Jade Bracelet": true,
 			"Stolen Goods": true,
+			"Dark Remains": true,
+			"Demonic Remains": true,
 			"Other trophies": true
 		},
 		"Tomes": {
@@ -2453,7 +2455,10 @@
 		"Trophies": {
 			"Glacial Stone": true,
 			"Destroyer Core": false,
+			"Jade Bracelet": false,
 			"Stolen Goods": true,
+			"Dark Remains": true,
+			"Demonic Remains": true,
 			"Other trophies": false
 		}
 	},

@@ -347,6 +347,7 @@ Func DefaultShouldPickItem($item)
 		Return $cache['Pick up items.Festival Items.' & $festivalDropName]
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
+		; TODO: replace this by a map from ID to trophy name
 		Switch $itemID
 			Case $ID_MINISTERIAL_COMMENDATION
 				Return True
@@ -358,6 +359,10 @@ Func DefaultShouldPickItem($item)
 				Return $cache['Pick up items.Trophies.Jade Bracelet']
 			Case $ID_STOLEN_GOODS
 				Return $cache['Pick up items.Trophies.Stolen Goods']
+			Case $ID_DARK_REMAINS
+				Return $cache['Pick up items.Trophies.Dark Remains']
+			Case $ID_DEMONIC_REMAINS
+				Return $cache['Pick up items.Trophies.Demonic Remains']
 		EndSwitch
 		Return $cache['Pick up items.Trophies']
 	; -------------------------------------- Materials --------------------------------------
@@ -432,6 +437,7 @@ Func DefaultShouldSalvageItem($item)
 	ElseIf IsTrophy($itemID) Then
 		If $cache['Salvage items.Trophies'] Then Return True
 		If $cache['@salvage.trophies.nothing'] Then Return False
+		; TODO: replace this by a map from ID to trophy name
 		Switch $itemID
 			Case $ID_GLACIAL_STONE
 				Return $cache['Salvage items.Trophies.Glacial Stone']
@@ -441,6 +447,10 @@ Func DefaultShouldSalvageItem($item)
 				Return $cache['Salvage items.Trophies.Jade Bracelet']
 			Case $ID_STOLEN_GOODS
 				Return $cache['Salvage items.Trophies.Stolen Goods']
+			Case $ID_DARK_REMAINS
+				Return $cache['Salvage items.Trophies.Dark Remains']
+			Case $ID_DEMONIC_REMAINS
+				Return $cache['Salvage items.Trophies.Demonic Remains']
 		EndSwitch
 		;Return $cache['Salvage items.Trophies.Other trophies']
 

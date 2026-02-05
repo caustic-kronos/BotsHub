@@ -141,7 +141,9 @@ Func VanquishMountQinkai()
 		[12000, 7500, 'Naga 5', $RANGE_SPIRIT], _
 		[16000, 7000, 'Naga 6', $AGGRO_RANGE], _
 		[15500, 4500, 'Leftovers', $AGGRO_RANGE], _
-		[18000, 3000, 'Oni 3', $RANGE_SPIRIT], _
+		[18000, 3250, 'Oni 3', $RANGE_SPIRIT], _
+		[18600, 3500, 'Oni 3', $RANGE_SPIRIT], _
+		[18000, 2500, 'Oni 3', $RANGE_SPIRIT], _
 		[16500, 1000, 'Leftovers', $AGGRO_RANGE], _
 		[13500, -1500, 'Naga 7', $RANGE_SPIRIT], _
 		[12500, -3500, 'Naga 8', $RANGE_SPIRIT], _
