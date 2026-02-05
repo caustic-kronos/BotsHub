@@ -419,10 +419,11 @@ Func CreateGUI()
 	; === Inventory tab ===
 	$gui_tab_lootoptions = GUICtrlCreateTabItem('Inventory')
 	$gui_treeview_lootoptions = GUICtrlCreateTreeView(80, 45, 545, 400, BitOR($TVS_HASLINES, $TVS_LINESATROOT, $TVS_HASBUTTONS, $TVS_CHECKBOXES, $TVS_FULLROWSELECT))
-	Local $GuiJsonLootOptions = LoadLootOptions(@ScriptDir & '/conf/loot/Default Loot Configuration.json')
-	BuildTreeViewFromJSON($gui_treeview_lootoptions, $GuiJsonLootOptions)
-	; It's better to fill cache after tree is built rather than mix intents and do it all in one go
-	FillInventoryCache($gui_treeview_lootoptions)
+	Local $jsonLootOptions = LoadLootOptions(@ScriptDir & '/conf/loot/Default Loot Configuration.json')
+	FillInventoryCacheFromJSON($jsonLootOptions, '')
+	BuildInventoryDerivedFlags()
+	RefreshValuableListsFromCache()
+	BuildTreeViewFromCache($gui_treeview_lootoptions)
 
 	$gui_expandlootoptionsbutton = GUICtrlCreateButton('Expand all', 21, 124, 55, 21)
 	$gui_reducelootoptionsbutton = GUICtrlCreateButton('Reduce all', 21, 154, 55, 21)
@@ -800,10 +801,11 @@ Func GuiLootTabButtonHandler()
 			If @error <> 0 Then
 				Warn('Failed to read JSON loot options configuration.')
 			Else
-				Local $GuiJsonLootOptions = LoadLootOptions($filePath)
-				_GUICtrlTreeView_DeleteAll($gui_treeview_lootoptions)
-				BuildTreeViewFromJSON($gui_treeview_lootoptions, $GuiJsonLootOptions)
-				FillInventoryCache($gui_treeview_lootoptions)
+				Local $jsonLootOptions = LoadLootOptions($filePath)
+				FillInventoryCacheFromJSON($jsonLootOptions, '')
+				BuildInventoryDerivedFlags()
+				RefreshValuableListsFromCache()
+				BuildTreeViewFromCache($gui_treeview_lootoptions)
 				Info('Loaded loot options configuration ' & $filePath)
 			EndIf
 		Case $gui_savelootoptionsbutton
@@ -819,12 +821,477 @@ Func GuiLootTabButtonHandler()
 				Info('Saved loot options configuration ' & $configFile)
 			EndIf
 		Case $gui_applylootoptionsbutton
-			FillInventoryCache($gui_treeview_lootoptions)
+			FillInventoryCacheFromTreeView($gui_treeview_lootoptions)
+			BuildInventoryDerivedFlags()
+			RefreshValuableListsFromCache()
 			Info('Refreshed inventory management options')
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
 	EndSwitch
 EndFunc
+
+
+;~ Update the farm description written on the rightmost tab
+Func UpdateFarmDescription($Farm)
+	GUICtrlSetData($gui_edit_characterbuilds, '')
+	GUICtrlSetData($gui_edit_heroesbuilds, '')
+	GUICtrlSetData($gui_label_farminformations, '')
+
+	Local $generalCharacterSetup = 'Simple build to play from skill 1 to skill 8, such as:' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:N/A_Assassin%27s_Promise_Death_Magic' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:E/A_Assassin%27s_Promise' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:Me/A_Assassin%27s_Promise'
+	Local $generalHeroesSetup = 'Solid heroes setup, such as:' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_Mercenary_Mesmerway' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:Team_-_5_Hero_Mesmerway' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:Team_-_3_Hero_Dual_Mesmer' & @CRLF & _
+		'https://gwpvx.fandom.com/wiki/Build:Team_-_3_Hero_Balanced'
+	Switch $Farm
+		Case 'Asuran'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $ASURAN_FARM_INFORMATIONS)
+		Case 'Boreal'
+			GUICtrlSetData($gui_edit_characterbuilds, $BOREAL_RANGER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$BOREAL_MONK_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$BOREAL_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $BOREAL_CHESTRUN_INFORMATIONS)
+		Case 'CoF'
+			GUICtrlSetData($gui_edit_characterbuilds, $D_COF_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $COF_FARM_INFORMATIONS)
+		Case 'Corsairs'
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $CORSAIRS_FARM_INFORMATIONS)
+		Case 'Deldrimor'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $DELDRIMOR_FARM_INFORMATIONS)
+		Case 'Dragon Moss'
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_DRAGON_MOSS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $DRAGON_MOSS_FARM_INFORMATIONS)
+		Case 'Eden Iris'
+			GUICtrlSetData($gui_label_farminformations, $EDEN_IRIS_FARM_INFORMATIONS)
+		Case 'Feathers'
+			GUICtrlSetData($gui_edit_characterbuilds, $DA_FEATHERS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $FEATHERS_FARM_INFORMATIONS)
+		Case 'Follower'
+			GUICtrlSetData($gui_label_farminformations, $FOLLOWER_INFORMATIONS)
+		Case 'FoW'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $FOW_FARM_INFORMATIONS)
+		Case 'FoW Tower of Courage'
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_FOW_TOC_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $FOW_TOC_FARM_INFORMATIONS)
+		Case 'Froggy'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $FROGGY_FARM_INFORMATIONS)
+		Case 'Gemstones'
+			GUICtrlSetData($gui_edit_characterbuilds, $GEMSTONES_MESMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $GEMSTONES_HERO_1_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_2_SKILLBAR & @CRLF & $GEMSTONES_HERO_3_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_4_SKILLBAR & @CRLF & $GEMSTONES_HERO_5_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_6_SKILLBAR & @CRLF & $GEMSTONES_HERO_7_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONES_FARM_INFORMATIONS)
+		Case 'Gemstone Margonite'
+			GUICtrlSetData($gui_edit_characterbuilds, $AME_MARGONITE_SKILLBAR & @CRLF & _
+				$MEA_MARGONITE_SKILLBAR & @CRLF & $EME_MARGONITE_SKILLBAR & @CRLF & $RA_MARGONITE_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $MARGONITE_MONK_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_MARGONITE_FARM_INFORMATIONS)
+		Case 'Gemstone Stygian'
+			GUICtrlSetData($gui_edit_characterbuilds, $AME_STYGIAN_SKILLBAR _
+				& @CRLF & $MEA_STYGIAN_SKILLBAR & @CRLF & $RN_STYGIAN_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $STYGIAN_RANGER_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_STYGIAN_FARM_INFORMATIONS)
+		Case 'Gemstone Torment'
+			GUICtrlSetData($gui_edit_characterbuilds, $EA_TORMENT_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_TORMENT_FARM_INFORMATIONS)
+		Case 'Glint Challenge'
+			GUICtrlSetData($gui_edit_characterbuilds, $GLINT_MESMER_SKILLBAR_OPTIONAL)
+			GUICtrlSetData($gui_edit_heroesbuilds, $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR & @CRLF & _
+				$GLINT_NECRO_FLESH_GOLEM_HERO_SKILLBAR & @CRLF & $GLINT_NECRO_HEXER_HERO_SKILLBAR & @CRLF & _
+				$GLINT_NECRO_BIP_HERO_SKILLBAR & @CRLF & $GLINT_MESMER_PANIC_HERO_SKILLBAR & @CRLF & _
+				$GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $GLINT_CHALLENGE_INFORMATIONS)
+		Case 'Jade Brotherhood'
+			GUICtrlSetData($gui_edit_characterbuilds, $JB_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $JB_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $JB_FARM_INFORMATIONS)
+		Case 'Kournans'
+			GUICtrlSetData($gui_edit_characterbuilds, $ELA_KOURNANS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _
+				$RT_KOURNANS_HERO_SKILLBAR & @CRLF & $P_KOURNANS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $KOURNANS_FARM_INFORMATIONS)
+		Case 'Kurzick'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $KURZICK_FACTION_INFORMATIONS)
+		Case 'Kurzick Drazach'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $KURZICK_FACTION_DRAZACH_INFORMATIONS)
+		Case 'LDOA'
+			GUICtrlSetData($gui_label_farminformations, $LDOA_INFORMATIONS)
+		Case 'Lightbringer & Sunspear'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS)
+		Case 'Lightbringer'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LIGHTBRINGER_FARM_INFORMATIONS)
+		Case 'Luxon'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LUXON_FACTION_INFORMATIONS)
+		Case 'Mantids'
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_MANTIDS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $MANTIDS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $MANTIDS_FARM_INFORMATIONS)
+		Case 'Ministerial Commendations'
+			GUICtrlSetData($gui_edit_characterbuilds, $DW_COMMENDATIONS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $COMMENDATIONS_FARM_INFORMATIONS)
+		Case 'Minotaurs'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $MINOTAURS_FARM_INFORMATIONS)
+		Case 'Nexus Challenge'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $NEXUS_CHALLENGE_INFORMATIONS)
+		Case 'Norn'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $NORN_FARM_INFORMATIONS)
+		Case 'Pongmei'
+			GUICtrlSetData($gui_edit_characterbuilds, $PONGMEI_CHESTRUNNER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $PONGMEI_CHESTRUN_INFORMATIONS)
+		Case 'Raptors'
+			GUICtrlSetData($gui_edit_characterbuilds, $WN_RAPTORS_FARMER_SKILLBAR & @CRLF & $DN_RAPTORS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $P_RUNNER_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $RAPTORS_FARM_INFORMATIONS)
+		Case 'SoO'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $SOO_FARM_INFORMATIONS)
+		Case 'SpiritSlaves'
+			GUICtrlSetData($gui_edit_characterbuilds, $SPIRIT_SLAVES_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $SPIRIT_SLAVES_FARM_INFORMATIONS)
+		Case 'Sunspear Armor'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $SUNSPEAR_ARMOR_FARM_INFORMATIONS)
+		Case 'Tasca'
+			GUICtrlSetData($gui_edit_characterbuilds, $TASCA_DERVISH_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MONK_CHESTRUNNER_SKILLBAR & @CRLF & _
+				$TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $TASCA_CHESTRUN_INFORMATIONS)
+		Case 'Underworld'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_INFORMATIONS)
+		Case 'Vaettirs'
+			GUICtrlSetData($gui_edit_characterbuilds, $AME_VAETTIRS_FARMER_SKILLBAR & @CRLF & _
+				$MEA_VAETTIRS_FARMER_SKILLBAR & @CRLF & $MOA_VAETTIRS_FARMER_SKILLBAR & @CRLF & $EME_VAETTIRS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $VAETTIRS_FARM_INFORMATIONS)
+		Case 'Vanguard'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $VANGUARD_TITLE_FARM_INFORMATIONS)
+		Case 'Voltaic'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $VOLTAIC_FARM_INFORMATIONS)
+		Case 'War Supply Keiran'
+			GUICtrlSetData($gui_label_farminformations, $WAR_SUPPLY_KEIRAN_INFORMATIONS)
+		Case 'OmniFarm'
+			Return
+		Case 'Storage'
+			Return
+		Case Else
+			Return
+	EndSwitch
+EndFunc
+
+
+#Region Statistics management
+;~ Fill statistics
+Func UpdateStats($result, $elapsedTime = 0)
+	; All static variables are initialized only once when UpdateStats() function is called first time
+	Local Static $runs = 0
+	Local Static $successes = 0
+	Local Static $failures = 0
+	Local Static $successRatio = 0
+	Local Static $totalTime = 0
+	Local Static $TotalChests = 0
+	Local Static $InitialExperience = GetExperience()
+
+	Local Static $AsuraTitlePoints = GetAsuraTitle()
+	Local Static $DeldrimorTitlePoints = GetDeldrimorTitle()
+	Local Static $NornTitlePoints = GetNornTitle()
+	Local Static $VanguardTitlePoints = GetVanguardTitle()
+	Local Static $LightbringerTitlePoints = GetLightbringerTitle()
+	Local Static $SunspearTitlePoints = GetSunspearTitle()
+	Local Static $KurzickTitlePoints = GetKurzickTitle()
+	Local Static $LuxonTitlePoints = GetLuxonTitle()
+
+	; $NOT_STARTED = -1 : Before every farm loop
+	If $result == $NOT_STARTED Then
+		Info('Starting run ' & ($runs + 1))
+	; $SUCCESS = 0 : Successful farm run
+	ElseIf $result == $SUCCESS Then
+		$successes += 1
+		$runs += 1
+		$successRatio = Round(($successes / $runs) * 100, 2)
+		$totalTime += $elapsedTime
+	; $FAIL = 1 : Failed farm run
+	ElseIf $result == $FAIL Then
+		$failures += 1
+		$runs += 1
+		$successRatio = Round(($successes / $runs) * 100, 2)
+		$totalTime += $elapsedTime
+	EndIf
+	; $PAUSE = 2 : Paused run or will pause
+
+	; Global stats
+	GUICtrlSetData($gui_label_runs_value, $runs)
+	GUICtrlSetData($gui_label_successes_value, $successes)
+	GUICtrlSetData($gui_label_failures_value, $failures)
+	GUICtrlSetData($gui_label_successratio_value, $successRatio & ' %')
+	GUICtrlSetData($gui_label_time_value, ConvertTimeToHourString($totalTime))
+	Local $timePerRun = $runs == 0 ? 0 : $totalTime / $runs
+	GUICtrlSetData($gui_label_timeperrun_value, ConvertTimeToMinutesString($timePerRun))
+	$TotalChests += CountOpenedChests()
+	ClearChestsMap()
+	GUICtrlSetData($gui_label_chests_value, $TotalChests)
+	GUICtrlSetData($gui_label_experience_value, (GetExperience() - $InitialExperience))
+
+	; Title stats
+	GUICtrlSetData($gui_label_asuratitle_value, GetAsuraTitle() - $AsuraTitlePoints)
+	GUICtrlSetData($gui_label_deldrimortitle_value, GetDeldrimorTitle() - $DeldrimorTitlePoints)
+	GUICtrlSetData($gui_label_norntitle_value, GetNornTitle() - $NornTitlePoints)
+	GUICtrlSetData($gui_label_vanguardtitle_value, GetVanguardTitle() - $VanguardTitlePoints)
+	GUICtrlSetData($gui_label_kurzicktitle_value, GetKurzickTitle() - $KurzickTitlePoints)
+	GUICtrlSetData($gui_label_luxontitle_value, GetLuxonTitle() - $LuxonTitlePoints)
+	GUICtrlSetData($gui_label_lightbringertitle_value, GetLightbringerTitle() - $LightbringerTitlePoints)
+	GUICtrlSetData($gui_label_sunspeartitle_value, GetSunspearTitle() - $SunspearTitlePoints)
+
+	UpdateItemStats()
+	Return $timePerRun
+EndFunc
+
+
+Func UpdateItemStats()
+	; All static variables are initialized only once when UpdateItemStats() function is called first time
+	Local Static $itemsToCount[28] = [$ID_GLOB_OF_ECTOPLASM, $ID_OBSIDIAN_SHARD, $ID_LOCKPICK, _
+		$ID_MARGONITE_GEMSTONE, $ID_STYGIAN_GEMSTONE, $ID_TITAN_GEMSTONE, $ID_TORMENT_GEMSTONE, _
+		$ID_DIESSA_CHALICE, $ID_GOLDEN_RIN_RELIC, $ID_DESTROYER_CORE, $ID_GLACIAL_STONE, _
+		$ID_WAR_SUPPLIES, $ID_MINISTERIAL_COMMENDATION, $ID_JADE_BRACELET, _
+		$ID_CHUNK_OF_DRAKE_FLESH, $ID_SKALE_FIN, _
+		$ID_WINTERSDAY_GIFT, $ID_TOT, $ID_BIRTHDAY_CUPCAKE, $ID_GOLDEN_EGG, $ID_SLICE_OF_PUMPKIN_PIE, _
+		$ID_HONEYCOMB, $ID_FRUITCAKE, $ID_SUGARY_BLUE_DRINK, $ID_CHOCOLATE_BUNNY, $ID_DELICIOUS_CAKE, _
+		$ID_AMBER_CHUNK, $ID_JADEITE_SHARD]
+	Local $itemCounts = CountTheseItems($itemsToCount)
+	Local $goldItemsCount = CountGoldItems()
+
+	Local Static $PreRunGold = GetGoldCharacter()
+	Local Static $PreRunGoldItems = $goldItemsCount
+	Local Static $TotalGold = 0
+	Local Static $TotalGoldItems = 0
+
+	Local Static $PreRunEctos = $itemCounts[0]
+	Local Static $PreRunObsidianShards = $itemCounts[1]
+	Local Static $PreRunLockpicks = $itemCounts[2]
+	Local Static $PreRunMargoniteGemstones = $itemCounts[3]
+	Local Static $PreRunStygianGemstones = $itemCounts[4]
+	Local Static $PreRunTitanGemstones = $itemCounts[5]
+	Local Static $PreRunTormentGemstones = $itemCounts[6]
+	Local Static $PreRunDiessaChalices = $itemCounts[7]
+	Local Static $PreRunRinRelics = $itemCounts[8]
+	Local Static $PreRunDestroyerCores = $itemCounts[9]
+	Local Static $PreRunGlacialStones = $itemCounts[10]
+	Local Static $PreRunWarSupplies = $itemCounts[11]
+	Local Static $PreRunMinisterialCommendations = $itemCounts[12]
+	Local Static $PreRunJadeBracelets = $itemCounts[13]
+	Local Static $PreRunChunksOfDrakeFlesh = $itemCounts[14]
+	Local Static $PreRunSkaleFins = $itemCounts[15]
+	Local Static $PreRunWintersdayGifts = $itemCounts[16]
+	Local Static $PreRunTrickOrTreats = $itemCounts[17]
+	Local Static $PreRunBirthdayCupcakes = $itemCounts[18]
+	Local Static $PreRunGoldenEggs = $itemCounts[19]
+	Local Static $PreRunPumpkinPieSlices = $itemCounts[20]
+	Local Static $PreRunHoneyCombs = $itemCounts[21]
+	Local Static $PreRunFruitCakes = $itemCounts[22]
+	Local Static $PreRunSugaryBlueDrinks = $itemCounts[23]
+	Local Static $PreRunChocolateBunnies = $itemCounts[24]
+	Local Static $PreRunDeliciousCakes = $itemCounts[25]
+	Local Static $PreRunAmberChunks = $itemCounts[26]
+	Local Static $PreRunJadeiteShards = $itemCounts[27]
+
+	Local Static $TotalEctos = 0
+	Local Static $TotalObsidianShards = 0
+	Local Static $TotalLockpicks = 0
+	Local Static $TotalMargoniteGemstones = 0
+	Local Static $TotalStygianGemstones = 0
+	Local Static $TotalTitanGemstones = 0
+	Local Static $TotalTormentGemstones = 0
+	Local Static $TotalDiessaChalices = 0
+	Local Static $TotalRinRelics = 0
+	Local Static $TotalDestroyerCores = 0
+	Local Static $TotalGlacialStones = 0
+	Local Static $TotalWarSupplies = 0
+	Local Static $TotalMinisterialCommendations = 0
+	Local Static $TotalJadeBracelets = 0
+	Local Static $TotalChunksOfDrakeFlesh = 0
+	Local Static $TotalSkaleFins = 0
+	Local Static $TotalWintersdayGifts = 0
+	Local Static $TotalTrickOrTreats = 0
+	Local Static $TotalBirthdayCupcakes = 0
+	Local Static $TotalGoldenEggs = 0
+	Local Static $TotalPumpkinPieSlices = 0
+	Local Static $TotalHoneyCombs = 0
+	Local Static $TotalFruitCakes = 0
+	Local Static $TotalSugaryBlueDrinks = 0
+	Local Static $TotalChocolateBunnies = 0
+	Local Static $TotalDeliciousCakes = 0
+	Local Static $TotalAmberChunks = 0
+	Local Static $TotalJadeiteShards = 0
+
+	; Items stats, including inventory management situations when some items got sold or stored in chest, to update counters accordingly
+	; Counting income surplus of every item group after each finished run
+	Local $runIncomeGold = GetGoldCharacter() - $PreRunGold
+	Local $runIncomeGoldItems = $goldItemsCount - $PreRunGoldItems
+	Local $runIncomeEctos = $itemCounts[0] - $PreRunEctos
+	Local $runIncomeObsidianShards = $itemCounts[1] - $PreRunObsidianShards
+	Local $runIncomeLockpicks = $itemCounts[2] - $PreRunLockpicks
+	Local $runIncomeMargoniteGemstones = $itemCounts[3] - $PreRunMargoniteGemstones
+	Local $runIncomeStygianGemstones = $itemCounts[4] - $PreRunStygianGemstones
+	Local $runIncomeTitanGemstones = $itemCounts[5] - $PreRunTitanGemstones
+	Local $runIncomeTormentGemstones = $itemCounts[6] - $PreRunTormentGemstones
+	Local $runIncomeDiessaChalices = $itemCounts[7] - $PreRunDiessaChalices
+	Local $runIncomeRinRelics = $itemCounts[8] - $PreRunRinRelics
+	Local $runIncomeDestroyerCores = $itemCounts[9] - $PreRunDestroyerCores
+	Local $runIncomeGlacialStones = $itemCounts[10] - $PreRunGlacialStones
+	Local $runIncomeWarSupplies = $itemCounts[11] - $PreRunWarSupplies
+	Local $runIncomeMinisterialCommendations = $itemCounts[12] - $PreRunMinisterialCommendations
+	Local $runIncomeJadeBracelets = $itemCounts[13] - $PreRunJadeBracelets
+	Local $runIncomeChunksOfDrakeFlesh = $itemCounts[14] - $PreRunChunksOfDrakeFlesh
+	Local $runIncomeSkaleFins = $itemCounts[15] - $PreRunSkaleFins
+	Local $runIncomeWintersdayGifts = $itemCounts[16] - $PreRunWintersdayGifts
+	Local $runIncomeTrickOrTreats = $itemCounts[17] - $PreRunTrickOrTreats
+	Local $runIncomeBirthdayCupcakes = $itemCounts[18] - $PreRunBirthdayCupcakes
+	Local $runIncomeGoldenEggs = $itemCounts[19] - $PreRunGoldenEggs
+	Local $runIncomePumpkinPieSlices = $itemCounts[20] - $PreRunPumpkinPieSlices
+	Local $runIncomeHoneyCombs = $itemCounts[21] - $PreRunHoneyCombs
+	Local $runIncomeFruitCakes = $itemCounts[22] - $PreRunFruitCakes
+	Local $runIncomeSugaryBlueDrinks = $itemCounts[23] - $PreRunSugaryBlueDrinks
+	Local $runIncomeChocolateBunnies = $itemCounts[24] - $PreRunChocolateBunnies
+	Local $runIncomeDeliciousCakes = $itemCounts[25] - $PreRunDeliciousCakes
+	Local $runIncomeAmberChunks = $itemCounts[26] - $PreRunAmberChunks
+	Local $runIncomeJadeiteShards = $itemCounts[27] - $PreRunJadeiteShards
+
+	; If income is positive then updating cumulative item stats. Income is negative when selling or storing items in chest
+	If $runIncomeGold > 0 Then $TotalGold += $runIncomeGold
+	If $runIncomeGoldItems > 0 Then $TotalGoldItems += $runIncomeGoldItems
+	If $runIncomeEctos > 0 Then $TotalEctos += $runIncomeEctos
+	If $runIncomeObsidianShards > 0 Then $TotalObsidianShards += $runIncomeObsidianShards
+	If $runIncomeLockpicks > 0 Then $TotalLockpicks += $runIncomeLockpicks
+	If $runIncomeMargoniteGemstones > 0 Then $TotalMargoniteGemstones += $runIncomeMargoniteGemstones
+	If $runIncomeStygianGemstones > 0 Then $TotalStygianGemstones += $runIncomeStygianGemstones
+	If $runIncomeTitanGemstones > 0 Then $TotalTitanGemstones += $runIncomeTitanGemstones
+	If $runIncomeTormentGemstones > 0 Then $TotalTormentGemstones += $runIncomeTormentGemstones
+	If $runIncomeDiessaChalices > 0 Then $TotalDiessaChalices += $runIncomeDiessaChalices
+	If $runIncomeRinRelics > 0 Then $TotalRinRelics += $runIncomeRinRelics
+	If $runIncomeDestroyerCores > 0 Then $TotalDestroyerCores += $runIncomeDestroyerCores
+	If $runIncomeGlacialStones > 0 Then $TotalGlacialStones += $runIncomeGlacialStones
+	If $runIncomeWarSupplies > 0 Then $TotalWarSupplies += $runIncomeWarSupplies
+	If $runIncomeMinisterialCommendations > 0 Then $TotalMinisterialCommendations += $runIncomeMinisterialCommendations
+	If $runIncomeJadeBracelets > 0 Then $TotalJadeBracelets += $runIncomeJadeBracelets
+	If $runIncomeChunksOfDrakeFlesh > 0 Then $TotalChunksOfDrakeFlesh += $runIncomeChunksOfDrakeFlesh
+	If $runIncomeSkaleFins > 0 Then $TotalSkaleFins += $runIncomeSkaleFins
+	If $runIncomeWintersdayGifts > 0 Then $TotalWintersdayGifts += $runIncomeWintersdayGifts
+	If $runIncomeTrickOrTreats > 0 Then $TotalTrickOrTreats += $runIncomeTrickOrTreats
+	If $runIncomeBirthdayCupcakes > 0 Then $TotalBirthdayCupcakes += $runIncomeBirthdayCupcakes
+	If $runIncomeGoldenEggs > 0 Then $TotalGoldenEggs += $runIncomeGoldenEggs
+	If $runIncomePumpkinPieSlices > 0 Then $TotalPumpkinPieSlices += $runIncomePumpkinPieSlices
+	If $runIncomeHoneyCombs > 0 Then $TotalHoneyCombs += $runIncomeHoneyCombs
+	If $runIncomeFruitCakes > 0 Then $TotalFruitCakes += $runIncomeFruitCakes
+	If $runIncomeSugaryBlueDrinks > 0 Then $TotalSugaryBlueDrinks += $runIncomeSugaryBlueDrinks
+	If $runIncomeChocolateBunnies > 0 Then $TotalChocolateBunnies += $runIncomeChocolateBunnies
+	If $runIncomeDeliciousCakes > 0 Then $TotalDeliciousCakes += $runIncomeDeliciousCakes
+	If $runIncomeAmberChunks > 0 Then $TotalAmberChunks += $runIncomeAmberChunks
+	If $runIncomeJadeiteShards > 0 Then $TotalJadeiteShards += $runIncomeJadeiteShards
+
+	; updating GUI labels with cumulative items counters
+	GUICtrlSetData($gui_label_gold_value, Floor($TotalGold/1000) & 'k' & Mod($TotalGold, 1000) & 'g')
+	GUICtrlSetData($gui_label_golditems_value, $TotalGoldItems)
+	GUICtrlSetData($gui_label_ectos_value, $TotalEctos)
+	GUICtrlSetData($gui_label_obsidianshards_value, $TotalObsidianShards)
+	GUICtrlSetData($gui_label_lockpicks_value, $TotalLockpicks)
+	GUICtrlSetData($gui_label_margonitegemstone_value, $TotalMargoniteGemstones)
+	GUICtrlSetData($gui_label_stygiangemstone_value, $TotalStygianGemstones)
+	GUICtrlSetData($gui_label_titangemstone_value, $TotalTitanGemstones)
+	GUICtrlSetData($gui_label_tormentgemstone_value, $TotalTormentGemstones)
+	GUICtrlSetData($gui_label_diessachalices_value, $TotalDiessaChalices)
+	GUICtrlSetData($gui_label_rinrelics_value, $TotalRinRelics)
+	GUICtrlSetData($gui_label_destroyercores_value, $TotalDestroyerCores)
+	GUICtrlSetData($gui_label_glacialstones_value, $TotalGlacialStones)
+	GUICtrlSetData($gui_label_warsupplies_value, $TotalWarSupplies)
+	GUICtrlSetData($gui_label_ministerialcommendations_value, $TotalMinisterialCommendations)
+	GUICtrlSetData($gui_label_jadebracelets_value, $TotalJadeBracelets)
+	GUICtrlSetData($gui_label_chunksofdrakeflesh_value, $TotalChunksOfDrakeFlesh)
+	GUICtrlSetData($gui_label_skalefins_value, $TotalSkaleFins)
+	GUICtrlSetData($gui_label_wintersdaygifts_value, $TotalWintersdayGifts)
+	GUICtrlSetData($gui_label_trickortreats_value, $TotalTrickOrTreats)
+	GUICtrlSetData($gui_label_birthdaycupcakes_value, $TotalBirthdayCupcakes)
+	GUICtrlSetData($gui_label_goldeneggs_value, $TotalGoldenEggs)
+	GUICtrlSetData($gui_label_pumpkinpieslices_value, $TotalPumpkinPieSlices)
+	GUICtrlSetData($gui_label_honeycombs_value, $TotalHoneyCombs)
+	GUICtrlSetData($gui_label_fruitcakes_value, $TotalFruitCakes)
+	GUICtrlSetData($gui_label_sugarybluedrinks_value, $TotalSugaryBlueDrinks)
+	GUICtrlSetData($gui_label_chocolatebunnies_value, $TotalChocolateBunnies)
+	GUICtrlSetData($gui_label_deliciouscakes_value, $TotalDeliciousCakes)
+	GUICtrlSetData($gui_label_amberchunks_value, $TotalAmberChunks)
+	GUICtrlSetData($gui_label_jadeiteshards_value, $TotalJadeiteShards)
+
+	; resetting items counters to count income surplus for the next run
+	$PreRunGold = GetGoldCharacter()
+	$PreRunGoldItems = $goldItemsCount
+	$PreRunEctos = $itemCounts[0]
+	$PreRunObsidianShards = $itemCounts[1]
+	$PreRunLockpicks = $itemCounts[2]
+	$PreRunMargoniteGemstones = $itemCounts[3]
+	$PreRunStygianGemstones = $itemCounts[4]
+	$PreRunTitanGemstones = $itemCounts[5]
+	$PreRunTormentGemstones = $itemCounts[6]
+	$PreRunDiessaChalices = $itemCounts[7]
+	$PreRunRinRelics = $itemCounts[8]
+	$PreRunDestroyerCores = $itemCounts[9]
+	$PreRunGlacialStones = $itemCounts[10]
+	$PreRunWarSupplies = $itemCounts[11]
+	$PreRunMinisterialCommendations = $itemCounts[12]
+	$PreRunJadeBracelets = $itemCounts[13]
+	$PreRunChunksOfDrakeFlesh = $itemCounts[14]
+	$PreRunSkaleFins = $itemCounts[15]
+	$PreRunWintersdayGifts = $itemCounts[16]
+	$PreRunTrickOrTreats = $itemCounts[17]
+	$PreRunBirthdayCupcakes = $itemCounts[18]
+	$PreRunGoldenEggs = $itemCounts[19]
+	$PreRunPumpkinPieSlices = $itemCounts[20]
+	$PreRunHoneyCombs = $itemCounts[21]
+	$PreRunFruitCakes = $itemCounts[22]
+	$PreRunSugaryBlueDrinks = $itemCounts[23]
+	$PreRunChocolateBunnies = $itemCounts[24]
+	$PreRunDeliciousCakes = $itemCounts[25]
+	$PreRunAmberChunks = $itemCounts[26]
+	$PreRunJadeiteShards = $itemCounts[27]
+EndFunc
+#EndRegion Statistics management
 
 
 ;~ Refresh rendering button according to current rendering status - should be split from real rendering logic
@@ -955,6 +1422,12 @@ Func UpdateProgressBar($totalDuration = 0)
 	; capping run progress at 98%
 	If $progress > 98 Then $progress = 98
 	GUICtrlSetData($gui_farmprogress, $progress)
+EndFunc
+
+
+;~ Update the progress bar to 100%
+Func CompleteGUIFarmProgress()
+	GUICtrlSetData($gui_farmprogress, 100)
 EndFunc
 #EndRegion Handlers
 
@@ -1261,6 +1734,52 @@ EndFunc
 
 
 #Region Loot Tree View Management
+;~ Fill inventory cache from JSON
+Func FillInventoryCacheFromJSON($jsonNode, $currentPath)
+	If IsMap($jsonNode) Then
+		Local $checked = True
+		For $key In MapKeys($jsonNode)
+			If Not FillInventoryCacheFromJSON($jsonNode[$key], ($currentPath == '') ? $key : ($currentPath & '.' & $key)) Then $checked = False
+		Next
+		$inventory_management_cache[$currentPath] = $checked
+		Return $checked
+	Else
+		$inventory_management_cache[$currentPath] = $jsonNode
+		Return $jsonNode
+	EndIf
+EndFunc
+
+
+;~ Build TreeView from flat map
+Func BuildTreeViewFromCache($guiTreeviewHandle)
+	_GUICtrlTreeView_DeleteAll($guiTreeviewHandle)
+	Local $mapTreeViewIDs[]
+	For $key In MapKeys($inventory_management_cache)
+		; Parent item, no need to draw it
+		If $key == '' Then ContinueLoop
+		; Derived value, does not show in interface
+		If StringLeft($key, 1) == '@' Then ContinueLoop
+
+		Local $bananaSplit = StringSplit($key, '.')
+		Local $current = Null
+		Local $currentPath = ''
+		For $i = 1 To $bananaSplit[0]
+			Local $part = $bananaSplit[$i]
+			$currentPath &= ($currentPath == '') ? $part : ('.' & $part)
+			If $mapTreeViewIDs[$currentPath] <> Null Then
+				; Already exists, it's in map
+				$current = $mapTreeViewIDs[$currentPath]
+			Else
+				; Doesn't exist yet, create and add to map
+				$current = GUICtrlCreateTreeViewItem($part, $current <> Null ? $current : $guiTreeviewHandle)
+				$mapTreeViewIDs[$currentPath] = $current
+			EndIf
+		Next
+		_GUICtrlTreeView_SetChecked($guiTreeviewHandle, $current, $inventory_management_cache[$key])
+	Next
+EndFunc
+
+
 ;~ Creating a treeview from a JSON node
 Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 	If IsMap($jsonNode) Then
@@ -1278,64 +1797,50 @@ Func BuildTreeViewFromJSON($parentItem, $jsonNode)
 EndFunc
 
 
-;~ Fill the inventory cache with the treeview data
-Func FillInventoryCache($treeViewHandle)
-	IterateOverTreeView(Null, $treeViewHandle, Null, '', AddToInventoryCache)
-	BuildInventoryDerivedFlags()
-	RefreshValuableListsFromInterface()
-EndFunc
-
-
-;~ Utility function to add treeview elements to the inventory cache
-Func AddToInventoryCache(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	$inventory_management_cache[$currentPath] = _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
-EndFunc
-
-
 ;~ Fill the inventory cache with additional derived data
 Func BuildInventoryDerivedFlags()
 	; -------- Pickup --------
-	Local $pickupSomething = IsAnyLootOptionInBranchChecked('Pick up items')
+	Local $pickupSomething = IsAnyChecked('Pick up items')
 	$inventory_management_cache['@pickup.something'] = $pickupSomething
 	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
-	Local $pickupSomeWeapons = IsAnyLootOptionInBranchChecked('Pick up items.Weapons and offhands')
+	Local $pickupSomeWeapons = IsAnyChecked('Pick up items.Weapons and offhands')
 	$inventory_management_cache['@pickup.weapons.something'] = $pickupSomeWeapons
 	$inventory_management_cache['@pickup.weapons.nothing'] = Not $pickupSomeWeapons
 
 	; -------- Identify --------
-	Local $identifySomething = IsAnyLootOptionInBranchChecked('Identify items')
+	Local $identifySomething = IsAnyChecked('Identify items')
 	$inventory_management_cache['@identify.something'] = $identifySomething
 	$inventory_management_cache['@identify.nothing'] = Not $identifySomething
 
 	; -------- Salvage --------
-	Local $salvageSomething = IsAnyLootOptionInBranchChecked('Salvage items')
+	Local $salvageSomething = IsAnyChecked('Salvage items')
 	$inventory_management_cache['@salvage.something'] = $salvageSomething
 	$inventory_management_cache['@salvage.nothing'] = Not $salvageSomething
-	Local $salvageSomeWeapons = IsAnyLootOptionInBranchChecked('Salvage items.Weapons and offhands')
+	Local $salvageSomeWeapons = IsAnyChecked('Salvage items.Weapons and offhands')
 	$inventory_management_cache['@salvage.weapons.something'] = $salvageSomeWeapons
 	$inventory_management_cache['@salvage.weapons.nothing'] = Not $salvageSomeWeapons
-	Local $salvageSomeSalvageables = IsAnyLootOptionInBranchChecked('Salvage items.Armor salvageables')
+	Local $salvageSomeSalvageables = IsAnyChecked('Salvage items.Armor salvageables')
 	$inventory_management_cache['@salvage.salvageables.something'] = $salvageSomeSalvageables
 	$inventory_management_cache['@salvage.salvageables.nothing'] = Not $salvageSomeSalvageables
-	Local $salvageSomeTrophies = IsAnyLootOptionInBranchChecked('Salvage items.Trophies')
+	Local $salvageSomeTrophies = IsAnyChecked('Salvage items.Trophies')
 	$inventory_management_cache['@salvage.trophies.something'] = $salvageSomeTrophies
 	$inventory_management_cache['@salvage.trophies.nothing'] = Not $salvageSomeTrophies
-	Local $salvageSomeMaterials = IsAnyLootOptionInBranchChecked('Salvage items.Rare Materials')
+	Local $salvageSomeMaterials = IsAnyChecked('Salvage items.Rare Materials')
 	$inventory_management_cache['@salvage.materials.something'] = $salvageSomeMaterials
 	$inventory_management_cache['@salvage.materials.nothing'] = Not $salvageSomeMaterials
 
 	; -------- Sell --------
-	Local $sellSomething = IsAnyLootOptionInBranchChecked('Sell items')
+	Local $sellSomething = IsAnyChecked('Sell items')
 	$inventory_management_cache['@sell.something'] = $sellSomething
 	$inventory_management_cache['@sell.nothing'] = Not $sellSomething
-	Local $sellSomeWeapons = IsAnyLootOptionInBranchChecked('Sell items.Weapons and offhands')
+	Local $sellSomeWeapons = IsAnyChecked('Sell items.Weapons and offhands')
 	$inventory_management_cache['@sell.weapons.something'] = $sellSomeWeapons
 	$inventory_management_cache['@sell.weapons.nothing'] = Not $sellSomeWeapons
 
-	Local $sellSomeBasicMaterials = IsAnyLootOptionInBranchChecked('Sell items.Basic Materials')
+	Local $sellSomeBasicMaterials = IsAnyChecked('Sell items.Basic Materials')
 	$inventory_management_cache['@sell.materials.basic.something'] = $sellSomeBasicMaterials
 	$inventory_management_cache['@sell.materials.basic.nothing'] = Not $sellSomeBasicMaterials
-	Local $sellSomeRareMaterials = IsAnyLootOptionInBranchChecked('Sell items.Rare Materials')
+	Local $sellSomeRareMaterials = IsAnyChecked('Sell items.Rare Materials')
 	$inventory_management_cache['@sell.materials.rare.something'] = $sellSomeRareMaterials
 	$inventory_management_cache['@sell.materials.rare.nothing'] = Not $sellSomeRareMaterials
 	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
@@ -1343,14 +1848,14 @@ Func BuildInventoryDerivedFlags()
 	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
 
 	; -------- Buy --------
-	Local $buySomething = IsAnyLootOptionInBranchChecked('Buy items')
+	Local $buySomething = IsAnyChecked('Buy items')
 	$inventory_management_cache['@buy.something'] = $buySomething
 	$inventory_management_cache['@buy.nothing'] = Not $buySomething
 
-	Local $buySomeBasicMaterials = IsAnyLootOptionInBranchChecked('Buy items.Basic Materials')
+	Local $buySomeBasicMaterials = IsAnyChecked('Buy items.Basic Materials')
 	$inventory_management_cache['@buy.materials.basic.something'] = $buySomeBasicMaterials
 	$inventory_management_cache['@buy.materials.basic.nothing'] = Not $buySomeBasicMaterials
-	Local $buySomeRareMaterials = IsAnyLootOptionInBranchChecked('Buy items.Rare Materials')
+	Local $buySomeRareMaterials = IsAnyChecked('Buy items.Rare Materials')
 	$inventory_management_cache['@buy.materials.rare.something'] = $buySomeRareMaterials
 	$inventory_management_cache['@buy.materials.rare.nothing'] = Not $buySomeRareMaterials
 	Local $buySomeMaterials = $buySomeBasicMaterials Or $buySomeRareMaterials
@@ -1358,12 +1863,24 @@ Func BuildInventoryDerivedFlags()
 	$inventory_management_cache['@buy.materials.nothing'] = Not $buySomeMaterials
 
 	; -------- Store --------
-	Local $storeSomething = IsAnyLootOptionInBranchChecked('Store items')
+	Local $storeSomething = IsAnyChecked('Store items')
 	$inventory_management_cache['@store.something'] = $storeSomething
 	$inventory_management_cache['@store.nothing'] = Not $storeSomething
-	Local $storeSomeWeapons = IsAnyLootOptionInBranchChecked('Store items.Weapons and offhands')
+	Local $storeSomeWeapons = IsAnyChecked('Store items.Weapons and offhands')
 	$inventory_management_cache['@store.weapons.something'] = $storeSomeWeapons
-	$inventory_management_cache['@store.weapons.something'] = Not $storeSomeWeapons
+	$inventory_management_cache['@store.weapons.nothing'] = Not $storeSomeWeapons
+EndFunc
+
+
+;~ Fill the inventory cache with the treeview data
+Func FillInventoryCacheFromTreeView($treeViewHandle)
+	IterateOverTreeView(Null, $treeViewHandle, Null, '', AddToInventoryCache)
+EndFunc
+
+
+;~ Utility function to add treeview elements to the inventory cache
+Func AddToInventoryCache(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
+	$inventory_management_cache[$currentPath] = _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
 EndFunc
 
 
@@ -1467,17 +1984,29 @@ Func FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, $pathA
 EndFunc
 
 
-;~ Check if a specific loot option is checked in treeview by providing its path as string
-Func IsLootOptionChecked($itemPath, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.')
-	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $itemPath, $pathDelimiter)
-	Return $treeViewItem == Null ? False : _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
+;~ Find the child from the given treeview by its name
+Func FindDirectChildTreeViewItem($treeViewHandle, $treeViewItem, $name)
+	If $treeViewItem == Null Then
+		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
+		;Out('parent not mentioned, taking ' & $treeViewItem)
+	EndIf
+	Return FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
 EndFunc
 
 
-;~ Function to check if any checkbox is checked in a branch starting in node provided as path string
-Func IsAnyLootOptionInBranchChecked($startNodePath, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.')
-	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startNodePath, $pathDelimiter)
-	Return $treeViewItem == Null ? False : IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
+;~ Find a node in a treeview by its path as string
+Func FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
+	Local $treeViewItemName
+	While $treeViewItem <> 0
+		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
+		If $treeViewItemName == $name Then
+			Out('found: ' & $name)
+			Return $treeViewItem
+		EndIf
+		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
+	WEnd
+	Out('Not found: ' & $name)
+	Return Null
 EndFunc
 
 
@@ -1573,8 +2102,8 @@ Func OpenPickWindow()
 	Local $windowYPos = $mainPos[1] + 25
 
 	; need to be global
-	$temporary_gui = GUICreate("List of stuff", $windowWidth, $windowHeight, $windowXPos, $windowYPos, BitOR($WS_POPUP, $WS_BORDER), $WS_EX_TOOLWINDOW)
-	Local $list = GUICtrlCreateList("", 8, 8, $windowWidth - 16, $windowHeight - 16, BitOR($LBS_EXTENDEDSEL, $WS_VSCROLL, $LBS_NOINTEGRALHEIGHT))
+	$temporary_gui = GUICreate('List of stuff', $windowWidth, $windowHeight, $windowXPos, $windowYPos, BitOR($WS_POPUP, $WS_BORDER), $WS_EX_TOOLWINDOW)
+	Local $list = GUICtrlCreateList('', 8, 8, $windowWidth - 16, $windowHeight - 16, BitOR($LBS_EXTENDEDSEL, $WS_VSCROLL, $LBS_NOINTEGRALHEIGHT))
 
 	; Fill list
 	Local $alreadyPickedStuff = $map['pickedStuff']
@@ -1589,7 +2118,7 @@ Func OpenPickWindow()
 
 	; need to be global
 	$temporary_gui_opened = True
-	GUIRegisterMsg($GUI_WM_ACTIVATE, "TemporaryGUIWMActivateHandler")
+	GUIRegisterMsg($GUI_WM_ACTIVATE, 'TemporaryGUIWMActivateHandler')
 	GUISetState(@SW_SHOW, $temporary_gui)
 
 	While $temporary_gui_opened
@@ -1598,7 +2127,7 @@ Func OpenPickWindow()
 				$temporary_gui_opened = False
 		EndSwitch
 	WEnd
-	
+
 	; harvest while GUI still exists
 	Local $selectedStuff[]
 	Local $selectedIndices = _GUICtrlListBox_GetSelItems($list)
@@ -1618,5 +2147,12 @@ Func TemporaryGUIWMActivateHandler($handle, $message, $param)
 		EndIf
 	EndIf
 	Return $GUI_RUNDEFMSG
+EndFunc
+
+
+;~ Function to check if any checkbox is checked in a branch starting in node provided as path string
+Func IsAnyLootOptionInBranchChecked($startNodePath, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.')
+	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startNodePath, $pathDelimiter)
+	Return $treeViewItem == Null ? False : IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
 EndFunc
 #EndRegion Dead GUI code but keep because it could come handy

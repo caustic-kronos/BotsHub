@@ -808,7 +808,7 @@ EndFunc
 Func CreateMobsPriorityMap()
 	; Priority map : 0 highest kill priority, bigger numbers mean lesser priority
 	Local $priorityMap[]
-	Local $voltaicMobs = 				[	$ID_STONE_SUMMIT_DEFENDER,	$ID_STONE_SUMMIT_PRIEST,		$ID_MODNIIR_PRIEST,			$ID_STONE_SUMMIT_SUMMONER,		$ID_STONE_SUMMIT_WARDER, _
+	Local $voltaicMobs =				[	$ID_STONE_SUMMIT_DEFENDER,	$ID_STONE_SUMMIT_PRIEST,		$ID_MODNIIR_PRIEST,			$ID_STONE_SUMMIT_SUMMONER,		$ID_STONE_SUMMIT_WARDER, _
 											$ID_STONE_SUMMIT_DOMINATOR,	$ID_STONE_SUMMIT_BLASPHEMER,	$ID_STONE_SUMMIT_DREAMER,	$ID_STONE_SUMMIT_CONTAMINATOR,	$ID_STONE_SUMMIT_ZEALOT]
 	Local $voltaicMobsPriorities =		[	0,							0,								0,							1,								2, _
 											2,							2,								2,							2,								2]

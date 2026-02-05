@@ -1516,7 +1516,7 @@
 					"Of Tengu Slaying": true,
 					"Of Demon Slaying": true,
 					"Of Ogre Slaying": true,
-					"Of Dragon Slaying": false,
+					"Of Dragon Slaying": true,
 					"Of Hammer Mastery (Item's attribute +1 - 20% chance while using skills)": false
 				}
 			},

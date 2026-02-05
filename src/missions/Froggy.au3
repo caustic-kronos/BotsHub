@@ -36,6 +36,7 @@ Global Const $FROGGY_AGGRO_RANGE = $RANGE_SPELLCAST + 100
 Global Const $ID_FROGGY_QUEST = $ID_QUEST_GIRIFFS_WAR
 ;Global Const $ID_FROGGY_QUEST = $ID_QUEST_TEKKS_WAR
 
+Global Const $FROGGY_FARM_DURATION = 40 * 60 * 1000
 Global Const $MAX_FROGGY_FARM_DURATION = 60 * 60 * 1000
 
 Global $froggy_farm_setup = False

@@ -250,7 +250,7 @@ Func VaettirsFarmLoop()
 	Sleep(1000)
 
 	If IsPlayerDead() Then Return RezoneToJagaMoraine()
-	
+
 	Info('Picking up loot')
 	PickUpItems(VaettirsStayAlive)
 	Return RezoneToJagaMoraine()
@@ -367,7 +367,7 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 	If $result == $SUCCESS Then Return $SUCCESS
 	; If no success when moving, either we died (the end) or we were bodyblocked
 	If IsPlayerDead() Then Return $FAIL
-	
+
 	; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 	VaettirsKillSequence()
 	If IsPlayerDead() Then Return $FAIL

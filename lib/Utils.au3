@@ -82,8 +82,8 @@ EndFunc
 
 ;~ Differs from previous function by going randomly in a direction, but the distance from the given point is fixed
 Func MoveRandom($x, $y, $distance)
-    Local $angle = Random(0, 2 * 3.14)
-    MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 0)
+	Local $angle = Random(0, 2 * 3.14)
+	MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 0)
 EndFunc
 
 
@@ -1377,13 +1377,13 @@ EndFunc
 
 ;~ Manage excess faction points by either donating them, buying materials or elite zone scrolls
 Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
-	If GetFactionFunction() > (GetMaxFactionFunction() - 25000) Then
+	If $GetFactionFunction() > ($GetMaxFactionFunction() - 25000) Then
 		TravelToOutpost($mapForFactionExchange, $district_name)
 		RandomSleep(200)
 		GoNearestNPCToCoords($npcX, $npcY)
 		If $run_options_cache['run.donate_faction_points'] Then
 			Info('Donating ' & $factionName & ' faction points')
-			While GetFactionFunction() >= 5000
+			While $GetFactionFunction() >= 5000
 				DonateFaction($factionName)
 				RandomSleep(500)
 			WEnd
@@ -1391,7 +1391,7 @@ Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFu
 			Info('Converting ' & $factionName & ' faction points into materials')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfChunks = Floor(GetFactionFunction() / 5000)
+			Local $numberOfChunks = Floor($GetFactionFunction() / 5000)
 			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
 			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
 			Dialog($dialogID)
@@ -1400,7 +1400,7 @@ Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFu
 			Info('Converting ' & $factionName & ' faction points into Passage Scrolls')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfScrolls = Floor(GetFactionFunction() / 1000)
+			Local $numberOfScrolls = Floor($GetFactionFunction() / 1000)
 			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
 			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)

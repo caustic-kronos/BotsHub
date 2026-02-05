@@ -47,7 +47,7 @@ Func KurzickFactionFarmDrazach()
 	GoToDrazach()
 	Local $result = VanquishDrazach()
 	AdlibUnRegister('TrackPartyStatus')
-	
+
 	Return $result
 EndFunc
 
@@ -94,7 +94,7 @@ Func VanquishDrazach()
 		Dialog(0x86)
 		RandomSleep(1000)
 	EndIf
-	
+
 	Local Static $foes[81][3] = [ _
 		[-6506, -16099, 'Start'], _
 		[-8581, -15354, 'Approach'], _
@@ -177,7 +177,7 @@ Func VanquishDrazach()
 		[455.56, -9067.87, 'Last enemies'], _
 		[2772.91, -9397.36, 'Ritualist bosses'] _
 	]
-	
+
 	For $i = 0 To UBound($foes) - 1
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next

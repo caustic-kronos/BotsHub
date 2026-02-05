@@ -32,6 +32,8 @@ Opt('MustDeclareVars', True)
 #Region Inventory Management
 ;~ Function to deal with inventory before farm run
 Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
+	; Clarity rename
+	Local $cache = $inventory_management_cache
 	; Operations order :
 	; 1-Store unids if desired
 	; 2-Sort items
@@ -43,12 +45,12 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	; 8-Balance character's gold level
 	; 9-Buy ectoplasm/obsidian with surplus
 	; 10-Store items
-	If $inventory_management_cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
+	If $cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
 	If $run_options_cache['run.sort_items'] Then SortInventory()
-	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then
+	If $cache['@identify.something'] And HasUnidentifiedItems() Then
 		TravelToOutpost($tradeTown, $district_name)
 		IdentifyItems()
 	EndIf
@@ -60,7 +62,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If $inventory_management_cache['@salvage.something'] And HasItemsToSalvage() Then
+	If $cache['@salvage.something'] And HasItemsToSalvage() Then
 		TravelToOutpost($tradeTown, $district_name)
 		SalvageItems()
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
@@ -68,42 +70,44 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		;UpgradeWithSalvageInscriptions()
 		;SalvageMaterials()
 	EndIf
-	If $inventory_management_cache['@sell.materials.something'] And (HasBasicMaterialsToTrade() Or HasRareMaterialsToTrade()) Then
+	If $cache['@sell.materials.something'] And (HasBasicMaterialsToTrade() Or HasRareMaterialsToTrade()) Then
 		TravelToOutpost($tradeTown, $district_name)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
-		If $inventory_management_cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
-		If $inventory_management_cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
+		If $cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
+		If $cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
-	If $inventory_management_cache['@sell.something'] And HasItemsToSell() Then
+	If $cache['@sell.something'] And HasItemsToSell() Then
 		TravelToOutpost($tradeTown, $district_name)
 		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		SellItemsToMerchant()
 	EndIf
 	; Max gold in Xunlai chest is 1000 platinums
-	If $inventory_management_cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
+	If $cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		DepositGold(60000)
 		Info('Deposited Gold')
 	EndIf
-	If $inventory_management_cache['Store items.Gold'] Then
+	If $cache['Store items.Gold'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		BalanceCharacterGold(10000)
 	EndIf
 	; TODO: generalize this for all materials
-	If $inventory_management_cache['Buy items.Rare Materials.Glob of Ectoplasm'] And GetGoldCharacter() > 10000 Then
+	If $cache['Buy items.Rare Materials.Glob of Ectoplasm'] And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
 	EndIf
-	If $inventory_management_cache['Buy items.Rare Materials.Obsidian Shard'] And GetGoldCharacter() > 10000 Then
+	If $cache['Buy items.Rare Materials.Obsidian Shard'] And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
 	EndIf
-	If $inventory_management_cache['@store.something'] Then
+	If $cache['@store.something'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage()
 	EndIf
+	ResetBotsSetups()
+	Return $PAUSE
 EndFunc
 
 
@@ -448,7 +452,7 @@ Func DefaultShouldSalvageItem($item)
 	; -------------------------------------- Materials --------------------------------------
 	ElseIf IsRareMaterial($item) Then
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
+		Return $cache['Salvage items.Rare Materials.' & $materialName]
 	EndIf
 	Return False
 EndFunc

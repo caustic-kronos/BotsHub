@@ -53,7 +53,7 @@ Global Const $AGENT_STRUCT_TEMPLATE = _
 	'dword VisibleEffectsHasEnded;	dword unknown384;			dword LoginNumber;			float AnimationSpeed;'		& _
 	'dword AnimationCode;			dword AnimationID;			byte unknown404[32];		byte LastStrike;'			& _
 	'byte Allegiance;				short WeaponType;			short Skill;				short unknown442;'			& _
-	'byte WeaponItemType;			byte OffhandItemType;		short WeaponItemID;			short OffhandItemID;'		
+	'byte WeaponItemType;			byte OffhandItemType;		short WeaponItemID;			short OffhandItemID;'
 Global Const $BUFF_STRUCT_TEMPLATE = _
 	'long SkillID;				long unknown1;				long BuffID;				long TargetID;'
 Global Const $EFFECT_STRUCT_TEMPLATE = _

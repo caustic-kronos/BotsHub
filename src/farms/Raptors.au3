@@ -301,7 +301,7 @@ Func RaptorsDefend()
 	Local $energy = GetEnergy()
 	Switch $raptors_player_profession
 		Case $ID_WARRIOR
-			If $energy > 5 And IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then 
+			If $energy > 5 And IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then
 				UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
 				$energy -= 5
 			EndIf

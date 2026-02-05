@@ -204,10 +204,10 @@ EndFunc
 
 
 Func IsCasting($agent)
-    Local $modelState = DllStructGetData($agent, 'ModelState')
-    Local $cast = DllStructGetData($agent, 'Skill')
-    Local $isCasting = ($cast <> 0) Or ($modelState == 0x41) Or ($modelState == 0x245)
-    Return $isCasting
+	Local $modelState = DllStructGetData($agent, 'ModelState')
+	Local $cast = DllStructGetData($agent, 'Skill')
+	Local $isCasting = ($cast <> 0) Or ($modelState == 0x41) Or ($modelState == 0x245)
+	Return $isCasting
 EndFunc
 
 
@@ -349,7 +349,7 @@ EndFunc
 ;			$offset[4] = $i * 0xBC
 ;			Local $skillBarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 ;			SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $skillBarStructAddress[0], 'ptr', DllStructGetPtr($skillbarStruct), 'int', DllStructGetSize($skillbarStruct), 'int', 0)
-;			
+;
 ;			If DllStructGetData($skillbarStruct, 'AgentID') == GetHeroID($heroIndex) Then
 ;				$cachedSkillbarAddress = $skillBarStructAddress[0]
 ;				$cachedHero = $heroIndex
@@ -555,9 +555,9 @@ EndFunc
 
 ;~ Return the skill timer - shared timer for all skills
 Func GetSkillTimer()
-    Static $skillTimer = MemoryRead(GetProcessHandle(), $skill_timer_address, 'dword')
-    Local $tickCount = DllCall($kernel_handle, 'dword', 'GetTickCount')[0]
-    Return BitAND($tickCount + $skillTimer, 0xFFFFFFFF)
+	Static $skillTimer = MemoryRead(GetProcessHandle(), $skill_timer_address, 'dword')
+	Local $tickCount = DllCall($kernel_handle, 'dword', 'GetTickCount')[0]
+	Return BitAND($tickCount + $skillTimer, 0xFFFFFFFF)
 EndFunc
 
 
@@ -1671,33 +1671,33 @@ Func SellItemToTrader($item, $quantity = 0)
 	Local $processHandle = GetProcessHandle()
 	Local $batchSize = 1
 
-    If $itemQuantity < 0 Then Return False
+	If $itemQuantity < 0 Then Return False
 	; Sell all
-    If $quantity == 0 Or $quantity > $itemQuantity Then $quantity = $itemQuantity
+	If $quantity == 0 Or $quantity > $itemQuantity Then $quantity = $itemQuantity
 
-    If IsBasicMaterial($item) Then $batchSize = 10
-    For $i = 0 To $itemQuantity - $batchSize Step $batchSize
-        ; Request quote
-        DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 2, $itemID)
-        Enqueue($REQUEST_QUOTE_STRUCT_SELL_PTR, 8)
-        ; Wait for quote response
+	If IsBasicMaterial($item) Then $batchSize = 10
+	For $i = 0 To $itemQuantity - $batchSize Step $batchSize
+		; Request quote
+		DllStructSetData($REQUEST_QUOTE_STRUCT_SELL, 2, $itemID)
+		Enqueue($REQUEST_QUOTE_STRUCT_SELL_PTR, 8)
+		; Wait for quote response
 		Local $costID = -1
-        Local $timer = TimerInit()
-        While $costID <> $itemID
-            $costID = MemoryRead($processHandle, $trader_cost_ID)
+		Local $timer = TimerInit()
+		While $costID <> $itemID
+			$costID = MemoryRead($processHandle, $trader_cost_ID)
 			Sleep(20 + GetPing())
 			If TimerDiff($timer) > 2000 Then
 				Warn('Trader quote timeout for item ' & DllStructGetData($item, 'ModelID'))
 				Return False
 			EndIf
 		WEnd
-        ; Execute trader sell
-        Local $costValue = MemoryRead($processHandle, $trader_cost_value)
-        Enqueue($TRADER_SELL_STRUCT_PTR, 4)
-        ; Wait a bit for transaction to complete
-        Sleep(20 + GetPing())
-    Next
-    Return True
+		; Execute trader sell
+		Local $costValue = MemoryRead($processHandle, $trader_cost_value)
+		Enqueue($TRADER_SELL_STRUCT_PTR, 4)
+		; Wait a bit for transaction to complete
+		Sleep(20 + GetPing())
+	Next
+	Return True
 EndFunc
 
 #Region NPC Trade
