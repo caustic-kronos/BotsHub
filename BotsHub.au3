@@ -18,7 +18,7 @@
 ; - after salvage, get material ID and write in file salvaged material
 ; - add true locking mechanism to prevent trying to run several bots on the same account at the same time
 
-; Night's tips and tricks
+; Night tips and tricks
 ; - Always refresh agents before getting data from them (agent = snapshot)
 ;		(so only use $me if you are sure nothing important changes between $me definition and $me usage)
 ; - AdlibRegister('NotifyHangingBot', 120000) can be used to simulate multithreading
@@ -109,6 +109,8 @@ Global $run_mode = 'AUTOLOAD'
 Global $process_id = ''
 Global $character_name = ''
 Global $farm_name = ''
+Global $run_configuration = 'Default Farm Configuration'
+Global $loot_configuration = 'Default Loot Configuration'
 ; If set to 0, disables inventory management
 Global $inventory_space_needed = 5
 Global $run_timer = Null
@@ -157,11 +159,8 @@ Func Main()
 
 	; Steps GUI free
 	FillFarmMap()
-	LoadDefaultConfiguration()
-	Local $jsonLootOptions = LoadLootOptions(@ScriptDir & '/conf/loot/Default Loot Configuration.json')
-	FillInventoryCacheFromJSON($jsonLootOptions, '')
-	BuildInventoryDerivedFlags()
-	RefreshValuableListsFromCache()
+	LoadDefaultRunConfiguration()
+	LoadDefaultLootConfiguration()
 
 	; GUI part
 	CreateGUI()
@@ -242,7 +241,7 @@ Func RunFarmLoop()
 		If (CountSlots(1, _Min($bags_count, 4)) < $inventorySpaceNeeded) Then
 			InventoryManagementBeforeRun()
 		EndIf
-		; Inventory management didn't clean up inventory - we pause
+		; Inventory management did not clean up inventory - we pause
 		If (CountSlots(1, $bags_count) < $inventorySpaceNeeded) Then
 			Notice('Inventory full, pausing.')
 			ResetBotsSetups()
@@ -283,37 +282,61 @@ EndFunc
 
 
 #Region Load/Save configuration
-;~ Change to a different configuration
-Func LoadConfiguration($configuration)
-	Local $configFile = FileOpen(@ScriptDir & '/conf/farm/' & $configuration & '.json' , $FO_READ + $FO_UTF8)
-	Local $jsonString = FileRead($configFile)
-	ReadConfigFromJson($jsonString)
-	FileClose($configFile)
-	Info('Loaded configuration <' & $configuration & '>')
-EndFunc
-
-
 ;~ Load default farm configuration if it exists
-Func LoadDefaultConfiguration()
-	If FileExists(@ScriptDir & '/conf/farm/Default Farm Configuration.json') Then
-		Local $configFile = FileOpen(@ScriptDir & '/conf/farm/Default Farm Configuration.json' , $FO_READ + $FO_UTF8)
-		Local $jsonString = FileRead($configFile)
-		ReadConfigFromJson($jsonString)
-		FileClose($configFile)
-		Info('Loaded default farm configuration')
+Func LoadDefaultRunConfiguration()
+	Local $filePath = @ScriptDir & '/conf/farm/' & $run_configuration & '.json'
+	If FileExists($filePath) Then
+		LoadRunConfiguration($filePath)
+	Else
+		Error('No default run configuration at ' & $filePath)
 	EndIf
 EndFunc
 
 
+;~ Change to a different configuration
+Func LoadRunConfiguration($filePath)
+	Local $configFile = FileOpen($filePath , $FO_READ + $FO_UTF8)
+	Local $jsonString = FileRead($configFile)
+	ReadConfigFromJson($jsonString)
+	FileClose($configFile)
+	Info('Loaded run configuration at ' & $filePath)
+EndFunc
+
+
 ;~ Save a new configuration
-Func SaveConfiguration($configurationPath)
-	Local $configFile = FileOpen($configurationPath, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)
+Func SaveRunConfiguration($filePath)
+	Local $configFile = FileOpen($filePath, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)
 	Local $jsonString = WriteConfigToJson()
 	FileWrite($configFile, $jsonString)
 	FileClose($configFile)
-	Local $configurationName = StringTrimRight(StringMid($configurationPath, StringInStr($configurationPath, '\', 0, -1) + 1), 5)
-	Info('Saved configuration ' & $configurationPath)
+	Local $configurationName = StringTrimRight(StringMid($filePath, StringInStr($filePath, '\', 0, -1) + 1), 5)
+	Info('Saved run configuration at ' & $filePath)
 	Return $configurationName
+EndFunc
+
+
+;~ Load default loot configuration if it exists
+Func LoadDefaultLootConfiguration()
+	Local $filePath = @ScriptDir & '/conf/loot/' & $loot_configuration & '.json'
+	If FileExists($filePath) Then
+		LoadLootConfiguration($filePath)
+	Else
+		Error('No default loot configuration at ' & $filePath)
+	EndIf
+EndFunc
+
+
+;~ Load loot configuration file if it exists
+Func LoadLootConfiguration($filePath)
+	$loot_configuration = $filePath
+	$loot_configuration = StringTrimRight($loot_configuration, StringLen(@ScriptDir & '/conf/loot/'))
+	; Removing .json
+	$loot_configuration = StringTrimLeft($loot_configuration, 5)
+	Local $jsonLootOptions = LoadLootOptions($filePath)
+	FillInventoryCacheFromJSON($jsonLootOptions, '')
+	BuildInventoryDerivedFlags()
+	RefreshValuableListsFromCache()
+	Info('Loaded loot configuration at ' & $filePath)
 EndFunc
 
 
@@ -335,6 +358,8 @@ Func ReadConfigFromJson($jsonString)
 
 	$character_name = _JSON_Get($jsonObject, 'main.character')
 	$farm_name = _JSON_Get($jsonObject, 'main.farm')
+	Local $lootConfig = _JSON_Get($jsonObject, 'main.loot_configuration')
+	If $lootConfig <> Null And $lootConfig <> '' Then $loot_configuration = $lootConfig
 
 	Local $weaponSlot = _JSON_Get($jsonObject, 'run.weapon_slot')
 	$weaponSlot = _Max($weaponSlot, 0)
@@ -518,7 +543,7 @@ Func ResetBotsSetups()
 	$spirit_slaves_farm_setup				= False
 	$tasca_farm_setup						= False
 	$vaettirs_farm_setup					= False
-	; Those don't need to be reset - party didn't change, build didn't change, and there is no need to refresh portal
+	; Those do not need to be reset - party did not change, build did not change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$cof_farm_setup						= False
 	;$corsairs_farm_setup					= False
@@ -583,7 +608,7 @@ Func SetupTeamUsingGlobalSettings($teamSize = $ID_TEAM_SIZE_LARGE)
 	Info('Setting up team according to GUI settings')
 	LeaveParty()
 	RandomSleep(500)
-	; Could use Eval(), it's shorter but it's kind of dirty
+	; Could use Eval(), it is shorter but also kind of dirty
 	For $i = 1 To $ID_TEAM_SIZE_LARGE - 1
 		Local $hero = $run_options_cache['team.hero_' & $i]
 		If $hero <> '' Then

@@ -32,7 +32,7 @@ Opt('MustDeclareVars', True)
 Global Const $KURZICK_FACTION_DRAZACH_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
-	& 'This bot doesnt load hero builds - please use your own teambuild' & @CRLF _
+	& 'This bot does not load hero builds - please use your own teambuild' & @CRLF _
 	& 'An Alternative Farm to Ferndale. This Bot will farm Drazach Thicket'
 ; Average duration ~ 25m
 Global Const $KURZICKS_FARM_DRAZACH_DURATION = 25 * 60 * 1000

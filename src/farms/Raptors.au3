@@ -31,7 +31,7 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $WN_RAPTORS_FARMER_SKILLBAR = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
-;Doesn't work, dervish just takes too much damage
+;Does not work, dervish just takes too much damage
 Global Const $DN_RAPTORS_FARMER_SKILLBAR = 'OQQTcYqVXySgmUlJvovYUbHctAA'
 Global Const $P_RUNNER_HERO_SKILLBAR = 'OQijEqmMKODbe8O2Efjrx0bWMA'
 Global Const $RAPTORS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _

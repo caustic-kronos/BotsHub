@@ -368,7 +368,7 @@ Func VaettirsMoveDefending($destinationX, $destinationY)
 	; If no success when moving, either we died (the end) or we were bodyblocked
 	If IsPlayerDead() Then Return $FAIL
 
-	; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
+	; When playing as Elementalist or other professions that do not have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 	VaettirsKillSequence()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Picking up loot')
@@ -432,7 +432,7 @@ EndFunc
 
 ;~ Uses Shadow Form if its recharged
 Func VaettirsCheckShadowForm()
-	; Caution, monk 55hp needs protective spirit before casting shadow form, otherwise damage reduction won't be applied
+	; Caution, monk 55hp needs protective spirit before casting shadow form, otherwise damage reduction will not be applied
 	; Casting protective spirit multiple times may remove damage reduction so protective spirit has to casted only once just before Shadow Form
 	If ($vaettirs_player_profession <> $ID_MONK And TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20) Or _
 		($vaettirs_player_profession == $ID_MONK And TimerDiff($vaettir_shadowform_timer) > 19500 And GetEnergy() > 30) Then

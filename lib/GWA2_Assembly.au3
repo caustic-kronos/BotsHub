@@ -26,7 +26,7 @@ Global Const $CONTROL_TYPE_ACTIVATE = 0x20
 Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 
 #Region GWA2 Structure templates
-; Don't create global DllStruct for those (can exist simultaneously in several instances)
+; Do not create global DllStruct for those (can exist simultaneously in several instances)
 Global Const $AGENT_STRUCT_TEMPLATE = _
 	'ptr vtable;					dword unknown008[4];		dword Timer;				dword Timer2;'				& _
 	'ptr NextAgent;					dword unknown032[3];		long ID;					float Z;'					& _

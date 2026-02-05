@@ -179,7 +179,7 @@ Func Attack($agent, $callTarget = False)
 EndFunc
 
 
-;~ Use a skill, doesn't wait for the skill to be done
+;~ Use a skill, does not wait for the skill to be done
 ;~ If no target is provided then skill is used on self
 Func UseSkill($skillSlot, $target = Null, $callTarget = False)
 	Local $myID = GetMyID()
@@ -192,7 +192,7 @@ Func UseSkill($skillSlot, $target = Null, $callTarget = False)
 EndFunc
 
 
-;~ Order a hero to use a skill, doesn't wait for the skill to be done
+;~ Order a hero to use a skill, does not wait for the skill to be done
 ;~ If no target is provided then skill is used on hero who uses the skill
 Func UseHeroSkill($heroIndex, $skillSlot, $target = Null)
 	Local $targetID = ($target == Null) ? GetHeroID($heroIndex) : DllStructGetData($target, 'ID')
@@ -547,7 +547,7 @@ Func GetEffectTimeRemaining($effect, $heroIndex = 0)
 	Local $castTimeStamp = DllStructGetData($effect, 'TimeStamp')
 
 	; Caution, noticed some	discrepancy between GetInstanceUpTime() and cast timestamps, difference can be negative surprisingly
-	; Furthermore, other problem is that reapplying the effect doesn't always refresh its start timestamp until previous effect elapses
+	; Furthermore, other problem is that reapplying the effect does not always refresh its start timestamp until previous effect elapses
 	; Therefore capping remaining effect time to be always bigger or equal to 1 with _Max() if there is still effect on hero/player
 	Return _Max(1, $duration - (GetInstanceUpTime() - ($castTimeStamp + $castTime + $aftercast + GetPing())))
 EndFunc
@@ -1105,7 +1105,7 @@ Func GetHeroNumberByHeroID($heroID)
 EndFunc
 
 
-;~ Returns hero's profession ID (when it can't be found by other means)
+;~ Returns hero's profession ID (when it cannot be found by other means)
 Func GetHeroProfession($heroIndex, $secondary = False)
 	Local $processHandle = GetProcessHandle()
 	Local $offset[5] = [0, 0x18, 0x2C, 0x6BC, 0]
@@ -1387,7 +1387,7 @@ Func StartSalvageWithKit($item, $salvageKit)
 EndFunc
 
 
-;~ Doesn't work - Should validate salvage
+;~ Does not work - Should validate salvage
 Func ValidateSalvage()
 	ControlSend(GetWindowHandle(), '', '', '{Enter}')
 	Sleep(1000 + GetPing())
@@ -1474,7 +1474,7 @@ Func IsItemEquippedInWeaponSlot($itemModelID, $weaponSlot)
 EndFunc
 
 
-; FIXME: doesn't work
+; FIXME: does not work
 ;~ Checks if item specified by item's model ID is located in any bag or backpack or is equipped in any weapon slot
 Func ItemExistsInInventory($itemModelID)
 	Local $item = GetItemByModelID($itemModelID)
@@ -2482,10 +2482,10 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 
 	$primaryAttribute = GetProfPrimaryAttribute(GetHeroProfession($heroIndex))
 
-	; fix for problem when build template doesn't have second profession, but attribute points of current player/hero profession still need to be cleared
-	; in case of player it's possible to extract secondary profession property from agent struct because player exists in outposts contrary to heroes
-	; in case of heroes it isn't possible to extract secondary profession from agent struct of hero in outpost because hero agents don't exist in outposts, only in explorables
-	; therefore doing a workaround for heroes that when build template doesn't have second profession then hero second profession is changed to Monk, which clears attribute points of second profession, regardless if it was Monk or not
+	; fix for problem when build template does not have second profession, but attribute points of current player/hero profession still need to be cleared
+	; in case of player it is possible to extract secondary profession property from agent struct because player exists in outposts contrary to heroes
+	; in case of heroes it is not possible to extract secondary profession from agent struct of hero in outpost because hero agents do not exist in outposts, only in explorables
+	; therefore doing a workaround for heroes that when build template does not have second profession then hero second profession is changed to Monk, which clears attribute points of second profession, regardless if it was Monk or not
 	If $secondaryProfession == 0 Or $secondaryProfession == Null Then
 		If $heroIndex == 0 Then
 			$secondaryProfession = DllStructGetData(GetMyAgent(), 'Secondary')
@@ -2620,7 +2620,7 @@ Func GetExperience()
 EndFunc
 
 
-;~ Returns current ping. Don't overruse, is valuable for sensitive things (salvage for instance) and small sleeps
+;~ Returns current ping. Do not overruse, is valuable for sensitive things (salvage for instance) and small sleeps
 Func GetPing()
 	Local $ping = MemoryRead(GetProcessHandle(), $ping_address)
 	Return $ping < 10 ? 10 : $ping

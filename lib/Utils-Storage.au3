@@ -72,14 +72,14 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	EndIf
 	If $cache['@sell.materials.something'] And (HasBasicMaterialsToTrade() Or HasRareMaterialsToTrade()) Then
 		TravelToOutpost($tradeTown, $district_name)
-		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		; If we have more than 60k, we risk running into the situation we cannot sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		If $cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
 		If $cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
 	If $cache['@sell.something'] And HasItemsToSell() Then
 		TravelToOutpost($tradeTown, $district_name)
-		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		; If we have more than 60k, we risk running into the situation we cannot sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		SellItemsToMerchant()
 	EndIf
@@ -594,7 +594,7 @@ Func ShouldKeepWeapon($item)
 		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
 		If GetItemReq($item) == 9 And $MAP_RARE_WEAPONS[$itemID] <> Null Then Return True
 		Return False
-	; OS - Old School weapon without inscription ... it's more complicated
+	; OS - Old School weapon without inscription ... it is more complicated
 	Else
 		If GetItemReq($item) >= 9 Then
 			; OS (Old School) high Req are kept only if : 1) rare skin and perfect/almost perfect mods 2) good type and perfect mods (shield, offhand, wand)
@@ -1649,7 +1649,7 @@ EndFunc
 Func CountSlots($fromBag = 1, $toBag = $bags_count)
 	Local $bag
 	Local $availableSlots = 0
-	; If bag is missing it just won't count (Slots = 0, ItemsCount = 0)
+	; If bag is missing it just will not count (Slots = 0, ItemsCount = 0)
 	For $i = $fromBag To $toBag
 		$bag = GetBag($i)
 		$availableSlots += DllStructGetData($bag, 'Slots') - DllStructGetData($bag, 'ItemsCount')

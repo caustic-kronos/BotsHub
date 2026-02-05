@@ -1,7 +1,8 @@
 ﻿{
 	"main": {
 		"character": "No character selected",
-		"farm": "Choose a farm"
+		"farm": "Choose a farm",
+		"loot_configuration": "Default Loot Configuration"
 	},
 	"run": {
 		"loop_mode": true,

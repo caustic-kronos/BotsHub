@@ -46,12 +46,12 @@ Global Const $MAX_UW_FARM_DURATION = 135 * 60 * 1000 ; Runs take about 135 minut
 Global Const $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
 
 ; Specific Quest Knobs
-Global Const $ENABLE_WRATHFUL_SPIRITS = False ; Quest takes too long and mobs don't drop loot.
+Global Const $ENABLE_WRATHFUL_SPIRITS = False ; Quest takes too long and mobs do not drop loot.
 Global Const $ENABLE_SERVANTS_OF_GRENTH = True
 Global Const $ENABLE_THE_FOUR_HORSEMEN = False ; Quest not implemented yet.
 Global Const $ENABLE_TERRORWEB_QUEEN = True
 Global Const $ENABLE_IMPRISONED_SPIRITS = True
-Global Const $ENABLE_DEMON_ASSASSIN = False ; Behemoths don't drop ecto. Skips Mountain area too.
+Global Const $ENABLE_DEMON_ASSASSIN = False ; Behemoths do not drop ectos. Skips Mountain area too.
 
 Global $underworld_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
 

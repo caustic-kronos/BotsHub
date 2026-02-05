@@ -35,7 +35,7 @@ Global Const $FAITHFUL_INTERVENTION_SKILL_POSITION = 8
 ; BiP Necro
 Global Const $BIP_SKILL_POSITION = 7
 
-; Zephyr Ranger - Quickening Zephyr and serpent's quickness must be locked so hero doesn't use them
+; Zephyr Ranger - Quickening Zephyr and serpent's quickness must be locked so hero does not use them
 Global Const $SERPENTS_QUICKNESS_SKILL_POSITION = 6
 Global Const $QUICKENING_ZEPHYR_SKILL_POSITION = 7
 
@@ -52,7 +52,7 @@ Global Const $ID_NECRO_MERCENARY_HERO = $ID_MERCENARY_HERO_3
 
 Global $quickening_zephyr_cast_timer
 
-;~ Shouldn't be used - doesn't farm anything
+;~ Should not be used - does not farm anything
 Func OmniFarm()
 	;If Not($Farm_Setup) Then OmniFarmSetup()
 
@@ -64,7 +64,7 @@ Func OmniFarm()
 	Return $SUCCESS
 EndFunc
 
-;~ Shouldn't be used
+;~ Should not be used
 Func HealingLoop()
 	While $runtime_status == 'RUNNING'
 		ManualFarmAutoHealingLoop()
@@ -264,7 +264,7 @@ Func BurstHealingUnit()
 EndFunc
 
 
-;~ Shouldn't be used in other farm bots - made to run continuously, so has strong latency (about 5s)
+;~ Should not be used in other farm bots - made to run continuously, so has strong latency (about 5s)
 Func ManualFarmAutoHealingLoop()
 	If TimerDiff($quickening_zephyr_cast_timer) > 38000 Then
 		UseHeroSkill($HERO_ZEPHYR_RANGER, $QUICKENING_ZEPHYR_SKILL_POSITION)

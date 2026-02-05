@@ -173,7 +173,7 @@ EndFunc
 
 
 ;~ Return back to outpost from exploration/mission map using resign functionality. This can put player closer to exit portal in outpost
-;~ Don't use for maps that share the same ID as the outpost
+;~ Do not use for maps that share the same ID as the outpost
 Func ResignAndReturnToOutpost($outpostID, $ignoreMapID = False)
 	Local $outpostName = $MAP_NAMES_FROM_IDS[$outpostID]
 	Info('Returning to ' & $outpostName & ' (outpost)')
@@ -422,7 +422,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 			;MoveTo(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 			;Seems to work but serious rubberbanding
 			;GoSignpost($agent)
-			;Much better solution BUT character doesn't defend itself while going to chest + function kind of sucks
+			;Much better solution BUT character does not defend itself while going to chest + function kind of sucks
 			;GoToSignpost($agent)
 			;Final solution, caution, chest is considered as signpost by game client
 			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)
@@ -501,7 +501,7 @@ Func CheckStuck($stuckLocation, $maxFarmDuration = 3600000)
 EndFunc
 
 
-;~ Send /stuck - don't overuse, otherwise there can be a BAN !
+;~ Send /stuck - do not overuse, otherwise there can be a BAN !
 Func CheckAndSendStuckCommand()
 	; static variable is initialized only once when CheckAndSendStuckCommand is called first time
 	Local Static $chatStuckTimer = TimerInit()
@@ -509,7 +509,7 @@ Func CheckAndSendStuckCommand()
 	Local $stuckInterval = 10000
 
 	; Use a timer to avoid spamming /stuck, because spamming stuck can result in being flagged, which can result in a ban
-	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there shouldn't be any enemies around the character then
+	; Checking if no foes are in range to use /stuck only when rubberbanding or on some obstacles, there should not be any enemies around the character then
 	If Not IsPlayerMoving() And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY) == 0 And TimerDiff($chatStuckTimer) > $stuckInterval Then
 		Warn('Sending /stuck')
 		SendChat('stuck', '/')
@@ -1204,7 +1204,7 @@ EndFunc
 ; During below festival these are the decorated towns: Kamadan, Jewel of Istan, Lion's Arch, Shing Jea Monastery
 ; Map IDs for these cities may change so can check them before travelling
 ; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot can't travel even when that city was visited before festival event by that character
+; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
 Func IsCanthanNewYearFestival()
 	Local $currentMonth = @MON
 	Local $currentDay = @MDAY
@@ -1216,7 +1216,7 @@ EndFunc
 ; During below festival Kaineng Center and Shing Jea Monastery are decorated
 ; Map IDs for these cities may change so can check them before travelling
 ; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot can't travel even when that city was visited before festival event by that character
+; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
 Func IsAnniversaryCelebration()
 	Local $currentMonth = @MON
 	Local $currentDay = @MDAY
@@ -1228,7 +1228,7 @@ EndFunc
 ; During below festival decorations are applied to Kaineng Center and Shing Jea Monastery
 ; Map IDs for these cities may change so can check them before travelling
 ; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot can't travel even when that city was visited before festival event by that character
+; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
 Func IsDragonFestival()
 	Local $currentMonth = @MON
 	Local $currentDay = @MDAY
@@ -1240,7 +1240,7 @@ EndFunc
 ; During below festival Lion's Arch, Droknar's Forge, Kamadan, Jewel of Istan and Tomb of the Primeval Kings are all redecorated in a suitably festive (dark) style
 ; Map IDs for these cities may change so can check them before travelling
 ; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot can't travel even when that city was visited before festival event by that character
+; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
 Func IsHalloweenFestival()
 	Local $currentMonth = @MON
 	Local $currentDay = @MDAY
@@ -1252,7 +1252,7 @@ EndFunc
 ; During below festival Ascalon City, Lion's Arch, Droknar's Forge, Kamadan, Jewel of Istan and Eye of the North are all redecorated in a suitably festive (and snowy) style
 ; Map IDs for these cities may change so can check them before travelling
 ; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot can't travel even when that city was visited before festival event by that character
+; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
 Func IsChristmasFestival()
 	Local $currentMonth = @MON
 	Local $currentDay = @MDAY
@@ -2128,7 +2128,7 @@ EndFunc
 ; Parameters ....:	$pid - The PID of a currently running process
 ; Return values .:	Success		- The name of the process
 ;					Failure		- Blank string and sets @error
-;						1 - Process doesn't exist
+;						1 - Process does not exist
 ;						2 - Error getting process list
 ;						3 - No processes found
 ; Author ........: Erifash <erifash [at] gmail [dot] com>, Wouter van Kesteren.
@@ -2149,7 +2149,7 @@ EndFunc
 
 
 #Region AutoIt Utils
-;~ Return the value if it's not Null else the defaultValue
+;~ Return the value if it is not Null else the defaultValue
 Func GetOrDefault($value, $defaultValue)
 	Return ($value == Null) ? $defaultValue : $value
 EndFunc

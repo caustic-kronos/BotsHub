@@ -58,7 +58,7 @@ Func LDOATitleFarm()
 		Info('LDOA farm setup failed, stopping farm.')
 		Return $PAUSE
 	EndIf
-	; Difference between this bot and ALL the others : this bot can't go to Eye of the North or other towns for inventory management
+	; Difference between this bot and ALL the others : this bot cannot go to Eye of the North or other towns for inventory management
 	PresearingInventoryManagement()
 
 	AdlibRegister('LowHealthMonitor', $LOW_HEALTH_CHECK_INTERVAL)

@@ -337,7 +337,7 @@ Func CreateGUI()
 		'- correct build' & @CRLF & _
 		'- correct order' & @CRLF & _
 		'- correct behaviour (passive/aggressive)' & @CRLF & _
-		'If party size is 4 or 6, last heroes just won''t be added to party.', 40, 70)
+		'If party size is 4 or 6, last heroes just will not be added to party.', 40, 70)
 	$gui_checkbox_automaticteamsetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 140)
 	$gui_teammemberlabel = GUICtrlCreateLabel('Team member', 147, 170, 100, 20)
 	$gui_teammemberbuildlabel = GUICtrlCreateLabel('Team member build', 445, 170, 100, 20)
@@ -577,15 +577,20 @@ Func GuiMainButtonHandler()
 		Case $gui_combo_farmchoice
 			UpdateFarmDescription(GUICtrlRead($gui_combo_farmchoice))
 		Case $gui_combo_configchoice
-			LoadConfiguration(GUICtrlRead($gui_combo_configchoice))
+			Local $filePath = @ScriptDir & '/conf/farm/' & GUICtrlRead($gui_combo_configchoice) & '.json'
+			LoadRunConfiguration($filePath)
 			ApplyConfigToGUI()
+			; If run config contains a link to loot config, we need to reload loot as well
+			; We could compare old/new value or loot_configuration to see if this is worth it
+			LoadDefaultLootConfiguration()
+			BuildTreeViewFromCache($gui_treeview_lootoptions)
 		Case $gui_icon_saveconfig
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_DISABLE)
 			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf\farm', '(*.json)')
 			If @error <> 0 Then
 				Warn('Failed to write JSON configuration.')
 			Else
-				Local $configurationName = SaveConfiguration($filePath)
+				Local $configurationName = SaveRunConfiguration($filePath)
 				FillConfigurationCombo($configurationName)
 			EndIf
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_ENABLE)
@@ -803,12 +808,8 @@ Func GuiLootTabButtonHandler()
 			If @error <> 0 Then
 				Warn('Failed to read JSON loot options configuration.')
 			Else
-				Local $jsonLootOptions = LoadLootOptions($filePath)
-				FillInventoryCacheFromJSON($jsonLootOptions, '')
-				BuildInventoryDerivedFlags()
-				RefreshValuableListsFromCache()
+				LoadLootConfiguration($filePath)
 				BuildTreeViewFromCache($gui_treeview_lootoptions)
-				Info('Loaded loot options configuration ' & $filePath)
 			EndIf
 		Case $gui_savelootoptionsbutton
 			Local $jsonObject = BuildJSONFromTreeView($gui_treeview_lootoptions)
@@ -1460,7 +1461,7 @@ EndFunc
 
 
 ;~ Print warning to console with timestamp, only once
-;~ Don't overuse, warnings are stored in memory
+;~ Do not overuse, warnings are stored in memory
 Func WarnOnce($TEXT)
 	Static Local $warningMessages[]
 	If $warningMessages[$TEXT] <> 1 Then
@@ -1604,10 +1605,10 @@ Func BuildTreeViewFromCache($guiTreeviewHandle)
 			Local $part = $bananaSplit[$i]
 			$currentPath &= ($currentPath == '') ? $part : ('.' & $part)
 			If $mapTreeViewIDs[$currentPath] <> Null Then
-				; Already exists, it's in map
+				; Already exists in map
 				$current = $mapTreeViewIDs[$currentPath]
 			Else
-				; Doesn't exist yet, create and add to map
+				; Does not exist yet, create and add to map
 				$current = GUICtrlCreateTreeViewItem($part, $current <> Null ? $current : $guiTreeviewHandle)
 				$mapTreeViewIDs[$currentPath] = $current
 			EndIf

@@ -248,7 +248,7 @@ Func RunWayPoints()
 		$y = $wayPoints[$i][1]
 		$log = $wayPoints[$i][2]
 		If MoveAggroAndKill($x, $y, $log, $warsupply_fight_options) == $FAIL Then Return $FAIL
-		; wait for initial group to appear in front of player, because they appear suddenly and can't be detected in advance
+		; wait for initial group to appear in front of player, because they appear suddenly and cannot be detected in advance
 		If $i == 2 Or $i == 3 Then Sleep(3000)
 		; wait for pre forest group to clear it because not clearing it can result in fail by Miku pulling this group into forest (2-3 groups at once)
 		If $i == 9 Or $i == 10 Then Sleep(3000)
@@ -347,7 +347,7 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 			Next
 		EndIf
 
-		; fix for the pathological situation when Miku stays behind player and doesn't attack mobs, because mobs are standing a bit too far beyond Miku's range but still can attack the player from sufficient distance (rangers and spellcasters)
+		; fix for the pathological situation when Miku stays behind player and does not attack mobs, because mobs are standing a bit too far beyond Miku's range but still can attack the player from sufficient distance (rangers and spellcasters)
 		;Local $isFoeAttackingPlayer = False
 		;Local $isFoeAttackingMiku = False
 		Local $isPlayerAttacking = False
@@ -357,7 +357,7 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 		For $foe In $foes
 			If BitAND(DllStructGetData($foe, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isFoeAttacking = True
 			If GetDistance($miku, $foe) < $RANGE_EARSHOT Then $isFoeInRangeOfMiku = True
-			; unfortunately GetTarget() always returns 0, so can't be used here
+			; unfortunately GetTarget() always returns 0, so cannot be used here
 			;If GetTarget($foe) == $AGENTID_PLAYER Then $isFoeAttackingPlayer = True
 			;If GetTarget($foe) == $AGENTID_MIKU Then $isFoeAttackingMiku = True
 		Next

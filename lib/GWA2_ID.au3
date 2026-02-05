@@ -134,7 +134,7 @@ Global Const $ID_TYPEMAP_SKILL_USAGE	= 0x2000					; = 2^13 = 8192 = usage of ski
 Global Const $ID_TYPEMAP_DEATH_STATE	= 0x0008					; = 2^3 = 8 = death of party member or foe agent. Bit on 4th position
 
 Global Const $ID_TYPEMAP_CITY_NPC		= 0x0002					; = 2^1 = 2 = npcs in cities. Bit on 2nd position
-Global Const $ID_TYPEMAP_IDLE_FOE		= 0x0000					; = 0 = enemies, who don't do anything, for example when far away
+Global Const $ID_TYPEMAP_IDLE_FOE		= 0x0000					; = 0 = enemies, who do not do anything, for example when far away
 Global Const $ID_TYPEMAP_ATTACKING_FOE	= 0x2001					; = 8193 = enemies, during fights, when using skills/attacking, Bits on 1st and 14th positions
 Global Const $ID_TYPEMAP_AGGROED_FOE	= $ID_TYPEMAP_ATTACK_STANCE	; = 0x1 = enemies, when they are in attack stance, but not using skills
 Global Const $ID_TYPEMAP_DEAD_FOE		= $ID_TYPEMAP_DEATH_STATE	; = 0x8 = enemies in dead state

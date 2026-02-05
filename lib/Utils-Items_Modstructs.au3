@@ -163,7 +163,7 @@ Global Const $STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE	= '00085828'					;-20 w
 #Region Martial prefix mods
 Global Const $STRUCT_MOD_BARBED								= 'DE016824'					;+33% bleeding
 Global Const $STRUCT_MOD_CRUEL								= 'E2016824'					;+33% deep wound
-Global Const $STRUCT_MOD_CRIPPLING							= 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
+Global Const $STRUCT_MOD_CRIPPLING							= 'E1016824'					;+33% crippled							;Does not match all crippling prefixes
 Global Const $STRUCT_MOD_HEAVY								= 'E601824'						;+33% weakness
 Global Const $STRUCT_MOD_POISONOUS							= 'E4016824'					;+33% poison
 Global Const $STRUCT_MOD_SILENCING							= 'E5016824'					;+33% dazed
@@ -776,7 +776,7 @@ Func DefaultCreateValuableRunesAndInsigniasArray()
 EndFunc
 
 
-;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	; Nothing worth it on OS shields and focii, and there are no OS scythes and spears
 	Local Const $ShieldModsArray			= []
@@ -824,7 +824,7 @@ Func DefaultCreateValuableModsByOSWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableModsByWeaponTypeMap()
 	; Nothing worth on shields - maybe could keep +45^enchanted handles ....
 	Local Const $ShieldModsArray	= []
@@ -864,7 +864,7 @@ Func DefaultCreateValuableModsByWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map to use to find whether a weapon (not Old School) has a valuable inscription - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether a weapon (not Old School) has a valuable inscription - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableInscriptionsByWeaponTypeMap()
 	Local Const $ShieldInscriptionsArray	= []
 	Local Const $OffhandInscriptionsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT]
@@ -900,7 +900,7 @@ EndFunc
 ;~ Creates a map to use to find whether an OS (Old School) weapon ITSELF has perfect mods or not
 Func DefaultCreatePerfectModsByOSWeaponTypeMap()
 	; For martial weapons, only one of those mods is enough to say the weapon is perfect
-	; But for zealous strength and vampiric strength, we need to check that it's not the zealous/vampiric mod
+	; But for zealous strength and vampiric strength, we need to check that it is not the zealous/vampiric mod
 	Local $martialWeapons = [ _
 		$STRUCT_INSCRIPTION_STRENGTH_AND_HONOR, _
 		$STRUCT_INSCRIPTION_GUIDED_BY_FATE, _

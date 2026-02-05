@@ -97,7 +97,7 @@ And that's it !
 ## FAQ
 Before submitting any bug report or asking questions, make sure you have the most recent version of AutoIt and the most recent version of the bot.
 
-<details> <summary><strong>Q: The bot is stuck, it doesn't continue the farm nor return to the city. What should I do?</strong></summary>
+<details> <summary><strong>Q: The bot is stuck, it does not continue the farm nor return to the city. What should I do?</strong></summary>
 There are several possible causes for this issue. To help diagnose it, please provide as much information as possible:
 - Which bot are you using?
 - When did it stop? (During the farm itself, while managing inventory, etc.)
@@ -130,10 +130,10 @@ Please ensure that any valuable or important items are safely stored or protecte
 The developers are not responsible for any unintended consequences resulting from the bot’s actions.
 </details>
 
-<details> <summary><strong>Q: Why isn't the data tracking option working? I get a 'Failed to load sqlite' error.</strong></summary>
+<details> <summary><strong>Q: Why is the data tracking option not working? I get a 'Failed to load sqlite' error.</strong></summary>
 You need SQLite installed on your computer.
 You also need AutoIt to access SQLite properly via the SQLite.dll.au3, SQLite.au3 and SQLite.dll files, all present in repository.
-You might need to copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder, but this shouldn't be necessary.
+You might need to copy SQLite.au3 and SQLite.dll.au3 into your AutoIt3\Include\ folder, but this should not be necessary.
 </details>
 
 <details> <summary><strong>Q: Do you have a 'YYY' bot?</strong></summary>

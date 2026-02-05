@@ -169,7 +169,7 @@ Func TheGreatBattleField()
 	FlagMoveAggroAndKill(-3700, 13400, '5', $optionsTheGreatBattleField)
 	FlagMoveAggroAndKill(-6700, 11200, '6', $optionsTheGreatBattleField)
 
-	; We have to send dialog here because quest isn't 'complete' in quest log
+	; We have to send dialog here because quest is not 'complete' in quest log
 	MoveTo(-7350, 11875)
 	GoToNPC($questNPC)
 	Sleep(1000)
