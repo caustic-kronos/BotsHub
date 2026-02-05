@@ -33,7 +33,9 @@ Global Const $DELDRIMOR_FARM_INFORMATIONS = 'For best results, do not cheap out 
 	& '15-20mn average in HM with cons (automatically used if HM is on)' & @CRLF _
 	& 'You must have already completed the 4 map pieces and at least one' & @CRLF _
 	& 'Manual run of the Dungeon Prior to running this script'
-	
+
+Global Const $DELDRIMOR_FARM_DURATION = 20 * 60 * 1000
+
 Global Const $SNOWMAN_QUEST_ACCEPT_ID = 0x838201
 Global Const $SNOWMAN_READY_ID = 0x84
 Global Const $SNOWMAN_ACCEPT_REWARD = 0x838207
@@ -56,7 +58,7 @@ EndFunc
 Func SetupDeldrimorTitleFarm()
 	DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
 	SwitchToHardModeIfEnabled()
-	
+
 	If IsQuestReward($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
 		Info('Quest Reward Found! Gathering Quest Reward')
 		MoveTo(-23886.06, 13881.35)
@@ -71,7 +73,7 @@ Func SetupDeldrimorTitleFarm()
 		DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
 		RandomSleep(1000)
 	EndIf
-	
+
 	If IsQuestNotFound($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
 		Info('Setting up Snowman Lair')
 		RandomSleep(750)
@@ -79,7 +81,7 @@ Func SetupDeldrimorTitleFarm()
 		Local $questNPC = GetNearestNPCToCoords(-23886.06, 13881.35)
 		TakeQuest($questNPC, $ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR, $SNOWMAN_QUEST_ACCEPT_ID)
 	EndIf
-	
+
 	If IsQuestActive($ID_QUEST_LOST_TREASURE_OF_KING_HUNDAR) Then
 		$snowman_farm_setup = True
 		Info('Quest in the logbook. Good to go!')
@@ -94,7 +96,7 @@ Func MoveToLairSnowman()
 	GoToNPC(GetNearestNPCToCoords(-23886.06, 13881.35))
 	RandomSleep(250)
 	Dialog(0x84)
-	
+
 	WaitMapLoading($ID_SNOWMEN_LAIR, 10000, 2000)
 EndFunc
 
@@ -104,49 +106,49 @@ Func FarmLairSnowman()
 	GoToNPC(GetNearestNPCToCoords(-14131.44, 15437.75))
 	RandomSleep(250)
 	Dialog(0x84)
-	
+
 	FlagMoveAggroAndKillInRange(-14610.22, 12352.80, 'First Snowmen Block')
 	FlagMoveAggroAndKillInRange(-16585.22, 8741.05, 'Second Snowmen Block')
 	MoveAggroAndKillInRange(-17949.62, 6797.99, 'Mopping up any snowmen')
 	Info('Time to avoid Snowballs')
 	RandomSleep(10000)
-	
+
 	MoveAggroAndKillInRange(-19169.78, 5355.52, 'Lonely Snowmen 1')
 	MoveAggroAndKillInRange(-17196.19, 1934.53, 'Lots of Snowmen')
-	
+
 	MoveAggroAndKillInRange(-15396.72, 2887.34, 'Bridge of Snowmen')
 	MoveAggroAndKillInRange(-14392.77, 3759.07, 'Over The Bridge of Snowmen')
-	
+
 	Info('Get New Blessing')
 	MoveAggroAndKillInRange(-12482.00, 3924.00, 'Murder Over The Bridge of Snowmen')
 	GoToNPC(GetNearestNPCToCoords(-12482.00, 3924.00))
 	Info('Moving to Snowman Channel')
 	MoveTo(-14413.26, 2483.14)
-	
+
 	MoveAggroAndKillInRange(-13464.57, -687.09, 'Channel of Snowmen')
-	
+
 	Info('Wait to Heal after Ice Spouts')
 	RandomSleep(5000)
-	
+
 	MoveAggroAndKillInRange(-12989.46, -731.47, 'Lonely Snowman 2')
 	MoveAggroAndKillInRange(-12802.18, -4446.38, 'Remainder of Snowmen')
-	
+
 	Info('Wait to Heal after Ice Spouts')
 	RandomSleep(10000)
 	Info('Beware of Avalanches')
-	
+
 	FlagMoveAggroAndKillInRange(-13176.58, -6779.26, 'Third Snowmen Block')
 	FlagMoveAggroAndKillInRange(-13676.65, -9799.06, 'Fourth Snowmen Block')
-	
+
 	Info('Time To Get a Key')
-	
+
 	MoveAggroAndKillInRange(-9646.23, -10924.95, 'Key of Snowmen')
 	PickUpItems()
-	
+
 	Info('Get New Blessing')
 	MoveTo(-16005.98, -10679.64)
 	GoToNPC(GetNearestNPCToCoords(-16005.98, -10679.64))
-	
+
 	Info('Time to open the door')
 	MoveAggroAndKillInRange(-15641.55, -11961.42, 'Door of Snowmen')
 	Info('Open dungeon door')
@@ -161,13 +163,13 @@ Func FarmLairSnowman()
 		ActionInteract()
 		RandomSleep(500)
 	Next
-	
+
 	MoveAggroAndKillInRange(-17345.07, -13797.14, 'Circle of Snowmen')
-	
+
 	Info('Time for Freezie')
 	MoveTo(-14303.93, -17111.98)
 	FlagMoveAggroAndKillInRange(-13843.53, -17345.66, 'Freezie Snowmen Block')
-	
+
 	Info('Pickup Key')
 	PickUpItems()
 	Info('Opening Boss door')
@@ -182,7 +184,7 @@ Func FarmLairSnowman()
 		ActionInteract()
 		RandomSleep(500)
 	Next
-	
+
 	Info('Having a cry about beer')
 	MoveTo(-7767.71, -18739.19)
 	Info('Waiting to finish tears')

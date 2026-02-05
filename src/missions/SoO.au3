@@ -35,6 +35,7 @@ Global Const $SOO_FARM_INFORMATIONS = 'For best results, do not cheap out on her
 Global Const $ID_SOO_TORCH = 22342
 Global Const $SOO_AGGRO_RANGE = $RANGE_SPELLCAST + 100
 
+Global Const $SOO_FARM_DURATION = 60 * 60 * 1000
 Global Const $MAX_SOO_FARM_DURATION = 80 * 60 * 1000
 
 Global $soo_farm_setup = False

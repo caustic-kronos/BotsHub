@@ -31,7 +31,7 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $WN_RAPTORS_FARMER_SKILLBAR = 'OQQUc4oQt6SWC0kqM5F9Fja7grFA'
-;Doesn't work, dervish just takes too much damage
+;Does not work, dervish just takes too much damage
 Global Const $DN_RAPTORS_FARMER_SKILLBAR = 'OQQTcYqVXySgmUlJvovYUbHctAA'
 Global Const $P_RUNNER_HERO_SKILLBAR = 'OQijEqmMKODbe8O2Efjrx0bWMA'
 Global Const $RAPTORS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
@@ -146,7 +146,7 @@ EndFunc
 
 
 Func SetupTeamRaptorsFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
 	RandomSleep(500)
@@ -301,7 +301,7 @@ Func RaptorsDefend()
 	Local $energy = GetEnergy()
 	Switch $raptors_player_profession
 		Case $ID_WARRIOR
-			If $energy > 5 And IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then 
+			If $energy > 5 And IsRecharged($RAPTORS_I_AM_UNSTOPPABLE) Then
 				UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
 				$energy -= 5
 			EndIf

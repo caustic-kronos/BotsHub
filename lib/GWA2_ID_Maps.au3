@@ -564,7 +564,7 @@ Global Const $ID_A_LAND_OF_HEROES = 447
 Global Const $ID_CRYSTAL_OVERLOOK = 448
 Global Const $ID_KAMADAN_JEWEL_OF_ISTAN_DEFAULT = 449
 Global Const $ID_GATE_OF_TORMENT = 450
-; Below map ID doesn't seem to work, 474 works instead as below
+; Below map ID does not seem to work, 474 works instead as below
 ;Global Const $ID_GATE_OF_ANGUISH = 451
 Global Const $ID_SECURE_THE_REFUGE_MISSION = 452
 Global Const $ID_EVACUATION = 453

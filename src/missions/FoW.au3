@@ -169,7 +169,7 @@ Func TheGreatBattleField()
 	FlagMoveAggroAndKill(-3700, 13400, '5', $optionsTheGreatBattleField)
 	FlagMoveAggroAndKill(-6700, 11200, '6', $optionsTheGreatBattleField)
 
-	; We have to send dialog here because quest isn't 'complete' in quest log
+	; We have to send dialog here because quest is not 'complete' in quest log
 	MoveTo(-7350, 11875)
 	GoToNPC($questNPC)
 	Sleep(1000)
@@ -359,14 +359,14 @@ Func BurningForest()
 	$optionsBurningForest.Item('fightRange') = $RANGE_EARSHOT
 	FlagMoveAggroAndKill(16500, 9100, '3', $optionsBurningForest)
 	FlagMoveAggroAndKill(19000, 8400, '4', $optionsBurningForest)
-	FlagMoveAggroAndKill(20800, 8500, '5', $optionsBurningForest) 
-	FlagMoveAggroAndKill(21700, 12600, '6', $optionsBurningForest) 
-	FlagMoveAggroAndKill(23000, 13100, '7', $optionsBurningForest) 
+	FlagMoveAggroAndKill(20800, 8500, '5', $optionsBurningForest)
+	FlagMoveAggroAndKill(21700, 12600, '6', $optionsBurningForest)
+	FlagMoveAggroAndKill(23000, 13100, '7', $optionsBurningForest)
 	FlagMoveAggroAndKill(22880, 15000, '8', $optionsBurningForest)
 	FlagMoveAggroAndKill(22200, 15800, '9', $optionsBurningForest)
 	FlagMoveAggroAndKill(20900, 15900, '10', $optionsBurningForest)
 	FlagMoveAggroAndKill(21240, 14530, '11', $optionsBurningForest)
-	FlagMoveAggroAndKill(21700, 12600, '12', $optionsBurningForest) 
+	FlagMoveAggroAndKill(21700, 12600, '12', $optionsBurningForest)
 	KillShardWolf()
 	FlagMoveAggroAndKill(19800, 11900, '13', $optionsBurningForest)
 	KillShardWolf()
@@ -431,19 +431,19 @@ Func ForestOfTheWailingLord()
 	Local $questLoopCount = 0
 	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_WAILING_LORD)
 		; Pull Skeletal Mobs
-    	If $questLoopCount < 2 Then
-        	MoveTo(-21000, 14600)
-        	Sleep(3000)
-        	MoveTo(-20500, 14200)
-        	Sleep(17000)
+		If $questLoopCount < 2 Then
+			MoveTo(-21000, 14600)
+			Sleep(3000)
+			MoveTo(-20500, 14200)
+			Sleep(17000)
 		; Go Deeper to pull the Banshees
-    	Else
-        	MoveTo(-21500, 15000)
-        	Sleep(3000)
-        	MoveTo(-20500, 14200)
-        	Sleep(12000)
-    	EndIf
-    	$questLoopCount += 1
+		Else
+			MoveTo(-21500, 15000)
+			Sleep(3000)
+			MoveTo(-20500, 14200)
+			Sleep(12000)
+		EndIf
+		$questLoopCount += 1
 	WEnd
 	CancelAllHeroes()
 
@@ -488,14 +488,14 @@ Func GriffonRun()
 	MoveAggroAndKill(-18000, -3500, '9')
 	KillShardWolf()
 	MoveAggroAndKill(-17600, -4800, '10')
-	KillShardWolf() 
+	KillShardWolf()
 	MoveAggroAndKill(-16575, -5200, '11')
-	KillShardWolf() 
+	KillShardWolf()
 	MoveAggroAndKill(-18000, -3500)
 	MoveAggroAndKill(-13750, -2750)
 	CommandAll(-9800, -4800)
 	MoveAggroAndKill(-15750, -1750)
-	
+
 	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
 	TakeQuestReward($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC07, 0x80CC06)
 	TakeQuestReward($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD07)

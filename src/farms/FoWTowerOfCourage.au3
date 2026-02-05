@@ -158,7 +158,7 @@ Func FoWToCFarmLoop()
 		CastFowToCBuffs()
 		Sleep(500)
 		; If only 2 abyssal left we can finish them by hand
-		If $foesCount > 0 And $foesCount < 3 Then 
+		If $foesCount > 0 And $foesCount < 3 Then
 			Local $foe = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
 			If DllStructGetData($foe, 'HealthPercent') < 0.3 Then Attack($foe)
 		EndIf
@@ -208,7 +208,7 @@ Func FoWToCFarmLoop()
 		CastFowToCBuffs()
 		Sleep(500)
 		; If only 2 rangers left we can finish them by hand
-		If $foesCount > 0 And $foesCount < 3 Then 
+		If $foesCount > 0 And $foesCount < 3 Then
 			Local $foe = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
 			If DllStructGetData($foe, 'HealthPercent') < 0.3 Then Attack($foe)
 		EndIf

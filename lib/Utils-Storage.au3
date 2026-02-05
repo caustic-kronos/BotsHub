@@ -32,6 +32,8 @@ Opt('MustDeclareVars', True)
 #Region Inventory Management
 ;~ Function to deal with inventory before farm run
 Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
+	; Clarity rename
+	Local $cache = $inventory_management_cache
 	; Operations order :
 	; 1-Store unids if desired
 	; 2-Sort items
@@ -43,16 +45,16 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	; 8-Balance character's gold level
 	; 9-Buy ectoplasm/obsidian with surplus
 	; 10-Store items
-	If $inventory_management_cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
+	If $cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
-	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then
+	If $run_options_cache['run.sort_items'] Then SortInventory()
+	If $cache['@identify.something'] And HasUnidentifiedItems() Then
 		TravelToOutpost($tradeTown, $district_name)
 		IdentifyItems()
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_CollectData) == $GUI_CHECKED Then
+	If $run_options_cache['run.collect_data'] Then
 		ConnectToDatabase()
 		InitializeDatabase()
 		CompleteModelLookupTable()
@@ -60,7 +62,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If $inventory_management_cache['@salvage.something'] And HasItemsToSalvage() Then
+	If $cache['@salvage.something'] And HasItemsToSalvage() Then
 		TravelToOutpost($tradeTown, $district_name)
 		SalvageItems()
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
@@ -68,41 +70,44 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		;UpgradeWithSalvageInscriptions()
 		;SalvageMaterials()
 	EndIf
-	If $inventory_management_cache['@sell.materials.something'] And (HasBasicMaterialsToTrade() Or HasRareMaterialsToTrade()) Then
+	If $cache['@sell.materials.something'] And (HasBasicMaterialsToTrade() Or HasRareMaterialsToTrade()) Then
 		TravelToOutpost($tradeTown, $district_name)
-		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		; If we have more than 60k, we risk running into the situation we cannot sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
-		If $inventory_management_cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
-		If $inventory_management_cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
+		If $cache['@sell.materials.basic.something'] And HasBasicMaterials() Then SellBasicMaterialsToMerchant()
+		If $cache['@sell.materials.rare.something'] And HasRareMaterials() Then SellRareMaterialsToMerchant()
 	EndIf
-	If $inventory_management_cache['@sell.something'] And HasItemsToSell() Then
+	If $cache['@sell.something'] And HasItemsToSell() Then
 		TravelToOutpost($tradeTown, $district_name)
-		; If we have more than 60k, we risk running into the situation we can't sell because we're too rich, so we store some in xunlai
+		; If we have more than 60k, we risk running into the situation we cannot sell because we're too rich, so we store some in xunlai
 		If GetGoldCharacter() > 60000 Then BalanceCharacterGold(10000)
 		SellItemsToMerchant()
 	EndIf
 	; Max gold in Xunlai chest is 1000 platinums
-	If $inventory_management_cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
+	If $cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		DepositGold(60000)
 		Info('Deposited Gold')
 	EndIf
-	If $inventory_management_cache['Store items.Gold'] Then
+	If $cache['Store items.Gold'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		BalanceCharacterGold(10000)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyEctoplasm) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then
+	; TODO: generalize this for all materials
+	If $cache['Buy items.Rare Materials.Glob of Ectoplasm'] And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_BuyObsidian) == $GUI_CHECKED And GetGoldCharacter() > 10000 Then
+	If $cache['Buy items.Rare Materials.Obsidian Shard'] And GetGoldCharacter() > 10000 Then
 		TravelToOutpost($tradeTown, $district_name)
 		BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
 	EndIf
-	If $inventory_management_cache['@store.something'] Then
+	If $cache['@store.something'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage()
 	EndIf
+	ResetBotsSetups()
+	Return $PAUSE
 EndFunc
 
 
@@ -124,7 +129,7 @@ Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		BuyKitsForMidRun()
 		Return True
 	EndIf
-	If GUICtrlRead($GUI_Checkbox_SortItems) == $GUI_CHECKED Then SortInventory()
+	If $run_options_cache['run.sort_items'] Then SortInventory()
 	IdentifyItems(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
@@ -447,7 +452,7 @@ Func DefaultShouldSalvageItem($item)
 	; -------------------------------------- Materials --------------------------------------
 	ElseIf IsRareMaterial($item) Then
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return IsLootOptionChecked('Salvage items.Rare Materials.' & $materialName)
+		Return $cache['Salvage items.Rare Materials.' & $materialName]
 	EndIf
 	Return False
 EndFunc
@@ -589,7 +594,7 @@ Func ShouldKeepWeapon($item)
 		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
 		If GetItemReq($item) == 9 And $MAP_RARE_WEAPONS[$itemID] <> Null Then Return True
 		Return False
-	; OS - Old School weapon without inscription ... it's more complicated
+	; OS - Old School weapon without inscription ... it is more complicated
 	Else
 		If GetItemReq($item) >= 9 Then
 			; OS (Old School) high Req are kept only if : 1) rare skin and perfect/almost perfect mods 2) good type and perfect mods (shield, offhand, wand)
@@ -1644,7 +1649,7 @@ EndFunc
 Func CountSlots($fromBag = 1, $toBag = $bags_count)
 	Local $bag
 	Local $availableSlots = 0
-	; If bag is missing it just won't count (Slots = 0, ItemsCount = 0)
+	; If bag is missing it just will not count (Slots = 0, ItemsCount = 0)
 	For $i = $fromBag To $toBag
 		$bag = GetBag($i)
 		$availableSlots += DllStructGetData($bag, 'Slots') - DllStructGetData($bag, 'ItemsCount')
@@ -1939,9 +1944,9 @@ EndFunc
 
 ;~ Uses a consumable from inventory, if present
 Func UseCitySpeedBoost($forceUse = False)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return $FAIL
+	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return $FAIL
 	If GetMapType() <> $ID_OUTPOST Then Return $FAIL
-	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return
+	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return $SUCCESS
 	Local $consumableSlot = FindInInventory($ID_SUGARY_BLUE_DRINK)
 	If $consumableSlot[0] <> 0 Then
 		UseItemBySlot($consumableSlot[0], $consumableSlot[1])
@@ -1975,7 +1980,7 @@ EndFunc
 
 ;~ Uses a consumable from inventory or chest, if present
 Func UseConsumable($consumableID, $forceUse = False, $checkXunlaiChest = True)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseConsumables) == $GUI_UNCHECKED) Then Return
+	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return
 	If Not IsConsumable($consumableID) Then
 		Warn('Provided item model ID might not correspond to consumable')
 		Return $FAIL
@@ -1989,7 +1994,6 @@ EndFunc
 
 ;~ Uses a scroll from inventory or chest, if present
 Func UseScroll($scrollID, $forceUse = False, $checkXunlaiChest = True)
-	If (Not $forceUse And GUICtrlRead($GUI_Checkbox_UseScrolls) == $GUI_UNCHECKED) Then Return
 	If Not IsBlueScroll($scrollID) And Not IsGoldScroll($scrollID) Then
 		Warn('Provided item model ID might not correspond to scroll')
 		Return $FAIL

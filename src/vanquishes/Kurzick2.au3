@@ -32,7 +32,7 @@ Opt('MustDeclareVars', True)
 Global Const $KURZICK_FACTION_DRAZACH_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
-	& 'This bot doesnt load hero builds - please use your own teambuild' & @CRLF _
+	& 'This bot does not load hero builds - please use your own teambuild' & @CRLF _
 	& 'An Alternative Farm to Ferndale. This Bot will farm Drazach Thicket'
 ; Average duration ~ 25m
 Global Const $KURZICKS_FARM_DRAZACH_DURATION = 25 * 60 * 1000
@@ -43,11 +43,11 @@ Global $kurzick_farm_drazach_setup = False
 Func KurzickFactionFarmDrazach()
 	ManageFactionPointsKurzickFarm()
 	If Not $kurzick_farm_drazach_setup Then KurzickFarmDrazachSetup()
-	CheckGoldKurzickFarm()
+	GetGoldForShrineBenediction()
 	GoToDrazach()
 	Local $result = VanquishDrazach()
 	AdlibUnRegister('TrackPartyStatus')
-	
+
 	Return $result
 EndFunc
 
@@ -94,7 +94,7 @@ Func VanquishDrazach()
 		Dialog(0x86)
 		RandomSleep(1000)
 	EndIf
-	
+
 	Local Static $foes[81][3] = [ _
 		[-6506, -16099, 'Start'], _
 		[-8581, -15354, 'Approach'], _
@@ -177,7 +177,7 @@ Func VanquishDrazach()
 		[455.56, -9067.87, 'Last enemies'], _
 		[2772.91, -9397.36, 'Ritualist bosses'] _
 	]
-	
+
 	For $i = 0 To UBound($foes) - 1
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next

@@ -32,7 +32,7 @@ Opt('MustDeclareVars', True)
 Global Const $KURZICK_FACTION_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
-	& 'This bot doesnt load hero builds - please use your own teambuild'
+	& 'This bot does not load hero builds - please use your own teambuild'
 ; Average duration ~ 40m
 Global Const $KURZICKS_FARM_DURATION = 41 * 60 * 1000
 
@@ -44,7 +44,7 @@ Func KurzickFactionFarm()
 	If Not $kurzick_farm_setup Then KurzickFarmSetup()
 
 	ManageFactionPointsKurzickFarm()
-	CheckGoldKurzickFarm()
+	GetGoldForShrineBenediction()
 	GoToFerndale()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)

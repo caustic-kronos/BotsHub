@@ -187,7 +187,7 @@ Func BorealChestFarmLoop()
 	Next
 
 	Info('Opened ' & $openedChests & '/' & $totalChestsCount & ' chests.')
-	; Result can't be considered a failure if no chests were found
+	; Result cannot be considered a failure if no chests were found
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
 

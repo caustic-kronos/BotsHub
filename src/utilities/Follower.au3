@@ -26,7 +26,7 @@
 ; Possible improvements :
 ; - Correct a crash happening when someone picks up items the bot wanted to pick up
 ; - Correct a bug that makes the bot want to repeatedly open chests
-; - speed up the bot by all ways possible (since it casts shouts it's always lagging behind)
+; - speed up the bot by all ways possible (since it casts shouts it is always lagging behind)
 ;		- using a cupcake and a pumpkin pie might be a good idea
 
 Opt('MustDeclareVars', True)
@@ -274,7 +274,7 @@ Func ParagonRefreshShouts()
 			$i = Mod($i, UBound($party)) + 1
 		EndIf
 
-		; This solution would be better - but effects can't be accessed on other heroes/characters
+		; This solution would be better - but effects cannot be accessed on other heroes/characters
 		;Local $heroNumber
 		;Local $ping = GetPing()
 		;For $member In $party

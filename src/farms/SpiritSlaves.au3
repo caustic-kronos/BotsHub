@@ -132,14 +132,14 @@ Func RunToShatteredRavines()
 		$me = GetMyAgent()
 	WEnd
 
-	; If dead it's not worth rezzing better just restart running
+	; If dead it is not worth rezzing better just restart running
 	If IsPlayerDead() Then Return $FAIL
 
 	MoveTo(-4486, 19700)
 	RandomSleep(3000)
 	MoveTo(-4486, 19700)
 
-	; If dead it's not worth rezzing better just restart running
+	; If dead it is not worth rezzing better just restart running
 	If IsPlayerDead() Then Return $FAIL
 
 	; Entering The Shattered Ravines

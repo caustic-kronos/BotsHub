@@ -187,7 +187,7 @@ EndFunc
 
 
 Func SetupTeamMargoniteFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
 	LeaveParty()
@@ -245,7 +245,7 @@ Func CastBondsMargoniteFarm()
 	Info('Casting hero monk bonds')
 	; Below sequence ensures that player have the effect of 5 monk enchantments from monk hero and also monk hero have 1 enchantment - balthazar's spirit
 	; Last 2 enchantments are least important so these may deactivate when hero energy drops to 0, which is unlikely
-	; Disable blessed signet hero skill so that hero doesn't mess up below sequence with using that skill in wrong moment
+	; Disable blessed signet hero skill so that hero does not mess up below sequence with using that skill in wrong moment
 	DisableHeroSkillSlot($MARGONITE_HERO_INDEX, $MARGONITE_HERO_BLESSED_SIGNET)
 	Sleep(25 + GetPing())
 
@@ -372,7 +372,7 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 	If $result == $SUCCESS Then Return $SUCCESS
 	; If no success when moving, either we died (the end) or we were bodyblocked
 	If IsPlayerDead() Then Return $FAIL
-	; When playing as Elementalist or other professions that don't have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
+	; When playing as Elementalist or other professions that do not have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
 	If KillMargonites() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
 	If IsPlayerDead() Then Return $FAIL

@@ -163,7 +163,7 @@ Global Const $STRUCT_INSCRIPTION_ONLY_THE_STRONG_SURVIVE	= '00085828'					;-20 w
 #Region Martial prefix mods
 Global Const $STRUCT_MOD_BARBED								= 'DE016824'					;+33% bleeding
 Global Const $STRUCT_MOD_CRUEL								= 'E2016824'					;+33% deep wound
-Global Const $STRUCT_MOD_CRIPPLING							= 'E1016824'					;+33% crippled							;Doesn't match all crippling prefixes
+Global Const $STRUCT_MOD_CRIPPLING							= 'E1016824'					;+33% crippled							;Does not match all crippling prefixes
 Global Const $STRUCT_MOD_HEAVY								= 'E601824'						;+33% weakness
 Global Const $STRUCT_MOD_POISONOUS							= 'E4016824'					;+33% poison
 Global Const $STRUCT_MOD_SILENCING							= 'E5016824'					;+33% dazed
@@ -776,7 +776,7 @@ Func DefaultCreateValuableRunesAndInsigniasArray()
 EndFunc
 
 
-;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	; Nothing worth it on OS shields and focii, and there are no OS scythes and spears
 	Local Const $ShieldModsArray			= []
@@ -824,7 +824,7 @@ Func DefaultCreateValuableModsByOSWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableModsByWeaponTypeMap()
 	; Nothing worth on shields - maybe could keep +45^enchanted handles ....
 	Local Const $ShieldModsArray	= []
@@ -864,7 +864,7 @@ Func DefaultCreateValuableModsByWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map to use to find whether a weapon (not Old School) has a valuable inscription - this doesn't mean the weapon itself is valuable
+;~ Creates a map to use to find whether a weapon (not Old School) has a valuable inscription - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableInscriptionsByWeaponTypeMap()
 	Local Const $ShieldInscriptionsArray	= []
 	Local Const $OffhandInscriptionsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT]
@@ -900,7 +900,7 @@ EndFunc
 ;~ Creates a map to use to find whether an OS (Old School) weapon ITSELF has perfect mods or not
 Func DefaultCreatePerfectModsByOSWeaponTypeMap()
 	; For martial weapons, only one of those mods is enough to say the weapon is perfect
-	; But for zealous strength and vampiric strength, we need to check that it's not the zealous/vampiric mod
+	; But for zealous strength and vampiric strength, we need to check that it is not the zealous/vampiric mod
 	Local $martialWeapons = [ _
 		$STRUCT_INSCRIPTION_STRENGTH_AND_HONOR, _
 		$STRUCT_INSCRIPTION_GUIDED_BY_FATE, _
@@ -1150,8 +1150,8 @@ Global $valuable_inscriptions_array[]
 Global $valuable_inscriptions_by_weapon_type			= DefaultCreateValuableInscriptionsByWeaponTypeMap()
 
 
-;~ Replace valuable runes/insignias/inscriptions/mods default lists by the lists of elements selected in the GUI interface
-Func RefreshValuableListsFromInterface()
+;~ Replace valuable runes/insignias/inscriptions/mods default lists by the lists of elements present in cache
+Func RefreshValuableListsFromCache()
 	$valuable_runes_and_insignias_structs_array = CreateValuableRunesAndInsigniasArray()
 	;$valuable_mods_by_os_weapon_type = CreateValuableModsByOSWeaponTypeMap()
 	$valuable_mods_by_weapon_type = CreateValuableModsByWeaponTypeMap()
@@ -1161,11 +1161,11 @@ EndFunc
 
 ;~ Creates an array of all valuable runes and insignias based on selected elements in treeview
 Func CreateValuableRunesAndInsigniasArray()
-	Local $tickedRunesAndInsignias = GetLootOptionsTickedCheckboxes('Keep components.Armor upgrades')
+	Local $tickedRunesAndInsignias = GetAllChecked($inventory_management_cache, 'Keep components.Armor upgrades', 3, 3)
 	Local $valuableRunesAndInsigniasStructsArray[UBound($tickedRunesAndInsignias)]
 	For $i = 0 To UBound($tickedRunesAndInsignias) - 1
-		; removing leftmost string with dot 'Armor upgrades.'
-		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 15)
+		; removing leftmost string with dot 'Keep components.Armor upgrades.'
+		Local $varName = StringTrimLeft($tickedRunesAndInsignias[$i], 31)
 		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_')
 		$valuableRunesAndInsigniasStructsArray[$i] = SafeEval($varName)
 	Next
@@ -1176,7 +1176,7 @@ EndFunc
 ;~ TODO: finish this function
 ;~ Creates an array of all valuable OS (Old School without inscription) weapon mods based on selected elements in treeview
 Func CreateValuableModsByOSWeaponTypeMap()
-	Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods')
+	Local $tickedMods = GetAllChecked($inventory_management_cache, 'Keep components.Mods')
 	Local $valuableModsByOSWeaponTypeMap[UBound($tickedMods)]
 	For $tickedMod In $tickedMods
 		Info($tickedMods)
@@ -1225,7 +1225,7 @@ Func CreateValuableModsByWeaponTypeMap()
 	Local $weaponModsByType[]
 	For $weaponType In $AllWeaponsArray
 		Local $weaponName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-		Local $tickedMods = GetLootOptionsTickedCheckboxes('Keep components.Mods.' & $weaponName)
+		Local $tickedMods = GetAllChecked($inventory_management_cache, 'Keep components.Mods.' & $weaponName, 2, 2)
 		Local $count = UBound($tickedMods)
 		Local $mods[$count]
 
@@ -1238,6 +1238,8 @@ Func CreateValuableModsByWeaponTypeMap()
 		Local $suffixRule = $suffixWeaponModRules[$weaponName]
 		For $j = 0 To $count - 1
 			Local $varName = $tickedMods[$j]
+			; Removing Keep components.Mods.
+			$varName = StringTrimLeft($varName, 21)
 			If $prefixRule <> Null Then $varName = StringReplace($varName, $prefixRule, 'STRUCT_MOD_')
 			If $suffixRule <> Null Then $varName = StringReplace($varName, $suffixRule, 'STRUCT_MOD_')
 			$varName = ModNameCleanupHelper($varName)
@@ -1250,21 +1252,21 @@ Func CreateValuableModsByWeaponTypeMap()
 EndFunc
 
 
-;~ Creates a map of all valuable inscriptions based on selected elements in treeview
+;~ Creates a map of all valuable inscriptions based on selected elements in cache
 Func CreateValuableInscriptionsByWeaponTypeMap()
-	Local $tickedInscriptionAll = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionWeapons = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionWeaponsMartial = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Martial', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionWeaponsSpellcasting = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Weapon.Spellcasting', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionOffhand = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand', $GUI_TreeView_LootOptions, '.', False)
-	Local $tickedInscriptionOffhandFocus = GetLootOptionsTickedCheckboxes('Keep components.Inscriptions.Offhand.Focus', $GUI_TreeView_LootOptions, '.', False)
+	Local $tickedInscriptionAll = GetAllChecked($inventory_management_cache, 'Keep components.Inscriptions', 1, 1)
+	Local $tickedInscriptionWeapons = GetAllChecked($inventory_management_cache, 'Keep components.Inscriptions.Weapon', 1, 1)
+	Local $tickedInscriptionWeaponsMartial = GetAllChecked($inventory_management_cache, 'Keep components.Inscriptions.Weapon.Martial', 1, 1)
+	Local $tickedInscriptionWeaponsSpellcasting = GetAllChecked($inventory_management_cache, 'Keep components.Inscriptions.Weapon.Spellcasting', 1, 1)
+	Local $tickedInscriptionOffhand = GetAllChecked($inventory_management_cache, 'Keep components.Inscriptions.Offhand', 1, 1)
+	Local $tickedInscriptionOffhandFocus = GetAllChecked($inventory_management_cache, 'Keep components.Inscriptions.Offhand.Focus', 1, 1)
 
 	Local $inscriptionsWeaponsMartial[UBound($tickedInscriptionAll) + UBound($tickedInscriptionWeapons) + UBound($tickedInscriptionWeaponsMartial)]
 	Local $inscriptionsWeaponsSpellcasting[UBound($tickedInscriptionAll) + UBound($tickedInscriptionWeapons) + UBound($tickedInscriptionWeaponsSpellcasting)]
 	Local $inscriptionsFocus[UBound($tickedInscriptionAll) + UBound($tickedInscriptionOffhand) + UBound($tickedInscriptionOffhandFocus)]
 	Local $inscriptionsShield[UBound($tickedInscriptionAll) + UBound($tickedInscriptionOffhand)]
 
-	Local $prefixLength = StringLen('Inscriptions.')
+	Local $prefixLength = StringLen('Keep components.Inscriptions.')
 	For $i = 0 To UBound($tickedInscriptionAll) - 1
 		Local $inscription = TrimCleanupAndEval($tickedInscriptionAll[$i], $prefixLength)
 		$inscriptionsWeaponsMartial[$i] = $inscription
@@ -1273,29 +1275,29 @@ Func CreateValuableInscriptionsByWeaponTypeMap()
 		$inscriptionsShield[$i] = $inscription
 	Next
 	Local $generalIndex = UBound($tickedInscriptionAll)
-	$prefixLength = StringLen('Weapon.')
+	$prefixLength = StringLen('Keep components.Inscriptions.Weapon.')
 	For $i = 0 To UBound($tickedInscriptionWeapons) - 1
 		Local $inscription = TrimCleanupAndEval($tickedInscriptionWeapons[$i], $prefixLength)
 		$inscriptionsWeaponsMartial[$generalIndex + $i] = $inscription
 		$inscriptionsWeaponsSpellcasting[$generalIndex + $i] = $inscription
 	Next
 	Local $weaponIndex = $generalIndex + UBound($tickedInscriptionWeapons)
-	$prefixLength = StringLen('Martial.')
+	$prefixLength = StringLen('Keep components.Inscriptions.Weapon.Martial.')
 	For $i = 0 To UBound($tickedInscriptionWeaponsMartial) - 1
 		$inscriptionsWeaponsMartial[$weaponIndex + $i] = TrimCleanupAndEval($tickedInscriptionWeaponsMartial[$i], $prefixLength)
 	Next
-	$prefixLength = StringLen('Spellcasting.')
+	$prefixLength = StringLen('Keep components.Inscriptions.Weapon.Spellcasting.')
 	For $i = 0 To UBound($tickedInscriptionWeaponsSpellcasting) - 1
 		$inscriptionsWeaponsSpellcasting[$weaponIndex + $i] = TrimCleanupAndEval($tickedInscriptionWeaponsSpellcasting[$i], $prefixLength)
 	Next
-	$prefixLength = StringLen('Offhand.')
+	$prefixLength = StringLen('Keep components.Inscriptions.Offhand.')
 	For $i = 0 To UBound($tickedInscriptionOffhand) - 1
 		Local $inscription = TrimCleanupAndEval($tickedInscriptionOffhand[$i], $prefixLength)
 		$inscriptionsFocus[$generalIndex + $i] = $inscription
 		$inscriptionsShield[$generalIndex + $i] = $inscription
 	Next
 	Local $offhandIndex = $generalIndex + UBound($tickedInscriptionOffhand)
-	$prefixLength = StringLen('Focus.')
+	$prefixLength = StringLen('Keep components.Inscriptions.Offhand.Focus.')
 	For $i = 0 To $i + UBound($tickedInscriptionOffhandFocus) - 1
 		$inscriptionsFocus[$offhandIndex + $i] = TrimCleanupAndEval($tickedInscriptionOffhandFocus[$i], $prefixLength)
 	Next

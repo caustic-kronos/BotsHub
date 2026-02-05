@@ -514,14 +514,14 @@ Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
 
 	For $agent In $agents
 		If Not EnemyAgentFilter($agent) Then ContinueLoop
-		; This gets all mobs in fight, but also mobs that just used a skill, it's not completely perfect
+		; This gets all mobs in fight, but also mobs that just used a skill, it is not completely perfect
 		; TypeMap == 0 is only when foe is idle, not casting and not fighting, also prioritized for surprise attack
 		; If DllStructGetData($agent, 'TypeMap') == 0 Then ContinueLoop
 		If DllStructGetData($agent, 'ID') == $agentID Then ContinueLoop
 		Local $distance = GetDistance($targetAgent, $agent)
 		If $distance < $range Then
 			Local $priority = $mobsPriorityMap[DllStructGetData($agent, 'ModelID')]
-			; map returns Null for all other mobs that don't exist in map
+			; map returns Null for all other mobs that do not exist in map
 			If ($priority == Null) Then
 				If $highestPriorityTarget == Null Then $highestPriorityTarget = $agent
 				ContinueLoop
@@ -808,7 +808,7 @@ EndFunc
 Func CreateMobsPriorityMap()
 	; Priority map : 0 highest kill priority, bigger numbers mean lesser priority
 	Local $priorityMap[]
-	Local $voltaicMobs = 				[	$ID_STONE_SUMMIT_DEFENDER,	$ID_STONE_SUMMIT_PRIEST,		$ID_MODNIIR_PRIEST,			$ID_STONE_SUMMIT_SUMMONER,		$ID_STONE_SUMMIT_WARDER, _
+	Local $voltaicMobs =				[	$ID_STONE_SUMMIT_DEFENDER,	$ID_STONE_SUMMIT_PRIEST,		$ID_MODNIIR_PRIEST,			$ID_STONE_SUMMIT_SUMMONER,		$ID_STONE_SUMMIT_WARDER, _
 											$ID_STONE_SUMMIT_DOMINATOR,	$ID_STONE_SUMMIT_BLASPHEMER,	$ID_STONE_SUMMIT_DREAMER,	$ID_STONE_SUMMIT_CONTAMINATOR,	$ID_STONE_SUMMIT_ZEALOT]
 	Local $voltaicMobsPriorities =		[	0,							0,								0,							1,								2, _
 											2,							2,								2,							2,								2]

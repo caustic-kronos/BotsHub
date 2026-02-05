@@ -216,12 +216,12 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 
 	; Speed up team using Junundu Tunnel
 	; Get close enough to cast spells but not Aggro
-	; Use Junundu Siege (4) until it's in cooldown
+	; Use Junundu Siege (4) until it is in cooldown
 	; While there are enemies
-	;	Use Junundu Tunnel (5) unless it's on cooldown
+	;	Use Junundu Tunnel (5) unless it is on cooldown
 	;	Use Junundu Bite (3) off cooldown
 	;	Use Junundu Smash (2) if available
-	;		Don't use Junundu Feast (6) if an enemy died (would need to check what skill we get afterward ...)
+	;		Do not use Junundu Feast (6) if an enemy died (would need to check what skill we get afterward ...)
 	;	Use Junundu Strike (1) in between
 	;	Else just attack
 	; Use Junundu Wail (7) after fight only and if life is < 2400/3000 or if a team member is dead

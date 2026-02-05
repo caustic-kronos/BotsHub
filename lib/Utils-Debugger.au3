@@ -21,7 +21,7 @@
 Global Const $DEBUG_MODE = False
 Global Const $ADD_CONTEXT = False
 Global Const $FUNCTION_NAMES = ['SetProcessWorkingSetSizeEx','VirtualQueryEx','VirtualFreeEx','VirtualAllocEx','ReadProcessMemory','WriteProcessMemory','CreateRemoteThread','CloseHandle','WaitForSingleObject','OpenProcess','SetProcessWorkingSetSize']
-; VirtualQueryEx error code is 0 - but it shouldn't be caught
+; VirtualQueryEx error code is 0 - but it should not be caught
 Global Const $ERROR_CODES = [0, -1, 0, Null, 0, 0, Null, 0, 0xFFFFFFFF, Null, 0]
 Global Const $FUNCTION_ERROR_CODES = MapFromArrays($FUNCTION_NAMES, $ERROR_CODES)
 
@@ -316,7 +316,7 @@ Func IsMemoryReadable($processHandle, $address, $size)
 	Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
 	Local $regionSize = DllStructGetData($memoryInfo, 'RegionSize')
 	If ($address - $regionStart) + $size > $regionSize Then
-		DebuggerLog('Read - Range doesnt fit in the memory region')
+		DebuggerLog('Read - Range does not fit in the memory region')
 		Return False
 	EndIf
 
@@ -352,7 +352,7 @@ Func IsMemoryWritable($processHandle, $address, $size)
 	Local $regionStart = DllStructGetData($memoryInfo, 'BaseAddress')
 	Local $regionSize = DllStructGetData($memoryInfo, 'RegionSize')
 	If ($address - $regionStart) + $size > $regionSize Then
-		DebuggerLog('Write - Range doesnt fit in the memory region')
+		DebuggerLog('Write - Range does not fit in the memory region')
 		Return False
 	EndIf
 

@@ -1,7 +1,8 @@
-{
+﻿{
 	"main": {
 		"character": "No character selected",
-		"farm": "Choose a farm"
+		"farm": "Choose a farm",
+		"loot_configuration": "Default Loot Configuration"
 	},
 	"run": {
 		"loop_mode": true,
@@ -11,41 +12,39 @@
 		"use_scrolls": false,
 		"sort_items": false,
 		"collect_data": false,
-		"buy_ectoplasm": false,
-		"buy_obsidian": false,
 		"donate_faction_points": true,
 		"buy_faction_resources": false,
 		"buy_faction_scrolls": false,
-		"save_weapon_slot": false,
-		"weapon_slot": 1,
+		"weapon_slot": 0,
 		"bags_count": 5,
 		"district": "Random EU",
 		"disable_rendering": false
 	},
 	"team": {
 		"automatic_team_setup": false,
-		"load_player_build": false,
-		"player_build": "",
 		"hero_1": "Master of Whispers",
-		"load_hero_1_build": false,
-		"hero_1_build": "OAljUwGopSUBHVyBoBVVbh4B1YA",
 		"hero_2": "Livia",
-		"load_hero_2_build": false,
-		"hero_2_build": "OAhjQoGYIP3hhWVVaO5EeDzxJ",
 		"hero_3": "Gwen",
-		"load_hero_3_build": false,
-		"hero_3_build": "OQNEAqwD2ycC0AmupXOIDQEQj",
 		"hero_4": "Olias",
-		"load_hero_4_build": false,
-		"hero_4_build": "OAhjUwGYoSUBHVoBbhVVWbTODTA",
 		"hero_5": "Norgu",
-		"load_hero_5_build": false,
-		"hero_5_build": "OQNEAqwD2ycCwpmupXOIDcBQj",
 		"hero_6": "Xandra",
-		"load_hero_6_build": false,
-		"hero_6_build": "OACiAyk8gNtePuwJ00ZOPLYA",
 		"hero_7": "Razah",
+		"load_all_builds": false,
+		"load_player_build": false,
+		"load_hero_1_build": false,
+		"load_hero_2_build": false,
+		"load_hero_3_build": false,
+		"load_hero_4_build": false,
+		"load_hero_5_build": false,
+		"load_hero_6_build": false,
 		"load_hero_7_build": false,
+		"player_build": "",
+		"hero_1_build": "OAljUwGopSUBHVyBoBVVbh4B1YA",
+		"hero_2_build": "OAhjQoGYIP3hhWVVaO5EeDzxJ",
+		"hero_3_build": "OQNEAqwD2ycC0AmupXOIDQEQj",
+		"hero_4_build": "OAhjUwGYoSUBHVoBbhVVWbTODTA",
+		"hero_5_build": "OQNEAqwD2ycCwpmupXOIDcBQj",
+		"hero_6_build": "OACiAyk8gNtePuwJ00ZOPLYA",
 		"hero_7_build": "OQNEAqwD2ycCaCmupXOIDMEQj"
 	}
 }

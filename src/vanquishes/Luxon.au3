@@ -31,7 +31,7 @@ Opt('MustDeclareVars', True)
 Global Const $LUXON_FACTION_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
-	& 'This bot doesnt load hero builds - please use your own teambuild'
+	& 'This bot does not load hero builds - please use your own teambuild'
 ; Average duration ~ 20m
 Global Const $LUXONS_FARM_DURATION = 20 * 60 * 1000
 
@@ -43,7 +43,7 @@ Func LuxonFactionFarm()
 	If Not $luxon_farm_setup Then LuxonFarmSetup()
 
 	ManageFactionPointsLuxonFarm()
-	CheckGoldLuxonFarm()
+	GetGoldForShrineBenediction()
 	GoToMountQinkai()
 	ResetFailuresCounter()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -52,57 +52,6 @@ Func LuxonFactionFarm()
 
 	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
 	Return $result
-EndFunc
-
-
-Func ManageFactionPointsLuxonFarm()
-	If GetLuxonFaction() > (GetMaxLuxonFaction() - 25000) Then
-		TravelToOutpost($ID_CAVALON, $district_name)
-		RandomSleep(200)
-		GoNearestNPCToCoords(9076, -1111)
-
-		Local $donatePoints = (GUICtrlRead($GUI_RadioButton_DonatePoints) == $GUI_CHECKED)
-		Local $buyResources = (GUICtrlRead($GUI_RadioButton_BuyFactionResources) == $GUI_CHECKED)
-		Local $buyScrolls = (GUICtrlRead($GUI_RadioButton_BuyFactionScrolls) == $GUI_CHECKED)
-		If $donatePoints Then
-			Info('Donating Luxon faction points')
-			While GetLuxonFaction() >= 5000
-				DonateFaction('Luxon')
-				RandomSleep(500)
-			WEnd
-		ElseIf $buyResources Then
-			Info('Converting Luxon faction points into Jadeite Shards')
-			Dialog(0x83)
-			RandomSleep(500)
-			Local $numberOfShards = Floor(GetLuxonFaction() / 5000)
-			; number of shards = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 shard, 0x800201 = 2 shards
-			Local $dialogID = 0x800001 + (0x100 * $numberOfShards)
-			Dialog($dialogID)
-			RandomSleep(550)
-		ElseIf $buyScrolls Then
-			Info('Converting Luxon faction points into The Deep Passage Scrolls')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfScrolls = Floor(GetLuxonFaction() / 1000)
-			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
-			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
-			Dialog($dialogID)
-			RandomSleep(550)
-		EndIf
-		RandomSleep(500)
-		TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
-	EndIf
-EndFunc
-
-
-Func CheckGoldLuxonFarm()
-	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
-	If GetGoldCharacter() < 100 AND GetGoldStorage() > 100 Then
-		Info('Withdrawing gold for shrines benediction')
-		RandomSleep(250)
-		WithdrawGold(100)
-		RandomSleep(250)
-	EndIf
 EndFunc
 
 

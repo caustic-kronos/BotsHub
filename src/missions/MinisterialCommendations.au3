@@ -150,20 +150,19 @@ EndFunc
 
 
 Func SetupPlayerMinisterialCommendationsFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) <> $GUI_CHECKED Then
-		If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-			Info('Player''s profession is dervish. Loading up recommended dervish build automatically')
-			LoadSkillTemplate($DW_COMMENDATIONS_FARMER_SKILLBAR)
-		Else
-			Info('Assuming player build is set up manually')
-		EndIf
+	If IsTeamAutoSetup() Then Return $SUCCESS
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
+		Info('Player''s profession is dervish. Loading up recommended dervish build automatically')
+		LoadSkillTemplate($DW_COMMENDATIONS_FARMER_SKILLBAR)
+	Else
+		Info('Assuming player build is set up manually')
 	EndIf
 	RandomSleep(250)
 EndFunc
 
 
 Func SetupTeamMinisterialCommendationsFarm()
-	If GUICtrlRead($GUI_Checkbox_AutomaticTeamSetup) == $GUI_CHECKED Then Return $SUCCESS
+	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
 	LeaveParty()
@@ -233,7 +232,7 @@ Func EnterAChanceEncounterQuest()
 	UseCitySpeedBoost()
 	Local $npc = GetNearestNPCToCoords(2240, -1264)
 	GoToNPC($npc)
-	If GetDistance(GetMyAgent(), $npc) > $RANGE_ADJACENT Then 
+	If GetDistance(GetMyAgent(), $npc) > $RANGE_ADJACENT Then
 		MoveTo(1474, -1197, 0)
 		GoToNPC($npc)
 	EndIf
