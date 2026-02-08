@@ -847,6 +847,8 @@ Func InitializeCommandStructures()
 	DllStructSetData($TRADER_BUY_STRUCT, 1, GetLabel('CommandTraderBuy'))
 	DllStructSetData($TRADER_SELL_STRUCT, 1, GetLabel('CommandTraderSell'))
 	DllStructSetData($SALVAGE_STRUCT, 1, GetLabel('CommandSalvage'))
+	$craft_item_ptr = GetLabel('CommandCraftItem')
+	$collector_exchange_ptr = GetLabel('CommandCollectorExchange')
 	;Agent
 	DllStructSetData($CHANGE_TARGET_STRUCT, 1, GetLabel('CommandChangeTarget'))
 	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 1, GetLabel('CommandMakeAgentArray'))

@@ -55,6 +55,8 @@ Global $map_is_loaded_ptr
 ; Trader system
 Global $trader_quote_ID, $trader_cost_ID, $trader_cost_value
 Global $trade_partner_ptr
+Global $craft_item_ptr
+Global $collector_exchange_ptr
 
 ; Other
 Global $friend_list_address
@@ -561,7 +563,7 @@ Func GetSkillTimer()
 EndFunc
 
 
-;~ Returns level of an attribute - takes runes into account
+;~ Returns level of an attribute - takes runes into account | Thanks DukeFredek for fix !
 Func GetAttributeByID($attributeID, $withRunes = False, $heroIndex = 0)
 	Local $agentID = GetHeroID($heroIndex)
 	Local $buffer
@@ -572,10 +574,10 @@ Func GetAttributeByID($attributeID, $withRunes = False, $heroIndex = 0)
 	$offset[3] = 0xAC
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To GetHeroCount()
-		$offset[4] = 0x3D8 * $i
+		$offset[4] = 0x43C * $i
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 		If $buffer[1] == $agentID Then
-			$offset[4] = 0x3D8 * $i + 0x14 * $attributeID + $withRunes ? 0xC : 0x8
+			$offset[4] = 0x43C * $i + 0x14 * $attributeID + ($withRunes ? 0xC : 0x8)
 			$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 			Return $buffer[1]
 		EndIf
