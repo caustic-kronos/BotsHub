@@ -50,8 +50,6 @@ Func KurzickFactionFarm()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishFerndale()
 	AdlibUnRegister('TrackPartyStatus')
-
-	TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
 	Return $result
 EndFunc
 

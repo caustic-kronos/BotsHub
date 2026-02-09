@@ -137,7 +137,7 @@ Func SetupPlayerRaptorsFarm()
 			$raptors_player_profession = $ID_DERVISH
 			LoadSkillTemplate($DN_RAPTORS_FARMER_SKILLBAR)
 		Case Else
-			Warn('Should run this farm as warrior or dervish (though dervish build does not seem to work)')
+			Warn('Should run this farm as warrior')
 			Return $FAIL
 	EndSwitch
 	RandomSleep(250)

@@ -49,8 +49,6 @@ Func LuxonFactionFarm()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishMountQinkai()
 	AdlibUnRegister('TrackPartyStatus')
-
-	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
 	Return $result
 EndFunc
 

@@ -47,7 +47,6 @@ Func KurzickFactionFarmDrazach()
 	GoToDrazach()
 	Local $result = VanquishDrazach()
 	AdlibUnRegister('TrackPartyStatus')
-
 	Return $result
 EndFunc
 

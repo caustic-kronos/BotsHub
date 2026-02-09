@@ -42,8 +42,6 @@ Func NornTitleFarm()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishVarajarFells()
 	AdlibUnRegister('TrackPartyStatus')
-
-	TravelToOutpost($ID_OLAFSTEAD, $district_name)
 	Return $result
 EndFunc
 

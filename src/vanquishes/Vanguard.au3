@@ -42,8 +42,6 @@ Func VanguardTitleFarm()
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishDaladaUplands()
 	AdlibUnRegister('TrackPartyStatus')
-
-	TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)
 	Return $result
 EndFunc
 
