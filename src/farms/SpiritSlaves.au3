@@ -463,6 +463,6 @@ Func GetTemporaryPosition($startX, $startY, $endX, $endY)
 	; Reduce it by 2 to have the correct length
 	Local $xMove45degrees = ($xMovement + $yMovement) / 2
 	Local $yMove45degrees = ($yMovement - $xMovement) / 2
-	Local $temporaryPosition[2] = [$startX + $xMove45degrees, $startY + $yMove45degrees]
+	Local $temporaryPosition[] = [$startX + $xMove45degrees, $startY + $yMove45degrees]
 	Return $temporaryPosition
 EndFunc

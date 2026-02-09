@@ -25,6 +25,11 @@ Global Const $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS = 12
 Global Const $CONTROL_TYPE_ACTIVATE = 0x20
 Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 
+; Constants for EncString decoding
+Global Const $ENCSTR_WORD_VALUE_BASE = 0x0100
+Global Const $ENCSTR_WORD_BIT_MORE = 0x8000
+Global Const $ENCSTR_WORD_VALUE_RANGE = 0x7F00
+
 #Region GWA2 Structure templates
 ; Do not create global DllStruct for those (can exist simultaneously in several instances)
 Global Const $AGENT_STRUCT_TEMPLATE = _
@@ -266,7 +271,7 @@ Global $trade_hack_address
 Global $labels_map[]
 
 ; [labelName, bytePattern, resultOffset, patternType, assertSourceFile, assertMessage]
-Global $scan_patterns[57][6]
+Global $scan_patterns[58][6]
 Global $scan_patterns_count = 0
 ; [file, message]
 Global $assertions_patterns_cache[]
@@ -435,6 +440,8 @@ Func RegisterScanPatterns()
 	AddScanPattern('LoadFinished',				'2BD9C1E303',															0xA0,	'hook')
 	AddScanPattern('Trader',					'8D4DFC51576A5550',														-0x3C,	'hook')
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
+	; EncString Decoding
+	AddScanPattern('ValidateAsyncDecodeStr',	'',																		'',		'func',	'P:\Code\Engine\Text\TextApi.cpp',			'codedString')
 	If IsDeclared('g_b_AddPattern') Then Extend_AddPattern()
 EndFunc
 
@@ -775,6 +782,11 @@ Func MapScanResultsToLabels()
 	$tempValue = $scan_results['ActiveQuest']
 	SetLabel('ActiveQuest', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0xF)))
 
+	;EncString Decoding
+	$tempValue = $scan_results['ValidateAsyncDecodeStr']
+	$tempValue = ScanToFunctionStart($tempValue)
+	SetLabel('ValidateAsyncDecodeStr', Ptr($tempValue))
+
 	; Hook
 	$tempValue = $scan_results['Engine']
 	SetLabel('MainStart', Ptr($tempValue))
@@ -886,6 +898,11 @@ Func InitializeCommandStructures()
 	DllStructSetData($KICK_INVITED_PLAYER_STRUCT, 1, GetLabel('CommandKickInvitedPlayer'))
 	DllStructSetData($REJECT_INVITATION_STRUCT, 1, GetLabel('CommandRejectInvitation'))
 	DllStructSetData($ACCEPT_INVITATION_STRUCT, 1, GetLabel('CommandAcceptInvitation'))
+	;EncString
+	DllStructSetData($decode_enc_string, 1, GetLabel('CommandDecodeEncString'))
+	$decode_input_ptr = GetLabel('DecodeInputPtr')
+	$decode_output_ptr = GetLabel('DecodeOutputPtr')
+	$decode_ready = GetLabel('DecodeReady')
 EndFunc
 
 
@@ -1339,6 +1356,7 @@ Func ModifyMemory()
 	AssemblerCreateTradeCommands()
 	AssemblerCreateUICommands()
 	AssemblerCreatePartyCommands()
+	AssemblerCreateEncStringCommands()
 	If IsDeclared('g_b_Assembler') Then Extend_Assembler()
 
 	Local $allocationCommand = False
@@ -1458,6 +1476,13 @@ Func AssemblerCreateData()
 	_('MapIsLoaded/4')
 	_('TradePartner/4')
 	_('AgentCopyCount/4')
+	; EncString decoding buffers
+	; Flag: 1 when decode is complete
+	_('DecodeReady/4')
+	; Input: encoded wchar string (max 128 wchars)
+	_('DecodeInputPtr/256')
+	; Output: decoded wchar string (max 1024 wchars)
+	_('DecodeOutputPtr/2048')
 
 	If IsDeclared('g_b_AssemblerData') Then Extend_AssemblerData()
 
@@ -2139,6 +2164,76 @@ Func AssemblerCreatePartyCommands()
 	_('push dword[eax+4]')
 	_('call AcceptInvitation')
 	_('add esp,4')
+	_('ljmp CommandReturn')
+EndFunc
+
+
+Func AssemblerCreateEncStringCommands()
+	; Callback function for ValidateAsyncDecodeStr
+	; Called by GW with: void __cdecl callback(void* param, wchar_t* decodedString)
+	; param is at [esp+4], decodedString is at [esp+8]
+	_('DecodeCallback:')
+	_('push esi')
+	_('push edi')
+	_('push ecx')
+	; Get source string pointer (decodedString)
+	; [esp+8] + 12 bytes for pushed regs = [esp+14]
+	_('mov esi,dword[esp+14]')
+	; Get destination buffer
+	_('mov edi,DecodeOutputPtr')
+	; Copy string (max 1023 wchars + null)
+	_('mov ecx,400')  ; 1024 wchars max (0x400)
+	_('DecodeLoop:')
+	; Load word from [esi] into ax, esi += 2
+	_('lodsw -> 66 AD')
+	; Store word from ax to [edi], edi += 2
+	_('stosw -> 66 AB')
+	; Check if null terminator
+	_('test ax,ax')
+	_('jz DecodeDone')
+	_('dec ecx')
+	_('jnz DecodeLoop')
+	_('DecodeDone:')
+	; Set ready flag
+	_('mov dword[DecodeReady],1')
+	_('pop ecx')
+	_('pop edi')
+	_('pop esi')
+	; stdcall: callee cleans up 2 params (8 bytes)
+	_('retn 8')
+
+	; Command to decode an encoded string
+	; eax points to command struct: [ptr command][wchar encoded_string[64]]
+	_('CommandDecodeEncString:')
+	; Reset ready flag
+	_('mov dword[DecodeReady],0')
+	; Clear output buffer first word (to detect no result)
+	_('mov word[DecodeOutputPtr],0 -> 66 C7 05 [DecodeOutputPtr] 00 00')
+	; Copy encoded string from command to input buffer
+	_('push esi')
+	_('push edi')
+	_('push ecx')
+	; Source: command struct + 4 (skip ptr)
+	_('lea esi,dword[eax+4]')
+	; Destination: input buffer
+	_('mov edi,DecodeInputPtr')
+	; 64 dwords = 128 wchars = 256 bytes
+	_('mov ecx,40')
+	; Copy
+	_('rep movsd -> F3 A5')
+	_('pop ecx')
+	_('pop edi')
+	_('pop esi')
+	; Push callback param (not used, pass 0)
+	_('push 0')
+	; Push callback function pointer
+	_('push DecodeCallback')
+	; Push encoded string pointer
+	_('push DecodeInputPtr')
+	; Call ValidateAsyncDecodeStr
+	_('call ValidateAsyncDecodeStr')
+	; Clean up 3 params (12 bytes)
+	_('add esp,C')
 	_('ljmp CommandReturn')
 EndFunc
 
@@ -3144,6 +3239,10 @@ Func _($asm)
 					$opCode = '8D4918'
 				Case 'lea ecx,dword[ebx+18]'
 					$opCode = '8D4B18'
+				Case 'lea esi,dword[eax+4]'
+					$opCode = '8D7004'
+				Case 'lea esi,dword[eax+8]'
+					$opCode = '8D7008'
 				Case 'shl eax,4'
 					$opCode = 'C1E004'
 				Case 'shl eax,8'
@@ -3310,6 +3409,8 @@ Func _($asm)
 					$opCode = '8B4D08'
 				Case 'mov ecx,dword[esp+1F4]'
 					$opCode = '8B8C24F4010000'
+				Case 'mov esi,dword[esp+14]'
+					$opCode = '8B742414'
 				Case 'mov ecx,dword[edi+4]'
 					$opCode = '8B4F04'
 				Case 'mov ecx,dword[edi+8]'

@@ -327,7 +327,7 @@ EndFunc
 
 ;~ Returns the coordinates in the middle of the party team in 2 elements array
 Func FindMiddleOfParty()
-	Local $position[2] = [0, 0]
+	Local $position[] = [0, 0]
 	Local $party = GetParty()
 	Local $partySize = 0
 	Local $me = GetMyAgent()
@@ -347,7 +347,7 @@ EndFunc
 
 ;~ Returns the coordinates in the middle of a group of foes nearest to provided position
 Func FindMiddleOfFoes($posX, $posY, $range = $RANGE_AREA)
-	Local $position[2] = [0, 0]
+	Local $position[] = [0, 0]
 	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
 	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $range)
 	For $foe In $foes

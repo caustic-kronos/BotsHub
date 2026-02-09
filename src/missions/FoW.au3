@@ -565,7 +565,7 @@ Func PickUpUnholyTexts()
 					Local $attempt = Floor($attempts / 20)
 					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
 					Error('Attempt ' & $attempt)
-					Local $attemptPlaces[8] = [2300, 14700, 1800, 16500, 4400, 15800, 1900, 13800]
+					Local $attemptPlaces[] = [2300, 14700, 1800, 16500, 4400, 15800, 1900, 13800]
 					MoveTo($attemptPlaces[Floor($attempts / 10)] - 2, $attemptPlaces[Floor($attempts / 10) - 1])
 				EndIf
 				$attempts += 1

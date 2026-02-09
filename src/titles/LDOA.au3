@@ -226,7 +226,7 @@ Func LDOATitleFarmUnder2()
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
 	MoveTo(-10433, -6021)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
-	Local $wurmies[5][2] = [ _
+	Local $wurmies[][] = [ _
 		[-9551,	-5499], _
 		[-9545, -4205], _
 		[-9551, -2929], _

@@ -33,7 +33,7 @@ Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
 ; Speed of a character without boosts ~290/s
 Global Const $PLAYER_DEFAULT_SPEED = 290
 
-Global Const $SPIRIT_TYPES_ARRAY[2] = [0x44000, 0x4C000]
+Global Const $SPIRIT_TYPES_ARRAY[] = [0x44000, 0x4C000]
 Global Const $MAP_SPIRIT_TYPES = MapFromArray($SPIRIT_TYPES_ARRAY)
 
 ; Map containing the IDs of the opened chests - this map should be cleared at every loop
@@ -149,8 +149,8 @@ EndFunc
 ;~ Travel to specified map to a random district
 ;~ 7=eu, 8=eu+int, 11=all(incl. asia)
 Func RandomDistrictTravel($mapID, $fromDistrict = 0, $toDistrict = 6)
-	Local $region[12] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_INTERNATIONAL, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA]
-	Local $language[12] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
+	Local $region[] = [$ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_EUROPE, $ID_AMERICA, $ID_INTERNATIONAL, $ID_ASIA_CHINA, $ID_ASIA_JAPAN, $ID_ASIA_KOREA]
+	Local $language[] = [$ID_ENGLISH, $ID_FRENCH, $ID_GERMAN, $ID_ITALIAN, $ID_SPANISH, $ID_POLISH, $ID_RUSSIAN, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH, $ID_ENGLISH]
 	Local $random = Random($fromDistrict, $toDistrict, 1)
 	MoveMap($mapID, $region[$random], 0, $language[$random])
 	WaitMapLoading($mapID, 20000)
@@ -302,7 +302,7 @@ EndFunc
 
 
 Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
-	Local $coordinates[2] = [-1, -1]
+	Local $coordinates[] = [-1, -1]
 	Switch $type
 		Case 'Merchant'
 			Switch $town
@@ -1143,13 +1143,13 @@ Func FanFlagHeroes($range = $RANGE_AREA)
 	Switch $heroCount
 		Case 3
 			; right, left, behind
-			Local $heroFlagPositions[3] = [1, 2, 3]
+			Local $heroFlagPositions[] = [1, 2, 3]
 		Case 5
 			; right, left, behind, behind right, behind left
-			Local $heroFlagPositions[5] = [1, 2, 3, 4, 5]
+			Local $heroFlagPositions[] = [1, 2, 3, 4, 5]
 		Case 7
 			; right, left, behind, behind right, behind left, way behind right, way behind left
-			Local $heroFlagPositions[7] = [1, 2, 6, 3, 4, 5, 7]
+			Local $heroFlagPositions[] = [1, 2, 6, 3, 4, 5, 7]
 		Case Else
 			Local $heroFlagPositions[0] = []
 	EndSwitch
@@ -1577,7 +1577,7 @@ Func MemoryReadPtr($processHandle, $address, $offset, $type = 'dword')
 	Local $ptrCount = UBound($offset) - 2
 	Local $buffer = SafeDllStructCreate('dword')
 	Local $memoryInfo = DllStructCreate($MEMORY_INFO_STRUCT_TEMPLATE)
-	Local $data[2] = [0, 0]
+	Local $data[] = [0, 0]
 
 	; This loops serves as a control - if ExitLoop is reached in the inner loop, we can skip the rest of the outer loop
 	For $j = 0 To 0
@@ -1604,6 +1604,16 @@ Func MemoryReadPtr($processHandle, $address, $offset, $type = 'dword')
 	; This can be valid when trying to access an agent out of range for instance
 	DebuggerLog('Tried to access an invalid address')
 	Return $data
+EndFunc
+
+
+Func ScanToFunctionStart($callInstructionAddress, $scanRange = 0x200)
+    If $callInstructionAddress = 0 Then Return 0
+
+    Local $start = $callInstructionAddress
+    Local $end = BitAND($start - $scanRange, 0xFFFFFFFF)
+
+    Return FindInRange(GetProcessHandle(), '558BEC', 'xxx', 0, $start, $end)
 EndFunc
 
 
@@ -1815,7 +1825,7 @@ Func ScanMemoryForPattern($processHandle, $patternBinary)
 					$tmpMemoryData = BinaryToString($tmpMemoryData)
 					Local $matchOffset = StringInStr($tmpMemoryData, $patternBinary, 2)
 					If $matchOffset > 0 Then
-						Local $match[3] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
+						Local $match[] = [$memoryBaseAddress, $currentSearchAddress, $matchOffset]
 						Return $match
 					EndIf
 			EndSwitch
@@ -2183,7 +2193,7 @@ EndFunc
 ;~ Add to a Map of arrays (create key and new array if unexisting, add to existent array if existing)
 Func AppendArrayMap($map, $key, $element)
 	If ($map[$key] == Null) Then
-		Local $newArray[1] = [$element]
+		Local $newArray[] = [$element]
 		$map[$key] = $newArray
 	Else
 		_ArrayAdd($map[$key], $element)
@@ -2405,7 +2415,7 @@ Func DynamicExecution($functionCall)
 	Local $argumentsString = StringMid($functionCall, $openParenthesisPosition + 1, StringLen($functionCall) - $openParenthesisPosition)
 	Local $functionArguments = ParseFunctionArguments($argumentsString)
 	; flag to be able to pass unlimited array of arguments into Call() function
-	Local $arguments[1] = ['CallArgArray']
+	Local $arguments[] = ['CallArgArray']
 	_ArrayConcatenate($arguments, $functionArguments)
 	Call($functionName, $arguments)
 EndFunc
@@ -2433,7 +2443,7 @@ Func _dlldisplay($struct, $fieldNames = Null)
 	Local $elementValue, $type, $typeSize, $elementSize, $arrayCount, $aligns
 
 	; #|Offset|Type|Size|Value'
-	Local $structArray[1][6] = [['-', '-', $currentPtr, '<struct>', 0, '-']]
+	Local $structArray[][] = [['-', '-', $currentPtr, '<struct>', 0, '-']]
 
 	; loop through elements
 	For $i = 1 To 2 ^ 63

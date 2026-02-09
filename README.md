@@ -151,14 +151,14 @@ Some require manual setup in the **Team** tab or in-game 🛡️
 </details>
 
 <details>
-<summary><strong>Q: Error: "Variable subscript badly formatted" (`Local $map[]`).</strong></summary>
+<summary><strong>Q: Error: 'Variable subscript badly formatted' (`Local $map[]`).</strong></summary>
 
 Your AutoIt version is too old.  
 Update to **AutoIt ≥ 3.3.16.0** 🆙
 </details>
 
 <details>
-<summary><strong>Q: Error: "not accessible variable" in `/lib/Utils.au3`.</strong></summary>
+<summary><strong>Q: Error: 'not accessible variable' in `/lib/Utils.au3`.</strong></summary>
 
 Reinstall AutoIt 🔄
 </details>
@@ -171,14 +171,14 @@ Always store valuable items before running the bot 💎
 </details>
 
 <details>
-<summary><strong>Q: Data tracking does not work ("Failed to load sqlite").</strong></summary>
+<summary><strong>Q: Data tracking does not work ('Failed to load sqlite').</strong></summary>
 
 SQLite must be installed and accessible by AutoIt.  
 DLL and UDF files are included in the repository
 </details>
 
 <details>
-<summary><strong>Q: Do you have a "YYY" bot?</strong></summary>
+<summary><strong>Q: Do you have a 'YYY' bot?</strong></summary>
 
 If it is not listed, it does not exist ❌  
 PvP bots will not be added  

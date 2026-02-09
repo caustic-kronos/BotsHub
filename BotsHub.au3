@@ -582,7 +582,7 @@ EndFunc
 
 ;~ Helper to add farms into map in a one-liner
 Func AddFarmToFarmMap($farmName, $farmFunction, $farmInventorySpace, $farmDuration)
-	Local $farmArray[4] = [$farmName, $farmFunction, $farmInventorySpace, $farmDuration]
+	Local $farmArray[] = [$farmName, $farmFunction, $farmInventorySpace, $farmDuration]
 	$farm_map[$farmName] = $farmArray
 EndFunc
 

@@ -58,6 +58,17 @@ Global $trade_partner_ptr
 Global $craft_item_ptr
 Global $collector_exchange_ptr
 
+;EncString Decoding
+; Pointer to encoded string input buffer in GW memory
+Global $decode_input_ptr
+; Pointer to decoded string output buffer in GW memory
+Global $decode_output_ptr
+; Pointer to ready flag in GW memory
+Global $decode_ready
+; Command struct: ptr to command + encoded string
+Global $decode_enc_string = DllStructCreate('ptr;wchar[128]')
+Global $decode_enc_string_ptr = DllStructGetPtr($decode_enc_string)
+
 ; Other
 Global $friend_list_address
 #EndRegion Declarations
@@ -323,7 +334,7 @@ EndFunc
 
 ;~ Returns skillbar struct.
 Func GetSkillbar($heroIndex = 0)
-	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
+	Local $offset[] = [0, 0x18, 0x2C, 0x6F0, 0]
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To GetHeroCount()
 		$offset[4] = $i * 0xBC
@@ -346,7 +357,7 @@ EndFunc
 ;	; Check if we can use cached address
 ;	If $heroIndex <> $cachedHero Or TimerDiff($cacheTimestamp) > $cacheLifetimeMs Then
 ;		; Follow the pointer chain to find the address
-;		Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0]
+;		Local $offset[] = [0, 0x18, 0x2C, 0x6F0, 0]
 ;		For $i = 0 To GetHeroCount()
 ;			$offset[4] = $i * 0xBC
 ;			Local $skillBarStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
@@ -567,11 +578,7 @@ EndFunc
 Func GetAttributeByID($attributeID, $withRunes = False, $heroIndex = 0)
 	Local $agentID = GetHeroID($heroIndex)
 	Local $buffer
-	Local $offset[5]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x2C
-	$offset[3] = 0xAC
+	Local $offset[] = [0, 0x18, 0x2C, 0xAC, 0]
 	Local $processHandle = GetProcessHandle()
 	For $i = 0 To GetHeroCount()
 		$offset[4] = 0x43C * $i
@@ -589,7 +596,7 @@ EndFunc
 #Region Travel
 ;~ Returns number of foes that have been killed so far.
 Func GetFoesKilled()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x84C]
+	Local $offset[] = [0, 0x18, 0x2C, 0x84C]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -597,7 +604,7 @@ EndFunc
 
 ;~ Returns number of enemies left to kill for vanquish.
 Func GetFoesToKill()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x850]
+	Local $offset[] = [0, 0x18, 0x2C, 0x850]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -611,7 +618,7 @@ EndFunc
 
 ;~ Returns the instance type (city, explorable, mission, etc ...)
 Func GetMapType()
-	Local $offset[1] = [0x4]
+	Local $offset[] = [0x4]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $instance_info_ptr, $offset, 'dword')
 	Return $result[1]
 EndFunc
@@ -619,7 +626,7 @@ EndFunc
 
 ;~ Returns current map ID
 Func GetMapID()
-	Local $offset[3] = [0, 0x18, 0x44]
+	Local $offset[] = [0, 0x18, 0x44]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset, 'ptr')
 	$result = MemoryRead(GetProcessHandle(), $result[1] + 0x198, 'long')
 	Return $result
@@ -666,7 +673,7 @@ EndFunc
 
 ;~ Returns current district
 Func GetDistrict()
-	Local $offset[4] = [0, 0x18, 0x44, 0x220]
+	Local $offset[] = [0, 0x18, 0x44, 0x220]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -704,7 +711,7 @@ EndFunc
 
 ;~ Travel to your guild hall.
 Func TravelGuildHall()
-	Local $offset[3] = [0, 0x18, 0x3C]
+	Local $offset[] = [0, 0x18, 0x3C]
 	Local $processHandle = GetProcessHandle()
 	Local $guildHall = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 	SendPacket(0x18, $HEADER_GUILDHALL_TRAVEL, MemoryRead($processHandle, $guildHall[1] + 0x64), MemoryRead($processHandle, $guildHall[1] + 0x68), MemoryRead($processHandle, $guildHall[1] + 0x6C), MemoryRead($processHandle, $guildHall[1] + 0x70), 1)
@@ -721,7 +728,7 @@ EndFunc
 
 ;~ Wait for map to be loaded, True if map loaded correctly, False otherwise
 ;Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
-;	Local $offset[5] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
+;	Local $offset[] = [0, 0x18, 0x2C, 0x6F0, 0xBC]
 ;	Local $deadlock = TimerInit()
 ;	Local $processHandle = GetProcessHandle()
 ;	Local $skillbarStruct = MemoryReadPtr($processHandle, $base_address_ptr, $offset, 'ptr')
@@ -888,7 +895,7 @@ EndFunc
 
 ;~ Internal use for GetAgentByID()
 Func GetAgentPtr($agentID)
-	Local $offset[3] = [0, 4 * $agentID, 0]
+	Local $offset[] = [0, 4 * $agentID, 0]
 	Local $agentStructAddress = MemoryReadPtr(GetProcessHandle(), $agent_base_address, $offset)
 	Return $agentStructAddress[0]
 EndFunc
@@ -955,7 +962,7 @@ EndFunc
 ;~ Returns a player's name.
 Func GetPlayerName($agent)
 	Local $loginNumber = DllStructGetData($agent, 'LoginNumber')
-	Local $offset[6] = [0, 0x18, 0x2C, 0x80C, 76 * $loginNumber + 0x28, 0]
+	Local $offset[] = [0, 0x18, 0x2C, 0x80C, 76 * $loginNumber + 0x28, 0]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset, 'wchar[30]')
 	Return $result[1]
 EndFunc
@@ -1064,7 +1071,7 @@ EndFunc
 
 ;~ Returns number of heroes you control.
 Func GetHeroCount()
-	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x2C]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x2C]
 	Local $heroCount = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $heroCount[1]
 EndFunc
@@ -1073,7 +1080,7 @@ EndFunc
 ;~ Returns agent ID of a hero.
 Func GetHeroID($heroIndex)
 	If $heroIndex == 0 Then Return GetMyID()
-	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0x18 * ($heroIndex - 1)]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x24, 0x18 * ($heroIndex - 1)]
 	Local $agentID = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $agentID[1]
 EndFunc
@@ -1083,7 +1090,7 @@ EndFunc
 Func GetHeroNumberByAgentID($agentID)
 	Local $heroID
 	Local $processHandle = GetProcessHandle()
-	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 0x18 * ($i - 1)
 		$heroID = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
@@ -1097,7 +1104,7 @@ EndFunc
 Func GetHeroNumberByHeroID($heroID)
 	Local $agentID
 	Local $processHandle = GetProcessHandle()
-	Local $offset[6] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x24, 0]
 	For $i = 1 To GetHeroCount()
 		$offset[5] = 8 + 0x18 * ($i - 1)
 		$agentID = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
@@ -1110,7 +1117,7 @@ EndFunc
 ;~ Returns hero's profession ID (when it cannot be found by other means)
 Func GetHeroProfession($heroIndex, $secondary = False)
 	Local $processHandle = GetProcessHandle()
-	Local $offset[5] = [0, 0x18, 0x2C, 0x6BC, 0]
+	Local $offset[] = [0, 0x18, 0x2C, 0x6BC, 0]
 	Local $buffer
 	$heroIndex = GetHeroID($heroIndex)
 	For $i = 0 To GetHeroCount()
@@ -1142,7 +1149,7 @@ EndFunc
 ;~	0x80 = Party Leader
 ;~	0x100 = Observe-Mode
 Func GetPartyState($flag)
-	Local $offset[4] = [0, 0x18, 0x4C, 0x14]
+	Local $offset[] = [0, 0x18, 0x4C, 0x14]
 	Local $bitMask = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return BitAND($bitMask[1], $flag) > 0
 EndFunc
@@ -1156,13 +1163,13 @@ EndFunc
 
 Func GetPartySize()
 	Local $processHandle = GetProcessHandle()
-	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0xC]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0xC]
 	Local $playersPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 
-	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x1C]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x1C]
 	Local $henchmenPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 
-	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x2C]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x2C]
 	Local $heroesPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 
 	Local $players = MemoryRead($processHandle, $playersPtr[0], 'long')
@@ -1174,7 +1181,7 @@ EndFunc
 
 Func GetPartyAlliesSize()
 	Local $processHandle = GetProcessHandle()
-	Local $offset[5] = [0, 0x18, 0x4C, 0x54, 0x3C]
+	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x3C]
 	Local $alliesPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 	Return MemoryRead($processHandle, $alliesPtr[0], 'long')
 EndFunc
@@ -1262,7 +1269,7 @@ EndFunc
 
 ;~ Returns pointer to the bag at the bag index provided
 Func GetBagPtr($bagIndex)
-	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x4 * $bagIndex]
+	Local $offset[] = [0, 0x18, 0x40, 0xF8, 0x4 * $bagIndex]
 	Local $itemStructAddress = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset, 'ptr')
 	Return $itemStructAddress[1]
 EndFunc
@@ -1302,7 +1309,7 @@ EndFunc
 ;~ Returns item struct.
 Func GetItemByItemID($itemID)
 	Local $processHandle = GetProcessHandle()
-	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0x4 * $itemID]
+	Local $offset[] = [0, 0x18, 0x40, 0xB8, 0x4 * $itemID]
 	Local $itemPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 	Local $itemStruct = SafeDllStructCreate($ITEM_STRUCT_TEMPLATE)
 	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $itemPtr[1], 'ptr', DllStructGetPtr($itemStruct), 'int', DllStructGetSize($itemStruct), 'int', 0)
@@ -1337,9 +1344,9 @@ EndFunc
 ;~ Returns item corresponding to the filter function provided with the parameter given
 Func GetItemByFilter($filterFunction, $filterParameter = Null)
 	Local $processHandle = GetProcessHandle()
-	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
+	Local $offset[] = [0, 0x18, 0x40, 0xC0]
 	Local $itemArraySize = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
-	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
+	Local $offset[] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
 	For $itemID = 1 To $itemArraySize[1]
 		$offset[4] = 0x4 * $itemID
@@ -1355,7 +1362,7 @@ EndFunc
 
 ;~ Returns amount of gold in storage.
 Func GetGoldStorage()
-	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x94]
+	Local $offset[] = [0, 0x18, 0x40, 0xF8, 0x94]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -1363,7 +1370,7 @@ EndFunc
 
 ;~ Returns amount of gold being carried.
 Func GetGoldCharacter()
-	Local $offset[5] = [0, 0x18, 0x40, 0xF8, 0x90]
+	Local $offset[] = [0, 0x18, 0x40, 0xF8, 0x90]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -1373,7 +1380,7 @@ EndFunc
 #Region Item manipulations
 ;~ Starts a salvaging session of an item.
 Func StartSalvageWithKit($item, $salvageKit)
-	Local $offset[4] = [0, 0x18, 0x2C, 0x690]
+	Local $offset[] = [0, 0x18, 0x2C, 0x690]
 	Local $salvageSessionID = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	If $salvageSessionID[0] == 0 Then Return False
 	Sleep(40 + GetPing())
@@ -1542,7 +1549,7 @@ EndFunc
 Func ChangeGold($character, $storage)
 	Return SendPacket(0xC, $HEADER_CHANGE_GOLD, $character, $storage)
 EndFunc
-#Region Item manipulations
+#EndRegion Item manipulations
 
 
 #Region Trade
@@ -1585,7 +1592,7 @@ EndFunc
 
 ;~ Internal use for BuyItem()
 Func GetMerchantItemsBase()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x24]
+	Local $offset[] = [0, 0x18, 0x2C, 0x24]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -1593,7 +1600,7 @@ EndFunc
 
 ;~ Internal use for BuyItem()
 Func GetMerchantItemsSize()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x28]
+	Local $offset[] = [0, 0x18, 0x2C, 0x28]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -1601,7 +1608,7 @@ EndFunc
 
 ;~ Get item from merchant corresponding to given modelID
 Func GetMerchantItemPtrByModelID($modelID)
-	Local $offsets[5] = [0, 0x18, 0x40, 0xB8]
+	Local $offsets[] = [0, 0x18, 0x40, 0xB8]
 	Local $merchantBaseAddress = GetMerchantItemsBase()
 	Local $itemID = 0
 	Local $itemPtr = 0
@@ -1622,9 +1629,9 @@ EndFunc
 ;~ Request a quote to buy an item from a trader. Returns True if successful.
 Func TraderRequest($modelID, $dyeColor = -1)
 	Local $processHandle = GetProcessHandle()
-	Local $offset[4] = [0, 0x18, 0x40, 0xC0]
+	Local $offset[] = [0, 0x18, 0x40, 0xC0]
 	Local $itemArraySize = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
-	Local $offset[5] = [0, 0x18, 0x40, 0xB8, 0]
+	Local $offset[] = [0, 0x18, 0x40, 0xB8, 0]
 	Local $itemPtr, $itemID
 	Local $found = False
 	Local $quoteID = MemoryRead($processHandle, $trader_quote_ID)
@@ -1702,7 +1709,7 @@ Func SellItemToTrader($item, $quantity = 0)
 	Return True
 EndFunc
 
-#Region NPC Trade
+#EndRegion NPC Trade
 
 
 #Region Player Trade
@@ -1792,7 +1799,7 @@ EndFunc
 Func GetQuestByID($questID = 0)
 	Local $questPtr, $questLogSize, $quest
 	Local $processHandle = GetProcessHandle()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x534]
+	Local $offset[] = [0, 0x18, 0x2C, 0x534]
 
 	$questLogSize = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 
@@ -1804,7 +1811,7 @@ Func GetQuestByID($questID = 0)
 		$questID = $quest[1]
 	EndIf
 
-	Local $offset[5] = [0, 0x18, 0x2C, 0x52C, 0]
+	Local $offset[] = [0, 0x18, 0x2C, 0x52C, 0]
 	For $i = 0 To $questLogSize[1]
 		$offset[4] = 0x34 * $i
 		$questPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
@@ -1874,7 +1881,7 @@ EndFunc
 
 ;~ Return title progression - common part for most titles
 Func GetTitleProgress($finalOffset)
-	Local $offset[5] = [0, 0x18, 0x2C, 0x81C, $finalOffset]
+	Local $offset[] = [0, 0x18, 0x2C, 0x81C, $finalOffset]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -2032,7 +2039,7 @@ EndFunc
 
 ;~ Returns current Tournament points.
 Func GetTournamentPoints()
-	Local $offset[5] = [0, 0x18, 0x2C, 0, 0x18]
+	Local $offset[] = [0, 0x18, 0x2C, 0, 0x18]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -2090,7 +2097,7 @@ EndFunc
 
 ;~ Returns the faction points depending on the offset provided
 Func GetFaction($finalOffset)
-	Local $offset[4] = [0, 0x18, 0x2C, $finalOffset]
+	Local $offset[] = [0, 0x18, 0x2C, $finalOffset]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -2602,6 +2609,72 @@ EndFunc
 
 
 #Region Miscellaneous
+; Decodes a Guild Wars Encoded String to extract the string ID
+; EncStrings use variable-length encoding with continuation bits
+Func DecodeEncString($ptr)
+    If $ptr = 0 Then Return 0
+
+    Local $value = 0
+    Local $offset = 0
+	; Safety limit
+    Local $maxIterations = 10
+	Local $processHandle = GetProcessHandle()
+
+    For $i = 1 To $maxIterations
+        Local $char = MemoryRead($processHandle, $ptr + $offset, 'word')
+
+        ; Check if this is a valid encoded word (>= 0x100)
+        If $char < $ENCSTR_WORD_VALUE_BASE Then ExitLoop
+
+        $value *= $ENCSTR_WORD_VALUE_RANGE
+        $value += BitAND($char, BitNOT($ENCSTR_WORD_BIT_MORE)) - $ENCSTR_WORD_VALUE_BASE
+        $offset += 2
+
+        ; If continuation bit is not set, we're done
+        If BitAND($char, $ENCSTR_WORD_BIT_MORE) = 0 Then ExitLoop
+    Next
+
+    Return $value
+EndFunc
+
+; Decodes an encoded string to readable text using GW's internal decoder
+; This calls ValidateAsyncDecodeStr via injected ASM code
+; @param $a_p_Ptr - Pointer to the encoded string in GW memory
+; @param $a_i_Timeout - Maximum time to wait for decode (ms), default 1000
+; @return Decoded string or empty string on failure
+Func DecodeEncStringAsync($ptr, $timeout = 1000)
+    If $ptr = 0 Then Return ''
+
+	Local $processHandle = GetProcessHandle()
+    ; Read the encoded string from GW memory (max 128 wchars)
+    Local $encString = MemoryRead($processHandle, $ptr, 'wchar[128]')
+    If $encString = '' Then Return ''
+
+    ; Write encoded string to command struct
+    DllStructSetData($decode_enc_string, 2, $encString)
+
+    ; Reset ready flag before sending command
+    MemoryWrite($processHandle, $decode_ready, 0, 'dword')
+
+    ; Enqueue the decode command
+    Enqueue($decode_enc_string_ptr, DllStructGetSize($decode_enc_string))
+
+    ; Wait for decode to complete
+    Local $startTime = TimerInit()
+    While TimerDiff($startTime) < $timeout
+        If MemoryRead($processHandle, $decode_ready, 'dword') = 1 Then
+            ; Read the decoded string
+            Local $decoded = MemoryRead($processHandle, $decode_output_ptr, 'wchar[1024]')
+            Return $decoded
+        EndIf
+        Sleep(16)
+    WEnd
+
+    ; Timeout
+    Return ''
+EndFunc
+
+
 ;~ Returns current morale.
 Func GetMorale($heroIndex = 0)
 	Local $processHandle = GetProcessHandle()
@@ -2616,7 +2689,7 @@ EndFunc
 
 ;~ Returns amount of experience.
 Func GetExperience()
-	Local $offset[4] = [0, 0x18, 0x2C, 0x740]
+	Local $offset[] = [0, 0x18, 0x2C, 0x740]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -2631,7 +2704,7 @@ EndFunc
 
 ;~ Returns language currently being used.
 Func GetDisplayLanguage()
-	Local $offset[6] = [0, 0x18, 0x18, 0x194, 0x4C, 0x40]
+	Local $offset[] = [0, 0x18, 0x18, 0x194, 0x4C, 0x40]
 	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $result[1]
 EndFunc
@@ -2639,11 +2712,7 @@ EndFunc
 
 ;~ Returns how long the current instance has been active, in milliseconds.
 Func GetInstanceUpTime()
-	Local $offset[4]
-	$offset[0] = 0
-	$offset[1] = 0x18
-	$offset[2] = 0x8
-	$offset[3] = 0x1AC
+	Local $offset[] = [0, 0x18, 0x8, 0x1AC]
 	Local $timer = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	Return $timer[1]
 EndFunc

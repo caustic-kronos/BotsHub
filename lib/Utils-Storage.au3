@@ -1608,7 +1608,7 @@ EndFunc
 
 ;~ Find first empty slot in bags from firstBag to lastBag
 Func FindFirstEmptySlot($firstBag, $lastBag)
-	Local $bagEmptySlot[2] = [0, 0]
+	Local $bagEmptySlot[] = [0, 0]
 	For $i = $firstBag To $lastBag
 		$bagEmptySlot[1] = FindEmptySlot($i)
 		If $bagEmptySlot[1] <> 0 Then
@@ -1829,7 +1829,7 @@ EndFunc
 ;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else (bags and slots are indexed from 1 as in GWToolbox)
 Func FindInStorages($firstBag, $lastBag, $itemID)
 	Local $item
-	Local $itemBagAndSlot[2] = [0, 0]
+	Local $itemBagAndSlot[] = [0, 0]
 
 	For $bagIndex = $firstBag To $lastBag
 		Local $bag = GetBag($bagIndex)
@@ -2555,7 +2555,7 @@ EndFunc
 ;~ Auto fill the items mods based on the known modstructs
 Func CompleteItemsMods($batchID)
 	Info('Completing items mods')
-	Local $upgradeTypes[3] = ['prefix', 'suffix', 'inscription']
+	Local $upgradeTypes[] = ['prefix', 'suffix', 'inscription']
 	Local $query
 	For $upgradeType In $upgradeTypes
 		$query = 'UPDATE ' & $TABLE_DATA_USER & @CRLF _
@@ -2612,7 +2612,7 @@ EndFunc
 ;~ Complete mods data by cross-comparing all modstructs from items that have the same mods and deduce the mod hexa from it
 Func CompleteUpgradeLookupTable()
 	Info('Completing upgrade lookup')
-	Local $modTypes[3] = ['prefix', 'suffix', 'inscription']
+	Local $modTypes[] = ['prefix', 'suffix', 'inscription']
 	For $upgradeType In $modTypes
 		InsertNewUpgrades($upgradeType)
 		UpdateNewUpgrades($upgradeType)
