@@ -454,6 +454,7 @@ Func DefaultShouldSalvageItem($item)
 		EndSwitch
 		;Return $cache['Salvage items.Trophies.Other trophies']
 
+		If $MAP_NICHOLAS_ITEMS[$itemID] <> Null Then Return False
 		If $MAP_FEATHER_TROPHIES[$itemID] <> Null Then Return True
 		If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return True
 		If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return True
