@@ -1257,7 +1257,7 @@ Func GetModStruct($item)
 EndFunc
 
 
-;~ Returns struct of an inventory bag.
+;~ Returns struct of an inventory bag. Indexes: 1-5: inventory, 6: xunlai materials, 7: , 8-21: xunlai
 Func GetBag($bagIndex)
 	Local $bagPtr = GetBagPtr($bagIndex)
 	If $bagPtr = 0 Then Return Null

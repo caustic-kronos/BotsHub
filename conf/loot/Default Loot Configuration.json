@@ -945,14 +945,14 @@
 			"Stygian Gemstone": true,
 			"Titan Gemstone": true,
 			"Torment Gemstone": true,
-			"Glacial Stone": true,
-			"Destroyer Core": true,
 			"Diessa Chalice": true,
 			"Golden Rin Relic": true,
 			"Chunk of Drake Flesh": true,
 			"Skale Fin": true,
+			"Iboga Petal": true,
+			"Destroyer Core": true,
+			"Glacial Stone": true,
 			"Jade Bracelet": true,
-			"Stolen Goods": true,
 			"Dark Remains": true,
 			"Demonic Remains": true,
 			"Other trophies": true
@@ -2453,13 +2453,14 @@
 			"Jadeite Shard": false
 		},
 		"Trophies": {
-			"Glacial Stone": true,
+			"Chunk of Drake Flesh": false,
+			"Skale Fin": false,
+			"Iboga Petal": false,
 			"Destroyer Core": false,
+			"Glacial Stone": true,
 			"Jade Bracelet": false,
-			"Stolen Goods": true,
 			"Dark Remains": true,
-			"Demonic Remains": true,
-			"Other trophies": false
+			"Demonic Remains": true
 		}
 	},
 	"Sell items": {
@@ -3223,9 +3224,14 @@
 			"Jadeite Shard": false
 		},
 		"Trophies": {
-			"Glacial Stone": false,
+			"Chunk of Drake Flesh": false,
+			"Skale Fin": false,
+			"Iboga Petal": false,
 			"Destroyer Core": false,
-			"Other trophies": false
+			"Glacial Stone": false,
+			"Jade Bracelet": false,
+			"Dark Remains": false,
+			"Demonic Remains": false
 		},
 		"Scrolls": {
 			"Blue": true,
@@ -4228,14 +4234,16 @@
 			"Stygian Gemstone": true,
 			"Titan Gemstone": true,
 			"Torment Gemstone": true,
-			"Glacial Stone": false,
-			"Destroyer Core": true,
 			"Diessa Chalice": true,
 			"Golden Rin Relic": true,
 			"Chunk of Drake Flesh": true,
 			"Skale Fin": true,
-			"Jade Bracelet": false,
-			"Stolen Goods": false,
+			"Iboga Petal": true,
+			"Destroyer Core": true,
+			"Glacial Stone": false,
+			"Jade Bracelet": true,
+			"Dark Remains": true,
+			"Demonic Remains": true,
 			"Other trophies": true
 		},
 		"Tomes": {
