@@ -13,6 +13,7 @@ It provides a **single framework and interface** to run multiple bot scripts, wi
 
 ## Usage
 To use it:
+0. Run the game with no add-ons: NO Toolbox, NO cartography, NO reshade, nothing. Also use lowest graphics if possible.
 1. Install **AutoIt (≥ 3.3.16.0)** 🛠️  
 2. Clone or download the repository (`<> Code → Download ZIP`) 📥
 3. Extract the archive if needed
@@ -134,6 +135,13 @@ Too many possible causes. Please provide:
 - When it stopped (during farm, inventory, travel, etc.)
 - Last console logs
 - Whether it happens consistently
+</details>
+
+<details>
+<summary><strong>Q: The game crashes or disconnects.</strong></summary>
+
+Some degree of crash or disconnect is normal and happens to all bots.
+If it happens too often, make sure you are running the game at lowest quality and with no add-ons.
 </details>
 
 <details>
