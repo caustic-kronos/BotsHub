@@ -952,6 +952,7 @@
 			"Iboga Petal": true,
 			"Destroyer Core": true,
 			"Glacial Stone": true,
+			"Saurian Bone": true,
 			"Jade Bracelet": true,
 			"Dark Remains": true,
 			"Demonic Remains": true,
@@ -2458,6 +2459,7 @@
 			"Iboga Petal": false,
 			"Destroyer Core": false,
 			"Glacial Stone": true,
+			"Saurian Bone": true,
 			"Jade Bracelet": false,
 			"Dark Remains": true,
 			"Demonic Remains": true
@@ -3229,6 +3231,7 @@
 			"Iboga Petal": false,
 			"Destroyer Core": false,
 			"Glacial Stone": false,
+			"Saurian Bone": false,
 			"Jade Bracelet": false,
 			"Dark Remains": false,
 			"Demonic Remains": false
@@ -4241,6 +4244,7 @@
 			"Iboga Petal": true,
 			"Destroyer Core": true,
 			"Glacial Stone": false,
+			"Saurian Bone": false,
 			"Jade Bracelet": true,
 			"Dark Remains": true,
 			"Demonic Remains": true,
