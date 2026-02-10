@@ -27,12 +27,12 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $LDOA_INFORMATIONS = 'The bot will:' & @CRLF _
-	& '- Go right off the bat, on a new character after the cutscene.' & @CRLF _
-	& '- In the beginning it tries to do the elementalist quest to get some initial skill.' & @CRLF _
-	& '- If you are not an elementalist, then it is advised to get some initial skills yourself.' & @CRLF _
-	& '- If you are already level 2, it wont setup your bar or weapons, you can choose.' & @CRLF _
-	& '- It will get you Legendary Defender of Ascalon title, this is not a farming bot.'
+Global Const $LDOA_INFORMATIONS = 'This bot:' & @CRLF _
+	& '- gets weapons and summoning stone' & @CRLF _
+	& '- do a few quests and kill worms outside Ashford until level 2' & @CRLF _
+	& '- between level 2 and 9, does the quest Charr at the Gate repeatedly' & @CRLF _
+	& '- between level 10 and 19 does the quest Farmer Hamnet which is only available one day of the week' & @CRLF _
+	& '- stops once Legendary Defender of Ascalon.'
 ; Average duration ~ 1m
 Global Const $LDOA_FARM_DURATION = 1 * 60 * 1000
 
@@ -134,7 +134,6 @@ Func GetBonusWeapons()
 	DestroyFromInventory($bonusItemsMap)
 	Local $luminescentScepter = FindInInventory($ID_LUMINESCENT_SCEPTER)
 	Local $serratedShield = FindInInventory($ID_SERRATED_SHIELD)
-	; TODO: add trashing the other bonus weapons
 	If $luminescentScepter[0] <> 0 And $serratedShield[0] <> 0 Then
 		Info('Equipping Luminescent Scepter and Serrated Shield')
 		Local $item = GetItemBySlot($luminescentScepter[0], $luminescentScepter[1])
