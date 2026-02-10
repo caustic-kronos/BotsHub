@@ -608,7 +608,7 @@ EndFunc
 Func GuiStartButtonHandler()
 	Switch $runtime_status
 		Case 'UNINITIALIZED'
-			If (Authentification() <> $SUCCESS) Then Return
+			If (Authentification(GUICtrlRead($gui_combo_characterchoice)) <> $SUCCESS) Then Return
 			$runtime_status = 'INITIALIZED'
 			GUICtrlSetData($gui_startbutton, 'Pause')
 			GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTCORAL)
@@ -1699,12 +1699,6 @@ Func RenameGUI($gui_title)
 EndFunc
 
 
-Func ChangeCharacterNameBoxWithInput()
-	GUICtrlDelete($gui_combo_characterchoice)
-	$gui_combo_characterchoice = GUICtrlCreateCombo('Character Name Input', 10, 470, 150, 20)
-EndFunc
-
-
 Func EnableStartButton()
 	GUICtrlSetData($gui_startbutton, 'Start')
 	GUICtrlSetState($gui_startbutton, $GUI_ENABLE)
@@ -1811,7 +1805,6 @@ EndFunc
 Func FindDirectChildTreeViewItem($treeViewHandle, $treeViewItem, $name)
 	If $treeViewItem == Null Then
 		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-		;Out('parent not mentioned, taking ' & $treeViewItem)
 	EndIf
 	Return FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
 EndFunc
@@ -1823,12 +1816,10 @@ Func FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
 	While $treeViewItem <> 0
 		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
 		If $treeViewItemName == $name Then
-			Out('found: ' & $name)
 			Return $treeViewItem
 		EndIf
 		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
 	WEnd
-	Out('Not found: ' & $name)
 	Return Null
 EndFunc
 

@@ -811,7 +811,7 @@ Func GetWeaponAttackTime($weapon)
 		Case 0
 			Return 0
 		Case Else
-			Out('No weapon req on this skill - ' & $weapon)
+			Error('No weapon req on this skill - ' & $weapon)
 			Return 0
 	EndSwitch
 EndFunc

@@ -105,7 +105,7 @@ Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Dunkoro|Ge
 
 ; UNINITIALIZED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $runtime_status = 'UNINITIALIZED'
-Global $run_mode = 'AUTOLOAD'
+Global $run_mode = 'GUI'
 Global $process_id = ''
 Global $character_name = ''
 Global $farm_name = ''
@@ -157,36 +157,50 @@ Func Main()
 		Exit 1
 	EndIf
 
-	; Steps GUI free
+	If $CmdLine[0] <> 0 Then $run_mode = 'HEADLESS'
+
+	; GUI free steps
 	FillFarmMap()
 	LoadDefaultRunConfiguration()
 	LoadDefaultLootConfiguration()
 
-	; GUI part
-	CreateGUI()
-	ApplyConfigToGUI()
-	FillConfigurationCombo()
-	GUISetState(@SW_SHOWNORMAL)
-	Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
-
-	; Authentication
-	If $CmdLine[0] <> 0 Then
-		$run_mode = 'CMD'
-		If 1 > UBound($CmdLine)-1 Then
-			MsgBox(0, 'Error', 'Element is out of the array bounds.')
-			exit
-		EndIf
-		If 2 > UBound($CmdLine)-1 Then exit
-
-		$character_name = $CmdLine[1]
-		$process_id = $CmdLine[2]
-		; Login with $character_name or $process_id
-		$runtime_status = 'INITIALIZED'
-	ElseIf $run_mode == 'AUTOLOAD' Then
+	If $run_mode == 'GUI' Then
+		CreateGUI()
+		ApplyConfigToGUI()
+		FillConfigurationCombo()
+		GUISetState(@SW_SHOWNORMAL)
+		Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
+		; Authentication
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()
+	ElseIf $run_mode == 'HEADLESS' Then
+		; Need minimum 3 things to run a bot: process ID, character name and farm name
+		If $CmdLine[0] < 3 Then
+			MsgBox(0, 'Error', 'The Hub needs 0 or at least 3 arguments.')
+			Exit
+		EndIf
+		$process_id = $CmdLine[1]
+		$character_name = $CmdLine[2]
+		$farm_name = $CmdLine[3]
+
+		Info('Running in CMD mode with process ID: ' & $process_id & ' character name: ' & $character_name & ' farm name: ' & $farm_name)
+
+		Local $openProcess = SafeDllCall9($kernel_handle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $process_id)
+		Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
+		If $processHandle <> 0 Then
+			Local $windowHandle = GetWindowHandleForProcess($process_id)
+			AddClient($process_id, $processHandle, $windowHandle, $character_name)
+			SelectClient(1)
+		Else
+			MsgBox(0, 'Error', 'GW Process with incorrect handle.')
+			Exit
+		EndIf
+		; Authentication
+		Authentification($character_name)
+		$runtime_status = 'RUNNING'
 	Else
-		ChangeCharacterNameBoxWithInput()
+		MsgBox(0, 'Error', 'Unknown run mode: ' & $run_mode)
+		Exit
 	EndIf
 
 	; Infinite loop
@@ -198,7 +212,16 @@ EndFunc
 Func BotHubLoop()
 	While True
 		If ($runtime_status == 'RUNNING') Then
-			DisableGUIComboboxes()
+			If $run_mode == 'GUI' Then
+				DisableGUIComboboxes()
+				$farm_name = GUICtrlRead($gui_combo_farmchoice)
+				If $farm_name == Null Or $farm_name == '' Then
+					Error('This farm does not exist.')
+					$runtime_status = 'INITIALIZED'
+					EnableStartButton()
+					Return $PAUSE
+				EndIf
+			EndIf
 			Local $result = RunFarmLoop()
 			If ($result == $PAUSE Or $run_options_cache['run.loop_mode'] == False) Then $runtime_status = 'WILL_PAUSE'
 		EndIf
@@ -206,8 +229,10 @@ Func BotHubLoop()
 		If ($runtime_status == 'WILL_PAUSE') Then
 			Warn('Paused.')
 			$runtime_status = 'PAUSED'
-			EnableStartButton()
-			EnableGUIComboboxes()
+			If $run_mode == 'GUI' Then
+				EnableStartButton()
+				EnableGUIComboboxes()
+			EndIf
 		EndIf
 		Sleep(1000)
 	WEnd
@@ -216,16 +241,8 @@ EndFunc
 
 ;~ Main loop to run farms
 Func RunFarmLoop()
-	Local $farmName = GUICtrlRead($gui_combo_farmchoice)
-	If $farmName == Null Or $farmName == '' Then
-		MsgBox(0, 'Error', 'This farm does not exist.')
-		$runtime_status = 'INITIALIZED'
-		EnableStartButton()
-		Return $PAUSE
-	EndIf
-
 	; Farm Name;Farm function;Inventory space;Farm duration
-	Local $farm = $farm_map[$farmName]
+	Local $farm = $farm_map[$farm_name]
 	Local $inventorySpaceNeeded = $farm[2]
 
 	; No authentication: skip global farm setup and inventory management
@@ -262,18 +279,21 @@ Func RunFarmLoop()
 
 	; Running chosen farm
 	Local $result = $NOT_STARTED
-	Local $timePerRun = UpdateStats($NOT_STARTED)
 	$run_timer = TimerInit()
-	UpdateProgressBar($timePerRun == 0 ? $farm[3] : $timePerRun)
-	AdlibRegister('UpdateProgressBar', 5000)
 	Local $farmFunction = $farm[1]
-	$result = $farmFunction()
-	AdlibUnRegister('UpdateProgressBar')
-	CompleteGUIFarmProgress()
-
-	Local $elapsedTime = TimerDiff($run_timer)
-	Info('Run ' & ($result == $SUCCESS ? 'successful' : 'failed') & ' after: ' & ConvertTimeToMinutesString($elapsedTime))
-	UpdateStats($result, $elapsedTime)
+	If $run_mode == 'HEADLESS' Then
+		$result = $farmFunction()
+	ElseIf $run_mode == 'GUI' Then
+		Local $timePerRun = UpdateStats($NOT_STARTED)
+		UpdateProgressBar($timePerRun == 0 ? $farm[3] : $timePerRun)
+		AdlibRegister('UpdateProgressBar', 5000)
+		$result = $farmFunction()
+		AdlibUnRegister('UpdateProgressBar')
+		CompleteGUIFarmProgress()
+		Local $elapsedTime = TimerDiff($run_timer)
+		Info('Run ' & ($result == $SUCCESS ? 'successful' : 'failed') & ' after: ' & ConvertTimeToMinutesString($elapsedTime))
+		UpdateStats($result, $elapsedTime)
+	EndIf
 	ClearMemory(GetProcessHandle())
 	; _PurgeHook()
 	Return $result
@@ -783,21 +803,19 @@ EndFunc
 
 #Region Authentification and Login
 ;~ Initialize connection to GW with the character name or process ID given
-Func Authentification()
-	$character_name = GUICtrlRead($gui_combo_characterchoice)
-	If ($character_name == '') Then
+Func Authentification($characterName)
+	If ($characterName == '') Then
 		Warn('Running without authentification.')
-	ElseIf $process_id And $run_mode == 'CMD' Then
-		Local $processID = Number($process_id, 2)
-		Info('Running via PID ' & $processID)
+	ElseIf $run_mode == 'HEADLESS' Then
+		Info('Running via PID ' & $process_id)
 		If InitializeGameClientForGWA2(True) = 0 Then
-			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $processID & '>> ' & VarGetType($processID) & '')
+			MsgBox(0, 'Error', 'Could not find a ProcessID or somewhat <<' & $process_id & '>> ' & VarGetType($process_id) & '')
 			Return $FAIL
 		EndIf
 	Else
-		Local $clientIndex = FindClientIndexByCharacterName($character_name)
+		Local $clientIndex = FindClientIndexByCharacterName($characterName)
 		If $clientIndex == -1 Then
-			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $character_name & '>>')
+			MsgBox(0, 'Error', 'Could not find a GW client with a character named <<' & $characterName & '>>')
 			Return $FAIL
 		Else
 			SelectClient($clientIndex)
@@ -807,8 +825,8 @@ Func Authentification()
 				Return $FAIL
 			EndIf
 		EndIf
+		RenameGUI('GW Bot Hub - ' & $characterName)
 	EndIf
-	RenameGUI('GW Bot Hub - ' & $character_name)
 	Return $SUCCESS
 EndFunc
 #EndRegion Authentification and Login

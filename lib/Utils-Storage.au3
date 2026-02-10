@@ -472,7 +472,6 @@ Func DefaultShouldSellItem($item)
 			Return $shouldSell == Null ? False : $shouldSell
 		EndIf
 		; Do not sell Nick items and items that salvage into rare materials
-		Out($itemID)
 		If $MAP_NICHOLAS_ITEMS[$itemID] <> Null Then Return False
 		If $MAP_RARE_MATERIALS_TROPHIES[$itemID] <> Null Then Return False
 		; Do not sell items that salvage into feathers, dust, bones and fiber
