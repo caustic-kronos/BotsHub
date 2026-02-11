@@ -58,6 +58,9 @@ Global $trade_partner_ptr
 Global $craft_item_ptr
 Global $collector_exchange_ptr
 
+Global $scene_context_ptr
+Global $time_on_map_ptr
+
 ;EncString Decoding
 ; Pointer to encoded string input buffer in GW memory
 Global $decode_input_ptr

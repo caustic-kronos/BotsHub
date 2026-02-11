@@ -271,7 +271,7 @@ Global $trade_hack_address
 Global $labels_map[]
 
 ; [labelName, bytePattern, resultOffset, patternType, assertSourceFile, assertMessage]
-Global $scan_patterns[58][6]
+Global $scan_patterns[59][6]
 Global $scan_patterns_count = 0
 ; [file, message]
 Global $assertions_patterns_cache[]
@@ -384,6 +384,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('Environment',				'6BC67C5E05',															0x6,	'ptr')
 	AddScanPattern('PreGame',					'',																		'',		'ptr',	'P:\Code\Gw\Ui\UiPregame.cpp',			'!s_scene')
 	AddScanPattern('FrameArray',				'',																		'',		'ptr',	'P:\Code\Engine\Frame\FrMsg.cpp',		'frame')
+	AddScanPattern('SceneContext',				'D9E0D95DFC8B01',														'',		'ptr')
 	; Skill patterns
 	AddScanPattern('SkillBase',					'69C6A40000005E',														0x9,	'ptr')
 	AddScanPattern('SkillTimer',				'FFD68B4DF08BD88B4708',													-0x3,	'ptr')
@@ -665,6 +666,8 @@ Func MapScanResultsToLabels()
 	Local $packetLocationAddress = MemoryRead($processHandle, $scan_results['PacketLocation'])
 	$pre_game_address = MemoryRead($processHandle, $scan_results['PreGame'] + 0x35)
 	Local $frameArray = MemoryRead($processHandle, $scan_results['FrameArray'] - 0x13)
+	$scene_context_ptr = MemoryRead($processHandle, $scan_results['SceneContext'] + 0x1B)
+	$time_on_map_ptr = $scene_context_ptr + 0xC
 	SetLabel('BasePointer', Ptr($base_address_ptr))
 	SetLabel('PacketLocation', Ptr($packetLocationAddress))
 	SetLabel('Ping', Ptr($ping_address))
@@ -675,6 +678,8 @@ Func MapScanResultsToLabels()
 	SetLabel('ActionBase', Ptr(MemoryRead($processHandle, $scan_results['ActionBase'])))
 	SetLabel('Action', Ptr($scan_results['Action']))
 	SetLabel('Environment', Ptr($scan_results['Environment']))
+	SetLabel('SceneContext ', Ptr($scene_context_ptr))
+	SetLabel('TimeOnMap ', Ptr($time_on_map_ptr))
 
 	; Skill
 	$skill_base_address = MemoryRead($processHandle, $scan_results['SkillBase'])
