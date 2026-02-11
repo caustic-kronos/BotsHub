@@ -101,7 +101,7 @@ Func VanquishFerndale()
 	EndIf
 
 	; 117 groups to vanquish
-	Local Static $foes[117][4] = [ _
+	Local Static $foes[][] = [ _
 		[-11733, 16729, 'Mantis Group 1', $AGGRO_RANGE], _
 		[-11942, 18468, 'Mantis Group 2', $AGGRO_RANGE], _
 		[-11178, 20073, 'Mantis Group 3', $AGGRO_RANGE], _

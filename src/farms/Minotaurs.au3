@@ -85,7 +85,7 @@ Func FarmMinotaurs()
 	If GetMapID() <> $ID_PROPHETS_PATH Then Return $FAIL
 
 	; 12 groups to vanquish
-	Local Static $minotaurs[12][3] = [ _
+	Local Static $minotaurs[][] = [ _
 		[18870, -6, 'Minotaurs group 1'], _
 		[18828, 2201, 'Minotaurs group 2'], _
 		[17106, 1459, 'Minotaurs group 3'], _

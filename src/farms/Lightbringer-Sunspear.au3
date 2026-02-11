@@ -104,7 +104,7 @@ Func FarmTheSulfurousWastes()
 	RandomSleep(1500)
 
 	; 30 groups to vanquish
-	Local Static $foes[31][3] = [ _
+	Local Static $foes[][] = [ _
 		[-800, 12000, 'First Undead Group 1'], _
 		[-1700, 9800, 'First Undead Group 2'], _
 		[-3000, 10900, 'Second Undead Group 1'], _

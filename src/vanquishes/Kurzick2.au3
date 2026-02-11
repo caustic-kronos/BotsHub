@@ -94,7 +94,7 @@ Func VanquishDrazach()
 		RandomSleep(1000)
 	EndIf
 
-	Local Static $foes[81][3] = [ _
+	Local Static $foes[][] = [ _
 		[-6506, -16099, 'Start'], _
 		[-8581, -15354, 'Approach'], _
 		[-8627, -13151, 'Clear first big batch'], _

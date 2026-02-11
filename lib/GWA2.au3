@@ -267,18 +267,18 @@ EndFunc
 Func DropBuff($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
-	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
 	Local $processHandle = GetProcessHandle()
 	Local $count = MemoryReadPtr($processHandle, $base_address_ptr, $offset1)
 
 	Local $buffer
-	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
+	Local $offset2[] = [0, 0x18, 0x2C, 0x508, 0]
 	Local $buffStruct = SafeDllStructCreate($BUFF_STRUCT_TEMPLATE)
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
+			Local $offset3[] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
 			For $j = 0 To $buffCount - 1
 				$offset3[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset3)
@@ -413,11 +413,11 @@ EndFunc
 
 ;~ Returns current number of buffs being maintained.
 Func GetBuffCount($heroIndex = 0)
-	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
 	Local $processHandle = GetProcessHandle()
 	Local $count = MemoryReadPtr($processHandle, $base_address_ptr, $offset1)
 	Local $buffer
-	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
+	Local $offset2[] = [0, 0x18, 0x2C, 0x508, 0]
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
@@ -433,16 +433,16 @@ EndFunc
 Func GetIsTargetBuffed($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
 	Local $buffStructAddress
-	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
 	Local $processHandle = GetProcessHandle()
 	Local $count = MemoryReadPtr($processHandle, $base_address_ptr, $offset1)
 	Local $buffer
-	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
+	Local $offset2[] = [0, 0x18, 0x2C, 0x508, 0]
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
+			Local $offset3[] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0]
 			For $j = 0 To $buffCount - 1
 				$offset3[5] = 0 + 0x10 * $j
 				$buffStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset3)
@@ -458,16 +458,16 @@ EndFunc
 
 ;~ Returns buff struct.
 Func GetBuffByIndex($buffIndex, $heroIndex = 0)
-	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
 	Local $processHandle = GetProcessHandle()
 	Local $count = MemoryReadPtr($processHandle, $base_address_ptr, $offset1)
-	Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0]
+	Local $offset2[] = [0, 0x18, 0x2C, 0x508, 0]
 	Local $buffer
 	For $i = 0 To $count[1] - 1
 		$offset2[4] = 0x24 * $i
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			Local $offset3[6] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0x10 * ($buffIndex - 1)]
+			Local $offset3[] = [0, 0x18, 0x2C, 0x508, 0x4 + 0x24 * $i, 0x10 * ($buffIndex - 1)]
 			$buffStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset3)
 			Local $buffStruct = SafeDllStructCreate($BUFF_STRUCT_TEMPLATE)
 			SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $buffStructAddress[0], 'ptr', DllStructGetPtr($buffStruct), 'int', DllStructGetSize($buffStruct), 'int', 0)
@@ -512,18 +512,18 @@ EndFunc
 Func GetEffect($skillID = 0, $heroIndex = 0)
 	Local $effectCount, $effectStructAddress
 	; Offsets have to be kept separate - else we risk cross-call contamination - Avoid ReDim !
-	Local $offset1[4] = [0, 0x18, 0x2C, 0x510]
+	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
 	Local $processHandle = GetProcessHandle()
 	Local $count = MemoryReadPtr($processHandle, $base_address_ptr, $offset1)
 	Local $buffer
 	For $i = 0 To $count[1] - 1
-		Local $offset2[5] = [0, 0x18, 0x2C, 0x508, 0x24 * $i]
+		Local $offset2[] = [0, 0x18, 0x2C, 0x508, 0x24 * $i]
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
 		If $buffer[1] == GetHeroID($heroIndex) Then
-			Local $offset3[5] = [0, 0x18, 0x2C, 0x508, 0x1C + 0x24 * $i]
+			Local $offset3[] = [0, 0x18, 0x2C, 0x508, 0x1C + 0x24 * $i]
 			$effectCount = MemoryReadPtr($processHandle, $base_address_ptr, $offset3)
 
-			Local $offset4[6] = [0, 0x18, 0x2C, 0x508, 0x14 + 0x24 * $i, 0]
+			Local $offset4[] = [0, 0x18, 0x2C, 0x508, 0x14 + 0x24 * $i, 0]
 			$effectStructAddress = MemoryReadPtr($processHandle, $base_address_ptr, $offset4)
 
 			If $skillID = 0 Then
@@ -2682,9 +2682,9 @@ EndFunc
 Func GetMorale($heroIndex = 0)
 	Local $processHandle = GetProcessHandle()
 	Local $agentID = GetHeroID($heroIndex)
-	Local $offset1[4] = [0, 0x18, 0x2C, 0x638]
+	Local $offset1[] = [0, 0x18, 0x2C, 0x638]
 	Local $index = MemoryReadPtr($processHandle, $base_address_ptr, $offset1)
-	Local $offset2[6] = [0, 0x18, 0x2C, 0x62C, 8 + 0xC * BitAND($agentID, $index[1]), 0x18]
+	Local $offset2[] = [0, 0x18, 0x2C, 0x62C, 8 + 0xC * BitAND($agentID, $index[1]), 0x18]
 	Local $result = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
 	Return $result[1] - 100
 EndFunc

@@ -281,7 +281,7 @@ EndFunc
 Func AggroAllMobs()
 	Local $target
 	; Vaettirs locations
-	Local Static $vaettirs[30][2] = [ _
+	Local Static $vaettirs[][] = [ _
 		_ ; left ball
 		[12496,	-22600], _
 		[11375,	-22761], _

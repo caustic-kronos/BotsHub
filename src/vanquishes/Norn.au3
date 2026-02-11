@@ -75,7 +75,7 @@ Func VanquishVarajarFells()
 	If GetMapID() <> $ID_VARAJAR_FELLS Then Return $FAIL
 
 	; 43 groups to vanquish + 6 movements
-	Local Static $foes[49][4] = [ _
+	Local Static $foes[][] = [ _
 		_ ; blessing
 		[-5278, -5771, 'Berserker', $AGGRO_RANGE], _
 		[-5456, -7921, 'Berserker', $AGGRO_RANGE], _

@@ -101,7 +101,7 @@ Func VanquishMountQinkai()
 	EndIf
 
 	; 43 groups to vanquish
-	Local Static $foes[45][4] = [ _
+	Local Static $foes[][] = [ _
 		[-11400, -9000, 'Yetis', $AGGRO_RANGE], _
 		[-13500, -10000, 'Yeti 1', $AGGRO_RANGE], _
 		[-15000, -8000, 'Yeti 2', $AGGRO_RANGE], _

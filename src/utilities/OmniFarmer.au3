@@ -163,7 +163,7 @@ EndFunc
 Func SteadyHealingUnit()
 	Local Static $adlibBusy = False
 	Local Static $steadyHealingHealerIndex = 0
-	Local Static $healerArray[6] = [$HERO_DERVISH_1, $HERO_DERVISH_2, $HERO_DERVISH_3, $HERO_BIP_NECRO_1, $HERO_BIP_NECRO_2, $HERO_SPEED_PARAGON]
+	Local Static $healerArray[] = [$HERO_DERVISH_1, $HERO_DERVISH_2, $HERO_DERVISH_3, $HERO_BIP_NECRO_1, $HERO_BIP_NECRO_2, $HERO_SPEED_PARAGON]
 
 	If $adlibBusy Then Return
 	$adlibBusy = True

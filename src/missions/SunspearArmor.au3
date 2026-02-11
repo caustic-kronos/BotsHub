@@ -85,7 +85,7 @@ Func SunspearArmorClean()
 	RandomSleep(62000)
 
 	; 23 groups to vanquish + 10 movements
-	Local Static $foes[33][3] = [ _
+	Local Static $foes[][] = [ _
 		[22595, -484, 'Moving and aggroing'], _
 		[21032, 1357, 'Moving and aggroing'], _
 		[20006, 3631, 'Moving and aggroing'], _

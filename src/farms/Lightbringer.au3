@@ -89,7 +89,7 @@ Func FarmMirrorOfLyss()
 	MoveAggroAndKill(-4785, -14912, 'Path 3')
 
 	; 14 groups to clear + 1 position change
-	Local Static $foes[15][3] = [ _
+	Local Static $foes[][] = [ _
 		[-2451, -15086, 'Group 1/10'], _
 		[1174, -13787, 'Plants'], _
 		[6728, -12014, 'Plants'], _

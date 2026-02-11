@@ -74,7 +74,7 @@ Func VanquishDaladaUplands()
 	If GetMapID() <> $ID_DALADA_UPLANDS Then Return $FAIL
 
 	; 72 groups to vanquish + 21 movements
-	Local Static $foes[93][3] = [ _
+	Local Static $foes[][] = [ _
 		_ ; blessing
 		[-12373, 12899, 'Move To Start'], _
 		[-9464, 15937, 'Charr Group'], _

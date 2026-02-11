@@ -94,7 +94,7 @@ Func NexusChallenge()
 	Sleep(50000)
 
 	; 9 groups to defeat in each loop
-	Local Static $foes[18][3] = [ _
+	Local Static $foes[][] = [ _
 		; First loop
 		[-2675, 3301, 'Group 1'], _
 		[-55, 3297, 'Group 2'], _
