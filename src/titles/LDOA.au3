@@ -36,10 +36,9 @@ Global Const $LDOA_INFORMATIONS = 'This bot:' & @CRLF _
 ; Average duration ~ 1m
 Global Const $LDOA_FARM_DURATION = 1 * 60 * 1000
 
-Global Const $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS = 0x80DB01
-Global Const $ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS = 0x80DB07
-Global Const $ID_DIALOG_ACCEPT_QUEST_ELEMENTALIST_TEST = 0x805301
-Global Const $ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST = 0x805307
+; Accepting an finishing 'War Preparation' dialog IDs depend on the profession and are determined dynamically
+Global $TEMPLATE_ID_DIALOG_ACCEPT_QUEST = 0x800001
+Global $TEMPLATE_ID_DIALOG_FINISH_QUEST = 0x800007
 Global Const $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN = 0x804703
 Global Const $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN = 0x804701
 Global Const $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE = 0x802E01
@@ -98,23 +97,67 @@ Func InitialSetupLDOA()
 	MoveTo(10399, 318)
 	MoveTo(11004, 1409)
 	Local $questNPC = GetNearestNPCToCoords(11683, 3447)
-	TakeQuest($questNPC, $ID_QUEST_WAR_PREPARATIONS, $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS)
+	; Determine War Preparation and Profession Test quest IDs and dialog IDs depending on the primary profession
+	Local $questID_WarPrep
+	Local $questID_ProfessionTest
+	Local $primaryProfession = DllStructGetData(GetMyAgent(), 'Primary')
+	Switch $primaryProfession
+		Case $ID_MESMER
+			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_MESMER
+			$questID_ProfessionTest = $ID_QUEST_MESMER_TEST
+		Case $ID_NECROMANCER
+			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_NECROMANCER
+			$questID_ProfessionTest = $ID_QUEST_NECROMANCER_TEST
+		Case $ID_ELEMENTALIST
+			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_ELEMENTALIST
+			$questID_ProfessionTest = $ID_QUEST_ELEMENTALIST_TEST
+		Case $ID_MONK
+			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_MONK
+			$questID_ProfessionTest = $ID_QUEST_MONK_TEST
+		Case $ID_WARRIOR
+			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_WARRIOR
+			$questID_ProfessionTest = $ID_QUEST_WARRIOR_TEST
+		Case $ID_RANGER
+			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_RANGER
+			$questID_ProfessionTest = $ID_QUEST_RANGER_TEST
+	EndSwitch
+	Local $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($questID_WarPrep, -8))
+	Local $ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($questID_WarPrep, -8))
+	Local $ID_DIALOG_ACCEPT_QUEST_PROFESSION_TEST = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($questID_ProfessionTest, -8))
+	Local $ID_DIALOG_FINISH_QUEST_PROFESSION_TEST = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($questID_ProfessionTest, -8))
 
+	TakeQuest($questNPC, $questID_WarPrep, $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS)
 	MoveTo(7607, 5552)
 	Move(7175, 5229)
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
 	MoveTo(6116, 3995)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	$questNPC = GetNearestNPCToCoords(6187, 4085)
-	TakeQuestReward($questNPC, $ID_QUEST_WAR_PREPARATIONS, $ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS)
-	TakeQuest($questNPC, $ID_QUEST_ELEMENTALIST_TEST, $ID_DIALOG_ACCEPT_QUEST_ELEMENTALIST_TEST)
+
+	; We send the dialog here manually since the quest at this stage is not shown as "completed".
+	Info('Finishing War Preparations')
+	GoToNPC($questNPC)
+	Sleep(1000 + GetPing())
+	Dialog($ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS)
+	Sleep(1000 + GetPing())
+	Info('Done: Finishing War Preparations')
+
+	TakeQuest($questNPC, $questID_ProfessionTest, $ID_DIALOG_ACCEPT_QUEST_PROFESSION_TEST)
 	MoveTo(4187, -948)
-	MoveAggroAndKillInRange(4207, -2892, '', 2500)
+	MoveAggroAndKillInRange(4207, -2892, '', 3000)
+	If $primaryProfession == $ID_MONK Then
+		MoveTo(3868, -4330)
+		Local $npcGwen = GetNearestNPCToCoords(3868, -4330)
+		GoToNPC($npcGwen)
+		Sleep(1000 + GetPing())
+	EndIf
 	MoveTo(3771, -1729)
 	MoveTo(6069, 3865)
-	TakeQuestReward($questNPC, $ID_QUEST_ELEMENTALIST_TEST, $ID_DIALOG_FINISH_QUEST_ELEMENTALIST_TEST)
+	; Here the character finishes the quest but the TakeQuestOrReward function times out. IDK why... . After the timeout the bot continues normally
+	TakeQuestReward($questNPC, $questID_ProfessionTest, $ID_DIALOG_FINISH_QUEST_PROFESSION_TEST)
 
-	$questNPC = GetNearestNPCToCoords(2785, 7736)
+	MoveTo(2885, 7638)
+	$questNPC = GetNearestNPCToCoords(2885, 7638)
 	TakeQuest($questNPC, $ID_QUEST_A_MESMER_S_BURDEN, $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN, $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN)
 
 	DistrictTravel($ID_ASCALON_CITY_PRESEARING, $district_name)
