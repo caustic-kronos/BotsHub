@@ -36,7 +36,7 @@ Global $nexus_challenge_setup = False
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm()
-	If Not $nexus_challenge_setup Then NexusChallengeSetup()
+	If Not $nexus_challenge_setup And NexusChallengeSetup() == $FAIL Then Return $FAIL
 
 	EnterNexusChallengeMission()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -95,7 +95,7 @@ Func NexusChallenge()
 
 	; 9 groups to defeat in each loop
 	Local Static $foes[][] = [ _
-		; First loop
+		_ ; First loop
 		[-2675, 3301, 'Group 1'], _
 		[-55, 3297, 'Group 2'], _
 		[-1759, 993, 'Group 3'], _
@@ -105,7 +105,7 @@ Func NexusChallenge()
 		[668, -3516, 'Group 7'], _
 		[-3723, -3662, 'Group 8'], _
 		[-3809, 880, 'Group 9'], _
-		; Second loop
+		_ ; Second loop
 		[-2675, 3301, 'Group 1'], _
 		[-55, 3297, 'Group 2'], _
 		[-1759, 993, 'Group 3'], _
