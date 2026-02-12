@@ -98,35 +98,35 @@ Func InitialSetupLDOA()
 	MoveTo(11004, 1409)
 	Local $questNPC = GetNearestNPCToCoords(11683, 3447)
 	; Determine War Preparation and Profession Test quest IDs and dialog IDs depending on the primary profession
-	Local $questID_WarPrep
-	Local $questID_ProfessionTest
+	Local $warPreparationsQuestID
+	Local $professionTestQuestID
 	Local $primaryProfession = DllStructGetData(GetMyAgent(), 'Primary')
 	Switch $primaryProfession
 		Case $ID_MESMER
-			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_MESMER
-			$questID_ProfessionTest = $ID_QUEST_MESMER_TEST
+			$warPreparationsQuestID = $ID_QUEST_WAR_PREPARATIONS_MESMER
+			$professionTestQuestID = $ID_QUEST_MESMER_TEST
 		Case $ID_NECROMANCER
-			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_NECROMANCER
-			$questID_ProfessionTest = $ID_QUEST_NECROMANCER_TEST
+			$warPreparationsQuestID = $ID_QUEST_WAR_PREPARATIONS_NECROMANCER
+			$professionTestQuestID = $ID_QUEST_NECROMANCER_TEST
 		Case $ID_ELEMENTALIST
-			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_ELEMENTALIST
-			$questID_ProfessionTest = $ID_QUEST_ELEMENTALIST_TEST
+			$warPreparationsQuestID = $ID_QUEST_WAR_PREPARATIONS_ELEMENTALIST
+			$professionTestQuestID = $ID_QUEST_ELEMENTALIST_TEST
 		Case $ID_MONK
-			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_MONK
-			$questID_ProfessionTest = $ID_QUEST_MONK_TEST
+			$warPreparationsQuestID = $ID_QUEST_WAR_PREPARATIONS_MONK
+			$professionTestQuestID = $ID_QUEST_MONK_TEST
 		Case $ID_WARRIOR
-			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_WARRIOR
-			$questID_ProfessionTest = $ID_QUEST_WARRIOR_TEST
+			$warPreparationsQuestID = $ID_QUEST_WAR_PREPARATIONS_WARRIOR
+			$professionTestQuestID = $ID_QUEST_WARRIOR_TEST
 		Case $ID_RANGER
-			$questID_WarPrep = $ID_QUEST_WAR_PREPARATIONS_RANGER
-			$questID_ProfessionTest = $ID_QUEST_RANGER_TEST
+			$warPreparationsQuestID = $ID_QUEST_WAR_PREPARATIONS_RANGER
+			$professionTestQuestID = $ID_QUEST_RANGER_TEST
 	EndSwitch
-	Local $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($questID_WarPrep, -8))
-	Local $ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($questID_WarPrep, -8))
-	Local $ID_DIALOG_ACCEPT_QUEST_PROFESSION_TEST = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($questID_ProfessionTest, -8))
-	Local $ID_DIALOG_FINISH_QUEST_PROFESSION_TEST = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($questID_ProfessionTest, -8))
+	Local $warPreparationsAcceptQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($warPreparationsQuestID, -8))
+	Local $warPreparationsFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($warPreparationsQuestID, -8))
+	Local $professionTestAcceptQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($professionTestQuestID, -8))
+	Local $professionTestFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($professionTestQuestID, -8))
 
-	TakeQuest($questNPC, $questID_WarPrep, $ID_DIALOG_ACCEPT_QUEST_WAR_PREPARATIONS)
+	TakeQuest($questNPC, $warPreparationsQuestID, $warPreparationsAcceptQuestDialogID)
 	MoveTo(7607, 5552)
 	Move(7175, 5229)
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
@@ -134,15 +134,16 @@ Func InitialSetupLDOA()
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	$questNPC = GetNearestNPCToCoords(6187, 4085)
 
-	; We send the dialog here manually since the quest at this stage is not shown as "completed".
+	; This quest never appears as completed because taking the reward is the completion
+	; So we send the dialog here manually
 	Info('Finishing War Preparations')
 	GoToNPC($questNPC)
 	Sleep(1000 + GetPing())
-	Dialog($ID_DIALOG_FINISH_QUEST_WAR_PREPARATIONS)
+	Dialog($warPreparationsFinishQuestDialogID)
 	Sleep(1000 + GetPing())
 	Info('Done: Finishing War Preparations')
 
-	TakeQuest($questNPC, $questID_ProfessionTest, $ID_DIALOG_ACCEPT_QUEST_PROFESSION_TEST)
+	TakeQuest($questNPC, $professionTestQuestID, $professionTestAcceptQuestDialogID)
 	MoveTo(4187, -948)
 	MoveAggroAndKillInRange(4207, -2892, '', 3000)
 	If $primaryProfession == $ID_MONK Then
@@ -153,8 +154,14 @@ Func InitialSetupLDOA()
 	EndIf
 	MoveTo(3771, -1729)
 	MoveTo(6069, 3865)
-	; Here the character finishes the quest but the TakeQuestOrReward function times out. IDK why... . After the timeout the bot continues normally
-	TakeQuestReward($questNPC, $questID_ProfessionTest, $ID_DIALOG_FINISH_QUEST_PROFESSION_TEST)
+
+	; This quest never appears as completed either - last dialog to get reward is the completion
+	Info('Finishing Profession Test')
+	GoToNPC($questNPC)
+	Sleep(1000 + GetPing())
+	Dialog($professionTestFinishQuestDialogID)
+	Sleep(1000 + GetPing())
+	Info('Done: Finishing Profession Test')
 
 	MoveTo(2885, 7638)
 	$questNPC = GetNearestNPCToCoords(2885, 7638)
@@ -278,6 +285,8 @@ Func LDOATitleFarmUnder2()
 	For $i = 0 To UBound($wurmies) - 1
 		MoveAggroAndKill($wurmies[$i][0], $wurmies[$i][1])
 		If DllStructGetData(GetMyAgent(), 'Level') == 2 Then Return $SUCCESS
+		; If not in Lakeside County, we ported because of low life
+		If GetMapID() <> $ID_LAKESIDE_COUNTY Then Return $FAIL
 		If IsPlayerDead() Then Return $FAIL
 	Next
 	Return $SUCCESS
