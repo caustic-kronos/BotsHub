@@ -70,6 +70,8 @@ Global $boreal_farm_setup = False
 Global $boreal_has_shroud_of_distress = False
 Global $boreal_has_heart_of_shadow = False
 Global $boreal_has_deaths_charge = False
+Global $boreal_has_pious_renewal = False
+Global $boreal_has_pious_haste = False
 
 ;~ Main method to chest farm Boreal
 Func BorealChestFarm()
@@ -142,6 +144,8 @@ Func SetupPlayerBorealChestFarm()
 	$boreal_has_shroud_of_distress = GetSkillbarSkillID($BOREAL_SHROUD_OF_DISTRESS) == $ID_SHROUD_OF_DISTRESS
 	$boreal_has_heart_of_shadow = GetSkillbarSkillID($BOREAL_HEART_OF_SHADOW) == $ID_HEART_OF_SHADOW
 	$boreal_has_deaths_charge = GetSkillbarSkillID($BOREAL_DEATHS_CHARGE) == $ID_DEATHS_CHARGE
+	$boreal_has_pious_renewal = GetSkillbarSkillID($BOREAL_PIOUS_RENEWAL) == $ID_PIOUS_RENEWAL
+	$boreal_has_pious_haste = GetSkillbarSkillID($BOREAL_PIOUS_HASTE) == $ID_PIOUS_HASTE
 EndFunc
 
 
@@ -178,7 +182,7 @@ Func BorealChestFarmLoop()
 	Info('Total amount of chests here: ' & $totalChestsCount)
 
 	; For all remaining chests, run to them, and return to the original spot inbetween
-	For $i=1 To $totalChestsCount - $openedChests
+	For $i = 1 To $totalChestsCount - $openedChests
 		Info('Running to Spot #' & (2+$i))
 		$openedChests += FindAndOpenChests($RANGE_COMPASS, BorealSpeedRun, BorealUnblock) ? 1 : 0
 		If $openedChests == $totalChestsCount Then ExitLoop
@@ -247,8 +251,15 @@ Func BorealSpeedRun()
 	;~ Cast Dwarven Stability and Dash when ready
 	If IsRecharged($BOREAL_DWARVEN_STABILITY) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DWARVEN_STABILITY)
+		Sleep(GetPing() + 100)
 	EndIf
-	If IsRecharged($BOREAL_DASH) And GetEnergy() >= 5 Then
+	If $boreal_player_profession == $ID_DERVISH And $boreal_has_pious_haste And $boreal_has_pious_renewal Then
+		If IsRecharged($BOREAL_PIOUS_HASTE) And GetEnergy() >= 10 Then
+			UseSkillEx($BOREAL_PIOUS_RENEWAL)
+			Sleep(GetPing() + 100)
+			UseSkillEx($BOREAL_PIOUS_HASTE)
+		EndIf
+	ElseIf IsRecharged($BOREAL_DASH) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DASH)
 	EndIf
 	Return $SUCCESS
