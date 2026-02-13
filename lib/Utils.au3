@@ -1010,6 +1010,18 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
+	Local Const $MOVE_AGGRO_MODE_NORMAL = 0
+	Local Const $MOVE_AGGRO_MODE_RECOVERY = 1
+	Local Const $MOVE_AGGRO_STUCK_TICKS = 6
+	Local Const $MOVE_AGGRO_MIN_MOVEMENT = 20
+	Local Const $MOVE_AGGRO_NORMAL_NET_DISPLACEMENT_WINDOW_MS = 2000
+	Local Const $MOVE_AGGRO_NORMAL_LOW_DISPLACEMENT_THRESHOLD = 90
+	Local Const $MOVE_AGGRO_RECOVERY_NET_DISPLACEMENT_WINDOW_MS = 10000
+	Local Const $MOVE_AGGRO_RECOVERY_MEASURE_INTERVAL_MS = 5000
+	Local Const $MOVE_AGGRO_RECOVERY_LOW_DISPLACEMENT_THRESHOLD = 180
+	Local Const $MOVE_AGGRO_RECOVERY_MAX_LOW_DISPLACEMENTS = 3
+	Local Const $MOVE_AGGRO_RECOVERY_HISTORY_KEEP_MS = 20000
+
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
@@ -1021,6 +1033,14 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
 	Local $blocked = 0
+	Local $mode = $MOVE_AGGRO_MODE_NORMAL
+	Local $recoveryMeasureTimer = TimerInit()
+	Local $recoveryLowDisplacementCount = 0
+	Local $movementTimelineTimer = TimerInit()
+	Local $positionHistory[1][3]
+	$positionHistory[0][0] = 0
+	$positionHistory[0][1] = $myX
+	$positionHistory[0][2] = $myY
 
 	Move($x, $y)
 
@@ -1028,7 +1048,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $oldMyY
 	Local $target
 	Local $chest
-	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
+	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
 		$oldMyX = $myX
 		$oldMyY = $myY
 		$me = GetMyAgent()
@@ -1043,17 +1063,42 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
-		If $oldMyX = $myX And $oldMyY = $myY Then
+		TrackPositionHistory($positionHistory, $myX, $myY, $MOVE_AGGRO_RECOVERY_HISTORY_KEEP_MS, TimerDiff($movementTimelineTimer))
+		Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
+		Local $shortNetDisplacement = GetNetDisplacementInWindow($positionHistory, $MOVE_AGGRO_NORMAL_NET_DISPLACEMENT_WINDOW_MS)
+
+		If $movementDistance < $MOVE_AGGRO_MIN_MOVEMENT Or ($shortNetDisplacement >= 0 And $shortNetDisplacement < $MOVE_AGGRO_NORMAL_LOW_DISPLACEMENT_THRESHOLD) Then
 			$blocked += 1
-			If $blocked > 6 Then
+		Else
+			; keep some blocked memory to detect oscillation/stutter faster than full reset
+			$blocked = Max(0, $blocked - 2)
+		EndIf
+
+		If $blocked >= $MOVE_AGGRO_STUCK_TICKS And $mode == $MOVE_AGGRO_MODE_NORMAL Then
+			$mode = $MOVE_AGGRO_MODE_RECOVERY
+			$recoveryMeasureTimer = TimerInit()
+			$recoveryLowDisplacementCount = 0
+		EndIf
+
+		If $mode == $MOVE_AGGRO_MODE_RECOVERY Then
+			If $blocked >= $MOVE_AGGRO_STUCK_TICKS Then
 				Move($myX, $myY, 500)
 				RandomSleep(500)
 				Move($x, $y)
 			EndIf
-		Else
-			; reset of block count if player got unstuck
-			$blocked = 0
+
+			If TimerDiff($recoveryMeasureTimer) >= $MOVE_AGGRO_RECOVERY_MEASURE_INTERVAL_MS Then
+				$recoveryMeasureTimer = TimerInit()
+				Local $netDisplacement = GetNetDisplacementInWindow($positionHistory, $MOVE_AGGRO_RECOVERY_NET_DISPLACEMENT_WINDOW_MS)
+				If $netDisplacement >= 0 And $netDisplacement < $MOVE_AGGRO_RECOVERY_LOW_DISPLACEMENT_THRESHOLD Then
+					$recoveryLowDisplacementCount += 1
+					If $recoveryLowDisplacementCount >= $MOVE_AGGRO_RECOVERY_MAX_LOW_DISPLACEMENTS Then Return $FAIL
+				ElseIf $netDisplacement >= 0 Then
+					$recoveryLowDisplacementCount = 0
+				EndIf
+			EndIf
 		EndIf
+
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -1067,6 +1112,53 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
 	Return $SUCCESS
+EndFunc
+
+
+Func TrackPositionHistory(ByRef $positionHistory, $x, $y, $keepWindowMs, $nowMs)
+	Local $now = $nowMs
+	Local $historySize = UBound($positionHistory)
+	ReDim $positionHistory[$historySize + 1][3]
+	$positionHistory[$historySize][0] = $now
+	$positionHistory[$historySize][1] = $x
+	$positionHistory[$historySize][2] = $y
+
+	Local $minTimestamp = $now - $keepWindowMs
+	Local $trimStart = 0
+	While $trimStart < UBound($positionHistory) - 1 And $positionHistory[$trimStart][0] < $minTimestamp
+		$trimStart += 1
+	WEnd
+
+	If $trimStart > 0 Then
+		Local $newSize = UBound($positionHistory) - $trimStart
+		Local $trimmedHistory[$newSize][3]
+		For $i = 0 To $newSize - 1
+			$trimmedHistory[$i][0] = $positionHistory[$trimStart + $i][0]
+			$trimmedHistory[$i][1] = $positionHistory[$trimStart + $i][1]
+			$trimmedHistory[$i][2] = $positionHistory[$trimStart + $i][2]
+		Next
+		$positionHistory = $trimmedHistory
+	EndIf
+EndFunc
+
+
+Func GetNetDisplacementInWindow(ByRef $positionHistory, $windowMs)
+	If UBound($positionHistory) < 2 Then Return -1
+
+	Local $lastIndex = UBound($positionHistory) - 1
+	Local $now = $positionHistory[$lastIndex][0]
+	Local $targetTimestamp = $now - $windowMs
+	Local $historyIndex = -1
+	For $i = $lastIndex - 1 To 0 Step -1
+		If $positionHistory[$i][0] <= $targetTimestamp Then
+			$historyIndex = $i
+			ExitLoop
+		EndIf
+	Next
+
+	If $historyIndex == -1 Then Return -1
+
+	Return ComputeDistance($positionHistory[$lastIndex][1], $positionHistory[$lastIndex][2], $positionHistory[$historyIndex][1], $positionHistory[$historyIndex][2])
 EndFunc
 
 
