@@ -1010,17 +1010,25 @@ EndFunc
 ;~ Clear a zone around the coordinates provided
 ;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
-	Local Const $MOVE_AGGRO_MODE_NORMAL = 0
-	Local Const $MOVE_AGGRO_MODE_RECOVERY = 1
-	Local Const $MOVE_AGGRO_STUCK_TICKS = 6
-	Local Const $MOVE_AGGRO_MIN_MOVEMENT = 20
-	Local Const $MOVE_AGGRO_NORMAL_NET_DISPLACEMENT_WINDOW_MS = 2000
-	Local Const $MOVE_AGGRO_NORMAL_LOW_DISPLACEMENT_THRESHOLD = 90
-	Local Const $MOVE_AGGRO_RECOVERY_NET_DISPLACEMENT_WINDOW_MS = 10000
-	Local Const $MOVE_AGGRO_RECOVERY_MEASURE_INTERVAL_MS = 5000
-	Local Const $MOVE_AGGRO_RECOVERY_LOW_DISPLACEMENT_THRESHOLD = 180
-	Local Const $MOVE_AGGRO_RECOVERY_MAX_LOW_DISPLACEMENTS = 3
-	Local Const $MOVE_AGGRO_RECOVERY_HISTORY_KEEP_MS = 20000
+
+	; ==================== Variables to ensure movement without stucking ====================
+	; We use two modes: Normal mode (movement is fine) and RECOVERY mode (trying to unstuck)
+	; In Normal mode, we track whether we are moving (at least $MIN_MOVEMENT in 1 iteration)
+	; In Recovery mode, we track whether we are making progress (displacement) towards unstucking in time $RECOVERY_NET_DISPLACEMENT_WINDOW_MS.
+	Local Const $MODE_NORMAL = 0
+	Local Const $MODE_RECOVERY = 1
+	Local Const $STUCK_TICKS = 6
+	Local Const $MIN_MOVEMENT = 10 ; used to detect stuck
+	Local Const $RECOVERY_INTERVAL_MS = 10000 ; try to unstuck for 10s
+	Local Const $RECOVERY_NET_DISPLACEMENT_WINDOW_MS = 9000 ; measure displacement across the last 9s
+	Local Const $RECOVERY_LOW_DISPLACEMENT_THRESHOLD = $RANGE_AREA ; we need to displace for this much to detect unstuck
+	Local Const $RECOVERY_HISTORY_KEEP_MS = $RECOVERY_INTERVAL_MS
+	Local $blocked = 0
+	Local $mode = $MODE_NORMAL
+	Local $recoveryTimer = TimerInit()
+	Local $movementStartTimer = TimerInit()
+	; Position history will track timestamp ([0]) and respective position ([1],[2]) for $RECOVERY_HISTORY_KEEP_MS
+	Local $positionHistory[1][3]
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
@@ -1032,12 +1040,6 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	Local $blocked = 0
-	Local $mode = $MOVE_AGGRO_MODE_NORMAL
-	Local $recoveryMeasureTimer = TimerInit()
-	Local $recoveryLowDisplacementCount = 0
-	Local $movementTimelineTimer = TimerInit()
-	Local $positionHistory[1][3]
 	$positionHistory[0][0] = 0
 	$positionHistory[0][1] = $myX
 	$positionHistory[0][2] = $myY
@@ -1063,38 +1065,39 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
-		TrackPositionHistory($positionHistory, $myX, $myY, $MOVE_AGGRO_RECOVERY_HISTORY_KEEP_MS, TimerDiff($movementTimelineTimer))
+		TrackPositionHistory($positionHistory, $myX, $myY, $RECOVERY_HISTORY_KEEP_MS, TimerDiff($movementStartTimer))
 		Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
-		Local $shortNetDisplacement = GetNetDisplacementInWindow($positionHistory, $MOVE_AGGRO_NORMAL_NET_DISPLACEMENT_WINDOW_MS)
 
-		If $movementDistance < $MOVE_AGGRO_MIN_MOVEMENT Or ($shortNetDisplacement >= 0 And $shortNetDisplacement < $MOVE_AGGRO_NORMAL_LOW_DISPLACEMENT_THRESHOLD) Then
+		; If we didn't move at least $MIN_MOVEMENT, increase $blocked counter. Else, reduce $blocked counter.
+		If $movementDistance < $MIN_MOVEMENT Then
 			$blocked += 1
 		Else
 			; keep some blocked memory to detect oscillation/stutter faster than full reset
 			$blocked = Max(0, $blocked - 2)
 		EndIf
 
-		If $blocked >= $MOVE_AGGRO_STUCK_TICKS And $mode == $MOVE_AGGRO_MODE_NORMAL Then
-			$mode = $MOVE_AGGRO_MODE_RECOVERY
-			$recoveryMeasureTimer = TimerInit()
-			$recoveryLowDisplacementCount = 0
+		; Stuck detected. Change to recovery mode and start recovery timer.
+		If $blocked >= $STUCK_TICKS And $mode == $MODE_NORMAL Then
+			$mode = $MODE_RECOVERY
+			$recoveryTimer = TimerInit()
 		EndIf
 
-		If $mode == $MOVE_AGGRO_MODE_RECOVERY Then
-			If $blocked >= $MOVE_AGGRO_STUCK_TICKS Then
+		If $mode == $MODE_RECOVERY Then
+			If $blocked >= $STUCK_TICKS Then
+				; Try to unstuck
 				Move($myX, $myY, 500)
 				RandomSleep(500)
 				Move($x, $y)
 			EndIf
 
-			If TimerDiff($recoveryMeasureTimer) >= $MOVE_AGGRO_RECOVERY_MEASURE_INTERVAL_MS Then
-				$recoveryMeasureTimer = TimerInit()
-				Local $netDisplacement = GetNetDisplacementInWindow($positionHistory, $MOVE_AGGRO_RECOVERY_NET_DISPLACEMENT_WINDOW_MS)
-				If $netDisplacement >= 0 And $netDisplacement < $MOVE_AGGRO_RECOVERY_LOW_DISPLACEMENT_THRESHOLD Then
-					$recoveryLowDisplacementCount += 1
-					If $recoveryLowDisplacementCount >= $MOVE_AGGRO_RECOVERY_MAX_LOW_DISPLACEMENTS Then Return $FAIL
+			; Recovery timer expired. Check displacement. Did we move significantly?
+			If $mode == $MODE_RECOVERY And TimerDiff($recoveryTimer) >= $RECOVERY_INTERVAL_MS Then
+				Local $netDisplacement = GetNetDisplacementInWindow($positionHistory, $RECOVERY_NET_DISPLACEMENT_WINDOW_MS)
+				If $netDisplacement >= 0 And $netDisplacement < $RECOVERY_LOW_DISPLACEMENT_THRESHOLD Then
+					Return $FAIL
 				ElseIf $netDisplacement >= 0 Then
-					$recoveryLowDisplacementCount = 0
+					; We unstucked and are moving normally again
+					$mode = $MODE_NORMAL
 				EndIf
 			EndIf
 		EndIf
