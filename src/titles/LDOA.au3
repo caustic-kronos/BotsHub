@@ -249,6 +249,11 @@ Func LDOATitleFarmLoop()
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
 	Local $result
 	Info('Current level: ' & $level)
+	If $level < 1 Then
+		Error('Level 0, something went wrong. Waiting a bit and repeating.')
+		RandomSleep(3000)
+		Return $FAIL
+	EndIf
 	If $level < 2 Then
 		$result = LDOATitleFarmUnder2()
 	ElseIf $level < 10 Then
@@ -442,7 +447,7 @@ EndFunc
 
 ;~ Function to deal with inventory after farm, in presearing
 Func PresearingInventoryManagement()
-	If (CountSlots(1, $bags_count) < 5) Then
+	If (CountSlots(1, $bags_count) < 0) Then
 		; Operations order :
 		; 1-Sort items
 		; 2-Identify items
