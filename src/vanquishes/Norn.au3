@@ -63,7 +63,7 @@ Func GoToVarajarFells()
 	While GetMapID() <> $ID_VARAJAR_FELLS
 		Info('Moving to the Varajar Fells')
 		MoveTo(222, 756)
-		MoveTo(-1435, 1217)
+		Move(-1435, 1217)
 		RandomSleep(5000)
 		WaitMapLoading($ID_VARAJAR_FELLS, 10000, 2000)
 	WEnd

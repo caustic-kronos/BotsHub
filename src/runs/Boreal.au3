@@ -36,7 +36,7 @@ Global Const $BOREAL_ELEMENTALIST_CHESTRUNNER_SKILLBAR = 'OgdT8Z/wYiHRn5A6ukmcCC
 Global Const $BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR = 'OwBj8xe84Q8I6MHQ3l0kTQ4OIQ'
 Global Const $BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR = 'OAej8xeM5Q8I6MHQ3l0kTQ4OIQ'
 Global Const $BOREAL_PARAGON_CHESTRUNNER_SKILLBAR = 'OQej8xeM6Q8I6MHQ3l0kTQ4OIQ'
-Global Const $BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR = 'Ogej8xeDLT8I6MHQ3l0kTQ4OIQ'
+Global Const $BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR = 'Ogej4NfMLTbXHYHQ3l0kTQ4OIQA'
 
 
 Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF _
@@ -48,15 +48,15 @@ Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF 
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
 Global Const $BOREAL_CHEST_RUN_TIMEOUT_MS = 5 * 60 * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($BOREAL_DWARVENSTABILITY) is better than UseSkillEx(1))
-Global Const $BOREAL_DEADLYPARADOX		= 1
-Global Const $BOREAL_SHADOWFORM			= 2
-Global Const $BOREAL_SHROUDOFDISTRESS	= 3
-Global Const $BOREAL_DWARVENSTABILITY	= 4
-Global Const $BOREAL_IAMUNSTOPPABLE		= 5
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($BOREAL_DWARVEN_STABILITY) is better than UseSkillEx(1))
+Global Const $BOREAL_PIOUS_RENEWAL		= 1
+Global Const $BOREAL_PIOUS_HASTE		= 2
+Global Const $BOREAL_SHROUD_OF_DISTRESS	= 3
+Global Const $BOREAL_DWARVEN_STABILITY	= 4
+Global Const $BOREAL_I_AM_UNSTOPPABLE	= 5
 Global Const $BOREAL_DASH				= 6
-Global Const $BOREAL_DEATHSCHARGE		= 7
-Global Const $BOREAL_HEARTOFSHADOW		= 8
+Global Const $BOREAL_DEATHS_CHARGE		= 7
+Global Const $BOREAL_HEART_OF_SHADOW	= 8
 
 ; Model IDs of enemy NPCs that we might encounter
 Global Const $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID = 6539
@@ -91,9 +91,8 @@ Func SetupBorealFarm()
 
 	MoveTo(5799, -27957)
 	MoveTo(6035, -27977)
-	;~ MoveTo(5584, -27924)
-	Move(5232, -27891)
-	Moveto(3986, -27642)
+	MoveTo(5232, -27891)
+	Move(3986, -27642)
 	RandomSleep(1500)
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)
 
@@ -140,9 +139,9 @@ Func SetupPlayerBorealChestFarm()
 			LoadSkillTemplate($BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
 	EndSwitch
 	RandomSleep(250)
-	$boreal_has_shroud_of_distress = GetSkillbarSkillID($BOREAL_SHROUDOFDISTRESS) == $ID_SHROUD_OF_DISTRESS
-	$boreal_has_heart_of_shadow = GetSkillbarSkillID($BOREAL_HEARTOFSHADOW) == $ID_HEART_OF_SHADOW
-	$boreal_has_deaths_charge = GetSkillbarSkillID($BOREAL_DEATHSCHARGE) == $ID_DEATHS_CHARGE
+	$boreal_has_shroud_of_distress = GetSkillbarSkillID($BOREAL_SHROUD_OF_DISTRESS) == $ID_SHROUD_OF_DISTRESS
+	$boreal_has_heart_of_shadow = GetSkillbarSkillID($BOREAL_HEART_OF_SHADOW) == $ID_HEART_OF_SHADOW
+	$boreal_has_deaths_charge = GetSkillbarSkillID($BOREAL_DEATHS_CHARGE) == $ID_DEATHS_CHARGE
 EndFunc
 
 
@@ -157,7 +156,7 @@ Func BorealChestFarmLoop()
 	Info('Starting chest farm run')
 
 	MoveTo(5799, -27957)
-	Moveto(3986, -27642)
+	Move(3986, -27642)
 	RandomSleep(1500)
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)
 
@@ -211,13 +210,13 @@ EndFunc
 
 ;~ Function to unblocked when opening chests
 Func BorealUnblock()
-	If $boreal_has_heart_of_shadow And IsRecharged($BOREAL_HEARTOFSHADOW) And GetEnergy() >= 5 Then
+	If $boreal_has_heart_of_shadow And IsRecharged($BOREAL_HEART_OF_SHADOW) And GetEnergy() >= 5 Then
 		Local $target = GetNearestEnemyToAgent(GetMyAgent())
 		If $target == Null Then $target = GetMyAgent()
-		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
-	ElseIf $boreal_has_deaths_charge And IsRecharged($BOREAL_DEATHSCHARGE) And GetEnergy() >= 5 Then
+		UseSkillEx($BOREAL_HEART_OF_SHADOW, $target)
+	ElseIf $boreal_has_deaths_charge And IsRecharged($BOREAL_DEATHS_CHARGE) And GetEnergy() >= 5 Then
 		Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST)
-		If $target <> Null Then UseSkillEx($BOREAL_DEATHSCHARGE, $target)
+		If $target <> Null Then UseSkillEx($BOREAL_DEATHS_CHARGE, $target)
 	EndIf
 EndFunc
 
@@ -226,28 +225,28 @@ EndFunc
 Func BorealSpeedRun()
 	If IsPlayerDead() Then Return $FAIL
 	Local $me = GetMyAgent()
-	Local $my_health_percent = DllStructGetData($me, 'HealthPercent')
-	Local $are_enemies_in_castingrange = GetAreBorealEnemiesInCastingRange()
-	Local $am_crippled = GetEffect($ID_CRIPPLED) <> Null
+	Local $myHealthPercent = DllStructGetData($me, 'HealthPercent')
+	Local $areEnemiesInCastingRange = GetAreBorealEnemiesInCastingRange()
+	Local $amCrippled = GetEffect($ID_CRIPPLED) <> Null
 	;~ If health is very low, attempt to shadow step away from nearest target
-	If $boreal_has_heart_of_shadow And $my_health_percent < 0.2 And GetEnergy() >= 5 And IsRecharged($BOREAL_HEARTOFSHADOW) Then
+	If $boreal_has_heart_of_shadow And $myHealthPercent < 0.2 And GetEnergy() >= 5 And IsRecharged($BOREAL_HEART_OF_SHADOW) Then
 		Local $target = GetNearestEnemyToAgent($me)
 		If $target == Null Then $target = $me
-		UseSkillEx($BOREAL_HEARTOFSHADOW, $target)
+		UseSkillEx($BOREAL_HEART_OF_SHADOW, $target)
 	EndIf
 	;~ If health is low, cast Shroud of Distress
-	If $boreal_has_shroud_of_distress And $my_health_percent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUDOFDISTRESS) Then
-		UseSkillEx($BOREAL_SHROUDOFDISTRESS)
+	If $boreal_has_shroud_of_distress And $myHealthPercent < 0.6 And GetEnergy() >= 10 And IsRecharged($BOREAL_SHROUD_OF_DISTRESS) Then
+		UseSkillEx($BOREAL_SHROUD_OF_DISTRESS)
 	EndIf
 	;~ If Crippled or Mountain Aloe/Pinesoul near, cast I am unstoppable
-	If $are_enemies_in_castingrange Or $am_crippled Then
-		If IsRecharged($BOREAL_IAMUNSTOPPABLE) And GetEnergy() >= 5 Then
-			UseSkillEx($BOREAL_IAMUNSTOPPABLE)
+	If $areEnemiesInCastingRange Or $amCrippled Then
+		If IsRecharged($BOREAL_I_AM_UNSTOPPABLE) And GetEnergy() >= 5 Then
+			UseSkillEx($BOREAL_I_AM_UNSTOPPABLE)
 		EndIf
 	EndIf
 	;~ Cast Dwarven Stability and Dash when ready
-	If IsRecharged($BOREAL_DWARVENSTABILITY) And GetEnergy() >= 5 Then
-		UseSkillEx($BOREAL_DWARVENSTABILITY)
+	If IsRecharged($BOREAL_DWARVEN_STABILITY) And GetEnergy() >= 5 Then
+		UseSkillEx($BOREAL_DWARVEN_STABILITY)
 	EndIf
 	If IsRecharged($BOREAL_DASH) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DASH)
@@ -258,7 +257,6 @@ EndFunc
 
 Func GetAreBorealEnemiesInCastingRange()
 	Local $me = GetMyAgent()
-	Local $flags = 0
 	For $agent In GetNPCsInRangeOfAgent($me, $ID_ALLEGIANCE_FOE, $RANGE_SPELLCAST)
 		Switch DllStructGetData($agent, 'ModelID')
 			Case $BOREAL_MOUNTAIN_ALOE_MODEL_ID, $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID

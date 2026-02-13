@@ -67,7 +67,7 @@ Func GoToDrazach()
 	While GetMapID() <> $ID_DRAZACH_THICKET
 		Info('Moving to Drazach')
 		MoveTo(-5928.21, 14269.09)
-		MoveTo(-6550, 14550)
+		Move(-6550, 14550)
 		RandomSleep(1000)
 		WaitMapLoading($ID_DRAZACH_THICKET, 10000, 2000)
 	WEnd
