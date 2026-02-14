@@ -762,7 +762,11 @@ EndFunc
 Func UseSkillEx($skillSlot, $target = Null)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
-	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $skillID = GetSkillbarSkillID($skillSlot)
+	; Empty skill slot
+	If $skillID == 0 Then Return False
+
+	Local $skill = GetSkillByID($skillID)
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy() < $energy Then Return False
 

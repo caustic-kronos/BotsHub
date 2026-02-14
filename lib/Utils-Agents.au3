@@ -833,5 +833,8 @@ Func CreateMobsPriorityMap()
 											4,								4,								5,								5,								5, _
 											5]
 	AddToMapFromArrays($priorityMap, $warSupplyMobs, $warSupplyMobsPriorities)
+	Local $ldoaMobs =				[	$ID_BANDIT_RAIDER,	$ID_BANDIT_FIRESTARTER]
+	Local $ldoaMobsPriorities =		[	0,					1]
+	AddToMapFromArrays($priorityMap, $ldoaMobs, $ldoaMobsPriorities)
 	Return $priorityMap
 EndFunc

@@ -50,6 +50,11 @@ Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
 
 Global $ldoa_farm_setup = False
 
+Global $ldoa_fight_options = CloneDictMap($default_moveaggroandkill_options)
+$ldoa_fight_options.Item('openChests')			= False
+$ldoa_fight_options.Item('callTarget')			= False
+$ldoa_fight_options.Item('priorityMobs')		= True
+$ldoa_fight_options.Item('lootInFights')		= False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm()
@@ -329,14 +334,14 @@ Func LDOATitleFarmAfter10()
 	Info('Starting Hamnet farm...')
 	Info('Heading to Foibles Fair!')
 	DistrictTravel($ID_FOIBLES_FAIR, $district_name)
-	MoveTo(-183, 9002)
 	MoveTo(356, 7834)
 	Info('Entering Wizards Folly!')
 	Move(500, 7300)
 	WaitMapLoading($ID_WIZARDS_FOLLY, 10000, 2000)
 	MoveTo(2200, 6000)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
-	MoveAggroAndKillInRange(2550, 4500, '', 2000)
+	MoveTo(2550, 4500)
+	KillFoesInArea($ldoa_fight_options)
 	If IsPlayerDead() Then Return $FAIL
 	Info('Returning to Foibles Fair')
 	ResignAndReturnToOutpost($ID_FOIBLES_FAIR)
