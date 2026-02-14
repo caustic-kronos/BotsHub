@@ -1008,7 +1008,6 @@ EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
-;~ Credits to Shiva for auto-attack improvement
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
@@ -2069,16 +2068,18 @@ Func GetDataFromRelativeAddress($processHandle, $relativeCheatEngineAddress, $si
 EndFunc
 
 
-;~ Compute and print structure offsets and total size based on structure definition string
-Func ComputeStructureOffsets($structureDefinition)
+;~ Compute structure fields offsets map
+Func ComputeStructureOffsetsMap($structureTemplate)
+	Local $offsetsMap[]
+
 	Local $offset = 0
-	Local $fields = StringSplit($structureDefinition, ';', 2)
+	Local $fields = StringSplit($structureTemplate, ';', 2)
 
 	For $field In $fields
 		$field = StringStripWS($field, 3)
 		If $field = '' Then ContinueLoop
 
-		Local $parts = StringSplit($field, ' ', 2)
+		Local $parts = StringSplit($field, ' 	', 2)
 		Local $type = $parts[0]
 		Local $name = $parts[1]
 
@@ -2092,11 +2093,48 @@ Func ComputeStructureOffsets($structureDefinition)
 		EndIf
 
 		Local $size = TypeSize($type) * $count
-		Info(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
+		$offsetsMap[$name] = $offset
+		Debug(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
 		$offset += $size
 	Next
 
-	Info('Total size = ' & $offset & ' bytes')
+	Debug('Total size = ' & $offset & ' bytes')
+	Return $offsetsMap
+EndFunc
+
+
+;~ Build structure fields offsets map
+Func BuildStructureOffsetsMap($structureTemplate)
+	Local $offsetsMap[]
+
+	Local $structure = DllStructCreate($structureTemplate)
+    Local $baseAddress = DllStructGetPtr($structure)
+
+	Local $fields = StringSplit($structureTemplate, ';', 2)
+	For $field In $fields
+		$field = StringStripWS($field, 3)
+		If $field = '' Then ContinueLoop
+
+		Local $parts = StringSplit($field, ' 	', 2)
+		Local $type = $parts[0]
+		Local $name = $parts[1]
+
+		; Handle arrays (for example wchar name[32])
+		Local $count = 1
+		Local $countPosition = StringInStr($name, '[')
+		If $countPosition > 0 Then
+			Local $countSize = StringInStr($name, ']') - $countPosition - 1
+			$count = Number(StringMid($name, $countPosition + 1, $countSize))
+			$name = StringLeft($name, $countPosition - 1)
+		EndIf
+
+    	Local $fieldAddress = DllStructGetPtr($structure, $name)
+		Local $offset = Number($fieldAddress) - Number($baseAddress)
+    	$offsetsMap[$name] = $offset
+		; Size not computed here - would need to create a struct for every field
+		Debug(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, 0, $offset, StringRight('00' & Hex($offset), 2)))
+	Next
+	Return $offsetsMap
 EndFunc
 
 
