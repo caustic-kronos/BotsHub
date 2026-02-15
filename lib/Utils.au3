@@ -1346,7 +1346,9 @@ EndFunc
 
 ;~ Return whether or not the given quest matches the given mask
 Func QuestStateMatches($questID, $expectedMask)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Local $quest = GetQuestByID($questID)
+	Local $questState = $ID_QUEST_NOT_FOUND
+	If $quest <> Null Then $questState = DllStructGetData($quest, 'LogState')
 	; Cannot use a bitmask on a 0x00 mask
 	If $expectedMask == $ID_QUEST_NOT_FOUND Then Return $questState = $ID_QUEST_NOT_FOUND
 	Return BitAND($questState, $expectedMask) <> 0
