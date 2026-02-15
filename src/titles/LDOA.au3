@@ -43,6 +43,8 @@ Global Const $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN = 0x804703
 Global Const $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN = 0x804701
 Global Const $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE = 0x802E01
 Global Const $ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET = 0x84A101
+Global Const $ID_DIALOG_ACCEPT_QUEST_BANDIT_RAID = 0x802901
+Global Const $ID_DIALOG_ACCEPT_QUEST_POOR_TENANT = 0x804601
 
 ; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_HEALTH_THRESHOLD = 0.33
@@ -130,8 +132,20 @@ Func InitialSetupLDOA()
 	Local $warPreparationsFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($warPreparationsQuestID, -8))
 	Local $professionTestAcceptQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($professionTestQuestID, -8))
 	Local $professionTestFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($professionTestQuestID, -8))
-
 	TakeQuest($questNPC, $warPreparationsQuestID, $warPreparationsAcceptQuestDialogID)
+
+	; Talking to Baron Egan to get Bandit Raid Quest
+	; We do not need it but it prevents some bugs to not have an empty log book
+	MoveTo(11000, 10400)
+	$questNPC = GetNearestNPCToCoords(11060, 10775)
+	TakeQuest($questNPC, $ID_QUEST_BANDIT_RAID, $ID_DIALOG_ACCEPT_QUEST_BANDIT_RAID)
+
+	; Could also get Namar quest
+	;MoveTo(7607, 5552)
+	;MoveTo(6800, 9500)
+	;$questNPC = GetNearestNPCToCoords(6760, 9720)
+	;TakeQuest($questNPC, $ID_QUEST_POOR_TENANT, $ID_DIALOG_ACCEPT_QUEST_POOR_TENANT)
+
 	MoveTo(7607, 5552)
 	Move(7175, 5229)
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
