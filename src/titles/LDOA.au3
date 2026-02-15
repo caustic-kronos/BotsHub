@@ -134,11 +134,10 @@ Func InitialSetupLDOA()
 	Local $professionTestFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($professionTestQuestID, -8))
 	TakeQuest($questNPC, $warPreparationsQuestID, $warPreparationsAcceptQuestDialogID)
 
-	; Talking to Baron Egan to get Bandit Raid Quest
-	; We do not need it but it prevents some bugs to not have an empty log book
-	MoveTo(11000, 10400)
-	$questNPC = GetNearestNPCToCoords(11060, 10775)
-	TakeQuest($questNPC, $ID_QUEST_BANDIT_RAID, $ID_DIALOG_ACCEPT_QUEST_BANDIT_RAID)
+	; Could talk to Baron Egan to get Bandit Raid Quest
+	;MoveTo(11000, 10400)
+	;$questNPC = GetNearestNPCToCoords(11060, 10775)
+	;TakeQuest($questNPC, $ID_QUEST_BANDIT_RAID, $ID_DIALOG_ACCEPT_QUEST_BANDIT_RAID)
 
 	; Could also get Namar quest
 	;MoveTo(7607, 5552)
