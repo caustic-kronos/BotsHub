@@ -84,21 +84,7 @@ Func VanquishFerndale()
 	If GetMapID() <> $ID_FERNDALE Then Return $FAIL
 	Info('Taking blessing')
 	GoNearestNPCToCoords(-12909, 15616)
-	If GetLuxonFaction() > GetKurzickFaction() Then
-		Dialog(0x81)
-		Sleep(1000)
-		Dialog(0x2)
-		Sleep(1000)
-		Dialog(0x84)
-		Sleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-	Else
-		Dialog(0x85)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-	EndIf
+	TakeFactionBlessing('kurzick')
 
 	; 117 groups to vanquish
 	Local Static $foes[][] = [ _
