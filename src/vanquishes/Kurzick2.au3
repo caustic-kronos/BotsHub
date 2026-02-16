@@ -289,7 +289,6 @@ EndFunc
 ; =====================================================================
 ; Phase 1 -> Shrine 2
 ; NOTE: Every StepTo(...) MUST be checked for $FAIL and Return immediately.
-; This is the bug that caused your "continue after wipe" behaviour.
 ; =====================================================================
 Func FarmToSecondShrine()
 	If HandleDeathAndReturn('Restart from the first Shrine') = $FAIL Then Return
