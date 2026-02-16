@@ -1805,6 +1805,7 @@ Func GetQuestByID($questID = 0)
 	Local $offset[] = [0, 0x18, 0x2C, 0x534]
 
 	$questLogSize = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
+	If $questLogSize[1] = 0 Then Return Null
 
 	If $questID = 0 Then
 		$offset[1] = 0x18
@@ -1815,7 +1816,7 @@ Func GetQuestByID($questID = 0)
 	EndIf
 
 	Local $offset[] = [0, 0x18, 0x2C, 0x52C, 0]
-	For $i = 0 To $questLogSize[1]
+	For $i = 0 To $questLogSize[1] - 1
 		$offset[4] = 0x34 * $i
 		$questPtr = MemoryReadPtr($processHandle, $base_address_ptr, $offset)
 		$quest = SafeDllStructCreate($QUEST_STRUCT_TEMPLATE)

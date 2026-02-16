@@ -84,7 +84,7 @@ Func SetupFeathersFarm()
 	If GetDistanceToPoint($me, 17300, 17300) > 1800 Then MoveTo(18750, 16000)
 
 	GoToJayaBluffs()
-	Move(10500, -13100)
+	MoveTo(10500, -13100)
 	Move(10970, -13360)
 	RandomSleep(1000)
 	WaitMapLoading($ID_SEITUNG_HARBOR, 10000, 2000)

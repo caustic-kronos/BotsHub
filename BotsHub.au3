@@ -106,6 +106,7 @@ Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Dunkoro|Ge
 ; UNINITIALIZED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $runtime_status = 'UNINITIALIZED'
 Global $run_mode = 'GUI'
+Global $slave_index = 0
 Global $process_id = ''
 Global $character_name = ''
 Global $farm_name = ''
@@ -174,14 +175,15 @@ Func Main()
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()
 	ElseIf $run_mode == 'HEADLESS' Then
-		; Need minimum 3 things to run a bot: process ID, character name and farm name
-		If $CmdLine[0] < 3 Then
-			MsgBox(0, 'Error', 'The Hub needs 0 or at least 3 arguments.')
+		; Need minimum 4 things to run a bot: slave index, process ID, character name and farm name
+		If $CmdLine[0] < 4 Then
+			MsgBox(0, 'Error', 'The Hub needs 0 or at least 4 arguments.')
 			Exit
 		EndIf
-		$process_id = $CmdLine[1]
-		$character_name = $CmdLine[2]
-		$farm_name = $CmdLine[3]
+		$slave_index = $CmdLine[1]
+		$process_id = $CmdLine[2]
+		$character_name = $CmdLine[3]
+		$farm_name = $CmdLine[4]
 
 		Info('Running in CMD mode with process ID: ' & $process_id & ' character name: ' & $character_name & ' farm name: ' & $farm_name)
 

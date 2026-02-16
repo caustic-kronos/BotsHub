@@ -43,6 +43,8 @@ Global Const $ID_DIALOG_SELECT_QUEST_A_MESMERS_BURDEN = 0x804703
 Global Const $ID_DIALOG_ACCEPT_QUEST_A_MESMERS_BURDEN = 0x804701
 Global Const $ID_DIALOG_ACCEPT_QUEST_CHARR_AT_THE_GATE = 0x802E01
 Global Const $ID_DIALOG_ACCEPT_QUEST_FARMER_HAMNET = 0x84A101
+Global Const $ID_DIALOG_ACCEPT_QUEST_BANDIT_RAID = 0x802901
+Global Const $ID_DIALOG_ACCEPT_QUEST_POOR_TENANT = 0x804601
 
 ; Variables used for Survivor async checking (Low Health Monitor)
 Global Const $LOW_HEALTH_THRESHOLD = 0.33
@@ -50,6 +52,11 @@ Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
 
 Global $ldoa_farm_setup = False
 
+Global $ldoa_fight_options = CloneDictMap($default_moveaggroandkill_options)
+$ldoa_fight_options.Item('openChests')			= False
+$ldoa_fight_options.Item('callTarget')			= False
+$ldoa_fight_options.Item('priorityMobs')		= True
+$ldoa_fight_options.Item('lootInFights')		= False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm()
@@ -125,8 +132,19 @@ Func InitialSetupLDOA()
 	Local $warPreparationsFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($warPreparationsQuestID, -8))
 	Local $professionTestAcceptQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_ACCEPT_QUEST, BitShift($professionTestQuestID, -8))
 	Local $professionTestFinishQuestDialogID = BitOR($TEMPLATE_ID_DIALOG_FINISH_QUEST, BitShift($professionTestQuestID, -8))
-
 	TakeQuest($questNPC, $warPreparationsQuestID, $warPreparationsAcceptQuestDialogID)
+
+	; Could talk to Baron Egan to get Bandit Raid Quest
+	;MoveTo(11000, 10400)
+	;$questNPC = GetNearestNPCToCoords(11060, 10775)
+	;TakeQuest($questNPC, $ID_QUEST_BANDIT_RAID, $ID_DIALOG_ACCEPT_QUEST_BANDIT_RAID)
+
+	; Could also get Namar quest
+	;MoveTo(7607, 5552)
+	;MoveTo(6800, 9500)
+	;$questNPC = GetNearestNPCToCoords(6760, 9720)
+	;TakeQuest($questNPC, $ID_QUEST_POOR_TENANT, $ID_DIALOG_ACCEPT_QUEST_POOR_TENANT)
+
 	MoveTo(7607, 5552)
 	Move(7175, 5229)
 	WaitMapLoading($ID_LAKESIDE_COUNTY, 10000, 2000)
@@ -249,6 +267,11 @@ Func LDOATitleFarmLoop()
 	Local $level = DllStructGetData(GetMyAgent(), 'Level')
 	Local $result
 	Info('Current level: ' & $level)
+	If $level < 1 Then
+		Error('Level 0, something went wrong. Waiting a bit and repeating.')
+		RandomSleep(3000)
+		Return $FAIL
+	EndIf
 	If $level < 2 Then
 		$result = LDOATitleFarmUnder2()
 	ElseIf $level < 10 Then
@@ -324,14 +347,14 @@ Func LDOATitleFarmAfter10()
 	Info('Starting Hamnet farm...')
 	Info('Heading to Foibles Fair!')
 	DistrictTravel($ID_FOIBLES_FAIR, $district_name)
-	MoveTo(-183, 9002)
 	MoveTo(356, 7834)
 	Info('Entering Wizards Folly!')
 	Move(500, 7300)
 	WaitMapLoading($ID_WIZARDS_FOLLY, 10000, 2000)
 	MoveTo(2200, 6000)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
-	MoveAggroAndKillInRange(2550, 4500, '', 2000)
+	MoveTo(2550, 4500)
+	KillFoesInArea($ldoa_fight_options)
 	If IsPlayerDead() Then Return $FAIL
 	Info('Returning to Foibles Fair')
 	ResignAndReturnToOutpost($ID_FOIBLES_FAIR)
@@ -442,7 +465,7 @@ EndFunc
 
 ;~ Function to deal with inventory after farm, in presearing
 Func PresearingInventoryManagement()
-	If (CountSlots(1, $bags_count) < 5) Then
+	If (CountSlots(1, $bags_count) < 0) Then
 		; Operations order :
 		; 1-Sort items
 		; 2-Identify items

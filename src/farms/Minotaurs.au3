@@ -73,7 +73,7 @@ Func GoToProphetsPath()
 		MoveTo(-17071, -1065)
 		MoveTo(-18069, -1026)
 		MoveTo(-18853, -444)
-		MoveTo(-20100, -400)
+		Move(-20100, -400)
 		RandomSleep(1000)
 		WaitMapLoading($ID_PROPHETS_PATH, 10000, 2000)
 	WEnd

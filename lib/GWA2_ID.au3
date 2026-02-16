@@ -338,6 +338,9 @@ Global Const $ID_WEAKNESS	= 486
 #EndRegionConditions
 
 #Region Mob IDs
+; LDOA foes model IDs
+Global Const $ID_BANDIT_FIRESTARTER			= 7824
+Global Const $ID_BANDIT_RAIDER				= 7825
 ; Voltaic farm foes model IDs
 Global Const $ID_STONE_SUMMIT_DOMINATOR		= 6544
 Global Const $ID_STONE_SUMMIT_DREAMER		= 6545

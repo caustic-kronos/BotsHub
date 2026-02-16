@@ -153,7 +153,7 @@ Func EnterHallOfMonuments()
 		MoveTo(-3477, 4245)
 		MoveTo(-4060, 4675)
 		MoveTo(-4448, 4952)
-		move(-4779, 5209)
+		Move(-4779, 5209)
 		WaitMapLoading($ID_HALL_OF_MONUMENTS)
 	EndIf
 	Return GetMapID() == $ID_HALL_OF_MONUMENTS ? $SUCCESS : $FAIL
