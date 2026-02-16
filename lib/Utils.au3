@@ -1073,7 +1073,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 			$blocked += 1
 		Else
 			; keep some blocked memory to detect oscillation/stutter faster than full reset
-			$blocked = Max(0, $blocked - 2)
+			$blocked = _Max(0, $blocked - 2)
 		EndIf
 
 		; Stuck detected. Change to recovery mode and start recovery timer.
