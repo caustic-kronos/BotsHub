@@ -1,5 +1,5 @@
 #CS ===========================================================================
-; Author: ian
+; Author: Northbound
 ; Contributor: ---
 ; Copyright 2026 caustic-kronos
 ;
@@ -36,8 +36,10 @@ Global Const $KURZICKS_FARM_DRAZACH_DURATION = 25 * 60 * 1000
 
 Global $kurzick_farm_drazach_setup = False
 
-; Shrine state (matches the GW3 script pattern)
+; Shrine state
 Global $RezShrine = 0
+Global $g_bJustRezzed = False
+Global $g_iLastRezShrine = 0
 
 
 ; =====================================================================
@@ -46,7 +48,7 @@ Global $RezShrine = 0
 ;   - IsPlayerDead(), IsPlayerAlive(), IsPlayerAndPartyWiped()
 ;   - IsRunFailed(), TrackPartyStatus(), ResetFailuresCounter(), ...
 ; There is no GetPartyDead()/GetPartyDefeated() in this codebase, but the
-; shrine-phase logic we want reads better with them, so we provide wrappers
+; shrine-phase logic we use reads better with them, so we provide wrappers
 ; locally *in this file only*.
 ; =====================================================================
 
@@ -93,7 +95,7 @@ EndFunc
 
 
 ; =====================================================================
-; “Loop” container for a single run (SoO style)
+; “Loop” container for a single run 
 ; =====================================================================
 Func KurzickFactionFarmDrazachLoop()
 	If GoToDrazach() = $FAIL Then
@@ -135,7 +137,7 @@ EndFunc
 
 
 ; =====================================================================
-; Blessing (same as before)
+; Blessing
 ; =====================================================================
 Func GetBlessingDrazach()
 	Info('Taking blessing')
@@ -163,16 +165,12 @@ EndFunc
 
 
 ; =====================================================================
-; Core behavioral fix:
-; - NEVER continue executing waypoints if player is dead
-; - Wait for rez, then return to let outer Do..Until rerun the phase
+; Handling Death
 ; =====================================================================
 Func _HandleDeathAndReturn($restartMsg)
 	; If the run is already considered failed, stop.
 	If GetPartyDefeated() Then Return $FAIL
 
-	; Stop phase immediately if player is dead (regardless of whether a hero might rez).
-	; This is the key behaviour: prevent burning through waypoints while dead.
 	If IsPlayerDead() Then
 		If IsPlayerAndPartyWiped() Then
 			Warn($restartMsg & ' (wipe detected)')
@@ -191,6 +189,9 @@ Func _HandleDeathAndReturn($restartMsg)
 				Return $FAIL
 			EndIf
 		WEnd
+		
+		$g_bJustRezzed = True
+		$g_iLastRezShrine = $RezShrine
 
 		; After rez, caller should stop current phase and let outer loop rerun it.
 		Return $FAIL
@@ -220,9 +221,56 @@ Func _Step($x, $y, $msg, $aggroRange = 0)
 	Return $SUCCESS
 EndFunc
 
+Func _RepositionAfterRez()
+	If Not $g_bJustRezzed Then Return $SUCCESS
+	If GetPartyDefeated() Then Return $FAIL
+
+	Info('Repositioning after rez (shrine ' & $g_iLastRezShrine & ')')
+
+	; Give heroes a second to load in / regroup after shrine rez
+	Sleep(1500)
+
+	Switch $g_iLastRezShrine
+		Case 1
+			; Back to start of Phase 1
+			MoveTo(-6000, -15800)
+			MoveTo(-6506, -16099)
+
+		Case 2
+			; Shrine 2 is at/near (-1355, -914). Get back to Phase 2 start (-4464, 780)
+			MoveTo(-2400, -500)
+			MoveTo(-3500, 200)
+			MoveTo(-4464.77, 780.87)
+
+		Case 3
+			; Shrine 3 is at/near (-8019, 18330). Phase 3 start is (-5701, 16202)
+			MoveTo(-7000, 17200)
+			MoveTo(-6100, 16650)
+			MoveTo(-5701.15, 16202.36)
+
+		Case 4
+			; Shrine 4 is at/near (15884, 9224). Phase 4 start is (14685, 7077)
+			MoveTo(15400, 8400)
+			MoveTo(15000, 7600)
+			MoveTo(14685.91, 7077.44)
+
+		Case 5
+			; Shrine 5 is at/near (-1257, -1004). Phase 5 start is (-2693, -4748)
+			MoveTo(-1600, -2500)
+			MoveTo(-2200, -3600)
+			MoveTo(-2693.82, -4748.93)
+	EndSwitch
+
+	; One more pause so the party clumps and doesn’t rubber-band into aggro
+	Sleep(1000)
+
+	$g_bJustRezzed = False
+	Return $SUCCESS
+EndFunc
+
 
 ; =====================================================================
-; Farm controller (matches the GW3 farm pattern exactly)
+; Farm controller
 ; =====================================================================
 Func FarmDrazachThicket()
 	If GetPartyDead() Then Return False
@@ -274,6 +322,8 @@ Func FarmToSecondShrine()
 		_HandleDeathAndReturn('Restart from the first Shrine')
 		Return
 	EndIf
+	
+	If _RepositionAfterRez() = $FAIL Then Return
 
 	_Step(-6506, -16099, 'Start')
 	If GetPartyDead() Then Return
@@ -334,6 +384,8 @@ Func FarmToThirdShrine()
 		_HandleDeathAndReturn('Restart from the second Shrine')
 		Return
 	EndIf
+	
+	If _RepositionAfterRez() = $FAIL Then Return
 
 	_Step(-4464.77, 780.87, 'Back NW')
 	If GetPartyDead() Then Return
@@ -402,6 +454,8 @@ Func FarmToFourthShrine()
 		_HandleDeathAndReturn('Restart from the third Shrine')
 		Return
 	EndIf
+	
+	If _RepositionAfterRez() = $FAIL Then Return
 
 	_Step(-5701.15, 16202.36, 'Back')
 	If GetPartyDead() Then Return
@@ -460,6 +514,8 @@ Func FarmToFifthShrine()
 		_HandleDeathAndReturn('Restart from the fourth Shrine')
 		Return
 	EndIf
+	
+	If _RepositionAfterRez() = $FAIL Then Return
 
 	_Step(14685.91, 7077.44, 'To Wardens')
 	If GetPartyDead() Then Return
@@ -509,6 +565,8 @@ Func FarmToEnd()
 		_HandleDeathAndReturn('Restart from the fifth Shrine')
 		Return
 	EndIf
+	
+	If _RepositionAfterRez() = $FAIL Then Return
 
 	_Step(-2693.82, -4748.93, 'Last enemies')
 	If GetPartyDead() Then Return
