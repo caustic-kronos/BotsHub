@@ -1463,6 +1463,30 @@ Func GetGoldForShrineBenediction()
 EndFunc
 
 
+;~ Take faction blessing
+Func TakeFactionBlessing($factionName)
+	Local $needBribe = False
+	If $factionName == 'luxon' Then 
+		$needBribe = GetKurzickFaction() > GetLuxonFaction()
+	Else 
+		$needBribe = GetLuxonFaction() > GetKurzickFaction()
+	EndIf
+	If $needBribe Then
+		Dialog(0x81)
+		RandomSleep(1000)
+		Dialog(0x2)
+		RandomSleep(1000)
+		Dialog(0x84)
+	Else
+		Dialog(0x85)
+	EndIf
+	RandomSleep(1000)
+	Dialog(0x86)
+	RandomSleep(1000)
+EndFunc
+
+
+
 ;~ Manage excess Kurzick faction points by either donating them, buying amber chunks or Urgoz scrolls
 Func ManageFactionPointsKurzickFarm()
 	ManageFactionPointsFarm('kurzick', GetKurzickFaction, GetMaxKurzickFaction, $ID_HOUSE_ZU_HELTZER, 5390, 1524)
