@@ -53,7 +53,7 @@ EndFunc
 
 
 ;~ Move to a location and wait until you reach it.
-Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
+Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 	Local $blockedCount = 0
 	Local $me
 	Local $mapID = GetMapID(), $oldMapID
@@ -62,7 +62,7 @@ Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
 
 	Move($destinationX, $destinationY, 0)
 
-	While GetDistanceToPoint($me, $destinationX, $destinationY) > 25 And $blockedCount < 14
+	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision And $blockedCount < 14
 		RandomSleep(100)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
@@ -83,7 +83,7 @@ EndFunc
 ;~ Differs from previous function by going randomly in a direction, but the distance from the given point is fixed
 Func MoveRandom($x, $y, $distance)
 	Local $angle = Random(0, 2 * 3.14)
-	MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 0)
+	MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 25, 0)
 EndFunc
 
 
@@ -545,7 +545,7 @@ Func GoNearestNPCToCoords($x, $y)
 	$me = GetMyAgent()
 	While GetDistance($me, $npc) > 250
 		RandomSleep(250)
-		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'), 40)
+		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'))
 		RandomSleep(250)
 		GoNPC($npc)
 		RandomSleep(250)
@@ -570,7 +570,7 @@ Func GetAlmostInRangeOfAgent($targetAgent, $proximity = ($RANGE_SPELLCAST + 100)
 
 	Local $goX = $myX + ($targetX - $myX) * (1 - $ratio)
 	Local $goY = $myY + ($targetY - $myY) * (1 - $ratio)
-	MoveTo($goX, $goY, 0)
+	MoveTo($goX, $goY, 25, 0)
 EndFunc
 
 
@@ -579,7 +579,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
-	Local Const $PI = 3.141592653589793
+	Local Const $PI = 3.14
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT

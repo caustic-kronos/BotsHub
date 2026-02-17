@@ -94,30 +94,30 @@ Global Const $ID_MESMER_MERCENARY_HERO = $ID_MERCENARY_HERO_1
 Global Const $ID_RITUALIST_MERCENARY_HERO = $ID_MERCENARY_HERO_2
 
 #CS ===========================================================================
-Character location :	X: -6322.51318359375, Y: -5266.85986328125
+Character location :	X: -6322,	Y: -5266
 Heroes locations :
-- Me1 dps				X: -6488.185546875, Y: -5084.078125
-- Me2 dps				X: -6052.578125, Y: -5522.14208984375
-- Me3 dps				X: -5820.1552734375, Y: -5309.80615234375
-- Me1 ineptitude/speed	X: -6041.62353515625, Y: -5072.26220703125
-- Rt SoS				X: -6307.7060546875, Y: -5273.31494140625
-- Rt heal				X: -6244.70703125, Y: -4860.3154296875
-- N BiP					X: -6004.0107421875, Y: -4620.87451171875
+- Me1 dps				X: -6488,	Y: -5084
+- Me2 dps				X: -6052,	Y: -5522
+- Me3 dps				X: -5820,	Y: -5309
+- Me1 ineptitude/speed	X: -6041,	Y: -5072
+- Rt SoS				X: -6307,	Y: -5273
+- Rt heal				X: -6244,	Y: -4860
+- N BiP					X: -6004,	Y: -4620
 
-Platform center :		X: -6699.40966796875, Y: -5645.5556640625
-Away from loot :		X: -7295.5771484375, Y: -6395.5556640625
+Platform center :		X: -6699,	Y: -5645
+Away from loot :		X: -7295,	Y: -6395
 
 Travel :
-1st stairs :			X: -4693.87451171875, Y: -3137.0244140625 (time : until all mobs are dead)
-2nd stairs :			X: -4199.5126953125, Y: -1475.53430175781 (time : 6s no speed)
-3rd stairs :			X: -4709.81005859375, Y: -609.159118652344 (3s)
-1st corner :			X: -3116.35498046875, Y: 650.431457519531 (7s)
-2nd corner :			X: -2518.41357421875, Y: 631.814453125 (1.5s)
-4th stairs :			X: -2096.59228515625, Y: -1067.5732421875 (6s)
-5th stairs :			X: -815.586608886719, Y: -1898.28894042969 (5s)
-last stairs :			X: -690.559143066406, Y: -3769.5224609375 (6.5s)
+1st stairs :			X: -4693,	Y: -3137 (time : until all mobs are dead)
+2nd stairs :			X: -4199,	Y: -1475 (time : 6s no speed)
+3rd stairs :			X: -4709,	Y: -609 (3s)
+1st corner :			X: -3116,	Y: 650 (7s)
+2nd corner :			X: -2518,	Y: 631 (1.5s)
+4th stairs :			X: -2096,	Y: -1067 (6s)
+5th stairs :			X: -815,	Y: -1898 (5s)
+last stairs :			X: -690,	Y: -3769 (6.5s)
 
-DPS spot :				X: -850.958312988281, Y: -3961.001953125 (1s)
+DPS spot :				X: -850, Y: -3961 (1s)
 #CE ===========================================================================
 
 Global $ministerial_commendations_farm_setup = False
@@ -225,7 +225,7 @@ Func EnterAChanceEncounterQuest()
 	Local $coordsY = DllStructGetData($me, 'Y')
 
 	If -1400 < $coordsX And $coordsX < -550 And - 2000 < $coordsY And $coordsY < -1100 Then
-		MoveTo(1474, -1197, 0)
+		MoveTo(1474, -1197, 25, 0)
 	EndIf
 
 	RandomSleep(1000)
@@ -233,7 +233,7 @@ Func EnterAChanceEncounterQuest()
 	Local $npc = GetNearestNPCToCoords(2240, -1264)
 	GoToNPC($npc)
 	If GetDistance(GetMyAgent(), $npc) > $RANGE_ADJACENT Then
-		MoveTo(1474, -1197, 0)
+		MoveTo(1474, -1197, 25, 0)
 		GoToNPC($npc)
 	EndIf
 	RandomSleep(250)
@@ -444,7 +444,7 @@ Func RunToKillSpot()
 	MoveTo(-2096, -1067)
 	MoveTo(-815, -1898)
 	MoveTo(-690, -3769)
-	MoveTo(-850, -3961, 0)
+	MoveTo(-850, -3961, 25, 0)
 	RandomSleep(500)
 EndFunc
 

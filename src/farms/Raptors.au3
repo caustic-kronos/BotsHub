@@ -234,7 +234,7 @@ Func MoveToBaseOfCave()
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_CANT_TOUCH_THIS)
 	RandomSleep(50)
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
-	Move(-20930, -9480, 40)
+	Move(-20930, -9480)
 EndFunc
 
 
@@ -243,7 +243,7 @@ Func AggroRaptors()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Gathering Raptors')
 
-	Move(-20695, -9900, 20)
+	Move(-20695, -9900)
 	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 

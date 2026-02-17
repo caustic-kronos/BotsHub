@@ -207,7 +207,7 @@ Func TalkToAiko()
 	RandomSleep(1000)
 	Info('Taking quest')
 	AcceptQuest($ID_QUEST_MISSING_DAUGHTER)
-	Move(-11303, -6545, 40)
+	Move(-11303, -6545)
 	RandomSleep(4500)
 EndFunc
 

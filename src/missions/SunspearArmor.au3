@@ -81,7 +81,7 @@ EndFunc
 ;~ Cleaning Sunspear Armors function
 Func SunspearArmorClean()
 	If GetMapID() <> $ID_DAJKAH_INLET Then Return $FAIL
-	MoveTo(25752.28, -3139.02)
+	MoveTo(25750, -3140)
 	RandomSleep(62000)
 
 	; 23 groups to vanquish + 10 movements

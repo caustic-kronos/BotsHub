@@ -46,7 +46,7 @@ Global Const $BOREAL_CHESTRUN_INFORMATIONS = 'For best results, have :' & @CRLF 
 	& 'Optional skills (for more survivability and unblocking): Shroud of Distress, Heart of Shadow, Deaths Charge'
 ; Average duration ~ 1m30s
 Global Const $BOREAL_FARM_DURATION = (1 * 60 + 30) * 1000
-Global Const $BOREAL_CHEST_RUN_TIMEOUT_MS = 5 * 60 * 1000
+Global Const $BOREAL_CHEST_RUN_TIMEOUT_MS = 2 * 60 * 1000
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($BOREAL_DWARVEN_STABILITY) is better than UseSkillEx(1))
 Global Const $BOREAL_PIOUS_RENEWAL		= 1
@@ -91,9 +91,8 @@ Func SetupBorealFarm()
 	LeaveParty()
 	SwitchToHardModeIfEnabled()
 
-	MoveTo(5799, -27957)
-	MoveTo(6035, -27977)
-	MoveTo(5232, -27891)
+	MoveTo(5600, -27900)
+	MoveTo(5200,-27900, $RANGE_ADJACENT, 0)
 	Move(3986, -27642)
 	RandomSleep(1500)
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)
@@ -159,7 +158,7 @@ Func BorealChestFarmLoop()
 
 	Info('Starting chest farm run')
 
-	MoveTo(5799, -27957)
+	MoveTo(5200,-27900, $RANGE_ADJACENT, 0)
 	Move(3986, -27642)
 	RandomSleep(1500)
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)

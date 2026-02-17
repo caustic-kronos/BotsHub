@@ -181,7 +181,7 @@ Func CorsairsFarmLoop()
 	DefendAgainstCorsairs()
 
 	UseHeroSkill(2, $CORSAIRS_WINNOWING)
-	MoveTo(-9783,-7073, 0)
+	MoveTo(-9783,-7073, 25, 0)
 	WaitForBohseda()
 	CommandHero(2, -13778, -10156)
 	UseSkillEx($CORSAIRS_DWARVEN_STABILITY)
@@ -189,7 +189,7 @@ Func CorsairsFarmLoop()
 	CastAllDefensiveSkills()
 	If IsPlayerDead() Then Return $FAIL
 
-	MoveTo(-9730,-7350, 0)
+	MoveTo(-9730,-7350, 25, 0)
 	GoNPC($captainBohseda)
 	RandomSleep(1000)
 	Dialog(0x85)

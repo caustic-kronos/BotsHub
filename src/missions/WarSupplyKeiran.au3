@@ -266,7 +266,7 @@ Func RunWayPoints()
 			; Ensuring that Miku is not too far
 			If GetDistance($me, $Miku) > 1650 Then
 				Info('Miku is too far. Trying to move to her location')
-				MoveTo(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 250)
+				MoveTo(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 25, 250)
 			EndIf
 			; continue running through waypoints
 			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($Miku, 'HealthPercent') > 0.9 Then ExitLoop
@@ -432,5 +432,5 @@ Func EvadeAoESkillArea()
 	Local $offsetX = $randomRadius * cos($randomAngle)
 	Local $offsetY = $randomRadius * sin($randomAngle)
 	; 0 = no random, because random offset is already calculated
-	MoveTo($myX + $offsetX , $myY + $offsetY, 0)
+	MoveTo($myX + $offsetX , $myY + $offsetY, 25, 0)
 EndFunc
