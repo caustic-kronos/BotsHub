@@ -90,6 +90,7 @@ Func SetupBorealFarm()
 	SetupPlayerBorealChestFarm()
 	LeaveParty()
 	SwitchToHardModeIfEnabled()
+	SetDisplayedTitle($ID_NORN_TITLE)
 
 	MoveTo(5600, -27900)
 	MoveTo(5200, -27900, $RANGE_ADJACENT, 0)

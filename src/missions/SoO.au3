@@ -53,6 +53,7 @@ Func SetupSoOFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_VLOXS_FALLS, $district_name)
 	SwitchToHardModeIfEnabled()
+	SetDisplayedTitle($ID_ASURA_TITLE)
 	While Not $soo_farm_setup
 		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop
 		$soo_farm_setup = True

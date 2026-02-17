@@ -56,6 +56,7 @@ Func SetupVoltaicFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_UMBRAL_GROTTO, $district_name)
 	SwitchToHardModeIfEnabled()
+	SetDisplayedTitle($ID_ASURA_TITLE)
 	$voltaic_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
