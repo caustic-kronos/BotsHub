@@ -55,28 +55,28 @@ EndFunc
 ;~ Move to a location and wait until you reach it.
 Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 	Local $blockedCount = 0
-	Local $me
-	Local $mapID = GetMapID(), $oldMapID
+	Local $mapID = GetMapID()
 	Local $destinationX = $X + Random(-$random, $random)
 	Local $destinationY = $Y + Random(-$random, $random)
 
 	Move($destinationX, $destinationY, 0)
 
-	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision And $blockedCount < 14
-		RandomSleep(100)
-		$me = GetMyAgent()
-		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
-		$oldMapID = $mapID
-		$mapID = GetMapID()
-		If $mapID <> $oldMapID Then ExitLoop
+	Local $me = GetMyAgent()
+	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision
 		If $doWhileRunning <> Null Then $doWhileRunning()
+		RandomSleep(100)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			$destinationX = $X + Random(-$random, $random)
 			$destinationY = $Y + Random(-$random, $random)
 			Move($destinationX, $destinationY, 0)
 		EndIf
+		$me = GetMyAgent()
+		If GetMapID() <> $mapID Then ExitLoop
+		If DllStructGetData($me, 'HealthPercent') <= 0 Then Return False
+		If $blockedCount > 14 Then Return False
 	WEnd
+	Return True
 EndFunc
 
 
