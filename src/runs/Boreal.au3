@@ -163,7 +163,12 @@ Func BorealChestFarmLoop()
 
 	Info('Starting chest farm run')
 
-	MoveTo(5200,-27900, $RANGE_ADJACENT, 0)
+	MoveTo(5200, -27900, $RANGE_ADJACENT, 0)
+	If GetDistanceToPoint(GetMyAgent(), 5200, -27900) > $RANGE_ADJACENT Then
+		MoveTo(5350, -27500)
+		MoveTo(5500, -27750)
+		MoveTo(5200, -27900)
+	EndIf
 	Move(3986, -27642)
 	RandomSleep(1500)
 	WaitMapLoading($ID_ICE_CLIFF_CHASMS, 10000, 2000)
