@@ -1011,45 +1011,6 @@ Func LootTrappedAreaSafely()
 EndFunc
 
 
-Func IsPlayerStuck($movementDistance, ByRef $blocked, $minMovement = 5, $stuckTicks = 6)
-	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
-	If $movementDistance < $minMovement Then
-		$blocked += 1
-	Else
-		; keep some blocked memory to detect oscillation/stutter faster than full reset
-		$blocked = _Max(0, $blocked - 2)
-	EndIf
-	Return $blocked >= $stuckTicks
-EndFunc
-
-
-Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_AREA)
-	Local $unstuckStartTimer = TimerInit()
-
-	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
-	Local $myInitialX = $myX
-	Local $myInitialY = $myY
-
-	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
-		; Try to move randomly from the current position
-		Move($myX, $myY, 500)
-		RandomSleep(500)
-		Move($targetX, $targetY)
-		RandomSleep(1000)
-
-		$me = GetMyAgent()
-		$myX = DllStructGetData($me, 'X')
-		$myY = DllStructGetData($me, 'Y')
-		; If we moved enough away from initial position consider unstuck
-		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
-		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
-	WEnd
-	Return $FAIL
-EndFunc
-
-
 ;~ Clear a zone around the coordinates provided
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
 
@@ -1110,6 +1071,45 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
 	Return $SUCCESS
+EndFunc
+
+
+Func IsPlayerStuck($movementDistance, ByRef $blocked, $minMovement = 5, $stuckTicks = 6)
+	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
+	If $movementDistance < $minMovement Then
+		$blocked += 1
+	Else
+		; keep some blocked memory to detect oscillation/stutter faster than full reset
+		$blocked = _Max(0, $blocked - 2)
+	EndIf
+	Return $blocked >= $stuckTicks
+EndFunc
+
+
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_AREA)
+	Local $unstuckStartTimer = TimerInit()
+
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+	Local $myInitialX = $myX
+	Local $myInitialY = $myY
+
+	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
+		; Try to move randomly from the current position
+		Move($myX, $myY, 500)
+		RandomSleep(500)
+		Move($targetX, $targetY)
+		RandomSleep(1000)
+
+		$me = GetMyAgent()
+		$myX = DllStructGetData($me, 'X')
+		$myY = DllStructGetData($me, 'Y')
+		; If we moved enough away from initial position consider unstuck
+		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
+		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
+	WEnd
+	Return $FAIL
 EndFunc
 
 
