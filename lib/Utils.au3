@@ -905,9 +905,9 @@ EndFunc
 #Region Map Clearing Utilities
 Global $default_moveaggroandkill_options = ObjCreate('Scripting.Dictionary')
 $default_moveaggroandkill_options.Add('fightFunction', KillFoesInArea)
-$default_moveaggroandkill_options.Add('unstuckFunction', TryToGetUnstuck)
 $default_moveaggroandkill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
 $default_moveaggroandkill_options.Add('flagHeroesOnFight', False)
+$default_moveaggroandkill_options.Add('unstuckFunction', TryToGetUnstuck)
 $default_moveaggroandkill_options.Add('callTarget', True)
 $default_moveaggroandkill_options.Add('priorityMobs', False)
 $default_moveaggroandkill_options.Add('skillsMask', Null)
@@ -1018,9 +1018,9 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
-	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
+	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
 
 	If $log <> '' Then Info($log)
 	Local $isStuck = False
