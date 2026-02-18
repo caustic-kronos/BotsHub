@@ -1011,7 +1011,7 @@ Func LootTrappedAreaSafely()
 EndFunc
 
 
-Func IsPlayerStuck($movementDistance, ByRef $blocked, ByRef $mode, ByRef $recoveryTimer, $minMovement, $stuckTicks, $modeNormal, $modeRecovery)
+Func IsPlayerStuck($movementDistance, ByRef $blocked, $minMovement = 5, $stuckTicks = 6)
 	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
 	If $movementDistance < $minMovement Then
 		$blocked += 1
@@ -1019,62 +1019,37 @@ Func IsPlayerStuck($movementDistance, ByRef $blocked, ByRef $mode, ByRef $recove
 		; keep some blocked memory to detect oscillation/stutter faster than full reset
 		$blocked = _Max(0, $blocked - 2)
 	EndIf
-
-	; Stuck detected. Change to recovery mode and start recovery timer.
-	If $blocked >= $stuckTicks And $mode == $modeNormal Then
-		$mode = $modeRecovery
-		$recoveryTimer = TimerInit()
-	EndIf
-
 	Return $blocked >= $stuckTicks
 EndFunc
 
 
-Func TryToGetUnstuck($myX, $myY, $targetX, $targetY, ByRef $mode, $modeNormal, $modeRecovery, $isStuck, ByRef $recoveryTimer, ByRef $positionHistory, $recoveryIntervalMs, $recoveryNetDisplacementWindowMs, $recoveryLowDisplacementThreshold)
-	If $mode <> $modeRecovery Then Return Null
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = 600)
+	Local $unstuckStartTimer = TimerInit()
 
-	If $isStuck Then
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+
+	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
 		Move($myX, $myY, 500)
 		RandomSleep(500)
 		Move($targetX, $targetY)
-	EndIf
+		RandomSleep(1500)
 
-	; Recovery timer expired. Check displacement. Did we move significantly?
-	If TimerDiff($recoveryTimer) < $recoveryIntervalMs Then Return Null
-
-	Local $netDisplacement = GetNetDisplacementInWindow($positionHistory, $recoveryNetDisplacementWindowMs)
-	If $netDisplacement >= 0 And $netDisplacement < $recoveryLowDisplacementThreshold Then
-		Return $FAIL
-	ElseIf $netDisplacement >= 0 Then
-		; We unstucked and are moving normally again
-		$mode = $modeNormal
-	EndIf
-
-	Return Null
+		$me = GetMyAgent()
+		$myOldX = $myX
+		$myOldY = $myY
+		$myX = DllStructGetData($me, 'X')
+		$myY = DllStructGetData($me, 'Y')
+		Local $movementDistance = ComputeDistance($myOldX, $myOldY, $myX, $myY)
+		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
+	WEnd
+	Return $FAIL
 EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
-
-	; ==================== Variables to ensure movement without stucking ====================
-	; We use two modes: Normal mode (movement is fine) and RECOVERY mode (trying to unstuck)
-	; In Normal mode, we track whether we are moving (at least $MIN_MOVEMENT in 1 iteration)
-	; In Recovery mode, we track whether we are making progress (displacement) towards unstucking in time $RECOVERY_NET_DISPLACEMENT_WINDOW_MS.
-	Local Const $MODE_NORMAL = 0
-	Local Const $MODE_RECOVERY = 1
-	Local Const $STUCK_TICKS = 6
-	Local Const $MIN_MOVEMENT = 10 ; used to detect stuck
-	Local Const $RECOVERY_INTERVAL_MS = 10000 ; try to unstuck for 10s
-	Local Const $RECOVERY_NET_DISPLACEMENT_WINDOW_MS = 9000 ; measure displacement across the last 9s
-	Local Const $RECOVERY_LOW_DISPLACEMENT_THRESHOLD = $RANGE_AREA ; we need to displace for this much to detect unstuck
-	Local Const $RECOVERY_HISTORY_KEEP_MS = $RECOVERY_INTERVAL_MS
-	Local $blocked = 0
-	Local $mode = $MODE_NORMAL
-	Local $recoveryTimer = TimerInit()
-	Local $movementStartTimer = TimerInit()
-	; Position history will track timestamp ([0]) and respective position ([1],[2]) for $RECOVERY_HISTORY_KEEP_MS
-	Local $positionHistory[1][3]
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
@@ -1083,17 +1058,17 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 
 	If $log <> '' Then Info($log)
+	Local $isStuck = False
+	Local $blocked = 0
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	$positionHistory[0][0] = 0
-	$positionHistory[0][1] = $myX
-	$positionHistory[0][2] = $myY
+	Local $oldMyX
+	Local $oldMyY
+	Local $movementDistance
 
 	Move($x, $y)
 
-	Local $oldMyX
-	Local $oldMyY
 	Local $target
 	Local $chest
 	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
@@ -1111,12 +1086,18 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
-		TrackPositionHistory($positionHistory, $myX, $myY, $RECOVERY_HISTORY_KEEP_MS, TimerDiff($movementStartTimer))
-		Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
-		Local $isStuck = IsPlayerStuck($movementDistance, $blocked, $mode, $recoveryTimer, $MIN_MOVEMENT, $STUCK_TICKS, $MODE_NORMAL, $MODE_RECOVERY)
-		Local $unstuckResult = TryToGetUnstuck($myX, $myY, $x, $y, $mode, $MODE_NORMAL, $MODE_RECOVERY, $isStuck, $recoveryTimer, $positionHistory, $RECOVERY_INTERVAL_MS, $RECOVERY_NET_DISPLACEMENT_WINDOW_MS, $RECOVERY_LOW_DISPLACEMENT_THRESHOLD)
-		If $unstuckResult == $FAIL Then Return $FAIL
-
+		$movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
+		$isStuck = IsPlayerStuck($movementDistance, $blocked)
+		
+		If $isStuck Then 
+			If TryToGetUnstuck($x, $y) == $SUCCESS Then
+				$isStuck = False
+				$blocked = 0
+			Else
+				Return $FAIL
+			EndIf
+		EndIf
+		
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -1130,53 +1111,6 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
 	Return $SUCCESS
-EndFunc
-
-
-Func TrackPositionHistory(ByRef $positionHistory, $x, $y, $keepWindowMs, $nowMs)
-	Local $now = $nowMs
-	Local $historySize = UBound($positionHistory)
-	ReDim $positionHistory[$historySize + 1][3]
-	$positionHistory[$historySize][0] = $now
-	$positionHistory[$historySize][1] = $x
-	$positionHistory[$historySize][2] = $y
-
-	Local $minTimestamp = $now - $keepWindowMs
-	Local $trimStart = 0
-	While $trimStart < UBound($positionHistory) - 1 And $positionHistory[$trimStart][0] < $minTimestamp
-		$trimStart += 1
-	WEnd
-
-	If $trimStart > 0 Then
-		Local $newSize = UBound($positionHistory) - $trimStart
-		Local $trimmedHistory[$newSize][3]
-		For $i = 0 To $newSize - 1
-			$trimmedHistory[$i][0] = $positionHistory[$trimStart + $i][0]
-			$trimmedHistory[$i][1] = $positionHistory[$trimStart + $i][1]
-			$trimmedHistory[$i][2] = $positionHistory[$trimStart + $i][2]
-		Next
-		$positionHistory = $trimmedHistory
-	EndIf
-EndFunc
-
-
-Func GetNetDisplacementInWindow(ByRef $positionHistory, $windowMs)
-	If UBound($positionHistory) < 2 Then Return -1
-
-	Local $lastIndex = UBound($positionHistory) - 1
-	Local $now = $positionHistory[$lastIndex][0]
-	Local $targetTimestamp = $now - $windowMs
-	Local $historyIndex = -1
-	For $i = $lastIndex - 1 To 0 Step -1
-		If $positionHistory[$i][0] <= $targetTimestamp Then
-			$historyIndex = $i
-			ExitLoop
-		EndIf
-	Next
-
-	If $historyIndex == -1 Then Return -1
-
-	Return ComputeDistance($positionHistory[$lastIndex][1], $positionHistory[$lastIndex][2], $positionHistory[$historyIndex][1], $positionHistory[$historyIndex][2])
 EndFunc
 
 
