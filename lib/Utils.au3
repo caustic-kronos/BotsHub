@@ -1011,6 +1011,49 @@ Func LootTrappedAreaSafely()
 EndFunc
 
 
+Func IsPlayerStuck($movementDistance, ByRef $blocked, ByRef $mode, ByRef $recoveryTimer, $minMovement, $stuckTicks, $modeNormal, $modeRecovery)
+	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
+	If $movementDistance < $minMovement Then
+		$blocked += 1
+	Else
+		; keep some blocked memory to detect oscillation/stutter faster than full reset
+		$blocked = _Max(0, $blocked - 2)
+	EndIf
+
+	; Stuck detected. Change to recovery mode and start recovery timer.
+	If $blocked >= $stuckTicks And $mode == $modeNormal Then
+		$mode = $modeRecovery
+		$recoveryTimer = TimerInit()
+	EndIf
+
+	Return $blocked >= $stuckTicks
+EndFunc
+
+
+Func TryToGetUnstuck($myX, $myY, $targetX, $targetY, ByRef $mode, $modeNormal, $modeRecovery, $isStuck, ByRef $recoveryTimer, ByRef $positionHistory, $recoveryIntervalMs, $recoveryNetDisplacementWindowMs, $recoveryLowDisplacementThreshold)
+	If $mode <> $modeRecovery Then Return Null
+
+	If $isStuck Then
+		Move($myX, $myY, 500)
+		RandomSleep(500)
+		Move($targetX, $targetY)
+	EndIf
+
+	; Recovery timer expired. Check displacement. Did we move significantly?
+	If TimerDiff($recoveryTimer) < $recoveryIntervalMs Then Return Null
+
+	Local $netDisplacement = GetNetDisplacementInWindow($positionHistory, $recoveryNetDisplacementWindowMs)
+	If $netDisplacement >= 0 And $netDisplacement < $recoveryLowDisplacementThreshold Then
+		Return $FAIL
+	ElseIf $netDisplacement >= 0 Then
+		; We unstucked and are moving normally again
+		$mode = $modeNormal
+	EndIf
+
+	Return Null
+EndFunc
+
+
 ;~ Clear a zone around the coordinates provided
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
 
@@ -1070,40 +1113,9 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		$myY = DllStructGetData($me, 'Y')
 		TrackPositionHistory($positionHistory, $myX, $myY, $RECOVERY_HISTORY_KEEP_MS, TimerDiff($movementStartTimer))
 		Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
-
-		; If we didn't move at least $MIN_MOVEMENT, increase $blocked counter. Else, reduce $blocked counter.
-		If $movementDistance < $MIN_MOVEMENT Then
-			$blocked += 1
-		Else
-			; keep some blocked memory to detect oscillation/stutter faster than full reset
-			$blocked = _Max(0, $blocked - 2)
-		EndIf
-
-		; Stuck detected. Change to recovery mode and start recovery timer.
-		If $blocked >= $STUCK_TICKS And $mode == $MODE_NORMAL Then
-			$mode = $MODE_RECOVERY
-			$recoveryTimer = TimerInit()
-		EndIf
-
-		If $mode == $MODE_RECOVERY Then
-			If $blocked >= $STUCK_TICKS Then
-				; Try to unstuck
-				Move($myX, $myY, 500)
-				RandomSleep(500)
-				Move($x, $y)
-			EndIf
-
-			; Recovery timer expired. Check displacement. Did we move significantly?
-			If $mode == $MODE_RECOVERY And TimerDiff($recoveryTimer) >= $RECOVERY_INTERVAL_MS Then
-				Local $netDisplacement = GetNetDisplacementInWindow($positionHistory, $RECOVERY_NET_DISPLACEMENT_WINDOW_MS)
-				If $netDisplacement >= 0 And $netDisplacement < $RECOVERY_LOW_DISPLACEMENT_THRESHOLD Then
-					Return $FAIL
-				ElseIf $netDisplacement >= 0 Then
-					; We unstucked and are moving normally again
-					$mode = $MODE_NORMAL
-				EndIf
-			EndIf
-		EndIf
+		Local $isStuck = IsPlayerStuck($movementDistance, $blocked, $mode, $recoveryTimer, $MIN_MOVEMENT, $STUCK_TICKS, $MODE_NORMAL, $MODE_RECOVERY)
+		Local $unstuckResult = TryToGetUnstuck($myX, $myY, $x, $y, $mode, $MODE_NORMAL, $MODE_RECOVERY, $isStuck, $recoveryTimer, $positionHistory, $RECOVERY_INTERVAL_MS, $RECOVERY_NET_DISPLACEMENT_WINDOW_MS, $RECOVERY_LOW_DISPLACEMENT_THRESHOLD)
+		If $unstuckResult == $FAIL Then Return $FAIL
 
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
