@@ -1023,25 +1023,27 @@ Func IsPlayerStuck($movementDistance, ByRef $blocked, $minMovement = 5, $stuckTi
 EndFunc
 
 
-Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_EARSHOT)
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_AREA)
 	Local $unstuckStartTimer = TimerInit()
 
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
+	Local $myInitialX = $myX
+	Local $myInitialY = $myY
 
 	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
+		; Try to move randomly from the current position
 		Move($myX, $myY, 500)
 		RandomSleep(500)
 		Move($targetX, $targetY)
-		RandomSleep(1500)
+		RandomSleep(1000)
 
 		$me = GetMyAgent()
-		Local $myOldX = $myX
-		Local $myOldY = $myY
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
-		Local $movementDistance = ComputeDistance($myOldX, $myOldY, $myX, $myY)
+		; If we moved enough away from initial position consider unstuck
+		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
 		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
 	WEnd
 	Return $FAIL
