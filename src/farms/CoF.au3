@@ -141,6 +141,7 @@ Func CoFFarmLoop()
 
 	AggroAndPrepare()
 	Info('Farming Cryptos')
+	CheckVoS()
 	CleanCoFMobs()
 	If IsPlayerDead() Then Return $FAIL
 
@@ -181,15 +182,17 @@ EndFunc
 
 
 Func CleanCoFMobs()
-	CheckVoS()
 	Local $target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsUndead)
+	Local $clock = False
 	While $target <> Null And GetDistance(GetMyAgent(), $target) < $RANGE_EARSHOT
-		If GetSkillbarSkillAdrenaline($COF_CRIPPLING_VICTORY) >= 150 Then
+		If Not $clock And GetSkillbarSkillAdrenaline($COF_CRIPPLING_VICTORY) >= 150 Then
 			UseSkillEx($COF_CRIPPLING_VICTORY, $target)
-			RandomSleep(800)
-		ElseIf GetSkillbarSkillAdrenaline($COF_REAP_IMPURITIES) >= 120 Then
+			$clock = True
+			;RandomSleep(800)
+		ElseIf $clock And GetSkillbarSkillAdrenaline($COF_REAP_IMPURITIES) >= 120 Then
 			UseSkillEx($COF_REAP_IMPURITIES, $target)
-			RandomSleep(800)
+			$clock = False
+			;RandomSleep(800)
 		Else
 			Attack($target)
 			Sleep(200)
