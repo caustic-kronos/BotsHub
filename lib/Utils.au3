@@ -907,6 +907,7 @@ Global $default_moveaggroandkill_options = ObjCreate('Scripting.Dictionary')
 $default_moveaggroandkill_options.Add('fightFunction', KillFoesInArea)
 $default_moveaggroandkill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
 $default_moveaggroandkill_options.Add('flagHeroesOnFight', False)
+$default_moveaggroandkill_options.Add('unstuckFunction', TryToGetUnstuck)
 $default_moveaggroandkill_options.Add('callTarget', True)
 $default_moveaggroandkill_options.Add('priorityMobs', False)
 $default_moveaggroandkill_options.Add('skillsMask', Null)
@@ -1019,6 +1020,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
+	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
 
 	If $log <> '' Then Info($log)
 	Local $isStuck = False
@@ -1050,7 +1052,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		$isStuck = IsPlayerStuck($movementDistance, $blocked)
 		
 		If $isStuck Then 
-			If TryToGetUnstuck($x, $y) == $SUCCESS Then
+			If $unstuckFunction($x, $y) == $SUCCESS Then
 				$isStuck = False
 				$blocked = 0
 			Else
