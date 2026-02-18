@@ -1037,8 +1037,8 @@ Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDis
 		RandomSleep(1500)
 
 		$me = GetMyAgent()
-		$myOldX = $myX
-		$myOldY = $myY
+		Local $myOldX = $myX
+		Local $myOldY = $myY
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
 		Local $movementDistance = ComputeDistance($myOldX, $myOldY, $myX, $myY)
