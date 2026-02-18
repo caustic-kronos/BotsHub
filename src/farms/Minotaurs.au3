@@ -86,18 +86,18 @@ Func FarmMinotaurs()
 
 	; 12 groups to vanquish
 	Local Static $minotaurs[][] = [ _
-		[18870, -6, 'Minotaurs group 1'], _
-		[18828, 2201, 'Minotaurs group 2'], _
-		[17106, 1459, 'Minotaurs group 3'], _
-		[14424, 134, 'Minotaurs group 4'], _
-		[10852, 1967, 'Minotaurs group 5'], _
-		[10704, 6422, 'Minotaurs group 6'], _
-		[9081, 7155, 'Minotaurs group 7'], _
-		[8755, 10512, 'Minotaurs group 8'], _
-		[12348, 10156, 'Minotaurs group 9'], _
-		[7001, 8789, 'Minotaurs group 10'], _
-		[5155, 8838, 'Minotaurs group 11'], _
-		[2616, 7615, 'Minotaurs group 12'] _
+		[18870,		-6,		'Minotaurs group 1'		], _
+		[18828,		2201,	'Minotaurs group 2'		], _
+		[17106,		1459,	'Minotaurs group 3'		], _
+		[14424,		134,	'Minotaurs group 4'		], _
+		[10852,		1967,	'Minotaurs group 5'		], _
+		[10704,		6422,	'Minotaurs group 6'		], _
+		[9081,		7155,	'Minotaurs group 7'		], _
+		[8755,		10512,	'Minotaurs group 8'		], _
+		[12348,		10156,	'Minotaurs group 9'		], _
+		[7001,		8789,	'Minotaurs group 10'	], _
+		[5155,		8838,	'Minotaurs group 11'	], _
+		[2616,		7615,	'Minotaurs group 12'	] _
 	]
 	For $i = 0 To UBound($minotaurs) - 1
 		If MoveAggroAndKillInRange($minotaurs[$i][0], $minotaurs[$i][1], $minotaurs[$i][2]) == $FAIL Then Return $FAIL

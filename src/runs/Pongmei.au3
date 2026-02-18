@@ -210,7 +210,7 @@ EndFunc
 Func DervishRun($X, $Y)
 	; We could potentially improve bot by avoiding using run stance right before Shadow Form, but that's a very tiny improvement
 	;Local Static $shadowFormLastUse = Null
-	Move($X, $Y, 0)
+	Move($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
@@ -241,7 +241,7 @@ Func DervishRun($X, $Y)
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
-			Move($X, $Y, 0)
+			Move($X, $Y)
 		EndIf
 
 		If $blockedCounter > 5 And GetEnergy() >= 5 And IsRecharged($PONGMEI_HEART_OF_SHADOW) Then

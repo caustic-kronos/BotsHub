@@ -77,64 +77,64 @@ Func VanquishVarajarFells()
 	; 43 groups to vanquish + 6 movements
 	Local Static $foes[][] = [ _
 		_ ; blessing
-		[-5278, -5771, 'Berserker', $AGGRO_RANGE], _
-		[-5456, -7921, 'Berserker', $AGGRO_RANGE], _
-		[-8793, -5837, 'Berserker', $AGGRO_RANGE], _
-		[-14092, -9662, 'Vaettir and Berserker', $AGGRO_RANGE], _
-		[-17260, -7906, 'Vaettir and Berserker', $AGGRO_RANGE], _
-		[-21964, -12877, 'Jotun', 2500], _
+		[-5278,		-5771,	'Berserker',				$AGGRO_RANGE	], _
+		[-5456,		-7921,	'Berserker',				$AGGRO_RANGE	], _
+		[-8793,		-5837,	'Berserker',				$AGGRO_RANGE	], _
+		[-14092,	-9662,	'Vaettir and Berserker',	$AGGRO_RANGE	], _
+		[-17260,	-7906,	'Vaettir and Berserker',	$AGGRO_RANGE	], _
+		[-21964,	-12877,	'Jotun',					2500			], _
 		_ ; blessing
-		[-22275, -12462, 'Moving', $AGGRO_RANGE], _
-		[-21671, -2163, 'Berserker', $AGGRO_RANGE], _
-		[-19592, 772, 'Berserker', $AGGRO_RANGE], _
-		[-13795, -751, 'Berserker', $AGGRO_RANGE], _
-		[-17012, -5376, 'Berserker', $AGGRO_RANGE], _
+		[-22275,	-12462,	'Moving',					$AGGRO_RANGE	], _
+		[-21671,	-2163,	'Berserker',				$AGGRO_RANGE	], _
+		[-19592,	772,	'Berserker',				$AGGRO_RANGE	], _
+		[-13795,	-751,	'Berserker',				$AGGRO_RANGE	], _
+		[-17012,	-5376,	'Berserker',				$AGGRO_RANGE	], _
 		_ ; blessing
-		[-8351, -2633, 'Berserker', $AGGRO_RANGE], _
-		[-4362, -1610, 'Moving', $AGGRO_RANGE], _
-		[-4316, 4033, 'Lake', $AGGRO_RANGE], _
-		[-8809, 5639, 'Lake', $AGGRO_RANGE], _
-		[-14916, 2475, 'Lake', $AGGRO_RANGE], _
+		[-8351,		-2633,	'Berserker',				$AGGRO_RANGE	], _
+		[-4362,		-1610,	'Moving',					$AGGRO_RANGE	], _
+		[-4316,		4033,	'Lake',						$AGGRO_RANGE	], _
+		[-8809,		5639,	'Lake',						$AGGRO_RANGE	], _
+		[-14916,	2475,	'Lake',						$AGGRO_RANGE	], _
 		_ ; blessing
-		[-16051, 6492, 'Elemental', $AGGRO_RANGE], _
-		[-16934, 11145, 'Elemental', $AGGRO_RANGE], _
-		[-19378, 14555, 'Elemental', $AGGRO_RANGE], _
+		[-16051,	6492,	'Elemental',				$AGGRO_RANGE	], _
+		[-16934,	11145,	'Elemental',				$AGGRO_RANGE	], _
+		[-19378,	14555,	'Elemental',				$AGGRO_RANGE	], _
 		_ ; blessing
-		[-15932, 9386, '', $AGGRO_RANGE], _
-		[-13777, 8097, 'Moving', $AGGRO_RANGE], _
-		[-4729, 15385, 'Lake', $AGGRO_RANGE], _
+		[-15932,	9386,	'',							$AGGRO_RANGE	], _
+		[-13777,	8097,	'Moving',					$AGGRO_RANGE	], _
+		[-4729,		15385,	'Lake',						$AGGRO_RANGE	], _
 		_ ; blessing
-		[-1810, 4679, 'Modniir', $AGGRO_RANGE], _
-		[-6911, 5240, 'Moving', $AGGRO_RANGE], _
-		[-15471, 6384, 'Boss', $AGGRO_RANGE], _
-		[-411, 5874, 'Moving', $AGGRO_RANGE], _
-		[2859, 3982, 'Modniir', $AGGRO_RANGE], _
-		[4909, -4259, 'Ice Imp', $AGGRO_RANGE], _
-		[7514, -6587, 'Ice Imp', $AGGRO_RANGE], _
-		[3800, -6182, 'Berserker', $AGGRO_RANGE], _
-		[7755, -11467, 'Berserker', $AGGRO_RANGE], _
-		[15403, -4243, 'Elementals and Griffins', $AGGRO_RANGE], _
-		[21597, -6798, 'Elementals and Griffins', $AGGRO_RANGE], _
+		[-1810,		4679,	'Modniir',					$AGGRO_RANGE	], _
+		[-6911,		5240,	'Moving',					$AGGRO_RANGE	], _
+		[-15471,	6384,	'Boss',						$AGGRO_RANGE	], _
+		[-411,		5874,	'Moving',					$AGGRO_RANGE	], _
+		[2859,		3982,	'Modniir',					$AGGRO_RANGE	], _
+		[4909,		-4259,	'Ice Imp',					$AGGRO_RANGE	], _
+		[7514,		-6587,	'Ice Imp',					$AGGRO_RANGE	], _
+		[3800,		-6182,	'Berserker',				$AGGRO_RANGE	], _
+		[7755,		-11467,	'Berserker',				$AGGRO_RANGE	], _
+		[15403,		-4243,	'Elementals and Griffins',	$AGGRO_RANGE	], _
+		[21597,		-6798,	'Elementals and Griffins',	$AGGRO_RANGE	], _
 		_ ; blessing
-		[22883, -4248, '', $AGGRO_RANGE], _
-		[18606, -1894, '', $AGGRO_RANGE], _
-		[14969, -4048, '', $AGGRO_RANGE], _
-		[13599, -7339, '', $AGGRO_RANGE], _
-		[10056, -4967, 'Ice Imp', $AGGRO_RANGE], _
-		[10147, -1630, 'Ice Imp', $AGGRO_RANGE], _
-		[8963, 4043, 'Ice Imp', $AGGRO_RANGE], _
+		[22883,		-4248,	'',							$AGGRO_RANGE	], _
+		[18606,		-1894,	'',							$AGGRO_RANGE	], _
+		[14969,		-4048,	'',							$AGGRO_RANGE	], _
+		[13599,		-7339,	'',							$AGGRO_RANGE	], _
+		[10056,		-4967,	'Ice Imp',					$AGGRO_RANGE	], _
+		[10147,		-1630,	'Ice Imp',					$AGGRO_RANGE	], _
+		[8963,		4043,	'Ice Imp',					$AGGRO_RANGE	], _
 		_ ; blessing
-		[15576, 7156, '', $AGGRO_RANGE], _
-		[22838, 7914, 'Berserker', 2500], _
+		[15576,		7156,	'',							$AGGRO_RANGE	], _
+		[22838,		7914,	'Berserker',				2500			], _
 		_ ; blessing
-		[18067, 8766, 'Moving', $AGGRO_RANGE], _
-		[13311, 11917, 'Modniir and Elemental', $AGGRO_RANGE], _
+		[18067,		8766,	'Moving',					$AGGRO_RANGE	], _
+		[13311,		11917,	'Modniir and Elemental',	$AGGRO_RANGE	], _
 		_ ; blessing
-		[11126, 10443, 'Modniir and Elemental', $AGGRO_RANGE], _
-		[5575, 4696, 'Modniir and Elemental', 2500], _
-		[-503, 9182, 'Modniir and Elemental', $AGGRO_RANGE], _
-		[1582, 15275, 'Modniir and Elemental', 2500], _
-		[7857, 10409, 'Modniir and Elemental', 2500] _
+		[11126,		10443,	'Modniir and Elemental',	$AGGRO_RANGE	], _
+		[5575,		4696,	'Modniir and Elemental',	2500			], _
+		[-503,		9182,	'Modniir and Elemental',	$AGGRO_RANGE	], _
+		[1582,		15275,	'Modniir and Elemental',	2500			], _
+		[7857,		10409,	'Modniir and Elemental',	2500			] _
 	]
 
 	MoveTo(-2484, 118)

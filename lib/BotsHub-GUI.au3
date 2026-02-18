@@ -40,7 +40,7 @@
 #EndRegion Includes
 
 Global Const $GUI_WA_INACTIVE = 0
-Global Const $GUI_WM_ACTIVATE  = 0x0006
+Global Const $GUI_WM_ACTIVATE = 0x0006
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 

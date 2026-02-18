@@ -12,7 +12,7 @@ $files = Get-ChildItem -Path $RootPath -Recurse -Include $Extensions -File -Erro
 
 Write-Host "Files found:" $files.Count
 foreach ($f in $files) {
-	Write-Host "  -" $f.FullName
+	Write-Host "	-" $f.FullName
 }
 Write-Host ""
 
@@ -41,7 +41,7 @@ foreach ($file in $files) {
 Write-Host ""
 Write-Host "Constants collected:" $constMap.Count
 foreach ($k in $constMap.Keys) {
-	Write-Host "  $k -> $($constMap[$k])"
+	Write-Host "	$k -> $($constMap[$k])"
 }
 
 if ($constMap.Count -eq 0) {

@@ -418,7 +418,7 @@ Func DefaultShouldSalvageItem($item)
 		Return IsIdentified($item) And Not ContainsValuableUpgrades($item)
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
-		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then 
+		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then
 			Local $shouldSalvage = $cache['Salvage items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
 			Return $shouldSalvage == Null ? False : $shouldSalvage
 		EndIf
@@ -467,7 +467,7 @@ Func DefaultShouldSellItem($item)
 		Return IsIdentified($item) And Not ContainsValuableUpgrades($item)
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
-		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then 
+		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then
 			Local $shouldSell = $cache['Sell items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
 			Return $shouldSell == Null ? False : $shouldSell
 		EndIf

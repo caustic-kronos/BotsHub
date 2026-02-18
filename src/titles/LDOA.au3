@@ -391,8 +391,8 @@ Func RunToAshford()
 	MoveTo(-1247, -6084)
 	MoveTo(-5310, -6951)
 	MoveTo(-11026, -6238)
-	Move(-11444, -6237)
 	If IsPlayerDead() Then Return $FAIL
+	Move(-11444, -6237)
 	WaitMapLoading($ID_ASHFORD_ABBEY, 10000, 2000)
 	Info('Made it to Ashford Abbey')
 	Return $SUCCESS
@@ -413,9 +413,9 @@ Func RunToFoible()
 	MoveTo(-11566, -18712)
 	MoveTo(-11246, -19376)
 	MoveTo(-13738, -20079)
+	If IsPlayerDead() Then Return $FAIL
 	Info('Entering Wizards Folly!')
 	Move(-14000, -19900)
-	If IsPlayerDead() Then Return $FAIL
 	WaitMapLoading($ID_WIZARDS_FOLLY, 10000, 2000)
 	MoveTo(8648, 17730)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
@@ -423,8 +423,8 @@ Func RunToFoible()
 	MoveTo(2840, 10383)
 	MoveTo(1648, 7527)
 	MoveTo(536, 7315)
-	Move(320, 7950)
 	If IsPlayerDead() Then Return $FAIL
+	Move(320, 7950)
 	WaitMapLoading($ID_FOIBLES_FAIR, 10000, 2000)
 	Info('Made it to Foibles Fair')
 	Return $SUCCESS

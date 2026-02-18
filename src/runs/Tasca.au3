@@ -259,14 +259,14 @@ EndFunc
 Func TascaChestRun($X, $Y)
 	If IsPlayerDead() Then Return $FAIL
 
-	Move($X, $Y, 0)
+	Move($X, $Y)
 	Local $blockedCounter = 0
 	Local $me = GetMyAgent()
 	Local $energy
 	While GetDistanceToPoint($me, $X, $Y) > 150 And $blockedCounter < 20
 		If Not IsPlayerMoving() Then
 			$blockedCounter += 1
-			Move($X, $Y, 0)
+			Move($X, $Y)
 		EndIf
 
 		TascaDefendFunction($X, $Y)

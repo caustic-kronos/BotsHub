@@ -203,7 +203,7 @@ EndFunc
 
 ;~ Farm the north group (group 1, 4 and 5)
 Func FarmNorthGroup()
-	MoveTo(-7375, -7767, 25, 0)
+	MoveTo(-7375, -7767)
 	WaitForFoesBall()
 	WaitForEnergy()
 	WaitForDeathsCharge()
@@ -264,7 +264,7 @@ Func FarmSouthGroup()
 	If IsPlayerDead() Then Return $FAIL
 
 	ChangeWeaponSet(1)
-	MoveTo(-7800, -7680, 25, 0)
+	MoveTo(-7800, -7680)
 
 	UseSkillEx($SS_SAND_SHARDS)
 	RandomSleep(2000)

@@ -105,40 +105,40 @@ Func FarmTheSulfurousWastes()
 
 	; 30 groups to vanquish
 	Local Static $foes[][] = [ _
-		[-800, 12000, 'First Undead Group 1'], _
-		[-1700, 9800, 'First Undead Group 2'], _
-		[-3000, 10900, 'Second Undead Group 1'], _
-		[-4500, 11500, 'Second Undead Group 2'], _
-		[-5500, 11250, 'Second Undead Group 3'], _
-		[-13250, 6750, 'Third Undead Group'], _
-		[-22000, 9000, 'First Margonite Group 1'], _
-		[-22350, 11100, 'First Margonite Group 2'], _
+		[-800,		12000,	'First Undead Group 1'			], _
+		[-1700,		9800,	'First Undead Group 2'			], _
+		[-3000,		10900,	'Second Undead Group 1'			], _
+		[-4500,		11500,	'Second Undead Group 2'			], _
+		[-5500,		11250,	'Second Undead Group 3'			], _
+		[-13250,	6750,	'Third Undead Group'			], _
+		[-22000,	9000,	'First Margonite Group 1'		], _
+		[-22350,	11100,	'First Margonite Group 2'		], _
 		_ ; Skipping this group because it can bring heroes on land and make them go out of Wurm
-		_ ;[-21200, 10750, 'Second Margonite Group 1'], _
-		_ ;[-20250, 11000, 'Second Margonite Group 2'], _
-		[-19000, 5700, 'Djinn Group Group 1'], _
-		[-20800, 600, 'Djinn Group Group 2'], _
-		[-22000, -1200, 'Djinn Group Group 3'], _
-		[-21500, -6000, 'Undead Ritualist Boss Group 1'], _
-		[-20400, -7400, 'Undead Ritualist Boss Group 2'], _
-		[-19500, -9500, 'Undead Ritualist Boss Group 3'], _
-		[-22000, -9400, 'Third Margonite Group 1'], _
-		[-22800, -9800, 'Third Margonite Group 2'], _
-		[-23000, -10600, 'Fourth Margonite Group 1'], _
-		[-23150, -12250, 'Fourth Margonite Group 2'], _
-		[-22800, -13500, 'Fifth Margonite Group 1'], _
-		[-21300, -14000, 'Fifth Margonite Group 2'], _
-		[-22800, -13500, 'Sixth Margonite Group 1'], _
-		[-23000, -10600, 'Sixth Margonite Group 2'], _
-		[-21500, -9500, 'Sixth Margonite Group 3'], _
-		[-21000, -9500, 'Seventh Margonite Group 1'], _
-		[-19500, -8500, 'Seventh Margonite Group 2'], _
-		[-22000, -9400, 'Temple Monolith Group 1'], _
-		[-23000, -10600, 'Temple Monolith Group 2'], _
-		[-22800, -13500, 'Temple Monolith Group 3'], _
-		[-19500, -13100, 'Temple Monolith Group 4'], _
-		[-18000, -13100, 'Temple Monolith Group 5'], _
-		[-18000, -13100, 'Margonite Boss Group'] _
+		_ ;[-21200,	10750,	'Second Margonite Group 1'		], _
+		_ ;[-20250,	11000,	'Second Margonite Group 2'		], _
+		[-19000,	5700,	'Djinn Group Group 1'			], _
+		[-20800,	600,	'Djinn Group Group 2'			], _
+		[-22000,	-1200,	'Djinn Group Group 3'			], _
+		[-21500,	-6000,	'Undead Ritualist Boss Group 1'	], _
+		[-20400,	-7400,	'Undead Ritualist Boss Group 2'	], _
+		[-19500,	-9500,	'Undead Ritualist Boss Group 3'	], _
+		[-22000,	-9400,	'Third Margonite Group 1'		], _
+		[-22800,	-9800,	'Third Margonite Group 2'		], _
+		[-23000,	-10600,	'Fourth Margonite Group 1'		], _
+		[-23150,	-12250,	'Fourth Margonite Group 2'		], _
+		[-22800,	-13500,	'Fifth Margonite Group 1'		], _
+		[-21300,	-14000,	'Fifth Margonite Group 2'		], _
+		[-22800,	-13500,	'Sixth Margonite Group 1'		], _
+		[-23000,	-10600,	'Sixth Margonite Group 2'		], _
+		[-21500,	-9500,	'Sixth Margonite Group 3'		], _
+		[-21000,	-9500,	'Seventh Margonite Group 1'		], _
+		[-19500,	-8500,	'Seventh Margonite Group 2'		], _
+		[-22000,	-9400,	'Temple Monolith Group 1'		], _
+		[-23000,	-10600,	'Temple Monolith Group 2'		], _
+		[-22800,	-13500,	'Temple Monolith Group 3'		], _
+		[-19500,	-13100,	'Temple Monolith Group 4'		], _
+		[-18000,	-13100,	'Temple Monolith Group 5'		], _
+		[-18000,	-13100,	'Margonite Boss Group'			] _
 	]
 
 	For $i = 0 To 4

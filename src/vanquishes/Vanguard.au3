@@ -76,105 +76,105 @@ Func VanquishDaladaUplands()
 	; 72 groups to vanquish + 21 movements
 	Local Static $foes[][] = [ _
 		_ ; blessing
-		[-12373, 12899, 'Move To Start'], _
-		[-9464, 15937, 'Charr Group'], _
-		[-9130, 13535, 'Moving'], _
-		[-5532, 11281, 'Moving'], _
-		[-3979, 9184, 'Mantid Group'], _
-		[-355, 9296, 'Again mantid Group'], _
-		[836, 12171, 'Charr Patrol'], _
-		[884, 15641, 'Charr Group'], _
-		[2956, 10496, 'Mantid Group'], _
-		[5160, 11032, 'Moving'], _
+		[-12373,	12899,	'Move To Start'			], _
+		[-9464,		15937,	'Charr Group'			], _
+		[-9130,		13535,	'Moving'				], _
+		[-5532,		11281,	'Moving'				], _
+		[-3979,		9184,	'Mantid Group'			], _
+		[-355,		9296,	'Again mantid Group'	], _
+		[836,		12171,	'Charr Patrol'			], _
+		[884,		15641,	'Charr Group'			], _
+		[2956,		10496,	'Mantid Group'			], _
+		[5160,		11032,	'Moving'				], _
 		_ ; blessing
-		[5848, 11086, 'Mantid Group'], _
-		[7639, 11839, 'Charr Patrol'], _
-		[6494, 15729, 'Charr Patrol'], _
-		[5704, 17469, 'Charr Group'], _
-		[8572, 12365, 'Moving Back'], _
-		[13960, 13432, 'Charr Group'], _
-		[15385, 9899, 'Going Charr'], _
-		[17089, 6922, 'Charr Group'], _
-		[16363, 3809, 'Moving Gain'], _
-		[15635, 710, 'Charr Group'], _
-		[12754, 2740, 'Charr Seeker'], _
-		[10068, 2580, 'Skale'], _
-		[7663, 3236, 'Charr Seeker'], _
-		[6152, 1706, 'Charr Seeker'], _
-		[5086, -2187, 'Charr on the way'], _
-		[3449, -3693, 'Charr Patrol'], _
-		[7170, -4037, 'Moving'], _
+		[5848,		11086,	'Mantid Group'			], _
+		[7639,		11839,	'Charr Patrol'			], _
+		[6494,		15729,	'Charr Patrol'			], _
+		[5704,		17469,	'Charr Group'			], _
+		[8572,		12365,	'Moving Back'			], _
+		[13960,		13432,	'Charr Group'			], _
+		[15385,		9899,	'Going Charr'			], _
+		[17089,		6922,	'Charr Group'			], _
+		[16363,		3809,	'Moving Gain'			], _
+		[15635,		710,	'Charr Group'			], _
+		[12754,		2740,	'Charr Seeker'			], _
+		[10068,		2580,	'Skale'					], _
+		[7663,		3236,	'Charr Seeker'			], _
+		[6152,		1706,	'Charr Seeker'			], _
+		[5086,		-2187,	'Charr on the way'		], _
+		[3449,		-3693,	'Charr Patrol'			], _
+		[7170,		-4037,	'Moving'				], _
 		_ ; blessing
-		[8903, -1801, 'Second Skale'], _
-		[6790, -6124, 'Moving'], _
-		[3696, -9324, 'Charr Patrol'], _
-		[8031, -10361, 'Charr on the way'], _
-		[9282, -12837, 'Moving'], _
-		[8817, -16314, 'Charr Patrol'], _
-		[13337, -14025, 'Charr Patrol 2'], _
-		[13675, -5513, 'Charr Group'], _
-		[14760, -2224, 'Charr Group'], _
-		[13378, -2577, 'Charr Group'], _
-		[17500, -11685, 'Charr Group'], _
-		[15290, -13688, 'Charr Seeker'], _
-		[15932, -14104, 'Moving Back'], _
-		[14934, -17261, 'Moving'], _
+		[8903,		-1801,	'Second Skale'			], _
+		[6790,		-6124,	'Moving'				], _
+		[3696,		-9324,	'Charr Patrol'			], _
+		[8031,		-10361,	'Charr on the way'		], _
+		[9282,		-12837,	'Moving'				], _
+		[8817,		-16314,	'Charr Patrol'			], _
+		[13337,		-14025,	'Charr Patrol 2'		], _
+		[13675,		-5513,	'Charr Group'			], _
+		[14760,		-2224,	'Charr Group'			], _
+		[13378,		-2577,	'Charr Group'			], _
+		[17500,		-11685,	'Charr Group'			], _
+		[15290,		-13688,	'Charr Seeker'			], _
+		[15932,		-14104,	'Moving Back'			], _
+		[14934,		-17261,	'Moving'				], _
 		_ ; blessing
-		[11509, -17586, 'Moving'], _
-		[6031, -17582, 'Moving'], _
-		[2846, -17340, 'Charr Group'], _
-		[-586, -16529, 'Charr Seeker'], _
-		[-4099, -14897, 'Moving'], _
-		[-4217, -12620, 'Moving'], _
+		[11509,		-17586,	'Moving'				], _
+		[6031,		-17582,	'Moving'				], _
+		[2846,		-17340,	'Charr Group'			], _
+		[-586,		-16529,	'Charr Seeker'			], _
+		[-4099,		-14897,	'Moving'				], _
+		[-4217,		-12620,	'Moving'				], _
 		_ ; blessing
-		[-8023, -13970, 'Charr Seeker'], _
-		[-7326, -8852, 'Charr Seeker'], _
-		[-8023, -13970, 'Charr Patrol'], _
-		[-9808, -15103, 'Moving'], _
-		[-10902, -16356, 'Skale Place'], _
-		[-11917, -18111, 'Skale Place'], _
-		[-13425, -16930, 'Skale Boss'], _
-		[-15218, -17460, 'Skale Group'], _
-		[-16084, -14159, 'Skale Group'], _
-		[-17395, -12851, 'Skale Place'], _
-		[-18157, -9785, 'Skale On the Way'], _
-		[-18222, -6263, 'Finish Skale'], _
-		[-17239, -1933, 'Moving'], _
-		[-17509, 202, 'Moving'], _
+		[-8023,		-13970,	'Charr Seeker'			], _
+		[-7326,		-8852,	'Charr Seeker'			], _
+		[-8023,		-13970,	'Charr Patrol'			], _
+		[-9808,		-15103,	'Moving'				], _
+		[-10902,	-16356,	'Skale Place'			], _
+		[-11917,	-18111,	'Skale Place'			], _
+		[-13425,	-16930,	'Skale Boss'			], _
+		[-15218,	-17460,	'Skale Group'			], _
+		[-16084,	-14159,	'Skale Group'			], _
+		[-17395,	-12851,	'Skale Place'			], _
+		[-18157,	-9785,	'Skale On the Way'		], _
+		[-18222,	-6263,	'Finish Skale'			], _
+		[-17239,	-1933,	'Moving'				], _
+		[-17509,	202,	'Moving'				], _
 		_ ; blessing
-		[-13853, -2427, 'Charr Seeker'], _
-		[-9313, -3786, 'Charr Seeker'], _
-		[-13228, 2083, 'Charr Seeker'], _
-		[-13622, 5476, 'Moving'], _
-		[-17705, 3079, 'Mantid on the way'], _
-		[-16565, 2528, 'More Charr'], _
-		[-12909, 6403, 'Mantid on the way'], _
-		[-10699, 5105, 'Mantid Group'], _
-		[-9016, 6958, 'Mantid Group'], _
-		[-8889, 9446, 'Mantid Group'], _
-		[-6869, 4604, 'Mantid Monk Boss'], _
-		[-8190, 6872, 'Mantid'], _
-		[-6181, 1837, 'Mantid Group'], _
-		[-4125, 2789, 'Mantid Group'], _
-		[-2875, 985, 'Moving'], _
-		[-769, 2047, 'Charr Group'], _
-		[1114, 1765, 'Mantid and Charr'], _
-		[6550, 7549, 'Looking for Mantids'], _
-		[8246, 8104, 'Looking for Mantids'], _
-		[1960, 4969, 'Looking for Mantids'], _
-		[621, 8056, 'Looking for Mantids'], _
-		[-4039, 8928, 'Looking for Mantids'], _
-		[-3299, 606, 'Looking for Mantids'], _
+		[-13853,	-2427,	'Charr Seeker'			], _
+		[-9313,		-3786,	'Charr Seeker'			], _
+		[-13228,	2083,	'Charr Seeker'			], _
+		[-13622,	5476,	'Moving'				], _
+		[-17705,	3079,	'Mantid on the way'		], _
+		[-16565,	2528,	'More Charr'			], _
+		[-12909,	6403,	'Mantid on the way'		], _
+		[-10699,	5105,	'Mantid Group'			], _
+		[-9016,		6958,	'Mantid Group'			], _
+		[-8889,		9446,	'Mantid Group'			], _
+		[-6869,		4604,	'Mantid Monk Boss'		], _
+		[-8190,		6872,	'Mantid'				], _
+		[-6181,		1837,	'Mantid Group'			], _
+		[-4125,		2789,	'Mantid Group'			], _
+		[-2875,		985,	'Moving'				], _
+		[-769,		2047,	'Charr Group'			], _
+		[1114,		1765,	'Mantid and Charr'		], _
+		[6550,		7549,	'Looking for Mantids'	], _
+		[8246,		8104,	'Looking for Mantids'	], _
+		[1960,		4969,	'Looking for Mantids'	], _
+		[621,		8056,	'Looking for Mantids'	], _
+		[-4039,		8928,	'Looking for Mantids'	], _
+		[-3299,		606,	'Looking for Mantids'	], _
 		_ ; blessing
-		[5219, -5017, 'Charr Patrol'], _
-		[7289, -9484, 'Charr Patrol'], _
-		[5219, -7017, 'Charr Patrol'], _
-		[1342, -9068, 'Charr Patrol'], _
-		[1606, 22, 'Charr Patrol'], _
-		[-276, -2566, 'Going to Molotov'], _
-		[-3337, -4323, 'Molotov'], _
-		[-4700, -4943, 'Molotov'], _
-		[-5561, -5483, 'Molotov'] _
+		[5219,		-5017,	'Charr Patrol'			], _
+		[7289,		-9484,	'Charr Patrol'			], _
+		[5219,		-7017,	'Charr Patrol'			], _
+		[1342,		-9068,	'Charr Patrol'			], _
+		[1606,		22,		'Charr Patrol'			], _
+		[-276,		-2566,	'Going to Molotov'		], _
+		[-3337,		-4323,	'Molotov'				], _
+		[-4700,		-4943,	'Molotov'				], _
+		[-5561,		-5483,	'Molotov'				] _
 	]
 
 	Info('Taking Blessing')

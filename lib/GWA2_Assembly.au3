@@ -2187,7 +2187,7 @@ Func AssemblerCreateEncStringCommands()
 	; Get destination buffer
 	_('mov edi,DecodeOutputPtr')
 	; Copy string (max 1023 wchars + null)
-	_('mov ecx,400')  ; 1024 wchars max (0x400)
+	_('mov ecx,400')							; 1024 wchars max (0x400)
 	_('DecodeLoop:')
 	; Load word from [esi] into ax, esi += 2
 	_('lodsw -> 66 AD')

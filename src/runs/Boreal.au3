@@ -291,14 +291,14 @@ EndFunc
 ;~ Main function for chest run
 Func BorealChestRun($X, $Y)
 	Local $runTimer = TimerInit()
-	Move($X, $Y, 0)
+	Move($X, $Y)
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, $X, $Y) > $RANGE_ADJACENT
 		If TimerDiff($runTimer) > $BOREAL_CHEST_RUN_TIMEOUT_MS Then Return $FAIL
 		BorealSpeedRun()
 		Sleep(250)
 		$me = GetMyAgent()
-		Move($X, $Y, 0)
+		Move($X, $Y)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 	Return $SUCCESS

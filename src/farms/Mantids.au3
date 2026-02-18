@@ -157,7 +157,7 @@ Func MantidsFarmLoop()
 	AdlibRegister('MantidsUseFallBack', 8000)
 
 	; Move to spot before aggro
-	MoveTo(3150, -16350, 0)
+	MoveTo(3150, -16350, 0, 0)
 	RandomSleep(1500)
 	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
@@ -187,7 +187,7 @@ Func MantidsFarmLoop()
 	MoveTo(0, -14300)
 
 	; Monk Balling spot
-	MoveTo(1050, -14950, 0)
+	MoveTo(1050, -14950, 0, 0)
 	While Not IsRecharged($MANTIDS_SHADOWFORM)
 		RandomSleep(500)
 	WEnd

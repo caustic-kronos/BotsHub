@@ -444,7 +444,7 @@ Func RunToKillSpot()
 	MoveTo(-2096, -1067)
 	MoveTo(-815, -1898)
 	MoveTo(-690, -3769)
-	MoveTo(-850, -3961, 25, 0)
+	MoveTo(-850, -3961, 0, 0)
 	RandomSleep(500)
 EndFunc
 

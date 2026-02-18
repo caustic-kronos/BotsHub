@@ -104,7 +104,7 @@ Func GoToAgent($agent, $GoFunction = Null)
 	Local $me
 	Local $blockedCount = 0
 	Local $mapLoading = GetMapType(), $mapLoadingOld
-	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
+	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 	RandomSleep(100)
 	If $GoFunction <> Null Then $GoFunction($agent)
 	While GetDistance($me, $agent) > 250 And $blockedCount < 14
@@ -116,7 +116,7 @@ Func GoToAgent($agent, $GoFunction = Null)
 		If $mapLoading <> $mapLoadingOld Then ExitLoop
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
-			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
+			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 			RandomSleep(100)
 			If $GoFunction <> Null Then $GoFunction($agent)
 		EndIf
@@ -464,7 +464,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 	Local $y = DllStructGetData($signpost, 'Y')
 	Local $blocked = 0
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
-		Move($x, $y, 100)
+		Move($x, $y)
 		RandomSleep(100)
 		If $defendFunction <> Null Then $defendFunction()
 		$me = GetMyAgent()
@@ -473,7 +473,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 				$blockedFunction()
 			EndIf
 			$blocked += 1
-			Move($x, $y, 100)
+			Move($x, $y)
 		EndIf
 		RandomSleep(100)
 		$me = GetMyAgent()
@@ -1371,9 +1371,9 @@ EndFunc
 ;~ Take faction blessing
 Func TakeFactionBlessing($factionName)
 	Local $needBribe = False
-	If $factionName == 'luxon' Then 
+	If $factionName == 'luxon' Then
 		$needBribe = GetKurzickFaction() > GetLuxonFaction()
-	Else 
+	Else
 		$needBribe = GetLuxonFaction() > GetKurzickFaction()
 	EndIf
 	If $needBribe Then
@@ -1582,7 +1582,7 @@ EndFunc
 ;~ Reads data from a memory address, returning it as the specified type (defaults to dword).
 Func MemoryRead($processHandle, $address, $type = 'dword')
 	Local $buffer = SafeDllStructCreate($type)
-	Local $bytesRead =  DllStructCreate('ulong_ptr')
+	Local $bytesRead = DllStructCreate('ulong_ptr')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', DllStructGetSize($buffer), 'ptr', DllStructGetPtr($bytesRead))
 	Return SetExtended(DllStructGetData($bytesRead, 1), DllStructGetData($buffer, 1))
 EndFunc
@@ -1637,12 +1637,12 @@ EndFunc
 
 
 Func ScanToFunctionStart($callInstructionAddress, $scanRange = 0x200)
-    If $callInstructionAddress = 0 Then Return 0
+	If $callInstructionAddress = 0 Then Return 0
 
-    Local $start = $callInstructionAddress
-    Local $end = BitAND($start - $scanRange, 0xFFFFFFFF)
+	Local $start = $callInstructionAddress
+	Local $end = BitAND($start - $scanRange, 0xFFFFFFFF)
 
-    Return FindInRange(GetProcessHandle(), '558BEC', 'xxx', 0, $start, $end)
+	Return FindInRange(GetProcessHandle(), '558BEC', 'xxx', 0, $start, $end)
 EndFunc
 
 
@@ -2109,7 +2109,7 @@ Func ComputeStructureOffsetsMap($structureTemplate)
 		$field = StringStripWS($field, 3)
 		If $field = '' Then ContinueLoop
 
-		Local $parts = StringSplit($field, ' 	', 2)
+		Local $parts = StringSplit($field, '	', 2)
 		Local $type = $parts[0]
 		Local $name = $parts[1]
 
@@ -2138,14 +2138,14 @@ Func BuildStructureOffsetsMap($structureTemplate)
 	Local $offsetsMap[]
 
 	Local $structure = DllStructCreate($structureTemplate)
-    Local $baseAddress = DllStructGetPtr($structure)
+	Local $baseAddress = DllStructGetPtr($structure)
 
 	Local $fields = StringSplit($structureTemplate, ';', 2)
 	For $field In $fields
 		$field = StringStripWS($field, 3)
 		If $field = '' Then ContinueLoop
 
-		Local $parts = StringSplit($field, ' 	', 2)
+		Local $parts = StringSplit($field, '	', 2)
 		Local $type = $parts[0]
 		Local $name = $parts[1]
 
@@ -2158,9 +2158,9 @@ Func BuildStructureOffsetsMap($structureTemplate)
 			$name = StringLeft($name, $countPosition - 1)
 		EndIf
 
-    	Local $fieldAddress = DllStructGetPtr($structure, $name)
+		Local $fieldAddress = DllStructGetPtr($structure, $name)
 		Local $offset = Number($fieldAddress) - Number($baseAddress)
-    	$offsetsMap[$name] = $offset
+		$offsetsMap[$name] = $offset
 		; Size not computed here - would need to create a struct for every field
 		Debug(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, 0, $offset, StringRight('00' & Hex($offset), 2)))
 	Next

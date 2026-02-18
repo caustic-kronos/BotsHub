@@ -90,21 +90,21 @@ Func FarmMirrorOfLyss()
 
 	; 14 groups to clear + 1 position change
 	Local Static $foes[][] = [ _
-		[-2451, -15086, 'Group 1/10'], _
-		[1174, -13787, 'Plants'], _
-		[6728, -12014, 'Plants'], _
-		[9554, -14517, 'Kournans + boss'], _
-		[16856, -14068, 'Plants'], _
-		[19428, -13168, 'Group 2/10'], _
-		[16961, -7251, 'Group 3/10'], _
-		[20212, -5510, 'Group 4/10'], _
-		[20373, -580, 'Group 5/10'], _
-		[19778, 2882, 'Group 6/10'], _
-		[19561, 6432, 'Group 7/10'], _
-		[15914, 10322, 'Group 8/10'], _
-		[12116, 7908, 'Moving to position'], _
-		[12932, 6907, 'Group 9/10'], _
-		[12956, 2637, 'Group 10/10'] _
+		[-2451,		-15086,		'Group 1/10'			], _
+		[1174,		-13787,		'Plants'				], _
+		[6728,		-12014,		'Plants'				], _
+		[9554,		-14517,		'Kournans + boss'		], _
+		[16856,		-14068,		'Plants'				], _
+		[19428,		-13168,		'Group 2/10'			], _
+		[16961,		-7251,		'Group 3/10'			], _
+		[20212,		-5510,		'Group 4/10'			], _
+		[20373,		-580,		'Group 5/10'			], _
+		[19778,		2882,		'Group 6/10'			], _
+		[19561,		6432,		'Group 7/10'			], _
+		[15914,		10322,		'Group 8/10'			], _
+		[12116,		7908,		'Moving to position'	], _
+		[12932,		6907,		'Group 9/10'			], _
+		[12956,		2637,		'Group 10/10'			] _
 	]
 	For $i = 0 To UBound($foes) - 1
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL

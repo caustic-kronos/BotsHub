@@ -279,7 +279,7 @@ Func StygianJobMesmerAssassin($waveNumber = 1)
 	EndIf
 	MoveTo(13128, -10084)
 	; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
-	MoveTo(13082, -9788, 0)
+	MoveTo(13082, -9788, 0, 0)
 	RandomSleep(500)
 	If IsRecharged($STYGIAN_DWARVEN_STABILITY) Then
 		UseSkillEx($STYGIAN_DWARVEN_STABILITY)
@@ -308,8 +308,8 @@ Func StygianJobRanger()
 	CommandAll(9300, -9350)
 	MoveTo(10844, -10205)
 	MoveTo(10313, -11156)
-	MoveTo(8269, -11160, 25, 10)
-	MoveTo(8177, -11171, 25, 10)
+	MoveTo(8269, -11160)
+	MoveTo(8177, -11171, 0, 0)
 
 	; Always use Spike with Flame - same cooldown
 	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
@@ -435,7 +435,7 @@ Func GoToHidingSpot()
 	If IsPlayerDead() Then Return $FAIL
 	RunStygianFarm(10575, -8170)
 	; 0 to get player into the exact location without randomness, spot to hide from running mobs
-	MoveTo(10871, -7842, 25, 0)
+	MoveTo(10871, -7842, 0, 0)
 	; waiting for mobs to run by
 	RandomSleep(7500)
 	If $stygian_player_profession == $ID_RANGER Then

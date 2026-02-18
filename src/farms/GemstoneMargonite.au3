@@ -321,7 +321,7 @@ Func GemstoneMargoniteFarmLoop()
 	$me = GetMyAgent()
 	$target = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsAnurDabiOrKayaOrKiOrSu)
 	If $margonite_player_profession <> $ID_ELEMENTALIST Then
-		If IsRecharged($MARGONITE_DEATHS_CHARGE)  Then
+		If IsRecharged($MARGONITE_DEATHS_CHARGE) Then
 			UseSkillEx($MARGONITE_DEATHS_CHARGE, $target)
 			RandomSleep(50)
 		EndIf

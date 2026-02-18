@@ -2616,29 +2616,29 @@ EndFunc
 ; Decodes a Guild Wars Encoded String to extract the string ID
 ; EncStrings use variable-length encoding with continuation bits
 Func DecodeEncString($ptr)
-    If $ptr = 0 Then Return 0
+	If $ptr = 0 Then Return 0
 
-    Local $value = 0
-    Local $offset = 0
+	Local $value = 0
+	Local $offset = 0
 	; Safety limit
-    Local $maxIterations = 10
+	Local $maxIterations = 10
 	Local $processHandle = GetProcessHandle()
 
-    For $i = 1 To $maxIterations
-        Local $char = MemoryRead($processHandle, $ptr + $offset, 'word')
+	For $i = 1 To $maxIterations
+		Local $char = MemoryRead($processHandle, $ptr + $offset, 'word')
 
-        ; Check if this is a valid encoded word (>= 0x100)
-        If $char < $ENCSTR_WORD_VALUE_BASE Then ExitLoop
+		; Check if this is a valid encoded word (>= 0x100)
+		If $char < $ENCSTR_WORD_VALUE_BASE Then ExitLoop
 
-        $value *= $ENCSTR_WORD_VALUE_RANGE
-        $value += BitAND($char, BitNOT($ENCSTR_WORD_BIT_MORE)) - $ENCSTR_WORD_VALUE_BASE
-        $offset += 2
+		$value *= $ENCSTR_WORD_VALUE_RANGE
+		$value += BitAND($char, BitNOT($ENCSTR_WORD_BIT_MORE)) - $ENCSTR_WORD_VALUE_BASE
+		$offset += 2
 
-        ; If continuation bit is not set, we're done
-        If BitAND($char, $ENCSTR_WORD_BIT_MORE) = 0 Then ExitLoop
-    Next
+		; If continuation bit is not set, we're done
+		If BitAND($char, $ENCSTR_WORD_BIT_MORE) = 0 Then ExitLoop
+	Next
 
-    Return $value
+	Return $value
 EndFunc
 
 ; Decodes an encoded string to readable text using GW's internal decoder
@@ -2647,35 +2647,35 @@ EndFunc
 ; @param $a_i_Timeout - Maximum time to wait for decode (ms), default 1000
 ; @return Decoded string or empty string on failure
 Func DecodeEncStringAsync($ptr, $timeout = 1000)
-    If $ptr = 0 Then Return ''
+	If $ptr = 0 Then Return ''
 
 	Local $processHandle = GetProcessHandle()
-    ; Read the encoded string from GW memory (max 128 wchars)
-    Local $encString = MemoryRead($processHandle, $ptr, 'wchar[128]')
-    If $encString = '' Then Return ''
+	; Read the encoded string from GW memory (max 128 wchars)
+	Local $encString = MemoryRead($processHandle, $ptr, 'wchar[128]')
+	If $encString = '' Then Return ''
 
-    ; Write encoded string to command struct
-    DllStructSetData($decode_enc_string, 2, $encString)
+	; Write encoded string to command struct
+	DllStructSetData($decode_enc_string, 2, $encString)
 
-    ; Reset ready flag before sending command
-    MemoryWrite($processHandle, $decode_ready, 0, 'dword')
+	; Reset ready flag before sending command
+	MemoryWrite($processHandle, $decode_ready, 0, 'dword')
 
-    ; Enqueue the decode command
-    Enqueue($decode_enc_string_ptr, DllStructGetSize($decode_enc_string))
+	; Enqueue the decode command
+	Enqueue($decode_enc_string_ptr, DllStructGetSize($decode_enc_string))
 
-    ; Wait for decode to complete
-    Local $startTime = TimerInit()
-    While TimerDiff($startTime) < $timeout
-        If MemoryRead($processHandle, $decode_ready, 'dword') = 1 Then
-            ; Read the decoded string
-            Local $decoded = MemoryRead($processHandle, $decode_output_ptr, 'wchar[1024]')
-            Return $decoded
-        EndIf
-        Sleep(16)
-    WEnd
+	; Wait for decode to complete
+	Local $startTime = TimerInit()
+	While TimerDiff($startTime) < $timeout
+		If MemoryRead($processHandle, $decode_ready, 'dword') = 1 Then
+			; Read the decoded string
+			Local $decoded = MemoryRead($processHandle, $decode_output_ptr, 'wchar[1024]')
+			Return $decoded
+		EndIf
+		Sleep(16)
+	WEnd
 
-    ; Timeout
-    Return ''
+	; Timeout
+	Return ''
 EndFunc
 
 

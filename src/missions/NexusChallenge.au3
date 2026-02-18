@@ -96,25 +96,25 @@ Func NexusChallenge()
 	; 9 groups to defeat in each loop
 	Local Static $foes[][] = [ _
 		_ ; First loop
-		[-2675, 3301, 'Group 1'], _
-		[-55, 3297, 'Group 2'], _
-		[-1759, 993, 'Group 3'], _
-		[3834, 2759, 'Group 4'], _
-		[2479, -1967, 'Group 5'], _
-		[1572, -616, 'Group 6'], _
-		[668, -3516, 'Group 7'], _
-		[-3723, -3662, 'Group 8'], _
-		[-3809, 880, 'Group 9'], _
+		[-2675,		3301,	'Group 1'], _
+		[-55,		3297,	'Group 2'], _
+		[-1759,		993,	'Group 3'], _
+		[3834,		2759,	'Group 4'], _
+		[2479,		-1967,	'Group 5'], _
+		[1572,		-616,	'Group 6'], _
+		[668,		-3516,	'Group 7'], _
+		[-3723,		-3662,	'Group 8'], _
+		[-3809,		880,	'Group 9'], _
 		_ ; Second loop
-		[-2675, 3301, 'Group 1'], _
-		[-55, 3297, 'Group 2'], _
-		[-1759, 993, 'Group 3'], _
-		[3834, 2759, 'Group 4'], _
-		[2479, -1967, 'Group 5'], _
-		[1572, -616, 'Group 6'], _
-		[668, -3516, 'Group 7'], _
-		[-3723, -3662, 'Group 8'], _
-		[-3809, 880, 'Group 9'] _
+		[-2675,		3301,	'Group 1'], _
+		[-55,		3297,	'Group 2'], _
+		[-1759,		993,	'Group 3'], _
+		[3834,		2759,	'Group 4'], _
+		[2479,		-1967,	'Group 5'], _
+		[1572,		-616,	'Group 6'], _
+		[668,		-3516,	'Group 7'], _
+		[-3723,		-3662,	'Group 8'], _
+		[-3809,		880,	'Group 9'] _
 	]
 	For $i = 0 To 8
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
