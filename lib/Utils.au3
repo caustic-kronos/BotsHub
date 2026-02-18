@@ -1023,7 +1023,7 @@ Func IsPlayerStuck($movementDistance, ByRef $blocked, $minMovement = 5, $stuckTi
 EndFunc
 
 
-Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = 600)
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_EARSHOT)
 	Local $unstuckStartTimer = TimerInit()
 
 	Local $me = GetMyAgent()
@@ -1063,17 +1063,14 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	Local $oldMyX
-	Local $oldMyY
-	Local $movementDistance
 
 	Move($x, $y)
 
 	Local $target
 	Local $chest
 	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
-		$oldMyX = $myX
-		$oldMyY = $myY
+		Local $oldMyX = $myX
+		Local $oldMyY = $myY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
@@ -1086,7 +1083,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
-		$movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
+		Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
 		$isStuck = IsPlayerStuck($movementDistance, $blocked)
 		
 		If $isStuck Then 
