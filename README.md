@@ -146,6 +146,12 @@ If it happens too often, make sure you are running the game at lowest quality an
 </details>
 
 <details>
+<summary><strong>Q: My character's name doesn't appear in the left dropdown.</strong></summary>
+
+Check your system locale. Set it to English and that should fix the problem.
+</details>
+
+<details>
 <summary><strong>Q: How can I change what items the bot sells?</strong></summary>
 
 Most options are configurable in the interface.  
