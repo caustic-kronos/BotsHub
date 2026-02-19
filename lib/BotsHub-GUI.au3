@@ -52,13 +52,14 @@ Global Const $LVL_ERROR = 4
 
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
+Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
 
 #Region GUI
 Opt('GUIOnEventMode', True)
 Opt('GUICloseOnESC', False)
 Opt('MustDeclareVars', True)
 
-Global $GUI_ENABLEd = True
+Global $GUI_ENABLED = True
 
 ; TODO: rename GUI to lowercase snake_case - do it once we move GUI to a separate file
 Global $gui_botshub, $gui_tabs_parent, $gui_tab_main, $gui_tab_runoptions, $gui_tab_lootoptions, $gui_tab_farminfos, $gui_tab_lootoptions, $gui_tab_teamoptions
@@ -90,8 +91,9 @@ Global $gui_group_titles, _
 		$gui_label_vanguardtitle_text, $gui_label_vanguardtitle_value, $gui_label_kurzicktitle_text, $gui_label_kurzicktitle_value, $gui_label_luxontitle_text, $gui_label_luxontitle_value, _
 		$gui_label_lightbringertitle_text, $gui_label_lightbringertitle_value, $gui_label_sunspeartitle_text, $gui_label_sunspeartitle_value
 Global $gui_group_runoptions, _
-		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_usescrolls
-Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_farmmaterialsmidrun
+		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_emergencytravel, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_useconsets, $gui_checkbox_usescrolls
+Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_farmmaterialsmidrun, _
+		$gui_label_salvagekits, $gui_combo_salvagekits, $gui_label_identificationkits, $gui_combo_identificationkits
 Global $gui_group_factionoptions, $gui_label_faction, $gui_radiobutton_donatepoints, $gui_radiobutton_buyfactionresources, $gui_radiobutton_buyfactionscrolls
 Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teammemberbuildlabel, _
 		$gui_label_hero_1, $gui_label_hero_2, $gui_label_hero_3, $gui_label_hero_4, $gui_label_hero_5, $gui_label_hero_6, $gui_label_hero_7, _
@@ -251,18 +253,38 @@ Func CreateGUI()
 	; === Options tab ===
 	$gui_tab_runoptions = GUICtrlCreateTabItem('Options')
 	_GUICtrlTab_SetBkColor($gui_botshub, $gui_tabs_parent, $COLOR_SILVER)
-
 	$gui_group_runoptions = GUICtrlCreateGroup('Run options', 21, 39, 295, 155)
 	$gui_checkbox_loopruns = GUICtrlCreateCheckbox('Loop Runs', 31, 60)
 	$gui_checkbox_hardmode = GUICtrlCreateCheckbox('Hard Mode', 31, 85)
-	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 110)
-	$gui_checkbox_useconsumables = GUICtrlCreateCheckbox('Use optional consumables', 31, 135)
-	$gui_checkbox_usescrolls = GUICtrlCreateCheckbox('Use scrolls to enter elite zones', 31, 160)
+	$gui_label_weaponslot = GUICtrlCreateLabel('Use weapon slot for farm:', 31, 114)
+	$gui_combo_weaponslot = GUICtrlCreateCombo('0', 180, 110, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetData($gui_combo_weaponslot, $AVAILABLE_WEAPON_SLOTS, '0')
+	$gui_label_bagscount = GUICtrlCreateLabel('Use bags:', 31, 139)
+	$gui_combo_bagscount = GUICtrlCreateCombo('5', 180, 135, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetData($gui_combo_bagscount, $AVAILABLE_BAG_COUNTS, '5')
+	$gui_label_traveldistrict = GUICtrlCreateLabel('Travel district:', 31, 164)
+	$gui_combo_districtchoice = GUICtrlCreateCombo('Random EU', 180, 160, 95, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetData($gui_combo_districtchoice, $AVAILABLE_DISTRICTS, 'Random EU')
+
+	$gui_checkbox_emergencytravel = GUICtrlCreateCheckbox('Emergency Travel', 180, 60)
+	GUICtrlSetState($gui_checkbox_emergencytravel, $GUI_DISABLE)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$gui_group_itemoptions = GUICtrlCreateGroup('Loot management options', 21, 205, 295, 235)
+	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 235)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
-	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 255)
+	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 255)
+	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 288)
+	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 285, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetData($gui_combo_salvagekits, $KIT_AMOUNT_CHOICE, '12')
+	GUICtrlSetState($gui_label_salvagekits, $GUI_DISABLE)
+	GUICtrlSetState($gui_combo_salvagekits, $GUI_DISABLE)
+	$gui_label_identificationkits = GUICtrlCreateLabel('Identification kits:', 160, 288)
+	$gui_combo_identificationkits = GUICtrlCreateCombo('4', 250, 285, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	GUICtrlSetData($gui_combo_identificationkits, $KIT_AMOUNT_CHOICE, '4')
+	GUICtrlSetState($gui_label_identificationkits, $GUI_DISABLE)
+	GUICtrlSetState($gui_combo_identificationkits, $GUI_DISABLE)
+	$gui_checkbox_usescrolls = GUICtrlCreateCheckbox('Use scrolls to enter elite zones', 31, 315)
+	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 345)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$gui_group_factionoptions = GUICtrlCreateGroup('Faction options', 330, 39, 295, 155)
@@ -273,17 +295,10 @@ Func CreateGUI()
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$gui_group_otheroptions = GUICtrlCreateGroup('Other options', 330, 205, 295, 235)
-	$gui_label_weaponslot = GUICtrlCreateLabel('Use weapon slot for farm:', 355, 228)
-	$gui_combo_weaponslot = GUICtrlCreateCombo('0', 505, 225, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	GUICtrlSetData($gui_combo_weaponslot, $AVAILABLE_WEAPON_SLOTS, '0')
-	$gui_label_bagscount = GUICtrlCreateLabel('Use bags:', 355, 253)
-	$gui_combo_bagscount = GUICtrlCreateCombo('5', 505, 250, 30, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	GUICtrlSetData($gui_combo_bagscount, $AVAILABLE_BAG_COUNTS, '5')
-	$gui_label_traveldistrict = GUICtrlCreateLabel('Travel district:', 355, 278)
-	$gui_combo_districtchoice = GUICtrlCreateCombo('Random EU', 440, 275, 95, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	GUICtrlSetData($gui_combo_districtchoice, $AVAILABLE_DISTRICTS, 'Random EU')
-
-	$gui_renderbutton = GUICtrlCreateButton('Rendering enabled', 351, 325, 252, 25)
+	$gui_checkbox_useconsumables = GUICtrlCreateCheckbox('Use optional consumables', 355, 228)
+	$gui_checkbox_useconsets = GUICtrlCreateCheckbox('Use consets', 355, 258)
+	GUICtrlSetState($gui_checkbox_useconsets, $GUI_DISABLE)
+	$gui_renderbutton = GUICtrlCreateButton('Rendering enabled', 351, 365, 252, 25)
 	GUICtrlSetBkColor($gui_renderbutton, $COLOR_YELLOW)
 
 	GUICtrlSetTip($gui_checkbox_farmmaterialsmidrun, 'Salvage items during runs to save space. Bot will take some salvage kits in inventory for that.')
