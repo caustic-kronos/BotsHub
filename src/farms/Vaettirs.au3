@@ -615,7 +615,6 @@ Func RezoneToJagaMoraine()
 		EndIf
 	WEnd
 	MoveTo(15600, -20500)
-	Move(15865, -20531, 30)
 	Move(16250, -20531)
 	WaitMapLoading($ID_BJORA_MARCHES)
 	MoveTo(-19968, 5564)
