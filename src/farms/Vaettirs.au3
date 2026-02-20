@@ -615,10 +615,10 @@ Func RezoneToJagaMoraine()
 		EndIf
 	WEnd
 	MoveTo(15600, -20500)
-	Move(15865, -20531)
+	Move(16250, -20531)
 	WaitMapLoading($ID_BJORA_MARCHES)
 	MoveTo(-19968, 5564)
-	Move(-20076, 5580)
+	Move(-20500, 5600)
 	WaitMapLoading($ID_JAGA_MORAINE)
 	RandomSleep(1000)
 	Return $result
