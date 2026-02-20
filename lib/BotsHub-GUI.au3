@@ -92,7 +92,7 @@ Global $gui_group_titles, _
 		$gui_label_lightbringertitle_text, $gui_label_lightbringertitle_value, $gui_label_sunspeartitle_text, $gui_label_sunspeartitle_value
 Global $gui_group_runoptions, _
 		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_emergencytravel, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_useconsets, $gui_checkbox_usescrolls
-Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_farmmaterialsmidrun, _
+Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_salvageintocomponents, $gui_checkbox_farmmaterialsmidrun, _
 		$gui_label_salvagekits, $gui_combo_salvagekits, $gui_label_identificationkits, $gui_combo_identificationkits
 Global $gui_group_factionoptions, $gui_label_faction, $gui_radiobutton_donatepoints, $gui_radiobutton_buyfactionresources, $gui_radiobutton_buyfactionscrolls
 Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teammemberbuildlabel, _
@@ -272,19 +272,21 @@ Func CreateGUI()
 
 	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 235)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
-	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 255)
-	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 288)
-	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 285, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_checkbox_salvageintocomponents = GUICtrlCreateCheckbox('Salvage into components', 31, 255)
+	GUICtrlSetState($gui_checkbox_salvageintocomponents, $GUI_DISABLE)
+	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 285)
+	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 318)
+	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 315, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($gui_combo_salvagekits, $KIT_AMOUNT_CHOICE, '12')
 	GUICtrlSetState($gui_label_salvagekits, $GUI_DISABLE)
 	GUICtrlSetState($gui_combo_salvagekits, $GUI_DISABLE)
-	$gui_label_identificationkits = GUICtrlCreateLabel('Identification kits:', 160, 288)
-	$gui_combo_identificationkits = GUICtrlCreateCombo('4', 250, 285, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_label_identificationkits = GUICtrlCreateLabel('Identification kits:', 160, 318)
+	$gui_combo_identificationkits = GUICtrlCreateCombo('4', 250, 315, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($gui_combo_identificationkits, $KIT_AMOUNT_CHOICE, '4')
 	GUICtrlSetState($gui_label_identificationkits, $GUI_DISABLE)
 	GUICtrlSetState($gui_combo_identificationkits, $GUI_DISABLE)
-	$gui_checkbox_usescrolls = GUICtrlCreateCheckbox('Use scrolls to enter elite zones', 31, 315)
-	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 345)
+	$gui_checkbox_usescrolls = GUICtrlCreateCheckbox('Use scrolls to enter elite zones', 31, 345)
+	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 375)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$gui_group_factionoptions = GUICtrlCreateGroup('Faction options', 330, 39, 295, 155)

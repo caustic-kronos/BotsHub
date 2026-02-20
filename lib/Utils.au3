@@ -1131,7 +1131,10 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
-		If IsPlayerAndPartyWiped() Then Return $FAIL
+		If IsPlayerAndPartyWiped() Then 
+			If $flagHeroes Then CancelAllHeroes()
+			Return $FAIL
+		EndIf
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
 	If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems($lootTrappedArea ? LootTrappedAreaSafely : Null, DefaultShouldPickItem, $fightRange)
