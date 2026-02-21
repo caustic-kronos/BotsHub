@@ -351,9 +351,9 @@ EndFunc
 ;~ Load loot configuration file if it exists
 Func LoadLootConfiguration($filePath)
 	$loot_configuration = $filePath
-	$loot_configuration = StringTrimRight($loot_configuration, StringLen(@ScriptDir & '/conf/loot/'))
+	$loot_configuration = StringTrimLeft($loot_configuration, StringLen(@ScriptDir & '/conf/loot/'))
 	; Removing .json
-	$loot_configuration = StringTrimLeft($loot_configuration, 5)
+	$loot_configuration = StringTrimRight($loot_configuration, 5)
 	Local $jsonLootOptions = LoadLootOptions($filePath)
 	FillInventoryCacheFromJSON($jsonLootOptions, '')
 	BuildInventoryDerivedFlags()
@@ -446,6 +446,7 @@ Func WriteConfigToJson()
 	; TODO/FIXME: simplify by iterating over map keys
 	_JSON_addChangeDelete($jsonObject, 'main.character', $character_name)
 	_JSON_addChangeDelete($jsonObject, 'main.farm', $farm_name)
+	_JSON_addChangeDelete($jsonObject, 'main.loot_configuration', $loot_configuration)
 	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', $run_options_cache['run.loop_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
