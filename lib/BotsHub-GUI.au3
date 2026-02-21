@@ -838,7 +838,7 @@ Func GuiLootTabButtonHandler()
 				Local $configFile = FileOpen($filePath, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)
 				FileWrite($configFile, $jsonString)
 				FileClose($configFile)
-				Info('Saved loot options configuration ' & $configFile)
+				Info('Saved loot options configuration ' & $filePath)
 			EndIf
 		Case $gui_applylootoptionsbutton
 			FillInventoryCacheFromTreeView($gui_treeview_lootoptions)
