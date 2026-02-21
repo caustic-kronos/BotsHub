@@ -1279,17 +1279,28 @@ EndFunc
 
 
 ;~ Salvage the given item - FIXME: fails for weapons/armorsalvageable when using expert kits and better because they open a window
-Func SalvageItem($item, $salvageKit)
+Func SalvageItem($item, $salvageKit, $salvageType = 'Materials')
 	Local $rarity = GetRarity($item)
 	While Not StartSalvageWithKit($item, $salvageKit)
 		Sleep(GetPing())
 	WEnd
 	Sleep(600 + GetPing())
-	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
-		ValidateSalvage()
-		Sleep(600 + GetPing())
-	EndIf
-	SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
+	;~ If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
+	;~ 	ValidateSalvage()
+	;~ 	Sleep(600 + GetPing())
+	;~ EndIf
+	Switch $salvageType
+        Case 'Materials'
+            SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
+        Case 'Prefix'
+            SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 0)
+        Case 'Suffix'
+            SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 1)
+        Case 'Inscription'
+            SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 2)
+        Case Else
+            Return False
+    EndSwitch
 	Sleep(40 + GetPing())
 	Return True
 EndFunc
