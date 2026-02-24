@@ -84,11 +84,6 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		SellItemsToMerchant()
 	EndIf
 	; Max gold in Xunlai chest is 1000 platinums
-	If $cache['Store items.Gold'] AND GetGoldCharacter() > 60000 And GetGoldStorage() <= (1000000 - 60000) Then
-		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
-		DepositGold(60000)
-		Info('Deposited Gold')
-	EndIf
 	If $cache['Store items.Gold'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		BalanceCharacterGold(10000)
@@ -130,7 +125,7 @@ Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		Return True
 	EndIf
 	If $run_options_cache['run.sort_items'] Then SortInventory()
-	IdentifyItems(False)
+	If $cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
@@ -759,8 +754,9 @@ EndFunc
 
 ;~ Sell general items to trader
 Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = False, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	Info('Selling items')
 	TravelToOutpost($tradeTown, $district_name)
-	Info('Moving to merchant to sell items')
+	Debug('Moving to merchant to sell items')
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
@@ -770,7 +766,6 @@ Func SellItemsToMerchant($shouldSellItem = DefaultShouldSellItem, $dryRun = Fals
 	GoToNPC($merchant)
 	RandomSleep(250)
 
-	Info('Selling items')
 	Local $item, $itemID
 	For $bagIndex = 1 To $bags_count
 		Local $bag = GetBag($bagIndex)
@@ -794,8 +789,9 @@ EndFunc
 
 ;~ Sell basic materials to materials merchant in town
 Func SellBasicMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellBasicMaterial, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	Info('Selling basic materials')
 	TravelToOutpost($tradeTown, $district_name)
-	Info('Moving to materials merchant')
+	Debug('Moving to materials merchant')
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
@@ -820,8 +816,9 @@ EndFunc
 
 ;~ Sell rare materials to rare materials merchant in town
 Func SellRareMaterialsToMerchant($shouldSellMaterial = DefaultShouldSellRareMaterial, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	Info('Selling rare materials')
 	TravelToOutpost($tradeTown, $district_name)
-	Info('Moving to rare materials merchant')
+	Debug('Moving to rare materials merchant')
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
@@ -847,7 +844,7 @@ EndFunc
 ;~ Buy rare material from rare materials merchant in town
 Func BuyRareMaterialFromMerchant($materialModelID, $amount, $tradeTown = $ID_EYE_OF_THE_NORTH)
 	TravelToOutpost($tradeTown, $district_name)
-	Info('Moving to rare materials merchant')
+	Debug('Moving to rare materials merchant')
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
@@ -873,12 +870,13 @@ EndFunc
 ;~ Possible issue if you provide a very low poorThreshold and the price of an item hike up enough to reduce your money to less than 0
 ;~ So please only use with $poorThreshold > 5k
 Func BuyRareMaterialFromMerchantUntilPoor($materialModelID, $poorThreshold = 20000, $backupMaterialModelID = Null, $tradeTown = $ID_EYE_OF_THE_NORTH)
+	Info('Buying rare materials')
 	TravelToOutpost($tradeTown, $district_name)
 	If CountSlots(1, 4) == 0 Then
 		Warn('No room in inventory to buy rare materials, tick some checkboxes to clear inventory')
 		Return
 	EndIf
-	Info('Moving to rare materials merchant')
+	Debug('Moving to rare materials merchant')
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
@@ -928,7 +926,7 @@ Func BuyInTown($itemID, $itemPosition, $itemPrice, $amount = 1, $stackable = Fal
 		RandomSleep(500)
 	EndIf
 
-	Info('Moving to merchant to buy items')
+	Debug('Moving to merchant to buy items')
 	UseCitySpeedBoost()
 	; in Embark Beach, move to spot to avoid getting stuck on obstacles
 	If $tradeTown == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
@@ -1179,6 +1177,7 @@ EndFunc
 #Region Salvage
 ;~ Salvage items from inventory, only items specified by configuration in GUI interface
 Func SalvageItems($buyKit = True)
+	Info('Salvaging items')
 	Local $kit = GetSalvageKit($buyKit)
 	If $kit == 0 Then Return False
 	Local $uses = DllStructGetData($kit, 'Value') / 2
@@ -1191,7 +1190,6 @@ Func SalvageItems($buyKit = True)
 		MoveItem($movedItem, $xunlaiTemporarySlot[0], $xunlaiTemporarySlot[1])
 	EndIf
 
-	Info('Salvaging items')
 	Local $trophiesAndMaterialItems[60]
 	Local $trophyAndMaterialIndex = 0
 	For $bagIndex = 1 To _Min(4, $bags_count)
@@ -1381,7 +1379,7 @@ EndFunc
 
 ;~ Store selected items in the Xunlai Storage
 Func StoreItemsInXunlaiStorage($shouldStoreItem = DefaultShouldStoreItem)
-	Info('Storing items')
+	Info('Storing items in Xunlai Storage')
 	Local $item, $itemID
 	For $bagIndex = 1 To $bags_count
 		Local $bag = GetBag($bagIndex)
@@ -1495,13 +1493,15 @@ Func BalanceCharacterGold($goldAmount, $mode = 0)
 	Local $goldCharacter = GetGoldCharacter()
 	Local $goldStorage = GetGoldStorage()
 	If $goldStorage > 950000 Then
-		Warn('Too much gold in chest, use some.')
+		Warn('Too much moneyz in Xunlai, you are a rich bitch.')
 	ElseIf $goldStorage < 50000 Then
-		Warn('Not enough gold in chest, get some.')
+		Warn('Not enough moneyz in Xunlai, you poor bastard.')
 	ElseIf $goldCharacter > $goldAmount And $mode <> 1 Then
 		DepositGold($goldCharacter - $goldAmount)
+		Info('Deposited gold')
 	ElseIf $goldCharacter < $goldAmount And $mode <> 2 Then
 		WithdrawGold($goldAmount - $goldCharacter)
+		Info('Withdrawn gold')
 	EndIf
 	Return True
 EndFunc
