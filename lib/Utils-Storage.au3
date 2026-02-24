@@ -1285,10 +1285,10 @@ Func SalvageItem($item, $salvageKit, $salvageType = 'Materials')
 		Sleep(GetPing())
 	WEnd
 	Sleep(600 + GetPing())
-	;~ If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
-	;~ 	ValidateSalvage()
-	;~ 	Sleep(600 + GetPing())
-	;~ EndIf
+	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
+		ValidateSalvage()
+		Sleep(600 + GetPing())
+	EndIf
 	Switch $salvageType
         Case 'Materials'
             SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
