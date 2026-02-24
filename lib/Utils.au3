@@ -1023,8 +1023,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
 
 	If $log <> '' Then Info($log)
-	Local $isStuck = False
-	IsPlayerStuck(Default, Default, True) ; reset=True
+	IsPlayerStuck(Default, Default, True) ; init internal state
 	Local $me = GetMyAgent()
 
 	Move($x, $y)
@@ -1041,12 +1040,10 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 			; FIXME: add rezzing dead party members here
 		EndIf
 		RandomSleep(250)
-		$isStuck = IsPlayerStuck()
 		
-		If $isStuck Then 
+		If IsPlayerStuck() Then 
 			If $unstuckFunction($x, $y) == $SUCCESS Then
-				$isStuck = False
-				IsPlayerStuck(Default, Default, True)
+				IsPlayerStuck(Default, Default, True) ; reset stuck detection
 			Else
 				Return $FAIL
 			EndIf
@@ -1068,6 +1065,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 EndFunc
 
 
+; Call this with $reset=True to (re-)initialize it's internal state to track blocked counter and old positions across calls
 Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
 	Static $oldMyX = Null
 	Static $oldMyY = Null
