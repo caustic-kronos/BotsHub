@@ -907,6 +907,7 @@ Global $default_moveaggroandkill_options = ObjCreate('Scripting.Dictionary')
 $default_moveaggroandkill_options.Add('fightFunction', KillFoesInArea)
 $default_moveaggroandkill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
 $default_moveaggroandkill_options.Add('flagHeroesOnFight', False)
+$default_moveaggroandkill_options.Add('unstuckFunction', TryToGetUnstuck)
 $default_moveaggroandkill_options.Add('callTarget', True)
 $default_moveaggroandkill_options.Add('priorityMobs', False)
 $default_moveaggroandkill_options.Add('skillsMask', Null)
@@ -1013,27 +1014,23 @@ EndFunc
 
 ;~ Clear a zone around the coordinates provided
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
+
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
+	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
 
 	If $log <> '' Then Info($log)
+	IsPlayerStuck(Default, Default, True) ; init internal state
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
-	Local $blocked = 0
 
 	Move($x, $y)
 
-	Local $oldMyX
-	Local $oldMyY
 	Local $target
 	Local $chest
-	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
-		$oldMyX = $myX
-		$oldMyY = $myY
+	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
@@ -1043,20 +1040,15 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 			; FIXME: add rezzing dead party members here
 		EndIf
 		RandomSleep(250)
-		$me = GetMyAgent()
-		$myX = DllStructGetData($me, 'X')
-		$myY = DllStructGetData($me, 'Y')
-		If $oldMyX = $myX And $oldMyY = $myY Then
-			$blocked += 1
-			If $blocked > 6 Then
-				Move($myX, $myY, 500)
-				RandomSleep(500)
-				Move($x, $y)
+		
+		If IsPlayerStuck() Then 
+			If $unstuckFunction($x, $y) == $SUCCESS Then
+				IsPlayerStuck(Default, Default, True) ; reset stuck detection
+			Else
+				Return $FAIL
 			EndIf
-		Else
-			; reset of block count if player got unstuck
-			$blocked = 0
 		EndIf
+		
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -1070,6 +1062,72 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 		If IsPlayerAndPartyWiped() Then Return $FAIL
 	WEnd
 	Return $SUCCESS
+EndFunc
+
+
+; Call this with $reset=True to (re-)initialize it's internal state to track blocked counter and old positions across calls
+Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
+	Static $oldMyX = Null
+	Static $oldMyY = Null
+	Static $blocked = 0
+
+	If $reset Then
+		$oldMyX = Null
+		$oldMyY = Null
+		$blocked = 0
+		Return False
+	EndIf
+
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+
+	If $oldMyX == Null Or $oldMyY == Null Then
+		$oldMyX = $myX
+		$oldMyY = $myY
+		$blocked = 0
+		Return False
+	EndIf
+
+	Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
+	$oldMyX = $myX
+	$oldMyY = $myY
+
+	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
+	If $movementDistance < $minMovement Then
+		$blocked += 1
+	Else
+		; keep some blocked memory to detect oscillation/stutter faster than full reset
+		$blocked = _Max(0, $blocked - 2)
+	EndIf
+	Return $blocked >= $stuckTicks
+EndFunc
+
+
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_AREA)
+	Local $unstuckStartTimer = TimerInit()
+
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+	Local $myInitialX = $myX
+	Local $myInitialY = $myY
+
+	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
+		; Try to move randomly from the current position
+		Move($myX, $myY, 500)
+		RandomSleep(500)
+		Move($targetX, $targetY)
+		RandomSleep(1000)
+
+		$me = GetMyAgent()
+		$myX = DllStructGetData($me, 'X')
+		$myY = DllStructGetData($me, 'Y')
+		; If we moved enough away from initial position consider unstuck
+		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
+		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
+	WEnd
+	Return $FAIL
 EndFunc
 
 
