@@ -1024,18 +1024,14 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 
 	If $log <> '' Then Info($log)
 	Local $isStuck = False
-	Local $blocked = 0
+	IsPlayerStuck(Default, Default, True) ; reset=True
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
 
 	Move($x, $y)
 
 	Local $target
 	Local $chest
 	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
-		Local $oldMyX = $myX
-		Local $oldMyY = $myY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
@@ -1045,16 +1041,12 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 			; FIXME: add rezzing dead party members here
 		EndIf
 		RandomSleep(250)
-		$me = GetMyAgent()
-		$myX = DllStructGetData($me, 'X')
-		$myY = DllStructGetData($me, 'Y')
-		Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
-		$isStuck = IsPlayerStuck($movementDistance, $blocked)
+		$isStuck = IsPlayerStuck()
 		
 		If $isStuck Then 
 			If $unstuckFunction($x, $y) == $SUCCESS Then
 				$isStuck = False
-				$blocked = 0
+				IsPlayerStuck(Default, Default, True)
 			Else
 				Return $FAIL
 			EndIf
@@ -1076,7 +1068,33 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 EndFunc
 
 
-Func IsPlayerStuck($movementDistance, ByRef $blocked, $minMovement = 5, $stuckTicks = 6)
+Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
+	Static $oldMyX = Null
+	Static $oldMyY = Null
+	Static $blocked = 0
+
+	If $reset Then
+		$oldMyX = Null
+		$oldMyY = Null
+		$blocked = 0
+		Return False
+	EndIf
+
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+
+	If $oldMyX == Null Or $oldMyY == Null Then
+		$oldMyX = $myX
+		$oldMyY = $myY
+		$blocked = 0
+		Return False
+	EndIf
+
+	Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
+	$oldMyX = $myX
+	$oldMyY = $myY
+
 	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
 	If $movementDistance < $minMovement Then
 		$blocked += 1
