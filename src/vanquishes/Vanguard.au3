@@ -73,6 +73,8 @@ EndFunc
 Func VanquishDaladaUplands()
 	If GetMapID() <> $ID_DALADA_UPLANDS Then Return $FAIL
 
+	If IsHardmodeEnabled() Then UseConset()
+
 	; 72 groups to vanquish + 21 movements
 	Local Static $foes[][] = [ _
 		_ ; blessing

@@ -103,6 +103,8 @@ Func FarmTheSulfurousWastes()
 	ActionInteract()
 	RandomSleep(1500)
 
+	If IsHardmodeEnabled() Then UseConset()
+
 	; 30 groups to vanquish
 	Local Static $foes[][] = [ _
 		[-800,		12000,	'First Undead Group 1'			], _

@@ -84,6 +84,8 @@ EndFunc
 Func FarmMinotaurs()
 	If GetMapID() <> $ID_PROPHETS_PATH Then Return $FAIL
 
+	If IsHardmodeEnabled() Then UseConset()
+	
 	; 12 groups to vanquish
 	Local Static $minotaurs[][] = [ _
 		[18870,		-6,		'Minotaurs group 1'		], _

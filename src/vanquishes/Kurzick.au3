@@ -86,6 +86,8 @@ Func VanquishFerndale()
 	GoNearestNPCToCoords(-12909, 15616)
 	TakeFactionBlessing('kurzick')
 
+	If IsHardmodeEnabled() Then UseConset()
+
 	; 117 groups to vanquish
 	Local Static $foes[][] = [ _
 		[-11733,	16729,		'Mantis Group 1',					$AGGRO_RANGE		], _

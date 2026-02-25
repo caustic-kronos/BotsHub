@@ -84,6 +84,9 @@ Func FarmMirrorOfLyss()
 	RandomSleep(1000)
 	Dialog(0x85)
 	RandomSleep(1000)
+
+	If IsHardmodeEnabled() Then UseConset()
+
 	MoveAggroAndKill(-13760, -13924, 'Path 1')
 	MoveAggroAndKill(-10600, -12671, 'Path 2')
 	MoveAggroAndKill(-4785, -14912, 'Path 3')

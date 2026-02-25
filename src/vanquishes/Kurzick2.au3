@@ -78,21 +78,9 @@ Func VanquishDrazach()
 	Info('Taking blessing')
 	MoveTo(-4930, -16385)
 	GoNearestNPCToCoords(-5620, -16370)
-	If GetLuxonFaction() > GetKurzickFaction() Then
-		Dialog(0x81)
-		Sleep(1000)
-		Dialog(0x2)
-		Sleep(1000)
-		Dialog(0x84)
-		Sleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-	Else
-		Dialog(0x85)
-		RandomSleep(1000)
-		Dialog(0x86)
-		RandomSleep(1000)
-	EndIf
+	TakeFactionBlessing('kurzick')
+
+	If IsHardmodeEnabled() Then UseConset()
 
 	Local Static $foes[][] = [ _
 		[-6506,		-16099,		'Start'					], _

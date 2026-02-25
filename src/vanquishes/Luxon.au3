@@ -85,6 +85,8 @@ Func VanquishMountQinkai()
 	GoNearestNPCToCoords(-8394, -9801)
 	TakeFactionBlessing('luxon')
 
+	If IsHardmodeEnabled() Then UseConset()
+
 	; 43 groups to vanquish
 	Local Static $foes[][] = [ _
 		[-11400,	-9000,		'Yetis',				$AGGRO_RANGE	], _

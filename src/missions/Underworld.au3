@@ -83,6 +83,7 @@ EndFunc
 
 Func UnderworldFarmLoop()
 	Info('Starting Farm')
+	UseConset()
 	ClearTheChamberUnderworld()
 
 	; Accept reward & take quest Restoring Grenth's Monuments

@@ -79,7 +79,7 @@ EndFunc
 
 ;~ Farm exact process - wrapper needed to be able to deregister adlib functions
 Func FoWFarmProcess()
-	If IsHardmodeEnabled() Then UseConset()
+	UseConset()
 	If TowerOfCourage() == $FAIL Then Return $FAIL
 	If TheGreatBattleField() == $FAIL Then Return $FAIL
 	If TheTempleOfWar() == $FAIL Then Return $FAIL

@@ -106,6 +106,9 @@ Func FarmLairSnowman()
 	GoToNPC(GetNearestNPCToCoords(-14131, 15437))
 	RandomSleep(250)
 	Dialog(0x84)
+	RandomSleep(500)
+
+	If IsHardmodeEnabled() Then UseConset()
 
 	FlagMoveAggroAndKillInRange(-14610, 12352, 'First Snowmen Block')
 	FlagMoveAggroAndKillInRange(-16585, 8741, 'Second Snowmen Block')

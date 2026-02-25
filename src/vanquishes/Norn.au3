@@ -74,6 +74,8 @@ EndFunc
 Func VanquishVarajarFells()
 	If GetMapID() <> $ID_VARAJAR_FELLS Then Return $FAIL
 
+	If IsHardmodeEnabled() Then UseConset()
+
 	; 43 groups to vanquish + 6 movements
 	Local Static $foes[][] = [ _
 		_ ; blessing

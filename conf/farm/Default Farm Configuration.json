@@ -9,6 +9,7 @@
 		"hard_mode": true,
 		"farm_materials_mid_run": false,
 		"consume_consumables": true,
+		"use_consets": false,
 		"use_scrolls": false,
 		"sort_items": false,
 		"collect_data": false,
