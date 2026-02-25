@@ -592,8 +592,11 @@ EndFunc
 ;~ Handle main GUI buttons usage
 Func GuiMainButtonHandler()
 	Switch @GUI_CtrlId
+		Case $gui_combo_characterchoice
+			$character_name = GUICtrlRead($gui_combo_characterchoice)
 		Case $gui_combo_farmchoice
-			UpdateFarmDescription(GUICtrlRead($gui_combo_farmchoice))
+			$farm_name = GUICtrlRead($gui_combo_farmchoice)
+			UpdateFarmDescription($farm_name)
 		Case $gui_combo_configchoice
 			Local $filePath = @ScriptDir & '/conf/farm/' & GUICtrlRead($gui_combo_configchoice) & '.json'
 			LoadRunConfiguration($filePath)
@@ -626,7 +629,8 @@ EndFunc
 Func GuiStartButtonHandler()
 	Switch $runtime_status
 		Case 'UNINITIALIZED'
-			If (Authentification(GUICtrlRead($gui_combo_characterchoice)) <> $SUCCESS) Then Return
+			$character_name = GUICtrlRead($gui_combo_characterchoice)
+			If (Authentification($character_name) <> $SUCCESS) Then Return
 			$runtime_status = 'INITIALIZED'
 			GUICtrlSetData($gui_startbutton, 'Pause')
 			GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTCORAL)
@@ -1335,8 +1339,12 @@ Func RefreshCharactersComboBox()
 	For $i = 1 To $game_clients[0][0]
 		If $game_clients[$i][0] <> -1 Then $comboList &= '|' & $game_clients[$i][3]
 	Next
-	GUICtrlSetData($gui_combo_characterchoice, $comboList, $game_clients[0][0] > 0 ? $game_clients[1][3] : '')
-	If ($game_clients[0][0] > 0) Then SelectClient(1)
+	GUICtrlSetData($gui_combo_characterchoice, $comboList, '')
+	If ($game_clients[0][0] > 0) Then
+		SelectClient(1)
+		GUICtrlSetData($gui_combo_characterchoice, $comboList, $game_clients[1][3])
+		$character_name = $game_clients[1][3]
+	EndIf
 EndFunc
 
 

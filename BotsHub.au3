@@ -217,7 +217,6 @@ Func BotHubLoop()
 		If ($runtime_status == 'RUNNING') Then
 			If $run_mode == 'GUI' Then
 				DisableGUIComboboxes()
-				$farm_name = GUICtrlRead($gui_combo_farmchoice)
 				If $farm_name == Null Or $farm_name == '' Then
 					Error('This farm does not exist.')
 					$runtime_status = 'INITIALIZED'
