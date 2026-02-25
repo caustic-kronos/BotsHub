@@ -81,12 +81,19 @@ EndFunc
 Func FoWFarmProcess()
 	UseConset()
 	If TowerOfCourage() == $FAIL Then Return $FAIL
+	UseConset()
 	If TheGreatBattleField() == $FAIL Then Return $FAIL
+	UseConset()
 	If TheTempleOfWar() == $FAIL Then Return $FAIL
+	UseConset()
 	If TheSpiderCave_and_FissureShore() == $FAIL Then Return $FAIL
+	UseConset()
 	If LakeOfFire() == $FAIL Then Return $FAIL
+	UseConset()
 	If TowerOfStrength() == $FAIL Then Return $FAIL
+	UseConset()
 	If BurningForest() == $FAIL Then Return $FAIL
+	UseConset()
 	If ForestOfTheWailingLord() == $FAIL Then Return $FAIL
 	If GriffonRun() == $FAIL Then Return $FAIL
 	If TempleLoot() == $FAIL Then Return $FAIL

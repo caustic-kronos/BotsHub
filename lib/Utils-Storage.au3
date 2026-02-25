@@ -1950,9 +1950,9 @@ EndFunc
 ;~ Use Armor of Salvation, Essence of Celerity and Grail of Might
 Func UseConset($forceUse = False)
 	If (Not $forceUse And Not $run_options_cache['run.use_consets']) Then Return
-	UseConsumable($ID_ARMOR_OF_SALVATION)
-	UseConsumable($ID_ESSENCE_OF_CELERITY)
-	UseConsumable($ID_GRAIL_OF_MIGHT)
+	If GetEffectTimeRemaining(GetEffect($ID_ARMOR_OF_SALVATION_EFFECT)) <= 0 Then UseConsumable($ID_ARMOR_OF_SALVATION)
+	If GetEffectTimeRemaining(GetEffect($ID_ESSENCE_OF_CELERITY_EFFECT)) <= 0 Then UseConsumable($ID_ESSENCE_OF_CELERITY)
+	If GetEffectTimeRemaining(GetEffect($ID_GRAIL_OF_MIGHT_EFFECT)) <= 0 Then UseConsumable($ID_GRAIL_OF_MIGHT)
 EndFunc
 
 

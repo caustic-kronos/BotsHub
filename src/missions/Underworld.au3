@@ -92,31 +92,37 @@ Func UnderworldFarmLoop()
 	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)
 	Info('Taking Restoring Grenths Monuments Quest')
 
+	UseConset()
 	ClearTheForgottenVale()
 	; Take Quest Wrathful spirits from the Reaper and complete
 	Local $Reaper_ForgottenVale
 	$Reaper_ForgottenVale = GetNearestNPCToCoords(-13211, 5322)
 	WrathfulSpirits($Reaper_ForgottenVale)
 
+	UseConset()
 	ClearTheFrozenWastes()
 	; Take Quest Servants of Grenth from Reaper of the Ice Wastes
 	Local $Reaper_IceWastes
 	$Reaper_IceWastes = GetNearestNPCToCoords(526, 18407)
 	ServantsOfGrenth($Reaper_IceWastes)
 
+	UseConset()
 	ClearTheChaosPlanes()
 	; Take Quest The Four Horsemen from Reaper of the Chaos Planes
 	Local $Reaper_ChaosPlanes
 	$Reaper_ChaosPlanes = GetNearestNPCToCoords(11306, -17893)
+	UseConset()
 	; TODO: Currently this function simply takes player back to Labyrinth Reaper
 	TheFourHorsemen($Reaper_ChaosPlanes)
 
+	UseConset()
 	ClearSpawningPools($Reaper_Labyrinth)
 	; Take Quest Terrorweb Queen from the Reaper of the Spawning Pools
 	Local $Reaper_SpawningPools
 	$Reaper_SpawningPools = GetNearestNPCToCoords(-6962, -19505)
 	TerrorwebQueen($Reaper_SpawningPools)
 
+	UseConset()
 	ClearBonePits($Reaper_Labyrinth)
 	; Take Quest Imprisoned Spirits from the Reaper of the Bone Pits
 	Local $Reaper_BonePits
