@@ -575,7 +575,7 @@ EndFunc
 
 
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
-Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_movedefend_options)
+Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_move_defend_options)
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
@@ -921,18 +921,18 @@ $default_move_aggro_kill_options.Add('ignoreDroppedLoot', False)
 ; default 60 seconds fight duration
 $default_move_aggro_kill_options.Add('fightDuration', 60000)
 
-Global $default_flagmoveaggroandkill_options = CloneDictMap($default_move_aggro_kill_options)
-$default_flagmoveaggroandkill_options.Item('flagHeroesOnFight') = True
+Global $flag_move_aggro_kill_options = CloneDictMap($default_move_aggro_kill_options)
+$flag_move_aggro_kill_options.Item('flagHeroesOnFight') = True
 
-Global $default_movedefend_options = ObjCreate('Scripting.Dictionary')
-$default_movedefend_options.Add('defendFunction', Null)
-$default_movedefend_options.Add('moveTimeOut', 5 * 60 * 1000)
+Global $default_move_defend_options = ObjCreate('Scripting.Dictionary')
+$default_move_defend_options.Add('defendFunction', Null)
+$default_move_defend_options.Add('moveTimeOut', 5 * 60 * 1000)
 ; random factor for movement
-$default_movedefend_options.Add('randomFactor', 100)
-$default_movedefend_options.Add('hosSkillSlot', 0)
-$default_movedefend_options.Add('deathChargeSkillSlot', 0)
-$default_movedefend_options.Add('openChests', False)
-$default_movedefend_options.Add('chestOpenRange', $RANGE_SPIRIT)
+$default_move_defend_options.Add('randomFactor', 100)
+$default_move_defend_options.Add('hosSkillSlot', 0)
+$default_move_defend_options.Add('deathChargeSkillSlot', 0)
+$default_move_defend_options.Add('openChests', False)
+$default_move_defend_options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
@@ -969,7 +969,7 @@ EndFunc
 
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
-Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $default_flagmoveaggroandkill_options)
+Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $flag_move_aggro_kill_options)
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
@@ -984,7 +984,7 @@ EndFunc
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
 Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_flagmoveaggroandkill_options)
+	If $options = Null Then $options = CloneDictMap($flag_move_aggro_kill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc

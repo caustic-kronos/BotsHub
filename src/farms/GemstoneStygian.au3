@@ -88,7 +88,7 @@ Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
 Global Const $STYGIANS_RANGE_SHORT = 800
 Global Const $STYGIANS_RANGE_LONG = 1300
 
-Global $stygian_run_options = CloneDictMap($default_movedefend_options)
+Global $stygian_run_options = CloneDictMap($default_move_defend_options)
 $stygian_run_options.Item('defendFunction')		= StygianCheckRunBuffs
 $stygian_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
 $stygian_run_options.Item('randomFactor')			= 20

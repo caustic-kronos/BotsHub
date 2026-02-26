@@ -65,7 +65,7 @@ Global Const $FOW_TOC_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 Global Const $FOW_TOC_FARM_DURATION = 3 * 60 * 1000
 Global Const $MAX_FOW_TOC_FARM_DURATION = 6 * 60 * 1000
 
-Global $fow_toc_move_options = CloneDictMap($default_movedefend_options)
+Global $fow_toc_move_options = CloneDictMap($default_move_defend_options)
 $fow_toc_move_options.Item('defendFunction')		= CastFowToCBuffs
 $fow_toc_move_options.Item('moveTimeOut')			= 5 * 60 * 1000
 $fow_toc_move_options.Item('randomFactor')			= 25

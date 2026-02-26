@@ -74,7 +74,7 @@ Global Const $VAETTIR_ELEMENTALIST_ELEMENTAL_LORD		= 4
 Global Const $VAETTIR_ELEMENTALIST_MANTRA_OF_EARTH		= 5
 
 ; ==== Global variables ====
-Global $vaettirs_move_options = CloneDictMap($default_movedefend_options)
+Global $vaettirs_move_options = CloneDictMap($default_move_defend_options)
 $vaettirs_move_options.Item('defendFunction')				= VaettirsStayAlive
 $vaettirs_move_options.Item('moveTimeOut')					= 100 * 1000
 $vaettirs_move_options.Item('randomFactor')					= 50

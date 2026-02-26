@@ -103,7 +103,7 @@ Global Const $GEMSTONE_MARGONITE_FARM_DURATION = 5 * 60 * 1000
 Global Const $MAX_GEMSTONE_MARGONITE_FARM_DURATION = 10 * 60 * 1000
 Global Const $MARGONITES_RANGE = 800
 
-Global $margonite_move_options = CloneDictMap($default_movedefend_options)
+Global $margonite_move_options = CloneDictMap($default_move_defend_options)
 $margonite_move_options.Item('defendFunction')		= MargoniteDefend
 $margonite_move_options.Item('moveTimeOut')			= 100 * 1000
 $margonite_move_options.Item('randomFactor')			= 25

@@ -61,7 +61,7 @@ Global Const $TORMENT_WEAPON_SLOT_STAFF = 2
 ; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
 Global Const $TORMENT_WEAPON_SLOT_FOCUS = 3
 
-Global $torment_run_options = CloneDictMap($default_movedefend_options)
+Global $torment_run_options = CloneDictMap($default_move_defend_options)
 $torment_run_options.Item('defendFunction')		= DefendTormentFarm
 $torment_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
 $torment_run_options.Item('randomFactor')			= 200
