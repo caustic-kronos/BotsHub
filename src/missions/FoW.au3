@@ -79,14 +79,19 @@ EndFunc
 
 ;~ Farm exact process - wrapper needed to be able to deregister adlib functions
 Func FoWFarmProcess()
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	If TowerOfCourage() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	If TheGreatBattleField() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	If TheTempleOfWar() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	If TheSpiderCave_and_FissureShore() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	If LakeOfFire() == $FAIL Then Return $FAIL
 	UseConset()

@@ -83,6 +83,7 @@ EndFunc
 
 Func UnderworldFarmLoop()
 	Info('Starting Farm')
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	ClearTheChamberUnderworld()
 
@@ -92,6 +93,7 @@ Func UnderworldFarmLoop()
 	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)
 	Info('Taking Restoring Grenths Monuments Quest')
 
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	ClearTheForgottenVale()
 	; Take Quest Wrathful spirits from the Reaper and complete
@@ -99,6 +101,7 @@ Func UnderworldFarmLoop()
 	$Reaper_ForgottenVale = GetNearestNPCToCoords(-13211, 5322)
 	WrathfulSpirits($Reaper_ForgottenVale)
 
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	ClearTheFrozenWastes()
 	; Take Quest Servants of Grenth from Reaper of the Ice Wastes
@@ -106,6 +109,7 @@ Func UnderworldFarmLoop()
 	$Reaper_IceWastes = GetNearestNPCToCoords(526, 18407)
 	ServantsOfGrenth($Reaper_IceWastes)
 
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	ClearTheChaosPlanes()
 	; Take Quest The Four Horsemen from Reaper of the Chaos Planes
@@ -115,6 +119,7 @@ Func UnderworldFarmLoop()
 	; TODO: Currently this function simply takes player back to Labyrinth Reaper
 	TheFourHorsemen($Reaper_ChaosPlanes)
 
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	ClearSpawningPools($Reaper_Labyrinth)
 	; Take Quest Terrorweb Queen from the Reaper of the Spawning Pools
@@ -122,6 +127,7 @@ Func UnderworldFarmLoop()
 	$Reaper_SpawningPools = GetNearestNPCToCoords(-6962, -19505)
 	TerrorwebQueen($Reaper_SpawningPools)
 
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	ClearBonePits($Reaper_Labyrinth)
 	; Take Quest Imprisoned Spirits from the Reaper of the Bone Pits
