@@ -61,7 +61,7 @@ Global Const $KEIRAN_SKILLS_ARRAY			= [$KEIRAN_SNIPER_SHOT,	$KEIRAN_GRAVESTONE_M
 Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,							2,						0,						0]
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
-Global $warsupply_fight_options = CloneDictMap($default_moveaggroandkill_options)
+Global $warsupply_fight_options = CloneDictMap($default_move_aggro_kill_options)
 $warsupply_fight_options.Item('fightFunction')	= WarSupplyFarmFight
 $warsupply_fight_options.Item('fightRange')		= 1250
 ; approximate 20 seconds max duration of initial and final fight
@@ -241,7 +241,7 @@ Func RunWayPoints()
 	]
 
 	Info('Running through way points')
-	Local $x, $y, $log, $range, $me, $Miku
+	Local $x, $y, $log, $range, $me, $miku
 	For $i = 0 To UBound($wayPoints) - 1
 		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS And GetMapID() <> $ID_HALL_OF_MONUMENTS) Then Disconnected()
 		$x = $wayPoints[$i][0]
@@ -257,19 +257,19 @@ Func RunWayPoints()
 			If CheckStuck('Waypoint ' & $log, $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
 			If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then ExitLoop
 			$me = GetMyAgent()
-			$Miku = GetAgentByID($AGENTID_MIKU)
+			$miku = GetAgentByID($AGENTID_MIKU)
 			; check against some impossible scenarios
-			If DllStructGetData($Miku, 'X') == 0 And DllStructGetData($Miku, 'Y') == 0 Then Return $FAIL
+			If DllStructGetData($miku, 'X') == 0 And DllStructGetData($miku, 'Y') == 0 Then Return $FAIL
 			; Using 6th healing skill on the way between waypoints to recover until health is full
-			If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
+			If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($miku, 'HealthPercent') < 0.9) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
 			If CountFoesInRangeOfAgent($me, $warsupply_fight_options.Item('fightRange')) > 0 Then WarSupplyFarmFight($warsupply_fight_options)
 			; Ensuring that Miku is not too far
-			If GetDistance($me, $Miku) > 1650 Then
+			If GetDistance($me, $miku) > 1650 Then
 				Info('Miku is too far. Trying to move to her location')
-				MoveTo(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), $RANGE_NEARBY)
+				MoveTo(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'), $RANGE_NEARBY)
 			EndIf
 			; continue running through waypoints
-			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($Miku, 'HealthPercent') > 0.9 Then ExitLoop
+			If GetDistance($me, $miku) < 1650 And Not GetIsDead($miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($miku, 'HealthPercent') > 0.9 Then ExitLoop
 			Sleep(1000)
 		WEnd
 		If IsPlayerDead() Then Return $FAIL

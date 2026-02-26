@@ -337,16 +337,16 @@ EndFunc
 
 
 Func IsAnurDabiOrKayaOrKiOrSu($agent)
-	Local Static $AnurKaya	= 5166
-	Local Static $AnurDabi	= 5167
-	Local Static $AnurSu	= 5168
-	Local Static $AnurKi	= 5169
+	Local Static $anurKaya	= 5166
+	Local Static $anurDabi	= 5167
+	Local Static $anurSu	= 5168
+	Local Static $anurKi	= 5169
 
 	Return EnemyAgentFilter($agent) And _
-		(DllStructGetData($agent, 'ModelID') == $AnurKaya Or _
-		DllStructGetData($agent, 'ModelID') == $AnurDabi Or _
-		DllStructGetData($agent, 'ModelID') == $AnurSu Or _
-		DllStructGetData($agent, 'ModelID') == $AnurKi)
+		(DllStructGetData($agent, 'ModelID') == $anurKaya Or _
+		DllStructGetData($agent, 'ModelID') == $anurDabi Or _
+		DllStructGetData($agent, 'ModelID') == $anurSu Or _
+		DllStructGetData($agent, 'ModelID') == $anurKi)
 EndFunc
 
 
@@ -483,9 +483,9 @@ EndFunc
 Func KillMargonitesUsingVisageSkills()
 	If IsPlayerDead() Then Return $FAIL
 	Local $timerKill = TimerInit()
-	Local Static $MaxFightTime = 100000
+	Local Static $maxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -520,9 +520,9 @@ EndFunc
 Func KillMargonitesUsingWhirlingDefense()
 	If IsPlayerDead() Then Return $FAIL
 	Local $timerKill = TimerInit()
-	Local Static $MaxFightTime = 100000
+	Local Static $maxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 

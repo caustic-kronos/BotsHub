@@ -48,7 +48,7 @@ Global Const $JB_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
 ;Global Const $JB_HERO_PARTY_ID = $ID_HAYDA
 Global Const $JB_HERO_INDEX = 1
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($markOfPain) is better than UseSkillEx(1))
 Global Const $JB_DRUNKENMASTER				= 1
 Global Const $JB_SAND_SHARDS				= 2
 Global Const $JB_MYSTIC_VIGOR				= 3

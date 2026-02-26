@@ -117,10 +117,10 @@ Func GoToCathedralOfFlames()
 	TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)
 	While GetMapID() <> $ID_CATHEDRAL_OF_FLAMES
 		Info('Entering Cathedral of Flames')
-		Local $Gron = GetNearestNPCToCoords(-19166, 17980)
-		GoToNPC($Gron)
+		Local $gron = GetNearestNPCToCoords(-19166, 17980)
+		GoToNPC($gron)
 		If IsQuestNotFound($ID_QUEST_TEMPLE_OF_THE_DAMNED) Then
-			TakeQuest($Gron, $ID_QUEST_TEMPLE_OF_THE_DAMNED, $QUEST_ACCEPT_DIALOG, $QUEST_INIT_DIALOG)
+			TakeQuest($gron, $ID_QUEST_TEMPLE_OF_THE_DAMNED, $QUEST_ACCEPT_DIALOG, $QUEST_INIT_DIALOG)
 			Sleep(1000)
 		EndIf
 		Dialog($ENTER_INIT_DIALOG)

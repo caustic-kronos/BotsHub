@@ -98,8 +98,8 @@ EndFunc
 
 ;~ Did run fail ?
 Func IsRunFailed()
-	Local Static $MaxPartyWipesCount = 5
-	If ($party_failures_count > $MaxPartyWipesCount) Then
+	Local Static $maxPartyWipesCount = 5
+	If ($party_failures_count > $maxPartyWipesCount) Then
 		Notice('Party wiped ' & $party_failures_count & ' times, run is considered failed.')
 		Return True
 	EndIf

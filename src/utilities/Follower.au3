@@ -131,20 +131,20 @@ EndFunc
 
 
 ;~ Follower loop
-Func FollowerLoop($RunFunction = DefaultRun, $FightFunction = DefaultFight)
+Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
 	Local Static $firstPlayer = Null, $currentMap = Null
 	; Whenever player travels to a new explorable location, then current map ID is saved and first player agent is refreshed, because changing location can change agent ID of player
 	If GetMapID() <> $currentMap Then
 		$firstPlayer = GetFirstPlayerOfParty()
 		$currentMap = GetMapID()
 	EndIf
-	$RunFunction()
+	$runFunction()
 	GoPlayer($firstPlayer)
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	If $foesCount > 0 Then
 		Debug('Foes in range detected, starting fight')
 		While IsPlayerAlive() And $foesCount > 0
-			$FightFunction()
+			$fightFunction()
 			$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 		WEnd
 		Debug('Fight is over')

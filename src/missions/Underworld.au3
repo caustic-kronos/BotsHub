@@ -53,7 +53,7 @@ Global Const $ENABLE_TERRORWEB_QUEEN = True
 Global Const $ENABLE_IMPRISONED_SPIRITS = True
 Global Const $ENABLE_DEMON_ASSASSIN = False ; Behemoths do not drop ectos. Skips Mountain area too.
 
-Global $underworld_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
 
 Global $uw_farm_setup = False
 
@@ -83,77 +83,55 @@ EndFunc
 
 Func UnderworldFarmLoop()
 	Info('Starting Farm')
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
-	ClearTheChamberUnderworld()
+	UseUWConsetsAndConsumables()
+	If ClearTheChamberUnderworld() == $FAIL Then Return $FAIL
 
 	; Accept reward & take quest Restoring Grenth's Monuments
-	Local $Reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
-	TakeQuestReward($Reaper_Labyrinth, $ID_QUEST_CLEAR_THE_CHAMBER, 0x806507)
-	TakeQuest($Reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)
+	Local $reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
+	TakeQuestReward($reaper_Labyrinth, $ID_QUEST_CLEAR_THE_CHAMBER, 0x806507)
+	TakeQuest($reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)
 	Info('Taking Restoring Grenths Monuments Quest')
 
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
-	ClearTheForgottenVale()
-	; Take Quest Wrathful spirits from the Reaper and complete
-	Local $Reaper_ForgottenVale
-	$Reaper_ForgottenVale = GetNearestNPCToCoords(-13211, 5322)
-	WrathfulSpirits($Reaper_ForgottenVale)
+	UseUWConsetsAndConsumables()
+	If ClearTheForgottenVale() == $FAIL Then Return $FAIL
+	If WrathfulSpirits() == $FAIL Then Return $FAIL
 
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
-	ClearTheFrozenWastes()
-	; Take Quest Servants of Grenth from Reaper of the Ice Wastes
-	Local $Reaper_IceWastes
-	$Reaper_IceWastes = GetNearestNPCToCoords(526, 18407)
-	ServantsOfGrenth($Reaper_IceWastes)
+	UseUWConsetsAndConsumables()
+	If ClearTheFrozenWastes() == $FAIL Then Return $FAIL
+	If ServantsOfGrenth() == $FAIL Then Return $FAIL
 
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
-	ClearTheChaosPlanes()
-	; Take Quest The Four Horsemen from Reaper of the Chaos Planes
-	Local $Reaper_ChaosPlanes
-	$Reaper_ChaosPlanes = GetNearestNPCToCoords(11306, -17893)
-	UseConset()
+	UseUWConsetsAndConsumables()
+	If ClearTheChaosPlanes() == $FAIL Then Return $FAIL
 	; TODO: Currently this function simply takes player back to Labyrinth Reaper
-	TheFourHorsemen($Reaper_ChaosPlanes)
+	If TheFourHorsemen() == $FAIL Then Return $FAIL
 
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
-	ClearSpawningPools($Reaper_Labyrinth)
-	; Take Quest Terrorweb Queen from the Reaper of the Spawning Pools
-	Local $Reaper_SpawningPools
-	$Reaper_SpawningPools = GetNearestNPCToCoords(-6962, -19505)
-	TerrorwebQueen($Reaper_SpawningPools)
+	UseUWConsetsAndConsumables()
+	If ClearSpawningPools($reaper_Labyrinth) == $FAIL Then Return $FAIL
+	If TerrorwebQueen() == $FAIL Then Return $FAIL
 
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
-	ClearBonePits($Reaper_Labyrinth)
-	; Take Quest Imprisoned Spirits from the Reaper of the Bone Pits
-	Local $Reaper_BonePits
-	$Reaper_BonePits = GetNearestNPCToCoords(8759, 6314)
-	ImprisonedSpirits($Reaper_BonePits)
+	UseUWConsetsAndConsumables()
+	If ClearBonePits($reaper_Labyrinth) == $FAIL Then Return $FAIL
+	If ImprisonedSpirits() == $FAIL Then Return $FAIL
 
-	If $ATTEMPT_REAPER_QUESTS == True Then
-		ClearTwinSerpentMountains()
-		; Take Quest Demon Assassin from the Reaper of the Twin Serpent Mountains & defend
-		Local $Reaper_TwinSerpentMountains
-		$Reaper_TwinSerpentMountains = GetNearestNPCToCoords(8220, 5202)
-		DemonAssassin($Reaper_TwinSerpentMountains)
-	Else
-		Info('Skipping Twin Serpent Mounts Area as per settings')
-	EndIf
+	If ClearTwinSerpentMountains() == $FAIL Then Return $FAIL
+	If DemonAssassin() == $FAIL Then Return $FAIL
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
+;~ Small wrapper to use both conset and legionnaire summoning crystal
+Func UseUWConsetsAndConsumables()
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
+EndFunc
+
+
 ;~ Send user back to Chaos Plains
-Func TeleportBackToChaosPlains($Reaper)
+Func TeleportBackToChaosPlains($reaper)
 	Info('Teleporting back to Chaos Plains')
 	Sleep(1000)
-	GoToNPC($Reaper)
+	GoToNPC($reaper)
 	Sleep(1000)
 	Dialog(0x7F)
 	Sleep(1000)
@@ -165,10 +143,10 @@ EndFunc
 
 
 ;~ Send user back to Labyrinth if skipping quest
-Func TeleportBackToLabyrinthQuestSkip($Reaper)
+Func TeleportBackToLabyrinthQuestSkip($reaper)
 	Info('Teleporting back to Labyrinth')
 	Sleep(1000)
-	GoToNPC($Reaper)
+	GoToNPC($reaper)
 	Sleep(1000)
 	Dialog(0x7F)
 	Sleep(1000)
@@ -180,10 +158,10 @@ EndFunc
 
 
 ;~ Send user back to Labyrinth after completing quest
-Func TeleportBackToLabyrinthQuestComplete($Reaper)
+Func TeleportBackToLabyrinthQuestComplete($reaper)
 	Info('Teleporting back to Labyrinth')
 	Sleep(1000)
-	GoToNPC($Reaper)
+	GoToNPC($reaper)
 	Sleep(1000)
 	Dialog(0x86)
 	Sleep(1000)
@@ -326,22 +304,20 @@ Func ClearTheForgottenVale()
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
-Func WrathfulSpirits($Reaper)
+Func WrathfulSpirits()
+	; Take Quest Wrathful spirits from the Reaper and complete
+	Local $reaper = GetNearestNPCToCoords(-13211, 5322)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_WRATHFUL_SPIRITS Then
 		Info('Skipping Wrathful Spirits Quest as per settings')
-		TeleportBackToLabyrinthQuestSkip($Reaper)
+		TeleportBackToLabyrinthQuestSkip($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
 	$optionsForgottenVale.Item('fightRange') = $RANGE_EARSHOT
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('ignoreDroppedLoot') = False
-	TakeQuest($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
-			ExitLoop
-		EndIf
+	TakeQuest($reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
+	While Not IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS)
 		Info('1st Group')
 		MoveTo(-13290, 3629)
 		MoveTo(-13200, 2657)
@@ -381,12 +357,13 @@ Func WrathfulSpirits($Reaper)
 		MoveAggroAndKill(-12530, 6322)
 		MoveAggroAndKill(-13665, 4673)
 		MoveAggroAndKill(-13211, 5322)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
+			Return $FAIL
+		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
-		Return $FAIL
-	EndIf
-	TakeQuestReward($Reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E07)
+	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
+	TakeQuestReward($reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E07)
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(-8233, 45)
 	RandomSleep(30000)
@@ -400,7 +377,7 @@ Func WrathfulSpirits($Reaper)
 	Sleep(250)
 	CancelAll()
 	MoveAggroAndKill(-13211, 5322)
-	TeleportBackToLabyrinthQuestComplete($Reaper)
+	TeleportBackToLabyrinthQuestComplete($reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -497,10 +474,12 @@ Func ClearTheFrozenWastes()
 EndFunc
 
 
-Func ServantsOfGrenth($Reaper)
+Func ServantsOfGrenth()
+	; Take Quest Servants of Grenth from Reaper of the Ice Wastes
+	Local $reaper = GetNearestNPCToCoords(526, 18407)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_SERVANTS_OF_GRENTH Then
 		Info('Skipping Servants of Grenth Quest as per settings')
-		TeleportBackToLabyrinthQuestSkip($Reaper)
+		TeleportBackToLabyrinthQuestSkip($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
@@ -516,26 +495,22 @@ Func ServantsOfGrenth($Reaper)
 	CommandHero(6, 2362, 19090)
 	CommandHero(7, 2373, 19447)
 	RandomSleep(16000)
-	TakeQuest($Reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806601, 0x806603)
+	TakeQuest($reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806601, 0x806603)
 	RandomSleep(1000)
 	MoveTo(2200, 19668)
 	MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
 	Info('Killing waves of Dryders and Skeletons')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_SERVANTS_OF_GRENTH) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
-			ExitLoop
-		Else
-			MoveAggroAndKill(2807, 19907, '', $optionsFrozenWastes)
-			RandomSleep(250)
-			MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
-			RandomSleep(250)
+	While Not IsQuestReward($ID_QUEST_SERVANTS_OF_GRENTH)
+		MoveAggroAndKill(2807, 19907, '', $optionsFrozenWastes)
+		RandomSleep(250)
+		MoveAggroAndKill(2200, 19668, '', $optionsFrozenWastes)
+		RandomSleep(250)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
+			Return $FAIL
 		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
-		Return $FAIL
-	EndIf
+	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
 	MoveAggroAndKill(2514, 17133, '', $optionsFrozenWastes)
 	CancelAllHeroes()
 	MoveAggroAndKill(3693, 16071, '', $optionsFrozenWastes)
@@ -567,8 +542,8 @@ Func ServantsOfGrenth($Reaper)
 	PickUpItems()
 	CancelAll()
 	MoveTo(560, 18377)
-	TakeQuestReward($Reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806607)
-	TeleportBackToLabyrinthQuestComplete($Reaper)
+	TakeQuestReward($reaper, $ID_QUEST_SERVANTS_OF_GRENTH, 0x806607)
+	TeleportBackToLabyrinthQuestComplete($reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -824,17 +799,19 @@ Func ClearTheChaosPlanes()
 EndFunc
 
 
-Func TheFourHorsemen($Reaper)
+Func TheFourHorsemen()
+	; Take Quest The Four Horsemen from Reaper of the Chaos Planes
+	Local $reaper = GetNearestNPCToCoords(11306, -17893)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THE_FOUR_HORSEMEN Then
 		Info('Skipping The Four Horsemen Quest as per settings')
-		TeleportBackToLabyrinthQuestSkip($Reaper)
+		TeleportBackToLabyrinthQuestSkip($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	;Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
 	;$optionsChaosPlanes.Item('fightRange') = $RANGE_EARSHOT * 1.5
 	;$optionsChaosPlanes.Item('flagHeroesOnFight') = False
 	;$optionsChaosPlanes.Item('ignoreDroppedLoot') = False
-	;GoToNPC($Reaper)
+	;GoToNPC($reaper)
 	;RandomSleep(1000)
 	;Dialog(0x7F) ; The Four Horsemen = 0x806A03
 	;RandomSleep(1000)
@@ -843,18 +820,18 @@ Func TheFourHorsemen($Reaper)
 	;RandomSleep(1000)
 	;Dialog(0x8D) ; Remove when quest is implemented
 	;RandomSleep(1000) ; Remove when quest is implemented
-	;TeleportBackToLabyrinthQuestComplete($Reaper)
+	;TeleportBackToLabyrinthQuestComplete($reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
-Func ClearSpawningPools($Reaper)
+Func ClearSpawningPools($reaper)
 	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('ignoreDroppedLoot') = False
-	TeleportBackToChaosPlains($Reaper)
+	TeleportBackToChaosPlains($reaper)
 	Info('Moving to Spawning Pools')
 	MoveAggroAndKill(10235, -19396)
 	MoveAggroAndKill(8730, -20479)
@@ -923,17 +900,19 @@ Func ClearSpawningPools($Reaper)
 EndFunc
 
 
-Func TerrorwebQueen($Reaper)
+Func TerrorwebQueen()
+	; Take Quest Terrorweb Queen from the Reaper of the Spawning Pools
+	Local $reaper = GetNearestNPCToCoords(-6962, -19505)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_TERRORWEB_QUEEN Then
 		Info('Skipping Terrorweb Queen Quest as per settings')
-		TeleportBackToLabyrinthQuestSkip($Reaper)
+		TeleportBackToLabyrinthQuestSkip($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
 	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	$optionsSpawningPools.Item('flagHeroesOnFight') = True
 	$optionsSpawningPools.Item('ignoreDroppedLoot') = False
-	TakeQuest($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
+	TakeQuest($reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
 	Info('Clearing Exterior')
 	MoveAggroAndKill(-8585, -19681)
 	MoveAggroAndKill(-9400, -17320)
@@ -960,19 +939,19 @@ Func TerrorwebQueen($Reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-	TakeQuestReward($Reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B07)
-	TeleportBackToLabyrinthQuestComplete($Reaper)
+	TakeQuestReward($reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B07)
+	TeleportBackToLabyrinthQuestComplete($reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
-Func ClearBonePits($Reaper)
+Func ClearBonePits($reaper)
 	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
 	$optionsBonePits.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('ignoreDroppedLoot') = False
-	TeleportBackToChaosPlains($Reaper)
+	TeleportBackToChaosPlains($reaper)
 	MoveAggroAndKill(13653, -16965)
 	Info('Let us make sure Reaper is ok before proceeding.')
 	MoveAggroAndKill(12564, -17553)
@@ -1037,10 +1016,12 @@ Func ClearBonePits($Reaper)
 EndFunc
 
 
-Func ImprisonedSpirits($Reaper)
+Func ImprisonedSpirits()
+	; Take Quest Imprisoned Spirits from the Reaper of the Bone Pits
+	Local $reaper = GetNearestNPCToCoords(8759, 6314)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_IMPRISONED_SPIRITS Then
 		Info('Skipping Imprisoned Spirits Quest as per settings')
-		TeleportBackToLabyrinthQuestSkip($Reaper)
+		TeleportBackToLabyrinthQuestSkip($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
@@ -1056,27 +1037,22 @@ Func ImprisonedSpirits($Reaper)
 	CommandHero(6, 12787, 3645)
 	CommandHero(7, 12526, 4567)
 	RandomSleep(30000)
-	TakeQuest($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806901, 0x806903)
+	TakeQuest($reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806901, 0x806903)
 	MoveTo(12714, 4288)
 	MoveAggroAndKill(12832, 4436, '', $optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
-			ExitLoop
-		Else
-			MoveAggroAndKill(12711, 3339, '', $optionsBonePits)
-			RandomSleep(250)
-			MoveAggroAndKill(12579, 2997, '', $optionsBonePits)
-			RandomSleep(250)
-			MoveAggroAndKill(12832, 3339, '', $optionsBonePits)
-			RandomSleep(250)
+	While Not IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS) Then
+		MoveAggroAndKill(12711, 3339, '', $optionsBonePits)
+		RandomSleep(250)
+		MoveAggroAndKill(12579, 2997, '', $optionsBonePits)
+		RandomSleep(250)
+		MoveAggroAndKill(12832, 3339, '', $optionsBonePits)
+		RandomSleep(250)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
+			Return $FAIL
 		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
-		Return $FAIL
-	EndIf
 	; Loot here
 	Info('Picking up Loot')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
@@ -1101,8 +1077,8 @@ Func ImprisonedSpirits($Reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-	TakeQuestReward($Reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806907)
-	TeleportBackToLabyrinthQuestComplete($Reaper)
+	TakeQuestReward($reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806907)
+	TeleportBackToLabyrinthQuestComplete($reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -1245,10 +1221,12 @@ Func ClearTwinSerpentMountains()
 EndFunc
 
 
-Func DemonAssassin($Reaper)
+Func DemonAssassin()
+	; Take Quest Demon Assassin from the Reaper of the Twin Serpent Mountains & defend
+	Local $reaper = GetNearestNPCToCoords(8220, 5202)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMON_ASSASSIN Then
 		Info('Skipping Demon Assassin Quest as per settings')
-		TeleportBackToLabyrinthQuestSkip($Reaper)
+		TeleportBackToLabyrinthQuestSkip($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
@@ -1264,13 +1242,17 @@ Func DemonAssassin($Reaper)
 	CommandHero(6, -5288, -5621)
 	CommandHero(7, -5165, -6047)
 	RandomSleep(16000)
-	TakeQuest($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806801, 0x806803)
+	TakeQuest($reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806801, 0x806803)
 	MoveTo(-4742, -5531)
 	Info('Killing the Slayer')
 	For $i = 1 To 6
 		MoveAggroAndKill(-4629, -5282, '', $optionsTwinSerpentMountains)
 		RandomSleep(250)
 		MoveAggroAndKill(-4745, -5535, '', $optionsTwinSerpentMountains)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
+			Return $FAIL
+		EndIf
 		If $i < 6 Then RandomSleep(5000)
 	Next
 	Info('Waiting for the waves of Dryders')
@@ -1280,6 +1262,10 @@ Func DemonAssassin($Reaper)
 		MoveAggroAndKill(-4629, -5282, '', $optionsTwinSerpentMountains)
 		RandomSleep(250)
 		MoveAggroAndKill(-4748, -5538, '', $optionsTwinSerpentMountains)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
+			Return $FAIL
+		EndIf
 		If $i < 8 Then RandomSleep(5000)
 	Next
 	Info('Picking up Loot')
@@ -1299,8 +1285,8 @@ Func DemonAssassin($Reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-	TakeQuestReward($Reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806807)
-	TeleportBackToLabyrinthQuestComplete($Reaper)
+	TakeQuestReward($reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806807)
+	TeleportBackToLabyrinthQuestComplete($reaper)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc

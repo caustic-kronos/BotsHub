@@ -52,7 +52,7 @@ Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
 
 Global $ldoa_farm_setup = False
 
-Global $ldoa_fight_options = CloneDictMap($default_moveaggroandkill_options)
+Global $ldoa_fight_options = CloneDictMap($default_move_aggro_kill_options)
 $ldoa_fight_options.Item('openChests')			= False
 $ldoa_fight_options.Item('callTarget')			= False
 $ldoa_fight_options.Item('priorityMobs')		= True

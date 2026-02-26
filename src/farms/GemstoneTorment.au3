@@ -124,10 +124,10 @@ Func GoToRavenHeartGloom()
 	Info('Moving to RavenHeart Gloom')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in RavenHeart Gloom
-	Local Static $StartX = 16034
-	Local Static $StartY = 1244
+	Local Static $startX = 16034
+	Local Static $startY = 1244
 	Local $timerZoning = TimerInit()
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		If TimerDiff($timerZoning) > 120000 Then
 			Info('Could not zone to RavenHeart Gloom')
 			Return $FAIL

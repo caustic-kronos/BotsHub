@@ -66,9 +66,9 @@ Func EnterSunspearArmorChallenge()
 	Info('Entering Dajkah Inlet challenge')
 	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map
-	Local Static $StartX = 29886
-	Local Static $StartY = -3956
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	Local Static $startX = 29886
+	Local Static $startY = -3956
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 		RandomSleep(250)
 		Dialog(0x87)

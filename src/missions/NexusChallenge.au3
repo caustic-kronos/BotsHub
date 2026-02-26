@@ -73,9 +73,9 @@ Func EnterNexusChallengeMission()
 	TravelToOutpost($ID_THE_SHADOW_NEXUS, $district_name)
 	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
-	Local Static $StartX = -391
-	Local Static $StartY = -335
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	Local Static $startX = -391
+	Local Static $startY = -335
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		Info('Entering Nexus mission')
 		MoveTo(-2218, -5033)
 		GoToNPC(GetNearestNPCToCoords(-2218, -5033))

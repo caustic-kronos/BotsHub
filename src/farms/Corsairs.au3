@@ -134,9 +134,9 @@ Func EnterCorsairsModdokCreviceMission()
 	TravelToOutpost($ID_MODDOK_CREVICE, $district_name)
 	; Unfortunately Moddok Crevice mission map has the same map ID as Moddok Crevice outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
-	Local Static $StartX = -11468
-	Local Static $StartY = -7267
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	Local Static $startX = -11468
+	Local Static $startY = -7267
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		Info('Entering Moddok Crevice mission')
 		GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 		RandomSleep(250)
@@ -259,20 +259,20 @@ EndFunc
 
 
 ;~ Function to defend against the corsairs
-Func DefendAgainstCorsairs($Hidden = False)
+Func DefendAgainstCorsairs($hidden = False)
 	If IsRecharged($CORSAIRS_TOGETHER_AS_ONE) Then
 		UseSkillEx($CORSAIRS_TOGETHER_AS_ONE)
 		RandomSleep(50)
 	EndIf
-	If Not $Hidden And IsRecharged($CORSAIRS_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 Then
+	If Not $hidden And IsRecharged($CORSAIRS_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 Then
 		UseSkillEx($CORSAIRS_MENTAL_BLOCK)
 		RandomSleep(50)
 	EndIf
-	If Not $Hidden And IsRecharged($CORSAIRS_SHROUD_OF_DISTRESS) Then
+	If Not $hidden And IsRecharged($CORSAIRS_SHROUD_OF_DISTRESS) Then
 		UseSkillEx($CORSAIRS_SHROUD_OF_DISTRESS)
 		RandomSleep(50)
 	EndIf
-	If Not $Hidden And IsRecharged($CORSAIRS_FEIGNED_NEUTRALITY) Then
+	If Not $hidden And IsRecharged($CORSAIRS_FEIGNED_NEUTRALITY) Then
 		UseSkillEx($CORSAIRS_FEIGNED_NEUTRALITY)
 		RandomSleep(50)
 	EndIf

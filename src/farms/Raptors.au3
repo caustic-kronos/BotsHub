@@ -332,7 +332,7 @@ EndFunc
 
 ;~ Kill raptors
 Func KillRaptors()
-	Local $MoPTarget
+	Local $mopTarget
 	If IsPlayerDead() Then Return $FAIL
 	Info('Clearing Raptors')
 
@@ -356,14 +356,14 @@ Func KillRaptors()
 	Local $rekoffBoss = GetBossFoe()
 	Local $me = GetMyAgent()
 	If GetDistance($me, $rekoffBoss) > $RANGE_SPELLCAST Then
-		$MoPTarget = GetNearestEnemyToAgent($me)
+		$mopTarget = GetNearestEnemyToAgent($me)
 	Else
-		$MoPTarget = GetNearestEnemyToAgent($rekoffBoss)
+		$mopTarget = GetNearestEnemyToAgent($rekoffBoss)
 	EndIf
 
-	If GetHasHex($MoPTarget) Then
+	If GetHasHex($mopTarget) Then
 		TargetNextEnemy()
-		$MoPTarget = GetCurrentTarget()
+		$mopTarget = GetCurrentTarget()
 	EndIf
 
 	If ($raptors_player_profession == $ID_DERVISH) Then
@@ -389,7 +389,7 @@ Func KillRaptors()
 	Local $timer = TimerInit()
 	; There is an issue here with infinite loop despite the count (wtf!) so added a timer as well
 	While IsPlayerAlive() And IsRecharged($RAPTORS_MARK_OF_PAIN) And $count < 200 And TimerDiff($timer) < 10000
-		UseSkillEx($RAPTORS_MARK_OF_PAIN, $MoPTarget)
+		UseSkillEx($RAPTORS_MARK_OF_PAIN, $mopTarget)
 		RandomSleep(50)
 		$count += 1
 	WEnd

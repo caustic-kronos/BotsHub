@@ -779,28 +779,28 @@ EndFunc
 ;~ Creates a map to use to find whether an OS (Old School) weapon has a valuable mod - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	; Nothing worth it on OS shields and focii, and there are no OS scythes and spears
-	Local Const $ShieldModsArray			= []
-	Local Const $OffhandModsArray			= []
-	Local Const $ScytheModsArray			= []
-	Local Const $SpearModsArray				= []
-	Local Const $WandModsArray				= [$STRUCT_MOD_OF_THE_NECROMANCER]
-	Local Const $DaggerModsArray			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local Const $StaffModsArray				= [ _
+	Local Const $shieldModsArray			= []
+	Local Const $offhandModsArray			= []
+	Local Const $scytheModsArray			= []
+	Local Const $spearModsArray				= []
+	Local Const $wandModsArray				= [$STRUCT_MOD_OF_THE_NECROMANCER]
+	Local Const $daggerModsArray			= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $staffModsArray				= [ _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
 	]
-	Local Const $BowModsArray				= [ _
+	Local Const $bowModsArray				= [ _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
 		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
 	]
-	Local Const $AxeModsArray				= [ _
+	Local Const $axeModsArray				= [ _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
 		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
 	]
-	Local Const $HammerModsArray			= [ _
+	Local Const $hammerModsArray			= [ _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
 		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
 	]
-	Local Const $SwordModsArray			= [ _
+	Local Const $swordModsArray			= [ _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER, _
 		$STRUCT_MOD_OF_CHARRSLAYING, $STRUCT_MOD_OF_TROLLSLAYING, $STRUCT_MOD_OF_GIANT_SLAYING, $STRUCT_MOD_OF_DWARF_SLAYING, $STRUCT_MOD_OF_TENGU_SLAYING _
 	]
@@ -816,10 +816,10 @@ Func DefaultCreateValuableModsByOSWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
-	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
-	Local Const $AllWeaponsModsArray		= [$ShieldModsArray, $OffhandModsArray, $WandModsArray, $StaffModsArray, $BowModsArray, $AxeModsArray, $HammerModsArray, _
-													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
-	Local $valuableModsByOSWeaponType[]		= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Local Const $allWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $allWeaponsModsArray		= [$shieldModsArray, $offhandModsArray, $wandModsArray, $staffModsArray, $bowModsArray, $axeModsArray, $hammerModsArray, _
+													$swordModsArray, $daggerModsArray, $scytheModsArray, $spearModsArray]
+	Local $valuableModsByOSWeaponType[]		= MapFromArrays($allWeaponsArray, $allWeaponsModsArray)
 	Return $valuableModsByOSWeaponType
 EndFunc
 
@@ -827,20 +827,20 @@ EndFunc
 ;~ Creates a map to use to find whether a weapon (not Old School) has a valuable mod - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableModsByWeaponTypeMap()
 	; Nothing worth on shields - maybe could keep +45^enchanted handles ....
-	Local Const $ShieldModsArray	= []
-	Local Const $OffhandModsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20]
-	Local Const $WandModsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_THE_NECROMANCER]
-	Local Const $StaffModsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_THE_NECROMANCER]
-	Local Const $BowModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local Const $AxeModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local Const $HammerModsArray	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local Const $SwordModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local Const $DaggerModsArray	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
-	Local Const $ScytheModsArray	= [ _
+	Local Const $shieldModsArray	= []
+	Local Const $offhandModsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT, $STRUCT_MOD_HCT_20, $STRUCT_MOD_HSR_20]
+	Local Const $wandModsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_THE_NECROMANCER]
+	Local Const $staffModsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE, $STRUCT_MOD_OF_THE_NECROMANCER]
+	Local Const $bowModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $axeModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $hammerModsArray	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $swordModsArray		= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $daggerModsArray	= [$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER]
+	Local Const $scytheModsArray	= [ _
 		$STRUCT_MOD_ZEALOUS, $STRUCT_MOD_OF_ENCHANTING, $STRUCT_MOD_SUNDERING, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER _
 	]
-	Local Const $SpearModsArray		= [ _
+	Local Const $spearModsArray		= [ _
 		$STRUCT_MOD_OF_ENCHANTING, _
 		$STRUCT_MOD_OF_THE_NECROMANCER, $STRUCT_MOD_OF_THE_RANGER _
 	]
@@ -856,27 +856,27 @@ Func DefaultCreateValuableModsByWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
-	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
-	Local Const $AllWeaponsModsArray		= [$ShieldModsArray, $OffhandModsArray, $WandModsArray, $StaffModsArray, $BowModsArray, $AxeModsArray, $HammerModsArray, _
-													$SwordModsArray, $DaggerModsArray, $ScytheModsArray, $SpearModsArray]
-	Local Const $weaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Local Const $allWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $allWeaponsModsArray		= [$shieldModsArray, $offhandModsArray, $wandModsArray, $staffModsArray, $bowModsArray, $axeModsArray, $hammerModsArray, _
+													$swordModsArray, $daggerModsArray, $scytheModsArray, $spearModsArray]
+	Local Const $weaponModsByType[]			= MapFromArrays($allWeaponsArray, $allWeaponsModsArray)
 	Return $weaponModsByType
 EndFunc
 
 
 ;~ Creates a map to use to find whether a weapon (not Old School) has a valuable inscription - this does not mean the weapon itself is valuable
 Func DefaultCreateValuableInscriptionsByWeaponTypeMap()
-	Local Const $ShieldInscriptionsArray	= []
-	Local Const $OffhandInscriptionsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT]
-	Local Const $WandInscriptionsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE]
-	Local Const $StaffInscriptionsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE]
-	Local Const $BowInscriptionsArray		= []
-	Local Const $AxeInscriptionsArray		= []
-	Local Const $HammerInscriptionsArray	= []
-	Local Const $SwordInscriptionsArray		= []
-	Local Const $DaggerInscriptionsArray	= []
-	Local Const $ScytheInscriptionsArray	= []
-	Local Const $SpearInscriptionsArray		= []
+	Local Const $shieldInscriptionsArray	= []
+	Local Const $offhandInscriptionsArray	= [$STRUCT_INSCRIPTION_FORGET_ME_NOT]
+	Local Const $wandInscriptionsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE]
+	Local Const $staffInscriptionsArray		= [$STRUCT_INSCRIPTION_APTITUDE_NOT_ATTITUDE]
+	Local Const $bowInscriptionsArray		= []
+	Local Const $axeInscriptionsArray		= []
+	Local Const $hammerInscriptionsArray	= []
+	Local Const $swordInscriptionsArray		= []
+	Local Const $daggerInscriptionsArray	= []
+	Local Const $scytheInscriptionsArray	= []
+	Local Const $spearInscriptionsArray		= []
 	; Redefining types here remove dependency on GWA2_ID - and we only execute this function once
 	Local Const $IDTypeAxe					= 2
 	Local Const $IDTypeBow					= 5
@@ -889,10 +889,10 @@ Func DefaultCreateValuableInscriptionsByWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
-	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
-	Local Const $AllWeaponsInscriptionsArray		= [$ShieldInscriptionsArray, $OffhandInscriptionsArray, $WandInscriptionsArray, $StaffInscriptionsArray, $BowInscriptionsArray, $AxeInscriptionsArray, _
-													$HammerInscriptionsArray, $SwordInscriptionsArray, $DaggerInscriptionsArray, $ScytheInscriptionsArray, $SpearInscriptionsArray]
-	Local Const $weaponInscriptionsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsInscriptionsArray)
+	Local Const $allWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $allWeaponsInscriptionsArray		= [$shieldInscriptionsArray, $offhandInscriptionsArray, $wandInscriptionsArray, $staffInscriptionsArray, $bowInscriptionsArray, $axeInscriptionsArray, _
+													$hammerInscriptionsArray, $swordInscriptionsArray, $daggerInscriptionsArray, $scytheInscriptionsArray, $spearInscriptionsArray]
+	Local Const $weaponInscriptionsByType[]			= MapFromArrays($allWeaponsArray, $allWeaponsInscriptionsArray)
 	Return $weaponInscriptionsByType
 EndFunc
 
@@ -1041,10 +1041,10 @@ Func DefaultCreatePerfectModsByOSWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
-	Local Const $AllWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
-	Local Const $AllWeaponsModsArray			= [$shield, $focus, $casterWeapons, $casterWeapons, $martialWeapons, $martialWeapons, $martialWeapons, _
+	Local Const $allWeaponsArray			= [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $allWeaponsModsArray			= [$shield, $focus, $casterWeapons, $casterWeapons, $martialWeapons, $martialWeapons, $martialWeapons, _
 													$martialWeapons, $martialWeapons, $scytheAndSpear, $scytheAndSpear]
-	Local Const $weaponModsByType[]			= MapFromArrays($AllWeaponsArray, $AllWeaponsModsArray)
+	Local Const $weaponModsByType[]			= MapFromArrays($allWeaponsArray, $allWeaponsModsArray)
 	Return $weaponModsByType
 EndFunc
 #EndRegion Default structure creation
@@ -1198,7 +1198,7 @@ Func CreateValuableModsByWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
-	Local Const $AllWeaponsArray = [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $allWeaponsArray = [$IDTypeShield, $IDTypeOffhand, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
 
 	Local $prefixWeaponModRules[]
 	Local $suffixWeaponModRules[]
@@ -1223,7 +1223,7 @@ Func CreateValuableModsByWeaponTypeMap()
 	$suffixWeaponModRules['Wand']	= 'Wand.Suffix - Wrapping.'
 
 	Local $weaponModsByType[]
-	For $weaponType In $AllWeaponsArray
+	For $weaponType In $allWeaponsArray
 		Local $weaponName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 		Local $tickedMods = GetAllChecked($inventory_management_cache, 'Keep components.Mods.' & $weaponName, 2, 2)
 		Local $count = UBound($tickedMods)
@@ -1313,10 +1313,10 @@ Func CreateValuableInscriptionsByWeaponTypeMap()
 	Local Const $IDTypeDagger				= 32
 	Local Const $IDTypeScythe				= 35
 	Local Const $IDTypeSpear				= 36
-	Local Const $AllWeaponsArray = [$IDTypeShield, $IDTypeFocus, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
+	Local Const $allWeaponsArray = [$IDTypeShield, $IDTypeFocus, $IDTypeWand, $IDTypeStaff, $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear]
 
 	Local $inscriptionsByWeaponType[]
-	For $weaponType In $AllWeaponsArray
+	For $weaponType In $allWeaponsArray
 		Switch $weaponType
 			Case $IDTypeBow, $IDTypeAxe, $IDTypeHammer, $IDTypeSword, $IDTypeDagger, $IDTypeScythe, $IDTypeSpear
 				$inscriptionsByWeaponType[$weaponType] = $inscriptionsWeaponsMartial

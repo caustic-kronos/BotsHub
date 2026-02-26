@@ -75,7 +75,7 @@ Global Const $GEM_SKILLS_ARRAY			= [$GEM_SYMBOLIC_CELERITY,	$GEM_SYMBOLIC_POSTUR
 Global Const $GEM_SKILLS_COSTS_ARRAY	= [15,						10,						0,						0,						0,							0,							5,						10]
 Global Const $GEM_SKILLS_COSTS_MAP		= MapFromArrays($GEM_SKILLS_ARRAY, $GEM_SKILLS_COSTS_ARRAY)
 
-Global $gemstones_fight_options	= CloneDictMap($default_moveaggroandkill_options)
+Global $gemstones_fight_options	= CloneDictMap($default_move_aggro_kill_options)
 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
 $gemstones_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location

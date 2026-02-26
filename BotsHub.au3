@@ -159,7 +159,7 @@ Func Main()
 		Exit 1
 	EndIf
 
-	If $CmdLine[0] <> 0 Then $run_mode = 'HEADLESS'
+	If $cmdLine[0] <> 0 Then $run_mode = 'HEADLESS'
 
 	; GUI free steps
 	FillFarmMap()
@@ -177,14 +177,14 @@ Func Main()
 		RefreshCharactersComboBox()
 	ElseIf $run_mode == 'HEADLESS' Then
 		; Need minimum 4 things to run a bot: slave index, process ID, character name and farm name
-		If $CmdLine[0] < 4 Then
+		If $cmdLine[0] < 4 Then
 			MsgBox(0, 'Error', 'The Hub needs 0 or at least 4 arguments.')
 			Exit
 		EndIf
-		$slave_index = $CmdLine[1]
-		$process_id = $CmdLine[2]
-		$character_name = $CmdLine[3]
-		$farm_name = $CmdLine[4]
+		$slave_index = $cmdLine[1]
+		$process_id = $cmdLine[2]
+		$character_name = $cmdLine[3]
+		$farm_name = $cmdLine[4]
 
 		Info('Running in CMD mode with process ID: ' & $process_id & ' character name: ' & $character_name & ' farm name: ' & $farm_name)
 

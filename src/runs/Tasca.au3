@@ -337,14 +337,14 @@ EndFunc
 ;~ Use defensive skills while opening chests
 Func TascaDefendFunction($X, $Y)
 	; Using timers here reduce DllCalls and make bot more reactive
-	Local Static $Timer_ShroudOfDistress = Null
-	Local Static $Timer_Shadowform = Null
-	Local Static $Timer_DwarvenStability = Null
+	Local Static $timer_ShroudOfDistress = Null
+	Local Static $timer_Shadowform = Null
+	Local Static $timer_DwarvenStability = Null
 
 	Local $me = GetMyAgent()
 	Local $target = GetNearestEnemyToAgent($me)
 	Local $ping = GetPing()
-	If ($Timer_Shadowform == Null Or TimerDiff($Timer_Shadowform) > 19500) Then
+	If ($timer_Shadowform == Null Or TimerDiff($timer_Shadowform) > 19500) Then
 		Local $enemiesAreNear = GetDistance($me, $target) < $RANGE_SPELLCAST
 		If $enemiesAreNear Or ($X <> 0 And AreFoesInFront($X, $Y)) Then
 			If $enemiesAreNear And IsRecharged($TASCA_I_AM_UNSTOPPABLE) Then UseSkillEx($TASCA_I_AM_UNSTOPPABLE)
@@ -358,20 +358,20 @@ Func TascaDefendFunction($X, $Y)
 				UseSkillEx($TASCA_SHADOWFORM, $me)
 				Sleep(20 + $ping)
 			WEnd
-			$Timer_Shadowform = TimerInit()
+			$timer_Shadowform = TimerInit()
 			Sleep(20 + $ping)
-			If ($Timer_DwarvenStability == Null Or TimerDiff($Timer_DwarvenStability) > 34000) And GetEnergy() >= 5 Then
+			If ($timer_DwarvenStability == Null Or TimerDiff($timer_DwarvenStability) > 34000) And GetEnergy() >= 5 Then
 				UseSkillEx($TASCA_DWARVEN_STABILITY)
-				$Timer_DwarvenStability = TimerInit()
+				$timer_DwarvenStability = TimerInit()
 				Sleep(20 + $ping)
 			EndIf
 			If (GetEnergy() >= 5) Then UseSkillEx($TASCA_DARK_ESCAPE)
 		EndIf
 	EndIf
-	If ($Timer_ShroudOfDistress == Null Or TimerDiff($Timer_ShroudOfDistress) > 62000) And GetEnergy() >= 10 Then
+	If ($timer_ShroudOfDistress == Null Or TimerDiff($timer_ShroudOfDistress) > 62000) And GetEnergy() >= 10 Then
 		If (GetEnergy() >= 10) Then
 			UseSkillEx($TASCA_SHROUD_OF_DISTRESS)
-			$Timer_ShroudOfDistress = TimerInit()
+			$timer_ShroudOfDistress = TimerInit()
 		EndIf
 	EndIf
 EndFunc

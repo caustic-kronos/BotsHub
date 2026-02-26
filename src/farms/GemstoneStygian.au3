@@ -181,10 +181,10 @@ Func GoToStygianVeil()
 	Info('Moving to Stygian Veil')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Stygian Veil
-	Local Static $StartX = -364
-	Local Static $StartY = -10445
+	Local Static $startX = -364
+	Local Static $startY = -10445
 	Local $timerZoning = TimerInit()
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		If TimerDiff($timerZoning) > 120000 Then
 			Info('Could not zone to Stygian Veil')
 			Return $FAIL

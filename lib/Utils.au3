@@ -100,13 +100,13 @@ EndFunc
 
 
 ;~ Talks to an agent and waits until you reach it.
-Func GoToAgent($agent, $GoFunction = Null)
+Func GoToAgent($agent, $goFunction = Null)
 	Local $me
 	Local $blockedCount = 0
 	Local $mapLoading = GetMapType(), $mapLoadingOld
 	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 	RandomSleep(100)
-	If $GoFunction <> Null Then $GoFunction($agent)
+	If $goFunction <> Null Then $goFunction($agent)
 	While GetDistance($me, $agent) > 250 And $blockedCount < 14
 		RandomSleep(100)
 		$me = GetMyAgent()
@@ -118,7 +118,7 @@ Func GoToAgent($agent, $GoFunction = Null)
 			$blockedCount += 1
 			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 			RandomSleep(100)
-			If $GoFunction <> Null Then $GoFunction($agent)
+			If $goFunction <> Null Then $goFunction($agent)
 		EndIf
 	WEnd
 	RandomSleep(1000)
@@ -355,8 +355,8 @@ EndFunc
 #Region Find and open Chests
 ;~ Scans for chests and return the first one found around the player or the given coordinates
 ;~ If flagged is set to true, it will return previously found chests
-;~ If $Chest_Gadget_ID parameter is provided then functions will scan only for chests with the same GadgetID as provided
-Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $Chest_Gadget_ID = Null)
+;~ If $chest_Gadget_ID parameter is provided then functions will scan only for chests with the same GadgetID as provided
+Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $chest_Gadget_ID = Null)
 	If $X == Null Or $Y == Null Then
 		Local $me = GetMyAgent()
 		$X = DllStructGetData($me, 'X')
@@ -366,8 +366,8 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $Chest_Gadget
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_STATIC)
 	For $agent In $agents
 		$gadgetID = DllStructGetData($agent, 'GadgetID')
-		If $Chest_Gadget_ID <> Null And $Chest_Gadget_ID <> $gadgetID Then ContinueLoop
-		If $Chest_Gadget_ID == Null And $MAP_CHESTS_IDS[$gadgetID] == Null Then ContinueLoop
+		If $chest_Gadget_ID <> Null And $chest_Gadget_ID <> $gadgetID Then ContinueLoop
+		If $chest_Gadget_ID == Null And $MAP_CHESTS_IDS[$gadgetID] == Null Then ContinueLoop
 		If GetDistanceToPoint($agent, $X, $Y) > $range Then ContinueLoop
 		Local $chestID = DllStructGetData($agent, 'ID')
 		If $chests_map[$chestID] == Null Or $chests_map[$chestID] == 0 Or ($flagged And $chests_map[$chestID] == 1) Then
@@ -903,25 +903,25 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-Global $default_moveaggroandkill_options = ObjCreate('Scripting.Dictionary')
-$default_moveaggroandkill_options.Add('fightFunction', KillFoesInArea)
-$default_moveaggroandkill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
-$default_moveaggroandkill_options.Add('flagHeroesOnFight', False)
-$default_moveaggroandkill_options.Add('unstuckFunction', TryToGetUnstuck)
-$default_moveaggroandkill_options.Add('callTarget', True)
-$default_moveaggroandkill_options.Add('priorityMobs', False)
-$default_moveaggroandkill_options.Add('skillsMask', Null)
-$default_moveaggroandkill_options.Add('skillsCostMap', Null)
-$default_moveaggroandkill_options.Add('skillsCastTimeMap', Null)
-$default_moveaggroandkill_options.Add('lootInFights', False)
-$default_moveaggroandkill_options.Add('openChests', True)
-$default_moveaggroandkill_options.Add('chestOpenRange', $RANGE_SPIRIT)
-$Default_MoveAggroAndKill_Options.Add('lootTrappedArea', False)
-$Default_MoveAggroAndKill_Options.Add('ignoreDroppedLoot', False)
+Global $default_move_aggro_kill_options = ObjCreate('Scripting.Dictionary')
+$default_move_aggro_kill_options.Add('fightFunction', KillFoesInArea)
+$default_move_aggro_kill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
+$default_move_aggro_kill_options.Add('flagHeroesOnFight', False)
+$default_move_aggro_kill_options.Add('unstuckFunction', TryToGetUnstuck)
+$default_move_aggro_kill_options.Add('callTarget', True)
+$default_move_aggro_kill_options.Add('priorityMobs', False)
+$default_move_aggro_kill_options.Add('skillsMask', Null)
+$default_move_aggro_kill_options.Add('skillsCostMap', Null)
+$default_move_aggro_kill_options.Add('skillsCastTimeMap', Null)
+$default_move_aggro_kill_options.Add('lootInFights', False)
+$default_move_aggro_kill_options.Add('openChests', True)
+$default_move_aggro_kill_options.Add('chestOpenRange', $RANGE_SPIRIT)
+$default_move_aggro_kill_options.Add('lootTrappedArea', False)
+$default_move_aggro_kill_options.Add('ignoreDroppedLoot', False)
 ; default 60 seconds fight duration
-$default_moveaggroandkill_options.Add('fightDuration', 60000)
+$default_move_aggro_kill_options.Add('fightDuration', 60000)
 
-Global $default_flagmoveaggroandkill_options = CloneDictMap($default_moveaggroandkill_options)
+Global $default_flagmoveaggroandkill_options = CloneDictMap($default_move_aggro_kill_options)
 $default_flagmoveaggroandkill_options.Item('flagHeroesOnFight') = True
 
 Global $default_movedefend_options = ObjCreate('Scripting.Dictionary')
@@ -936,7 +936,7 @@ $default_movedefend_options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
-Func WaitAndFightEnemiesInArea($options = $default_moveaggroandkill_options)
+Func WaitAndFightEnemiesInArea($options = $default_move_aggro_kill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
@@ -976,7 +976,7 @@ EndFunc
 
 ;~ Version to specify fight range as parameter instead of in options map
 Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_moveaggroandkill_options)
+	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -992,7 +992,7 @@ EndFunc
 
 ;~ Trap Safe Wrapper for MoveAggroAndKill
 Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
-	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
+	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
 	$options.Item('lootTrappedArea') = True
 	$options.Item('fightRange') = $RANGE_SPELLCAST
 	MoveAggroAndKill($x, $y, $log, $options)
@@ -1013,7 +1013,7 @@ EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
-Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
+Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
@@ -1132,7 +1132,7 @@ EndFunc
 
 
 ;~ Kill foes by casting skills from 1 to 8
-Func KillFoesInArea($options = $default_moveaggroandkill_options)
+Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $flagHeroes = ($options.Item('flagHeroesOnFight') <> Null) ? $options.Item('flagHeroesOnFight') : False
 	Local $callTarget = ($options.Item('callTarget') <> Null) ? $options.Item('callTarget') : True
@@ -1466,14 +1466,14 @@ EndFunc
 
 
 ;~ Manage excess faction points by either donating them, buying materials or elite zone scrolls
-Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
-	If $GetFactionFunction() > ($GetMaxFactionFunction() - 25000) Then
+Func ManageFactionPointsFarm($factionName, $getFactionFunction, $getMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
+	If $getFactionFunction() > ($getMaxFactionFunction() - 25000) Then
 		TravelToOutpost($mapForFactionExchange, $district_name)
 		RandomSleep(200)
 		GoNearestNPCToCoords($npcX, $npcY)
 		If $run_options_cache['run.donate_faction_points'] Then
 			Info('Donating ' & $factionName & ' faction points')
-			While $GetFactionFunction() >= 5000
+			While $getFactionFunction() >= 5000
 				DonateFaction($factionName)
 				RandomSleep(500)
 			WEnd
@@ -1481,7 +1481,7 @@ Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFu
 			Info('Converting ' & $factionName & ' faction points into materials')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfChunks = Floor($GetFactionFunction() / 5000)
+			Local $numberOfChunks = Floor($getFactionFunction() / 5000)
 			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
 			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
 			Dialog($dialogID)
@@ -1490,7 +1490,7 @@ Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFu
 			Info('Converting ' & $factionName & ' faction points into Passage Scrolls')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfScrolls = Floor($GetFactionFunction() / 1000)
+			Local $numberOfScrolls = Floor($getFactionFunction() / 1000)
 			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
 			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)
@@ -2440,7 +2440,7 @@ Func LongestCommonSubstring($strings)
 			Next
 		Next
 	EndIf
-	Return $LongestCommonSubstring
+	Return $longestCommonSubstring
 EndFunc
 
 

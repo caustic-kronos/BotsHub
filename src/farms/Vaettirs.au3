@@ -541,7 +541,7 @@ EndFunc
 
 
 Func KillVaettirsUsingWastrelSkills()
-	Local Static $MaxKillTime = 100000
+	Local Static $maxKillTime = 100000
 	Local $deadlock = TimerInit()
 	Local $target
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
@@ -550,7 +550,7 @@ Func KillVaettirsUsingWastrelSkills()
 		UseSkillEx($VAETTIR_ARCANE_ECHO)
 		$target = GetWastrelsTarget()
 		UseSkillEx($VAETTIR_WASTRELS_DEMISE, $target)
-		While $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime And IsPlayerAlive()
+		While $foesCount > 0 And TimerDiff($deadlock) < $maxKillTime And IsPlayerAlive()
 			VaettirsStayAlive()
 
 			; Use echoed wastrel if possible
@@ -573,10 +573,10 @@ EndFunc
 
 
 Func KillVaettirsUsingSmitingSkills()
-	Local Static $MaxKillTime = 120000
+	Local Static $maxKillTime = 120000
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	While $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime And IsPlayerAlive()
+	While $foesCount > 0 And TimerDiff($deadlock) < $maxKillTime And IsPlayerAlive()
 		VaettirsStayAlive()
 
 		If TimerDiff($vaettir_shadowform_timer) < 16000 And IsRecharged($VAETTIR_MONK_BALTHAZARS_AURA) And GetEnergy() > 25 Then
