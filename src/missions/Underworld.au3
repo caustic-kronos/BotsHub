@@ -66,6 +66,7 @@ Global Const $ENABLE_DEMON_ASSASSIN = True ; Behemoths do not drop ectos. Skips 
 Global Const $ENABLE_ESCORT_OF_SOULS = True
 Global Const $ENABLE_UNWANTED_GUESTS = True
 Global Const $ENABLE_THE_FOUR_HORSEMEN = True ; Rt/A or A/Rt only at the moment
+Global Const $ENABLE_THE_NIGHTMAN_COMETH = True ; TODO
 
 Global $underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
 Global $underworld_player_profession = $ID_RITUALIST
@@ -98,7 +99,7 @@ EndFunc
 
 Func SetupPlayerUnderworldFarm()
 	Info('Setting up player build skill bar')
-	If $ATTEMPT_REAPER_QUESTS And $ENABLE_THE_FOUR_HORSEMEN Or $ENABLE_THE_NIGHTMAN_COMETH Then
+	If $ATTEMPT_REAPER_QUESTS And ($ENABLE_THE_FOUR_HORSEMEN Or $ENABLE_THE_NIGHTMAN_COMETH) Then
 		Switch DllStructGetData(GetMyAgent(), 'Primary')
 			Case $ID_ASSASSIN
 				$underworld_player_profession = $ID_ASSASSIN
