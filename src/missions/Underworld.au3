@@ -1448,7 +1448,7 @@ Func UnwantedGuests($reaper)
 	MoveTo(-1167, 13345)
 	MoveTo(-4886, 13309)
 	MoveTo(-5722, 12758)
-	TeleportBackToTwinSerpentMountains($Reaper)
+	TeleportBackToTwinSerpentMountains($reaper)
 	MoveAggroAndKillSafeTraps(-3757, -5800)
 	MoveAggroAndKillSafeTraps(-175, -2678)
 	MoveAggroAndKillSafeTraps(4660, -2347)
@@ -1490,10 +1490,10 @@ Func UnwantedGuests($reaper)
 	MoveAggroAndKill(-5703, 12732)
 	If IsQuestReward($ID_QUEST_UNWANTED_GUESTS) Then 
 		Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_UNWANTED_GUESTS])
-		TakeQuestReward($Reaper, $ID_QUEST_UNWANTED_GUESTS, 0x806707)
+		TakeQuestReward($reaper, $ID_QUEST_UNWANTED_GUESTS, 0x806707)
 	Else
 		Info('Quest Failed?: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_UNWANTED_GUESTS])
-		If IsPlayerOrPartyAlive() Then UnwantedGuests($Reaper)
+		If IsPlayerOrPartyAlive() Then UnwantedGuests($reaper)
 	EndIf
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
