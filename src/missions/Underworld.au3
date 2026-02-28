@@ -68,7 +68,7 @@ Global Const $ENABLE_UNWANTED_GUESTS = True
 Global Const $ENABLE_THE_FOUR_HORSEMEN = True ; Rt/A or A/Rt only at the moment
 Global Const $ENABLE_THE_NIGHTMAN_COMETH = True ; TODO
 
-Global $underworld_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
 Global $underworld_player_profession = $ID_RITUALIST
 Global $uw_farm_setup = False
 
