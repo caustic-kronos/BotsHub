@@ -836,5 +836,10 @@ Func CreateMobsPriorityMap()
 	Local $ldoaMobs =				[	$ID_BANDIT_RAIDER,	$ID_BANDIT_FIRESTARTER]
 	Local $ldoaMobsPriorities =		[	0,					1]
 	AddToMapFromArrays($priorityMap, $ldoaMobs, $ldoaMobsPriorities)
+	Local $underWorldMobs =				[	$ID_KEEPER_OF_SOULS,	$ID_VENGEFUL_AATXE,		$ID_TERRORWEB_DRYDER,			$ID_TERRORWEB_DRYDER_SILVER,		$ID_SMITE_CRAWLER, _
+											$ID_BANISHED_DREAM_RIDER,	$ID_MINDBLADE_SPECTRE,	$ID_BLADED_AATXE,	$ID_SKELETON_OF_DHUUM]
+	Local $underWorldMobsPriorities =		[	0,							999,							3,							4,								3, _
+											1,							5,								3,							2]
+	AddToMapFromArrays($priorityMap, $underWorldMobs, $underWorldMobsPriorities)
 	Return $priorityMap
 EndFunc
