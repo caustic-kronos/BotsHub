@@ -1562,10 +1562,10 @@ Func TheFourHorsemen($reaper)
 	$optionsChaosPlanes.Item('priorityMobs') = True
 	Info('Setting heroes & spirits up for quest')
 	CommandHero(1, 13153, -12503)
-	CommandHero(2, 13476, -12533)
+	CommandHero(2, 13795, -12084)
 	CommandHero(3, 13413, -12219)
 	CommandHero(4, 13414, -12808)
-	CommandHero(5, 13821, -12533)
+	CommandHero(5, 13697, -12538)
 	CommandHero(6, 13689, -12910)
 	CommandHero(7, 13987, -12807)
 
