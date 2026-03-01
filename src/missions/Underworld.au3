@@ -1526,7 +1526,7 @@ Func TheFourHorsemen($reaper)
 	WEnd
 
 	DropBuff($ID_RECALL, GetMyAgent())
-	TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
+	TeleportBackToArea($reaper_ChaosPlanes, '0x86', '0x8D', 'Labyrinth')
 	CancelAllHeroes()
 	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
 
