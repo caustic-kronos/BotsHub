@@ -43,19 +43,19 @@ Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, dont cheap out o
 Global Const $UW_FARM_DURATION = 90 * 60 * 1000 ; Runs take about 90 minutes if quests set to False
 Global Const $MAX_UW_FARM_DURATION = 135 * 60 * 1000 ; Runs take about 135 minutes if all quests set to True
 
-Global Const $RTA_UNDERWORLD_FARMER_SKILLBAR = 'OAejAqiMpR0gdOXT+glTfTRbQTA'
+Global Const $RTA_UNDERWORLD_FARMER_SKILLBAR = 'OAejAqiMpR0gXT+glTfTQTVTdOA'
 Global Const $ART_UNDERWORLD_FARMER_SKILLBAR = 'OwhjAyi84QXT+glTVTQT0gAAAAA'
 
 Global Const $UNDERWORLD_SUMMON_SPIRITS			= 1
-Global Const $UNDERWORLD_RECALL					= 2
-Global Const $UNDERWORLD_SIGNET_OF_SPIRITS		= 3
-Global Const $UNDERWORLD_VAMPIRISM				= 4
-Global Const $UNDERWORLD_BLOODSONG				= 5
-Global Const $UNDERWORLD_PAIN					= 6
-Global Const $UNDERWORLD_ANGUISH				= 7
-Global Const $UNDERWORLD_ARMOR_OF_UNFEELING		= 8
+Global Const $UNDERWORLD_SIGNET_OF_SPIRITS		= 2
+Global Const $UNDERWORLD_VAMPIRISM				= 3
+Global Const $UNDERWORLD_BLOODSONG				= 4
+Global Const $UNDERWORLD_PAIN					= 5
+Global Const $UNDERWORLD_ARMOR_OF_UNFEELING		= 6
+Global Const $UNDERWORLD_PAINFUL_BOND			= 7
+Global Const $UNDERWORLD_RECALL					= 8
 
-Global Const $ATTEMPT_REAPER_QUESTS = True ; Set this to True in order for bot to do Reaper quests
+Global Const $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
 
 ; Specific Quest Knobs
 Global Const $ENABLE_WRATHFUL_SPIRITS = True ; Quest takes too long and mobs do not drop loot.
@@ -1040,7 +1040,7 @@ Func ImprisonedSpirits()
 	MoveTo(12525, 3865)
 	KillFoesInArea($optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
-	While Not IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS) Then
+	While Not IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS)
 			KillFoesInArea($optionsBonePits)
 			RandomSleep(5000)
 		If Not IsPlayerOrPartyAlive() Then
@@ -1204,7 +1204,7 @@ Func DemonAssassin()
 	TakeQuest($reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806801, 0x806803)
 	MoveTo(-4742, -5531)
 	Info('Killing the Slayer')
-	While Not IsQuestReward($ID_QUEST_DEMON_ASSASSIN) Then
+	While Not IsQuestReward($ID_QUEST_DEMON_ASSASSIN)
 		KillFoesInArea($optionsTwinSerpentMountains)
 		RandomSleep(2500)
 		If Not IsPlayerOrPartyAlive() Then
@@ -1258,7 +1258,7 @@ EndFunc
 Func EscortOfSouls($reaper, $reaper_ForgottenVale)
 	; Take Quest Escort of Souls from the Reaper in the Labyrinth
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_ESCORT_OF_SOULS Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_ESCORT_OF_SOULS] &' quest per settings.')
+		Info('Skipping Escort of Souls quest per settings.')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Info('Setting heroes up for quest')
@@ -1278,18 +1278,13 @@ Func EscortOfSouls($reaper, $reaper_ForgottenVale)
 	MoveAggroAndKill(-12122, 968, 'Spot 8')
 	Local $MayorAlegheri = GetNearestNPCToCoords(-12122, 968)
 	Info('Waiting for Souls to come to the Vale')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_ESCORT_OF_SOULS) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_ESCORT_OF_SOULS])
-			ExitLoop
-		Else
-			RandomSleep(5000)
+	While Not IsQuestReward($ID_QUEST_ESCORT_OF_SOULS)
+		RandomSleep(5000)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_ESCORT_OF_SOULS])
+			Return $FAIL
 		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_ESCORT_OF_SOULS])
-		Return $FAIL
-	EndIf
 	TakeQuestReward($MayorAlegheri, $ID_QUEST_ESCORT_OF_SOULS, 0x806C07)
 	Info('Moving back to the Labyrinth')
 	MoveTo(-13766, 1311)
@@ -1302,7 +1297,7 @@ EndFunc
 Func UnwantedGuests($reaper)
 	; Take Quest Unwanted Guests from the Reaper in the Labyrinth
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_UNWANTED_GUESTS Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_UNWANTED_GUESTS] &' quest per settings.')
+		Info('Skipping Unwanted Guests quest per settings.')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsUnwantedGuests = CloneDictMap($underworld_fight_options)
@@ -1315,109 +1310,106 @@ Func UnwantedGuests($reaper)
 	Info('Waiting 20 seconds for life spirits to expire')
 	RandomSleep(20000)
 	TakeQuest($reaper, $ID_QUEST_UNWANTED_GUESTS, 0x806703, 0x806701)
-	; Rarely the dryder spawn will pat too far and aggro the Reaper
-	Info('Moving to the Forgotten Vale')
-	TeleportBackToArea($reaper, '0x8A', '0x91', 'Forgotten Vale')
-	CancelAll()
-	MoveTo(-13783,  1170)
-	MoveTo(-12610, 886)
-	MoveTo(-7643, 2332)
-	MoveTo(-7400, 3630)
-	MoveTo(-7760, 4130)
-	TrackVengefulAatxes(-6390, 7858, 'away')
-	MoveAvoidingBodyBlock(-8670, 5690)
-	Info('Killing Keeper of Souls 1')
-	KillKeeperOfSouls()
-	MoveAggroAndKill(-8670, 5690)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	MoveAggroAndKill(-5233, 8960)
-	MoveTo(-5233, 8961)
-	MoveTo(-6366, 10238)
-	TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS -  1000)
-	RandomSleep(10000)
-	TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS -  1000)
-	MoveAvoidingBodyBlock(-4825, 12075)
-	MoveAvoidingBodyBlock(-4250, 11560)
-	MoveAvoidingBodyBlock(-3350, 10555)
-	Info('Killing Keeper of Souls 2')
-	KillKeeperOfSouls($RANGE_SPIRIT)
-	MoveAggroAndKill(-3350, 10555)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	MoveTo(-5722, 12758)
-	MoveTo(-4886, 13309)
-	MoveTo(-4480, 13320)
-	TrackVengefulAatxes(-4480, 13320, 'nearby', $RANGE_COMPASS, $RANGE_EARSHOT * 2)
-	TrackVengefulAatxes(-10, 13312, 'away')
-	MoveAvoidingBodyBlock(-1046, 13343)
-	Info('Killing Keeper of Souls 3')
-	KillKeeperOfSouls($RANGE_SPIRIT)
-	MoveAggroAndKill(-1046, 13343)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	MoveAggroAndKill(224, 13362)
-	MoveTo(915, 12787)
-	TrackVengefulAatxes(1875, 10465, 'nearby', $RANGE_COMPASS, $RANGE_EARSHOT)
-	TrackVengefulAatxes(-180, 9400, 'away', $RANGE_COMPASS, $RANGE_EARSHOT) ; old coords 336, 9321
-	MoveAvoidingBodyBlock(2422, 10322)
-	Info('Killing Keeper of Souls 4')
-	KillKeeperOfSouls($RANGE_SPIRIT)
-	MoveAggroAndKill(2422, 10322)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	MoveTo(1200, 10700)
-	MoveAggroAndKill(224, 13362)
-	MoveTo(-1167, 13345)
-	MoveTo(-4886, 13309)
-	MoveTo(-5722, 12758)
-	TeleportBackToArea($reaper, '0x87', '0x8E', 'Twin Serpent Mountains')
-	MoveAggroAndKillSafeTraps(-3757, -5800)
-	MoveAggroAndKillSafeTraps(-175, -2678)
-	MoveAggroAndKillSafeTraps(4660, -2347)
-	MoveAggroAndKillSafeTraps(5371, 300)
-	MoveAggroAndKillSafeTraps(2753, 2853)
-	MoveTo(1650, 2230)
-	TrackVengefulAatxes(-2424, 1767, 'away')
-	RandomSleep(5000)
-	CommandAll(1650, 2230)
-	Info('Aggro killable mobs away from Vengeful Aatxe path')
-	MoveAvoidingBodyBlock(367, 1623)
-	MoveAvoidingBodyBlock(90, 1940)
-	MoveAvoidingBodyBlock(367, 1623)
-	MoveAvoidingBodyBlock(1650, 2230)
-	CancelAll()
-	KillFoesInArea($optionsUnwantedGuests)
-	CommandAll(1650, 2230)
-	RandomSleep(5000)
-	CancelAll()
-	KillFoesInArea($optionsUnwantedGuests)
-	CommandAll(1650, 2230)
-	RandomSleep(5000)
-	TrackVengefulAatxes(-2424, 1767, 'away')
-	CancelAll()
-	MoveAvoidingBodyBlock(-214, 2775)
-	MoveAvoidingBodyBlock(267, 3575)
-	Info('Killing Keeper of Souls 5')
-	KillKeeperOfSouls($RANGE_SPIRIT)
-	MoveAggroAndKill(267, 3575)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
-	MoveAggroAndKill(-3436, 1260)
-	MoveAggroAndKill(-3184, 4456)
-	MoveTo(-2690, 5115)
-	TrackVengefulAatxes(-1255, 6500, 'nearby')
-	TrackVengefulAatxes(980, 7740, 'away')
-	MoveAvoidingBodyBlock(-630, 6415)
-	Info('Killing Keeper of Souls 6')
-	KillKeeperOfSouls()
-	MoveAggroAndKill(-630, 6415)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	MoveAggroAndKill(-1380, 10396)
-	MoveAggroAndKill(-5703, 12732)
-	If IsQuestReward($ID_QUEST_UNWANTED_GUESTS) Then 
-		Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_UNWANTED_GUESTS])
-		TakeQuestReward($reaper, $ID_QUEST_UNWANTED_GUESTS, 0x806707)
-	Else
-		Info('Quest Failed?: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_UNWANTED_GUESTS])
-		If IsPlayerOrPartyAlive() Then UnwantedGuests($reaper)
-	EndIf
+	While Not IsQuestReward($ID_QUEST_UNWANTED_GUESTS)
+		; Rarely the dryder spawn will pat too far and aggro the Reaper
+		Info('Moving to the Forgotten Vale')
+		TeleportBackToArea($reaper, '0x8A', '0x91', 'Forgotten Vale')
+		CancelAll()
+		MoveTo(-13783,  1170)
+		MoveTo(-12610, 886)
+		MoveTo(-7643, 2332)
+		MoveTo(-7400, 3630)
+		MoveTo(-7760, 4130)
+		TrackVengefulAatxes(-6390, 7858, 'away')
+		MoveAvoidingBodyBlock(-8670, 5690)
+		Info('Killing Keeper of Souls 1')
+		KillKeeperOfSouls()
+		MoveAggroAndKill(-8670, 5690)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		MoveAggroAndKill(-5233, 8960)
+		MoveTo(-5233, 8961)
+		MoveTo(-6366, 10238)
+		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS -  1000)
+		RandomSleep(10000)
+		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS -  1000)
+		MoveAvoidingBodyBlock(-4825, 12075)
+		MoveAvoidingBodyBlock(-4250, 11560)
+		MoveAvoidingBodyBlock(-3350, 10555)
+		Info('Killing Keeper of Souls 2')
+		KillKeeperOfSouls($RANGE_SPIRIT)
+		MoveAggroAndKill(-3350, 10555)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		MoveTo(-5722, 12758)
+		MoveTo(-4886, 13309)
+		MoveTo(-4480, 13320)
+		TrackVengefulAatxes(-4480, 13320, 'nearby', $RANGE_COMPASS, $RANGE_EARSHOT * 2)
+		TrackVengefulAatxes(-10, 13312, 'away')
+		MoveAvoidingBodyBlock(-1046, 13343)
+		Info('Killing Keeper of Souls 3')
+		KillKeeperOfSouls($RANGE_SPIRIT)
+		MoveAggroAndKill(-1046, 13343)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		MoveAggroAndKill(224, 13362)
+		MoveTo(915, 12787)
+		TrackVengefulAatxes(1875, 10465, 'nearby', $RANGE_COMPASS, $RANGE_EARSHOT)
+		TrackVengefulAatxes(-180, 9400, 'away', $RANGE_COMPASS, $RANGE_EARSHOT) ; old coords 336, 9321
+		MoveAvoidingBodyBlock(2422, 10322)
+		Info('Killing Keeper of Souls 4')
+		KillKeeperOfSouls($RANGE_SPIRIT)
+		MoveAggroAndKill(2422, 10322)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		MoveTo(1200, 10700)
+		MoveAggroAndKill(224, 13362)
+		MoveTo(-1167, 13345)
+		MoveTo(-4886, 13309)
+		MoveTo(-5722, 12758)
+		TeleportBackToArea($reaper, '0x87', '0x8E', 'Twin Serpent Mountains')
+		MoveAggroAndKillSafeTraps(-3757, -5800)
+		MoveAggroAndKillSafeTraps(-175, -2678)
+		MoveAggroAndKillSafeTraps(4660, -2347)
+		MoveAggroAndKillSafeTraps(5371, 300)
+		MoveAggroAndKillSafeTraps(2753, 2853)
+		MoveTo(1650, 2230)
+		TrackVengefulAatxes(-2424, 1767, 'away')
+		RandomSleep(5000)
+		CommandAll(1650, 2230)
+		Info('Aggro killable mobs away from Vengeful Aatxe path')
+		MoveAvoidingBodyBlock(367, 1623)
+		MoveAvoidingBodyBlock(90, 1940)
+		MoveAvoidingBodyBlock(367, 1623)
+		MoveAvoidingBodyBlock(1650, 2230)
+		CancelAll()
+		KillFoesInArea($optionsUnwantedGuests)
+		CommandAll(1650, 2230)
+		RandomSleep(5000)
+		CancelAll()
+		KillFoesInArea($optionsUnwantedGuests)
+		CommandAll(1650, 2230)
+		RandomSleep(5000)
+		TrackVengefulAatxes(-2424, 1767, 'away')
+		CancelAll()
+		MoveAvoidingBodyBlock(-214, 2775)
+		MoveAvoidingBodyBlock(267, 3575)
+		Info('Killing Keeper of Souls 5')
+		KillKeeperOfSouls($RANGE_SPIRIT)
+		MoveAggroAndKill(267, 3575)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
+		MoveAggroAndKill(-3436, 1260)
+		MoveAggroAndKill(-3184, 4456)
+		MoveTo(-2690, 5115)
+		TrackVengefulAatxes(-1255, 6500, 'nearby')
+		TrackVengefulAatxes(980, 7740, 'away')
+		MoveAvoidingBodyBlock(-630, 6415)
+		Info('Killing Keeper of Souls 6')
+		KillKeeperOfSouls()
+		MoveAggroAndKill(-630, 6415)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		MoveAggroAndKill(-1380, 10396)
+		MoveAggroAndKill(-5703, 12732)
+	WEnd
+	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_UNWANTED_GUESTS])
+	TakeQuestReward($reaper, $ID_QUEST_UNWANTED_GUESTS, 0x806707)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -1473,7 +1465,7 @@ EndFunc
 
 Func TheFourHorsemen($reaper)
 	Local $reaper_ChaosPlanes = GetNearestNPCToCoords(11306, -17893)
-	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THE_FOUR_HORSEMEN Or $underworld_player_profession <> $ID_RITUALIST Or $ID_ASSASSIN Then
+	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_THE_FOUR_HORSEMEN Or $underworld_player_profession <> ($ID_RITUALIST Or $ID_ASSASSIN) Then
 		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN] &' quest per settings.')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
@@ -1509,8 +1501,9 @@ Func TheFourHorsemen($reaper)
 	MoveTo(7468, -19050)
 	Sleep(7000)
 
-	Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-	While $myHealth > 0.3
+	
+	While IsPlayerOrPartyAlive()
+		Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
 		; Recast Spirits @ new spot
 		UseSkillEx($UNDERWORLD_VAMPIRISM)
 		MoveTo(7540, -19425)
@@ -1518,15 +1511,16 @@ Func TheFourHorsemen($reaper)
 		MoveTo(7890, -19275)
 		UseSkillEx($UNDERWORLD_PAIN)
 		$myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
+		If $myHealth <= 0.3 Then ExitLoop
 		MoveTo(7770, -19742)
 		UseSkillEx($UNDERWORLD_SIGNET_OF_SPIRITS)
-		MoveTo(8132, -19510)
-		UseSkillEx($UNDERWORLD_ANGUISH)
 		UseSkillEx($UNDERWORLD_ARMOR_OF_UNFEELING)
 		MoveTo(10480, -19800)
 		$myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-		Sleep(10000)
+		If $myHealth <= 0.3 Then ExitLoop
+		Sleep(12000)
 		$myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
+		If $myHealth <= 0.3 Then ExitLoop
 	
 		; Recast Spirits @ new spot
 		UseSkillEx($UNDERWORLD_VAMPIRISM)
@@ -1536,15 +1530,16 @@ Func TheFourHorsemen($reaper)
 		UseSkillEx($UNDERWORLD_PAIN)
 		MoveTo(10660, -19330)
         $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
+		If $myHealth <= 0.3 Then ExitLoop
 		UseSkillEx($UNDERWORLD_SIGNET_OF_SPIRITS)
 		UseSkillEx($UNDERWORLD_ARMOR_OF_UNFEELING)
 		MoveTo(10525, -16735)
         $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-        Sleep(10000)
+        If $myHealth <= 0.3 Then ExitLoop
+		Sleep(10000)
 
-		ExitLoop
 	WEnd
-	
+
 	DropBuff($ID_RECALL, GetMyAgent())
 	TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 	CancelAllHeroes()
@@ -1558,41 +1553,32 @@ Func TheFourHorsemen($reaper)
 	CommandHero(6, 11240, -17213)
 	CommandHero(7, 10894, -17430)
 
+	
 	Info('Final Stand against the Four Horsemen at Reaper.')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
-			ExitLoop
-		Else
-			Local $four_minute_timer = TimerInit()
-			; Protect Reaper for 4 minutes
-			While TimerDiff($four_minute_timer) < 4 * 60 * 1000 And IsPlayerOrPartyAlive()
-				MoveTo(11210, -17560)
-				KillFoesInArea($optionsChaosPlanes)
-				RandomSleep(5000)
-				If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then ExitLoop
-			WEnd
-			; If quest still isn't complete, roam and search for stuck horseman
-			If Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) And IsPlayerOrPartyAlive() Then
-				Info('Quest still not complete. Roaming for last Horseman.')
-				While IsPlayerOrPartyAlive() And Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
-                    CancelAllHeroes()
-                    MoveAggroAndKill(11200, -17615)
-                    MoveAggroAndKill(10000, -19630)
-					MoveAggroAndKill(13800, -15800)
-                    RandomSleep(10000)
-					If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then ExitLoop
-                    MoveAggroAndKill(13730, -12820)
-                    MoveAggroAndKill(11555, -13500)
-                    MoveAggroAndKill(13432, -10358)
-				WEnd
-			EndIf
-		EndIf
+	Local $four_minute_timer = TimerInit()
+	; Protect Reaper for 4 minutes
+	While TimerDiff($four_minute_timer) < 4 * 60 * 1000 And IsPlayerOrPartyAlive() And Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
+		MoveTo(11210, -17560)
+		KillFoesInArea($optionsChaosPlanes)
+		RandomSleep(5000)
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
-		Return $FAIL
-	EndIf
+	While Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
+		; If quest still isn't complete, roam and search for stuck horseman
+		Info('Quest still not complete. Roaming for last Horseman.')
+            CancelAllHeroes()
+            MoveAggroAndKill(11200, -17615)
+            MoveAggroAndKill(10000, -19630)
+			MoveAggroAndKill(13800, -15800)
+            MoveAggroAndKill(13730, -12820) ; Likely spot we find hhorseman
+			If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then ExitLoop
+            MoveAggroAndKill(11555, -13500)
+            MoveAggroAndKill(13432, -10358)
+			If Not IsPlayerOrPartyAlive() Then
+				Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
+				Return $FAIL
+			EndIf
+	WEnd
+	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
 	CancelAllHeroes()
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(13153, -12503)
