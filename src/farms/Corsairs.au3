@@ -45,6 +45,10 @@ Global Const $CORSAIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
 Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
 
+Global Const $CORSAIRS_SECOND_HERO = $ID_MELONNI
+;Global Const $CORSAIRS_SECOND_HERO = $ID_MOX
+;Global Const $CORSAIRS_SECOND_HERO = $ID_KAHMU
+
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
 Global Const $CORSAIRS_DWARVEN_STABILITY	= 1
 Global Const $CORSAIRS_WHIRLING_DEFENSE		= 2
@@ -114,7 +118,7 @@ Func SetupTeamCorsairsFarm()
 	LeaveParty()
 	RandomSleep(250)
 	AddHero($ID_DUNKORO)
-	AddHero($ID_MELONNI)
+	AddHero($CORSAIRS_SECOND_HERO)
 	RandomSleep(500)
 	If GetPartySize() <> 3 Then
 		Warn('Could not set up party correctly. Team size different than 3')

@@ -137,7 +137,7 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-17500, -2800) == $FAIL Then Return $FAIL
 	UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	If MoveDefendingFoWToC(-16500, -3100) == $FAIL Then Return $FAIL
-	; Waiting for Dark Escape to finish anf for buffs to be all fresh
+	; Waiting for Dark Escape to finish and for buffs to be all fresh
 	While TimerDiff($fow_toc_30s_timer) < 27000
 		Sleep(500)
 	WEnd
@@ -148,6 +148,7 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-14150, -2950) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-13600, -1800) == $FAIL Then Return $FAIL
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
+	Local $whirlingDefenseTimer = TimerInit()
 	If MoveDefendingFoWToC(-14200, -700) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-14650, -200) == $FAIL Then Return $FAIL
 
@@ -177,7 +178,10 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-14750, -2800) == $FAIL Then Return $FAIL
 	RandomSleep(2000)
 	If MoveDefendingFoWToC(-15150, -2950) == $FAIL Then Return $FAIL
-	RandomSleep(2000)
+	While TimerDiff($whirlingDefenseTimer) < 60000
+		RandomSleep(2000)
+		CastFowToCBuffs()
+	WEnd
 
 	Info('Killing rangers')
 	; Longest bow range is around 1500
@@ -232,17 +236,20 @@ EndFunc
 
 Func CastFowToCBuffs()
 	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 28000 Then
+		Out('Casting all buffs')
 		; Since everything is casted together, no risk of interrupts
-		$fow_toc_30s_timer = TimerInit()
 		UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
+		If (GetIsKnocked(GetMyAgent())) Then Sleep(1750)
 		Sleep(250)
 		UseSkillEx($FOW_TOC_SHADOWFORM)
 		Sleep(250)
 		UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
+		Sleep(250)
 		If (TimerDiff($run_timer) > 20000) And (GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0) And (IsRecharged($FOW_TOC_MENTAL_BLOCK)) Then UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 		$fow_toc_30s_timer = TimerInit()
 	EndIf
 	If IsRecharged($FOW_TOC_SHROUD_OF_DISTRESS) Then
+		Out('Casting shroud')
 		Sleep(250)
 		UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
 	EndIf
