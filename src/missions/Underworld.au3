@@ -55,7 +55,7 @@ Global Const $UNDERWORLD_PAIN					= 6
 Global Const $UNDERWORLD_ANGUISH				= 7
 Global Const $UNDERWORLD_ARMOR_OF_UNFEELING		= 8
 
-Global Const $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
+Global Const $ATTEMPT_REAPER_QUESTS = True ; Set this to True in order for bot to do Reaper quests
 
 ; Specific Quest Knobs
 Global Const $ENABLE_WRATHFUL_SPIRITS = True ; Quest takes too long and mobs do not drop loot.
@@ -328,7 +328,7 @@ Func WrathfulSpirits()
 	; Take Quest Wrathful spirits from the Reaper and complete
 	Local $reaper = GetNearestNPCToCoords(-13211, 5322)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_WRATHFUL_SPIRITS Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS] &' quest per settings.')
+		Info('Skipping Wrathful Spirits Quest as per settings')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
@@ -337,11 +337,7 @@ Func WrathfulSpirits()
 	$optionsForgottenVale.Item('flagHeroesOnFight') = False
 	$optionsForgottenVale.Item('ignoreDroppedLoot') = False
 	TakeQuest($reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
-			ExitLoop
-		EndIf
+	While Not IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS)
 		Info('1st Group')
 		MoveTo(-13290, 3629)
 		MoveTo(-13200, 2657)
@@ -381,11 +377,12 @@ Func WrathfulSpirits()
 		MoveAggroAndKill(-12530, 6322)
 		MoveAggroAndKill(-13665, 4673)
 		MoveAggroAndKill(-13211, 5322)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
+			Return $FAIL
+		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
-		Return $FAIL
-	EndIf
+	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_WRATHFUL_SPIRITS])
 	TakeQuestReward($reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E07)
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(-8233, 45)
@@ -503,7 +500,7 @@ Func ServantsOfGrenth()
 	; Take Quest Servants of Grenth from Reaper of the Ice Wastes
 	Local $reaper = GetNearestNPCToCoords(526, 18407)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_SERVANTS_OF_GRENTH Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH] &' quest per settings.')
+		Info('Skipping Servants of Grenth Quest as per settings')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
@@ -526,19 +523,15 @@ Func ServantsOfGrenth()
 	MoveTo(1762, 20090)
 	KillFoesInArea($optionsFrozenWastes)
 	Info('Killing waves of Dryders and Skeletons')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_SERVANTS_OF_GRENTH) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
-			ExitLoop
-		Else
-			KillFoesInArea($optionsFrozenWastes)
-			RandomSleep(250)
+	While Not IsQuestReward($ID_QUEST_SERVANTS_OF_GRENTH)
+		KillFoesInArea($optionsFrozenWastes)
+		RandomSleep(2500)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
+			Return $FAIL
 		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
-		Return $FAIL
-	EndIf
+	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_SERVANTS_OF_GRENTH])
 	MoveAggroAndKill(2514, 17133, '', $optionsFrozenWastes)
 	CancelAllHeroes()
 	MoveAggroAndKill(3693, 16071, '', $optionsFrozenWastes)
@@ -884,7 +877,7 @@ Func ClearSpawningPools($reaper)
 	$optionsSpawningPools.Item('ignoreDroppedLoot') = True
 	MoveAggroAndKill(-8466, -19867, '', $optionsSpawningPools)
 	Info('Move to protect Reaper')
-	MoveAvoidingBodyBlock(-7150, -19480)
+	MoveAvoidingBodyBlock(-7102, -19484)
 	KillFoesInArea($optionsSpawningPools)
 	MoveAggroAndKill(-6254, -20456, '', $optionsSpawningPools)
 	MoveAggroAndKill(-5280, -19470, '', $optionsSpawningPools)
@@ -908,7 +901,7 @@ Func TerrorwebQueen()
 	; Take Quest Terrorweb Queen from the Reaper of the Spawning Pools
 	Local $reaper = GetNearestNPCToCoords(-6962, -19505)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_TERRORWEB_QUEEN Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_TERRORWEB_QUEEN] &' quest per settings.')
+		Info('Skipping Terrorweb Queen Quest as per settings')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
@@ -1025,7 +1018,7 @@ Func ImprisonedSpirits()
 	; Take Quest Imprisoned Spirits from the Reaper of the Bone Pits
 	Local $reaper = GetNearestNPCToCoords(8759, 6314)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_IMPRISONED_SPIRITS Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS] &' quest per settings.')
+		Info('Skipping Imprisoned Spirits Quest as per settings')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
@@ -1047,19 +1040,14 @@ Func ImprisonedSpirits()
 	MoveTo(12525, 3865)
 	KillFoesInArea($optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
-			ExitLoop
-		Else
+	While Not IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS) Then
 			KillFoesInArea($optionsBonePits)
 			RandomSleep(5000)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
+			Return $FAIL
 		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
-		Return $FAIL
-	EndIf
 	; Loot here
 	Info('Picking up Loot')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
@@ -1193,7 +1181,7 @@ Func DemonAssassin()
 	; Take Quest Demon Assassin from the Reaper of the Twin Serpent Mountains & defend
 	Local $reaper = GetNearestNPCToCoords(8220, 5202)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMON_ASSASSIN Then
-		Info('Skipping ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN] &' quest per settings.')
+		Info('Skipping Demon Assassin Quest as per settings')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
@@ -1216,19 +1204,14 @@ Func DemonAssassin()
 	TakeQuest($reaper, $ID_QUEST_DEMON_ASSASSIN, 0x806801, 0x806803)
 	MoveTo(-4742, -5531)
 	Info('Killing the Slayer')
-	While IsPlayerOrPartyAlive()
-		If IsQuestReward($ID_QUEST_DEMON_ASSASSIN) Then
-			Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
-			ExitLoop
-		Else
-			KillFoesInArea($optionsTwinSerpentMountains)
-			RandomSleep(5000)
+	While Not IsQuestReward($ID_QUEST_DEMON_ASSASSIN) Then
+		KillFoesInArea($optionsTwinSerpentMountains)
+		RandomSleep(2500)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
+			Return $FAIL
 		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
-		Return $FAIL
-	EndIf
 	Info('Waiting for the waves of Dryders')
 	RandomSleep(50000)
 	Info('Killing Dryders')
@@ -1238,11 +1221,16 @@ Func DemonAssassin()
 		KillFoesInArea($optionsTwinSerpentMountains)
 		RandomSleep(5000)
 		$foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT*2.35)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
+			Return $FAIL
+		EndIf
 	WEnd
-	If Not IsPlayerOrPartyAlive() Then
-		Info('Failed Dryders Waves on Demon Assassin Quest')
+	If IsQuestReward($ID_QUEST_DEMON_ASSASSIN) Then
+		Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
+	Else
 		Return $FAIL
-	EndIf
+	EndIf	
 	Info('Picking up Loot')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
 	MoveTo(-4742, -5531)
