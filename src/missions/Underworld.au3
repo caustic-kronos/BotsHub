@@ -1440,26 +1440,11 @@ EndFunc
 ;~ Wait for Vengeful Aatxe to pat
 Func TrackVengefulAatxes($x, $y, $direction = 'away', $range = $RANGE_COMPASS, $distance = $RANGE_NEARBY) 
 	Info('Waiting for Vengeful Aatxe to pat ' & $direction & '.' )
-    Local $vengefulAaxteNearSpot = False
-    While Not $vengefulAaxteNearSpot
-        Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
-        If IsArray($foes) And UBound($foes) > 0 Then
-            For $i = 0 To UBound($foes) - 1
-                Local $vengefulAaxte = $foes[$i]
-                If IsAgentInRange($vengefulAaxte, $x, $y, $distance) Then
-                    $vengefulAaxteNearSpot = True
-                    ExitLoop
-                EndIf
-            Next
-            If Not $vengefulAaxteNearSpot Then
-                RandomSleep(1000)
-            EndIf
-        Else
-            Info('No Vengeful Aatxe found.')
-            ExitLoop
-        EndIf
+    Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
+    While IsArray($foes) And UBound($foes) > 0 And Not IsAgentInRange($foes[0], $x, $y, $distance)
+        RandomSleep(1000)
+        $foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
     WEnd
-    Return $SUCCESS
 EndFunc
 
 
