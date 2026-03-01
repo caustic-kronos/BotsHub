@@ -1227,7 +1227,7 @@ Func DemonAssassin()
 		EndIf
 	WEnd
 	If IsQuestReward($ID_QUEST_DEMON_ASSASSIN) Then
-		Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
+		Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
 	Else
 		Return $FAIL
 	EndIf	
