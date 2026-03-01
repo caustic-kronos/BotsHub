@@ -44,7 +44,7 @@ Global Const $UW_FARM_DURATION = 90 * 60 * 1000 ; Runs take about 90 minutes if 
 Global Const $MAX_UW_FARM_DURATION = 135 * 60 * 1000 ; Runs take about 135 minutes if all quests set to True
 
 Global Const $RTA_UNDERWORLD_FARMER_SKILLBAR = 'OAejAqiMpR0gXT+glTfTQTVTdOA'
-Global Const $ART_UNDERWORLD_FARMER_SKILLBAR = 'OwhjAyi84QXT+glTVTQT0gAAAAA'
+Global Const $ART_UNDERWORLD_FARMER_SKILLBAR = 'OwhjAyi84Q0gXT+glTfTQTVTdOA'
 
 Global Const $UNDERWORLD_SUMMON_SPIRITS			= 1
 Global Const $UNDERWORLD_SIGNET_OF_SPIRITS		= 2
@@ -1522,7 +1522,7 @@ Func TheFourHorsemen($reaper)
         $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
         If $myHealth <= 0.3 Then ExitLoop
 		Sleep(10000)
-
+		ExitLoop
 	WEnd
 
 	DropBuff($ID_RECALL, GetMyAgent())
