@@ -2101,6 +2101,78 @@ Func Base64ToBin64($character)
 EndFunc
 
 
+;~ Translate textual register name into its corresponding 3-bit register code
+Func RegisterNameTo32Code($registerName)
+    Switch $registerName
+        Case "eax"
+			Return 0
+        Case "ecx"
+			Return 1
+        Case "edx"
+			Return 2
+        Case "ebx"
+			Return 3
+        Case "esp"
+			Return 4
+        Case "ebp"
+			Return 5
+        Case "esi"
+			Return 6
+        Case "edi"
+			Return 7
+    EndSwitch
+    Return SetError(1, 0, -1)
+EndFunc
+
+
+;~ Translate textual register name into its corresponding 3-bit register code
+Func RegisterNameTo16Code($registerName)
+    Switch $registerName
+        Case "ax"
+			Return 0
+        Case "cx"
+			Return 1
+        Case "dx"
+			Return 2
+        Case "bx"
+			Return 3
+        Case "sp"
+			Return 4
+        Case "bp"
+			Return 5
+        Case "si"
+			Return 6
+        Case "di"
+			Return 7
+    EndSwitch
+    Return SetError(1, 0, -1)
+EndFunc
+
+
+;~ Translate textual register name into its corresponding 3-bit register code
+Func RegisterNameTo8Code($registerName)
+    Switch $registerName
+        Case "al"
+			Return 0
+        Case "cl"
+			Return 1
+        Case "dl"
+			Return 2
+        Case "bl"
+			Return 3
+        Case "ah"
+			Return 4
+        Case "ch"
+			Return 5
+        Case "dh"
+			Return 6
+        Case "bh"
+			Return 7
+    EndSwitch
+    Return SetError(1, 0, -1)
+EndFunc
+
+
 ;~ Internal use only.
 Func ASMNumber($value, $small = False)
 	Local $number

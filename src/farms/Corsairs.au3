@@ -23,7 +23,8 @@
 #include '../../lib/GWA2_ID.au3'
 #include '../../lib/Utils.au3'
 
-; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
+; Performance as of 26.03.02: 100 runs, 98% success, 3h40m
+
 ; Using third hero for more speed is a bad idea - you'd lose aggro
 
 Opt('MustDeclareVars', True)
@@ -43,7 +44,7 @@ Global Const $CORSAIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '' & @CRLF _
 	& 'This farm bot is based on below article:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
-Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
+Global Const $CORSAIRS_FARM_DURATION = (2 * 60 + 15) * 1000
 
 Global Const $CORSAIRS_SECOND_HERO = $ID_MELONNI
 ;Global Const $CORSAIRS_SECOND_HERO = $ID_MOX

@@ -18,13 +18,13 @@
 
 ; GAME_CMSG_ - Trade related
 ; Player trade
-Global Const $HEADER_TRADE_PLAYER = 0x00					; Send trade request to player
+Global Const $HEADER_TRADE_PLAYER = 0x00					; Receive trade request from player
 Global Const $HEADER_TRADE_CANCEL = 0x01					; Cancels an ongoing trade
 Global Const $HEADER_TRADE_ADD_ITEM = 0x02					; Adds an item to the trade window
 Global Const $HEADER_TRADE_SUBMIT_OFFER = 0x03				; Submit offer
 Global Const $HEADER_TRADE_OFFER_ITEM = 0x04				; Add item to trade window
 Global Const $HEADER_TRADE_REMOVE_ITEM = 0x05				; Removes an item from the trade window
-Global Const $HEADER_TRADE_CANCEL_OFFER = 0x06				; Cancels a previously sent trade offer
+Global Const $HEADER_TRADE_CHANGE_OFFER = 0x06				; Cancels a previously sent trade offer
 Global Const $HEADER_TRADE_ACCEPT = 0x07					; Accepts a trade offer
 Global Const $HEADER_TRADE_INITIATE = 0x49					; Initiates a trade with another player
 Global Const $HEADER_TRANSACT_ITEMS = 0x4D					; Confirms a transaction involving items
@@ -146,8 +146,9 @@ Global Const $HEADER_TITLE_UPDATE = 0xF5
 Global Const $HEADER_CINEMATIC_SKIP = 0x63					; Skips the cinematic
 
 ; GAME_CMSG_ - Attributes and Skills
-Global Const $HEADER_ATTRIBUTE_DECREASE = 0x0E				; Decreases a player's attribute level
-Global Const $HEADER_ATTRIBUTE_INCREASE = 0x0F				; Increases a player's attribute level
+Global Const $HEADER_ATTRIBUTE_DECREASE = 0x0E				; Decreases attribute level
+Global Const $HEADER_ATTRIBUTE_INCREASE = 0x0F				; Increases attribute level
+Global Const $HEADER_ATTRIBUTE_LOAD = 0x10					; Load attribute level
 Global Const $HEADER_PROFESSION_CHANGE = 0x41				; Changes Secondary class (from Build window, not class changer)
 Global Const $HEADER_USE_SKILL = 0x46
 Global Const $HEADER_SET_SKILLBAR_SKILL = 0x5C				; Changes a skill on the skillbar
@@ -159,6 +160,12 @@ Global Const $HEADER_OPEN_CHEST = 0x53						; interacts with chest or signpost
 
 ; =CHAT=
 Global Const $HEADER_SEND_CHAT = 0x64						; Needed for sending messages in chat
+
+; =GUILD=
+Global Const $HEADER_BUY_GUILD_CAPE = 0x38					; header used to buy a cape
+Global Const $HEADER_SHOW_HIDE = 0x57						; show or hide helm/cape/costume
+Global Const $HEADER_GUILD_ANNOUCEMENTS = 0xBE				; Modify guild announcement
+Global Const $HEADER_GUILD_SET_OFFICER = 0xBD				; Modify guild member role
 
 ; =DEPRECATED=
 ;Global Const $HEADER_TRADE_CHANGE_OFFER = 0x02				; Change offer

@@ -55,7 +55,7 @@ Global Const $GEMSTONES_FARM_INFORMATIONS = 'Requirements:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm' & @CRLF
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONES_FARM_DURATION = (12 * 60 + 30) * 1000
-Global Const $MAX_GEMSTONES_FARM_DURATION = 25 * 60 * 1000
+Global Const $MAX_GEMSTONES_FARM_DURATION = 18 * 60 * 1000
 
 ;=== Configuration / Globals ===
 Global Const $GEMSTONES_DEFEND_X = -3432

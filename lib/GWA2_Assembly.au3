@@ -421,10 +421,10 @@ Func RegisterScanPatterns()
 	AddScanPattern('TradeCancel',				'C745FC01000000506A04',													-0x6,	'func')
 	; Ui patterns
 	AddScanPattern('UIMessage',					'B900000000E8000000005DC3894508',										-0x14,	'func')
-	AddScanPattern('CompassFlag',				'8D451050566A5C57',														0x1,	'func')
+	AddScanPattern('CompassFlag',				'8D451050566A5D57',														0x1,	'func')
 	AddScanPattern('PartySearchButtonCallback',	'8B450883EC08568BF18B480483F90E',										-0x2,	'func')
 	AddScanPattern('PartyWindowButtonCallback',	'837d0800578bf97411',													-0x2,	'func')
-	AddScanPattern('EnterMission',				'A900001000743A',														0x52,	'func')
+	AddScanPattern('EnterMission',				'83C902890A5D',															0x24,	'func')
 	AddScanPattern('SetDifficulty',				'83C41C682A010010',														0x8C,	'func')
 	AddScanPattern('OpenChest',					'83C901894B24',															0x29,	'func')
 	AddScanPattern('Dialog',					'894B248B4B2883E900',													0x16,	'func')
@@ -439,7 +439,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('Engine',					'568B3085F67478EB038D4900D9460C',										-0x22,	'hook')
 	AddScanPattern('Render',					'F6C401741C68',															-0x68,	'hook')
 	AddScanPattern('LoadFinished',				'2BD9C1E303',															0xA0,	'hook')
-	AddScanPattern('Trader',					'8D4DFC51576A5550',														-0x3C,	'hook')
+	AddScanPattern('Trader',					'8D4DFC51576A5650',														-0x3C,	'hook')
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
 	; EncString Decoding
 	AddScanPattern('ValidateAsyncDecodeStr',	'',																		'',		'func',	'P:\Code\Engine\Text\TextApi.cpp',			'codedString')
@@ -2308,7 +2308,6 @@ Func _($asm)
 		Case StringLeft($asm, 4) = 'jle '
 			$asm_injection_size += 2
 			$asm_injection_string &= '7E(' & StringRight($asm, StringLen($asm) - 4) & ')'
-
 		Case StringRegExp($asm, 'call dword[[][a-z,A-Z]{4,}[]]')
 			$asm_injection_size += 6
 			$asm_injection_string &= 'FF15[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
@@ -2318,13 +2317,8 @@ Func _($asm)
 		Case StringRegExp($asm, 'fstp dword[[][a-z,A-Z]{4,}[]]')
 			$asm_injection_size += 6
 			$asm_injection_string &= 'D91D[' & StringMid($asm, 12, StringLen($asm) - 12) & ']'
-		Case StringRegExp($asm, 'retn [0-9A-Fa-f]+h')
+		Case StringRegExp($asm, 'retn [0-9A-Fa-f]+')
 			Local $value = StringRegExpReplace($asm, 'retn ([0-9A-Fa-f]+)h', '$1')
-			$value = Dec($value)
-			$asm_injection_size += 3
-			$asm_injection_string &= 'C2' & SwapEndian(Hex($value, 4))
-		Case StringRegExp($asm, 'retn 0x[0-9A-Fa-f]+')
-			Local $value = StringRegExpReplace($asm, 'retn 0x([0-9A-Fa-f]+)', '$1')
 			$value = Dec($value)
 			$asm_injection_size += 3
 			$asm_injection_string &= 'C2' & SwapEndian(Hex($value, 4))
@@ -2355,6 +2349,15 @@ Func _($asm)
 			Else
 				$asm_injection_size += 5
 				$asm_injection_string &= '3D' & ASMNumber($value)
+			EndIf
+		Case StringRegExp($asm, 'cmp ebx,[0-9A-Fa-f]+\z')
+			Local $value = Dec(StringMid($asm, 9))
+			If $value <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '83FB' & Hex($value, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '81FB' & SwapEndian(Hex($value, 8))
 			EndIf
 		Case StringRegExp($asm, 'cmp ebx,[-[:xdigit:]]{1,2}\z')
 			Local $value = StringMid($asm, 9)
@@ -2387,49 +2390,10 @@ Func _($asm)
 		Case StringRegExp($asm, 'cmp eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 5
 			$asm_injection_string &= '3D[' & StringRight($asm, StringLen($asm) - 8) & ']'
-		Case StringRegExp($asm, 'cmp ebx,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83FB' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81FB' & $buffer
-			EndIf
 		Case StringLeft($asm, 8) = 'cmp ecx,' And StringLen($asm) > 10
 			Local $opCode = '81F9' & StringMid($asm, 9)
 			$asm_injection_size += 0.5 * StringLen($opCode)
 			$asm_injection_string &= $opCode
-		Case StringRegExp($asm, 'add esp,0x[0-9A-Fa-f]+')
-			Local $value = StringRegExpReplace($asm, 'add esp,0x([0-9A-Fa-f]+)', '$1')
-			$value = Dec($value)
-			If $value <= 0x7F Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C4' & Hex($value, 2)
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C4' & SwapEndian(Hex($value, 8))
-			EndIf
-		Case StringRegExp($asm, 'add eax,[0-9A-Fa-f]+h')
-			Local $value = StringRegExpReplace($asm, 'add eax,([0-9A-Fa-f]+)h', '$1')
-			$value = Dec($value)
-			If $value <= 0x7F Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C0' & Hex($value, 2)
-			Else
-				$asm_injection_size += 5
-				$asm_injection_string &= '05' & SwapEndian(Hex($value, 8))
-			EndIf
-		Case StringRegExp($asm, 'add ebx,[0-9A-Fa-f]+h')
-			Local $value = StringRegExpReplace($asm, 'add ebx,([0-9A-Fa-f]+)h', '$1')
-			$value = Dec($value)
-			If $value <= 0x7F Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C3' & Hex($value, 2)
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C3' & SwapEndian(Hex($value, 8))
-			EndIf
 		Case StringRegExp($asm, 'add ebx,dword\[[a-zA-Z_][a-zA-Z0-9_]*\]')
 			Local $label = StringRegExpReplace($asm, 'add ebx,dword\[([a-zA-Z_][a-zA-Z0-9_]*)\]', '$1')
 			$asm_injection_size += 6
@@ -2438,89 +2402,6 @@ Func _($asm)
 			Local $label = StringRegExpReplace($asm, 'add eax,dword\[([a-zA-Z_][a-zA-Z0-9_]*)\]', '$1')
 			$asm_injection_size += 5
 			$asm_injection_string &= '0305[' & $label & ']'
-		Case StringRegExp($asm, 'add ecx,[0-9A-Fa-f]+h')
-			Local $value = StringRegExpReplace($asm, 'add ecx,([0-9A-Fa-f]+)h', '$1')
-			$value = Dec($value)
-			If $value <= 0x7F Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C1' & Hex($value, 2)
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C1' & SwapEndian(Hex($value, 8))
-			EndIf
-		Case StringRegExp($asm, 'add edx,[0-9A-Fa-f]+h')
-			Local $value = StringRegExpReplace($asm, 'add edx,([0-9A-Fa-f]+)h', '$1')
-			$value = Dec($value)
-			If $value <= 0x7F Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C2' & Hex($value, 2)
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C2' & SwapEndian(Hex($value, 8))
-			EndIf
-		Case StringRegExp($asm, 'add eax,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C0' & $buffer
-			Else
-				$asm_injection_size += 5
-				$asm_injection_string &= '05' & $buffer
-			EndIf
-		Case StringRegExp($asm, 'add ebx,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C3' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C3' & $buffer
-			EndIf
-		Case StringRegExp($asm, 'add ecx,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C1' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C1' & $buffer
-			EndIf
-		Case StringRegExp($asm, 'add edx,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C2' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C2' & $buffer
-			EndIf
-		Case StringRegExp($asm, 'add edi,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C7' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C7' & $buffer
-			EndIf
-		Case StringRegExp($asm, 'add esi,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C6' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C6' & $buffer
-			EndIf
-		Case StringRegExp($asm, 'add esp,[-[:xdigit:]]{1,8}\z')
-			$buffer = ASMNumber(StringMid($asm, 9), True)
-			If @extended Then
-				$asm_injection_size += 3
-				$asm_injection_string &= '83C4' & $buffer
-			Else
-				$asm_injection_size += 6
-				$asm_injection_string &= '81C4' & $buffer
-			EndIf
 		Case StringRegExp($asm, 'add eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 5
 			$asm_injection_string &= '05[' & StringRight($asm, StringLen($asm) - 8) & ']'
@@ -2830,6 +2711,16 @@ Func _($asm)
 		Case StringRegExp($asm, 'mov edi,dword[[][a-z,A-Z]{4,}[]]')
 			$asm_injection_size += 6
 			$asm_injection_string &= '8B3D[' & StringMid($asm, 15, StringLen($asm) - 15) & ']'
+		Case StringRegExp($asm, 'mov edi,dword\[esi\+[0-9A-Fa-f]+\]')
+            Local $offset = StringRegExpReplace($asm, 'mov edi,dword\[esi\+([0-9A-Fa-f]+)\]', '$1')
+            $offset = Dec($offset)
+            If $offset <= 0x7F Then
+                $asm_injection_size += 3
+                $asm_injection_string &= '8B7E' & Hex($offset, 2)
+            Else
+                $asm_injection_size += 6
+                $asm_injection_string &= '8BBE' & SwapEndian(Hex($offset, 8))
+            EndIf
 		Case StringRegExp($asm, 'mov eax,[a-z,A-Z]{4,}') And StringInStr($asm, ',dword') = 0
 			$asm_injection_size += 5
 			$asm_injection_string &= 'B8[' & StringRight($asm, StringLen($asm) - 8) & ']'
@@ -2892,6 +2783,26 @@ Func _($asm)
 				$asm_injection_size += 6
 				$asm_injection_string &= '8B88' & SwapEndian(Hex($offset, 8))
 			EndIf
+		Case StringRegExp($asm, 'mov ecx,dword\[ecx\+[0-9A-Fa-f]+\]')
+			Local $offset = StringRegExpReplace($asm, 'mov ecx,dword\[ecx\+([0-9A-Fa-f]+)\]', '$1')
+			$offset = Dec($offset)
+			If $offset <= 0x7F Then
+				$asm_injection_size += 3
+				$asm_injection_string &= '8B49' & Hex($offset, 2)
+			Else
+				$asm_injection_size += 6
+				$asm_injection_string &= '8B89' & SwapEndian(Hex($offset, 8))
+			EndIf
+		Case StringRegExp($asm, 'mov ecx,dword\[esi\+[0-9A-Fa-f]+\]')
+            Local $offset = StringRegExpReplace($asm, 'mov ecx,dword\[esi\+([0-9A-Fa-f]+)\]', '$1')
+            $offset = Dec($offset)
+            If $offset <= 0x7F Then
+                $asm_injection_size += 3
+                $asm_injection_string &= '8B4E' & Hex($offset, 2)
+            Else
+                $asm_injection_size += 6
+                $asm_injection_string &= '8B8E' & SwapEndian(Hex($offset, 8))
+            EndIf
 		Case StringRegExp($asm, 'mov edx,dword\[eax\+[0-9A-Fa-f]+\]')
 			Local $offset = StringRegExpReplace($asm, 'mov edx,dword\[eax\+([0-9A-Fa-f]+)\]', '$1')
 			$offset = Dec($offset)
@@ -2961,16 +2872,6 @@ Func _($asm)
 			Else
 				$asm_injection_size += 10
 				$asm_injection_string &= 'C783' & SwapEndian(Hex($offset, 8)) & '00000000'
-			EndIf
-		Case StringRegExp($asm, 'mov dword\[ecx\+[0-9A-Fa-f]+\],0')
-			Local $offset = StringRegExpReplace($asm, 'mov dword\[ecx\+([0-9A-Fa-f]+)\],0', '$1')
-			$offset = Dec($offset)
-			If $offset <= 0x7F Then
-				$asm_injection_size += 7
-				$asm_injection_string &= 'C741' & Hex($offset, 2) & '00000000'
-			Else
-				$asm_injection_size += 10
-				$asm_injection_string &= 'C781' & SwapEndian(Hex($offset, 8)) & '00000000'
 			EndIf
 		Case StringRegExp($asm, 'mov dword\[edx\+[0-9A-Fa-f]+\],0')
 			Local $offset = StringRegExpReplace($asm, 'mov dword\[edx\+([0-9A-Fa-f]+)\],0', '$1')
@@ -3091,6 +2992,114 @@ Func _($asm)
 				$asm_injection_size += 6
 				$asm_injection_string &= '89A0' & SwapEndian(Hex($offset, 8))
 			EndIf
+		Case StringRegExp($asm, '^add\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*(eax|ecx|edx|ebx|esp|ebp|esi|edi)$')
+            Local $matches = StringRegExp($asm, '^add\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*(eax|ecx|edx|ebx|esp|ebp|esi|edi)$', 1)
+            Local $destination = RegisterNameTo32Code($matches[0])
+            Local $source = RegisterNameTo32Code($matches[1])
+            Local $address = 0xC0 + ($source * 8) + $destination
+            $asm_injection_size += 2
+            $asm_injection_string &= '01' & Hex($address, 2)
+		Case StringRegExp($asm, '^add\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*(ax|cx|dx|bx|sp|bp|si|di)$')
+            Local $matches = StringRegExp($asm, '^add\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*(ax|cx|dx|bx|sp|bp|si|di)$', 1)
+            Local $destination = RegisterNameTo16Code($matches[0])
+            Local $source = RegisterNameTo16Code($matches[1])
+            Local $address = 0xC0 + ($source * 8) + $destination
+            $asm_injection_size += 3
+            $asm_injection_string &= '66' & '01' & Hex($address, 2)
+		Case StringRegExp($asm, '^add\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*(al|cl|dl|bl|ah|ch|dh|bh)$')
+            Local $matches = StringRegExp($asm, '^add\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*(al|cl|dl|bl|ah|ch|dh|bh)$', 1)
+            Local $destination = RegisterNameTo8Code($matches[0])
+            Local $source = RegisterNameTo8Code($matches[1])
+            Local $address = 0xC0 + ($source * 8) + $destination
+            $asm_injection_size += 2
+            $asm_injection_string &= '00' & Hex($address, 2)
+		Case StringRegExp($asm, '^add\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*([0-9A-Fa-f]+)$')
+            Local $matches = StringRegExp($asm, '^add\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*([0-9A-Fa-f]+)$', 1)
+            Local $registerCode = RegisterNameTo32Code($matches[0])
+            Local $address = Dec($matches[1])
+            If $address <= 0x7F Then
+                Local $address = 0xC0 + $registerCode
+                $asm_injection_size += 3
+                $asm_injection_string &= '83' & Hex($address, 2) & Hex($address, 2)
+            Else
+                Local $address = 0xC0 + $registerCode
+                $asm_injection_size += 6
+                $asm_injection_string &= '81' & Hex($address, 2) & SwapEndian(Hex($address, 8))
+            EndIf
+		Case StringRegExp($asm, '^add\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$')
+            Local $matches = StringRegExp($asm, '^add\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$', 1)
+            Local $registerCode = RegisterNameTo16Code($matches[0])
+            Local $address = Dec($matches[1])
+            If $address <= 0x7F Then
+                Local $address = 0xC0 + $registerCode
+                $asm_injection_size += 4
+                $asm_injection_string &= '66' & '83' & Hex($address, 2) & Hex($address, 2)
+            Else
+                Local $address = 0xC0 + $registerCode
+                $asm_injection_size += 5
+                $asm_injection_string &= '66' & '81' & Hex($address, 2) & SwapEndian(Hex($address, 4))
+            EndIf
+		Case StringRegExp($asm, '^add\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$')
+            Local $matches = StringRegExp($asm, '^add\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$', 1)
+            Local $registerCode = RegisterNameTo8Code($matches[0])
+            Local $address = Dec($matches[1])
+            Local $address = 0xC0 + $registerCode
+            $asm_injection_size += 3
+            $asm_injection_string &= '80' & Hex($address, 2) & Hex($address, 2)
+        Case StringRegExp($asm, '^sub\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*(eax|ecx|edx|ebx|esp|ebp|esi|edi)$')
+            Local $matches = StringRegExp($asm, '^sub\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*(eax|ecx|edx|ebx|esp|ebp|esi|edi)$', 1)
+            Local $destination = RegisterNameTo32Code($matches[0])
+            Local $source = RegisterNameTo32Code($matches[1])
+            Local $address = 0xC0 + ($source * 8) + $destination
+            $asm_injection_size += 2
+            $asm_injection_string &= '29' & Hex($address, 2)
+        Case StringRegExp($asm, '^sub\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*(ax|cx|dx|bx|sp|bp|si|di)$')
+            Local $matches = StringRegExp($asm, '^sub\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*(ax|cx|dx|bx|sp|bp|si|di)$', 1)
+            Local $destination = RegisterNameTo16Code($matches[0])
+            Local $source = RegisterNameTo16Code($matches[1])
+            Local $address = 0xC0 + ($source * 8) + $destination
+            $asm_injection_size += 3
+            $asm_injection_string &= '66' & '29' & Hex($address, 2)
+        Case StringRegExp($asm, '^sub\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*(al|cl|dl|bl|ah|ch|dh|bh)$')
+            Local $matches = StringRegExp($asm, '^sub\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*(al|cl|dl|bl|ah|ch|dh|bh)$', 1)
+            Local $destination = RegisterNameTo8Code($matches[0])
+            Local $source = RegisterNameTo8Code($matches[1])
+            Local $address = 0xC0 + ($source * 8) + $destination
+            $asm_injection_size += 2
+            $asm_injection_string &= '28' & Hex($address, 2)
+        Case StringRegExp($asm, '^sub\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*([0-9A-Fa-f]+)$')
+            Local $matches = StringRegExp($asm, '^sub\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*([0-9A-Fa-f]+)$', 1)
+            Local $registerCode = RegisterNameTo32Code($matches[0])
+            Local $address = Dec($matches[1])
+            If $address <= 0x7F Then
+                Local $address = 0xC0 + (5 * 8) + $registerCode
+                $asm_injection_size += 3
+                $asm_injection_string &= '83' & Hex($address, 2) & Hex($address, 2)
+            Else
+                Local $address = 0xC0 + (5 * 8) + $registerCode
+                $asm_injection_size += 6
+                $asm_injection_string &= '81' & Hex($address, 2) & SwapEndian(Hex($address, 8))
+            EndIf
+        Case StringRegExp($asm, '^sub\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$')
+            Local $matches = StringRegExp($asm, '^sub\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$', 1)
+            Local $registerCode = RegisterNameTo16Code($matches[0])
+            Local $address = Dec($matches[1])
+            If $address <= 0x7F Then
+                Local $address = 0xC0 + (5 * 8) + $registerCode
+                $asm_injection_size += 4
+                $asm_injection_string &= '66' & '83' & Hex($address, 2) & Hex($address, 2)
+            Else
+                Local $address = 0xC0 + (5 * 8) + $registerCode
+                $asm_injection_size += 5
+                $asm_injection_string &= '66' & '81' & Hex($address, 2) & SwapEndian(Hex($address, 4))
+            EndIf
+        Case StringRegExp($asm, '^sub\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$')
+            Local $matches = StringRegExp($asm, '^sub\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$', 1)
+            Local $registerCode = RegisterNameTo8Code($matches[0])
+            Local $address = Dec($matches[1])
+            Local $address = 0xC0 + (5 * 8) + $registerCode
+            $asm_injection_size += 3
+            $asm_injection_string &= '80' & Hex($address, 2) & Hex($address, 2)
 		Case Else
 			Local $opCode
 			Switch $asm
@@ -3100,8 +3109,6 @@ Func _($asm)
 					$opCode = 'F8'
 				Case 'retn'
 					$opCode = 'C3'
-				Case 'retn 10'
-					$opCode = 'C21000'
 				Case 'nop'
 					$opCode = '90'
 				Case 'pushad'
@@ -3200,26 +3207,14 @@ Func _($asm)
 					$opCode = '33D2'
 				Case 'xor ebx,ebx'
 					$opCode = '33DB'
-				Case 'sub eax,4'
-					$opCode = '83E804'
-				Case 'sub esp,8'
-					$opCode = '83EC08'
-				Case 'sub esi,4'
-					$opCode = '83EE04'
-				Case 'sub esp,14'
-					$opCode = '83EC14'
-				Case 'sub eax,C'
-					$opCode = '83E80C'
-				Case 'sub esp,16'
-					$opCode = '83EC10'
-				Case 'sub esp,12'
-					$opCode = '83EC0C'
 				Case 'lea eax,dword[eax+18]'
 					$opCode = '8D4018'
 				Case 'lea ecx,dword[eax+4]'
 					$opCode = '8D4804'
 				Case 'lea ecx,dword[eax+C]'
 					$opCode = '8D480C'
+				Case 'lea ecx,dword[eax+10]'
+					$l_s_OpCode = '8D4810'
 				Case 'lea eax,dword[eax+4]'
 					$opCode = '8D4004'
 				Case 'lea edx,dword[eax]'
@@ -3266,24 +3261,6 @@ Func _($asm)
 					$opCode = 'C1E310'
 				Case 'shl esi,8'
 					$opCode = 'C1E608'
-				Case 'add ebx,ecx'
-					$opCode = '03D9'
-				Case 'add esi,D'
-					$opCode = '83C60D'
-				Case 'add esi,12'
-					$opCode = '83C612'
-				Case 'add edi,8'
-					$opCode = '83C708'
-				Case 'add eax,ebx'
-					$opCode = '03C3'
-				Case 'add ecx,edx'
-					$opCode = '03CA'
-				Case 'add eax,esi'
-					$opCode = '03C6'
-				Case 'add esp,16'
-					$opCode = '83C410'
-				Case 'add esp,12'
-					$opCode = '83C40C'
 				Case 'or eax,esi'
 					$opCode = '0BC6'
 				Case 'or eax,edi'
