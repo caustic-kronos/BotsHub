@@ -1496,7 +1496,7 @@ Func TheFourHorsemen($reaper)
 	CommandHero(6, 13689, -12910)
 	CommandHero(7, 13987, -12807)
 	For $i = 1 to 8
-		SetHeroBehaviour($i, 0)
+		SetHeroBehaviour($i, $ID_HERO_FIGHTING)
 	Next
 
 	UseSkillEx($UNDERWORLD_RECALL, $reaper_ChaosPlanes)
