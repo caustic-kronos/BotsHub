@@ -3018,34 +3018,34 @@ Func _($asm)
             Local $registerCode = RegisterNameTo32Code($matches[0])
             Local $address = Dec($matches[1])
             If $address <= 0x7F Then
-                Local $address = 0xC0 + $registerCode
+                Local $registerAddress = 0xC0 + $registerCode
                 $asm_injection_size += 3
-                $asm_injection_string &= '83' & Hex($address, 2) & Hex($address, 2)
+                $asm_injection_string &= '83' & Hex($registerAddress, 2) & Hex($address, 2)
             Else
-                Local $address = 0xC0 + $registerCode
+                Local $registerAddress = 0xC0 + $registerCode
                 $asm_injection_size += 6
-                $asm_injection_string &= '81' & Hex($address, 2) & SwapEndian(Hex($address, 8))
+                $asm_injection_string &= '81' & Hex($registerAddress, 2) & SwapEndian(Hex($address, 8))
             EndIf
 		Case StringRegExp($asm, '^add\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$')
             Local $matches = StringRegExp($asm, '^add\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$', 1)
             Local $registerCode = RegisterNameTo16Code($matches[0])
             Local $address = Dec($matches[1])
             If $address <= 0x7F Then
-                Local $address = 0xC0 + $registerCode
+                Local $registerAddress = 0xC0 + $registerCode
                 $asm_injection_size += 4
-                $asm_injection_string &= '66' & '83' & Hex($address, 2) & Hex($address, 2)
+                $asm_injection_string &= '66' & '83' & Hex($registerAddress, 2) & Hex($address, 2)
             Else
-                Local $address = 0xC0 + $registerCode
+                Local $registerAddress = 0xC0 + $registerCode
                 $asm_injection_size += 5
-                $asm_injection_string &= '66' & '81' & Hex($address, 2) & SwapEndian(Hex($address, 4))
+                $asm_injection_string &= '66' & '81' & Hex($registerAddress, 2) & SwapEndian(Hex($address, 4))
             EndIf
 		Case StringRegExp($asm, '^add\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$')
             Local $matches = StringRegExp($asm, '^add\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$', 1)
             Local $registerCode = RegisterNameTo8Code($matches[0])
             Local $address = Dec($matches[1])
-            Local $address = 0xC0 + $registerCode
+            Local $registerAddress = 0xC0 + $registerCode
             $asm_injection_size += 3
-            $asm_injection_string &= '80' & Hex($address, 2) & Hex($address, 2)
+            $asm_injection_string &= '80' & Hex($registerAddress, 2) & Hex($address, 2)
         Case StringRegExp($asm, '^sub\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*(eax|ecx|edx|ebx|esp|ebp|esi|edi)$')
             Local $matches = StringRegExp($asm, '^sub\s+(eax|ecx|edx|ebx|esp|ebp|esi|edi)\s*,\s*(eax|ecx|edx|ebx|esp|ebp|esi|edi)$', 1)
             Local $destination = RegisterNameTo32Code($matches[0])
@@ -3072,34 +3072,34 @@ Func _($asm)
             Local $registerCode = RegisterNameTo32Code($matches[0])
             Local $address = Dec($matches[1])
             If $address <= 0x7F Then
-                Local $address = 0xC0 + (5 * 8) + $registerCode
+                Local $registerAddress = 0xC0 + (5 * 8) + $registerCode
                 $asm_injection_size += 3
-                $asm_injection_string &= '83' & Hex($address, 2) & Hex($address, 2)
+                $asm_injection_string &= '83' & Hex($registerAddress, 2) & Hex($address, 2)
             Else
-                Local $address = 0xC0 + (5 * 8) + $registerCode
+                Local $registerAddress = 0xC0 + (5 * 8) + $registerCode
                 $asm_injection_size += 6
-                $asm_injection_string &= '81' & Hex($address, 2) & SwapEndian(Hex($address, 8))
+                $asm_injection_string &= '81' & Hex($registerAddress, 2) & SwapEndian(Hex($address, 8))
             EndIf
         Case StringRegExp($asm, '^sub\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$')
             Local $matches = StringRegExp($asm, '^sub\s+(ax|cx|dx|bx|sp|bp|si|di)\s*,\s*([0-9A-Fa-f]+)$', 1)
             Local $registerCode = RegisterNameTo16Code($matches[0])
             Local $address = Dec($matches[1])
             If $address <= 0x7F Then
-                Local $address = 0xC0 + (5 * 8) + $registerCode
+                Local $registerAddress = 0xC0 + (5 * 8) + $registerCode
                 $asm_injection_size += 4
-                $asm_injection_string &= '66' & '83' & Hex($address, 2) & Hex($address, 2)
+                $asm_injection_string &= '66' & '83' & Hex($registerAddress, 2) & Hex($address, 2)
             Else
-                Local $address = 0xC0 + (5 * 8) + $registerCode
+                Local $registerAddress = 0xC0 + (5 * 8) + $registerCode
                 $asm_injection_size += 5
-                $asm_injection_string &= '66' & '81' & Hex($address, 2) & SwapEndian(Hex($address, 4))
+                $asm_injection_string &= '66' & '81' & Hex($registerAddress, 2) & SwapEndian(Hex($address, 4))
             EndIf
         Case StringRegExp($asm, '^sub\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$')
             Local $matches = StringRegExp($asm, '^sub\s+(al|cl|dl|bl|ah|ch|dh|bh)\s*,\s*([0-9A-Fa-f]+)$', 1)
             Local $registerCode = RegisterNameTo8Code($matches[0])
             Local $address = Dec($matches[1])
-            Local $address = 0xC0 + (5 * 8) + $registerCode
+            Local $registerAddress = 0xC0 + (5 * 8) + $registerCode
             $asm_injection_size += 3
-            $asm_injection_string &= '80' & Hex($address, 2) & Hex($address, 2)
+            $asm_injection_string &= '80' & Hex($registerAddress, 2) & Hex($address, 2)
 		Case Else
 			Local $opCode
 			Switch $asm
