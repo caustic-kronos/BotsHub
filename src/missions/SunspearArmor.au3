@@ -66,9 +66,9 @@ Func EnterSunspearArmorChallenge()
 	Info('Entering Dajkah Inlet challenge')
 	; Unfortunately Dajkah Inlet Challenge map has the same map ID as Dajkah Inlet outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Dajkah Inlet Challenge map
-	Local Static $StartX = 29886
-	Local Static $StartY = -3956
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	Local Static $startX = 29886
+	Local Static $startY = -3956
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		GoToNPC(GetNearestNPCToCoords(-2884, -2572))
 		RandomSleep(250)
 		Dialog(0x87)
@@ -81,44 +81,46 @@ EndFunc
 ;~ Cleaning Sunspear Armors function
 Func SunspearArmorClean()
 	If GetMapID() <> $ID_DAJKAH_INLET Then Return $FAIL
-	MoveTo(25752.28, -3139.02)
+	MoveTo(25750, -3140)
 	RandomSleep(62000)
+
+	If IsHardmodeEnabled() Then UseConset()
 
 	; 23 groups to vanquish + 10 movements
 	Local Static $foes[][] = [ _
-		[22595, -484, 'Moving and aggroing'], _
-		[21032, 1357, 'Moving and aggroing'], _
-		[20006, 3631, 'Moving and aggroing'], _
-		[20548, 4762, 'Lord 1'], _
-		[20834, 5205, 'Cleaning'], _
-		[20548, 4762, 'Moving and aggroing'], _
-		[18991, 3166, 'Moving'], _
-		[17809, 3999, 'Moving'], _
-		[3043, -625, 'Cleaning right downstairs'], _
-		[-459, -2790, 'Cleaning left downstairs'], _
-		[-2337, -5236, 'Moving'], _
-		[-3041, -5971, 'Cleaning left upstairs'], _
-		[-4624, -5597, 'Moving and aggroing'], _
-		[-3602, -4455, 'Lord 2'], _
-		[-4624, -5597, 'Moving and aggroing'], _
-		[-3041, -5971, 'Moving and aggroing'], _
-		[-459, -2790, 'Moving and aggroing'], _
-		[3043, -625, 'Moving and aggroing'], _
-		[4878, 2035, 'Moving'], _
-		[5258, 2388, 'Cleaning right upstairs'], _
-		[4425, 3445, 'Lord 3'], _
-		[5258, 2388, 'Moving'], _
-		[4878, 2035, 'Moving'], _
-		[-1775, 1634, 'Moving'], _
-		[-2077, 1961, 'Moving'], _
-		[-22281, -1947, 'Moving'], _
-		[-24882, -2719, 'Moving and aggroing'], _
-		[-28780, -3676, 'Lord 4'], _
-		[-24882, -2719, 'Moving and aggroing'], _
-		[-21963, 624, 'Last Lords gate'], _
-		[-20928, 3428, 'Moving and aggroing'], _
-		[-20263, 4476, 'Moving'], _
-		[-19880, 4086, 'Lord 5'] _
+		[22595,		-484,	'Moving and aggroing'		], _
+		[21032,		1357,	'Moving and aggroing'		], _
+		[20006,		3631,	'Moving and aggroing'		], _
+		[20548,		4762,	'Lord 1'					], _
+		[20834,		5205,	'Cleaning'					], _
+		[20548,		4762,	'Moving and aggroing'		], _
+		[18991,		3166,	'Moving'					], _
+		[17809,		3999,	'Moving'					], _
+		[3043,		-625,	'Cleaning right downstairs'	], _
+		[-459,		-2790,	'Cleaning left downstairs'	], _
+		[-2337,		-5236,	'Moving'					], _
+		[-3041,		-5971,	'Cleaning left upstairs'	], _
+		[-4624,		-5597,	'Moving and aggroing'		], _
+		[-3602,		-4455,	'Lord 2'					], _
+		[-4624,		-5597,	'Moving and aggroing'		], _
+		[-3041,		-5971,	'Moving and aggroing'		], _
+		[-459,		-2790,	'Moving and aggroing'		], _
+		[3043,		-625,	'Moving and aggroing'		], _
+		[4878,		2035,	'Moving'					], _
+		[5258,		2388,	'Cleaning right upstairs'	], _
+		[4425,		3445,	'Lord 3'					], _
+		[5258,		2388,	'Moving'					], _
+		[4878,		2035,	'Moving'					], _
+		[-1775,		1634,	'Moving'					], _
+		[-2077,		1961,	'Moving'					], _
+		[-22281,	-1947,	'Moving'					], _
+		[-24882,	-2719,	'Moving and aggroing'		], _
+		[-28780,	-3676,	'Lord 4'					], _
+		[-24882,	-2719,	'Moving and aggroing'		], _
+		[-21963,	624,	'Last Lords gate'			], _
+		[-20928,	3428,	'Moving and aggroing'		], _
+		[-20263,	4476,	'Moving'					], _
+		[-19880,	4086,	'Lord 5'					] _
 	]
 
 	For $i = 0 To 6

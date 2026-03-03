@@ -48,7 +48,7 @@ Global Const $JB_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
 ;Global Const $JB_HERO_PARTY_ID = $ID_HAYDA
 Global Const $JB_HERO_INDEX = 1
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($MarkOfPain) is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($markOfPain) is better than UseSkillEx(1))
 Global Const $JB_DRUNKENMASTER				= 1
 Global Const $JB_SAND_SHARDS				= 2
 Global Const $JB_MYSTIC_VIGOR				= 3
@@ -207,7 +207,7 @@ Func TalkToAiko()
 	RandomSleep(1000)
 	Info('Taking quest')
 	AcceptQuest($ID_QUEST_MISSING_DAUGHTER)
-	Move(-11303, -6545, 40)
+	Move(-11303, -6545)
 	RandomSleep(4500)
 EndFunc
 

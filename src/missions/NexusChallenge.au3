@@ -36,7 +36,7 @@ Global $nexus_challenge_setup = False
 
 ;~ Main loop for the Mysterious armor farm
 Func NexusChallengeFarm()
-	If Not $nexus_challenge_setup Then NexusChallengeSetup()
+	If Not $nexus_challenge_setup And NexusChallengeSetup() == $FAIL Then Return $FAIL
 
 	EnterNexusChallengeMission()
 	AdlibRegister('TrackPartyStatus', 10000)
@@ -73,9 +73,9 @@ Func EnterNexusChallengeMission()
 	TravelToOutpost($ID_THE_SHADOW_NEXUS, $district_name)
 	; Unfortunately Nexus Challenge map has the same map ID as Nexus outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Nexus Challenge map
-	Local Static $StartX = -391
-	Local Static $StartY = -335
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	Local Static $startX = -391
+	Local Static $startY = -335
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		Info('Entering Nexus mission')
 		MoveTo(-2218, -5033)
 		GoToNPC(GetNearestNPCToCoords(-2218, -5033))
@@ -95,26 +95,26 @@ Func NexusChallenge()
 
 	; 9 groups to defeat in each loop
 	Local Static $foes[][] = [ _
-		; First loop
-		[-2675, 3301, 'Group 1'], _
-		[-55, 3297, 'Group 2'], _
-		[-1759, 993, 'Group 3'], _
-		[3834, 2759, 'Group 4'], _
-		[2479, -1967, 'Group 5'], _
-		[1572, -616, 'Group 6'], _
-		[668, -3516, 'Group 7'], _
-		[-3723, -3662, 'Group 8'], _
-		[-3809, 880, 'Group 9'], _
-		; Second loop
-		[-2675, 3301, 'Group 1'], _
-		[-55, 3297, 'Group 2'], _
-		[-1759, 993, 'Group 3'], _
-		[3834, 2759, 'Group 4'], _
-		[2479, -1967, 'Group 5'], _
-		[1572, -616, 'Group 6'], _
-		[668, -3516, 'Group 7'], _
-		[-3723, -3662, 'Group 8'], _
-		[-3809, 880, 'Group 9'] _
+		_ ; First loop
+		[-2675,		3301,	'Group 1'], _
+		[-55,		3297,	'Group 2'], _
+		[-1759,		993,	'Group 3'], _
+		[3834,		2759,	'Group 4'], _
+		[2479,		-1967,	'Group 5'], _
+		[1572,		-616,	'Group 6'], _
+		[668,		-3516,	'Group 7'], _
+		[-3723,		-3662,	'Group 8'], _
+		[-3809,		880,	'Group 9'], _
+		_ ; Second loop
+		[-2675,		3301,	'Group 1'], _
+		[-55,		3297,	'Group 2'], _
+		[-1759,		993,	'Group 3'], _
+		[3834,		2759,	'Group 4'], _
+		[2479,		-1967,	'Group 5'], _
+		[1572,		-616,	'Group 6'], _
+		[668,		-3516,	'Group 7'], _
+		[-3723,		-3662,	'Group 8'], _
+		[-3809,		880,	'Group 9'] _
 	]
 	For $i = 0 To 8
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL

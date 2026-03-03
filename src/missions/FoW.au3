@@ -37,7 +37,7 @@ Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 Global Const $SHARD_WOLF_MODELID = 2835
 Global Const $ID_FOW_UNHOLY_TEXTS = 2619
 
-Global $fow_fight_options = CloneDictMap($Default_MoveAggroAndKill_Options)
+Global $fow_fight_options = CloneDictMap($default_move_aggro_kill_options)
 
 Global $fow_farm_setup = False
 
@@ -79,14 +79,26 @@ EndFunc
 
 ;~ Farm exact process - wrapper needed to be able to deregister adlib functions
 Func FoWFarmProcess()
-	If IsHardmodeEnabled() Then UseConset()
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
 	If TowerOfCourage() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
 	If TheGreatBattleField() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
 	If TheTempleOfWar() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
 	If TheSpiderCave_and_FissureShore() == $FAIL Then Return $FAIL
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
 	If LakeOfFire() == $FAIL Then Return $FAIL
+	UseConset()
 	If TowerOfStrength() == $FAIL Then Return $FAIL
+	UseConset()
 	If BurningForest() == $FAIL Then Return $FAIL
+	UseConset()
 	If ForestOfTheWailingLord() == $FAIL Then Return $FAIL
 	If GriffonRun() == $FAIL Then Return $FAIL
 	If TempleLoot() == $FAIL Then Return $FAIL
@@ -114,7 +126,7 @@ Func TowerOfCourage()
 	Info('Waiting for door to open')
 	Local $waitCount = 0
 	Local $me = GetMyAgent()
-	While Not IsRunFailed() And GetDistanceToPoint($me, -15000, -2000) > $RANGE_ADJACENT
+	While GetDistanceToPoint($me, -15000, -2000) > $RANGE_ADJACENT
 		If $waitCount == 20 Then
 			Info('Rastigan is not moving, lets nudge him')
 			MoveAggroAndKill(-15500, -3500)
@@ -129,6 +141,7 @@ Func TowerOfCourage()
 		Sleep(3000)
 		$waitCount += 1
 		$me = GetMyAgent()
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	WEnd
 	MoveAggroAndKill(-15500, -2000)
 
@@ -208,9 +221,10 @@ Func TheTempleOfWar()
 	MoveAggroAndKill(2500, -300, '3')
 	MoveAggroAndKill(1850, -150, '4')
 
-	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_ETERNAL_FORGEMASTER)
+	While Not IsQuestReward($ID_QUEST_THE_ETERNAL_FORGEMASTER)
 		Info('The Eternal Forgemaster quest is not finished yet')
 		Sleep(1000)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	WEnd
 
 	Local $questNPC = GetNearestNPCToCoords(1850, -200)
@@ -321,12 +335,13 @@ Func TowerOfStrength()
 	MoveAggroAndKill(15400, -1400, '3')
 	; Entering the tower guarantees that the npc arrived
 	Local $me = GetMyAgent()
-	While Not IsRunFailed() And GetDistanceToPoint($me, 16700, -1700) > $RANGE_NEARBY
+	While GetDistanceToPoint($me, 16700, -1700) > $RANGE_NEARBY
 		MoveTo(16700, -1700)
 		Sleep(1000)
 		$me = GetMyAgent()
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	WEnd
-	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+	Return $SUCCESS
 EndFunc
 
 
@@ -429,7 +444,7 @@ Func ForestOfTheWailingLord()
 	CommandHero(7, -19900, 13600)
 
 	Local $questLoopCount = 0
-	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_WAILING_LORD)
+	While Not IsQuestReward($ID_QUEST_THE_WAILING_LORD)
 		; Pull Skeletal Mobs
 		If $questLoopCount < 2 Then
 			MoveTo(-21000, 14600)
@@ -444,6 +459,7 @@ Func ForestOfTheWailingLord()
 			Sleep(12000)
 		EndIf
 		$questLoopCount += 1
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	WEnd
 	CancelAllHeroes()
 
@@ -560,7 +576,7 @@ Func PickUpUnholyTexts()
 		If (DllStructGetData($item, 'ModelID') == $ID_FOW_UNHOLY_TEXTS) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
 			PickUpItem($item)
-			While IsPlayerAlive() And Not IsRunFailed() And GetAgentExists($agentID)
+			While GetAgentExists($agentID)
 				If Mod($attempts, 20) == 0 Then
 					Local $attempt = Floor($attempts / 20)
 					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
@@ -570,6 +586,7 @@ Func PickUpUnholyTexts()
 				EndIf
 				$attempts += 1
 				RandomSleep(1000)
+				If Not IsPlayerOrPartyAlive() Then Return False
 			WEnd
 			Return True
 		EndIf

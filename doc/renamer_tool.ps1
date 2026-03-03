@@ -1,18 +1,18 @@
 param(
-	[string]$RootPath = ".",
-	[string[]]$Extensions = @("*.au3")
+	[string]$rootPath = ".",
+	[string[]]$extensions = @("*.au3")
 )
 
-Write-Host "RootPath:" (Resolve-Path $RootPath)
-Write-Host "Extensions:" ($Extensions -join ", ")
+Write-Host "RootPath:" (Resolve-Path $rootPath)
+Write-Host "Extensions:" ($extensions -join ", ")
 Write-Host ""
 
 # 1. Collect all target files
-$files = Get-ChildItem -Path $RootPath -Recurse -Include $Extensions -File -ErrorAction Stop
+$files = Get-ChildItem -Path $rootPath -Recurse -Include $extensions -File -ErrorAction Stop
 
 Write-Host "Files found:" $files.Count
 foreach ($f in $files) {
-	Write-Host "  -" $f.FullName
+	Write-Host "	-" $f.FullName
 }
 Write-Host ""
 
@@ -41,7 +41,7 @@ foreach ($file in $files) {
 Write-Host ""
 Write-Host "Constants collected:" $constMap.Count
 foreach ($k in $constMap.Keys) {
-	Write-Host "  $k -> $($constMap[$k])"
+	Write-Host "	$k -> $($constMap[$k])"
 }
 
 if ($constMap.Count -eq 0) {

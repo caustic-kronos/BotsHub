@@ -88,7 +88,7 @@ Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
 Global Const $STYGIANS_RANGE_SHORT = 800
 Global Const $STYGIANS_RANGE_LONG = 1300
 
-Global $stygian_run_options = CloneDictMap($default_movedefend_options)
+Global $stygian_run_options = CloneDictMap($default_move_defend_options)
 $stygian_run_options.Item('defendFunction')		= StygianCheckRunBuffs
 $stygian_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
 $stygian_run_options.Item('randomFactor')			= 20
@@ -181,10 +181,10 @@ Func GoToStygianVeil()
 	Info('Moving to Stygian Veil')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Stygian Veil
-	Local Static $StartX = -364
-	Local Static $StartY = -10445
+	Local Static $startX = -364
+	Local Static $startY = -10445
 	Local $timerZoning = TimerInit()
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		If TimerDiff($timerZoning) > 120000 Then
 			Info('Could not zone to Stygian Veil')
 			Return $FAIL
@@ -279,7 +279,7 @@ Func StygianJobMesmerAssassin($waveNumber = 1)
 	EndIf
 	MoveTo(13128, -10084)
 	; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
-	MoveTo(13082, -9788, 0)
+	MoveTo(13082, -9788, 0, 0)
 	RandomSleep(500)
 	If IsRecharged($STYGIAN_DWARVEN_STABILITY) Then
 		UseSkillEx($STYGIAN_DWARVEN_STABILITY)
@@ -308,8 +308,8 @@ Func StygianJobRanger()
 	CommandAll(9300, -9350)
 	MoveTo(10844, -10205)
 	MoveTo(10313, -11156)
-	MoveTo(8269, -11160, 10)
-	MoveTo(8177, -11171, 10)
+	MoveTo(8269, -11160)
+	MoveTo(8177, -11171, 0, 0)
 
 	; Always use Spike with Flame - same cooldown
 	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
@@ -435,7 +435,7 @@ Func GoToHidingSpot()
 	If IsPlayerDead() Then Return $FAIL
 	RunStygianFarm(10575, -8170)
 	; 0 to get player into the exact location without randomness, spot to hide from running mobs
-	MoveTo(10871, -7842, 0)
+	MoveTo(10871, -7842, 0, 0)
 	; waiting for mobs to run by
 	RandomSleep(7500)
 	If $stygian_player_profession == $ID_RANGER Then

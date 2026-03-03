@@ -86,7 +86,7 @@ Global Const $RAPTORS_STAND_YOUR_GROUND	= 6
 Global Const $RAPTORS_CANT_TOUCH_THIS	= 7
 Global Const $RAPTORS_BLADETURN_REFRAIN	= 8
 
-Global $raptors_move_options = CloneDictMap($default_movedefend_options)
+Global $raptors_move_options = CloneDictMap($default_move_defend_options)
 $raptors_move_options.Item('defendFunction')			= Null
 $raptors_move_options.Item('moveTimeOut')				= 3 * 60 * 1000
 $raptors_move_options.Item('randomFactor')			= 10
@@ -234,7 +234,7 @@ Func MoveToBaseOfCave()
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_CANT_TOUCH_THIS)
 	RandomSleep(50)
 	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
-	Move(-20930, -9480, 40)
+	Move(-20930, -9480)
 EndFunc
 
 
@@ -243,7 +243,7 @@ Func AggroRaptors()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Gathering Raptors')
 
-	Move(-20695, -9900, 20)
+	Move(-20695, -9900)
 	; Using the nearest to agent could result in targeting Angorodon if they are badly placed
 	Local $target = GetNearestEnemyToCoords(-20042, -10251)
 
@@ -332,7 +332,7 @@ EndFunc
 
 ;~ Kill raptors
 Func KillRaptors()
-	Local $MoPTarget
+	Local $mopTarget
 	If IsPlayerDead() Then Return $FAIL
 	Info('Clearing Raptors')
 
@@ -356,14 +356,14 @@ Func KillRaptors()
 	Local $rekoffBoss = GetBossFoe()
 	Local $me = GetMyAgent()
 	If GetDistance($me, $rekoffBoss) > $RANGE_SPELLCAST Then
-		$MoPTarget = GetNearestEnemyToAgent($me)
+		$mopTarget = GetNearestEnemyToAgent($me)
 	Else
-		$MoPTarget = GetNearestEnemyToAgent($rekoffBoss)
+		$mopTarget = GetNearestEnemyToAgent($rekoffBoss)
 	EndIf
 
-	If GetHasHex($MoPTarget) Then
+	If GetHasHex($mopTarget) Then
 		TargetNextEnemy()
-		$MoPTarget = GetCurrentTarget()
+		$mopTarget = GetCurrentTarget()
 	EndIf
 
 	If ($raptors_player_profession == $ID_DERVISH) Then
@@ -389,7 +389,7 @@ Func KillRaptors()
 	Local $timer = TimerInit()
 	; There is an issue here with infinite loop despite the count (wtf!) so added a timer as well
 	While IsPlayerAlive() And IsRecharged($RAPTORS_MARK_OF_PAIN) And $count < 200 And TimerDiff($timer) < 10000
-		UseSkillEx($RAPTORS_MARK_OF_PAIN, $MoPTarget)
+		UseSkillEx($RAPTORS_MARK_OF_PAIN, $mopTarget)
 		RandomSleep(50)
 		$count += 1
 	WEnd

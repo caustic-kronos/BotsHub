@@ -23,7 +23,8 @@
 #include '../../lib/GWA2_ID.au3'
 #include '../../lib/Utils.au3'
 
-; Possible improvements : add second hero, use winnowing - get further away from Bunkoro/Bohseda
+; Performance as of 26.03.02: 100 runs, 98% success, 3h40m
+
 ; Using third hero for more speed is a bad idea - you'd lose aggro
 
 Opt('MustDeclareVars', True)
@@ -43,7 +44,11 @@ Global Const $CORSAIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '' & @CRLF _
 	& 'This farm bot is based on below article:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
-Global Const $CORSAIRS_FARM_DURATION = 3 * 60 * 1000
+Global Const $CORSAIRS_FARM_DURATION = (2 * 60 + 15) * 1000
+
+Global Const $CORSAIRS_SECOND_HERO = $ID_MELONNI
+;Global Const $CORSAIRS_SECOND_HERO = $ID_MOX
+;Global Const $CORSAIRS_SECOND_HERO = $ID_KAHMU
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
 Global Const $CORSAIRS_DWARVEN_STABILITY	= 1
@@ -114,7 +119,7 @@ Func SetupTeamCorsairsFarm()
 	LeaveParty()
 	RandomSleep(250)
 	AddHero($ID_DUNKORO)
-	AddHero($ID_MELONNI)
+	AddHero($CORSAIRS_SECOND_HERO)
 	RandomSleep(500)
 	If GetPartySize() <> 3 Then
 		Warn('Could not set up party correctly. Team size different than 3')
@@ -134,9 +139,9 @@ Func EnterCorsairsModdokCreviceMission()
 	TravelToOutpost($ID_MODDOK_CREVICE, $district_name)
 	; Unfortunately Moddok Crevice mission map has the same map ID as Moddok Crevice outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in Moddok Crevice mission map
-	Local Static $StartX = -11468
-	Local Static $StartY = -7267
-	While Not IsAgentInRange(GetMyAgent(), $StartX, $StartY, $RANGE_EARSHOT)
+	Local Static $startX = -11468
+	Local Static $startY = -7267
+	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		Info('Entering Moddok Crevice mission')
 		GoToNPC(GetNearestNPCToCoords(-13875, -12800))
 		RandomSleep(250)
@@ -181,7 +186,7 @@ Func CorsairsFarmLoop()
 	DefendAgainstCorsairs()
 
 	UseHeroSkill(2, $CORSAIRS_WINNOWING)
-	MoveTo(-9783,-7073, 0)
+	MoveTo(-9783,-7073, 0, 0)
 	WaitForBohseda()
 	CommandHero(2, -13778, -10156)
 	UseSkillEx($CORSAIRS_DWARVEN_STABILITY)
@@ -189,7 +194,7 @@ Func CorsairsFarmLoop()
 	CastAllDefensiveSkills()
 	If IsPlayerDead() Then Return $FAIL
 
-	MoveTo(-9730,-7350, 0)
+	MoveTo(-9730,-7350, 0, 0)
 	GoNPC($captainBohseda)
 	RandomSleep(1000)
 	Dialog(0x85)
@@ -259,20 +264,20 @@ EndFunc
 
 
 ;~ Function to defend against the corsairs
-Func DefendAgainstCorsairs($Hidden = False)
+Func DefendAgainstCorsairs($hidden = False)
 	If IsRecharged($CORSAIRS_TOGETHER_AS_ONE) Then
 		UseSkillEx($CORSAIRS_TOGETHER_AS_ONE)
 		RandomSleep(50)
 	EndIf
-	If Not $Hidden And IsRecharged($CORSAIRS_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 Then
+	If Not $hidden And IsRecharged($CORSAIRS_MENTAL_BLOCK) And GetEffectTimeRemaining(GetEffect($ID_MENTAL_BLOCK)) == 0 Then
 		UseSkillEx($CORSAIRS_MENTAL_BLOCK)
 		RandomSleep(50)
 	EndIf
-	If Not $Hidden And IsRecharged($CORSAIRS_SHROUD_OF_DISTRESS) Then
+	If Not $hidden And IsRecharged($CORSAIRS_SHROUD_OF_DISTRESS) Then
 		UseSkillEx($CORSAIRS_SHROUD_OF_DISTRESS)
 		RandomSleep(50)
 	EndIf
-	If Not $Hidden And IsRecharged($CORSAIRS_FEIGNED_NEUTRALITY) Then
+	If Not $hidden And IsRecharged($CORSAIRS_FEIGNED_NEUTRALITY) Then
 		UseSkillEx($CORSAIRS_FEIGNED_NEUTRALITY)
 		RandomSleep(50)
 	EndIf

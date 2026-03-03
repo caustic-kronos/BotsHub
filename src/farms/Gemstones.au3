@@ -55,7 +55,7 @@ Global Const $GEMSTONES_FARM_INFORMATIONS = 'Requirements:' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:Team_-_7_Hero_AFK_Gemstone_Farm' & @CRLF
 ; Average duration ~ 12m30sec
 Global Const $GEMSTONES_FARM_DURATION = (12 * 60 + 30) * 1000
-Global Const $MAX_GEMSTONES_FARM_DURATION = 25 * 60 * 1000
+Global Const $MAX_GEMSTONES_FARM_DURATION = 18 * 60 * 1000
 
 ;=== Configuration / Globals ===
 Global Const $GEMSTONES_DEFEND_X = -3432
@@ -75,7 +75,7 @@ Global Const $GEM_SKILLS_ARRAY			= [$GEM_SYMBOLIC_CELERITY,	$GEM_SYMBOLIC_POSTUR
 Global Const $GEM_SKILLS_COSTS_ARRAY	= [15,						10,						0,						0,						0,							0,							5,						10]
 Global Const $GEM_SKILLS_COSTS_MAP		= MapFromArrays($GEM_SKILLS_ARRAY, $GEM_SKILLS_COSTS_ARRAY)
 
-Global $gemstones_fight_options	= CloneDictMap($default_moveaggroandkill_options)
+Global $gemstones_fight_options	= CloneDictMap($default_move_aggro_kill_options)
 ; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
 $gemstones_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location
@@ -144,7 +144,7 @@ EndFunc
 Func GemstonesFarmLoop()
 	If TalkToZhellix() == $FAIL Then Return $FAIL
 	WalkToSpotGemstonesFarm()
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL, False)
+	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	Sleep(2000)
 	If Defend() == $FAIL Then Return $FAIL
 	Return $SUCCESS

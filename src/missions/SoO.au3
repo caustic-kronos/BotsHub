@@ -53,6 +53,7 @@ Func SetupSoOFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_VLOXS_FALLS, $district_name)
 	SwitchToHardModeIfEnabled()
+	SetDisplayedTitle($ID_ASURA_TITLE)
 	While Not $soo_farm_setup
 		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop
 		$soo_farm_setup = True
@@ -220,8 +221,9 @@ Func ClearSoOFloor1()
 		FanFlagHeroes()
 		MoveTo(12500, 14250)
 		MoveTo(11200, 13900)
-		RandomSleep(2000)
+		RandomSleep(1000)
 		CancelAllHeroes()
+		RandomSleep(1000)
 		; too close to walls
 		MoveAggroAndKillInRange(12500, 14250, '2', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(13750, 15900, '3', $SOO_AGGRO_RANGE)

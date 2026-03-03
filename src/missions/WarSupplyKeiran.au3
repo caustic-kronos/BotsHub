@@ -12,10 +12,10 @@
 ; ==================================================================================================
 ; War Supplies/Keiran Bot
 ; ==================================================================================================
-; AutoIt Version:   3.3.18.0
-; Original Author:  Danylia
-; Modified Author:  RiflemanX
-; Modified Author:  Zaishen Silver
+; AutoIt Version:	3.3.18.0
+; Original Author:	Danylia
+; Modified Author:	RiflemanX
+; Modified Author:	Zaishen Silver
 ; Rewrite Author for BotsHub: Gahais
 #CE ===========================================================================
 
@@ -61,7 +61,7 @@ Global Const $KEIRAN_SKILLS_ARRAY			= [$KEIRAN_SNIPER_SHOT,	$KEIRAN_GRAVESTONE_M
 Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,							2,						0,						0]
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
-Global $warsupply_fight_options = CloneDictMap($default_moveaggroandkill_options)
+Global $warsupply_fight_options = CloneDictMap($default_move_aggro_kill_options)
 $warsupply_fight_options.Item('fightFunction')	= WarSupplyFarmFight
 $warsupply_fight_options.Item('fightRange')		= 1250
 ; approximate 20 seconds max duration of initial and final fight
@@ -153,7 +153,7 @@ Func EnterHallOfMonuments()
 		MoveTo(-3477, 4245)
 		MoveTo(-4060, 4675)
 		MoveTo(-4448, 4952)
-		move(-4779, 5209)
+		Move(-4779, 5209)
 		WaitMapLoading($ID_HALL_OF_MONUMENTS)
 	EndIf
 	Return GetMapID() == $ID_HALL_OF_MONUMENTS ? $SUCCESS : $FAIL
@@ -212,36 +212,36 @@ EndFunc
 
 Func RunWayPoints()
 	Local $wayPoints[][] = [ _
-		[11125, -5226, 'Main Path 1'], _
-		[11000, -5200, 'Main Path 2'], _
-		[10750, -5500, 'Main Path 3'], _
-		[10500, -5800, 'Main Path 4'], _
-		[10338, -5966, 'Main Path 5'], _
-		[9871, -6464, 'Main Path 6'], _
-		[9500, -7000, 'Main Path 7'], _
-		[8740, -7978, 'Main Path 8'], _
-		[7498, -8517, 'Main Path 9'], _
-		[6000, -8000, 'Main Path 10'], _
-		[5000, -7500, 'Fighting pre forest group'], _
-		[5193, -8514, 'Trying to skip forest'], _
-		[3082, -11112, 'Trying to skip forest'], _
-		[1743, -12859, 'Trying to skip forest group'], _
-		[-181, -12791, 'Leaving Forest'], _
-		[-2728, -11695, 'Detour 16'], _
-		[-2858, -11942, 'Detour 17'], _
-		[-4212, -12641, 'Detour 18'], _
-		[-4276, -12771, 'Detour 19'], _
-		[-6884, -11357, 'Detour 20'], _
-		[-9085, -8631, 'Detour 21'], _
-		[-13156, -7883, 'Detour 22'], _
-		[-13768, -8158, 'Final Area 23'], _
-		[-14205, -8373, 'Final Area 24'], _
-		[-15876, -8903, 'Final Area 25'], _
-		[-17109, -8978, 'Final Area 26'] _
+		[11125,		-5226,	'Main Path 1'					], _
+		[11000,		-5200,	'Main Path 2'					], _
+		[10750,		-5500,	'Main Path 3'					], _
+		[10500,		-5800,	'Main Path 4'					], _
+		[10338,		-5966,	'Main Path 5'					], _
+		[9871,		-6464,	'Main Path 6'					], _
+		[9500,		-7000,	'Main Path 7'					], _
+		[8740,		-7978,	'Main Path 8'					], _
+		[7498,		-8517,	'Main Path 9'					], _
+		[6000,		-8000,	'Main Path 10'					], _
+		[5000,		-7500,	'Fighting pre forest group'		], _
+		[5193,		-8514,	'Trying to skip forest'			], _
+		[3082,		-11112,	'Trying to skip forest'			], _
+		[1743,		-12859,	'Trying to skip forest group'	], _
+		[-181,		-12791,	'Leaving Forest'				], _
+		[-2728,		-11695,	'Detour 16'						], _
+		[-2858,		-11942,	'Detour 17'						], _
+		[-4212,		-12641,	'Detour 18'						], _
+		[-4276,		-12771,	'Detour 19'						], _
+		[-6884,		-11357,	'Detour 20'						], _
+		[-9085,		-8631,	'Detour 21'						], _
+		[-13156,	-7883,	'Detour 22'						], _
+		[-13768,	-8158,	'Final Area 23'					], _
+		[-14205,	-8373,	'Final Area 24'					], _
+		[-15876,	-8903,	'Final Area 25'					], _
+		[-17109,	-8978,	'Final Area 26'					] _
 	]
 
 	Info('Running through way points')
-	Local $x, $y, $log, $range, $me, $Miku
+	Local $x, $y, $log, $range, $me, $miku
 	For $i = 0 To UBound($wayPoints) - 1
 		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS And GetMapID() <> $ID_HALL_OF_MONUMENTS) Then Disconnected()
 		$x = $wayPoints[$i][0]
@@ -257,19 +257,19 @@ Func RunWayPoints()
 			If CheckStuck('Waypoint ' & $log, $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
 			If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then ExitLoop
 			$me = GetMyAgent()
-			$Miku = GetAgentByID($AGENTID_MIKU)
+			$miku = GetAgentByID($AGENTID_MIKU)
 			; check against some impossible scenarios
-			If DllStructGetData($Miku, 'X') == 0 And DllStructGetData($Miku, 'Y') == 0 Then Return $FAIL
+			If DllStructGetData($miku, 'X') == 0 And DllStructGetData($miku, 'Y') == 0 Then Return $FAIL
 			; Using 6th healing skill on the way between waypoints to recover until health is full
-			If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($Miku, 'HealthPercent') < 0.9) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
+			If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($miku, 'HealthPercent') < 0.9) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
 			If CountFoesInRangeOfAgent($me, $warsupply_fight_options.Item('fightRange')) > 0 Then WarSupplyFarmFight($warsupply_fight_options)
 			; Ensuring that Miku is not too far
-			If GetDistance($me, $Miku) > 1650 Then
+			If GetDistance($me, $miku) > 1650 Then
 				Info('Miku is too far. Trying to move to her location')
-				MoveTo(DllStructGetData($Miku, 'X'), DllStructGetData($Miku, 'Y'), 250)
+				MoveTo(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'), $RANGE_NEARBY)
 			EndIf
 			; continue running through waypoints
-			If GetDistance($me, $Miku) < 1650 And Not GetIsDead($Miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($Miku, 'HealthPercent') > 0.9 Then ExitLoop
+			If GetDistance($me, $miku) < 1650 And Not GetIsDead($miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($miku, 'HealthPercent') > 0.9 Then ExitLoop
 			Sleep(1000)
 		WEnd
 		If IsPlayerDead() Then Return $FAIL
@@ -365,7 +365,7 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 		If BitAND(DllStructGetData($miku, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isMikuAttacking = True
 		If ($isPlayerAttacking And $isFoeAttacking And Not $isFoeInRangeOfMiku And Not $isMikuAttacking And IsPlayerAlive() And Not GetIsDead($miku)) Then
 			; move to Miku's position to trigger fight between Miku and mobs
-			Move(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'), 300)
+			Move(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'))
 			ContinueLoop
 		EndIf
 
@@ -432,5 +432,5 @@ Func EvadeAoESkillArea()
 	Local $offsetX = $randomRadius * cos($randomAngle)
 	Local $offsetY = $randomRadius * sin($randomAngle)
 	; 0 = no random, because random offset is already calculated
-	MoveTo($myX + $offsetX , $myY + $offsetY, 0)
+	MoveTo($myX + $offsetX , $myY + $offsetY, 25, 0)
 EndFunc

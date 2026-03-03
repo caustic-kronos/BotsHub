@@ -106,6 +106,7 @@ Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Dunkoro|Ge
 ; UNINITIALIZED -> INITIALIZED -> RUNNING -> WILL_PAUSE -> PAUSED -> RUNNING
 Global $runtime_status = 'UNINITIALIZED'
 Global $run_mode = 'GUI'
+Global $slave_index = 0
 Global $process_id = ''
 Global $character_name = ''
 Global $farm_name = ''
@@ -124,6 +125,7 @@ Global $inventory_management_cache[]
 Global $run_options_cache[]
 $run_options_cache['run.district'] = 'Random EU'
 $run_options_cache['run.consume_consumables'] = True
+$run_options_cache['run.use_consets'] = False
 $run_options_cache['run.use_scrolls'] = False
 $run_options_cache['run.sort_items'] = False
 $run_options_cache['run.farm_materials_mid_run'] = False
@@ -157,7 +159,7 @@ Func Main()
 		Exit 1
 	EndIf
 
-	If $CmdLine[0] <> 0 Then $run_mode = 'HEADLESS'
+	If $cmdLine[0] <> 0 Then $run_mode = 'HEADLESS'
 
 	; GUI free steps
 	FillFarmMap()
@@ -174,14 +176,15 @@ Func Main()
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()
 	ElseIf $run_mode == 'HEADLESS' Then
-		; Need minimum 3 things to run a bot: process ID, character name and farm name
-		If $CmdLine[0] < 3 Then
-			MsgBox(0, 'Error', 'The Hub needs 0 or at least 3 arguments.')
+		; Need minimum 4 things to run a bot: slave index, process ID, character name and farm name
+		If $cmdLine[0] < 4 Then
+			MsgBox(0, 'Error', 'The Hub needs 0 or at least 4 arguments.')
 			Exit
 		EndIf
-		$process_id = $CmdLine[1]
-		$character_name = $CmdLine[2]
-		$farm_name = $CmdLine[3]
+		$slave_index = $cmdLine[1]
+		$process_id = $cmdLine[2]
+		$character_name = $cmdLine[3]
+		$farm_name = $cmdLine[4]
 
 		Info('Running in CMD mode with process ID: ' & $process_id & ' character name: ' & $character_name & ' farm name: ' & $farm_name)
 
@@ -214,7 +217,6 @@ Func BotHubLoop()
 		If ($runtime_status == 'RUNNING') Then
 			If $run_mode == 'GUI' Then
 				DisableGUIComboboxes()
-				$farm_name = GUICtrlRead($gui_combo_farmchoice)
 				If $farm_name == Null Or $farm_name == '' Then
 					Error('This farm does not exist.')
 					$runtime_status = 'INITIALIZED'
@@ -349,9 +351,9 @@ EndFunc
 ;~ Load loot configuration file if it exists
 Func LoadLootConfiguration($filePath)
 	$loot_configuration = $filePath
-	$loot_configuration = StringTrimRight($loot_configuration, StringLen(@ScriptDir & '/conf/loot/'))
+	$loot_configuration = StringTrimLeft($loot_configuration, StringLen(@ScriptDir & '/conf/loot/'))
 	; Removing .json
-	$loot_configuration = StringTrimLeft($loot_configuration, 5)
+	$loot_configuration = StringTrimRight($loot_configuration, 5)
 	Local $jsonLootOptions = LoadLootOptions($filePath)
 	FillInventoryCacheFromJSON($jsonLootOptions, '')
 	BuildInventoryDerivedFlags()
@@ -402,6 +404,7 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.hard_mode'] = _JSON_Get($jsonObject, 'run.hard_mode')
 	$run_options_cache['run.farm_materials_mid_run'] = _JSON_Get($jsonObject, 'run.farm_materials_mid_run')
 	$run_options_cache['run.consume_consumables'] = _JSON_Get($jsonObject, 'run.consume_consumables')
+	$run_options_cache['run.use_consets'] = _JSON_Get($jsonObject, 'run.use_consets')
 	$run_options_cache['run.use_scrolls'] = _JSON_Get($jsonObject, 'run.use_scrolls')
 	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
 	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
@@ -444,10 +447,12 @@ Func WriteConfigToJson()
 	; TODO/FIXME: simplify by iterating over map keys
 	_JSON_addChangeDelete($jsonObject, 'main.character', $character_name)
 	_JSON_addChangeDelete($jsonObject, 'main.farm', $farm_name)
+	_JSON_addChangeDelete($jsonObject, 'main.loot_configuration', $loot_configuration)
 	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', $run_options_cache['run.loop_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
 	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', $run_options_cache['run.consume_consumables'])
+	_JSON_addChangeDelete($jsonObject, 'run.use_consets', $run_options_cache['run.use_consets'])
 	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', $run_options_cache['run.sort_items'])
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])

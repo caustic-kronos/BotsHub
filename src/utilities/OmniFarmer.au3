@@ -54,7 +54,7 @@ Global $quickening_zephyr_cast_timer
 
 ;~ Should not be used - does not farm anything
 Func OmniFarm()
-	;If Not($Farm_Setup) Then OmniFarmSetup()
+	;If Not($farm_Setup) Then OmniFarmSetup()
 
 	Info('Preparing the spirit setup')
 	PrepareZephyrSpirit()

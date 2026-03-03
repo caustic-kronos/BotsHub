@@ -66,7 +66,7 @@ Global Const $BROTHERHOOD_CHEST_X = -3184
 Global Const $BROTHERHOOD_CHEST_Y = 908
 Global Const $BROTHERHOOD_CHEST_GADGETID = 9157
 
-Global $glint_challenge_fight_options = CloneDictMap($default_moveaggroandkill_options)
+Global $glint_challenge_fight_options = CloneDictMap($default_move_aggro_kill_options)
 $glint_challenge_fight_options.Item('fightRange')			= 1500
 ; heroes will be flagged before fight to defend the start location
 $glint_challenge_fight_options.Item('flagHeroesOnFight')	= False

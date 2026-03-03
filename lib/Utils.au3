@@ -53,37 +53,37 @@ EndFunc
 
 
 ;~ Move to a location and wait until you reach it.
-Func MoveTo($X, $Y, $random = 50, $doWhileRunning = Null)
+Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 	Local $blockedCount = 0
-	Local $me
-	Local $mapID = GetMapID(), $oldMapID
+	Local $mapID = GetMapID()
 	Local $destinationX = $X + Random(-$random, $random)
 	Local $destinationY = $Y + Random(-$random, $random)
 
 	Move($destinationX, $destinationY, 0)
 
-	While GetDistanceToPoint($me, $destinationX, $destinationY) > 25 And $blockedCount < 14
-		RandomSleep(100)
-		$me = GetMyAgent()
-		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
-		$oldMapID = $mapID
-		$mapID = GetMapID()
-		If $mapID <> $oldMapID Then ExitLoop
+	Local $me = GetMyAgent()
+	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision
 		If $doWhileRunning <> Null Then $doWhileRunning()
+		RandomSleep(100)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			$destinationX = $X + Random(-$random, $random)
 			$destinationY = $Y + Random(-$random, $random)
 			Move($destinationX, $destinationY, 0)
 		EndIf
+		$me = GetMyAgent()
+		If GetMapID() <> $mapID Then ExitLoop
+		If DllStructGetData($me, 'HealthPercent') <= 0 Then Return False
+		If $blockedCount > 14 Then Return False
 	WEnd
+	Return True
 EndFunc
 
 
 ;~ Differs from previous function by going randomly in a direction, but the distance from the given point is fixed
 Func MoveRandom($x, $y, $distance)
 	Local $angle = Random(0, 2 * 3.14)
-	MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 0)
+	MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 25, 0)
 EndFunc
 
 
@@ -100,13 +100,13 @@ EndFunc
 
 
 ;~ Talks to an agent and waits until you reach it.
-Func GoToAgent($agent, $GoFunction = Null)
+Func GoToAgent($agent, $goFunction = Null)
 	Local $me
 	Local $blockedCount = 0
 	Local $mapLoading = GetMapType(), $mapLoadingOld
-	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
+	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 	RandomSleep(100)
-	If $GoFunction <> Null Then $GoFunction($agent)
+	If $goFunction <> Null Then $goFunction($agent)
 	While GetDistance($me, $agent) > 250 And $blockedCount < 14
 		RandomSleep(100)
 		$me = GetMyAgent()
@@ -116,9 +116,9 @@ Func GoToAgent($agent, $GoFunction = Null)
 		If $mapLoading <> $mapLoadingOld Then ExitLoop
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
-			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'), 100)
+			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
 			RandomSleep(100)
-			If $GoFunction <> Null Then $GoFunction($agent)
+			If $goFunction <> Null Then $goFunction($agent)
 		EndIf
 	WEnd
 	RandomSleep(1000)
@@ -355,8 +355,8 @@ EndFunc
 #Region Find and open Chests
 ;~ Scans for chests and return the first one found around the player or the given coordinates
 ;~ If flagged is set to true, it will return previously found chests
-;~ If $Chest_Gadget_ID parameter is provided then functions will scan only for chests with the same GadgetID as provided
-Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $Chest_Gadget_ID = Null)
+;~ If $chest_Gadget_ID parameter is provided then functions will scan only for chests with the same GadgetID as provided
+Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $chest_Gadget_ID = Null)
 	If $X == Null Or $Y == Null Then
 		Local $me = GetMyAgent()
 		$X = DllStructGetData($me, 'X')
@@ -366,8 +366,8 @@ Func ScanForChests($range, $flagged = False, $X = Null, $Y = Null, $Chest_Gadget
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_STATIC)
 	For $agent In $agents
 		$gadgetID = DllStructGetData($agent, 'GadgetID')
-		If $Chest_Gadget_ID <> Null And $Chest_Gadget_ID <> $gadgetID Then ContinueLoop
-		If $Chest_Gadget_ID == Null And $MAP_CHESTS_IDS[$gadgetID] == Null Then ContinueLoop
+		If $chest_Gadget_ID <> Null And $chest_Gadget_ID <> $gadgetID Then ContinueLoop
+		If $chest_Gadget_ID == Null And $MAP_CHESTS_IDS[$gadgetID] == Null Then ContinueLoop
 		If GetDistanceToPoint($agent, $X, $Y) > $range Then ContinueLoop
 		Local $chestID = DllStructGetData($agent, 'ID')
 		If $chests_map[$chestID] == Null Or $chests_map[$chestID] == 0 Or ($flagged And $chests_map[$chestID] == 1) Then
@@ -464,7 +464,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 	Local $y = DllStructGetData($signpost, 'Y')
 	Local $blocked = 0
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
-		Move($x, $y, 100)
+		Move($x, $y)
 		RandomSleep(100)
 		If $defendFunction <> Null Then $defendFunction()
 		$me = GetMyAgent()
@@ -473,7 +473,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 				$blockedFunction()
 			EndIf
 			$blocked += 1
-			Move($x, $y, 100)
+			Move($x, $y)
 		EndIf
 		RandomSleep(100)
 		$me = GetMyAgent()
@@ -545,7 +545,7 @@ Func GoNearestNPCToCoords($x, $y)
 	$me = GetMyAgent()
 	While GetDistance($me, $npc) > 250
 		RandomSleep(250)
-		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'), 40)
+		Move(DllStructGetData($npc, 'X'), DllStructGetData($npc, 'Y'))
 		RandomSleep(250)
 		GoNPC($npc)
 		RandomSleep(250)
@@ -570,16 +570,16 @@ Func GetAlmostInRangeOfAgent($targetAgent, $proximity = ($RANGE_SPELLCAST + 100)
 
 	Local $goX = $myX + ($targetX - $myX) * (1 - $ratio)
 	Local $goY = $myY + ($targetY - $myY) * (1 - $ratio)
-	MoveTo($goX, $goY, 0)
+	MoveTo($goX, $goY, 25, 0)
 EndFunc
 
 
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
-Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_movedefend_options)
+Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_move_defend_options)
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
-	Local Const $PI = 3.141592653589793
+	Local Const $PI = 3.14
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
@@ -762,7 +762,11 @@ EndFunc
 Func UseSkillEx($skillSlot, $target = Null)
 	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
 
-	Local $skill = GetSkillByID(GetSkillbarSkillID($skillSlot))
+	Local $skillID = GetSkillbarSkillID($skillSlot)
+	; Empty skill slot
+	If $skillID == 0 Then Return False
+
+	Local $skill = GetSkillByID($skillID)
 	Local $energy = StringReplace(StringReplace(StringReplace(StringMid(DllStructGetData($skill, 'Unknown4'), 6, 1), 'C', '25'), 'B', '15'), 'A', '10')
 	If GetEnergy() < $energy Then Return False
 
@@ -899,39 +903,40 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-Global $default_moveaggroandkill_options = ObjCreate('Scripting.Dictionary')
-$default_moveaggroandkill_options.Add('fightFunction', KillFoesInArea)
-$default_moveaggroandkill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
-$default_moveaggroandkill_options.Add('flagHeroesOnFight', False)
-$default_moveaggroandkill_options.Add('callTarget', True)
-$default_moveaggroandkill_options.Add('priorityMobs', False)
-$default_moveaggroandkill_options.Add('skillsMask', Null)
-$default_moveaggroandkill_options.Add('skillsCostMap', Null)
-$default_moveaggroandkill_options.Add('skillsCastTimeMap', Null)
-$default_moveaggroandkill_options.Add('lootInFights', False)
-$default_moveaggroandkill_options.Add('openChests', True)
-$default_moveaggroandkill_options.Add('chestOpenRange', $RANGE_SPIRIT)
-$Default_MoveAggroAndKill_Options.Add('lootTrappedArea', False)
-$Default_MoveAggroAndKill_Options.Add('ignoreDroppedLoot', False)
+Global $default_move_aggro_kill_options = ObjCreate('Scripting.Dictionary')
+$default_move_aggro_kill_options.Add('fightFunction', KillFoesInArea)
+$default_move_aggro_kill_options.Add('fightRange', $RANGE_EARSHOT * 1.5)
+$default_move_aggro_kill_options.Add('flagHeroesOnFight', False)
+$default_move_aggro_kill_options.Add('unstuckFunction', TryToGetUnstuck)
+$default_move_aggro_kill_options.Add('callTarget', True)
+$default_move_aggro_kill_options.Add('priorityMobs', False)
+$default_move_aggro_kill_options.Add('skillsMask', Null)
+$default_move_aggro_kill_options.Add('skillsCostMap', Null)
+$default_move_aggro_kill_options.Add('skillsCastTimeMap', Null)
+$default_move_aggro_kill_options.Add('lootInFights', False)
+$default_move_aggro_kill_options.Add('openChests', True)
+$default_move_aggro_kill_options.Add('chestOpenRange', $RANGE_SPIRIT)
+$default_move_aggro_kill_options.Add('lootTrappedArea', False)
+$default_move_aggro_kill_options.Add('ignoreDroppedLoot', False)
 ; default 60 seconds fight duration
-$default_moveaggroandkill_options.Add('fightDuration', 60000)
+$default_move_aggro_kill_options.Add('fightDuration', 60000)
 
-Global $default_flagmoveaggroandkill_options = CloneDictMap($default_moveaggroandkill_options)
-$default_flagmoveaggroandkill_options.Item('flagHeroesOnFight') = True
+Global $flag_move_aggro_kill_options = CloneDictMap($default_move_aggro_kill_options)
+$flag_move_aggro_kill_options.Item('flagHeroesOnFight') = True
 
-Global $default_movedefend_options = ObjCreate('Scripting.Dictionary')
-$default_movedefend_options.Add('defendFunction', Null)
-$default_movedefend_options.Add('moveTimeOut', 5 * 60 * 1000)
+Global $default_move_defend_options = ObjCreate('Scripting.Dictionary')
+$default_move_defend_options.Add('defendFunction', Null)
+$default_move_defend_options.Add('moveTimeOut', 5 * 60 * 1000)
 ; random factor for movement
-$default_movedefend_options.Add('randomFactor', 100)
-$default_movedefend_options.Add('hosSkillSlot', 0)
-$default_movedefend_options.Add('deathChargeSkillSlot', 0)
-$default_movedefend_options.Add('openChests', False)
-$default_movedefend_options.Add('chestOpenRange', $RANGE_SPIRIT)
+$default_move_defend_options.Add('randomFactor', 100)
+$default_move_defend_options.Add('hosSkillSlot', 0)
+$default_move_defend_options.Add('deathChargeSkillSlot', 0)
+$default_move_defend_options.Add('openChests', False)
+$default_move_defend_options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
-Func WaitAndFightEnemiesInArea($options = $default_moveaggroandkill_options)
+Func WaitAndFightEnemiesInArea($options = $default_move_aggro_kill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
@@ -964,14 +969,14 @@ EndFunc
 
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
-Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $default_flagmoveaggroandkill_options)
+Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $flag_move_aggro_kill_options)
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map
 Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_moveaggroandkill_options)
+	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -979,7 +984,7 @@ EndFunc
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
 Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_flagmoveaggroandkill_options)
+	If $options = Null Then $options = CloneDictMap($flag_move_aggro_kill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -987,7 +992,7 @@ EndFunc
 
 ;~ Trap Safe Wrapper for MoveAggroAndKill
 Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
-	If $options = Null Then $options = CloneDictMap($Default_MoveAggroAndKill_Options)
+	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
 	$options.Item('lootTrappedArea') = True
 	$options.Item('fightRange') = $RANGE_SPELLCAST
 	MoveAggroAndKill($x, $y, $log, $options)
@@ -1008,29 +1013,24 @@ EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
-;~ Credits to Shiva for auto-attack improvement
-Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_options)
+Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
+
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
+	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
 
 	If $log <> '' Then Info($log)
+	IsPlayerStuck(Default, Default, True) ; init internal state
 	Local $me = GetMyAgent()
-	Local $myX = DllStructGetData($me, 'X')
-	Local $myY = DllStructGetData($me, 'Y')
-	Local $blocked = 0
 
 	Move($x, $y)
 
-	Local $oldMyX
-	Local $oldMyY
 	Local $target
 	Local $chest
-	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY And $blocked < 10
-		$oldMyX = $myX
-		$oldMyY = $myY
+	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
 		$me = GetMyAgent()
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
@@ -1040,20 +1040,15 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 			; FIXME: add rezzing dead party members here
 		EndIf
 		RandomSleep(250)
-		$me = GetMyAgent()
-		$myX = DllStructGetData($me, 'X')
-		$myY = DllStructGetData($me, 'Y')
-		If $oldMyX = $myX And $oldMyY = $myY Then
-			$blocked += 1
-			If $blocked > 6 Then
-				Move($myX, $myY, 500)
-				RandomSleep(500)
-				Move($x, $y)
+		
+		If IsPlayerStuck() Then 
+			If $unstuckFunction($x, $y) == $SUCCESS Then
+				IsPlayerStuck(Default, Default, True) ; reset stuck detection
+			Else
+				Return $FAIL
 			EndIf
-		Else
-			; reset of block count if player got unstuck
-			$blocked = 0
 		EndIf
+		
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -1070,8 +1065,74 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_moveaggroandkill_op
 EndFunc
 
 
+; Call this with $reset=True to (re-)initialize it's internal state to track blocked counter and old positions across calls
+Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
+	Static $oldMyX = Null
+	Static $oldMyY = Null
+	Static $blocked = 0
+
+	If $reset Then
+		$oldMyX = Null
+		$oldMyY = Null
+		$blocked = 0
+		Return False
+	EndIf
+
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+
+	If $oldMyX == Null Or $oldMyY == Null Then
+		$oldMyX = $myX
+		$oldMyY = $myY
+		$blocked = 0
+		Return False
+	EndIf
+
+	Local $movementDistance = ComputeDistance($oldMyX, $oldMyY, $myX, $myY)
+	$oldMyX = $myX
+	$oldMyY = $myY
+
+	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
+	If $movementDistance < $minMovement Then
+		$blocked += 1
+	Else
+		; keep some blocked memory to detect oscillation/stutter faster than full reset
+		$blocked = _Max(0, $blocked - 2)
+	EndIf
+	Return $blocked >= $stuckTicks
+EndFunc
+
+
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_AREA)
+	Local $unstuckStartTimer = TimerInit()
+
+	Local $me = GetMyAgent()
+	Local $myX = DllStructGetData($me, 'X')
+	Local $myY = DllStructGetData($me, 'Y')
+	Local $myInitialX = $myX
+	Local $myInitialY = $myY
+
+	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
+		; Try to move randomly from the current position
+		Move($myX, $myY, 500)
+		RandomSleep(500)
+		Move($targetX, $targetY)
+		RandomSleep(1000)
+
+		$me = GetMyAgent()
+		$myX = DllStructGetData($me, 'X')
+		$myY = DllStructGetData($me, 'Y')
+		; If we moved enough away from initial position consider unstuck
+		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
+		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
+	WEnd
+	Return $FAIL
+EndFunc
+
+
 ;~ Kill foes by casting skills from 1 to 8
-Func KillFoesInArea($options = $default_moveaggroandkill_options)
+Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $flagHeroes = ($options.Item('flagHeroesOnFight') <> Null) ? $options.Item('flagHeroesOnFight') : False
 	Local $callTarget = ($options.Item('callTarget') <> Null) ? $options.Item('callTarget') : True
@@ -1128,7 +1189,10 @@ Func KillFoesInArea($options = $default_moveaggroandkill_options)
 		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
-		If IsPlayerAndPartyWiped() Then Return $FAIL
+		If IsPlayerAndPartyWiped() Then 
+			If $flagHeroes Then CancelAllHeroes()
+			Return $FAIL
+		EndIf
 	WEnd
 	If $flagHeroes Then CancelAllHeroes()
 	If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems($lootTrappedArea ? LootTrappedAreaSafely : Null, DefaultShouldPickItem, $fightRange)
@@ -1343,7 +1407,9 @@ EndFunc
 
 ;~ Return whether or not the given quest matches the given mask
 Func QuestStateMatches($questID, $expectedMask)
-	Local $questState = DllStructGetData(GetQuestByID($questID), 'LogState')
+	Local $quest = GetQuestByID($questID)
+	Local $questState = $ID_QUEST_NOT_FOUND
+	If $quest <> Null Then $questState = DllStructGetData($quest, 'LogState')
 	; Cannot use a bitmask on a 0x00 mask
 	If $expectedMask == $ID_QUEST_NOT_FOUND Then Return $questState = $ID_QUEST_NOT_FOUND
 	Return BitAND($questState, $expectedMask) <> 0
@@ -1363,6 +1429,30 @@ Func GetGoldForShrineBenediction()
 EndFunc
 
 
+;~ Take faction blessing
+Func TakeFactionBlessing($factionName)
+	Local $needBribe = False
+	If $factionName == 'luxon' Then
+		$needBribe = GetKurzickFaction() > GetLuxonFaction()
+	Else
+		$needBribe = GetLuxonFaction() > GetKurzickFaction()
+	EndIf
+	If $needBribe Then
+		Dialog(0x81)
+		RandomSleep(1000)
+		Dialog(0x2)
+		RandomSleep(1000)
+		Dialog(0x84)
+	Else
+		Dialog(0x85)
+	EndIf
+	RandomSleep(1000)
+	Dialog(0x86)
+	RandomSleep(1000)
+EndFunc
+
+
+
 ;~ Manage excess Kurzick faction points by either donating them, buying amber chunks or Urgoz scrolls
 Func ManageFactionPointsKurzickFarm()
 	ManageFactionPointsFarm('kurzick', GetKurzickFaction, GetMaxKurzickFaction, $ID_HOUSE_ZU_HELTZER, 5390, 1524)
@@ -1376,14 +1466,14 @@ EndFunc
 
 
 ;~ Manage excess faction points by either donating them, buying materials or elite zone scrolls
-Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
-	If $GetFactionFunction() > ($GetMaxFactionFunction() - 25000) Then
+Func ManageFactionPointsFarm($factionName, $getFactionFunction, $getMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
+	If $getFactionFunction() > ($getMaxFactionFunction() - 25000) Then
 		TravelToOutpost($mapForFactionExchange, $district_name)
 		RandomSleep(200)
 		GoNearestNPCToCoords($npcX, $npcY)
 		If $run_options_cache['run.donate_faction_points'] Then
 			Info('Donating ' & $factionName & ' faction points')
-			While $GetFactionFunction() >= 5000
+			While $getFactionFunction() >= 5000
 				DonateFaction($factionName)
 				RandomSleep(500)
 			WEnd
@@ -1391,7 +1481,7 @@ Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFu
 			Info('Converting ' & $factionName & ' faction points into materials')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfChunks = Floor($GetFactionFunction() / 5000)
+			Local $numberOfChunks = Floor($getFactionFunction() / 5000)
 			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
 			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
 			Dialog($dialogID)
@@ -1400,7 +1490,7 @@ Func ManageFactionPointsFarm($factionName, $GetFactionFunction, $GetMaxFactionFu
 			Info('Converting ' & $factionName & ' faction points into Passage Scrolls')
 			Dialog(0x83)
 			RandomSleep(550)
-			Local $numberOfScrolls = Floor($GetFactionFunction() / 1000)
+			Local $numberOfScrolls = Floor($getFactionFunction() / 1000)
 			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
 			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
 			Dialog($dialogID)
@@ -1558,7 +1648,7 @@ EndFunc
 Func MemoryRead($processHandle, $address, $type = 'dword')
 	PushContext('MemoryRead')
 	Local $buffer = SafeDllStructCreate($type)
-	Local $bytesRead =  DllStructCreate('ulong_ptr')
+	Local $bytesRead = DllStructCreate('ulong_ptr')
 	Local $result = SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $address, 'ptr', DllStructGetPtr($buffer), 'ulong_ptr', DllStructGetSize($buffer), 'ptr', DllStructGetPtr($bytesRead))
 	PopContext('MemoryRead')
 	Return SetExtended(DllStructGetData($bytesRead, 1), DllStructGetData($buffer, 1))
@@ -1619,12 +1709,12 @@ EndFunc
 
 
 Func ScanToFunctionStart($callInstructionAddress, $scanRange = 0x200)
-    If $callInstructionAddress = 0 Then Return 0
+	If $callInstructionAddress = 0 Then Return 0
 
-    Local $start = $callInstructionAddress
-    Local $end = BitAND($start - $scanRange, 0xFFFFFFFF)
+	Local $start = $callInstructionAddress
+	Local $end = BitAND($start - $scanRange, 0xFFFFFFFF)
 
-    Return FindInRange(GetProcessHandle(), '558BEC', 'xxx', 0, $start, $end)
+	Return FindInRange(GetProcessHandle(), '558BEC', 'xxx', 0, $start, $end)
 EndFunc
 
 
@@ -2042,6 +2132,78 @@ Func Base64ToBin64($character)
 EndFunc
 
 
+;~ Translate textual register name into its corresponding 3-bit register code
+Func RegisterNameTo32Code($registerName)
+    Switch $registerName
+        Case "eax"
+			Return 0
+        Case "ecx"
+			Return 1
+        Case "edx"
+			Return 2
+        Case "ebx"
+			Return 3
+        Case "esp"
+			Return 4
+        Case "ebp"
+			Return 5
+        Case "esi"
+			Return 6
+        Case "edi"
+			Return 7
+    EndSwitch
+    Return SetError(1, 0, -1)
+EndFunc
+
+
+;~ Translate textual register name into its corresponding 3-bit register code
+Func RegisterNameTo16Code($registerName)
+    Switch $registerName
+        Case "ax"
+			Return 0
+        Case "cx"
+			Return 1
+        Case "dx"
+			Return 2
+        Case "bx"
+			Return 3
+        Case "sp"
+			Return 4
+        Case "bp"
+			Return 5
+        Case "si"
+			Return 6
+        Case "di"
+			Return 7
+    EndSwitch
+    Return SetError(1, 0, -1)
+EndFunc
+
+
+;~ Translate textual register name into its corresponding 3-bit register code
+Func RegisterNameTo8Code($registerName)
+    Switch $registerName
+        Case "al"
+			Return 0
+        Case "cl"
+			Return 1
+        Case "dl"
+			Return 2
+        Case "bl"
+			Return 3
+        Case "ah"
+			Return 4
+        Case "ch"
+			Return 5
+        Case "dh"
+			Return 6
+        Case "bh"
+			Return 7
+    EndSwitch
+    Return SetError(1, 0, -1)
+EndFunc
+
+
 ;~ Internal use only.
 Func ASMNumber($value, $small = False)
 	Local $number
@@ -2102,16 +2264,18 @@ Func GetDataFromRelativeAddress($processHandle, $relativeCheatEngineAddress, $si
 EndFunc
 
 
-;~ Compute and print structure offsets and total size based on structure definition string
-Func ComputeStructureOffsets($structureDefinition)
+;~ Compute structure fields offsets map
+Func ComputeStructureOffsetsMap($structureTemplate)
+	Local $offsetsMap[]
+
 	Local $offset = 0
-	Local $fields = StringSplit($structureDefinition, ';', 2)
+	Local $fields = StringSplit($structureTemplate, ';', 2)
 
 	For $field In $fields
 		$field = StringStripWS($field, 3)
 		If $field = '' Then ContinueLoop
 
-		Local $parts = StringSplit($field, ' ', 2)
+		Local $parts = StringSplit($field, '	', 2)
 		Local $type = $parts[0]
 		Local $name = $parts[1]
 
@@ -2125,11 +2289,48 @@ Func ComputeStructureOffsets($structureDefinition)
 		EndIf
 
 		Local $size = TypeSize($type) * $count
-		Info(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
+		$offsetsMap[$name] = $offset
+		Debug(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, $size, $offset, StringRight('00' & Hex($offset), 2)))
 		$offset += $size
 	Next
 
-	Info('Total size = ' & $offset & ' bytes')
+	Debug('Total size = ' & $offset & ' bytes')
+	Return $offsetsMap
+EndFunc
+
+
+;~ Build structure fields offsets map
+Func BuildStructureOffsetsMap($structureTemplate)
+	Local $offsetsMap[]
+
+	Local $structure = DllStructCreate($structureTemplate)
+	Local $baseAddress = DllStructGetPtr($structure)
+
+	Local $fields = StringSplit($structureTemplate, ';', 2)
+	For $field In $fields
+		$field = StringStripWS($field, 3)
+		If $field = '' Then ContinueLoop
+
+		Local $parts = StringSplit($field, '	', 2)
+		Local $type = $parts[0]
+		Local $name = $parts[1]
+
+		; Handle arrays (for example wchar name[32])
+		Local $count = 1
+		Local $countPosition = StringInStr($name, '[')
+		If $countPosition > 0 Then
+			Local $countSize = StringInStr($name, ']') - $countPosition - 1
+			$count = Number(StringMid($name, $countPosition + 1, $countSize))
+			$name = StringLeft($name, $countPosition - 1)
+		EndIf
+
+		Local $fieldAddress = DllStructGetPtr($structure, $name)
+		Local $offset = Number($fieldAddress) - Number($baseAddress)
+		$offsetsMap[$name] = $offset
+		; Size not computed here - would need to create a struct for every field
+		Debug(StringFormat('%-30s size=%3d offset=%4d 0x%s', $name, 0, $offset, StringRight('00' & Hex($offset), 2)))
+	Next
+	Return $offsetsMap
 EndFunc
 
 
@@ -2344,7 +2545,7 @@ Func LongestCommonSubstring($strings)
 			Next
 		Next
 	EndIf
-	Return $LongestCommonSubstring
+	Return $longestCommonSubstring
 EndFunc
 
 

@@ -74,7 +74,7 @@ Global Const $VAETTIR_ELEMENTALIST_ELEMENTAL_LORD		= 4
 Global Const $VAETTIR_ELEMENTALIST_MANTRA_OF_EARTH		= 5
 
 ; ==== Global variables ====
-Global $vaettirs_move_options = CloneDictMap($default_movedefend_options)
+Global $vaettirs_move_options = CloneDictMap($default_move_defend_options)
 $vaettirs_move_options.Item('defendFunction')				= VaettirsStayAlive
 $vaettirs_move_options.Item('moveTimeOut')					= 100 * 1000
 $vaettirs_move_options.Item('randomFactor')					= 50
@@ -168,41 +168,41 @@ Func RunToJagaMoraine()
 
 	Info('Running to Jaga Moraine')
 	Local $pathToJaga[][] = [ _
-		[15003.8,	-16598.1], _
-		[15003.8,	-16598.1], _
-		[12699.5,	-14589.8], _
-		[11628,		-13867.9], _
-		[10891.5,	-12989.5], _
-		[10517.5,	-11229.5], _
-		[10209.1,	-9973.1], _
-		[9296.5,	-8811.5], _
-		[7815.6,	-7967.1], _
-		[6266.7,	-6328.5], _
-		[4940,		-4655.4], _
-		[3867.8,	-2397.6], _
-		[2279.6,	-1331.9], _
-		[7.2,		-1072.6], _
-		[7.2,		-1072.6], _
-		[-1752.7,	-1209], _
-		[-3596.9,	-1671.8], _
-		[-5386.6,	-1526.4], _
-		[-6904.2,	-283.2], _
-		[-7711.6,	364.9], _
-		[-9537.8,	1265.4], _
-		[-11141.2,	857.4], _
-		[-12730.7,	371.5], _
-		[-13379,	40.5], _
-		[-14925.7,	1099.6], _
-		[-16183.3,	2753], _
-		[-17803.8,	4439.4], _
-		[-18852.2,	5290.9], _
-		[-19250,	5431], _
-		[-19968,	5564] _
+		[15003,		-16598	], _
+		[15003,		-16598	], _
+		[12699,		-14589	], _
+		[11628,		-13867	], _
+		[10891,		-12989	], _
+		[10517,		-11229	], _
+		[10209,		-9973	], _
+		[9296,		-8811	], _
+		[7815,		-7967	], _
+		[6266,		-6328	], _
+		[4940,		-4655	], _
+		[3867,		-2397	], _
+		[2279,		-1331	], _
+		[7,			-1072	], _
+		[7,			-1072	], _
+		[-1752,		-1209	], _
+		[-3596,		-1671	], _
+		[-5386,		-1526	], _
+		[-6904,		-283	], _
+		[-7711,		364		], _
+		[-9537,		1265	], _
+		[-11141,	857		], _
+		[-12730,	371		], _
+		[-13379,	40		], _
+		[-14925,	1099	], _
+		[-16183,	2753	], _
+		[-17803,	4439	], _
+		[-18852,	5290	], _
+		[-19250,	5431	], _
+		[-19968,	5564	] _
 	]
 	For $i = 0 To UBound($pathToJaga) - 1
 		If RunAcrossBjoraMarches($pathToJaga[$i][0], $pathToJaga[$i][1]) == $FAIL Then Return $FAIL
 	Next
-	Move(-20076, 5580, 30)
+	Move(-20076, 5580)
 	WaitMapLoading($ID_JAGA_MORAINE)
 	Return GetMapID() == $ID_JAGA_MORAINE ? $SUCCESS : $FAIL
 EndFunc
@@ -238,7 +238,7 @@ EndFunc
 ;~ Farm loop
 Func VaettirsFarmLoop()
 	; In case character died at previous loop
-	If IsPlayerDead() Then 
+	If IsPlayerDead() Then
 		If IsPlayerAtMaxMalus() Then
 			Warn('Reached max death malus, restarting the farm setup')
 			$vaettirs_farm_setup = False
@@ -283,38 +283,38 @@ Func AggroAllMobs()
 	; Vaettirs locations
 	Local Static $vaettirs[][] = [ _
 		_ ; left ball
-		[12496,	-22600], _
-		[11375,	-22761], _
-		[10925,	-23466], _
-		[10917,	-24311], _
-		[9910,	-24599], _
-		[8995,	-23177], _
-		[8307,	-23187], _
-		[8213,	-22829], _
-		[8307,	-23187], _
-		[8213,	-22829], _
-		[8740,	-22475], _
-		[8880,	-21384], _
-		[8684,	-20833], _
-		[8982,	-20576], _
+		[12496,	-22600	], _
+		[11375,	-22761	], _
+		[10925,	-23466	], _
+		[10917,	-24311	], _
+		[9910,	-24599	], _
+		[8995,	-23177	], _
+		[8307,	-23187	], _
+		[8213,	-22829	], _
+		[8307,	-23187	], _
+		[8213,	-22829	], _
+		[8740,	-22475	], _
+		[8880,	-21384	], _
+		[8684,	-20833	], _
+		[8982,	-20576	], _
 		_ ; right ball
-		[10196,	-20124], _
-		[9976,	-18338], _
-		[11316,	-18056], _
-		[10392,	-17512], _
-		[10114,	-16948], _
-		[10729,	-16273], _
-		[10810,	-15058], _
-		[11120,	-15105], _
-		[11670,	-15457], _
-		[12604,	-15320], _
-		[12476,	-16157], _
+		[10196,	-20124	], _
+		[9976,	-18338	], _
+		[11316,	-18056	], _
+		[10392,	-17512	], _
+		[10114,	-16948	], _
+		[10729,	-16273	], _
+		[10810,	-15058	], _
+		[11120,	-15105	], _
+		[11670,	-15457	], _
+		[12604,	-15320	], _
+		[12476,	-16157	], _
 		_ ; moving to spot
-		[12920,	-17032], _
-		[12847,	-17136], _
-		[12720,	-17222], _
-		[12617,	-17273], _
-		[12518,	-17305] _
+		[12920,	-17032	], _
+		[12847,	-17136	], _
+		[12720,	-17222	], _
+		[12617,	-17273	], _
+		[12518,	-17305	] _
 	]
 
 	Info('Aggroing left')
@@ -357,7 +357,7 @@ Func AggroAllMobs()
 
 	; [12445,	-17327]
 	; Final spot needs to be precise to avoid losing aggro (we need a right wall block)
-	MoveTo(12480, -17336, 0)
+	MoveTo(12480, -17336, 0, 0)
 
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -541,7 +541,7 @@ EndFunc
 
 
 Func KillVaettirsUsingWastrelSkills()
-	Local Static $MaxKillTime = 100000
+	Local Static $maxKillTime = 100000
 	Local $deadlock = TimerInit()
 	Local $target
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
@@ -550,7 +550,7 @@ Func KillVaettirsUsingWastrelSkills()
 		UseSkillEx($VAETTIR_ARCANE_ECHO)
 		$target = GetWastrelsTarget()
 		UseSkillEx($VAETTIR_WASTRELS_DEMISE, $target)
-		While $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime And IsPlayerAlive()
+		While $foesCount > 0 And TimerDiff($deadlock) < $maxKillTime And IsPlayerAlive()
 			VaettirsStayAlive()
 
 			; Use echoed wastrel if possible
@@ -573,10 +573,10 @@ EndFunc
 
 
 Func KillVaettirsUsingSmitingSkills()
-	Local Static $MaxKillTime = 120000
+	Local Static $maxKillTime = 120000
 	Local $deadlock = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	While $foesCount > 0 And TimerDiff($deadlock) < $MaxKillTime And IsPlayerAlive()
+	While $foesCount > 0 And TimerDiff($deadlock) < $maxKillTime And IsPlayerAlive()
 		VaettirsStayAlive()
 
 		If TimerDiff($vaettir_shadowform_timer) < 16000 And IsRecharged($VAETTIR_MONK_BALTHAZARS_AURA) And GetEnergy() > 25 Then
@@ -615,10 +615,10 @@ Func RezoneToJagaMoraine()
 		EndIf
 	WEnd
 	MoveTo(15600, -20500)
-	Move(15865, -20531)
+	Move(16250, -20531)
 	WaitMapLoading($ID_BJORA_MARCHES)
 	MoveTo(-19968, 5564)
-	Move(-20076, 5580, 30)
+	Move(-20500, 5600)
 	WaitMapLoading($ID_JAGA_MORAINE)
 	RandomSleep(1000)
 	Return $result

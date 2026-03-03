@@ -13,8 +13,9 @@ It provides a **single framework and interface** to run multiple bot scripts, wi
 
 ## Usage
 To use it:
+
 0. Run the game with no add-ons: NO Toolbox, NO cartography, NO reshade, nothing. Also use lowest graphics if possible.
-1. Install **AutoIt (≥ 3.3.16.0)** 🛠️  
+1. Install **AutoIt (≥ 3.3.16.0)** 🛠️
 2. Clone or download the repository (`<> Code → Download ZIP`) 📥
 3. Extract the archive if needed
 4. Run `BotsHub.au3` **using AutoIt** ▶️
@@ -38,62 +39,62 @@ To use it:
 
 ### Farms
 
-| Farm                                | Purpose / Drops                                         |
-| ----------------------------------- | ------------------------------------------------------- |
-| Raptors                             | Festive items, golds, materials, Asura points           |
-| Vaettirs                            | Festive items, golds, materials, Norn points            |
-| Cathedral of Flames (Cryptos)       | Rin Relics, Diessa Chalices, bones                      |
-| Jaya Bluffs (Sensali)               | Feathers, bones                                         |
-| Drazach Thicket (DragonMoss)        | Fibers, Gothic Defender, Echovald Shield, Ornate Shield |
-| Wajjun Bazaar (Mantids)             | Celestial weapons, chitin, dust                         |
-| Moddok Crevice (Corsairs)           | Runes, Colossal Scimitar, Q8                            |
-| Missing Daughter (Jade Brotherhood) | Q8 items, jade bracelets                                |
-| Fish in a Barrel (Kournans)         | Q8 items, runes                                         |
-| Spirit Slaves                       | Q8 items, dust, bones                                   |
-| Minotaurs                           | Materials                                               |
-| Auspicious Beginnings               | War Supplies, festive items, gold, Vanguard points      |
-| A Chance Encounter                  | Ministerial Commendations, faction skins                |
-| Presearing Iris                     | Iris                                                    |
-| Nexus Challenge                     | Mysterious armor hero pieces                            |
-| Dajkah Inlet Challenge              | Sunspear armor hero pieces                              |
-| Glint’s Challenge                   | Cloth of Brotherhood, hero armor, Destroyer cores       |
+| Farm									| Purpose / Drops											|
+| ------------------------------------- | --------------------------------------------------------- |
+| Raptors								| Festive items, golds, materials, Asura points				|
+| Vaettirs								| Festive items, golds, materials, Norn points				|
+| Cathedral of Flames (Cryptos)			| Rin Relics, Diessa Chalices, bones						|
+| Jaya Bluffs (Sensali)					| Feathers, bones											|
+| Drazach Thicket (DragonMoss)			| Fibers, Gothic Defender, Echovald Shield, Ornate Shield	|
+| Wajjun Bazaar (Mantids)				| Celestial weapons, chitin, dust							|
+| Moddok Crevice (Corsairs)				| Runes, Colossal Scimitar, Q8								|
+| Missing Daughter (Jade Brotherhood)	| Q8 items, jade bracelets									|
+| Fish in a Barrel (Kournans)			| Q8 items, runes											|
+| Spirit Slaves							| Q8 items, dust, bones										|
+| Minotaurs								| Materials													|
+| Auspicious Beginnings					| War Supplies, festive items, gold, Vanguard points		|
+| A Chance Encounter					| Ministerial Commendations, faction skins					|
+| Presearing Iris						| Iris														|
+| Nexus Challenge						| Mysterious armor hero pieces								|
+| Dajkah Inlet Challenge				| Sunspear armor hero pieces								|
+| Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores			|
 
 ### Vanquishes / Titles
 
-| Area                       | Title / Points                       |
-| -------------------------- | ------------------------------------ |
-| Ferndale                   | Kurzick                              |
-| Mount Qinkai               | Luxon                                |
-| Sulfurous Wastes           | Sunspear, Lightbringer               |
-| Mirror of Lyss             | Lightbringer                         |
-| Magus Stones               | Asura                                |
-| Varajar Fells              | Norn                                 |
-| Dalada Uplands             | Vanguard                             |
-| Secret Lair of the Snowmen | Deldrimor                            |
-| Pre-Searing                | Legendary Defender of Ascalon (LDOA) |
+| Area							| Title / Points						|
+| ----------------------------- | ------------------------------------- |
+| Ferndale						| Kurzick								|
+| Mount Qinkai					| Luxon									|
+| Sulfurous Wastes				| Sunspear, Lightbringer				|
+| Mirror of Lyss				| Lightbringer							|
+| Magus Stones					| Asura									|
+| Varajar Fells					| Norn									|
+| Dalada Uplands				| Vanguard								|
+| Secret Lair of the Snowmen	| Deldrimor								|
+| Pre-Searing					| Legendary Defender of Ascalon (LDOA)	|
 
 ### Dungeons / Elite Zones
 
-| Area                          | Drops                                          |
-| ----------------------------- | ---------------------------------------------- |
-| Bogroot                       | Froggy                                         |
-| Sepulchre of Dragrimmar (SoO) | Dragon Bone Staff                              |
-| Slaver’s Exile                | Voltaic Spears                                 |
-| FoW                           | Obsidian Shards, Obsidian Edge, Shadow weapons |
-| FoW – Tower of Courage        | Obsidian Shards, dust                          |
-| Domain of Anguish             | Gemstones                                      |
-| City of Torc'qua              | Margonite Gemstones                            |
-| Ravenheart Gloom              | Torment Gemstones                              |
-| Stygian Veil                  | Stygian Gemstones                              |
-| Underworld                    | Globs of Ectoplasm                             |
+| Area							| Drops												|
+| ----------------------------- | ------------------------------------------------- |
+| Bogroot						| Froggy											|
+| Sepulchre of Dragrimmar (SoO)	| Dragon Bone Staff									|
+| Slaver’s Exile				| Voltaic Spears									|
+| FoW							| Obsidian Shards, Obsidian Edge, Shadow weapons	|
+| FoW – Tower of Courage		| Obsidian Shards, dust								|
+| Domain of Anguish				| Gemstones											|
+| City of Torc'qua				| Margonite Gemstones								|
+| Ravenheart Gloom				| Torment Gemstones									|
+| Stygian Veil					| Stygian Gemstones									|
+| Underworld					| Globs of Ectoplasm								|
 
 ### Chest Runs
 
-| Area    | Possible Drops                                           |
-| ------- | -------------------------------------------------------- |
-| Boreal  | Glacial Blades                                           |
-| Pongmei | Faction skins, Q8                                        |
-| Tasca   | Magma Shield, Stone Summit Shield, Summit Warlord Shield |
+| Area		| Possible Drops											|
+| --------- | --------------------------------------------------------- |
+| Boreal	| Glacial Blades											|
+| Pongmei	| Faction skins, Q8											|
+| Tasca		| Magma Shield, Stone Summit Shield, Summit Warlord Shield	|
 
 ### Others
 - Follower bot
@@ -142,6 +143,12 @@ Too many possible causes. Please provide:
 
 Some degree of crash or disconnect is normal and happens to all bots.
 If it happens too often, make sure you are running the game at lowest quality and with no add-ons.
+</details>
+
+<details>
+<summary><strong>Q: My character's name doesn't appear in the left dropdown.</strong></summary>
+
+Check your system locale. Set it to English and that should fix the problem.
 </details>
 
 <details>

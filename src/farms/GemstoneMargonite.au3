@@ -103,7 +103,7 @@ Global Const $GEMSTONE_MARGONITE_FARM_DURATION = 5 * 60 * 1000
 Global Const $MAX_GEMSTONE_MARGONITE_FARM_DURATION = 10 * 60 * 1000
 Global Const $MARGONITES_RANGE = 800
 
-Global $margonite_move_options = CloneDictMap($default_movedefend_options)
+Global $margonite_move_options = CloneDictMap($default_move_defend_options)
 $margonite_move_options.Item('defendFunction')		= MargoniteDefend
 $margonite_move_options.Item('moveTimeOut')			= 100 * 1000
 $margonite_move_options.Item('randomFactor')			= 25
@@ -321,7 +321,7 @@ Func GemstoneMargoniteFarmLoop()
 	$me = GetMyAgent()
 	$target = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsAnurDabiOrKayaOrKiOrSu)
 	If $margonite_player_profession <> $ID_ELEMENTALIST Then
-		If IsRecharged($MARGONITE_DEATHS_CHARGE)  Then
+		If IsRecharged($MARGONITE_DEATHS_CHARGE) Then
 			UseSkillEx($MARGONITE_DEATHS_CHARGE, $target)
 			RandomSleep(50)
 		EndIf
@@ -337,16 +337,16 @@ EndFunc
 
 
 Func IsAnurDabiOrKayaOrKiOrSu($agent)
-	Local Static $AnurKaya	= 5166
-	Local Static $AnurDabi	= 5167
-	Local Static $AnurSu	= 5168
-	Local Static $AnurKi	= 5169
+	Local Static $anurKaya	= 5166
+	Local Static $anurDabi	= 5167
+	Local Static $anurSu	= 5168
+	Local Static $anurKi	= 5169
 
 	Return EnemyAgentFilter($agent) And _
-		(DllStructGetData($agent, 'ModelID') == $AnurKaya Or _
-		DllStructGetData($agent, 'ModelID') == $AnurDabi Or _
-		DllStructGetData($agent, 'ModelID') == $AnurSu Or _
-		DllStructGetData($agent, 'ModelID') == $AnurKi)
+		(DllStructGetData($agent, 'ModelID') == $anurKaya Or _
+		DllStructGetData($agent, 'ModelID') == $anurDabi Or _
+		DllStructGetData($agent, 'ModelID') == $anurSu Or _
+		DllStructGetData($agent, 'ModelID') == $anurKi)
 EndFunc
 
 
@@ -483,9 +483,9 @@ EndFunc
 Func KillMargonitesUsingVisageSkills()
 	If IsPlayerDead() Then Return $FAIL
 	Local $timerKill = TimerInit()
-	Local Static $MaxFightTime = 100000
+	Local Static $maxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -520,9 +520,9 @@ EndFunc
 Func KillMargonitesUsingWhirlingDefense()
 	If IsPlayerDead() Then Return $FAIL
 	Local $timerKill = TimerInit()
-	Local Static $MaxFightTime = 100000
+	Local Static $maxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $MaxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead($MARGONITE_HERO_INDEX)
 		RandomSleep(100)
 		MargoniteDefend()
 

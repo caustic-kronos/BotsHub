@@ -98,8 +98,8 @@ EndFunc
 
 ;~ Did run fail ?
 Func IsRunFailed()
-	Local Static $MaxPartyWipesCount = 5
-	If ($party_failures_count > $MaxPartyWipesCount) Then
+	Local Static $maxPartyWipesCount = 5
+	If ($party_failures_count > $maxPartyWipesCount) Then
 		Notice('Party wiped ' & $party_failures_count & ' times, run is considered failed.')
 		Return True
 	EndIf
@@ -833,5 +833,8 @@ Func CreateMobsPriorityMap()
 											4,								4,								5,								5,								5, _
 											5]
 	AddToMapFromArrays($priorityMap, $warSupplyMobs, $warSupplyMobsPriorities)
+	Local $ldoaMobs =				[	$ID_BANDIT_RAIDER,	$ID_BANDIT_FIRESTARTER]
+	Local $ldoaMobsPriorities =		[	0,					1]
+	AddToMapFromArrays($priorityMap, $ldoaMobs, $ldoaMobsPriorities)
 	Return $priorityMap
 EndFunc

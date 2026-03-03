@@ -84,7 +84,7 @@ Func SetupFeathersFarm()
 	If GetDistanceToPoint($me, 17300, 17300) > 1800 Then MoveTo(18750, 16000)
 
 	GoToJayaBluffs()
-	Move(10500, -13100)
+	MoveTo(10500, -13100)
 	Move(10970, -13360)
 	RandomSleep(1000)
 	WaitMapLoading($ID_SEITUNG_HARBOR, 10000, 2000)
@@ -268,7 +268,7 @@ EndFunc
 
 
 ;~ Wait for foes to settle, I guess ?
-Func WaitForSettle($Timeout = 10000)
+Func WaitForSettle($timeout = 10000)
 	Local $me = GetMyAgent()
 	Local $target
 	Local $deadlock = TimerInit()
@@ -286,7 +286,7 @@ Func WaitForSettle($Timeout = 10000)
 	If CountFoesInRangeOfAgent($me, 900) == 0 Then Return False
 
 	$deadlock = TimerInit()
-	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($deadlock) < $Timeout)
+	While (GetDistance($me, $target) > $RANGE_NEARBY) And (TimerDiff($deadlock) < $timeout)
 		If IsPlayerDead() Then Return False
 		If DllStructGetData($me, 'HealthPercent') < 0.7 Then Return True
 		If GetEffectTimeRemaining($ID_MYSTIC_REGENERATION) <= 0 Then UseSkillEx($FEATHERS_MYSTIC_REGENERATION)
