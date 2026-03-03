@@ -1563,7 +1563,7 @@ Func TheFourHorsemen($reaper)
 
 	ToggleQuestWindow()
 	For $i = 1 to 8
-		SetHeroBehaviour($i, 1)
+		SetHeroBehaviour($i, $ID_HERO_GUARDING)
 	Next
 	CommandHero(1, 11076, -17974)
 	CommandHero(2, 11563, -17492)
