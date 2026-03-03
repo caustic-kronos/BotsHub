@@ -1231,7 +1231,7 @@ Func DemonAssassin()
 	RandomSleep(50000)
 	Info('Killing Dryders')
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT*2.35)
-	While IsPlayerOrPartyAlive() And UBound($foes) > 0
+	While UBound($foes) > 0
 		MoveTo(-4629, -5282)
 		KillFoesInArea($optionsTwinSerpentMountains)
 		RandomSleep(5000)
