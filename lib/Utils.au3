@@ -1431,6 +1431,12 @@ Func QuestStateMatches($questID, $expectedMask)
 	If $expectedMask == $ID_QUEST_NOT_FOUND Then Return $questState = $ID_QUEST_NOT_FOUND
 	Return BitAND($questState, $expectedMask) <> 0
 EndFunc
+
+;~ Return quest objectives hex string
+Func QuestObjective($questID)
+	Local $quest = GetQuestByID($questID)
+	If $quest <> Null Then Return DllStructGetData($quest, 'Objective')
+EndFunc
 #EndRegion Quests
 
 

@@ -444,4 +444,14 @@ Global Const $ID_WHITE_MANTLE_CHAMPION_1	= 8295
 Global Const $ID_WHITE_MANTLE_CHAMPION_2	= 8296
 Global Const $ID_WHITE_MANTLE_CHAMPION_3	= 8297
 Global Const $ID_WHITE_MANTLE_ZEALOT_5		= 8392
+; Underworld farm foes model IDs
+Global Const $ID_KEEPER_OF_SOULS	 		= 2373
+Global Const $ID_VENGEFUL_AATXE 			= 2390
+Global Const $ID_TERRORWEB_DRYDER 			= 2371
+Global Const $ID_TERRORWEB_DRYDER_SILVER	= 2372
+Global Const $ID_SMITE_CRAWLER				= 2375
+Global Const $ID_BANISHED_DREAM_RIDER		= 2377
+Global Const $ID_MINDBLADE_SPECTRE			= 2380
+Global Const $ID_BLADED_AATXE				= 2389
+Global Const $ID_SKELETON_OF_DHUUM			= 2392
 #EndRegion Mob IDs
