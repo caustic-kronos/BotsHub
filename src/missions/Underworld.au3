@@ -1468,6 +1468,9 @@ Func TheFourHorsemen($reaper)
 	CommandHero(5, 13697, -12538)
 	CommandHero(6, 13689, -12910)
 	CommandHero(7, 13987, -12807)
+	For $i = 1 to 8
+		SetHeroBehaviour($i, 0)
+	Next
 
 	UseSkillEx($UNDERWORLD_RECALL, $reaper_ChaosPlanes)
 	MoveTo(6768, -16996)
@@ -1483,53 +1486,58 @@ Func TheFourHorsemen($reaper)
 	Sleep(5000)
 	TakeQuest($reaper_ChaosPlanes, $ID_QUEST_THE_FOUR_HORSEMEN, 0x806A01, 0x806A03)
 	UseSkillEx($UNDERWORLD_RECALL, $reaper_ChaosPlanes)
-	MoveTo(7468, -19050)
-	Sleep(7000)
+	ToggleQuestWindow()
+	Info('Time to Kite the Four Horsemen.')
+	
+	Local $steps[17][4] = [ _
+		[7468, -19050, 0, 3000], _
+		[7468, -19050, 0, 3000], _
+		[7468, -19050, $UNDERWORLD_VAMPIRISM, 0], _
+		[7540, -19425, $UNDERWORLD_BLOODSONG, 0], _
+		[7890, -19275, $UNDERWORLD_PAIN, 0], _
+		[7770, -19742, $UNDERWORLD_SIGNET_OF_SPIRITS, 0], _
+		[7770, -19742, $UNDERWORLD_ARMOR_OF_UNFEELING, 0], _
+		[10480, -19800, 0, 3000], _
+		[10480, -19800, 0, 3000], _
+		[10480, -19800, 0, 3000], _
+		[10480, -19800, $UNDERWORLD_VAMPIRISM, 0], _
+		[10355, -19490, $UNDERWORLD_BLOODSONG, 0], _
+		[10770, -19690, $UNDERWORLD_PAIN, 0], _
+		[10660, -19330, $UNDERWORLD_SIGNET_OF_SPIRITS, 0], _
+		[10660, -19330, $UNDERWORLD_ARMOR_OF_UNFEELING, 0], _
+		[11306, -17893, 0, 4000], _
+		[11306, -17893, 0, 4000] _
+	]
 
-	
-	While IsPlayerOrPartyAlive()
-		Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-		; Recast Spirits @ new spot
-		UseSkillEx($UNDERWORLD_VAMPIRISM)
-		MoveTo(7540, -19425)
-		UseSkillEx($UNDERWORLD_BLOODSONG)
-		MoveTo(7890, -19275)
-		UseSkillEx($UNDERWORLD_PAIN)
-		$myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-		If $myHealth <= 0.3 Then ExitLoop
-		MoveTo(7770, -19742)
-		UseSkillEx($UNDERWORLD_SIGNET_OF_SPIRITS)
-		UseSkillEx($UNDERWORLD_ARMOR_OF_UNFEELING)
-		MoveTo(10480, -19800)
-		$myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-		If $myHealth <= 0.3 Then ExitLoop
-		Sleep(12000)
-		$myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-		If $myHealth <= 0.3 Then ExitLoop
-	
-		; Recast Spirits @ new spot
-		UseSkillEx($UNDERWORLD_VAMPIRISM)
-		MoveTo(10355, -19490)
-		UseSkillEx($UNDERWORLD_BLOODSONG)
-		MoveTo(10770, -19690)
-		UseSkillEx($UNDERWORLD_PAIN)
-		MoveTo(10660, -19330)
-        $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-		If $myHealth <= 0.3 Then ExitLoop
-		UseSkillEx($UNDERWORLD_SIGNET_OF_SPIRITS)
-		UseSkillEx($UNDERWORLD_ARMOR_OF_UNFEELING)
-		MoveTo(10525, -16735)
-        $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-        If $myHealth <= 0.3 Then ExitLoop
-		Sleep(10000)
-		ExitLoop
+	Local $index = 0
+	Local $stepCount = UBound($steps)
+	AbortFourHorsemenKite(True)
+
+	While IsPlayerAlive() And $index < $stepCount And Not AbortFourHorsemenKite()
+		MoveTo($steps[$index][0], $steps[$index][1])
+
+		Local $skill = $steps[$index][2]
+		If $skill <> 0 Then UseSkillEx($skill)
+
+		Local $sleepTime = $steps[$index][3]
+		If $sleepTime > 0 Then Sleep($sleepTime)
+
+		$index += 1
 	WEnd
 
-	DropBuff($ID_RECALL, GetMyAgent())
-	TeleportBackToArea($reaper_ChaosPlanes, '0x86', '0x8D', 'Labyrinth')
-	CancelAllHeroes()
-	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
+	If IsPlayerAlive() Then
+		DropBuff($ID_RECALL, GetMyAgent())
+		TeleportBackToArea($reaper_ChaosPlanes, '0x86', '0x8D', 'Labyrinth')
+		CancelAllHeroes()
+		TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
+	Else
+		CancelAllHeroes()
+	EndIf
 
+	ToggleQuestWindow()
+	For $i = 1 to 8
+		SetHeroBehaviour($i, 1)
+	Next
 	CommandHero(1, 11076, -17974)
 	CommandHero(2, 11563, -17492)
 	CommandHero(3, 11744, -17898)
@@ -1542,11 +1550,33 @@ Func TheFourHorsemen($reaper)
 	Info('Final Stand against the Four Horsemen at Reaper.')
 	Local $four_minute_timer = TimerInit()
 	; Protect Reaper for 4 minutes
-	While TimerDiff($four_minute_timer) < 4 * 60 * 1000 And IsPlayerOrPartyAlive() And Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
+	While TimerDiff($four_minute_timer) < 4 * 60 * 1000 And Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
 		MoveTo(11210, -17560)
 		KillFoesInArea($optionsChaosPlanes)
 		RandomSleep(5000)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
+			Return $FAIL
+		EndIf
 	WEnd
+	If Not IsPlayerAlive() Then
+		CancelAll()
+		Info('Unflag heroes and wait for rez.')
+		Local $rezTimer = TimerInit()
+		Local $rezTimeout = 30000 ; 30 seconds max wait
+		While TimerDiff($rezTimer) < $rezTimeout
+			If IsPlayerAlive() Then
+				Info('Player rezzed, moving back to area.')
+				ExitLoop
+			EndIf
+			Sleep(3000)
+			If Not IsPlayerOrPartyAlive() Then
+				Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
+				Return $FAIL
+			EndIf
+		WEnd
+		MoveTo(11210, -17560)
+	EndIf
 	While Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
 		; If quest still isn't complete, roam and search for stuck horseman
 		Info('Quest still not complete. Roaming for last Horseman.')
@@ -1582,9 +1612,39 @@ Func TheFourHorsemen($reaper)
 	PickUpItems()
 	CancelAll()
 
-
 	TakeQuestReward($reaper_ChaosPlanes, $ID_QUEST_THE_FOUR_HORSEMEN, 0x806A07)
 	TeleportBackToArea($reaper_ChaosPlanes, '0x86', '0x8D', 'Labyrinth', Null)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
+EndFunc
+
+Func AbortFourHorsemenKite($reset = False)
+	Static $isInitialized = False
+	Static $initialQuestObjectives = ''
+	Static $lastQuestObjectives = ''
+	Static $objectiveChanges = 0
+
+	If $reset Then
+		$isInitialized = False
+		$initialQuestObjectives = ''
+		$lastQuestObjectives = ''
+		$objectiveChanges = 0
+		Return False
+	EndIf
+
+    Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
+	Local $questObjectives = QuestObjective($ID_QUEST_THE_FOUR_HORSEMEN)
+
+	; Capture the initial value for this encounter, then count subsequent changes.
+	If Not $isInitialized Then
+		$initialQuestObjectives = $questObjectives
+		$lastQuestObjectives = $questObjectives
+		$objectiveChanges = 0
+		$isInitialized = True
+	ElseIf $questObjectives <> $lastQuestObjectives Then
+		$objectiveChanges += 1
+		$lastQuestObjectives = $questObjectives
+	EndIf
+
+	Return ($myHealth <= 0.3 Or $objectiveChanges >= 2)
 EndFunc
