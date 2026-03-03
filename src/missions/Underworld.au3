@@ -1186,7 +1186,8 @@ Func ClearTwinSerpentMountains()
 	Sleep(5000)
 	CancelAll()
 	KillFoesInArea($optionsTwinSerpentMountains)
-	Sleep(10000)
+	Sleep(5000)
+	CommandAll(-8317, -5353)
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT)
 	
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
