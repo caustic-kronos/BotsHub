@@ -1327,6 +1327,23 @@ EndFunc
 
 
 #Region Quests
+;~ Return whether or not the given quest matches the given mask
+Func GetQuestEncryptedObjectivesPtr($questID)
+	Local $quest = GetQuestByID($questID)
+	If $quest == Null Then Return Null
+	Return DllStructGetData($quest, 'Objective')
+EndFunc
+
+
+;~ Return whether or not the given quest matches the given mask
+Func GetQuestEncryptedObjectives($questID, $objectiveByteSize = 4)
+	Local $objectivesPointer = GetQuestEncryptedObjectivesPtr($questID)
+	If $objectivesPointer == Null Then Return Null
+	Local $objectives = MemoryRead(GetProcessHandle(), $objectivesPointer, 'byte[' & $objectiveByteSize & ']')
+	Return Hex($objectives)
+EndFunc
+
+
 ;~ Take a quest or a reward - for reward, expectedState should be $ID_QUEST_NOT_FOUND once reward taken
 Func TakeQuestOrReward($questNPC, $questID, $dialogID, $statePredicate = IsQuestNotFound)
 	Local $timerQuest = TimerInit()
