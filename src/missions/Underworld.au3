@@ -1179,9 +1179,6 @@ Func ClearTwinSerpentMountains()
 	$optionsTwinSerpentMountains.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	MoveAggroAndKillSafeTraps(-8150, -4800, '', $optionsTwinSerpentMountains)
 	CommandAll(-7988, -4615)
-	MoveTo(8220, 5202)
-	Sleep(5000)
-	CancelAll()
 	MoveTo(-8317, -5353)
 	Sleep(5000)
 	CancelAll()
@@ -1189,6 +1186,7 @@ Func ClearTwinSerpentMountains()
 	Sleep(5000)
 	CommandAll(-8317, -5353)
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT)
+	CancelAll()
 	
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -1398,7 +1396,7 @@ Func UnwantedGuests($reaper)
 		MoveAggroAndKillSafeTraps(5371, 300)
 		MoveAggroAndKillSafeTraps(2753, 2853)
 		MoveTo(1850, 2410)
-		TrackVengefulAatxes(-2424, 1767, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
+		TrackVengefulAatxes(-1882, 1820, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
 		RandomSleep(5000)
 		Info('Aggro killable mobs away from Vengeful Aatxe path')
 		CommandAll(1850, 2410)
@@ -1413,7 +1411,7 @@ Func UnwantedGuests($reaper)
 		KillFoesInArea($optionsUnwantedGuests)
 		CommandAll(1850, 2410)
 		RandomSleep(5000)
-		TrackVengefulAatxes(-2424, 1767, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
+		TrackVengefulAatxes(-1882, 1820, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
 		CancelAll()
 		MoveAvoidingBodyBlock(-214, 2775)
 		MoveAvoidingBodyBlock(267, 3575)
@@ -1514,7 +1512,6 @@ Func TheFourHorsemen($reaper)
 	Sleep(5000)
 	TakeQuest($reaper_ChaosPlanes, $ID_QUEST_THE_FOUR_HORSEMEN, 0x806A01, 0x806A03)
 	UseSkillEx($UNDERWORLD_RECALL, $reaper_ChaosPlanes)
-	ToggleQuestWindow()
 	Info('Time to Kite the Four Horsemen.')
 	
 	Local $steps[17][4] = [ _
@@ -1539,7 +1536,6 @@ Func TheFourHorsemen($reaper)
 
 	Local $index = 0
 	Local $stepCount = UBound($steps)
-	AbortFourHorsemenKite(True)
 
 	While IsPlayerAlive() And $index < $stepCount And Not AbortFourHorsemenKite()
 		MoveTo($steps[$index][0], $steps[$index][1])
@@ -1562,7 +1558,6 @@ Func TheFourHorsemen($reaper)
 		CancelAllHeroes()
 	EndIf
 
-	ToggleQuestWindow()
 	For $i = 1 to 8
 		SetHeroBehaviour($i, $ID_HERO_GUARDING)
 	Next
@@ -1612,7 +1607,7 @@ Func TheFourHorsemen($reaper)
             MoveAggroAndKill(11200, -17615)
             MoveAggroAndKill(10000, -19630)
 			MoveAggroAndKill(13800, -15800)
-            MoveAggroAndKill(13730, -12820) ; Likely spot we find hhorseman
+            MoveAggroAndKill(13730, -12820) ; Likely spot we find the last horseman
 			If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then ExitLoop
             MoveAggroAndKill(11555, -13500)
             MoveAggroAndKill(13432, -10358)
@@ -1639,40 +1634,16 @@ Func TheFourHorsemen($reaper)
 	Sleep(2500)
 	PickUpItems()
 	CancelAll()
-
+	GoToNPC($reaper_ChaosPlanes)
 	TakeQuestReward($reaper_ChaosPlanes, $ID_QUEST_THE_FOUR_HORSEMEN, 0x806A07)
 	TeleportBackToArea($reaper_ChaosPlanes, '0x86', '0x8D', 'Labyrinth', Null)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
-Func AbortFourHorsemenKite($reset = False)
-	Static $isInitialized = False
-	Static $initialQuestObjectives = ''
-	Static $lastQuestObjectives = ''
-	Static $objectiveChanges = 0
-
-	If $reset Then
-		$isInitialized = False
-		$initialQuestObjectives = ''
-		$lastQuestObjectives = ''
-		$objectiveChanges = 0
-		Return False
-	EndIf
-
+;~ Abort Four Horseman kite early if health dips too low or heroes kill horsemen on their side
+Func AbortFourHorsemenKite()
     Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
-	Local $questObjectives = QuestObjective($ID_QUEST_THE_FOUR_HORSEMEN)
-
-	; Capture the initial value for this encounter, then count subsequent changes.
-	If Not $isInitialized Then
-		$initialQuestObjectives = $questObjectives
-		$lastQuestObjectives = $questObjectives
-		$objectiveChanges = 0
-		$isInitialized = True
-	ElseIf $questObjectives <> $lastQuestObjectives Then
-		$objectiveChanges += 1
-		$lastQuestObjectives = $questObjectives
-	EndIf
-
-	Return ($myHealth <= 0.3 Or $objectiveChanges >= 2)
+	;Local $objectiveValue = GetQuestEncryptedObjectives($ID_QUEST_THE_FOUR_HORSEMEN, 32)
+	If $myHealth <= 0.3 Then Return True
 EndFunc
