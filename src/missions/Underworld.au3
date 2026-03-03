@@ -1455,7 +1455,6 @@ Func KillKeeperOfSouls($range = $RANGE_COMPASS)
 		Local $keeperOfSouls = $foes[0]
 		MoveAggroAndKill(DllStructGetData($keeperOfSouls, 'X'), DllStructGetData($keeperOfSouls, 'Y'))
 	EndIf
-	Return $SUCCESS
 EndFunc
 
 
