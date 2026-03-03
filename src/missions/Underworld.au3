@@ -41,7 +41,7 @@ Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, dont cheap out o
 	& 'Must be Rt/A or A/Rt in order to do Four Horsemen quest.' & @CRLF
 
 Global Const $UW_FARM_DURATION = 90 * 60 * 1000 ; Runs take about 90 minutes if quests set to False
-Global Const $MAX_UW_FARM_DURATION = 135 * 60 * 1000 ; Runs take about 135 minutes if all quests set to True
+Global Const $MAX_UW_FARM_DURATION = 150 * 60 * 1000 ; Runs take about 150 minutes if all quests set to True
 
 Global Const $RTA_UNDERWORLD_FARMER_SKILLBAR = 'OAejAqiMpR0gXT+glTfTQTVTdOA'
 Global Const $ART_UNDERWORLD_FARMER_SKILLBAR = 'OwhjAyi84Q0gXT+glTfTQTVTdOA'
@@ -58,14 +58,14 @@ Global Const $UNDERWORLD_RECALL					= 8
 Global Const $ATTEMPT_REAPER_QUESTS = False ; Set this to True in order for bot to do Reaper quests
 
 ; Specific Quest Knobs
-Global Const $ENABLE_WRATHFUL_SPIRITS = True ; Quest takes too long and mobs do not drop loot.
-Global Const $ENABLE_SERVANTS_OF_GRENTH = True
-Global Const $ENABLE_TERRORWEB_QUEEN = True
-Global Const $ENABLE_IMPRISONED_SPIRITS = True ; Hero Healer AI lets spirits die often
-Global Const $ENABLE_DEMON_ASSASSIN = True ; Behemoths do not drop ectos. Skips Mountain area too.
-Global Const $ENABLE_ESCORT_OF_SOULS = True
-Global Const $ENABLE_UNWANTED_GUESTS = True
-Global Const $ENABLE_THE_FOUR_HORSEMEN = True ; Rt/A or A/Rt only at the moment
+Global Const $ENABLE_WRATHFUL_SPIRITS = True ; Quest takes too long and mobs do not drop loot. ~10min
+Global Const $ENABLE_SERVANTS_OF_GRENTH = True ; Dryders drop ecto ~5min
+Global Const $ENABLE_THE_FOUR_HORSEMEN = True ; Rt/A or A/Rt only at the moment. Mobs drop ecto. ~10min
+Global Const $ENABLE_TERRORWEB_QUEEN = True ; Dryders/Skeles drop ecto. ~5min
+Global Const $ENABLE_IMPRISONED_SPIRITS = True ; Dryders/Skeles drop ecto. ~5min
+Global Const $ENABLE_DEMON_ASSASSIN = True ; Behemoths do not drop ectos. Skips Mountain area too. ~5min
+Global Const $ENABLE_ESCORT_OF_SOULS = True ; For UW total completion. ~5 min
+Global Const $ENABLE_UNWANTED_GUESTS = True ; For UW total completion. ~15 min
 Global Const $ENABLE_THE_NIGHTMAN_COMETH = True ; TODO
 
 Global $underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
@@ -447,9 +447,9 @@ Func ClearTheFrozenWastes()
 	MoveAggroAndKill(12576, 20212, '', $optionsFrozenWastes)
 	MoveAggroAndKill(11881, 20024, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 4')
+	$optionsFrozenWastes.Item('flagHeroesOnFight') = False
 	MoveAggroAndKill(11125, 20565, '', $optionsFrozenWastes)
 	MoveAggroAndKill(9660, 21593, '', $optionsFrozenWastes)
-	$optionsFrozenWastes.Item('flagHeroesOnFight') = False
 	MoveAggroAndKill(8277, 22011, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 5')
 	MoveAggroAndKill(7785, 21633, '', $optionsFrozenWastes)
@@ -872,12 +872,15 @@ Func ClearSpawningPools($reaper)
 	MoveAggroAndKill(-11432, -18087, '', $optionsSpawningPools)
 	MoveAggroAndKill(-10381, -17482, '', $optionsSpawningPools)
 	MoveAggroAndKill(-9931, -17845, '', $optionsSpawningPools)
-	MoveAggroAndKill(-9739, -19466, '', $optionsSpawningPools)
+	MoveAggroAndKill(-9342, -20193, '', $optionsSpawningPools)
 	Info('Moving to Monument to clear Terrorweb Dryders')
 	$optionsSpawningPools.Item('ignoreDroppedLoot') = True
-	MoveAggroAndKill(-8466, -19867, '', $optionsSpawningPools)
+	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT * 1.25
+	MoveAvoidingBodyBlock(-8067, -19658)
+	KillFoesInArea($optionsSpawningPools)
 	Info('Move to protect Reaper')
-	MoveAvoidingBodyBlock(-7102, -19484)
+	MoveAvoidingBodyBlock(-7316, -19514)
+	$optionsSpawningPools.Item('fightRange') = $RANGE_EARSHOT
 	KillFoesInArea($optionsSpawningPools)
 	MoveAggroAndKill(-6254, -20456, '', $optionsSpawningPools)
 	MoveAggroAndKill(-5280, -19470, '', $optionsSpawningPools)
@@ -1009,6 +1012,8 @@ Func ClearBonePits($reaper)
 	MoveAggroAndKill(10076, 6717)
 	MoveAggroAndKill(9145, 6561)
 	MoveAggroAndKill(8759, 6314)
+	MoveTo(8759, 6314)
+	RandomSleep(5000)
 
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -1027,17 +1032,23 @@ Func ImprisonedSpirits()
 	$optionsBonePits.Item('flagHeroesOnFight') = False
 	$optionsBonePits.Item('ignoreDroppedLoot') = True
 	$optionsBonePits.Item('priorityMobs') = True
+	If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
+        UseSkillEx($UNDERWORLD_RECALL, GetAgentByID(GetHeroID(5)))
+    EndIf
 	Info('Setting heroes up for quest')
-	CommandHero(1, 12815, 4535)
-	CommandHero(2, 12600, 3110)
-	CommandHero(3, 12100, 3260)
-	CommandHero(4, 12320, 4320)
-	CommandHero(5, 12115, 3875)
-	CommandHero(6, 12800, 3545)
-    CommandHero(7, 13100, 4170)
+	CommandHero(1, 12691, 4865)
+	CommandHero(2, 12520, 3880)
+	CommandHero(3, 12658, 4351)
+	CommandHero(4, 12209, 4104)
+	CommandHero(5, 12233, 4590)
+    CommandHero(6, 12851, 3908)
+	CommandHero(7, 13070, 4352)
 	RandomSleep(30000)
 	TakeQuest($reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806901, 0x806903)
-	MoveTo(12525, 3865)
+    If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
+        DropBuff($ID_RECALL, GetMyAgent())
+    EndIf
+	MoveTo(13136, 4753)
 	KillFoesInArea($optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
 	While Not IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS)
@@ -1171,7 +1182,12 @@ Func ClearTwinSerpentMountains()
 	MoveTo(8220, 5202)
 	Sleep(5000)
 	CancelAll()
-	MoveTo(8220, 5202)
+	MoveTo(-8317, -5353)
+	Sleep(5000)
+	CancelAll()
+	KillFoesInArea($optionsTwinSerpentMountains)
+	Sleep(10000)
+	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT)
 	
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -1179,7 +1195,7 @@ EndFunc
 
 Func DemonAssassin()
 	; Take Quest Demon Assassin from the Reaper of the Twin Serpent Mountains & defend
-	Local $reaper = GetNearestNPCToCoords(8220, 5202)
+	Local $reaper = GetNearestNPCToCoords(-8208, -5241)
 	If Not $ATTEMPT_REAPER_QUESTS Or Not $ENABLE_DEMON_ASSASSIN Then
 		Info('Skipping Demon Assassin Quest as per settings')
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
@@ -1190,8 +1206,7 @@ Func DemonAssassin()
 	$optionsTwinSerpentMountains.Item('flagHeroesOnFight') = False
 	$optionsTwinSerpentMountains.Item('ignoreDroppedLoot') = True
 	$optionsTwinSerpentMountains.Item('priorityMobs') = True
-	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT)
-	MoveTo(8220, 5202)
+	MoveTo(-8208, -5241)
 	Info('Setting heroes up for quest')
 	CommandHero(1, -4629, -5282)
 	CommandHero(2, -4928, -5373)
@@ -1328,13 +1343,25 @@ Func UnwantedGuests($reaper)
 		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 		MoveAggroAndKill(-5233, 8960)
 		MoveTo(-5233, 8961)
-		MoveTo(-6366, 10238)
+		MoveTo(-6250, 10390)
 		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS -  1000)
 		RandomSleep(10000)
 		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS -  1000)
-		MoveAvoidingBodyBlock(-4825, 12075)
-		MoveAvoidingBodyBlock(-4250, 11560)
-		MoveAvoidingBodyBlock(-3350, 10555)
+		Info('Aggro killable mobs away from Vengeful Aatxe path')
+		CommandAll(-6250, 10390)
+		MoveAvoidingBodyBlock(-4410, 11472)
+		MoveAvoidingBodyBlock(-6250, 10390)
+		RandomSleep(5000)
+		CancelAll()
+		KillFoesInArea($optionsUnwantedGuests)
+		MoveTo(-6250, 10390)
+		KillFoesInArea($optionsUnwantedGuests)
+		RandomSleep(10000)
+		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS -  1000)
+		RandomSleep(10000)
+		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS -  1000)
+		MoveAvoidingBodyBlock(-4410, 11472)
+		MoveAvoidingBodyBlock(-3568, 10770)
 		Info('Killing Keeper of Souls 2')
 		KillKeeperOfSouls($RANGE_SPIRIT)
 		MoveAggroAndKill(-3350, 10555)
@@ -1352,7 +1379,7 @@ Func UnwantedGuests($reaper)
 		MoveAggroAndKill(224, 13362)
 		MoveTo(915, 12787)
 		TrackVengefulAatxes(1875, 10465, 'nearby', $RANGE_COMPASS, $RANGE_EARSHOT)
-		TrackVengefulAatxes(-180, 9400, 'away', $RANGE_COMPASS, $RANGE_EARSHOT) ; old coords 336, 9321
+		TrackVengefulAatxes(-180, 9400, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
 		MoveAvoidingBodyBlock(2422, 10322)
 		Info('Killing Keeper of Souls 4')
 		KillKeeperOfSouls($RANGE_SPIRIT)
@@ -1369,24 +1396,23 @@ Func UnwantedGuests($reaper)
 		MoveAggroAndKillSafeTraps(4660, -2347)
 		MoveAggroAndKillSafeTraps(5371, 300)
 		MoveAggroAndKillSafeTraps(2753, 2853)
-		MoveTo(1650, 2230)
-		TrackVengefulAatxes(-2424, 1767, 'away')
+		MoveTo(1850, 2410)
+		TrackVengefulAatxes(-2424, 1767, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
 		RandomSleep(5000)
-		CommandAll(1650, 2230)
 		Info('Aggro killable mobs away from Vengeful Aatxe path')
+		CommandAll(1850, 2410)
 		MoveAvoidingBodyBlock(367, 1623)
-		MoveAvoidingBodyBlock(90, 1940)
-		MoveAvoidingBodyBlock(367, 1623)
-		MoveAvoidingBodyBlock(1650, 2230)
+		MoveAvoidingBodyBlock(1850, 2410)
+		Sleep(2500)
 		CancelAll()
 		KillFoesInArea($optionsUnwantedGuests)
-		CommandAll(1650, 2230)
-		RandomSleep(5000)
+		CommandAll(1850, 2410)
+		RandomSleep(2500)
 		CancelAll()
 		KillFoesInArea($optionsUnwantedGuests)
-		CommandAll(1650, 2230)
+		CommandAll(1850, 2410)
 		RandomSleep(5000)
-		TrackVengefulAatxes(-2424, 1767, 'away')
+		TrackVengefulAatxes(-2424, 1767, 'away', $RANGE_COMPASS, $RANGE_EARSHOT)
 		CancelAll()
 		MoveAvoidingBodyBlock(-214, 2775)
 		MoveAvoidingBodyBlock(267, 3575)
@@ -1400,11 +1426,12 @@ Func UnwantedGuests($reaper)
 		MoveTo(-2690, 5115)
 		TrackVengefulAatxes(-1255, 6500, 'nearby')
 		TrackVengefulAatxes(980, 7740, 'away')
-		MoveAvoidingBodyBlock(-630, 6415)
+		MoveAvoidingBodyBlock(-630, 6415) ; is this an ok coord?
 		Info('Killing Keeper of Souls 6')
 		KillKeeperOfSouls()
-		MoveAggroAndKill(-630, 6415)
 		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+		MoveAggroAndKill(-630, 6415)
+		MoveAggroAndKill(-1255, 6500)
 		MoveAggroAndKill(-1380, 10396)
 		MoveAggroAndKill(-5703, 12732)
 	WEnd
@@ -1430,6 +1457,7 @@ Func KillKeeperOfSouls($range = $RANGE_COMPASS)
 	EndIf
 	Return $SUCCESS
 EndFunc
+
 
 ;~ Return true if agent is a Vengeful Aatxe
 Func IsVengefulAatxe($agent)
