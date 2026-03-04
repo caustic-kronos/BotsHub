@@ -153,7 +153,7 @@ Func UnderworldFarmLoop()
 	If ClearTwinSerpentMountains() == $FAIL Then Return $FAIL
 	If DemonAssassin() == $FAIL Then Return $FAIL
 
-	If IsQuestReward($ID_QUEST_RESTORING_GRENTH_S_MONUMENTS) Then 
+	If IsQuestReward($ID_QUEST_RESTORING_GRENTH_S_MONUMENTS) Then
 		Info('Accepting quest reward for Restoring Grenths Monuments quest')
 		TakeQuestReward($reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D07)
 
@@ -1033,27 +1033,27 @@ Func ImprisonedSpirits()
 	$optionsBonePits.Item('ignoreDroppedLoot') = True
 	$optionsBonePits.Item('priorityMobs') = True
 	If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
-        UseSkillEx($UNDERWORLD_RECALL, GetAgentByID(GetHeroID(5)))
-    EndIf
+		UseSkillEx($UNDERWORLD_RECALL, GetAgentByID(GetHeroID(5)))
+	EndIf
 	Info('Setting heroes up for quest')
 	CommandHero(1, 12691, 4865)
 	CommandHero(2, 12520, 3880)
 	CommandHero(3, 12658, 4351)
 	CommandHero(4, 12209, 4104)
 	CommandHero(5, 12233, 4590)
-    CommandHero(6, 12851, 3908)
+	CommandHero(6, 12851, 3908)
 	CommandHero(7, 13070, 4352)
 	RandomSleep(30000)
 	TakeQuest($reaper, $ID_QUEST_IMPRISONED_SPIRITS, 0x806901, 0x806903)
-    If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
-        DropBuff($ID_RECALL, GetMyAgent())
-    EndIf
+	If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
+		DropBuff($ID_RECALL, GetMyAgent())
+	EndIf
 	MoveTo(13136, 4753)
 	KillFoesInArea($optionsBonePits)
 	Info('Killing waves of Dryders and Skeletons')
 	While Not IsQuestReward($ID_QUEST_IMPRISONED_SPIRITS)
-			KillFoesInArea($optionsBonePits)
-			RandomSleep(5000)
+		KillFoesInArea($optionsBonePits)
+		RandomSleep(5000)
 		If Not IsPlayerOrPartyAlive() Then
 			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_IMPRISONED_SPIRITS])
 			Return $FAIL
@@ -1187,7 +1187,7 @@ Func ClearTwinSerpentMountains()
 	CommandAll(-8317, -5353)
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT)
 	CancelAll()
-	
+
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
@@ -1244,7 +1244,7 @@ Func DemonAssassin()
 		Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
 	Else
 		Return $FAIL
-	EndIf	
+	EndIf
 	Info('Picking up Loot')
 	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
 	MoveTo(-4742, -5531)
@@ -1464,13 +1464,13 @@ EndFunc
 
 
 ;~ Wait for Vengeful Aatxe to pat
-Func TrackVengefulAatxes($x, $y, $direction = 'away', $range = $RANGE_COMPASS, $distance = $RANGE_NEARBY) 
+Func TrackVengefulAatxes($x, $y, $direction = 'away', $range = $RANGE_COMPASS, $distance = $RANGE_NEARBY)
 	Info('Waiting for Vengeful Aatxe to pat ' & $direction & '.' )
-    Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
-    While IsArray($foes) And UBound($foes) > 0 And Not IsAgentInRange($foes[0], $x, $y, $distance)
-        RandomSleep(1000)
-        $foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
-    WEnd
+	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
+	While IsArray($foes) And UBound($foes) > 0 And Not IsAgentInRange($foes[0], $x, $y, $distance)
+		RandomSleep(1000)
+		$foes = GetFoesInRangeOfAgent(GetMyAgent(), $range, IsVengefulAatxe)
+	WEnd
 EndFunc
 
 
@@ -1513,7 +1513,7 @@ Func TheFourHorsemen($reaper)
 	TakeQuest($reaper_ChaosPlanes, $ID_QUEST_THE_FOUR_HORSEMEN, 0x806A01, 0x806A03)
 	UseSkillEx($UNDERWORLD_RECALL, $reaper_ChaosPlanes)
 	Info('Time to Kite the Four Horsemen.')
-	
+
 	Local $steps[17][4] = [ _
 		[7468, -19050, 0, 3000], _
 		[7468, -19050, 0, 3000], _
@@ -1569,7 +1569,7 @@ Func TheFourHorsemen($reaper)
 	CommandHero(6, 11240, -17213)
 	CommandHero(7, 10894, -17430)
 
-	
+
 	Info('Final Stand against the Four Horsemen at Reaper.')
 	Local $four_minute_timer = TimerInit()
 	; Protect Reaper for 4 minutes
@@ -1603,18 +1603,18 @@ Func TheFourHorsemen($reaper)
 	While Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
 		; If quest still isn't complete, roam and search for stuck horseman
 		Info('Quest still not complete. Roaming for last Horseman.')
-            CancelAllHeroes()
-            MoveAggroAndKill(11200, -17615)
-            MoveAggroAndKill(10000, -19630)
-			MoveAggroAndKill(13800, -15800)
-            MoveAggroAndKill(13730, -12820) ; Likely spot we find the last horseman
-			If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then ExitLoop
-            MoveAggroAndKill(11555, -13500)
-            MoveAggroAndKill(13432, -10358)
-			If Not IsPlayerOrPartyAlive() Then
-				Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
-				Return $FAIL
-			EndIf
+		CancelAllHeroes()
+		MoveAggroAndKill(11200, -17615)
+		MoveAggroAndKill(10000, -19630)
+		MoveAggroAndKill(13800, -15800)
+		MoveAggroAndKill(13730, -12820) ; Likely spot we find the last horseman
+		If IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN) Then ExitLoop
+		MoveAggroAndKill(11555, -13500)
+		MoveAggroAndKill(13432, -10358)
+		If Not IsPlayerOrPartyAlive() Then
+			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
+			Return $FAIL
+		EndIf
 	WEnd
 	Info('Quest Successful: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_THE_FOUR_HORSEMEN])
 	CancelAllHeroes()
@@ -1643,7 +1643,7 @@ EndFunc
 
 ;~ Abort Four Horseman kite early if health dips too low or heroes kill horsemen on their side
 Func AbortFourHorsemenKite()
-    Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
+	Local $myHealth = DllStructGetData(GetMyAgent(), 'HealthPercent')
 	;Local $objectiveValue = GetQuestEncryptedObjectives($ID_QUEST_THE_FOUR_HORSEMEN, 32)
 	If $myHealth <= 0.3 Then Return True
 EndFunc

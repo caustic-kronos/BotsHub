@@ -1288,17 +1288,17 @@ Func SalvageItem($item, $salvageKit, $salvageType = 'Materials')
 		Sleep(600 + GetPing())
 	EndIf
 	Switch $salvageType
-        Case 'Materials'
-            SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
-        Case 'Prefix'
-            SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 0)
-        Case 'Suffix'
-            SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 1)
-        Case 'Inscription'
-            SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 2)
-        Case Else
-            Return False
-    EndSwitch
+		Case 'Materials'
+			SendPacket(0x4, $HEADER_SALVAGE_MATERIALS)
+		Case 'Prefix'
+			SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 0)
+		Case 'Suffix'
+			SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 1)
+		Case 'Inscription'
+			SendPacket(0x8, $HEADER_SALVAGE_UPGRADE, 2)
+		Case Else
+			Return False
+	EndSwitch
 	Sleep(40 + GetPing())
 	Return True
 EndFunc

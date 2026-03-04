@@ -1040,15 +1040,15 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 			; FIXME: add rezzing dead party members here
 		EndIf
 		RandomSleep(250)
-		
-		If IsPlayerStuck() Then 
+
+		If IsPlayerStuck() Then
 			If $unstuckFunction($x, $y) == $SUCCESS Then
 				IsPlayerStuck(Default, Default, True) ; reset stuck detection
 			Else
 				Return $FAIL
 			EndIf
 		EndIf
-		
+
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -1189,7 +1189,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
-		If IsPlayerAndPartyWiped() Then 
+		If IsPlayerAndPartyWiped() Then
 			If $flagHeroes Then CancelAllHeroes()
 			Return $FAIL
 		EndIf
@@ -1430,12 +1430,6 @@ Func QuestStateMatches($questID, $expectedMask)
 	; Cannot use a bitmask on a 0x00 mask
 	If $expectedMask == $ID_QUEST_NOT_FOUND Then Return $questState = $ID_QUEST_NOT_FOUND
 	Return BitAND($questState, $expectedMask) <> 0
-EndFunc
-
-;~ Return quest objectives hex string
-Func QuestObjective($questID)
-	Local $quest = GetQuestByID($questID)
-	If $quest <> Null Then Return DllStructGetData($quest, 'Objective')
 EndFunc
 #EndRegion Quests
 
@@ -2126,73 +2120,73 @@ EndFunc
 
 ;~ Translate textual register name into its corresponding 3-bit register code
 Func RegisterNameTo32Code($registerName)
-    Switch $registerName
-        Case "eax"
+	Switch $registerName
+		Case 'eax'
 			Return 0
-        Case "ecx"
+		Case 'ecx'
 			Return 1
-        Case "edx"
+		Case 'edx'
 			Return 2
-        Case "ebx"
+		Case 'ebx'
 			Return 3
-        Case "esp"
+		Case 'esp'
 			Return 4
-        Case "ebp"
+		Case 'ebp'
 			Return 5
-        Case "esi"
+		Case 'esi'
 			Return 6
-        Case "edi"
+		Case 'edi'
 			Return 7
-    EndSwitch
-    Return SetError(1, 0, -1)
+	EndSwitch
+	Return SetError(1, 0, -1)
 EndFunc
 
 
 ;~ Translate textual register name into its corresponding 3-bit register code
 Func RegisterNameTo16Code($registerName)
-    Switch $registerName
-        Case "ax"
+	Switch $registerName
+		Case 'ax'
 			Return 0
-        Case "cx"
+		Case 'cx'
 			Return 1
-        Case "dx"
+		Case 'dx'
 			Return 2
-        Case "bx"
+		Case 'bx'
 			Return 3
-        Case "sp"
+		Case 'sp'
 			Return 4
-        Case "bp"
+		Case 'bp'
 			Return 5
-        Case "si"
+		Case 'si'
 			Return 6
-        Case "di"
+		Case 'di'
 			Return 7
-    EndSwitch
-    Return SetError(1, 0, -1)
+	EndSwitch
+	Return SetError(1, 0, -1)
 EndFunc
 
 
 ;~ Translate textual register name into its corresponding 3-bit register code
 Func RegisterNameTo8Code($registerName)
-    Switch $registerName
-        Case "al"
+	Switch $registerName
+		Case 'al'
 			Return 0
-        Case "cl"
+		Case 'cl'
 			Return 1
-        Case "dl"
+		Case 'dl'
 			Return 2
-        Case "bl"
+		Case 'bl'
 			Return 3
-        Case "ah"
+		Case 'ah'
 			Return 4
-        Case "ch"
+		Case 'ch'
 			Return 5
-        Case "dh"
+		Case 'dh'
 			Return 6
-        Case "bh"
+		Case 'bh'
 			Return 7
-    EndSwitch
-    Return SetError(1, 0, -1)
+	EndSwitch
+	Return SetError(1, 0, -1)
 EndFunc
 
 

@@ -236,7 +236,7 @@ EndFunc
 
 Func CastFowToCBuffs()
 	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 28000 Then
-		Out('Casting all buffs')
+		Debug('Casting all buffs')
 		; Since everything is casted together, no risk of interrupts
 		UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
 		If (GetIsKnocked(GetMyAgent())) Then Sleep(1750)
@@ -249,7 +249,7 @@ Func CastFowToCBuffs()
 		$fow_toc_30s_timer = TimerInit()
 	EndIf
 	If IsRecharged($FOW_TOC_SHROUD_OF_DISTRESS) Then
-		Out('Casting shroud')
+		Debug('Casting shroud')
 		Sleep(250)
 		UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
 	EndIf
