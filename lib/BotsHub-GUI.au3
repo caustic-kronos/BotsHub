@@ -1491,7 +1491,7 @@ EndFunc
 ;~ Print warning to console with timestamp, only once
 ;~ Do not overuse, warnings are stored in memory
 Func WarnOnce($TEXT)
-	Static Local $warningMessages[]
+	Local Static $warningMessages[]
 	If $warningMessages[$TEXT] <> 1 Then
 		Out($TEXT, $LVL_WARNING)
 		$warningMessages[$TEXT] = 1

@@ -132,6 +132,11 @@ EndFunc
 
 ;~ Follower loop
 Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
+	If GetMapType() <> $ID_EXPLORABLE Then
+		Sleep(3000)
+		Return
+	EndIf
+
 	Local Static $firstPlayer = Null, $currentMap = Null
 	; Whenever player travels to a new explorable location, then current map ID is saved and first player agent is refreshed, because changing location can change agent ID of player
 	If GetMapID() <> $currentMap Then
@@ -274,7 +279,7 @@ Func ParagonRefreshShouts()
 			$i = Mod($i, UBound($party)) + 1
 		EndIf
 
-		; This solution would be better - but effects cannot be accessed on other heroes/characters
+		; This solution would be better - but effects cannot be accessed on other account heroes/characters and mercenaries
 		;Local $heroNumber
 		;Local $ping = GetPing()
 		;For $member In $party

@@ -309,18 +309,14 @@ EndFunc
 ;~ Move to the middle of the party team within specified limited timeout
 Func MoveToMiddleOfPartyWithTimeout($timeOut)
 	Local $me = GetMyAgent()
-	Local $oldMapID, $mapID = GetMapID()
 	Local $timer = TimerInit()
 	Local $position = FindMiddleOfParty()
 	Move($position[0], $position[1], 0)
-	While GetDistanceToPoint($me, $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) > $timeOut
-		If IsPlayerDead() Then ExitLoop
-		$oldMapID = $mapID
-		$mapID = GetMapID()
-		If $mapID <> $oldMapID Then ExitLoop
+	While GetDistanceToPoint($me, $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
 		$position = FindMiddleOfParty()
-		RandomSleep(200)
+		RandomSleep(500)
 		$me = GetMyAgent()
+		If IsPlayerDead() Then ExitLoop
 	WEnd
 EndFunc
 

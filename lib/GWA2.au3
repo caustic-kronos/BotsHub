@@ -351,9 +351,9 @@ EndFunc
 
 ;~ Returns skillbar struct with built-in address caching.
 ;Func GetSkillbar($heroIndex = 0, $cacheLifetimeMs = 10000)
-;	Static $cachedHero = -1
-;	Static $cachedSkillbarAddress = -1
-;	Static $cacheTimestamp = 0
+;	Local Static $cachedHero = -1
+;	Local Static $cachedSkillbarAddress = -1
+;	Local Static $cacheTimestamp = 0
 ;
 ;	Local $skillbarStruct = SafeDllStructCreate($SKILLBAR_STRUCT_TEMPLATE)
 ;	Local $processHandle = GetProcessHandle()
@@ -571,7 +571,7 @@ EndFunc
 
 ;~ Return the skill timer - shared timer for all skills
 Func GetSkillTimer()
-	Static $skillTimer = MemoryRead(GetProcessHandle(), $skill_timer_address, 'dword')
+	Local Static $skillTimer = MemoryRead(GetProcessHandle(), $skill_timer_address, 'dword')
 	Local $tickCount = DllCall($kernel_handle, 'dword', 'GetTickCount')[0]
 	Return BitAND($tickCount + $skillTimer, 0xFFFFFFFF)
 EndFunc
@@ -1877,8 +1877,8 @@ EndFunc
 
 ;~ Returns title progress by title index.
 Func GetTitleByIndex($titleIndex)
-	Static $TITLE_BASE_OFFSET = 0x04
-	Static $TITLE_STRUCT_SIZE = 0x2C
+	Local Static $TITLE_BASE_OFFSET = 0x04
+	Local Static $TITLE_STRUCT_SIZE = 0x2C
 	Return GetTitleProgress($TITLE_BASE_OFFSET + ($titleIndex * $TITLE_STRUCT_SIZE))
 EndFunc
 

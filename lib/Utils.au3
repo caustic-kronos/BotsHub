@@ -23,6 +23,7 @@
 #include 'GWA2_ID.au3'
 #include 'GWA2.au3'
 #include 'Utils-Debugger.au3'
+#include 'Build_PW_Heroic-Refrain.au3'
 
 Opt('MustDeclareVars', True)
 
@@ -910,7 +911,6 @@ $default_move_aggro_kill_options.Add('flagHeroesOnFight', False)
 $default_move_aggro_kill_options.Add('unstuckFunction', TryToGetUnstuck)
 $default_move_aggro_kill_options.Add('callTarget', True)
 $default_move_aggro_kill_options.Add('priorityMobs', False)
-$default_move_aggro_kill_options.Add('skillsMask', Null)
 $default_move_aggro_kill_options.Add('skillsCostMap', Null)
 $default_move_aggro_kill_options.Add('skillsCastTimeMap', Null)
 $default_move_aggro_kill_options.Add('lootInFights', False)
@@ -1067,9 +1067,9 @@ EndFunc
 
 ; Call this with $reset=True to (re-)initialize it's internal state to track blocked counter and old positions across calls
 Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
-	Static $oldMyX = Null
-	Static $oldMyY = Null
-	Static $blocked = 0
+	Local Static $oldMyX = Null
+	Local Static $oldMyY = Null
+	Local Static $blocked = 0
 
 	If $reset Then
 		$oldMyX = Null
@@ -1138,8 +1138,6 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $callTarget = ($options.Item('callTarget') <> Null) ? $options.Item('callTarget') : True
 	Local $priorityMobs = ($options.Item('priorityMobs') <> Null) ? $options.Item('priorityMobs') : False
 	Local $lootInFights = ($options.Item('lootInFights') <> Null) ? $options.Item('lootInFights') : False
-	Local $skillsMask = ($options.Item('skillsMask') <> Null And IsArray($options.Item('skillsMask')) And UBound($options.Item('skillsMask')) == 8) ? $options.Item('skillsMask') : Null
-	Local $skillsCostMap = ($options.Item('skillsCostMap') <> Null And UBound($options.Item('skillsCostMap')) == 8) ? $options.Item('skillsCostMap') : Null
 	Local $lootTrappedArea = ($options.Item('lootTrappedArea') <> Null) ? $options.Item('lootTrappedArea') : False
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 
@@ -1159,31 +1157,9 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 				CallTarget($target)
 				Sleep(100)
 			EndIf
-			; get as close as possible to target foe to have a surprise effect when attacking
-			GetAlmostInRangeOfAgent($target)
-			Attack($target)
-			Sleep(100)
 
-			Local $i = 0
-			; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
-			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
-				; incrementation of skill index and capping it by number of skills, range <1..8>
-				$i = Mod($i, 8) + 1
-				; optional skillsMask indexed from 0, tells which skills to use or skip
-				If $skillsMask <> Null And $skillsMask[$i - 1] == False Then ContinueLoop
-				; Always ensure auto-attack is active before using skills
-				Attack($target)
-				Sleep(100)
-
-				; if no skill energy cost map is provided then attempt to use skills anyway
-				Local $sufficientEnergy = $skillsCostMap == Null ? True : (GetEnergy() >= $skillsCostMap[$i])
-				If $sufficientEnergy And IsRecharged($i) Then
-					UseSkillEx($i, $target)
-					RandomSleep(100)
-				EndIf
-				$target = GetCurrentTarget()
-				If IsPlayerDead() Then ExitLoop
-			WEnd
+			;FightAsPWHeroicRefrain($target, $options)
+			UseSkillSequentially($target, $options)
 		EndIf
 
 		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
@@ -1197,6 +1173,34 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	If $flagHeroes Then CancelAllHeroes()
 	If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems($lootTrappedArea ? LootTrappedAreaSafely : Null, DefaultShouldPickItem, $fightRange)
 	Return $SUCCESS
+EndFunc
+
+
+Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
+	Local $skillsCostMap = ($options.Item('skillsCostMap') <> Null And UBound($options.Item('skillsCostMap')) == 8) ? $options.Item('skillsCostMap') : Null
+
+	; get as close as possible to target foe to have a surprise effect when attacking
+	GetAlmostInRangeOfAgent($target)
+	Attack($target)
+	Sleep(100)
+
+	Local $i = 0
+	; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
+	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
+		; incrementation of skill index and capping it by number of skills, range <1..8>
+		$i = Mod($i, 8) + 1
+		; Always ensure auto-attack is active before using skills
+		Attack($target)
+		Sleep(100
+		; if no skill energy cost map is provided then attempt to use skills anyway
+		Local $sufficientEnergy = $skillsCostMap == Null ? True : (GetEnergy() >= $skillsCostMap[$i])
+		If $sufficientEnergy And IsRecharged($i) Then
+			UseSkillEx($i, $target)
+			RandomSleep(100)
+		EndIf
+		$target = GetCurrentTarget()
+		If IsPlayerDead() Then ExitLoop
+	WEnd
 EndFunc
 
 
