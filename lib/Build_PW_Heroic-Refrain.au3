@@ -170,14 +170,8 @@ Func FightAsPWHeroicRefrain($target, $options = Null)
 	; Timer used for Stand your ground, there is nothing to fear and cant touch this
 	Local Static $timer20s = Null
 
-	; Aggressive refrain should only be casted once
-	;~ If IsDeclared('BUILD_PW_AGGRESSIVE_REFRAIN') And GetEffectTimeRemaining(GetEffect($ID_AGGRESSIVE_REFRAIN, 0), 0) == 0 Then
-	;~ 	UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
-	;~ 	RandomSleep(250)
-	;~ EndIf
-
 	If $timer20s == Null Or TimerDiff($timer20s) > 20000 Then
-		MoveToMiddleOfPartyWithTimeout(5000)
+		GetIntoTeamRange()
 		Local $ping = GetPing()
 		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
 		Sleep(20 + $ping)

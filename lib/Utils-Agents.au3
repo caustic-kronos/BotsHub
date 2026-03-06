@@ -262,6 +262,12 @@ Func CountFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
 EndFunc
 
 
+;~ Count team in range of the given agent
+Func CountTeamInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
+	Return CountNPCsInRangeOfAgent($agent, $ID_ALLEGIANCE_TEAM, $range, $condition)
+EndFunc
+
+
 ;~ Count foes in range of the given coordinates
 Func CountFoesInRangeOfCoords($xCoord = Null, $yCoord = Null, $range = $RANGE_AREA, $condition = Null)
 	Return CountNPCsInRangeOfCoords($xCoord, $yCoord, $ID_ALLEGIANCE_FOE, $range, $condition)
@@ -306,6 +312,17 @@ EndFunc
 
 
 #Region Getting NPCs
+;~ Move such that the whole team is in range
+Func GetIntoTeamRange($teamSize = 8, $range = $RANGE_EARSHOT, $maxWait = 50)
+	Local $i = 0
+	While CountTeamInRangeOfAgent(GetMyAgent(), $range) < $teamSize And $i < $maxWait
+		Sleep(200)
+		$i += 1
+		If IsPlayerDead() Then ExitLoop
+	WEnd
+EndFunc
+
+
 ;~ Move to the middle of the party team within specified limited timeout
 Func MoveToMiddleOfPartyWithTimeout($timeOut)
 	Local $me = GetMyAgent()
