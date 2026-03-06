@@ -213,7 +213,7 @@ Func WalkToSpotGlintChallenge()
 	Info('Moving to defend position')
 	MoveTo($GLINT_CHALLENGE_DEFEND_X, $GLINT_CHALLENGE_DEFEND_Y)
 	; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
-	;FanFlagHeroes(260)
+	;FanFlagHeroes()
 	CommandHero($GLINT_HERO_RITU_SOULTWISTER, -4300, 125)
 	CommandHero($GLINT_HERO_NECRO_FLESHGOLEM, -4278, 346)
 	CommandHero($GLINT_HERO_NECRO_HEXER, -3925, -200)

@@ -1205,7 +1205,8 @@ EndFunc
 
 
 ;~ Take current character's position (AND orientation) to flag heroes in a fan position
-Func FanFlagHeroes($range = $RANGE_AREA)
+Func FanFlagHeroes($range = 250)
+	; 250 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 	Local $heroCount = GetHeroCount()
 	; Change your hero locations here
 	Switch $heroCount

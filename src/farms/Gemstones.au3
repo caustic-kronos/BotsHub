@@ -169,8 +169,7 @@ Func WalkToSpotGemstonesFarm()
 	; go close to Zhellix to let him start erforming the ritual, Null for no interaction
 	GoToAgent(GetAgentByID($AGENTID_ZHELLIX), Null)
 	MoveTo($GEMSTONES_DEFEND_X, $GEMSTONES_DEFEND_Y)
-	; spread out all heroes to avoid AoE damage, distance a bit larger than nearby range = 240, and still quite compact formation
-	FanFlagHeroes(260)
+	FanFlagHeroes()
 EndFunc
 
 

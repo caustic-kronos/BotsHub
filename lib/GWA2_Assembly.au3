@@ -443,7 +443,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
 	; EncString Decoding
 	AddScanPattern('ValidateAsyncDecodeStr',	'',																		'',		'func',	'P:\Code\Engine\Text\TextApi.cpp',			'codedString')
-	If IsDeclared('g_b_AddPattern') Then Extend_AddPattern()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendScannerWithChatLog()
 EndFunc
 
 
@@ -835,7 +835,7 @@ Func InitializeCommandStructures()
 	$disable_rendering_address = GetLabel('DisableRendering')
 	$map_is_loaded_ptr = GetLabel('MapIsLoaded')
 	$trade_partner_ptr = GetLabel('TradePartner')
-	If IsDeclared('g_b_InitializeResult') Then Extend_InitializeResult()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendInitializeChatLogResult()
 
 	; Setup command structures
 	DllStructSetData($INVITE_GUILD_STRUCT, 1, GetLabel('CommandPacketSend'))
