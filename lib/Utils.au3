@@ -1191,7 +1191,7 @@ Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
 		$i = Mod($i, 8) + 1
 		; Always ensure auto-attack is active before using skills
 		Attack($target)
-		Sleep(100
+		Sleep(100)
 		; if no skill energy cost map is provided then attempt to use skills anyway
 		Local $sufficientEnergy = $skillsCostMap == Null ? True : (GetEnergy() >= $skillsCostMap[$i])
 		If $sufficientEnergy And IsRecharged($i) Then
