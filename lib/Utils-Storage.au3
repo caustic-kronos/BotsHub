@@ -125,7 +125,7 @@ Func InventoryManagementMidRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		Return True
 	EndIf
 	If $run_options_cache['run.sort_items'] Then SortInventory()
-	If $cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
+	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()

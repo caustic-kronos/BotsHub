@@ -1154,7 +1154,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 			ChangeTarget($target)
 			Sleep(100)
 			If $callTarget Then
-				CallTarget($target)
+				CallTargetOnce($target)
 				Sleep(100)
 			EndIf
 

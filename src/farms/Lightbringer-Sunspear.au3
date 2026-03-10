@@ -251,7 +251,7 @@ Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	While $foes <> 0
 		$target = GetNearestEnemyToAgent($me)
 		If (IsRecharged($JUNUNDU_TUNNEL)) Then UseSkillEx($JUNUNDU_TUNNEL)
-		CallTarget($target)
+		CallTargetOnce($target)
 		RandomSleep(50)
 		If (GetSkillbarSkillAdrenaline($JUNUNDU_SMASH) == 130) Then UseSkillEx($JUNUNDU_SMASH)
 		AttackOrUseSkill($WEAPON_ATTACK_TIME, $JUNUNDU_BITE, $JUNUNDU_STRIKE)

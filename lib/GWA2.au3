@@ -788,6 +788,16 @@ Func CallTarget($target)
 EndFunc
 
 
+;~ Call target.
+Func CallTargetOnce($target)
+	Local Static $previousTargetID = Null
+	Local $targetID = DllStructGetData($target, 'ID')
+	If $previousTargetID == $targetID Then Return
+	$previousTargetID = $targetID
+	Return SendPacket(0xC, $HEADER_CALL_TARGET, 0xA, $targetID)
+EndFunc
+
+
 ;~ Clear current target.
 Func ClearTarget()
 	Return PerformAction(0xE3)
