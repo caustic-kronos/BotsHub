@@ -84,7 +84,7 @@ Global $kournans_farm_setup = False
 
 ;~ Main method to farm Kournans
 Func KournansFarm()
-	If Not $kournans_farm_setup And If SetupKournansFarm() == $FAIL Then Return $PAUSE
+	If Not $kournans_farm_setup And SetupKournansFarm() == $FAIL Then Return $PAUSE
 
 	GoToCommandPost()
 	Local $result = KournansFarmLoop()
@@ -274,6 +274,6 @@ Func TalkToMargrid()
 	GoNearestNPCToCoords(1250, 7300)
 	RandomSleep(1000)
 	Info('Taking quest')
-	AcceptQuest($ID_FISH_IN_A_BARREL)
+	AcceptQuest($ID_QUEST_FISH_IN_A_BARREL)
 	RandomSleep(500)
 EndFunc
