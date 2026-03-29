@@ -55,6 +55,7 @@ EndFunc
 
 ;~ Move to a location and wait until you reach it.
 Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
+	If $doWhileRunning = Null Then $doWhileRunning = $active_do_while_moving
 	Local $blockedCount = 0
 	Local $mapID = GetMapID()
 	Local $destinationX = $X + Random(-$random, $random)
@@ -918,11 +919,17 @@ $default_move_aggro_kill_options.Add('openChests', True)
 $default_move_aggro_kill_options.Add('chestOpenRange', $RANGE_SPIRIT)
 $default_move_aggro_kill_options.Add('lootTrappedArea', False)
 $default_move_aggro_kill_options.Add('ignoreDroppedLoot', False)
+$default_move_aggro_kill_options.Add('doWhileMoving', Null)
+$default_move_aggro_kill_options.Add('combatFunction', Null)
 ; default 60 seconds fight duration
 $default_move_aggro_kill_options.Add('fightDuration', 60000)
 
 Global $flag_move_aggro_kill_options = CloneDictMap($default_move_aggro_kill_options)
 $flag_move_aggro_kill_options.Item('flagHeroesOnFight') = True
+
+Global $active_fight_options = Null
+Global $active_flag_fight_options = Null
+Global $active_do_while_moving = Null
 
 Global $default_move_defend_options = ObjCreate('Scripting.Dictionary')
 $default_move_defend_options.Add('defendFunction', Null)
@@ -976,7 +983,7 @@ EndFunc
 
 ;~ Version to specify fight range as parameter instead of in options map
 Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
+	If $options = Null Then $options = ($active_fight_options <> Null) ? CloneDictMap($active_fight_options) : CloneDictMap($default_move_aggro_kill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -984,7 +991,7 @@ EndFunc
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
 Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($flag_move_aggro_kill_options)
+	If $options = Null Then $options = ($active_flag_fight_options <> Null) ? CloneDictMap($active_flag_fight_options) : CloneDictMap($flag_move_aggro_kill_options)
 	$options.Item('fightRange') = $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
@@ -1021,6 +1028,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
+	Local $doWhileMoving = $options.Exists('doWhileMoving') ? $options.Item('doWhileMoving') : Null
 
 	If $log <> '' Then Info($log)
 	IsPlayerStuck(Default, Default, True) ; init internal state
@@ -1039,6 +1047,8 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 			If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; FIXME: add rezzing dead party members here
 		EndIf
+
+		If $doWhileMoving <> Null Then $doWhileMoving()
 		RandomSleep(250)
 
 		If IsPlayerStuck() Then
@@ -1140,6 +1150,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $lootInFights = ($options.Item('lootInFights') <> Null) ? $options.Item('lootInFights') : False
 	Local $lootTrappedArea = ($options.Item('lootTrappedArea') <> Null) ? $options.Item('lootTrappedArea') : False
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
+	Local $combatFunction = $options.Exists('combatFunction') ? $options.Item('combatFunction') : Null
 
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
@@ -1159,7 +1170,11 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 			EndIf
 
 			;FightAsPWHeroicRefrain($target, $options)
-			UseSkillSequentially($target, $options)
+			If $combatFunction <> Null Then
+				$combatFunction($target, $options)
+			Else
+				UseSkillSequentially($target, $options)
+			EndIf
 		EndIf
 
 		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
