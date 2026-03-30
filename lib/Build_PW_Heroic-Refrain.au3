@@ -387,8 +387,8 @@ EndFunc
 ; then pass the returned option dicts to MoveAggroAndKillInRange.
 ; ============================================================================
 
-;~ Set up the HR Adrenaline build: load template, init context, return configured option dicts.
-;~ Returns a 2-element array: [0] = fight options, [1] = flag fight options.
+;~ Set up the HR Adrenaline build: load template, init context, set active build globals.
+;~ Paragon does not flag heroes, so both active options use the same non-flag dict.
 Func SetupHRAdrenalineBuild()
 	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
 	$hr_adrenaline_ctx = HeroicRefrain_Init()
@@ -397,12 +397,9 @@ Func SetupHRAdrenalineBuild()
 	$fightOptions.Item('combatFunction') = HRAdrenalineCombat
 	$fightOptions.Item('doWhileMoving') = HRAdrenalineDoWhileMoving
 
-	Local $flagFightOptions = CloneDictMap($flag_move_aggro_kill_options)
-	$flagFightOptions.Item('combatFunction') = HRAdrenalineCombat
-	$flagFightOptions.Item('doWhileMoving') = HRAdrenalineDoWhileMoving
-
-	Local $result[2] = [$fightOptions, $flagFightOptions]
-	Return $result
+	$active_fight_options = $fightOptions
+	$active_flag_fight_options = $fightOptions
+	$active_do_while_moving = HRAdrenalineDoWhileMoving
 EndFunc
 
 ;~ Combat callback for KillFoesInArea: loops Attack + FightAdrenaline_Tick until target is dead.
