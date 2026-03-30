@@ -44,23 +44,37 @@ Global Const $BUILD_PW_BLADETURN_REFRAIN = 8
 Global Const $BUILD_PW_SAVE_YOURSELVES = 5
 Global Const $BUILD_PW_TO_THE_LIMIT = 6
 Global Const $BUILD_PW_FOR_GREAT_JUSTICE = 7
+Global Const $BUILD_PW_NATURAL_TEMPER = 7
 Global Const $BUILD_PW_AGGRESSIVE_REFRAIN = 8
-;Global Const $BUILD_PW_NATURAL_TEMPER = 7
 
 ; Phase constants
 Global Const $HR_PHASE_SELF_SETUP = 0
 Global Const $HR_PHASE_APPLY_PARTY = 1
 Global Const $HR_PHASE_MAINTENANCE = 2
 
+; Adlib interval constants
+Global Const $HR_INTERVAL_FAST = 3000
+Global Const $HR_INTERVAL_SLOW = 12000
+
+; HR state globals (replaces ctx dictionary for clarity)
+Global $hr_phase = $HR_PHASE_SELF_SETUP
+Global $hr_party_index = 1
+Global $hr_last_tof_time = 0
+Global $hr_initialized = False
+Global $hr_self_cast_count = 0
+Global $hr_last_map_id = 0
+
 Global $registered_shouts = False
-Global $hr_adrenaline_ctx = Null
 
 ; ============================================================================
-; Heroic Refrain Tick-based Utility
+; Heroic Refrain AdlibRegister Utility
 ;
-; Non-blocking, state-machine-based utility for Heroic Refrain maintenance.
-; Call HeroicRefrain_Init() once to create a context, then call
-; HeroicRefrain_Tick($ctx) repeatedly from your fight/movement loop.
+; State-machine-based utility for Heroic Refrain maintenance.
+; Runs via AdlibRegister, keeping HR active on the entire party regardless
+; of the current control flow (movement, combat, sleep, idle, etc.).
+;
+; Uses a fast interval (3s) during setup/application/pending TOF,
+; then switches to a slow interval (12s) for steady-state maintenance.
 ;
 ; Phases:
 ;   SELF_SETUP   - Cast HR on self twice for max Leadership
@@ -70,138 +84,106 @@ Global $hr_adrenaline_ctx = Null
 ; State resets automatically on death or zone change.
 ; ============================================================================
 
-;~ Create and return a new Heroic Refrain context dictionary.
-;~ Call this once before entering your fight loop.
-Func HeroicRefrain_Init()
-	Local $ctx = ObjCreate('Scripting.Dictionary')
-	$ctx.Add('phase', $HR_PHASE_SELF_SETUP)
-	$ctx.Add('pendingTOF', False)
-	$ctx.Add('partyIndex', 1)
-	$ctx.Add('lastTOFTime', 0)
-	$ctx.Add('lastHRCastTime', 0)
-	$ctx.Add('initialized', False)
-	$ctx.Add('selfCastCount', 0)
-	$ctx.Add('lastMapID', 0)
-	Return $ctx
-EndFunc
-
-;~ Non-blocking tick function for Heroic Refrain management.
-;~ Performs at most one skill cast per call. Returns immediately if nothing to do.
-;~
-;~ $ctx - context dictionary from HeroicRefrain_Init()
-;~
-;~ Returns:
-;~   True  - an action was taken this tick (skill cast attempted)
-;~   False - nothing to do this tick (idle / waiting for recharge)
-Func HeroicRefrain_Tick($ctx)
-	; Reset state on zone change or death
+;~ AdlibRegister target. Performs at most one phase action per call.
+;~ TOF is cast on cooldown at every tick (off global cooldown) to keep existing HR alive.
+;~ Interval is dynamic: fast (3s) during setup/apply, slow (12s) during maintenance.
+Func TickHeroicRefrain()
+	; Leave explorable: unregister and reset
 	If GetMapType() <> $ID_EXPLORABLE Or Not IsPlayerAlive() Then
-		If $ctx.Item('initialized') Then HeroicRefrain_Reset($ctx)
-		Return False
+		If $hr_initialized Then ResetHeroicRefrain()
+		Return
 	EndIf
 
 	; Detect map/floor change and reset (all buffs drop on zone)
 	Local $currentMap = GetMapID()
-	If $ctx.Item('lastMapID') <> 0 And $ctx.Item('lastMapID') <> $currentMap Then
-		Debug('HR Utility: Map changed (' & $ctx.Item('lastMapID') & ' -> ' & $currentMap & '), resetting')
-		HeroicRefrain_Reset($ctx)
+	If $hr_last_map_id <> 0 And $hr_last_map_id <> $currentMap Then
+		Debug('HR Utility: Map changed (' & $hr_last_map_id & ' -> ' & $currentMap & '), resetting')
+		ResetHeroicRefrain()
 	EndIf
-	$ctx.Item('lastMapID') = $currentMap
-
-	If IsCasting(GetMyAgent()) Then Return False
+	$hr_last_map_id = $currentMap
 
 	; Mark initialized on first successful tick
-	If Not $ctx.Item('initialized') Then
-		$ctx.Item('initialized') = True
+	If Not $hr_initialized Then
+		$hr_initialized = True
 		Debug('HR Utility: Initialized, starting self setup')
 	EndIf
 
-	; Priority: cast "They are on Fire!" follow-up after any HR cast
-	If $ctx.Item('pendingTOF') Then
-		Return _HR_TryCastPendingTOF($ctx)
+	; Always cast TOF on cooldown regardless of phase.
+	; TOF is off the global cooldown so it can be cast during HR casts, while knocked down, etc.
+	; Leadership returns ~10e from party members affected by shouts, making this energy-neutral.
+	; Under Quickening Zephyr, TOF recharges before its buff expires. Recasting while active
+	; does NOT trigger HR refresh, so we must wait for the old buff to expire first.
+	If IsRecharged($BUILD_PW_THEYRE_ON_FIRE) Then
+		Local $tofRemaining = GetEffectTimeRemaining($ID_THEYRE_ON_FIRE, 0)
+		If $tofRemaining > 0 Then Sleep($tofRemaining + 50)
+		UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
+		$hr_last_tof_time = TimerInit()
 	EndIf
 
-	Switch $ctx.Item('phase')
+	If IsCasting(GetMyAgent()) Then Return
+
+	Switch $hr_phase
 		Case $HR_PHASE_SELF_SETUP
-			Return _HR_PhaseSelfSetup($ctx)
+			HRPhaseSelfSetup()
 
 		Case $HR_PHASE_APPLY_PARTY
-			Return _HR_PhaseApplyParty($ctx)
+			HRPhaseApplyParty()
 
 		Case $HR_PHASE_MAINTENANCE
-			Return _HR_PhaseMaintenance($ctx)
+			HRPhaseMaintenance()
 	EndSwitch
 
-	Return False
+	HRAdjustInterval()
 EndFunc
 
-;~ Reset the context to restart the full HR application cycle.
-;~ Useful when entering a new zone or after a wipe.
-Func HeroicRefrain_Reset($ctx)
-	$ctx.Item('phase') = $HR_PHASE_SELF_SETUP
-	$ctx.Item('pendingTOF') = False
-	$ctx.Item('partyIndex') = 1
-	$ctx.Item('lastTOFTime') = 0
-	$ctx.Item('lastHRCastTime') = 0
-	$ctx.Item('initialized') = False
-	$ctx.Item('selfCastCount') = 0
-	Debug('HR Utility: Context reset')
+;~ Re-register adlib at appropriate interval based on current phase.
+;~ Fast (3s) during setup, apply, or pending TOF. Slow (12s) during steady maintenance.
+Func HRAdjustInterval()
+	If $hr_phase == $HR_PHASE_MAINTENANCE Then
+		AdlibRegister('TickHeroicRefrain', $HR_INTERVAL_SLOW)
+	Else
+		AdlibRegister('TickHeroicRefrain', $HR_INTERVAL_FAST)
+	EndIf
 EndFunc
 
-; --- Internal helpers ---
-
-;~ Try to cast pending "They're on Fire!" follow-up.
-;~ If TOF is still recharging, waits up to 12s then gives up.
-Func _HR_TryCastPendingTOF($ctx)
-	If IsRecharged($BUILD_PW_THEYRE_ON_FIRE) Then
-		UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
-		$ctx.Item('lastTOFTime') = TimerInit()
-		$ctx.Item('pendingTOF') = False
-		Debug('HR Utility: TOF follow-up cast')
-		Return True
-	EndIf
-
-	; If HR was cast more than 12s ago and TOF still not ready, give up waiting
-	If $ctx.Item('lastHRCastTime') > 0 And TimerDiff($ctx.Item('lastHRCastTime')) > 12000 Then
-		$ctx.Item('pendingTOF') = False
-		Debug('HR Utility: TOF follow-up skipped (still recharging)')
-	EndIf
-
-	Return False
+;~ Reset all HR state to restart the full application cycle.
+;~ Called on zone change, death, or map transition.
+Func ResetHeroicRefrain()
+	$hr_phase = $HR_PHASE_SELF_SETUP
+	$hr_party_index = 1
+	$hr_last_tof_time = 0
+	$hr_initialized = False
+	$hr_self_cast_count = 0
+	Debug('HR Utility: State reset')
 EndFunc
 
 ;~ Cast HR on self twice, then advance to APPLY_PARTY.
 ;~ Tracked by counter, not effect checking. Resets on death/zone.
-Func _HR_PhaseSelfSetup($ctx)
-	If $ctx.Item('selfCastCount') >= 2 Then
-		$ctx.Item('phase') = $HR_PHASE_APPLY_PARTY
-		$ctx.Item('partyIndex') = 1
-		Debug('HR Utility: Self setup complete (' & $ctx.Item('selfCastCount') & ' casts)')
-		Return False
+Func HRPhaseSelfSetup()
+	If $hr_self_cast_count >= 2 Then
+		$hr_phase = $HR_PHASE_APPLY_PARTY
+		$hr_party_index = 1
+		Debug('HR Utility: Self setup complete (' & $hr_self_cast_count & ' casts)')
+		Return
 	EndIf
 
-	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return False
-	If GetEnergy() < 5 Then Return False
+	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return
+	If GetEnergy() < 5 Then Return
 
 	Local $me = GetMyAgent()
 	If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $me) Then
-		$ctx.Item('selfCastCount') = $ctx.Item('selfCastCount') + 1
-		$ctx.Item('pendingTOF') = True
-		$ctx.Item('lastHRCastTime') = TimerInit()
-		Debug('HR Utility: Self cast ' & $ctx.Item('selfCastCount') & '/2')
-		Return True
+		$hr_self_cast_count += 1
+		Debug('HR Utility: Self cast ' & $hr_self_cast_count & '/2')
 	EndIf
-
-	Return False
 EndFunc
 
 ;~ Find next party member without HR and cast it on them.
-;~ Skips out-of-range heroes and casts on nearby ones first.
-Func _HR_PhaseApplyParty($ctx)
-	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return False
+;~ Skips dead, invalid, and out-of-range heroes; retries skipped heroes on next pass.
+Func HRPhaseApplyParty()
+	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return
 
 	Local $heroCount = GetHeroCount()
-	Local $idx = $ctx.Item('partyIndex')
+	Local $idx = $hr_party_index
 	Local $me = GetMyAgent()
 	Local $skippedOutOfRange = False
 
@@ -234,40 +216,38 @@ Func _HR_PhaseApplyParty($ctx)
 
 		; Cast HR on this hero
 		If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then
-			$ctx.Item('pendingTOF') = True
-			$ctx.Item('lastHRCastTime') = TimerInit()
-			$ctx.Item('partyIndex') = $idx + 1
+			$hr_party_index = $idx + 1
 			Debug('HR Utility: Cast HR on party member ' & $idx)
-			Return True
+			Return
 		EndIf
 
 		; Cast failed (energy, etc.) - try again next tick
-		$ctx.Item('partyIndex') = $idx
-		Return False
+		$hr_party_index = $idx
+		Return
 	WEnd
 
 	; Some heroes were out of range - loop back to try them again
 	If $skippedOutOfRange Then
-		$ctx.Item('partyIndex') = 1
-		Return False
+		$hr_party_index = 1
+		Return
 	EndIf
 
 	; All party members processed - enter maintenance
-	$ctx.Item('phase') = $HR_PHASE_MAINTENANCE
-	$ctx.Item('lastTOFTime') = TimerInit()
+	$hr_phase = $HR_PHASE_MAINTENANCE
+	$hr_last_tof_time = TimerInit()
 	Debug('HR Utility: All party buffed, entering maintenance')
-	Return False
 EndFunc
 
-;~ Maintenance phase: cast TOF on cooldown to keep HR alive, reapply HR on rezzed heroes.
-Func _HR_PhaseMaintenance($ctx)
+;~ Maintenance phase: reapply HR on rezzed heroes. TOF is handled at top of tick.
+Func HRPhaseMaintenance()
 	; Recovery: if player lost HR (death/respawn, buff expiry), restart full cycle
 	If GetEffect($ID_HEROIC_REFRAIN, 0) == Null Then
-		$ctx.Item('phase') = $HR_PHASE_SELF_SETUP
-		$ctx.Item('selfCastCount') = 0
-		$ctx.Item('partyIndex') = 1
+		$hr_phase = $HR_PHASE_SELF_SETUP
+		$hr_self_cast_count = 0
+		$hr_party_index = 1
 		Debug('HR Utility: Player lost HR, restarting self setup')
-		Return _HR_PhaseSelfSetup($ctx)
+		HRPhaseSelfSetup()
+		Return
 	EndIf
 
 	; Recovery: check party members for dropped HR (e.g. hero was rezzed) and reapply
@@ -282,26 +262,13 @@ Func _HR_PhaseMaintenance($ctx)
 		If GetEffect($ID_HEROIC_REFRAIN, $i) == Null Then
 			If IsRecharged($BUILD_PW_HEROIC_REFRAIN) And GetDistance(GetMyAgent(), $agent) <= $RANGE_SPELLCAST Then
 				If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then
-					$ctx.Item('pendingTOF') = True
-					$ctx.Item('lastHRCastTime') = TimerInit()
 					Debug('HR Utility: Reapplied HR on party member ' & $i)
-					Return True
+					Return
 				EndIf
 			EndIf
-			Return False
+			Return
 		EndIf
 	Next
-
-	; Steady state: cast TOF on cooldown to keep HR alive
-	If IsRecharged($BUILD_PW_THEYRE_ON_FIRE) Then
-		If UseSkillEx($BUILD_PW_THEYRE_ON_FIRE) Then
-			$ctx.Item('lastTOFTime') = TimerInit()
-			Debug('HR Utility: Maintenance TOF')
-			Return True
-		EndIf
-	EndIf
-
-	Return False
 EndFunc
 
 
@@ -309,30 +276,27 @@ EndFunc
 ; Adrenaline Build Fight Function (non-blocking, tick-based)
 ;
 ; Skill priority (highest to lowest):
-;   1. Heroic Refrain / They're on Fire! (via HeroicRefrain_Tick)
-;   2. Aggressive Refrain (25e, once if not already buffed)
-;   3. Auto-attack (always ensure attacking target)
-;   4. "Stand Your Ground!" (only if party not already buffed)
-;   5. "There's Nothing to Fear!" (15e)
-;   6. "Save Yourselves!" (adrenaline >= 200)
-;   7. "To the Limit!" (only if foes in earshot, adrenaline gain)
-;   8. "For Great Justice!" (5e, lowest priority)
+;   1. Aggressive Refrain (25e, once if not already buffed)
+;   2. Auto-attack (always ensure attacking target)
+;   3. "Stand Your Ground!" (only if party not already buffed)
+;   4. "There's Nothing to Fear!" (15e)
+;   5. "Save Yourselves!" (adrenaline >= 200)
+;   6. "To the Limit!" (only if foes in earshot, adrenaline gain)
+;   7. "For Great Justice!" (5e, lowest priority)
+;
+; Note: HR maintenance is handled by AdlibRegister, not by this function.
 ; ============================================================================
 
 ;~ Non-blocking fight tick for the HR Adrenaline build.
 ;~ Call every fight loop iteration. Performs at most one skill cast per call.
 ;~
-;~ $hrCtx  - context dictionary from HeroicRefrain_Init()
 ;~ $target - current enemy agent (or Null for untargeted shouts)
-Func FightAdrenaline_Tick($hrCtx, $target = Null)
+Func FightAdrenalineTick($target = Null)
 	; Guards
 	If Not IsPlayerAlive() Then Return
 	If IsCasting(GetMyAgent()) Then Return
 
-	; Priority 1: HR maintenance (includes TOF follow-up)
-	If HeroicRefrain_Tick($hrCtx) Then Return
-
-	; Priority 2: Aggressive Refrain — only if not already active, costs 25e, only in combat
+	; Priority 1: Aggressive Refrain — only if not already active, costs 25e, only in combat
 	If $target <> Null And GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null Then
 		If GetEnergy() >= 25 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then
 			UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
@@ -340,10 +304,10 @@ Func FightAdrenaline_Tick($hrCtx, $target = Null)
 		EndIf
 	EndIf
 
-	; Priority 3: Ensure we are attacking the target
+	; Priority 2: Ensure we are attacking the target
 	If $target <> Null Then Attack($target)
 
-	; Priority 4: "Stand Your Ground!" — only if party not already buffed
+	; Priority 3: "Stand Your Ground!" — only if party not already buffed
 	If IsRecharged($BUILD_PW_STAND_YOUR_GROUND) Then
 		If GetEffect($ID_STAND_YOUR_GROUND, 0) == Null Then
 			UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
@@ -351,25 +315,25 @@ Func FightAdrenaline_Tick($hrCtx, $target = Null)
 		EndIf
 	EndIf
 
-	; Priority 5: "There's Nothing to Fear!" (15e)
+	; Priority 4: "There's Nothing to Fear!" (15e)
 	If IsRecharged($BUILD_PW_THERES_NOTHING_TO_FEAR) And GetEnergy() >= 15 Then
 		UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
 		Return
 	EndIf
 
-	; Priority 6: "Save Yourselves!" (adrenaline-based, 200 required)
+	; Priority 5: "Save Yourselves!" (adrenaline-based, 200 required)
 	If GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then
 		UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
 		Return
 	EndIf
 
-	; Priority 7: "To the Limit!" (only if foes nearby for adrenaline gain)
+	; Priority 6: "To the Limit!" (only if foes nearby for adrenaline gain)
 	If IsRecharged($BUILD_PW_TO_THE_LIMIT) And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
 		UseSkillEx($BUILD_PW_TO_THE_LIMIT)
 		Return
 	EndIf
 
-	; Priority 8: "For Great Justice!" (5e, lowest priority)
+	; Priority 7: "For Great Justice!" (5e, lowest priority)
 	If IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And GetEnergy() >= 5 Then
 		If GetEffect($ID_FOR_GREAT_JUSTICE, 0) == Null Then
 			UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
@@ -383,42 +347,37 @@ EndFunc
 ; HR Adrenaline Build Setup & Callbacks
 ;
 ; Reusable setup and callback functions for any farm/mission script using
-; the HR Adrenaline build. Call SetupHRAdrenalineBuild() once during setup,
-; then pass the returned option dicts to MoveAggroAndKillInRange.
+; the HR Adrenaline build. Call SetupHRAdrenalineBuild() once during setup.
+; HR maintenance runs automatically via AdlibRegister.
+; Combat function is wired through active build globals.
 ; ============================================================================
 
-;~ Set up the HR Adrenaline build: load template, init context, set active build globals.
+;~ Set up the HR Adrenaline build: load template, register HR maintenance, set combat globals.
 ;~ Paragon does not flag heroes, so both active options use the same non-flag dict.
 Func SetupHRAdrenalineBuild()
 	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
-	$hr_adrenaline_ctx = HeroicRefrain_Init()
+	ResetHeroicRefrain()
+	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL_FAST)
 
 	Local $fightOptions = CloneDictMap($default_move_aggro_kill_options)
 	$fightOptions.Item('combatFunction') = HRAdrenalineCombat
-	$fightOptions.Item('doWhileMoving') = HRAdrenalineDoWhileMoving
 
 	$active_fight_options = $fightOptions
 	$active_flag_fight_options = $fightOptions
-	$active_do_while_moving = HRAdrenalineDoWhileMoving
 EndFunc
 
-;~ Combat callback for KillFoesInArea: loops Attack + FightAdrenaline_Tick until target is dead.
+;~ Combat callback for KillFoesInArea: loops Attack + FightAdrenalineTick until target is dead.
 Func HRAdrenalineCombat($target, $options)
 	GetAlmostInRangeOfAgent($target)
 	Attack($target)
 	Sleep(100)
 	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
 		Attack($target)
-		FightAdrenaline_Tick($hr_adrenaline_ctx, $target)
+		FightAdrenalineTick($target)
 		Sleep(100)
 		$target = GetCurrentTarget()
 		If IsPlayerDead() Then ExitLoop
 	WEnd
-EndFunc
-
-;~ DoWhileMoving callback: ticks HR maintenance during movement between waypoints.
-Func HRAdrenalineDoWhileMoving()
-	HeroicRefrain_Tick($hr_adrenaline_ctx)
 EndFunc
 
 
