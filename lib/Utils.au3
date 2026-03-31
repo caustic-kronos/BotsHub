@@ -55,7 +55,6 @@ EndFunc
 
 ;~ Move to a location and wait until you reach it.
 Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
-	If $doWhileRunning = Null Then $doWhileRunning = $active_do_while_moving
 	Local $blockedCount = 0
 	Local $mapID = GetMapID()
 	Local $destinationX = $X + Random(-$random, $random)
@@ -929,7 +928,6 @@ $flag_move_aggro_kill_options.Item('flagHeroesOnFight') = True
 
 Global $active_fight_options = Null
 Global $active_flag_fight_options = Null
-Global $active_do_while_moving = Null
 
 Global $default_move_defend_options = ObjCreate('Scripting.Dictionary')
 $default_move_defend_options.Add('defendFunction', Null)
@@ -977,6 +975,7 @@ EndFunc
 ;~ Version to flag heroes before fights
 ;~ Better against heavy AoE - dangerous when flags can end up in a non accessible spot
 Func FlagMoveAggroAndKill($x, $y, $log = '', $options = $flag_move_aggro_kill_options)
+	If $options = Null Then $options = ($active_fight_options <> Null) ? CloneDictMap($active_fight_options) : CloneDictMap($default_move_aggro_kill_options)
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
@@ -999,7 +998,7 @@ EndFunc
 
 ;~ Trap Safe Wrapper for MoveAggroAndKill
 Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
+	If $options = Null Then $options = ($active_fight_options <> Null) ? CloneDictMap($active_fight_options) : CloneDictMap($default_move_aggro_kill_options)
 	$options.Item('lootTrappedArea') = True
 	$options.Item('fightRange') = $RANGE_SPELLCAST
 	MoveAggroAndKill($x, $y, $log, $options)
@@ -1020,7 +1019,8 @@ EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
-Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
+Func MoveAggroAndKill($x, $y, $log = '', $options = Null)
+	If $options = Null Then $options = ($active_fight_options <> Null) ? CloneDictMap($active_fight_options) : CloneDictMap($default_move_aggro_kill_options)
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
