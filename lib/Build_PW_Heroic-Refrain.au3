@@ -52,17 +52,16 @@ Global Const $HR_PHASE_SELF_SETUP = 0
 Global Const $HR_PHASE_APPLY_PARTY = 1
 Global Const $HR_PHASE_MAINTENANCE = 2
 
-; Adlib interval constants
-Global Const $HR_INTERVAL_FAST = 3000
-Global Const $HR_INTERVAL_SLOW = 12000
+; Adlib interval constant
+Global Const $HR_INTERVAL = 12000
 
-; HR state globals (replaces ctx dictionary for clarity)
+; HR state globals
 Global $hr_phase = $HR_PHASE_SELF_SETUP
 Global $hr_party_index = 1
 Global $hr_last_tof_time = 0
 Global $hr_initialized = False
-Global $hr_self_cast_count = 0
 Global $hr_last_map_id = 0
+Global $hr_target_attr_level = 0
 
 Global $registered_shouts = False
 
@@ -73,20 +72,22 @@ Global $registered_shouts = False
 ; Runs via AdlibRegister, keeping HR active on the entire party regardless
 ; of the current control flow (movement, combat, sleep, idle, etc.).
 ;
-; Uses a fast interval (3s) during setup/application/pending TOF,
-; then switches to a slow interval (12s) for steady-state maintenance.
-;
 ; Phases:
-;   SELF_SETUP   - Cast HR on self twice for max Leadership
-;   APPLY_PARTY  - Cast HR on each party member (heroes)
-;   MAINTENANCE  - Keep HR alive via "They're on Fire!" on cooldown, reapply on rezzed heroes
+;   SELF_SETUP   - Cast HR on self twice; bootstrap detected via two different attr levels
+;   APPLY_PARTY  - Cast HR on each party member (heroes) at boosted level
+;   MAINTENANCE  - Keep HR alive via TOF on cooldown, reapply on rezzed/degraded heroes
+;
+; Attribute-level verification: scans the full effects array for the highest
+; HR AttributeLevel, since reapplying HR creates duplicate entries and
+; GetEffect() only returns the first match (which may be the weaker one).
+; The boosted level is auto-discovered during self-setup and used as the
+; threshold for party application and maintenance checks.
 ;
 ; State resets automatically on death or zone change.
 ; ============================================================================
 
 ;~ AdlibRegister target. Performs at most one phase action per call.
 ;~ TOF is cast on cooldown at every tick (off global cooldown) to keep existing HR alive.
-;~ Interval is dynamic: fast (3s) during setup/apply, slow (12s) during maintenance.
 Func TickHeroicRefrain()
 	; Leave explorable: unregister and reset
 	If GetMapType() <> $ID_EXPLORABLE Or Not IsPlayerAlive() Then
@@ -97,7 +98,6 @@ Func TickHeroicRefrain()
 	; Detect map/floor change and reset (all buffs drop on zone)
 	Local $currentMap = GetMapID()
 	If $hr_last_map_id <> 0 And $hr_last_map_id <> $currentMap Then
-		Debug('HR Utility: Map changed (' & $hr_last_map_id & ' -> ' & $currentMap & '), resetting')
 		ResetHeroicRefrain()
 	EndIf
 	$hr_last_map_id = $currentMap
@@ -105,7 +105,6 @@ Func TickHeroicRefrain()
 	; Mark initialized on first successful tick
 	If Not $hr_initialized Then
 		$hr_initialized = True
-		Debug('HR Utility: Initialized, starting self setup')
 	EndIf
 
 	; Always cast TOF on cooldown regardless of phase.
@@ -132,18 +131,6 @@ Func TickHeroicRefrain()
 		Case $HR_PHASE_MAINTENANCE
 			HRPhaseMaintenance()
 	EndSwitch
-
-	HRAdjustInterval()
-EndFunc
-
-;~ Re-register adlib at appropriate interval based on current phase.
-;~ Fast (3s) during setup, apply, or pending TOF. Slow (12s) during steady maintenance.
-Func HRAdjustInterval()
-	If $hr_phase == $HR_PHASE_MAINTENANCE Then
-		AdlibRegister('TickHeroicRefrain', $HR_INTERVAL_SLOW)
-	Else
-		AdlibRegister('TickHeroicRefrain', $HR_INTERVAL_FAST)
-	EndIf
 EndFunc
 
 ;~ Reset all HR state to restart the full application cycle.
@@ -153,33 +140,66 @@ Func ResetHeroicRefrain()
 	$hr_party_index = 1
 	$hr_last_tof_time = 0
 	$hr_initialized = False
-	$hr_self_cast_count = 0
-	Debug('HR Utility: State reset')
+	$hr_target_attr_level = 0
 EndFunc
 
-;~ Cast HR on self twice, then advance to APPLY_PARTY.
-;~ Tracked by counter, not effect checking. Resets on death/zone.
+;~ Scan all effects on a party member for the highest HR AttributeLevel.
+;~ Reapplying HR creates duplicate entries at different attribute levels;
+;~ GetEffect() returns the first match which may be the weaker one.
+;~ Returns 0 if no HR effect found.
+Func GetMaxHRAttributeLevel($heroIndex = 0)
+	Local $effects = GetEffect(0, $heroIndex)
+	If Not IsArray($effects) Then Return 0
+
+	Local $maxLevel = 0
+	For $i = 0 To UBound($effects) - 1
+		If DllStructGetData($effects[$i], 'SkillID') == $ID_HEROIC_REFRAIN Then
+			Local $level = DllStructGetData($effects[$i], 'AttributeLevel')
+			If $level > $maxLevel Then $maxLevel = $level
+		EndIf
+	Next
+	Return $maxLevel
+EndFunc
+
+;~ Cast HR on self until bootstrap is detected, then advance to APPLY_PARTY.
+;~ Bootstrap complete when we see HR at two different attribute levels (base + boosted).
+;~ The boosted level becomes the target threshold for party application and maintenance.
 Func HRPhaseSelfSetup()
-	If $hr_self_cast_count >= 2 Then
-		$hr_phase = $HR_PHASE_APPLY_PARTY
-		$hr_party_index = 1
-		Debug('HR Utility: Self setup complete (' & $hr_self_cast_count & ' casts)')
-		Return
+	Local $effects = GetEffect(0, 0)
+	If IsArray($effects) Then
+		Local $hrMin = 99999
+		Local $hrMax = 0
+		For $i = 0 To UBound($effects) - 1
+			If DllStructGetData($effects[$i], 'SkillID') == $ID_HEROIC_REFRAIN Then
+				Local $level = DllStructGetData($effects[$i], 'AttributeLevel')
+				If $level < $hrMin Then $hrMin = $level
+				If $level > $hrMax Then $hrMax = $level
+			EndIf
+		Next
+		If $hrMax > 0 And $hrMax > $hrMin Then
+			$hr_target_attr_level = $hrMax
+			$hr_phase = $HR_PHASE_APPLY_PARTY
+			$hr_party_index = 1
+			Return
+		EndIf
 	EndIf
 
 	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return
 	If GetEnergy() < 5 Then Return
 
 	Local $me = GetMyAgent()
-	If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $me) Then
-		$hr_self_cast_count += 1
-		Debug('HR Utility: Self cast ' & $hr_self_cast_count & '/2')
-	EndIf
+	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $me)
 EndFunc
 
 ;~ Find next party member without HR and cast it on them.
 ;~ Skips dead, invalid, and out-of-range heroes; retries skipped heroes on next pass.
 Func HRPhaseApplyParty()
+	If GetMaxHRAttributeLevel(0) < $hr_target_attr_level Then
+		$hr_phase = $HR_PHASE_SELF_SETUP
+		$hr_party_index = 1
+		Return
+	EndIf
+
 	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return
 
 	Local $heroCount = GetHeroCount()
@@ -195,62 +215,50 @@ Func HRPhaseApplyParty()
 		EndIf
 
 		Local $agent = GetAgentByID($agentID)
-		; Skip dead or invalid heroes
 		If $agent == Null Or GetIsDead($agent) Then
 			$idx += 1
 			ContinueLoop
 		EndIf
 
-		; Skip heroes that already have HR
-		If GetEffect($ID_HEROIC_REFRAIN, $idx) <> Null Then
+		If GetMaxHRAttributeLevel($idx) >= $hr_target_attr_level Then
 			$idx += 1
 			ContinueLoop
 		EndIf
 
-		; Skip heroes too far away - try them on the next pass
 		If GetDistance($me, $agent) > $RANGE_SPELLCAST Then
 			$skippedOutOfRange = True
 			$idx += 1
 			ContinueLoop
 		EndIf
 
-		; Cast HR on this hero
 		If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then
 			$hr_party_index = $idx + 1
-			Debug('HR Utility: Cast HR on party member ' & $idx)
 			Return
 		EndIf
 
-		; Cast failed (energy, etc.) - try again next tick
 		$hr_party_index = $idx
 		Return
 	WEnd
 
-	; Some heroes were out of range - loop back to try them again
 	If $skippedOutOfRange Then
 		$hr_party_index = 1
 		Return
 	EndIf
 
-	; All party members processed - enter maintenance
 	$hr_phase = $HR_PHASE_MAINTENANCE
 	$hr_last_tof_time = TimerInit()
-	Debug('HR Utility: All party buffed, entering maintenance')
 EndFunc
 
 ;~ Maintenance phase: reapply HR on rezzed heroes. TOF is handled at top of tick.
 Func HRPhaseMaintenance()
-	; Recovery: if player lost HR (death/respawn, buff expiry), restart full cycle
-	If GetEffect($ID_HEROIC_REFRAIN, 0) == Null Then
+	Local $playerAttr = GetMaxHRAttributeLevel(0)
+	If $playerAttr < $hr_target_attr_level Then
 		$hr_phase = $HR_PHASE_SELF_SETUP
-		$hr_self_cast_count = 0
 		$hr_party_index = 1
-		Debug('HR Utility: Player lost HR, restarting self setup')
 		HRPhaseSelfSetup()
 		Return
 	EndIf
 
-	; Recovery: check party members for dropped HR (e.g. hero was rezzed) and reapply
 	Local $heroCount = GetHeroCount()
 	For $i = 1 To $heroCount
 		Local $agentID = GetHeroID($i)
@@ -259,12 +267,9 @@ Func HRPhaseMaintenance()
 		Local $agent = GetAgentByID($agentID)
 		If $agent == Null Or GetIsDead($agent) Then ContinueLoop
 
-		If GetEffect($ID_HEROIC_REFRAIN, $i) == Null Then
+		If GetMaxHRAttributeLevel($i) < $hr_target_attr_level Then
 			If IsRecharged($BUILD_PW_HEROIC_REFRAIN) And GetDistance(GetMyAgent(), $agent) <= $RANGE_SPELLCAST Then
-				If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then
-					Debug('HR Utility: Reapplied HR on party member ' & $i)
-					Return
-				EndIf
+				If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then Return
 			EndIf
 			Return
 		EndIf
@@ -357,7 +362,7 @@ EndFunc
 Func SetupHRAdrenalineBuild()
 	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
 	ResetHeroicRefrain()
-	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL_FAST)
+	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
 
 	Local $fightOptions = CloneDictMap($default_move_aggro_kill_options)
 	$fightOptions.Item('combatFunction') = HRAdrenalineCombat
