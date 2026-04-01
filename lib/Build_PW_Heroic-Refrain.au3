@@ -50,18 +50,13 @@ Global Const $BUILD_PW_AGGRESSIVE_REFRAIN = 8
 ; Phase constants
 Global Const $HR_PHASE_SELF_SETUP = 0
 Global Const $HR_PHASE_APPLY_PARTY = 1
-Global Const $HR_PHASE_MAINTENANCE = 2
 
 ; Adlib interval constant
 Global Const $HR_INTERVAL = 12000
 
 ; HR state globals
-Global $hr_phase = $HR_PHASE_SELF_SETUP
-Global $hr_party_index = 1
-Global $hr_last_tof_time = 0
-Global $hr_initialized = False
-Global $hr_last_map_id = 0
 Global $hr_target_attr_level = 0
+Global $hr_reset_pending = False
 
 Global $registered_shouts = False
 
@@ -73,74 +68,80 @@ Global $registered_shouts = False
 ; of the current control flow (movement, combat, sleep, idle, etc.).
 ;
 ; Phases:
-;   SELF_SETUP   - Cast HR on self twice; bootstrap detected via two different attr levels
-;   APPLY_PARTY  - Cast HR on each party member (heroes) at boosted level
-;   MAINTENANCE  - Keep HR alive via TOF on cooldown, reapply on rezzed/degraded heroes
+;   SELF_SETUP   - Cast HR on self twice; bootstrap detected via duplicate HR entries
+;   APPLY_PARTY  - Iterate all heroes, apply/reapply HR to anyone missing or degraded
 ;
-; Attribute-level verification: scans the full effects array for the highest
-; HR AttributeLevel, since reapplying HR creates duplicate entries and
-; GetEffect() only returns the first match (which may be the weaker one).
-; The boosted level is auto-discovered during self-setup and used as the
-; threshold for party application and maintenance checks.
+; Attribute-level verification: counts HR entries in the effects array
+; (duplicates at different levels coexist). The boosted level is auto-discovered
+; during self-setup and used as the threshold for party checks.
 ;
 ; State resets automatically on death or zone change.
+; External reset is signalled via $hr_reset_pending; phase functions return
+; the next phase to keep phase state local to the tick function.
 ; ============================================================================
 
 ;~ AdlibRegister target. Performs at most one phase action per call.
-;~ TOF is cast on cooldown at every tick (off global cooldown) to keep existing HR alive.
+;~ TOF is cast unconditionally every tick to keep existing HR alive.
 Func TickHeroicRefrain()
-	; Leave explorable: unregister and reset
+	Local Static $phase = $HR_PHASE_SELF_SETUP
+	Local Static $initialized = False
+	Local Static $lastMapId = 0
+
+	; Handle pending reset from external callers or previous tick
+	If $hr_reset_pending Then
+		$phase = $HR_PHASE_SELF_SETUP
+		$initialized = False
+		$lastMapId = 0
+		$hr_reset_pending = False
+	EndIf
+
+	; Leave explorable: reset and return
 	If GetMapType() <> $ID_EXPLORABLE Or Not IsPlayerAlive() Then
-		If $hr_initialized Then ResetHeroicRefrain()
+		If $initialized Then ResetHeroicRefrain()
 		Return
 	EndIf
 
 	; Detect map/floor change and reset (all buffs drop on zone)
 	Local $currentMap = GetMapID()
-	If $hr_last_map_id <> 0 And $hr_last_map_id <> $currentMap Then
+	If $lastMapId <> 0 And $lastMapId <> $currentMap Then
 		ResetHeroicRefrain()
+		$phase = $HR_PHASE_SELF_SETUP
+		$initialized = False
+		$hr_reset_pending = False
 	EndIf
-	$hr_last_map_id = $currentMap
+	$lastMapId = $currentMap
 
 	; Mark initialized on first successful tick
-	If Not $hr_initialized Then
-		$hr_initialized = True
+	If Not $initialized Then
+		$initialized = True
 	EndIf
 
-	; Always cast TOF on cooldown regardless of phase.
-	; TOF is off the global cooldown so it can be cast during HR casts, while knocked down, etc.
-	; Leadership returns ~10e from party members affected by shouts, making this energy-neutral.
-	; Under Quickening Zephyr, TOF recharges before its buff expires. Recasting while active
-	; does NOT trigger HR refresh, so we must wait for the old buff to expire first.
-	If IsRecharged($BUILD_PW_THEYRE_ON_FIRE) Then
-		Local $tofRemaining = GetEffectTimeRemaining($ID_THEYRE_ON_FIRE, 0)
-		If $tofRemaining > 0 Then Sleep($tofRemaining + 50)
-		UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
-		$hr_last_tof_time = TimerInit()
-	EndIf
+	; Cast TOF unconditionally every tick to keep existing HR alive.
+	; TOF is off the global cooldown so it can fire during other casts.
+	; Leadership returns ~10e from party members affected by shouts.
+	UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
 
 	If IsCasting(GetMyAgent()) Then Return
 
-	Switch $hr_phase
+	; If player HR has degraded, restart self-setup before any phase logic
+	If $hr_target_attr_level > 0 And GetMaxHRAttributeLevel(0) < $hr_target_attr_level Then
+		$phase = $HR_PHASE_SELF_SETUP
+	EndIf
+
+	Switch $phase
 		Case $HR_PHASE_SELF_SETUP
-			HRPhaseSelfSetup()
+			$phase = HRPhaseSelfSetup()
 
 		Case $HR_PHASE_APPLY_PARTY
-			HRPhaseApplyParty()
-
-		Case $HR_PHASE_MAINTENANCE
-			HRPhaseMaintenance()
+			$phase = HRPhaseApplyParty()
 	EndSwitch
 EndFunc
 
 ;~ Reset all HR state to restart the full application cycle.
 ;~ Called on zone change, death, or map transition.
 Func ResetHeroicRefrain()
-	$hr_phase = $HR_PHASE_SELF_SETUP
-	$hr_party_index = 1
-	$hr_last_tof_time = 0
-	$hr_initialized = False
 	$hr_target_attr_level = 0
+	$hr_reset_pending = True
 EndFunc
 
 ;~ Scan all effects on a party member for the highest HR AttributeLevel.
@@ -162,118 +163,51 @@ Func GetMaxHRAttributeLevel($heroIndex = 0)
 EndFunc
 
 ;~ Cast HR on self until bootstrap is detected, then advance to APPLY_PARTY.
-;~ Bootstrap complete when we see HR at two different attribute levels (base + boosted).
-;~ The boosted level becomes the target threshold for party application and maintenance.
+;~ Bootstrap complete when two HR entries exist (base + boosted; duplicates overwrite).
+;~ The boosted level becomes the target threshold for party application.
 Func HRPhaseSelfSetup()
 	Local $effects = GetEffect(0, 0)
 	If IsArray($effects) Then
-		Local $hrMin = 99999
+		Local $hrCount = 0
 		Local $hrMax = 0
 		For $i = 0 To UBound($effects) - 1
 			If DllStructGetData($effects[$i], 'SkillID') == $ID_HEROIC_REFRAIN Then
+				$hrCount += 1
 				Local $level = DllStructGetData($effects[$i], 'AttributeLevel')
-				If $level < $hrMin Then $hrMin = $level
 				If $level > $hrMax Then $hrMax = $level
 			EndIf
 		Next
-		If $hrMax > 0 And $hrMax > $hrMin Then
+		If $hrCount >= 2 Then
 			$hr_target_attr_level = $hrMax
-			$hr_phase = $HR_PHASE_APPLY_PARTY
-			$hr_party_index = 1
-			Return
+			Return $HR_PHASE_APPLY_PARTY
 		EndIf
 	EndIf
 
-	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return
-	If GetEnergy() < 5 Then Return
+	If GetEnergy() < 5 Then Return $HR_PHASE_SELF_SETUP
 
-	Local $me = GetMyAgent()
-	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $me)
+	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
+	Return $HR_PHASE_SELF_SETUP
 EndFunc
 
-;~ Find next party member without HR and cast it on them.
-;~ Skips dead, invalid, and out-of-range heroes; retries skipped heroes on next pass.
+;~ Iterate all heroes and apply HR to anyone missing or below target level.
+;~ Full scan every tick to avoid stale state from deaths, movement, or buff expiry.
 Func HRPhaseApplyParty()
-	If GetMaxHRAttributeLevel(0) < $hr_target_attr_level Then
-		$hr_phase = $HR_PHASE_SELF_SETUP
-		$hr_party_index = 1
-		Return
-	EndIf
+	Local Static $heroCount = GetHeroCount()
 
-	If Not IsRecharged($BUILD_PW_HEROIC_REFRAIN) Then Return
-
-	Local $heroCount = GetHeroCount()
-	Local $idx = $hr_party_index
-	Local $me = GetMyAgent()
-	Local $skippedOutOfRange = False
-
-	While $idx <= $heroCount
-		Local $agentID = GetHeroID($idx)
-		If $agentID == 0 Then
-			$idx += 1
-			ContinueLoop
-		EndIf
-
-		Local $agent = GetAgentByID($agentID)
-		If $agent == Null Or GetIsDead($agent) Then
-			$idx += 1
-			ContinueLoop
-		EndIf
-
-		If GetMaxHRAttributeLevel($idx) >= $hr_target_attr_level Then
-			$idx += 1
-			ContinueLoop
-		EndIf
-
-		If GetDistance($me, $agent) > $RANGE_SPELLCAST Then
-			$skippedOutOfRange = True
-			$idx += 1
-			ContinueLoop
-		EndIf
-
-		If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then
-			$hr_party_index = $idx + 1
-			Return
-		EndIf
-
-		$hr_party_index = $idx
-		Return
-	WEnd
-
-	If $skippedOutOfRange Then
-		$hr_party_index = 1
-		Return
-	EndIf
-
-	$hr_phase = $HR_PHASE_MAINTENANCE
-	$hr_last_tof_time = TimerInit()
-EndFunc
-
-;~ Maintenance phase: reapply HR on rezzed heroes. TOF is handled at top of tick.
-Func HRPhaseMaintenance()
-	Local $playerAttr = GetMaxHRAttributeLevel(0)
-	If $playerAttr < $hr_target_attr_level Then
-		$hr_phase = $HR_PHASE_SELF_SETUP
-		$hr_party_index = 1
-		HRPhaseSelfSetup()
-		Return
-	EndIf
-
-	Local $heroCount = GetHeroCount()
 	For $i = 1 To $heroCount
 		Local $agentID = GetHeroID($i)
 		If $agentID == 0 Then ContinueLoop
 
 		Local $agent = GetAgentByID($agentID)
 		If $agent == Null Or GetIsDead($agent) Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
 
 		If GetMaxHRAttributeLevel($i) < $hr_target_attr_level Then
-			If IsRecharged($BUILD_PW_HEROIC_REFRAIN) And GetDistance(GetMyAgent(), $agent) <= $RANGE_SPELLCAST Then
-				If UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent) Then Return
-			EndIf
-			Return
+			UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
+			Return $HR_PHASE_APPLY_PARTY
 		EndIf
 	Next
+	Return $HR_PHASE_APPLY_PARTY
 EndFunc
 
 
@@ -297,10 +231,6 @@ EndFunc
 ;~
 ;~ $target - current enemy agent (or Null for untargeted shouts)
 Func FightAdrenalineTick($target = Null)
-	; Guards
-	If Not IsPlayerAlive() Then Return
-	If IsCasting(GetMyAgent()) Then Return
-
 	; Priority 1: Aggressive Refrain — only if not already active, costs 25e, only in combat
 	If $target <> Null And GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null Then
 		If GetEnergy() >= 25 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then
@@ -312,12 +242,10 @@ Func FightAdrenalineTick($target = Null)
 	; Priority 2: Ensure we are attacking the target
 	If $target <> Null Then Attack($target)
 
-	; Priority 3: "Stand Your Ground!" — only if party not already buffed
+	; Priority 3: "Stand Your Ground!"
 	If IsRecharged($BUILD_PW_STAND_YOUR_GROUND) Then
-		If GetEffect($ID_STAND_YOUR_GROUND, 0) == Null Then
-			UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
-			Return
-		EndIf
+		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
+		Return
 	EndIf
 
 	; Priority 4: "There's Nothing to Fear!" (15e)
@@ -340,10 +268,8 @@ Func FightAdrenalineTick($target = Null)
 
 	; Priority 7: "For Great Justice!" (5e, lowest priority)
 	If IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And GetEnergy() >= 5 Then
-		If GetEffect($ID_FOR_GREAT_JUSTICE, 0) == Null Then
-			UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
-			Return
-		EndIf
+		UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
+		Return
 	EndIf
 EndFunc
 
@@ -354,21 +280,18 @@ EndFunc
 ; Reusable setup and callback functions for any farm/mission script using
 ; the HR Adrenaline build. Call SetupHRAdrenalineBuild() once during setup.
 ; HR maintenance runs automatically via AdlibRegister.
-; Combat function is wired through active build globals.
+; Combat function is wired through the default move-aggro-kill option dicts.
 ; ============================================================================
 
-;~ Set up the HR Adrenaline build: load template, register HR maintenance, set combat globals.
-;~ Paragon does not flag heroes, so both active options use the same non-flag dict.
+;~ Set up the HR Adrenaline build: load template, register HR maintenance, set combat function.
+;~ Overwrites the default combat function on both option dicts so all MoveAggro* calls use it.
 Func SetupHRAdrenalineBuild()
 	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
 	ResetHeroicRefrain()
 	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
 
-	Local $fightOptions = CloneDictMap($default_move_aggro_kill_options)
-	$fightOptions.Item('combatFunction') = HRAdrenalineCombat
-
-	$active_fight_options = $fightOptions
-	$active_flag_fight_options = $fightOptions
+	$default_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
+	$flag_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
 EndFunc
 
 ;~ Combat callback for KillFoesInArea: loops Attack + FightAdrenalineTick until target is dead.
@@ -379,7 +302,7 @@ Func HRAdrenalineCombat($target, $options)
 	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
 		Attack($target)
 		FightAdrenalineTick($target)
-		Sleep(100)
+		Sleep(250)
 		$target = GetCurrentTarget()
 		If IsPlayerDead() Then ExitLoop
 	WEnd
