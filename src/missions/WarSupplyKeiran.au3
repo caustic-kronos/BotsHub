@@ -163,8 +163,7 @@ EndFunc
 Func EnterAuspiciousBeginningsQuest()
 	If GetMapID() <> $ID_HALL_OF_MONUMENTS Then Return $FAIL
 	; hexadecimal code of dialog id to start Auspicious Beginnings quest
-	;Local $questDialogID = 0x63E ;Apparently dialog changed
-	Local $questDialogID = 0x63F
+	Local $questDialogID = 0x644
 	Info('Entering Auspicious Beginnings quest')
 	Info('Changing Weapons: Slot-4 Keiran Bow')
 	ChangeWeaponSet(4)
