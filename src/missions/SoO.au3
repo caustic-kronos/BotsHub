@@ -30,8 +30,7 @@ Global Const $SOO_FARM_INFORMATIONS = 'For best results, do not cheap out on her
 	& 'Testing was done with a ROJ monk and an adapted mesmerway (1esurge replaced by a ROJ, inept replaced by blinding surge)' & @CRLF _
 	& 'I recommend using a range build to avoid pulling extra groups in crowded rooms' & @CRLF _
 	& '45mn average in NM' & @CRLF _
-	& '60mn average in HM with cons (automatically used if HM is on)' & @CRLF _
-	& '45mn average in HM as Paragon Adren Build (automatically used if HM is on)'
+	& '60mn average in HM with cons (automatically used if HM is on)'
 
 Global Const $ID_SOO_TORCH = 22342
 Global Const $SOO_AGGRO_RANGE = $RANGE_SPELLCAST + 100
@@ -55,13 +54,6 @@ Func SetupSoOFarm()
 	TravelToOutpost($ID_VLOXS_FALLS, $district_name)
 	SwitchToHardModeIfEnabled()
 	SetDisplayedTitle($ID_ASURA_TITLE)
-
-	; Detect Paragon and set up HR Adrenaline build
-	If GetHeroProfession(0) == $ID_PARAGON Then
-		Info('Paragon detected - loading HR Adrenaline build')
-		SetupHRAdrenalineBuild()
-	EndIf
-
 	While Not $soo_farm_setup
 		If RunToShardsOfOrrDungeon() == $FAIL Then ContinueLoop
 		$soo_farm_setup = True
