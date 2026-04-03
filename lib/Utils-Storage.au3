@@ -89,13 +89,17 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 		BalanceCharacterGold(10000)
 	EndIf
 	; TODO: generalize this for all materials
-	If $cache['Buy items.Rare Materials.Glob of Ectoplasm'] And GetGoldCharacter() > 10000 Then
-		TravelToOutpost($tradeTown, $district_name)
-		BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
-	EndIf
-	If $cache['Buy items.Rare Materials.Obsidian Shard'] And GetGoldCharacter() > 10000 Then
-		TravelToOutpost($tradeTown, $district_name)
-		BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
+	If GetGoldCharacter() > 10000 Then
+		If $cache['Buy items.Lockpicks'] Then
+			Local $lockpicksToBuy = Floor((GetGoldCharacter() - 10000) / 1500)
+			If $lockpicksToBuy > 0 Then BuyLockpicksInTown($lockpicksToBuy)
+		ElseIf $cache['Buy items.Rare Materials.Obsidian Shard'] Then
+			TravelToOutpost($tradeTown, $district_name)
+			BuyRareMaterialFromMerchantUntilPoor($ID_OBSIDIAN_SHARD, 10000, $ID_GLOB_OF_ECTOPLASM)
+		ElseIf $cache['Buy items.Rare Materials.Glob of Ectoplasm'] Then
+			TravelToOutpost($tradeTown, $district_name)
+			BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
+		EndIf
 	EndIf
 	If $cache['@store.something'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
@@ -749,6 +753,12 @@ Func BuySuperiorIdentificationKitInTown($amount = 1)
 		$amount -= 10
 	WEnd
 	If $amount > 0 Then BuyInTown($ID_SUPERIOR_IDENTIFICATION_KIT, 6, 500, $amount, False)
+EndFunc
+
+
+;~ Buy lockpicks in town
+Func BuyLockpicksInTown($amount = 1)
+	If $amount > 0 Then BuyInTown($ID_LOCKPICK, 11, 1500, $amount, True)
 EndFunc
 
 

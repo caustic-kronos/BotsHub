@@ -156,6 +156,8 @@ Func FightAsPWHeroicRefrain($target, $options = Null)
 	Local Static $castSaveYourselves = GetSkillbarSkillID($BUILD_PW_SAVE_YOURSELVES) == $ID_SAVE_YOURSELVES_KURZICK Or GetSkillbarSkillID($BUILD_PW_SAVE_YOURSELVES) == $ID_SAVE_YOURSELVES_LUXON
 	Local Static $castNaturalTemper = GetSkillbarSkillID($BUILD_PW_NATURAL_TEMPER) == $ID_NATURAL_TEMPER
 	Local Static $castToTheLimit = GetSkillbarSkillID($BUILD_PW_TO_THE_LIMIT) == $ID_TO_THE_LIMIT
+	; Timer used for Stand your ground, there is nothing to fear and cant touch this
+	Local Static $timer20s = Null
 
 	If Not $registered_shouts And GetMapType() == $ID_EXPLORABLE Then
 		AdlibRegister('MaintainHeroicRefrain', 12000)
@@ -166,10 +168,6 @@ Func FightAsPWHeroicRefrain($target, $options = Null)
 	GetAlmostInRangeOfAgent($target)
 	Attack($target)
 	Sleep(1500)
-
-	; Timer used for Stand your ground, there is nothing to fear and cant touch this
-	Local Static $timer20s = Null
-
 	If $timer20s == Null Or TimerDiff($timer20s) > 20000 Then
 		GetIntoTeamRange()
 		Local $ping = GetPing()

@@ -3249,6 +3249,7 @@
 		"Keys": true
 	},
 	"Buy items": {
+		"Lockpicks": false,
 		"Basic Materials": {
 			"Bone": false,
 			"Bolt of Cloth": false,
