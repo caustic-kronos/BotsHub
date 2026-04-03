@@ -1145,7 +1145,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $lootInFights = ($options.Item('lootInFights') <> Null) ? $options.Item('lootInFights') : False
 	Local $lootTrappedArea = ($options.Item('lootTrappedArea') <> Null) ? $options.Item('lootTrappedArea') : False
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
-	Local $combatFunction = ($options.Exists('combatFunction') And $options.Item('combatFunction') <> Null) ? $options.Item('combatFunction') : UseSkillSequentially
+	Local $combatFunction = ($options.Item('combatFunction') <> Null) ? $options.Item('combatFunction') : UseSkillSequentially
 
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
