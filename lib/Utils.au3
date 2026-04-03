@@ -918,7 +918,7 @@ $default_move_aggro_kill_options.Add('openChests', True)
 $default_move_aggro_kill_options.Add('chestOpenRange', $RANGE_SPIRIT)
 $default_move_aggro_kill_options.Add('lootTrappedArea', False)
 $default_move_aggro_kill_options.Add('ignoreDroppedLoot', False)
-$default_move_aggro_kill_options.Add('combatFunction', Null)
+$default_move_aggro_kill_options.Add('combatFunction', UseSkillSequentially)
 ; default 60 seconds fight duration
 $default_move_aggro_kill_options.Add('fightDuration', 60000)
 
