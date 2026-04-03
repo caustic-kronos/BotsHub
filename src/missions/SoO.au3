@@ -365,6 +365,7 @@ Func ClearSoOFloor2()
 
 		If IsAgentInRange(GetMyAgent(), -14076, -19457, 1250) Then
 			Info('Group wiped, moving from shrine to torch room 1 exit')
+			CancelAll()
 			MoveTo(-9300, -17300)
 			RandomSleep(500)
 			MoveTo(-9600, -16600)

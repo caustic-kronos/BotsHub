@@ -16,7 +16,7 @@
 
 Global Const $BUILD_PW_HR_REFRAINS = 'OQCjUamLKTn19Y1YAh0b4ioYsYA'
 Global Const $BUILD_PW_HR_ARIAS = 'OQCkUWm4Ziy0ZdPWNGQI9GuoHGHG'
-Global Const $BUILD_PW_HR_ADRENALINE = 'OQGkURll5iy0ZdPWNGQI9WM4VBPB'
+Global Const $BUILD_PW_HR_ADRENALINE = 'OQGkURll5iy0ZdPWNGQYMIPxVh7G' ; +3+1 Leadership, +1 Spear, +1 Command, +Clarity
 
 ; Default build
 Global Const $BUILD_PW_HEROIC_REFRAIN = 1
@@ -41,13 +41,224 @@ Global Const $BUILD_PW_BURNING_REFRAIN = 7
 Global Const $BUILD_PW_BLADETURN_REFRAIN = 8
 
 ; Adrenaline build - not tested
-Global Const $BUILD_PW_SAVE_YOURSELVES = 6
-;Global Const $BUILD_PW_FOR_GREAT_JUSTICE = 7					; not supported
-Global Const $BUILD_PW_AGGRESSIVE_REFRAIN = 8
+Global Const $BUILD_PW_SAVE_YOURSELVES = 5
+Global Const $BUILD_PW_TO_THE_LIMIT = 6
+Global Const $BUILD_PW_FOR_GREAT_JUSTICE = 7
 Global Const $BUILD_PW_NATURAL_TEMPER = 7
-Global Const $BUILD_PW_TO_THE_LIMIT = 8
+Global Const $BUILD_PW_AGGRESSIVE_REFRAIN = 8
+
+; Phase constants
+Global Const $HR_PHASE_NOT_INITIALIZED = 0
+Global Const $HR_PHASE_SELF_SETUP = 1
+Global Const $HR_PHASE_APPLY_PARTY = 2
+
+; Adlib interval constant
+Global Const $HR_INTERVAL = 12000
 
 Global $registered_shouts = False
+
+; ============================================================================
+; Heroic Refrain AdlibRegister Utility
+;
+; State-machine-based utility for Heroic Refrain maintenance.
+; Runs via AdlibRegister, keeping HR active on the entire party regardless
+; of the current control flow (movement, combat, sleep, idle, etc.).
+;
+; Phases:
+;   NOT_INITIALIZED - Waiting for first tick in explorable
+;   SELF_SETUP      - Cast HR on self twice to hit the +4 breakpoint
+;   APPLY_PARTY     - Apply/reapply HR on heroes, maintain via TOF
+;
+; Self-setup uses a binary check: no HR -> cast -> stay, has HR -> cast -> leave.
+; This guarantees the double-cast needed for the Leadership breakpoint (+3 -> +4).
+;
+; State resets automatically on death or zone change.
+; ============================================================================
+
+;~ AdlibRegister target. Performs at most one phase action per call.
+;~ TOF is cast unconditionally every tick to keep existing HR alive.
+Func TickHeroicRefrain()
+	Local Static $phase = $HR_PHASE_NOT_INITIALIZED
+	Local Static $lastMapId = 0
+
+	; Not in explorable or dead: reset to uninitialized
+	If GetMapType() <> $ID_EXPLORABLE Or Not IsPlayerAlive() Then
+		$phase = $HR_PHASE_NOT_INITIALIZED
+		$lastMapId = 0
+		Return
+	EndIf
+
+	; Detect map/floor change: restart self-setup
+	Local $currentMap = GetMapID()
+	If $lastMapId <> 0 And $lastMapId <> $currentMap Then
+		$phase = $HR_PHASE_SELF_SETUP
+	EndIf
+	$lastMapId = $currentMap
+
+	; First tick in explorable: start self-setup
+	If $phase == $HR_PHASE_NOT_INITIALIZED Then
+		$phase = $HR_PHASE_SELF_SETUP
+		Return
+	EndIf
+
+	; Cast TOF unconditionally every tick to keep existing HR alive.
+	; TOF is off the global cooldown so it can fire during other casts.
+	; Leadership returns ~10e from party members affected by shouts.
+	UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
+
+	; If player lost HR at any phase, restart self-setup
+	If $phase <> $HR_PHASE_SELF_SETUP And GetEffect($ID_HEROIC_REFRAIN, 0) == Null Then
+		$phase = $HR_PHASE_SELF_SETUP
+	EndIf
+
+	Switch $phase
+		Case $HR_PHASE_SELF_SETUP
+			$phase = HRPhaseSelfSetup()
+
+		Case $HR_PHASE_APPLY_PARTY
+			$phase = HRPhaseApplyParty()
+	EndSwitch
+EndFunc
+
+;~ Cast HR on self until bootstrap is complete, then advance to APPLY_PARTY.
+;~ No HR -> cast -> stay. Has HR -> cast again (boosted) -> leave.
+;~ Guarantees two casts for the Leadership +3 -> +4 breakpoint.
+Func HRPhaseSelfSetup()
+	If GetEnergy() < 5 Then Return $HR_PHASE_SELF_SETUP
+
+	If GetEffect($ID_HEROIC_REFRAIN, 0) <> Null Then
+		UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
+		Return $HR_PHASE_APPLY_PARTY
+	EndIf
+
+	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
+	Return $HR_PHASE_SELF_SETUP
+EndFunc
+
+;~ Iterate all heroes and apply HR to anyone missing it.
+;~ Full scan every tick to avoid stale state from deaths, movement, or buff expiry.
+Func HRPhaseApplyParty()
+	Local Static $heroCount = GetHeroCount()
+	Local Static $nextHero = 1
+
+	For $j = 0 To $heroCount - 1
+		Local $i = Mod($nextHero + $j - 1, $heroCount) + 1
+		Local $agentID = GetHeroID($i)
+		If $agentID == 0 Then ContinueLoop
+
+		Local $agent = GetAgentByID($agentID)
+		If $agent == Null Or GetIsDead($agent) Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
+
+		If GetEffect($ID_HEROIC_REFRAIN, $i) == Null Then
+			UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
+			$nextHero = Mod($i, $heroCount) + 1
+			Return $HR_PHASE_APPLY_PARTY
+		EndIf
+	Next
+	Return $HR_PHASE_APPLY_PARTY
+EndFunc
+
+
+; ============================================================================
+; Adrenaline Build Combat Shouts (non-blocking, tick-based)
+;
+; Skill priority (highest to lowest):
+;   1. Aggressive Refrain (25e, once if not already buffed)
+;   2. Auto-attack (always ensure attacking target)
+;   3. "Stand Your Ground!"
+;   4. "There's Nothing to Fear!" (15e)
+;   5. "Save Yourselves!" (adrenaline >= 200)
+;   6. "To the Limit!" (only if foes in earshot, adrenaline gain)
+;   7. "For Great Justice!" (5e, lowest priority)
+;
+; Note: HR maintenance is handled by AdlibRegister, not by this function.
+; ============================================================================
+
+;~ Cast one combat shout per call based on priority.
+;~
+;~ $target - current enemy agent (or Null for untargeted shouts)
+Func CastCombatShouts($target = Null)
+	; Priority 1: Aggressive Refrain — only if not already active, costs 25e, only in combat
+	If $target <> Null And GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null Then
+		If GetEnergy() >= 25 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then
+			UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
+			Return
+		EndIf
+	EndIf
+
+	; Priority 2: Ensure we are attacking the target
+	If $target <> Null Then Attack($target)
+
+	; Priority 3: "Stand Your Ground!"
+	If IsRecharged($BUILD_PW_STAND_YOUR_GROUND) Then
+		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
+		Return
+	EndIf
+
+	; Priority 4: "There's Nothing to Fear!" (15e)
+	If IsRecharged($BUILD_PW_THERES_NOTHING_TO_FEAR) And GetEnergy() >= 15 Then
+		UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
+		Return
+	EndIf
+
+	; Priority 5: "Save Yourselves!" (adrenaline-based, 200 required)
+	If GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then
+		UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
+		Return
+	EndIf
+
+	; Priority 6: "To the Limit!" (only if foes nearby for adrenaline gain)
+	If IsRecharged($BUILD_PW_TO_THE_LIMIT) And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
+		UseSkillEx($BUILD_PW_TO_THE_LIMIT)
+		Return
+	EndIf
+
+	; Priority 7: "For Great Justice!" (5e, lowest priority)
+	If IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And GetEnergy() >= 5 Then
+		UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
+		Return
+	EndIf
+EndFunc
+
+
+; ============================================================================
+; HR Adrenaline Build Setup & Callbacks
+;
+; Reusable setup and callback functions for any farm/mission script using
+; the HR Adrenaline build. Call SetupHRAdrenalineBuild() once during setup.
+; HR maintenance runs automatically via AdlibRegister.
+; Combat function is wired through the default move-aggro-kill option dicts.
+; ============================================================================
+
+;~ Set up the HR Adrenaline build: load template, register HR maintenance, set combat function.
+;~ Overwrites the default combat function on both option dicts so all MoveAggro* calls use it.
+Func SetupHRAdrenalineBuild()
+	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
+	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
+
+	$default_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
+	$flag_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
+EndFunc
+
+;~ Combat callback for KillFoesInArea: loops Attack + CastCombatShouts until target is dead.
+Func HRAdrenalineCombat($target, $options)
+	GetAlmostInRangeOfAgent($target)
+	Attack($target)
+	Sleep(100)
+	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
+		Attack($target)
+		CastCombatShouts($target)
+		Sleep(250)
+		$target = GetCurrentTarget()
+		If IsPlayerDead() Then ExitLoop
+	WEnd
+EndFunc
+
+
+; ============================================================================
+; Legacy functions below (AdlibRegister-based approach)
+; ============================================================================
 
 ;~ This function should be put on a 11 to 15s adlibregister
 Func MaintainHeroicRefrain()
