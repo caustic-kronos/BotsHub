@@ -23,7 +23,6 @@
 #include 'GWA2_ID.au3'
 #include 'GWA2.au3'
 #include 'Utils-Debugger.au3'
-#include 'Build_PW_Heroic-Refrain.au3'
 
 Opt('MustDeclareVars', True)
 
@@ -1016,8 +1015,7 @@ EndFunc
 
 
 ;~ Clear a zone around the coordinates provided
-Func MoveAggroAndKill($x, $y, $log = '', $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
+Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
