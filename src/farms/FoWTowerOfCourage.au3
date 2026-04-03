@@ -36,17 +36,44 @@ Opt('MustDeclareVars', True)
 
 #Region Configuration
 ; === Build ===
-Global Const $RA_FOW_TOC_FARMER_SKILLBAR = 'OgcTc5+8ZSn5AimsBC35uU4IuEA'
+Global Const $RA_FOW_TOC_FARMER_SKILLBAR = 'OgcTc5+8Z6Aims4ABC35uU4IuEA'
+Global Const $FOW_TOC_M_HERO_SKILLBAR = 'OwAS8YIH2Eg/LeyLiAAA'
+Global Const $FOW_TOC_P_HERO_SKILLBAR = 'OQijEqmMKODbe8OGAYiJx1YWMA'
 
-Global Const $FOW_TOC_SHADOWFORM			= 1
-Global Const $FOW_TOC_SHROUD_OF_DISTRESS	= 2
-Global Const $FOW_TOC_I_AM_UNSTOPPABLE		= 3
-Global Const $FOW_TOC_DARK_ESCAPE			= 4
-;Global Const $FOW_TOC_HEART_OF_SHADOW		= 5
+;Global Const $FOW_TOC_M_HERO_PARTY_ID = $ID_DUNKORO
+;Global Const $FOW_TOC_M_HERO_PARTY_ID = $ID_TAHLKORA
+Global Const $FOW_TOC_M_HERO_PARTY_ID = $ID_OGDEN
+;Global Const $FOW_TOC_P_HERO_PARTY_ID = $ID_HAYDA
+Global Const $FOW_TOC_P_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
+
+;~ Global Const $FOW_TOC_SHADOWFORM			= 1
+Global Const $FOW_TOC_SHROUD_OF_DISTRESS	= 1
+Global Const $FOW_TOC_I_AM_UNSTOPPABLE		= 2
+Global Const $FOW_TOC_UNSEEN_FURY			= 3
+;~ Global Const $FOW_TOC_DARK_ESCAPE		= 4
+Global Const $FOW_TOC_HEART_OF_SHADOW		= 4
 Global Const $FOW_TOC_DEATH_CHARGE			= 5
 Global Const $FOW_TOC_DWARVEN_STABILITY		= 6
 Global Const $FOW_TOC_WHIRLING_DEFENSE		= 7
 Global Const $FOW_TOC_MENTAL_BLOCK			= 8
+
+; Monk Hero Build
+Global Const $FOW_TOC_DIVINE_SPIRIT			= 1
+Global Const $FOW_TOC_BLESSED_AURA			= 2
+Global Const $FOW_TOC_WATCHFUL_SPIRIT		= 3
+Global Const $FOW_TOC_LIFE_BOND				= 4
+Global Const $FOW_TOC_BALTHAZARS_SPIRIT		= 5
+Global Const $FOW_TOC_SPELLBREAKER			= 6
+
+; Paragon Hero Build
+Global Const $FOW_TOC_VOCAL_WAS_SOGOLON		= 1
+Global Const $FOW_TOC_INCOMING				= 2
+Global Const $FOW_TOC_FALLBACK				= 3
+; Any idea on skill 4 ?
+Global Const $FOW_TOC_ENDURING_HARMONY		= 5
+Global Const $FOW_TOC_BRACE_YOURSELVES		= 6
+Global Const $FOW_TOC_STAND_YOUR_GROUND		= 7
+Global Const $FOW_TOC_BLADETURN_REFRAIN		= 8
 #EndRegion Configuration
 
 ; ==== Constants ====
@@ -55,6 +82,7 @@ Global Const $FOW_TOC_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- Spear/Sword/Axe +5 energy of Enchanting (20% longer enchantments duration)' & @CRLF _
 	& '- A shield with the inscription Through Thick and Thin (+10 armor against piercing damage) and +45 health while enchanted or in stance' & @CRLF _
 	& '- At least 5th level in Deldrimor, Asura and Norn reputation ranks' & @CRLF _
+	& '- one monk and one paragon heroes' & @CRLF _
 	& ' ' & @CRLF _
 	& 'This bot farms obsidian shards in Tower of Courage in Fissure of Woe location in normal mode.' & @CRLF _
 	& 'Solo farm using Ranger based on below article' & @CRLF _
@@ -69,7 +97,7 @@ Global $fow_toc_move_options = CloneDictMap($default_move_defend_options)
 $fow_toc_move_options.Item('defendFunction')		= CastFowToCBuffs
 $fow_toc_move_options.Item('moveTimeOut')			= 5 * 60 * 1000
 $fow_toc_move_options.Item('randomFactor')			= 25
-$fow_toc_move_options.Item('hosSkillSlot')			= 0
+$fow_toc_move_options.Item('hosSkillSlot')			= $FOW_TOC_HEART_OF_SHADOW
 $fow_toc_move_options.Item('deathChargeSkillSlot')	= $FOW_TOC_DEATH_CHARGE
 $fow_toc_move_options.Item('openChests')			= False
 
@@ -103,9 +131,12 @@ Func SetupFoWToCFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
-	If SetupPlayerFowToCFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
+	AddHero($FOW_TOC_M_HERO_PARTY_ID)
+	AddHero($FOW_TOC_P_HERO_PARTY_ID)
 	RandomSleep(500)
+	If SetupPlayerFoWToCFarm() == $FAIL Then Return $FAIL
+	If SetupTeamFoWToCFarm() == $FAIL Then Return $FAIL
 	$fow_toc_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -125,22 +156,34 @@ Func SetupPlayerFowToCFarm()
 EndFunc
 
 
+Func SetupTeamFoWToCFarm()
+	Info('Setting up team build skill bars')
+	LoadSkillTemplate($FOW_TOC_M_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($FOW_TOC_P_HERO_SKILLBAR, 2)
+	RandomSleep(250)
+	DisableAllHeroSkills(1)
+	DisableAllHeroSkills(2)
+	Return $SUCCESS
+EndFunc
+
+
 ;~ Farm loop
 Func FoWToCFarmLoop()
 	$run_timer = TimerInit()
 
 	Info('Moving to initial spot')
+	HeroesCastFoWToCBuffs()
 	CastFowToCBuffs()
+	Move(-21100, -2400)
+	RandomSleep(1200)
+	CommandAll(-23300, -1300)
 	; Dark escape can be replaced by other skills like great dwarf armor to increase survivability at the cost of farm speed
-	UseSkillEx($FOW_TOC_DARK_ESCAPE)
+	;~ UseSkillEx($FOW_TOC_DARK_ESCAPE)
 	If MoveDefendingFoWToC(-21100, -2400) == $FAIL Then Return $FAIL
 	If MoveDefendingFoWToC(-17500, -2800) == $FAIL Then Return $FAIL
 	UseSkillEx($FOW_TOC_MENTAL_BLOCK)
 	If MoveDefendingFoWToC(-16500, -3100) == $FAIL Then Return $FAIL
-	; Waiting for Dark Escape to finish and for buffs to be all fresh
-	While TimerDiff($fow_toc_30s_timer) < 27000
-		Sleep(500)
-	WEnd
+	UseSkillEx($FOW_TOC_UNSEEN_FURY)
 
 	Info('Balling abyssals')
 	If MoveDefendingFoWToC(-15250, -3600) == $FAIL Then Return $FAIL
@@ -180,15 +223,12 @@ Func FoWToCFarmLoop()
 	If MoveDefendingFoWToC(-15150, -2950) == $FAIL Then Return $FAIL
 	While TimerDiff($whirlingDefenseTimer) < 60000
 		RandomSleep(2000)
-		CastFowToCBuffs()
 	WEnd
 
 	Info('Killing rangers')
 	; Longest bow range is around 1500
 	Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST + 500)
-	;Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
-	;$target = GetNearestEnemyToCoords($center[0], $center[1])
 	CastFowToCBuffs()
 	GetAlmostInRangeOfAgent($target)
 	CastFowToCBuffs()
@@ -235,13 +275,11 @@ EndFunc
 
 
 Func CastFowToCBuffs()
-	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 28000 Then
+	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 30000 Then
 		Debug('Casting all buffs')
 		; Since everything is casted together, no risk of interrupts
 		UseSkillEx($FOW_TOC_I_AM_UNSTOPPABLE)
 		If (GetIsKnocked(GetMyAgent())) Then Sleep(1750)
-		Sleep(250)
-		UseSkillEx($FOW_TOC_SHADOWFORM)
 		Sleep(250)
 		UseSkillEx($FOW_TOC_DWARVEN_STABILITY)
 		Sleep(250)
@@ -253,6 +291,27 @@ Func CastFowToCBuffs()
 		Sleep(250)
 		UseSkillEx($FOW_TOC_SHROUD_OF_DISTRESS)
 	EndIf
+EndFunc
+
+
+Func HeroesCastFoWToCBuffs()
+	Local $myAgent = GetMyAgent()
+	CommandAll(-22600, -1075)
+	UseHeroSkill(1, $FOW_TOC_DIVINE_SPIRIT)
+	UseHeroSkill(2, $FOW_TOC_VOCAL_WAS_SOGOLON)
+	RandomSleep(1200)
+	UseHeroSkill(1, $FOW_TOC_BLESSED_AURA)
+	UseHeroSkill(2, $FOW_TOC_ENDURING_HARMONY, $myAgent)
+	RandomSleep(1200)
+	UseHeroSkill(1, $FOW_TOC_BALTHAZARS_SPIRIT, $myAgent)
+	UseHeroSkill(2, $FOW_TOC_BRACE_YOURSELVES, $myAgent)
+	RandomSleep(1200)
+	UseHeroSkill(2, $FOW_TOC_STAND_YOUR_GROUND)
+	RandomSleep(50)
+	UseHeroSkill(2, $FOW_TOC_INCOMING)
+	RandomSleep(50)
+	UseHeroSkill(1, $FOW_TOC_SPELLBREAKER, $myAgent)
+	UseHeroSkill(2, $FOW_TOC_BLADETURN_REFRAIN, $myAgent)
 EndFunc
 
 

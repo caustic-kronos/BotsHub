@@ -590,8 +590,6 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 	Local $hosSkillSlot = ($options.Item('hosSkillSlot') <> Null) ? $options.Item('hosSkillSlot') : 0
 	Local $deathChargeSkillSlot = ($options.Item('$deathChargeSkillSlot') <> Null) ? $options.Item('$deathChargeSkillSlot') : 0
 	$randomFactor = _Min(_Max($randomFactor, 0), $RANGE_NEARBY) ; $randomFactor in range [0;$RANGE_NEARBY]
-	If $hosSkillSlot <> 1 And $hosSkillSlot <> 2 And $hosSkillSlot <> 3 And $hosSkillSlot <> 4 And $hosSkillSlot <> 5 And $hosSkillSlot <> 6 And $hosSkillSlot <> 7 And $hosSkillSlot <> 8 Then $hosSkillSlot = 0
-	If $deathChargeSkillSlot <> 1 And $deathChargeSkillSlot <> 2 And $deathChargeSkillSlot <> 3 And $deathChargeSkillSlot <> 4 And $deathChargeSkillSlot <> 5 And $deathChargeSkillSlot <> 6 And $deathChargeSkillSlot <> 7 And $deathChargeSkillSlot <> 8 Then $deathChargeSkillSlot = 0
 
 	Local $moveTimer = TimerInit()
 	Local $chatStuckTimer = TimerInit()
@@ -601,7 +599,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 		If $defendFunction <> Null Then $defendFunction()
 		If TimerDiff($moveTimer) > $moveTimeOut Then Return $FAIL
 
-		If IsPlayerAlive() And Not IsPlayerMoving() Then
+		If IsPlayerAlive() And Not IsPlayerMoving() And Not GetIsKnocked(GetMyAgent()) Then
 			$blocked += 1
 			$me = GetMyAgent()
 			If $blocked > 8 Then CheckAndSendStuckCommand()
@@ -657,7 +655,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
-		Sleep(50 + GetPing())
+		Sleep(100 + GetPing())
 	WEnd
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -1144,7 +1142,6 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = Null
-	; 260 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 	If $flagHeroes Then FanFlagHeroes(260)
 
 	While $foesCount > 0
