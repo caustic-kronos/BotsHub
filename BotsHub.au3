@@ -37,6 +37,7 @@
 #include 'lib/Utils-Agents.au3'
 #include 'lib/Utils-Storage.au3'
 #include 'lib/Utils-Debugger.au3'
+#include 'lib/Build_PW_Heroic-Refrain.au3'
 #include 'lib/BotsHub-GUI.au3'
 
 #include 'src/farms/CoF.au3'
@@ -601,6 +602,9 @@ Func GeneralFarmSetup()
 		SetupPlayerUsingGlobalSettings()
 		SetupTeamUsingGlobalSettings()
 	EndIf
+
+	SetupPlayerBuildOverrides()
+
 	$global_farm_setup = True
 EndFunc
 
@@ -625,6 +629,18 @@ Func SetupPlayerUsingGlobalSettings()
 		LoadSkillTemplate($run_options_cache['team.player_build'])
 		RandomSleep(250)
 	EndIf
+EndFunc
+
+
+;~ Auto-detect player build and wire up specialized combat/maintenance routines
+Func SetupPlayerBuildOverrides()
+	If GetHeroProfession(0) <> $ID_PARAGON Then Return
+	For $i = 1 To 8
+		If GetSkillbarSkillID($i) == $ID_HEROIC_REFRAIN Then
+			SetupHRAdrenalineBuild()
+			Return
+		EndIf
+	Next
 EndFunc
 
 
