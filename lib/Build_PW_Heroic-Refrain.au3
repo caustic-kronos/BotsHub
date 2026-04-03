@@ -139,8 +139,10 @@ EndFunc
 ;~ Full scan every tick to avoid stale state from deaths, movement, or buff expiry.
 Func HRPhaseApplyParty()
 	Local Static $heroCount = GetHeroCount()
+	Local Static $nextHero = 1
 
-	For $i = 1 To $heroCount
+	For $j = 0 To $heroCount - 1
+		Local $i = Mod($nextHero + $j - 1, $heroCount) + 1
 		Local $agentID = GetHeroID($i)
 		If $agentID == 0 Then ContinueLoop
 
@@ -150,6 +152,7 @@ Func HRPhaseApplyParty()
 
 		If GetEffect($ID_HEROIC_REFRAIN, $i) == Null Then
 			UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
+			$nextHero = Mod($i, $heroCount) + 1
 			Return $HR_PHASE_APPLY_PARTY
 		EndIf
 	Next
