@@ -998,7 +998,7 @@ EndFunc
 
 ;~ Kicks all heroes from the party.
 Func KickAllHeroes()
-	Return SendPacket(0x8, $HEADER_HERO_KICK, 0x26)
+	Return SendPacket(0x8, $HEADER_HERO_KICK, 0x27)
 EndFunc
 
 
