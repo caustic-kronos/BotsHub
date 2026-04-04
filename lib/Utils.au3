@@ -1565,7 +1565,7 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 		Sleep(500)
 		If GetHeroCount() > $previousCount Then Return GetHeroCount()
 	Next
-	Warn('Could not add any hero with profession ID ' & $professionID)
+	Error('Could not add any hero with profession ID ' & $professionID)
 	Return 0
 EndFunc
 
