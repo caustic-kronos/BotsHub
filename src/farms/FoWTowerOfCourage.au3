@@ -125,14 +125,9 @@ Func SetupFoWToCFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
-	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == 0 Then
-		Error('No Monk hero available')
-		Return $FAIL
-	EndIf
-	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then
-		Error('No Paragon hero available')
-		Return $FAIL
-	EndIf
+	LeaveParty()
+	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == 0 Then Return $FAIL
+	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then Return $FAIL
 	RandomSleep(500)
 	If SetupPlayerFoWToCFarm() == $FAIL Then Return $FAIL
 	If SetupTeamFoWToCFarm() == $FAIL Then Return $FAIL
