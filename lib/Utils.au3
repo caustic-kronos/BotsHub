@@ -1552,6 +1552,7 @@ EndFunc
 ;~ Iterates all known heroes of that profession and attempts AddHero until one succeeds.
 ;~ Returns the hero's party index (1-based) on success, or 0 if no hero of that profession could be added.
 Func AddHeroByProfession($professionID, $preferredHeroID = 0)
+	Sleep(500)
 	Local $previousCount = GetHeroCount()
 	If $preferredHeroID > 0 Then
 		AddHero($preferredHeroID)
