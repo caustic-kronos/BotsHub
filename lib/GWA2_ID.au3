@@ -313,6 +313,18 @@ Global Const $HERO_NAMES[]						= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whi
 
 ;Global Const $HERO_NAMES_FROM_IDS				=	MapFromArrays($HERO_IDS, $HERO_NAMES)
 Global Const $HERO_IDS_FROM_NAMES				=	MapFromArrays($HERO_NAMES, $HERO_IDS)
+
+; Primary profession for each hero, parallel to $HERO_IDS
+; Mercenary heroes use $ID_UNKNOWN since their profession varies per account
+Global Const $HERO_PROFESSION_IDS[]				= [$ID_MESMER, $ID_WARRIOR, $ID_MONK, $ID_NECROMANCER, $ID_RANGER, _
+													$ID_WARRIOR, $ID_MONK, $ID_ELEMENTALIST, $ID_DERVISH, $ID_ELEMENTALIST, _
+													$ID_PARAGON, $ID_RANGER, $ID_ASSASSIN, $ID_NECROMANCER, $ID_RITUALIST, _
+													$ID_DERVISH, $ID_RANGER, $ID_WARRIOR, $ID_RANGER, $ID_ASSASSIN, _
+													$ID_NECROMANCER, $ID_PARAGON, $ID_DERVISH, $ID_MESMER, $ID_RITUALIST, $ID_ELEMENTALIST, $ID_MONK, _
+													$ID_ASSASSIN, $ID_RITUALIST, $ID_UNKNOWN, $ID_UNKNOWN, _
+													$ID_UNKNOWN, $ID_UNKNOWN, $ID_UNKNOWN, _
+													$ID_UNKNOWN, $ID_UNKNOWN, $ID_UNKNOWN]
+Global Const $HERO_PROFESSIONS					=	MapFromArrays($HERO_IDS, $HERO_PROFESSION_IDS)
 #EndRegion Hero IDs
 
 

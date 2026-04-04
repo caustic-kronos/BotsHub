@@ -40,12 +40,6 @@ Global Const $RA_FOW_TOC_FARMER_SKILLBAR = 'OgcTc5+8Z6Aims4ABC35uU4IuEA'
 Global Const $FOW_TOC_M_HERO_SKILLBAR = 'OwAS8YIH2Eg/LeyLiAAA'
 Global Const $FOW_TOC_P_HERO_SKILLBAR = 'OQijEqmMKODbe8OGAYiJx1YWMA'
 
-;Global Const $FOW_TOC_M_HERO_PARTY_ID = $ID_DUNKORO
-;Global Const $FOW_TOC_M_HERO_PARTY_ID = $ID_TAHLKORA
-Global Const $FOW_TOC_M_HERO_PARTY_ID = $ID_OGDEN
-;Global Const $FOW_TOC_P_HERO_PARTY_ID = $ID_HAYDA
-Global Const $FOW_TOC_P_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
-
 ;~ Global Const $FOW_TOC_SHADOWFORM			= 1
 Global Const $FOW_TOC_SHROUD_OF_DISTRESS	= 1
 Global Const $FOW_TOC_I_AM_UNSTOPPABLE		= 2
@@ -132,8 +126,8 @@ Func SetupFoWToCFarm()
 	If TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
-	AddHero($FOW_TOC_M_HERO_PARTY_ID)
-	AddHero($FOW_TOC_P_HERO_PARTY_ID)
+	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == 0 Then Return $FAIL
+	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then Return $FAIL
 	RandomSleep(500)
 	If SetupPlayerFoWToCFarm() == $FAIL Then Return $FAIL
 	If SetupTeamFoWToCFarm() == $FAIL Then Return $FAIL

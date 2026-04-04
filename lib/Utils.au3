@@ -1547,6 +1547,29 @@ Func EnableHeroSkillSlot($heroIndex, $skillSlot)
 EndFunc
 
 
+;~ Try to add any available hero of the given profession to the party.
+;~ If $preferredHeroID is specified, tries that hero first before falling back to others.
+;~ Iterates all known heroes of that profession and attempts AddHero until one succeeds.
+;~ Returns the hero's party index (1-based) on success, or 0 if no hero of that profession could be added.
+Func AddHeroByProfession($professionID, $preferredHeroID = 0)
+	Local $previousCount = GetHeroCount()
+	If $preferredHeroID > 0 Then
+		AddHero($preferredHeroID)
+		Sleep(500)
+		If GetHeroCount() > $previousCount Then Return GetHeroCount()
+	EndIf
+	For $heroID In MapKeys($HERO_PROFESSIONS)
+		If $HERO_PROFESSIONS[$heroID] <> $professionID Then ContinueLoop
+		If $heroID == $preferredHeroID Then ContinueLoop
+		AddHero($heroID)
+		Sleep(500)
+		If GetHeroCount() > $previousCount Then Return GetHeroCount()
+	Next
+	Error('Could not add any hero with profession ID ' & $professionID)
+	Return 0
+EndFunc
+
+
 ;~ Returns the nearest item by model ID to an agent.
 Func GetNearestItemByModelIDToAgent($modelID, $agent)
 	Local $nearestItemAgent = Null
