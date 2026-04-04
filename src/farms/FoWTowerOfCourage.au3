@@ -245,6 +245,7 @@ Func FoWToCFarmLoop()
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 
+	Move($center[0], $center[1])
 	UseSkillEx($FOW_TOC_WHIRLING_DEFENSE)
 	$killTimer = TimerInit()
 	$foesCount = 999
@@ -275,6 +276,14 @@ EndFunc
 
 
 Func CastFowToCBuffs()
+	; Emergency shadow step if health drops critically low
+	If IsRecharged($FOW_TOC_HEART_OF_SHADOW) And GetEnergy() >= 5 Then
+		Local $me = GetMyAgent()
+		If DllStructGetData($me, 'MaxHealth') * DllStructGetData($me, 'HealthPercent') < 100 Then
+			Local $foe = GetNearestEnemyToAgent($me, $RANGE_SPELLCAST)
+			If $foe <> Null Then UseSkillEx($FOW_TOC_HEART_OF_SHADOW, $foe)
+		EndIf
+	EndIf
 	If $fow_toc_30s_timer == Null Or TimerDiff($fow_toc_30s_timer) > 30000 Then
 		Debug('Casting all buffs')
 		; Since everything is casted together, no risk of interrupts
@@ -298,19 +307,22 @@ Func HeroesCastFoWToCBuffs()
 	Local $myAgent = GetMyAgent()
 	CommandAll(-22600, -1075)
 	UseHeroSkill(1, $FOW_TOC_DIVINE_SPIRIT)
-	UseHeroSkill(2, $FOW_TOC_VOCAL_WAS_SOGOLON)
-	RandomSleep(1200)
+	RandomSleep(1400)
+	UseHeroSkill(1, $FOW_TOC_LIFE_BOND, $myAgent)
+	RandomSleep(3000)
 	UseHeroSkill(1, $FOW_TOC_BLESSED_AURA)
+	UseHeroSkill(2, $FOW_TOC_VOCAL_WAS_SOGOLON)
+	RandomSleep(1400)
 	UseHeroSkill(2, $FOW_TOC_ENDURING_HARMONY, $myAgent)
-	RandomSleep(1200)
-	UseHeroSkill(1, $FOW_TOC_BALTHAZARS_SPIRIT, $myAgent)
+	RandomSleep(1400)
+	UseHeroSkill(1, $FOW_TOC_WATCHFUL_SPIRIT, $myAgent)
 	UseHeroSkill(2, $FOW_TOC_BRACE_YOURSELVES, $myAgent)
-	RandomSleep(1200)
+	RandomSleep(1400)
+	UseHeroSkill(1, $FOW_TOC_SPELLBREAKER, $myAgent)
 	UseHeroSkill(2, $FOW_TOC_STAND_YOUR_GROUND)
-	RandomSleep(50)
+	RandomSleep(1400)
 	UseHeroSkill(2, $FOW_TOC_INCOMING)
 	RandomSleep(50)
-	UseHeroSkill(1, $FOW_TOC_SPELLBREAKER, $myAgent)
 	UseHeroSkill(2, $FOW_TOC_BLADETURN_REFRAIN, $myAgent)
 EndFunc
 
