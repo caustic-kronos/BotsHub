@@ -1552,9 +1552,8 @@ EndFunc
 ;~ Iterates all known heroes of that profession and attempts AddHero until one succeeds.
 ;~ Returns the hero's party index (1-based) on success, or 0 if no hero of that profession could be added.
 Func AddHeroByProfession($professionID, $preferredHeroID = 0)
-	Sleep(500)
-	Local $previousCount = GetHeroCount()
 	If $preferredHeroID > 0 Then
+		Local $previousCount = GetHeroCount()
 		AddHero($preferredHeroID)
 		Sleep(500)
 		If GetHeroCount() > $previousCount Then Return GetHeroCount()
@@ -1562,6 +1561,7 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 	For $heroID In MapKeys($HERO_PROFESSIONS)
 		If $HERO_PROFESSIONS[$heroID] <> $professionID Then ContinueLoop
 		If $heroID == $preferredHeroID Then ContinueLoop
+		Local $previousCount = GetHeroCount()
 		AddHero($heroID)
 		Sleep(500)
 		If GetHeroCount() > $previousCount Then Return GetHeroCount()
