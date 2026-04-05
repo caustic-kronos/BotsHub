@@ -21,6 +21,7 @@
 #include <WinAPIDiag.au3>
 #include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
+#include 'GWA2_ID_Maps.au3'
 #include 'GWA2.au3'
 #include 'Utils-Debugger.au3'
 
@@ -190,8 +191,64 @@ Func ResignAndReturnToOutpost($outpostID, $ignoreMapID = False)
 EndFunc
 
 
+;~ Travel to an outpost for entering Fissure of Woe.
+;~ Tries Chantry of Secrets first (Balthazar statue is close to spawn), then Temple of the Ages.
+;~ Remembers the last successful outpost and reuses it on subsequent calls.
+;~ Returns $SUCCESS or $FAIL if none are accessible.
+Func TravelToFoWOutpost($district = 'Random')
+	Local Static $knownOutpost = 0
+	Local $outposts[] = [$ID_CHANTRY_OF_SECRETS, $ID_TEMPLE_OF_THE_AGES]
+	For $i = 0 To UBound($outposts) - 1
+		If GetMapID() == $outposts[$i] Then
+			$knownOutpost = $outposts[$i]
+			Return $SUCCESS
+		EndIf
+	Next
+	If $knownOutpost > 0 Then
+		If TravelToOutpost($knownOutpost, $district) == $SUCCESS Then Return $SUCCESS
+		$knownOutpost = 0
+	EndIf
+	For $i = 0 To UBound($outposts) - 1
+		If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
+			$knownOutpost = $outposts[$i]
+			Return $SUCCESS
+		EndIf
+	Next
+	Error('Could not travel to any FoW entry outpost')
+	Return $FAIL
+EndFunc
+
+
+;~ Travel to an outpost for entering The Underworld.
+;~ Tries Temple of the Ages first (Grenth statue is close to spawn), then Chantry of Secrets.
+;~ Remembers the last successful outpost and reuses it on subsequent calls.
+;~ Returns $SUCCESS or $FAIL if none are accessible.
+Func TravelToUWOutpost($district = 'Random')
+	Local Static $knownOutpost = 0
+	Local $outposts[] = [$ID_TEMPLE_OF_THE_AGES, $ID_CHANTRY_OF_SECRETS]
+	For $i = 0 To UBound($outposts) - 1
+		If GetMapID() == $outposts[$i] Then
+			$knownOutpost = $outposts[$i]
+			Return $SUCCESS
+		EndIf
+	Next
+	If $knownOutpost > 0 Then
+		If TravelToOutpost($knownOutpost, $district) == $SUCCESS Then Return $SUCCESS
+		$knownOutpost = 0
+	EndIf
+	For $i = 0 To UBound($outposts) - 1
+		If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
+			$knownOutpost = $outposts[$i]
+			Return $SUCCESS
+		EndIf
+	Next
+	Error('Could not travel to any UW entry outpost')
+	Return $FAIL
+EndFunc
+
+
 Func EnterFissureOfWoe()
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	If TravelToFoWOutpost($district_name) == $FAIL Then Return $FAIL
 	If $run_options_cache['run.use_scrolls'] Then
 		Info('Using scroll to enter Fissure of Woe')
 		If UseScroll($ID_FOW_SCROLL) == $SUCCESS Then
@@ -205,17 +262,31 @@ Func EnterFissureOfWoe()
 		Info('Balancing characters gold level to have enough to enter the Fissure of Woe')
 		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
-		MoveTo(-2500, 18700)
-		If GetDistanceToPoint(GetMyAgent(), -2500, 18700) > $RANGE_ADJACENT Then
-			MoveTo(-4650, 18700)
-			MoveTo(-3600, 18700)
-			MoveTo(-3100, 18000)
-			MoveTo(-2500, 18700)
-		EndIf
-		SendChat('/kneel', '')
+		Switch GetMapID()
+			Case $ID_TEMPLE_OF_THE_AGES
+				MoveTo(-2500, 18700)
+				If GetDistanceToPoint(GetMyAgent(), -2500, 18700) > $RANGE_ADJACENT Then
+					MoveTo(-4650, 18700)
+					MoveTo(-3600, 18700)
+					MoveTo(-3100, 18000)
+					MoveTo(-2500, 18700)
+				EndIf
+				SendChat('/kneel', '')
+				Local $ping = GetPing()
+				Sleep(3000 + $ping)
+				GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+			Case $ID_CHANTRY_OF_SECRETS
+				MoveTo(-9870, 990)
+				If GetDistanceToPoint(GetMyAgent(), -9870, 990) > $RANGE_ADJACENT Then
+					MoveTo(-10400, 770)
+					MoveTo(-9870, 990)
+				EndIf
+				SendChat('/kneel', '')
+				Local $ping = GetPing()
+				Sleep(3000 + $ping)
+				GoToNPC(GetNearestNPCToCoords(-9870, 990))
+		EndSwitch
 		Local $ping = GetPing()
-		Sleep(3000 + $ping)
-		GoToNPC(GetNearestNPCToCoords(-2500, 18700))
 		Sleep(750 + $ping)
 		Dialog(0x85)
 		Sleep(750 + $ping)
@@ -231,7 +302,7 @@ EndFunc
 
 
 Func EnterUnderworld()
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	If TravelToUWOutpost($district_name) == $FAIL Then Return $FAIL
 	If $run_options_cache['run.use_scrolls'] Then
 		Info('Using scroll to enter Underworld')
 		If UseScroll($ID_UW_SCROLL) == $SUCCESS Then
@@ -245,12 +316,26 @@ Func EnterUnderworld()
 		Info('Balancing characters gold level to have enough to enter the Underworld')
 		BalanceCharacterGold(10000)
 		Info('Moving to Grenth statue to enter Underworld')
-		MoveTo(-4170, 19759)
-		MoveTo(-4124, 19829)
-		SendChat('/kneel', '')
+		Switch GetMapID()
+			Case $ID_TEMPLE_OF_THE_AGES
+				MoveTo(-4170, 19759)
+				MoveTo(-4124, 19829)
+				SendChat('/kneel', '')
+				Local $ping = GetPing()
+				Sleep(3000 + $ping)
+				GoToNPC(GetNearestNPCToCoords(-4124, 19829))
+			Case $ID_CHANTRY_OF_SECRETS
+				MoveTo(-9000, 3900)
+				If GetDistanceToPoint(GetMyAgent(), -9000, 3900) > $RANGE_ADJACENT Then
+					MoveTo(-10130, 4450)
+					MoveTo(-9000, 3900)
+				EndIf
+				SendChat('/kneel', '')
+				Local $ping = GetPing()
+				Sleep(3000 + $ping)
+				GoToNPC(GetNearestNPCToCoords(-9000, 3900))
+		EndSwitch
 		Local $ping = GetPing()
-		Sleep(3000 + $ping)
-		GoToNPC(GetNearestNPCToCoords(-4124, 19829))
 		Sleep(750 + $ping)
 		Dialog(0x85)
 		Sleep(750 + $ping)

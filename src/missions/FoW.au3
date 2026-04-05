@@ -50,7 +50,7 @@ Func FoWFarm()
 	$result = FoWFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared Fissure of Woe')
 	If $result == $FAIL Then Info('Could not clear Fissure of Woe')
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	TravelToFoWOutpost($district_name)
 	Return $result
 EndFunc
 
@@ -58,7 +58,7 @@ EndFunc
 ;~ FoW farm setup
 Func SetupFoWFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	TravelToFoWOutpost($district_name)
 	SwitchToHardModeIfEnabled()
 	$fow_farm_setup = True
 	Info('Preparations complete')

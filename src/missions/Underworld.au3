@@ -81,14 +81,14 @@ Func UnderworldFarm()
 	$result = UnderworldFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared Underworld')
 	If $result == $FAIL Then Info('Could not clear Underworld')
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	TravelToUWOutpost($district_name)
 	Return $result
 EndFunc
 
 
 Func SetupUnderworldFarm()
 	Info('Setting up farm')
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	TravelToUWOutpost($district_name)
 	SetupPlayerUnderworldFarm()
 	SwitchToHardModeIfEnabled()
 	$uw_farm_setup = True
