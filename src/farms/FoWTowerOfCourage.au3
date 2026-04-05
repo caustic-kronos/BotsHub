@@ -115,7 +115,7 @@ Func FoWToCFarm()
 	$result = FoWToCFarmLoop()
 	If $result == $SUCCESS Then Info('Successfully cleared FoW Tower of Courage mobs')
 	If $result == $FAIL Then Info('Player died. Could not clear FoW Tower of Courage mobs')
-	TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name)
+	TravelToFoWOutpost($district_name)
 	Return $result
 EndFunc
 
@@ -123,7 +123,7 @@ EndFunc
 ;~ Fissure of Woe - Tower of Courage farm setup
 Func SetupFoWToCFarm()
 	Info('Setting up farm')
-	If TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name) == $FAIL Then Return $FAIL
+	If TravelToFoWOutpost($district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
 	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == 0 Then Return $FAIL
