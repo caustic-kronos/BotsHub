@@ -128,7 +128,6 @@ Func SetupFoWToCFarm()
 	LeaveParty()
 	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == 0 Then Return $FAIL
 	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then Return $FAIL
-	RandomSleep(500)
 	If SetupPlayerFoWToCFarm() == $FAIL Then Return $FAIL
 	If SetupTeamFoWToCFarm() == $FAIL Then Return $FAIL
 	$fow_toc_farm_setup = True
