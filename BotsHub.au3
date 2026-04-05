@@ -648,7 +648,6 @@ EndFunc
 Func SetupTeamUsingGlobalSettings($teamSize = $ID_TEAM_SIZE_LARGE)
 	Info('Setting up team according to GUI settings')
 	LeaveParty()
-	RandomSleep(500)
 	; Could use Eval(), it is shorter but also kind of dirty
 	For $i = 1 To $ID_TEAM_SIZE_LARGE - 1
 		Local $hero = $run_options_cache['team.hero_' & $i]

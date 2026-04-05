@@ -40,11 +40,6 @@ Global Const $MANTIDS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune'
 Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
-; You can select which paragon hero to use in the farm here, among 3 heroes available. Uncomment below line for hero to use
-; party hero ID that is used to add hero to the party team
-Global Const $MANTIDS_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
-;Global Const $MANTIDS_HERO_PARTY_ID = $ID_KEIRAN_THACKERAY
-;Global Const $MANTIDS_HERO_PARTY_ID = $ID_HAYDA
 Global Const $MANTIDS_HERO_INDEX = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MANTIDS_SERPENTS_QUICKNESS) is better than UseSkillEx(1))
@@ -119,15 +114,9 @@ Func SetupTeamMantidsFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	RandomSleep(500)
-	AddHero($MANTIDS_HERO_PARTY_ID)
+	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then Return $FAIL
 	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, $MANTIDS_HERO_INDEX)
 	DisableAllHeroSkills($MANTIDS_HERO_INDEX)
-	RandomSleep(500)
-	If GetPartySize() <> 2 Then
-		Warn('Could not set up party correctly. Team size different than 2')
-		Return $FAIL
-	EndIf
 	Return $SUCCESS
 EndFunc
 
