@@ -130,6 +130,7 @@ $run_options_cache['run.use_consets'] = False
 $run_options_cache['run.use_scrolls'] = False
 $run_options_cache['run.sort_items'] = False
 $run_options_cache['run.farm_materials_mid_run'] = False
+$run_options_cache['run.store_items_to_keep'] = False
 $run_options_cache['run.bags_count'] = 5
 $run_options_cache['run.donate_faction_points'] = True
 $run_options_cache['run.buy_faction_scrolls'] = False
@@ -404,6 +405,7 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.loop_mode'] = _JSON_Get($jsonObject, 'run.loop_mode')
 	$run_options_cache['run.hard_mode'] = _JSON_Get($jsonObject, 'run.hard_mode')
 	$run_options_cache['run.farm_materials_mid_run'] = _JSON_Get($jsonObject, 'run.farm_materials_mid_run')
+	$run_options_cache['run.store_items_to_keep'] = _JSON_Get($jsonObject, 'run.store_items_to_keep')
 	$run_options_cache['run.consume_consumables'] = _JSON_Get($jsonObject, 'run.consume_consumables')
 	$run_options_cache['run.use_consets'] = _JSON_Get($jsonObject, 'run.use_consets')
 	$run_options_cache['run.use_scrolls'] = _JSON_Get($jsonObject, 'run.use_scrolls')
@@ -452,6 +454,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', $run_options_cache['run.loop_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
+	_JSON_addChangeDelete($jsonObject, 'run.store_items_to_keep', $run_options_cache['run.store_items_to_keep'])
 	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', $run_options_cache['run.consume_consumables'])
 	_JSON_addChangeDelete($jsonObject, 'run.use_consets', $run_options_cache['run.use_consets'])
 	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])

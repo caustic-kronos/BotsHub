@@ -101,7 +101,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 			BuyRareMaterialFromMerchantUntilPoor($ID_GLOB_OF_ECTOPLASM, 10000, $ID_OBSIDIAN_SHARD)
 		EndIf
 	EndIf
-	If $cache['@store.something'] Then
+	If $cache['@store.something'] Or $run_options_cache['run.store_items_to_keep'] Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($tradeTown, $district_name)
 		StoreItemsInXunlaiStorage()
 	EndIf
@@ -508,13 +508,19 @@ Func DefaultShouldStoreItem($item)
 
 	; --------------------------------------- Weapons ---------------------------------------
 	If IsWeapon($item) Then
-		;Return ShouldKeepWeapon($item)
-		Return CheckStoreWeapon($item)
+		If ($run_options_cache['run.store_items_to_keep']) Then
+			Return ShouldKeepWeapon($item) Or CheckStoreWeapon($item)
+		Else
+			Return CheckStoreWeapon($item)
+		EndIf
 	; --------------------------------- Armor salvageables ---------------------------------
 	ElseIf isArmorSalvageItem($item) Then
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-		;Return ContainsValuableUpgrades($item)
-		Return $cache['Store items.Armor salvageables.' & $rarityName]
+		If ($run_options_cache['run.store_items_to_keep']) Then
+			ReturnContainsValuableUpgrades($item) Or $cache['Store items.Armor salvageables.' & $rarityName]
+		Else
+			Return $cache['Store items.Armor salvageables.' & $rarityName]
+		EndIf
 	; ------------------------------------- Consumables -------------------------------------
 	ElseIf IsConsumable($itemID) Then
 		If $quantity <> 250 Then Return False
