@@ -1571,6 +1571,18 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 EndFunc
 
 
+;~ Try to add a specific hero to the party. No fallback to other heroes.
+;~ Returns the hero's party index (1-based) on success, or 0 if the hero could not be added.
+Func AddRequiredHero($heroID)
+	Local $previousCount = GetHeroCount()
+	AddHero($heroID)
+	Sleep(500)
+	If GetHeroCount() > $previousCount Then Return GetHeroCount()
+	Error('Could not add required hero with ID ' & $heroID)
+	Return 0
+EndFunc
+
+
 ;~ Returns the nearest item by model ID to an agent.
 Func GetNearestItemByModelIDToAgent($modelID, $agent)
 	Local $nearestItemAgent = Null
