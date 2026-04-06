@@ -1006,7 +1006,7 @@ EndFunc
 Func LeaveParty($kickHeroes = True)
 	If $kickHeroes Then KickAllHeroes()
 	SendPacket(0x4, $HEADER_PARTY_LEAVE)
-	Sleep(100)
+	Sleep(350)
 EndFunc
 
 
