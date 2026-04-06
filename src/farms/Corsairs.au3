@@ -46,9 +46,6 @@ Global Const $CORSAIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
 Global Const $CORSAIRS_FARM_DURATION = (2 * 60 + 15) * 1000
 
-Global Const $CORSAIRS_FARM_M_HERO_INDEX = 1
-Global Const $CORSAIRS_FARM_D_HERO_INDEX = 2
-
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
 Global Const $CORSAIRS_DWARVEN_STABILITY	= 1
 Global Const $CORSAIRS_WHIRLING_DEFENSE		= 2
@@ -102,11 +99,11 @@ Func SetupPlayerCorsairsFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
 		LoadSkillTemplate($RA_CORSAIRS_FARMER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -116,10 +113,11 @@ Func SetupTeamCorsairsFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	If AddRequiredHero($ID_DUNKORO) == 0 Then Return $FAIL
-	If AddHeroByProfession($ID_DERVISH, $ID_MELONNI) == 0 Then Return $FAIL
-	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, $CORSAIRS_FARM_M_HERO_INDEX)
-	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, $CORSAIRS_FARM_D_HERO_INDEX)
+	If AddRequiredHero($ID_DUNKORO) == $FAIL Then Return $FAIL
+	If AddHeroByProfession($ID_DERVISH, $ID_MELONNI) == $FAIL Then Return $FAIL
+	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, 2)
+	RandomSleep(250)
 	DisableHeroSkillSlot(1, $CORSAIRS_MAKE_HASTE)
 	DisableHeroSkillSlot(2, $CORSAIRS_WINNOWING)
 	RandomSleep(250)

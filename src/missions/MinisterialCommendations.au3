@@ -154,10 +154,10 @@ Func SetupPlayerMinisterialCommendationsFarm()
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
 		Info('Player''s profession is dervish. Loading up recommended dervish build automatically')
 		LoadSkillTemplate($DW_COMMENDATIONS_FARMER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Info('Assuming player build is set up manually')
 	EndIf
-	RandomSleep(250)
 EndFunc
 
 
@@ -166,7 +166,6 @@ Func SetupTeamMinisterialCommendationsFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	RandomSleep(500)
 	AddHero($ID_GWEN)
 	AddHero($ID_NORGU)
 	AddHero($ID_RAZAH)

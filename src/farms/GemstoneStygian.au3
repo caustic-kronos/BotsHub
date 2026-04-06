@@ -38,7 +38,6 @@ Global Const $STYGIAN_RANGER_HERO_SKILLBAR = 'OgMTY5LjHhmgugf2BAAAAkJA'
 Global Const $STYGIAN_HERO_PARTY_ID = $ID_ACOLYTE_JIN
 ;Global Const $STYGIAN_HERO_PARTY_ID = $ID_MARGRID_THE_SLY
 ;Global Const $STYGIAN_HERO_PARTY_ID = $ID_PYRE_FIERCESHOT
-Global Const $STYGIAN_HERO_INDEX = 1
 
 Global Const $STYGIAN_DEADLY_PARADOX			= 1
 Global Const $STYGIAN_SHADOWFORM				= 2
@@ -157,15 +156,14 @@ Func SetupTeamStygianFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	RandomSleep(500)
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		AddHero($STYGIAN_HERO_PARTY_ID)
+		If AddHeroByProfession($ID_RANGER, $STYGIAN_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 		RandomSleep(500)
-		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, $STYGIAN_HERO_INDEX)
+		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, 1)
 		RandomSleep(500)
-		SetHeroBehaviour($STYGIAN_HERO_INDEX, $ID_HERO_AVOIDING)
+		SetHeroBehaviour(1, $ID_HERO_AVOIDING)
 		RandomSleep(500)
-		DisableAllHeroSkills($STYGIAN_HERO_INDEX)
+		DisableAllHeroSkills(1)
 		If GetPartySize() <> 2 Then
 			Warn('Could not add ranger hero to team. Team size different than 2')
 			Return $FAIL
@@ -253,7 +251,7 @@ Func StygianFarmRanger()
 	MoveTo(9900, -5200)
 	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(7500)
-	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_SUCCOR, GetMyAgent())
+	UseHeroSkill(1, $STYGIAN_HERO_SUCCOR, GetMyAgent())
 	RandomSleep(7500)
 	CancelAll()
 	If StygianJobRanger() == $FAIL Then Return $FAIL
@@ -335,9 +333,9 @@ Func StygianJobRanger()
 	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
 	; 36	-	Speed at 3.5	Dust at 10.5	Spike at 13.5
-	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_LACERATE)
+	UseHeroSkill(1, $STYGIAN_HERO_LACERATE)
 	Sleep(10500)
-	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
+	UseHeroSkill(1, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
 	; 46.5	-	Speed up		Dust up			Spike at 3
 	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
 	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
@@ -348,7 +346,7 @@ Func StygianJobRanger()
 	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
 	; 52.5	-	Speed at 14		Dust at 18		Spike at 13.5
 	;Sleep(14000)
-	UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_BRAMBLES)
+	UseHeroSkill(1, $STYGIAN_HERO_BRAMBLES)
 	UseSkillEx($STYGIAN_RANGER_WINNOWING)
 	CommandAll(9900, -5200)
 	UseSkillEx($STYGIAN_RANGER_MUDDY_TERRAIN)
@@ -373,7 +371,7 @@ Func StygianJobRanger()
 		RandomSleep(250)
 	WEnd
 	RandomSleep(250)
-	;UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_REBIRTH, GetMyAgent())
+	;UseHeroSkill(1, $STYGIAN_HERO_REBIRTH, GetMyAgent())
 
 	If IsPlayerDead() Then Return $FAIL
 	PickUpItems(Null, DefaultShouldPickItem, $STYGIANS_RANGE_LONG)
@@ -439,7 +437,7 @@ Func GoToHidingSpot()
 	; waiting for mobs to run by
 	RandomSleep(7500)
 	If $stygian_player_profession == $ID_RANGER Then
-		UseHeroSkill($STYGIAN_HERO_INDEX, $STYGIAN_HERO_SUCCOR, GetMyAgent())
+		UseHeroSkill(1, $STYGIAN_HERO_SUCCOR, GetMyAgent())
 	EndIf
 	RandomSleep(7500)
 	RunStygianFarm(10575, -8170)

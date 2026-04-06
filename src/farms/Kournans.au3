@@ -118,11 +118,11 @@ Func SetupPlayerKournansFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_ELEMENTALIST Then
 		LoadSkillTemplate($ELA_KOURNANS_FARMER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as elementalist')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -132,10 +132,9 @@ Func SetupTeamKournansFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	RandomSleep(500)
-	AddHero($KOURNANS_RANGER_HERO)
-	AddHero($KOURNANS_RITUALIST_HERO)
-	AddHero($KOURNANS_PARAGON_HERO)
+	If AddHeroByProfession($ID_RANGER, $KOURNANS_RANGER_HERO) == $FAIL Then Return $FAIL
+	If AddHeroByProfession($ID_RITUALIST, $KOURNANS_RITUALIST_HERO) == $FAIL Then Return $FAIL
+	If AddHeroByProfession($ID_PARAGON, $KOURNANS_PARAGON_HERO) == $FAIL Then Return $FAIL
 	RandomSleep(500)
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')

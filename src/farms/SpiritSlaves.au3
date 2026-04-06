@@ -73,7 +73,6 @@ Func SetupSpiritSlavesFarm()
 
 		If SetupPlayerSpiritSlavesFarm() == $FAIL Then Return $FAIL
 		LeaveParty()
-
 		While Not $spirit_slaves_farm_setup
 			If RunToShatteredRavines() == $FAIL Then ContinueLoop
 			$spirit_slaves_farm_setup = True
@@ -88,11 +87,11 @@ Func SetupPlayerSpiritSlavesFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
 		LoadSkillTemplate($SPIRIT_SLAVES_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 

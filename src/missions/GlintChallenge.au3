@@ -106,7 +106,6 @@ Func SetupTeamGlintChallengeFarm()
 
 	Info('Setting up using recommended team build')
 	LeaveParty()
-	RandomSleep(500)
 	AddHero($ID_XANDRA)
 	AddHero($ID_MASTER_OF_WHISPERS)
 	AddHero($ID_OLIAS)

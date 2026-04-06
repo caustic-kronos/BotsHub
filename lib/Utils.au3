@@ -1556,7 +1556,7 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 		Local $previousCount = GetHeroCount()
 		AddHero($preferredHeroID)
 		Sleep(500)
-		If GetHeroCount() > $previousCount Then Return GetHeroCount()
+		If GetHeroCount() > $previousCount Then Return $SUCCESS
 	EndIf
 	For $heroID In MapKeys($HERO_PROFESSIONS)
 		If $HERO_PROFESSIONS[$heroID] <> $professionID Then ContinueLoop
@@ -1564,10 +1564,10 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 		Local $previousCount = GetHeroCount()
 		AddHero($heroID)
 		Sleep(500)
-		If GetHeroCount() > $previousCount Then Return GetHeroCount()
+		If GetHeroCount() > $previousCount Then Return $SUCCESS
 	Next
 	Error('Could not add any hero with profession ID ' & $professionID)
-	Return 0
+	Return $FAIL
 EndFunc
 
 
@@ -1577,9 +1577,9 @@ Func AddRequiredHero($heroID)
 	Local $previousCount = GetHeroCount()
 	AddHero($heroID)
 	Sleep(500)
-	If GetHeroCount() > $previousCount Then Return GetHeroCount()
+	If GetHeroCount() > $previousCount Then Return $SUCCESS
 	Error('Could not add required hero with ID ' & $heroID)
-	Return 0
+	Return $FAIL
 EndFunc
 
 

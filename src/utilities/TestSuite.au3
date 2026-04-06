@@ -134,7 +134,6 @@ EndFunc
 Func TestPartyChanges()
 	Info('Testing party changes')
 	LeaveParty()
-	Sleep(500)
 	Debug('Party size:' & GetPartySize())
 	If GetPartySize() <> 1 Then Return $FAIL
 	AddHero($HERO_TO_ADD)
@@ -142,7 +141,6 @@ Func TestPartyChanges()
 	Debug('Party size:' & GetPartySize())
 	If GetPartySize() <> 2 Then Return $FAIL
 	LeaveParty()
-	Sleep(500)
 	Debug('Party size:' & GetPartySize())
 	If GetPartySize() <> 1 Then Return $FAIL
 	Return $SUCCESS
@@ -158,7 +156,6 @@ Func TestLoadingBuild()
 	If GetSkillbarSkillID($IAU_SKILLSLOT) <> $ID_I_AM_UNSTOPPABLE Then Return $FAIL
 
 	LeaveParty()
-	Sleep(500)
 	AddHero($HERO_TO_ADD)
 	Sleep(500)
 

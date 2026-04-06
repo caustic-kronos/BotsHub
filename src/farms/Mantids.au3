@@ -40,8 +40,6 @@ Global Const $MANTIDS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- A superior vigor rune'
 Global Const $MANTIDS_FARM_DURATION = 1 * 60 * 1000 + 30 * 1000
 
-Global Const $MANTIDS_HERO_INDEX = 1
-
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($MANTIDS_SERPENTS_QUICKNESS) is better than UseSkillEx(1))
 Global Const $MANTIDS_SERPENTS_QUICKNESS	= 1
 Global Const $MANTIDS_SHADOWFORM			= 2
@@ -100,11 +98,11 @@ Func SetupPlayerMantidsFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
 		LoadSkillTemplate($RA_MANTIDS_FARMER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -114,9 +112,10 @@ Func SetupTeamMantidsFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then Return $FAIL
-	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, $MANTIDS_HERO_INDEX)
-	DisableAllHeroSkills($MANTIDS_HERO_INDEX)
+	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == $FAIL Then Return $FAIL
+	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, 1)
+	RandomSleep(250)
+	DisableAllHeroSkills(1)
 	Return $SUCCESS
 EndFunc
 
@@ -140,21 +139,21 @@ Func MantidsFarmLoop()
 	If GetMapID() <> $ID_WAJJUN_BAZAAR Then Return $FAIL
 	Local $target
 
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_VOCAL_WAS_SOGOLON)
+	UseHeroSkill(1, $MANTIDS_VOCAL_WAS_SOGOLON)
 	RandomSleep(1500)
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_INCOMING)
+	UseHeroSkill(1, $MANTIDS_INCOMING)
 	AdlibRegister('MantidsUseFallBack', 8000)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0, 0)
 	RandomSleep(1500)
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill(1, $MANTIDS_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_THEY_RE_ON_FIRE)
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill(1, $MANTIDS_THEY_RE_ON_FIRE)
+	UseHeroSkill(1, $MANTIDS_MAKE_HASTE, GetMyAgent())
 	UseSkillEx($MANTIDS_SERPENTS_QUICKNESS)
 	RandomSleep(50)
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
+	UseHeroSkill(1, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
 	UseSkillEx($MANTIDS_SHROUD_OF_DISTRESS)
 	RandomSleep(50)
 	UseSkillEx($MANTIDS_SHADOWFORM)
@@ -227,7 +226,7 @@ EndFunc
 
 ;~ Paragon Hero uses Fallback
 Func MantidsUseFallBack()
-	UseHeroSkill($MANTIDS_HERO_INDEX, $MANTIDS_FALLBACK)
+	UseHeroSkill(1, $MANTIDS_FALLBACK)
 	AdlibUnRegister('MantidsUseFallBack')
 EndFunc
 

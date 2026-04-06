@@ -46,7 +46,6 @@ Global Const $JADEBROTHERHOOD_FARM_DURATION = (3 * 60 + 10) * 1000
 Global Const $JB_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
 ;Global Const $JB_HERO_PARTY_ID = $ID_KEIRAN_THACKERAY
 ;Global Const $JB_HERO_PARTY_ID = $ID_HAYDA
-Global Const $JB_HERO_INDEX = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($markOfPain) is better than UseSkillEx(1))
 Global Const $JB_DRUNKENMASTER				= 1
@@ -94,7 +93,7 @@ Func SetupJadeBrotherhoodFarm()
 
 	GoToBukdekByway()
 	RandomSleep(50)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
+	UseHeroSkill(1, $BROTHERHOOD_INCOMING)
 	MoveTo(-14000, -11000)
 	Move(-14000, -11700)
 	RandomSleep(1000)
@@ -109,11 +108,11 @@ Func SetupPlayerJadeBrotherhoodFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
 		LoadSkillTemplate($JB_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
@@ -123,12 +122,11 @@ Func SetupTeamJadeBrotherhoodFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	RandomSleep(500)
-	AddHero($JB_HERO_PARTY_ID)
+	If AddHeroByProfession($ID_PARAGON, $JB_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 	RandomSleep(250)
-	LoadSkillTemplate($JB_HERO_SKILLBAR, $JB_HERO_INDEX)
+	LoadSkillTemplate($JB_HERO_SKILLBAR, 1)
 	RandomSleep(250)
-	DisableAllHeroSkills($JB_HERO_INDEX)
+	DisableAllHeroSkills(1)
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -177,24 +175,24 @@ EndFunc
 ;~ Separate from paragon hero - you'll be missed Morgahn
 Func MoveToSeparationWithHero()
 	Info('Moving to crossing')
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_VOCAL_WAS_SOGOLON)
+	UseHeroSkill(1, $BROTHERHOOD_VOCAL_WAS_SOGOLON)
 	RandomSleep(1250)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
+	UseHeroSkill(1, $BROTHERHOOD_INCOMING)
 	RandomSleep(50)
 	MoveTo(-10475, -9685)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_FALLBACK)
+	UseHeroSkill(1, $BROTHERHOOD_FALLBACK)
 	MoveTo(-11303, -6545)
 	CommandAll(-11303, -6545)
 	MoveTo(-11983, -6261)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill(1, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
 EndFunc
 
 #CS
 	CommandAll(-10475, -9685)
 	RandomSleep(7500)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill(1, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill(1, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
 	RandomSleep(50)
 	Info('Moving Hero away')
 	CommandAll(-8447, -10099)
@@ -244,15 +242,15 @@ Func KillJadeBrotherhood()
 	Local $target
 
 	Info('Clearing Jade Brotherhood')
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_INCOMING)
+	UseHeroSkill(1, $BROTHERHOOD_INCOMING)
 	UseSkillEx($JB_DRUNKENMASTER)
 	RandomSleep(50)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_STAND_YOUR_GROUND)
+	UseHeroSkill(1, $BROTHERHOOD_STAND_YOUR_GROUND)
 	RandomSleep(50)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill(1, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
 	UseSkillEx($JB_SAND_SHARDS)
 	RandomSleep(50)
-	UseHeroSkill($JB_HERO_INDEX, $BROTHERHOOD_BLADETURN_REFRAIN, GetMyAgent())
+	UseHeroSkill(1, $BROTHERHOOD_BLADETURN_REFRAIN, GetMyAgent())
 
 	$target = GetNearestEnemyToCoords(-13262, -5486)
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)

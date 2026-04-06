@@ -86,10 +86,10 @@ Func SetupPlayerPongmeiChestFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
 		LoadSkillTemplate($PONGMEI_CHESTRUNNER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as dervish')
 	EndIf
-	RandomSleep(250)
 EndFunc
 
 
@@ -98,7 +98,6 @@ Func SetupTeamPongmeiChestFarm()
 
 	Info('Setting up team according to default settings')
 	LeaveParty()
-	RandomSleep(500)
 	AddHero($ID_GENERAL_MORGAHN)
 	AddHero($ID_HAYDA)
 	AddHero($ID_PARAGON_MERCENARY_HERO)

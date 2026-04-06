@@ -85,11 +85,11 @@ Func SetupPlayerDragonMossFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
 		LoadSkillTemplate($RA_DRAGON_MOSS_FARMER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 

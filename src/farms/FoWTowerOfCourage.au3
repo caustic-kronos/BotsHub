@@ -40,9 +40,6 @@ Global Const $RA_FOW_TOC_FARMER_SKILLBAR = 'OgcTc5+8Z6Aims4ABC35uU4IuEA'
 Global Const $FOW_TOC_M_HERO_SKILLBAR = 'OwAS8YIH2Eg/LeyLiAAA'
 Global Const $FOW_TOC_P_HERO_SKILLBAR = 'OQijEqmMKODbe8OGAYiJx1YWMA'
 
-Global Const $FOW_TOC_M_HERO_INDEX = 1
-Global Const $FOW_TOC_P_HERO_INDEX = 2
-
 ;~ Global Const $FOW_TOC_SHADOWFORM			= 1
 Global Const $FOW_TOC_SHROUD_OF_DISTRESS	= 1
 Global Const $FOW_TOC_I_AM_UNSTOPPABLE		= 2
@@ -129,8 +126,8 @@ Func SetupFoWToCFarm()
 	If TravelToOutpost($ID_TEMPLE_OF_THE_AGES, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
-	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == 0 Then Return $FAIL
-	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == 0 Then Return $FAIL
+	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == $FAIL Then Return $FAIL
+	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == $FAIL Then Return $FAIL
 	If SetupPlayerFoWToCFarm() == $FAIL Then Return $FAIL
 	If SetupTeamFoWToCFarm() == $FAIL Then Return $FAIL
 	$fow_toc_farm_setup = True
@@ -143,6 +140,7 @@ Func SetupPlayerFowToCFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
 		LoadSkillTemplate($RA_FOW_TOC_FARMER_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('You need to run this farm bot as Ranger')
 		Return $FAIL
@@ -153,8 +151,9 @@ EndFunc
 
 Func SetupTeamFoWToCFarm()
 	Info('Setting up team build skill bars')
-	LoadSkillTemplate($FOW_TOC_M_HERO_SKILLBAR, $FOW_TOC_M_HERO_INDEX)
-	LoadSkillTemplate($FOW_TOC_P_HERO_SKILLBAR, $FOW_TOC_P_HERO_INDEX)
+	LoadSkillTemplate($FOW_TOC_M_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($FOW_TOC_P_HERO_SKILLBAR, 2)
+	RandomSleep(250)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
 	Return $SUCCESS

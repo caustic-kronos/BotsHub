@@ -56,7 +56,6 @@ Global Const $RAPTORS_FARM_DURATION = (1 * 60 + 20) * 1000
 Global Const $RAPTORS_HERO_PARTY_ID = $ID_GENERAL_MORGAHN
 ;Global Const $RAPTORS_HERO_PARTY_ID = $ID_KEIRAN_THACKERAY
 ;Global Const $RAPTORS_HERO_PARTY_ID = $ID_HAYDA
-Global Const $RAPTORS_HERO_INDEX = 1
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
 Global Const $RAPTORS_MARK_OF_PAIN				= 1
@@ -151,12 +150,11 @@ Func SetupTeamRaptorsFarm()
 	Info('Setting up team')
 	RandomSleep(500)
 	LeaveParty()
-	RandomSleep(500)
-	AddHero($RAPTORS_HERO_PARTY_ID)
+	If AddHeroByProfession($ID_PARAGON, $RAPTORS_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 	RandomSleep(250)
-	LoadSkillTemplate($P_RUNNER_HERO_SKILLBAR, $RAPTORS_HERO_INDEX)
+	LoadSkillTemplate($P_RUNNER_HERO_SKILLBAR, 1)
 	RandomSleep(250)
-	DisableAllHeroSkills($RAPTORS_HERO_INDEX)
+	DisableAllHeroSkills(1)
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -183,9 +181,9 @@ EndFunc
 Func RaptorsFarmLoop()
 	If GetMapID() <> $ID_RIVEN_EARTH Then Return $FAIL
 
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_VOCAL_WAS_SOGOLON)
+	UseHeroSkill(1, $RAPTORS_VOCAL_WAS_SOGOLON)
 	RandomSleep(1200)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_INCOMING)
+	UseHeroSkill(1, $RAPTORS_INCOMING)
 	GetRaptorsAsuraBlessing()
 	MoveToBaseOfCave()
 	Info('Moving Hero away')
@@ -220,20 +218,20 @@ Func MoveToBaseOfCave()
 	Info('Moving to Cave')
 	Move(-22015, -7502)
 	RandomSleep(7000)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_FALLBACK)
+	UseHeroSkill(1, $RAPTORS_FALLBACK)
 	RandomSleep(500)
 	If ($raptors_player_profession == $ID_WARRIOR) Then UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
 	Moveto(-21333, -8384)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill(1, $RAPTORS_ENDURING_HARMONY, GetMyAgent())
 	If ($raptors_player_profession == $ID_DERVISH) Then UseSkillEx($RAPTORS_SIGNET_OF_MYSTIC_SPEED, GetMyAgent())
 	RandomSleep(1800)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill(1, $RAPTORS_MAKE_HASTE, GetMyAgent())
 	RandomSleep(50)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_STAND_YOUR_GROUND)
+	UseHeroSkill(1, $RAPTORS_STAND_YOUR_GROUND)
 	RandomSleep(50)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_CANT_TOUCH_THIS)
+	UseHeroSkill(1, $RAPTORS_CANT_TOUCH_THIS)
 	RandomSleep(50)
-	UseHeroSkill($RAPTORS_HERO_INDEX, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
+	UseHeroSkill(1, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
 	Move(-20930, -9480)
 EndFunc
 

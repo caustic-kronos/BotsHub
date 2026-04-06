@@ -96,7 +96,6 @@ Func SetupGemstoneTormentFarm()
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupPlayerTormentFarm() == $FAIL Then Return $FAIL
 	LeaveParty()
-	RandomSleep(500)
 	SetDisplayedTitle($ID_LIGHTBRINGER_TITLE)
 	RandomSleep(500)
 	$gemstone_torment_farm_setup = True
@@ -109,11 +108,11 @@ Func SetupPlayerTormentFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_ELEMENTALIST Then
 		LoadSkillTemplate($EA_TORMENT_SKILLBAR)
+		RandomSleep(250)
 	Else
 		Warn('You need to run this farm bot as Elementalist')
 		Return $FAIL
 	EndIf
-	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
