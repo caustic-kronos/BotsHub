@@ -199,21 +199,13 @@ Func TravelToFoWOutpost($district = 'Random')
 	Local Static $knownOutpost = 0
 	Local $outposts[] = [$ID_CHANTRY_OF_SECRETS, $ID_TEMPLE_OF_THE_AGES]
 	For $i = 0 To UBound($outposts) - 1
-		If GetMapID() == $outposts[$i] Then
-			$knownOutpost = $outposts[$i]
-			Return $SUCCESS
-		EndIf
+	    If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
+          $knownOutpost = $outposts[$i]
+          Return $SUCCESS
+        EndIf
 	Next
-	If $knownOutpost > 0 Then
-		If TravelToOutpost($knownOutpost, $district) == $SUCCESS Then Return $SUCCESS
-		$knownOutpost = 0
-	EndIf
-	For $i = 0 To UBound($outposts) - 1
-		If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
-			$knownOutpost = $outposts[$i]
-			Return $SUCCESS
-		EndIf
-	Next
+	Error('Could not travel to any FoW entry outpost')
+	Return $FAIL
 	Error('Could not travel to any FoW entry outpost')
 	Return $FAIL
 EndFunc
