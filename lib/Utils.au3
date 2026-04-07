@@ -196,7 +196,7 @@ EndFunc
 ;~ Remembers the last successful outpost and reuses it on subsequent calls.
 ;~ Returns $SUCCESS or $FAIL if none are accessible.
 Func TravelToFoWOutpost($district = 'Random')
-	Local Static $knownOutpost = 0
+	Local Static $knownOutpost = -1
 	Local $outposts[] = [$ID_CHANTRY_OF_SECRETS, $ID_TEMPLE_OF_THE_AGES]
 	For $i = 0 To UBound($outposts) - 1
 	    If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
@@ -216,7 +216,7 @@ EndFunc
 ;~ Remembers the last successful outpost and reuses it on subsequent calls.
 ;~ Returns $SUCCESS or $FAIL if none are accessible.
 Func TravelToUWOutpost($district = 'Random')
-	Local Static $knownOutpost = 0
+	Local Static $knownOutpost = -1
 	Local $outposts[] = [$ID_TEMPLE_OF_THE_AGES, $ID_CHANTRY_OF_SECRETS]
 	For $i = 0 To UBound($outposts) - 1
 		If GetMapID() == $outposts[$i] Then
@@ -224,9 +224,9 @@ Func TravelToUWOutpost($district = 'Random')
 			Return $SUCCESS
 		EndIf
 	Next
-	If $knownOutpost > 0 Then
+	If $knownOutpost > -1 Then
 		If TravelToOutpost($knownOutpost, $district) == $SUCCESS Then Return $SUCCESS
-		$knownOutpost = 0
+		$knownOutpost = -1
 	EndIf
 	For $i = 0 To UBound($outposts) - 1
 		If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
@@ -254,6 +254,7 @@ Func EnterFissureOfWoe()
 		Info('Balancing characters gold level to have enough to enter the Fissure of Woe')
 		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
+		Local $ping = GetPing()
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
 				MoveTo(-2500, 18700)
@@ -264,7 +265,6 @@ Func EnterFissureOfWoe()
 					MoveTo(-2500, 18700)
 				EndIf
 				SendChat('/kneel', '')
-				Local $ping = GetPing()
 				Sleep(3000 + $ping)
 				GoToNPC(GetNearestNPCToCoords(-2500, 18700))
 			Case $ID_CHANTRY_OF_SECRETS
@@ -274,11 +274,9 @@ Func EnterFissureOfWoe()
 					MoveTo(-9870, 990)
 				EndIf
 				SendChat('/kneel', '')
-				Local $ping = GetPing()
 				Sleep(3000 + $ping)
 				GoToNPC(GetNearestNPCToCoords(-9870, 990))
 		EndSwitch
-		Local $ping = GetPing()
 		Sleep(750 + $ping)
 		Dialog(0x85)
 		Sleep(750 + $ping)
@@ -308,12 +306,12 @@ Func EnterUnderworld()
 		Info('Balancing characters gold level to have enough to enter the Underworld')
 		BalanceCharacterGold(10000)
 		Info('Moving to Grenth statue to enter Underworld')
+		Local $ping = GetPing()
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
 				MoveTo(-4170, 19759)
 				MoveTo(-4124, 19829)
 				SendChat('/kneel', '')
-				Local $ping = GetPing()
 				Sleep(3000 + $ping)
 				GoToNPC(GetNearestNPCToCoords(-4124, 19829))
 			Case $ID_CHANTRY_OF_SECRETS
@@ -323,11 +321,9 @@ Func EnterUnderworld()
 					MoveTo(-9000, 3900)
 				EndIf
 				SendChat('/kneel', '')
-				Local $ping = GetPing()
 				Sleep(3000 + $ping)
 				GoToNPC(GetNearestNPCToCoords(-9000, 3900))
 		EndSwitch
-		Local $ping = GetPing()
 		Sleep(750 + $ping)
 		Dialog(0x85)
 		Sleep(750 + $ping)
