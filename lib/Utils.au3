@@ -197,15 +197,15 @@ EndFunc
 ;~ Returns $SUCCESS or $FAIL if none are accessible.
 Func TravelToFoWOutpost($district = 'Random')
 	Local Static $knownOutpost = -1
+	If $knownOutpost <> -1 Then Return TravelToOutpost($knownOutpost, $district)
+
 	Local $outposts[] = [$ID_CHANTRY_OF_SECRETS, $ID_TEMPLE_OF_THE_AGES]
 	For $i = 0 To UBound($outposts) - 1
-	    If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
-          $knownOutpost = $outposts[$i]
-          Return $SUCCESS
-        EndIf
+		If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
+			$knownOutpost = $outposts[$i]
+			Return $SUCCESS
+		EndIf
 	Next
-	Error('Could not travel to any FoW entry outpost')
-	Return $FAIL
 	Error('Could not travel to any FoW entry outpost')
 	Return $FAIL
 EndFunc
@@ -217,17 +217,9 @@ EndFunc
 ;~ Returns $SUCCESS or $FAIL if none are accessible.
 Func TravelToUWOutpost($district = 'Random')
 	Local Static $knownOutpost = -1
+	If $knownOutpost <> -1 Then Return TravelToOutpost($knownOutpost, $district)
+
 	Local $outposts[] = [$ID_TEMPLE_OF_THE_AGES, $ID_CHANTRY_OF_SECRETS]
-	For $i = 0 To UBound($outposts) - 1
-		If GetMapID() == $outposts[$i] Then
-			$knownOutpost = $outposts[$i]
-			Return $SUCCESS
-		EndIf
-	Next
-	If $knownOutpost > -1 Then
-		If TravelToOutpost($knownOutpost, $district) == $SUCCESS Then Return $SUCCESS
-		$knownOutpost = -1
-	EndIf
 	For $i = 0 To UBound($outposts) - 1
 		If TravelToOutpost($outposts[$i], $district) == $SUCCESS Then
 			$knownOutpost = $outposts[$i]
@@ -255,6 +247,7 @@ Func EnterFissureOfWoe()
 		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
 		Local $ping = GetPing()
+		Local $npcCoordinates[2]
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
 				MoveTo(-2500, 18700)
@@ -264,19 +257,18 @@ Func EnterFissureOfWoe()
 					MoveTo(-3100, 18000)
 					MoveTo(-2500, 18700)
 				EndIf
-				SendChat('/kneel', '')
-				Sleep(3000 + $ping)
-				GoToNPC(GetNearestNPCToCoords(-2500, 18700))
+				$npcCoordinates = [-2500, 18700]
 			Case $ID_CHANTRY_OF_SECRETS
 				MoveTo(-9870, 990)
 				If GetDistanceToPoint(GetMyAgent(), -9870, 990) > $RANGE_ADJACENT Then
 					MoveTo(-10400, 770)
 					MoveTo(-9870, 990)
 				EndIf
-				SendChat('/kneel', '')
-				Sleep(3000 + $ping)
-				GoToNPC(GetNearestNPCToCoords(-9870, 990))
+				$npcCoordinates = [-9870, 990]
 		EndSwitch
+		SendChat('/kneel', '')
+		Sleep(3000 + $ping)
+		GoToNPC(GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1]))
 		Sleep(750 + $ping)
 		Dialog(0x85)
 		Sleep(750 + $ping)
@@ -307,23 +299,23 @@ Func EnterUnderworld()
 		BalanceCharacterGold(10000)
 		Info('Moving to Grenth statue to enter Underworld')
 		Local $ping = GetPing()
+		Local $npcCoordinates[2]
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
 				MoveTo(-4170, 19759)
 				MoveTo(-4124, 19829)
-				SendChat('/kneel', '')
-				Sleep(3000 + $ping)
-				GoToNPC(GetNearestNPCToCoords(-4124, 19829))
+				$npcCoordinates = [-4124, 19829]
 			Case $ID_CHANTRY_OF_SECRETS
 				MoveTo(-9000, 3900)
 				If GetDistanceToPoint(GetMyAgent(), -9000, 3900) > $RANGE_ADJACENT Then
 					MoveTo(-10130, 4450)
 					MoveTo(-9000, 3900)
 				EndIf
-				SendChat('/kneel', '')
-				Sleep(3000 + $ping)
-				GoToNPC(GetNearestNPCToCoords(-9000, 3900))
+				$npcCoordinates = [-9000, 3900]
 		EndSwitch
+		SendChat('/kneel', '')
+		Sleep(3000 + $ping)
+		GoToNPC(GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1]))
 		Sleep(750 + $ping)
 		Dialog(0x85)
 		Sleep(750 + $ping)
