@@ -257,14 +257,16 @@ Func EnterFissureOfWoe()
 					MoveTo(-3100, 18000)
 					MoveTo(-2500, 18700)
 				EndIf
-				$npcCoordinates = [-2500, 18700]
+				$npcCoordinates[0] = -2500
+				$npcCoordinates[1] = 18700
 			Case $ID_CHANTRY_OF_SECRETS
 				MoveTo(-9870, 990)
 				If GetDistanceToPoint(GetMyAgent(), -9870, 990) > $RANGE_ADJACENT Then
 					MoveTo(-10400, 770)
 					MoveTo(-9870, 990)
 				EndIf
-				$npcCoordinates = [-9870, 990]
+				$npcCoordinates[0] = -9870
+				$npcCoordinates[1] = 990
 		EndSwitch
 		SendChat('/kneel', '')
 		Sleep(3000 + $ping)
@@ -304,14 +306,16 @@ Func EnterUnderworld()
 			Case $ID_TEMPLE_OF_THE_AGES
 				MoveTo(-4170, 19759)
 				MoveTo(-4124, 19829)
-				$npcCoordinates = [-4124, 19829]
+				$npcCoordinates[0] = -4124
+				$npcCoordinates[1] = 19829
 			Case $ID_CHANTRY_OF_SECRETS
 				MoveTo(-9000, 3900)
 				If GetDistanceToPoint(GetMyAgent(), -9000, 3900) > $RANGE_ADJACENT Then
 					MoveTo(-10130, 4450)
 					MoveTo(-9000, 3900)
 				EndIf
-				$npcCoordinates = [-9000, 3900]
+				$npcCoordinates[0] = -9000
+				$npcCoordinates[1] = 3900
 		EndSwitch
 		SendChat('/kneel', '')
 		Sleep(3000 + $ping)
