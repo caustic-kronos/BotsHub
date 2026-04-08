@@ -568,29 +568,30 @@ EndFunc
 
 ;~ Pick up the Unholy Texts
 Func PickUpUnholyTexts()
-	Local $attempts = 1
 	Local $agents = GetAgentArray($ID_AGENT_TYPE_ITEM)
 	For $agent In $agents
 		Local $agentID = DllStructGetData($agent, 'ID')
 		Local $item = GetItemByAgentID($agentID)
 		If (DllStructGetData($item, 'ModelID') == $ID_FOW_UNHOLY_TEXTS) Then
 			Info('Unholy Texts: (' & Round(DllStructGetData($agent, 'X')) & ', ' & Round(DllStructGetData($agent, 'Y')) & ')')
-			PickUpItem($item)
-			While GetAgentExists($agentID)
-				If Mod($attempts, 20) == 0 Then
-					Local $attempt = Floor($attempts / 20)
-					Error('Could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
-					Error('Attempt ' & $attempt)
-					Local $attemptPlaces[] = [2300, 14700, 1800, 16500, 4400, 15800, 1900, 13800]
-					MoveTo($attemptPlaces[Floor($attempts / 10)] - 2, $attemptPlaces[Floor($attempts / 10) - 1])
-				EndIf
-				$attempts += 1
-				RandomSleep(1000)
-				If Not IsPlayerOrPartyAlive() Then Return False
-			WEnd
-			Return True
+			Local $attemptPlaces[] = [2300, 14700, 1800, 16500, 4400, 15800, 1900, 13800]
+			For $attempt = 0 To 4
+				PickUpItem($item)
+				Local $waitCycles = 0
+				While $waitCycles < 10
+					RandomSleep(1000)
+					$waitCycles += 1
+					If Not IsPlayerOrPartyAlive() Then Return False
+					If Not GetAgentExists($agentID) Then Return True
+				WEnd
+				Error('Attempt ' & $attempt & ' - could not get Unholy Texts at (' & DllStructGetData($agent, 'X') & ', ' & DllStructGetData($agent, 'Y') & ')')
+				If $attempt < 4 Then MoveTo($attemptPlaces[2 * $attempt], $attemptPlaces[2 * $attempt + 1])
+			Next
+			Error('All attempts failed, skipping Unholy Texts quest')
+			Return False
 		EndIf
 	Next
+	Error('Could not find Unholy Texts on the ground')
 	Return False
 EndFunc
 
