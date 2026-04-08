@@ -68,7 +68,7 @@ Global Const $ENABLE_ESCORT_OF_SOULS = True ; For UW total completion. ~5 min
 Global Const $ENABLE_UNWANTED_GUESTS = True ; For UW total completion. ~15 min
 Global Const $ENABLE_THE_NIGHTMAN_COMETH = True ; TODO
 
-Global $underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
+Global $underworld_fight_options
 Global $underworld_player_profession = $ID_RITUALIST
 Global $uw_farm_setup = False
 
@@ -91,6 +91,7 @@ Func SetupUnderworldFarm()
 	TravelToUWOutpost($district_name)
 	SetupPlayerUnderworldFarm()
 	SwitchToHardModeIfEnabled()
+	$underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
 	$uw_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS

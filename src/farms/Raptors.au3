@@ -88,9 +88,9 @@ Global Const $RAPTORS_BLADETURN_REFRAIN	= 8
 Global $raptors_move_options = CloneDictMap($default_move_defend_options)
 $raptors_move_options.Item('defendFunction')			= Null
 $raptors_move_options.Item('moveTimeOut')				= 3 * 60 * 1000
-$raptors_move_options.Item('randomFactor')			= 10
-$raptors_move_options.Item('hosSkillSlot')			= 0
-$raptors_move_options.Item('deathChargeSkillSlot')	= 0
+$raptors_move_options.Item('randomFactor')				= 10
+$raptors_move_options.Item('hosSkillSlot')				= 0
+$raptors_move_options.Item('deathChargeSkillSlot')		= 0
 $raptors_move_options.Item('openChests')				= False
 
 Global $raptors_farm_setup = False

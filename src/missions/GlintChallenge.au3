@@ -66,14 +66,7 @@ Global Const $BROTHERHOOD_CHEST_X = -3184
 Global Const $BROTHERHOOD_CHEST_Y = 908
 Global Const $BROTHERHOOD_CHEST_GADGETID = 9157
 
-Global $glint_challenge_fight_options = CloneDictMap($default_move_aggro_kill_options)
-$glint_challenge_fight_options.Item('fightRange')			= 1500
-; heroes will be flagged before fight to defend the start location
-$glint_challenge_fight_options.Item('flagHeroesOnFight')	= False
-$glint_challenge_fight_options.Item('lootInFights')			= False
-; there are no chests in Glint Challenge location
-$glint_challenge_fight_options.Item('openChests')			= False
-
+Global $glint_challenge_fight_options
 Global $glint_challenge_setup = False
 
 ;~ Main loop for the Mysterious armor farm
@@ -95,9 +88,22 @@ Func GlintChallengeSetup()
 	SetDisplayedTitle($ID_DWARF_TITLE)
 	SwitchMode($ID_NORMAL_MODE)
 	If SetupTeamGlintChallengeFarm() == $FAIL Then Return $FAIL
+	SetupGlintFightOptions()
 	$glint_challenge_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
+EndFunc
+
+
+;~ Done here to pick latest version of $default_move_aggro_kill_options
+Func SetupGlintFightOptions()
+	$glint_challenge_fight_options = CloneDictMap($default_move_aggro_kill_options)
+	$glint_challenge_fight_options.Item('fightRange')			= 1500
+	; heroes will be flagged before fight to defend the start location
+	$glint_challenge_fight_options.Item('flagHeroesOnFight')	= False
+	$glint_challenge_fight_options.Item('lootInFights')			= False
+	; there are no chests in Glint Challenge location
+	$glint_challenge_fight_options.Item('openChests')			= False
 EndFunc
 
 

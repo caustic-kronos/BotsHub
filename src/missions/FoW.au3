@@ -37,7 +37,7 @@ Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 Global Const $SHARD_WOLF_MODELID = 2835
 Global Const $ID_FOW_UNHOLY_TEXTS = 2619
 
-Global $fow_fight_options = CloneDictMap($default_move_aggro_kill_options)
+Global $fow_fight_options
 
 Global $fow_farm_setup = False
 
@@ -60,6 +60,8 @@ Func SetupFoWFarm()
 	Info('Setting up farm')
 	TravelToFoWOutpost($district_name)
 	SwitchToHardModeIfEnabled()
+	; Done here in order to pick latest version of default_move_aggro_kill_options
+	$fow_fight_options = CloneDictMap($default_move_aggro_kill_options)
 	$fow_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -90,7 +92,7 @@ Func FoWFarmProcess()
 	If TheTempleOfWar() == $FAIL Then Return $FAIL
 	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
-	If TheSpiderCave_and_FissureShore() == $FAIL Then Return $FAIL
+	If TheSpiderCaveAndFissureShore() == $FAIL Then Return $FAIL
 	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 	If LakeOfFire() == $FAIL Then Return $FAIL
@@ -167,6 +169,8 @@ Func TheGreatBattleField()
 	FlagMoveAggroAndKill(-5000, 10000, '4', $optionsTheGreatBattleField)
 	FlagMoveAggroAndKill(-7000, 11400, '5', $optionsTheGreatBattleField)
 
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
+
 	MoveTo(-7326, 11892)
 	Local $questNPC = GetNearestNPCToCoords(-7400, 11950)
 	TakeQuest($questNPC, $ID_QUEST_ARMY_OF_DARKNESS, 0x80CB01)
@@ -181,6 +185,8 @@ Func TheGreatBattleField()
 	MoveTo(2100, 16500)
 	FlagMoveAggroAndKill(-3700, 13400, '5', $optionsTheGreatBattleField)
 	FlagMoveAggroAndKill(-6700, 11200, '6', $optionsTheGreatBattleField)
+
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	; We have to send dialog here because quest is not 'complete' in quest log
 	MoveTo(-7350, 11875)
@@ -245,7 +251,7 @@ Func TheTempleOfWar()
 EndFunc
 
 
-Func TheSpiderCave_and_FissureShore()
+Func TheSpiderCaveAndFissureShore()
 	Info('Going to Nimros')
 	MoveAggroAndKill(1800, -3700, '1')
 	MoveAggroAndKill(1800, -6900, '2')
@@ -323,6 +329,7 @@ Func TowerOfStrength()
 	MoveAggroAndKill(12000, 0, '7', $optionsTowerOfStrength)
 	KillShardWolf()
 	MoveAggroAndKill(15000, -1000, '8')
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	Info('Going back for Mage')
 	MoveAggroAndKill(10300, -5900, '1')
@@ -354,6 +361,7 @@ Func BurningForest()
 	MoveAggroAndKill(17400, 3300, '2')
 	MoveAggroAndKill(14100, 4000, '3')
 	MoveAggroAndKill(12100, 6750, '4')
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	MoveTo(12000, 6600)
 	Local $questNPC = GetNearestNPCToCoords(12050, 6500)
@@ -369,17 +377,23 @@ Func BurningForest()
 	MoveAggroAndKill(12600, 8000, 'Safety Pull 3', $optionsBurningForest)
 	FlagMoveAggroAndKill(12000, 6600, '', $optionsBurningForest)
 	RandomSleep(2500)
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
+
 	FlagMoveAggroAndKill(13090, 7580, '1', $optionsBurningForest)
 	FlagMoveAggroAndKill(14800, 8500, '2', $optionsBurningForest)
 	$optionsBurningForest.Item('fightRange') = $RANGE_EARSHOT
 	FlagMoveAggroAndKill(16500, 9100, '3', $optionsBurningForest)
 	FlagMoveAggroAndKill(19000, 8400, '4', $optionsBurningForest)
 	FlagMoveAggroAndKill(20800, 8500, '5', $optionsBurningForest)
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
+
 	FlagMoveAggroAndKill(21700, 12600, '6', $optionsBurningForest)
 	FlagMoveAggroAndKill(23000, 13100, '7', $optionsBurningForest)
 	FlagMoveAggroAndKill(22880, 15000, '8', $optionsBurningForest)
 	FlagMoveAggroAndKill(22200, 15800, '9', $optionsBurningForest)
 	FlagMoveAggroAndKill(20900, 15900, '10', $optionsBurningForest)
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
+
 	FlagMoveAggroAndKill(21240, 14530, '11', $optionsBurningForest)
 	FlagMoveAggroAndKill(21700, 12600, '12', $optionsBurningForest)
 	KillShardWolf()
@@ -389,9 +403,12 @@ Func BurningForest()
 	KillShardWolf()
 	FlagMoveAggroAndKill(17150, 12000, '15', $optionsBurningForest)
 	KillShardWolf()
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
+
 	FlagMoveAggroAndKill(16200, 11000, '16', $optionsBurningForest)
 	FlagMoveAggroAndKill(14800, 8500, '17', $optionsBurningForest)
 	FlagMoveAggroAndKill(13000, 7700, '18', $optionsBurningForest)
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	MoveTo(12000, 6600)
 	TakeQuestReward($questNPC, $ID_QUEST_SLAVES_OF_MENZIES, 0x80CE07)
@@ -425,14 +442,16 @@ Func ForestOfTheWailingLord()
 	KillShardWolf()
 	MoveAggroAndKill(-15400, 11950, '8')
 	KillShardWolf()
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
+
 	$optionsForestOfTheWailingLord.Item('fightRange') = $RANGE_EARSHOT
 	MoveAggroAndKill(-16160, 13325, '9', $optionsForestOfTheWailingLord)
 	MoveAggroAndKill(-16000, 13500, '10', $optionsForestOfTheWailingLord)
-
 	; Safer moves
 	MoveAggroAndKill(-20000, 13000, '11', $optionsForestOfTheWailingLord)
 	MoveAggroAndKill(-18000, 11000, '12', $optionsForestOfTheWailingLord)
 	MoveAggroAndKill(-20200, 14000, '13', $optionsForestOfTheWailingLord)
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	Info('Safely pulling')
 	CommandHero(1, -20200, 13600)
@@ -497,6 +516,7 @@ Func GriffonRun()
 	MoveAggroAndKill(-9500, -6000, '5')
 	MoveAggroAndKill(-13750, -2750, '6')
 	MoveAggroAndKill(-15750, -1750, '7')
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	RandomSleep(5000)
 
 	Info('Kill Last Shard Wolf')
@@ -511,6 +531,7 @@ Func GriffonRun()
 	MoveAggroAndKill(-13750, -2750)
 	CommandAll(-9800, -4800)
 	MoveAggroAndKill(-15750, -1750)
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
 	TakeQuestReward($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC07, 0x80CC06)

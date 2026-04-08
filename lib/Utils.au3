@@ -992,7 +992,6 @@ Global $flag_move_aggro_kill_options = CloneDictMap($default_move_aggro_kill_opt
 $flag_move_aggro_kill_options.Item('flagHeroesOnFight') = True
 
 
-
 Global $default_move_defend_options = ObjCreate('Scripting.Dictionary')
 $default_move_defend_options.Add('defendFunction', Null)
 $default_move_defend_options.Add('moveTimeOut', 5 * 60 * 1000)

@@ -75,16 +75,7 @@ Global Const $GEM_SKILLS_ARRAY			= [$GEM_SYMBOLIC_CELERITY,	$GEM_SYMBOLIC_POSTUR
 Global Const $GEM_SKILLS_COSTS_ARRAY	= [15,						10,						0,						0,						0,							0,							5,						10]
 Global Const $GEM_SKILLS_COSTS_MAP		= MapFromArrays($GEM_SKILLS_ARRAY, $GEM_SKILLS_COSTS_ARRAY)
 
-Global $gemstones_fight_options	= CloneDictMap($default_move_aggro_kill_options)
-; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-$gemstones_fight_options.Item('fightRange')			= 1500
-; heroes will be flagged before fight to defend the start location
-$gemstones_fight_options.Item('flagHeroesOnFight')	= False
-$gemstones_fight_options.Item('priorityMobs')			= True
-$gemstones_fight_options.Item('skillsCostMap')		= $GEM_SKILLS_COSTS_MAP
-$gemstones_fight_options.Item('lootInFights')			= False
-; there are no chests in Ebony Citadel of Mallyx location
-$gemstones_fight_options.Item('openChests')			= False
+Global $gemstones_fight_options
 
 ; in ebony citadel of Mallyx location, the agent ID of Zhellix is always assigned to 15, when party has 8 members (can be accessed in GWToolbox)
 Global Const $AGENTID_ZHELLIX = 15
@@ -121,9 +112,25 @@ Func SetupGemstonesFarm()
 		Error('Party not set up correctly. Team size different than ' & $ID_TEAM_SIZE_LARGE)
 		Return $FAIL
 	EndIf
+	SetupGemstonesFightOptions()
 	$gemstones_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
+EndFunc
+
+
+;~ Done here to pick latest version of $default_move_aggro_kill_options
+Func SetupGemstonesFightOptions()
+	$gemstones_fight_options = CloneDictMap($default_move_aggro_kill_options)
+	; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
+	$gemstones_fight_options.Item('fightRange')			= 1500
+	; heroes will be flagged before fight to defend the start location
+	$gemstones_fight_options.Item('flagHeroesOnFight')	= False
+	$gemstones_fight_options.Item('priorityMobs')		= True
+	$gemstones_fight_options.Item('skillsCostMap')		= $GEM_SKILLS_COSTS_MAP
+	$gemstones_fight_options.Item('lootInFights')		= False
+	; there are no chests in Ebony Citadel of Mallyx location
+	$gemstones_fight_options.Item('openChests')			= False
 EndFunc
 
 
