@@ -98,9 +98,9 @@ Func PickUpIris()
 		$item = GetItemByAgentID($agentID)
 		If (DllStructGetData($item, 'ModelID') == $ID_RED_IRIS_FLOWER) Then
 			Info('Iris: (' & Round(DllStructGetData($agent, 'X')) & ',' & Round(DllStructGetData($agent, 'Y')) & ')')
-			PickUpItem($item)
 			$deadlock = TimerInit()
 			While GetAgentExists($agentID)
+				PickUpItem($item)
 				RandomSleep(500)
 				If IsPlayerDead() Then Return False
 				If TimerDiff($deadlock) > 20000 Then
