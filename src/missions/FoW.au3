@@ -497,17 +497,52 @@ Func ForestOfTheWailingLord()
 	PickUpItems()
 	CancelAll()
 
-	MoveTo(-21500, 15000)
-	Local $questNPC = GetNearestNPCToCoords(-21600, 15050)
-	TakeQuest($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD01)
-
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
 
 Func GriffonRun()
+	Info('Preclearing area for griffons')
 	MoveAggroAndKill(-22000, 11000, 'Grabbing Griffons')
+	MoveAggroAndKill(-17300, 9600, '1')
+	MoveAggroAndKill(-16500, 8500, '2')
+	MoveAggroAndKill(-7500, 5000, '3')
+	MoveAggroAndKill(-6750, -4250, '4')
+	MoveAggroAndKill(-9500, -6000, '5')
+	MoveAggroAndKill(-13750, -2750, '6')
+	MoveAggroAndKill(-15750, -1750, '7')
+	RandomSleep(5000)
+
+	Info('Kill Last Shard Wolf')
+	MoveAggroAndKill(-14430, -2750, '8')
+	MoveAggroAndKill(-18000, -3500, '9')
+	KillShardWolf()
+	MoveAggroAndKill(-17600, -4800, '10')
+	KillShardWolf() 
+	MoveAggroAndKill(-16575, -5200, '11')
+	KillShardWolf() 
+	MoveAggroAndKill(-18000, -3500)
+	MoveAggroAndKill(-13750, -2750)
+	CommandAll(-9800, -4800)
+	MoveAggroAndKill(-15750, -1750)
+	
+
+	Info('Grabbing griffons')
+	MoveAggroAndKill(-13750, -2750, '1')
+	MoveAggroAndKill(-9500, -6000, '2')
+	MoveAggroAndKill(-6750, -4250, '3')
+	MoveAggroAndKill(-7500, 5000, '4')
+	MoveAggroAndKill(-18250, 9500, '5')
+	MoveAggroAndKill(-20000, 9500, '6')
+	
+	Info('Picking up quest')
+	MoveTo(-21500, 15000)
+	Local $questNPC = GetNearestNPCToCoords(-21600, 15050)
+	TakeQuest($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD01)
+	
+	MoveAggroAndKill(-22000, 11000, '7')
 	RandomSleep(1000)
+	
 	Info('Leading griffons back')
 	MoveAggroAndKill(-17300, 9600, '1')
 	MoveAggroAndKill(-16500, 8500, '2')
@@ -516,23 +551,23 @@ Func GriffonRun()
 	MoveAggroAndKill(-9500, -6000, '5')
 	MoveAggroAndKill(-13750, -2750, '6')
 	MoveAggroAndKill(-15750, -1750, '7')
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	RandomSleep(5000)
 
-	Info('Kill Last Shard Wolf')
-	MoveAggroAndKill(-14430, -2750, '8')
-	MoveAggroAndKill(-18000, -3500, '9')
-	KillShardWolf()
-	MoveAggroAndKill(-17600, -4800, '10')
-	KillShardWolf()
-	MoveAggroAndKill(-16575, -5200, '11')
-	KillShardWolf()
-	MoveAggroAndKill(-18000, -3500)
-	MoveAggroAndKill(-13750, -2750)
-	CommandAll(-9800, -4800)
-	MoveAggroAndKill(-15750, -1750)
-	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-
+	If Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_HUNT) Then
+		Info('Quest: The Hunt, not finished. Checking for Shard Wolf.')
+		MoveAggroAndKill(-14430, -2750, '8')
+		MoveAggroAndKill(-18000, -3500, '9')
+		KillShardWolf()
+		MoveAggroAndKill(-17600, -4800, '10')
+		KillShardWolf() 
+		MoveAggroAndKill(-16575, -5200, '11')
+		KillShardWolf() 
+		MoveAggroAndKill(-18000, -3500)
+		MoveAggroAndKill(-13750, -2750)
+		CommandAll(-9800, -4800)
+		MoveAggroAndKill(-15750, -1750)
+		RandomSleep(5000)
+	
 	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
 	TakeQuestReward($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC07, 0x80CC06)
 	TakeQuestReward($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD07)
@@ -551,11 +586,26 @@ EndFunc
 
 
 Func TempleLoot()
+	Local $optionsTempleLoot = CloneDictMap($fow_fight_options)
 	MoveAggroAndKill(-9800, -4800)
 	MoveAggroAndKill(-6800, -3800)
 	MoveAggroAndKill(-8000, 5100)
+	If Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_HUNT) Then
+		$optionsTempleLoot.Item('fightRange') = $RANGE_EARSHOT * 2
+		Info('The Hunt is not complete.')
+		Info('Let us make sure we got wolf in the battlefield')
+		MoveAggroAndKill(-5066, 11490, '', $optionsTempleLoot)
+		KillShardWolf()
+		MoveAggroAndKill(-3455, 14190, '', $optionsTempleLoot)
+		KillShardWolf()
+		MoveAggroAndKill(-1310, 14520, '', $optionsTempleLoot)
+		KillShardWolf()
+		MoveAggroAndKill(-685, 10980, '', $optionsTempleLoot)
+		KillShardWolf()
+	EndIf
 	MoveAggroAndKill(1550, 5200)
 	MoveAggroAndKill(1700, 2400)
+	; TODO: Add The Hunt Check again for Burning Forest as it's another are that can get missed
 	CommandAll(1500, 7360)
 	MoveTo(1585, -520)
 
