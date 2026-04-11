@@ -511,6 +511,7 @@ Func GriffonRun()
 	MoveAggroAndKill(-9500, -6000, '5')
 	MoveAggroAndKill(-13750, -2750, '6')
 	MoveAggroAndKill(-15750, -1750, '7')
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	RandomSleep(5000)
 
 	Info('Kill Last Shard Wolf')
@@ -552,6 +553,7 @@ Func GriffonRun()
 	MoveAggroAndKill(-9500, -6000, '5')
 	MoveAggroAndKill(-13750, -2750, '6')
 	MoveAggroAndKill(-15750, -1750, '7')
+	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	RandomSleep(5000)
 
 	If Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_HUNT) Then
