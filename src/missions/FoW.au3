@@ -680,9 +680,13 @@ EndFunc
 ;~ Kill shardwolf if found
 Func KillShardWolf()
 	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, IsShardWolf)
-	If IsArray($foes) And UBound($foes) > 0 Then
+	While IsArray($foes) And UBound($foes) > 0
 		Local $shardWolf = $foes[0]
-		MoveAggroAndKill(DllStructGetData($shardWolf, 'X'), DllStructGetData($shardWolf, 'Y'))
-	EndIf
+		Local $wolfX = DllStructGetData($shardWolf, 'X')
+		Local $wolfY = DllStructGetData($shardWolf, 'Y')
+		MoveTo($wolfX, $wolfY)
+		MoveAggroAndKillInRange($wolfX, $wolfY, '', $RANGE_COMPASS)
+		$foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, IsShardWolf)
+	WEnd
 	Return $SUCCESS
 EndFunc
