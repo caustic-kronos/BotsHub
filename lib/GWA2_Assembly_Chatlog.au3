@@ -1,4 +1,7 @@
 #include-once
+#include 'GWA2_Assembly.au3'
+#include 'Utils-Console.au3'
+#include 'Utils.au3'
 
 Global Const $CHAT_LOG_STRUCT = 'dword;wchar[256]'
 

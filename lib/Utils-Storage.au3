@@ -16,17 +16,20 @@
 #CE ===========================================================================
 
 #include-once
-
 #include 'SQLite.au3'
 #include 'SQLite.dll.au3'
+#include 'GWA2.au3'
+#include 'GWA2_Assembly.au3'
 #include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
-#include 'GWA2.au3'
+#include 'GWA2_ID_Items.au3'
+#include 'GWA2_ID_Maps.au3'
+#include 'GWA2_ID_Skills.au3'
 #include 'Utils.au3'
+#include 'Utils-Agents.au3'
+#include 'Utils-Console.au3'
 #include 'Utils-Items_Modstructs.au3'
-#include 'Utils-Debugger.au3'
-
-Opt('MustDeclareVars', True)
+#include 'Utils-Storage.au3'
 
 
 #Region Inventory Management

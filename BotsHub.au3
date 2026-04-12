@@ -27,19 +27,27 @@
 #RequireAdmin
 #NoTrayIcon
 
+Opt('MustDeclareVars', True)
+;Opt("ExpandEnvStrings", 1)
+
 #Region Includes
+#include-once
 #include <Math.au3>
-#include 'lib/GWA2_Headers.au3'
-#include 'lib/GWA2_ID.au3'
+
+#include 'lib/BotsHub-GUI.au3'
 #include 'lib/GWA2.au3'
 #include 'lib/GWA2_Assembly.au3'
+#include 'lib/GWA2_ID.au3'
+#include 'lib/GWA2_ID_Maps.au3'
+#include 'lib/GWA2_ID_Skills.au3'
+#include 'lib/JSON.au3'
 #include 'lib/Utils.au3'
-#include 'lib/Utils-Agents.au3'
-#include 'lib/Utils-Storage.au3'
 #include 'lib/Utils-Console.au3'
 #include 'lib/Utils-Debugger.au3'
+#include 'lib/Utils-Items_Modstructs.au3'
+#include 'lib/Utils-Shared_Memory.au3'
+#include 'lib/Utils-Storage.au3'
 #include 'lib/Build_PW_Heroic-Refrain.au3'
-#include 'lib/BotsHub-GUI.au3'
 
 #include 'src/farms/CoF.au3'
 #include 'src/farms/Corsairs.au3'

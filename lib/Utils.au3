@@ -16,16 +16,21 @@
 #CE ===========================================================================
 
 #include-once
-
 #include <array.au3>
 #include <WinAPIDiag.au3>
-#include 'GWA2_Headers.au3'
-#include 'GWA2_ID.au3'
-#include 'GWA2_ID_Maps.au3'
-#include 'GWA2.au3'
-#include 'Utils-Debugger.au3'
 
-Opt('MustDeclareVars', True)
+#include 'GWA2.au3'
+#include 'GWA2_Assembly.au3'
+#include 'GWA2_ID.au3'
+#include 'GWA2_ID_Items.au3'
+#include 'GWA2_ID_Maps.au3'
+#include 'GWA2_ID_Quests.au3'
+#include 'GWA2_ID_Skills.au3'
+#include 'Utils-Agents.au3'
+#include 'Utils-Console.au3'
+#include 'Utils-Debugger.au3'
+#include 'Utils-Storage.au3'
+
 
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST=1085, $RANGE_LONGBOW=1250, $RANGE_SPIRIT=2500, $RANGE_COMPASS=5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2

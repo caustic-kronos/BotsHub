@@ -16,9 +16,12 @@
 #CE ===========================================================================
 
 #include-once
-
 #include <Array.au3>
+#include 'GWA2.au3'
+#include 'GWA2_ID_Items.au3'
 #include 'Utils.au3'
+#include 'Utils-Console.au3'
+#include 'Utils-Storage.au3'
 
 Global Const $STRUCT_WEAPON_UPGRADE		= '30'
 Global Const $STRUCT_INSCRIPTION		= '32'
