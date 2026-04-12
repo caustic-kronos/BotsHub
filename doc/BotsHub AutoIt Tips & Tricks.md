@@ -52,6 +52,60 @@ A concise cheat sheet of powerful functions, techniques, and utilities in AutoIt
 * `DllStructGetData()` / `DllStructSetData()` → Binary or pointer manipulation.
 * `BinaryToString()`, `StringToBinary()` → Useful for encoding/decoding.
 
+### 📦 DllStruct Valid Types Reference
+
+**Integer Types (Signed)**  
+* `char` → 1 byte  
+* `short` → 2 bytes  
+* `int` → 4 bytes  
+* `int64` → 8 bytes  
+
+**Integer Types (Unsigned)**  
+* `byte` → 1 byte  
+* `ushort` → 2 bytes  
+* `uint` → 4 bytes  
+* `uint64` → 8 bytes  
+* `ulong` → Alias of `uint`  
+
+**Floating Point**  
+* `float` → 4 bytes  
+* `double` → 8 bytes  
+
+**Boolean**  
+* `bool` → 1 byte  
+
+**Pointer-Sized (architecture dependent)**  
+* `ptr`  
+* `handle`  
+* `hwnd`  
+* `lparam`  
+* `wparam`  
+* `hresult`  
+
+**String Types**  
+* `str` → ANSI string  
+* `wstr` → Unicode string  
+* `char[n]` → Fixed-length ANSI buffer  
+* `wchar[n]` → Fixed-length UTF-16 buffer  
+
+**Alignment Control**  
+* `align 1`  
+* `align 2`  
+* `align 4`  
+* `align 8`
+
+Order structures by decreasing alignement to reduce their size.
+
+**Common WinAPI Aliases**  
+* `dword` → `uint`  
+* `word` → `ushort`  
+* `long` → `int`
+
+**Sub structure**
+* `int int1;struct inStruct;int int2;int int3;endstruct;int int4`
+
+> Not supported: `uint32`, `int32`, `uint16`, `int16`, `size_t`, `void`
+
 ## 🚀 Performance & Compilation
 
 * `#pragma compile(Optimize, True)` → Improves execution speed.
@@ -68,5 +122,3 @@ A concise cheat sheet of powerful functions, techniques, and utilities in AutoIt
 ---
 
 Keep this as a reference when building or reviewing your next AutoIt project. These tools can make a huge difference in maintainability, flexibility, and speed.
-
-Happy scripting!
