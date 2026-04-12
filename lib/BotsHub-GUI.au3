@@ -37,6 +37,7 @@
 #include '../lib/GWA2.au3'
 #include '../lib/Utils.au3'
 #include '../lib/JSON.au3'
+#include '../lib/Utils-Console.au3'
 #EndRegion Includes
 
 Global Const $GUI_WA_INACTIVE = 0
@@ -44,15 +45,12 @@ Global Const $GUI_WM_ACTIVATE = 0x0006
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 
-Global Const $LVL_DEBUG = 0
-Global Const $LVL_INFO = 1
-Global Const $LVL_NOTICE = 2
-Global Const $LVL_WARNING = 3
-Global Const $LVL_ERROR = 4
-
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
+	'Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
+	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 
 #Region GUI
 Opt('GUIOnEventMode', True)
@@ -111,7 +109,7 @@ Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandloot
 ; Title...........:	_guiCreate
 ; Description.....:	Create the main GUI
 ;------------------------------------------------------
-Func CreateGUI()
+Func CreateBotsHubGUI()
 	; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
 	$gui_botshub = GUICreate('GW Bot Hub', 650, 500, -1, -1)
 	GUISetBkColor($COLOR_SILVER, $gui_botshub)
@@ -126,7 +124,7 @@ Func CreateGUI()
 	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTBLUE)
 
-	GUISetOnEvent($gui_event_close, 'GuiMainButtonHandler')
+	GUISetOnEvent($GUI_EVENT_CLOSE, 'GuiMainButtonHandler')
 	GUICtrlSetOnEvent($gui_startbutton, 'GuiStartButtonHandler')
 	GUICtrlSetOnEvent($gui_combo_farmchoice, 'GuiMainButtonHandler')
 	GUICtrlSetOnEvent($gui_combo_configchoice, 'GuiMainButtonHandler')
@@ -141,6 +139,7 @@ Func CreateGUI()
 	$gui_console = _GUICtrlRichEdit_Create($gui_botshub, '', 20, 190, 300, 255, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
 	_GUICtrlRichEdit_SetCharColor($gui_console, $COLOR_WHITE)
 	_GUICtrlRichEdit_SetBkColor($gui_console, $COLOR_BLACK)
+	SetConsole($gui_console)
 
 	; === Run Infos ===
 	$gui_group_runinfos = GUICtrlCreateGroup('Informations', 21, 39, 300, 145)
@@ -615,7 +614,7 @@ Func GuiMainButtonHandler()
 				FillConfigurationCombo($configurationName)
 			EndIf
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_ENABLE)
-		Case $gui_event_close
+		Case $GUI_EVENT_CLOSE
 			; restore rendering in case it was disabled
 			EnableRendering()
 			Exit
@@ -1461,72 +1460,6 @@ Func CompleteGUIFarmProgress()
 	GUICtrlSetData($gui_farmprogress, 100)
 EndFunc
 #EndRegion Handlers
-
-
-#Region Console
-;~ Print debug to console with timestamp
-Func Debug($TEXT)
-	Out($TEXT, $LVL_DEBUG)
-EndFunc
-
-
-;~ Print info to console with timestamp
-Func Info($TEXT)
-	Out($TEXT, $LVL_INFO)
-EndFunc
-
-
-;~ Print notice to console with timestamp
-Func Notice($TEXT)
-	Out($TEXT, $LVL_NOTICE)
-EndFunc
-
-
-;~ Print warning to console with timestamp
-Func Warn($TEXT)
-	Out($TEXT, $LVL_WARNING)
-EndFunc
-
-
-;~ Print warning to console with timestamp, only once
-;~ Do not overuse, warnings are stored in memory
-Func WarnOnce($TEXT)
-	Local Static $warningMessages[]
-	If $warningMessages[$TEXT] <> 1 Then
-		Out($TEXT, $LVL_WARNING)
-		$warningMessages[$TEXT] = 1
-	EndIf
-EndFunc
-
-
-;~ Print error to console with timestamp
-Func Error($TEXT)
-	Out($TEXT, $LVL_ERROR)
-EndFunc
-
-
-;~ Print to console with timestamp
-;~ LOGLEVEL= 0-Debug, 1-Info, 2-Notice, 3-Warning, 4-Error
-Func Out($TEXT, $LOGLEVEL = 1)
-	If $LOGLEVEL >= $log_level Then
-		Local $logColor
-		Switch $LOGLEVEL
-			Case $LVL_DEBUG
-				$logColor = $CLR_LIGHTGREEN	; CLR is reversed BGR color
-			Case $LVL_INFO
-				$logColor = $CLR_WHITE		; CLR is reversed BGR color
-			Case $LVL_NOTICE
-				$logColor = $CLR_TEAL		; CLR is reversed BGR color
-			Case $LVL_WARNING
-				$logColor = $CLR_YELLOW		; CLR is reversed BGR color
-			Case $LVL_ERROR
-				$logColor = $CLR_RED		; CLR is reversed BGR color
-		EndSwitch
-		_GUICtrlRichEdit_SetCharColor($gui_console, $logColor)
-		_GUICtrlRichEdit_AppendText($gui_console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
-	EndIf
-EndFunc
-#EndRegion Console
 #EndRegion GUI
 
 
