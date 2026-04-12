@@ -17,8 +17,6 @@
 
 #include-once
 #include <Array.au3>
-#include 'Utils.au3'
-
 
 #Region Skill Weapon Type
 Global Const $ID_SKILL_AXE = 1

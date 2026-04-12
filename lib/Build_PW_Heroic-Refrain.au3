@@ -14,6 +14,14 @@
 ; limitations under the License.
 #CE ===========================================================================
 
+#include-once
+#include 'GWA2.au3'
+#include 'GWA2_ID.au3'
+#include 'GWA2_ID_Maps.au3'
+#include 'GWA2_ID_Skills.au3'
+#include 'Utils.au3'
+#include 'Utils-Agents.au3'
+
 Global Const $BUILD_PW_HR_REFRAINS = 'OQCjUamLKTn19Y1YAh0b4ioYsYA'
 Global Const $BUILD_PW_HR_ARIAS = 'OQCkUWm4Ziy0ZdPWNGQI9GuoHGHG'
 Global Const $BUILD_PW_HR_ADRENALINE = 'OQGkURll5iy0ZdPWNGQYMIPxVh7G' ; +3+1 Leadership, +1 Spear, +1 Command, +Clarity

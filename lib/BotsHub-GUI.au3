@@ -17,27 +17,73 @@
 ; GUI built with GuiBuilderPlus
 #CE ===========================================================================
 
-#RequireAdmin
-#NoTrayIcon
+Opt('GUIOnEventMode', True)
+Opt('GUICloseOnESC', False)
 
 #Region Includes
+#include-once
 #include <GUIConstantsEx.au3>
 #include <GuiListBox.au3>
 #include <StaticConstants.au3>
 #include <ButtonConstants.au3>
 #include <WindowsConstants.au3>
-#include <ColorConstants.au3>
 #include <ComboConstants.au3>
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
 #include <GuiTreeView.au3>
 
-#include '../lib/GWA2_Headers.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/GWA2.au3'
-#include '../lib/Utils.au3'
 #include '../lib/JSON.au3'
+#include '../lib/GWA2.au3'
+#include '../lib/GWA2_Assembly.au3'
+#include '../lib/GWA2_ID_Items.au3'
+#include '../lib/Utils.au3'
 #include '../lib/Utils-Console.au3'
+#include '../lib/Utils-Items_Modstructs.au3'
+#include '../lib/Utils-Storage.au3'
+
+#include '../src/farms/CoF.au3'
+#include '../src/farms/Corsairs.au3'
+#include '../src/farms/DragonMoss.au3'
+#include '../src/farms/EdenIris.au3'
+#include '../src/farms/Feathers.au3'
+#include '../src/farms/FoWTowerOfCourage.au3'
+#include '../src/farms/Gemstones.au3'
+#include '../src/farms/GemstoneMargonite.au3'
+#include '../src/farms/GemstoneStygian.au3'
+#include '../src/farms/GemstoneTorment.au3'
+#include '../src/farms/JadeBrotherhood.au3'
+#include '../src/farms/Lightbringer-Sunspear.au3'
+#include '../src/farms/Lightbringer.au3'
+#include '../src/farms/Mantids.au3'
+#include '../src/farms/Kournans.au3'
+#include '../src/farms/Minotaurs.au3'
+#include '../src/farms/Raptors.au3'
+#include '../src/farms/SpiritSlaves.au3'
+#include '../src/farms/Vaettirs.au3'
+#include '../src/missions/Deldrimor.au3'
+#include '../src/missions/FoW.au3'
+#include '../src/missions/Froggy.au3'
+#include '../src/missions/GlintChallenge.au3'
+#include '../src/missions/MinisterialCommendations.au3'
+#include '../src/missions/NexusChallenge.au3'
+#include '../src/missions/SoO.au3'
+#include '../src/missions/SunspearArmor.au3'
+#include '../src/missions/Underworld.au3'
+#include '../src/missions/Voltaic.au3'
+#include '../src/missions/WarSupplyKeiran.au3'
+#include '../src/runs/Boreal.au3'
+#include '../src/runs/Pongmei.au3'
+#include '../src/runs/Tasca.au3'
+#include '../src/titles/LDOA.au3'
+#include '../src/utilities/Follower.au3'
+#include '../src/utilities/OmniFarmer.au3'
+#include '../src/utilities/TestSuite.au3'
+#include '../src/vanquishes/Asuran.au3'
+#include '../src/vanquishes/Kurzick.au3'
+#include '../src/vanquishes/Kurzick2.au3'
+#include '../src/vanquishes/Luxon.au3'
+#include '../src/vanquishes/Norn.au3'
+#include '../src/vanquishes/Vanguard.au3'
 #EndRegion Includes
 
 Global Const $GUI_WA_INACTIVE = 0
@@ -53,9 +99,6 @@ Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Mo
 	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 
 #Region GUI
-Opt('GUIOnEventMode', True)
-Opt('GUICloseOnESC', False)
-Opt('MustDeclareVars', True)
 
 Global $GUI_ENABLED = True
 

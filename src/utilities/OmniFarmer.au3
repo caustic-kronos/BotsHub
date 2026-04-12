@@ -16,13 +16,12 @@
 #CE ===========================================================================
 
 #include-once
-#NoTrayIcon
-
-#include '../../lib/GWA2.au3'
 #include '../../lib/GWA2_ID.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils-Agents.au3'
+#include '../../lib/Utils-Console.au3'
 #include '../../lib/Utils.au3'
 
-Opt('MustDeclareVars', True)
 
 ; Skill numbers declared to make the code WAY more readable (UseSkill($SKILL_CONVICTION is better than UseSkill(1))
 

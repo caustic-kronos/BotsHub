@@ -16,18 +16,19 @@
 #CE ===========================================================================
 
 #include-once
-#RequireAdmin
-#NoTrayIcon
-
-#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID_Maps.au3'
+#include '../../lib/GWA2_ID_Skills.au3'
 #include '../../lib/GWA2_ID.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils-Agents.au3'
+#include '../../lib/Utils-Console.au3'
+#include '../../lib/Utils-Storage.au3'
 #include '../../lib/Utils.au3'
 
 ; Performance as of 26.03.02: 100 runs, 98% success, 3h40m
 
 ; Using third hero for more speed is a bad idea - you'd lose aggro
 
-Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $RA_CORSAIRS_FARMER_SKILLBAR = 'OgcSc5PT3lCHIQHQj1xlpZ4O'

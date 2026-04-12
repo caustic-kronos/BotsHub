@@ -16,15 +16,13 @@
 #CE ===========================================================================
 
 #include-once
-#RequireAdmin
-#NoTrayIcon
-
-#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID_Maps.au3'
 #include '../../lib/GWA2_ID.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils-Agents.au3'
+#include '../../lib/Utils-Console.au3'
+#include '../../lib/Utils-Storage.au3'
 #include '../../lib/Utils.au3'
-
-
-Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $VANGUARD_TITLE_FARM_INFORMATIONS = 'Vanguard title farm'

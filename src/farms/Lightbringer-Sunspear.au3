@@ -15,14 +15,16 @@
 ; limitations under the License.
 #CE ===========================================================================
 
-#RequireAdmin
-#NoTrayIcon
-
-#include '../../lib/GWA2.au3'
+#include-once
+#include '../../lib/GWA2_Assembly.au3'
+#include '../../lib/GWA2_ID_Maps.au3'
 #include '../../lib/GWA2_ID.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils-Agents.au3'
+#include '../../lib/Utils-Console.au3'
+#include '../../lib/Utils-Storage.au3'
 #include '../../lib/Utils.au3'
 
-Opt('MustDeclareVars', True)
 
 Global Const $LIGHTBRINGER_SUNSPEAR_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- the quest A Show of Force' & @CRLF _

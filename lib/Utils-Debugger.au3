@@ -15,8 +15,9 @@
 #CE ===========================================================================
 
 #include-once
-
+#include 'GWA2_Assembly.au3'
 #include 'Utils.au3'
+#include 'Utils-Console.au3'
 
 Global Const $DEBUG_MODE = False
 Global Const $ADD_CONTEXT = False
