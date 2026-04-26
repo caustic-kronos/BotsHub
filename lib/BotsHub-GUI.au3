@@ -102,7 +102,7 @@ Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teamme
 		$gui_checkbox_load_build_hero_4, $gui_checkbox_load_build_hero_5, $gui_checkbox_load_build_hero_6, $gui_checkbox_load_build_hero_7, _
 		$gui_label_build_hero_1, $gui_label_build_hero_2, $gui_label_build_hero_3, $gui_label_build_hero_4, $gui_label_build_hero_5, $gui_label_build_hero_6, $gui_label_build_hero_7, _
 		$gui_input_build_player, $gui_input_build_hero_1, $gui_input_build_hero_2, $gui_input_build_hero_3, $gui_input_build_hero_4, $gui_input_build_hero_5, $gui_input_build_hero_6, $gui_input_build_hero_7
-Global $gui_group_otheroptions
+Global $gui_group_otheroptions, $gui_button_openstorage
 Global $gui_label_characterbuilds, $gui_label_heroesbuilds, $gui_edit_characterbuilds, $gui_edit_heroesbuilds, $gui_label_farminformations
 Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandlootoptionsbutton, $gui_reducelootoptionsbutton, $gui_loadlootoptionsbutton, $gui_savelootoptionsbutton, $gui_applylootoptionsbutton
 
@@ -299,12 +299,15 @@ Func CreateGUI()
 	$gui_group_otheroptions = GUICtrlCreateGroup('Other options', 330, 205, 295, 235)
 	$gui_checkbox_useconsumables = GUICtrlCreateCheckbox('Use optional consumables', 355, 228)
 	$gui_checkbox_useconsets = GUICtrlCreateCheckbox('Use consets', 355, 258)
+	$gui_button_openstorage = GUICtrlCreateButton('Open Storage', 351, 290, 252, 25)
+	GUICtrlSetBkColor($gui_button_openstorage, $COLOR_LIGHTBLUE)
 	$gui_renderbutton = GUICtrlCreateButton('Rendering enabled', 351, 365, 252, 25)
 	GUICtrlSetBkColor($gui_renderbutton, $COLOR_YELLOW)
 
 	GUICtrlSetTip($gui_checkbox_farmmaterialsmidrun, 'Salvage items during runs to save space. Bot will take some salvage kits in inventory for that.')
 	GUICtrlSetTip($gui_checkbox_useconsumables, 'If bot uses consumables (cake, pie, speed boosts, etc), it will do it automatically.')
 	GUICtrlSetTip($gui_checkbox_useconsets, 'If bot can use consets, it will do it automatically.')
+	GUICtrlSetTip($gui_button_openstorage, 'Open Xunlai storage window. Works remotely - view only from explorable areas.')
 	GUICtrlSetTip($gui_checkbox_usescrolls, 'Automatically uses scrolls required to enter elite zones (UW, FoW, Urgoz, Deep)')
 	GUICtrlSetTip($gui_checkbox_sortitems, 'Sorts items in inventory to optimize space before loot management.')
 	GUICtrlSetTip($gui_checkbox_collectdata, 'Collects data into SQLite database. Requires SQLite to be installed and configured. Keep unticked if unsure.')
@@ -332,6 +335,7 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($gui_combo_bagscount, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_combo_districtchoice, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_renderbutton, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_button_openstorage, 'GuiOptionsHandler')
 
 	Local $dynamicExecutionTooltip = 'Dynamic execution. It allows to run a command with' & @CRLF _
 							& 'any arguments on the fly by writing it in below field.' & @CRLF _
@@ -703,6 +707,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.disable_rendering'] = Not $rendering_enabled
 			RefreshRenderingButton()
 			ToggleRendering()
+		Case $gui_button_openstorage
+			OpenXunlaiWindow()
 		Case $gui_button_dynamicexecution
 			DynamicExecution(GUICtrlRead($gui_input_dynamicexecution))
 		Case Else
