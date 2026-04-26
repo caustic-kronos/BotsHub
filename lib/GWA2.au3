@@ -263,6 +263,12 @@ Func OpenChest()
 EndFunc
 
 
+;~ Opens the Xunlai storage window.
+Func OpenXunlaiWindow()
+	Enqueue($OPEN_XUNLAI_STRUCT_PTR, DllStructGetSize($OPEN_XUNLAI_STRUCT))
+EndFunc
+
+
 ;~ Stop maintaining enchantment on target.
 Func DropBuff($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
