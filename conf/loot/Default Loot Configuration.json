@@ -1,8 +1,22 @@
-﻿{
+{
 	"Pick up items": {
 		"Gold": true,
 		"Consumables": true,
-		"Alcohols": true,
+		"Alcohols": {
+			"Minor (1pt)": true,
+			"Major (3pt)": true,
+			"Superior (50pt)": true
+		},
+		"Party": {
+			"Minor (1-2pt)": true,
+			"Major (3-7pt)": true,
+			"Superior (25-50pt)": true
+		},
+		"Sweets": {
+			"Minor (1-2pt)": true,
+			"Major (3pt)": true,
+			"Superior (50pt)": true
+		},
 		"Weapons and offhands": {
 			"White": {
 				"Axe": {

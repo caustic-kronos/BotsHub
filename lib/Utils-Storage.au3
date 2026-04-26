@@ -336,11 +336,24 @@ Func DefaultShouldPickItem($item)
 	ElseIf isArmorSalvageItem($item) Then
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		Return $cache['Pick up items.Armor salvageables.' & $rarityName]
-	; --------------------------- Consumables, Alcohols & Festives ---------------------------
+	; --------------------------- Consumables, Alcohols, Party & Sweets ---------------------------
+	ElseIf IsAlcohol($itemID) Then
+		If $MAP_MINOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Pick up items.Alcohols.Minor (1pt)']
+		If $MAP_MAJOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Pick up items.Alcohols.Major (3pt)']
+		If $MAP_SUPERIOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Pick up items.Alcohols.Superior (50pt)']
+		Return False
+	ElseIf IsFestive($itemID) Or IsPartyTonic($itemID) Then
+		If $MAP_MINOR_PARTY[$itemID] <> Null Then Return $cache['Pick up items.Party.Minor (1-2pt)']
+		If $MAP_MAJOR_PARTY[$itemID] <> Null Then Return $cache['Pick up items.Party.Major (3-7pt)']
+		If $MAP_SUPERIOR_PARTY[$itemID] <> Null Then Return $cache['Pick up items.Party.Superior (25-50pt)']
+		Return False
+	ElseIf IsTownSweet($itemID) Then
+		If $MAP_MINOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Minor (1-2pt)']
+		If $MAP_MAJOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Major (3pt)']
+		If $MAP_SUPERIOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Superior (50pt)']
+		Return False
 	ElseIf IsConsumable($itemID) Then
 		Return $cache['Pick up items.Consumables']
-	ElseIf IsAlcohol($itemID) Then
-		Return $cache['Pick up items.Alcohols']
 	ElseIf IsSpecialDrop($itemID) Then
 		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
 		Return $cache['Pick up items.Festival Items.' & $festivalDropName]
