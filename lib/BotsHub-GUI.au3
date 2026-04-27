@@ -92,7 +92,7 @@ Global $gui_group_titles, _
 		$gui_label_lightbringertitle_text, $gui_label_lightbringertitle_value, $gui_label_sunspeartitle_text, $gui_label_sunspeartitle_value
 Global $gui_group_runoptions, _
 		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_emergencytravel, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_useconsets, $gui_checkbox_usescrolls
-Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_salvageintocomponents, $gui_checkbox_farmmaterialsmidrun, _
+Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_salvageintocomponents, $gui_checkbox_farmmaterialsmidrun, $gui_checkbox_storeitemstokeep, _
 		$gui_label_salvagekits, $gui_combo_salvagekits, $gui_label_identificationkits, $gui_combo_identificationkits
 Global $gui_group_factionoptions, $gui_label_faction, $gui_radiobutton_donatepoints, $gui_radiobutton_buyfactionresources, $gui_radiobutton_buyfactionscrolls
 Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teammemberbuildlabel, _
@@ -270,23 +270,24 @@ Func CreateGUI()
 	GUICtrlSetState($gui_checkbox_emergencytravel, $GUI_DISABLE)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 235)
+	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 260)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
 	$gui_checkbox_salvageintocomponents = GUICtrlCreateCheckbox('Salvage into components', 31, 255)
 	GUICtrlSetState($gui_checkbox_salvageintocomponents, $GUI_DISABLE)
 	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 285)
-	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 318)
-	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 315, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_checkbox_storeitemstokeep = GUICtrlCreateCheckbox('Store items with components to keep', 31, 315)
+	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 348)
+	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 342, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($gui_combo_salvagekits, $KIT_AMOUNT_CHOICE, '12')
 	GUICtrlSetState($gui_label_salvagekits, $GUI_DISABLE)
 	GUICtrlSetState($gui_combo_salvagekits, $GUI_DISABLE)
-	$gui_label_identificationkits = GUICtrlCreateLabel('Identification kits:', 160, 318)
-	$gui_combo_identificationkits = GUICtrlCreateCombo('4', 250, 315, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_label_identificationkits = GUICtrlCreateLabel('Identification kits:', 160, 348)
+	$gui_combo_identificationkits = GUICtrlCreateCombo('4', 250, 342, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
 	GUICtrlSetData($gui_combo_identificationkits, $KIT_AMOUNT_CHOICE, '4')
 	GUICtrlSetState($gui_label_identificationkits, $GUI_DISABLE)
 	GUICtrlSetState($gui_combo_identificationkits, $GUI_DISABLE)
-	$gui_checkbox_usescrolls = GUICtrlCreateCheckbox('Use scrolls to enter elite zones', 31, 345)
-	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 375)
+	$gui_checkbox_usescrolls = GUICtrlCreateCheckbox('Use scrolls to enter elite zones', 31, 375)
+	$gui_checkbox_collectdata = GUICtrlCreateCheckbox('Collect data into database', 31, 405)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
 	$gui_group_factionoptions = GUICtrlCreateGroup('Faction options', 330, 39, 295, 155)
@@ -303,6 +304,7 @@ Func CreateGUI()
 	GUICtrlSetBkColor($gui_renderbutton, $COLOR_YELLOW)
 
 	GUICtrlSetTip($gui_checkbox_farmmaterialsmidrun, 'Salvage items during runs to save space. Bot will take some salvage kits in inventory for that.')
+	GUICtrlSetTip($gui_checkbox_storeitemstokeep, 'Store items with components that should be kept to reduce inventory space.')
 	GUICtrlSetTip($gui_checkbox_useconsumables, 'If bot uses consumables (cake, pie, speed boosts, etc), it will do it automatically.')
 	GUICtrlSetTip($gui_checkbox_useconsets, 'If bot can use consets, it will do it automatically.')
 	GUICtrlSetTip($gui_checkbox_usescrolls, 'Automatically uses scrolls required to enter elite zones (UW, FoW, Urgoz, Deep)')
@@ -320,6 +322,7 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($gui_checkbox_loopruns, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_hardmode, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_farmmaterialsmidrun, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_checkbox_storeitemstokeep, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsumables, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsets, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_usescrolls, 'GuiOptionsHandler')
@@ -663,6 +666,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.hard_mode'] = GUICtrlRead($gui_checkbox_hardmode) == $GUI_CHECKED
 		Case $gui_checkbox_farmmaterialsmidrun
 			$run_options_cache['run.farm_materials_mid_run'] = GUICtrlRead($gui_checkbox_farmmaterialsmidrun) == $GUI_CHECKED
+		Case $gui_checkbox_storeitemstokeep
+			$run_options_cache['run.store_items_to_keep'] = GUICtrlRead($gui_checkbox_storeitemstokeep) == $GUI_CHECKED
 		Case $gui_checkbox_useconsumables
 			$run_options_cache['run.consume_consumables'] = GUICtrlRead($gui_checkbox_useconsumables) == $GUI_CHECKED
 		Case $gui_checkbox_useconsets
@@ -1561,6 +1566,7 @@ Func ApplyConfigToGUI()
 	GUICtrlSetState($gui_checkbox_loopruns, $run_options_cache['run.loop_mode'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_hardmode, $run_options_cache['run.hard_mode'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_farmmaterialsmidrun, $run_options_cache['run.farm_materials_mid_run'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_storeitemstokeep, $run_options_cache['run.store_items_to_keep'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsumables, $run_options_cache['run.consume_consumables'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsets, $run_options_cache['run.use_consets'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_usescrolls, $run_options_cache['run.use_scrolls'] ? $GUI_CHECKED : $GUI_UNCHECKED)
