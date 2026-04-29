@@ -774,7 +774,7 @@ Func MapScanResultsToLabels()
 	SetLabel('DropHeroBundle', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0xF6)))
 	SetLabel('LockHeroTarget', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x13E)))
 	$tempValue = $scan_results['HeroSkills']
-	SetLabel('ToggleHeroSkillState', Ptr(GetCallTargetAddress($processHandle, $tempValue - 0xB5)))
+	SetLabel('ToggleHeroSkillState', Ptr(GetCallTargetAddress($processHandle, $tempValue - 0xB1)))
 	SetLabel('CancelHeroSkill', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x1B)))
 	$tempValue = $scan_results['PlayerAdd']
 	SetLabel('AddPlayer', Ptr(GetCallTargetAddress($processHandle, $tempValue + 0x13)))
