@@ -1995,10 +1995,11 @@ EndFunc
 
 Func AssemblerCreateTradeCommands()
 	_('CommandTradeInitiate:')
+	_('push 0')
 	_('push dword[eax+8]')
 	_('push dword[eax+4]')
 	_('call UIMessage')
-	_('add esp,8')
+	_('add esp,C')
 	_('ljmp CommandReturn')
 
 	_('CommandTradeCancel:')
