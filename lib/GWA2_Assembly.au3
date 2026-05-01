@@ -25,6 +25,9 @@ Global Const $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS = 12
 Global Const $CONTROL_TYPE_ACTIVATE = 0x20
 Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 
+; UIMsg IDs
+Global Const $UIMSG_SHOW_XUNLAI_CHEST = 0x10000040
+
 ; Constants for EncString decoding
 Global Const $ENCSTR_WORD_VALUE_BASE = 0x0100
 Global Const $ENCSTR_WORD_BIT_MORE = 0x8000
@@ -233,6 +236,9 @@ Global Const $LOCK_HERO_TARGET_STRUCT = DllStructCreate('ptr;dword;dword')
 Global Const $TOGGLE_HERO_SKILL_STATE = DllStructCreate('ptr;dword;dword')
 Global Const $EQUIP_ITEM_STRUCT = DllStructCreate('ptr;dword;dword;dword')
 Global Const $EQUIP_ITEM_STRUCT_PTR = DllStructGetPtr($EQUIP_ITEM_STRUCT)
+; kShowXunlaiChest UIMsg: field layout is {ptr commandUIMsg, dword msgID, dword h0000, byte storage_pane_unlocked, byte anniversary_pane_unlocked}
+Global Const $OPEN_XUNLAI_STRUCT = DllStructCreate('ptr;dword;dword;byte;byte')
+Global Const $OPEN_XUNLAI_STRUCT_PTR = DllStructGetPtr($OPEN_XUNLAI_STRUCT)
 
 ; Party
 Global Const $ADD_PLAYER_STRUCT = DllStructCreate('ptr;dword')
@@ -897,6 +903,11 @@ Func InitializeCommandStructures()
 	;UIMsg
 	DllStructSetData($MOVE_MAP_STRUCT, 1, GetLabel('CommandUIMsg'))
 	DllStructSetData($EQUIP_ITEM_STRUCT, 1, GetLabel('CommandUIMsg'))
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 1, GetLabel('CommandUIMsg'))
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 2, $UIMSG_SHOW_XUNLAI_CHEST)
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 3, 0)
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 4, 1)
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 5, 1)
 	;Party
 	DllStructSetData($ADD_PLAYER_STRUCT, 1, GetLabel('CommandAddPlayer'))
 	DllStructSetData($KICK_PLAYER_STRUCT, 1, GetLabel('CommandKickPlayer'))
