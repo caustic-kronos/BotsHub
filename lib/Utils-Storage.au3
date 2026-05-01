@@ -1515,18 +1515,28 @@ Func BalanceCharacterGold($goldAmount, $mode = 0)
 	Info('Balancing characters gold')
 	Local $goldCharacter = GetGoldCharacter()
 	Local $goldStorage = GetGoldStorage()
-	If $goldStorage > 950000 Then
-		Warn('Too much moneyz in Xunlai, you are a rich bitch.')
-	ElseIf $goldStorage < 50000 Then
-		Warn('Not enough moneyz in Xunlai, you poor bastard.')
-	ElseIf $goldCharacter > $goldAmount And $mode <> 1 Then
-		DepositGold($goldCharacter - $goldAmount)
-		Info('Deposited gold')
+	If $goldCharacter > $goldAmount And $mode <> 1 Then
+		; We want to deposit
+		If $goldStorage > (1000000 - ($goldCharacter - $goldAmount)) Then
+			Warn('Too much moneyz in Xunlai, you are a rich bitch.')
+		Else
+			DepositGold($goldCharacter - $goldAmount)
+			Info('Deposited gold')
+		EndIf
+		Return True
 	ElseIf $goldCharacter < $goldAmount And $mode <> 2 Then
-		WithdrawGold($goldAmount - $goldCharacter)
-		Info('Withdrawn gold')
+		; We want to withdraw
+		If $goldStorage < ($goldAmount - $goldCharacter) Then
+			Warn('Not enough moneyz in Xunlai, you poor bastard.')
+		Else
+			WithdrawGold($goldAmount - $goldCharacter)
+			Info('Withdrawn gold')
+		EndIf
+		Return True
+	Else
+		Warn('Cannot balance characters gold.')
+		Return False
 	EndIf
-	Return True
 EndFunc
 
 
