@@ -121,8 +121,13 @@ Func SetupTeamJadeBrotherhoodFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
+	Local $paragonHeroNumber = Null
 	LeaveParty()
-	If AddHeroByProfession($ID_PARAGON, $JB_HERO_PARTY_ID) == $FAIL Then Return $FAIL
+	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $JB_HERO_PARTY_ID)
+	If Not IsNumber($paragonHeroNumber) Then
+		Warn('Could not add paragon hero to party')
+		Return $FAIL
+	EndIf
 	RandomSleep(250)
 	LoadSkillTemplate($JB_HERO_SKILLBAR, 1)
 	RandomSleep(250)

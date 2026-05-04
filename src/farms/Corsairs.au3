@@ -112,9 +112,14 @@ Func SetupTeamCorsairsFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
+	Local $dervishHeroNumber = Null
 	LeaveParty()
 	If AddRequiredHero($ID_DUNKORO) == $FAIL Then Return $FAIL
-	If AddHeroByProfession($ID_DERVISH, $ID_MELONNI) == $FAIL Then Return $FAIL
+	$dervishHeroNumber = AddHeroByProfession($ID_DERVISH, $ID_MELONNI)
+	If Not IsNumber($dervishHeroNumber) Then
+		Warn('Could not add dervish hero to party')
+		Return $FAIL
+	EndIf
 	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, 1)
 	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, 2)
 	RandomSleep(250)

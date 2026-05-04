@@ -95,6 +95,7 @@ $raptors_move_options.Item('openChests')				= False
 
 Global $raptors_farm_setup = False
 Global $raptors_player_profession = $ID_WARRIOR
+Global $raptors_hero_number = 1
 
 ;~ Main method to farm Raptors
 Func RaptorsFarm()
@@ -150,11 +151,15 @@ Func SetupTeamRaptorsFarm()
 	Info('Setting up team')
 	RandomSleep(500)
 	LeaveParty()
-	If AddHeroByProfession($ID_PARAGON, $RAPTORS_HERO_PARTY_ID) == $FAIL Then Return $FAIL
+	$raptors_hero_number = AddHeroByProfession($ID_PARAGON, $RAPTORS_HERO_PARTY_ID)
+	If Not IsNumber($raptors_hero_number) Then
+		Warn('Could not add paragon hero to party')
+		Return $FAIL
+	EndIf
 	RandomSleep(250)
-	LoadSkillTemplate($P_RUNNER_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($P_RUNNER_HERO_SKILLBAR, $raptors_hero_number)
 	RandomSleep(250)
-	DisableAllHeroSkills(1)
+	DisableAllHeroSkills($raptors_hero_number)
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -181,9 +186,9 @@ EndFunc
 Func RaptorsFarmLoop()
 	If GetMapID() <> $ID_RIVEN_EARTH Then Return $FAIL
 
-	UseHeroSkill(1, $RAPTORS_VOCAL_WAS_SOGOLON)
+	UseHeroSkill($raptors_hero_number, $RAPTORS_VOCAL_WAS_SOGOLON)
 	RandomSleep(1200)
-	UseHeroSkill(1, $RAPTORS_INCOMING)
+	UseHeroSkill($raptors_hero_number, $RAPTORS_INCOMING)
 	GetRaptorsAsuraBlessing()
 	MoveToBaseOfCave()
 	Info('Moving Hero away')
@@ -218,20 +223,20 @@ Func MoveToBaseOfCave()
 	Info('Moving to Cave')
 	Move(-22015, -7502)
 	RandomSleep(7000)
-	UseHeroSkill(1, $RAPTORS_FALLBACK)
+	UseHeroSkill($raptors_hero_number, $RAPTORS_FALLBACK)
 	RandomSleep(500)
 	If ($raptors_player_profession == $ID_WARRIOR) Then UseSkillEx($RAPTORS_I_AM_UNSTOPPABLE)
 	Moveto(-21333, -8384)
-	UseHeroSkill(1, $RAPTORS_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill($raptors_hero_number, $RAPTORS_ENDURING_HARMONY, GetMyAgent())
 	If ($raptors_player_profession == $ID_DERVISH) Then UseSkillEx($RAPTORS_SIGNET_OF_MYSTIC_SPEED, GetMyAgent())
 	RandomSleep(1800)
-	UseHeroSkill(1, $RAPTORS_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill($raptors_hero_number, $RAPTORS_MAKE_HASTE, GetMyAgent())
 	RandomSleep(50)
-	UseHeroSkill(1, $RAPTORS_STAND_YOUR_GROUND)
+	UseHeroSkill($raptors_hero_number, $RAPTORS_STAND_YOUR_GROUND)
 	RandomSleep(50)
-	UseHeroSkill(1, $RAPTORS_CANT_TOUCH_THIS)
+	UseHeroSkill($raptors_hero_number, $RAPTORS_CANT_TOUCH_THIS)
 	RandomSleep(50)
-	UseHeroSkill(1, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
+	UseHeroSkill($raptors_hero_number, $RAPTORS_BLADETURN_REFRAIN, GetMyAgent())
 	Move(-20930, -9480)
 EndFunc
 

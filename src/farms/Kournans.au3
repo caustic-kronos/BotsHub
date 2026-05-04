@@ -131,10 +131,25 @@ Func SetupTeamKournansFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
+	Local $rangerHeroNumber = Null
+	Local $ritualistHeroNumber = Null
+	Local $paragonHeroNumber = Null
 	LeaveParty()
-	If AddHeroByProfession($ID_RANGER, $KOURNANS_RANGER_HERO) == $FAIL Then Return $FAIL
-	If AddHeroByProfession($ID_RITUALIST, $KOURNANS_RITUALIST_HERO) == $FAIL Then Return $FAIL
-	If AddHeroByProfession($ID_PARAGON, $KOURNANS_PARAGON_HERO) == $FAIL Then Return $FAIL
+	$rangerHeroNumber = AddHeroByProfession($ID_RANGER, $KOURNANS_RANGER_HERO)
+	If Not IsNumber($rangerHeroNumber) Then
+		Warn('Could not add ranger hero to party')
+		Return $FAIL
+	EndIf
+	$ritualistHeroNumber = AddHeroByProfession($ID_RITUALIST, $KOURNANS_RITUALIST_HERO)
+	If Not IsNumber($ritualistHeroNumber) Then
+		Warn('Could not add ritualist hero to party')
+		Return $FAIL
+	EndIf
+	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $KOURNANS_PARAGON_HERO)
+	If Not IsNumber($paragonHeroNumber) Then
+		Warn('Could not add paragon hero to party')
+		Return $FAIL
+	EndIf
 	RandomSleep(500)
 	If GetPartySize() <> 4 Then
 		Warn('Could not set up party correctly. Team size different than 4')

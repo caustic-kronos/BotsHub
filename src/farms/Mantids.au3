@@ -111,8 +111,13 @@ Func SetupTeamMantidsFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
+	Local $paragonHeroNumber = Null
 	LeaveParty()
-	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == $FAIL Then Return $FAIL
+	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN)
+	If Not IsNumber($paragonHeroNumber) Then
+		Warn('Could not add paragon hero to party')
+		Return $FAIL
+	EndIf
 	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, 1)
 	RandomSleep(250)
 	DisableAllHeroSkills(1)

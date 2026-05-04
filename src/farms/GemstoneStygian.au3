@@ -155,9 +155,14 @@ Func SetupTeamStygianFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
+	Local $rangerHeroNumber = Null
 	LeaveParty()
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		If AddHeroByProfession($ID_RANGER, $STYGIAN_HERO_PARTY_ID) == $FAIL Then Return $FAIL
+		$rangerHeroNumber = AddHeroByProfession($ID_RANGER, $STYGIAN_HERO_PARTY_ID)
+		If Not IsNumber($rangerHeroNumber) Then
+			Warn('Could not add ranger hero to party')
+			Return $FAIL
+		EndIf
 		RandomSleep(500)
 		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, 1)
 		RandomSleep(500)
