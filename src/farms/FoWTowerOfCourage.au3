@@ -123,11 +123,21 @@ EndFunc
 ;~ Fissure of Woe - Tower of Courage farm setup
 Func SetupFoWToCFarm()
 	Info('Setting up farm')
+	Local $monkHeroNumber = Null
+	Local $paragonHeroNumber = Null
 	If TravelToFoWOutpost($district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
-	If AddHeroByProfession($ID_MONK, $ID_OGDEN) == $FAIL Then Return $FAIL
-	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == $FAIL Then Return $FAIL
+	$monkHeroNumber = AddHeroByProfession($ID_MONK, $ID_OGDEN)
+	If Not IsNumber($monkHeroNumber) Then
+		Warn('Could not add monk hero to party')
+		Return $FAIL
+	EndIf
+	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN)
+	If Not IsNumber($paragonHeroNumber) Then
+		Warn('Could not add paragon hero to party')
+		Return $FAIL
+	EndIf
 	If SetupPlayerFoWToCFarm() == $FAIL Then Return $FAIL
 	If SetupTeamFoWToCFarm() == $FAIL Then Return $FAIL
 	$fow_toc_farm_setup = True

@@ -189,8 +189,13 @@ Func SetupTeamMargoniteFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
+	Local $monkHeroNumber = Null
 	LeaveParty()
-	If AddHeroByProfession($ID_MONK, $MARGONITE_HERO_PARTY_ID) == $FAIL Then Return $FAIL
+	$monkHeroNumber = AddHeroByProfession($ID_MONK, $MARGONITE_HERO_PARTY_ID)
+	If Not IsNumber($monkHeroNumber) Then
+		Warn('Could not add monk hero to party')
+		Return $FAIL
+	EndIf
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not add monk hero to team. Team size different than 2')

@@ -1618,13 +1618,29 @@ EndFunc
 ;~ Try to add any available hero of the given profession to the party.
 ;~ If $preferredHeroID is specified, tries that hero first before falling back to others.
 ;~ Iterates all known heroes of that profession and attempts AddHero until one succeeds.
+;~ If a hero of that profession is already in party, returns that hero number and does not try to add.
 ;~ Returns the hero's party index (1-based) on success, or 0 if no hero of that profession could be added.
 Func AddHeroByProfession($professionID, $preferredHeroID = 0)
+	If $preferredHeroID > 0 Then
+		Local $preferredHeroNumber = GetHeroNumberByHeroID($preferredHeroID)
+		If IsNumber($preferredHeroNumber) Then Return $preferredHeroNumber
+	EndIf
+
+	For $heroNumber = 1 To GetHeroCount()
+		If GetHeroProfession($heroNumber) == $professionID Then Return $heroNumber
+	Next
+
 	If $preferredHeroID > 0 Then
 		Local $previousCount = GetHeroCount()
 		AddHero($preferredHeroID)
 		Sleep(500)
-		If GetHeroCount() > $previousCount Then Return $SUCCESS
+		If GetHeroCount() > $previousCount Then
+			Local $preferredHeroNumber = GetHeroNumberByHeroID($preferredHeroID)
+			If IsNumber($preferredHeroNumber) Then Return $preferredHeroNumber
+			For $heroNumber = 1 To GetHeroCount()
+				If GetHeroProfession($heroNumber) == $professionID Then Return $heroNumber
+			Next
+		EndIf
 	EndIf
 	For $heroID In MapKeys($HERO_PROFESSIONS)
 		If $HERO_PROFESSIONS[$heroID] <> $professionID Then ContinueLoop
@@ -1632,7 +1648,13 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 		Local $previousCount = GetHeroCount()
 		AddHero($heroID)
 		Sleep(500)
-		If GetHeroCount() > $previousCount Then Return $SUCCESS
+		If GetHeroCount() > $previousCount Then
+			Local $heroNumber = GetHeroNumberByHeroID($heroID)
+			If IsNumber($heroNumber) Then Return $heroNumber
+			For $i = 1 To GetHeroCount()
+				If GetHeroProfession($i) == $professionID Then Return $i
+			Next
+		EndIf
 	Next
 	Error('Could not add any hero with profession ID ' & $professionID)
 	Return $FAIL
