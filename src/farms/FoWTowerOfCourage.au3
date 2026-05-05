@@ -105,6 +105,8 @@ Global Const $FOW_TOC_MODELID_ABYSSAL			= 2861
 
 Global $fow_toc_farm_setup = False
 Global $fow_toc_30s_timer
+Global $fow_toc_monk_hero_number = 1
+Global $fow_toc_paragon_hero_number = 2
 
 ;~ Main method to farm Fissure of Woe - Tower of Courage
 Func FoWToCFarm()
@@ -123,18 +125,16 @@ EndFunc
 ;~ Fissure of Woe - Tower of Courage farm setup
 Func SetupFoWToCFarm()
 	Info('Setting up farm')
-	Local $monkHeroNumber = Null
-	Local $paragonHeroNumber = Null
 	If TravelToFoWOutpost($district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
-	$monkHeroNumber = AddHeroByProfession($ID_MONK, $ID_OGDEN)
-	If Not IsNumber($monkHeroNumber) Then
+	$fow_toc_monk_hero_number = AddHeroByProfession($ID_MONK, $ID_OGDEN)
+	If Not IsNumber($fow_toc_monk_hero_number) Then
 		Warn('Could not add monk hero to party')
 		Return $FAIL
 	EndIf
-	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN)
-	If Not IsNumber($paragonHeroNumber) Then
+	$fow_toc_paragon_hero_number = AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN)
+	If Not IsNumber($fow_toc_paragon_hero_number) Then
 		Warn('Could not add paragon hero to party')
 		Return $FAIL
 	EndIf
@@ -161,11 +161,11 @@ EndFunc
 
 Func SetupTeamFoWToCFarm()
 	Info('Setting up team build skill bars')
-	LoadSkillTemplate($FOW_TOC_M_HERO_SKILLBAR, 1)
-	LoadSkillTemplate($FOW_TOC_P_HERO_SKILLBAR, 2)
+	LoadSkillTemplate($FOW_TOC_M_HERO_SKILLBAR, $fow_toc_monk_hero_number)
+	LoadSkillTemplate($FOW_TOC_P_HERO_SKILLBAR, $fow_toc_paragon_hero_number)
 	RandomSleep(250)
-	DisableAllHeroSkills(1)
-	DisableAllHeroSkills(2)
+	DisableAllHeroSkills($fow_toc_monk_hero_number)
+	DisableAllHeroSkills($fow_toc_paragon_hero_number)
 	Return $SUCCESS
 EndFunc
 
@@ -308,20 +308,20 @@ Func HeroesCastFoWToCBuffs()
 	Local $myAgent = GetMyAgent()
 	CommandAll(-23300, -1300)
 	RandomSleep(1200)
-	UseHeroSkill(1, $FOW_TOC_DIVINE_SPIRIT)
-	UseHeroSkill(2, $FOW_TOC_VOCAL_WAS_SOGOLON)
+	UseHeroSkill($fow_toc_monk_hero_number, $FOW_TOC_DIVINE_SPIRIT)
+	UseHeroSkill($fow_toc_paragon_hero_number, $FOW_TOC_VOCAL_WAS_SOGOLON)
 	RandomSleep(1200)
-	UseHeroSkill(1, $FOW_TOC_BLESSED_AURA)
-	UseHeroSkill(2, $FOW_TOC_ENDURING_HARMONY, $myAgent)
+	UseHeroSkill($fow_toc_monk_hero_number, $FOW_TOC_BLESSED_AURA)
+	UseHeroSkill($fow_toc_paragon_hero_number, $FOW_TOC_ENDURING_HARMONY, $myAgent)
 	RandomSleep(2400)
-	UseHeroSkill(1, $FOW_TOC_SPELLBREAKER, $myAgent)
-	UseHeroSkill(2, $FOW_TOC_BRACE_YOURSELVES, $myAgent)
+	UseHeroSkill($fow_toc_monk_hero_number, $FOW_TOC_SPELLBREAKER, $myAgent)
+	UseHeroSkill($fow_toc_paragon_hero_number, $FOW_TOC_BRACE_YOURSELVES, $myAgent)
 	RandomSleep(1200)
-	UseHeroSkill(2, $FOW_TOC_STAND_YOUR_GROUND)
+	UseHeroSkill($fow_toc_paragon_hero_number, $FOW_TOC_STAND_YOUR_GROUND)
 	RandomSleep(50)
-	UseHeroSkill(2, $FOW_TOC_INCOMING)
+	UseHeroSkill($fow_toc_paragon_hero_number, $FOW_TOC_INCOMING)
 	RandomSleep(50)
-	UseHeroSkill(2, $FOW_TOC_BLADETURN_REFRAIN, $myAgent)
+	UseHeroSkill($fow_toc_paragon_hero_number, $FOW_TOC_BLADETURN_REFRAIN, $myAgent)
 EndFunc
 
 

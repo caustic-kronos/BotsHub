@@ -64,6 +64,8 @@ Global Const $CORSAIRS_MYSTIC_HEALING	= 2
 
 Global $corsairs_farm_setup = False
 Global $bohseda_timer = Null
+Global $corsairs_dunkoro_hero_number = 1
+Global $corsairs_dervish_hero_number = 2
 
 ;~ Main method to farm Corsairs
 Func CorsairsFarm()
@@ -112,19 +114,23 @@ Func SetupTeamCorsairsFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
-	Local $dervishHeroNumber = Null
 	LeaveParty()
 	If AddRequiredHero($ID_DUNKORO) == $FAIL Then Return $FAIL
-	$dervishHeroNumber = AddHeroByProfession($ID_DERVISH, $ID_MELONNI)
-	If Not IsNumber($dervishHeroNumber) Then
+	$corsairs_dunkoro_hero_number = GetHeroNumberByHeroID($ID_DUNKORO)
+	If Not IsNumber($corsairs_dunkoro_hero_number) Then
+		Warn('Could not find Dunkoro in party')
+		Return $FAIL
+	EndIf
+	$corsairs_dervish_hero_number = AddHeroByProfession($ID_DERVISH, $ID_MELONNI)
+	If Not IsNumber($corsairs_dervish_hero_number) Then
 		Warn('Could not add dervish hero to party')
 		Return $FAIL
 	EndIf
-	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, 1)
-	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, 2)
+	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, $corsairs_dunkoro_hero_number)
+	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, $corsairs_dervish_hero_number)
 	RandomSleep(250)
-	DisableHeroSkillSlot(1, $CORSAIRS_MAKE_HASTE)
-	DisableHeroSkillSlot(2, $CORSAIRS_WINNOWING)
+	DisableHeroSkillSlot($corsairs_dunkoro_hero_number, $CORSAIRS_MAKE_HASTE)
+	DisableHeroSkillSlot($corsairs_dervish_hero_number, $CORSAIRS_WINNOWING)
 	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
@@ -155,12 +161,12 @@ Func CorsairsFarmLoop()
 	RandomSleep(100)
 	UseSkillEx($CORSAIRS_WHIRLING_DEFENSE)
 	RandomSleep(100)
-	UseHeroSkill(1, $CORSAIRS_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill($corsairs_dunkoro_hero_number, $CORSAIRS_MAKE_HASTE, GetMyAgent())
 	RandomSleep(100)
 	$bohseda_timer = TimerInit()
 	; Furthest point from Bohseda
-	CommandHero(1, -13778, -10156)
-	CommandHero(2, -10850, -7025)
+	CommandHero($corsairs_dunkoro_hero_number, -13778, -10156)
+	CommandHero($corsairs_dervish_hero_number, -10850, -7025)
 	MoveTo(-9050, -7000)
 	Local $captainBohseda = GetNearestNPCToCoords(-9850, -7250)
 	UseSkillEx($CORSAIRS_HEART_OF_SHADOW, $captainBohseda)
@@ -180,10 +186,10 @@ Func CorsairsFarmLoop()
 	UseSkillEx($CORSAIRS_HEART_OF_SHADOW, GetNearestEnemyToAgent(GetMyAgent()))
 	DefendAgainstCorsairs()
 
-	UseHeroSkill(2, $CORSAIRS_WINNOWING)
+	UseHeroSkill($corsairs_dervish_hero_number, $CORSAIRS_WINNOWING)
 	MoveTo(-9783,-7073, 0, 0)
 	WaitForBohseda()
-	CommandHero(2, -13778, -10156)
+	CommandHero($corsairs_dervish_hero_number, -13778, -10156)
 	UseSkillEx($CORSAIRS_DWARVEN_STABILITY)
 	RandomSleep(50)
 	CastAllDefensiveSkills()

@@ -61,6 +61,7 @@ Global Const $MANTIDS_MAKE_HASTE			= 7
 Global Const $MANTIDS_BLADETURN_REFRAIN		= 8
 
 Global $mantids_farm_setup = False
+Global $mantids_paragon_hero_number = 1
 
 
 ;~ Main method to farm Mantids
@@ -111,16 +112,15 @@ Func SetupTeamMantidsFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
-	Local $paragonHeroNumber = Null
 	LeaveParty()
-	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN)
-	If Not IsNumber($paragonHeroNumber) Then
+	$mantids_paragon_hero_number = AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN)
+	If Not IsNumber($mantids_paragon_hero_number) Then
 		Warn('Could not add paragon hero to party')
 		Return $FAIL
 	EndIf
-	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, $mantids_paragon_hero_number)
 	RandomSleep(250)
-	DisableAllHeroSkills(1)
+	DisableAllHeroSkills($mantids_paragon_hero_number)
 	Return $SUCCESS
 EndFunc
 
@@ -144,25 +144,25 @@ Func MantidsFarmLoop()
 	If GetMapID() <> $ID_WAJJUN_BAZAAR Then Return $FAIL
 	Local $target
 
-	UseHeroSkill(1, $MANTIDS_VOCAL_WAS_SOGOLON)
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_VOCAL_WAS_SOGOLON)
 	RandomSleep(1500)
-	UseHeroSkill(1, $MANTIDS_INCOMING)
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_INCOMING)
 	AdlibRegister('MantidsUseFallBack', 8000)
 
 	; Move to spot before aggro
 	MoveTo(3150, -16350, 0, 0)
 	RandomSleep(1500)
-	UseHeroSkill(1, $MANTIDS_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_ENDURING_HARMONY, GetMyAgent())
 	RandomSleep(1500)
-	UseHeroSkill(1, $MANTIDS_THEY_RE_ON_FIRE)
-	UseHeroSkill(1, $MANTIDS_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_THEY_RE_ON_FIRE)
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_MAKE_HASTE, GetMyAgent())
 	UseSkillEx($MANTIDS_SERPENTS_QUICKNESS)
 	RandomSleep(50)
-	UseHeroSkill(1, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_BLADETURN_REFRAIN, GetMyAgent())
 	UseSkillEx($MANTIDS_SHROUD_OF_DISTRESS)
 	RandomSleep(50)
 	UseSkillEx($MANTIDS_SHADOWFORM)
-	UseHeroSkill(1, $MANTIDS_BRACEYOURSELF, GetMyAgent())
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_BRACEYOURSELF, GetMyAgent())
 	RandomSleep(50)
 	CommandAll(9000, -19500)
 
@@ -231,7 +231,7 @@ EndFunc
 
 ;~ Paragon Hero uses Fallback
 Func MantidsUseFallBack()
-	UseHeroSkill(1, $MANTIDS_FALLBACK)
+	UseHeroSkill($mantids_paragon_hero_number, $MANTIDS_FALLBACK)
 	AdlibUnRegister('MantidsUseFallBack')
 EndFunc
 

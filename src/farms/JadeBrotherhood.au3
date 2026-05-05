@@ -70,6 +70,7 @@ Global Const $JB_TIMEOUT = 120000
 
 Global $jade_brotherhood_farm_setup = False
 Global $deadlock_timer
+Global $jade_brotherhood_paragon_hero_number = 1
 
 
 ;~ Main method to farm Jade Brotherhood for q8
@@ -93,7 +94,7 @@ Func SetupJadeBrotherhoodFarm()
 
 	GoToBukdekByway()
 	RandomSleep(50)
-	UseHeroSkill(1, $BROTHERHOOD_INCOMING)
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_INCOMING)
 	MoveTo(-14000, -11000)
 	Move(-14000, -11700)
 	RandomSleep(1000)
@@ -121,17 +122,16 @@ Func SetupTeamJadeBrotherhoodFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
-	Local $paragonHeroNumber = Null
 	LeaveParty()
-	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $JB_HERO_PARTY_ID)
-	If Not IsNumber($paragonHeroNumber) Then
+	$jade_brotherhood_paragon_hero_number = AddHeroByProfession($ID_PARAGON, $JB_HERO_PARTY_ID)
+	If Not IsNumber($jade_brotherhood_paragon_hero_number) Then
 		Warn('Could not add paragon hero to party')
 		Return $FAIL
 	EndIf
 	RandomSleep(250)
-	LoadSkillTemplate($JB_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($JB_HERO_SKILLBAR, $jade_brotherhood_paragon_hero_number)
 	RandomSleep(250)
-	DisableAllHeroSkills(1)
+	DisableAllHeroSkills($jade_brotherhood_paragon_hero_number)
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then
 		Warn('Could not set up party correctly. Team size different than 2')
@@ -180,16 +180,16 @@ EndFunc
 ;~ Separate from paragon hero - you'll be missed Morgahn
 Func MoveToSeparationWithHero()
 	Info('Moving to crossing')
-	UseHeroSkill(1, $BROTHERHOOD_VOCAL_WAS_SOGOLON)
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_VOCAL_WAS_SOGOLON)
 	RandomSleep(1250)
-	UseHeroSkill(1, $BROTHERHOOD_INCOMING)
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_INCOMING)
 	RandomSleep(50)
 	MoveTo(-10475, -9685)
-	UseHeroSkill(1, $BROTHERHOOD_FALLBACK)
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_FALLBACK)
 	MoveTo(-11303, -6545)
 	CommandAll(-11303, -6545)
 	MoveTo(-11983, -6261)
-	UseHeroSkill(1, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_MAKE_HASTE, GetMyAgent())
 EndFunc
 
 #CS
@@ -247,15 +247,15 @@ Func KillJadeBrotherhood()
 	Local $target
 
 	Info('Clearing Jade Brotherhood')
-	UseHeroSkill(1, $BROTHERHOOD_INCOMING)
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_INCOMING)
 	UseSkillEx($JB_DRUNKENMASTER)
 	RandomSleep(50)
-	UseHeroSkill(1, $BROTHERHOOD_STAND_YOUR_GROUND)
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_STAND_YOUR_GROUND)
 	RandomSleep(50)
-	UseHeroSkill(1, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_ENDURING_HARMONY, GetMyAgent())
 	UseSkillEx($JB_SAND_SHARDS)
 	RandomSleep(50)
-	UseHeroSkill(1, $BROTHERHOOD_BLADETURN_REFRAIN, GetMyAgent())
+	UseHeroSkill($jade_brotherhood_paragon_hero_number, $BROTHERHOOD_BLADETURN_REFRAIN, GetMyAgent())
 
 	$target = GetNearestEnemyToCoords(-13262, -5486)
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)

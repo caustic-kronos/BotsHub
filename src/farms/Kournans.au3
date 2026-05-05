@@ -80,6 +80,9 @@ Global Const $KOURNANS_VITAL_WEAPON			= 3
 Global Const $KOURNANS_DEATH_PACT_SIGNET	= 4
 
 Global $kournans_farm_setup = False
+Global $kournans_ranger_hero_number = 1
+Global $kournans_ritualist_hero_number = 2
+Global $kournans_paragon_hero_number = 3
 
 
 ;~ Main method to farm Kournans
@@ -131,22 +134,19 @@ Func SetupTeamKournansFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
-	Local $rangerHeroNumber = Null
-	Local $ritualistHeroNumber = Null
-	Local $paragonHeroNumber = Null
 	LeaveParty()
-	$rangerHeroNumber = AddHeroByProfession($ID_RANGER, $KOURNANS_RANGER_HERO)
-	If Not IsNumber($rangerHeroNumber) Then
+	$kournans_ranger_hero_number = AddHeroByProfession($ID_RANGER, $KOURNANS_RANGER_HERO)
+	If Not IsNumber($kournans_ranger_hero_number) Then
 		Warn('Could not add ranger hero to party')
 		Return $FAIL
 	EndIf
-	$ritualistHeroNumber = AddHeroByProfession($ID_RITUALIST, $KOURNANS_RITUALIST_HERO)
-	If Not IsNumber($ritualistHeroNumber) Then
+	$kournans_ritualist_hero_number = AddHeroByProfession($ID_RITUALIST, $KOURNANS_RITUALIST_HERO)
+	If Not IsNumber($kournans_ritualist_hero_number) Then
 		Warn('Could not add ritualist hero to party')
 		Return $FAIL
 	EndIf
-	$paragonHeroNumber = AddHeroByProfession($ID_PARAGON, $KOURNANS_PARAGON_HERO)
-	If Not IsNumber($paragonHeroNumber) Then
+	$kournans_paragon_hero_number = AddHeroByProfession($ID_PARAGON, $KOURNANS_PARAGON_HERO)
+	If Not IsNumber($kournans_paragon_hero_number) Then
 		Warn('Could not add paragon hero to party')
 		Return $FAIL
 	EndIf
@@ -155,12 +155,12 @@ Func SetupTeamKournansFarm()
 		Warn('Could not set up party correctly. Team size different than 4')
 		Return $FAIL
 	EndIf
-	LoadSkillTemplate($R_KOURNANS_HERO_SKILLBAR, $KOURNANS_RANGER_HERO_POSITION)
-	LoadSkillTemplate($RT_KOURNANS_HERO_SKILLBAR, $KOURNANS_RITUALIST_HERO_POSITION)
-	LoadSkillTemplate($P_KOURNANS_HERO_SKILLBAR, $KOURNANS_PARAGON_HERO_POSITION)
+	LoadSkillTemplate($R_KOURNANS_HERO_SKILLBAR, $kournans_ranger_hero_number)
+	LoadSkillTemplate($RT_KOURNANS_HERO_SKILLBAR, $kournans_ritualist_hero_number)
+	LoadSkillTemplate($P_KOURNANS_HERO_SKILLBAR, $kournans_paragon_hero_number)
 	RandomSleep(250)
-	DisableAllHeroSkills(1)
-	DisableAllHeroSkills(2)
+	DisableAllHeroSkills($kournans_ranger_hero_number)
+	DisableAllHeroSkills($kournans_ritualist_hero_number)
 	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
@@ -236,48 +236,48 @@ EndFunc
 
 ;~ Cast the mandatory spirits and boons
 Func CastOnlyNecessarySpiritsAndBoons($safeX, $safeY)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_EDGE_OF_EXTINCTION)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_EDGE_OF_EXTINCTION)
 	; Get closer to the non-enemies to trigger them into enemies
 	Local $targetFoe = GetFurthestNPCInRangeOfCoords(Null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_EARSHOT - 50)
 	; Move back to be safe for a few seconds
 	MoveTo($safeX, $safeY)
 	RandomSleep(4000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_MUDDY_TERRAIN)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_MUDDY_TERRAIN)
 	RandomSleep(6000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_BRAMBLES)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_BRAMBLES)
 	RandomSleep(3000)
-	UseHeroSkill($KOURNANS_RITUALIST_HERO_POSITION, $KOURNANS_RITUAL_LORD)
-	UseHeroSkill($KOURNANS_RITUALIST_HERO_POSITION, $KOURNANS_EARTHBIND)
+	UseHeroSkill($kournans_ritualist_hero_number, $KOURNANS_RITUAL_LORD)
+	UseHeroSkill($kournans_ritualist_hero_number, $KOURNANS_EARTHBIND)
 	RandomSleep(1500)
-	UseHeroSkill($KOURNANS_RITUALIST_HERO_POSITION, $KOURNANS_VITAL_WEAPON, GetMyAgent())
+	UseHeroSkill($kournans_ritualist_hero_number, $KOURNANS_VITAL_WEAPON, GetMyAgent())
 	RandomSleep(1500)
 EndFunc
 
 
 ;~ Cast all of the spirits and boons - it is not necessary
 Func CastFullSpiritsAndBoons($safeX, $safeY)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_EDGE_OF_EXTINCTION)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_EDGE_OF_EXTINCTION)
 	; Get closer to the non-enemies to trigger them into enemies
 	Local $targetFoe = GetFurthestNPCInRangeOfCoords(Null, 9600, -650, $RANGE_EARSHOT)
 	GetAlmostInRangeOfAgent($targetFoe, $RANGE_EARSHOT -100)
 	; Move back to be safe for a few seconds
 	MoveTo($safeX, $safeY)
 	RandomSleep(5000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_BRAMBLES)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_BRAMBLES)
 	RandomSleep(6000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_LACERATE)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_LACERATE)
 	RandomSleep(4000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_NATURES_RENEWAL)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_NATURES_RENEWAL)
 	RandomSleep(6000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_MUDDY_TERRAIN)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_MUDDY_TERRAIN)
 	RandomSleep(6000)
-	UseHeroSkill($KOURNANS_RANGER_HERO_POSITION, $KOURNANS_PESTILENCE)
+	UseHeroSkill($kournans_ranger_hero_number, $KOURNANS_PESTILENCE)
 	RandomSleep(3000)
-	UseHeroSkill($KOURNANS_RITUALIST_HERO_POSITION, $KOURNANS_RITUAL_LORD)
-	UseHeroSkill($KOURNANS_RITUALIST_HERO_POSITION, $KOURNANS_EARTHBIND)
+	UseHeroSkill($kournans_ritualist_hero_number, $KOURNANS_RITUAL_LORD)
+	UseHeroSkill($kournans_ritualist_hero_number, $KOURNANS_EARTHBIND)
 	RandomSleep(1500)
-	UseHeroSkill($KOURNANS_RITUALIST_HERO_POSITION, $KOURNANS_VITAL_WEAPON, GetMyAgent())
+	UseHeroSkill($kournans_ritualist_hero_number, $KOURNANS_VITAL_WEAPON, GetMyAgent())
 	RandomSleep(1500)
 EndFunc
 

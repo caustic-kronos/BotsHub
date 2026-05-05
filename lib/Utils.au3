@@ -1619,7 +1619,7 @@ EndFunc
 ;~ If $preferredHeroID is specified, tries that hero first before falling back to others.
 ;~ Iterates all known heroes of that profession and attempts AddHero until one succeeds.
 ;~ If a hero of that profession is already in party, returns that hero number and does not try to add.
-;~ Returns the hero's party index (1-based) on success, or 0 if no hero of that profession could be added.
+;~ Returns the hero's party index (1-based) on success, or Null if no hero of that profession could be added.
 Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 	If $preferredHeroID > 0 Then
 		Local $preferredHeroNumber = GetHeroNumberByHeroID($preferredHeroID)
@@ -1657,7 +1657,7 @@ Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 		EndIf
 	Next
 	Error('Could not add any hero with profession ID ' & $professionID)
-	Return $FAIL
+	Return Null
 EndFunc
 
 

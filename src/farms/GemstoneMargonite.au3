@@ -120,6 +120,7 @@ Global $margonite_aura_of_restoration_timer	= TimerInit()
 
 Global $margonite_player_profession = $ID_MESMER
 Global $gemstone_margonite_farm_setup = False
+Global $margonite_monk_hero_number = 1
 
 ;~ Main loop function for farming margonite gemstones
 Func GemstoneMargoniteFarm()
@@ -131,7 +132,7 @@ Func GemstoneMargoniteFarm()
 		Info('Successfully cleared margonite mobs')
 	ElseIf $result == $FAIL Then
 		If IsPlayerDead() Then Warn('Player died')
-		If IsHeroDead(1) Then Warn('monk hero died')
+		If IsHeroDead($margonite_monk_hero_number) Then Warn('monk hero died')
 		Info('Could not clear margonite mobs')
 	EndIf
 	Info('Returning back to the outpost')
@@ -189,10 +190,9 @@ Func SetupTeamMargoniteFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 
 	Info('Setting up team')
-	Local $monkHeroNumber = Null
 	LeaveParty()
-	$monkHeroNumber = AddHeroByProfession($ID_MONK, $MARGONITE_HERO_PARTY_ID)
-	If Not IsNumber($monkHeroNumber) Then
+	$margonite_monk_hero_number = AddHeroByProfession($ID_MONK, $MARGONITE_HERO_PARTY_ID)
+	If Not IsNumber($margonite_monk_hero_number) Then
 		Warn('Could not add monk hero to party')
 		Return $FAIL
 	EndIf
@@ -203,20 +203,20 @@ Func SetupTeamMargoniteFarm()
 	EndIf
 	RandomSleep(250)
 	Info('Setting up hero build skill bar')
-	LoadSkillTemplate($MARGONITE_MONK_HERO_SKILLBAR, 1)
+	LoadSkillTemplate($MARGONITE_MONK_HERO_SKILLBAR, $margonite_monk_hero_number)
 	RandomSleep(250)
-	SetHeroBehaviour(1, $ID_HERO_AVOIDING)
+	SetHeroBehaviour($margonite_monk_hero_number, $ID_HERO_AVOIDING)
 	RandomSleep(250)
-	DisableAllHeroSkills(1)
+	DisableAllHeroSkills($margonite_monk_hero_number)
 	RandomSleep(250)
 	Return $SUCCESS
 EndFunc
 
 
 Func EnableMargoniteHeroSkills()
-	EnableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
+	EnableHeroSkillSlot($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)
 	Sleep(25 + GetPing())
-	EnableHeroSkillSlot(1, $MARGONITE_HERO_TROLL_UNGUENT)
+	EnableHeroSkillSlot($margonite_monk_hero_number, $MARGONITE_HERO_TROLL_UNGUENT)
 	Sleep(25 + GetPing())
 EndFunc
 
@@ -249,28 +249,28 @@ Func CastBondsMargoniteFarm()
 	; Below sequence ensures that player have the effect of 5 monk enchantments from monk hero and also monk hero have 1 enchantment - balthazar's spirit
 	; Last 2 enchantments are least important so these may deactivate when hero energy drops to 0, which is unlikely
 	; Disable blessed signet hero skill so that hero does not mess up below sequence with using that skill in wrong moment
-	DisableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
+	DisableHeroSkillSlot($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)
 	Sleep(25 + GetPing())
 
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BALTHAZAR_SPIRIT, GetMyAgent())	; costs 10 energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BALTHAZAR_SPIRIT, GetMyAgent())	; costs 10 energy
 	Sleep(10000)																			; wait until energy is recovered, should recover 10 energy with 3 energy pips
-	UseHeroSkillTimed(1, $MARGONITE_HERO_WATCHFUL_SPIRIT, GetMyAgent())	; costs 15 energy
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 6 hero energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_WATCHFUL_SPIRIT, GetMyAgent())	; costs 15 energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 6 hero energy
 	Sleep(12000)																			; wait until Blessed signet is recharged, should recover 8 energy with 2 energy pips
-	UseHeroSkillTimed(1, $MARGONITE_HERO_LIFE_BARRIER, GetMyAgent())		; costs 15 energy, 1 energy should be recovered during casting, energy should be maxed
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 9 hero energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_LIFE_BARRIER, GetMyAgent())		; costs 15 energy, 1 energy should be recovered during casting, energy should be maxed
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 9 hero energy
 	Sleep(15000)																			; wait until Blessed signet is recharged, should recover 5 energy with 1 energy pip
-	UseHeroSkillTimed(1, $MARGONITE_HERO_LIFE_BOND, GetMyAgent())			; costs 10 energy
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy, energy should be maxed
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_LIFE_BOND, GetMyAgent())			; costs 10 energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy, energy should be maxed
 	Sleep(10000)																			; wait until Blessed signet is recharged, 0 pips
-	UseHeroSkillTimed(1, $MARGONITE_HERO_VITAL_BLESSING, GetMyAgent())		; costs 10 energy
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_VITAL_BLESSING, GetMyAgent())		; costs 10 energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy
 	Sleep(10000)																			; wait until Blessed signet is recharged, around 3 energy lost with -1 pip
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BALTHAZAR_SPIRIT)					; costs 10 energy
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BALTHAZAR_SPIRIT)					; costs 10 energy
+	UseHeroSkillTimed($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
 
 	; Enable blessed signet skill so that hero uses it whenever it is recharged
-	EnableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
+	EnableHeroSkillSlot($margonite_monk_hero_number, $MARGONITE_HERO_BLESSED_SIGNET)
 	Sleep(25 + GetPing())
 
 	Return $SUCCESS
@@ -317,7 +317,7 @@ Func GemstoneMargoniteFarmLoop()
 	If MargoniteMoveDefending(-11410, -11359) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(3000)
 	If MargoniteMoveDefending(-11484, -11034) == $FAIL Then Return $FAIL
-	If IsPlayerDead() Or IsHeroDead(1) Then Return $FAIL
+	If IsPlayerDead() Or IsHeroDead($margonite_monk_hero_number) Then Return $FAIL
 
 	; if margonites group is somehow not in the spot then try to get closer to them
 	; getting closer to nearest Anur Dabi or Kaya or Ki or Su, not nearest Vu, Ruk, Tuk
@@ -392,11 +392,11 @@ EndFunc
 
 
 Func MargoniteMonkHeroHeal()
-	Local $monkHero = GetAgentByID(GetHeroID(1))
-	If IsRecharged($MARGONITE_HERO_TROLL_UNGUENT, 1) And _
+	Local $monkHero = GetAgentByID(GetHeroID($margonite_monk_hero_number))
+	If IsRecharged($MARGONITE_HERO_TROLL_UNGUENT, $margonite_monk_hero_number) And _
 			GetEnergy($monkHero) > 10 And DllStructGetData($monkHero, 'HealthPercent') < 1 And _
-			GetEffect($ID_TROLL_UNGUENT, 1) == Null Then
-		UseHeroSkill(1, $MARGONITE_HERO_TROLL_UNGUENT)
+			GetEffect($ID_TROLL_UNGUENT, $margonite_monk_hero_number) == Null Then
+		UseHeroSkill($margonite_monk_hero_number, $MARGONITE_HERO_TROLL_UNGUENT)
 	EndIf
 EndFunc
 
@@ -472,7 +472,7 @@ EndFunc
 
 Func KillMargonites()
 	Info('Fighting margonites')
-	UseHeroSkill(1, $MARGONITE_HERO_EDGE_OF_EXTINCTION)
+	UseHeroSkill($margonite_monk_hero_number, $MARGONITE_HERO_EDGE_OF_EXTINCTION)
 	Switch $margonite_player_profession
 		Case $ID_ASSASSIN, $ID_MESMER, $ID_ELEMENTALIST
 			KillMargonitesUsingVisageSkills()
@@ -488,7 +488,7 @@ Func KillMargonitesUsingVisageSkills()
 	Local $timerKill = TimerInit()
 	Local Static $maxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead(1)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead($margonite_monk_hero_number)
 		RandomSleep(100)
 		MargoniteDefend()
 
@@ -525,7 +525,7 @@ Func KillMargonitesUsingWhirlingDefense()
 	Local $timerKill = TimerInit()
 	Local Static $maxFightTime = 100000
 
-	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead(1)
+	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead($margonite_monk_hero_number)
 		RandomSleep(100)
 		MargoniteDefend()
 
