@@ -1416,6 +1416,8 @@ EndFunc
 
 
 Func AssemblerCreateScanProcedure($gwBaseAddress)
+	; 6 GB
+	Local $offset = 0x600000
 	_('ScanProc:')
 	_('pushad')
 	_('mov ecx,' & Hex($gwBaseAddress, 8))
@@ -1433,7 +1435,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 	_('jmp ScanExit')
 
@@ -1449,7 +1451,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 	_('jmp ScanExit')
 
@@ -1462,7 +1464,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 	_('jmp ScanExit')
 
@@ -1473,7 +1475,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 
 	_('ScanExit:')
