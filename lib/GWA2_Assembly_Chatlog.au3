@@ -8,6 +8,7 @@ Global $detours_map[]
 Global $chat_log_counter_address
 Global $chat_message_channel_address
 Global $chat_message_ptr_address
+Global $chat_message_data_address
 Global $chat_log_last_counter = 0
 
 Func AddChatLogScanPattern()
@@ -24,6 +25,7 @@ Func ExtendInitializeChatLogResult()
 	$chat_log_counter_address = GetLabel('ChatMessageCounter')
 	$chat_message_channel_address = GetLabel('ChatMessageChannel')
 	$chat_message_ptr_address = GetLabel('ChatMessagePtr')
+	$chat_message_data_address = GetLabel('ChatMessageData')
 EndFunc
 
 Func ExtendAssembler()
@@ -38,6 +40,7 @@ Func AssemblerCreateEventData()
 	_('ChatMessageCounter/4')
 	_('ChatMessageChannel/4')
 	_('ChatMessagePtr/4')
+	_('ChatMessageData/512')
 EndFunc
 
 Func AssemblerCreateChatLog()
@@ -55,6 +58,13 @@ Func AssemblerCreateChatLog()
 	_('mov dword[ChatMessageChannel],edx')
 	_('mov edx,dword[ebp+8]')
 	_('mov dword[ChatMessagePtr],edx')
+	; Copy message bytes into our owned buffer before incrementing the counter.
+	; This ensures the data is in BotsHub-controlled memory by the time the AutoIt
+	; poller detects the counter change — GW's source buffer may be freed within ~150ms.
+	_('mov esi,dword[ebp+8]')
+	_('mov edi,ChatMessageData')
+	_('mov ecx,128 -> B980000000')
+	_('rep movsd -> F3A5')
 	_('mov edx,dword[ChatMessageCounter]')
 	_('inc edx')
 	_('mov dword[ChatMessageCounter],edx')
@@ -146,11 +156,7 @@ Func ChatLogSetEventCallback($chatReceive = '')
 	If $chatReceive <> '' Then
 		MemoryWriteDetourEx('ChatLogStart', 'ChatLogProc', 'ChatLogTrampoline')
 		$chat_log_last_counter = GetChatMessageCounter()
-		; NOTE: Polling interval cannot exceed ~100ms. GW's internal message buffer is small;
-		; slower polling causes the pointer at $msgPtr to become stale/invalid before it's read,
-		; resulting in silent failure (whisper notifications never fire).
-		; Further testing and debugging will be required to implement a more conservative frequency.
-		AdlibRegister('ChatLogPollCallback', 100)
+		AdlibRegister('ChatLogPollCallback', 5000)
 		OnAutoItExitRegister('ChatLogOnExit')
 	Else
 		MemoryRevertDetour('ChatLogStart')
@@ -162,11 +168,13 @@ EndFunc
 
 ;------------------------------------------------------
 ; Title...........:	ChatLogPollCallback
-; Description.....:	AdlibRegister callback that fires every 100ms. Detects new chat
+; Description.....:	AdlibRegister callback that fires every 5000ms (5s). Detects new chat
 ;					messages by comparing ChatMessageCounter against the last seen value,
-;					then reads the message from GW memory and dispatches to
-;					$chat_receive_function. Replaces the PostMessage/GUIRegisterMsg approach
-;					to avoid cross-thread Windows API calls from inside the GW hook.
+;					then reads the message from the ChatMessageData buffer (copied directly
+;					into BotsHub-owned memory by the hook assembly) and dispatches to
+;					$chat_receive_function. This avoids reading GW's internal message pointer
+;					which is freed within ~150ms of AddToChatLog firing, making the polling
+;					frequency unconstrained.
 ;
 ;					Zone transition area-name announcements also fire AddToChatLog on channel
 ;					14 (the same slot as Received Whisper) using GW-encoded text tokens rather
@@ -212,13 +220,10 @@ Func ChatLogPollCallback()
 
 	Local $sender = ''
 	If $channel = 'Received Whisper' Then
-		; Read the GW message string from the pointer stored by the hook.
-		; Zone transition messages also arrive on channel 14 as GW-encoded text tokens
-		; (e.g. 8102 0000) and will not contain the whisper separator 'Ĉ'. If the
-		; separator is absent the event is not a real player whisper — skip it.
-		Local $msgPtr = GetChatMessagePtr()
-		If $msgPtr = 0 Then Return
-		Local $message = MemoryRead(GetProcessHandle(), $msgPtr, 'wchar[64]')
+		; Read from our owned ChatMessageData buffer — copied by the hook the instant
+		; AddToChatLog fires, so this is never stale regardless of polling frequency.
+		; Zone transition messages lack the whisper separator 'Ĉ' and are filtered here.
+		Local $message = MemoryRead(GetProcessHandle(), $chat_message_data_address, 'wchar[256]')
 		Local $separatorPos = StringInStr($message, 'Ĉ')
 		If $separatorPos = 0 Then Return
 		$sender = StringMid($message, 3, $separatorPos - 3)
