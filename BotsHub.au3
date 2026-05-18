@@ -204,8 +204,6 @@ Func Main()
 		EndIf
 		; Authentication
 		Authentification($character_name)
-		If $run_options_cache['run.go_offline'] Then SetPlayerStatus(0)
-		If $run_options_cache['run.flash_whisper'] Then EnableWhisperFlash()
 		$runtime_status = 'RUNNING'
 	Else
 		MsgBox(0, 'Error', 'Unknown run mode: ' & $run_mode)
@@ -416,6 +414,7 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
 	$run_options_cache['run.collect_data'] = _JSON_Get($jsonObject, 'run.collect_data')
 	$run_options_cache['run.go_offline'] = _JSON_Get($jsonObject, 'run.go_offline')
+	$run_options_cache['run.flash_whisper'] = _JSON_Get($jsonObject, 'run.flash_whisper')
 	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
 	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
 	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
@@ -464,6 +463,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', $run_options_cache['run.sort_items'])
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
 	_JSON_addChangeDelete($jsonObject, 'run.go_offline', $run_options_cache['run.go_offline'])
+	_JSON_addChangeDelete($jsonObject, 'run.flash_whisper', $run_options_cache['run.flash_whisper'])
 	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
@@ -608,6 +608,10 @@ Func GeneralFarmSetup()
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
 		SetupPlayerUsingGlobalSettings()
 		SetupTeamUsingGlobalSettings()
+	EndIf
+	If $character_name <> '' Then
+		If $run_options_cache['run.go_offline'] Then SetPlayerStatus(0)
+		If $run_options_cache['run.flash_whisper'] Then EnableWhisperFlash()
 	EndIf
 
 	SetupPlayerBuildOverrides()

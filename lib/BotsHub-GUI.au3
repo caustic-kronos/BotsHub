@@ -641,10 +641,6 @@ Func GuiStartButtonHandler()
 		Case 'UNINITIALIZED'
 			$character_name = GUICtrlRead($gui_combo_characterchoice)
 			If (Authentification($character_name) <> $SUCCESS) Then Return
-			If $character_name <> '' Then
-				If $run_options_cache['run.go_offline'] Then SetPlayerStatus(0)
-				If $run_options_cache['run.flash_whisper'] Then EnableWhisperFlash()
-			EndIf
 			$runtime_status = 'INITIALIZED'
 			GUICtrlSetData($gui_startbutton, 'Pause')
 			GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTCORAL)

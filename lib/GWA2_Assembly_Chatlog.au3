@@ -5,13 +5,12 @@ Global Const $CHAT_LOG_STRUCT = 'dword;wchar[256]'
 
 Global $detours_map[]
 
-Global $chat_receive_function
 Global $chat_log_counter_address
 Global $chat_message_channel_address
 Global $chat_message_ptr_address
 Global $chat_log_last_counter = 0
 
-Func ExtendAddPattern()
+Func AddChatLogScanPattern()
 	AddScanPattern('ChatLog',		'8B4508837D0C07',	-0x20,	'hook')
 EndFunc
 
@@ -131,14 +130,14 @@ Func MemoryRevertDetour($fromLabel)
 EndFunc
 
 ;------------------------------------------------------
-; Title...........:	_ChatLogOnExit
+; Title...........:	ChatLogOnExit
 ; Description.....:	OnAutoItExitRegister handler. Reverts the ChatLog detour whenever
 ;					BotsHub exits (normal close, error, or tray exit) so GW's code at
 ;					ChatLogStart is restored to its original bytes. Without this, a
 ;					subsequent BotsHub session would find a stale JMP at ChatLogStart and
 ;					crash GW the next time a chat message arrives.
 ;------------------------------------------------------
-Func _ChatLogOnExit()
+Func ChatLogOnExit()
 	AdlibUnRegister('ChatLogPollCallback')
 	MemoryRevertDetour('ChatLogStart')
 EndFunc
@@ -147,20 +146,23 @@ Func ChatLogSetEventCallback($chatReceive = '')
 	If $chatReceive <> '' Then
 		MemoryWriteDetourEx('ChatLogStart', 'ChatLogProc', 'ChatLogTrampoline')
 		$chat_log_last_counter = GetChatMessageCounter()
-		AdlibRegister('ChatLogPollCallback', 1000)
-		OnAutoItExitRegister('_ChatLogOnExit')
+		; NOTE: Polling interval cannot exceed ~100ms. GW's internal message buffer is small;
+		; slower polling causes the pointer at $msgPtr to become stale/invalid before it's read,
+		; resulting in silent failure (whisper notifications never fire).
+		; Further testing and debugging will be required to implement a more conservative frequency.
+		AdlibRegister('ChatLogPollCallback', 100)
+		OnAutoItExitRegister('ChatLogOnExit')
 	Else
 		MemoryRevertDetour('ChatLogStart')
 		AdlibUnRegister('ChatLogPollCallback')
-		OnAutoItExitUnRegister('_ChatLogOnExit')
+		OnAutoItExitUnRegister('ChatLogOnExit')
 	EndIf
 
-	$chat_receive_function = $chatReceive
 EndFunc
 
 ;------------------------------------------------------
 ; Title...........:	ChatLogPollCallback
-; Description.....:	AdlibRegister callback that fires every 1000ms (1s). Detects new chat
+; Description.....:	AdlibRegister callback that fires every 100ms. Detects new chat
 ;					messages by comparing ChatMessageCounter against the last seen value,
 ;					then reads the message from GW memory and dispatches to
 ;					$chat_receive_function. Replaces the PostMessage/GUIRegisterMsg approach
@@ -171,6 +173,14 @@ EndFunc
 ;					than plain Unicode. They are filtered out here by checking for the whisper
 ;					separator character 'Ĉ' (U+0108) which is always present in real whisper
 ;					messages and never in encoded GW strings.
+;
+;					LIMITATION: Currently only extracts sender name for 'Received Whisper'
+;					channel. Other channels (Alliance, Guild, Trade, All, etc.) dispatch with
+;					empty $message and $guildTag = 'No'. If callbacks need to parse message
+;					content from other channels, this function must be refactored to:
+;					- Read message pointer for all channels (not just whisper)
+;					- Call ChatLogParseAlliance/ChatLogParseGuild/etc. per channel type
+;					- Pass extracted message and sender to callback
 ;------------------------------------------------------
 Func ChatLogPollCallback()
 	Local $counter = GetChatMessageCounter()
@@ -214,7 +224,7 @@ Func ChatLogPollCallback()
 		$sender = StringMid($message, 3, $separatorPos - 3)
 	EndIf
 
-	Call($chat_receive_function, $channel, $sender, '', 'No')
+	WhisperFlashCallback($channel, $sender, '', 'No')
 EndFunc
 
 Func ChatLogParseAlliance($message, ByRef $sender, ByRef $tag, ByRef $text)

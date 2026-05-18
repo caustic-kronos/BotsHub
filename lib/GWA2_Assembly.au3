@@ -449,7 +449,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
 	; EncString Decoding
 	AddScanPattern('ValidateAsyncDecodeStr',	'',																		'',		'func',	'P:\Code\Engine\Text\TextApi.cpp',			'codedString')
-	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendAddPattern()
+	If IsDeclared('CHAT_LOG_STRUCT') Then AddChatLogScanPattern()
 EndFunc
 
 
