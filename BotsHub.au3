@@ -151,8 +151,8 @@ Main()
 ;------------------------------------------------------
 Func Main()
 	; Verify validity
-	If @AutoItVersion < '3.3.16.0' Then
-		MsgBox(16, 'Error', 'This bot requires AutoIt version 3.3.16.0 or higher. You are using ' & @AutoItVersion & '.')
+	If @AutoItVersion < '3.3.16.1' Then
+		MsgBox(16, 'Error', 'This bot requires AutoIt version 3.3.16.1 or higher. You are using ' & @AutoItVersion & '.')
 		Exit 1
 	EndIf
 	If @AutoItX64 Then
