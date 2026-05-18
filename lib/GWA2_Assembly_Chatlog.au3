@@ -160,11 +160,11 @@ EndFunc
 
 ;------------------------------------------------------
 ; Title...........:	ChatLogPollCallback
-; Description.....:	AdlibRegister callback that fires every 100ms. Detects new chat messages
-;					by comparing ChatMessageCounter against the last seen value, then reads
-;					the message from GW memory and dispatches to $chat_receive_function.
-;					Replaces the PostMessage/GUIRegisterMsg approach to avoid cross-thread
-;					Windows API calls from inside the GW hook.
+; Description.....:	AdlibRegister callback that fires every 1000ms (1s). Detects new chat
+;					messages by comparing ChatMessageCounter against the last seen value,
+;					then reads the message from GW memory and dispatches to
+;					$chat_receive_function. Replaces the PostMessage/GUIRegisterMsg approach
+;					to avoid cross-thread Windows API calls from inside the GW hook.
 ;
 ;					Zone transition area-name announcements also fire AddToChatLog on channel
 ;					14 (the same slot as Received Whisper) using GW-encoded text tokens rather
