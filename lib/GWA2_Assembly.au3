@@ -277,7 +277,7 @@ Global $trade_hack_address
 Global $labels_map[]
 
 ; [labelName, bytePattern, resultOffset, patternType, assertSourceFile, assertMessage]
-Global $scan_patterns[59][6]
+Global $scan_patterns[60][6]
 Global $scan_patterns_count = 0
 ; [file, message]
 Global $assertions_patterns_cache[]
@@ -449,7 +449,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
 	; EncString Decoding
 	AddScanPattern('ValidateAsyncDecodeStr',	'',																		'',		'func',	'P:\Code\Engine\Text\TextApi.cpp',			'codedString')
-	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendScannerWithChatLog()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendAddPattern()
 EndFunc
 
 
@@ -816,6 +816,7 @@ Func MapScanResultsToLabels()
 	SetLabel('TradePartnerReturn', Ptr($tempValue + 0x5))
 	; Hook log
 	If IsDeclared('g_b_Scanner') Then Extend_Scanner()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendScannerWithChatLog()
 	SetLabel('QueueSize', '0x00000040')
 
 	; Logging all labels
@@ -1373,6 +1374,7 @@ Func ModifyMemory()
 	AssemblerCreateUICommands()
 	AssemblerCreatePartyCommands()
 	AssemblerCreateEncStringCommands()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendAssembler()
 	If IsDeclared('g_b_Assembler') Then Extend_Assembler()
 
 	Local $allocationCommand = False
@@ -1503,6 +1505,7 @@ Func AssemblerCreateData()
 	_('DecodeOutputPtr/2048')
 
 	If IsDeclared('g_b_AssemblerData') Then Extend_AssemblerData()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendAssemblerData()
 
 	_('QueueBase/' & 256 * GetLabel('QueueSize'))
 	_('AgentCopyBase/' & 0x1C0 * 256)
