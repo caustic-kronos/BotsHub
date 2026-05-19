@@ -9,7 +9,10 @@ Global $chat_log_counter_address
 Global $chat_message_channel_address
 Global $chat_message_ptr_address
 Global $chat_message_data_address
+Global $whisper_counter_address
+Global $whisper_data_address
 Global $chat_log_last_counter = 0
+Global $chat_log_last_whisper_counter = 0
 
 Func AddChatLogScanPattern()
 	AddScanPattern('ChatLog',		'8B4508837D0C07',	-0x20,	'hook')
@@ -26,6 +29,8 @@ Func ExtendInitializeChatLogResult()
 	$chat_message_channel_address = GetLabel('ChatMessageChannel')
 	$chat_message_ptr_address = GetLabel('ChatMessagePtr')
 	$chat_message_data_address = GetLabel('ChatMessageData')
+	$whisper_counter_address = GetLabel('WhisperCounter')
+	$whisper_data_address = GetLabel('WhisperData')
 EndFunc
 
 Func ExtendAssembler()
@@ -41,6 +46,8 @@ Func AssemblerCreateEventData()
 	_('ChatMessageChannel/4')
 	_('ChatMessagePtr/4')
 	_('ChatMessageData/512')
+	_('WhisperCounter/4')
+	_('WhisperData/512')
 EndFunc
 
 Func AssemblerCreateChatLog()
@@ -68,6 +75,19 @@ Func AssemblerCreateChatLog()
 	_('mov edx,dword[ChatMessageCounter]')
 	_('inc edx')
 	_('mov dword[ChatMessageCounter],edx')
+	; If channel == 14 (Received Whisper, decimal 0x0E), snapshot the copied data into
+	; WhisperData and bump WhisperCounter. This isolates whisper state from subsequent
+	; messages on other channels that would otherwise overwrite ChatMessageData.
+	_('cmp dword[ebp+C],0E -> 837D0C0E')
+	_('jnz skipWhisper')
+	_('mov esi,ChatMessageData')
+	_('mov edi,WhisperData')
+	_('mov ecx,128 -> B980000000')
+	_('rep movsd -> F3A5')
+	_('mov edx,dword[WhisperCounter]')
+	_('inc edx')
+	_('mov dword[WhisperCounter],edx')
+	_('skipWhisper:')
 
 	_('popad')
 	_('popfd')
@@ -155,7 +175,7 @@ EndFunc
 Func ChatLogSetEventCallback($chatReceive = '')
 	If $chatReceive <> '' Then
 		MemoryWriteDetourEx('ChatLogStart', 'ChatLogProc', 'ChatLogTrampoline')
-		$chat_log_last_counter = GetChatMessageCounter()
+		$chat_log_last_whisper_counter = GetWhisperCounter()
 		AdlibRegister('ChatLogPollCallback', 5000)
 		OnAutoItExitRegister('ChatLogOnExit')
 	Else
@@ -168,68 +188,40 @@ EndFunc
 
 ;------------------------------------------------------
 ; Title...........:	ChatLogPollCallback
-; Description.....:	AdlibRegister callback that fires every 5000ms (5s). Detects new chat
-;					messages by comparing ChatMessageCounter against the last seen value,
-;					then reads the message from the ChatMessageData buffer (copied directly
-;					into BotsHub-owned memory by the hook assembly) and dispatches to
-;					$chat_receive_function. This avoids reading GW's internal message pointer
-;					which is freed within ~150ms of AddToChatLog firing, making the polling
-;					frequency unconstrained.
+; Description.....:	AdlibRegister callback that fires every 5000ms (5s). Detects incoming
+;					whispers by comparing WhisperCounter against the last seen value.
+;					WhisperCounter and WhisperData are written by the hook assembly only when
+;					AddToChatLog fires on channel 14 (Received Whisper), so this callback
+;					never needs to inspect the channel itself.
 ;
 ;					Zone transition area-name announcements also fire AddToChatLog on channel
-;					14 (the same slot as Received Whisper) using GW-encoded text tokens rather
-;					than plain Unicode. They are filtered out here by checking for the whisper
-;					separator character 'Ĉ' (U+0108) which is always present in real whisper
-;					messages and never in encoded GW strings.
+;					14 using GW-encoded text tokens rather than plain Unicode. They are filtered
+;					out here by checking for the whisper separator character 'Ĉ' (U+0108) which
+;					is always present in real whisper messages and never in encoded GW strings.
 ;
-;					LIMITATION: Currently only extracts sender name for 'Received Whisper'
-;					channel. Other channels (Alliance, Guild, Trade, All, etc.) dispatch with
-;					empty $message and $guildTag = 'No'. If callbacks need to parse message
-;					content from other channels, this function must be refactored to:
-;					- Read message pointer for all channels (not just whisper)
-;					- Call ChatLogParseAlliance/ChatLogParseGuild/etc. per channel type
-;					- Pass extracted message and sender to callback
+;					LIMITATION: Currently only handles 'Received Whisper'. To add general-channel
+;					alerting (e.g. scan Trade/All for "WTB conset"), register a separate
+;					AdlibRegister callback that polls GetChatMessageCounter(), reads
+;					GetChannelName(GetChatMessageChannel()) to filter by channel, and reads
+;					the message from ChatMessageData via $chat_message_data_address.
+;					For collision safety between channels, mirror the WhisperCounter/WhisperData
+;					pattern: add per-channel counter+data labels in AssemblerCreateEventData and
+;					a conditional block in AssemblerCreateChatLog that snapshots on the desired
+;					channel number.
 ;------------------------------------------------------
 Func ChatLogPollCallback()
-	Local $counter = GetChatMessageCounter()
-	If $counter = $chat_log_last_counter Then Return
-	$chat_log_last_counter = $counter
+	Local $counter = GetWhisperCounter()
+	If $counter = $chat_log_last_whisper_counter Then Return
+	$chat_log_last_whisper_counter = $counter
 
-	Local $channelType = GetChatMessageChannel()
-	Local $channel = ''
-	Switch $channelType
-		Case 0
-			$channel = 'Alliance'
-		Case 3
-			$channel = 'All'
-		Case 9
-			$channel = 'Guild'
-		Case 10
-			$channel = 'Send Whisper'
-		Case 11
-			$channel = 'Team'
-		Case 12
-			$channel = 'Trade'
-		Case 13
-			$channel = 'Advisory'
-		Case 14
-			$channel = 'Received Whisper'
-		Case Else
-			$channel = 'Other'
-	EndSwitch
+	; Read from WhisperData — isolated to channel 14 only, copied at hook-fire time.
+	; Zone transition messages lack the whisper separator 'Ĉ' and are filtered here.
+	Local $message = MemoryRead(GetProcessHandle(), $whisper_data_address, 'wchar[256]')
+	Local $separatorPos = StringInStr($message, 'Ĉ')
+	If $separatorPos = 0 Then Return
+	Local $sender = StringMid($message, 3, $separatorPos - 3)
 
-	Local $sender = ''
-	If $channel = 'Received Whisper' Then
-		; Read from our owned ChatMessageData buffer — copied by the hook the instant
-		; AddToChatLog fires, so this is never stale regardless of polling frequency.
-		; Zone transition messages lack the whisper separator 'Ĉ' and are filtered here.
-		Local $message = MemoryRead(GetProcessHandle(), $chat_message_data_address, 'wchar[256]')
-		Local $separatorPos = StringInStr($message, 'Ĉ')
-		If $separatorPos = 0 Then Return
-		$sender = StringMid($message, 3, $separatorPos - 3)
-	EndIf
-
-	WhisperFlashCallback($channel, $sender, '', 'No')
+	WhisperFlashCallback('Received Whisper', $sender, '', 'No')
 EndFunc
 
 Func ChatLogParseAlliance($message, ByRef $sender, ByRef $tag, ByRef $text)
@@ -274,6 +266,36 @@ EndFunc
 
 Func GetChatMessageCounter()
 	Return MemoryRead(GetProcessHandle(), $chat_log_counter_address)
+EndFunc
+
+Func GetWhisperCounter()
+	Return MemoryRead(GetProcessHandle(), $whisper_counter_address)
+EndFunc
+
+; Maps a raw GW channel type integer to a human-readable name.
+; Use with GetChatMessageCounter() + ChatMessageData to build general-channel alerting
+; (e.g. scan Trade or All for keyword matches).
+Func GetChannelName($channelType)
+	Switch $channelType
+		Case 0
+			Return 'Alliance'
+		Case 3
+			Return 'All'
+		Case 9
+			Return 'Guild'
+		Case 10
+			Return 'Send Whisper'
+		Case 11
+			Return 'Team'
+		Case 12
+			Return 'Trade'
+		Case 13
+			Return 'Advisory'
+		Case 14
+			Return 'Received Whisper'
+		Case Else
+			Return 'Other'
+	EndSwitch
 EndFunc
 
 Func GetChatMessageChannel()
