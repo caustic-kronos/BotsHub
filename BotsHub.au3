@@ -33,6 +33,7 @@
 #include 'lib/GWA2_ID.au3'
 #include 'lib/GWA2.au3'
 #include 'lib/GWA2_Assembly.au3'
+#include 'lib/GWA2_Assembly_Chatlog.au3'
 #include 'lib/Utils.au3'
 #include 'lib/Utils-Agents.au3'
 #include 'lib/Utils-Storage.au3'
@@ -135,6 +136,8 @@ $run_options_cache['run.donate_faction_points'] = True
 $run_options_cache['run.buy_faction_scrolls'] = False
 $run_options_cache['run.buy_faction_resources'] = False
 $run_options_cache['run.collect_data'] = False
+$run_options_cache['run.go_offline'] = False
+$run_options_cache['run.flash_whisper'] = False
 $run_options_cache['team.automatic_team_setup'] = False
 ; Overrides on $run_options_cache for frequent usage
 Global $district_name = 'Random EU'
@@ -410,6 +413,8 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
 	$run_options_cache['run.sort_items'] = _JSON_Get($jsonObject, 'run.sort_items')
 	$run_options_cache['run.collect_data'] = _JSON_Get($jsonObject, 'run.collect_data')
+	$run_options_cache['run.go_offline'] = _JSON_Get($jsonObject, 'run.go_offline')
+	$run_options_cache['run.flash_whisper'] = _JSON_Get($jsonObject, 'run.flash_whisper')
 	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
 	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
 	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
@@ -457,6 +462,8 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])
 	_JSON_addChangeDelete($jsonObject, 'run.sort_items', $run_options_cache['run.sort_items'])
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
+	_JSON_addChangeDelete($jsonObject, 'run.go_offline', $run_options_cache['run.go_offline'])
+	_JSON_addChangeDelete($jsonObject, 'run.flash_whisper', $run_options_cache['run.flash_whisper'])
 	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
@@ -601,6 +608,10 @@ Func GeneralFarmSetup()
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
 		SetupPlayerUsingGlobalSettings()
 		SetupTeamUsingGlobalSettings()
+	EndIf
+	If $character_name <> '' Then
+		If $run_options_cache['run.go_offline'] Then SetPlayerStatus(0)
+		If $run_options_cache['run.flash_whisper'] Then EnableWhisperFlash()
 	EndIf
 
 	SetupPlayerBuildOverrides()

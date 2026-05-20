@@ -19,7 +19,9 @@
 		"weapon_slot": 0,
 		"bags_count": 5,
 		"district": "Random EU",
-		"disable_rendering": false
+		"disable_rendering": false,
+		"go_offline": false,
+		"flash_whisper": false
 	},
 	"team": {
 		"automatic_team_setup": false,

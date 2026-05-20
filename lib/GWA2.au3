@@ -2759,7 +2759,7 @@ EndFunc
 
 ;~ Change online status. 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
 Func SetPlayerStatus($status)
-	If $status < 0 Or $status > 3 Or GetPlayerStatus() == $status Then
+	If $status < 0 Or $status > 3 Then
 		Warn('Provided an incorrect status - or the player is already in the provided status.')
 		Return False
 	EndIf
