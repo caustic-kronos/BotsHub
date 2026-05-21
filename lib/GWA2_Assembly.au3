@@ -1990,9 +1990,41 @@ Func AssemblerCreateAgentCommands()
 	_('cmp eax,dword[esi+9C]')
 	_('jnz AgentCopyLoopStart')
 	_('CopyAgent:')
+	; Guard against agent struct pointers crossing a decommitted OS page boundary.
+	; Both foe agents (freed after death) and item agents (heap-placed) can land at
+	; addresses where the second 4KB page is not committed. repe movsb will AV if
+	; it crosses into a decommitted page.
+	;
+	; Strategy: if the 448-byte struct crosses a page boundary, copy only the safe
+	; bytes from the first page, then zero-fill the remainder. All fields needed for
+	; filtering/pickup (ID, Owner, position, type at +0x9C) are within the first ~160
+	; bytes, so partial structs are fully usable and no live agent is ever skipped.
+	;
+	; Check: (ESI & 0xFFF) + 0x1C0 > 0x1000  (struct offset + size overflows page)
+	; ECX is freely available here — it is overwritten below.
+	_('mov ecx,esi')                        ; ecx = agent struct pointer
+	_('and ecx,FFF')                        ; ecx = byte offset within 4KB page
+	_('add ecx,1C0 -> 81C1C0010000')        ; ecx += 448 (struct size)
+	_('cmp ecx,1000 -> 81F900100000')       ; does copy cross a page boundary?
+	_('jbe DoAgentCopy')                    ; no crossing: full copy
+	; Crossing: copy only safe first-page bytes, zero-fill the rest
+	_('push ecx')                           ; save ECX = (ESI&0xFFF)+0x1C0
+	_('neg ecx -> F7D9')                    ; ecx = -(page_offset+0x1C0)
+	_('add ecx,11C0 -> 81C1C0110000')       ; ecx = 0x11C0-(page_offset+0x1C0) = 0x1000-page_offset = safe_bytes
+	_('cld -> FC')
+	_('repe movsb')                         ; copy safe_bytes from first page
+	_('pop ecx')                            ; restore (page_offset + 0x1C0)
+	_('sub ecx,1000 -> 81E900100000')       ; ecx = remaining bytes (overshoot past page end)
+	_('push eax')                           ; save type filter
+	_('xor eax,eax -> 31C0')               ; AL = 0 for stosb
+	_('rep stosb -> F3AA')                  ; zero-fill remaining bytes in dest buffer
+	_('pop eax')                            ; restore type filter
+	_('jmp AgentCopyDone')
+	_('DoAgentCopy:')
 	_('mov ecx,1C0')
-	_('clc')
+	_('cld -> FC')
 	_('repe movsb')
+	_('AgentCopyDone:')
 	_('inc edx')
 	_('jmp AgentCopyLoopStart')
 	_('AgentCopyLoopExit:')
