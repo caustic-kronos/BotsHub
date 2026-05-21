@@ -27,7 +27,11 @@ Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
 Global Const $AME_VAETTIRS_FARMER_SKILLBAR = 'OwVU4lPL2hN8Id2BEBSANBLhbK'
-Global Const $MEA_VAETTIRS_FARMER_SKILLBAR = 'OQdUAMhOsPP8Id2BEBSANBLhbK'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR = 'OQdVAMhOK/85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_12 = 'OQdVASBOKv85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_13 = 'OQdVAQROKv85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_14 = 'OQdVAOhOIf85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_TEST = 'OQdBA8wj0ZHQEIB0EsEupA'
 Global Const $MOA_VAETTIRS_FARMER_SKILLBAR = 'OwcU8UH6lPP8IdW9ABCRyi3D5B'
 ;Global Const $MOA_VAETTIRS_FARMER_SKILLBAR = 'OwcT44P7nhHpzOgIQISW8eIPA'
 Global Const $EME_VAETTIRS_FARMER_SKILLBAR = 'OgVFwDKJL7Uk0n2wXlLoBgJwSwNF'
@@ -99,6 +103,7 @@ Global $vaettir_protective_spirit_timer = TimerInit()
 
 ;~ Main method to farm Vaettirs
 Func VaettirsFarm()
+	If $vaettirs_farm_setup And GetMapID() <> $ID_JAGA_MORAINE Then $vaettirs_farm_setup = False
 	If Not $vaettirs_farm_setup And SetupVaettirsFarm() == $FAIL Then Return $PAUSE
 	Return VaettirsFarmLoop()
 EndFunc
@@ -121,6 +126,27 @@ Func SetupVaettirsFarm()
 EndFunc
 
 
+Func SelectMeaSkillbar()
+	If IsItemEquipped($ID_ANNIVERSARY_SHIELD_CURTAIN) Then
+		LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_TEST)
+		RandomSleep(250)
+		Local $fastCasting = GetAttributeByID($ID_FAST_CASTING, True)
+		Switch $fastCasting
+			Case 12
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_12)
+			Case 13
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_13)
+			Case 14
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_14)
+			Case Else
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR)
+		EndSwitch
+	Else
+		LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR)
+	EndIf
+EndFunc
+
+
 Func SetupPlayerVaettirsFarm()
 	Info('Setting up player build skill bar')
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
@@ -129,7 +155,7 @@ Func SetupPlayerVaettirsFarm()
 			LoadSkillTemplate($AME_VAETTIRS_FARMER_SKILLBAR)
 		Case $ID_MESMER
 			$vaettirs_player_profession = $ID_MESMER
-			LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR)
+			SelectMeaSkillbar()
 		Case $ID_MONK
 			$vaettirs_player_profession = $ID_MONK
 			LoadSkillTemplate($MOA_VAETTIRS_FARMER_SKILLBAR)
@@ -441,8 +467,17 @@ EndFunc
 Func VaettirsCheckShadowForm()
 	; Caution, monk 55hp needs protective spirit before casting shadow form, otherwise damage reduction will not be applied
 	; Casting protective spirit multiple times may remove damage reduction so protective spirit has to casted only once just before Shadow Form
-	If ($vaettirs_player_profession <> $ID_MONK And TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20) Or _
-		($vaettirs_player_profession == $ID_MONK And TimerDiff($vaettir_shadowform_timer) > 19500 And GetEnergy() > 30) Then
+	; Mesmers now have tightened timers to improve success rates
+	Local $shouldRecast = False
+	If $vaettirs_player_profession == $ID_MONK Then
+		$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19500 And GetEnergy() > 30
+	ElseIf $vaettirs_player_profession == $ID_MESMER Then
+		$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 18000 And GetEnergy() > 20
+	Else
+		$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20
+	EndIf
+
+	If $shouldRecast Then
 		If $vaettirs_player_profession == $ID_MONK Then UseSkillEx($VAETTIR_MONK_PROTECTIVE_SPIRIT)
 		UseSkillEx($VAETTIR_DEADLY_PARADOX)
 		While IsPlayerAlive() And Not IsRecharged($VAETTIR_SHADOWFORM)
