@@ -2010,7 +2010,7 @@ Func AssemblerCreateAgentCommands()
 	; Crossing: copy only safe first-page bytes, zero-fill the rest
 	_('push ecx')                           ; save ECX = (ESI&0xFFF)+0x1C0
 	_('neg ecx -> F7D9')                    ; ecx = -(page_offset+0x1C0)
-	_('add ecx,11C0 -> 81C1C0110000')       ; ecx = 0x1000-(page_offset+0x1C0) = safe_bytes
+	_('add ecx,11C0 -> 81C1C0110000')       ; ecx = 0x11C0-(page_offset+0x1C0) = 0x1000-page_offset = safe_bytes
 	_('cld -> FC')
 	_('repe movsb')                         ; copy safe_bytes from first page
 	_('pop ecx')                            ; restore (page_offset + 0x1C0)
