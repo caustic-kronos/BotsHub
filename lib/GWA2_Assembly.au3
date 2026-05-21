@@ -2011,7 +2011,7 @@ Func AssemblerCreateAgentCommands()
 	_('push ecx')                           ; save ECX = (ESI&0xFFF)+0x1C0
 	_('neg ecx -> F7D9')                    ; ecx = -(page_offset+0x1C0)
 	_('add ecx,11C0 -> 81C1C0110000')       ; ecx = 0x1000-(page_offset+0x1C0) = safe_bytes
-	_('clc')
+	_('cld -> FC')
 	_('repe movsb')                         ; copy safe_bytes from first page
 	_('pop ecx')                            ; restore (page_offset + 0x1C0)
 	_('sub ecx,1000 -> 81E900100000')       ; ecx = remaining bytes (overshoot past page end)
@@ -2022,7 +2022,7 @@ Func AssemblerCreateAgentCommands()
 	_('jmp AgentCopyDone')
 	_('DoAgentCopy:')
 	_('mov ecx,1C0')
-	_('clc')
+	_('cld -> FC')
 	_('repe movsb')
 	_('AgentCopyDone:')
 	_('inc edx')
