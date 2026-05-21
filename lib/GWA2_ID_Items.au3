@@ -1754,7 +1754,7 @@ Global Const $ID_SPIDERS_GLUTTONY_COMMAND				= 999999
 Global Const $ID_OMINOUS_AEGIS_COMMAND					= 999999
 #EndRegion Any
 
-#Region Anniverary Event Weapons
+#Region Anniversary Event Weapons
 Global Const $ID_ANNIVERSARY_SHIELD_CURTAIN				= 38027
 Global Const $ID_ANNIVERSARY_AXE_ENGRAVE      			= 999999
 Global Const $ID_ANNIVERSARY_FLATBOW_ORACLE   			= 999999
@@ -1765,7 +1765,7 @@ Global Const $ID_ANNIVERSARY_SCYTHE_SUFFERER  			= 38026
 Global Const $ID_ANNIVERSARY_SPEAR_ARBALEST   			= 999999
 Global Const $ID_ANNIVERSARY_STAFF_UNVEIL     			= 999999
 Global Const $ID_ANNIVERSARY_SWORD_PROMINENCE 			= 38030
-#EndRegion Anniverary Event Weapons
+#EndRegion Anniversary Event Weapons
 #EndRegion Anniversary Weapon skins
 
 
