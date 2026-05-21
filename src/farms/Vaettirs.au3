@@ -136,7 +136,7 @@ Func SelectMeaSkillbar()
 				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_12)
 			Case 13
 				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_13)
-			Case 14
+			Case 14 to 15
 				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_14)
 			Case Else
 				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR)
