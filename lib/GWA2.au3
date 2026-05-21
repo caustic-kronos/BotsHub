@@ -2342,6 +2342,12 @@ Func WriteChat($message, $sender = '[Bhub]', $channel = 6)
 	$queue_counter = Mod($queue_counter + 1, $queue_size)
 
 	If StringLen($message) > 100 Then $message = StringLeft($message, 100)
+	; Slot: 256 bytes, struct: 20 bytes → 118 wchars available (incl null).
+	; Sender-path fixed overhead: 11 chars + message, so sender max = 106 - msgLen.
+	If $sender <> '' Then
+		Local $maxSenderLen = 106 - StringLen($message)
+		If StringLen($sender) > $maxSenderLen Then $sender = StringLeft($sender, $maxSenderLen)
+	EndIf
 
 	; GW1 encoded string: \x108\x107{text}\x1 (must use ChrW for codepoints > 255)
 	Local $ESC = ChrW(0x108) & ChrW(0x107)
