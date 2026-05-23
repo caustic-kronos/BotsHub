@@ -292,13 +292,15 @@ Global Const $ID_MERCENARY_HERO_7	= 34
 Global Const $ID_MERCENARY_HERO_8	= 35
 Global Const $ID_MIKU				= 36
 Global Const $ID_ZEIRI				= 37
+Global Const $ID_DEVONA				= 38
+Global Const $ID_GHOST_OF_ALTHEA	= 39
 
 Global Const $HERO_IDS[]						= [$ID_NORGU, $ID_GOREN, $ID_TAHLKORA, $ID_MASTER_OF_WHISPERS, $ID_ACOLYTE_JIN, _
 													$ID_KOSS, $ID_DUNKORO, $ID_ACOLYTE_SOUSUKE, $ID_MELONNI, $ID_ZHED_SHADOWHOOF, _
 													$ID_GENERAL_MORGAHN, $ID_MARGRID_THE_SLY, $ID_ZENMAI, $ID_OLIAS, $ID_RAZAH, _
 													$ID_MOX, $ID_KEIRAN_THACKERAY, $ID_JORA, $ID_PYRE_FIERCESHOT, $ID_ANTON, _
 													$ID_LIVIA, $ID_HAYDA, $ID_KAHMU, $ID_GWEN, $ID_XANDRA, $ID_VEKK, $ID_OGDEN, _
-													$ID_MIKU, $ID_ZEIRI, $ID_MERCENARY_HERO_1, $ID_MERCENARY_HERO_2, _
+													$ID_MIKU, $ID_ZEIRI, $ID_DEVONA, $ID_GHOST_OF_ALTHEA, $ID_MERCENARY_HERO_1, $ID_MERCENARY_HERO_2, _
 													$ID_MERCENARY_HERO_3, $ID_MERCENARY_HERO_4, $ID_MERCENARY_HERO_5, _
 													$ID_MERCENARY_HERO_6, $ID_MERCENARY_HERO_7, $ID_MERCENARY_HERO_8]
 
@@ -307,7 +309,7 @@ Global Const $HERO_NAMES[]						= [ 'Norgu', 'Goren', 'Tahlkora', 'Master of Whi
 													'General Morgahn', 'Margrid the Sly', 'Zenmai', 'Olias', 'Razah', _
 													'MOX', 'Keiran Thackeray', 'Jora', 'Pyre Fierceshot', 'Anton', _
 													'Livia', 'Hayda', 'Kahmu', 'Gwen', 'Xandra', 'Vekk', 'Ogden', _
-													'Miku', 'ZeiRi', 'Mercenary Hero 1', 'Mercenary Hero 2', _
+													'Miku', 'ZeiRi', 'Devona', 'Ghost of Althea', 'Mercenary Hero 1', 'Mercenary Hero 2', _
 													'Mercenary Hero 3', 'Mercenary Hero 4', 'Mercenary Hero 5', _
 													'Mercenary Hero 6', 'Mercenary Hero 7', 'Mercenary Hero 8']
 
@@ -321,7 +323,7 @@ Global Const $HERO_PROFESSION_IDS[]				= [$ID_MESMER, $ID_WARRIOR, $ID_MONK, $ID
 													$ID_PARAGON, $ID_RANGER, $ID_ASSASSIN, $ID_NECROMANCER, $ID_RITUALIST, _
 													$ID_DERVISH, $ID_RANGER, $ID_WARRIOR, $ID_RANGER, $ID_ASSASSIN, _
 													$ID_NECROMANCER, $ID_PARAGON, $ID_DERVISH, $ID_MESMER, $ID_RITUALIST, $ID_ELEMENTALIST, $ID_MONK, _
-													$ID_ASSASSIN, $ID_RITUALIST, $ID_UNKNOWN, $ID_UNKNOWN, _
+													$ID_ASSASSIN, $ID_RITUALIST, $ID_WARRIOR, $ID_MESMER, $ID_UNKNOWN, $ID_UNKNOWN, _
 													$ID_UNKNOWN, $ID_UNKNOWN, $ID_UNKNOWN, _
 													$ID_UNKNOWN, $ID_UNKNOWN, $ID_UNKNOWN]
 Global Const $HERO_PROFESSIONS					=	MapFromArrays($HERO_IDS, $HERO_PROFESSION_IDS)
