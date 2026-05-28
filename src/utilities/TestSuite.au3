@@ -62,8 +62,10 @@ Func RunTests()
 	;Info(DllStructGetData(GetEffect($ID_SHROUD_OF_DISTRESS), 'TimeStamp'))
 	;Info(GetEffectTimeRemaining(GetEffect($ID_SHROUD_OF_DISTRESS)))
 
-	;WriteChat('WriteChat: Test full function input.', '[Bhub]', 6)
-	;WriteChat('WriteChat: Test lazy input.')
+	;Local $WriteChatChan = 6
+	;Local $WriteChatSender = '[Vaettir-Bot]'
+	;WriteChat('Test full function input.', $WriteChatSender, $WriteChatChan)
+	;WriteChat('Test lazy input.')
 
 	Return $PAUSE
 EndFunc
