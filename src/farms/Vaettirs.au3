@@ -469,13 +469,14 @@ Func VaettirsCheckShadowForm()
 	; Casting protective spirit multiple times may remove damage reduction so protective spirit has to casted only once just before Shadow Form
 	; Mesmers now have tightened timers to improve success rates
 	Local $shouldRecast = False
-	If $vaettirs_player_profession == $ID_MONK Then
-		$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19500 And GetEnergy() > 30
-	ElseIf $vaettirs_player_profession == $ID_MESMER Then
-		$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 18000 And GetEnergy() > 20
-	Else
-		$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20
-	EndIf
+	Switch $vaettirs_player_profession
+		Case $ID_MONK
+			$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19500 And GetEnergy() > 30
+		Case $ID_MESMER
+			$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 18000 And GetEnergy() > 20
+		Case Else
+			$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20
+	EndSwitch
 
 	If $shouldRecast Then
 		If $vaettirs_player_profession == $ID_MONK Then UseSkillEx($VAETTIR_MONK_PROTECTIVE_SPIRIT)
