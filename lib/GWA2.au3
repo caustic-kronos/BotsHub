@@ -1160,6 +1160,10 @@ EndFunc
 
 
 #Region Party
+;~ Shared pointer chains into party/player structures. Tails are appended to reach sub-fields.
+Global Const $PARTY_CONTEXT_OFFSET[] = [0, 0x18, 0x4C, 0x54]
+Global Const $PLAYER_AGENT_ARRAY_OFFSET[] = [0, 0x18, 0x2C, 0x80C]
+
 ;~	Description: Returns different States about Party. Check with BitAND.
 ;~	0x8 = Leader starts Mission / Leader is travelling with Party
 ;~	0x10 = Hardmode enabled
@@ -1208,6 +1212,30 @@ EndFunc
 
 Func GetPartyWaitingForMission()
 	Return GetPartyState(0x8)
+EndFunc
+
+
+;~ Returns the number of player slots in the party player array (includes empty slots).
+Func GetPlayerCount()
+	Local $offset[] = [$PARTY_CONTEXT_OFFSET[0], $PARTY_CONTEXT_OFFSET[1], $PARTY_CONTEXT_OFFSET[2], $PARTY_CONTEXT_OFFSET[3], 0xC]
+	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
+	Return $result[1]
+EndFunc
+
+
+;~ Returns the login number of the player at the given party slot index. Empty slots return 0.
+Func GetPartyPlayerLoginNumber($index)
+	Local $offset[] = [$PARTY_CONTEXT_OFFSET[0], $PARTY_CONTEXT_OFFSET[1], $PARTY_CONTEXT_OFFSET[2], $PARTY_CONTEXT_OFFSET[3], 0x4, 4 * $index]
+	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
+	Return $result[1]
+EndFunc
+
+
+;~ Returns the agent ID for a given login number by walking the player record array (80-byte records).
+Func GetAgentIDByLoginNumber($loginNumber)
+	Local $offset[] = [$PLAYER_AGENT_ARRAY_OFFSET[0], $PLAYER_AGENT_ARRAY_OFFSET[1], $PLAYER_AGENT_ARRAY_OFFSET[2], $PLAYER_AGENT_ARRAY_OFFSET[3], 80 * $loginNumber]
+	Local $result = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
+	Return $result[1]
 EndFunc
 #EndRegion Party
 
