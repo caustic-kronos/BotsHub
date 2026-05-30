@@ -25,6 +25,9 @@ Global Const $GWA2_REFORGED_OFFSET_COMMAND_ADDRESS = 12
 Global Const $CONTROL_TYPE_ACTIVATE = 0x20
 Global Const $CONTROL_TYPE_DEACTIVATE = 0x22
 
+; UIMsg IDs
+Global Const $UIMSG_SHOW_XUNLAI_CHEST = 0x10000040
+
 ; Constants for EncString decoding
 Global Const $ENCSTR_WORD_VALUE_BASE = 0x0100
 Global Const $ENCSTR_WORD_BIT_MORE = 0x8000
@@ -233,6 +236,9 @@ Global Const $LOCK_HERO_TARGET_STRUCT = DllStructCreate('ptr;dword;dword')
 Global Const $TOGGLE_HERO_SKILL_STATE = DllStructCreate('ptr;dword;dword')
 Global Const $EQUIP_ITEM_STRUCT = DllStructCreate('ptr;dword;dword;dword')
 Global Const $EQUIP_ITEM_STRUCT_PTR = DllStructGetPtr($EQUIP_ITEM_STRUCT)
+; kShowXunlaiChest UIMsg: field layout is {ptr commandUIMsg, dword msgID, dword h0000, byte storage_pane_unlocked, byte anniversary_pane_unlocked}
+Global Const $OPEN_XUNLAI_STRUCT = DllStructCreate('ptr;dword;dword;byte;byte')
+Global Const $OPEN_XUNLAI_STRUCT_PTR = DllStructGetPtr($OPEN_XUNLAI_STRUCT)
 
 ; Party
 Global Const $ADD_PLAYER_STRUCT = DllStructCreate('ptr;dword')
@@ -271,7 +277,7 @@ Global $trade_hack_address
 Global $labels_map[]
 
 ; [labelName, bytePattern, resultOffset, patternType, assertSourceFile, assertMessage]
-Global $scan_patterns[59][6]
+Global $scan_patterns[60][6]
 Global $scan_patterns_count = 0
 ; [file, message]
 Global $assertions_patterns_cache[]
@@ -443,7 +449,7 @@ Func RegisterScanPatterns()
 	AddScanPattern('TradePartner',				'6A008D45F8C745F801000000',												-0xC,	'hook')
 	; EncString Decoding
 	AddScanPattern('ValidateAsyncDecodeStr',	'',																		'',		'func',	'P:\Code\Engine\Text\TextApi.cpp',			'codedString')
-	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendScannerWithChatLog()
+	If IsDeclared('CHAT_LOG_STRUCT') Then AddChatLogScanPattern()
 EndFunc
 
 
@@ -810,6 +816,7 @@ Func MapScanResultsToLabels()
 	SetLabel('TradePartnerReturn', Ptr($tempValue + 0x5))
 	; Hook log
 	If IsDeclared('g_b_Scanner') Then Extend_Scanner()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendScannerWithChatLog()
 	SetLabel('QueueSize', '0x00000040')
 
 	; Logging all labels
@@ -897,6 +904,11 @@ Func InitializeCommandStructures()
 	;UIMsg
 	DllStructSetData($MOVE_MAP_STRUCT, 1, GetLabel('CommandUIMsg'))
 	DllStructSetData($EQUIP_ITEM_STRUCT, 1, GetLabel('CommandUIMsg'))
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 1, GetLabel('CommandUIMsg'))
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 2, $UIMSG_SHOW_XUNLAI_CHEST)
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 3, 0)
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 4, 1)
+	DllStructSetData($OPEN_XUNLAI_STRUCT, 5, 1)
 	;Party
 	DllStructSetData($ADD_PLAYER_STRUCT, 1, GetLabel('CommandAddPlayer'))
 	DllStructSetData($KICK_PLAYER_STRUCT, 1, GetLabel('CommandKickPlayer'))
@@ -1362,6 +1374,7 @@ Func ModifyMemory()
 	AssemblerCreateUICommands()
 	AssemblerCreatePartyCommands()
 	AssemblerCreateEncStringCommands()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendAssembler()
 	If IsDeclared('g_b_Assembler') Then Extend_Assembler()
 
 	Local $allocationCommand = False
@@ -1405,6 +1418,8 @@ EndFunc
 
 
 Func AssemblerCreateScanProcedure($gwBaseAddress)
+	; 6 GB
+	Local $offset = 0x600000
 	_('ScanProc:')
 	_('pushad')
 	_('mov ecx,' & Hex($gwBaseAddress, 8))
@@ -1422,7 +1437,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 	_('jmp ScanExit')
 
@@ -1438,7 +1453,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 	_('jmp ScanExit')
 
@@ -1451,7 +1466,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 	_('jmp ScanExit')
 
@@ -1462,7 +1477,7 @@ Func AssemblerCreateScanProcedure($gwBaseAddress)
 	_('add edx,50')
 	_('cmp edx,esi')
 	_('jnz ScanInnerLoop')
-	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + 6291456, 8)))
+	_('cmp ecx,' & SwapEndian(Hex($gwBaseAddress + $offset, 8)))
 	_('jnz ScanLoop')
 
 	_('ScanExit:')
@@ -1490,6 +1505,7 @@ Func AssemblerCreateData()
 	_('DecodeOutputPtr/2048')
 
 	If IsDeclared('g_b_AssemblerData') Then Extend_AssemblerData()
+	If IsDeclared('CHAT_LOG_STRUCT') Then ExtendAssemblerData()
 
 	_('QueueBase/' & 256 * GetLabel('QueueSize'))
 	_('AgentCopyBase/' & 0x1C0 * 256)
@@ -1974,9 +1990,41 @@ Func AssemblerCreateAgentCommands()
 	_('cmp eax,dword[esi+9C]')
 	_('jnz AgentCopyLoopStart')
 	_('CopyAgent:')
+	; Guard against agent struct pointers crossing a decommitted OS page boundary.
+	; Both foe agents (freed after death) and item agents (heap-placed) can land at
+	; addresses where the second 4KB page is not committed. repe movsb will AV if
+	; it crosses into a decommitted page.
+	;
+	; Strategy: if the 448-byte struct crosses a page boundary, copy only the safe
+	; bytes from the first page, then zero-fill the remainder. All fields needed for
+	; filtering/pickup (ID, Owner, position, type at +0x9C) are within the first ~160
+	; bytes, so partial structs are fully usable and no live agent is ever skipped.
+	;
+	; Check: (ESI & 0xFFF) + 0x1C0 > 0x1000  (struct offset + size overflows page)
+	; ECX is freely available here — it is overwritten below.
+	_('mov ecx,esi')                        ; ecx = agent struct pointer
+	_('and ecx,FFF')                        ; ecx = byte offset within 4KB page
+	_('add ecx,1C0 -> 81C1C0010000')        ; ecx += 448 (struct size)
+	_('cmp ecx,1000 -> 81F900100000')       ; does copy cross a page boundary?
+	_('jbe DoAgentCopy')                    ; no crossing: full copy
+	; Crossing: copy only safe first-page bytes, zero-fill the rest
+	_('push ecx')                           ; save ECX = (ESI&0xFFF)+0x1C0
+	_('neg ecx -> F7D9')                    ; ecx = -(page_offset+0x1C0)
+	_('add ecx,11C0 -> 81C1C0110000')       ; ecx = 0x11C0-(page_offset+0x1C0) = 0x1000-page_offset = safe_bytes
+	_('cld -> FC')
+	_('repe movsb')                         ; copy safe_bytes from first page
+	_('pop ecx')                            ; restore (page_offset + 0x1C0)
+	_('sub ecx,1000 -> 81E900100000')       ; ecx = remaining bytes (overshoot past page end)
+	_('push eax')                           ; save type filter
+	_('xor eax,eax -> 31C0')               ; AL = 0 for stosb
+	_('rep stosb -> F3AA')                  ; zero-fill remaining bytes in dest buffer
+	_('pop eax')                            ; restore type filter
+	_('jmp AgentCopyDone')
+	_('DoAgentCopy:')
 	_('mov ecx,1C0')
-	_('clc')
+	_('cld -> FC')
 	_('repe movsb')
+	_('AgentCopyDone:')
 	_('inc edx')
 	_('jmp AgentCopyLoopStart')
 	_('AgentCopyLoopExit:')

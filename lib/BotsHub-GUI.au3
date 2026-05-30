@@ -102,7 +102,7 @@ Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teamme
 		$gui_checkbox_load_build_hero_4, $gui_checkbox_load_build_hero_5, $gui_checkbox_load_build_hero_6, $gui_checkbox_load_build_hero_7, _
 		$gui_label_build_hero_1, $gui_label_build_hero_2, $gui_label_build_hero_3, $gui_label_build_hero_4, $gui_label_build_hero_5, $gui_label_build_hero_6, $gui_label_build_hero_7, _
 		$gui_input_build_player, $gui_input_build_hero_1, $gui_input_build_hero_2, $gui_input_build_hero_3, $gui_input_build_hero_4, $gui_input_build_hero_5, $gui_input_build_hero_6, $gui_input_build_hero_7
-Global $gui_group_otheroptions
+Global $gui_group_otheroptions, $gui_button_openstorage, $gui_checkbox_gooffline, $gui_checkbox_flashwhisper
 Global $gui_label_characterbuilds, $gui_label_heroesbuilds, $gui_edit_characterbuilds, $gui_edit_heroesbuilds, $gui_label_farminformations
 Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandlootoptionsbutton, $gui_reducelootoptionsbutton, $gui_loadlootoptionsbutton, $gui_savelootoptionsbutton, $gui_applylootoptionsbutton
 
@@ -296,15 +296,22 @@ Func CreateGUI()
 	GUICtrlSetState($gui_radiobutton_donatepoints, $GUI_CHECKED)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 
-	$gui_group_otheroptions = GUICtrlCreateGroup('Other options', 330, 205, 295, 235)
+	$gui_group_otheroptions = GUICtrlCreateGroup('Other options', 330, 205, 295, 260)
 	$gui_checkbox_useconsumables = GUICtrlCreateCheckbox('Use optional consumables', 355, 228)
 	$gui_checkbox_useconsets = GUICtrlCreateCheckbox('Use consets', 355, 258)
-	$gui_renderbutton = GUICtrlCreateButton('Rendering enabled', 351, 365, 252, 25)
+	$gui_button_openstorage = GUICtrlCreateButton('Open Storage', 351, 290, 252, 25)
+	GUICtrlSetBkColor($gui_button_openstorage, $COLOR_LIGHTBLUE)
+	$gui_checkbox_gooffline = GUICtrlCreateCheckbox('Go offline when bot starts', 355, 325)
+	$gui_checkbox_flashwhisper = GUICtrlCreateCheckbox('Flash taskbar on whisper', 355, 355)
+	$gui_renderbutton = GUICtrlCreateButton('Rendering enabled', 351, 385, 252, 25)
 	GUICtrlSetBkColor($gui_renderbutton, $COLOR_YELLOW)
 
 	GUICtrlSetTip($gui_checkbox_farmmaterialsmidrun, 'Salvage items during runs to save space. Bot will take some salvage kits in inventory for that.')
 	GUICtrlSetTip($gui_checkbox_useconsumables, 'If bot uses consumables (cake, pie, speed boosts, etc), it will do it automatically.')
 	GUICtrlSetTip($gui_checkbox_useconsets, 'If bot can use consets, it will do it automatically.')
+	GUICtrlSetTip($gui_button_openstorage, 'Open Xunlai storage window. Works remotely - view only from explorable areas.')
+	GUICtrlSetTip($gui_checkbox_gooffline, 'Set your status to offline in the friends list when the bot starts.')
+	GUICtrlSetTip($gui_checkbox_flashwhisper, 'Flash the GW taskbar button when an incoming whisper is received while the window is not focused.')
 	GUICtrlSetTip($gui_checkbox_usescrolls, 'Automatically uses scrolls required to enter elite zones (UW, FoW, Urgoz, Deep)')
 	GUICtrlSetTip($gui_checkbox_sortitems, 'Sorts items in inventory to optimize space before loot management.')
 	GUICtrlSetTip($gui_checkbox_collectdata, 'Collects data into SQLite database. Requires SQLite to be installed and configured. Keep unticked if unsure.')
@@ -323,6 +330,8 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($gui_checkbox_useconsumables, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsets, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_usescrolls, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_checkbox_gooffline, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_checkbox_flashwhisper, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_sortitems, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_collectdata, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_radiobutton_donatepoints, 'GuiOptionsHandler')
@@ -332,12 +341,13 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($gui_combo_bagscount, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_combo_districtchoice, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_renderbutton, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_button_openstorage, 'GuiOptionsHandler')
 
 	Local $dynamicExecutionTooltip = 'Dynamic execution. It allows to run a command with' & @CRLF _
 							& 'any arguments on the fly by writing it in below field.' & @CRLF _
 							& 'Syntax: fun(arg1, arg2, arg3, [...])'
-	$gui_input_dynamicexecution = GUICtrlCreateInput('', 355, 405, 156, 20)
-	$gui_button_dynamicexecution = GUICtrlCreateButton('Run', 530, 405, 75, 20)
+	$gui_input_dynamicexecution = GUICtrlCreateInput('', 355, 425, 156, 20)
+	$gui_button_dynamicexecution = GUICtrlCreateButton('Run', 530, 425, 75, 20)
 	GUICtrlSetTip($gui_label_dynamicexecution, $dynamicExecutionTooltip)
 	GUICtrlSetTip($gui_input_dynamicexecution, $dynamicExecutionTooltip)
 	GUICtrlSetTip($gui_button_dynamicexecution, $dynamicExecutionTooltip)
@@ -669,6 +679,10 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.use_consets'] = GUICtrlRead($gui_checkbox_useconsets) == $GUI_CHECKED
 		Case $gui_checkbox_usescrolls
 			$run_options_cache['run.use_scrolls'] = GUICtrlRead($gui_checkbox_usescrolls) == $GUI_CHECKED
+		Case $gui_checkbox_gooffline
+			$run_options_cache['run.go_offline'] = GUICtrlRead($gui_checkbox_gooffline) == $GUI_CHECKED
+		Case $gui_checkbox_flashwhisper
+			$run_options_cache['run.flash_whisper'] = GUICtrlRead($gui_checkbox_flashwhisper) == $GUI_CHECKED
 		Case $gui_checkbox_sortitems
 			$run_options_cache['run.sort_items'] = GUICtrlRead($gui_checkbox_sortitems) == $GUI_CHECKED
 		Case $gui_checkbox_collectdata
@@ -703,6 +717,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.disable_rendering'] = Not $rendering_enabled
 			RefreshRenderingButton()
 			ToggleRendering()
+		Case $gui_button_openstorage
+			OpenXunlaiWindow()
 		Case $gui_button_dynamicexecution
 			DynamicExecution(GUICtrlRead($gui_input_dynamicexecution))
 		Case Else
@@ -1564,6 +1580,8 @@ Func ApplyConfigToGUI()
 	GUICtrlSetState($gui_checkbox_useconsumables, $run_options_cache['run.consume_consumables'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsets, $run_options_cache['run.use_consets'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_usescrolls, $run_options_cache['run.use_scrolls'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_gooffline, $run_options_cache['run.go_offline'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_flashwhisper, $run_options_cache['run.flash_whisper'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_sortitems, $run_options_cache['run.sort_items'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_collectdata, $run_options_cache['run.collect_data'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_radiobutton_donatepoints, $run_options_cache['run.donate_faction_points'] ? $GUI_CHECKED : $GUI_UNCHECKED)

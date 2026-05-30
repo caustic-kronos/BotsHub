@@ -263,6 +263,12 @@ Func OpenChest()
 EndFunc
 
 
+;~ Opens the Xunlai storage window.
+Func OpenXunlaiWindow()
+	Enqueue($OPEN_XUNLAI_STRUCT_PTR, DllStructGetSize($OPEN_XUNLAI_STRUCT))
+EndFunc
+
+
 ;~ Stop maintaining enchantment on target.
 Func DropBuff($skillID, $agent, $heroIndex = 0)
 	Local $buffCount = GetBuffCount($heroIndex)
@@ -998,7 +1004,7 @@ EndFunc
 
 ;~ Kicks all heroes from the party.
 Func KickAllHeroes()
-	Return SendPacket(0x8, $HEADER_HERO_KICK, 0x27)
+	Return SendPacket(0x8, $HEADER_HERO_KICK, 0x28)
 EndFunc
 
 
@@ -2327,20 +2333,47 @@ EndFunc
 
 
 #Region Chat
-;~ Write a message in chat (can only be seen by user).
-Func WriteChat($message, $sender = 'GWA2')
+;~ Write a message in the local chat log (client-only, never sent to server).
+;~ Uses kWriteToChatLog (0x1000007F) via CommandUIMsg.
+;~ channel: 2=GWCA1, 3=All, 6=Emote, 7=Warning, 9=Guild, 11=Group
+Func WriteChat($message, $sender = '[Bhub]', $channel = 6)
 	Local $processHandle = GetProcessHandle()
 	Local $address = 256 * $queue_counter + $queue_base_address
 	$queue_counter = Mod($queue_counter + 1, $queue_size)
 
-	If StringLen($sender) > 19 Then $sender = StringLeft($sender, 19)
-	MemoryWrite($processHandle, $address + 4, $sender, 'wchar[20]')
-
 	If StringLen($message) > 100 Then $message = StringLeft($message, 100)
-	MemoryWrite($processHandle, $address + 44, $message, 'wchar[101]')
+	; Slot: 256 bytes, struct: 20 bytes → 118 wchars available (incl null).
+	; Sender-path fixed overhead: 11 chars + message, so sender max = 106 - msgLen.
+	If $sender <> '' Then
+		Local $maxSenderLen = 106 - StringLen($message)
+		If StringLen($sender) > $maxSenderLen Then $sender = StringLeft($sender, $maxSenderLen)
+	EndIf
 
-	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', $WRITE_CHAT_STRUCT_PTR, 'int', 4, 'int', 0)
-	If StringLen($message) > 100 Then WriteChat(StringTrimLeft($message, 100), $sender)
+	; GW1 encoded string: \x108\x107{text}\x1 (must use ChrW for codepoints > 255)
+	Local $ESC = ChrW(0x108) & ChrW(0x107)
+	Local $END = ChrW(0x1)
+	Local $displayStr
+	If $sender <> '' Then
+		; WriteChatEnc format: \x76b\x10a{senderEnc}\x1\x10b{msgEnc}\x1
+		Local $senderEnc = $ESC & $sender & $END
+		Local $msgEnc = $ESC & $message & $END
+		$displayStr = ChrW(0x76b) & ChrW(0x10a) & $senderEnc & $END & ChrW(0x10b) & $msgEnc & $END
+	Else
+		$displayStr = $ESC & $message & $END
+	EndIf
+
+	; Write encoded string into the queue slot after the 20-byte struct
+	Local $msgGWAddr = $address + 20
+	MemoryWrite($processHandle, $msgGWAddr, $displayStr, 'wchar[' & (StringLen($displayStr) + 1) & ']')
+
+	; CommandUIMsg struct: [fn ptr][kWriteToChatLog][channel][msg ptr][channel]
+	Local $s = DllStructCreate('dword;dword;dword;dword;dword')
+	DllStructSetData($s, 1, GetLabel('CommandUIMsg'))
+	DllStructSetData($s, 2, 0x1000007F)   ; kWriteToChatLog
+	DllStructSetData($s, 3, $channel)
+	DllStructSetData($s, 4, $msgGWAddr)   ; GW1-side pointer to encoded message
+	DllStructSetData($s, 5, $channel)
+	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($s), 'int', DllStructGetSize($s), 'int', 0)
 EndFunc
 
 
@@ -2753,7 +2786,7 @@ EndFunc
 
 ;~ Change online status. 0 = Offline, 1 = Online, 2 = Do not disturb, 3 = Away
 Func SetPlayerStatus($status)
-	If $status < 0 Or $status > 3 Or GetPlayerStatus() == $status Then
+	If $status < 0 Or $status > 3 Then
 		Warn('Provided an incorrect status - or the player is already in the provided status.')
 		Return False
 	EndIf
