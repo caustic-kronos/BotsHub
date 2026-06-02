@@ -16,7 +16,7 @@
 
 Global Const $BUILD_PW_HR_REFRAINS = 'OQCjUamLKTn19Y1YAh0b4ioYsYA'
 Global Const $BUILD_PW_HR_ARIAS = 'OQCkUWm4Ziy0ZdPWNGQI9GuoHGHG'
-Global Const $BUILD_PW_HR_ADRENALINE = 'OQGkURll5iy0ZdPWNGQYMIPxVh7G' ; +3+1 Leadership, +1 Spear, +1 Command, +Clarity
+Global Const $BUILD_PW_HR_ADRENALINE = 'OQGkURll5iy0ZdPWNGQooHPxVh7G' ; +3+1 Leadership, +1 Spear, +1 Command, +Clarity
 
 ; Default build
 Global Const $BUILD_PW_HEROIC_REFRAIN = 1
