@@ -64,7 +64,7 @@ But special thanks to Underavelvetmoon for sharing his work on the modstructs us
 - Contributors: Kronos, n1kn4x, Gahais
 - License: licensed under Apache 2.0
 
-### 'Froggy.au3' 'SoO.au3' 'FoW.au3'
+### 'Froggy.au3' 'SoO.au3' 'FoW.au3', 'TunnelOfTheForsaken.au3'
 - Author: TDawg
 - Contributors: Kronos, Gahais, BuddyLeeX
 - License: licensed under Apache 2.0

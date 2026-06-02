@@ -545,7 +545,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'SpiritSlaves',					SpiritSlavesFarm,				5,					$SPIRIT_SLAVES_FARM_DURATION)
 	AddFarmToFarmMap(	'Sunspear Armor',				SunspearArmorFarm,				5,					$SUNSPEAR_ARMOR_FARM_DURATION)
 	AddFarmToFarmMap(	'Tasca',						TascaChestFarm,					5,					$TASCA_FARM_DURATION)
-	AddFarmToFarmMap(	'TunnelOfTheForsaken',			TunnelOfTheForsakenFarm,		5,					50 * 60 * 1000)
+	AddFarmToFarmMap(	'TunnelOfTheForsaken',			TunnelOfTheForsakenFarm,		5,					$TUNNEL_OF_THE_FORSAKEN_FARM_DURATION)
 	AddFarmToFarmMap(	'Underworld',					UnderworldFarm,					5,					$UW_FARM_DURATION)
 	AddFarmToFarmMap(	'Vaettirs',						VaettirsFarm,					5,					$VAETTIRS_FARM_DURATION)
 	AddFarmToFarmMap(	'Vanguard',						VanguardTitleFarm,				5,					$VANGUARD_TITLE_FARM_DURATION)
@@ -577,7 +577,7 @@ Func ResetBotsSetups()
 	$soo_farm_setup							= False
 	$spirit_slaves_farm_setup				= False
 	$tasca_farm_setup						= False
-	$TunnelOfTheForsaken_farm_setup			= False
+	$tunnel_of_the_forsaken_farm_setup		= False
 	$vaettirs_farm_setup					= False
 	; Those do not need to be reset - party did not change, build did not change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
