@@ -120,10 +120,7 @@ Func VoltaicFarmLoop()
 
 	Sleep(1000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -18500, -8000, 1250)
-		; Waiting to be alive before retrying
-		While Not IsPartyCurrentlyAlive()
-			Sleep(2000)
-		WEnd
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 		MoveAggroAndKillInRange(-13500, -15750, 'In front of the door', $VS_AGGRO_RANGE)
@@ -138,10 +135,7 @@ Func VoltaicFarmLoop()
 		MoveAggroAndKillInRange(-18800, -7850, 'To the shrine', $VS_AGGRO_RANGE)
 	WEnd
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -17500, -14250, 1250)
-		; Waiting to be alive before retrying
-		While Not IsPartyCurrentlyAlive()
-			Sleep(2000)
-		WEnd
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 		MoveAggroAndKillInRange(-18500, -11500, 'Pre-Boss group', $VS_AGGRO_RANGE)

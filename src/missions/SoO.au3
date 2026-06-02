@@ -88,6 +88,7 @@ Func RunToShardsOfOrrDungeon()
 	RandomSleep(500)
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 11156, -17802, 1250)
+		WaitUntilPartyAlive()
 		MoveAggroAndKillInRange(13122, 10437, '1', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(10668, 6530, '2', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(11891, -224, '3', $SOO_AGGRO_RANGE)
@@ -184,6 +185,7 @@ Func ClearSoOFloor1()
 	If IsHardmodeEnabled() Then UseConset()
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 9232, 11483, 1250)
 		If CheckStuck('SoO Floor 1 - First loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-11657, 10465))
@@ -211,6 +213,7 @@ Func ClearSoOFloor1()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 16134, 11781, 1250)
 		If CheckStuck('SoO Floor 1 - Second loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		; too close to walls
 		MoveAggroAndKillInRange(7300, 12200, '', $SOO_AGGRO_RANGE)
@@ -233,6 +236,7 @@ Func ClearSoOFloor1()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 14750, 5250, 1250)
 		If CheckStuck('SoO Floor 1 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		; Poison trap between 1, 2 and 3
 		MoveAggroAndKillInRange(14000, 7400, '1', $SOO_AGGRO_RANGE)
@@ -244,6 +248,7 @@ Func ClearSoOFloor1()
 	Local $mapLoaded = False
 	While Not IsRunFailed() And Not $mapLoaded
 		If CheckStuck('SoO Floor 1 - Opening door', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		Info('Open dungeon door')
 		ClearTarget()
 		; Doubled to secure bot
@@ -277,6 +282,7 @@ Func ClearSoOFloor2()
 	Local $firstRoomfirstTime = True
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -11000, -6000, 1250)
 		If CheckStuck('SoO Floor 2 - First Room', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(-14076, -19457))
@@ -358,9 +364,7 @@ Func ClearSoOFloor2()
 	Local $mapLoaded = False
 	While Not IsRunFailed() And Not $mapLoaded
 		If CheckStuck('SoO Floor 2 - Second Room', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
-		While Not IsPartyCurrentlyAlive()
-			Sleep(2000)
-		WEnd
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 
 		If IsAgentInRange(GetMyAgent(), -14076, -19457, 1250) Then
@@ -463,6 +467,7 @@ Func ClearSoOFloor3()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 1100, 7100, 1250)
 		If CheckStuck('SoO Floor 3 - First loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		Info('Getting blessing')
 		GoToNPC(GetNearestNPCToCoords(17544, 18810))
@@ -487,6 +492,7 @@ Func ClearSoOFloor3()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -8650, 9200, 1250)
 		If CheckStuck('SoO Floor 3 - Second loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(-2300, 8000, 'Triggering beacon 2', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-4500, 6500, '1', $SOO_AGGRO_RANGE)
@@ -568,7 +574,7 @@ Func ClearSoOFloor3()
 	Local $largerSoOAggroRange = $RANGE_SPELLCAST + 300
 	While Not IsRunFailed() And Not IsQuestReward($ID_QUEST_LOST_SOULS)
 		If CheckStuck('SoO Floor 3 - Third loop', $MAX_SOO_FARM_DURATION) == $FAIL Then Return $FAIL
-
+		WaitUntilPartyAlive()
 		MoveAggroAndKillInRange(-9850, 7600, 'Going back to secure door opening in case run failed 1', $largerSoOAggroRange)
 		MoveAggroAndKillInRange(-9200, 6000, 'Going back to secure door opening in case run failed 2', $largerSoOAggroRange)
 

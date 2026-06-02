@@ -78,6 +78,7 @@ Func RunToBogroot()
 	Info('Making way to Bogroot')
 	AdlibRegister('TrackPartyStatus', 10000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 4671, 7094, 1250)
+		WaitUntilPartyAlive()
 		MoveAggroAndKillInRange(-4559, -14406, 'I majored in pain, with a minor in suffering', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-5204, -9831, 'Youre dumb! Youll die, and youll leave a dumb corpse!', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-928, -8699, 'I am fire! I am war! What are you?', $FROGGY_AGGRO_RANGE)
@@ -86,6 +87,7 @@ Func RunToBogroot()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 12280, 22585, 1250)
+		WaitUntilPartyAlive()
 		MoveAggroAndKillInRange(11025, 11710, 'Wow. Thats quality armor.', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(14624, 19314, 'By Ogdens Hammer, what savings!', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(14650, 19417, 'More violets I say. Less violence', $FROGGY_AGGRO_RANGE)
@@ -181,6 +183,7 @@ Func ClearFroggyFloor1()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 6078, 4483, 1250)
 		If CheckStuck('Froggy Floor 1 - First loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(17619, 2687, 'Moving near duo', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(18168, 4788, 'Killing one from duo', $FROGGY_AGGRO_RANGE)
@@ -200,6 +203,7 @@ Func ClearFroggyFloor1()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -1501, -8590, 1250)
 		If CheckStuck('Froggy Floor 1 - Second loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(4960, 1984, 'Triggering beacon 2', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(3567, -278, 'Massive frog cave', $FROGGY_AGGRO_RANGE)
@@ -212,6 +216,7 @@ Func ClearFroggyFloor1()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 7171, -17934, 1250)
 		If CheckStuck('Froggy Floor 1 - Third loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(-115, -8569, 'You played two hours and died like this?!', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(1966, -11018, 'Last cave entrance', $FROGGY_AGGRO_RANGE)
@@ -243,6 +248,7 @@ Func ClearFroggyFloor2()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -719, 11140, 1250)
 		If CheckStuck('Froggy Floor 2 - First loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		Info('Getting blessing')
 		MoveTo(-11072, -5522)
 		GoToNPC(GetNearestNPCToCoords(-11055, -5533))
@@ -267,6 +273,7 @@ Func ClearFroggyFloor2()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 8398, 4358, 1250)
 		If CheckStuck('Froggy Floor 2 - Second loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(3130, 12731, 'Beetle zone', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(3535, 13860, 'Aiur will be restored', $FROGGY_AGGRO_RANGE)
@@ -278,6 +285,7 @@ Func ClearFroggyFloor2()
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 19597, -11553, 1250)
 		If CheckStuck('Froggy Floor 2 - Third loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(9829, -1175, 'The Death Fleet descends', $FROGGY_AGGRO_RANGE)
 		MoveAggroAndKillInRange(10932, -5203, 'I hear and obey', $FROGGY_AGGRO_RANGE)
@@ -313,6 +321,7 @@ Func ClearFroggyFloor2()
 		If CheckStuck('Froggy Floor 2 - Fourth loop', $MAX_FROGGY_FARM_DURATION) == $FAIL Then Return $FAIL
 		Info('------------------------------------')
 		Info('Boss area')
+		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
 		MoveAggroAndKillInRange(17494, -14149, 'Our enemies will be undone', $largeFroggyAggroRange)
 		MoveAggroAndKillInRange(14641, -15081, 'I live to serve.', $largeFroggyAggroRange)

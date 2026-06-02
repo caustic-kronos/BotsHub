@@ -1003,6 +1003,16 @@ $default_move_defend_options.Add('openChests', False)
 $default_move_defend_options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
+;~ Waiting until party is alive again - doesn't wait more than 15s
+Func WaitUntilPartyAlive()
+	Local $count = 0
+	While IsPlayerAndPartyWiped() And $count < 15
+		Sleep(1000)
+		$count += 1
+	WEnd
+EndFunc
+
+
 ;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
 Func WaitAndFightEnemiesInArea($options = $default_move_aggro_kill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
