@@ -771,7 +771,7 @@ EndFunc
 ;~ Returns current target.
 Func GetCurrentTarget()
 	Local $currentTargetID = GetCurrentTargetID()
-	Return $currentTargetID == 0 ? Null : GetAgentByID(GetCurrentTargetID())
+	Return $currentTargetID == 0 ? Null : GetAgentByID($currentTargetID)
 EndFunc
 
 
@@ -975,6 +975,36 @@ Func GetAgentArray($type = 0)
 		_WinAPI_MoveMemory(DllStructGetPtr($returnArray[$i]), $ptrBase + ($i * $AGENT_SIZE), $AGENT_SIZE)
 	Next
 	Return $returnArray
+EndFunc
+
+
+;~ Alternative method to create an array of agents of a given type, without using the agent copy buffer - much slower but more reliable
+Func GetAgentArray2($type = 0)
+	Local $processHandle = GetProcessHandle()
+	Local $maxAgents = GetMaxAgents()
+	Local $agentArray[$maxAgents]
+	If $maxAgents <= 0 Then Return $agentArray
+
+	Local $pointer, $count = 0
+	Local $agentBase = MemoryRead($processHandle, $agent_base_address, 'ptr')
+	Local $agentPtrBuffer = DllStructCreate("ptr[" & $maxAgents & "]")
+
+	SafeDllCall13($kernel_handle, "bool", "ReadProcessMemory", "handle", $processHandle, "ptr", $agentBase, "struct*", $agentPtrBuffer, "ulong_ptr", 4 * $maxAgents, "ulong_ptr*", 0)
+
+	For $i = 1 To $maxAgents
+		$pointer = DllStructGetData($agentPtrBuffer, 1, $i)
+		If $pointer = 0 Then ContinueLoop
+
+		Local $struct = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
+		SafeDllCall13($kernel_handle, "bool", "ReadProcessMemory", "handle", $processHandle, "ptr", $pointer, "struct*", DllStructGetPtr($struct), "ulong_ptr", DllStructGetSize($struct), "ulong_ptr*", 0)
+		
+		If DllStructGetData($struct, 'Type') <> 0 Then
+			If DllStructGetData($struct, 'Type') <> $type Then ContinueLoop
+		EndIf
+		$agentArray[$count] = $struct
+		$count += 1
+	Next
+	Return $agentArray
 EndFunc
 
 

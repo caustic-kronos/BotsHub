@@ -255,6 +255,16 @@ Func PrintNPCInformations($npc)
 EndFunc
 
 
+;~ Return structure informations
+Func GetStructInformations($struct, $fieldsCount)
+	Local $string = ''
+	for $i = 1 To $fieldsCount
+		$string &= DllStructGetData($struct, $i) & ';'
+	Next
+	Return $string
+EndFunc
+
+
 #Region Counting NPCs
 ;~ Count foes in range of the given agent
 Func CountFoesInRangeOfAgent($agent, $range = $RANGE_AREA, $condition = Null)
