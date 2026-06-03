@@ -1,4 +1,4 @@
-{
+﻿{
 	"Pick up items": {
 		"Gold": true,
 		"Consumables": true,
@@ -1050,7 +1050,7 @@
 					"Radiant": false,
 					"Stalwart": false,
 					"Brawlers": false,
-					"Blessed": true,
+					"Blessed": false,
 					"Heralds": false,
 					"Sentrys": false
 				},
@@ -1061,7 +1061,7 @@
 					"Major Vigor": true,
 					"Recovery": false,
 					"Restoration": false,
-					"Clarity": true,
+					"Clarity": false,
 					"Purity": false,
 					"Superior Vigor": true
 				}
@@ -1071,7 +1071,7 @@
 					"Vanguards": false,
 					"Infiltrators": false,
 					"Saboteurs": false,
-					"Nightstalkers": true
+					"Nightstalkers": false
 				},
 				"Runes": {
 					"Minor Critical Strikes": false,
@@ -1145,8 +1145,8 @@
 					"Minor Fast Casting": true,
 					"Minor Illusion Magic": false,
 					"Minor Inspiration Magic": true,
-					"Major Domination Magic": true,
-					"Major Fast Casting": true,
+					"Major Domination Magic": false,
+					"Major Fast Casting": false,
 					"Major Illusion Magic": false,
 					"Major Inspiration Magic": false,
 					"Superior Domination Magic": true,
@@ -1162,9 +1162,9 @@
 					"Anchorites": true
 				},
 				"Runes": {
-					"Minor Divine Favor": true,
-					"Minor Healing Prayers": true,
-					"Minor Protection Prayers": true,
+					"Minor Divine Favor": false,
+					"Minor Healing Prayers": false,
+					"Minor Protection Prayers": false,
 					"Minor Smiting Prayers": false,
 					"Major Healing Prayers": false,
 					"Major Protection Prayers": false,
@@ -1186,11 +1186,11 @@
 					"Undertakers": false
 				},
 				"Runes": {
-					"Minor Blood Magic": false,
+					"Minor Blood Magic": true,
 					"Minor Curses": false,
 					"Minor Death Magic": false,
-					"Minor Soul Reaping": true,
-					"Major Blood Magic": false,
+					"Minor Soul Reaping": false,
+					"Major Blood Magic": true,
 					"Major Curses": false,
 					"Major Death Magic": false,
 					"Major Soul Reaping": false,
@@ -1238,7 +1238,7 @@
 					"Major Marksmanship": false,
 					"Major Wilderness Survival": false,
 					"Superior Beast Mastery": false,
-					"Superior Expertise": false,
+					"Superior Expertise": true,
 					"Superior Marksmanship": false,
 					"Superior Wilderness Survival": false
 				}
@@ -1251,9 +1251,9 @@
 				},
 				"Runes": {
 					"Minor Channeling Magic": false,
-					"Minor Communing": false,
-					"Minor Restoration Magic": false,
-					"Minor Spawning Power": true,
+					"Minor Communing": true,
+					"Minor Restoration Magic": true,
+					"Minor Spawning Power": false,
 					"Major Channeling Magic": false,
 					"Major Communing": false,
 					"Major Restoration Magic": false,
@@ -1270,15 +1270,15 @@
 					"Lieutenants": false,
 					"Stonefist": false,
 					"Dreadnought": false,
-					"Sentinels": true
+					"Sentinels": false
 				},
 				"Runes": {
 					"Minor Absorption": false,
 					"Minor Axe Mastery": false,
-					"Minor Hammer Mastery": false,
+					"Minor Hammer Mastery": true,
 					"Minor Strength": true,
 					"Minor Swordsmanship": false,
-					"Minor Tactics": true,
+					"Minor Tactics": false,
 					"Major Absorption": false,
 					"Major Axe Mastery": false,
 					"Major Hammer Mastery": false,
@@ -1551,14 +1551,14 @@
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
 					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": true
 				},
 				"Suffix - Grip": {
 					"of Fortitude (Health +30)": false,
 					"Of Defense (Armor +5)": false,
 					"Of Shelter (Armor +7 vs physical damage)": false,
 					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
 					"Of The Warrior": false,
 					"Of The Ranger": false,
 					"Of The Necromancer": false,
@@ -1592,7 +1592,7 @@
 					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
 					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
 					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
+					"Furious (Double Adrenaline on hit - Chance 10%)": true,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
 					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
@@ -1602,7 +1602,7 @@
 					"Of Defense (Armor +5)": false,
 					"Of Shelter (Armor +7 vs physical damage)": false,
 					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
+					"Of Enchanting (Enchantments last 20% longer)": true,
 					"Of The Warrior": false,
 					"Of The Ranger": false,
 					"Of The Necromancer": false,
