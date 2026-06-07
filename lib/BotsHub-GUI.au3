@@ -914,6 +914,7 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $DELDRIMOR_FARM_INFORMATIONS)
 		Case 'Dragon Moss'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_DRAGON_MOSS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $DM_RANGER_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $DRAGON_MOSS_FARM_INFORMATIONS)
 		Case 'Eden Iris'
 			GUICtrlSetData($gui_label_farminformations, $EDEN_IRIS_FARM_INFORMATIONS)

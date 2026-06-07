@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: caustic-kronos (aka Kronos, Night, Svarog)
-; Contributor: Gahais
+; Contributor: Gahais, Az
 ; Copyright 2025 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -28,13 +28,13 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $RA_DRAGON_MOSS_FARMER_SKILLBAR = 'OgcTcZ88Z6u844AiHRnJuE3R4AA'
+Global Const $RA_DRAGON_MOSS_FARMER_SKILLBAR = 'OgcTcZ88Z6u844AiHRnhAC3R4AA'
 Global Const $DRAGON_MOSS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- the quest A New Escort that makes the dragon moss show up (without it you cant farm)' & @CRLF _
 	& '- 16 in Expertise' & @CRLF _
 	& '- 12 in Shadow Arts' & @CRLF _
 	& '- 3 in Wilderness Survival' & @CRLF _
-	& '- A shield with the inscription Riders on the storm (+10 armor against Lightning damage)' & @CRLF _
+	& '- A shield of devotion (+45 health while enchanted) with the inscription Riders on the storm (+10 armor against Lightning damage)' & @CRLF _
 	& '- A spear +5 energy +20% enchantment duration' & @CRLF _
 	& '- Sentry or Blessed insignias on all the armor pieces' & @CRLF _
 	& '- A superior vigor rune'
@@ -46,9 +46,21 @@ Global Const $DM_STORM_CHASER		= 2
 Global Const $DM_SHROUD_OF_DISTRESS	= 3
 Global Const $DM_DEADLY_PARADOX		= 4
 Global Const $DM_SHADOWFORM			= 5
-Global Const $DM_MENTAL_BLOCK		= 6
+Global Const $DM_WAY_OF_PERFECTION	= 6
 Global Const $DM_DEATHS_CHARGE		= 7
 Global Const $DM_WHIRLING_DEFENSE	= 8
+
+; Hero Build
+Global Const $DM_RANGER_HERO_SKILLBAR = 'OgkjYxYjJP8YAA9+GXjBAQnnDA'
+Global Const $DM_RANGER_HERO_INCOMING			= 1
+Global Const $DM_RANGER_HERO_CANT_TOUCH_THIS	= 3
+Global Const $DM_RANGER_HERO_MAKE_HASTE			= 4
+Global Const $DM_RANGER_HERO_STAND_YOUR_GROUND	= 5
+Global Const $DM_RANGER_HERO_EDGE_OF_EXTINCTION = 7
+Global Const $DM_RANGER_HERO_WINNOWING 			= 8
+
+; Order heros are added to the team
+Global Const $DM_RANGER_HERO		= 1
 
 Global $dm_farm_setup = False
 
@@ -68,8 +80,8 @@ Func SetupDragonMossFarm()
 	Info('Setting up farm')
 	If TravelToOutpost($ID_SAINT_ANJEKAS_SHRINE, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
-	If SetupPlayerDragonMossFarm() Then Return $FAIL
-	LeaveParty()
+	If SetupPlayerDragonMossFarm() == $FAIL Then Return $FAIL
+	If SetupTeamDragonMossFarm() == $FAIL Then Return $FAIL
 	GoToDrazachThicket()
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
@@ -93,6 +105,25 @@ Func SetupPlayerDragonMossFarm()
 	Return $SUCCESS
 EndFunc
 
+Func SetupTeamDragonMossFarm()
+	If IsTeamAutoSetup() Then Return $SUCCESS
+
+	Info('Setting up team')
+	LeaveParty()
+	If AddHeroByProfession($ID_RANGER, $ID_PYRE_FIERCESHOT) == $SUCCESS Then
+		RandomSleep(150)
+		LoadSkillTemplate($DM_RANGER_HERO_SKILLBAR, 1)
+		RandomSleep(150)
+		DisableAllHeroSkills(1)
+		SetHeroBehaviour(1, $ID_HERO_AVOIDING)
+		RandomSleep(150)
+	Else
+		Warn('Could not add ranger hero to team. Continuing without hero')
+		$DM_RANGER_HERO = 0
+		Return $FAIL
+	EndIf
+	Return $SUCCESS
+EndFunc
 
 ;~ Move out of outpost into Drazach Thicket
 Func GoToDrazachThicket()
@@ -111,30 +142,62 @@ EndFunc
 Func DragonMossFarmLoop()
 	If GetMapID() <> $ID_DRAZACH_THICKET Then Return $FAIL
 
+	; Speed boosting and moving to the shrine
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO,$DM_RANGER_HERO_INCOMING)
+		RandomSleep(50)
+	EndIf
 	UseSkillEx($DM_DWARVEN_STABILITY)
 	RandomSleep(50)
 	UseSkillEx($DM_STORM_CHASER)
 	RandomSleep(50)
+	CommandHero($DM_RANGER_HERO, -8350, 18400)
 	MoveTo(-8400, 18450)
-	; Can talk to get benediction here
-
-	; Move to spot before aggro
+	
+	; Move to spot before aggro and cast defensive spells
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_MAKE_HASTE, GetMyAgent())
+		CommandHero($DM_RANGER_HERO, -6900, 17350)
+	EndIf
 	MoveTo(-6350, 16750)
-	UseSkillEx($DM_SHROUD_OF_DISTRESS)
-	RandomSleep(50)
 	UseSkillEx($DM_DEADLY_PARADOX)
 	RandomSleep(50)
 	UseSkillEx($DM_SHADOWFORM)
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_CANT_TOUCH_THIS)
+	EndIf
 	RandomSleep(50)
-	; Aggro
-	MoveTo(-5400, 15675, 0, 0, UseIMSWhenAvailable)
+	UseSkillEx($DM_WAY_OF_PERFECTION)
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_STAND_YOUR_GROUND)
+	EndIf
+	RandomSleep(50)
+	UseSkillEx($DM_SHROUD_OF_DISTRESS)
+	If $DM_RANGER_HERO > 0 Then
+		CommandHero($DM_RANGER_HERO, -8700, 18300)
+	EndIf
+	RandomSleep(50) 
+
+	; Aggro and cast hero spirits
+	MoveTo(-5300, 15600, 0, 0, UseIMSWhenAvailable)
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_WINNOWING)
+	EndIf
 	MoveTo(-6150, 18000, 0, 0, UseIMSWhenAvailable)
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_EDGE_OF_EXTINCTION)
+	EndIf
 	RandomSleep(2000)
-	; Safety
+
+	; Move to safety and send hero away to avoid stealing loots
 	MoveTo(-6575, 18575, 0, 0)
 	UseSkillEx($DM_DWARVEN_STABILITY)
+	If $DM_RANGER_HERO > 0 Then
+		UseHeroSkill($DM_RANGER_HERO,$DM_RANGER_HERO_INCOMING)
+		CommandHero($DM_RANGER_HERO, -11300, 19500)
+	EndIf
 	While IsPlayerAlive() And Not IsRecharged($DM_SHADOWFORM)
-		RandomSleep(500)
+		RandomSleep(250)
 	WEnd
 	UseSkillEx($DM_DEADLY_PARADOX)
 	RandomSleep(50)
@@ -142,6 +205,7 @@ Func DragonMossFarmLoop()
 	RandomSleep(50)
 	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(1000)
+
 	; Killing
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
@@ -164,8 +228,8 @@ Func DragonMossFarmLoop()
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_NEARBY)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
-	RandomSleep(1000)
 	Info('Picking up loot')
+	RandomSleep(1000)
 	PickUpItems()
 	Return $SUCCESS
 EndFunc
