@@ -936,7 +936,7 @@ EndFunc
 
 
 ;~ Quickly creates an array of agents of a given type
-Func GetAgentArray($type = 0)
+Func GetAgentArrayIssueOnDecommitedBlocks($type = 0)
 	Local $processHandle = GetProcessHandle()
 	DllStructSetData($MAKE_AGENT_ARRAY_STRUCT, 2, $type)
 	MemoryWrite($processHandle, $agent_copy_count, -1, 'long')
@@ -979,7 +979,7 @@ EndFunc
 
 
 ;~ Alternative method to create an array of agents of a given type, without using the agent copy buffer - much slower but more reliable
-Func GetAgentArray2($type = 0)
+Func GetAgentArray($type = 0)
 	Local $processHandle = GetProcessHandle()
 	Local $maxAgents = GetMaxAgents()
 	Local $agentArray[$maxAgents]
@@ -993,18 +993,21 @@ Func GetAgentArray2($type = 0)
 
 	For $i = 1 To $maxAgents
 		$pointer = DllStructGetData($agentPtrBuffer, 1, $i)
-		If $pointer = 0 Then ContinueLoop
+		If $pointer == 0 Then ContinueLoop
 
 		Local $struct = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
 		SafeDllCall13($kernel_handle, "bool", "ReadProcessMemory", "handle", $processHandle, "ptr", $pointer, "struct*", DllStructGetPtr($struct), "ulong_ptr", DllStructGetSize($struct), "ulong_ptr*", 0)
 		
-		If DllStructGetData($struct, 'Type') <> 0 Then
-			If DllStructGetData($struct, 'Type') <> $type Then ContinueLoop
-		EndIf
+		If DllStructGetData($struct, 'Type') <> 0 And DllStructGetData($struct, 'Type') <> $type Then ContinueLoop
 		$agentArray[$count] = $struct
 		$count += 1
 	Next
-	Return $agentArray
+
+	Local $resultArray[$count]
+	For $i = 0 To $count - 1
+		$resultArray[$i] = $agentArray[$i]
+	Next
+	Return $resultArray
 EndFunc
 
 
