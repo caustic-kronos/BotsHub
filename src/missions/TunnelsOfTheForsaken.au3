@@ -42,7 +42,7 @@ Global $tunnels_of_the_forsaken_farm_setup = False
 Func TunnelsOfTheForsakenFarm()
 	If Not $tunnels_of_the_forsaken_farm_setup Then SetupTunnelsOfTheForsakenFarm()
 
-	RunToTunnels()
+	If RunToTunnels() == $FAIL Then Return $FAIL
 	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = TunnelsOfTheForsakenFarmLoop()
 	AdlibUnregister('TrackPartyStatus')
@@ -58,6 +58,7 @@ Func SetupTunnelsOfTheForsakenFarm()
 	SwitchToHardModeIfEnabled()
 	AbandonQuest($ID_QUEST_THE_DREAMER_AND_THE_ZEALOT)
 	Info('Preparations complete')
+	$tunnels_of_the_forsaken_farm_setup = True
 	Return $SUCCESS
 EndFunc
 
@@ -79,6 +80,7 @@ Func RunToTunnels()
 	AdlibRegister('TrackPartyStatus', 10000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 18004, -1686, 1250)
 		WaitUntilPartyAlive()
+		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
 		MoveAggroAndKillInRange(21264., 3562, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(18837, -919, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(19213, -4201, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
@@ -105,7 +107,7 @@ Func TunnelsOfTheForsakenFarmLoop()
 	; Failure return delayed after adlib function deregistered
 	If (ClearTunnelsOfTheForsakenFloor1() == $FAIL Or ClearTunnelsOfTheForsakenFloor2() == $FAIL Or ClearTunnelsOfTheForsakenFloor3() == $FAIL) Then $tunnels_of_the_forsaken_farm_setup = False
 	AdlibUnRegister('TrackPartyStatus')
-;	If Not $tunnels_of_the_forsaken_farm_setup Then Return $FAIL
+	If Not $tunnels_of_the_forsaken_farm_setup Then Return $FAIL
 
 	Info('Finished Run')
 	Return $SUCCESS
@@ -122,6 +124,7 @@ Func ClearTunnelsOfTheForsakenFloor1()
 		WaitUntilPartyAlive()
 		If CheckStuck('TunnelsOfTheForsaken Floor 1 - First loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
+		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
 		MoveAggroAndKillInRange(-17442, -4638, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-12710, -6983, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-7836, -9115, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
@@ -162,6 +165,7 @@ Func ClearTunnelsOfTheForsakenFloor2()
 		If CheckStuck('TunnelsOfTheForsaken Floor 2 - First loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
+		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
 		MoveAggroAndKillInRange(-991, 10963, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(2007, 15561, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-764, 17454, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
@@ -200,6 +204,7 @@ Func ClearTunnelsOfTheForsakenFloor3()
 		If CheckStuck('TunnelsOfTheForsaken Floor 2 - First loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		WaitUntilPartyAlive()
 		UseMoraleConsumableIfNeeded()
+		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
 		MoveAggroAndKillInRange(-11162, 3309, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-10127, 2505, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-17353, -952, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
@@ -216,6 +221,8 @@ Func ClearTunnelsOfTheForsakenFloor3()
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -15949, -8561, 1250)
 		If CheckStuck('TunnelsOfTheForsaken Floor 2 - Second loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		WaitUntilPartyAlive()
+		UseMoraleConsumableIfNeeded()
+		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
 		MoveAggroAndKillInRange(-9819, -1276, '10', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-7260, 1425, '11', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-3990, -940, '12', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
