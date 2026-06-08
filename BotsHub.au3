@@ -68,7 +68,7 @@
 #include 'src/missions/NexusChallenge.au3'
 #include 'src/missions/SoO.au3'
 #include 'src/missions/SunspearArmor.au3'
-#include 'src/missions/TunnelOfTheForsaken.au3'
+#include 'src/missions/TunnelsOfTheForsaken.au3'
 #include 'src/missions/Underworld.au3'
 #include 'src/missions/Voltaic.au3'
 #include 'src/missions/WarSupplyKeiran.au3'
@@ -98,7 +98,7 @@ Global Const $PAUSE = 2
 
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
 	'Glint Challenge|Jade Brotherhood|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
-	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
+	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Dynamic execution'
 
 Global Const $AVAILABLE_DISTRICTS = '|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 
@@ -545,7 +545,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'SpiritSlaves',					SpiritSlavesFarm,				5,					$SPIRIT_SLAVES_FARM_DURATION)
 	AddFarmToFarmMap(	'Sunspear Armor',				SunspearArmorFarm,				5,					$SUNSPEAR_ARMOR_FARM_DURATION)
 	AddFarmToFarmMap(	'Tasca',						TascaChestFarm,					5,					$TASCA_FARM_DURATION)
-	AddFarmToFarmMap(	'TunnelOfTheForsaken',			TunnelOfTheForsakenFarm,		5,					$TUNNEL_OF_THE_FORSAKEN_FARM_DURATION)
+	AddFarmToFarmMap(	'TunnelsOfTheForsaken',			TunnelsOfTheForsakenFarm,		5,					$TUNNELS_OF_THE_FORSAKEN_FARM_DURATION)
 	AddFarmToFarmMap(	'Underworld',					UnderworldFarm,					5,					$UW_FARM_DURATION)
 	AddFarmToFarmMap(	'Vaettirs',						VaettirsFarm,					5,					$VAETTIRS_FARM_DURATION)
 	AddFarmToFarmMap(	'Vanguard',						VanguardTitleFarm,				5,					$VANGUARD_TITLE_FARM_DURATION)
@@ -577,7 +577,7 @@ Func ResetBotsSetups()
 	$soo_farm_setup							= False
 	$spirit_slaves_farm_setup				= False
 	$tasca_farm_setup						= False
-	$tunnel_of_the_forsaken_farm_setup		= False
+	$tunnels_of_the_forsaken_farm_setup		= False
 	$vaettirs_farm_setup					= False
 	; Those do not need to be reset - party did not change, build did not change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop

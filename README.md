@@ -86,7 +86,7 @@ To use it:
 | City of Torc'qua				| Margonite Gemstones								|
 | Ravenheart Gloom				| Torment Gemstones									|
 | Stygian Veil					| Stygian Gemstones									|
-| Tunnel of the Forsaken		| E-blade											|
+| Tunnels of the Forsaken		| E-blade											|
 | Underworld					| Globs of Ectoplasm								|
 
 ### Chest Runs
