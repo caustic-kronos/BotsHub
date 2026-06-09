@@ -60,7 +60,7 @@ Global Const $DM_RANGER_HERO_EDGE_OF_EXTINCTION = 7
 Global Const $DM_RANGER_HERO_WINNOWING 			= 8
 
 ; Order heros are added to the team
-Global Const $DM_RANGER_HERO		= 1
+Global $DM_RANGER_HERO	= 1
 
 Global $dm_farm_setup = False
 
@@ -81,7 +81,7 @@ Func SetupDragonMossFarm()
 	If TravelToOutpost($ID_SAINT_ANJEKAS_SHRINE, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_HARD_MODE)
 	If SetupPlayerDragonMossFarm() == $FAIL Then Return $FAIL
-	If SetupTeamDragonMossFarm() == $FAIL Then Return $FAIL
+	If SetupTeamDragonMossFarm() == $FAIL Then Warn('Could not add ranger hero to team. Continuing without hero')
 	GoToDrazachThicket()
 	MoveTo(-11100, 19700)
 	Move(-11300, 19900)
@@ -118,7 +118,6 @@ Func SetupTeamDragonMossFarm()
 		SetHeroBehaviour(1, $ID_HERO_AVOIDING)
 		RandomSleep(150)
 	Else
-		Warn('Could not add ranger hero to team. Continuing without hero')
 		$DM_RANGER_HERO = 0
 		Return $FAIL
 	EndIf
@@ -145,7 +144,6 @@ Func DragonMossFarmLoop()
 	; Speed boosting and moving to the shrine
 	If $DM_RANGER_HERO > 0 Then
 		UseHeroSkill($DM_RANGER_HERO,$DM_RANGER_HERO_INCOMING)
-		RandomSleep(50)
 	EndIf
 	UseSkillEx($DM_DWARVEN_STABILITY)
 	RandomSleep(50)
