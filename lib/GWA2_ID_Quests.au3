@@ -1439,6 +1439,7 @@ Global Const $ID_QUEST_DOUBLE_YOUR_PLEASURE_RUN = 1435
 Global Const $ID_QUEST_HUMBLING_GIFT = 1436
 Global Const $ID_QUEST_POLAR_DEPRESSED = 1437
 Global Const $ID_QUEST_TAKE_MY_SISTER_PLEASE = 1438
+Global Const $ID_QUEST_THE_DREAMER_AND_THE_ZEALOT = 1461
 #EndRegion Quest IDs
 
 
@@ -2841,7 +2842,8 @@ Global Const $QUEST_IDS[] = [ _
 	$ID_QUEST_DOUBLE_YOUR_PLEASURE_RUN, _
 	$ID_QUEST_HUMBLING_GIFT, _
 	$ID_QUEST_POLAR_DEPRESSED, _
-	$ID_QUEST_TAKE_MY_SISTER_PLEASE _
+	$ID_QUEST_TAKE_MY_SISTER_PLEASE, _
+	$ID_QUEST_THE_DREAMER_AND_THE_ZEALOT _
 ]
 
 
@@ -4243,7 +4245,8 @@ Global Const $QUEST_NAMES[] = [ _
 	'Double Your Pleasure and RUN!', _
 	'A Humbling Gift', _
 	'The Polar Depressed', _
-	'Take My Sister, Please' _
+	'Take My Sister, Please', _
+	'Tunnels of the Forsaken' _
 ]
 
 Global Const $QUEST_NAMES_FROM_IDS			=	MapFromArrays($QUEST_IDS, $QUEST_NAMES)
