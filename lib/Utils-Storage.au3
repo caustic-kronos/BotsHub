@@ -398,6 +398,8 @@ Func DefaultShouldPickItem($item)
 		Return False
 	ElseIf IsMapPiece($itemID) Then
 		Return $cache['Pick up items.Quest items.Map pieces']
+	ElseIf IsMiniature($item) Then
+		Return True
 	; ----------------------------------- Other stackables -----------------------------------
 	ElseIf IsStackable($item) Then
 		Return True
@@ -2196,6 +2198,24 @@ EndFunc
 ;~ Return true if the item is a special drop
 Func IsSpecialDrop($itemID)
 	Return $MAP_SPECIAL_DROPS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is a miniature
+Func IsMiniature($item)
+	Return DllStructGetData($item, 'Type') == 34
+EndFunc
+
+
+;~ Return true if the item is a consumable of any kind
+Func IsConsumableBis($item)
+	Return DllStructGetData($item, 'Type') == 9
+EndFunc
+
+
+;~ Return true if the item is a trophy (polymock piece included)
+Func IsTrophyBis($itemID)
+	Return DllStructGetData($item, 'Type') == 30
 EndFunc
 
 
