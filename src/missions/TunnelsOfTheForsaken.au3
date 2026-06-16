@@ -78,21 +78,19 @@ Func RunToTunnels()
 	WEnd
 	Info('Making way to entrance')
 	AdlibRegister('TrackPartyStatus', 10000)
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 18004, -1686, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 17982, 641, 1250)
 		WaitUntilPartyAlive()
 		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
-		MoveAggroAndKillInRange(21264., 3562, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveAggroAndKillInRange(18837, -919, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveAggroAndKillInRange(19213, -4201, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveAggroAndKillInRange(18004, -1686, '4', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
+		MoveAggroAndKillInRange(21264, 3562, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
+		MoveAggroAndKillInRange(17982, 641, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
 	;MoveAggroAndKillInRange(17750, -1500, '5', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	AdlibUnRegister('TrackPartyStatus')
-	
+
 	$mapLoaded = False
 	Info('Going through door')
 	While Not $mapLoaded
-		MoveTo(17771, -1416)
+		MoveTo(17342, -612)
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_TUNNELS_OF_THE_FORSAKEN_LVL_1)
 	WEnd
@@ -212,8 +210,6 @@ Func ClearTunnelsOfTheForsakenFloor3()
 		MoveAggroAndKillInRange(-13208, -4395, '5', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-12436, -5865, '6', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		PickUpItems()
-		MoveAggroAndKillInRange(-13244, -2246, '7', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveAggroAndKillInRange(-10537, -1300, '8', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		Info('Triggering beacon')
 		MoveAggroAndKillInRange(-10264, -4463, '9', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
