@@ -229,7 +229,7 @@ Global Const $ID_BOLT_OF_CLOTH					= 925
 Global Const $ID_WOOD_PLANK						= 946
 Global Const $ID_GRANITE_SLAB					= 955
 Global Const $ID_PILE_OF_GLITTERING_DUST		= 929
-Global Const $ID_PLANT_FIBERS					= 934
+Global Const $ID_PLANT_FIBER					= 934
 Global Const $ID_FEATHER						= 933
 
 ; Rare Marerials
@@ -261,7 +261,7 @@ Global Const $ID_JADEITE_SHARD					= 6533
 
 
 Global Const $BASIC_MATERIALS_ARRAY[]			= [$ID_BONE, $ID_IRON_INGOT, $ID_TANNED_HIDE_SQUARE, $ID_SCALE, $ID_CHITIN_FRAGMENT, $ID_BOLT_OF_CLOTH, _
-													$ID_WOOD_PLANK, $ID_GRANITE_SLAB, $ID_PILE_OF_GLITTERING_DUST, $ID_PLANT_FIBERS, $ID_FEATHER]
+													$ID_WOOD_PLANK, $ID_GRANITE_SLAB, $ID_PILE_OF_GLITTERING_DUST, $ID_PLANT_FIBER, $ID_FEATHER]
 Global Const $BASIC_MATERIALS_NAMES_ARRAY[]		= ['Bone', 'Iron Ingot', 'Tanned Hide Square', 'Scale', 'Chitin Fragment', 'Bolt of Cloth', _
 													'Wood Plank', 'Granite Slab', 'Pile of Glittering Dust', 'Plant Fiber', 'Feather']
 Global Const $BASIC_MATERIAL_NAMES_FROM_IDS		= MapFromArrays($BASIC_MATERIALS_ARRAY, $BASIC_MATERIALS_NAMES_ARRAY)
@@ -293,7 +293,7 @@ Global Const $MAP_BASIC_MATERIALS				= MapFromArray($BASIC_MATERIALS_ARRAY)
 Global Const $MAP_ALL_MATERIALS					= MapFromArray($all_materials_array)
 
 Global Const $MATERIALS_DOUBLE_ARRAY[][]		= [	[$ID_BONE, 1], [$ID_IRON_INGOT, 2], [$ID_TANNED_HIDE_SQUARE, 3], [$ID_SCALE, 4], [$ID_CHITIN_FRAGMENT, 5], [$ID_BOLT_OF_CLOTH, 6], _
-													[$ID_WOOD_PLANK, 7], [$ID_GRANITE_SLAB, 9], [$ID_PILE_OF_GLITTERING_DUST, 10], [$ID_PLANT_FIBERS, 11], [$ID_FEATHER, 12], _
+													[$ID_WOOD_PLANK, 7], [$ID_GRANITE_SLAB, 9], [$ID_PILE_OF_GLITTERING_DUST, 10], [$ID_PLANT_FIBER, 11], [$ID_FEATHER, 12], _
 													[$ID_FUR_SQUARE, 13], [$ID_BOLT_OF_LINEN, 14], [$ID_BOLT_OF_DAMASK, 15], [$ID_BOLT_OF_SILK, 16], [$ID_GLOB_OF_ECTOPLASM, 17], _
 													[$ID_STEEL_INGOT, 18], [$ID_DELDRIMOR_STEEL_INGOT, 19], [$ID_MONSTROUS_CLAW, 20], [$ID_MONSTROUS_EYE, 21], [$ID_MONSTROUS_FANG, 22], _
 													[$ID_RUBY, 23], [$ID_SAPPHIRE, 24], [$ID_DIAMOND, 25], [$ID_ONYX_GEMSTONE, 26], [$ID_LUMP_OF_CHARCOAL, 27], [$ID_OBSIDIAN_SHARD, 28], _

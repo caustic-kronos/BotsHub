@@ -544,11 +544,9 @@ Func DefaultShouldStoreItem($item)
 		Return True
 	; -------------------------------------- Materials --------------------------------------
 	ElseIf IsBasicMaterial($item) Then
-		If $quantity <> 250 Then Return False
 		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
 		Return $cache['Store items.Basic Materials.' & $materialName]
 	ElseIf IsRareMaterial($item) Then
-		If $quantity <> 250 Then Return False
 		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
 		Return $cache['Store items.Rare Materials.' & $materialName]
 	; ----------------------------------------- Tomes -----------------------------------------
