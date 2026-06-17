@@ -329,7 +329,7 @@ Func DefendWhileOpeningChests()
 	If GetEnergy() >= 5 And IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)
 	If GetEnergy() >= 20 And IsRecharged($PONGMEI_SHADOWFORM) And GetDistance(GetMyAgent(), $nearestFoe) < ($RANGE_SPELLCAST + 200) Then
 		UseSkillEx($PONGMEI_DEADLY_PARADOX)
-		RandomSleep(20)
+		RandomSleep(50)
 		UseSkillEx($PONGMEI_SHADOWFORM)
 	EndIf
 EndFunc

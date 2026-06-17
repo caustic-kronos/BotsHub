@@ -747,7 +747,7 @@ EndFunc
 ;		If $skillbarStruct[0] = 0 Then $deadlock = TimerInit()
 ;		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
 ;	WEnd
-;	RandomSleep($waitingTime + GetPing())
+;	PingSleep($waitingTime)
 ;	Return True
 ;EndFunc
 
@@ -758,10 +758,10 @@ Func WaitMapLoading($mapID = -1, $deadlockTime = 10000, $waitingTime = 2500)
 	Local $processHandle = GetProcessHandle()
 	; All variables are not updated at the same time
 	While GetMyID() == 0 Or GetMaxAgents() == 0 Or ($mapID <> -1 And GetMapID() <> $mapID)
-		Sleep(250 + GetPing())
+		PingSleep(250)
 		If TimerDiff($deadlock) > $deadlockTime And $deadlockTime > 0 Then Return False
 	WEnd
-	RandomSleep($waitingTime + 250 + GetPing())
+	PingSleep($waitingTime + 250)
 	Return True
 EndFunc
 #EndRegion Travel
@@ -1025,7 +1025,7 @@ EndFunc
 ;~ Adds a hero to the party.
 Func AddHero($heroID)
 	SendPacket(0x8, $HEADER_HERO_ADD, $heroID)
-	Sleep(100)
+	PingSleep(100)
 EndFunc
 
 
@@ -1463,14 +1463,14 @@ Func StartSalvageWithKit($item, $salvageKit)
 	Local $offset[] = [0, 0x18, 0x2C, 0x690]
 	Local $salvageSessionID = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)
 	If $salvageSessionID[0] == 0 Then Return False
-	Sleep(40 + GetPing())
+	PingSleep(50)
 	Local $itemID = DllStructGetData($item, 'ID')
 	DllStructSetData($SALVAGE_STRUCT, 2, $itemID)
 	DllStructSetData($SALVAGE_STRUCT, 3, DllStructGetData($salvageKit, 'ID'))
 	DllStructSetData($SALVAGE_STRUCT, 4, $salvageSessionID[1])
 	;Enqueue($SALVAGE_STRUCT_PTR, 16)
 	While Not SafeEnqueue($SALVAGE_STRUCT_PTR, 16)
-		Sleep(250 + GetPing())
+		PingSleep(250)
 	WEnd
 	Return True
 EndFunc
@@ -1479,7 +1479,7 @@ EndFunc
 ;~ Does not work - Should validate salvage
 Func ValidateSalvage()
 	ControlSend(GetWindowHandle(), '', '', '{Enter}')
-	Sleep(1000 + GetPing())
+	PingSleep(1000)
 EndFunc
 
 
@@ -1518,7 +1518,7 @@ Func IdentifyItem($item)
 	SendPacket(0xC, $HEADER_ITEM_IDENTIFY, DllStructGetData($identificationKit, 'ID'), $itemID)
 	Local $deadlock = TimerInit()
 	While TimerDiff($deadlock) < 5000
-		Sleep(20)
+		Sleep(50)
 		; Refetch item by ID to get updated identified status
 		If IsIdentified(GetItemByItemID($itemID)) Then Return True
 	WEnd
@@ -1737,7 +1737,7 @@ Func TraderRequest($modelID, $dyeColor = -1)
 	Local $deadlock = TimerInit()
 	$found = False
 	While Not $found And TimerDiff($deadlock) < 5000
-		Sleep(20)
+		Sleep(50)
 		$found = MemoryRead($processHandle, $trader_quote_ID) <> $quoteID
 	WEnd
 	Return $found
@@ -1774,7 +1774,7 @@ Func SellItemToTrader($item, $quantity = 0)
 		Local $timer = TimerInit()
 		While $costID <> $itemID
 			$costID = MemoryRead($processHandle, $trader_cost_ID)
-			Sleep(20 + GetPing())
+			PingSleep(50)
 			If TimerDiff($timer) > 2000 Then
 				Warn('Trader quote timeout for item ' & DllStructGetData($item, 'ModelID'))
 				Return False
@@ -1784,7 +1784,7 @@ Func SellItemToTrader($item, $quantity = 0)
 		Local $costValue = MemoryRead($processHandle, $trader_cost_value)
 		Enqueue($TRADER_SELL_STRUCT_PTR, 4)
 		; Wait a bit for transaction to complete
-		Sleep(20 + GetPing())
+		PingSleep(50)
 	Next
 	Return True
 EndFunc
@@ -2613,12 +2613,11 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	EndIf
 
 	$deadlock = TimerInit()
-	Local $ping = GetPing()
 	; Setting up secondary profession
 	If GetHeroProfession($heroIndex) <> $secondaryProfession Then
 		While GetHeroProfession($heroIndex, True) <> $secondaryProfession And TimerDiff($deadlock) < 8000
 			ChangeSecondProfession($attributesArray[0][0], $heroIndex)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		WEnd
 	EndIf
 
@@ -2636,15 +2635,15 @@ Func LoadAttributes($attributesArray, $secondaryProfession, $heroIndex = 0)
 	For $i = 1 To $attributesArray[0][1]
 		For $j = 1 To $attributesArray[$i][1]
 			IncreaseAttribute($attributesArray[$i][0], $heroIndex)
-			Sleep(50 + $ping)
+			PingSleep(50)
 		Next
 	Next
-	Sleep(50 + $ping)
+	PingSleep(50)
 
 	; If there are any points left, we put them in the primary attribute
 	For $i = 0 To 11
 		IncreaseAttribute($primaryAttribute, $heroIndex)
-		Sleep(50 + $ping)
+		PingSleep(50)
 	Next
 EndFunc
 
@@ -2678,18 +2677,17 @@ EndFunc
 
 ;~ Set all attributes of the character/hero to 0
 Func EmptyAttributes($secondaryProfession, $heroIndex = 0)
-	Local $ping = GetPing()
 	For $attribute In $ATTRIBUTES_BY_PROFESSION_MAP[GetHeroProfession($heroIndex)]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(10 + $ping)
+			PingSleep(50)
 		Next
 	Next
 
 	For $attribute In $ATTRIBUTES_BY_PROFESSION_MAP[$secondaryProfession]
 		For $i = 0 To 11
 			DecreaseAttribute($attribute, $heroIndex)
-			Sleep(10 + $ping)
+			PingSleep(50)
 		Next
 	Next
 EndFunc
@@ -2706,7 +2704,7 @@ Func ClearAttributes($heroIndex = 0)
 			While $attribute <> 0 And TimerDiff($deadlock) < 5000
 				$deadlock = TimerInit()
 				DecreaseAttribute($attributeID, $heroIndex)
-				Sleep(100)
+				Sleep(250)
 				$attribute = GetAttributeByID($attributeID, False, $heroIndex)
 			WEnd
 		EndIf
@@ -2775,7 +2773,7 @@ Func DecodeEncStringAsync($ptr, $timeout = 1000)
 			Local $decoded = MemoryRead($processHandle, $decode_output_ptr, 'wchar[1024]')
 			Return $decoded
 		EndIf
-		Sleep(16)
+		Sleep(50)
 	WEnd
 
 	; Timeout
@@ -2912,7 +2910,7 @@ Func Disconnected($maxRetries = 3, $retryDelay = 60000)
 			EnableRendering()
 			Exit 1
 		EndIf
-		Sleep(20)
+		Sleep(50)
 		$check = GetMapType() <> $ID_LOADING And GetAgentExists(GetMyID())
 	WEnd
 	Notice('Reconnected!')

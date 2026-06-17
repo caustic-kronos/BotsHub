@@ -245,7 +245,7 @@ EndFunc
 Func HRAdrenalineCombat($target, $options)
 	GetAlmostInRangeOfAgent($target)
 	Attack($target)
-	Sleep(100)
+	Sleep(250)
 	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
 		Attack($target)
 		CastCombatShouts($target)
@@ -274,7 +274,7 @@ Func MaintainHeroicRefrain()
 
 	; Maintaining
 	UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
-	RandomSleep(20 + GetPing())
+	PingSleep(50)
 
 	; Not casting refrains if not enough energy to guarantee the next theyre on fire
 	Local $energy = GetEnergy()
@@ -287,7 +287,7 @@ Func MaintainHeroicRefrain()
 				Sleep(1000)
 			WEnd
 			UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
-			RandomSleep(20 + GetPing())
+			PingSleep(50)
 			Return
 		EndIf
 	EndIf
@@ -296,7 +296,7 @@ Func MaintainHeroicRefrain()
 	Local Static $castHRSecondTime = False
 	If $castHRSecondTime Then
 		UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
-		RandomSleep(20 + GetPing())
+		PingSleep(50)
 		$castHRSecondTime = False
 		Return
 	EndIf
@@ -354,7 +354,7 @@ Func MaintainHeroicRefrain()
 	EndIf
 
 	UseSkillEx($missingRefrain, $target)
-	RandomSleep(20 + GetPing())
+	PingSleep(50)
 EndFunc
 
 
@@ -381,45 +381,44 @@ Func FightAsPWHeroicRefrain($target, $options = Null)
 	Sleep(1500)
 	If $timer20s == Null Or TimerDiff($timer20s) > 20000 Then
 		GetIntoTeamRange()
-		Local $ping = GetPing()
 		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
-		Sleep(20 + $ping)
+		PingSleep(50)
 		UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
-		Sleep(20 + $ping)
+		PingSleep(50)
 		If $castBattleStandard And GetEnergy() >= 20 Then
 			UseSkillEx($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 		If $castCantTouchThis Then
 			UseSkillEx($BUILD_PW_CANT_TOUCH_THIS)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 		If $castAriaOfRestoration Then
 			UseSkillEx($BUILD_PW_ARIA_OF_RESTORATION)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 		If $castBalladOfRestoration Then
 			UseSkillEx($BUILD_PW_BALLAD_OF_RESTORATION)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 		If $castAriaOfZeal Then
 			UseSkillEx($BUILD_PW_ARIA_OF_ZEAL)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 		If $castToTheLimit Then
 			UseSkillEx($BUILD_PW_TO_THE_LIMIT)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 		$timer20s = TimerInit()
 	EndIf
 
 	If $castSaveYourselves And GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then
 		UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
-		Sleep(20 + GetPing())
+		PingSleep(50)
 	EndIf
 
 	If $castNaturalTemper And GetSkillbarSkillAdrenaline($BUILD_PW_NATURAL_TEMPER) >= 75 Then
 		UseSkillEx($BUILD_PW_NATURAL_TEMPER)
-		Sleep(20 + GetPing())
+		PingSleep(50)
 	EndIf
 EndFunc

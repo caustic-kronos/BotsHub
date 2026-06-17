@@ -261,12 +261,12 @@ Func BorealSpeedRun()
 	;~ Cast Dwarven Stability and Dash when ready
 	If IsRecharged($BOREAL_DWARVEN_STABILITY) And GetEnergy() >= 5 Then
 		UseSkillEx($BOREAL_DWARVEN_STABILITY)
-		Sleep(GetPing() + 100)
+		PingSleep(100)
 	EndIf
 	If $boreal_player_profession == $ID_DERVISH And $boreal_has_pious_haste And $boreal_has_pious_renewal Then
 		If IsRecharged($BOREAL_PIOUS_HASTE) And GetEnergy() >= 10 Then
 			UseSkillEx($BOREAL_PIOUS_RENEWAL)
-			Sleep(GetPing() + 100)
+			PingSleep(100)
 			UseSkillEx($BOREAL_PIOUS_HASTE)
 		EndIf
 	ElseIf IsRecharged($BOREAL_DASH) And GetEnergy() >= 5 Then

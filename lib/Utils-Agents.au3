@@ -326,7 +326,7 @@ EndFunc
 Func GetIntoTeamRange($teamSize = 8, $range = $RANGE_EARSHOT, $maxWait = 50)
 	Local $i = 0
 	While CountTeamInRangeOfAgent(GetMyAgent(), $range) < $teamSize And $i < $maxWait
-		Sleep(200)
+		Sleep(250)
 		$i += 1
 		If IsPlayerDead() Then ExitLoop
 	WEnd
@@ -628,6 +628,30 @@ Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $rang
 
 	SetExtended(Sqrt($nearestDistance))
 	Return $nearestAgent
+EndFunc
+
+
+;~ Returns the nearest agent to specified target agent. $agentFilter is a function which returns True for the agents that should be considered, False for those to skip
+Func GetFurthestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $range = $RANGE_COMPASS, $agentFilter = Null)
+	Local $furthestAgent = Null, $distance = Null, $furthestDistance = -1
+	Local $agents = GetAgentArray($agentType)
+	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
+	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
+
+	For $agent In $agents
+		If DllStructGetData($agent, 'ID') == $targetAgentID Then ContinueLoop
+		If DllStructGetData($agent, 'ID') == $ownID Then ContinueLoop
+		If $agentFilter <> Null And Not $agentFilter($agent) Then ContinueLoop
+		$distance = GetDistance($targetAgent, $agent)
+		If $distance > $range Then ContinueLoop
+		If $distance > $furthestDistance Then
+			$furthestAgent = $agent
+			$furthestDistance = $distance
+		EndIf
+	Next
+
+	SetExtended(Sqrt($furthestDistance))
+	Return $furthestAgent
 EndFunc
 
 

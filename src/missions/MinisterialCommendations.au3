@@ -461,7 +461,6 @@ Func WaitForPurityBall()
 
 	LogIntoFile('Initial foes count - ' & CountFoesOnTopOfTheStairs())
 
-	Local $ping = GetPing()
 	While IsPlayerAlive() And TimerDiff($deadlock) < 75000 And (Not IsFurthestMobInBall() Or GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK) < 130)
 		If ($foesCount > 3 And IsRecharged($SKILL_TO_THE_LIMIT) And GetSkillbarSkillAdrenaline($SKILL_WHIRLWIND_ATTACK) < 130) Then
 			UseSkillEx($SKILL_TO_THE_LIMIT)
@@ -475,20 +474,20 @@ Func WaitForPurityBall()
 		EndIf
 		If IsRecharged($SKILL_CONVICTION) And GetEffectTimeRemaining(GetEffect($ID_CONVICTION)) == 0 Then
 			UseSkillEx($SKILL_CONVICTION)
-			Sleep(100 + $ping)
+			PingSleep(100)
 
 			If IsRecharged($SKILL_VITAL_BOON) Then
 				UseSkillEx($SKILL_VITAL_BOON)
-				Sleep(20 + $ping)
+				PingSleep(50)
 			EndIf
 		EndIf
 		;If IsRecharged($SKILL_MYSTIC_REGENERATION) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_REGENERATION)) == 0 Then
 		;	UseSkillEx($SKILL_MYSTIC_REGENERATION)
-		;	Sleep(20 + $ping)
+		;	PingSleep(50)
 		;EndIf
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($SKILL_VITAL_BOON) And GetEffectTimeRemaining(GetEffect($ID_VITAL_BOON)) == 0 Then
 			UseSkillEx($SKILL_VITAL_BOON)
-			Sleep(20 + $ping)
+			PingSleep(50)
 		EndIf
 
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.45 And IsRecharged($SKILL_GRENTHS_AURA) Then
@@ -646,10 +645,10 @@ Func HealWhilePickingItems()
 		EndIf
 		If DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.60 And IsRecharged($SKILL_VITAL_BOON) And GetEffectTimeRemaining(GetEffect($ID_VITAL_BOON)) == 0 Then
 			UseSkillEx($SKILL_VITAL_BOON)
-			Sleep(20 + GetPing())
+			PingSleep(50)
 		;If IsRecharged($SKILL_MYSTIC_REGENERATION) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_REGENERATION)) == 0 Then
 		;	UseSkillEx($SKILL_MYSTIC_REGENERATION)
-		;	Sleep(20 + GetPing())
+		;	PingSleep(50)
 		EndIf
 		; Heroes with Mystic Healing provide additional long range support
 		UseHeroSkill($HERO_MESMER_DPS_2, $ESURGE2_MYSTIC_HEALING_SKILL_POSITION)

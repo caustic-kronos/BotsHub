@@ -304,18 +304,17 @@ Func ParagonRefreshShouts()
 
 		; This solution would be better - but effects cannot be accessed on other account heroes/characters and mercenaries
 		;Local $heroNumber
-		;Local $ping = GetPing()
 		;For $member In $party
 		;	If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
 		;	$heroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
 		;	If ($heroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN), $heroNumber) == 0) And GetEnergy() > 15 Then
 		;		UseSkillEx($follower_maintain_skill_1, $member)
-		;		Sleep(20 + $ping)
+		;		PingSleep(50)
 		;		ExitLoop
 		;	EndIf
 		;	If ($heroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_BURNING_REFRAIN), $heroNumber) == 0) And GetEnergy() > 20 Then
 		;		UseSkillEx($follower_maintain_skill_2, $member)
-		;		Sleep(20 + $ping)
+		;		PingSleep(50)
 		;		ExitLoop
 		;	EndIf
 		;Next
@@ -325,17 +324,16 @@ EndFunc
 
 ;~ Paragon fight function
 Func ParagonFight()
-	Local $ping = GetPing()
 	If IsRecharged($follower_maintain_skill_7) Then UseSkillEx($follower_maintain_skill_7)
-	Sleep(20 + $ping)
+	PingSleep(50)
 	If IsRecharged($follower_maintain_skill_6) Then UseSkillEx($follower_maintain_skill_6)
-	Sleep(20 + $ping)
+	PingSleep(50)
 	If IsRecharged($follower_maintain_skill_3) Then UseSkillEx($follower_maintain_skill_3)
-	Sleep(20 + $ping)
+	PingSleep(50)
 	If GetSkillbarSkillAdrenaline($follower_maintain_skill_5) < 200 And IsRecharged($follower_maintain_skill_4) Then UseSkillEx($follower_maintain_skill_4)
-	Sleep(20 + $ping)
+	PingSleep(50)
 	If GetSkillbarSkillAdrenaline($follower_maintain_skill_5) == 200 Then UseSkillEx($follower_maintain_skill_5)
-	Sleep(20 + $ping)
+	PingSleep(50)
 	Attack(GetNearestEnemyToAgent(GetMyAgent()))
 	Sleep(1000)
 EndFunc

@@ -65,7 +65,7 @@ Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision
 		If $doWhileRunning <> Null Then $doWhileRunning()
-		RandomSleep(100)
+		PingSleep(100)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			$destinationX = $X + Random(-$random, $random)
@@ -106,10 +106,10 @@ Func GoToAgent($agent, $goFunction = Null)
 	Local $blockedCount = 0
 	Local $mapLoading = GetMapType(), $mapLoadingOld
 	Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-	RandomSleep(100)
+	PingSleep(100)
 	If $goFunction <> Null Then $goFunction($agent)
 	While GetDistance($me, $agent) > 250 And $blockedCount < 14
-		RandomSleep(100)
+		PingSleep(100)
 		$me = GetMyAgent()
 		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
 		$mapLoadingOld = $mapLoading
@@ -118,7 +118,7 @@ Func GoToAgent($agent, $goFunction = Null)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-			RandomSleep(100)
+			PingSleep(100)
 			If $goFunction <> Null Then $goFunction($agent)
 		EndIf
 	WEnd
@@ -246,7 +246,6 @@ Func EnterFissureOfWoe()
 		Info('Balancing characters gold level to have enough to enter the Fissure of Woe')
 		BalanceCharacterGold(10000)
 		Info('Going to Balthazar statue to enter Fissure of Woe')
-		Local $ping = GetPing()
 		Local $npcCoordinates[2]
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
@@ -269,11 +268,11 @@ Func EnterFissureOfWoe()
 				$npcCoordinates[1] = 990
 		EndSwitch
 		SendChat('/kneel', '')
-		Sleep(3000 + $ping)
+		PingSleep(3000)
 		GoToNPC(GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1]))
-		Sleep(750 + $ping)
+		PingSleep(750)
 		Dialog(0x85)
-		Sleep(750 + $ping)
+		PingSleep(750)
 		Dialog(0x86)
 		WaitMapLoading($ID_THE_FISSURE_OF_WOE)
 		If GetMapID() <> $ID_THE_FISSURE_OF_WOE Then
@@ -300,7 +299,6 @@ Func EnterUnderworld()
 		Info('Balancing characters gold level to have enough to enter the Underworld')
 		BalanceCharacterGold(10000)
 		Info('Moving to Grenth statue to enter Underworld')
-		Local $ping = GetPing()
 		Local $npcCoordinates[2]
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
@@ -318,11 +316,11 @@ Func EnterUnderworld()
 				$npcCoordinates[1] = 3900
 		EndSwitch
 		SendChat('/kneel', '')
-		Sleep(3000 + $ping)
+		PingSleep(3000)
 		GoToNPC(GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1]))
-		Sleep(750 + $ping)
+		PingSleep(750)
 		Dialog(0x85)
-		Sleep(750 + $ping)
+		PingSleep(750)
 		Dialog(0x86)
 		WaitMapLoading($ID_THE_UNDERWORLD)
 		If GetMapID() <> $ID_THE_UNDERWORLD Then
@@ -496,7 +494,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 			;Final solution, caution, chest is considered as signpost by game client
 			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)
 			If IsPlayerDead() Then Return
-			RandomSleep(200)
+			RandomSleep(250)
 			OpenChest()
 			RandomSleep(1000)
 			If IsPlayerDead() Then Return
@@ -534,7 +532,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 	Local $blocked = 0
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
 		Move($x, $y)
-		RandomSleep(100)
+		PingSleep(100)
 		If $defendFunction <> Null Then $defendFunction()
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then
@@ -544,11 +542,11 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 			$blocked += 1
 			Move($x, $y)
 		EndIf
-		RandomSleep(100)
+		PingSleep(100)
 		$me = GetMyAgent()
 	WEnd
 	GoSignpost($signpost)
-	RandomSleep(100)
+	PingSleep(100)
 EndFunc
 #EndRegion Find and open Chests
 
@@ -604,7 +602,7 @@ Func GoNearestNPCToCoords($x, $y)
 	Local $npc = GetNearestNPCToCoords($x, $y)
 	Local $me = GetMyAgent()
 	While DllStructGetData($npc, 'ID') == 0
-		RandomSleep(100)
+		RandomSleep(250)
 		$npc = GetNearestNPCToCoords($x, $y)
 	WEnd
 	ChangeTarget($npc)
@@ -670,32 +668,11 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 		If IsPlayerAlive() And Not IsPlayerMoving() And Not GetIsKnocked(GetMyAgent()) Then
 			$blocked += 1
 			$me = GetMyAgent()
-			If $blocked > 8 Then CheckAndSendStuckCommand()
-			If $blocked > 10 Then
-				; If Heart of Shadow skill is available then use it to avoid becoming stuck
-				If $hosSkillSlot > 0 Then
-					If IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
-						UseSkillEx($hosSkillSlot)
-						Sleep(GetPing())
-						Move($destinationX, $destinationY, $randomFactor)
-					EndIf
-				EndIf
-				; If Death's Charge skill is available then use it to avoid becoming stuck
-				If $deathChargeSkillSlot > 0 Then
-					If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
-						If IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
-							$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
-							UseSkillEx($deathChargeSkillSlot, $target)
-							Sleep(GetPing())
-							Move($destinationX, $destinationY, $randomFactor)
-						EndIf
-					EndIf
-				EndIf
-			EndIf
+
 			If $blocked < 6 Then
 				Move($destinationX, $destinationY, $randomFactor)
-				Sleep(GetPing())
-			ElseIf $blocked > 5 Then
+				PingSleep(50)
+			Else
 				$myX = DllStructGetData($me, 'X')
 				$myY = DllStructGetData($me, 'Y')
 				; range [0, 2*$PI] - full circle in radian degrees
@@ -704,7 +681,23 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 				$offsetY = 300 * sin($randomAngle)
 				; 0 = no random, because random offset is already calculated
 				Move($myX + $offsetX , $myY + $offsetY, 0)
-				Sleep(GetPing())
+				PingSleep(50)
+
+				If $blocked > 8 Then CheckAndSendStuckCommand()
+				If $blocked > 10 Then
+					; If Heart of Shadow skill is available then use it to get unstuck
+					If $hosSkillSlot > 0 And IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
+						UseSkillEx($hosSkillSlot)
+						PingSleep(50)
+						Move($destinationX, $destinationY, $randomFactor)
+					; If Death's Charge skill is available then use it to get unstuck
+					ElseIf $deathChargeSkillSlot > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 And IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
+						$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+						UseSkillEx($deathChargeSkillSlot, $target)
+						PingSleep(50)
+						Move($destinationX, $destinationY, $randomFactor)
+					EndIf
+				EndIf
 			EndIf
 		Else
 			Move($destinationX, $destinationY, $randomFactor)
@@ -723,7 +716,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
-		Sleep(100 + GetPing())
+		PingSleep(100)
 	WEnd
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -739,13 +732,13 @@ Func AttackOrUseSkill($attackSleep, $skill1 = Null, $skill2 = Null, $skill3 = Nu
 	; Start auto-attack first
 	Attack($target)
 	; Small delay to ensure attack starts
-	RandomSleep(50)
+	PingSleep(50)
 
 	For $i = 1 To 8
 		Local $skillSlot = Eval('skill' & $i)
 		If ($skillSlot <> Null And IsRecharged($skillSlot)) Then
 			UseSkillEx($skillSlot, $target)
-			RandomSleep(50)
+			PingSleep(50)
 			$skillUsed = True
 			ExitLoop
 		EndIf
@@ -818,7 +811,7 @@ Func UseSkillExNew($skillSlot, $target = Null, $timeout = 5000)
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
 	While IsCasting(GetMyAgent()) Or IsRecharged($skillSlot) Or DllStructGetData(GetSkillbar(), 'Casting') == 1
-		Sleep(50)
+		PingSleep(50)
 		If TimerDiff($castTimer) > $timeout Then Return False
 	WEnd
 	Return True
@@ -902,8 +895,7 @@ Func UseSkillTimed($skillSlot, $target = Null)
 	Local $effects = GetEffect(0)
 	; get cast time modifier, default is 1, but effects can influence it
 	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
-	Local $ping = GetPing()
-	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + $ping
+	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
 
 	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
 	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
@@ -911,7 +903,7 @@ Func UseSkillTimed($skillSlot, $target = Null)
 	Local $castTimer = TimerInit()
 	; wait until skill starts recharging or time for skill to be fully activated has elapsed
 	Do
-		Sleep(50 + $ping)
+		PingSleep(50)
 	Until ($fullCastTime < TimerDiff($castTimer)) Or (Not IsRecharged($skillSlot))
 	Return True
 EndFunc
@@ -928,14 +920,13 @@ Func UseHeroSkillEx($heroIndex, $skillSlot, $target = Null)
 	If GetEnergy(GetAgentByID(GetHeroID($heroIndex))) < $energy Then Return False
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
-	Local $ping = GetPing()
-	Local $approximateCastTime = $castTime + $aftercast + $ping
+	Local $approximateCastTime = $castTime + $aftercast + GetPing()
 
 	UseHeroSkill($heroIndex, $skillSlot, $target)
 	Local $castTimer = TimerInit()
 	; Wait until skill starts recharging or time for skill to be activated has elapsed
 	Do
-		Sleep(50 + $ping)
+		PingSleep(50)
 	Until ($approximateCastTime < TimerDiff($castTimer)) Or (Not IsRecharged($skillSlot))
 	Return True
 EndFunc
@@ -956,14 +947,13 @@ Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 	Local $effects = GetEffect(0, $heroIndex)
 	; get cast time modifier, default is 1, but effects can influence it
 	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
-	Local $ping = GetPing()
-	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + $ping
+	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
 
 	UseHeroSkill($heroIndex, $skillSlot, $target)
 	Local $castTimer = TimerInit()
 	; wait until skill starts recharging or time for skill to be fully activated has elapsed
 	Do
-		Sleep(50 + $ping)
+		PingSleep(50)
 	Until ($fullCastTime < TimerDiff($castTimer)) Or (Not IsRecharged($skillSlot))
 	Return True
 EndFunc
@@ -1231,10 +1221,10 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 		If Not $priorityMobs Or $target == Null Then $target = GetNearestEnemyToAgent($me)
 		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
 			ChangeTarget($target)
-			Sleep(100)
+			PingSleep(100)
 			If $callTarget Then
 				CallTargetOnce($target)
-				Sleep(100)
+				PingSleep(100)
 			EndIf
 
 			;FightAsPWHeroicRefrain($target, $options)
@@ -1261,7 +1251,7 @@ Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
 	; get as close as possible to target foe to have a surprise effect when attacking
 	GetAlmostInRangeOfAgent($target)
 	Attack($target)
-	Sleep(100)
+	PingSleep(100)
 
 	Local $i = 0
 	; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
@@ -1270,12 +1260,12 @@ Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
 		$i = Mod($i, 8) + 1
 		; Always ensure auto-attack is active before using skills
 		Attack($target)
-		Sleep(100)
+		PingSleep(100)
 		; if no skill energy cost map is provided then attempt to use skills anyway
 		Local $sufficientEnergy = $skillsCostMap == Null ? True : (GetEnergy() >= $skillsCostMap[$i])
 		If $sufficientEnergy And IsRecharged($i) Then
 			UseSkillEx($i, $target)
-			RandomSleep(100)
+			PingSleep(100)
 		EndIf
 		$target = GetCurrentTarget()
 		If IsPlayerDead() Then ExitLoop
@@ -1433,9 +1423,9 @@ Func TakeQuestOrReward($questNPC, $questID, $dialogID, $statePredicate = IsQuest
 	Local $timerQuest = TimerInit()
 	While Not $statePredicate($questID)
 		GoToNPC($questNPC)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 		Dialog($dialogID)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 		If TimerDiff($timerQuest) > 60000 Then
 			Warn('Could not handle quest named ' & $QUEST_NAMES_FROM_IDS[$questID])
 			Return $FAIL
@@ -1454,9 +1444,9 @@ Func TakeQuest($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	Info('Taking quest ' & $QUEST_NAMES_FROM_IDS[$questID])
 	If $initialDialogID <> Null Then
 		GoToNPC($questNPC)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 		Dialog($initialDialogID)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 	EndIf
 	Return TakeQuestOrReward($questNPC, $questID, $dialogID, IsQuestActive)
 EndFunc
@@ -1471,9 +1461,9 @@ Func TakeQuestReward($questNPC, $questID, $dialogID, $initialDialogID = Null)
 	Info('Taking reward for quest ' & $QUEST_NAMES_FROM_IDS[$questID])
 	If $initialDialogID <> Null Then
 		GoToNPC($questNPC)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 		Dialog($initialDialogID)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 	EndIf
 	Return TakeQuestOrReward($questNPC, $questID, $dialogID, IsQuestCompleted)
 EndFunc
@@ -1605,10 +1595,9 @@ EndFunc
 #Region GW Utils
 ;~ Disable all skills on a hero's skill bar.
 Func DisableAllHeroSkills($heroIndex)
-	Local $ping = GetPing()
 	For $i = 1 to 8
 		DisableHeroSkillSlot($heroIndex, $i)
-		Sleep(20 + $ping)
+		PingSleep(50)
 	Next
 EndFunc
 
@@ -2717,6 +2706,12 @@ Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 		$j = $i
 	Next
 	Return $oddNodes
+EndFunc
+
+
+;~ Sleep for the provided duration plus the current ping to the game server, to try to sync with server ticks and avoid desyncs
+Func PingSleep($duration)
+	Sleep($duration + GetPing())
 EndFunc
 
 

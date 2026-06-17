@@ -604,7 +604,7 @@ Func GeneralFarmSetup()
 	If $weaponSlot <> 0 Then
 		Info('Setting player weapon slot to ' & $weaponSlot & ' according to GUI settings')
 		ChangeWeaponSet($weaponSlot)
-		RandomSleep(250)
+		Sleep(500)
 	EndIf
 	If $run_options_cache['team.automatic_team_setup'] Then
 		; Need to be in an outpost to change team and builds
@@ -641,7 +641,7 @@ Func SetupPlayerUsingGlobalSettings()
 	If $run_options_cache['team.load_player_build'] Then
 		Info('Loading player build from GUI')
 		LoadSkillTemplate($run_options_cache['team.player_build'])
-		RandomSleep(250)
+		RandomSleep(500)
 	EndIf
 EndFunc
 
@@ -668,7 +668,7 @@ Func SetupTeamUsingGlobalSettings($teamSize = $ID_TEAM_SIZE_LARGE)
 		If $hero <> '' Then
 			AddHero($HERO_IDS_FROM_NAMES[$hero])
 			If $run_options_cache['team.load_hero_' & $i & '_build'] Then
-				RandomSleep(500 + GetPing())
+				RandomSleep(500)
 				Info('Loading hero ' & $i & ' build from GUI')
 				LoadSkillTemplate($run_options_cache['team.hero_' & $i & '_build'], $i)
 			EndIf

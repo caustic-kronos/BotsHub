@@ -157,9 +157,9 @@ Func GetRewardRefreshAndTakeFroggyQuest()
 	Info('Talk to Tekk/Giriff if already had quest')
 	For $i = 1 To 2
 		GoToNPC($questNPC)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 		Dialog(0x832205)
-		Sleep(1000 + GetPing())
+		PingSleep(1000)
 	Next
 
 	Info('Get back in')

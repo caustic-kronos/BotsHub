@@ -1305,12 +1305,12 @@ EndFunc
 Func SalvageItem($item, $salvageKit, $salvageType = 'Materials')
 	Local $rarity = GetRarity($item)
 	While Not StartSalvageWithKit($item, $salvageKit)
-		Sleep(GetPing())
+		PingSleep(50)
 	WEnd
-	Sleep(600 + GetPing())
+	PingSleep(600)
 	If $rarity == $RARITY_gold Or $rarity == $RARITY_purple Then
 		ValidateSalvage()
-		Sleep(600 + GetPing())
+		PingSleep(600)
 	EndIf
 	Switch $salvageType
 		Case 'Materials'
@@ -1324,7 +1324,7 @@ Func SalvageItem($item, $salvageKit, $salvageType = 'Materials')
 		Case Else
 			Return False
 	EndSwitch
-	Sleep(40 + GetPing())
+	PingSleep(50)
 	Return True
 EndFunc
 #EndRegion Salvage
@@ -1433,7 +1433,7 @@ Func StoreItemInXunlaiStorage($item)
 		Local $materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $countMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		MoveItem($item, 6, $materialStorageLocation)
-		Sleep(20 + GetPing())
+		PingSleep(50)
 		$materialInStorage = GetItemBySlot(6, $materialStorageLocation)
 		Local $newCountMaterial = DllStructGetData($materialInStorage, 'Equipped') * 256 + DllStructGetData($materialInStorage, 'Quantity')
 		If $newCountMaterial - $countMaterial == $amount Then Return True
@@ -1441,14 +1441,13 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	If (IsStackable($item) Or IsMaterial($item)) And $amount < 250 Then
 		$existingStacks = FindAllInXunlaiStorage($item)
-		Local $ping = GetPing()
 		For $bagIndex = 0 To UBound($existingStacks) - 1 Step 2
 			Local $existingStack = GetItemBySlot($existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
 			Local $existingAmount = DllStructGetData($existingStack, 'Quantity')
 			If $existingAmount < 250 Then
 				Debug('To ' & $existingStacks[$bagIndex] & ':' & $existingStacks[$bagIndex + 1])
 				MoveItem($item, $existingStacks[$bagIndex], $existingStacks[$bagIndex + 1])
-				Sleep(20 + $ping)
+				PingSleep(50)
 				$amount = $amount + $existingAmount - 250
 				If $amount <= 0 Then Return True
 			EndIf
@@ -1461,7 +1460,7 @@ Func StoreItemInXunlaiStorage($item)
 	EndIf
 	Debug('To ' & $storageSlot[0] & ':' & $storageSlot[1])
 	MoveItem($item, $storageSlot[0], $storageSlot[1])
-	Sleep(20)
+	PingSleep(50)
 	Return True
 EndFunc
 
@@ -1599,7 +1598,7 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 			PickUpItem($item)
 			$deadlock = TimerInit()
 			While IsPLayerAlive() And GetAgentExists($agentID) And TimerDiff($deadlock) < 10000
-				RandomSleep(100)
+				PingSleep(100)
 			WEnd
 		EndIf
 	Next
@@ -1866,6 +1865,14 @@ Func FindInXunlaiStorage($itemID)
 EndFunc
 
 
+;~ Look for an item in xunlai storage
+Func FindInInventoryOrXunlaiStorage($itemID)
+	Local $result = FindInInventory($itemID)
+	If $result[0] <> 0 Then Return $result
+	Return FindInXunlaiStorage($itemID)
+EndFunc
+
+
 ;~ Look for an item in storages from firstBag to lastBag and return bag and slot of the item, [0, 0] else (bags and slots are indexed from 1 as in GWToolbox)
 Func FindInStorages($firstBag, $lastBag, $itemID)
 	Local $item
@@ -1998,11 +2005,11 @@ Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return $FAIL
 	If GetMapType() <> $ID_OUTPOST Then Return $FAIL
 	If GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_SHORT)) > 0 Or GetEffectTimeRemaining(GetEffect($ID_SUGAR_JOLT_LONG)) > 0 Then Return $SUCCESS
-	Local $consumableSlot = FindInInventory($ID_SUGARY_BLUE_DRINK)
+	Local $consumableSlot = FindInInventoryOrXunlaiStorage($ID_SUGARY_BLUE_DRINK)
 	If $consumableSlot[0] <> 0 Then
 		UseItemBySlot($consumableSlot[0], $consumableSlot[1])
 	Else
-		$consumableSlot = FindInInventory($ID_CHOCOLATE_BUNNY)
+		$consumableSlot = FindInInventoryOrXunlaiStorage($ID_CHOCOLATE_BUNNY)
 		If $consumableSlot[0] <> 0 Then UseItemBySlot($consumableSlot[0], $consumableSlot[1])
 	EndIf
 	Return $SUCCESS
@@ -2370,7 +2377,7 @@ Func ReadAllItemsData()
 			$output = GetOneItemData($bagIndex, $slot)
 			If $output == '' Then ContinueLoop
 			Info($output)
-			RandomSleep(50)
+			RandomSleep(250)
 		Next
 	Next
 EndFunc
@@ -2588,7 +2595,7 @@ Func StoreAllItemsData()
 			$insertQuery &= DllStructGetData($item, 'DyeColor') & ', '
 			$insertQuery &= DllStructGetData($item, 'ID')
 			$insertQuery &= '),' & @CRLF
-			Sleep(20)
+			Sleep(50)
 		Next
 	Next
 

@@ -210,9 +210,9 @@ EndFunc
 
 Func EnableMargoniteHeroSkills()
 	EnableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
-	Sleep(25 + GetPing())
+	PingSleep(50)
 	EnableHeroSkillSlot(1, $MARGONITE_HERO_TROLL_UNGUENT)
-	Sleep(25 + GetPing())
+	PingSleep(50)
 EndFunc
 
 
@@ -245,7 +245,7 @@ Func CastBondsMargoniteFarm()
 	; Last 2 enchantments are least important so these may deactivate when hero energy drops to 0, which is unlikely
 	; Disable blessed signet hero skill so that hero does not mess up below sequence with using that skill in wrong moment
 	DisableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
-	Sleep(25 + GetPing())
+	PingSleep(50)
 
 	UseHeroSkillTimed(1, $MARGONITE_HERO_BALTHAZAR_SPIRIT, GetMyAgent())	; costs 10 energy
 	Sleep(10000)																			; wait until energy is recovered, should recover 10 energy with 3 energy pips
@@ -266,7 +266,7 @@ Func CastBondsMargoniteFarm()
 
 	; Enable blessed signet skill so that hero uses it whenever it is recharged
 	EnableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
-	Sleep(25 + GetPing())
+	PingSleep(50)
 
 	Return $SUCCESS
 EndFunc
@@ -428,7 +428,7 @@ Func MargoniteCheckBuffs()
 		If IsRecharged($MARGONITE_DEATHS_CHARGE) And Not IsRecharged($MARGONITE_SHADOWFORM) And _
 				GetDistance($me, $target) < $MARGONITES_RANGE And DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.3 Then
 			UseSkillEx($MARGONITE_DEATHS_CHARGE, $target)
-			Sleep(20 + GetPing())
+			PingSleep(50)
 		EndIf
 	EndIf
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL

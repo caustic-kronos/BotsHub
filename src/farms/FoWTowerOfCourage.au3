@@ -201,7 +201,7 @@ Func FoWToCFarmLoop()
 		If TimerDiff($killTimer) > 30000 Then ExitLoop
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT, IsAbyssal)
 	WEnd
-	Sleep(500 + GetPing())
+	Sleep(500)
 	Info('Abyssals cleared. Picking up loot')
 	If IsPlayerAlive() Then PickUpItems(CastFowToCBuffs)
 	RandomSleep(500)
@@ -253,7 +253,7 @@ Func FoWToCFarmLoop()
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
 	WEnd
 	Info('Rangers cleared. Picking up loot')
-	Sleep(500 + GetPing())
+	Sleep(500)
 	PickUpItems(CastFowToCBuffs)
 	Return $SUCCESS
 EndFunc

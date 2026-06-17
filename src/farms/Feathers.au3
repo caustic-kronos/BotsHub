@@ -77,8 +77,8 @@ Func SetupFeathersFarm()
 	LeaveParty()
 
 	Info('Entering Jaya Bluffs')
+	UseCitySpeedBoost()
 	Local $me = GetMyAgent()
-
 	If GetDistanceToPoint($me, 17300, 17300) > 5000 Then MoveTo(17000, 12400)
 	If GetDistanceToPoint($me, 17300, 17300) > 4400 Then MoveTo(19000, 13450)
 	If GetDistanceToPoint($me, 17300, 17300) > 1800 Then MoveTo(18750, 16000)
@@ -100,7 +100,7 @@ Func SetupPlayerFeathersFarm()
 		LoadSkillTemplate($DA_FEATHERS_FARMER_SKILLBAR)
 		RandomSleep(250)
 	Else
-		Warn('Should run this farm as dervish')
+		Error('Should run this farm as dervish')
 		Return $FAIL
 	EndIf
 	Return $SUCCESS
