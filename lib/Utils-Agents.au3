@@ -225,12 +225,12 @@ EndFunc
 
 
 ;~ Team member has too much malus
-Func TeamHasTooMuchMalus()
+Func GetTeamMemberWithTooMuchMalus()
 	Local $party = GetParty()
-	For $i = 0 To UBound($party)
-		If GetMorale($i) < 0 Then Return True
+	For $i = UBound($party) - 1 To 0 Step -1
+		If GetMorale($i) < 0 Then Return $i
 	Next
-	Return False
+	Return -1
 EndFunc
 #EndRegion Party
 

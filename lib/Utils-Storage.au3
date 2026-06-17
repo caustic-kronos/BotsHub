@@ -1977,18 +1977,30 @@ EndFunc
 ;~ Use morale booster on team
 Func UseMoraleConsumableIfNeeded($forceUse = False)
 	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return $FAIL
-	While TeamHasTooMuchMalus()
+	; Team member with malus is obtained from last member to first, to remove malus from character last
+	Local $teamMemberWithMalus = GetTeamMemberWithTooMuchMalus()
+	While $teamMemberWithMalus >= 0
 		Local $usedMoraleBooster = False
-		For $DPRemoval_Sweet In $DP_REMOVAL_SWEETS
-			Local $consumableSlot = FindInInventory($DPRemoval_Sweet)
-			If $consumableSlot[0] <> 0 Then
-				UseItemBySlot($consumableSlot[0], $consumableSlot[1])
-				$usedMoraleBooster = True
-			EndIf
-		Next
+		; Using solo morale booster first to keep team wide boosters for heroes
+		If $teamMemberWithMalus == 0 Then $usedMoraleBooster = UseFirstAvailableConsumable($SOLO_DP_REMOVAL)
+		If Not $usedMoraleBooster Then $usedMoraleBooster = UseFirstAvailableConsumable($TEAM_DP_REMOVAL)
 		If Not $usedMoraleBooster Then Return $FAIL
+		$teamMemberWithMalus = GetTeamMemberWithTooMuchMalus()
 	WEnd
 	Return $SUCCESS
+EndFunc
+
+
+;~ Use first item from given consumables list found in inventory
+Func UseFirstAvailableConsumable($consumables)
+	For $consumable In $consumables
+		Local $slot = FindInInventory($consumable)
+		If $slot[0] <> 0 Then
+			UseItemBySlot($slot[0], $slot[1])
+			Return True
+		EndIf
+	Next
+	Return False
 EndFunc
 
 
