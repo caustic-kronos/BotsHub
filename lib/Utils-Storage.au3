@@ -1975,7 +1975,8 @@ EndFunc
 
 #Region Use Items
 ;~ Use morale booster on team
-Func UseMoraleConsumableIfNeeded()
+Func UseMoraleConsumableIfNeeded($forceUse = False)
+	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return $FAIL
 	While TeamHasTooMuchMalus()
 		Local $usedMoraleBooster = False
 		For $DPRemoval_Sweet In $DP_REMOVAL_SWEETS
