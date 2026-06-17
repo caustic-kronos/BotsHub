@@ -233,7 +233,7 @@ Func GoToCityOfTorcqua()
 		MoveTo(6816, -13634)
 		MoveTo(8258, -10419)
 		MoveTo(10180, -10714)
-		Move(11250, -11350, 0)
+		Move(11250, -11350)
 		Sleep(8000)
 	WEnd
 EndFunc

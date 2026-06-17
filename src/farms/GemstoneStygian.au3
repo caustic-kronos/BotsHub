@@ -190,7 +190,7 @@ Func GoToStygianVeil()
 		MoveTo(6798, -15867)
 		MoveTo(1315, -17924)
 		MoveTo(-785, -18969)
-		Move(-1100, -20000, 0)
+		Move(-1100, -20000)
 		Sleep(8000)
 	WEnd
 EndFunc

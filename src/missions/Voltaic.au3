@@ -146,7 +146,7 @@ Func VoltaicFarmLoop()
 	Info('Opening chest')
 	; Tripled to secure looting of chest
 	For $i = 0 To 2
-		Move(-17500, -14250, 600)
+		MoveRadial(-17500, -14250, 600)
 		Sleep(5000)
 		TargetNearestItem()
 		ActionInteract()

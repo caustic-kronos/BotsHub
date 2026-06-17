@@ -102,11 +102,27 @@ Miscellaneous
 
 
 #Region Movement
+;~ Move to a random location around the given coordinates. Returns True if successful
+Func MoveRadial($x, $y, $distance)
+	Local Static $directionIndex = Random(0, 7, 1)
+	Local $angle = $directionIndex * $PI / 4
+	$directionIndex = Mod($directionIndex + 1, 8)
+	Return Move($x + $distance * Cos($angle), $y + $distance * Sin($angle))
+EndFunc
+
+
+;~ Avoid usage, it's a square around the original position, making it awkward, it can also not add any random
+;~ Move to a random location around the given coordinates. Returns True if successful
+Func RandomMove($X, $Y, $random = 50)
+	Return Move($X + Random(-$random, $random), $Y + Random(-$random, $random))
+EndFunc
+
+
 ;~ Move to a location. Returns True if successful
-Func Move($X, $Y, $random = 50)
+Func Move($X, $Y)
 	If GetAgentExists(GetMyID()) Then
-		DllStructSetData($MOVE_STRUCT, 2, $X + Random(-$random, $random))
-		DllStructSetData($MOVE_STRUCT, 3, $Y + Random(-$random, $random))
+		DllStructSetData($MOVE_STRUCT, 2, $X)
+		DllStructSetData($MOVE_STRUCT, 3, $Y)
 		Enqueue($MOVE_STRUCT_PTR, 16)
 		Return True
 	Else

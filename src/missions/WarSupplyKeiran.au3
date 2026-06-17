@@ -423,13 +423,5 @@ Func EvadeAoESkillArea()
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	Local Const $PI = 3.14
-	; range [0, 2*$PI] - full circle in radian degrees
-	Local $randomAngle = Random(0, 2 * $PI)
-	; range [300, 500] - outside of AoE area
-	Local $randomRadius = Random(300, 500)
-	Local $offsetX = $randomRadius * cos($randomAngle)
-	Local $offsetY = $randomRadius * sin($randomAngle)
-	; 0 = no random, because random offset is already calculated
-	MoveTo($myX + $offsetX , $myY + $offsetY, 25, 0)
+	MoveToRadial($myX, $myY, 400)
 EndFunc

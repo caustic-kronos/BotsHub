@@ -338,7 +338,7 @@ Func MoveToMiddleOfPartyWithTimeout($timeOut)
 	Local $me = GetMyAgent()
 	Local $timer = TimerInit()
 	Local $position = FindMiddleOfParty()
-	Move($position[0], $position[1], 0)
+	Move($position[0], $position[1])
 	While GetDistanceToPoint($me, $position[0], $position[1]) > $RANGE_ADJACENT And TimerDiff($timer) < $timeOut
 		$position = FindMiddleOfParty()
 		RandomSleep(500)

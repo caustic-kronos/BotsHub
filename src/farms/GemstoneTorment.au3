@@ -134,7 +134,7 @@ Func GoToRavenHeartGloom()
 		MoveTo(6798, -15867)
 		MoveTo(5487, -17983)
 		MoveTo(6489, -20099)
-		Move(6700, -21250, 0)
+		Move(6700, -21250)
 		Sleep(8000)
 	WEnd
 EndFunc

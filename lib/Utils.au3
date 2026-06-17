@@ -27,6 +27,7 @@
 
 Opt('MustDeclareVars', True)
 
+Global Const $PI = 3.14
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST=1085, $RANGE_LONGBOW=1250, $RANGE_SPIRIT=2500, $RANGE_COMPASS=5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
 ; Mobs aggro correspond to earshot range
@@ -60,7 +61,7 @@ Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 	Local $destinationX = $X + Random(-$random, $random)
 	Local $destinationY = $Y + Random(-$random, $random)
 
-	Move($destinationX, $destinationY, 0)
+	Move($destinationX, $destinationY)
 
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision
@@ -70,7 +71,7 @@ Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 			$blockedCount += 1
 			$destinationX = $X + Random(-$random, $random)
 			$destinationY = $Y + Random(-$random, $random)
-			Move($destinationX, $destinationY, 0)
+			Move($destinationX, $destinationY)
 		EndIf
 		$me = GetMyAgent()
 		If GetMapID() <> $mapID Then ExitLoop
@@ -81,10 +82,12 @@ Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 EndFunc
 
 
-;~ Differs from previous function by going randomly in a direction, but the distance from the given point is fixed
-Func MoveRandom($x, $y, $distance)
-	Local $angle = Random(0, 2 * 3.14)
-	MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle), 25, 0)
+;~ Move to a random location around the given coordinates
+Func MoveToRadial($x, $y, $distance)
+	Local Static $directionIndex = Random(0, 7, 1)
+	Local $angle = $directionIndex * $PI / 4
+	$directionIndex = Mod($directionIndex + 1, 8)
+	Return MoveTo($x + $distance * Cos($angle), $y + $distance * Sin($angle))
 EndFunc
 
 
@@ -646,7 +649,6 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
-	Local Const $PI = 3.14
 
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : False
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
@@ -659,7 +661,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 
 	Local $moveTimer = TimerInit()
 	Local $chatStuckTimer = TimerInit()
-	Move($destinationX, $destinationY, $randomFactor)
+	MoveRadial($destinationX, $destinationY, $randomFactor)
 
 	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
 		If $defendFunction <> Null Then $defendFunction()
@@ -670,18 +672,13 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 			$me = GetMyAgent()
 
 			If $blocked < 6 Then
-				Move($destinationX, $destinationY, $randomFactor)
+				MoveRadial($destinationX, $destinationY, $randomFactor)
 				PingSleep(50)
 			Else
 				$myX = DllStructGetData($me, 'X')
 				$myY = DllStructGetData($me, 'Y')
-				; range [0, 2*$PI] - full circle in radian degrees
-				$randomAngle = Random(0, 2 * $PI)
-				$offsetX = 300 * cos($randomAngle)
-				$offsetY = 300 * sin($randomAngle)
-				; 0 = no random, because random offset is already calculated
-				Move($myX + $offsetX , $myY + $offsetY, 0)
-				PingSleep(50)
+				MoveRadial($myX, $myY, 300)
+				PingSleep(1000)
 
 				If $blocked > 8 Then CheckAndSendStuckCommand()
 				If $blocked > 10 Then
@@ -689,18 +686,18 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 					If $hosSkillSlot > 0 And IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
 						UseSkillEx($hosSkillSlot)
 						PingSleep(50)
-						Move($destinationX, $destinationY, $randomFactor)
+						MoveRadial($destinationX, $destinationY, $randomFactor)
 					; If Death's Charge skill is available then use it to get unstuck
 					ElseIf $deathChargeSkillSlot > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 And IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
 						$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
 						UseSkillEx($deathChargeSkillSlot, $target)
 						PingSleep(50)
-						Move($destinationX, $destinationY, $randomFactor)
+						MoveRadial($destinationX, $destinationY, $randomFactor)
 					EndIf
 				EndIf
 			EndIf
 		Else
-			Move($destinationX, $destinationY, $randomFactor)
+			MoveRadial($destinationX, $destinationY, $randomFactor)
 			If $blocked > 0 Then
 				$blocked = 0
 				; player started moving, after being stuck but maybe player is rubberbanding? Therefore checking it
@@ -1103,17 +1100,17 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
-			RandomSleep(500)
-			If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 			; FIXME: add rezzing dead party members here
 		EndIf
 
+		Move($x, $y)
 		RandomSleep(250)
 
 		If IsPlayerStuck() Then
 			If $unstuckFunction($x, $y) == $SUCCESS Then
 				IsPlayerStuck(Default, Default, True) ; reset stuck detection
 			Else
+				Error('Player detected as stuck and could not get unstuck')
 				Return $FAIL
 			EndIf
 		EndIf
@@ -1144,6 +1141,7 @@ Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
 		$oldMyX = Null
 		$oldMyY = Null
 		$blocked = 0
+		Debug('Stuck detection reset')
 		Return False
 	EndIf
 
@@ -1169,11 +1167,15 @@ Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
 		; keep some blocked memory to detect oscillation/stutter faster than full reset
 		$blocked = _Max(0, $blocked - 2)
 	EndIf
-	Return $blocked >= $stuckTicks
+	Local $isStuck = $blocked >= $stuckTicks
+	If $isStuck Then
+		Debug('Player detected as stuck, blocked counter: ' & $blocked)
+	EndIf
+	Return $isStuck
 EndFunc
 
 
-Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDisplacementThreshold = $RANGE_AREA)
+Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 20000, $unstuckDisplacementThreshold = $RANGE_AREA)
 	Local $unstuckStartTimer = TimerInit()
 
 	Local $me = GetMyAgent()
@@ -1184,18 +1186,22 @@ Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 10000, $unstuckDis
 
 	While TimerDiff($unstuckStartTimer) < $unstuckIntervalMs
 		; Try to move randomly from the current position
-		Move($myX, $myY, 500)
-		RandomSleep(500)
-		Move($targetX, $targetY)
-		RandomSleep(1000)
+		MoveRadial($myX, $myY, 500)
+		RandomSleep(1500)
+		MoveRadial($targetX, $targetY, 500)
+		RandomSleep(1500)
 
 		$me = GetMyAgent()
 		$myX = DllStructGetData($me, 'X')
 		$myY = DllStructGetData($me, 'Y')
 		; If we moved enough away from initial position consider unstuck
 		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
-		If $movementDistance >= $unstuckDisplacementThreshold Then Return $SUCCESS
+		If $movementDistance >= $unstuckDisplacementThreshold Then 
+			Debug('Player got unstuck')
+			Return $SUCCESS
+		EndIf
 	WEnd
+	Debug('Player could not get unstuck')
 	Return $FAIL
 EndFunc
 
@@ -1239,6 +1245,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 			Return $FAIL
 		EndIf
 	WEnd
+	RandomSleep(500)
 	If $flagHeroes Then CancelAllHeroes()
 	If Not $ignoreDroppedLoot And IsPlayerAlive() Then PickUpItems($lootTrappedArea ? LootTrappedAreaSafely : Null, DefaultShouldPickItem, $fightRange)
 	Return $SUCCESS
