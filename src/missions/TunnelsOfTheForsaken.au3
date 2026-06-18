@@ -144,6 +144,7 @@ Func ClearTunnelsOfTheForsakenFloor1()
 	Local $mapLoaded = False
 	While Not $mapLoaded
 		If CheckStuck('TunnelsOfTheForsaken Floor 1 - Getting through portal', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
+		PickUpElementalKeystone()
 		MoveTo(-8684, 4580)
 		MoveTo(-8687, 4700)
 		RandomSleep(2000)
