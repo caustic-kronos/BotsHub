@@ -341,14 +341,14 @@ EndFunc
 
 ;~ Find character names by scanning memory
 Func ScanForCharname($processHandle)
-	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A14FF751868'))
+	Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x6A145668'))
 	; If you have issues finding your character name, tries this line instead of the previous one :
 	;Local $scannedMemory = ScanMemoryForPattern($processHandle, BinaryToString('0x00E20878'))
 	Local $baseAddress = $scannedMemory[1]
 	Local $matchOffset = $scannedMemory[2]
 	Local $tmpAddress = $baseAddress + $matchOffset - 1
 	Local $buffer = SafeDllStructCreate('ptr')
-	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 6, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
+	SafeDllCall13($kernel_handle, 'int', 'ReadProcessMemory', 'int', $processHandle, 'int', $tmpAddress + 4, 'ptr', DllStructGetPtr($buffer), 'int', DllStructGetSize($buffer), 'int', 0)
 	Local $characterName = DllStructGetData($buffer, 1)
 	Return MemoryRead($processHandle, $characterName, 'wchar[30]')
 EndFunc
