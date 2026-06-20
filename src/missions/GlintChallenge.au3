@@ -174,6 +174,7 @@ Func GlintChallenge()
 	While Not IsBrotherhoodChestSpawned()
 		If CheckStuck('Glint challenge fight', $MAX_GLINT_CHALLENGE_DURATION) == $FAIL Then Return $FAIL
 		Sleep(5000)
+		UseSummoningStone()
 		KillFoesInArea($glint_challenge_fight_options)
 		If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
 		If CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS) <= 3 Then

@@ -86,7 +86,7 @@ Func VanquishMountQinkai()
 	TakeFactionBlessing('luxon')
 
 	If IsHardmodeEnabled() Then UseConset()
-
+	UseSummoningStone()
 	; 43 groups to vanquish
 	Local Static $foes[][] = [ _
 		[-11400,	-9000,		'Yetis',				$AGGRO_RANGE	], _

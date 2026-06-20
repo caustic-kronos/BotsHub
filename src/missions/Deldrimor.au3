@@ -109,6 +109,7 @@ Func FarmLairSnowman()
 	RandomSleep(500)
 
 	If IsHardmodeEnabled() Then UseConset()
+	UseSummoningStone()
 
 	FlagMoveAggroAndKillInRange(-14610, 12352, 'First Snowmen Block')
 	FlagMoveAggroAndKillInRange(-16585, 8741, 'Second Snowmen Block')
@@ -132,6 +133,7 @@ Func FarmLairSnowman()
 
 	Info('Wait to Heal after Ice Spouts')
 	RandomSleep(5000)
+	UseSummoningStone()
 
 	MoveAggroAndKillInRange(-12989, -731, 'Lonely Snowman 2')
 	MoveAggroAndKillInRange(-12802, -4446, 'Remainder of Snowmen')

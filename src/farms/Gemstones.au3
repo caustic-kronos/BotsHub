@@ -151,7 +151,7 @@ EndFunc
 Func GemstonesFarmLoop()
 	If TalkToZhellix() == $FAIL Then Return $FAIL
 	WalkToSpotGemstonesFarm()
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseSummoningStone()
 	Sleep(2000)
 	If Defend() == $FAIL Then Return $FAIL
 	Return $SUCCESS

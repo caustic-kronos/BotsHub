@@ -2011,7 +2011,27 @@ Func UseConset($forceUse = False)
 EndFunc
 
 
-;~ Uses a consumable from inventory, if present
+;~ Use a summoning stone
+Func UseSummoningStone($forceUse = False, $preferredSummon = Null)
+	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return False
+	If GetEffectTimeRemaining(GetEffect($ID_SUMMONING_SICKNESS)) > 0 Then Return False
+	If $preferredSummon <> Null Then 
+		If UseConsumable($preferredSummon) Then Return True
+	EndIf
+
+	Local $itemCounts = CountTheseItems($SUMMONING_STONES_ARRAY)
+	For $i = 0 To UBound($SUMMONING_STONES_ARRAY) - 1
+		; Skipping merchant
+		If $SUMMONING_STONES_ARRAY[$i] == $ID_MERCHANT_SUMMON Then ContinueLoop
+		If $itemCounts[$i] > 0 Then
+			If UseConsumable($SUMMONING_STONES_ARRAY[$i]) == $SUCCESS Then Return True
+		EndIf
+	Next
+	Return False
+EndFunc
+
+
+;~ Uses a consumable from inventory or xunlai, if present
 Func UseCitySpeedBoost($forceUse = False)
 	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return $FAIL
 	If GetMapType() <> $ID_OUTPOST Then Return $FAIL
@@ -2055,7 +2075,7 @@ Func UseConsumable($consumableID, $forceUse = False, $checkXunlaiChest = True)
 		Return $FAIL
 	EndIf
 	Local $result = UseItemFromInventory($consumableID, $forceUse, $checkXunlaiChest)
-	If $result == $SUCCESS Then Info('Consumable used successfully')
+	If $result == $SUCCESS Then Info('Consumable ' & $consumableID & ' used successfully')
 	If $result == $FAIL Then Warn('Could not find specified consumable in inventory')
 	Return $result
 EndFunc
@@ -2516,7 +2536,7 @@ Func FillTable($table, Const ByRef $isNumber, Const ByRef $values)
 	Local $query = 'INSERT INTO ' & $table & ' VALUES '
 	For $i = 0 To UBound($values) - 1
 		$query &= '('
-		For $j = 0 To UBound($values,2) - 1
+		For $j = 0 To UBound($values, 2) - 1
 			If $isNumber[$j] Then
 				$query &= $values[$i][$j] & ', '
 			Else

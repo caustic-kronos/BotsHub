@@ -87,7 +87,7 @@ Func VanquishFerndale()
 	TakeFactionBlessing('kurzick')
 
 	If IsHardmodeEnabled() Then UseConset()
-
+	UseSummoningStone()
 	; 117 groups to vanquish
 	Local Static $foes[][] = [ _
 		[-11733,	16729,		'Mantis Group 1',					$AGGRO_RANGE		], _

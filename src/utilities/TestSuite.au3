@@ -46,7 +46,7 @@ Func RunTests()
 	;	GetOwnPosition()
 	;	Sleep(2000)
 	;WEnd
-
+	UseSummoningStone()
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $item = GetItemBySlot(1, 1)
 	;PrintItemInformations($item)

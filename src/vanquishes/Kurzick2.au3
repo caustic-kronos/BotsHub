@@ -81,7 +81,7 @@ Func VanquishDrazach()
 	TakeFactionBlessing('kurzick')
 
 	If IsHardmodeEnabled() Then UseConset()
-
+	UseSummoningStone()
 	Local Static $foes[][] = [ _
 		[-6506,		-16099,		'Start'					], _
 		[-8581,		-15354,		'Approach'				], _

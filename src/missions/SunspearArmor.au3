@@ -85,7 +85,7 @@ Func SunspearArmorClean()
 	RandomSleep(62000)
 
 	If IsHardmodeEnabled() Then UseConset()
-
+	UseSummoningStone()
 	; 23 groups to vanquish + 10 movements
 	Local Static $foes[][] = [ _
 		[22595,		-484,	'Moving and aggroing'		], _

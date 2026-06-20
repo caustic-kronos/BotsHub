@@ -92,7 +92,7 @@ EndFunc
 Func NexusChallenge()
 	If GetMapID() <> $ID_THE_SHADOW_NEXUS Then Return $FAIL
 	Sleep(50000)
-
+	UseSummoningStone()
 	; 9 groups to defeat in each loop
 	Local Static $foes[][] = [ _
 		_ ; First loop

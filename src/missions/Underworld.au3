@@ -171,7 +171,7 @@ EndFunc
 
 ;~ Small wrapper to use both conset and legionnaire summoning crystal
 Func UseUWConsetsAndConsumables()
-	UseConsumable($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
 	UseConset()
 EndFunc
 

@@ -174,7 +174,7 @@ Func VanquishMagusStones()
 	RandomSleep(1000)
 
 	If IsHardmodeEnabled() Then UseConset()
-
+	UseSummoningStone()
 	For $i = 0 To 8
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
