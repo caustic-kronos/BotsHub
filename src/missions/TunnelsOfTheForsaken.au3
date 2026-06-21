@@ -118,7 +118,7 @@ Func ClearTunnelsOfTheForsakenFloor1()
 	Info('First floor')
 	If IsHardmodeEnabled() Then UseConset()
 
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -8618, 3132, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -8684, 4580, $RANGE_AREA)
 		WaitUntilPartyAlive()
 		If CheckStuck('TunnelsOfTheForsaken Floor 1 - First loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
@@ -137,6 +137,8 @@ Func ClearTunnelsOfTheForsakenFloor1()
 		MoveAggroAndKillInRange(-10727, -304, '6', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		PickUpElementalKeystone()
 		MoveAggroAndKillInRange(-8618, 3132, '7', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
+		PickUpElementalKeystone()
+		MoveAggroAndKillInRange(-8684, 4580, '8', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
 	If IsRunFailed() Then Return $FAIL
 
@@ -144,9 +146,8 @@ Func ClearTunnelsOfTheForsakenFloor1()
 	Local $mapLoaded = False
 	While Not $mapLoaded
 		If CheckStuck('TunnelsOfTheForsaken Floor 1 - Getting through portal', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
-		PickUpElementalKeystone()
 		MoveTo(-8684, 4580)
-		MoveTo(-8687, 4700)
+		Move(-8687, 4700)
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_TUNNELS_OF_THE_FORSAKEN_LVL_2)
 	WEnd
