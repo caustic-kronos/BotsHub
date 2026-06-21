@@ -130,23 +130,23 @@ Func FeathersFarmLoop()
 
 	; 15 groups to kill
 	;~ Local Static $sensalis[][] = [ _
-	;~ 	[-472,		-4342,	'First sensali group'	], _
-	;~ 	[-1536,		-1686,	'Second sensali group'		], _
-	;~ 	[586,		-76,	'Third sensali group'		], _
-	;~ 	[-1556,		2786,	'Fourth sensali group'		], _
-	;~ 	[-2229,		-815,	'Fifth sensali group'		], _
-	;~ 	[-5247,		-3290,	'Sixth sensali group'		], _
-	;~ 	[-6994,		-2273,	'Seventh sensali group'		], _
-	;~ 	[-5042,		-6638,	'Eighth sensali group'		], _
-	;~ 	[-11040,	-8577,	'Ninth sensali group'		], _
-	;~ 	[-10860,	-2840,	'Tenth sensali group'		], _
-	;~ 	[-14900,	-3000,	'Eleventh sensali group'	], _
-	;~ 	[-12200,	150,	'Twelfth sensali group'		], _
-	;~ 	[-12500,	4000,	'Thirteenth sensali group'	], _
-	;~ 	[-12111,	1690,	'Fourteenth sensali group'	], _
-	;~ 	[-10303,	4110,	'Fifteenth sensali group'	], _
-	;~ 	[-10500,	5500,	'Sixteenth sensali group'	], _
-	;~ 	[-9700,		2400,	'Seventeenth sensali group'	] _
+	;~	[-472,		-4342,	'First sensali group'	], _
+	;~	[-1536,		-1686,	'Second sensali group'		], _
+	;~	[586,		-76,	'Third sensali group'		], _
+	;~	[-1556,		2786,	'Fourth sensali group'		], _
+	;~	[-2229,		-815,	'Fifth sensali group'		], _
+	;~	[-5247,		-3290,	'Sixth sensali group'		], _
+	;~	[-6994,		-2273,	'Seventh sensali group'		], _
+	;~	[-5042,		-6638,	'Eighth sensali group'		], _
+	;~	[-11040,	-8577,	'Ninth sensali group'		], _
+	;~	[-10860,	-2840,	'Tenth sensali group'		], _
+	;~	[-14900,	-3000,	'Eleventh sensali group'	], _
+	;~	[-12200,	150,	'Twelfth sensali group'		], _
+	;~	[-12500,	4000,	'Thirteenth sensali group'	], _
+	;~	[-12111,	1690,	'Fourteenth sensali group'	], _
+	;~	[-10303,	4110,	'Fifteenth sensali group'	], _
+	;~	[-10500,	5500,	'Sixteenth sensali group'	], _
+	;~	[-9700,		2400,	'Seventeenth sensali group'	] _
 	;~ ]
 	Local Static $sensalis[][] = [ _
 		[0,			-5000,	'Sensali group 1'			], _
@@ -237,7 +237,7 @@ Func MoveAndKillSensali($x, $y, $message)
 		$sensali = GetFurthestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_EARSHOT, IsSensali)
 	WEnd
 
-	; Those don't last that long, we cast them last moment
+	; Those do not last that long, we cast them last moment
 	UseSkillEx($FEATHERS_VOW_OF_STRENGTH)
 	RandomSleep(250)
 	UseSkillEx($FEATHERS_ZEALOUS_RENEWAL)

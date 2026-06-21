@@ -527,7 +527,7 @@ Func GriffonRun()
 	CommandAll(-9800, -4800)
 	MoveAggroAndKill(-15750, -1750)
 	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-	
+
 
 	Info('Grabbing griffons')
 	MoveAggroAndKill(-13750, -2750, '1')
@@ -536,15 +536,15 @@ Func GriffonRun()
 	MoveAggroAndKill(-7500, 5000, '4')
 	MoveAggroAndKill(-18250, 9500, '5')
 	MoveAggroAndKill(-20000, 9500, '6')
-	
+
 	Info('Picking up quest')
 	MoveTo(-21500, 15000)
 	Local $questNPC = GetNearestNPCToCoords(-21600, 15050)
 	TakeQuest($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD01)
-	
+
 	MoveAggroAndKill(-22000, 11000, '7')
 	RandomSleep(1000)
-	
+
 	Info('Leading griffons back')
 	MoveAggroAndKill(-17300, 9600, '1')
 	MoveAggroAndKill(-16500, 8500, '2')
@@ -571,7 +571,7 @@ Func GriffonRun()
 		MoveAggroAndKill(-15750, -1750)
 		RandomSleep(5000)
 	EndIf
-	
+
 	Local $questNPC = GetNearestNPCToCoords(-15750, -1700)
 	TakeQuestReward($questNPC, $ID_QUEST_THE_WAILING_LORD, 0x80CC07, 0x80CC06)
 	TakeQuestReward($questNPC, $ID_QUEST_A_GIFT_OF_GRIFFONS, 0x80CD07)

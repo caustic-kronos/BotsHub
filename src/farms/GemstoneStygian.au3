@@ -58,7 +58,6 @@ Global Const $STYGIAN_RANGER_WINNOWING			= 7
 Global Const $STYGIAN_RANGER_MUDDY_TERRAIN		= 8
 
 ; ranger hero
-; TODO: consider taking Brambles, Lacerate, Earthbind, and maybe move some more spirits at AoE range to block foes better
 Global Const $STYGIAN_HERO_SUCCOR				= 1
 Global Const $STYGIAN_HERO_EDGE_OF_EXTINCTION	= 2
 Global Const $STYGIAN_HERO_LACERATE				= 3

@@ -1602,7 +1602,7 @@ Func TheFourHorsemen($reaper)
 		MoveTo(11210, -17560)
 	EndIf
 	While Not IsQuestReward($ID_QUEST_THE_FOUR_HORSEMEN)
-		; If quest still isn't complete, roam and search for stuck horseman
+		; If quest still is not complete, roam and search for stuck horseman
 		Info('Quest still not complete. Roaming for last Horseman.')
 		CancelAllHeroes()
 		MoveAggroAndKill(11200, -17615)

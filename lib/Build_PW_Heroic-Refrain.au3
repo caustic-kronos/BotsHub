@@ -166,11 +166,11 @@ EndFunc
 ; Skill priority (highest to lowest):
 ;   1. Aggressive Refrain (25e, once if not already buffed)
 ;   2. Auto-attack (always ensure attacking target)
-;   3. "Stand Your Ground!"
-;   4. "There's Nothing to Fear!" (15e)
-;   5. "Save Yourselves!" (adrenaline >= 200)
-;   6. "To the Limit!" (only if foes in earshot, adrenaline gain)
-;   7. "For Great Justice!" (5e, lowest priority)
+;   3. Stand Your Ground!
+;   4. There's Nothing to Fear! (15e)
+;   5. Save Yourselves! (adrenaline >= 200)
+;   6. To the Limit! (only if foes in earshot, adrenaline gain)
+;   7. For Great Justice! (5e, lowest priority)
 ;
 ; Note: HR maintenance is handled by AdlibRegister, not by this function.
 ; ============================================================================
@@ -190,31 +190,31 @@ Func CastCombatShouts($target = Null)
 	; Priority 2: Ensure we are attacking the target
 	If $target <> Null Then Attack($target)
 
-	; Priority 3: "Stand Your Ground!"
+	; Priority 3: Stand Your Ground!
 	If IsRecharged($BUILD_PW_STAND_YOUR_GROUND) Then
 		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
 		Return
 	EndIf
 
-	; Priority 4: "There's Nothing to Fear!" (15e)
+	; Priority 4: There's Nothing to Fear! (15e)
 	If IsRecharged($BUILD_PW_THERES_NOTHING_TO_FEAR) And GetEnergy() >= 15 Then
 		UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
 		Return
 	EndIf
 
-	; Priority 5: "Save Yourselves!" (adrenaline-based, 200 required)
+	; Priority 5: Save Yourselves! (adrenaline-based, 200 required)
 	If GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then
 		UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
 		Return
 	EndIf
 
-	; Priority 6: "To the Limit!" (only if foes nearby for adrenaline gain)
+	; Priority 6: To the Limit! (only if foes nearby for adrenaline gain)
 	If IsRecharged($BUILD_PW_TO_THE_LIMIT) And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
 		UseSkillEx($BUILD_PW_TO_THE_LIMIT)
 		Return
 	EndIf
 
-	; Priority 7: "For Great Justice!" (5e, lowest priority)
+	; Priority 7: For Great Justice! (5e, lowest priority)
 	If IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And GetEnergy() >= 5 Then
 		UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
 		Return

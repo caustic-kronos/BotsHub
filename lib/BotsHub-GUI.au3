@@ -59,9 +59,6 @@ Opt('GUIOnEventMode', True)
 Opt('GUICloseOnESC', False)
 Opt('MustDeclareVars', True)
 
-Global $GUI_ENABLED = True
-
-; TODO: rename GUI to lowercase snake_case - do it once we move GUI to a separate file
 Global $gui_botshub, $gui_tabs_parent, $gui_tab_main, $gui_tab_runoptions, $gui_tab_lootoptions, $gui_tab_farminfos, $gui_tab_lootoptions, $gui_tab_teamoptions
 Global $gui_console, $gui_combo_characterchoice, $gui_combo_farmchoice, $gui_startbutton, $gui_farmprogress
 Global $gui_label_dynamicexecution, $gui_input_dynamicexecution, $gui_button_dynamicexecution, $gui_renderbutton, $gui_renderlabel, _

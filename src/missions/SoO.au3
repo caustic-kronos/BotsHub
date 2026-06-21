@@ -95,7 +95,7 @@ Func RunToShardsOfOrrDungeon()
 		MoveAggroAndKillInRange(11891, -224, '3', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(8803, -5104, '4', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(8125, -8247, '5', $SOO_AGGRO_RANGE)
-		; Can't return here - we need to deregister adlib first
+		; Cannot return here - we need to deregister adlib first
 		If IsRunFailed() Then ExitLoop
 		MoveAggroAndKillInRange(8634, -11529, '6', $SOO_AGGRO_RANGE)
 		MoveAggroAndKillInRange(9559, -13494, '7', $SOO_AGGRO_RANGE)

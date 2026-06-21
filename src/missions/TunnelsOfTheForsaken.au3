@@ -47,7 +47,7 @@ Func TunnelsOfTheForsakenFarm()
 	Local $result = TunnelsOfTheForsakenFarmLoop()
 	AdlibUnregister('TrackPartyStatus')
 	TravelToOutpost($ID_PIKEN_SQUARE, $district_name)
-	Return $result	
+	Return $result
 EndFunc
 
 
@@ -126,10 +126,10 @@ Func ClearTunnelsOfTheForsakenFloor1()
 		MoveAggroAndKillInRange(-17442, -4638, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-12710, -6983, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-7836, -9115, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		
+
 		Local $questNPC = GetNearestNPCToCoords(-7400, -9462)
-		TakeQuest($questNPC, $ID_QUEST_THE_DREAMER_AND_THE_ZEALOT, 0x85B501)		
-		
+		TakeQuest($questNPC, $ID_QUEST_THE_DREAMER_AND_THE_ZEALOT, 0x85B501)
+
 		MoveAggroAndKillInRange(-9672, -3286, '4', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		PickUpElementalKeystone()
 		MoveAggroAndKillInRange(-11186, -1788, '5', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
@@ -182,7 +182,7 @@ Func ClearTunnelsOfTheForsakenFloor2()
 		MoveAggroAndKillInRange(-16748, 5350, '14', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
 	If IsRunFailed() Then Return $FAIL
-	
+
 	Info('Going through portal')
 	Local $mapLoaded = False
 	While Not $mapLoaded
@@ -215,7 +215,7 @@ Func ClearTunnelsOfTheForsakenFloor3()
 		Info('Triggering beacon')
 		MoveAggroAndKillInRange(-10264, -4463, '9', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
-	
+
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -15949, -8561, 1250)
 		If CheckStuck('TunnelsOfTheForsaken Floor 2 - Second loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		WaitUntilPartyAlive()
@@ -225,7 +225,7 @@ Func ClearTunnelsOfTheForsakenFloor3()
 		MoveAggroAndKillInRange(-7260, 1425, '11', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-3990, -940, '12', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-6418, -4303, '13', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		
+
 		Info('Open dungeon door')
 		ClearTarget()
 
@@ -239,14 +239,14 @@ Func ClearTunnelsOfTheForsakenFloor3()
 			RandomSleep(500)
 			ActionInteract()
 		Next
-		
+
 		MoveAggroAndKillInRange(-10642, -8052, '14', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-13186, -8718, '15', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-15949, -8561, '16', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
 	If IsRunFailed() Then Return $FAIL
-	
-	; Taking reward 
+
+	; Taking reward
 	Local $questrewardNPC = GetNearestNPCToCoords(-16098, -8626)
 	TakeQuestReward($questrewardNPC, $ID_QUEST_THE_DREAMER_AND_THE_ZEALOT, 0x85B507)
 

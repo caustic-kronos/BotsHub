@@ -436,7 +436,7 @@ Func DefaultShouldSalvageItem($item)
 			Local $shouldSalvage = $cache['Salvage items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
 			Return $shouldSalvage == Null ? False : $shouldSalvage
 		EndIf
-		; Don't salvage Nick items and items that salvage into rare materials
+		; Do not salvage Nick items and items that salvage into rare materials
 		If $MAP_NICHOLAS_ITEMS[$itemID] <> Null Then Return False
 		; - FIXME: salvage once we can salvage with higher salvage kit
 		If $MAP_RARE_MATERIALS_TROPHIES[$itemID] <> Null Then Return False
@@ -493,7 +493,7 @@ Func DefaultShouldSellItem($item)
 		If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return False
 		If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return False
 		If $MAP_FIBER_TROPHIES[$itemID] <> Null Then Return False
-		; Sell the rest - FIXME: disabled until we have all IDs
+		; Sell the rest
 		Return True
 	; --------------------------------------- Scrolls ---------------------------------------
 	ElseIf IsBlueScroll($itemID) Then
@@ -2015,7 +2015,7 @@ EndFunc
 Func UseSummoningStone($forceUse = False, $preferredSummon = Null)
 	If (Not $forceUse And Not $run_options_cache['run.consume_consumables']) Then Return False
 	If GetEffectTimeRemaining(GetEffect($ID_SUMMONING_SICKNESS)) > 0 Then Return False
-	If $preferredSummon <> Null Then 
+	If $preferredSummon <> Null Then
 		If UseConsumable($preferredSummon) Then Return True
 	EndIf
 

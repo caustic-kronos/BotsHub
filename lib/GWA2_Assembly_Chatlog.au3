@@ -200,7 +200,7 @@ EndFunc
 ;					is always present in real whisper messages and never in encoded GW strings.
 ;
 ;					LIMITATION: Currently only handles 'Received Whisper'. To add general-channel
-;					alerting (e.g. scan Trade/All for "WTB conset"), register a separate
+;					alerting (e.g. scan Trade/All for 'WTB conset'), register a separate
 ;					AdlibRegister callback that polls GetChatMessageCounter(), reads
 ;					GetChannelName(GetChatMessageChannel()) to filter by channel, and reads
 ;					the message from ChatMessageData via $chat_message_data_address.

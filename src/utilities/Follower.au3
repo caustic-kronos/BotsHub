@@ -367,23 +367,23 @@ EndFunc
 
 ;~ Get first player of the party team other than yourself. If no other player found in the party team then function returns Null
 Func GetFirstPlayerOfParty()
-    Local $selfLoginNumber = DllStructGetData(GetMyAgent(), 'LoginNumber')
-    Local $playerCount = GetPlayerCount()
+	Local $selfLoginNumber = DllStructGetData(GetMyAgent(), 'LoginNumber')
+	Local $playerCount = GetPlayerCount()
 
-    Local $party = GetParty()
+	Local $party = GetParty()
 
-    For $i = 0 To $playerCount - 1
-        Local $slotLoginNumber = GetPartyPlayerLoginNumber($i)
+	For $i = 0 To $playerCount - 1
+		Local $slotLoginNumber = GetPartyPlayerLoginNumber($i)
 
-        If $slotLoginNumber == 0 Then ContinueLoop
-        If $slotLoginNumber == $selfLoginNumber Then ContinueLoop
+		If $slotLoginNumber == 0 Then ContinueLoop
+		If $slotLoginNumber == $selfLoginNumber Then ContinueLoop
 
-        For $member In $party
-            If DllStructGetData($member, 'LoginNumber') == $slotLoginNumber Then
-                Return $member
-            EndIf
-        Next
-    Next
+		For $member In $party
+			If DllStructGetData($member, 'LoginNumber') == $slotLoginNumber Then
+				Return $member
+			EndIf
+		Next
+	Next
 
-    Return Null
+	Return Null
 EndFunc

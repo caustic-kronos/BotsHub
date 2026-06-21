@@ -990,7 +990,7 @@ $default_move_defend_options.Add('openChests', False)
 $default_move_defend_options.Add('chestOpenRange', $RANGE_SPIRIT)
 
 
-;~ Waiting until party is alive again - doesn't wait more than 15s
+;~ Waiting until party is alive again - does not wait more than 15s
 Func WaitUntilPartyAlive()
 	Local $count = 0
 	While IsPlayerAndPartyWiped() And $count < 15
@@ -1160,7 +1160,7 @@ Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
 	$oldMyX = $myX
 	$oldMyY = $myY
 
-	; If we didn't move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
+	; If we did not move at least $minMovement, increase $blocked counter. Else, reduce $blocked counter.
 	If $movementDistance < $minMovement Then
 		$blocked += 1
 	Else
@@ -1196,7 +1196,7 @@ Func TryToGetUnstuck($targetX, $targetY, $unstuckIntervalMs = 20000, $unstuckDis
 		$myY = DllStructGetData($me, 'Y')
 		; If we moved enough away from initial position consider unstuck
 		Local $movementDistance = ComputeDistance($myInitialX, $myInitialY, $myX, $myY)
-		If $movementDistance >= $unstuckDisplacementThreshold Then 
+		If $movementDistance >= $unstuckDisplacementThreshold Then
 			Debug('Player got unstuck')
 			Return $SUCCESS
 		EndIf
@@ -1761,7 +1761,7 @@ Func MappingWrite($mode = Null, $mapfile = Null, $chestFile = Null, $foesFile = 
 					$position[0] += DllStructGetData($foe, 'X')
 					$position[1] += DllStructGetData($foe, 'Y')
 					$counter += 1
-					$foesMap[$foeID] = 0 
+					$foesMap[$foeID] = 0
 				EndIf
 			Next
 			If $position[0] <> 0 Then

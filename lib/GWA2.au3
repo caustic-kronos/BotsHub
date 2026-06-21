@@ -1003,17 +1003,17 @@ Func GetAgentArray($type = 0)
 
 	Local $pointer, $count = 0
 	Local $agentBase = MemoryRead($processHandle, $agent_base_address, 'ptr')
-	Local $agentPtrBuffer = DllStructCreate("ptr[" & $maxAgents & "]")
+	Local $agentPtrBuffer = DllStructCreate('ptr[' & $maxAgents & ']')
 
-	SafeDllCall13($kernel_handle, "bool", "ReadProcessMemory", "handle", $processHandle, "ptr", $agentBase, "struct*", $agentPtrBuffer, "ulong_ptr", 4 * $maxAgents, "ulong_ptr*", 0)
+	SafeDllCall13($kernel_handle, 'bool', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $agentBase, 'struct*', $agentPtrBuffer, 'ulong_ptr', 4 * $maxAgents, 'ulong_ptr*', 0)
 
 	For $i = 1 To $maxAgents
 		$pointer = DllStructGetData($agentPtrBuffer, 1, $i)
 		If $pointer == 0 Then ContinueLoop
 
 		Local $struct = SafeDllStructCreate($AGENT_STRUCT_TEMPLATE)
-		SafeDllCall13($kernel_handle, "bool", "ReadProcessMemory", "handle", $processHandle, "ptr", $pointer, "struct*", DllStructGetPtr($struct), "ulong_ptr", DllStructGetSize($struct), "ulong_ptr*", 0)
-		
+		SafeDllCall13($kernel_handle, 'bool', 'ReadProcessMemory', 'handle', $processHandle, 'ptr', $pointer, 'struct*', DllStructGetPtr($struct), 'ulong_ptr', DllStructGetSize($struct), 'ulong_ptr*', 0)
+
 		If DllStructGetData($struct, 'Type') <> 0 And DllStructGetData($struct, 'Type') <> $type Then ContinueLoop
 		$agentArray[$count] = $struct
 		$count += 1

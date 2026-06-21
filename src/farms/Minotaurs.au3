@@ -86,7 +86,7 @@ Func FarmMinotaurs()
 
 	If IsHardmodeEnabled() Then UseConset()
 	UseSummoningStone()
-	
+
 	; 12 groups to vanquish
 	Local Static $minotaurs[][] = [ _
 		[18870,		-6,		'Minotaurs group 1'		], _

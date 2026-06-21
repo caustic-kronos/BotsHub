@@ -281,7 +281,7 @@ Func GetAreBorealEnemiesInCastingRange()
 	For $agent In GetNPCsInRangeOfAgent($me, $ID_ALLEGIANCE_FOE, $RANGE_SPELLCAST)
 		Switch DllStructGetData($agent, 'ModelID')
 			Case $BOREAL_MOUNTAIN_ALOE_MODEL_ID, $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID
-				return True
+				Return True
 		EndSwitch
 	Next
 	Return False
