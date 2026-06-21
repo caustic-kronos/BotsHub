@@ -1680,23 +1680,27 @@ EndFunc
 
 
 ;~ Mapping function
-;~ Mapping mode corresponds to : 0 - everything, 1 - only location, 2 - only chests
-Func ToggleMapping($mappingMode = 0, $mappingPath = @ScriptDir & '/logs/mapping.log', $chestPath = @ScriptDir & '/logs/chests.log')
+;~ Mapping mode is a bit flag: 1 - location, 2 - chests, 4 - foes
+Func ToggleMapping($mappingMode = 3, $mappingPath = @ScriptDir & '/logs/mapping.log', $chestPath = @ScriptDir & '/logs/chests.log', $foesPath = @ScriptDir & '/logs/foes.log')
 	; Toggle variable
 	Local Static $isMapping = False
 	Local Static $mappingFile
 	Local Static $chestFile
+	Local Static $foesFile
 	If $isMapping Then
 		AdlibUnregister('MappingWrite')
 		FileClose($mappingFile)
 		FileClose($chestFile)
+		FileClose($foesFile)
 		$isMapping = False
 	Else
 		Info('Logging mapping to : ' & $mappingPath)
 		Info('Logging chests to : ' & $chestPath)
+		Info('Logging foes to : ' & $foesPath)
 		$mappingFile = FileOpen($mappingPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
 		$chestFile = FileOpen($chestPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
-		MappingWrite($mappingFile, $chestFile, $mappingMode)
+		$foesFile = FileOpen($foesPath, $FO_APPEND + $FO_CREATEPATH + $FO_UTF8)
+		MappingWrite($mappingMode, $mappingFile, $chestFile, $foesFile)
 		AdlibRegister('MappingWrite', 1000)
 		$isMapping = True
 	EndIf
@@ -1704,34 +1708,68 @@ EndFunc
 
 
 ;~ Write mapping log in file
-Func MappingWrite($mapfile = Null, $chestingFile = Null, $mode = Null)
-	Local Static $mappingFile = 0
-	Local Static $chestFile = 0
+Func MappingWrite($mode = Null, $mapfile = Null, $chestFile = Null, $foesFile = Null)
 	Local Static $mappingMode = 0
+	Local Static $mappingFile = 0
+	Local Static $chestingFile = 0
+	Local Static $foeingFile = 0
+	Local Static $foesMap[]
 	Local $mustReturn = False
 	; Initialisation the first time when called outside of AdlibRegister
-	If (IsDeclared('mapfile') And $mapfile <> Null) Then
-		$mappingFile = $mapfile
-		$mustReturn = True
-	EndIf
-	If (IsDeclared('chestingFile') And $chestingFile <> Null) Then
-		$chestFile = $chestingFile
-		$mustReturn = True
-	EndIf
 	If (IsDeclared('mode') And $mode <> Null) Then
 		$mappingMode = $mode
 		$mustReturn = True
 	EndIf
+	If (IsDeclared('mapfile') And $mapfile <> Null) Then
+		$mappingFile = $mapfile
+		$mustReturn = True
+	EndIf
+	If (IsDeclared('chestFile') And $chestFile <> Null) Then
+		$chestingFile = $chestFile
+		$mustReturn = True
+	EndIf
+	If (IsDeclared('foesFile') And $foesFile <> Null) Then
+		$foeingFile = $foesFile
+		$mustReturn = True
+		; Resetting static map
+		$foesMap = Null
+		Local $newMap[]
+		$foesMap = $newMap
+	EndIf
 	If $mustReturn Then Return
-	If $mappingMode <> 2 Then
+	If BitAND($mappingMode, 1) Then
 		Local $me = GetMyAgent()
 		_FileWriteLog($mappingFile, '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
 	EndIf
-	If $mappingMode <> 1 Then
+	If BitAND($mappingMode, 2) Then
 		Local $chest = ScanForChests($RANGE_COMPASS)
 		If $chest <> Null Then
 			Local $chestString = 'Chest ' & DllStructGetData($chest, 'ID') & ' - (' & DllStructGetData($chest, 'X') & ',' & DllStructGetData($chest, 'Y') & ')'
-			_FileWriteLog($chestFile, $chestString)
+			_FileWriteLog($chestingFile, $chestString)
+		EndIf
+	EndIf
+	If BitAND($mappingMode, 4) Then
+		Local $me = GetMyAgent()
+		Local $nearFoe = GetNearestEnemyToAgent($me, $RANGE_EARSHOT)
+		If $nearFoe <> Null And IsSensali($nearFoe) And $foesMap[DllStructGetData($nearFoe, 'ID')] == Null Then
+			Local $foes = GetFoesInRangeOfAgent($nearFoe, $RANGE_EARSHOT, IsSensali)
+			Local $counter = 0
+			Local $position = [0, 0]
+			For $foe In $foes
+				Local $foeID = DllStructGetData($foe, 'ID')
+				If $foesMap[$foeID] == Null Then
+					$position[0] += DllStructGetData($foe, 'X')
+					$position[1] += DllStructGetData($foe, 'Y')
+					$counter += 1
+					$foesMap[$foeID] = 0 
+				EndIf
+			Next
+			If $position[0] <> 0 Then
+				$position[0] = $position[0] / $counter
+				$position[1] = $position[1] / $counter
+				Local $foesString = 'Group ' & ' - (' & $position[0] & ',' & $position[1] & ')'
+				_FileWriteLog($foeingFile, $foesString)
+			EndIf
 		EndIf
 	EndIf
 EndFunc

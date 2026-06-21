@@ -369,16 +369,20 @@ EndFunc
 
 
 ;~ Returns the coordinates in the middle of a group of foes nearest to provided position
-Func FindMiddleOfFoes($posX, $posY, $range = $RANGE_AREA)
+Func FindMiddleOfFoes($posX, $posY, $range = $RANGE_AREA, $condition = Null)
 	Local $position[] = [0, 0]
 	Local $nearestFoe = GetNearestEnemyToCoords($posX, $posY)
 	Local $foes = GetFoesInRangeOfAgent($nearestFoe, $range)
+	Local $count = 0
 	For $foe In $foes
-		$position[0] += DllStructGetData($foe, 'X')
-		$position[1] += DllStructGetData($foe, 'Y')
+		If $condition == Null Or $condition($foe) Then
+			$position[0] += DllStructGetData($foe, 'X')
+			$position[1] += DllStructGetData($foe, 'Y')
+			$count += 1
+		EndIf
 	Next
-	$position[0] = $position[0] / Ubound($foes)
-	$position[1] = $position[1] / Ubound($foes)
+	$position[0] = $position[0] / $count
+	$position[1] = $position[1] / $count
 	Return $position
 EndFunc
 
