@@ -88,6 +88,7 @@ To use it:
 | Stygian Veil					| Stygian Gemstones									|
 | Tunnels of the Forsaken		| E-blade											|
 | Underworld					| Globs of Ectoplasm								|
+| Kilroy						| Glacial Blades									|
 
 ### Chest Runs
 
