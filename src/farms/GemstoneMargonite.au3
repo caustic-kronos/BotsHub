@@ -389,7 +389,7 @@ EndFunc
 Func MargoniteMonkHeroHeal()
 	Local $monkHero = GetAgentByID(GetHeroID(1))
 	If IsRecharged($MARGONITE_HERO_TROLL_UNGUENT, 1) And _
-			GetEnergy($monkHero) > 10 And DllStructGetData($monkHero, 'HealthPercent') < 1 And _
+			GetEnergy($monkHero) > 10 And Not IsNearlyEqual(DllStructGetData($monkHero, 'HealthPercent'), 1) And _
 			GetEffect($ID_TROLL_UNGUENT, 1) == Null Then
 		UseHeroSkill(1, $MARGONITE_HERO_TROLL_UNGUENT)
 	EndIf

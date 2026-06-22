@@ -458,7 +458,7 @@ EndFunc
 Func IsLowHealth()
 	Local $me = GetMyAgent()
 	Local $healthRatio = DllStructGetData($me, 'HealthPercent')
-	If $healthRatio > 0 And $healthRatio < $LOW_HEALTH_THRESHOLD Then Return True
+	If Not IsNearlyEqual($healthRatio, 0) And $healthRatio < $LOW_HEALTH_THRESHOLD Then Return True
 	Return False
 EndFunc
 

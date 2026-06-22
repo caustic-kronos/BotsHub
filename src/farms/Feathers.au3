@@ -296,7 +296,7 @@ EndFunc
 ;~ Return True if agent is a Sensali
 Func IsSensali($agent)
 	If DllStructGetData($agent, 'Allegiance') <> $ID_ALLEGIANCE_FOE Then Return False
-	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
+	If IsNearlyEqual(DllStructGetData($agent, 'HealthPercent'), 0) Then Return False
 	If GetIsDead($agent) Then Return False
 	If DllStructGetData($agent, 'TypeMap') == $ID_TYPEMAP_IDLE_MINION Then Return False
 	Local $modelID = DllStructGetData($agent, 'ModelID')

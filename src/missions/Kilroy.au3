@@ -32,9 +32,11 @@ Global Const $KILROY_FARM_INFORMATIONS = 'This bot runs the Kilroy Stonekins Pun
 	& 'Ideal setup: sup vigor, insignias (stalwart or better), rune of Clarity and Recovery,' & @CRLF _
 	& 'Thunderfists Brass Knuckles +15^-5e, vampiric, of Shelter (customized)' & @CRLF _
 	& 'As much in Dagger Mastery and your primary attribute as possible' & @CRLF _
-	& 'Consumables: pumpkin pie, cupcakes can be used'
+	& 'Consumables: pumpkin pie, cupcakes can be used' & @CRLF _
+	& 'IMPORTANT: this bot has not been proven survival safe yet'
 ; Average duration ~TBD
-Global Const $KILROY_FARM_DURATION = 10 * 60 * 1000
+Global Const $KILROY_FARM_DURATION = (6 * 60 + 40) * 1000
+Global Const $KILROY_MAX_FARM_DURATION = 8 * 60 * 1000
 Global Const $KILROY_ACCEPT_REWARD = 0x835807
 Global Const $KILROY_START_QUEST = 0x835803
 Global Const $KILRAY_ACCEPT_QUEST = 0x835801
@@ -107,77 +109,162 @@ EndFunc
 
 ;~ Do the dungeon
 Func FarmPunchOut()
-	; Done here in order to pick latest version of default_move_aggro_kill_options
-	Local $kilroyOptions = CloneDictMap($default_move_aggro_kill_options)
-	$kilroyOptions.Item('fightFunction') = KilroyFighting
-	$kilroyOptions.Item('fightRange') = $RANGE_EARSHOT
-	$kilroyOptions.Item('callTarget') = False
-	$kilroyOptions.Item('lootInFights') = False
-	$kilroyOptions.Item('openChests') = True
-	$kilroyOptions.Item('chestOpenRange') = $RANGE_EARSHOT
-	; No practical limit to fight duration other than the duration of the dungeon
-	$kilroyOptions.Item('fightDuration') = $KILROY_FARM_DURATION
-
 	Local $kilroy = GetNearestNPCToCoords(-16730, -13230)
 	$kilroy_id = DllStructGetData($kilroy, 'ID')
 
 	UseConsumable($ID_BIRTHDAY_CUPCAKE)
 	UseConsumable($ID_SLICE_OF_PUMPKIN_PIE)
 	Info('Move and wait for Kilroy') 
-	MoveTo(-15820, -14240)
-	RandomSleep(8000)
-	MoveAggroAndKill(-15160, -15200, 'Group 1', $kilroyOptions)
-	MoveAggroAndKill(-11940, -16200, 'Group 2', $kilroyOptions)
-	MoveAggroAndKill(-7425, -16290, 'Group 3', $kilroyOptions)
-	MoveAggroAndKill(-4450, -16180, 'Group 4', $kilroyOptions)
-	Info('Move and wait for Kilroy') 
-	MoveTo(-2500, -15725) 
-	Sleep(2000)
-	MoveAggroAndKill(-2050, -14725, 'Group 5', $kilroyOptions)
-	MoveAggroAndKill(530, -13925, 'Group 6', $kilroyOptions)
-	MoveAggroAndKill(3330, -16210, 'Group 7', $kilroyOptions)
-	MoveAggroAndKill(6930, -15400, 'Group 8', $kilroyOptions)
-	Info('Moving to Boss and Sleeping for Kilroy')
-	MoveTo(10500, -16130)
-	Sleep(10000)
-	MoveAggroAndKill(12575,-15934, 'Boss', $kilroyOptions)
+	MoveTo(-15800, -14250)
+	RandomSleep(7500)
+	KilroyMove(-15000, -15500, 'Group 1')
+	KilroyMove(-11500, -16250, 'Group 2')
+	KilroyMove(-7500, -16250, 'Group 3')
+	KilroyMove(-4000, -16000, 'Group 4')
+	KilroyMove(-2100, -15000, 'Group 5')
+	KilroyMove(800, -14000, 'Group 6')
+
+	; Skipping foes in the corridor - too much death, loss of time
+	;KilroyMove(1050, -14250, 'Group 7')
+	;KilroyMove(2850, -16200, 'Group 8')
+	;KilroyMove(3650, -16600, 'Group 9')
+	;KilroyMove(4670, -16170, 'Group 10')
+	; Skipping foes in the arena too
+	;KilroyMove(7000, -15500, 'Group 11')
+
+	Local $kilroy_move_options = CloneDictMap($default_move_defend_options)
+	$kilroy_move_options.Item('defendFunction')	= KilroySpamBlockSkill
+	$kilroy_move_options.Item('moveTimeOut')	= 15 * 1000
+	$kilroy_move_options.Item('randomFactor')	= 0
+
+	; Instead, running straight through the corridor
+	MoveAvoidingBodyBlock(1050, -14250, $kilroy_move_options)
+	MoveAvoidingBodyBlock(2850, -16200, $kilroy_move_options)
+	MoveAvoidingBodyBlock(3650, -16600, $kilroy_move_options)
+	; Between the doors
+	MoveAvoidingBodyBlock(4670, -16170, $kilroy_move_options)
+	; Following the right wall
+	MoveAvoidingBodyBlock(6200, -15850, $kilroy_move_options)
+	; Passage through the guards
+	MoveTo(6998, -16020, 0, 0, KilroySpamBlockSkill)
+	; This spot is the bodyblock spot: (7114, -16028)
+	MoveTo(7300, -16050, 0, 0, KilroySpamBlockSkill)
+	; Safe spot before boss
+	MoveTo(10550, -16100, 0, 0, KilroySpamBlockSkill)
+	MoveTo(11900, -16000, 0, 0, KilroySpamBlockSkill)
+	; Boss and Ettin at (13000, -15700)
+	Info('Boss and his pal')
+	Local $me = GetMyAgent()
+	Local $ettin = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsNormalFoe)
+	ChangeTarget($ettin)
+	If BrawlFight($ettin) == $FAIL Then Return $FAIL
+	Local $boss = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsBossFoe)
+	ChangeTarget($boss)
+	If BrawlFight($boss) == $FAIL Then Return $FAIL
+	PickUpItems()
 
 	Info('Looting chest')
-	MoveTo(13270,-15950)
+	MoveTo(13270, -15950)
 	ClearTarget()
 	Sleep(2000)
 	; Doubled to secure bot
 	For $i = 1 To 2
-		MoveTo(13270,-15950)
+		MoveTo(13270, -15950)
 		TargetNearestItem()
 		RandomSleep(500)
 		ActionInteract()
 		RandomSleep(500)
+		PickUpItems()
 	Next
 EndFunc
 
 
-;~ Kilroy group fight function - no need to give a default $options, it will always be the kilroyOptions of the previous function
-Func KilroyFighting($options = Null)
+;~ Move to the coordinates provided, staying close to Kilroy, killing foes and opening chests
+Func KilroyMove($x, $y, $log = '', $openChests = True)
+	If $log <> '' Then Info($log)
+	IsPlayerStuck(Default, Default, True) ; init internal state
+
+	Move($x, $y)
+
+	Local $target
+	Local $me = GetMyAgent()
+	Local $kilroy = GetAgentByID($kilroy_id)
+	Local $timer = TimerInit()
+	; Completion of move should be smaller than aggro range
+	While GetDistanceToPoint($me, $x, $y) > (2 * $RANGE_AREA)
+		$target = GetNearestEnemyToAgent($kilroy)
+		; Fight should be larger than move completion
+		If DllStructGetData($target, 'ID') <> 0 And GetDistance($kilroy, $target) < $RANGE_EARSHOT Then
+			If KilroyFightGroup() == $FAIL Then Return $FAIL
+			$me = GetMyAgent()
+			$kilroy = GetAgentByID($kilroy_id)
+		EndIf
+
+		; Moving toward destination, but staying close to Kilroy - with timer to complete move
+		If TimerDiff($timer) > 120000 Then
+			MoveTo($x, $y, 0, 0, KilroySpamBlockSkill)
+		ElseIf GetDistance($me, $kilroy) > 2 * $RANGE_AREA Then
+			Move(DllStructGetData($kilroy, 'X'), DllStructGetData($kilroy, 'Y'))
+		Else
+			Move($x, $y)
+		EndIf
+		RandomSleep(250)
+
+		If IsPlayerStuck() Then
+			If TryToGetUnstuck($x, $y) == $SUCCESS Then
+				IsPlayerStuck(Default, Default, True) ; reset stuck detection
+			Else
+				Error('Player detected as stuck and could not get unstuck')
+				Return $FAIL
+			EndIf
+		EndIf
+
+		If $openChests Then
+			Local $chest = FindChest($RANGE_EARSHOT)
+			If $chest <> Null Then
+				KilroyMove(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), 'Found a chest', False)
+				FindAndOpenChests($RANGE_EARSHOT)
+			EndIf
+		EndIf
+		$me = GetMyAgent()
+		$kilroy = GetAgentByID($kilroy_id)
+		If IsCharacterPassedOut() And Not GetBackUp() Then Return $FAIL
+	WEnd
+	$timer = TimerInit()
+	While GetIsDead($kilroy) And TimerDiff($timer) < 20000
+		Move(DllStructGetData($kilroy, 'X'), DllStructGetData($kilroy, 'Y'))
+		RandomSleep(250)
+		$kilroy = GetAgentByID($kilroy_id)
+	WEnd
+	Return $SUCCESS
+EndFunc
+
+
+;~ Kilroy function to fight a group of foes
+Func KilroyFightGroup()
 	Local $me = GetMyAgent()
 	Local $kilroy = GetAgentByID($kilroy_id)
 	Local $foesCount = CountFoesInRangeOfAgent($kilroy, $RANGE_EARSHOT)
 	Local $target = Null
 
 	While $foesCount > 0
-		;If $priorityMobs Then $target = GetHighestPriorityFoe($me, $RANGE_EARSHOT)
-		;If Not $priorityMobs Or $target == Null Then
+		If CheckStuck('Kilroy fight', $KILROY_MAX_FARM_DURATION) == $FAIL Then Return $FAIL
 		$target = GetNearestEnemyToAgent($kilroy)
 		If $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($kilroy, $target) < $RANGE_EARSHOT Then
-			ChangeTarget($target)
-			PingSleep(50)
-			If BrawlFight($target) == $FAIL Then Return $FAIL
+			If GetDistance($me, $target) < $RANGE_NEARBY Then
+				ChangeTarget($target)
+				PingSleep(50)
+				If BrawlFight($target) == $FAIL Then Return $FAIL
+			Else
+				Move(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'))
+				RandomSleep(250)
+			EndIf
 		EndIf
 
 		$me = GetMyAgent()
 		$kilroy = GetAgentByID($kilroy_id)
 		$foesCount = CountFoesInRangeOfAgent($kilroy, $RANGE_EARSHOT)
-		If IsKilroyDown() And Not GetBackUp() Then Return $FAIL
+		If IsCharacterPassedOut() And Not GetBackUp() Then Return $FAIL
 	WEnd
 	RandomSleep(500)
 	PickUpItems()
@@ -185,18 +272,20 @@ Func KilroyFighting($options = Null)
 EndFunc
 
 
-;~ Kilroy mob killing function
+;~ Kilroy function to kill a single mob
 Func BrawlFight($target)
 	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
-		;	Skill										usage						priority
-		;	$SKILLBAR_BRAWLING_BLOCK				->	off cooldown				0
-		;	$SKILLBAR_BRAWLING_JAB					->	off cooldown				5	
-		;	$SKILLBAR_BRAWLING_STRAIGHT_RIGHT		->	off cooldown				4
-		;	$SKILLBAR_BRAWLING_BRAWLING_HOOK		->	when enough adrenaline (4)	2
-		;	$SKILLBAR_BRAWLING_BRAWLING_UPPERCUT	->	when enough adrenaline (10) 0
-		;	$SKILLBAR_BRAWLING_HEADBUTT				->	when enough adrenaline (7)	1
-		;	$SKILLBAR_BRAWLING_COMBO_PUNCH			->	off cooldown				3
-		;	$SKILLBAR_STAND_UP						->	just used when knocked down
+		If CheckStuck('Kilroy fight', $KILROY_MAX_FARM_DURATION) == $FAIL Then Return $FAIL
+
+		;	Position	Skill									usage							priority
+		;	1			$SKILLBAR_BRAWLING_BLOCK				off cooldown					0
+		;	2			$SKILLBAR_BRAWLING_JAB					if everything else is on cd		5	
+		;	3			$SKILLBAR_BRAWLING_STRAIGHT_RIGHT		off cooldown					3
+		;	4			$SKILLBAR_BRAWLING_BRAWLING_HOOK		when enough adrenaline (4)		4
+		;	5			$SKILLBAR_BRAWLING_BRAWLING_UPPERCUT	when enough adrenaline (10) 	1
+		;	6			$SKILLBAR_BRAWLING_HEADBUTT				when enough adrenaline (7)		0
+		;	7			$SKILLBAR_BRAWLING_COMBO_PUNCH			off cooldown					2
+		;	8			$SKILLBAR_STAND_UP						just used when knocked down
 
 		; Here we are doing an intense usage of skillbar informations - it's better to avoid using IsRecharged and such
 		Local $skillbar = GetSkillbar(0)
@@ -208,56 +297,53 @@ Func BrawlFight($target)
 
 		; Block is used as soon as available
 		If $recharge1 == 0 Or ($recharge1 - $skillTimer) == 0 Then
-			UseSkillEx($SKILLBAR_BRAWLING_BLOCK)
+			UseSkill($SKILLBAR_BRAWLING_BLOCK)
 		EndIf
 		; Other skills are used in order of priority
-		If DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_BRAWLING_UPPERCUT) == 250 Then
-			UseSkillEx($SKILLBAR_BRAWLING_BRAWLING_UPPERCUT, $target)
-		ElseIf DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_HEADBUTT) == 175 Then
+		If DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_HEADBUTT) == 175 Then
 			UseSkillEx($SKILLBAR_BRAWLING_HEADBUTT, $target)
-		ElseIf DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_BRAWLING_HOOK) == 100 Then
-			UseSkillEx($SKILLBAR_BRAWLING_BRAWLING_HOOK, $target)
+		ElseIf DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_BRAWLING_UPPERCUT) == 250 Then
+			UseSkillEx($SKILLBAR_BRAWLING_BRAWLING_UPPERCUT, $target)
 		ElseIf $recharge7 == 0 Or ($recharge7 - $skillTimer) == 0 Then
 			UseSkillEx($SKILLBAR_BRAWLING_COMBO_PUNCH, $target)
 		ElseIf $recharge3 == 0 Or ($recharge3 - $skillTimer) == 0 Then
 			UseSkillEx($SKILLBAR_BRAWLING_STRAIGHT_RIGHT, $target)
-		ElseIf $recharge2 == 0 Or ($recharge2 - $skillTimer) == 0 Then
-			UseSkillEx($SKILLBAR_BRAWLING_JAB, $target)
+		ElseIf DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_BRAWLING_HOOK) == 100 Then
+			UseSkillEx($SKILLBAR_BRAWLING_BRAWLING_HOOK, $target)
 		Else
-			Attack($target)
+			UseSkillEx($SKILLBAR_BRAWLING_JAB, $target)
 		EndIf
-		PingSleep(50)
 		$target = GetCurrentTarget()
-		If IsKilroyDown() And Not GetBackUp() Then Return $FAIL
+		If IsCharacterPassedOut() And Not GetBackUp() Then Return $FAIL
 	WEnd
 	Return $SUCCESS
 EndFunc
 
 
 ;~ Function checking if we are down in the Kilroy sense (0 energy)
-Func IsKilroyDown()
+Func IsCharacterPassedOut()
 	Local $energyPercent = DllStructGetData(GetMyAgent(), 'EnergyPercent')
-	Return $energyPercent == 0
+	Return IsNearlyEqual($energyPercent, 0)
 EndFunc
 
 
 ;~ Function to spam skill 8 to get back on your feet and keep on fighting
 Func GetBackUp()
 	; For some reason we are not in instance anymore
-	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return $FAIL
+	If GetMapID() <> $ID_FRONIS_IRONTOES_LAIR Then Return False
 
 	Local $me = GetMyAgent()
 	Local $maxEnergy = DllStructGetData($me, 'MaxEnergy')
 	If $maxEnergy > 120 Then
 		Info('Energy too High. Run Failed')
 		DistrictTravel($ID_GUNNARS_HOLD, $district_name)
-		Return $FAIL
+		Return False
 	EndIf
 
 	Local $timer = TimerInit()
 	Local $energyPercent = DllStructGetData($me, 'EnergyPercent')
 	; 10 seconds maximum to get back up
-    While $energyPercent <> 1 And TimerDiff($timer) < 10000
+    While Not IsNearlyEqual($energyPercent, 1) And TimerDiff($timer) < 10000
         ; Respect skill 8 recharge
         Local $skillbar = GetSkillbar()
         If DllStructGetData($skillbar, "Recharge8") == 0 Then UseSkill($SKILLBAR_STAND_UP)
@@ -265,5 +351,31 @@ Func GetBackUp()
 		$me = GetMyAgent()
 		$energyPercent = DllStructGetData($me, 'EnergyPercent')
     WEnd
-    Return $energyPercent == 1 ? $SUCCESS : $FAIL
+    Return IsNearlyEqual($energyPercent, 1)
+EndFunc
+
+
+;~ While running spamm block skill to survive
+Func KilroySpamBlockSkill()
+	If IsRecharged($SKILLBAR_BRAWLING_BLOCK) Then UseSkill($SKILLBAR_BRAWLING_BLOCK)
+EndFunc
+
+
+;~ Return True if agent is a foe and a boss
+Func IsBossFoe($agent)
+	If DllStructGetData($agent, 'Allegiance') <> $ID_ALLEGIANCE_FOE Then Return False
+	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
+	If GetIsDead($agent) Then Return False
+	If DllStructGetData($agent, 'TypeMap') == $ID_TYPEMAP_IDLE_MINION Then Return False
+	Return GetIsBoss($agent)
+EndFunc
+
+
+;~ Return True if agent is a foe and not a boss
+Func IsNormalFoe($agent)
+	If DllStructGetData($agent, 'Allegiance') <> $ID_ALLEGIANCE_FOE Then Return False
+	If DllStructGetData($agent, 'HealthPercent') <= 0 Then Return False
+	If GetIsDead($agent) Then Return False
+	If DllStructGetData($agent, 'TypeMap') == $ID_TYPEMAP_IDLE_MINION Then Return False
+	Return Not GetIsBoss($agent)
 EndFunc

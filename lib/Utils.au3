@@ -75,7 +75,7 @@ Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
 		EndIf
 		$me = GetMyAgent()
 		If GetMapID() <> $mapID Then ExitLoop
-		If DllStructGetData($me, 'HealthPercent') <= 0 Then Return False
+		If IsNearlyEqual(DllStructGetData($me, 'HealthPercent'), 0) Then Return False
 		If $blockedCount > 14 Then Return False
 	WEnd
 	Return True
@@ -114,7 +114,7 @@ Func GoToAgent($agent, $goFunction = Null)
 	While GetDistance($me, $agent) > 250 And $blockedCount < 14
 		PingSleep(100)
 		$me = GetMyAgent()
-		If DllStructGetData($me, 'HealthPercent') <= 0 Then ExitLoop
+		If IsNearlyEqual(DllStructGetData($me, 'HealthPercent'), 0) Then ExitLoop
 		$mapLoadingOld = $mapLoading
 		$mapLoading = GetMapType()
 		If $mapLoading <> $mapLoadingOld Then ExitLoop
@@ -1079,33 +1079,34 @@ EndFunc
 
 ;~ Clear a zone around the coordinates provided
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
-
 	Local $openChests = ($options.Item('openChests') <> Null) ? $options.Item('openChests') : True
 	Local $chestOpenRange = ($options.Item('chestOpenRange') <> Null) ? $options.Item('chestOpenRange') : $RANGE_SPIRIT
 	Local $fightFunction = ($options.Item('fightFunction') <> Null) ? $options.Item('fightFunction') : KillFoesInArea
 	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : $RANGE_EARSHOT * 1.5
 	Local $ignoreDroppedLoot = ($options.Item('ignoreDroppedLoot') <> Null) ? $options.Item('ignoreDroppedLoot') : False
 	Local $unstuckFunction = ($options.Item('unstuckFunction') <> Null) ? $options.Item('unstuckFunction') : TryToGetUnstuck
+	IsPlayerStuck(Default, Default, True) ; init internal state
 
 	If $log <> '' Then Info($log)
-	IsPlayerStuck(Default, Default, True) ; init internal state
-	Local $me = GetMyAgent()
 
 	Move($x, $y)
 
 	Local $target
 	Local $chest
-	While GetDistanceToPoint(GetMyAgent(), $x, $y) > $RANGE_NEARBY
-		$me = GetMyAgent()
+	Local $me = GetMyAgent()
+	While GetDistanceToPoint($me, $x, $y) > $RANGE_NEARBY
+		; Trigger fight function if a foe comes close enough
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
 			If $fightFunction($options) == $FAIL Then ExitLoop
 			; FIXME: add rezzing dead party members here
 		EndIf
 
+		; Do the actual moving
 		Move($x, $y)
 		RandomSleep(250)
 
+		; Stuck verification
 		If IsPlayerStuck() Then
 			If $unstuckFunction($x, $y) == $SUCCESS Then
 				IsPlayerStuck(Default, Default, True) ; reset stuck detection
@@ -1115,6 +1116,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 			EndIf
 		EndIf
 
+		; Chest part
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
@@ -2531,6 +2533,12 @@ EndFunc
 
 
 #Region AutoIt Utils
+;~ Useful for approximate values. Happens a lot to percentages
+Func IsNearlyEqual($value, $expected, $epsilon = 0.0001)
+	Return Abs($value - $expected) < $epsilon
+EndFunc
+
+
 ;~ Return the value if it is not Null else the defaultValue
 Func GetOrDefault($value, $defaultValue)
 	Return ($value == Null) ? $defaultValue : $value

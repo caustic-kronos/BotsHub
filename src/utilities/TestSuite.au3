@@ -46,7 +46,7 @@ Func RunTests()
 	;	GetOwnPosition()
 	;	Sleep(2000)
 	;WEnd
-	UseSummoningStone()
+
 	;Local $itemPtr = GetItemPtrBySlot(1, 1)
 	;Local $item = GetItemBySlot(1, 1)
 	;PrintItemInformations($item)
@@ -67,6 +67,12 @@ Func RunTests()
 	;WriteChat('Test full function input.', $WriteChatSender, $WriteChatChan)
 	;WriteChat('Test lazy input.')
 
+	Return $PAUSE
+EndFunc
+
+
+;~ Method to make manual operations (open Xunlai, send instructions in the GUI input)
+Func ManualMode()
 	Return $PAUSE
 EndFunc
 
