@@ -26,13 +26,13 @@ https://gwpvx.fandom.com/wiki/Build:E/Me_Obsidian_Flesh_Vaettir_Farmer
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $AME_VAETTIRS_FARMER_SKILLBAR		= 'OwVU4lPL2hN8Id2BEBSANBLhbK'
-Global Const $MEA_VAETTIRS_FARMER_SKILLBAR		= 'OQdVAMhOK/85hHpzOgIQCoJYJcTB'
-Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_12	= 'OQdVASBOKv85hHpzOgIQCoJYJcTB'
-Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_13	= 'OQdVAQROKv85hHpzOgIQCoJYJcTB'
-Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_14	= 'OQdVAOhOIf85hHpzOgIQCoJYJcTB'
-Global Const $MOA_VAETTIRS_FARMER_SKILLBAR		= 'OwcU8UH6lPP8IdW9ABCRyi3D5B'
-Global Const $EME_VAETTIRS_FARMER_SKILLBAR		= 'OgVFwDKJL7Uk0n2wXlLoBgJwSwNF'
+Global Const $AME_VAETTIRS_FARMER_SKILLBAR			= 'OwVU4lPL2hN8Id2BEBSANBLhbK'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_FC0		= 'OQdVASBOKv85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_FC1		= 'OQdVAQROKv85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_FC2_3	= 'OQdVAOhOIf85hHpzOgIQCoJYJcTB'
+Global Const $MEA_VAETTIRS_FARMER_SKILLBAR_FC4		= 'OQdVAMhOK/85hHpzOgIQCoJYJcTB'
+Global Const $MOA_VAETTIRS_FARMER_SKILLBAR			= 'OwcU8UH6lPP8IdW9ABCRyi3D5B'
+Global Const $EME_VAETTIRS_FARMER_SKILLBAR			= 'OgVFwDKJL7Uk0n2wXlLoBgJwSwNF'
 
 Global Const $VAETTIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- +4 Shadow Arts (+3 +1 headgear)' & @CRLF _
@@ -162,16 +162,17 @@ Func SelectMeASkillbar()
 		Local $fast_casting_rune_bonus = GetAttributeByID($ID_FAST_CASTING, True, 0) - GetAttributeByID($ID_FAST_CASTING, False, 0)
 		Switch $fast_casting_rune_bonus
 			Case 0
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_12)
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC0)
 			Case 1
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_13)
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC1)
 			Case 2 to 3
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_14)
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC2_3)
 			Case Else
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR)
+				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC4)
 		EndSwitch
 	Else
-		LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR)
+		; No anniversary shield, so it doesn't matter what value of Fast Casting we actually have
+		LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC4)
 	EndIf
 EndFunc
 
