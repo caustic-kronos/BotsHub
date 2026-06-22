@@ -78,13 +78,11 @@ Func RunToTunnels()
 	WEnd
 	Info('Making way to entrance')
 	AdlibRegister('TrackPartyStatus', 10000)
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 17593, 330, 1250)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 17982, 641, 1250)
 		WaitUntilPartyAlive()
 		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
-		MoveAggroAndKillInRange(21059, 3844, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveAggroAndKillInRange(18447, 812, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveAggroAndKillInRange(18252, 728, '3', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveTo(17593, 330, '4')
+		MoveAggroAndKillInRange(21264, 3562, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
+		MoveTo(17982, 641, '2')
 	WEnd
 	AdlibUnRegister('TrackPartyStatus')
 
@@ -92,7 +90,7 @@ Func RunToTunnels()
 	Info('Going through door')
 	While Not $mapLoaded
 		MoveTo(17342, -612)
-		RandomSleep(1000)
+		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_TUNNELS_OF_THE_FORSAKEN_LVL_1)
 	WEnd
 	Return IsRunFailed() ? $FAIL : $SUCCESS
