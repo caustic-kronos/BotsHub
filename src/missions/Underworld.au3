@@ -68,7 +68,6 @@ Global Const $ENABLE_ESCORT_OF_SOULS = True ; For UW total completion. ~5 min
 Global Const $ENABLE_UNWANTED_GUESTS = True ; For UW total completion. ~15 min
 Global Const $ENABLE_THE_NIGHTMAN_COMETH = True ; TODO
 
-Global $underworld_fight_options
 Global $underworld_player_profession = $ID_RITUALIST
 Global $uw_farm_setup = False
 
@@ -91,7 +90,6 @@ Func SetupUnderworldFarm()
 	TravelToUWOutpost($district_name)
 	SetupPlayerUnderworldFarm()
 	SwitchToHardModeIfEnabled()
-	$underworld_fight_options = CloneDictMap($default_move_aggro_kill_options)
 	$uw_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -265,10 +263,10 @@ EndFunc
 
 
 Func ClearTheForgottenVale()
-	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
-	DictItem($optionsForgottenVale, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsForgottenVale, 'flagHeroesOnFight',  False)
-	DictItem($optionsForgottenVale, 'ignoreDroppedLoot',  False)
+	Local $optionsForgottenVale					= CloneMap($default_move_aggro_kill_options)
+	$optionsForgottenVale['fightRange']			= $RANGE_EARSHOT
+	$optionsForgottenVale['flagHeroesOnFight']	= False
+	$optionsForgottenVale['ignoreDroppedLoot']	= False
 	Info('Moving to Forgotten Vale')
 	MoveAggroAndKill(-5973, 12410)
 	MoveAggroAndKill(-6330, 10177)
@@ -296,8 +294,9 @@ Func ClearTheForgottenVale()
 	Info('Kill Terrorweb Dryders')
 	MoveAggroAndKill(-13491, 4605)
 	Info('Kill Some Coldfire Patrols')
-	DictItem($optionsForgottenVale, 'flagHeroesOnFight',  True)
-	DictItem($optionsForgottenVale, 'fightRange',  $RANGE_EARSHOT * 1.25)
+
+	$optionsForgottenVale['flagHeroesOnFight']	= True
+	$optionsForgottenVale['fightRange']			= $RANGE_EARSHOT * 1.25
 	MoveAggroAndKill(-13505, 6040, '', $optionsForgottenVale)
 	Info('Waiting for Coldfire Patrols 1')
 	RandomSleep(5000)
@@ -333,10 +332,10 @@ Func WrathfulSpirits()
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsForgottenVale = CloneDictMap($underworld_fight_options)
-	DictItem($optionsForgottenVale, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsForgottenVale, 'flagHeroesOnFight',  False)
-	DictItem($optionsForgottenVale, 'ignoreDroppedLoot',  False)
+	Local $optionsForgottenVale					= CloneMap($default_move_aggro_kill_options)
+	$optionsForgottenVale['fightRange']			= $RANGE_EARSHOT
+	$optionsForgottenVale['flagHeroesOnFight']	= False
+	$optionsForgottenVale['ignoreDroppedLoot']	= False
 	TakeQuest($reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
 	While Not IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS)
 		Info('1st Group')
@@ -405,11 +404,11 @@ EndFunc
 
 
 Func ClearTheFrozenWastes()
-	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
-	DictItem($optionsFrozenWastes, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsFrozenWastes, 'flagHeroesOnFight',  False)
-	DictItem($optionsFrozenWastes, 'ignoreDroppedLoot',  False)
-	DictItem($optionsFrozenWastes, 'priorityMobs',  True)
+	Local $optionsFrozenWastes					= CloneMap($default_move_aggro_kill_options)
+	$optionsFrozenWastes['fightRange']			= $RANGE_EARSHOT
+	$optionsFrozenWastes['flagHeroesOnFight']	= False
+	$optionsFrozenWastes['ignoreDroppedLoot']	= False
+	$optionsFrozenWastes['priorityMobs']		= True
 	Info('Moving to Frozen Wastes')
 	MoveAggroAndKill(-5129, 13248)
 	MoveAggroAndKill(-4, 13337)
@@ -442,13 +441,15 @@ Func ClearTheFrozenWastes()
 	MoveAggroAndKill(11159, 15195, '', $optionsFrozenWastes)
 	MoveAggroAndKill(12473, 15153, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 3')
-	DictItem($optionsFrozenWastes, 'flagHeroesOnFight',  True)
+
+	$optionsFrozenWastes['flagHeroesOnFight'] = True
 	MoveAggroAndKill(13973, 17130, '', $optionsFrozenWastes)
 	MoveAggroAndKill(13920, 19641, '', $optionsFrozenWastes)
 	MoveAggroAndKill(12576, 20212, '', $optionsFrozenWastes)
 	MoveAggroAndKill(11881, 20024, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 4')
-	DictItem($optionsFrozenWastes, 'flagHeroesOnFight',  False)
+
+	$optionsFrozenWastes['flagHeroesOnFight'] = False
 	MoveAggroAndKill(11125, 20565, '', $optionsFrozenWastes)
 	MoveAggroAndKill(9660, 21593, '', $optionsFrozenWastes)
 	MoveAggroAndKill(8277, 22011, '', $optionsFrozenWastes)
@@ -466,12 +467,14 @@ Func ClearTheFrozenWastes()
 	MoveAggroAndKill(2754, 18508, '', $optionsFrozenWastes)
 	MoveAggroAndKill(2827, 19050, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 8')
-	DictItem($optionsFrozenWastes, 'fightRange',  $RANGE_EARSHOT * 1.25)
+
+	$optionsFrozenWastes['fightRange']	= $RANGE_EARSHOT * 1.25
 	MoveAggroAndKill(2253, 19856, '', $optionsFrozenWastes)
 	MoveAggroAndKill(784, 19901, '', $optionsFrozenWastes)
 	MoveAggroAndKill(-498, 18792, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 9')
-	DictItem($optionsFrozenWastes, 'fightRange',  $RANGE_EARSHOT)
+
+	$optionsFrozenWastes['fightRange'] = $RANGE_EARSHOT
 	MoveAggroAndKill(-837, 18762, '', $optionsFrozenWastes)
 	MoveAggroAndKill(884, 20412, '', $optionsFrozenWastes)
 	MoveAggroAndKill(418, 21487, '', $optionsFrozenWastes)
@@ -505,11 +508,11 @@ Func ServantsOfGrenth()
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsFrozenWastes = CloneDictMap($underworld_fight_options)
-	DictItem($optionsFrozenWastes, 'fightRange',  $RANGE_EARSHOT * 1.5)
-	DictItem($optionsFrozenWastes, 'flagHeroesOnFight',  False)
-	DictItem($optionsFrozenWastes, 'ignoreDroppedLoot',  True)
-	DictItem($optionsFrozenWastes, 'priorityMobs',  True)
+	Local $optionsFrozenWastes					= CloneMap($default_move_aggro_kill_options)
+	$optionsFrozenWastes['fightRange']			= $RANGE_EARSHOT * 1.5
+	$optionsFrozenWastes['flagHeroesOnFight']	= False
+	$optionsFrozenWastes['ignoreDroppedLoot']	= True
+	$optionsFrozenWastes['priorityMobs']		= True
 	Info('Setting heroes up for quest')
 	CommandHero(1, 2158, 19713)
 	CommandHero(2, 2482, 19482)
@@ -572,11 +575,11 @@ EndFunc
 
 
 Func ClearTheChaosPlanes()
-	Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
-	DictItem($optionsChaosPlanes, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsChaosPlanes, 'flagHeroesOnFight',  False)
-	DictItem($optionsChaosPlanes, 'ignoreDroppedLoot',  False)
-	DictItem($optionsChaosPlanes, 'priorityMobs',  True)
+	Local $optionsChaosPlanes					= CloneMap($default_move_aggro_kill_options)
+	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT
+	$optionsChaosPlanes['flagHeroesOnFight']	= False
+	$optionsChaosPlanes['ignoreDroppedLoot']	= False
+	$optionsChaosPlanes['priorityMobs']			= True
 	Info('Moving to Chaos Plains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
@@ -789,8 +792,9 @@ Func ClearTheChaosPlanes()
 	MoveAggroAndKill(11160, -17710)
 	RandomSleep(5000)
 	Info('Killing Mindblade Mob 1')
-	DictItem($optionsChaosPlanes, 'ignoreDroppedLoot',  True)
-	DictItem($optionsChaosPlanes, 'fightRange',  $RANGE_EARSHOT * 1.5)
+
+	$optionsChaosPlanes['ignoreDroppedLoot']	= True
+	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT * 1.5
 	MoveAggroAndKill(12211, -17522, '', $optionsChaosPlanes) ; Right Short
 	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
 	Info('Killing Mindblade Mob 2')
@@ -823,11 +827,11 @@ EndFunc
 
 
 Func ClearSpawningPools($reaper)
-	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
-	DictItem($optionsSpawningPools, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsSpawningPools, 'flagHeroesOnFight',  True)
-	DictItem($optionsSpawningPools, 'ignoreDroppedLoot',  False)
-	DictItem($optionsSpawningPools, 'priorityMobs',  True)
+	Local $optionsSpawningPools					= CloneMap($default_move_aggro_kill_options)
+	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT
+	$optionsSpawningPools['flagHeroesOnFight']	= True
+	$optionsSpawningPools['ignoreDroppedLoot']	= False
+	$optionsSpawningPools['priorityMobs']		= True
 	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
 	Info('Moving to Spawning Pools')
 	MoveAggroAndKill(10235, -19396)
@@ -875,13 +879,15 @@ Func ClearSpawningPools($reaper)
 	MoveAggroAndKill(-9931, -17845, '', $optionsSpawningPools)
 	MoveAggroAndKill(-9342, -20193, '', $optionsSpawningPools)
 	Info('Moving to Monument to clear Terrorweb Dryders')
-	DictItem($optionsSpawningPools, 'ignoreDroppedLoot',  True)
-	DictItem($optionsSpawningPools, 'fightRange',  $RANGE_EARSHOT * 1.25)
+
+	$optionsSpawningPools['ignoreDroppedLoot']	= True
+	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT * 1.25
 	MoveAvoidingBodyBlock(-8067, -19658)
 	KillFoesInArea($optionsSpawningPools)
 	Info('Move to protect Reaper')
 	MoveAvoidingBodyBlock(-7316, -19514)
-	DictItem($optionsSpawningPools, 'fightRange',  $RANGE_EARSHOT)
+
+	$optionsSpawningPools['fightRange']	= $RANGE_EARSHOT
 	KillFoesInArea($optionsSpawningPools)
 	MoveAggroAndKill(-6254, -20456, '', $optionsSpawningPools)
 	MoveAggroAndKill(-5280, -19470, '', $optionsSpawningPools)
@@ -909,11 +915,11 @@ Func TerrorwebQueen()
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsSpawningPools = CloneDictMap($underworld_fight_options)
-	DictItem($optionsSpawningPools, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsSpawningPools, 'flagHeroesOnFight',  True)
-	DictItem($optionsSpawningPools, 'ignoreDroppedLoot',  False)
-	DictItem($optionsSpawningPools, 'priorityMobs',  True)
+	Local $optionsSpawningPools					= CloneMap($default_move_aggro_kill_options)
+	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT
+	$optionsSpawningPools['flagHeroesOnFight']	= True
+	$optionsSpawningPools['ignoreDroppedLoot']	= False
+	$optionsSpawningPools['priorityMobs']		= True
 	TakeQuest($reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
 	Info('Clearing Exterior')
 	MoveAggroAndKill(-8585, -19681)
@@ -949,10 +955,10 @@ EndFunc
 
 
 Func ClearBonePits($reaper)
-	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
-	DictItem($optionsBonePits, 'fightRange',  $RANGE_EARSHOT * 1.1)
-	DictItem($optionsBonePits, 'flagHeroesOnFight',  False)
-	DictItem($optionsBonePits, 'ignoreDroppedLoot',  False)
+	Local $optionsBonePits					= CloneMap($default_move_aggro_kill_options)
+	$optionsBonePits['fightRange']			= $RANGE_EARSHOT * 1.1
+	$optionsBonePits['flagHeroesOnFight']	= False
+	$optionsBonePits['ignoreDroppedLoot']	= False
 	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
 	MoveAggroAndKill(13653, -16965)
 	Info('Let us make sure Reaper is ok before proceeding.')
@@ -1028,11 +1034,11 @@ Func ImprisonedSpirits()
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsBonePits = CloneDictMap($underworld_fight_options)
-	DictItem($optionsBonePits, 'fightRange',  $RANGE_EARSHOT)
-	DictItem($optionsBonePits, 'flagHeroesOnFight',  False)
-	DictItem($optionsBonePits, 'ignoreDroppedLoot',  True)
-	DictItem($optionsBonePits, 'priorityMobs',  True)
+	Local $optionsBonePits					= CloneMap($default_move_aggro_kill_options)
+	$optionsBonePits['fightRange']			= $RANGE_EARSHOT
+	$optionsBonePits['flagHeroesOnFight']	= False
+	$optionsBonePits['ignoreDroppedLoot']	= True
+	$optionsBonePits['priorityMobs']		= True
 	If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
 		UseSkillEx($UNDERWORLD_RECALL, GetAgentByID(GetHeroID(5)))
 	EndIf
@@ -1096,11 +1102,11 @@ Func ClearTwinSerpentMountains()
 		Info('Skipping Twin Serpent Mounts Area as per settings')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
-	DictItem($optionsTwinSerpentMountains, 'fightRange',  $RANGE_EARSHOT * 0.9)
-	DictItem($optionsTwinSerpentMountains, 'flagHeroesOnFight',  False)
-	DictItem($optionsTwinSerpentMountains, 'ignoreDroppedLoot',  False)
-	DictItem($optionsTwinSerpentMountains, 'priorityMobs',  True)
+	Local $optionsTwinSerpentMountains					= CloneMap($default_move_aggro_kill_options)
+	$optionsTwinSerpentMountains['fightRange']			= $RANGE_EARSHOT * 0.9
+	$optionsTwinSerpentMountains['flagHeroesOnFight']	= False
+	$optionsTwinSerpentMountains['ignoreDroppedLoot']	= False
+	$optionsTwinSerpentMountains['priorityMobs']		= True
 	Info('Moving to Twin Serpent Mountains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
@@ -1157,7 +1163,8 @@ Func ClearTwinSerpentMountains()
 	MoveTo(-4281, -5058)
 	RandomSleep(5000)
 	CancelAll()
-	DictItem($optionsTwinSerpentMountains, 'ignoreDroppedLoot',  True)
+
+	$optionsTwinSerpentMountains['ignoreDroppedLoot'] = True
 	MoveAggroAndKillSafeTraps(-4649, -5910, '', $optionsTwinSerpentMountains)
 	Info('Moving to Spot 5')
 	MoveAggroAndKillSafeTraps(-4281, -5058, '', $optionsTwinSerpentMountains)
@@ -1177,7 +1184,8 @@ Func ClearTwinSerpentMountains()
 	Info('Moving to Monument to clear Terrorweb Dryders')
 	MoveAggroAndKillSafeTraps(-7418, -5871, '', $optionsTwinSerpentMountains)
 	MoveAggroAndKillSafeTraps(-7284, -4115, '', $optionsTwinSerpentMountains)
-	DictItem($optionsTwinSerpentMountains, 'fightRange',  $RANGE_EARSHOT * 1.25)
+
+	$optionsTwinSerpentMountains['fightRange'] = $RANGE_EARSHOT * 1.25
 	MoveAggroAndKillSafeTraps(-8150, -4800, '', $optionsTwinSerpentMountains)
 	CommandAll(-7988, -4615)
 	MoveTo(-8317, -5353)
@@ -1201,11 +1209,11 @@ Func DemonAssassin()
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsTwinSerpentMountains = CloneDictMap($underworld_fight_options)
-	DictItem($optionsTwinSerpentMountains, 'fightRange',  $RANGE_EARSHOT * 1.5)
-	DictItem($optionsTwinSerpentMountains, 'flagHeroesOnFight',  False)
-	DictItem($optionsTwinSerpentMountains, 'ignoreDroppedLoot',  True)
-	DictItem($optionsTwinSerpentMountains, 'priorityMobs',  True)
+	Local $optionsTwinSerpentMountains					= CloneMap($default_move_aggro_kill_options)
+	$optionsTwinSerpentMountains['fightRange']			= $RANGE_EARSHOT * 1.5
+	$optionsTwinSerpentMountains['flagHeroesOnFight']	= False
+	$optionsTwinSerpentMountains['ignoreDroppedLoot']	= True
+	$optionsTwinSerpentMountains['priorityMobs']		= True
 	MoveTo(-8208, -5241)
 	Info('Setting heroes up for quest')
 	CommandHero(1, -4629, -5282)
@@ -1315,11 +1323,11 @@ Func UnwantedGuests($reaper)
 		Info('Skipping Unwanted Guests quest per settings.')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsUnwantedGuests = CloneDictMap($underworld_fight_options)
-	DictItem($optionsUnwantedGuests, 'fightRange',  $RANGE_EARSHOT * 1.25)
-	DictItem($optionsUnwantedGuests, 'flagHeroesOnFight',  False)
-	DictItem($optionsUnwantedGuests, 'ignoreDroppedLoot',  True)
-	DictItem($optionsUnwantedGuests, 'priorityMobs',  True)
+	Local $optionsUnwantedGuests				= CloneMap($default_move_aggro_kill_options)
+	$optionsUnwantedGuests['fightRange']		= $RANGE_EARSHOT * 1.25
+	$optionsUnwantedGuests['flagHeroesOnFight']	= False
+	$optionsUnwantedGuests['ignoreDroppedLoot']	= True
+	$optionsUnwantedGuests['priorityMobs']		= True
 	Info('Setting heroes up for quest')
 	CommandAll(-7362, 14283)
 	Info('Waiting 20 seconds for life spirits to expire')
@@ -1330,7 +1338,7 @@ Func UnwantedGuests($reaper)
 		Info('Moving to the Forgotten Vale')
 		TeleportBackToArea($reaper, '0x8A', '0x91', 'Forgotten Vale')
 		CancelAll()
-		MoveTo(-13783,  1170)
+		MoveTo(-13783, 1170)
 		MoveTo(-12610, 886)
 		MoveTo(-7643, 2332)
 		MoveTo(-7400, 3630)
@@ -1344,9 +1352,9 @@ Func UnwantedGuests($reaper)
 		MoveAggroAndKill(-5233, 8960)
 		MoveTo(-5233, 8961)
 		MoveTo(-6250, 10390)
-		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS -  1000)
+		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS - 1000)
 		RandomSleep(10000)
-		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS -  1000)
+		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS - 1000)
 		Info('Aggro killable mobs away from Vengeful Aatxe path')
 		CommandAll(-6250, 10390)
 		MoveAvoidingBodyBlock(-4410, 11472)
@@ -1357,9 +1365,9 @@ Func UnwantedGuests($reaper)
 		MoveTo(-6250, 10390)
 		KillFoesInArea($optionsUnwantedGuests)
 		RandomSleep(10000)
-		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS -  1000)
+		TrackVengefulAatxes(-4673, 11711, 'nearby', $RANGE_COMPASS - 1000)
 		RandomSleep(10000)
-		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS -  1000)
+		TrackVengefulAatxes(-2436, 10363, 'away', $RANGE_COMPASS - 1000)
 		MoveAvoidingBodyBlock(-4410, 11472)
 		MoveAvoidingBodyBlock(-3568, 10770)
 		Info('Killing Keeper of Souls 2')
@@ -1482,11 +1490,11 @@ Func TheFourHorsemen($reaper)
 		TeleportBackToArea($reaper, '0x86', '0x8D', 'Labyrinth')
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
-	Local $optionsChaosPlanes = CloneDictMap($underworld_fight_options)
-	DictItem($optionsChaosPlanes, 'fightRange',  $RANGE_EARSHOT * 1.5)
-	DictItem($optionsChaosPlanes, 'flagHeroesOnFight',  False)
-	DictItem($optionsChaosPlanes, 'ignoreDroppedLoot',  True)
-	DictItem($optionsChaosPlanes, 'priorityMobs',  True)
+	Local $optionsChaosPlanes					= CloneMap($default_move_aggro_kill_options)
+	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT * 1.5
+	$optionsChaosPlanes['flagHeroesOnFight']	= False
+	$optionsChaosPlanes['ignoreDroppedLoot']	= True
+	$optionsChaosPlanes['priorityMobs']			= True
 	Info('Setting heroes & spirits up for quest')
 	CommandHero(1, 13153, -12503)
 	CommandHero(2, 13795, -12084)

@@ -59,8 +59,8 @@ Func AssemblerCreateChatLog()
 	_('pushad')
 	; AddToChatLog uses EBP-relative argument access (inherited from caller frame).
 	; Original first instruction: MOV EAX,[EBP+8] confirms EBP is valid at hook point.
-	;   [ebp+8] = message ptr (wchar_t*)
-	;   [ebp+C] = channel (uint32_t)
+	;	[ebp+8] = message ptr (wchar_t*)
+	;	[ebp+C] = channel (uint32_t)
 	_('mov edx,dword[ebp+C]')
 	_('mov dword[ChatMessageChannel],edx')
 	_('mov edx,dword[ebp+8]')

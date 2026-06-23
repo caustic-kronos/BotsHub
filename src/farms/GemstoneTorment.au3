@@ -61,14 +61,14 @@ Global Const $TORMENT_WEAPON_SLOT_STAFF = 2
 ; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
 Global Const $TORMENT_WEAPON_SLOT_FOCUS = 3
 
-Global $torment_run_options = CloneDictMap($default_move_defend_options)
-DictItem($torment_run_options, 'defendFunction',  DefendTormentFarm)
-DictItem($torment_run_options, 'moveTimeOut',  3 * 60 * 1000)
-DictItem($torment_run_options, 'randomFactor',  200)
-DictItem($torment_run_options, 'hosSkillSlot',  0)
-DictItem($torment_run_options, 'deathChargeSkillSlot',  $TORMENT_DEATHS_CHARGE)
+Global $torment_run_options						= CloneMap($default_move_defend_options)
+$torment_run_options['defendFunction']			= DefendTormentFarm
+$torment_run_options['moveTimeOut']				= 3 * 60 * 1000
+$torment_run_options['randomFactor']			= 200
+$torment_run_options['hosSkillSlot']			= 0
+$torment_run_options['deathChargeSkillSlot']	= $TORMENT_DEATHS_CHARGE
 ; chests in Ravenheart Gloom should have good loot
-DictItem($torment_run_options, 'openChests',  True)
+$torment_run_options['openChests']				= True
 
 Global $gemstone_torment_farm_setup = False
 

@@ -85,13 +85,13 @@ Global Const $RAPTORS_STAND_YOUR_GROUND	= 6
 Global Const $RAPTORS_CANT_TOUCH_THIS	= 7
 Global Const $RAPTORS_BLADETURN_REFRAIN	= 8
 
-Global $raptors_move_options = CloneDictMap($default_move_defend_options)
-DictItem($raptors_move_options, 'defendFunction',  Null)
-DictItem($raptors_move_options, 'moveTimeOut',  3 * 60 * 1000)
-DictItem($raptors_move_options, 'randomFactor',  10)
-DictItem($raptors_move_options, 'hosSkillSlot',  0)
-DictItem($raptors_move_options, 'deathChargeSkillSlot',  0)
-DictItem($raptors_move_options, 'openChests',  False)
+Global $raptors_move_options					= CloneMap($default_move_defend_options)
+$raptors_move_options['defendFunction']			= Null
+$raptors_move_options['moveTimeOut']			= 3 * 60 * 1000
+$raptors_move_options['randomFactor']			= 10
+$raptors_move_options['hosSkillSlot']			= 0
+$raptors_move_options['deathChargeSkillSlot']	= 0
+$raptors_move_options['openChests']				= False
 
 Global $raptors_farm_setup = False
 Global $raptors_player_profession = $ID_WARRIOR

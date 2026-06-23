@@ -24,7 +24,6 @@
 #include 'GWA2_ID_Maps.au3'
 #include 'GWA2.au3'
 #include 'Utils-Debugger.au3'
-#include 'DictMap.au3'
 
 Opt('MustDeclareVars', True)
 
@@ -651,13 +650,13 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
 
-	Local $openChests = (DictItem($options, 'openChests') <> Null) ? DictItem($options, 'openChests') : False
-	Local $chestOpenRange = (DictItem($options, 'chestOpenRange') <> Null) ? DictItem($options, 'chestOpenRange') : $RANGE_SPIRIT
-	Local $defendFunction = (DictItem($options, 'defendFunction') <> Null) ? DictItem($options, 'defendFunction') : Null
-	Local $moveTimeOut = (DictItem($options, 'moveTimeOut') <> Null) ? DictItem($options, 'moveTimeOut') : 2 * 60 * 1000
-	Local $randomFactor = (DictItem($options, 'randomFactor') <> Null) ? DictItem($options, 'randomFactor') : 100
-	Local $hosSkillSlot = (DictItem($options, 'hosSkillSlot') <> Null) ? DictItem($options, 'hosSkillSlot') : 0
-	Local $deathChargeSkillSlot = (DictItem($options, '$deathChargeSkillSlot') <> Null) ? DictItem($options, '$deathChargeSkillSlot') : 0
+	Local $openChests			= $options['openChests'] <> Null ?				$options['openChests'] : False
+	Local $chestOpenRange		= $options['chestOpenRange'] <> Null ?			$options['chestOpenRange'] : $RANGE_SPIRIT
+	Local $defendFunction		= $options['defendFunction'] <> Null ?			$options['defendFunction'] : Null
+	Local $moveTimeOut			= $options['moveTimeOut'] <> Null ?				$options['moveTimeOut'] : 2 * 60 * 1000
+	Local $randomFactor			= $options['randomFactor'] <> Null ?			$options['randomFactor'] : 100
+	Local $hosSkillSlot			= $options['hosSkillSlot'] <> Null ?			$options['hosSkillSlot'] : 0
+	Local $deathChargeSkillSlot	= $options['$deathChargeSkillSlot'] <> Null ?	$options['$deathChargeSkillSlot'] : 0
 	$randomFactor = _Min(_Max($randomFactor, 0), $RANGE_NEARBY) ; $randomFactor in range [0;$RANGE_NEARBY]
 
 	Local $moveTimer = TimerInit()
@@ -708,9 +707,9 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
-				DictItem($options, 'openChests',  False)
+				$options['openChests'] = False
 				MoveAvoidingBodyBlock(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), $options)
-				DictItem($options, 'openChests',  True)
+				$options['openChests'] = True
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
@@ -958,37 +957,37 @@ EndFunc
 
 
 #Region Map Clearing Utilities
-Global $default_move_aggro_kill_options = CreateDictMap()
-DictAdd($default_move_aggro_kill_options, 'fightFunction', KillFoesInArea)
-DictAdd($default_move_aggro_kill_options, 'fightRange', $RANGE_EARSHOT * 1.5)
-DictAdd($default_move_aggro_kill_options, 'flagHeroesOnFight', False)
-DictAdd($default_move_aggro_kill_options, 'unstuckFunction', TryToGetUnstuck)
-DictAdd($default_move_aggro_kill_options, 'callTarget', True)
-DictAdd($default_move_aggro_kill_options, 'priorityMobs', False)
-DictAdd($default_move_aggro_kill_options, 'skillsCostMap', Null)
-DictAdd($default_move_aggro_kill_options, 'skillsCastTimeMap', Null)
-DictAdd($default_move_aggro_kill_options, 'lootInFights', False)
-DictAdd($default_move_aggro_kill_options, 'openChests', True)
-DictAdd($default_move_aggro_kill_options, 'chestOpenRange', $RANGE_SPIRIT)
-DictAdd($default_move_aggro_kill_options, 'lootTrappedArea', False)
-DictAdd($default_move_aggro_kill_options, 'ignoreDroppedLoot', False)
-DictAdd($default_move_aggro_kill_options, 'combatFunction', UseSkillSequentially)
+Global $default_move_aggro_kill_options[]
+$default_move_aggro_kill_options['fightFunction']		= KillFoesInArea
+$default_move_aggro_kill_options['fightRange']			= $RANGE_EARSHOT * 1.5
+$default_move_aggro_kill_options['flagHeroesOnFight']	= False
+$default_move_aggro_kill_options['unstuckFunction']		= TryToGetUnstuck
+$default_move_aggro_kill_options['callTarget']			= True
+$default_move_aggro_kill_options['priorityMobs']		= False
+$default_move_aggro_kill_options['skillsCostMap']		= Null
+$default_move_aggro_kill_options['skillsCastTimeMap']	= Null
+$default_move_aggro_kill_options['lootInFights']		= False
+$default_move_aggro_kill_options['openChests']			= True
+$default_move_aggro_kill_options['chestOpenRange']		= $RANGE_SPIRIT
+$default_move_aggro_kill_options['lootTrappedArea']		= False
+$default_move_aggro_kill_options['ignoreDroppedLoot']	= False
+$default_move_aggro_kill_options['combatFunction']		= UseSkillSequentially
 ; default 60 seconds fight duration
-DictAdd($default_move_aggro_kill_options, 'fightDuration', 60000)
+$default_move_aggro_kill_options['fightDuration']		= 60000
 
-Global $flag_move_aggro_kill_options = CloneDictMap($default_move_aggro_kill_options)
-DictItem($flag_move_aggro_kill_options, 'flagHeroesOnFight',  True)
+Global $flag_move_aggro_kill_options					= CloneMap($default_move_aggro_kill_options)
+$flag_move_aggro_kill_options['flagHeroesOnFight']		= True
 
 
-Global $default_move_defend_options = CreateDictMap()
-DictAdd($default_move_defend_options, 'defendFunction', Null)
-DictAdd($default_move_defend_options, 'moveTimeOut', 5 * 60 * 1000)
+Global $default_move_defend_options[]
+$default_move_defend_options['defendFunction']			= Null
+$default_move_defend_options['moveTimeOut']				= 5 * 60 * 1000
 ; random factor for movement
-DictAdd($default_move_defend_options, 'randomFactor', 100)
-DictAdd($default_move_defend_options, 'hosSkillSlot', 0)
-DictAdd($default_move_defend_options, 'deathChargeSkillSlot', 0)
-DictAdd($default_move_defend_options, 'openChests', False)
-DictAdd($default_move_defend_options, 'chestOpenRange', $RANGE_SPIRIT)
+$default_move_defend_options['randomFactor']			= 100
+$default_move_defend_options['hosSkillSlot']			= 0
+$default_move_defend_options['deathChargeSkillSlot']	= 0
+$default_move_defend_options['openChests']				= False
+$default_move_defend_options['chestOpenRange']			= $RANGE_SPIRIT
 
 
 ;~ Waiting until party is alive again - does not wait more than 15s
@@ -1005,9 +1004,9 @@ EndFunc
 Func WaitAndFightEnemiesInArea($options = $default_move_aggro_kill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
-	Local $fightFunction = (DictItem($options, 'fightFunction') <> Null) ? DictItem($options, 'fightFunction') : KillFoesInArea
-	Local $fightRange = (DictItem($options, 'fightRange') <> Null) ? DictItem($options, 'fightRange') : $RANGE_EARSHOT * 1.5
-	Local $fightDuration = (DictItem($options, 'fightDuration') <> Null) ? DictItem($options, 'fightDuration') : 60000
+	Local $fightFunction	= $options['fightFunction'] <> Null ?	$options['fightFunction'] : KillFoesInArea
+	Local $fightRange		= $options['fightRange'] <> Null ?		$options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $fightDuration	= $options['fightDuration'] <> Null ?	$options['fightDuration'] : 60000
 
 	Local $me = GetMyAgent()
 	Local $target = Null
@@ -1041,26 +1040,26 @@ EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map
-Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
-	DictItem($options, 'fightRange',  $range)
+Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = $default_move_aggro_kill_options)
+	; This effectively copies the map - small price to pay
+	$options['fightRange']	= $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
-Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = Null)
-	If $options = Null Then $options = CloneDictMap($flag_move_aggro_kill_options)
-	DictItem($options, 'fightRange',  $range)
+Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = $flag_move_aggro_kill_options)
+	; This effectively copies the map - small price to pay
+	$options['fightRange']	= $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
 
 ;~ Trap Safe Wrapper for MoveAggroAndKill
-Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = Null)
-	If $options = Null Then $options = CloneDictMap($default_move_aggro_kill_options)
-	DictItem($options, 'lootTrappedArea',  True)
-	DictItem($options, 'fightRange',  $RANGE_SPELLCAST)
+Func MoveAggroAndKillSafeTraps($x, $y, $log = '', $options = $default_move_aggro_kill_options)
+	; This effectively copies the map - small price to pay
+	$options['lootTrappedArea']	= True
+	$options['fightRange']		= $RANGE_SPELLCAST
 	MoveAggroAndKill($x, $y, $log, $options)
 EndFunc
 
@@ -1080,16 +1079,16 @@ EndFunc
 
 ;~ Clear a zone around the coordinates provided
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
+	Local $openChests			= $options['openChests'] <> Null ?			$options['openChests'] : True
+	Local $chestOpenRange		= $options['chestOpenRange'] <> Null ?		$options['chestOpenRange'] : $RANGE_SPIRIT
+	Local $fightFunction		= $options['fightFunction'] <> Null ?		$options['fightFunction'] : KillFoesInArea
+	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
+	Local $unstuckFunction		= $options['unstuckFunction'] <> Null ?		$options['unstuckFunction'] : TryToGetUnstuck
 
-	Local $openChests = (DictItem($options, 'openChests') <> Null) ? DictItem($options, 'openChests') : True
-	Local $chestOpenRange = (DictItem($options, 'chestOpenRange') <> Null) ? DictItem($options, 'chestOpenRange') : $RANGE_SPIRIT
-	Local $fightFunction = (DictItem($options, 'fightFunction') <> Null) ? DictItem($options, 'fightFunction') : KillFoesInArea
-	Local $fightRange = (DictItem($options, 'fightRange') <> Null) ? DictItem($options, 'fightRange') : $RANGE_EARSHOT * 1.5
-	Local $ignoreDroppedLoot = (DictItem($options, 'ignoreDroppedLoot') <> Null) ? DictItem($options, 'ignoreDroppedLoot') : False
-	Local $unstuckFunction = (DictItem($options, 'unstuckFunction') <> Null) ? DictItem($options, 'unstuckFunction') : TryToGetUnstuck
+	IsPlayerStuck(Default, Default, True) ; init internal state
 
 	If $log <> '' Then Info($log)
-	IsPlayerStuck(Default, Default, True) ; init internal state
 
 	Move($x, $y)
 
@@ -1122,9 +1121,9 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 		If $openChests Then
 			$chest = FindChest($chestOpenRange)
 			If $chest <> Null Then
-				DictItem($options, 'openChests',  False)
+				$options['openChests'] = False
 				MoveAggroAndKill(DllStructGetData($chest, 'X'), DllStructGetData($chest, 'Y'), 'Found a chest', $options)
-				DictItem($options, 'openChests',  True)
+				$options['openChests'] = True
 				FindAndOpenChests($chestOpenRange)
 			EndIf
 		EndIf
@@ -1212,14 +1211,14 @@ EndFunc
 
 ;~ Kill foes by casting skills from 1 to 8
 Func KillFoesInArea($options = $default_move_aggro_kill_options)
-	Local $fightRange = (DictItem($options, 'fightRange') <> Null) ? DictItem($options, 'fightRange') : $RANGE_EARSHOT * 1.5
-	Local $flagHeroes = (DictItem($options, 'flagHeroesOnFight') <> Null) ? DictItem($options, 'flagHeroesOnFight') : False
-	Local $callTarget = (DictItem($options, 'callTarget') <> Null) ? DictItem($options, 'callTarget') : True
-	Local $priorityMobs = (DictItem($options, 'priorityMobs') <> Null) ? DictItem($options, 'priorityMobs') : False
-	Local $lootInFights = (DictItem($options, 'lootInFights') <> Null) ? DictItem($options, 'lootInFights') : False
-	Local $lootTrappedArea = (DictItem($options, 'lootTrappedArea') <> Null) ? DictItem($options, 'lootTrappedArea') : False
-	Local $ignoreDroppedLoot = (DictItem($options, 'ignoreDroppedLoot') <> Null) ? DictItem($options, 'ignoreDroppedLoot') : False
-	Local $combatFunction = (DictItem($options, 'combatFunction') <> Null) ? DictItem($options, 'combatFunction') : UseSkillSequentially
+	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $flagHeroes			= $options['flagHeroesOnFight'] <> Null ?	$options['flagHeroesOnFight'] : False
+	Local $callTarget			= $options['callTarget'] <> Null ?			$options['callTarget'] : True
+	Local $priorityMobs			= $options['priorityMobs'] <> Null ?		$options['priorityMobs'] : False
+	Local $lootInFights			= $options['lootInFights'] <> Null ?		$options['lootInFights'] : False
+	Local $lootTrappedArea		= $options['lootTrappedArea'] <> Null ?		$options['lootTrappedArea'] : False
+	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
+	Local $combatFunction		= $options['combatFunction'] <> Null ?		$options['combatFunction'] : UseSkillSequentially
 
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
@@ -1257,7 +1256,7 @@ EndFunc
 
 
 Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
-	Local $skillsCostMap = (DictItem($options, 'skillsCostMap') <> Null And UBound(DictItem($options, 'skillsCostMap')) == 8) ? DictItem($options, 'skillsCostMap') : Null
+	Local $skillsCostMap = $options['skillsCostMap']
 
 	; get as close as possible to target foe to have a surprise effect when attacking
 	GetAlmostInRangeOfAgent($target)

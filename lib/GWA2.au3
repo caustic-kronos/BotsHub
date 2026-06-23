@@ -2446,9 +2446,9 @@ Func WriteChat($message, $sender = '[Bhub]', $channel = 6)
 	; CommandUIMsg struct: [fn ptr][kWriteToChatLog][channel][msg ptr][channel]
 	Local $s = DllStructCreate('dword;dword;dword;dword;dword')
 	DllStructSetData($s, 1, GetLabel('CommandUIMsg'))
-	DllStructSetData($s, 2, 0x1000007F)   ; kWriteToChatLog
+	DllStructSetData($s, 2, 0x1000007F)		; kWriteToChatLog
 	DllStructSetData($s, 3, $channel)
-	DllStructSetData($s, 4, $msgGWAddr)   ; GW1-side pointer to encoded message
+	DllStructSetData($s, 4, $msgGWAddr)		; GW1-side pointer to encoded message
 	DllStructSetData($s, 5, $channel)
 	SafeDllCall13($kernel_handle, 'int', 'WriteProcessMemory', 'int', $processHandle, 'int', $address, 'ptr', DllStructGetPtr($s), 'int', DllStructGetSize($s), 'int', 0)
 EndFunc
