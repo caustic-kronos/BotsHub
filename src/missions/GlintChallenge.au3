@@ -97,13 +97,13 @@ EndFunc
 
 ;~ Done here to pick latest version of $default_move_aggro_kill_options
 Func SetupGlintFightOptions()
-	$glint_challenge_fight_options = CloneDictMap($default_move_aggro_kill_options)
-	$glint_challenge_fight_options.Item('fightRange')			= 1500
+	$glint_challenge_fight_options						= CloneMap($default_move_aggro_kill_options)
+	$glint_challenge_fight_options['fightRange']		= 1500
 	; heroes will be flagged before fight to defend the start location
-	$glint_challenge_fight_options.Item('flagHeroesOnFight')	= False
-	$glint_challenge_fight_options.Item('lootInFights')			= False
+	$glint_challenge_fight_options['flagHeroesOnFight']	= False
+	$glint_challenge_fight_options['lootInFights']		= False
 	; there are no chests in Glint Challenge location
-	$glint_challenge_fight_options.Item('openChests')			= False
+	$glint_challenge_fight_options['openChests']		= False
 EndFunc
 
 

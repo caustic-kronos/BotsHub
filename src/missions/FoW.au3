@@ -155,9 +155,9 @@ EndFunc
 
 
 Func TheGreatBattleField()
-	Local $optionsTheGreatBattleField = CloneDictMap($default_move_aggro_kill_options)
-	$optionsTheGreatBattleField.Item('fightRange') = $RANGE_EARSHOT
-	$optionsTheGreatBattleField.Item('flagHeroesOnFight') = True
+	Local $optionsTheGreatBattleField					= CloneMap($default_move_aggro_kill_options)
+	$optionsTheGreatBattleField['fightRange']			= $RANGE_EARSHOT
+	$optionsTheGreatBattleField['flagHeroesOnFight']	= True
 	Info('Heading to the Battlefield')
 	MoveAggroAndKill(-9500, -6000, '1')
 	FlagMoveAggroAndKill(-6300, 1700, '2', $optionsTheGreatBattleField)
@@ -307,8 +307,8 @@ EndFunc
 
 
 Func TowerOfStrength()
-	Local $optionsTowerOfStrength = CloneDictMap($default_move_aggro_kill_options)
-	$optionsTowerOfStrength.Item('fightRange') = $RANGE_EARSHOT
+	Local $optionsTowerOfStrength			= CloneMap($default_move_aggro_kill_options)
+	$optionsTowerOfStrength['fightRange']	= $RANGE_EARSHOT
 	Info('Clearing area of Tower of Strength')
 	MoveTo(18300, -14000)
 	MoveTo(20500, -12400)
@@ -349,9 +349,9 @@ EndFunc
 
 
 Func BurningForest()
-	Local $optionsBurningForest = CloneDictMap($default_move_aggro_kill_options)
-	$optionsBurningForest.Item('fightRange') = $RANGE_EARSHOT * 1.25
-	$optionsBurningForest.Item('flagHeroesOnFight') = True
+	Local $optionsBurningForest					= CloneMap($default_move_aggro_kill_options)
+	$optionsBurningForest['fightRange']			= $RANGE_EARSHOT * 1.25
+	$optionsBurningForest['flagHeroesOnFight']	= True
 	Info('Heading to Burning Forest')
 	MoveAggroAndKill(15200, -1100, '1')
 	MoveAggroAndKill(17400, 3300, '2')
@@ -377,7 +377,8 @@ Func BurningForest()
 
 	FlagMoveAggroAndKill(13090, 7580, '1', $optionsBurningForest)
 	FlagMoveAggroAndKill(14800, 8500, '2', $optionsBurningForest)
-	$optionsBurningForest.Item('fightRange') = $RANGE_EARSHOT
+
+	$optionsBurningForest['fightRange'] = $RANGE_EARSHOT
 	FlagMoveAggroAndKill(16500, 9100, '3', $optionsBurningForest)
 	FlagMoveAggroAndKill(19000, 8400, '4', $optionsBurningForest)
 	FlagMoveAggroAndKill(20800, 8500, '5', $optionsBurningForest)
@@ -422,15 +423,17 @@ EndFunc
 
 
 Func ForestOfTheWailingLord()
-	Local $optionsForestOfTheWailingLord = CloneDictMap($default_move_aggro_kill_options)
-	$optionsForestOfTheWailingLord.Item('fightRange') = $RANGE_EARSHOT * 1.25
+	Local $optionsForestOfTheWailingLord			= CloneMap($default_move_aggro_kill_options)
+	$optionsForestOfTheWailingLord['fightRange']	= $RANGE_EARSHOT * 1.25
 	Info('Clearing forest')
 	MoveAggroAndKill(-17500, 9750, '1')
 	MoveAggroAndKill(-20200, 9500, '2', $optionsForestOfTheWailingLord)
-	$optionsForestOfTheWailingLord.Item('fightRange') = $RANGE_EARSHOT
+
+	$optionsForestOfTheWailingLord['fightRange']	= $RANGE_EARSHOT
 	MoveAggroAndKill(-22000, 11000, '3', $optionsForestOfTheWailingLord)
 	MoveAggroAndKill(-20000, 13000, '4', $optionsForestOfTheWailingLord)
-	$optionsForestOfTheWailingLord.Item('fightRange') = $RANGE_EARSHOT * 1.1
+
+	$optionsForestOfTheWailingLord['fightRange']	= $RANGE_EARSHOT * 1.1
 	MoveAggroAndKill(-18000, 15000, '5')
 	MoveAggroAndKill(-18000, 14000, '6', $optionsForestOfTheWailingLord)
 	KillShardWolf()
@@ -440,7 +443,7 @@ Func ForestOfTheWailingLord()
 	KillShardWolf()
 	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
-	$optionsForestOfTheWailingLord.Item('fightRange') = $RANGE_EARSHOT
+	$optionsForestOfTheWailingLord['fightRange']	= $RANGE_EARSHOT
 	MoveAggroAndKill(-16160, 13325, '9', $optionsForestOfTheWailingLord)
 	MoveAggroAndKill(-16000, 13500, '10', $optionsForestOfTheWailingLord)
 	; Safer moves
@@ -586,12 +589,12 @@ EndFunc
 
 
 Func TempleLoot()
-	Local $optionsTempleLoot = CloneDictMap($default_move_aggro_kill_options)
+	Local $optionsTempleLoot = CloneMap($default_move_aggro_kill_options)
 	MoveAggroAndKill(-9800, -4800)
 	MoveAggroAndKill(-6800, -3800)
 	MoveAggroAndKill(-8000, 5100)
 	If Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_HUNT) Then
-		$optionsTempleLoot.Item('fightRange') = $RANGE_EARSHOT * 2
+		$optionsTempleLoot['fightRange'] = $RANGE_EARSHOT * 2
 		Info('The Hunt is not complete.')
 		Info('Let us make sure we got wolf in the battlefield')
 		MoveAggroAndKill(-5066, 11490, '', $optionsTempleLoot)

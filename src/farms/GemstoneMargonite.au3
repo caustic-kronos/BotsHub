@@ -102,16 +102,16 @@ Global Const $GEMSTONE_MARGONITE_FARM_DURATION = 5 * 60 * 1000
 Global Const $MAX_GEMSTONE_MARGONITE_FARM_DURATION = 10 * 60 * 1000
 Global Const $MARGONITES_RANGE = 800
 
-Global $margonite_move_options = CloneDictMap($default_move_defend_options)
-$margonite_move_options.Item('defendFunction')		= MargoniteDefend
-$margonite_move_options.Item('moveTimeOut')			= 100 * 1000
-$margonite_move_options.Item('randomFactor')			= 25
-$margonite_move_options.Item('hosSkillSlot')			= 0
-$margonite_move_options.Item('deathChargeSkillSlot')	= $MARGONITE_DEATHS_CHARGE
-$margonite_move_options.Item('openChests')			= False
+Global $margonite_move_options									= CloneMap($default_move_defend_options)
+$margonite_move_options['defendFunction']						= MargoniteDefend
+$margonite_move_options['moveTimeOut']							= 100 * 1000
+$margonite_move_options['randomFactor']							= 25
+$margonite_move_options['hosSkillSlot']							= 0
+$margonite_move_options['deathChargeSkillSlot']					= $MARGONITE_DEATHS_CHARGE
+$margonite_move_options['openChests']							= False
 
-Global $margonite_move_options_elementalist = CloneDictMap($margonite_move_options)
-$margonite_move_options_elementalist.Item('deathChargeSkillSlot') = 0
+Global $margonite_move_options_elementalist						= CloneMap($margonite_move_options)
+$margonite_move_options_elementalist['deathChargeSkillSlot']	= 0
 
 Global $margonite_obsidian_flesh_timer		= TimerInit()
 Global $margonite_stoneflesh_aura_timer		= TimerInit()

@@ -65,9 +65,9 @@ Global $registered_shouts = False
 ; of the current control flow (movement, combat, sleep, idle, etc.).
 ;
 ; Phases:
-;   NOT_INITIALIZED - Waiting for first tick in explorable
-;   SELF_SETUP      - Cast HR on self twice to hit the +4 breakpoint
-;   APPLY_PARTY     - Apply/reapply HR on heroes, maintain via TOF
+;	NOT_INITIALIZED	- Waiting for first tick in explorable
+;	SELF_SETUP		- Cast HR on self twice to hit the +4 breakpoint
+;	APPLY_PARTY		- Apply/reapply HR on heroes, maintain via TOF
 ;
 ; Self-setup uses a binary check: no HR -> cast -> stay, has HR -> cast -> leave.
 ; This guarantees the double-cast needed for the Leadership breakpoint (+3 -> +4).
@@ -164,13 +164,13 @@ EndFunc
 ; Adrenaline Build Combat Shouts (non-blocking, tick-based)
 ;
 ; Skill priority (highest to lowest):
-;   1. Aggressive Refrain (25e, once if not already buffed)
-;   2. Auto-attack (always ensure attacking target)
-;   3. Stand Your Ground!
-;   4. There's Nothing to Fear! (15e)
-;   5. Save Yourselves! (adrenaline >= 200)
-;   6. To the Limit! (only if foes in earshot, adrenaline gain)
-;   7. For Great Justice! (5e, lowest priority)
+;	1. Aggressive Refrain (25e, once if not already buffed)
+;	2. Auto-attack (always ensure attacking target)
+;	3. Stand Your Ground!
+;	4. There's Nothing to Fear! (15e)
+;	5. Save Yourselves! (adrenaline >= 200)
+;	6. To the Limit! (only if foes in earshot, adrenaline gain)
+;	7. For Great Justice! (5e, lowest priority)
 ;
 ; Note: HR maintenance is handled by AdlibRegister, not by this function.
 ; ============================================================================
@@ -228,17 +228,17 @@ EndFunc
 ; Reusable setup and callback functions for any farm/mission script using
 ; the HR Adrenaline build. Call SetupHRAdrenalineBuild() once during setup.
 ; HR maintenance runs automatically via AdlibRegister.
-; Combat function is wired through the default move-aggro-kill option dicts.
+; Combat function is wired through the default move-aggro-kill option maps.
 ; ============================================================================
 
 ;~ Set up the HR Adrenaline build: load template, register HR maintenance, set combat function.
-;~ Overwrites the default combat function on both option dicts so all MoveAggro* calls use it.
+;~ Overwrites the default combat function on both option maps so all MoveAggro* calls use it.
 Func SetupHRAdrenalineBuild()
 	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
 	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
 
-	$default_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
-	$flag_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
+	$default_move_aggro_kill_options['combatFunction']	= HRAdrenalineCombat
+	$flag_move_aggro_kill_options['combatFunction']		= HRAdrenalineCombat
 EndFunc
 
 ;~ Combat callback for KillFoesInArea: loops Attack + CastCombatShouts until target is dead.

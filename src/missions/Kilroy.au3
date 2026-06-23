@@ -114,7 +114,7 @@ Func FarmPunchOut()
 
 	UseConsumable($ID_BIRTHDAY_CUPCAKE)
 	UseConsumable($ID_SLICE_OF_PUMPKIN_PIE)
-	Info('Move and wait for Kilroy') 
+	Info('Move and wait for Kilroy')
 	MoveTo(-15800, -14250)
 	RandomSleep(7500)
 	KilroyMove(-15000, -15500, 'Group 1')
@@ -132,10 +132,10 @@ Func FarmPunchOut()
 	; Skipping foes in the arena too
 	;KilroyMove(7000, -15500, 'Group 11')
 
-	Local $kilroy_move_options = CloneDictMap($default_move_defend_options)
-	$kilroy_move_options.Item('defendFunction')	= KilroySpamBlockSkill
-	$kilroy_move_options.Item('moveTimeOut')	= 15 * 1000
-	$kilroy_move_options.Item('randomFactor')	= 0
+	Local $kilroy_move_options = CloneMap($default_move_defend_options)
+	$kilroy_move_options['defendFunction']	= KilroySpamBlockSkill
+	$kilroy_move_options['moveTimeOut']		= 15 * 1000
+	$kilroy_move_options['randomFactor']	= 0
 
 	; Instead, running straight through the corridor
 	MoveAvoidingBodyBlock(1050, -14250, $kilroy_move_options)
@@ -279,10 +279,10 @@ Func BrawlFight($target)
 
 		;	Position	Skill									usage							priority
 		;	1			$SKILLBAR_BRAWLING_BLOCK				off cooldown					0
-		;	2			$SKILLBAR_BRAWLING_JAB					if everything else is on cd		5	
+		;	2			$SKILLBAR_BRAWLING_JAB					if everything else is on cd		5
 		;	3			$SKILLBAR_BRAWLING_STRAIGHT_RIGHT		off cooldown					3
 		;	4			$SKILLBAR_BRAWLING_BRAWLING_HOOK		when enough adrenaline (4)		4
-		;	5			$SKILLBAR_BRAWLING_BRAWLING_UPPERCUT	when enough adrenaline (10) 	1
+		;	5			$SKILLBAR_BRAWLING_BRAWLING_UPPERCUT	when enough adrenaline (10)		1
 		;	6			$SKILLBAR_BRAWLING_HEADBUTT				when enough adrenaline (7)		0
 		;	7			$SKILLBAR_BRAWLING_COMBO_PUNCH			off cooldown					2
 		;	8			$SKILLBAR_STAND_UP						just used when knocked down
@@ -345,15 +345,15 @@ Func GetBackUp()
 	Local $timer = TimerInit()
 	Local $energyPercent = DllStructGetData($me, 'EnergyPercent')
 	; 10 seconds maximum to get back up
-    While Not IsNearlyEqual($energyPercent, 1) And TimerDiff($timer) < 10000
-        ; Respect skill 8 recharge
-        Local $skillbar = GetSkillbar()
-        If DllStructGetData($skillbar, "Recharge8") == 0 Then UseSkill($SKILLBAR_STAND_UP)
-        RandomSleep(50)
+	While Not IsNearlyEqual($energyPercent, 1) And TimerDiff($timer) < 10000
+		; Respect skill 8 recharge
+		Local $skillbar = GetSkillbar()
+		If DllStructGetData($skillbar, "Recharge8") == 0 Then UseSkill($SKILLBAR_STAND_UP)
+		RandomSleep(50)
 		$me = GetMyAgent()
 		$energyPercent = DllStructGetData($me, 'EnergyPercent')
-    WEnd
-    Return IsNearlyEqual($energyPercent, 1)
+	WEnd
+	Return IsNearlyEqual($energyPercent, 1)
 EndFunc
 
 

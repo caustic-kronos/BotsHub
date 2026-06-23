@@ -121,16 +121,16 @@ EndFunc
 
 ;~ Done here to pick latest version of $default_move_aggro_kill_options
 Func SetupGemstonesFightOptions()
-	$gemstones_fight_options = CloneDictMap($default_move_aggro_kill_options)
+	$gemstones_fight_options						= CloneMap($default_move_aggro_kill_options)
 	; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-	$gemstones_fight_options.Item('fightRange')			= 1500
+	$gemstones_fight_options['fightRange']			= 1500
 	; heroes will be flagged before fight to defend the start location
-	$gemstones_fight_options.Item('flagHeroesOnFight')	= False
-	$gemstones_fight_options.Item('priorityMobs')		= True
-	$gemstones_fight_options.Item('skillsCostMap')		= $GEM_SKILLS_COSTS_MAP
-	$gemstones_fight_options.Item('lootInFights')		= False
+	$gemstones_fight_options['flagHeroesOnFight']	= False
+	$gemstones_fight_options['priorityMobs']		= True
+	$gemstones_fight_options['skillsCostMap']		= $GEM_SKILLS_COSTS_MAP
+	$gemstones_fight_options['lootInFights']		= False
 	; there are no chests in Ebony Citadel of Mallyx location
-	$gemstones_fight_options.Item('openChests')			= False
+	$gemstones_fight_options['openChests']			= False
 EndFunc
 
 
@@ -213,7 +213,7 @@ Func IsZhellixPerformingRitual()
 
 	Local $me = GetMyAgent()
 	Local $zhellix = GetAgentByID($AGENTID_ZHELLIX)
-	Local $foesCount = CountFoesInRangeOfAgent($me, $gemstones_fight_options.Item('fightRange'))
+	Local $foesCount = CountFoesInRangeOfAgent($me, $gemstones_fight_options['fightRange'])
 	; After all waves are finished, Zhellix leaves citadel's entrance area where player is, which makes below check False
 	Return (Not GetIsDead($zhellix) And GetDistance($me, $zhellix) < 1500) Or $foesCount > 0
 EndFunc
