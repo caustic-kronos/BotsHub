@@ -248,7 +248,7 @@ Func ClearTunnelsOfTheForsakenFloor3()
 		MoveAggroAndKillInRange(-8166, 1081, '12', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-5090, -78, '13', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveAggroAndKillInRange(-6212, -2777, '14', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-	Info('Open dungeon door')
+		Info('Open dungeon door')
 		ClearTarget()
 
 		; Doubled to secure bot
