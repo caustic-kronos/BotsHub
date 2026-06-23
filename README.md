@@ -75,20 +75,20 @@ To use it:
 
 ### Dungeons / Elite Zones
 
-| Area							| Drops												|
-| ----------------------------- | ------------------------------------------------- |
-| Bogroot						| Froggy											|
-| Sepulchre of Dragrimmar (SoO)	| Dragon Bone Staff									|
-| Slaver’s Exile				| Voltaic Spears									|
-| FoW							| Obsidian Shards, Obsidian Edge, Shadow weapons	|
-| FoW – Tower of Courage		| Obsidian Shards, dust								|
-| Domain of Anguish				| Gemstones											|
-| City of Torc'qua				| Margonite Gemstones								|
-| Ravenheart Gloom				| Torment Gemstones									|
-| Stygian Veil					| Stygian Gemstones									|
-| Tunnels of the Forsaken		| E-blade											|
-| Underworld					| Globs of Ectoplasm								|
-| Kilroy						| Glacial Blades									|
+| Area							| Drops																	|
+| ----------------------------- | --------------------------------------------------------------------- |
+| Bogroot						| Froggy																|
+| Sepulchre of Dragrimmar (SoO)	| Dragon Bone Staff														|
+| Slaver’s Exile				| Voltaic Spears														|
+| FoW							| Obsidian Shards, Obsidian Edge, Shadow weapons						|
+| FoW – Tower of Courage		| Obsidian Shards, dust													|
+| Domain of Anguish				| Gemstones																|
+| City of Torc'qua				| Margonite Gemstones													|
+| Ravenheart Gloom				| Torment Gemstones														|
+| Stygian Veil					| Stygian Gemstones														|
+| Tunnels of the Forsaken		| E-blade																|
+| Underworld					| Globs of Ectoplasm													|
+| Kilroy						| Alcohol, Glacial Blades, Stone Summit Shield, Summit Warlord Shield	|
 
 ### Chest Runs
 
@@ -208,7 +208,6 @@ You are welcome to create and contribute new bots 👍
 
 - 💡🛠️ **Fix Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 🔄💭 **Kilroy bot/Irontoe's lair (q8, survivor title)** - 1 request
 - 🧠💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Bandit raid**
