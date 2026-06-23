@@ -105,7 +105,7 @@ Enormous modifications were made, to the point this bot is probably not in any w
 - Notes: Original work by Gahais, inspired from pvx wiki article.
 - License: licensed under Apache 2.0
 
-### 'Deldrimor.au3'
+### 'Deldrimor.au3', 'Kilroy.au3'
 - Author: Ian
 - Notes: Original work by Ian
 - License: licensed under Apache 2.0

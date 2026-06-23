@@ -61,7 +61,7 @@ Opt('MustDeclareVars', True)
 
 Global $gui_botshub, $gui_tabs_parent, $gui_tab_main, $gui_tab_runoptions, $gui_tab_lootoptions, $gui_tab_farminfos, $gui_tab_lootoptions, $gui_tab_teamoptions
 Global $gui_console, $gui_combo_characterchoice, $gui_combo_farmchoice, $gui_startbutton, $gui_farmprogress
-Global $gui_label_dynamicexecution, $gui_input_dynamicexecution, $gui_button_dynamicexecution, $gui_renderbutton, $gui_renderlabel, _
+Global $gui_label_manualmode, $gui_input_manualmode, $gui_button_manualmode, $gui_renderbutton, $gui_renderlabel, _
 		$gui_label_bagscount, $gui_combo_bagscount, $gui_label_traveldistrict, $gui_combo_districtchoice, _
 		$gui_label_weaponslot, $gui_combo_weaponslot, $gui_icon_saveconfig, $gui_combo_configchoice
 
@@ -340,16 +340,16 @@ Func CreateGUI()
 	GUICtrlSetOnEvent($gui_renderbutton, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_button_openstorage, 'GuiOptionsHandler')
 
-	Local $dynamicExecutionTooltip = 'Dynamic execution. It allows to run a command with' & @CRLF _
+	Local $manualModeTooltip = 'Manual Mode. Allows running a command with' & @CRLF _
 							& 'any arguments on the fly by writing it in below field.' & @CRLF _
 							& 'Syntax: fun(arg1, arg2, arg3, [...])'
-	$gui_input_dynamicexecution = GUICtrlCreateInput('', 355, 425, 156, 20)
-	$gui_button_dynamicexecution = GUICtrlCreateButton('Run', 530, 425, 75, 20)
-	GUICtrlSetTip($gui_label_dynamicexecution, $dynamicExecutionTooltip)
-	GUICtrlSetTip($gui_input_dynamicexecution, $dynamicExecutionTooltip)
-	GUICtrlSetTip($gui_button_dynamicexecution, $dynamicExecutionTooltip)
-	GUICtrlSetBkColor($gui_button_dynamicexecution, $COLOR_LIGHTBLUE)
-	GUICtrlSetOnEvent($gui_button_dynamicexecution, 'GuiOptionsHandler')
+	$gui_input_manualmode = GUICtrlCreateInput('', 355, 425, 156, 20)
+	$gui_button_manualmode = GUICtrlCreateButton('Run', 530, 425, 75, 20)
+	GUICtrlSetTip($gui_label_manualmode, $manualModeTooltip)
+	GUICtrlSetTip($gui_input_manualmode, $manualModeTooltip)
+	GUICtrlSetTip($gui_button_manualmode, $manualModeTooltip)
+	GUICtrlSetBkColor($gui_button_manualmode, $COLOR_LIGHTBLUE)
+	GUICtrlSetOnEvent($gui_button_manualmode, 'GuiOptionsHandler')
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	GUICtrlCreateTabItem('')
 
@@ -716,8 +716,8 @@ Func GuiOptionsHandler()
 			ToggleRendering()
 		Case $gui_button_openstorage
 			OpenXunlaiWindow()
-		Case $gui_button_dynamicexecution
-			DynamicExecution(GUICtrlRead($gui_input_dynamicexecution))
+		Case $gui_button_manualmode
+			DynamicExecution(GUICtrlRead($gui_input_manualmode))
 		Case Else
 			MsgBox(0, 'Error', 'This button is not coded yet.')
 	EndSwitch
@@ -962,6 +962,8 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_characterbuilds, $JB_SKILLBAR)
 			GUICtrlSetData($gui_edit_heroesbuilds, $JB_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $JB_FARM_INFORMATIONS)
+		Case 'Kilroy'
+			GUICtrlSetData($gui_label_farminformations, $KILROY_FARM_INFORMATIONS)
 		Case 'Kournans'
 			GUICtrlSetData($gui_edit_characterbuilds, $ELA_KOURNANS_FARMER_SKILLBAR)
 			GUICtrlSetData($gui_edit_heroesbuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _

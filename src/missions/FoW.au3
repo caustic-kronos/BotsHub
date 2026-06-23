@@ -37,8 +37,6 @@ Global Const $FOW_FARM_DURATION = 75 * 60 * 1000
 Global Const $SHARD_WOLF_MODELID = 2835
 Global Const $ID_FOW_UNHOLY_TEXTS = 2619
 
-Global $fow_fight_options
-
 Global $fow_farm_setup = False
 
 
@@ -60,8 +58,6 @@ Func SetupFoWFarm()
 	Info('Setting up farm')
 	TravelToFoWOutpost($district_name)
 	SwitchToHardModeIfEnabled()
-	; Done here in order to pick latest version of default_move_aggro_kill_options
-	$fow_fight_options = CloneDictMap($default_move_aggro_kill_options)
 	$fow_farm_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
@@ -159,7 +155,7 @@ EndFunc
 
 
 Func TheGreatBattleField()
-	Local $optionsTheGreatBattleField = CloneDictMap($fow_fight_options)
+	Local $optionsTheGreatBattleField = CloneDictMap($default_move_aggro_kill_options)
 	$optionsTheGreatBattleField.Item('fightRange') = $RANGE_EARSHOT
 	$optionsTheGreatBattleField.Item('flagHeroesOnFight') = True
 	Info('Heading to the Battlefield')
@@ -311,7 +307,7 @@ EndFunc
 
 
 Func TowerOfStrength()
-	Local $optionsTowerOfStrength = CloneDictMap($fow_fight_options)
+	Local $optionsTowerOfStrength = CloneDictMap($default_move_aggro_kill_options)
 	$optionsTowerOfStrength.Item('fightRange') = $RANGE_EARSHOT
 	Info('Clearing area of Tower of Strength')
 	MoveTo(18300, -14000)
@@ -353,7 +349,7 @@ EndFunc
 
 
 Func BurningForest()
-	Local $optionsBurningForest = CloneDictMap($fow_fight_options)
+	Local $optionsBurningForest = CloneDictMap($default_move_aggro_kill_options)
 	$optionsBurningForest.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	$optionsBurningForest.Item('flagHeroesOnFight') = True
 	Info('Heading to Burning Forest')
@@ -426,7 +422,7 @@ EndFunc
 
 
 Func ForestOfTheWailingLord()
-	Local $optionsForestOfTheWailingLord = CloneDictMap($fow_fight_options)
+	Local $optionsForestOfTheWailingLord = CloneDictMap($default_move_aggro_kill_options)
 	$optionsForestOfTheWailingLord.Item('fightRange') = $RANGE_EARSHOT * 1.25
 	Info('Clearing forest')
 	MoveAggroAndKill(-17500, 9750, '1')
@@ -590,7 +586,7 @@ EndFunc
 
 
 Func TempleLoot()
-	Local $optionsTempleLoot = CloneDictMap($fow_fight_options)
+	Local $optionsTempleLoot = CloneDictMap($default_move_aggro_kill_options)
 	MoveAggroAndKill(-9800, -4800)
 	MoveAggroAndKill(-6800, -3800)
 	MoveAggroAndKill(-8000, 5100)

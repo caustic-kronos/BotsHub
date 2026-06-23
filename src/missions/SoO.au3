@@ -262,6 +262,7 @@ Func ClearSoOFloor1()
 			TargetNearestItem()
 			RandomSleep(500)
 			ActionInteract()
+			RandomSleep(500)
 			ActionInteract()
 			RandomSleep(500)
 		Next
