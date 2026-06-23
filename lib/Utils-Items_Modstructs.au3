@@ -74,8 +74,8 @@ Global Const $STRUCT_MOD_HSR_10								= '000AA823'
 
 
 #Region Inscriptions
-Global Const $STRUCT_INSCRIPTION_MEASURE_FOR_MEASURE		= '1F0208243E0432251'			;salvageable
-Global Const $STRUCT_INSCRIPTION_SHOW_ME_THE_MONEY			= '1E0208243C043225'			;rare/money
+Global Const $STRUCT_INSCRIPTION_MEASURE_FOR_MEASURE		= '1E000826'					;salvageable
+Global Const $STRUCT_INSCRIPTION_SHOW_ME_THE_MONEY			= '3200F805'					;rare/money
 
 #Region Weapon Inscriptions
 Global Const $STRUCT_INSCRIPTION_STRENGTH_AND_HONOR			= '0F327822'					;+15% while health > 50%
