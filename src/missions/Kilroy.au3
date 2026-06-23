@@ -289,10 +289,12 @@ Func BrawlFight($target)
 
 		; Here we are doing an intense usage of skillbar informations - it's better to avoid using IsRecharged and such
 		Local $skillbar = GetSkillbar(0)
+		; Skill 7 is unavailable in NM
 		Local $recharge1 = DllStructGetData($skillbar, 'Recharge' & $SKILLBAR_BRAWLING_BLOCK)
 		Local $recharge2 = DllStructGetData($skillbar, 'Recharge' & $SKILLBAR_BRAWLING_JAB)
 		Local $recharge3 = DllStructGetData($skillbar, 'Recharge' & $SKILLBAR_BRAWLING_STRAIGHT_RIGHT)
 		Local $recharge7 = DllStructGetData($skillbar, 'Recharge' & $SKILLBAR_BRAWLING_COMBO_PUNCH)
+		Local $useSkill7 = DllStructGetData($skillbar, 'SkillID7') <> 0
 		Local $skillTimer = GetSkillTimer()
 
 		; Block is used as soon as available
@@ -304,7 +306,7 @@ Func BrawlFight($target)
 			UseSkillEx($SKILLBAR_BRAWLING_HEADBUTT, $target)
 		ElseIf DllStructGetData($skillbar, 'AdrenalineA' & $SKILLBAR_BRAWLING_BRAWLING_UPPERCUT) == 250 Then
 			UseSkillEx($SKILLBAR_BRAWLING_BRAWLING_UPPERCUT, $target)
-		ElseIf $recharge7 == 0 Or ($recharge7 - $skillTimer) == 0 Then
+		ElseIf $useSkill7 And ($recharge7 == 0 Or ($recharge7 - $skillTimer) == 0) Then
 			UseSkillEx($SKILLBAR_BRAWLING_COMBO_PUNCH, $target)
 		ElseIf $recharge3 == 0 Or ($recharge3 - $skillTimer) == 0 Then
 			UseSkillEx($SKILLBAR_BRAWLING_STRAIGHT_RIGHT, $target)
