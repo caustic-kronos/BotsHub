@@ -121,8 +121,7 @@ Func ClearTunnelsOfTheForsakenFloor1()
 		WaitUntilPartyAlive()
 		If CheckStuck('TunnelsOfTheForsaken Floor 1 - First loop', $MAX_TUNNELS_OF_THE_FORSAKEN_FARM_DURATION) == $FAIL Then Return $FAIL
 		UseMoraleConsumableIfNeeded()
-		UseConsumable($ID_IMPERIAL_GUARD_SUMMON)
-		;~ UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
+		UseSummoningStone()
 		;~ Move next line to avoid aggro of the Storm Riders
 		MoveTo(-15247, -5785, '1')
 		MoveAggroAndKillInRange(-13102, -6841, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
