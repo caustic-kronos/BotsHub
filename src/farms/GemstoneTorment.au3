@@ -62,13 +62,13 @@ Global Const $TORMENT_WEAPON_SLOT_STAFF = 2
 Global Const $TORMENT_WEAPON_SLOT_FOCUS = 3
 
 Global $torment_run_options = CloneDictMap($default_move_defend_options)
-$torment_run_options.Item('defendFunction')		= DefendTormentFarm
-$torment_run_options.Item('moveTimeOut')			= 3 * 60 * 1000
-$torment_run_options.Item('randomFactor')			= 200
-$torment_run_options.Item('hosSkillSlot')			= 0
-$torment_run_options.Item('deathChargeSkillSlot')	= $TORMENT_DEATHS_CHARGE
+DictItem($torment_run_options, 'defendFunction',  DefendTormentFarm)
+DictItem($torment_run_options, 'moveTimeOut',  3 * 60 * 1000)
+DictItem($torment_run_options, 'randomFactor',  200)
+DictItem($torment_run_options, 'hosSkillSlot',  0)
+DictItem($torment_run_options, 'deathChargeSkillSlot',  $TORMENT_DEATHS_CHARGE)
 ; chests in Ravenheart Gloom should have good loot
-$torment_run_options.Item('openChests')			= True
+DictItem($torment_run_options, 'openChests',  True)
 
 Global $gemstone_torment_farm_setup = False
 

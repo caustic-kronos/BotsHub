@@ -53,10 +53,10 @@ Global Const $LOW_HEALTH_CHECK_INTERVAL = 100
 Global $ldoa_farm_setup = False
 
 Global $ldoa_fight_options = CloneDictMap($default_move_aggro_kill_options)
-$ldoa_fight_options.Item('openChests')			= False
-$ldoa_fight_options.Item('callTarget')			= False
-$ldoa_fight_options.Item('priorityMobs')		= True
-$ldoa_fight_options.Item('lootInFights')		= False
+DictItem($ldoa_fight_options, 'openChests',  False)
+DictItem($ldoa_fight_options, 'callTarget',  False)
+DictItem($ldoa_fight_options, 'priorityMobs',  True)
+DictItem($ldoa_fight_options, 'lootInFights',  False)
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm()

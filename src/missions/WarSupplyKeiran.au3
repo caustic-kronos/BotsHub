@@ -62,16 +62,16 @@ Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,	
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
 Global $warsupply_fight_options = CloneDictMap($default_move_aggro_kill_options)
-$warsupply_fight_options.Item('fightFunction')	= WarSupplyFarmFight
-$warsupply_fight_options.Item('fightRange')		= 1250
+DictItem($warsupply_fight_options, 'fightFunction',  WarSupplyFarmFight)
+DictItem($warsupply_fight_options, 'fightRange',  1250)
 ; approximate 20 seconds max duration of initial and final fight
-$warsupply_fight_options.Item('fightDuration')	= 20000
-$warsupply_fight_options.Item('priorityMobs')		= True
-$warsupply_fight_options.Item('callTarget')		= False
-$warsupply_fight_options.Item('lootInFights')		= False
+DictItem($warsupply_fight_options, 'fightDuration',  20000)
+DictItem($warsupply_fight_options, 'priorityMobs',  True)
+DictItem($warsupply_fight_options, 'callTarget',  False)
+DictItem($warsupply_fight_options, 'lootInFights',  False)
 ; Only Krytan chests in Auspicious Beginnings quest which may have useless loot
-$warsupply_fight_options.Item('openChests')		= False
-$warsupply_fight_options.Item('skillsCostMap')	= $KEIRAN_SKILLS_COSTS_MAP
+DictItem($warsupply_fight_options, 'openChests',  False)
+DictItem($warsupply_fight_options, 'skillsCostMap',  $KEIRAN_SKILLS_COSTS_MAP)
 
 ; in Auspicious Beginnings location, the agent ID of Player is always assigned to 2 (can be accessed in GWToolbox)
 Global Const $AGENTID_PLAYER = 2
@@ -261,7 +261,7 @@ Func RunWayPoints()
 			If DllStructGetData($miku, 'X') == 0 And DllStructGetData($miku, 'Y') == 0 Then Return $FAIL
 			; Using 6th healing skill on the way between waypoints to recover until health is full
 			If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($miku, 'HealthPercent') < 0.9) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
-			If CountFoesInRangeOfAgent($me, $warsupply_fight_options.Item('fightRange')) > 0 Then WarSupplyFarmFight($warsupply_fight_options)
+			If CountFoesInRangeOfAgent($me, DictItem($warsupply_fight_options, 'fightRange')) > 0 Then WarSupplyFarmFight($warsupply_fight_options)
 			; Ensuring that Miku is not too far
 			If GetDistance($me, $miku) > 1650 Then
 				Info('Miku is too far. Trying to move to her location')
@@ -281,8 +281,8 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 	If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then Return $FAIL
 	Info('Fighting')
 
-	Local $fightRange = ($options.Item('fightRange') <> Null) ? $options.Item('fightRange') : 1200
-	Local $priorityMobs = ($options.Item('priorityMobs') <> Null) ? $options.Item('priorityMobs') : True
+	Local $fightRange = (DictItem($options, 'fightRange') <> Null) ? DictItem($options, 'fightRange') : 1200
+	Local $priorityMobs = (DictItem($options, 'priorityMobs') <> Null) ? DictItem($options, 'priorityMobs') : True
 
 	Local $me = Null
 	Local $miku = Null

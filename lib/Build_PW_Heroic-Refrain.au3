@@ -237,8 +237,8 @@ Func SetupHRAdrenalineBuild()
 	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
 	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
 
-	$default_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
-	$flag_move_aggro_kill_options.Item('combatFunction') = HRAdrenalineCombat
+	DictItem($default_move_aggro_kill_options, 'combatFunction',  HRAdrenalineCombat)
+	DictItem($flag_move_aggro_kill_options, 'combatFunction',  HRAdrenalineCombat)
 EndFunc
 
 ;~ Combat callback for KillFoesInArea: loops Attack + CastCombatShouts until target is dead.
