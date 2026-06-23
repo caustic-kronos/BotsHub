@@ -80,7 +80,7 @@ Func RunToTunnels()
 	AdlibRegister('TrackPartyStatus', 10000)
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 17982, 641, 1250)
 		WaitUntilPartyAlive()
-		UseConsumable($ID_CRACKED_ASCALONIAN_WAR_HORN)
+		UseSummoningStone()
 		MoveAggroAndKillInRange(21264, 3562, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 		MoveTo(17982, 641, '2')
 	WEnd
