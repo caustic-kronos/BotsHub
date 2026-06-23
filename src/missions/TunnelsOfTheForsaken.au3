@@ -82,14 +82,15 @@ Func RunToTunnels()
 		WaitUntilPartyAlive()
 		UseSummoningStone()
 		MoveAggroAndKillInRange(21264, 3562, '1', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
-		MoveTo(17982, 641, '2')
+		MoveAggroAndKillInRange(17982, 641, '2', $TUNNELS_OF_THE_FORSAKEN_AGGRO_RANGE)
 	WEnd
 	AdlibUnRegister('TrackPartyStatus')
 
 	$mapLoaded = False
 	Info('Going through door')
 	While Not $mapLoaded
-		MoveTo(17342, -612)
+		MoveTo(17300, -400)
+		Move(17400, -800)
 		RandomSleep(2000)
 		$mapLoaded = WaitMapLoading($ID_TUNNELS_OF_THE_FORSAKEN_LVL_1)
 	WEnd
