@@ -650,12 +650,18 @@ EndFunc
 
 ;~ Auto-detect player build and wire up specialized combat/maintenance routines
 Func SetupPlayerBuildOverrides()
-	If GetHeroProfession(0) <> $ID_PARAGON Then Return
+	; For build detection, we iterate over skills and key skills + profession will give use which build must be used
+	Local $profession = GetHeroProfession(0)
+	Local $skillbar = GetSkillbar(0)
 	For $i = 1 To 8
-		If GetSkillbarSkillID($i) == $ID_HEROIC_REFRAIN Then
-			SetupHRAdrenalineBuild()
-			Return
+		Local $skillID = DllStructGetData($skillbar, 'SkillID' & $i)
+		If $profession == $ID_PARAGON Then
+			If $skillID == $ID_HEROIC_REFRAIN Then Return SetupHRBuild()
+			;If $skillID == ... Then Return ...
 		EndIf
+		;If $profession == $ID_NECROMANCER Then
+			;If $skillID == ... Then Return ...
+		;EndIf
 	Next
 EndFunc
 
