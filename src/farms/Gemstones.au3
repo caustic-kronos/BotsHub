@@ -25,6 +25,7 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
+; TODO: rework builds following 26.06.24 nerfs
 ;Global Const $GEMSTONES_MESMER_SKILLBAR = 'OQBCAswDPVP/DMd5Zu2Nd6B'
 Global Const $GEMSTONES_MESMER_SKILLBAR = 'OQBDAcMCT7iTPNB/AmO5ZcNyiA'
 Global Const $GEMSTONES_HERO_1_SKILLBAR = 'OQNUAUBPwmMnAcqpb6lDyAXA0I'

@@ -613,7 +613,7 @@ Func KillVaettirsUsingSmitingSkills()
 	While $foesCount > 0 And TimerDiff($deadlock) < $maxKillTime And IsPlayerAlive()
 		VaettirsStayAlive()
 
-		If TimerDiff($vaettir_shadowform_timer) < 16000 And IsRecharged($VAETTIR_MONK_BALTHAZARS_AURA) And GetEnergy() > 25 Then
+		If TimerDiff($vaettir_shadowform_timer) < 16000 And IsRecharged($VAETTIR_MONK_BALTHAZARS_AURA) And GetEnergy() > 15 Then
 			UseSkillEx($VAETTIR_MONK_BALTHAZARS_AURA)
 		EndIf
 
@@ -622,7 +622,8 @@ Func KillVaettirsUsingSmitingSkills()
 		EndIf
 
 		If TimerDiff($vaettir_shadowform_timer) < 16000 And IsRecharged($VAETTIR_MONK_SYMBOL_OF_WRATH) And GetEnergy() > 5 Then
-			UseSkillEx($VAETTIR_MONK_SYMBOL_OF_WRATH)
+			Local $target = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_AREA)
+			UseSkillEx($VAETTIR_MONK_SYMBOL_OF_WRATH, $target)
 		EndIf
 
 		RandomSleep(100)

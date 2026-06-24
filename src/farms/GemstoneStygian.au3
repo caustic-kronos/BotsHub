@@ -247,12 +247,12 @@ Func StygianFarmRanger()
 	If IsPlayerDead() Then Return $FAIL
 	GoToHidingSpot()
 	If StygianJobRanger() == $FAIL Then Return $FAIL
+	CancelAll()
 	MoveTo(9900, -5200)
 	If IsPlayerDead() Then Return $FAIL
 	RandomSleep(7500)
 	UseHeroSkill(1, $STYGIAN_HERO_SUCCOR, GetMyAgent())
 	RandomSleep(7500)
-	CancelAll()
 	If StygianJobRanger() == $FAIL Then Return $FAIL
 	;MoveTo(7337, -9709)
 	;MoveTo(9071, -7330)
@@ -308,57 +308,26 @@ Func StygianJobRanger()
 	MoveTo(8269, -11160)
 	MoveTo(8177, -11171, 0, 0)
 
-	; Always use Spike with Flame - same cooldown
-	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	; -1.5	-	Speed at 20
-	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	; 0		-	Speed at 18.5	Dust at 22.5
-	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	; 3		-	Speed at 15.5	Dust at 19.5	Spike at 13.5
-	Sleep(13500)
-	; 16.5	-	Speed at 2		Dust at 6		Spike up
-	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	; 19.5	-	Speed up		Dust at 3		Spike at 13.5
-	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	; 19.5	-	Speed at 20		Dust at 3		Spike at 13.5
-	Sleep(3000)
-	; 22.5	-	Speed at 17		Dust up			Spike at 10.5
-	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	; 24	-	Speed at 15.5	Dust at 22.5	Spike at 9
-	Sleep(9000)
-	; 33	-	Speed at 6.5	Dust at 13.5	Spike up
-	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	; 36	-	Speed at 3.5	Dust at 10.5	Spike at 13.5
-	UseHeroSkill(1, $STYGIAN_HERO_LACERATE)
-	Sleep(10500)
 	UseHeroSkill(1, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
-	; 46.5	-	Speed up		Dust up			Spike at 3
-	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	; 48	-	Speed at 18.5	Dust at 22.5	Spike at 1.5
-	Sleep(1500)
-	; 49.5	-	Speed at 17		Dust at 21		Spike up
-	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	; 52.5	-	Speed at 14		Dust at 18		Spike at 13.5
-	;Sleep(14000)
-	UseHeroSkill(1, $STYGIAN_HERO_BRAMBLES)
 	UseSkillEx($STYGIAN_RANGER_WINNOWING)
-	CommandAll(9900, -5200)
 	UseSkillEx($STYGIAN_RANGER_MUDDY_TERRAIN)
-	Sleep(4000)
-	; 66.5	-	Speed up		Dust at 4		Spike up
-	UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
-	UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
-	UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
-	; 66.5	-	Speed at 17		Dust at 1		Spike at 13.5
-	Sleep(1000)
-	; 67.5	-	Speed at 16		Dust up			Spike at 12.5
-	UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
-	; 69	-	Speed at 14.5	Dust at 22.5	Spike at 11
+	UseHeroSkill(1, $STYGIAN_HERO_LACERATE)
+	; Traps last 90s - 90s to place max traps
+	For $i = 0 To 2
+		UseSkillEx($STYGIAN_RANGER_TRAPPERS_SPEED)
+		Local $timer = TimerInit()
+		While TimerDiff($timer) < 23000
+			If IsRecharged($STYGIAN_RANGER_DUST_TRAP) Then
+				UseSkillEx($STYGIAN_RANGER_DUST_TRAP)
+			ElseIf IsRecharged($STYGIAN_RANGER_SPIKE_TRAP) Then
+				UseSkillEx($STYGIAN_RANGER_SPIKE_TRAP)
+			ElseIf IsRecharged($STYGIAN_RANGER_FLAME_TRAP) Then
+				UseSkillEx($STYGIAN_RANGER_FLAME_TRAP)
+			EndIf
+			Sleep(100)
+		WEnd
+	Next
+	UseHeroSkill(1, $STYGIAN_HERO_BRAMBLES)
 
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
 	GetAlmostInRangeOfAgent($target)

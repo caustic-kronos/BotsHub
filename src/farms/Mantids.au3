@@ -201,7 +201,11 @@ Func MantidsFarmLoop()
 	MoveTo(-230, -14100)
 	Local $center = FindMiddleOfFoes(-250, -14250, $RANGE_AREA)
 	MoveTo($center[0], $center[1])
-	AdlibRegister('MantidsUseWhirlingDefense', 500)
+	While IsRecharged($MANTIDS_WHIRLING_DEFENSE) And IsPlayerAlive()
+		UseSkillEx($MANTIDS_WHIRLING_DEFENSE)
+		RandomSleep(50)
+	WEnd
+	Sleep(1500)
 	UseSkillEx($MANTIDS_EDGE_OF_EXTINCTION)
 
 	; Wait for all mobs to be registered dead or wait 3s
@@ -228,14 +232,4 @@ EndFunc
 Func MantidsUseFallBack()
 	UseHeroSkill(1, $MANTIDS_FALLBACK)
 	AdlibUnRegister('MantidsUseFallBack')
-EndFunc
-
-
-;~ Use Whirling Defense skill
-Func MantidsUseWhirlingDefense()
-	While IsRecharged($MANTIDS_WHIRLING_DEFENSE) And IsPlayerAlive()
-		UseSkillEx($MANTIDS_WHIRLING_DEFENSE)
-		RandomSleep(50)
-	WEnd
-	AdlibUnRegister('MantidsUseWhirlingDefense')
 EndFunc
