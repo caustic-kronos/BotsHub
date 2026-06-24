@@ -1740,18 +1740,18 @@ Func MappingWrite($mode = Null, $mapfile = Null, $chestFile = Null, $foesFile = 
 		$foesMap = $newMap
 	EndIf
 	If $mustReturn Then Return
-	If BitAND($mappingMode, 1) Then
+	If BitAND($mappingMode, 0x01) <> 0x00 Then
 		Local $me = GetMyAgent()
 		_FileWriteLog($mappingFile, '(' & DllStructGetData($me, 'X') & ',' & DllStructGetData($me, 'Y') & ')')
 	EndIf
-	If BitAND($mappingMode, 2) Then
+	If BitAND($mappingMode, 0x02) <> 0x00 Then
 		Local $chest = ScanForChests($RANGE_COMPASS)
 		If $chest <> Null Then
 			Local $chestString = 'Chest ' & DllStructGetData($chest, 'ID') & ' - (' & DllStructGetData($chest, 'X') & ',' & DllStructGetData($chest, 'Y') & ')'
 			_FileWriteLog($chestingFile, $chestString)
 		EndIf
 	EndIf
-	If BitAND($mappingMode, 4) Then
+	If BitAND($mappingMode, 0x04) <> 0x00 Then
 		Local $me = GetMyAgent()
 		Local $nearFoe = GetNearestEnemyToAgent($me, $RANGE_EARSHOT)
 		If $nearFoe <> Null And IsSensali($nearFoe) And $foesMap[DllStructGetData($nearFoe, 'ID')] == Null Then

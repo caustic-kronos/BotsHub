@@ -39,6 +39,10 @@ Global Const $BIP_SKILL_POSITION = 7
 Global Const $SERPENTS_QUICKNESS_SKILL_POSITION = 6
 Global Const $QUICKENING_ZEPHYR_SKILL_POSITION = 7
 
+Global Const $QUICKENING_ZEPHYR_SPIRIT_DURATION = 75000
+Global Const $QUICKENING_ZEPHYR_CAST_TIME = 2000
+
+
 ; Order in which heroes are added to the team
 Global Const $HERO_DERVISH_1 = 1
 Global Const $HERO_DERVISH_2 = 2
@@ -122,7 +126,7 @@ Func PrepareZephyrSpirit()
 	RandomSleep(50)
 	UseHeroSkill($HERO_ZEPHYR_RANGER, $QUICKENING_ZEPHYR_SKILL_POSITION)
 	$quickening_zephyr_cast_timer = TimerInit()
-	RandomSleep(5500)
+	RandomSleep($QUICKENING_ZEPHYR_CAST_TIME + 500)
 EndFunc
 
 
@@ -168,16 +172,14 @@ Func SteadyHealingUnit()
 	If $adlibBusy Then Return
 	$adlibBusy = True
 
-	If TimerDiff($quickening_zephyr_cast_timer) > 38000 Then
+	If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_SPIRIT_DURATION - 5000) Then
 		UseHeroSkill($HERO_ZEPHYR_RANGER, $QUICKENING_ZEPHYR_SKILL_POSITION)
 		$quickening_zephyr_cast_timer = TimerInit()
 	EndIf
 
 	; Heroes with Mystic Healing provide additional long range support
 	UseHeroSkill($healerArray[$steadyHealingHealerIndex], $MYSTIC_HEALING_SKILL_POSITION)
-	If TimerDiff($quickening_zephyr_cast_timer) > 6000 And $steadyHealingHealerIndex == 5 Then
-		UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
-	EndIf
+	If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_CAST_TIME + 500) And $steadyHealingHealerIndex == 5 Then UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
 
 	If GetHasCondition(GetMyAgent()) Then
 		Switch $steadyHealingHealerIndex
@@ -203,7 +205,7 @@ Func TwiceHealingUnit()
 	If $adlibBusy Then Return
 	$adlibBusy = True
 
-	If TimerDiff($quickening_zephyr_cast_timer) > 38000 Then
+	If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_SPIRIT_DURATION - 5000) Then
 		UseHeroSkill($HERO_ZEPHYR_RANGER, $QUICKENING_ZEPHYR_SKILL_POSITION)
 		$quickening_zephyr_cast_timer = TimerInit()
 	EndIf
@@ -218,9 +220,7 @@ Func TwiceHealingUnit()
 		UseHeroSkill($HERO_SPEED_PARAGON, $MYSTIC_HEALING_SKILL_POSITION)
 		UseHeroSkill($HERO_DERVISH_3, $MYSTIC_HEALING_SKILL_POSITION)
 		UseHeroSkill($HERO_BIP_NECRO_2, $MYSTIC_HEALING_SKILL_POSITION)
-		If TimerDiff($quickening_zephyr_cast_timer) > 6000 Then
-			UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
-		EndIf
+		If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_CAST_TIME + 500) Then UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
 		$steadyHealingHealerIndex = 0
 	EndIf
 
@@ -234,7 +234,7 @@ Func BurstHealingUnit()
 	If $adlibBusy Then Return
 	$adlibBusy = True
 
-	If TimerDiff($quickening_zephyr_cast_timer) > 38000 Then
+	If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_SPIRIT_DURATION - 5000) Then
 		UseHeroSkill($HERO_ZEPHYR_RANGER, $QUICKENING_ZEPHYR_SKILL_POSITION)
 		$quickening_zephyr_cast_timer = TimerInit()
 	EndIf
@@ -253,7 +253,7 @@ Func BurstHealingUnit()
 						UseHeroSkill($HERO_DERVISH_2, $MYSTIC_HEALING_SKILL_POSITION)
 						If $lifeRatio < 0.5 Then
 							UseHeroSkill($HERO_DERVISH_3, $MYSTIC_HEALING_SKILL_POSITION)
-							If $lifeRatio < 0.4 And TimerDiff($quickening_zephyr_cast_timer) > 6000 Then UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
+							If $lifeRatio < 0.4 And TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_CAST_TIME + 500) Then UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
 						EndIf
 					EndIf
 				EndIf
@@ -266,7 +266,7 @@ EndFunc
 
 ;~ Should not be used in other farm bots - made to run continuously, so has strong latency (about 5s)
 Func ManualFarmAutoHealingLoop()
-	If TimerDiff($quickening_zephyr_cast_timer) > 38000 Then
+	If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_SPIRIT_DURATION - 5000) Then
 		UseHeroSkill($HERO_ZEPHYR_RANGER, $QUICKENING_ZEPHYR_SKILL_POSITION)
 		$quickening_zephyr_cast_timer = TimerInit()
 	EndIf
@@ -284,11 +284,6 @@ Func ManualFarmAutoHealingLoop()
 	RandomSleep(430)
 	UseHeroSkill($HERO_BIP_NECRO_2, $MYSTIC_HEALING_SKILL_POSITION)
 	RandomSleep(430)
-	If TimerDiff($quickening_zephyr_cast_timer) > 6000 Then
-		UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
-		RandomSleep(430)
-	Else
-		RandomSleep(430)
-	EndIf
-	RandomSleep(70)
+	If TimerDiff($quickening_zephyr_cast_timer) > ($QUICKENING_ZEPHYR_CAST_TIME + 500) Then UseHeroSkill($HERO_ZEPHYR_RANGER, $MYSTIC_HEALING_SKILL_POSITION)
+	RandomSleep(500)
 EndFunc
