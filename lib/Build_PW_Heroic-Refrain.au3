@@ -18,35 +18,6 @@ Global Const $BUILD_PW_HR_REFRAINS = 'OQCjUamLKTn19Y1YAh0b4ioYsYA'
 Global Const $BUILD_PW_HR_ARIAS = 'OQCkUWm4Ziy0ZdPWNGQI9GuoHGHG'
 Global Const $BUILD_PW_HR_ADRENALINE = 'OQGkURll5iy0ZdPWNGQYMIPxVh7G' ; +3+1 Leadership, +1 Spear, +1 Command, +Clarity
 
-; Default build
-Global Const $BUILD_PW_HEROIC_REFRAIN = 1
-Global Const $BUILD_PW_THEYRE_ON_FIRE = 2
-Global Const $BUILD_PW_STAND_YOUR_GROUND = 3					; 20s
-Global Const $BUILD_PW_THERES_NOTHING_TO_FEAR = 4				; 20s
-
-; Options
-;Global Const $BUILD_PW_LEADERS_COMFORT = 5						; not supported
-Global Const $BUILD_PW_CANT_TOUCH_THIS = 5						; 20s
-Global Const $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM = 6		; 20s
-
-; Aria build
-Global Const $BUILD_PW_ARIA_OF_RESTORATION = 7					; 20s
-Global Const $BUILD_PW_BALLAD_OF_RESTORATION = 8				; 20s
-Global Const $BUILD_PW_ARIA_OF_ZEAL = 8							; 20s
-
-; Refrain build
-;Global Const $BUILD_PW_MENDING_REFRAIN = 7						; not supported
-;Global Const $BUILD_PW_HASTY_REFRAIN = 8						; not supported
-Global Const $BUILD_PW_BURNING_REFRAIN = 7
-Global Const $BUILD_PW_BLADETURN_REFRAIN = 8
-
-; Adrenaline build - not tested
-Global Const $BUILD_PW_SAVE_YOURSELVES = 5
-Global Const $BUILD_PW_TO_THE_LIMIT = 6
-Global Const $BUILD_PW_FOR_GREAT_JUSTICE = 7
-Global Const $BUILD_PW_NATURAL_TEMPER = 7
-Global Const $BUILD_PW_AGGRESSIVE_REFRAIN = 8
-
 ; Phase constants
 Global Const $HR_PHASE_NOT_INITIALIZED = 0
 Global Const $HR_PHASE_SELF_SETUP = 1
@@ -55,7 +26,102 @@ Global Const $HR_PHASE_APPLY_PARTY = 2
 ; Adlib interval constant
 Global Const $HR_INTERVAL = 12000
 
-Global $registered_shouts = False
+; Default build
+Global $BUILD_PW_HEROIC_REFRAIN = -1
+Global $BUILD_PW_THEYRE_ON_FIRE = -1
+Global $BUILD_PW_STAND_YOUR_GROUND = -1
+Global $BUILD_PW_THERES_NOTHING_TO_FEAR = -1
+
+; Options
+;Global $BUILD_PW_LEADERS_COMFORT = -1						; not supported
+Global $BUILD_PW_CANT_TOUCH_THIS = -1
+Global $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM = -1
+
+; Aria build
+Global $BUILD_PW_ARIA_OF_RESTORATION = -1
+Global $BUILD_PW_BALLAD_OF_RESTORATION = -1
+Global $BUILD_PW_ARIA_OF_ZEAL = -1
+
+; Refrain build
+;Global $BUILD_PW_MENDING_REFRAIN = -1						; not supported
+;Global $BUILD_PW_HASTY_REFRAIN = -1						; not supported
+Global $BUILD_PW_BURNING_REFRAIN = -1
+Global $BUILD_PW_BLADETURN_REFRAIN = -1
+
+; Adrenaline build
+Global $BUILD_PW_SAVE_YOURSELVES = -1
+Global $BUILD_PW_TO_THE_LIMIT = -1
+Global $BUILD_PW_FOR_GREAT_JUSTICE = -1
+Global $BUILD_PW_NATURAL_TEMPER = -1
+Global $BUILD_PW_AGGRESSIVE_REFRAIN = -1
+
+
+; ============================================================================
+; HR build setup & callbacks
+;
+; Reusable setup and callback functions for any farm/mission script using HR
+; Call SetupHRBuild() once during setup - build will be detected and used.
+; HR maintenance runs automatically via AdlibRegister.
+; Combat function is wired through the default move-aggro-kill option maps.
+; ============================================================================
+
+;~ Set up HR build: learn the build, register HR maintenance, set combat function.
+;~ Overwrites the default combat function on both option maps so all MoveAggro* calls use it.
+Func SetupHRBuild()
+	Local $skillbar = GetSkillbar(0)
+	For $i = 1 To 8
+		Local $skillID = DllStructGetData($skillbar, 'SkillID' & $i)
+		Switch $skillID
+			; HR build core skills
+			Case $ID_HEROIC_REFRAIN
+				$BUILD_PW_HEROIC_REFRAIN = $i
+			Case $ID_THEYRE_ON_FIRE
+				$BUILD_PW_THEYRE_ON_FIRE = $i
+			Case $ID_STAND_YOUR_GROUND
+				$BUILD_PW_STAND_YOUR_GROUND = $i
+			Case $ID_THERES_NOTHING_TO_FEAR
+				$BUILD_PW_THERES_NOTHING_TO_FEAR = $i
+			; HR build options
+			Case $ID_CANT_TOUCH_THIS
+				$BUILD_PW_CANT_TOUCH_THIS = $i
+			Case $ID_EBON_BATTLE_STANDARD_OF_WISDOM
+				$BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM = $i
+			; Aria build
+			Case $ID_ARIA_OF_RESTORATION
+				$BUILD_PW_ARIA_OF_RESTORATION = $i
+			Case $ID_BALLAD_OF_RESTORATION
+				$BUILD_PW_BALLAD_OF_RESTORATION = $i
+			Case $ID_ARIA_OF_ZEAL
+				$BUILD_PW_ARIA_OF_ZEAL = $i
+			; Refrain build
+			Case $ID_BURNING_REFRAIN
+				$BUILD_PW_BURNING_REFRAIN = $i
+			Case $ID_BLADETURN_REFRAIN
+				$BUILD_PW_BLADETURN_REFRAIN = $i
+			; Adrenaline build
+			Case $ID_SAVE_YOURSELVES_LUXON
+				$BUILD_PW_SAVE_YOURSELVES = $i
+			Case $ID_SAVE_YOURSELVES_KURZICK
+				$BUILD_PW_SAVE_YOURSELVES = $i
+			Case $ID_TO_THE_LIMIT
+				$BUILD_PW_TO_THE_LIMIT = $i
+			Case $ID_FOR_GREAT_JUSTICE
+				$BUILD_PW_FOR_GREAT_JUSTICE = $i
+			Case $ID_NATURAL_TEMPER
+				$BUILD_PW_NATURAL_TEMPER = $i
+			Case $ID_AGGRESSIVE_REFRAIN
+				$BUILD_PW_AGGRESSIVE_REFRAIN = $i
+			Case Else
+				Error('The skill ' & $i & ' is not recognised in a HR build.')
+		EndSwitch
+	Next
+
+	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
+
+	$default_move_aggro_kill_options['combatFunction']	= HRCombat
+	$flag_move_aggro_kill_options['combatFunction']		= HRCombat
+EndFunc
+
 
 ; ============================================================================
 ; Heroic Refrain AdlibRegister Utility
@@ -90,16 +156,11 @@ Func TickHeroicRefrain()
 
 	; Detect map/floor change: restart self-setup
 	Local $currentMap = GetMapID()
-	If $lastMapId <> 0 And $lastMapId <> $currentMap Then
-		$phase = $HR_PHASE_SELF_SETUP
-	EndIf
+	If $lastMapId <> 0 And $lastMapId <> $currentMap Then $phase = $HR_PHASE_SELF_SETUP
 	$lastMapId = $currentMap
 
 	; First tick in explorable: start self-setup
-	If $phase == $HR_PHASE_NOT_INITIALIZED Then
-		$phase = $HR_PHASE_SELF_SETUP
-		Return
-	EndIf
+	If $phase == $HR_PHASE_NOT_INITIALIZED Then $phase = $HR_PHASE_SELF_SETUP
 
 	; Cast TOF unconditionally every tick to keep existing HR alive.
 	; TOF is off the global cooldown so it can fire during other casts.
@@ -120,129 +181,75 @@ Func TickHeroicRefrain()
 	EndSwitch
 EndFunc
 
+
 ;~ Cast HR on self until bootstrap is complete, then advance to APPLY_PARTY.
 ;~ No HR -> cast -> stay. Has HR -> cast again (boosted) -> leave.
 ;~ Guarantees two casts for the Leadership +3 -> +4 breakpoint.
 Func HRPhaseSelfSetup()
 	If GetEnergy() < 5 Then Return $HR_PHASE_SELF_SETUP
 
-	If GetEffect($ID_HEROIC_REFRAIN, 0) <> Null Then
-		UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
-		Return $HR_PHASE_APPLY_PARTY
-	EndIf
-
+	Local $alreadyHadHR = GetEffect($ID_HEROIC_REFRAIN, 0) <> Null
 	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
-	Return $HR_PHASE_SELF_SETUP
+	Return $alreadyHadHR ? $HR_PHASE_APPLY_PARTY : $HR_PHASE_SELF_SETUP
 EndFunc
 
-;~ Iterate all heroes and apply HR to anyone missing it.
+
+;~ Iterate all party members and apply HR to anyone missing it.
 ;~ Full scan every tick to avoid stale state from deaths, movement, or buff expiry.
 Func HRPhaseApplyParty()
 	Local Static $heroCount = GetHeroCount()
-	Local Static $nextHero = 1
+	Local Static $next = 0
 
-	For $j = 0 To $heroCount - 1
-		Local $i = Mod($nextHero + $j - 1, $heroCount) + 1
-		Local $agentID = GetHeroID($i)
+	Local $refrain = Null
+	Local $refrainTarget = Null
+	For $offset = 0 To $heroCount
+		Local $index = Mod($next + $offset, $heroCount + 1)
+		Local $agentID = GetHeroID($index)
 		If $agentID == 0 Then ContinueLoop
-
 		Local $agent = GetAgentByID($agentID)
 		If $agent == Null Or GetIsDead($agent) Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
 
-		If GetEffect($ID_HEROIC_REFRAIN, $i) == Null Then
+		Local $refrainsByte = ScanAllyForRefrains($index)
+		If BitAnd($refrainsByte, 0x1) == 0x0 Then
 			UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
-			$nextHero = Mod($i, $heroCount) + 1
-			Return $HR_PHASE_APPLY_PARTY
+			$next = Mod($index + 1, $heroCount + 1)
+			Return $index == 0 ? $HR_PHASE_SELF_SETUP : $HR_PHASE_APPLY_PARTY
+		EndIf
+		If $refrainTarget == Null And BitAnd($refrainsByte, 0x6) <> 0x6 Then
+			$refrainTarget = $agent
+			$refrain = BitAnd($refrainsByte, 0x2) <> 0x2 ? $BUILD_PW_BLADETURN_REFRAIN : $BUILD_PW_BURNING_REFRAIN
 		EndIf
 	Next
+	If $refrainTarget <> Null Then UseSkillEx($refrain, $refrainTarget)
 	Return $HR_PHASE_APPLY_PARTY
 EndFunc
 
 
-; ============================================================================
-; Adrenaline Build Combat Shouts (non-blocking, tick-based)
-;
-; Skill priority (highest to lowest):
-;	1. Aggressive Refrain (25e, once if not already buffed)
-;	2. Auto-attack (always ensure attacking target)
-;	3. Stand Your Ground!
-;	4. There's Nothing to Fear! (15e)
-;	5. Save Yourselves! (adrenaline >= 200)
-;	6. To the Limit! (only if foes in earshot, adrenaline gain)
-;	7. For Great Justice! (5e, lowest priority)
-;
-; Note: HR maintenance is handled by AdlibRegister, not by this function.
-; ============================================================================
+;~ Scan a character at $index of the party and return a byte encoding which refrains are missing for that character
+Func ScanAllyForRefrains($index)
+	Local $refrainsByte = 0x0
+	If $BUILD_PW_BLADETURN_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x2)
+	If $BUILD_PW_BURNING_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x4)
 
-;~ Cast one combat shout per call based on priority.
-;~
-;~ $target - current enemy agent (or Null for untargeted shouts)
-Func CastCombatShouts($target = Null)
-	; Priority 1: Aggressive Refrain — only if not already active, costs 25e, only in combat
-	If $target <> Null And GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null Then
-		If GetEnergy() >= 25 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then
-			UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
-			Return
+	Local $effectsArray = GetEffect(0, $index)
+	For $effect In $effectsArray
+		Local $effectID = DllStructGetData($effect, 'SkillID')
+		If $effectID == $ID_HEROIC_REFRAIN Then
+			$refrainsByte = BitOR($refrainsByte, 0x1)
+		ElseIf $effectID == $ID_BLADETURN_REFRAIN Then
+			$refrainsByte = BitOR($refrainsByte, 0x2)
+		ElseIf $effectID == $ID_BURNING_REFRAIN Then
+			$refrainsByte = BitOR($refrainsByte, 0x4)
 		EndIf
-	EndIf
-
-	; Priority 2: Ensure we are attacking the target
-	If $target <> Null Then Attack($target)
-
-	; Priority 3: Stand Your Ground!
-	If IsRecharged($BUILD_PW_STAND_YOUR_GROUND) Then
-		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
-		Return
-	EndIf
-
-	; Priority 4: There's Nothing to Fear! (15e)
-	If IsRecharged($BUILD_PW_THERES_NOTHING_TO_FEAR) And GetEnergy() >= 15 Then
-		UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
-		Return
-	EndIf
-
-	; Priority 5: Save Yourselves! (adrenaline-based, 200 required)
-	If GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then
-		UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
-		Return
-	EndIf
-
-	; Priority 6: To the Limit! (only if foes nearby for adrenaline gain)
-	If IsRecharged($BUILD_PW_TO_THE_LIMIT) And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 Then
-		UseSkillEx($BUILD_PW_TO_THE_LIMIT)
-		Return
-	EndIf
-
-	; Priority 7: For Great Justice! (5e, lowest priority)
-	If IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And GetEnergy() >= 5 Then
-		UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
-		Return
-	EndIf
+		If BitAnd($refrainsByte, 0x7) == 0x7 Then ExitLoop
+	Next
+	Return $refrainsByte
 EndFunc
 
-
-; ============================================================================
-; HR Adrenaline Build Setup & Callbacks
-;
-; Reusable setup and callback functions for any farm/mission script using
-; the HR Adrenaline build. Call SetupHRAdrenalineBuild() once during setup.
-; HR maintenance runs automatically via AdlibRegister.
-; Combat function is wired through the default move-aggro-kill option maps.
-; ============================================================================
-
-;~ Set up the HR Adrenaline build: load template, register HR maintenance, set combat function.
-;~ Overwrites the default combat function on both option maps so all MoveAggro* calls use it.
-Func SetupHRAdrenalineBuild()
-	LoadSkillTemplate($BUILD_PW_HR_ADRENALINE)
-	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
-
-	$default_move_aggro_kill_options['combatFunction']	= HRAdrenalineCombat
-	$flag_move_aggro_kill_options['combatFunction']		= HRAdrenalineCombat
-EndFunc
 
 ;~ Combat callback for KillFoesInArea: loops Attack + CastCombatShouts until target is dead.
-Func HRAdrenalineCombat($target, $options)
+Func HRCombat($target, $options)
 	GetAlmostInRangeOfAgent($target)
 	Attack($target)
 	Sleep(250)
@@ -256,169 +263,46 @@ Func HRAdrenalineCombat($target, $options)
 EndFunc
 
 
-; ============================================================================
-; Legacy functions below (AdlibRegister-based approach)
-; ============================================================================
-
-;~ This function should be put on a 11 to 15s adlibregister
-Func MaintainHeroicRefrain()
-	Local Static $castBladeturnRefrain = GetSkillbarSkillID($BUILD_PW_BLADETURN_REFRAIN) == $ID_BLADETURN_REFRAIN
-	Local Static $castBurningRefrain = GetSkillbarSkillID($BUILD_PW_BURNING_REFRAIN) == $ID_BURNING_REFRAIN
-	Local Static $castAggressiveRefrain = GetSkillbarSkillID($BUILD_PW_AGGRESSIVE_REFRAIN) == $ID_AGGRESSIVE_REFRAIN
-
-	If GetMapType() <> $ID_EXPLORABLE Then
-		AdlibUnRegister('MaintainHeroicRefrain')
-		$registered_shouts = False
-		Return
-	EndIf
-
-	; Maintaining
-	UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
-	PingSleep(50)
-
-	; Not casting refrains if not enough energy to guarantee the next theyre on fire
+;~ Cast one combat shout per call based on priority.
+;~ $target - current enemy agent (or Null for untargeted shouts)
+Func CastCombatShouts($target = Null)
 	Local $energy = GetEnergy()
-	If $energy < 10 Then Return
+	; Priority 1: Ensure we are attacking the target
+	If $target <> Null Then Attack($target)
 
-	; Aggressive Refrain check
-	If $castAggressiveRefrain And $energy > 15 Then
-		If GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null Then
-			While IsPlayerAlive() And GetEnergy() < 25
-				Sleep(1000)
-			WEnd
-			UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
-			PingSleep(50)
-			Return
-		EndIf
-	EndIf
+	; Priority 2: Aggressive Refrain — only if not already active, only in combat
+	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null And $energy >= 15 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
+	
+	; Priority 3: Stand Your Ground!
+	If $BUILD_PW_STAND_YOUR_GROUND > 0 And IsRecharged($BUILD_PW_STAND_YOUR_GROUND) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
 
-	; Recasting HR on character to get max +4 stats
-	Local Static $castHRSecondTime = False
-	If $castHRSecondTime Then
-		UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
-		PingSleep(50)
-		$castHRSecondTime = False
-		Return
-	EndIf
+	; Priority 4: Ebon Battle Standard of Wisdom
+	If $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM > 0 And IsRecharged($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM)
 
-	; Checking if our characters have refrains on
-	Local $missingRefrain = -1
-	Local $missingCharacter = -1
-	For $i = 0 To 7
-		; Getting all effects is more efficient if we check several effects
-		Local $effectsArray = GetEffect(0, $i)
+	; Priority 5: There's Nothing to Fear!
+	If $BUILD_PW_THERES_NOTHING_TO_FEAR > 0 And IsRecharged($BUILD_PW_THERES_NOTHING_TO_FEAR) And $energy >= 15 Then Return UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
 
-		Local $heroicRefrain = False
-		Local $bladeRefrain = $castBladeturnRefrain ? False : True
-		Local $burningRefrain = $castBurningRefrain ? False : True
-		For $effect In $effectsArray
-			Local $effectID = DllStructGetData($effect, 'SkillID')
-			If $effectID == $ID_HEROIC_REFRAIN Then
-				$heroicRefrain = True
-			ElseIf $effectID == $ID_BLADETURN_REFRAIN Then
-				$bladeRefrain = True
-			ElseIf $effectID == $ID_BURNING_REFRAIN Then
-				$burningRefrain = True
-			EndIf
+	; Priority 6: Save Yourselves! (adrenaline-based, 200 required)
+	If $BUILD_PW_SAVE_YOURSELVES > 0 And GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then Return UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
 
-			If $heroicRefrain And $bladeRefrain And $burningRefrain Then ExitLoop
-		Next
+	; Priority 7: Aria of Restoration
+	If $BUILD_PW_ARIA_OF_RESTORATION > 0 And IsRecharged($BUILD_PW_ARIA_OF_RESTORATION) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_ARIA_OF_RESTORATION)
 
-		; Heroic Refrain is priority so it is instantly casted
-		If Not $heroicRefrain Then
-			$missingRefrain = $BUILD_PW_HEROIC_REFRAIN
-			$missingCharacter = $i
-			If $i == 0 Then $castHRSecondTime = True
-			ExitLoop
-		EndIf
-		; If we already found a missing refrain no need to check more than HR
-		If $missingRefrain <> -1 Then ContinueLoop
+	; Priority 8: Ballad of Restoration
+	If $BUILD_PW_BALLAD_OF_RESTORATION > 0 And IsRecharged($BUILD_PW_BALLAD_OF_RESTORATION) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_BALLAD_OF_RESTORATION)
 
-		; Other refrains must wait until we are sure we are not missing HR on someone
-		If Not $bladeRefrain Then
-			$missingRefrain = $BUILD_PW_BLADETURN_REFRAIN
-			$missingCharacter = $i
-		ElseIf Not $burningRefrain Then
-			$missingRefrain = $BUILD_PW_BURNING_REFRAIN
-			$missingCharacter = $i
-		EndIf
-	Next
+	; Priority 9: Aria of Zeal
+	If $BUILD_PW_ARIA_OF_ZEAL > 0 And IsRecharged($BUILD_PW_ARIA_OF_ZEAL) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_ARIA_OF_ZEAL)
 
-	Local $target
-	If $missingCharacter < 0 Then
-		Return
-	ElseIf $missingCharacter == 0 Then
-		$target = GetMyAgent()
-	Else
-		$target = GetAgentByID(GetHeroID($missingCharacter))
-	EndIf
+	; Priority 10: Cant touch this
+	If $BUILD_PW_CANT_TOUCH_THIS > 0 And IsRecharged($BUILD_PW_CANT_TOUCH_THIS) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_CANT_TOUCH_THIS)
 
-	UseSkillEx($missingRefrain, $target)
-	PingSleep(50)
-EndFunc
+	; Priority 11: Natural Temper
+	If $BUILD_PW_NATURAL_TEMPER > 0 And GetSkillbarSkillAdrenaline($BUILD_PW_NATURAL_TEMPER) >= 75 Then Return UseSkillEx($BUILD_PW_NATURAL_TEMPER)
 
+	; Priority 12: For Great Justice!
+	If $BUILD_PW_FOR_GREAT_JUSTICE > 0 And IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
 
-Func FightAsPWHeroicRefrain($target, $options = Null)
-	Local Static $castBattleStandard = GetSkillbarSkillID($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM) == $ID_EBON_BATTLE_STANDARD_OF_WISDOM
-	Local Static $castCantTouchThis = GetSkillbarSkillID($BUILD_PW_CANT_TOUCH_THIS) == $ID_CANT_TOUCH_THIS
-	Local Static $castAriaOfRestoration = GetSkillbarSkillID($BUILD_PW_ARIA_OF_RESTORATION) == $ID_ARIA_OF_RESTORATION
-	Local Static $castAriaOfZeal = GetSkillbarSkillID($BUILD_PW_ARIA_OF_ZEAL) == $ID_ARIA_OF_ZEAL
-	Local Static $castBalladOfRestoration = GetSkillbarSkillID($BUILD_PW_BALLAD_OF_RESTORATION) == $ID_BALLAD_OF_RESTORATION
-	Local Static $castSaveYourselves = GetSkillbarSkillID($BUILD_PW_SAVE_YOURSELVES) == $ID_SAVE_YOURSELVES_KURZICK Or GetSkillbarSkillID($BUILD_PW_SAVE_YOURSELVES) == $ID_SAVE_YOURSELVES_LUXON
-	Local Static $castNaturalTemper = GetSkillbarSkillID($BUILD_PW_NATURAL_TEMPER) == $ID_NATURAL_TEMPER
-	Local Static $castToTheLimit = GetSkillbarSkillID($BUILD_PW_TO_THE_LIMIT) == $ID_TO_THE_LIMIT
-	; Timer used for Stand your ground, there is nothing to fear and cant touch this
-	Local Static $timer20s = Null
-
-	If Not $registered_shouts And GetMapType() == $ID_EXPLORABLE Then
-		AdlibRegister('MaintainHeroicRefrain', 12000)
-		$registered_shouts = True
-	EndIf
-
-	; get as close as possible to target foe to have a surprise effect when attacking
-	GetAlmostInRangeOfAgent($target)
-	Attack($target)
-	Sleep(1500)
-	If $timer20s == Null Or TimerDiff($timer20s) > 20000 Then
-		GetIntoTeamRange()
-		UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
-		PingSleep(50)
-		UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
-		PingSleep(50)
-		If $castBattleStandard And GetEnergy() >= 20 Then
-			UseSkillEx($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM)
-			PingSleep(50)
-		EndIf
-		If $castCantTouchThis Then
-			UseSkillEx($BUILD_PW_CANT_TOUCH_THIS)
-			PingSleep(50)
-		EndIf
-		If $castAriaOfRestoration Then
-			UseSkillEx($BUILD_PW_ARIA_OF_RESTORATION)
-			PingSleep(50)
-		EndIf
-		If $castBalladOfRestoration Then
-			UseSkillEx($BUILD_PW_BALLAD_OF_RESTORATION)
-			PingSleep(50)
-		EndIf
-		If $castAriaOfZeal Then
-			UseSkillEx($BUILD_PW_ARIA_OF_ZEAL)
-			PingSleep(50)
-		EndIf
-		If $castToTheLimit Then
-			UseSkillEx($BUILD_PW_TO_THE_LIMIT)
-			PingSleep(50)
-		EndIf
-		$timer20s = TimerInit()
-	EndIf
-
-	If $castSaveYourselves And GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then
-		UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
-		PingSleep(50)
-	EndIf
-
-	If $castNaturalTemper And GetSkillbarSkillAdrenaline($BUILD_PW_NATURAL_TEMPER) >= 75 Then
-		UseSkillEx($BUILD_PW_NATURAL_TEMPER)
-		PingSleep(50)
-	EndIf
+	; Priority 13: To the Limit! (no need to check for foes presence - if there were no foes we would not be in this function)
+	If $BUILD_PW_TO_THE_LIMIT > 0 And IsRecharged($BUILD_PW_TO_THE_LIMIT) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_TO_THE_LIMIT)
 EndFunc
