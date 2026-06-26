@@ -39,28 +39,29 @@ To use it:
 
 ### Farms
 
-| Farm									| Purpose / Drops											|
-| ------------------------------------- | --------------------------------------------------------- |
-| A Chance Encounter					| Ministerial Commendations, faction skins					|
-| Auspicious Beginnings					| War Supplies, festive items, gold, Vanguard points		|
-| Cathedral of Flames (Cryptos)			| Rin Relics, Diessa Chalices, bones						|
-| Dajkah Inlet Challenge				| Sunspear armor hero pieces								|
-| Drake Flesh							| Drake flesh (kebob), golds								|
-| Drazach Thicket (DragonMoss)			| Fibers, Gothic Defender, Echovald Shield, Ornate Shield	|
-| Fish in a Barrel (Kournans)			| Q8 items, runes											|
-| Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores			|
-| Jaya Bluffs (Sensali)					| Feathers, bones											|
-| Minotaurs								| Materials													|
-| Missing Daughter (Jade Brotherhood)	| Q8 items, jade bracelets									|
-| Moddok Crevice (Corsairs)				| Runes, Colossal Scimitar, Q8								|
-| Nexus Challenge						| Mysterious armor hero pieces								|
-| Presearing Iris						| Iris														|
-| Raptors								| Festive items, golds, materials, Asura points				|
-| Skale Fins							| Skale fins (soup), low reqs								|
-| Skrees								| Spears, feathers, paragon normal and elite tomes			|
-| Spirit Slaves							| Q8 items, dust, bones										|
-| Vaettirs								| Festive items, golds, materials, Norn points				|
-| Wajjun Bazaar (Mantids)				| Celestial weapons, chitin, dust							|
+| Farm									| Purpose / Drops																|
+| ------------------------------------- | ----------------------------------------------------------------------------- |
+| A Chance Encounter					| Ministerial Commendations, faction skins										|
+| Auspicious Beginnings					| War Supplies, festive items, gold, Vanguard points							|
+| Cathedral of Flames (Cryptos)			| Rin Relics, Diessa Chalices, bones											|
+| Dajkah Inlet Challenge				| Sunspear armor hero pieces													|
+| Drake Flesh							| Drake flesh (kebob), golds													|
+| Drazach Thicket (DragonMoss)			| Fibers, Gothic Defender, Echovald Shield, Ornate Shield						|
+| Fish in a Barrel (Kournans)			| Q8 items, runes																|
+| Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores								|
+| Jaya Bluffs (Sensali)					| Feathers, bones																|
+| Minotaurs								| Materials																		|
+| Missing Daughter (Jade Brotherhood)	| Q8 items, jade bracelets														|
+| Moddok Crevice (Corsairs)				| Runes, Colossal Scimitar, Q8													|
+| Nexus Challenge						| Mysterious armor hero pieces													|
+| Presearing Iris						| Iris																			|
+| Raptors								| Festive items, golds, materials, Asura points									|
+| Skale Fins							| Skale fins (soup), low reqs													|
+| Skrees								| Spears, feathers, paragon normal and elite tomes								|
+| Spirit Slaves							| Q8 items, dust, bones															|
+| Vaettirs								| Festive items, golds, materials, Norn points									|
+| Wajjun Bazaar (Mantids)				| Celestial weapons, chitin, dust												|
+| Zodiac								| Zodiac weapons, Ironwing bows, Vertebreakers, Nephilim Gavels, Amber chunks	|
 
 ### Vanquishes / Titles
 

@@ -72,6 +72,7 @@ Opt('MustDeclareVars', True)
 #include 'src/farms/Skrees.au3'
 #include 'src/farms/SpiritSlaves.au3'
 #include 'src/farms/Vaettirs.au3'
+#include 'src/farms/Zodiac.au3'
 #include 'src/missions/Deldrimor.au3'
 #include 'src/missions/FoW.au3'
 #include 'src/missions/Froggy.au3'
@@ -581,6 +582,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'Vanguard',						VanguardTitleFarm,				5,					$VANGUARD_TITLE_FARM_DURATION)
 	AddFarmToFarmMap(	'Voltaic',						VoltaicFarm,					10,					$VOLTAIC_FARM_DURATION)
 	AddFarmToFarmMap(	'War Supply Keiran',			WarSupplyKeiranFarm,			10,					$WAR_SUPPLY_FARM_DURATION)
+	AddFarmToFarmMap(	'Zodiac',						ZodiacFarm,						10,					$ZODIAC_FARM_DURATION)
 	AddFarmToFarmMap(	'Manual Mode',					ManualMode,						0,					2 * 60 * 1000)
 	AddFarmToFarmMap(	'Storage',						InventoryManagementBeforeRun,	5,					2 * 60 * 1000)
 	AddFarmToFarmMap(	'Tests',						RunTests,						0,					2 * 60 * 1000)
@@ -611,6 +613,7 @@ Func ResetBotsSetups()
 	$tasca_farm_setup						= False
 	$tunnels_of_the_forsaken_farm_setup		= False
 	$vaettirs_farm_setup					= False
+	$zodiac_farm_setup						= False
 	; Those do not need to be reset - party did not change, build did not change, and there is no need to refresh portal
 	; BUT those bots MUST tp to the correct map on every loop
 	;$cof_farm_setup						= False

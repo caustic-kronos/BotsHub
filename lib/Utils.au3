@@ -346,9 +346,17 @@ Func EnterUnderworld()
 EndFunc
 
 
-Func EnterUrgozsWarren()
-	TravelToOutpost($ID_EMBARK_BEACH, $district_name)
-	If $run_options_cache['run.use_scrolls'] Then
+Func EnterUrgozsWarren($forceScrollUse)
+	; Talk to Vash in Kaineng Center - only 1 week out of 9
+	If IsFactionsEliteBonusWeek() Then
+		
+	ElseIf Not $forceScrollUse And Not $run_options_cache['run.use_scrolls'] Then
+		Error('Trying to enter Urgoz Warren without enabling scroll usage.')
+		Return $FAIL
+	Else
+		; Move to House Zu Heltzer and use a scroll
+		TravelToOutpost($ID_HOUSE_ZU_HELTZER, $district_name)
+		;TravelToOutpost($ID_EMBARK_BEACH, $district_name)
 		Info('Using scroll to enter Urgoz Warren')
 		If UseScroll($ID_URGOZ_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_URGOZS_WARREN)
@@ -356,17 +364,26 @@ Func EnterUrgozsWarren()
 				Warn('Used scroll but still could not enter Urgoz Warren. Ensure that player has correct scroll in inventory')
 				Return $PAUSE
 			EndIf
+		Else
+			Error('Trying to enter Urgoz Warren without scrolls.')
+			Return $FAIL
 		EndIf
-	Else
-		Return $FAIL
 	EndIf
 	Return $SUCCESS
 EndFunc
 
 
-Func EnterTheDeep()
-	TravelToOutpost($ID_EMBARK_BEACH, $district_name)
-	If $run_options_cache['run.use_scrolls'] Then
+Func EnterTheDeep($forceScrollUse)
+	; Talk to Eurayle in Kaineng Center - only 1 week out of 9
+	If IsFactionsEliteBonusWeek() Then
+
+	ElseIf Not $forceScrollUse And Not $run_options_cache['run.use_scrolls'] Then
+		Error('Trying to enter The Deep without enabling scroll usage.')
+		Return $FAIL
+	Else
+		; Move to Cavalon and use a scroll
+		TravelToOutpost($ID_CAVALON, $district_name)
+		;TravelToOutpost($ID_EMBARK_BEACH, $district_name)
 		Info('Using scroll to enter the Deep')
 		If UseScroll($ID_DEEP_SCROLL) == $SUCCESS Then
 			WaitMapLoading($ID_THE_DEEP)
@@ -376,6 +393,7 @@ Func EnterTheDeep()
 			EndIf
 		EndIf
 	Else
+		Error('Trying to enter the Deep without scrolls.')
 		Return $FAIL
 	EndIf
 	Return $SUCCESS
@@ -1422,6 +1440,46 @@ EndFunc
 ;~ Packs a (month, day, hour, minute) tuple as MMDDHHmm
 Func PackUtc($month, $day, $hour = 0, $minute = 0)
 	Return $month * 1000000 + $day * 10000 + $hour * 100 + $minute
+EndFunc
+
+
+Func IsFactionsEliteBonusWeek()
+	; Known start of a Factions Elite Bonus week (Mon 15:00 UTC)
+	Local $FACTIONS_ELITE_ANCHOR_UTC = '2026/07/13 15:00:00'
+	Return IsWithinRecurringWeek($FACTIONS_ELITE_ANCHOR_UTC)
+EndFunc
+
+Func IsPantheonBonusWeek()
+	; Known start of a Pantheon Bonus week (Mon 15:00 UTC)
+	Global Const $PANTHEON_ANCHOR_UTC = '2026/08/03 15:00:00'
+	Return IsWithinRecurringWeek($PANTHEON_ANCHOR_UTC)
+EndFunc
+
+
+; FIXME: use server time instead of local UTC time
+;~ True if now falls within the 1-week slot starting at $anchorStartUTC, recurring every 9 weeks. 
+;~ $sAnchorSanchorStartUTCtartUtc must be formatted 'YYYY/MM/DD HH:MM:SS' and can be any past OR future occurrence of the event start.
+Func IsWithinRecurringWeek($anchorStartUTC)
+	Local $elapsed = _DateDiff('s', $anchorStartUTC, _NowUtcString())
+
+	; 7 days * 24 hours * 60 min * 60 sec
+	Global $SECONDS_PER_WEEK   = 7 * 24 * 60 * 60
+	; 9 bonus weeks in rotation
+	Global $ROTATION_PERIOD_SECONDS = 9 * $SECONDS_PER_WEEK
+
+	Local $leftover = Mod($elapsed, $ROTATION_PERIOD_SECONDS)
+	; Mod() keeps sign of dividend, correct it
+	If $leftover < 0 Then $leftover += $ROTATION_PERIOD_SECONDS
+
+	Return $leftover < $SECONDS_PER_WEEK
+EndFunc
+
+;~ Current UTC time as 'YYYY/MM/DD HH:MM:SS', for use with _DateDiff()
+Func _NowUtcString()
+	Local $utc = _Date_Time_GetSystemTime()
+	Return StringFormat("%04d/%02d/%02d %02d:%02d:%02d", _
+			DllStructGetData($utc, 'Year'), DllStructGetData($utc, 'Month'), DllStructGetData($utc, 'Day'), _
+			DllStructGetData($utc, 'Hour'), DllStructGetData($utc, 'Minute'), DllStructGetData($utc, 'Second'))
 EndFunc
 #EndRegion DateTime
 

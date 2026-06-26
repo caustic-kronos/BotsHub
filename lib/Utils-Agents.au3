@@ -383,6 +383,10 @@ Func FindMiddleOfFoes($posX, $posY, $range = $RANGE_AREA, $condition = Null)
 			$count += 1
 		EndIf
 	Next
+	If $count == 0 Then
+		Warn('No foes to find middle of.')
+		Return $position
+	EndIf
 	$position[0] = $position[0] / $count
 	$position[1] = $position[1] / $count
 	Return $position
