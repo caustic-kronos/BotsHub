@@ -253,7 +253,7 @@ Func KillJadeBrotherhood()
 	UseHeroSkill(1, $BROTHERHOOD_BLADETURN_REFRAIN, GetMyAgent())
 
 	$target = GetNearestEnemyToCoords(-13262, -5486)
-	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
+	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), $RANGE_EARSHOT)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
 	GetAlmostInRangeOfAgent($target)
 	Info('Moving Hero away')
@@ -310,6 +310,6 @@ Func KillJadeBrotherhood()
 		ChangeTarget($target)
 		Attack($target)
 		RandomSleep(250)
-		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 1250)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $PLAYER_AGGRO_RANGE)
 	WEnd
 EndFunc

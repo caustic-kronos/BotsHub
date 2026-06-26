@@ -265,8 +265,6 @@ EndFunc
 Func ClearTheForgottenVale()
 	Local $optionsForgottenVale					= CloneMap($default_move_aggro_kill_options)
 	$optionsForgottenVale['fightRange']			= $RANGE_EARSHOT
-	$optionsForgottenVale['flagHeroesOnFight']	= False
-	$optionsForgottenVale['ignoreDroppedLoot']	= False
 	Info('Moving to Forgotten Vale')
 	MoveAggroAndKill(-5973, 12410)
 	MoveAggroAndKill(-6330, 10177)
@@ -296,7 +294,7 @@ Func ClearTheForgottenVale()
 	Info('Kill Some Coldfire Patrols')
 
 	$optionsForgottenVale['flagHeroesOnFight']	= True
-	$optionsForgottenVale['fightRange']			= $RANGE_EARSHOT * 1.25
+	$optionsForgottenVale['fightRange']			= $RANGE_LONGBOW
 	MoveAggroAndKill(-13505, 6040, '', $optionsForgottenVale)
 	Info('Waiting for Coldfire Patrols 1')
 	RandomSleep(5000)
@@ -334,8 +332,6 @@ Func WrathfulSpirits()
 	EndIf
 	Local $optionsForgottenVale					= CloneMap($default_move_aggro_kill_options)
 	$optionsForgottenVale['fightRange']			= $RANGE_EARSHOT
-	$optionsForgottenVale['flagHeroesOnFight']	= False
-	$optionsForgottenVale['ignoreDroppedLoot']	= False
 	TakeQuest($reaper, $ID_QUEST_WRATHFUL_SPIRITS, 0x806E01, 0x806E03)
 	While Not IsQuestReward($ID_QUEST_WRATHFUL_SPIRITS)
 		Info('1st Group')
@@ -406,8 +402,6 @@ EndFunc
 Func ClearTheFrozenWastes()
 	Local $optionsFrozenWastes					= CloneMap($default_move_aggro_kill_options)
 	$optionsFrozenWastes['fightRange']			= $RANGE_EARSHOT
-	$optionsFrozenWastes['flagHeroesOnFight']	= False
-	$optionsFrozenWastes['ignoreDroppedLoot']	= False
 	$optionsFrozenWastes['priorityMobs']		= True
 	Info('Moving to Frozen Wastes')
 	MoveAggroAndKill(-5129, 13248)
@@ -468,7 +462,7 @@ Func ClearTheFrozenWastes()
 	MoveAggroAndKill(2827, 19050, '', $optionsFrozenWastes)
 	Info('Killing Smite mob 8')
 
-	$optionsFrozenWastes['fightRange']	= $RANGE_EARSHOT * 1.25
+	$optionsFrozenWastes['fightRange']	= $RANGE_LONGBOW
 	MoveAggroAndKill(2253, 19856, '', $optionsFrozenWastes)
 	MoveAggroAndKill(784, 19901, '', $optionsFrozenWastes)
 	MoveAggroAndKill(-498, 18792, '', $optionsFrozenWastes)
@@ -509,8 +503,6 @@ Func ServantsOfGrenth()
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsFrozenWastes					= CloneMap($default_move_aggro_kill_options)
-	$optionsFrozenWastes['fightRange']			= $RANGE_EARSHOT * 1.5
-	$optionsFrozenWastes['flagHeroesOnFight']	= False
 	$optionsFrozenWastes['ignoreDroppedLoot']	= True
 	$optionsFrozenWastes['priorityMobs']		= True
 	Info('Setting heroes up for quest')
@@ -577,8 +569,6 @@ EndFunc
 Func ClearTheChaosPlanes()
 	Local $optionsChaosPlanes					= CloneMap($default_move_aggro_kill_options)
 	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT
-	$optionsChaosPlanes['flagHeroesOnFight']	= False
-	$optionsChaosPlanes['ignoreDroppedLoot']	= False
 	$optionsChaosPlanes['priorityMobs']			= True
 	Info('Moving to Chaos Plains')
 	MoveAggroAndKill(-4922, 13288)
@@ -794,7 +784,7 @@ Func ClearTheChaosPlanes()
 	Info('Killing Mindblade Mob 1')
 
 	$optionsChaosPlanes['ignoreDroppedLoot']	= True
-	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT * 1.5
+	$optionsChaosPlanes['fightRange']			= $WIDE_PLAYER_AGGRO_RANGE
 	MoveAggroAndKill(12211, -17522, '', $optionsChaosPlanes) ; Right Short
 	MoveAggroAndKill(11160, -17710, '', $optionsChaosPlanes) ; Center
 	Info('Killing Mindblade Mob 2')
@@ -830,7 +820,6 @@ Func ClearSpawningPools($reaper)
 	Local $optionsSpawningPools					= CloneMap($default_move_aggro_kill_options)
 	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT
 	$optionsSpawningPools['flagHeroesOnFight']	= True
-	$optionsSpawningPools['ignoreDroppedLoot']	= False
 	$optionsSpawningPools['priorityMobs']		= True
 	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
 	Info('Moving to Spawning Pools')
@@ -881,7 +870,7 @@ Func ClearSpawningPools($reaper)
 	Info('Moving to Monument to clear Terrorweb Dryders')
 
 	$optionsSpawningPools['ignoreDroppedLoot']	= True
-	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT * 1.25
+	$optionsSpawningPools['fightRange']			= $RANGE_LONGBOW
 	MoveAvoidingBodyBlock(-8067, -19658)
 	KillFoesInArea($optionsSpawningPools)
 	Info('Move to protect Reaper')
@@ -918,7 +907,6 @@ Func TerrorwebQueen()
 	Local $optionsSpawningPools					= CloneMap($default_move_aggro_kill_options)
 	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT
 	$optionsSpawningPools['flagHeroesOnFight']	= True
-	$optionsSpawningPools['ignoreDroppedLoot']	= False
 	$optionsSpawningPools['priorityMobs']		= True
 	TakeQuest($reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
 	Info('Clearing Exterior')
@@ -957,8 +945,6 @@ EndFunc
 Func ClearBonePits($reaper)
 	Local $optionsBonePits					= CloneMap($default_move_aggro_kill_options)
 	$optionsBonePits['fightRange']			= $RANGE_EARSHOT * 1.1
-	$optionsBonePits['flagHeroesOnFight']	= False
-	$optionsBonePits['ignoreDroppedLoot']	= False
 	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
 	MoveAggroAndKill(13653, -16965)
 	Info('Let us make sure Reaper is ok before proceeding.')
@@ -1036,7 +1022,6 @@ Func ImprisonedSpirits()
 	EndIf
 	Local $optionsBonePits					= CloneMap($default_move_aggro_kill_options)
 	$optionsBonePits['fightRange']			= $RANGE_EARSHOT
-	$optionsBonePits['flagHeroesOnFight']	= False
 	$optionsBonePits['ignoreDroppedLoot']	= True
 	$optionsBonePits['priorityMobs']		= True
 	If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
@@ -1104,8 +1089,6 @@ Func ClearTwinSerpentMountains()
 	EndIf
 	Local $optionsTwinSerpentMountains					= CloneMap($default_move_aggro_kill_options)
 	$optionsTwinSerpentMountains['fightRange']			= $RANGE_EARSHOT * 0.9
-	$optionsTwinSerpentMountains['flagHeroesOnFight']	= False
-	$optionsTwinSerpentMountains['ignoreDroppedLoot']	= False
 	$optionsTwinSerpentMountains['priorityMobs']		= True
 	Info('Moving to Twin Serpent Mountains')
 	MoveAggroAndKill(-4922, 13288)
@@ -1185,7 +1168,7 @@ Func ClearTwinSerpentMountains()
 	MoveAggroAndKillSafeTraps(-7418, -5871, '', $optionsTwinSerpentMountains)
 	MoveAggroAndKillSafeTraps(-7284, -4115, '', $optionsTwinSerpentMountains)
 
-	$optionsTwinSerpentMountains['fightRange'] = $RANGE_EARSHOT * 1.25
+	$optionsTwinSerpentMountains['fightRange'] = $RANGE_LONGBOW
 	MoveAggroAndKillSafeTraps(-8150, -4800, '', $optionsTwinSerpentMountains)
 	CommandAll(-7988, -4615)
 	MoveTo(-8317, -5353)
@@ -1210,8 +1193,6 @@ Func DemonAssassin()
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsTwinSerpentMountains					= CloneMap($default_move_aggro_kill_options)
-	$optionsTwinSerpentMountains['fightRange']			= $RANGE_EARSHOT * 1.5
-	$optionsTwinSerpentMountains['flagHeroesOnFight']	= False
 	$optionsTwinSerpentMountains['ignoreDroppedLoot']	= True
 	$optionsTwinSerpentMountains['priorityMobs']		= True
 	MoveTo(-8208, -5241)
@@ -1238,12 +1219,12 @@ Func DemonAssassin()
 	Info('Waiting for the waves of Dryders')
 	RandomSleep(50000)
 	Info('Killing Dryders')
-	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT*2.35)
+	Local $foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT * 2.35)
 	While UBound($foes) > 0
 		MoveTo(-4629, -5282)
 		KillFoesInArea($optionsTwinSerpentMountains)
 		RandomSleep(5000)
-		$foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT*2.35)
+		$foes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT * 2.35)
 		If Not IsPlayerOrPartyAlive() Then
 			Info('Quest Failed: ' & $QUEST_NAMES_FROM_IDS[$ID_QUEST_DEMON_ASSASSIN])
 			Return $FAIL
@@ -1255,7 +1236,7 @@ Func DemonAssassin()
 		Return $FAIL
 	EndIf
 	Info('Picking up Loot')
-	PickUpItems(Null, DefaultShouldPickItem, $RANGE_EARSHOT * 1.5)
+	PickUpItems(Null, DefaultShouldPickItem, $WIDE_PLAYER_AGGRO_RANGE)
 	MoveTo(-4742, -5531)
 	CancelAllHeroes()
 	RandomSleep(250)
@@ -1324,8 +1305,7 @@ Func UnwantedGuests($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsUnwantedGuests				= CloneMap($default_move_aggro_kill_options)
-	$optionsUnwantedGuests['fightRange']		= $RANGE_EARSHOT * 1.25
-	$optionsUnwantedGuests['flagHeroesOnFight']	= False
+	$optionsUnwantedGuests['fightRange']		= $RANGE_LONGBOW
 	$optionsUnwantedGuests['ignoreDroppedLoot']	= True
 	$optionsUnwantedGuests['priorityMobs']		= True
 	Info('Setting heroes up for quest')
@@ -1491,8 +1471,6 @@ Func TheFourHorsemen($reaper)
 		Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 	EndIf
 	Local $optionsChaosPlanes					= CloneMap($default_move_aggro_kill_options)
-	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT * 1.5
-	$optionsChaosPlanes['flagHeroesOnFight']	= False
 	$optionsChaosPlanes['ignoreDroppedLoot']	= True
 	$optionsChaosPlanes['priorityMobs']			= True
 	Info('Setting heroes & spirits up for quest')
@@ -1630,10 +1608,10 @@ Func TheFourHorsemen($reaper)
 	Info('Parking Heroes out of loot range for chest.')
 	CommandAll(13153, -12503)
 	MoveTo(11210, -17560)
-	PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT * 2)
+	PickUpItems(Null, DefaultShouldPickItem, $RANGE_COMPASS)
 	Info('Going to loot any drops on this side')
 	MoveTo(7685, -19340)
-	PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT * 2)
+	PickUpItems(Null, DefaultShouldPickItem, $RANGE_COMPASS)
 	Info('Going back to Reaper.')
 	MoveTo(11306, -17893)
 	; Loot Chest

@@ -37,7 +37,7 @@ Global Const $FOLLOWER_INFORMATIONS = 'This bot makes your character follow the 
 	& 'It will loot all items it can loot.' & @CRLF _
 	& 'It will also loot all chests in range.'
 
-Global Const $FOLLOWER_LEASH_RANGE = 850
+Global Const $FOLLOWER_LEASH_RANGE = $RANGE_SPELLCAST - 200
 
 ; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
 Global $player_profession_ID

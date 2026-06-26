@@ -106,9 +106,7 @@ Global $margonite_move_options									= CloneMap($default_move_defend_options)
 $margonite_move_options['defendFunction']						= MargoniteDefend
 $margonite_move_options['moveTimeOut']							= 100 * 1000
 $margonite_move_options['randomFactor']							= 25
-$margonite_move_options['hosSkillSlot']							= 0
 $margonite_move_options['deathChargeSkillSlot']					= $MARGONITE_DEATHS_CHARGE
-$margonite_move_options['openChests']							= False
 
 Global $margonite_move_options_elementalist						= CloneMap($margonite_move_options)
 $margonite_move_options_elementalist['deathChargeSkillSlot']	= 0

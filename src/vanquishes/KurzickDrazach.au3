@@ -1,6 +1,6 @@
 #CS ===========================================================================
 ; Author: ian
-; Contributor: ---
+; Contributor: Kronos
 ; Copyright 2026 caustic-kronos
 ;
 ; Licensed under the Apache License, Version 2.0 (the 'License');
@@ -29,37 +29,43 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $KURZICK_FACTION_DRAZACH_INFORMATIONS = 'For best results, have :' & @CRLF _
+Global Const $KURZICK_DRAZACH_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- a full hero team that can clear HM content easily' & @CRLF _
 	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
 	& 'This bot does not load hero builds - please use your own teambuild' & @CRLF _
 	& 'An Alternative Farm to Ferndale. This Bot will farm Drazach Thicket'
-; Average duration ~ 25m
-Global Const $KURZICKS_FARM_DRAZACH_DURATION = 25 * 60 * 1000
+; Average duration ~ 30m
+Global Const $KURZICKS_DRAZACH_DURATION = 30 * 60 * 1000
 
-Global $kurzick_farm_drazach_setup = False
+Global $kurzick_drazach_setup = False
+
 
 ;~ Main loop for the kurzick faction farm
-Func KurzickFactionFarmDrazach()
+Func KurzickDrazachFarm()
+	If Not $kurzick_drazach_setup Then KurzickDrazachSetup()
+
 	ManageFactionPointsKurzickFarm()
-	If Not $kurzick_farm_drazach_setup Then KurzickFarmDrazachSetup()
 	GetGoldForShrineBenediction()
 	GoToDrazach()
+	ResetFailuresCounter()
+	AdlibRegister('TrackPartyStatus', 10000)
 	Local $result = VanquishDrazach()
 	AdlibUnRegister('TrackPartyStatus')
 	Return $result
 EndFunc
 
+
 ;~ Setup for kurzick farm
-Func KurzickFarmDrazachSetup()
+Func KurzickDrazachSetup()
 	Info('Setting up farm')
 	TravelToOutpost($ID_THE_ETERNAL_GROVE, $district_name)
 	SwitchMode($ID_HARD_MODE)
 
-	$kurzick_farm_drazach_setup = True
+	$kurzick_drazach_setup = True
 	Info('Preparations complete')
 	Return $SUCCESS
 EndFunc
+
 
 ;~ Move out of outpost into Drazach
 Func GoToDrazach()
@@ -73,6 +79,7 @@ Func GoToDrazach()
 	WEnd
 	If GetMapID() <> $ID_DRAZACH_THICKET Then Return $FAIL
 EndFunc
+
 
 Func VanquishDrazach()
 	Info('Taking blessing')
