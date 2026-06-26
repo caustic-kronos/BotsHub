@@ -1,0 +1,149 @@
+#CS ===========================================================================
+; Author: caustic-kronos (aka Kronos, Night, Svarog)
+; Contributor: Gahais
+; Copyright 2025 caustic-kronos
+;
+; Licensed under the Apache License, Version 2.0 (the 'License');
+; you may not use this file except in compliance with the License.
+; You may obtain a copy of the License at
+; http://www.apache.org/licenses/LICENSE-2.0
+;
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an 'AS IS' BASIS,
+; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
+#CE ===========================================================================
+
+#include-once
+#RequireAdmin
+#NoTrayIcon
+
+#include '../../lib/GWA2.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/Utils.au3'
+
+; Possible improvements :
+
+Opt('MustDeclareVars', True)
+
+; ==== Constants ====
+Global Const $LUXON_MOUNT_QINKAI_INFORMATIONS = 'For best results, have :' & @CRLF _
+	& '- a full hero team that can clear HM content easily' & @CRLF _
+	& '- a build that can be played from skill 1 to 8 easily (no combos or complicated builds)' & @CRLF _
+	& 'This bot does not load hero builds - please use your own teambuild'
+; Average duration ~ 20m
+Global Const $LUXONS_MOUNT_QINKAI_DURATION = 20 * 60 * 1000
+
+Global $luxon_mount_qinkai_setup = False
+
+
+;~ Main loop for the luxon faction farm
+Func LuxonMountQinkaiFarm()
+	If Not $luxon_mount_qinkai_setup Then LuxonMountQinkaiSetup()
+
+	ManageFactionPointsLuxonFarm()
+	GetGoldForShrineBenediction()
+	GoToMountQinkai()
+	ResetFailuresCounter()
+	AdlibRegister('TrackPartyStatus', 10000)
+	Local $result = VanquishMountQinkai()
+	AdlibUnRegister('TrackPartyStatus')
+	Return $result
+EndFunc
+
+
+;~ Setup for the luxon points farm
+Func LuxonMountQinkaiSetup()
+	Info('Setting up farm')
+	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
+	SwitchMode($ID_HARD_MODE)
+	$luxon_mount_qinkai_setup = True
+	Info('Preparations complete')
+	Return $SUCCESS
+EndFunc
+
+
+;~ Move out of outpost into Mount Qinkai
+Func GoToMountQinkai()
+	TravelToOutpost($ID_ASPENWOOD_GATE_LUXON, $district_name)
+	While GetMapID() <> $ID_MOUNT_QINKAI
+		Info('Moving to Mount Qinkai')
+		MoveTo(-4268, 11628)
+		MoveTo(-5300, 13300)
+		Move(-5493, 13712)
+		RandomSleep(1000)
+		WaitMapLoading($ID_MOUNT_QINKAI, 10000, 2000)
+	WEnd
+EndFunc
+
+
+;~ Vanquish the Mount Qinkai map
+Func VanquishMountQinkai()
+	If GetMapID() <> $ID_MOUNT_QINKAI Then Return $FAIL
+	Info('Taking blessing')
+	GoNearestNPCToCoords(-8394, -9801)
+	TakeFactionBlessing('luxon')
+
+	If IsHardmodeEnabled() Then UseConset()
+	UseSummoningStone()
+	; 43 groups to vanquish
+	Local Static $foes[][] = [ _
+		[-11400,	-9000,		'Yetis',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-13500,	-10000,		'Yeti 1',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-15000,	-8000,		'Yeti 2',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-17500,	-10500,		'Yeti Ranger Boss',		$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-12000,	-4500,		'Rot Wallows',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-12500,	-3000,		'Yeti 3',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-14000,	-2500,		'Yeti Ritualist Boss',	$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-12000,	-3000,		'Leftovers',			$RANGE_SPIRIT					], _
+		[-10500,	-500,		'Rot Wallow 1',			$RANGE_SPIRIT					], _
+		[-11000,	5000,		'Yeti 4',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-10000,	7000,		'Yeti 5',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-8500,		8000,		'Yeti Monk Boss',		$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-5000,		6500,		'Yeti 6',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-3000,		8000,		'Yeti 7',				$RANGE_SPIRIT					], _
+		[-5000,		4000,		'Yeti 8',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-7000,		1000,		'Leftovers',			$RANGE_SPIRIT					], _
+		[-9000,		-1500,		'Leftovers',			$RANGE_SPIRIT					], _
+		[-6500,		-4500,		'Rot Wallow 2',			$RANGE_SPIRIT					], _
+		[-7000,		-7500,		'Rot Wallow 3',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-4000,		-7500,		'Leftovers',			$RANGE_SPIRIT					], _
+		[0,			-9500,		'Rot Wallow 4',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[5000,		-7000,		'Oni 1',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[6500,		-8500,		'Oni 2',				$RANGE_SPIRIT					], _
+		[5000,		-3500,		'Leftovers',			$RANGE_SPIRIT					], _
+		[500,		-2000,		'Leftovers',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[-1500,		-3000,		'Naga 1',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[1000,		1000,		'Rot Wallow 5',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[6500,		1000,		'Rot Wallow 6',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[5500,		5000,		'Leftovers',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[4000,		5500,		'Rot Wallow 7',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[6500,		7500,		'Rot Wallow 8',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[8000,		6000,		'Naga 2',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[9500,		7000,		'Naga 3',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[10500,		8000,		'Naga 4',				$RANGE_SPIRIT					], _
+		[12000,		7500,		'Naga 5',				$RANGE_SPIRIT					], _
+		[16000,		7000,		'Naga 6',				$WIDE_PLAYER_AGGRO_RANGE		], _
+		[15500,		4500,		'Leftovers',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[18000,		3250,		'Oni 3',				$RANGE_SPIRIT					], _
+		[18600,		3500,		'Oni 3',				$RANGE_SPIRIT					], _
+		[18000,		2500,		'Oni 3',				$RANGE_SPIRIT					], _
+		[16500,		1000,		'Leftovers',			$WIDE_PLAYER_AGGRO_RANGE		], _
+		[13500,		-1500,		'Naga 7',				$RANGE_SPIRIT					], _
+		[12500,		-3500,		'Naga 8',				$RANGE_SPIRIT					], _
+		[14000,		-6000,		'Outcast Warrior Boss', $RANGE_SPIRIT					], _
+		[13000,		-6000,		'Leftovers',			$RANGE_COMPASS					] _
+	]
+
+	For $i = 0 To UBound($foes) - 1
+		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
+	Next
+	If Not GetAreaVanquished() Then
+		Error('The map has not been completely vanquished.')
+		Return $FAIL
+	Else
+		Info('Map has been fully vanquished.')
+		Return $SUCCESS
+	EndIf
+EndFunc

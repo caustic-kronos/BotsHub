@@ -63,12 +63,11 @@ Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KE
 
 Global $warsupply_fight_options = CloneMap($default_move_aggro_kill_options)
 $warsupply_fight_options['fightFunction']	= WarSupplyFarmFight
-$warsupply_fight_options['fightRange']		= 1250
+$warsupply_fight_options['fightRange']		= $RANGE_LONGBOW
 ; approximate 20 seconds max duration of initial and final fight
 $warsupply_fight_options['fightDuration']	= 20000
 $warsupply_fight_options['priorityMobs']	= True
 $warsupply_fight_options['callTarget']		= False
-$warsupply_fight_options['lootInFights']	= False
 ; Only Krytan chests in Auspicious Beginnings quest which may have useless loot
 $warsupply_fight_options['openChests']		= False
 $warsupply_fight_options['skillsCostMap']	= $KEIRAN_SKILLS_COSTS_MAP
@@ -281,7 +280,7 @@ Func WarSupplyFarmFight($options = $warsupply_fight_options)
 	If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then Return $FAIL
 	Info('Fighting')
 
-	Local $fightRange	= $options['fightRange'] <> Null ?		$options['fightRange'] : 1200
+	Local $fightRange	= $options['fightRange'] <> Null ?		$options['fightRange'] : $RANGE_LONGBOW
 	Local $priorityMobs	= $options['priorityMobs'] <> Null ?	$options['priorityMobs'] : True
 
 	Local $me = Null

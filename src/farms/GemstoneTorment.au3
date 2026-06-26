@@ -65,7 +65,6 @@ Global $torment_run_options						= CloneMap($default_move_defend_options)
 $torment_run_options['defendFunction']			= DefendTormentFarm
 $torment_run_options['moveTimeOut']				= 3 * 60 * 1000
 $torment_run_options['randomFactor']			= 200
-$torment_run_options['hosSkillSlot']			= 0
 $torment_run_options['deathChargeSkillSlot']	= $TORMENT_DEATHS_CHARGE
 ; chests in Ravenheart Gloom should have good loot
 $torment_run_options['openChests']				= True
@@ -227,9 +226,9 @@ Func DefendTormentFarm()
 
 	If (DllStructGetData($me, 'HealthPercent') < 0.3 Or _
 			(DllStructGetData($me, 'HealthPercent') < 0.4 And GetHasCondition($me))) And _
-			CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 And _
+			CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST) > 0 And _
 			IsRecharged($TORMENT_DEATHS_CHARGE) And GetEnergy() > 5 Then
-		$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+		$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_SPELLCAST)
 		UseSkillTimed($TORMENT_DEATHS_CHARGE, $target)
 	EndIf
 EndFunc

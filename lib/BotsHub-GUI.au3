@@ -969,14 +969,14 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _
 				$RT_KOURNANS_HERO_SKILLBAR & @CRLF & $P_KOURNANS_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $KOURNANS_FARM_INFORMATIONS)
-		Case 'Kurzick'
+		Case 'Kurzick Ferndale'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
-			GUICtrlSetData($gui_label_farminformations, $KURZICK_FACTION_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $KURZICK_FERNDALE_INFORMATIONS)
 		Case 'Kurzick Drazach'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
-			GUICtrlSetData($gui_label_farminformations, $KURZICK_FACTION_DRAZACH_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $KURZICK_DRAZACH_INFORMATIONS)
 		Case 'LDOA'
 			GUICtrlSetData($gui_label_farminformations, $LDOA_INFORMATIONS)
 		Case 'Lightbringer & Sunspear'
@@ -987,10 +987,14 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $LIGHTBRINGER_FARM_INFORMATIONS)
-		Case 'Luxon'
+		Case 'LuxonMQ'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
-			GUICtrlSetData($gui_label_farminformations, $LUXON_FACTION_INFORMATIONS)
+			GUICtrlSetData($gui_label_farminformations, $LUXON_MOUNT_QINKAI_INFORMATIONS)
+		Case 'LuxonSS'
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $LUXON_SILENT_SURF_INFORMATIONS)
 		Case 'Mantids'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_MANTIDS_FARMER_SKILLBAR)
 			GUICtrlSetData($gui_edit_heroesbuilds, $MANTIDS_HERO_SKILLBAR)
@@ -1022,7 +1026,7 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $SOO_FARM_INFORMATIONS)
 		Case 'SpiritSlaves'
-			GUICtrlSetData($gui_edit_characterbuilds, $SPIRIT_SLAVES_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, $SPIRIT_SLAVES_RITUALIST_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $SPIRIT_SLAVES_FARM_INFORMATIONS)
 		Case 'Sunspear Armor'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)

@@ -184,7 +184,7 @@ EndFunc
 Func CleanCoFMobs()
 	Local $target = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, $RANGE_COMPASS, IsUndead)
 	Local $clock = False
-	While $target <> Null And GetDistance(GetMyAgent(), $target) < $RANGE_EARSHOT
+	While $target <> Null And GetDistance(GetMyAgent(), $target) < $MOB_AGGRO_RANGE
 		If Not $clock And GetSkillbarSkillAdrenaline($COF_CRIPPLING_VICTORY) >= 150 Then
 			UseSkillEx($COF_CRIPPLING_VICTORY, $target)
 			$clock = True

@@ -206,7 +206,7 @@ Func DragonMossFarmLoop()
 
 	; Killing
 	Local $target = GetNearestEnemyToAgent(GetMyAgent())
-	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_ADJACENT)
+	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), $RANGE_AREA)
 	$target = GetNearestEnemyToCoords($center[0], $center[1])
 	While IsRecharged($DM_DEATHS_CHARGE) And IsPlayerAlive()
 		UseSkillEx($DM_DEATHS_CHARGE, $target)

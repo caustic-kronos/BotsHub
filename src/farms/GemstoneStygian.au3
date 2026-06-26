@@ -90,9 +90,6 @@ Global $stygian_run_options						= CloneMap($default_move_defend_options)
 $stygian_run_options['defendFunction']			= StygianCheckRunBuffs
 $stygian_run_options['moveTimeOut']				= 3 * 60 * 1000
 $stygian_run_options['randomFactor']			= 20
-$stygian_run_options['hosSkillSlot']			= 0
-$stygian_run_options['deathChargeSkillSlot']	= 0
-$stygian_run_options['openChests']				= False
 
 Global $stygian_player_profession = $ID_MESMER
 Global $gemstone_stygian_farm_setup = False

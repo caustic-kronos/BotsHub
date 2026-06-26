@@ -123,13 +123,9 @@ EndFunc
 ;~ Done here to pick latest version of $default_move_aggro_kill_options
 Func SetupGemstonesFightOptions()
 	$gemstones_fight_options						= CloneMap($default_move_aggro_kill_options)
-	; == $RANGE_EARSHOT * 1.5 ; extended range to also target special foes, which can stand far away
-	$gemstones_fight_options['fightRange']			= 1500
 	; heroes will be flagged before fight to defend the start location
-	$gemstones_fight_options['flagHeroesOnFight']	= False
 	$gemstones_fight_options['priorityMobs']		= True
 	$gemstones_fight_options['skillsCostMap']		= $GEM_SKILLS_COSTS_MAP
-	$gemstones_fight_options['lootInFights']		= False
 	; there are no chests in Ebony Citadel of Mallyx location
 	$gemstones_fight_options['openChests']			= False
 EndFunc

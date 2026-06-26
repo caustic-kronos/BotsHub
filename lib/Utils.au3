@@ -30,8 +30,12 @@ Opt('MustDeclareVars', True)
 Global Const $PI = 3.14
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST=1085, $RANGE_LONGBOW=1250, $RANGE_SPIRIT=2500, $RANGE_COMPASS=5000
 Global Const $RANGE_ADJACENT_2=156^2, $RANGE_NEARBY_2=240^2, $RANGE_AREA_2=312^2, $RANGE_EARSHOT_2=1000^2, $RANGE_SPELLCAST_2=1085^2, $RANGE_LONGBOW_2=1250^2, $RANGE_SPIRIT_2=2500^2, $RANGE_COMPASS_2=5000^2
-; Mobs aggro correspond to earshot range
-Global Const $AGGRO_RANGE=$RANGE_EARSHOT * 1.5
+; Mobs aggro correspond to earshot range + hitbox size (10 diameter) - bosses have larger aggro range
+Global Const $MOB_AGGRO_RANGE = $RANGE_EARSHOT + 10
+; Aggro range of user in order to surprise mobs
+Global Const $PLAYER_AGGRO_RANGE= $RANGE_SPELLCAST + 100
+; Wider aggro range of user used for clears
+Global Const $WIDE_PLAYER_AGGRO_RANGE= $RANGE_EARSHOT * 1.5
 ; Speed of a character without boosts ~290/s
 Global Const $PLAYER_DEFAULT_SPEED = 290
 
@@ -626,7 +630,7 @@ EndFunc
 
 
 ;~ Get close to a mob without aggroing it
-Func GetAlmostInRangeOfAgent($targetAgent, $proximity = ($RANGE_SPELLCAST + 100))
+Func GetAlmostInRangeOfAgent($targetAgent, $proximity = $PLAYER_AGGRO_RANGE)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
@@ -688,8 +692,8 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 						PingSleep(50)
 						MoveRadial($destinationX, $destinationY, $randomFactor)
 					; If Death's Charge skill is available then use it to get unstuck
-					ElseIf $deathChargeSkillSlot > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT) > 0 And IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
-						$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_EARSHOT)
+					ElseIf $deathChargeSkillSlot > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST) > 0 And IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
+						$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_SPELLCAST)
 						UseSkillEx($deathChargeSkillSlot, $target)
 						PingSleep(50)
 						MoveRadial($destinationX, $destinationY, $randomFactor)
@@ -895,7 +899,7 @@ Func UseSkillTimed($skillSlot, $target = Null)
 	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()
 
 	; when player casts a skill on target that is beyond cast range then trying to get close to target first to not count time on the run
-	If $target <> Null And GetDistance(GetMyAgent(), $target) > ($RANGE_SPELLCAST + 100) Then GetAlmostInRangeOfAgent($target)
+	If $target <> Null And GetDistance(GetMyAgent(), $target) > $PLAYER_AGGRO_RANGE Then GetAlmostInRangeOfAgent($target)
 	UseSkill($skillSlot, $target)
 	Local $castTimer = TimerInit()
 	; wait until skill starts recharging or time for skill to be fully activated has elapsed
@@ -1005,7 +1009,7 @@ Func WaitAndFightEnemiesInArea($options = $default_move_aggro_kill_options)
 	If IsPlayerAndPartyWiped() Then Return $FAIL
 
 	Local $fightFunction	= $options['fightFunction'] <> Null ?	$options['fightFunction'] : KillFoesInArea
-	Local $fightRange		= $options['fightRange'] <> Null ?		$options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $fightRange		= $options['fightRange'] <> Null ?		$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
 	Local $fightDuration	= $options['fightDuration'] <> Null ?	$options['fightDuration'] : 60000
 
 	Local $me = GetMyAgent()
@@ -1040,7 +1044,7 @@ EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map
-Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = $default_move_aggro_kill_options)
+Func MoveAggroAndKillInRange($x, $y, $log = '', $range = $WIDE_PLAYER_AGGRO_RANGE, $options = $default_move_aggro_kill_options)
 	; This effectively copies the map - small price to pay
 	$options['fightRange']	= $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
@@ -1048,7 +1052,7 @@ EndFunc
 
 
 ;~ Version to specify fight range as parameter instead of in options map and also flag heroes before fights
-Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $RANGE_EARSHOT * 1.5, $options = $flag_move_aggro_kill_options)
+Func FlagMoveAggroAndKillInRange($x, $y, $log = '', $range = $WIDE_PLAYER_AGGRO_RANGE, $options = $flag_move_aggro_kill_options)
 	; This effectively copies the map - small price to pay
 	$options['fightRange']	= $range
 	Return MoveAggroAndKill($x, $y, $log, $options)
@@ -1082,7 +1086,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 	Local $openChests			= $options['openChests'] <> Null ?			$options['openChests'] : True
 	Local $chestOpenRange		= $options['chestOpenRange'] <> Null ?		$options['chestOpenRange'] : $RANGE_SPIRIT
 	Local $fightFunction		= $options['fightFunction'] <> Null ?		$options['fightFunction'] : KillFoesInArea
-	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
 	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
 	Local $unstuckFunction		= $options['unstuckFunction'] <> Null ?		$options['unstuckFunction'] : TryToGetUnstuck
 
@@ -1211,7 +1215,7 @@ EndFunc
 
 ;~ Kill foes by casting skills from 1 to 8
 Func KillFoesInArea($options = $default_move_aggro_kill_options)
-	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $RANGE_EARSHOT * 1.5
+	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
 	Local $flagHeroes			= $options['flagHeroesOnFight'] <> Null ?	$options['flagHeroesOnFight'] : False
 	Local $callTarget			= $options['callTarget'] <> Null ?			$options['callTarget'] : True
 	Local $priorityMobs			= $options['priorityMobs'] <> Null ?		$options['priorityMobs'] : False
@@ -1753,9 +1757,9 @@ Func MappingWrite($mode = Null, $mapfile = Null, $chestFile = Null, $foesFile = 
 	EndIf
 	If BitAND($mappingMode, 0x04) <> 0x00 Then
 		Local $me = GetMyAgent()
-		Local $nearFoe = GetNearestEnemyToAgent($me, $RANGE_EARSHOT)
+		Local $nearFoe = GetNearestEnemyToAgent($me, $MOB_AGGRO_RANGE)
 		If $nearFoe <> Null And IsSensali($nearFoe) And $foesMap[DllStructGetData($nearFoe, 'ID')] == Null Then
-			Local $foes = GetFoesInRangeOfAgent($nearFoe, $RANGE_EARSHOT, IsSensali)
+			Local $foes = GetFoesInRangeOfAgent($nearFoe, $MOB_AGGRO_RANGE, IsSensali)
 			Local $counter = 0
 			Local $position = [0, 0]
 			For $foe In $foes

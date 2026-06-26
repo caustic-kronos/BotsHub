@@ -188,14 +188,14 @@ Func MoveAndKillSensali($x, $y, $message)
 	Info($message)
 	; Move until we are at position or until we aggroed a sensali
 	Local $me = GetMyAgent()
-	Local $sensali = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_EARSHOT, IsSensali)
+	Local $sensali = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $MOB_AGGRO_RANGE, IsSensali)
 	While GetDistanceToPoint($me, $x, $y) > $RANGE_AREA And $sensali == Null
 		FeathersRun()
 		Move($x, $y)
 		RandomSleep(1000)
 		If IsPlayerDead() Then Return $FAIL
 		$me = GetMyAgent()
-		$sensali = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $RANGE_EARSHOT, IsSensali)
+		$sensali = GetNearestAgentToAgent($me, $ID_AGENT_TYPE_NPC, $MOB_AGGRO_RANGE, IsSensali)
 	WEnd
 	; No sensali around, we can consider this group as cleared and move on to the next one
 	If $sensali == Null Then Return $SUCCESS

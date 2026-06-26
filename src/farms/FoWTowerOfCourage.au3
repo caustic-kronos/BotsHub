@@ -89,11 +89,9 @@ Global Const $MAX_FOW_TOC_FARM_DURATION = 6 * 60 * 1000
 
 Global $fow_toc_move_options					= CloneMap($default_move_defend_options)
 $fow_toc_move_options['defendFunction']			= CastFowToCBuffs
-$fow_toc_move_options['moveTimeOut']			= 5 * 60 * 1000
 $fow_toc_move_options['randomFactor']			= 25
 $fow_toc_move_options['hosSkillSlot']			= $FOW_TOC_HEART_OF_SHADOW
 $fow_toc_move_options['deathChargeSkillSlot']	= $FOW_TOC_DEATH_CHARGE
-$fow_toc_move_options['openChests']				= False
 
 ;Global Const $FOW_TOC_MODELID_SHADOW_MESMER	= 2855
 ;Global Const $FOW_TOC_MODELID_SHADOW_ELEMENTAL	= 2856
@@ -219,7 +217,7 @@ Func FoWToCFarmLoop()
 	Info('Killing rangers')
 	; Longest bow range is around 1500
 	Local $target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_SPELLCAST + 500)
-	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), 2 * $RANGE_EARSHOT)
+	Local $center = FindMiddleOfFoes(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'), $RANGE_EARSHOT)
 	CastFowToCBuffs()
 	GetAlmostInRangeOfAgent($target)
 	CastFowToCBuffs()

@@ -301,7 +301,7 @@ Func LakeOfFire()
 	MoveAggroAndKillInRange(20500, -8100, '5', $RANGE_EARSHOT)
 	MoveAggroAndKillInRange(20500, -12400, '6', $RANGE_EARSHOT)
 	MoveAggroAndKillInRange(18300, -14000, '7', $RANGE_EARSHOT)
-	MoveAggroAndKillInRange(19500, -15000, '8', $RANGE_EARSHOT * 1.25)
+	MoveAggroAndKillInRange(19500, -15000, '8', $RANGE_LONGBOW)
 	Return IsPlayerOrPartyAlive() ? $SUCCESS : $FAIL
 EndFunc
 
@@ -350,7 +350,7 @@ EndFunc
 
 Func BurningForest()
 	Local $optionsBurningForest					= CloneMap($default_move_aggro_kill_options)
-	$optionsBurningForest['fightRange']			= $RANGE_EARSHOT * 1.25
+	$optionsBurningForest['fightRange']			= $RANGE_LONGBOW
 	$optionsBurningForest['flagHeroesOnFight']	= True
 	Info('Heading to Burning Forest')
 	MoveAggroAndKill(15200, -1100, '1')
@@ -424,7 +424,7 @@ EndFunc
 
 Func ForestOfTheWailingLord()
 	Local $optionsForestOfTheWailingLord			= CloneMap($default_move_aggro_kill_options)
-	$optionsForestOfTheWailingLord['fightRange']	= $RANGE_EARSHOT * 1.25
+	$optionsForestOfTheWailingLord['fightRange']	= $RANGE_LONGBOW
 	Info('Clearing forest')
 	MoveAggroAndKill(-17500, 9750, '1')
 	MoveAggroAndKill(-20200, 9500, '2', $optionsForestOfTheWailingLord)
@@ -590,11 +590,11 @@ EndFunc
 
 Func TempleLoot()
 	Local $optionsTempleLoot = CloneMap($default_move_aggro_kill_options)
+	$optionsTempleLoot['fightRange'] = $RANGE_EARSHOT * 2
 	MoveAggroAndKill(-9800, -4800)
 	MoveAggroAndKill(-6800, -3800)
 	MoveAggroAndKill(-8000, 5100)
 	If Not IsRunFailed() And Not IsQuestReward($ID_QUEST_THE_HUNT) Then
-		$optionsTempleLoot['fightRange'] = $RANGE_EARSHOT * 2
 		Info('The Hunt is not complete.')
 		Info('Let us make sure we got wolf in the battlefield')
 		MoveAggroAndKill(-5066, 11490, '', $optionsTempleLoot)

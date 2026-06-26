@@ -56,7 +56,6 @@ Global $ldoa_fight_options = CloneMap($default_move_aggro_kill_options)
 $ldoa_fight_options['openChests']	= False
 $ldoa_fight_options['callTarget']	= False
 $ldoa_fight_options['priorityMobs']	= True
-$ldoa_fight_options['lootInFights']	= False
 
 ;~ Main method to get LDOA title
 Func LDOATitleFarm()
@@ -163,7 +162,7 @@ Func InitialSetupLDOA()
 
 	TakeQuest($questNPC, $professionTestQuestID, $professionTestAcceptQuestDialogID)
 	MoveTo(4187, -948)
-	MoveAggroAndKillInRange(4207, -2892, '', 3000)
+	MoveAggroAndKillInRange(4207, -2892, '', $RANGE_SPIRIT + 500)
 	If $primaryProfession == $ID_MONK Then
 		MoveTo(3868, -4330)
 		Local $npcGwen = GetNearestNPCToCoords(3868, -4330)
@@ -336,7 +335,7 @@ Func LDOATitleFarmUnder10()
 	MoveTo(-3640, 10930)
 	Sleep(2000)
 	MoveTo(-3440, 10010)
-	MoveAggroAndKillInRange(-3753, 11131, '', 3000)
+	MoveAggroAndKillInRange(-3753, 11131, '', $RANGE_SPIRIT + 500)
 	If IsPlayerDead() Then Return $FAIL
 	Return $SUCCESS
 EndFunc

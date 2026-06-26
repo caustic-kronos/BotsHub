@@ -81,9 +81,10 @@
 #include 'src/utilities/OmniFarmer.au3'
 #include 'src/utilities/TestSuite.au3'
 #include 'src/vanquishes/Asuran.au3'
-#include 'src/vanquishes/Kurzick.au3'
-#include 'src/vanquishes/Kurzick2.au3'
-#include 'src/vanquishes/Luxon.au3'
+#include 'src/vanquishes/KurzickFerndale.au3'
+#include 'src/vanquishes/KurzickDrazach.au3'
+#include 'src/vanquishes/LuxonMountQinkai.au3'
+#include 'src/vanquishes/LuxonSilentSurf.au3'
 #include 'src/vanquishes/Norn.au3'
 #include 'src/vanquishes/Vanguard.au3'
 #EndRegion Includes
@@ -98,7 +99,7 @@ Global Const $FAIL = 1
 Global Const $PAUSE = 2
 
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
-	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|Luxon|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
+	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
 	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Manual Mode'
 
 Global Const $AVAILABLE_DISTRICTS = '|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
@@ -529,12 +530,13 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'Jade Brotherhood',				JadeBrotherhoodFarm,			5,					$JADEBROTHERHOOD_FARM_DURATION)
 	AddFarmToFarmMap(	'Kilroy',						KilroyFarm,						10,					$KILROY_FARM_DURATION)
 	AddFarmToFarmMap(	'Kournans',						KournansFarm,					5,					$KOURNANS_FARM_DURATION)
-	AddFarmToFarmMap(	'Kurzick',						KurzickFactionFarm,				15,					$KURZICKS_FARM_DURATION)
-	AddFarmToFarmMap(	'Kurzick Drazach',				KurzickFactionFarmDrazach,		10,					$KURZICKS_FARM_DRAZACH_DURATION)
+	AddFarmToFarmMap(	'Kurzick Ferndale',				KurzickFerndaleFarm,			15,					$KURZICKS_FERNDALE_DURATION)
+	AddFarmToFarmMap(	'Kurzick Drazach',				KurzickDrazachFarm,				10,					$KURZICKS_DRAZACH_DURATION)
 	AddFarmToFarmMap(	'LDOA',							LDOATitleFarm,					0,					$LDOA_FARM_DURATION)
 	AddFarmToFarmMap(	'Lightbringer',					LightbringerFarm,				5,					$LIGHTBRINGER_FARM_DURATION)
 	AddFarmToFarmMap(	'Lightbringer & Sunspear',		LightbringerSunspearFarm,		10,					$LIGHTBRINGER_SUNSPEAR_FARM_DURATION)
-	AddFarmToFarmMap(	'Luxon',						LuxonFactionFarm,				10,					$LUXONS_FARM_DURATION)
+	AddFarmToFarmMap(	'LuxonMQ',						LuxonMountQinkaiFarm,			10,					$LUXONS_MOUNT_QINKAI_DURATION)
+	AddFarmToFarmMap(	'LuxonSS',						LuxonSilentSurfFarm,			10,					$LUXONS_SILENT_SURF_DURATION)
 	AddFarmToFarmMap(	'Mantids',						MantidsFarm,					5,					$MANTIDS_FARM_DURATION)
 	AddFarmToFarmMap(	'Ministerial Commendations',	MinisterialCommendationsFarm,	5,					$COMMENDATIONS_FARM_DURATION)
 	AddFarmToFarmMap(	'Minotaurs',					MinotaursFarm,					5,					$MINOTAURS_FARM_DURATION)

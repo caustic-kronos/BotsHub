@@ -64,7 +64,9 @@ To use it:
 | Area							| Title / Points						|
 | ----------------------------- | ------------------------------------- |
 | Ferndale						| Kurzick								|
+| Drazach						| Kurzick								|
 | Mount Qinkai					| Luxon									|
+| Silent Surf					| Luxon									|
 | Sulfurous Wastes				| Sunspear, Lightbringer				|
 | Mirror of Lyss				| Lightbringer							|
 | Magus Stones					| Asura									|

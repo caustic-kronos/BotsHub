@@ -24,38 +24,27 @@
 Opt('MustDeclareVars', True)
 
 ; ==== Constants ====
-Global Const $SPIRIT_SLAVES_SKILLBAR = 'OgejkOrMLTmXfXfb0kkX4OcX5iA'
-Global Const $SPIRIT_SLAVES_FARM_INFORMATIONS = '[CURRENTLY BROKEN]' & @CRLF _
-	& 'For best results, have :' & @CRLF _
-	& '- 16 Earth Prayers' &@CRLF _
-	& '- 13 Mysticism' & @CRLF _
-	& '- 4 Scythe Mastery' & @CRLF _
-	& '- Windwalker insignias'& @CRLF _
-	& '- Anything of enchanting without zealous on slot 1' & @CRLF _
-	& '- A scythe of enchanting q4 or less with zealous mod on slot 2' & @CRLF _
-	& '- Anything defensive on slot 4' & @CRLF _
-	& '- any PCons you wish to use' & @CRLF _
-	& '- the quest Destroy the Ungrateful Slaves not completed' & @CRLF _
-	& 'Note: the farm works less efficiently during events because of the amount of loot'
+Global Const $SPIRIT_SLAVES_RITUALIST_SKILLBAR = 'OAWjMwhM5QRAmAsiLBWMEP0krlA'
+Global Const $SPIRIT_SLAVES_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
+	& '- 16 Restoration Magic' &@CRLF _
+	& '- 12 Inspiration Magic' & @CRLF _
+	& '- Herald insignias, Superior Vigor and 3 attunement runes'& @CRLF _
+	& '- the quest Destroy the Ungrateful Slaves not completed'
 Global Const $SPIRIT_SLAVES_FARM_DURATION = 10 * 60 * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkill($SKILL_CONVICTION is better than UseSkill(1))
-Global Const $SS_SAND_SHARDS					= 1
-Global Const $SS_I_AM_UNSTOPPABLE				= 2
-Global Const $SS_MYSTIC_VIGOR					= 3
-Global Const $SS_VOW_OF_STRENGTH				= 4
-Global Const $SS_EXTEND_ENCHANTMENTS			= 5
-Global Const $SS_DEATHS_CHARGE					= 6
-Global Const $SS_MIRAGE_CLOAK					= 7
-Global Const $SS_EBON_BATTLE_STANDARD_OF_HONOR	= 8
-;Global Const $SS_HEART_OF_FURY					= 8
+; Skill numbers declared to make the code WAY more readable (UseSkill($SS_MANTRA_OF_RESOLVE is better than UseSkill(1))
+Global Const $SS_MANTRA_OF_RESOLVE				= 1
+Global Const $SS_CHANNELING						= 2
+Global Const $SS_GREAT_DWARF_ARMOR				= 3
+Global Const $SS_ARCANE_ECHO					= 4
+Global Const $SS_VENGEFUL_WAS_KHANHEI			= 5
+Global Const $SS_VENGEFUL_WEAPON				= 6
+Global Const $SS_I_AM_UNSTOPPABLE				= 7
+Global Const $SS_MINDBENDER						= 8
 
-; Reduction from mysticism (50%) and increase from spirit (30%) are included
-Global Const $SS_SKILLS_ARRAY =			[$SS_SAND_SHARDS,	$SS_I_AM_UNSTOPPABLE,	$SS_MYSTIC_VIGOR,	$SS_VOW_OF_STRENGTH,	$SS_EXTEND_ENCHANTMENTS,	$SS_DEATHS_CHARGE,	$SS_MIRAGE_CLOAK,	$SS_EBON_BATTLE_STANDARD_OF_HONOR]
-Global Const $SS_SKILLS_COSTS_ARRAY =	[7,					7,						4,					4,						7,							7,					7,					13]
-Global Const $SKILL_COSTS_MAP = MapFromArrays($SS_SKILLS_ARRAY, $SS_SKILLS_COSTS_ARRAY)
-
+; Spirit from Arm of Insanity might cast a Quickening Zephyr close enough to reduce recast by 50% and increase costs by 30%
 Global $spirit_slaves_farm_setup = False
+
 
 ;~ Main loop of the farm
 Func SpiritSlavesFarm()
@@ -85,11 +74,11 @@ EndFunc
 
 Func SetupPlayerSpiritSlavesFarm()
 	Info('Setting up player build skill bar')
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-		LoadSkillTemplate($SPIRIT_SLAVES_SKILLBAR)
+	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RITUALIST Then
+		LoadSkillTemplate($SPIRIT_SLAVES_RITUALIST_SKILLBAR)
 		RandomSleep(250)
 	Else
-		Warn('Should run this farm as dervish')
+		Warn('Should run this farm as a ritualist')
 		Return $FAIL
 	EndIf
 	Return $SUCCESS
@@ -99,305 +88,191 @@ EndFunc
 Func RunToShatteredRavines()
 	TravelToOutpost($ID_BONE_PALACE, $district_name)
 	; Exiting to Joko's Domain
-	MoveTo(-14520, 6009)
-	Move(-14820, 3400)
+	MoveTo(-14500, 6000)
+	Move(-14800, 3400)
 	RandomSleep(1000)
 	If Not WaitMapLoading($ID_JOKOS_DOMAIN) Then Return $FAIL
+
 	RandomSleep(500)
-	MoveTo(-12657, 2609)
-	ChangeWeaponSet(4)
-	MoveTo(-10938, 4254)
+	UseSkillEx($SS_MINDBENDER)
+	MoveTo(-12650, 2600)
+	MoveTo(-10950, 4250)
 	; Going to wurm's spoor
-	ChangeTarget(GetNearestSignpostToCoords(-10938, 4254))
+	ChangeTarget(GetNearestSignpostToCoords(-10950, 4250))
 	RandomSleep(500)
 	Info('Taking wurm')
 	TargetNearestItem()
 	ActionInteract()
 	RandomSleep(1500)
 	UseSkillEx(5)
-	; Starting from there there might be enemies on the way
 	MoveTo(-8255, 5320)
+
+	; Starting from there, there might be enemies on the way
 	Local $me = GetMyAgent()
 	If (CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
-	MoveTo(-8624, 10636)
+	MoveTo(-8600, 10600)
 	$me = GetMyAgent()
 	If (CountFoesInRangeOfAgent($me, $RANGE_EARSHOT) > 0) Then UseSkillEx(5)
-	MoveTo(-8261, 12808)
-	Move(-3838, 19196)
+	MoveTo(-8250, 12800)
+	Move(-3850, 19200)
 	$me = GetMyAgent()
-	While IsPlayerAlive() And IsPlayerMoving()
+	While IsPlayerMoving()
 		If (CountFoesInRangeOfAgent($me, $RANGE_NEARBY) > 0 And IsRecharged(5)) Then UseSkillEx(5)
 		RandomSleep(500)
 		$me = GetMyAgent()
+		; If dead it is not worth rezzing better just restart running
+		If IsPlayerDead() Then Return $FAIL
 	WEnd
-
-	; If dead it is not worth rezzing better just restart running
-	If IsPlayerDead() Then Return $FAIL
-
-	MoveTo(-4486, 19700)
+	MoveTo(-4500, 19700)
 	RandomSleep(3000)
-	MoveTo(-4486, 19700)
-
+	MoveTo(-4500, 19700)
 	; If dead it is not worth rezzing better just restart running
 	If IsPlayerDead() Then Return $FAIL
 
 	; Entering The Shattered Ravines
-	ChangeWeaponSet(1)
 	Info('Entering The Shattered Ravines : careful')
 	MoveTo(-4500, 20150)
 	Move(-4500, 21000)
 	RandomSleep(1000)
 	If Not WaitMapLoading($ID_THE_SHATTERED_RAVINES, 10000, 2000) Then Return $FAIL
 	; Hurry up before dying
-	MoveTo(-9714, -10767)
-	MoveTo(-7919, -10530)
+	MoveTo(-9700, -10750)
+	UseSkillEx($SS_MINDBENDER)
+	MoveTo(-7900, -10550)
 	Return $SUCCESS
 EndFunc
 
 
 ;~ Farm loop
 Func SpiritSlavesFarmLoop()
-	UseConsumable($ID_SLICE_OF_PUMPKIN_PIE)
-
-	Info('Killing group 1 @ North')
-	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
-	Info('Killing group 2 @ South')
-	If FarmSouthGroup() == $FAIL Then Return RestartAfterDeath()
-	Info('Killing group 3 @ South')
-	If FarmSouthGroup() == $FAIL Then Return RestartAfterDeath()
-	Info('Killing group 4 @ North')
-	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
-	Info('Killing group 5 @ North')
-	If FarmNorthGroup() == $FAIL Then Return RestartAfterDeath()
+	Local $bottomPosition = [-8500, -6400]
+	Local $topPosition = [-8900, -4600]
+	; 5 Groups to kill
+	For $group = 1 To 5
+		MoveTo(-7465, -7900, 0, 0)
+		; For the first group, we need the allies to die first	-	First wave
+		If $group == 1 Then WaitForAlliesDead()
+		Local $balled = True
+		; The bottom group comes only the first three times		-	First, Second and Third waves
+		If $group >= 1 And $group <= 3 Then $balled = WaitForFoesBall($bottomPosition)
+		; The top group comes twice - 							-	Second and Fourth waves
+		If $group == 2 Or $group == 5 Then $balled = WaitForFoesBall($topPosition)
+		; FIXME: Sometimes groups get in range of player - we could fix with starting the fight
+		; for now we just die and restart the zone
+		If IsPlayerDead() Then Return RestartAfterDeath()
+		Info('Killing group ' & $group)
+		If ($balled ? FarmGroup() : QuickFarmGroup()) == $FAIL Then Return RestartAfterDeath()
+	Next
 
 	Info('Moving out of the zone and back again')
-	Move(-7735, -8380)
 	RezoneToTheShatteredRavines()
-
-	Return $SUCCESS
-EndFunc
-
-
-;~ Rezoning to reset the farm
-Func RezoneToTheShatteredRavines()
-	Info('Rezoning')
-	; Exiting to Jokos Domain
-	MoveTo(-7800, -10250)
-	MoveTo(-9000, -10900)
-	MoveTo(-10500, -11000)
-	Move(-10656, -11293)
-	RandomSleep(1000)
-	WaitMapLoading($ID_JOKOS_DOMAIN)
-	RandomSleep(500)
-	; Reentering The Shattered Ravines
-	MoveTo(-4500, 20150)
-	Move(-4500, 21000)
-	RandomSleep(1000)
-	WaitMapLoading($ID_THE_SHATTERED_RAVINES, 10000, 2000)
-	; Hurry up before dying
-	MoveTo(-9714, -10767)
-	MoveTo(-7919, -10530)
-EndFunc
-
-
-;~ Farm the north group (group 1, 4 and 5)
-Func FarmNorthGroup()
-	MoveTo(-7375, -7767)
-	WaitForFoesBall()
-	WaitForEnergy()
-	WaitForDeathsCharge()
-	Local $targetFoe = GetNearestNPCInRangeOfCoords(-8598, -5810, $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
-	GetAlmostInRangeOfAgent($targetFoe)
-	ChangeWeaponSet(1)
-	UseSkillEx($SS_SAND_SHARDS)
-	RandomSleep(3500)
-	UseSkillEx($SS_I_AM_UNSTOPPABLE)
-	RandomSleep(3500)
-	UseSkillEx($SS_MYSTIC_VIGOR)
-	RandomSleep(300)
-	UseSkillEx($SS_VOW_OF_STRENGTH)
-	RandomSleep(50)
-	UseSkillEx($SS_EXTEND_ENCHANTMENTS)
-	RandomSleep(50)
-	If IsPlayerDead() Then Return $FAIL
-
-	Local $positionToGo = FindMiddleOfFoes(-8598, -5810, $RANGE_AREA)
-	$targetFoe = BetterGetNearestNPCToCoords($ID_ALLEGIANCE_FOE, $positionToGo[0], $positionToGo[1], $RANGE_EARSHOT)
-
-	UseSkillEx($SS_DEATHS_CHARGE, $targetFoe)
-	RandomSleep(50)
-	If GetEnergy() > $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK] Then UseSkillEx($SS_MIRAGE_CLOAK)
-	RandomSleep(50)
-	If GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
-	RandomSleep(50)
-
-	If IsPlayerDead() Then Return $FAIL
-	If KillSequence() == $FAIL Then Return $FAIL
-	Return $SUCCESS
-EndFunc
-
-
-;~ Farm the south group (group 2 and 3)
-Func FarmSouthGroup()
-	CleanseFromCripple()
-	MoveTo(-7830, -7860)
-	CleanseFromCripple()
-	; Wait until an enemy is past the correct aggro line
-	Local $foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
-	Local $deadlock = TimerInit()
-	While IsPlayerAlive() And $foesCount < 8 And TimerDiff($deadlock) < 120000
-		RandomSleep(100)
-		$foesCount = CountFoesInRangeOfCoords(-7400, -9400, $RANGE_SPELLCAST, IsPastAggroLine)
-		CleanseFromCripple()
-	WEnd
-	CleanseFromCripple()
-	; We want foes between -8055,-9200 and -8055,-9300
-	Move(-7735, -8380)
-	$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
-	$deadlock = TimerInit()
-	; Wait until an enemy is aggroed
-	While IsPlayerAlive() And $foesCount == 0 And TimerDiff($deadlock) < 120000
-		RandomSleep(100)
-		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 950)
-	WEnd
-	If IsPlayerDead() Then Return $FAIL
-
-	ChangeWeaponSet(1)
-	MoveTo(-7800, -7680)
-
-	UseSkillEx($SS_SAND_SHARDS)
-	RandomSleep(2000)
-	UseSkillEx($SS_MYSTIC_VIGOR)
-	RandomSleep(750)
-	UseSkillEx($SS_VOW_OF_STRENGTH)
-	RandomSleep(200)
-
-	If IsPlayerDead() Then Return $FAIL
-
-	Local $positionToGo = FindMiddleOfFoes(-8055, -9250, $RANGE_NEARBY)
-	Local $targetFoe = BetterGetNearestNPCToCoords($ID_ALLEGIANCE_FOE, $positionToGo[0], $positionToGo[1], $RANGE_SPELLCAST)
-	UseSkillEx($SS_I_AM_UNSTOPPABLE)
-	RandomSleep(50)
-	UseSkillEx($SS_EXTEND_ENCHANTMENTS)
-	RandomSleep(50)
-	UseSkillEx($SS_DEATHS_CHARGE, $targetFoe)
-	RandomSleep(50)
-	If GetEnergy() > $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK] Then UseSkillEx($SS_MIRAGE_CLOAK)
-	RandomSleep(50)
-	If GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
-	RandomSleep(50)
-
-	If IsPlayerDead() Then Return $FAIL
-	If KillSequence() == $FAIL Then Return $FAIL
-	Return $SUCCESS
-EndFunc
-
-
-;~ Kill a mob group
-Func KillSequence()
-	Local $deadlock = TimerInit()
-	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
-	Local $casterFoesMap[]
-	ChangeWeaponSet(2)
-	While IsPlayerAlive() And $foesCount > 0 And TimerDiff($deadlock) < 100000
-		If IsRecharged($SS_MYSTIC_VIGOR) And GetEffectTimeRemaining(GetEffect($ID_MYSTIC_VIGOR)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_MYSTIC_VIGOR] Then
-			UseSkillEx($SS_MYSTIC_VIGOR)
-			RandomSleep(50)
-		EndIf
-		If $foesCount > 1 And IsRecharged($SS_MIRAGE_CLOAK) And GetEffectTimeRemaining(GetEffect($ID_MIRAGE_CLOAK)) == 0 And GetEnergy() > ($SKILL_COSTS_MAP[$SS_EXTEND_ENCHANTMENTS] + $SKILL_COSTS_MAP[$SS_MIRAGE_CLOAK]) Then
-			UseSkillEx($SS_EXTEND_ENCHANTMENTS)
-			RandomSleep(50)
-			UseSkillEx($SS_MIRAGE_CLOAK)
-			RandomSleep(50)
-		EndIf
-		If IsRecharged($SS_I_AM_UNSTOPPABLE) And GetEnergy() > $SKILL_COSTS_MAP[$SS_I_AM_UNSTOPPABLE] Then
-			UseSkillEx($SS_I_AM_UNSTOPPABLE)
-			RandomSleep(50)
-		EndIf
-		If $foesCount > 3 And IsRecharged($SS_SAND_SHARDS) And GetEffectTimeRemaining(GetEffect($ID_SAND_SHARDS)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_SAND_SHARDS] Then
-			UseSkillEx($SS_SAND_SHARDS)
-			RandomSleep(50)
-		EndIf
-		If IsRecharged($SS_EBON_BATTLE_STANDARD_OF_HONOR) And GetEffectTimeRemaining(GetEffect($ID_EBON_BATTLE_STANDARD_OF_HONOR)) == 0 And GetEnergy() > $SKILL_COSTS_MAP[$SS_EBON_BATTLE_STANDARD_OF_HONOR] Then
-			UseSkillEx($SS_EBON_BATTLE_STANDARD_OF_HONOR)
-			RandomSleep(50)
-		EndIf
-		If IsRecharged($SS_VOW_OF_STRENGTH) And GetEnergy() > $SKILL_COSTS_MAP[$SS_VOW_OF_STRENGTH] Then
-			UseSkillEx($SS_VOW_OF_STRENGTH)
-			RandomSleep(50)
-		EndIf
-		Local $me = GetMyAgent()
-		$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
-		If $foesCount > 0 Then
-			Local $casterFoe = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, Null, Null, $RANGE_AREA + 88)
-			Local $casterFoeID = DllStructGetData($casterFoe, 'ID')
-			Local $distance = GetDistance($me, $casterFoe)
-			If $foesCount < 5 And GetDistance($me, $casterFoe) > $RANGE_ADJACENT Then
-				Debug('One foe is distant')
-				If $casterFoesMap[$casterFoeID] == Null Then
-					$casterFoesMap[$casterFoeID] = 0
-				ElseIf $casterFoesMap[$casterFoeID] == 2 Then
-					Debug('Moving to fight that foe')
-					Local $timer = TimerInit()
-					;MoveAvoidingBodyBlock(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'X'), 1000)
-					While IsPlayerAlive() And GetDistance($me, $casterFoe) > $RANGE_ADJACENT And TimerDiff($timer) < 1000
-						Move(DllStructGetData($casterFoe, 'X'), DllStructGetData($casterFoe, 'Y'))
-						RandomSleep(100)
-					WEnd
-				EndIf
-				$casterFoesMap[$casterFoeID] += 1
-			EndIf
-			$me = GetMyAgent()
-			Local $nearestFoe = GetNearestEnemyToAgent($me)
-			If GetDistance($me, $nearestFoe) < $RANGE_AREA + 88 Then
-				Attack($nearestFoe)
-			EndIf
-			RandomSleep(1000)
-		EndIf
-		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_EARSHOT)
-	WEnd
-	ChangeWeaponSet(1)
-
-	If IsPlayerDead() Then Return $FAIL
-	CleanseFromCripple()
-	RandomSleep(1000)
-	PickUpItems(CleanseFromCripple)
 	Return $SUCCESS
 EndFunc
 
 
 ;~ Wait for all ennemies to be balled
-Func WaitForFoesBall()
-	WaitForAlliesDead()
-
+Func WaitForFoesBall($position)
 	Local $deadlock = TimerInit()
-	Local $target = GetNearestEnemyToCoords(-8598, -5810)
+	Local $target = GetNearestNPCInRangeOfCoords($position[0], $position[1], $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
+
 	Local $foesCount = CountFoesInRangeOfAgent($target, $RANGE_AREA)
 	Local $validation = 0
-
-	; Wait until all foes are balled
+	Local $me = GetMyAgent()
+	Local $nearestFoe = GetNearestEnemyToAgent($me)
+	; Wait until all foes are balled - as long as foes are not aggroed
 	While IsPlayerAlive() And $foesCount < 8 And $validation < 2 And TimerDiff($deadlock) < 120000
 		If $foesCount == 8 Then $validation += 1
-		RandomSleep(3000)
-		$target = GetNearestEnemyToCoords(-8598, -5810)
+		RandomSleep(1000)
+		$target = GetNearestNPCInRangeOfCoords($position[0], $position[1], $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT)
 		$foesCount = CountFoesInRangeOfAgent($target, $RANGE_AREA)
+		$me = GetMyAgent()
+		$nearestFoe = GetNearestEnemyToAgent($me)
 		Debug('foes: ' & $foesCount & '/8')
+		If GetDistance($me, $nearestFoe) <= $MOB_AGGRO_RANGE Then Return False
 	WEnd
-	If (TimerDiff($deadlock) > 120000) Then Info('Timed out waiting for mobs to ball')
+	If (TimerDiff($deadlock) > 120000) Then Warn('Timed out waiting for mobs to ball')
+	Return True
 EndFunc
 
 
-;~ Wait for all enemies to be balled and allies to be dead
+;~ Farm groups
+Func FarmGroup()
+	Local $target = GetNearestNPCInRangeOfCoords(-8850, -5500, $ID_ALLEGIANCE_FOE, $RANGE_EARSHOT * 2)
+	If IsRecharged($SS_MINDBENDER) Then UseSkillEx($SS_MINDBENDER)
+	GetAlmostInRangeOfAgent($target)
+
+	; Need a lot of energy in case both energy spirits are there: Zephyr add 30% mana cost and quicksand adds 1 energy
+	Local $waitCount = 0
+	While GetEnergy() < 40 And $waitCount < 10
+		; Recovering 4e
+		Sleep(3000)
+		$waitCount += 1
+	WEnd
+
+	UseSkillEx($SS_MANTRA_OF_RESOLVE)
+	; Recovering 8e
+	RandomSleep(6000)
+	UseSkillEx($SS_CHANNELING)
+	Local $channeling_timer = TimerInit()
+	; Recovering 2e
+	RandomSleep(1500)
+	UseSkillEx($SS_GREAT_DWARF_ARMOR)
+	Local $great_dwarf_armor_timer = TimerInit()
+	UseSkillEx($SS_ARCANE_ECHO)
+
+	; Aggro foes
+	Move(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'))
+	RandomSleep(1000)
+	UseSkillEx($SS_VENGEFUL_WAS_KHANHEI)
+	Local $vengeful_was_khanhei_timer = TimerInit()
+
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST + 200)
+	While $foesCount > 0
+		If TimerDiff($vengeful_was_khanhei_timer) > 9000 Then
+			If IsRecharged($SS_ARCANE_ECHO) And GetSkillbarSkillID($SS_ARCANE_ECHO) == $ID_VENGEFUL_WAS_KHANHEI Then
+				UseSkillEx($SS_ARCANE_ECHO)
+				$vengeful_was_khanhei_timer = TimerInit()
+			ElseIf IsRecharged($SS_VENGEFUL_WAS_KHANHEI) Then
+				UseSkillEx($SS_VENGEFUL_WAS_KHANHEI)
+				$vengeful_was_khanhei_timer = TimerInit()
+			EndIf
+		EndIf
+		If $foesCount < 5 And GetEnergy() >= 15 And IsRecharged($SS_VENGEFUL_WEAPON) Then UseSkillEx($SS_VENGEFUL_WEAPON)
+		; No point getting ~2-3 energy
+		If $foesCount > 3 And TimerDiff($channeling_timer) > 44000 Then
+			UseSkillEx($SS_CHANNELING)
+			$channeling_timer = TimerInit()
+		EndIf
+		; No point going defensive against so few enemies
+		If $foesCount > 3 And TimerDiff($great_dwarf_armor_timer) > 38000 Then
+			UseSkillEx($SS_GREAT_DWARF_ARMOR)
+			$great_dwarf_armor_timer = TimerInit()
+		EndIf
+		Sleep(250)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST + 200)
+		If IsPlayerDead() Then Return $FAIL
+	WEnd
+	CleanseFromCripple()
+	UseSkillEx($SS_MINDBENDER)
+	PickUpItems()
+	Return $SUCCESS
+EndFunc
+
+
+;~ Wait for allies to be dead
 Func WaitForAlliesDead()
 	Local $deadlock = TimerInit()
-	Local $target = GetNearestNPCToCoords(-8598, -5810)
+	Local $target = GetNearestNPCToCoords(-8600, -5810)
 
 	; Wait until foes are in range of allies
-	While GetDistanceToPoint($target, -8598, -5810) < $RANGE_EARSHOT And TimerDiff($deadlock) < 120000
-		RandomSleep(5000)
-		$target = GetNearestNPCToCoords(-8598, -5810)
+	Local $distance = GetDistanceToPoint($target, -8600, -5810)
+	While $distance < $RANGE_EARSHOT And TimerDiff($deadlock) < 120000
+		RandomSleep(2000)
+		$target = GetNearestNPCToCoords(-8600, -5810)
+		$distance = GetDistanceToPoint($target, -8600, -5810)
+		Debug('Target: ' & $distance)
 	WEnd
-	If (TimerDiff($deadlock) > 120000) Then Info('Timed out waiting for allies to be dead')
+	If (TimerDiff($deadlock) > 120000) Then Warn('Timed out waiting for allies to be dead')
 EndFunc
 
 
@@ -419,17 +294,35 @@ Func RestartAfterDeath()
 EndFunc
 
 
-;~ Wait to have enough energy before jumping into the next group
-Func WaitForEnergy()
-	While (GetEnergy() < 20) And IsPlayerAlive()
-		RandomSleep(1000)
-	WEnd
+;~ Rezoning to reset the farm
+Func RezoneToTheShatteredRavines()
+	Info('Rezoning')
+	; Exiting to Jokos Domain
+	If IsRecharged($SS_MINDBENDER) Then UseSkillEx($SS_MINDBENDER)
+	MoveTo(-7800, -10250)
+	If IsRecharged($SS_MINDBENDER) Then UseSkillEx($SS_MINDBENDER)
+	MoveTo(-9000, -10900)
+	If IsRecharged($SS_MINDBENDER) Then UseSkillEx($SS_MINDBENDER)
+	MoveTo(-10500, -11000)
+	Move(-10650, -11300)
+	RandomSleep(1000)
+	WaitMapLoading($ID_JOKOS_DOMAIN)
+	RandomSleep(500)
+	; Reentering The Shattered Ravines
+	MoveTo(-4500, 20150)
+	Move(-4500, 21000)
+	RandomSleep(1000)
+	WaitMapLoading($ID_THE_SHATTERED_RAVINES, 10000, 2000)
+	; Hurry up before dying
+	MoveTo(-9700, -10750)
+	UseSkillEx($SS_MINDBENDER)
+	MoveTo(-7900, -10550)
 EndFunc
 
 
-;~ Wait to have death's charge recharged
-Func WaitForDeathsCharge()
-	While Not IsRecharged($SS_DEATHS_CHARGE) And IsPlayerAlive()
+;~ Wait to have enough energy before jumping into the next group
+Func WaitForEnergy()
+	While (GetEnergy() < 30) And IsPlayerAlive()
 		RandomSleep(1000)
 	WEnd
 EndFunc
@@ -441,18 +334,7 @@ Func CleanseFromCripple()
 EndFunc
 
 
-;~ Give True if the given agent is past a specific line where we should take aggro
-Func IsPastAggroLine($agent)
-	Return Not IsOverLine(1, 0, 6750, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-	; 6500 works too, but slightly too early, some mobs stay downstairs
-	;Return Not IsOverLine(1, 0, 6500, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-	; 7000 works but is slightly too late, sometimes mobs do not get aggroed
-	;Return Not IsOverLine(1, 0, 7000, DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
-EndFunc
-
-
-;~ @Unused
-;~ Unused but good learning practice ;)
+;~ @Unused but good learning practice ;)
 Func GetTemporaryPosition($startX, $startY, $endX, $endY)
 	Local $distanceStartToEnd = ComputeDistance($startX, $startY, $endX, $endY)
 	Local $xMovement = $endX - $startX
@@ -464,4 +346,53 @@ Func GetTemporaryPosition($startX, $startY, $endX, $endY)
 	Local $yMove45degrees = ($yMovement - $xMovement) / 2
 	Local $temporaryPosition[] = [$startX + $xMove45degrees, $startY + $yMove45degrees]
 	Return $temporaryPosition
+EndFunc
+
+
+;~ Sped up version in case we are caught off guard
+Func QuickFarmGroup()
+	MoveTo(-7570,-8320)
+
+	UseSkillEx($SS_MANTRA_OF_RESOLVE)
+	RandomSleep(200)
+	UseSkillEx($SS_CHANNELING)
+	Local $channeling_timer = TimerInit()
+	RandomSleep(200)
+	UseSkillEx($SS_GREAT_DWARF_ARMOR)
+	Local $great_dwarf_armor_timer = TimerInit()
+	UseSkillEx($SS_ARCANE_ECHO)
+	RandomSleep(200)
+	UseSkillEx($SS_VENGEFUL_WAS_KHANHEI)
+	Local $vengeful_was_khanhei_timer = TimerInit()
+
+	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST + 200)
+	While $foesCount > 0
+		If TimerDiff($vengeful_was_khanhei_timer) > 9000 Then
+			If IsRecharged($SS_ARCANE_ECHO) And GetSkillbarSkillID($SS_ARCANE_ECHO) == $ID_VENGEFUL_WAS_KHANHEI Then
+				UseSkillEx($SS_ARCANE_ECHO)
+				$vengeful_was_khanhei_timer = TimerInit()
+			ElseIf IsRecharged($SS_VENGEFUL_WAS_KHANHEI) Then
+				UseSkillEx($SS_VENGEFUL_WAS_KHANHEI)
+				$vengeful_was_khanhei_timer = TimerInit()
+			EndIf
+		EndIf
+		If $foesCount < 5 And GetEnergy() >= 15 And IsRecharged($SS_VENGEFUL_WEAPON) Then UseSkillEx($SS_VENGEFUL_WEAPON)
+		; No point getting ~2-3 energy
+		If $foesCount > 3 And TimerDiff($channeling_timer) > 44000 Then
+			UseSkillEx($SS_CHANNELING)
+			$channeling_timer = TimerInit()
+		EndIf
+		; No point going defensive against so few enemies
+		If $foesCount > 3 And TimerDiff($great_dwarf_armor_timer) > 38000 Then
+			UseSkillEx($SS_GREAT_DWARF_ARMOR)
+			$great_dwarf_armor_timer = TimerInit()
+		EndIf
+		Sleep(250)
+		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST + 200)
+		If IsPlayerDead() Then Return $FAIL
+	WEnd
+	CleanseFromCripple()
+	UseSkillEx($SS_MINDBENDER)
+	PickUpItems()
+	Return $SUCCESS
 EndFunc
