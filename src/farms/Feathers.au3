@@ -126,7 +126,7 @@ Func FeathersFarmLoop()
 	MoveTo(7950, -10800, 0, 0, FeathersRun)
 	MoveTo(3300, -8950, 0, 0, FeathersRun)
 	MoveTo(1550, -6650, 0, 0, FeathersRun)
-	ToggleMapping(4)
+	;ToggleMapping(4)
 
 	; 15 groups to kill
 	;~ Local Static $sensalis[][] = [ _
@@ -177,10 +177,10 @@ Func FeathersFarmLoop()
 		[-14500,	-2500,	'Sensali group 14'			] _
 	]
 	For $i = 0 To UBound($sensalis) - 1
-		If MoveAndKillSensali($sensalis[$i][0], $sensalis[$i][1], $sensalis[$i][2]) == $FAIL Then ExitLoop
+		If MoveAndKillSensali($sensalis[$i][0], $sensalis[$i][1], $sensalis[$i][2]) == $FAIL And $i <> UBound($sensalis) - 1 Then Return $FAIL
 	Next
-	ToggleMapping(4)
-	Return IsPlayerAlive() ? $SUCCESS : $FAIL
+	;ToggleMapping(4)
+	Return $SUCCESS
 EndFunc
 
 
@@ -245,7 +245,9 @@ Func MoveAndKillSensali($x, $y, $message)
 	$me = GetMyAgent()
 	Local $attempts = 0
 	While IsRecharged($FEATHERS_EREMITES_ATTACK)
-		UseSkillEx($FEATHERS_EREMITES_ATTACK, GetNearestEnemyToAgent($me, $RANGE_AREA))
+		$sensali = GetNearestEnemyToAgent($me, $RANGE_ADJACENT)
+		If $sensali == Null Then CheckAndSendStuckCommand()
+		UseSkillEx($FEATHERS_EREMITES_ATTACK, $sensali)
 		$attempts += 1
 		RandomSleep(250)
 		$me = GetMyAgent()
