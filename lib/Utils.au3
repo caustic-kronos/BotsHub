@@ -18,6 +18,7 @@
 #include-once
 
 #include <array.au3>
+#include <Date.au3>
 #include <WinAPIDiag.au3>
 #include 'GWA2_Headers.au3'
 #include 'GWA2_ID.au3'
@@ -1353,63 +1354,67 @@ Func ConvertTimeToMinutesString($time)
 EndFunc
 
 
-; During below festival these are the decorated towns: Kamadan, Jewel of Istan, Lion's Arch, Shing Jea Monastery
-; Map IDs for these cities may change so can check them before travelling
-; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
+; During festivals some towns are decorated - Map IDs for these cities may change
+; Characters need to visit decorated city during events first before being able to travel automatically to it
+; Otherwise that city is considered an unknown outpost even if that city was visited before festival
+
+;~ Wintersday:										Dec 19 20:00 UTC to Jan 2 20:00 UTC
+Func IsWintersdayFestival()
+	Return IsWithinUtcWindow(GetUtcPacked(), PackUtc(12, 19, 20, 0), PackUtc(1, 2, 20, 0))
+EndFunc
+
+
+;~ Canthan New Year:								Jan 31 20:00 UTC to Feb 07 20:00 UTC
 Func IsCanthanNewYearFestival()
-	Local $currentMonth = @MON
-	Local $currentDay = @MDAY
-	; Check if current day is between 31-01 and 07-02
-	Return ($currentMonth == 1 And $currentDay >= 31) Or ($currentMonth == 2 And $currentDay <= 7)
+	Return IsWithinUtcWindow(GetUtcPacked(), PackUtc(1, 31, 20, 0), PackUtc(2, 7, 20, 0))
 EndFunc
 
 
-; During below festival Kaineng Center and Shing Jea Monastery are decorated
-; Map IDs for these cities may change so can check them before travelling
-; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
+;~ Anniversary Celebration:							Apr 22 19:00 UTC to May 06 19:00 UTC
 Func IsAnniversaryCelebration()
-	Local $currentMonth = @MON
-	Local $currentDay = @MDAY
-	; Check if current day is between 22-04 and 06-05 (Anniversary Celebration)
-	Return ($currentMonth == 4 And $currentDay >= 22) Or ($currentMonth == 5 And $currentDay <= 6)
+	Return IsWithinUtcWindow(GetUtcPacked(), PackUtc(4, 22, 19, 0), PackUtc(5, 6, 19, 0))
 EndFunc
 
 
-; During below festival decorations are applied to Kaineng Center and Shing Jea Monastery
-; Map IDs for these cities may change so can check them before travelling
-; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
+;~ Dragon Festival:									Jun 27 19:00 UTC to Jul 04 19:00 UTC
 Func IsDragonFestival()
-	Local $currentMonth = @MON
-	Local $currentDay = @MDAY
-	; Check if current day is between 27-06 and 04-07
-	Return ($currentMonth == 6 And $currentDay >= 27) Or ($currentMonth == 7 And $currentDay <= 4)
+	Return IsWithinUtcWindow(GetUtcPacked(), PackUtc(6, 27, 19, 0), PackUtc(7, 4, 19, 0))
 EndFunc
 
 
-; During below festival Lion's Arch, Droknar's Forge, Kamadan, Jewel of Istan and Tomb of the Primeval Kings are all redecorated in a suitably festive (dark) style
-; Map IDs for these cities may change so can check them before travelling
-; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
+;~ Halloween/Mad King's Day:						Oct 18 19:00 UTC to Nov 2 08:01 UTC
 Func IsHalloweenFestival()
-	Local $currentMonth = @MON
-	Local $currentDay = @MDAY
-	; Check if current day is between 18-10 and 02-11 (Halloween)
-	Return ($currentMonth == 10 And $currentDay >= 18) Or ($currentMonth == 11 And $currentDay <= 2)
+	Return IsWithinUtcWindow(GetUtcPacked(), PackUtc(10, 18, 19, 0), PackUtc(11, 2, 8, 1))
 EndFunc
 
 
-; During below festival Ascalon City, Lion's Arch, Droknar's Forge, Kamadan, Jewel of Istan and Eye of the North are all redecorated in a suitably festive (and snowy) style
-; Map IDs for these cities may change so can check them before travelling
-; Caution: Each character in account needs to visit city decorated during events first before being able to travel automatically to that city decorated during events using bots
-; Otherwise that city is considered an unknown outpost to which bot cannot travel even when that city was visited before festival event by that character
-Func IsChristmasFestival()
-	Local $currentMonth = @MON
-	Local $currentDay = @MDAY
-	; Check if current day is between 19-12 and 02-01 (from Christmas To New Year's Eve)
-	Return ($currentMonth == 12 And 19 <= $currentDay) Or ($currentMonth == 1 And $currentDay <= 2)
+;~ Returns True if $time falls within [$start, $end]
+;~ Dec -> Jan year wrap is handled by detecting $start > $end and treating it as <after start OR before end>
+Func IsWithinUtcWindow($utcPackedTime, $utcPackedStart, $utcPackedEnd)
+	If $utcPackedStart <= $utcPackedEnd Then
+		Return $utcPackedTime >= $utcPackedStart And $utcPackedTime <= $utcPackedEnd
+	Else
+		Return $utcPackedTime >= $utcPackedStart Or $utcPackedTime <= $utcPackedEnd
+	EndIf
+EndFunc
+
+
+; FIXME: use server time instead of local UTC time
+;~ Returns the current UTC time packed as MMDDHHmm
+;~ Dec -> Jan year wrap is handled by IsWithinUtcWindow() separately.
+Func GetUtcPacked()
+	Local $utc = _Date_Time_GetSystemTime()
+	Local $month = DllStructGetData($utc, 'Month')
+	Local $day = DllStructGetData($utc, 'Day')
+	Local $hour = DllStructGetData($utc, 'Hour')
+	Local $minute = DllStructGetData($utc, 'Minute')
+	Return $month * 1000000 + $day * 10000 + $hour * 100 + $minute
+EndFunc
+
+
+;~ Packs a (month, day, hour, minute) tuple as MMDDHHmm
+Func PackUtc($month, $day, $hour = 0, $minute = 0)
+	Return $month * 1000000 + $day * 10000 + $hour * 100 + $minute
 EndFunc
 #EndRegion DateTime
 
