@@ -134,27 +134,28 @@ EndFunc
 
 ;~ Follower loop
 Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
-	Local Static $firstPlayer = Null, $currentMap = Null, $resigned = False
+	Local Static $leaderID = Null, $currentMap = Null, $resigned = False
 
 	Local $mapID = GetMapID()
 	If $mapID <> $currentMap Then
 		$currentMap = $mapID
-		$firstPlayer = Null
+		$leaderID = Null
 		$resigned = False
 		SkipCinematic()
 		WaitMapLoading($mapID)
 	EndIf
 
-	If $firstPlayer == Null Then
-		$firstPlayer = FollowerResolveLeader()
-		If $firstPlayer == Null Then
+	If $leaderID == Null Then
+		$leaderID = FollowerResolveLeaderID()
+		If $leaderID == Null Then
 			RandomSleep(500)
 			Return
 		EndIf
 	EndIf
 
 	$runFunction()
-	GoPlayer($firstPlayer)
+	Local $leader = GetAgentByID($leaderID)
+	GoPlayer($leader)
 
 	If GetMapType() == $ID_EXPLORABLE Then
 		If Not $resigned Then
@@ -164,15 +165,15 @@ Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
 			RandomSleep(500)
 		EndIf
 
-		Local $leaderID = DllStructGetData($firstPlayer, 'ID')
 		Local $me = GetMyAgent()
-
-		If GetAgentExists($leaderID) And (GetDistance($me, GetAgentByID($leaderID)) <= $FOLLOWER_LEASH_RANGE) Then
+		$leader = GetAgentByID($leaderID)
+		If $leader <> Null And GetDistance($me, $leader) <= $FOLLOWER_LEASH_RANGE Then
 			Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 			While IsPlayerAlive() And $foesCount > 0
 				$fightFunction()
 				$me = GetMyAgent()
-				If GetAgentExists($leaderID) And GetDistance($me, GetAgentByID($leaderID)) > $FOLLOWER_LEASH_RANGE Then ExitLoop
+				$leader = GetAgentByID($leaderID)
+				If $leader <> Null And GetDistance($me, $leader) > $FOLLOWER_LEASH_RANGE Then ExitLoop
 				$foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 			WEnd
 			FindAndOpenChests()
@@ -343,24 +344,15 @@ EndFunc
 ;~ Works in both outposts and explorables. Bypasses the lib's GetFirstPlayerOfParty, which fails in
 ;~ outposts because party agent structs report LoginNumber=0 there.
 ;~ Player records are 80 bytes wide; agent ID is at offset 0 of each record.
-Func FollowerResolveLeader()
-	Local $selfLoginNumber = DllStructGetData(GetMyAgent(), 'LoginNumber')
-	Local $playerCount = GetPlayerCount()
-
-	For $i = 0 To $playerCount - 1
-		Local $slotLogin = GetPartyPlayerLoginNumber($i)
-
-		If $slotLogin == 0 Then ContinueLoop
-		If $slotLogin == $selfLoginNumber Then ContinueLoop
-
-		Local $leaderAgentID = GetAgentIDByLoginNumber($slotLogin)
-
-		If $leaderAgentID == 0 Then ContinueLoop
-		If Not GetAgentExists($leaderAgentID) Then ContinueLoop
-
-		Return GetAgentByID($leaderAgentID)
+Func FollowerResolveLeaderID()
+	Local $myLoginNumber = DllStructGetData(GetMyAgent(), 'LoginNumber')
+	Local $partyMembers = GetParty()
+	For $member In $partyMembers
+		Local $loginNumber = DllStructGetData($member, 'LoginNumber')
+		If $loginNumber <= 0 Then ContinueLoop
+		If $loginNumber == $myLoginNumber Then ContinueLoop
+		Return DllStructGetData($member, 'ID')
 	Next
-
 	Return Null
 EndFunc
 
