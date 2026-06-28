@@ -1137,7 +1137,7 @@ Func ToggleHeroSkillSlot($heroIndex, $skillSlot)
 EndFunc
 
 
-;~ Returns number of heroes you control.
+;~ Returns number of heroes from both you and other players
 Func GetHeroCount()
 	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x2C]
 	Local $heroCount = MemoryReadPtr(GetProcessHandle(), $base_address_ptr, $offset)

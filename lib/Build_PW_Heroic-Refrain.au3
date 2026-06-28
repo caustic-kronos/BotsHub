@@ -194,9 +194,10 @@ Func HRPhaseSelfSetup()
 EndFunc
 
 
-;~ Iterate all party members and apply HR to anyone missing it.
+;~ Iterate player and his heroes and apply HR to anyone missing it.
 ;~ Full scan every tick to avoid stale state from deaths, movement, or buff expiry.
 Func HRPhaseApplyParty()
+	; This gets all heroes, including the ones from other players
 	Local Static $heroCount = GetHeroCount()
 	Local Static $next = 0
 
@@ -207,6 +208,8 @@ Func HRPhaseApplyParty()
 		Local $agentID = GetHeroID($index)
 		If $agentID == 0 Then ContinueLoop
 		Local $agent = GetAgentByID($agentID)
+		; If an agent is not ours (another player or his heroes) we can stop looping - we came first
+		If Not IsMine($agent) Then ExitLoop
 		If $agent == Null Or GetIsDead($agent) Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
 

@@ -50,19 +50,13 @@ Global $party_is_alive = True
 ;~ Count number of alive heroes of the player's party
 Func CountAliveHeroes()
 	Local $aliveHeroes = 0
-	For $i = 1 to 7
+	For $i = 1 to GetHeroCount()
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentByID($heroID)) Then $aliveHeroes += 1
+		If Not GetAgentExists($heroID) Then ContinueLoop
+		Local $hero = GetAgentByID($heroID)
+		If Not GetIsDead($hero) Then $aliveHeroes += 1
 	Next
 	Return $aliveHeroes
-EndFunc
-
-
-;~ Count number of alive members of the player's party including 7 heroes and player
-Func CountAlivePartyMembers()
-	Local $alivePartyMembers = CountAliveHeroes()
-	If Not IsPlayerDead Then $alivePartyMembers += 1
-	Return $alivePartyMembers
 EndFunc
 
 
@@ -150,8 +144,15 @@ Func FindHeroesWithRez()
 	Local $heroes[7]
 	Local $count = 0
 	For $heroNumber = 1 To GetHeroCount()
+		Local $agentID = GetHeroID($heroNumber)
+		If $agentID == 0 Then ContinueLoop
+		Local $agent = GetAgentByID($agentID)
+		; If hero is not ours we passed our heroes already
+		If Not IsMine($agent) Then ExitLoop
+	
+		Local $skillbar = GetSkillbar($heroNumber)
 		For $skillSlot = 1 To 8
-			Local $skill = GetSkillbarSkillID($skillSlot, $heroNumber)
+			Local $skill = DllStructGetData($skillbar, 'SkillID' & $skillSlot)
 			If IsRezSkill($skill) Then
 				$heroes[$count] = $heroNumber
 				$count += 1
@@ -228,6 +229,8 @@ EndFunc
 Func GetTeamMemberWithTooMuchMalus()
 	Local $party = GetParty()
 	For $i = UBound($party) - 1 To 0 Step -1
+		; Can't read malus on other players and their heroes
+		If Not IsMine($party[$i]) Then ContinueLoop
 		If GetMorale($i) < 0 Then Return $i
 	Next
 	Return -1
@@ -737,6 +740,12 @@ EndFunc
 ;~ Tests if an agent is an item.
 Func IsItemAgentType($agent)
 	Return DllStructGetData($agent, 'Type') = $ID_AGENT_TYPE_ITEM
+EndFunc
+
+
+;~ Tests if an agent is mine (ie: either the character or one of his heroes)
+Func IsMine($agent)
+	Return DllStructGetData($agent, 'MaxEnergy') > 0
 EndFunc
 
 

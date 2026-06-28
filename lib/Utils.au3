@@ -752,7 +752,10 @@ EndFunc
 Func AllHeroesUseSkill($skillSlot, $target = 0)
 	For $i = 1 to 7
 		Local $heroID = GetHeroID($i)
-		If GetAgentExists($heroID) And Not GetIsDead(GetAgentByID($heroID)) Then UseHeroSkill($i, $skillSlot, $target)
+		If Not GetAgentExists($heroID) Then ContinueLoop
+		Local $hero = GetAgentByID($heroID)
+		If Not IsMine($hero) Then ExitLoop
+		If Not GetIsDead($hero) Then UseHeroSkill($i, $skillSlot, $target)
 	Next
 EndFunc
 

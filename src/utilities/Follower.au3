@@ -25,7 +25,6 @@
 
 ; Possible improvements :
 ; - Correct a crash happening when someone picks up items the bot wanted to pick up
-; - Correct a bug that makes the bot want to repeatedly open chests
 ; - speed up the bot by all ways possible (since it casts shouts it is always lagging behind)
 ;		- using a cupcake and a pumpkin pie might be a good idea
 
@@ -85,7 +84,6 @@ Func FollowerFarm()
 				FollowerLoop()
 			Case $ID_PARAGON
 				FollowerLoop()
-				;FollowerLoop(DefaultRun, ParagonFight)
 			Case $ID_DERVISH
 				FollowerLoop()
 			Case Else
@@ -146,7 +144,7 @@ Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
 	EndIf
 
 	If $leaderID == Null Then
-		$leaderID = FollowerResolveLeaderID()
+		If GetMapType() == $ID_EXPLORABLE Then $leaderID = FollowerResolveLeaderID()
 		If $leaderID == Null Then
 			RandomSleep(500)
 			Return
@@ -231,112 +229,6 @@ Func RangerSetup()
 	$follower_attack_skill_2 = $soldiersStrike
 	$follower_attack_skill_3 = $desperationBlow
 	$follower_running_skill = $runAsOne
-EndFunc
-
-
-;~ Paragon follower setup
-Func ParagonSetup()
-	Info('Paragon setup - Heroic Refrain')
-
-	Local $heroicRefrain = 8
-	;Local $aggressiveRefrain = 7
-	Local $burningRefrain = 7
-	Local $forGreatJustice = 6
-	Local $toTheLimit = 5
-	Local $saveYourselves = 4
-	Local $theresNothingToFear = 3
-	Local $standYourGround = 2
-	Local $theyreOnFire = 1
-
-	$follower_maintain_skill_1 = $heroicRefrain
-	$follower_maintain_skill_2 = $burningRefrain
-	$follower_maintain_skill_3 = $forGreatJustice
-	$follower_maintain_skill_4 = $toTheLimit
-	$follower_maintain_skill_5 = $saveYourselves
-	$follower_maintain_skill_6 = $theresNothingToFear
-	$follower_maintain_skill_7 = $standYourGround
-	$follower_maintain_skill_8 = $theyreOnFire
-
-	AdlibRegister('ParagonRefreshShouts', 12000)
-	;AdlibUnRegister()
-EndFunc
-
-
-;~ Paragon function to cast shouts on all party members
-Func ParagonRefreshShouts()
-	Info('Refresh shouts on party')
-	Local Static $selfRecast = False
-	MoveToMiddleOfPartyWithTimeout(5000)
-	RandomSleep(50)
-	Local $partyMembers = GetPartyInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
-	If UBound($partyMembers) < 4 Then Return
-
-	UseSkillEx($follower_maintain_skill_8)
-	RandomSleep(50)
-	If ($selfRecast Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN)) == 0) And GetEnergy() > 15 Then
-		UseSkillEx($follower_maintain_skill_1, GetMyAgent())
-		RandomSleep(50)
-		If $selfRecast Then
-			UseSkillEx($follower_maintain_skill_2, GetMyAgent())
-			RandomSleep(50)
-			$selfRecast = False
-		Else
-			$selfRecast = True
-		EndIf
-	Else
-		$party = GetParty()
-
-		Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
-
-		; This solution is imperfect because we recast HR every time
-		Local Static $i = 1
-		If UBound($party) > 1 Then
-			If DllStructGetData($party[$i], 'ID') == $ownID Or $i > UBound($party) Then $i = Mod($i, UBound($party)) + 1
-			If GetEnergy() > 15 Then
-				UseSkillEx($follower_maintain_skill_1, $party[$i])
-				RandomSleep(50)
-			EndIf
-			If GetEnergy() > 20 Then
-				UseSkillEx($follower_maintain_skill_2, $party[$i])
-				RandomSleep(50)
-			EndIf
-			$i = Mod($i, UBound($party)) + 1
-		EndIf
-
-		; This solution would be better - but effects cannot be accessed on other account heroes/characters and mercenaries
-		;Local $heroNumber
-		;For $member In $party
-		;	If DllStructGetData($member, 'ID') == $ownID Then ContinueLoop
-		;	$heroNumber = GetHeroNumberByAgentID(DllStructGetData($member, 'ID'))
-		;	If ($heroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_HEROIC_REFRAIN), $heroNumber) == 0) And GetEnergy() > 15 Then
-		;		UseSkillEx($follower_maintain_skill_1, $member)
-		;		PingSleep(50)
-		;		ExitLoop
-		;	EndIf
-		;	If ($heroNumber == Null Or GetEffectTimeRemaining(GetEffect($ID_BURNING_REFRAIN), $heroNumber) == 0) And GetEnergy() > 20 Then
-		;		UseSkillEx($follower_maintain_skill_2, $member)
-		;		PingSleep(50)
-		;		ExitLoop
-		;	EndIf
-		;Next
-	EndIf
-EndFunc
-
-
-;~ Paragon fight function
-Func ParagonFight()
-	If IsRecharged($follower_maintain_skill_7) Then UseSkillEx($follower_maintain_skill_7)
-	PingSleep(50)
-	If IsRecharged($follower_maintain_skill_6) Then UseSkillEx($follower_maintain_skill_6)
-	PingSleep(50)
-	If IsRecharged($follower_maintain_skill_3) Then UseSkillEx($follower_maintain_skill_3)
-	PingSleep(50)
-	If GetSkillbarSkillAdrenaline($follower_maintain_skill_5) < 200 And IsRecharged($follower_maintain_skill_4) Then UseSkillEx($follower_maintain_skill_4)
-	PingSleep(50)
-	If GetSkillbarSkillAdrenaline($follower_maintain_skill_5) == 200 Then UseSkillEx($follower_maintain_skill_5)
-	PingSleep(50)
-	Attack(GetNearestEnemyToAgent(GetMyAgent()))
-	Sleep(1000)
 EndFunc
 
 
