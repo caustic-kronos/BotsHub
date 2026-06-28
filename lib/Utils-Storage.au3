@@ -478,7 +478,7 @@ Func DefaultShouldSellItem($item)
 		If $cache['@sell.salvageables.nothing'] Then Return False
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		If Not $cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
-		Return IsIdentified($item) And Not ContainsValuableUpgrades($item)
+		Return $rarity == $RARITY_WHITE Or (IsIdentified($item) And Not ContainsValuableUpgrades($item))
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
 		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then
