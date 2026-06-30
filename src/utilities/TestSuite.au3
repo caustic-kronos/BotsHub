@@ -75,8 +75,21 @@ EndFunc
 
 
 ;~ Method to make manual operations (open Xunlai, send instructions in the GUI input)
+;~ Also shares information with other Hub instances
 Func ManualMode()
+	Local $freePeerIndex = OpenPeersSharedMemoryBlocks()
+	Info('First free peer index: ' & $freePeerIndex)
+	If CreatePeerSharedMemoryBlock($freePeerIndex) Then 
+		AdlibRegister('ShareTeamEffects', $HR_INTERVAL)
+	EndIf
 	Return $PAUSE
+EndFunc
+
+
+;~ Collect player's and heroes effects and share them in shared memory
+Func ShareTeamEffects()
+	Local $map = CollectHeroesEffects()
+	WriteHeroesEffectsToSharedMemory($map)
 EndFunc
 
 

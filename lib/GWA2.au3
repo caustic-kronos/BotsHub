@@ -536,7 +536,7 @@ EndFunc
 
 
 ;~ Returns effect struct or array of effects.
-Func GetEffect($skillID = 0, $heroIndex = 0)
+Func GetEffect($skillID = 0, $agentID = GetMyID())
 	Local $effectCount, $effectStructAddress
 	; Offsets have to be kept separate - else we risk cross-call contamination - Avoid ReDim !
 	Local $offset1[] = [0, 0x18, 0x2C, 0x510]
@@ -546,7 +546,7 @@ Func GetEffect($skillID = 0, $heroIndex = 0)
 	For $i = 0 To $count[1] - 1
 		Local $offset2[] = [0, 0x18, 0x2C, 0x508, 0x24 * $i]
 		$buffer = MemoryReadPtr($processHandle, $base_address_ptr, $offset2)
-		If $buffer[1] == GetHeroID($heroIndex) Then
+		If $buffer[1] == $agentID Then
 			Local $offset3[] = [0, 0x18, 0x2C, 0x508, 0x1C + 0x24 * $i]
 			$effectCount = MemoryReadPtr($processHandle, $base_address_ptr, $offset3)
 
@@ -575,8 +575,8 @@ EndFunc
 
 
 ;~ Returns time remaining before an effect expires, in milliseconds.
-Func GetEffectTimeRemaining($effect, $heroIndex = 0)
-	If Not IsDllStruct($effect) Then $effect = GetEffect($effect, $heroIndex)
+Func GetEffectTimeRemaining($effect, $agentID = GetMyID())
+	If Not IsDllStruct($effect) Then $effect = GetEffect($effect, $agentID)
 	; if hero or player (0) is not under specified effect then 0 will be returned here
 	If $effect == Null Then Return 0
 	If IsArray($effect) Then Return 0
@@ -1150,7 +1150,7 @@ Func GetHeroCount()
 EndFunc
 
 
-;~ Returns agent ID of a hero.
+;~ Returns agent ID of a hero - this is only valid in a group with a single player, for more, it can fail
 Func GetHeroID($heroIndex)
 	If $heroIndex == 0 Then Return GetMyID()
 	Local $offset[] = [0, 0x18, 0x4C, 0x54, 0x24, 0x18 * ($heroIndex - 1)]

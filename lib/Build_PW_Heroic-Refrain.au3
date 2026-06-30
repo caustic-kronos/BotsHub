@@ -124,6 +124,9 @@ Func SetupHRBuild()
 		EndSwitch
 	Next
 
+	OpenPeersSharedMemoryBlocks()
+	; Faster setup by calling it directly (Adlib will wait HR_INTERVAL before first call)
+	TickHeroicRefrain()
 	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
 
 	$default_move_aggro_kill_options['combatFunction']	= HRCombat
@@ -176,7 +179,7 @@ Func TickHeroicRefrain()
 	UseSkillEx($BUILD_PW_THEYRE_ON_FIRE)
 
 	; If player lost HR at any phase, restart self-setup
-	If $phase <> $HR_PHASE_SELF_SETUP And GetEffect($ID_HEROIC_REFRAIN, 0) == Null Then
+	If $phase <> $HR_PHASE_SELF_SETUP And GetEffect($ID_HEROIC_REFRAIN) == Null Then
 		$phase = $HR_PHASE_SELF_SETUP
 	EndIf
 
@@ -196,7 +199,7 @@ EndFunc
 Func HRPhaseSelfSetup()
 	If GetEnergy() < 5 Then Return $HR_PHASE_SELF_SETUP
 
-	Local $alreadyHadHR = GetEffect($ID_HEROIC_REFRAIN, 0) <> Null
+	Local $alreadyHadHR = GetEffect($ID_HEROIC_REFRAIN) <> Null
 	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, GetMyAgent())
 	Return $alreadyHadHR ? $HR_PHASE_APPLY_PARTY : $HR_PHASE_SELF_SETUP
 EndFunc
@@ -205,26 +208,33 @@ EndFunc
 ;~ Iterate player and his heroes and apply HR to anyone missing it.
 ;~ Full scan every tick to avoid stale state from deaths, movement, or buff expiry.
 Func HRPhaseApplyParty()
-	; This gets all heroes, including the ones from other players
-	Local Static $heroCount = GetHeroCount()
 	Local Static $next = 0
+	Local $party = GetParty()
+	Local $partySize = UBound($party)
 
 	Local $refrain = Null
 	Local $refrainTarget = Null
-	For $offset = 0 To $heroCount
-		Local $index = Mod($next + $offset, $heroCount + 1)
-		Local $agentID = GetHeroID($index)
-		If $agentID == 0 Then ContinueLoop
-		Local $agent = GetAgentByID($agentID)
-		; If an agent is not ours (another player or his heroes) we can stop looping - we came first
-		If Not IsMine($agent) Then ExitLoop
-		If $agent == Null Or GetIsDead($agent) Then ContinueLoop
+	For $offset = 0 To $partySize - 1
+		Local $index = Mod($next + $offset, $partySize)
+		Local $agent = $party[$index]
+		Local $agentID = DllStructGetData($agent, 'ID')
+		If $agentID == 0 Or GetIsDead($agent) Then ContinueLoop
 		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
+		Local $effects = Null
+		If Not IsMine($agent) Then
+			; If an agent is not ours (another player or his heroes) we try the shared memories
+			For $key In MapKeys($sharedMemoryHandlesMap)
+				Local $map = ReadHeroesEffectsFromSharedMemory($key)
+				$effects = $map[$agentID]
+				If $effects <> Null Then ExitLoop
+			Next
+			If $effects == Null Then ContinueLoop
+		EndIf
 
-		Local $refrainsByte = ScanAllyForRefrains($index)
+		Local $refrainsByte = ScanAllyForRefrains($agentID, $effects)
 		If BitAnd($refrainsByte, 0x1) == 0x0 Then
 			UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
-			$next = Mod($index + 1, $heroCount + 1)
+			$next = Mod($index + 1, $partySize)
 			Return $index == 0 ? $HR_PHASE_SELF_SETUP : $HR_PHASE_APPLY_PARTY
 		EndIf
 		If $refrainTarget == Null And BitAnd($refrainsByte, 0x6) <> 0x6 Then
@@ -237,13 +247,13 @@ Func HRPhaseApplyParty()
 EndFunc
 
 
-;~ Scan a character at $index of the party and return a byte encoding which refrains are missing for that character
-Func ScanAllyForRefrains($index)
+;~ Scan a character and return a byte encoding which refrains are missing for that character
+Func ScanAllyForRefrains($agentID, $effectsArray = Null)
 	Local $refrainsByte = 0x0
 	If $BUILD_PW_BLADETURN_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x2)
 	If $BUILD_PW_BURNING_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x4)
 
-	Local $effectsArray = GetEffect(0, $index)
+	If $effectsArray == Null Then $effectsArray = GetEffect(0, $agentID)
 	For $effect In $effectsArray
 		Local $effectID = DllStructGetData($effect, 'SkillID')
 		If $effectID == $ID_HEROIC_REFRAIN Then
@@ -282,7 +292,7 @@ Func CastCombatShouts($target = Null)
 	If $target <> Null Then Attack($target)
 
 	; Priority 2: Aggressive Refrain — only if not already active, only in combat
-	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN, 0) == Null And $energy >= 15 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
+	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN) == Null And $energy >= 15 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
 	
 	; Priority 3: Stand Your Ground!
 	If $BUILD_PW_STAND_YOUR_GROUND > 0 And IsRecharged($BUILD_PW_STAND_YOUR_GROUND) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)

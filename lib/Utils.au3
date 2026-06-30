@@ -759,9 +759,31 @@ Func AllHeroesUseSkill($skillSlot, $target = 0)
 		Local $heroID = GetHeroID($i)
 		If Not GetAgentExists($heroID) Then ContinueLoop
 		Local $hero = GetAgentByID($heroID)
-		If Not IsMine($hero) Then ExitLoop
+		If Not IsMine($hero) Then ContinueLoop
 		If Not GetIsDead($hero) Then UseHeroSkill($i, $skillSlot, $target)
 	Next
+EndFunc
+
+
+;~ Scan effects and write them for every agent in map
+Func CollectHeroesEffects()
+	Local Static $heroCount = GetHeroCount()
+
+	Local $effectsMap[]
+
+	For $index = 0 To $heroCount
+		Local $agentID = GetHeroID($index)
+		If $agentID = 0 Then ContinueLoop
+
+		Local $agent = GetAgentByID($agentID)
+		If $agent = Null Or GetIsDead($agent) Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
+		If Not IsMine($agent) Then ContinueLoop
+
+		$effectsMap[$agentID] = GetEffect(0, $agentID)
+	Next
+
+	Return $effectsMap
 EndFunc
 
 
@@ -954,7 +976,8 @@ Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	; taking into account skill activation time modifiers
-	Local $effects = GetEffect(0, $heroIndex)
+	Local $heroID = GetHeroID($heroIndex)
+	Local $effects = GetEffect(0, $heroID)
 	; get cast time modifier, default is 1, but effects can influence it
 	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
 	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()

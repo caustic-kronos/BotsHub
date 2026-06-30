@@ -127,8 +127,11 @@ Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
 
+Global $slave_heartbeat = 0
+
 ; Farm Name;Farm function;Inventory space;Farm duration
 Global $farm_map[]
+Global $gui_enabled
 
 Global $inventory_management_cache[]
 Global $run_options_cache[]
@@ -178,7 +181,8 @@ Func BotsHubMain()
 	LoadDefaultLootConfiguration()
 
 	If $run_mode == 'GUI' Then
-		CreateGUI()
+		$gui_enabled = True
+		CreateBotsHubGUI()
 		ApplyConfigToGUI()
 		FillConfigurationCombo()
 		GUISetState(@SW_SHOWNORMAL)
@@ -187,6 +191,7 @@ Func BotsHubMain()
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()
 	ElseIf $run_mode == 'HEADLESS' Then
+		$gui_enabled = False
 		; Need minimum 4 things to run a bot: slave index, process ID, character name and farm name
 		If $cmdLine[0] < 4 Then
 			MsgBox(0, 'Error', 'The Hub needs 0 or at least 4 arguments.')
@@ -199,19 +204,30 @@ Func BotsHubMain()
 
 		Info('Running in CMD mode with process ID: ' & $process_id & ' character name: ' & $character_name & ' farm name: ' & $farm_name)
 
-		Local $openProcess = SafeDllCall9($kernel_handle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $process_id)
-		Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
-		If $processHandle <> 0 Then
-			Local $windowHandle = GetWindowHandleForProcess($process_id)
-			AddClient($process_id, $processHandle, $windowHandle, $character_name)
-			SelectClient(1)
-		Else
-			MsgBox(0, 'Error', 'GW Process with incorrect handle.')
-			Exit
+		If $character_name <> '' Then
+			Local $openProcess = SafeDllCall9($kernel_handle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $process_id)
+			Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
+			If $processHandle <> 0 Then
+				Local $windowHandle = GetWindowHandleForProcess($process_id)
+				AddClient($process_id, $processHandle, $windowHandle, $character_name)
+				SelectClient(1)
+			Else
+				MsgBox(0, 'Error', 'GW Process with incorrect handle.')
+				Exit
+			EndIf
 		EndIf
 		; Authentication
 		Authentification($character_name)
 		$runtime_status = 'RUNNING'
+
+
+		If $slave_index >= 0 Then
+			If OpenMasterSlaveSharedMemory($slave_index) Then
+				AdlibRegister('UpdateHeartbeat', 5000)
+			Else
+				Error('Unable to open shared memory blocks.')
+			EndIf
+		EndIf
 	Else
 		MsgBox(0, 'Error', 'Unknown run mode: ' & $run_mode)
 		Exit
@@ -878,3 +894,25 @@ Func Authentification($characterName)
 	Return $SUCCESS
 EndFunc
 #EndRegion Authentification and Login
+
+
+Func UpdateHeartbeat()
+	WriteSlaveToMaster($slave_index, 'heartbeat', $slave_heartbeat)
+	$slave_heartbeat += 1
+
+	Info('Master hearbeat: ' & ReadMasterBroadcast('heartbeat'))
+	Local $enableGUICommand = ReadMasterToSlave($slave_index, 'enableGUI')
+	Info('Enable GUI order: ' & $enableGUICommand)
+	If Not $gui_enabled And $enableGUICommand Then
+		CreateBotsHubGUI()
+		ApplyConfigToGUI()
+		FillConfigurationCombo()
+		GUISetState(@SW_SHOWNORMAL)
+		Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
+		$gui_enabled = True
+	EndIf
+	If $gui_enabled And Not $enableGUICommand Then
+		GUISetState(@SW_HIDE)
+		$gui_enabled = False
+	EndIf
+EndFunc

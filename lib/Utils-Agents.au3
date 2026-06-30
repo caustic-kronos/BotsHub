@@ -147,8 +147,7 @@ Func FindHeroesWithRez()
 		Local $agentID = GetHeroID($heroNumber)
 		If $agentID == 0 Then ContinueLoop
 		Local $agent = GetAgentByID($agentID)
-		; If hero is not ours we passed our heroes already
-		If Not IsMine($agent) Then ExitLoop
+		If Not IsMine($agent) Then ContinueLoop
 	
 		Local $skillbar = GetSkillbar($heroNumber)
 		For $skillSlot = 1 To 8

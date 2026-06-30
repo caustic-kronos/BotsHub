@@ -433,7 +433,7 @@ EndFunc
 
 ;~ The soul twisting ritualist uses soul twisting - sic
 Func SoulTwistingRitualistUseSoulTwisting()
-	If GetEffectTimeRemaining(GetEffect($SOUL_TWISTING_SKILL_POSITION, $HERO_RITUALIST_PROT)) == 0 Then
+	If GetEffectTimeRemaining(GetEffect($SOUL_TWISTING_SKILL_POSITION, GetHeroID($HERO_RITUALIST_PROT))) == 0 Then
 		UseHeroSkill($HERO_RITUALIST_PROT, $SOUL_TWISTING_SKILL_POSITION)
 		RandomSleep(50)
 	EndIf
