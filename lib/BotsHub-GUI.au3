@@ -17,26 +17,76 @@
 ; GUI built with GuiBuilderPlus
 #CE ===========================================================================
 
-#RequireAdmin
-#NoTrayIcon
+Opt('GUIOnEventMode', True)
+Opt('GUICloseOnESC', False)
 
 #Region Includes
+#include-once
 #include <GUIConstantsEx.au3>
 #include <GuiListBox.au3>
 #include <StaticConstants.au3>
 #include <ButtonConstants.au3>
 #include <WindowsConstants.au3>
-#include <ColorConstants.au3>
 #include <ComboConstants.au3>
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
 #include <GuiTreeView.au3>
 
-#include '../lib/GWA2_Headers.au3'
-#include '../lib/GWA2_ID.au3'
-#include '../lib/GWA2.au3'
-#include '../lib/Utils.au3'
 #include '../lib/JSON.au3'
+#include '../lib/GWA2.au3'
+#include '../lib/GWA2_Assembly.au3'
+#include '../lib/GWA2_ID_Items.au3'
+#include '../lib/Utils.au3'
+#include '../lib/Utils-Console.au3'
+#include '../lib/Utils-Items_Modstructs.au3'
+#include '../lib/Utils-Storage.au3'
+
+#include '../src/farms/CoF.au3'
+#include '../src/farms/Corsairs.au3'
+#include '../src/farms/DragonMoss.au3'
+#include '../src/farms/EdenIris.au3'
+#include '../src/farms/Feathers.au3'
+#include '../src/farms/FoWTowerOfCourage.au3'
+#include '../src/farms/Gemstones.au3'
+#include '../src/farms/GemstoneMargonite.au3'
+#include '../src/farms/GemstoneStygian.au3'
+#include '../src/farms/GemstoneTorment.au3'
+#include '../src/farms/JadeBrotherhood.au3'
+#include '../src/farms/Kournans.au3'
+#include '../src/farms/Lightbringer-Sunspear.au3'
+#include '../src/farms/Lightbringer.au3'
+#include '../src/farms/Mantids.au3'
+#include '../src/farms/Minotaurs.au3'
+#include '../src/farms/Raptors.au3'
+#include '../src/farms/SpiritSlaves.au3'
+#include '../src/farms/Vaettirs.au3'
+#include '../src/missions/Deldrimor.au3'
+#include '../src/missions/FoW.au3'
+#include '../src/missions/Froggy.au3'
+#include '../src/missions/GlintChallenge.au3'
+#include '../src/missions/Kilroy.au3'
+#include '../src/missions/MinisterialCommendations.au3'
+#include '../src/missions/NexusChallenge.au3'
+#include '../src/missions/SoO.au3'
+#include '../src/missions/SunspearArmor.au3'
+#include '../src/missions/TunnelsOfTheForsaken.au3'
+#include '../src/missions/Underworld.au3'
+#include '../src/missions/Voltaic.au3'
+#include '../src/missions/WarSupplyKeiran.au3'
+#include '../src/runs/Boreal.au3'
+#include '../src/runs/Pongmei.au3'
+#include '../src/runs/Tasca.au3'
+#include '../src/titles/LDOA.au3'
+#include '../src/utilities/Follower.au3'
+#include '../src/utilities/OmniFarmer.au3'
+#include '../src/utilities/TestSuite.au3'
+#include '../src/vanquishes/Asuran.au3'
+#include '../src/vanquishes/KurzickDrazach.au3'
+#include '../src/vanquishes/KurzickFerndale.au3'
+#include '../src/vanquishes/LuxonMountQinkai.au3'
+#include '../src/vanquishes/LuxonSilentSurf.au3'
+#include '../src/vanquishes/Norn.au3'
+#include '../src/vanquishes/Vanguard.au3'
 #EndRegion Includes
 
 Global Const $GUI_WA_INACTIVE = 0
@@ -44,20 +94,14 @@ Global Const $GUI_WM_ACTIVATE = 0x0006
 Global Const $GUI_WM_COMMAND = 0x0111
 Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 
-Global Const $LVL_DEBUG = 0
-Global Const $LVL_INFO = 1
-Global Const $LVL_NOTICE = 2
-Global Const $LVL_WARNING = 3
-Global Const $LVL_ERROR = 4
-
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
+	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
+	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Manual Mode'
 
 #Region GUI
-Opt('GUIOnEventMode', True)
-Opt('GUICloseOnESC', False)
-Opt('MustDeclareVars', True)
 
 Global $gui_botshub, $gui_tabs_parent, $gui_tab_main, $gui_tab_runoptions, $gui_tab_lootoptions, $gui_tab_farminfos, $gui_tab_lootoptions, $gui_tab_teamoptions
 Global $gui_console, $gui_combo_characterchoice, $gui_combo_farmchoice, $gui_startbutton, $gui_farmprogress
@@ -108,7 +152,7 @@ Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandloot
 ; Title...........:	_guiCreate
 ; Description.....:	Create the main GUI
 ;------------------------------------------------------
-Func CreateGUI()
+Func CreateBotsHubGUI()
 	; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
 	$gui_botshub = GUICreate('GW Bot Hub', 650, 500, -1, -1)
 	GUISetBkColor($COLOR_SILVER, $gui_botshub)
@@ -123,7 +167,7 @@ Func CreateGUI()
 	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTBLUE)
 
-	GUISetOnEvent($gui_event_close, 'GuiMainButtonHandler')
+	GUISetOnEvent($GUI_EVENT_CLOSE, 'GuiMainButtonHandler')
 	GUICtrlSetOnEvent($gui_startbutton, 'GuiStartButtonHandler')
 	GUICtrlSetOnEvent($gui_combo_farmchoice, 'GuiMainButtonHandler')
 	GUICtrlSetOnEvent($gui_combo_configchoice, 'GuiMainButtonHandler')
@@ -138,6 +182,7 @@ Func CreateGUI()
 	$gui_console = _GUICtrlRichEdit_Create($gui_botshub, '', 20, 190, 300, 255, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
 	_GUICtrlRichEdit_SetCharColor($gui_console, $COLOR_WHITE)
 	_GUICtrlRichEdit_SetBkColor($gui_console, $COLOR_BLACK)
+	SetConsole($gui_console)
 
 	; === Run Infos ===
 	$gui_group_runinfos = GUICtrlCreateGroup('Informations', 21, 39, 300, 145)
@@ -622,7 +667,7 @@ Func GuiMainButtonHandler()
 				FillConfigurationCombo($configurationName)
 			EndIf
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_ENABLE)
-		Case $gui_event_close
+		Case $GUI_EVENT_CLOSE
 			; restore rendering in case it was disabled
 			EnableRendering()
 			Exit
@@ -1481,72 +1526,6 @@ Func CompleteGUIFarmProgress()
 	GUICtrlSetData($gui_farmprogress, 100)
 EndFunc
 #EndRegion Handlers
-
-
-#Region Console
-;~ Print debug to console with timestamp
-Func Debug($TEXT)
-	Out($TEXT, $LVL_DEBUG)
-EndFunc
-
-
-;~ Print info to console with timestamp
-Func Info($TEXT)
-	Out($TEXT, $LVL_INFO)
-EndFunc
-
-
-;~ Print notice to console with timestamp
-Func Notice($TEXT)
-	Out($TEXT, $LVL_NOTICE)
-EndFunc
-
-
-;~ Print warning to console with timestamp
-Func Warn($TEXT)
-	Out($TEXT, $LVL_WARNING)
-EndFunc
-
-
-;~ Print warning to console with timestamp, only once
-;~ Do not overuse, warnings are stored in memory
-Func WarnOnce($TEXT)
-	Local Static $warningMessages[]
-	If $warningMessages[$TEXT] <> 1 Then
-		Out($TEXT, $LVL_WARNING)
-		$warningMessages[$TEXT] = 1
-	EndIf
-EndFunc
-
-
-;~ Print error to console with timestamp
-Func Error($TEXT)
-	Out($TEXT, $LVL_ERROR)
-EndFunc
-
-
-;~ Print to console with timestamp
-;~ LOGLEVEL= 0-Debug, 1-Info, 2-Notice, 3-Warning, 4-Error
-Func Out($TEXT, $LOGLEVEL = 1)
-	If $LOGLEVEL >= $log_level Then
-		Local $logColor
-		Switch $LOGLEVEL
-			Case $LVL_DEBUG
-				$logColor = $CLR_LIGHTGREEN	; CLR is reversed BGR color
-			Case $LVL_INFO
-				$logColor = $CLR_WHITE		; CLR is reversed BGR color
-			Case $LVL_NOTICE
-				$logColor = $CLR_TEAL		; CLR is reversed BGR color
-			Case $LVL_WARNING
-				$logColor = $CLR_YELLOW		; CLR is reversed BGR color
-			Case $LVL_ERROR
-				$logColor = $CLR_RED		; CLR is reversed BGR color
-		EndSwitch
-		_GUICtrlRichEdit_SetCharColor($gui_console, $logColor)
-		_GUICtrlRichEdit_AppendText($gui_console, @HOUR & ':' & @MIN & ':' & @SEC & ' - ' & $TEXT & @CRLF)
-	EndIf
-EndFunc
-#EndRegion Console
 #EndRegion GUI
 
 
