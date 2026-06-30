@@ -16,13 +16,19 @@
 #CE ===========================================================================
 
 #include-once
-
-#include '../../lib/GWA2.au3'
-#include '../../lib/GWA2_ID.au3'
-#include '../../lib/Utils.au3'
 #include <File.au3>
 
-Opt('MustDeclareVars', True)
+#include '../../lib/GWA2_Assembly.au3'
+#include '../../lib/GWA2_ID_Items.au3'
+#include '../../lib/GWA2_ID_Maps.au3'
+#include '../../lib/GWA2_ID_Skills.au3'
+#include '../../lib/GWA2_ID.au3'
+#include '../../lib/GWA2.au3'
+#include '../../lib/Utils-Agents.au3'
+#include '../../lib/Utils-Console.au3'
+#include '../../lib/Utils-Storage.au3'
+#include '../../lib/Utils.au3'
+
 
 ; ==== Constants ====
 Global Const $DW_COMMENDATIONS_FARMER_SKILLBAR = 'OgGlQlVp6smsJRg19RTKexTkL2XsDC'
@@ -427,7 +433,7 @@ EndFunc
 
 ;~ The soul twisting ritualist uses soul twisting - sic
 Func SoulTwistingRitualistUseSoulTwisting()
-	If GetEffectTimeRemaining(GetEffect($SOUL_TWISTING_SKILL_POSITION, $HERO_RITUALIST_PROT)) == 0 Then
+	If GetEffectTimeRemaining(GetEffect($SOUL_TWISTING_SKILL_POSITION, GetHeroID($HERO_RITUALIST_PROT))) == 0 Then
 		UseHeroSkill($HERO_RITUALIST_PROT, $SOUL_TWISTING_SKILL_POSITION)
 		RandomSleep(50)
 	EndIf

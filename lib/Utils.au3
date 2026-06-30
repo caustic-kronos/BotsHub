@@ -16,17 +16,22 @@
 #CE ===========================================================================
 
 #include-once
-
 #include <array.au3>
 #include <Date.au3>
 #include <WinAPIDiag.au3>
-#include 'GWA2_Headers.au3'
-#include 'GWA2_ID.au3'
-#include 'GWA2_ID_Maps.au3'
-#include 'GWA2.au3'
-#include 'Utils-Debugger.au3'
 
-Opt('MustDeclareVars', True)
+#include 'GWA2.au3'
+#include 'GWA2_Assembly.au3'
+#include 'GWA2_ID.au3'
+#include 'GWA2_ID_Items.au3'
+#include 'GWA2_ID_Maps.au3'
+#include 'GWA2_ID_Quests.au3'
+#include 'GWA2_ID_Skills.au3'
+#include 'Utils-Agents.au3'
+#include 'Utils-Console.au3'
+#include 'Utils-Debugger.au3'
+#include 'Utils-Storage.au3'
+
 
 Global Const $PI = 3.14
 Global Const $RANGE_ADJACENT=156, $RANGE_NEARBY=240, $RANGE_AREA=312, $RANGE_EARSHOT=1000, $RANGE_SPELLCAST=1085, $RANGE_LONGBOW=1250, $RANGE_SPIRIT=2500, $RANGE_COMPASS=5000
@@ -754,9 +759,31 @@ Func AllHeroesUseSkill($skillSlot, $target = 0)
 		Local $heroID = GetHeroID($i)
 		If Not GetAgentExists($heroID) Then ContinueLoop
 		Local $hero = GetAgentByID($heroID)
-		If Not IsMine($hero) Then ExitLoop
+		If Not IsMine($hero) Then ContinueLoop
 		If Not GetIsDead($hero) Then UseHeroSkill($i, $skillSlot, $target)
 	Next
+EndFunc
+
+
+;~ Scan effects and write them for every agent in map
+Func CollectHeroesEffects()
+	Local Static $heroCount = GetHeroCount()
+
+	Local $effectsMap[]
+
+	For $index = 0 To $heroCount
+		Local $agentID = GetHeroID($index)
+		If $agentID = 0 Then ContinueLoop
+
+		Local $agent = GetAgentByID($agentID)
+		If $agent = Null Or GetIsDead($agent) Then ContinueLoop
+		If GetDistance(GetMyAgent(), $agent) > $RANGE_SPELLCAST Then ContinueLoop
+		If Not IsMine($agent) Then ContinueLoop
+
+		$effectsMap[$agentID] = GetEffect(0, $agentID)
+	Next
+
+	Return $effectsMap
 EndFunc
 
 
@@ -949,7 +976,8 @@ Func UseHeroSkillTimed($heroIndex, $skillSlot, $target = Null)
 	Local $castTime = DllStructGetData($skill, 'Activation') * 1000
 	Local $aftercast = DllStructGetData($skill, 'Aftercast') * 1000
 	; taking into account skill activation time modifiers
-	Local $effects = GetEffect(0, $heroIndex)
+	Local $heroID = GetHeroID($heroIndex)
+	Local $effects = GetEffect(0, $heroID)
 	; get cast time modifier, default is 1, but effects can influence it
 	Local $castTimeModifier = GetCastTimeModifier($effects, $skill)
 	Local $fullCastTime = $castTimeModifier * $castTime + $aftercast + GetPing()

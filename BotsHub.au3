@@ -27,19 +27,28 @@
 #RequireAdmin
 #NoTrayIcon
 
+Opt('MustDeclareVars', True)
+;Opt("ExpandEnvStrings", 1)
+
 #Region Includes
+#include-once
 #include <Math.au3>
-#include 'lib/GWA2_Headers.au3'
-#include 'lib/GWA2_ID.au3'
+
+#include 'lib/BotsHub-GUI.au3'
 #include 'lib/GWA2.au3'
 #include 'lib/GWA2_Assembly.au3'
 #include 'lib/GWA2_Assembly_Chatlog.au3'
+#include 'lib/GWA2_ID.au3'
+#include 'lib/GWA2_ID_Maps.au3'
+#include 'lib/GWA2_ID_Skills.au3'
+#include 'lib/JSON.au3'
 #include 'lib/Utils.au3'
-#include 'lib/Utils-Agents.au3'
-#include 'lib/Utils-Storage.au3'
+#include 'lib/Utils-Console.au3'
 #include 'lib/Utils-Debugger.au3'
+#include 'lib/Utils-Items_Modstructs.au3'
+#include 'lib/Utils-Shared_Memory.au3'
+#include 'lib/Utils-Storage.au3'
 #include 'lib/Build_PW_Heroic-Refrain.au3'
-#include 'lib/BotsHub-GUI.au3'
 
 #include 'src/farms/CoF.au3'
 #include 'src/farms/Corsairs.au3'
@@ -98,10 +107,6 @@ Global Const $SUCCESS = 0
 Global Const $FAIL = 1
 Global Const $PAUSE = 2
 
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
-	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
-	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Manual Mode'
-
 Global Const $AVAILABLE_DISTRICTS = '|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 
 Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Devona|Dunkoro|General Morgahn|Ghost of Althea|Goren|Gwen|Hayda|Jora|Kahmu|Keiran Thackeray|Koss|Livia|' & _
@@ -121,10 +126,12 @@ Global $loot_configuration = 'Default Loot Configuration'
 Global $inventory_space_needed = 5
 Global $run_timer = Null
 Global $global_farm_setup = False
-Global $log_level = $LVL_INFO
+
+Global $slave_heartbeat = 0
 
 ; Farm Name;Farm function;Inventory space;Farm duration
 Global $farm_map[]
+Global $gui_enabled
 
 Global $inventory_management_cache[]
 Global $run_options_cache[]
@@ -149,13 +156,13 @@ Global $bags_count = 5
 
 
 #Region Main loops
-Main()
+BotsHubMain()
 
 ;------------------------------------------------------
 ; Title...........:	Main
 ; Description.....:	run the main program
 ;------------------------------------------------------
-Func Main()
+Func BotsHubMain()
 	; Verify validity
 	If @AutoItVersion < '3.3.16.1' Then
 		MsgBox(16, 'Error', 'This bot requires AutoIt version 3.3.16.1 or higher. You are using ' & @AutoItVersion & '.')
@@ -174,7 +181,8 @@ Func Main()
 	LoadDefaultLootConfiguration()
 
 	If $run_mode == 'GUI' Then
-		CreateGUI()
+		$gui_enabled = True
+		CreateBotsHubGUI()
 		ApplyConfigToGUI()
 		FillConfigurationCombo()
 		GUISetState(@SW_SHOWNORMAL)
@@ -183,6 +191,7 @@ Func Main()
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()
 	ElseIf $run_mode == 'HEADLESS' Then
+		$gui_enabled = False
 		; Need minimum 4 things to run a bot: slave index, process ID, character name and farm name
 		If $cmdLine[0] < 4 Then
 			MsgBox(0, 'Error', 'The Hub needs 0 or at least 4 arguments.')
@@ -195,19 +204,30 @@ Func Main()
 
 		Info('Running in CMD mode with process ID: ' & $process_id & ' character name: ' & $character_name & ' farm name: ' & $farm_name)
 
-		Local $openProcess = SafeDllCall9($kernel_handle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $process_id)
-		Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
-		If $processHandle <> 0 Then
-			Local $windowHandle = GetWindowHandleForProcess($process_id)
-			AddClient($process_id, $processHandle, $windowHandle, $character_name)
-			SelectClient(1)
-		Else
-			MsgBox(0, 'Error', 'GW Process with incorrect handle.')
-			Exit
+		If $character_name <> '' Then
+			Local $openProcess = SafeDllCall9($kernel_handle, 'int', 'OpenProcess', 'int', 0x1F0FFF, 'int', 1, 'int', $process_id)
+			Local $processHandle = IsArray($openProcess) ? $openProcess[0] : 0
+			If $processHandle <> 0 Then
+				Local $windowHandle = GetWindowHandleForProcess($process_id)
+				AddClient($process_id, $processHandle, $windowHandle, $character_name)
+				SelectClient(1)
+			Else
+				MsgBox(0, 'Error', 'GW Process with incorrect handle.')
+				Exit
+			EndIf
 		EndIf
 		; Authentication
 		Authentification($character_name)
 		$runtime_status = 'RUNNING'
+
+
+		If $slave_index >= 0 Then
+			If OpenMasterSlaveSharedMemory($slave_index) Then
+				AdlibRegister('UpdateHeartbeat', 5000)
+			Else
+				Error('Unable to open shared memory blocks.')
+			EndIf
+		EndIf
 	Else
 		MsgBox(0, 'Error', 'Unknown run mode: ' & $run_mode)
 		Exit
@@ -874,3 +894,25 @@ Func Authentification($characterName)
 	Return $SUCCESS
 EndFunc
 #EndRegion Authentification and Login
+
+
+Func UpdateHeartbeat()
+	WriteSlaveToMaster($slave_index, 'heartbeat', $slave_heartbeat)
+	$slave_heartbeat += 1
+
+	Info('Master hearbeat: ' & ReadMasterBroadcast('heartbeat'))
+	Local $enableGUICommand = ReadMasterToSlave($slave_index, 'enableGUI')
+	Info('Enable GUI order: ' & $enableGUICommand)
+	If Not $gui_enabled And $enableGUICommand Then
+		CreateBotsHubGUI()
+		ApplyConfigToGUI()
+		FillConfigurationCombo()
+		GUISetState(@SW_SHOWNORMAL)
+		Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
+		$gui_enabled = True
+	EndIf
+	If $gui_enabled And Not $enableGUICommand Then
+		GUISetState(@SW_HIDE)
+		$gui_enabled = False
+	EndIf
+EndFunc
