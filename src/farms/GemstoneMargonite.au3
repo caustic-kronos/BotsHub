@@ -89,9 +89,9 @@ Global Const $GEMSTONE_MARGONITE_FARM_INFORMATIONS = 'For best results, have :' 
 	& '- Monk hero armor and weapons with bonus to energy and HP' & @CRLF _
 	& ' ' & @CRLF _
 	& 'You can run this farm as Assassin or Mesmer or Ranger or Elementalist. Bot will set up build automatically for these professions' & @CRLF _
-	& 'This bot farms margonite gemstones (1 of 4 types) in City of Torc''qua location' & @CRLF _
-	& 'Player needs to have access to Gate of Anguish outpost which has exit to City of Torc''qua location' & @CRLF _
-	& 'This farm reduces energy of margonites to 0 with ancestor''s visage skill which deals damage to margonites because margonites create Famine spirit' & @CRLF _
+	& 'This bot farms margonite gemstones (1 of 4 types) in City of Torcqua location' & @CRLF _
+	& 'Player needs to have access to Gate of Anguish outpost which has exit to City of Torcqua location' & @CRLF _
+	& 'This farm reduces energy of margonites to 0 with ancestors visage skill which deals damage to margonites because margonites create Famine spirit' & @CRLF _
 	& 'Recommended to have maxed out Lightbringer title. If not maxed out then this farm is good for raising lightbringer rank' & @CRLF _
 	& 'Can switch to normal mode in case of low success rate but hard mode has better loots' & @CRLF _
 	& 'Gemstones can be exchanged into armbrace of truth (15 of each type) or coffer of whisper (1 of each type)' & @CRLF _
@@ -219,7 +219,7 @@ EndFunc
 ;~ Exit gate of Anguish outpost by moving into portal that leads into farming location - City of Torc'qua
 Func GoToCityOfTorcqua()
 	TravelToOutpost($ID_GATE_OF_ANGUISH, $district_name)
-	Info('Moving to City of Torc''qua')
+	Info('Moving to City of Torcqua')
 	; Unfortunately all 4 gemstone farm explorable locations have the same map ID as Gate of Anguish outpost, so it is harder to tell if player left the outpost
 	; Therefore below loop checks if player is in close range of coordinates of that start zone where player initially spawns in City of Torc'qua
 	Local Static $startX = -18575
@@ -227,7 +227,7 @@ Func GoToCityOfTorcqua()
 	Local $timerZoning = TimerInit()
 	While Not IsAgentInRange(GetMyAgent(), $startX, $startY, $RANGE_EARSHOT)
 		If TimerDiff($timerZoning) > 120000 Then
-			Info('Could not zone to City of Torc''qua')
+			Info('Could not zone to City of Torcqua')
 			Return $FAIL
 		EndIf
 		MoveTo(6816, -13634)

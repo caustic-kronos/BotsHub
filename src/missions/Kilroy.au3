@@ -348,7 +348,7 @@ Func GetBackUp()
 	While Not IsNearlyEqual($energyPercent, 1) And TimerDiff($timer) < 10000
 		; Respect skill 8 recharge
 		Local $skillbar = GetSkillbar()
-		If DllStructGetData($skillbar, "Recharge8") == 0 Then UseSkill($SKILLBAR_STAND_UP)
+		If DllStructGetData($skillbar, 'Recharge8') == 0 Then UseSkill($SKILLBAR_STAND_UP)
 		RandomSleep(50)
 		$me = GetMyAgent()
 		$energyPercent = DllStructGetData($me, 'EnergyPercent')

@@ -323,9 +323,9 @@ Func ReadHeroesEffectsFromSharedMemory($memoryName)
 	Next
 
 	If $offset > $payloadSize Then
-		Warn("Shared memory over-read")
+		Warn('Shared memory over-read')
 	ElseIf $offset < $payloadSize Then
-		Warn("Shared memory under-read")
+		Warn('Shared memory under-read')
 	EndIf
 
 	Return $effectsMap
@@ -333,7 +333,7 @@ EndFunc
 
 Func BinaryWriterWriteUInt($pointer, $offset, $value)
 	If $offset + 4 > $SLAVE_BROADCAST_DATA_SIZE Then
-		Error("Shared memory overflow")
+		Error('Shared memory overflow')
 		Return SetError(1, 0, $offset)
 	EndIf
 
@@ -345,7 +345,7 @@ EndFunc
 Func BinaryWriterWriteStruct($pointer, $offset, $struct)
 	Local $size = DllStructGetSize($struct)
 	If $offset + $size > $SLAVE_BROADCAST_DATA_SIZE Then
-		Error("Shared memory overflow")
+		Error('Shared memory overflow')
 		Return SetError(1, 0, $offset)
 	EndIf
 

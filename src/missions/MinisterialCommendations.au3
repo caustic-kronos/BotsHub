@@ -158,7 +158,7 @@ EndFunc
 Func SetupPlayerMinisterialCommendationsFarm()
 	If IsTeamAutoSetup() Then Return $SUCCESS
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-		Info('Player''s profession is dervish. Loading up recommended dervish build automatically')
+		Info('Players profession is dervish. Loading up recommended dervish build automatically')
 		LoadSkillTemplate($DW_COMMENDATIONS_FARMER_SKILLBAR)
 		RandomSleep(250)
 	Else

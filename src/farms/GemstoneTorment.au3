@@ -142,6 +142,7 @@ Func GemstoneTormentFarmLoop()
 	Info('Starting Farm')
 	Local $timerWait
 
+	Info('Changing Weapons: Slot ' & $TORMENT_WEAPON_SLOT_STAFF & ' - Staff')
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
 	If GetLightbringerTitle() < 50000 Then
@@ -175,12 +176,14 @@ Func GemstoneTormentFarmLoop()
 	CastBuffsTormentFarm()
 	If RunTormentFarm(10779, 9898) == $FAIL Then Return $FAIL
 	;If RunTormentFarm(11125, 9198) == $FAIL Then Return $FAIL
+	Info('Changing Weapons: Slot ' & $TORMENT_WEAPON_SLOT_FOCUS & ' - Focus')
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500)
 	If KillTormentMobs() == $FAIL Then Return $FAIL
 	Info('Picking up loot')
 	PickUpItems()
 
+	Info('Changing Weapons: Slot ' & $TORMENT_WEAPON_SLOT_STAFF & ' - Staff')
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_STAFF)
 	RandomSleep(250)
 	If RunTormentFarm(11130, 10910) == $FAIL Then Return $FAIL
@@ -195,6 +198,7 @@ Func GemstoneTormentFarmLoop()
 	Info('Second group')
 	CastBuffsTormentFarm()
 	RandomSleep(250)
+	Info('Changing Weapons: Slot ' & $TORMENT_WEAPON_SLOT_FOCUS & ' - Focus')
 	ChangeWeaponSet($TORMENT_WEAPON_SLOT_FOCUS)
 	RandomSleep(500)
 	If KillTormentMobs() == $FAIL Then Return $FAIL

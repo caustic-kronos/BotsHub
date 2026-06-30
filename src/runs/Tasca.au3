@@ -148,7 +148,7 @@ EndFunc
 Func GoToTascasDemise()
 	TravelToOutpost($ID_THE_GRANITE_CITADEL, $district_name)
 	While GetMapID() <> $ID_TASCAS_DEMISE
-		Info('Moving to Tasca''s Demise')
+		Info('Moving to Tascas Demise')
 		MoveTo(-10000, 18875)
 		Move(-9250, 19850)
 		RandomSleep(1000)

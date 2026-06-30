@@ -28,7 +28,7 @@
 #NoTrayIcon
 
 Opt('MustDeclareVars', True)
-;Opt("ExpandEnvStrings", 1)
+;Opt('ExpandEnvStrings', 1)
 
 #Region Includes
 #include-once

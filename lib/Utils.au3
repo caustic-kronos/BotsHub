@@ -1272,7 +1272,6 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 				PingSleep(100)
 			EndIf
 
-			;FightAsPWHeroicRefrain($target, $options)
 			$combatFunction($target, $options)
 		EndIf
 

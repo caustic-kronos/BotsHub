@@ -68,7 +68,7 @@ EndFunc
 Func GoToProphetsPath()
 	TravelToOutpost($ID_AUGURY_ROCK, $district_name)
 	While GetMapID() <> $ID_PROPHETS_PATH
-		Info('Moving to Prophet''s Path')
+		Info('Moving to Prophets Path')
 		MoveTo(-17071, -1065)
 		MoveTo(-18069, -1026)
 		MoveTo(-18853, -444)

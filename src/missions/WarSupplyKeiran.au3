@@ -34,29 +34,29 @@
 ; ==== Constants ====
 Global Const $WAR_SUPPLY_KEIRAN_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& '- (Weapon Slot-3) Shortbow +15/-5 vamp +5 armor is the best weapon' & @CRLF _
-	& '- (Weapon Slot-4) Keiran''s Bow' & @CRLF _
-	& '- Ideal character is with max armor (Warrior/Paragon) with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
-	& '- When in Keiran Thackeray''s disguise then health is 600 and energy is 25' & @CRLF _
+	& '- (Weapon Slot-4) Keirans Bow' & @CRLF _
+	& '- Ideal character is warrior with 5x Knights Insignias and the Absorption -3 superior rune and 4 runes each of restoration/recovery/clarity/purity' & @CRLF _
+	& '- When in Keiran Thackerays disguise, armor is 70, health is 600 and energy is 25' & @CRLF _
 	& '- Consumables, insignias, runes, weapon upgrade components will not change health, energy, or attributes; they will otherwise work as expected (e.g. they will increase armor rating)' & @CRLF _
 	& '- This bot does not need any specific builds for main character or heroes' & @CRLF _
-	& '- Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackeray''s build for the duration of the quest' & @CRLF _
+	& '- Only main character enters Auspicious Beginnings mission and is assigned Keiran Thackerays build for the duration of the quest' & @CRLF _
 	& ' ' & @CRLF _
 	& 'Any character can go into Auspicious Beginnings mission if you send the right dialog ID (already in script) to Guild Wars client' & @CRLF _
-	& 'You just need the Keiran''s Bow which Gwen gives when the right dialog ID is sent to Guild Wars client' & @CRLF _
+	& 'You just need the Keirans Bow which Gwen gives when the right dialog ID is sent to Guild Wars client' & @CRLF _
 	& 'You do not need to have progress in Guild Wars Beyond campaign to be able enter this mission (even when these dialog options are not visible)' & @CRLF _
 	& 'This bot is useful for farming War Supplies, festival items, platinum and Ebon Vanguard reputation' & @CRLF
 ; Average duration ~ 8 minutes
 Global Const $WAR_SUPPLY_FARM_DURATION		= 8 * 60 * 1000
 Global Const $MAX_WAR_SUPPLY_FARM_DURATION	= 16 * 60 * 1000
 
-Global Const $KEIRAN_SNIPER_SHOT			= 1		; number of Keiran's Sniper Shot skill on Keiran's skillbar
-Global Const $KEIRAN_GRAVESTONE_MARKER		= 2		; number of Gravestone Marker skill on Keiran's skillbar
-Global Const $KEIRAN_TERMINAL_VELOCITY		= 3		; number of Terminal Velocity skill on Keiran's skillbar
-Global Const $KEIRAN_RAIN_OF_ARROWS			= 4		; number of Rain of Arrows skill on Keiran's skillbar
-Global Const $KEIRAN_RELENTLESS_ASSAULT		= 5		; number of Relentless Assault skill on Keiran's skillbar
-Global Const $KEIRAN_NATURES_BLESSING		= 6		; number of Nature's Blessing skill on Keiran's skillbar
-Global Const $KEIRAN_UNUSED_7TH_SKILL		= 7		; empty skill slot on Keiran's skillbar
-Global Const $KEIRAN_UNUSED_8TH_SKILL		= 8		; empty skill slot on Keiran's skillbar
+Global Const $KEIRAN_SNIPER_SHOT			= 1
+Global Const $KEIRAN_GRAVESTONE_MARKER		= 2
+Global Const $KEIRAN_TERMINAL_VELOCITY		= 3
+Global Const $KEIRAN_RAIN_OF_ARROWS			= 4
+Global Const $KEIRAN_RELENTLESS_ASSAULT		= 5
+Global Const $KEIRAN_NATURES_BLESSING		= 6
+Global Const $KEIRAN_UNUSED_7TH_SKILL		= 7
+Global Const $KEIRAN_UNUSED_8TH_SKILL		= 8
 
 ; Keiran's energy skill cost is reduced by expertise level 20
 Global Const $KEIRAN_SKILLS_ARRAY			= [$KEIRAN_SNIPER_SHOT,	$KEIRAN_GRAVESTONE_MARKER,	$KEIRAN_TERMINAL_VELOCITY,	$KEIRAN_RAIN_OF_ARROWS,	$KEIRAN_RELENTLESS_ASSAULT,	$KEIRAN_NATURES_BLESSING,	$KEIRAN_UNUSED_7TH_SKILL,	$KEIRAN_UNUSED_8TH_SKILL]
@@ -64,14 +64,14 @@ Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,	
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
 Global $warsupply_fight_options = CloneMap($default_move_aggro_kill_options)
-$warsupply_fight_options['fightFunction']	= WarSupplyFarmFight
+$warsupply_fight_options['combatFunction']	= WarSupplyFarmFight
 $warsupply_fight_options['fightRange']		= $RANGE_LONGBOW
 ; approximate 20 seconds max duration of initial and final fight
 $warsupply_fight_options['fightDuration']	= 20000
 $warsupply_fight_options['priorityMobs']	= True
 $warsupply_fight_options['callTarget']		= False
 ; Only Krytan chests in Auspicious Beginnings quest which may have useless loot
-$warsupply_fight_options['openChests']		= False
+$warsupply_fight_options['openChests']		= True
 $warsupply_fight_options['skillsCostMap']	= $KEIRAN_SKILLS_COSTS_MAP
 
 ; in Auspicious Beginnings location, the agent ID of Player is always assigned to 2 (can be accessed in GWToolbox)
@@ -96,15 +96,15 @@ Func SetupWarSupplyFarm()
 	Info('Setting up farm')
 	TravelToOutpost($ID_EYE_OF_THE_NORTH, $district_name)
 	If Not IsItemEquippedInWeaponSlot($ID_KEIRANS_BOW, 4) And FindInInventory($ID_KEIRANS_BOW)[0] == 0 Then
-		Info('Could not find Keiran''s bow in player''s inventory')
+		Info('Could not find Keirans bow in players inventory')
 		GetKeiranBow()
 	Else
-		Info('Found Keiran''s bow in player''s inventory')
+		Info('Found Keirans bow in players inventory')
 	EndIf
 	Info('Changing Weapons: Slot-4 Keiran Bow')
 	ChangeWeaponSet(4)
 	If Not IsItemEquippedInWeaponSlot($ID_KEIRANS_BOW, 4) Then
-		Info('Equipping Keiran''s bow')
+		Info('Equipping Keirans bow')
 		EquipItemByModelID($ID_KEIRANS_BOW)
 	EndIf
 	SwitchMode($ID_NORMAL_MODE)
@@ -115,7 +115,7 @@ EndFunc
 
 
 Func GetKeiranBow()
-	Info('Getting Keiran''s bow to be able to enter the quest')
+	Info('Getting Keirans bow to be able to enter the quest')
 	TravelToOutpost($ID_EYE_OF_THE_NORTH, $district_name)
 	EnterHallOfMonuments()
 	; hexadecimal code of dialog ID to receive keiran's bow
@@ -190,13 +190,8 @@ Func RunQuest()
 
 	Info('Changing weapons to 3th slot with custom modded bow')
 	ChangeWeaponSet(3)
-	; move to initial location to fight first group of foes
-	MoveTo(12000, -4600)
-	If WaitAndFightEnemiesInArea($warsupply_fight_options) == $FAIL Then Return $FAIL
 	; proceeding with the quest, second dialogs can be safely skipped to speed up farm runs
 	If RunWayPoints() == $FAIL Then Return $FAIL
-	; clearing final area
-	If WaitAndFightEnemiesInArea($warsupply_fight_options) == $FAIL Then Return $FAIL
 
 	; loop to wait out in-game countdown to exit quest automatically
 	Local $exitTimer = TimerInit()
@@ -205,216 +200,191 @@ Func RunQuest()
 		; if 2 minutes elapsed after a final fight and still not left the then some stuck occurred, therefore exiting
 		If TimerDiff($exitTimer) > 120000 Then Return $FAIL
 	WEnd
-	Sleep(3000)
 	Return $SUCCESS
 EndFunc
 
 
 Func RunWayPoints()
+	; Tiny waits everywhere to let time for Miku to join us
 	Local $wayPoints[][] = [ _
-		[11125,		-5226,	'Main Path 1'					], _
-		[11000,		-5200,	'Main Path 2'					], _
-		[10750,		-5500,	'Main Path 3'					], _
-		[10500,		-5800,	'Main Path 4'					], _
-		[10338,		-5966,	'Main Path 5'					], _
-		[9871,		-6464,	'Main Path 6'					], _
-		[9500,		-7000,	'Main Path 7'					], _
-		[8740,		-7978,	'Main Path 8'					], _
-		[7498,		-8517,	'Main Path 9'					], _
-		[6000,		-8000,	'Main Path 10'					], _
-		[5000,		-7500,	'Fighting pre forest group'		], _
-		[5193,		-8514,	'Trying to skip forest'			], _
-		[3082,		-11112,	'Trying to skip forest'			], _
-		[1743,		-12859,	'Trying to skip forest group'	], _
-		[-181,		-12791,	'Leaving Forest'				], _
-		[-2728,		-11695,	'Detour 16'						], _
-		[-2858,		-11942,	'Detour 17'						], _
-		[-4212,		-12641,	'Detour 18'						], _
-		[-4276,		-12771,	'Detour 19'						], _
-		[-6884,		-11357,	'Detour 20'						], _
-		[-9085,		-8631,	'Detour 21'						], _
-		[-13156,	-7883,	'Detour 22'						], _
-		[-13768,	-8158,	'Final Area 23'					], _
-		[-14205,	-8373,	'Final Area 24'					], _
-		[-15876,	-8903,	'Final Area 25'					], _
-		[-17109,	-8978,	'Final Area 26'					] _
+		[11900,		-4800,	'Group 1',			20	], _
+		[10700,		-5700,	'Group 2',			5	], _
+		[9600,		-6700,	'Moving',			1	], _
+		[8700,		-8000,	'Group 3',			1	], _
+		[8000,		-8600,	'Moving',			1	], _
+		[6900,		-8400,	'Moving',			1	], _
+		[5700,		-8000, 	'Group 4',			15	], _
+		[4600,		-9230, 	'Moving',			0	], _
+		[3750,		-10000, 'Moving',			0	], _
+		[3070,		-11300,	'Avoiding Group 5',	0	], _
+		[2250,		-12300,	'Moving',			0	], _
+		[1100,		-13200,	'Avoiding Group 6',	0	], _
+		[-200,		-12800,	'Moving',			0	], _
+		[-1000,		-12250,	'Moving',			0	], _
+		_ ;-1400, 	-11500
+		[-2000,		-11600,	'Group 7',			2	], _
+		[-4250,		-12400,	'Moving',			2	], _
+		[-5150,		-12800,	'Moving',			0	], _
+		[-6900,		-12100,	'Moving',			2	], _
+		[-6900,		-10500,	'Group 8',			2	], _
+		[-8200,		-9850,	'Moving',			2	], _
+		[-8700,		-9100,	'Moving',			2	], _
+		[-10100,	-8400,	'Group 9',			2	], _
+		[-13400,	-8000,	'Moving',			2	], _
+		[-16775,	-9000,	'Last group wait',	20	], _
+		[-16000,	-8500,	'Last group kill',	0	] _
 	]
 
 	Info('Running through way points')
-	Local $x, $y, $log, $range, $me, $miku
+	Local $me = GetMyAgent()
+	Local $miku = GetAgentByID($AGENTID_MIKU)
 	For $i = 0 To UBound($wayPoints) - 1
 		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS And GetMapID() <> $ID_HALL_OF_MONUMENTS) Then Disconnected()
-		$x = $wayPoints[$i][0]
-		$y = $wayPoints[$i][1]
-		$log = $wayPoints[$i][2]
-		If MoveAggroAndKill($x, $y, $log, $warsupply_fight_options) == $FAIL Then Return $FAIL
-		; wait for initial group to appear in front of player, because they appear suddenly and cannot be detected in advance
-		If $i == 2 Or $i == 3 Then Sleep(3000)
-		; wait for pre forest group to clear it because not clearing it can result in fail by Miku pulling this group into forest (2-3 groups at once)
-		If $i == 9 Or $i == 10 Then Sleep(3000)
+		If MoveAggroAndKill($wayPoints[$i][0], $wayPoints[$i][1], $wayPoints[$i][2], $warsupply_fight_options) == $FAIL Then Return $FAIL
+
+		; We have to wait for those places (first, second, preforest and last groups)
+		If $wayPoints[$i][3] <> 0 Then
+			Local $foe = GetNearestEnemyToAgent($me, $RANGE_EARSHOT)
+			Local $wait = 0
+			While $foe == Null And $wait < $wayPoints[$i][3]
+				Sleep(1000)
+				$me = GetMyAgent()
+				$foe = GetNearestEnemyToAgent($me, $RANGE_EARSHOT)
+				$wait += 1
+			WEnd
+			$miku = GetAgentByID($AGENTID_MIKU)
+		EndIf
+		If IsPlayerDead() Then Return $FAIL
+
 		; Between waypoints ensure that everything is fine with player and Miku
-		While IsPlayerAlive()
-			If CheckStuck('Waypoint ' & $log, $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
+		While GetDistance($me, $miku) > 1650 Or KeiranOrMikuNeedsHealing($me, $miku) Or GetIsDead($miku)
+			If CheckStuck('Waypoint ' & $wayPoints[$i][2], $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
 			If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then ExitLoop
+			; Using healing skill on the way between waypoints to recover until health is full
+			If KeiranOrMikuNeedsHealing($me, $miku) And IsRecharged($KEIRAN_NATURES_BLESSING) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
+			; Moving to Miku
+			If GetDistance($me, $miku) > 1650 And MoveAggroAndKill(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'), 'Moving to Miku', $warsupply_fight_options) == $FAIL Then Return $FAIL
+			Sleep(1000)
 			$me = GetMyAgent()
 			$miku = GetAgentByID($AGENTID_MIKU)
-			; check against some impossible scenarios
-			If DllStructGetData($miku, 'X') == 0 And DllStructGetData($miku, 'Y') == 0 Then Return $FAIL
-			; Using 6th healing skill on the way between waypoints to recover until health is full
-			If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($miku, 'HealthPercent') < 0.9) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
-			If CountFoesInRangeOfAgent($me, $warsupply_fight_options['fightRange']) > 0 Then WarSupplyFarmFight($warsupply_fight_options)
-			; Ensuring that Miku is not too far
-			If GetDistance($me, $miku) > 1650 Then
-				Info('Miku is too far. Trying to move to her location')
-				MoveTo(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'), $RANGE_NEARBY)
-			EndIf
-			; continue running through waypoints
-			If GetDistance($me, $miku) < 1650 And Not GetIsDead($miku) And DllStructGetData($me, 'HealthPercent') > 0.9 And DllStructGetData($miku, 'HealthPercent') > 0.9 Then ExitLoop
-			Sleep(1000)
+			If IsPlayerDead() Then Return $FAIL
 		WEnd
-		If IsPlayerDead() Then Return $FAIL
 	Next
 	Return $SUCCESS
 EndFunc
 
 
-Func WarSupplyFarmFight($options = $warsupply_fight_options)
+Func WarSupplyFarmFight($target, $options = $warsupply_fight_options)
 	If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then Return $FAIL
-	Info('Fighting')
+
+	GetAlmostInRangeOfAgent($target)
+	Attack($target)
+	PingSleep(100)
 
 	Local $fightRange	= $options['fightRange'] <> Null ?		$options['fightRange'] : $RANGE_LONGBOW
-	Local $priorityMobs	= $options['priorityMobs'] <> Null ?	$options['priorityMobs'] : True
-
-	Local $me = Null
-	Local $miku = Null
-	Local $foes = Null
-	Local $target = Null
-
+	Local $me = GetMyAgent()
+	Local $miku = GetAgentByID($AGENTID_MIKU)
 	; this loop ends when there are no more foes in range
-	While IsPlayerAlive()
-		If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then ExitLoop
+	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE
 		If CheckStuck('War Supply fight', $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
-		; refreshing/sampling all agents state at the start of every loop iteration to not operate on some old, inadequate data
-		$me = GetMyAgent()
-		$miku = GetAgentByID($AGENTID_MIKU)
-		$foes = GetFoesInRangeOfAgent($me, $fightRange)
-		If Not IsArray($foes) Or UBound($foes) < 0 Then ExitLoop
+		If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then Return $FAIL
+		If IsPlayerDead() Then Return $FAIL
 		; check to prevent data races when exited quest after doing above map check
 		If $miku == Null Then Return $FAIL
-		If GetIsDead($miku) Then Warn('Miku dead')
-		; no more foes detected in range
-		If UBound($foes) == 0 Then ExitLoop
 
-		; use skills 1, 3, 6 in special circumstances, not specifically on current target
-		; only use Nature's Blessing skill when it is recharged and player's or Miku's HP is below 90%
-		If IsRecharged($KEIRAN_NATURES_BLESSING) And (DllStructGetData($me, 'HealthPercent') < 0.9 Or DllStructGetData($miku, 'HealthPercent') < 0.9) And IsPlayerAlive() Then
-			UseSkillEx($KEIRAN_NATURES_BLESSING)
+		; Skill 6 : only use when player or Miku HP are below 90%
+		If KeiranOrMikuNeedsHealing($me, $miku) And IsRecharged($KEIRAN_NATURES_BLESSING) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
+
+		; Always ensure auto-attack is active before using skills
+		Attack($target)
+		PingSleep(50)
+
+		Local $foes = GetFoesInRangeOfAgent($me, $fightRange)
+		Local $hexFoe = Null
+		Local $interruptFoe = Null
+		Local $evade = False
+		For $foe In $foes
+			If GetHasHex($foe) Then
+				$hexFoe = $foe
+				ExitLoop
+			ElseIf GetIsCasting($foe) Then
+				Switch DllStructGetData($foe, 'Skill')
+					; if foe is casting dangerous AoE skill on player then try to interrupt it and evade AoE location
+					Case $ID_METEOR_SHOWER, $ID_FIRE_STORM, $ID_RAY_OF_JUDGMENT, $ID_UNSTEADY_GROUND, $ID_SANDSTORM, $ID_SAVANNAH_HEAT
+						$interruptFoe = $foe
+						$evade = True
+						ExitLoop
+					; other important skills casted by foes in Auspicious Beginnings quest that are easy to interrupt
+					Case $ID_HEALING_SIGNET, $ID_RESURRECTION_SIGNET, $ID_EMPATHY, $ID_ANIMATE_BONE_MINIONS, $ID_VENGEANCE, $ID_TROLL_UNGUENT, _
+							$ID_FLESH_OF_MY_FLESH, $ID_ANIMATE_FLESH_GOLEM, $ID_RESURRECTION_CHANT, $ID_RENEW_LIFE, $ID_SIGNET_OF_RETURN
+						$interruptFoe = $foe
+						ExitLoop
+				EndSwitch
+			EndIf
+		Next
+
+		; If knocked the others skills cannot be used
+		If GetIsKnocked($me) Then
+			Sleep(500)
+		; Situation when Miku stays behind player and does not attack, because mobs are too far beyond her range but they can attack the player from sufficient distance (rangers and spellcasters)
+		ElseIf ShouldEnsureMikuAttacks($me, $miku, $foes) Then
+			; We compute a spot right behind Miku and we move there
+			Local $dx = DllStructGetData($miku, 'X') - DllStructGetData($me, 'X')
+			Local $dy = DllStructGetData($miku, 'Y') - DllStructGetData($me, 'Y')
+			Local $length = Sqrt($dx * $dx + $dy * $dy)
+			Local $targetX = DllStructGetData($miku, 'X') + $dx / $length * $RANGE_NEARBY
+			Local $targetY = DllStructGetData($miku, 'Y') + $dy / $length * $RANGE_NEARBY
+			MoveTo($targetX, $targetY)
+		; Skill 1 : use on any foe with a hex
+		ElseIf IsRecharged($KEIRAN_SNIPER_SHOT) And $hexFoe <> Null Then
+			UseSkillEx($KEIRAN_SNIPER_SHOT, $hexFoe)
+			RandomSleep(100)
+		; Skill 3 : use to interrupt foes
+		ElseIf IsRecharged($KEIRAN_TERMINAL_VELOCITY) And $interruptFoe <> Null Then
+			; attempt to interrupt dangerous AoE skill
+			; or anoother important skills casted by foes in Auspicious Beginnings quest that are easy to interrupt
+			UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $foe)
+			; attempt to evade dangerous AoE skill effect just in case interrupt was too late or unsuccessful
+			If $evade Then EvadeAoESkillArea()
+		; Other skills can be used all the time
+		ElseIf IsRecharged($KEIRAN_RELENTLESS_ASSAULT) And GetHasCondition($me) Then
+			UseSkillEx($KEIRAN_RELENTLESS_ASSAULT, $target)
+			RandomSleep(100)
+		ElseIf IsRecharged($KEIRAN_RAIN_OF_ARROWS) Then
+			UseSkillEx($KEIRAN_RAIN_OF_ARROWS, $target)
+		ElseIf IsRecharged($KEIRAN_GRAVESTONE_MARKER) Then
+			UseSkillEx($KEIRAN_GRAVESTONE_MARKER, $target)
+			RandomSleep(100)
+		; Terminal velocity will still be used if all other skills are on CD - prioritized earlier for interrupt
+		ElseIf IsRecharged($KEIRAN_TERMINAL_VELOCITY) Then
+			UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $target)
 		EndIf
-
+		Sleep(500)
+		$me = GetMyAgent()
+		$miku = GetAgentByID($AGENTID_MIKU)
+		$target = GetCurrentTarget()
 		If IsPlayerDead() Then Return $FAIL
-		If GetIsKnocked($me) Then ContinueLoop
+	WEnd
+	Return $SUCCESS
+EndFunc
 
-		If IsRecharged($KEIRAN_SNIPER_SHOT) And IsPlayerAlive() Then
-			For $foe In $foes
-				If GetHasHex($foe) And Not GetIsDead($foe) And DllStructGetData($foe, 'ID') <> 0 Then
-					UseSkillEx($KEIRAN_SNIPER_SHOT, $foe)
-					RandomSleep(100)
-					; exit loop iteration to not use any skills on potentially deceased target
-					ContinueLoop
-				EndIf
-			Next
-		EndIf
 
-		If IsRecharged($KEIRAN_TERMINAL_VELOCITY) And IsPlayerAlive() Then
-			For $foe In $foes
-				If GetIsCasting($foe) And Not GetIsDead($foe) And DllStructGetData($foe, 'ID') <> 0 Then
-					Switch DllStructGetData($foe, 'Skill')
-						; if foe is casting dangerous AoE skill on player then try to interrupt it and evade AoE location
-						Case $ID_METEOR_SHOWER, $ID_FIRE_STORM, $ID_RAY_OF_JUDGMENT, $ID_UNSTEADY_GROUND, $ID_SANDSTORM, $ID_SAVANNAH_HEAT
-							; attempt to interrupt dangerous AoE skill
-							UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $foe)
-							; attempt to evade dangerous AoE skill effect just in case interrupt was too late or unsuccessful
-							EvadeAoESkillArea()
-							ContinueLoop
-						; other important skills casted by foes in Auspicious Beginnings quest that are easy to interrupt
-						Case $ID_HEALING_SIGNET, $ID_RESURRECTION_SIGNET, $ID_EMPATHY, $ID_ANIMATE_BONE_MINIONS, $ID_VENGEANCE, $ID_TROLL_UNGUENT, _
-								$ID_FLESH_OF_MY_FLESH, $ID_ANIMATE_FLESH_GOLEM, $ID_RESURRECTION_CHANT, $ID_RENEW_LIFE, $ID_SIGNET_OF_RETURN
-							; attempt to interrupt skill
-							UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $foe)
-							ContinueLoop
-					EndSwitch
-				EndIf
-			Next
-		EndIf
-
-		; fix for the pathological situation when Miku stays behind player and does not attack mobs, because mobs are standing a bit too far beyond Miku's range but still can attack the player from sufficient distance (rangers and spellcasters)
-		;Local $isFoeAttackingPlayer = False
-		;Local $isFoeAttackingMiku = False
-		Local $isPlayerAttacking = False
+Func ShouldEnsureMikuAttacks($me, $miku, $foes)
+	Local $isPlayerAttacking = False
+	Local $isMikuAttacking = False
+	If BitAND(DllStructGetData($me, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isPlayerAttacking = True
+	If BitAND(DllStructGetData($miku, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isMikuAttacking = True
+	If $isPlayerAttacking And Not $isMikuAttacking And Not GetIsDead($miku) Then
 		Local $isFoeAttacking = False
-		Local $isMikuAttacking = False
 		Local $isFoeInRangeOfMiku = False
 		For $foe In $foes
 			If BitAND(DllStructGetData($foe, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isFoeAttacking = True
 			If GetDistance($miku, $foe) < $RANGE_EARSHOT Then $isFoeInRangeOfMiku = True
-			; unfortunately GetTarget() always returns 0, so cannot be used here
-			;If GetTarget($foe) == $AGENTID_PLAYER Then $isFoeAttackingPlayer = True
-			;If GetTarget($foe) == $AGENTID_MIKU Then $isFoeAttackingMiku = True
+			If $isFoeAttacking And $isFoeInRangeOfMiku Then ExitLoop
 		Next
-		If BitAND(DllStructGetData($me, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isPlayerAttacking = True
-		If BitAND(DllStructGetData($miku, 'TypeMap'), 0x1) == $ID_TYPEMAP_ATTACK_STANCE Then $isMikuAttacking = True
-		If ($isPlayerAttacking And $isFoeAttacking And Not $isFoeInRangeOfMiku And Not $isMikuAttacking And IsPlayerAlive() And Not GetIsDead($miku)) Then
-			; move to Miku's position to trigger fight between Miku and mobs
-			Move(DllStructGetData($miku, 'X'), DllStructGetData($miku, 'Y'))
-			ContinueLoop
-		EndIf
-
-		; if target is Null then select a new target for ordinary bow attack skills 2, 4, 5 or exit the loop when there are no more targets in range
-		If $target == Null Or GetIsDead($target) Or GetIsDead(GetCurrentTarget()) Or DllStructGetData($target, 'ID') == 0 Then
-			$me = GetMyAgent()
-			If $priorityMobs Then $target = GetHighestPriorityFoe($me, $fightRange)
-			If $target == Null Or GetIsDead($target) Or DllStructGetData($target, 'ID') == 0 Then
-				$target = GetNearestEnemyToAgent($me)
-				; no more enemy agents found anywhere
-				If $target == Null Or GetIsDead($target) Or DllStructGetData($target, 'ID') == 0 Then ExitLoop
-				; no more enemy agents found within fight range
-				If GetDistance($me, $target) > $fightRange Then ExitLoop
-			Endif
-			ChangeTarget($target)
-			Sleep(100)
-			; Start auto-attack on new target
-			Attack($target)
-			Sleep(100)
-		EndIf
-
-
-		If IsRecharged($KEIRAN_RELENTLESS_ASSAULT) And GetHasCondition($me) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
-			UseSkillEx($KEIRAN_RELENTLESS_ASSAULT, $target)
-			RandomSleep(100)
-			ContinueLoop
-		EndIf
-
-		If IsRecharged($KEIRAN_RAIN_OF_ARROWS) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
-			UseSkillEx($KEIRAN_RAIN_OF_ARROWS, $target)
-			RandomSleep(100)
-			ContinueLoop
-		EndIf
-
-		If IsRecharged($KEIRAN_GRAVESTONE_MARKER) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
-			UseSkillEx($KEIRAN_GRAVESTONE_MARKER, $target)
-			RandomSleep(100)
-			ContinueLoop
-		EndIf
-
-		; only use interrupting 3th skill on current target when all other skills are recharging (interrupting skill is prioritized on more important skills above)
-		If IsRecharged($KEIRAN_TERMINAL_VELOCITY) And Not GetIsDead($target) And Not GetIsDead(GetCurrentTarget()) And DllStructGetData($target, 'ID') <> 0 And IsPlayerAlive() Then
-			UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $target)
-			ContinueLoop
-		EndIf
-	WEnd
-	If IsPlayerDead() Then Return $FAIL
-	PickUpItems(Null, DefaultShouldPickItem, $RANGE_SPIRIT)
-	Return $SUCCESS
+		If $isFoeAttacking And Not $isFoeInRangeOfMiku Then Return True
+	EndIf
+	Return False
 EndFunc
 
 
@@ -425,4 +395,10 @@ Func EvadeAoESkillArea()
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
 	MoveToRadial($myX, $myY, 400)
+EndFunc
+
+
+;~ Return true if Miku or Keiran have low life
+Func KeiranOrMikuNeedsHealing($me, $miku)
+	Return DllStructGetData($me, 'HealthPercent') < 0.75 Or DllStructGetData($miku, 'HealthPercent') < 0.75
 EndFunc
