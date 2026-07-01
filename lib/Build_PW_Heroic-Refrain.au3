@@ -129,8 +129,8 @@ Func SetupHRBuild()
 	TickHeroicRefrain()
 	AdlibRegister('TickHeroicRefrain', $HR_INTERVAL)
 
-	$default_move_aggro_kill_options['combatFunction']	= HRCombat
-	$flag_move_aggro_kill_options['combatFunction']		= HRCombat
+	$default_move_aggro_kill_options['killMethod']	= HRCombat
+	$flag_move_aggro_kill_options['killMethod']		= HRCombat
 EndFunc
 
 

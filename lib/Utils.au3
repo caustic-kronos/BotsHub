@@ -484,7 +484,7 @@ EndFunc
 
 
 ;~ Find and open chests in the given range (earshot by default)
-Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blockedFunction = Null)
+Func FindAndOpenChests($range = $RANGE_EARSHOT, $survivalFunction = Null, $blockedFunction = Null)
 	If FindInInventory($ID_LOCKPICK)[0] == 0 Then
 		WarnOnce('No lockpicks available to open chests')
 		Return Null
@@ -505,7 +505,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $defendFunction = Null, $blocked
 			;Much better solution BUT character does not defend itself while going to chest + function kind of sucks
 			;GoToSignpost($agent)
 			;Final solution, caution, chest is considered as signpost by game client
-			GoToSignpostWhileDefending($agent, $defendFunction, $blockedFunction)
+			GoToSignpostSafely($agent, $survivalFunction, $blockedFunction)
 			If IsPlayerDead() Then Return
 			RandomSleep(250)
 			OpenChest()
@@ -538,7 +538,7 @@ EndFunc
 
 
 ;~ Go to signpost and wait until you reach it.
-Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunction = Null)
+Func GoToSignpostSafely($signpost, $survivalFunction = Null, $blockedFunction = Null)
 	Local $me = GetMyAgent()
 	Local $x = DllStructGetData($signpost, 'X')
 	Local $y = DllStructGetData($signpost, 'Y')
@@ -546,7 +546,7 @@ Func GoToSignpostWhileDefending($signpost, $defendFunction = Null, $blockedFunct
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
 		Move($x, $y)
 		PingSleep(100)
-		If $defendFunction <> Null Then $defendFunction()
+		If $survivalFunction <> Null Then $survivalFunction()
 		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then
 			If $blockedFunction <> Null And $blocked > 10 Then
@@ -655,34 +655,33 @@ EndFunc
 
 
 ;~ Move to specified position while defending and trying to avoid body block and trying to avoid getting stuck
-Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_move_defend_options)
+Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_move_options)
 	Local $me = Null, $target = Null, $chest = Null
 	Local $blocked = 0, $distance = 0
 	Local $myX, $myY, $randomAngle, $offsetX, $offsetY
 
-	Local $openChests			= $options['openChests'] <> Null ?				$options['openChests'] : False
-	Local $chestOpenRange		= $options['chestOpenRange'] <> Null ?			$options['chestOpenRange'] : $RANGE_SPIRIT
-	Local $defendFunction		= $options['defendFunction'] <> Null ?			$options['defendFunction'] : Null
-	Local $moveTimeOut			= $options['moveTimeOut'] <> Null ?				$options['moveTimeOut'] : 2 * 60 * 1000
-	Local $randomFactor			= $options['randomFactor'] <> Null ?			$options['randomFactor'] : 100
-	Local $hosSkillSlot			= $options['hosSkillSlot'] <> Null ?			$options['hosSkillSlot'] : 0
-	Local $deathChargeSkillSlot	= $options['$deathChargeSkillSlot'] <> Null ?	$options['$deathChargeSkillSlot'] : 0
-	$randomFactor = _Min(_Max($randomFactor, 0), $RANGE_NEARBY) ; $randomFactor in range [0;$RANGE_NEARBY]
+	Local $openChests				= $options['openChests'] <> Null ?				$options['openChests'] : False
+	Local $chestOpenRange			= $options['chestOpenRange'] <> Null ?			$options['chestOpenRange'] : $RANGE_SPIRIT
+	Local $movementRoutine			= $options['movementRoutine'] <> Null ?			$options['movementRoutine'] : Null
+	Local $moveTimeout				= $options['moveTimeout'] <> Null ?				$options['moveTimeout'] : 2 * 60 * 1000
+	Local $moveVariance				= $options['moveVariance'] <> Null ?			$options['moveVariance'] : 100
+	Local $skillSlotHoS				= $options['skillSlotHoS'] <> Null ?			$options['skillSlotHoS'] : 0
+	Local $skillSlotDeathsCharge	= $options['skillSlotDeathsCharge'] <> Null ?	$options['skillSlotDeathsCharge'] : 0
+	$moveVariance = _Min(_Max($moveVariance, 0), $RANGE_NEARBY) ; $moveVariance in range [0;$RANGE_NEARBY]
 
 	Local $moveTimer = TimerInit()
-	Local $chatStuckTimer = TimerInit()
-	MoveRadial($destinationX, $destinationY, $randomFactor)
+	MoveRadial($destinationX, $destinationY, $moveVariance)
 
 	While IsPlayerAlive() And GetDistanceToPoint(GetMyAgent(), $destinationX, $destinationY) > $RANGE_NEARBY
-		If $defendFunction <> Null Then $defendFunction()
-		If TimerDiff($moveTimer) > $moveTimeOut Then Return $FAIL
+		If $movementRoutine <> Null Then $movementRoutine()
+		If TimerDiff($moveTimer) > $moveTimeout Then Return $FAIL
 
 		If IsPlayerAlive() And Not IsPlayerMoving() And Not GetIsKnocked(GetMyAgent()) Then
 			$blocked += 1
 			$me = GetMyAgent()
 
 			If $blocked < 6 Then
-				MoveRadial($destinationX, $destinationY, $randomFactor)
+				MoveRadial($destinationX, $destinationY, $moveVariance)
 				PingSleep(50)
 			Else
 				$myX = DllStructGetData($me, 'X')
@@ -693,21 +692,21 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 				If $blocked > 8 Then CheckAndSendStuckCommand()
 				If $blocked > 10 Then
 					; If Heart of Shadow skill is available then use it to get unstuck
-					If $hosSkillSlot > 0 And IsRecharged($hosSkillSlot) And GetEnergy() > 5 Then
-						UseSkillEx($hosSkillSlot)
+					If $skillSlotHoS > 0 And IsRecharged($skillSlotHoS) And GetEnergy() > 5 Then
+						UseSkillEx($skillSlotHoS)
 						PingSleep(50)
-						MoveRadial($destinationX, $destinationY, $randomFactor)
+						MoveRadial($destinationX, $destinationY, $moveVariance)
 					; If Death's Charge skill is available then use it to get unstuck
-					ElseIf $deathChargeSkillSlot > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST) > 0 And IsRecharged($deathChargeSkillSlot) And GetEnergy() > 5 Then
+					ElseIf $skillSlotDeathsCharge > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST) > 0 And IsRecharged($skillSlotDeathsCharge) And GetEnergy() > 5 Then
 						$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_SPELLCAST)
-						UseSkillEx($deathChargeSkillSlot, $target)
+						UseSkillEx($skillSlotDeathsCharge, $target)
 						PingSleep(50)
-						MoveRadial($destinationX, $destinationY, $randomFactor)
+						MoveRadial($destinationX, $destinationY, $moveVariance)
 					EndIf
 				EndIf
 			EndIf
 		Else
-			MoveRadial($destinationX, $destinationY, $randomFactor)
+			MoveRadial($destinationX, $destinationY, $moveVariance)
 			If $blocked > 0 Then
 				$blocked = 0
 				; player started moving, after being stuck but maybe player is rubberbanding? Therefore checking it
@@ -994,36 +993,35 @@ EndFunc
 
 #Region Map Clearing Utilities
 Global $default_move_aggro_kill_options[]
-$default_move_aggro_kill_options['fightFunction']		= KillFoesInArea
+$default_move_aggro_kill_options['fightHandler']		= KillFoesInArea
 $default_move_aggro_kill_options['fightRange']			= $RANGE_EARSHOT * 1.5
+$default_move_aggro_kill_options['fightTimeout']		= 5 * 60 * 1000
 $default_move_aggro_kill_options['flagHeroesOnFight']	= False
-$default_move_aggro_kill_options['unstuckFunction']		= TryToGetUnstuck
+$default_move_aggro_kill_options['unstuckHandler']		= TryToGetUnstuck
 $default_move_aggro_kill_options['callTarget']			= True
-$default_move_aggro_kill_options['priorityMobs']		= False
+$default_move_aggro_kill_options['priorityTargeting']	= False
 $default_move_aggro_kill_options['skillsCostMap']		= Null
-$default_move_aggro_kill_options['skillsCastTimeMap']	= Null
-$default_move_aggro_kill_options['lootInFights']		= False
+;$default_move_aggro_kill_options['skillsCastTimeMap']	= Null
+$default_move_aggro_kill_options['lootInCombat']		= False
 $default_move_aggro_kill_options['openChests']			= True
 $default_move_aggro_kill_options['chestOpenRange']		= $RANGE_SPIRIT
 $default_move_aggro_kill_options['lootTrappedArea']		= False
 $default_move_aggro_kill_options['ignoreDroppedLoot']	= False
-$default_move_aggro_kill_options['combatFunction']		= UseSkillSequentially
-; default 60 seconds fight duration
-$default_move_aggro_kill_options['fightDuration']		= 60000
+$default_move_aggro_kill_options['killMethod']			= UseSkillSequentially
 
 Global $flag_move_aggro_kill_options					= CloneMap($default_move_aggro_kill_options)
 $flag_move_aggro_kill_options['flagHeroesOnFight']		= True
 
 
-Global $default_move_defend_options[]
-$default_move_defend_options['defendFunction']			= Null
-$default_move_defend_options['moveTimeOut']				= 5 * 60 * 1000
+Global $default_move_options[]
+$default_move_options['movementRoutine']		= Null
+$default_move_options['moveTimeout']			= 5 * 60 * 1000
 ; random factor for movement
-$default_move_defend_options['randomFactor']			= 100
-$default_move_defend_options['hosSkillSlot']			= 0
-$default_move_defend_options['deathChargeSkillSlot']	= 0
-$default_move_defend_options['openChests']				= False
-$default_move_defend_options['chestOpenRange']			= $RANGE_SPIRIT
+$default_move_options['moveVariance']			= 100
+$default_move_options['skillSlotHoS']			= 0
+$default_move_options['skillSlotDeathsCharge']	= 0
+$default_move_options['openChests']				= False
+$default_move_options['chestOpenRange']			= $RANGE_SPIRIT
 
 
 ;~ Waiting until party is alive again - does not wait more than 15s
@@ -1033,38 +1031,6 @@ Func WaitUntilPartyAlive()
 		Sleep(1000)
 		$count += 1
 	WEnd
-EndFunc
-
-
-;~ Stand and fight any enemies that come within specified range within specified time interval (default 60 seconds) in options parameter
-Func WaitAndFightEnemiesInArea($options = $default_move_aggro_kill_options)
-	If IsPlayerAndPartyWiped() Then Return $FAIL
-
-	Local $fightFunction	= $options['fightFunction'] <> Null ?	$options['fightFunction'] : KillFoesInArea
-	Local $fightRange		= $options['fightRange'] <> Null ?		$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
-	Local $fightDuration	= $options['fightDuration'] <> Null ?	$options['fightDuration'] : 60000
-
-	Local $me = GetMyAgent()
-	Local $target = Null
-	Local $distance = 99999
-	Local $foesCount = 999
-	Local $timer = TimerInit()
-
-	While $foesCount > 0 Or TimerDiff($timer) < $fightDuration
-		$target = GetNearestEnemyToAgent($me)
-		If $target <> Null And DllStructGetData($target, 'ID') <> 0 Then
-			$distance = GetDistance($me, $target)
-			If $distance < $fightRange And $fightFunction <> Null Then
-				If $fightFunction($options) == $FAIL Then ExitLoop
-			EndIf
-			If IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
-		EndIf
-		RandomSleep(250)
-		$me = GetMyAgent()
-		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
-		If IsPlayerAndPartyWiped() Then Return $FAIL
-	WEnd
-	Return $SUCCESS
 EndFunc
 
 
@@ -1117,10 +1083,11 @@ EndFunc
 Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_options)
 	Local $openChests			= $options['openChests'] <> Null ?			$options['openChests'] : True
 	Local $chestOpenRange		= $options['chestOpenRange'] <> Null ?		$options['chestOpenRange'] : $RANGE_SPIRIT
-	Local $fightFunction		= $options['fightFunction'] <> Null ?		$options['fightFunction'] : KillFoesInArea
+	Local $fightHandler			= $options['fightHandler'] <> Null ?		$options['fightHandler'] : KillFoesInArea
 	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
+	Local $fightTimeout			= $options['fightTimeout'] <> Null ?		$options['fightTimeout'] : 10 * 60 * 1000 
 	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
-	Local $unstuckFunction		= $options['unstuckFunction'] <> Null ?		$options['unstuckFunction'] : TryToGetUnstuck
+	Local $unstuckHandler		= $options['unstuckHandler'] <> Null ?		$options['unstuckHandler'] : TryToGetUnstuck
 
 	IsPlayerStuck(Default, Default, True) ; init internal state
 
@@ -1131,11 +1098,14 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 	Local $target
 	Local $chest
 	Local $me = GetMyAgent()
+	Local $fightTimer = TimerInit()
 	While GetDistanceToPoint($me, $x, $y) > $RANGE_NEARBY
+		If TimerDiff($fightTimer) > $fightTimeout Then ExitLoop
+
 		; Trigger fight function if a foe comes close enough
 		$target = GetNearestEnemyToAgent($me)
 		If DllStructGetData($target, 'ID') <> 0 And GetDistance($me, $target) < $fightRange Then
-			If $fightFunction($options) == $FAIL Then ExitLoop
+			If $fightHandler($options) == $FAIL Then ExitLoop
 			; FIXME: add rezzing dead party members here
 		EndIf
 
@@ -1145,7 +1115,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 
 		; Stuck verification
 		If IsPlayerStuck() Then
-			If $unstuckFunction($x, $y) == $SUCCESS Then
+			If $unstuckHandler($x, $y) == $SUCCESS Then
 				IsPlayerStuck(Default, Default, True) ; reset stuck detection
 			Else
 				Error('Player detected as stuck and could not get unstuck')
@@ -1248,22 +1218,25 @@ EndFunc
 ;~ Kill foes by casting skills from 1 to 8
 Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
+	Local $fightTimeout			= $options['fightTimeout'] <> Null ?		$options['fightTimeout'] : 10 * 60 * 1000
 	Local $flagHeroes			= $options['flagHeroesOnFight'] <> Null ?	$options['flagHeroesOnFight'] : False
 	Local $callTarget			= $options['callTarget'] <> Null ?			$options['callTarget'] : True
-	Local $priorityMobs			= $options['priorityMobs'] <> Null ?		$options['priorityMobs'] : False
-	Local $lootInFights			= $options['lootInFights'] <> Null ?		$options['lootInFights'] : False
+	Local $priorityTargeting	= $options['priorityTargeting'] <> Null ?	$options['priorityTargeting'] : False
+	Local $lootInCombat			= $options['lootInCombat'] <> Null ?		$options['lootInCombat'] : False
 	Local $lootTrappedArea		= $options['lootTrappedArea'] <> Null ?		$options['lootTrappedArea'] : False
 	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
-	Local $combatFunction		= $options['combatFunction'] <> Null ?		$options['combatFunction'] : UseSkillSequentially
+	Local $killMethod			= $options['killMethod'] <> Null ?			$options['killMethod'] : UseSkillSequentially
 
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 	Local $target = Null
 	If $flagHeroes Then FanFlagHeroes(260)
 
+	Local $killTimer = TimerInit()
 	While $foesCount > 0
-		If $priorityMobs Then $target = GetHighestPriorityFoe($me, $fightRange)
-		If Not $priorityMobs Or $target == Null Then $target = GetNearestEnemyToAgent($me)
+		If TimerDiff($killTimer) > $fightTimeout Then ExitLoop
+		If $priorityTargeting Then $target = GetHighestPriorityFoe($me, $fightRange)
+		If Not $priorityTargeting Or $target == Null Then $target = GetNearestEnemyToAgent($me)
 		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
 			ChangeTarget($target)
 			PingSleep(100)
@@ -1272,10 +1245,10 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 				PingSleep(100)
 			EndIf
 
-			$combatFunction($target, $options)
+			$killMethod($target, $options)
 		EndIf
 
-		If $lootInFights And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
+		If $lootInCombat And IsPlayerAlive() Then PickUpItems(Null, DefaultShouldPickItem, $fightRange)
 		$me = GetMyAgent()
 		$foesCount = CountFoesInRangeOfAgent($me, $fightRange)
 		If IsPlayerAndPartyWiped() Then
@@ -2799,11 +2772,11 @@ EndFunc
 
 
 ;~ Sleep a random amount of time.
-Func RandomSleep($baseAmount, $randomFactor = Null)
+Func RandomSleep($baseAmount, $sleepVariance = Null)
 	Local $randomAmount
 	Select
-		Case $randomFactor <> Null
-			$randomAmount = $baseAmount * $randomFactor
+		Case $sleepVariance <> Null
+			$randomAmount = $baseAmount * $sleepVariance
 		Case $baseAmount >= 15000
 			$randomAmount = $baseAmount * 0.025
 		Case $baseAmount >= 6000

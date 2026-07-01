@@ -132,10 +132,10 @@ Func FarmPunchOut()
 	; Skipping foes in the arena too
 	;KilroyMove(7000, -15500, 'Group 11')
 
-	Local $kilroy_move_options = CloneMap($default_move_defend_options)
-	$kilroy_move_options['defendFunction']	= KilroySpamBlockSkill
-	$kilroy_move_options['moveTimeOut']		= 15 * 1000
-	$kilroy_move_options['randomFactor']	= 0
+	Local $kilroy_move_options = CloneMap($default_move_options)
+	$kilroy_move_options['movementRoutine']	= KilroySpamBlockSkill
+	$kilroy_move_options['moveTimeout']		= 15 * 1000
+	$kilroy_move_options['moveVariance']	= 0
 
 	; Instead, running straight through the corridor
 	MoveAvoidingBodyBlock(1050, -14250, $kilroy_move_options)

@@ -104,14 +104,14 @@ Global Const $GEMSTONE_MARGONITE_FARM_DURATION = 5 * 60 * 1000
 Global Const $MAX_GEMSTONE_MARGONITE_FARM_DURATION = 10 * 60 * 1000
 Global Const $MARGONITES_RANGE = 800
 
-Global $margonite_move_options									= CloneMap($default_move_defend_options)
-$margonite_move_options['defendFunction']						= MargoniteDefend
-$margonite_move_options['moveTimeOut']							= 100 * 1000
-$margonite_move_options['randomFactor']							= 25
-$margonite_move_options['deathChargeSkillSlot']					= $MARGONITE_DEATHS_CHARGE
+Global $margonite_move_options									= CloneMap($default_move_options)
+$margonite_move_options['movementRoutine']						= MargoniteSurvive
+$margonite_move_options['moveTimeout']							= 100 * 1000
+$margonite_move_options['moveVariance']							= 25
+$margonite_move_options['skillSlotDeathsCharge']					= $MARGONITE_DEATHS_CHARGE
 
 Global $margonite_move_options_elementalist						= CloneMap($margonite_move_options)
-$margonite_move_options_elementalist['deathChargeSkillSlot']	= 0
+$margonite_move_options_elementalist['skillSlotDeathsCharge']	= 0
 
 Global $margonite_obsidian_flesh_timer		= TimerInit()
 Global $margonite_stoneflesh_aura_timer		= TimerInit()
@@ -293,25 +293,25 @@ Func GemstoneMargoniteFarmLoop()
 
 	Info('Moving to spot and aggroing margonites')
 	MoveTo(-17541, -9431)
-	If MargoniteMoveDefending(-13935, -9850) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-13935, -9850) == $FAIL Then Return $FAIL
 	CommandAll(-16878, -9571)
-	If MargoniteMoveDefending(-14321, -11803) == $FAIL Then Return $FAIL
-	If MargoniteMoveDefending(-12115, -11057) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-14321, -11803) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-12115, -11057) == $FAIL Then Return $FAIL
 	CommandAll(-14879, -11729)
 	WaitAggroMargonites(7000)
 	; below is the furthest location player goes to pull front Margonite mobs but also not let rear margonite mobs leave player and kill monk hero
-	If MargoniteMoveDefending(-10277, -10778) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-10277, -10778) == $FAIL Then Return $FAIL
 	CommandAll(-12861, -12620)
 	; waiting for far margonite group to come into player's range
 	WaitAggroMargonites(50000)
-	If MargoniteMoveDefending(-12065, -10905) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-12065, -10905) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(5000)
-	If MargoniteMoveDefending(-12246, -10149) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-12246, -10149) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(7000)
-	If MargoniteMoveDefending(-12303, -10349) == $FAIL Then Return $FAIL
-	If MargoniteMoveDefending(-11410, -11359) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-12303, -10349) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-11410, -11359) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(3000)
-	If MargoniteMoveDefending(-11484, -11034) == $FAIL Then Return $FAIL
+	If MargoniteMoveAndSurvive(-11484, -11034) == $FAIL Then Return $FAIL
 	If IsPlayerDead() Or IsHeroDead(1) Then Return $FAIL
 
 	; if margonites group is somehow not in the spot then try to get closer to them
@@ -352,14 +352,14 @@ Func WaitAggroMargonites($timeToWait)
 	Local $timerAggro = TimerInit()
 	While TimerDiff($timerAggro) < $timeToWait
 		If IsPlayerDead() Or CheckStuck('Waiting for margonites aggro', $MAX_GEMSTONE_MARGONITE_FARM_DURATION) == $FAIL Then Return $FAIL
-		MargoniteDefend()
+		MargoniteSurvive()
 		RandomSleep(50)
 	WEnd
 	Return $SUCCESS
 EndFunc
 
 
-Func MargoniteMoveDefending($destinationX, $destinationY)
+Func MargoniteMoveAndSurvive($destinationX, $destinationY)
 	Local $result = Null
 	Switch $margonite_player_profession
 		Case $ID_ASSASSIN, $ID_MESMER, $ID_RANGER
@@ -380,7 +380,7 @@ Func MargoniteMoveDefending($destinationX, $destinationY)
 EndFunc
 
 
-Func MargoniteDefend()
+Func MargoniteSurvive()
 	MargoniteCheckBuffs()
 	MargoniteMonkHeroHeal()
 EndFunc
@@ -388,9 +388,8 @@ EndFunc
 
 Func MargoniteMonkHeroHeal()
 	Local $monkHero = GetAgentByID(GetHeroID(1))
-	If IsRecharged($MARGONITE_HERO_TROLL_UNGUENT, 1) And _
-			GetEnergy($monkHero) > 10 And Not IsNearlyEqual(DllStructGetData($monkHero, 'HealthPercent'), 1) And _
-			GetEffect($ID_TROLL_UNGUENT, 1) == Null Then
+	If IsRecharged($MARGONITE_HERO_TROLL_UNGUENT, 1) And GetEnergy($monkHero) > 10 And _
+		Not IsNearlyEqual(DllStructGetData($monkHero, 'HealthPercent'), 1) And GetEffect($ID_TROLL_UNGUENT, 1) == Null Then
 		UseHeroSkill(1, $MARGONITE_HERO_TROLL_UNGUENT)
 	EndIf
 EndFunc
@@ -485,7 +484,7 @@ Func KillMargonitesUsingVisageSkills()
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead(1)
 		RandomSleep(100)
-		MargoniteDefend()
+		MargoniteSurvive()
 
 		If IsRecharged($MARGONITE_ANCESTORS_VISAGE) And GetEffect($ID_ANCESTORS_VISAGE) == Null And GetEffect($ID_SYMPATHETIC_VISAGE) == Null And GetEnergy() > 14 And _
 				(($margonite_player_profession <> $ID_ELEMENTALIST And Not IsRecharged($MARGONITE_SHADOWFORM)) Or ($margonite_player_profession == $ID_ELEMENTALIST And Not IsRecharged($MARGONITE_ELEMENTALIST_OBSIDIAN_FLESH))) Then
@@ -522,7 +521,7 @@ Func KillMargonitesUsingWhirlingDefense()
 
 	While CountFoesInRangeOfAgent(GetMyAgent(), $MARGONITES_RANGE) > 0 And TimerDiff($timerKill) < $maxFightTime And Not IsHeroDead(1)
 		RandomSleep(100)
-		MargoniteDefend()
+		MargoniteSurvive()
 
 		If IsRecharged($MARGONITE_RANGER_DWARVEN_STABILITY) And Not IsRecharged($MARGONITE_SHADOWFORM) And GetEnergy() > 8 Then
 			UseSkillEx($MARGONITE_RANGER_DWARVEN_STABILITY)

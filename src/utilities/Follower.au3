@@ -132,7 +132,7 @@ EndFunc
 
 
 ;~ Follower loop
-Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
+Func FollowerLoop($runFunction = DefaultRun, $fightHandler = DefaultFollowerFight)
 	Local Static $leaderID = Null, $currentMap = Null, $resigned = False
 
 	Local $mapID = GetMapID()
@@ -169,7 +169,7 @@ Func FollowerLoop($runFunction = DefaultRun, $fightFunction = DefaultFight)
 		If $leader <> Null And GetDistance($me, $leader) <= $FOLLOWER_LEASH_RANGE Then
 			Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_EARSHOT)
 			While IsPlayerAlive() And $foesCount > 0
-				$fightFunction()
+				$fightHandler()
 				$me = GetMyAgent()
 				$leader = GetAgentByID($leaderID)
 				If $leader <> Null And GetDistance($me, $leader) > $FOLLOWER_LEASH_RANGE Then ExitLoop
@@ -205,7 +205,7 @@ EndFunc
 
 
 ;~ Default class fight method
-Func DefaultFight()
+Func DefaultFollowerFight()
 	AttackOrUseSkill(1000, $follower_maintain_skill_1, $follower_maintain_skill_2, $follower_maintain_skill_3, $follower_maintain_skill_4, $follower_maintain_skill_5, $follower_maintain_skill_6, $follower_maintain_skill_7, $follower_maintain_skill_8)
 	AttackOrUseSkill(1000, $follower_attack_skill_1, $follower_attack_skill_2, $follower_attack_skill_3, $follower_attack_skill_4, $follower_attack_skill_5, $follower_attack_skill_6, $follower_attack_skill_7, $follower_attack_skill_8)
 EndFunc

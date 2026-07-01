@@ -63,16 +63,16 @@ Global Const $KEIRAN_SKILLS_ARRAY			= [$KEIRAN_SNIPER_SHOT,	$KEIRAN_GRAVESTONE_M
 Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,							2,						0,						0]
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
-Global $warsupply_fight_options = CloneMap($default_move_aggro_kill_options)
-$warsupply_fight_options['combatFunction']	= WarSupplyFarmFight
-$warsupply_fight_options['fightRange']		= $RANGE_LONGBOW
+Global $warsupply_fight_options 				= CloneMap($default_move_aggro_kill_options)
+$warsupply_fight_options['killMethod']			= WarSupplyFarmFight
+$warsupply_fight_options['fightRange']			= $RANGE_LONGBOW
+$warsupply_fight_options['fightTimeout']		= 3 * 60 * 1000
 ; approximate 20 seconds max duration of initial and final fight
-$warsupply_fight_options['fightDuration']	= 20000
-$warsupply_fight_options['priorityMobs']	= True
-$warsupply_fight_options['callTarget']		= False
+$warsupply_fight_options['priorityTargeting']	= True
+$warsupply_fight_options['callTarget']			= False
 ; Only Krytan chests in Auspicious Beginnings quest which may have useless loot
-$warsupply_fight_options['openChests']		= True
-$warsupply_fight_options['skillsCostMap']	= $KEIRAN_SKILLS_COSTS_MAP
+$warsupply_fight_options['openChests']			= True
+$warsupply_fight_options['skillsCostMap']		= $KEIRAN_SKILLS_COSTS_MAP
 
 ; in Auspicious Beginnings location, the agent ID of Player is always assigned to 2 (can be accessed in GWToolbox)
 Global Const $AGENTID_PLAYER = 2
@@ -359,6 +359,8 @@ Func WarSupplyFarmFight($target, $options = $warsupply_fight_options)
 		ElseIf IsRecharged($KEIRAN_TERMINAL_VELOCITY) Then
 			UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $target)
 		EndIf
+		; Slow move in order to reduce cases where view of the target is obstructed
+		If GetDistance($me, $target) > $RANGE_AREA Then Move(DllStructGetData($target, 'X'), DllStructGetData($target, 'Y'))
 		Sleep(500)
 		$me = GetMyAgent()
 		$miku = GetAgentByID($AGENTID_MIKU)

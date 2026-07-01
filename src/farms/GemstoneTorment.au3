@@ -60,11 +60,11 @@ Global Const $TORMENT_WEAPON_SLOT_STAFF = 2
 ; Weapon of enchanting 20% and +5 Energy and a focus +15Energy/-1Regeneration for more energy
 Global Const $TORMENT_WEAPON_SLOT_FOCUS = 3
 
-Global $torment_run_options						= CloneMap($default_move_defend_options)
-$torment_run_options['defendFunction']			= DefendTormentFarm
-$torment_run_options['moveTimeOut']				= 3 * 60 * 1000
-$torment_run_options['randomFactor']			= 200
-$torment_run_options['deathChargeSkillSlot']	= $TORMENT_DEATHS_CHARGE
+Global $torment_run_options						= CloneMap($default_move_options)
+$torment_run_options['movementRoutine']			= SurviveTormentFarm
+$torment_run_options['moveTimeout']				= 3 * 60 * 1000
+$torment_run_options['moveVariance']			= 200
+$torment_run_options['skillSlotDeathsCharge']	= $TORMENT_DEATHS_CHARGE
 ; chests in Ravenheart Gloom should have good loot
 $torment_run_options['openChests']				= True
 
@@ -224,7 +224,7 @@ Func CastBuffsTormentFarm()
 EndFunc
 
 
-Func DefendTormentFarm()
+Func SurviveTormentFarm()
 	Local $me = GetMyAgent(), $target = Null
 
 	If (DllStructGetData($me, 'HealthPercent') < 0.3 Or _

@@ -145,50 +145,50 @@ Func PongmeiChestFarmLoop()
 	DervishRun(17760, 266)
 	DervishRun(15405, -2025)
 	DervishRun(13314, -1374)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #2/13')
 	DervishRun(12947, 2289)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #3/13')
 	DervishRun(11499, 4242)
 	; Am Fah Bridge
 	DervishRun(11839, 5966)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #4/13')
 	; Am Fah shits
 	DervishRun(11703, 8854)
 	DervishRun(8529, 10036)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #5/13')
 	DervishRun(5485, 11048)
 	DervishRun(1597, 7802)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #6/13')
 	DervishRun(0, 5850)
 	DervishRun(-2223, 5916)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #7/13')
 	DervishRun(-7113, 4543)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #8/13')
 	DervishRun(-9318, 1204)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #9/13')
 	; Echovald side
 	DervishRun(-12821, 2172)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #10/13')
 	DervishRun(-16938, 5153)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #11/13')
 	DervishRun(-17706, -1383)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #12/13')
 	DervishRun(-16347, -5139)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Running to Spot #13/13')
 	DervishRun(-13876, -5626)
-	$openedChests += FindAndOpenChests($RANGE_COMPASS, DefendWhileOpeningChests) ? 1 : 0
+	$openedChests += FindAndOpenChests($RANGE_COMPASS, SurviveWhileOpeningChests) ? 1 : 0
 	Info('Opened ' & $openedChests & ' chests.')
 	Return $openedChests > 0 And IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
@@ -324,7 +324,7 @@ EndFunc
 
 
 ;~ Use defensive skills while opening chests
-Func DefendWhileOpeningChests()
+Func SurviveWhileOpeningChests()
 	Local $nearestFoe = GetNearestEnemyToAgent(GetMyAgent())
 
 	If GetEnergy() >= 5 And IsRecharged($PONGMEI_I_AM_UNSTOPPABLE) And GetDistance(GetMyAgent(), $nearestFoe) < $RANGE_AREA Then UseSkillEx($PONGMEI_I_AM_UNSTOPPABLE)

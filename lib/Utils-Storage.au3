@@ -1577,7 +1577,7 @@ EndFunc
 
 #Region Loot items
 ;~ Loot items around character
-Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
+Func PickUpItems($survivalFunction = Null, $shouldPickItem = DefaultShouldPickItem, $range = $RANGE_COMPASS)
 	If $inventory_management_cache['@pickup.nothing'] Then Return
 
 	Local $item
@@ -1594,7 +1594,7 @@ Func PickUpItems($defendFunction = Null, $shouldPickItem = DefaultShouldPickItem
 		$item = GetItemByAgentID($agentID)
 
 		If ($shouldPickItem($item)) Then
-			If $defendFunction <> Null Then $defendFunction()
+			If $survivalFunction <> Null Then $survivalFunction()
 			If Not GetAgentExists($agentID) Then ContinueLoop
 			PickUpItem($item)
 			$deadlock = TimerInit()

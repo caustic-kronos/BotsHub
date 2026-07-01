@@ -84,9 +84,9 @@ Global Const $RAPTORS_STAND_YOUR_GROUND	= 6
 Global Const $RAPTORS_CANT_TOUCH_THIS	= 7
 Global Const $RAPTORS_BLADETURN_REFRAIN	= 8
 
-Global $raptors_move_options					= CloneMap($default_move_defend_options)
-$raptors_move_options['moveTimeOut']			= 3 * 60 * 1000
-$raptors_move_options['randomFactor']			= 10
+Global $raptors_move_options					= CloneMap($default_move_options)
+$raptors_move_options['moveTimeout']			= 3 * 60 * 1000
+$raptors_move_options['moveVariance']			= 10
 
 Global $raptors_farm_setup = False
 Global $raptors_player_profession = $ID_WARRIOR
@@ -187,7 +187,7 @@ Func RaptorsFarmLoop()
 	If KillRaptors() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
 	Info('Picking up loot')
-	PickUpItems(RaptorsDefend)
+	PickUpItems(RaptorsSurvive)
 	RandomSleep(250)
 	Return CheckFarmResult()
 EndFunc
@@ -289,8 +289,8 @@ Func IsBossAggroed()
 EndFunc
 
 
-;~ Defend skills to use when looting in case some mobs are still alive
-Func RaptorsDefend()
+;~ Survival skills to use when looting in case some mobs are still alive
+Func RaptorsSurvive()
 	Local $energy = GetEnergy()
 	Switch $raptors_player_profession
 		Case $ID_WARRIOR

@@ -86,10 +86,10 @@ Global Const $MAX_GEMSTONE_STYGIAN_FARM_DURATION = 16 * 60 * 1000
 Global Const $STYGIANS_RANGE_SHORT = 800
 Global Const $STYGIANS_RANGE_LONG = 1300
 
-Global $stygian_run_options						= CloneMap($default_move_defend_options)
-$stygian_run_options['defendFunction']			= StygianCheckRunBuffs
-$stygian_run_options['moveTimeOut']				= 3 * 60 * 1000
-$stygian_run_options['randomFactor']			= 20
+Global $stygian_run_options						= CloneMap($default_move_options)
+$stygian_run_options['movementRoutine']			= StygianCheckRunBuffs
+$stygian_run_options['moveTimeout']				= 3 * 60 * 1000
+$stygian_run_options['moveVariance']			= 20
 
 Global $stygian_player_profession = $ID_MESMER
 Global $gemstone_stygian_farm_setup = False

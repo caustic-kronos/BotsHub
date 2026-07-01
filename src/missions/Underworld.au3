@@ -404,7 +404,7 @@ EndFunc
 Func ClearTheFrozenWastes()
 	Local $optionsFrozenWastes					= CloneMap($default_move_aggro_kill_options)
 	$optionsFrozenWastes['fightRange']			= $RANGE_EARSHOT
-	$optionsFrozenWastes['priorityMobs']		= True
+	$optionsFrozenWastes['priorityTargeting']	= True
 	Info('Moving to Frozen Wastes')
 	MoveAggroAndKill(-5129, 13248)
 	MoveAggroAndKill(-4, 13337)
@@ -506,7 +506,7 @@ Func ServantsOfGrenth()
 	EndIf
 	Local $optionsFrozenWastes					= CloneMap($default_move_aggro_kill_options)
 	$optionsFrozenWastes['ignoreDroppedLoot']	= True
-	$optionsFrozenWastes['priorityMobs']		= True
+	$optionsFrozenWastes['priorityTargeting']	= True
 	Info('Setting heroes up for quest')
 	CommandHero(1, 2158, 19713)
 	CommandHero(2, 2482, 19482)
@@ -571,7 +571,7 @@ EndFunc
 Func ClearTheChaosPlanes()
 	Local $optionsChaosPlanes					= CloneMap($default_move_aggro_kill_options)
 	$optionsChaosPlanes['fightRange']			= $RANGE_EARSHOT
-	$optionsChaosPlanes['priorityMobs']			= True
+	$optionsChaosPlanes['priorityTargeting']	= True
 	Info('Moving to Chaos Plains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
@@ -822,7 +822,7 @@ Func ClearSpawningPools($reaper)
 	Local $optionsSpawningPools					= CloneMap($default_move_aggro_kill_options)
 	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT
 	$optionsSpawningPools['flagHeroesOnFight']	= True
-	$optionsSpawningPools['priorityMobs']		= True
+	$optionsSpawningPools['priorityTargeting']	= True
 	TeleportBackToArea($reaper, '0x84', '0x8B', 'Chaos Planes')
 	Info('Moving to Spawning Pools')
 	MoveAggroAndKill(10235, -19396)
@@ -909,7 +909,7 @@ Func TerrorwebQueen()
 	Local $optionsSpawningPools					= CloneMap($default_move_aggro_kill_options)
 	$optionsSpawningPools['fightRange']			= $RANGE_EARSHOT
 	$optionsSpawningPools['flagHeroesOnFight']	= True
-	$optionsSpawningPools['priorityMobs']		= True
+	$optionsSpawningPools['priorityTargeting']	= True
 	TakeQuest($reaper, $ID_QUEST_TERRORWEB_QUEEN, 0x806B01, 0x806B03)
 	Info('Clearing Exterior')
 	MoveAggroAndKill(-8585, -19681)
@@ -1025,7 +1025,7 @@ Func ImprisonedSpirits()
 	Local $optionsBonePits					= CloneMap($default_move_aggro_kill_options)
 	$optionsBonePits['fightRange']			= $RANGE_EARSHOT
 	$optionsBonePits['ignoreDroppedLoot']	= True
-	$optionsBonePits['priorityMobs']		= True
+	$optionsBonePits['priorityTargeting']	= True
 	If $underworld_player_profession == $ID_RITUALIST Or $underworld_player_profession == $ID_ASSASSIN Then
 		UseSkillEx($UNDERWORLD_RECALL, GetAgentByID(GetHeroID(5)))
 	EndIf
@@ -1091,7 +1091,7 @@ Func ClearTwinSerpentMountains()
 	EndIf
 	Local $optionsTwinSerpentMountains					= CloneMap($default_move_aggro_kill_options)
 	$optionsTwinSerpentMountains['fightRange']			= $RANGE_EARSHOT * 0.9
-	$optionsTwinSerpentMountains['priorityMobs']		= True
+	$optionsTwinSerpentMountains['priorityTargeting']	= True
 	Info('Moving to Twin Serpent Mountains')
 	MoveAggroAndKill(-4922, 13288)
 	MoveAggroAndKill(-127, 13346)
@@ -1196,7 +1196,7 @@ Func DemonAssassin()
 	EndIf
 	Local $optionsTwinSerpentMountains					= CloneMap($default_move_aggro_kill_options)
 	$optionsTwinSerpentMountains['ignoreDroppedLoot']	= True
-	$optionsTwinSerpentMountains['priorityMobs']		= True
+	$optionsTwinSerpentMountains['priorityTargeting']	= True
 	MoveTo(-8208, -5241)
 	Info('Setting heroes up for quest')
 	CommandHero(1, -4629, -5282)
@@ -1309,7 +1309,7 @@ Func UnwantedGuests($reaper)
 	Local $optionsUnwantedGuests				= CloneMap($default_move_aggro_kill_options)
 	$optionsUnwantedGuests['fightRange']		= $RANGE_LONGBOW
 	$optionsUnwantedGuests['ignoreDroppedLoot']	= True
-	$optionsUnwantedGuests['priorityMobs']		= True
+	$optionsUnwantedGuests['priorityTargeting']	= True
 	Info('Setting heroes up for quest')
 	CommandAll(-7362, 14283)
 	Info('Waiting 20 seconds for life spirits to expire')
@@ -1474,7 +1474,7 @@ Func TheFourHorsemen($reaper)
 	EndIf
 	Local $optionsChaosPlanes					= CloneMap($default_move_aggro_kill_options)
 	$optionsChaosPlanes['ignoreDroppedLoot']	= True
-	$optionsChaosPlanes['priorityMobs']			= True
+	$optionsChaosPlanes['priorityTargeting']	= True
 	Info('Setting heroes & spirits up for quest')
 	CommandHero(1, 13153, -12503)
 	CommandHero(2, 13795, -12084)
