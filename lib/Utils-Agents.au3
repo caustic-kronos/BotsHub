@@ -504,35 +504,6 @@ Func GetFurthestNPCInRangeOfCoords($npcAllegiance = Null, $coordX = Null, $coord
 EndFunc
 
 
-;~ TODO: check that this method is still better, I improved the original
-;~ Get NPC closest to the given coordinates and within specified range of the given coordinates. If range is Null then all found NPCs are checked, as with infinite range
-Func BetterGetNearestNPCToCoords($npcAllegiance = Null, $coordX = Null, $coordY = Null, $range = $RANGE_AREA, $condition = Null)
-	Local $me = GetMyAgent()
-	Local $agents = GetAgentArray($ID_AGENT_TYPE_NPC)
-	Local $smallestDistance = 99999
-	Local $nearestAgent = Null
-
-	If $coordX == Null Or $coordY == Null Then
-		$coordX = DllStructGetData($me, 'X')
-		$coordY = DllStructGetData($me, 'Y')
-	EndIf
-	For $agent In $agents
-		If $npcAllegiance <> Null And DllStructGetData($agent, 'Allegiance') <> $npcAllegiance Then ContinueLoop
-		If IsNearlyEqual(DllStructGetData($agent, 'HealthPercent'), 0) Then ContinueLoop
-		If GetIsDead($agent) Then ContinueLoop
-		If $MAP_SPIRIT_TYPES[DllStructGetData($agent, 'TypeMap')] <> Null Then ContinueLoop
-		If $condition <> Null And $condition($agent) == False Then ContinueLoop
-		Local $curDistance = GetDistanceToPoint($agent, $coordX, $coordY)
-		If $range < $curDistance Then ContinueLoop
-		If $curDistance < $smallestDistance Then
-			$nearestAgent = $agent
-			$smallestDistance = $curDistance
-		EndIf
-	Next
-	Return $nearestAgent
-EndFunc
-
-
 ;~ Returns the highest priority foe around a target agent
 Func GetHighestPriorityFoe($targetAgent, $range = $RANGE_SPELLCAST)
 	Local Static $mobsPriorityMap = CreateMobsPriorityMap()
@@ -618,7 +589,7 @@ Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $rang
 	Local $nearestAgent = Null, $distance = Null, $nearestDistance = 100000000
 	Local $agents = GetAgentArray($agentType)
 	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
-	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
+	Local $ownID = GetMyID()
 
 	For $agent In $agents
 		If DllStructGetData($agent, 'ID') == $targetAgentID Then ContinueLoop
@@ -642,7 +613,7 @@ Func GetFurthestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $ran
 	Local $furthestAgent = Null, $distance = Null, $furthestDistance = -1
 	Local $agents = GetAgentArray($agentType)
 	Local $targetAgentID = DllStructGetData($targetAgent, 'ID')
-	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
+	Local $ownID = GetMyID()
 
 	For $agent In $agents
 		If DllStructGetData($agent, 'ID') == $targetAgentID Then ContinueLoop
@@ -694,7 +665,7 @@ Func GetNearestAgentToCoords($X, $Y, $agentType = 0, $agentFilter = Null)
 	Local $nearestAgent, $nearestDistance = 100000000
 	Local $distance
 	Local $agents = GetAgentArray($agentType)
-	Local $ownID = DllStructGetData(GetMyAgent(), 'ID')
+	Local $ownID = GetMyID()
 
 	For $agent In $agents
 		If DllStructGetData($agent, 'ID') == $ownID Then ContinueLoop

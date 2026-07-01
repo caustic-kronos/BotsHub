@@ -208,11 +208,10 @@ You are welcome to create and contribute new bots 👍
 
 ## 📌 Planned Features
 
-- 💡🛠️ **Fix Spirit Slaves farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 🧠💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
+- 💡💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
+- 💡💭 **Bandit raid**
 - 🧠💭 **Nicholas the traveler items (gifties)**
-- 🧠💭 **Bandit raid**
 - 🧠💭 **Improve crash recovery**
 
 **Legend:**  

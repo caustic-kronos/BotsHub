@@ -161,8 +161,6 @@ Func SpiritSlavesFarmLoop()
 		If $group >= 1 And $group <= 3 Then $balled = WaitForFoesBall($bottomPosition)
 		; The top group comes twice - 							-	Second and Fourth waves
 		If $group == 2 Or $group == 5 Then $balled = WaitForFoesBall($topPosition)
-		; FIXME: Sometimes groups get in range of player - we could fix with starting the fight
-		; for now we just die and restart the zone
 		If IsPlayerDead() Then Return RestartAfterDeath()
 		Info('Killing group ' & $group)
 		If ($balled ? FarmGroup() : QuickFarmGroup()) == $FAIL Then Return RestartAfterDeath()
