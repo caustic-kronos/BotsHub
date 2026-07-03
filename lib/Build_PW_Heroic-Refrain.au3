@@ -44,6 +44,7 @@ Global $BUILD_PW_THERES_NOTHING_TO_FEAR = -1
 ;Global $BUILD_PW_LEADERS_COMFORT = -1						; not supported
 Global $BUILD_PW_CANT_TOUCH_THIS = -1
 Global $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM = -1
+Global $BUILD_PW_MIGHTY_THROW = -1
 
 ; Aria build
 Global $BUILD_PW_ARIA_OF_RESTORATION = -1
@@ -119,6 +120,10 @@ Func SetupHRBuild()
 				$BUILD_PW_NATURAL_TEMPER = $i
 			Case $ID_AGGRESSIVE_REFRAIN
 				$BUILD_PW_AGGRESSIVE_REFRAIN = $i
+			Case $ID_MIGHTY_THROW
+				$BUILD_PW_MIGHTY_THROW = $i
+			Case $ID_TO_THE_LIMIT
+				$BUILD_PW_TO_THE_LIMIT = $i
 			Case Else
 				Error('The skill ' & $i & ' is not recognised in a HR build.')
 		EndSwitch
@@ -326,4 +331,7 @@ Func CastCombatShouts($target = Null)
 
 	; Priority 13: To the Limit! (no need to check for foes presence - if there were no foes we would not be in this function)
 	If $BUILD_PW_TO_THE_LIMIT > 0 And IsRecharged($BUILD_PW_TO_THE_LIMIT) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_TO_THE_LIMIT)
+
+	; Priority 14: Mighty Throw (adrenaline-based, 50 required)
+	If $BUILD_PW_MIGHTY_THROW > 0 And GetSkillbarSkillAdrenaline($BUILD_PW_MIGHTY_THROW) >= 50 Then Return UseSkillEx($BUILD_PW_MIGHTY_THROW, $target)
 EndFunc
