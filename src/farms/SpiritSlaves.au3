@@ -153,7 +153,7 @@ Func SpiritSlavesFarmLoop()
 	Local $topPosition = [-8900, -4600]
 	; 5 Groups to kill
 	For $group = 1 To 5
-		If $group <> 4 Then MoveTo(-7465, -7900, 0, 0)
+		If $group <> 4 Then MoveTo(-7465, -7900, 0)
 		; For the first group, we need the allies to die first	-	First wave
 		If $group == 1 Then WaitForAlliesDead()
 		Local $balled = True

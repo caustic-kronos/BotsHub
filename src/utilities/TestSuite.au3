@@ -130,7 +130,7 @@ Func TestMovement()
 
 	Local $myX = DllStructGetData($me, 'X')
 	Local $myY = DllStructGetData($me, 'Y')
-	MoveTo($myX + 200, $myY + 200, 0, 0)
+	MoveTo($myX + 200, $myY + 200, 0)
 	$me = GetMyAgent()
 	If DllStructGetData($me, 'X') == $myX And DllStructGetData($me, 'Y') == $myY Then Return $FAIL
 

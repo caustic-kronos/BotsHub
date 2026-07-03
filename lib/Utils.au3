@@ -65,23 +65,18 @@ EndFunc
 
 
 ;~ Move to a location and wait until you reach it.
-Func MoveTo($X, $Y, $precision = 25, $random = 50, $doWhileRunning = Null)
+Func MoveTo($X, $Y, $precision = 100, $doWhileRunning = Null)
 	Local $blockedCount = 0
 	Local $mapID = GetMapID()
-	Local $destinationX = $X + Random(-$random, $random)
-	Local $destinationY = $Y + Random(-$random, $random)
-
-	Move($destinationX, $destinationY)
-
 	Local $me = GetMyAgent()
-	While GetDistanceToPoint($me, $destinationX, $destinationY) > $precision
+	While GetDistanceToPoint($me, $X, $Y) > $precision
 		If $doWhileRunning <> Null Then $doWhileRunning()
+		Move($X, $Y)
 		PingSleep(100)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
-			$destinationX = $X + Random(-$random, $random)
-			$destinationY = $Y + Random(-$random, $random)
-			Move($destinationX, $destinationY)
+			MoveRadial($X, $Y, $RANGE_AREA)
+			Sleep(1000)
 		EndIf
 		$me = GetMyAgent()
 		If GetMapID() <> $mapID Then ExitLoop
@@ -507,7 +502,7 @@ Func FindAndOpenChests($range = $RANGE_EARSHOT, $survivalFunction = Null, $block
 			;Final solution, caution, chest is considered as signpost by game client
 			GoToSignpostSafely($agent, $survivalFunction, $blockedFunction)
 			If IsPlayerDead() Then Return
-			RandomSleep(250)
+			RandomSleep(200)
 			OpenChest()
 			RandomSleep(1000)
 			If IsPlayerDead() Then Return
@@ -544,18 +539,13 @@ Func GoToSignpostSafely($signpost, $survivalFunction = Null, $blockedFunction = 
 	Local $y = DllStructGetData($signpost, 'Y')
 	Local $blocked = 0
 	While IsPlayerAlive() And GetDistance($me, $signpost) > 250 And $blocked < 15
+		If $survivalFunction <> Null Then $survivalFunction()
 		Move($x, $y)
 		PingSleep(100)
-		If $survivalFunction <> Null Then $survivalFunction()
-		$me = GetMyAgent()
 		If Not IsPlayerMoving() Then
-			If $blockedFunction <> Null And $blocked > 10 Then
-				$blockedFunction()
-			EndIf
+			If $blockedFunction <> Null And $blocked > 10 Then $blockedFunction()
 			$blocked += 1
-			Move($x, $y)
 		EndIf
-		PingSleep(100)
 		$me = GetMyAgent()
 	WEnd
 	GoSignpost($signpost)
@@ -650,7 +640,7 @@ Func GetAlmostInRangeOfAgent($targetAgent, $proximity = $PLAYER_AGGRO_RANGE)
 
 	Local $goX = $myX + ($targetX - $myX) * (1 - $ratio)
 	Local $goY = $myY + ($targetY - $myY) * (1 - $ratio)
-	MoveTo($goX, $goY, 25, 0)
+	MoveTo($goX, $goY)
 EndFunc
 
 
@@ -1092,8 +1082,6 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 	IsPlayerStuck(Default, Default, True) ; init internal state
 
 	If $log <> '' Then Info($log)
-
-	Move($x, $y)
 
 	Local $target
 	Local $chest

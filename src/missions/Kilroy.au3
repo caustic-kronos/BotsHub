@@ -146,12 +146,12 @@ Func FarmPunchOut()
 	; Following the right wall
 	MoveAvoidingBodyBlock(6200, -15850, $kilroy_move_options)
 	; Passage through the guards
-	MoveTo(6998, -16020, 0, 0, KilroySpamBlockSkill)
+	MoveTo(6998, -16020, 0, KilroySpamBlockSkill)
 	; This spot is the bodyblock spot: (7114, -16028)
-	MoveTo(7300, -16050, 0, 0, KilroySpamBlockSkill)
+	MoveTo(7300, -16050, 0, KilroySpamBlockSkill)
 	; Safe spot before boss
-	MoveTo(10550, -16100, 0, 0, KilroySpamBlockSkill)
-	MoveTo(11900, -16000, 0, 0, KilroySpamBlockSkill)
+	MoveTo(10550, -16100, 0, KilroySpamBlockSkill)
+	MoveTo(11900, -16000, 0, KilroySpamBlockSkill)
 	; Boss and Ettin at (13000, -15700)
 	Info('Boss and his pal')
 	Local $me = GetMyAgent()
@@ -202,7 +202,7 @@ Func KilroyMove($x, $y, $log = '', $openChests = True)
 
 		; Moving toward destination, but staying close to Kilroy - with timer to complete move
 		If TimerDiff($timer) > 120000 Then
-			MoveTo($x, $y, 0, 0, KilroySpamBlockSkill)
+			MoveTo($x, $y, 0, KilroySpamBlockSkill)
 		ElseIf GetDistance($me, $kilroy) > 2 * $RANGE_AREA Then
 			Move(DllStructGetData($kilroy, 'X'), DllStructGetData($kilroy, 'Y'))
 		Else

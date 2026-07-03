@@ -273,7 +273,7 @@ Func StygianJobMesmerAssassin($waveNumber = 1)
 	EndIf
 	MoveTo(13128, -10084)
 	; 0 to get player into the exact location without randomness, spot for cleaning stygian mobs
-	MoveTo(13082, -9788, 0, 0)
+	MoveTo(13082, -9788, 0)
 	RandomSleep(500)
 	If IsRecharged($STYGIAN_DWARVEN_STABILITY) Then
 		UseSkillEx($STYGIAN_DWARVEN_STABILITY)
@@ -303,7 +303,7 @@ Func StygianJobRanger()
 	MoveTo(10844, -10205)
 	MoveTo(10313, -11156)
 	MoveTo(8269, -11160)
-	MoveTo(8177, -11171, 0, 0)
+	MoveTo(8177, -11171, 0)
 
 	UseHeroSkill(1, $STYGIAN_HERO_EDGE_OF_EXTINCTION)
 	UseSkillEx($STYGIAN_RANGER_WINNOWING)
@@ -398,7 +398,7 @@ Func GoToHidingSpot()
 	If IsPlayerDead() Then Return $FAIL
 	RunStygianFarm(10575, -8170)
 	; 0 to get player into the exact location without randomness, spot to hide from running mobs
-	MoveTo(10871, -7842, 0, 0)
+	MoveTo(10871, -7842, 0)
 	; waiting for mobs to run by
 	RandomSleep(7500)
 	If $stygian_player_profession == $ID_RANGER Then

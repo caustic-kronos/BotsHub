@@ -229,16 +229,14 @@ Func EnterAChanceEncounterQuest()
 	Local $coordsX = DllStructGetData($me, 'X')
 	Local $coordsY = DllStructGetData($me, 'Y')
 
-	If -1400 < $coordsX And $coordsX < -550 And - 2000 < $coordsY And $coordsY < -1100 Then
-		MoveTo(1474, -1197, 25, 0)
-	EndIf
+	If -1400 < $coordsX And $coordsX < -550 And - 2000 < $coordsY And $coordsY < -1100 Then MoveTo(1474, -1197)
 
 	RandomSleep(1000)
 	UseCitySpeedBoost()
 	Local $npc = GetNearestNPCToCoords(2240, -1264)
 	GoToNPC($npc)
 	If GetDistance(GetMyAgent(), $npc) > $RANGE_ADJACENT Then
-		MoveTo(1474, -1197, 25, 0)
+		MoveTo(1474, -1197)
 		GoToNPC($npc)
 	EndIf
 	RandomSleep(250)
@@ -449,7 +447,7 @@ Func RunToKillSpot()
 	MoveTo(-2096, -1067)
 	MoveTo(-815, -1898)
 	MoveTo(-690, -3769)
-	MoveTo(-850, -3961, 0, 0)
+	MoveTo(-850, -3961, 0)
 	RandomSleep(500)
 EndFunc
 

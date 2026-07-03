@@ -175,18 +175,18 @@ Func DragonMossFarmLoop()
 	RandomSleep(50)
 
 	; Aggro and cast hero spirits
-	MoveTo(-5300, 15600, 0, 0, UseIMSWhenAvailable)
+	MoveTo(-5300, 15600, 0, UseIMSWhenAvailable)
 	If $DM_RANGER_HERO > 0 Then
 		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_WINNOWING)
 	EndIf
-	MoveTo(-6150, 18000, 0, 0, UseIMSWhenAvailable)
+	MoveTo(-6150, 18000, 0, UseIMSWhenAvailable)
 	If $DM_RANGER_HERO > 0 Then
 		UseHeroSkill($DM_RANGER_HERO, $DM_RANGER_HERO_EDGE_OF_EXTINCTION)
 	EndIf
 	RandomSleep(2000)
 
 	; Move to safety and send hero away to avoid stealing loots
-	MoveTo(-6575, 18575, 0, 0)
+	MoveTo(-6575, 18575, 0)
 	UseSkillEx($DM_DWARVEN_STABILITY)
 	If $DM_RANGER_HERO > 0 Then
 		UseHeroSkill($DM_RANGER_HERO,$DM_RANGER_HERO_INCOMING)

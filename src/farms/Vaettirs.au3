@@ -383,7 +383,7 @@ Func AggroAllMobs()
 
 	; [12445,	-17327]
 	; Final spot needs to be precise to avoid losing aggro (we need a right wall block)
-	MoveTo(12480, -17336, 0, 0)
+	MoveTo(12480, -17336, 0)
 
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc
