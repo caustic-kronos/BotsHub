@@ -77,20 +77,22 @@ Func RunToTunnels()
 	WEnd
 	Info('Making way to entrance')
 	AdlibRegister('TrackPartyStatus', 10000)
-	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 17982, 641, $RANGE_LONGBOW)
+	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), 18000, -1700, $RANGE_AREA)
 		WaitUntilPartyAlive()
 		UseSummoningStone()
-		MoveAggroAndKillInRange(21264, 3562, '1', $PLAYER_AGGRO_RANGE)
-		MoveAggroAndKillInRange(17982, 641, '2', $PLAYER_AGGRO_RANGE)
+		MoveAggroAndKillInRange(21250, 3550, '1', $PLAYER_AGGRO_RANGE)
+		MoveAggroAndKillInRange(18850, -900, '2', $PLAYER_AGGRO_RANGE)
+		MoveAggroAndKillInRange(19200, -4200, '3', $PLAYER_AGGRO_RANGE)
+		MoveAggroAndKillInRange(18000, -1700, '4', $PLAYER_AGGRO_RANGE)
 	WEnd
 	AdlibUnRegister('TrackPartyStatus')
 
 	$mapLoaded = False
 	Info('Going through door')
 	While Not $mapLoaded
-		MoveTo(17300, -400)
-		Move(17400, -800)
-		RandomSleep(2000)
+		MoveTo(17900, -1600)
+		Move(17600, -1300)
+		Sleep(3000)
 		$mapLoaded = WaitMapLoading($ID_TUNNELS_OF_THE_FORSAKEN_LVL_1)
 	WEnd
 	Return IsRunFailed() ? $FAIL : $SUCCESS
