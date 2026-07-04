@@ -420,12 +420,18 @@ Func GetSkillbarSkillAdrenaline($skillSlot, $heroIndex = 0)
 EndFunc
 
 
-;~ Returns True if the skill at the skillslot given is recharged
+;~ Returns True if the skill at the given skillslot is recharged
 Func IsRecharged($skillSlot, $heroIndex = 0)
-	Local $skillbar = GetSkillbar($heroIndex)
+	Return IsSkillRecharged(GetSkillbar($heroIndex), $skillSlot)
+EndFunc
+
+
+;~ Return True if the skill from given skillbar at the given skillslot is recharged
+Func IsSkillRecharged($skillbar, $skillSlot, $skillTimer = Null)
 	Local $recharge = DllStructGetData($skillbar, 'Recharge' & $skillSlot)
 	If $recharge == 0 Then Return True
-	Return ($recharge - GetSkillTimer()) == 0
+	If $skillTimer == Null Then $skillTimer = GetSkillTimer()
+	Return ($recharge - $skillTimer) == 0
 EndFunc
 
 

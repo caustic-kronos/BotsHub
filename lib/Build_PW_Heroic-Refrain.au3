@@ -136,6 +136,7 @@ Func SetupHRBuild()
 
 	$default_move_aggro_kill_options['killMethod']	= HRCombat
 	$flag_move_aggro_kill_options['killMethod']		= HRCombat
+	$optionsFollower['killMethod']					= HRCombat
 EndFunc
 
 
@@ -219,6 +220,7 @@ Func HRPhaseApplyParty()
 
 	Local $refrain = Null
 	Local $refrainTarget = Null
+	Local $myID = GetMyID()
 	For $offset = 0 To $partySize - 1
 		Local $index = Mod($next + $offset, $partySize)
 		Local $agent = $party[$index]
@@ -231,8 +233,10 @@ Func HRPhaseApplyParty()
 			For $key In MapKeys($sharedMemoryHandlesMap)
 				Local $map = ReadHeroesEffectsFromSharedMemory($key)
 				$effects = $map[$agentID]
+				; Effects found, no need to check other blocks
 				If $effects <> Null Then ExitLoop
 			Next
+			; Agent is not ours and we could not get his effects - skip
 			If $effects == Null Then ContinueLoop
 		EndIf
 
@@ -240,7 +244,7 @@ Func HRPhaseApplyParty()
 		If BitAnd($refrainsByte, 0x1) == 0x0 Then
 			UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
 			$next = Mod($index + 1, $partySize)
-			Return $index == 0 ? $HR_PHASE_SELF_SETUP : $HR_PHASE_APPLY_PARTY
+			Return $agentID == $myID ? $HR_PHASE_SELF_SETUP : $HR_PHASE_APPLY_PARTY
 		EndIf
 		If $refrainTarget == Null And BitAnd($refrainsByte, 0x6) <> 0x6 Then
 			$refrainTarget = $agent
@@ -276,6 +280,8 @@ EndFunc
 
 ;~ Combat callback for KillFoesInArea: loops Attack + CastCombatShouts until target is dead.
 Func HRCombat($target, $options)
+	Local $abortCondition		= $options['abortCondition'] <> Null ?		$options['abortCondition'] : Null
+
 	GetAlmostInRangeOfAgent($target)
 	Attack($target)
 	Sleep(250)
@@ -285,6 +291,7 @@ Func HRCombat($target, $options)
 		Sleep(250)
 		$target = GetCurrentTarget()
 		If IsPlayerDead() Then ExitLoop
+		If $abortCondition <> Null And $abortCondition() Then Return
 	WEnd
 EndFunc
 
@@ -296,41 +303,44 @@ Func CastCombatShouts($target = Null)
 	; Priority 1: Ensure we are attacking the target
 	If $target <> Null Then Attack($target)
 
+	Local $skillbar = GetSkillbar()
+	Local $skilltimer = GetSkillTimer()
+	
 	; Priority 2: Aggressive Refrain — only if not already active, only in combat
-	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN) == Null And $energy >= 15 And IsRecharged($BUILD_PW_AGGRESSIVE_REFRAIN) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
+	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN) == Null And $energy >= 15 And IsSkillRecharged($skillbar, $BUILD_PW_AGGRESSIVE_REFRAIN, $skilltimer) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
 	
 	; Priority 3: Stand Your Ground!
-	If $BUILD_PW_STAND_YOUR_GROUND > 0 And IsRecharged($BUILD_PW_STAND_YOUR_GROUND) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
+	If $BUILD_PW_STAND_YOUR_GROUND > 0 And IsSkillRecharged($skillbar, $BUILD_PW_STAND_YOUR_GROUND, $skilltimer) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
 
 	; Priority 4: Ebon Battle Standard of Wisdom
-	If $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM > 0 And IsRecharged($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM)
+	If $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM > 0 And IsSkillRecharged($skillbar, $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM, $skilltimer) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM)
 
 	; Priority 5: There's Nothing to Fear!
-	If $BUILD_PW_THERES_NOTHING_TO_FEAR > 0 And IsRecharged($BUILD_PW_THERES_NOTHING_TO_FEAR) And $energy >= 15 Then Return UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
+	If $BUILD_PW_THERES_NOTHING_TO_FEAR > 0 And IsSkillRecharged($skillbar, $BUILD_PW_THERES_NOTHING_TO_FEAR, $skilltimer) And $energy >= 15 Then Return UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
 
 	; Priority 6: Save Yourselves! (adrenaline-based, 200 required)
 	If $BUILD_PW_SAVE_YOURSELVES > 0 And GetSkillbarSkillAdrenaline($BUILD_PW_SAVE_YOURSELVES) >= 200 Then Return UseSkillEx($BUILD_PW_SAVE_YOURSELVES)
 
 	; Priority 7: Aria of Restoration
-	If $BUILD_PW_ARIA_OF_RESTORATION > 0 And IsRecharged($BUILD_PW_ARIA_OF_RESTORATION) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_ARIA_OF_RESTORATION)
+	If $BUILD_PW_ARIA_OF_RESTORATION > 0 And IsSkillRecharged($skillbar, $BUILD_PW_ARIA_OF_RESTORATION, $skilltimer) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_ARIA_OF_RESTORATION)
 
 	; Priority 8: Ballad of Restoration
-	If $BUILD_PW_BALLAD_OF_RESTORATION > 0 And IsRecharged($BUILD_PW_BALLAD_OF_RESTORATION) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_BALLAD_OF_RESTORATION)
+	If $BUILD_PW_BALLAD_OF_RESTORATION > 0 And IsSkillRecharged($skillbar, $BUILD_PW_BALLAD_OF_RESTORATION, $skilltimer) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_BALLAD_OF_RESTORATION)
 
 	; Priority 9: Aria of Zeal
-	If $BUILD_PW_ARIA_OF_ZEAL > 0 And IsRecharged($BUILD_PW_ARIA_OF_ZEAL) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_ARIA_OF_ZEAL)
+	If $BUILD_PW_ARIA_OF_ZEAL > 0 And IsSkillRecharged($skillbar, $BUILD_PW_ARIA_OF_ZEAL, $skilltimer) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_ARIA_OF_ZEAL)
 
 	; Priority 10: Cant touch this
-	If $BUILD_PW_CANT_TOUCH_THIS > 0 And IsRecharged($BUILD_PW_CANT_TOUCH_THIS) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_CANT_TOUCH_THIS)
+	If $BUILD_PW_CANT_TOUCH_THIS > 0 And IsSkillRecharged($skillbar, $BUILD_PW_CANT_TOUCH_THIS, $skilltimer) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_CANT_TOUCH_THIS)
 
 	; Priority 11: Natural Temper
 	If $BUILD_PW_NATURAL_TEMPER > 0 And GetSkillbarSkillAdrenaline($BUILD_PW_NATURAL_TEMPER) >= 75 Then Return UseSkillEx($BUILD_PW_NATURAL_TEMPER)
 
 	; Priority 12: For Great Justice!
-	If $BUILD_PW_FOR_GREAT_JUSTICE > 0 And IsRecharged($BUILD_PW_FOR_GREAT_JUSTICE) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
+	If $BUILD_PW_FOR_GREAT_JUSTICE > 0 And IsSkillRecharged($skillbar, $BUILD_PW_FOR_GREAT_JUSTICE, $skilltimer) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_FOR_GREAT_JUSTICE)
 
 	; Priority 13: To the Limit! (no need to check for foes presence - if there were no foes we would not be in this function)
-	If $BUILD_PW_TO_THE_LIMIT > 0 And IsRecharged($BUILD_PW_TO_THE_LIMIT) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_TO_THE_LIMIT)
+	If $BUILD_PW_TO_THE_LIMIT > 0 And IsSkillRecharged($skillbar, $BUILD_PW_TO_THE_LIMIT, $skilltimer) And $energy >= 5 Then Return UseSkillEx($BUILD_PW_TO_THE_LIMIT)
 
 	; Priority 14: Mighty Throw (adrenaline-based, 50 required)
 	If $BUILD_PW_MIGHTY_THROW > 0 And GetSkillbarSkillAdrenaline($BUILD_PW_MIGHTY_THROW) >= 50 Then Return UseSkillEx($BUILD_PW_MIGHTY_THROW, $target)

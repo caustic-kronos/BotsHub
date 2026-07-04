@@ -1214,6 +1214,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 	Local $lootTrappedArea		= $options['lootTrappedArea'] <> Null ?		$options['lootTrappedArea'] : False
 	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
 	Local $killMethod			= $options['killMethod'] <> Null ?			$options['killMethod'] : UseSkillSequentially
+	Local $abortCondition		= $options['abortCondition'] <> Null ?		$options['abortCondition'] : Null
 
 	Local $me = GetMyAgent()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $fightRange)
@@ -1228,11 +1229,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
 			ChangeTarget($target)
 			PingSleep(100)
-			If $callTarget Then
-				CallTargetOnce($target)
-				PingSleep(100)
-			EndIf
-
+			If $callTarget Then CallTargetOnce($target)
 			$killMethod($target, $options)
 		EndIf
 
@@ -1243,6 +1240,7 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 			If $flagHeroes Then CancelAllHeroes()
 			Return $FAIL
 		EndIf
+		If $abortCondition <> Null And $abortCondition() Then Return $SUCCESS
 	WEnd
 	RandomSleep(500)
 	If $flagHeroes Then CancelAllHeroes()
@@ -1252,7 +1250,8 @@ EndFunc
 
 
 Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
-	Local $skillsCostMap = $options['skillsCostMap']
+	Local $skillsCostMap		= $options['skillsCostMap']
+	Local $abortCondition		= $options['abortCondition'] <> Null ?		$options['abortCondition'] : Null
 
 	; get as close as possible to target foe to have a surprise effect when attacking
 	GetAlmostInRangeOfAgent($target)
@@ -1275,6 +1274,7 @@ Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
 		EndIf
 		$target = GetCurrentTarget()
 		If IsPlayerDead() Then ExitLoop
+		If $abortCondition <> Null And $abortCondition() Then Return
 	WEnd
 EndFunc
 
