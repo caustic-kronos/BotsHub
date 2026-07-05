@@ -133,6 +133,9 @@ Func FollowerLoop($options = $optionsFollower)
 				$leader = GetAgentByID($leaderID)
 			EndIf
 		EndIf
+
+		; Loot part
+		PickUpItems(Null, DefaultShouldPickItem, $MOB_AGGRO_RANGE)
 	EndIf
 
 	GoPlayer($leader)

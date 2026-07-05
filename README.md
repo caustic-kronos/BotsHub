@@ -80,7 +80,7 @@ To use it:
 | Area							| Drops																	|
 | ----------------------------- | --------------------------------------------------------------------- |
 | Bogroot						| Froggy																|
-| Sepulchre of Dragrimmar (SoO)	| Dragon Bone Staff														|
+| Shards of Orr (SoO)			| Dragon Bone Staff														|
 | Slaver’s Exile				| Voltaic Spears														|
 | FoW							| Obsidian Shards, Obsidian Edge, Shadow weapons						|
 | FoW – Tower of Courage		| Obsidian Shards, dust													|
@@ -211,6 +211,8 @@ You are welcome to create and contribute new bots 👍
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 💡💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
 - 💡💭 **Bandit raid**
+- 💡💭 **Skree farm** (spears, feathers)
+- 💡💭 **Kappa farm** (shield)
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Improve crash recovery**
 
