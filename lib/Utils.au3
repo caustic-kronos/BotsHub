@@ -69,14 +69,18 @@ Func MoveTo($X, $Y, $precision = 100, $doWhileRunning = Null)
 	Local $blockedCount = 0
 	Local $mapID = GetMapID()
 	Local $me = GetMyAgent()
+	; Precision can't be smaller than 1 - we set it to 2 by precaution
+	If $precision < 2 Then $precision = 2
 	While GetDistanceToPoint($me, $X, $Y) > $precision
 		If $doWhileRunning <> Null Then $doWhileRunning()
 		Move($X, $Y)
 		PingSleep(100)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
-			MoveRadial($X, $Y, $RANGE_AREA)
-			Sleep(1000)
+			If $blockedCount > 3 Then
+				MoveRadial($X, $Y, $RANGE_AREA)
+				Sleep(1000)
+			EndIf
 		EndIf
 		$me = GetMyAgent()
 		If GetMapID() <> $mapID Then ExitLoop
