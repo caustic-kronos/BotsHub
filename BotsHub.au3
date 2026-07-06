@@ -244,13 +244,13 @@ Func BotHubLoop()
 	While True
 		If ($runtime_status == 'RUNNING') Then
 			If $run_mode == 'GUI' Then
-				DisableGUIComboboxes()
 				If $farm_name == Null Or $farm_name == '' Then
 					Error('This farm does not exist.')
 					$runtime_status = 'INITIALIZED'
 					EnableStartButton()
 					Return $PAUSE
 				EndIf
+				DisableGUIComboboxes()
 			EndIf
 			Local $result = RunFarmLoop()
 			If ($result == $PAUSE Or $run_options_cache['run.loop_mode'] == False) Then $runtime_status = 'WILL_PAUSE'
@@ -581,7 +581,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'Storage',						InventoryManagementBeforeRun,	5,					2 * 60 * 1000)
 	AddFarmToFarmMap(	'Tests',						RunTests,						0,					2 * 60 * 1000)
 	AddFarmToFarmMap(	'TestSuite',					RunTestSuite,					0,					5 * 60 * 1000)
-	AddFarmToFarmMap(	'',								Null,							0,					2 * 60 * 1000)
+	AddFarmToFarmMap(	'',								RunTests,						0,					2 * 60 * 1000)
 EndFunc
 
 

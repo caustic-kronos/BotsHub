@@ -210,7 +210,7 @@ You are welcome to create and contribute new bots 👍
 ## 📌 Planned Features
 
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 💡💭 **Other consumables farms (Drake Kabob, Skalefin Soup and Pahnai Salad)** - 1 request
+- 💡💭 **Other consumables farms (~~Drake Kabob,~~ Skalefin Soup and Pahnai Salad)** - 1 request
 - 💡💭 **Bandit raid**
 - 💡💭 **Skree farm** (spears, feathers)
 - 💡💭 **Kappa farm** (shield)

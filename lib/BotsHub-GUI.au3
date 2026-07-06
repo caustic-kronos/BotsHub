@@ -31,6 +31,7 @@ Opt('GUICloseOnESC', False)
 #include <GuiTab.au3>
 #include <GuiRichEdit.au3>
 #include <GuiTreeView.au3>
+#include <GuiComboBox.au3>
 
 #include '../lib/JSON.au3'
 #include '../lib/GWA2.au3'
@@ -99,8 +100,8 @@ Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
-	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|Lightbringer & Sunspear|Lightbringer|LDOA|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
-	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Storage|Tests|TestSuite|Manual Mode'
+	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|LDOA|Lightbringer & Sunspear|Lightbringer|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
+	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Manual Mode|Storage|Tests|TestSuite'
 
 #Region GUI
 
@@ -160,7 +161,7 @@ Func CreateBotsHubGUI()
 
 	; === Buttons common to all tabs ===
 	$gui_combo_characterchoice = GUICtrlCreateCombo('No character selected', 10, 470, 150, 20)
-	$gui_combo_farmchoice = GUICtrlCreateCombo('Choose a farm', 170, 470, 150, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_combo_farmchoice = GUICtrlCreateCombo('Choose a farm', 170, 470, 150, 20, BitOR($CBS_DROPDOWN, $WS_VSCROLL))
 	$gui_startbutton = GUICtrlCreateButton('Start', 330, 470, 150, 21)
 	$gui_farmprogress = GUICtrlCreateProgress(490, 470, 150, 21)
 	$gui_combo_configchoice = GUICtrlCreateCombo('Default Farm Configuration', 400, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
@@ -541,13 +542,21 @@ EndFunc
 Func WM_COMMAND_Handler($windowHandle, $messageCode, $packedParameters, $controlHandle)
 	Local $notificationCode = BitShift($packedParameters, 16)
 	Local $controlID = BitAND($packedParameters, 0xFFFF)
-	If $notificationCode = $gui_combobox_dropdown_opened Then
-		Switch $controlID
-			Case $gui_combo_characterchoice
+
+	Switch $controlID
+		Case $gui_combo_characterchoice
+			If $notificationCode = $gui_combobox_dropdown_opened Then
 				ScanAndUpdateGameClients()
 				RefreshCharactersComboBox()
-		EndSwitch
-	EndIf
+			EndIf
+		Case $gui_combo_farmchoice
+			Switch $notificationCode
+				Case $CBN_EDITCHANGE
+					_GUICtrlComboBox_AutoComplete($gui_combo_farmchoice)
+					$farm_name = GUICtrlRead($gui_combo_farmchoice)
+					UpdateFarmDescription(GUICtrlRead($gui_combo_farmchoice))
+			EndSwitch
+	EndSwitch
 	Return $GUI_RUNDEFMSG
 EndFunc
 
@@ -932,6 +941,7 @@ Func UpdateFarmDescription($farm)
 		'https://gwpvx.fandom.com/wiki/Build:Team_-_5_Hero_Mesmerway' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:Team_-_3_Hero_Dual_Mesmer' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:Team_-_3_Hero_Balanced'
+
 	Switch $farm
 		Case 'Asuran'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
@@ -1064,6 +1074,8 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $NORN_FARM_INFORMATIONS)
+		Case 'Omnifarm'
+			GUICtrlSetData($gui_label_farminformations, '')
 		Case 'Pongmei'
 			GUICtrlSetData($gui_edit_characterbuilds, $PONGMEI_CHESTRUNNER_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $PONGMEI_CHESTRUN_INFORMATIONS)
@@ -1088,6 +1100,10 @@ Func UpdateFarmDescription($farm)
 				$TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MONK_CHESTRUNNER_SKILLBAR & @CRLF & _
 				$TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $TASCA_CHESTRUN_INFORMATIONS)
+		Case 'TunnelsOfTheForsaken'
+		 	GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+		 	GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+		 	GUICtrlSetData($gui_label_farminformations, $TUNNELS_OF_THE_FORSAKEN_FARM_INFORMATIONS)
 		Case 'Underworld'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
@@ -1106,10 +1122,19 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $VOLTAIC_FARM_INFORMATIONS)
 		Case 'War Supply Keiran'
 			GUICtrlSetData($gui_label_farminformations, $WAR_SUPPLY_KEIRAN_INFORMATIONS)
-		Case 'OmniFarm'
-			Return
+		Case 'Manual Mode'
+			GUICtrlSetData($gui_label_farminformations, 'This mode allows you to use BotsHub to:' & @CRLF & _
+				'- open Xunlai Storage' & @CRLF & _
+				'- run custom AutoIt instructions from Manual Mode input box in options tab' & @CRLF & _
+				'- enable/disabled rendering without running anything special' & @CRLF & _
+				'- share account informations (such as effects) with other BotsHub instances')
 		Case 'Storage'
-			Return
+			GUICtrlSetData($gui_label_farminformations, 'This runs the inventory management without having to run any specific bot.')
+		Case 'Tests'
+			GUICtrlSetData($gui_label_farminformations, 'This runs the RunTests function at the top of the TestSuite.au3 file,' & _
+				'allowing you to run anything you want to test.')
+		Case 'TestSuite'
+			GUICtrlSetData($gui_label_farminformations, 'This runs a tests suite to verify some required behaviours from the Hub.')
 		Case Else
 			Return
 	EndSwitch
