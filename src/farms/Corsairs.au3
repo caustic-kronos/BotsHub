@@ -47,7 +47,7 @@ Global Const $CORSAIRS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 	& 'https://gwpvx.fandom.com/wiki/Build:R/A_Moddok_Crevice_Corsair_Farmer'
 Global Const $CORSAIRS_FARM_DURATION = (2 * 60 + 15) * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($CORSAIRS_DWARVEN_STABILITY) is better than UseSkillEx(1))
 Global Const $CORSAIRS_DWARVEN_STABILITY	= 1
 Global Const $CORSAIRS_WHIRLING_DEFENSE		= 2
 Global Const $CORSAIRS_HEART_OF_SHADOW		= 3

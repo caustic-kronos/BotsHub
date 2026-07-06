@@ -53,6 +53,7 @@ Opt('MustDeclareVars', True)
 #include 'src/farms/CoF.au3'
 #include 'src/farms/Corsairs.au3'
 #include 'src/farms/DragonMoss.au3'
+#include 'src/farms/DrakeFlesh.au3'
 #include 'src/farms/EdenIris.au3'
 #include 'src/farms/Feathers.au3'
 #include 'src/farms/FoWTowerOfCourage.au3'
@@ -535,6 +536,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'CoF',							CoFFarm,						5,					$COF_FARM_DURATION)
 	AddFarmToFarmMap(	'Corsairs',						CorsairsFarm,					5,					$CORSAIRS_FARM_DURATION)
 	AddFarmToFarmMap(	'Deldrimor',					DeldrimorFarm,					10,					$DELDRIMOR_FARM_DURATION)
+	AddFarmToFarmMap(	'Drake Flesh',					DrakeFleshFarm,					5,					$DRAKE_FLESH_FARM_DURATION)
 	AddFarmToFarmMap(	'Dragon Moss',					DragonMossFarm,					5,					$DRAGONMOSS_FARM_DURATION)
 	AddFarmToFarmMap(	'Eden Iris',					EdenIrisFarm,					2,					$IRIS_FARM_DURATION)
 	AddFarmToFarmMap(	'Feathers',						FeathersFarm,					10,					$FEATHERS_FARM_DURATION)
@@ -587,6 +589,7 @@ EndFunc
 Func ResetBotsSetups()
 	$global_farm_setup						= False
 	$boreal_farm_setup						= False
+	$drake_flesh_farm_setup					= False
 	$dm_farm_setup							= False
 	$feathers_farm_setup					= False
 	$froggy_farm_setup						= False

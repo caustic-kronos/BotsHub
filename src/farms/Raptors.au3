@@ -354,10 +354,10 @@ Func KillRaptors()
 		$mopTarget = GetNearestEnemyToAgent($rekoffBoss)
 	EndIf
 
-	If GetHasHex($mopTarget) Then
+	While GetHasHex($mopTarget)
 		TargetNextEnemy()
 		$mopTarget = GetCurrentTarget()
-	EndIf
+	WEnd
 
 	If ($raptors_player_profession == $ID_DERVISH) Then
 		UseSkillEx($RAPTORS_DUST_CLOAK)

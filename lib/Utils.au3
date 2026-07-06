@@ -78,7 +78,9 @@ Func MoveTo($X, $Y, $precision = 100, $doWhileRunning = Null)
 		If Not IsPlayerMoving() Then
 			$blockedCount += 1
 			If $blockedCount > 3 Then
-				MoveRadial($X, $Y, $RANGE_AREA)
+				; We need to have distance to move larger than distance character can achieve
+				; (otherwise character will reach the point and stop moving)
+				MoveRadial($X, $Y, $RANGE_AREA * 1.5)
 				Sleep(1000)
 			EndIf
 		EndIf
@@ -596,11 +598,20 @@ EndFunc
 
 
 ;~ Aggro a foe
-Func AggroAgent($targetAgent)
-	While IsPlayerAlive() And GetDistance(GetMyAgent(), $targetAgent) > $RANGE_EARSHOT - 100
-		Move(DllStructGetData($targetAgent, 'X'), DllStructGetData($targetAgent, 'Y'))
-		RandomSleep(200)
+Func AggroAgent($agent)
+	Local $me = GetMyAgent()
+	Local $agentID = DllStructGetData($agent, 'ID')
+	Local $startingAnimationID = DllStructGetData($agent, 'AnimationID')
+	Local $startingAnimationCode = DllStructGetData($agent, 'AnimationCode')
+	While (DllStructGetData($agent, 'AnimationID') == $startingAnimationID Or DllStructGetData($agent, 'AnimationCode') == $startingAnimationCode) _
+		Or GetDistance($me, $agent) > $MOB_AGGRO_RANGE
+		Move(DllStructGetData($agent, 'X'), DllStructGetData($agent, 'Y'))
+		RandomSleep(100)
+		$agent = GetAgentByID($agentID)
+		$me = GetMyAgent()
+		If IsPlayerDead() Then Return False
 	WEnd
+	Return True
 EndFunc
 
 
@@ -680,8 +691,9 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 			Else
 				$myX = DllStructGetData($me, 'X')
 				$myY = DllStructGetData($me, 'Y')
-				MoveRadial($myX, $myY, 300)
-				PingSleep(1000)
+				; Distance must be higher than distance character can achieve, otherwise character will reach the point and stop moving
+				MoveRadial($myX, $myY, $RANGE_AREA * 1.5)
+				RandomSleep(1000)
 
 				If $blocked > 8 Then CheckAndSendStuckCommand()
 				If $blocked > 10 Then

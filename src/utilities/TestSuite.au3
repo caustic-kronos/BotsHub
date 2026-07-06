@@ -24,7 +24,6 @@
 #include '../../lib/Utils-Console.au3'
 #include '../../lib/Utils-Storage.au3'
 #include '../../lib/Utils.au3'
-#include '../farms/Raptors.au3'
 
 
 ; ==== Constants ====

@@ -44,7 +44,7 @@ Global Const $KOURNANS_FARM_INFORMATIONS = 'For best results, have :' & @CRLF _
 ; Average duration ~ 2m10s ~ First run is 2m40s with setup
 Global Const $KOURNANS_FARM_DURATION = (2 * 60 + 25) * 1000
 
-; Skill numbers declared to make the code WAY more readable (UseSkillEx($RAPTORS_MARK_OF_PAIN) is better than UseSkillEx(1))
+; Skill numbers declared to make the code WAY more readable (UseSkillEx($KOURNANS_INTENSITY) is better than UseSkillEx(1))
 Global Const $KOURNANS_INTENSITY						= 1
 Global Const $KOURNANS_EBON_BATTLE_STANDARD_OF_HONOR	= 2
 Global Const $KOURNANS_MINDBENDER						= 3

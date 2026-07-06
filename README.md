@@ -58,6 +58,7 @@ To use it:
 | Nexus Challenge						| Mysterious armor hero pieces								|
 | Dajkah Inlet Challenge				| Sunspear armor hero pieces								|
 | Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores			|
+| Drake Flesh							| Drake flesh, golds										|
 
 ### Vanquishes / Titles
 
