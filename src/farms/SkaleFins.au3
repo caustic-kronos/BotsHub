@@ -116,7 +116,7 @@ Func SkaleFinsFarmLoop()
 		[-18000,	-9500,	'Group 2'			], _
 		[-16500,	-10000,	'Moving'			], _
 		[-13500,	-9000,	'Group 3'			], _
-		[-9000,		-12000,	'Group 4'			], _
+		[-9800,		-12000,	'Group 4'			], _
 		[-9500,		-9000, 	'Moving'			], _
 		[-6000,		-8000, 	'Boss Group'		], _
 		[-6000,		-7000, 	'Boss Group - end'	] _
@@ -126,6 +126,7 @@ Func SkaleFinsFarmLoop()
 		Local $me = GetMyAgent()
 		Local $foe
 		While GetDistanceToPoint($me, $nodes[$i][0], $nodes[$i][1]) > $RANGE_NEARBY
+			If CheckStuck('Skale Fins spot ' & $nodes[$i][2], $SKALE_FINS_FARM_DURATION * 1.5) == $FAIL Then Return $FAIL
 			; Fight management
 			$foe = GetNearestEnemyToAgent($me, $RANGE_SPELLCAST)
 			If $foe <> Null Then
@@ -166,16 +167,19 @@ Func SkaleFinsFight()
 	If $target == Null Then $target = GetNearestEnemyToAgent($me, $RANGE_SPELLCAST)
 
 	While $target <> Null
+		If CheckStuck('Skale Fins - fighting', $SKALE_FINS_FARM_DURATION * 1.5) == $FAIL Then Return $FAIL
 		If IsFrigidSkale($target) Then
 			If IsRecharged($SKALE_FINS_DEATHS_CHARGE) Then
 				; Force casting Deaths Charge on target
 				While IsRecharged($SKALE_FINS_DEATHS_CHARGE)
+					If CheckStuck('Skale Fins - deaths charge', $SKALE_FINS_FARM_DURATION * 1.5) == $FAIL Then Return $FAIL
 					UseSkillEx($SKALE_FINS_DEATHS_CHARGE, $target)
 					If IsPlayerDead() Then Return $FAIL
 				WEnd
 			ElseIf IsRecharged($SKALE_FINS_DARK_PRISON) Then
 				; Force casting Dark Prison on target
 				While IsRecharged($SKALE_FINS_DARK_PRISON)
+					If CheckStuck('Skale Fins - dark prison', $SKALE_FINS_FARM_DURATION * 1.5) == $FAIL Then Return $FAIL
 					UseSkillEx($SKALE_FINS_DARK_PRISON, $target)
 					If IsPlayerDead() Then Return $FAIL
 				WEnd
@@ -196,7 +200,10 @@ EndFunc
 ;~ Focus on killing a Skale
 Func KillSkale($target)
 	Local $targetID = DllStructGetData($target, 'ID')
+	; Counter to check how long is spent on a single enemy - if it gets too long we select a new enemy to clear the way
+	Local $clock = 0
 	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0
+		If CheckStuck('Skale Fins - killing', $SKALE_FINS_FARM_DURATION * 1.5) == $FAIL Then Return $FAIL
 		If IsRecharged($SKALE_FINS_PIOUS_FURY) Then
 			UseSkillEx($SKALE_FINS_PIOUS_RENEWAL)
 			PingSleep(100)
@@ -215,7 +222,14 @@ Func KillSkale($target)
 			Sleep(500)
 		EndIf
 		Sleep(250)
-		$target = GetAgentByID($targetID)
+		$clock += 1
+		If $clock > 15 Then
+			$target = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
+			$targetID = DllStructGetData($target, 'ID')
+			$clock = 0
+		Else
+			$target = GetAgentByID($targetID)
+		EndIf
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 	Return $SUCCESS

@@ -41,24 +41,25 @@ To use it:
 
 | Farm									| Purpose / Drops											|
 | ------------------------------------- | --------------------------------------------------------- |
-| Raptors								| Festive items, golds, materials, Asura points				|
-| Vaettirs								| Festive items, golds, materials, Norn points				|
-| Cathedral of Flames (Cryptos)			| Rin Relics, Diessa Chalices, bones						|
-| Jaya Bluffs (Sensali)					| Feathers, bones											|
-| Drazach Thicket (DragonMoss)			| Fibers, Gothic Defender, Echovald Shield, Ornate Shield	|
-| Wajjun Bazaar (Mantids)				| Celestial weapons, chitin, dust							|
-| Moddok Crevice (Corsairs)				| Runes, Colossal Scimitar, Q8								|
-| Missing Daughter (Jade Brotherhood)	| Q8 items, jade bracelets									|
-| Fish in a Barrel (Kournans)			| Q8 items, runes											|
-| Spirit Slaves							| Q8 items, dust, bones										|
-| Minotaurs								| Materials													|
-| Auspicious Beginnings					| War Supplies, festive items, gold, Vanguard points		|
 | A Chance Encounter					| Ministerial Commendations, faction skins					|
-| Presearing Iris						| Iris														|
-| Nexus Challenge						| Mysterious armor hero pieces								|
+| Auspicious Beginnings					| War Supplies, festive items, gold, Vanguard points		|
+| Cathedral of Flames (Cryptos)			| Rin Relics, Diessa Chalices, bones						|
 | Dajkah Inlet Challenge				| Sunspear armor hero pieces								|
-| Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores			|
 | Drake Flesh							| Drake flesh, golds										|
+| Drazach Thicket (DragonMoss)			| Fibers, Gothic Defender, Echovald Shield, Ornate Shield	|
+| Fish in a Barrel (Kournans)			| Q8 items, runes											|
+| Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores			|
+| Jaya Bluffs (Sensali)					| Feathers, bones											|
+| Minotaurs								| Materials													|
+| Missing Daughter (Jade Brotherhood)	| Q8 items, jade bracelets									|
+| Moddok Crevice (Corsairs)				| Runes, Colossal Scimitar, Q8								|
+| Nexus Challenge						| Mysterious armor hero pieces								|
+| Presearing Iris						| Iris														|
+| Raptors								| Festive items, golds, materials, Asura points				|
+| Skale Fins							| Skale fines, low reqs										|
+| Spirit Slaves							| Q8 items, dust, bones										|
+| Vaettirs								| Festive items, golds, materials, Norn points				|
+| Wajjun Bazaar (Mantids)				| Celestial weapons, chitin, dust							|
 
 ### Vanquishes / Titles
 
@@ -210,7 +211,7 @@ You are welcome to create and contribute new bots 👍
 ## 📌 Planned Features
 
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 💡💭 **Other consumables farms (~~Drake Kabob,~~ Skalefin Soup and Pahnai Salad)** - 1 request
+- 💡💭 **Pahnai Salad - Iboga Petals farm**
 - 💡💭 **Bandit raid**
 - 💡💭 **Skree farm** (spears, feathers)
 - 💡💭 **Kappa farm** (shield)
