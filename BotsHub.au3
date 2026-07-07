@@ -68,6 +68,7 @@ Opt('MustDeclareVars', True)
 #include 'src/farms/Kournans.au3'
 #include 'src/farms/Minotaurs.au3'
 #include 'src/farms/Raptors.au3'
+#include 'src/farms/SkaleFins.au3'
 #include 'src/farms/SpiritSlaves.au3'
 #include 'src/farms/Vaettirs.au3'
 #include 'src/missions/Deldrimor.au3'
@@ -567,6 +568,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'OmniFarm',						OmniFarm,						5,					5 * 60 * 1000)
 	AddFarmToFarmMap(	'Pongmei',						PongmeiChestFarm,				5,					$PONGMEI_FARM_DURATION)
 	AddFarmToFarmMap(	'Raptors',						RaptorsFarm,					5,					$RAPTORS_FARM_DURATION)
+	AddFarmToFarmMap(	'Skale Fins',					SkaleFinsFarm,					5,					$SKALE_FINS_FARM_DURATION)
 	AddFarmToFarmMap(	'SoO',							SoOFarm,						15,					$SOO_FARM_DURATION)
 	AddFarmToFarmMap(	'SpiritSlaves',					SpiritSlavesFarm,				5,					$SPIRIT_SLAVES_FARM_DURATION)
 	AddFarmToFarmMap(	'Sunspear Armor',				SunspearArmorFarm,				5,					$SUNSPEAR_ARMOR_FARM_DURATION)

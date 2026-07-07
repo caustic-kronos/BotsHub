@@ -307,11 +307,11 @@ Func PickOnlyImportantItem($item)
 		Return (($dyeColor == $ID_BLACK_DYE) Or ($dyeColor == $ID_WHITE_DYE))
 	ElseIf ($itemID == $ID_LOCKPICK) Then
 		Return True
-	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
-		Return True
 	ElseIf ($rarity == $RARITY_GOLD) Then
 		Return True
 	ElseIf ($rarity == $RARITY_GREEN) Then
+		Return True
+	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
 		Return True
 	EndIf
 	Return False
@@ -605,7 +605,7 @@ Func ShouldKeepWeapon($item)
 	; Keeping items that contain good upgrades
 	If ContainsValuableUpgrades($item) Then Return True
 	; Throwing items without good damage/energy/armor
-	If Not IsMaxDamageForReq($item) Then Return False
+	If Not IsMaxStatsForReq($item) Then Return False
 	; Inscribable are kept only if : 1) rare skin and q9 2) low Req of a good type
 	If IsInscribable($item) Then
 		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
@@ -2131,15 +2131,57 @@ Func PrintItemInformations($item)
 EndFunc
 
 
-;~ Get the item damage (maximum, not minimum)
+;~ Get the item maximum damage
 Func GetItemMaxDmg($item)
-	If Not IsDllStruct($item) Then $item = GetItemByItemID($item)
+	Local $type = DllStructGetData($item, 'Type')
 	Local $modString = GetModStruct($item)
-	Local $position = StringInStr($modString, 'A8A7')						; Weapon Damage
-	If $position = 0 Then $position = StringInStr($modString, 'C867')		; Energy (focus)
-	If $position = 0 Then $position = StringInStr($modString, 'B8A7')		; Armor (shield)
-	If $position = 0 Then Return 0
-	Return Int('0x' & StringMid($modString, $position - 2, 2))
+	Local $position = 0
+	Switch $type
+		Case $ID_TYPE_OFFHAND
+			$position = StringInStr($modString, 'C867') - 2
+		Case $ID_TYPE_SHIELD
+			$position = StringInStr($modString, 'B8A7') - 2
+		Case Else
+			$position = StringInStr($modString, 'A8A7') - 2
+	EndSwitch
+	If $position <= 0 Then Return 0
+	Return Int('0x' & StringMid($modString, $position, 2))
+EndFunc
+
+
+;~ Get the item minimum damage
+Func GetItemMinDmg($item)
+	Local $type = DllStructGetData($item, 'Type')
+	Local $modString = GetModStruct($item)
+	Local $position = 0
+	Switch $type
+		Case $ID_TYPE_OFFHAND
+			$position = StringInStr($modString, 'C867') - 2
+		Case $ID_TYPE_SHIELD
+			$position = StringInStr($modString, 'B8A7') - 2
+		Case Else
+			$position = StringInStr($modString, 'A8A7') - 4
+	EndSwitch
+	If $position <= 0 Then Return 0
+	Return Int('0x' & StringMid($modString, $position, 2))
+EndFunc
+
+
+;~ Get staff base energy
+Func GetStaffEnergy($staffItem)
+	Local $modString = GetModStruct($staffItem)
+	Local $position = StringInStr($modString, 'C862') - 2
+	If $position <= 0 Then Return 0
+	Return Int('0x' & StringMid($modString, $position, 2))
+EndFunc
+
+
+;~ Get staff base HSR chance (chance to Half Skill Recharge of spells)
+Func GetStaffHSR($staffItem)
+	Local $modString = GetModStruct($staffItem)
+	Local $position = StringInStr($modString, 'A823') - 2
+	If $position <= 0 Then Return 0
+	Return Int('0x' & StringMid($modString, $position, 2))
 EndFunc
 
 
@@ -2350,11 +2392,11 @@ Func IsMapPiece($itemID)
 EndFunc
 
 
-;~ Identify is an item is q7-q8 with max damage
+;~ Identify is an item is q0-q8 with max damage
 Func IsLowReqMaxDamage($item)
 	If Not IsWeapon($item) Then Return False
 	Local $requirement = GetItemReq($item)
-	Return $requirement < 9 And IsMaxDamageForReq($item)
+	Return $requirement < 9 And IsMaxStatsForReq($item) And IsMinReqForDamage($item)
 EndFunc
 
 
@@ -2362,7 +2404,7 @@ EndFunc
 Func IsNoReqMaxDamage($item)
 	If Not IsWeapon($item) Then Return False
 	Local $requirement = GetItemReq($item)
-	Return $requirement == 0 And IsMaxDamageForReq($item)
+	Return $requirement == 0 And IsMaxStatsForReq($item) And IsMinReqForDamage($item)
 EndFunc
 
 
@@ -2376,6 +2418,50 @@ Func IsMaxDamageForReq($item)
 	Local $maxDamage = $weaponMaxDamages[$requirement]
 	If $damage == $maxDamage Then Return True
 	Return False
+EndFunc
+
+
+;~ Identify if an item has max stats (damage, energy, armor, HSR) for its requirement
+Func IsMaxStatsForReq($item)
+	If Not IsWeapon($item) Then Return False
+	Local $type = DllStructGetData($item, 'Type')
+	Local $requirement = GetItemReq($item)
+
+	Local $maxDamage = GetItemMaxDmg($item)
+	Local $weaponMaxDamages = $WEAPONS_MAX_DAMAGE_PER_LEVEL[$type]
+	Local $weaponMaxDamage = $weaponMaxDamages[$requirement]
+	If $maxDamage <> $weaponMaxDamage Then Return False
+
+	Local $minDamage = GetItemMinDmg($item)
+	Local $weaponMinDamages = $WEAPONS_MIN_DAMAGE_PER_LEVEL[$type]
+	Local $weaponMinDamage = $weaponMinDamages[$requirement]
+	If $minDamage <> $weaponMinDamage Then Return False
+
+	If $type == $ID_TYPE_STAFF Then
+		Local $staffEnergy = GetStaffEnergy($item)
+		Local $staffMaxEnergy = $STAFF_MAX_ENERGY_PER_LEVEL[$requirement]
+		If $staffEnergy <> $staffMaxEnergy Then Return False
+
+		Local $staffHSR = GetStaffHSR($item)
+		Local $staffMaxHSR = $STAFF_MAX_HSR_PER_LEVEL[$requirement]
+		If $staffHSR <> $staffMaxHSR Then Return False
+	EndIf
+
+	Return True
+EndFunc
+
+
+;~ Identify if an item has the minimum req for its (upper bound) damage
+Func IsMinReqForDamage($item)
+	If Not IsWeapon($item) Then Return False
+
+	Local $type = DllStructGetData($item, 'Type')
+	Local $requirement = GetItemReq($item)
+
+	Local $maxDamage = GetItemMaxDmg($item)
+	Local $weaponMinReqs = $WEAPONS_MIN_REQ_PER_MAX_DAMAGE[$type]
+	Local $minReq = $weaponMinReqs[$maxDamage]
+	Return $minReq <> Null And $requirement == $minReq
 EndFunc
 
 

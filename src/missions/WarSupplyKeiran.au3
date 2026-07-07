@@ -239,6 +239,9 @@ Func RunWayPoints()
 	Local $me = GetMyAgent()
 	Local $miku = GetAgentByID($AGENTID_MIKU)
 	For $i = 0 To UBound($wayPoints) - 1
+		If CheckStuck('Waypoint ' & $wayPoints[$i][2], $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
+		If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then Return $FAIL
+
 		;If GetMapLoading() == 2 Or (GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS And GetMapID() <> $ID_HALL_OF_MONUMENTS) Then Disconnected()
 		If MoveAggroAndKill($wayPoints[$i][0], $wayPoints[$i][1], $wayPoints[$i][2], $warsupply_fight_options) == $FAIL Then Return $FAIL
 
@@ -252,14 +255,15 @@ Func RunWayPoints()
 				$foe = GetNearestEnemyToAgent($me, $RANGE_EARSHOT)
 				$wait += 1
 			WEnd
-			$miku = GetAgentByID($AGENTID_MIKU)
 		EndIf
 		If IsPlayerDead() Then Return $FAIL
 
+		$me = GetMyAgent()
+		$miku = GetAgentByID($AGENTID_MIKU)
 		; Between waypoints ensure that everything is fine with player and Miku
 		While GetDistance($me, $miku) > 1650 Or KeiranOrMikuNeedsHealing($me, $miku) Or GetIsDead($miku)
 			If CheckStuck('Waypoint ' & $wayPoints[$i][2], $MAX_WAR_SUPPLY_FARM_DURATION) == $FAIL Then Return $FAIL
-			If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then ExitLoop
+			If GetMapID() <> $ID_AUSPICIOUS_BEGINNINGS Then Return $FAIL
 			; Using healing skill on the way between waypoints to recover until health is full
 			If KeiranOrMikuNeedsHealing($me, $miku) And IsRecharged($KEIRAN_NATURES_BLESSING) Then UseSkillEx($KEIRAN_NATURES_BLESSING)
 			; Moving to Miku

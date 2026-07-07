@@ -101,7 +101,7 @@ Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
 	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|LDOA|Lightbringer & Sunspear|Lightbringer|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
-	'Raptors|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Manual Mode|Storage|Tests|TestSuite'
+	'Raptors|Skale Fins|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Manual Mode|Storage|Tests|TestSuite'
 
 #Region GUI
 
@@ -1083,6 +1083,9 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_characterbuilds, $WN_RAPTORS_FARMER_SKILLBAR & @CRLF & $DN_RAPTORS_FARMER_SKILLBAR)
 			GUICtrlSetData($gui_edit_heroesbuilds, $P_RUNNER_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $RAPTORS_FARM_INFORMATIONS)
+		Case 'Skale Fins'
+			GUICtrlSetData($gui_edit_characterbuilds, $SKALE_FINS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $SKALE_FINS_FARM_INFORMATIONS)
 		Case 'SoO'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
