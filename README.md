@@ -45,7 +45,7 @@ To use it:
 | Auspicious Beginnings					| War Supplies, festive items, gold, Vanguard points		|
 | Cathedral of Flames (Cryptos)			| Rin Relics, Diessa Chalices, bones						|
 | Dajkah Inlet Challenge				| Sunspear armor hero pieces								|
-| Drake Flesh							| Drake flesh, golds										|
+| Drake Flesh							| Drake flesh (kebob), golds								|
 | Drazach Thicket (DragonMoss)			| Fibers, Gothic Defender, Echovald Shield, Ornate Shield	|
 | Fish in a Barrel (Kournans)			| Q8 items, runes											|
 | Glint’s Challenge						| Cloth of Brotherhood, hero armor, Destroyer cores			|
@@ -56,7 +56,8 @@ To use it:
 | Nexus Challenge						| Mysterious armor hero pieces								|
 | Presearing Iris						| Iris														|
 | Raptors								| Festive items, golds, materials, Asura points				|
-| Skale Fins							| Skale fines, low reqs										|
+| Skale Fins							| Skale fins (soup), low reqs								|
+| Skrees								| Spears, feathers, paragon normal and elite tomes			|
 | Spirit Slaves							| Q8 items, dust, bones										|
 | Vaettirs								| Festive items, golds, materials, Norn points				|
 | Wajjun Bazaar (Mantids)				| Celestial weapons, chitin, dust							|
@@ -213,7 +214,6 @@ You are welcome to create and contribute new bots 👍
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 💡💭 **Pahnai Salad - Iboga Petals farm**
 - 💡💭 **Bandit raid**
-- 💡💭 **Skrees farm** (spears, feathers)
 - 💡💭 **Kappa farm** (shield)
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Improve crash recovery**

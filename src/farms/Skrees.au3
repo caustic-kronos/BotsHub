@@ -216,10 +216,11 @@ Func SkreesFarmLoop()
 		[-11500,	6200], _
 		[-11900,	5800], _
 		[-12000,	5250], _
-		[-11700,	4850], _
-		[-11100,	5000], _
-		[-10600,	5200], _
-		[-10100,	5500], _
+		[-12000,	4700], _
+		[-11350,	4700], _
+		[-10800,	4900], _
+		[-10300,	5150], _
+		[-9900,		5400], _
 		[-9500,		5700], _
 		[-9050,		5450] _
 	]
@@ -246,6 +247,7 @@ Func SkreesFarmLoop()
 			If $tries == 12 Then UseSkillEx($SKREES_HEART_OF_SHADOW)
 			If IsPlayerDead() Then Return $FAIL
 		WEnd
+		Info('Spot ' & $i)
 	Next
 
 	For $i = 0 To 8
@@ -269,7 +271,7 @@ Func SkreesFarmLoop()
 	Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_SPELLCAST)
 	Local $killTimer = TimerInit()
 	While $foesCount > 0
-		If TimerDiff($killTimer) > 24000 Then ExitLoop
+		If TimerDiff($killTimer) > 22000 Then ExitLoop
 		UpkeepSkreesBoons(False)
 		PickUpItems(UpkeepSkreesBoons)
 		Attack($target)
