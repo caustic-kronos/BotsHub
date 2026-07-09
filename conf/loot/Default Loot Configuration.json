@@ -1326,7 +1326,7 @@
 				"Focus": {
 					"Forget me not (Halves skill recharge of spells of item's attribute)": true,
 					"Serenity now (Halves skill recharge of spells)": false,
-					"Hail to the king (Armor +5 while Health is above 50%)": false,
+					"Hail to the king (Armor +5 while Health is above 50%)": true,
 					"Faith is my shield (Armor +5 while Enchanted)": false,
 					"Might makes right (Armor +5 while attacking)": false,
 					"Knowing is half the battle (Armor +5 while casting)": false,
@@ -1488,11 +1488,11 @@
 			},
 			"Focus": {
 				"Suffix - Core": {
-					"of Fortitude (Health +30)": false,
+					"of Fortitude (Health +30)": true,
 					"Of Devotion (Health +45 while Enchanted)": false,
 					"Of Endurance (Health +45 while in a Stance)": false,
 					"Of Valor (Health +60 while Hexed)": false,
-					"Of Aptitude (Halves casting time of item's attribute spells - Chance 20%)": false,
+					"Of Aptitude (Halves casting time of item's attribute spells - Chance 20%)": true,
 					"Of Swiftness (Halves casting time of spells - Chance 10%)": false
 				}
 			},
@@ -1553,14 +1553,14 @@
 					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
 					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": true
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
 				},
 				"Suffix - Grip": {
 					"of Fortitude (Health +30)": false,
 					"Of Defense (Armor +5)": false,
 					"Of Shelter (Armor +7 vs physical damage)": false,
 					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": true,
+					"Of Enchanting (Enchantments last 20% longer)": false,
 					"Of The Warrior": false,
 					"Of The Ranger": false,
 					"Of The Necromancer": false,
@@ -1594,7 +1594,7 @@
 					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
 					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
 					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": true,
+					"Furious (Double Adrenaline on hit - Chance 10%)": false,
 					"Sundering (Armor penetration +20% - Chance 20%)": false,
 					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
 					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
@@ -1621,7 +1621,7 @@
 			"Staff": {
 				"Prefix - Head": {
 					"Hale (Health +30)": false,
-					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": false,
+					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": true,
 					"Swift (Halves casting time of spells - Chance 10%)": false,
 					"Insightful (Energy +5)": false,
 					"Defensive (Armor +5)": false
@@ -1706,7 +1706,7 @@
 			},
 			"Wand": {
 				"Suffix - Wrapping": {
-					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": false,
+					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": true,
 					"Of Quickening (Halves skill recharge of spells - Chance 10%)": false,
 					"Of The Warrior": false,
 					"Of The Ranger": false,

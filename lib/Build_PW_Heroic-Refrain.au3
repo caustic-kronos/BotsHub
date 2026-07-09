@@ -236,6 +236,14 @@ Func HRPhaseApplyParty()
 				; Effects found, no need to check other blocks
 				If $effects <> Null Then ExitLoop
 			Next
+			
+			; If playing with a friend or two, you can uncomment this - paragon will cast HR every 12s, but at least they will have HR
+			;If $effects == Null Then
+			; 	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
+			; 	$next = Mod($index + 1, $partySize)
+			; 	Return $HR_PHASE_APPLY_PARTY
+			;EndIf
+
 			; Agent is not ours and we could not get his effects - skip
 			If $effects == Null Then ContinueLoop
 		EndIf
