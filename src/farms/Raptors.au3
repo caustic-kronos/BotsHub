@@ -276,8 +276,8 @@ EndFunc
 
 
 ;~ Get foe that is a boss - Null if no boss
-Func GetBossFoe()
-	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $RANGE_COMPASS, GetIsBoss)
+Func GetBossFoe($range = $RANGE_COMPASS)
+	Local $bossFoes = GetFoesInRangeOfAgent(GetMyAgent(), $range, GetIsBoss)
 	Return IsArray($bossFoes) And UBound($bossFoes) > 0 ? $bossFoes[0] : Null
 EndFunc
 

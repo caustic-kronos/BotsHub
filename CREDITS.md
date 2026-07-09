@@ -127,7 +127,7 @@ Enormous modifications were made, to the point this bot is probably not in any w
 - Contributor: Gahais
 - License: licensed under Apache 2.0
 
-### 'Corsairs.au3' 'DrakeFlesh.au3' 'DragonMoss.au3' 'EdenIris.au3' 'Follower.au3' 'JadeBrotherhood.au3' 'Kournans.au3' 'Mantids.au3' 'Omnifarmer.au3' 'Pongmei.au3' 'SkalesFin.au3' 'SpiritSlaves.au3' 'Tasca.au3' 'Voltaic.au3'
+### 'Corsairs.au3' 'DrakeFlesh.au3' 'DragonMoss.au3' 'EdenIris.au3' 'Follower.au3' 'JadeBrotherhood.au3' 'Kournans.au3' 'Mantids.au3' 'Omnifarmer.au3' 'Pongmei.au3' 'SkalesFin.au3' 'Skrees.au3' 'SpiritSlaves.au3' 'Tasca.au3' 'Voltaic.au3'
 - Author: Kronos
 - Contributor: Gahais
 - Notes: Original work by Kronos, improvements by Gahais

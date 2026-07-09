@@ -69,6 +69,7 @@ Opt('MustDeclareVars', True)
 #include 'src/farms/Minotaurs.au3'
 #include 'src/farms/Raptors.au3'
 #include 'src/farms/SkaleFins.au3'
+#include 'src/farms/Skrees.au3'
 #include 'src/farms/SpiritSlaves.au3'
 #include 'src/farms/Vaettirs.au3'
 #include 'src/missions/Deldrimor.au3'
@@ -569,6 +570,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'Pongmei',						PongmeiChestFarm,				5,					$PONGMEI_FARM_DURATION)
 	AddFarmToFarmMap(	'Raptors',						RaptorsFarm,					5,					$RAPTORS_FARM_DURATION)
 	AddFarmToFarmMap(	'Skale Fins',					SkaleFinsFarm,					5,					$SKALE_FINS_FARM_DURATION)
+	AddFarmToFarmMap(	'Skrees',						SkreesFarm,						10,					$SKREES_FARM_DURATION)
 	AddFarmToFarmMap(	'SoO',							SoOFarm,						15,					$SOO_FARM_DURATION)
 	AddFarmToFarmMap(	'SpiritSlaves',					SpiritSlavesFarm,				5,					$SPIRIT_SLAVES_FARM_DURATION)
 	AddFarmToFarmMap(	'Sunspear Armor',				SunspearArmorFarm,				5,					$SUNSPEAR_ARMOR_FARM_DURATION)
@@ -603,6 +605,7 @@ Func ResetBotsSetups()
 	$mantids_farm_setup						= False
 	$pongmei_farm_setup						= False
 	$raptors_farm_setup						= False
+	$skrees_farm_setup						= False
 	$soo_farm_setup							= False
 	$spirit_slaves_farm_setup				= False
 	$tasca_farm_setup						= False

@@ -213,7 +213,7 @@ You are welcome to create and contribute new bots 👍
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
 - 💡💭 **Pahnai Salad - Iboga Petals farm**
 - 💡💭 **Bandit raid**
-- 💡💭 **Skree farm** (spears, feathers)
+- 💡💭 **Skrees farm** (spears, feathers)
 - 💡💭 **Kappa farm** (shield)
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Improve crash recovery**
