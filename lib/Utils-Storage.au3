@@ -1985,7 +1985,11 @@ Func UseMoraleConsumableIfNeeded($forceUse = False)
 		; Using solo morale booster first to keep team wide boosters for heroes
 		If $teamMemberWithMalus == 0 Then $usedMoraleBooster = UseFirstAvailableConsumable($SOLO_DP_REMOVAL)
 		If Not $usedMoraleBooster Then $usedMoraleBooster = UseFirstAvailableConsumable($TEAM_DP_REMOVAL)
-		If Not $usedMoraleBooster Then Return $FAIL
+		If Not $usedMoraleBooster Then
+			Return $FAIL
+		Else
+			PingSleep(50)
+		EndIf
 		$teamMemberWithMalus = GetTeamMemberWithTooMuchMalus()
 	WEnd
 	Return $SUCCESS

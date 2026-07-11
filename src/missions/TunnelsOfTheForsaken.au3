@@ -238,10 +238,12 @@ Func ClearTunnelsOfTheForsakenFloor3()
 		MoveAggroAndKillInRange(-14111, -6232, '7', $PLAYER_AGGRO_RANGE)
 		Sleep(2000)
 		MoveAggroAndKillInRange(-13875, -4543, '8', $PLAYER_AGGRO_RANGE)
+		PickUpItems()
 		MoveAggroAndKillInRange(-12599, -5454, '9', $PLAYER_AGGRO_RANGE)
 		Sleep(4000)
 		PickUpItems()
 		MoveAggroAndKillInRange(-10724, -3552, '10', $PLAYER_AGGRO_RANGE)
+		PickUpItems()
 	WEnd
 
 	While Not IsRunFailed() And Not IsAgentInRange(GetMyAgent(), -15949, -8561, $RANGE_LONGBOW)
