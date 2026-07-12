@@ -143,14 +143,19 @@ Func ZodiacFarmLoop()
 	If ZodiacKillGroup(6500, 3250) == $FAIL Then Return $FAIL
 	If IsPlayerDead() Then Return $FAIL
 	
+	Local $zodiacMoveOptions = CloneMap($default_move_options)
+	$zodiacMoveOptions['movementRoutine']	= ZodiacStayAlive
+	$zodiacMoveOptions['moveTimeout']		= 12 * 1000
+	$zodiacMoveOptions['moveVariance']		= 0
+
 	;################ Running to second group ################
 	ZodiacWaitForShadowForm()
-	If ZodiacMoveToAndStayAlive(7000, 2700) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(7000, 2700, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	UseSkillEx($ZODIAC_I_AM_UNSTOPPABLE)
-	If ZodiacMoveToAndStayAlive(8000, 1500) == $FAIL Then Return $FAIL
-	If ZodiacMoveToAndStayAlive(9000, 250) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(8000, 1500, $zodiacMoveOptions) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(9000, 250, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	If GetHasCondition(GetMyAgent()) Then UseHeroSkill(1, $ZODIAC_CAUTERY_SIGNET)
-	If ZodiacMoveToAndStayAlive(10390, -1015) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(10390, -1015, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 
 	;################ Second Drinker group ################
 	Info('Second group')
@@ -160,14 +165,14 @@ Func ZodiacFarmLoop()
 
 	;################ Running to third group ################
 	ZodiacWaitForShadowForm()
-	If ZodiacMoveToAndStayAlive(12000, -500) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(12000, -500, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	UseSkillEx($ZODIAC_I_AM_UNSTOPPABLE)
-	If ZodiacMoveToAndStayAlive(14000, -700) == $FAIL Then Return $FAIL
-	If ZodiacMoveToAndStayAlive(14700, -200) == $FAIL Then Return $FAIL
-	If ZodiacMoveToAndStayAlive(16200, 900) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(14000, -700, $zodiacMoveOptions) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(14700, -200, $zodiacMoveOptions) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(16200, 900, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	If GetHasCondition(GetMyAgent()) Then UseHeroSkill(1, $ZODIAC_CAUTERY_SIGNET)
-	If ZodiacMoveToAndStayAlive(17300, 1800) == $FAIL Then Return $FAIL
-	If ZodiacMoveToAndStayAlive(19100, 3100) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(17300, 1800, $zodiacMoveOptions) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(19100, 3100, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	If IsPlayerDead() Then Return $FAIL
 
 	;################ Third Drinker group ################
@@ -178,38 +183,24 @@ Func ZodiacFarmLoop()
 
 	;################ Last Drinker group ################
 	Info('Last group')
-	If ZodiacMoveToAndStayAlive(17300, 1800, False) == $FAIL Then Return $FAIL
+	$zodiacMoveOptions['movementRoutine'] = ZodiacStayAliveWithoutSpeed
+	If MoveAvoidingBodyBlock(17300, 1800, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	FindAndOpenChests($RANGE_AREA)
-	If ZodiacMoveToAndStayAlive(16600, 1100, False) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(16600, 1100, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	FindAndOpenChests($RANGE_AREA)
-	If ZodiacMoveToAndStayAlive(16200, 800, False) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(16200, 800, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	FindAndOpenChests($RANGE_AREA)
-	If ZodiacMoveToAndStayAlive(15300, 250, False) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(15300, 250, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	Local $foe = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, $RANGE_SPIRIT, IsGreaterBloodDrinker)
 	GetAlmostInRangeOfAgent($foe, $RANGE_EARSHOT - 200)
 	; Foes are a bit slow to take aggro here
 	Sleep(3000)
-	If ZodiacMoveToAndStayAlive(15615, 480, False) == $FAIL Then Return $FAIL
+	If MoveAvoidingBodyBlock(15615, 480, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	Sleep(1000)
 	ZodiacWaitForBall(14800, -100)
 	If ZodiacKillGroup(14800, -100) == $FAIL Then Return $FAIL
 	If IsPlayerDead() Then Return $FAIL
 
-	Return $SUCCESS
-EndFunc
-
-
-;~ Move and stay alive function of the Zodiac farm
-Func ZodiacMoveToAndStayAlive($X, $Y, $useStormChaser = True)
-	Local $me = GetMyAgent()
-	Local $timer = TimerInit()
-	While GetDistanceToPoint($me, $X, $Y) > $RANGE_NEARBY And TimerDiff($timer) < 30000
-		ZodiacStayAlive($useStormChaser)
-		Move($X, $Y)
-		RandomSleep(250)
-		$me = GetMyAgent()
-		If IsPlayerDead() Then Return $FAIL
-	WEnd
 	Return $SUCCESS
 EndFunc
 
@@ -220,7 +211,7 @@ Func ZodiacWaitForBall($X, $Y)
 	Local $foesCount = 0
 	Local $deadlockTimer = TimerInit()
 	While $foesCount < 1 And TimerDiff($deadlockTimer) < 4000
-		ZodiacStayAlive(True)
+		ZodiacStayAlive()
 		RandomSleep(200)
 		$foesCount = CountFoesInRangeOfCoords($X, $Y, $RANGE_SPELLCAST, IsGreaterBloodDrinker)
 		If IsPlayerDead() Then Return $FAIL
@@ -231,7 +222,7 @@ Func ZodiacWaitForBall($X, $Y)
 	Local $centerY = $Y
 	$foesCount = 0
 	While $foesCount < 7 And TimerDiff($deadlockTimer) < 12000
-		ZodiacStayAlive(True)
+		ZodiacStayAlive()
 		Local $newCenter = FindMiddleOfBloodDrinkers($centerX, $centerY)
 		If $newCenter[0] <> 0 And $newCenter[1] <> 0 Then
 			$centerX = $newCenter[0]
@@ -259,13 +250,13 @@ EndFunc
 ;~ Killing function of the Zodiac farm
 Func ZodiacKillGroup($X, $Y)
 	Local $center = FindMiddleOfBloodDrinkers($X, $Y)
-	MoveTo($center[0], $center[1], $RANGE_ADJACENT, ZodiacStayAlive)
+	MoveTo($center[0], $center[1], $RANGE_ADJACENT)
 
 	; Wait for Shadow Form to be just recasted
 	While TimerDiff($zodiac_shadow_form_timer) < 20000
 		TryUseZodiacShroudOfDistress()
 		$center = FindMiddleOfBloodDrinkers($X, $Y)
-		MoveTo($center[0], $center[1], $RANGE_ADJACENT, ZodiacStayAlive)
+		MoveTo($center[0], $center[1], $RANGE_ADJACENT)
 		RandomSleep(500)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
@@ -278,7 +269,7 @@ Func ZodiacKillGroup($X, $Y)
 	Local $foesCount = CountFoesInRangeOfAgent($me, $RANGE_NEARBY, IsGreaterBloodDrinker)
 	Local $counter = 0
 	While $foesCount > 2 And $counter < 36
-		ZodiacStayAlive(True)
+		ZodiacStayAlive()
 		RandomSleep(500)
 		$counter = $counter + 1
 		$me = GetMyAgent()
@@ -292,7 +283,7 @@ Func ZodiacKillGroup($X, $Y)
 		Local $target = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_EARSHOT)
 		While $target <> Null And DllStructGetData($target, 'HealthPercent') < 0.15 And TimerDiff($timer) < 60000
 			While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And TimerDiff($timer) < 60000
-				ZodiacStayAlive(True)
+				ZodiacStayAlive()
 				Attack($target)
 				RandomSleep(500)
 				$target = GetAgentByID(DllStructGetData($target, 'ID'))
@@ -320,8 +311,14 @@ Func BackToUrgozWarrenOutpost()
 EndFunc
 
 
-Func ZodiacStayAlive($useStormChaser = False)
-	TryUseZodiacShadowForm($useStormChaser)
+Func ZodiacStayAlive()
+	TryUseZodiacShadowForm(True)
+	TryUseZodiacShroudOfDistress()
+EndFunc
+
+
+Func ZodiacStayAliveWithoutSpeed()
+	TryUseZodiacShadowForm(False)
 	TryUseZodiacShroudOfDistress()
 EndFunc
 
@@ -352,7 +349,7 @@ EndFunc
 
 ;~ Uses Shroud of distress if its recharged
 Func TryUseZodiacShroudOfDistress()
-	If $zodiac_shroud_of_distress_timer == Null Or TimerDiff($zodiac_shroud_of_distress_timer) > 62000 And TimerDiff($zodiac_shadow_form_timer) < 18000 And GetEnergy() >= 10 Then
+	If $zodiac_shroud_of_distress_timer == Null Or TimerDiff($zodiac_shroud_of_distress_timer) > 62000 And TimerDiff($zodiac_shadow_form_timer) < 19000 And GetEnergy() >= 10 Then
 		UseSkillEx($ZODIAC_SHROUD_OF_DISTRESS)
 		$zodiac_shroud_of_distress_timer = TimerInit()
 	EndIf
