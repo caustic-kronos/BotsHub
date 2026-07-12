@@ -101,7 +101,7 @@ Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
 	'Glint Challenge|Jade Brotherhood|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|LDOA|Lightbringer & Sunspear|Lightbringer|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
-	'Raptors|Skale Fins|Skrees|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Manual Mode|Storage|Tests|TestSuite'
+	'Raptors|Skale Fins|Skrees|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Zodiac|Manual Mode|Storage|Tests|TestSuite'
 
 #Region GUI
 
@@ -1129,6 +1129,10 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $VOLTAIC_FARM_INFORMATIONS)
 		Case 'War Supply Keiran'
 			GUICtrlSetData($gui_label_farminformations, $WAR_SUPPLY_KEIRAN_INFORMATIONS)
+		Case 'Zodiac'
+			GUICtrlSetData($gui_edit_characterbuilds, $RA_ZODIAC_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $ZODIAC_HERO_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $ZODIAC_FARM_INFORMATIONS)
 		Case 'Manual Mode'
 			GUICtrlSetData($gui_label_farminformations, 'This mode allows you to use BotsHub to:' & @CRLF & _
 				'- open Xunlai Storage' & @CRLF & _
