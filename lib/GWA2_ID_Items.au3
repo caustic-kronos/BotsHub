@@ -1691,7 +1691,6 @@ Global Const $ID_SERPENT_AXE						= 118
 ; Missing IDs
 ;Global Const $ID_NAGA_SHORTBOW						=
 ;Global Const $ID_NAGA_LONGBOW						=
-;Global Const $ID_STRAW_EFFIGY						=
 ;Global Const $ID_COLOSSAL_PICK						=
 ;Global Const $ID_DESOLATION_MAUL					=
 ;Global Const $ID_COCKATRICE_STAFF					=
@@ -1813,10 +1812,18 @@ Global Const $ID_CELESTIAL_STAFF					= 785
 Global Const $ID_CELESTIAL_LONGBOW					= 1068
 #EndRegion Celestial
 
-#Region Zodiac
-Global Const $ID_ZODIAC_SHIELD						= 1039
+#Region Zodiac and similar
 Global Const $ID_ZODIAC_LONGBOW						= 966
-#EndRegion Zodiac
+Global Const $ID_ZODIAC_DAGGERS						= 969
+Global Const $ID_ZODIAC_SWORD						= 998
+Global Const $ID_ZODIAC_SHIELD						= 1039
+
+Global Const $ID_IRONWING_FLATBOW					= 967
+Global Const $ID_CEREMONIAL_DAGGERS					= 968
+Global Const $ID_STRAW_EFFIGY						= 971	;Soul Reaping
+Global Const $ID_GAVEL_OF_THE_NEPHILIM				= 975
+Global Const $ID_VERTEBREAKER						= 987
+#EndRegion Zodiac and similar
 #EndRegion Rare skins
 
 
@@ -2112,6 +2119,7 @@ Local $rareWeaponsToPickUp = [ _
 	_ ; Focii
 	$ID_PAPER_FAN, $ID_PAPER_FAN_2, $ID_PAPER_FAN_3, $ID_PAPER_FAN_4, $ID_PAPER_FAN_5, $ID_PAPER_LANTERN, _
 	$ID_JUG, $ID_JUG_2, $ID_JUG_3, $ID_PLAGUEBORN_FOCUS, $ID_PLAGUEBORN_FOCUS_2, $ID_PRONGED_FAN, _
+	$ID_STRAW_EFFIGY, _
 	_ ; Staves
 	$ID_BO_STAFF, _
 	_ ; Shields
@@ -2133,6 +2141,7 @@ Local $rareWeaponsArray = [ _
 	_ ; Focii
 	$ID_PAPER_FAN, $ID_PAPER_FAN_2, $ID_PAPER_FAN_3, $ID_PAPER_FAN_4, $ID_PAPER_FAN_5, $ID_PAPER_LANTERN, _
 	$ID_JUG, $ID_JUG_2, $ID_JUG_3, $ID_PLAGUEBORN_FOCUS, $ID_PLAGUEBORN_FOCUS_2, $ID_PRONGED_FAN, _
+	$ID_STRAW_EFFIGY, _
 	_ ; Scythes
 	$ID_DRACONIC_SCYTHE, _
 	_ ; Shields
@@ -2152,8 +2161,9 @@ Local $rareWeaponsArray = [ _
 	_ ; Celestial weapons
 	$ID_CELESTIAL_SHIELD, $ID_CELESTIAL_SHIELD_2, $ID_CELESTIAL_SCEPTER, $ID_CELESTIAL_SWORD, $ID_CELESTIAL_DAGGERS, _
 	$ID_CELESTIAL_HAMMER, $ID_CELESTIAL_AXE, $ID_CELESTIAL_STAFF, $ID_CELESTIAL_LONGBOW, _
-	_ ; Zodiac weapons
-	$ID_ZODIAC_SHIELD, _
+	_ ; Zodiac weapons and similar
+	$ID_ZODIAC_LONGBOW, $ID_ZODIAC_DAGGERS, $ID_ZODIAC_SWORD, $ID_ZODIAC_SHIELD, _
+	$ID_IRONWING_FLATBOW, $ID_CEREMONIAL_DAGGERS, $ID_GAVEL_OF_THE_NEPHILIM, $ID_VERTEBREAKER, _
 	_ ; Anniversary weapons
 	$ID_DRAGON_FANGS, $ID_CANTHAN_TARGE_STRENGTH, $ID_CANTHAN_TARGE_TACTIC, $ID_CANTHAN_TARGE_LEADERSHIP, _
 	$ID_SPIRITBINDER_COMMUNING, $ID_SPIRITBINDER_SPAWNING_POWER, $ID_SPIRITBINDER_RESTORATION, $ID_SPIRITBINDER_CHANNELING, _

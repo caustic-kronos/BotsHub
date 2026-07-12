@@ -124,6 +124,8 @@ Func ZodiacFarmLoop()
 	;################ Running phase ################
 	; Cupcake is mandatory - otherwise we do not lose aggro of dredges and we do not pack foes properly
 	UseConsumable($ID_BIRTHDAY_CUPCAKE, True)
+	; Egg is not mandatory - but it helps finishing group easier
+	UseConsumable($ID_GOLDEN_EGG, False)
 	; Run past the mobs
 	; Second speed boost causes enemies to lose aggro
 	UseSkillEx($ZODIAC_STORMCHASER)
