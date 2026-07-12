@@ -333,7 +333,6 @@ Func DefaultShouldPickItem($item)
 		Return $cache['Pick up items.Gold']
 	; --------------------------------------- Weapons ---------------------------------------
 	ElseIf IsWeapon($item) Then
-		If $rarity <> $RARITY_WHITE And IsLowReqMaxDamage($item) Then Return True
 		Return CheckPickupWeapon($item)
 	; --------------------------------- Armor salvageables ---------------------------------
 	ElseIf isArmorSalvageItem($item) Then
@@ -651,10 +650,15 @@ Func DefaultShouldSellRareMaterial($item)
 EndFunc
 
 
+;~ Return true if a weapon should be picked up
 Func CheckPickupWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_RED Then Return True
 	If $weaponRarity == $RARITY_GRAY Then Return False
+	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxDamage($weaponItem) Then Return True
+	Local $itemID = DllStructGetData($weaponItem, 'ModelID')
+	If $weaponRarity <> $RARITY_WHITE And $RARE_WEAPONS_TO_PICK[$itemID] <> Null And IsMaxStatsForReq($weaponItem) Then Return True
+
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
