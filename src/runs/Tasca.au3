@@ -144,7 +144,7 @@ Func SetupTeamTascaChestFarm()
 EndFunc
 
 
-;~ Move out of outpost into Tasca's Demise
+;~ Move out of outpost into Tascas Demise
 Func GoToTascasDemise()
 	TravelToOutpost($ID_THE_GRANITE_CITADEL, $district_name)
 	While GetMapID() <> $ID_TASCAS_DEMISE
@@ -271,13 +271,13 @@ Func TascaChestRun($X, $Y)
 		EndIf
 
 		TascaSurviveFunction($X, $Y)
-		; Energy usage becomes too heavy if we start using Death's Charge as a speedup
+		; Energy usage becomes too heavy if we start using Deaths Charge as a speedup
 		;If GetEnergy() >= 5 And IsRecharged($TASCA_DEATHS_CHARGE) Then
 		;	Local $target = GetTargetForDeathsCharge($X, $Y, 700)
 		;	If $target <> Null Then UseSkillEx($TASCA_DEATHS_CHARGE, $target)
 		;EndIf
 
-		; We only start unblocking after 10 times 250 ms which is 2.5 s -> that's because knockdown lasts 2s
+		; We only start unblocking after 10 times 250 ms which is 2.5 s -> that is because knockdown lasts 2s
 		If $blockedCounter > 10 And GetEnergy() >= 10 Then
 			Local $target = GetTargetToEscapeWithDeathsCharge($X, $Y)
 			If $target <> Null And IsRecharged($TASCA_DEATHS_CHARGE) Then
@@ -299,7 +299,7 @@ Func TascaChestRun($X, $Y)
 EndFunc
 
 
-;~ Get a foe close enough to use Death's Charge on and as close as possible to coordinates
+;~ Get a foe close enough to use Deaths Charge on and as close as possible to coordinates
 Func GetTargetToEscapeWithDeathsCharge($X, $Y)
 	Local $targetDistance = 999999
 	Local $target = Null

@@ -335,7 +335,7 @@ Func InitialFight()
 	WEnd
 
 	Local $deathTimer = Null
-	; Now there are enemies let's fight until one mob is left
+	; Now there are enemies fight until one mob is left
 	While $foesInRange > 1 And TimerDiff($deadlock) < 80000
 		HelpMikuAndCharacter()
 		AttackOrUseSkill(1300, $SKILL_I_AM_UNSTOPPABLE, $SKILL_HUNDRED_BLADES, $SKILL_TO_THE_LIMIT)

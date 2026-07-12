@@ -116,7 +116,7 @@ Func MoveRadial($x, $y, $distance)
 EndFunc
 
 
-;~ Avoid usage, it's a square around the original position, making it awkward, it can also not add any random
+;~ Avoid usage, it is a square around the original position, making it awkward, it can also not add any random
 ;~ Move to a random location around the given coordinates. Returns True if successful
 Func RandomMove($X, $Y, $random = 50)
 	Return Move($X + Random(-$random, $random), $Y + Random(-$random, $random))
@@ -1038,7 +1038,7 @@ Func GetAgentArray($type = 0)
 EndFunc
 
 
-;~ Returns a player's name.
+;~ Returns the name of a player.
 Func GetPlayerName($agent)
 	Local $loginNumber = DllStructGetData($agent, 'LoginNumber')
 	Local $offset[] = [0, 0x18, 0x2C, 0x80C, 76 * $loginNumber + 0x28, 0]
@@ -1115,7 +1115,7 @@ Func CancelAllHeroes()
 EndFunc
 
 
-;~ Place a hero's position flag.
+;~ Place the position flag of a hero.
 Func CommandHero($heroIndex, $X, $Y)
 	Return SendPacket(0x14, $HEADER_HERO_FLAG_SINGLE, GetHeroID($heroIndex), FloatToInt($X), FloatToInt($Y), 0)
 EndFunc
@@ -1134,7 +1134,7 @@ Func LockHeroTarget($heroIndex, $agentID = 0)
 EndFunc
 
 
-;~ Change a hero's aggression level.
+;~ Change aggression level of a hero.
 ;~ 0=Fight, 1=Guard, 2=Avoid
 Func SetHeroBehaviour($heroIndex, $aggressionLevel)
 	Local $heroID = GetHeroID($heroIndex)
@@ -1193,7 +1193,7 @@ Func GetHeroNumberByHeroID($heroID)
 EndFunc
 
 
-;~ Returns hero's profession ID (when it cannot be found by other means)
+;~ Returns profession ID of a hero (when it cannot be found by other means)
 Func GetHeroProfession($heroIndex, $secondary = False)
 	Local $processHandle = GetProcessHandle()
 	Local $offset[] = [0, 0x18, 0x2C, 0x6BC, 0]
@@ -1212,7 +1212,7 @@ Func GetHeroProfession($heroIndex, $secondary = False)
 EndFunc
 
 
-;~ Tests if a hero's skill slot is disabled.
+;~ Tests if the skill slot of a hero is disabled.
 Func GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot)
 	Return BitAND(BitShift(1, -($skillSlot - 1)), DllStructGetData(GetSkillbar($heroIndex), 'Disabled')) > 0
 EndFunc
@@ -1327,14 +1327,14 @@ Func IsUnidentifiedGoldItem($item)
 EndFunc
 
 
-;~ Returns a weapon or shield's minimum required attribute.
+;~ Returns a weapon or shield minimum required attribute.
 Func GetItemReq($item)
 	Local $mod = GetModByIdentifier($item, '9827')
 	Return $mod[0]
 EndFunc
 
 
-;~ Returns a weapon or shield's required attribute.
+;~ Returns a weapon or shield required attribute.
 Func GetItemAttribute($item)
 	Local $mod = GetModByIdentifier($item, '9827')
 	Return $mod[1]
@@ -1560,7 +1560,7 @@ Func EquipItem($item)
 EndFunc
 
 
-;~ Equips an item specified by item's model ID. No impact if item is already equipped
+;~ Equips an item specified by item model ID. No impact if item is already equipped
 Func EquipItemByModelID($itemModelID)
 	Local $item = GetItemByModelID($itemModelID)
 	If $item == Null Then Return False
@@ -1568,7 +1568,7 @@ Func EquipItemByModelID($itemModelID)
 EndFunc
 
 
-;~ Checks if item specified by item's model ID is equipped in any weapon slot
+;~ Checks if item specified by item model ID is equipped in any weapon slot
 Func IsItemEquipped($itemModelID)
 	Local $item = GetItemByModelID($itemModelID)
 	If $item == Null Then Return False
@@ -1577,7 +1577,7 @@ Func IsItemEquipped($itemModelID)
 EndFunc
 
 
-;~ Checks if item specified by item's model ID is equipped in specified weapon slot (from 1 to 4)
+;~ Checks if item specified by item model ID is equipped in specified weapon slot (from 1 to 4)
 Func IsItemEquippedInWeaponSlot($itemModelID, $weaponSlot)
 	If $weaponSlot <> 1 And $weaponSlot <> 2 And $weaponSlot <> 3 And $weaponSlot <> 4 Then Return False
 	Local $item = GetItemByModelID($itemModelID)
@@ -1591,7 +1591,7 @@ EndFunc
 
 
 ; FIXME: does not work
-;~ Checks if item specified by item's model ID is located in any bag or backpack or is equipped in any weapon slot
+;~ Checks if item specified by item model ID is located in any bag or backpack or is equipped in any weapon slot
 Func ItemExistsInInventory($itemModelID)
 	Local $item = GetItemByModelID($itemModelID)
 	If $item == Null Then Return False
@@ -2401,7 +2401,7 @@ Func ToggleHeroPanel($hero)
 EndFunc
 
 
-;~ Toggle hero's pet panel.
+;~ Toggle pet panel of a hero.
 Func ToggleHeroPetPanel($hero)
 	Return PerformAction(($hero < 4 ? 0xDF : 0xFA) + $hero)
 EndFunc
@@ -2770,7 +2770,7 @@ Func DecodeEncString($ptr)
 	Return $value
 EndFunc
 
-; Decodes an encoded string to readable text using GW's internal decoder
+; Decodes an encoded string to readable text using GW internal decoder
 ; This calls ValidateAsyncDecodeStr via injected ASM code
 ; @param $a_p_Ptr - Pointer to the encoded string in GW memory
 ; @param $a_i_Timeout - Maximum time to wait for decode (ms), default 1000

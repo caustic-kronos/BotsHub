@@ -196,8 +196,8 @@ EndFunc
 Func CloseSharedMemory($memoryName)
 	SafeDllCall5($kernel_handle, 'bool', 'UnmapViewOfFile', 'ptr', DllStructGetPtr($sharedMemoryStructuresMap[$memoryName]))
 	SafeDllCall5($kernel_handle, 'bool', 'CloseHandle', 'handle', $sharedMemoryHandlesMap[$memoryName])
-    $sharedMemoryStructuresMap[$memoryName] = Null
-    $sharedMemoryHandlesMap[$memoryName] = Null
+	$sharedMemoryStructuresMap[$memoryName] = Null
+	$sharedMemoryHandlesMap[$memoryName] = Null
 EndFunc
 
 

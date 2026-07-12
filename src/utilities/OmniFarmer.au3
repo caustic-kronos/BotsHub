@@ -34,7 +34,7 @@ Global Const $FAITHFUL_INTERVENTION_SKILL_POSITION = 8
 ; BiP Necro
 Global Const $BIP_SKILL_POSITION = 7
 
-; Zephyr Ranger - Quickening Zephyr and serpent's quickness must be locked so hero does not use them
+; Zephyr Ranger - Quickening Zephyr and serpents quickness must be locked so hero does not use them
 Global Const $SERPENTS_QUICKNESS_SKILL_POSITION = 6
 Global Const $QUICKENING_ZEPHYR_SKILL_POSITION = 7
 

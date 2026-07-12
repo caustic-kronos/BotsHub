@@ -63,7 +63,7 @@ Global Const $BOREAL_HEART_OF_SHADOW	= 8
 Global Const $BOREAL_MOUNTAIN_PINESOUL_MODEL_ID = 6539
 Global Const $BOREAL_MOUNTAIN_ALOE_MODEL_ID = 6540
 
-; global variable to remember player's profession in setup
+; global variable to remember profession of player in setup
 Global $boreal_player_profession = $ID_ASSASSIN
 Global $boreal_farm_setup = False
 

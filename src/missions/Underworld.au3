@@ -124,7 +124,7 @@ Func UnderworldFarmLoop()
 	UseUWConsetsAndConsumables()
 	If ClearTheChamberUnderworld() == $FAIL Then Return $FAIL
 
-	; Accept reward & take quest Restoring Grenth's Monuments
+	; Accept reward & take quest Restoring Grenths Monuments
 	Local $reaper_Labyrinth = GetNearestNPCToCoords(-5694, 12772)
 	TakeQuestReward($reaper_Labyrinth, $ID_QUEST_CLEAR_THE_CHAMBER, 0x806507)
 	TakeQuest($reaper_Labyrinth, $ID_QUEST_RESTORING_GRENTH_S_MONUMENTS, 0x806D01, 0x806D03)

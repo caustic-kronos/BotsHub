@@ -64,7 +64,7 @@ Func SetupMinotaursFarm()
 EndFunc
 
 
-;~ Move out of outpost into Prophet's 'Path
+;~ Move out of outpost into Prophets 'Path
 Func GoToProphetsPath()
 	TravelToOutpost($ID_AUGURY_ROCK, $district_name)
 	While GetMapID() <> $ID_PROPHETS_PATH

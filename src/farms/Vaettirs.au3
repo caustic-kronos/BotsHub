@@ -401,7 +401,7 @@ Func VaettirsMoveAndSurvive($destinationX, $destinationY)
 	; If no success when moving, either we died (the end) or we were bodyblocked
 	If IsPlayerDead() Then Return $FAIL
 
-	; When playing as Elementalist or other professions that do not have death's charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
+	; When playing as Elementalist or other professions that do not have deaths charge or heart of shadow skills, then fight Vaettirs wherever player got surrounded and stuck
 	VaettirsKillSequence()
 	If IsPlayerDead() Then Return $FAIL
 	Info('Picking up loot')
@@ -581,7 +581,7 @@ Func KillVaettirsUsingWastrelSkills()
 	Local $target
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_AREA)
 	If $foesCount > 0 Then
-		; Echo the Wastrel's Demise
+		; Echo the Wastrels Demise
 		UseSkillEx($VAETTIR_ARCANE_ECHO)
 		$target = GetWastrelsTarget()
 		UseSkillEx($VAETTIR_WASTRELS_DEMISE, $target)
@@ -594,7 +594,7 @@ Func KillVaettirsUsingWastrelSkills()
 				If $target <> Null Then UseSkillEx($VAETTIR_ARCANE_ECHO, $target)
 			EndIf
 
-			; Use wastrel's demise if possible
+			; Use wastrels demise if possible
 			If IsRecharged($VAETTIR_WASTRELS_DEMISE) Then
 				$target = GetWastrelsTarget()
 				If $target <> Null Then UseSkillEx($VAETTIR_WASTRELS_DEMISE, $target)

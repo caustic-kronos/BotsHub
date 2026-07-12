@@ -287,7 +287,7 @@ Func BrawlFight($target)
 		;	7			$SKILLBAR_BRAWLING_COMBO_PUNCH			off cooldown					2
 		;	8			$SKILLBAR_STAND_UP						just used when knocked down
 
-		; Here we are doing an intense usage of skillbar informations - it's better to avoid using IsRecharged and such
+		; Here we are doing an intense usage of skillbar informations - it is better to avoid using IsRecharged and such
 		Local $skillbar = GetSkillbar(0)
 		; Skill 7 is unavailable in NM
 		Local $recharge1 = DllStructGetData($skillbar, 'Recharge' & $SKILLBAR_BRAWLING_BLOCK)

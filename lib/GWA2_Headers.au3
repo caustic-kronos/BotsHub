@@ -48,7 +48,7 @@ Global Const $HEADER_DIALOG_SEND = 0x3B						; Accepts a quest or a quest reward
 ; GAME_CMSG_ - Heroes and NPCs
 Global Const $HEADER_HERO_BEHAVIOR = 0x15					; Sets the behavior/aggression level of a hero
 Global Const $HEADER_HERO_LOCK_TARGET = 0x16				; Locks a target for the hero
-Global Const $HEADER_HERO_SKILL_TOGGLE = 0x19				; Toggles a hero's skill on or off
+Global Const $HEADER_HERO_SKILL_TOGGLE = 0x19				; Toggles a hero skill on or off
 Global Const $HEADER_HERO_FLAG_ALL = 0x1B					; Sets or clears the party position flag
 Global Const $HEADER_HERO_FLAG_SINGLE = 0x1A				; Sets or clears a single hero position flag
 Global Const $HEADER_USE_HERO_SKILL = 0x1C					; For use with UseHeroSkillByPacket() only

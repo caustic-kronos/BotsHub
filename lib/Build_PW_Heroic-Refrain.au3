@@ -236,12 +236,12 @@ Func HRPhaseApplyParty()
 				; Effects found, no need to check other blocks
 				If $effects <> Null Then ExitLoop
 			Next
-			
+
 			; If playing with a friend or two, you can uncomment this - paragon will cast HR every 12s, but at least they will have HR
 			;If $effects == Null Then
-			; 	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
-			; 	$next = Mod($index + 1, $partySize)
-			; 	Return $HR_PHASE_APPLY_PARTY
+			;	UseSkillEx($BUILD_PW_HEROIC_REFRAIN, $agent)
+			;	$next = Mod($index + 1, $partySize)
+			;	Return $HR_PHASE_APPLY_PARTY
 			;EndIf
 
 			; Agent is not ours and we could not get his effects - skip
@@ -313,17 +313,17 @@ Func CastCombatShouts($target = Null)
 
 	Local $skillbar = GetSkillbar()
 	Local $skilltimer = GetSkillTimer()
-	
+
 	; Priority 2: Aggressive Refrain — only if not already active, only in combat
 	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN) == Null And $energy >= 15 And IsSkillRecharged($skillbar, $BUILD_PW_AGGRESSIVE_REFRAIN, $skilltimer) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
-	
+
 	; Priority 3: Stand Your Ground!
 	If $BUILD_PW_STAND_YOUR_GROUND > 0 And IsSkillRecharged($skillbar, $BUILD_PW_STAND_YOUR_GROUND, $skilltimer) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_STAND_YOUR_GROUND)
 
 	; Priority 4: Ebon Battle Standard of Wisdom
 	If $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM > 0 And IsSkillRecharged($skillbar, $BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM, $skilltimer) And $energy >= 10 Then Return UseSkillEx($BUILD_PW_EBON_BATTLE_STANDARD_OF_WISDOM)
 
-	; Priority 5: There's Nothing to Fear!
+	; Priority 5: Theres Nothing to Fear!
 	If $BUILD_PW_THERES_NOTHING_TO_FEAR > 0 And IsSkillRecharged($skillbar, $BUILD_PW_THERES_NOTHING_TO_FEAR, $skilltimer) And $energy >= 15 Then Return UseSkillEx($BUILD_PW_THERES_NOTHING_TO_FEAR)
 
 	; Priority 6: Save Yourselves! (adrenaline-based, 200 required)

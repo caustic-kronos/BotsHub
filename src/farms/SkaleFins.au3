@@ -117,9 +117,9 @@ Func SkaleFinsFarmLoop()
 		[-16500,	-10000,	'Moving'			], _
 		[-13500,	-9000,	'Group 3'			], _
 		[-9800,		-12000,	'Group 4'			], _
-		[-9500,		-9000, 	'Moving'			], _
-		[-6000,		-8000, 	'Boss Group'		], _
-		[-6000,		-7000, 	'Boss Group - end'	] _
+		[-9500,		-9000,	'Moving'			], _
+		[-6000,		-8000,	'Boss Group'		], _
+		[-6000,		-7000,	'Boss Group - end'	] _
 	]
 	For $i = 0 To UBound($nodes) - 1
 		Info($nodes[$i][2])

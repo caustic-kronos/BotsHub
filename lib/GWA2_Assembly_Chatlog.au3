@@ -70,7 +70,7 @@ Func AssemblerCreateChatLog()
 	_('mov dword[ChatMessagePtr],edx')
 	; Copy message bytes into our owned buffer before incrementing the counter.
 	; This ensures the data is in BotsHub-controlled memory by the time the AutoIt
-	; poller detects the counter change — GW's source buffer may be freed within ~150ms.
+	; poller detects the counter change — GW source buffer may be freed within ~150ms.
 	_('mov esi,dword[ebp+8]')
 	_('mov edi,ChatMessageData')
 	_('mov ecx,128 -> B980000000')
@@ -165,7 +165,7 @@ EndFunc
 ;------------------------------------------------------
 ; Title...........:	ChatLogOnExit
 ; Description.....:	OnAutoItExitRegister handler. Reverts the ChatLog detour whenever
-;					BotsHub exits (normal close, error, or tray exit) so GW's code at
+;					BotsHub exits (normal close, error, or tray exit) so GW code at
 ;					ChatLogStart is restored to its original bytes. Without this, a
 ;					subsequent BotsHub session would find a stale JMP at ChatLogStart and
 ;					crash GW the next time a chat message arrives.

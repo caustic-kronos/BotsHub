@@ -58,12 +58,12 @@ Global Const $KEIRAN_NATURES_BLESSING		= 6
 Global Const $KEIRAN_UNUSED_7TH_SKILL		= 7
 Global Const $KEIRAN_UNUSED_8TH_SKILL		= 8
 
-; Keiran's energy skill cost is reduced by expertise level 20
+; Keiran energy skills costs are reduced by expertise level 20
 Global Const $KEIRAN_SKILLS_ARRAY			= [$KEIRAN_SNIPER_SHOT,	$KEIRAN_GRAVESTONE_MARKER,	$KEIRAN_TERMINAL_VELOCITY,	$KEIRAN_RAIN_OF_ARROWS,	$KEIRAN_RELENTLESS_ASSAULT,	$KEIRAN_NATURES_BLESSING,	$KEIRAN_UNUSED_7TH_SKILL,	$KEIRAN_UNUSED_8TH_SKILL]
 Global Const $KEIRAN_SKILLS_COSTS_ARRAY		= [2,					2,							1,							1,						3,							2,						0,						0]
 Global Const $KEIRAN_SKILLS_COSTS_MAP		= MapFromArrays($KEIRAN_SKILLS_ARRAY, $KEIRAN_SKILLS_COSTS_ARRAY)
 
-Global $warsupply_fight_options 				= CloneMap($default_move_aggro_kill_options)
+Global $warsupply_fight_options					= CloneMap($default_move_aggro_kill_options)
 $warsupply_fight_options['killMethod']			= WarSupplyFarmFight
 $warsupply_fight_options['fightRange']			= $RANGE_LONGBOW
 $warsupply_fight_options['fightTimeout']		= 3 * 60 * 1000
@@ -118,7 +118,7 @@ Func GetKeiranBow()
 	Info('Getting Keirans bow to be able to enter the quest')
 	TravelToOutpost($ID_EYE_OF_THE_NORTH, $district_name)
 	EnterHallOfMonuments()
-	; hexadecimal code of dialog ID to receive keiran's bow
+	; hexadecimal code of dialog ID to receive keirans bow
 	Local $bowDialogID = 0x8A
 	; coordinates of Gwen inside Hall of Monuments location
 	Local $gwen = GetNearestNPCToCoords(-6583, 6672)
@@ -213,15 +213,15 @@ Func RunWayPoints()
 		[8700,		-8000,	'Group 3',			1	], _
 		[8000,		-8600,	'Moving',			1	], _
 		[6900,		-8400,	'Moving',			1	], _
-		[5700,		-8000, 	'Group 4',			15	], _
-		[4600,		-9230, 	'Moving',			0	], _
+		[5700,		-8000,	'Group 4',			15	], _
+		[4600,		-9230,	'Moving',			0	], _
 		[3750,		-10000, 'Moving',			0	], _
 		[3070,		-11300,	'Avoiding Group 5',	0	], _
 		[2250,		-12300,	'Moving',			0	], _
 		[1100,		-13200,	'Avoiding Group 6',	0	], _
 		[-200,		-12800,	'Moving',			0	], _
 		[-1000,		-12250,	'Moving',			0	], _
-		_ ;-1400, 	-11500
+		_ ;-1400,	-11500
 		[-2000,		-11600,	'Group 7',			2	], _
 		[-4250,		-12400,	'Moving',			2	], _
 		[-5150,		-12800,	'Moving',			0	], _

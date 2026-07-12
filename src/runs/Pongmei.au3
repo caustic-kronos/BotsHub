@@ -208,7 +208,7 @@ EndFunc
 
 ;~ Main function to run as a Dervish
 Func DervishRun($X, $Y)
-	; We could potentially improve bot by avoiding using run stance right before Shadow Form, but that's a very tiny improvement
+	; We could potentially improve bot by avoiding using run stance right before Shadow Form, but that is a very tiny improvement
 	;Local Static $shadowFormLastUse = Null
 	Move($X, $Y)
 	Local $blockedCounter = 0
@@ -309,7 +309,7 @@ Func GetNPCInTheBack($X, $Y)
 EndFunc
 
 
-;~ Get a foe that in front of player and close enough to point (X, Y) to use Death's Charge on
+;~ Get a foe that in front of player and close enough to point (X, Y) to use Deaths Charge on
 Func GetTargetForDeathsCharge($X, $Y, $distance = 700)
 	Local $me = GetMyAgent()
 	Local $myX = DllStructGetData($me, 'X')

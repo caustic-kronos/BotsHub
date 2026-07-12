@@ -1108,9 +1108,9 @@ Func UpdateFarmDescription($farm)
 				$TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $TASCA_CHESTRUN_INFORMATIONS)
 		Case 'TunnelsOfTheForsaken'
-		 	GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
-		 	GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
-		 	GUICtrlSetData($gui_label_farminformations, $TUNNELS_OF_THE_FORSAKEN_FARM_INFORMATIONS)
+			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
+			GUICtrlSetData($gui_label_farminformations, $TUNNELS_OF_THE_FORSAKEN_FARM_INFORMATIONS)
 		Case 'Underworld'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)

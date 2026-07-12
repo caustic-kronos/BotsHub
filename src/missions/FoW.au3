@@ -609,7 +609,7 @@ Func TempleLoot()
 	EndIf
 	MoveAggroAndKill(1550, 5200)
 	MoveAggroAndKill(1700, 2400)
-	; TODO: Add The Hunt Check again for Burning Forest as it's another are that can get missed
+	; TODO: Add The Hunt Check again for Burning Forest as it is another area that can get missed
 	CommandAll(1500, 7360)
 	MoveTo(1585, -520)
 

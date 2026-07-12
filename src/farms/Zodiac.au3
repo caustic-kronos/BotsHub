@@ -142,7 +142,7 @@ Func ZodiacFarmLoop()
 	ZodiacWaitForBall(6500, 3250)
 	If ZodiacKillGroup(6500, 3250) == $FAIL Then Return $FAIL
 	If IsPlayerDead() Then Return $FAIL
-	
+
 	Local $zodiacMoveOptions = CloneMap($default_move_options)
 	$zodiacMoveOptions['movementRoutine']	= ZodiacStayAlive
 	$zodiacMoveOptions['moveTimeout']		= 12 * 1000

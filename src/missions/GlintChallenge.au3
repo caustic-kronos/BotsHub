@@ -178,7 +178,7 @@ Func GlintChallenge()
 				$glitchTimer = TimerInit()
 				$glitchTimerStarted = True
 			ElseIf TimerDiff($glitchTimer) > 150000 Then ; 2,5 minutes max time for detection of pathological situation
-				; in case pathological situation happened, make a full sweep with team around baby dragon's location
+				; in case pathological situation happened, make a full sweep with team around baby dragon location
 				SweepAroundBabyDragonLocation()
 				$glitchTimerStarted = False
 			EndIf

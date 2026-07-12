@@ -91,7 +91,7 @@ EndFunc
 
 Func RunToShatteredRavines()
 	TravelToOutpost($ID_BONE_PALACE, $district_name)
-	; Exiting to Joko's Domain
+	; Exiting to Jokos Domain
 	MoveTo(-14500, 6000)
 	Move(-14800, 3400)
 	RandomSleep(1000)
@@ -101,7 +101,7 @@ Func RunToShatteredRavines()
 	UseSkillEx($SS_MINDBENDER)
 	MoveTo(-12650, 2600)
 	MoveTo(-10950, 4250)
-	; Going to wurm's spoor
+	; Going to wurms spoor
 	ChangeTarget(GetNearestSignpostToCoords(-10950, 4250))
 	RandomSleep(500)
 	Info('Taking wurm')
@@ -159,7 +159,7 @@ Func SpiritSlavesFarmLoop()
 		Local $balled = True
 		; The bottom group comes only the first three times		-	First, Second and Third waves
 		If $group >= 1 And $group <= 3 Then $balled = WaitForFoesBall($bottomPosition)
-		; The top group comes twice - 							-	Second and Fourth waves
+		; The top group comes twice -							-	Second and Fourth waves
 		If $group == 2 Or $group == 5 Then $balled = WaitForFoesBall($topPosition)
 		If IsPlayerDead() Then Return RestartAfterDeath()
 		Info('Killing group ' & $group)

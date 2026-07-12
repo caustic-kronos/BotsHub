@@ -96,7 +96,7 @@ Global Const $WEAPONS_MAX_DAMAGE_PER_LEVEL_VALUES	=	[$AXE_MAX_DAMAGE_PER_LEVEL, 
 															$STAFF_MAX_DAMAGE_PER_LEVEL, $SWORD_MAX_DAMAGE_PER_LEVEL, $DAGGER_MAX_DAMAGE_PER_LEVEL, $SCYTHE_MAX_DAMAGE_PER_LEVEL, $SPEAR_MAX_DAMAGE_PER_LEVEL]
 Global Const $WEAPONS_MAX_DAMAGE_PER_LEVEL[]		=	MapFromArrays($WEAPONS_MAX_DAMAGE_PER_LEVEL_KEYS, $WEAPONS_MAX_DAMAGE_PER_LEVEL_VALUES)
 
-; This is not the "weakest" weapon, this is the highest lower bound damage a weapon can deal
+; This is not the <<weakest>> weapon, this is the highest lower bound damage a weapon can deal
 ; Min damage relative to the Req						0		1		2		3		4		5		6		7		8		9		10		11		12		13
 Global Const $AXE_MIN_DAMAGE_PER_LEVEL				=	[6,		6,		6,		6,		7,		6,		6,		6,		6,		6,		6,		6,		6,		6]
 Global Const $BOW_MIN_DAMAGE_PER_LEVEL				=	[9,		9,		10,		11,		12,		13,		14,		14,		14,		15,		15,		15,		15,		15]
@@ -1307,7 +1307,7 @@ Global Const $ID_SHINING_BLADE_SUMMON			= 35126
 Global Const $ID_LEGIONNAIRE_SUMMONING_CRYSTAL	= 37810
 Global Const $ID_CRACKED_ASCALONIAN_WAR_HORN	= 38369
 ;Global Const $ID_ASCALONIAN_WAR_HORN			= XXXXX
-; Order matters - it's the preferential order in which summoning stones will be used
+; Order matters - it is the preferential order in which summoning stones will be used
 Global Const $SUMMONING_STONES_ARRAY[]			= [	$ID_CRACKED_ASCALONIAN_WAR_HORN, $ID_IGNEOUS_SUMMONING_STONE, $ID_LEGIONNAIRE_SUMMONING_CRYSTAL, _				; Infinite summons tier
 													$ID_GHASTLY_SUMMON, $ID_MYSTICAL_SUMMON, $ID_TENGU_SUMMON, $ID_IMPERIAL_GUARD_SUMMON, _							; Good summons tier
 													$ID_AUTOMATON_SUMMON, $ID_CHITINOUS_SUMMON, $ID_AMBER_SUMMON, $ID_ARTIC_SUMMON, _								; Trash tier
@@ -2055,6 +2055,7 @@ Global Const $ID_TALL_SHIELD							= 343
 Global Const $ID_ADAMANTINE_SHIELD						= 1892
 Global Const $ID_AEGIS									= 323
 Global Const $ID_DARKWING_DEFENDER						= 1052
+Global Const $ID_DARKWING_DEFENDER_TACTICS				= 2237		; Tactics
 Global Const $ID_DEFENDER								= 331
 Global Const $ID_DIAMOND_AEGIS							= 783
 Global Const $ID_DIAMOND_AEGIS_2						= 1469
@@ -2065,18 +2066,17 @@ Global Const $ID_SHADOW_SHIELD							= 336
 Global Const $ID_TOWER_SHIELD							= 345
 Global Const $ID_DWARVEN_AXE							= 114
 Global Const $ID_ONI_DAGGERS							= 766
-Global Const $ID_GOLDLEAF_DEFENDER_COMMAND				= 1878	; Command
-Global Const $ID_HERALDIC_SHIELD						= 1889	; Command
+Global Const $ID_GOLDLEAF_DEFENDER_COMMAND				= 1878		; Command
+Global Const $ID_HERALDIC_SHIELD						= 1889		; Command
 Global Const $ID_DAEDAL_SHIELD							= 1887
-Global Const $ID_GOLDLEAF_DEFENDER_MOTIVATION			= 1877	; Motivation
-Global Const $ID_SUNTOUCHED_SHIELD						= 1534	; Motivation
-Global Const $ID_SILVER_BOAR_SCEPTER					= 2286	; Divine Favor
-Global Const $ID_SCEPTER_OF_THE_FORGOTTEN_SOUL_REAPING	= 1720	; Soul Reaping
-Global Const $ID_SCEPTER_OF_THE_FORGOTTEN_DOMINATION	= 1719	; Domination
+Global Const $ID_GOLDLEAF_DEFENDER_MOTIVATION			= 1877		; Motivation
+Global Const $ID_SUNTOUCHED_SHIELD						= 1534		; Motivation
+Global Const $ID_SILVER_BOAR_SCEPTER					= 2286		; Divine Favor
+Global Const $ID_SCEPTER_OF_THE_FORGOTTEN_SOUL_REAPING	= 1720		; Soul Reaping
+Global Const $ID_SCEPTER_OF_THE_FORGOTTEN_DOMINATION	= 1719		; Domination
 Global Const $ID_IGNEOUS_BLADE							= 1558
 Global Const $ID_JADE_SWORD								= 1322
-Global Const $ID_REINFORCED_DEFENDER					= 2300	; Motivation
-Global Const $ID_DARKWING_DEFENDER						= 2237	; Tactics
+Global Const $ID_REINFORCED_DEFENDER					= 2300		; Motivation
 
 #EndRegion Other skins
 

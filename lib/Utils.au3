@@ -349,7 +349,7 @@ EndFunc
 Func EnterUrgozsWarren($forceScrollUse)
 	; Talk to Vash in Kaineng Center - only 1 week out of 9
 	If IsFactionsEliteBonusWeek() Then
-		
+
 	ElseIf Not $forceScrollUse And Not $run_options_cache['run.use_scrolls'] Then
 		Error('Trying to enter Urgoz Warren without enabling scroll usage.')
 		Return $FAIL
@@ -720,7 +720,7 @@ Func MoveAvoidingBodyBlock($destinationX, $destinationY, $options = $default_mov
 						UseSkillEx($skillSlotHoS)
 						PingSleep(50)
 						MoveRadial($destinationX, $destinationY, $moveVariance)
-					; If Death's Charge skill is available then use it to get unstuck
+					; If Death Charge skill is available then use it to get unstuck
 					ElseIf $skillSlotDeathsCharge > 0 And CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST) > 0 And IsRecharged($skillSlotDeathsCharge) And GetEnergy() > 5 Then
 						$target = GetFurthestNPCInRangeOfCoords($ID_ALLEGIANCE_FOE, DllStructGetData($me, 'X'), DllStructGetData($me, 'Y'), $RANGE_SPELLCAST)
 						UseSkillEx($skillSlotDeathsCharge, $target)
@@ -1109,7 +1109,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 	Local $chestOpenRange		= $options['chestOpenRange'] <> Null ?		$options['chestOpenRange'] : $RANGE_SPIRIT
 	Local $fightHandler			= $options['fightHandler'] <> Null ?		$options['fightHandler'] : KillFoesInArea
 	Local $fightRange			= $options['fightRange'] <> Null ?			$options['fightRange'] : $WIDE_PLAYER_AGGRO_RANGE
-	Local $fightTimeout			= $options['fightTimeout'] <> Null ?		$options['fightTimeout'] : 10 * 60 * 1000 
+	Local $fightTimeout			= $options['fightTimeout'] <> Null ?		$options['fightTimeout'] : 10 * 60 * 1000
 	Local $ignoreDroppedLoot	= $options['ignoreDroppedLoot'] <> Null ?	$options['ignoreDroppedLoot'] : False
 	Local $unstuckHandler		= $options['unstuckHandler'] <> Null ?		$options['unstuckHandler'] : TryToGetUnstuck
 
@@ -1162,7 +1162,7 @@ Func MoveAggroAndKill($x, $y, $log = '', $options = $default_move_aggro_kill_opt
 EndFunc
 
 
-; Call this with $reset=True to (re-)initialize it's internal state to track blocked counter and old positions across calls
+; Call this with $reset=True to (re-)initialize its internal state to track blocked counter and old positions across calls
 Func IsPlayerStuck($minMovement = 5, $stuckTicks = 6, $reset = False)
 	Local Static $oldMyX = Null
 	Local Static $oldMyY = Null
@@ -1313,7 +1313,7 @@ Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
 EndFunc
 
 
-;~ Take current character's position (AND orientation) to flag heroes in a fan position
+;~ Take current character position (AND orientation) to flag heroes in a fan position
 Func FanFlagHeroes($range = 250)
 	; 250 distance larger than nearby distance = 240 to avoid AoE damage and still quite compact formation
 	Local $heroCount = GetHeroCount()
@@ -1407,7 +1407,7 @@ Func IsDragonFestival()
 EndFunc
 
 
-;~ Halloween/Mad King's Day:						Oct 18 19:00 UTC to Nov 2 08:01 UTC
+;~ Halloween/Mad Kings Day:						Oct 18 19:00 UTC to Nov 2 08:01 UTC
 Func IsHalloweenFestival()
 	Return IsWithinUtcWindow(GetUtcPacked(), PackUtc(10, 18, 19, 0), PackUtc(11, 2, 8, 1))
 EndFunc
@@ -1457,7 +1457,7 @@ EndFunc
 
 
 ; FIXME: use server time instead of local UTC time
-;~ True if now falls within the 1-week slot starting at $anchorStartUTC, recurring every 9 weeks. 
+;~ True if now falls within the 1-week slot starting at $anchorStartUTC, recurring every 9 weeks.
 ;~ $sAnchorSanchorStartUTCtartUtc must be formatted 'YYYY/MM/DD HH:MM:SS' and can be any past OR future occurrence of the event start.
 Func IsWithinRecurringWeek($anchorStartUTC)
 	Local $elapsed = _DateDiff('s', $anchorStartUTC, _NowUtcString())
@@ -1477,7 +1477,7 @@ EndFunc
 ;~ Current UTC time as 'YYYY/MM/DD HH:MM:SS', for use with _DateDiff()
 Func _NowUtcString()
 	Local $utc = _Date_Time_GetSystemTime()
-	Return StringFormat("%04d/%02d/%02d %02d:%02d:%02d", _
+	Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', _
 			DllStructGetData($utc, 'Year'), DllStructGetData($utc, 'Month'), DllStructGetData($utc, 'Day'), _
 			DllStructGetData($utc, 'Hour'), DllStructGetData($utc, 'Minute'), DllStructGetData($utc, 'Second'))
 EndFunc
@@ -1677,7 +1677,7 @@ EndFunc
 
 
 #Region GW Utils
-;~ Disable all skills on a hero's skill bar.
+;~ Disable all skills on the skillbar of a hero.
 Func DisableAllHeroSkills($heroIndex)
 	For $i = 1 to 8
 		DisableHeroSkillSlot($heroIndex, $i)
@@ -1686,13 +1686,13 @@ Func DisableAllHeroSkills($heroIndex)
 EndFunc
 
 
-;~ Disable a skill on a hero's skill bar.
+;~ Disable a skill on the skillbar of a hero.
 Func DisableHeroSkillSlot($heroIndex, $skillSlot)
 	If Not GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ToggleHeroSkillSlot($heroIndex, $skillSlot)
 EndFunc
 
 
-;~ Enable a skill on a hero's skill bar.
+;~ Enable a skill on the skillbar of a hero.
 Func EnableHeroSkillSlot($heroIndex, $skillSlot)
 	If GetIsHeroSkillSlotDisabled($heroIndex, $skillSlot) Then ToggleHeroSkillSlot($heroIndex, $skillSlot)
 EndFunc
@@ -1701,7 +1701,7 @@ EndFunc
 ;~ Try to add any available hero of the given profession to the party.
 ;~ If $preferredHeroID is specified, tries that hero first before falling back to others.
 ;~ Iterates all known heroes of that profession and attempts AddHero until one succeeds.
-;~ Returns the hero's party index (1-based) on success, or 0 if no hero of that profession could be added.
+;~ Returns the party index of the hero (1-based) on success, or 0 if no hero of that profession could be added.
 Func AddHeroByProfession($professionID, $preferredHeroID = 0)
 	If $preferredHeroID > 0 Then
 		Local $previousCount = GetHeroCount()
@@ -1723,7 +1723,7 @@ EndFunc
 
 
 ;~ Try to add a specific hero to the party. No fallback to other heroes.
-;~ Returns the hero's party index (1-based) on success, or 0 if the hero could not be added.
+;~ Returns the party index of a hero (1-based) on success, or 0 if the hero could not be added.
 Func AddRequiredHero($heroID)
 	Local $previousCount = GetHeroCount()
 	AddHero($heroID)

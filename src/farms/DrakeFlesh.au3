@@ -167,7 +167,7 @@ Func DrakeFleshFarmLoop()
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 	PingSleep(50)
-	
+
 	; Use IAU not too late so we still have enduring harmony on it
 	UseSkillEx($DRAKE_FLESH_I_AM_UNSTOPPABLE)
 
@@ -232,7 +232,7 @@ Func KillDrakes()
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 	UseSkillEx($DRAKE_FLESH_WARY_STANCE)
-	; Waiting for enough energy to do EBSoH, soldier's defense and MoP
+	; Waiting for enough energy to do EBSoH, soldiers defense and MoP
 	While GetEnergy() < 25
 		RandomSleep(250)
 		If IsPlayerDead() Then Return $FAIL
@@ -269,6 +269,6 @@ Func KillDrakes()
 		RandomSleep(250)
 		$me = GetMyAgent()
 		If IsPlayerDead() Then Return $FAIL
-	WEnd	
+	WEnd
 	Return IsPlayerAlive() ? $SUCCESS : $FAIL
 EndFunc

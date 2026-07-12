@@ -78,14 +78,12 @@ EndFunc
 Func ManualMode()
 	Local $freePeerIndex = OpenPeersSharedMemoryBlocks()
 	Info('First free peer index: ' & $freePeerIndex)
-	If CreatePeerSharedMemoryBlock($freePeerIndex) Then 
-		AdlibRegister('ShareTeamEffects', $HR_INTERVAL)
-	EndIf
+	If CreatePeerSharedMemoryBlock($freePeerIndex) Then AdlibRegister('ShareTeamEffects', $HR_INTERVAL)
 	Return $PAUSE
 EndFunc
 
 
-;~ Collect player's and heroes effects and share them in shared memory
+;~ Collect player and heroes effects and share them in shared memory
 Func ShareTeamEffects()
 	Local $map = CollectHeroesEffects()
 	WriteHeroesEffectsToSharedMemory($map)

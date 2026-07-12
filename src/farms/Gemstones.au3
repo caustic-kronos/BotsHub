@@ -207,13 +207,13 @@ Func IsDoARunFailed()
 EndFunc
 
 
-;~ While Zhellix stays within area of citadel's entrance and performs opening ritual then farm run is still on
+;~ While Zhellix stays within entrance of citadel area and performs opening ritual then farm run is still on
 Func IsZhellixPerformingRitual()
 	If IsDoARunFailed() Then Return False
 
 	Local $me = GetMyAgent()
 	Local $zhellix = GetAgentByID($AGENTID_ZHELLIX)
 	Local $foesCount = CountFoesInRangeOfAgent($me, $gemstones_fight_options['fightRange'])
-	; After all waves are finished, Zhellix leaves citadel's entrance area where player is, which makes below check False
+	; After all waves are finished, Zhellix leaves entrance of citadel area where player is, which makes below check False
 	Return (Not GetIsDead($zhellix) And GetDistance($me, $zhellix) < 1500) Or $foesCount > 0
 EndFunc

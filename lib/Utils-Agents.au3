@@ -47,7 +47,7 @@ EndFunc
 Global $party_failures_count = 0
 Global $party_is_alive = True
 
-;~ Count number of alive heroes of the player's party
+;~ Count number of alive heroes of the player party
 Func CountAliveHeroes()
 	Local $aliveHeroes = 0
 	For $i = 1 to GetHeroCount()
@@ -148,7 +148,7 @@ Func FindHeroesWithRez()
 		If $agentID == 0 Then ContinueLoop
 		Local $agent = GetAgentByID($agentID)
 		If Not IsMine($agent) Then ContinueLoop
-	
+
 		Local $skillbar = GetSkillbar($heroNumber)
 		For $skillSlot = 1 To 8
 			Local $skill = DllStructGetData($skillbar, 'SkillID' & $skillSlot)

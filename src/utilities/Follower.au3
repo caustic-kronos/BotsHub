@@ -154,8 +154,8 @@ Func FollowerInRangeOfLeader($leader = GetAgentByID($leaderID), $me = GetMyAgent
 EndFunc
 
 
-;~ Resolve the leader's agent struct by reading the agent ID directly out of the player record array.
-;~ Works in both outposts and explorables. Bypasses the lib's GetFirstPlayerOfParty, which fails in
+;~ Resolve the agent struct of leader by reading the agent ID directly out of the player record array.
+;~ Works in both outposts and explorables. Bypasses the lib GetFirstPlayerOfParty, which fails in
 ;~ outposts because party agent structs report LoginNumber=0 there.
 ;~ Player records are 80 bytes wide; agent ID is at offset 0 of each record.
 Func FollowerResolveLeaderID()

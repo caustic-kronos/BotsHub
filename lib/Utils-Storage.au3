@@ -45,7 +45,7 @@ Func InventoryManagementBeforeRun($tradeTown = $ID_EYE_OF_THE_NORTH)
 	; 5-Salvage
 	; 6-Sell materials
 	; 7-Sell items
-	; 8-Balance character's gold level
+	; 8-Balance character gold level
 	; 9-Buy ectoplasm/obsidian with surplus
 	; 10-Store items
 	If $cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then

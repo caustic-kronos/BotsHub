@@ -120,7 +120,7 @@ EndFunc
 
 
 ;~ Take quest rewards, refresh quest by entering dungeon and exiting it, then take quest again and reenter dungeon
-;~ This is Giriff's War version. To use Tekk's war quest instead, replace:
+;~ This is Giriff War version. To use Tekk War quest instead, replace:
 ;~ GoToNPC(GetNearestNPCToCoords(12308, 22836)) -> GoToNPC(GetNearestNPCToCoords(12500, 22648))
 ;~ Dialog(0x832207) -> Dialog(0x833907)
 ;~ Dialog(0x832201) -> Dialog(0x833901)

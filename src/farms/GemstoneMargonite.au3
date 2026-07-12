@@ -50,8 +50,8 @@ Global Const $MARGONITE_I_AM_UNSTOPPABLE	= 6
 Global Const $MARGONITE_ANCESTORS_VISAGE	= 7
 Global Const $MARGONITE_LIGHTBRINGERS_GAZE	= 8
 ; Margonites always create Quickening Zephyr spirit which halves recharge time of spells
-; Therefore Ancestor's visage recharges after 10 seconds which is basically equal to 9-10 seconds duration with illusion magic attribute equal to 12-14
-; So Sympathetic Visage is replaced here with Lightbringer's Gaze, which also should recharge 2x faster, to increase damage rate
+; Therefore Ancestors visage recharges after 10 seconds which is basically equal to 9-10 seconds duration with illusion magic attribute equal to 12-14
+; So Sympathetic Visage is replaced here with Lightbringers Gaze, which also should recharge 2x faster, to increase damage rate
 ; Deadly Paradox skill could also be potentially removed because of Quickening Zephyr spirit
 
 Global Const $MARGONITE_ASSASSIN_GREAT_DWARF_ARMOR			= 4
@@ -241,7 +241,7 @@ EndFunc
 
 Func CastBondsMargoniteFarm()
 	Info('Casting hero monk bonds')
-	; Below sequence ensures that player have the effect of 5 monk enchantments from monk hero and also monk hero have 1 enchantment - balthazar's spirit
+	; Below sequence ensures that player have the effect of 5 monk enchantments from monk hero and also monk hero have 1 enchantment - balthazars spirit
 	; Last 2 enchantments are least important so these may deactivate when hero energy drops to 0, which is unlikely
 	; Disable blessed signet hero skill so that hero does not mess up below sequence with using that skill in wrong moment
 	DisableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
@@ -262,7 +262,7 @@ Func CastBondsMargoniteFarm()
 	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy
 	Sleep(10000)																			; wait until Blessed signet is recharged, around 3 energy lost with -1 pip
 	UseHeroSkillTimed(1, $MARGONITE_HERO_BALTHAZAR_SPIRIT)					; costs 10 energy
-	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazar's spirit
+	UseHeroSkillTimed(1, $MARGONITE_HERO_BLESSED_SIGNET)					; recover 11 hero energy, -2 pips, but energy will be recovered soon with balthazars spirit
 
 	; Enable blessed signet skill so that hero uses it whenever it is recharged
 	EnableHeroSkillSlot(1, $MARGONITE_HERO_BLESSED_SIGNET)
@@ -302,7 +302,7 @@ Func GemstoneMargoniteFarmLoop()
 	; below is the furthest location player goes to pull front Margonite mobs but also not let rear margonite mobs leave player and kill monk hero
 	If MargoniteMoveAndSurvive(-10277, -10778) == $FAIL Then Return $FAIL
 	CommandAll(-12861, -12620)
-	; waiting for far margonite group to come into player's range
+	; waiting for far margonite group to come into range of player
 	WaitAggroMargonites(50000)
 	If MargoniteMoveAndSurvive(-12065, -10905) == $FAIL Then Return $FAIL
 	WaitAggroMargonites(5000)
@@ -370,7 +370,7 @@ Func MargoniteMoveAndSurvive($destinationX, $destinationY)
 	If $result == $SUCCESS Then Return $SUCCESS
 	; If no success when moving, either we died (the end) or we were bodyblocked
 	If IsPlayerDead() Then Return $FAIL
-	; When playing as Elementalist or other professions that do not have death's charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
+	; When playing as Elementalist or other professions that do not have deaths charge or heart of shadow skills, then fight Margonites wherever player got surrounded and stuck
 	If KillMargonites() == $FAIL Then Return $FAIL
 	RandomSleep(1000)
 	If IsPlayerDead() Then Return $FAIL
@@ -498,7 +498,7 @@ Func KillMargonitesUsingVisageSkills()
 					UseSkillEx($MARGONITE_ELEMENTALIST_SYMPATHETICVISAGE)
 				EndIf
 			Case $ID_ASSASSIN, $ID_MESMER
-				; Use lightbringer's gaze or other skill for optimization, because quickening zephyr makes Ancestor's Visage duration basically equal to recharge time
+				; Use lightbringers gaze or other skill for optimization, because quickening zephyr makes Ancestors Visage duration basically equal to recharge time
 				If IsRecharged($MARGONITE_LIGHTBRINGERS_GAZE) And Not IsRecharged($MARGONITE_SHADOWFORM) And GetEnergy() > 8 Then
 					Local $target = GetNearestEnemyToAgent(GetMyAgent())
 					If $target <> Null Then
