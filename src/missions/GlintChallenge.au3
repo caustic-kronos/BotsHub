@@ -64,7 +64,6 @@ Global Const $AGENTID_BABY_DRAGON = 19
 Global Const $MODELID_BABY_DRAGON = 1816
 Global Const $BROTHERHOOD_CHEST_X = -3184
 Global Const $BROTHERHOOD_CHEST_Y = 908
-Global Const $BROTHERHOOD_CHEST_GADGETID = 9157
 
 Global $glint_challenge_fight_options
 Global $glint_challenge_setup = False
@@ -196,7 +195,7 @@ Func GlintChallenge()
 	; Tripled to secure the looting of chest
 	For $i = 1 To 3
 		MoveAggroAndKill($BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y)
-		Local $brotherhoodChest = ScanForChests($RANGE_COMPASS, True, $BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y, $BROTHERHOOD_CHEST_GADGETID)
+		Local $brotherhoodChest = ScanForChests($RANGE_COMPASS, True, $BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y, $GADGETID_BROTHERHOOD_CHEST)
 		ChangeTarget($brotherhoodChest)
 		ActionInteract()
 		RandomSleep(2500)
@@ -237,5 +236,5 @@ EndFunc
 
 
 Func IsBrotherhoodChestSpawned()
-	Return Null <> ScanForChests($RANGE_COMPASS, True, $BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y, $BROTHERHOOD_CHEST_GADGETID)
+	Return Null <> ScanForChests($RANGE_COMPASS, True, $BROTHERHOOD_CHEST_X, $BROTHERHOOD_CHEST_Y, $GADGETID_BROTHERHOOD_CHEST)
 EndFunc
