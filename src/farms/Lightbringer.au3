@@ -110,6 +110,7 @@ Func FarmMirrorOfLyss()
 		[12956,		2637,		'Group 10/10'			] _
 	]
 	For $i = 0 To UBound($foes) - 1
+		If CheckStuck($foes[$i][2], 1.5 * $LIGHTBRINGER_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 

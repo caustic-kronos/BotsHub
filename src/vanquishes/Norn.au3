@@ -149,6 +149,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 0 To 5
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -157,6 +158,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 6 To 10
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -165,6 +167,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 11 To 15
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -173,6 +176,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 16 To 18
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -181,6 +185,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 19 To 21
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -189,6 +194,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 22 To 32
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -197,6 +203,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 33 To 39
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -205,6 +212,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 40 To 41
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -213,6 +221,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 42 To 43
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 
@@ -221,6 +230,7 @@ Func VanquishVarajarFells()
 	Sleep(1000)
 
 	For $i = 44 To 48
+		If CheckStuck($foes[$i][2], 1.5 * $NORN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 

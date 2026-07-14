@@ -137,6 +137,7 @@ Func VanquishMountQinkai()
 	]
 
 	For $i = 0 To UBound($foes) - 1
+		If CheckStuck($foes[$i][2], 2 * $LUXONS_MOUNT_QINKAI_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2], $foes[$i][3]) == $FAIL Then Return $FAIL
 	Next
 	If Not GetAreaVanquished() Then

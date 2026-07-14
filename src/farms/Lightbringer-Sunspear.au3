@@ -219,6 +219,7 @@ EndFunc
 ;~ Return $FAIL if the party is dead, $SUCCESS if not
 Func MoveToAndAggroWithJunundu($x, $y, $foesGroup)
 	Info('Killing ' & $foesGroup)
+	If CheckStuck('Killing ' & $foesGroup, 2 * $LIGHTBRINGER_SUNSPEAR_FARM_DURATION) == $FAIL Then Return $FAIL
 	Local $range = 1650
 
 	; Speed up team using Junundu Tunnel

@@ -174,6 +174,7 @@ Func VanquishMagusStones()
 	If IsHardmodeEnabled() Then UseConset()
 	UseSummoningStone()
 	For $i = 0 To 8
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -182,6 +183,7 @@ Func VanquishMagusStones()
 	RandomSleep(2000)
 
 	For $i = 9 To 25
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -190,6 +192,7 @@ Func VanquishMagusStones()
 	RandomSleep(2000)
 
 	For $i = 26 To 40
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -198,6 +201,7 @@ Func VanquishMagusStones()
 	RandomSleep(2000)
 
 	For $i = 41 To 55
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -206,6 +210,7 @@ Func VanquishMagusStones()
 	RandomSleep(2000)
 
 	For $i = 56 To 67
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -214,6 +219,7 @@ Func VanquishMagusStones()
 	RandomSleep(2000)
 
 	For $i = 68 To 79
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -222,6 +228,7 @@ Func VanquishMagusStones()
 	RandomSleep(3000)
 
 	For $i = 80 To 82
+		If CheckStuck($foes[$i][2], 1.5 * $ASURAN_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 

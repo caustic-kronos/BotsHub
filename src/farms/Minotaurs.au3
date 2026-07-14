@@ -102,6 +102,7 @@ Func FarmMinotaurs()
 		[2616,		7615,	'Minotaurs group 12'	] _
 	]
 	For $i = 0 To UBound($minotaurs) - 1
+		If CheckStuck($minotaurs[$i][2], 2 * $MINOTAURS_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($minotaurs[$i][0], $minotaurs[$i][1], $minotaurs[$i][2]) == $FAIL Then Return $FAIL
 	Next
 	Return $SUCCESS

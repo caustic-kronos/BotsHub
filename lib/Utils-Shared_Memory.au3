@@ -274,6 +274,7 @@ Func WriteHeroesEffectsToSharedMemory(ByRef $effectsMap)
 
 	For $agentID In $keys
 		Local $effects = $effectsMap[$agentID]
+		If $effects == Null Then ContinueLoop
 		Debug('Effect count ' & UBound($effects))
 
 		$offset = BinaryWriterWriteUInt($pointer, $offset, $agentID)

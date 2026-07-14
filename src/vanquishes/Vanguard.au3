@@ -184,6 +184,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 0 To 9
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -192,6 +193,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 10 To 26
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -200,6 +202,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 27 To 40
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -208,6 +211,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 41 To 46
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -216,6 +220,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 47 To 60
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -224,6 +229,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 61 To 83
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 
@@ -232,6 +238,7 @@ Func VanquishDaladaUplands()
 	Sleep(1000)
 
 	For $i = 84 To 92
+		If CheckStuck($foes[$i][2], 1.5 * $VANGUARD_TITLE_FARM_DURATION) == $FAIL Then Return $FAIL
 		If MoveAggroAndKillInRange($foes[$i][0], $foes[$i][1], $foes[$i][2]) == $FAIL Then Return $FAIL
 	Next
 

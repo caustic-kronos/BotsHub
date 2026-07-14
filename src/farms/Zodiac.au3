@@ -193,6 +193,7 @@ Func ZodiacFarmLoop()
 	FindAndOpenChests($RANGE_AREA)
 	If MoveAvoidingBodyBlock(15300, 250, $zodiacMoveOptions) == $FAIL Then Return $FAIL
 	Local $foe = GetNearestAgentToAgent(GetMyAgent(), $ID_AGENT_TYPE_NPC, $RANGE_SPIRIT, IsGreaterBloodDrinker)
+	ZodiacStayAliveWithoutSpeed()
 	GetAlmostInRangeOfAgent($foe, $RANGE_EARSHOT - 200)
 	; Foes are a bit slow to take aggro here
 	Sleep(3000)
