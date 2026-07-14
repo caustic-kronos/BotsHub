@@ -67,11 +67,12 @@ Func ZodiacFarm()
 		SetupZodiacFarm()
 		$zodiac_farm_setup = True
 	EndIf
-
 	If $runtime_status <> 'RUNNING' Then Return 2
 
 	Local $result = ZodiacFarmLoop()
 	BackToUrgozWarrenOutpost()
+	; If we need to manage kurzick points we also need to go back to Urgoz Warren afterward
+	If ManageFactionPointsKurzickFarm() And EnterUrgozsWarren(True) == $FAIL Then Return $FAIL
 	Return $result
 EndFunc
 

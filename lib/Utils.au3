@@ -349,7 +349,21 @@ EndFunc
 Func EnterUrgozsWarren($forceScrollUse)
 	; Talk to Vash in Kaineng Center - only 1 week out of 9
 	If IsFactionsEliteBonusWeek() Then
-
+		Info('Bonus week means free entry :D')
+		If GetMapID() <> $ID_KAINENG_CENTER Then TravelToOutpost($ID_KAINENG_CENTER, $district_name)
+		MoveTo(3096, -1984)
+		GoToNPC(GetNearestNPCToCoords(4050, -2150))
+		PingSleep(750)
+		Dialog(0x81)
+		PingSleep(750)
+		Dialog(0x800009)
+		PingSleep(750)
+		Dialog(0x80000B)
+		WaitMapLoading($ID_URGOZS_WARREN)
+		If GetMapID() <> $ID_URGOZS_WARREN Then
+			Warn('Something went wrong with Vash.')
+			Return $PAUSE
+		EndIf
 	ElseIf Not $forceScrollUse And Not $run_options_cache['run.use_scrolls'] Then
 		Error('Trying to enter Urgoz Warren without enabling scroll usage.')
 		Return $FAIL
@@ -376,7 +390,21 @@ EndFunc
 Func EnterTheDeep($forceScrollUse)
 	; Talk to Eurayle in Kaineng Center - only 1 week out of 9
 	If IsFactionsEliteBonusWeek() Then
-
+		Info('Bonus week means free entry :D')
+		If GetMapID() <> $ID_KAINENG_CENTER Then TravelToOutpost($ID_KAINENG_CENTER, $district_name)
+		MoveTo(3095, -1294)
+		GoToNPC(GetNearestNPCToCoords(4050, -930))
+		PingSleep(750)
+		Dialog(0x81)
+		PingSleep(750)
+		Dialog(0x800009)
+		PingSleep(750)
+		Dialog(0x80000B)
+		WaitMapLoading($ID_THE_DEEP)
+		If GetMapID() <> $ID_THE_DEEP Then
+			Warn('Something went wrong with Eurayle.')
+			Return $PAUSE
+		EndIf
 	ElseIf Not $forceScrollUse And Not $run_options_cache['run.use_scrolls'] Then
 		Error('Trying to enter The Deep without enabling scroll usage.')
 		Return $FAIL
@@ -1671,7 +1699,9 @@ Func ManageFactionPointsFarm($factionName, $getFactionFunction, $getMaxFactionFu
 			Dialog($dialogID)
 			RandomSleep(550)
 		EndIf
+		Return True
 	EndIf
+	Return False
 EndFunc
 #EndRegion Faction
 
