@@ -1112,7 +1112,9 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $TUNNELS_OF_THE_FORSAKEN_FARM_INFORMATIONS)
 		Case 'Underworld'
-			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_characterbuilds, 'Specialized builds:' & _
+				@CRLF & $RTA_UNDERWORLD_FARMER_SKILLBAR & @CRLF & $ART_UNDERWORLD_FARMER_SKILLBAR & _
+				@CRLF & 'Or ' & $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_INFORMATIONS)
 		Case 'Vaettirs'
