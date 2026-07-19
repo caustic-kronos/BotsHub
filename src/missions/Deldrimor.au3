@@ -49,7 +49,7 @@ Func DeldrimorFarm()
 	EndIf
 	MoveToLairSnowman()
 	AdlibRegister('TrackPartyStatus', 10000)
-	Local $result =FarmLairSnowman()
+	Local $result = FarmLairSnowman()
 	AdlibUnRegister('TrackPartyStatus')
 	DistrictTravel($ID_UMBRAL_GROTTO, $district_name)
 	Return $result

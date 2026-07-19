@@ -185,7 +185,6 @@ Func GemstonesDefendPosition()
 	Info('Defending...')
 
 	While IsZhellixPerformingRitual()
-		;If GetMapLoading() == 2 Then Disconnected()
 		If CheckStuck('Gemstones fight', $MAX_GEMSTONES_FARM_DURATION) == $FAIL Then Return $FAIL
 		If IsDoARunFailed() Then Return $FAIL
 		Sleep(1000)
