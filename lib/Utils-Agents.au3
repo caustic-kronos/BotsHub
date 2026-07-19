@@ -209,11 +209,19 @@ EndFunc
 Func CheckIfAnyPartyMembersDead()
 	Local $party = GetParty()
 	For $member In $party
-		If GetIsDead($member) Then
-			Return True
-		EndIf
+		If GetIsDead($member) Then Return True
 	Next
 	Return False
+EndFunc
+
+
+;~ Returns true if all party members are dead
+Func CheckIfAllPartyMembersDead()
+	Local $party = GetParty()
+	For $member In $party
+		If Not GetIsDead($member) Then Return False
+	Next
+	Return True
 EndFunc
 
 

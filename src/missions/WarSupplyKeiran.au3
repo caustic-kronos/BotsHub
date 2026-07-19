@@ -345,8 +345,8 @@ Func WarSupplyFarmFight($target, $options = $warsupply_fight_options)
 		; Skill 3 : use to interrupt foes
 		ElseIf IsRecharged($KEIRAN_TERMINAL_VELOCITY) And $interruptFoe <> Null Then
 			; attempt to interrupt dangerous AoE skill
-			; or anoother important skills casted by foes in Auspicious Beginnings quest that are easy to interrupt
-			UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $foe)
+			; or another important skills casted by foes in Auspicious Beginnings quest that are easy to interrupt
+			UseSkillEx($KEIRAN_TERMINAL_VELOCITY, $interruptFoe)
 			; attempt to evade dangerous AoE skill effect just in case interrupt was too late or unsuccessful
 			If $evade Then EvadeAoESkillArea()
 		; Other skills can be used all the time

@@ -106,7 +106,7 @@ Func ZodiacFarmLoop()
 	Sleep(3000)
 	While Not WaitMapLoading()
 		If CheckStuck('Loading Urgoz Warren map', $ZODIAC_FARM_DURATION * 1.5) == $FAIL Then Return $FAIL
-		Sleep(50)
+		Sleep(500)
 	WEnd
 
 	;################ Pre aggro phase ################

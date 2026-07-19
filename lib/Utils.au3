@@ -1484,23 +1484,40 @@ Func IsPantheonBonusWeek()
 EndFunc
 
 
-; FIXME: use server time instead of local UTC time
-;~ True if now falls within the 1-week slot starting at $anchorStartUTC, recurring every 9 weeks.
-;~ $sAnchorSanchorStartUTCtartUtc must be formatted 'YYYY/MM/DD HH:MM:SS' and can be any past OR future occurrence of the event start.
-Func IsWithinRecurringWeek($anchorStartUTC)
-	Local $elapsed = _DateDiff('s', $anchorStartUTC, _NowUtcString())
+Func IsHeroesAscentZaishenQuest()
+	; Known start of a Heroes Ascent Zaishen Quest occurrence (16:00 UTC), changes daily but repeats every 6 days
+	Local $ZAISHEN_QUEST_ANCHOR_UTC = '2026/07/24 16:00:00'
 
-	; 7 days * 24 hours * 60 min * 60 sec
-	Global $SECONDS_PER_WEEK   = 7 * 24 * 60 * 60
+	Local $SECONDS_PER_DAY = 24 * 60 * 60
+	; 6 day rotation for zaishen combat quests
+	Local $ROTATION_PERIOD_SECONDS = 6 * $SECONDS_PER_DAY
+
+	Return IsWithinRecurringPeriod($ZAISHEN_QUEST_ANCHOR_UTC, $ROTATION_PERIOD_SECONDS, $SECONDS_PER_DAY)
+EndFunc
+
+;~ True if now falls within the 1-week slot starting at $anchorStartUTC, recurring every 9 weeks.
+;~ $anchorStartUTC must be formatted 'YYYY/MM/DD HH:MM:SS' and can be any past OR future occurrence of the event start.
+Func IsWithinRecurringWeek($anchorStartUTC)
+	Global $SECONDS_PER_WEEK = 7 * 24 * 60 * 60
 	; 9 bonus weeks in rotation
 	Global $ROTATION_PERIOD_SECONDS = 9 * $SECONDS_PER_WEEK
 
-	Local $leftover = Mod($elapsed, $ROTATION_PERIOD_SECONDS)
-	; Mod() keeps sign of dividend, correct it
-	If $leftover < 0 Then $leftover += $ROTATION_PERIOD_SECONDS
-
-	Return $leftover < $SECONDS_PER_WEEK
+	Return IsWithinRecurringPeriod($anchorStartUTC, $ROTATION_PERIOD_SECONDS, $SECONDS_PER_WEEK)
 EndFunc
+
+
+; FIXME: use server time instead of local UTC time
+;~ True if now falls within a $durationSeconds-long slot starting at $anchorStartUTC, recurring every $periodSeconds.
+Func IsWithinRecurringPeriod($anchorStartUTC, $periodSeconds, $durationSeconds)
+	Local $elapsed = _DateDiff('s', $anchorStartUTC, _NowUtcString())
+
+	Local $leftover = Mod($elapsed, $periodSeconds)
+	; Mod() keeps sign of dividend, correct it
+	If $leftover < 0 Then $leftover += $periodSeconds
+
+	Return $leftover < $durationSeconds
+EndFunc
+
 
 ;~ Current UTC time as 'YYYY/MM/DD HH:MM:SS', for use with _DateDiff()
 Func _NowUtcString()

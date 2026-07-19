@@ -164,9 +164,9 @@ Func VanquishMagusStones()
 	]
 
 	Info('Taking Blessing')
-	MoveTo(14865,13160)
+	MoveTo(14865, 13160)
 	RandomSleep(1000)
-	GoNearestNPCToCoords(14865,13160)
+	GoNearestNPCToCoords(14865, 13160)
 	RandomSleep(1000)
 	Dialog(0x84)
 	RandomSleep(1000)

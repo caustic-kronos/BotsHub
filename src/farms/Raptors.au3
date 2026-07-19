@@ -269,7 +269,7 @@ Func AggroRaptors()
 EndFunc
 
 
-;~ Move to (X,Y) while staying alive vs raptors
+;~ Move to (X, Y) while staying alive vs raptors
 Func MoveAggroingRaptors($destinationX, $destinationY)
 	Return MoveAvoidingBodyBlock($destinationX, $destinationY, $raptors_move_options)
 EndFunc
