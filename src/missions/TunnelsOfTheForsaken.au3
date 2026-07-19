@@ -15,8 +15,6 @@
 #CE ===========================================================================
 
 #include-once
-#RequireAdmin
-#NoTrayIcon
 
 #include '../../lib/GWA2_Headers.au3'
 #include '../../lib/GWA2.au3'
