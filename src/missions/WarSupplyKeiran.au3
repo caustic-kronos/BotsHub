@@ -101,8 +101,7 @@ Func SetupWarSupplyFarm()
 	Else
 		Info('Found Keirans bow in players inventory')
 	EndIf
-	Info('Changing Weapons: Slot-4 Keiran Bow')
-	ChangeWeaponSet(4)
+	SwitchToKeiranBowToEnterQuest()
 	If Not IsItemEquippedInWeaponSlot($ID_KEIRANS_BOW, 4) Then
 		Info('Equipping Keirans bow')
 		EquipItemByModelID($ID_KEIRANS_BOW)
@@ -166,8 +165,7 @@ Func EnterAuspiciousBeginningsQuest()
 	; hexadecimal code of dialog id to start Auspicious Beginnings quest
 	Local $questDialogID = 0x64B
 	Info('Entering Auspicious Beginnings quest')
-	Info('Changing Weapons: Slot-4 Keiran Bow')
-	ChangeWeaponSet(4)
+	SwitchToKeiranBowToEnterQuest()
 	MoveTo(-6445, 6415)
 	Local $scryingPool = GetNearestNpcToCoords(-6662, 6584)
 	ChangeTarget($scryingPool)
@@ -188,8 +186,7 @@ Func RunQuest()
 	; waiting out initial dialogs for 20 seconds
 	Sleep(20000)
 
-	Info('Changing weapons to 3th slot with custom modded bow')
-	ChangeWeaponSet(3)
+	SwitchToDamageBow()
 	; proceeding with the quest, second dialogs can be safely skipped to speed up farm runs
 	If RunWayPoints() == $FAIL Then Return $FAIL
 
@@ -406,4 +403,19 @@ EndFunc
 ;~ Return true if Miku or Keiran have low life
 Func KeiranOrMikuNeedsHealing($me, $miku)
 	Return DllStructGetData($me, 'HealthPercent') < 0.75 Or DllStructGetData($miku, 'HealthPercent') < 0.75
+EndFunc
+
+
+Func SwitchToKeiranBowToEnterQuest()
+	Info('Changing Weapons: Slot-4 Keiran Bow')
+	PingSleep(200)
+	ChangeWeaponSet(4)
+	PingSleep(200)
+EndFunc
+
+Func SwitchToDamageBow()
+	Info('Changing weapons to 3th slot with custom modded bow')
+	PingSleep(200)
+	ChangeWeaponSet(3)
+	PingSleep(200)
 EndFunc

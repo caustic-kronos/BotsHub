@@ -596,6 +596,14 @@ Func EnemyAgentFilter($agent)
 EndFunc
 
 
+;~ Return True if an agent is a player, False otherwise
+Func IsPlayer($agent)
+	If DllStructGetData($agent, 'TypeMap') == $ID_TYPEMAP_IDLE_MINION Then Return False
+	If DllStructGetData($agent, 'LoginNumber') <= 0 Then Return False
+	Return True
+EndFunc
+
+
 ;~ Returns the nearest agent to specified target agent. $agentFilter is a function which returns True for the agents that should be considered, False for those to skip
 Func GetNearestAgentToAgent($targetAgent, $agentType = $ID_AGENT_TYPE_NPC, $range = $RANGE_COMPASS, $agentFilter = Null)
 	Local $nearestAgent = Null, $distance = Null, $nearestDistance = 100000000
