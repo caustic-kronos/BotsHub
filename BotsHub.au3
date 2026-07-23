@@ -295,7 +295,7 @@ Func RunFarmLoop()
 		If (CountSlots(1, $bags_count) < $inventorySpaceNeeded) Then
 			Notice('Inventory full, pausing.')
 			ResetBotsSetups()
-			$runtime_status = 'WILL_PAUSE'
+			Return $PAUSE
 		EndIf
 
 		; Global farm setup
