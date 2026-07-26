@@ -175,6 +175,7 @@ Func InitialSetupLDOA()
 
 	; This quest never appears as completed either - last dialog to get reward is the completion
 	Info('Finishing Profession Test')
+	$questNPC = GetAgentByID(DllStructGetData($questNPC, 'ID'))
 	GoToNPC($questNPC)
 	PingSleep(1000)
 	Dialog($professionTestFinishQuestDialogID)
