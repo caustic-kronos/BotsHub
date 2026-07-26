@@ -295,6 +295,7 @@ Func VaettirsFarmLoop()
 		; Max malus - we return to the outpost and rerun
 		If IsPlayerAtMaxMalus() Then
 			Warn('Reached max death malus, restarting the farm setup')
+			TravelToOutpost($ID_LONGEYES_LEDGE, $district_name)
 			$vaettirs_farm_setup = False
 			Return $FAIL
 		EndIf
