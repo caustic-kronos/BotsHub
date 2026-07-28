@@ -1621,7 +1621,7 @@
 			"Staff": {
 				"Prefix - Head": {
 					"Hale (Health +30)": false,
-					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": true,
+					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": false,
 					"Swift (Halves casting time of spells - Chance 10%)": false,
 					"Insightful (Energy +5)": false,
 					"Defensive (Armor +5)": false
@@ -1706,7 +1706,7 @@
 			},
 			"Wand": {
 				"Suffix - Wrapping": {
-					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": true,
+					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": false,
 					"Of Quickening (Halves skill recharge of spells - Chance 10%)": false,
 					"Of The Warrior": false,
 					"Of The Ranger": false,
