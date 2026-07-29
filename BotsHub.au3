@@ -85,6 +85,7 @@ Opt('MustDeclareVars', True)
 #include 'src/missions/SunspearArmor.au3'
 #include 'src/missions/TunnelsOfTheForsaken.au3'
 #include 'src/missions/Underworld.au3'
+#include 'src/missions/UnderworldPantheon.au3'
 #include 'src/missions/Voltaic.au3'
 #include 'src/missions/WarSupplyKeiran.au3'
 #include 'src/runs/Boreal.au3'
@@ -580,6 +581,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'Tasca',						TascaChestFarm,					5,					$TASCA_FARM_DURATION)
 	AddFarmToFarmMap(	'TunnelsOfTheForsaken',			TunnelsOfTheForsakenFarm,		5,					$TUNNELS_OF_THE_FORSAKEN_FARM_DURATION)
 	AddFarmToFarmMap(	'Underworld',					UnderworldFarm,					5,					$UW_FARM_DURATION)
+	AddFarmToFarmMap(	'UnderworldPantheon',			UnderworldFarmPantheon,		    5,					$UW_FARMPantheon_DURATION)
 	AddFarmToFarmMap(	'Vaettirs',						VaettirsFarm,					5,					$VAETTIRS_FARM_DURATION)
 	AddFarmToFarmMap(	'Vanguard',						VanguardTitleFarm,				5,					$VANGUARD_TITLE_FARM_DURATION)
 	AddFarmToFarmMap(	'Voltaic',						VoltaicFarm,					10,					$VOLTAIC_FARM_DURATION)
