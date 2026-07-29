@@ -533,6 +533,9 @@ Func DefaultShouldStoreItem($item)
 		;Return ContainsValuableUpgrades($item)
 		Return $cache['Store items.Armor salvageables.' & $rarityName]
 	; ------------------------------------- Consumables -------------------------------------
+	ElseIf IsAlcohol($itemID) Then
+		If $quantity <> 250 Then Return False
+		Return $cache['Store items.Alcohols']
 	ElseIf IsConsumable($itemID) Then
 		If $quantity <> 250 Then Return False
 		Return $cache['Store items.Consumables']
