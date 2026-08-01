@@ -1290,8 +1290,8 @@ Func KillFoesInArea($options = $default_move_aggro_kill_options)
 		If Not $priorityTargeting Or $target == Null Then $target = GetNearestEnemyToAgent($me)
 		If IsPlayerAlive() And $target <> Null And DllStructGetData($target, 'ID') <> 0 And Not GetIsDead($target) And GetDistance($me, $target) < $fightRange Then
 			ChangeTarget($target)
-			PingSleep(100)
 			If $callTarget Then CallTargetOnce($target)
+			PingSleep(100)
 			$killMethod($target, $options)
 		EndIf
 
@@ -1317,9 +1317,6 @@ Func UseSkillSequentially($target, $options = $default_move_aggro_kill_options)
 
 	; get as close as possible to target foe to have a surprise effect when attacking
 	GetAlmostInRangeOfAgent($target)
-	Attack($target)
-	PingSleep(100)
-
 	Local $i = 0
 	; casting skills from 1 to 8 in inner loop and leaving it only after target or player is dead
 	While $target <> Null And Not GetIsDead($target) And DllStructGetData($target, 'HealthPercent') > 0 And DllStructGetData($target, 'ID') <> 0 And DllStructGetData($target, 'Allegiance') == $ID_ALLEGIANCE_FOE

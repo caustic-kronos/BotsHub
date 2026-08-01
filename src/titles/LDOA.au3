@@ -300,11 +300,11 @@ Func LDOATitleFarmUnder2()
 	MoveTo(-10433, -6021)
 	UseConsumable($ID_IGNEOUS_SUMMONING_STONE, True)
 	Local $wurmies[][] = [ _
-		[-9551,	-5499], _
-		[-9545, -4205], _
-		[-9551, -2929], _
-		[-9559, -1324], _
-		[-9451, -301] _
+		[-9550,	-5500], _
+		[-9550, -4200], _
+		[-9550, -2900], _
+		[-9550, -1300], _
+		[-9450, -300] _
 	]
 	For $i = 0 To UBound($wurmies) - 1
 		MoveAggroAndKill($wurmies[$i][0], $wurmies[$i][1])
