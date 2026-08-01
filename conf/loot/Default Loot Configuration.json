@@ -1036,7 +1036,8 @@
 			"Map pieces": false
 		},
 		"Lockpicks": true,
-		"Keys": true
+		"Keys": true,
+		"Miniatures": true
 	},
 	"Identify items": {
 		"White": false,

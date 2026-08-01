@@ -389,7 +389,7 @@ Func DefaultShouldPickItem($item)
 	ElseIf IsKey($itemID) Then
 		Return $cache['Pick up items.Keys']
 	ElseIf ($itemID == $ID_LOCKPICK) Then
-		Return True
+		Return $cache['Pick up items.Lockpicks']
 	; ----------------------------------------- Dyes -----------------------------------------
 	ElseIf ($itemID == $ID_DYES) Then
 		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
@@ -401,7 +401,7 @@ Func DefaultShouldPickItem($item)
 	ElseIf IsMapPiece($itemID) Then
 		Return $cache['Pick up items.Quest items.Map pieces']
 	ElseIf IsMiniature($item) Then
-		Return True
+		Return $cache['Pick up items.Miniatures']
 	; ----------------------------------- Other stackables -----------------------------------
 	ElseIf IsStackable($item) Then
 		Return True
