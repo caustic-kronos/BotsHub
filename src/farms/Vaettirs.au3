@@ -87,6 +87,7 @@ $vaettirs_move_options['skillSlotHoS']				= $VAETTIR_HEART_OF_SHADOW
 
 Global $vaettirs_move_options_elementalist			= CloneMap($vaettirs_move_options)
 $vaettirs_move_options_elementalist['skillSlotHoS']	= 0
+$vaettirs_move_options_elementalist['moveTimeout']	= 15 * 1000
 
 Global $vaettirs_farm_setup = False
 Global $vaettirs_player_profession = $ID_ASSASSIN

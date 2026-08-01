@@ -534,13 +534,11 @@ Func DefaultShouldStoreItem($item)
 		Return $cache['Store items.Armor salvageables.' & $rarityName]
 	; ------------------------------------- Consumables -------------------------------------
 	ElseIf IsAlcohol($itemID) Then
-		If $quantity <> 250 Then Return False
 		If $MAP_MINOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Minor (1pt)']
 		If $MAP_MAJOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Major (3pt)']
 		If $MAP_SUPERIOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Superior (50pt)']
 		Return False
 	ElseIf IsConsumable($itemID) Then
-		If $quantity <> 250 Then Return False
 		Return $cache['Store items.Consumables']
 	ElseIf IsSpecialDrop($itemID) Then
 		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
