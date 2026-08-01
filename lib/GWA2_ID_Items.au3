@@ -1211,13 +1211,15 @@ Global Const $MAP_NICHOLAS_ITEMS			= MapFromArray($NICHOLAS_ITEMS_ARRAY)
 ; Items farmed specifically to obtain them or just very frequently obtained
 Global Const $FARMED_TROPHIES[]				= [ _
 	$ID_MARGONITE_GEMSTONE, $ID_STYGIAN_GEMSTONE, $ID_TITAN_GEMSTONE, $ID_TORMENT_GEMSTONE, _
-	$ID_DIESSA_CHALICE, $ID_GOLDEN_RIN_RELIC, $ID_CHUNK_OF_DRAKE_FLESH, $ID_SKALE_FIN, $ID_IBOGA_PETAL, _
+	$ID_DIESSA_CHALICE, $ID_GOLDEN_RIN_RELIC, $ID_SUPERB_CHARR_CARVING, _
+	$ID_CHUNK_OF_DRAKE_FLESH, $ID_SKALE_FIN, $ID_IBOGA_PETAL, _
 	$ID_DESTROYER_CORE, $ID_GLACIAL_STONE, $ID_SAURIAN_BONE, _
 	$ID_JADE_BRACELET, $ID_DARK_REMAINS, $ID_DEMONIC_REMAINS _
 ]
 Global Const $FARMED_TROPHIES_NAMES[]		= [ _
 	'Margonite Gemstone', 'Stygian Gemstone', 'Titan Gemstone', 'Torment Gemstone', _
-	'Diessa Chalice', 'Golden Rin Relic', 'Chunk of Drake Flesh', 'Skale Fin', 'Iboga Petal', _
+	'Diessa Chalice', 'Golden Rin Relic', 'Superb Charr Carving', _
+	'Chunk of Drake Flesh', 'Skale Fin', 'Iboga Petal', _
 	'Destroyer Core', 'Glacial Stone', 'Saurian Bone', _
 	'Jade Bracelet', 'Dark Remains', 'Demonic Remains' _
 ]

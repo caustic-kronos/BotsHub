@@ -429,6 +429,7 @@ EndFunc
 
 
 Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
+	If $town == $ID_EMBARK_BEACH Then MoveTo(1950, 0)
 	Local $coordinates[] = [-1, -1]
 	Switch $type
 		Case 'Merchant'
@@ -439,6 +440,12 @@ Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
 				Case $ID_EYE_OF_THE_NORTH
 					$coordinates[0] = -2700
 					$coordinates[1] = 1075
+				Case $ID_GREAT_TEMPLE_OF_BALTHAZAR
+					$coordinates[0] = -4800
+					$coordinates[1] = -7400
+				Case $ID_WIZARDS_ISLE
+					$coordinates[0] = 3550
+					$coordinates[1] = 9050
 				Case Else
 					Warn('For provided town coordinates of that NPC are not mapped yet')
 			EndSwitch
@@ -450,6 +457,9 @@ Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
 				Case $ID_EYE_OF_THE_NORTH
 					$coordinates[0] = -1850
 					$coordinates[1] = 875
+				Case $ID_WIZARDS_ISLE
+					$coordinates[0] = 3750
+					$coordinates[1] = 10000
 				Case Else
 					Warn('For provided town coordinates of that NPC are not mapped yet')
 			EndSwitch
@@ -461,6 +471,9 @@ Func NPCCoordinatesInTown($town = $ID_EYE_OF_THE_NORTH, $type = 'Merchant')
 				Case $ID_EYE_OF_THE_NORTH
 					$coordinates[0] = -2100
 					$coordinates[1] = 1125
+				Case $ID_WIZARDS_ISLE
+					$coordinates[0] = 3250
+					$coordinates[1] = 9950
 				Case Else
 					Warn('For provided town coordinates of that NPC are not mapped yet')
 			EndSwitch

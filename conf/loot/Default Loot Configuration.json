@@ -962,6 +962,7 @@
 			"Torment Gemstone": true,
 			"Diessa Chalice": true,
 			"Golden Rin Relic": true,
+			"Superb Charr Carving": true,
 			"Chunk of Drake Flesh": true,
 			"Skale Fin": true,
 			"Iboga Petal": true,
@@ -2472,6 +2473,7 @@
 			"Jadeite Shard": false
 		},
 		"Trophies": {
+			"Superb Charr Carving": false,
 			"Chunk of Drake Flesh": false,
 			"Skale Fin": false,
 			"Iboga Petal": false,
@@ -3245,6 +3247,7 @@
 			"Jadeite Shard": false
 		},
 		"Trophies": {
+			"Superb Charr Carving": false,
 			"Chunk of Drake Flesh": false,
 			"Skale Fin": false,
 			"Iboga Petal": false,
@@ -4264,6 +4267,7 @@
 			"Torment Gemstone": true,
 			"Diessa Chalice": true,
 			"Golden Rin Relic": true,
+			"Superb Charr Carving": true,
 			"Chunk of Drake Flesh": true,
 			"Skale Fin": true,
 			"Iboga Petal": true,

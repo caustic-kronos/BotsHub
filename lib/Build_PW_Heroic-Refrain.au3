@@ -52,10 +52,10 @@ Global $BUILD_PW_BALLAD_OF_RESTORATION = -1
 Global $BUILD_PW_ARIA_OF_ZEAL = -1
 
 ; Refrain build
-;Global $BUILD_PW_MENDING_REFRAIN = -1						; not supported
 ;Global $BUILD_PW_HASTY_REFRAIN = -1						; not supported
 Global $BUILD_PW_BURNING_REFRAIN = -1
 Global $BUILD_PW_BLADETURN_REFRAIN = -1
+Global $BUILD_PW_MENDING_REFRAIN = -1
 
 ; Adrenaline build
 Global $BUILD_PW_SAVE_YOURSELVES = -1
@@ -107,6 +107,8 @@ Func SetupHRBuild()
 				$BUILD_PW_BURNING_REFRAIN = $i
 			Case $ID_BLADETURN_REFRAIN
 				$BUILD_PW_BLADETURN_REFRAIN = $i
+			Case $ID_MENDING_REFRAIN
+				$BUILD_PW_MENDING_REFRAIN = $i
 			; Adrenaline build
 			Case $ID_SAVE_YOURSELVES_LUXON
 				$BUILD_PW_SAVE_YOURSELVES = $i
@@ -254,9 +256,15 @@ Func HRPhaseApplyParty()
 			$next = Mod($index + 1, $partySize)
 			Return $agentID == $myID ? $HR_PHASE_SELF_SETUP : $HR_PHASE_APPLY_PARTY
 		EndIf
-		If $refrainTarget == Null And BitAnd($refrainsByte, 0x6) <> 0x6 Then
+		If $refrainTarget == Null And BitAnd($refrainsByte, 0xE) <> 0xE Then
 			$refrainTarget = $agent
-			$refrain = BitAnd($refrainsByte, 0x2) <> 0x2 ? $BUILD_PW_BLADETURN_REFRAIN : $BUILD_PW_BURNING_REFRAIN
+			If BitAnd($refrainsByte, 0x2) <> 0x2 Then
+				$refrain = $BUILD_PW_BLADETURN_REFRAIN
+			ElseIf BitAnd($refrainsByte, 0x4) <> 0x4 Then
+				$refrain = $BUILD_PW_BURNING_REFRAIN
+			ElseIf BitAnd($refrainsByte, 0x8) <> 0x8 Then
+				$refrain = $BUILD_PW_MENDING_REFRAIN
+			EndIf
 		EndIf
 	Next
 	If $refrainTarget <> Null Then UseSkillEx($refrain, $refrainTarget)
@@ -269,6 +277,7 @@ Func ScanAllyForRefrains($agentID, $effectsArray = Null)
 	Local $refrainsByte = 0x0
 	If $BUILD_PW_BLADETURN_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x2)
 	If $BUILD_PW_BURNING_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x4)
+	If $BUILD_PW_MENDING_REFRAIN < 0 Then $refrainsByte = BitOR($refrainsByte, 0x8)
 
 	If $effectsArray == Null Then $effectsArray = GetEffect(0, $agentID)
 	For $effect In $effectsArray
@@ -279,8 +288,10 @@ Func ScanAllyForRefrains($agentID, $effectsArray = Null)
 			$refrainsByte = BitOR($refrainsByte, 0x2)
 		ElseIf $effectID == $ID_BURNING_REFRAIN Then
 			$refrainsByte = BitOR($refrainsByte, 0x4)
+		ElseIf $effectID == $ID_MENDING_REFRAIN Then
+			$refrainsByte = BitOR($refrainsByte, 0x8)
 		EndIf
-		If BitAnd($refrainsByte, 0x7) == 0x7 Then ExitLoop
+		If BitAnd($refrainsByte, 0xF) == 0xF Then ExitLoop
 	Next
 	Return $refrainsByte
 EndFunc
