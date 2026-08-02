@@ -27,16 +27,16 @@
 
 
 ; ==== Constants ====
-Global Const $UW_PANTHEON_A_SKILLBAR					= ''
-Global Const $UW_PANTHEON_E_SKILLBAR					= 'OghjwMgsITlTfTXT+gRbnNQTVTA'
-Global Const $UW_PANTHEON_D_SKILLBAR					= ''
-Global Const $UW_PANTHEON_ME_SKILLBAR					= ''
-Global Const $UW_PANTHEON_MO_SKILLBAR					= ''
-Global Const $UW_PANTHEON_N_SKILLBAR					= ''
-Global Const $UW_PANTHEON_P_SKILLBAR					= ''
-Global Const $UW_PANTHEON_RA_SKILLBAR					= ''
-Global Const $UW_PANTHEON_RT_SKILLBAR					= 'OACjAyiM5QlTfT+gXTRbnNVTQTA'
-Global Const $UW_PANTHEON_W_SKILLBAR					= ''
+Global Const $UW_PANTHEON_A_SKILLBAR					= 'OwhjAyi84QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_E_SKILLBAR					= 'OghjwMgsITlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_D_SKILLBAR					= 'OgijAyiM7QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_ME_SKILLBAR					= 'OQhjAyiMwQlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_MO_SKILLBAR					= 'OwgjAyiM0QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_N_SKILLBAR					= 'OAhjAyisxQlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_P_SKILLBAR					= 'OQijAyiM6QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_RA_SKILLBAR					= 'OggjAyi81QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_RT_SKILLBAR					= 'OACjAyiM5QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_W_SKILLBAR					= 'OQgjAyic0QlTfT+gXTRbnNVTQT'
 
 Global Const $UNDERWORLD_FARM_PANTHEON_INFORMATIONS = 'Only use this during the pantheon week !' & @CRLF _
 	& 'For best results run the bot in NM' & @CRLF _
