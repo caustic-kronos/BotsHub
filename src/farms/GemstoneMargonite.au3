@@ -163,18 +163,15 @@ EndFunc
 
 Func SetupPlayerMargoniteFarm()
 	Info('Setting up player build skill bar')
-	Switch DllStructGetData(GetMyAgent(), 'Primary')
+	$margonite_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
+	Switch $margonite_player_profession
 		Case $ID_ASSASSIN
-			$margonite_player_profession = $ID_ASSASSIN
 			LoadSkillTemplate($AME_MARGONITE_SKILLBAR)
 		Case $ID_MESMER
-			$margonite_player_profession = $ID_MESMER
 			LoadSkillTemplate($MEA_MARGONITE_SKILLBAR)
 		Case $ID_ELEMENTALIST
-			$margonite_player_profession = $ID_ELEMENTALIST
 			LoadSkillTemplate($EME_MARGONITE_SKILLBAR)
 		Case $ID_RANGER
-			$margonite_player_profession = $ID_RANGER
 			LoadSkillTemplate($RA_MARGONITE_SKILLBAR)
 		Case Else
 			Warn('You need to run this farm bot as Assassin or Mesmer or Elementalist or Ranger')

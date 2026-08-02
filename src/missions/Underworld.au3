@@ -42,8 +42,8 @@ Global Const $UNDERWORLD_FARM_INFORMATIONS = 'For best results, dont cheap out o
 	& 'Or disable specific Reaper quests that take too long.' & @CRLF _
 	& 'Must be Rt/A or A/Rt in order to do Four Horsemen quest.' & @CRLF
 
-Global Const $UW_FARM_DURATION = 90 * 60 * 1000 ; Runs take about 90 minutes if quests set to False
-Global Const $MAX_UW_FARM_DURATION = 150 * 60 * 1000 ; Runs take about 150 minutes if all quests set to True
+Global Const $UW_DURATION = 90 * 60 * 1000 ; Runs take about 90 minutes if quests set to False
+Global Const $MAX_UW_DURATION = 150 * 60 * 1000 ; Runs take about 150 minutes if all quests set to True
 
 Global Const $RTA_UNDERWORLD_FARMER_SKILLBAR = 'OAejAqiMpR0gXT+glTfTQTVTdOA'
 Global Const $ART_UNDERWORLD_FARMER_SKILLBAR = 'OwhjAyi84Q0gXT+glTfTQTVTdOA'
@@ -101,16 +101,15 @@ EndFunc
 Func SetupPlayerUnderworldFarm()
 	Info('Setting up player build skill bar')
 	If $ATTEMPT_REAPER_QUESTS And ($ENABLE_THE_FOUR_HORSEMEN Or $ENABLE_THE_NIGHTMAN_COMETH) Then
-		Switch DllStructGetData(GetMyAgent(), 'Primary')
+		$underworld_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
+		Switch $underworld_player_profession
 			Case $ID_ASSASSIN
-				$underworld_player_profession = $ID_ASSASSIN
 				LoadSkillTemplate($ART_UNDERWORLD_FARMER_SKILLBAR)
 			Case $ID_RITUALIST
-				$underworld_player_profession = $ID_RITUALIST
 				LoadSkillTemplate($RTA_UNDERWORLD_FARMER_SKILLBAR)
 			Case Else
 				If $ATTEMPT_REAPER_QUESTS Then
-					Warn('Bot will skip Four Horsement quest and Nightman Cometh unless A/Rt or Rt/A profession combos.')
+					Warn('Bot will skip Four Horsemen quest and Nightman Cometh unless A/Rt or Rt/A profession combos.')
 			EndIf
 		EndSwitch
 	EndIf
