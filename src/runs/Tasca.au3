@@ -63,7 +63,6 @@ Global Const $TASCA_HEART_OF_SHADOW		= 8
 Global Const $TASCA_CHEST_RANGE = 1.5 * $RANGE_SPELLCAST
 
 Global $tasca_farm_setup = False
-Global $tasca_player_profession = $ID_DERVISH
 
 ;~ Main method to chest farm Tasca
 Func TascaChestFarm()
@@ -100,25 +99,18 @@ Func SetupPlayerTascaChestFarm()
 	Info('Setting up player build skill bar')
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_DERVISH
-			$tasca_player_profession = $ID_DERVISH
 			LoadSkillTemplate($TASCA_DERVISH_CHESTRUNNER_SKILLBAR)
 		Case $ID_ASSASSIN
-			$tasca_player_profession = $ID_ASSASSIN
 			LoadSkillTemplate($TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR)
 		Case $ID_MESMER
-			$tasca_player_profession = $ID_MESMER
 			LoadSkillTemplate($TASCA_MESMER_CHESTRUNNER_SKILLBAR)
 		Case $ID_MONK
-			$tasca_player_profession = $ID_MONK
 			LoadSkillTemplate($TASCA_MONK_CHESTRUNNER_SKILLBAR)
 		Case $ID_ELEMENTALIST
-			$tasca_player_profession = $ID_ELEMENTALIST
 			LoadSkillTemplate($TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR)
 		Case $ID_NECROMANCER
-			$tasca_player_profession = $ID_NECROMANCER
 			LoadSkillTemplate($TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR)
 		Case $ID_RITUALIST
-			$tasca_player_profession = $ID_RITUALIST
 			LoadSkillTemplate($TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
 		Case Else
 			; other characters have too few energy

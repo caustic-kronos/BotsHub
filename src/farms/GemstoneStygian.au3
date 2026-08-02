@@ -128,15 +128,13 @@ EndFunc
 
 Func SetupPlayerStygianFarm()
 	Info('Setting up player build skill bar')
-	Switch DllStructGetData(GetMyAgent(), 'Primary')
+	$stygian_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
+	Switch $stygian_player_profession
 		Case $ID_ASSASSIN
-			$stygian_player_profession = $ID_ASSASSIN
 			LoadSkillTemplate($AME_STYGIAN_SKILLBAR)
 		Case $ID_MESMER
-			$stygian_player_profession = $ID_MESMER
 			LoadSkillTemplate($MEA_STYGIAN_SKILLBAR)
 		Case $ID_RANGER
-			$stygian_player_profession = $ID_RANGER
 			LoadSkillTemplate($RN_STYGIAN_SKILLBAR)
 		Case Else
 			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
@@ -152,7 +150,7 @@ Func SetupTeamStygianFarm()
 
 	Info('Setting up team')
 	LeaveParty()
-	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
+	If $stygian_player_profession == $ID_RANGER Then
 		If AddHeroByProfession($ID_RANGER, $STYGIAN_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 		RandomSleep(500)
 		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, 1)

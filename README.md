@@ -95,6 +95,7 @@ To use it:
 | Stygian Veil					| Stygian Gemstones														|
 | Tunnels of the Forsaken		| E-blade																|
 | Underworld					| Globs of Ectoplasm													|
+| Underworld Pantheon			| Globs of Ectoplasm													|
 | Kilroy						| Alcohol, Glacial Blades, Stone Summit Shield, Summit Warlord Shield	|
 
 ### Chest Runs

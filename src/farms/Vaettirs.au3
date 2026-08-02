@@ -166,10 +166,9 @@ EndFunc
 ;~ Setup player profession
 Func SetupVaettirProfession()
 	Info('Setting up player profession')
-	Local $profession = DllStructGetData(GetMyAgent(), 'Primary')
-	Switch $profession
+	$vaettirs_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
+	Switch $vaettirs_player_profession
 		Case $ID_ASSASSIN, $ID_MESMER, $ID_MONK, $ID_ELEMENTALIST
-			$vaettirs_player_profession = $profession
 			Return $SUCCESS
 		Case Else
 			Warn('You need to run this farm bot as Assassin, Mesmer, Monk or Elementalist')

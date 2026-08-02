@@ -114,36 +114,27 @@ EndFunc
 
 Func SetupPlayerBorealChestFarm()
 	Info('Setting up player build skill bar')
-	Switch DllStructGetData(GetMyAgent(), 'Primary')
+	$boreal_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
+	Switch $boreal_player_profession
 		Case $ID_WARRIOR
-			$boreal_player_profession = $ID_WARRIOR
 			LoadSkillTemplate($BOREAL_WARRIOR_CHESTRUNNER_SKILLBAR)
 		Case $ID_RANGER
-			$boreal_player_profession = $ID_RANGER
 			LoadSkillTemplate($BOREAL_RANGER_CHESTRUNNER_SKILLBAR)
 		Case $ID_MONK
-			$boreal_player_profession = $ID_MONK
 			LoadSkillTemplate($BOREAL_MONK_CHESTRUNNER_SKILLBAR)
 		Case $ID_NECROMANCER
-			$boreal_player_profession = $ID_NECROMANCER
 			LoadSkillTemplate($BOREAL_NECROMANCER_CHESTRUNNER_SKILLBAR)
 		Case $ID_MESMER
-			$boreal_player_profession = $ID_MESMER
 			LoadSkillTemplate($BOREAL_MESMER_CHESTRUNNER_SKILLBAR)
 		Case $ID_ELEMENTALIST
-			$boreal_player_profession = $ID_ELEMENTALIST
 			LoadSkillTemplate($BOREAL_ELEMENTALIST_CHESTRUNNER_SKILLBAR)
 		Case $ID_ASSASSIN
-			$boreal_player_profession = $ID_ASSASSIN
 			LoadSkillTemplate($BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR)
 		Case $ID_RITUALIST
-			$boreal_player_profession = $ID_RITUALIST
 			LoadSkillTemplate($BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR)
 		Case $ID_PARAGON
-			$boreal_player_profession = $ID_PARAGON
 			LoadSkillTemplate($BOREAL_PARAGON_CHESTRUNNER_SKILLBAR)
 		Case $ID_DERVISH
-			$boreal_player_profession = $ID_DERVISH
 			LoadSkillTemplate($BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
 	EndSwitch
 	RandomSleep(250)

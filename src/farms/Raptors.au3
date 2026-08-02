@@ -123,12 +123,11 @@ EndFunc
 
 Func SetupPlayerRaptorsFarm()
 	Info('Setting up player build skill bar')
-	Switch DllStructGetData(GetMyAgent(), 'Primary')
+	$raptors_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
+	Switch $raptors_player_profession
 		Case $ID_WARRIOR
-			$raptors_player_profession = $ID_WARRIOR
 			LoadSkillTemplate($WN_RAPTORS_FARMER_SKILLBAR)
 		Case $ID_DERVISH
-			$raptors_player_profession = $ID_DERVISH
 			LoadSkillTemplate($DN_RAPTORS_FARMER_SKILLBAR)
 		Case Else
 			Warn('Should run this farm as warrior')

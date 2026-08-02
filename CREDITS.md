@@ -116,6 +116,11 @@ Enormous modifications were made, to the point this bot is probably not in any w
 - Notes: Major modifications were made.
 - License: Unknown (shared freely on a forum thread). Contact for takedown if needed.
 
+### 'UnderworldPantheon.au3'
+- Authors: kneemant
+- Contributor: Akiro/The Great Gree, Kronos
+- License: licensed under Apache 2.0
+
 ### 'FoWTowerOfCourage.au3'
 - Authors: Zaishen, RiflemanX, Monk Reborn
 - Contributor: Gahais
