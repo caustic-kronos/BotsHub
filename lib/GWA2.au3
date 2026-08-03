@@ -1330,7 +1330,7 @@ EndFunc
 ;~ Returns a weapon or shield minimum required attribute.
 Func GetItemReq($item)
 	Local $mod = GetModByIdentifier($item, '9827')
-	Return $mod[0]
+	Return $mod[0] == '' ? 0 : $mod[0]
 EndFunc
 
 
