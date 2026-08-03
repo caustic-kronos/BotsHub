@@ -63,7 +63,7 @@ Func SetupSkaleFinsFarm()
 	If TravelToOutpost($ID_JOKANUR_DIGGINGS, $district_name) == $FAIL Then Return $FAIL
 	SwitchMode($ID_NORMAL_MODE)
 	LeaveParty()
-	;~ If SetupPlayerSkaleFinsFarm() == $FAIL Then Return $FAIL
+	If SetupPlayerSkaleFinsFarm() == $FAIL Then Return $FAIL
 	LeaveToZehlonReach()
 	UseSkillEx($SKALE_FINS_PIOUS_RENEWAL)
 	PingSleep(100)
