@@ -78,30 +78,37 @@ EndFunc
 
 ;~ Farm exact process - wrapper needed to be able to deregister adlib functions
 Func FoWFarmProcess()
-	UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
+	; Direct boost to 10% morale
+	UseConsumable($ID_HONEYCOMB, False)
+	UseConsumable($ID_HONEYCOMB, False)
+	UseFoWConsumables(True)
 	If TowerOfCourage() == $FAIL Then Return $FAIL
-	UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
+	UseFoWConsumables(True)
 	If TheGreatBattleField() == $FAIL Then Return $FAIL
-	UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
+	UseFoWConsumables(True)
 	If TheTempleOfWar() == $FAIL Then Return $FAIL
-	UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
+	UseFoWConsumables(True)
 	If TheSpiderCaveAndFissureShore() == $FAIL Then Return $FAIL
-	UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
-	UseConset()
+	UseFoWConsumables(True)
 	If LakeOfFire() == $FAIL Then Return $FAIL
-	UseConset()
+	UseFoWConsumables(True)
 	If TowerOfStrength() == $FAIL Then Return $FAIL
-	UseConset()
+	UseFoWConsumables(True)
 	If BurningForest() == $FAIL Then Return $FAIL
-	UseConset()
+	UseFoWConsumables()
 	If ForestOfTheWailingLord() == $FAIL Then Return $FAIL
 	If GriffonRun() == $FAIL Then Return $FAIL
 	If TempleLoot() == $FAIL Then Return $FAIL
 	Return $SUCCESS
+EndFunc
+
+
+;~ Use all needed consumables
+Func UseFoWConsumables($useSummoningStone = False)
+	If $useSummoningStone Then UseSummoningStone($ID_LEGIONNAIRE_SUMMONING_CRYSTAL)
+	UseConset()
+	If GetEffectTimeRemaining(GetEffect($ID_PIE_INDUCED_ECSTASY)) <= 0 Then UseConsumable($ID_SLICE_OF_PUMPKIN_PIE, False)
+	If GetEffectTimeRemaining(GetEffect($ID_CANDY_APPLE_EFFECT)) <= 0 Then UseConsumable($ID_CANDY_APPLE, False)
 EndFunc
 
 
@@ -126,7 +133,7 @@ Func TowerOfCourage()
 	Local $waitCount = 0
 	Local $me = GetMyAgent()
 	While GetDistanceToPoint($me, -15000, -2000) > $RANGE_ADJACENT
-		If $waitCount == 20 Then
+		If $waitCount >= 20 Then
 			Info('Rastigan is not moving, lets nudge him')
 			MoveAggroAndKill(-15500, -3500)
 			MoveAggroAndKill(-17000, -3000)
@@ -136,7 +143,7 @@ Func TowerOfCourage()
 			MoveAggroAndKill(-14600, -2600)
 			$waitCount = 0
 		EndIf
-		MoveTo(-15000, -2000)
+		Move(-15000, -2000)
 		Sleep(3000)
 		$waitCount += 1
 		$me = GetMyAgent()
@@ -226,6 +233,7 @@ Func TheTempleOfWar()
 
 	While Not IsQuestReward($ID_QUEST_THE_ETERNAL_FORGEMASTER)
 		Info('The Eternal Forgemaster quest is not finished yet')
+		KillFoesInArea()
 		Sleep(1000)
 		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	WEnd
@@ -234,9 +242,13 @@ Func TheTempleOfWar()
 	TakeQuestReward($questNPC, $ID_QUEST_THE_ETERNAL_FORGEMASTER, 0x80D107)
 	TakeQuest($questNPC, $ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR, 0x80CA01)
 
-	Info('Waiting the defense, feeling cute, might optimise later')
-	Info('Sleeping for 480s')
-	Sleep(480000)
+	Info('Defending the Temple of War')
+	Local $timer = TimerInit()
+	While Not IsQuestReward($ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR) And TimerDiff($timer) < 480000
+		KillFoesInArea()
+		Sleep(3000)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+	WEnd
 
 	$questNPC = GetNearestNPCToCoords(1850, -150)
 	TakeQuestReward($questNPC, $ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR, 0x80CA07)
@@ -524,10 +536,8 @@ Func GriffonRun()
 	KillShardWolf()
 	MoveAggroAndKill(-18000, -3500)
 	MoveAggroAndKill(-13750, -2750)
-	CommandAll(-9800, -4800)
 	MoveAggroAndKill(-15750, -1750)
 	If Not IsPlayerOrPartyAlive() Then Return $FAIL
-
 
 	Info('Grabbing griffons')
 	MoveAggroAndKill(-13750, -2750, '1')
@@ -567,7 +577,6 @@ Func GriffonRun()
 		KillShardWolf()
 		MoveAggroAndKill(-18000, -3500)
 		MoveAggroAndKill(-13750, -2750)
-		CommandAll(-9800, -4800)
 		MoveAggroAndKill(-15750, -1750)
 		RandomSleep(5000)
 	EndIf
