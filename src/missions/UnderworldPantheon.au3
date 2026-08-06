@@ -27,16 +27,16 @@
 
 
 ; ==== Constants ====
-Global Const $UW_PANTHEON_A_SKILLBAR					= 'OwhjAyi84QlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_E_SKILLBAR					= 'OghjwMgsITlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_D_SKILLBAR					= 'OgijAyiM7QlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_ME_SKILLBAR					= 'OQhjAyiMwQlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_MO_SKILLBAR					= 'OwgjAyiM0QlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_N_SKILLBAR					= 'OAhjAyisxQlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_P_SKILLBAR					= 'OQijAyiM6QlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_RA_SKILLBAR					= 'OggjAyi81QlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_RT_SKILLBAR					= 'OACjAyiM5QlTfT+gXTRbnNVTQT'
-Global Const $UW_PANTHEON_W_SKILLBAR					= 'OQgjAyic0QlTfT+gXTRbnNVTQT'
+Global Const $UW_PANTHEON_A_SKILLBAR					= 'OwhiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_E_SKILLBAR					= 'OghiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_D_SKILLBAR					= 'OgiiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_ME_SKILLBAR					= 'OQhiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_MO_SKILLBAR					= 'OwgiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_N_SKILLBAR					= 'OAhiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_P_SKILLBAR					= 'OQiiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_RA_SKILLBAR					= 'OggiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_RT_SKILLBAR					= 'OACiIygMVO9NdN5De2EtVNBNB'
+Global Const $UW_PANTHEON_W_SKILLBAR					= 'OQgiIygMVO9NdN5De2EtVNBNB'
 
 Global Const $UNDERWORLD_FARM_PANTHEON_INFORMATIONS = 'Only use this during the pantheon week !' & @CRLF _
 	& 'For best results run the bot in NM' & @CRLF _
@@ -63,6 +63,8 @@ Global Const $UW_AATXE_CHECK_INTERVAL = 1000
 Global Const $UW_AATXE_SKILL_RECAST_INTERVAL = 5000
 
 Global $uw_pantheon_farm_setup = False
+; Timer for the 2-minute run timeout, started at the beginning of each run
+Global $uw_pantheon_run_timer = 0
 
 ;~ Main loop function
 Func UnderworldFarmPantheon()
@@ -116,8 +118,16 @@ Func SetupPlayerUnderworldPantheonFarm()
 EndFunc
 
 
+;~ Returns True once the run has exceeded the 2-minute limit
+Func IsPantheonRunTimedOut()
+	Return TimerDiff($uw_pantheon_run_timer) >= $MAX_UW_FARM_PANTHEON_DURATION
+EndFunc
+
+
 ;~ Single-pass: Spawn spirits, wair for exactly 2 aatxe, pull, kill, loot
 Func ClearTheChamberUnderworldPantheon()
+	$uw_pantheon_run_timer = TimerInit()
+
 	Info('Place Spirits for block')
 	MoveTo(1376, 7418)
 	UseSkillEx($UW_FARM_BLOODSONG)
@@ -128,6 +138,7 @@ Func ClearTheChamberUnderworldPantheon()
 	Sleep(500)
 	; First 3 spirits have very long duration, so we can wait for energy to be maxxed again
 	While DllStructGetData(GetMyAgent(), 'EnergyPercent') < 0.99
+		If IsPantheonRunTimedOut() Then Return $FAIL
 		Sleep(1000)
 	WEnd
 	UseSkillEx($UW_FARM_SIGNET_OF_SPIRITS)
@@ -141,9 +152,10 @@ Func ClearTheChamberUnderworldPantheon()
 	If WaitForExactlyTwoAatxe() == $FAIL Then Return $FAIL
 	; Wait for enough energy to cast painful bond
 	While GetEnergy() < 15
+		If IsPantheonRunTimedOut() Then Return $FAIL
 		Sleep(1000)
 	WEnd
-	Info('Found exactly 2 Aatxe - Pull started')
+	Info('Pull started')
 	; walk nearby to pull
 	MoveTo(1000, 8005)
 	Sleep(250)
@@ -165,17 +177,26 @@ Func ClearTheChamberUnderworldPantheon()
 EndFunc
 
 
-;~ Wait until exactly 2 Aatxe are nearby
-;~ If it is 3 Aatxe, wait until one walked away. spirits cannot handle 3
+;~ Wait until at most 2 Aatxe are nearby.
+;~ - more than 2: wait until one leaves (spirits cannot handle 3)
+;~ - exactly 2: proceed normally
+;~ - 0 or 1: Aatxe are too far away to be counted in range - target the nearest enemy and pull anyway
 Func WaitForExactlyTwoAatxe()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 2000)
-	While $foesCount <> 2
-		Info('3 Aatxes nearby - wait until 1 leaves')
+	While $foesCount > 2
+		Info('More than 2 Aatxes nearby - wait until 1 leaves')
 
+		If IsPantheonRunTimedOut() Then Return $FAIL
 		Sleep($UW_AATXE_CHECK_INTERVAL)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 2000)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
+
+	If $foesCount <= 1 Then
+		Info('Only ' & $foesCount & ' Aatxe in range - targeting nearest enemy and pulling anyway')
+		GetNearestEnemyToAgent(GetMyAgent(), 2000)
+	EndIf
+
 	Return $SUCCESS
 EndFunc
 
@@ -185,6 +206,8 @@ Func WaitUntilAatxeDead()
 	Local $lastSkillCast = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	While $foesCount > 0
+		If IsPantheonRunTimedOut() Then Return $FAIL
+
 		If TimerDiff($lastSkillCast) >= $UW_AATXE_SKILL_RECAST_INTERVAL Then
 			UseSkillEx($UW_FARM_ARMOR_OF_UNFEELING)
 			Local $bondTargetAgent = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
