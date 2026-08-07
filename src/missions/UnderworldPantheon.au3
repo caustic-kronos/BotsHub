@@ -178,7 +178,7 @@ Func WaitForExactlyTwoAatxe()
 	While $foesCount > 2
 		Info('More than 2 Aatxes nearby - wait until 1 leaves')
 
-		If IsPantheonRunTimedOut() Then Return $FAIL
+		If CheckStuck('UW Pantheon - Waiting for 2 Aaxtes or less', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep($UW_AATXE_CHECK_INTERVAL)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 2000)
 		If IsPlayerDead() Then Return $FAIL
