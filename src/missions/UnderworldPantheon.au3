@@ -195,7 +195,7 @@ Func WaitUntilAatxeDead()
 	Local $lastSkillCast = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	While $foesCount > 0
-		If IsPantheonRunTimedOut() Then Return $FAIL
+		If CheckStuck('UW Pantheon - Waiting for Aaxtes to be dead', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 
 		If TimerDiff($lastSkillCast) >= $UW_AATXE_SKILL_RECAST_INTERVAL Then
 			UseSkillEx($UW_FARM_ARMOR_OF_UNFEELING)
