@@ -130,7 +130,7 @@ Func ClearTheChamberUnderworldPantheon()
 	Sleep(500)
 	; First 3 spirits have very long duration, so we can wait for energy to be maxxed again
 	While DllStructGetData(GetMyAgent(), 'EnergyPercent') < 0.99
-		If IsPantheonRunTimedOut() Then Return $FAIL
+		If CheckStuck('UW Pantheon - Waiting for max energy', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
 	WEnd
 	UseSkillEx($UW_FARM_SIGNET_OF_SPIRITS)
