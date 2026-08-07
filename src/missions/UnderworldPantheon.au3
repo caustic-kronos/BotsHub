@@ -63,8 +63,6 @@ Global Const $UW_AATXE_CHECK_INTERVAL = 1000
 Global Const $UW_AATXE_SKILL_RECAST_INTERVAL = 5000
 
 Global $uw_pantheon_farm_setup = False
-; Timer for the 2-minute run timeout, started at the beginning of each run
-Global $uw_pantheon_run_timer = 0
 
 ;~ Main loop function
 Func UnderworldFarmPantheon()
