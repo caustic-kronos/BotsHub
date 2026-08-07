@@ -113,7 +113,7 @@ Global Const $SUCCESS = 0
 Global Const $FAIL = 1
 Global Const $PAUSE = 2
 
-Global Const $AVAILABLE_DISTRICTS = '|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
+Global Const $AVAILABLE_DISTRICTS = '|Default|Random|Random EU|Random US|Random Asia|America|China|English|French|German|International|Italian|Japan|Korea|Polish|Russian|Spanish'
 
 Global Const $AVAILABLE_HEROES = '||Acolyte Jin|Acolyte Sousuke|Anton|Devona|Dunkoro|General Morgahn|Ghost of Althea|Goren|Gwen|Hayda|Jora|Kahmu|Keiran Thackeray|Koss|Livia|' & _
 	'Margrid the Sly|Master of Whispers|Melonni|Miku|MOX|Norgu|Ogden|Olias|Pyre Fierceshot|Razah|Tahlkora|Vekk|Xandra|ZeiRi|Zenmai|Zhed Shadowhoof|' & _
@@ -141,7 +141,7 @@ Global $gui_enabled
 
 Global $inventory_management_cache[]
 Global $run_options_cache[]
-$run_options_cache['run.district'] = 'Random EU'
+$run_options_cache['run.district'] = 'Default'
 $run_options_cache['run.consume_consumables'] = True
 $run_options_cache['run.use_consets'] = False
 $run_options_cache['run.use_scrolls'] = False
@@ -156,7 +156,7 @@ $run_options_cache['run.go_offline'] = False
 $run_options_cache['run.flash_whisper'] = False
 $run_options_cache['team.automatic_team_setup'] = False
 ; Overrides on $run_options_cache for frequent usage
-Global $district_name = 'Random EU'
+Global $district_name = 'Default'
 Global $bags_count = 5
 #EndRegion Variables
 

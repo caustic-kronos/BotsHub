@@ -141,8 +141,9 @@ EndFunc
 
 
 ;~ Travel to specified map and specified district
-Func DistrictTravel($mapID, $district = 'Random EU')
+Func DistrictTravel($mapID, $district = 'Default')
 	If GetMapID() == $mapID Then Return
+	If $district == 'Default' Then $district = GetDistrictFromUTCOffset()
 	Switch $district
 		Case 'Random'
 			RandomDistrictTravel($mapID, 0, 11)
@@ -1535,6 +1536,44 @@ Func _NowUtcString()
 	Return StringFormat('%04d/%02d/%02d %02d:%02d:%02d', _
 			DllStructGetData($utc, 'Year'), DllStructGetData($utc, 'Month'), DllStructGetData($utc, 'Day'), _
 			DllStructGetData($utc, 'Hour'), DllStructGetData($utc, 'Minute'), DllStructGetData($utc, 'Second'))
+EndFunc
+
+
+;~ Return closest region corresponding to the local system time zone, based on UTC offset
+Func GetDistrictFromUTCOffset()
+	Local $RegionUS = 0, $RegionEU = 1, $RegionAsia = 2
+	Local $utcOffset = GetUTCOffset()
+	Switch True
+		Case $utcOffset < 0
+			Return 'Random US'
+		Case $utcOffset <= 240 ; UTC+4:00 (UAE)
+			Return 'Random EU'
+		Case Else
+			Return 'Random Asia'
+	EndSwitch
+EndFunc
+
+
+;~ Returns the UTC offset in minutes for the local system time zone, taking into account DST if applicable
+Func GetUTCOffset()
+	Local $timezoneInformation = _Date_Time_GetTimeZoneInformation()
+	Local $bias = $timezoneInformation[1]
+	Switch $timezoneInformation[0]
+		Case 1 ; Standard time
+			$bias += $timezoneInformation[4]
+		Case 2 ; Daylight saving time
+			$bias += $timezoneInformation[7]
+		; Case 0 ; Unknown time zone
+			; Do nothing, bias is already set to the default value
+	EndSwitch
+	Local $utcOffset = -$bias
+	Return $utcOffset
+EndFunc
+
+
+;~ Return GeoID of system to determine country - cannot be used to determiner server location as it is based on system locale
+Func GetSystemGeoID()
+	Return RegRead('HKEY_CURRENT_USER\Control Panel\International\Geo', 'Nation')
 EndFunc
 #EndRegion DateTime
 
