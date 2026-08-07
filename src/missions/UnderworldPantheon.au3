@@ -118,8 +118,6 @@ EndFunc
 
 ;~ Single-pass: Spawn spirits, wair for exactly 2 aatxe, pull, kill, loot
 Func ClearTheChamberUnderworldPantheon()
-	$uw_pantheon_run_timer = TimerInit()
-
 	Info('Place Spirits for block')
 	MoveTo(1376, 7418)
 	UseSkillEx($UW_FARM_BLOODSONG)
