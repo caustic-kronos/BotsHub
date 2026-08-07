@@ -116,12 +116,6 @@ Func SetupPlayerUnderworldPantheonFarm()
 EndFunc
 
 
-;~ Returns True once the run has exceeded the 2-minute limit
-Func IsPantheonRunTimedOut()
-	Return TimerDiff($uw_pantheon_run_timer) >= $MAX_UW_FARM_PANTHEON_DURATION
-EndFunc
-
-
 ;~ Single-pass: Spawn spirits, wair for exactly 2 aatxe, pull, kill, loot
 Func ClearTheChamberUnderworldPantheon()
 	$uw_pantheon_run_timer = TimerInit()
