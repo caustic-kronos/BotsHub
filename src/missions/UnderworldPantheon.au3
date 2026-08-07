@@ -184,10 +184,7 @@ Func WaitForExactlyTwoAatxe()
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
 
-	If $foesCount <= 1 Then
-		Info('Only ' & $foesCount & ' Aatxe in range - targeting nearest enemy and pulling anyway')
-		GetNearestEnemyToAgent(GetMyAgent(), 2000)
-	EndIf
+	If $foesCount <= 1 Then Info('Only ' & $foesCount & ' Aatxe in range - targeting nearest enemy and pulling anyway')
 
 	Return $SUCCESS
 EndFunc
