@@ -144,7 +144,7 @@ Func ClearTheChamberUnderworldPantheon()
 	If WaitForExactlyTwoAatxe() == $FAIL Then Return $FAIL
 	; Wait for enough energy to cast painful bond
 	While GetEnergy() < 15
-		If IsPantheonRunTimedOut() Then Return $FAIL
+		If CheckStuck('UW Pantheon - Waiting for energy', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
 	WEnd
 	Info('Pull started')
