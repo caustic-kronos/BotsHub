@@ -1837,9 +1837,8 @@ EndFunc
 
 
 ;~ Look for any of the given items in bags and return bag and slot of an item, [0, 0] if none are present (positions start at 1)
-Func FindAnyInInventory(ByRef $itemIDs)
-	Local $itemBagAndSlot[2]
-	$itemBagAndSlot[0] = $itemBagAndSlot[1] = 0
+Func FindAnyInInventory($itemIDs)
+	Local $itemBagAndSlot = [0, 0]
 
 	For $bagIndex = 1 To $bags_count
 		Local $bag = GetBag($bagIndex)
@@ -1848,8 +1847,9 @@ Func FindAnyInInventory(ByRef $itemIDs)
 			Local $item = GetItemBySlot($bagIndex, $slot)
 			For $itemID in $itemIDs
 				If(DllStructGetData($item, 'ModelID') == $itemID) Then
-					$itemBagAndSlot[0] = $bag
+					$itemBagAndSlot[0] = $bagIndex
 					$itemBagAndSlot[1] = $slot
+					Return $itemBagAndSlot
 				EndIf
 			Next
 		Next
@@ -2110,7 +2110,13 @@ Func UseItemBySlot($bagIndex, $slot)
 	If $bagIndex > 0 And $slot > 0 Then
 		If IsPlayerAlive() And GetMapType() <> $ID_LOADING Then
 			Local $item = GetItemBySlot($bagIndex, $slot)
-			SendPacket(8, $HEADER_Item_USE, DllStructGetData($item, 'ID'))
+			Local $itemID = DllStructGetData($item, 'ID')
+			If $itemID <> 0 Then
+				SendPacket(8, $HEADER_ITEM_USE, $itemID)
+				Return True
+			Else
+				Return False
+			EndIf
 		EndIf
 	EndIf
 EndFunc
@@ -2880,3 +2886,23 @@ Func ValidateNewUpgrades($upgradeType)
 	SQLExecute($query)
 EndFunc
 #EndRegion Database
+
+
+;~ Main loop
+Func AutomaticTonicConsumer()
+	If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
+	While True
+		Local $itemPosition = FindAnyInInventory($PARTY_TONICS_ARRAY)
+		If $itemPosition[0] == 0 Then
+			Info('No tonics found in inventory, stopping bot.')
+			Return $PAUSE
+		EndIf
+		Info('Using tonic at bag ' & $itemPosition[0] & ', slot ' & $itemPosition[1])
+		Local $item = GetItemBySlot($itemPosition[0], $itemPosition[1])
+		For $i = 1 To DllStructGetData($item, 'Quantity')
+			If UseItemBySlot($itemPosition[0], $itemPosition[1]) == False Then ExitLoop
+			Sleep(6000)
+		Next
+	WEnd
+	Return $PAUSE
+EndFunc

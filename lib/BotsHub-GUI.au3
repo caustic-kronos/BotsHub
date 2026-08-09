@@ -101,7 +101,7 @@ Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
 Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
 	'Glint Challenge|Jade Brotherhood|Kappa|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|LDOA|Lightbringer & Sunspear|Lightbringer|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
-	'Raptors|Skale Fins|Skrees|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|UnderworldPantheon|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Zodiac|Manual Mode|Storage|Tests|TestSuite'
+	'Raptors|Skale Fins|Skrees|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|UnderworldPantheon|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Zodiac|Manual Mode|Storage|Tests|Tonic Spammer|TestSuite'
 
 #Region GUI
 
@@ -1153,6 +1153,8 @@ Func UpdateFarmDescription($farm)
 		Case 'Tests'
 			GUICtrlSetData($gui_label_farminformations, 'This runs the RunTests function at the top of the TestSuite.au3 file,' & _
 				'allowing you to run anything you want to test.')
+		Case 'Tonic Spammer'
+			GUICtrlSetData($gui_label_farminformations, 'This consumes tonics from inventory automatically until none are left.')
 		Case 'TestSuite'
 			GUICtrlSetData($gui_label_farminformations, 'This runs a tests suite to verify some required behaviours from the Hub.')
 		Case Else

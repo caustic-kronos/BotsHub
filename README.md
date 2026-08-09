@@ -109,6 +109,7 @@ To use it:
 ### Others
 - Follower bot
 - Inventory management
+- Automatic Tonic consumer
 
 ---
 
