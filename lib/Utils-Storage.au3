@@ -314,7 +314,7 @@ Func PickOnlyImportantItem($item)
 		Return True
 	ElseIf ($rarity == $RARITY_GREEN) Then
 		Return True
-	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxDamage($item) Then
+	ElseIf $rarity <> $RARITY_WHITE And IsWeapon($item) And IsLowReqMaxStats($item) Then
 		Return True
 	EndIf
 	Return False
@@ -614,7 +614,7 @@ Func ShouldKeepWeapon($item)
 	If Not IsMaxStatsForReq($item) Then Return False
 	; Inscribable are kept only if : 1) rare skin and q9 2) low Req of a good type
 	If IsInscribable($item) Then
-		If IsLowReqMaxDamage($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
+		If IsLowReqMaxStats($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
 		If GetItemReq($item) == 9 And $MAP_RARE_WEAPONS[$itemID] <> Null Then Return True
 		Return False
 	; OS - Old School weapon without inscription ... it is more complicated
@@ -661,7 +661,7 @@ Func CheckPickupWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_RED Then Return True
 	If $weaponRarity == $RARITY_GRAY Then Return False
-	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxDamage($weaponItem) Then Return True
+	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxStats($weaponItem) Then Return True
 	Local $itemID = DllStructGetData($weaponItem, 'ModelID')
 	If $weaponRarity <> $RARITY_WHITE And $RARE_WEAPONS_TO_PICK[$itemID] <> Null And IsMaxStatsForReq($weaponItem) Then Return True
 
@@ -2407,7 +2407,7 @@ EndFunc
 
 
 ;~ Identify is an item is q0-q8 with max damage
-Func IsLowReqMaxDamage($item)
+Func IsLowReqMaxStats($item)
 	If Not IsWeapon($item) Then Return False
 	Local $requirement = GetItemReq($item)
 	Return $requirement < 9 And IsMaxStatsForReq($item) And IsMinReqForDamage($item)
@@ -2415,7 +2415,7 @@ EndFunc
 
 
 ;~ Identify if an item is q0 with max damage
-Func IsNoReqMaxDamage($item)
+Func IsNoReqMaxStats($item)
 	If Not IsWeapon($item) Then Return False
 	Local $requirement = GetItemReq($item)
 	Return $requirement == 0 And IsMaxStatsForReq($item) And IsMinReqForDamage($item)
