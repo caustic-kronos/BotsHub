@@ -2891,7 +2891,7 @@ EndFunc
 ;~ Main loop
 Func AutomaticTonicConsumer()
 	If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($ID_EYE_OF_THE_NORTH)
-	While True
+	While GetPartyTitle() < 10000
 		Local $itemPosition = FindAnyInInventory($PARTY_TONICS_ARRAY)
 		If $itemPosition[0] == 0 Then
 			Info('No tonics found in inventory, stopping bot.')
@@ -2899,7 +2899,8 @@ Func AutomaticTonicConsumer()
 		EndIf
 		Info('Using tonic at bag ' & $itemPosition[0] & ', slot ' & $itemPosition[1])
 		Local $item = GetItemBySlot($itemPosition[0], $itemPosition[1])
-		For $i = 1 To DllStructGetData($item, 'Quantity')
+		Local $quantity = DllStructGetData($item, 'Quantity')
+		For $i = 1 To _Min(10000 - GetPartyTitle(), $quantity)
 			If UseItemBySlot($itemPosition[0], $itemPosition[1]) == False Then ExitLoop
 			Sleep(6000)
 		Next

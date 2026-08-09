@@ -42,7 +42,7 @@ Global Const $UNDERWORLD_FARM_PANTHEON_INFORMATIONS = 'Only use this during the 
 	& 'For best results run the bot in NM' & @CRLF _
 	& 'HM can workout but it depends where the aatxe spawn,' & @CRLF _
 	& 'it also depends on the aggro of the spirits/aatxe.' & @CRLF _
-	& 'Any class should work.' & @CRLF _
+	& 'Any class should work. Do not use melee weapons.' & @CRLF _
 	& 'Make sure you have a staff and minimum 35 energy' & @CRLF _
 
 Global Const $UW_FARM_PANTHEON_DURATION = 2 * 60 * 1000
@@ -127,7 +127,8 @@ Func ClearTheChamberUnderworldPantheon()
 	UseSkillEx($UW_FARM_VAMPIRISM)
 	Sleep(500)
 	; First 3 spirits have very long duration, so we can wait for energy to be maxxed again
-	While DllStructGetData(GetMyAgent(), 'EnergyPercent') < 0.99
+	While GetEnergy() < 30
+		If CheckStuck('UW Pantheon - Waiting for max energy', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
 	WEnd
 	UseSkillEx($UW_FARM_SIGNET_OF_SPIRITS)
@@ -136,23 +137,24 @@ Func ClearTheChamberUnderworldPantheon()
 	Sleep(250)
 	UseSkillEx($UW_FARM_SHADOWSONG)
 	Sleep(250)
-	MoveTo(1008, 7411)
+	MoveTo(1000, 7500)
 	Sleep(1000)
 	If WaitForExactlyTwoAatxe() == $FAIL Then Return $FAIL
 	; Wait for enough energy to cast painful bond
 	While GetEnergy() < 15
+		If CheckStuck('UW Pantheon - Waiting for energy', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
 	WEnd
-	Info('Found exactly 2 Aatxe - Pull started')
+	Info('Pull started')
 	; walk nearby to pull
-	MoveTo(1000, 8005)
+	MoveTo(1000, 8000)
 	Sleep(250)
 	If IsPlayerDead() Then Return $FAIL
 	Local $bondTargetAgent = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_LONGBOW + 250)
 	UseSkillEx($UW_FARM_PAINFUL_BOND, $bondTargetAgent)
 	Sleep(250)
 	; hide behind spirits
-	MoveTo(1458, 7491)
+	MoveTo(1487, 7632)
 	GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	Local $bondTargetAgent = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	UseSkillEx($UW_FARM_ARMOR_OF_UNFEELING)
@@ -165,17 +167,23 @@ Func ClearTheChamberUnderworldPantheon()
 EndFunc
 
 
-;~ Wait until exactly 2 Aatxe are nearby
-;~ If it is 3 Aatxe, wait until one walked away. spirits cannot handle 3
+;~ Wait until at most 2 Aatxe are nearby.
+;~ - more than 2: wait until one leaves (spirits cannot handle 3)
+;~ - exactly 2: proceed normally
+;~ - 0 or 1: Aatxe are too far away to be counted in range - target the nearest enemy and pull anyway
 Func WaitForExactlyTwoAatxe()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 2000)
-	While $foesCount <> 2
-		Info('3 Aatxes nearby - wait until 1 leaves')
+	While $foesCount > 2
+		Info('More than 2 Aatxes nearby - wait until 1 leaves')
 
+		If CheckStuck('UW Pantheon - Waiting for 2 Aaxtes or less', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep($UW_AATXE_CHECK_INTERVAL)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), 2000)
 		If IsPlayerDead() Then Return $FAIL
 	WEnd
+
+	If $foesCount <= 1 Then Info('Only ' & $foesCount & ' Aatxe in range - targeting nearest enemy and pulling anyway')
+
 	Return $SUCCESS
 EndFunc
 
@@ -185,6 +193,8 @@ Func WaitUntilAatxeDead()
 	Local $lastSkillCast = TimerInit()
 	Local $foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	While $foesCount > 0
+		If CheckStuck('UW Pantheon - Waiting for Aaxtes to be dead', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
+
 		If TimerDiff($lastSkillCast) >= $UW_AATXE_SKILL_RECAST_INTERVAL Then
 			UseSkillEx($UW_FARM_ARMOR_OF_UNFEELING)
 			Local $bondTargetAgent = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
@@ -192,6 +202,7 @@ Func WaitUntilAatxeDead()
 			$lastSkillCast = TimerInit()
 		EndIf
 
+		Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		Sleep(500)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 		If IsPlayerDead() Then Return $FAIL
