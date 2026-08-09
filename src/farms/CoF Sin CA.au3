@@ -78,6 +78,7 @@ Global Const $COFSINCA_SF_DP_MIN_ENERGY = 20
 Global Const $COFSINCA_DP_AFTER_SF_DELAY_MS = 500
 Global Const $COFSINCA_SF_QUEUE_RETRY_MS = 1500 ; Guard against Adlib re-cast during DP delay
 Global Const $COFSINCA_COMBAT_TIMEOUT_MS = 10 * 60 * 1000 ; Abort combat after 10 min
+Global Const $COFSINCA_DEBUG_LOG = False ; Set to True to enable CSV debug logging (logs/cofsinca_debug-*.csv)
 
 Global $cofsinca_farm_setup = False
 Global $cofsinca_log_handle = -1
@@ -314,6 +315,7 @@ EndFunc
 
 #Region Debug CSV logging
 Func CoFSinCALogInit()
+	If Not $COFSINCA_DEBUG_LOG Then Return
 	Local $timestamp = @YEAR & @MON & @MDAY & '_' & @HOUR & @MIN & @SEC
 	Local $path = @ScriptDir & '/logs/cofsinca_debug-' & GetCharacterName() & '-run' & $cofsinca_log_run & '-' & $timestamp & '.csv'
 	$cofsinca_log_handle = FileOpen($path, $FO_OVERWRITE + $FO_CREATEPATH + $FO_UTF8)

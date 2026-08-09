@@ -3041,4 +3041,45 @@ Func _dlldisplay($struct, $fieldNames = Null)
 
 	Return $structArray
 EndFunc
+
+
+;~ Returns True if the hero (or player, heroIndex=0) already has all 8 skills matching the given template code.
+;~ Avoids redundant LoadSkillTemplate calls and saves significant setup time across all farms.
+Func HeroHasTemplate($heroIndex, $templateCode)
+	Local $buildTemplateChars = StringSplit($templateCode, '')
+	_ArrayDelete($buildTemplateChars, 0)
+	Local $buildTemplate = ''
+	For $character In $buildTemplateChars
+		$buildTemplate &= StringRight('000000' & Base64ToBin64($character), 6)
+	Next
+
+	; templateType (4 bits) + version (4 bits)
+	If Bin64ToDec(StringLeft($buildTemplate, 4)) <> 14 Then Return False
+	$buildTemplate = StringTrimLeft($buildTemplate, 8)
+
+	; professionBits (2 bits) => P
+	Local $professionBits = Bin64ToDec(StringLeft($buildTemplate, 2)) * 2 + 4
+	$buildTemplate = StringTrimLeft($buildTemplate, 2)
+
+	; primaryProfession (P bits)
+	Local $primaryProfession = Bin64ToDec(StringLeft($buildTemplate, $professionBits))
+	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
+	If $primaryProfession <> GetHeroProfession($heroIndex) Then Return False
+
+	; Skip secondary (always same bits as primary in modern templates)
+	$buildTemplate = StringTrimLeft($buildTemplate, $professionBits)
+
+	; attributes (8 bits each, 5 attributes max) — skip
+	$buildTemplate = StringTrimLeft($buildTemplate, 8 * 5)
+
+	; Now 8 skill slots (11 bits each)
+	For $slot = 1 To 8
+		Local $expectedSkillID = Bin64ToDec(StringLeft($buildTemplate, 11))
+		$buildTemplate = StringTrimLeft($buildTemplate, 11)
+		Local $actualSkillID = GetSkillbarSkillID($slot, $heroIndex)
+		If $actualSkillID <> $expectedSkillID And $expectedSkillID > 0 Then Return False
+	Next
+
+	Return True
+EndFunc
 #EndRegion AutoIt Utils
