@@ -76,7 +76,7 @@ Global Const $COFSINCA_SIGNET_OF_MYSTIC_SPEED	= 8
 ; Perma SF+DP timing (same rhythm as FocusHanaku)
 Global Const $COFSINCA_SF_DP_MIN_ENERGY = 20
 Global Const $COFSINCA_DP_AFTER_SF_DELAY_MS = 500
-Global Const $COFSINCA_SF_QUEUE_RETRY_MS = 1500 ; Guard against Adlib re-cast during DP delay
+Global Const $COFSINCA_SF_QUEUE_RETRY_MS = 1500
 Global Const $COFSINCA_COMBAT_TIMEOUT_MS = 10 * 60 * 1000 ; Abort combat after 10 min
 Global Const $COFSINCA_DEBUG_LOG = False ; Set to True to enable CSV debug logging (logs/cofsinca_debug-*.csv)
 
@@ -171,9 +171,7 @@ Func CoFSinCAFarmLoop()
 
 	AggroAndPrepareSinCA()
 	Info('Farming Cryptos')
-	AdlibRegister('MaintainCoFSinCAPermaAdlib', 200)
 	CleanCoFSinCAMobs()
-	AdlibUnRegister('MaintainCoFSinCAPermaAdlib')
 	If IsPlayerDead() Then Return $FAIL
 
 	Info('Picking up loot')
@@ -199,12 +197,6 @@ Func AggroAndPrepareSinCA()
 	RandomSleep(80)
 	MoveTo(-15220, -8950)
 	Sleep(500)
-EndFunc
-
-
-;~ AdlibRegister wrapper: calls perma maintenance with utility casts allowed.
-Func MaintainCoFSinCAPermaAdlib()
-	MaintainCoFSinCAPerma(True)
 EndFunc
 
 
