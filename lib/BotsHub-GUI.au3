@@ -516,9 +516,9 @@ Func CreateBotsHubGUI()
 	$gui_tab_farminfos = GUICtrlCreateTabItem('Farm infos')
 	_GUICtrlTab_SetBkColor($gui_botshub, $gui_tabs_parent, $COLOR_SILVER)
 	$gui_label_characterbuilds = GUICtrlCreateLabel('Recommended character builds:', 90, 40)
-	$gui_edit_characterbuilds = GUICtrlCreateEdit('', 45, 60, 250, 105, BitOR($ES_MULTILINE, $ES_READONLY), $WS_EX_TOOLWINDOW)
+	$gui_edit_characterbuilds = GUICtrlCreateEdit('', 35, 60, 270, 105, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL), $WS_EX_TOOLWINDOW)
 	$gui_label_heroesbuilds = GUICtrlCreateLabel('Recommended Heroes builds:', 400, 40)
-	$gui_edit_heroesbuilds = GUICtrlCreateEdit('', 350, 60, 250, 105, BitOR($ES_MULTILINE, $ES_READONLY), $WS_EX_TOOLWINDOW)
+	$gui_edit_heroesbuilds = GUICtrlCreateEdit('', 340, 60, 270, 105, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL), $WS_EX_TOOLWINDOW)
 	$gui_label_farminformations = GUICtrlCreateLabel('Farm informations:', 30, 170, 575, 450)
 	GUICtrlCreateTabItem('')
 
@@ -948,18 +948,26 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $ASURAN_FARM_INFORMATIONS)
 		Case 'Boreal'
-			GUICtrlSetData($gui_edit_characterbuilds, $BOREAL_RANGER_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$BOREAL_MONK_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$BOREAL_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'Ra:'	& @TAB & $BOREAL_RANGER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'Mo:'	& @TAB & $BOREAL_MONK_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'N:'	& @TAB & $BOREAL_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'Me:'	& @TAB & $BOREAL_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'E:'	& @TAB & $BOREAL_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'A:'	& @TAB & $BOREAL_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'Rt:'	& @TAB & $BOREAL_RITUALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'D:'	& @TAB & $BOREAL_DERVISH_CHEST_RUNNER_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $BOREAL_CHESTRUN_INFORMATIONS)
 		Case 'CoF'
 			GUICtrlSetData($gui_edit_characterbuilds, $D_COF_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $COF_FARM_INFORMATIONS)
 		Case 'Corsairs'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
-			GUICtrlSetData($gui_edit_heroesbuilds, $MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & $DR_CORSAIRS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$MOP_CORSAIRS_HERO_SKILLBAR & @CRLF & _
+				$DR_CORSAIRS_HERO_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $CORSAIRS_FARM_INFORMATIONS)
 		Case 'Deldrimor'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
@@ -993,19 +1001,31 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $FROGGY_FARM_INFORMATIONS)
 		Case 'Gemstones'
 			GUICtrlSetData($gui_edit_characterbuilds, $GEMSTONES_MESMER_SKILLBAR)
-			GUICtrlSetData($gui_edit_heroesbuilds, $GEMSTONES_HERO_1_SKILLBAR & @CRLF & _
-				$GEMSTONES_HERO_2_SKILLBAR & @CRLF & $GEMSTONES_HERO_3_SKILLBAR & @CRLF & _
-				$GEMSTONES_HERO_4_SKILLBAR & @CRLF & $GEMSTONES_HERO_5_SKILLBAR & @CRLF & _
-				$GEMSTONES_HERO_6_SKILLBAR & @CRLF & $GEMSTONES_HERO_7_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$GEMSTONES_HERO_1_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_2_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_3_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_4_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_5_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_6_SKILLBAR & @CRLF & _
+				$GEMSTONES_HERO_7_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $GEMSTONES_FARM_INFORMATIONS)
 		Case 'Gemstone Margonite'
-			GUICtrlSetData($gui_edit_characterbuilds, $AME_MARGONITE_SKILLBAR & @CRLF & _
-				$MEA_MARGONITE_SKILLBAR & @CRLF & $EME_MARGONITE_SKILLBAR & @CRLF & $RA_MARGONITE_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'A:'	& @TAB & $AME_MARGONITE_SKILLBAR & @CRLF & _
+				'Me:'	& @TAB & $MEA_MARGONITE_SKILLBAR & @CRLF & _
+				'E:'	& @TAB & $EME_MARGONITE_SKILLBAR & @CRLF & _
+				'Ra:'	& @TAB & $RA_MARGONITE_SKILLBAR _
+			)
 			GUICtrlSetData($gui_edit_heroesbuilds, $MARGONITE_MONK_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_MARGONITE_FARM_INFORMATIONS)
 		Case 'Gemstone Stygian'
-			GUICtrlSetData($gui_edit_characterbuilds, $AME_STYGIAN_SKILLBAR _
-				& @CRLF & $MEA_STYGIAN_SKILLBAR & @CRLF & $RN_STYGIAN_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'A:'	& @TAB & $AME_STYGIAN_SKILLBAR & @CRLF & _
+				'Me:'	& @TAB & $MEA_STYGIAN_SKILLBAR & @CRLF & _
+				'Ra:'	& @TAB & $RN_STYGIAN_SKILLBAR _
+			)
 			GUICtrlSetData($gui_edit_heroesbuilds, $STYGIAN_RANGER_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_STYGIAN_FARM_INFORMATIONS)
 		Case 'Gemstone Torment'
@@ -1013,10 +1033,14 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $GEMSTONE_TORMENT_FARM_INFORMATIONS)
 		Case 'Glint Challenge'
 			GUICtrlSetData($gui_edit_characterbuilds, $GLINT_MESMER_SKILLBAR_OPTIONAL)
-			GUICtrlSetData($gui_edit_heroesbuilds, $GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR & @CRLF & _
-				$GLINT_NECRO_FLESH_GOLEM_HERO_SKILLBAR & @CRLF & $GLINT_NECRO_HEXER_HERO_SKILLBAR & @CRLF & _
-				$GLINT_NECRO_BIP_HERO_SKILLBAR & @CRLF & $GLINT_MESMER_PANIC_HERO_SKILLBAR & @CRLF & _
-				$GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$GLINT_RITU_SOUL_TWISTER_HERO_SKILLBAR & @CRLF & _
+				$GLINT_NECRO_FLESH_GOLEM_HERO_SKILLBAR & @CRLF & _
+				$GLINT_NECRO_HEXER_HERO_SKILLBAR & @CRLF & _
+				$GLINT_NECRO_BIP_HERO_SKILLBAR & @CRLF & _
+				$GLINT_MESMER_PANIC_HERO_SKILLBAR & @CRLF & _
+				$GLINT_MESMER_INEPTITUDE_HERO_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $GLINT_CHALLENGE_INFORMATIONS)
 		Case 'Jade Brotherhood'
 			GUICtrlSetData($gui_edit_characterbuilds, $JB_SKILLBAR)
@@ -1024,14 +1048,21 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $JB_FARM_INFORMATIONS)
 		Case 'Kappa'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_KAPPA_FARMER_SKILLBAR)
-			GUICtrlSetData($gui_edit_heroesbuilds, $KAPPA_P1_HERO_SKILLBAR & @CRLF & $KAPPA_P2_HERO_SKILLBAR & @CRLF & $KAPPA_BIP_HERO_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$KAPPA_P1_HERO_SKILLBAR & @CRLF & _
+				$KAPPA_P2_HERO_SKILLBAR & @CRLF & _
+				$KAPPA_BIP_HERO_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $KAPPA_FARM_INFORMATIONS)
 		Case 'Kilroy'
 			GUICtrlSetData($gui_label_farminformations, $KILROY_FARM_INFORMATIONS)
 		Case 'Kournans'
 			GUICtrlSetData($gui_edit_characterbuilds, $ELA_KOURNANS_FARMER_SKILLBAR)
-			GUICtrlSetData($gui_edit_heroesbuilds, $R_KOURNANS_HERO_SKILLBAR & @CRLF & _
-				$RT_KOURNANS_HERO_SKILLBAR & @CRLF & $P_KOURNANS_HERO_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$R_KOURNANS_HERO_SKILLBAR & @CRLF & _
+				$RT_KOURNANS_HERO_SKILLBAR & @CRLF & _
+				$P_KOURNANS_HERO_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $KOURNANS_FARM_INFORMATIONS)
 		Case 'Kurzick Ferndale'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
@@ -1084,7 +1115,10 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_characterbuilds, $PONGMEI_CHESTRUNNER_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $PONGMEI_CHESTRUN_INFORMATIONS)
 		Case 'Raptors'
-			GUICtrlSetData($gui_edit_characterbuilds, $WN_RAPTORS_FARMER_SKILLBAR & @CRLF & $DN_RAPTORS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'W:' & @TAB & $WN_RAPTORS_FARMER_SKILLBAR & @CRLF & _
+				'D:' & @TAB & $DN_RAPTORS_FARMER_SKILLBAR _
+			)
 			GUICtrlSetData($gui_edit_heroesbuilds, $P_RUNNER_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $RAPTORS_FARM_INFORMATIONS)
 		Case 'Skale Fins'
@@ -1092,7 +1126,10 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $SKALE_FINS_FARM_INFORMATIONS)
 		Case 'Skrees'
 			GUICtrlSetData($gui_edit_characterbuilds, $SKREES_FARMER_SKILLBAR)
-			GUICtrlSetData($gui_edit_heroesbuilds, $SKREES_RANGER_HERO_SKILLBAR & @CRLF & $SKREES_PARAGON_HERO_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$SKREES_RANGER_HERO_SKILLBAR & @CRLF & _
+				$SKREES_PARAGON_HERO_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $SKREES_FARM_INFORMATIONS)
 		Case 'SoO'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
@@ -1106,37 +1143,48 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $SUNSPEAR_ARMOR_FARM_INFORMATIONS)
 		Case 'Tasca'
-			GUICtrlSetData($gui_edit_characterbuilds, $TASCA_DERVISH_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_MONK_CHESTRUNNER_SKILLBAR & @CRLF & _
-				$TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'D:'	& @TAB & $TASCA_DERVISH_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'A:'	& @TAB & $TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'Me:'	& @TAB & $TASCA_MESMER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'E:'	& @TAB & $TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'Mo:'	& @TAB & $TASCA_MONK_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'N:'	& @TAB & $TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR & @CRLF & _
+				'Rt:'	& @TAB & $TASCA_RITUALIST_CHESTRUNNER_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $TASCA_CHESTRUN_INFORMATIONS)
 		Case 'TunnelsOfTheForsaken'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $TUNNELS_OF_THE_FORSAKEN_FARM_INFORMATIONS)
 		Case 'Underworld'
-			GUICtrlSetData($gui_edit_characterbuilds, 'Specialized builds:' & _
-				@CRLF & $RTA_UNDERWORLD_FARMER_SKILLBAR & @CRLF & $ART_UNDERWORLD_FARMER_SKILLBAR & _
-				@CRLF & 'Or ' & $generalCharacterSetup)
+			GUICtrlSetData($gui_edit_characterbuilds, 'Specialized builds:' & @CRLF & _
+				@TAB & $RTA_UNDERWORLD_FARMER_SKILLBAR & @CRLF & _
+				@TAB & $ART_UNDERWORLD_FARMER_SKILLBAR & @CRLF & _
+				'Or' & $generalCharacterSetup)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_INFORMATIONS)
 		Case 'UnderworldPantheon'
 			GUICtrlSetData($gui_edit_characterbuilds, _
-				'A:' & $UW_PANTHEON_A_SKILLBAR & @CRLF & _
-				'E:' & $UW_PANTHEON_E_SKILLBAR & @CRLF & _
-				'D:' & $UW_PANTHEON_D_SKILLBAR & @CRLF & _
-				'Me:' & $UW_PANTHEON_ME_SKILLBAR & @CRLF & _
-				'Mo:' & $UW_PANTHEON_MO_SKILLBAR & @CRLF & _
-				'N:' & $UW_PANTHEON_N_SKILLBAR & @CRLF & _
-				'P:' & $UW_PANTHEON_P_SKILLBAR & @CRLF & _
-				'Ra:' & $UW_PANTHEON_RA_SKILLBAR & @CRLF & _
-				'RT:' & $UW_PANTHEON_RT_SKILLBAR & @CRLF & _
-				'W:' & $UW_PANTHEON_W_SKILLBAR)
+				'A:'	& @TAB & $UW_PANTHEON_A_SKILLBAR & @CRLF & _
+				'E:'	& @TAB & $UW_PANTHEON_E_SKILLBAR & @CRLF & _
+				'D:'	& @TAB & $UW_PANTHEON_D_SKILLBAR & @CRLF & _
+				'Me:'	& @TAB & $UW_PANTHEON_ME_SKILLBAR & @CRLF & _
+				'Mo:'	& @TAB & $UW_PANTHEON_MO_SKILLBAR & @CRLF & _
+				'N:'	& @TAB & $UW_PANTHEON_N_SKILLBAR & @CRLF & _
+				'P:'	& @TAB & $UW_PANTHEON_P_SKILLBAR & @CRLF & _
+				'Ra:'	& @TAB & $UW_PANTHEON_RA_SKILLBAR & @CRLF & _
+				'RT:'	& @TAB & $UW_PANTHEON_RT_SKILLBAR & @CRLF & _
+				'W:'	& @TAB & $UW_PANTHEON_W_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_PANTHEON_INFORMATIONS)
 		Case 'Vaettirs'
-			GUICtrlSetData($gui_edit_characterbuilds, $AME_VAETTIRS_FARMER_SKILLBAR & @CRLF & _
-				$MEA_VAETTIRS_FARMER_SKILLBAR_FC4 & @CRLF & $MOA_VAETTIRS_FARMER_SKILLBAR & @CRLF & $EME_VAETTIRS_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'A:'	& @TAB & $AME_VAETTIRS_FARMER_SKILLBAR & @CRLF & _
+				'Me:'	& @TAB & $MEA_VAETTIRS_FARMER_SKILLBAR_FC4 & @CRLF & _
+				'Mo:'	& @TAB & $MOA_VAETTIRS_FARMER_SKILLBAR & @CRLF & _
+				'E:'	& @TAB & $EME_VAETTIRS_FARMER_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $VAETTIRS_FARM_INFORMATIONS)
 		Case 'Vanguard'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
@@ -1153,7 +1201,8 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $ZODIAC_HERO_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $ZODIAC_FARM_INFORMATIONS)
 		Case 'Manual Mode'
-			GUICtrlSetData($gui_label_farminformations, 'This mode allows you to use BotsHub to:' & @CRLF & _
+			GUICtrlSetData($gui_label_farminformations, _
+				'This mode allows you to use BotsHub to:' & @CRLF & _
 				'- open Xunlai Storage' & @CRLF & _
 				'- run custom AutoIt instructions from Manual Mode input box in options tab' & @CRLF & _
 				'- enable/disabled rendering without running anything special' & @CRLF & _

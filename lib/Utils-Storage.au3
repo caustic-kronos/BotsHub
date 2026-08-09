@@ -2900,7 +2900,7 @@ Func AutomaticTonicConsumer()
 		Info('Using tonic at bag ' & $itemPosition[0] & ', slot ' & $itemPosition[1])
 		Local $item = GetItemBySlot($itemPosition[0], $itemPosition[1])
 		Local $quantity = DllStructGetData($item, 'Quantity')
-		For $i = 1 To Min(10000 - GetPartyTitle(), $quantity)
+		For $i = 1 To _Min(10000 - GetPartyTitle(), $quantity)
 			DllStructGetData($item, 'Quantity')
 			If UseItemBySlot($itemPosition[0], $itemPosition[1]) == False Then ExitLoop
 			Sleep(6000)
