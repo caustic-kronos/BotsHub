@@ -269,22 +269,26 @@ Func EnterFissureOfWoe()
 					MoveTo(-4650, 18700)
 					MoveTo(-3600, 18700)
 					MoveTo(-3100, 18000)
-					MoveTo(-2500, 18700)
+					MoveTo(-2400, 18750)
 				EndIf
-				$npcCoordinates[0] = -2500
-				$npcCoordinates[1] = 18700
+				$npcCoordinates[0] = -2400
+				$npcCoordinates[1] = 18750
 			Case $ID_CHANTRY_OF_SECRETS
-				MoveTo(-9870, 990)
-				If GetDistanceToPoint(GetMyAgent(), -9870, 990) > $RANGE_ADJACENT Then
+				MoveTo(-9900, 1000)
+				If GetDistanceToPoint(GetMyAgent(), -9900, 1000) > $RANGE_ADJACENT Then
 					MoveTo(-10400, 770)
-					MoveTo(-9870, 990)
+					MoveTo(-9900, 1000)
 				EndIf
-				$npcCoordinates[0] = -9870
-				$npcCoordinates[1] = 990
+				$npcCoordinates[0] = -9900
+				$npcCoordinates[1] = 1000
 		EndSwitch
-		SendChat('/kneel', '')
-		PingSleep(3000)
-		GoToNPC(GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1]))
+		Local $championOfBalthazar = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
+		If $championOfBalthazar == Null Or GetDistanceToPoint($championOfBalthazar, $npcCoordinates[0], $npcCoordinates[1]) > $RANGE_ADJACENT Then
+			SendChat('/kneel', '')
+			PingSleep(3000)
+			$championOfBalthazar = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
+		EndIf
+		GoToNPC($championOfBalthazar)
 		PingSleep(750)
 		Dialog(0x85)
 		PingSleep(750)
@@ -318,9 +322,9 @@ Func EnterUnderworld()
 		Switch GetMapID()
 			Case $ID_TEMPLE_OF_THE_AGES
 				MoveTo(-4170, 19759)
-				MoveTo(-4124, 19829)
-				$npcCoordinates[0] = -4124
-				$npcCoordinates[1] = 19829
+				MoveTo(-4100, 19800)
+				$npcCoordinates[0] = -4100
+				$npcCoordinates[1] = 19800
 			Case $ID_CHANTRY_OF_SECRETS
 				MoveTo(-9000, 3900)
 				If GetDistanceToPoint(GetMyAgent(), -9000, 3900) > $RANGE_ADJACENT Then
@@ -330,9 +334,13 @@ Func EnterUnderworld()
 				$npcCoordinates[0] = -9000
 				$npcCoordinates[1] = 3900
 		EndSwitch
-		SendChat('/kneel', '')
-		PingSleep(3000)
-		GoToNPC(GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1]))
+		Local $voiceOfGrenth = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
+		If $voiceOfGrenth == Null Or GetDistanceToPoint($voiceOfGrenth, $npcCoordinates[0], $npcCoordinates[1]) > $RANGE_ADJACENT Then
+			SendChat('/kneel', '')
+			PingSleep(3000)
+			$voiceOfGrenth = GetNearestNPCToCoords($npcCoordinates[0], $npcCoordinates[1])
+		EndIf
+		GoToNPC($voiceOfGrenth)
 		PingSleep(750)
 		Dialog(0x85)
 		PingSleep(750)

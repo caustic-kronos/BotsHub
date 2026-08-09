@@ -1122,7 +1122,17 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_edit_heroesbuilds, $generalHeroesSetup)
 			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_INFORMATIONS)
 		Case 'UnderworldPantheon'
-			GUICtrlSetData($gui_edit_characterbuilds, $UW_PANTHEON_RT_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'A:' & $UW_PANTHEON_A_SKILLBAR & @CRLF & _
+				'E:' & $UW_PANTHEON_E_SKILLBAR & @CRLF & _
+				'D:' & $UW_PANTHEON_D_SKILLBAR & @CRLF & _
+				'Me:' & $UW_PANTHEON_ME_SKILLBAR & @CRLF & _
+				'Mo:' & $UW_PANTHEON_MO_SKILLBAR & @CRLF & _
+				'N:' & $UW_PANTHEON_N_SKILLBAR & @CRLF & _
+				'P:' & $UW_PANTHEON_P_SKILLBAR & @CRLF & _
+				'Ra:' & $UW_PANTHEON_RA_SKILLBAR & @CRLF & _
+				'RT:' & $UW_PANTHEON_RT_SKILLBAR & @CRLF & _
+				'W:' & $UW_PANTHEON_W_SKILLBAR)
 			GUICtrlSetData($gui_label_farminformations, $UNDERWORLD_FARM_PANTHEON_INFORMATIONS)
 		Case 'Vaettirs'
 			GUICtrlSetData($gui_edit_characterbuilds, $AME_VAETTIRS_FARMER_SKILLBAR & @CRLF & _

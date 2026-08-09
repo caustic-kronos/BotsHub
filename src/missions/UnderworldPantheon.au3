@@ -42,7 +42,7 @@ Global Const $UNDERWORLD_FARM_PANTHEON_INFORMATIONS = 'Only use this during the 
 	& 'For best results run the bot in NM' & @CRLF _
 	& 'HM can workout but it depends where the aatxe spawn,' & @CRLF _
 	& 'it also depends on the aggro of the spirits/aatxe.' & @CRLF _
-	& 'Any class should work.' & @CRLF _
+	& 'Any class should work. Do not use melee weapons.' & @CRLF _
 	& 'Make sure you have a staff and minimum 35 energy' & @CRLF _
 
 Global Const $UW_FARM_PANTHEON_DURATION = 2 * 60 * 1000
@@ -127,7 +127,7 @@ Func ClearTheChamberUnderworldPantheon()
 	UseSkillEx($UW_FARM_VAMPIRISM)
 	Sleep(500)
 	; First 3 spirits have very long duration, so we can wait for energy to be maxxed again
-	While DllStructGetData(GetMyAgent(), 'EnergyPercent') < 0.99
+	While GetEnergy() < 30
 		If CheckStuck('UW Pantheon - Waiting for max energy', $MAX_UW_FARM_PANTHEON_DURATION) == $FAIL Then Return $FAIL
 		Sleep(1000)
 	WEnd
@@ -137,7 +137,7 @@ Func ClearTheChamberUnderworldPantheon()
 	Sleep(250)
 	UseSkillEx($UW_FARM_SHADOWSONG)
 	Sleep(250)
-	MoveTo(1008, 7411)
+	MoveTo(1000, 7500)
 	Sleep(1000)
 	If WaitForExactlyTwoAatxe() == $FAIL Then Return $FAIL
 	; Wait for enough energy to cast painful bond
@@ -147,14 +147,14 @@ Func ClearTheChamberUnderworldPantheon()
 	WEnd
 	Info('Pull started')
 	; walk nearby to pull
-	MoveTo(1000, 8005)
+	MoveTo(1000, 8000)
 	Sleep(250)
 	If IsPlayerDead() Then Return $FAIL
 	Local $bondTargetAgent = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_LONGBOW + 250)
 	UseSkillEx($UW_FARM_PAINFUL_BOND, $bondTargetAgent)
 	Sleep(250)
 	; hide behind spirits
-	MoveTo(1458, 7491)
+	MoveTo(1487, 7632)
 	GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	Local $bondTargetAgent = GetNearestEnemyToAgent(GetMyAgent(), $RANGE_SPELLCAST)
 	UseSkillEx($UW_FARM_ARMOR_OF_UNFEELING)
@@ -202,6 +202,7 @@ Func WaitUntilAatxeDead()
 			$lastSkillCast = TimerInit()
 		EndIf
 
+		Attack(GetNearestEnemyToAgent(GetMyAgent()))
 		Sleep(500)
 		$foesCount = CountFoesInRangeOfAgent(GetMyAgent(), $RANGE_SPELLCAST)
 		If IsPlayerDead() Then Return $FAIL
