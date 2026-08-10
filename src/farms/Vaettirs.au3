@@ -264,7 +264,14 @@ Func RunAcrossBjoraMarches($X, $Y)
 		If IsPlayerDead() Then Return $FAIL
 		$target = GetNearestEnemyToAgent($me)
 
-		If GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then VaettirsCheckBuffs()
+		; The 55 HP Monk must stay protected throughout Bjora. A distant enemy can
+		; remain dangerous after leaving the original 1300-unit detection gate.
+		; Preserve the original gate for every other profession.
+		If $vaettirs_player_profession == $ID_MONK Then
+			VaettirsCheckBuffs()
+		ElseIf GetDistance($me, $target) < 1300 And GetEnergy() > 20 Then
+			VaettirsCheckBuffs()
+		EndIf
 
 		If $vaettirs_player_profession <> $ID_ELEMENTALIST Then
 			$me = GetMyAgent()
@@ -292,9 +299,12 @@ Func VaettirsFarmLoop()
 
 	If IsPlayerDead() Then
 		$result = $FAIL
-		; Max malus - we return to the outpost and rerun
-		If IsPlayerAtMaxMalus() Then
-			Warn('Reached max death malus, restarting the farm setup')
+		; Any death penalty makes the 55 HP Monk effectively a 1 HP build. Return
+		; immediately to town to clear it; other professions retain max-DP recovery.
+		If $vaettirs_player_profession == $ID_MONK Or IsPlayerAtMaxMalus() Then
+			Warn($vaettirs_player_profession == $ID_MONK ? _
+				'Monk died; returning to town to clear death penalty' : _
+				'Reached max death malus, restarting the farm setup')
 			TravelToOutpost($ID_LONGEYES_LEDGE, $district_name)
 			$vaettirs_farm_setup = False
 			Return $FAIL
@@ -318,6 +328,11 @@ EndFunc
 
 ;~ Get Norn blessing only if title is not maxed yet. Assuming that Norn has been already defeated
 Func GetVaettirsNornBlessing()
+	; Norn Hunting Party can randomly grant Strength of the Norn (+100 maximum
+	; Health). That changes this 55 HP build to 155 HP and triples Protective
+	; Spirit's damage cap, so the Monk must never take the blessing.
+	If $vaettirs_player_profession == $ID_MONK Then Return
+
 	Local $nornTitlePoints = GetNornTitle()
 	If $nornTitlePoints < 160000 Then
 		Info('Getting norn title blessing')
@@ -468,13 +483,16 @@ Func VaettirsStayAlive()
 		EndIf
 	Next
 
-	If $foesNear Then VaettirsCheckBuffs()
+	; During balling, Vaettirs can briefly move out of range and return after the
+	; Monk's protection expires. Keep protection active continuously in Jaga.
+	Local $continuousMonkProtection = $vaettirs_player_profession == $ID_MONK And GetMapID() == $ID_JAGA_MORAINE
+	If $continuousMonkProtection Or $foesNear Then VaettirsCheckBuffs()
 	If ($vaettirs_player_profession == $ID_ASSASSIN Or $vaettirs_player_profession == $ID_MESMER) And _
 		($adjacentCount > 20 Or DllStructGetData(GetMyAgent(), 'HealthPercent') < 0.6 Or _
 		($foesSpellRange And GetEffect($ID_SHROUD_OF_DISTRESS) == Null)) Then VaettirsCheckShroudOfDistress()
-	If $foesNear Then VaettirsCheckBuffs()
+	If $foesNear And Not $continuousMonkProtection Then VaettirsCheckBuffs()
 	If $areaCount > 5 And $vaettirs_player_profession <> $ID_MONK Then VaettirsCheckChanneling()
-	If $foesNear Then VaettirsCheckBuffs()
+	If $foesNear And Not $continuousMonkProtection Then VaettirsCheckBuffs()
 EndFunc
 
 
@@ -493,31 +511,128 @@ EndFunc
 Func VaettirsCheckShadowForm()
 	; Caution, monk 55hp needs protective spirit before casting shadow form, otherwise damage reduction will not be applied
 	; Casting protective spirit multiple times may remove damage reduction so protective spirit has to casted only once just before Shadow Form
-	; Mesmers now have tightened timers to improve success rates
-	Local $shouldRecast = False
-	Switch $vaettirs_player_profession
-		Case $ID_MONK
-			$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 18500 And GetEnergy() > 30
-		Case $ID_MESMER
-			$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 18000 And GetEnergy() > 20
-		Case Else
-			$shouldRecast = TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20
-	EndSwitch
-	If $shouldRecast Then
-		UseSkillEx($VAETTIR_DEADLY_PARADOX)
-		If $vaettirs_player_profession == $ID_MONK Then UseSkillEx($VAETTIR_MONK_PROTECTIVE_SPIRIT)
-		While IsPlayerAlive() And Not IsRecharged($VAETTIR_SHADOWFORM)
-			Sleep(50)
-		WEnd
-		UseSkillEx($VAETTIR_SHADOWFORM)
-		If $vaettirs_player_profession <> $ID_MONK Then
-			While IsPlayerAlive() And Not IsRecharged($VAETTIR_WAY_OF_PERFECTION)
-				Sleep(50)
-			WEnd
-			UseSkillEx($VAETTIR_WAY_OF_PERFECTION)
+	If $vaettirs_player_profession == $ID_MONK Then
+		If GetMapID() == $ID_JAGA_MORAINE Then
+			VaettirsMaintainMonkProtection()
+		Else
+			VaettirsMaintainMonkProtectionBjora()
 		EndIf
-		$vaettir_shadowform_timer = TimerInit()
+		Return
 	EndIf
+
+	; Preserve the existing behavior for Assassin and Mesmer builds.
+	Local $shouldRecast = ($vaettirs_player_profession == $ID_MESMER) ? _
+		TimerDiff($vaettir_shadowform_timer) > 18000 And GetEnergy() > 20 : _
+		TimerDiff($vaettir_shadowform_timer) > 19000 And GetEnergy() > 20
+	If Not $shouldRecast Then Return
+
+	UseSkillEx($VAETTIR_DEADLY_PARADOX)
+	While IsPlayerAlive() And Not IsRecharged($VAETTIR_SHADOWFORM)
+		Sleep(50)
+	WEnd
+	UseSkillEx($VAETTIR_SHADOWFORM)
+	While IsPlayerAlive() And Not IsRecharged($VAETTIR_WAY_OF_PERFECTION)
+		Sleep(50)
+	WEnd
+	UseSkillEx($VAETTIR_WAY_OF_PERFECTION)
+	$vaettir_shadowform_timer = TimerInit()
+EndFunc
+
+
+;~ Keep the Bjora protection sequence separate from the Jaga timing changes.
+Func VaettirsMaintainMonkProtectionBjora()
+	If TimerDiff($vaettir_shadowform_timer) <= 18500 Or GetEnergy() <= 30 Then Return
+
+	UseSkillEx($VAETTIR_DEADLY_PARADOX)
+	UseSkillEx($VAETTIR_MONK_PROTECTIVE_SPIRIT)
+	While IsPlayerAlive() And Not IsRecharged($VAETTIR_SHADOWFORM)
+		Sleep(50)
+	WEnd
+	UseSkillEx($VAETTIR_SHADOWFORM)
+	$vaettir_shadowform_timer = TimerInit()
+EndFunc
+
+
+;~ The 55 HP Monk depends on Protective Spirit being applied immediately before
+;~ Shadow Form. Deadly Paradox is a stance, so it can be armed earlier without
+;~ changing that enchantment order.
+Func VaettirsMaintainMonkProtection()
+	If GetMapID() <> $ID_JAGA_MORAINE Then Return
+
+	Local $ping = GetPing()
+	Local $deadlyParadoxTriggerAge = 16500
+	Local $protectiveSpiritTriggerAge = 18400 - (2 * $ping)
+	If $protectiveSpiritTriggerAge < 17000 Then $protectiveSpiritTriggerAge = 17000
+	If $protectiveSpiritTriggerAge > 17900 Then $protectiveSpiritTriggerAge = 17900
+	If TimerDiff($vaettir_shadowform_timer) <= $deadlyParadoxTriggerAge Or GetEnergy() <= 30 Then Return
+
+	; Submit each skill once and confirm that the client accepted it. Resending can
+	; replace a queued command and cancel the cast that protects the Monk.
+	If Not VaettirsUseSkillOnceConfirmed($VAETTIR_DEADLY_PARADOX) Then Return
+	If Not VaettirsWaitForEffect($ID_DEADLY_PARADOX, 1, 1500) Then Return
+
+	While IsPlayerAlive() And TimerDiff($vaettir_shadowform_timer) < $protectiveSpiritTriggerAge
+		Sleep(25)
+	WEnd
+	If Not IsPlayerAlive() Then Return
+	If Not VaettirsUseSkillOnceConfirmed($VAETTIR_MONK_PROTECTIVE_SPIRIT) Then Return
+
+	Local $shadowFormReadyTimer = TimerInit()
+	While IsPlayerAlive() And Not IsRecharged($VAETTIR_SHADOWFORM)
+		Sleep(25)
+		If TimerDiff($shadowFormReadyTimer) > 4000 Then Return
+	WEnd
+
+	; The local recharge timestamp can update one frame before the server accepts
+	; the skill. Give that boundary a small ping-adjusted settling period.
+	Local $shadowFormSettleDelay = GetPing() + 50
+	If $shadowFormSettleDelay < 100 Then $shadowFormSettleDelay = 100
+	If $shadowFormSettleDelay > 300 Then $shadowFormSettleDelay = 300
+	Sleep($shadowFormSettleDelay)
+	If Not IsPlayerAlive() Then Return
+
+	Local $shadowFormBefore = GetEffectTimeRemaining($ID_SHADOW_FORM)
+	If Not VaettirsUseSkillOnceConfirmed($VAETTIR_SHADOWFORM) Then Return
+	$vaettir_shadowform_timer = TimerInit()
+
+	; GWA2 can expose the old effect timestamp after a successful recast. Waiting
+	; for the refresh keeps the transaction isolated without treating stale effect
+	; data as a failure.
+	VaettirsWaitForEffectRefresh($ID_SHADOW_FORM, $shadowFormBefore, 4000)
+EndFunc
+
+
+;~ Enqueue once, then confirm acceptance from the local recharge state.
+Func VaettirsUseSkillOnceConfirmed($skillSlot, $target = Null, $timeout = 4000)
+	If IsPlayerDead() Or Not IsRecharged($skillSlot) Then Return False
+
+	UseSkill($skillSlot, $target)
+	Local $confirmationTimer = TimerInit()
+	While IsPlayerAlive() And IsRecharged($skillSlot)
+		Sleep(25)
+		If TimerDiff($confirmationTimer) > $timeout Then Return False
+	WEnd
+	Return IsPlayerAlive() And Not IsRecharged($skillSlot)
+EndFunc
+
+
+Func VaettirsWaitForEffect($effectID, $minimumRemaining, $timeout)
+	Local $timer = TimerInit()
+	While IsPlayerAlive() And TimerDiff($timer) <= $timeout
+		If GetEffectTimeRemaining($effectID) >= $minimumRemaining Then Return True
+		Sleep(25)
+	WEnd
+	Return False
+EndFunc
+
+
+Func VaettirsWaitForEffectRefresh($effectID, $previousRemaining, $timeout)
+	Local $timer = TimerInit()
+	While IsPlayerAlive() And TimerDiff($timer) <= $timeout
+		If GetEffectTimeRemaining($effectID) > ($previousRemaining + 5000) Then Return True
+		Sleep(25)
+	WEnd
+	Return False
 EndFunc
 
 
