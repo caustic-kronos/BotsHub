@@ -1366,17 +1366,14 @@ Func FanFlagHeroes($range = 250)
 	Local $heroCount = GetHeroCount()
 	; Change your hero locations here
 	Switch $heroCount
-		Case 3
-			; right, left, behind
-			Local $heroFlagPositions[] = [1, 2, 3]
-		Case 5
+		Case 1 To 5
 			; right, left, behind, behind right, behind left
-			Local $heroFlagPositions[] = [1, 2, 3, 4, 5]
-		Case 7
+			Local $heroFlagPositions = [1, 2, 3, 4, 5]
+		Case 6 To 7
 			; right, left, behind, behind right, behind left, way behind right, way behind left
-			Local $heroFlagPositions[] = [1, 2, 6, 3, 4, 5, 7]
+			Local $heroFlagPositions = [1, 2, 6, 3, 4, 5, 7]
 		Case Else
-			Local $heroFlagPositions[0] = []
+			Local $heroFlagPositions = []
 	EndSwitch
 
 	Local $me = GetMyAgent()
@@ -1409,7 +1406,6 @@ Func FanFlagHeroes($range = 250)
 	If $heroCount > 5 Then CommandHero($heroFlagPositions[5], $x + ($rotationY / 2 - 2 * $rotationX) * $distance, $y - (2 * $rotationY + $rotationX / 2) * $distance)
 	; To the left, way behind
 	If $heroCount > 6 Then CommandHero($heroFlagPositions[6], $x - ($rotationY / 2 + 2 * $rotationX) * $distance, $y + ($rotationX / 2 - 2 * $rotationY) * $distance)
-
 EndFunc
 #EndRegion Map Clearing Utilities
 #EndRegion Advanced actions

@@ -246,6 +246,7 @@ Func TheTempleOfWar()
 	Local $timer = TimerInit()
 	While Not IsQuestReward($ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR) And TimerDiff($timer) < 480000
 		KillFoesInArea()
+		Move(1850, -200)
 		Sleep(3000)
 		If Not IsPlayerOrPartyAlive() Then Return $FAIL
 	WEnd
@@ -264,8 +265,13 @@ Func TheSpiderCaveAndFissureShore()
 	Info('Going to Nimros')
 	MoveAggroAndKill(1800, -3700, '1')
 	MoveAggroAndKill(1800, -6900, '2')
-	Info('Sleeping for 30s')
-	Sleep(30000)
+	Info('Holding position for 30s')
+	For $i = 1 To 10
+		KillFoesInArea()
+		Move(1800, -6900)
+		Sleep(3000)
+		If Not IsPlayerOrPartyAlive() Then Return $FAIL
+	Next
 	MoveAggroAndKill(2800, -9700, '3')
 	MoveAggroAndKill(1800, -12000, '4')
 	MoveAggroAndKill(1100, -13500, '5')
