@@ -271,9 +271,9 @@ Global Const $GADGETID_KOURNAN_CHEST				= 6064
 ; #################### Chests that do not need a key ####################
 ;~ Global Const $GADGETID_MAZS_CHEST				=
 ;~ Global Const $GADGETID_SORROWS_FURNACE_CHEST		=
-;~ Global Const $GADGETID_FOW_QUEST_CHEST			=
+Global Const $GADGETID_FOW_QUEST_CHEST				= 2
 ;~ Global Const $GADGETID_UW_QUEST_CHEST			=
-;~ Global Const $GADGETID_CHEST_OF_WOE				=
+Global Const $GADGETID_CHEST_OF_WOE					= 9286
 ;~ Global Const $GADGETID_UNDERWORLD_WOE			=
 
 ;~ Global Const $GADGETID_URGOZ_CHEST				=

@@ -1740,38 +1740,39 @@ EndFunc
 
 ;~ Manage excess faction points by either donating them, buying materials or elite zone scrolls
 Func ManageFactionPointsFarm($factionName, $getFactionFunction, $getMaxFactionFunction, $mapForFactionExchange, $npcX, $npcY)
-	If $getFactionFunction() > ($getMaxFactionFunction() - 25000) Then
-		TravelToOutpost($mapForFactionExchange, $district_name)
-		RandomSleep(200)
-		GoNearestNPCToCoords($npcX, $npcY)
-		If $run_options_cache['run.donate_faction_points'] Then
-			Info('Donating ' & $factionName & ' faction points')
-			While $getFactionFunction() >= 5000
-				DonateFaction($factionName)
-				RandomSleep(500)
-			WEnd
-		ElseIf $run_options_cache['run.buy_faction_resources'] Then
-			Info('Converting ' & $factionName & ' faction points into materials')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfChunks = Floor($getFactionFunction() / 5000)
-			; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
-			Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
-			Dialog($dialogID)
-			RandomSleep(550)
-		ElseIf $run_options_cache['run.buy_faction_scrolls'] Then
-			Info('Converting ' & $factionName & ' faction points into Passage Scrolls')
-			Dialog(0x83)
-			RandomSleep(550)
-			Local $numberOfScrolls = Floor($getFactionFunction() / 1000)
-			; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
-			Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
-			Dialog($dialogID)
-			RandomSleep(550)
-		EndIf
-		Return True
+	Local $maxFactionPoints = $getMaxFactionFunction()
+	Local $currentFactionPoints = $getFactionFunction()
+	If $currentFactionPoints < 5000 Or $currentFactionPoints < ($maxFactionPoints - 25000) Then Return False
+
+	TravelToOutpost($mapForFactionExchange, $district_name)
+	RandomSleep(200)
+	GoNearestNPCToCoords($npcX, $npcY)
+	If $run_options_cache['run.donate_faction_points'] Then
+		Info('Donating ' & $factionName & ' faction points')
+		While $getFactionFunction() >= 5000
+			DonateFaction($factionName)
+			RandomSleep(500)
+		WEnd
+	ElseIf $run_options_cache['run.buy_faction_resources'] Then
+		Info('Converting ' & $factionName & ' faction points into materials')
+		Dialog(0x83)
+		RandomSleep(550)
+		Local $numberOfChunks = Floor($getFactionFunction() / 5000)
+		; number of chunks = bits from 9th position (binary, not hex), e.g. 0x800101 = 1 chunk, 0x800201 = 2 chunks
+		Local $dialogID = 0x800001 + (0x100 * $numberOfChunks)
+		Dialog($dialogID)
+		RandomSleep(550)
+	ElseIf $run_options_cache['run.buy_faction_scrolls'] Then
+		Info('Converting ' & $factionName & ' faction points into Passage Scrolls')
+		Dialog(0x83)
+		RandomSleep(550)
+		Local $numberOfScrolls = Floor($getFactionFunction() / 1000)
+		; number of scrolls = bits from 9th position (binary, not hex), e.g. 0x800102 = 1 scroll, 0x800202 = 2 scrolls, 0x800A02 = 10 scrolls
+		Local $dialogID = 0x800002 + (0x100 * $numberOfScrolls)
+		Dialog($dialogID)
+		RandomSleep(550)
 	EndIf
-	Return False
+	Return True
 EndFunc
 #EndRegion Faction
 
