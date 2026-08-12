@@ -1050,17 +1050,17 @@
 		"Armor upgrades": {
 			"All": {
 				"Insignias": {
-					"Survivor": true,
-					"Radiant": true,
-					"Stalwart": true,
-					"Brawlers": true,
+					"Survivor": false,
+					"Radiant": false,
+					"Stalwart": false,
+					"Brawlers": false,
 					"Blessed": false,
 					"Heralds": false,
 					"Sentrys": false
 				},
 				"Runes": {
 					"Minor Vigor": true,
-					"Vitae": true,
+					"Vitae": false,
 					"Attunement": false,
 					"Major Vigor": true,
 					"Recovery": false,
@@ -1079,7 +1079,7 @@
 				},
 				"Runes": {
 					"Minor Critical Strikes": true,
-					"Minor Dagger Mastery": true,
+					"Minor Dagger Mastery": false,
 					"Minor Deadly Arts": false,
 					"Minor Shadow Arts": false,
 					"Major Critical Strikes": false,
@@ -1125,7 +1125,7 @@
 					"Minor Earth Magic": false,
 					"Minor Energy Storage": false,
 					"Minor Water Magic": false,
-					"Minor Fire Magic": true,
+					"Minor Fire Magic": false,
 					"Major Air Magic": false,
 					"Major Earth Magic": false,
 					"Major Energy Storage": false,
@@ -1146,7 +1146,7 @@
 				},
 				"Runes": {
 					"Minor Domination Magic": false,
-					"Minor Fast Casting": true,
+					"Minor Fast Casting": false,
 					"Minor Illusion Magic": false,
 					"Minor Inspiration Magic": true,
 					"Major Domination Magic": false,
@@ -1166,10 +1166,10 @@
 					"Anchorites": true
 				},
 				"Runes": {
-					"Minor Divine Favor": true,
+					"Minor Divine Favor": false,
 					"Minor Healing Prayers": false,
 					"Minor Protection Prayers": false,
-					"Minor Smiting Prayers": true,
+					"Minor Smiting Prayers": false,
 					"Major Healing Prayers": false,
 					"Major Protection Prayers": false,
 					"Major Smiting Prayers": false,
@@ -1177,7 +1177,7 @@
 					"Superior Divine Favor": false,
 					"Superior Healing Prayers": false,
 					"Superior Protection Prayers": false,
-					"Superior Smiting Prayers": true
+					"Superior Smiting Prayers": false
 				}
 			},
 			"Necromancer": {
@@ -1191,13 +1191,13 @@
 				},
 				"Runes": {
 					"Minor Blood Magic": true,
-					"Minor Curses": true,
+					"Minor Curses": false,
 					"Minor Death Magic": false,
-					"Minor Soul Reaping": true,
+					"Minor Soul Reaping": false,
 					"Major Blood Magic": false,
 					"Major Curses": false,
 					"Major Death Magic": false,
-					"Major Soul Reaping": true,
+					"Major Soul Reaping": false,
 					"Superior Blood Magic": false,
 					"Superior Curses": false,
 					"Superior Death Magic": false,
@@ -1212,7 +1212,7 @@
 					"Minor Command": false,
 					"Minor Leadership": true,
 					"Minor Motivation": false,
-					"Minor Spear Mastery": true,
+					"Minor Spear Mastery": false,
 					"Major Command": false,
 					"Major Leadership": false,
 					"Major Motivation": false,
@@ -1230,7 +1230,7 @@
 					"Stormbound": false,
 					"Scouts": false,
 					"Earthbound": false,
-					"Beastmasters": false
+					"Beastmasters": true
 				},
 				"Runes": {
 					"Minor Beast Mastery": false,
@@ -1250,8 +1250,8 @@
 			"Ritualist": {
 				"Insignias": {
 					"Shamans": true,
-					"Ghost Forge": true,
-					"Mystics": true
+					"Ghost Forge": false,
+					"Mystics": false
 				},
 				"Runes": {
 					"Minor Channeling Magic": true,
@@ -1261,9 +1261,9 @@
 					"Major Channeling Magic": false,
 					"Major Communing": false,
 					"Major Restoration Magic": false,
-					"Major Spawning Power": true,
+					"Major Spawning Power": false,
 					"Superior Channeling Magic": false,
-					"Superior Communing": true,
+					"Superior Communing": false,
 					"Superior Restoration Magic": false,
 					"Superior Spawning Power": true
 				}
@@ -1279,15 +1279,15 @@
 				"Runes": {
 					"Minor Absorption": false,
 					"Minor Axe Mastery": false,
-					"Minor Hammer Mastery": true,
-					"Minor Strength": true,
-					"Minor Swordsmanship": false,
-					"Minor Tactics": true,
+					"Minor Hammer Mastery": false,
+					"Minor Strength": false,
+					"Minor Swordsmanship": true,
+					"Minor Tactics": false,
 					"Major Absorption": false,
 					"Major Axe Mastery": false,
 					"Major Hammer Mastery": false,
 					"Major Strength": false,
-					"Major Swordsmanship": true,
+					"Major Swordsmanship": false,
 					"Major Tactics": false,
 					"Superior Axe Mastery": false,
 					"Superior Hammer Mastery": false,
@@ -1640,7 +1640,7 @@
 					"Of The Mesmer": false,
 					"Of The Elementalist": false,
 					"Of The Monk": false,
-					"Of The Ritualist": false,
+					"Of The Ritualist": true,
 					"Of The Assassin": false,
 					"Of The Paragon": false,
 					"Of The Dervish": false,
@@ -1716,7 +1716,7 @@
 					"Of The Mesmer": false,
 					"Of The Elementalist": false,
 					"Of The Monk": false,
-					"Of The Ritualist": false,
+					"Of The Ritualist": true,
 					"Of The Assassin": false,
 					"Of The Paragon": false,
 					"Of The Dervish": false
