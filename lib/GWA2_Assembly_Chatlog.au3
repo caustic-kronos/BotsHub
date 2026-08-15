@@ -70,7 +70,7 @@ Func AssemblerCreateChatLog()
 	_('mov dword[ChatMessagePtr],edx')
 	; Copy message bytes into our owned buffer before incrementing the counter.
 	; This ensures the data is in BotsHub-controlled memory by the time the AutoIt
-	; poller detects the counter change — GW source buffer may be freed within ~150ms.
+	; poller detects the counter change - GW source buffer may be freed within ~150ms.
 	_('mov esi,dword[ebp+8]')
 	_('mov edi,ChatMessageData')
 	_('mov ecx,128 -> B980000000')
@@ -217,7 +217,7 @@ Func ChatLogPollCallback()
 	If $counter = $chat_log_last_whisper_counter Then Return
 	$chat_log_last_whisper_counter = $counter
 
-	; Read from WhisperData — isolated to channel 14 only, copied at hook-fire time.
+	; Read from WhisperData - isolated to channel 14 only, copied at hook-fire time.
 	; Zone transition messages lack the whisper separator 'Ĉ' and are filtered here.
 	Local $message = MemoryRead(GetProcessHandle(), $whisper_data_address, 'wchar[256]')
 	Local $separatorPos = StringInStr($message, 'Ĉ')

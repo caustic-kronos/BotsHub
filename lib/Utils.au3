@@ -2903,7 +2903,7 @@ EndFunc
 
 
 ;~ Checks if a point is within a polygon defined by an array
-;~ Point-in-Polygon algorithm — Ray Casting Method - pretty cool stuff !
+;~ Point-in-Polygon algorithm - Ray Casting Method - pretty cool stuff !
 Func GetIsPointInPolygon($areaCoordinates, $X = 0, $Y = 0)
 	Local $edges = UBound($areaCoordinates)
 	Local $oddNodes = False

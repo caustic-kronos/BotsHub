@@ -192,7 +192,7 @@ Func BotsHubMain()
 		ApplyConfigToGUI()
 		FillConfigurationCombo()
 		GUISetState(@SW_SHOWNORMAL)
-		Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION)
+		Info('GW Bot Hub ' & $GW_BOT_HUB_VERSION & ' - AutoIt ' & @AutoItVersion)
 		; Authentication
 		ScanAndUpdateGameClients()
 		RefreshCharactersComboBox()

@@ -150,6 +150,12 @@ Too many possible causes. Please provide:
 </details>
 
 <details>
+<summary><strong>Q: The bot is stuck talking to an NPC and can't enter zone/mission.</strong></summary>
+
+This sometimes happens - abandon the related quest and restart the bot, this will fix it.
+</details>
+
+<details>
 <summary><strong>Q: The game crashes or disconnects.</strong></summary>
 
 Some degree of crash or disconnect is normal and happens to all bots.
@@ -234,7 +240,7 @@ Status → ✅ Done | 🔄 In progress | 🛠️ Broken | 🕓 Planned | 💭 Wi
 ---
 
 ## License
-Apache License 2.0 ⚖️ — see the [LICENSE](LICENSE) file
+Apache License 2.0 ⚖️ - see the [LICENSE](LICENSE) file
 
 ---
 

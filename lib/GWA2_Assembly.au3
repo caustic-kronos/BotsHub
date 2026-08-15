@@ -2004,7 +2004,7 @@ Func AssemblerCreateAgentCommands()
 	; bytes, so partial structs are fully usable and no live agent is ever skipped.
 	;
 	; Check: (ESI & 0xFFF) + 0x1C0 > 0x1000 (struct offset + size overflows page)
-	; ECX is freely available here — it is overwritten below.
+	; ECX is freely available here - it is overwritten below.
 	_('mov ecx,esi')						; ecx = agent struct pointer
 	_('and ecx,FFF')						; ecx = byte offset within 4KB page
 	_('add ecx,1C0 -> 81C1C0010000')		; ecx += 448 (struct size)

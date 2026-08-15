@@ -325,7 +325,7 @@ Func CastCombatShouts($target = Null)
 	Local $skillbar = GetSkillbar()
 	Local $skilltimer = GetSkillTimer()
 
-	; Priority 2: Aggressive Refrain — only if not already active, only in combat
+	; Priority 2: Aggressive Refrain - only if not already active, only in combat
 	If $BUILD_PW_AGGRESSIVE_REFRAIN > 0 And GetEffect($ID_AGGRESSIVE_REFRAIN) == Null And $energy >= 15 And IsSkillRecharged($skillbar, $BUILD_PW_AGGRESSIVE_REFRAIN, $skilltimer) Then Return UseSkillEx($BUILD_PW_AGGRESSIVE_REFRAIN)
 
 	; Priority 3: Stand Your Ground!

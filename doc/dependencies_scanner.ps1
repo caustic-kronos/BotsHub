@@ -116,7 +116,7 @@ foreach ($file in $files) {
 }
 
 Log ''
-Log "Pass 1 done — $($varDefs.Count) unique global var(s), $($funcDefs.Count) unique func(s) across all files." 'Green'
+Log "Pass 1 done - $($varDefs.Count) unique global var(s), $($funcDefs.Count) unique func(s) across all files." 'Green'
 
 if ($funcDefs.Count -eq 0 -and $varDefs.Count -eq 0) {
     Log 'No definitions found – check path or file contents.' 'Red'
@@ -146,7 +146,7 @@ Log "  Using global-scan + hashtable strategy ($($varDefs.Count) vars, $($funcDe
 $deps = @{}
 foreach ($file in $files) { $deps[$file.FullName] = @{} }
 
-# Inline helper — records a dependency hit without duplicates
+# Inline helper - records a dependency hit without duplicates
 function RecordDep($depTable, $depFile, $kind, $name) {
     if (-not $depTable.ContainsKey($depFile)) {
         $depTable[$depFile] = @{

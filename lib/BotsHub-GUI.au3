@@ -964,7 +964,10 @@ Func UpdateFarmDescription($farm)
 			)
 			GUICtrlSetData($gui_label_farminformations, $BOREAL_CHESTRUN_INFORMATIONS)
 		Case 'CoF'
-			GUICtrlSetData($gui_edit_characterbuilds, $D_COF_SKILLBAR)
+			GUICtrlSetData($gui_edit_characterbuilds, _
+				'D:'	& @TAB & $D_COF_SKILLBAR & @CRLF & _
+				'A:'	& @TAB & $A_COF_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $COF_FARM_INFORMATIONS)
 		Case 'Corsairs'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
