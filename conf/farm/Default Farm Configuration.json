@@ -7,6 +7,7 @@
 	"run": {
 		"loop_mode": true,
 		"hard_mode": true,
+		"share_memory": false,
 		"farm_materials_mid_run": false,
 		"consume_consumables": true,
 		"use_consets": false,

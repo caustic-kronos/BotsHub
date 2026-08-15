@@ -134,7 +134,7 @@ Global $gui_group_titles, _
 		$gui_label_vanguardtitle_text, $gui_label_vanguardtitle_value, $gui_label_kurzicktitle_text, $gui_label_kurzicktitle_value, $gui_label_luxontitle_text, $gui_label_luxontitle_value, _
 		$gui_label_lightbringertitle_text, $gui_label_lightbringertitle_value, $gui_label_sunspeartitle_text, $gui_label_sunspeartitle_value
 Global $gui_group_runoptions, _
-		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_emergencytravel, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_useconsets, $gui_checkbox_usescrolls
+		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_emergencytravel, $gui_checkbox_sharememory, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_useconsets, $gui_checkbox_usescrolls
 Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_salvageintocomponents, $gui_checkbox_farmmaterialsmidrun, _
 		$gui_label_salvagekits, $gui_combo_salvagekits, $gui_label_identificationkits, $gui_combo_identificationkits
 Global $gui_group_factionoptions, $gui_label_faction, $gui_radiobutton_donatepoints, $gui_radiobutton_buyfactionresources, $gui_radiobutton_buyfactionscrolls
@@ -312,8 +312,9 @@ Func CreateBotsHubGUI()
 
 	$gui_checkbox_emergencytravel = GUICtrlCreateCheckbox('Emergency Travel', 180, 60)
 	GUICtrlSetState($gui_checkbox_emergencytravel, $GUI_DISABLE)
-	GUICtrlCreateGroup('', -99, -99, 1, 1)
+	$gui_checkbox_sharememory = GUICtrlCreateCheckbox('Share Memory', 180, 85)
 
+	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 235)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
 	$gui_checkbox_salvageintocomponents = GUICtrlCreateCheckbox('Salvage into components', 31, 255)
@@ -370,6 +371,7 @@ Func CreateBotsHubGUI()
 
 	GUICtrlSetOnEvent($gui_checkbox_loopruns, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_hardmode, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_checkbox_sharememory, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_farmmaterialsmidrun, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsumables, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsets, 'GuiOptionsHandler')
@@ -723,6 +725,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.loop_mode'] = GUICtrlRead($gui_checkbox_loopruns) == $GUI_CHECKED
 		Case $gui_checkbox_hardmode
 			$run_options_cache['run.hard_mode'] = GUICtrlRead($gui_checkbox_hardmode) == $GUI_CHECKED
+		Case $gui_checkbox_sharememory
+			$run_options_cache['run.share_memory'] = GUICtrlRead($gui_checkbox_sharememory) == $GUI_CHECKED
 		Case $gui_checkbox_farmmaterialsmidrun
 			$run_options_cache['run.farm_materials_mid_run'] = GUICtrlRead($gui_checkbox_farmmaterialsmidrun) == $GUI_CHECKED
 		Case $gui_checkbox_useconsumables
@@ -1670,6 +1674,7 @@ Func ApplyConfigToGUI()
 	RefreshRenderingButton()
 	GUICtrlSetState($gui_checkbox_loopruns, $run_options_cache['run.loop_mode'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_hardmode, $run_options_cache['run.hard_mode'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_sharememory, $run_options_cache['run.share_memory'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_farmmaterialsmidrun, $run_options_cache['run.farm_materials_mid_run'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsumables, $run_options_cache['run.consume_consumables'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsets, $run_options_cache['run.use_consets'] ? $GUI_CHECKED : $GUI_UNCHECKED)

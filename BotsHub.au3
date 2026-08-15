@@ -226,7 +226,6 @@ Func BotsHubMain()
 		Authentification($character_name)
 		$runtime_status = 'RUNNING'
 
-
 		If $slave_index >= 0 Then
 			If OpenMasterSlaveSharedMemory($slave_index) Then
 				AdlibRegister('UpdateHeartbeat', 5000)
@@ -435,6 +434,7 @@ Func ReadConfigFromJson($jsonString)
 	; TODO/FIXME: simplify by iterating over JSON leaves
 	$run_options_cache['run.loop_mode'] = _JSON_Get($jsonObject, 'run.loop_mode')
 	$run_options_cache['run.hard_mode'] = _JSON_Get($jsonObject, 'run.hard_mode')
+	$run_options_cache['run.share_memory'] = _JSON_Get($jsonObject, 'run.share_memory')
 	$run_options_cache['run.farm_materials_mid_run'] = _JSON_Get($jsonObject, 'run.farm_materials_mid_run')
 	$run_options_cache['run.consume_consumables'] = _JSON_Get($jsonObject, 'run.consume_consumables')
 	$run_options_cache['run.use_consets'] = _JSON_Get($jsonObject, 'run.use_consets')
@@ -485,6 +485,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'main.loot_configuration', $loot_configuration)
 	_JSON_addChangeDelete($jsonObject, 'run.loop_mode', $run_options_cache['run.loop_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
+	_JSON_addChangeDelete($jsonObject, 'run.share_memory', $run_options_cache['run.share_memory'])
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
 	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', $run_options_cache['run.consume_consumables'])
 	_JSON_addChangeDelete($jsonObject, 'run.use_consets', $run_options_cache['run.use_consets'])
@@ -656,6 +657,11 @@ Func GeneralFarmSetup()
 	If $character_name <> '' Then
 		If $run_options_cache['run.go_offline'] Then SetPlayerStatus(0)
 		If $run_options_cache['run.flash_whisper'] Then EnableWhisperFlash()
+	EndIf
+	If $run_options_cache['run.share_memory'] And $peerIndex == -1 Then
+		Local $freePeerIndex = OpenPeersSharedMemoryBlocks()
+		Info('First free peer index: ' & $freePeerIndex)
+		If CreatePeerSharedMemoryBlock($freePeerIndex) Then AdlibRegister('ShareTeamEffects', $HR_INTERVAL)
 	EndIf
 
 	SetupPlayerBuildOverrides()
