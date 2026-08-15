@@ -41,7 +41,7 @@ Func NexusChallengeFarm()
 	Local $result = NexusChallenge()
 	AdlibUnRegister('TrackPartyStatus')
 	; wait 15 seconds to ensure end mission timer of 15 seconds has elapsed
-	Sleep(15000)
+	;Sleep(15000)
 	Info('Returning back to the outpost')
 	ResignAndReturnToOutpost($ID_THE_SHADOW_NEXUS, true)
 	Return $result
@@ -98,8 +98,8 @@ Func NexusChallenge()
 		[-55,		3297,	'Group 2'], _
 		[-1759,		993,	'Group 3'], _
 		[3834,		2759,	'Group 4'], _
-		[2479,		-1967,	'Group 5'], _
 		[1572,		-616,	'Group 6'], _
+		[2479,		-1967,	'Group 5'], _
 		[668,		-3516,	'Group 7'], _
 		[-3723,		-3662,	'Group 8'], _
 		[-3809,		880,	'Group 9'], _
@@ -108,8 +108,8 @@ Func NexusChallenge()
 		[-55,		3297,	'Group 2'], _
 		[-1759,		993,	'Group 3'], _
 		[3834,		2759,	'Group 4'], _
-		[2479,		-1967,	'Group 5'], _
 		[1572,		-616,	'Group 6'], _
+		[2479,		-1967,	'Group 5'], _
 		[668,		-3516,	'Group 7'], _
 		[-3723,		-3662,	'Group 8'], _
 		[-3809,		880,	'Group 9'] _
