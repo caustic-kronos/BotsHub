@@ -105,8 +105,7 @@ EndFunc
 Func SetupPlayerTormentFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_ELEMENTALIST Then
-		LoadSkillTemplate($EA_TORMENT_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($EA_TORMENT_SKILLBAR)
 	Else
 		Warn('You need to run this farm bot as Elementalist')
 		Return $FAIL

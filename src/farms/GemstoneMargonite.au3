@@ -166,13 +166,13 @@ Func SetupPlayerMargoniteFarm()
 	$margonite_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
 	Switch $margonite_player_profession
 		Case $ID_ASSASSIN
-			LoadSkillTemplate($AME_MARGONITE_SKILLBAR)
+			LoadSkillTemplateIfNeeded($AME_MARGONITE_SKILLBAR)
 		Case $ID_MESMER
-			LoadSkillTemplate($MEA_MARGONITE_SKILLBAR)
+			LoadSkillTemplateIfNeeded($MEA_MARGONITE_SKILLBAR)
 		Case $ID_ELEMENTALIST
-			LoadSkillTemplate($EME_MARGONITE_SKILLBAR)
+			LoadSkillTemplateIfNeeded($EME_MARGONITE_SKILLBAR)
 		Case $ID_RANGER
-			LoadSkillTemplate($RA_MARGONITE_SKILLBAR)
+			LoadSkillTemplateIfNeeded($RA_MARGONITE_SKILLBAR)
 		Case Else
 			Warn('You need to run this farm bot as Assassin or Mesmer or Elementalist or Ranger')
 			Return $FAIL
@@ -195,8 +195,7 @@ Func SetupTeamMargoniteFarm()
 	EndIf
 	RandomSleep(250)
 	Info('Setting up hero build skill bar')
-	LoadSkillTemplate($MARGONITE_MONK_HERO_SKILLBAR, 1)
-	RandomSleep(250)
+	LoadSkillTemplateIfNeeded($MARGONITE_MONK_HERO_SKILLBAR, 1)
 	SetHeroBehaviour(1, $ID_HERO_AVOIDING)
 	RandomSleep(250)
 	DisableAllHeroSkills(1)

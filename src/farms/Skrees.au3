@@ -110,8 +110,7 @@ EndFunc
 Func SetupPlayerSkreesFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		LoadSkillTemplate($SKREES_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($SKREES_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -129,9 +128,8 @@ Func SetupTeamSkreesFarm()
 	If AddHeroByProfession($ID_RANGER, $ID_PYRE_FIERCESHOT) <> $SUCCESS Then Return $FAIL
 	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) <> $SUCCESS Then Return $FAIL
 	RandomSleep(150)
-	LoadSkillTemplate($SKREES_RANGER_HERO_SKILLBAR, 1)
-	LoadSkillTemplate($SKREES_PARAGON_HERO_SKILLBAR, 2)
-	RandomSleep(150)
+	LoadSkillTemplateIfNeeded($SKREES_RANGER_HERO_SKILLBAR, 1)
+	LoadSkillTemplateIfNeeded($SKREES_PARAGON_HERO_SKILLBAR, 2)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
 	SetHeroBehaviour(1, $ID_HERO_AVOIDING)

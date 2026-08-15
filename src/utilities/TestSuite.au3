@@ -174,7 +174,7 @@ EndFunc
 Func TestLoadingBuild()
 	Info('Testing build loading')
 
-	LoadSkillTemplate($RESURRECT_SIGNET_AND_IAU)
+	LoadSkillTemplateIfNeeded($RESURRECT_SIGNET_AND_IAU)
 	Sleep(500)
 	If GetSkillbarSkillID($RESURRECTION_SIGNET_SKILLSLOT) <> $ID_RESURRECTION_SIGNET Then Return $FAIL
 	If GetSkillbarSkillID($IAU_SKILLSLOT) <> $ID_I_AM_UNSTOPPABLE Then Return $FAIL
@@ -183,7 +183,7 @@ Func TestLoadingBuild()
 	AddHero($HERO_TO_ADD)
 	Sleep(500)
 
-	LoadSkillTemplate($RESURRECT_SIGNET_AND_FALLBACK, 1)
+	LoadSkillTemplateIfNeeded($RESURRECT_SIGNET_AND_FALLBACK, 1)
 	Sleep(500)
 	If GetSkillbarSkillID($RESURRECTION_SIGNET_SKILLSLOT, 1) <> $ID_RESURRECTION_SIGNET Then Return $FAIL
 	If GetSkillbarSkillID($FALLBACK_SKILLSLOT, 1) <> $ID_FALL_BACK Then Return $FAIL

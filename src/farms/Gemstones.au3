@@ -139,8 +139,7 @@ Func SetupPlayerGemstonesFarm()
 
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_MESMER Then
 		Info('Players profession is mesmer. Loading up recommended mesmer build automatically')
-		LoadSkillTemplate($GEMSTONES_MESMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($GEMSTONES_MESMER_SKILLBAR)
 	Else
 		Info('Automatic player build setup is disabled. Assuming that player build is set up manually')
 	EndIf

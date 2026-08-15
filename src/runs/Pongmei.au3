@@ -86,8 +86,7 @@ EndFunc
 Func SetupPlayerPongmeiChestFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-		LoadSkillTemplate($PONGMEI_CHESTRUNNER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($PONGMEI_CHESTRUNNER_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 	EndIf

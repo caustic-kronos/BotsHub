@@ -95,8 +95,7 @@ EndFunc
 Func SetupPlayerFeathersFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-		LoadSkillTemplate($DA_FEATHERS_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($DA_FEATHERS_FARMER_SKILLBAR)
 	Else
 		Error('Should run this farm as dervish')
 		Return $FAIL

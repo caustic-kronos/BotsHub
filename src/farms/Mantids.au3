@@ -97,8 +97,7 @@ EndFunc
 Func SetupPlayerMantidsFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		LoadSkillTemplate($RA_MANTIDS_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($RA_MANTIDS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -113,8 +112,7 @@ Func SetupTeamMantidsFarm()
 	Info('Setting up team')
 	LeaveParty()
 	If AddHeroByProfession($ID_PARAGON, $ID_GENERAL_MORGAHN) == $FAIL Then Return $FAIL
-	LoadSkillTemplate($MANTIDS_HERO_SKILLBAR, 1)
-	RandomSleep(250)
+	LoadSkillTemplateIfNeeded($MANTIDS_HERO_SKILLBAR, 1)
 	DisableAllHeroSkills(1)
 	Return $SUCCESS
 EndFunc

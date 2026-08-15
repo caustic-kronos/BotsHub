@@ -140,16 +140,15 @@ Func SetupVaettirBuild()
 	Info('Setting up player build skill bar')
 	Switch $vaettirs_player_profession
 		Case $ID_ASSASSIN
-			LoadSkillTemplate($AME_VAETTIRS_FARMER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($AME_VAETTIRS_FARMER_SKILLBAR)
 		Case $ID_MESMER
 			SelectMeASkillbar()
 		Case $ID_MONK
-			LoadSkillTemplate($MOA_VAETTIRS_FARMER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($MOA_VAETTIRS_FARMER_SKILLBAR)
 			; giving more health to monk 55hp from norn title effect would screw up farm, so no displayed title for monk
-			RandomSleep(250)
 			SetDisplayedTitle(0)
 		Case $ID_ELEMENTALIST
-			LoadSkillTemplate($EME_VAETTIRS_FARMER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($EME_VAETTIRS_FARMER_SKILLBAR)
 		Case Else
 			Warn('This branch should not be reached')
 			Return $FAIL
@@ -183,17 +182,17 @@ Func SelectMeASkillbar()
 		Local $fast_casting_rune_bonus = GetAttributeByID($ID_FAST_CASTING, True, 0) - GetAttributeByID($ID_FAST_CASTING, False, 0)
 		Switch $fast_casting_rune_bonus
 			Case 0
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC0)
+				LoadSkillTemplateIfNeeded($MEA_VAETTIRS_FARMER_SKILLBAR_FC0)
 			Case 1
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC1)
+				LoadSkillTemplateIfNeeded($MEA_VAETTIRS_FARMER_SKILLBAR_FC1)
 			Case 2 to 3
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC2_3)
+				LoadSkillTemplateIfNeeded($MEA_VAETTIRS_FARMER_SKILLBAR_FC2_3)
 			Case Else
-				LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC4)
+				LoadSkillTemplateIfNeeded($MEA_VAETTIRS_FARMER_SKILLBAR_FC4)
 		EndSwitch
 	Else
 		; No anniversary shield, so it doesn't matter what value of Fast Casting we actually have
-		LoadSkillTemplate($MEA_VAETTIRS_FARMER_SKILLBAR_FC4)
+		LoadSkillTemplateIfNeeded($MEA_VAETTIRS_FARMER_SKILLBAR_FC4)
 	EndIf
 EndFunc
 

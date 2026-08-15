@@ -99,19 +99,19 @@ Func SetupPlayerTascaChestFarm()
 	Info('Setting up player build skill bar')
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_DERVISH
-			LoadSkillTemplate($TASCA_DERVISH_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_DERVISH_CHESTRUNNER_SKILLBAR)
 		Case $ID_ASSASSIN
-			LoadSkillTemplate($TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_ASSASSIN_CHESTRUNNER_SKILLBAR)
 		Case $ID_MESMER
-			LoadSkillTemplate($TASCA_MESMER_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_MESMER_CHESTRUNNER_SKILLBAR)
 		Case $ID_MONK
-			LoadSkillTemplate($TASCA_MONK_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_MONK_CHESTRUNNER_SKILLBAR)
 		Case $ID_ELEMENTALIST
-			LoadSkillTemplate($TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_ELEMENTALIST_CHESTRUNNER_SKILLBAR)
 		Case $ID_NECROMANCER
-			LoadSkillTemplate($TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_NECROMANCER_CHESTRUNNER_SKILLBAR)
 		Case $ID_RITUALIST
-			LoadSkillTemplate($TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($TASCA_RITUALIST_CHESTRUNNER_SKILLBAR)
 		Case Else
 			; other characters have too few energy
 			Warn('Should run this farm as Dervish, Assassin, Mesmer, Monk, Elementalist, Necromancer or Ritualist')

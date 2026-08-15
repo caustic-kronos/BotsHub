@@ -107,8 +107,7 @@ EndFunc
 Func SetupPlayerJadeBrotherhoodFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-		LoadSkillTemplate($JB_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($JB_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL
@@ -124,8 +123,7 @@ Func SetupTeamJadeBrotherhoodFarm()
 	LeaveParty()
 	If AddHeroByProfession($ID_PARAGON, $JB_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 	RandomSleep(250)
-	LoadSkillTemplate($JB_HERO_SKILLBAR, 1)
-	RandomSleep(250)
+	LoadSkillTemplateIfNeeded($JB_HERO_SKILLBAR, 1)
 	DisableAllHeroSkills(1)
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then

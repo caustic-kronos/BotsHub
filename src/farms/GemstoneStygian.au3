@@ -131,11 +131,11 @@ Func SetupPlayerStygianFarm()
 	$stygian_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
 	Switch $stygian_player_profession
 		Case $ID_ASSASSIN
-			LoadSkillTemplate($AME_STYGIAN_SKILLBAR)
+			LoadSkillTemplateIfNeeded($AME_STYGIAN_SKILLBAR)
 		Case $ID_MESMER
-			LoadSkillTemplate($MEA_STYGIAN_SKILLBAR)
+			LoadSkillTemplateIfNeeded($MEA_STYGIAN_SKILLBAR)
 		Case $ID_RANGER
-			LoadSkillTemplate($RN_STYGIAN_SKILLBAR)
+			LoadSkillTemplateIfNeeded($RN_STYGIAN_SKILLBAR)
 		Case Else
 			Warn('You need to run this farm bot as Assassin or Mesmer or Ranger')
 			Return $FAIL
@@ -153,8 +153,7 @@ Func SetupTeamStygianFarm()
 	If $stygian_player_profession == $ID_RANGER Then
 		If AddHeroByProfession($ID_RANGER, $STYGIAN_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 		RandomSleep(500)
-		LoadSkillTemplate($STYGIAN_RANGER_HERO_SKILLBAR, 1)
-		RandomSleep(500)
+		LoadSkillTemplateIfNeeded($STYGIAN_RANGER_HERO_SKILLBAR, 1)
 		SetHeroBehaviour(1, $ID_HERO_AVOIDING)
 		RandomSleep(500)
 		DisableAllHeroSkills(1)

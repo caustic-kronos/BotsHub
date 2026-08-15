@@ -2541,9 +2541,18 @@ EndFunc
 
 
 #Region Builds and Templates
+;~ Only load skill template if character does not have it already
+Func LoadSkillTemplateIfNeeded($templateCode, $heroIndex = 0)
+	If HeroHasTemplate($templateCode, $heroIndex) Then Return True
+	Local $result = LoadSkillTemplate($templateCode, $heroIndex)
+	RandomSleep(250)
+	Return $result
+EndFunc
+
+
 ;~ Returns True if the hero (or player, heroIndex=0) already has all 8 skills matching the given template code.
 ;~ Avoids redundant LoadSkillTemplate calls and saves significant setup time across all farms. Credits to Phiwi for this function.
-Func HeroHasTemplate($heroIndex, $templateCode)
+Func HeroHasTemplate($templateCode, $heroIndex = 0)
 	Local $buildTemplateChars = StringSplit($templateCode, '')
 	_ArrayDelete($buildTemplateChars, 0)
 	Local $buildTemplate = ''
@@ -2660,10 +2669,10 @@ Func LoadSkillTemplate($buildTemplate, $heroIndex = 0)
 
 	$opTail = Bin64ToDec($buildTemplate)
 
-
 	LoadAttributes($attributes, $secondaryProfession, $heroIndex)
 
 	LoadSkillBar($skills[0], $skills[1], $skills[2], $skills[3], $skills[4], $skills[5], $skills[6], $skills[7], $heroIndex)
+	Return True
 EndFunc
 
 

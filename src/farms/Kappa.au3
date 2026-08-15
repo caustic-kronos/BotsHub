@@ -116,8 +116,7 @@ EndFunc
 Func SetupPlayerKappaFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		LoadSkillTemplate($RA_KAPPA_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($RA_KAPPA_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -138,14 +137,13 @@ Func SetupTeamKappaFarm()
 	If AddHeroByProfession($ID_DERVISH, $ID_MOX) == $FAIL Then Return $FAIL
 	If AddHeroByProfession($ID_DERVISH, $ID_KAHMU) == $FAIL Then Return $FAIL
 	If AddHeroByProfession($ID_RANGER, $ID_PYRE_FIERCESHOT) == $FAIL Then Return $FAIL
-	LoadSkillTemplate($KAPPA_P1_HERO_SKILLBAR, 1)
-	LoadSkillTemplate($KAPPA_P2_HERO_SKILLBAR, 2)
-	LoadSkillTemplate($KAPPA_BIP_HERO_SKILLBAR, 3)
-	LoadSkillTemplate($KAPPA_DERVISH_HERO_SKILLBAR, 4)
-	LoadSkillTemplate($KAPPA_DERVISH_HERO_SKILLBAR, 5)
-	LoadSkillTemplate($KAPPA_DERVISH_HERO_SKILLBAR, 6)
-	LoadSkillTemplate($KAPPA_RANGER_HERO_SKILLBAR, 7)
-	RandomSleep(250)
+	LoadSkillTemplateIfNeeded($KAPPA_P1_HERO_SKILLBAR, 1)
+	LoadSkillTemplateIfNeeded($KAPPA_P2_HERO_SKILLBAR, 2)
+	LoadSkillTemplateIfNeeded($KAPPA_BIP_HERO_SKILLBAR, 3)
+	LoadSkillTemplateIfNeeded($KAPPA_DERVISH_HERO_SKILLBAR, 4)
+	LoadSkillTemplateIfNeeded($KAPPA_DERVISH_HERO_SKILLBAR, 5)
+	LoadSkillTemplateIfNeeded($KAPPA_DERVISH_HERO_SKILLBAR, 6)
+	LoadSkillTemplateIfNeeded($KAPPA_RANGER_HERO_SKILLBAR, 7)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)
 	DisableAllHeroSkills(3)

@@ -94,8 +94,7 @@ EndFunc
 Func SetupPlayerDragonMossFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		LoadSkillTemplate($RA_DRAGON_MOSS_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($RA_DRAGON_MOSS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -110,8 +109,7 @@ Func SetupTeamDragonMossFarm()
 	LeaveParty()
 	If AddHeroByProfession($ID_RANGER, $ID_PYRE_FIERCESHOT) == $SUCCESS Then
 		RandomSleep(150)
-		LoadSkillTemplate($DM_RANGER_HERO_SKILLBAR, 1)
-		RandomSleep(150)
+		LoadSkillTemplateIfNeeded($DM_RANGER_HERO_SKILLBAR, 1)
 		DisableAllHeroSkills(1)
 		SetHeroBehaviour(1, $ID_HERO_AVOIDING)
 		RandomSleep(150)

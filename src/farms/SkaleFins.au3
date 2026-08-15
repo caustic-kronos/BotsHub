@@ -82,8 +82,7 @@ EndFunc
 Func SetupPlayerSkaleFinsFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_DERVISH Then
-		LoadSkillTemplate($SKALE_FINS_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($SKALE_FINS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish')
 		Return $FAIL

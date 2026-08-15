@@ -126,9 +126,9 @@ Func SetupPlayerRaptorsFarm()
 	$raptors_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
 	Switch $raptors_player_profession
 		Case $ID_WARRIOR
-			LoadSkillTemplate($WN_RAPTORS_FARMER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($WN_RAPTORS_FARMER_SKILLBAR)
 		Case $ID_DERVISH
-			LoadSkillTemplate($DN_RAPTORS_FARMER_SKILLBAR)
+			LoadSkillTemplateIfNeeded($DN_RAPTORS_FARMER_SKILLBAR)
 		Case Else
 			Warn('Should run this farm as warrior')
 			Return $FAIL
@@ -146,8 +146,7 @@ Func SetupTeamRaptorsFarm()
 	LeaveParty()
 	If AddHeroByProfession($ID_PARAGON, $RAPTORS_HERO_PARTY_ID) == $FAIL Then Return $FAIL
 	RandomSleep(250)
-	LoadSkillTemplate($P_RUNNER_HERO_SKILLBAR, 1)
-	RandomSleep(250)
+	LoadSkillTemplateIfNeeded($P_RUNNER_HERO_SKILLBAR, 1)
 	DisableAllHeroSkills(1)
 	RandomSleep(500)
 	If GetPartySize() <> 2 Then

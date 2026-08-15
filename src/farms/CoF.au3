@@ -130,19 +130,9 @@ Func SetupPlayerCoFFarm()
 	Info('Setting up player build skill bar')
 	$cof_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
 	If $cof_player_profession == $ID_DERVISH Then
-		If HeroHasTemplate(0, $D_COF_SKILLBAR) Then
-			Info('CoF Dervish template already loaded, skipping')
-		Else
-			LoadSkillTemplate($D_COF_SKILLBAR)
-			RandomSleep(250)
-		EndIf
+		LoadSkillTemplateIfNeeded($D_COF_SKILLBAR)
 	ElseIf $cof_player_profession == $ID_ASSASSIN Then
-		If HeroHasTemplate(0, $A_COF_SKILLBAR) Then
-			Info('CoF Assassin template already loaded, skipping')
-		Else
-			LoadSkillTemplate($A_COF_SKILLBAR)
-			RandomSleep(250)
-		EndIf
+		LoadSkillTemplateIfNeeded($A_COF_SKILLBAR)
 	Else
 		Warn('Should run this farm as dervish or assassin')
 		Return $FAIL

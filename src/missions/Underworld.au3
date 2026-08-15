@@ -104,9 +104,9 @@ Func SetupPlayerUnderworldFarm()
 		$underworld_player_profession = DllStructGetData(GetMyAgent(), 'Primary')
 		Switch $underworld_player_profession
 			Case $ID_ASSASSIN
-				LoadSkillTemplate($ART_UNDERWORLD_FARMER_SKILLBAR)
+				LoadSkillTemplateIfNeeded($ART_UNDERWORLD_FARMER_SKILLBAR)
 			Case $ID_RITUALIST
-				LoadSkillTemplate($RTA_UNDERWORLD_FARMER_SKILLBAR)
+				LoadSkillTemplateIfNeeded($RTA_UNDERWORLD_FARMER_SKILLBAR)
 			Case Else
 				If $ATTEMPT_REAPER_QUESTS Then
 					Warn('Bot will skip Four Horsemen quest and Nightman Cometh unless A/Rt or Rt/A profession combos.')

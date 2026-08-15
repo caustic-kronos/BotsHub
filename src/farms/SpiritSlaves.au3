@@ -79,8 +79,7 @@ EndFunc
 Func SetupPlayerSpiritSlavesFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RITUALIST Then
-		LoadSkillTemplate($SPIRIT_SLAVES_RITUALIST_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($SPIRIT_SLAVES_RITUALIST_SKILLBAR)
 	Else
 		Warn('Should run this farm as a ritualist')
 		Return $FAIL

@@ -91,25 +91,25 @@ Func SetupPlayerUnderworldPantheonFarm()
 	Info('Setting up player build skill bar')
 	Switch DllStructGetData(GetMyAgent(), 'Primary')
 		Case $ID_WARRIOR
-			LoadSkillTemplate($UW_PANTHEON_W_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_W_SKILLBAR)
 		Case $ID_RANGER
-			LoadSkillTemplate($UW_PANTHEON_RA_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_RA_SKILLBAR)
 		Case $ID_MONK
-			LoadSkillTemplate($UW_PANTHEON_MO_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_MO_SKILLBAR)
 		Case $ID_NECROMANCER
-			LoadSkillTemplate($UW_PANTHEON_N_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_N_SKILLBAR)
 		Case $ID_MESMER
-			LoadSkillTemplate($UW_PANTHEON_ME_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_ME_SKILLBAR)
 		Case $ID_ELEMENTALIST
-			LoadSkillTemplate($UW_PANTHEON_E_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_E_SKILLBAR)
 		Case $ID_ASSASSIN
-			LoadSkillTemplate($UW_PANTHEON_A_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_A_SKILLBAR)
 		Case $ID_RITUALIST
-			LoadSkillTemplate($UW_PANTHEON_RT_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_RT_SKILLBAR)
 		Case $ID_PARAGON
-			LoadSkillTemplate($UW_PANTHEON_P_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_P_SKILLBAR)
 		Case $ID_DERVISH
-			LoadSkillTemplate($UW_PANTHEON_D_SKILLBAR)
+			LoadSkillTemplateIfNeeded($UW_PANTHEON_D_SKILLBAR)
 	EndSwitch
 	RandomSleep(250)
 	Return $SUCCESS

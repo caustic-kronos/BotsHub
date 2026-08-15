@@ -136,8 +136,7 @@ EndFunc
 Func SetupPlayerFowToCFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		LoadSkillTemplate($RA_FOW_TOC_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($RA_FOW_TOC_FARMER_SKILLBAR)
 	Else
 		Warn('You need to run this farm bot as Ranger')
 		Return $FAIL
@@ -148,8 +147,8 @@ EndFunc
 
 Func SetupTeamFoWToCFarm()
 	Info('Setting up team build skill bars')
-	LoadSkillTemplate($FOW_TOC_M_HERO_SKILLBAR, 1)
-	LoadSkillTemplate($FOW_TOC_P_HERO_SKILLBAR, 2)
+	LoadSkillTemplateIfNeeded($FOW_TOC_M_HERO_SKILLBAR, 1)
+	LoadSkillTemplateIfNeeded($FOW_TOC_P_HERO_SKILLBAR, 2)
 	RandomSleep(250)
 	DisableAllHeroSkills(1)
 	DisableAllHeroSkills(2)

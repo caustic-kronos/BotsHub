@@ -687,8 +687,7 @@ EndFunc
 Func SetupPlayerUsingGlobalSettings()
 	If $run_options_cache['team.load_player_build'] Then
 		Info('Loading player build from GUI')
-		LoadSkillTemplate($run_options_cache['team.player_build'])
-		RandomSleep(500)
+		LoadSkillTemplateIfNeeded($run_options_cache['team.player_build'])
 	EndIf
 EndFunc
 
@@ -723,7 +722,7 @@ Func SetupTeamUsingGlobalSettings($teamSize = $ID_TEAM_SIZE_LARGE)
 			If $run_options_cache['team.load_hero_' & $i & '_build'] Then
 				RandomSleep(500)
 				Info('Loading hero ' & $i & ' build from GUI')
-				LoadSkillTemplate($run_options_cache['team.hero_' & $i & '_build'], $i)
+				LoadSkillTemplateIfNeeded($run_options_cache['team.hero_' & $i & '_build'], $i)
 			EndIf
 		EndIf
 	Next

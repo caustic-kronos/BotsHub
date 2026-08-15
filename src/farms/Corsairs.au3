@@ -99,8 +99,7 @@ EndFunc
 Func SetupPlayerCorsairsFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_RANGER Then
-		LoadSkillTemplate($RA_CORSAIRS_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($RA_CORSAIRS_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as ranger')
 		Return $FAIL
@@ -116,9 +115,8 @@ Func SetupTeamCorsairsFarm()
 	LeaveParty()
 	If AddRequiredHero($ID_DUNKORO) == $FAIL Then Return $FAIL
 	If AddHeroByProfession($ID_DERVISH, $ID_MELONNI) == $FAIL Then Return $FAIL
-	LoadSkillTemplate($MOP_CORSAIRS_HERO_SKILLBAR, 1)
-	LoadSkillTemplate($DR_CORSAIRS_HERO_SKILLBAR, 2)
-	RandomSleep(250)
+	LoadSkillTemplateIfNeeded($MOP_CORSAIRS_HERO_SKILLBAR, 1)
+	LoadSkillTemplateIfNeeded($DR_CORSAIRS_HERO_SKILLBAR, 2)
 	DisableHeroSkillSlot(1, $CORSAIRS_MAKE_HASTE)
 	DisableHeroSkillSlot(2, $CORSAIRS_WINNOWING)
 	RandomSleep(250)

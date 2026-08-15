@@ -96,8 +96,7 @@ EndFunc
 Func SetupPlayerDrakeFleshFarm()
 	Info('Setting up player build skill bar')
 	If DllStructGetData(GetMyAgent(), 'Primary') == $ID_WARRIOR Then
-		LoadSkillTemplate($DRAKE_FLESH_FARMER_SKILLBAR)
-		RandomSleep(250)
+		LoadSkillTemplateIfNeeded($DRAKE_FLESH_FARMER_SKILLBAR)
 	Else
 		Warn('Should run this farm as warrior')
 		Return $FAIL
@@ -117,7 +116,7 @@ Func SetupTeamDrakeFleshFarm()
 		Return $FAIL
 	EndIf
 	RandomSleep(150)
-	LoadSkillTemplate($DRAKE_FLESH_KOSS_SKILLBAR, 1)
+	LoadSkillTemplateIfNeeded($DRAKE_FLESH_KOSS_SKILLBAR, 1)
 	RandomSleep(150)
 	DisableAllHeroSkills(1)
 	SetHeroBehaviour(1, $ID_HERO_AVOIDING)
