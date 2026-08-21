@@ -138,7 +138,7 @@ Func InventoryManagementMidRun()
 	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
-		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
+		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
 	EndIf
 	Return False
 EndFunc
