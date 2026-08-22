@@ -43,6 +43,7 @@ Opt('GUICloseOnESC', False)
 #include '../lib/Utils-Storage.au3'
 
 #include '../src/farms/CoF.au3'
+#include '../src/farms/CoF Sin CA.au3'
 #include '../src/farms/Corsairs.au3'
 #include '../src/farms/DrakeFlesh.au3'
 #include '../src/farms/DragonMoss.au3'
@@ -99,7 +100,7 @@ Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|CoF Sin CA|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
 	'Glint Challenge|Jade Brotherhood|Kappa|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|LDOA|Lightbringer & Sunspear|Lightbringer|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
 	'Raptors|Skale Fins|Skrees|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|UnderworldPantheon|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Zodiac|Manual Mode|Storage|Tests|Tonic Spammer|TestSuite'
 
@@ -969,6 +970,9 @@ Func UpdateFarmDescription($farm)
 				'A:'	& @TAB & $A_COF_SKILLBAR _
 			)
 			GUICtrlSetData($gui_label_farminformations, $COF_FARM_INFORMATIONS)
+		Case 'CoF Sin CA'
+			GUICtrlSetData($gui_edit_characterbuilds, $COFSINCA_PLAYER_SKILLBAR)
+			GUICtrlSetData($gui_label_farminformations, $COFSINCA_FARM_INFORMATIONS)
 		Case 'Corsairs'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
 			GUICtrlSetData($gui_edit_heroesbuilds, _
