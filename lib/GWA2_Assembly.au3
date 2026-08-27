@@ -673,7 +673,7 @@ Func MapScanResultsToLabels()
 	$ping_address = MemoryRead($processHandle, $scan_results['Ping'])
 	$status_code_address = MemoryRead($processHandle, $scan_results['StatusCode'])
 	Local $packetLocationAddress = MemoryRead($processHandle, $scan_results['PacketLocation'])
-	$pre_game_address = MemoryRead($processHandle, $scan_results['PreGame'] + 0x35)
+	$pre_game_address = MemoryRead($processHandle, $scan_results['PreGame'] + 0x33)
 	Local $frameArray = MemoryRead($processHandle, $scan_results['FrameArray'] - 0x13)
 	$scene_context_ptr = MemoryRead($processHandle, $scan_results['SceneContext'] + 0x1B)
 	$time_on_map_ptr = $scene_context_ptr + 0xC
