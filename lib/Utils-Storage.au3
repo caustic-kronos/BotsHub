@@ -124,7 +124,7 @@ Func InventoryManagementMidRun()
 	; 3-Sort items
 	; 4-Identify items
 	; 5-Salvage
-	Local Static $superiorIdentificationKits = [$ID_SUPERIOR_IDENTIFICATION_KIT]
+	Local Static $superiorIdentificationKits = [$ID_INFINITE_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
 	Local Static $salvageKits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
 		Info('Buying kits for passive inventory management')
@@ -1008,10 +1008,12 @@ Func BuyKitsForMidRun()
 	Local Static $requiredSalvageKitUses = 300				; = 12 salvage kits with 25 uses,
 	Local Static $requiredIdentificationKitUses = 400		; = 4 superior identification kits with 100 uses
 
+	Local Static $infiniteIdentificationKits = [$ID_INFINITE_IDENTIFICATION_KIT]
+	Local $hasInfiniteIdentificationKit = GetInventoryKitCount($infiniteIdentificationKits) > 0
 	Local $salvageUses = CountRemainingKitUses($ID_SALVAGE_KIT)
 	Local $salvageKitsRequired = KitsRequired($requiredSalvageKitUses - $salvageUses, $ID_SALVAGE_KIT)
 	Local $identificationUses = CountRemainingKitUses($ID_SUPERIOR_IDENTIFICATION_KIT)
-	Local $identificationKitsRequired = KitsRequired($requiredIdentificationKitUses - $identificationUses, $ID_SUPERIOR_IDENTIFICATION_KIT)
+	Local $identificationKitsRequired = $hasInfiniteIdentificationKit ? 0 : KitsRequired($requiredIdentificationKitUses - $identificationUses, $ID_SUPERIOR_IDENTIFICATION_KIT)
 
 	If $salvageKitsRequired > 0 Then BuySalvageKitInTown($salvageKitsRequired)
 	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInTown($identificationKitsRequired)
@@ -1043,7 +1045,7 @@ EndFunc
 
 ;~ Returns item ID of identification kit in inventory.
 Func FindIdentificationKit()
-	Local $kits = [$ID_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
+	Local $kits = [$ID_INFINITE_IDENTIFICATION_KIT, $ID_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
 	Return FindKit($kits)
 EndFunc
 
@@ -1080,6 +1082,8 @@ Func FindKit($enabledModelIDs)
 
 			; Skip this item if model is not in our list
 			If Not FindKitArrayContainsHelper($enabledModelIDs, $modelID) Then ContinueLoop
+			; Permanent kits do not expose a finite-use Value; prefer them immediately.
+			If $modelID == $ID_INFINITE_IDENTIFICATION_KIT Then Return $item
 			$value = DllStructGetData($item, 'Value')
 			Switch $modelID
 				Case $ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2
