@@ -26,6 +26,7 @@ Global Const $COF_CHEST_MONK_BUILD_DESCRIPTION = 'Prepared seven-hero support pa
 
 Global Const $COF_CHEST_INFORMATIONS = 'Fast Cathedral of Flames level-one chest run (Normal Mode).' & @CRLF _
 	& '- Player: Dervish/Assassin, 3 Deadly Arts, 12 Shadow Arts, 12+ Mysticism' & @CRLF _
+	& '- Automatically loads the player build and assembles the seven-hero support party' & @CRLF _
 	& '- Party: Tasca support heroes in slots 1-6; Ogden Monk/Paragon in slot 7' & @CRLF _
 	& '- Six stationary heroes provide unlimited-range Mystic Healing and Cautery Signet' & @CRLF _
 	& '- Ogden follows only long enough to apply the opening protection, then returns to the support flag' & @CRLF _
@@ -53,10 +54,6 @@ Global Const $COF_CHEST_GRON_RESOLVE_RADIUS = 450
 Global Const $COF_CHEST_GRON_READY_TIMEOUT_MS = 5000
 Global Const $COF_CHEST_GRON_APPROACH_TIMEOUT_MS = 7000
 Global Const $COF_CHEST_GRON_PROGRESS_TIMEOUT_MS = 1200
-; The in-game validation used the already-loaded player/hero bars and party.
-; Return-point priming is independent and still runs once per BotsHub start.
-Global Const $COF_CHEST_USE_LOADED_SETUP = True
-
 Global Const $COF_CHEST_HERO_DERVISH_1 = 1
 Global Const $COF_CHEST_HERO_DERVISH_2 = 2
 Global Const $COF_CHEST_HERO_DERVISH_3 = 3
@@ -197,17 +194,9 @@ Func SetupCoFChestFarm()
 		Warn('CoF NM chest run requires a primary Dervish')
 		Return $FAIL
 	EndIf
-	If $COF_CHEST_USE_LOADED_SETUP Then
-		Info('Using the currently loaded player and seven hero builds')
-		If GetPartySize() <> 8 Then
-			Warn('CoF NM chest run requires the prepared eight-character party')
-			Return $FAIL
-		EndIf
-	Else
-		LoadSkillTemplate($COF_CHEST_DERVISH_SKILLBAR)
-		RandomSleep(250)
-		If SetupCoFChestSupportTeam() == $FAIL Then Return $FAIL
-	EndIf
+	Info('Loading the Cathedral of Flames NM player and hero setup')
+	If Not CoFLoadRequiredTemplate($COF_CHEST_DERVISH_SKILLBAR, 0, 'player') Then Return $FAIL
+	If SetupCoFChestSupportTeam() == $FAIL Then Return $FAIL
 	For $heroIndex = 1 To $COF_CHEST_HERO_OGDEN
 		SetHeroBehaviour($heroIndex, $ID_HERO_AVOIDING)
 	Next
@@ -244,13 +233,13 @@ Func SetupCoFChestSupportTeam()
 		Return $FAIL
 	EndIf
 
-	LoadSkillTemplate($COF_CHEST_DERVISH_SUPPORT_SKILLBAR, $COF_CHEST_HERO_DERVISH_1)
-	LoadSkillTemplate($COF_CHEST_DERVISH_SUPPORT_SKILLBAR, $COF_CHEST_HERO_DERVISH_2)
-	LoadSkillTemplate($COF_CHEST_DERVISH_SUPPORT_SKILLBAR, $COF_CHEST_HERO_DERVISH_3)
-	LoadSkillTemplate($COF_CHEST_RANGER_SUPPORT_SKILLBAR, $COF_CHEST_HERO_ZEPHYR_RANGER)
-	LoadSkillTemplate($COF_CHEST_NECROMANCER_SUPPORT_SKILLBAR, $COF_CHEST_HERO_BIP_NECRO_1)
-	LoadSkillTemplate($COF_CHEST_NECROMANCER_SUPPORT_SKILLBAR, $COF_CHEST_HERO_BIP_NECRO_2)
-	SetupCoFChestMonkBar($COF_CHEST_HERO_OGDEN)
+	If Not CoFLoadRequiredTemplate($COF_CHEST_DERVISH_SUPPORT_SKILLBAR, $COF_CHEST_HERO_DERVISH_1, 'Melonni') Then Return $FAIL
+	If Not CoFLoadRequiredTemplate($COF_CHEST_DERVISH_SUPPORT_SKILLBAR, $COF_CHEST_HERO_DERVISH_2, 'M.O.X.') Then Return $FAIL
+	If Not CoFLoadRequiredTemplate($COF_CHEST_DERVISH_SUPPORT_SKILLBAR, $COF_CHEST_HERO_DERVISH_3, 'Kahmu') Then Return $FAIL
+	If Not CoFLoadRequiredTemplate($COF_CHEST_RANGER_SUPPORT_SKILLBAR, $COF_CHEST_HERO_ZEPHYR_RANGER, 'Pyre Fierceshot') Then Return $FAIL
+	If Not CoFLoadRequiredTemplate($COF_CHEST_NECROMANCER_SUPPORT_SKILLBAR, $COF_CHEST_HERO_BIP_NECRO_1, 'Olias') Then Return $FAIL
+	If Not CoFLoadRequiredTemplate($COF_CHEST_NECROMANCER_SUPPORT_SKILLBAR, $COF_CHEST_HERO_BIP_NECRO_2, 'Livia') Then Return $FAIL
+	If SetupCoFChestMonkBar($COF_CHEST_HERO_OGDEN) == $FAIL Then Return $FAIL
 	RandomSleep(500)
 
 	; Tasca controls these two Ranger skills explicitly so the spirit timing is
@@ -258,6 +247,17 @@ Func SetupCoFChestSupportTeam()
 	DisableHeroSkillSlot($COF_CHEST_HERO_ZEPHYR_RANGER, $COF_CHEST_SUPPORT_SERPENTS_QUICKNESS)
 	DisableHeroSkillSlot($COF_CHEST_HERO_ZEPHYR_RANGER, $COF_CHEST_SUPPORT_QUICKENING_ZEPHYR)
 	Return $SUCCESS
+EndFunc
+
+
+Func CoFLoadRequiredTemplate($template, $heroIndex, $actorName)
+	For $attempt = 1 To 3
+		LoadSkillTemplateIfNeeded($template, $heroIndex)
+		If HeroHasTemplate($template, $heroIndex) Then Return True
+		RandomSleep(250)
+	Next
+	Error('Could not load and verify the required CoF NM template for ' & $actorName)
+	Return False
 EndFunc
 
 
@@ -561,6 +561,19 @@ Func SetupCoFChestMonkBar($heroIndex = $COF_CHEST_HERO_OGDEN)
 	$attributes[2][1] = 12
 	LoadAttributes($attributes, $ID_PARAGON, $heroIndex)
 	LoadSkillBar($ID_BLESSED_AURA, $ID_SPELL_BREAKER, $ID_FALL_BACK, $ID_BRACE_YOURSELF, 0, 0, 0, 0, $heroIndex)
+	RandomSleep(250)
+	If GetHeroProfession($heroIndex, True) <> $ID_PARAGON Then
+		Error('Could not set Ogden secondary profession to Paragon')
+		Return $FAIL
+	EndIf
+	Local $requiredSkills[] = [$ID_BLESSED_AURA, $ID_SPELL_BREAKER, $ID_FALL_BACK, $ID_BRACE_YOURSELF]
+	For $slot = 1 To UBound($requiredSkills)
+		If GetSkillbarSkillID($slot, $heroIndex) <> $requiredSkills[$slot - 1] Then
+			Error('Could not verify Ogden CoF NM skill slot ' & $slot)
+			Return $FAIL
+		EndIf
+	Next
+	Return $SUCCESS
 EndFunc
 
 

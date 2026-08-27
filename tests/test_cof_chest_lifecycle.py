@@ -24,6 +24,31 @@ class CoFChestLifecycleTests(unittest.TestCase):
         enter_attempt = self.function("TryEnterCoFChestWithGron($gron)", "ResolveReadyCoFGron")
         self.assertIn("WaitMapLoading($ID_CATHEDRAL_OF_FLAMES", enter_attempt)
 
+    def test_setup_loads_player_and_exact_seven_hero_party(self) -> None:
+        setup = self.function("SetupCoFChestFarm()", "SetupCoFChestSupportTeam")
+        self.assertIn("TravelToOutpost($ID_DOOMLORE_SHRINE, $district_name)", setup)
+        self.assertIn("SwitchMode($ID_NORMAL_MODE)", setup)
+        self.assertIn("CoFLoadRequiredTemplate($COF_CHEST_DERVISH_SKILLBAR, 0, 'player')", setup)
+        self.assertIn("SetupCoFChestSupportTeam()", setup)
+        self.assertLess(setup.index("CoFLoadRequiredTemplate($COF_CHEST_DERVISH_SKILLBAR"), setup.index("EnterCoFChestInstance()"))
+        self.assertNotIn("COF_CHEST_USE_LOADED_SETUP", self.source)
+
+        team = self.function("SetupCoFChestSupportTeam()", "CoFStartSupportBattery")
+        self.assertIn("LeaveParty()", team)
+        for hero in ("$ID_MELONNI", "$ID_MOX", "$ID_KAHMU", "$ID_PYRE_FIERCESHOT", "$ID_OLIAS", "$ID_LIVIA", "$ID_OGDEN"):
+            self.assertIn(hero, team)
+        self.assertEqual(team.count("If Not CoFLoadRequiredTemplate("), 6)
+        self.assertIn("SetupCoFChestMonkBar($COF_CHEST_HERO_OGDEN)", team)
+
+        loader = self.function("CoFLoadRequiredTemplate($template", "CoFStartSupportBattery")
+        self.assertIn("LoadSkillTemplateIfNeeded($template, $heroIndex)", loader)
+        self.assertIn("HeroHasTemplate($template, $heroIndex)", loader)
+        self.assertIn("For $attempt = 1 To 3", loader)
+
+        ogden = self.function("SetupCoFChestMonkBar($heroIndex", "CoFChestFarmLoop")
+        self.assertIn("GetHeroProfession($heroIndex, True) <> $ID_PARAGON", ogden)
+        self.assertIn("GetSkillbarSkillID($slot, $heroIndex)", ogden)
+
     def test_per_run_state_is_reset_after_entry(self) -> None:
         farm = self.function("CoFChestFarm()", "CoFStartInstanceWatchdog")
         entry = farm.index("EnterCoFChestInstance()")

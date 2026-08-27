@@ -45,18 +45,25 @@ Route diagnostic CSVs include `elapsed_ms` and `spell_breaker_ms` columns. Spell
 
 ## Required setup
 
-`COF_CHEST_USE_LOADED_SETUP` is enabled because this is the exact mode used for the reported validation. The runner preserves the currently loaded player bar, eight-character party, attributes, and all seven hero bars. It still primes the Doomlore return point at startup and repeats that priming after BotsHub inventory-management travel resets farm setup. Priming occurs before the measured run and before the 96-second Cathedral instance deadline.
+The runner travels to Doomlore in the configured district, forces Normal Mode, loads player template `Ogej4NfMLTjbHY3lsZ4OBMIQUQA`, leaves the current party, and assembles Melonni, M.O.X., Kahmu, Pyre Fierceshot, Olias, Livia, and Ogden in the required order. It loads the three Tasca-derived support templates for slots 1–6 and the observed Monk/Paragon opening bar for Ogden. It then primes the Doomlore resign-return point. Inventory-management travel resets farm setup, so the complete setup and priming sequence is repeated before the next measured run.
 
 1. Select `CoF Chestrun` as the farm, select the desired loot profile, and save a run configuration if it will be reused.
-2. Confirm the selected character is a primary Dervish with the player template `Ogej4NfMLTjbHY3lsZ4OBMIQUQA`, lockpicks, and the prepared eight-character party: Melonni, M.O.X., Kahmu, Pyre Fierceshot, Olias, Livia, and Ogden.
-3. Use the three Tasca support templates declared at the top of `CoFChest.au3` for hero slots 1–6. Ogden is Monk/Paragon with Blessed Aura, Spell Breaker, "Fall Back!", and "Brace Yourself!" in slots 1–4.
-4. Select Normal Mode. The runner forces NM at setup, but the supplied route has not been validated in HM.
-5. Run one attended cycle before enabling loop mode. Keep rendering enabled during initial validation.
-6. Inspect `logs\benchmarks\cof-route-latest.csv`, the timestamped per-run route CSV, and `logs\benchmarks\cof-nm-latest.txt`.
+2. Use a primary Dervish and carry lockpicks. The player and hero skill/attribute templates are loaded automatically.
+3. Run one attended setup and route cycle before enabling loop mode. Keep rendering enabled during initial validation.
+4. Inspect `logs\benchmarks\cof-route-latest.csv`, the timestamped per-run route CSV, and `logs\benchmarks\cof-nm-latest.txt`.
+
+## Recommended equipment
+
+These equipment upgrades improve the survival margin but are not enforced by the runner:
+
+- Player weapon set: one-handed weapon with +5 Energy and 20% longer enchantments.
+- Player shield: ideally +10 armor versus lightning with +45 Health while enchanted or while in a stance.
+- Player armor: five Blessed or five Windwalker insignias; a Mysticism headpiece (+1) with a minor Mysticism rune (+1); one Superior Vigor rune; Vitae runes in the remaining rune slots.
+- Heroes: caster weapons and the normal survivability/attribute rune sets used for the Tasca NM support team are recommended but not strictly required. Favor a main-attribute headpiece/rune, Superior Vigor, and Vitae or energy runes in otherwise unused slots.
 
 ## NM validation results
 
-The longest completed unattended NM session used the exact loaded-setup path in this contribution:
+The longest completed unattended NM session used the same player template, hero order, hero templates, and runtime route in this contribution. That session began with the builds already loaded; automatic party assembly and template loading are structurally verified but still require a short attended in-game setup check:
 
 - 374 completed attempts over 8h 23m 40s wall time
 - 354 benchmark successes and 20 failures (94.7% success rate)
@@ -67,7 +74,7 @@ The longest completed unattended NM session used the exact loaded-setup path in 
 
 Here, benchmark success means at least one chest was opened and no exact desirable chest drop remained unresolved. A death after productive chest/loot handling is recorded separately and does not automatically turn the attempt into a failure.
 
-The validation character used a +5 Energy / 20% longer-enchantment one-handed weapon and a shield with +9 armor versus lightning and +45 Health while enchanted. The Ebon Vanguard title was selected manually. Those equipment choices are test conditions, not enforced by code.
+The validation character used a +5 Energy / 20% longer-enchantment one-handed weapon and a shield with +9 armor versus lightning and +45 Health while enchanted. The recommended shield target is the perfect +10 armor-versus-lightning version; +45 Health while enchanted or while in a stance is acceptable. The Ebon Vanguard title was selected manually. Those equipment choices are recommendations/test conditions, not enforced by code.
 
 ## Hard Mode status
 
