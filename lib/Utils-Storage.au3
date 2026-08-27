@@ -664,45 +664,66 @@ Func CheckPickupWeapon($weaponItem)
 	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxStats($weaponItem) Then Return True
 	Local $itemID = DllStructGetData($weaponItem, 'ModelID')
 	If $weaponRarity <> $RARITY_WHITE And $RARE_WEAPONS_TO_PICK[$itemID] <> Null And IsMaxStatsForReq($weaponItem) Then Return True
-
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+	Return CheckConfiguredWeaponAction('Pick up items', $weaponItem)
 EndFunc
 
 
 Func CheckSalvageWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+	Return CheckConfiguredWeaponAction('Salvage items', $weaponItem)
 EndFunc
 
 
 Func CheckSellWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+	Return CheckConfiguredWeaponAction('Sell items', $weaponItem)
 EndFunc
 
 
 Func CheckStoreWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
+	Return CheckConfiguredWeaponAction('Store items', $weaponItem)
+EndFunc
+
+
+;~ Return the configured action for a weapon. Shields include their required
+;~ attribute in the configuration path; other weapon paths remain unchanged.
+Func CheckConfiguredWeaponAction($configurationRoot, $weaponItem)
+	Local $weaponRarity = GetRarity($weaponItem)
 	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
 	Local $weaponType = DllStructGetData($weaponItem, 'Type')
 	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
 	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
+	Local $configurationPath = $configurationRoot & '.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName
+
+	If $weaponType == $ID_TYPE_SHIELD Then
+		Local $attributePath = $configurationPath & '.' & GetShieldAttributeConfigurationName($weaponItem) & '.Req ' & $weaponReq
+		If MapExists($inventory_management_cache, $attributePath) Then Return $inventory_management_cache[$attributePath]
+	EndIf
+
+	Return $inventory_management_cache[$configurationPath & '.Req ' & $weaponReq]
+EndFunc
+
+
+;~ Return the shield attribute category used by loot configurations.
+Func GetShieldAttributeConfigurationName($shieldItem)
+	Switch GetItemAttribute($shieldItem)
+		Case $ID_STRENGTH
+			Return 'Strength'
+		Case $ID_TACTICS
+			Return 'Tactics'
+		Case $ID_LEADERSHIP
+			Return 'Leadership'
+		Case $ID_COMMAND
+			Return 'Command'
+		Case $ID_MOTIVATION
+			Return 'Motivation'
+		Case Else
+			Return 'Other'
+	EndSwitch
 EndFunc
 #EndRegion Inventory Management
 

@@ -388,9 +388,56 @@ Func LoadLootConfiguration($filePath)
 	$loot_configuration = StringTrimRight($loot_configuration, 5)
 	Local $jsonLootOptions = LoadLootOptions($filePath)
 	FillInventoryCacheFromJSON($jsonLootOptions, '')
+	ExpandShieldRequirementSettings()
 	BuildInventoryDerivedFlags()
 	RefreshValuableListsFromCache()
 	Info('Loaded loot configuration at ' & $filePath)
+EndFunc
+
+
+;~ Expand legacy Shield.Req N settings into attribute-specific shield settings.
+;~ The loot tree is generated from this cache, so existing profiles gain the new
+;~ hierarchy without requiring a destructive file migration.
+Func ExpandShieldRequirementSettings()
+	Local Static $configurationRoots[] = ['Pick up items', 'Salvage items', 'Sell items', 'Store items']
+	Local Static $rarities[] = ['White', 'Blue', 'Purple', 'Gold', 'Green']
+	Local Static $shieldAttributes[] = ['Strength', 'Tactics', 'Leadership', 'Command', 'Motivation', 'Other']
+
+	For $configurationRoot In $configurationRoots
+		For $rarity In $rarities
+			Local $shieldPath = $configurationRoot & '.Weapons and offhands.' & $rarity & '.Shield'
+			Local $hasLegacySettings = False
+
+			For $requirement = 0 To 13
+				If MapExists($inventory_management_cache, $shieldPath & '.Req ' & $requirement) Then $hasLegacySettings = True
+			Next
+
+			If Not $hasLegacySettings Then ContinueLoop
+			Local $shieldValue = True
+			For $attributeIndex = 0 To UBound($shieldAttributes) - 1
+				Local $attributePath = $shieldPath & '.' & $shieldAttributes[$attributeIndex]
+				Local $attributeValue = True
+
+				For $requirement = 0 To 13
+					Local $legacyPath = $shieldPath & '.Req ' & $requirement
+					Local $attributeRequirementPath = $attributePath & '.Req ' & $requirement
+					If Not MapExists($inventory_management_cache, $attributeRequirementPath) Then
+						$inventory_management_cache[$attributeRequirementPath] = MapExists($inventory_management_cache, $legacyPath) ? $inventory_management_cache[$legacyPath] : False
+					EndIf
+					If Not $inventory_management_cache[$attributeRequirementPath] Then $attributeValue = False
+				Next
+
+				$inventory_management_cache[$attributePath] = $attributeValue
+				If Not $attributeValue Then $shieldValue = False
+			Next
+
+			For $requirement = 0 To 13
+				Local $legacyCleanupPath = $shieldPath & '.Req ' & $requirement
+				If MapExists($inventory_management_cache, $legacyCleanupPath) Then MapRemove($inventory_management_cache, $legacyCleanupPath)
+			Next
+			$inventory_management_cache[$shieldPath] = $shieldValue
+		Next
+	Next
 EndFunc
 
 
