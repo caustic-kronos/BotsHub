@@ -89,6 +89,7 @@ Opt('MustDeclareVars', True)
 #include 'src/missions/Voltaic.au3'
 #include 'src/missions/WarSupplyKeiran.au3'
 #include 'src/runs/Boreal.au3'
+#include 'src/runs/CoFChest.au3'
 #include 'src/runs/Pongmei.au3'
 #include 'src/runs/Tasca.au3'
 #include 'src/titles/LDOA.au3'
@@ -540,6 +541,7 @@ Func FillFarmMap()
 	AddFarmToFarmMap(	'Asuran',						AsuranTitleFarm,				5,					$ASURAN_FARM_DURATION)
 	AddFarmToFarmMap(	'Boreal',						BorealChestFarm,				5,					$BOREAL_FARM_DURATION)
 	AddFarmToFarmMap(	'CoF',							CoFFarm,						5,					$COF_FARM_DURATION)
+	AddFarmToFarmMap(	'CoF Chestrun',					CoFChestFarm,					5,					$COF_CHEST_DURATION)
 	AddFarmToFarmMap(	'Corsairs',						CorsairsFarm,					5,					$CORSAIRS_FARM_DURATION)
 	AddFarmToFarmMap(	'Deldrimor',					DeldrimorFarm,					10,					$DELDRIMOR_FARM_DURATION)
 	AddFarmToFarmMap(	'Drake Flesh',					DrakeFleshFarm,					5,					$DRAKE_FLESH_FARM_DURATION)
@@ -601,6 +603,7 @@ EndFunc
 Func ResetBotsSetups()
 	$global_farm_setup						= False
 	$boreal_farm_setup						= False
+	$cof_chest_setup							= False
 	$drake_flesh_farm_setup					= False
 	$dm_farm_setup							= False
 	$feathers_farm_setup					= False

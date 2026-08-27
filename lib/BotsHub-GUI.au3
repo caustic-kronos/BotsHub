@@ -99,7 +99,7 @@ Global Const $GUI_COMBOBOX_DROPDOWN_OPENED = 7
 Global Const $AVAILABLE_BAG_COUNTS = '|1|2|3|4|5'
 Global Const $AVAILABLE_WEAPON_SLOTS = '|0|1|2|3|4'
 Global Const $KIT_AMOUNT_CHOICE = '|0|1|2|3|4|5|6|7|8|9|10|11|12'
-Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
+Global Const $AVAILABLE_FARMS = '|Asuran|Boreal|CoF|CoF Chestrun|Corsairs|Deldrimor|Drake Flesh|Dragon Moss|Eden Iris|Feathers|Follower|FoW|FoW Tower of Courage|Froggy|Gemstones|Gemstone Margonite|Gemstone Stygian|Gemstone Torment|' & _
 	'Glint Challenge|Jade Brotherhood|Kappa|Kilroy|Kournans|Kurzick Ferndale|Kurzick Drazach|LDOA|Lightbringer & Sunspear|Lightbringer|LuxonMQ|LuxonSS|Mantids|Ministerial Commendations|Minotaurs|Nexus Challenge|Norn|OmniFarm|Pongmei|' & _
 	'Raptors|Skale Fins|Skrees|SoO|SpiritSlaves|Sunspear Armor|Tasca|TunnelsOfTheForsaken|Underworld|UnderworldPantheon|Vaettirs|Vanguard|Voltaic|War Supply Keiran|Zodiac|Manual Mode|Storage|Tests|Tonic Spammer|TestSuite'
 
@@ -969,6 +969,10 @@ Func UpdateFarmDescription($farm)
 				'A:'	& @TAB & $A_COF_SKILLBAR _
 			)
 			GUICtrlSetData($gui_label_farminformations, $COF_FARM_INFORMATIONS)
+		Case 'CoF Chestrun'
+			GUICtrlSetData($gui_edit_characterbuilds, $COF_CHEST_DERVISH_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, $COF_CHEST_MONK_BUILD_DESCRIPTION)
+			GUICtrlSetData($gui_label_farminformations, $COF_CHEST_INFORMATIONS)
 		Case 'Corsairs'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_CORSAIRS_FARMER_SKILLBAR)
 			GUICtrlSetData($gui_edit_heroesbuilds, _
