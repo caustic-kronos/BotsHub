@@ -244,7 +244,7 @@ Func TheTempleOfWar()
 
 	Info('Defending the Temple of War')
 	Local $timer = TimerInit()
-	While Not IsQuestReward($ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR) And TimerDiff($timer) < 480000
+	While Not IsQuestReward($ID_QUEST_DEFEND_THE_TEMPLE_OF_WAR) And TimerDiff($timer) < 600000
 		KillFoesInArea()
 		Move(1850, -200)
 		Sleep(3000)
