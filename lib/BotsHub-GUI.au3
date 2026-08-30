@@ -1001,6 +1001,10 @@ Func UpdateFarmDescription($farm)
 			GUICtrlSetData($gui_label_farminformations, $FOW_FARM_INFORMATIONS)
 		Case 'FoW Tower of Courage'
 			GUICtrlSetData($gui_edit_characterbuilds, $RA_FOW_TOC_FARMER_SKILLBAR)
+			GUICtrlSetData($gui_edit_heroesbuilds, _
+				$FOW_TOC_M_HERO_SKILLBAR & @CRLF & _
+				$FOW_TOC_P_HERO_SKILLBAR _
+			)
 			GUICtrlSetData($gui_label_farminformations, $FOW_TOC_FARM_INFORMATIONS)
 		Case 'Froggy'
 			GUICtrlSetData($gui_edit_characterbuilds, $generalCharacterSetup)
