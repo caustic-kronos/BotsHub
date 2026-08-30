@@ -221,9 +221,12 @@ You are welcome to create and contribute new bots 👍
 
 ## 📌 Planned Features
 
+- 💡🕓 **Bloodstone caves Warrior farm**
+- 💡🕓 **Luxon assassin farm**
 - 💡🕓 **Improve the Pongmei chest farm with Tasca chest farm capabilities**
-- 💡💭 **Pahnai Salad - Iboga Petals farm**
+- 💡🕓 **Vermin farm**
 - 💡💭 **Bandit raid**
+- 💡💭 **Pahnai Salad - Iboga Petals farm**
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Improve crash recovery**
 
