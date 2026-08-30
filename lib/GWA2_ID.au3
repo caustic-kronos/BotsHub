@@ -416,7 +416,13 @@ Global Const $ID_DISEASE	= 483
 Global Const $ID_POISON		= 484
 Global Const $ID_DAZED		= 485
 Global Const $ID_WEAKNESS	= 486
-#EndRegionConditions
+#EndRegion Conditions
+
+
+#Region Allied NPCS
+Global Const $ID_THE_PURVEYOR				= 8057
+#EndRegion Allied NPCS
+
 
 #Region Mob IDs
 ; LDOA foes model IDs
