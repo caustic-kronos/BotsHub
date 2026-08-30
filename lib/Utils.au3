@@ -625,6 +625,18 @@ Func GoToSignpostSafely($signpost, $survivalFunction = Null, $blockedFunction = 
 	GoSignpost($signpost)
 	PingSleep(100)
 EndFunc
+
+
+Func OpenDungeonChestAt($x, $y)
+	Local $chest = GetNearestSignpostToCoords($x, $y)
+	ChangeTarget($chest)
+	RandomSleep(500)
+	GoToSignpost($chest)
+	RandomSleep(2000)
+	ActionInteract()
+	RandomSleep(3000)
+	CheckAndSendStuckCommand()
+EndFunc
 #EndRegion Find and open Chests
 
 

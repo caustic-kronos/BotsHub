@@ -417,13 +417,15 @@ Func BurningForest()
 	KillShardWolf()
 	FlagMoveAggroAndKill(18900, 12880, '14', $optionsBurningForest)
 	KillShardWolf()
-	FlagMoveAggroAndKill(17150, 12000, '15', $optionsBurningForest)
+	FlagMoveAggroAndKill(18600, 10600, '15', $optionsBurningForest)
+	KillShardWolf()
+	FlagMoveAggroAndKill(17150, 12000, '16', $optionsBurningForest)
 	KillShardWolf()
 	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
-	FlagMoveAggroAndKill(16200, 11000, '16', $optionsBurningForest)
-	FlagMoveAggroAndKill(14800, 8500, '17', $optionsBurningForest)
-	FlagMoveAggroAndKill(13000, 7700, '18', $optionsBurningForest)
+	FlagMoveAggroAndKill(16200, 11000, '17', $optionsBurningForest)
+	FlagMoveAggroAndKill(14800, 8500, '18', $optionsBurningForest)
+	FlagMoveAggroAndKill(13000, 7700, '19', $optionsBurningForest)
 	If Not IsPlayerOrPartyAlive() Then Return $FAIL
 
 	MoveTo(12000, 6600)
@@ -629,19 +631,14 @@ Func TempleLoot()
 	MoveTo(1585, -520)
 
 	Info('Looting quest chest')
-	TargetNearestItem()
-	ActionInteract()
-	Sleep(2500)
+	OpenDungeonChestAt(1550, -550)
 	PickUpItems()
 	CancelAll()
 
 	Info('Opening mission chest')
-	For $i = 1 To 3
-		MoveTo(1800, 400)
-		RandomSleep(5000)
-		TargetNearestItem()
-		ActionInteract()
-		RandomSleep(2500)
+	For $i = 1 To 2
+		MoveTo(1850, 150)
+		OpenDungeonChestAt(1850, 450)
 		PickUpItems()
 	Next
 
