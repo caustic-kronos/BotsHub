@@ -661,7 +661,7 @@ Func CheckPickupWeapon($weaponItem)
 	Local $weaponRarity = GetRarity($weaponItem)
 	If $weaponRarity == $RARITY_RED Then Return True
 	If $weaponRarity == $RARITY_GRAY Then Return False
-	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxStats($weaponItem) Then Return True
+	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxStats($weaponItem) And $inventory_management_cache['Pick up items.Weapons and offhands.Low Req Max Stats'] Then Return True
 	Local $itemID = DllStructGetData($weaponItem, 'ModelID')
 	If $weaponRarity <> $RARITY_WHITE And $RARE_WEAPONS_TO_PICK[$itemID] <> Null And IsMaxStatsForReq($weaponItem) Then Return True
 
