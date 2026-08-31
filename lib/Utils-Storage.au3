@@ -566,6 +566,12 @@ Func DefaultShouldStoreItem($item)
 	ElseIf IsSpecialDrop($itemID) Then
 		Local $specialDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
 		Return $cache['Store items.Special drops.' & $specialDropName]
+	ElseIf IsSummoningStone($itemID) Then
+		Local $stoneName = $SUMMONING_STONES_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Summoning stones.' & $stoneName]
+	ElseIf IsConset($itemID) Then
+		Local $consetItemName = $MAP_CONSETS[$itemID]
+		Return $cache['Store items.Consets.' & $consetItemName]
 	ElseIf IsConsumable($itemID) Then
 		Return $cache['Store items.Consumables']
 	; --------------------------------------- Trophies ---------------------------------------
@@ -2282,7 +2288,8 @@ Func IsConsumable($itemID)
 EndFunc
 
 
-;~ Returns true if the item is 1 of 3 conset items: Essence of Celerity, Armor of Salvation, Grail of Might
+;~ Returns true if the item is a conset item or assimilated: 
+;~ Essence of Celerity, Armor of Salvation, Grail of Might, Heroes Trifecta, Scroll of Resurrection, Empowering Feasts
 Func IsConset($itemID)
 	Return $MAP_CONSETS[$itemID] <> Null
 EndFunc
@@ -2344,7 +2351,7 @@ EndFunc
 
 ;~ Return true if the item is a summoning stone
 Func IsSummoningStone($itemID)
-	Return $MAP_SUMMONING_STONES[$itemID] <> Null
+	Return $SUMMONING_STONES_NAMES_FROM_IDS[$itemID] <> Null
 EndFunc
 
 

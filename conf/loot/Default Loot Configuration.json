@@ -3429,6 +3429,38 @@
 			"Stalkers Rations": true,
 			"Birds Eye Compass": true
 		},
+		"Summoning stones": {
+			"Cracked Ascalonian War Horn": false,
+			"Igneous Summoning Stone": false,
+			"Legionnaire Summoning Crystal": false,
+			"Ghastly Summon": false,
+			"Mystical Summon": false,
+			"Tengu Summon": false,
+			"Imperial Guard Summon": false,
+			"Automaton Summon": false,
+			"Chitinous Summon": false,
+			"Amber Summon": false,
+			"Arctic Summon": false,
+			"Demonic Summon": false,
+			"Gelatinous Summon": false,
+			"Fossilized Summon": false,
+			"Jadeite Summon": false,
+			"Mischievous Summon": false,
+			"Frosty Summon": false,
+			"Zaishen Summon": false,
+			"Celestial Summon": false,
+			"Shining Blade Summon": false,
+			"Mysterious Summon": false,
+			"Merchant Summon": false
+		},
+		"Consets": {			
+			"Heroes Trifecta": false,
+			"Essence of Celerity": false,
+			"Armor of Salvation": false,
+			"Grail of Might": false,
+			"Scroll of Resurrection": false,
+			"Empowering Feasts": false
+		},
 		"Unidentified gold items": false,
 		"Weapons and offhands": {
 			"White": {

@@ -476,6 +476,22 @@ Global Const $ID_MEDAL_OF_HONOR				= 35122		; Not tradeable
 #EndRegion Endgame Rewards
 
 
+#Region Consumable Crafter Items
+Global Const $ID_ESSENCE_OF_CELERITY	= 24859
+Global Const $ID_ARMOR_OF_SALVATION		= 24860
+Global Const $ID_GRAIL_OF_MIGHT			= 24861
+Global Const $ID_POWERSTONE_OF_COURAGE	= 24862
+Global Const $ID_SCROLL_OF_RESURRECTION	= 26501
+Global Const $ID_STAR_OF_TRANSFERENCE	= 25896
+Global Const $ID_PERFECT_SALVAGE_KIT	= 25881
+Global Const $ID_EMPOWERING_FEASTS		= 38618
+Global Const $ID_HEROES_TRIFECTA		= 38619
+Global Const $CONSETS_ARRAY[]			= [$ID_HEROES_TRIFECTA, $ID_ESSENCE_OF_CELERITY, $ID_ARMOR_OF_SALVATION, $ID_GRAIL_OF_MIGHT, $ID_SCROLL_OF_RESURRECTION, $ID_EMPOWERING_FEASTS]
+Global Const $CONSETS_NAMES[]			= ['Heroes Trifecta', 'Essence of Celerity', 'Armor of Salvation', 'Grail of Might', 'Scroll of Resurrection', 'Empowering Feasts']
+Global Const $MAP_CONSETS				= MapFromArrays($CONSETS_ARRAY, $CONSETS_NAMES)
+#EndRegion Consumable Crafter Items
+
+
 #Region Alcohol
 Global Const $ID_HUNTERS_ALE				= 910
 Global Const $ID_FLASK_OF_FIREWATER			= 2513
@@ -704,7 +720,6 @@ Global Const $PCONS_NAMES[] = [ _
 	'Lunar Fortune (Snake)', 'Lunar Fortune (Horse)', 'Lunar Fortune (Sheep)', 'Lunar Fortune (Monkey)', 'Lunar Fortune (Rooster)', 'Lunar Fortune (Dog)' _
 ]
 Global Const $PCONS_NAMES_FROM_IDS	= MapFromArrays($PCONS_IDS, $PCONS_NAMES)
-Global Const $PCONS_IDS_FROM_NAMES	= MapFromArrays($PCONS_NAMES, $PCONS_IDS)
 #EndRegion Sweet Pcon
 #EndRegion Sweets
 
@@ -733,7 +748,6 @@ Global Const $DP_REMOVAL_SWEETS_NAMES[]		= [ _
 	'Oath of Purity', 'Seal of the Dragon Empire', 'Shining Blade Ration' _
 ]
 Global Const $DP_REMOVAL_NAMES_FROM_IDS		= MapFromArrays($DP_REMOVAL_SWEETS, $DP_REMOVAL_SWEETS_NAMES)
-Global Const $DP_REMOVAL_IDS_FROM_NAMES		= MapFromArrays($DP_REMOVAL_SWEETS_NAMES, $DP_REMOVAL_SWEETS)
 #EndRegion DP Removal
 
 
@@ -760,7 +774,6 @@ Global Const $SPECIAL_DROP_NAMES[] = [ _
 	'Flame of Balthazar', 'Golden Flame of Balthazar', 'Celestial Sigil', 'Stalkers Rations', 'Birds Eye Compass' _
 ]
 Global Const $SPECIAL_DROP_NAMES_FROM_IDS	= MapFromArrays($SPECIAL_DROP_IDS, $SPECIAL_DROP_NAMES)
-Global Const $SPECIAL_DROP_IDS_FROM_NAMES	= MapFromArrays($SPECIAL_DROP_NAMES, $SPECIAL_DROP_IDS)
 #EndRegion Special Drops
 
 
@@ -1308,21 +1321,6 @@ Global Const $MAP_REGULAR_TOMES				= MapFromArray($REGULAR_TOMES_ARRAY)
 #EndRegion Tomes
 
 
-#Region Consumable Crafter Items
-Global Const $ID_ARMOR_OF_SALVATION		= 24860
-Global Const $ID_ESSENCE_OF_CELERITY	= 24859
-Global Const $ID_GRAIL_OF_MIGHT			= 24861
-Global Const $ID_POWERSTONE_OF_COURAGE	= 24862
-Global Const $ID_SCROLL_OF_RESURRECTION	= 26501
-Global Const $ID_STAR_OF_TRANSFERENCE	= 25896
-Global Const $ID_PERFECT_SALVAGE_KIT	= 25881
-Global Const $ID_EMPOWERING_FEASTS		= 38618
-Global Const $ID_HEROES_TRIFECTA		= 38619
-Global Const $CONSETS_ARRAY[]			= [$ID_ESSENCE_OF_CELERITY, $ID_ARMOR_OF_SALVATION, $ID_GRAIL_OF_MIGHT]
-Global Const $MAP_CONSETS				= MapFromArray($CONSETS_ARRAY)
-#EndRegion Consumable Crafter Items
-
-
 #Region Summoning Stones
 Global Const $ID_MERCHANT_SUMMON				= 21154
 Global Const $ID_TENGU_SUMMON					= 30209
@@ -1348,14 +1346,25 @@ Global Const $ID_LEGIONNAIRE_SUMMONING_CRYSTAL	= 37810
 Global Const $ID_CRACKED_ASCALONIAN_WAR_HORN	= 38369
 ;Global Const $ID_ASCALONIAN_WAR_HORN			= XXXXX
 ; Order matters - it is the preferential order in which summoning stones will be used
-Global Const $SUMMONING_STONES_ARRAY[]			= [	$ID_CRACKED_ASCALONIAN_WAR_HORN, $ID_IGNEOUS_SUMMONING_STONE, $ID_LEGIONNAIRE_SUMMONING_CRYSTAL, _				; Infinite summons tier
-													$ID_GHASTLY_SUMMON, $ID_MYSTICAL_SUMMON, $ID_TENGU_SUMMON, $ID_IMPERIAL_GUARD_SUMMON, _							; Good summons tier
-													$ID_AUTOMATON_SUMMON, $ID_CHITINOUS_SUMMON, $ID_AMBER_SUMMON, $ID_ARTIC_SUMMON, _								; Trash tier
-													$ID_DEMONIC_SUMMON, $ID_GELATINOUS_SUMMON, $ID_FOSSILIZED__SUMMON, $ID_JADEITE_SUMMON, _
-													$ID_MISCHIEVOUS_SUMMON, $ID_FROSTY_SUMMON, _
-													$ID_ZAISHEN_SUMMON, $ID_CELESTIAL_SUMMON, $ID_SHINING_BLADE_SUMMON, $ID_MYSTERIOUS_SUMMON, _					; Random tier
-													$ID_MERCHANT_SUMMON]																							; Merchant tier
-Global Const $MAP_SUMMONING_STONES				= MapFromArray($SUMMONING_STONES_ARRAY)
+Global Const $SUMMONING_STONES_ARRAY[]			= [ _
+	$ID_CRACKED_ASCALONIAN_WAR_HORN, $ID_IGNEOUS_SUMMONING_STONE, $ID_LEGIONNAIRE_SUMMONING_CRYSTAL, _	; Infinite summons tier
+	$ID_GHASTLY_SUMMON, $ID_MYSTICAL_SUMMON, $ID_TENGU_SUMMON, $ID_IMPERIAL_GUARD_SUMMON, _				; Good summons tier
+	$ID_AUTOMATON_SUMMON, $ID_CHITINOUS_SUMMON, $ID_AMBER_SUMMON, $ID_ARTIC_SUMMON, _					; Trash tier
+	$ID_DEMONIC_SUMMON, $ID_GELATINOUS_SUMMON, $ID_FOSSILIZED__SUMMON, $ID_JADEITE_SUMMON, _
+	$ID_MISCHIEVOUS_SUMMON, $ID_FROSTY_SUMMON, _
+	$ID_ZAISHEN_SUMMON, $ID_CELESTIAL_SUMMON, $ID_SHINING_BLADE_SUMMON, $ID_MYSTERIOUS_SUMMON, _		; Random tier
+	$ID_MERCHANT_SUMMON _																				; Merchant tier
+]
+Global Const $SUMMONING_STONES_NAMES[]			= [ _
+	'Cracked Ascalonian War Horn', 'Igneous Summoning Stone', 'Legionnaire Summoning Crystal', _	; Infinite summons tier
+	'Ghastly Summon', 'Mystical Summon', 'Tengu Summon', 'Imperial Guard Summon', _					; Good summons tier
+	'Automaton Summon', 'Chitinous Summon', 'Amber Summon', 'Arctic Summon', _						; Trash tier
+	'Demonic Summon', 'Gelatinous Summon', 'Fossilized Summon', 'Jadeite Summon', _
+	'Mischievous Summon', 'Frosty Summon', _
+	'Zaishen Summon', 'Celestial Summon', 'Shining Blade Summon', 'Mysterious Summon', _			; Random tier
+	'Merchant Summon' _																				; Merchant tier
+]
+Global Const $SUMMONING_STONES_NAMES_FROM_IDS	= MapFromArrays($SUMMONING_STONES_ARRAY, $SUMMONING_STONES_NAMES)
 #EndRegion Summoning Stones
 
 
