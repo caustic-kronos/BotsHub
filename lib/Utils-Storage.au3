@@ -357,11 +357,17 @@ Func DefaultShouldPickItem($item)
 		If $MAP_MAJOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Major (3pt)']
 		If $MAP_SUPERIOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Superior (50pt)']
 		Return False
+	ElseIf IsPCon($itemID) Then
+		Local $pconName = $PCONS_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.PCons.' & $pconName]
+	ElseIf IsDPRemoval($itemID) Then
+		Local $moraleItemName = $DP_REMOVAL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Morale.' & $moraleItemName]
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $specialDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+		Return $cache['Pick up items.Special drops.' & $specialDropName]
 	ElseIf IsConsumable($itemID) Then
 		Return $cache['Pick up items.Consumables']
-	ElseIf IsSpecialDrop($itemID) Then
-		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Festival Items.' & $festivalDropName]
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
 		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then Return $cache['Pick up items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
@@ -541,11 +547,27 @@ Func DefaultShouldStoreItem($item)
 		If $MAP_MAJOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Major (3pt)']
 		If $MAP_SUPERIOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Superior (50pt)']
 		Return False
+	ElseIf IsFestive($itemID) Or IsPartyTonic($itemID) Then
+		If $MAP_MINOR_PARTY[$itemID] <> Null Then Return $cache['Store items.Party.Minor (1-2pt)']
+		If $MAP_MAJOR_PARTY[$itemID] <> Null Then Return $cache['Store items.Party.Major (3-7pt)']
+		If $MAP_SUPERIOR_PARTY[$itemID] <> Null Then Return $cache['Store items.Party.Superior (25-50pt)']
+		Return False
+	ElseIf IsTownSweet($itemID) Then
+		If $MAP_MINOR_SWEETS[$itemID] <> Null Then Return $cache['Store items.Sweets.Minor (1-2pt)']
+		If $MAP_MAJOR_SWEETS[$itemID] <> Null Then Return $cache['Store items.Sweets.Major (3pt)']
+		If $MAP_SUPERIOR_SWEETS[$itemID] <> Null Then Return $cache['Store items.Sweets.Superior (50pt)']
+		Return False
+	ElseIf IsPCon($itemID) Then
+		Local $pconName = $PCONS_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.PCons.' & $pconName]
+	ElseIf IsDPRemoval($itemID) Then
+		Local $moraleItemName = $DP_REMOVAL_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Morale.' & $moraleItemName]
+	ElseIf IsSpecialDrop($itemID) Then
+		Local $specialDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+		Return $cache['Store items.Special drops.' & $specialDropName]
 	ElseIf IsConsumable($itemID) Then
 		Return $cache['Store items.Consumables']
-	ElseIf IsSpecialDrop($itemID) Then
-		Local $festivalDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Festival Items.' & $festivalDropName]
 	; --------------------------------------- Trophies ---------------------------------------
 	ElseIf IsTrophy($itemID) Then
 		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then Return $cache['Store items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
@@ -2255,7 +2277,7 @@ EndFunc
 
 ;~ Returns true if the item is a consumable
 Func IsConsumable($itemID)
-	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemovalSweet($itemID) Or _
+	Return IsAlcohol($itemID) Or IsFestive($itemID) Or IsTownSweet($itemID) Or IsPCon($itemID) Or IsDPRemoval($itemID) Or _
 		IsSummoningStone($itemID) Or IsPartyTonic($itemID) Or IsEverlastingTonic($itemID) Or IsConset($itemID)
 EndFunc
 
@@ -2286,19 +2308,19 @@ EndFunc
 
 ;~ Returns true if the item is a PCon
 Func IsPCon($itemID)
-	Return $MAP_SWEET_PCONS[$itemID] <> Null
+	Return $PCONS_NAMES_FROM_IDS[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a sweet removing doubl... death penalty
-Func IsDPRemovalSweet($itemID)
-	Return $MAP_DP_REMOVAL_SWEETS[$itemID] <> Null
+Func IsDPRemoval($itemID)
+	Return $DP_REMOVAL_NAMES_FROM_IDS[$itemID] <> Null
 EndFunc
 
 
 ;~ Return true if the item is a special drop
 Func IsSpecialDrop($itemID)
-	Return $MAP_SPECIAL_DROPS[$itemID] <> Null
+	Return $SPECIAL_DROP_NAMES_FROM_IDS[$itemID] <> Null
 EndFunc
 
 

@@ -17,6 +17,59 @@
 			"Major (3pt)": true,
 			"Superior (50pt)": true
 		},
+		"PCons": {
+			"Drake Kabob": true,
+			"Bowl of Skalefin Soup": true,
+			"Pahnai Salad": true,
+			"Birthday Cupcake": true,
+			"Golden Egg": true,
+			"Candy Apple": true,
+			"Candy Corn": true,
+			"Slice of Pumpkin Pie": true,
+			"Blue Rock Candy": true,
+			"Green Rock Candy": true,
+			"Red Rock Candy": true,
+			"War Supplies": true,
+			"Lunar Fortune (Pig)": true,
+			"Lunar Fortune (Rat)": true,
+			"Lunar Fortune (Ox)": true,
+			"Lunar Fortune (Tiger)": true,
+			"Lunar Fortune (Rabbit)": true,
+			"Lunar Fortune (Dragon)": true,
+			"Lunar Fortune (Snake)": true,
+			"Lunar Fortune (Horse)": true,
+			"Lunar Fortune (Sheep)": true,
+			"Lunar Fortune (Monkey)": true,
+			"Lunar Fortune (Rooster)": true,
+			"Lunar Fortune (Dog)": true
+		},
+		"Morale": {
+			"Peppermint Candy Cane": true,
+			"Refined Jelly": true,
+			"Elixir of Valor": true,
+			"Wintergreen Candy Cane": true,
+			"Rainbow Candy Cane": true,
+			"Four Leaf Clover": true,
+			"Honeycomb": true,
+			"Pumpkin Cookie": true,
+			"Oath of Purity": true,
+			"Seal of the Dragon Empire": true,
+			"Shining Blade Ration": true
+		},
+		"Special drops": {
+			"Candy Cane Shard": true,
+			"Victory Token": true,
+			"Wintersday Gift": true,
+			"Wayfarer Mark": true,
+			"Lunar Token": true,
+			"Lunar Tokens": true,
+			"Trick-or-Treat Bag": true,
+			"Flame of Balthazar": true,
+			"Golden Flame of Balthazar": true,
+			"Celestial Sigil": true,
+			"Stalkers Rations": true,
+			"Birds Eye Compass": true
+		},
 		"Weapons and offhands": {
 			"Low Req Max Stats": true,
 			"White": {
@@ -1024,15 +1077,6 @@
 			"Silver": false,
 			"White": true,
 			"Yellow": false
-		},
-		"Festival Items": {
-			"Wintersday Gift": true,
-			"Trick-or-Treat Bag": true,
-			"Lunar Token": true,
-			"Victory Token": true,
-			"Candy Cane Shard": true,
-			"Jade Wind Orb": true,
-			"Wayfarer Mark": true
 		},
 		"Quest items": {
 			"Map pieces": false
@@ -3322,6 +3366,69 @@
 			"Major (3pt)": true,
 			"Superior (50pt)": true
 		},
+		"Party": {
+			"Minor (1-2pt)": true,
+			"Major (3-7pt)": true,
+			"Superior (25-50pt)": true
+		},
+		"Sweets": {
+			"Minor (1-2pt)": true,
+			"Major (3pt)": true,
+			"Superior (50pt)": true
+		},
+		"PCons": {
+			"Drake Kabob": true,
+			"Bowl of Skalefin Soup": true,
+			"Pahnai Salad": true,
+			"Birthday Cupcake": false,
+			"Golden Egg": true,
+			"Candy Apple": true,
+			"Candy Corn": true,
+			"Slice of Pumpkin Pie": false,
+			"Blue Rock Candy": true,
+			"Green Rock Candy": true,
+			"Red Rock Candy": true,
+			"War Supplies": true,
+			"Lunar Fortune (Pig)": true,
+			"Lunar Fortune (Rat)": true,
+			"Lunar Fortune (Ox)": true,
+			"Lunar Fortune (Tiger)": true,
+			"Lunar Fortune (Rabbit)": true,
+			"Lunar Fortune (Dragon)": true,
+			"Lunar Fortune (Snake)": true,
+			"Lunar Fortune (Horse)": true,
+			"Lunar Fortune (Sheep)": true,
+			"Lunar Fortune (Monkey)": true,
+			"Lunar Fortune (Rooster)": true,
+			"Lunar Fortune (Dog)": true
+		},
+		"Morale": {
+			"Peppermint Candy Cane": true,
+			"Refined Jelly": true,
+			"Elixir of Valor": true,
+			"Wintergreen Candy Cane": true,
+			"Rainbow Candy Cane": true,
+			"Four Leaf Clover": true,
+			"Honeycomb": false,
+			"Pumpkin Cookie": true,
+			"Oath of Purity": true,
+			"Seal of the Dragon Empire": true,
+			"Shining Blade Ration": true
+		},
+		"Special drops": {
+			"Candy Cane Shard": true,
+			"Victory Token": true,
+			"Wintersday Gift": true,
+			"Wayfarer Mark": true,
+			"Lunar Token": true,
+			"Lunar Tokens": true,
+			"Trick-or-Treat Bag": true,
+			"Flame of Balthazar": true,
+			"Golden Flame of Balthazar": true,
+			"Celestial Sigil": true,
+			"Stalkers Rations": true,
+			"Birds Eye Compass": true
+		},
 		"Unidentified gold items": false,
 		"Weapons and offhands": {
 			"White": {
@@ -4329,15 +4436,6 @@
 			"Silver": false,
 			"White": true,
 			"Yellow": false
-		},
-		"Festival Items": {
-			"Wintersday Gift": true,
-			"Trick-or-Treat Bag": true,
-			"Lunar Token": true,
-			"Victory Token": true,
-			"Candy Cane Shard": true,
-			"Jade Wind Orb": true,
-			"Wayfarer Mark": true
 		},
 		"Quest items": {
 			"Map pieces": false

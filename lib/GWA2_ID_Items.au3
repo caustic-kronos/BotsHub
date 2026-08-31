@@ -687,16 +687,24 @@ Global Const $ID_LUNAR_FORTUNE_SHEEP	= 29432		; 2015
 Global Const $ID_LUNAR_FORTUNE_MONKEY	= 29433		; 2016
 Global Const $ID_LUNAR_FORTUNE_ROOSTER	= 29434		; 2017
 Global Const $ID_LUNAR_FORTUNE_DOG		= 29435		; 2018
-
 Global Const $ID_BLUE_ROCK_CANDY		= 31151
 Global Const $ID_GREEN_ROCK_CANDY		= 31152
 Global Const $ID_RED_ROCK_CANDY			= 31153
 Global Const $ID_WAR_SUPPLIES			= 35121
-Global Const $SWEET_PCONS_ARRAY			= [	$ID_DRAKE_KABOB, $ID_BOWL_OF_SKALEFIN_SOUP, $ID_PAHNAI_SALAD, $ID_BIRTHDAY_CUPCAKE, $ID_GOLDEN_EGG, $ID_CANDY_APPLE, $ID_CANDY_CORN, _
-											$ID_SLICE_OF_PUMPKIN_PIE, $ID_BLUE_ROCK_CANDY, $ID_GREEN_ROCK_CANDY, $ID_RED_ROCK_CANDY, $ID_WAR_SUPPLIES, _
-											$ID_LUNAR_FORTUNE_PIG, $ID_LUNAR_FORTUNE_RAT, $ID_LUNAR_FORTUNE_OX, $ID_LUNAR_FORTUNE_TIGER, $ID_LUNAR_FORTUNE_RABBIT, $ID_LUNAR_FORTUNE_DRAGON, _
-											$ID_LUNAR_FORTUNE_SNAKE, $ID_LUNAR_FORTUNE_HORSE, $ID_LUNAR_FORTUNE_SHEEP, $ID_LUNAR_FORTUNE_MONKEY, $ID_LUNAR_FORTUNE_ROOSTER, $ID_LUNAR_FORTUNE_DOG]
-Global Const $MAP_SWEET_PCONS			= MapFromArray($SWEET_PCONS_ARRAY)
+Global Const $PCONS_IDS[] = [ _ 
+	$ID_DRAKE_KABOB, $ID_BOWL_OF_SKALEFIN_SOUP, $ID_PAHNAI_SALAD, $ID_BIRTHDAY_CUPCAKE, $ID_GOLDEN_EGG, $ID_CANDY_APPLE, $ID_CANDY_CORN, _
+	$ID_SLICE_OF_PUMPKIN_PIE, $ID_BLUE_ROCK_CANDY, $ID_GREEN_ROCK_CANDY, $ID_RED_ROCK_CANDY, $ID_WAR_SUPPLIES, _
+	$ID_LUNAR_FORTUNE_PIG, $ID_LUNAR_FORTUNE_RAT, $ID_LUNAR_FORTUNE_OX, $ID_LUNAR_FORTUNE_TIGER, $ID_LUNAR_FORTUNE_RABBIT, $ID_LUNAR_FORTUNE_DRAGON, _
+	$ID_LUNAR_FORTUNE_SNAKE, $ID_LUNAR_FORTUNE_HORSE, $ID_LUNAR_FORTUNE_SHEEP, $ID_LUNAR_FORTUNE_MONKEY, $ID_LUNAR_FORTUNE_ROOSTER, $ID_LUNAR_FORTUNE_DOG _
+]
+Global Const $PCONS_NAMES[] = [ _ 
+	'Drake Kabob', 'Bowl of Skalefin Soup', 'Pahnai Salad', 'Birthday Cupcake', 'Golden Egg', 'Candy Apple', 'Candy Corn', _
+	'Slice of Pumpkin Pie', 'Blue Rock Candy', 'Green Rock Candy', 'Red Rock Candy', 'War Supplies', _
+	'Lunar Fortune (Pig)', 'Lunar Fortune (Rat)', 'Lunar Fortune (Ox)', 'Lunar Fortune (Tiger)', 'Lunar Fortune (Rabbit)', 'Lunar Fortune (Dragon)', _
+	'Lunar Fortune (Snake)', 'Lunar Fortune (Horse)', 'Lunar Fortune (Sheep)', 'Lunar Fortune (Monkey)', 'Lunar Fortune (Rooster)', 'Lunar Fortune (Dog)' _
+]
+Global Const $PCONS_NAMES_FROM_IDS	= MapFromArrays($PCONS_IDS, $PCONS_NAMES)
+Global Const $PCONS_IDS_FROM_NAMES	= MapFromArrays($PCONS_NAMES, $PCONS_IDS)
 #EndRegion Sweet Pcon
 #EndRegion Sweets
 
@@ -716,29 +724,43 @@ Global Const $ID_SHINING_BLADE_RATION		= 35127
 ; DP removal should be first before morale boost in the array
 Global Const $TEAM_DP_REMOVAL[]				= [$ID_FOUR_LEAF_CLOVER, $ID_OATH_OF_PURITY, $ID_ELIXIR_OF_VALOR, $ID_RAINBOW_CC, $ID_HONEYCOMB]
 Global Const $SOLO_DP_REMOVAL[]				= [$ID_PEPPERMINT_CC, $ID_REFINED_JELLY, $ID_WINTERGREEN_CC, $ID_SHINING_BLADE_RATION, $ID_PUMPKIN_COOKIE]
-Global Const $DP_REMOVAL_SWEETS[]			= [$ID_PEPPERMINT_CC, $ID_REFINED_JELLY, $ID_ELIXIR_OF_VALOR, $ID_WINTERGREEN_CC, $ID_RAINBOW_CC, $ID_FOUR_LEAF_CLOVER, $ID_HONEYCOMB, $ID_PUMPKIN_COOKIE, $ID_OATH_OF_PURITY, $ID_SHINING_BLADE_RATION]
-Global Const $MAP_DP_REMOVAL_SWEETS			= MapFromArray($DP_REMOVAL_SWEETS)
+Global Const $DP_REMOVAL_SWEETS[]			= [ _
+	$ID_PEPPERMINT_CC, $ID_REFINED_JELLY, $ID_ELIXIR_OF_VALOR, $ID_WINTERGREEN_CC, $ID_RAINBOW_CC, $ID_FOUR_LEAF_CLOVER, $ID_HONEYCOMB, $ID_PUMPKIN_COOKIE, _
+	$ID_OATH_OF_PURITY, $ID_SEAL_OF_THE_DRAGON_EMPIRE, $ID_SHINING_BLADE_RATION _
+]
+Global Const $DP_REMOVAL_SWEETS_NAMES[]		= [ _
+	'Peppermint Candy Cane', 'Refined Jelly', 'Elixir of Valor', 'Wintergreen Candy Cane', 'Rainbow Candy Cane', 'Four Leaf Clover', 'Honeycomb', 'Pumpkin Cookie', _
+	'Oath of Purity', 'Seal of the Dragon Empire', 'Shining Blade Ration' _
+]
+Global Const $DP_REMOVAL_NAMES_FROM_IDS		= MapFromArrays($DP_REMOVAL_SWEETS, $DP_REMOVAL_SWEETS_NAMES)
+Global Const $DP_REMOVAL_IDS_FROM_NAMES		= MapFromArrays($DP_REMOVAL_SWEETS_NAMES, $DP_REMOVAL_SWEETS)
 #EndRegion DP Removal
 
 
 #Region Special Drops
 Global Const $ID_CC_SHARD					= 556
-Global Const $ID_FLAME_OF_BALTHAZAR			= 2514		; Not really a drop
-Global Const $ID_GOLDEN_FLAME_OF_BALTHAZAR	= 22188		; Not really a drop
-Global Const $ID_CELESTIAL_SIGIL			= 2571		; Not really a drop
 Global Const $ID_VICTORY_TOKEN				= 18345
-Global Const $ID_WINTERSDAY_GIFT			= 21491		; Not really a drop
+Global Const $ID_WINTERSDAY_GIFT			= 21491
 Global Const $ID_WAYFARER_MARK				= 37765
 Global Const $ID_LUNAR_TOKEN				= 21833
 Global Const $ID_LUNAR_TOKENS				= 28433
 Global Const $ID_TOT						= 28434
+Global Const $ID_FLAME_OF_BALTHAZAR			= 2514		; Not really a drop
+Global Const $ID_GOLDEN_FLAME_OF_BALTHAZAR	= 22188		; Not really a drop
+Global Const $ID_CELESTIAL_SIGIL			= 2571		; Not really a drop
 Global Const $ID_STALKERS_RATION			= 38613
 Global Const $ID_BIRDS_EYE_COMPASS			= 38614
-Global Const $SPECIAL_DROPS[]				= [$ID_CC_SHARD, $ID_VICTORY_TOKEN, $ID_WINTERSDAY_GIFT, $ID_WAYFARER_MARK, $ID_LUNAR_TOKEN, $ID_LUNAR_TOKENS, $ID_TOT]
-Global Const $SPECIAL_DROPS_NAMES[]			= ['Candy Cane Shard', 'Victory Token', 'Wintersday Gift', 'Wayfarer Mark', 'Lunar Token', 'Lunar Tokens', 'Trick-or-Treat Bag']
-Global Const $SPECIAL_DROP_NAMES_FROM_IDS		= MapFromArrays($SPECIAL_DROPS, $SPECIAL_DROPS_NAMES)
-;Global Const $SPECIAL_DROP_IDS_FROM_NAMES	= MapFromArrays($SPECIAL_DROPS_NAMES, $SPECIAL_DROPS)
-Global Const $MAP_SPECIAL_DROPS				= MapFromArray($SPECIAL_DROPS)
+
+Global Const $SPECIAL_DROP_IDS[] = [ _ 
+	$ID_CC_SHARD, $ID_VICTORY_TOKEN, $ID_WINTERSDAY_GIFT, $ID_WAYFARER_MARK, $ID_LUNAR_TOKEN, $ID_LUNAR_TOKENS, $ID_TOT, _
+	$ID_FLAME_OF_BALTHAZAR, $ID_GOLDEN_FLAME_OF_BALTHAZAR, $ID_CELESTIAL_SIGIL, $ID_STALKERS_RATION, $ID_BIRDS_EYE_COMPASS _
+]
+Global Const $SPECIAL_DROP_NAMES[] = [ _ 
+	'Candy Cane Shard', 'Victory Token', 'Wintersday Gift', 'Wayfarer Mark', 'Lunar Token', 'Lunar Tokens', 'Trick-or-Treat Bag', _
+	'Flame of Balthazar', 'Golden Flame of Balthazar', 'Celestial Sigil', 'Stalkers Rations', 'Birds Eye Compass' _
+]
+Global Const $SPECIAL_DROP_NAMES_FROM_IDS	= MapFromArrays($SPECIAL_DROP_IDS, $SPECIAL_DROP_NAMES)
+Global Const $SPECIAL_DROP_IDS_FROM_NAMES	= MapFromArrays($SPECIAL_DROP_NAMES, $SPECIAL_DROP_IDS)
 #EndRegion Special Drops
 
 
