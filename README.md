@@ -227,8 +227,8 @@ You are welcome to create and contribute new bots 👍
 - 💡🕓 **Vermin farm**
 - 💡💭 **Bandit raid**
 - 💡💭 **Pahnai Salad - Iboga Petals farm**
-- 💭 **Bightclaw Farm (20/20 Restro Wand, doable with Any/Rt SoS as in https://www.youtube.com/watch?v=dwaX0RDY80M)**
-- 💭 **Vloxen Excavations Chest Run - Glacial Blade (as in https://www.youtube.com/watch?v=9kXejK7F-ao)**
+- 🧠💭 **Bightclaw Farm - 20/20 restoration wand, doable with Any/Rt SoS: https://www.youtube.com/watch?v=dwaX0RDY80M**
+- 🧠💭 **Vloxen Excavations chest run - Glacial Blade: https://www.youtube.com/watch?v=9kXejK7F-ao**
 - 🧠💭 **Nicholas the traveler items (gifties)**
 - 🧠💭 **Improve crash recovery**
 
