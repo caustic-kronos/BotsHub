@@ -45,12 +45,13 @@ Func InventoryManagementBeforeRun()
 	; 2-Sort items
 	; 3-Identify items
 	; 4-Collect data
-	; 5-Salvage
-	; 6-Sell materials
-	; 7-Sell items
-	; 8-Balance character gold level
-	; 9-Buy ectoplasm/obsidian with surplus
-	; 10-Store items
+	; 5-Salvage valuable components out of items not worth keeping
+	; 6-Salvage
+	; 7-Sell materials
+	; 8-Sell items
+	; 9-Balance character gold level
+	; 10-Buy ectoplasm/obsidian with surplus
+	; 11-Store items
 	If $cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($trade_town, $district_name)
 		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
@@ -68,11 +69,14 @@ Func InventoryManagementBeforeRun()
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
+	If $run_options_cache['run.salvage_into_components'] And HasComponentsToSalvage() Then
+		TravelToOutpost($trade_town, $district_name)
+		SalvageComponents()
+	EndIf
 	If $cache['@salvage.something'] And HasItemsToSalvage() Then
 		TravelToOutpost($trade_town, $district_name)
 		SalvageItems()
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
-		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
 		;SalvageMaterials()
 	EndIf
@@ -123,7 +127,8 @@ Func InventoryManagementMidRun()
 	; 2-If not, buy until we have 4 identification kits and 12 salvaged kits
 	; 3-Sort items
 	; 4-Identify items
-	; 5-Salvage
+	; 5-Salvage valuable components out of items if an expert salvage kit is available
+	; 6-Salvage
 	Local Static $superiorIdentificationKits = [$ID_INFINITE_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
 	Local Static $salvageKits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
 	If GetInventoryKitCount($superiorIdentificationKits) < 1 Or GetInventoryKitCount($salvageKits) < 1 Then
@@ -136,6 +141,7 @@ Func InventoryManagementMidRun()
 	EndIf
 	If $run_options_cache['run.sort_items'] Then SortInventory()
 	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
+	If $run_options_cache['run.salvage_into_components'] Then SalvageComponents(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
@@ -466,6 +472,22 @@ Func DefaultShouldSalvageItem($item)
 EndFunc
 
 
+;~ Return True if valuable components (mods, inscriptions, runes, insignias) should be salvaged out of the item
+;~ Only items not worth keeping for themselves are stripped, so weapons kept for their skin, req or stats stay untouched
+Func ShouldSalvageComponents($item)
+	If DllStructGetData($item, 'ID') = 0 Then Return False
+	If GetRarity($item) == $RARITY_GREEN Then Return False
+	If Not IsIdentified($item) Then Return False
+	If IsWeapon($item) Then
+		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
+		If ShouldKeepWeapon($item, False) Then Return False
+	ElseIf Not IsArmorSalvageItem($item) Then
+		Return False
+	EndIf
+	Return UBound(GetValuableComponentIndices($item)) > 0
+EndFunc
+
+
 ;~ Return True if the item should be sold to the merchant - default to false
 Func DefaultShouldSellItem($item)
 	; Clarity rename
@@ -541,6 +563,11 @@ Func DefaultShouldStoreItem($item)
 		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
 		;Return ContainsValuableUpgrades($item)
 		Return $cache['Store items.Armor salvageables.' & $rarityName]
+	; ----------------------------------- Upgrade components -----------------------------------
+	ElseIf IsUpgradeComponent($item) Then
+		Local $shouldStore = $cache['Store items.Upgrade components']
+		; Loot configurations saved before this option existed have no value for it: store components when the bot salvages them
+		Return $shouldStore == Null ? $run_options_cache['run.salvage_into_components'] : $shouldStore
 	; ------------------------------------- Consumables -------------------------------------
 	ElseIf IsAlcohol($itemID) Then
 		If $MAP_MINOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Minor (1pt)']
@@ -614,8 +641,8 @@ Func DefaultShouldStoreItem($item)
 EndFunc
 
 
-;~ Return True if weapon item should not be sold or salvaged
-Func ShouldKeepWeapon($item)
+;~ Return True if weapon item should not be sold or salvaged - $checkUpgrades False ignores the components it contains
+Func ShouldKeepWeapon($item, $checkUpgrades = True)
 	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SWORD, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
 	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
 	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND]
@@ -637,7 +664,7 @@ Func ShouldKeepWeapon($item)
 	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
 	If $MAP_ULTRA_RARE_WEAPONS[$itemID] <> Null Then Return True
 	; Keeping items that contain good upgrades
-	If ContainsValuableUpgrades($item) Then Return True
+	If $checkUpgrades And ContainsValuableUpgrades($item) Then Return True
 	; Throwing items without good damage/energy/armor
 	If Not IsMaxStatsForReq($item) Then Return False
 	; Inscribable are kept only if : 1) rare skin and q9 2) low Req of a good type
@@ -1045,6 +1072,8 @@ Func BuyKitsForMidRun()
 
 	If $salvageKitsRequired > 0 Then BuySalvageKitInTown($salvageKitsRequired)
 	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInTown($identificationKitsRequired)
+	; Salvaging components needs an expert salvage kit - keep one in inventory when the option is enabled
+	If $run_options_cache['run.salvage_into_components'] And FindSalvageKit() == Null Then BuyExpertSalvageKitInTown()
 EndFunc
 #EndRegion Buying/selling items from/to merchant
 
@@ -1328,6 +1357,31 @@ Func GetSalvageKit($buyKit = True)
 EndFunc
 
 
+;~ Returns an expert or superior salvage kit, buying an expert one in town if needed and allowed - required to salvage components
+Func GetExpertSalvageKit($buyKit = True)
+	Local $kit = FindSalvageKit()
+	If $kit == Null And $buyKit Then
+		BuyExpertSalvageKitInTown()
+		$kit = FindSalvageKit()
+	EndIf
+	Return $kit
+EndFunc
+
+
+;~ Returns the remaining uses of a salvage kit - kits sell back for a fixed price per remaining use
+Func GetSalvageKitUses($kit)
+	Local $value = DllStructGetData($kit, 'Value')
+	Switch DllStructGetData($kit, 'ModelID')
+		Case $ID_EXPERT_SALVAGE_KIT
+			Return $value / 8
+		Case $ID_SUPERIOR_SALVAGE_KIT
+			Return $value / 10
+		Case Else
+			Return $value / 2
+	EndSwitch
+EndFunc
+
+
 ;~ Salvage an item based on its position in the inventory
 Func SalvageItemAt($bagIndex, $slot)
 	Local $item = GetItemBySlot($bagIndex, $slot)
@@ -1362,6 +1416,88 @@ Func SalvageItem($item, $salvageKit, $salvageType = 'Materials')
 			Return False
 	EndSwitch
 	PingSleep(50)
+	Return True
+EndFunc
+
+
+;~ Salvage valuable components (mods, inscriptions, runes, insignias) out of the items not worth keeping for themselves
+;~ Needs an expert or superior salvage kit - the stripped item then goes through the usual salvage/sell flow
+;~ Salvaging a component can destroy the item, so it is re-read from its slot after each salvage
+;~ With $dryRun, only logs what would be salvaged
+Func SalvageComponents($buyKit = True, $dryRun = False)
+	; A weapon holds at most a prefix, a suffix and an inscription
+	Local Static $maxComponentsPerItem = 3
+	Info('Salvaging components out of items')
+	Local $kit = Null
+	Local $uses = 0
+	If Not $dryRun Then
+		$kit = GetExpertSalvageKit($buyKit)
+		If $kit == Null Then
+			Warn('No expert salvage kit available to salvage components')
+			Return False
+		EndIf
+		$uses = GetSalvageKitUses($kit)
+	EndIf
+
+	For $bagIndex = 1 To $bags_count
+		Local $bagSize = DllStructGetData(GetBag($bagIndex), 'slots')
+		For $slot = 1 To $bagSize
+			Local $item = GetItemBySlot($bagIndex, $slot)
+			If Not ShouldSalvageComponents($item) Then ContinueLoop
+			Local $itemID = DllStructGetData($item, 'ID')
+			Local $attempts = 0
+			While $attempts < $maxComponentsPerItem
+				Local $indices = GetValuableComponentIndices($item)
+				If UBound($indices) == 0 Then ExitLoop
+				If $dryRun Then
+					Info('Would salvage components ' & _ArrayToString($indices, ', ') & ' out of item at ' & $bagIndex & ':' & $slot)
+					ExitLoop
+				EndIf
+				; Each salvaged component needs a free slot, and the item may survive the salvage
+				If CountSlots(1, _Min(4, $bags_count)) < 1 Then
+					Warn('No space left in inventory to salvage more components')
+					Return True
+				EndIf
+				Debug('Salvaging component ' & $indices[0] & ' out of item at ' & $bagIndex & ':' & $slot)
+				Local $modStructBefore = GetModStruct($item)
+				SalvageComponent($item, $kit, $indices[0])
+				$attempts += 1
+				$uses -= 1
+				If $uses < 1 Then
+					$kit = GetExpertSalvageKit($buyKit)
+					If $kit == Null Then Return False
+					$uses = GetSalvageKitUses($kit)
+				EndIf
+				; The salvage might have destroyed the item - stop if it is gone or replaced
+				$item = GetItemBySlot($bagIndex, $slot)
+				If DllStructGetData($item, 'ID') <> $itemID Then ExitLoop
+				If GetModStruct($item) == $modStructBefore Then
+					Warn('Salvaging a component did not change the item at ' & $bagIndex & ':' & $slot & ', skipping it')
+					ExitLoop
+				EndIf
+			WEnd
+		Next
+	Next
+	Return True
+EndFunc
+
+
+;~ Salvage the component at the given index (prefix/insignia 0, suffix/rune 1, inscription 2) out of the given item
+;~ Needs an expert or superior salvage kit: the game opens a choice window for those, and the packets answer it directly
+Func SalvageComponent($item, $salvageKit, $componentIndex)
+	Local $rarity = GetRarity($item)
+	While Not StartSalvageWithKit($item, $salvageKit)
+		PingSleep(50)
+	WEnd
+	PingSleep(600)
+	If $rarity == $RARITY_GOLD Or $rarity == $RARITY_PURPLE Then
+		ValidateSalvage()
+		PingSleep(600)
+	EndIf
+	SalvageMod($componentIndex)
+	PingSleep(600)
+	EndSalvage()
+	PingSleep(300)
 	Return True
 EndFunc
 #EndRegion Salvage
@@ -1789,6 +1925,12 @@ EndFunc
 ;~ Returns true if there are items in inventory that user selected to salvage in the GUI interface
 Func HasItemsToSalvage($shouldSalvageItem = DefaultShouldSalvageItem)
 	Return HasInInventory($shouldSalvageItem)
+EndFunc
+
+
+;~ Returns true if there are items in inventory with valuable components to salvage out
+Func HasComponentsToSalvage()
+	Return HasInInventory(ShouldSalvageComponents)
 EndFunc
 
 
@@ -2394,6 +2536,12 @@ EndFunc
 ;~ Return true if the item is a weapon mod
 Func IsWeaponMod($itemID)
 	Return $MAP_WEAPON_MODS[$itemID] <> Null
+EndFunc
+
+
+;~ Return true if the item is an upgrade component: weapon mod, inscription, rune or insignia
+Func IsUpgradeComponent($item)
+	Return DllStructGetData($item, 'type') == $ID_TYPE_UPGRADE
 EndFunc
 
 

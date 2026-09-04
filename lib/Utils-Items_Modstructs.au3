@@ -1099,6 +1099,42 @@ Func ContainsValuableUpgrades($item)
 EndFunc
 
 
+;~ Returns the salvage slot indices (prefix/insignia 0, suffix/rune 1, inscription 2) of the components worth keeping in the item
+;~ Same detection as ContainsValuableUpgrades, split by slot so the right component can be salvaged out of the item
+Func GetValuableComponentIndices($item)
+	Local $indices[0]
+	Local $modStruct = GetModStruct($item)
+	If Not $modStruct Then Return $indices
+	If IsWeapon($item) Then
+		Local $itemType = DllStructGetData($item, 'type')
+		If ContainsAnyStruct($modStruct, $valuable_prefix_mods_by_weapon_type[$itemType], $STRUCT_WEAPON_UPGRADE) Then _ArrayAdd($indices, $COMPONENT_INDEX_PREFIX)
+		If ContainsAnyStruct($modStruct, $valuable_suffix_mods_by_weapon_type[$itemType], $STRUCT_WEAPON_UPGRADE) Then _ArrayAdd($indices, $COMPONENT_INDEX_SUFFIX)
+		If IsInscribable($item) And ContainsAnyStruct($modStruct, $valuable_inscriptions_by_weapon_type[$itemType], $STRUCT_INSCRIPTION) Then _ArrayAdd($indices, $COMPONENT_INDEX_INSCRIPTION)
+	ElseIf IsArmorSalvageItem($item) Then
+		If ContainsAnyStruct($modStruct, $valuable_insignias_structs_array) Then _ArrayAdd($indices, $COMPONENT_INDEX_PREFIX)
+		If ContainsAnyStruct($modStruct, $valuable_runes_structs_array) Then _ArrayAdd($indices, $COMPONENT_INDEX_SUFFIX)
+	EndIf
+	Return $indices
+EndFunc
+
+
+;~ Returns true if the modstruct contains one of the given structs - when a header is given, only structs preceded by it count
+;~ Header is the byte in front of the struct: $STRUCT_WEAPON_UPGRADE for weapon mods, $STRUCT_INSCRIPTION for inscriptions
+Func ContainsAnyStruct($modStruct, $structs, $header = Null)
+	If Not IsArray($structs) Then Return False
+	For $struct In $structs
+		If Not IsString($struct) Or $struct == '' Then ContinueLoop
+		Local $upgradePosition = StringInStr($modStruct, $struct)
+		While $upgradePosition > 0
+			If $header == Null Then Return True
+			If $upgradePosition >= 5 And StringMid($modStruct, $upgradePosition - 4, 2) == $header Then Return True
+			$upgradePosition = StringInStr($modStruct, $struct, 0, 1, $upgradePosition + 1)
+		WEnd
+	Next
+	Return False
+EndFunc
+
+
 ;~ Determines whether the provided OS (Old School) item has perfect mods
 Func HasPerfectMods($item)
 	Local $itemType	= DllStructGetData($item, 'type')
@@ -1153,12 +1189,27 @@ Global $valuable_inscriptions_array[]
 Global $valuable_inscriptions_by_weapon_type			= DefaultCreateValuableInscriptionsByWeaponTypeMap()
 
 
+; Salvage slot indices used to salvage a component out of an item: prefix/insignia 0, suffix/rune 1, inscription 2
+Global Const $COMPONENT_INDEX_PREFIX = 0
+Global Const $COMPONENT_INDEX_SUFFIX = 1
+Global Const $COMPONENT_INDEX_INSCRIPTION = 2
+; Valuable components split by salvage slot - filled from the loot configuration, used to salvage components out of items
+Global $valuable_prefix_mods_by_weapon_type[]
+Global $valuable_suffix_mods_by_weapon_type[]
+Global $valuable_insignias_structs_array[]
+Global $valuable_runes_structs_array[]
+
+
 ;~ Replace valuable runes/insignias/inscriptions/mods default lists by the lists of elements present in cache
 Func RefreshValuableListsFromCache()
 	$valuable_runes_and_insignias_structs_array = CreateValuableRunesAndInsigniasArray()
 	;$valuable_mods_by_os_weapon_type = CreateValuableModsByOSWeaponTypeMap()
 	$valuable_mods_by_weapon_type = CreateValuableModsByWeaponTypeMap()
 	$valuable_inscriptions_by_weapon_type = CreateValuableInscriptionsByWeaponTypeMap()
+	$valuable_prefix_mods_by_weapon_type = CreateValuableModsBySlotByWeaponTypeMap('Prefix')
+	$valuable_suffix_mods_by_weapon_type = CreateValuableModsBySlotByWeaponTypeMap('Suffix')
+	$valuable_insignias_structs_array = CreateValuableArmorUpgradesArray('Insignias')
+	$valuable_runes_structs_array = CreateValuableArmorUpgradesArray('Runes')
 EndFunc
 
 
@@ -1173,6 +1224,22 @@ Func CreateValuableRunesAndInsigniasArray()
 		$valuableRunesAndInsigniasStructsArray[$i] = SafeEval($varName)
 	Next
 	Return $valuableRunesAndInsigniasStructsArray
+EndFunc
+
+
+;~ Creates an array of the valuable armor upgrades of one category ('Insignias' or 'Runes') based on selected elements in treeview
+;~ Insignias sit at salvage index 0 and runes at index 1 of their armor salvageable item, hence the split
+Func CreateValuableArmorUpgradesArray($category)
+	Local $tickedRunesAndInsignias = GetAllChecked($inventory_management_cache, 'Keep components.Armor upgrades', 3, 3)
+	Local $valuableStructsArray[0]
+	For $tickedElement In $tickedRunesAndInsignias
+		If Not StringInStr($tickedElement, '.' & $category & '.') Then ContinueLoop
+		; removing leftmost string with dot 'Keep components.Armor upgrades.'
+		Local $varName = StringTrimLeft($tickedElement, 31)
+		$varName = 'Struct_' & StringReplace(StringReplace($varName, '.', '_'), ' ', '_')
+		_ArrayAdd($valuableStructsArray, SafeEval($varName))
+	Next
+	Return $valuableStructsArray
 EndFunc
 
 
@@ -1332,6 +1399,28 @@ Func CreateValuableInscriptionsByWeaponTypeMap()
 		EndSwitch
 	Next
 	Return $inscriptionsByWeaponType
+EndFunc
+
+
+;~ Creates a map of the valuable weapon mods of one salvage slot ('Prefix' or 'Suffix') by weapon type based on selected elements in treeview
+;~ Same elements as CreateValuableModsByWeaponTypeMap, split by slot so the right component can be salvaged out of an item
+Func CreateValuableModsBySlotByWeaponTypeMap($slotName)
+	Local $weaponModsByType[]
+	For $weaponType In $WEAPON_TYPES_ARRAY
+		Local $weaponName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
+		Local $modsPath = 'Keep components.Mods.' & $weaponName & '.'
+		Local $tickedMods = GetAllChecked($inventory_management_cache, 'Keep components.Mods.' & $weaponName, 2, 2)
+		Local $mods[0]
+		For $tickedMod In $tickedMods
+			; Relative path looks like 'Prefix - Haft.Sundering (Armor penetration +20% - Chance 20%)'
+			Local $relativePath = StringTrimLeft($tickedMod, StringLen($modsPath))
+			If StringLeft($relativePath, StringLen($slotName)) <> $slotName Then ContinueLoop
+			Local $modName = StringTrimLeft($relativePath, StringInStr($relativePath, '.'))
+			_ArrayAdd($mods, SafeEval('STRUCT_MOD_' & ModNameCleanupHelper($modName)))
+		Next
+		$weaponModsByType[$weaponType] = $mods
+	Next
+	Return $weaponModsByType
 EndFunc
 #EndRegion Structure creation from UI
 

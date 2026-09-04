@@ -318,7 +318,6 @@ Func CreateBotsHubGUI()
 	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 235)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
 	$gui_checkbox_salvageintocomponents = GUICtrlCreateCheckbox('Salvage into components', 31, 255)
-	GUICtrlSetState($gui_checkbox_salvageintocomponents, $GUI_DISABLE)
 	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 285)
 	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 318)
 	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 315, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
@@ -352,6 +351,7 @@ Func CreateBotsHubGUI()
 	GUICtrlSetBkColor($gui_renderbutton, $COLOR_YELLOW)
 
 	GUICtrlSetTip($gui_checkbox_farmmaterialsmidrun, 'Salvage items during runs to save space. Bot will take some salvage kits in inventory for that.')
+	GUICtrlSetTip($gui_checkbox_salvageintocomponents, 'Salvage the components ticked in Keep components (mods, inscriptions, runes, insignias) out of items not worth keeping, using expert salvage kits. Salvaged components are then stored.')
 	GUICtrlSetTip($gui_checkbox_useconsumables, 'If bot uses consumables (cake, pie, speed boosts, etc), it will do it automatically.')
 	GUICtrlSetTip($gui_checkbox_useconsets, 'If bot can use consets, it will do it automatically.')
 	GUICtrlSetTip($gui_button_openstorage, 'Open Xunlai storage window. Works remotely - view only from explorable areas.')
@@ -373,6 +373,7 @@ Func CreateBotsHubGUI()
 	GUICtrlSetOnEvent($gui_checkbox_hardmode, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_sharememory, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_farmmaterialsmidrun, 'GuiOptionsHandler')
+	GUICtrlSetOnEvent($gui_checkbox_salvageintocomponents, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsumables, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_useconsets, 'GuiOptionsHandler')
 	GUICtrlSetOnEvent($gui_checkbox_usescrolls, 'GuiOptionsHandler')
@@ -729,6 +730,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.share_memory'] = GUICtrlRead($gui_checkbox_sharememory) == $GUI_CHECKED
 		Case $gui_checkbox_farmmaterialsmidrun
 			$run_options_cache['run.farm_materials_mid_run'] = GUICtrlRead($gui_checkbox_farmmaterialsmidrun) == $GUI_CHECKED
+		Case $gui_checkbox_salvageintocomponents
+			$run_options_cache['run.salvage_into_components'] = GUICtrlRead($gui_checkbox_salvageintocomponents) == $GUI_CHECKED
 		Case $gui_checkbox_useconsumables
 			$run_options_cache['run.consume_consumables'] = GUICtrlRead($gui_checkbox_useconsumables) == $GUI_CHECKED
 		Case $gui_checkbox_useconsets
@@ -1683,6 +1686,7 @@ Func ApplyConfigToGUI()
 	GUICtrlSetState($gui_checkbox_hardmode, $run_options_cache['run.hard_mode'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_sharememory, $run_options_cache['run.share_memory'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_farmmaterialsmidrun, $run_options_cache['run.farm_materials_mid_run'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_salvageintocomponents, $run_options_cache['run.salvage_into_components'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsumables, $run_options_cache['run.consume_consumables'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_useconsets, $run_options_cache['run.use_consets'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_usescrolls, $run_options_cache['run.use_scrolls'] ? $GUI_CHECKED : $GUI_UNCHECKED)
