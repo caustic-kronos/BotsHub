@@ -36,28 +36,23 @@ Global $trade_town = $ID_EYE_OF_THE_NORTH
 
 
 #Region Inventory Management
-;~ Function to deal with inventory before farm run
+;~ Inventory management before a run: identify, salvage mods, salvage, sell, balance gold, buy and store - in that order
 Func InventoryManagementBeforeRun()
 	; Clarity rename
 	Local $cache = $inventory_management_cache
 	; Operations order :
-	; 1-Store unids if desired
-	; 2-Sort items
-	; 3-Identify items
-	; 4-Collect data
-	; 5-Salvage valuable components out of items not worth keeping
-	; 6-Salvage
-	; 7-Sell materials
-	; 8-Sell items
-	; 9-Balance character gold level
-	; 10-Buy ectoplasm/obsidian with surplus
-	; 11-Store items
-	If $cache['Store items.Unidentified gold items'] And HasGoldUnidentifiedItems() Then
-		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($trade_town, $district_name)
-		StoreItemsInXunlaiStorage(IsUnidentifiedGoldItem)
-	EndIf
+	; 1-Sort items
+	; 2-Identify items
+	; 3-Collect data
+	; 4-Salvage mods out of items that are salvaged or sold
+	; 5-Salvage
+	; 6-Sell materials
+	; 7-Sell items
+	; 8-Balance character gold level
+	; 9-Buy ectoplasm/obsidian with surplus
+	; 10-Store items
 	If $run_options_cache['run.sort_items'] Then SortInventory()
-	If $cache['@identify.something'] And HasUnidentifiedItems() Then
+	If $cache['@identify.something'] And HasItemsToIdentify() Then
 		TravelToOutpost($trade_town, $district_name)
 		IdentifyItems()
 	EndIf
@@ -69,7 +64,7 @@ Func InventoryManagementBeforeRun()
 		StoreAllItemsData()
 		DisconnectFromDatabase()
 	EndIf
-	If $run_options_cache['run.salvage_into_components'] And HasComponentsToSalvage() Then
+	If $cache['@components.something'] And HasComponentsToSalvage() Then
 		TravelToOutpost($trade_town, $district_name)
 		SalvageComponents()
 	EndIf
@@ -77,6 +72,7 @@ Func InventoryManagementBeforeRun()
 		TravelToOutpost($trade_town, $district_name)
 		SalvageItems()
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems()
+		;SalvageInscriptions()
 		;UpgradeWithSalvageInscriptions()
 		;SalvageMaterials()
 	EndIf
@@ -94,7 +90,7 @@ Func InventoryManagementBeforeRun()
 		SellItemsToMerchant()
 	EndIf
 	; Max gold in Xunlai chest is 1000 platinums
-	If $cache['Store items.Gold'] Then
+	If IsMoneyStored() Then
 		If GetMapType() <> $ID_OUTPOST Then TravelToOutpost($trade_town, $district_name)
 		BalanceCharacterGold(10000)
 	EndIf
@@ -127,7 +123,7 @@ Func InventoryManagementMidRun()
 	; 2-If not, buy until we have 4 identification kits and 12 salvaged kits
 	; 3-Sort items
 	; 4-Identify items
-	; 5-Salvage valuable components out of items if an expert salvage kit is available
+	; 5-Salvage mods out of items that are salvaged or sold
 	; 6-Salvage
 	Local Static $superiorIdentificationKits = [$ID_INFINITE_IDENTIFICATION_KIT, $ID_SUPERIOR_IDENTIFICATION_KIT]
 	Local Static $salvageKits = [$ID_SALVAGE_KIT, $ID_SALVAGE_KIT_2]
@@ -140,8 +136,8 @@ Func InventoryManagementMidRun()
 		Return True
 	EndIf
 	If $run_options_cache['run.sort_items'] Then SortInventory()
-	If $inventory_management_cache['@identify.something'] And HasUnidentifiedItems() Then IdentifyItems(False)
-	If $run_options_cache['run.salvage_into_components'] Then SalvageComponents(False)
+	If $inventory_management_cache['@identify.something'] And HasItemsToIdentify() Then IdentifyItems(False)
+	If $inventory_management_cache['@components.something'] Then SalvageComponents(False)
 	If $inventory_management_cache['@salvage.something'] Then
 		SalvageItems(False)
 		If $bags_count == 5 And MoveItemsOutOfEquipmentBag() > 0 Then SalvageItems(False)
@@ -329,436 +325,104 @@ EndFunc
 
 ;~ Return True if the item should be picked up - default to False
 Func DefaultShouldPickItem($item)
-	; Clarity rename
-	Local $cache = $inventory_management_cache
-	If $cache['@pickup.nothing'] Then Return False
-	If $cache['@pickup.everything'] Then Return True
-
-	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $rarity = GetRarity($item)
-
-	; ---------------------------------------- Money ----------------------------------------
-	If (($itemID == $ID_MONEY) And (GetGoldCharacter() < 99000)) Then
-		Return $cache['Pick up items.Gold']
-	; --------------------------------------- Weapons ---------------------------------------
-	ElseIf IsWeapon($item) Then
-		Return CheckPickupWeapon($item)
-	; --------------------------------- Armor salvageables ---------------------------------
-	ElseIf isArmorSalvageItem($item) Then
-		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-		Return $cache['Pick up items.Armor salvageables.' & $rarityName]
-	; --------------------------- Consumables, Alcohols, Party & Sweets ---------------------------
-	ElseIf IsAlcohol($itemID) Then
-		If $MAP_MINOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Pick up items.Alcohols.Minor (1pt)']
-		If $MAP_MAJOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Pick up items.Alcohols.Major (3pt)']
-		If $MAP_SUPERIOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Pick up items.Alcohols.Superior (50pt)']
-		Return False
-	ElseIf IsFestive($itemID) Or IsPartyTonic($itemID) Then
-		If $MAP_MINOR_PARTY[$itemID] <> Null Then Return $cache['Pick up items.Party.Minor (1-2pt)']
-		If $MAP_MAJOR_PARTY[$itemID] <> Null Then Return $cache['Pick up items.Party.Major (3-7pt)']
-		If $MAP_SUPERIOR_PARTY[$itemID] <> Null Then Return $cache['Pick up items.Party.Superior (25-50pt)']
-		Return False
-	ElseIf IsTownSweet($itemID) Then
-		If $MAP_MINOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Minor (1-2pt)']
-		If $MAP_MAJOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Major (3pt)']
-		If $MAP_SUPERIOR_SWEETS[$itemID] <> Null Then Return $cache['Pick up items.Sweets.Superior (50pt)']
-		Return False
-	ElseIf IsPCon($itemID) Then
-		Local $pconName = $PCONS_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.PCons.' & $pconName]
-	ElseIf IsDPRemoval($itemID) Then
-		Local $moraleItemName = $DP_REMOVAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Morale.' & $moraleItemName]
-	ElseIf IsSpecialDrop($itemID) Then
-		Local $specialDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Special drops.' & $specialDropName]
-	ElseIf IsConsumable($itemID) Then
-		Return $cache['Pick up items.Consumables']
-	; --------------------------------------- Trophies ---------------------------------------
-	ElseIf IsTrophy($itemID) Then
-		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then Return $cache['Pick up items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
-		Return $cache['Pick up items.Trophies.Other trophies']
-	; -------------------------------------- Materials --------------------------------------
-	ElseIf IsBasicMaterial($item) Then
-		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Basic Materials.' & $materialName]
-	ElseIf IsRareMaterial($item) Then
-		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Rare Materials.' & $materialName]
-	; ---------------------------------------- Tomes ----------------------------------------
-	ElseIf IsRegularTome($itemID) Then
-		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Tomes.Normal.' & $tomeName]
-	ElseIf IsEliteTome($itemID) Then
-		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
-		Return $cache['Pick up items.Tomes.Elite.' & $tomeName]
-	; --------------------------------------- Scrolls ---------------------------------------
-	ElseIf IsGoldScroll($itemID) Then
-		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Local $pickup = $cache['Pick up items.Scrolls.Gold.' & $scrollName]
-		If $pickup <> Null Then Return $pickup
-		Return $cache['Pick up items.Scrolls.Gold.Other gold scrolls']
-	ElseIf IsBlueScroll($itemID) Then
-		Return $cache['Pick up items.Scrolls.Blue']
-	; ----------------------------------------- Keys -----------------------------------------
-	ElseIf IsKey($itemID) Then
-		Return $cache['Pick up items.Keys']
-	ElseIf ($itemID == $ID_LOCKPICK) Then
-		Return $cache['Pick up items.Lockpicks']
-	; ----------------------------------------- Dyes -----------------------------------------
-	ElseIf ($itemID == $ID_DYES) Then
-		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
-		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
-		Return $cache['Pick up items.Dyes.' & $dyeColorName]
-	; --------------------------------- Gizmos & Quest items ---------------------------------
-	ElseIf ($itemID == $ID_JAR_OF_INVIGORATION) Then
-		Return False
-	ElseIf IsMapPiece($itemID) Then
-		Return $cache['Pick up items.Quest items.Map pieces']
-	ElseIf IsMiniature($item) Then
-		Return $cache['Pick up items.Miniatures']
-	; ----------------------------------- Other stackables -----------------------------------
-	ElseIf IsStackable($item) Then
-		Return True
-	EndIf
-	Return False
+	If $inventory_management_cache['@pickup.nothing'] Then Return False
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	; Character gold is capped, leave money on the ground when close to the cap
+	If $itemID == $ID_MONEY And GetGoldCharacter() >= 99000 Then Return False
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	Return Not $decision['ignore']
 EndFunc
 
 
 ;~ Return True if the item should be salvaged - default to false
 Func DefaultShouldSalvageItem($item)
-	; Clarity rename
-	Local $cache = $inventory_management_cache
-	If $cache['@salvage.nothing'] Then Return False
-
-	Local $itemID = DllStructGetData($item, 'ModelID')
-	Local $rarity = GetRarity($item)
-	If $rarity == $RARITY_GREEN Then
-		Return False
-	; --------------------------------------- Weapons ---------------------------------------
-	ElseIf IsWeapon($item) Then
-		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
-		If $cache['@salvage.weapons.nothing'] Then Return False
-		If Not CheckSalvageWeapon($item) Then Return False
-		Return Not ShouldKeepWeapon($item)
-	; --------------------------------- Armor salvageables ---------------------------------
-	ElseIf IsArmorSalvageItem($item) Then
-		If $cache['@salvage.salvageables.nothing'] Then Return False
-		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-		If Not $cache['Salvage items.Armor salvageables.' & $rarityName] Then Return False
-		Return IsIdentified($item) And Not ContainsValuableUpgrades($item)
-	; --------------------------------------- Trophies ---------------------------------------
-	ElseIf IsTrophy($itemID) Then
-		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then
-			Local $shouldSalvage = $cache['Salvage items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
-			Return $shouldSalvage == Null ? False : $shouldSalvage
-		EndIf
-		; Do not salvage Nick items and items that salvage into rare materials
-		If $MAP_NICHOLAS_ITEMS[$itemID] <> Null Then Return False
-		; - FIXME: salvage once we can salvage with higher salvage kit
-		If $MAP_RARE_MATERIALS_TROPHIES[$itemID] <> Null Then Return False
-		; Salvage items that salvage into feathers, dust, bones and fiber
-		If $MAP_FEATHER_TROPHIES[$itemID] <> Null Then Return True
-		If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return True
-		If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return True
-		If $MAP_FIBER_TROPHIES[$itemID] <> Null Then Return True
-		Return False
-	; -------------------------------------- Materials --------------------------------------
-	ElseIf IsRareMaterial($item) Then
-		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Salvage items.Rare Materials.' & $materialName]
-	EndIf
-	Return False
+	If $inventory_management_cache['@salvage.nothing'] Then Return False
+	If DllStructGetData($item, 'ID') == 0 Then Return False
+	If IsUpgradeComponent($item) Then Return False
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	If $decision['action'] <> $LOOT_ACTION_SALVAGE Then Return False
+	If IsWeapon($item) And Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
+	; Items waiting for identification are handled after the identification step
+	If $decision['identify'] And Not IsIdentified($item) Then Return False
+	; Mods worth salvaging come out first with an expert kit - a basic salvage would destroy them
+	If HasComponentsToSalvageOut($item) Then Return False
+	Return True
 EndFunc
 
 
-;~ Return True if valuable components (mods, inscriptions, runes, insignias) should be salvaged out of the item
-;~ Only items not worth keeping for themselves are stripped, so weapons kept for their skin, req or stats stay untouched
+;~ Return True if mods worth salvaging should be taken out of the item: identified, salvageable, and leaving the bags anyway
+;~ Stored items keep their mods, and so do ignored and kept ones
 Func ShouldSalvageComponents($item)
 	If DllStructGetData($item, 'ID') = 0 Then Return False
-	If GetRarity($item) == $RARITY_GREEN Then Return False
 	If Not IsIdentified($item) Then Return False
 	If IsWeapon($item) Then
 		If Not DllStructGetData($item, 'IsMaterialSalvageable') Then Return False
-		If ShouldKeepWeapon($item, False) Then Return False
 	ElseIf Not IsArmorSalvageItem($item) Then
 		Return False
 	EndIf
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	If $decision['action'] <> $LOOT_ACTION_SALVAGE And $decision['action'] <> $LOOT_ACTION_SELL Then Return False
 	Return UBound(GetValuableComponentIndices($item)) > 0
 EndFunc
 
 
 ;~ Return True if the item should be sold to the merchant - default to false
+;~ Materials are sold to the material traders instead, see DefaultShouldSellBasicMaterial and DefaultShouldSellRareMaterial
 Func DefaultShouldSellItem($item)
-	; Clarity rename
-	Local $cache = $inventory_management_cache
-	If $cache['@sell.nothing'] Then Return False
-
-	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $rarity = GetRarity($item)
-
-	If DllStructGetData($item, 'Value') == 0 Then
-		Return False
-	ElseIf $rarity == $RARITY_GREEN Then
-		Return False
-	; --------------------------------------- Weapons ---------------------------------------
-	ElseIf IsWeapon($item) Then
-		If $cache['@sell.weapons.nothing'] Then Return False
-		If Not CheckSellWeapon($item) Then Return False
-		Return Not ShouldKeepWeapon($item)
-	; --------------------------------- Armor salvageables ---------------------------------
-	ElseIf isArmorSalvageItem($item) Then
-		If $cache['@sell.salvageables.nothing'] Then Return False
-		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-		If Not $cache['Sell items.Armor salvageables.' & $rarityName] Then Return False
-		Return $rarity == $RARITY_WHITE Or (IsIdentified($item) And Not ContainsValuableUpgrades($item))
-	; --------------------------------------- Trophies ---------------------------------------
-	ElseIf IsTrophy($itemID) Then
-		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then
-			Local $shouldSell = $cache['Sell items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
-			Return $shouldSell == Null ? False : $shouldSell
-		EndIf
-		; Do not sell Nick items and items that salvage into rare materials
-		If $MAP_NICHOLAS_ITEMS[$itemID] <> Null Then Return False
-		If $MAP_RARE_MATERIALS_TROPHIES[$itemID] <> Null Then Return False
-		; Do not sell items that salvage into feathers, dust, bones and fiber
-		If $MAP_FEATHER_TROPHIES[$itemID] <> Null Then Return False
-		If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return False
-		If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return False
-		If $MAP_FIBER_TROPHIES[$itemID] <> Null Then Return False
-		; Sell the rest
-		Return True
-	; --------------------------------------- Scrolls ---------------------------------------
-	ElseIf IsBlueScroll($itemID) Then
-		Return $cache['Sell items.Scrolls.Blue']
-	ElseIf IsGoldScroll($itemID) Then
-		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Local $shouldSell = $cache['Sell items.Scrolls.Gold.' & $scrollName]
-		If $shouldSell <> Null Then Return $shouldSell
-		Return $cache['Sell items.Scrolls.Gold.Other gold scrolls']
-	; ----------------------------------------- Keys -----------------------------------------
-	ElseIf IsKey($itemID) Then
-		Return $cache['Sell items.Keys']
-	EndIf
-	Return False
+	If $inventory_management_cache['@sell.nothing'] Then Return False
+	If DllStructGetData($item, 'ID') == 0 Then Return False
+	If DllStructGetData($item, 'Value') == 0 Then Return False
+	If IsMaterial($item) Then Return False
+	If IsUpgradeComponent($item) Then Return ShouldSellLooseComponent($item)
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	If $decision['action'] <> $LOOT_ACTION_SELL Then Return False
+	; Items waiting for identification are handled after the identification step
+	If $decision['identify'] And Not IsIdentified($item) Then Return False
+	; Mods worth salvaging come out first
+	If HasComponentsToSalvageOut($item) Then Return False
+	Return True
 EndFunc
 
 
 ;~ Return True if the item should be stored in Xunlai Storage - default to false
 Func DefaultShouldStoreItem($item)
-	; Clarity rename
-	Local $cache = $inventory_management_cache
-	If $cache['@store.nothing'] Then Return False
-
-	Local $itemID = DllStructGetData(($item), 'ModelID')
-	Local $rarity = GetRarity($item)
-	Local $quantity = DllStructGetData($item, 'Quantity')
-
-	; --------------------------------------- Weapons ---------------------------------------
-	If IsWeapon($item) Then
-		;Return ShouldKeepWeapon($item)
-		Return CheckStoreWeapon($item)
-	; --------------------------------- Armor salvageables ---------------------------------
-	ElseIf isArmorSalvageItem($item) Then
-		Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-		;Return ContainsValuableUpgrades($item)
-		Return $cache['Store items.Armor salvageables.' & $rarityName]
-	; ----------------------------------- Upgrade components -----------------------------------
-	ElseIf IsUpgradeComponent($item) Then
-		Local $shouldStore = $cache['Store items.Upgrade components']
-		; Loot configurations saved before this option existed have no value for it: store components when the bot salvages them
-		Return $shouldStore == Null ? $run_options_cache['run.salvage_into_components'] : $shouldStore
-	; ------------------------------------- Consumables -------------------------------------
-	ElseIf IsAlcohol($itemID) Then
-		If $MAP_MINOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Minor (1pt)']
-		If $MAP_MAJOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Major (3pt)']
-		If $MAP_SUPERIOR_ALCOHOLS[$itemID] <> Null Then Return $cache['Store items.Alcohols.Superior (50pt)']
-		Return False
-	ElseIf IsFestive($itemID) Or IsPartyTonic($itemID) Then
-		If $MAP_MINOR_PARTY[$itemID] <> Null Then Return $cache['Store items.Party.Minor (1-2pt)']
-		If $MAP_MAJOR_PARTY[$itemID] <> Null Then Return $cache['Store items.Party.Major (3-7pt)']
-		If $MAP_SUPERIOR_PARTY[$itemID] <> Null Then Return $cache['Store items.Party.Superior (25-50pt)']
-		Return False
-	ElseIf IsTownSweet($itemID) Then
-		If $MAP_MINOR_SWEETS[$itemID] <> Null Then Return $cache['Store items.Sweets.Minor (1-2pt)']
-		If $MAP_MAJOR_SWEETS[$itemID] <> Null Then Return $cache['Store items.Sweets.Major (3pt)']
-		If $MAP_SUPERIOR_SWEETS[$itemID] <> Null Then Return $cache['Store items.Sweets.Superior (50pt)']
-		Return False
-	ElseIf IsPCon($itemID) Then
-		Local $pconName = $PCONS_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.PCons.' & $pconName]
-	ElseIf IsDPRemoval($itemID) Then
-		Local $moraleItemName = $DP_REMOVAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Morale.' & $moraleItemName]
-	ElseIf IsSpecialDrop($itemID) Then
-		Local $specialDropName = $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Special drops.' & $specialDropName]
-	ElseIf IsSummoningStone($itemID) Then
-		Local $stoneName = $SUMMONING_STONES_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Summoning stones.' & $stoneName]
-	ElseIf IsConset($itemID) Then
-		Local $consetItemName = $MAP_CONSETS[$itemID]
-		Return $cache['Store items.Consets.' & $consetItemName]
-	ElseIf IsConsumable($itemID) Then
-		Return $cache['Store items.Consumables']
-	; --------------------------------------- Trophies ---------------------------------------
-	ElseIf IsTrophy($itemID) Then
-		If $MAP_FARMED_TROPHIES[$itemID] <> Null Then Return $cache['Store items.Trophies.' & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]]
-		If $quantity <> 250 Then Return False
-		Return True
-	; -------------------------------------- Materials --------------------------------------
-	ElseIf IsBasicMaterial($item) Then
-		Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Basic Materials.' & $materialName]
-	ElseIf IsRareMaterial($item) Then
-		Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Rare Materials.' & $materialName]
-	; ----------------------------------------- Tomes -----------------------------------------
-	ElseIf IsRegularTome($itemID) Then
-		Local $tomeName = $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Tomes.Normal.' & $tomeName]
-	ElseIf IsEliteTome($itemID) Then
-		Local $tomeName = $ELITE_TOME_NAMES_FROM_IDS[$itemID]
-		Return $cache['Store items.Tomes.Elite.' & $tomeName]
-	; --------------------------------------- Scrolls ---------------------------------------
-	ElseIf IsGoldScroll($itemID) Then
-		Local $scrollName = $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
-		Local $shouldStore = $cache['Store items.Scrolls.Gold.' & $scrollName]
-		If $shouldStore <> Null Then Return $shouldStore
-		Return $cache['Store items.Scrolls.Gold.Other gold scrolls']
-	ElseIf IsBlueScroll($itemID) Then
-		Return $cache['Store items.Scrolls.Blue']
-	; ----------------------------------------- Keys -----------------------------------------
-	ElseIf IsKey($itemID) Then
-		Return $cache['Store items.Keys']
-	; ----------------------------------------- Dyes -----------------------------------------
-	ElseIf ($itemID == $ID_DYES) Then
-		Local $dyeColorID = DllStructGetData($item, 'DyeColor')
-		Local $dyeColorName = $DYE_NAMES_FROM_IDS[$dyeColorID]
-		Return $cache['Store items.Dyes.' & $dyeColorName]
-	EndIf
-	Return False
-EndFunc
-
-
-;~ Return True if weapon item should not be sold or salvaged - $checkUpgrades False ignores the components it contains
-Func ShouldKeepWeapon($item, $checkUpgrades = True)
-	Local Static $lowReqValuableWeaponTypes = [$ID_TYPE_SWORD, $ID_TYPE_OFFHAND, $ID_TYPE_SHIELD, $ID_TYPE_DAGGER, $ID_TYPE_SCYTHE, $ID_TYPE_SPEAR]
-	Local Static $lowReqValuableWeaponTypesMap = MapFromArray($lowReqValuableWeaponTypes)
-	Local Static $valuableOSWeaponTypes = [$ID_TYPE_SHIELD, $ID_TYPE_OFFHAND, $ID_TYPE_WAND]
-	Local Static $valuableOSWeaponTypesMap = MapFromArray($valuableOSWeaponTypes)
-
-	Local $rarity = GetRarity($item)
-	Local $itemID = DllStructGetData($item, 'ModelID')
-	Local $type = DllStructGetData($item, 'Type')
-	; Keeping equipped items
-	If DllStructGetData($item, 'Equipped') Then Return True
-	; Keeping customized items
-	If DllStructGetData($item, 'Customized') <> 0 Then Return True
-	; Throwing white items
-	If $rarity == $RARITY_WHITE Then Return False
-	; Keeping green items
-	If $rarity == $RARITY_GREEN Then Return True
-	; Keeping unidentified items
-	If Not IsIdentified($item) Then Return True
-	; Keeping super-rare items, good in all cases, items (BDS, voltaic, etc)
-	If $MAP_ULTRA_RARE_WEAPONS[$itemID] <> Null Then Return True
-	; Keeping items that contain good upgrades
-	If $checkUpgrades And ContainsValuableUpgrades($item) Then Return True
-	; Throwing items without good damage/energy/armor
-	If Not IsMaxStatsForReq($item) Then Return False
-	; Inscribable are kept only if : 1) rare skin and q9 2) low Req of a good type
-	If IsInscribable($item) Then
-		If IsLowReqMaxStats($item) And $lowReqValuableWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then Return True
-		If GetItemReq($item) == 9 And $MAP_RARE_WEAPONS[$itemID] <> Null Then Return True
-		Return False
-	; OS - Old School weapon without inscription ... it is more complicated
-	Else
-		If GetItemReq($item) >= 9 Then
-			; OS (Old School) high Req are kept only if : 1) rare skin and perfect mods 2) good type and perfect mods (shield, offhand, wand)
-			If $MAP_RARE_WEAPONS[$itemID] <> Null Then
-				Return HasPerfectMods($item)
-			ElseIf $valuableOSWeaponTypesMap[DllStructGetData($item, 'type')] <> Null Then
-				Return HasPerfectMods($item)
-			EndIf
-			Return False
-		Else
-			; Low Req are kept if they have perfect mods
-			If HasPerfectMods($item) Then Return True
-			If $MAP_RARE_WEAPONS[$itemID] <> Null And HasPerfectMods($item) Then Return True
-			Return False
-		EndIf
-	EndIf
-	Return False
+	If $inventory_management_cache['@store.nothing'] Then Return False
+	If DllStructGetData($item, 'ID') == 0 Then Return False
+	If IsUpgradeComponent($item) Then Return ShouldStoreLooseComponent($item)
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	Return $decision['action'] == $LOOT_ACTION_STORE
 EndFunc
 
 
 ;~ Return true if basic material should be sold to the material merchant
 Func DefaultShouldSellBasicMaterial($item)
 	If Not IsBasicMaterial($item) Then Return False
-	Local $materialID = DllStructGetData($item, 'ModelID')
-	Local $materialName = $BASIC_MATERIAL_NAMES_FROM_IDS[$materialID]
-	Return $inventory_management_cache['Sell items.Basic Materials.' & $materialName]
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	Return $decision['action'] == $LOOT_ACTION_SELL
 EndFunc
 
 
 ;~ Return true if rare material should be sold to the rare material merchant
 Func DefaultShouldSellRareMaterial($item)
 	If Not IsRareMaterial($item) Then Return False
-	Local $materialID = DllStructGetData($item, 'ModelID')
-	Local $materialName = $RARE_MATERIAL_NAMES_FROM_IDS[$materialID]
-	Return $inventory_management_cache['Sell items.Rare Materials.' & $materialName]
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	Return $decision['action'] == $LOOT_ACTION_SELL
 EndFunc
 
 
-;~ Return true if a weapon should be picked up
-Func CheckPickupWeapon($weaponItem)
-	Local $weaponRarity = GetRarity($weaponItem)
-	If $weaponRarity == $RARITY_RED Then Return True
-	If $weaponRarity == $RARITY_GRAY Then Return False
-	If $weaponRarity <> $RARITY_WHITE And IsLowReqMaxStats($weaponItem) And $inventory_management_cache['Pick up items.Weapons and offhands.Low Req Max Stats'] Then Return True
-	Local $itemID = DllStructGetData($weaponItem, 'ModelID')
-	If $weaponRarity <> $RARITY_WHITE And $RARE_WEAPONS_TO_PICK[$itemID] <> Null And IsMaxStatsForReq($weaponItem) Then Return True
-
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Pick up items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
-EndFunc
-
-
-Func CheckSalvageWeapon($weaponItem)
-	Local $weaponRarity = GetRarity($weaponItem)
-	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Salvage items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
-EndFunc
-
-
-Func CheckSellWeapon($weaponItem)
-	Local $weaponRarity = GetRarity($weaponItem)
-	If $weaponRarity == $RARITY_GREEN Or $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Sell items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
-EndFunc
-
-
-Func CheckStoreWeapon($weaponItem)
-	Local $weaponRarity = GetRarity($weaponItem)
-	If $weaponRarity == $RARITY_GRAY Or $weaponRarity == $RARITY_RED Then Return False
-	Local $weaponRarityName = $RARITY_NAMES_FROM_IDS[$weaponRarity]
-	Local $weaponType = DllStructGetData($weaponItem, 'Type')
-	Local $weaponTypeName = $WEAPON_NAMES_FROM_TYPES[$weaponType]
-	Local $weaponReq = GetItemReq($weaponItem)
-	Return $inventory_management_cache['Store items.Weapons and offhands.' & $weaponRarityName & '.' & $weaponTypeName & '.Req ' & $weaponReq]
-EndFunc
 #EndRegion Inventory Management
 
 
@@ -1073,7 +737,7 @@ Func BuyKitsForMidRun()
 	If $salvageKitsRequired > 0 Then BuySalvageKitInTown($salvageKitsRequired)
 	If $identificationKitsRequired > 0 Then BuySuperiorIdentificationKitInTown($identificationKitsRequired)
 	; Salvaging components needs an expert salvage kit - keep one in inventory when the option is enabled
-	If $run_options_cache['run.salvage_into_components'] And FindSalvageKit() == Null Then BuyExpertSalvageKitInTown()
+	If $inventory_management_cache['@components.something'] And FindSalvageKit() == Null Then BuyExpertSalvageKitInTown()
 EndFunc
 #EndRegion Buying/selling items from/to merchant
 
@@ -1220,7 +884,7 @@ EndFunc
 
 
 #Region Identification
-;~ Identify items from inventory
+;~ Identifies the items whose leaf asks for identification, buying superior kits in town when allowed
 Func IdentifyItems($buyKit = True)
 	Info('Identifying items')
 	For $bagIndex = 1 To $bags_count
@@ -1229,22 +893,17 @@ Func IdentifyItems($buyKit = True)
 		For $i = 1 To DllStructGetData($bag, 'slots')
 			$item = GetItemBySlot($bagIndex, $i)
 			If DllStructGetData($item, 'ID') == 0 Then ContinueLoop
-			If Not IsIdentified($item) Then
-				Local $rarity = GetRarity($item)
-				Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
-				If Not $inventory_management_cache['Identify items.' & $rarityName] Then ContinueLoop
-
-				Local $identificationKit = FindIdentificationKit()
-				If $identificationKit == Null Then
-					If $buyKit Then
-						BuySuperiorIdentificationKitInTown()
-					Else
-						Return False
-					EndIf
+			If Not ShouldIdentifyItem($item) Then ContinueLoop
+			Local $identificationKit = FindIdentificationKit()
+			If $identificationKit == Null Then
+				If $buyKit Then
+					BuySuperiorIdentificationKitInTown()
+				Else
+					Return False
 				EndIf
-				IdentifyItem($item)
-				RandomSleep(100)
 			EndIf
+			IdentifyItem($item)
+			RandomSleep(100)
 		Next
 	Next
 	Return True
@@ -3087,4 +2746,235 @@ Func AutomaticTonicConsumer()
 		Next
 	WEnd
 	Return $PAUSE
+EndFunc
+
+
+;~ Configuration path of the leaf holding the decision for an item - Null for items without a leaf (loose mods, jars)
+;~ Unknown items fall back to the Other items leaves in GetItemLootDecision
+Func GetItemLootPath($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $items = $LOOT_ROOT_ITEMS & '.'
+	; ---------------------------------------- Money ----------------------------------------
+	If $itemID == $ID_MONEY Then Return $items & $LOOT_MONEY
+	; --------------------------------------- Weapons ---------------------------------------
+	If IsWeapon($item) Then Return GetWeaponLootPath($item)
+	; --------------------------------- Armor salvageables ---------------------------------
+	If IsArmorSalvageItem($item) Then Return $items & $LOOT_ARMOR_FAMILY & '.' & $RARITY_NAMES_FROM_IDS[GetRarity($item)]
+	; --------------------------- Consumables, Alcohols, Party & Sweets ---------------------------
+	If IsAlcohol($itemID) Then
+		If $MAP_MINOR_ALCOHOLS[$itemID] <> Null Then Return $items & 'Alcohols.Minor (1pt)'
+		If $MAP_MAJOR_ALCOHOLS[$itemID] <> Null Then Return $items & 'Alcohols.Major (3pt)'
+		If $MAP_SUPERIOR_ALCOHOLS[$itemID] <> Null Then Return $items & 'Alcohols.Superior (50pt)'
+		Return Null
+	EndIf
+	If IsFestive($itemID) Or IsPartyTonic($itemID) Then
+		If $MAP_MINOR_PARTY[$itemID] <> Null Then Return $items & 'Party.Minor (1-2pt)'
+		If $MAP_MAJOR_PARTY[$itemID] <> Null Then Return $items & 'Party.Major (3-7pt)'
+		If $MAP_SUPERIOR_PARTY[$itemID] <> Null Then Return $items & 'Party.Superior (25-50pt)'
+		Return Null
+	EndIf
+	If IsTownSweet($itemID) Then
+		If $MAP_MINOR_SWEETS[$itemID] <> Null Then Return $items & 'Sweets.Minor (1-2pt)'
+		If $MAP_MAJOR_SWEETS[$itemID] <> Null Then Return $items & 'Sweets.Major (3pt)'
+		If $MAP_SUPERIOR_SWEETS[$itemID] <> Null Then Return $items & 'Sweets.Superior (50pt)'
+		Return Null
+	EndIf
+	If IsPCon($itemID) Then Return $items & 'PCons.' & $PCONS_NAMES_FROM_IDS[$itemID]
+	If IsDPRemoval($itemID) Then Return $items & 'Morale.' & $DP_REMOVAL_NAMES_FROM_IDS[$itemID]
+	If IsSpecialDrop($itemID) Then Return $items & 'Special drops.' & $SPECIAL_DROP_NAMES_FROM_IDS[$itemID]
+	If IsSummoningStone($itemID) Then Return $items & 'Summoning stones.' & $SUMMONING_STONES_NAMES_FROM_IDS[$itemID]
+	If IsConset($itemID) Then Return $items & 'Consets.' & $MAP_CONSETS[$itemID]
+	If IsConsumable($itemID) Then Return $items & $LOOT_CONSUMABLES
+	; --------------------------------------- Trophies ---------------------------------------
+	If IsTrophy($itemID) Then Return GetTrophyLootPath($itemID)
+	; -------------------------------------- Materials --------------------------------------
+	If IsBasicMaterial($item) Then Return $items & $LOOT_BASIC_MATERIALS_FAMILY & '.' & $BASIC_MATERIAL_NAMES_FROM_IDS[$itemID]
+	If IsRareMaterial($item) Then Return $items & $LOOT_RARE_MATERIALS_FAMILY & '.' & $RARE_MATERIAL_NAMES_FROM_IDS[$itemID]
+	; ---------------------------------------- Tomes ----------------------------------------
+	If IsRegularTome($itemID) Then Return $items & 'Tomes.Normal.' & $REGULAR_TOME_NAMES_FROM_IDS[$itemID]
+	If IsEliteTome($itemID) Then Return $items & 'Tomes.Elite.' & $ELITE_TOME_NAMES_FROM_IDS[$itemID]
+	; --------------------------------------- Scrolls ---------------------------------------
+	If IsGoldScroll($itemID) Then
+		Local $scrollPath = $items & $LOOT_SCROLLS_FAMILY & '.Gold.' & $GOLD_SCROLL_NAMES_FROM_IDS[$itemID]
+		If LootLeafExists($scrollPath) Then Return $scrollPath
+		Return $items & $LOOT_SCROLLS_FAMILY & '.Gold.' & $LOOT_OTHER_GOLD_SCROLLS
+	EndIf
+	If IsBlueScroll($itemID) Then Return $items & $LOOT_SCROLLS_FAMILY & '.Blue'
+	; ------------------------------------ Keys & Dyes ------------------------------------
+	If IsKey($itemID) Then Return $items & 'Keys'
+	If $itemID == $ID_LOCKPICK Then Return $items & 'Lockpicks'
+	If $itemID == $ID_DYES Then Return $items & 'Dyes.' & $DYE_NAMES_FROM_IDS[DllStructGetData($item, 'DyeColor')]
+	; --------------------------------- Gizmos & Quest items ---------------------------------
+	If $itemID == $ID_JAR_OF_INVIGORATION Then Return Null
+	If IsMapPiece($itemID) Then Return $items & 'Quest items.Map pieces'
+	If IsMiniature($item) Then Return $items & 'Miniatures'
+	; Loose mods, inscriptions, runes and insignias follow the Mods section
+	If IsUpgradeComponent($item) Then Return Null
+	Return $items & $LOOT_OTHER_FAMILY & '.' & (IsStackable($item) ? $LOOT_OTHER_STACKABLES : $LOOT_OTHER_UNKNOWN)
+EndFunc
+
+
+;~ Configuration path of a weapon: type > rarity > requirement > rare or other skins, green weapons having a single leaf per type
+Func GetWeaponLootPath($item)
+	Local $weapons = $LOOT_ROOT_ITEMS & '.' & $LOOT_WEAPONS_FAMILY & '.'
+	Local $typeName = $WEAPON_NAMES_FROM_TYPES[DllStructGetData($item, 'Type')]
+	If $typeName == Null Then Return Null
+	Local $rarity = GetRarity($item)
+	If $rarity == $RARITY_GREEN Then Return $weapons & $typeName & '.' & $LOOT_GREEN_RARITY
+	Local $rarityName = $RARITY_NAMES_FROM_IDS[$rarity]
+	; Gray named weapons are trash like white ones, red ones are not weapons the configuration knows
+	If $rarity == $RARITY_GRAY Then $rarityName = 'White'
+	If $rarity == $RARITY_RED Or $rarityName == Null Then Return Null
+	Local $req = GetItemReq($item)
+	If $req < 0 Then $req = 0
+	If $req > $LOOT_WEAPON_MAX_REQ Then $req = $LOOT_WEAPON_MAX_REQ
+	Local $skins = IsRareSkinWeapon($item) ? $LOOT_RARE_SKINS : $LOOT_OTHER_SKINS
+	Return $weapons & $typeName & '.' & $rarityName & '.Req ' & $req & '.' & $skins
+EndFunc
+
+
+;~ Configuration path of a trophy: farmed trophies have their own leaf, the others are grouped by what they are worth
+Func GetTrophyLootPath($itemID)
+	Local $trophies = $LOOT_ROOT_ITEMS & '.' & $LOOT_TROPHIES_FAMILY & '.'
+	If $MAP_FARMED_TROPHIES[$itemID] <> Null Then
+		Local $farmedPath = $trophies & $FARMED_TROPHIES_NAMES_FROM_ID[$itemID]
+		If LootLeafExists($farmedPath) Then Return $farmedPath
+	EndIf
+	If $MAP_NICHOLAS_ITEMS[$itemID] <> Null Then Return $trophies & $LOOT_TROPHIES_NICHOLAS
+	If $MAP_RARE_MATERIALS_TROPHIES[$itemID] <> Null Then Return $trophies & $LOOT_TROPHIES_RARE_MATERIALS
+	If $MAP_FEATHER_TROPHIES[$itemID] <> Null Then Return $trophies & $LOOT_TROPHIES_COMMON_MATERIALS
+	If $MAP_DUST_TROPHIES[$itemID] <> Null Then Return $trophies & $LOOT_TROPHIES_COMMON_MATERIALS
+	If $MAP_BONES_TROPHIES[$itemID] <> Null Then Return $trophies & $LOOT_TROPHIES_COMMON_MATERIALS
+	If $MAP_FIBER_TROPHIES[$itemID] <> Null Then Return $trophies & $LOOT_TROPHIES_COMMON_MATERIALS
+	Return $trophies & $LOOT_TROPHIES_OTHER
+EndFunc
+
+
+;~ Rare skins get their own leaf under each requirement: weapons of the rare and ultra rare lists with max stats for their requirement
+Func IsRareSkinWeapon($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	Local $rareSkin = $MAP_RARE_WEAPONS[$itemID] <> Null
+	If $RARE_WEAPONS_TO_PICK[$itemID] <> Null Then $rareSkin = True
+	If $MAP_ULTRA_RARE_WEAPONS[$itemID] <> Null Then $rareSkin = True
+	If Not $rareSkin Then Return False
+	Return IsMaxStatsForReq($item)
+EndFunc
+
+
+;~ Decision for an item: map with keys ignore, identify and action - Null when the configuration has no leaf at all for it
+;~ Items without a leaf of their own follow the Other items leaves (stackables or unknown items)
+;~ Weapons then go through the weapon rules: equipped and customized weapons are never touched, the low requirement
+;~ rule replaces the leaf, and weapons worth keeping are stored instead of being salvaged or sold
+Func GetItemLootDecision($item)
+	Local $path = GetItemLootPath($item)
+	Local $decision = Null
+	If $path <> Null Then $decision = GetLootItemDecision($path)
+	If $decision == Null Then
+		Local $fallback = $LOOT_ROOT_ITEMS & '.' & $LOOT_OTHER_FAMILY & '.' & (IsStackable($item) ? $LOOT_OTHER_STACKABLES : $LOOT_OTHER_UNKNOWN)
+		$decision = GetLootItemDecision($fallback)
+		If $decision == Null Then Return Null
+	EndIf
+	If Not IsWeapon($item) Then Return $decision
+	Return ApplyWeaponLootRules($item, $decision)
+EndFunc
+
+
+;~ Weapon rules on top of the leaf decision - see GetItemLootDecision
+Func ApplyWeaponLootRules($item, $decision)
+	; Equipped and customized weapons belong to the character
+	If DllStructGetData($item, 'Equipped') Or DllStructGetData($item, 'Customized') <> 0 Then
+		$decision['ignore'] = True
+		Return $decision
+	EndIf
+	; The low requirement rule applies to any non white weapon with max stats and a requirement under 9
+	Local $rarity = GetRarity($item)
+	If $rarity <> $RARITY_WHITE And $rarity <> $RARITY_GRAY Then
+		If IsLowReqMaxStats($item) Then
+			Local $rule = GetLootItemDecision($LOOT_ROOT_ITEMS & '.' & $LOOT_WEAPONS_FAMILY & '.' & $LOOT_LOW_REQ_RULE)
+			If $rule <> Null Then
+				If Not $rule['ignore'] Then $decision = $rule
+			EndIf
+		EndIf
+	EndIf
+	If $decision['ignore'] Then Return $decision
+	; Weapons worth keeping are stored whatever the leaf says
+	If $decision['action'] == $LOOT_ACTION_SALVAGE Or $decision['action'] == $LOOT_ACTION_SELL Then
+		If IsWeaponWorthKeeping($item) Then $decision['action'] = $LOOT_ACTION_STORE
+	EndIf
+	Return $decision
+EndFunc
+
+
+;~ Keep rules: ultra rare skins, and identified old school weapons with max stats and perfect inherent mods
+Func IsWeaponWorthKeeping($item)
+	Local $itemID = DllStructGetData($item, 'ModelID')
+	If $MAP_ULTRA_RARE_WEAPONS[$itemID] <> Null Then Return True
+	If Not IsIdentified($item) Then Return False
+	If IsInscribable($item) Then Return False
+	If Not IsMaxStatsForReq($item) Then Return False
+	Return HasPerfectMods($item)
+EndFunc
+
+
+;~ Return True if the item should be identified: not identified yet, not ignored, and its leaf asks for identification
+Func ShouldIdentifyItem($item)
+	If DllStructGetData($item, 'ID') == 0 Then Return False
+	If IsIdentified($item) Then Return False
+	Local $decision = GetItemLootDecision($item)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	Return $decision['identify']
+EndFunc
+
+
+;~ Returns true if there are items in inventory waiting for identification
+Func HasItemsToIdentify()
+	Return HasInInventory(ShouldIdentifyItem)
+EndFunc
+
+
+;~ True when the configuration asks to keep the character gold balanced with the Xunlai storage
+Func IsMoneyStored()
+	Local $decision = GetLootItemDecision($LOOT_ROOT_ITEMS & '.' & $LOOT_MONEY)
+	If $decision == Null Then Return False
+	If $decision['ignore'] Then Return False
+	Return $decision['action'] == $LOOT_ACTION_STORE
+EndFunc
+
+
+;~ True when mods worth salvaging are still on the item - such an item waits for SalvageComponents before anything else happens to it
+Func HasComponentsToSalvageOut($item)
+	If $inventory_management_cache['@components.nothing'] Then Return False
+	If Not IsIdentified($item) Then Return False
+	If Not IsWeapon($item) And Not IsArmorSalvageItem($item) Then Return False
+	Return UBound(GetValuableComponentIndices($item)) > 0
+EndFunc
+
+
+;~ Decision of a loose mod, inscription, rune or insignia from the Mods section - Null when it is not listed there
+Func GetLooseComponentDecision($item)
+	Local $modStruct = GetModStruct($item)
+	If Not $modStruct Then Return Null
+	For $struct In MapKeys($component_decisions_by_struct)
+		If StringInStr($modStruct, $struct) > 0 Then Return $component_decisions_by_struct[$struct]
+	Next
+	Return Null
+EndFunc
+
+
+;~ Loose components are stored when their mod is salvaged and stored
+Func ShouldStoreLooseComponent($item)
+	Local $decision = GetLooseComponentDecision($item)
+	If $decision == Null Then Return False
+	If Not $decision['salvage'] Then Return False
+	Return $decision['store']
+EndFunc
+
+
+;~ Loose components are sold when their mod is salvaged but not stored
+Func ShouldSellLooseComponent($item)
+	Local $decision = GetLooseComponentDecision($item)
+	If $decision == Null Then Return False
+	If Not $decision['salvage'] Then Return False
+	Return Not $decision['store']
 EndFunc

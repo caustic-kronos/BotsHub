@@ -46,6 +46,7 @@ Opt('MustDeclareVars', True)
 #include 'lib/Utils-Console.au3'
 #include 'lib/Utils-Debugger.au3'
 #include 'lib/Utils-Items_Modstructs.au3'
+#include 'lib/Utils-Loot_Configuration.au3'
 #include 'lib/Utils-Shared_Memory.au3'
 #include 'lib/Utils-Storage.au3'
 #include 'lib/Build_PW_Heroic-Refrain.au3'
@@ -140,7 +141,6 @@ Global $slave_heartbeat = 0
 Global $farm_map[]
 Global $gui_enabled
 
-Global $inventory_management_cache[]
 Global $run_options_cache[]
 $run_options_cache['run.district'] = 'Default'
 $run_options_cache['run.consume_consumables'] = True
@@ -148,7 +148,6 @@ $run_options_cache['run.use_consets'] = False
 $run_options_cache['run.use_scrolls'] = False
 $run_options_cache['run.sort_items'] = False
 $run_options_cache['run.farm_materials_mid_run'] = False
-$run_options_cache['run.salvage_into_components'] = False
 $run_options_cache['run.bags_count'] = 5
 $run_options_cache['run.donate_faction_points'] = True
 $run_options_cache['run.buy_faction_scrolls'] = False
@@ -390,8 +389,7 @@ Func LoadLootConfiguration($filePath)
 	; Removing .json
 	$loot_configuration = StringTrimRight($loot_configuration, 5)
 	Local $jsonLootOptions = LoadLootOptions($filePath)
-	FillInventoryCacheFromJSON($jsonLootOptions, '')
-	BuildInventoryDerivedFlags()
+	LoadLootDecisionsFromJson($jsonLootOptions)
 	RefreshValuableListsFromCache()
 	Info('Loaded loot configuration at ' & $filePath)
 EndFunc
@@ -439,7 +437,6 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.hard_mode'] = _JSON_Get($jsonObject, 'run.hard_mode')
 	$run_options_cache['run.share_memory'] = _JSON_Get($jsonObject, 'run.share_memory')
 	$run_options_cache['run.farm_materials_mid_run'] = _JSON_Get($jsonObject, 'run.farm_materials_mid_run')
-	$run_options_cache['run.salvage_into_components'] = _JSON_Get($jsonObject, 'run.salvage_into_components')
 	$run_options_cache['run.consume_consumables'] = _JSON_Get($jsonObject, 'run.consume_consumables')
 	$run_options_cache['run.use_consets'] = _JSON_Get($jsonObject, 'run.use_consets')
 	$run_options_cache['run.use_scrolls'] = _JSON_Get($jsonObject, 'run.use_scrolls')
@@ -494,7 +491,6 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.hard_mode', $run_options_cache['run.hard_mode'])
 	_JSON_addChangeDelete($jsonObject, 'run.share_memory', $run_options_cache['run.share_memory'])
 	_JSON_addChangeDelete($jsonObject, 'run.farm_materials_mid_run', $run_options_cache['run.farm_materials_mid_run'])
-	_JSON_addChangeDelete($jsonObject, 'run.salvage_into_components', $run_options_cache['run.salvage_into_components'])
 	_JSON_addChangeDelete($jsonObject, 'run.consume_consumables', $run_options_cache['run.consume_consumables'])
 	_JSON_addChangeDelete($jsonObject, 'run.use_consets', $run_options_cache['run.use_consets'])
 	_JSON_addChangeDelete($jsonObject, 'run.use_scrolls', $run_options_cache['run.use_scrolls'])
@@ -764,93 +760,6 @@ EndFunc
 
 
 ;~ Fill the inventory cache with additional derived data
-Func BuildInventoryDerivedFlags()
-	; -------- Pickup --------
-	Local $pickupSomething = IsAnyChecked('Pick up items')
-	$inventory_management_cache['@pickup.something'] = $pickupSomething
-	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
-	Local $pickupSomeWeapons = IsAnyChecked('Pick up items.Weapons and offhands')
-	$inventory_management_cache['@pickup.weapons.something'] = $pickupSomeWeapons
-	$inventory_management_cache['@pickup.weapons.nothing'] = Not $pickupSomeWeapons
-
-	; -------- Identify --------
-	Local $identifySomething = IsAnyChecked('Identify items')
-	$inventory_management_cache['@identify.something'] = $identifySomething
-	$inventory_management_cache['@identify.nothing'] = Not $identifySomething
-
-	; -------- Salvage --------
-	Local $salvageSomething = IsAnyChecked('Salvage items')
-	$inventory_management_cache['@salvage.something'] = $salvageSomething
-	$inventory_management_cache['@salvage.nothing'] = Not $salvageSomething
-	Local $salvageSomeWeapons = IsAnyChecked('Salvage items.Weapons and offhands')
-	$inventory_management_cache['@salvage.weapons.something'] = $salvageSomeWeapons
-	$inventory_management_cache['@salvage.weapons.nothing'] = Not $salvageSomeWeapons
-	Local $salvageSomeSalvageables = IsAnyChecked('Salvage items.Armor salvageables')
-	$inventory_management_cache['@salvage.salvageables.something'] = $salvageSomeSalvageables
-	$inventory_management_cache['@salvage.salvageables.nothing'] = Not $salvageSomeSalvageables
-	Local $salvageSomeTrophies = IsAnyChecked('Salvage items.Trophies')
-	$inventory_management_cache['@salvage.trophies.something'] = $salvageSomeTrophies
-	$inventory_management_cache['@salvage.trophies.nothing'] = Not $salvageSomeTrophies
-	Local $salvageSomeMaterials = IsAnyChecked('Salvage items.Rare Materials')
-	$inventory_management_cache['@salvage.materials.something'] = $salvageSomeMaterials
-	$inventory_management_cache['@salvage.materials.nothing'] = Not $salvageSomeMaterials
-
-	; -------- Sell --------
-	Local $sellSomething = IsAnyChecked('Sell items')
-	$inventory_management_cache['@sell.something'] = $sellSomething
-	$inventory_management_cache['@sell.nothing'] = Not $sellSomething
-	Local $sellSomeWeapons = IsAnyChecked('Sell items.Weapons and offhands')
-	$inventory_management_cache['@sell.weapons.something'] = $sellSomeWeapons
-	$inventory_management_cache['@sell.weapons.nothing'] = Not $sellSomeWeapons
-
-	Local $sellSomeBasicMaterials = IsAnyChecked('Sell items.Basic Materials')
-	$inventory_management_cache['@sell.materials.basic.something'] = $sellSomeBasicMaterials
-	$inventory_management_cache['@sell.materials.basic.nothing'] = Not $sellSomeBasicMaterials
-	Local $sellSomeRareMaterials = IsAnyChecked('Sell items.Rare Materials')
-	$inventory_management_cache['@sell.materials.rare.something'] = $sellSomeRareMaterials
-	$inventory_management_cache['@sell.materials.rare.nothing'] = Not $sellSomeRareMaterials
-	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
-	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
-	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
-
-	; -------- Buy --------
-	Local $buySomething = IsAnyChecked('Buy items')
-	$inventory_management_cache['@buy.something'] = $buySomething
-	$inventory_management_cache['@buy.nothing'] = Not $buySomething
-
-	Local $buySomeBasicMaterials = IsAnyChecked('Buy items.Basic Materials')
-	$inventory_management_cache['@buy.materials.basic.something'] = $buySomeBasicMaterials
-	$inventory_management_cache['@buy.materials.basic.nothing'] = Not $buySomeBasicMaterials
-	Local $buySomeRareMaterials = IsAnyChecked('Buy items.Rare Materials')
-	$inventory_management_cache['@buy.materials.rare.something'] = $buySomeRareMaterials
-	$inventory_management_cache['@buy.materials.rare.nothing'] = Not $buySomeRareMaterials
-	Local $buySomeMaterials = $buySomeBasicMaterials Or $buySomeRareMaterials
-	$inventory_management_cache['@buy.materials.something'] = $buySomeMaterials
-	$inventory_management_cache['@buy.materials.nothing'] = Not $buySomeMaterials
-
-	; -------- Store --------
-	Local $storeSomething = IsAnyChecked('Store items')
-	$inventory_management_cache['@store.something'] = $storeSomething
-	$inventory_management_cache['@store.nothing'] = Not $storeSomething
-	Local $storeSomeWeapons = IsAnyChecked('Store items.Weapons and offhands')
-	$inventory_management_cache['@store.weapons.something'] = $storeSomeWeapons
-	$inventory_management_cache['@store.weapons.nothing'] = Not $storeSomeWeapons
-EndFunc
-
-
-;~ Return if any option at provided path or lower in the tree is checked
-Func IsAnyChecked($path)
-	Local $pathLength = StringLen($path) + 1
-	For $key In MapKeys($inventory_management_cache)
-		If Not $inventory_management_cache[$key] Then ContinueLoop
-		If $key == $path Then Return True
-		If StringLen($key) <= $pathLength Then ContinueLoop
-		If StringLeft($key, $pathLength) == ($path & '.') Then Return True
-	Next
-	Return False
-EndFunc
-
-
 ;~ Return checked leaf options under provided path
 Func GetAllChecked($map, $path, $minDepth = -1, $maxDepth = -1)
 	Local $checkedElements[0]
