@@ -29,7 +29,7 @@ To use it:
 ## Features
 - Unified interface shared by all bots 🖥️
 - Shared inventory, loot, farm, and title tracking 🎯
-- Configurable item handling (pickup, identify, salvage, sell, buy, store) 📦
+- Configurable item handling (pickup, identify, salvage, salvage into components, sell, buy, store) 📦
 - Farm UI with build, equipment, and contextual information 🛡️
 - Modular, plug-and-play bot system 🔌
 

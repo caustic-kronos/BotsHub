@@ -4360,6 +4360,7 @@
 			"Purple": false,
 			"Gold": false
 		},
+		"Upgrade components": true,
 		"Basic Materials": {
 			"Bone": true,
 			"Bolt of Cloth": true,
