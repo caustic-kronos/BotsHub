@@ -126,7 +126,7 @@ The **Inventory** tab lists item families (weapons by type, rarity, requirement 
 
 A change on a group applies to every item below it, and each row shows its decision in brackets (`[mixed]` for groups whose items differ). The tree checkboxes tick items that are picked up, mods that are salvaged and materials that are bought.
 
-Weapons have a few rules on top of their leaf: equipped and customized items are never touched, the *Low req max stats* rule replaces the leaf of non white weapons with a requirement under 9 and max stats, ultra rare skins and perfect old school weapons are stored instead of being salvaged or sold, and rare skins with max stats have their own leaf under each requirement.
+Weapons have a few rules on top of their leaf: equipped and customized items are never touched, the *Low req max stats* rule replaces the leaf of non white weapons with a requirement under 9 and max stats, ultra rare skins and perfect old school weapons are stored instead of being salvaged or sold, and rare skins with max stats have their own leaf under each requirement. The skins counted as rare or ultra rare are listed per weapon type in [doc/rare-skins.md](doc/rare-skins.md).
 
 The **Mods** section says, for each weapon mod, inscription, rune and insignia, whether it is salvaged out of items that are salvaged or sold (with an expert kit) and whether the salvaged mod is stored or sold. Stored items keep their mods.
 

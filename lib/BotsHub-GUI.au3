@@ -169,12 +169,12 @@ Func CreateBotsHubGUI()
 	GUISetBkColor($COLOR_SILVER, $gui_botshub)
 
 	; === Buttons common to all tabs ===
-	$gui_combo_characterchoice = GUICtrlCreateCombo('No character selected', 10, 470, 150, 20)
-	$gui_combo_farmchoice = GUICtrlCreateCombo('Choose a farm', 170, 470, 150, 20, BitOR($CBS_DROPDOWN, $WS_VSCROLL))
-	$gui_startbutton = GUICtrlCreateButton('Start', 330, 470, 150, 21)
-	$gui_farmprogress = GUICtrlCreateProgress(490, 470, 150, 21)
-	$gui_combo_configchoice = GUICtrlCreateCombo('Default Farm Configuration', 400, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	$gui_icon_saveconfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 615, 12, 20, 20)
+	$gui_combo_characterchoice = GUICtrlCreateCombo('No character selected', 10, 620, 210, 20)
+	$gui_combo_farmchoice = GUICtrlCreateCombo('Choose a farm', 230, 620, 210, 20, BitOR($CBS_DROPDOWN, $WS_VSCROLL))
+	$gui_startbutton = GUICtrlCreateButton('Start', 450, 620, 210, 21)
+	$gui_farmprogress = GUICtrlCreateProgress(670, 620, 220, 21)
+	$gui_combo_configchoice = GUICtrlCreateCombo('Default Farm Configuration', 650, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_icon_saveconfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 865, 12, 20, 20)
 	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTBLUE)
 
@@ -533,7 +533,7 @@ Func CreateBotsHubGUI()
 	$gui_checkbox_lootbuy = GUICtrlCreateCheckbox('Buy with the spare gold', 600, 155, 265, 20)
 	$gui_label_lootlegend = GUICtrlCreateLabel('Rows show their decision in brackets, groups show [mixed] when their items differ.' & @CRLF & @CRLF & _
 		'Tree checkboxes: item picked up, mod salvaged, material bought - ticking a group ticks everything below it.' & @CRLF & @CRLF & _
-		'Weapons: rare skins with max stats have their own leaf under each requirement, the low req max stats rule replaces the leaf of such weapons, ' & _
+		'Weapons: rare skins with max stats (lists in doc/rare-skins.md) have their own leaf under each requirement, the low req max stats rule replaces the leaf of such weapons, ' & _
 		'ultra rare skins and perfect old school weapons are stored instead of salvaged or sold, equipped and customized items are never touched.' & @CRLF & @CRLF & _
 		'Mods are only salvaged out of items that are salvaged or sold: stored items keep their mods.', 600, 340, 265, 245)
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
