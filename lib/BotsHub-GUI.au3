@@ -34,6 +34,7 @@ Opt('GUICloseOnESC', False)
 #include <GuiComboBox.au3>
 
 #include '../lib/JSON.au3'
+#include '../lib/Utils-Loot_Configuration.au3'
 #include '../lib/GWA2.au3'
 #include '../lib/GWA2_Assembly.au3'
 #include '../lib/GWA2_ID_Items.au3'
@@ -135,7 +136,7 @@ Global $gui_group_titles, _
 		$gui_label_lightbringertitle_text, $gui_label_lightbringertitle_value, $gui_label_sunspeartitle_text, $gui_label_sunspeartitle_value
 Global $gui_group_runoptions, _
 		$gui_checkbox_loopruns, $gui_checkbox_hardmode, $gui_checkbox_emergencytravel, $gui_checkbox_sharememory, $gui_checkbox_automaticteamsetup, $gui_checkbox_useconsumables, $gui_checkbox_useconsets, $gui_checkbox_usescrolls
-Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_salvageintocomponents, $gui_checkbox_farmmaterialsmidrun, _
+Global $gui_group_itemoptions, $gui_checkbox_sortitems, $gui_checkbox_collectdata, $gui_checkbox_farmmaterialsmidrun, _
 		$gui_label_salvagekits, $gui_combo_salvagekits, $gui_label_identificationkits, $gui_combo_identificationkits
 Global $gui_group_factionoptions, $gui_label_faction, $gui_radiobutton_donatepoints, $gui_radiobutton_buyfactionresources, $gui_radiobutton_buyfactionscrolls
 Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teammemberbuildlabel, _
@@ -145,9 +146,17 @@ Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teamme
 		$gui_checkbox_load_build_hero_4, $gui_checkbox_load_build_hero_5, $gui_checkbox_load_build_hero_6, $gui_checkbox_load_build_hero_7, _
 		$gui_label_build_hero_1, $gui_label_build_hero_2, $gui_label_build_hero_3, $gui_label_build_hero_4, $gui_label_build_hero_5, $gui_label_build_hero_6, $gui_label_build_hero_7, _
 		$gui_input_build_player, $gui_input_build_hero_1, $gui_input_build_hero_2, $gui_input_build_hero_3, $gui_input_build_hero_4, $gui_input_build_hero_5, $gui_input_build_hero_6, $gui_input_build_hero_7
-Global $gui_group_otheroptions, $gui_button_openstorage, $gui_checkbox_gooffline, $gui_checkbox_flashwhisper
+Global $gui_group_otheroptions, $gui_button_openstorage, $gui_checkbox_gooffline, $gui_checkbox_flashwhisper, $gui_checkbox_smartassassinspromise
 Global $gui_label_characterbuilds, $gui_label_heroesbuilds, $gui_edit_characterbuilds, $gui_edit_heroesbuilds, $gui_label_farminformations
 Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandlootoptionsbutton, $gui_reducelootoptionsbutton, $gui_loadlootoptionsbutton, $gui_savelootoptionsbutton, $gui_applylootoptionsbutton
+Global $gui_group_lootdecision, $gui_label_lootselection, $gui_label_lootscope, $gui_label_lootlegend, $gui_checkbox_lootignore, $gui_checkbox_lootidentify, $gui_group_lootthen, _
+		$gui_radio_lootkeep, $gui_radio_lootsalvage, $gui_radio_lootsell, $gui_radio_lootstore, $gui_checkbox_modsalvage, $gui_checkbox_modstore, $gui_checkbox_lootbuy
+; Loot tree model: decisions being edited (given to the bot with the Apply button) and tree item handles <-> configuration paths
+Global $gui_loot_decisions[]
+Global $gui_loot_paths_by_handle[]
+Global $gui_loot_handles_by_path[]
+Global $gui_loot_selected_path = ''
+Global $gui_loot_refreshing_panel = False
 
 
 ;------------------------------------------------------
@@ -156,16 +165,16 @@ Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandloot
 ;------------------------------------------------------
 Func CreateBotsHubGUI()
 	; -1, -1 automatically positions GUI in the middle of the screen, alternatively can do calculations with inbuilt @DesktopWidth and @DesktopHeight
-	$gui_botshub = GUICreate('GW Bot Hub', 650, 500, -1, -1)
+	$gui_botshub = GUICreate('GW Bot Hub', 900, 650, -1, -1)
 	GUISetBkColor($COLOR_SILVER, $gui_botshub)
 
 	; === Buttons common to all tabs ===
-	$gui_combo_characterchoice = GUICtrlCreateCombo('No character selected', 10, 470, 150, 20)
-	$gui_combo_farmchoice = GUICtrlCreateCombo('Choose a farm', 170, 470, 150, 20, BitOR($CBS_DROPDOWN, $WS_VSCROLL))
-	$gui_startbutton = GUICtrlCreateButton('Start', 330, 470, 150, 21)
-	$gui_farmprogress = GUICtrlCreateProgress(490, 470, 150, 21)
-	$gui_combo_configchoice = GUICtrlCreateCombo('Default Farm Configuration', 400, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
-	$gui_icon_saveconfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 615, 12, 20, 20)
+	$gui_combo_characterchoice = GUICtrlCreateCombo('No character selected', 10, 620, 210, 20)
+	$gui_combo_farmchoice = GUICtrlCreateCombo('Choose a farm', 230, 620, 210, 20, BitOR($CBS_DROPDOWN, $WS_VSCROLL))
+	$gui_startbutton = GUICtrlCreateButton('Start', 450, 620, 210, 21)
+	$gui_farmprogress = GUICtrlCreateProgress(670, 620, 220, 21)
+	$gui_combo_configchoice = GUICtrlCreateCombo('Default Farm Configuration', 650, 10, 210, 22, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
+	$gui_icon_saveconfig = GUICtrlCreatePic(@ScriptDir & '/doc/save.jpg', 865, 12, 20, 20)
 	GUICtrlSetData($gui_combo_farmchoice, $AVAILABLE_FARMS, 'Choose a farm')
 	GUICtrlSetBkColor($gui_startbutton, $COLOR_LIGHTBLUE)
 
@@ -176,12 +185,12 @@ Func CreateBotsHubGUI()
 	GUICtrlSetOnEvent($gui_icon_saveconfig, 'GuiMainButtonHandler')
 
 	; === Main tab ===
-	$gui_tabs_parent = GUICtrlCreateTab(10, 10, 630, 450)
+	$gui_tabs_parent = GUICtrlCreateTab(10, 10, 880, 600)
 	$gui_tab_main = GUICtrlCreateTabItem('Main')
 	_GUICtrlTab_SetBkColor($gui_botshub, $gui_tabs_parent, $COLOR_SILVER)
 	GUICtrlSetOnEvent($gui_tabs_parent, 'GuiTabHandler')
 
-	$gui_console = _GUICtrlRichEdit_Create($gui_botshub, '', 20, 190, 300, 255, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
+	$gui_console = _GUICtrlRichEdit_Create($gui_botshub, '', 20, 190, 300, 400, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL))
 	_GUICtrlRichEdit_SetCharColor($gui_console, $COLOR_WHITE)
 	_GUICtrlRichEdit_SetBkColor($gui_console, $COLOR_BLACK)
 	SetConsole($gui_console)
@@ -317,8 +326,6 @@ Func CreateBotsHubGUI()
 	GUICtrlCreateGroup('', -99, -99, 1, 1)
 	$gui_group_itemoptions = GUICtrlCreateGroup('Inventory management options', 21, 205, 295, 235)
 	$gui_checkbox_sortitems = GUICtrlCreateCheckbox('Sort items', 31, 225)
-	$gui_checkbox_salvageintocomponents = GUICtrlCreateCheckbox('Salvage into components', 31, 255)
-	GUICtrlSetState($gui_checkbox_salvageintocomponents, $GUI_DISABLE)
 	$gui_checkbox_farmmaterialsmidrun = GUICtrlCreateCheckbox('Salvage during run', 31, 285)
 	$gui_label_salvagekits = GUICtrlCreateLabel('Salvage kits:', 31, 318)
 	$gui_combo_salvagekits = GUICtrlCreateCombo('12', 100, 315, 40, 20, BitOR($CBS_DROPDOWNLIST, $WS_VSCROLL))
@@ -413,6 +420,9 @@ Func CreateBotsHubGUI()
 		'- correct behaviour (passive/aggressive)' & @CRLF & _
 		'If party size is 4 or 6, last heroes just will not be added to party.', 40, 70)
 	$gui_checkbox_automaticteamsetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 140)
+	$gui_checkbox_smartassassinspromise = GUICtrlCreateCheckbox('Smart Assassin''s Promise casting', 375, 140)
+	GUICtrlSetTip($gui_checkbox_smartassassinspromise, 'When Assassin''s Promise is on the player skillbar, fights use a build-aware casting routine: Promise once the target nears 50% health, "Finish Him!" under 50%, "You Move Like a Dwarf!" to finish, Ebon Vanguard Assassin Support otherwise, mesmer Arcane Echo and Auspicious Incantation only where they pay off. Untick to cast skills from 1 to 8 instead.')
+	GUICtrlSetOnEvent($gui_checkbox_smartassassinspromise, 'GuiOptionsHandler')
 	$gui_teammemberlabel = GUICtrlCreateLabel('Team member', 147, 170, 100, 20)
 	$gui_teammemberbuildlabel = GUICtrlCreateLabel('Team member build', 445, 170, 100, 20)
 	$gui_checkbox_load_build_all = GUICtrlCreateCheckbox('Load all builds:', 254, 167)
@@ -496,8 +506,7 @@ Func CreateBotsHubGUI()
 
 	; === Inventory tab ===
 	$gui_tab_lootoptions = GUICtrlCreateTabItem('Inventory')
-	$gui_treeview_lootoptions = GUICtrlCreateTreeView(80, 45, 545, 400, BitOR($TVS_HASLINES, $TVS_LINESATROOT, $TVS_HASBUTTONS, $TVS_CHECKBOXES, $TVS_FULLROWSELECT))
-	BuildTreeViewFromCache($gui_treeview_lootoptions)
+	$gui_treeview_lootoptions = GUICtrlCreateTreeView(80, 45, 500, 545, BitOR($TVS_HASLINES, $TVS_LINESATROOT, $TVS_HASBUTTONS, $TVS_CHECKBOXES, $TVS_FULLROWSELECT))
 
 	$gui_expandlootoptionsbutton = GUICtrlCreateButton('Expand all', 21, 124, 55, 21)
 	$gui_reducelootoptionsbutton = GUICtrlCreateButton('Reduce all', 21, 154, 55, 21)
@@ -507,11 +516,43 @@ Func CreateBotsHubGUI()
 	$gui_applylootoptionsbutton = GUICtrlCreateButton(@LF & 'Apply' & @LF & 'changes', 21, 304, 55, 63, $BS_MULTILINE)
 	GUICtrlSetBkColor($gui_applylootoptionsbutton, $COLOR_YELLOW)
 
+	; Decision panel of the selected node - a change on a group applies to every item below it
+	$gui_group_lootdecision = GUICtrlCreateGroup('Decision', 590, 45, 285, 545)
+	$gui_label_lootselection = GUICtrlCreateLabel('Select an item or a group in the tree', 600, 65, 265, 55)
+	$gui_label_lootscope = GUICtrlCreateLabel('', 600, 122, 265, 30)
+	$gui_checkbox_lootignore = GUICtrlCreateCheckbox('Ignore: never picked up, never touched', 600, 155, 265, 20)
+	$gui_checkbox_lootidentify = GUICtrlCreateCheckbox('Identify before anything else', 600, 180, 265, 20)
+	$gui_group_lootthen = GUICtrlCreateGroup('Then', 600, 205, 265, 125)
+	$gui_radio_lootkeep = GUICtrlCreateRadio('Keep in the bags', 610, 225, 245, 20)
+	$gui_radio_lootsalvage = GUICtrlCreateRadio('Salvage', 610, 250, 245, 20)
+	$gui_radio_lootsell = GUICtrlCreateRadio('Sell', 610, 275, 245, 20)
+	$gui_radio_lootstore = GUICtrlCreateRadio('Store in the Xunlai storage', 610, 300, 245, 20)
+	GUICtrlCreateGroup('', -99, -99, 1, 1)
+	$gui_checkbox_modsalvage = GUICtrlCreateCheckbox('Salvage this mod out of items that are salvaged or sold', 600, 155, 265, 40, BitOR($BS_MULTILINE, $BS_AUTOCHECKBOX))
+	$gui_checkbox_modstore = GUICtrlCreateCheckbox('Store the salvaged mod (untick to sell it)', 600, 200, 265, 40, BitOR($BS_MULTILINE, $BS_AUTOCHECKBOX))
+	$gui_checkbox_lootbuy = GUICtrlCreateCheckbox('Buy with the spare gold', 600, 155, 265, 20)
+	$gui_label_lootlegend = GUICtrlCreateLabel('Rows show their decision in brackets, groups show [mixed] when their items differ.' & @CRLF & @CRLF & _
+		'Tree checkboxes: item picked up, mod salvaged, material bought - ticking a group ticks everything below it.' & @CRLF & @CRLF & _
+		'Weapons: rare skins with max stats (lists in doc/rare-skins.md) have their own leaf under each requirement, the low req max stats rule replaces the leaf of such weapons, ' & _
+		'ultra rare skins and perfect old school weapons are stored instead of salvaged or sold, equipped and customized items are never touched.' & @CRLF & @CRLF & _
+		'Mods are only salvaged out of items that are salvaged or sold: stored items keep their mods.', 600, 340, 265, 245)
+	GUICtrlCreateGroup('', -99, -99, 1, 1)
+	BuildLootTreeView()
+
 	GUICtrlSetOnEvent($gui_expandlootoptionsbutton, 'GuiLootTabButtonHandler')
 	GUICtrlSetOnEvent($gui_reducelootoptionsbutton, 'GuiLootTabButtonHandler')
 	GUICtrlSetOnEvent($gui_loadlootoptionsbutton, 'GuiLootTabButtonHandler')
 	GUICtrlSetOnEvent($gui_savelootoptionsbutton, 'GuiLootTabButtonHandler')
 	GUICtrlSetOnEvent($gui_applylootoptionsbutton, 'GuiLootTabButtonHandler')
+	GUICtrlSetOnEvent($gui_checkbox_lootignore, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_checkbox_lootidentify, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_radio_lootkeep, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_radio_lootsalvage, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_radio_lootsell, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_radio_lootstore, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_checkbox_modsalvage, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_checkbox_modstore, 'GuiLootDecisionHandler')
+	GUICtrlSetOnEvent($gui_checkbox_lootbuy, 'GuiLootDecisionHandler')
 	GUICtrlCreateTabItem('')
 
 	; === Infos tab ===
@@ -563,7 +604,7 @@ Func WM_COMMAND_Handler($windowHandle, $messageCode, $packedParameters, $control
 EndFunc
 
 
-;~ Handles WM_NOTIFY elements, like treeview clicks
+;~ Handles WM_NOTIFY elements: loot tree checkbox clicks, space key and selection changes
 Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifyStruct)
 	Local $notificationHeader = DllStructCreate('hwnd sourceHandle;int controlID;int notificationCode', $paramNotifyStruct)
 	Local $sourceHandle = DllStructGetData($notificationHeader, 'sourceHandle')
@@ -576,62 +617,26 @@ Func WM_NOTIFY_Handler($windowHandle, $messageCode, $unusedParam, $paramNotifySt
 				Local $hitTestResult = _GUICtrlTreeView_HitTestEx($sourceHandle, DllStructGetData($mousePos, 1), DllStructGetData($mousePos, 2))
 				Local $clickedItem = DllStructGetData($hitTestResult, 'Item')
 				Local $hitFlags = DllStructGetData($hitTestResult, 'Flags')
-
 				If $clickedItem <> 0 And BitAND($hitFlags, $TVHT_ONITEMSTATEICON) Then
-					ToggleCheckboxCascade($sourceHandle, $clickedItem, True)
-					ToggleCheckboxCascadeUpwards($sourceHandle, $clickedItem, True)
+					; The clicked checkbox is inverted by the tree after this handler returns, so the model gets the future state
+					; and every other node is refreshed from it
+					SetLootNodeActive(GetLootPathByHandle($clickedItem), Not _GUICtrlTreeView_GetChecked($sourceHandle, $clickedItem), $clickedItem)
 				EndIf
 
 			Case $TVN_KEYDOWN
 				Local $keyInfo = DllStructCreate('hwnd;int;int;short key;uint', $paramNotifyStruct)
 				Local $selectedItem = _GUICtrlTreeView_GetSelection($sourceHandle)
-				; Spacebar pressed
+				; Spacebar pressed: same as a click on the checkbox
 				If DllStructGetData($keyInfo, 'key') = 0x20 And $selectedItem Then
-					ToggleCheckboxCascade($sourceHandle, $selectedItem, True)
-					ToggleCheckboxCascadeUpwards($sourceHandle, $selectedItem, True)
+					SetLootNodeActive(GetLootPathByHandle($selectedItem), Not _GUICtrlTreeView_GetChecked($sourceHandle, $selectedItem), $selectedItem)
 				EndIf
+
+			Case $TVN_SELCHANGEDW, $TVN_SELCHANGEDA
+				$gui_loot_selected_path = GetLootPathByHandle(_GUICtrlTreeView_GetSelection($sourceHandle))
+				RefreshLootDecisionPanel()
 		EndSwitch
 	EndIf
 	Return $GUI_RUNDEFMSG
-EndFunc
-
-
-;~ Toggles checkbox state on a TreeView item and cascades it to children
-Func ToggleCheckboxCascade($treeViewHandle, $itemHandle, $toggleFromRoot = False)
-	Local $isChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $itemHandle)
-	; Clicked item check status is only changed after WM_NOTIFY is handled, so it needs to be inverted
-	If $toggleFromRoot Then $isChecked = Not $isChecked
-
-	If _GUICtrlTreeView_GetChildren($treeViewHandle, $itemHandle) Then
-		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $itemHandle)
-		While $childHandle <> 0
-			_GUICtrlTreeView_SetChecked($treeViewHandle, $childHandle, $isChecked)
-			ToggleCheckboxCascade($treeViewHandle, $childHandle)
-			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
-		WEnd
-	EndIf
-EndFunc
-
-
-;~ Toggles checkbox state on a TreeView item and cascades it to its parents
-Func ToggleCheckboxCascadeUpwards($treeViewHandle, $itemHandle, $toggleFromRoot = False)
-	Local $parentHandle = _GUICtrlTreeView_GetParentHandle($treeViewHandle, $itemHandle)
-	If $parentHandle == 0 Or $parentHandle == $itemHandle Then Return
-
-	Local $allChildrenChecked = True
-	Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $parentHandle)
-	While $childHandle <> 0
-		Local $childChecked = _GUICtrlTreeView_GetChecked($treeViewHandle, $childHandle)
-		; Clicked item check status is only changed after WM_NOTIFY is handled, so it needs to be inverted
-		If $toggleFromRoot And $childHandle == $itemHandle Then $childChecked = Not $childChecked
-		If Not $childChecked Then
-			$allChildrenChecked = False
-			ExitLoop
-		EndIf
-		$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
-	WEnd
-	_GUICtrlTreeView_SetChecked($treeViewHandle, $parentHandle, $allChildrenChecked)
-	ToggleCheckboxCascadeUpwards($treeViewHandle, $parentHandle)
 EndFunc
 
 
@@ -668,7 +673,7 @@ Func GuiMainButtonHandler()
 			; If run config contains a link to loot config, we need to reload loot as well
 			; We could compare old/new value or loot_configuration to see if this is worth it
 			LoadDefaultLootConfiguration()
-			BuildTreeViewFromCache($gui_treeview_lootoptions)
+			BuildLootTreeView()
 		Case $gui_icon_saveconfig
 			GUICtrlSetState($gui_icon_saveconfig, $GUI_DISABLE)
 			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf\farm', '(*.json)')
@@ -739,6 +744,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.go_offline'] = GUICtrlRead($gui_checkbox_gooffline) == $GUI_CHECKED
 		Case $gui_checkbox_flashwhisper
 			$run_options_cache['run.flash_whisper'] = GUICtrlRead($gui_checkbox_flashwhisper) == $GUI_CHECKED
+		Case $gui_checkbox_smartassassinspromise
+			$run_options_cache['run.smart_assassins_promise'] = GUICtrlRead($gui_checkbox_smartassassinspromise) == $GUI_CHECKED
 		Case $gui_checkbox_sortitems
 			$run_options_cache['run.sort_items'] = GUICtrlRead($gui_checkbox_sortitems) == $GUI_CHECKED
 		Case $gui_checkbox_collectdata
@@ -905,11 +912,10 @@ Func GuiLootTabButtonHandler()
 				Warn('Failed to read JSON loot options configuration.')
 			Else
 				LoadLootConfiguration($filePath)
-				BuildTreeViewFromCache($gui_treeview_lootoptions)
+				BuildLootTreeView()
 			EndIf
 		Case $gui_savelootoptionsbutton
-			Local $jsonObject = BuildJSONFromTreeView($gui_treeview_lootoptions)
-			Local $jsonString = _JSON_Generate($jsonObject)
+			Local $jsonString = _JSON_Generate(BuildLootJson($gui_loot_decisions))
 			Local $filePath = FileSaveDialog('', @ScriptDir & '\conf\loot', '(*.json)')
 			If @error <> 0 Then
 				Warn('Failed to write JSON loot options configuration.')
@@ -920,8 +926,7 @@ Func GuiLootTabButtonHandler()
 				Info('Saved loot options configuration ' & $filePath)
 			EndIf
 		Case $gui_applylootoptionsbutton
-			FillInventoryCacheFromTreeView($gui_treeview_lootoptions)
-			BuildInventoryDerivedFlags()
+			ApplyLootDecisions($gui_loot_decisions)
 			RefreshValuableListsFromCache()
 			Info('Refreshed inventory management options')
 		Case Else
@@ -936,7 +941,7 @@ Func UpdateFarmDescription($farm)
 	GUICtrlSetData($gui_edit_heroesbuilds, '')
 	GUICtrlSetData($gui_label_farminformations, '')
 
-	Local $generalCharacterSetup = 'Simple build to play from skill 1 to skill 8, such as:' & @CRLF & _
+	Local $generalCharacterSetup = 'Assassin''s Promise builds are played with a dedicated casting routine (see the Team tab option), other builds from skill 1 to skill 8. Suggested builds:' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:N/A_Assassin%27s_Promise_Death_Magic' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:E/A_Assassin%27s_Promise' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:Me/A_Assassin%27s_Promise'
@@ -1688,6 +1693,7 @@ Func ApplyConfigToGUI()
 	GUICtrlSetState($gui_checkbox_usescrolls, $run_options_cache['run.use_scrolls'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_gooffline, $run_options_cache['run.go_offline'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_flashwhisper, $run_options_cache['run.flash_whisper'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_smartassassinspromise, $run_options_cache['run.smart_assassins_promise'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_sortitems, $run_options_cache['run.sort_items'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_collectdata, $run_options_cache['run.collect_data'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_radiobutton_donatepoints, $run_options_cache['run.donate_faction_points'] ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -1725,125 +1731,327 @@ EndFunc
 
 
 #Region Loot Tree View Management
-;~ Fill inventory cache from JSON
-Func FillInventoryCacheFromJSON($jsonNode, $currentPath)
-	If IsMap($jsonNode) Then
-		Local $checked = True
-		For $key In MapKeys($jsonNode)
-			If Not FillInventoryCacheFromJSON($jsonNode[$key], ($currentPath == '') ? $key : ($currentPath & '.' & $key)) Then $checked = False
-		Next
-		$inventory_management_cache[$currentPath] = $checked
-		Return $checked
-	Else
-		$inventory_management_cache[$currentPath] = $jsonNode
-		Return $jsonNode
-	EndIf
+;~ Handle the decision panel: the changed control is applied to the selected node, or to every item below a group
+Func GuiLootDecisionHandler()
+	If $gui_loot_refreshing_panel Then Return
+	Local $path = $gui_loot_selected_path
+	If $path == '' Then Return
+	Switch @GUI_CtrlId
+		Case $gui_checkbox_lootignore
+			ApplyLootFieldToNode($path, 'ignore', GUICtrlRead($gui_checkbox_lootignore) == $GUI_CHECKED)
+		Case $gui_checkbox_lootidentify
+			ApplyLootFieldToNode($path, 'identify', GUICtrlRead($gui_checkbox_lootidentify) == $GUI_CHECKED)
+		Case $gui_radio_lootkeep
+			ApplyLootFieldToNode($path, 'action', $LOOT_ACTION_KEEP)
+		Case $gui_radio_lootsalvage
+			ApplyLootFieldToNode($path, 'action', $LOOT_ACTION_SALVAGE)
+		Case $gui_radio_lootsell
+			ApplyLootFieldToNode($path, 'action', $LOOT_ACTION_SELL)
+		Case $gui_radio_lootstore
+			ApplyLootFieldToNode($path, 'action', $LOOT_ACTION_STORE)
+		Case $gui_checkbox_modsalvage
+			ApplyLootFieldToNode($path, 'salvage', GUICtrlRead($gui_checkbox_modsalvage) == $GUI_CHECKED)
+		Case $gui_checkbox_modstore
+			ApplyLootFieldToNode($path, 'store', GUICtrlRead($gui_checkbox_modstore) == $GUI_CHECKED)
+		Case $gui_checkbox_lootbuy
+			ApplyLootFieldToNode($path, 'buy', GUICtrlRead($gui_checkbox_lootbuy) == $GUI_CHECKED)
+	EndSwitch
+	RefreshLootTreeBranch($path)
+	RefreshLootDecisionPanel()
 EndFunc
 
 
-;~ Build TreeView from flat map
-Func BuildTreeViewFromCache($guiTreeviewHandle)
-	_GUICtrlTreeView_DeleteAll($guiTreeviewHandle)
-	Local $mapTreeViewIDs[]
-	For $key In MapKeys($inventory_management_cache)
-		; Parent item, no need to draw it
-		If $key == '' Then ContinueLoop
-		; Derived value, does not show in interface
-		If StringLeft($key, 1) == '@' Then ContinueLoop
+;~ Rebuild the loot tree from the loaded configuration: one node per group and per leaf, decisions shown in brackets
+;~ The tree edits a copy of the decisions, applied to the bot with the Apply button
+Func BuildLootTreeView()
+	Local $treeHandle = GUICtrlGetHandle($gui_treeview_lootoptions)
+	_GUICtrlTreeView_BeginUpdate($treeHandle)
+	_GUICtrlTreeView_DeleteAll($treeHandle)
+	$gui_loot_decisions = $loot_decisions
+	Local $emptyPaths[]
+	Local $emptyHandles[]
+	$gui_loot_paths_by_handle = $emptyPaths
+	$gui_loot_handles_by_path = $emptyHandles
+	$gui_loot_selected_path = ''
 
-		Local $bananaSplit = StringSplit($key, '.')
-		Local $current = Null
+	Local $controlIDs[]
+	For $path In MapKeys($gui_loot_decisions)
+		Local $parts = StringSplit($path, '.')
+		Local $parentID = Null
 		Local $currentPath = ''
-		For $i = 1 To $bananaSplit[0]
-			Local $part = $bananaSplit[$i]
-			$currentPath &= ($currentPath == '') ? $part : ('.' & $part)
-			If $mapTreeViewIDs[$currentPath] <> Null Then
-				; Already exists in map
-				$current = $mapTreeViewIDs[$currentPath]
+		For $i = 1 To $parts[0]
+			$currentPath &= ($i == 1 ? '' : '.') & $parts[$i]
+			If MapExists($controlIDs, $currentPath) Then
+				$parentID = $controlIDs[$currentPath]
+				ContinueLoop
+			EndIf
+			Local $controlID = GUICtrlCreateTreeViewItem($parts[$i], $parentID == Null ? $gui_treeview_lootoptions : $parentID)
+			$controlIDs[$currentPath] = $controlID
+			Local $handle = GUICtrlGetHandle($controlID)
+			$gui_loot_paths_by_handle[Int($handle)] = $currentPath
+			$gui_loot_handles_by_path[$currentPath] = $handle
+			$parentID = $controlID
+		Next
+	Next
+	Local $summaries = ComputeLootSummaries()
+	For $path In MapKeys($gui_loot_handles_by_path)
+		RefreshLootTreeNode($path, $summaries, 0)
+	Next
+	_GUICtrlTreeView_EndUpdate($treeHandle)
+	RefreshLootDecisionPanel()
+EndFunc
+
+
+;~ Path of a tree item from its handle, empty when unknown
+Func GetLootPathByHandle($handle)
+	If $handle == 0 Or $handle == Null Then Return ''
+	Local $key = Int($handle)
+	If Not MapExists($gui_loot_paths_by_handle, $key) Then Return ''
+	Return $gui_loot_paths_by_handle[$key]
+EndFunc
+
+
+;~ Text shown in brackets after a node name for a decision
+Func FormatLootDecisionText($path, $decision)
+	Switch GetLootNodeKind($path)
+		Case $LOOT_KIND_ITEM
+			Local $parsed = ParseItemDecision($decision)
+			If $parsed['ignore'] Then Return 'Ignore'
+			Local $text = ''
+			If $parsed['identify'] Then $text = 'Identify, '
+			Switch $parsed['action']
+				Case $LOOT_ACTION_SALVAGE
+					Return $text & 'Salvage'
+				Case $LOOT_ACTION_SELL
+					Return $text & 'Sell'
+				Case $LOOT_ACTION_STORE
+					Return $text & 'Store'
+			EndSwitch
+			Return $text & 'Keep'
+		Case $LOOT_KIND_MOD
+			Local $parsed = ParseModDecision($decision)
+			If Not $parsed['salvage'] Then Return 'Leave on item'
+			Return $parsed['store'] ? 'Salvage, store' : 'Salvage, sell'
+		Case $LOOT_KIND_BUY
+			Return $decision == True ? 'Buy' : 'Do not buy'
+	EndSwitch
+	Return ''
+EndFunc
+
+
+;~ Summaries of every leaf and group of the edited decisions: text in brackets, tree checkbox state and number of items
+;~ A group shows the common decision of its items, or 'mixed', and is checked when every item below it is active
+Func ComputeLootSummaries()
+	Local $summaries[]
+	For $path In MapKeys($gui_loot_decisions)
+		Local $decision = $gui_loot_decisions[$path]
+		Local $text = FormatLootDecisionText($path, $decision)
+		Local $active = IsLootDecisionActive($path, $decision)
+		Local $leaf[]
+		$leaf['text'] = $text
+		$leaf['active'] = $active
+		$leaf['count'] = 1
+		$summaries[$path] = $leaf
+		Local $parts = StringSplit($path, '.')
+		Local $current = ''
+		For $i = 1 To $parts[0] - 1
+			$current &= ($i == 1 ? '' : '.') & $parts[$i]
+			If MapExists($summaries, $current) Then
+				Local $existing = $summaries[$current]
+				If $existing['text'] <> $text Then $existing['text'] = 'mixed'
+				If Not $active Then $existing['active'] = False
+				$existing['count'] = $existing['count'] + 1
+				$summaries[$current] = $existing
 			Else
-				; Does not exist yet, create and add to map
-				$current = GUICtrlCreateTreeViewItem($part, $current <> Null ? $current : $guiTreeviewHandle)
-				$mapTreeViewIDs[$currentPath] = $current
+				Local $created[]
+				$created['text'] = $text
+				$created['active'] = $active
+				$created['count'] = 1
+				$summaries[$current] = $created
 			EndIf
 		Next
-		_GUICtrlTreeView_SetChecked($guiTreeviewHandle, $current, $inventory_management_cache[$key])
+	Next
+	Return $summaries
+EndFunc
+
+
+;~ Refresh the text and checkbox of one node from the summaries - the node whose checkbox is being toggled by the tree keeps its state
+Func RefreshLootTreeNode($path, $summaries, $skipCheckHandle)
+	If Not MapExists($gui_loot_handles_by_path, $path) Then Return
+	If Not MapExists($summaries, $path) Then Return
+	Local $treeHandle = GUICtrlGetHandle($gui_treeview_lootoptions)
+	Local $handle = $gui_loot_handles_by_path[$path]
+	Local $summary = $summaries[$path]
+	Local $name = $path
+	Local $lastDot = StringInStr($path, '.', 0, -1)
+	If $lastDot > 0 Then $name = StringTrimLeft($path, $lastDot)
+	_GUICtrlTreeView_SetText($treeHandle, $handle, $name & '  [' & $summary['text'] & ']')
+	If $skipCheckHandle <> 0 And Int($handle) == Int($skipCheckHandle) Then Return
+	_GUICtrlTreeView_SetChecked($treeHandle, $handle, $summary['active'])
+EndFunc
+
+
+;~ Refresh a node, everything below it and its ancestors after a change
+Func RefreshLootTreeBranch($path, $skipCheckHandle = 0)
+	Local $summaries = ComputeLootSummaries()
+	Local $prefix = $path & '.'
+	For $nodePath In MapKeys($gui_loot_handles_by_path)
+		If $nodePath == $path Or StringLeft($nodePath, StringLen($prefix)) == $prefix Then RefreshLootTreeNode($nodePath, $summaries, $skipCheckHandle)
+	Next
+	Local $parts = StringSplit($path, '.')
+	Local $current = ''
+	For $i = 1 To $parts[0] - 1
+		$current &= ($i == 1 ? '' : '.') & $parts[$i]
+		RefreshLootTreeNode($current, $summaries, $skipCheckHandle)
 	Next
 EndFunc
 
 
-;~ Fill the inventory cache with the treeview data
-Func FillInventoryCacheFromTreeView($treeViewHandle)
-	IterateOverTreeView(Null, $treeViewHandle, Null, '', AddToInventoryCache)
+;~ Tree checkbox toggled on a node: items are picked up or ignored, mods salvaged or left, buy items bought or not
+Func SetLootNodeActive($path, $active, $toggledHandle = 0)
+	If $path == '' Then Return
+	Switch GetLootNodeKind($path)
+		Case $LOOT_KIND_ITEM
+			ApplyLootFieldToNode($path, 'ignore', Not $active)
+		Case $LOOT_KIND_MOD
+			ApplyLootFieldToNode($path, 'salvage', $active)
+		Case $LOOT_KIND_BUY
+			ApplyLootFieldToNode($path, 'buy', $active)
+	EndSwitch
+	RefreshLootTreeBranch($path, $toggledHandle)
+	If $path == $gui_loot_selected_path Then RefreshLootDecisionPanel()
 EndFunc
 
 
-;~ Utility function to add treeview elements to the inventory cache
-Func AddToInventoryCache(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	$inventory_management_cache[$currentPath] = _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem)
-EndFunc
-
-
-;~ Creating a JSON node from a treeview
-Func BuildJSONFromTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = '')
-	Local $jsonObject
-	IterateOverTreeView($jsonObject, $treeViewHandle, $treeViewItem, $currentPath, AddLeavesToJSONObject)
-	Return $jsonObject
-EndFunc
-
-
-;~ Utility function to add treeview elements to a JSON object
-Func AddLeavesToJSONObject(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	; We are on a leaf
-	If _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem) <= 0 Then
-		_JSON_addChangeDelete($context, $currentPath, _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem))
-	EndIf
-EndFunc
-
-
-;~ Creating an array from a treeview
-Func BuildArrayFromTreeView($treeViewHandle, $treeViewItem = Null, $currentPath = '', $recursive = True)
-	Local $array[0]
-	IterateOverTreeView($array, $treeViewHandle, $treeViewItem, $currentPath, AddLeafToArray, $recursive ? -1 : 2)
-	Return $array
-EndFunc
-
-
-;~ Utility function to add treeview elements to an array
-Func AddLeafToArray(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath)
-	; We are on a leaf
-	If _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem) <= 0 Then
-		If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then _ArrayAdd($context, $currentPath)
-	EndIf
-EndFunc
-
-
-;~ Iterate over a treeview and make an operation on every node - can be called on root node (Null) or any other node
-Func IterateOverTreeView(ByRef $context, $treeViewHandle, $treeViewItem = Null, $currentPath = '', $functionToApply = Null, $maxDepth = -1)
-	If $treeViewItem == Null Then
-		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-		While $treeViewItem <> 0
-			IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply, 1, $maxDepth)
-			$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
-		WEnd
+;~ Apply one decision field to a leaf, or to every leaf below a group
+Func ApplyLootFieldToNode($path, $field, $value)
+	If MapExists($gui_loot_decisions, $path) Then
+		SetLootLeafField($path, $field, $value)
 		Return
 	EndIf
-	IterateOverTreeItem($context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply, 1, $maxDepth)
+	Local $prefix = $path & '.'
+	For $leafPath In MapKeys($gui_loot_decisions)
+		If StringLeft($leafPath, StringLen($prefix)) == $prefix Then SetLootLeafField($leafPath, $field, $value)
+	Next
 EndFunc
 
 
-;~ Iterate over a treeview item and make an operation on every node - cannot be called on root node (Null)
-Func IterateOverTreeItem(ByRef $context, $treeViewHandle, $treeViewItem, $currentPath, $functionToApply, $currentDepth, $maxDepth)
-	If $maxDepth <> -1 And $currentDepth > $maxDepth Then Return
-	Local $treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-	Local $newPath = ($currentPath == '') ? $treeViewItemName : $currentPath & '.' & $treeViewItemName
-	If $functionToApply <> Null Then $functionToApply($context, $treeViewHandle, $treeViewItem, $newPath)
-
-	Local $child = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
-	While $child <> 0
-		IterateOverTreeItem($context, $treeViewHandle, $child, $newPath, $functionToApply, $currentDepth + 1, $maxDepth)
-		$child = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $child)
-	WEnd
+;~ Change one field of a leaf decision - ignore blocks the other item fields, salvage blocks the store field of mods
+Func SetLootLeafField($path, $field, $value)
+	Switch GetLootNodeKind($path)
+		Case $LOOT_KIND_ITEM
+			Local $decision = ParseItemDecision($gui_loot_decisions[$path])
+			Switch $field
+				Case 'ignore'
+					$decision['ignore'] = $value
+				Case 'identify'
+					If $decision['ignore'] Then Return
+					$decision['identify'] = $value
+				Case 'action'
+					If $decision['ignore'] Then Return
+					$decision['action'] = $value
+			EndSwitch
+			$gui_loot_decisions[$path] = FormatItemDecision($decision['ignore'], $decision['identify'], $decision['action'])
+		Case $LOOT_KIND_MOD
+			Local $decision = ParseModDecision($gui_loot_decisions[$path])
+			Switch $field
+				Case 'salvage'
+					; A mod that starts being salvaged is stored until told otherwise
+					If $value And Not $decision['salvage'] Then $decision['store'] = True
+					$decision['salvage'] = $value
+				Case 'store'
+					If Not $decision['salvage'] Then Return
+					$decision['store'] = $value
+			EndSwitch
+			$gui_loot_decisions[$path] = FormatModDecision($decision['salvage'], $decision['store'])
+		Case $LOOT_KIND_BUY
+			If $field == 'buy' Then $gui_loot_decisions[$path] = ($value == True)
+	EndSwitch
 EndFunc
+
+
+;~ Decision of a leaf, or of the first leaf below a group - Null when there is none
+Func GetLootRepresentativeDecision($path)
+	If MapExists($gui_loot_decisions, $path) Then Return $gui_loot_decisions[$path]
+	Local $prefix = $path & '.'
+	For $leafPath In MapKeys($gui_loot_decisions)
+		If StringLeft($leafPath, StringLen($prefix)) == $prefix Then Return $gui_loot_decisions[$leafPath]
+	Next
+	Return Null
+EndFunc
+
+
+;~ Show or hide the decision panel controls of one kind of node
+Func ShowLootPanelControls($kind)
+	Local $itemControls = [$gui_checkbox_lootignore, $gui_checkbox_lootidentify, $gui_group_lootthen, $gui_radio_lootkeep, $gui_radio_lootsalvage, $gui_radio_lootsell, $gui_radio_lootstore]
+	Local $modControls = [$gui_checkbox_modsalvage, $gui_checkbox_modstore]
+	Local $buyControls = [$gui_checkbox_lootbuy]
+	For $control In $itemControls
+		GUICtrlSetState($control, $kind == $LOOT_KIND_ITEM ? $GUI_SHOW : $GUI_HIDE)
+	Next
+	For $control In $modControls
+		GUICtrlSetState($control, $kind == $LOOT_KIND_MOD ? $GUI_SHOW : $GUI_HIDE)
+	Next
+	For $control In $buyControls
+		GUICtrlSetState($control, $kind == $LOOT_KIND_BUY ? $GUI_SHOW : $GUI_HIDE)
+	Next
+EndFunc
+
+
+;~ Show the decision of the selected node in the panel - a group shows the decision shared by its items, nothing when they differ
+Func RefreshLootDecisionPanel()
+	$gui_loot_refreshing_panel = True
+	Local $path = $gui_loot_selected_path
+	Local $kind = GetLootNodeKind($path)
+	If $path == '' Or $kind == '' Then
+		GUICtrlSetData($gui_label_lootselection, 'Select an item or a group in the tree')
+		GUICtrlSetData($gui_label_lootscope, '')
+		ShowLootPanelControls('')
+		$gui_loot_refreshing_panel = False
+		Return
+	EndIf
+	Local $summaries = ComputeLootSummaries()
+	Local $summary = $summaries[$path]
+	Local $isLeaf = MapExists($gui_loot_decisions, $path)
+	Local $mixed = Not $isLeaf And $summary['text'] == 'mixed'
+	GUICtrlSetData($gui_label_lootselection, StringReplace($path, '.', ' > '))
+	If $isLeaf Then
+		GUICtrlSetData($gui_label_lootscope, '')
+	ElseIf $mixed Then
+		GUICtrlSetData($gui_label_lootscope, 'Group of ' & $summary['count'] & ' items with different decisions - a change applies to all of them')
+	Else
+		GUICtrlSetData($gui_label_lootscope, 'Group of ' & $summary['count'] & ' items - a change applies to all of them')
+	EndIf
+	ShowLootPanelControls($kind)
+
+	Local $decision = GetLootRepresentativeDecision($path)
+	Switch $kind
+		Case $LOOT_KIND_ITEM
+			Local $parsed = ParseItemDecision($mixed Or $decision == Null ? $LOOT_ACTION_KEEP : $decision)
+			Local $ignore = Not $mixed And $parsed['ignore']
+			GUICtrlSetState($gui_checkbox_lootignore, $ignore ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_checkbox_lootidentify, (Not $mixed And $parsed['identify']) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_radio_lootkeep, (Not $mixed And Not $ignore And $parsed['action'] == $LOOT_ACTION_KEEP) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_radio_lootsalvage, (Not $mixed And Not $ignore And $parsed['action'] == $LOOT_ACTION_SALVAGE) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_radio_lootsell, (Not $mixed And Not $ignore And $parsed['action'] == $LOOT_ACTION_SELL) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_radio_lootstore, (Not $mixed And Not $ignore And $parsed['action'] == $LOOT_ACTION_STORE) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			; Ignore blocks the other options
+			Local $otherControls = [$gui_checkbox_lootidentify, $gui_radio_lootkeep, $gui_radio_lootsalvage, $gui_radio_lootsell, $gui_radio_lootstore]
+			For $control In $otherControls
+				GUICtrlSetState($control, $ignore ? $GUI_DISABLE : $GUI_ENABLE)
+			Next
+		Case $LOOT_KIND_MOD
+			Local $parsed = ParseModDecision($mixed Or $decision == Null ? $LOOT_DECISION_IGNORE : $decision)
+			GUICtrlSetState($gui_checkbox_modsalvage, $parsed['salvage'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_checkbox_modstore, $parsed['store'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($gui_checkbox_modstore, $parsed['salvage'] ? $GUI_ENABLE : $GUI_DISABLE)
+		Case $LOOT_KIND_BUY
+			GUICtrlSetState($gui_checkbox_lootbuy, (Not $mixed And $decision == True) ? $GUI_CHECKED : $GUI_UNCHECKED)
+	EndSwitch
+	$gui_loot_refreshing_panel = False
+EndFunc
+
+
 #EndRegion Loot Tree View Management
 
 
@@ -1917,104 +2125,4 @@ Func TemporaryGUIWMActivateHandler($handle, $message, $param)
 EndFunc
 
 
-;~ Getting ticked loot options from checkboxes as array
-Func GetLootOptionsTickedCheckboxes($startingPoint, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.', $recursive = True)
-	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startingPoint, $pathDelimiter)
-	Return $treeViewItem == Null ? Null : BuildArrayFromTreeView($treeViewHandle, $treeViewItem, '', $recursive)
-EndFunc
-
-
-;~ Find a node in a treeview by its path as string
-Func FindNodeInTreeView($treeViewHandle, $treeViewItem = Null, $path = '', $pathDelimiter = '.')
-	Local $pathArray = StringSplit($path, $pathDelimiter)
-	; Caution in AutoIT, StringSplit function returns array in which first element is count of items
-	Local $pathArraySize = $pathArray[0]
-	If $pathArraySize == 0 Or $path == '' Then Return Null
-	If $treeViewItem == Null Then $treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-	Return FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, 1)
-EndFunc
-
-
-;~ Find a node in a treeview by its path as string
-Func FindNodeInTreeViewHelper($treeViewHandle, $treeViewItem, $pathArray, $pathArrayIndex)
-	Local $treeViewItemName, $treeViewItemChildCount, $treeViewItemFirstChild
-	While $treeViewItem <> 0
-		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-		$treeViewItemChildCount = _GUICtrlTreeView_GetChildCount($treeViewHandle, $treeViewItem)
-		If $treeViewItemName == $pathArray[$pathArrayIndex] Then
-			If $pathArrayIndex == UBound($pathArray) - 1 Then
-				Return $treeViewItem
-			Else
-				Return FindNodeInTreeViewHelper($treeViewHandle, _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem), $pathArray, $pathArrayIndex + 1)
-			EndIf
-		EndIf
-		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
-	WEnd
-	Return Null
-EndFunc
-
-
-;~ Find the child from the given treeview by its name
-Func FindDirectChildTreeViewItem($treeViewHandle, $treeViewItem, $name)
-	If $treeViewItem == Null Then
-		$treeViewItem = _GUICtrlTreeView_GetFirstItem($treeViewHandle)
-	EndIf
-	Return FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
-EndFunc
-
-
-;~ Find a node in a treeview by its path as string
-Func FindDirectChildTreeViewItemHelper($treeViewHandle, $treeViewItem, $name)
-	Local $treeViewItemName
-	While $treeViewItem <> 0
-		$treeViewItemName = _GUICtrlTreeView_GetText($treeViewHandle, $treeViewItem)
-		If $treeViewItemName == $name Then
-			Return $treeViewItem
-		EndIf
-		$treeViewItem = _GUICtrlTreeView_GetNextSibling($treeViewHandle, $treeViewItem)
-	WEnd
-	Return Null
-EndFunc
-
-
-;~ Creating a treeview from a JSON node
-Func BuildTreeViewFromJSON($parentItem, $jsonNode)
-	If IsMap($jsonNode) Then
-		Local $isChecked = True
-		For $key In MapKeys($jsonNode)
-			Local $keyHandle = GUICtrlCreateTreeViewItem($key, $parentItem)
-			If Not BuildTreeViewFromJSON($keyHandle, $jsonNode[$key]) Then $isChecked = False
-		Next
-		_GUICtrlTreeView_SetChecked($gui_treeview_lootoptions, $parentItem, $isChecked)
-		Return $isChecked
-	EndIf
-	; Leaf node: this node is true or false
-	_GUICtrlTreeView_SetChecked($gui_treeview_lootoptions, $parentItem, $jsonNode)
-	Return $jsonNode == True
-EndFunc
-
-
-;~ Function to recursively traverse a branch in a tree view to check if any child in that branch is checked
-Func IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
-	; Check if current tree node item is checked
-	If _GUICtrlTreeView_GetChecked($treeViewHandle, $treeViewItem) Then Return True
-
-	; Recursively check all child items of provided $treeViewItem
-	If _GUICtrlTreeView_GetChildren($treeViewHandle, $treeViewItem) Then
-		Local $childHandle = _GUICtrlTreeView_GetFirstChild($treeViewHandle, $treeViewItem)
-		While $childHandle <> 0
-			If IsAnyChildInBranchChecked($treeViewHandle, $childHandle) Then Return True
-			$childHandle = _GUICtrlTreeView_GetNextChild($treeViewHandle, $childHandle)
-		WEnd
-	EndIf
-
-	Return False
-EndFunc
-
-
-;~ Function to check if any checkbox is checked in a branch starting in node provided as path string
-Func IsAnyLootOptionInBranchChecked($startNodePath, $treeViewHandle = $gui_treeview_lootoptions, $pathDelimiter = '.')
-	Local $treeViewItem = FindNodeInTreeView($treeViewHandle, Null, $startNodePath, $pathDelimiter)
-	Return $treeViewItem == Null ? False : IsAnyChildInBranchChecked($treeViewHandle, $treeViewItem)
-EndFunc
 #EndRegion Dead GUI code but keep because it could come handy

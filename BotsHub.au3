@@ -46,9 +46,11 @@ Opt('MustDeclareVars', True)
 #include 'lib/Utils-Console.au3'
 #include 'lib/Utils-Debugger.au3'
 #include 'lib/Utils-Items_Modstructs.au3'
+#include 'lib/Utils-Loot_Configuration.au3'
 #include 'lib/Utils-Shared_Memory.au3'
 #include 'lib/Utils-Storage.au3'
 #include 'lib/Build_PW_Heroic-Refrain.au3'
+#include 'lib/Build_XA_Assassins-Promise.au3'
 
 #include 'src/farms/CoF.au3'
 #include 'src/farms/Corsairs.au3'
@@ -139,7 +141,6 @@ Global $slave_heartbeat = 0
 Global $farm_map[]
 Global $gui_enabled
 
-Global $inventory_management_cache[]
 Global $run_options_cache[]
 $run_options_cache['run.district'] = 'Default'
 $run_options_cache['run.consume_consumables'] = True
@@ -154,6 +155,7 @@ $run_options_cache['run.buy_faction_resources'] = False
 $run_options_cache['run.collect_data'] = False
 $run_options_cache['run.go_offline'] = False
 $run_options_cache['run.flash_whisper'] = False
+$run_options_cache['run.smart_assassins_promise'] = True
 $run_options_cache['team.automatic_team_setup'] = False
 ; Overrides on $run_options_cache for frequent usage
 Global $district_name = 'Default'
@@ -387,8 +389,7 @@ Func LoadLootConfiguration($filePath)
 	; Removing .json
 	$loot_configuration = StringTrimRight($loot_configuration, 5)
 	Local $jsonLootOptions = LoadLootOptions($filePath)
-	FillInventoryCacheFromJSON($jsonLootOptions, '')
-	BuildInventoryDerivedFlags()
+	LoadLootDecisionsFromJson($jsonLootOptions)
 	RefreshValuableListsFromCache()
 	Info('Loaded loot configuration at ' & $filePath)
 EndFunc
@@ -444,6 +445,9 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.collect_data'] = _JSON_Get($jsonObject, 'run.collect_data')
 	$run_options_cache['run.go_offline'] = _JSON_Get($jsonObject, 'run.go_offline')
 	$run_options_cache['run.flash_whisper'] = _JSON_Get($jsonObject, 'run.flash_whisper')
+	; Older configuration files do not have this key - smart casting is enabled by default
+	Local $smartAssassinsPromise = _JSON_Get($jsonObject, 'run.smart_assassins_promise')
+	$run_options_cache['run.smart_assassins_promise'] = @error ? True : $smartAssassinsPromise
 	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
 	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
 	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
@@ -494,6 +498,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
 	_JSON_addChangeDelete($jsonObject, 'run.go_offline', $run_options_cache['run.go_offline'])
 	_JSON_addChangeDelete($jsonObject, 'run.flash_whisper', $run_options_cache['run.flash_whisper'])
+	_JSON_addChangeDelete($jsonObject, 'run.smart_assassins_promise', $run_options_cache['run.smart_assassins_promise'])
 	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
@@ -694,11 +699,22 @@ EndFunc
 
 ;~ Auto-detect player build and wire up specialized combat/maintenance routines
 Func SetupPlayerBuildOverrides()
+	; Start from the default combat routine so a previous build override does not linger
+	$default_move_aggro_kill_options['killMethod']	= UseSkillSequentially
+	$flag_move_aggro_kill_options['killMethod']		= UseSkillSequentially
+	$optionsFollower['killMethod']					= UseSkillSequentially
+
 	; For build detection, we iterate over skills and key skills + profession will give use which build must be used
 	Local $profession = GetHeroProfession(0)
 	Local $skillbar = GetSkillbar(0)
 	For $i = 1 To 8
 		Local $skillID = DllStructGetData($skillbar, 'SkillID' & $i)
+		; Builds recognised whatever the primary profession
+		If $skillID == $ID_ASSASSINS_PROMISE Then
+			If $run_options_cache['run.smart_assassins_promise'] Then Return SetupAPBuild()
+			Info('Assassin''s Promise is on the skillbar but smart casting is disabled - skills will be used from 1 to 8')
+			Return
+		EndIf
 		If $profession == $ID_PARAGON Then
 			If $skillID == $ID_HEROIC_REFRAIN Then Return SetupHRBuild()
 			;If $skillID == ... Then Return ...
@@ -744,93 +760,6 @@ EndFunc
 
 
 ;~ Fill the inventory cache with additional derived data
-Func BuildInventoryDerivedFlags()
-	; -------- Pickup --------
-	Local $pickupSomething = IsAnyChecked('Pick up items')
-	$inventory_management_cache['@pickup.something'] = $pickupSomething
-	$inventory_management_cache['@pickup.nothing'] = Not $pickupSomething
-	Local $pickupSomeWeapons = IsAnyChecked('Pick up items.Weapons and offhands')
-	$inventory_management_cache['@pickup.weapons.something'] = $pickupSomeWeapons
-	$inventory_management_cache['@pickup.weapons.nothing'] = Not $pickupSomeWeapons
-
-	; -------- Identify --------
-	Local $identifySomething = IsAnyChecked('Identify items')
-	$inventory_management_cache['@identify.something'] = $identifySomething
-	$inventory_management_cache['@identify.nothing'] = Not $identifySomething
-
-	; -------- Salvage --------
-	Local $salvageSomething = IsAnyChecked('Salvage items')
-	$inventory_management_cache['@salvage.something'] = $salvageSomething
-	$inventory_management_cache['@salvage.nothing'] = Not $salvageSomething
-	Local $salvageSomeWeapons = IsAnyChecked('Salvage items.Weapons and offhands')
-	$inventory_management_cache['@salvage.weapons.something'] = $salvageSomeWeapons
-	$inventory_management_cache['@salvage.weapons.nothing'] = Not $salvageSomeWeapons
-	Local $salvageSomeSalvageables = IsAnyChecked('Salvage items.Armor salvageables')
-	$inventory_management_cache['@salvage.salvageables.something'] = $salvageSomeSalvageables
-	$inventory_management_cache['@salvage.salvageables.nothing'] = Not $salvageSomeSalvageables
-	Local $salvageSomeTrophies = IsAnyChecked('Salvage items.Trophies')
-	$inventory_management_cache['@salvage.trophies.something'] = $salvageSomeTrophies
-	$inventory_management_cache['@salvage.trophies.nothing'] = Not $salvageSomeTrophies
-	Local $salvageSomeMaterials = IsAnyChecked('Salvage items.Rare Materials')
-	$inventory_management_cache['@salvage.materials.something'] = $salvageSomeMaterials
-	$inventory_management_cache['@salvage.materials.nothing'] = Not $salvageSomeMaterials
-
-	; -------- Sell --------
-	Local $sellSomething = IsAnyChecked('Sell items')
-	$inventory_management_cache['@sell.something'] = $sellSomething
-	$inventory_management_cache['@sell.nothing'] = Not $sellSomething
-	Local $sellSomeWeapons = IsAnyChecked('Sell items.Weapons and offhands')
-	$inventory_management_cache['@sell.weapons.something'] = $sellSomeWeapons
-	$inventory_management_cache['@sell.weapons.nothing'] = Not $sellSomeWeapons
-
-	Local $sellSomeBasicMaterials = IsAnyChecked('Sell items.Basic Materials')
-	$inventory_management_cache['@sell.materials.basic.something'] = $sellSomeBasicMaterials
-	$inventory_management_cache['@sell.materials.basic.nothing'] = Not $sellSomeBasicMaterials
-	Local $sellSomeRareMaterials = IsAnyChecked('Sell items.Rare Materials')
-	$inventory_management_cache['@sell.materials.rare.something'] = $sellSomeRareMaterials
-	$inventory_management_cache['@sell.materials.rare.nothing'] = Not $sellSomeRareMaterials
-	Local $sellSomeMaterials = $sellSomeBasicMaterials Or $sellSomeRareMaterials
-	$inventory_management_cache['@sell.materials.something'] = $sellSomeMaterials
-	$inventory_management_cache['@sell.materials.nothing'] = Not $sellSomeMaterials
-
-	; -------- Buy --------
-	Local $buySomething = IsAnyChecked('Buy items')
-	$inventory_management_cache['@buy.something'] = $buySomething
-	$inventory_management_cache['@buy.nothing'] = Not $buySomething
-
-	Local $buySomeBasicMaterials = IsAnyChecked('Buy items.Basic Materials')
-	$inventory_management_cache['@buy.materials.basic.something'] = $buySomeBasicMaterials
-	$inventory_management_cache['@buy.materials.basic.nothing'] = Not $buySomeBasicMaterials
-	Local $buySomeRareMaterials = IsAnyChecked('Buy items.Rare Materials')
-	$inventory_management_cache['@buy.materials.rare.something'] = $buySomeRareMaterials
-	$inventory_management_cache['@buy.materials.rare.nothing'] = Not $buySomeRareMaterials
-	Local $buySomeMaterials = $buySomeBasicMaterials Or $buySomeRareMaterials
-	$inventory_management_cache['@buy.materials.something'] = $buySomeMaterials
-	$inventory_management_cache['@buy.materials.nothing'] = Not $buySomeMaterials
-
-	; -------- Store --------
-	Local $storeSomething = IsAnyChecked('Store items')
-	$inventory_management_cache['@store.something'] = $storeSomething
-	$inventory_management_cache['@store.nothing'] = Not $storeSomething
-	Local $storeSomeWeapons = IsAnyChecked('Store items.Weapons and offhands')
-	$inventory_management_cache['@store.weapons.something'] = $storeSomeWeapons
-	$inventory_management_cache['@store.weapons.nothing'] = Not $storeSomeWeapons
-EndFunc
-
-
-;~ Return if any option at provided path or lower in the tree is checked
-Func IsAnyChecked($path)
-	Local $pathLength = StringLen($path) + 1
-	For $key In MapKeys($inventory_management_cache)
-		If Not $inventory_management_cache[$key] Then ContinueLoop
-		If $key == $path Then Return True
-		If StringLen($key) <= $pathLength Then ContinueLoop
-		If StringLeft($key, $pathLength) == ($path & '.') Then Return True
-	Next
-	Return False
-EndFunc
-
-
 ;~ Return checked leaf options under provided path
 Func GetAllChecked($map, $path, $minDepth = -1, $maxDepth = -1)
 	Local $checkedElements[0]

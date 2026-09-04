@@ -29,8 +29,9 @@ To use it:
 ## Features
 - Unified interface shared by all bots 🖥️
 - Shared inventory, loot, farm, and title tracking 🎯
-- Configurable item handling (pickup, identify, salvage, sell, buy, store) 📦
+- One decision per item: ignore, identify, then keep, salvage, sell or store, plus a mods section for what to salvage out of unwanted items 📦
 - Farm UI with build, equipment, and contextual information 🛡️
+- Build-aware combat when a known player build is detected (Heroic Refrain, Assassin's Promise) 🧠
 - Modular, plug-and-play bot system 🔌
 
 ---
@@ -80,6 +81,8 @@ To use it:
 | Secret Lair of the Snowmen	| Deldrimor								|
 | Pre-Searing					| Legendary Defender of Ascalon (LDOA)	|
 
+Vanquish, dungeon and title bots play whatever build the character carries. With an Assassin's Promise build (Me/A, N/A, E/A) the bot uses a dedicated casting routine: Assassin's Promise once the target is close to 50% health, "Finish Him!" under 50%, "You Move Like a Dwarf!" to finish, Ebon Vanguard Assassin Support otherwise, and the mesmer's Arcane Echo and Auspicious Incantation only where they pay off. Untick *Smart Assassin's Promise casting* in the Team tab to fall back to casting skills from 1 to 8.
+
 ### Dungeons / Elite Zones
 
 | Area							| Drops																	|
@@ -110,6 +113,24 @@ To use it:
 - Follower bot
 - Inventory management
 - Automatic Tonic consumer
+
+---
+
+## Inventory configuration
+
+The **Inventory** tab lists item families (weapons by type, rarity, requirement and skin, armor salvageables, trophies, materials, consumables, tomes, scrolls, dyes...) as a tree. Select an item or a group and set its decision in the panel on the right:
+
+- **Ignore**: the item is never picked up and never touched in the bags. It blocks the other options.
+- **Identify**: the item is identified before anything else happens to it.
+- **Keep in the bags**, **Salvage**, **Sell** or **Store in the Xunlai storage**: exactly one of them.
+
+A change on a group applies to every item below it, and each row shows its decision in brackets (`[mixed]` for groups whose items differ). The tree checkboxes tick items that are picked up, mods that are salvaged and materials that are bought.
+
+Weapons have a few rules on top of their leaf: equipped and customized items are never touched, the *Low req max stats* rule replaces the leaf of non white weapons with a requirement under 9 and max stats, ultra rare skins and perfect old school weapons are stored instead of being salvaged or sold, and rare skins with max stats have their own leaf under each requirement. The skins counted as rare or ultra rare are listed per weapon type in [doc/rare-skins.md](doc/rare-skins.md).
+
+The **Mods** section says, for each weapon mod, inscription, rune and insignia, whether it is salvaged out of items that are salvaged or sold (with an expert kit) and whether the salvaged mod is stored or sold. Stored items keep their mods.
+
+Loot files saved by previous versions (one tree per action) are migrated when loaded: an item is ignored when it was not picked up, salvage wins over sell which wins over store, and identification follows the former rarity setting. Save the file again to keep it in the new format.
 
 ---
 
@@ -171,8 +192,7 @@ Check your system locale. Set it to English and that should fix the problem.
 <details>
 <summary><strong>Q: How can I change what items the bot sells?</strong></summary>
 
-Most options are configurable in the interface.  
-Advanced customization requires manual file edits ✏️
+Use the **Inventory** tab: select the item or the group and pick its decision (ignore, identify, keep, salvage, sell or store), then click *Apply changes* and *Save* to keep it 📦
 </details>
 
 <details>

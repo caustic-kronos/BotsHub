@@ -22,7 +22,8 @@
 		"district": "Default",
 		"disable_rendering": false,
 		"go_offline": false,
-		"flash_whisper": false
+		"flash_whisper": false,
+		"smart_assassins_promise": true
 	},
 	"team": {
 		"automatic_team_setup": false,

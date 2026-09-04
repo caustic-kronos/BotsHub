@@ -1,3319 +1,3501 @@
 ﻿{
-	"Pick up items": {
-		"Gold": true,
-		"Consumables": true,
-		"Alcohols": {
-			"Minor (1pt)": true,
-			"Major (3pt)": true,
-			"Superior (50pt)": true
-		},
-		"Party": {
-			"Minor (1-2pt)": true,
-			"Major (3-7pt)": true,
-			"Superior (25-50pt)": true
-		},
-		"Sweets": {
-			"Minor (1-2pt)": true,
-			"Major (3pt)": true,
-			"Superior (50pt)": true
-		},
-		"PCons": {
-			"Drake Kabob": true,
-			"Bowl of Skalefin Soup": true,
-			"Pahnai Salad": true,
-			"Birthday Cupcake": true,
-			"Golden Egg": true,
-			"Candy Apple": true,
-			"Candy Corn": true,
-			"Slice of Pumpkin Pie": true,
-			"Blue Rock Candy": true,
-			"Green Rock Candy": true,
-			"Red Rock Candy": true,
-			"War Supplies": true,
-			"Lunar Fortune (Pig)": true,
-			"Lunar Fortune (Rat)": true,
-			"Lunar Fortune (Ox)": true,
-			"Lunar Fortune (Tiger)": true,
-			"Lunar Fortune (Rabbit)": true,
-			"Lunar Fortune (Dragon)": true,
-			"Lunar Fortune (Snake)": true,
-			"Lunar Fortune (Horse)": true,
-			"Lunar Fortune (Sheep)": true,
-			"Lunar Fortune (Monkey)": true,
-			"Lunar Fortune (Rooster)": true,
-			"Lunar Fortune (Dog)": true
-		},
-		"Morale": {
-			"Peppermint Candy Cane": true,
-			"Refined Jelly": true,
-			"Elixir of Valor": true,
-			"Wintergreen Candy Cane": true,
-			"Rainbow Candy Cane": true,
-			"Four Leaf Clover": true,
-			"Honeycomb": true,
-			"Pumpkin Cookie": true,
-			"Oath of Purity": true,
-			"Seal of the Dragon Empire": true,
-			"Shining Blade Ration": true
-		},
-		"Special drops": {
-			"Candy Cane Shard": true,
-			"Victory Token": true,
-			"Wintersday Gift": true,
-			"Wayfarer Mark": true,
-			"Lunar Token": true,
-			"Lunar Tokens": true,
-			"Trick-or-Treat Bag": true,
-			"Flame of Balthazar": true,
-			"Golden Flame of Balthazar": true,
-			"Celestial Sigil": true,
-			"Stalkers Rations": true,
-			"Birds Eye Compass": true
-		},
+	"Items": {
+		"Gold": "store",
 		"Weapons and offhands": {
-			"Low Req Max Stats": true,
-			"White": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+			"Low req max stats": "identify+store",
+			"Axe": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
 				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
+				"Green": "keep"
 			},
-			"Blue": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+			"Sword": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
 				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
+				"Green": "keep"
 			},
-			"Purple": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+			"Dagger": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": true,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
 				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": true,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": true,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
+				"Green": "keep"
 			},
-			"Gold": {
-				"Axe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+			"Hammer": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Bow": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Dagger": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Focus": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
 				},
-				"Hammer": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Scythe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Shield": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Spear": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Staff": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Sword": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Wand": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				}
+				"Green": "keep"
 			},
-			"Green": {
-				"Axe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+			"Scythe": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Bow": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Dagger": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Focus": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
 				},
-				"Hammer": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Green": "keep"
+			},
+			"Spear": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Scythe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Shield": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Spear": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
 				},
-				"Staff": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Green": "keep"
+			},
+			"Bow": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Sword": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
 				},
-				"Wand": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				}
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
+				},
+				"Green": "keep"
+			},
+			"Wand": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
+				},
+				"Green": "keep"
+			},
+			"Staff": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
+				},
+				"Green": "keep"
+			},
+			"Focus": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
+				},
+				"Green": "keep"
+			},
+			"Shield": {
+				"White": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Blue": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Purple": {
+					"Req 0": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 1": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 2": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 3": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 4": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 5": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 6": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 7": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 10": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 11": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 12": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					},
+					"Req 13": {
+						"Rare skins": "ignore",
+						"Other skins": "ignore"
+					}
+				},
+				"Gold": {
+					"Req 0": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 1": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 2": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 3": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 4": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 5": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 6": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 7": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 8": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 9": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 10": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 11": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 12": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					},
+					"Req 13": {
+						"Rare skins": "identify+sell",
+						"Other skins": "identify+sell"
+					}
+				},
+				"Green": "keep"
 			}
 		},
 		"Armor salvageables": {
-			"White": false,
-			"Blue": true,
-			"Purple": true,
-			"Gold": true
-		},
-		"Basic Materials": {
-			"Bone": true,
-			"Bolt of Cloth": true,
-			"Chitin Fragment": true,
-			"Feather": true,
-			"Granite Slab": true,
-			"Iron Ingot": true,
-			"Pile of Glittering Dust": true,
-			"Plant Fiber": true,
-			"Scale": true,
-			"Tanned Hide Square": true,
-			"Wood Plank": true
-		},
-		"Rare Materials": {
-			"Fur Square": true,
-			"Bolt of Linen": true,
-			"Bolt of Damask": true,
-			"Bolt of Silk": true,
-			"Glob of Ectoplasm": true,
-			"Steel Ingot": true,
-			"Deldrimor Steel Ingot": true,
-			"Monstrous Claw": true,
-			"Monstrous Eye": true,
-			"Monstrous Fang": true,
-			"Ruby": true,
-			"Sapphire": true,
-			"Diamond": true,
-			"Onyx Gemstone": true,
-			"Lump of Charcoal": true,
-			"Obsidian Shard": true,
-			"Tempered Glass Vial": true,
-			"Leather Square": true,
-			"Elonian Leather Square": true,
-			"Vial of Ink": true,
-			"Roll of Parchment": true,
-			"Roll of Vellum": true,
-			"Spiritwood Plank": true,
-			"Amber Chunk": true,
-			"Jadeite Shard": true
+			"White": "ignore",
+			"Blue": "identify+sell",
+			"Purple": "identify+sell",
+			"Gold": "identify+sell"
 		},
 		"Trophies": {
-			"Margonite Gemstone": true,
-			"Stygian Gemstone": true,
-			"Titan Gemstone": true,
-			"Torment Gemstone": true,
-			"Diessa Chalice": true,
-			"Golden Rin Relic": true,
-			"Superb Charr Carving": true,
-			"Chunk of Drake Flesh": true,
-			"Skale Fin": true,
-			"Iboga Petal": true,
-			"Destroyer Core": true,
-			"Glacial Stone": true,
-			"Saurian Bone": true,
-			"Jade Bracelet": true,
-			"Dark Remains": true,
-			"Demonic Remains": true,
-			"Other trophies": true
+			"Margonite Gemstone": "store",
+			"Stygian Gemstone": "store",
+			"Titan Gemstone": "store",
+			"Torment Gemstone": "store",
+			"Diessa Chalice": "store",
+			"Golden Rin Relic": "store",
+			"Superb Charr Carving": "store",
+			"Chunk of Drake Flesh": "store",
+			"Skale Fin": "store",
+			"Iboga Petal": "store",
+			"Destroyer Core": "store",
+			"Glacial Stone": "salvage",
+			"Saurian Bone": "salvage",
+			"Jade Bracelet": "store",
+			"Dark Remains": "salvage",
+			"Demonic Remains": "salvage",
+			"Common material trophies": "salvage",
+			"Nicholas trophies": "keep",
+			"Rare material trophies": "keep",
+			"Other trophies": "sell"
+		},
+		"Basic Materials": {
+			"Bone": "store",
+			"Bolt of Cloth": "store",
+			"Chitin Fragment": "store",
+			"Feather": "store",
+			"Granite Slab": "store",
+			"Iron Ingot": "store",
+			"Pile of Glittering Dust": "store",
+			"Plant Fiber": "store",
+			"Scale": "store",
+			"Tanned Hide Square": "store",
+			"Wood Plank": "store"
+		},
+		"Rare Materials": {
+			"Fur Square": "store",
+			"Bolt of Linen": "store",
+			"Bolt of Damask": "store",
+			"Bolt of Silk": "store",
+			"Glob of Ectoplasm": "store",
+			"Steel Ingot": "salvage",
+			"Deldrimor Steel Ingot": "store",
+			"Monstrous Claw": "store",
+			"Monstrous Eye": "store",
+			"Monstrous Fang": "store",
+			"Ruby": "store",
+			"Sapphire": "store",
+			"Diamond": "store",
+			"Onyx Gemstone": "store",
+			"Lump of Charcoal": "store",
+			"Obsidian Shard": "store",
+			"Tempered Glass Vial": "store",
+			"Leather Square": "store",
+			"Elonian Leather Square": "store",
+			"Vial of Ink": "store",
+			"Roll of Parchment": "store",
+			"Roll of Vellum": "store",
+			"Spiritwood Plank": "store",
+			"Amber Chunk": "store",
+			"Jadeite Shard": "store"
+		},
+		"Consumables": "store",
+		"Alcohols": {
+			"Minor (1pt)": "store",
+			"Major (3pt)": "store",
+			"Superior (50pt)": "store"
+		},
+		"Party": {
+			"Minor (1-2pt)": "store",
+			"Major (3-7pt)": "store",
+			"Superior (25-50pt)": "store"
+		},
+		"Sweets": {
+			"Minor (1-2pt)": "store",
+			"Major (3pt)": "store",
+			"Superior (50pt)": "store"
+		},
+		"PCons": {
+			"Drake Kabob": "store",
+			"Bowl of Skalefin Soup": "store",
+			"Pahnai Salad": "store",
+			"Birthday Cupcake": "keep",
+			"Golden Egg": "store",
+			"Candy Apple": "store",
+			"Candy Corn": "store",
+			"Slice of Pumpkin Pie": "keep",
+			"Blue Rock Candy": "store",
+			"Green Rock Candy": "store",
+			"Red Rock Candy": "store",
+			"War Supplies": "store",
+			"Lunar Fortune (Pig)": "store",
+			"Lunar Fortune (Rat)": "store",
+			"Lunar Fortune (Ox)": "store",
+			"Lunar Fortune (Tiger)": "store",
+			"Lunar Fortune (Rabbit)": "store",
+			"Lunar Fortune (Dragon)": "store",
+			"Lunar Fortune (Snake)": "store",
+			"Lunar Fortune (Horse)": "store",
+			"Lunar Fortune (Sheep)": "store",
+			"Lunar Fortune (Monkey)": "store",
+			"Lunar Fortune (Rooster)": "store",
+			"Lunar Fortune (Dog)": "store"
+		},
+		"Morale": {
+			"Peppermint Candy Cane": "store",
+			"Refined Jelly": "store",
+			"Elixir of Valor": "store",
+			"Wintergreen Candy Cane": "store",
+			"Rainbow Candy Cane": "store",
+			"Four Leaf Clover": "store",
+			"Honeycomb": "keep",
+			"Pumpkin Cookie": "store",
+			"Oath of Purity": "store",
+			"Seal of the Dragon Empire": "store",
+			"Shining Blade Ration": "store"
+		},
+		"Special drops": {
+			"Candy Cane Shard": "store",
+			"Victory Token": "store",
+			"Wintersday Gift": "store",
+			"Wayfarer Mark": "store",
+			"Lunar Token": "store",
+			"Lunar Tokens": "store",
+			"Trick-or-Treat Bag": "store",
+			"Flame of Balthazar": "store",
+			"Golden Flame of Balthazar": "store",
+			"Celestial Sigil": "store",
+			"Stalkers Rations": "store",
+			"Birds Eye Compass": "store"
+		},
+		"Consets": {
+			"Heroes Trifecta": "keep",
+			"Essence of Celerity": "keep",
+			"Armor of Salvation": "keep",
+			"Grail of Might": "keep",
+			"Scroll of Resurrection": "keep",
+			"Empowering Feasts": "keep"
+		},
+		"Summoning stones": {
+			"Cracked Ascalonian War Horn": "keep",
+			"Igneous Summoning Stone": "keep",
+			"Legionnaire Summoning Crystal": "keep",
+			"Ghastly Summon": "keep",
+			"Mystical Summon": "keep",
+			"Tengu Summon": "keep",
+			"Imperial Guard Summon": "keep",
+			"Automaton Summon": "keep",
+			"Chitinous Summon": "keep",
+			"Amber Summon": "keep",
+			"Arctic Summon": "keep",
+			"Demonic Summon": "keep",
+			"Gelatinous Summon": "keep",
+			"Fossilized Summon": "keep",
+			"Jadeite Summon": "keep",
+			"Mischievous Summon": "keep",
+			"Frosty Summon": "keep",
+			"Zaishen Summon": "keep",
+			"Celestial Summon": "keep",
+			"Shining Blade Summon": "keep",
+			"Mysterious Summon": "keep",
+			"Merchant Summon": "keep"
 		},
 		"Tomes": {
 			"Normal": {
-				"Warrior Tome": true,
-				"Ranger Tome": true,
-				"Monk Tome": true,
-				"Necromancer Tome": true,
-				"Mesmer Tome": true,
-				"Elementalist Tome": true,
-				"Assassin Tome": true,
-				"Ritualist Tome": true,
-				"Paragon Tome": true,
-				"Dervish Tome": true
+				"Warrior Tome": "store",
+				"Ranger Tome": "store",
+				"Monk Tome": "store",
+				"Necromancer Tome": "store",
+				"Mesmer Tome": "store",
+				"Elementalist Tome": "store",
+				"Assassin Tome": "store",
+				"Ritualist Tome": "store",
+				"Paragon Tome": "store",
+				"Dervish Tome": "store"
 			},
 			"Elite": {
-				"Elite Warrior Tome": true,
-				"Elite Ranger Tome": true,
-				"Elite Monk Tome": true,
-				"Elite Necromancer Tome": true,
-				"Elite Mesmer Tome": true,
-				"Elite Elementalist Tome": true,
-				"Elite Assassin Tome": true,
-				"Elite Ritualist Tome": true,
-				"Elite Paragon Tome": true,
-				"Elite Dervish Tome": true
+				"Elite Warrior Tome": "store",
+				"Elite Ranger Tome": "store",
+				"Elite Monk Tome": "store",
+				"Elite Necromancer Tome": "store",
+				"Elite Mesmer Tome": "store",
+				"Elite Elementalist Tome": "store",
+				"Elite Assassin Tome": "store",
+				"Elite Ritualist Tome": "store",
+				"Elite Paragon Tome": "store",
+				"Elite Dervish Tome": "store"
 			}
 		},
 		"Scrolls": {
-			"Blue": true,
+			"Blue": "sell",
 			"Gold": {
-				"Passage Scroll to the Fissure of Woe": true,
-				"Passage Scroll to the Underworld": true,
-				"Passage Scroll to the Deep": true,
-				"Passage Scroll to Urgozs Warren": true,
-				"Other gold scrolls": true
+				"Passage Scroll to the Fissure of Woe": "store",
+				"Passage Scroll to the Underworld": "store",
+				"Passage Scroll to the Deep": "store",
+				"Passage Scroll to Urgozs Warren": "store",
+				"Other gold scrolls": "sell"
 			}
 		},
 		"Dyes": {
-			"Black": true,
-			"Blue": false,
-			"Brown": false,
-			"Gray": false,
-			"Green": false,
-			"Orange": false,
-			"Pink": false,
-			"Purple": false,
-			"Red": false,
-			"Silver": false,
-			"White": true,
-			"Yellow": false
+			"Black": "store",
+			"Blue": "ignore",
+			"Brown": "ignore",
+			"Gray": "ignore",
+			"Green": "ignore",
+			"Orange": "ignore",
+			"Pink": "ignore",
+			"Purple": "ignore",
+			"Red": "ignore",
+			"Silver": "ignore",
+			"White": "store",
+			"Yellow": "ignore"
 		},
+		"Keys": "sell",
+		"Lockpicks": "keep",
+		"Miniatures": "keep",
 		"Quest items": {
-			"Map pieces": false
+			"Map pieces": "ignore"
 		},
-		"Lockpicks": true,
-		"Keys": true,
-		"Miniatures": true
+		"Other items": {
+			"Stackables": "keep",
+			"Unknown items": "ignore"
+		}
 	},
-	"Identify items": {
-		"White": false,
-		"Blue": true,
-		"Purple": true,
-		"Gold": true
-	},
-	"Keep components": {
+	"Mods": {
 		"Armor upgrades": {
 			"All": {
 				"Insignias": {
-					"Survivor": false,
-					"Radiant": false,
-					"Stalwart": false,
-					"Brawlers": false,
-					"Blessed": false,
-					"Heralds": false,
-					"Sentrys": false
+					"Survivor": "ignore",
+					"Radiant": "ignore",
+					"Stalwart": "ignore",
+					"Brawlers": "ignore",
+					"Blessed": "ignore",
+					"Heralds": "ignore",
+					"Sentrys": "ignore"
 				},
 				"Runes": {
-					"Minor Vigor": true,
-					"Vitae": false,
-					"Attunement": false,
-					"Major Vigor": true,
-					"Recovery": false,
-					"Restoration": false,
-					"Clarity": false,
-					"Purity": false,
-					"Superior Vigor": true
+					"Minor Vigor": "salvage+store",
+					"Vitae": "ignore",
+					"Attunement": "ignore",
+					"Major Vigor": "salvage+store",
+					"Recovery": "ignore",
+					"Restoration": "ignore",
+					"Clarity": "ignore",
+					"Purity": "ignore",
+					"Superior Vigor": "salvage+store"
 				}
 			},
 			"Assassin": {
 				"Insignias": {
-					"Vanguards": false,
-					"Infiltrators": false,
-					"Saboteurs": false,
-					"Nightstalkers": false
+					"Vanguards": "ignore",
+					"Infiltrators": "ignore",
+					"Saboteurs": "ignore",
+					"Nightstalkers": "ignore"
 				},
 				"Runes": {
-					"Minor Critical Strikes": true,
-					"Minor Dagger Mastery": false,
-					"Minor Deadly Arts": false,
-					"Minor Shadow Arts": false,
-					"Major Critical Strikes": false,
-					"Major Dagger Mastery": false,
-					"Major Deadly Arts": false,
-					"Major Shadow Arts": false,
-					"Superior Critical Strikes": false,
-					"Superior Dagger Mastery": false,
-					"Superior Deadly Arts": false,
-					"Superior Shadow Arts": false
+					"Minor Critical Strikes": "salvage+store",
+					"Minor Dagger Mastery": "ignore",
+					"Minor Deadly Arts": "ignore",
+					"Minor Shadow Arts": "ignore",
+					"Major Critical Strikes": "ignore",
+					"Major Dagger Mastery": "ignore",
+					"Major Deadly Arts": "ignore",
+					"Major Shadow Arts": "ignore",
+					"Superior Critical Strikes": "ignore",
+					"Superior Dagger Mastery": "ignore",
+					"Superior Deadly Arts": "ignore",
+					"Superior Shadow Arts": "ignore"
 				}
 			},
 			"Dervish": {
 				"Insignias": {
-					"Windwalker": true,
-					"Forsaken": false
+					"Windwalker": "salvage+store",
+					"Forsaken": "ignore"
 				},
 				"Runes": {
-					"Minor Earth Prayers": true,
-					"Minor Mysticism": false,
-					"Minor Scythe Mastery": true,
-					"Minor Wind Prayers": false,
-					"Major Earth Prayers": false,
-					"Major Mysticism": false,
-					"Major Scythe Mastery": false,
-					"Major Wind Prayers": false,
-					"Superior Earth Prayers": false,
-					"Superior Mysticism": false,
-					"Superior Scythe Mastery": false,
-					"Superior Wind Prayers": false
+					"Minor Earth Prayers": "salvage+store",
+					"Minor Mysticism": "ignore",
+					"Minor Scythe Mastery": "salvage+store",
+					"Minor Wind Prayers": "ignore",
+					"Major Earth Prayers": "ignore",
+					"Major Mysticism": "ignore",
+					"Major Scythe Mastery": "ignore",
+					"Major Wind Prayers": "ignore",
+					"Superior Earth Prayers": "ignore",
+					"Superior Mysticism": "ignore",
+					"Superior Scythe Mastery": "ignore",
+					"Superior Wind Prayers": "ignore"
 				}
 			},
 			"Elementalist": {
 				"Insignias": {
-					"Hydromancer": false,
-					"Geomancer": false,
-					"Pyromancer": false,
-					"Aeromancer": false,
-					"Prismatic": false
+					"Hydromancer": "ignore",
+					"Geomancer": "ignore",
+					"Pyromancer": "ignore",
+					"Aeromancer": "ignore",
+					"Prismatic": "ignore"
 				},
 				"Runes": {
-					"Minor Air Magic": false,
-					"Minor Earth Magic": false,
-					"Minor Energy Storage": false,
-					"Minor Water Magic": false,
-					"Minor Fire Magic": false,
-					"Major Air Magic": false,
-					"Major Earth Magic": false,
-					"Major Energy Storage": false,
-					"Major Fire Magic": false,
-					"Major Water Magic": false,
-					"Superior Air Magic": false,
-					"Superior Earth Magic": false,
-					"Superior Energy Storage": false,
-					"Superior Fire Magic": false,
-					"Superior Water Magic": false
+					"Minor Air Magic": "ignore",
+					"Minor Earth Magic": "ignore",
+					"Minor Energy Storage": "ignore",
+					"Minor Water Magic": "ignore",
+					"Minor Fire Magic": "ignore",
+					"Major Air Magic": "ignore",
+					"Major Earth Magic": "ignore",
+					"Major Energy Storage": "ignore",
+					"Major Fire Magic": "ignore",
+					"Major Water Magic": "ignore",
+					"Superior Air Magic": "ignore",
+					"Superior Earth Magic": "ignore",
+					"Superior Energy Storage": "ignore",
+					"Superior Fire Magic": "ignore",
+					"Superior Water Magic": "ignore"
 				}
 			},
 			"Mesmer": {
 				"Insignias": {
-					"Virtuosos": false,
-					"Artificers": false,
-					"Prodigys": true
+					"Virtuosos": "ignore",
+					"Artificers": "ignore",
+					"Prodigys": "salvage+store"
 				},
 				"Runes": {
-					"Minor Domination Magic": false,
-					"Minor Fast Casting": false,
-					"Minor Illusion Magic": false,
-					"Minor Inspiration Magic": true,
-					"Major Domination Magic": false,
-					"Major Fast Casting": false,
-					"Major Illusion Magic": false,
-					"Major Inspiration Magic": false,
-					"Superior Domination Magic": false,
-					"Superior Fast Casting": false,
-					"Superior Illusion Magic": false,
-					"Superior Inspiration Magic": false
+					"Minor Domination Magic": "ignore",
+					"Minor Fast Casting": "ignore",
+					"Minor Illusion Magic": "ignore",
+					"Minor Inspiration Magic": "salvage+store",
+					"Major Domination Magic": "ignore",
+					"Major Fast Casting": "ignore",
+					"Major Illusion Magic": "ignore",
+					"Major Inspiration Magic": "ignore",
+					"Superior Domination Magic": "ignore",
+					"Superior Fast Casting": "ignore",
+					"Superior Illusion Magic": "ignore",
+					"Superior Inspiration Magic": "ignore"
 				}
 			},
 			"Monk": {
 				"Insignias": {
-					"Wanderers": false,
-					"Disciples": false,
-					"Anchorites": true
+					"Wanderers": "ignore",
+					"Disciples": "ignore",
+					"Anchorites": "salvage+store"
 				},
 				"Runes": {
-					"Minor Divine Favor": false,
-					"Minor Healing Prayers": false,
-					"Minor Protection Prayers": false,
-					"Minor Smiting Prayers": false,
-					"Major Healing Prayers": false,
-					"Major Protection Prayers": false,
-					"Major Smiting Prayers": false,
-					"Major Divine Favor": false,
-					"Superior Divine Favor": false,
-					"Superior Healing Prayers": false,
-					"Superior Protection Prayers": false,
-					"Superior Smiting Prayers": false
+					"Minor Divine Favor": "ignore",
+					"Minor Healing Prayers": "ignore",
+					"Minor Protection Prayers": "ignore",
+					"Minor Smiting Prayers": "ignore",
+					"Major Healing Prayers": "ignore",
+					"Major Protection Prayers": "ignore",
+					"Major Smiting Prayers": "ignore",
+					"Major Divine Favor": "ignore",
+					"Superior Divine Favor": "ignore",
+					"Superior Healing Prayers": "ignore",
+					"Superior Protection Prayers": "ignore",
+					"Superior Smiting Prayers": "ignore"
 				}
 			},
 			"Necromancer": {
 				"Insignias": {
-					"Bloodstained": false,
-					"Tormentors": true,
-					"Bonelace": false,
-					"Minion Masters": true,
-					"Blighters": false,
-					"Undertakers": false
+					"Bloodstained": "ignore",
+					"Tormentors": "salvage+store",
+					"Bonelace": "ignore",
+					"Minion Masters": "salvage+store",
+					"Blighters": "ignore",
+					"Undertakers": "ignore"
 				},
 				"Runes": {
-					"Minor Blood Magic": true,
-					"Minor Curses": false,
-					"Minor Death Magic": false,
-					"Minor Soul Reaping": false,
-					"Major Blood Magic": false,
-					"Major Curses": false,
-					"Major Death Magic": false,
-					"Major Soul Reaping": false,
-					"Superior Blood Magic": false,
-					"Superior Curses": false,
-					"Superior Death Magic": false,
-					"Superior Soul Reaping": false
+					"Minor Blood Magic": "salvage+store",
+					"Minor Curses": "ignore",
+					"Minor Death Magic": "ignore",
+					"Minor Soul Reaping": "ignore",
+					"Major Blood Magic": "ignore",
+					"Major Curses": "ignore",
+					"Major Death Magic": "ignore",
+					"Major Soul Reaping": "ignore",
+					"Superior Blood Magic": "ignore",
+					"Superior Curses": "ignore",
+					"Superior Death Magic": "ignore",
+					"Superior Soul Reaping": "ignore"
 				}
 			},
 			"Paragon": {
 				"Insignias": {
-					"Centurions": true
+					"Centurions": "salvage+store"
 				},
 				"Runes": {
-					"Minor Command": false,
-					"Minor Leadership": true,
-					"Minor Motivation": false,
-					"Minor Spear Mastery": false,
-					"Major Command": false,
-					"Major Leadership": false,
-					"Major Motivation": false,
-					"Major Spear Mastery": false,
-					"Superior Command": false,
-					"Superior Leadership": false,
-					"Superior Motivation": false,
-					"Superior Spear Mastery": false
+					"Minor Command": "ignore",
+					"Minor Leadership": "salvage+store",
+					"Minor Motivation": "ignore",
+					"Minor Spear Mastery": "ignore",
+					"Major Command": "ignore",
+					"Major Leadership": "ignore",
+					"Major Motivation": "ignore",
+					"Major Spear Mastery": "ignore",
+					"Superior Command": "ignore",
+					"Superior Leadership": "ignore",
+					"Superior Motivation": "ignore",
+					"Superior Spear Mastery": "ignore"
 				}
 			},
 			"Ranger": {
 				"Insignias": {
-					"Frostbound": false,
-					"Pyrebound": false,
-					"Stormbound": false,
-					"Scouts": false,
-					"Earthbound": false,
-					"Beastmasters": true
+					"Frostbound": "ignore",
+					"Pyrebound": "ignore",
+					"Stormbound": "ignore",
+					"Scouts": "ignore",
+					"Earthbound": "ignore",
+					"Beastmasters": "salvage+store"
 				},
 				"Runes": {
-					"Minor Beast Mastery": false,
-					"Minor Expertise": false,
-					"Minor Marksmanship": false,
-					"Minor Wilderness Survival": false,
-					"Major Beast Mastery": false,
-					"Major Expertise": false,
-					"Major Marksmanship": false,
-					"Major Wilderness Survival": false,
-					"Superior Beast Mastery": false,
-					"Superior Expertise": false,
-					"Superior Marksmanship": false,
-					"Superior Wilderness Survival": false
+					"Minor Beast Mastery": "ignore",
+					"Minor Expertise": "ignore",
+					"Minor Marksmanship": "ignore",
+					"Minor Wilderness Survival": "ignore",
+					"Major Beast Mastery": "ignore",
+					"Major Expertise": "ignore",
+					"Major Marksmanship": "ignore",
+					"Major Wilderness Survival": "ignore",
+					"Superior Beast Mastery": "ignore",
+					"Superior Expertise": "ignore",
+					"Superior Marksmanship": "ignore",
+					"Superior Wilderness Survival": "ignore"
 				}
 			},
 			"Ritualist": {
 				"Insignias": {
-					"Shamans": true,
-					"Ghost Forge": false,
-					"Mystics": false
+					"Shamans": "salvage+store",
+					"Ghost Forge": "ignore",
+					"Mystics": "ignore"
 				},
 				"Runes": {
-					"Minor Channeling Magic": true,
-					"Minor Communing": true,
-					"Minor Restoration Magic": true,
-					"Minor Spawning Power": false,
-					"Major Channeling Magic": false,
-					"Major Communing": false,
-					"Major Restoration Magic": false,
-					"Major Spawning Power": false,
-					"Superior Channeling Magic": false,
-					"Superior Communing": false,
-					"Superior Restoration Magic": false,
-					"Superior Spawning Power": true
+					"Minor Channeling Magic": "salvage+store",
+					"Minor Communing": "salvage+store",
+					"Minor Restoration Magic": "salvage+store",
+					"Minor Spawning Power": "ignore",
+					"Major Channeling Magic": "ignore",
+					"Major Communing": "ignore",
+					"Major Restoration Magic": "ignore",
+					"Major Spawning Power": "ignore",
+					"Superior Channeling Magic": "ignore",
+					"Superior Communing": "ignore",
+					"Superior Restoration Magic": "ignore",
+					"Superior Spawning Power": "salvage+store"
 				}
 			},
 			"Warrior": {
 				"Insignias": {
-					"Knights": false,
-					"Lieutenants": false,
-					"Stonefist": false,
-					"Dreadnought": false,
-					"Sentinels": false
+					"Knights": "ignore",
+					"Lieutenants": "ignore",
+					"Stonefist": "ignore",
+					"Dreadnought": "ignore",
+					"Sentinels": "ignore"
 				},
 				"Runes": {
-					"Minor Absorption": false,
-					"Minor Axe Mastery": false,
-					"Minor Hammer Mastery": false,
-					"Minor Strength": false,
-					"Minor Swordsmanship": true,
-					"Minor Tactics": false,
-					"Major Absorption": false,
-					"Major Axe Mastery": false,
-					"Major Hammer Mastery": false,
-					"Major Strength": false,
-					"Major Swordsmanship": false,
-					"Major Tactics": false,
-					"Superior Axe Mastery": false,
-					"Superior Hammer Mastery": false,
-					"Superior Strength": false,
-					"Superior Swordsmanship": false,
-					"Superior Tactics": false,
-					"Superior Absorption": false
+					"Minor Absorption": "ignore",
+					"Minor Axe Mastery": "ignore",
+					"Minor Hammer Mastery": "ignore",
+					"Minor Strength": "ignore",
+					"Minor Swordsmanship": "salvage+store",
+					"Minor Tactics": "ignore",
+					"Major Absorption": "ignore",
+					"Major Axe Mastery": "ignore",
+					"Major Hammer Mastery": "ignore",
+					"Major Strength": "ignore",
+					"Major Swordsmanship": "ignore",
+					"Major Tactics": "ignore",
+					"Superior Axe Mastery": "ignore",
+					"Superior Hammer Mastery": "ignore",
+					"Superior Strength": "ignore",
+					"Superior Swordsmanship": "ignore",
+					"Superior Tactics": "ignore",
+					"Superior Absorption": "ignore"
 				}
 			}
 		},
 		"Inscriptions": {
-			"Measure for measure (Highly salvageable)": false,
-			"Show me the money (Improved sale value)": false,
+			"Measure for measure (Highly salvageable)": "ignore",
+			"Show me the money (Improved sale value)": "ignore",
 			"Weapon": {
-				"Strength and honor (Damage +15% while Health is above 50%)": false,
-				"Guided by fate (Damage +15% while Enchanted)": false,
-				"Dance with death (Damage +15% while in a Stance)": false,
-				"Too much information (Damage +15% vs Hexed foes)": false,
-				"To the pain (Damage +15% Armor -10 while attacking)": false,
-				"Brawn over brain (Damage +15% Energy -5)": false,
-				"Vengeance is mine (Damage +20% while Health is below 50%)": false,
-				"Dont fear the reaper (Damage +20% while Hexed)": false,
-				"Dont think twice (Halves casting time of spells)": false,
+				"Strength and honor (Damage +15% while Health is above 50%)": "ignore",
+				"Guided by fate (Damage +15% while Enchanted)": "ignore",
+				"Dance with death (Damage +15% while in a Stance)": "ignore",
+				"Too much information (Damage +15% vs Hexed foes)": "ignore",
+				"To the pain (Damage +15% Armor -10 while attacking)": "ignore",
+				"Brawn over brain (Damage +15% Energy -5)": "ignore",
+				"Vengeance is mine (Damage +20% while Health is below 50%)": "ignore",
+				"Dont fear the reaper (Damage +20% while Hexed)": "ignore",
+				"Dont think twice (Halves casting time of spells)": "ignore",
 				"Martial": {
-					"I have the power (Energy +5)": false,
-					"Let the memory live again (Halves skill recharge of spells)": false
+					"I have the power (Energy +5)": "ignore",
+					"Let the memory live again (Halves skill recharge of spells)": "ignore"
 				},
 				"Spellcasting": {
-					"Hale and hearty (Energy +5 while Health is above 50%)": false,
-					"Have faith (Energy +5 while Enchanted)": false,
-					"Dont call it a come back (Energy +7 while Health is below 50%)": false,
-					"I am sorrow (Energy +7 while Hexed)": false,
-					"Seize the day (Energy +15 Energy regeneration -1)": false,
-					"Aptitude not attitude (Halves casting time of spells of item's attribute)": true
+					"Hale and hearty (Energy +5 while Health is above 50%)": "ignore",
+					"Have faith (Energy +5 while Enchanted)": "ignore",
+					"Dont call it a come back (Energy +7 while Health is below 50%)": "ignore",
+					"I am sorrow (Energy +7 while Hexed)": "ignore",
+					"Seize the day (Energy +15 Energy regeneration -1)": "ignore",
+					"Aptitude not attitude (Halves casting time of spells of item's attribute)": "salvage+store"
 				}
 			},
 			"Offhand": {
 				"Focus": {
-					"Forget me not (Halves skill recharge of spells of item's attribute)": true,
-					"Serenity now (Halves skill recharge of spells)": false,
-					"Hail to the king (Armor +5 while Health is above 50%)": true,
-					"Faith is my shield (Armor +5 while Enchanted)": false,
-					"Might makes right (Armor +5 while attacking)": false,
-					"Knowing is half the battle (Armor +5 while casting)": false,
-					"Man for all seasons (Armor +5 vs Elemental damage)": false,
-					"Survival of the fittest (Armor +5 vs Physical damage)": false,
-					"Ignorance is bliss (Armor +5 Energy -5)": false,
-					"Life is pain (Armor +5 Health -20)": false,
-					"Down but not out (Armor +10 while Health is below 50%)": false,
-					"Be just and fear not (Armor +10 while hexed)": false,
-					"Live for today (Energy +15 Energy regeneration -1)": false
+					"Forget me not (Halves skill recharge of spells of item's attribute)": "salvage+store",
+					"Serenity now (Halves skill recharge of spells)": "ignore",
+					"Hail to the king (Armor +5 while Health is above 50%)": "salvage+store",
+					"Faith is my shield (Armor +5 while Enchanted)": "ignore",
+					"Might makes right (Armor +5 while attacking)": "ignore",
+					"Knowing is half the battle (Armor +5 while casting)": "ignore",
+					"Man for all seasons (Armor +5 vs Elemental damage)": "ignore",
+					"Survival of the fittest (Armor +5 vs Physical damage)": "ignore",
+					"Ignorance is bliss (Armor +5 Energy -5)": "ignore",
+					"Life is pain (Armor +5 Health -20)": "ignore",
+					"Down but not out (Armor +10 while Health is below 50%)": "ignore",
+					"Be just and fear not (Armor +10 while hexed)": "ignore",
+					"Live for today (Energy +15 Energy regeneration -1)": "ignore"
 				},
-				"Master of my domain (Item's attribute +1)": false,
-				"Not the face (Armor +10 vs Blunt damage)": false,
-				"Leaf on the wind (Armor +10 vs Cold damage)": false,
-				"Like a rolling stone (Armor +10 vs Earth damage)": false,
-				"Sleep now in the fire (Armor +10 vs Fire damage)": false,
-				"Riders on the storm (Armor +10 vs Lightning damage)": false,
-				"Through thick and thin (Armor +10 vs Piercing damage)": false,
-				"The riddle of steel (Armor +10 vs Slashing damage)": false,
-				"Sheltered by faith (Received physical damage -2 while Enchanted)": false,
-				"Run for your life (Received physical damage -2 while in a Stance)": false,
-				"Nothing to fear (Received physical damage -3 while Hexed)": false,
-				"Luck of the draw (Received physical damage -5 - Chance 20%)": false,
-				"Fear cuts deeper (Reduces Bleeding duration on you by 20%)": false,
-				"I can see clearly now (Reduces Blind duration on you by 20%)": false,
-				"Swift as the wind (Reduces Crippled duration on you by 20%)": false,
-				"Soundness of mind (Reduces Dazed duration on you by 20%)": false,
-				"Strength of body (Reduces Deep Wound duration on you by 20%)": false,
-				"Cast out the unclean (Reduces Disease duration on you by 20%)": false,
-				"Pure of heart (Reduces Poison duration on you by 20%)": false,
-				"Only the strong survive (Reduces Weakness duration on you by 20%)": false
+				"Master of my domain (Item's attribute +1)": "ignore",
+				"Not the face (Armor +10 vs Blunt damage)": "ignore",
+				"Leaf on the wind (Armor +10 vs Cold damage)": "ignore",
+				"Like a rolling stone (Armor +10 vs Earth damage)": "ignore",
+				"Sleep now in the fire (Armor +10 vs Fire damage)": "ignore",
+				"Riders on the storm (Armor +10 vs Lightning damage)": "ignore",
+				"Through thick and thin (Armor +10 vs Piercing damage)": "ignore",
+				"The riddle of steel (Armor +10 vs Slashing damage)": "ignore",
+				"Sheltered by faith (Received physical damage -2 while Enchanted)": "ignore",
+				"Run for your life (Received physical damage -2 while in a Stance)": "ignore",
+				"Nothing to fear (Received physical damage -3 while Hexed)": "ignore",
+				"Luck of the draw (Received physical damage -5 - Chance 20%)": "ignore",
+				"Fear cuts deeper (Reduces Bleeding duration on you by 20%)": "ignore",
+				"I can see clearly now (Reduces Blind duration on you by 20%)": "ignore",
+				"Swift as the wind (Reduces Crippled duration on you by 20%)": "ignore",
+				"Soundness of mind (Reduces Dazed duration on you by 20%)": "ignore",
+				"Strength of body (Reduces Deep Wound duration on you by 20%)": "ignore",
+				"Cast out the unclean (Reduces Disease duration on you by 20%)": "ignore",
+				"Pure of heart (Reduces Poison duration on you by 20%)": "ignore",
+				"Only the strong survive (Reduces Weakness duration on you by 20%)": "ignore"
 			}
 		},
-		"Mods": {
+		"Weapon mods": {
 			"Axe": {
 				"Prefix - Haft": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
-					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
-					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
-					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
-					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": "ignore",
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": "ignore",
+					"Crippling (Lengthens Crippled duration on foes by 33%)": "ignore",
+					"Heavy (Lengthens Weakness duration on foes by 33%)": "ignore",
+					"Poisonous (Lengthens Poison duration on foes by 33%)": "ignore",
+					"Furious (Double Adrenaline on hit - Chance 10%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Grip": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Deathbane": false,
-					"Of Charrslaying": true,
-					"Of Trollslaying": true,
-					"Of Pruning": true,
-					"Of Skeleton Slaying": true,
-					"Of Giant Slaying": true,
-					"Of Dwarf Slaying": true,
-					"Of Tengu Slaying": true,
-					"Of Demon Slaying": true,
-					"Of Ogre Slaying": true,
-					"Of Dragon Slaying": true,
-					"Of Axe Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Deathbane": "ignore",
+					"Of Charrslaying": "salvage+store",
+					"Of Trollslaying": "salvage+store",
+					"Of Pruning": "salvage+store",
+					"Of Skeleton Slaying": "salvage+store",
+					"Of Giant Slaying": "salvage+store",
+					"Of Dwarf Slaying": "salvage+store",
+					"Of Tengu Slaying": "salvage+store",
+					"Of Demon Slaying": "salvage+store",
+					"Of Ogre Slaying": "salvage+store",
+					"Of Dragon Slaying": "salvage+store",
+					"Of Axe Mastery (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Bow": {
 				"Prefix - String": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
-					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
-					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
-					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": "ignore",
+					"Crippling (Lengthens Crippled duration on foes by 33%)": "ignore",
+					"Poisonous (Lengthens Poison duration on foes by 33%)": "ignore",
+					"Silencing (Lengthens Dazed duration on foes by 33%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 5 (Life Draining 5 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Grip": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Deathbane": false,
-					"Of Charrslaying": true,
-					"Of Trollslaying": true,
-					"Of Pruning": true,
-					"Of Skeleton Slaying": true,
-					"Of Giant Slaying": true,
-					"Of Dwarf Slaying": true,
-					"Of Tengu Slaying": true,
-					"Of Demon Slaying": true,
-					"Of Ogre Slaying": true,
-					"Of Dragon Slaying": true,
-					"Of Marksmanship (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Deathbane": "ignore",
+					"Of Charrslaying": "salvage+store",
+					"Of Trollslaying": "salvage+store",
+					"Of Pruning": "salvage+store",
+					"Of Skeleton Slaying": "salvage+store",
+					"Of Giant Slaying": "salvage+store",
+					"Of Dwarf Slaying": "salvage+store",
+					"Of Tengu Slaying": "salvage+store",
+					"Of Demon Slaying": "salvage+store",
+					"Of Ogre Slaying": "salvage+store",
+					"Of Dragon Slaying": "salvage+store",
+					"Of Marksmanship (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Dagger": {
 				"Prefix - Tang": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
-					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
-					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
-					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
-					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": "ignore",
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": "ignore",
+					"Crippling (Lengthens Crippled duration on foes by 33%)": "ignore",
+					"Poisonous (Lengthens Poison duration on foes by 33%)": "ignore",
+					"Silencing (Lengthens Dazed duration on foes by 33%)": "ignore",
+					"Furious (Double Adrenaline on hit - Chance 10%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Handle": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Dagger Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Dagger Mastery (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Focus": {
 				"Suffix - Core": {
-					"of Fortitude (Health +30)": true,
-					"Of Devotion (Health +45 while Enchanted)": false,
-					"Of Endurance (Health +45 while in a Stance)": false,
-					"Of Valor (Health +60 while Hexed)": false,
-					"Of Aptitude (Halves casting time of item's attribute spells - Chance 20%)": true,
-					"Of Swiftness (Halves casting time of spells - Chance 10%)": false
+					"of Fortitude (Health +30)": "salvage+store",
+					"Of Devotion (Health +45 while Enchanted)": "ignore",
+					"Of Endurance (Health +45 while in a Stance)": "ignore",
+					"Of Valor (Health +60 while Hexed)": "ignore",
+					"Of Aptitude (Halves casting time of item's attribute spells - Chance 20%)": "salvage+store",
+					"Of Swiftness (Halves casting time of spells - Chance 10%)": "ignore"
 				}
 			},
 			"Hammer": {
 				"Prefix - Haft": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
-					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": "ignore",
+					"Heavy (Lengthens Weakness duration on foes by 33%)": "ignore",
+					"Furious (Double Adrenaline on hit - Chance 10%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 5 (Life Draining 5 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Grip": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Deathbane": false,
-					"Of Charrslaying": true,
-					"Of Trollslaying": true,
-					"Of Pruning": true,
-					"Of Skeleton Slaying": true,
-					"Of Giant Slaying": true,
-					"Of Dwarf Slaying": true,
-					"Of Tengu Slaying": true,
-					"Of Demon Slaying": true,
-					"Of Ogre Slaying": true,
-					"Of Dragon Slaying": true,
-					"Of Hammer Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Deathbane": "ignore",
+					"Of Charrslaying": "salvage+store",
+					"Of Trollslaying": "salvage+store",
+					"Of Pruning": "salvage+store",
+					"Of Skeleton Slaying": "salvage+store",
+					"Of Giant Slaying": "salvage+store",
+					"Of Dwarf Slaying": "salvage+store",
+					"Of Tengu Slaying": "salvage+store",
+					"Of Demon Slaying": "salvage+store",
+					"Of Ogre Slaying": "salvage+store",
+					"Of Dragon Slaying": "salvage+store",
+					"Of Hammer Mastery (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Scythe": {
 				"Prefix - Snathe": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
-					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
-					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
-					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
-					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 5 (Life Draining 5 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": "ignore",
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": "ignore",
+					"Crippling (Lengthens Crippled duration on foes by 33%)": "ignore",
+					"Heavy (Lengthens Weakness duration on foes by 33%)": "ignore",
+					"Poisonous (Lengthens Poison duration on foes by 33%)": "ignore",
+					"Furious (Double Adrenaline on hit - Chance 10%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 5 (Life Draining 5 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Grip": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Scythe Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Scythe Mastery (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Shield": {
 				"Suffix - Handle": {
-					"of Fortitude (Health +30)": false,
-					"Of Devotion (Health +45 while Enchanted)": false,
-					"Of Endurance (Health +45 while in a Stance)": false,
-					"Of Valor (Health +60 while Hexed)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Devotion (Health +45 while Enchanted)": "ignore",
+					"Of Endurance (Health +45 while in a Stance)": "ignore",
+					"Of Valor (Health +60 while Hexed)": "ignore"
 				}
 			},
 			"Spear": {
 				"Prefix - Head": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
-					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
-					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
-					"Heavy (Lengthens Weakness duration on foes by 33%)": false,
-					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
-					"Silencing (Lengthens Dazed duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": "ignore",
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": "ignore",
+					"Crippling (Lengthens Crippled duration on foes by 33%)": "ignore",
+					"Heavy (Lengthens Weakness duration on foes by 33%)": "ignore",
+					"Poisonous (Lengthens Poison duration on foes by 33%)": "ignore",
+					"Silencing (Lengthens Dazed duration on foes by 33%)": "ignore",
+					"Furious (Double Adrenaline on hit - Chance 10%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Grip": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": true,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Spear Mastery (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "salvage+store",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Spear Mastery (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Staff": {
 				"Prefix - Head": {
-					"Hale (Health +30)": false,
-					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": false,
-					"Swift (Halves casting time of spells - Chance 10%)": false,
-					"Insightful (Energy +5)": false,
-					"Defensive (Armor +5)": false
+					"Hale (Health +30)": "ignore",
+					"Adept (Halves casting time of spells of item's attribute - Chance 20%)": "ignore",
+					"Swift (Halves casting time of spells - Chance 10%)": "ignore",
+					"Insightful (Energy +5)": "ignore",
+					"Defensive (Armor +5)": "ignore"
 				},
 				"Suffix - Wrapping": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": true,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": true,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Deathbane": false,
-					"Of Charrslaying": true,
-					"Of Trollslaying": true,
-					"Of Pruning": true,
-					"Of Skeleton Slaying": true,
-					"Of Giant Slaying": true,
-					"Of Dwarf Slaying": true,
-					"Of Tengu Slaying": true,
-					"Of Demon Slaying": true,
-					"Of Ogre Slaying": true,
-					"Of Dragon Slaying": true,
-					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": false,
-					"Of Devotion (Health +45 while Enchanted)": false,
-					"Of Endurance (Health +45 while in a Stance)": false,
-					"Of Valor (Health +60 while Hexed)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "salvage+store",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "salvage+store",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Deathbane": "ignore",
+					"Of Charrslaying": "salvage+store",
+					"Of Trollslaying": "salvage+store",
+					"Of Pruning": "salvage+store",
+					"Of Skeleton Slaying": "salvage+store",
+					"Of Giant Slaying": "salvage+store",
+					"Of Dwarf Slaying": "salvage+store",
+					"Of Tengu Slaying": "salvage+store",
+					"Of Demon Slaying": "salvage+store",
+					"Of Ogre Slaying": "salvage+store",
+					"Of Dragon Slaying": "salvage+store",
+					"Of Mastery (Item's attribute +1 - 20% chance while using skills)": "ignore",
+					"Of Devotion (Health +45 while Enchanted)": "ignore",
+					"Of Endurance (Health +45 while in a Stance)": "ignore",
+					"Of Valor (Health +60 while Hexed)": "ignore"
 				}
 			},
 			"Sword": {
 				"Prefix - Hilt": {
-					"Ebon (Earth damage)": false,
-					"Fiery (Fire damage)": false,
-					"Icy (Cold damage)": false,
-					"Shocking (Lightning damage)": false,
-					"Barbed (Lengthens Bleeding duration on foes by 33%)": false,
-					"Cruel (Lengthens Deep Wound duration on foes by 33%)": false,
-					"Crippling (Lengthens Crippled duration on foes by 33%)": false,
-					"Poisonous (Lengthens Poison duration on foes by 33%)": false,
-					"Furious (Double Adrenaline on hit - Chance 10%)": false,
-					"Sundering (Armor penetration +20% - Chance 20%)": false,
-					"Vampiric 3 (Life Draining 3 Health regeneration -1)": false,
-					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": false
+					"Ebon (Earth damage)": "ignore",
+					"Fiery (Fire damage)": "ignore",
+					"Icy (Cold damage)": "ignore",
+					"Shocking (Lightning damage)": "ignore",
+					"Barbed (Lengthens Bleeding duration on foes by 33%)": "ignore",
+					"Cruel (Lengthens Deep Wound duration on foes by 33%)": "ignore",
+					"Crippling (Lengthens Crippled duration on foes by 33%)": "ignore",
+					"Poisonous (Lengthens Poison duration on foes by 33%)": "ignore",
+					"Furious (Double Adrenaline on hit - Chance 10%)": "ignore",
+					"Sundering (Armor penetration +20% - Chance 20%)": "ignore",
+					"Vampiric 3 (Life Draining 3 Health regeneration -1)": "ignore",
+					"Zealous (Energy gain on hit: 1 Energy regeneration: -1)": "ignore"
 				},
 				"Suffix - Pommel": {
-					"of Fortitude (Health +30)": false,
-					"Of Defense (Armor +5)": false,
-					"Of Shelter (Armor +7 vs physical damage)": false,
-					"Of Warding (Armor +7 vs elemental damage)": false,
-					"Of Enchanting (Enchantments last 20% longer)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": false,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": false,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false,
-					"Of Deathbane": false,
-					"Of Charrslaying": true,
-					"Of Trollslaying": true,
-					"Of Pruning": true,
-					"Of Skeleton Slaying": true,
-					"Of Giant Slaying": true,
-					"Of Dwarf Slaying": true,
-					"Of Tengu Slaying": true,
-					"Of Demon Slaying": true,
-					"Of Ogre Slaying": true,
-					"Of Dragon Slaying": true,
-					"Of Swordmanship (Item's attribute +1 - 20% chance while using skills)": false
+					"of Fortitude (Health +30)": "ignore",
+					"Of Defense (Armor +5)": "ignore",
+					"Of Shelter (Armor +7 vs physical damage)": "ignore",
+					"Of Warding (Armor +7 vs elemental damage)": "ignore",
+					"Of Enchanting (Enchantments last 20% longer)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "ignore",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "ignore",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore",
+					"Of Deathbane": "ignore",
+					"Of Charrslaying": "salvage+store",
+					"Of Trollslaying": "salvage+store",
+					"Of Pruning": "salvage+store",
+					"Of Skeleton Slaying": "salvage+store",
+					"Of Giant Slaying": "salvage+store",
+					"Of Dwarf Slaying": "salvage+store",
+					"Of Tengu Slaying": "salvage+store",
+					"Of Demon Slaying": "salvage+store",
+					"Of Ogre Slaying": "salvage+store",
+					"Of Dragon Slaying": "salvage+store",
+					"Of Swordmanship (Item's attribute +1 - 20% chance while using skills)": "ignore"
 				}
 			},
 			"Wand": {
 				"Suffix - Wrapping": {
-					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": false,
-					"Of Quickening (Halves skill recharge of spells - Chance 10%)": false,
-					"Of The Warrior": false,
-					"Of The Ranger": false,
-					"Of The Necromancer": true,
-					"Of The Mesmer": false,
-					"Of The Elementalist": false,
-					"Of The Monk": false,
-					"Of The Ritualist": true,
-					"Of The Assassin": false,
-					"Of The Paragon": false,
-					"Of The Dervish": false
+					"Of Memory (Halves skill recharge of item's attribute spells - Chance 20%)": "ignore",
+					"Of Quickening (Halves skill recharge of spells - Chance 10%)": "ignore",
+					"Of The Warrior": "ignore",
+					"Of The Ranger": "ignore",
+					"Of The Necromancer": "salvage+store",
+					"Of The Mesmer": "ignore",
+					"Of The Elementalist": "ignore",
+					"Of The Monk": "ignore",
+					"Of The Ritualist": "salvage+store",
+					"Of The Assassin": "ignore",
+					"Of The Paragon": "ignore",
+					"Of The Dervish": "ignore"
 				}
 			}
 		}
-	},
-	"Salvage items": {
-		"Weapons and offhands": {
-			"White": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Blue": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Purple": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Gold": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			}
-		},
-		"Armor salvageables": {
-			"White": false,
-			"Blue": false,
-			"Purple": false,
-			"Gold": false
-		},
-		"Rare Materials": {
-			"Fur Square": false,
-			"Bolt of Linen": false,
-			"Bolt of Damask": false,
-			"Bolt of Silk": false,
-			"Glob of Ectoplasm": false,
-			"Steel Ingot": true,
-			"Deldrimor Steel Ingot": false,
-			"Monstrous Claw": false,
-			"Monstrous Eye": false,
-			"Monstrous Fang": false,
-			"Ruby": false,
-			"Sapphire": false,
-			"Diamond": false,
-			"Onyx Gemstone": false,
-			"Lump of Charcoal": false,
-			"Obsidian Shard": false,
-			"Tempered Glass Vial": false,
-			"Leather Square": false,
-			"Elonian Leather Square": false,
-			"Vial of Ink": false,
-			"Roll of Parchment": false,
-			"Roll of Vellum": false,
-			"Spiritwood Plank": false,
-			"Amber Chunk": false,
-			"Jadeite Shard": false
-		},
-		"Trophies": {
-			"Superb Charr Carving": false,
-			"Chunk of Drake Flesh": false,
-			"Skale Fin": false,
-			"Iboga Petal": false,
-			"Destroyer Core": false,
-			"Glacial Stone": true,
-			"Saurian Bone": true,
-			"Jade Bracelet": false,
-			"Dark Remains": true,
-			"Demonic Remains": true
-		}
-	},
-	"Sell items": {
-		"Weapons and offhands": {
-			"White": {
-				"Axe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Bow": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Dagger": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Focus": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Hammer": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Scythe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Shield": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Spear": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Staff": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Sword": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Wand": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				}
-			},
-			"Blue": {
-				"Axe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Bow": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Dagger": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Focus": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Hammer": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Scythe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Shield": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Spear": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Staff": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Sword": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Wand": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				}
-			},
-			"Purple": {
-				"Axe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Bow": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Dagger": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Focus": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Hammer": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Scythe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Shield": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Spear": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Staff": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Sword": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Wand": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				}
-			},
-			"Gold": {
-				"Axe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Bow": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Dagger": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Focus": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Hammer": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Scythe": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Shield": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Spear": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Staff": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Sword": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				},
-				"Wand": {
-					"Req 0": true,
-					"Req 1": true,
-					"Req 2": true,
-					"Req 3": true,
-					"Req 4": true,
-					"Req 5": true,
-					"Req 6": true,
-					"Req 7": true,
-					"Req 8": true,
-					"Req 9": true,
-					"Req 10": true,
-					"Req 11": true,
-					"Req 12": true,
-					"Req 13": true
-				}
-			}
-		},
-		"Armor salvageables": {
-			"White": true,
-			"Blue": true,
-			"Purple": true,
-			"Gold": true
-		},
-		"Basic Materials": {
-			"Bone": false,
-			"Bolt of Cloth": false,
-			"Chitin Fragment": false,
-			"Feather": false,
-			"Granite Slab": false,
-			"Iron Ingot": false,
-			"Pile of Glittering Dust": false,
-			"Plant Fiber": false,
-			"Scale": false,
-			"Tanned Hide Square": false,
-			"Wood Plank": false
-		},
-		"Rare Materials": {
-			"Fur Square": false,
-			"Bolt of Linen": false,
-			"Bolt of Damask": false,
-			"Bolt of Silk": false,
-			"Glob of Ectoplasm": false,
-			"Steel Ingot": false,
-			"Deldrimor Steel Ingot": false,
-			"Monstrous Claw": false,
-			"Monstrous Eye": false,
-			"Monstrous Fang": false,
-			"Ruby": false,
-			"Sapphire": false,
-			"Diamond": false,
-			"Onyx Gemstone": false,
-			"Lump of Charcoal": false,
-			"Obsidian Shard": false,
-			"Tempered Glass Vial": false,
-			"Leather Square": false,
-			"Elonian Leather Square": false,
-			"Vial of Ink": false,
-			"Roll of Parchment": false,
-			"Roll of Vellum": false,
-			"Spiritwood Plank": false,
-			"Amber Chunk": false,
-			"Jadeite Shard": false
-		},
-		"Trophies": {
-			"Superb Charr Carving": false,
-			"Chunk of Drake Flesh": false,
-			"Skale Fin": false,
-			"Iboga Petal": false,
-			"Destroyer Core": false,
-			"Glacial Stone": false,
-			"Saurian Bone": false,
-			"Jade Bracelet": false,
-			"Dark Remains": false,
-			"Demonic Remains": false
-		},
-		"Scrolls": {
-			"Blue": true,
-			"Gold": {
-				"Passage Scroll to the Fissure of Woe": false,
-				"Passage Scroll to the Underworld": false,
-				"Passage Scroll to the Deep": false,
-				"Passage Scroll to Urgozs Warren": false,
-				"Other gold scrolls": true
-			}
-		},
-		"Keys": true
 	},
 	"Buy items": {
 		"Lockpicks": false,
@@ -3357,1122 +3539,5 @@
 			"Amber Chunk": false,
 			"Jadeite Shard": false
 		}
-	},
-	"Store items": {
-		"Gold": true,
-		"Consumables": true,
-		"Alcohols": {
-			"Minor (1pt)": true,
-			"Major (3pt)": true,
-			"Superior (50pt)": true
-		},
-		"Party": {
-			"Minor (1-2pt)": true,
-			"Major (3-7pt)": true,
-			"Superior (25-50pt)": true
-		},
-		"Sweets": {
-			"Minor (1-2pt)": true,
-			"Major (3pt)": true,
-			"Superior (50pt)": true
-		},
-		"PCons": {
-			"Drake Kabob": true,
-			"Bowl of Skalefin Soup": true,
-			"Pahnai Salad": true,
-			"Birthday Cupcake": false,
-			"Golden Egg": true,
-			"Candy Apple": true,
-			"Candy Corn": true,
-			"Slice of Pumpkin Pie": false,
-			"Blue Rock Candy": true,
-			"Green Rock Candy": true,
-			"Red Rock Candy": true,
-			"War Supplies": true,
-			"Lunar Fortune (Pig)": true,
-			"Lunar Fortune (Rat)": true,
-			"Lunar Fortune (Ox)": true,
-			"Lunar Fortune (Tiger)": true,
-			"Lunar Fortune (Rabbit)": true,
-			"Lunar Fortune (Dragon)": true,
-			"Lunar Fortune (Snake)": true,
-			"Lunar Fortune (Horse)": true,
-			"Lunar Fortune (Sheep)": true,
-			"Lunar Fortune (Monkey)": true,
-			"Lunar Fortune (Rooster)": true,
-			"Lunar Fortune (Dog)": true
-		},
-		"Morale": {
-			"Peppermint Candy Cane": true,
-			"Refined Jelly": true,
-			"Elixir of Valor": true,
-			"Wintergreen Candy Cane": true,
-			"Rainbow Candy Cane": true,
-			"Four Leaf Clover": true,
-			"Honeycomb": false,
-			"Pumpkin Cookie": true,
-			"Oath of Purity": true,
-			"Seal of the Dragon Empire": true,
-			"Shining Blade Ration": true
-		},
-		"Special drops": {
-			"Candy Cane Shard": true,
-			"Victory Token": true,
-			"Wintersday Gift": true,
-			"Wayfarer Mark": true,
-			"Lunar Token": true,
-			"Lunar Tokens": true,
-			"Trick-or-Treat Bag": true,
-			"Flame of Balthazar": true,
-			"Golden Flame of Balthazar": true,
-			"Celestial Sigil": true,
-			"Stalkers Rations": true,
-			"Birds Eye Compass": true
-		},
-		"Summoning stones": {
-			"Cracked Ascalonian War Horn": false,
-			"Igneous Summoning Stone": false,
-			"Legionnaire Summoning Crystal": false,
-			"Ghastly Summon": false,
-			"Mystical Summon": false,
-			"Tengu Summon": false,
-			"Imperial Guard Summon": false,
-			"Automaton Summon": false,
-			"Chitinous Summon": false,
-			"Amber Summon": false,
-			"Arctic Summon": false,
-			"Demonic Summon": false,
-			"Gelatinous Summon": false,
-			"Fossilized Summon": false,
-			"Jadeite Summon": false,
-			"Mischievous Summon": false,
-			"Frosty Summon": false,
-			"Zaishen Summon": false,
-			"Celestial Summon": false,
-			"Shining Blade Summon": false,
-			"Mysterious Summon": false,
-			"Merchant Summon": false
-		},
-		"Consets": {			
-			"Heroes Trifecta": false,
-			"Essence of Celerity": false,
-			"Armor of Salvation": false,
-			"Grail of Might": false,
-			"Scroll of Resurrection": false,
-			"Empowering Feasts": false
-		},
-		"Unidentified gold items": false,
-		"Weapons and offhands": {
-			"White": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Blue": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Purple": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Gold": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			},
-			"Green": {
-				"Axe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Bow": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Dagger": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Focus": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Hammer": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Scythe": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Shield": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Spear": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Staff": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Sword": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				},
-				"Wand": {
-					"Req 0": false,
-					"Req 1": false,
-					"Req 2": false,
-					"Req 3": false,
-					"Req 4": false,
-					"Req 5": false,
-					"Req 6": false,
-					"Req 7": false,
-					"Req 8": false,
-					"Req 9": false,
-					"Req 10": false,
-					"Req 11": false,
-					"Req 12": false,
-					"Req 13": false
-				}
-			}
-		},
-		"Armor salvageables": {
-			"White": false,
-			"Blue": false,
-			"Purple": false,
-			"Gold": false
-		},
-		"Basic Materials": {
-			"Bone": true,
-			"Bolt of Cloth": true,
-			"Chitin Fragment": true,
-			"Feather": true,
-			"Granite Slab": true,
-			"Iron Ingot": true,
-			"Pile of Glittering Dust": true,
-			"Plant Fiber": true,
-			"Scale": true,
-			"Tanned Hide Square": true,
-			"Wood Plank": true
-		},
-		"Rare Materials": {
-			"Fur Square": true,
-			"Bolt of Linen": true,
-			"Bolt of Damask": true,
-			"Bolt of Silk": true,
-			"Glob of Ectoplasm": true,
-			"Steel Ingot": true,
-			"Deldrimor Steel Ingot": true,
-			"Monstrous Claw": true,
-			"Monstrous Eye": true,
-			"Monstrous Fang": true,
-			"Ruby": true,
-			"Sapphire": true,
-			"Diamond": true,
-			"Onyx Gemstone": true,
-			"Lump of Charcoal": true,
-			"Obsidian Shard": true,
-			"Tempered Glass Vial": true,
-			"Leather Square": true,
-			"Elonian Leather Square": true,
-			"Vial of Ink": true,
-			"Roll of Parchment": true,
-			"Roll of Vellum": true,
-			"Spiritwood Plank": true,
-			"Amber Chunk": true,
-			"Jadeite Shard": true
-		},
-		"Trophies": {
-			"Margonite Gemstone": true,
-			"Stygian Gemstone": true,
-			"Titan Gemstone": true,
-			"Torment Gemstone": true,
-			"Diessa Chalice": true,
-			"Golden Rin Relic": true,
-			"Superb Charr Carving": true,
-			"Chunk of Drake Flesh": true,
-			"Skale Fin": true,
-			"Iboga Petal": true,
-			"Destroyer Core": true,
-			"Glacial Stone": false,
-			"Saurian Bone": false,
-			"Jade Bracelet": true,
-			"Dark Remains": true,
-			"Demonic Remains": true,
-			"Other trophies": true
-		},
-		"Tomes": {
-			"Normal": {
-				"Warrior Tome": true,
-				"Ranger Tome": true,
-				"Monk Tome": true,
-				"Necromancer Tome": true,
-				"Mesmer Tome": true,
-				"Elementalist Tome": true,
-				"Assassin Tome": true,
-				"Ritualist Tome": true,
-				"Paragon Tome": true,
-				"Dervish Tome": true
-			},
-			"Elite": {
-				"Elite Warrior Tome": true,
-				"Elite Ranger Tome": true,
-				"Elite Monk Tome": true,
-				"Elite Necromancer Tome": true,
-				"Elite Mesmer Tome": true,
-				"Elite Elementalist Tome": true,
-				"Elite Assassin Tome": true,
-				"Elite Ritualist Tome": true,
-				"Elite Paragon Tome": true,
-				"Elite Dervish Tome": true
-			}
-		},
-		"Scrolls": {
-			"Blue": false,
-			"Gold": {
-				"Passage Scroll to the Fissure of Woe": true,
-				"Passage Scroll to the Underworld": true,
-				"Passage Scroll to the Deep": true,
-				"Passage Scroll to Urgozs Warren": true,
-				"Other gold scrolls": false
-			}
-		},
-		"Dyes": {
-			"Black": true,
-			"Blue": false,
-			"Brown": false,
-			"Gray": false,
-			"Green": false,
-			"Orange": false,
-			"Pink": false,
-			"Purple": false,
-			"Red": false,
-			"Silver": false,
-			"White": true,
-			"Yellow": false
-		},
-		"Quest items": {
-			"Map pieces": false
-		},
-		"Lockpicks": false,
-		"Keys": false
 	}
 }
