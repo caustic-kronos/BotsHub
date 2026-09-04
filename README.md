@@ -31,6 +31,7 @@ To use it:
 - Shared inventory, loot, farm, and title tracking 🎯
 - Configurable item handling (pickup, identify, salvage, sell, buy, store) 📦
 - Farm UI with build, equipment, and contextual information 🛡️
+- Build-aware combat when a known player build is detected (Heroic Refrain, Assassin's Promise) 🧠
 - Modular, plug-and-play bot system 🔌
 
 ---
@@ -79,6 +80,8 @@ To use it:
 | Dalada Uplands				| Vanguard								|
 | Secret Lair of the Snowmen	| Deldrimor								|
 | Pre-Searing					| Legendary Defender of Ascalon (LDOA)	|
+
+Vanquish, dungeon and title bots play whatever build the character carries. With an Assassin's Promise build (Me/A, N/A, E/A) the bot uses a dedicated casting routine: Assassin's Promise once the target is close to 50% health, "Finish Him!" under 50%, "You Move Like a Dwarf!" to finish, Ebon Vanguard Assassin Support otherwise, and the mesmer's Arcane Echo and Auspicious Incantation only where they pay off. Untick *Smart Assassin's Promise casting* in the Team tab to fall back to casting skills from 1 to 8.
 
 ### Dungeons / Elite Zones
 

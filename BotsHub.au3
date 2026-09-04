@@ -49,6 +49,7 @@ Opt('MustDeclareVars', True)
 #include 'lib/Utils-Shared_Memory.au3'
 #include 'lib/Utils-Storage.au3'
 #include 'lib/Build_PW_Heroic-Refrain.au3'
+#include 'lib/Build_XA_Assassins-Promise.au3'
 
 #include 'src/farms/CoF.au3'
 #include 'src/farms/Corsairs.au3'
@@ -154,6 +155,7 @@ $run_options_cache['run.buy_faction_resources'] = False
 $run_options_cache['run.collect_data'] = False
 $run_options_cache['run.go_offline'] = False
 $run_options_cache['run.flash_whisper'] = False
+$run_options_cache['run.smart_assassins_promise'] = True
 $run_options_cache['team.automatic_team_setup'] = False
 ; Overrides on $run_options_cache for frequent usage
 Global $district_name = 'Default'
@@ -444,6 +446,9 @@ Func ReadConfigFromJson($jsonString)
 	$run_options_cache['run.collect_data'] = _JSON_Get($jsonObject, 'run.collect_data')
 	$run_options_cache['run.go_offline'] = _JSON_Get($jsonObject, 'run.go_offline')
 	$run_options_cache['run.flash_whisper'] = _JSON_Get($jsonObject, 'run.flash_whisper')
+	; Older configuration files do not have this key - smart casting is enabled by default
+	Local $smartAssassinsPromise = _JSON_Get($jsonObject, 'run.smart_assassins_promise')
+	$run_options_cache['run.smart_assassins_promise'] = @error ? True : $smartAssassinsPromise
 	$run_options_cache['run.donate_faction_points'] = _JSON_Get($jsonObject, 'run.donate_faction_points')
 	$run_options_cache['run.buy_faction_resources'] = _JSON_Get($jsonObject, 'run.buy_faction_resources')
 	$run_options_cache['run.buy_faction_scrolls'] = _JSON_Get($jsonObject, 'run.buy_faction_scrolls')
@@ -494,6 +499,7 @@ Func WriteConfigToJson()
 	_JSON_addChangeDelete($jsonObject, 'run.collect_data', $run_options_cache['run.collect_data'])
 	_JSON_addChangeDelete($jsonObject, 'run.go_offline', $run_options_cache['run.go_offline'])
 	_JSON_addChangeDelete($jsonObject, 'run.flash_whisper', $run_options_cache['run.flash_whisper'])
+	_JSON_addChangeDelete($jsonObject, 'run.smart_assassins_promise', $run_options_cache['run.smart_assassins_promise'])
 	_JSON_addChangeDelete($jsonObject, 'run.donate_faction_points', $run_options_cache['run.donate_faction_points'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_resources', $run_options_cache['run.buy_faction_resources'])
 	_JSON_addChangeDelete($jsonObject, 'run.buy_faction_scrolls', $run_options_cache['run.buy_faction_scrolls'])
@@ -694,11 +700,22 @@ EndFunc
 
 ;~ Auto-detect player build and wire up specialized combat/maintenance routines
 Func SetupPlayerBuildOverrides()
+	; Start from the default combat routine so a previous build override does not linger
+	$default_move_aggro_kill_options['killMethod']	= UseSkillSequentially
+	$flag_move_aggro_kill_options['killMethod']		= UseSkillSequentially
+	$optionsFollower['killMethod']					= UseSkillSequentially
+
 	; For build detection, we iterate over skills and key skills + profession will give use which build must be used
 	Local $profession = GetHeroProfession(0)
 	Local $skillbar = GetSkillbar(0)
 	For $i = 1 To 8
 		Local $skillID = DllStructGetData($skillbar, 'SkillID' & $i)
+		; Builds recognised whatever the primary profession
+		If $skillID == $ID_ASSASSINS_PROMISE Then
+			If $run_options_cache['run.smart_assassins_promise'] Then Return SetupAPBuild()
+			Info('Assassin''s Promise is on the skillbar but smart casting is disabled - skills will be used from 1 to 8')
+			Return
+		EndIf
 		If $profession == $ID_PARAGON Then
 			If $skillID == $ID_HEROIC_REFRAIN Then Return SetupHRBuild()
 			;If $skillID == ... Then Return ...
