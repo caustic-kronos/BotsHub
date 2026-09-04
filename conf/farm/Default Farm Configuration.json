@@ -9,6 +9,7 @@
 		"hard_mode": true,
 		"share_memory": false,
 		"farm_materials_mid_run": false,
+		"salvage_into_components": false,
 		"consume_consumables": true,
 		"use_consets": false,
 		"use_scrolls": false,
