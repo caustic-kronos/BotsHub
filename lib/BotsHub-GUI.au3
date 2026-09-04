@@ -145,7 +145,7 @@ Global $gui_group_teamoptions, $gui_teamlabel, $gui_teammemberlabel, $gui_teamme
 		$gui_checkbox_load_build_hero_4, $gui_checkbox_load_build_hero_5, $gui_checkbox_load_build_hero_6, $gui_checkbox_load_build_hero_7, _
 		$gui_label_build_hero_1, $gui_label_build_hero_2, $gui_label_build_hero_3, $gui_label_build_hero_4, $gui_label_build_hero_5, $gui_label_build_hero_6, $gui_label_build_hero_7, _
 		$gui_input_build_player, $gui_input_build_hero_1, $gui_input_build_hero_2, $gui_input_build_hero_3, $gui_input_build_hero_4, $gui_input_build_hero_5, $gui_input_build_hero_6, $gui_input_build_hero_7
-Global $gui_group_otheroptions, $gui_button_openstorage, $gui_checkbox_gooffline, $gui_checkbox_flashwhisper
+Global $gui_group_otheroptions, $gui_button_openstorage, $gui_checkbox_gooffline, $gui_checkbox_flashwhisper, $gui_checkbox_smartassassinspromise
 Global $gui_label_characterbuilds, $gui_label_heroesbuilds, $gui_edit_characterbuilds, $gui_edit_heroesbuilds, $gui_label_farminformations
 Global $gui_treeview_lootoptions, $gui_label_lootoptionswarning, $gui_expandlootoptionsbutton, $gui_reducelootoptionsbutton, $gui_loadlootoptionsbutton, $gui_savelootoptionsbutton, $gui_applylootoptionsbutton
 
@@ -413,6 +413,9 @@ Func CreateBotsHubGUI()
 		'- correct behaviour (passive/aggressive)' & @CRLF & _
 		'If party size is 4 or 6, last heroes just will not be added to party.', 40, 70)
 	$gui_checkbox_automaticteamsetup = GUICtrlCreateCheckbox('Setup team automatically using team options section', 31, 140)
+	$gui_checkbox_smartassassinspromise = GUICtrlCreateCheckbox('Smart Assassin''s Promise casting', 375, 140)
+	GUICtrlSetTip($gui_checkbox_smartassassinspromise, 'When Assassin''s Promise is on the player skillbar, fights use a build-aware casting routine: Promise once the target nears 50% health, "Finish Him!" under 50%, "You Move Like a Dwarf!" to finish, Ebon Vanguard Assassin Support otherwise, mesmer Arcane Echo and Auspicious Incantation only where they pay off. Untick to cast skills from 1 to 8 instead.')
+	GUICtrlSetOnEvent($gui_checkbox_smartassassinspromise, 'GuiOptionsHandler')
 	$gui_teammemberlabel = GUICtrlCreateLabel('Team member', 147, 170, 100, 20)
 	$gui_teammemberbuildlabel = GUICtrlCreateLabel('Team member build', 445, 170, 100, 20)
 	$gui_checkbox_load_build_all = GUICtrlCreateCheckbox('Load all builds:', 254, 167)
@@ -739,6 +742,8 @@ Func GuiOptionsHandler()
 			$run_options_cache['run.go_offline'] = GUICtrlRead($gui_checkbox_gooffline) == $GUI_CHECKED
 		Case $gui_checkbox_flashwhisper
 			$run_options_cache['run.flash_whisper'] = GUICtrlRead($gui_checkbox_flashwhisper) == $GUI_CHECKED
+		Case $gui_checkbox_smartassassinspromise
+			$run_options_cache['run.smart_assassins_promise'] = GUICtrlRead($gui_checkbox_smartassassinspromise) == $GUI_CHECKED
 		Case $gui_checkbox_sortitems
 			$run_options_cache['run.sort_items'] = GUICtrlRead($gui_checkbox_sortitems) == $GUI_CHECKED
 		Case $gui_checkbox_collectdata
@@ -936,7 +941,7 @@ Func UpdateFarmDescription($farm)
 	GUICtrlSetData($gui_edit_heroesbuilds, '')
 	GUICtrlSetData($gui_label_farminformations, '')
 
-	Local $generalCharacterSetup = 'Simple build to play from skill 1 to skill 8, such as:' & @CRLF & _
+	Local $generalCharacterSetup = 'Assassin''s Promise builds are played with a dedicated casting routine (see the Team tab option), other builds from skill 1 to skill 8. Suggested builds:' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:N/A_Assassin%27s_Promise_Death_Magic' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:E/A_Assassin%27s_Promise' & @CRLF & _
 		'https://gwpvx.fandom.com/wiki/Build:Me/A_Assassin%27s_Promise'
@@ -1688,6 +1693,7 @@ Func ApplyConfigToGUI()
 	GUICtrlSetState($gui_checkbox_usescrolls, $run_options_cache['run.use_scrolls'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_gooffline, $run_options_cache['run.go_offline'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_flashwhisper, $run_options_cache['run.flash_whisper'] ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($gui_checkbox_smartassassinspromise, $run_options_cache['run.smart_assassins_promise'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_sortitems, $run_options_cache['run.sort_items'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_checkbox_collectdata, $run_options_cache['run.collect_data'] ? $GUI_CHECKED : $GUI_UNCHECKED)
 	GUICtrlSetState($gui_radiobutton_donatepoints, $run_options_cache['run.donate_faction_points'] ? $GUI_CHECKED : $GUI_UNCHECKED)
